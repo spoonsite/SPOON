@@ -233,10 +233,17 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
       if (option.$viewValue === 'USAGE') {
         $scope.options.useage=true;
         $scope.options.link=false;
+        $scope.options.submission=false;
+      }else if (option.$viewValue === 'SUBMISSION') {
+        $scope.options.submission=true;
+        $scope.options.useage=false;
+        $scope.options.link=false;
       } else if (option.$viewValue === 'LINKVALID') {
+        $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=true;
       } else {
+        $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=false;
       }      

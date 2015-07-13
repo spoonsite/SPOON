@@ -1,12 +1,12 @@
 <div class="modal-header">
-  <button type="button" title="Cancel Changes" class="btn btn-primary pull-right" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Cancel</button>
+  <button type="button" title="Cancel Changes" class="btn btn-primary pull-right" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Close</button>
   <h3 style="display:inline-block; margin-top:0px; margin-bottom:0px; max-width:calc(100% - 90px)">Edit {{component.description}} Configuration</h3>
 </div> 
 <div class="modal-body" id="editCompConfModal" ng-show="!componentId">
   <div class="form-group form-group-sm col-sm-12" ng-class="(componentId && componentId !== -1)? ' has-success has-feedback ': componentId === -1? ' has-warning has-feedback ':''" style="margin: 0 auto; padding: 0; min-height: 50px;">
-    <label style="padding-left:0px; padding-right:0px;" class="control-label" for="componentSearch">Select A Component:&nbsp;</label>
+	  <label style="padding-left:0px; padding-right:0px;" class="control-label" for="componentSearch">Select A Component: <br><span style="font-weight: normal">(Approved only; for pending use component tool)</span>&nbsp;</label>
     <div class="" style="padding: 0;">
-      <input type="text" class="form-control searchBar" id="componentSearch" ng-model="data.grabCompId" ng-options="key as key.description for key in getTypeahead($viewValue)" placeholder="Select A Component" bs-typeahead>
+      <input type="text" class="form-control searchBar" id="componentSearch" ng-model="data.grabCompId"  typeahead="key as key.description for key in getTypeahead($viewValue) | filter:$viewValue | limitTo:8" placeholder="Select A Component" >
       <span ng-class="(componentId && componentId !== -1)? ' glyphicon glyphicon-ok form-control-feedback ': componentId === -1? ' glyphicon glyphicon-warning-sign form-control-feedback ':''"></span>
     </div>
   </div>
@@ -14,6 +14,16 @@
 </div>
 <div class="modal-body" id="editCompConfModal" ng-show="componentId">
   <loader trigger="editLoad"></loader>
+  
+  <panel class-list="edges" open-state="false" title="Override Refresh Rate Interval" class="ng-isolate-scope">
+	   <div class="" style="padding-left:0px; padding-right: 0; position: relative;">
+		  {{cron.componentCron}} <button class="btn btn-danger" ng-click="removeCompRefresh()"><i class="fa fa-close"></i>&nbsp;Clear</button>
+		  <p ng-show="cron.cronExpressionDescription">{{cron.cronExpressionDescription}}</p> 		  
+		  <cron ng-model="cron.componentCron" id="cmpRefreshRate" callback="saveCompRefresh()"></cron>
+	   </div>
+  </panel>
+  
+  
   <form class="form-horizontal" role="form" ng-show="componentId && integrationConfs.length">
     <div class="form-group form-group-md col-md-12" style="margin:0px;  padding:0px;">
       <button class="btn btn-default" ng-click="getIntegrationConf(componentId)"><i class="fa fa-refresh"></i>&nbsp;Refresh Table</button>
@@ -32,7 +42,7 @@
           <td ng-show="conf.status !== 'E' || !conf.errorMessage">{{calcStatus(conf.status)}}</td>
           <td ng-show="conf.status === 'E' && conf.errorMessage" popover data-trigger="hover" data-placement="bottom" data-html="true"  data-selector="" data-original-title="Error message:" data-container="body" data-content="<p class='dd'>{{conf.errorMessage}}</p>">{{calcStatus(conf.status)}}</td>
           <td style="padding:0px;">
-            <button class="btn btn-primary" ng-click="refreshJob(conf.componentId, conf.integrationConfigId)" ng-disabled="enabled"><i class="fa fa-refresh"></i>&nbsp;Run Configuration</button>
+            <button class="btn btn-primary" ng-click="refreshJob(conf.componentId, conf.integrationConfigId)" ng-show="!enabled"><i class="fa fa-refresh"></i>&nbsp;Run Configuration</button>
             <button class="btn btn-default" ng-click="setConfig(conf)"><i class="fa fa-edit"></i>&nbsp;Edit</button>
             <button ng-show="conf.activeStatus === 'A'" class="btn btn-warning" ng-click="deactivateConfig(conf.componentId, conf.integrationConfigId)"><i class="fa fa-ban"></i>&nbsp;Deactivate</button>
             <button ng-show="conf.activeStatus !== 'A'" class="btn btn-warning inverted" ng-click="activateConfig(conf.componentId, conf.integrationConfigId)"><i class="glyphicon glyphicon-off"></i>&nbsp;Activate</button>
@@ -62,7 +72,7 @@
         <div class="form-group form-group-sm col-sm-12" ng-class="(componentId && componentId !== -1)? ' has-success has-feedback ': componentId === -1? ' has-warning has-feedback ':''" style="margin: 0 auto; padding: 0; min-height: 50px;">
           <label style="padding-left:0px; padding-right:0px;" class="control-label" for="componentSearch">Component:&nbsp;</label>
           <div class="" style="padding: 0;">
-            <input type="text" class="form-control searchBar" id="componentSearch" ng-model="component" ng-options="key as key.description for key in getTypeahead($viewValue)" placeholder="Search For Component" bs-typeahead readonly>
+            <input type="text" class="form-control searchBar" id="componentSearch" ng-model="component" typeahead="key as key.description for key in getTypeahead($viewValue) | filter:$viewValue | limitTo:8" placeholder="Search For Component"  readonly>
             <span ng-class="(componentId && componentId !== -1)? ' glyphicon glyphicon-ok form-control-feedback ': componentId === -1? ' glyphicon glyphicon-warning-sign form-control-feedback ':''"></span>
           </div>
         </div>
@@ -84,7 +94,8 @@
         <div class="col-sm-12">&nbsp;</div>
         <div class="form-group form-group-sm col-sm-12" style="margin: 0 auto; padding: 0; margin-top: 10px;">
           <div class="">
-            <button class="btn btn-primary" type="submit" ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1) || !data.jiraProject) "><i class="fa fa-save"></i>&nbsp;Save</button>
+	    <button class="btn btn-primary" type="submit" style="min-width: 100px;"  ng-disabled="((!componentId || componentId === -1) || (!issueId || issueId === -1) || !data.jiraProject) "><i class="fa fa-save"></i>&nbsp;Save</button>
+	    <button class="btn btn-danger" type="button" ng-click="cancelEdit()" ><i class="fa fa-close"></i>&nbsp;Cancel</button>
           </div>
         </div>
       </form>
@@ -92,5 +103,5 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" title="Cancel Changes" class="btn btn-primary ng-scope" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Cancel</button>
+  <button type="button" title="Cancel Changes" class="btn btn-primary ng-scope" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Close</button>
 </div>

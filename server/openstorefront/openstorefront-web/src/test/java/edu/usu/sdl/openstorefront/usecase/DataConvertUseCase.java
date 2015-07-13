@@ -21,9 +21,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.sort.AttributeTypeViewComparator;
+import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
@@ -33,6 +33,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ContactType;
 import edu.usu.sdl.openstorefront.storage.model.MediaType;
 import edu.usu.sdl.openstorefront.storage.model.ResourceType;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
@@ -263,7 +264,7 @@ public class DataConvertUseCase
 			Component componentDetail = componentAll.getComponent();
 
 			//defaults
-			componentDetail.setActiveStatus(BaseEntity.ACTIVE_STATUS);
+			componentDetail.setActiveStatus(StandardEntity.ACTIVE_STATUS);
 
 			//map form old
 			componentDetail.setComponentId("" + oldAsset.getId());
@@ -289,13 +290,13 @@ public class DataConvertUseCase
 			updateUser = StringUtils.isNotBlank(oldAsset.getEditedBy().getUsername()) ? oldAsset.getEditedBy().getUsername() : OpenStorefrontConstant.SYSTEM_ADMIN_USER;
 
 			if ("Approved".equalsIgnoreCase(oldAsset.getApprovalStatus())) {
-				componentDetail.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.A.name());
+				componentDetail.setApprovalState(ApprovalStatus.APPROVED);
 				if (componentDetail.getApprovedDts() == null) {
 					componentDetail.setApprovedDts(TimeUtil.currentDate());
 					componentDetail.setApprovedUser(createUser);
 				}
 			} else {
-				componentDetail.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.P.name());
+				componentDetail.setApprovalState(ApprovalStatus.PENDING);
 			}
 
 			componentDetail.setCreateUser(createUser);

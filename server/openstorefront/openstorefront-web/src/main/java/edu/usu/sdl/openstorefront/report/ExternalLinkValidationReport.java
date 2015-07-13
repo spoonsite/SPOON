@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.model.LinkCheckModel;
+import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.Report;
@@ -91,7 +92,7 @@ public class ExternalLinkValidationReport
 
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		componentExample.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED);
+		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
 
 		Map<String, Component> componentMap = new HashMap<>();
@@ -218,10 +219,15 @@ public class ExternalLinkValidationReport
 				LinkCheckModel processed;
 				try {
 					processed = task.get(timeOutTime, TimeUnit.MILLISECONDS);
-					LinkCheckModel reportModel = linkMap.get(processed.getId());
-					reportModel.setStatus(processed.getStatus());
-					reportModel.setCheckResults(processed.getCheckResults());
-					reportModel.setHttpStatus(processed.getHttpStatus());
+					if (processed != null) {
+						LinkCheckModel reportModel = linkMap.get(processed.getId());
+						reportModel.setStatus(processed.getStatus());
+						reportModel.setCheckResults(processed.getCheckResults());
+						reportModel.setHttpStatus(processed.getHttpStatus());
+					} else {
+						//This shouldn't occur, however if it does at least show a message.
+						log.log(Level.WARNING, MessageFormat.format("A link check task failed to return results.  Status at Completed Abnormally? {0}", task.isCompletedAbnormally()));
+					}
 				} catch (TimeoutException e) {
 					task.cancel(true);
 				}

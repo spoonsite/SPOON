@@ -34,6 +34,8 @@ public class UserMessageType
 	public static final String COMPONENT_WATCH = "CWATCH";
 	public static final String USER_DATA_ALERT = "USERDATA";
 	public static final String SYSTEM_ERROR_ALERT = "SYSERROR";
+	public static final String COMPONENT_SUBMISSION_ALERT = "CMPSUB";
+	public static final String APPROVAL_NOTIFICATION = "APPNOT";
 
 	public UserMessageType()
 	{
@@ -46,6 +48,8 @@ public class UserMessageType
 		codeMap.put(COMPONENT_WATCH, newLookup(UserMessageType.class, COMPONENT_WATCH, "Component Watch"));
 		codeMap.put(USER_DATA_ALERT, newLookup(UserMessageType.class, USER_DATA_ALERT, "User Data Alert"));
 		codeMap.put(SYSTEM_ERROR_ALERT, newLookup(UserMessageType.class, SYSTEM_ERROR_ALERT, "System Error Alert"));
+		codeMap.put(COMPONENT_SUBMISSION_ALERT, newLookup(UserMessageType.class, COMPONENT_SUBMISSION_ALERT, "Component Submission Alert"));
+		codeMap.put(APPROVAL_NOTIFICATION, newLookup(UserMessageType.class, APPROVAL_NOTIFICATION, "Component Approval Notification"));
 		return codeMap;
 	}
 

@@ -36,12 +36,13 @@ import org.apache.commons.lang.StringUtils;
  */
 @APIDescription("Attribute code are used to link metadata and create articles on topics")
 public class AttributeCode
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK
 	@NotNull
 	@ConsumeField
+	@OneToOne(orphanRemoval = true)
 	private AttributeCodePk attributeCodePk;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)

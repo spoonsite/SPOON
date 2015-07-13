@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.List;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,7 +33,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public class Alert
-		extends BaseEntity<Alert>
+		extends StandardEntity<Alert>
 {
 
 	@PK(generated = true)
@@ -57,9 +58,11 @@ public class Alert
 	private List<EmailAddress> emailAddresses;
 
 	@ConsumeField
+	@OneToOne(orphanRemoval = true)
 	private UserDataAlertOption userDataAlertOption;
 
 	@ConsumeField
+	@OneToOne(orphanRemoval = true)
 	private SystemErrorAlertOption systemErrorAlertOption;
 
 	public Alert()

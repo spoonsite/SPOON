@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,18 @@
  */
 package edu.usu.sdl.openstorefront.sort;
 
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
-import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Compares Architecture codes
  *
  * @author dshurtleff
- * @param <T>
  */
-public class AttributeCodeArchComparator<T extends AttributeCodeView>
+public class AttributeCodeArchComparator<T extends AttributeCode>
 		implements Comparator<T>, Serializable
 {
 
@@ -45,20 +43,20 @@ public class AttributeCodeArchComparator<T extends AttributeCodeView>
 			if (StringUtils.isNotBlank(o1.getArchitectureCode())) {
 				codeKey1 = StringProcessor.archtecureCodeToDecimal(o1.getArchitectureCode());
 			} else {
-				codeKey1 = StringProcessor.archtecureCodeToDecimal(o1.getCode());
+				codeKey1 = StringProcessor.archtecureCodeToDecimal(o1.getAttributeCodePk().getAttributeCode());
 			}
 
 			if (StringUtils.isNotBlank(o2.getArchitectureCode())) {
 				codeKey2 = StringProcessor.archtecureCodeToDecimal(o2.getArchitectureCode());
 			} else {
-				codeKey2 = StringProcessor.archtecureCodeToDecimal(o2.getCode());
+				codeKey2 = StringProcessor.archtecureCodeToDecimal(o2.getAttributeCodePk().getAttributeCode());
 			}
 
 			int results = codeKey1.compareTo(codeKey2);
 			if (results != 0) {
 				return results;
 			} else {
-				return o1.getCode().compareTo(o2.getCode());
+				return o1.getAttributeCodePk().getAttributeCode().compareTo(o2.getAttributeCodePk().getAttributeCode());
 			}
 		}
 	}

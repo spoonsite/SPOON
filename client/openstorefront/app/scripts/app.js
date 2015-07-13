@@ -44,7 +44,13 @@ var app = angular
     'ngIdle',    
     'multi-select',
     'angular.filter',
-    'notifications'
+    'notifications',
+    'com.2fdevs.videogular',
+    'com.2fdevs.videogular.plugins.controls',
+    'com.2fdevs.videogular.plugins.overlayplay',
+    'com.2fdevs.videogular.plugins.poster',
+    'pasvaz.bindonce',
+    'infinite-scroll'
   // end of dependency injections
   ]
 // end of the module creation
@@ -57,7 +63,7 @@ var app = angular
   };
 })
 // Here we configure the route provider
-.config(['$routeProvider', 'tagsInputConfigProvider', 'LightboxProvider', '$keepaliveProvider', '$idleProvider', '$httpProvider', function ($routeProvider, tagsInputConfigProvider, LightboxProvider, $keepaliveProvider, $idleProvider, $httpProvider) {
+.config(['$routeProvider', 'tagsInputConfigProvider', 'LightboxProvider', '$keepaliveProvider', '$idleProvider', '$httpProvider', '$locationProvider', function ($routeProvider, tagsInputConfigProvider, LightboxProvider, $keepaliveProvider, $idleProvider, $httpProvider, $locationProvider) {
   $routeProvider
   .when('/', {
     templateUrl: 'views/main.html',
@@ -92,9 +98,33 @@ var app = angular
     templateUrl: 'views/print.html',
     controller: 'PrintCtrl'
   })
+  .when('/help', {
+    templateUrl: 'views/helpSingle.html',
+    controller: 'helpSingleCtrl',
+    resolve: {
+      printView: function() {
+        return {};
+      }
+    }
+  })
+  .when('/helpprint', {
+    templateUrl: 'views/helpPrint.html',
+    controller: 'helpSingleCtrl',
+    resolve: {
+      printView: function() {
+        return {
+          print: true
+        };
+      }
+    }
+  })  
   .otherwise({
     redirectTo: '/'
   });
+  
+  $locationProvider
+  .html5Mode(true);
+  
 
   //disable IE ajax request caching
   //initialize get if not there
@@ -244,7 +274,6 @@ var app = angular
         $rootScope.$broadcast(newEvent, infoArray);
       });
 
-
       //////////////////////////////////////////////////////////////////////////////
       // Event Handlers
       //////////////////////////////////////////////////////////////////////////////
@@ -290,8 +319,8 @@ var app = angular
           && $location.path() !== '/admin' 
           && $location.path() !== '/print')) {
           $location.search({});
-        }
-      });
+      }
+    });
 
       /***************************************************************
       * This function is what is called when the view has finally been loaded
@@ -356,8 +385,8 @@ var app = angular
         $analytics.eventTrack(name,{'category': category, 'label': label});
       };
 
-      $rootScope.openAdminMessage = function(type, contacts, subject, message) {
-        $rootScope.$broadcast('$OPENADMINMESSAGE', type, contacts, subject, message);
+      $rootScope.openAdminMessage = function(type, contacts, subject, message, modal) {
+        $rootScope.$broadcast('$OPENADMINMESSAGE', type, contacts, subject, message, modal);
       }
 
 
@@ -567,6 +596,13 @@ var app = angular
         $rootScope.logout();
       });
 
+      // $rootScope.$on('$APPEND', function(event, args, elem) {
+      //   console.log('args', args);
+      //   console.log('elem', elem);
+      //   console.log('event', event);
+
+      // });
+
       // $rootScope.start = function() {
       //   closeModals();
       //   $idle.watch();
@@ -580,7 +616,35 @@ var app = angular
       // };
       
       $idle.watch();
+      function manipulationTarget( elem, content ) {
+        return jQuery.nodeName( elem, "table" ) &&
+        jQuery.nodeName( content.nodeType !== 11 ? content : content.firstChild, "tr" ) ?
 
+        elem.getElementsByTagName("tbody")[0] ||
+        elem.appendChild( elem.ownerDocument.createElement("tbody") ) :
+        elem;
+      }
+      function isBody(el) {
+        return document.body === el;
+      }
+
+
+      // extending append so that we can catch it for our 'alwas-on-top' stuff
+      jQuery.fn.extend({
+        append: function() {
+          return this.domManip( arguments, function( elem ) {
+
+            if ( this.nodeType === 1 || this.nodeType === 11 || this.nodeType === 9 ) {
+              var target = manipulationTarget( this, elem );
+              if (isBody(target)){
+                $rootScope.$broadcast('$APPEND', arguments, elem)
+              } 
+              
+              target.appendChild( elem );
+            }
+          });
+        },
+      })
 
     } // end of run function
   ] // end of injected dependencies for .run

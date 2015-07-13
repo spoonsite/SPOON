@@ -26,7 +26,9 @@ import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
 import edu.usu.sdl.openstorefront.service.manager.resource.AsyncTaskCallback;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
+import edu.usu.sdl.openstorefront.service.transfermodel.AttributeAll;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeArchComparator;
+import edu.usu.sdl.openstorefront.sort.AttributeCodeArchViewComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.sort.AttributeTypeViewComparator;
@@ -69,6 +71,7 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -142,7 +145,7 @@ public class AttributeResource
 		attributeTypeViews.sort(new AttributeTypeViewComparator<>());
 		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
 			if (attributeTypeView.getArchitectureFlg()) {
-				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
+				attributeTypeView.getCodes().sort(new AttributeCodeArchViewComparator<>());
 			} else {
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
 			}
@@ -151,84 +154,84 @@ public class AttributeResource
 		return attributeTypeViews;
 	}
 
-	@GET
-	@APIDescription("Exports attributes in csv formt. POST to Upload.action?UploadAttributes and then the file to import attributes (Requires Admin)")
+	@POST
+	@APIDescription("Exports attributes in json formt. POST to Upload.action?UploadAttributes and then the file to import attributes (Requires Admin)")
 	@RequireAdmin
-	@Produces("text/csv")
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("export")
-	public Response exportAttributes()
+	public Response exportAttributes(
+			@FormParam("type")
+			@RequiredParam List<String> types)
 	{
-		List<AttributeTypeView> attributeTypeViews = new ArrayList<>();
+		List<AttributeAll> attributes = new ArrayList<>();
 
 		AttributeType attributeTypeExample = new AttributeType();
 		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 
+		boolean restrictTypes = false;
+		Set<String> typeSet = new HashSet<>();
+		if (types != null) {
+			restrictTypes = true;
+			typeSet.addAll(types);
+		}
+
 		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(AttributeType.class, new QueryByExample(attributeTypeExample));
 		for (AttributeType attributeType : attributeTypes) {
-			AttributeTypeView attributeTypeView = AttributeTypeView.toView(attributeType);
-			List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
-			attributeCodes.stream().forEach(code -> {
-				attributeTypeView.getCodes().add(AttributeCodeView.toView(code));
-			});
-			attributeTypeViews.add(attributeTypeView);
-		}
-		attributeTypeViews.sort(new AttributeTypeViewComparator<>());
-		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
-			if (attributeTypeView.getArchitectureFlg()) {
-				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
-			} else {
-				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
+			if (restrictTypes && typeSet.contains(attributeType.getAttributeType())) {
+				AttributeAll attributeAll = new AttributeAll();
+				attributeAll.setAttributeType(attributeType);
+
+				List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
+				attributeCodes.stream().forEach(code -> {
+					attributeAll.getAttributeCodes().add(code);
+				});
+				if (attributeType.getArchitectureFlg()) {
+					attributeAll.getAttributeCodes().sort(new AttributeCodeArchComparator<>());
+				} else {
+					attributeAll.getAttributeCodes().sort(new AttributeCodeComparator<>());
+				}
+				attributes.add(attributeAll);
 			}
 		}
-		StringBuilder data = new StringBuilder();
-		data.append("Attribute Type").append(",");
-		data.append("Description").append(",");
-		data.append("Architecture Flag").append(",");
-		data.append("Visible Flag").append(",");
-		data.append("Important Flag").append(",");
-		data.append("Required Flag").append(",");
-		data.append("Code").append(",");
-		data.append("Code Label").append(",");
-		data.append("Code Description").append(",");
-		data.append("External Link").append(",");
-		data.append("Group").append(",");
-		data.append("Sort Order").append(",");
-		data.append("Architecture Code").append(",");
-		data.append("Badge Url").append(",");
-		data.append("Highlight Style").append(",");
-		data.append("Allow Multiple Codes").append("\n");
 
-		for (AttributeTypeView attributeTypeView : attributeTypeViews) {
-			data.append(attributeTypeView.export());
+		String data;
+		try {
+			data = StringProcessor.defaultObjectMapper().writeValueAsString(attributes);
+		} catch (JsonProcessingException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to export attributes.  Unable able to generate JSON.", ex);
 		}
 
-		Response.ResponseBuilder response = Response.ok(data.toString());
-		response.header("Content-Disposition", "attachment; filename=\"allattributes.csv\"");
+		Response.ResponseBuilder response = Response.ok(data);
+		response.header("Content-Disposition", "attachment; filename=\"allattributes.json\"");
 		return response.build();
 	}
 
-	@GET
+	@POST
 	@APIDescription("Gets all articles")
 	@RequireAdmin
 	@Produces({MediaType.WILDCARD})
 	@DataType(ArticleView.class)
 	@Path("/articles/export")
-	public Response getComponentExport()
+	public Response getComponentExport(
+			@FormParam("typeCode")
+			@RequiredParam List<String> typeCodes)
 	{
-		List<ArticleView> articles = service.getAttributeService().getArticles();
-		if (articles != null) {
-			String componentJson;
-			try {
-				componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(articles);
-			} catch (JsonProcessingException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to export articles.", ex);
-			}
-			Response.ResponseBuilder response = Response.ok(componentJson);
-			response.header("Content-Disposition", "attachment; filename=\"allArticlesExport.json\"");
-			return response.build();
-		} else {
-			return Response.status(Response.Status.NOT_FOUND).build();
+		List<ArticleView> articles = new ArrayList<>();
+		for (String typeCode : typeCodes) {
+			AttributeCodePk attributeCodePk = AttributeCodePk.fromKey(typeCode);
+			ArticleView articleView = service.getAttributeService().getArticle(attributeCodePk);
+			articles.add(articleView);
 		}
+
+		String articleJson;
+		try {
+			articleJson = StringProcessor.defaultObjectMapper().writeValueAsString(articles);
+		} catch (JsonProcessingException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to export articles.", ex);
+		}
+		Response.ResponseBuilder response = Response.ok(articleJson);
+		response.header("Content-Disposition", "attachment; filename=\"articlesExport.json\"");
+		return response.build();
 	}
 
 	@GET
@@ -304,7 +307,7 @@ public class AttributeResource
 				attributeTypeView.getCodes().add(AttributeCodeView.toView(code));
 			}
 			if (attributeTypeView.getArchitectureFlg()) {
-				attributeTypeView.getCodes().sort(new AttributeCodeArchComparator<>());
+				attributeTypeView.getCodes().sort(new AttributeCodeArchViewComparator<>());
 			} else {
 				attributeTypeView.getCodes().sort(new AttributeCodeViewComparator<>());
 			}
@@ -335,7 +338,7 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets attribute code base on filter. Always sort by sort Order or label")
+	@APIDescription("Gets attribute code base on filter. Always sorted by sort Order or label")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeCode.class)
 	@Path("/attributetypes/{type}/attributecodes")
@@ -349,7 +352,7 @@ public class AttributeResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		List<AttributeCode> attributeCodes = getAttributeCodesFunc(type, filterQueryParams);
+		List<AttributeCode> attributeCodes = getAttributeCodesForType(type, filterQueryParams);
 
 		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(attributeCodes)
 		{
@@ -358,9 +361,9 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets attribute code base on filter. Always sort by sort Order or label")
+	@APIDescription("Gets attribute code base on filter. Always sorted by sort Order or label")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(AttributeCode.class)
+	@DataType(AttributeCodeWrapper.class)
 	@Path("/attributetypes/{type}/attributecodeviews")
 	public Response getAttributeCodeViews(
 			@PathParam("type")
@@ -371,22 +374,11 @@ public class AttributeResource
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
-
 		AttributeCodeWrapper views = service.getAttributeService().getFilteredCodes(filterQueryParams, type);
-
-		GenericEntity<AttributeCodeWrapper> entity = new GenericEntity<AttributeCodeWrapper>(views)
-		{
-		};
-		return sendSingleEntityResponse(entity);
+		return sendSingleEntityResponse(views);
 	}
 
-	/**
-	 *
-	 * @param type
-	 * @param filterQueryParams
-	 * @return
-	 */
-	private List<AttributeCode> getAttributeCodesFunc(String type, FilterQueryParams filterQueryParams)
+	private List<AttributeCode> getAttributeCodesForType(String type, FilterQueryParams filterQueryParams)
 	{
 		AttributeCode attributeCodeExample = new AttributeCode();
 		attributeCodeExample.setActiveStatus(filterQueryParams.getStatus());
@@ -600,7 +592,7 @@ public class AttributeResource
 	@APIDescription("Adds a new attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes")
-	public Response postNewEntity(AttributeType attributeType)
+	public Response postAttributeType(AttributeType attributeType)
 	{
 		return handleAttributePostPutType(attributeType, true);
 	}
@@ -610,7 +602,7 @@ public class AttributeResource
 	@APIDescription("Updates a attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}")
-	public Response updateEntityValue(
+	public Response updateAttributeType(
 			@PathParam("type")
 			@RequiredParam String type,
 			AttributeType attributeType)
@@ -629,6 +621,7 @@ public class AttributeResource
 		ValidationModel validationModel = new ValidationModel(attributeType);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		validationResult.merge(attributeType.customValidation());
 		if (validationResult.valid()) {
 			attributeType.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 			attributeType.setCreateUser(SecurityUtil.getCurrentUserName());

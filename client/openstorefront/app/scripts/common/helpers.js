@@ -6,6 +6,202 @@
 
   // BEGIN API
 
+
+  utils.handleFileQueue = function(uploader, elem){
+    console.log('uploader', uploader);
+    console.log('elem', elem);
+    
+    if (uploader.queueLimit === 1){
+      if (uploader.queue.length >= 1) {
+        console.log('replacing the queue', elem.files);
+        uploader.clearQueue();
+        setTimeout(function(){
+          uploader.addToQueue(elem.files);
+        },0)
+      } else {
+        console.log('just adding it to the queue', elem.files);
+        
+        uploader.addToQueue(elem.files);
+      }
+    }
+  }
+
+  utils.getBasicFileType = function(file){
+    var type = file.mimeType || '';
+    if (type.match('video.*')) {
+      return 'video'
+    } else if (type.match('audio.*')){
+      return 'audio'
+    } else if (type.match('application.*')){
+      return 'application'
+    } else if (type.match('text.*')){
+      return 'text'
+    } else if (type.match('image.*')){
+      return 'image'
+    } else {
+      return 'other'
+    }
+  }
+
+
+  utils.getMimeTypeClass = function(type){
+    if (type) {
+      if (type.match('video.*')) {
+        return 'fa-file-video-o'
+      } else if (type.match('audio.*')){
+        return 'fa-file-audio-o'
+      } else if (type.match('application.*')){
+        return 'fa-file-code-o'
+      } else if (type.match('text.*')){
+        return 'fa-file-text-o'
+      } else if (type.match('image.*')){
+        return 'fa-file-image-o'
+      } else {
+        return 'fa-file-o'
+      }
+    } else {return ''};
+  }
+
+  utils.getMediaHTML = function(media, $sce, placement){
+    placement = placement || 'top';
+    var link = 'Media.action?LoadMedia&amp;mediaId=';
+    if (media.mediaLink) {
+      link = media.mediaLink;
+      media.componentMediaId = true;
+    } else if (media.componentMediaId) {
+      link = link + media.componentMediaId
+    }
+    if (media && media.mimeType){
+      var type = media.mimeType;
+      if (type.match('video.*')) {
+        if (media.componentMediaId){
+          var srcs = [];
+          var result = $('<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="File Preview" placement="'+placement+'" trigger="click"><i class="fa fa-lg fa-file-video-o"></i></button>');
+          srcs.push({src: $sce.trustAsResourceUrl(link).$$unwrapTrustedValue(), type: 'video/mp4'});             
+          srcs.push({src: $sce.trustAsResourceUrl(link).$$unwrapTrustedValue(), type: 'video/webm'});             
+          srcs.push({src: $sce.trustAsResourceUrl(link).$$unwrapTrustedValue(), type: 'video/ogg'}); 
+          var video = $('<videogular> <vg-media vg-src=\''+JSON.stringify(srcs)+'\' vg-preload="\'none\'" vg-native-controls=\'true\'></vg-media></videogular>');
+          result.attr('content-string', video.prop('outerHTML'));
+          
+          return result.prop('outerHTML');
+        }
+        return '<i class="fa fa-file-video-o"></i>'
+      } else if (type.match('audio.*')){
+        if (media.componentMediaId){
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="File Preview" content-string="',
+          '<audio controls><source src=\''+link+'\' type=\'audio/ogg\'><source src=\''+link+'\' type=\'audio/mpeg\'></audio>',
+          '" placement="'+placement+'" trigger="click"><i class="fa fa-lg fa-file-audio-o"></i></button>'
+          ].join('');
+          
+          return result;
+        }
+        return '<i class="fa fa-file-audio-o"></i>'
+      } else if (type.match('application.*')){
+        return '<i class="fa fa-file-code-o"></i>'
+      } else if (type.match('text.*')){
+        return '<i class="fa fa-file-text-o"></i>'
+      } else if (type.match('image.*')){
+        if (media.componentMediaId){
+          if (!media.originalName && media.orignalFileName){
+            media.originalName = media.orignalFileName;
+          } else if (!media.originalName) {
+            media.originalName = ' ';
+          }
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="File Preview" content-string="',
+          '<img class=\'thumb\' src=\''+link+'\' title=\'', escape(media.originalName), '\' width=\'368\'    height=\'auto\'/>',
+          '" placement="'+placement+'" trigger="click"><i class="fa fa-lg fa-file-image-o"></i></button>'
+          ].join('');
+          
+          return result;
+        }
+        return '<i class="fa fa-file-image-o"></i>'
+      } else {
+        return '<i class="fa fa-file-o"></i>'
+      }
+    } else {
+      return 'Missing Mime type, we cannot determine how to provide a preview.'
+    }
+  }
+
+  utils.getResourceHTML = function(resource, $sce){
+    if (resource && resource.mimeType){
+      var type = resource.mimeType;
+      if (type.match('video.*')) {
+        if (resource.resourceId){
+          var srcs = [];
+          var result = $('<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="File Preview" placement="top" trigger="click"><i class="fa fa-lg fa-file-video-o"></i></button>');
+          srcs.push({src: $sce.trustAsResourceUrl('Resource.action?LoadResource&amp;resourceId='+resource.resourceId).$$unwrapTrustedValue(), type: 'video/mp4'});             
+          srcs.push({src: $sce.trustAsResourceUrl('Resource.action?LoadResource&amp;resourceId='+resource.resourceId).$$unwrapTrustedValue(), type: 'video/webm'});             
+          srcs.push({src: $sce.trustAsResourceUrl('Resource.action?LoadResource&amp;resourceId='+resource.resourceId).$$unwrapTrustedValue(), type: 'video/ogg'}); 
+          var video = $('<videogular> <vg-media vg-src=\''+JSON.stringify(srcs)+'\' vg-preload="\'none\'" vg-native-controls=\'true\'></vg-media></videogular>');
+          result.attr('content-string', video.prop('outerHTML'));
+          
+          return result.prop('outerHTML');
+        }
+        return '<i class="fa fa-file-video-o"></i>'
+      } else if (type.match('audio.*')){
+        if (resource.resourceId){
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="File Preview" content-string="',
+          '<audio controls><source src=\'Resource.action?LoadResource&amp;resourceId=',resource.resourceId,'\' type=\'audio/ogg\'><source src=\'Resource.action?LoadResource&amp;resourceId=',resource.resourceId,'\' type=\'audio/mpeg\'></audio>',
+          '" placement="top" trigger="click"><i class="fa fa-lg fa-file-audio-o"></i></button>'
+          ].join('');
+          
+          return result;
+        }
+        return '<i class="fa fa-file-audio-o"></i>'
+      } else if (type.match('application.*')){
+        return '<i class="fa fa-file-code-o"></i>'
+      } else if (type.match('text.*')){
+        return '<i class="fa fa-file-text-o"></i>'
+      } else if (type.match('image.*')){
+        if (resource.resourceId){
+          if (!resource.originalName){
+            resource.originalName = ' ';
+          }
+          var result = ['<button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="File Preview" content-string="',
+          '<img class=\'thumb\' src=\'Resource.action?LoadResource&amp;resourceId=',resource.resourceId,'\' title=\'', escape(resource.originalName), '\' width=\'368\'    height=\'auto\'/>',
+          '" placement="top" trigger="click"><i class="fa fa-lg fa-file-image-o"></i></button>'
+          ].join('');
+          
+          return result;
+        }
+        return '<i class="fa fa-file-image-o"></i>'
+      } else {
+        return '<i class="fa fa-file-o"></i>'
+      }
+    } else {
+      return 'Missing Mime type, we cannot determine how to provide a preview.'
+    }
+  }
+
+  _.mixin({
+    shallowDiff: function(a,b) {
+      return _.omit(a, function(v,k) { return b[k] === v; })
+    },
+    diff: function(a,b) {
+      // console.log('a', a);
+      // console.log('b', b);
+      
+      var r = {};
+      _.each(a, function(v,k) {
+        if (k !== 'createDts' && k !== 'updateDts') {
+          if(b && b[k] === v) return;
+          var temp = _.isObject(v)
+          ? b? _.diff(v, b[k]) : _.diff(v, '')
+          : v
+          ;
+          if (!angular.equals({}, temp) && temp) {
+            r[k] = temp
+          }
+        }
+      });
+      if (!angular.equals({}, r)){
+        return r;
+      }
+      return false;
+    }
+  });
+
   // function to convert letters for the job status into human readable form
   // (might think about moving this to the server so it doesn't require a code change)
   utils.calcStatus = function(val) {
@@ -205,7 +401,7 @@
     sortField: null,
     sortOrder: null,
     offset: null,
-    all: false,
+    all: false,    
     toQuery: function () {
       return utils.toParamString(this);
     }

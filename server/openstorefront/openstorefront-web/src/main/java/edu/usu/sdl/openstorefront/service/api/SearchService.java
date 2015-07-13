@@ -60,16 +60,16 @@ public interface SearchService
 	/**
 	 * Indexes a component
 	 *
-	 * @param component
+	 * @param components
 	 */
-	public void addIndex(Component component);
+	public void indexComponents(List<Component> components);
 
 	/**
 	 * Indexes an article
 	 *
-	 * @param article
+	 * @param articles
 	 */
-	public void addIndex(ArticleView article);
+	public void indexArticles(List<ArticleView> articles);
 
 	/**
 	 * Indexes articles and Components

@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
@@ -149,7 +150,7 @@ public class PersistenceService
 		return attached;
 	}
 
-	public <T extends BaseEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus)
+	public <T extends StandardEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus)
 	{
 		T found = findById(entity, id);
 		if (found != null) {
@@ -788,6 +789,8 @@ public class PersistenceService
 
 	public <T extends BaseEntity> T persist(T entity)
 	{
+		Objects.requireNonNull(entity, "Unable to persist a NULL entity.");
+
 		OObjectDatabaseTx db = getConnection();
 		T t = null;
 		try {
@@ -797,6 +800,7 @@ public class PersistenceService
 					ReflectionUtil.updatePKFieldValue(entity, generateId());
 				}
 			}
+
 			ValidationModel validationModel = new ValidationModel(entity);
 			validationModel.setSantize(false);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
@@ -806,7 +810,7 @@ public class PersistenceService
 				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
 			}
 		} catch (Exception e) {
-			throw new OpenStorefrontRuntimeException("Unable to save record: " + StringProcessor.printObject(entity), e);
+			throw new OpenStorefrontRuntimeException("Unable to save record. (See stacktrace cause) \n Field Values: \n" + StringProcessor.printObject(entity), e);
 		} finally {
 			closeConnection(db);
 		}
@@ -816,6 +820,21 @@ public class PersistenceService
 
 	public <T extends BaseEntity> T saveNonPkEntity(T entity)
 	{
+		return saveNonBaseEntity(entity);
+	}
+
+	/**
+	 * This is used for non-base entity object. Keep in mind they still need to
+	 * be registered with the DB.
+	 *
+	 * @param <T>
+	 * @param entity
+	 * @return
+	 */
+	public <T> T saveNonBaseEntity(T entity)
+	{
+		Objects.requireNonNull(entity, "Unable to persist a NULL entity.");
+
 		OObjectDatabaseTx db = getConnection();
 		T t = null;
 		try {

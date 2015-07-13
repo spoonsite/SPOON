@@ -23,7 +23,6 @@ import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.PersistenceService;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
@@ -268,11 +267,11 @@ public class LookupTypeResource
 	}
 
 	@GET
-	@APIDescription("Get a entity type detail for the given id")
+	@APIDescription("Get an entity type for the given id")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(value = UserTypeCode.class, actualClassName = "LookupEntity")
+	@DataType(value = GenericLookupEntity.class, actualClassName = "LookupEntity")
 	@Path("/{entity}/{code}")
-	public Response getEntityValues(
+	public Response getEntityValue(
 			@PathParam("entity")
 			@RequiredParam String entityName,
 			@PathParam("code")

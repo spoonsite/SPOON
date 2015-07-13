@@ -17,7 +17,7 @@
 
 /*global setUpDropdown*/
 
-app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'business', '$route', '$timeout', 'auth', function ($scope, $location, localCache, $rootScope, Business, $route, $timeout, Auth) { /*jshint unused: false*/
+app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'business', '$route', '$timeout', 'auth', '$draggable', function ($scope, $location, localCache, $rootScope, Business, $route, $timeout, Auth, $draggable) { /*jshint unused: false*/
 
   /*******************************************************************************
   * This Controller gives us a place to add functionality to the navbar
@@ -108,7 +108,12 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
 
   $scope.getTypeahead = function(){
     Business.typeahead($scope.searchKey).then(function(result){
-      $scope.typeahead = result || [];
+      result = result || [];
+      _.forEach(result, function(item){
+        item.description = '"' + item.description + '"';
+      });
+
+      $scope.typeahead = result;
     }, function(){
       $scope.typeahead = [];
     })
@@ -206,6 +211,23 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
       setUpDropdown('dropTheMenu');
     }, 500);
   });
+
+
+  $scope.openHelp = function() {
+    var draggableInstance = $draggable.open({
+      alwaysontop: true,
+      templateUrl: 'views/help.html',
+      controller: 'helpCtrl',
+      size: 600,
+      top: 100,
+      left: 50,
+      closeTarget: 'closeTarget',
+      moveTarget: 'dragTarget',
+      id: 'helpWindow',
+      resolve: {        
+      }
+    });  
+  };
 
 
   /***************************************************************

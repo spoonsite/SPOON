@@ -76,7 +76,7 @@ app.controller('AdminConfigurationCtrl',['$scope','business', '$q', '$timeout', 
     Business.configurationservice.getGlobalConfig().then(function(result) {
       // console.log('refreshRate', result);
       $scope.cron.global_cron = result? result.jiraRefreshRate? result.jiraRefreshRate: null: null;
-      $scope.cron.global_cron_display = result? result.cronExpressionDescription? result.cronExpressionDescription + ' (' + result.jiraRefreshRate + ')': null: null;
+      $scope.cron.global_cron_display = result ? result.cronExpressionDescription + ' (' + result.jiraRefreshRate + ')': null;
     }, function() {
       $scope.cron.global_cron = null;
     });
@@ -277,8 +277,8 @@ $scope.getConfigId = function(mapping) {
       deferred.reject(false);
     });
   }
-  return deferred.promise
-}
+  return deferred.promise;
+};
 
 
 $scope.setupModal = function(componentId, enabled) {
@@ -294,7 +294,7 @@ $scope.setupModal = function(componentId, enabled) {
       },
       enabled: function() {
         return enabled;
-      },
+      },   
       size: function() {
         return 'lg';
       }
@@ -365,19 +365,6 @@ $scope.saveGlobalConf = function(){
       // console.log('saved global config', result);
       $scope.getGlobalConfig();
       // do something if you want to after you save the global conf
-    });
-    return false;
-  }
-
-  $scope.saveCompRefresh = function(){
-    Business.configurationservice.saveCompRefresh($scope.component.compId, $scope.cron.componentCron).then(function(result){
-      // do something if you want to after you save the component's cron
-    });
-    return false;
-  }
-  $scope.removeCompRefresh = function(){
-    Business.configurationservice.removeCompRefresh($scope.component.compId).then(function(result){
-      $scope.getAllJobs();
     });
     return false;
   }

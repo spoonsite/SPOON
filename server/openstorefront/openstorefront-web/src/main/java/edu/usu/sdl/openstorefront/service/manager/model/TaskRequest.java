@@ -28,6 +28,10 @@ import java.util.concurrent.Callable;
 public class TaskRequest
 {
 
+	public static final String TASKNAME_REPORT = "Generating Report";
+
+	public static final String DATAKEY_REPORT_ID = "REPORTID";
+
 	private String name;
 	private String details;
 	private boolean allowMultiple;

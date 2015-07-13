@@ -91,6 +91,10 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
       scope.sendRequest = function(){
         var deferred = $q.defer();
         var query = angular.copy(scope.query);
+        query.filterObj.approvalState = scope.internalControl.approvalState;
+        if (query.filterObj.approvalState === 'ALL') {
+          query.filterObj.approvalState = null;
+        }
         if (query.filterObj.end) {
           var d = new Date(query.filterObj.end);
           d.setHours(d.getHours()+24);
@@ -122,6 +126,11 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
             deferred.resolve();
           });
         }
+
+        if (scope.internalControl && scope.internalControl.onRefresh){
+          scope.internalControl.onRefresh();
+        }
+
         return deferred.promise;
       }
 

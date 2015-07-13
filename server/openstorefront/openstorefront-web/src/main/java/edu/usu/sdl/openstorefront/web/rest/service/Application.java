@@ -20,8 +20,17 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.service.query.QueryByExample;
+import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.storage.model.DBLogRecord;
+import edu.usu.sdl.openstorefront.util.Convert;
+import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ApplicationStatus;
+import edu.usu.sdl.openstorefront.web.rest.model.DBLogRecordWrapper;
+import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.LoggerView;
 import edu.usu.sdl.openstorefront.web.rest.model.MemoryPoolStatus;
 import edu.usu.sdl.openstorefront.web.rest.model.ThreadStatus;
@@ -36,6 +45,7 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,7 +56,9 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -54,6 +66,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -285,6 +298,86 @@ public class Application
 				Level.FINEST.getName(),
 				Level.ALL.getName());
 		return logLevels;
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets log records")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(DBLogRecord.class)
+	@Path("/logrecords")
+	public Response getLogFile(@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		DBLogRecord logRecordExample = new DBLogRecord();
+
+		DBLogRecord logStartExample = new DBLogRecord();
+		logStartExample.setEventDts(TimeUtil.beginningOfDay(filterQueryParams.getStart()));
+
+		DBLogRecord logEndExample = new DBLogRecord();
+		logEndExample.setEventDts(TimeUtil.endOfDay(filterQueryParams.getEnd()));
+
+		QueryByExample queryByExample = new QueryByExample(logRecordExample);
+
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(logStartExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(logEndExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+		queryByExample.setMaxResults(filterQueryParams.getMax());
+		queryByExample.setFirstResult(filterQueryParams.getOffset());
+		queryByExample.setSortDirection(filterQueryParams.getSortOrder());
+
+		DBLogRecord logRecordSortExample = new DBLogRecord();
+		Field sortField = ReflectionUtil.getField(logRecordSortExample, filterQueryParams.getSortField());
+		if (sortField != null) {
+			BeanUtil.setPropertyValue(sortField.getName(), logRecordSortExample, QueryByExample.getFlagForType(sortField.getType()));
+			queryByExample.setOrderBy(logRecordSortExample);
+		}
+
+		List<DBLogRecord> logRecords = service.getPersistenceService().queryByExample(DBLogRecord.class, queryByExample);
+
+		DBLogRecordWrapper logRecordWrapper = new DBLogRecordWrapper();
+		logRecordWrapper.getLogRecords().addAll(logRecords);
+		logRecordWrapper.setResults(logRecords.size());
+		logRecordWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
+
+		return sendSingleEntityResponse(logRecordWrapper);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Clears all DB log records. Doesn't affect server logs. Note: application will automatically clear old records exceeding max allowed.")
+	@Path("/logrecords")
+	public void clearAllDBLogs()
+	{
+		service.getSystemService().clearAllLogRecord();
+	}
+
+	@GET
+	@APIDescription("Gets information about whether the Jira User Feedback is available or not.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/showfeedback")
+	public LookupModel getShowFeedBack()
+	{
+		LookupModel lookupModel = new LookupModel();
+		lookupModel.setCode(PropertiesManager.getValue(PropertiesManager.KEY_ALLOW_JIRA_FEEDBACK, "True").toUpperCase());
+		if (Convert.toBoolean(lookupModel.getCode())) {
+			lookupModel.setDescription("Allow jira feedback");
+		} else {
+			lookupModel.setDescription("Do not allow jira feedback");
+		}
+		return lookupModel;
 	}
 
 }

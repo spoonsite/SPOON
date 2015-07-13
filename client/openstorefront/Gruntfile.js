@@ -239,7 +239,8 @@ module.exports = function (grunt) {
     // Automatically inject Bower components into the app
     bowerInstall: {
       app: {
-        src: ['<%= yeoman.app %>/index.html'],
+        // src: ['<%= yeoman.app %>/index.html'],
+        src: ['<%= yeoman.app %>/index.html','<%= yeoman.app %>/submission.html'],
         ignorePath: '<%= yeoman.app %>/'
       },
       sass: {
@@ -267,7 +268,8 @@ module.exports = function (grunt) {
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
     useminPrepare: {
-      html: ['<%= yeoman.app %>/index.html','<%= yeoman.app %>/views/results.html', '<%= yeoman.app %>/views/single.html', '<%= yeoman.app %>/views/main.html', '<%= yeoman.app %>/views/admin.html'],
+      // html: ['<%= yeoman.app %>/index.html', '<%= yeoman.app %>/views/results.html', '<%= yeoman.app %>/views/single.html', '<%= yeoman.app %>/views/main.html', '<%= yeoman.app %>/views/admin.html'],
+      html: ['<%= yeoman.app %>/index.html','<%= yeoman.app %>/submission.html','<%= yeoman.app %>/views/results.html', '<%= yeoman.app %>/views/single.html', '<%= yeoman.app %>/views/main.html', '<%= yeoman.app %>/views/admin.html'],
       options: {
         dest: '<%= yeoman.dist %>',
         flow: {
@@ -337,10 +339,10 @@ module.exports = function (grunt) {
       }
     },
 
-    // ngmin tries to make the code safe for minification automatically by
+    // ngAnnotate tries to make the code safe for minification automatically by
     // using the Angular long form for dependency injection. It doesn't work on
     // things like resolve or inject so those have to be done manually.
-    ngmin: {
+    ngAnnotate: {
       dist: {
         files: [{
           expand: true,
@@ -377,6 +379,7 @@ module.exports = function (grunt) {
           'bower_components/bootstrap/dist/fonts/*',
           'bower_components/bootstrap/dist/css/bootstrap.css',
           'bower_components/angular-mocks/angular-mocks.js',
+          'bower_components/videogular-themes-default/videogular.css',
           'scripts/common/angular-lightbox.js',
           'scripts/common/ng-ckeditor.js',
           'styles/*.css',
@@ -444,6 +447,7 @@ module.exports = function (grunt) {
             '404.html',
             'favicon.ico',
             'index.html',
+            'submission.html',
             'robots.txt'
           ]
       }
@@ -560,7 +564,7 @@ grunt.registerTask('build', function (target) {
     'concurrent:dist',
         // 'autoprefixer',
         'concat',
-        'ngmin',
+        'ngAnnotate',
         'copy:dist',
         'copy:fonts',
         'cdnify',

@@ -22,7 +22,7 @@
 /***************************************************************
 * TODO:: Make this directive work in the modal on the results page.
 ***************************************************************/
-app.directive('componentList', ['localCache', 'business', '$timeout', '$location', function (localCache, Business, $timeout, $location) {/*jshint unused:false*/
+app.directive('componentList', ['localCache', 'business', '$timeout', '$location', '$q', function (localCache, Business, $timeout, $location, $q) {/*jshint unused:false*/
   var uniqueId = 1;
   var getTemplateUrl = function(element, attrs) {
     var mode = attrs.mode || null;
@@ -41,16 +41,60 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       filters: '=',
       clickCallback: '=',
       blankTarget: '=',
+      showResultCount: '=',
       hideMore: '@',
+      handler: '='
       // list: '=',
       // search: '&',
       // setFilters: '=',
     },
     link: function postLink(scope, element, attrs) {
       if (scope.data) {
-        
       }
+
+      scope.finished = 0;
       
+      scope.limit = 10;
+      scope.paused = false;
+
+      scope.loadMore = function() {
+        if (scope.data && scope.data.length && !scope.paused) {
+          if (scope.limit + 6 <= scope.data.length) {
+            scope.limit += 6;
+            $timeout(scope.shortenDescription, 0);
+          } else if (scope.limit !== scope.data.length) {
+            scope.limit = scope.data.length
+            $timeout(scope.shortenDescription, 0);
+          }
+        }
+      };
+
+      scope.internalHandler = scope.handler || {};
+      scope.internalHandler.resetLimit = function(thing){
+        // console.log('thing', $(thing));
+        
+        $(thing).scrollTop(0);
+        scope.limit = 10;
+      }
+      scope.internalHandler.pauseLimit = function(thing){
+        scope.paused = true;
+      }
+      scope.internalHandler.resumeLimit = function(thing){
+        scope.paused = false;
+      }
+      scope.internalHandler.dotdotdotFinished = function(){
+        var timeout;
+        var deferred = $q.defer();
+        scope.$watch('finished', function(){
+          clearTimeout(timeout);
+          timeout = setTimeout(function(){
+            deferred.resolve();
+            scope.finished = 0;
+          }, 300);
+        })
+        return deferred.promise;
+      }
+
       scope.getShortDescription = getShortDescription;
 
       if (scope.search && (!scope.search.type || !scope.search.code)) {
@@ -146,6 +190,10 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
         }
       }
 
+      scope.$watch('data', function() {
+        $timeout(scope.shortenDescription, 100);
+      });
+
       // scope.$watch('data', function() {
       //
       if (scope.data && scope.data.length) {
@@ -205,9 +253,8 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       ***************************************************************/
       scope.setupData = function() {
         if (timer) {
-          clearTimeout(timer);
         } else { 
-          setTimeout(function() {
+          timer = setTimeout(function() {
             if (attrs.type !== null && attrs.type !== undefined && attrs.type !== '') {
               var code = (attrs.code !== null && attrs.code !== undefined && attrs.code !== '')? attrs.code: null;
               scope.search = {'type': 'attribute', code:{'type': attrs.type, 'key': code}};
@@ -218,11 +265,14 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
               if (filter){
                 architecture = filter.architectureFlg;
               }
+              scope.$emit('$TRIGGERLOAD', 'resultsLoader');
               Business.componentservice.doSearch(scope.search.type, scope.search.code, architecture).then(function(result){
+                scope.$emit('$TRIGGERUNLOAD', 'resultsLoader');
                 if (result)
                 {
-                  if (result.data && result.data.length > 0) { 
-                    scope.data = angular.copy(result.data);
+                  if (result.data && result.data.length > 0) {                                         
+                    scope.data = result.data;
+                    $timeout(scope.shortenDescription, 200);
                   } else {
                     scope.data = [];
                   }
@@ -230,22 +280,29 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
                   scope.data = [];
                 }
                 $timeout(function(){
+                  clearTimeout(timer);
+                  timer = false;
                   scope.init();
                   $timeout(function(){
                     scope.$apply();
                   })
                 })
               }, function(){
+                scope.$emit('$TRIGGERUNLOAD', 'resultsLoader');
                 scope.data = [];
                 $timeout(function(){
+                  clearTimeout(timer);
+                  timer = false;
                   scope.init();
                   $timeout(function(){
                     scope.$apply();
                   })
                 })
               });
-            } else {
+            } else {//
               $timeout(function(){
+                clearTimeout(timer);
+                timer = false;
                 scope.init();
                 $timeout(function(){
                   scope.$apply();
@@ -320,8 +377,40 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       scope.init = function() {
         $('[data-toggle=\'tooltip\']').tooltip();
       };
-      
 
+      scope.shortenDescription = function() {
+        element.find('.shortDescription').dotdotdot({
+          /*  The text to add as ellipsis. */
+          ellipsis: '... ',
+          /*  How to cut off the text/html: 'word'/'letter'/'children' */
+          wrap: 'word',
+          /*  Wrap-option fallback to 'letter' for long words */
+          fallbackToLetter: true,
+          /*  jQuery-selector for the element to keep and put after the ellipsis. */
+          after: null,
+          /*  Whether to update the ellipsis: true/'window' */
+          watch: true,
+          /*  Optionally set a max-height, if null, the height will be measured. */
+          height: 150,
+          /*  Deviation for the height-option. */
+          tolerance: 0,
+          /*  Callback function that is fired after the ellipsis is added,
+          receives two parameters: isTruncated(boolean), orgContent(string). */
+          callback: function (isTruncated, orgContent) {
+            scope.finished++;
+          },
+          lastCharacter: {
+            /*  Remove these characters from the end of the truncated text. */
+            remove: [' ', ',', ';', '.', '!', '?'],
+            /*  Don't add an ellipsis if this array contains 
+            the last character of the truncated text. */
+            noEllipsis: []
+          }
+        }).removeClass('shortDescription');
+      };//
+      $timeout(scope.shortenDescription, 100);
     }
   };
 }]);
+
+

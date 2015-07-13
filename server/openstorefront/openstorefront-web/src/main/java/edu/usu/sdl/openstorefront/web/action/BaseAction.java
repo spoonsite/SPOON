@@ -21,16 +21,19 @@ import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.viewmodel.JsonFormLoad;
 import edu.usu.sdl.openstorefront.web.viewmodel.JsonResponse;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.ActionBeanContext;
+import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.validation.ValidationError;
@@ -47,6 +50,8 @@ public abstract class BaseAction
 		implements ActionBean, ValidationErrorHandler
 {
 
+	private static final long MAX_UPLOAD_SIZE = 104857600L;
+
 	private static final Logger log = Logger.getLogger(BaseAction.class.getName());
 
 	protected ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
@@ -59,6 +64,48 @@ public abstract class BaseAction
 	public String getApplicationVersion()
 	{
 		return PropertiesManager.getApplicationVersion();
+	}
+
+	protected String getCookieValue(String key)
+	{
+		String value = null;
+
+		Cookie cookies[] = getContext().getRequest().getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals(key)) {
+					value = cookie.getValue();
+				}
+			}
+		}
+
+		return value;
+	}
+
+	protected boolean doesFileExceedLimit(FileBean fileBean)
+	{
+		return doesFileExceedLimit(fileBean, MAX_UPLOAD_SIZE);
+	}
+
+	protected boolean doesFileExceedLimit(FileBean fileBean, long limit)
+	{
+		boolean exceeds = false;
+
+		if (fileBean != null) {
+			if (fileBean.getSize() > limit) {
+				exceeds = true;
+			}
+		}
+		return exceeds;
+	}
+
+	protected void deleteTempFile(FileBean fileBean)
+	{
+		try {
+			fileBean.delete();
+		} catch (IOException ex) {
+			log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+		}
 	}
 
 	protected void mapFields(Map<String, Object> fields, Object data, String propertyRoot)

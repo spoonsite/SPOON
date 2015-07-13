@@ -5,7 +5,9 @@
 <!--[if gt IE 8]><!--> <html xmlns:ng="http://angularjs.org" id="ng-app" class="no-js" > <!--<![endif]-->
 <head>
 
-  <meta http-equiv="X-UA-Compatible" content="IE-edge,chrome=1" />
+  <base href="/openstorefront/">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta charset="utf-8">
   <title>DI2E Clearinghouse</title>
   <meta name="description" content="">
@@ -20,6 +22,7 @@
   <link rel="stylesheet" href="bower_components/ng-grid/ng-grid.css" />
   <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.css" />
   <link rel="stylesheet" href="bower_components/angular-carousel/dist/angular-carousel.css" />
+  <link rel="stylesheet" href="bower_components/videogular-themes-default/videogular.css" />
   <!-- endbower -->
   <!-- endbuild -->
   <!-- <link rel="stylesheet" href="bower_components/sass-bootstrap/dist/css/bootstrap.css" /> -->
@@ -123,6 +126,14 @@ limitations under the License.
   <script src="bower_components/angulartics/src/angulartics-marketo.js"></script>
   <script src="bower_components/ng-idle/angular-idle.js"></script>
   <script src="bower_components/angular-filter/dist/angular-filter.js"></script>
+  <script src="bower_components/videogular/videogular.js"></script>
+  <script src="bower_components/videogular-controls/vg-controls.js"></script>
+  <script src="bower_components/videogular-buffering/vg-buffering.js"></script>
+  <script src="bower_components/videogular-poster/vg-poster.js"></script>
+  <script src="bower_components/videogular-overlay-play/vg-overlay-play.js"></script>
+  <script src="bower_components/jquery-cycle2/build/jquery.cycle2.js"></script>
+  <script src="bower_components/jQuery.dotdotdot/src/js/jquery.dotdotdot.js"></script>
+  <script src="bower_components/angular-bindonce/bindonce.js"></script>
   <!-- endbower -->
   <!-- endbuild -->
   <!-- <script src="bower_components/sass-bootstrap/dist/js/bootstrap.js"></script> -->
@@ -142,6 +153,7 @@ limitations under the License.
   <!-- build:js({.tmp,app}) scripts/scripts.js -->
   <!-- Grab our app -->
   <script type="text/javascript" src="scripts/modules/notifications.js"></script>
+  <script type="text/javascript" src="scripts/modules/infinitescroll.js"></script>
   <script type="text/javascript" src="scripts/app.js"></script>
 
   <!-- Grab our factories -->
@@ -161,6 +173,7 @@ limitations under the License.
   <script type="text/javascript" src="scripts/services/errorinterceptor.js"></script>
   <script type="text/javascript" src="scripts/services/reportservice.js"></script>
   <script type="text/javascript" src="scripts/services/alertservice.js"></script>  
+  <script type="text/javascript" src="scripts/services/submission.js"></script>  
 
   <!-- Grab our Directives -->
   <script type="text/javascript" src="scripts/directives/raty.js"></script>
@@ -173,6 +186,7 @@ limitations under the License.
   <script type="text/javascript" src="scripts/directives/popover_directive.js"></script>
   <script type="text/javascript" src="scripts/directives/loader.js"></script>
   <script type="text/javascript" src="scripts/directives/dynamichtml.js"></script>
+  <script type="text/javascript" src="scripts/directives/dynamicpopover.js"></script>
   <script type="text/javascript" src="scripts/directives/selectall.js"></script>
   <script type="text/javascript" src="scripts/directives/svcv4archdiagram.js"></script>
   <script type="text/javascript" src="scripts/directives/showerrors.js"></script>
@@ -188,6 +202,11 @@ limitations under the License.
   <script type="text/javascript" src="scripts/directives/services/filterquery.js"></script>
   <script type="text/javascript" src="scripts/directives/content/panel.js"></script>
   <script type="text/javascript" src="scripts/directives/content/stickydiv.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/photo.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/readmore.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/draggable.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/alwaysontop.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/collapse.js"></script>
 
   <!-- Grab our Controller -->
   <script type="text/javascript" src="scripts/controllers/main.js"></script>
@@ -223,6 +242,8 @@ limitations under the License.
   <script type="text/javascript" src="scripts/controllers/admin/media.js"></script>
   <script type="text/javascript" src="scripts/controllers/admin/alerts.js"></script>
   <script type="text/javascript" src="scripts/controllers/admin/reports.js"></script>  
+  <script type="text/javascript" src="scripts/controllers/submissions.js"></script>
+  <script type="text/javascript" src="scripts/controllers/help.js"></script>
 
   <!-- Grab our Filters -->
   <script type="text/javascript" src="scripts/filters/componentfilter.js"></script>
@@ -248,12 +269,16 @@ limitations under the License.
   <script type="text/javascript" src="scripts/common/ui-bootstrap-tpls.js"></script>
   <script type="text/javascript" src="scripts/common/search.js"></script>
   <script type="text/javascript" src="scripts/common/sticky-tables.js"></script>
+  <script type="text/javascript" src="scripts/common/jquery.cycle2.carousel.min.js"></script>
+  <script type="text/javascript" src="scripts/common/jquery.cycle2.center.min.js"></script>
   <!-- endbuild -->
 
   <!-- This is the profile modal -->
   <div modal controller-name="UserProfileCtrl" modalId='profileModal' modalclasses="fullWidthModal">
   </div>
-
+  
+  <!-- <div alwaysontop draggable style="min-width: 300px; min-height: 300px; top:0px; left:0px;"> -->
+  <!-- </div> -->
 
 </body>
 </html>

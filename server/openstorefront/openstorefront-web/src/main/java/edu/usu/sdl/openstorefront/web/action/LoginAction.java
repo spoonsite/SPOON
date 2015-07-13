@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.web.init.ShiroAdjustedFilter;
+import edu.usu.sdl.openstorefront.web.viewmodel.JsonResponse;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
+import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
@@ -73,13 +75,20 @@ public class LoginAction
 	@DefaultHandler
 	public Resolution loginHandler()
 	{
+		gotoPage = (String) getContext().getRequest().getSession().getAttribute(ShiroAdjustedFilter.REFERENCED_FILTER_URL_ATTRIBUTE);
 		Subject currentUser = SecurityUtils.getSubject();
 		if (currentUser.isAuthenticated()) {
+			if (StringUtils.isNotBlank(gotoPage)) {
+				if (gotoPage.toLowerCase().startsWith("http")) {
+					return new RedirectResolution(gotoPage, false);
+				} else {
+					return new RedirectResolution(gotoPage);
+				}
+			}
 			return new RedirectResolution("/");
 		}
 
 		org.apache.shiro.mgt.SecurityManager securityManager = SecurityUtils.getSecurityManager();
-		gotoPage = (String) getContext().getRequest().getSession().getAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE);
 		if (securityManager instanceof DefaultWebSecurityManager) {
 			DefaultWebSecurityManager webSecurityManager = (DefaultWebSecurityManager) securityManager;
 			Resolution resolution = null;
@@ -118,21 +127,38 @@ public class LoginAction
 				return resolution;
 			}
 		}
-		return new RedirectResolution("/login.jsp?gotoPage=" + gotoPage);
+		getContext().getRequest().getSession().setAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE, gotoPage);
+		return new ForwardResolution("/login.jsp").addParameter("gotoPage", gotoPage);
 	}
 
 	private Resolution handleLoginRedirect()
+	{
+		String startPage = startPage();
+		if (startPage.toLowerCase().startsWith("http")) {
+			return new RedirectResolution(startPage, false);
+		} else {
+			return new RedirectResolution(startPage);
+		}
+		//This for using shiro Direct redirect to be used with authc = org.apache.shiro.web.filter.authc.PassThruAuthenticationFilter
+//		return new OnwardResolution(LoginAction.class)
+//		{
+//
+//			@Override
+//			public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception
+//			{
+//				WebUtils.redirectToSavedRequest(request, response, startPage);
+//			}
+//		};
+	}
+
+	private String startPage()
 	{
 		String startPage = "/";
 		if (StringUtils.isNotBlank(gotoPage)) {
 			startPage = gotoPage;
 		}
 		startPage = startPage.replace("Login.action", "");
-		if (startPage.toLowerCase().startsWith("http")) {
-			return new RedirectResolution(startPage, false);
-		} else {
-			return new RedirectResolution(startPage);
-		}
+		return startPage;
 	}
 
 	@HandlesEvent("CheckHeaders")
@@ -178,11 +204,17 @@ public class LoginAction
 			UserProfile userProfile = new UserProfile();
 			userProfile.setUsername(username);
 			service.getUserService().handleLogin(userProfile, getContext().getRequest(), null);
-			return handleLoginRedirect();
+			String startPage = startPage();
+			if (startPage.toLowerCase().startsWith("http") == false) {
+				startPage = getContext().getServletContext().getContextPath() + startPage;
+			}
+			JsonResponse jsonResponse = new JsonResponse();
+			jsonResponse.setMessage(startPage);
+			return streamResults(jsonResponse);
 		} catch (AuthenticationException uea) {
-			log.log(Level.WARNING, "Failed to login", uea);
+			log.log(Level.WARNING, MessageFormat.format("{0} Failed to login.", username));
+			log.log(Level.FINEST, "Failed to login Details: ", uea);
 			errors.put("username", "Unable to login. Check username and password.");
-			errors.put("password", "Unable to login. Check username and password.");
 		}
 		return streamErrorResponse(errors);
 	}

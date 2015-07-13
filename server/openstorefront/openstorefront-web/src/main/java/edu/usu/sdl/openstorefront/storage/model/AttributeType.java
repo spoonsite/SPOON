@@ -17,12 +17,18 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
+import edu.usu.sdl.openstorefront.util.Convert;
+import edu.usu.sdl.openstorefront.util.DefaultFieldValue;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
+import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -30,7 +36,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Allows for grouping the metadata into categories")
 public class AttributeType
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK
@@ -44,6 +50,11 @@ public class AttributeType
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String description;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_DESCRIPTION)
+	@Sanitize(BasicHTMLSanitizer.class)
+	@ConsumeField
+	private String detailedDescription;
 
 	@NotNull
 	@ConsumeField
@@ -70,12 +81,41 @@ public class AttributeType
 	@APIDescription("Allow multiple value codes per component")
 	private Boolean allowMultipleFlg;
 
+	@NotNull
+	@ConsumeField
+	@APIDescription("Hides attribute on the submission form")
+	@DefaultFieldValue("false")
+	private Boolean hideOnSubmission;
+
+	@ConsumeField
+	@APIDescription("Default attribute code")
+	private String defaultAttributeCode;
+
 	public static final String DI2E_SVCV4 = "DI2E-SVCV4-A";
 	public static final String TYPE = "TYPE";
 	public static final String DI2ELEVEL = "DI2ELEVEL";
 
 	public AttributeType()
 	{
+	}
+
+	public ValidationResult customValidation()
+	{
+		ValidationResult validationResult = new ValidationResult();
+
+		if (Convert.toBoolean(getHideOnSubmission())) {
+			if (Convert.toBoolean(getRequiredFlg())) {
+				if (StringUtils.isBlank(getDefaultAttributeCode())) {
+					RuleResult result = new RuleResult();
+					result.setFieldName("hideOnSubmission");
+					result.setEntityClassName(getClass().getSimpleName());
+					result.setValidationRule("Hide requires Default Code");
+					result.setMessage("Default Code is requried when hide on submission and the attribute is required.");
+					validationResult.getRuleResults().add(result);
+				}
+			}
+		}
+		return validationResult;
 	}
 
 	@Override
@@ -170,6 +210,36 @@ public class AttributeType
 	public void setAllowMultipleFlg(Boolean allowMultipleFlg)
 	{
 		this.allowMultipleFlg = allowMultipleFlg;
+	}
+
+	public Boolean getHideOnSubmission()
+	{
+		return hideOnSubmission;
+	}
+
+	public void setHideOnSubmission(Boolean hideOnSubmission)
+	{
+		this.hideOnSubmission = hideOnSubmission;
+	}
+
+	public String getDefaultAttributeCode()
+	{
+		return defaultAttributeCode;
+	}
+
+	public void setDefaultAttributeCode(String defaultAttributeCode)
+	{
+		this.defaultAttributeCode = defaultAttributeCode;
+	}
+
+	public String getDetailedDescription()
+	{
+		return detailedDescription;
+	}
+
+	public void setDetailedDescription(String detailedDescription)
+	{
+		this.detailedDescription = detailedDescription;
 	}
 
 }

@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.storage.model;
 
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.PK;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -30,6 +31,7 @@ public class ComponentReviewPro
 	@PK
 	@NotNull
 	@ConsumeField
+	@OneToOne(orphanRemoval = true)
 	private ComponentReviewProPk componentReviewProPk;
 
 	public ComponentReviewPro()

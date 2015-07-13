@@ -37,7 +37,7 @@ import org.apache.commons.lang.StringUtils;
  */
 @APIDescription("General media used for articles and bagdes...etc")
 public class GeneralMedia
-		extends BaseEntity<GeneralMedia>
+		extends StandardEntity<GeneralMedia>
 {
 
 	@PK

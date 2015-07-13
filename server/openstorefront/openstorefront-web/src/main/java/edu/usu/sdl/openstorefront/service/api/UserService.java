@@ -15,11 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.security.ExternalUserManager;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.UserMessage;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
@@ -41,63 +41,6 @@ public interface UserService
 {
 
 	/**
-	 *
-	 * @param <T>
-	 * @param subComponentClass
-	 * @param userId
-	 * @return
-	 */
-	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId);
-
-	/**
-	 *
-	 * @param <T>
-	 * @param subComponentClass
-	 * @param userId
-	 * @param all
-	 * @return
-	 */
-	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId, boolean all);
-
-	/**
-	 *
-	 * @param <T>
-	 * @param subComponentClass
-	 * @param userId
-	 * @return
-	 */
-	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId);
-
-	/**
-	 *
-	 * @param <T>
-	 * @param subComponentClass
-	 * @param userId
-	 * @param all
-	 * @return
-	 */
-	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId, boolean all);
-
-	/**
-	 *
-	 * @param <T>
-	 * @param subComponentClass
-	 * @param pk
-	 * @return
-	 */
-	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk);
-
-	/**
-	 *
-	 * @param <T>
-	 * @param subComponentClass
-	 * @param pk
-	 * @param all
-	 * @return
-	 */
-	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk, Boolean all);
-
-	/**
 	 * Return the list of watches tied to a userID
 	 *
 	 * @param userId
@@ -114,6 +57,8 @@ public interface UserService
 	public UserWatch getWatch(String watchId);
 
 	/**
+	 * Queries user tracking records
+	 *
 	 * @param filter
 	 * @param userId
 	 * @return
@@ -121,6 +66,7 @@ public interface UserService
 	public UserTrackingResult getUserTracking(FilterQueryParams filter, String userId);
 
 	/**
+	 * Save a user watch
 	 *
 	 * @param watch
 	 * @return
@@ -181,6 +127,7 @@ public interface UserService
 	public UserProfile saveUserProfile(UserProfile user);
 
 	/**
+	 * Saves user profile and optionally refreshes the user session
 	 *
 	 * @param user
 	 * @param refreshSession
@@ -294,6 +241,14 @@ public interface UserService
 	 * @param emailAddress (Only sends to this email if set)
 	 */
 	public void sendRecentChangeEmail(Date lastRunDts, String emailAddress);
+
+	/**
+	 * Performs the sync task with the user profiles with an external user
+	 * manager
+	 *
+	 * @param userManager
+	 */
+	public void syncUserProfilesWithUserManagement(ExternalUserManager userManager);
 
 //  This will be fleshed out more later
 //	/**

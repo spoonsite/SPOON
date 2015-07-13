@@ -41,7 +41,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 public abstract class LookupEntity
-		extends BaseEntity
+		extends StandardEntity
 		implements ExportImport
 {
 
@@ -127,9 +127,9 @@ public abstract class LookupEntity
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		writer.writeNext(new String[]{getCode(),
-			getDescription(),
-			getDetailedDecription(),
-			getSortOrder() != null ? sortOrder.toString() : ""
+									  getDescription(),
+									  getDetailedDecription(),
+									  getSortOrder() != null ? sortOrder.toString() : ""
 		});
 		return stringWriter.toString();
 	}

@@ -59,7 +59,7 @@
               <i ng-if="!col.notAvailable && col.actualScore > 0" ng-repeat="t in getTimes(col.actualScore) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block">
               </i>
               <span ng-if="!col.notAvailable && col.actualScore <= 0">&nbsp;</span>
-      <span ng-if="col.notAvailable" ><b>N/A</b></span>
+              <span ng-if="col.notAvailable" ><b>N/A</b></span>
             </div>
             <div  ng-class="getIsUpdated('evaluationSections')? 'updatedForUser': ''" class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="<b>{{col.name}}</b> ranking = {{col.score}}" data-container="body" data-content="<b>Section Description:</br></b>{{getEvalDescription(col)}}" >
               <a href="javascript:void(0)" class="helpcontent" > {{col.name}} </a>
@@ -79,6 +79,8 @@
     <div class="section-headers"><h4>Screenshots / Media</h4></div>
     <br>
     <div class="containers" ng-class="getIsUpdated('media')? 'updatedForUser': ''" >
+      <photo callback="openFilePreview(file, files)" data-fx="carousel" data-wrap="false" style="height: 175px; position: relative; display: block;" files="details.details.componentMedia"></photo>
+      <!-- 
       <ul style="list-style-type: none;">
         <li ng-repeat="image in getImages(details.details.componentMedia) | limitTo:3" style="display:inline; padding:5px 10px 10px 0;" style="display:inline">
           <a ng-click="openLightboxModal($index, details.details.componentMedia)" style="text-decoration:none; cursor:pointer; width: 100px; height: 100px; overflow: hidden;">
@@ -88,7 +90,7 @@
         <li ng-if="images.length > 3" style="display:inline">
           <button class="btn btn-default" ng-click="openLightboxModal(3, details.details.componentMedia)">View More</button>
         </li>
-      </ul>
+      </ul> -->
     </div>
   </div>
 <!--   <div ng-if="checkForImportants(details.details.attributes)" class="leftCol hideTheExtra">
@@ -120,35 +122,35 @@
 <div ng-if="evaluationAttributes.exist" class="row">
   <div class="col-md-12">
     <div class="section-headers addBorders"><h4>DI2E Evaluation Level</h4></div>
-  <table class="table table-bordered table-hover" >
-    <tr ng-if="evaluationAttributes.level">
-      <th style="vertical-align: middle">
-        {{evaluationAttributes.level.typeDescription}}
-      </th>
-      <td class="{{evaluationAttributes.level.highlightStyle}}" >
-        <h4>{{evaluationAttributes.level.codeDescription}}</h4>
-        <span dynamichtml="evaluationAttributes.level.codeLongDescription"></span>
-      </td>     
-    </tr>
-    <tr ng-if="evaluationAttributes.state">
-      <th style="vertical-align: middle">
-        {{evaluationAttributes.state.typeDescription}}
-      </th>
-      <td  class="{{evaluationAttributes.state.highlightStyle}}" >
-        <h4>{{evaluationAttributes.state.codeDescription}}</h4>
-        <span dynamichtml="evaluationAttributes.state.codeLongDescription"></span>
-      </td>     
-    </tr>
-    <tr ng-if="evaluationAttributes.intent">
-      <th style="vertical-align: middle">
-        {{evaluationAttributes.intent.typeDescription}}
-      </th>
-      <td  class="{{evaluationAttributes.intent.highlightStyle}}" >
-        <h4>{{evaluationAttributes.intent.codeDescription}}</h4>
-        <span dynamichtml="evaluationAttributes.intent.codeLongDescription"></span>
-      </td>     
-    </tr>   
-  </table>  
+    <table class="table table-bordered table-hover" >
+      <tr ng-if="evaluationAttributes.level">
+        <th style="vertical-align: middle">
+          {{evaluationAttributes.level.typeDescription}}
+        </th>
+        <td class="{{evaluationAttributes.level.highlightStyle}}" >
+          <h4>{{evaluationAttributes.level.codeDescription}}</h4>
+          <span dynamichtml="evaluationAttributes.level.codeLongDescription"></span>
+        </td>     
+      </tr>
+      <tr ng-if="evaluationAttributes.state">
+        <th style="vertical-align: middle">
+          {{evaluationAttributes.state.typeDescription}}
+        </th>
+        <td  class="{{evaluationAttributes.state.highlightStyle}}" >
+          <h4>{{evaluationAttributes.state.codeDescription}}</h4>
+          <span dynamichtml="evaluationAttributes.state.codeLongDescription"></span>
+        </td>     
+      </tr>
+      <tr ng-if="evaluationAttributes.intent">
+        <th style="vertical-align: middle">
+          {{evaluationAttributes.intent.typeDescription}}
+        </th>
+        <td  class="{{evaluationAttributes.intent.highlightStyle}}" >
+          <h4>{{evaluationAttributes.intent.codeDescription}}</h4>
+          <span dynamichtml="evaluationAttributes.intent.codeLongDescription"></span>
+        </td>     
+      </tr>   
+    </table>  
   </div>
 </div>
 
@@ -173,33 +175,33 @@
         </tr>             
         <tr id="dependencies{{$index}}Update" data-ng-repeat="row in details.details.dependencies">
           <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-class="getIsUpdated('dependencies'+$index)? 'updatedForUser': ''" class="text-left-bold">
-			  <p style="font-size: 15px;">{{row.dependencyName}}  {{row.version}}</p>
-			  <p ng-show="row.dependancyReferenceLink"><a href="{{row.dependancyReferenceLink}}" target="_blank" ng-click="sendEvent('External-Link', details.details.name, row.link + ' -- ' + row.resourceTypeDesc)">{{row.dependancyReferenceLink}}</a></p>
-			  <p ng-show="row.comment">{{row.comment}}</p>
-		  </td>
-        </tr>
-      </tbody>
-    </table>  
-    <table ng-if="details.details.resources[0] !== undefined" class="table table-bordered table-hover" style="table-layout:fixed">
-      <tbody>
-        <tr>
-          <th class="valign"  colspan="13"><h4>Location of Component Artifacts</h4></th>
-        </tr>             
-        <tr>
-          <th class="valign"  colspan="5">Name</th>
-          <!-- <th class="valign"  colspan="5">Description</th> -->
-          <th class="valign"  colspan="8">Link</th>
-        </tr>             
-        <tr id="resources{{$index}}Update" data-ng-repeat="row in details.details.resources">
-          <td ng-class="getIsUpdated('resources'+$index)? 'updatedForUser': ''" colspan="5" class="text-left-bold hasLinks" style="overflow:hidden; -ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;">{{row.resourceTypeDesc}}</td>
-          <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="row.description" colspan="5" class="text-left">{{row.description}}</td> -->
-          <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="!row.description" colspan="5" class="text-left">&mdash;</td> -->
-          <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="8" class="text-left hasLinks" ng-bind-html="{{row.link}}">{{row.link}}</td> -->
-          <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="8" class="text-left hasLinks"><a  href="{{row.actualLink}}" target="_blank" ng-click="sendEvent('External-Link', details.details.name, row.link + ' -- ' + row.resourceTypeDesc)"><span dynamichtml="row.link"></span></a><div>{{row.description}}</div></td>
-        </tr>
-      </tbody>
-    </table>                  
-  </div>
+           <p style="font-size: 15px;">{{row.dependencyName}}  {{row.version}}</p>
+           <p ng-show="row.dependancyReferenceLink"><a href="{{row.dependancyReferenceLink}}" target="_blank" ng-click="sendEvent('External-Link', details.details.name, row.link + ' -- ' + row.resourceTypeDesc)">{{row.dependancyReferenceLink}}</a></p>
+           <p ng-show="row.comment">{{row.comment}}</p>
+         </td>
+       </tr>
+     </tbody>
+   </table>  
+   <table ng-if="details.details.resources[0] !== undefined" class="table table-bordered table-hover" style="table-layout:fixed">
+    <tbody>
+      <tr>
+        <th class="valign"  colspan="13"><h4>Location of Component Artifacts</h4></th>
+      </tr>             
+      <tr>
+        <th class="valign"  colspan="5">Name</th>
+        <!-- <th class="valign"  colspan="5">Description</th> -->
+        <th class="valign"  colspan="8">Link</th>
+      </tr>             
+      <tr id="resources{{$index}}Update" data-ng-repeat="row in details.details.resources">
+        <td ng-class="getIsUpdated('resources'+$index)? 'updatedForUser': ''" colspan="5" class="text-left-bold hasLinks" style="overflow:hidden; -ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;">{{row.resourceTypeDesc}}</td>
+        <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="row.description" colspan="5" class="text-left">{{row.description}}</td> -->
+        <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" ng-if="!row.description" colspan="5" class="text-left">&mdash;</td> -->
+        <!-- <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="8" class="text-left hasLinks" ng-bind-html="{{row.link}}">{{row.link}}</td> -->
+        <td style="-ms-word-break: break-all; word-break: break-all; word-break: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; -ms-hyphens: auto; hyphens: auto;" colspan="8" class="text-left hasLinks"><a  href="{{row.actualLink}}" target="_blank" ng-click="sendEvent('External-Link', details.details.name, row.link + ' -- ' + row.resourceTypeDesc)"><span dynamichtml="row.link"></span></a><div>{{row.description}}</div></td>
+      </tr>
+    </tbody>
+  </table>                  
+</div>
 </div>
 <div class="row">
   <div class="col-md-12">

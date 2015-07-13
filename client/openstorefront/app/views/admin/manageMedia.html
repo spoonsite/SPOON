@@ -36,14 +36,15 @@ limitations under the License.
 			</tr>
 			<tr ng-repeat="item in media | orderBy:predicate['media']:reverse['media']" >
 				<td>{{item.name}}</td>
-				<td><a href="{{item.mediaLink}}" >{{item.mediaLink}}</a></td>
+				<td><a href="{{item.mediaLink}}" target="_blank">{{item.mediaLink}}</a></td>
 				<td>{{item.orignalFileName}}</td>
 				<td>{{item.mimeType}}</td>
 				<td>{{item.updateUser}}</td>
 				<td>{{item.updateDts | date:'MM/dd/yyyy h:mm a'}}</td>				
 				<td style="padding:0px 3px !important;  width: 200px;">&nbsp;
 					<button class="btn btn-danger btn-sm" ng-click="removeMedia(item);"  title="Remove Media"><i class="fa fa-trash"></i></button>
-				</td>
+          <span dynamichtml="getMediaHTML(item)"></span>
+        </td>
 			</tr>
 	</table>	
 	

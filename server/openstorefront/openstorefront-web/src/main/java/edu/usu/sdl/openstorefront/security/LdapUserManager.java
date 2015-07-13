@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.job;
+package edu.usu.sdl.openstorefront.security;
 
-import org.quartz.JobExecutionContext;
+import edu.usu.sdl.openstorefront.service.manager.LDAPManager;
+import java.util.List;
 
 /**
- * Reaps the errors
+ * LDAP user management
  *
  * @author dshurtleff
  */
-public class ErrorTicketCleanupJob
-		extends BaseJob
+public class LdapUserManager
+		extends ExternalUserManager
 {
 
-	@Override
-	protected void executeInternaljob(JobExecutionContext context)
+	public LdapUserManager()
 	{
-		service.getSystemService().cleanupOldErrors();
+	}
+
+	@Override
+	public UserRecord findUser(String username)
+	{
+		return LDAPManager.getLdapClient().findUser(username);
+	}
+
+	@Override
+	public List<UserRecord> findUsers(List<String> users)
+	{
+		return (List<UserRecord>) LDAPManager.getLdapClient().findUsers(users);
 	}
 
 }

@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 public class ComponentIntegrationConfig
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK(generated = true)

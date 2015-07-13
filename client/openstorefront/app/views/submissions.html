@@ -1,0 +1,42 @@
+<div class="ng-scope">  
+  <loader trigger="userLoad" class="ng-isolate-scope"><div class="loader-holder modal-backdrop ng-hide" ng-show="loading"><div class="loader"><!--[if lt IE 10]><span>...Loading...</span><![endif]--></div></div></loader>
+  <div class="row default-content">
+    <div class="col-sm-12">
+      <div class="panel panel-primary">
+        <div class="panel-heading text-center watch-content-title panel-title">USER SUBMISSIONS</div>
+        <div class="panel-body">
+          <div ng-controller="UserSubmissionCtrl">            
+	    <a href="submission.html" target="_blank" class="btn btn-default"><i class="fa fa-plus"></i>&nbsp;Create new submission</a>		
+            <table class="table table-stripped table-bordered" ng-show="submissions.length">
+              <tr>
+                <th class="imitateLink" ng-click="setPredicate('name')">Name&nbsp;<span ng-show="predicate === 'name'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></th>
+                <th class="imitateLink" ng-click="setPredicate('approvalState')">Status&nbsp;<span ng-show="predicate === 'approvalState'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></th>
+                <th class="imitateLink" ng-click="setPredicate('submittedDts')">Submission Date&nbsp;<span ng-show="predicate === 'submittedDts'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></th>
+                <th class="imitateLink" ng-click="setPredicate('notifyOfApprovalEmail')">Approval Email&nbsp;<span ng-show="predicate === 'notifyOfApprovalEmail'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></th>
+                <th>Actions</th>
+              </tr>
+              <tr ng-repeat="submission in submissions | orderBy: predicate:reverse">
+                <td>{{submission.name}}</td>
+                <td>{{getApprovalStatus(submission.approvalState)}}</td>
+                <td>{{submission.submittedDts | date:'MM/dd/yyyy h:mm a'}}</td>
+                <td style="padding: 5px; vertical-align: middle; text-align: center;" ng-class="submission.notifyOfApprovalEmail? 'success':'danger'">
+                  <input type="checkbox" ng-disabled="!userInfo.email || submission.approvalState === 'A'" ng-checked="submission.notifyMe" ng-model="submission.notifyMe" ng-change="setNotifyMe(submission)">
+                  <br>
+                  <small ng-show="submission.notifyOfApprovalEmail">{{submission.notifyOfApprovalEmail}}</small>
+                  <small ng-show="!submission.notifyOfApprovalEmail">No approval email will be sent</small>
+                  <small ng-show="!userInfo.email">You must add an email to your profile to be able to recieve notification emails</small>
+                </td>
+                <td>
+                  <a ng-show="submission.approvalState !== 'A'" href="submission.html#?id={{submission.componentId}}" target="_blank" class="btn btn-default"><i class="fa fa-edit"></i></a>
+                  <a ng-show="submission.approvalState !== 'N'" href="single?id={{submission.componentId}}" target="_blank" class="btn btn-info"><i class="fa fa fa-binoculars"></i></a>
+                  <button ng-show="submission.approvalState === 'P'" class="btn btn-warning" ng-click="submit(submission, true)"><i class="fa fa-power-off"></i></button>
+                  <button ng-show="submission.approvalState === 'N'" class="btn btn-danger" ng-click="deactivateSubmission(submission)"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

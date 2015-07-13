@@ -19,6 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.config.Configuration;
 
 /**
  * Handling Application level caching
@@ -46,7 +47,10 @@ public class OSFCacheManager
 		ReentrantLock lock = new ReentrantLock();
 		lock.lock();
 		try {
-			CacheManager singletonManager = CacheManager.create();
+			Configuration config = new Configuration();
+			config.setUpdateCheck(false);
+			config.setName("Main");
+			CacheManager singletonManager = CacheManager.create(config);
 
 			Cache memoryOnlyCache = new Cache("lookupCache", 500, false, false, 600, 600);
 			singletonManager.addCache(memoryOnlyCache);
@@ -60,7 +64,7 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			attributeTypeCache = singletonManager.getCache("attributeTypeCache");
 
-			memoryOnlyCache = new Cache("attributeCodeAllCache", 1, false, true, 7200, 7200);
+			memoryOnlyCache = new Cache("attributeCodeAllCache", 1, false, true, 0, 0);
 			singletonManager.addCache(memoryOnlyCache);
 			attributeCodeAllCache = singletonManager.getCache("attributeCodeAllCache");
 

@@ -26,9 +26,11 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $scope.selectedComponents = [];
     $scope.selectAllComps = {};
     $scope.selectAllComps.flag = false;
+    $scope.submitter = null;
     $scope.pagination = {};
     $scope.pagination.control = {};
-    $scope.pagination.features = {'dates': false, 'max': false};
+    $scope.pagination.control.approvalState ='ALL';
+    $scope.pagination.features = {'dates': false, 'max': false};    
 
     $scope.$watch('allComponentsWatch', function(){
       if ($scope.allComponentsWatch.data){
@@ -49,14 +51,21 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     };
 
     $scope.pagination.control.setPredicate = function(val){
-      $scope.setPredicate(val, 'components')
+      $scope.setPredicate(val, 'components');
     };
 
-    $scope.refreshComponents = function () {
+    if ($scope.pagination.control) {
+      $scope.pagination.control.onRefresh = function(){
+        $scope.selectedComponents = [];
+        $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
+      }
+    }
 
+    $scope.refreshComponents = function () {
       if ($scope.pagination.control && $scope.pagination.control.refresh) {
         $scope.$emit('$TRIGGERLOAD', 'componentLoader');
         $scope.pagination.control.refresh().then(function(){
+          $scope.selectedComponents = [];
           $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
         });
       }
@@ -127,7 +136,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     };    
     
     $scope.preview = function(component) {
-      utils.openWindow('#/single?id='+ component.component.componentId, 'Component Preview');
+      utils.openWindow('single?id='+ component.component.componentId, 'Component Preview', "resizable=yes,scrollbars=yes,height=650,width=1000");
     };    
     
     $scope.deleteComponent = function(component){
@@ -187,7 +196,10 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
       });
       item.formData.push({
         "componentUploadOptions.uploadTags" : $scope.componentUploadOptions.uploadTags
-      });              
+      });
+      item.formData.push({
+        "componentUploadOptions.uploadIntegration" : $scope.componentUploadOptions.uploadIntegration
+      });      
     },
     onSuccessItem: function (item, response, status, headers) {
       $scope.$emit('$TRIGGERUNLOAD', 'componentLoader');
@@ -228,15 +240,17 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $(window).resize(stickThatTable);
     $timeout(stickThatTable, 100);
 
-}]);
+  }]);
 
-app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalInstance', 'component', 'editMode', 'business', '$uiModal', 'FileUploader', 
-  function ($scope, $q, $filter, $uiModalInstance, component, editMode, Business, $uiModal, FileUploader) {
+app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalInstance', 'component', 'editMode', 'business', '$uiModal', '$draggable', 'FileUploader', '$rootScope', '$timeout',
+  function ($scope, $q, $filter, $uiModalInstance, component, editMode, Business, $uiModal, $draggable, FileUploader, $rootScope, $timeout) {
 
     $scope.editMode = editMode;
     $scope.editModeText = $scope.editMode ? 'Edit ' + component.component.name : 'Add Component';
     $scope.componentForm = component.component !== undefined ? angular.copy(component.component) : {};
     $scope.editorOptions = getCkBasicConfig(true);
+    $scope.integration = {};
+    $scope.sendAdminMessage   = $rootScope.openAdminMessage;
 
     $scope.statusFilterOptions = [
     {code: 'A', desc: 'Active'},
@@ -246,21 +260,99 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.predicate = [];
     $scope.reverse = [];      
     
+    $scope.setupModal = function(componentId, enabled) {
+      var deferred = $q.defer();
+      var modalInstance = $uiModal.open({
+        templateUrl: 'views/admin/configuration/savecompconf.html',
+        controller: 'SavecompconfCtrl',
+        size: 'lg',
+        backdrop: 'static',
+        resolve: {
+          componentId: function(){
+            return componentId;
+          },
+          enabled: function() {
+            return enabled;
+          },   
+          size: function() {
+            return 'lg';
+          }
+        }
+      });
+
+      modalInstance.result.then(function (result) {        
+      }, function (result) {
+        $scope.$emit('$TRIGGERLOAD', 'generalFormLoader');
+        Business.componentservice.getComponent(componentId).then(function(results){
+         $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
+         $scope.componentForm = results.component;
+         $scope.integration.integrationText = results.integrationManagement;
+         if (results.integrationManagement){
+           $scope.flags.showIntegrationBanner = true;      
+         }  else {
+           $scope.flags.showIntegrationBanner = false;
+         }            
+       }, function(results){
+         $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
+       });
+      });
+      deferred.resolve();
+      return deferred.promise;
+    };    
+
+    $scope.sendToSubmitter = function() {
+      var temp = [];
+      var templates = {
+        types: [{
+          title: 'Please add to these sections'
+        },{
+          title: 'Please review these sections'
+        },{
+          title: 'Please remove items from these sections'
+        }],
+        templates: [{
+          title: 'Description'
+        }, {
+          title: 'Attributes'
+        }, {
+          title: 'Contacts'
+        }, {
+          title: 'Resources'
+        }, {
+          title: 'Media'
+        }, {
+          title: 'Dependencies'
+        }, {
+          title: 'Tags'
+        }
+        ]
+      }
+
+      temp.push($scope.submitter);
+      if (temp && temp.length) {
+        // console.log('component', component);
+        
+        $scope.sendAdminMessage('users', temp, 'Please Review Your Submission "'+ component.component.name +'"', templates, true);
+      } else {
+        triggerAlert('You are unable to send a message to this user. (They could be deactivated or without an email address)', 'failedMessage', 'body', '8000')
+      }
+    }
+
     var basicForm = {
       saveText: 'Add',
       edit: false
     };
-    
+
     var basicFilter = {
       status: $scope.statusFilterOptions[0]
     };    
-    
+
     $scope.generalForm = {};   
     $scope.generalForm.requiredAttribute = {};
     $scope.flags = {};
     if (component.integrationManagement){
       $scope.flags.showIntegrationBanner = true;
-      $scope.integrationText = component.integrationManagement;
+      $scope.integration.integrationText = component.integrationManagement;
     }
     $scope.componentAttributeQueryFilter = angular.copy(utils.queryFilter);      
 
@@ -272,38 +364,38 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.contactForm = angular.copy(basicForm);
     $scope.contactQueryFilter = angular.copy(utils.queryFilter);   
     $scope.contactQueryFilter.status = $scope.statusFilterOptions[0].code;
-    
+
     $scope.resourceForm = angular.copy(basicForm);
     $scope.resourceQueryFilter = angular.copy(utils.queryFilter);   
     $scope.resourceQueryFilter.status = $scope.statusFilterOptions[0].code;
-    
+
     $scope.mediaForm = angular.copy(basicForm);
     $scope.mediaQueryFilter = angular.copy(utils.queryFilter);   
     $scope.mediaQueryFilter.status = $scope.statusFilterOptions[0].code;    
-    
+
     $scope.dependencyForm = angular.copy(basicForm);
     $scope.dependencyFilter = angular.copy(utils.queryFilter);   
     $scope.dependencyFilter.status = $scope.statusFilterOptions[0].code;      
-    
+
     $scope.metadataForm = angular.copy(basicForm);
     $scope.metadataFilter = angular.copy(utils.queryFilter);   
     $scope.metadataFilter.status = $scope.statusFilterOptions[0].code;    
-    
+
     $scope.evaluationForm = {};
-    
+
     $scope.tagForm = angular.copy(basicForm);
     $scope.tagFilter = angular.copy(utils.queryFilter);   
     $scope.tagFilter.status = $scope.statusFilterOptions[0].code;        
-    
+
     $scope.reviewFilter = angular.copy(utils.queryFilter);   
     $scope.reviewFilter.status = $scope.statusFilterOptions[0].code;     
 
     $scope.questionFilter = angular.copy(utils.queryFilter);   
     $scope.questionFilter.status = $scope.statusFilterOptions[0].code;      
     $scope.questionDetailsShow = [];
-    
+
     $scope.EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
-    
+
     $scope.setPredicate = function (predicate, table) {
       if ($scope.predicate[table] === predicate) {
         $scope.reverse[table] = !$scope.reverse[table];
@@ -312,7 +404,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
         $scope.reverse[table] = false;
       }
     };
-    
+
 //<editor-fold   desc="COMMON Section">    
 
 $scope.loadLookup = function(lookup, entity, loader){
@@ -521,7 +613,7 @@ $scope.saveComponent = function(){
 
   var missingRequiredAttributes = false;
   _.forEach($scope.requiredAttributes, function(attribute) {
-        
+
     var found = false;   
     _.forOwn($scope.generalForm.requiredAttribute, function (value, key) {
       if (attribute.attributeType === key) {
@@ -627,6 +719,17 @@ $scope.toggleAttributeStatus = function(attribute){
   }
 }; 
 
+$scope.deleteAttribute = function(attribute) {
+  var response = window.confirm("Are you sure you want to DELETE attribute "+ attribute.typeDescription + "?");
+  if (response) {
+    $scope.$emit('$TRIGGERLOAD', 'attributeFormLoader');
+    Business.componentservice.deleteAttribute($scope.componentForm.componentId, attribute.type, attribute.code).then(function (results) {
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'attributeFormLoader');
+      $scope.loadComponentAttributesView();              
+    });    
+  }  
+};
+
 $scope.saveAttribute = function(){
   $scope.$emit('$TRIGGERLOAD', 'attributeFormLoader');
   var componentAttribute = {
@@ -662,7 +765,13 @@ $scope.loadContacts = function() {
   $scope.loadEntity({
     filter: $scope.contactQueryFilter,
     entity: 'contacts',
-    loader: 'contactFormLoader'
+    loader: 'contactFormLoader',
+    callback: function(result){
+      var found = _.find(result, {'contactType': 'SUB'});
+      if (found){
+        $scope.submitter = angular.copy(found);
+      }
+    }
   });
 };
 $scope.loadContacts();    
@@ -758,8 +867,7 @@ $scope.saveResource = function () {
       }
     });
   } else {      
-    $scope.resourceUploader.uploadAll();
-    document.resourceUIForm.uploadFile.value = null;
+    $scope.resourceUploader.uploadAll();   
   }
 };   
 
@@ -772,6 +880,14 @@ $scope.resourceUploader = new FileUploader({
   alias: 'file',
   queueLimit: 1,  
   removeAfterUpload: true,
+  onAfterAddingFile: function(file){
+    if (file._file && file._file.size && file._file.size >= 104857600) {
+      triggerAlert('The file you have selected exceeds the file size limit of 100MB and will not be uploaded.', 'mediaLoader', 'body', 7000);
+      this.removeFromQueue(file);          
+      $scope.cancelResourceEdit();
+      return;
+    }
+  },
   onBeforeUploadItem: function(item) {
     $scope.$emit('$TRIGGERLOAD', 'resourceFormLoader');
 
@@ -814,8 +930,12 @@ $scope.resourceUploader = new FileUploader({
       },
       onErrorItem: function (item, response, status, headers) {
         $scope.$emit('$TRIGGERUNLOAD', 'resourceFormLoader');
-        triggerAlert('Unable to upload resource. Failure communicating with server. ', 'saveResource', 'componentWindowDiv', 6000);      
-      }      
+        triggerAlert('Unable to upload resource. Failure communicating with server. ', 'saveResource', 'componentWindowDiv', 6000);              
+      },
+      onCompleteAll: function(){        
+        document.resourceUIForm.uploadFile.value = null;
+        $scope.resourceUploader.queue = [];      
+      }     
     });     
 
 
@@ -858,6 +978,22 @@ $scope.toggleMediaStatus = function(media){
   });
 };    
 
+$scope.setUploadInput = function(uploader, form){
+  if ($scope[uploader] 
+    && $scope[uploader]._directives 
+    && $scope[uploader]._directives.select 
+    && $scope[uploader]._directives.select.length 
+    && $scope[uploader]._directives.select[0].element 
+    && $scope[uploader]._directives.select[0].element.length 
+    && $scope[uploader]._directives.select[0].element[0].files
+    && $scope[uploader]._directives.select[0].element[0].files.length) {
+    $scope[form].uploadInput = true;
+} else {
+  $scope[uploader].clearQueue();
+  $scope[form].uploadInput = false;
+}
+}
+
 $scope.saveMedia = function () {
   $scope.mediaForm.link = $scope.mediaForm.originalLink;
   if ($scope.mediaForm.originalLink || 
@@ -882,8 +1018,7 @@ $scope.saveMedia = function () {
       }
     });
   } else {      
-    $scope.mediaUploader.uploadAll();
-    document.mediaUIForm.uploadFile.value = null;
+    $scope.mediaUploader.uploadAll();    
   }
 };   
 
@@ -896,6 +1031,14 @@ $scope.mediaUploader = new FileUploader({
   alias: 'file',
   queueLimit: 1,  
   removeAfterUpload: true,
+  onAfterAddingFile: function(file){
+    if (file._file && file._file.size && file._file.size >= 104857600) {
+      triggerAlert('The file you have selected exceeds the file size limit of 100MB and will not be uploaded.', 'mediaLoader', 'body', 7000);
+      this.removeFromQueue(file);          
+      $scope.cancelMediaEdit();
+      return;
+    }
+  },
   onBeforeUploadItem: function(item) {
     $scope.$emit('$TRIGGERLOAD', 'mediaFormLoader');
 
@@ -922,8 +1065,9 @@ $scope.mediaUploader = new FileUploader({
         //check response for a fail ticket or a error model
         if (response.success) {
           triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000);          
-          $scope.cancelMediaEdit();
-          $scope.loadMedia();          
+          $scope.cancelMediaEdit();          
+          $scope.loadMedia();     
+          
         } else {
           if (response.errors) {
             var uploadError = response.errors.file;
@@ -932,12 +1076,18 @@ $scope.mediaUploader = new FileUploader({
             triggerAlert('Unable to upload media. Message: <br> ' + errorMessage, 'saveMedia', 'componentWindowDiv', 6000);
           } else {
             triggerAlert('Unable to upload media. ', 'saveMedia', 'componentWindowDiv', 6000);
+        
           }
         }
       },
       onErrorItem: function (item, response, status, headers) {
         $scope.$emit('$TRIGGERUNLOAD', 'mediaFormLoader');
         triggerAlert('Unable to upload media. Failure communicating with server. ', 'saveMedia', 'componentWindowDiv', 6000);        
+        
+      },
+      onCompleteAll: function(){        
+        document.mediaUIForm.uploadFile.value = null;
+        $scope.mediaUploader.queue = [];      
       }      
     });     
 
@@ -1315,7 +1465,27 @@ $scope.toggleQuestionResponseStatus = function(questionResponse, question){
 
 
 $scope.close = function () {
+  $scope.$emit('$TRIGGEREVENT', '$CLOSEMSG');
   $uiModalInstance.dismiss('close');
 };
 
 }]);
+
+app.controller('messageSubmitterCtrl',['$scope', '$draggableInstance', 'submitter', 'business', '$location', function ($scope, $draggableInstance, submitter, Business, $location) {
+
+  $scope.submitter = submitter || {};
+
+
+  $scope.ok = function () {
+    $draggableInstance.close();
+  };
+
+  $scope.cancel = function () {
+    $draggableInstance.dismiss('cancel');
+  };
+
+  $scope.$on('$CLOSEMSG', function(){
+    $draggableInstance.dismiss('cancel');
+  })
+}]);
+

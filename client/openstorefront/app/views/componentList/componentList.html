@@ -13,53 +13,65 @@
     </label>
     <br />
     <div ng-class="listOfClasses">
+      <loader trigger="resultsLoader"></loader>
       <div ng-show="isTitle" class="componentListTitle">{{title}}</div>
+      <div ng-show="showResultCount">
+        <p ng-show="!data.length">No items found</p>
+        <p ng-show="data.length">Found: {{data.length}}</p>
+      </div>  
       <table class="table table-striped" id="resultsTable">
-        <tr ng-repeat="item in data" class="moreSection" style="margin-bottom: 20px;">
-          <td ng-show="showitem(item)" style="white-space: inherit;" id="{{getComponentScroll(item)}}">
-            <div class="container-fluid">
-              <div class="row" style="margin-left: 0px; margin-right: 0px">
-                <div class="results-content">
-                  <div class="results-content-title" ng-click="clickCallback(item.componentId, item)">
-                    <div ng-show="blankTarget" style="display:inline-block">
-                      <a ng-if="item.listingType === 'Article'" href="#/landing?type={{item.articleAttributeType}}&code={{item.articleAttributeCode}}" target="_blank">
-                        <div class="results-content-title-content" >{{item.name}}
-                          <span style="font-size:13px;">&nbsp;(Article)</span>
+        <tbody infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check='true' window-element="page1">
+          <tr ng-repeat="item in data | limitTo: limit" class="moreSection" style="margin-bottom: 20px;">
+            <td ng-show="showitem(item)" style="white-space: inherit;" id="{{getComponentScroll(item)}}">
+              <div class="container-fluid">
+                <div class="row" style="margin-left: 0px; margin-right: 0px">
+                  <div class="results-content">
+                    <div class="results-content-title" ng-click="clickCallback(item.componentId, item)">
+                      <div ng-show="blankTarget" style="display:inline-block">
+                        <a ng-if="item.listingType === 'Article'" ng-href="#/landing?type={{item.articleAttributeType}}&code={{item.articleAttributeCode}}" target="_blank">
+                          <div class="results-content-title-content" ><span ng-bind="item.name"></span>
+                            <span style="font-size:13px;">&nbsp;(Article)</span>
+                          </div>
+                        </a>
+                        <a ng-if="item.listingType !== 'Article'" ng-href="#/single?id={{item.componentId}}" target="_blank">
+                          <div class="results-content-title-content" ><span ng-bind="item.name"></span>
+                          </div>
+                        </a>
+                      </div>
+                      <div ng-show="!blankTarget" id="{{item.componentId}}" style="display:inline-block">
+                        <div class="results-content-title-content" ><span ng-bind="item.name"></span>
+                          <br ng-show="item.attributes.length">
+
+                          <div bindonce ng-repeat="attribute in item.attributes" style="display:inline-block;">
+                            <img ng-show="attribute.badgeUrl" ng-src="{{attribute.badgeUrl}}" alt="Attribute Badge" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.label}}" data-trigger="hover" style="padding-left: 5px; margin-top:-5px; width: 40px; height: auto;">
+                          </div>
+
+                          <span ng-if="item.listingType === 'Article'" style="font-size:13px;">&nbsp;(Article)</span>
                         </div>
-                      </a>
-                      <a ng-if="item.listingType !== 'Article'" href="#/single?id={{item.componentId}}" target="_blank">
-                        <div class="results-content-title-content" >{{item.name}}
-                        </div>
-                      </a>
-                    </div>
-                    <div ng-show="!blankTarget" id="{{item.componentId}}" style="display:inline-block">
-                      <div class="results-content-title-content" >{{item.name}}
-                        <br ng-show="item.attributes.length">
-                        <div ng-repeat="attribute in item.attributes" style="display:inline-block;">
-                          <img ng-show="attribute.badgeUrl" ng-src="{{attribute.badgeUrl}}" alt="Attribute Badge" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.label}}" data-trigger="hover" style="padding-left: 5px; margin-top:-5px; width: 40px; height: auto;">
-                        </div>
-                        <span ng-if="item.listingType === 'Article'" style="font-size:13px;">&nbsp;(Article)</span>
                       </div>
                     </div>
-                  </div>
-                  <div class="results-content-description">
-                    <div ng-bind-html="getShortDescription(item.description)"></div>
-                    <br>
-                    <span class="componentListDate pull-left" ng-show="item.updateDts" >Last Updated: {{getDate(item.updateDts)}}</span>
-                    <span class="componentListDate pull-right checkbox" style="margin-top: -5px; margin-bottom: 0px; padding-left: 0px;" ng-show="item.updateDts && showCompare">
-                      <label>
-                        <input type="checkbox" ng-model="compare" ng-checked="compare" ng-change="addToCompare(item.componentId)">
-                        <span ng-show="!compare" style="line-height:20px;">Add To Compare</span> <span ng-show="compare" style="line-height:20px;">Remove From Compare</span> 
-                      </label>
-                      <button ng-show="compare && list.length > 1" class="btn btn-default btn-xs" ng-click="goToCompare()">Compare</button>
-                    </span>
+                    <div class="results-content-description">
+
+                      <div class="shortDescription" ng-bind-html="item.description"></div>
+
+                      <br>
+                      <span class="componentListDate pull-left" ng-show="item.updateDts" >Last Updated: <span>{{getDate(item.updateDts)}}</span></span>
+                      <span class="componentListDate pull-right checkbox" style="margin-top: -5px; margin-bottom: 0px; padding-left: 0px;" ng-show="item.updateDts && showCompare">
+                        <label>
+                          <input type="checkbox" ng-model="compare" ng-checked="compare" ng-change="addToCompare(item.componentId)">
+                          <span ng-show="!compare" style="line-height:20px;">Add To Compare</span> <span ng-show="compare" style="line-height:20px;">Remove From Compare</span> 
+                        </label>
+                        <button ng-show="compare && list.length > 1" class="btn btn-default btn-xs" ng-click="goToCompare()">Compare</button>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </td>
-        </tr>
+            </td>
+          </tr>
+        </tbody>
       </table>
+
     </div>
   </div>
 </div>

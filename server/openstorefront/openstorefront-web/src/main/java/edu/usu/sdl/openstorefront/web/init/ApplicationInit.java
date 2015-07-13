@@ -16,13 +16,16 @@
 package edu.usu.sdl.openstorefront.web.init;
 
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
+import edu.usu.sdl.openstorefront.service.io.HelpImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
+import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.Initializable;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
+import edu.usu.sdl.openstorefront.service.manager.LDAPManager;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.ReportManager;
@@ -34,6 +37,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import net.java.truevfs.access.TVFS;
 
 /**
  * Use to init the application and shut it down properly
@@ -63,6 +67,10 @@ public class ApplicationInit
 		startupManager(new UserAgentManager());
 		startupManager(new AsyncTaskManager());
 		startupManager(new ReportManager());
+		startupManager(new LDAPManager());
+		startupManager(new HelpImporter());
+
+		startupManager(new DBLogManager());
 	}
 
 	private void startupManager(Initializable initializable)
@@ -74,7 +82,17 @@ public class ApplicationInit
 	@Override
 	public void contextDestroyed(ServletContextEvent sce)
 	{
+		try {
+			log.log(Level.INFO, "Unmount Truevfs");
+			TVFS.umount();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, MessageFormat.format("Failed to unmount: {0}", e.getMessage()));
+		}
+
 		//Shutdown in reverse order to make sure the dependancies are good.
+		shutdownManager(new DBLogManager());
+		shutdownManager(new LDAPManager());
+		shutdownManager(new ReportManager());
 		shutdownManager(new AsyncTaskManager());
 		shutdownManager(new UserAgentManager());
 		shutdownManager(new JobManager());
@@ -84,7 +102,6 @@ public class ApplicationInit
 		shutdownManager(new SolrManager());
 		shutdownManager(new DBManager());
 		shutdownManager(new FileSystemManager());
-		shutdownManager(new ReportManager());
 	}
 
 	private void shutdownManager(Initializable initializable)

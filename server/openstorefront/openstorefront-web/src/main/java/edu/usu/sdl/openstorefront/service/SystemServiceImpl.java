@@ -17,16 +17,22 @@ package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.api.SystemService;
+import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import edu.usu.sdl.openstorefront.service.transfermodel.AlertContext;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
+import edu.usu.sdl.openstorefront.service.transfermodel.HelpSectionAll;
 import edu.usu.sdl.openstorefront.storage.model.AlertType;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
 import edu.usu.sdl.openstorefront.storage.model.AsyncTask;
+import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
+import edu.usu.sdl.openstorefront.storage.model.DBLogRecord;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTicket;
 import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
+import edu.usu.sdl.openstorefront.storage.model.HelpSection;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
@@ -47,10 +53,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -324,6 +332,13 @@ public class SystemServiceImpl
 	public void saveGlobalIntegrationConfig(GlobalIntegrationModel globalIntegrationModel)
 	{
 		saveProperty(ApplicationProperty.GLOBAL_INTEGRATION_REFRESH, globalIntegrationModel.getJiraRefreshRate());
+
+		List<ComponentIntegration> integrations = getComponentService().getComponentIntegrationModels(ComponentIntegration.ACTIVE_STATUS);
+		for (ComponentIntegration integration : integrations) {
+			if (StringUtils.isBlank(integration.getRefreshRate())) {
+				JobManager.updateComponentIntegrationJob(integration);
+			}
+		}
 	}
 
 	@Override
@@ -331,6 +346,7 @@ public class SystemServiceImpl
 	{
 		Objects.requireNonNull(generalMedia);
 		Objects.requireNonNull(fileInput);
+		Objects.requireNonNull(generalMedia.getName(), "Name must be set.");
 
 		generalMedia.setFileName(generalMedia.getName());
 		try (InputStream in = fileInput) {
@@ -389,6 +405,152 @@ public class SystemServiceImpl
 		AsyncTask task = persistenceService.findById(AsyncTask.class, taskId);
 		if (task != null) {
 			persistenceService.delete(task);
+		}
+	}
+
+	@Override
+	public void addLogRecord(DBLogRecord logRecord)
+	{
+		logRecord.setLogId(persistenceService.generateId());
+		persistenceService.saveNonBaseEntity(logRecord);
+	}
+
+	@Override
+	public void cleanUpOldLogRecords()
+	{
+		long count = persistenceService.countClass(DBLogRecord.class);
+		long max = DBLogManager.getMaxLogEntries();
+
+		if (count > max) {
+			log.log(Level.INFO, MessageFormat.format("Cleaning old log records:  {0}", (count - max)));
+
+			long limit = count - max;
+			String query = "SELECT FROM DBLogRecord ORDER BY eventDts ASC LIMIT " + limit;
+			List<DBLogRecord> logRecords = persistenceService.query(query, null);
+			logRecords.stream().forEach((record) -> {
+				persistenceService.delete(record);
+			});
+		}
+	}
+
+	@Override
+	public void clearAllLogRecord()
+	{
+		int recordsRemoved = persistenceService.deleteByQuery(DBLogRecord.class, "", new HashMap<>());
+		log.log(Level.WARNING, MessageFormat.format("DB log records were cleared.  Records cleared: {0}", recordsRemoved));
+	}
+
+	@Override
+	public void loadNewHelpSections(List<HelpSection> helpSections)
+	{
+		Objects.requireNonNull(helpSections, "Help sections required");
+
+		int recordsRemoved = persistenceService.deleteByQuery(HelpSection.class, "", new HashMap<>());
+		log.log(Level.FINE, MessageFormat.format("Help records were cleared.  Records cleared: {0}", recordsRemoved));
+
+		log.log(Level.FINE, MessageFormat.format("Saving new Help records: {0}", helpSections.size()));
+		for (HelpSection helpSection : helpSections) {
+			helpSection.setId(persistenceService.generateId());
+			persistenceService.persist(helpSection);
+		}
+	}
+
+	@Override
+	public HelpSectionAll getAllHelp(Boolean includeAdmin)
+	{
+		HelpSectionAll helpSectionAll = new HelpSectionAll();
+
+		HelpSection helpSectionExample = new HelpSection();
+		helpSectionExample.setAdminSection(includeAdmin);
+
+		List<HelpSection> helpSections = persistenceService.queryByExample(HelpSection.class, helpSectionExample);
+
+		if (helpSections.isEmpty() == false) {
+
+			//Root Section
+			HelpSection helpSectionRoot = new HelpSection();
+			helpSectionRoot.setTitle(PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE));
+			helpSectionRoot.setContent("<center><h2>User Guide</h2>Version: " + PropertiesManager.getApplicationVersion() + "</center>");
+			helpSectionAll.setHelpSection(helpSectionRoot);
+
+			for (HelpSection helpSection : helpSections) {
+				String codeTokens[] = helpSection.getSectionNumber().split(Pattern.quote("."));
+				HelpSectionAll rootHelp = helpSectionAll;
+				StringBuilder codeKey = new StringBuilder();
+				for (String codeToken : codeTokens) {
+					codeKey.append(codeToken);
+					//put in stubs as needed
+					boolean found = false;
+					String compare = codeKey.toString();
+					if (codeKey.toString().length() == 1) {
+						compare += ".";
+					}
+					for (HelpSectionAll child : rootHelp.getChildSections()) {
+						if (child.getHelpSection().getSectionNumber().equals(compare)) {
+							found = true;
+							rootHelp = child;
+							break;
+						}
+					}
+					if (!found) {
+						HelpSectionAll newChild = new HelpSectionAll();
+						HelpSection childHelp = new HelpSection();
+						childHelp.setSectionNumber(compare);
+						newChild.setHelpSection(childHelp);
+						rootHelp.getChildSections().add(newChild);
+						rootHelp = newChild;
+					}
+					codeKey.append(".");
+				}
+				rootHelp.setHelpSection(helpSection);
+			}
+		}
+		//reorder help number so missing sections do cause holes
+		reorderHelpSectionTitles(helpSectionAll, "");
+		return helpSectionAll;
+	}
+
+	private void reorderHelpSectionTitles(HelpSectionAll helpSectionAll, String parentSection)
+	{
+		if (helpSectionAll.getChildSections().isEmpty()) {
+			return;
+		}
+
+		int sectionNumber = 1;
+		for (HelpSectionAll helpSection : helpSectionAll.getChildSections()) {
+			String titleSplit[] = helpSection.getHelpSection().getTitle().split(" ");
+			String titleNumber;
+			if (StringUtils.isBlank(parentSection)) {
+				titleNumber = sectionNumber + ". ";
+
+			} else {
+				titleNumber = parentSection + sectionNumber + " ";
+			}
+
+			StringBuilder restOfTitle = new StringBuilder();
+			for (int i = 1; i < titleSplit.length; i++) {
+				if (restOfTitle.length() != 0) {
+					restOfTitle.append(" ");
+				}
+				restOfTitle.append(titleSplit[i]);
+			}
+			helpSection.getHelpSection().setTitle(titleNumber + restOfTitle.toString());
+
+			if (titleNumber.endsWith(". ") == false) {
+				StringBuilder temp = new StringBuilder();
+				temp.append(titleNumber);
+				temp = temp.deleteCharAt(temp.length() - 1);
+				temp.append(".");
+				titleNumber = temp.toString();
+			} else {
+				StringBuilder temp = new StringBuilder();
+				temp.append(titleNumber);
+				temp = temp.deleteCharAt(temp.length() - 1);
+				titleNumber = temp.toString();
+			}
+			reorderHelpSectionTitles(helpSection, titleNumber);
+
+			sectionNumber++;
 		}
 	}
 

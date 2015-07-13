@@ -17,13 +17,17 @@ package edu.usu.sdl.openstorefront.service;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.security.ExternalUserManager;
 import edu.usu.sdl.openstorefront.security.UserContext;
+import edu.usu.sdl.openstorefront.security.UserRecord;
 import edu.usu.sdl.openstorefront.service.api.UserService;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
+import edu.usu.sdl.openstorefront.service.message.ApprovalMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.BaseMessageGenerator;
+import edu.usu.sdl.openstorefront.service.message.ComponentSubmissionMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.ComponentWatchMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.MessageContext;
 import edu.usu.sdl.openstorefront.service.message.RecentChangeMessage;
@@ -37,8 +41,8 @@ import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
 import edu.usu.sdl.openstorefront.storage.model.Alert;
+import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
@@ -68,9 +72,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Message;
@@ -96,65 +102,6 @@ public class UserServiceImpl
 	private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
 
 	private static final int MAX_NAME_CHECK = 100;
-
-	@Override
-	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId)
-	{
-		return getBaseEntity(subComponentClass, userId, false);
-	}
-
-	@Override
-	public <T extends BaseEntity> List<T> getBaseEntity(Class<T> subComponentClass, String userId, boolean all)
-	{
-		try {
-			T baseComponentExample = subComponentClass.newInstance();
-			baseComponentExample.setUpdateUser(userId);
-			if (all == false) {
-				baseComponentExample.setActiveStatus(BaseEntity.ACTIVE_STATUS);
-			}
-			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
-		} catch (InstantiationException | IllegalAccessException ex) {
-			throw new OpenStorefrontRuntimeException(ex);
-		}
-	}
-
-	@Override
-	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId)
-	{
-		return getBaseEntity(subComponentClass, userId, false);
-	}
-
-	@Override
-	public <T extends BaseEntity> List<T> getBaseEntityByCreateUser(Class<T> subComponentClass, String userId, boolean all)
-	{
-		try {
-			T baseComponentExample = subComponentClass.newInstance();
-//			baseComponentExample.setCreateUser(userId);
-			if (all == false) {
-				baseComponentExample.setActiveStatus(BaseEntity.ACTIVE_STATUS);
-			}
-			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
-		} catch (InstantiationException | IllegalAccessException ex) {
-			throw new OpenStorefrontRuntimeException(ex);
-		}
-	}
-
-	@Override
-	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk)
-	{
-		return deactivateBaseEntity(subComponentClass, pk, false);
-	}
-
-	@Override
-	public <T extends BaseEntity> T deactivateBaseEntity(Class<T> subComponentClass, Object pk, Boolean all)
-	{
-		T found = persistenceService.findById(subComponentClass, pk);
-		if (found != null) {
-			found.setActiveStatus(T.INACTIVE_STATUS);
-			persistenceService.persist(found);
-		}
-		return found;
-	}
 
 	@Override
 	public List<UserWatch> getWatches(String userId)
@@ -700,12 +647,24 @@ public class UserServiceImpl
 			}
 
 			BaseMessageGenerator generator = null;
-			if (UserMessageType.COMPONENT_WATCH.equals(userMessage.getUserMessageType())) {
-				generator = new ComponentWatchMessageGenerator(messageContext);
-			} else if (UserMessageType.USER_DATA_ALERT.equals(userMessage.getUserMessageType())) {
-				generator = new UserDataAlertMessageGenerator(messageContext);
-			} else if (UserMessageType.SYSTEM_ERROR_ALERT.equals(userMessage.getUserMessageType())) {
-				generator = new SystemErrorAlertMessageGenerator(messageContext);
+			if (null != userMessage.getUserMessageType()) {
+				switch (userMessage.getUserMessageType()) {
+					case UserMessageType.COMPONENT_WATCH:
+						generator = new ComponentWatchMessageGenerator(messageContext);
+						break;
+					case UserMessageType.USER_DATA_ALERT:
+						generator = new UserDataAlertMessageGenerator(messageContext);
+						break;
+					case UserMessageType.SYSTEM_ERROR_ALERT:
+						generator = new SystemErrorAlertMessageGenerator(messageContext);
+						break;
+					case UserMessageType.COMPONENT_SUBMISSION_ALERT:
+						generator = new ComponentSubmissionMessageGenerator(messageContext);
+						break;
+					case UserMessageType.APPROVAL_NOTIFICATION:
+						generator = new ApprovalMessageGenerator(messageContext);
+						break;
+				}
 			}
 
 			if (generator == null) {
@@ -757,7 +716,7 @@ public class UserServiceImpl
 		queryParams.put("activeStatusParam", Component.ACTIVE_STATUS);
 		List<Component> components = persistenceService.query(componentQuery, queryParams);
 		for (Component component : components) {
-			if (OpenStorefrontConstant.ComponentApprovalStatus.APPROVED.equals(component.getApprovalState())) {
+			if (ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
 				if (component.getApprovedDts() != null
 						&& component.getApprovedDts().after(lastRunDts)) {
 					recentChangeMessage.getComponentsAdded().add(component);
@@ -905,6 +864,40 @@ public class UserServiceImpl
 		result.setCount(persistenceService.countByExample(queryByExample));
 
 		return result;
+	}
+
+	@Override
+	public void syncUserProfilesWithUserManagement(ExternalUserManager userManager)
+	{
+		UserProfile userProfileExample = new UserProfile();
+		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
+
+		//page through users
+		long pageSize = 200;
+		long maxRecords = persistenceService.countByExample(userProfileExample);
+		for (long i = 0; i < maxRecords; i = i + pageSize) {
+			QueryByExample queryByExample = new QueryByExample(userProfileExample);
+			queryByExample.setFirstResult((int) i);
+			queryByExample.setMaxResults((int) pageSize);
+			queryByExample.setReturnNonProxied(false);
+
+			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, queryByExample);
+			List<String> usernames = new ArrayList<>();
+			for (UserProfile userProfile : userProfiles) {
+				usernames.add(userProfile.getUsername());
+			}
+			List<UserRecord> userRecords = userManager.findUsers(usernames);
+			Set<String> activeUserSet = new HashSet<>();
+			for (UserRecord userRecord : userRecords) {
+				activeUserSet.add(userRecord.getUsername());
+			}
+			for (UserProfile userProfile : userProfiles) {
+				if (activeUserSet.contains(userProfile.getUsername()) == false) {
+					log.log(Level.INFO, "User not found in external user management, Inacvtivating user. (Sync Service)");
+					deleteProfile(userProfile.getUsername());
+				}
+			}
+		}
 	}
 
 }

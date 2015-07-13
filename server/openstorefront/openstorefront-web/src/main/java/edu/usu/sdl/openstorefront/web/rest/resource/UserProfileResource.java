@@ -444,7 +444,15 @@ public class UserProfileResource
 			@PathParam("id")
 			@RequiredParam String trackingId)
 	{
-		service.getUserService().deactivateBaseEntity(UserTracking.class, trackingId);
+		UserTracking userTrackingExample = new UserTracking();
+		userTrackingExample.setCreateUser(userId);
+		userTrackingExample.setTrackingId(trackingId);
+
+		//make sure the that it only remove records for the user
+		UserTracking userTracking = service.getPersistenceService().queryOneByExample(UserTracking.class, userTrackingExample);
+		if (userTracking != null) {
+			service.getPersistenceService().setStatusOnEntity(UserTracking.class, trackingId, UserTracking.INACTIVE_STATUS);
+		}
 	}
 
 	@POST

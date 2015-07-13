@@ -34,11 +34,32 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q', 'componentId', 'si
   $scope.data.grabCompId;
   $scope.data.issue;
   $scope.data.jiraProject;
+  $scope.cron = {};
+  $scope.cron.componentCron = 'Using Global'; 
+  $scope.integration={};
+  
+  $scope.loadIntegration = function(){
+    $scope.$emit('$TRIGGERLOAD', 'ticketContLoad');
+    Business.configurationservice.getComponentIntegration($scope.componentId).then(function(result){
+      $scope.$emit('$TRIGGERUNLOAD', 'ticketContLoad');
+      if (result) {        
+       $scope.integration = result;
+       if (result.refreshRate) {
+        $scope.cron.componentCron = result.refreshRate;
+        $scope.cron.cronExpressionDescription = result.cronExpressionDescription;
+       } else {
+         $scope.cron.componentCron = 'Using Global';
+         $scope.cron.cronExpressionDescription = null;
+       }
+      }
+    });
+  };
+  $scope.loadIntegration();
 
   $scope.$watch('componentId', function(value){
     if (!$scope.componentId) {
     }
-  })
+  });
 
   $scope.$watch('data', function(value) {
     if (value.grabCompId && typeof value.grabCompId === 'object') {
@@ -49,9 +70,9 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q', 'componentId', 'si
             $scope.getTypeahead(result.name).then(function(results){
               $scope.component = _.find(results, {'code': $scope.componentId});
               $scope.getIntegrationConf($scope.componentId);
-            })
+            });
           }
-        })
+        });
       }
     }
     if (value.issue){
@@ -71,7 +92,28 @@ app.controller('SavecompconfCtrl',['$scope','business', '$q', 'componentId', 'si
 $scope.calcStatus = function(val)
 {
   return utils.calcStatus(val);
-}
+};
+
+$scope.cancelEdit = function(){
+  $scope.config = null;
+  $scope.integrationConfigId = null;
+  $scope.data.issue = null;
+};
+
+  $scope.saveCompRefresh = function(){
+    Business.configurationservice.saveCompRefresh($scope.componentId, $scope.cron.componentCron).then(function(result){
+      $scope.loadIntegration();
+    });
+    return false;
+  };
+  
+  $scope.removeCompRefresh = function(){
+    Business.configurationservice.removeCompRefresh($scope.componentId).then(function(result){
+       $scope.cron.componentCron = 'Using Global';
+       $scope.cron.cronExpressionDescription = null;
+    });
+    return false;
+  };
 
 $scope.getIntegrationConf = function(compId) {
   if (compId) {
@@ -95,7 +137,7 @@ $scope.getIntegrationConf = function(compId) {
       });
     }
   };
-  $scope.getIntegrationConf($scope.componentId)
+  $scope.getIntegrationConf($scope.componentId);
 
 
   $scope.getTypeahead = function(val){
@@ -128,8 +170,8 @@ $scope.getIntegrationConf = function(compId) {
         $scope.ticketContents = null;
         $scope.loading--;
       })
-    }, 1000);
-  }
+    }, 1500);
+  };
 
   $scope.$watch('loading', function(value){ //
     if (value > 0){
@@ -150,8 +192,7 @@ $scope.getIntegrationConf = function(compId) {
       }
       conf.issueNumber = $scope.data.issue;
       conf.projectType = $scope.data.jiraProject.projectType;
-      conf.issueType = $scope.data.jiraProject.issueType
-      conf.integrationType = $scope.integrationType? $scope.integrationType: 'JIRA';
+      conf.issueType = $scope.data.jiraProject.issueType;
       conf.integrationType = $scope.integrationType? $scope.integrationType: 'JIRA';
       // console.log('conf', conf);
 
@@ -159,18 +200,21 @@ $scope.getIntegrationConf = function(compId) {
         // console.log('conf result', result);
         // console.log('conf', conf);
         $scope.$emit('$TRIGGEREVENT', '$UPDATECONFFORID', $scope.componentId);
-        triggerAlert('The configuration was saved', 'saveIntegrationConf','.modal-dialog', 5000);
+        triggerAlert('The configuration was saved', 'saveIntegrationConf','body', 5000);
         $scope.data.jiraProject = null;
         $scope.data.issue = null;
         $scope.getIntegrationConf($scope.componentId);
         $scope.config = null;
       }, function(result){
-        triggerAlert('<i class="fa fa-warning"></i>&nbsp;There was an error saving the configuration!', 'saveIntegrationConf','.modal-dialog', 5000);
-        // console.log('Failed', result);
-        
+        if (result === 304) {
+          triggerAlert('<i class="fa fa-warning"></i>&nbsp;Issue number already exsists. <br> It needs to be unique per project.', 'saveIntegrationConf','body', 5000);
+        } else {
+          triggerAlert('<i class="fa fa-warning"></i>&nbsp;There was an error saving the configuration!', 'saveIntegrationConf','body', 5000);
+        }
+        // console.log('Failed', result);        
       });
     } else {
-      triggerAlert('<i class="fa fa-warning"></i>&nbsp;You must select a project and issue type!', 'newConfig', '.modal-dialog', 6000);
+      triggerAlert('<i class="fa fa-warning"></i>&nbsp;You must select a project and issue type!', 'newConfig', 'body', 6000);
     }
     return false;
   }

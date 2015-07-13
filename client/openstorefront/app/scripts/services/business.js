@@ -15,8 +15,8 @@
 */
 'use strict';
 
-app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'configurationservice', 'jobservice', 'systemservice', 'mediaservice', 'trackingservice', 'alertservice', 'reportservice',
-  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, configurationservice, jobservice, systemservice, mediaservice, trackingservice, alertservice, reportservice) { /*jshint unused: false*/
+app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'configurationservice', 'jobservice', 'systemservice', 'mediaservice', 'trackingservice', 'alertservice', 'reportservice', 'submissionservice',
+  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, configurationservice, jobservice, systemservice, mediaservice, trackingservice, alertservice, reportservice, submissionservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
   var minute = 60 * 1000;
@@ -78,6 +78,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.trackingservice = trackingservice;
   business.alertservice = alertservice;
   business.reportservice = reportservice;
+  business.submissionservice = submissionservice;
 
 
   business.updateCache = function(name, value) {
@@ -220,23 +221,26 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     if (!search) {
       deferred.reject('There was no search');
     } else {
-      $http({
-        'method': 'GET',
-        'url': 'api/v1/resource/components/typeahead',
-        'params': {'search': search}
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false' && isNotRequestError(data)) {
-          removeError();
-          deferred.resolve(data);
-        } else {
-          removeError();
-          triggerError(data);
-          deferred.reject('There was an error grabbing the typeahead');
-        }
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error grabbing the typeahead');
-      });
+      //check local cache
+      var cachedResults = localCache.get("CMPNames", 'object');
+      
+      var getNames = function(names, deferred) {
+        var found = _.filter(names, function(item){
+          return item.description.toLowerCase().indexOf(search.toLowerCase()) !== -1;
+        });
+        deferred.resolve(found);           
+      };
+      
+      if (!cachedResults) { 
+        business.componentservice.getComponentLookupList().then(function(data){
+          localCache.save("CMPNames", data);
+          cachedResults = data;
+          getNames(cachedResults, deferred);
+        });
+      }  else {
+        getNames(cachedResults, deferred);
+      }
+      
     }
     return deferred.promise;
   };

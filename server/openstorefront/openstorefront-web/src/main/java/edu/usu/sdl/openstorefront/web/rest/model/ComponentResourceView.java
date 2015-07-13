@@ -43,6 +43,7 @@ public class ComponentResourceView
 	private Date updateDts;
 	private String activeStatus;
 	private String originalLink;
+	private String componentId;
 
 	private static final String LOCAL_RESOURCE_URL = "Resource.action?LoadResource&resourceId=";
 	private static final String ACTUAL_RESOURCE_URL = "Resource.action?Redirect&resourceId=";
@@ -73,6 +74,7 @@ public class ComponentResourceView
 		componentResourceView.setUpdateDts(componentResource.getUpdateDts());
 		componentResourceView.setActiveStatus(componentResource.getActiveStatus());
 		componentResourceView.setOriginalFileName(componentResource.getOriginalName());
+		componentResourceView.setComponentId(componentResource.getComponentId());
 		String link = componentResource.getLink();
 		link = StringProcessor.stripHtml(link);
 		componentResourceView.setOriginalLink(link);
@@ -213,6 +215,16 @@ public class ComponentResourceView
 	public void setOriginalFileName(String originalFileName)
 	{
 		this.originalFileName = originalFileName;
+	}
+
+	public String getComponentId()
+	{
+		return componentId;
+	}
+
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
 	}
 
 }

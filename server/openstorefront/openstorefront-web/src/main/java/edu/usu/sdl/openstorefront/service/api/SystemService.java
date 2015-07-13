@@ -19,8 +19,11 @@ import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
 import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
+import edu.usu.sdl.openstorefront.service.transfermodel.HelpSectionAll;
 import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
+import edu.usu.sdl.openstorefront.storage.model.DBLogRecord;
 import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
+import edu.usu.sdl.openstorefront.storage.model.HelpSection;
 import edu.usu.sdl.openstorefront.storage.model.Highlight;
 import edu.usu.sdl.openstorefront.web.rest.model.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
@@ -144,7 +147,6 @@ public interface SystemService
 	 *
 	 * @param globalIntegrationModel
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveGlobalIntegrationConfig(GlobalIntegrationModel globalIntegrationModel);
 
 	/**
@@ -181,5 +183,42 @@ public interface SystemService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeAsyncTask(String taskId);
+
+	/**
+	 * Inserts a new log record.
+	 *
+	 * @param logRecord
+	 */
+	public void addLogRecord(DBLogRecord logRecord);
+
+	/**
+	 * This enforces max log records kept in the DB.
+	 */
+	public void cleanUpOldLogRecords();
+
+	/**
+	 * Warning: This will clear all database log records Keep in mind the
+	 * purpose of DB logs is for troubleshooting and it works in conjunction
+	 * with run-time log Level switching. Server log are the primary long term
+	 * login method.
+	 */
+	public void clearAllLogRecord();
+
+	/**
+	 * Loads a new set of help sections...it will remove the old and save the
+	 * new Full Refresh of the help data
+	 *
+	 * @param helpSections
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void loadNewHelpSections(List<HelpSection> helpSections);
+
+	/**
+	 * Pull all help and organize it
+	 *
+	 * @param includeAdmin
+	 * @return root help section and all children
+	 */
+	public HelpSectionAll getAllHelp(Boolean includeAdmin);
 
 }

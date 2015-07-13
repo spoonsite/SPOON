@@ -198,6 +198,12 @@ public class AttributeServiceImpl
 	public void performSaveAttributeType(AttributeType attributeType)
 	{
 		AttributeType existing = persistenceService.findById(AttributeType.class, attributeType.getAttributeType());
+
+		ValidationResult validationResult = attributeType.customValidation();
+		if (validationResult.valid() == false) {
+			throw new OpenStorefrontRuntimeException(validationResult.toString());
+		}
+
 		if (existing != null) {
 			//remove to inactivate
 			existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
@@ -209,6 +215,9 @@ public class AttributeServiceImpl
 			existing.setImportantFlg(attributeType.getImportantFlg());
 			existing.setRequiredFlg(attributeType.getRequiredFlg());
 			existing.setVisibleFlg(attributeType.getVisibleFlg());
+			existing.setDetailedDescription(attributeType.getDetailedDescription());
+			existing.setHideOnSubmission(attributeType.getHideOnSubmission());
+			existing.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
 			persistenceService.persist(existing);
 		} else {
 			attributeType.populateBaseCreateFields();
@@ -235,7 +244,7 @@ public class AttributeServiceImpl
 	{
 		getAttributeServicePrivate().performSaveAttributeCode(attributeCode);
 
-		if (!updateIndexes) {
+		if (updateIndexes) {
 			ComponentAttributePk pk = new ComponentAttributePk();
 			pk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
 			pk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
@@ -311,14 +320,18 @@ public class AttributeServiceImpl
 	public void saveArticle(AttributeCode attributeCode, String articleContents)
 	{
 		getAttributeServicePrivate().performSaveArticle(attributeCode, articleContents);
-		getSearchService().addIndex(ArticleView.toViewHtml(attributeCode, articleContents));
+		List<ArticleView> articleViews = new ArrayList<>();
+		articleViews.add(ArticleView.toViewHtml(attributeCode, articleContents));
+		getSearchService().indexArticles(articleViews);
 	}
 
 	@Override
 	public void saveArticle(ArticleView article)
 	{
 		getAttributeServicePrivate().performSaveArticle(article);
-		getSearchService().addIndex(article);
+		List<ArticleView> articleViews = new ArrayList<>();
+		articleViews.add(article);
+		getSearchService().indexArticles(articleViews);
 	}
 
 	@Override
@@ -566,6 +579,7 @@ public class AttributeServiceImpl
 		attributeMap.keySet().stream().forEach(attributeType -> {
 
 			try {
+
 				ValidationModel validationModel = new ValidationModel(attributeType);
 				validationModel.setConsumeFieldsOnly(true);
 				ValidationResult validationResult = ValidationUtil.validate(validationModel);
@@ -580,6 +594,9 @@ public class AttributeServiceImpl
 						existing.setImportantFlg(attributeType.getImportantFlg());
 						existing.setRequiredFlg(attributeType.getRequiredFlg());
 						existing.setVisibleFlg(attributeType.getVisibleFlg());
+						existing.setDetailedDescription(attributeType.getDetailedDescription());
+						existing.setHideOnSubmission(attributeType.getHideOnSubmission());
+						existing.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
 						existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
 						existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
@@ -1157,7 +1174,9 @@ public class AttributeServiceImpl
 		AttributeTypeWrapper result = new AttributeTypeWrapper();
 
 		AttributeType attributeExample = new AttributeType();
-		attributeExample.setActiveStatus(filter.getStatus());
+		if (filter.getAll() == null || filter.getAll() == false) {
+			attributeExample.setActiveStatus(filter.getStatus());
+		}
 
 		QueryByExample queryByExample = new QueryByExample(attributeExample);
 
@@ -1179,15 +1198,6 @@ public class AttributeServiceImpl
 		queryByExample.setQueryType(QueryType.COUNT);
 		result.setTotalNumber(persistenceService.countByExample(queryByExample));
 		return result;
-	}
-
-	private String reverseSortOrder(String order)
-	{
-		if (order.equals("ASC")) {
-			return "DESC";
-		} else {
-			return "ASC";
-		}
 	}
 
 	@Override

@@ -153,28 +153,6 @@ public class OpenStorefrontConstant
 
 	}
 
-	public static enum ComponentApprovalStatus
-	{
-
-		A("Approved"),
-		P("Pending");
-
-		public static final String APPROVED = "A";
-		public static final String PENDING = "P";
-
-		private String description;
-
-		private ComponentApprovalStatus(String description)
-		{
-			this.description = description;
-		}
-
-		public String getDescription()
-		{
-			return description;
-		}
-
-	}
 
 	/**
 	 * This just return the localhost information (It may not represent the
@@ -193,5 +171,4 @@ public class OpenStorefrontConstant
 		}
 		return nodeName;
 	}
-
 }

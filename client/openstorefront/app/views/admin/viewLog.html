@@ -1,0 +1,76 @@
+<!--
+Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<style>
+	.highlight-FINE {
+		background: lightgreen;
+	}
+	.highlight-WARNING {
+		background: #ffcc66;
+	}
+	.highlight-SEVERE {
+		background: lightcoral;
+	}	
+</style>
+
+<div>  
+	<h2>&nbsp;&nbsp;<i class="fa fa-edit"></i> &nbsp;View Log Records
+		<button type="button" title="Close" class="btn btn-default pull-right" ng-click="cancel()"><i class="fa fa-close"></i></button>
+	</h2>
+	<hr>
+	<div style="padding-left: 10px; padding-right: 10px;">
+		This allows for searching the database logs records. The primary purpose is for troubleshooting.  Some log messages (Eg. Security Filter) may have been filtered to reduce noise these can be viewed from server logs.
+		<loader trigger="logLoader"></loader>
+		<div >	
+			<button type="button" title="Deletes all DB log records. This doen't effect server logs." class="btn btn-danger pull-right" ng-click="clearAll()"><i class="fa fa-trash"></i>Clear All Records</button>
+			<filterquery data="logRecords" url="api/v1/service/application/logrecords" sort-by="eventDts" type="default" set-features="pagination.features" control="pagination.control" show-export="false" allow-all-option="false"></filterquery>			
+		</div>
+
+		<table class="table table-striped table-bordered admin-table">
+			<tr>
+				<th><a href="" ng-click="setPredicate('eventDts', 'logs');">Events Dts<span ng-show="predicate['logs'] == 'eventDts'"><i ng-show="!reverse['logs']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['logs']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+				<th><a href="" ng-click="setPredicate('level', 'logs');">Level<span ng-show="predicate['logs'] == 'level'"><i ng-show="!reverse['logs']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['logs']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+				<th><a href="" ng-click="setPredicate('loggerName', 'logs');">Logger Name<span ng-show="predicate['logs'] == 'loggerName'"><i ng-show="!reverse['logs']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['logs']" class="fa fa-sort-alpha-desc"></i></span></a></th>								
+				<th><a href="" ng-click="setPredicate('message', 'logs');">Message<span ng-show="predicate['logs'] == 'message'"><i ng-show="!reverse['logs']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['logs']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+				<th>Action</th>
+
+			</tr>
+			<tr ng-repeat-start="record in logRecords.logRecords" >
+				<td>{{record.eventDts| date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
+				<td class="highlight-{{record.level}}">{{record.level}}</td>
+				<td>{{record.loggerName}}</td>								
+				<td>{{record.message | limitTo: 100}}</td>						
+				<td style="padding:0px 3px !important;">
+					&nbsp;<button class="btn btn-default btn-sm" ng-click="showDetails(record)">Details</button>					
+				</td>
+			</tr>
+			<tr ng-show="record.details" ng-repeat-end>
+				<td colspan="5">
+					<p><b>Thread Id:</b> {{record.threadId}} </p>
+					<p><b>Source Class:</b> {{record.sourceClass}} </p>
+					<p><b>Source Method:</b> {{record.sourceMethod}} </p>
+					<div><b>Message:</b><br>
+						{{record.message}} 						
+					</div>
+					<br>
+					<div><b>Stack Track:</b><br>
+						<p ng-bind-html="getLogContent(record)"></p>
+					</div>
+				</td>				
+			</tr>
+		</table>
+
+	</div>
+</div>

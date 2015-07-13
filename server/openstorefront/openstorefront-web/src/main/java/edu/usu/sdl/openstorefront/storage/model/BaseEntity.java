@@ -15,17 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
-import edu.usu.sdl.openstorefront.doc.ValidValueType;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.util.TimeUtil;
 import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -36,32 +28,8 @@ public abstract class BaseEntity<T>
 		implements Serializable, Comparable<T>
 {
 
-	public static final String ACTIVE_STATUS = "A";
-	public static final String INACTIVE_STATUS = "I";
-	public static final String PENDING_STATUS = "P";
-
-	@NotNull
-	@ValidValueType({"A", "I", "P"})
-	private String activeStatus;
-
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
-	private String createUser;
-
-	@NotNull
-	private Date createDts;
-
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
-	private String updateUser;
-
-	@NotNull
-	private Date updateDts;
-
 	@Version
 	private String storageVersion;
-
-	private Boolean adminModified;
 
 	public BaseEntity()
 	{
@@ -71,90 +39,15 @@ public abstract class BaseEntity<T>
 	public int compareTo(T o)
 	{
 		if (o != null) {
-			if (o instanceof BaseEntity) {
-				return ReflectionUtil.compareObjects(getActiveStatus(), ((BaseEntity) o).getActiveStatus());
-			} else {
-				return -1;
-			}
+			return 1;
 		} else {
 			return -1;
 		}
 	}
 
-	public void populateBaseUpdateFields()
+	public void applyDefaultValues()
 	{
-		setUpdateDts(TimeUtil.currentDate());
-		if (StringUtils.isBlank(getUpdateUser())) {
-			setUpdateUser(SecurityUtil.getCurrentUserName());
-		}
-		setAdminModified(SecurityUtil.isAdminUser());
-	}
-
-	public void populateBaseCreateFields()
-	{
-		if (StringUtils.isBlank(getActiveStatus())) {
-			setActiveStatus(ACTIVE_STATUS);
-		}
-		setCreateDts(TimeUtil.currentDate());
-		setUpdateDts(TimeUtil.currentDate());
-
-		if (StringUtils.isBlank(getCreateUser())) {
-			setCreateUser(SecurityUtil.getCurrentUserName());
-		}
-		if (StringUtils.isBlank(getUpdateUser())) {
-			setUpdateUser(SecurityUtil.getCurrentUserName());
-		}
-		setAdminModified(SecurityUtil.isAdminUser());
-	}
-
-	public String getActiveStatus()
-	{
-		return activeStatus;
-	}
-
-	public void setActiveStatus(String activeStatus)
-	{
-		this.activeStatus = activeStatus;
-	}
-
-	public String getCreateUser()
-	{
-		return createUser;
-	}
-
-	public void setCreateUser(String createUser)
-	{
-		this.createUser = createUser;
-	}
-
-	public Date getCreateDts()
-	{
-		return createDts;
-	}
-
-	public void setCreateDts(Date createDts)
-	{
-		this.createDts = createDts;
-	}
-
-	public String getUpdateUser()
-	{
-		return updateUser;
-	}
-
-	public void setUpdateUser(String updateUser)
-	{
-		this.updateUser = updateUser;
-	}
-
-	public Date getUpdateDts()
-	{
-		return updateDts;
-	}
-
-	public void setUpdateDts(Date updateDts)
-	{
-		this.updateDts = updateDts;
+		ReflectionUtil.setDefaultsOnFields(this);
 	}
 
 	public String getStorageVersion()
@@ -165,16 +58,6 @@ public abstract class BaseEntity<T>
 	public void setStorageVersion(String storageVersion)
 	{
 		this.storageVersion = storageVersion;
-	}
-
-	public Boolean getAdminModified()
-	{
-		return adminModified;
-	}
-
-	public void setAdminModified(Boolean adminModified)
-	{
-		this.adminModified = adminModified;
 	}
 
 }

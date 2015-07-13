@@ -1,0 +1,126 @@
+.carousel {
+  border:1px solid dimgray;
+  background: lightgray;
+  position: absolute;
+}
+.carousel .itemData p{
+  background: black;
+  color: white;
+  margin: 0;
+  padding: 5px;
+  position: absolute;
+  bottom: 0;
+  opacity: .6;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.cycle-prev, .cycle-next{
+  font-size: 20px;
+  height:25px;
+  top: 70px;
+  margin-left: 10px;
+  width: 15px;
+  overflow: hidden;
+  position: absolute;
+  display: block;
+}
+.cycle-prev.full, .cycle-next.full{
+  text-indent: 0px;
+  font-size: 40px;
+  color: white;
+}
+.cycle-next.full{
+  right: 0px;
+  background: none;
+  position: absolute;
+  top: 50%;
+  display: inline-block;
+  /* By using an em scale, the arrows will size with the font */
+  width: 30px;
+  height: 50px;
+  margin: 0px;
+}
+.cycle-prev.full{
+  background: none;
+  position: absolute;
+  top: 50%;
+  display: inline-block;
+  height: 50px;
+  width: 30px;
+  margin: 0px;
+  /* By using an em scale, the arrows will size with the font */ 
+}
+.cycle-prev {
+  background-position: 0 0;
+  left: 0px
+}
+.cycle-prev:hover {
+  left:  1px
+}     
+.cycle-next{
+  right: 10px;
+  background-position: -18px 0;
+}
+.cycle-next:hover {
+  right: 11px
+}
+.cycle-next.full:hover {
+  right: 1px
+}       
+
+.carousel .item{
+  border: 1px solid transparent;
+}
+
+.carousel .item.centeredItem{
+  vertical-align: middle !important;
+  top: 50% !important;
+  transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+}
+
+.verticleCenter {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+}
+
+.cycle-slide-active{
+  border:1px solid black !important;
+}
+
+.cycle-prev.disabled, .cycle-next.disabled {
+  visibility: hidden;
+}
+
+
+.noModalBackgrounds .modal-content{
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.noModalBackgrounds.modal-backdrop{
+  opacity:0.8;
+}
+
+.noModalBackgrounds .carousel{
+  background:none;
+  border:none;
+}
+
+.noModalBackgrounds .carousel .item{
+  background: rgba(255, 255, 255, .3);
+  color: white !important;
+}

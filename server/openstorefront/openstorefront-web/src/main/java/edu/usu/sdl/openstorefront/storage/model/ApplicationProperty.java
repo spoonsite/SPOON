@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("This is used for system managed properties")
 public class ApplicationProperty
-		extends BaseEntity
+		extends StandardEntity
 {
 
 	@PK
@@ -46,6 +46,7 @@ public class ApplicationProperty
 	public static final String COMPONENT_IMPORTER_LAST_SYNC_DTS = "COMPONENTSYNCDTS";
 	public static final String GLOBAL_INTEGRATION_REFRESH = "GLOBALINTREF";
 	public static final String RECENT_CHANGE_EMAIL_LAST_DTS = "REMAILLASTDTS";
+	public static final String HELP_SYNC = "HELPSYNC";
 
 	public ApplicationProperty()
 	{

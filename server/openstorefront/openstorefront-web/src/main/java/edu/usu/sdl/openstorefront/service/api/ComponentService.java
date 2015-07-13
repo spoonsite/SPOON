@@ -41,6 +41,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingResult;
@@ -179,6 +180,7 @@ public interface ComponentService
 	public List<ComponentReviewView> getReviewByUser(String username);
 
 	/**
+	 * Pulls from cache
 	 *
 	 * @param componentId
 	 * @return
@@ -342,6 +344,23 @@ public interface ComponentService
 	public ComponentAll saveFullComponent(ComponentAll componentAll);
 
 	/**
+	 * @see saveFullComponent(ComponentAll componentAll);
+	 * @param componentAll
+	 * @param options (save options)
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public ComponentAll saveFullComponent(ComponentAll componentAll, ComponentUploadOption options);
+
+	/**
+	 * Submits a component for Approval
+	 *
+	 * @param componentId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void submitComponentSubmission(String componentId);
+
+	/**
 	 * This will handle syncing all the component of the list.
 	 *
 	 * @param components
@@ -478,20 +497,30 @@ public interface ComponentService
 	public void bulkComponentAttributeChange(BulkComponentAttributeChange bulkComponentAttributeChange);
 
 	/**
-	 * This allows for
+	 * Get components according to filter
 	 *
 	 * @param filter
 	 * @param componentId
 	 * @return
 	 */
-	public ComponentAdminWrapper getFilteredComponents(FilterQueryParams filter, String componentId);
+	public ComponentAdminWrapper getFilteredComponents(ComponentFilterParams filter, String componentId);
 
 	/**
-	 * Used for getting the name
+	 * Component name search Used for getting the name through a typeahead
 	 *
 	 * @param search
 	 * @return
 	 */
 	public Set<LookupModel> getTypeahead(String search);
+
+	/**
+	 * This checks the component approval state and handle alerting about
+	 * pending to not submitted state.
+	 *
+	 * @param componentId
+	 * @param newApprovalStatus
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void checkComponentCancelStatus(String componentId, String newApprovalStatus);
 
 }

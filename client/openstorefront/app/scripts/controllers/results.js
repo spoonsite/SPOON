@@ -153,7 +153,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
           }
         } else if (!article) {
           if (item.listingType !== 'Article')
-          count++;
+            count++;
         }
       })
       return count;
@@ -281,12 +281,12 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       });
       $scope.setupData();
       setupFilters();
+      adjustFilters();
       // var end = new Date().getTime();
       // var time = end - start;
       // console.log('Total Execution time ****: ' + time);
       $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
       $scope.initializeData(key);
-      adjustFilters();
     }, function(result){
       if (result && result.data && result.data.length > 0)
       {
@@ -491,7 +491,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         }
       }
     }
-    $scope.resetFilters = JSON.parse(JSON.stringify($scope.filters));
+    Business.getFilters(false, false).then(function(result) {
+      $scope.resetFilters = JSON.parse(JSON.stringify(result));
+    })
   };
 
   /***************************************************************
@@ -535,8 +537,14 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       }
       $timeout(function(){
         $('.page1').focus();
-        $scope.scrollTo('componentScroll'+article.attributes[0].type.replace(/\W/g, '')+article.attributes[0].code.replace(/\W/g, ''));
-      }, 500);
+        // $scope.componentList.pauseLimit();
+        $scope.componentList.dotdotdotFinished().then(function(){
+          $scope.scrollTo('componentScroll'+article.attributes[0].type.replace(/\W/g, '')+article.attributes[0].code.replace(/\W/g, ''));
+        });
+        // $timeout(function(){
+          // $scope.componentList.resumeLimit();
+        // })
+    }, 0);
     } else {
       $scope.isArticle = false;
 
@@ -555,7 +563,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
           $scope.sendPageView(result.name);
           $scope.details.details = result;
-
+          $scope.$emit('$TRIGGEREVENT', '$RESETCAROUSEL')
           // Code here will be linted with JSHint.
           /* jshint ignore:start */
           // Code here will be linted with ignored by JSHint.
@@ -588,8 +596,14 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.showDetails = true;
         $timeout(function(){
           $('.page1').focus();
-          $scope.scrollTo('componentScroll'+$scope.details.details.componentId.replace(/\W/g, ''));
-        }, 500);
+          // $scope.componentList.pauseLimit();
+          $scope.componentList.dotdotdotFinished().then(function(){
+            $scope.scrollTo('componentScroll'+$scope.details.details.componentId.replace(/\W/g, ''));
+          });
+          // $timeout(function(){
+            // $scope.componentList.resumeLimit();
+          // })
+      }, 0);
       });
     } //
   }; //
@@ -654,27 +668,31 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function applies the filters that have been given to us to filter the
   * data with
   ***************************************************************/
+  //componentList will be overridden by the component list directive
+  //it is the 'handler'
+  $scope.componentList = {};
+  $scope.componentList.resetLimit = function(){};
   $scope.applyFilters = function() {
     if ($scope.filteredTotal) {
+
       var results =
       // We must use recursive filtering or we will get incorrect results
       // the order DOES matter here.
       $filter('orderBy')
-        //
-        ($filter('ratingFilter')
-          ($filter('tagFilter')
-            ($filter('componentFilter')
-              ($filter('filter')
-              //filter by the string
-              ($scope.total, $scope.query),
-            // filter the data by the filters
-            $scope.filters),
-          // filter the data by the tags
-          $scope.tagsFilter),
-        // filter the data by the ratings
-        $scope.ratingsFilter),
-      // Then order-by the orderProp
-      $scope.orderProp);
+      ($filter('ratingFilter')
+        ($filter('tagFilter')
+          ($filter('componentFilter')
+            ($filter('filter')
+                                        //filter by the string
+                                        ($scope.total, $scope.query),
+                                                // filter the data by the filters
+                                                $scope.filters),
+                                        // filter the data by the tags
+                                        $scope.tagsFilter),
+                                // filter the data by the ratings
+                                $scope.ratingsFilter),
+                        // Then order-by the orderProp
+                        $scope.orderProp);
 
       // make sure we reset the data and then copy over the results  
       $scope.filteredTotal = [''];
@@ -695,9 +713,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.showMessage = true;
       }
       // after a slight wait, reapply the popovers for the results ratings.
-      $timeout(function() {
-        setupPopovers();
+      $timeout(function () {
+        setupPopovers();                    
+        $scope.componentList.resetLimit('.page1');
       }, 300);
+
     }
   };
 
@@ -705,6 +725,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   //////////////////////////////////////////////////////////////////////////////
   // Here we put our Event Watchers
   //////////////////////////////////////////////////////////////////////////////
+
 
   /***************************************************************
   * Event for callSearch caught here. This is triggered by the nav

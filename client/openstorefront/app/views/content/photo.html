@@ -1,0 +1,39 @@
+<div ng-if="fx === 'center'" style="position: fixed; top: 10px; left: 50%; z-index: 10000;">
+	<i class="fa fa-close imitateLink" style="color: black; background-color: white; font-size: 38px;  opacity: .7; right: -165px; z-index: 20000; top: 4px; height: 38px; line-height: 40px; width: 40px; border-radius: 20px; text-align: center;" title="Close"  ng-click="doCallback()"></i>	
+ </div>
+<div id="wrapper" ng-style="{height: getWinHeight() + 'px'}">
+  <div ng-if="fx === 'carousel'" class="carousel" style="margin: 0px 30px;">
+    <div class="item imitateLink" ng-repeat="file in files" style="vertical-align: middle !important;" ng-click="doCallback($index, {file: file, files: files})">
+      <div class="itemData" style="margin: 5px; position:relative;" >
+        <img ng-if="isImage(file)" ng-src="{{file.link}}" style="height: 150px; width:auto;" alt="{{file.fileName}}"/>
+        <div style="height:150px; width: 150px; text-align: center;" ng-if="!isImage(file)"><i style="font-size: 150px;" class="fa" ng-class="getMimeTypeClass(file.mimeType)"></i></div>
+        <!-- <videogular> <vg-media vg-src="['src':'{{file.link}}','type':'{{file.mimeType}}']" vg-preload="'none'" vg-native-controls="true"></vg-media></videogular> -->
+        <p>{{file.originalFileName}}</p>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  <div ng-if="fx === 'center'" class="carousel" style="margin: 0px 30px; width: calc(100% - 60px); height: 100%;">
+    <div class="item centeredItem" ng-repeat="file in files" style="width: 100%; height: 100%;">
+      <div class="itemData" style="margin: 5px; position:relative; height: calc(100% - 10px); text-align: center;" >
+        <img class="verticleCenter" ng-if="isImage(file)" ng-src="{{file.link}}" style="width: auto; height : auto; max-height: 100%; max-width: 100%;" alt="{{file.fileName}}"/>
+        <videogular class="verticleCenter" ng-style="{'max-height': getWinHeight() + 'px'}" ng-if="isVideo(file)"> <vg-media vg-src="file.srcs" vg-preload="'none'" vg-native-controls="true"></vg-media></videogular>
+        <audio class="verticleCenter" ng-style="{'max-height': getWinHeight() + 'px', 'vertical-align': 'middle'}"  ng-if="isAudio(file)" controls><source ng-src="{{file.link}}" type="audio/ogg"><source ng-src="{{file.link}}" type="audio/mpeg"></audio>
+        <div class="verticleCenter" style="height:150px; width: 150px; text-align: center; display:inline-block;" ng-if="isOther(file)"><i style="font-size: 150px;" class="fa" ng-class="getMimeTypeClass(file.mimeType)"></i></div>
+        <p ng-if="isImage(file) || isOther(file)">{{file.originalFileName}}</p>
+      </div>
+      <div class="col-sm-12" style="text-align:center">
+        <p ng-if="file.caption">{{file.caption}}</p>
+        <span style="background: dimgray; padding: 4px; position: relative; top: -3px;">
+          <a style="color: white; font-weight: bold" href="{{file.link}}" target="_blank" download="{{file.fileName}}"><i class="fa fa-download"></i>&nbsp;Download link</a>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+  
+  <a href="javascript:void(0);" id="prev"  class="cycle-prev imitateLink" ng-style="fullStylePrev" ng-class="{'full':fullClass}"><i class="fa fa-chevron-left"></i></a>
+  <a  href="javascript:void(0);" id="next" class="cycle-next imitateLink" ng-style="fullStyleNext" ng-class="{'full':fullClass}"><i class="fa fa-chevron-right"></i></a>
+
+  
+</div>

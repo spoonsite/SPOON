@@ -11,6 +11,10 @@
     <div class="container component-title">
       <div class="col-sm-12">
         <div style="display:inline-block; width: 100%">
+          <div class="input-group" ng-if="details.details.approvalState !== 'A'" style="margin-top: 10px;">
+            <span class="input-group-addon"><i class="fa fa-warning" style="color:#ff811a"></i></span>
+            <span class="form-control">This component has not yet been approved for the site and is <span ng-if="details.details.approvalState === 'P'">still under review</span><span ng-if="details.details.approvalState === 'N'">still in the process of being submitted</span>.</span>
+          </div>
           <h1>
             <div style="font-weight: 100; margin: 0px; padding: 0px; display: inline-block; float: left; margin-top: 10px;">{{details.details.name}}
               <span ng-if="details.details.organization" style="font-weight: bold; margin-top: -20px; padding-left:0px; display:block;">
@@ -60,7 +64,7 @@
               <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
                 <li class="tag-item ng-scope" ng-repeat="tag in details.details.tags" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px 'Helvetica Neue',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
                   <span ng-bind="tag.text"></span>
-                  <a ng-if="(user && tag.createUser && user.info.username === tag.createUser) || !tag.createUser || user.info.admin" class="remove-button" ng-click="removeTag(details.details.componentId, tag, details.details.tags)" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">×</a>
+                  <a ng-if="(user && tag.createUser && user.info.username === tag.createUser) || !tag.createUser || user.info.admin" class="remove-button" ng-click="removeTag(details.details.componentId, tag, details.details.tags)" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
                 </li>
               </ul>
             </div>
@@ -70,6 +74,8 @@
       </div>
     </div>
     <!-- END TITLE SECTION -->
+
+
 
 
     <!-- Tabbing for Results Page -->

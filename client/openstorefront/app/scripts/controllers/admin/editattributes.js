@@ -26,6 +26,7 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   $scope.pagination = {};
   $scope.pagination.control = {};
   $scope.pagination.features = {'dates': false, 'max': false};
+  $scope.selectedTypes = [];
 
   $scope.getFilters = function (override, all) {
     $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
@@ -58,6 +59,13 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
   $scope.pagination.control.setPredicate = function(val){
     $scope.setPredicate(val, false);
   };
+
+  if ($scope.pagination.control) {
+    $scope.pagination.control.onRefresh = function(){
+      $scope.selectedTypes = [];
+      $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+    }
+  }
 
   $scope.editLanding = function(type, code) {
     $scope.$parent.editLanding(type, code);
@@ -162,47 +170,70 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     $('[data-toggle=\'tooltip\']').tooltip();
   }, 300);
   
-  $scope.export = function(){
-    window.location.href = "api/v1/resource/attributes/export"; 
-  };
-
-  $scope.confirmAttributeUpload = function(isAttributeUploader){
-    var cont = false;
-    if (isAttributeUploader){
-      cont = confirm('Please verify that this file is the allattributes.csv file with a header similiar to this: (order and letter case matters)\nAttribute Type, Description, Architecture Flag, Visible Flag, Important Flag, Required Flag, Code, Code Label, Code Description, External Link, Group, Sort Order, Architecture Code, Badge Url');
-      if (cont){
-        $scope.attributeUploader.uploadAll();
-        document.getElementById('attributeUploadFile').value = null;
-      }
-    } else {
-      cont = confirm('Please verify that this file is the svcv-4_export.csv file with a header similiar to this: (order and letter case matters)\nTagValue_UID, TagValue_Number, TagValue_Service Name, TagNotes_Service Definition, TagNotes_Service Description, TagValue_JCA Alignment, TagNotes_JCSFL Alignment, TagValue_JARM/ESL Alignment, TagNotes_Comments');
-      if (cont){
-        $scope.svcv4uploader.uploadAll(); 
-        document.getElementById('svcv4UploadFile').value = null;
-      }
+  $scope.selectType = function(attributeType){
+    if (attributeType.selected) {
+      attributeType.selected = !attributeType.selected;
+      if (attributeType.selected === false) {
+       $scope.selectedTypes = _.reject($scope.selectedTypes, function(type) { return type === attributeType.attributeType; });
+     } else {
+      $scope.selectedTypes.push(attributeType.attributeType);
     }
-  };
+  } else {
+    attributeType.selected = true;
+    $scope.selectedTypes.push(attributeType.attributeType);
+  }
+};
 
-  $scope.attributeUploader = new FileUploader({
-    url: 'Upload.action?UploadAttributes',
-    alias: 'uploadFile',
-    queueLimit: 1, 
-    removeAfterUpload: true,
-    filters: [{
-      name: 'csv',    
-      fn: function(item) {
-        return true;
-      }
-    }],
-    onBeforeUploadItem: function(item) {
-      $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-    },
-    onSuccessItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
+$scope.selectAllTypes = function(){
+  $scope.selectedTypes = [];
+  _.forEach($scope.data.allTypes.data, function(attributeType){                
+        attributeType.selected = !$scope.selectAllTypes.flag; //click happens before state change
+        if (attributeType.selected) {
+          $scope.selectedTypes.push(attributeType.attributeType);
+        }
+      });
+};  
+
+$scope.export = function(){
+   // window.location.href = "api/v1/resource/attributes/export"; 
+   document.exportForm.submit();
+ };
+
+ $scope.confirmAttributeUpload = function(isAttributeUploader){
+  var cont = false;
+  if (isAttributeUploader){
+    cont = confirm('Please verify that this file is an attributes json file.');
+    if (cont){
+      $scope.attributeUploader.uploadAll();
+    }
+  } else {
+    cont = confirm('Please verify that this file is the svcv-4_export.csv file with a header similiar to this: (order and letter case matters)\nTagValue_UID, TagValue_Number, TagValue_Service Name, TagNotes_Service Definition, TagNotes_Service Description, TagValue_JCA Alignment, TagNotes_JCSFL Alignment, TagValue_JARM/ESL Alignment, TagNotes_Comments');
+    if (cont){
+      $scope.svcv4uploader.uploadAll(); 
+    }
+  }
+};
+
+$scope.attributeUploader = new FileUploader({
+  url: 'Upload.action?UploadAttributes',
+  alias: 'uploadFile',
+  queueLimit: 1, 
+  removeAfterUpload: true,
+  filters: [{
+    name: 'csv',    
+    fn: function(item) {
+      return true;
+    }
+  }],
+  onBeforeUploadItem: function(item) {
+    $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
+  },
+  onSuccessItem: function (item, response, status, headers) {
+    $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
 
       //check response for a fail ticket or a error model
       if (response.success) {
-        triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing.', 'importAttributes', 'body', 3000);          
+        triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing.', 'importAttributes', 'body', 3000);                 
         $scope.flags.showUpload = false;
         $scope.getFilters(true);
       } else {
@@ -212,16 +243,20 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
           if (uploadError){
             errorMessage = uploadError;
           }          
-          triggerAlert('Unable to import attributes. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);
+          triggerAlert('Unable to import attributes. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);          
         } else {
-          triggerAlert('Unable to import attributes. ', 'importAttributes', 'body', 6000);
+          triggerAlert('Unable to import attributes. ', 'importAttributes', 'body', 6000);          
         }
       }
     },
     onErrorItem: function (item, response, status, headers) {
       $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-      triggerAlert('Unable to import attributes. Failure communicating with server. ', 'importAttributes', 'body', 6000);    
-    }      
+      triggerAlert('Unable to import attributes. Failure communicating with server. ', 'importAttributes', 'body', 6000);
+    },
+    onCompleteAll: function(){        
+     document.getElementById('attributeUploadFile').value = null;
+     $scope.attributeUploader.queue = [];      
+    }       
   });  
 
 $scope.svcv4uploader = new FileUploader({
@@ -245,7 +280,7 @@ $scope.svcv4uploader = new FileUploader({
       if (response.success) {
         triggerAlert('Uploaded successfully.  Watch Job-Tasks for completion of processing', 'importAttributes', 'body', 3000);          
         $scope.flags.showUpload = false;
-        $scope.getFilters(true);
+        $scope.getFilters(true);        
       } else {
         if (response.errors) {
           var uploadError = response.errors.uploadFile;  
@@ -253,16 +288,20 @@ $scope.svcv4uploader = new FileUploader({
           if (uploadError){
             errorMessage = uploadError;
           }          
-          triggerAlert('Unable to import svcv4 data. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);
+          triggerAlert('Unable to import svcv4 data. Message: <br> ' + errorMessage, 'importAttributes', 'body', 6000);          
         } else {
-          triggerAlert('Unable to import  svcv4 data. ', 'importAttributes', 'body', 6000);
+          triggerAlert('Unable to import  svcv4 data. ', 'importAttributes', 'body', 6000);          
         }
       }
     },
     onErrorItem: function (item, response, status, headers) {
       $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-      triggerAlert('Unable to import  svcv4 data. Failure communicating with server. ', 'importAttributes', 'body', 6000);    
-    }    
+      triggerAlert('Unable to import  svcv4 data. Failure communicating with server. ', 'importAttributes', 'body', 6000);        
+    },
+    onCompleteAll: function(){        
+     document.getElementById('svcv4UploadFile').value = null;
+     $scope.svcv4uploader.queue = [];      
+    }     
   });  
 
 var stickThatTable = function(){

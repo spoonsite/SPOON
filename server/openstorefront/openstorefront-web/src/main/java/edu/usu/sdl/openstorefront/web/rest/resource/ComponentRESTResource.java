@@ -21,16 +21,17 @@ import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.doc.RequireAdmin;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
 import edu.usu.sdl.openstorefront.service.query.QueryType;
 import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
 import edu.usu.sdl.openstorefront.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.sort.SortUtil;
+import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
@@ -52,8 +53,10 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
 import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
@@ -63,12 +66,14 @@ import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationSectionView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependencyView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMediaView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadataView;
@@ -85,9 +90,16 @@ import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
 import edu.usu.sdl.openstorefront.web.rest.model.TagView;
 import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -104,11 +116,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import jersey.repackaged.com.google.common.collect.Lists;
+import net.java.truevfs.access.TFile;
+import net.java.truevfs.access.TFileWriter;
+import net.java.truevfs.access.TPath;
+import net.java.truevfs.access.TVFS;
+import net.java.truevfs.kernel.spec.FsSyncException;
 
 /**
  * ComponentRESTResource Resource
@@ -146,7 +165,7 @@ public class ComponentRESTResource
 
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		componentExample.setApprovalState(OpenStorefrontConstant.ComponentApprovalStatus.APPROVED);
+		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
 		components.forEach(component -> {
 			LookupModel lookupModel = new LookupModel();
@@ -162,6 +181,25 @@ public class ComponentRESTResource
 	}
 
 	@GET
+	@APIDescription("Get all resources for ")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentResourceView.class)
+	@Path("/resources")
+	public Response getComponentAllResources()
+	{
+		ComponentResource componentResourceExample = new ComponentResource();
+		componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
+		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
+
+		List<ComponentResourceView> views = ComponentResourceView.toViewList(componentResources);
+
+		GenericEntity<List<ComponentResourceView>> entity = new GenericEntity<List<ComponentResourceView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
 	@APIDescription("Get valid component approval statuses")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -169,14 +207,13 @@ public class ComponentRESTResource
 	public List<LookupModel> getComponentApprovalStatus()
 	{
 		List<LookupModel> lookupModels = new ArrayList<>();
-
-		for (OpenStorefrontConstant.ComponentApprovalStatus approvalStatus : OpenStorefrontConstant.ComponentApprovalStatus.values()) {
+		List<ApprovalStatus> lookups = service.getLookupService().findLookup(ApprovalStatus.class, ApprovalStatus.ACTIVE_STATUS);
+		for (LookupEntity lookupEntity : lookups) {
 			LookupModel lookupModel = new LookupModel();
-			lookupModel.setCode(approvalStatus.name());
-			lookupModel.setDescription(approvalStatus.getDescription());
+			lookupModel.setCode(lookupEntity.getCode());
+			lookupModel.setDescription(lookupEntity.getDescription());
 			lookupModels.add(lookupModel);
 		}
-
 		return lookupModels;
 	}
 
@@ -186,7 +223,7 @@ public class ComponentRESTResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Component.class)
 	@Path("/filterable")
-	public Response getComponentList(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getComponentList(@BeanParam ComponentFilterParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
@@ -248,7 +285,25 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Gets a component <br>(Note: this only the top level component object only)")
+	@RequireAdmin
+	@APIDescription("Gets a component  admin view")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentAdminView.class)
+	@Path("/{id}/admin")
+	public Response getComponentAdminView(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		ComponentAdminView componentAdminView = null;
+		ComponentAdminWrapper views = service.getComponentService().getFilteredComponents(ComponentFilterParams.defaultFilter(), componentId);
+		if (views.getComponents().isEmpty() == false) {
+			componentAdminView = views.getComponents().get(0);
+		}
+		return sendSingleEntityResponse(componentAdminView);
+	}
+
+	@GET
+	@APIDescription("Export a component with full component details.")
 	@RequireAdmin
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
@@ -261,23 +316,14 @@ public class ComponentRESTResource
 		if (componentAll != null) {
 			List<ComponentAll> fullComponents = new ArrayList<>();
 			fullComponents.add(componentAll);
-
-			String componentJson;
-			try {
-				componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
-			} catch (JsonProcessingException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to export component.", ex);
-			}
-			Response.ResponseBuilder response = Response.ok(componentJson);
-			response.header("Content-Disposition", "attachment; filename=\"" + componentAll.getComponent().getName() + ".json\"");
-			return response.build();
+			return exportComponents(fullComponents);
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}
 
 	@POST
-	@APIDescription("Exports a set of components.  POST JSON to Upload.action?UploadComponent (multipart/form-data) uploadFile to import (Requires Admin)")
+	@APIDescription("Exports a set of components.  POST ZIP or JSON file to Upload.action?UploadComponent (multipart/form-data) uploadFile to import (Requires Admin)")
 	@RequireAdmin
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
@@ -286,20 +332,73 @@ public class ComponentRESTResource
 			@FormParam("id")
 			@RequiredParam List<String> ids)
 	{
-		if (ids.isEmpty() == false) {
-			List<ComponentAll> fullComponents = new ArrayList<>();
-			for (String componentId : ids) {
-				ComponentAll componentAll = service.getComponentService().getFullComponent(componentId);
-				fullComponents.add(componentAll);
-			}
+		List<ComponentAll> fullComponents = new ArrayList<>();
+		for (String componentId : ids) {
+			ComponentAll componentAll = service.getComponentService().getFullComponent(componentId);
+			fullComponents.add(componentAll);
+		}
+		return exportComponents(fullComponents);
+	}
 
-			String componentJson;
+	private Response exportComponents(List<ComponentAll> fullComponents)
+	{
+		if (fullComponents.isEmpty() == false) {
 			try {
-				componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
-				Response.ResponseBuilder response = Response.ok(componentJson);
-				response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.json\"");
+				String componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
+				String archiveName = FileSystemManager.getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/exportComponent-" + System.currentTimeMillis() + ".zip";
+				File entry = new TFile(archiveName + "/components.json");
+				try (Writer writer = new TFileWriter(entry)) {
+					writer.write(componentJson);
+				} catch (IOException io) {
+					throw new OpenStorefrontRuntimeException("Unable to export components.", io);
+				}
+
+				Set<String> fileNameMediaSet = new HashSet<>();
+				Set<String> fileNameResourceSet = new HashSet<>();
+				for (ComponentAll componentAll : fullComponents) {
+					//media
+					for (ComponentMedia componentMedia : componentAll.getMedia()) {
+						java.nio.file.Path mediaPath = componentMedia.pathToMedia();
+						if (mediaPath != null) {
+							String name = mediaPath.getFileName().toString();
+							if (fileNameMediaSet.contains(name) == false) {
+								java.nio.file.Path archiveMediaPath = new TPath(archiveName + "/media/" + name);
+								Files.copy(mediaPath, archiveMediaPath);
+								fileNameMediaSet.add(name);
+							}
+						}
+					}
+
+					//localreources
+					for (ComponentResource componentResource : componentAll.getResources()) {
+						java.nio.file.Path resourcePath = componentResource.pathToResource();
+						if (resourcePath != null) {
+							String name = resourcePath.getFileName().toString();
+							if (fileNameResourceSet.contains(name) == false) {
+								java.nio.file.Path archiveResourcePath = new TPath(archiveName + "/resources/" + name);
+								Files.copy(resourcePath, archiveResourcePath);
+								fileNameResourceSet.add(name);
+							}
+						}
+					}
+				}
+				TVFS.umount();
+
+				Response.ResponseBuilder response = Response.ok(new StreamingOutput()
+				{
+
+					@Override
+					public void write(OutputStream output) throws IOException, WebApplicationException
+					{
+						Files.copy(Paths.get(archiveName), output);
+					}
+
+				});
+				response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.zip\"");
 				return response.build();
-			} catch (JsonProcessingException ex) {
+			} catch (JsonProcessingException | FsSyncException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to export components.", ex);
+			} catch (IOException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to export components.", ex);
 			}
 		} else {
@@ -442,14 +541,28 @@ public class ComponentRESTResource
 			@RequiredParam RequiredForComponent component)
 	{
 		component.getComponent().setComponentId(componentId);
+		Set<String> attributeKeySet = new HashSet<>();
 		component.getAttributes().forEach(attribute -> {
 			attribute.getComponentAttributePk().setComponentId(componentId);
 			attribute.setComponentId(componentId);
+			attributeKeySet.add(attribute.getComponentAttributePk().pkValue());
 		});
 		ValidationModel validationModel = new ValidationModel(component);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+
+			//pick up all existing active attribute not already in the update
+			ComponentAttribute componentAttributeExample = new ComponentAttribute();
+			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+			componentAttributeExample.setComponentId(componentId);
+			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+			for (ComponentAttribute componentAttribute : componentAttributes) {
+				if (attributeKeySet.contains(componentAttribute.getComponentAttributePk().pkValue()) == false) {
+					component.getAttributes().add(componentAttribute);
+				}
+			}
+
 			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
 			component.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
@@ -667,7 +780,7 @@ public class ComponentRESTResource
 	@APIDescription("Remove an attribute from the entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/attributes/{attributeType}/{attributeCode}")
-	public void deleteComponentAttribute(
+	public void inactivateComponentAttribute(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("attributeType")
@@ -680,6 +793,26 @@ public class ComponentRESTResource
 		pk.setAttributeType(attributeType);
 		pk.setComponentId(componentId);
 		service.getComponentService().deactivateBaseComponent(ComponentAttribute.class, pk);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete an attribute from the entity (Hard Removal")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/attributes/{attributeType}/{attributeCode}/force")
+	public void deleteComponentAttribute(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("attributeType")
+			@RequiredParam String attributeType,
+			@PathParam("attributeCode")
+			@RequiredParam String attributeCode)
+	{
+		ComponentAttributePk pk = new ComponentAttributePk();
+		pk.setAttributeCode(attributeCode);
+		pk.setAttributeType(attributeType);
+		pk.setComponentId(componentId);
+		service.getComponentService().deleteBaseComponent(ComponentAttribute.class, pk);
 	}
 
 	@PUT
@@ -2626,9 +2759,7 @@ public class ComponentRESTResource
 	{
 		ComponentTag example = new ComponentTag();
 		example.setComponentId(componentId);
-		service.getPersistenceService().deleteByExample(example);
-		Component temp = service.getPersistenceService().findById(Component.class, componentId);
-		service.getSearchService().addIndex(temp);
+		service.getComponentService().deleteAllBaseComponent(ComponentTag.class, componentId);
 	}
 
 	@DELETE
@@ -2649,9 +2780,7 @@ public class ComponentRESTResource
 		if (componentTag != null) {
 			response = ownerCheck(componentTag);
 			if (response == null) {
-				service.getComponentService().deactivateBaseComponent(ComponentTag.class, tagId);
-				Component temp = service.getPersistenceService().findById(Component.class, componentId);
-				service.getSearchService().addIndex(temp);
+				service.getComponentService().deleteBaseComponent(ComponentTag.class, tagId);
 			}
 		}
 		return response;
@@ -2677,8 +2806,6 @@ public class ComponentRESTResource
 			response = ownerCheck(tag);
 			if (response == null) {
 				service.getComponentService().deleteBaseComponent(ComponentTag.class, tag.getTagId());
-				Component temp = service.getPersistenceService().findById(Component.class, componentId);
-				service.getSearchService().addIndex(temp);
 				response = Response.ok().build();
 			}
 		}
@@ -2893,10 +3020,15 @@ public class ComponentRESTResource
 	@DataType(ComponentIntegration.class)
 	@Path("/{id}/integration")
 	public Response getIntegration(
-			@QueryParam("id") String componentId)
+			@PathParam("id") String componentId)
 	{
-		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
-		ComponentIntegrationView view = ComponentIntegrationView.toView(integration);
+		ComponentIntegration integrationExample = new ComponentIntegration();
+		integrationExample.setComponentId(componentId);
+		ComponentIntegration integration = service.getPersistenceService().queryOneByExample(ComponentIntegration.class, integrationExample);
+		ComponentIntegrationView view = null;
+		if (integration != null) {
+			view = ComponentIntegrationView.toView(integration);
+		}
 		return sendSingleEntityResponse(view);
 	}
 
@@ -2923,7 +3055,7 @@ public class ComponentRESTResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Saves a component integration model")
+	@APIDescription("Updates a component integration refresh Time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
 	public Response saveRefreshRate(
@@ -2951,13 +3083,12 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Saves a component integration model")
+	@APIDescription("Removes the integration override time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
 	public Response deleteRefreshRate(
 			@PathParam("componentId")
-			@RequiredParam String componentId,
-			String cron)
+			@RequiredParam String componentId)
 	{
 		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
 		if (integration != null) {
@@ -3099,8 +3230,24 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 
 		if (validationResult.valid()) {
-			integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
-			return Response.created(URI.create("v1/resource/components/" + componentId + "/integration/configs/" + integrationConfig.getIntegrationConfigId())).entity(integrationConfig).build();
+			//check for exsiting config with the same ticket
+			ComponentIntegrationConfig configExample = new ComponentIntegrationConfig();
+			configExample.setComponentId(componentId);
+			configExample.setIntegrationType(integrationConfig.getIntegrationType());
+			configExample.setProjectType(integrationConfig.getProjectType());
+			configExample.setIssueType(integrationConfig.getIssueType());
+			configExample.setIssueNumber(integrationConfig.getIssueNumber());
+
+			long count = service.getPersistenceService().countByExample(configExample);
+			if (count > 0) {
+				RestErrorModel restErrorModel = new RestErrorModel();
+				restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
+				return Response.status(Response.Status.NOT_MODIFIED).entity(restErrorModel).build();
+			} else {
+				integrationConfig.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
+				integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
+				return Response.created(URI.create("v1/resource/components/" + componentId + "/integration/configs/" + integrationConfig.getIntegrationConfigId())).entity(integrationConfig).build();
+			}
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -3198,7 +3345,7 @@ public class ComponentRESTResource
 		}
 	}
 
-	private Response ownerCheck(BaseEntity entity)
+	private Response ownerCheck(StandardEntity entity)
 	{
 		if (SecurityUtil.isCurrentUserTheOwner(entity)
 				|| SecurityUtil.isAdminUser()) {

@@ -15,12 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import au.com.bytecode.opencsv.CSVWriter;
 import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.service.io.ExportImport;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.util.Convert;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -30,7 +27,6 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 public class AttributeTypeView
-		implements ExportImport
 {
 
 	@NotNull
@@ -55,6 +51,12 @@ public class AttributeTypeView
 	private boolean allowMultipleFlg;
 
 	@NotNull
+	private boolean hideOnSubmission;
+
+	private String defaultAttributeCode;
+	private String detailedDescription;
+
+	@NotNull
 	private String activeStatus;
 
 	@DataType(AttributeCodeView.class)
@@ -74,42 +76,12 @@ public class AttributeTypeView
 		attributeTypeView.setImportantFlg(Convert.toBoolean(attributeType.getImportantFlg()));
 		attributeTypeView.setRequiredFlg(Convert.toBoolean(attributeType.getRequiredFlg()));
 		attributeTypeView.setVisibleFlg(Convert.toBoolean(attributeType.getVisibleFlg()));
+		attributeTypeView.setDetailedDescription(attributeType.getDetailedDescription());
+		attributeTypeView.setHideOnSubmission(Convert.toBoolean(attributeType.getHideOnSubmission()));
+		attributeTypeView.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
 		attributeTypeView.setActiveStatus(attributeType.getActiveStatus());
 
 		return attributeTypeView;
-	}
-
-	@Override
-	public String export()
-	{
-		StringWriter stringWriter = new StringWriter();
-		CSVWriter writer = new CSVWriter(stringWriter);
-		codes.stream().forEach((code) -> {
-			writer.writeNext(new String[]{getAttributeType(),
-				getDescription(),
-				Boolean.toString(getArchitectureFlg()),
-				Boolean.toString(getVisibleFlg()),
-				Boolean.toString(getImportantFlg()),
-				Boolean.toString(getRequiredFlg()),
-				code.getCode(),
-				code.getLabel(),
-				code.getDescription(),
-				code.getDetailUrl(),
-				code.getGroupCode(),
-				code.getSortOrder() == null ? "" : code.getSortOrder().toString(),
-				code.getArchitectureCode(),
-				code.getBadgeUrl(),
-				code.getHighlightStyle(),
-				Boolean.toString(getAllowMultipleFlg())
-			});
-		});
-		return stringWriter.toString();
-	}
-
-	@Override
-	public void importData(String[] data)
-	{
-		throw new UnsupportedOperationException("Use Parser");
 	}
 
 	public String getAttributeType()
@@ -205,6 +177,36 @@ public class AttributeTypeView
 	public void setActiveStatus(String activeStatus)
 	{
 		this.activeStatus = activeStatus;
+	}
+
+	public boolean getHideOnSubmission()
+	{
+		return hideOnSubmission;
+	}
+
+	public void setHideOnSubmission(boolean hideOnSubmission)
+	{
+		this.hideOnSubmission = hideOnSubmission;
+	}
+
+	public String getDefaultAttributeCode()
+	{
+		return defaultAttributeCode;
+	}
+
+	public void setDefaultAttributeCode(String defaultAttributeCode)
+	{
+		this.defaultAttributeCode = defaultAttributeCode;
+	}
+
+	public String getDetailedDescription()
+	{
+		return detailedDescription;
+	}
+
+	public void setDetailedDescription(String detailedDescription)
+	{
+		this.detailedDescription = detailedDescription;
 	}
 
 }

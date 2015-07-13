@@ -58,8 +58,8 @@ app.controller('AdminLookupCtrl', ['$scope', 'business', '$rootScope', '$uiModal
 
 }]);
 
-app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'lookupEntity', 'business', '$uiModal', 'FileUploader',
-  function ($scope, $uiModalInstance, lookupEntity, Business, $uiModal, FileUploader) {
+app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'lookupEntity', 'business', '$uiModal', 'FileUploader', '$timeout',
+  function ($scope, $uiModalInstance, lookupEntity, Business, $uiModal, FileUploader, $timeout) {
   
     $scope.showInactive = false;
     $scope.statusFilterOptions = [
@@ -75,9 +75,16 @@ app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'look
     $scope.flags = {};
     $scope.flags.showUpload = false;
     
+    $scope.toggleImport = function(){
+      if ($scope.flags.showUpload) {
+        $scope.flags.showUpload = false;
+      } else {
+        $scope.flags.showUpload = true;
+      }
+    };
+    
     $scope.importFile = function(){      
       $scope.uploader.uploadAll();
-      document.getElementById('uploadFile').value = null;
     };
     
     $scope.uploader = new FileUploader({
@@ -117,6 +124,10 @@ app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'look
         $scope.$emit('$TRIGGERUNLOAD', 'lookupCodeLoader');
         triggerAlert('Unable to import codes. Failure communicating with server. ', 'importCode', '#lookupWindowDiv', 6000);
         $scope.uploader.clearQueue();
+      },
+      onCompleteAll: function(){        
+          document.getElementById('uploadFile').value = null;
+          $scope.uploader.queue = [];      
       }      
     });
     

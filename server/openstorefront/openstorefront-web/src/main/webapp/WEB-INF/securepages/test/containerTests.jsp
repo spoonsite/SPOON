@@ -27,13 +27,13 @@ limitations under the License.
 				left: 0px;
 				position: fixed;
 				top: 0px;
+				bottom: 0px;
 				margin-top: 45px;
 				padding-left: 10px;
 				border-right: 1px solid #dadfe5;
 				overflow: hidden;
 				overflow-y: auto;
-				width: 300px;
-				height: 10000px;
+				width: 300px;				
 				z-index: 25;	
 				background-color: white;
 			}
@@ -54,16 +54,16 @@ limitations under the License.
 		<div class="test-guide" >
 			<ul>
 				<li>
-					<a href="javascript:void();" onclick="runTest('');" >Run All Tests</a>
+					<a href="javascript:i=0;" onclick="runTest('');" >Run All Tests</a>
 					<hr>
 				</li>				
 			<c:forEach var="testSuite" items="${actionBean.testSuites}">
 				<li>
-					<a href="javascript:void();" onclick="runTest('&suite=${testSuite.name}');" >${testSuite.name}</a>
+					<a href="javascript:i=0;" onclick="runTest('&suite=${testSuite.name}');" >${testSuite.name}</a>
 					<ul>	
 					<c:forEach var="item" items="${testSuite.tests}">						
 						<li>
-							<a href="javascript:void();" onclick="runTest('&suite=${testSuite.name}&test=${item.description}');" >${item.description}</a>
+							<a href="javascript:i=0;" onclick="runTest('&suite=${testSuite.name}&test=${item.description}');" >${item.description}</a>
 						</li>	
 					</c:forEach>					
 					</ul>

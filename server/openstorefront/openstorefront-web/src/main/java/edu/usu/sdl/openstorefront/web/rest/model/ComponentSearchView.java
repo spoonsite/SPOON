@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.web.rest.model;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
@@ -51,7 +50,7 @@ public class ComponentSearchView
 	private Date releaseDate;
 	private Date approvedDts;
 	private Date lastActivityDts;
-	private List<ComponentTag> tags;
+	private List<ComponentTag> tags = new ArrayList<>();
 
 	private String activeStatus;
 	private String createUser;
@@ -59,7 +58,7 @@ public class ComponentSearchView
 	private String updateUser;
 	private Date updateDts;
 
-	private List<SearchResultAttribute> attributes;
+	private List<SearchResultAttribute> attributes = new ArrayList<>();
 
 	public ComponentSearchView()
 	{
@@ -80,7 +79,6 @@ public class ComponentSearchView
 
 	public static ComponentSearchView toView(Component component, List<ComponentAttribute> attributes, List<ComponentReview> reviews, List<ComponentTag> tags)
 	{
-		ServiceProxy service = new ServiceProxy();
 		ComponentSearchView view = new ComponentSearchView();
 		view.setListingType(OpenStorefrontConstant.ListingType.COMPONENT.getDescription());
 		view.setComponentId(component.getComponentId());
@@ -98,7 +96,7 @@ public class ComponentSearchView
 
 		List<SearchResultAttribute> addMes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
-			
+
 			addMes.add(SearchResultAttribute.toView(attribute));
 		}
 		view.setAttributes(addMes);

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.transfermodel;
 
+import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
@@ -29,7 +30,11 @@ public class ReviewAll
 {
 
 	private ComponentReview componentReview;
+
+	@DataType(ComponentReviewPro.class)
 	private List<ComponentReviewPro> pros = new ArrayList<>();
+
+	@DataType(ComponentReviewCon.class)
 	private List<ComponentReviewCon> cons = new ArrayList<>();
 
 	public ReviewAll()

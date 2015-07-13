@@ -24,12 +24,13 @@ import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.job.BaseJob;
 import edu.usu.sdl.openstorefront.service.job.ComponentUpdateJob;
-import edu.usu.sdl.openstorefront.service.job.ErrorTicketCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.job.NotificationJob;
 import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
 import edu.usu.sdl.openstorefront.service.job.ScheduledReportJob;
+import edu.usu.sdl.openstorefront.service.job.SystemCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.TrackingCleanupJob;
+import edu.usu.sdl.openstorefront.service.job.UserProfileSyncJob;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
 import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
 import java.text.MessageFormat;
@@ -97,6 +98,7 @@ public class JobManager
 		addScheduledReportJob();
 		addComponentUpdate();
 		addComponentIntegrationJobs();
+		addUserProfileSyncjob();
 	}
 
 	private static void addComponentIntegrationJobs() throws SchedulerException
@@ -121,7 +123,7 @@ public class JobManager
 		} else {
 			JobDetail job = JobBuilder.newJob(IntegrationJob.class)
 					.withIdentity("ComponentJob-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
-					.withDescription("Component Integration Job")
+					.withDescription("Component Integration Job for " + serviceProxy.getComponentService().getComponentName(componentIntegration.getComponentId()))
 					.build();
 
 			job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, componentIntegration.getComponentId());
@@ -233,17 +235,37 @@ public class JobManager
 		scheduler.scheduleJob(job, trigger);
 	}
 
-	private static void addCleanUpErrorsJob() throws SchedulerException
+	private static void addUserProfileSyncjob() throws SchedulerException
 	{
-		log.log(Level.INFO, "Adding Error Clean up Job");
+		log.log(Level.INFO, "Adding User Profile Sync Job");
 
-		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
-				.withIdentity("CleanUpErrorsJob", JOB_GROUP_SYSTEM)
-				.withDescription("Removes old error tickets")
+		JobDetail job = JobBuilder.newJob(UserProfileSyncJob.class)
+				.withIdentity("UserProfileSyncJob", JOB_GROUP_SYSTEM)
+				.withDescription("Run User Profile Sync")
 				.build();
 
 		Trigger trigger = newTrigger()
-				.withIdentity("CleanUpErrorsJobTrigger", JOB_GROUP_SYSTEM)
+				.withIdentity("SUserProfileSyncJobrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInHours(24)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
+	}
+
+	private static void addCleanUpErrorsJob() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding System Clean up Job");
+
+		JobDetail job = JobBuilder.newJob(SystemCleanupJob.class)
+				.withIdentity("SystemCleanupJob", JOB_GROUP_SYSTEM)
+				.withDescription("Removes old error tickets and db log cleanup")
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("SystemCleanupJob", JOB_GROUP_SYSTEM)
 				.startNow()
 				.withSchedule(simpleSchedule()
 						.withIntervalInMinutes(5)
@@ -443,7 +465,7 @@ public class JobManager
 		//TODO: Add the ability to run a temp background job
 		throw new UnsupportedOperationException("Method is not supported yet");
 //		String job
-//		JobDetail job = JobBuilder.newJob(ErrorTicketCleanupJob.class)
+//		JobDetail job = JobBuilder.newJob(SystemCleanupJob.class)
 //				.withIdentity("DynamicJob-" + UUID.randomUUID().toString(), JOB_GROUP_SYSTEM)
 //				.build();
 //

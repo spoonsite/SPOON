@@ -16,7 +16,7 @@
 package edu.usu.sdl.openstorefront.util;
 
 import edu.usu.sdl.openstorefront.security.UserContext;
-import edu.usu.sdl.openstorefront.storage.model.BaseEntity;
+import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +36,41 @@ public class SecurityUtil
 
 	public static final String ADMIN_ROLE = "administrator";
 	public static final String USER_CONTEXT_KEY = "USER_CONTEXT";
+
+	/**
+	 * Is the current request logged in
+	 *
+	 * @return
+	 */
+	public static boolean isLoggedIn()
+	{
+		boolean loggedIn;
+		try {
+			Subject currentUser = SecurityUtils.getSubject();
+			loggedIn = currentUser.isAuthenticated();
+		} catch (Exception e) {
+			//ignore
+			loggedIn = false;
+		}
+		return loggedIn;
+	}
+
+	/**
+	 * Check for Guest or Anonymous user
+	 *
+	 * @return true if guest
+	 */
+	public static boolean isGuest()
+	{
+		boolean guest;
+		try {
+			guest = !SecurityUtils.getSubject().isRemembered();
+		} catch (Exception e) {
+			//ignore
+			guest = true;
+		}
+		return guest;
+	}
 
 	/**
 	 * Gets the current user logged in.
@@ -96,7 +131,7 @@ public class SecurityUtil
 	 * @param entity (if null it will return false)
 	 * @return
 	 */
-	public static boolean isCurrentUserTheOwner(BaseEntity entity)
+	public static boolean isCurrentUserTheOwner(StandardEntity entity)
 	{
 		if (entity != null) {
 			return getCurrentUserName().equals(entity.getCreateUser());

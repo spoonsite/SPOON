@@ -15,20 +15,50 @@
 */
 'use strict';
 
-app.directive('ngFocus', [function() {
+
+// WARNING: This overrides the angular ng-focus directive
+app.directive('ngFocus', ['$parse', '$rootScope', function($parse, $rootScope) {
   var FOCUS_CLASS = 'ng-focused';
   return {
     restrict: 'A',
     require: 'ngModel',
     link: function(scope, element, attrs, ctrl) {
       ctrl.$focused = false;
+      var fn = $parse(attrs['ngFocus']);
       element.bind('focus', function(evt) { /*jshint unused:false*/
-        element.addClass(FOCUS_CLASS);
-        scope.$apply(function() {ctrl.$focused = true;});
+        if (!$rootScope.$$phase){
+          scope.$apply(function() {
+            element.addClass(FOCUS_CLASS);
+            ctrl.$focused = true;
+            fn(scope, {$event:event});
+          });
+        } else {
+          element.addClass(FOCUS_CLASS);
+          ctrl.$focused = true;
+          fn(scope, {$event:event});
+        }
       }).bind('blur', function(evt) { /*jshint unused:false*/
-        element.removeClass(FOCUS_CLASS);
-        scope.$apply(function() {ctrl.$focused = false;});
+        if (!$rootScope.$$phase){
+          scope.$apply(function() {
+            element.removeClass(FOCUS_CLASS);
+            ctrl.$focused = false;
+          });
+        } else {
+          element.removeClass(FOCUS_CLASS);
+          ctrl.$focused = false;
+        }
       });
     }
   };
 }]);
+
+/*['$parse', function($parse) {
+  return function(scope, element, attr) {
+    var fn = $parse(attr['ngFocus']);
+    element.bind('focus', function(event) {
+      scope.$apply(function() {
+        fn(scope, {$event:event});
+      });
+    });
+  }
+}]);*/

@@ -50,6 +50,12 @@ public class PropertiesManager
 	public static final String KEY_MAX_ERROR_TICKETS = "errorticket.max";
 	public static final String KEY_SOLR_URL = "solr.server.url";
 	public static final String KEY_MAX_AGE_TRACKING_RECORDS = "trackingrecords.max.age.days";
+	public static final String KEY_EXTERNAL_USER_MANAGER = "external.usermanager";
+	public static final String KEY_EXTERNAL_SYNC_ACTIVATE = "external.sync.activate";
+	public static final String KEY_DBLOG_MAX_RECORD = "dblog.maxrecords";
+	public static final String KEY_DBLOG_ON = "dblog.on";
+	public static final String KEY_DBLOG_LOG_SECURITY = "dblog.logSecurityFilter";
+	public static final String KEY_ALLOW_JIRA_FEEDBACK = "jirafeedback.show";
 
 	public static final String KEY_OPENAM_URL = "openam.url";
 	public static final String KEY_LOGOUT_URL = "logout.url";
@@ -89,6 +95,20 @@ public class PropertiesManager
 	public static final String KEY_MAX_TASK_POOL_SIZE = "task.pool.size";
 	public static final String KEY_MAX_TASK_COMPLETE_EXPIRE = "task.complete.expireminutes";
 	public static final String KEY_MAX_TASK_ERROR_EXPIRE = "task.error.expireminutes";
+
+	public static final String KEY_LDAP_MANAGER_URL = "ldapmanager.url";
+	public static final String KEY_LDAP_MANAGER_USER_DN_TEMPLATE = "ldapmanager.userDnTemplate";
+	public static final String KEY_LDAP_MANAGER_AUTHM = "ldapmanager.authenticationMechanism";
+	public static final String KEY_LDAP_MANAGER_SASL_REALM = "ldapmanager.security.sasl.realm";
+	public static final String KEY_LDAP_MANAGER_BIND_DN = "ldapmanager.binddn";
+	public static final String KEY_LDAP_MANAGER_CREDENTIALS = "ldapmanager.pw";
+	public static final String KEY_LDAP_MANAGER_CONNECT_TIMEOUT = "ldapmanager.connectionTimeout";
+	public static final String KEY_LDAP_MANAGER_CONTEXT_ROOT = "ldapmanager.contextRoot";
+	public static final String KEY_LDAP_MANAGER_ATTRIB_USERNAME = "ldapmanager.attribute.username";
+	public static final String KEY_LDAP_MANAGER_ATTRIB_EMAIL = "ldapmanager.attribute.email";
+	public static final String KEY_LDAP_MANAGER_ATTRIB_FULLNAME = "ldapmanager.attribute.fullname";
+	public static final String KEY_LDAP_MANAGER_ATTRIB_ORGANIZATION = "ldapmanager.attribute.organization";
+	public static final String KEY_LDAP_MANAGER_ATTRIB_GUID = "ldapmanager.attribute.guid";
 
 	public static final String KEY_NODE_NAME = "node.name";
 
