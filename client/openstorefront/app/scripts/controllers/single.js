@@ -31,6 +31,20 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   $scope.modal.isLanding   = false;
   $scope.showDetails       = false;
 
+  $rootScope.eventHistory = [];
+  $scope.eventHistory = $rootScope.eventHistory;
+  $scope.goToBreadcrumb = $rootScope.goToBreadcrumb;
+
+  var label = $route.routes[$location.$$path].label || $location.$$path;
+  if ($location.$$path === '/single'){
+    label = 'Component ' + $location.search().id;
+  }
+  $rootScope.eventHistory.push({path: $location.$$path, search: $location.search(), label: label});
+
+  $rootScope.$watch('eventHistory', function(){
+    $scope.eventHistory = $rootScope.eventHistory;
+  })
+
   Business.componentservice.getComponentDetails().then(function(result) {
     if (result) {
       $scope.data.data = result;
@@ -84,7 +98,12 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
     Business.componentservice.getComponentDetails(id, true).then(function(result){
       if (result)
       {
-
+        // console.log('result', result);
+        _.each($rootScope.eventHistory, function(item){
+          if (item.path === $location.$$path && item.search === $location.search()){
+            item.label = result.name;
+          }
+        })
         // grab evaluation schedule.
 
         $scope.sendPageView(result.name);
