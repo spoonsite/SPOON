@@ -12,7 +12,7 @@
 		
 	if (SecurityUtil.isLoggedIn()) {
 		RequestDispatcher rd = request.getRequestDispatcher("/index.html");
-		rd.forward(request, response);		
+		rd.include(request, response);		
 	} else {
 		
 		final String STUB_HEADER = "X_STUBHEADER_X";
@@ -68,7 +68,7 @@
 					rd.forward(request, response);
 				} else {
 					RequestDispatcher rd = request.getRequestDispatcher("/index.html");
-					rd.forward(request, response);
+					rd.include(request, response);
 				}
 		}
 	}	
