@@ -428,11 +428,13 @@ public class ComponentServiceImpl
 		}
 		result.setComponentDetails(tempComponent, tempParentComponent);
 
-		Component childExample = new Component();
-		childExample.setParentComponentId(componentId);
-		List<Component> childComponents = persistenceService.queryByExample(Component.class, childExample);
-		result.setSubComponents(ComponentRelationshipView.toViewList(childComponents));
+//		Component childExample = new Component();
+//		childExample.setParentComponentId(componentId);
+//		List<Component> childComponents = persistenceService.queryByExample(Component.class, childExample);
+//		result.setSubComponents(ComponentRelationshipView.toViewList(childComponents));
 
+//		result.setParentComponent(ComponentRelationshipView.toView(persistenceService.findById(Component.class, tempComponent.getParentComponentId())));
+		
 		UserWatch tempWatch = new UserWatch();
 		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
 		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
