@@ -36,7 +36,7 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 	
-    <!--
+ <!--   
 	<filter>
 		<filter-name>MockHeaderFilter</filter-name>
 		<filter-class>edu.usu.sdl.openstorefront.web.init.HeaderTestFilter</filter-class>
