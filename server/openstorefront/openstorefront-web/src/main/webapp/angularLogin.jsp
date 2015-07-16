@@ -51,8 +51,8 @@
 						currentUser.login(headerAuthToken);
 						loginHandled = true;
 					} catch (Exception ex) {								
-						log.log(Level.SEVERE, "Check configuration", ex);
-						response.sendError(HttpServletResponse.SC_FORBIDDEN, "Unable to access system.");					
+						log.log(Level.WARNING, "Direct link used (Most Common) or Header Auth not set; check configuration if needed");
+						out.print("Awaiting login from Auth System");						
 						processHandling = false;
 					}
 					break;

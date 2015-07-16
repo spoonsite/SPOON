@@ -244,6 +244,13 @@ public class StringProcessor
 			return text.toString();
 		}
 	}
+	
+	public static Boolean isEmail(String text){
+		if (text.matches(OpenStorefrontConstant.EMAIL_PATTERN)){
+			return true;
+		}
+		return false;
+	}
 
 	public static String stripHtml(String text)
 	{
