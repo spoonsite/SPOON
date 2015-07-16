@@ -531,7 +531,7 @@ public class UserServiceImpl
 		if (adminMessage.getUsersToEmail().isEmpty()
 				&& StringUtils.isBlank(adminMessage.getUserTypeCode())) {
 
-			log.log(Level.FINE, "Sending email to all users");
+			log.log(Level.INFO, "(Admin Message) Sending email to all users");
 			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
 			for (UserProfile userProfile : userProfiles) {
 				if (StringUtils.isNotBlank(userProfile.getEmail())) {
@@ -539,7 +539,7 @@ public class UserServiceImpl
 				}
 			}
 		} else if (StringUtils.isNotBlank(adminMessage.getUserTypeCode())) {
-			log.log(Level.FINE, MessageFormat.format("Sending email to users of type: {0}", adminMessage.getUserTypeCode()));
+			log.log(Level.INFO, MessageFormat.format("(Admin Message) Sending email to users of type: {0}", adminMessage.getUserTypeCode()));
 			userProfileExample.setUserTypeCode(adminMessage.getUserTypeCode());
 			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
 			for (UserProfile userProfile : userProfiles) {
@@ -548,7 +548,7 @@ public class UserServiceImpl
 				}
 			}
 		} else if (adminMessage.getUsersToEmail().isEmpty() == false) {
-			log.log(Level.FINE, "Sending email to specfic users");
+			log.log(Level.INFO, "(Admin Message) Sending email to specfic users");
 			StringBuilder query = new StringBuilder();
 			query.append("select from ").append(UserProfile.class.getSimpleName()).append(" where email IS NOT NULL AND username IN :userList");
 			Map<String, Object> params = new HashMap<>();
@@ -567,7 +567,7 @@ public class UserServiceImpl
 			MailManager.send(email);
 			emailCount++;
 		}
-		log.log(Level.FINE, "{0} email(s) sent", emailCount);
+		log.log(Level.INFO, MessageFormat.format("(Admin Message) {0} email(s) sent", emailCount));
 	}
 
 	@Override

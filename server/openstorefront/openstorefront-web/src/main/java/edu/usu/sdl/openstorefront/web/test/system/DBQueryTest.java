@@ -63,7 +63,7 @@ public class DBQueryTest
 		TestEntity testEntityExample = new TestEntity();
 		testEntityExample.setActiveStatus(TestEntity.ACTIVE_STATUS);
 
-		List<TestEntity> testActiveRecords = service.getPersistenceService().queryByExample(TestEntity.class, testEntityExample);
+		List<TestEntity> testActiveRecords = testEntityExample.findByExample();
 		testActiveRecords.stream().forEach(record -> {
 			results.append(String.join("-", record.getCode(), record.getDescription())).append("<br>");
 		});

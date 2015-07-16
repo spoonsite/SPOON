@@ -61,6 +61,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
+import edu.usu.sdl.openstorefront.storage.model.ComponentRelationship;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
@@ -420,18 +421,15 @@ public class ComponentServiceImpl
 
 		result.setApprovalState(tempComponent.getApprovalState());
 
-		Component tempParentComponent;
-		if (tempComponent.getParentComponentId() != null) {
-			tempParentComponent = persistenceService.findById(Component.class, tempComponent.getParentComponentId());
-		} else {
-			tempParentComponent = new Component();
-		}
-		result.setComponentDetails(tempComponent, tempParentComponent);
+		//Pull relationships direct relationships
+		ComponentRelationship componentRelationshipExample = new ComponentRelationship();
+		componentRelationshipExample.setComponentId(componentId);
+		result.getRelationships().addAll(ComponentRelationshipView.toViewList(componentRelationshipExample.findByExample()));
 
-		Component childExample = new Component();
-		childExample.setParentComponentId(componentId);
-		List<Component> childComponents = persistenceService.queryByExample(Component.class, childExample);
-		result.setSubComponents(ComponentRelationshipView.toViewList(childComponents));
+		//Pull indirect
+		componentRelationshipExample = new ComponentRelationship();
+		componentRelationshipExample.setRelatedComponentId(componentId);
+		result.getRelationships().addAll(ComponentRelationshipView.toViewList(componentRelationshipExample.findByExample()));
 
 		UserWatch tempWatch = new UserWatch();
 		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
@@ -756,7 +754,7 @@ public class ComponentServiceImpl
 		saveComponentMetadata(metadata, true);
 	}
 
-	public void saveComponentMetadata(ComponentMetadata metadata, boolean updateLastActivity)
+	private void saveComponentMetadata(ComponentMetadata metadata, boolean updateLastActivity)
 	{
 		ComponentMetadata oldMetadata = persistenceService.findById(ComponentMetadata.class, metadata.getMetadataId());
 		if (oldMetadata != null) {
@@ -777,6 +775,48 @@ public class ComponentServiceImpl
 		if (updateLastActivity) {
 			updateComponentLastActivity(metadata.getComponentId());
 		}
+	}
+
+	@Override
+	public ComponentRelationship saveComponentRelationship(ComponentRelationship componentRelationship)
+	{
+		return saveComponentRelationship(componentRelationship, true);
+	}
+
+	private ComponentRelationship saveComponentRelationship(ComponentRelationship componentRelationship, boolean updateLastActivity)
+	{
+		ComponentRelationship componentRelationshipExisting = persistenceService.findById(ComponentRelationship.class, componentRelationship.getComponentRelationshipId());
+
+		if (componentRelationshipExisting == null) {
+			//handle duplicates
+			ComponentRelationship relationshipCheck = new ComponentRelationship();
+			relationshipCheck.setRelationshipType(componentRelationship.getRelationshipType());
+			relationshipCheck.setComponentId(componentRelationship.getComponentId());
+			relationshipCheck.setRelatedComponentId(componentRelationship.getRelatedComponentId());
+
+			QueryByExample queryByExample = new QueryByExample(relationshipCheck);
+			queryByExample.setReturnNonProxied(false);
+
+			componentRelationshipExisting = persistenceService.queryOneByExample(ComponentRelationship.class, queryByExample);
+		}
+
+		if (componentRelationshipExisting != null) {
+			componentRelationshipExisting.setComponentId(componentRelationship.getComponentId());
+			componentRelationshipExisting.setRelatedComponentId(componentRelationship.getRelatedComponentId());
+			componentRelationshipExisting.setRelationshipType(componentRelationship.getRelationshipType());
+
+			componentRelationshipExisting.populateBaseUpdateFields();
+			componentRelationship = persistenceService.persist(componentRelationshipExisting);
+		} else {
+			componentRelationship.setComponentRelationshipId(persistenceService.generateId());
+			componentRelationship.populateBaseCreateFields();
+			componentRelationship = persistenceService.persist(componentRelationship);
+		}
+
+		if (updateLastActivity) {
+			updateComponentLastActivity(componentRelationship.getComponentId());
+		}
+		return componentRelationship;
 	}
 
 	@Override
@@ -1078,7 +1118,6 @@ public class ComponentServiceImpl
 					oldComponent.setGuid(component.getComponent().getGuid());
 					oldComponent.setLastActivityDts(TimeUtil.currentDate());
 					oldComponent.setOrganization(component.getComponent().getOrganization());
-					oldComponent.setParentComponentId(component.getComponent().getParentComponentId());
 					oldComponent.setReleaseDate(component.getComponent().getReleaseDate());
 					oldComponent.setVersion(component.getComponent().getVersion());
 					oldComponent.setNotifyOfApprovalEmail(component.getComponent().getNotifyOfApprovalEmail());
@@ -1234,6 +1273,7 @@ public class ComponentServiceImpl
 		lockSwitch.setSwitched(handleBaseComponetSave(ComponentMedia.class, componentAll.getMedia(), component.getComponentId()));
 		lockSwitch.setSwitched(handleBaseComponetSave(ComponentMetadata.class, componentAll.getMetadata(), component.getComponentId()));
 		lockSwitch.setSwitched(handleBaseComponetSave(ComponentResource.class, componentAll.getResources(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponetSave(ComponentRelationship.class, componentAll.getRelationships(), component.getComponentId()));
 
 		if (options.getUploadTags()) {
 			lockSwitch.setSwitched(handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId()));
@@ -1354,6 +1394,8 @@ public class ComponentServiceImpl
 					saveComponentMetadata((ComponentMetadata) baseComponent, false);
 				} else if (baseComponent instanceof ComponentResource) {
 					saveComponentResource((ComponentResource) baseComponent, false);
+				} else if (baseComponent instanceof ComponentRelationship) {
+					saveComponentRelationship((ComponentRelationship) baseComponent, false);
 				} else if (baseComponent instanceof ComponentTag) {
 					doSaveComponentTag((ComponentTag) baseComponent, false);
 				} else if (baseComponent instanceof ComponentQuestion) {
@@ -2094,6 +2136,7 @@ public class ComponentServiceImpl
 					componentAll.setExternalDependencies(getBaseComponent(ComponentExternalDependency.class, componentId));
 					componentAll.setMedia(getBaseComponent(ComponentMedia.class, componentId));
 					componentAll.setMetadata(getBaseComponent(ComponentMetadata.class, componentId));
+					componentAll.setRelationships(getBaseComponent(ComponentRelationship.class, componentId));
 					componentAll.setResources(getBaseComponent(ComponentResource.class, componentId));
 					componentAll.setResources(SortUtil.sortComponentResource(componentAll.getResources()));
 

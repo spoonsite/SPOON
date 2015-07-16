@@ -15,7 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.storage.model.ComponentRelationship;
+import edu.usu.sdl.openstorefront.storage.model.RelationshipType;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,66 +31,124 @@ import java.util.Objects;
 public class ComponentRelationshipView
 {
 
-	private String componentId;
-	private String name;
+	private String relationshipId;
+	private String ownerComponentId;
+	private String ownerComponentName;
+	private String targetComponentId;
+	private String targetComponentName;
+	private String relationshipType;
+	private String relationshipTypeDescription;
 	private Date updateDts;
 
 	public ComponentRelationshipView()
 	{
 	}
 
-	public static ComponentRelationshipView toView(Component component)
+	public static ComponentRelationshipView toView(ComponentRelationship componentRelationship)
 	{
-		Objects.requireNonNull(component, "Component Required");
+		Objects.requireNonNull(componentRelationship, "Component Required");
+
+		ServiceProxy serviceProxy = new ServiceProxy();
 		ComponentRelationshipView relationshipView = new ComponentRelationshipView();
-		relationshipView.setComponentId(component.getComponentId());
-		relationshipView.setName(component.getName());
+		relationshipView.setRelationshipId(componentRelationship.getComponentRelationshipId());
+		relationshipView.setOwnerComponentId(componentRelationship.getComponentId());
+		relationshipView.setOwnerComponentName(serviceProxy.getComponentService().getComponentName(componentRelationship.getComponentId()));
+		relationshipView.setTargetComponentId(componentRelationship.getRelatedComponentId());
+		relationshipView.setTargetComponentName(serviceProxy.getComponentService().getComponentName(componentRelationship.getRelatedComponentId()));
+		relationshipView.setRelationshipType(componentRelationship.getRelationshipType());
+		relationshipView.setRelationshipTypeDescription(TranslateUtil.translate(RelationshipType.class, componentRelationship.getRelationshipType()));
+		relationshipView.setUpdateDts(componentRelationship.getUpdateDts());
+
 		return relationshipView;
 	}
 
-	public static List<ComponentRelationshipView> toViewList(List<Component> components)
+	public static List<ComponentRelationshipView> toViewList(List<ComponentRelationship> componentRelationships)
 	{
 		List<ComponentRelationshipView> views = new ArrayList<>();
-		components.forEach(component -> {
-			views.add(toView(component));
+		componentRelationships.forEach(componentRelationship -> {
+			views.add(toView(componentRelationship));
 		});
 		return views;
 	}
 
-	public String getComponentId()
-	{
-		return componentId;
-	}
-
-	public void setComponentId(String componentId)
-	{
-		this.componentId = componentId;
-	}
-
-	public String getName()
-	{
-		return name;
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-	/**
-	 * @return the updateDts
-	 */
 	public Date getUpdateDts()
 	{
 		return updateDts;
 	}
 
-	/**
-	 * @param updateDts the updateDts to set
-	 */
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	public String getOwnerComponentId()
+	{
+		return ownerComponentId;
+	}
+
+	public void setOwnerComponentId(String ownerComponentId)
+	{
+		this.ownerComponentId = ownerComponentId;
+	}
+
+	public String getOwnerComponentName()
+	{
+		return ownerComponentName;
+	}
+
+	public void setOwnerComponentName(String ownerComponentName)
+	{
+		this.ownerComponentName = ownerComponentName;
+	}
+
+	public String getTargetComponentId()
+	{
+		return targetComponentId;
+	}
+
+	public void setTargetComponentId(String targetComponentId)
+	{
+		this.targetComponentId = targetComponentId;
+	}
+
+	public String getTargetComponentName()
+	{
+		return targetComponentName;
+	}
+
+	public void setTargetComponentName(String targetComponentName)
+	{
+		this.targetComponentName = targetComponentName;
+	}
+
+	public String getRelationshipType()
+	{
+		return relationshipType;
+	}
+
+	public void setRelationshipType(String relationshipType)
+	{
+		this.relationshipType = relationshipType;
+	}
+
+	public String getRelationshipTypeDescription()
+	{
+		return relationshipTypeDescription;
+	}
+
+	public void setRelationshipTypeDescription(String relationshipTypeDescription)
+	{
+		this.relationshipTypeDescription = relationshipTypeDescription;
+	}
+
+	public String getRelationshipId()
+	{
+		return relationshipId;
+	}
+
+	public void setRelationshipId(String relationshipId)
+	{
+		this.relationshipId = relationshipId;
 	}
 
 }

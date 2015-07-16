@@ -113,6 +113,11 @@ public class ComponentWatchMessageGenerator
 			changes = true;
 		}
 
+		if (changed(componentAll.getRelationships(), userWatch.getLastViewDts())) {
+			message.append(" - Relationships<br>");
+			changes = true;
+		}
+
 		if (changed(componentAll.getEvaluationSections(), userWatch.getLastViewDts())) {
 			message.append(" - Evaluation Information<br>");
 			changes = true;

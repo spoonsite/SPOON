@@ -15,8 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Version;
 
 /**
@@ -33,6 +35,28 @@ public abstract class BaseEntity<T>
 
 	public BaseEntity()
 	{
+	}
+
+	/**
+	 * Perform a query by example using this object as an example
+	 *
+	 * @return Entity found or null if not found
+	 */
+	public T find()
+	{
+		ServiceProxy serviceProxy = new ServiceProxy();
+		return (T) serviceProxy.getPersistenceService().queryOneByExample(this.getClass(), this);
+	}
+
+	/**
+	 * Perform a query by example using this object as an example
+	 *
+	 * @return List of entities found or empty list if not found
+	 */
+	public List<T> findByExample()
+	{
+		ServiceProxy serviceProxy = new ServiceProxy();
+		return (List<T>) serviceProxy.getPersistenceService().queryByExample(this.getClass(), this);
 	}
 
 	@Override

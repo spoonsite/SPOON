@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.doc.DataType;
 import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import java.util.ArrayList;
@@ -32,8 +33,10 @@ public class ComponentPrintView
 	private String componentId;
 	private String componentName;
 	private String description;
-	private ComponentRelationshipView parentComponent;
-	private List<ComponentRelationshipView> subComponents = new ArrayList<>();
+
+	@DataType(ComponentRelationshipView.class)
+	private List<ComponentRelationshipView> relationships = new ArrayList<>();
+
 	private String organization;
 	private Date releaseDate;
 	private String version;
@@ -56,7 +59,7 @@ public class ComponentPrintView
 	{
 	}
 
-	public void setComponentDetails(Component component, Component parentComponent)
+	public void setComponentDetails(Component component)
 	{
 		setComponentId(component.getComponentId());
 		setComponentName(component.getName());
@@ -64,9 +67,6 @@ public class ComponentPrintView
 		setVersion(component.getVersion());
 		setReleaseDate(component.getReleaseDate());
 		setOrganization(component.getOrganization());
-		parentComponent.setComponentId(parentComponent.getComponentId());
-		parentComponent.setName(parentComponent.getName());
-		parentComponent.setUpdateDts(parentComponent.getUpdateDts());
 		setLastActivityDate(component.getLastActivityDts());
 	}
 
@@ -82,7 +82,6 @@ public class ComponentPrintView
 		view.setReleaseDate(component.getReleaseDate());
 		view.setOrganization(component.getOrganization());
 		view.setLastActivityDate(component.getLastActivityDts());
-		view.setParentComponent(component.getParentComponent());
 		view.setLastViewedDate(component.getLastViewedDts());
 		view.setEvaluation(component.getEvaluation());
 		view.setQuestions(component.getQuestions());
@@ -94,6 +93,7 @@ public class ComponentPrintView
 		view.setResources(component.getResources());
 		view.setReviews(component.getReviews());
 		view.setDependencies(component.getDependencies());
+		view.setRelationships(component.getRelationships());
 
 		return view;
 	}
@@ -128,38 +128,6 @@ public class ComponentPrintView
 	public void setDescription(String description)
 	{
 		this.description = description;
-	}
-
-	/**
-	 * @return the parentComponent
-	 */
-	public ComponentRelationshipView getParentComponent()
-	{
-		return parentComponent;
-	}
-
-	/**
-	 * @param parentComponent the parentComponent to set
-	 */
-	public void setParentComponent(ComponentRelationshipView parentComponent)
-	{
-		this.parentComponent = parentComponent;
-	}
-
-	/**
-	 * @return the subComponents
-	 */
-	public List<ComponentRelationshipView> getSubComponents()
-	{
-		return subComponents;
-	}
-
-	/**
-	 * @param subComponents the subComponents to set
-	 */
-	public void setSubComponents(List<ComponentRelationshipView> subComponents)
-	{
-		this.subComponents = subComponents;
 	}
 
 	/**
@@ -432,5 +400,15 @@ public class ComponentPrintView
 	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
+	}
+
+	public List<ComponentRelationshipView> getRelationships()
+	{
+		return relationships;
+	}
+
+	public void setRelationships(List<ComponentRelationshipView> relationships)
+	{
+		this.relationships = relationships;
 	}
 }
