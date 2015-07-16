@@ -56,6 +56,7 @@ import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -550,12 +551,32 @@ public class UserServiceImpl
 		} else if (adminMessage.getUsersToEmail().isEmpty() == false) {
 			log.log(Level.FINE, "Sending email to specfic users");
 			StringBuilder query = new StringBuilder();
-			query.append("select from ").append(UserProfile.class.getSimpleName()).append(" where email IS NOT NULL AND username IN :userList");
+			query.append("select from ").append(UserProfile.class.getSimpleName()).append(" where email IS NOT NULL AND username IN :userList OR email IN :userList2");
 			Map<String, Object> params = new HashMap<>();
 			params.put("userList", adminMessage.getUsersToEmail());
+			params.put("userList2", adminMessage.getUsersToEmail());
 			usersToSend = persistenceService.query(query.toString(), params);
+			for(String email: adminMessage.getUsersToEmail()){
+				Boolean found = false;
+				for(UserProfile user: usersToSend){
+					if (StringUtils.equalsIgnoreCase(user.getEmail(), email)){
+						found = true;
+					} else if (StringUtils.equalsIgnoreCase(user.getUsername(), email)) {
+						found = true;
+					}
+				}
+				if (!found && StringProcessor.isEmail(email)){
+					UserProfile temp = new UserProfile();
+					temp.setEmail(email);
+					temp.setFirstName("");
+					temp.setLastName("");
+					usersToSend.add(temp);
+				}
+			}
 		}
-
+		
+		List<UserProfile> temp = usersToSend;
+		
 		int emailCount = 0;
 		for (UserProfile userProfile : usersToSend) {
 			Email email = MailManager.newEmail();
