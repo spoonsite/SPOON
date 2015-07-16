@@ -270,10 +270,12 @@ app.directive('draggable', ['$document', '$timeout', '$draggableStack',  functio
   };
 
   $draggableStack.dismiss = function (draggableInstance, reason) {
-    var draggableWindow = openedWindows.get(draggableInstance).value;
-    if (draggableWindow) {
-      draggableWindow.deferred.reject(reason);
-      removeDraggableWindow(draggableInstance);
+    if (openedWindows.get(draggableInstance)){
+      var draggableWindow = openedWindows.get(draggableInstance).value;
+      if (draggableWindow) {
+        draggableWindow.deferred.reject(reason);
+        removeDraggableWindow(draggableInstance);
+      }
     }
   };
   $draggableStack.getTop = function () {
