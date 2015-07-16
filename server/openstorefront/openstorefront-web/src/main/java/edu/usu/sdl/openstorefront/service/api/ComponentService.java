@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
+import edu.usu.sdl.openstorefront.storage.model.ComponentRelationship;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
@@ -250,6 +251,7 @@ public interface ComponentService
 	/**
 	 *
 	 * @param media
+	 * @return saved media record
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public ComponentMedia saveComponentMedia(ComponentMedia media);
@@ -304,10 +306,21 @@ public interface ComponentService
 	public void saveComponentReviewPro(ComponentReviewPro pro);
 
 	/**
+	 * Adds a tags to a component
 	 *
 	 * @param tag
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentTag(ComponentTag tag);
+
+	/**
+	 * Saves a new relationship
+	 *
+	 * @param componentRelationship
+	 * @return saved entity
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public ComponentRelationship saveComponentRelationship(ComponentRelationship componentRelationship);
 
 	/**
 	 *

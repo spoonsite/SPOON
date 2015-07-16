@@ -45,10 +45,8 @@ public class ComponentDetailView
 	@NotNull
 	private String description;
 
-	private ComponentRelationshipView parentComponent;
-
 	@DataType(ComponentRelationshipView.class)
-	private List<ComponentRelationshipView> subComponents = new ArrayList<>();
+	private List<ComponentRelationshipView> relationships = new ArrayList<>();
 
 	@NotNull
 	private String organization;
@@ -375,26 +373,6 @@ public class ComponentDetailView
 		this.questions = questions;
 	}
 
-	public ComponentRelationshipView getParentComponent()
-	{
-		return parentComponent;
-	}
-
-	public void setParentComponent(ComponentRelationshipView parentComponent)
-	{
-		this.parentComponent = parentComponent;
-	}
-
-	public List<ComponentRelationshipView> getSubComponents()
-	{
-		return subComponents;
-	}
-
-	public void setSubComponents(List<ComponentRelationshipView> subComponents)
-	{
-		this.subComponents = subComponents;
-	}
-
 	public List<ComponentExternalDependencyView> getDependencies()
 	{
 		return dependencies;
@@ -473,6 +451,16 @@ public class ComponentDetailView
 	public void setNotifyOfApprovalEmail(String notifyOfApprovalEmail)
 	{
 		this.notifyOfApprovalEmail = notifyOfApprovalEmail;
+	}
+
+	public List<ComponentRelationshipView> getRelationships()
+	{
+		return relationships;
+	}
+
+	public void setRelationships(List<ComponentRelationshipView> relationships)
+	{
+		this.relationships = relationships;
 	}
 
 }

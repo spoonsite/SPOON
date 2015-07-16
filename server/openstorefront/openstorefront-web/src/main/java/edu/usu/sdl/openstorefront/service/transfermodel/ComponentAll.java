@@ -30,6 +30,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
+import edu.usu.sdl.openstorefront.storage.model.ComponentRelationship;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
@@ -87,6 +88,9 @@ public class ComponentAll
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
 
+	@DataType(ComponentRelationship.class)
+	private List<ComponentRelationship> relationships = new ArrayList<>();
+
 	private IntegrationAll integrationAll;
 
 	public ComponentAll()
@@ -111,6 +115,7 @@ public class ComponentAll
 		validationResult.merge(validateSubComponent(metadata));
 		validationResult.merge(validateSubComponent(resources));
 		validationResult.merge(validateSubComponent(tags));
+		validationResult.merge(validateSubComponent(relationships));
 
 		for (QuestionAll questionAll : questions) {
 			List<ComponentQuestion> componentQuestions = new ArrayList<>();
@@ -151,6 +156,7 @@ public class ComponentAll
 		populateCreateUpdateFieldsBaseComponent(metadata, update);
 		populateCreateUpdateFieldsBaseComponent(resources, update);
 		populateCreateUpdateFieldsBaseComponent(tags, update);
+		populateCreateUpdateFieldsBaseComponent(relationships, update);
 
 		for (QuestionAll questionAll : questions) {
 			populateCreateUpdateFieldsBaseComponent(questionAll.getQuestion(), update);
@@ -225,6 +231,7 @@ public class ComponentAll
 				this.resources = componentAll.getResources();
 				this.reviews = componentAll.getReviews();
 				this.tags = componentAll.getTags();
+				this.relationships = componentAll.getRelationships();
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to import component.", "Make sure the data is in the correct format");
 			}
@@ -351,6 +358,16 @@ public class ComponentAll
 	public void setIntegrationAll(IntegrationAll integrationAll)
 	{
 		this.integrationAll = integrationAll;
+	}
+
+	public List<ComponentRelationship> getRelationships()
+	{
+		return relationships;
+	}
+
+	public void setRelationships(List<ComponentRelationship> relationships)
+	{
+		this.relationships = relationships;
 	}
 
 }

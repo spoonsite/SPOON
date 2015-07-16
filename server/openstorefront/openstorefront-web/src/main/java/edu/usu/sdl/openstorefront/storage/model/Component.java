@@ -52,10 +52,6 @@ public class Component
 	@ConsumeField
 	private String description;
 
-	@ConsumeField
-	@APIDescription("Id to a internal component that parent to this component")
-	private String parentComponentId;
-
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
 	@ConsumeField
 	@APIDescription("External system id")
@@ -143,16 +139,6 @@ public class Component
 	public void setDescription(String description)
 	{
 		this.description = description;
-	}
-
-	public String getParentComponentId()
-	{
-		return parentComponentId;
-	}
-
-	public void setParentComponentId(String parentComponentId)
-	{
-		this.parentComponentId = parentComponentId;
 	}
 
 	public String getGuid()
