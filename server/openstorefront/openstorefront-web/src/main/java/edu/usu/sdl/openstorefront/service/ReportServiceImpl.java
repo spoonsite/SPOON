@@ -81,7 +81,7 @@ public class ReportServiceImpl
 		managedReport.setRunStatus(RunStatus.WORKING);
 		managedReport.setUpdateDts(TimeUtil.currentDate());
 		managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-		persistenceService.persist(managedReport);
+		managedReport = persistenceService.persist(managedReport);
 
 		//run report
 		try {
@@ -91,12 +91,12 @@ public class ReportServiceImpl
 			managedReport.setRunStatus(RunStatus.COMPLETE);
 			managedReport.setUpdateDts(TimeUtil.currentDate());
 			managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-			persistenceService.persist(managedReport);
+			managedReport = persistenceService.persist(managedReport);
 		} catch (Exception e) {
 			managedReport.setRunStatus(RunStatus.ERROR);
 			managedReport.setUpdateDts(TimeUtil.currentDate());
 			managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-			persistenceService.persist(managedReport);
+			managedReport = persistenceService.persist(managedReport);
 
 			ErrorInfo errorInfo = new ErrorInfo(e, null);
 			errorInfo.setErrorTypeCode(ErrorTypeCode.REPORT);

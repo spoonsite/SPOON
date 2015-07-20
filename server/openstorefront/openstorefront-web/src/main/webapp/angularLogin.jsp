@@ -52,7 +52,7 @@
 						loginHandled = true;
 					} catch (Exception ex) {								
 						log.log(Level.WARNING, "Direct link used (Most Common) or Header Auth not set; check configuration if needed");
-						out.print("Awaiting login from Auth System");						
+						response.sendRedirect(response.encodeRedirectURL("403-forbidden.jsp?goto="+request.getSession().getAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE)));
 						processHandling = false;
 					}
 					break;
