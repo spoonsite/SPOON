@@ -22,8 +22,10 @@ module.exports = function (grunt) {
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
-    grunt.loadNpmTasks('grunt-war');
+  grunt.loadNpmTasks('grunt-war');
   grunt.loadNpmTasks("grunt-protractor-runner");
+  grunt.file.defaultEncoding = 'utf8';
+  grunt.file.preserveBOM = false;
 
   // Define the configuration for all the tasks
   grunt.initConfig({
@@ -105,8 +107,8 @@ module.exports = function (grunt) {
 
     // The actual grunt server settings
     connect: {
-          options: {
-           port: 9000,
+      options: {
+       port: 9000,
         // Change this to '0.0.0.0' to access the server from outside.
         hostname: 'localhost',
         livereload: 35729
@@ -210,12 +212,12 @@ module.exports = function (grunt) {
         files: [{
           dot: true,          
           src: [                  
-            '../../server/openstorefront/openstorefront-web/src/main/webapp/bower_components',
-            '../../server/openstorefront/openstorefront-web/src/main/webapp/fonts',
-            '../../server/openstorefront/openstorefront-web/src/main/webapp/images',
-            '../../server/openstorefront/openstorefront-web/src/main/webapp/scripts',
-            '../../server/openstorefront/openstorefront-web/src/main/webapp/styles',
-            '../../server/openstorefront/openstorefront-web/src/main/webapp/views'
+          '../../server/openstorefront/openstorefront-web/src/main/webapp/bower_components',
+          '../../server/openstorefront/openstorefront-web/src/main/webapp/fonts',
+          '../../server/openstorefront/openstorefront-web/src/main/webapp/images',
+          '../../server/openstorefront/openstorefront-web/src/main/webapp/scripts',
+          '../../server/openstorefront/openstorefront-web/src/main/webapp/styles',
+          '../../server/openstorefront/openstorefront-web/src/main/webapp/views'
           ]
         }]
       }      
@@ -380,6 +382,7 @@ module.exports = function (grunt) {
           'bower_components/bootstrap/dist/css/bootstrap.css',
           'bower_components/angular-mocks/angular-mocks.js',
           'bower_components/videogular-themes-default/videogular.css',
+          'bower_components/d3/d3.js',
           'scripts/common/angular-lightbox.js',
           'scripts/common/ng-ckeditor.js',
           'styles/*.css',
@@ -434,22 +437,22 @@ module.exports = function (grunt) {
         src: '**/*.css'
       },      
       all: {
-          expand: true,
-          dot: true,
-          cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
-          src: [
-            'bower_components/**/*',
-            'fonts/**/*',
-            'images/**/*',
-            'scripts/**/*',
-            'views/**/*',
-            '404.html',
-            'favicon.ico',
-            'index.html',
-            'submission.html',
-            'robots.txt'
-          ]
+        expand: true,
+        dot: true,
+        cwd: '<%= yeoman.app %>',
+        dest: '<%= yeoman.dist %>',
+        src: [
+        'bower_components/**/*',
+        'fonts/**/*',
+        'images/**/*',
+        'scripts/**/*',
+        'views/**/*',
+        '404.html',
+        'favicon.ico',
+        'index.html',
+        'submission.html',
+        'robots.txt'
+        ]
       }
     },
 
@@ -488,11 +491,14 @@ module.exports = function (grunt) {
     //     }
     //   }
     // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/*.js'
+    //   uglify: {
+    //     options:{
+    //       asciiOnly: true
+    //     },
+    //     dist: {
+    //       files: {
+    //         '<%= yeoman.dist %>/scripts/scripts.js': [
+    //       '<%= yeoman.dist %>/scripts/{,*/}*.js'
     //       ]
     //     }
     //   }
@@ -550,11 +556,11 @@ grunt.registerTask('test', [
     'connect:test',
     'karma'
     ]);
-    
+
 grunt.registerTask('test-e2e', [
   'clean:server',
   'protractor:run'
-    ]);
+  ]);
 
 grunt.registerTask('build', function (target) {
   grunt.task.run([
@@ -569,7 +575,7 @@ grunt.registerTask('build', function (target) {
         'copy:fonts',
         'cdnify',
         'cssmin',
-        'uglify',
+        // 'uglify',
         'rev',
         'usemin',
         'htmlmin'
@@ -583,7 +589,7 @@ grunt.registerTask('buildprod', function (target) {
     'build',
     'clean:serverweb',
     'copy:server'  
-  ]);
+    ]);
 });  
 
 grunt.registerTask('build-debug', function (target) {
@@ -596,6 +602,7 @@ grunt.registerTask('build-debug', function (target) {
     'concurrent:dist',
     'copy:compstyles',    
     'cdnify',
+    // 'uglify',
     'copy:server'
     ]);
 });
