@@ -56,6 +56,7 @@ import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -531,7 +532,7 @@ public class UserServiceImpl
 		if (adminMessage.getUsersToEmail().isEmpty()
 				&& StringUtils.isBlank(adminMessage.getUserTypeCode())) {
 
-			log.log(Level.FINE, "Sending email to all users");
+			log.log(Level.INFO, "(Admin Message) Sending email to all users");
 			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
 			for (UserProfile userProfile : userProfiles) {
 				if (StringUtils.isNotBlank(userProfile.getEmail())) {
@@ -539,7 +540,7 @@ public class UserServiceImpl
 				}
 			}
 		} else if (StringUtils.isNotBlank(adminMessage.getUserTypeCode())) {
-			log.log(Level.FINE, MessageFormat.format("Sending email to users of type: {0}", adminMessage.getUserTypeCode()));
+			log.log(Level.INFO, MessageFormat.format("(Admin Message) Sending email to users of type: {0}", adminMessage.getUserTypeCode()));
 			userProfileExample.setUserTypeCode(adminMessage.getUserTypeCode());
 			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
 			for (UserProfile userProfile : userProfiles) {
@@ -548,14 +549,34 @@ public class UserServiceImpl
 				}
 			}
 		} else if (adminMessage.getUsersToEmail().isEmpty() == false) {
-			log.log(Level.FINE, "Sending email to specfic users");
+			log.log(Level.INFO, "(Admin Message) Sending email to specfic users");
 			StringBuilder query = new StringBuilder();
-			query.append("select from ").append(UserProfile.class.getSimpleName()).append(" where email IS NOT NULL AND username IN :userList");
+			query.append("select from ").append(UserProfile.class.getSimpleName()).append(" where email IS NOT NULL AND username IN :userList OR email IN :userList2");
 			Map<String, Object> params = new HashMap<>();
 			params.put("userList", adminMessage.getUsersToEmail());
+			params.put("userList2", adminMessage.getUsersToEmail());
 			usersToSend = persistenceService.query(query.toString(), params);
+			for(String email: adminMessage.getUsersToEmail()){
+				Boolean found = false;
+				for(UserProfile user: usersToSend){
+					if (StringUtils.equalsIgnoreCase(user.getEmail(), email)){
+						found = true;
+					} else if (StringUtils.equalsIgnoreCase(user.getUsername(), email)) {
+						found = true;
+					}
+				}
+				if (!found && StringProcessor.isEmail(email)){
+					UserProfile temp = new UserProfile();
+					temp.setEmail(email);
+					temp.setFirstName("");
+					temp.setLastName("");
+					usersToSend.add(temp);
+				}
+			}
 		}
-
+		
+		List<UserProfile> temp = usersToSend;
+		
 		int emailCount = 0;
 		for (UserProfile userProfile : usersToSend) {
 			Email email = MailManager.newEmail();
@@ -567,7 +588,7 @@ public class UserServiceImpl
 			MailManager.send(email);
 			emailCount++;
 		}
-		log.log(Level.FINE, "{0} email(s) sent", emailCount);
+		log.log(Level.INFO, MessageFormat.format("(Admin Message) {0} email(s) sent", emailCount));
 	}
 
 	@Override

@@ -45,6 +45,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
 import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
 import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
+import edu.usu.sdl.openstorefront.storage.model.ComponentRelationship;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
@@ -80,6 +81,7 @@ import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadataView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentPrintView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
+import edu.usu.sdl.openstorefront.web.rest.model.ComponentRelationshipView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentResourceView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
@@ -1234,6 +1236,7 @@ public class ComponentRESTResource
 	public Response saveComponentEvaluationSections(
 			@PathParam("id")
 			@RequiredParam String componentId,
+			@DataType(ComponentEvaluationSection.class)
 			@RequiredParam List<ComponentEvaluationSection> sections)
 	{
 		ValidationResult allValidationResult = new ValidationResult();
@@ -2904,6 +2907,83 @@ public class ComponentRESTResource
 	}
 	// </editor-fold>
 
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource Relationships section">
+	@GET
+	@APIDescription("Get all direct relationship for a specified component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentRelationshipView.class)
+	@Path("/{id}/relationships")
+	public List<ComponentRelationshipView> getComponentRelationships(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		return ComponentRelationshipView.toViewList(service.getComponentService().getBaseComponent(ComponentRelationship.class, componentId));
+	}
+
+	@GET
+	@APIDescription("Get a relationship entity for a specified component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentRelationship.class)
+	@Path("/{id}/relationships/{relationshipId}")
+	public Response getComponentRelationship(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("relationshipId")
+			@RequiredParam String relationshipId)
+	{
+		ComponentRelationship relationshipExample = new ComponentRelationship();
+		relationshipExample.setComponentRelationshipId(relationshipId);
+		relationshipExample.setComponentId(componentId);
+		return sendSingleEntityResponse(relationshipExample.find());
+	}
+
+	@POST
+	@APIDescription("Get all direct relationship for a specified component")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(ComponentRelationship.class)
+	@Path("/{id}/relationships")
+	public Response addComponentRelationship(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam ComponentRelationship relationship)
+	{
+
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+
+		//check that the component exists
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+		relationship.setComponentId(componentId);
+		if (component != null) {
+			ValidationModel validationModel = new ValidationModel(relationship);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				relationship = service.getComponentService().saveComponentRelationship(relationship);
+
+				return Response.created(URI.create("v1/resource/components/"
+						+ relationship.getComponentId()
+						+ "/relationships/"
+						+ relationship.getComponentRelationshipId())).entity(relationship).build();
+			}
+		}
+
+		return response;
+	}
+
+	@DELETE
+	@APIDescription("Delete a relationship for a specified component")
+	@Path("/{id}/relationships/{relationshipId}")
+	public void deleteRelationship(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("relationshipId")
+			@RequiredParam String relationshipId)
+	{
+		service.getComponentService().deleteBaseComponent(ComponentRelationship.class, relationshipId);
+	}
+
+	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
 	@RequireAdmin

@@ -12,7 +12,7 @@
 		
 	if (SecurityUtil.isLoggedIn()) {
 		RequestDispatcher rd = request.getRequestDispatcher("/index.html");
-		rd.forward(request, response);		
+		rd.include(request, response);		
 	} else {
 		
 		final String STUB_HEADER = "X_STUBHEADER_X";
@@ -51,8 +51,8 @@
 						currentUser.login(headerAuthToken);
 						loginHandled = true;
 					} catch (Exception ex) {								
-						log.log(Level.SEVERE, "Check configuration", ex);
-						response.sendError(HttpServletResponse.SC_FORBIDDEN, "Unable to access system.");					
+						log.log(Level.WARNING, "Direct link used (Most Common) or Header Auth not set; check configuration if needed");
+						response.sendRedirect(response.encodeRedirectURL("403-forbidden.jsp?goto="+request.getSession().getAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE)));
 						processHandling = false;
 					}
 					break;
@@ -68,7 +68,7 @@
 					rd.forward(request, response);
 				} else {
 					RequestDispatcher rd = request.getRequestDispatcher("/index.html");
-					rd.forward(request, response);
+					rd.include(request, response);
 				}
 		}
 	}	

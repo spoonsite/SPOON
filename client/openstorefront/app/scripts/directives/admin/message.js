@@ -36,7 +36,8 @@ app.directive('message', ['$uiModal', '$draggable', 'business', function ($uiMod
       scope.open = function(size, type, contacts, subject, message, modal){
         
         modal?
-        (function(){
+        (function(size, type, contacts, subject, message, modal){
+          
           var draggableInstance = $draggable.open({
             alwaysontop: true,
             templateUrl: 'views/admin/component/messagesubmitter.html',
@@ -70,9 +71,9 @@ app.directive('message', ['$uiModal', '$draggable', 'business', function ($uiMod
             scope.selected = selectedItem;
           }, function (result) {
           });
-        })(size, type, contacts, subject, message)
+        })(size, type, contacts, subject, message, modal)
         :
-        (function (size, type, contacts, subject, message) {
+        (function (size, type, contacts, subject, message, modal) {
           var modalInstance = $uiModal.open({
             templateUrl: 'views/admin/message/adminMessageContent.html',
             controller: 'adminMessageCtrlModal',
@@ -101,7 +102,7 @@ app.directive('message', ['$uiModal', '$draggable', 'business', function ($uiMod
           }, function () {
           // console.log('Modal dismissed at: ' + new Date());
         });
-        })(size, type, contacts, subject, message)
+        })(size, type, contacts, subject, message, modal)
       }
     }
   };
@@ -224,12 +225,14 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
 var messageCtrl = function ($scope, $uiModalInstance, type, contacts, subject, message, disabledContacts, Business) {
   $scope.form = {};
   $scope.form.subjectField = subject? subject: '';
-  $scope.form.type = type;
+  $scope.form.msgType = type || 'users';
+  // console.log('type', type);
+  // console.log('form', $scope.form.msgType);
   $scope.form.contacts = contacts;
   $scope.form.disabledContacts = disabledContacts || false;
   $scope.prep = $scope.form.disabledContacts;
   $scope.form.templates = [];
-
+  
   if (!$scope.form.disabledContacts) {
     $scope.editorContent = message? message: '';
     $scope.editorContentWatch;
@@ -312,7 +315,11 @@ var messageCtrl = function ($scope, $uiModalInstance, type, contacts, subject, m
   var getUsernames = function(users) {
     var result = [];
     _.each(users, function(user) {
-      result.push(user.username);
+      if (user.username) {
+        result.push(user.username);
+      } else if (user.email){
+        result.push(user.email);
+      }
     })
     return result;
   }
@@ -341,11 +348,12 @@ var messageCtrl = function ($scope, $uiModalInstance, type, contacts, subject, m
     messageObj.message = $scope.editorContentWatch;
 
     
+    // console.log('form', $scope.form);
 
-    if ($scope.form.type === 'group' && $scope.form.contacts && $scope.form.contacts.code) {
+    if ($scope.form.msgType === 'group' && $scope.form.contacts && $scope.form.contacts.code) {
       messageObj.userTypeCode = $scope.form.contacts.code;
       messageObj.usersToEmail = [];
-    } else if ($scope.form.type === 'users' && $scope.form.contacts && $scope.form.contacts.length){
+    } else if ($scope.form.msgType === 'users' && $scope.form.contacts && $scope.form.contacts.length){
       messageObj.usersToEmail = getUsernames($scope.form.contacts);
       messageObj.userTypeCode = null;
     } else {
