@@ -15,61 +15,18 @@
 		rd.include(request, response);		
 	} else {
 		
-		final String STUB_HEADER = "X_STUBHEADER_X";
-		
-		//Check for open am set if so login and then send 
-		Logger log = Logger.getLogger("angularLogin.jsp"); 
-		
-		org.apache.shiro.mgt.SecurityManager securityManager = SecurityUtils.getSecurityManager();		
-		boolean loginHandled = false;
-		boolean processHandling = true;
-		if (securityManager instanceof DefaultWebSecurityManager) {
-			DefaultWebSecurityManager webSecurityManager = (DefaultWebSecurityManager) securityManager;			
-			for (Realm realm : webSecurityManager.getRealms()) {
-				if (realm instanceof HeaderRealm) {
-					HeaderAuthToken headerAuthToken = new HeaderAuthToken();
-					headerAuthToken.setRequest(request);
-					headerAuthToken.setAdminGroupName(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ADMIN_GROUP));
-					headerAuthToken.setEmail(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_EMAIL, STUB_HEADER)));
-					headerAuthToken.setFirstname(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_FIRSTNAME, STUB_HEADER)));
-
-					Enumeration<String> groupValues = request.getHeaders(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_GROUP, STUB_HEADER));
-					StringBuilder group = new StringBuilder();
-					while (groupValues.hasMoreElements()) {
-						group.append(groupValues.nextElement());
-						group.append(" | ");
-					}
-
-					headerAuthToken.setGroup(group.toString());
-					headerAuthToken.setGuid(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LDAPGUID, STUB_HEADER)));
-					headerAuthToken.setLastname(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LASTNAME, STUB_HEADER)));
-					headerAuthToken.setOrganization(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ORGANIZATION, STUB_HEADER)));
-					headerAuthToken.setUsername(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_USERNAME, STUB_HEADER)));
-
-					try {
-						Subject currentUser = SecurityUtils.getSubject();
-						currentUser.login(headerAuthToken);
-						loginHandled = true;
-					} catch (Exception ex) {								
-						log.log(Level.WARNING, "Direct link used (Most Common) or Header Auth not set; check configuration if needed");
-						response.sendRedirect(response.encodeRedirectURL("403-forbidden.jsp?goto="+request.getSession().getAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE)));
-						processHandling = false;
-					}
-					break;
-				}
-			}			
-		}
-		
-		//if not  send to login page	
-		if (processHandling) {
-				if (loginHandled == false) {
-					String originalPage = (String) session.getAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE);
-					RequestDispatcher rd = request.getRequestDispatcher("/login.jsp?gotoPage=" + originalPage);
-					rd.forward(request, response);
-				} else {
-					RequestDispatcher rd = request.getRequestDispatcher("/index.html");
-					rd.include(request, response);
-				}
+		if (HeaderRealm.isUsingHeaderRealm()) {
+			boolean loginSuccessful = HeaderRealm.handleHeaderLogin(request);
+			if (loginSuccessful == false) {						
+				response.sendRedirect(response.encodeRedirectURL("403-forbidden.jsp?goto="+request.getSession().getAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE)));			
+			} else {
+				RequestDispatcher rd = request.getRequestDispatcher("/index.html");
+				rd.include(request, response);
+			}
+		} else {
+			String originalPage = (String) session.getAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE);
+			RequestDispatcher rd = request.getRequestDispatcher("/login.jsp?gotoPage=" + originalPage);
+			rd.forward(request, response);			
 		}
 	}	
 %>
