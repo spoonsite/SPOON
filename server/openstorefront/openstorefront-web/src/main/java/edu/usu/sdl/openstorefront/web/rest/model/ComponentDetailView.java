@@ -121,7 +121,7 @@ public class ComponentDetailView
 	{
 	}
 
-	public void setComponentDetails(Component component, Component parentComponent)
+	public void setComponentDetails(Component component)
 	{
 		name = component.getName();
 		guid = component.getGuid();
@@ -137,9 +137,6 @@ public class ComponentDetailView
 		organization = component.getOrganization();
 		submittedDts = component.getSubmittedDts();
 		notifyOfApprovalEmail = component.getNotifyOfApprovalEmail();
-		parentComponent.setComponentId(parentComponent.getComponentId());
-		parentComponent.setName(parentComponent.getName());
-		parentComponent.setUpdateDts(parentComponent.getUpdateDts());
 		lastActivityDts = component.getLastActivityDts();
 	}
 
