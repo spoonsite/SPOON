@@ -491,14 +491,11 @@ module.exports = function (grunt) {
     //     }
     //   }
     // },
-    //   uglify: {
-    //     options:{
-    //       asciiOnly: true
-    //     },
-    //     dist: {
-    //       files: {
-    //         '<%= yeoman.dist %>/scripts/scripts.js': [
-    //       '<%= yeoman.dist %>/scripts/{,*/}*.js'
+    // uglify: {
+    //   dist: {
+    //     files: {
+    //       '<%= yeoman.dist %>/scripts/scripts.js': [
+    //         '<%= yeoman.dist %>/scripts/{,*/}*.js'
     //       ]
     //     }
     //   }
@@ -575,7 +572,7 @@ grunt.registerTask('build', function (target) {
         'copy:fonts',
         'cdnify',
         'cssmin',
-        // 'uglify',
+        'uglify',
         'rev',
         'usemin',
         'htmlmin'
@@ -602,7 +599,6 @@ grunt.registerTask('build-debug', function (target) {
     'concurrent:dist',
     'copy:compstyles',    
     'cdnify',
-    // 'uglify',
     'copy:server'
     ]);
 });

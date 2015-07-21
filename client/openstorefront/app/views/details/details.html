@@ -228,33 +228,7 @@
     </table>  
   </div>
 </div>
-<div class="row">
-    <d3-bars data="details.deatils." label="title"></d3-bars>
-</div>
-<div class="row" ng-if="details.details.parentComponent || details.details.subComponents.length || details.details.relatedComponents.length">
-  <div class="col-md-12">
-    <div class="section-headers addBorders"><h4>Relationships</h4></div>  
-    <div>
-      <div ng-if="details.details.parentComponent" style="display: inline-block; margin: 0px 20px;">
-        <h4>
-          Parent Component:
-        </h4>
-        <div>
-          <a href="#/single?id={{details.details.parentComponent.componentId}}" target="_blank">{{details.details.parentComponent.name}}</a>
-        </div>
-      </div>
-      <div ng-if="details.details.subComponents.length" style="display: inline-block; margin: 0px 20px;">
-        <h4>
-          Child Component(s):
-        </h4>
-        <div data-ng-repeat="thing in details.details.subComponents">
-          <a href="#/single?id={{thing.componentId}}" target="_blank">{{thing.name}}</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<br ng-if="details.details.parentComponent || details.details.subComponents.length || details.details.relatedComponents.length">
+<br ng-if="details.details.contacts && details.details.contacts.length">
 <div class="row">
   <div class="col-md-12">
     <table class="table table-bordered table-hover" >
@@ -274,4 +248,8 @@
       </tbody>
     </table>
   </div>
+</div>
+<br ng-if="details.details.attributes && details.details.attributes.length">
+<div class="row">
+    <d3-directed-graph owner="details.details" readonly="true" data="details.details.relationships" label="title"></d3-directed-graph>
 </div>
