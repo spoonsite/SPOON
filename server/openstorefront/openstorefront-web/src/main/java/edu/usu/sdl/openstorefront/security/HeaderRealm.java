@@ -16,15 +16,24 @@
 package edu.usu.sdl.openstorefront.security;
 
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 
 /**
  * This is used to login based on Request Header info
@@ -34,6 +43,8 @@ import org.apache.shiro.subject.PrincipalCollection;
 public class HeaderRealm
 		extends AuthorizingRealm
 {
+
+	private static final Logger log = Logger.getLogger(HeaderRealm.class.getName());
 
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals)
@@ -100,6 +111,59 @@ public class HeaderRealm
 		}
 
 		return headerAccount;
+	}
+
+	public static boolean isUsingHeaderRealm()
+	{
+		boolean headerRealm = false;
+		org.apache.shiro.mgt.SecurityManager securityManager = SecurityUtils.getSecurityManager();
+		if (securityManager instanceof DefaultWebSecurityManager) {
+			DefaultWebSecurityManager webSecurityManager = (DefaultWebSecurityManager) securityManager;
+			for (Realm realm : webSecurityManager.getRealms()) {
+				if (realm instanceof HeaderRealm) {
+					headerRealm = true;
+					break;
+				}
+			}
+		}
+		return headerRealm;
+	}
+
+	public static boolean handleHeaderLogin(HttpServletRequest request)
+	{
+		boolean loginSuccessful = false;
+
+		final String STUB_HEADER = "X_STUBHEADER_X";
+		if (isUsingHeaderRealm()) {
+			HeaderAuthToken headerAuthToken = new HeaderAuthToken();
+			headerAuthToken.setRequest(request);
+			headerAuthToken.setAdminGroupName(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ADMIN_GROUP));
+			headerAuthToken.setEmail(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_EMAIL, STUB_HEADER)));
+			headerAuthToken.setFirstname(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_FIRSTNAME, STUB_HEADER)));
+
+			Enumeration<String> groupValues = request.getHeaders(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_GROUP, STUB_HEADER));
+			StringBuilder group = new StringBuilder();
+			while (groupValues.hasMoreElements()) {
+				group.append(groupValues.nextElement());
+				group.append(" | ");
+			}
+
+			headerAuthToken.setGroup(group.toString());
+			headerAuthToken.setGuid(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LDAPGUID, STUB_HEADER)));
+			headerAuthToken.setLastname(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LASTNAME, STUB_HEADER)));
+			headerAuthToken.setOrganization(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ORGANIZATION, STUB_HEADER)));
+			headerAuthToken.setUsername(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_USERNAME, STUB_HEADER)));
+
+			try {
+				Subject currentUser = SecurityUtils.getSubject();
+				currentUser.login(headerAuthToken);
+				loginSuccessful = true;
+			} catch (Exception ex) {
+				log.log(Level.WARNING, "Login failed on header; Check configuration, if needed", ex);
+			}
+		}
+
+		return loginSuccessful;
 	}
 
 }

@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.security.HeaderAuthToken;
 import edu.usu.sdl.openstorefront.security.HeaderRealm;
 import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.storage.model.UserProfile;
@@ -88,40 +87,13 @@ public class LoginAction
 			return new RedirectResolution("/");
 		}
 
-		org.apache.shiro.mgt.SecurityManager securityManager = SecurityUtils.getSecurityManager();
-		if (securityManager instanceof DefaultWebSecurityManager) {
-			DefaultWebSecurityManager webSecurityManager = (DefaultWebSecurityManager) securityManager;
-			Resolution resolution = null;
-			for (Realm realm : webSecurityManager.getRealms()) {
-				if (realm instanceof HeaderRealm) {
-					HeaderAuthToken headerAuthToken = new HeaderAuthToken();
-					headerAuthToken.setRequest(getContext().getRequest());
-					headerAuthToken.setAdminGroupName(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ADMIN_GROUP));
-					headerAuthToken.setEmail(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_EMAIL, STUB_HEADER)));
-					headerAuthToken.setFirstname(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_FIRSTNAME, STUB_HEADER)));
-
-					Enumeration<String> groupValues = getContext().getRequest().getHeaders(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_GROUP, STUB_HEADER));
-					StringBuilder group = new StringBuilder();
-					while (groupValues.hasMoreElements()) {
-						group.append(groupValues.nextElement());
-						group.append(" | ");
-					}
-
-					headerAuthToken.setGroup(group.toString());
-					headerAuthToken.setGuid(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LDAPGUID, STUB_HEADER)));
-					headerAuthToken.setLastname(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LASTNAME, STUB_HEADER)));
-					headerAuthToken.setOrganization(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ORGANIZATION, STUB_HEADER)));
-					headerAuthToken.setUsername(getContext().getRequest().getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_USERNAME, STUB_HEADER)));
-
-					try {
-						currentUser.login(headerAuthToken);
-						resolution = handleLoginRedirect();
-					} catch (Exception ex) {
-						log.log(Level.SEVERE, "Check configuration", ex);
-						resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Unable to access system.");
-					}
-					break;
-				}
+		if (HeaderRealm.isUsingHeaderRealm()) {
+			Resolution resolution;
+			if (HeaderRealm.handleHeaderLogin(getContext().getRequest())) {
+				resolution = handleLoginRedirect();
+			} else {
+				log.log(Level.SEVERE, "Check configuration; Unable to login user using header realm");
+				resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Unable to access system.");
 			}
 			if (resolution != null) {
 				return resolution;
