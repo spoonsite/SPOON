@@ -25,6 +25,19 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.sendAdminMessage   = $rootScope.openAdminMessage;
 
   resetUpdateNotify();
+  $scope.predicate = [];
+  $scope.reverse = [];
+  $scope.setPredicate = function (predicate, table) {
+    if ($scope.predicate[table] === predicate) {
+      $scope.reverse[table] = !$scope.reverse[table];
+    } else {
+      $scope.predicate[table] = predicate;
+      $scope.reverse[table] = false;
+    }
+    if (table === 'components') {
+      $scope.pagination.control.changeSortOrder(predicate);
+    }
+  };
 
   $scope.setupTagList = $scope.setupTagList || function() {
     Business.getTagsList(true).then(function(result) {
@@ -80,6 +93,13 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     // console.log('section', result);
     
   })
+
+  $scope.goTo = function(location){
+    console.log('location', location);
+    
+    $location.path(location.path);
+    $location.search(location.search);
+  }
 
   $scope.title = "DemoCtrl";
   $scope.d3Data = [

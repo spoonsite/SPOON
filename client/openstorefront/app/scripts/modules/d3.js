@@ -65,7 +65,7 @@ angular.module('d3', [])
       onClick: '&'
     },
     link: function(scope, ele, attrs) {
-      console.log('scope', scope);
+      // console.log('scope', scope);
       
       var checkTrue = function(value){
         if (value === 'true' || value === true || value === 1 || value === '1')
@@ -113,7 +113,7 @@ angular.module('d3', [])
             })
           }
         })
-        console.log('scope', scope);
+        // console.log('scope', scope);
         scope.nodes = tNodes; //
         scope.links = tLinks;
         scope.nodes = scope.nodes ||  [
@@ -291,6 +291,9 @@ angular.module('d3', [])
                 sourceY = d.source.y + (sourcePadding * normY),
                 targetX = d.target.x - (targetPadding * normX),
                 targetY = d.target.y - (targetPadding * normY);
+
+                // use this line instead of the return to make the paths arc
+                // return linkArc(sourceX, sourceY, targetX, targetY);
                 return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
               });
 
@@ -424,7 +427,15 @@ angular.module('d3', [])
                 vis.call(zoom);
                 circle.call(fakeDrag);
                 restart();
-              });
+              })
+              .on('dblclick', function(d){ //
+                scope.onClick({
+                  'location': {
+                    path: '/single',
+                    search: {'id': d.id}
+                  }
+                })
+              })
 
               // show node IDs
               g.append('svg:text')
@@ -472,8 +483,7 @@ angular.module('d3', [])
             }
             // rescale g
             function zoomed() {
-              console.log('d3.translate', d3.event.translate);
-              
+              // console.log('d3.translate', d3.event.translate);
               vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
             }
 
@@ -489,7 +499,12 @@ angular.module('d3', [])
             function dragended(d) {
               d3.select(this).classed("dragging", false);
             }
-
+            function linkArc(sourceX, sourceY, targetX, targetY) {
+              var dx = targetX - sourceX,
+              dy = targetY - sourceY,
+              dr = Math.sqrt(dx * dx + dy * dy);
+              return "M" + sourceX + "," + sourceY + "A" + dr + "," + dr + " 0 0,1 " + targetX + "," + targetY;
+            }
 
 
             // app starts here
