@@ -30,8 +30,8 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   $scope.details.details   = null;
   $scope.modal.isLanding   = false;
   $scope.showDetails       = false;
+  $scope.showBreadCrumbs    = true;
 
-  $rootScope.eventHistory = [];
   $scope.eventHistory = $rootScope.eventHistory;
   $scope.goToBreadcrumb = $rootScope.goToBreadcrumb;
 
@@ -39,7 +39,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   if ($location.$$path === '/single'){
     label = 'Component ' + $location.search().id;
   }
-  $rootScope.eventHistory.push({path: $location.$$path, search: $location.search(), label: label});
+  // $rootScope.eventHistory.push({path: $location.$$path, search: $location.search(), label: label});
 
   $rootScope.$watch('eventHistory', function(){
     $scope.eventHistory = $rootScope.eventHistory;
