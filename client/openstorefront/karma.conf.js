@@ -58,6 +58,7 @@ module.exports = function(config) {
       'app/bower_components/jQuery.dotdotdot/src/js/jquery.dotdotdot.js',
       'app/bower_components/angular-bindonce/bindonce.js',
       'app/bower_components/d3/d3.js',
+      'app/scripts/common/ckeditor/ckeditor.js',
       'app/scripts/**/*.js',
       'test/spec/controllers/**/*.js',
       // 'test/spec/directives/**/*.js',
