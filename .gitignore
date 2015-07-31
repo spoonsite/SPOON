@@ -39,3 +39,5 @@ client/openstorefront/app/images/logo/DI2E (logo).tif
 client/openstorefront/app/images/logo/DI2E-(logo).gif
 /server/openstorefront/openstorefront-web/src/main/webapp/submission.html
 /server/openstorefront/apiclient/target/
+/server/openstorefront/core/target/
+/server/openstorefront/core-modules/core/target/
