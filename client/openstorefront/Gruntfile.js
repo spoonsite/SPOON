@@ -23,6 +23,7 @@ module.exports = function (grunt) {
   require('time-grunt')(grunt);
 
   grunt.loadNpmTasks('grunt-war');
+  grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks("grunt-protractor-runner");
   grunt.file.defaultEncoding = 'utf8';
   grunt.file.preserveBOM = false;

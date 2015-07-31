@@ -171,7 +171,7 @@ angular.module('d3', [])
           renderTimeout = setTimeout(function() {
             // set up SVG for D3
             var width = d3.select(ele[0])[0][0].offsetWidth - margin,
-            height = 500/*scope.data.length * (barHeight + barPadding)*/,
+            height = 700/*scope.data.length * (barHeight + barPadding)*/,
             colors = d3.scale.category20();
 
             // required if we ever want to linearly scale down the size of the content

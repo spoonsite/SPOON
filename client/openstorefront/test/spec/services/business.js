@@ -1,18 +1,18 @@
-'use strict';
+// 'use strict';
 
-describe('Service: business', function () {
+// describe('Service: business', function () {
 
-  // load the service's module
-  beforeEach(module('openstorefrontApp'));
+//   // load the service's module
+//   beforeEach(module('openstorefrontApp'));
 
-  // instantiate service
-  var business;
-  beforeEach(inject(function (_business_) {
-    business = _business_;
-  }));
+//   // instantiate service
+//   var business;
+//   beforeEach(inject(function (_business_) {
+//     business = _business_;
+//   }));
 
-  it('should do something', function () {
-    expect(!!business).toBe(true);
-  });
+//   it('should do something', function () {
+//     expect(!!business).toBe(true);
+//   });
 
-});
+// });

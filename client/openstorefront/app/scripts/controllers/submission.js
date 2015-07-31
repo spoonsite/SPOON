@@ -31,6 +31,12 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.lastMediaFile = '';
   $scope.hideMultiSelect = true;
 
+  $scope.editor = {};
+  $scope.editor.editorContent = '';
+  $scope.editor.editorContentWatch;
+  $scope.editorOptions = getCkBasicConfig(false);
+
+
   $scope.submitter = {};
   $scope.submitter.firstName;
   $scope.submitter.lastName;
@@ -38,6 +44,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.submitter.organization;
   $scope.current = 'top';
   $scope.optIn = true;
+  $scope.notDif = true;
 
 
   $scope.componentId;
@@ -58,13 +65,13 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
 
   $scope.component.media = [];
   $scope.mediaForm = {};
-  $scope.showMediaUpload = 'true';
+  $scope.showMediaUpload = 'falseValue';
   $scope.isFull = false;
 
 
   $scope.component.resources = [];
   $scope.resourceForm = {};
-  $scope.showResourceUpload = 'false';
+  $scope.showResourceUpload = 'trueValue';
   $scope.isFullResource = false;
 
 
@@ -107,6 +114,35 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     } 
   }
 
+  $scope.setupTagList = $scope.setupTagList || function() {
+    Business.getTagsList(true).then(function(result) {
+      if (result) {
+        $scope.tagsList       = result;
+        $scope.tagsList.sort();
+      } else {
+        $scope.tagsList       = null;
+      }
+    });
+  }
+  $scope.setupTagList();
+
+  $scope.checkTagsList = $scope.checkTagsList || function(query, list, source) {
+    var deferred = $q.defer();
+    var subList = null;
+    if (query === ' ') {
+      subList = _.reject(source, function(item) {
+        return !!(_.where(list, {'text': item}).length);
+      });
+    } else {
+      subList = _.filter(source, function(item) {
+        return item.toLowerCase().indexOf(query.toLowerCase()) > -1;
+      });
+    }
+    deferred.resolve(subList);
+    return deferred.promise;
+  };
+
+
   $scope.getMediaHTML = function(media){
     return utils.getMediaHTML(media, $sce);
   }
@@ -119,11 +155,13 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     var deferred = $q.defer();
     Business.userservice.getCurrentUserProfile().then(function(result){
       if (result) {
+
         $scope.userInfo = result;
         deferred.resolve(result);
         // console.log('result', result);
       }
     }, function(result){
+      $scope.userInfo = null;
       deferred.reject(result);
     });
     return deferred.promise;
@@ -134,9 +172,15 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.getUserInfo().then(function(result){
     window.onbeforeunload = function (event) {
       if ($scope.leaveOverride) {
-
-      } else if (!$scope.component.component.approvalState || $scope.component.component.approvalState === 'N') {
-        var message = 'Important: Your component has not yet been submitted. Please finish the form and click on the \'Save Component\' to submit your component. Otherwise you may return to this form later through the user menu on the Clearinghouse website to submit your component.';
+      } else if (($scope.userInfo && !$scope.notDif) || (!$scope.userInfo && (!$scope.component.component.approvalState || $scope.component.component.approvalState === 'N'))) {
+        var message
+        if (!$scope.notDif) {
+          message = 'Important!: Some content has changed for your component and has not yet been saved. Please save this content before leaving.';
+        } else if (!$scope.userInfo){
+          message = 'Important!: We\'ve someohow lost a connection to your user account and your component has not yet been submitted. To ensure that we don\'t lose your progress, please finish the form and click on the \'Submit Component\' to submit your component.';
+        } else {
+          message = 'Important!: Your progress ahs been saved, but your comoponent has not yet been submitted. You can come back to this form later through the user menu, or you can finish the form and click the \'Submit Component\' button to submit your component.';
+        }
         if (typeof event == 'undefined') {
           event = window.event;
         }
@@ -147,10 +191,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       }
     }
   }, function(result){
-    console.log('we hit this side');
     window.onbeforeunload = function (event) {
       if ($scope.leaveOverride) {
-
       } else if (!$scope.component.component.approvalState || $scope.component.component.approvalState === 'N') {
         var message = 'Important: Please finish the form and click on the \'Save Component\' button before leaving this page. Otherwise your component will not be submitted and your work will be lost.';
         if (typeof event == 'undefined') {
@@ -173,38 +215,38 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
   })
 
-  $scope.getSubmission = function(){
-    var deferred = $q.defer();
-    if ($scope.componentId !== null && $scope.componentId !== undefined){
-      Business.submissionservice.getSubmission($scope.componentId, true).then(function(result){
-        $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
-        if (result && result.component && result.component.componentId){
-          $scope.backup = angular.copy(result);
-          $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
-          $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
-          $scope.componentId = result.component.componentId;
-          $scope.component = angular.copy(result);
-          $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');
-          $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');
-          $scope.hideMultiSelect = true;
-          $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
-          $scope.hideMultiSelect = false;
-          if ($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N') {
-            $scope.scrollTo('reviewAndSubmit', 'submit', '', null)
-          }
+$scope.getSubmission = function(){
+  var deferred = $q.defer();
+  if ($scope.componentId !== null && $scope.componentId !== undefined){
+    Business.submissionservice.getSubmission($scope.componentId, true).then(function(result){
+      $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+      if (result && result.component && result.component.componentId){
+        $scope.backup = angular.copy(result);
+        $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
+        $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
+        $scope.componentId = result.component.componentId;
+        $scope.component = angular.copy(result);
+        $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');
+        $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');
+        $scope.hideMultiSelect = true;
+        $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+        $scope.hideMultiSelect = false;
+        if ($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N') {
+          $scope.scrollTo('reviewAndSubmit', 'submit', '', null)
         }
-        deferred.resolve();
-      }, function(data){
-        console.log('data', data);
-        
-        if (data.status === 403) {
-          var confirmation = window.confirm('You were not logged in or not the owner of this component submission. Please log in and return to this submission form through the user menu.');
-          $scope.leaveOverride = true;
-          window.location = "";
-        }
-        $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
-        deferred.reject();
-      });
+      }
+      deferred.resolve();
+    }, function(data){
+      // console.log('data', data);
+
+      if (data.status === 403) {
+        var confirmation = window.confirm('You were not logged in or not the owner of this component submission. Please log in and return to this submission form through the user menu.');
+        $scope.leaveOverride = true;
+        window.location = "";
+      }
+      $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+      deferred.reject();
+    });
     }//
     return deferred.promise;
   }
@@ -339,7 +381,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   $scope.initialSave = function($event){
     if ($scope.vitalsCheck()){
       $scope.submit(true).then(function(){
-        $scope.scrollTo('details', 'details', '', $event, 'tagLabel');
+        $scope.scrollTo('details', 'vitals', '', $event, 'tagLabel');
       }, function(){
         if($event) {
           $event.preventDefault();
@@ -440,6 +482,45 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     return deferred.promise;
   }
 
+  $scope.$watch('component', function(){
+    $scope.notDifferent();
+  }, true);
+  
+  $scope.$watch('optIn', function(){
+    $scope.notDifferent();
+  })
+
+  $scope.notDifferent = function(){
+    $scope.createInitialSubmit().then(function(component){
+      // console.log('checking diff');
+      
+      var compare = angular.copy(component);
+      for(var i = 0; i < compare.attributes.length; i++){
+        compare.attributes[i] = {
+          componentAttributePk: compare.attributes[i].componentAttributePk
+        };
+      }
+      if ($scope.optIn) {
+        compare.component.notifyOfApprovalEmail = $scope.submitter.email;
+      } else if (compare.component.notifyOfApprovalEmail){
+        delete compare.component.notifyOfApprovalEmail;
+      }
+      // console.log('dif', _.diff(compare, $scope.backup));
+      // console.log('second dif', $scope.difMinusAttributes(_.diff($scope.backup, compare)));
+      // console.log('compare', compare);
+      // console.log('backup', $scope.backup);
+      if (!_.diff(compare,$scope.backup) && !$scope.difMinusAttributes(_.diff($scope.backup, compare))) {
+        $scope.notDif = true;
+        return;
+      }
+      $scope.notDif = false;
+    });
+  }
+
+  $scope.difMinusAttributes = function(diff){
+    delete diff.attributes;
+    return !angular.equals(diff, {});
+  }
 
   $scope.submit = function(initial){
     $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Saving progress');
@@ -453,12 +534,16 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
           };
         }
         if ($scope.optIn) {
-          component.component.notifyOfApprovalEmail = $scope.submitter.email;
-        }        
-        if (_.diff(compare,$scope.backup)) {
-
-          Business.submissionservice.createSubmission(component).then(function(result){
-            $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+          compare.component.notifyOfApprovalEmail = $scope.submitter.email;
+        } else {
+          if (compare.component.notifyOfApprovalEmail){
+            delete compare.component.notifyOfApprovalEmail;
+          }
+        }
+        if (_.diff(compare,$scope.backup) || $scope.difMinusAttributes(_.diff($scope.backup, compare))) {
+          delete compare.component.trigger;
+          $scope.notDif = false;
+          Business.submissionservice.createSubmission(compare).then(function(result){
             if (result && result.component && result.component.componentId){
               $scope.backup = angular.copy(result);
               $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
@@ -470,10 +555,16 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
               $scope.hideMultiSelect = true;
               $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
               $scope.hideMultiSelect = false;
+              $scope.notDif = true;
             }
+            $timeout(function(){
+              $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+            }, 2000);
             deferred.resolve();
           }, function(result){
-            $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+            $timeout(function(){
+              $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+            }, 2000);
             deferred.reject();
           });
         } else {//
@@ -483,38 +574,37 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       })
     } else {//
       $scope.createInitialSubmit().then(function(component){
-        component.attributes = $scope.getCompactAttributes(true);
+        // console.log('$scope.component', component);
+        var compare = angular.copy(component);
+        compare.attributes = $scope.getCompactAttributes(true);
         if ($scope.optIn) {
           // console.log('we opted in');
-          
-          component.component.notifyOfApprovalEmail = $scope.submitter.email;
+          compare.component.notifyOfApprovalEmail = $scope.submitter.email;
+        }  else {
+          if (compare.component.notifyOfApprovalEmail){
+            delete compare.component.notifyOfApprovalEmail;
+          }
         }
-
-        component.contacts = component.contacts || [];
-
-        _.each(component.contacts, function(contact){
+        compare.contacts = compare.contacts || [];
+        _.each(compare.contacts, function(contact){
           if (contact.contactType && contact.contactType.code){
             contact.contactType = contact.contactType.code;
           } else if (contact.contactType) {
           }
         })
-
-        // console.log('$scope.component', component);
-        var compare = angular.copy(component);
         for(var i = 0; i < compare.attributes.length; i++){
           compare.attributes[i] = {
             componentAttributePk: compare.attributes[i].componentAttributePk
           };
         }
-
-        if (_.diff(compare,$scope.backup)) {
+        if (_.diff(compare,$scope.backup) || $scope.difMinusAttributes(_.diff($scope.backup, compare))) {
+          delete compare.component.trigger;
           // console.log('UPDATE Diff', compare);
           // console.log('UPDATE Diff', $scope.backup);
-          // console.log('UPDATE Diff', _.diff(compare,$scope.backup));
+          // console.log('UPDATE Diff', _.diff(compare,$scope.backup) || $scope.difMinusAttributes(_.diff($scope.backup, compare)));
           // console.log('component', component);
-          
-          Business.submissionservice.updateSubmission(component).then(function(result){
-            $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+          $scope.notDif = false;
+          Business.submissionservice.updateSubmission(compare).then(function(result){
             if (result && result.component && result.component.componentId){
               $scope.backup = angular.copy(result);
               $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
@@ -526,11 +616,18 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
               $scope.hideMultiSelect = true;
               $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
               $scope.hideMultiSelect = false;
+              $scope.notDif = true;
             }
+            $timeout(function(){
+              $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+            }, 2000);
+
             deferred.resolve();
             // console.log('Success result', result);
           }, function(result){
-            $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+            $timeout(function(){
+              $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+            }, 2000);
             deferred.reject();
             // console.log('Fail result', result);
           });
@@ -715,14 +812,18 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     }
   }
   $scope.addTag = function(form){
-    if ( $scope.tagsForm.text ) {
-      var found = _.find($scope.component.tags, {'text':$scope.tagsForm.text});
+    if ( $scope.tagsForm.text && $scope.tagsForm.text[0].text) {
+      var found = _.find($scope.component.tags, {'text':$scope.tagsForm.text[0].text});
       if (!found) {
-        $scope.component.tags.push($scope.tagsForm);
+        $scope.component.tags.push($scope.tagsForm.text[0]);
         $scope.tagsForm = {};
         $scope.formFocused(form, true)
         $('#tagLabel').focus();
+      } else {
+        $scope.tagsForm = {};
       }
+    } else {
+      $scope.tagsForm = {};
     }
   }
 
@@ -733,9 +834,6 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   }
   $scope.removeContact = function(index){
     if (!($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N')) {
-      var originalLength = $scope.component.contacts.length;
-      var afterLength = $filter('contactsfilter')($scope.component.contacts, 'contactType').length;
-      index = index + (originalLength - afterLength);
       $scope.component.contacts.splice(index, 1);
     }
   }
@@ -1080,7 +1178,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       $scope.addMedia(file, $scope.queue, 'mediaForm', 'mediaLoader', 'caption', 'mediaTypeCode');
       file.componentId = $scope.componentId;
       file.mediaTypeCode = $scope.mediaForm.mediaTypeCode;
-      file.caption = $scope.mediaForm.caption;
+      file.caption = $scope.mediaForm.caption || '';
       file.componentMediaId = $scope.mediaForm.componentMediaId;
       $scope.resetMediaInput();
     },
@@ -1174,7 +1272,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
           entityPath: 'resources',
           entityId: resource.resourceId,
           loadEntity: function(){
-            $scope.loadResources();
+            $scope.getSubmission();
           }        
         }); 
       } else {
@@ -1217,7 +1315,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       $scope.addMedia(file, $scope.resourceQueue, 'resourceForm', 'submissionLoader', 'description', 'resourceType');
       file.componentId = $scope.componentId;
       file.resourceType = $scope.resourceForm.resourceType;
-      file.description = $scope.resourceForm.description;
+      file.description = $scope.resourceForm.description || '';
       file.resourceId = $scope.resourceForm.resourceId;
       $scope.resetResourceInput();
     },
@@ -1246,8 +1344,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       //check response for a fail ticket or a error model
       if (response.success) {
         triggerAlert('Uploaded successfully', 'saveResource', 'componentWindowDiv', 3000); 
-        $scope.cancelResourceEdit();
-        $scope.loadResources();
+        $scope.getSubmission();
       } else {
         if (response.errors) {
           var uploadError = response.errors.file;
@@ -1277,6 +1374,8 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       $event.stopPropagation();
     }
     $('li a:focus').blur();
+    // console.log('current', current);
+    
     $scope.current = current;
     $timeout(function(){
       $('[data-spy="scroll"]').each(function () {
