@@ -1,18 +1,18 @@
-'use strict';
+// 'use strict';
 
-describe('Service: localCache', function () {
+// describe('Service: localCache', function () {
 
-  // load the service's module
-  beforeEach(module('openstorefrontApp'));
+//   // load the service's module
+//   beforeEach(module('openstorefrontApp'));
 
-  // instantiate service
-  var localCache;
-  beforeEach(inject(function (_localCache_) {
-    localCache = _localCache_;
-  }));
+//   // instantiate service
+//   var localCache;
+//   beforeEach(inject(function (_localCache_) {
+//     localCache = _localCache_;
+//   }));
 
-  it('should do something', function () {
-    expect(!!localCache).toBe(true);
-  });
+//   it('should do something', function () {
+//     expect(!!localCache).toBe(true);
+//   });
 
-});
+// });
