@@ -44,6 +44,8 @@ import org.jsoup.nodes.Document;
 public class StringProcessor
 {
 
+	private static final Logger log = Logger.getLogger(StringProcessor.class.getName());
+
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
 	private static final int MAX_RESOURCE_NAME = 35;
@@ -197,7 +199,7 @@ public class StringProcessor
 	 * @param max_length
 	 * @return
 	 */
-	public static String eclipseString(String data, int max_length)
+	public static String ellipseString(String data, int max_length)
 	{
 		if (data == null) {
 			return data;
@@ -244,9 +246,10 @@ public class StringProcessor
 			return text.toString();
 		}
 	}
-	
-	public static Boolean isEmail(String text){
-		if (text.matches(OpenStorefrontConstant.EMAIL_PATTERN)){
+
+	public static Boolean isEmail(String text)
+	{
+		if (text.matches(OpenStorefrontConstant.EMAIL_PATTERN)) {
 			return true;
 		}
 		return false;
@@ -334,6 +337,46 @@ public class StringProcessor
 		}
 
 		return exception.toString();
+	}
+
+	/**
+	 * Adds "(" as long as the input is not Blank
+	 *
+	 * @param s
+	 * @return original string enclose or just original
+	 */
+	public static String enclose(String s)
+	{
+		return enclose(s, "(", ")");
+	}
+
+	public static String enclose(String s, String enclose)
+	{
+		return enclose(s, enclose, enclose);
+	}
+
+	public static String enclose(String s, String encloseStart, String encloseEnd)
+	{
+		if (StringUtils.isNotBlank(s)) {
+			s = encloseStart + s + encloseEnd;
+		}
+		return s;
+	}
+
+	/**
+	 * This can be used to code a key that is web-safe
+	 *
+	 * @param key
+	 * @return
+	 */
+	public static String encodeWebKey(String key)
+	{
+		try {
+			key = URLEncoder.encode(key, "UTF-8");
+		} catch (UnsupportedEncodingException ex) {
+			throw new OpenStorefrontRuntimeException("Unsupported Character set.", "Likely a Programming error", ex);
+		}
+		return key;
 	}
 
 }

@@ -146,6 +146,14 @@ public interface ComponentService
 	public String getComponentName(String componentId);
 
 	/**
+	 * Lookup approval status on a component
+	 *
+	 * @param componentId
+	 * @return Status or null if component is not found
+	 */
+	public String getComponentApprovalStatus(String componentId);
+
+	/**
 	 * Return the whole list of components. (the short view) Just Active and
 	 * Approved components
 	 *

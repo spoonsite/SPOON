@@ -15,13 +15,18 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
 public class TagView
+		extends StandardEntityView
 {
 
 	private String tagId;
@@ -33,6 +38,34 @@ public class TagView
 
 	public TagView()
 	{
+	}
+
+	public static TagView toView(ComponentTag tag)
+	{
+		ServiceProxy service = new ServiceProxy();
+
+		TagView tagView = new TagView();
+		tagView.setTagId(tag.getTagId());
+		tagView.setText(tag.getText());
+		tagView.setCreateDts(tag.getCreateDts());
+		tagView.setCreateUser(tag.getCreateUser());
+		tagView.setComponentId(tag.getComponentId());
+		String componentName = service.getComponentService().getComponentName(tag.getComponentId());
+		if (componentName != null) {
+			tagView.setComponentName(componentName);
+		} else {
+			tagView.setComponentName("Missing Component (Orphaned Tag)");
+		}
+		return tagView;
+	}
+
+	public static List<TagView> toView(List<ComponentTag> tags)
+	{
+		List<TagView> views = new ArrayList<>();
+		tags.forEach(tag -> {
+			views.add(toView(tag));
+		});
+		return views;
 	}
 
 	public String getTagId()

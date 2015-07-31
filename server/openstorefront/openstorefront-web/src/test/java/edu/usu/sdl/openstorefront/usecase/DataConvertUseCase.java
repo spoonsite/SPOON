@@ -616,7 +616,7 @@ public class DataConvertUseCase
 //
 //			//Strip the <br> may other
 //			String description = detail.getDescription().replace("<br>", "");
-//			description = StringProcessor.eclipseString(description, MAX_SEARCH_DESCRIPTION);
+//			description = StringProcessor.ellipseString(description, MAX_SEARCH_DESCRIPTION);
 //			searchResult.setDescription(description);
 //			searchResult.setAverageRating(random.nextInt(6));
 //			searchResult.setViews(random.nextInt(200));

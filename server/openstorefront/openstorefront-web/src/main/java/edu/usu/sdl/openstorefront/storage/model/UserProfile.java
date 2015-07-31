@@ -32,6 +32,7 @@ import javax.validation.constraints.Size;
  */
 public class UserProfile
 		extends StandardEntity
+		implements OrganizationModel
 {
 
 	@PK
@@ -137,11 +138,13 @@ public class UserProfile
 		this.userTypeCode = userTypeCode;
 	}
 
+	@Override
 	public String getOrganization()
 	{
 		return organization;
 	}
 
+	@Override
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;

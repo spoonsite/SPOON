@@ -31,6 +31,7 @@ import javax.validation.constraints.Size;
  */
 public class ComponentContact
 		extends BaseComponent
+		implements OrganizationModel
 {
 
 	@PK(generated = true)
@@ -74,6 +75,22 @@ public class ComponentContact
 	{
 	}
 
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		ComponentContact contact = (ComponentContact) entity;
+
+		this.setContactType(contact.getContactType());
+		this.setEmail(contact.getEmail());
+		this.setFirstName(contact.getFirstName());
+		this.setLastName(contact.getLastName());
+		this.setOrganization(contact.getOrganization());
+		this.setPhone(contact.getPhone());
+
+	}
+
 	public String getContactId()
 	{
 		return contactId;
@@ -114,11 +131,13 @@ public class ComponentContact
 		this.phone = phone;
 	}
 
+	@Override
 	public String getOrganization()
 	{
 		return organization;
 	}
 
+	@Override
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;

@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
+import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant.ListingType;
 import java.util.Date;
 
@@ -24,6 +27,7 @@ import java.util.Date;
  * @author dshurtleff
  */
 public class RecentlyAddedView
+		extends StandardEntityView
 {
 
 	private ListingType listingType = ListingType.COMPONENT;
@@ -33,6 +37,37 @@ public class RecentlyAddedView
 	private String articleAttributeType;
 	private String articleAttributeCode;
 	private Date addedDts;
+
+	public RecentlyAddedView()
+	{
+	}
+
+	public static RecentlyAddedView toView(Component component)
+	{
+		RecentlyAddedView recentlyAddedView = new RecentlyAddedView();
+		recentlyAddedView.setListingType(OpenStorefrontConstant.ListingType.COMPONENT);
+		recentlyAddedView.setComponentId(component.getComponentId());
+		recentlyAddedView.setName(component.getName());
+		recentlyAddedView.setDescription(component.getDescription());
+		recentlyAddedView.setAddedDts(component.getApprovedDts());
+		recentlyAddedView.toStandardView(component);
+		return recentlyAddedView;
+	}
+
+	public static RecentlyAddedView toView(AttributeCode attributeCode)
+	{
+		RecentlyAddedView recentlyAddedView = new RecentlyAddedView();
+		recentlyAddedView.setListingType(OpenStorefrontConstant.ListingType.ARTICLE);
+		recentlyAddedView.setArticleAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+		recentlyAddedView.setArticleAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+
+		ArticleView articleView = ArticleView.toView(attributeCode);
+		recentlyAddedView.setDescription(articleView.getDescription());
+		recentlyAddedView.setName(articleView.getTitle());
+		recentlyAddedView.setAddedDts(attributeCode.getUpdateDts());
+		recentlyAddedView.toStandardView(attributeCode);
+		return recentlyAddedView;
+	}
 
 	public ListingType getListingType()
 	{

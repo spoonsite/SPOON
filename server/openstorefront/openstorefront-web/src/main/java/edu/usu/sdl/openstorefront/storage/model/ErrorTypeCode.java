@@ -44,7 +44,7 @@ public class ErrorTypeCode
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(SYSTEM, newLookup(ErrorTypeCode.class, SYSTEM, "System"));
-		codeMap.put(REST_API, newLookup(ErrorTypeCode.class, REST_API, "REST Api"));
+		codeMap.put(REST_API, newLookup(ErrorTypeCode.class, REST_API, "REST API"));
 		codeMap.put(INTEGRATION, newLookup(ErrorTypeCode.class, INTEGRATION, "Intergation"));
 		codeMap.put(REPORT, newLookup(ErrorTypeCode.class, REPORT, "Report"));
 		return codeMap;

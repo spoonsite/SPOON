@@ -64,6 +64,19 @@ public class ComponentExternalDependency
 	{
 	}
 
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		ComponentExternalDependency dependency = (ComponentExternalDependency) entity;
+		this.setComment(dependency.getComment());
+		this.setDependancyReferenceLink(dependency.getDependancyReferenceLink());
+		this.setDependencyName(dependency.getDependencyName());
+		this.setVersion(dependency.getVersion());
+
+	}
+
 	public String getVersion()
 	{
 		return version;

@@ -40,12 +40,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Message;
 import org.codemonkey.simplejavamail.Email;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 
 /**
  *
  * @author dshurtleff
  */
+@DisallowConcurrentExecution
 public class ScheduledReportJob
 		extends BaseJob
 {

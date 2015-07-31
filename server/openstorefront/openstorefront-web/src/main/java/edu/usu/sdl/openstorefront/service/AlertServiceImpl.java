@@ -38,6 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Handles Alerts triggers
  *
  * @author dshurtleff
  */
@@ -53,12 +54,7 @@ public class AlertServiceImpl
 	{
 		Alert oldAlert = persistenceService.findById(Alert.class, alert.getAlertId());
 		if (oldAlert != null) {
-			oldAlert.setAlertType(alert.getAlertType());
-			oldAlert.setEmailAddresses(alert.getEmailAddresses());
-			oldAlert.setName(alert.getName());
-			oldAlert.setSystemErrorAlertOption(alert.getSystemErrorAlertOption());
-			oldAlert.setUserDataAlertOption(alert.getUserDataAlertOption());
-			oldAlert.populateBaseUpdateFields();
+			oldAlert.updateFields(alert);
 			persistenceService.persist(oldAlert);
 			alert = oldAlert;
 		} else {

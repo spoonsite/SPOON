@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 public class ComponentDetailView
+		extends StandardEntityView
 {
 
 	@NotNull
@@ -138,6 +139,7 @@ public class ComponentDetailView
 		submittedDts = component.getSubmittedDts();
 		notifyOfApprovalEmail = component.getNotifyOfApprovalEmail();
 		lastActivityDts = component.getLastActivityDts();
+		this.toStandardView(component);
 	}
 
 	public String getComponentId()

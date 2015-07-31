@@ -423,24 +423,7 @@ public class ComponentRESTResource
 		componentTagExample.setActiveStatus(Component.ACTIVE_STATUS);
 
 		List<ComponentTag> tags = service.getPersistenceService().queryByExample(ComponentTag.class, componentTagExample);
-		if (!tags.isEmpty()) {
-
-			tags.forEach(tag -> {
-				TagView tagView = new TagView();
-				tagView.setTagId(tag.getTagId());
-				tagView.setText(tag.getText());
-				tagView.setCreateDts(tag.getCreateDts());
-				tagView.setCreateUser(tag.getCreateUser());
-				tagView.setComponentId(tag.getComponentId());
-				String componentName = service.getComponentService().getComponentName(tag.getComponentId());
-				if (componentName != null) {
-					tagView.setComponentName(componentName);
-				} else {
-					tagView.setComponentName("Missing Component (Orphaned Tag)");
-				}
-				views.add(tagView);
-			});
-		}
+		views.addAll(TagView.toView(tags));
 
 		GenericEntity<List<TagView>> entity = new GenericEntity<List<TagView>>(views)
 		{

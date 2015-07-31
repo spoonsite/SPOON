@@ -76,6 +76,29 @@ public class ComponentResource
 	}
 
 	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		ComponentResource resource = (ComponentResource) entity;
+
+		if (StringUtils.isNotBlank(resource.getLink())) {
+			this.setFileName(null);
+			this.setOriginalName(null);
+			this.setMimeType(null);
+		} else {
+			this.setFileName(resource.getFileName());
+			this.setOriginalName(resource.getOriginalName());
+			this.setMimeType(resource.getMimeType());
+		}
+		this.setDescription(resource.getDescription());
+		this.setLink(resource.getLink());
+		this.setResourceType(resource.getResourceType());
+		this.setRestricted(resource.getRestricted());
+
+	}
+
+	@Override
 	public int customCompareTo(BaseComponent o)
 	{
 		int value = ReflectionUtil.compareObjects(getFileName(), ((ComponentResource) o).getFileName());

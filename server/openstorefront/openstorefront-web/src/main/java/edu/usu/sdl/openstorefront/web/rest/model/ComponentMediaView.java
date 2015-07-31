@@ -28,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
  * @author dshurtleff
  */
 public class ComponentMediaView
+		extends StandardEntityView
 {
 
 	private String componentMediaId;
@@ -65,6 +66,8 @@ public class ComponentMediaView
 		mediaView.setMimeType(media.getMimeType());
 		mediaView.setCaption(media.getCaption());
 		mediaView.setUpdateDts(media.getUpdateDts());
+		mediaView.toStandardView(media);
+
 		return mediaView;
 	}
 

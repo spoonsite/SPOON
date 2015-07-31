@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.storage.model.Component;
 import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
 import edu.usu.sdl.openstorefront.storage.model.Report;
 import edu.usu.sdl.openstorefront.storage.model.ResourceType;
+import edu.usu.sdl.openstorefront.storage.model.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.util.TranslateUtil;
@@ -115,6 +116,7 @@ public class ExternalLinkValidationReport
 				linkCheckModel.setLink(link);
 				linkCheckModel.setNetworkOfLink(getNetworkOfLink(link));
 				linkCheckModel.setResourceType("Description Link");
+				linkCheckModel.setSecurityMarking(component.getSecurityMarkingType());
 				links.add(linkCheckModel);
 			}
 
@@ -140,6 +142,7 @@ public class ExternalLinkValidationReport
 						linkCheckModel.setLink(link);
 						linkCheckModel.setNetworkOfLink(getNetworkOfLink(resource.getLink()));
 						linkCheckModel.setResourceType(TranslateUtil.translate(ResourceType.class, resource.getResourceType()));
+						linkCheckModel.setSecurityMarking(resource.getSecurityMarkingType());
 						links.add(linkCheckModel);
 					}
 				}
@@ -158,6 +161,7 @@ public class ExternalLinkValidationReport
 		cvsGenerator.addLine("External Link Validation Report", sdf.format(TimeUtil.currentDate()));
 		cvsGenerator.addLine(
 				"Component Name",
+				"Security Classification",
 				"Resource Type",
 				"Network Of Link",
 				"Link",
@@ -170,6 +174,7 @@ public class ExternalLinkValidationReport
 		links.stream().forEach((linkCheckModel) -> {
 			cvsGenerator.addLine(
 					linkCheckModel.getComponentName(),
+					linkCheckModel.getSecurityMarking() == null ? "" : "(" + linkCheckModel.getSecurityMarking() + ") - " + TranslateUtil.translate(SecurityMarkingType.class, linkCheckModel.getSecurityMarking()),
 					linkCheckModel.getResourceType(),
 					linkCheckModel.getNetworkOfLink(),
 					linkCheckModel.getLink(),

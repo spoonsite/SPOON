@@ -15,16 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
-
+import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import java.util.ArrayList;
 import java.util.List;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 
 /**
  *
  * @author dshurtleff
  */
 public class AttributeCodeView
+		extends StandardEntityView
 {
 
 	private String code;
@@ -59,14 +59,15 @@ public class AttributeCodeView
 		} else {
 			attributeCodeView.setDetailUrl(attributeCode.getDetailUrl());
 		}
+		attributeCodeView.toStandardView(attributeCode);
 
 		return attributeCodeView;
 	}
-	
+
 	public static List<AttributeCodeView> toViews(List<AttributeCode> codes)
 	{
 		List<AttributeCodeView> views = new ArrayList<>();
-		for(AttributeCode code: codes) {
+		for (AttributeCode code : codes) {
 			views.add(AttributeCodeView.toView(code));
 		}
 		return views;

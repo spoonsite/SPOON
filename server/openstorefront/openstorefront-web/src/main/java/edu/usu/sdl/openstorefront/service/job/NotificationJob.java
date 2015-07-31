@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.job;
 
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 
 /**
@@ -22,6 +23,7 @@ import org.quartz.JobExecutionContext;
  *
  * @author dshurtleff
  */
+@DisallowConcurrentExecution
 public class NotificationJob
 		extends BaseJob
 {

@@ -28,9 +28,7 @@ import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
 import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
 import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import edu.usu.sdl.openstorefront.web.rest.model.ListingStats;
@@ -168,26 +166,11 @@ public class Search
 		List<AttributeCode> attributeCodes = service.getAttributeService().findRecentlyAddedArticles(maxResults);
 
 		for (Component component : components) {
-			RecentlyAddedView recentlyAddedView = new RecentlyAddedView();
-			recentlyAddedView.setListingType(OpenStorefrontConstant.ListingType.COMPONENT);
-			recentlyAddedView.setComponentId(component.getComponentId());
-			recentlyAddedView.setName(component.getName());
-			recentlyAddedView.setDescription(component.getDescription());
-			recentlyAddedView.setAddedDts(component.getApprovedDts());
-			recentlyAddedViews.add(recentlyAddedView);
+			recentlyAddedViews.add(RecentlyAddedView.toView(component));
 		}
 
 		for (AttributeCode attributeCode : attributeCodes) {
-			RecentlyAddedView recentlyAddedView = new RecentlyAddedView();
-			recentlyAddedView.setListingType(OpenStorefrontConstant.ListingType.ARTICLE);
-			recentlyAddedView.setArticleAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
-			recentlyAddedView.setArticleAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
-
-			ArticleView articleView = ArticleView.toView(attributeCode);
-			recentlyAddedView.setDescription(articleView.getDescription());
-			recentlyAddedView.setName(articleView.getTitle());
-			recentlyAddedView.setAddedDts(attributeCode.getUpdateDts());
-			recentlyAddedViews.add(recentlyAddedView);
+			recentlyAddedViews.add(RecentlyAddedView.toView(attributeCode));
 		}
 
 		recentlyAddedViews.sort(new RecentlyAddedViewComparator<>());

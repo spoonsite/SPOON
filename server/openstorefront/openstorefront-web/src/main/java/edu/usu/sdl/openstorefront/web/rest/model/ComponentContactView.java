@@ -25,6 +25,7 @@ import java.util.Date;
  * @author dshurtleff
  */
 public class ComponentContactView
+		extends StandardEntityView
 {
 
 	private String contactId;
@@ -56,6 +57,7 @@ public class ComponentContactView
 		view.setLastName(contact.getLastName());
 		view.setActiveStatus(contact.getActiveStatus());
 		view.setContactId(contact.getContactId());
+		view.toStandardView(contact);
 
 		if (contact.getLastName() == null || "".equals(contact.getLastName())) {
 			view.setName(contact.getFirstName());

@@ -9,8 +9,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
 	</properties>
 	<modules>
-	 <module>openstorefront-web</module>
-	 <module>apiclient</module>
+		<module>openstorefront-web</module>
+		<module>apiclient</module>
 	</modules>
 	
 	<dependencies>

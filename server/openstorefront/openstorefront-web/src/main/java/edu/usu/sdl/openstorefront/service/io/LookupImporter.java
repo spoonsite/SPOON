@@ -47,11 +47,6 @@ public class LookupImporter
 
 	private static final Logger log = Logger.getLogger(LookupImporter.class.getName());
 
-	private static final int CODE = 0;
-	private static final int DESCRIPTION = 1;
-	private static final int DETAILED_DESCRIPTION = 2;
-	private static final int SORT_ORDER = 3;
-
 	@Override
 	public void initialize()
 	{

@@ -32,6 +32,7 @@ import java.util.List;
  * @author jlaw
  */
 public class ComponentSearchView
+		extends StandardEntityView
 {
 
 	private String listingType;
@@ -93,17 +94,23 @@ public class ComponentSearchView
 		view.setReleaseDate(component.getReleaseDate());
 		view.setVersion(component.getVersion());
 
-		List<SearchResultAttribute> addMes = new ArrayList<>();
+		List<SearchResultAttribute> componentAttributes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
 
-			addMes.add(SearchResultAttribute.toView(attribute));
+			componentAttributes.add(SearchResultAttribute.toView(attribute));
+			view.toStandardView(attribute);
 		}
-		view.setAttributes(addMes);
+		view.setAttributes(componentAttributes);
+
+		for (ComponentTag tag : tags) {
+			view.toStandardView(tag);
+		}
 
 		view.setTags(tags);
 		Integer total = 0;
 		for (ComponentReview review : reviews) {
 			total = total + review.getRating();
+			view.toStandardView(review);
 		}
 		if (reviews.size() > 0) {
 			view.setAverageRating(total / reviews.size());
@@ -116,6 +123,7 @@ public class ComponentSearchView
 		view.setUpdateDts(component.getUpdateDts());
 		view.setCreateDts(component.getCreateDts());
 		view.setUpdateUser(component.getUpdateUser());
+		view.toStandardView(component);
 
 		return view;
 	}

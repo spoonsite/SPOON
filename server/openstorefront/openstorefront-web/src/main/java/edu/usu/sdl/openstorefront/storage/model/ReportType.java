@@ -36,6 +36,7 @@ public class ReportType
 	public static final String COMPONENT = "COMPONENT";
 	public static final String USER = "USER";
 	public static final String ORGANIZATION = "ORGANIZATION";
+	public static final String COMPONENT_ORGANIZATION = "CMPORG";
 	public static final String SUBMISSION = "SUBMISSION";
 
 	public ReportType()
@@ -50,7 +51,8 @@ public class ReportType
 		codeMap.put(LINK_VALIDATION, newLookup(ReportType.class, LINK_VALIDATION, "Link Validation", "Reports on potentially broken external url links."));
 		codeMap.put(COMPONENT, newLookup(ReportType.class, COMPONENT, "Component", "Reports on component statistic and usage."));
 		codeMap.put(USER, newLookup(ReportType.class, USER, "User", "Reports on users and thier usage of the application."));
-		codeMap.put(ORGANIZATION, newLookup(ReportType.class, ORGANIZATION, "Organization", "Reports on the organizations in the appliaction and thier usage."));
+		codeMap.put(ORGANIZATION, newLookup(ReportType.class, ORGANIZATION, "User Organization", "Reports on the user organizations in the appliaction and thier usage."));
+		codeMap.put(COMPONENT_ORGANIZATION, newLookup(ReportType.class, COMPONENT_ORGANIZATION, "Component Organization", "Reports on components that belong to an organization"));
 		codeMap.put(SUBMISSION, newLookup(ReportType.class, SUBMISSION, "Submissions", "Reports on component submissions."));
 		return codeMap;
 	}

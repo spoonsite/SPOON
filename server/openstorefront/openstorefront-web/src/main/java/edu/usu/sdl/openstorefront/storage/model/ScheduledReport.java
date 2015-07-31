@@ -74,6 +74,22 @@ public class ScheduledReport
 	{
 	}
 
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+
+		ScheduledReport scheduledReport = (ScheduledReport) entity;
+
+		this.setLastRanDts(scheduledReport.getLastRanDts());
+		this.setEmailAddresses(scheduledReport.getEmailAddresses());
+		this.setReportFormat(scheduledReport.getReportFormat());
+		this.setReportOption(scheduledReport.getReportOption());
+		this.setReportType(scheduledReport.getReportType());
+		this.setScheduleIntervalDays(scheduledReport.getScheduleIntervalDays());
+
+	}
+
 	public String getScheduleReportId()
 	{
 		return scheduleReportId;
