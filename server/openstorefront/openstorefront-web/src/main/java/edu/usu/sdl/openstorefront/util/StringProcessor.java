@@ -26,6 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -375,6 +376,23 @@ public class StringProcessor
 			key = URLEncoder.encode(key, "UTF-8");
 		} catch (UnsupportedEncodingException ex) {
 			throw new OpenStorefrontRuntimeException("Unsupported Character set.", "Likely a Programming error", ex);
+		}
+		return key;
+	}
+
+	/**
+	 * This strips out characters that don't work well for keys
+	 *
+	 * @param key
+	 * @return clean up key
+	 */
+	public static String cleanEntityKey(String key)
+	{
+		if (StringUtils.isNotBlank(key)) {
+			List<String> badChars = Arrays.asList(" ", "/", "?", "&", "[", "]", "@", "!", "$", "'", "(", ")", "*", "+", ",", ";", "=", "%", ":");
+			for (String badChar : badChars) {
+				key = key.replace(badChar, "");
+			}
 		}
 		return key;
 	}

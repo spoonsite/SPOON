@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
@@ -46,7 +47,7 @@ public class AttributeCode
 	private AttributeCodePk attributeCodePk;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@Sanitize(TextSanitizer.class)
+	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
 	private String architectureCode;
 
@@ -76,7 +77,7 @@ public class AttributeCode
 	private String badgeUrl;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@Sanitize(TextSanitizer.class)
+	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
 	private String groupCode;
 

@@ -55,10 +55,10 @@ public abstract class ApplyOnceInit
 		if (StringUtils.isNotBlank(lastRunString)) {
 			log.log(Level.INFO, MessageFormat.format("Already Applied {0} on {1}", appliedKey, lastRunString));
 		} else {
-			boolean success = internalApply();
+			String results = internalApply();
 			log.log(Level.INFO, MessageFormat.format("Applied {0} changes", appliedKey));
 			service.getSystemService().saveProperty(appliedKey + "_LASTRUN_DTS", TimeUtil.dateToString(TimeUtil.currentDate()));
-			service.getSystemService().saveProperty(appliedKey + "_STATUS", Boolean.toString(success));
+			service.getSystemService().saveProperty(appliedKey + "_STATUS", results);
 		}
 	}
 
@@ -67,6 +67,6 @@ public abstract class ApplyOnceInit
 	 *
 	 * @return true if applied successfully
 	 */
-	protected abstract boolean internalApply();
+	protected abstract String internalApply();
 
 }

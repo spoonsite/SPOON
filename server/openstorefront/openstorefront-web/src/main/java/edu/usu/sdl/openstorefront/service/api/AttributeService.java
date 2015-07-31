@@ -59,17 +59,17 @@ public interface AttributeService
 	public List<AttributeCode> getAllAttributeCodes(String activeStatus);
 
 	/**
-	 * 
+	 *
 	 * @param filter
-	 * @return 
+	 * @return
 	 */
 	public AttributeTypeWrapper getFilteredTypes(FilterQueryParams filter);
 
 	/**
-	 * 
+	 *
 	 * @param filter
 	 * @param type
-	 * @return 
+	 * @return
 	 */
 	public AttributeCodeWrapper getFilteredCodes(FilterQueryParams filter, String type);
 
@@ -352,5 +352,14 @@ public interface AttributeService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveAttributeCodeSortOrder(AttributeCodePk attributeCodePk, Integer sortOrder);
+
+	/**
+	 * Update the code and all reference to the old code
+	 *
+	 * @param attributeCodePk
+	 * @param newCode
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void changeAttributeCode(AttributeCodePk attributeCodePk, String newCode);
 
 }
