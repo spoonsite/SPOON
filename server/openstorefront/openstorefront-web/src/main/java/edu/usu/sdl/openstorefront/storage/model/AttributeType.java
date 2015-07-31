@@ -99,6 +99,24 @@ public class AttributeType
 	{
 	}
 
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		AttributeType attributeTypeUpdate = (AttributeType) entity;
+		this.setAllowMultipleFlg(attributeTypeUpdate.getAllowMultipleFlg());
+		this.setArchitectureFlg(attributeTypeUpdate.getArchitectureFlg());
+		this.setDescription(attributeTypeUpdate.getDescription());
+		this.setImportantFlg(attributeTypeUpdate.getImportantFlg());
+		this.setRequiredFlg(attributeTypeUpdate.getRequiredFlg());
+		this.setVisibleFlg(attributeTypeUpdate.getVisibleFlg());
+		this.setDetailedDescription(attributeTypeUpdate.getDetailedDescription());
+		this.setHideOnSubmission(attributeTypeUpdate.getHideOnSubmission());
+		this.setDefaultAttributeCode(attributeTypeUpdate.getDefaultAttributeCode());
+
+	}
+
 	public ValidationResult customValidation()
 	{
 		ValidationResult validationResult = new ValidationResult();

@@ -155,7 +155,7 @@ public class UserDataAlertMessageGenerator
 				message.append("<ul>");
 			}
 			for (ComponentQuestion question : questions) {
-				message.append("  <li>'").append(StringProcessor.eclipseString(question.getQuestion(), MAX_SENSTIVE_DATA_LENGTH))
+				message.append("  <li>'").append(StringProcessor.ellipseString(question.getQuestion(), MAX_SENSTIVE_DATA_LENGTH))
 						.append("' modified by ").append(question.getUpdateUser())
 						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(question.getComponentId()))
 						.append("</li>");
@@ -186,7 +186,7 @@ public class UserDataAlertMessageGenerator
 				message.append("<ul>");
 			}
 			for (ComponentQuestionResponse question : questionReponses) {
-				message.append("  <li>'").append(StringProcessor.eclipseString(question.getResponse(), MAX_SENSTIVE_DATA_LENGTH))
+				message.append("  <li>'").append(StringProcessor.ellipseString(question.getResponse(), MAX_SENSTIVE_DATA_LENGTH))
 						.append("' modified by ").append(question.getUpdateUser())
 						.append(" on component ").append(serviceProxy.getComponentService().getComponentName(question.getComponentId()))
 						.append("</li>");

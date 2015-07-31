@@ -31,6 +31,7 @@ import javax.validation.constraints.NotNull;
  * @author jlaw
  */
 public class ComponentReviewProCon
+		extends StandardEntityView
 {
 
 	@NotNull
@@ -52,6 +53,8 @@ public class ComponentReviewProCon
 		view.setUpdateDts(pro.getUpdateDts());
 		view.setText(TranslateUtil.translate(ReviewPro.class, pro.getComponentReviewProPk().getReviewPro()));
 		view.setReviewId(pro.getComponentReviewProPk().getComponentReviewId());
+		view.toStandardView(pro);
+
 		return view;
 	}
 
@@ -62,6 +65,7 @@ public class ComponentReviewProCon
 		view.setUpdateDts(con.getUpdateDts());
 		view.setText(TranslateUtil.translate(ReviewCon.class, con.getComponentReviewConPk().getReviewCon()));
 		view.setReviewId(con.getComponentReviewConPk().getComponentReviewId());
+		view.toStandardView(con);
 		return view;
 	}
 

@@ -30,6 +30,7 @@ public class LinkCheckModel
 	private String checkResults;
 	private String link;
 	private String httpStatus;
+	private String securityMarking;
 
 	public LinkCheckModel()
 	{
@@ -113,6 +114,16 @@ public class LinkCheckModel
 	public void setId(String id)
 	{
 		this.id = id;
+	}
+
+	public String getSecurityMarking()
+	{
+		return securityMarking;
+	}
+
+	public void setSecurityMarking(String securityMarking)
+	{
+		this.securityMarking = securityMarking;
 	}
 
 }

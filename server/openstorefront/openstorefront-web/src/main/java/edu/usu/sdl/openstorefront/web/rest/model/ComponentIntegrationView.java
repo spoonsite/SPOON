@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author jlaw
  */
 public class ComponentIntegrationView
+		extends StandardEntityView
 {
 
 	private String componentId;
@@ -64,6 +65,7 @@ public class ComponentIntegrationView
 		view.setLastEndTime(integration.getLastEndTime());
 		view.setLastStartTime(integration.getLastStartTime());
 		view.setActiveStatus(integration.getActiveStatus());
+		view.toStandardView(integration);
 
 		if (StringUtils.isNotBlank(view.getRefreshRate())) {
 			try {

@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 public class AttributeTypeView
+		extends StandardEntityView
 {
 
 	@NotNull
@@ -80,6 +81,7 @@ public class AttributeTypeView
 		attributeTypeView.setHideOnSubmission(Convert.toBoolean(attributeType.getHideOnSubmission()));
 		attributeTypeView.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
 		attributeTypeView.setActiveStatus(attributeType.getActiveStatus());
+		attributeTypeView.toStandardView(attributeType);
 
 		return attributeTypeView;
 	}

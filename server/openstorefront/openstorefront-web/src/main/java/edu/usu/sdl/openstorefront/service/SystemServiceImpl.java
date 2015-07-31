@@ -75,6 +75,9 @@ public class SystemServiceImpl
 	private static final Logger log = Logger.getLogger(SystemServiceImpl.class.getName());
 	private static final Logger errorLog = Logger.getLogger(OpenStorefrontConstant.ERROR_LOGGER);
 
+	private static final int MAX_DB_CLEAN_AMOUNT = 1000;
+	private static final int MIN_DB_CLEAN_AMOUNT = 1000;
+
 	@Override
 	public ApplicationProperty getProperty(String key)
 	{
@@ -95,22 +98,30 @@ public class SystemServiceImpl
 	@Override
 	public void saveProperty(String key, String value)
 	{
-		ApplicationProperty existingProperty = persistenceService.findById(ApplicationProperty.class, key);
-		if (existingProperty != null) {
-			existingProperty.setValue(value);
-			existingProperty.setUpdateDts(TimeUtil.currentDate());
-			existingProperty.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-			persistenceService.persist(existingProperty);
+		if (StringUtils.isBlank(value)) {
+			//remove existing
+			ApplicationProperty existingProperty = persistenceService.findById(ApplicationProperty.class, key);
+			if (existingProperty != null) {
+				persistenceService.delete(existingProperty);
+			}
 		} else {
-			ApplicationProperty property = new ApplicationProperty();
-			property.setKey(key);
-			property.setValue(value);
-			property.setActiveStatus(ApplicationProperty.ACTIVE_STATUS);
-			property.setCreateDts(TimeUtil.currentDate());
-			property.setUpdateDts(TimeUtil.currentDate());
-			property.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
-			property.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-			persistenceService.persist(property);
+			ApplicationProperty existingProperty = persistenceService.findById(ApplicationProperty.class, key);
+			if (existingProperty != null) {
+				existingProperty.setValue(value);
+				existingProperty.setUpdateDts(TimeUtil.currentDate());
+				existingProperty.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+				persistenceService.persist(existingProperty);
+			} else {
+				ApplicationProperty property = new ApplicationProperty();
+				property.setKey(key);
+				property.setValue(value);
+				property.setActiveStatus(ApplicationProperty.ACTIVE_STATUS);
+				property.setCreateDts(TimeUtil.currentDate());
+				property.setUpdateDts(TimeUtil.currentDate());
+				property.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
+				property.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+				persistenceService.persist(property);
+			}
 		}
 	}
 
@@ -130,20 +141,11 @@ public class SystemServiceImpl
 			existing = persistenceService.findById(Highlight.class, highlight.getHighlightId());
 		}
 		if (existing != null) {
-			existing.setDescription(highlight.getDescription());
-			existing.setHighlightType(highlight.getHighlightType());
-			existing.setLink(highlight.getLink());
-			existing.setTitle(highlight.getTitle());
-			existing.setActiveStatus(Highlight.ACTIVE_STATUS);
-			existing.setUpdateDts(TimeUtil.currentDate());
-			existing.setUpdateUser(highlight.getUpdateUser());
+			existing.updateFields(highlight);
 			persistenceService.persist(existing);
-
 		} else {
 			highlight.setHighlightId(persistenceService.generateId());
-			highlight.setActiveStatus(Highlight.ACTIVE_STATUS);
-			highlight.setCreateDts(TimeUtil.currentDate());
-			highlight.setUpdateDts(TimeUtil.currentDate());
+			highlight.populateBaseCreateFields();
 			persistenceService.persist(highlight);
 		}
 	}
@@ -424,7 +426,13 @@ public class SystemServiceImpl
 		if (count > max) {
 			log.log(Level.INFO, MessageFormat.format("Cleaning old log records:  {0}", (count - max)));
 
-			long limit = count - max;
+			long limit = count - max - MIN_DB_CLEAN_AMOUNT;
+			if (limit > MAX_DB_CLEAN_AMOUNT) {
+				limit = MAX_DB_CLEAN_AMOUNT;
+			}
+			if (limit < 0) {
+				limit = 1;
+			}
 			String query = "SELECT FROM DBLogRecord ORDER BY eventDts ASC LIMIT " + limit;
 			List<DBLogRecord> logRecords = persistenceService.query(query, null);
 			logRecords.stream().forEach((record) -> {

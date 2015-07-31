@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.io.ExportImport;
-import edu.usu.sdl.openstorefront.storage.model.Article;
 import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
 import edu.usu.sdl.openstorefront.storage.model.AttributeType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
@@ -44,6 +43,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author dshurtleff
  */
 public class ArticleView
+		extends StandardEntityView
 		implements ExportImport
 {
 
@@ -74,7 +74,7 @@ public class ArticleView
 	public ArticleView()
 	{
 	}
-	
+
 	public static ArticleView toView(AttributeCode attributeCode)
 	{
 		ServiceProxy service = new ServiceProxy();
@@ -85,7 +85,7 @@ public class ArticleView
 		articleView.setCodeDescription(attributeCode.getLabel());
 		articleView.setCodeLongDescription(attributeCode.getDescription());
 		articleView.setAttributeCodeActiveStatus(attributeCode.getActiveStatus());
-		
+
 		AttributeType type = service.getPersistenceService().findById(AttributeType.class, attributeCode.getAttributeCodePk().getAttributeType());
 		if (type != null) {
 			articleView.setTypeDescription(type.getDescription());
@@ -94,20 +94,19 @@ public class ArticleView
 		if (attributeCode.getArticle() != null) {
 			if (StringUtils.isNotBlank(attributeCode.getArticle().getTitle())) {
 				articleView.setTitle(attributeCode.getArticle().getTitle());
-			}
-			else {
+			} else {
 				articleView.setTitle(attributeCode.getLabel());
 			}
 
 			if (StringUtils.isNotBlank(attributeCode.getArticle().getDescription())) {
 				articleView.setDescription(attributeCode.getArticle().getDescription());
-			}
-			else {
+			} else {
 				articleView.setDescription(attributeCode.getDescription());
 			}
 
 			articleView.setUpdateDts(attributeCode.getArticle().getUpdateDts());
 		}
+		articleView.toStandardView(attributeCode);
 
 		return articleView;
 	}
@@ -258,8 +257,7 @@ public class ArticleView
 		String componentJson = null;
 		try {
 			componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(this);
-		}
-		catch (JsonProcessingException ex) {
+		} catch (JsonProcessingException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to export component.", ex);
 		}
 		return componentJson;
@@ -271,7 +269,7 @@ public class ArticleView
 		Objects.requireNonNull(data, "Input data cannot be null");
 		try {
 			ArticleView article = StringProcessor.defaultObjectMapper().readValue(data[0], new TypeReference<ArticleView>()
-																	  {
+			{
 			});
 			if (article != null) {
 //				this.component = article.getComponent();
@@ -285,12 +283,10 @@ public class ArticleView
 //				this.resources = article.getResources();
 //				this.reviews = article.getReviews();
 //				this.tags = article.getTags();
-			}
-			else {
+			} else {
 				throw new OpenStorefrontRuntimeException("Unable to import component.", "Make sure the data is in the correct format");
 			}
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to import component. Data could not be real", ex);
 		}
 	}

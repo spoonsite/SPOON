@@ -134,7 +134,7 @@ public class HighlightResource
 		if (post) {
 			return Response.created(URI.create("v1/resource/highlights/" + highlight.getHighlightId())).entity(highlight).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(highlight).build();
 		}
 	}
 

@@ -152,7 +152,7 @@
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orient-commons</artifactId>
 			<version>${orientdb.verison}</version>
-		</dependency>
+		</dependency>	
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-core</artifactId>
@@ -187,8 +187,8 @@
 				<exclusion>
 					<groupId>asm</groupId>
 					<artifactId>asm-util</artifactId>
-				</exclusion>
-			</exclusions>
+				</exclusion>				
+			</exclusions>			
 		</dependency>		 
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
@@ -204,7 +204,7 @@
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-nativeos</artifactId>
 			<version>${orientdb.verison}</version>
-		</dependency>			  
+		</dependency>			  	
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-server</artifactId>

@@ -51,6 +51,16 @@ public class Article
 	{
 	}
 
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		Article article = (Article) entity;
+		this.setTitle(article.getTitle());
+		this.setDescription(article.getDescription());
+	}
+
 	public String getTitle()
 	{
 		return title;

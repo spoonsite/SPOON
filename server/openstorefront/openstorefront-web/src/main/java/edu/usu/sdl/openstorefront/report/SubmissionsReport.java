@@ -33,6 +33,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -132,10 +133,21 @@ public class SubmissionsReport
 					submitter = componentContact;
 				}
 			}
+
+			String componentSecurityMarking = "";
+			if (StringUtils.isNotBlank(component.getSecurityMarkingType())) {
+				componentSecurityMarking = " (" + component.getSecurityMarkingType() + ")";
+			}
+
+			String submitterSecurityMarking = "";
+			if (StringUtils.isNotBlank(submitter.getSecurityMarkingType())) {
+				submitterSecurityMarking = " (" + submitter.getSecurityMarkingType() + ")";
+			}
+
 			cvsGenerator.addLine(
-					component.getName(),
+					component.getName() + componentSecurityMarking,
 					component.getSubmittedDts() != null ? sdf.format(component.getSubmittedDts()) : "",
-					submitter.getFirstName() + " " + submitter.getLastName(),
+					submitter.getFirstName() + " " + submitter.getLastName() + submitterSecurityMarking,
 					submitter.getEmail(),
 					submitter.getPhone(),
 					submitter.getOrganization(),

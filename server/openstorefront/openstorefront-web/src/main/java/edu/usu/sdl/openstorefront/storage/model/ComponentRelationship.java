@@ -48,6 +48,18 @@ public class ComponentRelationship
 	{
 	}
 
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		ComponentRelationship componentRelationship = (ComponentRelationship) entity;
+		this.setComponentId(componentRelationship.getComponentId());
+		this.setRelatedComponentId(componentRelationship.getRelatedComponentId());
+		this.setRelationshipType(componentRelationship.getRelationshipType());
+
+	}
+
 	public String getComponentRelationshipId()
 	{
 		return componentRelationshipId;

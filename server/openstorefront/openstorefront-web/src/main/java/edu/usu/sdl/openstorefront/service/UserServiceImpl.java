@@ -207,6 +207,7 @@ public class UserServiceImpl
 		}
 
 		userProfile = persistenceService.deattachAll(userProfile);
+		getOrganizationService().addOrganization(userProfile.getOrganization());
 		if (refreshSession) {
 			UserContext userContext = SecurityUtil.getUserContext();
 			if (userContext != null) {
@@ -556,16 +557,16 @@ public class UserServiceImpl
 			params.put("userList", adminMessage.getUsersToEmail());
 			params.put("userList2", adminMessage.getUsersToEmail());
 			usersToSend = persistenceService.query(query.toString(), params);
-			for(String email: adminMessage.getUsersToEmail()){
+			for (String email : adminMessage.getUsersToEmail()) {
 				Boolean found = false;
-				for(UserProfile user: usersToSend){
-					if (StringUtils.equalsIgnoreCase(user.getEmail(), email)){
+				for (UserProfile user : usersToSend) {
+					if (StringUtils.equalsIgnoreCase(user.getEmail(), email)) {
 						found = true;
 					} else if (StringUtils.equalsIgnoreCase(user.getUsername(), email)) {
 						found = true;
 					}
 				}
-				if (!found && StringProcessor.isEmail(email)){
+				if (!found && StringProcessor.isEmail(email)) {
 					UserProfile temp = new UserProfile();
 					temp.setEmail(email);
 					temp.setFirstName("");
@@ -574,9 +575,9 @@ public class UserServiceImpl
 				}
 			}
 		}
-		
+
 		List<UserProfile> temp = usersToSend;
-		
+
 		int emailCount = 0;
 		for (UserProfile userProfile : usersToSend) {
 			Email email = MailManager.newEmail();

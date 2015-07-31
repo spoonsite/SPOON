@@ -15,11 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.storage.model;
 
+import edu.usu.sdl.openstorefront.doc.APIDescription;
+import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -37,6 +41,12 @@ public abstract class StandardEntity<T>
 	public static final String ACTIVE_STATUS = "A";
 	public static final String INACTIVE_STATUS = "I";
 	public static final String PENDING_STATUS = "P";
+
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = SecurityMarkingType.class)
+	@APIDescription("Security Classification")
+	private String securityMarkingType;
 
 	@NotNull
 	@ValidValueType({"A", "I", "P"})
@@ -76,8 +86,25 @@ public abstract class StandardEntity<T>
 		}
 	}
 
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		this.setSecurityMarkingType(entity.getSecurityMarkingType());
+		if (entity.getActiveStatus() != null) {
+			this.setActiveStatus(entity.getActiveStatus());
+		}
+
+		if (StringUtils.isNotBlank(entity.getUpdateUser())) {
+			setUpdateUser(entity.getUpdateUser());
+		}
+
+		this.populateBaseUpdateFields();
+	}
+
 	public void populateBaseUpdateFields()
 	{
+		if (StringUtils.isBlank(getActiveStatus())) {
+			setActiveStatus(ACTIVE_STATUS);
+		}
 		setUpdateDts(TimeUtil.currentDate());
 		if (StringUtils.isBlank(getUpdateUser())) {
 			setUpdateUser(SecurityUtil.getCurrentUserName());
@@ -160,6 +187,16 @@ public abstract class StandardEntity<T>
 	public void setAdminModified(Boolean adminModified)
 	{
 		this.adminModified = adminModified;
+	}
+
+	public String getSecurityMarkingType()
+	{
+		return securityMarkingType;
+	}
+
+	public void setSecurityMarkingType(String securityMarkingType)
+	{
+		this.securityMarkingType = securityMarkingType;
 	}
 
 }

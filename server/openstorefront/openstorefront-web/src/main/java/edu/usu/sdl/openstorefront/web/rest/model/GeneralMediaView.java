@@ -25,6 +25,7 @@ import java.util.List;
  * @author dshurtleff
  */
 public class GeneralMediaView
+		extends StandardEntityView
 {
 
 	private String name;
@@ -47,6 +48,7 @@ public class GeneralMediaView
 		generalMediaView.setUpdateDts(generalMedia.getUpdateDts());
 		generalMediaView.setUpdateUser(generalMedia.getUpdateUser());
 		generalMediaView.setMediaLink("Media.action?GeneralMedia&name=" + generalMedia.getName());
+		generalMediaView.toStandardView(generalMedia);
 		return generalMediaView;
 	}
 

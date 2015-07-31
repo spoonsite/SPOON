@@ -45,6 +45,16 @@ public class ComponentTag
 	{
 	}
 
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		ComponentTag tag = (ComponentTag) entity;
+		this.setText(tag.getText());
+
+	}
+
 	public String getTagId()
 	{
 		return tagId;

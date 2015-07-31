@@ -49,6 +49,7 @@ public class ValidationUtil
 			new UniqueRule(),
 			new RequiredRule(),
 			new SizeRule(),
+			new ForeignKeyRule(),
 			new ValidValueRule()
 	);
 

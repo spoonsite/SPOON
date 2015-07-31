@@ -28,6 +28,7 @@ import java.util.List;
  * @author dshurtleff
  */
 public class ComponentPrintView
+		extends StandardEntityView
 {
 
 	private String componentId;
@@ -68,6 +69,7 @@ public class ComponentPrintView
 		setReleaseDate(component.getReleaseDate());
 		setOrganization(component.getOrganization());
 		setLastActivityDate(component.getLastActivityDts());
+		toStandardView(component);
 	}
 
 	public static ComponentPrintView toView(ComponentDetailView component)
@@ -94,6 +96,9 @@ public class ComponentPrintView
 		view.setReviews(component.getReviews());
 		view.setDependencies(component.getDependencies());
 		view.setRelationships(component.getRelationships());
+		view.setSecurityMarkingCode(component.getSecurityMarkingCode());
+		view.setSecurityMarkingDescription(component.getSecurityMarkingDescription());
+		view.setSecurityMarkingRank(component.getSecurityMarkingRank());
 
 		return view;
 	}

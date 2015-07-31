@@ -76,7 +76,7 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			componentCache = singletonManager.getCache("componentCache");
 
-			memoryOnlyCache = new Cache("componentLookupCache", 10000, false, false, 300, 300);
+			memoryOnlyCache = new Cache("componentLookupCache", 50000, false, false, 300, 300);
 			singletonManager.addCache(memoryOnlyCache);
 			componentLookupCache = singletonManager.getCache("componentLookupCache");
 

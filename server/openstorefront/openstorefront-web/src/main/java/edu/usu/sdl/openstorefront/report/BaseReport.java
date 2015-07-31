@@ -58,6 +58,9 @@ public abstract class BaseReport
 				case ReportType.ORGANIZATION:
 					baseReport = new OrganizationReport(report);
 					break;
+				case ReportType.COMPONENT_ORGANIZATION:
+					baseReport = new ComponentOrganizationReport(report);
+					break;
 				case ReportType.USER:
 					baseReport = new UserReport(report);
 					break;

@@ -18,15 +18,19 @@ package edu.usu.sdl.openstorefront.storage.model;
 import edu.usu.sdl.openstorefront.doc.APIDescription;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.doc.ValidValueType;
+import edu.usu.sdl.openstorefront.util.DefaultFieldValue;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
-import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -34,6 +38,7 @@ import javax.validation.constraints.Size;
  */
 public class Component
 		extends StandardEntity<Component>
+		implements OrganizationModel
 {
 
 	@PK(generated = true)
@@ -48,9 +53,16 @@ public class Component
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_COMPONENT_DESCRIPTION)
-	@Sanitize(BasicHTMLSanitizer.class)
+	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String description;
+
+	@NotNull
+	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = ComponentType.class)
+	@DefaultFieldValue(ComponentType.COMPONENT)
+	@APIDescription("Type of listing")
+	private String componentType;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
 	@ConsumeField
@@ -121,6 +133,46 @@ public class Component
 		return value;
 	}
 
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+
+		Component component = (Component) entity;
+
+		this.setName(component.getName());
+		if ((ApprovalStatus.PENDING.equals(this.getApprovalState()) || ApprovalStatus.NOT_SUBMITTED.equals(this.getApprovalState()))
+				&& ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
+			this.setApprovalState(component.getApprovalState());
+
+			if (StringUtils.isBlank(component.getApprovedUser())) {
+				component.setApprovedUser(SecurityUtil.getCurrentUserName());
+			}
+			if (component.getApprovedDts() == null) {
+				component.setApprovedDts(TimeUtil.currentDate());
+			}
+			this.setApprovedUser(component.getApprovedUser());
+			this.setApprovedDts(component.getApprovedDts());
+
+		} else if (ApprovalStatus.APPROVED.equals(this.getApprovalState())
+				&& (ApprovalStatus.PENDING.equals(component.getApprovalState())) || ApprovalStatus.NOT_SUBMITTED.equals(component.getApprovalState())) {
+			this.setApprovalState(component.getApprovalState());
+			this.setApprovedUser(null);
+			this.setApprovedDts(null);
+		}
+
+		this.setDescription(component.getDescription());
+		this.setGuid(component.getGuid());
+		this.setLastActivityDts(TimeUtil.currentDate());
+		this.setOrganization(component.getOrganization());
+		this.setComponentType(component.getComponentType());
+		this.setReleaseDate(component.getReleaseDate());
+		this.setVersion(component.getVersion());
+		this.setNotifyOfApprovalEmail(component.getNotifyOfApprovalEmail());
+		this.setSubmittedDts(component.getSubmittedDts());
+
+	}
+
 	public String getName()
 	{
 		return name;
@@ -151,11 +203,13 @@ public class Component
 		this.guid = guid;
 	}
 
+	@Override
 	public String getOrganization()
 	{
 		return organization;
 	}
 
+	@Override
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;
@@ -249,6 +303,16 @@ public class Component
 	public void setNotifyOfApprovalEmail(String notifyOfApprovalEmail)
 	{
 		this.notifyOfApprovalEmail = notifyOfApprovalEmail;
+	}
+
+	public String getComponentType()
+	{
+		return componentType;
+	}
+
+	public void setComponentType(String componentType)
+	{
+		this.componentType = componentType;
 	}
 
 }

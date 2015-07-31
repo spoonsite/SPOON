@@ -29,6 +29,7 @@ import java.util.List;
  * @author dshurtleff
  */
 public class ComponentEvaluationSectionView
+		extends StandardEntityView
 {
 
 	public static final String NAME_FIELD = "name";
@@ -58,6 +59,8 @@ public class ComponentEvaluationSectionView
 		view.setActiveStatus(section.getActiveStatus());
 		view.setNotAvailable(section.getNotAvailable());
 		view.setEvaluationSection(section.getComponentEvaluationSectionPk().getEvaluationSection());
+		view.toStandardView(section);
+
 		return view;
 	}
 

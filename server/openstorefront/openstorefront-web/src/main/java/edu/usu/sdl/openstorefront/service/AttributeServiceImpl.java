@@ -206,18 +206,7 @@ public class AttributeServiceImpl
 
 		if (existing != null) {
 			//remove to inactivate
-			existing.setActiveStatus(AttributeType.ACTIVE_STATUS);
-			existing.setUpdateDts(TimeUtil.currentDate());
-			existing.setUpdateUser(attributeType.getUpdateUser());
-			existing.setAllowMultipleFlg(attributeType.getAllowMultipleFlg());
-			existing.setArchitectureFlg(attributeType.getArchitectureFlg());
-			existing.setDescription(attributeType.getDescription());
-			existing.setImportantFlg(attributeType.getImportantFlg());
-			existing.setRequiredFlg(attributeType.getRequiredFlg());
-			existing.setVisibleFlg(attributeType.getVisibleFlg());
-			existing.setDetailedDescription(attributeType.getDetailedDescription());
-			existing.setHideOnSubmission(attributeType.getHideOnSubmission());
-			existing.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
+			existing.updateFields(attributeType);
 			persistenceService.persist(existing);
 		} else {
 			attributeType.populateBaseCreateFields();
@@ -272,18 +261,7 @@ public class AttributeServiceImpl
 	{
 		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 		if (existing != null) {
-			//remove to inactivate
-			existing.setActiveStatus(AttributeCode.ACTIVE_STATUS);
-			existing.setUpdateDts(TimeUtil.currentDate());
-			existing.setUpdateUser(attributeCode.getUpdateUser());
-			existing.setDescription(attributeCode.getDescription());
-			existing.setDetailUrl(attributeCode.getDetailUrl());
-			existing.setLabel(attributeCode.getLabel());
-			existing.setArchitectureCode(attributeCode.getArchitectureCode());
-			existing.setBadgeUrl(attributeCode.getBadgeUrl());
-			existing.setGroupCode(attributeCode.getGroupCode());
-			existing.setSortOrder(attributeCode.getSortOrder());
-			existing.setHighlightStyle(attributeCode.getHighlightStyle());
+			existing.updateFields(attributeCode);
 			persistenceService.persist(existing);
 		} else {
 			attributeCode.populateBaseCreateFields();
@@ -378,9 +356,7 @@ public class AttributeServiceImpl
 				//save attribute
 				if (attributeCodeExisting.getArticle() != null) {
 					attributeCodeExisting.getArticle().setArticleFilename(filename);
-					attributeCodeExisting.getArticle().setTitle(attributeCode.getArticle().getTitle());
-					attributeCodeExisting.getArticle().setDescription(attributeCode.getArticle().getDescription());
-					attributeCodeExisting.getArticle().populateBaseUpdateFields();
+					attributeCodeExisting.getArticle().updateFields(attributeCode.getArticle());
 					persistenceService.saveNonPkEntity(attributeCodeExisting.getArticle());
 				} else {
 					attributeCodeExisting.setArticle(attributeCode.getArticle());

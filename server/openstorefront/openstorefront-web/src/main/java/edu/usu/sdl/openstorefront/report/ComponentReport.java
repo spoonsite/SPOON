@@ -24,9 +24,11 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
 import edu.usu.sdl.openstorefront.storage.model.Report;
+import edu.usu.sdl.openstorefront.storage.model.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.util.TranslateUtil;
 import java.util.List;
 
 /**
@@ -61,6 +63,7 @@ public class ComponentReport
 		cvsGenerator.addLine(
 				"Name",
 				"Organization",
+				"Security Classification",
 				"Last Activity Date",
 				"Approval Status",
 				"Approval Date",
@@ -131,6 +134,7 @@ public class ComponentReport
 			cvsGenerator.addLine(
 					component.getName(),
 					component.getOrganization(),
+					component.getSecurityMarkingType() == null ? "" : "(" + component.getSecurityMarkingType() + ") - " + TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()),
 					sdf.format(component.getLastActivityDts()),
 					component.getApprovalState(),
 					component.getApprovedDts() == null ? "" : sdf.format(component.getApprovedDts()),
