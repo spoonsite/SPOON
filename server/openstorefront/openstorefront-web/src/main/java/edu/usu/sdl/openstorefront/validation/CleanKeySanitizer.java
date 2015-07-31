@@ -13,38 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.init;
+package edu.usu.sdl.openstorefront.validation;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import edu.usu.sdl.openstorefront.util.StringProcessor;
 
 /**
- * Extracts organizations from the data
+ * Clean up user-definable DB Keys that can cause issues in the API
  *
  * @author dshurtleff
  */
-public class UpdateOrganizationsInit
-		extends ApplyOnceInit
+public class CleanKeySanitizer
+		extends Sanitizer
 {
 
-	private static final Logger log = Logger.getLogger(UpdateOrganizationsInit.class.getName());
-
-	public UpdateOrganizationsInit()
-	{
-		super("Update Organizations");
-	}
-
 	@Override
-	protected String internalApply()
+	public Object santize(Object fieldData)
 	{
-		boolean success = false;
-		try {
-			service.getOrganizationService().extractOrganizations();
-			success = true;
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed extracting Organizations", e);
+		if (fieldData == null) {
+			return fieldData;
+		} else {
+			String safe = StringProcessor.cleanEntityKey(fieldData.toString());
+			return safe;
 		}
-		return Boolean.toString(success);
 	}
 
 }

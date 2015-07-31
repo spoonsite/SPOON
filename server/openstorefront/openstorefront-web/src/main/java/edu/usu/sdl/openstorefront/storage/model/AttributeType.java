@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.util.DefaultFieldValue;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
@@ -42,6 +43,7 @@ public class AttributeType
 	@PK
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
 	private String attributeType;
 

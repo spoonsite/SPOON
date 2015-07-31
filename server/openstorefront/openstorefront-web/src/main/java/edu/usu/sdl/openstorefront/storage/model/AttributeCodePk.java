@@ -18,6 +18,8 @@ package edu.usu.sdl.openstorefront.storage.model;
 import edu.usu.sdl.openstorefront.doc.ConsumeField;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -33,11 +35,13 @@ public class AttributeCodePk
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
 	private String attributeType;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
 	private String attributeCode;
 
