@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.util.Convert;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.util.PK;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.io.StringWriter;
@@ -48,6 +49,7 @@ public abstract class LookupEntity
 	@PK
 	@NotNull
 	@ConsumeField
+	@Sanitize(CleanKeySanitizer.class)
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@APIDescription("Internal System code")
 	protected String code;
