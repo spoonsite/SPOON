@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
  */
 public class ComponentQuestion
 		extends BaseComponent
+		implements OrganizationModel
 {
 
 	@PK(generated = true)
@@ -61,6 +62,18 @@ public class ComponentQuestion
 	{
 	}
 
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		ComponentQuestion componentQuestion = (ComponentQuestion) entity;
+		this.setOrganization(componentQuestion.getOrganization());
+		this.setQuestion(componentQuestion.getQuestion());
+		this.setUserTypeCode(componentQuestion.getUserTypeCode());
+
+	}
+
 	public String getQuestion()
 	{
 		return question;
@@ -81,11 +94,13 @@ public class ComponentQuestion
 		this.userTypeCode = userType;
 	}
 
+	@Override
 	public String getOrganization()
 	{
 		return organization;
 	}
 
+	@Override
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;

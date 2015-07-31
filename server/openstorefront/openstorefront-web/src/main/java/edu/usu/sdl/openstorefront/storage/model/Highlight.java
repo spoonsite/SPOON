@@ -69,6 +69,20 @@ public class Highlight
 	{
 	}
 
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		Highlight highlight = (Highlight) entity;
+
+		this.setDescription(highlight.getDescription());
+		this.setHighlightType(highlight.getHighlightType());
+		this.setLink(highlight.getLink());
+		this.setTitle(highlight.getTitle());
+
+	}
+
 	public String getHighlightId()
 	{
 		return highlightId;

@@ -25,6 +25,7 @@ import java.util.List;
  * @author dshurtleff
  */
 public class ComponentExternalDependencyView
+		extends StandardEntityView
 {
 
 	private String dependencyId;
@@ -49,6 +50,8 @@ public class ComponentExternalDependencyView
 		view.setDependencyId(dependency.getDependencyId());
 		view.setUpdateDts(dependency.getUpdateDts());
 		view.setActiveStatus(dependency.getActiveStatus());
+		view.toStandardView(dependency);
+
 		return view;
 	}
 

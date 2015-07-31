@@ -151,13 +151,7 @@ public class ReportServiceImpl
 
 		ScheduledReport existing = persistenceService.findById(ScheduledReport.class, scheduledReport.getScheduleReportId());
 		if (existing != null) {
-			existing.setLastRanDts(scheduledReport.getLastRanDts());
-			existing.setEmailAddresses(scheduledReport.getEmailAddresses());
-			existing.setReportFormat(scheduledReport.getReportFormat());
-			existing.setReportOption(scheduledReport.getReportOption());
-			existing.setReportType(scheduledReport.getReportType());
-			existing.setScheduleIntervalDays(scheduledReport.getScheduleIntervalDays());
-			existing.populateBaseUpdateFields();
+			existing.updateFields(scheduledReport);
 			persistenceService.persist(existing);
 		} else {
 			scheduledReport.setScheduleReportId(persistenceService.generateId());

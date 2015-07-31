@@ -27,6 +27,7 @@ import java.util.List;
  * @author dshurtleff
  */
 public class ComponentQuestionResponseView
+		extends StandardEntityView
 {
 
 	private String response;
@@ -63,6 +64,8 @@ public class ComponentQuestionResponseView
 		tempView.setUsername(response.getUpdateUser());
 		tempView.setUpdateDts(response.getUpdateDts());
 		tempView.setResponseId(response.getResponseId());
+		tempView.toStandardView(response);
+
 		return tempView;
 	}
 

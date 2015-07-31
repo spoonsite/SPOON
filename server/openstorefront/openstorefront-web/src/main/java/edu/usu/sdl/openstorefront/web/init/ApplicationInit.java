@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.init;
 
+import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.HelpImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
@@ -38,6 +39,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import net.java.truevfs.access.TVFS;
+import net.sourceforge.stripes.util.ResolverUtil;
 
 /**
  * Use to init the application and shut it down properly
@@ -69,8 +71,22 @@ public class ApplicationInit
 		startupManager(new ReportManager());
 		startupManager(new LDAPManager());
 		startupManager(new HelpImporter());
-
 		startupManager(new DBLogManager());
+
+		//Apply any Inits
+		ResolverUtil resolverUtil = new ResolverUtil();
+		resolverUtil.find(new ResolverUtil.IsA(ApplyOnceInit.class), this.getClass().getPackage().getName());
+		for (Object testObject : resolverUtil.getClasses()) {
+			Class testClass = (Class) testObject;
+			try {
+				if (ApplyOnceInit.class.getSimpleName().equals(testClass.getSimpleName()) == false) {
+					((ApplyOnceInit) testClass.newInstance()).applyChanges();
+				}
+			} catch (InstantiationException | IllegalAccessException ex) {
+				throw new OpenStorefrontRuntimeException(ex);
+			}
+		}
+
 	}
 
 	private void startupManager(Initializable initializable)

@@ -62,7 +62,7 @@ public class OrganizationReport
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		//write header
-		cvsGenerator.addLine("Organization Report", sdf.format(TimeUtil.currentDate()));
+		cvsGenerator.addLine("User Organization Report", sdf.format(TimeUtil.currentDate()));
 		cvsGenerator.addLine(
 				"Organization",
 				"# Users",
@@ -82,7 +82,7 @@ public class OrganizationReport
 				if (StringUtils.isNotBlank(userProfile.getEmail())) {
 					String splitEmail[] = userProfile.getEmail().split("@");
 					if (splitEmail.length > 1) {
-						organization = splitEmail[1];
+						organization = splitEmail[1] + " (Based on Email)";
 					}
 				}
 			}

@@ -54,6 +54,16 @@ public class ComponentMetadata
 	{
 	}
 
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		ComponentMetadata metadata = (ComponentMetadata) entity;
+		this.setLabel(metadata.getLabel());
+		this.setValue(metadata.getValue());
+	}
+
 	public String getMetadataId()
 	{
 		return metadataId;

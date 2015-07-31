@@ -69,6 +69,19 @@ public class Alert
 	{
 	}
 
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+
+		Alert alertUpdate = (Alert) entity;
+		this.setAlertType(alertUpdate.getAlertType());
+		this.setEmailAddresses(alertUpdate.getEmailAddresses());
+		this.setName(alertUpdate.getName());
+		this.setSystemErrorAlertOption(alertUpdate.getSystemErrorAlertOption());
+		this.setUserDataAlertOption(alertUpdate.getUserDataAlertOption());
+	}
+
 	public String getAlertId()
 	{
 		return alertId;

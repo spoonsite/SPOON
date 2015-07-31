@@ -38,6 +38,7 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 public class ComponentReviewView
+		extends StandardEntityView
 {
 
 	private String username;
@@ -114,6 +115,9 @@ public class ComponentReviewView
 		reviewProPk.setComponentReviewId(review.getComponentReviewId());
 		reviewProExample.setComponentReviewProPk(reviewProPk);
 		List<ComponentReviewPro> componentReviewPros = service.getPersistenceService().queryByExample(ComponentReviewPro.class, reviewProExample);
+		for (ComponentReviewPro pro : componentReviewPros) {
+			view.toStandardView(pro);
+		}
 		view.setPros(ComponentReviewProCon.toViewListPro(componentReviewPros));
 
 		ComponentReviewCon reviewConExample = new ComponentReviewCon();
@@ -122,6 +126,9 @@ public class ComponentReviewView
 		reviewConPk.setComponentReviewId(review.getComponentReviewId());
 		reviewConExample.setComponentReviewConPk(reviewConPk);
 		List<ComponentReviewCon> componentReviewCons = service.getPersistenceService().queryByExample(ComponentReviewCon.class, reviewConExample);
+		for (ComponentReviewCon con : componentReviewCons) {
+			view.toStandardView(con);
+		}
 		view.setCons(ComponentReviewProCon.toViewListCon(componentReviewCons));
 
 		view.setActiveStatus(review.getActiveStatus());
@@ -129,6 +136,8 @@ public class ComponentReviewView
 		view.setUpdateDate(review.getUpdateDts());
 		view.setOrganization(review.getOrganization());
 		view.setRecommend(review.getRecommend());
+		view.toStandardView(review);
+
 		return view;
 	}
 

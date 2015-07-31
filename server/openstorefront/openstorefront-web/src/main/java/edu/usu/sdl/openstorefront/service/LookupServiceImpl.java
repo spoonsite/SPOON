@@ -116,13 +116,12 @@ public class LookupServiceImpl
 			oldEntity.setDescription(lookupEntity.getDescription());
 			oldEntity.setDetailedDecription(lookupEntity.getDetailedDecription());
 			oldEntity.setSortOrder(lookupEntity.getSortOrder());
+			oldEntity.setHighlightStyle(lookupEntity.getHighlightStyle());
 			oldEntity.setActiveStatus(lookupEntity.getActiveStatus());
-			oldEntity.setUpdateUser(lookupEntity.getUpdateUser());
-			oldEntity.setUpdateDts(TimeUtil.currentDate());
+			oldEntity.populateBaseUpdateFields();
 			persistenceService.persist(oldEntity);
 		} else {
-			lookupEntity.setCreateDts(TimeUtil.currentDate());
-			lookupEntity.setUpdateDts(TimeUtil.currentDate());
+			lookupEntity.populateBaseCreateFields();
 			persistenceService.persist(lookupEntity);
 		}
 		OSFCacheManager.getLookupCache().remove((Object) lookupEntity.getClass().getName());
@@ -149,6 +148,7 @@ public class LookupServiceImpl
 						existing.setDescription(lookupEntity.getDescription());
 						existing.setDetailedDecription(lookupEntity.getDetailedDecription());
 						existing.setSortOrder(lookupEntity.getSortOrder());
+						existing.setHighlightStyle(lookupEntity.getHighlightStyle());
 						existing.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 						existing.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 						existing.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);

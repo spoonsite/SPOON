@@ -71,6 +71,11 @@ public abstract class LookupEntity
 	@Max(Integer.MAX_VALUE)
 	private Integer sortOrder;
 
+	@ConsumeField
+	@APIDescription("Used to store visual style preference")
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String highlightStyle;
+
 	public LookupEntity()
 	{
 	}
@@ -129,7 +134,8 @@ public abstract class LookupEntity
 		writer.writeNext(new String[]{getCode(),
 									  getDescription(),
 									  getDetailedDecription(),
-									  getSortOrder() != null ? sortOrder.toString() : ""
+									  getSortOrder() != null ? sortOrder.toString() : "",
+									  getHighlightStyle()
 		});
 		return stringWriter.toString();
 	}
@@ -141,6 +147,7 @@ public abstract class LookupEntity
 		int DESCRIPTION = 1;
 		int DETAILED_DESCRIPTION = 2;
 		int SORT_ORDER = 3;
+		int HIGHLIGHT_STYLE = 4;
 
 		if (data.length > DESCRIPTION) {
 
@@ -152,6 +159,9 @@ public abstract class LookupEntity
 			}
 			if (data.length > SORT_ORDER) {
 				setSortOrder(Convert.toInteger(data[SORT_ORDER].trim()));
+			}
+			if (data.length > HIGHLIGHT_STYLE) {
+				setHighlightStyle(data[HIGHLIGHT_STYLE].trim());
 			}
 		} else {
 			throw new OpenStorefrontRuntimeException("Missing Required Fields: (Code, Description) Unable import the data.");
@@ -224,6 +234,16 @@ public abstract class LookupEntity
 	public String toString()
 	{
 		return this.getClass().getName() + "[ code=" + code + " ]";
+	}
+
+	public String getHighlightStyle()
+	{
+		return highlightStyle;
+	}
+
+	public void setHighlightStyle(String highlightStyle)
+	{
+		this.highlightStyle = highlightStyle;
 	}
 
 }

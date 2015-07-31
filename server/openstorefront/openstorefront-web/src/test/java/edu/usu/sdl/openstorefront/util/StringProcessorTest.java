@@ -198,14 +198,14 @@ public class StringProcessorTest
 	}
 
 	/**
-	 * Test of eclipseString method, of class StringProcessor.
+	 * Test of ellipseString method, of class StringProcessor.
 	 */
 	@Test
-	public void testEclipseString()
+	public void testEllipseString()
 	{
 		System.out.println("eclipseString");
 		String data = "This is a test string that is really long.  Does it all show?";
-		String result = StringProcessor.eclipseString(data, 20);
+		String result = StringProcessor.ellipseString(data, 20);
 		System.out.println(result);
 		if (result.endsWith("...") == false) {
 			Assert.fail("It didn't eclispe the text");

@@ -29,6 +29,7 @@ import java.util.Map;
  * @author dshurtleff
  */
 public class ComponentQuestionView
+		extends StandardEntityView
 {
 
 	private String question;
@@ -71,6 +72,8 @@ public class ComponentQuestionView
 		view.setOrganization(question.getOrganization());
 		view.setQuestionId(question.getQuestionId());
 		view.setQuestionUpdateDts(question.getUpdateDts());
+		view.toStandardView(question);
+
 		Date max;
 		if (responses.size() > 0) {
 			max = responses.get(0).getUpdateDts();

@@ -25,6 +25,7 @@ import java.util.List;
  * @author dshurtleff
  */
 public class ComponentMetadataView
+		extends StandardEntityView
 {
 
 	private String metadataId;
@@ -45,6 +46,8 @@ public class ComponentMetadataView
 		componentMetadataView.setValue(metadata.getValue());
 		componentMetadataView.setMetadataId(metadata.getMetadataId());
 		componentMetadataView.setActiveStatus(metadata.getActiveStatus());
+		componentMetadataView.toStandardView(metadata);
+
 		return componentMetadataView;
 	}
 

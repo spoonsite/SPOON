@@ -77,6 +77,27 @@ public class ComponentMedia
 	}
 
 	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		ComponentMedia media = (ComponentMedia) entity;
+
+		if (StringUtils.isNotBlank(media.getLink())) {
+			this.setFileName(null);
+			this.setOriginalName(null);
+			this.setMimeType(null);
+		} else {
+			this.setFileName(media.getFileName());
+			this.setOriginalName(media.getOriginalName());
+			this.setMimeType(media.getMimeType());
+		}
+		this.setCaption(media.getCaption());
+		this.setLink(media.getLink());
+		this.setMediaTypeCode(media.getMediaTypeCode());
+	}
+
+	@Override
 	public int customCompareTo(BaseComponent o)
 	{
 		int value = ReflectionUtil.compareObjects(getFileName(), ((ComponentMedia) o).getFileName());

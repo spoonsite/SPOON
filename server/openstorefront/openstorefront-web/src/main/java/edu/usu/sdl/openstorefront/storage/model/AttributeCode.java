@@ -84,6 +84,7 @@ public class AttributeCode
 	private Integer sortOrder;
 
 	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String highlightStyle;
 
 	public static final String DI2ELEVEL_NA = "NA";
@@ -94,6 +95,22 @@ public class AttributeCode
 
 	public AttributeCode()
 	{
+	}
+
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		AttributeCode attributeCode = (AttributeCode) entity;
+		this.setDescription(attributeCode.getDescription());
+		this.setDetailUrl(attributeCode.getDetailUrl());
+		this.setLabel(attributeCode.getLabel());
+		this.setArchitectureCode(attributeCode.getArchitectureCode());
+		this.setBadgeUrl(attributeCode.getBadgeUrl());
+		this.setGroupCode(attributeCode.getGroupCode());
+		this.setSortOrder(attributeCode.getSortOrder());
+		this.setHighlightStyle(attributeCode.getHighlightStyle());
 	}
 
 	/**

@@ -34,6 +34,7 @@ import javax.validation.constraints.Size;
  */
 public class ComponentReview
 		extends BaseComponent
+		implements OrganizationModel
 {
 
 	@PK(generated = true)
@@ -86,6 +87,23 @@ public class ComponentReview
 
 	public ComponentReview()
 	{
+	}
+
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		ComponentReview review = (ComponentReview) entity;
+		this.setComment(review.getComment());
+		this.setUserTimeCode(review.getUserTimeCode());
+		this.setLastUsed(review.getLastUsed());
+		this.setOrganization(review.getOrganization());
+		this.setRating(review.getRating());
+		this.setRecommend(review.getRecommend());
+		this.setTitle(review.getTitle());
+		this.setUserTypeCode(review.getUserTypeCode());
+
 	}
 
 	public String getComponentReviewId()
@@ -158,11 +176,13 @@ public class ComponentReview
 		this.recommend = recommend;
 	}
 
+	@Override
 	public String getOrganization()
 	{
 		return organization;
 	}
 
+	@Override
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;

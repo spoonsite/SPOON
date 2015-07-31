@@ -348,13 +348,12 @@ public class ComponentServiceImpl
 		} else {
 			String query = "select componentId, name from " + Component.class.getSimpleName();
 			List<ODocument> documents = persistenceService.query(query, null);
-			documents.forEach(document -> {
+			for (ODocument document : documents) {
 				Element newElement = new Element(document.field("componentId"), document.field("name"));
+				if (document.field("componentId").equals(componentId)) {
+					componentName = (String) document.field("name");
+				}
 				OSFCacheManager.getComponentLookupCache().put(newElement);
-			});
-			element = OSFCacheManager.getComponentLookupCache().get(componentId);
-			if (element != null) {
-				componentName = (String) element.getObjectValue();
 			}
 		}
 		return componentName;
@@ -556,7 +555,7 @@ public class ComponentServiceImpl
 			ComponentAttribute oldAttribute = persistenceService.findById(ComponentAttribute.class, attribute.getComponentAttributePk());
 			if (oldAttribute != null) {
 				oldAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-				oldAttribute.populateBaseUpdateFields();
+				oldAttribute.updateFields(attribute);
 				persistenceService.persist(oldAttribute);
 			} else {
 				attribute.populateBaseCreateFields();
@@ -614,23 +613,14 @@ public class ComponentServiceImpl
 	{
 		ComponentContact oldContact = persistenceService.findById(ComponentContact.class, contact.getContactId());
 		if (oldContact != null) {
-			oldContact.setActiveStatus(contact.getActiveStatus());
-			oldContact.setContactType(contact.getContactType());
-			oldContact.setEmail(contact.getEmail());
-			oldContact.setFirstName(contact.getFirstName());
-			oldContact.setLastName(contact.getLastName());
-			oldContact.setOrganization(contact.getOrganization());
-			oldContact.setPhone(contact.getPhone());
-			oldContact.setUpdateDts(TimeUtil.currentDate());
-			oldContact.setUpdateUser(contact.getUpdateUser());
+			oldContact.updateFields(contact);
 			persistenceService.persist(oldContact);
 		} else {
-			contact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
 			contact.setContactId(persistenceService.generateId());
-			contact.setCreateDts(TimeUtil.currentDate());
-			contact.setUpdateDts(TimeUtil.currentDate());
+			contact.populateBaseCreateFields();
 			persistenceService.persist(contact);
 		}
+		getOrganizationService().addOrganization(contact.getOrganization());
 
 		if (updateLastActivity) {
 			updateComponentLastActivity(contact.getComponentId());
@@ -647,19 +637,11 @@ public class ComponentServiceImpl
 	{
 		ComponentExternalDependency oldDependency = persistenceService.findById(ComponentExternalDependency.class, dependency.getDependencyId());
 		if (oldDependency != null) {
-			oldDependency.setComment(dependency.getComment());
-			oldDependency.setDependancyReferenceLink(dependency.getDependancyReferenceLink());
-			oldDependency.setDependencyName(dependency.getDependencyName());
-			oldDependency.setVersion(dependency.getVersion());
-			oldDependency.setActiveStatus(dependency.getActiveStatus());
-			oldDependency.setUpdateDts(TimeUtil.currentDate());
-			oldDependency.setUpdateUser(dependency.getUpdateUser());
+			oldDependency.updateFields(dependency);
 			persistenceService.persist(oldDependency);
 		} else {
-			dependency.setActiveStatus(ComponentExternalDependency.ACTIVE_STATUS);
 			dependency.setDependencyId(persistenceService.generateId());
-			dependency.setCreateDts(TimeUtil.currentDate());
-			dependency.setUpdateDts(TimeUtil.currentDate());
+			dependency.populateBaseCreateFields();
 			persistenceService.persist(dependency);
 		}
 		if (updateLastActivity) {
@@ -688,17 +670,10 @@ public class ComponentServiceImpl
 	{
 		ComponentEvaluationSection oldSection = persistenceService.findById(ComponentEvaluationSection.class, section.getComponentEvaluationSectionPk());
 		if (oldSection != null) {
-			oldSection.setActiveStatus(section.getActiveStatus());
-			oldSection.setActualScore(section.getActualScore());
-			oldSection.setScore(null);
-			oldSection.setNotAvailable(section.getNotAvailable());
-			oldSection.setUpdateDts(TimeUtil.currentDate());
-			oldSection.setUpdateUser(section.getUpdateUser());
+			oldSection.updateFields(section);
 			persistenceService.persist(oldSection);
 		} else {
-			section.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
-			section.setCreateDts(TimeUtil.currentDate());
-			section.setUpdateDts(TimeUtil.currentDate());
+			section.populateBaseCreateFields();
 			persistenceService.persist(section);
 		}
 
@@ -719,27 +694,13 @@ public class ComponentServiceImpl
 		if (oldMedia != null) {
 			if (StringUtils.isNotBlank(media.getLink())) {
 				removeLocalMedia(oldMedia);
-				oldMedia.setFileName(null);
-				oldMedia.setOriginalName(null);
-				oldMedia.setMimeType(null);
-			} else {
-				oldMedia.setFileName(media.getFileName());
-				oldMedia.setOriginalName(media.getOriginalName());
-				oldMedia.setMimeType(media.getMimeType());
 			}
-			oldMedia.setCaption(media.getCaption());
-			oldMedia.setLink(media.getLink());
-			oldMedia.setMediaTypeCode(media.getMediaTypeCode());
-			oldMedia.setActiveStatus(media.getActiveStatus());
-			oldMedia.setUpdateDts(TimeUtil.currentDate());
-			oldMedia.setUpdateUser(media.getUpdateUser());
+			oldMedia.updateFields(media);
 			persistenceService.persist(oldMedia);
 			media = oldMedia;
 		} else {
-			media.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 			media.setComponentMediaId(persistenceService.generateId());
-			media.setCreateDts(TimeUtil.currentDate());
-			media.setUpdateDts(TimeUtil.currentDate());
+			media.updateFields(media);
 			persistenceService.persist(media);
 		}
 
@@ -759,17 +720,11 @@ public class ComponentServiceImpl
 	{
 		ComponentMetadata oldMetadata = persistenceService.findById(ComponentMetadata.class, metadata.getMetadataId());
 		if (oldMetadata != null) {
-			oldMetadata.setLabel(metadata.getLabel());
-			oldMetadata.setValue(metadata.getValue());
-			oldMetadata.setActiveStatus(metadata.getActiveStatus());
-			oldMetadata.setUpdateDts(TimeUtil.currentDate());
-			oldMetadata.setUpdateUser(metadata.getUpdateUser());
+			oldMetadata.updateFields(metadata);
 			persistenceService.persist(oldMetadata);
 		} else {
-			metadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
 			metadata.setMetadataId(persistenceService.generateId());
-			metadata.setCreateDts(TimeUtil.currentDate());
-			metadata.setUpdateDts(TimeUtil.currentDate());
+			metadata.populateBaseCreateFields();
 			persistenceService.persist(metadata);
 		}
 
@@ -802,11 +757,7 @@ public class ComponentServiceImpl
 		}
 
 		if (componentRelationshipExisting != null) {
-			componentRelationshipExisting.setComponentId(componentRelationship.getComponentId());
-			componentRelationshipExisting.setRelatedComponentId(componentRelationship.getRelatedComponentId());
-			componentRelationshipExisting.setRelationshipType(componentRelationship.getRelationshipType());
-
-			componentRelationshipExisting.populateBaseUpdateFields();
+			componentRelationshipExisting.updateFields(componentRelationship);
 			componentRelationship = persistenceService.persist(componentRelationshipExisting);
 		} else {
 			componentRelationship.setComponentRelationshipId(persistenceService.generateId());
@@ -830,20 +781,16 @@ public class ComponentServiceImpl
 	{
 		ComponentQuestion oldQuestion = persistenceService.findById(ComponentQuestion.class, question.getQuestionId());
 		if (oldQuestion != null) {
-			oldQuestion.setOrganization(question.getOrganization());
-			oldQuestion.setQuestion(question.getQuestion());
-			oldQuestion.setUserTypeCode(question.getUserTypeCode());
-			oldQuestion.setActiveStatus(question.getActiveStatus());
-			oldQuestion.populateBaseUpdateFields();
+			oldQuestion.updateFields(question);
 			persistenceService.persist(oldQuestion);
 			question = oldQuestion;
 		} else {
-			question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 			question.setQuestionId(persistenceService.generateId());
 			question.populateBaseCreateFields();
 			persistenceService.persist(question);
 		}
 		handleUserDataAlert(question);
+		getOrganizationService().addOrganization(question.getOrganization());
 
 		if (updateLastActivity) {
 			updateComponentLastActivity(question.getComponentId());
@@ -860,21 +807,16 @@ public class ComponentServiceImpl
 	{
 		ComponentQuestionResponse oldResponse = persistenceService.findById(ComponentQuestionResponse.class, response.getResponseId());
 		if (oldResponse != null) {
-			oldResponse.setOrganization(response.getOrganization());
-			oldResponse.setQuestionId(response.getQuestionId());
-			oldResponse.setResponse(response.getResponse());
-			oldResponse.setUserTypeCode(response.getUserTypeCode());
-			oldResponse.setActiveStatus(response.getActiveStatus());
-			oldResponse.populateBaseUpdateFields();
+			oldResponse.updateFields(response);
 			persistenceService.persist(oldResponse);
 			response = oldResponse;
 		} else {
-			response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			response.setResponseId(persistenceService.generateId());
 			response.populateBaseCreateFields();
 			persistenceService.persist(response);
 		}
 		handleUserDataAlert(response);
+		getOrganizationService().addOrganization(response.getOrganization());
 
 		if (updateLastActivity) {
 			updateComponentLastActivity(response.getComponentId());
@@ -894,29 +836,13 @@ public class ComponentServiceImpl
 
 			if (StringUtils.isNotBlank(resource.getLink())) {
 				removeLocalResource(oldResource);
-				oldResource.setFileName(null);
-				oldResource.setOriginalName(null);
-				oldResource.setMimeType(null);
-			} else {
-				oldResource.setFileName(resource.getFileName());
-				oldResource.setOriginalName(resource.getOriginalName());
-				oldResource.setMimeType(resource.getMimeType());
 			}
-
-			oldResource.setDescription(resource.getDescription());
-			oldResource.setLink(resource.getLink());
-			oldResource.setResourceType(resource.getResourceType());
-			oldResource.setRestricted(resource.getRestricted());
-			oldResource.setActiveStatus(resource.getActiveStatus());
-			oldResource.setUpdateDts(TimeUtil.currentDate());
-			oldResource.setUpdateUser(resource.getUpdateUser());
+			oldResource.updateFields(resource);
 			persistenceService.persist(oldResource);
 			resource = oldResource;
 		} else {
-			resource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 			resource.setResourceId(persistenceService.generateId());
-			resource.setCreateDts(TimeUtil.currentDate());
-			resource.setUpdateDts(TimeUtil.currentDate());
+			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
 		}
 
@@ -936,25 +862,16 @@ public class ComponentServiceImpl
 	{
 		ComponentReview oldReview = persistenceService.findById(ComponentReview.class, review.getComponentReviewId());
 		if (oldReview != null) {
-			oldReview.setComment(review.getComment());
-			oldReview.setUserTimeCode(review.getUserTimeCode());
-			oldReview.setLastUsed(review.getLastUsed());
-			oldReview.setOrganization(review.getOrganization());
-			oldReview.setRating(review.getRating());
-			oldReview.setRecommend(review.getRecommend());
-			oldReview.setTitle(review.getTitle());
-			oldReview.setUserTypeCode(review.getUserTypeCode());
-			oldReview.setActiveStatus(review.getActiveStatus());
-			oldReview.populateBaseUpdateFields();
+			oldReview.updateFields(review);
 			persistenceService.persist(oldReview);
 			review = oldReview;
 		} else {
-			review.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			review.setComponentReviewId(persistenceService.generateId());
 			review.populateBaseCreateFields();
 			persistenceService.persist(review);
 		}
 		handleUserDataAlert(review);
+		getOrganizationService().addOrganization(review.getOrganization());
 
 		if (updateLastActivity) {
 			updateComponentLastActivity(review.getComponentId());
@@ -971,14 +888,10 @@ public class ComponentServiceImpl
 	{
 		ComponentReviewCon oldCon = persistenceService.findById(ComponentReviewCon.class, con.getComponentReviewConPk());
 		if (oldCon != null) {
-			oldCon.setActiveStatus(con.getActiveStatus());
-			oldCon.setUpdateDts(TimeUtil.currentDate());
-			oldCon.setUpdateUser(con.getUpdateUser());
+			oldCon.updateFields(con);
 			persistenceService.persist(oldCon);
 		} else {
-			con.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
-			con.setCreateDts(TimeUtil.currentDate());
-			con.setUpdateDts(TimeUtil.currentDate());
+			con.populateBaseCreateFields();
 			persistenceService.persist(con);
 		}
 
@@ -1024,13 +937,10 @@ public class ComponentServiceImpl
 	{
 		ComponentTag oldTag = persistenceService.findById(ComponentTag.class, tag.getTagId());
 		if (oldTag != null) {
-			oldTag.setText(tag.getText());
-			oldTag.setActiveStatus(tag.getActiveStatus());
-			oldTag.populateBaseUpdateFields();
+			oldTag.updateFields(tag);
 			persistenceService.persist(oldTag);
 			tag = oldTag;
 		} else {
-			tag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
 			tag.setTagId(persistenceService.generateId());
 			tag.populateBaseCreateFields();
 			persistenceService.persist(tag);
@@ -1086,13 +996,15 @@ public class ComponentServiceImpl
 	{
 		Component oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
 
+		ReflectionUtil.setDefaultsOnFields(component.getComponent());
+
 		ValidationResult validationResult = component.checkForComplete();
 		if (validationResult.valid()) {
 			boolean approved = false;
 			if (oldComponent != null) {
 
 				if (component.getComponent().compareTo(oldComponent) != 0) {
-					oldComponent.setName(component.getComponent().getName());
+
 					if ((ApprovalStatus.PENDING.equals(oldComponent.getApprovalState()) || ApprovalStatus.NOT_SUBMITTED.equals(oldComponent.getApprovalState()))
 							&& ApprovalStatus.APPROVED.equals(component.getComponent().getApprovalState())) {
 						oldComponent.setApprovalState(component.getComponent().getApprovalState());
@@ -1103,33 +1015,14 @@ public class ComponentServiceImpl
 						if (component.getComponent().getApprovedDts() == null) {
 							component.getComponent().setApprovedDts(TimeUtil.currentDate());
 						}
-						oldComponent.setApprovedUser(component.getComponent().getApprovedUser());
-						oldComponent.setApprovedDts(component.getComponent().getApprovedDts());
 						approved = true;
 					} else if (ApprovalStatus.APPROVED.equals(oldComponent.getApprovalState())
 							&& (ApprovalStatus.PENDING.equals(component.getComponent().getApprovalState())) || ApprovalStatus.NOT_SUBMITTED.equals(component.getComponent().getApprovalState())) {
-						oldComponent.setApprovalState(component.getComponent().getApprovalState());
-						oldComponent.setApprovedUser(null);
-						oldComponent.setApprovedDts(null);
 						component.getComponent().setApprovedUser(null);
 						component.getComponent().setApprovedDts(null);
 					}
+					oldComponent.updateFields(component.getComponent());
 
-					oldComponent.setDescription(component.getComponent().getDescription());
-					oldComponent.setGuid(component.getComponent().getGuid());
-					oldComponent.setLastActivityDts(TimeUtil.currentDate());
-					oldComponent.setOrganization(component.getComponent().getOrganization());
-					oldComponent.setReleaseDate(component.getComponent().getReleaseDate());
-					oldComponent.setVersion(component.getComponent().getVersion());
-					oldComponent.setNotifyOfApprovalEmail(component.getComponent().getNotifyOfApprovalEmail());
-					oldComponent.setSubmittedDts(component.getComponent().getSubmittedDts());
-					if (component.getComponent().getActiveStatus() == null) {
-						oldComponent.setActiveStatus(Component.ACTIVE_STATUS);
-					} else {
-						oldComponent.setActiveStatus(component.getComponent().getActiveStatus());
-					}
-					oldComponent.setUpdateDts(TimeUtil.currentDate());
-					oldComponent.setUpdateUser(component.getComponent().getUpdateUser());
 					persistenceService.persist(oldComponent);
 					component.setComponentChanged(true);
 				}
@@ -1144,9 +1037,7 @@ public class ComponentServiceImpl
 				if (StringUtils.isBlank(component.getComponent().getComponentId())) {
 					component.getComponent().setComponentId(persistenceService.generateId());
 				}
-				component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
-				component.getComponent().setCreateDts(TimeUtil.currentDate());
-				component.getComponent().setUpdateDts(TimeUtil.currentDate());
+				component.getComponent().populateBaseCreateFields();
 				component.getComponent().setLastActivityDts(TimeUtil.currentDate());
 
 				if (ApprovalStatus.APPROVED.equals(component.getComponent().getApprovalState())) {
@@ -1171,6 +1062,7 @@ public class ComponentServiceImpl
 				});
 				component.setAttributeChanged(true);
 			}
+			getOrganizationService().addOrganization(component.getComponent().getOrganization());
 
 			if (approved) {
 				if (StringUtils.isNotBlank(component.getComponent().getNotifyOfApprovalEmail())) {
@@ -2465,6 +2357,23 @@ public class ComponentServiceImpl
 			alertContext.setDataTrigger(existingComponent);
 			getAlertService().checkAlert(alertContext);
 		}
+	}
+
+	@Override
+	public String getComponentApprovalStatus(String componentId)
+	{
+		String approvalStatus = null;
+
+		String query = "select approvalState from " + Component.class.getSimpleName() + " where componentId = :componentIdParam";
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("componentIdParam", componentId);
+
+		List<ODocument> documents = persistenceService.query(query, parameters);
+		//There should be only one or none
+		for (ODocument document : documents) {
+			approvalStatus = document.field("approvalState");
+		}
+		return approvalStatus;
 	}
 
 }

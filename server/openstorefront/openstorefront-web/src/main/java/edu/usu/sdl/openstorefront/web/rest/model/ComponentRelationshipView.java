@@ -29,6 +29,7 @@ import java.util.Objects;
  * @author dshurtleff
  */
 public class ComponentRelationshipView
+		extends StandardEntityView
 {
 
 	private String relationshipId;
@@ -58,6 +59,7 @@ public class ComponentRelationshipView
 		relationshipView.setRelationshipType(componentRelationship.getRelationshipType());
 		relationshipView.setRelationshipTypeDescription(TranslateUtil.translate(RelationshipType.class, componentRelationship.getRelationshipType()));
 		relationshipView.setUpdateDts(componentRelationship.getUpdateDts());
+		relationshipView.toStandardView(componentRelationship);
 
 		return relationshipView;
 	}

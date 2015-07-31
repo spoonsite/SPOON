@@ -30,11 +30,6 @@ import org.apache.commons.beanutils.BeanUtils;
  *
  * @author dshurtleff
  */
-/**
- *
- * @author dshurtleff
- */
-
 public class ReportView
 		extends Report
 {

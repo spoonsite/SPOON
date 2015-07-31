@@ -57,6 +57,18 @@ public class ComponentEvaluationSection
 	{
 	}
 
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		ComponentEvaluationSection section = (ComponentEvaluationSection) entity;
+		this.setActualScore(section.getActualScore());
+		this.setScore(null);
+		this.setNotAvailable(section.getNotAvailable());
+
+	}
+
 	public ComponentEvaluationSectionPk getComponentEvaluationSectionPk()
 	{
 		return componentEvaluationSectionPk;

@@ -28,6 +28,7 @@ import java.util.List;
  * @author dshurtleff
  */
 public class ComponentResourceView
+		extends StandardEntityView
 {
 
 	private String resourceId;
@@ -83,6 +84,7 @@ public class ComponentResourceView
 		}
 		componentResourceView.setLink(link);
 		componentResourceView.setActualLink(ACTUAL_RESOURCE_URL + componentResource.getResourceId());
+		componentResourceView.toStandardView(componentResource);
 
 		return componentResourceView;
 	}

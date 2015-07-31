@@ -31,6 +31,7 @@ import java.util.List;
  * @author dshurtleff
  */
 public class ComponentAttributeView
+		extends StandardEntityView
 {
 
 	private String type;
@@ -88,6 +89,7 @@ public class ComponentAttributeView
 
 		view.setSortOrder(0);
 		view.setGroupCode("Article");
+		view.toStandardView(code, type);
 
 		return view;
 	}
@@ -130,6 +132,7 @@ public class ComponentAttributeView
 		view.setGroupCode(code.getGroupCode());
 		view.setHighlightStyle(code.getHighlightStyle());
 		view.setActiveStatus(attribute.getActiveStatus());
+		view.toStandardView(code, type);
 
 		return view;
 	}
@@ -171,6 +174,7 @@ public class ComponentAttributeView
 			view.setSortOrder(code.getSortOrder());
 			view.setGroupCode(code.getGroupCode());
 			view.setActiveStatus(attribute.getActiveStatus());
+			view.toStandardView(code, type);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find code and/or type.");
 		}
