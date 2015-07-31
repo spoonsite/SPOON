@@ -86,6 +86,9 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
           },
           editMode: function(){
             return true;
+          },
+          allComponents: function(){
+            return $scope.filteredComponents;
           }
         }
       });     
@@ -103,6 +106,9 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
           },
           editMode: function(){
             return false;
+          },
+          allComponents: function(){
+            return $scope.filteredComponents;
           }
         }
       });       
@@ -242,10 +248,11 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
 
   }]);
 
-app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalInstance', 'component', 'editMode', 'business', '$uiModal', '$draggable', 'FileUploader', '$rootScope', '$timeout',
-  function ($scope, $q, $filter, $uiModalInstance, component, editMode, Business, $uiModal, $draggable, FileUploader, $rootScope, $timeout) {
+app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalInstance', 'component', 'editMode', 'allComponents', 'business', '$uiModal', '$draggable', 'FileUploader', '$rootScope', '$timeout',
+  function ($scope, $q, $filter, $uiModalInstance, component, editMode, allComponents, Business, $uiModal, $draggable, FileUploader, $rootScope, $timeout) {
 
     $scope.editMode = editMode;
+    $scope.allComponents = allComponents;
     $scope.editModeText = $scope.editMode ? 'Edit ' + component.component.name : 'Add Component';
     $scope.componentForm = component.component !== undefined ? angular.copy(component.component) : {};
     $scope.editorOptions = getCkBasicConfig(true);
@@ -299,6 +306,23 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
       deferred.resolve();
       return deferred.promise;
     };    
+
+    $scope.getRelationship = function(type){
+      var found = _.find($scope.relationshipTypes, {'code': type});
+      if (found){
+        return found.description;
+      }
+      return '(Relationship not found)';
+    }
+
+    $scope.getComponentName = function(id){
+      var components = _.pluck($scope.allComponents, 'component');
+      var found = _.find(components, {'componentId': id});
+      if (found){
+        return found.name;
+      }
+      return '(Component not found)';
+    }
 
     $scope.sendToSubmitter = function() {
       var temp = [];
@@ -360,6 +384,10 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.attributeForm = angular.copy(basicForm);
     $scope.componentAttributeViewQueryFilter = angular.copy(utils.queryFilter);      
     $scope.componentAttributeViewQueryFilter.status = $scope.statusFilterOptions[0].code;
+
+    $scope.relationshipForm = angular.copy(basicForm);
+    $scope.componentRelationshipViewQueryFilter = angular.copy(utils.queryFilter);      
+    $scope.componentRelationshipViewQueryFilter.status = $scope.statusFilterOptions[0].code;
 
     $scope.contactForm = angular.copy(basicForm);
     $scope.contactQueryFilter = angular.copy(utils.queryFilter);   
@@ -756,6 +784,56 @@ $scope.saveAttribute = function(){
 };
 
 //</editor-fold> 
+//<editor-fold   desc="RELATIONSHIP Section">
+$scope.loadLookup('RelationshipType', 'relationshipTypes', 'relationshipFormLoader');  
+
+$scope.loadComponentRelationshipsView = function(){
+  if ($scope.componentForm.componentId) {
+    $scope.$emit('$TRIGGERLOAD', 'relationshipFormLoader');     
+    Business.componentservice.getComponentRelationships($scope.componentForm.componentId, $scope.componentRelationshipViewQueryFilter).then(function (results) {
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'relationshipFormLoader');
+      if (results) {
+        $scope.componentRelationshipsView = results; 
+      }
+    });
+  }
+};    
+$scope.loadComponentRelationshipsView();   
+
+$scope.deleteRelationship = function(relationship) {
+  var response = window.confirm("Are you sure you want to DELETE relationship &mdash; "+ relationship.ownerComponentName + ' ' + relationship.relationshipTypeDescription + ' ' + relationship.targetComponentName + "?");
+  if (response) {
+    $scope.$emit('$TRIGGERLOAD', 'relationshipFormLoader');
+    Business.componentservice.deleteRelationship($scope.componentForm.componentId, relationship.relationshipId).then(function (results) {
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'relationshipFormLoader');
+      $scope.loadComponentRelationshipsView();              
+    });    
+  }  
+};
+
+$scope.saveRelationship = function(){
+  $scope.$emit('$TRIGGERLOAD', 'relationshipFormLoader');
+  var componentRelationship = {
+    relationshipType: $scope.relationshipForm.type,
+    relatedComponentId: $scope.relationshipForm.target
+  };
+  Business.componentservice.saveRelationship($scope.componentForm.componentId, componentRelationship).then(function (result) {
+    $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'relationshipFormLoader');
+    if (result){
+      if (result && result !== 'false' && isNotRequestError(result)) {
+        removeError();
+        triggerAlert('Saved successfully', 'saveRelationships', 'componentWindowDiv', 3000);
+        $scope.relationshipForm.type = "";
+        $scope.relationshipForm.target = "";
+        $scope.loadComponentRelationshipsView();
+      } else {
+        removeError();
+        triggerError(result, true);
+      }
+    }        
+  });       
+};
+//</editor-fold> 
 
 //<editor-fold   desc="Contact Section">
 
@@ -1076,7 +1154,7 @@ $scope.mediaUploader = new FileUploader({
             triggerAlert('Unable to upload media. Message: <br> ' + errorMessage, 'saveMedia', 'componentWindowDiv', 6000);
           } else {
             triggerAlert('Unable to upload media. ', 'saveMedia', 'componentWindowDiv', 6000);
-        
+
           }
         }
       },

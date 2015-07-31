@@ -383,6 +383,8 @@ module.exports = function (grunt) {
           'bower_components/angular-mocks/angular-mocks.js',
           'bower_components/videogular-themes-default/videogular.css',
           'bower_components/d3/d3.js',
+          'bower_components/bootstrap-combobox/css/bootstrap-combobox.css',
+          'bower_components/bootstrap-combobox/js/bootstrap-combobox.js',
           'scripts/common/angular-lightbox.js',
           'scripts/common/ng-ckeditor.js',
           'styles/*.css',

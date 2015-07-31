@@ -2921,7 +2921,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@APIDescription("Get all direct relationship for a specified component")
+	@APIDescription("Save a new component relationship")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentRelationship.class)

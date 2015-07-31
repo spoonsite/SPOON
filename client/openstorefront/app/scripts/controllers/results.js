@@ -63,7 +63,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.pageNumber         = 1;
   $scope.maxPageNumber      = 1;
   $scope.noDataMessage      = $sce.trustAsHtml('<p>There are no results for your search</p> <p>&mdash; Or &mdash;</p> <p>You have filtered out all of the results.</p><button class="btn btn-default" ng-click="clearFilters()">Reset Filters</button>');
-
+  $scope.showBreadCrumbs    = false;
 
   // grab what we need from the server.
 
