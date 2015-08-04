@@ -80,6 +80,8 @@ public class ComponentDetailView
 	@NotNull
 	private Date approvedDate;
 	private String approvalState;
+	
+	private String componentType;
 
 	@NotNull
 	private String approvedUser;
@@ -139,6 +141,7 @@ public class ComponentDetailView
 		submittedDts = component.getSubmittedDts();
 		notifyOfApprovalEmail = component.getNotifyOfApprovalEmail();
 		lastActivityDts = component.getLastActivityDts();
+		componentType = component.getComponentType();
 		this.toStandardView(component);
 	}
 
@@ -460,6 +463,22 @@ public class ComponentDetailView
 	public void setRelationships(List<ComponentRelationshipView> relationships)
 	{
 		this.relationships = relationships;
+	}
+
+	/**
+	 * @return the componentType
+	 */
+	public String getComponentType()
+	{
+		return componentType;
+	}
+
+	/**
+	 * @param componentType the componentType to set
+	 */
+	public void setComponentType(String componentType)
+	{
+		this.componentType = componentType;
 	}
 
 }

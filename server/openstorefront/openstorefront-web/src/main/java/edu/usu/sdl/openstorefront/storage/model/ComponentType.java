@@ -33,6 +33,7 @@ public class ComponentType
 
 	public static final String COMPONENT = "COMP";
 	public static final String ARTICLE = "ARTICLE";
+	public static final String ALL = "ALL";
 
 	public ComponentType()
 	{

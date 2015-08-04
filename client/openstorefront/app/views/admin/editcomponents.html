@@ -30,6 +30,12 @@ limitations under the License.
        <label class="btn btn-default" ng-model="pagination.control.approvalState" ng-change="refreshComponents()" btn-radio="'A'">Approved</label>
        <label class="btn btn-default" ng-model="pagination.control.approvalState" ng-change="refreshComponents()" btn-radio="'P'">Pending</label>
        <label class="btn btn-default" ng-model="pagination.control.approvalState" ng-change="refreshComponents()" btn-radio="'N'">Not Submitted</label>       
+     </span>
+     &nbsp;Type: &nbsp;
+      <span class="btn-group">
+       <label class="btn btn-default" ng-model="pagination.control.componentType" ng-change="refreshComponents()" btn-radio="'ALL'">All</label>
+       <label class="btn btn-default" ng-model="pagination.control.componentType" ng-change="refreshComponents()" btn-radio="'COMP'">Components</label>
+       <label class="btn btn-default" ng-model="pagination.control.componentType" ng-change="refreshComponents()" btn-radio="'ARTICLE'">Articles</label>       
      </span>  
      <filterquery data="allComponentsWatch.data" url="api/v1/resource/components/filterable" all="true" sort-by="name" sort-order="DESC" type="default" max="300" set-features="pagination.features" control="pagination.control"></filterquery>
      <div ng-show="flags.showUpload" style="border: 2px rgb(103, 103, 103) solid; padding: 20px;" > 

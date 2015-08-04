@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
 import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
+import edu.usu.sdl.openstorefront.storage.model.ComponentType;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,6 +48,7 @@ public class ComponentSearchView
 	private String approvedUser;
 	private String articleAttributeType;
 	private String articleAttributeCode;
+	private String componentType;
 	private Integer averageRating;
 	private Date releaseDate;
 	private Date approvedDts;
@@ -93,6 +95,7 @@ public class ComponentSearchView
 		view.setOrganization(component.getOrganization());
 		view.setReleaseDate(component.getReleaseDate());
 		view.setVersion(component.getVersion());
+		view.setComponentType(component.getComponentType());
 
 		List<SearchResultAttribute> componentAttributes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
@@ -139,6 +142,7 @@ public class ComponentSearchView
 		view.setDescription(article.getDescription());
 		view.setName(article.getTitle());
 		view.setLastActivityDts(article.getUpdateDts());
+		view.setComponentType(ComponentType.ARTICLE);
 		List<ComponentAttribute> attributes = new ArrayList<>();
 		ComponentAttribute attribute = new ComponentAttribute();
 		ComponentAttributePk pk = new ComponentAttributePk();
@@ -444,6 +448,22 @@ public class ComponentSearchView
 	public void setAverageRating(Integer averageRating)
 	{
 		this.averageRating = averageRating;
+	}
+
+	/**
+	 * @return the componentType
+	 */
+	public String getComponentType()
+	{
+		return componentType;
+	}
+
+	/**
+	 * @param componentType the componentType to set
+	 */
+	public void setComponentType(String componentType)
+	{
+		this.componentType = componentType;
 	}
 
 }

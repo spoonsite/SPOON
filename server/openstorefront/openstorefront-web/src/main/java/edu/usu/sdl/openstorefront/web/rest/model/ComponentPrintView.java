@@ -41,6 +41,7 @@ public class ComponentPrintView
 	private String organization;
 	private Date releaseDate;
 	private String version;
+	private String componentType;
 	private Date lastActivityDate;
 	private Date lastViewedDate;
 	private ComponentEvaluationView evaluation = new ComponentEvaluationView();
@@ -69,6 +70,7 @@ public class ComponentPrintView
 		setReleaseDate(component.getReleaseDate());
 		setOrganization(component.getOrganization());
 		setLastActivityDate(component.getLastActivityDts());
+		setComponentType(component.getComponentType());
 		toStandardView(component);
 	}
 
@@ -84,6 +86,7 @@ public class ComponentPrintView
 		view.setReleaseDate(component.getReleaseDate());
 		view.setOrganization(component.getOrganization());
 		view.setLastActivityDate(component.getLastActivityDts());
+		view.setComponentType(component.getComponentType());
 		view.setLastViewedDate(component.getLastViewedDts());
 		view.setEvaluation(component.getEvaluation());
 		view.setQuestions(component.getQuestions());
@@ -415,5 +418,21 @@ public class ComponentPrintView
 	public void setRelationships(List<ComponentRelationshipView> relationships)
 	{
 		this.relationships = relationships;
+	}
+
+	/**
+	 * @return the componentType
+	 */
+	public String getComponentType()
+	{
+		return componentType;
+	}
+
+	/**
+	 * @param componentType the componentType to set
+	 */
+	public void setComponentType(String componentType)
+	{
+		this.componentType = componentType;
 	}
 }
