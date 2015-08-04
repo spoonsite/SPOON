@@ -57,6 +57,19 @@ public class UserMessage
 	{
 	}
 
+	public String uniqueKey()
+	{
+		String key = String.join("|",
+				getActiveStatus(),
+				getEmailAddress(),
+				getUsername(),
+				getUserMessageType(),
+				getAlertId(),
+				getComponentId()
+		);
+		return key;
+	}
+
 	public String getUserMessageId()
 	{
 		return userMessageId;
