@@ -23,6 +23,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.editQuestion       = [];
   $scope.currentTab         = null;
   $scope.sendAdminMessage   = $rootScope.openAdminMessage;
+  $scope.currentAttribute   = null;
 
   resetUpdateNotify();
   $scope.predicate = [];
@@ -110,6 +111,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.d3OnClick = function(item){
     alert(item.name);
   };
+
+  $scope.setCurrentAttribute = function(row){
+    $scope.currentAttribute = row;
+  }
 
   /***************************************************************
   * This function is used by the reviews section in the details to remove
@@ -798,15 +803,26 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           }, 300);
           setupUpdateFlags();
           onlyOnce = $scope.details.details.componentId;
-          $scope.detailResultsTabs = [
+          if ($scope.details.details.componentType === 'COMP' || !$scope.details.details.componentType) {
+            $scope.detailResultsTabs = [
+              //
+              { title:'DETAILS', id:'detailsTab', content:'2', relpath:'views/details/details.html', class:$scope.detailsUpdated.length > 0? 'updatedTab' : ''},
+              { title:'REVIEWS', id:'reviewsTab', content:'3', relpath:'views/details/reviews.html', class:$scope.reviewsUpdated.length > 0? 'updatedTab' : ''},
+              { title:'Q&A', id:'qaTab', content:'4', relpath:'views/details/comments.html', class:$scope.commentsUpdated.length > 0? 'updatedTab' : ''}
+              // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
             //
-            { title:'DETAILS', id:'detailsTab', content:'2', relpath:'views/details/details.html', class:$scope.detailsUpdated.length > 0? 'updatedTab' : ''},
-            { title:'REVIEWS', id:'reviewsTab', content:'3', relpath:'views/details/reviews.html', class:$scope.reviewsUpdated.length > 0? 'updatedTab' : ''},
-            { title:'Q&A', id:'qaTab', content:'4', relpath:'views/details/comments.html', class:$scope.commentsUpdated.length > 0? 'updatedTab' : ''}
-            // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
-          //
-          ];
-          
+            ];
+          }else if ($scope.details.details.componentType === 'ARTICLE') {
+            $scope.detailResultsTabs = [
+              //
+              { title:'DETAILS', id:'detailsTab', content:'2', relpath:'views/details/detailsarticles.html', class:$scope.detailsUpdated.length > 0? 'updatedTab' : ''},
+              // { title:'REVIEWS', id:'reviewsTab', content:'3', relpath:'views/details/reviews.html', class:$scope.reviewsUpdated.length > 0? 'updatedTab' : ''},
+              { title:'Q&A', id:'qaTab', content:'4', relpath:'views/details/comments.html', class:$scope.commentsUpdated.length > 0? 'updatedTab' : ''}
+              // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
+            //
+            ];
+          }
+
           $scope.currentTab = $scope.detailResultsTabs[0].id;
           $scope.selectedTab = $scope.detailResultsTabs[0];
           $scope.evaluationDetails($scope.details.details.attributes);

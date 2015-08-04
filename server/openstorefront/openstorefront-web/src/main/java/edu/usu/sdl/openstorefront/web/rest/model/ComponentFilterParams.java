@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.model;
 
+import edu.usu.sdl.openstorefront.storage.model.ComponentType;
 import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
 import javax.ws.rs.QueryParam;
@@ -29,6 +30,9 @@ public class ComponentFilterParams
 
 	@QueryParam("approvalState")
 	private String approvalState;
+	
+	@QueryParam("componentType")
+	private String componentType;
 
 	public static ComponentFilterParams defaultFilter()
 	{
@@ -54,6 +58,22 @@ public class ComponentFilterParams
 	public void setApprovalState(String approvalState)
 	{
 		this.approvalState = approvalState;
+	}
+
+	/**
+	 * @return the componentType
+	 */
+	public String getComponentType()
+	{
+		return componentType;
+	}
+
+	/**
+	 * @param componentType the componentType to set
+	 */
+	public void setComponentType(String componentType)
+	{
+		this.componentType = componentType;
 	}
 
 }

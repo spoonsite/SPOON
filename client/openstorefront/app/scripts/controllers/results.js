@@ -143,16 +143,20 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $scope.selectedTab = tab;
   };
 
+  $scope.isItAnArticle = function(item){
+    return item.listingType === 'Article' || item.componentType === 'ARTICLE';
+  }
+
   $scope.getNumThings = function(article){
     if ($scope.data && $scope.data.data && $scope.data.data.length) {
       var count = 0;
       _.each($scope.data.data, function(item){
         if (article) {
-          if (item.listingType === 'Article') {
+          if ($scope.isItAnArticle(item)) {
             count++; 
           }
         } else if (!article) {
-          if (item.listingType !== 'Article')
+          if (!$scope.isItAnArticle(item))
             count++;
         }
       })

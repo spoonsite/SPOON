@@ -115,6 +115,13 @@ limitations under the License.
             <p style="text-align:center" ng-show="componentUIForm.approvalStatus.$error.required && !componentUIForm.approvalStatus.$focused" class="help-block">Approval State is required.</p>
 
           </div>        
+        </div>
+        <div class="form-group required" show-errors >
+          <label class="col-sm-2 control-label required">Component Type</label>
+          <div class="col-sm-10">
+            <select type="text" class="form-control" name="componentType" id="componentType" required  ng-change="loadComponentAttributesView()" style="width:125px;display: inline" ng-model="componentForm.componentType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in componentTypes"></select>
+            <p style="text-align:center" ng-show="componentUIForm.componentType.$error.required && !componentUIForm.componentType.$focused" class="help-block">Component Type is required.</p>
+          </div>        
         </div>        
         <div class="form-group">
           <label class="col-sm-2 control-label">User Submitted Date</label>

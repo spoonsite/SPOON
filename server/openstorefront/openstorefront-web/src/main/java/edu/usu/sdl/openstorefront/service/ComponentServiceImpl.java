@@ -70,6 +70,7 @@ import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
 import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
+import edu.usu.sdl.openstorefront.storage.model.ComponentType;
 import edu.usu.sdl.openstorefront.storage.model.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
@@ -2194,6 +2195,10 @@ public class ComponentServiceImpl
 		}
 		componentExample.setComponentId(componentId);
 		componentExample.setApprovalState(filter.getApprovalState());
+		componentExample.setComponentType(filter.getComponentType());
+		if (componentExample != null && componentExample.getComponentType() != null && componentExample.getComponentType().equals(ComponentType.ALL)){
+			componentExample.setComponentType(null);
+		}
 
 		QueryByExample queryByExample = new QueryByExample(componentExample);
 

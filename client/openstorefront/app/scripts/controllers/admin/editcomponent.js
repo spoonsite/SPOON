@@ -30,6 +30,7 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
     $scope.pagination = {};
     $scope.pagination.control = {};
     $scope.pagination.control.approvalState ='ALL';
+    $scope.pagination.control.componentType ='ALL';
     $scope.pagination.features = {'dates': false, 'max': false};    
 
     $scope.$watch('allComponentsWatch', function(){
@@ -255,7 +256,7 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.allComponents = allComponents;
     $scope.editModeText = $scope.editMode ? 'Edit ' + component.component.name : 'Add Component';
     $scope.componentForm = component.component !== undefined ? angular.copy(component.component) : {};
-    $scope.editorOptions = getCkBasicConfig(true);
+    $scope.editorOptions = getCkBasicConfig(false);
     $scope.integration = {};
     $scope.sendAdminMessage   = $rootScope.openAdminMessage;
 
@@ -631,6 +632,7 @@ $scope.getCodesForType = function(type){
   return foundType !== undefined ? foundType.codes : [];
 };  
 
+$scope.loadLookup('ComponentType', 'componentTypes', 'generalFormLoader'); 
 $scope.saveComponent = function(){
   $scope.$emit('$TRIGGERLOAD', 'generalFormLoader');
 
@@ -638,6 +640,11 @@ $scope.saveComponent = function(){
     component: $scope.componentForm,
     attributes: []
   };
+
+  //default the type to Component
+  if (requiredForComponent.component && !requiredForComponent.ComponentType) {
+    requiredForComponent.component.componentType = requiredForComponent.component.componentType || 'COMP';
+  }
 
   var missingRequiredAttributes = false;
   _.forEach($scope.requiredAttributes, function(attribute) {
@@ -670,45 +677,47 @@ $scope.saveComponent = function(){
 
   if (requiredForComponent.component.releaseDate){
     requiredForComponent.component.releaseDate = $filter('date')(requiredForComponent.component.releaseDate, "yyyy-MM-dd'T'HH:mm:ss.sss");
-      //requiredForComponent.component.releaseDate = requiredForComponent.component.releaseDate.sub
-    }
+    //requiredForComponent.component.releaseDate = requiredForComponent.component.releaseDate.sub
+  }
 
-    if ($scope.editMode){
-      Business.componentservice.updateComponent(requiredForComponent, $scope.componentForm.componentId).then(function (result) {
-        $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
-        if (result) {
-          if (result && result !== 'false' && isNotRequestError(result)){      
-            removeError();
-            triggerAlert('Saved successfully', 'saveGeneralComponent', 'componentWindowDiv', 3000);
-            $scope.componentForm = result.component;
-            $scope.$emit('$TRIGGEREVENT', '$REFRESH_COMPONENTS');  
-          } else {
-            removeError();
-            triggerError(result, true);
-          }
+  if ($scope.editMode){
+    Business.componentservice.updateComponent(requiredForComponent, $scope.componentForm.componentId).then(function (result) {
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
+      if (result) {
+        if (result && result !== 'false' && isNotRequestError(result)){      
+          removeError();
+          triggerAlert('Saved successfully', 'saveGeneralComponent', 'componentWindowDiv', 3000);
+          $scope.componentForm = result.component;
+          $scope.$emit('$TRIGGEREVENT', '$REFRESH_COMPONENTS');  
+        } else {
+          removeError();
+          triggerError(result, true);
         }
-      });         
-    } else {
-      Business.componentservice.addComponent(requiredForComponent).then(function (result) {
-        $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
-        if (result) {
-          if (result && result !== 'false' && isNotRequestError(result)){  
-            removeError();
-            triggerAlert('Saved successfully', 'saveGeneralComponent', 'componentWindowDiv', 3000);
-            $scope.componentForm = result.component;
-            $scope.editMode = true;
-            $scope.editModeText = 'Edit ' + $scope.componentForm.name;
-            $scope.loadEvaluationInfo();
-            $scope.$emit('$TRIGGEREVENT', '$REFRESH_COMPONENTS');  
-          } else {
-            removeError();
-            triggerError(result, true);
-          }
-        }
-      });       
-    } 
+      }
+    });         
+  } else {
+    console.log('requiredForComponent', requiredForComponent);
 
-  };
+    Business.componentservice.addComponent(requiredForComponent).then(function (result) {
+      $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'generalFormLoader');
+      if (result) {
+        if (result && result !== 'false' && isNotRequestError(result)){  
+          removeError();
+          triggerAlert('Saved successfully', 'saveGeneralComponent', 'componentWindowDiv', 3000);
+          $scope.componentForm = result.component;
+          $scope.editMode = true;
+          $scope.editModeText = 'Edit ' + $scope.componentForm.name;
+          $scope.loadEvaluationInfo();
+          $scope.$emit('$TRIGGEREVENT', '$REFRESH_COMPONENTS');  
+        } else {
+          removeError();
+          triggerError(result, true);
+        }
+      }
+    });       
+  } 
+
+};
 
 
 

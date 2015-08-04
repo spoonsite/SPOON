@@ -95,6 +95,10 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
         if (query.filterObj.approvalState === 'ALL') {
           query.filterObj.approvalState = null;
         }
+        query.filterObj.componentType = scope.internalControl.componentType;
+        if (query.filterObj.componentType === 'ALL') {
+          query.filterObj.componentType = null;
+        }
         if (query.filterObj.end) {
           var d = new Date(query.filterObj.end);
           d.setHours(d.getHours()+24);
