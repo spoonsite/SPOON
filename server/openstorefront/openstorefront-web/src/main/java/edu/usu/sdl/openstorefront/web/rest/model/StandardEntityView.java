@@ -28,7 +28,7 @@ public abstract class StandardEntityView
 
 	private String securityMarkingCode;
 	private String securityMarkingDescription;
-	private Integer securityMarkingRank = Integer.MIN_VALUE;
+	private Integer securityMarkingRank;
 	private String securityMarkingStyle;
 
 	public StandardEntityView()
@@ -45,7 +45,7 @@ public abstract class StandardEntityView
 					SecurityMarkingType marking = serviceProxy.getLookupService().getLookupEnity(SecurityMarkingType.class, entity.getSecurityMarkingType());
 					if (marking != null
 							&& marking.getSortOrder() != null
-							&& marking.getSortOrder() > securityMarkingRank) {
+							&& (securityMarkingRank == null || marking.getSortOrder() > securityMarkingRank)) {
 						securityMarkingCode = entity.getSecurityMarkingType();
 						securityMarkingDescription = marking.getDescription();
 						securityMarkingRank = marking.getSortOrder();
