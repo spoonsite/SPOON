@@ -62,8 +62,9 @@ module.exports = function(config) {
       'app/scripts/**/*.js',
       'test/spec/controllers/**/*.js',
       // 'test/spec/directives/**/*.js',
-      // 'test/spec/filters/**/*.js',
-      // 'test/spec/services/**/*.js'
+      'test/spec/filters/**/*.js',
+      'test/spec/services/**/*.js',
+      // 'test/spec/protractor/**/*.js' // e2e tests
     ],
 
     // list of files / patterns to exclude
