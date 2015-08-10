@@ -36,6 +36,12 @@ public class TimeUtil
 {
 
 	private static final String OMP_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+	private static final long MINTUE_TO_MILLIS = 60000;
+
+	public static long minutesToMillis(long minutes)
+	{
+		return minutes * MINTUE_TO_MILLIS;
+	}
 
 	public static Date fromString(String value)
 	{

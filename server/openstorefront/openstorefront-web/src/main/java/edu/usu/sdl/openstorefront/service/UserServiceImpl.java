@@ -576,8 +576,6 @@ public class UserServiceImpl
 			}
 		}
 
-		List<UserProfile> temp = usersToSend;
-
 		int emailCount = 0;
 		for (UserProfile userProfile : usersToSend) {
 			Email email = MailManager.newEmail();
@@ -606,8 +604,19 @@ public class UserServiceImpl
 		if (minQueueMinutes < 0) {
 			minQueueMinutes = 0;
 		}
-		long queueMills = System.currentTimeMillis() - (minQueueMinutes * 60000);
+		long queueMills = System.currentTimeMillis() - TimeUtil.minutesToMillis(minQueueMinutes);
+
+		//remove dups
+		Map<String, UserMessage> messageMap = new HashMap<>();
 		for (UserMessage userMessage : userMessages) {
+			if (messageMap.containsKey(userMessage.uniqueKey())) {
+				log.log(Level.FINE, MessageFormat.format("Removing duplicate user message: ", userMessage.uniqueKey()));
+			} else {
+				messageMap.put(userMessage.uniqueKey(), userMessage);
+			}
+		}
+
+		for (UserMessage userMessage : messageMap.values()) {
 
 			if (sendNow || userMessage.getCreateDts().getTime() <= queueMills) {
 

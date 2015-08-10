@@ -25,6 +25,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-war');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks("grunt-protractor-runner");
+  grunt.loadNpmTasks("grunt-contrib-compass");
   grunt.file.defaultEncoding = 'utf8';
   grunt.file.preserveBOM = false;
 
