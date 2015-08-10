@@ -20,7 +20,7 @@
             </ul>
           </div>
         </div>
-        <tags-input class="bootstrap" min-length="1" ng-model="data.tempTags" placeholder="Add contact" add-from-autocomplete-only="true" replace-spaces-with-dashes="false" on-tag-added="addTag($tag, data.selectedUsers);"><auto-complete min-length="1" source="checkTagsList($query, data.selectedUsers, userProfiles)"></auto-complete></tags-input>
+        <tags-input class="bootstrap" min-length="1" ng-model="data.tempTags" placeholder="Add contact" add-from-autocomplete-only="true" replace-spaces-with-dashes="false" on-tag-added="addTag($tag, data.selectedUsers);"><auto-complete min-length="1" source="checkTagsList($query, data.selectedUsers, userProfiles.data)"></auto-complete></tags-input>
       </div>
       <div style="max-height: 500px; overflow:auto;">
         <table class="friend table table-hover">
@@ -30,7 +30,7 @@
             <th style="padding: 8px 3px;"><a href="" ng-click="predicate = 'organization'; reverse=!reverse">Organization</a></th>
             <th style="padding: 8px 3px;"><a href="" ng-click="predicate = 'userTypeCode'; reverse=!reverse">User Type</a></th>
           </tr>
-          <tr ng-repeat="friend in userProfiles | orderBy:predicate:reverse" ng-click="addTag(friend, data.selectedUsers);" class="imitateLink">
+          <tr ng-repeat="friend in userProfiles.data | orderBy:predicate:reverse" ng-click="addTag(friend, data.selectedUsers);" class="imitateLink">
             <td style="padding:3px;">{{friend.firstName}}</td>
             <td style="padding:3px;">{{friend.lastName}}</td>
             <td style="padding:3px;">{{friend.organization}}</td>
