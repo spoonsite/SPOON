@@ -379,11 +379,12 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
 
       $timeout(function(){
         if (scope.hideMore && scope.hideMore === 'true') {
-          console.log('hiding more');
           scope.showMore = true;
           scope.limit = 3;
-        } else {
+        } else if(scope.hideMore && scope.hideMore === 'false') {
           scope.limit = scope.data.length;
+        } else {
+          scope.limit = 10;
         }
       })
 

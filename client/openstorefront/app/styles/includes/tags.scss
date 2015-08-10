@@ -51,6 +51,11 @@ tags-input.bootstrap .tags input {
   color: #262626;
   background-color: #3d3d3d;
 }
+
+.bootstrap.nomargin tags-input .host {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
 /************************************************ 
 *************************************************/
 
