@@ -21,14 +21,24 @@ app.directive('smartselect', ['$timeout', function($timeout) {
   var nextId2 = 1;
   return {
     scope: {
-      smartselect: '@'
+      smartselect: '@',
+      ngModel: '='
     },
     restrict: 'A',
     link: function postlink(scope, element, attrs) {
+      var init = false;
       $timeout(function(){
         element.combobox({
           'appendTo': scope.smartselect || 'body'
         });
+        scope.$watch('ngModel', function(nval, oval){
+          if (init && !nval) {
+            $timeout(function(){
+              element.trigger('change');
+            })
+          }
+          init = true;
+        })
       }, 500);
     }
   };

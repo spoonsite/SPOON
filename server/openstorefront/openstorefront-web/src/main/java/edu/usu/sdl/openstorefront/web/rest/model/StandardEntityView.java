@@ -26,7 +26,7 @@ import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
 public abstract class StandardEntityView
 {
 
-	private String securityMarkingCode;
+	private String securityMarkingType;
 	private String securityMarkingDescription;
 	private Integer securityMarkingRank;
 	private String securityMarkingStyle;
@@ -37,6 +37,7 @@ public abstract class StandardEntityView
 
 	public void toStandardView(StandardEntity... entities)
 	{
+		int i = 0;
 		if (entities != null) {
 			ServiceProxy serviceProxy = new ServiceProxy();
 			//Set to the highest classification
@@ -46,7 +47,7 @@ public abstract class StandardEntityView
 					if (marking != null
 							&& marking.getSortOrder() != null
 							&& (securityMarkingRank == null || marking.getSortOrder() > securityMarkingRank)) {
-						securityMarkingCode = entity.getSecurityMarkingType();
+						securityMarkingType = entity.getSecurityMarkingType();
 						securityMarkingDescription = marking.getDescription();
 						securityMarkingRank = marking.getSortOrder();
 						securityMarkingStyle = marking.getHighlightStyle();
@@ -56,14 +57,14 @@ public abstract class StandardEntityView
 		}
 	}
 
-	public String getSecurityMarkingCode()
+	public String getSecurityMarkingType()
 	{
-		return securityMarkingCode;
+		return securityMarkingType;
 	}
 
-	public void setSecurityMarkingCode(String securityMarkingCode)
+	public void setSecurityMarkingType(String securityMarkingType)
 	{
-		this.securityMarkingCode = securityMarkingCode;
+		this.securityMarkingType = securityMarkingType;
 	}
 
 	public String getSecurityMarkingDescription()

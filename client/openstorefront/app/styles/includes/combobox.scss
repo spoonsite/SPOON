@@ -8,11 +8,11 @@
 .form-inline .combobox-container .input-group-addon {
   width: auto;
 }
-.combobox-selected .caret {
+.combobox-selected .fa-caret-down {
   display: none;
 }
 /* :not doesn't work in IE8 */
-.combobox-container:not(.combobox-selected) .glyphicon-remove {
+.combobox-container:not(.combobox-selected) .fa-times {
   display: none;
 }
 .typeahead-long {

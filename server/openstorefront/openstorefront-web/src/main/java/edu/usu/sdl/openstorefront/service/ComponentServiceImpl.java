@@ -701,7 +701,7 @@ public class ComponentServiceImpl
 			media = oldMedia;
 		} else {
 			media.setComponentMediaId(persistenceService.generateId());
-			media.updateFields(media);
+			media.populateBaseCreateFields();
 			persistenceService.persist(media);
 		}
 

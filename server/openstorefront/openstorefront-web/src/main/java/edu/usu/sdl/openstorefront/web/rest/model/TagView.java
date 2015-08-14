@@ -50,6 +50,7 @@ public class TagView
 		tagView.setCreateDts(tag.getCreateDts());
 		tagView.setCreateUser(tag.getCreateUser());
 		tagView.setComponentId(tag.getComponentId());
+		tagView.toStandardView(tag);
 		String componentName = service.getComponentService().getComponentName(tag.getComponentId());
 		if (componentName != null) {
 			tagView.setComponentName(componentName);

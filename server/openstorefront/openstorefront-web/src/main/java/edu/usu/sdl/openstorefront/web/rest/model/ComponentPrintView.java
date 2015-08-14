@@ -99,7 +99,7 @@ public class ComponentPrintView
 		view.setReviews(component.getReviews());
 		view.setDependencies(component.getDependencies());
 		view.setRelationships(component.getRelationships());
-		view.setSecurityMarkingCode(component.getSecurityMarkingCode());
+		view.setSecurityMarkingType(component.getSecurityMarkingType());
 		view.setSecurityMarkingDescription(component.getSecurityMarkingDescription());
 		view.setSecurityMarkingRank(component.getSecurityMarkingRank());
 
