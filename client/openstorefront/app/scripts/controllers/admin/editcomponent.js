@@ -39,6 +39,27 @@ app.controller('AdminEditcomponentCtrl', ['$scope', 'business', '$timeout', '$ui
       }
     }, true);
 
+
+
+    $scope.loadLookup = function(lookup, entity, loader){
+      $scope.$emit('$TRIGGERLOAD', loader);
+
+      Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+        $scope.$emit('$TRIGGERUNLOAD', loader);
+        if (results) {
+          $scope[entity]= results;
+        }        
+      });      
+    };
+    $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
+
+    $scope.getSecurityDesc = function(type){
+      var found = _.find($scope.securityTypes, {'code': type});
+      return found? found.description : type; 
+    }
+
+
+
     $scope.setPredicate = function (predicate, table) {
       if ($scope.predicate[table] === predicate) {
         $scope.reverse[table] = !$scope.reverse[table];

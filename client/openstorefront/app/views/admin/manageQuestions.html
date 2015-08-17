@@ -30,7 +30,8 @@ limitations under the License.
 			<th><a href="" ng-click="setPredicate('username', 'question');">Username<span ng-show="predicate['question'] === 'username'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 			<th><a href="" ng-click="setPredicate('userType', 'question');">User Type<span ng-show="predicate['question'] === 'userType'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 			<th><a href="" ng-click="setPredicate('organization', 'question');">Organization<span ng-show="predicate['question'] === 'organization'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-			<th><a href="" ng-click="setPredicate('updateDts', 'question');">Update Date<span ng-show="predicate['question'] === 'updateDts'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th><a href="" ng-click="setPredicate('updateDts', 'question');">Update Date<span ng-show="predicate['question'] === 'updateDts'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+			<th><a href="" ng-click="setPredicate('securityMarkingType', 'question');">Security Type<span ng-show="predicate['question'] === 'securityMarkingType'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 			<th>Action</th>
 		</tr>
 		<tr ng-repeat-start="question in questions | orderBy:predicate['question']:reverse['question']">
@@ -39,14 +40,15 @@ limitations under the License.
 			<td>{{question.username}}</td>
 			<td>{{question.userType}}</td>
 			<td>{{question.organization}}</td>
-			<td>{{question.questionUpdateDts| date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
+      <td>{{question.questionUpdateDts| date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>                                
+			<td>{{question.securityMarkingDescription}}</td>																
 			<td style="padding:0px 3px !important; width: 200px;">&nbsp;
 				<button class="btn btn-default btn-sm" ng-click="showQuestionResponses(question);"  title="ShowResponse">{{questionDetailsShow[question.questionId].showResponsesText}} Responses</button>	
 				<button class="btn btn-warning btn-sm" ng-click="toggleQuestionStatus(question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
 			</td>
 		</tr>
 		<tr ng-show="questionDetailsShow[question.questionId].flag" ng-repeat-end>					
-			<td colspan="6" style="padding: 10px">						
+			<td colspan="7" style="padding: 10px">						
 				<table class="table table-bordered table-striped admin-table">
 					<tr>
 						<th><a href="" ng-click="setPredicate('response', 'questionResponse');">Response<span ng-show="predicate['questionResponse'] === 'response'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
@@ -54,7 +56,8 @@ limitations under the License.
 						<th><a href="" ng-click="setPredicate('userType', 'questionResponse');">User Type<span ng-show="predicate['questionResponse'] === 'userType'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 						<th><a href="" ng-click="setPredicate('organization', 'questionResponse');">Organization<span ng-show="predicate['questionResponse'] === 'organization'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 						<th><a href="" ng-click="setPredicate('updateDts', 'questionResponse');">Update Date<span ng-show="predicate['questionResponse'] === 'updateDts'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-						<th><a href="" ng-click="setPredicate('activeStatus', 'questionResponse');">Active Status<span ng-show="predicate['questionResponse'] === 'activeStatus'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+            <th><a href="" ng-click="setPredicate('activeStatus', 'questionResponse');">Active Status<span ng-show="predicate['questionResponse'] === 'activeStatus'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('securityMarkingType', 'questionResponse');">Security Type<span ng-show="predicate['questionResponse'] === 'securityMarkingType'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 						<th>Action</th>
 					</tr>
 					<tr ng-repeat="response in question.responses| orderBy:predicate['questionResponse']:reverse['questionResponse']">
@@ -63,7 +66,8 @@ limitations under the License.
 						<td>{{response.userType}}</td>
 						<td>{{response.organization}}</td>
 						<td>{{response.updateDts| date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
-						<td align="center">{{response.activeStatus}}</td>
+            <td align="center">{{response.activeStatus}}</td>
+						<td>{{response.securityMarkingDescription}}</td>
 						<td style="padding:0px 3px !important;  width: 200px;">&nbsp;									
 							<button class="btn btn-warning btn-sm" ng-disabled="question.activeStatus !== 'A'" ng-click="toggleQuestionResponseStatus(response, question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
 						</td>

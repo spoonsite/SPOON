@@ -2441,6 +2441,7 @@ public class ComponentRESTResource
 		componentReview.setTitle(review.getTitle());
 		componentReview.setUserTimeCode(review.getUserTimeCode());
 		componentReview.setUserTypeCode(review.getUserTypeCode());
+		componentReview.setSecurityMarkingType(review.getSecurityMarkingType());
 
 		List<ComponentReviewPro> pros = new ArrayList<>();
 		for (ComponentReviewProCon pro : review.getPros()) {
