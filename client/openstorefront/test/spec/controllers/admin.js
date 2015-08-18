@@ -15,7 +15,6 @@
    });
  }));
 
-// besplin, 18 Aug 2015
  it('should have the correct initializations', function () {
    expect(scope.collection).toEqual(null);
    expect(scope.collectionSelection).toEqual(null);
@@ -27,6 +26,7 @@
    expect(scope.menuPanel.system.open).toEqual(true);
    expect(scope.oneAtATime).toEqual(false);
 
+// Does not work on arrays {} and []
   /* expect(scope.myTree).toEqual(array);
      expect(scope.systemTree).toEqual(array);
      expect(scope.data).toEqual(array);
