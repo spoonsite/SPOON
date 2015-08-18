@@ -3,20 +3,27 @@
 describe('Controller: UserProfileCtrl', function () {
 
   // // load the controller's module
-  // beforeEach(module('openstorefrontApp'));
+  beforeEach(module('openstorefrontApp'));
 
-  // var MainCtrl,
-  //   scope;
+  var MainCtrl,
+    scope;
 
-  // // Initialize the controller and a mock scope
-  // beforeEach(inject(function ($controller, $rootScope) {
-  //   scope = $rootScope.$new();
-  //   MainCtrl = $controller('MainCtrl', {
-  //     $scope: scope
-  //   });
-  // }));
+  // Initialize the controller and a mock scope
+  beforeEach(inject(function ($controller, $rootScope) {
+    scope = $rootScope.$new();
+    MainCtrl = $controller('MainCtrl', {
+      $scope: scope
+    });
+  }));
 
-  // it('should attach a list of awesomeThings to the scope', function () {
-  //   expect(scope.awesomeThings.length).toBe(3);
-  // });
+  it('should have the correct initializations', function () {
+    expect(scope._scopename).toEqual('main');  //NOTE this is set to 'userprofile' when scoped!
+    expect(scope.pageTitle).toEqual('DI2E');  //NOTE this is set to 'DI2E Clearinghouse' when scoped!
+    // NOTE:  This does not 'stick' from where it is scoped in userprofile.js in the app
+      //expect(scope.defaultTitle).toEqual('Browse Categories');
+    // NOTE:  This does not 'stick' from where it is scoped in userprofile.js in the app
+      //expect(scope.untilDate).toEqual(new Date());
+    // NOTE:  This does not 'stick' from where it is scoped in userprofile.js in the app
+      //expect(scope.review).toEqual(null);
+ });
 });
