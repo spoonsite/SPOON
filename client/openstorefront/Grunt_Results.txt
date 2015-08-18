@@ -1,0 +1,650 @@
+[4mInitializing[24m
+Command-line options: [36m--verbose[39m
+
+Reading "Gruntfile.js" Gruntfile...[32mOK[39m
+
+[1mRegistering Gruntfile tasks.[22m
+
+[1mRegistering "grunt-autoprefixer" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-autoprefixer\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-autoprefixer\package.json...[32mOK[39m
+Loading "autoprefixer.js" tasks...[32mOK[39m
++ [36mautoprefixer[39m
+
+[1mRegistering "grunt-bower-install" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-bower-install\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-bower-install\package.json...[32mOK[39m
+Loading "bower-install.js" tasks...[32mOK[39m
++ [36mbowerInstall[39m
+
+[1mRegistering "grunt-concurrent" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-concurrent\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-concurrent\package.json...[32mOK[39m
+Loading "concurrent.js" tasks...[32mOK[39m
++ [36mconcurrent[39m
+
+[1mRegistering "grunt-contrib-clean" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-clean\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-clean\package.json...[32mOK[39m
+Loading "clean.js" tasks...[32mOK[39m
++ [36mclean[39m
+
+[1mRegistering "grunt-contrib-compass" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-compass\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-compass\package.json...[32mOK[39m
+Loading "compass.js" tasks...[32mOK[39m
++ [36mcompass[39m
+
+[1mRegistering "grunt-contrib-concat" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-concat\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-concat\package.json...[32mOK[39m
+Loading "concat.js" tasks...[32mOK[39m
++ [36mconcat[39m
+
+[1mRegistering "grunt-contrib-connect" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-connect\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-connect\package.json...[32mOK[39m
+Loading "connect.js" tasks...[32mOK[39m
++ [36mconnect[39m
+
+[1mRegistering "grunt-contrib-copy" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-copy\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-copy\package.json...[32mOK[39m
+Loading "copy.js" tasks...[32mOK[39m
++ [36mcopy[39m
+
+[1mRegistering "grunt-contrib-cssmin" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-cssmin\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-cssmin\package.json...[32mOK[39m
+Loading "cssmin.js" tasks...[32mOK[39m
++ [36mcssmin[39m
+
+[1mRegistering "grunt-contrib-htmlmin" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-htmlmin\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-htmlmin\package.json...[32mOK[39m
+Loading "htmlmin.js" tasks...[32mOK[39m
++ [36mhtmlmin[39m
+
+[1mRegistering "grunt-contrib-jshint" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-jshint\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-jshint\package.json...[32mOK[39m
+Loading "jshint.js" tasks...[32mOK[39m
++ [36mjshint[39m
+
+[1mRegistering "grunt-contrib-uglify" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-uglify\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-uglify\package.json...[32mOK[39m
+Loading "uglify.js" tasks...[32mOK[39m
++ [36muglify[39m
+
+[1mRegistering "grunt-contrib-watch" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-watch\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-watch\package.json...[32mOK[39m
+Loading "watch.js" tasks...[32mOK[39m
++ [36mwatch[39m
+
+[1mRegistering "grunt-google-cdn" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-google-cdn\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-google-cdn\package.json...[32mOK[39m
+Loading "cdnify.js" tasks...[32mOK[39m
++ [36mcdnify[39m
+
+[1mRegistering "grunt-karma" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-karma\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-karma\package.json...[32mOK[39m
+Loading "grunt-karma.js" tasks...[32mOK[39m
++ [36mkarma[39m
+
+[1mRegistering "grunt-newer" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-newer\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-newer\package.json...[32mOK[39m
+Loading "newer.js" tasks...[32mOK[39m
++ [36many-newer[39m, [36mnewer[39m, [36mnewer-clean[39m, [36mnewer-postrun[39m
+
+[1mRegistering "grunt-ng-annotate" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-ng-annotate\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-ng-annotate\package.json...[32mOK[39m
+Loading "ng-annotate.js" tasks...[32mOK[39m
++ [36mngAnnotate[39m
+
+[1mRegistering "grunt-protractor-runner" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-protractor-runner\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-protractor-runner\package.json...[32mOK[39m
+Loading "protractor_runner.js" tasks...[32mOK[39m
++ [36mprotractor[39m
+
+[1mRegistering "grunt-rev" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-rev\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-rev\package.json...[32mOK[39m
+Loading "rev.js" tasks...[32mOK[39m
++ [36mrev[39m
+
+[1mRegistering "grunt-svgmin" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-svgmin\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-svgmin\package.json...[32mOK[39m
+Loading "svgmin.js" tasks...[32mOK[39m
++ [36msvgmin[39m
+
+[1mRegistering "grunt-usemin" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-usemin\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-usemin\package.json...[32mOK[39m
+Loading "usemin.js" tasks...[32mOK[39m
++ [36musemin[39m, [36museminPrepare[39m
+
+[1mRegistering "grunt-verbosity" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-verbosity\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-verbosity\package.json...[32mOK[39m
+Loading "verbosity_task.js" tasks...[32mOK[39m
++ [36mverbosity[39m
+
+[1mRegistering "grunt-war" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-war\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-war\package.json...[32mOK[39m
+Loading "war.js" tasks...[32mOK[39m
++ [36mwar[39m
+
+[1mRegistering "grunt-war" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-war\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-war\package.json...[32mOK[39m
+Loading "war.js" tasks...[32mOK[39m
++ [36mwar[39m
+
+[1mRegistering "grunt-karma" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-karma\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-karma\package.json...[32mOK[39m
+Loading "grunt-karma.js" tasks...[32mOK[39m
++ [36mkarma[39m
+
+[1mRegistering "grunt-protractor-runner" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-protractor-runner\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-protractor-runner\package.json...[32mOK[39m
+Loading "protractor_runner.js" tasks...[32mOK[39m
++ [36mprotractor[39m
+
+[1mRegistering "grunt-contrib-compass" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-compass\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-compass\package.json...[32mOK[39m
+Loading "compass.js" tasks...[32mOK[39m
++ [36mcompass[39m
+Initializing config...[32mOK[39m
+Loading "Gruntfile.js" tasks...[32mOK[39m
++ [36mbuild[39m, [36mbuild-debug[39m, [36mbuildprod[39m, [36mdefault[39m, [36mserve[39m, [36mserver[39m, [36mtest[39m, [36mtest-e2e[39m
+
+Running tasks: [36mtest[39m
+
+[4mRunning "test" task[24m
+
+[4mRunning "clean:server" (clean) task[24m
+Verifying property [36mclean.server[39m exists in config...[32mOK[39m
+Files: [36m.tmp[39m -> [36mserver[39m
+Options: [36mforce=false[39m, [36mno-write=false[39m
+Options: [36mforce=false[39m, [36mno-write=false[39m
+Cleaning .tmp...[32mOK[39m
+
+[4mRunning "concurrent:test" (concurrent) task[24m
+Verifying property [36mconcurrent.test[39m exists in config...[32mOK[39m
+Files: [33m[no src][39m -> [36mtest[39m
+Options: [36mlimit=4[39m
+    
+[4mInitializing[24m
+Command-line options: [36m--verbose[39m
+
+Reading "Gruntfile.js" Gruntfile...[32mOK[39m
+
+[1mRegistering Gruntfile tasks.[22m
+
+[1mRegistering "grunt-autoprefixer" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-autoprefixer\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-autoprefixer\package.json...[32mOK[39m
+Loading "autoprefixer.js" tasks...[32mOK[39m
++ [36mautoprefixer[39m
+
+[1mRegistering "grunt-bower-install" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-bower-install\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-bower-install\package.json...[32mOK[39m
+Loading "bower-install.js" tasks...[32mOK[39m
++ [36mbowerInstall[39m
+
+[1mRegistering "grunt-concurrent" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-concurrent\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-concurrent\package.json...[32mOK[39m
+Loading "concurrent.js" tasks...[32mOK[39m
++ [36mconcurrent[39m
+
+[1mRegistering "grunt-contrib-clean" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-clean\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-clean\package.json...[32mOK[39m
+Loading "clean.js" tasks...[32mOK[39m
++ [36mclean[39m
+
+[1mRegistering "grunt-contrib-compass" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-compass\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-compass\package.json...[32mOK[39m
+Loading "compass.js" tasks...[32mOK[39m
++ [36mcompass[39m
+
+[1mRegistering "grunt-contrib-concat" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-concat\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-concat\package.json...[32mOK[39m
+Loading "concat.js" tasks...[32mOK[39m
++ [36mconcat[39m
+
+[1mRegistering "grunt-contrib-connect" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-connect\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-connect\package.json...[32mOK[39m
+Loading "connect.js" tasks...[32mOK[39m
++ [36mconnect[39m
+
+[1mRegistering "grunt-contrib-copy" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-copy\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-copy\package.json...[32mOK[39m
+Loading "copy.js" tasks...[32mOK[39m
++ [36mcopy[39m
+
+[1mRegistering "grunt-contrib-cssmin" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-cssmin\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-cssmin\package.json...[32mOK[39m
+Loading "cssmin.js" tasks...[32mOK[39m
++ [36mcssmin[39m
+
+[1mRegistering "grunt-contrib-htmlmin" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-htmlmin\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-htmlmin\package.json...[32mOK[39m
+Loading "htmlmin.js" tasks...[32mOK[39m
++ [36mhtmlmin[39m
+
+[1mRegistering "grunt-contrib-jshint" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-jshint\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-jshint\package.json...[32mOK[39m
+Loading "jshint.js" tasks...[32mOK[39m
++ [36mjshint[39m
+
+[1mRegistering "grunt-contrib-uglify" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-uglify\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-uglify\package.json...[32mOK[39m
+Loading "uglify.js" tasks...[32mOK[39m
++ [36muglify[39m
+
+[1mRegistering "grunt-contrib-watch" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-watch\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-watch\package.json...[32mOK[39m
+Loading "watch.js" tasks...[32mOK[39m
++ [36mwatch[39m
+
+[1mRegistering "grunt-google-cdn" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-google-cdn\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-google-cdn\package.json...[32mOK[39m
+Loading "cdnify.js" tasks...[32mOK[39m
++ [36mcdnify[39m
+
+[1mRegistering "grunt-karma" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-karma\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-karma\package.json...[32mOK[39m
+Loading "grunt-karma.js" tasks...[32mOK[39m
++ [36mkarma[39m
+
+[1mRegistering "grunt-newer" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-newer\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-newer\package.json...[32mOK[39m
+Loading "newer.js" tasks...[32mOK[39m
++ [36many-newer[39m, [36mnewer[39m, [36mnewer-clean[39m, [36mnewer-postrun[39m
+
+[1mRegistering "grunt-ng-annotate" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-ng-annotate\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-ng-annotate\package.json...[32mOK[39m
+Loading "ng-annotate.js" tasks...[32mOK[39m
++ [36mngAnnotate[39m
+
+[1mRegistering "grunt-protractor-runner" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-protractor-runner\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-protractor-runner\package.json...[32mOK[39m
+Loading "protractor_runner.js" tasks...[32mOK[39m
++ [36mprotractor[39m
+
+[1mRegistering "grunt-rev" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-rev\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-rev\package.json...[32mOK[39m
+Loading "rev.js" tasks...[32mOK[39m
++ [36mrev[39m
+
+[1mRegistering "grunt-svgmin" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-svgmin\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-svgmin\package.json...[32mOK[39m
+Loading "svgmin.js" tasks...[32mOK[39m
++ [36msvgmin[39m
+
+[1mRegistering "grunt-usemin" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-usemin\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-usemin\package.json...[32mOK[39m
+Loading "usemin.js" tasks...[32mOK[39m
++ [36musemin[39m, [36museminPrepare[39m
+
+[1mRegistering "grunt-verbosity" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-verbosity\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-verbosity\package.json...[32mOK[39m
+Loading "verbosity_task.js" tasks...[32mOK[39m
++ [36mverbosity[39m
+
+[1mRegistering "grunt-war" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-war\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-war\package.json...[32mOK[39m
+Loading "war.js" tasks...[32mOK[39m
++ [36mwar[39m
+
+[1mRegistering "grunt-war" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-war\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-war\package.json...[32mOK[39m
+Loading "war.js" tasks...[32mOK[39m
++ [36mwar[39m
+
+[1mRegistering "grunt-karma" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-karma\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-karma\package.json...[32mOK[39m
+Loading "grunt-karma.js" tasks...[32mOK[39m
++ [36mkarma[39m
+
+[1mRegistering "grunt-protractor-runner" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-protractor-runner\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-protractor-runner\package.json...[32mOK[39m
+Loading "protractor_runner.js" tasks...[32mOK[39m
++ [36mprotractor[39m
+
+[1mRegistering "grunt-contrib-compass" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-compass\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-compass\package.json...[32mOK[39m
+Loading "compass.js" tasks...[32mOK[39m
++ [36mcompass[39m
+Initializing config...[32mOK[39m
+Loading "Gruntfile.js" tasks...[32mOK[39m
++ [36mbuild[39m, [36mbuild-debug[39m, [36mbuildprod[39m, [36mdefault[39m, [36mserve[39m, [36mserver[39m, [36mtest[39m, [36mtest-e2e[39m
+
+Running tasks: [36mcopy:styles[39m
+
+[4mRunning "copy:styles" (copy) task[24m
+Verifying property [36mcopy.styles[39m exists in config...[32mOK[39m
+Files: [36mapp/styles/abn_tree.css[39m -> [36m.tmp/styles/abn_tree.css[39m
+Files: [36mapp/styles/common/angular-lightbox.css[39m -> [36m.tmp/styles/common/angular-lightbox.css[39m
+Files: [36mapp/styles/common/angular-multi-select.css[39m -> [36m.tmp/styles/common/angular-multi-select.css[39m
+Files: [36mapp/styles/common/ckeditor-content.css[39m -> [36m.tmp/styles/common/ckeditor-content.css[39m
+Options: [36mprocessContent=false[39m, [36mprocessContentExclude=[][39m
+Options: [36mprocessContent=false[39m, [36mprocessContentExclude=[][39m
+Copying [36mapp/styles/abn_tree.css[39m -> [36m.tmp/styles/abn_tree.css[39m
+Reading app/styles/abn_tree.css...[32mOK[39m
+Writing .tmp/styles/abn_tree.css...[32mOK[39m
+Copying [36mapp/styles/common/angular-lightbox.css[39m -> [36m.tmp/styles/common/angular-lightbox.css[39m
+Reading app/styles/common/angular-lightbox.css...[32mOK[39m
+Writing .tmp/styles/common/angular-lightbox.css...[32mOK[39m
+Copying [36mapp/styles/common/angular-multi-select.css[39m -> [36m.tmp/styles/common/angular-multi-select.css[39m
+Reading app/styles/common/angular-multi-select.css...[32mOK[39m
+Writing .tmp/styles/common/angular-multi-select.css...[32mOK[39m
+Copying [36mapp/styles/common/ckeditor-content.css[39m -> [36m.tmp/styles/common/ckeditor-content.css[39m
+Reading app/styles/common/ckeditor-content.css...[32mOK[39m
+Writing .tmp/styles/common/ckeditor-content.css...[32mOK[39m
+Copied [36m4[39m files
+
+[32mDone, without errors.[39m
+    
+[4mInitializing[24m
+Command-line options: [36m--verbose[39m
+
+Reading "Gruntfile.js" Gruntfile...[32mOK[39m
+
+[1mRegistering Gruntfile tasks.[22m
+
+[1mRegistering "grunt-autoprefixer" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-autoprefixer\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-autoprefixer\package.json...[32mOK[39m
+Loading "autoprefixer.js" tasks...[32mOK[39m
++ [36mautoprefixer[39m
+
+[1mRegistering "grunt-bower-install" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-bower-install\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-bower-install\package.json...[32mOK[39m
+Loading "bower-install.js" tasks...[32mOK[39m
++ [36mbowerInstall[39m
+
+[1mRegistering "grunt-concurrent" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-concurrent\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-concurrent\package.json...[32mOK[39m
+Loading "concurrent.js" tasks...[32mOK[39m
++ [36mconcurrent[39m
+
+[1mRegistering "grunt-contrib-clean" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-clean\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-clean\package.json...[32mOK[39m
+Loading "clean.js" tasks...[32mOK[39m
++ [36mclean[39m
+
+[1mRegistering "grunt-contrib-compass" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-compass\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-compass\package.json...[32mOK[39m
+Loading "compass.js" tasks...[32mOK[39m
++ [36mcompass[39m
+
+[1mRegistering "grunt-contrib-concat" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-concat\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-concat\package.json...[32mOK[39m
+Loading "concat.js" tasks...[32mOK[39m
++ [36mconcat[39m
+
+[1mRegistering "grunt-contrib-connect" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-connect\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-connect\package.json...[32mOK[39m
+Loading "connect.js" tasks...[32mOK[39m
++ [36mconnect[39m
+
+[1mRegistering "grunt-contrib-copy" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-copy\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-copy\package.json...[32mOK[39m
+Loading "copy.js" tasks...[32mOK[39m
++ [36mcopy[39m
+
+[1mRegistering "grunt-contrib-cssmin" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-cssmin\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-cssmin\package.json...[32mOK[39m
+Loading "cssmin.js" tasks...[32mOK[39m
++ [36mcssmin[39m
+
+[1mRegistering "grunt-contrib-htmlmin" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-htmlmin\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-htmlmin\package.json...[32mOK[39m
+Loading "htmlmin.js" tasks...[32mOK[39m
++ [36mhtmlmin[39m
+
+[1mRegistering "grunt-contrib-jshint" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-jshint\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-jshint\package.json...[32mOK[39m
+Loading "jshint.js" tasks...[32mOK[39m
++ [36mjshint[39m
+
+[1mRegistering "grunt-contrib-uglify" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-uglify\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-uglify\package.json...[32mOK[39m
+Loading "uglify.js" tasks...[32mOK[39m
++ [36muglify[39m
+
+[1mRegistering "grunt-contrib-watch" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-watch\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-watch\package.json...[32mOK[39m
+Loading "watch.js" tasks...[32mOK[39m
++ [36mwatch[39m
+
+[1mRegistering "grunt-google-cdn" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-google-cdn\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-google-cdn\package.json...[32mOK[39m
+Loading "cdnify.js" tasks...[32mOK[39m
++ [36mcdnify[39m
+
+[1mRegistering "grunt-karma" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-karma\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-karma\package.json...[32mOK[39m
+Loading "grunt-karma.js" tasks...[32mOK[39m
++ [36mkarma[39m
+
+[1mRegistering "grunt-newer" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-newer\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-newer\package.json...[32mOK[39m
+Loading "newer.js" tasks...[32mOK[39m
++ [36many-newer[39m, [36mnewer[39m, [36mnewer-clean[39m, [36mnewer-postrun[39m
+
+[1mRegistering "grunt-ng-annotate" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-ng-annotate\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-ng-annotate\package.json...[32mOK[39m
+Loading "ng-annotate.js" tasks...[32mOK[39m
++ [36mngAnnotate[39m
+
+[1mRegistering "grunt-protractor-runner" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-protractor-runner\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-protractor-runner\package.json...[32mOK[39m
+Loading "protractor_runner.js" tasks...[32mOK[39m
++ [36mprotractor[39m
+
+[1mRegistering "grunt-rev" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-rev\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-rev\package.json...[32mOK[39m
+Loading "rev.js" tasks...[32mOK[39m
++ [36mrev[39m
+
+[1mRegistering "grunt-svgmin" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-svgmin\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-svgmin\package.json...[32mOK[39m
+Loading "svgmin.js" tasks...[32mOK[39m
++ [36msvgmin[39m
+
+[1mRegistering "grunt-usemin" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-usemin\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-usemin\package.json...[32mOK[39m
+Loading "usemin.js" tasks...[32mOK[39m
++ [36musemin[39m, [36museminPrepare[39m
+
+[1mRegistering "grunt-verbosity" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-verbosity\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-verbosity\package.json...[32mOK[39m
+Loading "verbosity_task.js" tasks...[32mOK[39m
++ [36mverbosity[39m
+
+[1mRegistering "grunt-war" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-war\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-war\package.json...[32mOK[39m
+Loading "war.js" tasks...[32mOK[39m
++ [36mwar[39m
+
+[1mRegistering "grunt-war" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-war\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-war\package.json...[32mOK[39m
+Loading "war.js" tasks...[32mOK[39m
++ [36mwar[39m
+
+[1mRegistering "grunt-karma" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-karma\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-karma\package.json...[32mOK[39m
+Loading "grunt-karma.js" tasks...[32mOK[39m
++ [36mkarma[39m
+
+[1mRegistering "grunt-protractor-runner" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-protractor-runner\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-protractor-runner\package.json...[32mOK[39m
+Loading "protractor_runner.js" tasks...[32mOK[39m
++ [36mprotractor[39m
+
+[1mRegistering "grunt-contrib-compass" local Npm module tasks.[22m
+Reading C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-compass\package.json...[32mOK[39m
+Parsing C:\CODE\openstorefront\client\openstorefront\node_modules\grunt-contrib-compass\package.json...[32mOK[39m
+Loading "compass.js" tasks...[32mOK[39m
++ [36mcompass[39m
+Initializing config...[32mOK[39m
+Loading "Gruntfile.js" tasks...[32mOK[39m
++ [36mbuild[39m, [36mbuild-debug[39m, [36mbuildprod[39m, [36mdefault[39m, [36mserve[39m, [36mserver[39m, [36mtest[39m, [36mtest-e2e[39m
+
+Running tasks: [36mcompass[39m
+
+[4mRunning "compass" task[24m
+
+[4mRunning "compass:dist" (compass) task[24m
+Verifying property [36mcompass.dist[39m exists in config...[32mOK[39m
+File: [33m[no files][39m
+Options: [36msassDir="app/styles"[39m, [36mcssDir=".tmp/styles"[39m, [36mimagesDir="app/images"[39m, [36mhttpImagesPath="/images"[39m, [36mjavascriptsDir="app/scripts"[39m, [36mimportPath="app/bower_components"[39m, [36mhttpGeneratedImagesPath="/images/generated"[39m, [36mfontsDir="app/fonts"[39m, [36mhttpFontsPath="/fonts"[39m, [36mrelativeAssets=false[39m, [36massetCacheBuster=false[39m, [36mraw="Sass::Script::Number.precision = 10\r\n"[39m
+Running command: compass.bat compile --sass-dir=app/styles --css-dir=.tmp/styles --images-dir=app/images --javascripts-dir=app/scripts --import-path=app/bower_components --fonts-dir=app/fonts --time --config C:\Users\ttravis\AppData\Local\Temp\tmp-13440kctuze8.tmp
+directory .tmp/styles/bootstrap
+        write .tmp/styles/bootstrap/bootstrap.css (1.355s)
+        write .tmp/styles/customLanding.css (0.001s)
+        write .tmp/styles/details.css (0.141s)
+    directory .tmp/styles/details
+        write .tmp/styles/details/QandA.css (0.078s)
+        write .tmp/styles/details/default.css (0.032s)
+        write .tmp/styles/details/details.css (0.031s)
+        write .tmp/styles/details/reviews.css (0.031s)
+        write .tmp/styles/details/summary.css (0.016s)
+    directory .tmp/styles/fonts
+        write .tmp/styles/fonts/fontello.css (0.205s)
+        write .tmp/styles/fonts/icomoon.css (0.236s)
+        write .tmp/styles/homepage.css (0.032s)
+    directory .tmp/styles/includes
+        write .tmp/styles/includes/admin.css (0.147s)
+        write .tmp/styles/includes/affix.css (0.047s)
+        write .tmp/styles/includes/architecture.css (0.001s)
+        write .tmp/styles/includes/carouseloverride.css (0.047s)
+        write .tmp/styles/includes/combobox.css (0.016s)
+        write .tmp/styles/includes/compare.css (0.016s)
+        write .tmp/styles/includes/componentList.css (0.016s)
+        write .tmp/styles/includes/cron.css (0.001s)
+        write .tmp/styles/includes/feedback.css (0.031s)
+        write .tmp/styles/includes/loader.css (0.016s)
+        write .tmp/styles/includes/misc.css (0.031s)
+        write .tmp/styles/includes/nav.css (0.031s)
+        write .tmp/styles/includes/nggrid.css (0.001s)
+        write .tmp/styles/includes/notifications.css (0.031s)
+        write .tmp/styles/includes/panel.css (0.016s)
+        write .tmp/styles/includes/photo.css (0.031s)
+        write .tmp/styles/includes/raty.css (0.031s)
+        write .tmp/styles/includes/schedule.css (0.001s)
+        write .tmp/styles/includes/svg.css (0.047s)
+        write .tmp/styles/includes/tags.css (0.126s)
+        write .tmp/styles/includes/typeahead.css (0.016s)
+        write .tmp/styles/includes/update.css (0.016s)
+        write .tmp/styles/includes/watches.css (0.017s)
+        write .tmp/styles/login.css (0.031s)
+        write .tmp/styles/main.css (5.851s)
+        write .tmp/styles/more.css (0.031s)
+        write .tmp/styles/print.css (0.031s)
+        write .tmp/styles/results.css (0.261s)
+    directory .tmp/styles/results
+        write .tmp/styles/results/default.css (0.031s)
+        write .tmp/styles/results/filters.css (0.031s)
+        write .tmp/styles/results/page1.css (0.016s)
+        write .tmp/styles/results/pages.css (0.031s)
+        write .tmp/styles/single.css (0.165s)
+    
+[4mRunning "compass:server" (compass) task[24m
+Verifying property [36mcompass.server[39m exists in config...[32mOK[39m
+File: [33m[no files][39m
+Options: [36msassDir="app/styles"[39m, [36mcssDir=".tmp/styles"[39m, [36mimagesDir="app/images"[39m, [36mhttpImagesPath="/images"[39m, [36mjavascriptsDir="app/scripts"[39m, [36mimportPath="app/bower_components"[39m, [36mhttpGeneratedImagesPath="/images/generated"[39m, [36mfontsDir="app/fonts"[39m, [36mhttpFontsPath="/fonts"[39m, [36mrelativeAssets=false[39m, [36massetCacheBuster=false[39m, [36mraw="Sass::Script::Number.precision = 10\r\n"[39m, [36mdebugInfo[39m
+Running command: compass.bat compile --sass-dir=app/styles --css-dir=.tmp/styles --images-dir=app/images --javascripts-dir=app/scripts --import-path=app/bower_components --fonts-dir=app/fonts --debug-info --time --config C:\Users\ttravis\AppData\Local\Temp\tmp-13440moevpk0.tmp
+
+[32mDone, without errors.[39m
+
+[4mRunning "connect:test" (connect) task[24m
+Verifying property [36mconnect.test[39m exists in config...[32mOK[39m
+File: [33m[no files][39m
+Options: [36mprotocol="http"[39m, [36mport=9001[39m, [36mhostname="localhost"[39m, [36mbase=[".tmp","test","app"][39m, [36mdirectory=null[39m, [36mkeepalive=false[39m, [36mdebug=false[39m, [36mlivereload=35729[39m, [36mopen=false[39m, [36mmiddleware=undefined[39m
+Started connect web server on 127.0.0.1:9001.
+
+[4mRunning "karma" task[24m
+
+[4mRunning "karma:unit" (karma) task[24m
+Verifying property [36mkarma.unit[39m exists in config...[32mOK[39m
+File: [33m[no files][39m
+Options: [36mbackground=false[39m
+[32mINFO [karma]: [39mKarma v0.12.37 server started at http://localhost:8081/
+[32mINFO [launcher]: [39mStarting browser PhantomJS
+[32mINFO [PhantomJS 1.9.8 (Windows 7 0.0.0)]: [39mConnected on socket p6yszevepgF2xBVOexRz with id 15505278
+PhantomJS 1.9.8 (Windows 7 0.0.0): Executed 0 of 2 SUCCESS (0 secs / 0 secs)
+[1A[2KPhantomJS 1.9.8 (Windows 7 0.0.0): Executed 1 of 2 SUCCESS (0 secs / 0.023 secs)
+[1A[2KPhantomJS 1.9.8 (Windows 7 0.0.0) Controller: MainCtrl should have the correct initializations FAILED
+	Expected true to be falsy.
+	    at C:/CODE/openstorefront/client/openstorefront/test/spec/controllers/main.js:29
+PhantomJS 1.9.8 (Windows 7 0.0.0): Executed 2 of 2 (1 FAILED) (0 secs / 0.033 secs)
+[1A[2KPhantomJS 1.9.8 (Windows 7 0.0.0): Executed 2 of 2 (1 FAILED) (0 secs / 0.033 secs)
+Warning: Task "karma:unit" failed. Use --force to continue.
+
+Aborted due to warnings.
