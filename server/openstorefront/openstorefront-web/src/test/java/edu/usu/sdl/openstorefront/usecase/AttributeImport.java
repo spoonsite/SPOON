@@ -17,10 +17,10 @@ package edu.usu.sdl.openstorefront.usecase;
 
 import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
-import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
-import edu.usu.sdl.openstorefront.util.Convert;
-import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
-import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
+import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;

@@ -15,22 +15,22 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
-import edu.usu.sdl.openstorefront.exception.AttachedReferencesException;
-import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
-import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
-import edu.usu.sdl.openstorefront.service.transfermodel.OrgReference;
-import edu.usu.sdl.openstorefront.storage.model.Organization;
-import edu.usu.sdl.openstorefront.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
+import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.Organization;
+import edu.usu.sdl.openstorefront.core.model.OrgReference;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.OrganizationView;
+import edu.usu.sdl.openstorefront.core.view.OrganizationWrapper;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.rest.model.OrganizationView;
-import edu.usu.sdl.openstorefront.web.rest.model.OrganizationWrapper;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.List;

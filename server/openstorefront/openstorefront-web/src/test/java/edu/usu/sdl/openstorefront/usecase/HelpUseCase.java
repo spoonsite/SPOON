@@ -15,8 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.usecase;
 
+import edu.usu.sdl.openstorefront.core.entity.HelpSection;
 import edu.usu.sdl.openstorefront.service.io.HelpImporter;
-import edu.usu.sdl.openstorefront.storage.model.HelpSection;
 import java.util.List;
 import org.junit.Test;
 

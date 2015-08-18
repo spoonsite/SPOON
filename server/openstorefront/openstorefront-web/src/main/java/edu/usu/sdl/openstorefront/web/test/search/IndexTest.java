@@ -15,14 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.web.test.search;
 
-import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
-import edu.usu.sdl.openstorefront.storage.model.Article;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
+import edu.usu.sdl.openstorefront.core.entity.Article;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.view.ArticleView;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import edu.usu.sdl.openstorefront.web.test.attribute.ArticleTest;
 import edu.usu.sdl.openstorefront.web.test.component.ComponentTest;

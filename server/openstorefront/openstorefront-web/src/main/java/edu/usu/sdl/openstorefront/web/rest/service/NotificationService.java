@@ -15,22 +15,22 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
+import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
+import edu.usu.sdl.openstorefront.core.model.AdminMessage;
+import edu.usu.sdl.openstorefront.core.view.RecentChangesStatus;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
-import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
-import edu.usu.sdl.openstorefront.service.transfermodel.AdminMessage;
-import edu.usu.sdl.openstorefront.storage.model.ApplicationProperty;
-import edu.usu.sdl.openstorefront.util.Convert;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import edu.usu.sdl.openstorefront.web.rest.model.RecentChangesStatus;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -69,7 +69,7 @@ public class NotificationService
 			taskRequest.setAllowMultiple(true);
 			taskRequest.setName("Sending Admin Message");
 			taskRequest.setDetails("Emailing: " + Arrays.toString(adminMessage.getUsersToEmail().toArray(new String[0])));
-			service.getAyncProxy(service.getUserService(), taskRequest).sendAdminMessage(adminMessage);
+			service.getAsyncProxy(service.getUserService(), taskRequest).sendAdminMessage(adminMessage);
 			return Response.ok().build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -109,7 +109,7 @@ public class NotificationService
 				email = " Email: " + emailAddress;
 			}
 			taskRequest.setDetails("Start Date: " + lastRunDts + email);
-			service.getAyncProxy(service.getUserService(), taskRequest).sendRecentChangeEmail(lastRunDts, emailAddress);
+			service.getAsyncProxy(service.getUserService(), taskRequest).sendRecentChangeEmail(lastRunDts, emailAddress);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to parse last run dts", "Check last run dts param format (MM/dd/yyyy) ");
 		}

@@ -15,8 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.action.admin;
 
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.web.action.BaseAction;
 import java.util.Collections;
 import java.util.List;
