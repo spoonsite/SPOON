@@ -26,6 +26,7 @@ describe('Controller: ResultsCtrl', function () {
     expect(scope.showDetails).toEqual(false);
     expect(scope.showMessage).toEqual(false);
     expect(scope.modal.isLanding).toEqual(false);
+    expect(scope.modal).toEqual({'isLanding': false});
     expect(scope.single).toEqual(false);
     expect(scope.isArticle).toEqual(false);
     expect(scope.searchCode).toEqual('all');
@@ -33,9 +34,9 @@ describe('Controller: ResultsCtrl', function () {
     expect(scope.searchTitle).toEqual(null);
     expect(scope.searchDescription).toEqual(null);
     expect(scope.details.details).toEqual(null);
+    expect(scope.details).toEqual({'details': null});
     expect(scope.typeahead).toEqual(null);
-    // Never did get this working properly with the object
-    // expect(scope.searchGroup).toEqual(Object({key:'search', code:'all'}));
+    //expect(scope.searchGroup).toEqual({ 'key': 'search', 'code': 'all' });
     expect(scope.searchKey).toEqual('search');
     expect(scope.filters).toEqual(null);
     expect(scope.resetFilters).toEqual(null);
@@ -45,5 +46,6 @@ describe('Controller: ResultsCtrl', function () {
     expect(scope.pageNumber).toEqual(1);
     expect(scope.maxPageNumber).toEqual(1);
     expect(scope.showBreadCrumbs).toEqual(false);
+    expect(scope.data).toEqual({});
   });
 });

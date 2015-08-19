@@ -22,5 +22,14 @@ describe('Controller: UserProfileCtrl', function () {
     expect(scope.defaultTitle).toEqual('Browse Categories');
     expect(scope.untilDate.toString()).toEqual(new Date().toString());
     expect(scope.review).toEqual(null);
+    expect(scope.total).toEqual({});
+    expect(scope.userProfileForm).toEqual({});
+    expect(scope.user).toEqual({});
+    expect(scope.nav).toEqual({ 'current': null, 'bars': [
+      {'title': 'User Profile', 'include': 'views/userprofiletab.html'},
+      {'title': 'Watches', 'include': 'views/watchestab.html'},
+      {'title': 'Component Reviews', 'include': 'views/feedbacktab.html'},
+      {'title': 'Submissions', 'include': 'views/submissions.html'}
+    ]});
  });
 });
