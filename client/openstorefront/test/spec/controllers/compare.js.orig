@@ -2,13 +2,21 @@
 
  describe('Controller: CompareCtrl', function () {
 
+<<<<<<< HEAD
+   // load the controller's module
+=======
  //   load the controller's module
+>>>>>>> upstream/v1.5
    beforeEach(module('openstorefrontApp'));
 
    var CompareCtrl,
      scope;
 
+<<<<<<< HEAD
+   // Initialize the controller and a mock scope
+=======
  //   Initialize the controller and a mock scope
+>>>>>>> upstream/v1.5
    beforeEach(inject(function ($controller, $rootScope) {
      scope = $rootScope.$new();
      CompareCtrl = $controller('CompareCtrl', {
@@ -18,7 +26,10 @@
 
    it('should attach a list of awesomeThings to the scope', function () {
      expect(scope.showChoices).toEqual(false);
+<<<<<<< HEAD
      expect(scope.pair).toEqual([]);
+=======
+>>>>>>> upstream/v1.5
      expect(scope.data).toEqual(null);
      expect(scope.id).toEqual(null);
      expect(scope.article).toEqual(null);

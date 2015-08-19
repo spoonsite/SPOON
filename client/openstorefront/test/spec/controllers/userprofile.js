@@ -3,20 +3,24 @@
 describe('Controller: UserProfileCtrl', function () {
 
   // // load the controller's module
-  // beforeEach(module('openstorefrontApp'));
+  beforeEach(module('openstorefrontApp'));
 
-  // var MainCtrl,
-  //   scope;
+  var UserProfileCtrl,
+    scope;
 
-  // // Initialize the controller and a mock scope
-  // beforeEach(inject(function ($controller, $rootScope) {
-  //   scope = $rootScope.$new();
-  //   MainCtrl = $controller('MainCtrl', {
-  //     $scope: scope
-  //   });
-  // }));
+  // Initialize the controller and a mock scope
+  beforeEach(inject(function ($controller, $rootScope) {
+    scope = $rootScope.$new();
+    UserProfileCtrl = $controller('UserProfileCtrl', {
+      $scope: scope
+    });
+  }));
 
-  // it('should attach a list of awesomeThings to the scope', function () {
-  //   expect(scope.awesomeThings.length).toBe(3);
-  // });
+  it('should have the correct initializations', function () {
+    expect(scope._scopename).toEqual('userprofile');  //NOTE this is set to 'userprofile' when scoped!
+    expect(scope.pageTitle).toEqual('DI2E Clearinghouse');  //NOTE this is set to 'DI2E Clearinghouse' when scoped!
+    expect(scope.defaultTitle).toEqual('Browse Categories');
+    expect(scope.untilDate.toString()).toEqual(new Date().toString());
+    expect(scope.review).toEqual(null);
+ });
 });

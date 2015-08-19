@@ -6,8 +6,12 @@ auxiliary.org-netbeans-modules-css-prep.sass_2e_configured=true
 auxiliary.org-netbeans-modules-css-prep.sass_2e_enabled=true
 auxiliary.org-netbeans-modules-css-prep.sass_2e_mappings=/styles:/styles
 auxiliary.org-netbeans-modules-javascript-nodejs.enabled=true
-auxiliary.org-netbeans-modules-javascript-nodejs.run_2e_enabled=true
+<<<<<<< HEAD
+auxiliary.org-netbeans-modules-javascript-nodejs.run_2e_enabled=false
 auxiliary.org-netbeans-modules-javascript-nodejs.run_2e_restart=false
+=======
+auxiliary.org-netbeans-modules-javascript-nodejs.run_2e_enabled=true
+>>>>>>> upstream/v1.5
 auxiliary.org-netbeans-modules-web-clientproject-api.js_2e_libs_2e_folder=app/bower_components/jquery/src
 browser.autorefresh.Chrome=true
 browser.autorefresh.Chrome.INTEGRATED=true
