@@ -20,12 +20,7 @@ describe('Controller: UserProfileCtrl', function () {
     expect(scope._scopename).toEqual('userprofile');  //NOTE this is set to 'userprofile' when scoped!
     expect(scope.pageTitle).toEqual('DI2E Clearinghouse');  //NOTE this is set to 'DI2E Clearinghouse' when scoped!
     expect(scope.defaultTitle).toEqual('Browse Categories');
-
-    var coeff = 1000;  // round the milliseconds
-    var thenRounded = new Date(Math.round(scope.untilDate / coeff) * coeff);
-    var nowRounded = new Date(Math.round(new Date() / coeff) * coeff);
-    expect(thenRounded).toEqual(nowRounded);
-
+    expect(scope.untilDate.toString()).toEqual(new Date().toString());
     expect(scope.review).toEqual(null);
  });
 });
