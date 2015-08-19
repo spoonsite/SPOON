@@ -17,8 +17,8 @@ describe('Controller: UserProfileCtrl', function () {
   }));
 
   it('should have the correct initializations', function () {
-    expect(scope._scopename).toEqual('userprofile');  //NOTE this is set to 'userprofile' when scoped!
-    expect(scope.pageTitle).toEqual('DI2E Clearinghouse');  //NOTE this is set to 'DI2E Clearinghouse' when scoped!
+    expect(scope._scopename).toEqual('userprofile');
+    expect(scope.pageTitle).toEqual('DI2E Clearinghouse');
     expect(scope.defaultTitle).toEqual('Browse Categories');
     expect(scope.untilDate.toString()).toEqual(new Date().toString());
     expect(scope.review).toEqual(null);
