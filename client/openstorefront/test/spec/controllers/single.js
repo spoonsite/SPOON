@@ -1,22 +1,26 @@
-// 'use strict';
+'use strict';
 
-// describe('Controller: SingleCtrl', function () {
+describe('Controller: SingleCtrl', function () {
 
-//   // load the controller's module
-//   beforeEach(module('openstorefrontApp'));
+ // load the controller's module
+ beforeEach(module('openstorefrontApp'));
 
-//   var SingleCtrl,
-//     scope;
+ var SingleCtrl,
+   scope;
 
-//   // Initialize the controller and a mock scope
-//   beforeEach(inject(function ($controller, $rootScope) {
-//     scope = $rootScope.$new();
-//     SingleCtrl = $controller('SingleCtrl', {
-//       $scope: scope
-//     });
-//   }));
+ // Initialize the controller and a mock scope
+ beforeEach(inject(function ($controller, $rootScope) {
+   scope = $rootScope.$new();
+   SingleCtrl = $controller('SingleCtrl', {
+     $scope: scope
+   });
+ }));
 
-//   it('should attach a list of awesomeThings to the scope', function () {
-//     expect(scope.awesomeThings.length).toBe(3);
-//   });
-// });
+ it('should have the correct initializations', function () {
+   expect(scope.single).toEqual(true);
+   expect(scope.details.details).toEqual(null);
+   expect(scope.modal.isLanding).toEqual(false);
+   expect(scope.showDetails).toEqual(false);
+   expect(scope.showBreadCrumbs).toEqual(true);
+ });
+});
