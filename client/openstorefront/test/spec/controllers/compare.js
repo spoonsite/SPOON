@@ -16,9 +16,9 @@
      });
    }));
 
-   it('should have the correct initializations', function () {
-     expect(scope.pair).toEqual([]);
+   it('should attach a list of awesomeThings to the scope', function () {
      expect(scope.showChoices).toEqual(false);
+     expect(scope.pair).toEqual([]);
      expect(scope.data).toEqual(null);
      expect(scope.id).toEqual(null);
      expect(scope.article).toEqual(null);
