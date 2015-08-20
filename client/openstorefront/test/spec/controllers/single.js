@@ -22,13 +22,8 @@ describe('Controller: SingleCtrl', function () {
    expect(scope.modal).toEqual({isLanding: false});
    expect(scope.single).toEqual(true);
    expect(scope.details.details).toEqual(null);
-   expect(scope.details).toEqual({'details': null});
    expect(scope.modal.isLanding).toEqual(false);
-   expect(scope.modal).toEqual({'isLanding': false});
    expect(scope.showDetails).toEqual(false);
    expect(scope.showBreadCrumbs).toEqual(true);
-   expect(scope.data).toEqual({});
-
-
  });
 });
