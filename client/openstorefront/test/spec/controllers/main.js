@@ -16,6 +16,9 @@ describe('Controller: MainCtrl', function () {
     MainCtrl = $controller('MainCtrl', {
       $scope: scope
     });
+
+  //  spyOn(scope, 'pageTitle').and.callThrough();
+  //  expect(scope.pageTitle).toHaveBeenCalled();
   }));
 
   it('should have the correct initializations', function () {
@@ -29,6 +32,7 @@ describe('Controller: MainCtrl', function () {
     
     // verify that this test is being run by creating an error
     // expect(true).toBeFalsy();
+
   });
 
 });
