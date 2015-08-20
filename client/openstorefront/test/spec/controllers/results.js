@@ -21,6 +21,9 @@
     expect(scope.orderProp).toEqual('');
     expect(scope.query).toEqual('');
     expect(scope.lastUsed.toString()).toEqual(new Date().toString());
+    expect(scope.modal).toEqual({isLanding: false});
+    expect(scope.details).toEqual({details: null});
+    expect(scope.data).toEqual({});
     expect(scope.isPage1).toEqual(true);
     expect(scope.showSearch).toEqual(false);
     expect(scope.showDetails).toEqual(false);
@@ -34,8 +37,7 @@
     expect(scope.searchDescription).toEqual(null);
     expect(scope.details.details).toEqual(null);
     expect(scope.typeahead).toEqual(null);
-    // Never did get this working properly with the object
-    // expect(scope.searchGroup).toEqual(Object({key:'search', code:'all'}));
+    expect(scope.searchGroup).toEqual([{key:'search', code:'all'}]);
     expect(scope.searchKey).toEqual('search');
     expect(scope.filters).toEqual(null);
     expect(scope.resetFilters).toEqual(null);
@@ -47,5 +49,3 @@
     expect(scope.showBreadCrumbs).toEqual(false);
   });
 });
-   });
- });

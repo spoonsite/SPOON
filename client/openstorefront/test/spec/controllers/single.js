@@ -17,6 +17,9 @@ describe('Controller: SingleCtrl', function () {
  }));
 
  it('should have the correct initializations', function () {
+   expect(scope.data).toEqual({});
+   expect(scope.details).toEqual({details: null});
+   expect(scope.modal).toEqual({isLanding: false});
    expect(scope.single).toEqual(true);
    expect(scope.details.details).toEqual(null);
    expect(scope.modal.isLanding).toEqual(false);
