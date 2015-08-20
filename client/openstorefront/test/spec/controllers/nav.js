@@ -21,5 +21,6 @@
      expect(scope.navLocation).toEqual('views/nav/nav.html');
      expect(scope.beforeLogin).toEqual(null);
      expect(scope.typeahead).toEqual(null);
+     // Parse Error:   expect(scope.user).toEqual({});
    });
  });

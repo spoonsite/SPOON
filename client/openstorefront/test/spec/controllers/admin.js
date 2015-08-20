@@ -25,16 +25,17 @@
    expect(scope.menuPanel.data.open).toEqual(true);
    expect(scope.menuPanel.system.open).toEqual(true);
    expect(scope.oneAtATime).toEqual(false);
-
-// Does not work on arrays {} and []
-  /* expect(scope.myTree).toEqual(array);
-     expect(scope.systemTree).toEqual(array);
-     expect(scope.data).toEqual(array);
-     expect(scope.systemTools).toEqual(array);
-     expect(scope.menuPanel).toEqual(array);
-     expect(scope.menuPanel.data).toEqual(array);
-     expect(scope.menuPanel.system).toEqual(array);
-  */
-
+   expect(scope.myTree).toEqual({});
+   expect(scope.systemTree).toEqual({});
+   /*expect(scope.data).toEqual({'label': 'Articles',
+     'location':'views/admin/editlanding.html',
+     'toolTitle': 'Manage Articles',
+     'detailedDesc': "Articles, also called topic landing pages, are detail pages of topics of interest with optional related listings.  Articles are assigned to an Attribute Code which allows for searching and filter by topic. ",
+     'key': 'landing'});
+   expect(scope.systemTools).toEqual([]);
+   expect(scope.menuPanel).toEqual({});
+   expect(scope.menuPanel.data).toEqual({});
+   expect(scope.menuPanel.system).toEqual({});
+   */
  });
 });
