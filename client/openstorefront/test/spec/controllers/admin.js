@@ -25,8 +25,8 @@
    expect(scope.menuPanel.data.open).toEqual(true);
    expect(scope.menuPanel.system.open).toEqual(true);
    expect(scope.oneAtATime).toEqual(false);
-
-// Does not work on arrays {} and []
+   expect(scope.myTree).toEqual({});
+   expect(scope.systemTree).toEqual({});
    expect(scope.myTree).toEqual({});
    expect(scope.systemTree).toEqual({});
    expect(scope.data).toEqual([
