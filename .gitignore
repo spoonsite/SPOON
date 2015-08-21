@@ -41,3 +41,11 @@ client/openstorefront/app/images/logo/DI2E-(logo).gif
 /server/openstorefront/apiclient/target/
 /server/openstorefront/core/target/
 /server/openstorefront/core-modules/core/target/
+/server/openstorefront/wso2client/target/
+/server/openstorefront/openstorefront-core/core/target/
+/server/openstorefront/openstorefront-core/service/target/
+/server/openstorefront/openstorefront-plugin/openstorefront-plugin-wso2/target/
+/server/openstorefront/openstorefront-core/common/target/
+/server/openstorefront/openstorefront-core/model/target/
+/server/openstorefront/openstorefront-core/apidoc/target/
+/server/openstorefront/openstorefront-plugin/example/target/
