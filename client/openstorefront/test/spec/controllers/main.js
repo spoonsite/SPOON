@@ -1,4 +1,4 @@
-// 'use strict';
+'use strict';
 
 describe('Controller: MainCtrl', function () {
 
@@ -30,7 +30,7 @@ describe('Controller: MainCtrl', function () {
     // expect(true).toBeFalsy();
   });
 
-  it('should return correct values from Spies', function() {
+  it('should return correct values from spies', function() {
     spyOn(scope, 'pageTitle');
     spyOn(scope, 'subTitle');
     spyOn(scope, 'searchKey');
@@ -45,8 +45,6 @@ describe('Controller: MainCtrl', function () {
     expect(scope.subTitle).toHaveBeenCalledWith('Yada');
     expect(scope.searchKey).toHaveBeenCalledWith('Infinity');
     expect(scope.goToLand).toHaveBeenCalledWith(true);
-
-
-
   });
+
 });

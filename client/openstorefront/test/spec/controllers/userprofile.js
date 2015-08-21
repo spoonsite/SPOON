@@ -34,5 +34,28 @@ describe('Controller: UserProfileCtrl', function () {
           { 'title': 'Submissions', 'include': 'views/submissions.html' }
       ]
     });
- });
+  });
+
+  it('should validate functions that return values', function() {
+    expect(scope.validateEmail('complete_email@whatever.com')).toBeTruthy();
+    expect(scope.validateEmail('incomplete_email')).toBeFalsy();
+    expect(scope.validateEmail('wrongEmail@@wrong.com')).toBeFalsy();
+    expect(scope.validateEmail('blah@whatevercom')).toBeFalsy();
+
+    expect(scope.getDate(1440186375456)).toEqual('8/21/2015');
+    expect(scope.isNewer(1440186375456,1440101702555)).toEqual(true);
+    expect(scope.isNewer(1440101702555,1440186375456)).toEqual(false);
+  });
+
+  it('should validate properly using spies', function() {
+    spyOn(scope, 'sendTestEmail');
+    spyOn(scope, 'saveUserProfile');
+
+    scope.sendTestEmail();
+    scope.saveUserProfile();
+
+    expect(scope.sendTestEmail).toHaveBeenCalled();
+    expect(scope.saveUserProfile).toHaveBeenCalled();
+  });
+
 });
