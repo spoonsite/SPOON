@@ -38,7 +38,7 @@ public class DBLogManager
 	public static long getMaxLogEntries()
 	{
 		long max;
-		String maxRecords = PropertiesManager.getValue(PropertiesManager.KEY_DBLOG_MAX_RECORD, "100000");
+		String maxRecords = PropertiesManager.getValue(PropertiesManager.KEY_DBLOG_MAX_RECORD, "50000");
 		max = Convert.toLong(maxRecords);
 		return max;
 	}

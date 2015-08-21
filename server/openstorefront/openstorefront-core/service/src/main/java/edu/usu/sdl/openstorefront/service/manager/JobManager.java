@@ -34,6 +34,7 @@ import edu.usu.sdl.openstorefront.service.job.ScheduledReportJob;
 import edu.usu.sdl.openstorefront.service.job.SystemCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.TrackingCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.UserProfileSyncJob;
+import edu.usu.sdl.openstorefront.service.manager.model.AddJobModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.SimpleScheduleBuilder;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import org.quartz.Trigger;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -69,7 +71,7 @@ public class JobManager
 
 	private static final Logger log = Logger.getLogger(JobManager.class.getName());
 
-	private static final String JOB_GROUP_SYSTEM = "SYSTEM";
+	private static final String JOB_GROUP_SYSTEM = AddJobModel.JOB_GROUP_SYSTEM;
 	private static Scheduler scheduler;
 
 	public static void init()
@@ -297,6 +299,48 @@ public class JobManager
 		scheduler.scheduleJob(job, trigger);
 	}
 
+	public static void addJob(AddJobModel addjob)
+	{
+		log.log(Level.FINE, MessageFormat.format("Adding Job: {0}", addjob.getJobName()));
+		try {
+			JobDetail job = JobBuilder.newJob(addjob.getJobClass())
+					.withIdentity(addjob.getJobName(), addjob.getJobGroup())
+					.withDescription(addjob.getDescription())
+					.build();
+
+			SimpleScheduleBuilder scheduleBuilder = simpleSchedule();
+
+			if (addjob.getHours() != null) {
+				scheduleBuilder.withIntervalInHours(addjob.getHours());
+			} else if (addjob.getMinutes() != null) {
+				scheduleBuilder.withIntervalInMinutes(addjob.getMinutes());
+			} else if (addjob.getSeconds() != null) {
+				scheduleBuilder.withIntervalInSeconds(addjob.getSeconds());
+			} else if (addjob.getMilliseconds() != null) {
+				scheduleBuilder.withIntervalInMilliseconds(addjob.getMilliseconds());
+			}
+
+			if (addjob.isRepeatForever()) {
+				scheduleBuilder.repeatForever();
+			} else {
+				scheduleBuilder.withRepeatCount(addjob.getRepeatCount());
+			}
+
+			Trigger trigger = newTrigger()
+					.withIdentity(addjob.getJobName() + "Trigger", addjob.getJobGroup())
+					.startNow()
+					.withSchedule(scheduleBuilder)
+					.build();
+
+			scheduler.scheduleJob(job, trigger);
+			if (addjob.isPause()) {
+				scheduler.pauseTrigger(trigger.getKey());
+			}
+		} catch (SchedulerException se) {
+			throw new OpenStorefrontRuntimeException(se);
+		}
+	}
+
 	private static void addNotificationJob() throws SchedulerException
 	{
 		log.log(Level.INFO, "Adding Notification Job");
@@ -337,7 +381,12 @@ public class JobManager
 		scheduler.scheduleJob(job, trigger);
 	}
 
-	private static void addImportJob(DirectoryScanListener directoryScanListener, String dirToWatch) throws SchedulerException
+	public static void addImportJob(DirectoryScanListener directoryScanListener, String dirToWatch) throws SchedulerException
+	{
+		addImportJob(directoryScanListener, dirToWatch, false);
+	}
+
+	public static void addImportJob(DirectoryScanListener directoryScanListener, String dirToWatch, boolean activateJob) throws SchedulerException
 	{
 		String jobName = directoryScanListener.getClass().getName();
 		log.log(Level.INFO, MessageFormat.format("Adding DIRWatch Job: {0}", directoryScanListener.getClass().getName()));
@@ -359,7 +408,9 @@ public class JobManager
 				.build();
 
 		scheduler.scheduleJob(job, trigger);
-		scheduler.pauseTrigger(trigger.getKey());
+		if (activateJob == false) {
+			scheduler.pauseTrigger(trigger.getKey());
+		}
 	}
 
 	public static void runJobNow(String jobName, String groupName)

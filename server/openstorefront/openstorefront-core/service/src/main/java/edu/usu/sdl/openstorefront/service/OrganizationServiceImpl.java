@@ -118,10 +118,8 @@ public class OrganizationServiceImpl
 		Objects.requireNonNull(targetOrganizationId);
 		Objects.requireNonNull(toMergeOrganizationId);
 
-		targetOrganizationId = targetOrganizationId.toUpperCase();
-		toMergeOrganizationId = toMergeOrganizationId.toUpperCase();
-		Organization organizationTarget = persistenceService.findById(Organization.class, targetOrganizationId.toUpperCase());
-		Organization organizationMerge = persistenceService.findById(Organization.class, toMergeOrganizationId.toUpperCase());
+		Organization organizationTarget = persistenceService.findById(Organization.class, targetOrganizationId);
+		Organization organizationMerge = persistenceService.findById(Organization.class, toMergeOrganizationId);
 
 		if (organizationTarget != null) {
 			if (organizationMerge != null) {

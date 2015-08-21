@@ -397,4 +397,22 @@ public class StringProcessor
 		return key;
 	}
 
+	/**
+	 * Finds filename extension if possible
+	 *
+	 * @param filename
+	 * @return extension or null if not found
+	 */
+	public static String getFileExtension(String filename)
+	{
+		String extension = null;
+		if (StringUtils.isNotBlank(filename)) {
+			int firstIndex = filename.lastIndexOf(".");
+			if (firstIndex != -1) {
+				extension = filename.substring(firstIndex);
+			}
+		}
+		return extension;
+	}
+
 }

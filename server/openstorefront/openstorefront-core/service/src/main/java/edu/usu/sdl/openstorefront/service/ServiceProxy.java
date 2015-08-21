@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
 import edu.usu.sdl.openstorefront.core.api.OrganizationService;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
+import edu.usu.sdl.openstorefront.core.api.PluginService;
 import edu.usu.sdl.openstorefront.core.api.ReportService;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.Service;
@@ -30,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.api.UserService;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
+import edu.usu.sdl.openstorefront.service.api.PluginServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import java.util.Objects;
 
@@ -56,6 +58,8 @@ public class ServiceProxy
 	private AlertService alertService;
 	private ReportService reportService;
 	private OrganizationService organizationService;
+	private PluginService pluginService;
+	private PluginServicePrivate pluginServicePrivate;
 
 	public ServiceProxy()
 	{
@@ -178,6 +182,23 @@ public class ServiceProxy
 			organizationService = DynamicProxy.newInstance(new OrganizationServiceImpl());
 		}
 		return organizationService;
+	}
+
+	@Override
+	public PluginService getPluginService()
+	{
+		if (pluginService == null) {
+			pluginService = DynamicProxy.newInstance(new PluginServiceImpl());
+		}
+		return pluginService;
+	}
+
+	public PluginServicePrivate getPluginServicePrivate()
+	{
+		if (pluginServicePrivate == null) {
+			pluginServicePrivate = DynamicProxy.newInstance(new PluginServiceImpl());
+		}
+		return pluginServicePrivate;
 	}
 
 	public AttributeServicePrivate getAttributeServicePrivate()
