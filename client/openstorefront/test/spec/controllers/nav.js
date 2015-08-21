@@ -11,7 +11,7 @@
    // Initialize the controller and a mock scope
    beforeEach(inject(function ($controller, $rootScope) {
      scope = $rootScope.$new();
-     $rootScope.searchKey = 'test'
+     $rootScope.searchKey = 'test';
      NavCtrl = $controller('NavCtrl', {
        $scope: scope
      });
@@ -25,4 +25,28 @@
      expect(scope.beforeLogin).toEqual(null);
      expect(scope.typeahead).toEqual(null);
     });
+
+   it('should return correct values from spies', function() {
+     spyOn(scope, 'getTypeahead');
+     spyOn(scope, 'goToSearch');
+     spyOn(scope, 'goToLogin');
+     spyOn(scope, 'sendHome');
+     spyOn(scope, 'logout');
+     spyOn(scope, 'openHelp');
+
+     scope.getTypeahead();
+     scope.goToSearch();
+     scope.goToLogin();
+     scope.sendHome();
+     scope.logout();
+     scope.openHelp();
+
+     expect(scope.getTypeahead).toHaveBeenCalled();
+     expect(scope.goToSearch).toHaveBeenCalled();
+     expect(scope.goToLogin).toHaveBeenCalled();
+     expect(scope.sendHome).toHaveBeenCalled();
+     expect(scope.logout).toHaveBeenCalled();
+     expect(scope.openHelp).toHaveBeenCalled();
+   });
+
  });

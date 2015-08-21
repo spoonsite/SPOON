@@ -48,4 +48,67 @@
     expect(scope.maxPageNumber).toEqual(1);
     expect(scope.showBreadCrumbs).toEqual(false);
   });
+
+   it('should validate properly using spies', function() {
+     spyOn(scope, 'setupTagList');
+     spyOn(scope, 'setSelectedTab');
+     spyOn(scope, 'isItAnArticle');
+     spyOn(scope, 'getNumThings');
+     spyOn(scope, 'tabClass');
+     spyOn(scope, 'checkTagsList');
+     spyOn(scope, 'reAdjust');
+     spyOn(scope, 'setupData');
+     spyOn(scope, 'initializeData');
+     spyOn(scope, 'resetSearch');
+     spyOn(scope, 'toggleclass');
+     spyOn(scope, 'doButtonOpen');
+     spyOn(scope, 'doButtonClose');
+     spyOn(scope, 'toggleChecks');
+     spyOn(scope, 'updateDetails');
+     spyOn(scope, 'goToFullPage');
+     spyOn(scope, 'goToCompare');
+     spyOn(scope, 'clearFilters');
+     spyOn(scope, 'checkFilters');
+
+     scope.setupTagList();
+     scope.setSelectedTab();
+     scope.isItAnArticle('articleObject?');
+     scope.getNumThings('articleObject?');
+     scope.tabClass();
+     scope.checkTagsList('blah','blah','blah');
+     scope.reAdjust('key');
+     scope.setupData();
+     scope.initializeData('key');
+     scope.resetSearch();
+     scope.toggleclass(1, 'class');
+     scope.doButtonOpen();
+     scope.doButtonClose();
+     scope.toggleChecks('collection','override');
+     scope.updateDetails(99, 'article');
+     scope.goToFullPage(5);
+     scope.goToCompare();
+     scope.clearFilters();
+     scope.checkFilters();
+
+     expect(scope.setupTagList).toHaveBeenCalled();
+     expect(scope.setSelectedTab).toHaveBeenCalled();
+     expect(scope.isItAnArticle).toHaveBeenCalledWith('articleObject?');
+     expect(scope.getNumThings).toHaveBeenCalledWith('articleObject?');
+     expect(scope.tabClass).toHaveBeenCalled();
+     expect(scope.checkTagsList).toHaveBeenCalledWith('blah','blah','blah');
+     expect(scope.reAdjust).toHaveBeenCalledWith('key');
+     expect(scope.setupData).toHaveBeenCalled();
+     expect(scope.initializeData).toHaveBeenCalledWith('key');
+     expect(scope.resetSearch).toHaveBeenCalled();
+     expect(scope.toggleclass).toHaveBeenCalledWith(1, 'class');
+     expect(scope.doButtonOpen).toHaveBeenCalled();
+     expect(scope.doButtonClose).toHaveBeenCalled();
+     expect(scope.toggleChecks).toHaveBeenCalledWith('collection', 'override');
+     expect(scope.updateDetails).toHaveBeenCalledWith(99, 'article');
+     expect(scope.goToFullPage).toHaveBeenCalledWith(5);
+     expect(scope.goToCompare).toHaveBeenCalled();
+     expect(scope.clearFilters).toHaveBeenCalled();
+     expect(scope.checkFilters).toHaveBeenCalled();
+   });
+
 });

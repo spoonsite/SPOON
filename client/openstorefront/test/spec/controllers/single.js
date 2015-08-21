@@ -26,4 +26,11 @@ describe('Controller: SingleCtrl', function () {
    expect(scope.showDetails).toEqual(false);
    expect(scope.showBreadCrumbs).toEqual(true);
  });
+
+  it('should validate properly using spies', function() {
+    spyOn(scope, 'updateDetails');
+    scope.updateDetails(-1);
+    expect(scope.updateDetails).toHaveBeenCalledWith(-1);
+  });
+
 });
