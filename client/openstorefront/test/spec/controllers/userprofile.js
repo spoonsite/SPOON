@@ -50,12 +50,30 @@ describe('Controller: UserProfileCtrl', function () {
   it('should validate properly using spies', function() {
     spyOn(scope, 'sendTestEmail');
     spyOn(scope, 'saveUserProfile');
+    spyOn(scope, 'checkTagsList');
+    spyOn(scope, 'cancelUserProfile');
+    spyOn(scope, 'revertProfileChanges');
+    spyOn(scope, 'removeFromWatches');
+    spyOn(scope, 'updateWatch');
+    spyOn(scope, 'resetWatches');
 
     scope.sendTestEmail();
     scope.saveUserProfile();
+    scope.checkTagsList();
+    scope.cancelUserProfile();
+    scope.revertProfileChanges();
+    scope.removeFromWatches();
+    scope.updateWatch();
+    scope.resetWatches();
 
     expect(scope.sendTestEmail).toHaveBeenCalled();
     expect(scope.saveUserProfile).toHaveBeenCalled();
+    expect(scope.checkTagsList).toHaveBeenCalled();
+    expect(scope.cancelUserProfile).toHaveBeenCalled();
+    expect(scope.revertProfileChanges).toHaveBeenCalled();
+    expect(scope.removeFromWatches).toHaveBeenCalled();
+    expect(scope.updateWatch).toHaveBeenCalled();
+    expect(scope.resetWatches).toHaveBeenCalled();
   });
 
 });
