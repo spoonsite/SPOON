@@ -26,8 +26,6 @@
      expect(scope.typeahead).toEqual(null);
     });
 
-
-
    it('should return correct values from spies', function() {
      spyOn(scope, 'getTypeahead');
      spyOn(scope, 'goToSearch');
