@@ -76,7 +76,7 @@ public class OsgiManager
 			try {
 				felix.stop();
 				FrameworkEvent frameworkEvent = felix.waitForStop(MAX_SHUTDOWN_WAIT_TIME);
-				log.log(Level.INFO, MessageFormat.format("Framework Shutdow Event: {0}", frameworkEvent.getType()));
+				log.log(Level.INFO, MessageFormat.format("Framework Shutdown Event: {0}", frameworkEvent.getType()));
 			} catch (BundleException | InterruptedException ex) {
 				Logger.getLogger(OsgiManager.class.getName()).log(Level.SEVERE, null, ex);
 			}

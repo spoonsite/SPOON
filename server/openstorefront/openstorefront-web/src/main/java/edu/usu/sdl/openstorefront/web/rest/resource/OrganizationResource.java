@@ -116,13 +116,13 @@ public class OrganizationResource
 	@APIDescription("Gets an organization record. ")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Organization.class)
-	@Path("/{name}")
+	@Path("/{id}")
 	public Response getOrganization(
-			@PathParam("name") String organizationName
+			@PathParam("id") String organizationId
 	)
 	{
 		Organization organizationExample = new Organization();
-		organizationExample.setOrganizationId(organizationName);
+		organizationExample.setOrganizationId(organizationId);
 		return sendSingleEntityResponse(organizationExample.find());
 	}
 
@@ -130,14 +130,14 @@ public class OrganizationResource
 	@APIDescription("Gets an organization references. ")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(OrgReference.class)
-	@Path("/{name}/references")
+	@Path("/{id}/references")
 	public List<OrgReference> getReferences(
-			@PathParam("name") String organizationName,
+			@PathParam("id") String organizationId,
 			@QueryParam("activeOnly") boolean activeOnly,
 			@QueryParam("approvedOnly") boolean approvedOnly
 	)
 	{
-		return service.getOrganizationService().findReferences(organizationName, activeOnly, approvedOnly);
+		return service.getOrganizationService().findReferences(organizationId, activeOnly, approvedOnly);
 	}
 
 	@GET
@@ -151,6 +151,20 @@ public class OrganizationResource
 	)
 	{
 		return service.getOrganizationService().findReferences(null, activeOnly, approvedOnly);
+	}
+
+	@POST
+	@APIDescription("Gets an organization references by organization name.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.TEXT_PLAIN})
+	@DataType(OrgReference.class)
+	@Path("/referencesByName")
+	public List<OrgReference> getReferencesByName(
+			@QueryParam("activeOnly") boolean activeOnly,
+			@QueryParam("approvedOnly") boolean approvedOnly,
+			String name)
+	{
+		return service.getOrganizationService().findReferences(name, activeOnly, approvedOnly);
 	}
 
 	@POST
@@ -168,18 +182,18 @@ public class OrganizationResource
 	@APIDescription("Updates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
-	@Path("/{name}")
+	@Path("/{id}")
 	public Response createOrganization(
-			@PathParam("name") String organizationName,
+			@PathParam("id") String organizationId,
 			Organization organization)
 	{
 		Organization existing = new Organization();
-		existing.setOrganizationId(organizationName);
+		existing.setOrganizationId(organizationId);
 		existing = existing.find();
 		if (existing == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-		organization.setOrganizationId(organizationName);
+		organization.setOrganizationId(organizationId);
 		return handleSaveOrganization(organization, false);
 	}
 
@@ -204,23 +218,24 @@ public class OrganizationResource
 	@RequireAdmin
 	@APIDescription("Merges one organization with another")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{targetName}/merge/{mergeName}")
+	@Path("/{targetId}/merge/{mergeId}")
 	public Response merge(
-			@PathParam("targetName") String targetName,
-			@PathParam("mergeName") String mergeName
+			@PathParam("targetId") String targetId,
+			@PathParam("mergeId") String mergeId
 	)
 	{
 		Response response = Response.status(Status.NOT_FOUND).build();
 
 		Organization target = new Organization();
-		target.setOrganizationId(targetName);
+		target.setOrganizationId(targetId);
 		target = target.find();
 
 		Organization merge = new Organization();
-		merge.setOrganizationId(mergeName);
+		merge.setOrganizationId(mergeId);
 		merge = merge.find();
 		if (target != null && merge != null) {
-			service.getOrganizationService().mergeOrganizations(targetName, mergeName);
+			service.getOrganizationService().mergeOrganizations(targetId, mergeId);
+			response = Response.ok(target).build();
 		}
 
 		return response;
@@ -240,11 +255,11 @@ public class OrganizationResource
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Deletes an organization")
-	@Path("/{name}")
+	@Path("/{id}")
 	public void deleteReport(
-			@PathParam("name") String organizationName) throws AttachedReferencesException
+			@PathParam("id") String organizationid) throws AttachedReferencesException
 	{
-		service.getOrganizationService().removeOrganization(organizationName);
+		service.getOrganizationService().removeOrganization(organizationid);
 	}
 
 }

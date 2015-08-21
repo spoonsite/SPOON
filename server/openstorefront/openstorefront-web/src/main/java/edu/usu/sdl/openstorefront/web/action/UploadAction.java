@@ -69,7 +69,7 @@ public class UploadAction
 
 	private static final Logger log = Logger.getLogger(UploadAction.class.getName());
 
-	@Validate(required = true, on = {"UploadLookup", "UploadComponent", "UploadArticles", "UploadAttributes", "UploadSvcv4"})
+	@Validate(required = true, on = {"UploadLookup", "UploadComponent", "UploadArticles", "UploadAttributes", "UploadSvcv4", "UploadPlugin"})
 	private FileBean uploadFile;
 
 	@Validate(required = true, on = "UploadLookup")
@@ -340,6 +340,31 @@ public class UploadAction
 					taskRequest.setDetails("File name: " + uploadFile.getFileName());
 					service.getAsyncProxy(service.getAttributeService(), taskRequest).importArticles(articles);
 				}
+			} catch (IOException ex) {
+				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
+				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
+			} finally {
+				try {
+					if (uploadFile != null) {
+						uploadFile.delete();
+					}
+				} catch (IOException ex) {
+					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+				}
+			}
+			return streamUploadResponse(errors);
+		}
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
+	@HandlesEvent("UploadPlugin")
+	public Resolution uploadPlugin()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			try (InputStream in = uploadFile.getInputStream()) {
+				service.getPluginService().installPlugin(uploadFile.getFileName(), in);
 			} catch (IOException ex) {
 				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");

@@ -24,26 +24,6 @@ import edu.usu.sdl.openstorefront.core.entity.OrganizationModel;
 public class OrgReference
 {
 
-	public String getActiveStatus()
-	{
-		return activeStatus;
-	}
-
-	public void setActiveStatus(String activeStatus)
-	{
-		this.activeStatus = activeStatus;
-	}
-
-	public String getComponentApproveStatus()
-	{
-		return componentApproveStatus;
-	}
-
-	public void setComponentApproveStatus(String componentApproveStatus)
-	{
-		this.componentApproveStatus = componentApproveStatus;
-	}
-
 	@FunctionalInterface
 	public interface ReferenceTranformer<T extends OrganizationModel>
 	{
@@ -111,6 +91,26 @@ public class OrgReference
 	public void setReferenceType(String referenceType)
 	{
 		this.referenceType = referenceType;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
+	}
+
+	public String getComponentApproveStatus()
+	{
+		return componentApproveStatus;
+	}
+
+	public void setComponentApproveStatus(String componentApproveStatus)
+	{
+		this.componentApproveStatus = componentApproveStatus;
 	}
 
 }

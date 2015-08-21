@@ -65,6 +65,13 @@ public interface Service
 	public OrganizationService getOrganizationService();
 
 	/**
+	 * Handles plugins
+	 *
+	 * @return
+	 */
+	public PluginService getPluginService();
+
+	/**
 	 * Handles persistence (generally just for querying...use services for data
 	 * manipulation)
 	 *

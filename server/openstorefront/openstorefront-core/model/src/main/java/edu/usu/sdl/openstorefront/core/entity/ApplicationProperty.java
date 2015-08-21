@@ -47,6 +47,7 @@ public class ApplicationProperty
 	public static final String GLOBAL_INTEGRATION_REFRESH = "GLOBALINTREF";
 	public static final String RECENT_CHANGE_EMAIL_LAST_DTS = "REMAILLASTDTS";
 	public static final String HELP_SYNC = "HELPSYNC";
+	public static final String PLUGIN_LAST_LOAD_MAP = "PLUGINLASTDTS";
 
 	public ApplicationProperty()
 	{

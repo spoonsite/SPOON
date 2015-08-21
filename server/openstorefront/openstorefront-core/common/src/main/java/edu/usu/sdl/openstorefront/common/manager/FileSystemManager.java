@@ -56,6 +56,8 @@ public class FileSystemManager
 	public static final String ERROR_TICKET_DIR = MAIN_TEMP_DIR + "/errorticket";
 	public static final String RESOURCE_DIR = MAIN_PERM_DIR + "/resource";
 	public static final String REPORT_DIR = MAIN_PERM_DIR + "/report";
+	public static final String PLUGIN_DIR = MAIN_PERM_DIR + "/plugins";
+	public static final String PLUGIN_UNINSTALLED_DIR = MAIN_PERM_DIR + "/plugins/uninstalled";
 	public static final String DB_DIR = MAIN_DIR + "/db";
 
 	private static final int BUFFER_SIZE = 8192;
