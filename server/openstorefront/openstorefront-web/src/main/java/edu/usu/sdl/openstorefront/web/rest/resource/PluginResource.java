@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -140,10 +141,10 @@ public class PluginResource
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
-	@POST
+	@DELETE
 	@RequireAdmin
 	@APIDescription("Uninstall a plugin")
-	@Path("/{id}/uninstall")
+	@Path("/{id}")
 	public Response uninstallPlugin(
 			@PathParam("id") String pluginId
 	)
@@ -155,6 +156,6 @@ public class PluginResource
 			service.getPluginService().uninstallPlugin(pluginId);
 			return Response.ok().build();
 		}
-		return Response.status(Response.Status.NOT_FOUND).build();
+		return Response.status(Response.Status.NO_CONTENT).build();
 	}
 }

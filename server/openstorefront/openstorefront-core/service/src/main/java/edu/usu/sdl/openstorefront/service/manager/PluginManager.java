@@ -234,6 +234,7 @@ public class PluginManager
 			pluginModel.setCurrentState(getBundleState(bundle));
 			pluginModel.setLocation(bundle.getLocation());
 			pluginModel.setLastModified(new Date(bundle.getLastModified()));
+			pluginModel.setVersion(bundle.getVersion().toString());
 
 			plugins.add(pluginModel);
 		}

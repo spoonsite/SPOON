@@ -363,8 +363,10 @@ public class UploadAction
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
 			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
-			try (InputStream in = uploadFile.getInputStream()) {
-				service.getPluginService().installPlugin(uploadFile.getFileName(), in);
+			try {
+				//just copy plugin to  plugin directory...to avoid double pickup
+				File pluginDir = FileSystemManager.getDir(FileSystemManager.PLUGIN_DIR);
+				uploadFile.save(new File(pluginDir + "/" + StringProcessor.cleanFileName(uploadFile.getFileName())));
 			} catch (IOException ex) {
 				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
