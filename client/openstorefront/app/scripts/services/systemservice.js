@@ -289,6 +289,68 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
     
     return deferred.promise;
   };   
+  
+  //plugins 
+  
+  var getPlugins = function() {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/plugins' 
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };   
+  
+  var startPlugin = function(pluginId) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/resource/plugins/'+pluginId +"/start" 
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };  
+  
+  var stopPlugin = function(pluginId) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/resource/plugins/'+pluginId +"/stop" 
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };  
+  
+  var uninstallPlugin = function(pluginId) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/plugins/'+pluginId 
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };    
     
   return {
       getErrorTickets: getErrorTickets,
@@ -307,8 +369,11 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
       getLoggers: getLoggers,
       clearAllLogRecords: clearAllLogRecords,
       getHelp: getHelp,
-      getShowFeedback: getShowFeedback
-      
+      getShowFeedback: getShowFeedback,
+      getPlugins: getPlugins,
+      startPlugin: startPlugin,
+      stopPlugin: stopPlugin,
+      uninstallPlugin: uninstallPlugin      
   };
     
 }]);

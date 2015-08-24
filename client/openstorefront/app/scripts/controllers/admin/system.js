@@ -16,7 +16,8 @@
 
 'use strict';
 
-app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal', '$timeout', function ($scope, Business, $rootScope, $uiModal, $timeout) {
+app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal', '$timeout', 'FileUploader',
+  function ($scope, Business, $rootScope, $uiModal, $timeout, FileUploader) {
 
   $scope.recentChangesForm = {};
   $scope.recentChangesForm.lastRunDts = "";
@@ -38,6 +39,10 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
   $scope.reverse = [];
   $scope.tabs = {};
   $scope.tabs.general = true;
+  $scope.flags = {};
+  $scope.flags.showPluginUpload = false;
+  
+  $scope.plugins = [];
   
   $scope.selectTab = function(tab){
     _.forIn($scope.tabs, function(value, key){
@@ -299,6 +304,113 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
       }
     });    
   };
+  
+  //plugin controls  
+  $scope.refreshPlugins = function(){
+    $scope.$emit('$TRIGGERLOAD', 'pluginsLoader');       
+   
+    Business.systemservice.getPlugins().then(function (results) {
+      if (results) {          
+        $scope.plugins = results;
+      }  
+      $scope.$emit('$TRIGGERUNLOAD', 'pluginsLoader');        
+    }, function(failed) {
+      $scope.$emit('$TRIGGERUNLOAD', 'pluginsLoader');        
+    });     
+  };
+  $scope.refreshPlugins();
+  
+  $scope.startPlugin = function(pluginId){
+    $scope.$emit('$TRIGGERLOAD', 'pluginsLoader');  
+    Business.systemservice.startPlugin(pluginId).then(function (results) {      
+      $scope.refreshPlugins();
+      $scope.$emit('$TRIGGERUNLOAD', 'pluginsLoader');        
+      triggerAlert('Started plugin', 'plugin', 'body', 3000);
+    }, function(failed){
+      triggerAlert('Failed to start plugin. See log for details.', 'plugin', 'body', 3000);
+      $scope.$emit('$TRIGGERUNLOAD', 'pluginsLoader');   
+    });      
+  };
+
+  $scope.stopPlugin = function(pluginId){
+    Business.systemservice.stopPlugin(pluginId).then(function (results) {      
+      $scope.refreshPlugins(); 
+      $scope.$emit('$TRIGGERUNLOAD', 'pluginsLoader');    
+      triggerAlert('Stopped plugin', 'plugin', 'body', 3000);
+    }, function(failed){
+      triggerAlert('Failed to stop plugin. See log for details.', 'plugin', 'body', 3000);
+      $scope.$emit('$TRIGGERUNLOAD', 'pluginsLoader');   
+    });      
+  };
+
+  $scope.uninstallPlugin = function(pluginId){
+    var response = window.confirm("Are you sure you want to uninstall plugin?  (It's recommended to download the plugin first for an easy re-install.)");
+      if (response) {
+        Business.systemservice.uninstallPlugin(pluginId).then(function (results) {
+          $scope.refreshPlugins();
+          $scope.$emit('$TRIGGERUNLOAD', 'pluginsLoader');
+          triggerAlert('Uninstalled plugin', 'plugin', 'body', 3000);
+        }, function (failed) {
+          triggerAlert('Failed to uninstall plugin. See log for details.', 'plugin', 'body', 3000);
+          $scope.$emit('$TRIGGERUNLOAD', 'pluginsLoader');
+        });
+      }
+  };
+      
+  $scope.addPlugin = function(){
+      if ($scope.flags.showPluginUpload) {
+        $scope.flags.showPluginUpload = false;
+      } else {
+        $scope.flags.showPluginUpload = true;
+      }    
+  };
+  
+  $scope.uploadPlugin = function(){
+    $scope.uploader.uploadAll();
+  };
+  
+  $scope.downloadPlugin = function(pluginId){
+    window.location.href = "api/v1/resource/plugins/" + pluginId + "/download";
+  };
+  
+  $scope.uploader = new FileUploader({
+    url: 'Upload.action?UploadPlugin',
+    alias: 'uploadFile',
+    queueLimit: 1,      
+    onBeforeUploadItem: function(item) {
+      $scope.$emit('$TRIGGERLOAD', 'pluginsLoader');
+    },
+    onSuccessItem: function (item, response, status, headers) {
+      $scope.$emit('$TRIGGERUNLOAD', 'pluginsLoader');
+      $scope.uploader.clearQueue();
+
+      //check response for a fail ticket or a error model
+      if (response.success) {
+        triggerAlert('Uploaded successfully;  Waiting for deployment job to install.  Please refresh to confirm deployment.', 'plugin', 'body', 3000);          
+        $scope.flags.showPluginUpload = false;
+        $scope.refreshPlugins();
+      } else {
+        if (response.errors) {
+          var uploadError = response.errors.uploadFile;
+          var enityError = response.errors.entityName;
+          var errorMessage = uploadError !== undefined ? uploadError : '  ' + enityError !== undefined ? enityError : '';
+          triggerAlert('Unable to upload plugin. Message: <br> ' + errorMessage, 'plugin', 'body', 6000);
+        } else {
+          triggerAlert('Unable to upload plugin. ', 'plugin', 'body', 6000);
+        }
+      }
+    },
+    onErrorItem: function (item, response, status, headers) {
+      $scope.$emit('$TRIGGERUNLOAD', 'pluginsLoader');
+      triggerAlert('Unable to upload plugin. Failure communicating with server. ', 'plugin', 'body', 6000);
+      $scope.uploader.clearQueue();
+    },
+    onCompleteAll: function(){        
+        document.getElementById('uploadFile').value = null;
+        $scope.uploader.queue = [];      
+    }      
+  });  
+
 
 }]);
 
