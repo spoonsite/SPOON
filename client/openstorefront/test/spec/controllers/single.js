@@ -28,7 +28,7 @@ describe('Controller: SingleCtrl', function () {
  });
 
   it('should validate properly using spies', function() {
-    spyOn(scope, 'updateDetails');
+    spyOn(scope, 'updateDetails').and.callThrough();
     scope.updateDetails(-1);
     expect(scope.updateDetails).toHaveBeenCalledWith(-1);
   });

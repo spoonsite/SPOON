@@ -31,19 +31,19 @@ describe('Controller: MainCtrl', function () {
   });
 
   it('should return correct values from spies', function() {
-    spyOn(scope, 'pageTitle');
-    spyOn(scope, 'subTitle');
+    spyOn(scope, 'pageTitle'); //.and.callThrough();
+    spyOn(scope, 'subTitle'); //.and.callThrough();
     spyOn(scope, 'searchKey');
     spyOn(scope, 'goToLand');
 
     scope.pageTitle('Blah');
     scope.subTitle('Yada');
-    scope.searchKey('Infinity');
+    scope.searchKey(3);
     scope.goToLand(true);
 
     expect(scope.pageTitle).toHaveBeenCalledWith('Blah');
     expect(scope.subTitle).toHaveBeenCalledWith('Yada');
-    expect(scope.searchKey).toHaveBeenCalledWith('Infinity');
+    expect(scope.searchKey).toHaveBeenCalledWith(3);
     expect(scope.goToLand).toHaveBeenCalledWith(true);
   });
 
