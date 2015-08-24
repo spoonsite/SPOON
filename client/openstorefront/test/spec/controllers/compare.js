@@ -16,11 +16,21 @@
      });
    }));
 
-   it('should attach a list of awesomeThings to the scope', function () {
+   it('should have the correct initializations', function () {
      expect(scope.showChoices).toEqual(false);
      expect(scope.pair).toEqual([]);
      expect(scope.data).toEqual(null);
      expect(scope.id).toEqual(null);
      expect(scope.article).toEqual(null);
+   });
+   it('should return correct values from spies', function () {
+      spyOn(scope, 'resetSide');
+      spyOn(scope, 'setCompare');
+      
+      scope.resetSide(false);
+      scope.setCompare(null, null);
+      
+      expect(scope.resetSide).toHaveBeenCalledWith(false);
+      expect(scope.setCompare).toHaveBeenCalledWith(null, null);
    });
  });
