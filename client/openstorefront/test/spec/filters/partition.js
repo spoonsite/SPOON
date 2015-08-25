@@ -10,9 +10,10 @@ describe('Filter: partition', function () {
     partition = $filter('partition');
   }));
 
-  it('should return the input prefixed with "partition filter:"', function () {
+  it('should return the input in an x dimensional array"', function () {
     var myArray = ["hello", "world", "testing", 1, 2, 3];
-    expect(partition(myArray, 2).toString()).toBe([ ["hello", "world"], ["testing", 1], [2,3]].toString());
+    var x = 2;
+    expect(partition(myArray, x).toString()).toBe([ ["hello", "world"], ["testing", 1], [2,3]].toString());
   });
 
 });

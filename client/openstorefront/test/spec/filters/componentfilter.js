@@ -10,7 +10,7 @@ describe('Filter: componentFilter', function () {
     componentFilter = $filter('componentFilter');
   }));
 
-  it('should return the input prefixed with "componentFilter filter:"', function () {
+  it('should return the input in an array one element per letter"', function () {
     var text = 'angularjs';
     expect(componentFilter(text)).toEqual(['a', 'n', 'g', 'u', 'l', 'a', 'r', 'j', 's']);
   });
