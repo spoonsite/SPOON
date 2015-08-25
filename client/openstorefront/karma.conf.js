@@ -61,9 +61,9 @@ module.exports = function(config) {
       'app/scripts/common/ckeditor/ckeditor.js',
       'app/scripts/**/*.js',
       'test/spec/controllers/**/*.js',
-      // 'test/spec/directives/**/*.js',
+      //'test/spec/directives/**/*.js',
       'test/spec/filters/**/*.js',
-      'test/spec/services/**/*.js',
+      'test/spec/services/**/*.js'
       // 'test/spec/protractor/**/*.js' // e2e tests
     ],
 
