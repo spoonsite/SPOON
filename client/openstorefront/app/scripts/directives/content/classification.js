@@ -16,30 +16,20 @@
 
 'use strict';
 
-app.directive('smartselect', ['$timeout', function($timeout) {
+app.directive('classification', ['$timeout', function($timeout) {
   // id needs to be unique across all implementations of the directive
-  var nextId2 = 1;
   return {
-    scope: {
-      smartselect: '@',
+    restrict: 'E',
+    scope:{
       ngModel: '='
     },
-    restrict: 'A',
+    replace: true,
+    template: '<small ng-show="ngModel.securityMarkingType"><span ng-show="leftSpace">&nbsp;</span>({{ngModel.securityMarkingType}})<span ng-show="!leftSpace">&nbsp;</span></small>',
     link: function postlink(scope, element, attrs) {
-      var init = false;
-      $timeout(function(){
-        element.combobox({
-          'appendTo': scope.smartselect || 'body'
-        });
-        scope.$watch('ngModel', function(nval, oval){
-          if (init && !nval) {
-            $timeout(function(){
-              element.trigger('change');
-            })
-          }
-          init = true;
-        })
-      }, 500);
+      scope.leftSpace = false;
+      if (attrs['ls'] !== undefined) {
+        scope.leftSpace = true;
+      }
     }
   };
 }]);

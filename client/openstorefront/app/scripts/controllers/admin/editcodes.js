@@ -39,16 +39,16 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
   $scope.defaultCodesLookup = [];
   
   $scope.loadCodesForDefault = function() {
-      var filter = angular.copy(utils.queryFilter);
-      filter.sortField = 'label';
-      filter.sortOrder = 'ASC';
-      Business.get({
-        url: 'api/v1/resource/attributes/attributetypes/' + $scope.type.attributeType + '/attributecodeviews',
-        filterObj: filter
-      }).then(function(data){
-        $scope.defaultCodesLookup = data.data;
-        $scope.defaultCodesLookup.push({});
-      });
+    var filter = angular.copy(utils.queryFilter);
+    filter.sortField = 'label';
+    filter.sortOrder = 'ASC';
+    Business.get({
+      url: 'api/v1/resource/attributes/attributetypes/' + $scope.type.attributeType + '/attributecodeviews',
+      filterObj: filter
+    }).then(function(data){
+      $scope.defaultCodesLookup = data.data;
+      $scope.defaultCodesLookup.push({});
+    });
   }; 
   $timeout(function(){
     $scope.loadCodesForDefault();
@@ -115,6 +115,19 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
     result.code = code;
     $uiModalInstance.dismiss(result);
   };
+
+
+  $scope.loadLookup = function(lookup, entity, loader){
+    $scope.$emit('$TRIGGERLOAD', loader);
+
+    Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+      $scope.$emit('$TRIGGERUNLOAD', loader);
+      if (results) {
+        $scope[entity]= results;
+      }        
+    });      
+  };
+  $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
 
 
   $scope.saveType = function(validity){
@@ -325,6 +338,21 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
     return $scope.code? $scope.code.length? $scope.code.length: 100 : 100;
   };
   
+
+  $scope.loadLookup = function(lookup, entity, loader){
+    $scope.$emit('$TRIGGERLOAD', loader);
+
+    Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+      $scope.$emit('$TRIGGERUNLOAD', loader);
+      if (results) {
+        $scope[entity]= results;
+      }        
+    });      
+  };
+  $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
+
+
+
   $scope.urlPattern = utils.URL_REGEX;
 
   $scope.ok = function (validity) {
@@ -350,6 +378,7 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
         $scope.code.detailUrl = $scope.code.detailUrl || '';
         $scope.code.groupCode = $scope.code.groupCode || '';
         $scope.code.sortOrder = $scope.code.sortOrder || null;
+        $scope.code.securityMarkingType = $scope.code.securityMarkingType || null;
         if (!$scope.code.sortOrder) {
           delete $scope.code.sortOrder;
         }

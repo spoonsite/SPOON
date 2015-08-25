@@ -48,6 +48,7 @@ public abstract class StandardEntityView
 
 	public void toStandardView(StandardEntity... entities)
 	{
+		int i = 0;
 		if (entities != null) {
 			Service service = ServiceProxyFactory.getServiceProxy();
 			//Set to the highest classification

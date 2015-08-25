@@ -32,6 +32,25 @@ app.controller('AdminEditHighlightsCtrl',['$scope','business', '$uiModal', '$tim
     }
   }
 
+  $scope.loadLookup = function(lookup, entity, loader){
+    $scope.$emit('$TRIGGERLOAD', loader);
+
+    Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+      $scope.$emit('$TRIGGERUNLOAD', loader);
+      if (results) {
+        $scope[entity]= results;
+      }        
+    });      
+  };
+  $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
+
+  $scope.getSecurityDesc = function(type){
+    var found = _.find($scope.securityTypes, {'code': type});
+    return found? found.description : type; 
+  }
+
+
+
   $scope.getHighlights = function() {
     Business.highlightservice.getHighlights(true, true).then(function(result){
       $scope.data.highlights = result? result: [];
@@ -54,7 +73,7 @@ app.controller('AdminEditHighlightsCtrl',['$scope','business', '$uiModal', '$tim
 
   $scope.getHighlightCodes = function() {
     Business.lookupservice.getHighlightCodes().then(function(result){
-      
+
       $scope.highlightCodes = result || [];
     }, function(){
       $scope.highlightCodes = [];
@@ -187,6 +206,20 @@ app.controller('AdminEditHighlightsModalCtrl',['$scope', '$uiModalInstance', 'hi
   }, function(){
     $scope.highlightCodes = [];
   })
+
+  $scope.loadLookup = function(lookup, entity, loader){
+    $scope.$emit('$TRIGGERLOAD', loader);
+
+    Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+      $scope.$emit('$TRIGGERUNLOAD', loader);
+      if (results) {
+        $scope[entity]= results;
+      }        
+    });      
+  };
+  $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
+
+
 
 
   $scope.ok = function () {

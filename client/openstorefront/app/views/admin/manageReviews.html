@@ -32,7 +32,8 @@ limitations under the License.
 			<th>Pros</th>
 			<th>Cons</th>
 			<th><a href="" ng-click="setPredicate('username', 'review');">User<span ng-show="predicate['review'] === 'username'"><i ng-show="!reverse['review']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['review']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-			<th><a href="" ng-click="setPredicate('updateDate', 'review');">Update Date<span ng-show="predicate['review'] === 'updateDate'"><i ng-show="!reverse['review']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['review']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <th><a href="" ng-click="setPredicate('updateDate', 'review');">Update Date<span ng-show="predicate['review'] === 'updateDate'"><i ng-show="!reverse['review']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['review']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+			<th><a href="" ng-click="setPredicate('securityMarkingType', 'review');">Security Type<span ng-show="predicate['review'] === 'securityMarkingType'"><i ng-show="!reverse['review']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['review']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 			<th>Action</th>
 		</tr>
 		<tr ng-repeat="review in reviews | orderBy:predicate['review']:reverse['review']" >
@@ -55,7 +56,8 @@ limitations under the License.
 				</ul>
 			</td>	
 			<td>{{review.username}}</td>
-			<td>{{review.updateDate | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
+      <td>{{review.updateDate | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>                                
+			<td>{{review.securityMarkingDescription}}</td>
 			<td style="padding:0px 3px !important; width: 200px;">&nbsp;						
 				<button class="btn  btn-warning btn-sm" ng-click="toggleReviewStatus(review);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>						
 			</td>

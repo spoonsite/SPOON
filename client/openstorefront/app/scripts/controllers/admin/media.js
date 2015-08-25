@@ -46,6 +46,22 @@
   };
   $scope.refreshMedia();
 
+
+  
+  $scope.loadLookup = function(lookup, entity, loader){
+    $scope.$emit('$TRIGGERLOAD', loader);
+
+    Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+      $scope.$emit('$TRIGGERUNLOAD', loader);
+      if (results) {
+        $scope[entity]= results;
+      }        
+    });      
+  };
+  $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
+
+
+
   $scope.$on('$REFRESH_MEDIA', function(){        
     $scope.refreshMedia();
   });    
@@ -99,6 +115,20 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url
       $scope.mediaUIForm = mediaUIForm;
       $scope.mediaUploader.uploadAll();   
     };
+
+    $scope.loadLookup = function(lookup, entity, loader){
+      $scope.$emit('$TRIGGERLOAD', loader);
+
+      Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+        $scope.$emit('$TRIGGERUNLOAD', loader);
+        if (results) {
+          $scope[entity]= results;
+        }        
+      });      
+    };
+    $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
+
+
     
     var getNewFileUpload = function () {
       return new FileUploader({
@@ -111,6 +141,9 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url
             item.formData.push({
               "generalMedia.name": $scope.mediaForm.name
             });
+            item.formData.push({
+              "generalMedia.securityMarkingType": $scope.mediaForm.securityMarkingType
+            });
           }
         },
         onSuccessItem: function (item, response, status, headers) {
@@ -118,7 +151,7 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url
 
           //check response for a fail ticket or a error model
           if (response.success) { 
-            
+
             $scope.mediaUploader.clearQueue();
             $scope.mediaUploader.cancelAll();            
             triggerAlert('Uploaded successfully', 'saveMedia', 'body', 3000);
@@ -126,7 +159,7 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url
             $scope.$emit('$TRIGGEREVENT', '$REFRESH_MEDIA');
           } else {
             if (response.errors) {  
-                                    
+
               var uploadError = response.errors.file;
               var enityError = response.errors.generalMedia;
               var errorMessage = (uploadError !== undefined) ? uploadError : ((enityError !== undefined)? '  ' + enityError : '');
