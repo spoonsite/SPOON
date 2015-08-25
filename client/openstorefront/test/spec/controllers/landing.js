@@ -1,22 +1,23 @@
-// 'use strict';
+ 'use strict';
 
-// describe('Controller: LandingCtrl', function () {
+ describe('Controller: LandingCtrl', function () {
 
-//   // load the controller's module
-//   beforeEach(module('openstorefrontApp'));
+   // load the controller's module
+   beforeEach(module('openstorefrontApp'));
 
-//   var LandingCtrl,
-//     scope;
+   var LandingCtrl,
+     scope;
 
-//   // Initialize the controller and a mock scope
-//   beforeEach(inject(function ($controller, $rootScope) {
-//     scope = $rootScope.$new();
-//     LandingCtrl = $controller('LandingCtrl', {
-//       $scope: scope
-//     });
-//   }));
+   // Initialize the controller and a mock scope
+   beforeEach(inject(function ($controller, $rootScope) {
+     scope = $rootScope.$new();
+     LandingCtrl = $controller('LandingCtrl', {
+       $scope: scope
+     });
+   }));
 
-//   it('should attach a list of awesomeThings to the scope', function () {
-//     expect(scope.awesomeThings.length).toBe(3);
-//   });
-// });
+   it('should have the correct initializations', function () {
+     expect(scope.data).toEqual([]);
+     expect(scope.landingRoute).toEqual(null);
+   });
+ });
