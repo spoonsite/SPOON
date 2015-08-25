@@ -180,10 +180,10 @@
 
   , template: function() {
       if (this.options.bsVersion == '2') {
-        return '<div class="combobox-container"><input type="hidden" /> <div class="input-append"> <input type="text" autocomplete="off" /> <span class="add-on dropdown-toggle" data-dropdown="dropdown"> <span class="caret"/> <i class="icon-remove"/> </span> </div> </div>'
+        return '<div class="combobox-container"><input type="hidden" tabindex="-1"/> <div class="input-append"> <input type="text" autocomplete="off" /> <span class="add-on dropdown-toggle" data-dropdown="dropdown"> <span class="caret"/> <i class="icon-remove"/> </span> </div> </div>'
       } else {
         // we added font-awesome icons for this one
-        return '<div class="combobox-container"> <input type="hidden" /> <div class="input-group"> <input type="text" autocomplete="off" /> <span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="fa fa-caret-down fa-fw" /> <span class="fa fa-times fa-fw" /> </span> </div> </div>'
+        return '<div class="combobox-container"> <input type="hidden" tabindex="-1"/> <div class="input-group"> <input type="text" autocomplete="off" /> <span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="fa fa-caret-down fa-fw" /> <span class="fa fa-times fa-fw" /> </span> </div> </div>'
       }
     }
 
@@ -327,7 +327,7 @@
       if (!this.shown) {return;}
 
       switch(e.keyCode) {
-        case 9: // tab
+        // case 9: // tab
         case 13: // enter
         case 27: // escape
           e.preventDefault();
@@ -348,7 +348,7 @@
     }
 
   , keydown: function (e) {
-      this.suppressKeyPressRepeat = ~$.inArray(e.keyCode, [40,38,9,13,27]);
+      this.suppressKeyPressRepeat = ~$.inArray(e.keyCode, [40,38,13,27]);
       this.move(e);
     }
 
@@ -368,10 +368,9 @@
         case 16: // shift
         case 17: // ctrl
         case 18: // alt
+        // case 9: // tab
           break;
 
-        // we don't want it to select on tab, but it was a default keyup
-        // case 9: // tab
         case 13: // enter
           if (!this.shown) {return;}
           this.select();

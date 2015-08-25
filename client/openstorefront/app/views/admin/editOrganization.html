@@ -1,0 +1,90 @@
+<div id="highlightEditModal">
+  <div class="modal-header">
+    <button type="button" title="Cancel Changes" class="btn btn-primary pull-right" ng-click="close()"><i class="fa fa-close"></i>&nbsp;Cancel</button>
+    <h3 style="display:inline-block; margin-top:0px; margin-bottom:0px; max-width:calc(100% - 90px)">{{editModeText}}</h3> 
+  </div> 
+  <div class="modal-body" id="editAttributeCodeForm" style=" padding: 20px 0px; ">
+    <form ng-submit="ok();" id="editLandingPages" style="margin: 0px;">
+      <h3 class="col-md-offset-2">Organization information</h3>
+      <div class="form-group" style="margin-bottom:0px;">
+        <label class="col-md-2" style="text-align:right;" for="title">Name</label>
+        <div class="col-md-10">
+          <input autofocus tabindex="1" type="text" class="form-control" id="title" placeholder="Name" ng-model="organization.name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label" style="text-align:right;">Description</label>
+        <div class="col-sm-10">
+          <textarea ckeditor="editorOptions" tabindex="2" id="description" name="description"  class="col-sm-10" style="height: 100px;" ng-model="organization.description" ng-watch="editorContentWatch"></textarea>        
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-md-2" style="text-align:right;" for="link">Organization Link</label>
+        <div class="col-md-10">
+          <input type="URL" class="form-control" tabindex="3" id="link" placeholder="Link to highlight" ng-model="organization.homeUrl">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label" style="text-align:right;">Organization Type</label>
+        <div class="col-sm-10">
+          <select smartselect type="text" class="form-control" tabindex="4" id="organization_securityType" name="organizationType" style="width:125px;display: inline" ng-model="organization.organizationType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in organizationTypes">
+            <option style="display:none" value="">Select a Type</option>
+          </select>
+        </div>        
+      </div>
+      <div style="clear: both"></div>
+      <hr>
+      <h3 class="col-md-offset-2">Main Contact information</h3>
+      <div class="form-group" style="margin-bottom:0px;">
+        <label class="col-md-2" style="text-align:right;" for="contactName">Contact Name</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" id="contactName" tabindex="5" placeholder="Contact Name" ng-model="organization.contactName">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0px;">
+        <label class="col-md-2" style="text-align:right;" for="contactPhone">Phone Number</label>
+        <div class="col-md-10">
+          <input type="tel" class="form-control" id="contactPhone" tabindex="6" placeholder="xxx-xxx-xxxx" ng-model="organization.contactPhone">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0px;">
+        <label class="col-md-2" style="text-align:right;" for="contactEmail">Email</label>
+        <div class="col-md-10">
+          <input type="email" class="form-control" id="contactEmail" tabindex="7" placeholder="Email" ng-model="organization.contactEmail">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0px;">
+        <label class="col-md-2" style="text-align:right;" for="agency">Agency</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" id="agency" tabindex="8" placeholder="Agency" ng-model="organization.agency">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0px;">
+        <label class="col-md-2" style="text-align:right;" for="department">Department</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" id="department" tabindex="9" placeholder="Department" ng-model="organization.department">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0px;">
+        <label class="col-md-2" style="text-align:right;" for="address">Address</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" id="address" tabindex="10" placeholder="Address" ng-model="organization.address">
+        </div>
+      </div>
+      <div class="form-group" show-errors >
+        <label class="col-sm-2 control-label" style="text-align:right;">Security Type</label>
+        <div class="col-sm-10">
+          <select smartselect type="text" class="form-control" tabindex="11" id="tag_securityType" name="securityType" style="width:125px;display: inline" ng-model="tagForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+            <option style="display:none" value="">Select a Type</option>
+          </select>
+        </div>        
+      </div>
+      <div style="clear: both"></div>
+      <hr>
+      <div style="text-align: center; padding:5px;">
+        <button type="submit" style="display:inline-block;" class="btn btn-default" tabindex="11"><i class="fa fa-save"></i>&nbsp;Save Changes</button>
+        <button type="button" style="display:inline-block;" class="btn btn-primary" tabindex="12" ng-click="close()"><i class="fa fa-close"></i>Cancel</button>
+      </div>
+    </form>
+  </div>  
+</div>
