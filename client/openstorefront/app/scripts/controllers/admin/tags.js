@@ -43,6 +43,19 @@
   };
   $scope.loadTags();    
 
+  $scope.loadLookup = function(lookup, entity, loader){
+    $scope.$emit('$TRIGGERLOAD', loader);
+
+    Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+      $scope.$emit('$TRIGGERUNLOAD', loader);
+      if (results) {
+        $scope[entity]= results;
+      }        
+    });      
+  };
+  $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
+
+
   var compare = function (a, b) {
     return ((a.description == b.description) ? 0 : ((a.description > b.description) ? 1 : -1));
   }

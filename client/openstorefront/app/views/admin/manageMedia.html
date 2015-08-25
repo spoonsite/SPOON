@@ -31,7 +31,8 @@ limitations under the License.
 				<th><a href="" ng-click="setPredicate('orignalFileName', 'media');">Filename <span ng-show="predicate['media']  === 'orignalFileName'"><i ng-show="!reverse['media'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['media']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 				<th><a href="" ng-click="setPredicate('mimeType', 'media');">Mime Type <span ng-show="predicate['media']  === 'mimeType'"><i ng-show="!reverse['media'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['media']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 				<th><a href="" ng-click="setPredicate('updateUser', 'media');">Update User <span ng-show="predicate['media']  === 'updateUser'"><i ng-show="!reverse['media'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['media']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-				<th><a href="" ng-click="setPredicate('updateDts', 'media');">Update Date <span ng-show="predicate['media']  === 'updateDts'"><i ng-show="!reverse['media'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['media']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+        <th><a href="" ng-click="setPredicate('updateDts', 'media');">Update Date <span ng-show="predicate['media']  === 'updateDts'"><i ng-show="!reverse['media'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['media']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+				<th><a href="" ng-click="setPredicate('securityMarkingType', 'media');">Security Type<span ng-show="predicate['media']  === 'securityMarkingType'"><i ng-show="!reverse['media'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['media']" class="fa fa-sort-alpha-desc"></i></span></a></th>
 				<th>Action</th>
 			</tr>
 			<tr ng-repeat="item in media | orderBy:predicate['media']:reverse['media']" >
@@ -40,7 +41,8 @@ limitations under the License.
 				<td>{{item.orignalFileName}}</td>
 				<td>{{item.mimeType}}</td>
 				<td>{{item.updateUser}}</td>
-				<td>{{item.updateDts | date:'MM/dd/yyyy h:mm a'}}</td>				
+        <td>{{item.updateDts | date:'MM/dd/yyyy h:mm a'}}</td>        
+				<td>{{item.securityMarkingDescription}}</td>
 				<td style="padding:0px 3px !important;  width: 200px;">&nbsp;
 					<button class="btn btn-danger btn-sm" ng-click="removeMedia(item);"  title="Remove Media"><i class="fa fa-trash"></i></button>
           <span dynamichtml="getMediaHTML(item)"></span>

@@ -29,17 +29,17 @@
                     <div class="results-content-title" ng-click="clickCallback(item.componentId, item)">
                       <div ng-show="blankTarget" style="display:inline-block">
                         <a ng-if="isArticle(item)" ng-href="#/{{item.listingType === 'Article'?  'landing': 'single'}}?{{( item.listingType === 'Article'?  'type=' + item.articleAttributeType + '&code=' + item.articleAttributeCode: 'id='+item.componentId)}}" target="_blank">
-                          <div class="results-content-title-content" ><span ng-bind="item.name"></span>
+                          <div class="results-content-title-content" ><span ng-bind="item.name"></span><classification ls style="font-size:14px;" ng-model="item"></classification>
                             <span style="font-size:13px;">&nbsp;(Article)</span>
                           </div>
                         </a>
                         <a ng-if="!isArticle(item)" ng-href="#/single?id={{item.componentId}}" target="_blank">
-                          <div class="results-content-title-content" ><span ng-bind="item.name"></span>
+                          <div class="results-content-title-content" ><span ng-bind="item.name"></span><classification ls style="font-size:14px;" ng-model="item"></classification>
                           </div>
                         </a>
                       </div>
                       <div ng-show="!blankTarget" id="{{item.componentId}}" style="display:inline-block">
-                        <div class="results-content-title-content" ><span ng-bind="item.name"></span>
+                        <div class="results-content-title-content" ><span ng-bind="item.name"></span><classification ls style="font-size:14px;" ng-model="item"></classification>
                           <br ng-show="item.attributes.length">
 
                           <div bindonce ng-repeat="attribute in item.attributes" style="display:inline-block;">

@@ -15,9 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.usecase;
 
-import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.util.ReflectionUtil;
-import edu.usu.sdl.openstorefront.util.StringProcessor;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import org.junit.Test;
 
 /**
@@ -34,7 +34,7 @@ public class PersistenceUseCase
 		for (int i = 0; i < 100; i++) {
 			attributeType = new AttributeType();
 			long startTime = System.currentTimeMillis();
-			ReflectionUtil.setDefaultsOnFields(attributeType);
+			EntityUtil.setDefaultsOnFields(attributeType);
 			System.out.println("Time: " + (System.currentTimeMillis() - startTime));
 		}
 

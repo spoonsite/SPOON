@@ -16,13 +16,13 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.view.ArticleTrackingCompleteWrapper;
+import edu.usu.sdl.openstorefront.core.view.ArticleTrackingResult;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingCompleteWrapper;
-import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingResult;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.io.StringWriter;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
@@ -80,13 +80,13 @@ public class ArticleTrackingResource
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		writer.writeNext(new String[]{"Title",
-			"Attribute Type",
-			"Attribute Code",
-			"Create Date",
-			"Event",
-			"Tracking ID",
-			"Create User",
-			"Client IP"
+									  "Attribute Type",
+									  "Attribute Code",
+									  "Create Date",
+									  "Event",
+									  "Tracking ID",
+									  "Create User",
+									  "Client IP"
 		});
 		data.append(stringWriter.toString());
 

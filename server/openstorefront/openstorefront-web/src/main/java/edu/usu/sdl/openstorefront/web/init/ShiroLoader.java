@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.init;
 
-import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import java.io.File;
 import javax.servlet.ServletContextEvent;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;

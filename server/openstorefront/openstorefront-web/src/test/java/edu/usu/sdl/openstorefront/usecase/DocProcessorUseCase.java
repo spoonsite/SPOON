@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.usecase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.usu.sdl.openstorefront.util.StringProcessor;
-import edu.usu.sdl.openstorefront.web.rest.model.UserProfileView;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.view.UserProfileView;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
-
-
 
 /**
  *
@@ -31,16 +28,15 @@ import org.junit.Test;
  */
 public class DocProcessorUseCase
 {
-	
+
 	@Test
 	public void testProcessor() throws JsonProcessingException
 	{
 		Set<String> fields = new HashSet<>();
 		fields.add("username");
-		
+
 		String json = StringProcessor.stripeFieldJSON(StringProcessor.defaultObjectMapper().writeValueAsString(new UserProfileView()), fields);
 		System.out.println(json);
 	}
-	
-	
+
 }

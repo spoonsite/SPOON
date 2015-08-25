@@ -12,7 +12,9 @@
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Type</div>
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><input ng-disabled="!addTypeFlg" class="form-control" type="text" id="attributeType" ng-model="type.attributeType"  ng-maxlength="20" maxlength="20" placeholder="Type key" required/></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Default Code <i ng-show="!typeCodes.length" class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="top" data-title="To set the default code for this type, you must have codes to select from." data-trigger="hover"></i></div>
-        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><select ng-disabled="!typeCodes.length" class="form-control" type="text" id="defaultAttributeCode" ng-model="type.defaultAttributeCode"  ng-options="code.code as code.label for code in defaultCodesLookup"/></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><select smartselect ng-disabled="!typeCodes.length" class="form-control" type="text" id="defaultAttributeCode" ng-model="type.defaultAttributeCode"  ng-options="code.code as code.label for code in defaultCodesLookup"><option style="display:none" value="">Select a Code</option></select></div>
+        <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Security Type <i ng-show="!securityTypes.length" class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="top" data-title="To set the default code for this type, you must have codes to select from." data-trigger="hover"></i></div>
+        <div class="col-sm-10" style="padding-left:0px; padding-right:0px;"><select smartselect ng-disabled="!securityTypes.length" class="form-control" type="text" id="securityMarkingType" ng-model="type.securityMarkingType"  ng-options="code.code as code.description for code in securityTypes"><option style="display:none" value="">Select a Type</option></select></div>
         <div class="col-sm-2" style="padding-left:0px; padding-right:0px;">Detailed Description</div>
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;">
           <textarea ckeditor="editorOptions" id="detailedDescription" ng-model="type.detailedDescription" ng-watch="type.detailedDescription"></textarea>
@@ -46,6 +48,7 @@
               <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('code');">Code&nbsp;<span ng-show="predicate === 'code'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
               <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('description');">Description&nbsp;<span ng-show="predicate === 'description'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th>
               <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('highlightStyle');">Highlight Style&nbsp;<span ng-show="predicate === 'highlightStyle'"><i ng-show="!reverse" class="fa fa-sort-numeric-asc"></i><i ng-show="reverse" class="fa fa-sort-numeric-desc"></i></span></a></th>
+              <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('securityMarkingType');">Security Type&nbsp;<span ng-show="predicate === 'securityMarkingType'"><i ng-show="!reverse" class="fa fa-sort-numeric-asc"></i><i ng-show="reverse" class="fa fa-sort-numeric-desc"></i></span></a></th>
               <th style="padding: 8px 3px; min-width: 150px;"><a href="">Actions</a></th>
             </tr>
             <tr>
@@ -54,6 +57,7 @@
               <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('sortOrder');">Sort Order&nbsp;<span ng-show="predicate === 'sortOrder'"><i ng-show="!reverse" class="fa fa-sort-numeric-asc"></i><i ng-show="reverse" class="fa fa-sort-numeric-desc"></i></span></a></th>
               <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('architectureCode');">Architecture Code&nbsp;<span ng-show="predicate === 'architectureCode'"><i ng-show="!reverse" class="fa fa-sort-numeric-asc"></i><i ng-show="reverse" class="fa fa-sort-numeric-desc"></i></span></a></th>
               <th style="padding: 8px 3px;  overflow:hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="" ng-click="setPredicate('badgeUrl');">Badge Url&nbsp;<span ng-show="predicate === 'badgeUrl'"><i ng-show="!reverse" class="fa fa-sort-numeric-asc"></i><i ng-show="reverse" class="fa fa-sort-numeric-desc"></i></span></a></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -63,6 +67,7 @@
               <td ng-show="code.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 1px;" popover data-trigger="hover" data-placement="right" data-html="true"  data-selector="" data-original-title="Description" data-container="#editTypeModalDiv" data-content="{{getCodeDesc(code.description)}}">{{code.description}}</td>
               <td ng-show="!code.description" style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 1px;"></td>
               <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 1px;" class="{{code.highlightStyle}}">{{code.highlightStyle}}</td>
+              <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 1px;" class="{{code.highlightStyle}}">{{code.securityMarkingDescription}}</td>
               <td style="padding: 0px 3px;">
                 <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editCode(code)" ng-disabled="code.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button>
                 <button type="button" title="Activate/Deactivate Attribute" class="btn btn-warning btn-sm" ng-click="changeActivity(code)" ng-class="code.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button>
@@ -76,6 +81,7 @@
               <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 1px;">{{code.sortOrder}}</td>
               <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 1px;">{{code.architectureCode}}</td>
               <td style="padding:5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 1px;">{{code.badgeUrl}}</td>
+              <td></td>
             </tr>
           </tbody>
         </table>

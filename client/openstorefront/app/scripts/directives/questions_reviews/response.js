@@ -48,11 +48,21 @@ app.directive('response', ['business', '$timeout', function (Business, $timeout)
                 scope.post.organization = scope.user.info.organization;
               }
             } else {
-              $scope.userTypeCodes = [];
+              scope.userTypeCodes = [];
             }
           });
         }
       });
+      scope.loadLookup = function(lookup, entity, loader){
+        scope.$emit('$TRIGGERLOAD', loader);
+        Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+          scope.$emit('$TRIGGERUNLOAD', loader);
+          if (results) {
+            scope[entity]= results;
+          }        
+        });      
+      };
+      scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
 
       scope.submitResponse = function(event) {
 

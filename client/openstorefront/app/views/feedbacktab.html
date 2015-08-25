@@ -37,7 +37,7 @@ limitations under the License.
                     <button class="btn btn-default" ng-if="revs.username === user.info.username || user.info.admin === true" ng-click="deleteReview(revs.reviewId, revs.componentId)">Delete&nbsp;<i class="fa fa-trash-o"></i></button>
                   </div>
                   <div ng-if="!revs.edit">
-                    <h4 style="margin-top: 0px"><strong>{{revs.title}}</strong>
+                    <h4 style="margin-top: 0px"><strong><classification ng-model="revs"></classification>{{revs.title}}</strong>
                     </h4>
                     <div class="container component2-div">
                       <div class="col-sm-12">
