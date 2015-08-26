@@ -15,12 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.web.test.system;
 
-import edu.usu.sdl.openstorefront.service.api.LookupService;
+import edu.usu.sdl.openstorefront.core.api.LookupService;
+import edu.usu.sdl.openstorefront.core.api.model.AsyncTaskCallback;
+import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
+import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
+import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
-import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
-import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
-import edu.usu.sdl.openstorefront.service.manager.resource.AsyncTaskCallback;
-import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +73,7 @@ public class AsyncProxyTest
 			}
 		});
 
-		LookupService asyncLookup = service.getAyncProxy(service.getLookupService(), taskRequest);
+		LookupService asyncLookup = service.getAsyncProxy(service.getLookupService(), taskRequest);
 		asyncLookup.findLookup(ErrorTypeCode.class);
 
 		results.append("Lookup style: <br>");

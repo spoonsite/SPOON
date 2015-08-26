@@ -15,14 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.web.action;
 
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.view.JsonResponse;
 import edu.usu.sdl.openstorefront.security.HeaderRealm;
-import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
-import edu.usu.sdl.openstorefront.storage.model.UserProfile;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.web.init.ShiroAdjustedFilter;
-import edu.usu.sdl.openstorefront.web.viewmodel.JsonResponse;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;

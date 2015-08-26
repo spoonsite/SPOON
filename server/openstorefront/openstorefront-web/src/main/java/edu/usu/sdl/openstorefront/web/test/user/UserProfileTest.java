@@ -15,8 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.test.user;
 
-import edu.usu.sdl.openstorefront.storage.model.UserProfile;
-import edu.usu.sdl.openstorefront.storage.model.UserTypeCode;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 
 /**

@@ -1382,6 +1382,28 @@ componentservice.getComponentTags = function (componentId) {
   return deferred.promise;
 };
 
+
+componentservice.getComponentTagViews = function (componentId) {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/tagsview'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+};
+
 componentservice.getComponentAllTags = function () {
   var deferred = $q.defer();
 

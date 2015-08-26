@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="com.samaxes.filter.util.HTTPCacheHeader"%>
-<%@page  import="edu.usu.sdl.openstorefront.util.SecurityUtil" %>
+<%@page  import="edu.usu.sdl.openstorefront.security.SecurityUtil" %>
 <%@page import="edu.usu.sdl.openstorefront.security.HeaderRealm"%>
 <!DOCTYPE html>
 <html>

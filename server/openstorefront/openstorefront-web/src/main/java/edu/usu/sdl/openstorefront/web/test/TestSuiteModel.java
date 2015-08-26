@@ -1,8 +1,8 @@
 package edu.usu.sdl.openstorefront.web.test;
 
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.sort.BeanComparator;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import java.util.ArrayList;
 import java.util.List;
 import net.sourceforge.stripes.util.ResolverUtil;

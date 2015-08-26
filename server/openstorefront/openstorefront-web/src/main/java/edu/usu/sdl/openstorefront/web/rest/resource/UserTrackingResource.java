@@ -16,14 +16,14 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.UserTracking;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.UserTrackingResult;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.storage.model.UserTracking;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.rest.model.UserTrackingResult;
 import java.io.StringWriter;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
@@ -84,17 +84,17 @@ public class UserTrackingResource
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		writer.writeNext(new String[]{"User Name",
-			"Organization",
-			"User Type",
-			"Event Date",
-			"Event",
-			"Client IP",
-			"Browser",
-			"Browser Version",
-			"OS Platform",
-			"User Agent",
-			"Device Type",
-			"Tracking ID"
+									  "Organization",
+									  "User Type",
+									  "Event Date",
+									  "Event",
+									  "Client IP",
+									  "Browser",
+									  "Browser Version",
+									  "OS Platform",
+									  "User Agent",
+									  "Device Type",
+									  "Tracking ID"
 		});
 
 		data.append(stringWriter.toString());

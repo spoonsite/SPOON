@@ -15,9 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.test.user;
 
-import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
-import edu.usu.sdl.openstorefront.storage.model.UserWatch;
-import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.core.entity.UserWatch;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import edu.usu.sdl.openstorefront.web.test.component.ComponentTest;
 

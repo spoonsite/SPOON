@@ -15,10 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.web.rest;
 
+import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
+import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
+import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
-import edu.usu.sdl.openstorefront.storage.model.ErrorTypeCode;
-import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;

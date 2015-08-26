@@ -28,6 +28,19 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
     });
   }
 
+  $scope.loadLookup = function(lookup, entity, loader){
+    $scope.$emit('$TRIGGERLOAD', loader);
+
+    Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+      $scope.$emit('$TRIGGERUNLOAD', loader);
+      if (results) {
+        $scope[entity]= results;
+      }        
+    });      
+  };
+  $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
+
+
   var resetVars = function() {
     var deferred = $q.defer();
     Business.userservice.getCurrentUserProfile().then(function(profile) {
@@ -164,6 +177,7 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
     if (reviewId) {
       body.componentReviewId = reviewId;
     }
+    body.securityMarkingType = review.securityMarkingType;
     Business.componentservice.saveCompleteReview(componentId, body, reviewId).then(function(result){
       if (!revs) {
         $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', componentId);
