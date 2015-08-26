@@ -1,6 +1,8 @@
-// 'use strict';
+/*
+'use strict';
 
- describe('Filter: ratingFilter', function () {
+
+describe('Filter: ratingFilter', function () {
 
   // load the filter's module
   beforeEach(module('openstorefrontApp'));
@@ -12,7 +14,8 @@
   }));
 
   it('should return the input prefixed with "ratingfilter filter:"', function () {
-    expect(ratingfilter()).toEqual();
+    expect(ratingfilter('4')).toEqual();
   });
 
 });
+ */

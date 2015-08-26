@@ -39,9 +39,10 @@
        { label: 'Media', location: 'views/admin/manageMedia.html', toolTitle: 'Manage General Media', detailedDesc: 'Media that can be used for articles and badges', key: 'media' }, 
        { label: 'Questions', location: 'views/admin/manageQuestions.html', toolTitle: 'Manage Question', detailedDesc: 'User questions and answers about a component.', key: 'questions' }, 
        { label: 'Reviews', location: 'views/admin/manageReviews.html', toolTitle: 'Manage User Reivews', detailedDesc: 'User reviews and ratings about a component.', key: 'reviews' }, 
-       { label: 'Tags', location: 'views/admin/manageTags.html', toolTitle: 'Manage Tags', detailedDesc: 'Tags are user-definable labels that are associated to a component.', key: 'tags' }, 
+       { label: 'Tags', location: 'views/admin/manageTags.html', toolTitle: 'Manage Tags', detailedDesc: 'Tags are user-definable labels that are associated to a component.', key: 'tags' },
+       { label: 'Organizations', location: 'views/admin/manageOrganizations.html', toolTitle: 'Organization Management', detailedDesc: "Organizations found within the metadata in the site.", key: 'ORGANIZATIONS' },
        { label: 'User Profiles', location: 'views/admin/manageUserProfiles.html', toolTitle: 'User Profile Management', detailedDesc: 'A user profile represents a user in the system and contains the user\'s information.', key: 'USER_PROFILE' }]);
-   expect(scope.systemTools).toEqual([ 
+   expect(scope.systemTools).toEqual([
        { label: 'Alerts', location: 'views/admin/manageAlerts.html', toolTitle: 'Manage Alerts', detailedDesc: 'Alerts are triggers set up to watch the data, that an administrator can subscribe to.', key: 'alerts' }, 
        { label: 'Jobs', location: 'views/admin/manageJobs.html', toolTitle: 'Job Management', detailedDesc: 'Allows for controling and viewing scheduled jobs and background tasks', key: 'JOBS' }, 
        { label: 'Reports', location: 'views/admin/manageReports.html', toolTitle: 'Manage Reports', detailedDesc: 'System generated hard reports.', key: 'reports' }, 
