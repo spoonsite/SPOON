@@ -16,82 +16,83 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.util.NetworkUtil;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.QueryType;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
+import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
+import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSectionPk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
+import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
+import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
+import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
+import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
+import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
+import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReviewCon;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReviewConPk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
+import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.sort.SortUtil;
+import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
+import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
+import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
+import edu.usu.sdl.openstorefront.core.view.ComponentContactView;
+import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
+import edu.usu.sdl.openstorefront.core.view.ComponentEvaluationSectionView;
+import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
+import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
+import edu.usu.sdl.openstorefront.core.view.ComponentIntegrationView;
+import edu.usu.sdl.openstorefront.core.view.ComponentMediaView;
+import edu.usu.sdl.openstorefront.core.view.ComponentMetadataView;
+import edu.usu.sdl.openstorefront.core.view.ComponentPrintView;
+import edu.usu.sdl.openstorefront.core.view.ComponentQuestionResponseView;
+import edu.usu.sdl.openstorefront.core.view.ComponentQuestionView;
+import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
+import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
+import edu.usu.sdl.openstorefront.core.view.ComponentReviewProCon;
+import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.ComponentTrackingWrapper;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
+import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
+import edu.usu.sdl.openstorefront.core.view.TagView;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
-import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.service.query.QueryType;
-import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
-import edu.usu.sdl.openstorefront.sort.BeanComparator;
-import edu.usu.sdl.openstorefront.sort.SortUtil;
-import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
-import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
-import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
-import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
-import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSectionPk;
-import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
-import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
-import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
-import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
-import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
-import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
-import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
-import edu.usu.sdl.openstorefront.storage.model.ComponentRelationship;
-import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
-import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
-import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
-import edu.usu.sdl.openstorefront.storage.model.ComponentReviewConPk;
-import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
-import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
-import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
-import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
-import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
-import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
-import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.util.StringProcessor;
-import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationSectionView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependencyView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentFilterParams;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentMediaView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadataView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentPrintView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentRelationshipView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentResourceView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingWrapper;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
-import edu.usu.sdl.openstorefront.web.rest.model.TagView;
-import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
-import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -319,7 +320,8 @@ public class ComponentRESTResource
 			List<ComponentAll> fullComponents = new ArrayList<>();
 			fullComponents.add(componentAll);
 			return exportComponents(fullComponents);
-		} else {
+		}
+		else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}
@@ -351,7 +353,8 @@ public class ComponentRESTResource
 				File entry = new TFile(archiveName + "/components.json");
 				try (Writer writer = new TFileWriter(entry)) {
 					writer.write(componentJson);
-				} catch (IOException io) {
+				}
+				catch (IOException io) {
 					throw new OpenStorefrontRuntimeException("Unable to export components.", io);
 				}
 
@@ -398,12 +401,15 @@ public class ComponentRESTResource
 				});
 				response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.zip\"");
 				return response.build();
-			} catch (JsonProcessingException | FsSyncException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to export components.", ex);
-			} catch (IOException ex) {
+			}
+			catch (JsonProcessingException | FsSyncException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to export components.", ex);
 			}
-		} else {
+			catch (IOException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to export components.", ex);
+			}
+		}
+		else {
 			Response.ResponseBuilder response = Response.ok("[]");
 			response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.json\"");
 			return response.build();
@@ -480,7 +486,8 @@ public class ComponentRESTResource
 		for (ComponentQuestionResponse componentQuestionResponse : componentQuestionResponses) {
 			if (responseMap.containsKey(componentQuestionResponse.getQuestionId())) {
 				responseMap.get(componentQuestionResponse.getQuestionId()).add(ComponentQuestionResponseView.toView(componentQuestionResponse));
-			} else {
+			}
+			else {
 				List<ComponentQuestionResponseView> responseViews = new ArrayList<>();
 				responseViews.add(ComponentQuestionResponseView.toView(componentQuestionResponse));
 				responseMap.put(componentQuestionResponse.getQuestionId(), responseViews);
@@ -510,7 +517,8 @@ public class ComponentRESTResource
 			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
 			RequiredForComponent savedComponent = service.getComponentService().saveComponent(component);
 			return Response.created(URI.create("v1/resource/components/" + savedComponent.getComponent().getComponentId())).entity(savedComponent).build();
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -552,7 +560,8 @@ public class ComponentRESTResource
 			component.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
 			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
 			return Response.ok(service.getComponentService().saveComponent(component)).build();
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -600,13 +609,14 @@ public class ComponentRESTResource
 		if (type.equals("print")) {
 			ComponentDetailView temp = service.getComponentService().getComponentDetails(componentId);
 			componentPrint = ComponentPrintView.toView(temp);
-		} else {
+		}
+		else {
 			componentDetail = service.getComponentService().getComponentDetails(componentId);
 		}
 		//Track Views
 		if (componentDetail != null || componentPrint != null) {
 			ComponentTracking componentTracking = new ComponentTracking();
-			componentTracking.setClientIp(SecurityUtil.getClientIp(request));
+			componentTracking.setClientIp(NetworkUtil.getClientIp(request));
 			componentTracking.setComponentId(componentId);
 			componentTracking.setEventDts(TimeUtil.currentDate());
 			componentTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
@@ -618,9 +628,11 @@ public class ComponentRESTResource
 		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
 		if (componentDetail != null) {
 			return sendSingleEntityResponse(componentDetail);
-		} else if (componentPrint != null) {
+		}
+		else if (componentPrint != null) {
 			return sendSingleEntityResponse(componentPrint);
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -844,7 +856,8 @@ public class ComponentRESTResource
 			attribute.setCreateUser(SecurityUtil.getCurrentUserName());
 			attribute.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentAttribute(attribute);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		return Response.created(URI.create("v1/resource/components/"
@@ -1000,12 +1013,14 @@ public class ComponentRESTResource
 			dependency.setCreateUser(SecurityUtil.getCurrentUserName());
 			dependency.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentDependency(dependency);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + dependency.getComponentId() + "/dependency/" + dependency.getDependencyId())).entity(dependency).build();
-		} else {
+		}
+		else {
 			return Response.ok(dependency).build();
 		}
 	}
@@ -1142,12 +1157,14 @@ public class ComponentRESTResource
 			contact.setCreateUser(SecurityUtil.getCurrentUserName());
 			contact.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentContact(contact);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + contact.getComponentId() + "/contacts/" + contact.getContactId())).entity(contact).build();
-		} else {
+		}
+		else {
 			return Response.ok(contact).build();
 		}
 	}
@@ -1242,7 +1259,8 @@ public class ComponentRESTResource
 				section.setUpdateUser(SecurityUtil.getCurrentUserName());
 			}
 			service.getComponentService().saveComponentEvaluationSection(sections);
-		} else {
+		}
+		else {
 			return Response.ok(allValidationResult.toRestError()).build();
 		}
 		return Response.ok().build();
@@ -1299,14 +1317,16 @@ public class ComponentRESTResource
 			section.setCreateUser(SecurityUtil.getCurrentUserName());
 			section.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentEvaluationSection(section);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/"
 					+ section.getComponentId() + "/sections/"
 					+ StringProcessor.urlEncode(section.getComponentEvaluationSectionPk().getEvaluationSection()))).entity(section).build();
-		} else {
+		}
+		else {
 			return Response.ok(section).build();
 		}
 	}
@@ -1487,12 +1507,14 @@ public class ComponentRESTResource
 			resource.setCreateUser(SecurityUtil.getCurrentUserName());
 			resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentResource(resource);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + resource.getComponentId() + "/resources/" + resource.getResourceId())).entity(resource).build();
-		} else {
+		}
+		else {
 			return Response.ok(resource).build();
 		}
 	}
@@ -1665,12 +1687,14 @@ public class ComponentRESTResource
 			media.setCreateUser(SecurityUtil.getCurrentUserName());
 			media.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMedia(media);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + media.getComponentId() + "/media/" + media.getComponentMediaId())).entity(media).build();
-		} else {
+		}
+		else {
 			return Response.ok(media).build();
 		}
 	}
@@ -1821,12 +1845,14 @@ public class ComponentRESTResource
 			metadata.setCreateUser(SecurityUtil.getCurrentUserName());
 			metadata.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentMetadata(metadata);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + metadata.getComponentId() + "/metadata/" + metadata.getMetadataId())).entity(metadata).build();
-		} else {
+		}
+		else {
 			return Response.ok(metadata).build();
 		}
 	}
@@ -1875,7 +1901,8 @@ public class ComponentRESTResource
 		for (ComponentQuestionResponse componentQuestionResponse : componentQuestionResponses) {
 			if (responseMap.containsKey(componentQuestionResponse.getQuestionId())) {
 				responseMap.get(componentQuestionResponse.getQuestionId()).add(ComponentQuestionResponseView.toView(componentQuestionResponse));
-			} else {
+			}
+			else {
 				List<ComponentQuestionResponseView> responseViews = new ArrayList<>();
 				responseViews.add(ComponentQuestionResponseView.toView(componentQuestionResponse));
 				responseMap.put(componentQuestionResponse.getQuestionId(), responseViews);
@@ -2025,12 +2052,14 @@ public class ComponentRESTResource
 			question.setCreateUser(SecurityUtil.getCurrentUserName());
 			question.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestion(question);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + question.getComponentId() + "/questions/" + question.getQuestionId())).entity(question).build();
-		} else {
+		}
+		else {
 			return Response.ok(question).build();
 		}
 	}
@@ -2188,13 +2217,15 @@ public class ComponentRESTResource
 			response.setCreateUser(SecurityUtil.getCurrentUserName());
 			response.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentQuestionResponse(response);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 
 			return Response.created(URI.create("v1/resource/components/" + response.getComponentId() + "/questions/" + response.getQuestionId() + "/responses/" + response.getResponseId())).entity(response).build();
-		} else {
+		}
+		else {
 			return Response.ok(response).build();
 		}
 	}
@@ -2347,12 +2378,14 @@ public class ComponentRESTResource
 			review.setCreateUser(SecurityUtil.getCurrentUserName());
 			review.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getComponentService().saveComponentReview(review);
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + review.getComponentId() + "/review/" + review.getComponentReviewId())).entity(review).build();
-		} else {
+		}
+		else {
 			return Response.ok(review).build();
 		}
 	}
@@ -2409,6 +2442,7 @@ public class ComponentRESTResource
 		componentReview.setTitle(review.getTitle());
 		componentReview.setUserTimeCode(review.getUserTimeCode());
 		componentReview.setUserTypeCode(review.getUserTypeCode());
+		componentReview.setSecurityMarkingType(review.getSecurityMarkingType());
 
 		List<ComponentReviewPro> pros = new ArrayList<>();
 		for (ComponentReviewProCon pro : review.getPros()) {
@@ -2435,7 +2469,8 @@ public class ComponentRESTResource
 		}
 		if (post) {
 			return Response.created(URI.create("v1/resource/components/" + componentReview.getComponentId() + "/review/" + componentReview.getComponentReviewId())).entity(review).build();
-		} else {
+		}
+		else {
 			return Response.ok(review).build();
 		}
 	}
@@ -2537,10 +2572,12 @@ public class ComponentRESTResource
 					conCode = service.getLookupService().getLookupEnityByDesc(ReviewCon.class, text);
 					if (conCode == null) {
 						pk.setReviewCon(null);
-					} else {
+					}
+					else {
 						pk.setReviewCon(conCode.getCode());
 					}
-				} else {
+				}
+				else {
 					pk.setReviewCon(conCode.getCode());
 				}
 				con.setComponentReviewConPk(pk);
@@ -2558,7 +2595,8 @@ public class ComponentRESTResource
 							+ "/reviews/" + con.getComponentReviewConPk().getComponentReviewId()
 							+ "/cons/" + con.getComponentReviewConPk().getReviewCon())).entity(con).build();
 
-				} else {
+				}
+				else {
 					response = Response.ok(validationResult.toRestError()).build();
 				}
 			}
@@ -2663,10 +2701,12 @@ public class ComponentRESTResource
 					proCode = service.getLookupService().getLookupEnityByDesc(ReviewPro.class, text);
 					if (proCode == null) {
 						pk.setReviewPro(null);
-					} else {
+					}
+					else {
 						pk.setReviewPro(proCode.getCode());
 					}
-				} else {
+				}
+				else {
 					pk.setReviewPro(proCode.getCode());
 				}
 				pro.setComponentReviewProPk(pk);
@@ -2683,7 +2723,8 @@ public class ComponentRESTResource
 					response = Response.created(URI.create("v1/resource/components/" + pro.getComponentId()
 							+ "/reviews/" + pro.getComponentReviewProPk().getComponentReviewId()
 							+ "/pros/" + pro.getComponentReviewProPk().getReviewPro())).entity(pro).build();
-				} else {
+				}
+				else {
 					response = Response.ok(validationResult.toRestError()).build();
 				}
 			}
@@ -2713,6 +2754,19 @@ public class ComponentRESTResource
 			@RequiredParam String componentId)
 	{
 		return service.getComponentService().getBaseComponent(ComponentTag.class, componentId);
+	}
+
+	@GET
+	@APIDescription("Get all the tag list for a specified component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(TagView.class)
+	@Path("/{id}/tagsview")
+	public List<TagView> getComponentTagView(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		List<ComponentTag> tags = service.getComponentService().getBaseComponent(ComponentTag.class, componentId);
+		return TagView.toView(tags);
 	}
 
 	@GET
@@ -2823,7 +2877,8 @@ public class ComponentRESTResource
 					tag.setCreateUser(SecurityUtil.getCurrentUserName());
 					tag.setUpdateUser(SecurityUtil.getCurrentUserName());
 					verified.add(tag);
-				} else {
+				}
+				else {
 					valid = Boolean.FALSE;
 					unVerified.add(validationResult.toRestError());
 				}
@@ -2837,16 +2892,19 @@ public class ComponentRESTResource
 					{
 					};
 					return Response.created(URI.create("v1/resource/components/" + verified.get(0).getComponentId() + "/tags/" + verified.get(0).getTagId())).entity(entity).build();
-				} else {
+				}
+				else {
 					return Response.notAcceptable(null).build();
 				}
-			} else {
+			}
+			else {
 				GenericEntity<List<RestErrorModel>> entity = new GenericEntity<List<RestErrorModel>>(Lists.newArrayList(unVerified))
 				{
 				};
 				return Response.ok(entity).build();
 			}
-		} else {
+		}
+		else {
 			return Response.notAcceptable(null).build();
 		}
 	}
@@ -2883,7 +2941,8 @@ public class ComponentRESTResource
 			if (cont) {
 				service.getComponentService().saveComponentTag(tag);
 			}
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		return Response.created(URI.create("v1/resource/components/" + tag.getComponentId() + "/tags/" + tag.getTagId())).entity(tag).build();
@@ -3111,7 +3170,8 @@ public class ComponentRESTResource
 		if (validationResult.valid()) {
 			service.getComponentService().saveComponentIntegration(integration);
 			return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -3135,10 +3195,12 @@ public class ComponentRESTResource
 			if (validationResult.valid()) {
 				service.getComponentService().saveComponentIntegration(integration);
 				return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
-			} else {
+			}
+			else {
 				return Response.ok(validationResult.toRestError()).build();
 			}
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 
@@ -3162,10 +3224,12 @@ public class ComponentRESTResource
 			if (validationResult.valid()) {
 				service.getComponentService().saveComponentIntegration(integration);
 				return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
-			} else {
+			}
+			else {
 				return Response.ok(validationResult.toRestError()).build();
 			}
-		} else {
+		}
+		else {
 			return Response.ok().build();
 		}
 	}
@@ -3225,7 +3289,8 @@ public class ComponentRESTResource
 		if (integration != null) {
 			JobManager.runComponentIntegrationNow(componentId, null);
 			return Response.ok().build();
-		} else {
+		}
+		else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}
@@ -3306,12 +3371,14 @@ public class ComponentRESTResource
 				RestErrorModel restErrorModel = new RestErrorModel();
 				restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
 				return Response.status(Response.Status.NOT_MODIFIED).entity(restErrorModel).build();
-			} else {
+			}
+			else {
 				integrationConfig.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
 				integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
 				return Response.created(URI.create("v1/resource/components/" + componentId + "/integration/configs/" + integrationConfig.getIntegrationConfigId())).entity(integrationConfig).build();
 			}
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
@@ -3394,7 +3461,8 @@ public class ComponentRESTResource
 		if (integrationConfig != null) {
 			JobManager.runComponentIntegrationNow(componentId, configId);
 			return Response.ok().build();
-		} else {
+		}
+		else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}
@@ -3413,7 +3481,8 @@ public class ComponentRESTResource
 		if (SecurityUtil.isCurrentUserTheOwner(entity)
 				|| SecurityUtil.isAdminUser()) {
 			return null;
-		} else {
+		}
+		else {
 			return Response.status(Response.Status.FORBIDDEN)
 					.type(MediaType.TEXT_PLAIN)
 					.entity("User cannot modify resource.")

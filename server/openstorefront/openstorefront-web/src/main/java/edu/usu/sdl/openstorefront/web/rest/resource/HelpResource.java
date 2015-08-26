@@ -15,10 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.service.transfermodel.HelpSectionAll;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.model.HelpSectionAll;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;

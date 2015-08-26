@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.action;
 
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.Resolution;
 

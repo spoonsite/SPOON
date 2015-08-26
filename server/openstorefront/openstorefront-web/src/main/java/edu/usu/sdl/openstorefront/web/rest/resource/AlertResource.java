@@ -15,16 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.Alert;
+import edu.usu.sdl.openstorefront.core.view.AlertView;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.storage.model.Alert;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import edu.usu.sdl.openstorefront.web.rest.model.AlertView;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
 import java.net.URI;
 import java.util.List;
 import javax.ws.rs.BeanParam;

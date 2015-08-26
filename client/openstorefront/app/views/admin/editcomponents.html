@@ -69,7 +69,8 @@ limitations under the License.
       <th><a href="" ng-click="setPredicate('approvedDts', 'components');">Approval Date<span ng-show="predicate['components']  === 'approvedDts'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th align="center"><a href="" ng-click="setPredicate('approvalState', 'components');">Approval State<span ng-show="predicate['components']  === 'approvalState'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th><a href="" ng-click="setPredicate('activeStatus', 'components');">Active Status<span ng-show="predicate['components']  === 'activeStatus'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-      <th><a href="" ng-click="setPredicate('integrationManagement', 'components');"  title="Shows if the component's data is being patially managed by an external system ">Integration Management<span ng-show="predicate['components']  === 'integrationManagement'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>				
+      <th><a href="" ng-click="setPredicate('integrationManagement', 'components');"  title="Shows if the component's data is being patially managed by an external system ">Integration Management<span ng-show="predicate['components']  === 'integrationManagement'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>       
+      <th><a href="" ng-click="setPredicate('securityMarkingType', 'components');"  title="The security classification type for this component">SecurityType<span ng-show="predicate['components']  === 'securityMarkingType'"><i ng-show="!reverse['components'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['components']" class="fa fa-sort-alpha-desc"></i></span></a></th>				
       <th style="min-width: 170px;">Action</th>
     </tr>	
   </thead>
@@ -85,6 +86,7 @@ limitations under the License.
       <td align="center">{{component.component.activeStatus}}</td>
 
       <td>{{component.integrationManagement}}</td>
+      <td>{{getSecurityDesc(component.component.securityMarkingType)}}</td>
       <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
         <button class="btn btn-default btn-sm" ng-click="editComponent(component);"  title="Edit Component"><i class="fa fa-edit"></i></button>
         <button class="btn btn-info btn-sm" ng-click="preview(component);"  title="Preview Component"><i class="fa fa-binoculars"></i></button>

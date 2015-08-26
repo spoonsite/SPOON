@@ -17,8 +17,8 @@ package edu.usu.sdl.openstorefront.usecase;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueType;
-import edu.usu.sdl.openstorefront.util.StringProcessor;
 import java.io.IOException;
 import java.util.List;
 import org.junit.Test;

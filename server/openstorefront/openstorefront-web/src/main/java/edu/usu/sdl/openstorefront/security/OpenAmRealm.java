@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
-import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -15,14 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
-import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.GeneralMediaView;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.rest.model.GeneralMediaView;
-import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.BeanParam;

@@ -15,25 +15,25 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.QueryType;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.sort.ComponentSearchViewComparator;
+import edu.usu.sdl.openstorefront.core.sort.RecentlyAddedViewComparator;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.ListingStats;
+import edu.usu.sdl.openstorefront.core.view.RecentlyAddedView;
+import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
-import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.service.query.QueryType;
-import edu.usu.sdl.openstorefront.sort.ComponentSearchViewComparator;
-import edu.usu.sdl.openstorefront.sort.RecentlyAddedViewComparator;
-import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
-import edu.usu.sdl.openstorefront.storage.model.Component;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.rest.model.ListingStats;
-import edu.usu.sdl.openstorefront.web.rest.model.RecentlyAddedView;
-import edu.usu.sdl.openstorefront.web.rest.model.SearchQuery;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,7 +105,7 @@ public class Search
 		taskRequest.setAllowMultiple(false);
 		taskRequest.setName("Resetting Indexer");
 		taskRequest.setDetails("Reindexing components and articles");
-		service.getAyncProxy(service.getSearchService(), taskRequest).resetIndexer();
+		service.getAsyncProxy(service.getSearchService(), taskRequest).resetIndexer();
 		return Response.ok().build();
 	}
 

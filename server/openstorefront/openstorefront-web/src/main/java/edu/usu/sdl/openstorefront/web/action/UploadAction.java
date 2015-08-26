@@ -17,22 +17,22 @@ package edu.usu.sdl.openstorefront.web.action;
 
 import au.com.bytecode.opencsv.CSVReader;
 import com.fasterxml.jackson.core.type.TypeReference;
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentUploadOption;
+import edu.usu.sdl.openstorefront.core.view.ArticleView;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.parser.BaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
-import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
-import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
-import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
-import edu.usu.sdl.openstorefront.service.transfermodel.ComponentUploadOption;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
-import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.util.StringProcessor;
-import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,7 +69,7 @@ public class UploadAction
 
 	private static final Logger log = Logger.getLogger(UploadAction.class.getName());
 
-	@Validate(required = true, on = {"UploadLookup", "UploadComponent", "UploadArticles", "UploadAttributes", "UploadSvcv4"})
+	@Validate(required = true, on = {"UploadLookup", "UploadComponent", "UploadArticles", "UploadAttributes", "UploadSvcv4", "UploadPlugin"})
 	private FileBean uploadFile;
 
 	@Validate(required = true, on = "UploadLookup")
@@ -192,7 +192,7 @@ public class UploadAction
 					taskRequest.setAllowMultiple(false);
 					taskRequest.setName("Uploading Attribute(s)");
 					taskRequest.setDetails("File name: " + uploadFile.getFileName());
-					service.getAyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
+					service.getAsyncProxy(service.getAttributeService(), taskRequest).syncAttribute(attributeMap);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to read file: " + uploadFile.getFileName(), ex);
 				} finally {
@@ -289,7 +289,7 @@ public class UploadAction
 					taskRequest.setAllowMultiple(false);
 					taskRequest.setName("Uploading Component(s)");
 					taskRequest.setDetails("Component(s) Processing: " + components.size() + " from Filename: " + uploadFile.getFileName());
-					service.getAyncProxy(service.getComponentService(), taskRequest).importComponents(components, componentUploadOptions);
+					service.getAsyncProxy(service.getComponentService(), taskRequest).importComponents(components, componentUploadOptions);
 				}
 			} catch (IOException ex) {
 				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
@@ -338,8 +338,35 @@ public class UploadAction
 					taskRequest.setAllowMultiple(false);
 					taskRequest.setName("Uploading Article");
 					taskRequest.setDetails("File name: " + uploadFile.getFileName());
-					service.getAyncProxy(service.getAttributeService(), taskRequest).importArticles(articles);
+					service.getAsyncProxy(service.getAttributeService(), taskRequest).importArticles(articles);
 				}
+			} catch (IOException ex) {
+				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
+				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
+			} finally {
+				try {
+					if (uploadFile != null) {
+						uploadFile.delete();
+					}
+				} catch (IOException ex) {
+					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+				}
+			}
+			return streamUploadResponse(errors);
+		}
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
+	@HandlesEvent("UploadPlugin")
+	public Resolution uploadPlugin()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			try {
+				//just copy plugin to  plugin directory...to avoid double pickup
+				File pluginDir = FileSystemManager.getDir(FileSystemManager.PLUGIN_DIR);
+				uploadFile.save(new File(pluginDir + "/" + StringProcessor.cleanFileName(uploadFile.getFileName())));
 			} catch (IOException ex) {
 				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");

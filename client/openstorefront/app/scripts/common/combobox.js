@@ -16,6 +16,10 @@
  * limitations under the License.
  * ============================================================ */
 
+ /*
+ * Modified for use in the Storefront Project by Jonathan Law
+ */
+
 !function( $ ) {
 
  "use strict";
@@ -176,9 +180,10 @@
 
   , template: function() {
       if (this.options.bsVersion == '2') {
-        return '<div class="combobox-container"><input type="hidden" /> <div class="input-append"> <input type="text" autocomplete="off" /> <span class="add-on dropdown-toggle" data-dropdown="dropdown"> <span class="caret"/> <i class="icon-remove"/> </span> </div> </div>'
+        return '<div class="combobox-container"><input type="hidden" tabindex="-1"/> <div class="input-append"> <input type="text" autocomplete="off" /> <span class="add-on dropdown-toggle" data-dropdown="dropdown"> <span class="caret"/> <i class="icon-remove"/> </span> </div> </div>'
       } else {
-        return '<div class="combobox-container"> <input type="hidden" /> <div class="input-group"> <input type="text" autocomplete="off" /> <span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="caret" /> <span class="glyphicon glyphicon-remove" /> </span> </div> </div>'
+        // we added font-awesome icons for this one
+        return '<div class="combobox-container"> <input type="hidden" tabindex="-1"/> <div class="input-group"> <input type="text" autocomplete="off" /> <span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="fa fa-caret-down fa-fw" /> <span class="fa fa-times fa-fw" /> </span> </div> </div>'
       }
     }
 
@@ -292,6 +297,9 @@
         .on('blur',     $.proxy(this.blur, this))
         .on('keypress', $.proxy(this.keypress, this))
         .on('keyup',    $.proxy(this.keyup, this));
+      
+      //added a listener for the source change
+      this.$source.on('change', $.proxy(this.change, this));
 
       if (this.eventSupported('keydown')) {
         this.$element.on('keydown', $.proxy(this.keydown, this));
@@ -319,7 +327,7 @@
       if (!this.shown) {return;}
 
       switch(e.keyCode) {
-        case 9: // tab
+        // case 9: // tab
         case 13: // enter
         case 27: // escape
           e.preventDefault();
@@ -340,7 +348,7 @@
     }
 
   , keydown: function (e) {
-      this.suppressKeyPressRepeat = ~$.inArray(e.keyCode, [40,38,9,13,27]);
+      this.suppressKeyPressRepeat = ~$.inArray(e.keyCode, [40,38,13,27]);
       this.move(e);
     }
 
@@ -360,9 +368,9 @@
         case 16: // shift
         case 17: // ctrl
         case 18: // alt
+        // case 9: // tab
           break;
 
-        case 9: // tab
         case 13: // enter
           if (!this.shown) {return;}
           this.select();
@@ -383,6 +391,10 @@
   }
 
   , focus: function (e) {
+      // added this so that on first focus, we trigger the lookup
+      if (!this.focused && this.$source.val() === ''){
+        this.lookup();
+      }
       this.focused = true;
     }
 
@@ -413,6 +425,24 @@
 
   , mouseleave: function (e) {
       this.mousedover = false;
+    }
+
+  , change: function (e) {
+    //check to see if the value is empty (this means we're going to clear the input)
+    //does something very similar to the toggle.
+      if (this.$source.val() === '' && this.$element.val() !== '' && this.$target.val() !== '') {
+        if (!this.disabled) {
+          if (this.$container.hasClass('combobox-selected')) {
+            this.clearTarget();
+            this.triggerChange();
+            this.$element.val('');
+          } else {
+            if (this.shown) {
+              this.hide();
+            }
+          }
+        }
+      }
     }
   };
 

@@ -15,8 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.usecase;
 
-import edu.usu.sdl.openstorefront.util.StringProcessor;
-import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;

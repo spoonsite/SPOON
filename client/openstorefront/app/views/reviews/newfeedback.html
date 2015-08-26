@@ -68,6 +68,14 @@
               <input type="text" class="form-control" id="organization" ng-model="review.organization">
             </div>
           </div>
+        </div>
+        <div class="row form-group" show-errors >
+          <div class="col-sm-12">
+          <label class="control-label">Security Type:</label>
+            <select smartselect type="text" class="form-control" id="review_securityType" name="securityType" style="width:125px;display: inline" ng-model="review.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+              <option style="display:none" value="">Select a Type</option>
+            </select>
+          </div>        
         </div>    
         <div>
           <div class="row">

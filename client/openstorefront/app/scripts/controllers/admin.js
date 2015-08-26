@@ -294,6 +294,14 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
     });
 
     $scope.data.push({
+      'label': 'Organizations', 
+      'location':'views/admin/manageOrganizations.html', 
+      'toolTitle': 'Organization Management',
+      'detailedDesc': "Organizations found within the metadata in the site.",
+      'key': 'ORGANIZATIONS' 
+    });
+
+    $scope.data.push({
       'label': 'User Profiles', 
       'location':'views/admin/manageUserProfiles.html', 
       'toolTitle': 'User Profile Management',

@@ -42,6 +42,25 @@ app.controller('AdminEditattributesCtrl',['$scope','business', '$uiModal', '$tim
     $scope.getFilters();
   },10)
 
+  $scope.loadLookup = function(lookup, entity, loader){
+    $scope.$emit('$TRIGGERLOAD', loader);
+
+    Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
+      $scope.$emit('$TRIGGERUNLOAD', loader);
+      if (results) {
+        $scope[entity]= results;
+      }        
+    });      
+  };
+  $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
+
+  $scope.getSecurityDesc = function(type){
+    var found = _.find($scope.securityTypes, {'code': type});
+    return found? found.description : type; 
+  }
+
+
+
   $scope.refreshFilterCache = function() {
     $scope.getFilters(true, false);
   };
@@ -256,8 +275,8 @@ $scope.attributeUploader = new FileUploader({
     onCompleteAll: function(){        
      document.getElementById('attributeUploadFile').value = null;
      $scope.attributeUploader.queue = [];      
-    }       
-  });  
+   }       
+ });  
 
 $scope.svcv4uploader = new FileUploader({
   url: 'Upload.action?UploadSvcv4',
@@ -301,8 +320,8 @@ $scope.svcv4uploader = new FileUploader({
     onCompleteAll: function(){        
      document.getElementById('svcv4UploadFile').value = null;
      $scope.svcv4uploader.queue = [];      
-    }     
-  });  
+   }     
+ });  
 
 var stickThatTable = function(){
   var offset = $('.top').outerHeight() + $('#editAttributesToolbar').outerHeight();

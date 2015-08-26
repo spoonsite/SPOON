@@ -15,8 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.test.lookup;
 
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import edu.usu.sdl.openstorefront.storage.model.TestEntity;
+import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.core.entity.TestEntity;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.ArrayList;
 import java.util.Arrays;

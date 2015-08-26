@@ -15,9 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.test.lookup;
 
+import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import edu.usu.sdl.openstorefront.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.Collection;
 import java.util.List;

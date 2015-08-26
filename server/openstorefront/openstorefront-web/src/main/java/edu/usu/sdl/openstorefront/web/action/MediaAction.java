@@ -15,13 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.web.action;
 
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
-import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
-import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
-import edu.usu.sdl.openstorefront.storage.model.GeneralMedia;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
+import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;

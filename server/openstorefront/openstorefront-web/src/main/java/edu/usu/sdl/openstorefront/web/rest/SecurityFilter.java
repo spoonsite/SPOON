@@ -15,9 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.rest;
 
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
