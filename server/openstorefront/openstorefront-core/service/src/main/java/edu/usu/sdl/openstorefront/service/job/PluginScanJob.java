@@ -70,6 +70,8 @@ public class PluginScanJob
 			} catch (IOException e) {
 				log.log(Level.WARNING, "Unable to restore plugin file map.  Starting over; should be able to continue.");
 			}
+		} else {
+			fileMapJson = "";
 		}
 
 		if (fileMap == null) {
