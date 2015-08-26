@@ -24,8 +24,8 @@
      expect(scope.article).toEqual(null);
    });
    it('should return correct values from spies', function () {
-      spyOn(scope, 'resetSide');
-      spyOn(scope, 'setCompare');
+      spyOn(scope, 'resetSide'); //.and.callThrough();
+      spyOn(scope, 'setCompare'); //.and.callThrough();
       
       scope.resetSide(false);
       scope.setCompare(null, null);
