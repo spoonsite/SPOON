@@ -22,7 +22,6 @@ describe('Directive: svcv4archdiagram', function () {
     expect(scope.svcv4Mode).toEqual(false);
     expect(scope.diagramToggleAllState).toEqual(true);
     expect(scope.diagramToggleAllText).toEqual('Expand All');
-    expect(diagramToggleAllState)
   });
 
 });

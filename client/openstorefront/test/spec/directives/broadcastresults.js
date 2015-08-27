@@ -17,6 +17,6 @@ describe('Directive: broadcastResults', function () {
     element = $compile(element)(scope);
     expect(element.html()).toContain('<div></div>');
     
-    
+    expect(element.text()).toBe('');
   }));
 });
