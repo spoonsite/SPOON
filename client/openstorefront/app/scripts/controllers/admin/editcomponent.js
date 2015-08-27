@@ -281,6 +281,8 @@ app.controller('AdminComponentEditCtrl', ['$scope', '$q', '$filter', '$uiModalIn
     $scope.integration = {};
     $scope.sendAdminMessage   = $rootScope.openAdminMessage;
 
+    $scope.business = Business;
+
     $scope.statusFilterOptions = [
     {code: 'A', desc: 'Active'},
     {code: 'I', desc: 'Inactive'}
@@ -900,6 +902,7 @@ $scope.toggleContactStatus = function(contact){
 };    
 
 $scope.saveContact = function () {
+  delete $scope.contactForm.type;
   $scope.saveEntity({
     alertId: 'saveContact',
     alertDiv: 'contactManagementDivId',

@@ -6,6 +6,8 @@ app.controller('DetailsReviewCtrl', ['$scope', 'business', '$rootScope', '$timeo
   $scope.user = {};
   $scope.backup = {};
   $scope.untilDate = new Date();
+  
+  $scope.business = Business;
 
   var setupReview = function() {
     $scope.rating = $scope.review.rating;

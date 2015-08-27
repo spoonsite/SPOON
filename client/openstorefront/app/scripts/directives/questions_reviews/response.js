@@ -28,6 +28,7 @@ app.directive('response', ['business', '$timeout', function (Business, $timeout)
     link: function postLink(scope, element, attrs) {
       scope.user = {};
       scope.post = {};
+      scope.business = Business;
       element.find('textarea').attr('id', responseId+'response')
       element.find('.giveMeARole').attr('id', responseId+'role')
       element.find('.giveMeAnOrganization').attr('id', responseId+'org')
