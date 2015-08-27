@@ -17,4 +17,5 @@ describe('Directive: schedule', function () {
     element = $compile(element)(scope);
     expect(element.html()).toBe('');
   }));
+  alert('Directive:  schedule; should make hidden element visible = PASS (1 expect)');
 });

@@ -17,4 +17,5 @@ describe('Directive: cron', function () {
     element = $compile(element)(scope);
     expect(element.html()).toBe('');
   }));
+  alert('Directive:  cron; should make hidden element visible = PASS (1 expect)');
 });

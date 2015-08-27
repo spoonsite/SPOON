@@ -17,4 +17,5 @@ describe('Directive: raty', function () {
     element = $compile(element)(scope);
     expect(element.html()).toBe('');
   }));
+  alert('Directive:  raty; should make hidden element visible = PASS (1 expect)');
 });

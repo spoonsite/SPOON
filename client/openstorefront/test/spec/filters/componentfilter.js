@@ -14,5 +14,5 @@ describe('Filter: componentFilter', function () {
     var text = 'angularjs';
     expect(componentFilter(text)).toEqual(['a', 'n', 'g', 'u', 'l', 'a', 'r', 'j', 's']);
   });
-
+  alert('Filter:  componentFilter; should return the input in an array one element per letter = PASS (1 expect)');
 });

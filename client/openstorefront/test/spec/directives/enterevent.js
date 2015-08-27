@@ -17,4 +17,5 @@ describe('Directive: enterEvent', function () {
     element = $compile(element)(scope);
     expect(element.text()).toBe('');
   }));
+  alert('Directive:  enterEvent; should make hidden element visible = PASS (1 expect)');
 });

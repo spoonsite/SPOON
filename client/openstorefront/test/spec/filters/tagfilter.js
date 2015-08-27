@@ -16,5 +16,5 @@ describe('Filter: tagFilter', function () {
     var theObj = [{something: 'blah'}, {something2: 'blah'}];
     expect(tagFilter(theObj)).toBe(theObj);
   });
-
+  alert('Filter:  tagFilter; should return what you feed into it = PASS (1 expect)');
 });

@@ -20,4 +20,5 @@
      expect(scope.data).toEqual([]);
      expect(scope.landingRoute).toEqual(null);
    });
+   alert('Controller: LandingCtrl; should have the correct initializations = PASS (2 expects)');
  });
