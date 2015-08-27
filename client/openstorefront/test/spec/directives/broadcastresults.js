@@ -17,5 +17,5 @@ describe('Directive: broadcastResults', function () {
     element = $compile(element)(scope);
     expect(element.html()).toContain('<div></div>');
   }));
-  alert('Directive:  broadcastResults; should make hidden element visible = PASS (1 expect)');
+  alert('Directive:  broadcastResults; should make hidden element visible = PASS (1 expect) ');
 });
