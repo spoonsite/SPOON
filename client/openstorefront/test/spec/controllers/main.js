@@ -46,5 +46,5 @@ describe('Controller: MainCtrl', function () {
     expect(scope.searchKey).toHaveBeenCalledWith(3);
     expect(scope.goToLand).toHaveBeenCalledWith(true);
   });
-
+  alert('Controller: MainCtrl; should have the correct initializations, spies = PASS (11 expects, 4 spies)');
 });

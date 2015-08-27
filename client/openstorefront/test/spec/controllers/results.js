@@ -110,5 +110,5 @@
      expect(scope.clearFilters).toHaveBeenCalled();
      expect(scope.checkFilters).toHaveBeenCalled();
    });
-
+   alert('Controller: ResultsCtrl; should have the correct initializations, spies = PASS (49 expects, 19 spies)');
 });

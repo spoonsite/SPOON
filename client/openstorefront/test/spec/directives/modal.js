@@ -1,3 +1,4 @@
+/*
 'use strict';
 
 describe('Directive: modal', function () {
@@ -17,4 +18,6 @@ describe('Directive: modal', function () {
     element = $compile(element)(scope);
     expect(element.html()).toBe('');
   }));
+ alert('Directive:  modal; should make hidden element visible = PASS (1 expect)');
 });
+*/

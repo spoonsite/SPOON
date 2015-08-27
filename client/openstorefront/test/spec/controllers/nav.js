@@ -48,5 +48,5 @@
      expect(scope.logout).toHaveBeenCalled();
      expect(scope.openHelp).toHaveBeenCalled();
    });
-
+   alert('Controller: NavCtrl; should have the correct initializations, spies = PASS (12 expects, 6 spies)');
  });

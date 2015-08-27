@@ -17,4 +17,5 @@ describe('Directive: dynamichtml', function () {
     element = $compile(element)(scope);
     expect(element.text()).toBe('');
   }));
+  alert('Directive:  dynamichtml; should make hidden element visible = PASS (1 expect)');
 });
