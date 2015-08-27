@@ -103,15 +103,18 @@ limitations under the License.
                   <div class="form-group" show-errors>
                     <label class="col-sm-3 control-label">Organization:</label>
                     <div class="col-sm-6">
-                      <input  type="text" 
-                      id="organization"
-                      name="organization"
-                      placeholder="Organization"
-                      ng-disabled="!userProfileForm.mySwitch"
-                      class="form-control" 
+                      <type-ahead
+                      type="text"                 
+                      id="organization"                         
+                      name="organization"                         
                       ng-model="userProfileForm.organization" 
-                      ng-maxlength=80 
-                      ng-focus />
+                      ng-minlength=1
+                      ng-maxlength=120
+                      ng-disabled="!userProfileForm.mySwitch"
+                      callback="business.orgTypeahead"
+                      statement="key.description as key.description for key in typeahead | looseFilter:$viewValue | limitTo:8"
+                      required 
+                      ></type-ahead>
                     </div>
                     <p ng-show="userForm.organization.$error.required && !userForm.organization.$focused" class="help-block">Organization is required.</p>  
                   </div>

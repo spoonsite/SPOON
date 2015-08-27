@@ -22,9 +22,11 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.OrganizationView;
 import edu.usu.sdl.openstorefront.core.view.OrganizationWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
@@ -33,6 +35,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -44,6 +47,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -151,6 +155,31 @@ public class OrganizationResource
 	)
 	{
 		return service.getOrganizationService().findReferences(null, activeOnly, approvedOnly);
+	}
+	
+	
+	@GET
+	@APIDescription("Get a list of active organizations for selection list.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/lookup")
+	public Response getLookupList()
+	{
+		List<LookupModel> lookupModels = new ArrayList<>();
+		Organization organizationExample = new Organization();
+		organizationExample.setActiveStatus(Organization.ACTIVE_STATUS);
+		List<Organization> organizations = organizationExample.findByExample();
+		organizations.forEach(organization -> {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(organization.getOrganizationId());
+			lookupModel.setDescription(organization.getName());
+			lookupModels.add(lookupModel);
+		});
+
+		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@POST

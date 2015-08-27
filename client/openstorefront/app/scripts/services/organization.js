@@ -305,7 +305,32 @@ app.factory('organizationservice', ['$http', '$q', 'localCache', function($http,
     }
     return deferred.promise;
   }
-  
+
+  organization.getLookupList = function (override) {
+    var deferred = $q.defer();
+    var result = checkExpire('org_lookup_list', minute * 30);
+    if (result && !override) {
+      deferred.resolve(result);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': basepath + 'lookup'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          removeError();
+          save('org_lookup_list', data);
+          deferred.resolve(data);
+        } else {
+          deferred.resolve(data);
+        }
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+      });
+    }
+    return deferred.promise;
+  };
+
 
   return organization;
 }]);
