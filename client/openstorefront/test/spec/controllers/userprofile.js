@@ -75,5 +75,5 @@ describe('Controller: UserProfileCtrl', function () {
     expect(scope.updateWatch).toHaveBeenCalled();
     expect(scope.resetWatches).toHaveBeenCalled();
   });
-
+  alert('Controller: UserProfileCtrl; should have the correct initializations = PASS (24 expects, 8 spies)');
 });

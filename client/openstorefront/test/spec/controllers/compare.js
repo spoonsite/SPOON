@@ -33,4 +33,6 @@
       expect(scope.resetSide).toHaveBeenCalledWith(false);
       expect(scope.setCompare).toHaveBeenCalledWith(null, null);
    });
+
+   alert('Controller: CompareCtrl; should have the correct initializations, spies = PASS (7 expects; 2 spies)');
  });

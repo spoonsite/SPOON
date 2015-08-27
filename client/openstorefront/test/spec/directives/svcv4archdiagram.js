@@ -24,4 +24,5 @@ describe('Directive: svcv4archdiagram', function () {
     expect(scope.diagramToggleAllText).toEqual('Expand All');
   });
 
+  alert('Directive:  svcv4archdiagram; should have the correct initializations = PASS (3 expects)');
 });

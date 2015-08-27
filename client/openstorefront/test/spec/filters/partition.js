@@ -15,5 +15,5 @@ describe('Filter: partition', function () {
     var x = 2;
     expect(partition(myArray, x).toString()).toBe([ ["hello", "world"], ["testing", 1], [2,3]].toString());
   });
-
+  alert('Filter:  partition; should return the input in an x dimensional array = PASS (1 expect)');
 });

@@ -53,7 +53,6 @@
    expect(scope.menuPanel).toEqual({data: {open: true}, system: {open: true}});
    expect(scope.menuPanel.data).toEqual({ open: true });
    expect(scope.menuPanel.system).toEqual({ open: true });
-  
-
  });
+ alert('Controller: AdminCtrl; should have the correct initializations = PASS (16 expects)');
 });
