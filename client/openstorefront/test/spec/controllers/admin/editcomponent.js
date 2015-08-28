@@ -37,5 +37,5 @@ describe('Controller: AdminEditcomponentCtrl', function () {
     expect(scope.pagination.features).toEqual({'dates': false, 'max':false});
 
   });
-  alert('Controller:  AdminEditcomponentCtrl; should have the correct initializations = PASS (10+ expects)');
+  alert('Controller:  AdminEditcomponentCtrl; should have the correct initializations = PASS (18 expects)');
 });
