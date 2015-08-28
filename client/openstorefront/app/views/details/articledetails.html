@@ -18,7 +18,7 @@
           <span class="form-control">This component has not yet been approved for the site and is <span ng-if="details.details.approvalState === 'P'">still under review</span><span ng-if="details.details.approvalState === 'N'">still in the process of being submitted</span>.</span>
         </div>
         <h1>
-          <div style="font-weight: 100; margin: 0px; padding: 0px; display: inline-block; float: left; margin-top: 10px;">{{details.details.name}}
+          <div style="font-weight: 100; margin: 0px; padding: 0px; display: inline-block; float: left; margin-top: 10px;">{{details.details.name}}<classification ls style="font-size:14px;"  ng-model="details.details"></classification>
             <span ng-if="details.details.organization" style="font-weight: bold; margin-top: -20px; padding-left:0px; display:block;">
               <br>
               Organization: {{details.details.organization}}

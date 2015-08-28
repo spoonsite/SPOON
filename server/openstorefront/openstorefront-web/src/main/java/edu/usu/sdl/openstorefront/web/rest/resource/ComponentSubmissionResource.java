@@ -58,6 +58,11 @@ public class ComponentSubmissionResource
 		extends BaseResource
 {
 
+	
+	//	The check for ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false has been overriden
+	//  This is so that a user may edit an approved component. If the desire for behavior changes, the code is still
+	//  there, you just need to remove the '|| true'
+	
 	@GET
 	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this only the top level component object)")
 	@DataType(Component.class)
@@ -164,7 +169,7 @@ public class ComponentSubmissionResource
 		if (component != null) {
 			response = ownerCheck(component);
 			if (response == null) {
-				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
 					service.getComponentService().submitComponentSubmission(componentId);
 					response = Response.ok().build();
 				} else {
@@ -191,7 +196,7 @@ public class ComponentSubmissionResource
 		if (component != null) {
 			response = ownerCheck(component);
 			if (response == null) {
-				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
 					service.getComponentService().checkComponentCancelStatus(componentId, ApprovalStatus.NOT_SUBMITTED);
 					response = Response.ok().build();
 				} else {
@@ -251,7 +256,7 @@ public class ComponentSubmissionResource
 				if (exstingComponent != null) {
 					response = ownerCheck(exstingComponent);
 					if (response == null) {
-						if (ApprovalStatus.APPROVED.equals(exstingComponent.getApprovalState()) == false) {
+						if (ApprovalStatus.APPROVED.equals(exstingComponent.getApprovalState()) == false || true) {
 
 							//Pull in existing media and resources (they may be saved seperately)
 							ComponentMedia componentMediaExample = new ComponentMedia();
@@ -359,7 +364,7 @@ public class ComponentSubmissionResource
 
 				//Need to check component to make sure it's not approved.
 				Component component = service.getPersistenceService().findById(Component.class, componentId);
-				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
 					service.getComponentService().deleteBaseComponent(ComponentMedia.class, mediaId);
 				} else {
 					return Response.status(Response.Status.FORBIDDEN)
@@ -391,7 +396,7 @@ public class ComponentSubmissionResource
 			response = ownerCheck(componentResource);
 			if (response == null) {
 				Component component = service.getPersistenceService().findById(Component.class, componentId);
-				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
 					service.getComponentService().deleteBaseComponent(ComponentResource.class, resourceId);
 				} else {
 					return Response.status(Response.Status.FORBIDDEN)
