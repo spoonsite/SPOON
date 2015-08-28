@@ -243,6 +243,8 @@ var app = angular
       $rootScope.loaded = false;
       $rootScope.eventHistory = [];
 
+      $rootScope.business = Business;
+
       $rootScope.$on('$routeChangeSuccess', function() {
         var label = $route.routes[$location.$$path].label || $location.$$path;
         if ($location.$$path === '/single'){

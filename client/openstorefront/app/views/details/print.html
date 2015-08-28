@@ -33,11 +33,11 @@
                 <div class="overflow-pair-right" style="vertical-align:middle; padding: 8px 5px; border-left: 1px solid lightgray; margin-left: -1px; width:65px; float: right;" ng-class="col.actualScore > 0? '':'shadeME'">
                   <i ng-if="!col.notAvailable && col.actualScore > 0" ng-repeat="t in getTimes(col.actualScore) track by $index" class="fa fa-circle" style="color:#021233; display:inline-block">
                   </i>
-		<span ng-if="!col.notAvailable && col.actualScore <= 0">&nbsp;</span>
-		<span ng-if="col.notAvailable" ><b>N/A</b></span>
+                  <span ng-if="!col.notAvailable && col.actualScore <= 0">&nbsp;</span>
+                  <span ng-if="col.notAvailable" ><b>N/A</b></span>
                 </div>
                 <div  ng-class="getIsUpdated('evaluationSections')? 'updatedForUser': ''" class="overflow-pair-left imitateLink" style="vertical-align:middle; padding: 8px;  border-right: 1px solid lightgray;">
-                  <a href="javascript:void(0)" class="helpcontent" > {{col.name}} </a>
+                  <a href="javascript:void(0)" class="helpcontent" > {{col.name}}<classification ls ng-model="col"></classification> </a>
                 </div>
               </td>
             </tr>
@@ -49,7 +49,7 @@
           <table class="table table-striped table-bordered" style="table-layout:fixed">
             <tr ng-repeat="attribute in details.attributes.data">
               <td>
-                {{attribute.typeDescription}}
+                {{attribute.typeDescription}}<classification ls ng-model="attribute"></classification>
               </td>
               <td class="{{attribute.highlightStyle}}">
                 {{attribute.codeDescription}}
@@ -57,7 +57,7 @@
             </tr>
             <tr ng-repeat="metadata in details.metadata.data">
               <td>
-                {{metadata.label}}
+                {{metadata.label}}<classification ls ng-model="metadata"></classification>
               </td>
               <td>
                 {{metadata.value}}
@@ -74,153 +74,157 @@
               <col width="175px" />
               <tr>
                 <td>Name</td>
-                <td>{{contact.name}}</td>
+                <td>{{contact.name}}<classification ls ng-model="contact"></classification></td>
               </tr>
               <tr>
                 <td>Email</td>
                 <td>{{contact.email}}</td>
+              </tr>              
+              <tr>
+                <td>Phone</td>
+                <td>{{contact.phone}}</td>
               </tr>
             </table>
           </div>
         </div>
       </div>
       <div class="left liners" ng-init="details.myStyle = (details.componentType.data === 'ARTICLE')? '0px !important': '5px !important' " style="margin-right: {{details.myStyle}}" ng-if="details.componentName.checked || details.organization.checked || details.version.checked || details.organization.checked || details.lastActivityDate.checked || details.lastViewedDate.checked || details.componentViews.checked || details.badges.checked">
-		  <div class="line" ng-if="details.componentName.checked"><strong>Component:&nbsp;</strong> {{details.componentName.data}}</div>
-		  <div class="line" ng-if="details.version.checked"><strong>Version:&nbsp;</strong> {{details.version.data}}</div>
-		  <div class="line" ng-if="details.organization.checked"><strong>Organization:&nbsp;</strong> {{details.organization.data}}</div>
-		  <div class="line" ng-if="details.lastActivityDate.checked"><strong>Last Activity Date:&nbsp;</strong> {{getDate(details.lastActivityDate.data)}}</div>
-		  <div class="line" ng-if="details.lastViewedDate.checked"><strong>Last View Date:&nbsp;</strong> {{getDate(details.lastViewedDate.data)}}</div>
-		  <div class="line" ng-if="details.componentViews.checked"><strong>Views:&nbsp;</strong> {{details.componentViews.data}}</div>
-		  <div ng-if="details.badges.checked">
-			  <div ng-repeat="attribute in details.attributes.data" style="display:inline-block;">
-				<img ng-show="attribute.badgeUrl" ng-src="{{attribute.badgeUrl}}" alt="Attribute Badge"  data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.label}}" data-trigger="hover" style=" width: auto; height: 40px;">
-			  </div>
-		  </div>		
-      </div>
-      <div class="left border" ng-if="details.tags.checked"><strong>Tags:&nbsp;</strong> <span ng-repeat="tag in details.tags.data" style="border: 1px solid lightgray; border-radius: 4px; padding: 3px;">{{tag.text}}</span></div>
-      <div class="left" ng-if="details.description.checked"><strong>Description:&nbsp;</strong><span dynamichtml="details.description.data"></span></div>
-      <div class="left" ng-if="details.resources.checked && details.resources.data.length"><strong>Resources:&nbsp;</strong>
-        <table class="table table-striped table-bordered" style="table-layout:fixed">
-          <tr>
-            <th>Resource Type / Link</th>
-          </tr>
-          <tr ng-repeat="resource in details.resources.data">
-            <td>
-              <span style="width: 100%; display:block;"><strong>{{resource.resourceTypeDesc}}</strong></span>
-              <span dynamichtml="resource.link"></span>
-            </td>
-          </tr>
-        </table>
-      </div>
-      <div class="left" ng-if="details.attributes.checked && details.attributes.data && details.attributes.data.length && (isEvaluationPresent() || details.componentType.data === 'ARTICLE')"><strong>Component Vitals:&nbsp;</strong>
-        <table class="table table-striped table-bordered" style="table-layout:fixed">
-          <tr ng-repeat="attribute in details.attributes.data">
-            <td>
-              {{attribute.typeDescription}}
-            </td>
-            <td class="{{attribute.highlightStyle}}">
-              {{attribute.codeDescription}}
-            </td>
-          </tr>
-          <tr ng-repeat="metadata in details.metadata.data">
-            <td>
-              {{metadata.label}}
-            </td>
-            <td>
-              {{metadata.value}}
-            </td>
-          </tr>
-        </table>
-      </div>
-      <div class="left" ng-if="details.contacts.checked && details.contacts.data && details.contacts.data.length && (isEvaluationPresent() || details.componentType.data === 'ARTICLE')"><strong>Points of Contact:&nbsp;</strong>
-        <div ng-repeat="contact in details.contacts.data">
-          {{contact.positionDescription}}
-          <table class="table table-striped table-bordered" style="table-layout:fixed">
-            <col width="60px" />
-            <col width="175px" />
-            <tr>
-              <td>Name</td>
-              <td>{{contact.name}}</td>
-            </tr>
-            <tr>
-              <td>Email</td>
-              <td>{{contact.email}}</td>
-            </tr>
-          </table>
+        <div class="line" ng-if="details.componentName.checked"><strong>Component:&nbsp;</strong> {{details.componentName.data}}&nbsp;<small ng-if="details.componentSecurityMarkingType.data">({{details.componentSecurityMarkingType.data}})</small></div>
+        <div class="line" ng-if="details.version.checked"><strong>Version:&nbsp;</strong> {{details.version.data}}</div>
+        <div class="line" ng-if="details.organization.checked"><strong>Organization:&nbsp;</strong> {{details.organization.data}}</div>
+        <div class="line" ng-if="details.lastActivityDate.checked"><strong>Last Activity Date:&nbsp;</strong> {{getDate(details.lastActivityDate.data)}}</div>
+        <div class="line" ng-if="details.lastViewedDate.checked"><strong>Last View Date:&nbsp;</strong> {{getDate(details.lastViewedDate.data)}}</div>
+        <div class="line" ng-if="details.componentViews.checked"><strong>Views:&nbsp;</strong> {{details.componentViews.data}}</div>
+        <div ng-if="details.badges.checked">
+         <div ng-repeat="attribute in details.attributes.data" style="display:inline-block;">
+          <img ng-show="attribute.badgeUrl" ng-src="{{attribute.badgeUrl}}" alt="Attribute Badge"  data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.label}}" data-trigger="hover" style=" width: auto; height: 40px;">
         </div>
-      </div>
-      <div class="left" ng-if="details.subComponents.checked && details.subComponents.data.length"><strong>Sub Components:&nbsp;</strong>{{details.subComponents.data}}</div>
-      <div class="left" ng-if="details.dependencies.checked && details.dependencies.data.length"><strong>Dependencies:&nbsp;</strong>
-        <table class="table table-striped table-bordered" style="table-layout:fixed">
-          <tr>
-            <th>Dependency</th>
-            <th>Version</th>           
-            <th>Link</th>
-	 <th>Comment</th>
-          </tr>
-          <tr ng-repeat="dependency in details.dependencies.data">
-            <td>{{dependency.dependencyName}}</td>
-            <td>{{dependency.version}}</td>
-	 <td>{{dependency.dependancyReferenceLink}}</td>
-            <td>{{dependency.comment}}</td>           
-          </tr>
-        </table>
-      </div>
-      <div style="clear:both;"></div>
-      <div class="pageBreak" ng-if="details.reviews.checked && details.reviews.data.length"><h4>Reviews</h4>
-        <hr style="border-top: 1px solid #555; margin-top: 0px;">
-        <div ng-repeat="review in details.reviews.data">
-          <div class="col-sm-12" style="padding-left: 0px; padding-right:0px; margin: 0px;">
-            <h5 style="margin-top: 0px">
-              <strong>Title:&nbsp;</strong>{{review.title}}&mdash;<span ng-repeat="index in getFullRating(review.rating) track by $index"><i class="fa fa-star"></i></span><span ng-repeat="index in getEmptyRating(review.rating) track by $index"><i class="fa fa-star-o"></i></span><span  ng-if="review.recommend" style="font-size: 14px;"><span ng-if="review.rating"></span>&mdash;I would recommend this component</span>
-            </h5>
-          </div>
-          <div style="font-size:11px;">
-            <div class="col-sm-12" style="padding-left: 0px; padding-right:0px; margin: 0px;">
-              <strong ng-if="review.username">Reviewer: </strong> {{review.username}}<br />
-              <strong ng-if="review.userType">Role: </strong> {{review.userType}} <br />
-              <strong ng-if="review.usedTimeCode">Time used: </strong> {{review.usedTimeCode}} <br />
-              <strong ng-if="review.lastUsed">Last used: </strong> {{getDate(review.lastUsed)}} <br />
-              <strong ng-if="review.organization">Organization: </strong> {{review.organization}} <br />
-            </div>
-            <div ng-if="review.pros.length || review.cons.length" class="col-sm-12" style="padding-left: 0px; padding-right:0px; margin: 0px;">
-              <div ng-if="review.pros.length">
-                <strong>Pros: </strong><span ng-repeat="pro in review.pros"> {{pro.text}}<span ng-if="$index !== review.pros.length - 1">,&nbsp;</span></span>
-              </div>
-              <div ng-if="review.cons.length">
-                <strong>Cons: </strong><span ng-repeat="con in review.cons"> {{con.text}}<span ng-if="$index !== review.cons.length - 1">,&nbsp;</span></span>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-12" style="padding-left: 0px; padding-right:0px; margin: 0px;">
-            <div id="detailsReview-{{$index}}" class="detailsPadding detailsReview">
-              <p><strong>Comments: </strong> {{review.comment}}
-              </p>
-            </div>
-          </div>
-          <hr>
-        </div>
-      </div>
-      <div class="pageBreak" ng-if="details.questions.checked && details.questions.data.length"><h4>Questions</h4>
-        <hr style="border-top: 1px solid #555; margin-top: 0px;">
-        <div ng-repeat="question in details.questions.data">
-          <strong>Q:</strong>{{question.question}} <span style="font-size: 11px;">&nbsp;&mdash;&nbsp;{{question.username}}&nbsp;({{question.organization}} - {{question.userType}})&nbsp;{{getDate(question.updateDts)}}</span>
-          <div ng-repeat="response in question.responses" style="margin-left: 20px;">
-            <strong>A:</strong>{{response.response}} <span style="font-size: 11px;">&nbsp;&mdash;&nbsp;{{response.username}}&nbsp;({{response.organization}} - {{response.userType}})&nbsp;{{getDate(response.updateDts)}}</span>
-          </div>
-        </div>
-      </div>
-      <div class="pageBreak" ng-if="details.componentMedia.checked && details.componentMedia.data.length">
-        <h4>Media</h4>
-        <hr style="border-top: 1px solid #555; margin-top: 0px;">
-        <div ng-repeat="image in details.componentMedia.data">
-          <img ng-src="{{image.link}}" alt="">
-          <br>
-          <span style="color: #555; font-size: 11px;">Updated: {{getDate(image.updateDts)}}</span>
-        </div>
-      </div>
-      <div style="clear:both;"></div>
+      </div>		
     </div>
+    <div class="left border" ng-if="details.tags.checked"><strong>Tags:&nbsp;</strong> <span ng-repeat="tag in details.tags.data" style="border: 1px solid lightgray; border-radius: 4px; padding: 3px;">{{tag.text}}<classification ls ng-model="tag"></classification></span></div>
+    <div class="left" ng-if="details.description.checked"><strong>Description:&nbsp;</strong><span dynamichtml="details.description.data"></span></div>
+    <div class="left" ng-if="details.resources.checked && details.resources.data.length"><strong>Resources:&nbsp;</strong>
+      <table class="table table-striped table-bordered" style="table-layout:fixed">
+        <tr>
+          <th>Resource Type / Link</th>
+        </tr>
+        <tr ng-repeat="resource in details.resources.data">
+          <td>
+            <span style="width: 100%; display:block;"><strong>{{resource.resourceTypeDesc}}<classification ls ng-model="resource"></classification></strong></span>
+            <span dynamichtml="resource.link"></span>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="left" ng-if="details.attributes.checked && details.attributes.data && details.attributes.data.length && (isEvaluationPresent() || details.componentType.data === 'ARTICLE')"><strong>Component Vitals:&nbsp;</strong>
+      <table class="table table-striped table-bordered" style="table-layout:fixed">
+        <tr ng-repeat="attribute in details.attributes.data">
+          <td>
+            {{attribute.typeDescription}}<classification ls ng-model="attribute"></classification>
+          </td>
+          <td class="{{attribute.highlightStyle}}">
+            {{attribute.codeDescription}}
+          </td>
+        </tr>
+        <tr ng-repeat="metadata in details.metadata.data">
+          <td>
+            {{metadata.label}}<classification ls ng-model="metadata"></classification>
+          </td>
+          <td>
+            {{metadata.value}}
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="left" ng-if="details.contacts.checked && details.contacts.data && details.contacts.data.length && (isEvaluationPresent() || details.componentType.data === 'ARTICLE')"><strong>Points of Contact:&nbsp;</strong>
+      <div ng-repeat="contact in details.contacts.data">
+        {{contact.positionDescription}}
+        <table class="table table-striped table-bordered" style="table-layout:fixed">
+          <col width="60px" />
+          <col width="175px" />
+          <tr>
+            <td>Name</td>
+            <td>{{contact.name}}<classification ls ng-model="contact"></classification></td>
+          </tr>
+          <tr>
+            <td>Email</td>
+            <td>{{contact.email}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="left" ng-if="details.subComponents.checked && details.subComponents.data.length"><strong>Sub Components:&nbsp;</strong>{{details.subComponents.data}}</div>
+    <div class="left" ng-if="details.dependencies.checked && details.dependencies.data.length"><strong>Dependencies:&nbsp;</strong>
+      <table class="table table-striped table-bordered" style="table-layout:fixed">
+        <tr>
+          <th>Dependency</th>
+          <th>Version</th>           
+          <th>Link</th>
+          <th>Comment</th>
+        </tr>
+        <tr ng-repeat="dependency in details.dependencies.data">
+          <td>{{dependency.dependencyName}}<classification ls ng-model="dependency"></classification></td>
+          <td>{{dependency.version}}</td>
+          <td>{{dependency.dependancyReferenceLink}}</td>
+          <td>{{dependency.comment}}</td>           
+        </tr>
+      </table>
+    </div>
+    <div style="clear:both;"></div>
+    <div class="pageBreak" ng-if="details.reviews.checked && details.reviews.data.length"><h4>Reviews</h4>
+      <hr style="border-top: 1px solid #555; margin-top: 0px;">
+      <div ng-repeat="review in details.reviews.data">
+        <div class="col-sm-12" style="padding-left: 0px; padding-right:0px; margin: 0px;">
+          <h5 style="margin-top: 0px">
+            <strong>Title:&nbsp;</strong>{{review.title}}&mdash;<classification ls ng-model="review"></classification><span ng-repeat="index in getFullRating(review.rating) track by $index"><i class="fa fa-star"></i></span><span ng-repeat="index in getEmptyRating(review.rating) track by $index"><i class="fa fa-star-o"></i></span><span  ng-if="review.recommend" style="font-size: 14px;"><span ng-if="review.rating"></span>&mdash;I would recommend this component</span>
+          </h5>
+        </div>
+        <div style="font-size:11px;">
+          <div class="col-sm-12" style="padding-left: 0px; padding-right:0px; margin: 0px;">
+            <strong ng-if="review.username">Reviewer: </strong> {{review.username}}<br />
+            <strong ng-if="review.userType">Role: </strong> {{review.userType}} <br />
+            <strong ng-if="review.usedTimeCode">Time used: </strong> {{review.usedTimeCode}} <br />
+            <strong ng-if="review.lastUsed">Last used: </strong> {{getDate(review.lastUsed)}} <br />
+            <strong ng-if="review.organization">Organization: </strong> {{review.organization}} <br />
+          </div>
+          <div ng-if="review.pros.length || review.cons.length" class="col-sm-12" style="padding-left: 0px; padding-right:0px; margin: 0px;">
+            <div ng-if="review.pros.length">
+              <strong>Pros: </strong><span ng-repeat="pro in review.pros"> {{pro.text}}<span ng-if="$index !== review.pros.length - 1">,&nbsp;</span></span>
+            </div>
+            <div ng-if="review.cons.length">
+              <strong>Cons: </strong><span ng-repeat="con in review.cons"> {{con.text}}<span ng-if="$index !== review.cons.length - 1">,&nbsp;</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12" style="padding-left: 0px; padding-right:0px; margin: 0px;">
+          <div id="detailsReview-{{$index}}" class="detailsPadding detailsReview">
+            <p><strong>Comments: </strong> {{review.comment}}
+            </p>
+          </div>
+        </div>
+        <hr>
+      </div>
+    </div>
+    <div class="pageBreak" ng-if="details.questions.checked && details.questions.data.length"><h4>Questions</h4>
+      <hr style="border-top: 1px solid #555; margin-top: 0px;">
+      <div ng-repeat="question in details.questions.data">
+        <strong>Q:</strong>{{question.question}}<classification ls ng-model="question"></classification> <span style="font-size: 11px;">&nbsp;&mdash;&nbsp;{{question.username}}&nbsp;({{question.organization}} - {{question.userType}})&nbsp;{{getDate(question.updateDts)}}</span>
+        <div ng-repeat="response in question.responses" style="margin-left: 20px;">
+          <strong>A:</strong>{{response.response}}<classification ls ng-model="response"></classification> <span style="font-size: 11px;">&nbsp;&mdash;&nbsp;{{response.username}}&nbsp;({{response.organization}} - {{response.userType}})&nbsp;{{getDate(response.updateDts)}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="pageBreak" ng-if="details.componentMedia.checked && details.componentMedia.data.length">
+      <h4>Media</h4>
+      <hr style="border-top: 1px solid #555; margin-top: 0px;">
+      <div ng-repeat="image in details.componentMedia.data">
+        <img ng-src="{{image.link}}" alt="">
+        <br>
+        <span style="color: #555; font-size: 11px;">Updated: {{getDate(image.updateDts)}}<classification ls ng-model="image"></classification></span>
+      </div>
+    </div>
+    <div style="clear:both;"></div>
   </div>
+</div>
 </div>
 
