@@ -1,17 +1,17 @@
 'use strict';
 
-describe('Controller: AdminMediaCtrl', function () {
+describe('Controller: AdminReportCtrl', function () {
 
-// load the controller's module
+  // load the controller's module
   beforeEach(module('openstorefrontApp'));
 
-  var AdminMediaCtrl,
+  var AdminReportCtrl,
     scope;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope) {
     scope = $rootScope.$new();
-    AdminMediaCtrl = $controller('AdminMediaCtrl', {
+    AdminReportCtrl = $controller('AdminReportCtrl', {
       $scope: scope
     });
   }));
@@ -20,5 +20,7 @@ describe('Controller: AdminMediaCtrl', function () {
     expect(scope.predicate).toEqual([]);
     expect(scope.reverse).toEqual([]);
   });
-  alert('Controller:  AdminMediaCtrl; should have the correct initializations = PASS (2 expects)');
+  alert('Controller:  AdminReportCtrl; should have the correct initializations = PASS (2 expects)');
 });
+
+
