@@ -422,7 +422,6 @@ public class ComponentServiceImpl
 			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id: " + componentId);
 		}
 
-		result.setComponentDetails(tempComponent);
 		result.setApprovalState(tempComponent.getApprovalState());
 
 		//Pull relationships direct relationships
@@ -522,6 +521,7 @@ public class ComponentServiceImpl
 
 		result.setToday(new Date());
 
+		result.setComponentDetails(tempComponent);
 		return result;
 	}
 

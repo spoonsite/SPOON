@@ -32,7 +32,7 @@ app.directive('smartselect', ['$timeout', function($timeout) {
           'appendTo': scope.smartselect || 'body'
         });
         scope.$watch('ngModel', function(nval, oval){
-          if (init && !nval) {
+          if (init) {
             $timeout(function(){
               element.trigger('change');
             })

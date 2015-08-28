@@ -529,6 +529,7 @@ $scope.saveEntity = function(options){
   $scope.$emit('$TRIGGERLOAD', options.loader);
 
   if ($scope[options.formName].edit){
+    delete options.entity.type;
     Business.componentservice.updateSubComponentEntity({
       componentId: $scope.componentForm.componentId,
       entityName: options.entityName,
@@ -1178,6 +1179,7 @@ $scope.mediaUploader = new FileUploader({
         "componentMedia.componentMediaId": $scope.mediaForm.componentMediaId
       });
     }
+    delete item.formData.type;
     console.log('item', item);
     
   },

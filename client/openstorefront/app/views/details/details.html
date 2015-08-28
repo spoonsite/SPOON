@@ -70,7 +70,7 @@
     </table>
   </div>
   <div id="updatedStuff">
-    <div class="section-headers"><h4>Component Description</h4></div>
+    <div class="section-headers"><h4>Component Description&nbsp;<small ng-if="details.details.componentSecurityMarkingType">({{details.details.componentSecurityMarkingType}})</small></h4></div>
     <p class="results-content-description" ng-class="getIsUpdated('description')? 'updatedForUser': ''" style="margin-left: 0px;" ng-bind-html="details.details.description">
     </p>
     <br>
