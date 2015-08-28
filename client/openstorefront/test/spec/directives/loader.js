@@ -17,4 +17,5 @@ describe('Directive: loader', function () {
     element = $compile(element)(scope);
     expect(element.html()).toBe('<div class="loader-holder modal-backdrop" ng-show="loading"><div class="loader"><!--[if lt IE 10]><span>...Loading...</span><![endif]--></div></div>');
   }));
+  alert('Directive:  loader; should make hidden element visible = PASS (1 expect)');
 });

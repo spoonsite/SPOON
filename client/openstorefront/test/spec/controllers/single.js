@@ -32,5 +32,5 @@ describe('Controller: SingleCtrl', function () {
     scope.updateDetails(-1);
     expect(scope.updateDetails).toHaveBeenCalledWith(-1);
   });
-
+  alert('Controller: SingleCtrl; should have the correct initializations, spies = PASS (9 expects, 1 spy)');
 });

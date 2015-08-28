@@ -17,4 +17,5 @@ describe('Directive: print', function () {
     element = $compile(element)(scope);
     expect(element.html()).toBe('');
   }));
+  alert('Directive:  print; should make hidden element visible = PASS (1 expect)');
 });

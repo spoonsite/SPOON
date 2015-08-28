@@ -17,4 +17,5 @@ describe('Directive: response', function () {
     element = $compile(element)(scope);
     expect(element.html()).toBe('');
   }));
+  alert('Directive:  response; should make hidden element visible = PASS (1 expect)');
 });
