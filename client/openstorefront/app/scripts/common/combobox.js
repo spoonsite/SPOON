@@ -26,7 +26,6 @@
 
  /* COMBOBOX PUBLIC CLASS DEFINITION
   * ================================ */
-
   var Combobox = function ( element, options ) {
     this.options = $.extend({}, $.fn.combobox.defaults, options);
     this.$source = $(element);
@@ -442,6 +441,14 @@
             }
           }
         }
+      } else if (this.$source.val() && !this.$element.val() && !this.$target.val()){
+        this.lookup();
+        this.$menu.find('.active').removeClass('active');
+        var found = this.$menu.find('[data-value="'+(_.invert(this.map))[this.$source.val()]+'"]');
+        console.log('found', found);
+        
+        found.addClass('active');
+        this.select();
       }
     }
   };

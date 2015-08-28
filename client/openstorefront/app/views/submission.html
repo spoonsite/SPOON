@@ -96,7 +96,7 @@ body {
             </li>
             <hr ng-show="(component.component.approvalState && component.component.approvalState !== 'N')"  style="margin:2px 0;">
             <li data-target="#" ng-show="(component.component.approvalState && component.component.approvalState !== 'N')"  class="edit">
-              <a target="_self" href="#" ng-show="(component.component.approvalState && component.component.approvalState !== 'N' && component.component.approvalState !=='A')" ng-click="setEditable($event)">Edit Component</a>
+              <a target="_self" href="#" ng-show="(component.component.approvalState && component.component.approvalState !== 'N')" ng-click="setEditable($event)">Edit Component</a>
             </li>
           </ul>
         </div>
@@ -167,7 +167,20 @@ body {
             <div class="form-group required">
               <label class="col-sm-2 control-label" for="inputOrganization">Organization</label>
               <div class="col-sm-10">
-                <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="text" id="inputOrganization" class="form-control" placeholder="Organization" required ng-model="submitter.organization">
+                <type-ahead
+                type="text"                 
+                id="inputOrganization"                       
+                name="organization"                         
+                ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"
+                ng-model="submitter.organization"
+                ng-minlength=1
+                ng-maxlength=120
+                callback="business.orgTypeahead"
+                statement="key.description as key.description for key in typeahead | looseFilter:$viewValue | limitTo:8"
+                required 
+                ng-focus
+                placeholder="Organization"
+                ></type-ahead>
               </div>
               <div style="clear:both;"></div>
             </div>
@@ -213,8 +226,27 @@ body {
           <label style="position:relative; padding-right:15px; padding-top:7px;" for="description">Description</label>
           <div class="help-text">Describe the component with a description about what is it, purpose, features and capabilities</div>
           <textarea ckeditor="editorOptions" ng-model="component.component.description"></textarea>
+          <div class="form-group" show-errors style="margin-bottom:0px;" >
+            <label class="control-label" style="padding-top:7px;">Security Type</label>
+            <select smartselect type="text" class="form-control" id="component_securityType" name="securityType" style="width:125px;display: inline" ng-model="component.component.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+              <option style="display:none" value="">Select a Type</option>
+            </select>
+          </div>
           <label style="position:relative; padding-right:15px; padding-top:7px;" for="organization">Organization</label>
-          <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="text" id="organization" class="form-control" placeholder="Organization" required ng-model="component.component.organization">
+          <type-ahead
+          type="text"                 
+          id="organization"                       
+          name="organization"                         
+          ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"
+          ng-model="component.component.organization"
+          ng-minlength=1
+          ng-maxlength=120
+          callback="business.orgTypeahead"
+          statement="key.description as key.description for key in typeahead | looseFilter:$viewValue | limitTo:8"
+          required 
+          ng-focus
+          placeholder="Organization"
+          ></type-ahead>
         </div>
         <div style="padding-top:15px;">
           <label for="requiredAttributes">Required Attributes</label>
@@ -435,18 +467,23 @@ body {
       <div class="form-group required">
         <label class="col-sm-2 control-label ">Organization</label>
         <div class="col-sm-10">
-          <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"type="text"
-          id="organization"
-          name="organization"
-          class="form-control"
+          <type-ahead
+          type="text"                 
+          id="organization"                       
+          name="organization"                         
+          ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"
           ng-model="contactForm.organization"
           ng-minlength=1
-          ng-maxlength=200
-          ng-focus="contactUIForm.organization.$focused=true" 
+          ng-maxlength=120
+          callback="business.orgTypeahead"
+          statement="key.description as key.description for key in typeahead | looseFilter:$viewValue | limitTo:8"
+          required 
+          ng-focus
+          placeholder="Organization"
           on-enter="makeThisHappen(!contactUIForm.$invalid, contactUIForm, addContact)"
+          ng-focus="contactUIForm.organization.$focused=true" 
           ng-blur="contactUIForm.organization.$focused=false; contactUIForm.organization.$hasBeenFocused = true;" 
-          required
-          />
+          ></type-ahead>
         </div>
         <p ng-show="contactUIForm.organization.$error.minlength && !contactUIForm.organization.$focused && contactUIForm.organization.$hasBeenFocused && formFocused(contactUIForm)" class="help-block">Organization must be longer than 1 character in length.</p>
         <p ng-show="contactUIForm.organization.$error.required && !contactUIForm.organization.$focused && contactUIForm.organization.$hasBeenFocused && formFocused(contactUIForm)" class="help-block">An organization is required.</p>
@@ -492,6 +529,14 @@ body {
         </div>
         <div style="clear:both;"></div>
       </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Security Type</label>
+        <div class="col-sm-10">
+          <select smartselect type="text" class="form-control" id="component_securityType" name="securityType" style="width:125px;display: inline" ng-model="contactForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+            <option style="display:none" value="">Select a Type</option>
+          </select>
+        </div>        
+      </div>        
       <div class="col-sm-12">
         <button type="button" class="col-md-offset-2 btn btn-primary" ng-click="addContact(contactUIForm)" ng-disabled="!vitalsCheck() || contactUIForm.$invalid || !contactForm.contactType || !contactForm.firstName || !contactForm.lastName || !contactForm.organization || !contactForm.email || !contactForm.phone"><i class="fa fa-save"></i>&nbsp;Add</button>
       </div>
@@ -505,6 +550,7 @@ body {
           <th>Organization</th>
           <th>Email</th>
           <th>Phone</th>
+          <th>Security Type</th>
           <th>Action</th>
         </tr>
         <tr ng-disabled="contact.contactType.code === 'SUB' " ng-repeat="contact in component.contacts" >
@@ -514,6 +560,7 @@ body {
           <td>{{contact.organization}}</td>
           <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;">{{contact.email}}</td>
           <td>{{contact.phone}}</td>
+          <td>{{getSecurityDesc(contact.securityMarkingType)}}</td>
           <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
             <button class="btn btn-danger btn-sm" ng-disabled="contact.contactType.code === 'SUB' " ng-click="removeContact($index);" title="Delete"><i class="fa fa-trash"></i></button>
           </td>
@@ -547,7 +594,7 @@ body {
         />
       </div>
       <p ng-show="dependencyUIForm.name.$error.minlength && !dependencyUIForm.name.$focused && dependencyUIForm.name.$hasBeenFocused &&formFocused(dependencyUIForm)" class="help-block">Name must be longer than 1 character in length.</p>
-      <p ng-show="dependencyUIForm.name.$error.required && !dependencyUIForm.name.$focused && dependencyUIForm.name.$hasBeenFocused &&formFocused(dependencyUIForm)" class="help-block">An organization is required.</p>
+      <p ng-show="dependencyUIForm.name.$error.required && !dependencyUIForm.name.$focused && dependencyUIForm.name.$hasBeenFocused &&formFocused(dependencyUIForm)" class="help-block">A name is required.</p>
       <div style="clear:both;"></div>
     </div>
     <div class="form-group required">
@@ -567,7 +614,7 @@ body {
         />
       </div>
       <p ng-show="dependencyUIForm.version.$error.minlength && !dependencyUIForm.version.$focused && dependencyUIForm.version.$hasBeenFocused &&formFocused(dependencyUIForm)" class="help-block">Version must be longer than 1 character in length.</p>
-      <p ng-show="dependencyUIForm.version.$error.required && !dependencyUIForm.version.$focused && dependencyUIForm.version.$hasBeenFocused &&formFocused(dependencyUIForm)" class="help-block">An organization is required.</p>
+      <p ng-show="dependencyUIForm.version.$error.required && !dependencyUIForm.version.$focused && dependencyUIForm.version.$hasBeenFocused &&formFocused(dependencyUIForm)" class="help-block">A version is required.</p>
       <div style="clear:both;"></div>
     </div>
     <div class="form-group">
@@ -605,6 +652,17 @@ body {
       </div>
       <div style="clear:both;"></div>
     </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Security Type</label>
+      <div class="col-sm-10">
+        <select smartselect type="text" class="form-control" id="component_securityType" name="securityType" style="width:125px;display: inline" ng-model="dependencyForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+          <option style="display:none" value="">Select a Type</option>
+        </select>
+      </div>        
+    </div>        
+
+
     <div class="col-sm-12">
       <button type="button" class=" col-md-offset-2 btn btn-primary" ng-click="addDependency(dependencyUIForm)" ng-disabled="!vitalsCheck() || !dependencyForm.dependencyName || !dependencyForm.version || dependencyUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;Add</button>
     </div>
@@ -616,6 +674,7 @@ body {
         <th>Version</th>
         <th>External Link</th>
         <th>Comment</th>
+        <th>Security Type</th>
         <th>Action</th>
       </tr>
       <tr ng-repeat="dependency in component.externalDependencies" >
@@ -623,6 +682,7 @@ body {
         <td>{{dependency.version}}</td>
         <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;">{{dependency.dependencyReferenceLink}}</td>
         <td>{{dependency.comment}}</td>
+        <td>{{getSecurityDesc(dependency.securityMarkingType)}}</td>
         <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
           <button class="btn btn-danger btn-sm" ng-click="removeDependency($index);" title="Delete"><i class="fa fa-trash"></i></button>
         </td>
@@ -700,6 +760,14 @@ body {
                 </div>
                 <div style="clear:both;"></div>
               </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Security Type</label>
+                <div class="col-sm-10">
+                  <select smartselect type="text" class="form-control" id="component_securityType" name="securityType" style="width:125px;display: inline" ng-model="resourceForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+                    <option style="display:none" value="">Select a Type</option>
+                  </select>
+                </div>        
+              </div> 
               <div class="col-sm-12">
                 <button type="button" class="btn btn-primary" ng-click="addLinkToResource()" ng-disabled="!vitalsCheck() || showResourceUpload === 'falseValue' || !resourceForm.resourceType || !resourceForm.link"><i class="fa fa-save"></i>&nbsp;Add Link</button>
               </div>
@@ -732,6 +800,14 @@ body {
                 </div>
                 <div style="clear:both;"></div>
               </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Security Type</label>
+                <div class="col-sm-10">
+                  <select smartselect type="text" class="form-control" id="component_securityType" name="securityType" style="width:125px;display: inline" ng-model="resourceForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+                    <option style="display:none" value="">Select a Type</option>
+                  </select>
+                </div>        
+              </div> 
               <div class="col-sm-12">
                 <span class="btn btn-primary btn-file" ng-disabled="!vitalsCheck() || lastResourceFile || showResourceUpload === 'trueValue' || !resourceForm.resourceType ||  isFullResource">
                   <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="resourceUploader" name="uploadFile" id="resourceUploadInput" width="100" ng-disabled="!vitalsCheck() || lastResourceFile || showResourceUpload === 'trueValue' || !resourceForm.resourceType || isFullResource || (component.component.approvalState && component.component.approvalState !=='N')"/>
@@ -749,6 +825,7 @@ body {
                 <th>Type</th>
                 <th>Caption</th>
                 <th>Mime Type</th>
+                <th>Security Type</th>
                 <th>Preview/Link</th>
                 <th>Actions</th>
               </tr>
@@ -756,6 +833,7 @@ body {
                 <td>{{getResourceTypeDesc(item.file.resourceType)}}</td>
                 <td>{{item.file.description}}</td>
                 <td>{{item.file.mimeType}}</td>
+                <td>{{getSecurityDesc(item.file.securityMarkingType)}}</td>
                 <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;">
                   <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
                     <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
@@ -767,6 +845,7 @@ body {
                 <td>{{getResourceTypeDesc(item.resourceType)}}</td>
                 <td>{{item.description}}</td>
                 <td>&mdash;</td>
+                <td>{{getSecurityDesc(item.securityMarkingType)}}</td>
                 <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
                 <!-- <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" ></td> -->
                 <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getResourceHTML(item)"></td>
@@ -829,6 +908,14 @@ body {
                   </div>
                   <div style="clear:both;"></div>
                 </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">Security Type</label>
+                  <div class="col-sm-10">
+                    <select smartselect type="text" class="form-control" id="component_securityType" name="securityType" style="width:125px;display: inline" ng-model="mediaForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+                      <option style="display:none" value="">Select a Type</option>
+                    </select>
+                  </div>        
+                </div> 
                 <div class="col-sm-12">
                   <span class="btn btn-primary btn-file" ng-disabled="!vitalsCheck() || lastMediaFile || showMediaUpload === 'trueValue' || !mediaForm.mediaTypeCode || isFull">
                     <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="mediaUploader" name="uploadFile" id="mediaUploadInput" width="100" ng-disabled="!vitalsCheck() || lastMediaFile || showMediaUpload === 'trueValue' || !mediaForm.mediaTypeCode || isFull || (component.component.approvalState && component.component.approvalState !=='N')"/>
@@ -879,6 +966,14 @@ body {
                   </div>
                   <div style="clear:both;"></div>
                 </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">Security Type</label>
+                  <div class="col-sm-10">
+                    <select smartselect type="text" class="form-control" id="component_securityType" name="securityType" style="width:125px;display: inline" ng-model="mediaForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+                      <option style="display:none" value="">Select a Type</option>
+                    </select>
+                  </div>        
+                </div> 
                 <div class="col-sm-12">
                   <button type="button" class="btn btn-primary" ng-click="addLinkToMedia()" ng-disabled="!vitalsCheck() || showMediaUpload === 'falseValue' || !mediaForm.mediaTypeCode || !mediaForm.link"><i class="fa fa-save"></i>&nbsp;Add Link</button>
                 </div>
@@ -894,6 +989,7 @@ body {
                   <th>Type</th>
                   <th>Caption</th>
                   <th>Mime Type</th>
+                  <th>Security Type</th>
                   <th>Preview/Link</th>
                   <th>Actions</th>
                 </tr>
@@ -901,6 +997,7 @@ body {
                   <td>{{getMediaTypeDesc(item.file.mediaTypeCode)}}</td>
                   <td>{{item.file.caption}}</td>
                   <td>{{item.file.mimeType}}</td>
+                  <td>{{getSecurityDesc(item.file.securityMarkingType)}}</td>
                   <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;">
                     <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
                       <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
@@ -912,6 +1009,7 @@ body {
                   <td>{{getMediaTypeDesc(item.mediaTypeCode)}}</td>
                   <td>{{item.caption}}</td>
                   <td>&mdash;</td>
+                  <td>{{getSecurityDesc(item.securityMarkingType)}}</td>
                   <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
                   <!-- <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;"></td> -->
                   <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getMediaHTML(item)"></td>
@@ -970,7 +1068,7 @@ body {
         </div>
         <div class="line" ><strong>Component:&nbsp;</strong> {{component.component.name}}</div>
         <div class="line" ><strong>Organization:&nbsp;</strong> {{component.component.organization}}</div>
-        <div class="line" ><strong>Description:&nbsp;</strong><span dynamichtml="component.component.description"></span></div>
+        <div class="line" ><strong>Description<classification ls style="font-size:14px;"  ng-model="component.component"></classification>:&nbsp;</strong><span dynamichtml="component.component.description"></span></div>
         <div class="line" ng-show="badgeFound"><strong>Badges:&nbsp;</strong></div>
         <div ng-show="badgeFound">
           <div ng-repeat="attribute in component.attributes" style="display:inline-block;">
@@ -1022,6 +1120,7 @@ body {
               <th>Organization</th>
               <th>Email</th>
               <th>Phone</th>
+              <th>Security Type</th>
             </tr>
             <tr ng-repeat="contact in component.contacts">
               <td>{{getContactTypeDesc(contact.contactType)}}</td>
@@ -1029,6 +1128,7 @@ body {
               <td>{{contact.organization}}</td>
               <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;">{{contact.email}}</td>
               <td>{{contact.phone}}</td>
+              <td>{{getSecurityDesc(contact.securityMarkingType)}}</td>
             </tr>
           </table>
         </div>
@@ -1047,12 +1147,14 @@ body {
             <th>Version</th>           
             <th>Link</th>
             <th>Comment</th>
+            <th>Security Type</th>
           </tr>
           <tr ng-repeat="dependency in component.externalDependencies">
             <td>{{dependency.dependencyName}}</td>
             <td>{{dependency.version}}</td>
             <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" >{{dependency.dependancyReferenceLink}}</td>
             <td>{{dependency.comment}}</td>           
+            <td>{{getSecurityDesc(dependency.securityMarkingType)}}</td>
           </tr>
         </table>
       </div>
@@ -1081,12 +1183,14 @@ body {
               <th>Description</th>
               <th>Caption</th>
               <th>Mime Type</th>
+              <th>Security Type</th>
               <th>Preview/Link</th>
             </tr>
             <tr ng-repeat="item in resourceQueue">
               <td>{{getResourceTypeDesc(item.file.resourceType)}}</td>
               <td>{{item.file.description}}</td>
               <td>{{item.file.mimeType}}</td>
+              <td>{{getSecurityDesc(item.file.securityMarkingType)}}</td>
               <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;">
                 <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
                   <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
@@ -1097,6 +1201,7 @@ body {
               <td>{{getResourceTypeDesc(item.resourceType)}}</td>
               <td>{{item.description}}</td>
               <td>{{item.mimeType}}</td>
+              <td>{{getSecurityDesc(item.securityMarkingType)}}</td>
               <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
               <!-- <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" ></td> -->
               <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getResourceHTML(item)"></td>
@@ -1121,12 +1226,14 @@ body {
                 <th>Description</th>
                 <th>Caption</th>
                 <th>Mime Type</th>
+                <th>Security Type</th>
                 <th>Preview/Link</th>
               </tr>
               <tr ng-repeat="item in queue">
                 <td>{{getMediaTypeDesc(item.file.mediaTypeCode)}}</td>
                 <td>{{item.file.caption}}</td>
                 <td>{{item.file.mimeType}}</td>
+                <td>{{getSecurityDesc(item.file.securityMarkingType)}}</td>
                 <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;">
                   <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
                     <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
@@ -1137,6 +1244,7 @@ body {
                 <td>{{getMediaTypeDesc(item.mediaTypeCode)}}</td>
                 <td>{{item.caption}}</td>
                 <td>{{item.mimeType}}</td>
+                <td>{{getSecurityDesc(item.securityMarkingType)}}</td>
                 <td ng-if="!item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="item.link"></td>
                 <!-- <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;"></td> -->
                 <td ng-if="item.fileName" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;" dynamichtml="getMediaHTML(item)"></td>
@@ -1157,7 +1265,7 @@ body {
       <div style="clear:both;"></div>
       <br>
       <div class="col-sm-12" style="text-align: center; margin-bottom: 20px;">
-        <button ng-show="(component.component.approvalState && component.component.approvalState !== 'N' && component.component.approvalState !=='A')" style="display:inline-block" class="btn btn-primary btn-lg" ng-click="setEditable($event)">Edit Component</button>
+        <button ng-show="(component.component.approvalState && component.component.approvalState !== 'N')" style="display:inline-block" class="btn btn-primary btn-lg" ng-click="setEditable($event)">Edit Component</button>
         <a style="display:inline-block" class="btn btn-primary btn-lg" ng-show="component.component.componentId" href="single?id={{component.component.componentId}}" target="_blank">Preview Component</a>
         <button ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')" style="display:inline-block" class="btn btn-primary btn-lg" ng-click="finalSave($event)">Submit Component</button>
       </div>

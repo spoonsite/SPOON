@@ -24,7 +24,7 @@ app.directive('classification', ['$timeout', function($timeout) {
       ngModel: '='
     },
     replace: true,
-    template: '<small ng-show="ngModel.securityMarkingType"><span ng-show="leftSpace">&nbsp;</span>({{ngModel.securityMarkingType}})<span ng-show="!leftSpace">&nbsp;</span></small>',
+    template: '<small ng-show="ngModel.securityMarkingType"><span ng-show="leftSpace" style="padding: 0px; font-weight: inherit; font-size: inherit">&nbsp;</span>({{ngModel.securityMarkingType}})<span ng-show="!leftSpace">&nbsp;</span></small>',
     link: function postlink(scope, element, attrs) {
       scope.leftSpace = false;
       if (attrs['ls'] !== undefined) {
