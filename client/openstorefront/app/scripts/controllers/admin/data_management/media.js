@@ -80,7 +80,7 @@
 
   $scope.addMedia = function(){
     var modalInstance = $uiModal.open({
-      templateUrl: 'views/admin/addGeneralMedia.html',
+      templateUrl: 'views/admin/data_management/addGeneralMedia.html',
       controller: 'AdminAddMediaCtrl',
       backdrop: 'static',
       size: 'sm',

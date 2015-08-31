@@ -56,7 +56,7 @@ app.controller('AdminAlertCtrl', ['$scope', 'business', '$rootScope', '$uiModal'
   
   $scope.addAlert = function(){
       var modalInstance = $uiModal.open({
-        templateUrl: 'views/admin/editAlert.html',
+        templateUrl: 'views/admin/application_management/editAlert.html',
         controller: 'AdminEditAlertCtrl',
         backdrop: 'static',
         size: 'sm',
@@ -70,7 +70,7 @@ app.controller('AdminAlertCtrl', ['$scope', 'business', '$rootScope', '$uiModal'
   
   $scope.editAlert = function(alert){
       var modalInstance = $uiModal.open({
-        templateUrl: 'views/admin/editAlert.html',
+        templateUrl: 'views/admin/application_management/editAlert.html',
         controller: 'AdminEditAlertCtrl',
         backdrop: 'static',
         size: 'sm',

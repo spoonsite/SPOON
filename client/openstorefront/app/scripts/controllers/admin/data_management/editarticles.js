@@ -106,7 +106,7 @@ $scope.getArticleDesc = function(desc){
 
 $scope.editContent = function(type, code){
   var modalInstance = $uiModal.open({
-    templateUrl: 'views/admin/editlandingform.html',
+    templateUrl: 'views/admin/data_management/editlandingform.html',
     controller: 'AdminEditLandingCtrl',
     size: 'lg',
     backdrop: 'static',
@@ -164,7 +164,7 @@ $scope.changeActivity = function(article){
 
 $scope.importFile = function(){
   var modalInstance = $uiModal.open({
-    templateUrl: 'views/admin/fileupload.html',
+    templateUrl: 'views/admin/data_management/fileupload.html',
     controller: 'AdminAddMediaCtrl',
     backdrop: 'static',
     size: 'sm',

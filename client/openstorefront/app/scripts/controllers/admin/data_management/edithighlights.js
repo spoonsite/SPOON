@@ -165,7 +165,7 @@ app.controller('AdminEditHighlightsCtrl',['$scope','business', '$uiModal', '$tim
 
   $scope.editHighlights = function(highlight){
     var modalInstance = $uiModal.open({
-      templateUrl: 'views/admin/edithighlightsmodal.html',
+      templateUrl: 'views/admin/data_management/edithighlightsmodal.html',
       controller: 'AdminEditHighlightsModalCtrl',
       backdrop: 'static',
       size: 'lg',

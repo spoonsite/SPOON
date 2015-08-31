@@ -65,9 +65,12 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
     $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
     if ($scope.pagination.control && $scope.pagination.control.refresh) {
       $scope.pagination.control.refresh().then(function(result){
-        console.log('result', result);
-        
-        $scope.typeCodes = result.data;
+        // console.log('result', result);
+        if (result && result.data) {
+          $scope.typeCodes = result.data;
+        } else {
+          $scope.typeCodes = [];
+        }
         $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminTypeRefresh');
       });
     } else {
@@ -275,7 +278,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
     if ($scope.type && $scope.type.attributeType) {
 
       var modalInstance = $uiModal.open({
-        templateUrl: 'views/admin/editcode.html',
+        templateUrl: 'views/admin/data_management/editcode.html',
         controller: 'AdminEditCodeCtrl',
         size: 'lg',
         backdrop: 'static',
