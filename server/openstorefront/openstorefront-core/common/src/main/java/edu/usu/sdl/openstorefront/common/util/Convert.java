@@ -17,6 +17,10 @@ package edu.usu.sdl.openstorefront.common.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Methods for Converting Values. Typically from External Input.
@@ -139,6 +143,50 @@ public class Convert
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Attempts to convert several different formats
+	 *
+	 * MM/dd/yyyy HH:mm:ss z yyyy-mm-dd HH:mm:ss z yyyy-MM-dd'T'HH:mm:ss.SSS'Z
+	 * MM/dd/yyyy yyyy-mm-dd date standard milliseconds
+	 *
+	 * @param dateString
+	 * @return date
+	 */
+	public static Date toDate(String dateString)
+	{
+		Date dateConverted = null;
+
+		if (StringUtils.isNotBlank(dateString)) {
+
+			try {
+				if (StringUtils.isNumeric(dateString)) {
+					dateConverted = new Date(Long.parseLong(dateString));
+				} else {
+
+					String formats[] = {
+						"MM/dd/yyyy HH:mm:ss z ",
+						"yyyy-mm-dd HH:mm:ss z ",
+						"yyyy-MM-dd'T'HH:mm:ss.SSS'Z",
+						"MM/dd/yyyy",
+						"yyyy-mm-dd ",};
+
+					for (String format : formats) {
+						SimpleDateFormat sdf = new SimpleDateFormat(format);
+						dateConverted = sdf.parse(dateString, new ParsePosition(0));
+						if (dateConverted != null) {
+							break;
+						}
+					}
+				}
+
+			} catch (Exception e) {
+				dateConverted = null;
+			}
+		}
+
+		return dateConverted;
 	}
 
 }

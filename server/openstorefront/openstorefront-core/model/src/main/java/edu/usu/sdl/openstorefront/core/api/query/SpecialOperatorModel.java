@@ -25,7 +25,7 @@ import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 public class SpecialOperatorModel< T extends BaseEntity>
 {
 
-	private GenerateStatementOption generateStatementOption = new GenerateStatementOption();
+	private GenerateStatementOption generateStatementOption = new GenerateStatementOptionBuilder().build();
 	private T example;
 
 	public SpecialOperatorModel()

@@ -59,6 +59,16 @@ public class ValidValueRule
 						}
 					}
 					validValueSet.addAll(Arrays.asList(validValueType.value()));
+					if (validValueType.enumClass().length > 0) {
+						for (Class enumClass : validValueType.enumClass()) {
+							Object enumValues[] = enumClass.getEnumConstants();
+							if (enumValues != null) {
+								for (Object enumValue : enumValues) {
+									validValueSet.add(enumValue.toString());
+								}
+							}
+						}
+					}
 
 					if (validValueSet.contains(value) == false) {
 						valid = false;

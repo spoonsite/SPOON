@@ -13,27 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.search;
-
-import java.util.Date;
+package edu.usu.sdl.openstorefront.validation;
 
 /**
+ * implement this interface to be able to use enum as valid value validation.
  *
  * @author dshurtleff
  */
-public class SearchElement
+public interface EnumLookup
 {
 
-	String field;
-	String entity;
-	String value;
-	String keyfield;
-	String keyValue;
-	Date startDate;
-	Date endDate;
-	boolean caseSenstive;
-
-//	public ValidationResult validate()
-//	{
-//	}
+	public boolean vaildValue(String value);
 }

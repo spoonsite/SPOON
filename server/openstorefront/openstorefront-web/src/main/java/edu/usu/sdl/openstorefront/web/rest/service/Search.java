@@ -24,6 +24,8 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
+import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.sort.ComponentSearchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
@@ -82,6 +84,25 @@ public class Search
 		{
 		};
 		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Advance searche of listing ")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(ComponentSearchView.class)
+	public Response advanceSearch(SearchModel searchModel)
+	{
+
+		AdvanceSearchResult result = service.getSearchService().advanceSearch(searchModel);
+		if (result.getValidationResult().valid()) {
+			GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result.getResults())
+			{
+			};
+			return sendSingleEntityResponse(entity);
+		} else {
+			return sendSingleEntityResponse(result.getValidationResult().toRestError());
+		}
 	}
 
 	@DELETE

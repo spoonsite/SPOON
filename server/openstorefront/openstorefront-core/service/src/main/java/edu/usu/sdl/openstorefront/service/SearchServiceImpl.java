@@ -28,6 +28,13 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
+import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
+import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
+import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
+import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.MergeCondition;
+import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.SearchType;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -35,11 +42,21 @@ import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager.SolrAndOr;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager.SolrEquals;
+import edu.usu.sdl.openstorefront.service.search.AttributeSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.BaseSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.ComponentSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.ContactSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.MetaDataSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.ReviewSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
+import edu.usu.sdl.openstorefront.service.search.TagSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.UserRatingSearchHandler;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -488,5 +505,98 @@ public class SearchServiceImpl
 	{
 		deleteAll();
 		saveAll();
+	}
+
+	@Override
+	public AdvanceSearchResult advanceSearch(SearchModel searchModel)
+	{
+		AdvanceSearchResult searchResult = new AdvanceSearchResult();
+
+		//group
+		Map<SearchType, List<SearchElement>> searchGroup = new HashMap<>();
+		for (SearchElement searchElement : searchModel.getSearchElements()) {
+			if (searchGroup.containsKey(searchElement.getSearchType())) {
+				searchGroup.get(searchElement.getSearchType()).add(searchElement);
+			} else {
+				List<SearchElement> searchElements = new ArrayList<>();
+				searchElements.add(searchElement);
+				searchGroup.put(searchElement.getSearchType(), searchElements);
+			}
+		}
+
+		List<BaseSearchHandler> handlers = new ArrayList<>();
+		for (SearchType searchType : searchGroup.keySet()) {
+			List<SearchElement> searchElements = searchGroup.get(searchType);
+			switch (searchType) {
+				case ATTRIBUTE:
+					handlers.add(new AttributeSearchHandler(searchElements));
+					break;
+				case COMPONENT:
+					handlers.add(new ComponentSearchHandler(searchElements));
+					break;
+				case CONTACT:
+					handlers.add(new ContactSearchHandler(searchElements));
+					break;
+				case METADATA:
+					handlers.add(new MetaDataSearchHandler(searchElements));
+					break;
+				case REVIEW:
+					handlers.add(new ReviewSearchHandler(searchElements));
+					break;
+				case TAG:
+					handlers.add(new TagSearchHandler(searchElements));
+					break;
+				case USER_RATING:
+					handlers.add(new UserRatingSearchHandler(searchElements));
+					break;
+				default:
+					throw new OpenStorefrontRuntimeException("No handler defined for Search Type: " + searchType, "Add support; programming error");
+			}
+		}
+
+		//validate
+		ValidationResult validationResultMain = new ValidationResult();
+		for (BaseSearchHandler handler : handlers) {
+			ValidationResult validationResult = handler.validate();
+			validationResultMain.merge(validationResult);
+		}
+
+		if (validationResultMain.valid()) {
+			//process groups and aggergate
+			List<String> componentIds = new ArrayList<>();
+			MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
+			for (BaseSearchHandler handler : handlers) {
+				List<String> foundIds = handler.processSearch();
+
+				componentIds = mergeCondition.apply(componentIds, foundIds);
+
+				//merge
+				mergeCondition = handler.getNextMergeCondition();
+			}
+			Set<String> masterResults = new HashSet<>();
+			masterResults.addAll(componentIds);
+
+			//resolve results
+			List<ComponentSearchView> views = getComponentService().getSearchComponentList(new ArrayList<>(masterResults));
+
+			//sort and window
+			if (StringUtils.isNotBlank(searchModel.getSortField())) {
+				Collections.sort(views, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
+			}
+			//window
+			if (searchModel.getStartOffset() < views.size() && searchModel.getMax() > 0) {
+				int count = 0;
+				for (int i = searchModel.getStartOffset(); i < views.size(); i++) {
+					searchResult.getResults().add(views.get(i));
+					count++;
+					if (count >= searchModel.getMax()) {
+						break;
+					}
+				}
+			}
+		}
+		searchResult.setValidationResult(validationResultMain);
+
+		return searchResult;
 	}
 }
