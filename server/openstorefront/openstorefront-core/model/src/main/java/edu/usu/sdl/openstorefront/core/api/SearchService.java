@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
+import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -47,6 +49,15 @@ public interface SearchService
 	 * @return
 	 */
 	public List<ComponentSearchView> getSearchItems(SearchQuery query, FilterQueryParams filter);
+
+	/**
+	 * Performs the search according to search elements and then gathers all
+	 * results
+	 *
+	 * @param searchModel
+	 * @return results and any validation failures
+	 */
+	public AdvanceSearchResult advanceSearch(SearchModel searchModel);
 
 	/**
 	 * This is used for an architecture search

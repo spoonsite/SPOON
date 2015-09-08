@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.query.ComplexFieldStack;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import static edu.usu.sdl.openstorefront.core.api.query.QueryType.COUNT;
@@ -339,6 +340,7 @@ public class OrientPersistenceService
 		return deleteByExample(new QueryByExample(example));
 	}
 
+	@Override
 	public <T> int deleteByExample(QueryByExample queryByExample)
 	{
 		int deleteCount = 0;
@@ -347,7 +349,7 @@ public class OrientPersistenceService
 		queryString.append("delete from ").append(queryByExample.getExample().getClass().getSimpleName());
 
 		Map<String, Object> mappedParams = new HashMap<>();
-		String whereClause = generateWhereClause(queryByExample.getExample());
+		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
 			mappedParams.putAll(mapParameters(queryByExample.getExample()));
@@ -402,9 +404,9 @@ public class OrientPersistenceService
 		StringBuilder queryString = new StringBuilder();
 		queryString.append("update ").append(entityClass.getSimpleName());
 
-		GenerateStatementOption generateStatementOption = new GenerateStatementOption();
+		GenerateStatementOption generateStatementOption = new GenerateStatementOptionBuilder().build();
 		generateStatementOption.setCondition(GenerateStatementOption.CONDITION_COMMA);
-		generateStatementOption.setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_SET);
+		generateStatementOption.setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_SET);
 		queryString.append(" set ").append(generateWhereClause(exampleSet, new ComplexFieldStack(), generateStatementOption));
 		queryString.append(" where ").append(generateWhereClause(exampleWhere));
 
@@ -442,6 +444,7 @@ public class OrientPersistenceService
 		return countByExample(new QueryByExample(example));
 	}
 
+	@Override
 	public long countByExample(QueryByExample queryByExample)
 	{
 		long count = 0;
@@ -462,7 +465,7 @@ public class OrientPersistenceService
 		queryString.append("from ").append(queryByExample.getExample().getClass().getSimpleName());
 
 		Map<String, Object> mappedParams = new HashMap<>();
-		String whereClause = generateWhereClause(queryByExample.getExample());
+		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
 			mappedParams.putAll(mapParameters(queryByExample.getExample()));
@@ -520,6 +523,7 @@ public class OrientPersistenceService
 		return queryByExample(exampleClass, new QueryByExample(baseEntity));
 	}
 
+	@Override
 	public <T> List<T> queryByExample(Class<T> exampleClass, QueryByExample queryByExample)
 	{
 		StringBuilder queryString = new StringBuilder();
@@ -534,15 +538,13 @@ public class OrientPersistenceService
 		queryString.append(" from ").append(queryByExample.getExample().getClass().getSimpleName());
 
 		Map<String, Object> mappedParams = new HashMap<>();
-		String whereClause = generateWhereClause(queryByExample.getExample());
+		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
 			mappedParams.putAll(mapParameters(queryByExample.getExample()));
 		}
 		if (queryByExample.getLikeExample() != null) {
-			GenerateStatementOption generateStatementOption = new GenerateStatementOption();
-			generateStatementOption.setOperation(GenerateStatementOption.OPERATION_LIKE);
-			String likeClause = generateWhereClause(queryByExample.getLikeExample(), new ComplexFieldStack(), generateStatementOption);
+			String likeClause = generateWhereClause(queryByExample.getLikeExample(), new ComplexFieldStack(), queryByExample.getLikeExampleOption());
 			if (StringUtils.isNotBlank(likeClause)) {
 				if (StringUtils.isNotBlank(whereClause)) {
 					queryString.append(" AND ");
@@ -598,7 +600,7 @@ public class OrientPersistenceService
 
 	private <T> String generateWhereClause(T example)
 	{
-		return generateWhereClause(example, new ComplexFieldStack(), new GenerateStatementOption());
+		return generateWhereClause(example, new ComplexFieldStack(), new GenerateStatementOptionBuilder().build());
 	}
 
 	private <T> String generateWhereClause(T example, ComplexFieldStack complexFieldStack, GenerateStatementOption generateStatementOption)
@@ -635,11 +637,12 @@ public class OrientPersistenceService
 								where.append(" ");
 							}
 
-							String fieldName = complexFieldStack.getQueryFieldName() + field.toString();
+							String fieldName = complexFieldStack.getQueryFieldName() + field.toString() + generateStatementOption.getMethod();
+							String fieldParamName = complexFieldStack.getQueryFieldName() + field.toString();
 							where.append(fieldName)
 									.append(" ").append(generateStatementOption.getOperation()).append(" :")
-									.append(fieldName.replace(".", PARAM_NAME_SEPARATOR))
-									.append(generateStatementOption.getParamaterSuffix());
+									.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
+									.append(generateStatementOption.getParameterSuffix());
 						}
 					}
 				}
@@ -703,7 +706,7 @@ public class OrientPersistenceService
 
 	private <T> Map<String, Object> mapParameters(T example)
 	{
-		return mapParameters(example, new ComplexFieldStack(PARAM_NAME_SEPARATOR), new GenerateStatementOption());
+		return mapParameters(example, new ComplexFieldStack(PARAM_NAME_SEPARATOR), new GenerateStatementOptionBuilder().build());
 	}
 
 	private <T> Map<String, Object> mapParameters(T example, ComplexFieldStack complexFieldStack, GenerateStatementOption generateStatementOption)
@@ -724,7 +727,7 @@ public class OrientPersistenceService
 							complexFieldStack.getFieldStack().pop();
 						} else {
 							String fieldName = complexFieldStack.getQueryFieldName() + field.getName();
-							parameterMap.put(fieldName + generateStatementOption.getParamaterSuffix(), value);
+							parameterMap.put(fieldName + generateStatementOption.getParameterSuffix(), value);
 						}
 					}
 				}
@@ -750,6 +753,7 @@ public class OrientPersistenceService
 		return queryOneByExample(exampleClass, new QueryByExample(baseEnity));
 	}
 
+	@Override
 	public <T> T queryOneByExample(Class<T> exampleClass, QueryByExample queryByExample)
 	{
 		List<T> results = queryByExample(exampleClass, queryByExample);
@@ -883,6 +887,7 @@ public class OrientPersistenceService
 		return t;
 	}
 
+	@Override
 	public <T> void delete(T entity)
 	{
 		OObjectDatabaseTx db = getConnection();

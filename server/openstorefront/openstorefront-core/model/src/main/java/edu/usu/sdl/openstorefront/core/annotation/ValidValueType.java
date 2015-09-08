@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.annotation;
 
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.validation.EnumLookup;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -40,4 +41,11 @@ public @interface ValidValueType
 	 * @return
 	 */
 	Class<? extends LookupEntity>[] lookupClass() default {};
+
+	/**
+	 * This allows for enums to be use for values (Optional)
+	 *
+	 * @return
+	 */
+	Class<? extends EnumLookup>[] enumClass() default {};
 }

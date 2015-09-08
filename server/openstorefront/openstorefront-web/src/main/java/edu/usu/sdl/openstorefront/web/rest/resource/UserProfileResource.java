@@ -103,7 +103,7 @@ public class UserProfileResource
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(userProfileEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		queryByExample.setMaxResults(filterQueryParams.getMax());

@@ -41,12 +41,24 @@ public class GenerateStatementOption
 	public static final String PARAMETER_SUFFIX_SET = "SetParam";
 	public static final String PARAMETER_SUFFIX_END_RANGE = "EndRangeParam";
 
+	public static final String METHOD_LOWER_CASE = ".toLowerCase()";
+	public static final String METHOD_UPPER_CASE = ".toUpperCase()";
+
 	private String operation = OPERATION_EQUALS;
 	private String condition = CONDITION_AND;
-	private String paramaterSuffix = PARAMETER_SUFFIX_DEFAULT;
+	private String parameterSuffix = PARAMETER_SUFFIX_DEFAULT;
+	private String method = "";
 
 	public GenerateStatementOption()
 	{
+	}
+
+	public GenerateStatementOption(String operation, String condition, String parameterSuffix, String method)
+	{
+		this.operation = operation;
+		this.condition = condition;
+		this.parameterSuffix = parameterSuffix;
+		this.method = method;
 	}
 
 	public String getOperation()
@@ -69,14 +81,24 @@ public class GenerateStatementOption
 		this.condition = condition;
 	}
 
-	public String getParamaterSuffix()
+	public String getParameterSuffix()
 	{
-		return paramaterSuffix;
+		return parameterSuffix;
 	}
 
-	public void setParamaterSuffix(String paramaterSuffix)
+	public void setParameterSuffix(String parameterSuffix)
 	{
-		this.paramaterSuffix = paramaterSuffix;
+		this.parameterSuffix = parameterSuffix;
+	}
+
+	public String getMethod()
+	{
+		return method;
+	}
+
+	public void setMethod(String method)
+	{
+		this.method = method;
 	}
 
 }
