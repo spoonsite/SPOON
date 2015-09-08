@@ -106,6 +106,10 @@ var app = angular
     templateUrl: 'views/print.html',
     controller: 'PrintCtrl',
     label: 'Print Page'
+  })  .when('/tools', {
+    templateUrl: 'views/user.html',
+    controller: 'UserCtrl',
+    label: 'Tools Page'
   })
   .when('/help', {
     templateUrl: 'views/helpSingle.html',
@@ -362,6 +366,7 @@ var app = angular
           && $location.path() !== '/landing' 
           && $location.path() !== '/compare' 
           && $location.path() !== '/admin' 
+          && $location.path() !== '/tools' 
           && $location.path() !== '/print')) {
           $location.search({});
       }

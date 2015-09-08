@@ -86,7 +86,7 @@ app.controller('AdminManageOrganizationsCtrl', ['$scope', 'business', '$timeout'
 
     $scope.editOrganization = function(organization){
       var modalInstance = $uiModal.open({
-        templateUrl: 'views/admin/editOrganization.html',
+        templateUrl: 'views/admin/data_management/editOrganization.html',
         controller: 'AdminOrganizationEditCtrl',
         backdrop: 'static',
         size: 'lg',
@@ -106,7 +106,7 @@ app.controller('AdminManageOrganizationsCtrl', ['$scope', 'business', '$timeout'
 
     $scope.viewOrphans = function(){
       var modalInstance = $uiModal.open({
-        templateUrl: 'views/admin/viewOrgOrphans.html',
+        templateUrl: 'views/admin/data_management/viewOrgOrphans.html',
         controller: 'AdminOrganizationOrphanCtrl',
         backdrop: 'static',
         size: 'lg',
@@ -116,7 +116,7 @@ app.controller('AdminManageOrganizationsCtrl', ['$scope', 'business', '$timeout'
 
     $scope.viewRefs = function(organization){
       var modalInstance = $uiModal.open({
-        templateUrl: 'views/admin/viewOrgOrphans.html',
+        templateUrl: 'views/admin/data_management/viewOrgOrphans.html',
         controller: 'AdminOrganizationRefCtrl',
         backdrop: 'static',
         size: 'lg',

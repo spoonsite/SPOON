@@ -261,7 +261,7 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
 
   $scope.editAppProperty = function(property){
     var modalInstance = $uiModal.open({
-      templateUrl: 'views/admin/editAppProperty.html',
+      templateUrl: 'views/admin/application_management/editAppProperty.html',
       controller: 'adminEditAppPropertyCtrl',
       size: 'lg',
       resolve: {
@@ -279,7 +279,7 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
 
   $scope.editLogger = function(logger){
     var modalInstance = $uiModal.open({
-      templateUrl: 'views/admin/editLogger.html',
+      templateUrl: 'views/admin/application_management/editLogger.html',
       controller: 'adminEditLoggingCtrl',
       size: 'lg',
       resolve: {
@@ -297,7 +297,7 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
   
   $scope.viewLog =function(){
     var modalInstance = $uiModal.open({
-      templateUrl: 'views/admin/viewLog.html',
+      templateUrl: 'views/admin/application_management/viewLog.html',
       controller: 'adminViewLogCtrl',      
       size: 'lg',
       resolve: {        

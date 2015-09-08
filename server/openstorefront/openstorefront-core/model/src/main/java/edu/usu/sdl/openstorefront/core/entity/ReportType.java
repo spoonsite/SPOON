@@ -39,6 +39,7 @@ public class ReportType
 	public static final String COMPONENT_ORGANIZATION = "CMPORG";
 	public static final String SUBMISSION = "SUBMISSION";
 	public static final String CATEGORY_COMPONENT = "CATCOMP";
+	public static final String TYPE_COMPONENT = "TYPECOMP";
 
 	public ReportType()
 	{
@@ -56,6 +57,7 @@ public class ReportType
 		codeMap.put(COMPONENT_ORGANIZATION, newLookup(ReportType.class, COMPONENT_ORGANIZATION, "Component Organization", "Reports on components that belong to an organization"));
 		codeMap.put(SUBMISSION, newLookup(ReportType.class, SUBMISSION, "Submissions", "Reports on component submissions."));
 		codeMap.put(CATEGORY_COMPONENT, newLookup(ReportType.class, CATEGORY_COMPONENT, "Category Component", "Reports on components in a category."));
+		codeMap.put(TYPE_COMPONENT, newLookup(ReportType.class, TYPE_COMPONENT, "Type Component", "Reports on components by type."));
 		return codeMap;
 	}
 

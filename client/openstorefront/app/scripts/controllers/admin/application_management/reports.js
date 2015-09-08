@@ -95,7 +95,7 @@
 
   $scope.newReport = function(){
     var modalInstance = $uiModal.open({
-      templateUrl: 'views/admin/editReport.html',
+      templateUrl: 'views/admin/application_management/editReport.html',
       controller: 'AdminEditReportCtrl',
       backdrop: 'static',
       size: 'sm',
@@ -112,7 +112,7 @@
 
   $scope.editScheduledReport = function(report){
     var modalInstance = $uiModal.open({
-      templateUrl: 'views/admin/editReport.html',
+      templateUrl: 'views/admin/application_management/editReport.html',
       controller: 'AdminEditReportCtrl',
       backdrop: 'static',
       size: 'sm',

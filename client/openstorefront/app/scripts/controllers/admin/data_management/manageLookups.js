@@ -45,7 +45,7 @@ app.controller('AdminLookupCtrl', ['$scope', 'business', '$rootScope', '$uiModal
 
     $scope.editLookupCodes = function(lookupEntity) {
       var modalInstance = $uiModal.open({
-        templateUrl: 'views/admin/editLookupCodes.html',
+        templateUrl: 'views/admin/data_management/editLookupCodes.html',
         controller: 'AdminEditLookupEntityCtrl',
         size: 'lg',
         resolve: {
@@ -159,7 +159,7 @@ app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'look
     
     $scope.editLookupCode = function(lookupCode){
         var modalInstance = $uiModal.open({
-        templateUrl: 'views/admin/editLookupCodeForm.html',
+        templateUrl: 'views/admin/data_management/editLookupCodeForm.html',
         controller: 'AdminEditLookupCodeCtrl',
         backdrop: 'static',
         size: 'sm',
@@ -179,7 +179,7 @@ app.controller('AdminEditLookupEntityCtrl', ['$scope', '$uiModalInstance', 'look
     
     $scope.addLookupCode = function(){
         var modalInstance = $uiModal.open({
-        templateUrl: 'views/admin/editLookupCodeForm.html',
+        templateUrl: 'views/admin/data_management/editLookupCodeForm.html',
         controller: 'AdminEditLookupCodeCtrl',
         backdrop: 'static',
         size: 'sm',
