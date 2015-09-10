@@ -56,15 +56,15 @@ body {
         <div style="position:relative;">
           <div class="bs-sidebar hidden-print affix" role="complementary" data-offset-top="-100" bs-affix  id="scrollSpy">
             <ul class="nav bs-sidenav">
-              <li ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" data-target="#top" class="active" ng-class="getStarted()? 'complete':''">
+              <li ng-show="!(component && component.component && component.component.approvalState && component.component.approvalState !=='N')" data-target="#top" class="active" ng-class="getStarted()? 'complete':''">
                 <a target="_self" href="#top" ng-click="scrollTo('top', 'top');">Getting started</a>
               </li>
-              <hr ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" style="margin: 2px 0;">
-              <li ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" data-target="#vitals" ng-class="{'complete': vitalsCheck(), 'disabled': !getStarted()}">
+              <hr ng-show="!(component && component.component && component.component.approvalState && component.component.approvalState !=='N')" style="margin: 2px 0;">
+              <li ng-show="!(component && component.component && component.component.approvalState && component.component.approvalState !=='N')" data-target="#vitals" ng-class="{'complete': vitalsCheck(), 'disabled': !getStarted()}">
                 <a target="_self" href="#vitals" ng-click="getStarted()? scrollTo('vitals', 'vitals', '', $event, 'componentName'):'';">Required Information</a>
               </li>
-              <!-- <hr ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" style="margin: 2px 0;"> -->
-              <li ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" data-target="#details" ng-class="{'disabled': !vitalsCheck(), 'complete': vitalsCheck() && (detailsForm.$dirty || detailsDone)}">
+              <!-- <hr ng-show="!(component && component.component && component.component.approvalState && component.component.approvalState !=='N')" style="margin: 2px 0;"> -->
+              <li ng-show="!(component && component.component && component.component.approvalState && component.component.approvalState !=='N')" data-target="#details" ng-class="{'disabled': !vitalsCheck(), 'complete': vitalsCheck() && (detailsForm.$dirty || detailsDone)}">
                 <a target="_self" href="#details" ng-click="initialSave($event)">Details</a>
                 <ul class="nav">
                   <li data-target="#metadata" ng-class="{'disabled': !vitalsCheck()}">
@@ -87,7 +87,7 @@ body {
             <!-- <li data-target="#moreDetails" ng-class="{'disabled': !vitalsCheck()}">
               <a target="_self" href="#moreDetails" ng-click="vitalsCheck()? scrollTo('moreDetails', 'details', '', $event): ''">Extra Details</a>
             </li> -->
-            <hr ng-show="!(component.component.approvalState && component.component.approvalState !=='N')" style="margin: 2px 0;">
+            <hr ng-show="!(component && component.component && component.component.approvalState && component.component.approvalState !=='N')" style="margin: 2px 0;">
             <li data-target="#reviewAndSubmit" ng-class="{'disabled': !vitalsCheck(), 'complete': component.component.approvalState && component.component.approvalState !== 'N'}">
               <a target="_self" href="#reviewAndSubmit" ng-click="updateSave($event)">
                 <span ng-show="!(component.component.approvalState && component.component.approvalState !== 'N')">Review/Submit</span>
@@ -130,27 +130,27 @@ body {
               <div class="form-group required">
                 <label class="col-sm-2 control-label" for="firstNameInput">First Name</label>
                 <div class="col-sm-10">
-                  <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N') || userInfo"type="text" id="firstNameInput" class="form-control" placeholder="First Name" required ng-model="submitter.firstName" autofocus="">
+                  <input ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N') || (userInfo && userInfo.firstName)"type="text" id="firstNameInput" class="form-control" placeholder="First Name" required ng-model="submitter.firstName" autofocus="">
                 </div>
                 <div style="clear:both;"></div>
               </div>              <div class="form-group required">
               <label class="col-sm-2 control-label" for="lastNameInput">Last Name</label>
               <div class="col-sm-10">
-                <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N') ||  userInfo"type="text" id="lastNameInput" class="form-control" placeholder="Last Name" required ng-model="submitter.lastName" autofocus="">
+                <input ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N') || (userInfo && userInfo.lastName)"type="text" id="lastNameInput" class="form-control" placeholder="Last Name" required ng-model="submitter.lastName" autofocus="">
               </div>
               <div style="clear:both;"></div>
             </div>
             <div class="form-group required">
               <label class="col-sm-2 control-label" for="inputEmail">Email address</label>
               <div class="col-sm-10">
-                <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="email" id="inputEmail" class="form-control" placeholder="Email address" required ng-model="submitter.email">
+                <input ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="email" id="inputEmail" class="form-control" placeholder="Email address" required ng-model="submitter.email">
               </div>
               <div style="clear:both;"></div>
             </div>
             <div class="form-group required">
               <label class="col-sm-2 control-label" for="inputPhone">Phone</label>       
               <div class="col-sm-10">
-                <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="tel"                
+                <input ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="tel"                
                 id="inputPhone"                          
                 name="inputPhone"                          
                 class="form-control" 
@@ -171,7 +171,7 @@ body {
                 type="text"                 
                 id="inputOrganization"                       
                 name="organization"                         
-                ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"
+                ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')"
                 ng-model="submitter.organization"
                 ng-minlength=1
                 ng-maxlength=120
@@ -186,7 +186,7 @@ body {
             </div>
             <div class="checkbox col-sm-offset-2">
               <label >
-                <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"style="margin-left: -15px;" type="checkbox" ng-checked="optIn" ng-model="optIn"> Opt in for Approval Notification (email will be sent to <i>{{submitter.email}}</i>)
+                <input ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')"style="margin-left: -15px;" type="checkbox" ng-checked="optIn" ng-model="optIn"> Opt in for Approval Notification (email will be sent to <i>{{submitter.email}}</i>)
               </label>
             </div>
             <br>
@@ -228,7 +228,7 @@ body {
             </select>
           </div> -->
           <label style="position:relative; padding-right:15px; padding-top:7px;" for="name">Name</label>
-          <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="text" id="componentName" class="form-control" placeholder="Component Name" required ng-model="component.component.name" autofocus>
+          <input ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="text" id="componentName" class="form-control" placeholder="Component Name" required ng-model="component.component.name" autofocus>
           <label style="position:relative; padding-right:15px; padding-top:7px;" for="description">Description</label>
           <div class="help-text">Describe the component with a description about what is it, purpose, features and capabilities</div>
           <textarea ckeditor="editorOptions" ng-model="component.component.description"></textarea>
@@ -237,7 +237,7 @@ body {
           type="text"                 
           id="organization"                       
           name="organization"                         
-          ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"
+          ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')"
           ng-model="component.component.organization"
           ng-minlength=1
           ng-maxlength=120
@@ -261,7 +261,7 @@ body {
               <tr class="ng-scope" ng-repeat="attribute in requiredAttributes | shownattribute">
                 <td ><span data-toggle="tooltip" data-placement="top" data-html="true" title="{{attribute.detailedDescription}}" class="required ng-binding" >{{attribute.description}}</span></td>
                 <td>
-                  <select  ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')" ng-init="setDefaultAttribute(attribute.attributeType, attribute, true)" type="text" ng-change="vitalsCheck(true)" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="component.attributes[attribute.attributeType]" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute track by code.code "></select>
+                  <select  ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')" ng-init="setDefaultAttribute(attribute.attributeType, attribute, true)" type="text" ng-change="vitalsCheck(true)" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="component.attributes[attribute.attributeType]" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute track by code.code "></select>
                   <div class="tags" ng-if="component.attributes[attribute.attributeType]">
                     <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
                       <li class="tag-item" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
@@ -278,7 +278,7 @@ body {
                   <i class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.description}} information" data-trigger="hover" ng-click="openInfo(attribute)"></i>
                 </span></td>
                 <td>
-                  <select class="form-control" ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"  ng-if="attribute.allowMultipleFlg" ng-change="addTo(tempAttribute, component.attributes[attribute.attributeType].items); vitalsCheck()" ng-model="tempAttribute" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
+                  <select class="form-control" ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')"  ng-if="attribute.allowMultipleFlg" ng-change="addTo(tempAttribute, component.attributes[attribute.attributeType].items); vitalsCheck()" ng-model="tempAttribute" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
                   <div class="tags" ng-if="attribute.allowMultipleFlg &&  component.attributes[attribute.attributeType] && component.attributes[attribute.attributeType].items && component.attributes[attribute.attributeType].items.length">
                     <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
                       <li class="tag-item" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;" ng-repeat="item in component.attributes[attribute.attributeType].items">
@@ -287,8 +287,8 @@ body {
                       </li>
                     </ul>
                   </div>
-                  <!-- <multiselect is-disabled="(component.component.approvalState && component.component.approvalState !=='N')"  ng-if="attribute.allowMultipleFlg" on-change="vitalsCheck()" selected="tempValues[$index]" options="code as code.label for code in list" list="attribute.codes | makeattribute:attribute"></multiselect> -->
-                  <select  ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')" class="form-control" ng-if="!attribute.allowMultipleFlg" ng-model="component.attributes[attribute.attributeType].items[0]" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
+                  <!-- <multiselect is-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')"  ng-if="attribute.allowMultipleFlg" on-change="vitalsCheck()" selected="tempValues[$index]" options="code as code.label for code in list" list="attribute.codes | makeattribute:attribute"></multiselect> -->
+                  <select  ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')" class="form-control" ng-if="!attribute.allowMultipleFlg" ng-model="component.attributes[attribute.attributeType].items[0]" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
                   <div class="tags" ng-if="!attribute.allowMultipleFlg && component.attributes[attribute.attributeType] && component.attributes[attribute.attributeType].items && component.attributes[attribute.attributeType].items[0]">
                     <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
                       <li class="tag-item" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
@@ -334,7 +334,7 @@ body {
             ng-blur="tagsUIForm.text.$focused=false" 
             ng-model="tagsForm.text" 
             replace-spaces-with-dashes="false" 
-            ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"
+            ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"
             required
             on-tag-added="addTag(tagsUIForm);"><auto-complete min-length="1" source="checkTagsList($query, component.tags, tagsList)"></auto-complete>
           </tags-input>
@@ -360,7 +360,7 @@ body {
         <div class="form-group required">
           <label class="col-sm-2 control-label">Label</label>
           <div class="col-sm-10">
-            <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"type="text"
+            <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="text"
             id="metadataLabel"
             name="label"
             class="form-control"
@@ -380,7 +380,7 @@ body {
         <div class="form-group required">
           <label class="col-sm-2 control-label">Value</label>
           <div class="col-sm-10">
-            <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"type="text"
+            <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="text"
             name="value"
             class="form-control"
             ng-model="metadataForm.value"
@@ -427,7 +427,7 @@ body {
       <div class="form-group required" show-errors >
         <label class="col-sm-2 control-label ">Contact Type</label>
         <div class="col-sm-10">
-          <select  ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')" type="text" name="contactType" id="contactType" class="form-control" ng-focus="contactUIForm.contactType.$focused=true" 
+          <select  ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')" type="text" name="contactType" id="contactType" class="form-control" ng-focus="contactUIForm.contactType.$focused=true" 
           ng-blur="contactUIForm.contactType.$focused=false" ng-model="contactForm.contactType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in contactTypes | contactsfilter:'code'" placeholder="Select Type" required></select>
         </div>
         <div style="clear:both;"></div>
@@ -435,7 +435,7 @@ body {
       <div class="form-group required">
         <label class="col-sm-2 control-label ">First Name</label>
         <div class="col-sm-10">
-          <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"type="text"
+          <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="text"
           id="contactsFirstName"
           name="firstName"
           class="form-control"
@@ -455,7 +455,7 @@ body {
       <div class="form-group required">
         <label class="col-sm-2 control-label ">Last Name</label>
         <div class="col-sm-10">
-          <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"type="text"
+          <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="text"
           id="lastName"
           name="lastName"
           class="form-control"
@@ -479,7 +479,7 @@ body {
           type="text"                 
           id="organization"                       
           name="organization"                         
-          ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"
+          ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"
           ng-model="contactForm.organization"
           ng-minlength=1
           ng-maxlength=120
@@ -500,7 +500,7 @@ body {
       <div class="form-group required">
         <label class="col-sm-2 control-label">Email</label>
         <div class="col-sm-10">
-          <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"
+          <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"
           type="email"
           id="email"
           name="email"
@@ -519,7 +519,7 @@ body {
       <div class="form-group required">
         <label class="col-sm-2 control-label">Phone</label>
         <div class="col-sm-10">
-          <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"
+          <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"
           type="tel"
           id="phone"
           name="phone"
@@ -588,7 +588,7 @@ body {
     <div class="form-group required">
       <label class="col-sm-2 control-label">Name</label>
       <div class="col-sm-10">
-        <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"type="text"
+        <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="text"
         id="dependencyFormName"
         name="name"
         ng-focus="dependencyUIForm.name.$focused=true" 
@@ -608,7 +608,7 @@ body {
     <div class="form-group required">
       <label class="col-sm-2 control-label">Version</label>
       <div class="col-sm-10">
-        <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"type="text"
+        <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="text"
         id="dependencyFormVersion"
         name="version"
         ng-focus="dependencyUIForm.version.$focused=true" 
@@ -628,7 +628,7 @@ body {
     <div class="form-group">
       <label class="col-sm-2 control-label">External Link</label>
       <div class="col-sm-10">
-        <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"type="text"
+        <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="text"
         id="dependencyReferenceLink"
         name="dependencyReferenceLink"
         ng-focus="dependencyUIForm.dependencyReferenceLink.$focused=true" 
@@ -646,7 +646,7 @@ body {
     <div class="form-group">
       <label class="col-sm-2 control-label">Comment</label>
       <div class="col-sm-10">
-        <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"type="text"
+        <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="text"
         id="comment"
         name="comment"
         ng-focus="dependencyUIForm.comment.$focused=true" 
@@ -732,14 +732,14 @@ body {
               <div class="form-group">
                 <label class="col-sm-2 control-label">External Link Type</label>
                 <div class="col-sm-10">
-                  <select  type="text" class="form-control" name="resourceType" id="resourceFormType" ng-model="resourceForm.resourceType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N') || showResourceUpload === 'falseValue'"></select>
+                  <select  type="text" class="form-control" name="resourceType" id="resourceFormType" ng-model="resourceForm.resourceType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N') || showResourceUpload === 'falseValue'"></select>
                 </div>
                 <div style="clear:both;"></div>
               </div>
               <div class="form-group">
                 <label class="col-sm-2 control-label">Description</label>
                 <div class="col-sm-10">
-                  <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"
+                  <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"
                   class="form-control"
                   type="text"
                   name="caption"
@@ -755,7 +755,7 @@ body {
               <div class="form-group">
                 <label class="col-sm-2 control-label">Link</label>
                 <div class="col-sm-10">
-                  <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"type="text"
+                  <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="text"
                   id="link"
                   name="link"
                   class="form-control"
@@ -788,14 +788,14 @@ body {
               <div class="form-group">
                 <label class="col-sm-2 control-label">External Link Type</label>
                 <div class="col-sm-10">
-                  <select type="text" class="form-control" name="resourceType"  ng-model="resourceForm.resourceType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N') || lastResourceFile || showResourceUpload === 'trueValue' || isFullResource"></select>
+                  <select type="text" class="form-control" name="resourceType"  ng-model="resourceForm.resourceType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in resourceTypes" placeholder="Select Type" ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N') || lastResourceFile || showResourceUpload === 'trueValue' || isFullResource"></select>
                 </div>
                 <div style="clear:both;"></div>
               </div>
               <div class="form-group">
                 <label class="col-sm-2 control-label">Caption</label>
                 <div class="col-sm-10">
-                  <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"
+                  <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"
                   class="form-control"
                   type="text"
                   name="caption"
@@ -810,7 +810,7 @@ body {
               </div>
               <div class="col-sm-12">
                 <span class="btn btn-primary btn-file" ng-disabled="!vitalsCheck() || lastResourceFile || showResourceUpload === 'trueValue' || !resourceForm.resourceType ||  isFullResource">
-                  <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="resourceUploader" name="uploadFile" id="resourceUploadInput" width="100" ng-disabled="!vitalsCheck() || lastResourceFile || showResourceUpload === 'trueValue' || !resourceForm.resourceType || isFullResource || (component.component.approvalState && component.component.approvalState !=='N')"/>
+                  <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="resourceUploader" name="uploadFile" id="resourceUploadInput" width="100" ng-disabled="!vitalsCheck() || lastResourceFile || showResourceUpload === 'trueValue' || !resourceForm.resourceType || isFullResource || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"/>
                 </span> <span>{{lastResourceFile}}</span>
               </div>
             </label>
@@ -896,14 +896,14 @@ body {
                 <div class="form-group">
                   <label class="col-sm-2 control-label">Media Type</label>
                   <div class="col-sm-10">
-                    <select type="text" class="form-control" name="typeCode" id="mediaFormType" ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type"  ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N') || lastMediaFile || showMediaUpload === 'trueValue' || isFull"></select>
+                    <select type="text" class="form-control" name="typeCode" id="mediaFormType" ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type"  ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N') || lastMediaFile || showMediaUpload === 'trueValue' || isFull"></select>
                   </div>
                   <div style="clear:both;"></div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 control-label">Caption</label>
                   <div class="col-sm-10">
-                    <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"
+                    <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"
                     class="form-control"
                     type="text"
                     name="caption"
@@ -918,7 +918,7 @@ body {
                 </div>
                 <div class="col-sm-12">
                   <span class="btn btn-primary btn-file" ng-disabled="!vitalsCheck() || lastMediaFile || showMediaUpload === 'trueValue' || !mediaForm.mediaTypeCode || isFull">
-                    <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="mediaUploader" name="uploadFile" id="mediaUploadInput" width="100" ng-disabled="!vitalsCheck() || lastMediaFile || showMediaUpload === 'trueValue' || !mediaForm.mediaTypeCode || isFull || (component.component.approvalState && component.component.approvalState !=='N')"/>
+                    <i class="fa fa-save"></i>&nbsp;Add File <input type="file" nv-file-select uploader="mediaUploader" name="uploadFile" id="mediaUploadInput" width="100" ng-disabled="!vitalsCheck() || lastMediaFile || showMediaUpload === 'trueValue' || !mediaForm.mediaTypeCode || isFull || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"/>
                   </span> <span>{{lastMediaFile}}</span>
                 </div>
               </label>
@@ -938,14 +938,14 @@ body {
                 <div class="form-group">
                   <label class="col-sm-2 control-label">Media Type</label>
                   <div class="col-sm-10">
-                    <select type="text" class="form-control" name="typeCode"  ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N') || showMediaUpload === 'falseValue'"></select>
+                    <select type="text" class="form-control" name="typeCode"  ng-model="mediaForm.mediaTypeCode" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.description for code in mediaTypes" placeholder="Select Type" ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N') || showMediaUpload === 'falseValue'"></select>
                   </div>
                   <div style="clear:both;"></div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 control-label">Caption</label>
                   <div class="col-sm-10">
-                    <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"
+                    <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"
                     class="form-control"
                     type="text"
                     name="caption"
@@ -961,7 +961,7 @@ body {
                 <div class="form-group">
                   <label class="col-sm-2 control-label">Link</label>
                   <div class="col-sm-10">
-                    <input ng-disabled="!vitalsCheck() || (component.component.approvalState && component.component.approvalState !=='N')"type="text"
+                    <input ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="text"
                     id="link"
                     name="link"
                     class="form-control"
@@ -1056,7 +1056,7 @@ body {
       <form name="optInForm">
         <div class="checkbox">
           <label>
-            <input ng-disabled="(component.component.approvalState && component.component.approvalState !=='N')"type="checkbox" ng-checked="optIn" ng-model="optIn"> Opt in for Approval Notification (email will be sent to <i>{{submitter.email}}</i>)
+            <input ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')"type="checkbox" ng-checked="optIn" ng-model="optIn"> Opt in for Approval Notification (email will be sent to <i>{{submitter.email}}</i>)
           </label>
         </div>
       </form>
