@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -55,8 +56,10 @@ public class CategoryComponentReport
 	{
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
-		//TODO: this should be a report option
 		String category = AttributeType.DI2E_SVCV4;
+		if (StringUtils.isNotBlank(report.getReportOption().getCategory())) {
+			category = report.getReportOption().getCategory();
+		}
 
 		//write header
 		cvsGenerator.addLine("Category Component Report", sdf.format(TimeUtil.currentDate()));
@@ -67,7 +70,7 @@ public class CategoryComponentReport
 				"Category Description",
 				"Component Name",
 				"Component Description",
-				"Security Classification",
+				//"Security Classification",
 				"Last Update Date"
 		);
 
@@ -126,7 +129,7 @@ public class CategoryComponentReport
 								"",
 								component.getName(),
 								component.getDescription(),
-								component.getSecurityMarkingType(),
+								//component.getSecurityMarkingType(),
 								sdf.format(component.getLastActivityDts())
 						);
 					}
