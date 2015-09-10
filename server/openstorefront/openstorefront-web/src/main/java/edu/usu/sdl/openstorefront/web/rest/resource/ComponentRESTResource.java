@@ -2910,11 +2910,27 @@ public class ComponentRESTResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentRelationshipView.class)
 	@Path("/{id}/relationships")
-	public List<ComponentRelationshipView> getComponentRelationships(
+	public Response getComponentRelationships(
 			@PathParam("id")
-			@RequiredParam String componentId)
+			@RequiredParam String componentId,
+			@BeanParam FilterQueryParams filterQueryParams)
 	{
-		return ComponentRelationshipView.toViewList(service.getComponentService().getBaseComponent(ComponentRelationship.class, componentId));
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		ComponentRelationship componentRelationship = new ComponentRelationship();
+		componentRelationship.setComponentId(componentId);
+		componentRelationship.setActiveStatus(filterQueryParams.getStatus());
+		List<ComponentRelationship> relationships = componentRelationship.findByExample();
+		relationships = filterQueryParams.filter(relationships);
+		List<ComponentRelationshipView> views = ComponentRelationshipView.toViewList(relationships);
+
+		GenericEntity<List<ComponentRelationshipView>> entity = new GenericEntity<List<ComponentRelationshipView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
