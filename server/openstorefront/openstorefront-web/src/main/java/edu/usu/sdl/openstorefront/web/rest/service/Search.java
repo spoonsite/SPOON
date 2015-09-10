@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.ListingStats;
 import edu.usu.sdl.openstorefront.core.view.RecentlyAddedView;
+import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
@@ -87,12 +88,17 @@ public class Search
 	}
 
 	@GET
-	@APIDescription("Advance searche of listing ")
+	@APIDescription("Advance search of listing ")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
 	public Response advanceSearch(SearchModel searchModel)
 	{
+		if (searchModel == null) {
+			RestErrorModel restErrorModel = new RestErrorModel();
+			restErrorModel.getErrors().put("searchModel", "Search Model must be pass to this call see api documentation");
+			return sendSingleEntityResponse(restErrorModel);
+		}
 
 		AdvanceSearchResult result = service.getSearchService().advanceSearch(searchModel);
 		if (result.getValidationResult().valid()) {

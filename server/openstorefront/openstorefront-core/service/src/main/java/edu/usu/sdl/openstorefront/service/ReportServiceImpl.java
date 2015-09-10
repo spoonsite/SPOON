@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.ReportService;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.Report;
-import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
@@ -29,7 +28,6 @@ import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.report.BaseReport;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,12 +131,10 @@ public class ReportServiceImpl
 	{
 		Map<String, List<String>> formatMap = new HashMap<>();
 
-		//For now they only support csv
+		//formats
 		List<ReportType> reportTypes = getLookupService().findLookup(ReportType.class);
 		reportTypes.stream().forEach((reportType) -> {
-			List<String> formats = new ArrayList<>();
-			formats.add(ReportFormat.CSV);
-			formatMap.put(reportType.getCode(), formats);
+			formatMap.put(reportType.getCode(), reportType.getSupportedFormats());
 		});
 
 		return formatMap;

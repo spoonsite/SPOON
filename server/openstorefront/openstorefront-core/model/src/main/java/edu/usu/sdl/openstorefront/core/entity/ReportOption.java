@@ -15,12 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
 /**
  * Part of Report/Scheduled Report
@@ -46,6 +48,10 @@ public class ReportOption
 	@Max(300)
 	@ConsumeField
 	private Integer maxWaitSeconds;
+
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	private String category;
 
 	@Version
 	private String storageVersion;
@@ -102,6 +108,16 @@ public class ReportOption
 	public void setMaxWaitSeconds(Integer maxWaitSeconds)
 	{
 		this.maxWaitSeconds = maxWaitSeconds;
+	}
+
+	public String getCategory()
+	{
+		return category;
+	}
+
+	public void setCategory(String category)
+	{
+		this.category = category;
 	}
 
 }

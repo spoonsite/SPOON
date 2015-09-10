@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -43,6 +46,19 @@ public abstract class BaseResource
 			return Response.status(status).build();
 		} else {
 			return Response.ok(entity).build();
+		}
+	}
+
+	protected Response ownerCheck(StandardEntity entity)
+	{
+		if (SecurityUtil.isCurrentUserTheOwner(entity)
+				|| SecurityUtil.isAdminUser()) {
+			return null;
+		} else {
+			return Response.status(Response.Status.FORBIDDEN)
+					.type(MediaType.TEXT_PLAIN)
+					.entity("User cannot modify resource.")
+					.build();
 		}
 	}
 

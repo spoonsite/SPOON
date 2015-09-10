@@ -47,6 +47,9 @@ public abstract class BaseGenerator
 			case ReportFormat.CSV:
 				generator = new CSVGenerator(report);
 				break;
+			case ReportFormat.HTML:
+				generator = new HtmlGenerator(report);
+				break;
 			default:
 				throw new UnsupportedOperationException("Unsupported report format: " + report.getReportFormat());
 		}

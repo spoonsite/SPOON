@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.report;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
@@ -25,9 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.Report;
-import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
-import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import java.util.List;
 
@@ -50,6 +49,8 @@ public class ComponentReport
 	protected void gatherData()
 	{
 		Component componentExample = new Component();
+		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		components = service.getPersistenceService().queryByExample(Component.class, componentExample);
 	}
 
@@ -63,7 +64,7 @@ public class ComponentReport
 		cvsGenerator.addLine(
 				"Name",
 				"Organization",
-				"Security Classification",
+				//"Security Classification",
 				"Last Activity Date",
 				"Approval Status",
 				"Approval Date",
@@ -134,7 +135,7 @@ public class ComponentReport
 			cvsGenerator.addLine(
 					component.getName(),
 					component.getOrganization(),
-					component.getSecurityMarkingType() == null ? "" : "(" + component.getSecurityMarkingType() + ") - " + TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()),
+					//component.getSecurityMarkingType() == null ? "" : "(" + component.getSecurityMarkingType() + ") - " + TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()),
 					sdf.format(component.getLastActivityDts()),
 					component.getApprovalState(),
 					component.getApprovedDts() == null ? "" : sdf.format(component.getApprovedDts()),

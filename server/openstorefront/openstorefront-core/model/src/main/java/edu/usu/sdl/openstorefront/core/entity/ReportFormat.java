@@ -34,6 +34,7 @@ public class ReportFormat
 	public static final String CSV = "text-csv";
 	public static final String XLSX = "application-xlsx";
 	public static final String PDF = "application-pdf";
+	public static final String HTML = "text-html";
 
 	public ReportFormat()
 	{
@@ -51,6 +52,7 @@ public class ReportFormat
 		codeMap.put(CSV, newLookup(ReportFormat.class, CSV, "Comma-Seperated Values"));
 		codeMap.put(XLSX, newLookup(ReportFormat.class, XLSX, "Excel"));
 		codeMap.put(PDF, newLookup(ReportFormat.class, PDF, "Portable Document Format"));
+		codeMap.put(HTML, newLookup(ReportFormat.class, HTML, "HTML"));
 		return codeMap;
 	}
 

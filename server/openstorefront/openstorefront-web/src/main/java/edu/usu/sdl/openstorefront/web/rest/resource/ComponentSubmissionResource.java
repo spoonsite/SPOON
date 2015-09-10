@@ -58,11 +58,9 @@ public class ComponentSubmissionResource
 		extends BaseResource
 {
 
-	
 	//	The check for ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false has been overriden
 	//  This is so that a user may edit an approved component. If the desire for behavior changes, the code is still
 	//  there, you just need to remove the '|| true'
-	
 	@GET
 	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this only the top level component object)")
 	@DataType(Component.class)
@@ -137,7 +135,7 @@ public class ComponentSubmissionResource
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		Component component = service.getPersistenceService().findById(Component.class, componentId);
 		if (component != null) {
-			response = ownerCheck(component);
+			response = ownerAnonymousCheck(component);
 			if (response == null) {
 				response = Response.ok().build();
 				if (email.isEmpty()) {
@@ -167,7 +165,7 @@ public class ComponentSubmissionResource
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		Component component = service.getPersistenceService().findById(Component.class, componentId);
 		if (component != null) {
-			response = ownerCheck(component);
+			response = ownerAnonymousCheck(component);
 			if (response == null) {
 				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
 					service.getComponentService().submitComponentSubmission(componentId);
@@ -194,7 +192,7 @@ public class ComponentSubmissionResource
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		Component component = service.getPersistenceService().findById(Component.class, componentId);
 		if (component != null) {
-			response = ownerCheck(component);
+			response = ownerAnonymousCheck(component);
 			if (response == null) {
 				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
 					service.getComponentService().checkComponentCancelStatus(componentId, ApprovalStatus.NOT_SUBMITTED);
@@ -221,7 +219,7 @@ public class ComponentSubmissionResource
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		Component component = service.getPersistenceService().findById(Component.class, componentId);
 		if (component != null) {
-			response = ownerCheck(component);
+			response = ownerAnonymousCheck(component);
 			if (response == null) {
 				if (ApprovalStatus.NOT_SUBMITTED.equals(component.getApprovalState())) {
 					service.getComponentService().deactivateComponent(componentId);
@@ -254,7 +252,7 @@ public class ComponentSubmissionResource
 
 				Component exstingComponent = service.getPersistenceService().findById(Component.class, componentAll.getComponent().getComponentId());
 				if (exstingComponent != null) {
-					response = ownerCheck(exstingComponent);
+					response = ownerAnonymousCheck(exstingComponent);
 					if (response == null) {
 						if (ApprovalStatus.APPROVED.equals(exstingComponent.getApprovalState()) == false || true) {
 
@@ -335,7 +333,7 @@ public class ComponentSubmissionResource
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		ComponentAll componentAll = service.getComponentService().getFullComponent(componentId);
 		if (componentAll != null && componentAll.getComponent() != null) {
-			response = ownerCheck(componentAll.getComponent());
+			response = ownerAnonymousCheck(componentAll.getComponent());
 			if (response == null) {
 				response = Response.ok(componentAll).build();
 			}
@@ -359,7 +357,7 @@ public class ComponentSubmissionResource
 
 		ComponentMedia componentMedia = service.getPersistenceService().queryOneByExample(ComponentMedia.class, componentMediaExample);
 		if (componentMedia != null) {
-			response = ownerCheck(componentMedia);
+			response = ownerAnonymousCheck(componentMedia);
 			if (response == null) {
 
 				//Need to check component to make sure it's not approved.
@@ -393,7 +391,7 @@ public class ComponentSubmissionResource
 		componentResourceExample.setResourceId(resourceId);
 		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(ComponentResource.class, componentResourceExample);
 		if (componentResource != null) {
-			response = ownerCheck(componentResource);
+			response = ownerAnonymousCheck(componentResource);
 			if (response == null) {
 				Component component = service.getPersistenceService().findById(Component.class, componentId);
 				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
@@ -410,7 +408,7 @@ public class ComponentSubmissionResource
 		return response;
 	}
 
-	private Response ownerCheck(StandardEntity entity)
+	private Response ownerAnonymousCheck(StandardEntity entity)
 	{
 		if (SecurityUtil.isCurrentUserTheOwner(entity)
 				|| OpenStorefrontConstant.ANONYMOUS_USER.equals(entity.getCreateUser())) {
