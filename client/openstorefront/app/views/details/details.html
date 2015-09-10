@@ -250,18 +250,18 @@
   </div>
 </div>
 <br ng-if="details.details.attributes && details.details.attributes.length">
-<div class="row">
-  <table class="table table-bordered table-hover" >
+<div class="row" ng-show="details.details.relationships.length">
+  <table class="table table-bordered" >
     <tbody> 
       <tr>
-        <th class="valign" colspan="16"><h4>Component Relationships <button class="btn btn-sm btn-default" title="Graphic" ng-click="table = false;"><i class="fa fa-th-large"></i></button><button class="btn btn-sm btn-default" title="Table" ng-click="table=true;"><i class="fa fa-table"></i></button><small style="color: dimgray" ng-show="!table">&nbsp;(double click on a component to view component details)</small></h4></th>
+        <th class="valign" colspan="16"><h4>Component Relationships <button class="btn btn-sm btn-default" title="Graphic" ng-click="table = false;"><i class="fa fa-th-large"></i></button><button class="btn btn-sm btn-default" title="Table" ng-click="table=true;"><i class="fa fa-table"></i></button><small style="color: dimgray" ng-show="!table">&nbsp;(double click on a component to view component details, hover over lines to see relationship details)</small></h4></th>
       </tr>             
       <tr class="row.highlightStyle">
         <td ng-show="!table">
           <d3-directed-graph owner="details.details" on-click="goTo(location);" readonly="true" data="details.details.relationships" label="title"></d3-directed-graph>
         </td>
         <td ng-show="table">
-          <table class="table table-striped table-bordered admin-table">
+          <table class="table table-striped table-bordered admin-table table-hover">
             <tr>
               <th><a href="" ng-click="setPredicate('ownerComponentName', 'relationship');">Relationship Owner <span ng-show="predicate['relationship'] === 'ownerComponentName'"><i ng-show="!reverse['relationship']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['relationship']" class="fa fa-sort-alpha-desc"></i></span></a></th>
               <th><a href="" ng-click="setPredicate('relationshipTypeDescription', 'relationship');">Relationship Type <span ng-show="predicate['relationship'] === 'relationshipTypeDescription'"><i ng-show="!reverse['relationship']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['relationship']" class="fa fa-sort-alpha-desc"></i></span></a></th>
