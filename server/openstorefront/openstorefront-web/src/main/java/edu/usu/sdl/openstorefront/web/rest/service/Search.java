@@ -92,6 +92,7 @@ public class Search
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
+	@Path("/advance")
 	public Response advanceSearch(SearchModel searchModel)
 	{
 		if (searchModel == null) {
