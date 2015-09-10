@@ -1,4 +1,5 @@
-/* 'use strict';
+/*
+'use strict';
 
 describe('Controller: AdminEditcodesCtrl', function () {
   // load the controller's module
@@ -11,7 +12,8 @@ describe('Controller: AdminEditcodesCtrl', function () {
   beforeEach(inject(function ($controller, $rootScope) {
     scope = $rootScope.$new();
     AdminEditcodesCtrl = $controller('AdminEditcodesCtrl', {
-      // Something is not 'liked' about this!
+      //   Error: [$injector:unpr] Unknown provider: $uiModalInstanceProvider <- $uiModalInstance
+      //    at C:/CODE/openstorefront/client/openstorefront/test/spec/controllers/admin/editcodes.js:14
       $scope: scope
     });
   }));
@@ -32,5 +34,7 @@ describe('Controller: AdminEditcodesCtrl', function () {
     expect(scope.typeCodes).toEqual([]);
     expect(scope.defaultCodesLookup).toEqual([]);
   });
-  alert('Controller:  AdminEditCodesCtrl; should have the correct initializations = PASS (13 expects)');});
+  alert('Controller:  AdminEditCodesCtrl; should have the correct initializations = PASS (13 expects)');
+});
 */
+

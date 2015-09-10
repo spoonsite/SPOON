@@ -32,6 +32,8 @@ import java.util.List;
 public class QueryByExample<T extends BaseEntity>
 {
 
+	public static final String LIKE_SYMBOL = "%";
+
 	public static final String STRING_FLAG = "X";
 	public static final int INT_FLAG = 1;
 	public static final Boolean BOOLEAN_FLAG = Boolean.TRUE;
@@ -39,6 +41,7 @@ public class QueryByExample<T extends BaseEntity>
 
 	private QueryType queryType = QueryType.SELECT;
 	private T example;
+	private GenerateStatementOption exampleOption = new GenerateStatementOptionBuilder().build();
 	private Integer firstResult;
 	private Integer maxResults;
 	private String distinctField;
@@ -50,6 +53,7 @@ public class QueryByExample<T extends BaseEntity>
 	private String sortDirection = OpenStorefrontConstant.SORT_ASCENDING;
 	private T groupBy;
 	private T likeExample;
+	private GenerateStatementOption likeExampleOption = new GenerateStatementOptionBuilder().setOperation(GenerateStatementOption.OPERATION_LIKE).build();
 	private List<SpecialOperatorModel<T>> extraWhereCauses = new ArrayList<>();
 
 	public QueryByExample()
@@ -225,6 +229,26 @@ public class QueryByExample<T extends BaseEntity>
 	public void setExtraWhereCauses(List<SpecialOperatorModel<T>> extraWhereCauses)
 	{
 		this.extraWhereCauses = extraWhereCauses;
+	}
+
+	public GenerateStatementOption getExampleOption()
+	{
+		return exampleOption;
+	}
+
+	public void setExampleOption(GenerateStatementOption exampleOption)
+	{
+		this.exampleOption = exampleOption;
+	}
+
+	public GenerateStatementOption getLikeExampleOption()
+	{
+		return likeExampleOption;
+	}
+
+	public void setLikeExampleOption(GenerateStatementOption likeExampleOption)
+	{
+		this.likeExampleOption = likeExampleOption;
 	}
 
 }

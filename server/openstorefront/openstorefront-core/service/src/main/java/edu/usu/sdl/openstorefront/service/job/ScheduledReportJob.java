@@ -82,7 +82,7 @@ public class ScheduledReportJob
 				reportHistory.setReportFormat(report.getReportFormat());
 				reportHistory.setReportType(report.getReportType());
 				reportHistory.setReportOption(report.getReportOption());
-				reportHistory.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
+				reportHistory.setCreateUser(report.getCreateUser());
 				reportHistory.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 
 				Report reportProcessed = service.getReportService().generateReport(reportHistory);

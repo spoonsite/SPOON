@@ -31,7 +31,7 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.ReportView;
 import edu.usu.sdl.openstorefront.core.view.ReportWrapper;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -44,9 +44,11 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -70,7 +72,6 @@ public class ReportResource
 {
 
 	@GET
-	@RequireAdmin
 	@APIDescription("Gets report records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportView.class)
@@ -83,6 +84,9 @@ public class ReportResource
 
 		Report reportExample = new Report();
 		reportExample.setActiveStatus(filterQueryParams.getStatus());
+		if (SecurityUtil.isAdminUser() == false) {
+			reportExample.setCreateUser(SecurityUtil.getCurrentUserName());
+		}
 
 		Report reportStartExample = new Report();
 		reportStartExample.setCreateDts(filterQueryParams.getStart());
@@ -100,7 +104,7 @@ public class ReportResource
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(reportEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		queryByExample.setMaxResults(filterQueryParams.getMax());
@@ -124,7 +128,6 @@ public class ReportResource
 	}
 
 	@GET
-	@RequireAdmin
 	@APIDescription("Gets a report record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Report.class)
@@ -136,11 +139,14 @@ public class ReportResource
 		Report reportExample = new Report();
 		reportExample.setReportId(reportId);
 		Report report = service.getPersistenceService().queryOneByExample(Report.class, reportExample);
-		return sendSingleEntityResponse(report);
+		Response response = ownerCheck(report);
+		if (response == null) {
+			response = sendSingleEntityResponse(report);
+		}
+		return response;
 	}
 
 	@GET
-	@RequireAdmin
 	@APIDescription("Gets the actual report")
 	@Produces({MediaType.WILDCARD})
 	@DataType(Report.class)
@@ -154,29 +160,52 @@ public class ReportResource
 		Report report = service.getPersistenceService().queryOneByExample(Report.class, reportExample);
 		if (report != null) {
 
-			java.nio.file.Path path = report.pathToReport();
+			Response response = ownerCheck(report);
+			if (response == null) {
 
-			if (path.toFile().exists()) {
-				String extenstion = OpenStorefrontConstant.getFileExtensionForMime(ReportFormat.mimeType(report.getReportFormat()));
-				Response.ResponseBuilder response = Response.ok(new StreamingOutput()
-				{
+				java.nio.file.Path path = report.pathToReport();
 
-					@Override
-					public void write(OutputStream output) throws IOException, WebApplicationException
+				if (path.toFile().exists()) {
+					String extenstion = OpenStorefrontConstant.getFileExtensionForMime(ReportFormat.mimeType(report.getReportFormat()));
+					Response.ResponseBuilder responseBuilder = Response.ok(new StreamingOutput()
 					{
-						Files.copy(path, output);
-					}
 
-				});
-				response.header("Content-Disposition", "attachment; filename=\"" + TranslateUtil.translate(ReportType.class, report.getReportType()) + extenstion + "\"");
-				return response.build();
+						@Override
+						public void write(OutputStream output) throws IOException, WebApplicationException
+						{
+							Files.copy(path, output);
+						}
+
+					});
+					responseBuilder.header("Content-Disposition", "attachment; filename=\"" + TranslateUtil.translate(ReportType.class, report.getReportType()) + extenstion + "\"");
+					response = responseBuilder.build();
+				}
 			}
+			return response;
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
 	@GET
-	@RequireAdmin
+	@APIDescription("Gets report supported formats")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ReportType.class)
+	@Path("/reporttypes")
+	public Response getReportTypeForUser()
+	{
+		List<ReportType> reportTypes = service.getLookupService().findLookup(ReportType.class);
+
+		if (SecurityUtil.isAdminUser() == false) {
+			reportTypes = reportTypes.stream().filter(r -> r.getAdminOnly() == false).collect(Collectors.toList());
+		}
+
+		GenericEntity<List<ReportType>> entity = new GenericEntity<List<ReportType>>(reportTypes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
 	@APIDescription("Gets report supported formats")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -203,7 +232,6 @@ public class ReportResource
 	}
 
 	@POST
-	@RequireAdmin
 	@APIDescription("Generates a new report")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postAlert(Report report)
@@ -212,15 +240,28 @@ public class ReportResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			report = service.getReportService().queueReport(report);
 
-			TaskRequest taskRequest = new TaskRequest();
-			taskRequest.setAllowMultiple(true);
-			taskRequest.setName(TaskRequest.TASKNAME_REPORT);
-			taskRequest.setDetails("Report: " + report.getReportType() + " Report id: " + report.getReportId() + " for user: " + SecurityUtil.getCurrentUserName());
-			taskRequest.getTaskData().put(TaskRequest.DATAKEY_REPORT_ID, report.getReportId());
-			service.getAsyncProxy(service.getReportService(), taskRequest).generateReport(report);
+			//check that user can run that report
+			ReportType reportType = service.getLookupService().getLookupEnity(ReportType.class, report.getReportType());
+			boolean run = true;
+			if (reportType.getAdminOnly()) {
+				if (SecurityUtil.isAdminUser() == false) {
+					run = false;
+				}
+			}
 
+			if (run) {
+				report = service.getReportService().queueReport(report);
+
+				TaskRequest taskRequest = new TaskRequest();
+				taskRequest.setAllowMultiple(true);
+				taskRequest.setName(TaskRequest.TASKNAME_REPORT);
+				taskRequest.setDetails("Report: " + report.getReportType() + " Report id: " + report.getReportId() + " for user: " + SecurityUtil.getCurrentUserName());
+				taskRequest.getTaskData().put(TaskRequest.DATAKEY_REPORT_ID, report.getReportId());
+				service.getAsyncProxy(service.getReportService(), taskRequest).generateReport(report);
+			} else {
+				return Response.status(Response.Status.FORBIDDEN).build();
+			}
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -228,13 +269,39 @@ public class ReportResource
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Deletes a report")
 	@Path("/{id}")
 	public void deleteReport(
 			@PathParam("id") String reportId)
 	{
-		service.getReportService().deleteReport(reportId);
+		Report report = new Report();
+		report.setReportId(reportId);
+		report = report.find();
+		handleDeleteReport(report);
+	}
+
+	private void handleDeleteReport(Report report)
+	{
+		if (report != null) {
+			if (ownerCheck(report) == null) {
+				service.getReportService().deleteReport(report.getReportId());
+			}
+		}
+	}
+
+	@DELETE
+	@APIDescription("Deletes group of reports")
+	@Path("/delete")
+	public void deleteReports(
+			@FormParam("id")
+			@RequiredParam List<String> reportIds)
+	{
+		for (String reportId : reportIds) {
+			Report report = new Report();
+			report.setReportId(reportId);
+			report = report.find();
+			handleDeleteReport(report);
+		}
 	}
 
 }

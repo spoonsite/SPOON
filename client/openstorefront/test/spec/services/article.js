@@ -1,18 +1,19 @@
-// 'use strict';
+/*'use strict';
 
-// describe('Service: articleservice', function () {
+describe('Service: articleservice', function () {
 
-//   // load the service's module
-//   beforeEach(module('openstorefrontApp'));
+   // load the service's module
+   beforeEach(module('openstorefrontApp'));
 
-//   // instantiate service
-//   var article;
-//   beforeEach(inject(function (_article_) {
-//     article = _article_;
-//   }));
+   // instantiate service
+   var articleservice;
+   beforeEach(inject(function (_article_) {
+     articleservice = _article_;
+   }));
 
-//   it('should do something', function () {
-//     expect(!!article).toBe(true);
-//   });
+   it('check articleservice boolean', function () {
+     expect(articleservice).toBe(true);
+   });
 
-// });
+});
+*/

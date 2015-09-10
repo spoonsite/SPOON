@@ -24,12 +24,15 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
+import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.sort.ComponentSearchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.ListingStats;
 import edu.usu.sdl.openstorefront.core.view.RecentlyAddedView;
+import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
@@ -82,6 +85,31 @@ public class Search
 		{
 		};
 		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Advance search of listing ")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(ComponentSearchView.class)
+	@Path("/advance")
+	public Response advanceSearch(SearchModel searchModel)
+	{
+		if (searchModel == null) {
+			RestErrorModel restErrorModel = new RestErrorModel();
+			restErrorModel.getErrors().put("searchModel", "Search Model must be pass to this call see api documentation");
+			return sendSingleEntityResponse(restErrorModel);
+		}
+
+		AdvanceSearchResult result = service.getSearchService().advanceSearch(searchModel);
+		if (result.getValidationResult().valid()) {
+			GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result.getResults())
+			{
+			};
+			return sendSingleEntityResponse(entity);
+		} else {
+			return sendSingleEntityResponse(result.getValidationResult().toRestError());
+		}
 	}
 
 	@DELETE

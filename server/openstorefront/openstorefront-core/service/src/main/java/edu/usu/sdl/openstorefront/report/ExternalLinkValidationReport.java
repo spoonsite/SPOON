@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ResourceType;
-import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.model.LinkCheckModel;
@@ -161,7 +160,7 @@ public class ExternalLinkValidationReport
 		cvsGenerator.addLine("External Link Validation Report", sdf.format(TimeUtil.currentDate()));
 		cvsGenerator.addLine(
 				"Component Name",
-				"Security Classification",
+				//"Security Classification",
 				"Resource Type",
 				"Network Of Link",
 				"Link",
@@ -174,7 +173,7 @@ public class ExternalLinkValidationReport
 		links.stream().forEach((linkCheckModel) -> {
 			cvsGenerator.addLine(
 					linkCheckModel.getComponentName(),
-					linkCheckModel.getSecurityMarking() == null ? "" : "(" + linkCheckModel.getSecurityMarking() + ") - " + TranslateUtil.translate(SecurityMarkingType.class, linkCheckModel.getSecurityMarking()),
+					//linkCheckModel.getSecurityMarking() == null ? "" : "(" + linkCheckModel.getSecurityMarking() + ") - " + TranslateUtil.translate(SecurityMarkingType.class, linkCheckModel.getSecurityMarking()),
 					linkCheckModel.getResourceType(),
 					linkCheckModel.getNetworkOfLink(),
 					linkCheckModel.getLink(),

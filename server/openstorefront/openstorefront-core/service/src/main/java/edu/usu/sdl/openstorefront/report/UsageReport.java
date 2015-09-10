@@ -76,7 +76,7 @@ public class UsageReport
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(userTrackingEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(UserTracking.class, queryByExample);
@@ -135,7 +135,7 @@ public class UsageReport
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(componentTrackingEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		long componentViews = service.getPersistenceService().countByExample(queryByExample);
@@ -162,7 +162,7 @@ public class UsageReport
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(articleTrackingEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		long articleViews = service.getPersistenceService().countByExample(queryByExample);
@@ -226,7 +226,7 @@ public class UsageReport
 			specialOperatorModel = new SpecialOperatorModel();
 			specialOperatorModel.setExample(componentTrackingEndExample);
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-			specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+			specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 			long userComponentViews = service.getPersistenceService().countByExample(queryByExample);
@@ -254,7 +254,7 @@ public class UsageReport
 			specialOperatorModel = new SpecialOperatorModel();
 			specialOperatorModel.setExample(articleTrackingEndExample);
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-			specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+			specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 			long userArticleViews = service.getPersistenceService().countByExample(queryByExample);

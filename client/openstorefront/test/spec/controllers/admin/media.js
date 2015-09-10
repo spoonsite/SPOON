@@ -20,5 +20,5 @@ describe('Controller: AdminMediaCtrl', function () {
     expect(scope.predicate).toEqual([]);
     expect(scope.reverse).toEqual([]);
   });
-  alert('Controller:  AdminMediaCtrl; should have the correct initializations = PASS (3 expects)');
+  alert('Controller:  AdminMediaCtrl; should have the correct initializations = PASS (2 expects)');
 });

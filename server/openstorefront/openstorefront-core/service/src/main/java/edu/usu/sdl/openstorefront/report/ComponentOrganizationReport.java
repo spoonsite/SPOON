@@ -17,10 +17,9 @@ package edu.usu.sdl.openstorefront.report;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Report;
-import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
-import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,12 +55,14 @@ public class ComponentOrganizationReport
 		cvsGenerator.addLine(
 				"Organization",
 				"Component Name",
-				"Security Classification",
+				//"Security Classification",
 				"Last Update Date",
 				"Approve Status"
 		);
 
-		List<ODocument> documents = service.getPersistenceService().query("Select DISTINCT(organization) as organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName() + " where activeStatus= '" + Component.ACTIVE_STATUS + "' order by sortname", new HashMap<>());
+		List<ODocument> documents = service.getPersistenceService().query("Select DISTINCT(organization) as organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
+				+ " where approvalState='" + ApprovalStatus.APPROVED
+				+ "' activeStatus= '" + Component.ACTIVE_STATUS + "' order by sortname", new HashMap<>());
 
 		//group by org
 		Map<String, List<ODocument>> orgMap = new HashMap<>();
@@ -87,10 +88,10 @@ public class ComponentOrganizationReport
 			cvsGenerator.addLine(organization);
 			for (ODocument document : orgMap.get(organization)) {
 
-				String securityMarking = document.field("securityMarkingType");
+				//String securityMarking = document.field("securityMarkingType");
 				cvsGenerator.addLine("",
 						document.field("name"),
-						securityMarking == null ? "" : "(" + securityMarking + ") - " + TranslateUtil.translate(SecurityMarkingType.class, securityMarking),
+						//securityMarking == null ? "" : "(" + securityMarking + ") - " + TranslateUtil.translate(SecurityMarkingType.class, securityMarking),
 						document.field("lastActivityDts"),
 						document.field("approvalState"));
 

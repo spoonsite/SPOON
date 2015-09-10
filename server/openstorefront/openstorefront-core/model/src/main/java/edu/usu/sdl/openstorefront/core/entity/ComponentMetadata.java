@@ -34,6 +34,8 @@ public class ComponentMetadata
 		extends BaseComponent
 {
 
+	public static final String FIELD_LABEL = "label";
+
 	@PK(generated = true)
 	@NotNull
 	private String metadataId;

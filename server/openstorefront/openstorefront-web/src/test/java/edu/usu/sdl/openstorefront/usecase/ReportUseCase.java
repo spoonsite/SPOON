@@ -46,8 +46,8 @@ public class ReportUseCase
 
 			for (ComponentAll componentAll : components) {
 				out.write("Name: " + componentAll.getComponent().getName() + "<br>");
-				out.write("Organization: " + componentAll.getComponent().getName() + "<br>");
-				out.write("Description: " + componentAll.getComponent().getName() + "<br>");
+				out.write("Organization: " + componentAll.getComponent().getOrganization() + "<br>");
+				out.write("Description: " + componentAll.getComponent().getDescription() + "<br>");
 				out.write("Component Vitals <br>");
 				out.write("<table border='1'>");
 				for (ComponentAttribute componentAttribute : componentAll.getAttributes()) {
