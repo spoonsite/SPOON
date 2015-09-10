@@ -1,4 +1,4 @@
-svg {
+/*svg {
   background-color: #FFF;
   cursor: default;
   -webkit-user-select: none;
@@ -53,4 +53,53 @@ text {
 text.id {
   text-anchor: middle;
   font-weight: bold;
+}
+*/
+/*
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+path.link.twofive {
+  opacity: 0.25;
+}
+
+path.link.fivezero {
+  opacity: 0.50;
+}
+
+path.link.sevenfive {
+  opacity: 0.75;
+}
+
+path.link.onezerozero {
+  opacity: 1.0;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+text {
+  fill: #000;
+  font: 10px sans-serif;
+  pointer-events: none;
+}*/
+.node.circle {
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+.link {
+    stroke: #999;
+    stroke-width: 4px;
+    stroke-opacity: .6;
+    fill:white;
+}
+d3-tip {
+    line-height: 1;
+    color: black;
 }
