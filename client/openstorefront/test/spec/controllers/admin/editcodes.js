@@ -1,4 +1,5 @@
-/* 'use strict';
+/*
+'use strict';
 
 describe('Controller: AdminEditcodesCtrl', function () {
   // load the controller's module
@@ -35,4 +36,5 @@ describe('Controller: AdminEditcodesCtrl', function () {
   });
   alert('Controller:  AdminEditCodesCtrl; should have the correct initializations = PASS (13 expects)');
 });
-  */
+*/
+
