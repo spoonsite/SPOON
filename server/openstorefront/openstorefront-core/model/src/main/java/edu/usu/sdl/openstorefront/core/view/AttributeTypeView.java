@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.view;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -63,6 +64,9 @@ public class AttributeTypeView
 	@DataType(AttributeCodeView.class)
 	private List<AttributeCodeView> codes = new ArrayList<>();
 
+	@DataType(ComponentTypeRestriction.class)
+	private List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
+
 	public AttributeTypeView()
 	{
 	}
@@ -81,6 +85,7 @@ public class AttributeTypeView
 		attributeTypeView.setHideOnSubmission(Convert.toBoolean(attributeType.getHideOnSubmission()));
 		attributeTypeView.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
 		attributeTypeView.setActiveStatus(attributeType.getActiveStatus());
+		attributeTypeView.setRequiredRestrictions(attributeType.getRequiredRestrictions());
 		attributeTypeView.toStandardView(attributeType);
 
 		return attributeTypeView;
@@ -209,6 +214,16 @@ public class AttributeTypeView
 	public void setDetailedDescription(String detailedDescription)
 	{
 		this.detailedDescription = detailedDescription;
+	}
+
+	public List<ComponentTypeRestriction> getRequiredRestrictions()
+	{
+		return requiredRestrictions;
+	}
+
+	public void setRequiredRestrictions(List<ComponentTypeRestriction> requiredRestrictions)
+	{
+		this.requiredRestrictions = requiredRestrictions;
 	}
 
 }
