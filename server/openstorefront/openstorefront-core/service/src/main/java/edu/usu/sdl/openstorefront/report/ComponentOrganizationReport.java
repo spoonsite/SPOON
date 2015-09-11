@@ -61,8 +61,8 @@ public class ComponentOrganizationReport
 		);
 
 		List<ODocument> documents = service.getPersistenceService().query("Select DISTINCT(organization) as organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
-				+ " where approvalState='" + ApprovalStatus.APPROVED
-				+ "' activeStatus= '" + Component.ACTIVE_STATUS + "' order by sortname", new HashMap<>());
+				+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
+				+ " activeStatus= '" + Component.ACTIVE_STATUS + "' order by sortname", new HashMap<>());
 
 		//group by org
 		Map<String, List<ODocument>> orgMap = new HashMap<>();
