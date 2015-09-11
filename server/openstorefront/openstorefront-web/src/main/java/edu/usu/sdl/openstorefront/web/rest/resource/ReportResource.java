@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.ReportView;
 import edu.usu.sdl.openstorefront.core.view.ReportWrapper;
+import edu.usu.sdl.openstorefront.core.view.RequestEntity;
 import edu.usu.sdl.openstorefront.doc.RequiredParam;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -54,6 +55,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
@@ -259,10 +261,12 @@ public class ReportResource
 				taskRequest.setDetails("Report: " + report.getReportType() + " Report id: " + report.getReportId() + " for user: " + SecurityUtil.getCurrentUserName());
 				taskRequest.getTaskData().put(TaskRequest.DATAKEY_REPORT_ID, report.getReportId());
 				service.getAsyncProxy(service.getReportService(), taskRequest).generateReport(report);
-			} else {
+			}
+			else {
 				return Response.status(Response.Status.FORBIDDEN).build();
 			}
-		} else {
+		}
+		else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		return Response.created(URI.create("v1/resource/reports/" + report.getReportId())).entity(report).build();
@@ -291,12 +295,12 @@ public class ReportResource
 
 	@DELETE
 	@APIDescription("Deletes group of reports")
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/delete")
 	public void deleteReports(
-			@FormParam("id")
-			@RequiredParam List<String> reportIds)
+			@RequiredParam RequestEntity reportIds)
 	{
-		for (String reportId : reportIds) {
+		for (String reportId : reportIds.getEntity()) {
 			Report report = new Report();
 			report.setReportId(reportId);
 			report = report.find();

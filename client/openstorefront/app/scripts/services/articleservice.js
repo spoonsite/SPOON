@@ -180,7 +180,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
     return deferred.promise;
   };  
 
-  article.getTypes = function(filterQueryObj){
+  article.getTypes = function(filterQueryObj, view){
     var deferred = $q.defer();
     if (filterQueryObj) {
       var method = 'GET';
