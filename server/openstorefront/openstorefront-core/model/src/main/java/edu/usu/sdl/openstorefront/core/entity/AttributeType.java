@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.DefaultFieldValue;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
@@ -27,6 +28,8 @@ import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.util.List;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
@@ -67,6 +70,11 @@ public class AttributeType
 	@ConsumeField
 	@APIDescription("A component is required to have this attribute")
 	private Boolean requiredFlg;
+
+	@DataType(ComponentTypeRestriction.class)
+	@ConsumeField
+	@OneToMany(orphanRemoval = true)
+	private List<ComponentTypeRestriction> requiredRestrictions;
 
 	@NotNull
 	@ConsumeField
@@ -116,6 +124,7 @@ public class AttributeType
 		this.setDetailedDescription(attributeTypeUpdate.getDetailedDescription());
 		this.setHideOnSubmission(attributeTypeUpdate.getHideOnSubmission());
 		this.setDefaultAttributeCode(attributeTypeUpdate.getDefaultAttributeCode());
+		this.setRequiredRestrictions(attributeTypeUpdate.getRequiredRestrictions());
 
 	}
 
@@ -260,6 +269,16 @@ public class AttributeType
 	public void setDetailedDescription(String detailedDescription)
 	{
 		this.detailedDescription = detailedDescription;
+	}
+
+	public List<ComponentTypeRestriction> getRequiredRestrictions()
+	{
+		return requiredRestrictions;
+	}
+
+	public void setRequiredRestrictions(List<ComponentTypeRestriction> requiredRestrictions)
+	{
+		this.requiredRestrictions = requiredRestrictions;
 	}
 
 }
