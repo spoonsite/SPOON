@@ -706,7 +706,7 @@ Attributes are used to group and filter catalog items and articles.
 
 Attribute Types represent a related group of specific categories or
 represent a single attribute of a listing (Eg. "Funded" would be a type
-with the corresponding value "Yes" or "No"). A type may have many codes.
+with the corresponding value "Yes" or "No"). A type may have many codes.  
 
 Deleting a type will delete the associated codes and component
 attributes. Inactivating a type will inactivate associated data such as
