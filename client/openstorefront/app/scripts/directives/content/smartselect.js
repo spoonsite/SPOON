@@ -26,18 +26,20 @@ app.directive('smartselect', ['$timeout', function($timeout) {
     },
     restrict: 'A',
     link: function postlink(scope, element, attrs) {
-      var init = false;
+      var init = true;
       $timeout(function(){
         element.combobox({
           'appendTo': scope.smartselect || 'body'
         });
         scope.$watch('ngModel', function(nval, oval){
-          if (init) {
+          if (!init && nval !== oval) {
+            console.log('nval timeout', nval);
+            
             $timeout(function(){
               element.trigger('change');
             })
           }
-          init = true;
+          init = false;
         })
       }, 500);
     }

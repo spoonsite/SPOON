@@ -113,7 +113,7 @@ limitations under the License.
       <div class="form-group required" show-errors >
         <label class="col-sm-2 control-label required">Approval State</label>
         <div class="col-sm-10">
-          <select smartselect type="text" class="form-control" name="approvalStatus" id="approvalStatus" required  ng-change="loadComponentAttributesView()" style="width:125px;display: inline" ng-model="componentForm.approvalState" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in approvalStatuses">
+          <select smartselect type="text" class="form-control" name="approvalStatus" id="approvalStatus" required  ng-change="loadComponentAttributesView()" ng-model="componentForm.approvalState" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in approvalStatuses">
             <option style="display:none" value="">Select a Type</option>
           </select>          
           {{componentForm.approvedDts | date:'MM/dd/yyyy h:mm a'}}&nbsp; {{componentForm.approvedUser}}
@@ -124,7 +124,7 @@ limitations under the License.
       <div class="form-group required" show-errors >
         <label class="col-sm-2 control-label required">Component Type</label>
         <div class="col-sm-10">
-          <select smartselect type="text" class="form-control" name="componentType" id="componentType" required  ng-change="loadComponentAttributesView()" style="width:125px;display: inline" ng-model="componentForm.componentType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in componentTypes">
+          <select smartselect type="text" class="form-control" name="componentType" id="componentType" required  ng-change="loadComponentAttributesView()" ng-model="componentForm.componentType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in componentTypes">
             <option style="display:none" value="">Select a Type</option>
           </select>
           <p style="text-align:center" ng-show="componentUIForm.componentType.$error.required && !componentUIForm.componentType.$focused" class="help-block">Component Type is required.</p>
@@ -133,7 +133,7 @@ limitations under the License.
       <div class="form-group" show-errors >
         <label class="col-sm-2 control-label">Security Type</label>
         <div class="col-sm-10">
-          <select smartselect type="text" class="form-control" id="component_securityType" name="securityType" style="width:125px;display: inline" ng-model="componentForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+          <select smartselect type="text" class="form-control" id="component_securityType" name="securityType" ng-model="componentForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
             <option style="display:none" value="">Select a Type</option>
           </select>
         </div>        
@@ -268,7 +268,7 @@ limitations under the License.
         <div class="form-group" show-errors >
           <label class="col-sm-2 control-label">Security Type</label>
           <div class="col-sm-10">
-            <select smartselect type="text" class="form-control" id="relationship_securityType" name="securityType" style="width:125px;display: inline" ng-model="relationshipForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+            <select smartselect type="text" class="form-control" id="relationship_securityType" name="securityType" ng-model="relationshipForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
               <option style="display:none" value="">Select a Type</option>
             </select>
           </div>        
@@ -406,7 +406,7 @@ limitations under the License.
       <div class="form-group" show-errors >
         <label class="col-sm-2 control-label">Security Type</label>
         <div class="col-sm-10">
-          <select smartselect type="text" class="form-control" id="contact_securityType" name="securityType" style="width:125px;display: inline" ng-model="contactForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+          <select smartselect type="text" class="form-control" id="contact_securityType" name="securityType" ng-model="contactForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
             <option style="display:none" value="">Select a Type</option>
           </select>
         </div>        
@@ -495,7 +495,7 @@ limitations under the License.
         <div class="form-group" show-errors >
           <label class="col-sm-2 control-label">Security Type</label>
           <div class="col-sm-10">
-            <select smartselect type="text" class="form-control" id="resource_securityType" name="securityType" style="width:125px;display: inline" ng-model="resourceForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+            <select smartselect type="text" class="form-control" id="resource_securityType" name="securityType" ng-model="resourceForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
               <option style="display:none" value="">Select a Type</option>
             </select>
           </div>        
@@ -597,7 +597,7 @@ limitations under the License.
       <div class="form-group" show-errors >
         <label class="col-sm-2 control-label">Security Type</label>
         <div class="col-sm-10">
-          <select smartselect type="text" class="form-control" id="media_securityType" name="securityType" style="width:125px;display: inline" ng-model="mediaForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+          <select smartselect type="text" class="form-control" id="media_securityType" name="securityType" ng-model="mediaForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
             <option style="display:none" value="">Select a Type</option>
           </select>
         </div>        
@@ -774,7 +774,7 @@ limitations under the License.
       <div class="form-group" show-errors >
         <label class="col-sm-2 control-label">Security Type</label>
         <div class="col-sm-10">
-          <select smartselect type="text" class="form-control" id="metadata_securityType" name="securityType" style="width:125px;display: inline" ng-model="metadataForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+          <select smartselect type="text" class="form-control" id="metadata_securityType" name="securityType" ng-model="metadataForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
             <option style="display:none" value="">Select a Type</option>
           </select>
         </div>        
@@ -1018,7 +1018,7 @@ limitations under the License.
       <div class="form-group" show-errors >
         <label class="col-sm-2 control-label">Security Type</label>
         <div class="col-sm-10">
-          <select smartselect type="text" class="form-control" id="tags_securityType" name="securityType" style="width:125px;display: inline" ng-model="tagForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
+          <select smartselect type="text" class="form-control" id="tags_securityType" name="securityType" ng-model="tagForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
             <option style="display:none" value="">Select a Type</option>
           </select>
         </div>        
