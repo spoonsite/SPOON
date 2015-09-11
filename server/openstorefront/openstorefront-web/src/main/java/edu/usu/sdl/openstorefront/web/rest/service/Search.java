@@ -87,7 +87,7 @@ public class Search
 		return sendSingleEntityResponse(entity);
 	}
 
-	@GET
+	@POST
 	@APIDescription("Advance search of listing ")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
