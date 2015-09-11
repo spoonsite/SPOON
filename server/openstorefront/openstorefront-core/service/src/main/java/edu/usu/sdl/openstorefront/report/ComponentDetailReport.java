@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
@@ -171,7 +172,13 @@ public class ComponentDetailReport
 
 							attributeCodePk.setAttributeCode(attributePk.getAttributeCode());
 							attributeCodePk.setAttributeType(attributePk.getAttributeType());
-							String attributeLabel = service.getAttributeService().findCodeForType(attributeCodePk).getLabel();
+							AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
+							String attributeLabel;
+							if (attributeCode != null) {
+								attributeLabel = attributeCode.getLabel();
+							} else {
+								attributeLabel = "Missing Code: " + attributeCodePk.getAttributeCode() + " on Type: " + attributeCodePk.getAttributeType();
+							}
 							cvsGenerator.addLine(
 									"",
 									typeLabel,
@@ -187,7 +194,13 @@ public class ComponentDetailReport
 
 								attributeCodePk.setAttributeCode(componentAttribute.getComponentAttributePk().getAttributeCode());
 								attributeCodePk.setAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
-								String attributeLabel = service.getAttributeService().findCodeForType(attributeCodePk).getLabel();
+								AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
+								String attributeLabel;
+								if (attributeCode != null) {
+									attributeLabel = attributeCode.getLabel();
+								} else {
+									attributeLabel = "Missing Code: " + attributeCodePk.getAttributeCode() + " on Type: " + attributeCodePk.getAttributeType();
+								}
 
 								cvsGenerator.addLine(
 										"",
@@ -336,8 +349,13 @@ public class ComponentDetailReport
 
 							attributeCodePk.setAttributeCode(componentAttribute.getComponentAttributePk().getAttributeCode());
 							attributeCodePk.setAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
-							String attributeLabel = service.getAttributeService().findCodeForType(attributeCodePk).getLabel();
-
+							AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
+							String attributeLabel;
+							if (attributeCode != null) {
+								attributeLabel = attributeCode.getLabel();
+							} else {
+								attributeLabel = "Missing Code: " + attributeCodePk.getAttributeCode() + " on Type: " + attributeCodePk.getAttributeType();
+							}
 							htmlGenerator.addLine("<tr>");
 							htmlGenerator.addLine("<td><b>" + typeLabel + "</b></td>");
 							htmlGenerator.addLine("<td>" + attributeLabel + "</td>");
