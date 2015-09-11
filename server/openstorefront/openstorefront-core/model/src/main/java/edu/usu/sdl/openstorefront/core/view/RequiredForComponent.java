@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
@@ -59,7 +60,23 @@ public class RequiredForComponent
 		List<AttributeType> requireds = ServiceProxyFactory.getServiceProxy().getAttributeService().getRequiredAttributes();
 		Set<String> requiredTypeSet = new HashSet<>();
 		for (AttributeType attributeType : requireds) {
-			requiredTypeSet.add(attributeType.getAttributeType());
+			boolean add = true;
+			if (attributeType.getRequiredRestrictions().isEmpty() == false) {
+				if (component.getComponentType() != null) {
+					boolean found = false;
+					for (ComponentTypeRestriction componentTypeRestriction : attributeType.getRequiredRestrictions()) {
+						if (component.getComponentType().equals(componentTypeRestriction.getComponentType())) {
+							found = true;
+						}
+					}
+					if (!found) {
+						add = false;
+					}
+				}
+			}
+			if (add) {
+				requiredTypeSet.add(attributeType.getAttributeType());
+			}
 		}
 
 		Set<String> matchedAttributes = new HashSet<>();
