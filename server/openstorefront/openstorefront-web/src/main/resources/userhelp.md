@@ -480,7 +480,12 @@ messages – just messages going forward.
 ## 3.2 Components *
 ----------
 
-Components can be managed using the Components Tool.
+
+
+### 3.2.1 Managing *
+----------
+
+Components can be managed using the Components Tool.  Components are created by an application administrator.
 
 **To create a component:**
 
@@ -524,7 +529,7 @@ Inactive components are not visible to or searchable by users.
 **To remove a component:**
 
 **WARNING:** This is a hard delete and it will remove all associated data
-(media, user reviews, question…etc.)
+(media, user reviews, questions, etc.)
 
 1.  Click the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to remove.
 
@@ -551,7 +556,7 @@ Inactive components are not visible to or searchable by users.
     new task will be created to handle the import. The application will
     notify the admin when the task is complete or if there was an issue.
 
-### 3.2.1 Approval *
+### 3.2.2 Approval *
 ------
 
 Approved components are searchable by all users. Pending/Not submitted
@@ -574,7 +579,50 @@ the home page.
 step above and selecting **Pending**. Marking the component as
 **Pending** makes it unapproved.
 
-### 3.2.2 Resources *
+
+### 3.2.3 General *
+------
+
+General information about the component is found here such as the Name, 
+Description, Organization, etc.
+
+**To edit General fields:**
+
+1.  Navigate to the Component Tool.
+
+2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
+
+3.  Click the **General** tab.
+
+**Other Fields**  
+a. Approval State:  Pending | Approved | Not Submitted  
+b. Component Type:  ARTICLE *(allows for watches to be put on the article)* | Component  
+c. Security Type:   *select the security level of the component or article*
+  
+
+### 3.2.4 Relationships *
+------
+
+Relationships between components can be added as a Relationship Type to 
+a Relationship Target with a Security Type as well.  
+ 
+**To add a relationship:**
+
+1.  Navigate to the Component Tool.
+
+2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
+
+3.  Click the **Relationship** tab.
+
+4.  Fill in the form and press the Add button.  You will see the new relationship below.  
+
+**NOTE:** To view the graphical representation of relationships, go to
+the *DETAILS* tab of that component (in the search results) and scroll
+to the bottom to the Component Relationships section.  The relationship
+can be viewed either in 
+
+
+### 3.2.5 Resources *
 ------
 
 Resources are links to documentation, the home page, sources, etc. that
@@ -596,7 +644,7 @@ they can be hosted locally.
 Inactivating makes it not visible to the users. However, the resource is
 still there so it can be reactivated.
 
-### 3.2.3 Media *
+### 3.2.6 Media *
 ------
 
 Media provides visual/audio descriptions of the component. A common
@@ -619,7 +667,7 @@ hosted externally.
 it not visible to the users. However, the media is still there so it can
 be reactivated.
 
-### 3.2.4 Evaluation *
+### 3.2.7 Evaluation *
 ------
 
 Components may be evaluated and, if so, that evaluation information may
@@ -884,8 +932,8 @@ queue immediately, but in most cases this is not needed or desired as
 the automatic process will take handling the message queue.
 
 Watches can be placed on Components or Articles by selecting either in
-the drop-down "Component Type" in the General tab when editing a
-component.
+the drop-down "Component Type" in the General tab when editing or adding
+a component.
 
 **NOTE:** Other user messages besides watches, such as alerts, flow
 through the message queue as well.
