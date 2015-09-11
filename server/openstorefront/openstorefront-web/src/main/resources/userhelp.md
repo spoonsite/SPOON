@@ -619,7 +619,11 @@ a Relationship Target with a Security Type as well.
 **NOTE:** To view the graphical representation of relationships, go to
 the *DETAILS* tab of that component (in the search results) and scroll
 to the bottom to the Component Relationships section.  The relationship
-can be viewed either in 
+can be viewed either in either a graphic or table form.
+
+![edit](../../../../../../client/openstorefront/app/images/help/graphic.png) 
+
+![edit](../../../../../../client/openstorefront/app/images/help/table.png)
 
 
 ### 3.2.5 Resources *
