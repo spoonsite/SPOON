@@ -132,6 +132,41 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
   };
   $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
 
+  $scope.loadLookup('ComponentType', 'componentTypes', 'generalFormLoader'); 
+
+  $scope.addToRequiredRestrictions = function(type, old){
+    if (type !== old) {
+      
+      if (_.find($scope.componentTypes, {'code': type})){
+        $scope.type.requiredRestrictions = $scope.type.requiredRestrictions || [];
+        if (!_.find($scope.type.requiredRestrictions, {'componentType': type})){
+          $scope.type.requiredRestrictions.push({'componentType': type})
+        }
+      }
+      $timeout(function(){
+        $scope.type.restrictions = '';
+      }, 200);
+    }
+  }
+
+  $scope.removeFromRequiredRestrictions = function(type){
+    var found = _.find($scope.type.requiredRestrictions, {'componentType': type.componentType});
+    found = _.indexOf($scope.type.requiredRestrictions, found);
+    if (found >= 0) {
+      $scope.type.requiredRestrictions.splice(found, 1);
+    }
+  }
+
+  $scope.getTypeDesc = function(type){
+    var found = _.find($scope.componentTypes, {'code': type.componentType});
+    if (found){
+      return found.description;
+    } else {
+      return type.ComponentType;
+    }
+  }
+
+
 
   $scope.saveType = function(validity){
     if (validity) {
@@ -348,12 +383,13 @@ app.controller('AdminEditCodeCtrl', ['$scope', '$uiModalInstance', 'code', 'type
     Business.lookupservice.getLookupCodes(lookup, 'A').then(function (results) {
       $scope.$emit('$TRIGGERUNLOAD', loader);
       if (results) {
+        // console.log('results', results);
+        
         $scope[entity]= results;
       }        
     });      
   };
   $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
-
 
 
   $scope.urlPattern = utils.URL_REGEX;

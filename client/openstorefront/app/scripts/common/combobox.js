@@ -429,6 +429,7 @@
   , change: function (e) {
     //check to see if the value is empty (this means we're going to clear the input)
     //does something very similar to the toggle.
+      
       if (this.$source.val() === '' && this.$element.val() !== '' && this.$target.val() !== '') {
         if (!this.disabled) {
           if (this.$container.hasClass('combobox-selected')) {
@@ -441,12 +442,15 @@
             }
           }
         }
-      } else if (this.$source.val() && !this.$element.val() && !this.$target.val()){
+      } else if (this.$source.val() === '') {
+        this.$element.val('');
+        this.$target.val('');
+        this.selected = false
+        this.$element.trigger('blur');
+      } else if (this.$source.val() && this.$element.val() === '' && this.$target.val() === ''){
         this.lookup();
         this.$menu.find('.active').removeClass('active');
         var found = this.$menu.find('[data-value="'+(_.invert(this.map))[this.$source.val()]+'"]');
-        console.log('found', found);
-        
         found.addClass('active');
         this.select();
       }
