@@ -883,6 +883,10 @@ notification or not. The tools also allow for manually processing the
 queue immediately, but in most cases this is not needed or desired as
 the automatic process will take handling the message queue.
 
+Watches can be placed on Components or Articles by selecting either in
+the drop-down "Component Type" in the General tab when editing a
+component.
+
 **NOTE:** Other user messages besides watches, such as alerts, flow
 through the message queue as well.
 
