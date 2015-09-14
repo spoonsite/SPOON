@@ -31,7 +31,7 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.ReportView;
 import edu.usu.sdl.openstorefront.core.view.ReportWrapper;
-import edu.usu.sdl.openstorefront.doc.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -294,9 +294,9 @@ public class ReportResource
 	@Path("/delete")
 	public void deleteReports(
 			@FormParam("id")
-			@RequiredParam List<String> reportIds)
+			@RequiredParam GenericEntity<List<String>> reportIdEntity)
 	{
-		for (String reportId : reportIds) {
+		for (String reportId : reportIdEntity.getEntity()) {
 			Report report = new Report();
 			report.setReportId(reportId);
 			report = report.find();
