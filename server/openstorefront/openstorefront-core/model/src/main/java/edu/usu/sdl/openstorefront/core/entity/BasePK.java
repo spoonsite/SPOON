@@ -16,15 +16,16 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import java.io.Serializable;
 import javax.persistence.Version;
 
 /**
- * This base class for PKs Version is needed for the transaction
  *
  * @author dshurtleff
  * @param <T>
  */
+@APIDescription("This base class for PKs Version is needed for transactions")
 public abstract class BasePK<T>
 		implements Serializable, Comparable<T>
 {

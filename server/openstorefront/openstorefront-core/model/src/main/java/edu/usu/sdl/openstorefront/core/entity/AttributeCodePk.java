@@ -17,7 +17,9 @@ package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.util.Objects;
@@ -29,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author dshurtleff
  */
+@APIDescription("Primary Key for Attribute Code")
 public class AttributeCodePk
 		extends BasePK<AttributeCodePk>
 {
@@ -37,6 +40,7 @@ public class AttributeCodePk
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
+	@FK(AttributeType.class)
 	private String attributeType;
 
 	@NotNull

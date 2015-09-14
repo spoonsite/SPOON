@@ -17,7 +17,9 @@ package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -26,21 +28,25 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
+@APIDescription("Primary Key")
 public class ComponentAttributePk
 		extends BasePK<ComponentAttributePk>
 {
 
 	@NotNull
+	@FK(Component.class)
 	private String componentId;
 
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@FK(AttributeType.class)
 	private String attributeType;
 
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@FK(AttributeCode.class)
 	private String attributeCode;
 
 	public ComponentAttributePk()

@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
@@ -26,18 +27,21 @@ import javax.validation.constraints.NotNull;
  *
  * @author dshurtleff
  */
+@APIDescription("Evaluation section Primary Key")
 public class ComponentEvaluationSectionPk
 		extends BasePK
 {
 
 	@NotNull
 	@ConsumeField
+	@FK(Component.class)
 	private String componentId;
 
 	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = EvaluationSection.class)
 	@APIDescription("Evaluation section code")
+	@FK(EvaluationSection.class)
 	private String evaluationSection;
 
 	public ComponentEvaluationSectionPk()

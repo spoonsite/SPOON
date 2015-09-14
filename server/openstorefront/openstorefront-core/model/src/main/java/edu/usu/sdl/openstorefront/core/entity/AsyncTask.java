@@ -16,16 +16,17 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
 import java.util.Date;
 
 /**
- * Holds an Error / Completed Task Information so it can be persists over a
- * longer period across bounces This is a read-only system model
  *
  * @author dshurtleff
  */
+@APIDescription("Holds an Error / Completed Task Information so it can be persists over a "
+		+ "longer period across bounces This is a read-only system model")
 public class AsyncTask
 		extends StandardEntity<AsyncTask>
 {
