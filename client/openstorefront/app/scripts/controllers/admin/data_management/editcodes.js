@@ -136,11 +136,12 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
 
   $scope.addToRequiredRestrictions = function(type, old){
     if (type !== old) {
-      
       if (_.find($scope.componentTypes, {'code': type})){
         $scope.type.requiredRestrictions = $scope.type.requiredRestrictions || [];
         if (!_.find($scope.type.requiredRestrictions, {'componentType': type})){
           $scope.type.requiredRestrictions.push({'componentType': type})
+          console.log('$scope.type', $scope.type);
+          
         }
       }
       $timeout(function(){
@@ -208,6 +209,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
             cont = confirm('Warning: You will be overriding a previously saved type by saving this form. Continue?');
           }
           if (cont) {
+            console.log('type', type);
             Business.articleservice.saveType(type, $scope.addTypeFlg).then(function(result){
               if (result) {
                 $scope.addTypeFlg = false;
@@ -223,6 +225,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
             })
           }
         }, function(){
+          console.log('type', type);
           Business.articleservice.saveType(type, $scope.addTypeFlg).then(function(result){
             if (result) {
               $scope.addTypeFlg = false;

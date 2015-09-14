@@ -33,8 +33,6 @@ app.directive('smartselect', ['$timeout', function($timeout) {
         });
         scope.$watch('ngModel', function(nval, oval){
           if (!init && nval !== oval) {
-            console.log('nval timeout', nval);
-            
             $timeout(function(){
               element.trigger('change');
             })
