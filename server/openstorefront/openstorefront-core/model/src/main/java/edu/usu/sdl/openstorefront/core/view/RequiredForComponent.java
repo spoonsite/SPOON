@@ -61,7 +61,8 @@ public class RequiredForComponent
 		Set<String> requiredTypeSet = new HashSet<>();
 		for (AttributeType attributeType : requireds) {
 			boolean add = true;
-			if (attributeType.getRequiredRestrictions().isEmpty() == false) {
+			if (attributeType.getRequiredRestrictions() != null
+					&& attributeType.getRequiredRestrictions().isEmpty() == false) {
 				if (component.getComponentType() != null) {
 					boolean found = false;
 					for (ComponentTypeRestriction componentTypeRestriction : attributeType.getRequiredRestrictions()) {
