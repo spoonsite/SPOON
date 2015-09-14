@@ -210,6 +210,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
           }
           if (cont) {
             console.log('type', type);
+            delete type.restrictions
             Business.articleservice.saveType(type, $scope.addTypeFlg).then(function(result){
               if (result) {
                 $scope.addTypeFlg = false;
@@ -226,6 +227,7 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
           }
         }, function(){
           console.log('type', type);
+          delete type.restrictions
           Business.articleservice.saveType(type, $scope.addTypeFlg).then(function(result){
             if (result) {
               $scope.addTypeFlg = false;

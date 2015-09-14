@@ -1615,3 +1615,41 @@ app.controller('messageSubmitterCtrl',['$scope', '$draggableInstance', 'submitte
   })
 }]);
 
+'use strict';
+
+app.filter('requiredByComponentType', function () {
+  return function (input, type, inverse) {
+    if (!input) {
+      return [];
+    } else if (!type) {
+      return input;
+    } else {
+      var results =[];
+      _.each(input, function(thing){
+        if (thing.requiredFlg) {
+          if (!thing.requiredRestrictions) {
+            // console.log('is required but not restricted', thing);
+            
+            if (!inverse){
+              results.push(thing);
+            }
+          } else if (_.find(thing.requiredRestrictions, {'componentType': type})){
+            // console.log('is required and has the right type', thing);
+            if (!inverse){
+              results.push(thing);
+            }
+          } else {
+            // console.log('is required but not the right type', thing);
+            if (inverse){
+              results.push(thing);
+            }
+          }
+        }
+      });
+      return results;
+    }
+  };
+});
+
+
+// byComponentType: {{componentForm.componentType}}
