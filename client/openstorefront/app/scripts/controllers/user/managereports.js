@@ -18,63 +18,22 @@
 
 app.controller('userManageReports',['$scope','business', '$uiModal', '$timeout', '$q', function ($scope, Business, $uiModal, $timeout, $q) {
 
-  $scope.predicate = 'title';
-  $scope.reverse = false;
-  $scope.$emit('$TRIGGEREVENT', '$TRIGGERLOAD', 'adminArticlesEdit');
-  $scope.selectedTypes = [];
-
-  // /***************************************************************
-  // * If we don't have a landing page, we're going to set up one for now so that
-  // * there will always be one in the editor when we look, unless we click on a button
-  // * that says 'add landing page'
-  // ***************************************************************/
+  $scope.predicate = [];
+  $scope.reverse = [];
+  $scope.selectedRows = [];
 
 
-  $scope.clearSort = function() {
-    $scope.predicate = 'title'; 
-    $scope.reverse = false;
-    if(!$scope.$$phase) {
-      $scope.$apply();
-    }
-  }
-
-  $scope.setPredicate = function (predicate) {
-    if ($scope.predicate === predicate) {
-      $scope.reverse = !$scope.reverse;
+  $scope.setPredicate = function (predicate, table) {
+    if ($scope.predicate[table] === predicate) {
+      $scope.reverse[table] = !$scope.reverse[table];
     } else {
-      $scope.predicate = predicate;
-      $scope.reverse = false;
+      $scope.predicate[table] = predicate;
+      $scope.reverse[table] = false;
     }
-  };
-
-  $scope.export = function(){
-    document.exportForm.submit();
-  };
-
-  $scope.editContent = function(type, code){
-    var modalInstance = $uiModal.open({
-      templateUrl: 'views/admin/data_management/editlandingform.html',
-      controller: 'AdminEditLandingCtrl',
-      size: 'lg',
-      backdrop: 'static',
-      resolve: {
-        type: function () {
-          return type;
-        },
-        code: function () {
-          return code;
-        }
-      }
-    });
-
-    modalInstance.result.then(function (result) {
-      $scope.getArticles(true);
-    }, function (result) {
-      $scope.getArticles(true);
-    });
-  }
-  
-
+    if (table === 'report') {
+      $scope.pagination.control.changeSortOrder(predicate);
+    }
+  };  
 
   $scope.statusFilterOptions = [
   {code: 'A', desc: 'Active'},
@@ -89,8 +48,10 @@ app.controller('userManageReports',['$scope','business', '$uiModal', '$timeout',
   $scope.reportScheduledFilter = angular.copy(utils.queryFilter);   
   $scope.reportScheduledFilter.status = $scope.statusFilterOptions[0].code;           
 
-  $scope.reports = {};
-  $scope.reports.data = [];
+  $scope.data = {};
+  $scope.data.reports = {};
+  $scope.data.reports.data = [];
+
   $scope.scheduledReports = [];
   $scope.pagination = {};
   $scope.pagination.control;
@@ -103,6 +64,7 @@ app.controller('userManageReports',['$scope','business', '$uiModal', '$timeout',
         $scope.$emit('$TRIGGERUNLOAD', 'reportLoader');
       });
     }
+    $scope.selectedRows = [];
   };
 
   $scope.refreshScheduledReports = function(){
@@ -132,6 +94,18 @@ app.controller('userManageReports',['$scope','business', '$uiModal', '$timeout',
       });
     }       
   };
+
+  $scope.deleteMultiple = function(){
+    var response = window.confirm("Are you sure you want DELETE these reports?");
+    if (response) {
+      $scope.$emit('$TRIGGERLOAD', 'reportLoader');
+      Business.reportservice.removeReports($scope.selectedRows).then(function (result) {          
+        $scope.$emit('$TRIGGERUNLOAD', 'reportLoader');
+        $scope.refreshReports();
+      });
+    } 
+  };
+
 
   $scope.sheduleMode = function(mode){
     $scope.sheduleFlag = mode;
@@ -232,38 +206,6 @@ app.controller('userManageReports',['$scope','business', '$uiModal', '$timeout',
 
   $(window).resize(stickThatTable);
   $timeout(stickThatTable, 100);
-
-}]);
-
-app.controller('AdminEditLandingCtrl',['$scope', '$uiModalInstance', 'type', 'code', 'business', '$location', '$q', '$timeout', function ($scope, $uiModalInstance, type, code, Business, $location, $q, $timeout) {
-
-  $scope.editor = {};
-  $scope.editor.editorContent = '';
-  $scope.editor.editorContentWatch;
-  $scope.showEditor = false;
-
-  
-  var popupWin;
-  $scope.editorOptions = getCkConfig();
-
-  $scope.ok = function () {
-    $scope.article.html = $scope.getEditorContent();
-    $scope.article.attributeType = $scope.type.type;
-    $scope.article.attributeCode = $scope.code.code;
-    if ($scope.article && $scope.article.html && $scope.article.attributeType && $scope.article.attributeCode) {
-      Business.articleservice.saveArticle($scope.article).then(function(result){
-        $uiModalInstance.close();
-      }, function(){
-        triggerAlert('There was an error saving your article, please try again.', 'articleAlert', 'articleEditModal', 6000);
-      })
-    } else {
-      triggerAlert('There is missing information required for saving the article, please try again.', 'articleAlert', 'articleEditModal', 6000);
-    }
-  };
-
-  $scope.cancel = function () {
-    $uiModalInstance.dismiss('cancel');
-  };
 
 }]);
 

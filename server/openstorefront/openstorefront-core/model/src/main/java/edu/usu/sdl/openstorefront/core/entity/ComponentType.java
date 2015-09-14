@@ -44,7 +44,7 @@ public class ComponentType
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(COMPONENT, newLookup(ErrorTypeCode.class, COMPONENT, "Component"));
-		codeMap.put(ARTICLE, newLookup(ErrorTypeCode.class, ARTICLE, "ARTICLE"));
+		codeMap.put(ARTICLE, newLookup(ErrorTypeCode.class, ARTICLE, "Article"));
 		return codeMap;
 	}
 
