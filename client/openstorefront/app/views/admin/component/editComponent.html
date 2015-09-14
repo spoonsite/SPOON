@@ -173,7 +173,7 @@ limitations under the License.
         <th>Attribute Type</th>
         <th>Attribute Code</th>         
       </tr>
-      <tr ng-repeat="attrib in requiredAttributes | orderBy:'description'" >
+      <tr ng-repeat="attrib in requiredAttributes | orderBy:'description' | requiredByComponentType:componentForm.componentType:false" >
         <td><span class="required">{{attrib.description}}</span></td>
         <td>
           <select type="text" class="form-control" style="width: 100%" ng-model="generalForm.requiredAttribute[attrib.attributeType]" id="{{generalForm.requiredAttribute[attrib.attributeType]}}" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="code.code as code.label for code in getCodesForType(attrib.attributeType)" placeholder="Select Code"></select>
