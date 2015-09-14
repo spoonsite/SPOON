@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
@@ -28,6 +29,7 @@ import javax.persistence.Version;
  * @author dshurtleff
  * @param <T>
  */
+@APIDescription("This defines a storable entity")
 public abstract class BaseEntity<T>
 		implements Serializable, Comparable<T>
 {

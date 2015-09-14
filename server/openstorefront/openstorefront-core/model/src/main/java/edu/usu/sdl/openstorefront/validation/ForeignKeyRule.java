@@ -16,12 +16,15 @@
 package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Field value needs to exist in foreign Table Doesn't support compound keys
@@ -40,18 +43,39 @@ public class ForeignKeyRule
 		if (dataObject != null) {
 			FK fk = field.getAnnotation(FK.class);
 			if (fk != null) {
-				try {
-					String value = BeanUtils.getProperty(dataObject, field.getName());
-					if (value != null) {
-						Class fkClass = fk.value();
-						Service serviceProxy = ServiceProxyFactory.getServiceProxy();
-						Object entity = serviceProxy.getPersistenceService().findById(fkClass, value);
-						if (entity == null) {
-							valid = false;
+				if (fk.enforce()) {
+					try {
+						String value = BeanUtils.getProperty(dataObject, field.getName());
+						if (value != null) {
+							Class fkClass = fk.value();
+							Service serviceProxy = ServiceProxyFactory.getServiceProxy();
+							if (StringUtils.isNotBlank(fk.referencedField())) {
+								Object referenceEntity = fkClass.newInstance();
+								Field referenceField = ReflectionUtil.getField(referenceEntity, fk.referencedField());
+								if (referenceField != null) {
+									if (referenceEntity instanceof BaseEntity) {
+										referenceField.setAccessible(true);
+										referenceField.set(referenceEntity, value);
+										Object entity = ((BaseEntity) referenceEntity).find();
+										if (entity == null) {
+											valid = false;
+										}
+									} else {
+										throw new OpenStorefrontRuntimeException("Reference Class is not a Base Entity: " + fkClass.getName());
+									}
+								} else {
+									throw new OpenStorefrontRuntimeException("Reference field: " + fk.referencedField() + " not on Class: " + fkClass.getSimpleName(), "check code");
+								}
+							} else {
+								Object entity = serviceProxy.getPersistenceService().findById(fkClass, value);
+								if (entity == null) {
+									valid = false;
+								}
+							}
 						}
+					} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
+						throw new OpenStorefrontRuntimeException("Unexpected error occur trying get original field value.", ex);
 					}
-				} catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
-					throw new OpenStorefrontRuntimeException("Unexpected error occur trying get original field value.", ex);
 				}
 			}
 		}

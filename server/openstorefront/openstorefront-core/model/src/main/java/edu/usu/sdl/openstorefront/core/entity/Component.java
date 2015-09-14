@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DefaultFieldValue;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
@@ -39,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author jlaw
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@APIDescription("This is the main listing item that represents a component, asset, topic landing page...etc")
 public class Component
 		extends StandardEntity<Component>
 		implements OrganizationModel
@@ -65,6 +67,7 @@ public class Component
 	@ValidValueType(value = {}, lookupClass = ComponentType.class)
 	@DefaultFieldValue(ComponentType.COMPONENT)
 	@APIDescription("Type of listing")
+	@FK(ComponentType.class)
 	private String componentType;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
@@ -77,6 +80,7 @@ public class Component
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	@APIDescription("Component organization")
+	@FK(value = Organization.class, referencedField = "name", softReference = true)
 	private String organization;
 
 	@ConsumeField
@@ -93,6 +97,7 @@ public class Component
 	@ValidValueType(value = {}, lookupClass = ApprovalStatus.class)
 	@ConsumeField
 	@APIDescription("Status of an approval")
+	@FK(ApprovalStatus.class)
 	private String approvalState;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)

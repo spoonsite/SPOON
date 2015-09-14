@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.doc;
+package edu.usu.sdl.openstorefront.doc.sort;
 
-import edu.usu.sdl.openstorefront.doc.APIMethodModel;
+import edu.usu.sdl.openstorefront.doc.model.APIMethodModel;
 import java.io.Serializable;
 import java.util.Comparator;
 

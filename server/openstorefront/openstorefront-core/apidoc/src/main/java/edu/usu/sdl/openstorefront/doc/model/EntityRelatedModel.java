@@ -13,33 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.annotation;
-
-import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package edu.usu.sdl.openstorefront.doc.model;
 
 /**
- * Foreign Key using to create a constraint validation
  *
  * @author dshurtleff
  */
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@APIDescription("Foreign Key")
-public @interface FK
+public class EntityRelatedModel
 {
 
-	Class<? extends BaseEntity> value();
+	private EntityFieldModel relatedField;
+	private EntityDocModel relatedEntity;
 
-	boolean enforce() default false;
+	public EntityRelatedModel()
+	{
+	}
 
-	boolean softReference() default false;
+	public EntityFieldModel getRelatedField()
+	{
+		return relatedField;
+	}
 
-	String referencedField() default "";
+	public void setRelatedField(EntityFieldModel relatedField)
+	{
+		this.relatedField = relatedField;
+	}
+
+	public EntityDocModel getRelatedEntity()
+	{
+		return relatedEntity;
+	}
+
+	public void setRelatedEntity(EntityDocModel relatedEntity)
+	{
+		this.relatedEntity = relatedEntity;
+	}
 
 }

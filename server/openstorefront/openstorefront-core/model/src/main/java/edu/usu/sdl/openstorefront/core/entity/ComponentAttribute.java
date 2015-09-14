@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import javax.persistence.OneToOne;
@@ -23,6 +24,7 @@ import javax.persistence.OneToOne;
  *
  * @author dshurtleff
  */
+@APIDescription("Referenced Metadata Attribute")
 public class ComponentAttribute
 		extends BaseComponent
 {

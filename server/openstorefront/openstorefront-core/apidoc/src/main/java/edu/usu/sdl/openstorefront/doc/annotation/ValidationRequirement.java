@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.doc;
 
-import edu.usu.sdl.openstorefront.doc.APIResourceModel;
-import java.io.Serializable;
-import java.util.Comparator;
+package edu.usu.sdl.openstorefront.doc.annotation;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Used to sort resources
  *
  * @author dshurtleff
- * @param <T>
  */
-public class ApiResourceComparator<T extends APIResourceModel>
-		implements Comparator<T>, Serializable
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface ValidationRequirement
 {
-
-	@Override
-	public int compare(T o1, T o2)
-	{
-		return o1.getResourceName().compareTo(o2.getResourceName());
-	}
-
+	String value();
 }

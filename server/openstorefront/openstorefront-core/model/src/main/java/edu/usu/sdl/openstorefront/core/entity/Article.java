@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -24,11 +25,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * This a composite class attribute code as such it doesn't have a PK field.
- * It's part of Attribute Code
  *
  * @author dshurtleff
  */
+@APIDescription("This a composite class attribute code as such it doesn't have a PK field. It's part of Attribute Code.")
 public class Article
 		extends StandardEntity
 {

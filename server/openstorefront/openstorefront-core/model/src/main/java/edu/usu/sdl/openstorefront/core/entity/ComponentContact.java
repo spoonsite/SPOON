@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -29,6 +31,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@APIDescription("Hold component Contact information")
 public class ComponentContact
 		extends BaseComponent
 		implements OrganizationModel
@@ -41,6 +44,7 @@ public class ComponentContact
 	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = ContactType.class)
+	@FK(ContactType.class)
 	private String contactType;
 
 	@NotNull
@@ -69,6 +73,7 @@ public class ComponentContact
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@FK(value = Organization.class, referencedField = "name", softReference = true)
 	private String organization;
 
 	public ComponentContact()
