@@ -32,6 +32,21 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
       });
 
       return deferred.promise;
+    };
+
+    reportservice.getReportTypes = function () {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/reports/reporttypes'
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/    
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
     };  
     
     reportservice.getReportFormats = function (reportType) {
@@ -76,6 +91,23 @@ app.factory('reportservice', ['$http', '$q', 'localCache', function($http, $q, l
       $http({
         'method': 'DELETE',
         'url': 'api/v1/resource/reports/' + encodeURIComponent(id)
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/    
+        deferred.reject('There was an error');
+      });
+
+      return deferred.promise;
+    }; 
+
+    reportservice.removeReports = function (ids) {
+      var deferred = $q.defer();
+
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/resource/reports/delete',
+        'data': {entity: ids},
+        'headers': {'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8'} 
       }).success(function (data, status, headers, config) { /*jshint unused:false*/
         deferred.resolve(data);
       }).error(function (data, status, headers, config) { /*jshint unused:false*/    

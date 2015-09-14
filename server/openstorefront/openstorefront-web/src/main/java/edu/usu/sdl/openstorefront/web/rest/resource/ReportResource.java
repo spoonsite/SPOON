@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.ReportView;
 import edu.usu.sdl.openstorefront.core.view.ReportWrapper;
+import edu.usu.sdl.openstorefront.core.view.RequestEntity;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -48,7 +49,6 @@ import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -291,12 +291,12 @@ public class ReportResource
 
 	@DELETE
 	@APIDescription("Deletes group of reports")
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/delete")
 	public void deleteReports(
-			@FormParam("id")
-			@RequiredParam GenericEntity<List<String>> reportIdEntity)
+			@RequiredParam RequestEntity reportIds)
 	{
-		for (String reportId : reportIdEntity.getEntity()) {
+		for (String reportId : reportIds.getEntity()) {
 			Report report = new Report();
 			report.setReportId(reportId);
 			report = report.find();
