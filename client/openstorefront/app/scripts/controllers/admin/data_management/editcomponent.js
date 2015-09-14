@@ -1626,7 +1626,7 @@ app.filter('requiredByComponentType', function () {
     } else {
       var results =[];
       _.each(input, function(thing){
-        if (thing.requiredFlg) {
+        if (thing && thing.requiredFlg) {
           if (!thing.requiredRestrictions) {
             // console.log('is required but not restricted', thing);
             

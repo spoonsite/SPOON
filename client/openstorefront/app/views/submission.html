@@ -258,15 +258,15 @@ body {
                 <th>Attribute Code</th>
               </tr>
               <!-- repeat on each attribute -->
-              <tr class="ng-scope" ng-repeat="attribute in requiredAttributes | shownattribute">
+              <tr class="ng-scope" ng-repeat="attribute in requiredAttributes | shownattribute | requiredByComponentType:'COMP':false">
                 <td ><span data-toggle="tooltip" data-placement="top" data-html="true" title="{{attribute.detailedDescription}}" class="required ng-binding" >{{attribute.description}}</span></td>
                 <td>
-                  <select  ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')" ng-init="setDefaultAttribute(attribute.attributeType, attribute, true)" type="text" ng-change="vitalsCheck(true)" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="component.attributes[attribute.attributeType]" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute track by code.code "></select>
-                  <div class="tags" ng-if="component.attributes[attribute.attributeType]">
+                  <select  ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')" ng-init="setDefaultAttribute(attribute.attributeType, attribute, true)" type="text" ng-change="addTo(tempAtt, attribute, component.attributes); vitalsCheck(true)" class="form-control ng-pristine ng-valid" style="width: 100%" ng-model="tempAtt" id="WIDGET" data-min-length="0" data-html="1" data-animation="am-flip-x" placeholder="Select Code" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute track by code.code "></select>
+                  <div class="tags" ng-if="component.attributes[attribute.attributeType].items">
                     <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
                       <li class="tag-item" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
-                        <span ng-bind="component.attributes[attribute.attributeType].label"></span>
-                        <a class="remove-button" ng-click="component.attributes[attribute.attributeType] = null" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
+                        <span ng-bind="component.attributes[attribute.attributeType].items[0].label"></span>
+                        <a class="remove-button" ng-click="component.attributes[attribute.attributeType] = {items:[]}; tempAtt = null;" style="margin: 0 0 0 5px; padding: 0; border: 0; background: 0 0; cursor: pointer; vertical-align: middle; font: 700 16px Arial,sans-serif; color: #585858;">&times;</a>
                       </li>
                     </ul>
                   </div>
@@ -278,7 +278,7 @@ body {
                   <i class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.description}} information" data-trigger="hover" ng-click="openInfo(attribute)"></i>
                 </span></td>
                 <td>
-                  <select class="form-control" ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')"  ng-if="attribute.allowMultipleFlg" ng-change="addTo(tempAttribute, component.attributes[attribute.attributeType].items); vitalsCheck()" ng-model="tempAttribute" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
+                  <select class="form-control" ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')"  ng-if="attribute.allowMultipleFlg" ng-change="addTo(tempAttribute, attribute, component.attributes);" ng-model="tempAttribute" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
                   <div class="tags" ng-if="attribute.allowMultipleFlg &&  component.attributes[attribute.attributeType] && component.attributes[attribute.attributeType].items && component.attributes[attribute.attributeType].items.length">
                     <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
                       <li class="tag-item" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;" ng-repeat="item in component.attributes[attribute.attributeType].items">
@@ -288,7 +288,7 @@ body {
                     </ul>
                   </div>
                   <!-- <multiselect is-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')"  ng-if="attribute.allowMultipleFlg" on-change="vitalsCheck()" selected="tempValues[$index]" options="code as code.label for code in list" list="attribute.codes | makeattribute:attribute"></multiselect> -->
-                  <select  ng-disabled="(component && component.component && component.component.approvalState && component.component.approvalState !=='N')" class="form-control" ng-if="!attribute.allowMultipleFlg" ng-model="component.attributes[attribute.attributeType].items[0]" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
+                  <select  ng-disabled="!vitalsCheck() || (component && component.component && component.component.approvalState && component.component.approvalState !=='N')" class="form-control" ng-if="!attribute.allowMultipleFlg" ng-model="component.attributes[attribute.attributeType].items[0]" ng-options="code as code.label for code in attribute.codes | makeattribute:attribute"></select>
                   <div class="tags" ng-if="!attribute.allowMultipleFlg && component.attributes[attribute.attributeType] && component.attributes[attribute.attributeType].items && component.attributes[attribute.attributeType].items[0]">
                     <ul class="tags-list" style="margin: 0; padding: 0; list-style-type: none;">
                       <li class="tag-item" style="margin: 2px; padding: 0 5px; display: inline-block; font: 14px \'Helvetica Neue\',Helvetica,Arial,sans-serif; height: 26px; line-height: 25px;">
