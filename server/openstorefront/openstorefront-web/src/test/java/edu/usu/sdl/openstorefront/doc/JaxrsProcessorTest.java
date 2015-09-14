@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.doc;
 
+import edu.usu.sdl.openstorefront.doc.model.APIResourceModel;
 import edu.usu.sdl.openstorefront.web.rest.RestConfiguration;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.ArrayList;

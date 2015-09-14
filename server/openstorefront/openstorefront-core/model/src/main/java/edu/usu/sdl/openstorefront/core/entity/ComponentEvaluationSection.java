@@ -28,6 +28,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author dshurtleff
  */
+@APIDescription("Evaluation section score")
 public class ComponentEvaluationSection
 		extends BaseComponent
 {

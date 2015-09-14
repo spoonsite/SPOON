@@ -13,33 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.annotation;
+package edu.usu.sdl.openstorefront.doc.sort;
 
-import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import edu.usu.sdl.openstorefront.doc.model.APIResourceModel;
+import java.io.Serializable;
+import java.util.Comparator;
 
 /**
- * Foreign Key using to create a constraint validation
+ * Used to sort resources
  *
  * @author dshurtleff
+ * @param <T>
  */
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@APIDescription("Foreign Key")
-public @interface FK
+public class ApiResourceComparator<T extends APIResourceModel>
+		implements Comparator<T>, Serializable
 {
 
-	Class<? extends BaseEntity> value();
-
-	boolean enforce() default false;
-
-	boolean softReference() default false;
-
-	String referencedField() default "";
+	@Override
+	public int compare(T o1, T o2)
+	{
+		return o1.getResourceName().compareTo(o2.getResourceName());
+	}
 
 }

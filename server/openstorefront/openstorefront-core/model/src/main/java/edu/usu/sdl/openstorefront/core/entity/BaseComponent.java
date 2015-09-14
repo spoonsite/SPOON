@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import javax.validation.constraints.NotNull;
 
@@ -29,6 +30,7 @@ public abstract class BaseComponent<T>
 {
 
 	@NotNull
+	@FK(Component.class)
 	private String componentId;
 
 	public BaseComponent()

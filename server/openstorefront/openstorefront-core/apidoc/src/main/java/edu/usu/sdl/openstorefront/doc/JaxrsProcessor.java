@@ -15,8 +15,17 @@
  */
 package edu.usu.sdl.openstorefront.doc;
 
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
-import edu.usu.sdl.openstorefront.core.annotation.ParamTypeDescription;
+import edu.usu.sdl.openstorefront.doc.annotation.ValidationRequirement;
+import edu.usu.sdl.openstorefront.doc.annotation.ParameterRestrictions;
+import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.annotation.ReturnType;
+import edu.usu.sdl.openstorefront.doc.sort.ApiMethodComparator;
+import edu.usu.sdl.openstorefront.doc.model.APITypeModel;
+import edu.usu.sdl.openstorefront.doc.model.APIParamModel;
+import edu.usu.sdl.openstorefront.doc.model.APIValueFieldModel;
+import edu.usu.sdl.openstorefront.doc.model.APIValueModel;
+import edu.usu.sdl.openstorefront.doc.model.APIMethodModel;
+import edu.usu.sdl.openstorefront.doc.model.APIResourceModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -26,7 +35,9 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ParamTypeDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -484,6 +495,17 @@ public class JaxrsProcessor
 						validation.append("See Lookup table(s): <br>");
 						for (Class lookupClass : validValueType.lookupClass()) {
 							validation.append(lookupClass.getSimpleName());
+						}
+					}
+					if (validValueType.enumClass().length > 0) {
+						validation.append("See Enum List: <br>");
+						for (Class enumClass : validValueType.enumClass()) {
+							validation.append(enumClass.getSimpleName());
+							if (enumClass.isEnum()) {
+								validation.append(" (")
+										.append(Arrays.toString(enumClass.getEnumConstants()))
+										.append(") ");
+							}
 						}
 					}
 				}
