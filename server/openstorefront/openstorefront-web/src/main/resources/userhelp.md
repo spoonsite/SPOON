@@ -118,20 +118,20 @@ FraMewoRk
 
 Avoid searching with noise words, unless they are part of a
 double-quote-enclosed exact phrase search. Some common noise words
-include: a, an, and, are, as, at, be, but, by, for, if, in, into, is,
+include: a, an, and, are, as, at, be, but, by, for, if, in, into, is,
 it, no, not, of, on, or, such, that, the, their, then, there, these,
 they, this, to, was, will, with.
 
-Search example: create a common framework
+Search example: create a common framework
 
-This search works, but the 'a' will return more results than are desired
+This search works, but the 'a' will return more results than are desired
 since results with the word 'a' will be returned in the search.
 
-Search example: create common framework
+Search example: create common framework
 
 This search works, and will return fewer, more specific results. It will
-return *only* those places where the three words *create*, *common*,
-and *framework* are found.
+return *only* those places where the three words *create*, *common*,
+and *framework* are found.
 
 The only time that including noise words may be recommended is when
 performing an exact search and the words are a necessary part of the
