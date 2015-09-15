@@ -19,7 +19,8 @@
         <div class="col-sm-10" style="padding-left:0px; padding-right:0px;">
           <textarea ckeditor="editorOptions" id="detailedDescription" ng-model="type.detailedDescription" ng-watch="type.detailedDescription"></textarea>
         </div>
-        <div ng-show="type.requiredFlg" class="col-sm-2" style="padding-left:0px; padding-right:0px;">Types required for</div>
+        <div ng-show="type.requiredFlg" class="col-sm-2" style="padding-left:0px; padding-right:0px;">Types required for <i class="glyphicon glyphicon-info-sign" style="font-size: 10px;" data-toggle="tooltip" data-placement="top" data-title="You can restrict which component types this attribute is required for by selecting it from this dropdown (leaving it blank defaults to required for all types)" data-trigger="hover"></i>
+        </div>
         <div ng-show="type.requiredFlg" class="col-sm-10" style="padding-left:0px; padding-right:0px;">
           <select smartselect type="text" class="form-control" name="type.restrictions" id="type.restrictions" ng-change="addToRequiredRestrictions(type.restrictions, type.oldR); type.oldR = type.restrictions" ng-model="type.restrictions" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="thing.code as thing.description for thing in componentTypes" on-enter="addToRequiredRestrictions()">
             <option style="display:none" value="">Select a Type</option>

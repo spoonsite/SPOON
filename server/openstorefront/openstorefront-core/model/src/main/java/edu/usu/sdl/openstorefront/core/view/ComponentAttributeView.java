@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,6 +57,7 @@ public class ComponentAttributeView
 	private String activeStatus;
 	private String badgeUrl;
 	private String highlightStyle;
+	private List<ComponentTypeRestriction> requiredRestrictions;
 
 	public ComponentAttributeView()
 	{
@@ -112,7 +114,8 @@ public class ComponentAttributeView
 			view.setOrphan(true);
 			type = service.getPersistenceService().findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
 		}
-
+		
+		view.setRequiredRestrictions(type.getRequiredRestrictions());
 		view.setExternalLink(code.getDetailUrl());
 		view.setCodeDescription(code.getLabel());
 		view.setCodeLongDescription(code.getDescription());
@@ -405,6 +408,22 @@ public class ComponentAttributeView
 	public void setDefaultAttributeCode(String defaultAttributeCode)
 	{
 		this.defaultAttributeCode = defaultAttributeCode;
+	}
+
+	/**
+	 * @return the requiredRestrictions
+	 */
+	public List<ComponentTypeRestriction> getRequiredRestrictions()
+	{
+		return requiredRestrictions;
+	}
+
+	/**
+	 * @param requiredRestrictions the requiredRestrictions to set
+	 */
+	public void setRequiredRestrictions(List<ComponentTypeRestriction> requiredRestrictions)
+	{
+		this.requiredRestrictions = requiredRestrictions;
 	}
 
 }
