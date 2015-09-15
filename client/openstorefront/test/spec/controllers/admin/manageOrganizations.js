@@ -27,7 +27,7 @@ describe('Controller: AdminManageOrganizationsCtrl', function () {
     expect(scope.submitter).toEqual(null);
     expect(scope.pagination.control.approvalState).toEqual('ALL');
     expect(scope.pagination.control.organizationType).toEqual('ALL');
-    expect(scope.pagination.features).toEqual({'dates': false, 'max': false});
+    expect(scope.pagination.features).toEqual({'dates': false, 'max': false, 'activeStatus': false});
   });
   alert('Controller:  AdminManageOrganizationsCtrl; should have the correct initializations = PASS (11 expects)');
 });
