@@ -1150,6 +1150,41 @@ System Tools and their Purpose:
 ### 3.12.1 Managing
 --------------
 
+**To add a new organization:**
+
+1.  Click **Add New Organization** from the Organizations section of the Admin Tools.
+
+2.  Enter the information and click **Save Changes**.
+
+**Note:** When a new component is added if an unrecognized organization is added, it will automatically be saved to the 
+  organization list.  However, details such as the Description and Main Contact Information will need to be added here.
+
+**To edit an organization**
+1.  From Organizations in the Admin Tools, select an organization.
+
+2.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) next to the organization.
+
+    a.  Update Organization information as desired including:  Name, Description, Organization Link, and Organization Type.
+
+    b.  Update Main Contact information as desired including:  Contact Name, Phone Number, Email, Agency, Department, 
+         Address, and Security Type.
+    
+3.  When finished, click **Save Changes**.
+
+**To remove an organization:**
+1.  From Organizations in the Admin Tools, select an organization.
+
+2.  Click on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the organization.
+
+3.  Confirm that you wish to delete the organization by cliking **OK**.
+
+
+**"No Organization" References:**
+This displays a list of references where no organization is listed.  
+
+**Run Extract:**
+This runs a query to get current component and organization information to update the table.  
+
 
 # 4.  Glossary
 ----------
