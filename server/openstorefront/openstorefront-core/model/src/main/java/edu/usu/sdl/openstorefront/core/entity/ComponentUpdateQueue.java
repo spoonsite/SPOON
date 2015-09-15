@@ -15,13 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 
 /**
- * This is used to queue up slow updates and avoid contention
  *
  * @author dshurtleff
  */
+@APIDescription("This is used to queue up slow updates and avoid contention")
 public class ComponentUpdateQueue
 		extends StandardEntity<ComponentUpdateQueue>
 {
@@ -29,6 +31,7 @@ public class ComponentUpdateQueue
 	@PK(generated = true)
 	private String updateId;
 
+	@FK(Component.class)
 	private String componentId;
 	private String nodeId;
 

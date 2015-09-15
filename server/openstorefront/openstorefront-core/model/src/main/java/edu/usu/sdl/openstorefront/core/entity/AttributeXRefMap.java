@@ -27,6 +27,7 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
+@APIDescription("Mapping of external categories to attributes")
 public class AttributeXRefMap
 		extends StandardEntity
 {

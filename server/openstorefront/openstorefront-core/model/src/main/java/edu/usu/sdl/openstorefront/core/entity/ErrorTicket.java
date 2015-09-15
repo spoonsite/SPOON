@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import javax.validation.constraints.NotNull;
@@ -24,6 +25,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author jlaw
  */
+@APIDescription("Holds error ticket information")
 public class ErrorTicket
 		extends StandardEntity
 {
@@ -39,13 +41,19 @@ public class ErrorTicket
 	private String input;
 
 	@NotNull
+	@APIDescription("Pointer to the detail record")
 	private String ticketFile;
 	private String clientIp;
+
+	@APIDescription("Message from the error")
 	private String message;
+
+	@APIDescription("Potential fix for the error, if available")
 	private String potentialResolution;
 
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = ErrorTypeCode.class)
+	@FK(ErrorTypeCode.class)
 	private String errorTypeCode;
 
 	public ErrorTicket()

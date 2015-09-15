@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -30,6 +31,7 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
+@APIDescription("Holds user information and preferences")
 public class UserProfile
 		extends StandardEntity
 		implements OrganizationModel
@@ -60,11 +62,13 @@ public class UserProfile
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
 	@ConsumeField
+	@FK(UserTypeCode.class)
 	private String userTypeCode;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
+	@FK(value = Organization.class, softReference = true, referencedField = "name")
 	private String organization;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
@@ -79,9 +83,11 @@ public class UserProfile
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
 	@ConsumeField
+	@APIDescription("Used to map user from external systems")
 	private String externalUserId;
 
 	@ConsumeField
+	@APIDescription("Send user a message about recent changes")
 	private Boolean notifyOfNew;
 
 	public UserProfile()

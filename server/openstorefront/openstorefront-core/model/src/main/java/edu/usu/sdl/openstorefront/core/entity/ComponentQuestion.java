@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.core.view.ComponentQuestionResponseView;
@@ -31,6 +33,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@APIDescription("User question about a component")
 public class ComponentQuestion
 		extends BaseComponent
 		implements OrganizationModel
@@ -50,12 +53,14 @@ public class ComponentQuestion
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
+	@FK(UserTypeCode.class)
 	private String userTypeCode;
 
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
 	@Sanitize(TextSanitizer.class)
+	@FK(value = Organization.class, softReference = true, referencedField = "name")
 	private String organization;
 
 	public ComponentQuestion()

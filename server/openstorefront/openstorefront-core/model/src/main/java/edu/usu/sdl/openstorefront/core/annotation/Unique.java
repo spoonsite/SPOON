@@ -29,6 +29,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@APIDescription("Defines unique constraint")
 public @interface Unique
 {
 

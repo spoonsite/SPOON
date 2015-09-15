@@ -15,15 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import java.io.Serializable;
 import javax.persistence.Version;
 
 /**
- * This is part of the alert object
  *
  * @author dshurtleff
  */
+@APIDescription("This is part of the alert entity")
 public class UserDataAlertOption
 		implements Serializable
 {

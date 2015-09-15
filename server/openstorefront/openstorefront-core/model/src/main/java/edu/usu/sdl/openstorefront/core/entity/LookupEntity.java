@@ -41,6 +41,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@APIDescription("Base entity of all lookups")
 public abstract class LookupEntity
 		extends StandardEntity
 		implements ExportImport

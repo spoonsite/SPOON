@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -29,6 +31,7 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
+@APIDescription("External Integration config record")
 public class ComponentIntegrationConfig
 		extends StandardEntity
 {
@@ -40,25 +43,31 @@ public class ComponentIntegrationConfig
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = IntegrationType.class)
 	@ConsumeField
+	@FK(IntegrationType.class)
 	private String integrationType;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
+	@APIDescription("External system value")
 	private String issueNumber;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
+	@APIDescription("External system value")
 	private String projectType;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
+	@APIDescription("External system value")
 	private String issueType;
 
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = RunStatus.class)
+	@FK(RunStatus.class)
 	private String status;
 
+	@FK(value = ErrorTicket.class, referencedField = "errorTicketId")
 	private String errorTicketNumber;
 	private String errorMessage;
 	private String potentialResolution;
@@ -67,6 +76,7 @@ public class ComponentIntegrationConfig
 
 	@NotNull
 	@ConsumeField
+	@FK(Component.class)
 	private String componentId;
 
 	public ComponentIntegrationConfig()

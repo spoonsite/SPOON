@@ -16,16 +16,17 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import java.util.Date;
 import java.util.logging.LogRecord;
 import javax.validation.constraints.NotNull;
 
 /**
- * Represents a log record
  *
  * @author dshurtleff
  */
+@APIDescription("Represents a log record")
 public class DBLogRecord
 		extends BaseEntity<DBLogRecord>
 {

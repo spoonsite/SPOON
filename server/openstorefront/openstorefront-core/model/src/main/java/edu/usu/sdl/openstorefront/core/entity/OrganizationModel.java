@@ -15,10 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Used to normalize entities that have an organization")
 public interface OrganizationModel
 {
 

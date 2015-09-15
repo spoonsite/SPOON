@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import javax.validation.constraints.NotNull;
@@ -25,6 +26,7 @@ import javax.validation.constraints.NotNull;
  * @author jlaw
  * @param <T>
  */
+@APIDescription("Common shared point for all component related entities")
 public abstract class BaseComponent<T>
 		extends StandardEntity<BaseComponent>
 {

@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
@@ -25,16 +27,19 @@ import javax.validation.constraints.NotNull;
  *
  * @author dshurtleff
  */
+@APIDescription("Primary Key")
 public class ComponentReviewProPk
 		extends BasePK
 {
 
 	@NotNull
+	@FK(ComponentReview.class)
 	private String componentReviewId;
 
 	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = ReviewPro.class)
+	@FK(ReviewPro.class)
 	private String reviewPro;
 
 	public ComponentReviewProPk()

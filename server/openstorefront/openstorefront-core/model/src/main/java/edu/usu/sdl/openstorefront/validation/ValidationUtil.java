@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ValidationUtil
 {
+
+	private static final Logger log = Logger.getLogger(ValidationUtil.class.getName());
 
 	private static final List<BaseRule> rules = Arrays.asList(
 			new MaxValueRule(),
@@ -163,7 +166,11 @@ public class ValidationUtil
 									Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
 									if (returnObj != null) {
 										for (Object itemObj : (Collection) returnObj) {
-											ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, itemObj), itemObj.getClass(), field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
+											if (itemObj != null) {
+												ruleResults.addAll(validateFields(ValidationModel.copy(validateModel, itemObj), itemObj.getClass(), field.getName(), validateModel.getDataObject().getClass().getSimpleName()));
+											} else {
+												log.log(Level.WARNING, "There is a NULL item in a collection.  Check data passed in to validation.");
+											}
 										}
 									} else {
 										NotNull notNull = field.getAnnotation(NotNull.class);

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.core.annotation;
 
 import java.lang.annotation.Documented;
@@ -29,7 +28,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@APIDescription("Defines input comes from user")
 public @interface ConsumeField
 {
-	
+
 }
