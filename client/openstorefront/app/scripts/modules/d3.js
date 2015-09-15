@@ -1022,6 +1022,14 @@ angular.module('d3', [])
             .attr("r", 10)
             .style('fill', function(d) { return color(d.id); })
             .style('stroke', function(d) { return d3.rgb(color(d.id)).darker().toString(); })
+            .on('dblclick', function(d){ //
+                scope.onClick({
+                  'location': {
+                    path: '/single',
+                    search: {'id': d.id}
+                  }
+                })
+              })
 
             // add the text 
             node.append("text")
