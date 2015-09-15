@@ -1185,6 +1185,13 @@ This displays a list of references where no organization is listed.
 **Run Extract:**
 This runs a query to get current component and organization information to update the table.  
 
+**Show Contact info:**
+Clicking this button ![Show Contact Info](../../../../../../client/openstorefront/app/images/help/showcontactinfo.png)
+ shows the Agency, Department, Contact Name, Contact Phone, and Contact Email for the organization.
+
+**View References:**
+Clicking this icon ![View References](../../../../../../client/openstorefront/app/images/help/viewreferences.png)
+ shows all of the references for the organization.  
 
 # 4.  Glossary
 ----------
