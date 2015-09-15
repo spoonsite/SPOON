@@ -89,11 +89,33 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     window.location.href = "/";
   };
 
-  $scope.addTo = function(item, collection){
+  $scope.addTo = function(item, attr, collection){
+    console.log('collection', collection);
+    
+    if (!collection) {
+      collection = {};
+      collection[attr.attributeType] = {
+        items: []
+      }
+      collection = collection[attr.attributeType].items;
+    } else if (!collection[attr.attributeType]){
+      collection[attr.attributeType] = {
+        items: []
+      }
+      collection = collection[attr.attributeType].items;
+    } else if (!collection[attr.attributeType].items) {
+      collection[attr.attributeType] = {
+        items: []
+      }
+      collection = collection[attr.attributeType].items;
+    } else {
+      collection = collection[attr.attributeType].items;
+    }
     if (!_.isArray(collection)){
       collection = [];
     }
     _.contains(collection, item)? '': collection.push(item);
+    console.log('item', item);
   }
   $scope.removeFrom = function(item, collection){
     collection.splice(item, 1);
@@ -306,10 +328,24 @@ $scope.getSubmission = function(){
   $scope.getAttributes = function (override) { 
     var deferred = $q.defer();
     Business.getFilters(override, false).then(function (result) {
-      deferred.resolve();
       $scope.allAttributes = result ? angular.copy(result) : [];
       $scope.requiredAttributes = _.filter($scope.allAttributes, {requiredFlg: true, hideOnSubmission: false});
       $scope.attributes = _.filter($scope.allAttributes, {requiredFlg: false});
+      var temp = $filter('requiredByComponentType')($scope.requiredAttributes,'COMP',true);
+      _.each(temp, function(thing){
+        if (!thing.hideOnSubmission) {
+          $scope.attributes.push(thing);
+        }
+      })
+      $scope.attributes.sort(function(a, b){
+        var nameA=a.description.toLowerCase(), nameB=b.description.toLowerCase()
+        if (nameA < nameB)
+          return -1 
+        if (nameA > nameB)
+          return 1
+        return 0 
+      })
+      deferred.resolve();
     });
     return deferred.promise;
   }; 
@@ -551,6 +587,8 @@ $scope.getSubmission = function(){
             delete compare.component.notifyOfApprovalEmail;
           }
         }
+        console.log('compare', compare);
+        
         if (_.diff(compare,$scope.backup) || $scope.difMinusAttributes(_.diff($scope.backup, compare))) {
           delete compare.component.trigger;
           $scope.notDif = false;
@@ -699,14 +737,25 @@ $scope.getSubmission = function(){
     // we need to compact the attributes list because it may have unused indexes.
     var list = angular.copy($scope.component.attributes);
     
-    var requiredAttributes = _.filter(list, function(n){
-      return n.requiredFlg && !n.hideOnSubmission;
-    });
+    list = _.pluck(list, 'items');
+    var requiredAttributes = [];
+    _.each(list, function(item){
+      requiredAttributes.push(item[0]);
+    })
+    console.log('items', requiredAttributes);
     
-    if (requiredAttributes.length !== $scope.requiredAttributes.length) {
-      return false;
+    requiredAttributes = _.filter(requiredAttributes, function(n){
+      if (n) {
+        return n.requiredFlg && !n.hideOnSubmission;
+      } else {
+        return false;
+      }
+    });
+    requiredAttributes = $filter('requiredByComponentType')(requiredAttributes, 'COMP', false);
+    if (requiredAttributes.length === $filter('requiredByComponentType')($scope.requiredAttributes, 'COMP', false).length) {
+      return true;
     }
-    return true;
+    return false;
   }
 
   $scope.setDefaultAttribute = function(index, attribute, required){
@@ -735,24 +784,26 @@ $scope.getSubmission = function(){
     var realAttributes = $scope.component.attributes;
     var attributes = [];
     _.each(realAttributes, function(attr){
-      if (_.isArray(attr.items) ){
-        _.each(attr.items, function(item){
-          if (attributePK && !item.componentAttributePk) {
-            item.componentAttributePk = {
-              'attributeType': item.attributeType,
-              'attributeCode': item.code,
+      if (attr) {
+        if (_.isArray(attr.items) ){
+          _.each(attr.items, function(item){
+            if (attributePK && !item.componentAttributePk) {
+              item.componentAttributePk = {
+                'attributeType': item.attributeType,
+                'attributeCode': item.code,
+              };
+            }
+            attributes.push(item);
+          })
+        } else {
+          if (attributePK && !attr.componentAttributePk) {
+            attr.componentAttributePk = {
+              'attributeType': attr.attributeType,
+              'attributeCode': attr.code,
             };
           }
-          attributes.push(item);
-        })
-      } else {
-        if (attributePK && !attr.componentAttributePk) {
-          attr.componentAttributePk = {
-            'attributeType': attr.attributeType,
-            'attributeCode': attr.code,
-          };
+          attributes.push(attr);
         }
-        attributes.push(attr);
       }
     })
 
@@ -1469,6 +1520,7 @@ $scope.getSubmission = function(){
     _.each(input, function(code){
       if (code) {
         code.requiredFlg = attribute.requiredFlg || false;
+        code.requiredRestrictions = attribute.requiredRestrictions || false;
         code.hideOnSubmission = attribute.hideOnSubmission || false;
         code.attributeType = attribute.attributeType;
       }

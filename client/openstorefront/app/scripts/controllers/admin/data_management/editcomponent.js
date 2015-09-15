@@ -667,12 +667,14 @@ $scope.saveComponent = function(){
   };
 
   //default the type to Component
-  if (requiredForComponent.component && !requiredForComponent.ComponentType) {
+  if (requiredForComponent.component && !requiredForComponent.componentType) {
     requiredForComponent.component.componentType = requiredForComponent.component.componentType || 'COMP';
   }
 
   var missingRequiredAttributes = false;
-  _.forEach($scope.requiredAttributes, function(attribute) {
+  console.log('requiredForComponent.component.ComponentType', requiredForComponent.component.componentType);
+  
+  _.forEach($filter('requiredByComponentType')($scope.requiredAttributes, requiredForComponent.component.componentType , false), function(attribute) {
 
     var found = false;   
     _.forOwn($scope.generalForm.requiredAttribute, function (value, key) {
@@ -757,7 +759,9 @@ $scope.loadComponentAttributesView = function(){
       $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'attributeFormLoader');
       if (results) {
         $scope.componentAttributesView = results; 
-        $scope.componentAttributesView = _.filter($scope.componentAttributesView, {requiredFlg: false});
+        $scope.componentAttributesView = _.filter($scope.componentAttributesView, function(attributesView){
+          return !attributesView.requiredFlg || (attributesView.requiredFlg && !!!_.find(attributesView.requiredRestrictions, {'componentType': $scope.componentForm.componentType}));
+        });
       }
     });
   }
@@ -1626,7 +1630,7 @@ app.filter('requiredByComponentType', function () {
     } else {
       var results =[];
       _.each(input, function(thing){
-        if (thing.requiredFlg) {
+        if (thing && thing.requiredFlg) {
           if (!thing.requiredRestrictions) {
             // console.log('is required but not restricted', thing);
             

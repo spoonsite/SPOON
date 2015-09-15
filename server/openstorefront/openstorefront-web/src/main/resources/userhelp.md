@@ -621,8 +621,7 @@ the *DETAILS* tab of that component (in the search results) and scroll
 to the bottom to the Component Relationships section.  The relationship
 can be viewed either in either a graphic or table form.
 
-![edit](../../../../../../client/openstorefront/app/images/help/graphic.png)
-
+![edit](../../../../../../client/openstorefront/app/images/help/graphic.png)  
 ![edit](../../../../../../client/openstorefront/app/images/help/table.png)
 
 
@@ -696,7 +695,7 @@ sections until a value is entered. The existing column shows the value
 that is currently saved, if any. To remove the value click the delete
 ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) icon.
 
-### 3.3  Attributes *
+## 3.3  Attributes *
 ----------
 
 Attributes are used to group and filter catalog items and articles.
@@ -1136,6 +1135,21 @@ System Tools and their Purpose:
 -  **System Configuration** -     Provides a read-only view in the current properties.
 -  **Logging** -                  Allows for adjusting log levels at run time to log more/less information from a software component. **NOTE:** Logs are hierarchically organized so set a level from a parent will affect all children who are set to delegate to the parent logger. Loggers under: edu.usu.sdl.openstorefront are application specific. A logger will only appear when the software component is loaded.
 -  **Status** -                   Shows the run status of the application (i.e. memory, load, thread status and properties). Refer to Java platform documentation for the interpretation of the information.
+
+## 3.12 Organizations *
+---------------
+
+ Organizations provide information on specific organizations that are linked with the components listed on the site. The information these objects contain include:
+
+ - **Description** -            What the organization does
+ - **Type** -                   The type of organization (i.e. Commercial Business, Contractor, US Organization, etc.)
+ - **Website** -                The website for the specific organization if provided
+ - **Address** -                The address for the organization
+ - **Contact Information** -    A way to contact the organization
+
+### 3.12.1 Managing
+--------------
+
 
 # 4.  Glossary
 ----------
