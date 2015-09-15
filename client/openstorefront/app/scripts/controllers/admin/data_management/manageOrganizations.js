@@ -27,7 +27,7 @@ app.controller('AdminManageOrganizationsCtrl', ['$scope', 'business', '$timeout'
     $scope.pagination.control = {};
     $scope.pagination.control.approvalState ='ALL';
     $scope.pagination.control.organizationType ='ALL';
-    $scope.pagination.features = {'dates': false, 'max': false};    
+    $scope.pagination.features = {'dates': false, 'max': false, 'activeStatus': false};    
 
     $scope.loadLookup = function(lookup, entity, loader){
       $scope.$emit('$TRIGGERLOAD', loader);
