@@ -1160,6 +1160,7 @@ System Tools and their Purpose:
   organization list.  However, details such as the Description and Main Contact Information will need to be added here.
 
 **To edit an organization**
+
 1.  From Organizations in the Admin Tools, select an organization.
 
 2.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) next to the organization.
@@ -1172,6 +1173,7 @@ System Tools and their Purpose:
 3.  When finished, click **Save Changes**.
 
 **To remove an organization:**
+
 1.  From Organizations in the Admin Tools, select an organization.
 
 2.  Click on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the organization.
