@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import javax.persistence.OneToOne;
@@ -24,6 +25,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author dshurtleff
  */
+@APIDescription("Review Pro")
 public class ComponentReviewPro
 		extends BaseComponent
 {

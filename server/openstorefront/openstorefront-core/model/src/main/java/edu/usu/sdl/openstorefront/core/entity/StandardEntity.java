@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -34,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author dshurtleff
  * @param <T>
  */
+@APIDescription("Root entity for all top-level entities")
 public abstract class StandardEntity<T>
 		extends BaseEntity<T>
 {
@@ -46,6 +48,7 @@ public abstract class StandardEntity<T>
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = SecurityMarkingType.class)
 	@APIDescription("Security Classification")
+	@FK(SecurityMarkingType.class)
 	private String securityMarkingType;
 
 	@NotNull

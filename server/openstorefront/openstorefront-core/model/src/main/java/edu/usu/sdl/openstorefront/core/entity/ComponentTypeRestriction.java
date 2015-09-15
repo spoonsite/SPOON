@@ -15,7 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.io.Serializable;
 import javax.persistence.Version;
@@ -25,12 +27,14 @@ import javax.persistence.Version;
  *
  * @author dshurtleff
  */
+@APIDescription("Defines a restrict for a component type")
 public class ComponentTypeRestriction
 		implements Serializable
 {
 
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = ComponentType.class)
+	@FK(ComponentType.class)
 	private String componentType;
 
 	@Version

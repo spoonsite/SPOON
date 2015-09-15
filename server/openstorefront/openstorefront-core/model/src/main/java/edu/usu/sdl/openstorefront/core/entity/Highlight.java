@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
@@ -30,6 +31,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@APIDescription("Hold a highlight for the homepage")
 public class Highlight
 		extends StandardEntity
 {
@@ -41,6 +43,7 @@ public class Highlight
 	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {Highlight.TYPE_ARTICLE, Highlight.TYPE_COMPONENT, Highlight.TYPE_EXTERNAL_LINK}, lookupClass = HighlightType.class)
+	@FK(HighlightType.class)
 	private String highlightType;
 
 	@NotNull

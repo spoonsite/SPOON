@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import java.io.Serializable;
 import java.util.Date;
@@ -29,6 +30,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@APIDescription("Hold report options")
 public class ReportOption
 		implements Serializable
 {

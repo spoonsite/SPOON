@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
@@ -36,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author jlaw
  */
+@APIDescription("Holds the media information for a component")
 public class ComponentMedia
 		extends BaseComponent
 {
@@ -56,6 +58,7 @@ public class ComponentMedia
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = MediaType.class)
 	@ConsumeField
+	@FK(MediaType.class)
 	private String mediaTypeCode;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)

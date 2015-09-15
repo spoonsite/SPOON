@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.core.annotation;
 
 import java.lang.annotation.Documented;
@@ -29,8 +28,11 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@APIDescription("Defined specific data type")
 public @interface DataType
 {
+
 	Class value();
+
 	String actualClassName() default "";
 }

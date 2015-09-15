@@ -17,8 +17,11 @@ package edu.usu.sdl.openstorefront.core.entity;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.core.util.ExportImport;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -34,6 +37,7 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
+@APIDescription("User tracking record.  Snapshot of the user.")
 public class UserTracking
 		extends StandardEntity
 		implements ExportImport
@@ -46,6 +50,8 @@ public class UserTracking
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@ValidValueType(value = {}, lookupClass = TrackEventCode.class)
+	@FK(TrackEventCode.class)
 	private String trackEventTypeCode;
 
 	@ConsumeField

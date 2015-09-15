@@ -29,6 +29,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@APIDescription("Primary Key")
 public @interface PK
 {
 

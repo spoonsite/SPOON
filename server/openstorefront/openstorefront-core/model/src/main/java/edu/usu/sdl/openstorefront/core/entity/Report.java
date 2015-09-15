@@ -17,7 +17,9 @@ package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.io.File;
@@ -32,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author dshurtleff
  */
+@APIDescription("Hold report history record")
 public class Report
 		extends StandardEntity<Report>
 {
@@ -44,17 +47,20 @@ public class Report
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ReportType.class)
 	@ConsumeField
+	@FK(ReportType.class)
 	private String reportType;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
 	@ConsumeField
+	@FK(ReportFormat.class)
 	private String reportFormat;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = RunStatus.class)
+	@FK(RunStatus.class)
 	private String runStatus;
 
 	@ConsumeField

@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import javax.validation.constraints.NotNull;
@@ -26,6 +28,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@APIDescription("Defines Relationship between components")
 public class ComponentRelationship
 		extends BaseComponent
 {
@@ -37,11 +40,13 @@ public class ComponentRelationship
 	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = RelationshipType.class)
+	@FK(RelationshipType.class)
 	private String relationshipType;
 
 	@NotNull
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@FK(Component.class)
 	private String relatedComponentId;
 
 	public ComponentRelationship()

@@ -15,14 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import javax.validation.constraints.NotNull;
 
 /**
- * Represents a section of help
  *
  * @author dshurtleff
  */
+@APIDescription("Represents a section of help")
 public class HelpSection
 		extends BaseEntity<HelpSection>
 {
@@ -38,6 +39,7 @@ public class HelpSection
 	private String sectionNumber;
 
 	@NotNull
+	@APIDescription("Used to create the hierarchy of the help")
 	private Integer headerLevel;
 	private String content;
 	private Boolean adminSection;

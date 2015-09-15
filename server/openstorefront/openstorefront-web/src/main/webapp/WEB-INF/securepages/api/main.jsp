@@ -51,6 +51,9 @@ limitations under the License.
 				<li>
 					<a href="#API.action?Page&page=attribute" >Attribute Table</a>
 				</li>
+				<li>
+					<a href="API.action?ViewEntities" target="_blank">Entities</a>
+				</li>
 			</ul>
 			
 			<h4 title="(/api/v1/resource/) - Resources are entities that the server manages.  API provides CRUD support, querying and some resource specific behavior.">

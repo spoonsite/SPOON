@@ -16,8 +16,10 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.util.Date;
@@ -33,6 +35,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@APIDescription("Defines a sheduled report")
 public class ScheduledReport
 		extends StandardEntity<ScheduledReport>
 {
@@ -45,12 +48,14 @@ public class ScheduledReport
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ReportType.class)
 	@ConsumeField
+	@FK(ReportType.class)
 	private String reportType;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
 	@ConsumeField
+	@FK(ReportFormat.class)
 	private String reportFormat;
 
 	@ConsumeField

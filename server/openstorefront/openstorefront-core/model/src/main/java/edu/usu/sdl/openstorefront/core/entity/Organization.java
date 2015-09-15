@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
@@ -32,6 +33,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@APIDescription("Central point for all organizations in the system")
 public class Organization
 		extends StandardEntity<Organization>
 {
@@ -40,14 +42,14 @@ public class Organization
 	@NotNull
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
-	@APIDescription("The organization id is the key")
+	@APIDescription("The id is based on the name")
 	private String organizationId;
 
 	@NotNull
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
-	@APIDescription("This is the name of the organization")
+	@APIDescription("Name of the organization")
 	private String name;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -58,6 +60,7 @@ public class Organization
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = OrganizationType.class)
+	@FK(OrganizationType.class)
 	private String organizationType;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)

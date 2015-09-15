@@ -18,11 +18,14 @@ package edu.usu.sdl.openstorefront.web.action;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
-import edu.usu.sdl.openstorefront.doc.model.APIResourceModel;
-import edu.usu.sdl.openstorefront.doc.sort.ApiResourceComparator;
+import edu.usu.sdl.openstorefront.doc.EntityProcessor;
 import edu.usu.sdl.openstorefront.doc.JaxrsProcessor;
+import edu.usu.sdl.openstorefront.doc.model.APIResourceModel;
+import edu.usu.sdl.openstorefront.doc.model.EntityDocModel;
+import edu.usu.sdl.openstorefront.doc.sort.ApiResourceComparator;
 import edu.usu.sdl.openstorefront.web.rest.RestConfiguration;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -60,6 +63,8 @@ public class APIAction
 
 	private List<LookupModel> resourceClasses = new ArrayList<>();
 	private List<LookupModel> serviceClasses = new ArrayList<>();
+
+	private List<EntityDocModel> entityDocModels = new ArrayList<>();
 
 	@DefaultHandler
 	public Resolution mainPage()
@@ -147,6 +152,19 @@ public class APIAction
 		return new ForwardResolution("/WEB-INF/securepages/api/printapi.jsp");
 	}
 
+	@HandlesEvent("ViewEntities")
+	public Resolution viewEntities()
+	{
+		ResolverUtil resolverUtil = new ResolverUtil();
+		resolverUtil.find(new ResolverUtil.IsA(Serializable.class), "edu.usu.sdl.openstorefront.core.entity");
+		List<Class> classList = new ArrayList<>();
+		classList.addAll(resolverUtil.getClasses());
+
+		entityDocModels = EntityProcessor.processEntites(classList);
+
+		return new ForwardResolution("/WEB-INF/securepages/api/entity.jsp");
+	}
+
 	public String getResourceClass()
 	{
 		return resourceClass;
@@ -225,6 +243,16 @@ public class APIAction
 	public void setServiceClasses(List<LookupModel> serviceClasses)
 	{
 		this.serviceClasses = serviceClasses;
+	}
+
+	public List<EntityDocModel> getEntityDocModels()
+	{
+		return entityDocModels;
+	}
+
+	public void setEntityDocModels(List<EntityDocModel> entityDocModels)
+	{
+		this.entityDocModels = entityDocModels;
 	}
 
 }

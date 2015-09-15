@@ -30,6 +30,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@APIDescription("Enforces specific values")
 public @interface ValidValueType
 {
 

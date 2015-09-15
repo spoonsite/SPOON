@@ -23,10 +23,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * This hold Plugin Metadata
  *
  * @author dshurtleff
  */
+@APIDescription("Holds Plugin Metadata")
 public class Plugin
 		extends StandardEntity<Plugin>
 {
@@ -46,7 +46,7 @@ public class Plugin
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Plugin Type")
+	@APIDescription("Indentfies the plugin")
 	private String pluginType;
 
 	public Plugin()

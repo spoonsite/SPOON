@@ -16,7 +16,9 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -29,6 +31,7 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
+@APIDescription("External system integration record")
 public class ComponentIntegration
 		extends StandardEntity
 {
@@ -36,11 +39,13 @@ public class ComponentIntegration
 	@PK
 	@NotNull
 	@ConsumeField
+	@FK(Component.class)
 	private String componentId;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CRON)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
+	@APIDescription("Cron Expression")
 	private String refreshRate;
 
 	@NotNull

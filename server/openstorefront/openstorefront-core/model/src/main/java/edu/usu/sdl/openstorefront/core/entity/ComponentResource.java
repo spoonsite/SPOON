@@ -18,7 +18,9 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
@@ -35,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author jlaw
  */
+@APIDescription("Resource for a componet")
 public class ComponentResource
 		extends BaseComponent
 {
@@ -44,23 +47,28 @@ public class ComponentResource
 	private String resourceId;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("For a local resource")
 	private String fileName;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("For a local resource")
 	private String originalName;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("For a local resource")
 	private String mimeType;
 
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = ResourceType.class)
+	@FK(ResourceType.class)
 	private String resourceType;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	@Sanitize(LinkSanitizer.class)
+	@APIDescription("For an external resource")
 	private String link;
 
 	@ConsumeField
@@ -69,6 +77,7 @@ public class ComponentResource
 	private String description;
 
 	@ConsumeField
+	@APIDescription("This is used to indentify if a resource require login or CAC")
 	private Boolean restricted;
 
 	public ComponentResource()
