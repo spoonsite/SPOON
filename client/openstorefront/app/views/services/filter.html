@@ -2,7 +2,7 @@
 <div ng-show="all === 'true'">
   <input type="checkbox" ng-checked="query.filterObj.all" ng-model="query.filterObj.all">Show all Status
 </div>
-<div class="form-group col-xs-12" style="padding-left:0px; padding-right:0px;">
+<div class="form-group col-xs-12" style="padding-left:0px; padding-right:0px;" ng-show="setFeatures && (setFeatures.activeStatus === undefined || setFeatures.activeStatus)">
   <label class="control-label">Select status</label>
   <select ng-disabled="query.filterObj.all" ng-model="query.filterObj.status">
     <option value="A">Active Status</option>

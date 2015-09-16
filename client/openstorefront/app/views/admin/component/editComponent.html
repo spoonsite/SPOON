@@ -53,12 +53,6 @@ limitations under the License.
           </div>
           <p style="text-align:center" ng-show="componentUIForm.description.$error.required && !componentUIForm.description.$focused" class="help-block">Description is required.</p>
         </div>
-        <div class="form-group" show-errors >
-          <label class="col-sm-2 control-label">Parent Component</label>
-          <div class="col-sm-10">
-            <select type="text" class="form-control" id="parentComponentId" ng-model="componentForm.parentComponentId" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="comp.code as comp.description for comp in parentComponents" placeholder="Select Component"></select>
-          </div>  
-        </div>  
         <div class="form-group"  >
           <label class="col-sm-2 control-label " title="External Id">GUID</label>       
           <div class="col-sm-10">
@@ -130,14 +124,14 @@ limitations under the License.
           <p style="text-align:center" ng-show="componentUIForm.componentType.$error.required && !componentUIForm.componentType.$focused" class="help-block">Component Type is required.</p>
         </div>        
       </div>        
-      <div class="form-group" show-errors >
+<!--       <div class="form-group" show-errors >
         <label class="col-sm-2 control-label">Security Type</label>
         <div class="col-sm-10">
           <select smartselect type="text" class="form-control" id="component_securityType" name="securityType" ng-model="componentForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
             <option style="display:none" value="">Select a Type</option>
           </select>
         </div>        
-      </div>        
+      </div>       -->  
       <div class="form-group">
         <label class="col-sm-2 control-label">User Submitted Date</label>
         <div class="col-sm-10">  
@@ -225,14 +219,14 @@ limitations under the License.
       <th><a href="" ng-click="setPredicate('typeDescription', 'attribute');">Attribute Type <span ng-show="predicate['attribute'] === 'typeDescription'"><i ng-show="!reverse['attribute']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['attribute']" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th>Attribute Code</th>         
       <th>Orphan</th>                 
-      <th>Security</th>                 
+      <!-- <th>Security</th>                  -->
       <th>Action</th>
     </tr>
     <tr ng-repeat="attribute in componentAttributesView | orderBy:predicate['attribute']:reverse['attribute']" >
       <td>{{attribute.typeDescription}}</td>
       <td>{{attribute.codeDescription}}</td>          
       <td>{{attribute.orphan}}</td>                               
-      <td>{{attribute.securityMarkingDescription}}</td>
+      <!-- <td>{{attribute.securityMarkingDescription}}</td> -->
       <td style="padding: 0px 3px !important;">&nbsp;           
         <button class="btn btn-warning btn-sm" ng-click="toggleAttributeStatus(attribute);"  title="Toggle Status"><i class="fa fa-power-off"></i></button> 
         <button class="btn btn-danger btn-sm" ng-click="deleteAttribute(attribute);"  title="Delete Attribute"><i class="fa fa-trash"></i></button>   
@@ -265,14 +259,14 @@ limitations under the License.
             <p ng-show="relationshipUIForm.relationshipTarget.$error.required && !relationshipUIForm.relationshipTarget.$focused" class="help-block">Relationship Target is required.</p>
           </div>  
         </div>
-        <div class="form-group" show-errors >
+<!--         <div class="form-group" show-errors >
           <label class="col-sm-2 control-label">Security Type</label>
           <div class="col-sm-10">
             <select smartselect type="text" class="form-control" id="relationship_securityType" name="securityType" ng-model="relationshipForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
               <option style="display:none" value="">Select a Type</option>
             </select>
           </div>        
-        </div> 
+        </div>  -->
         <div class="col-sm-12 col-sm-offset-2" ng-show="!relationshipUIForm.$invalid">
           Relationship preview: {{componentForm.name}} &mdash; {{getRelationship(relationshipForm.type)}} &mdash; {{getComponentName(relationshipForm.target)}}
         </div>
@@ -294,14 +288,14 @@ limitations under the License.
       <th><a href="" ng-click="setPredicate('ownerComponentName', 'relationship');">Relationship Owner <span ng-show="predicate['relationship'] === 'ownerComponentName'"><i ng-show="!reverse['relationship']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['relationship']" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th><a href="" ng-click="setPredicate('relationshipTypeDescription', 'relationship');">Relationship Type <span ng-show="predicate['relationship'] === 'relationshipTypeDescription'"><i ng-show="!reverse['relationship']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['relationship']" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th><a href="" ng-click="setPredicate('targetComponentName', 'relationship');">Relationship Target <span ng-show="predicate['relationship'] === 'targetComponentName'"><i ng-show="!reverse['relationship']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['relationship']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-      <th><a href="" ng-click="setPredicate('securityMarkingDescription', 'relationship');">Security Type <span ng-show="predicate['relationship'] === 'securityMarkingDescription'"><i ng-show="!reverse['relationship']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['relationship']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+<!--       <th><a href="" ng-click="setPredicate('securityMarkingDescription', 'relationship');">Security Type <span ng-show="predicate['relationship'] === 'securityMarkingDescription'"><i ng-show="!reverse['relationship']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['relationship']" class="fa fa-sort-alpha-desc"></i></span></a></th> -->
       <th>Action</th>
     </tr>
     <tr ng-repeat="relationship in componentRelationshipsView | orderBy:predicate['relationship']:reverse['relationship']" >
       <td>{{relationship.ownerComponentName}}</td>
       <td>{{relationship.relationshipTypeDescription}}</td>
       <td>{{relationship.targetComponentName}}</td>
-      <td>{{relationship.securityMarkingDescription}}</td>
+      <!-- <td>{{relationship.securityMarkingDescription}}</td> -->
       <td style="padding: 0px 3px !important;">&nbsp;
         <button class="btn btn-danger btn-sm" ng-click="deleteRelationship(relationship);"  title="Delete Relationship"><i class="fa fa-trash"></i></button>
       </td>
@@ -403,14 +397,14 @@ limitations under the License.
           ng-focus />
         </div>
       </div>
-      <div class="form-group" show-errors >
+<!--       <div class="form-group" show-errors >
         <label class="col-sm-2 control-label">Security Type</label>
         <div class="col-sm-10">
           <select smartselect type="text" class="form-control" id="contact_securityType" name="securityType" ng-model="contactForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
             <option style="display:none" value="">Select a Type</option>
           </select>
         </div>        
-      </div> 
+      </div> --> 
       <button type="submit" class="btn btn-primary" ng-disabled="contactUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;{{contactForm.saveText}}</button>
       <a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancelEdit('contactForm')" ng-show="contactForm.edit"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>
     </form>
@@ -431,7 +425,7 @@ limitations under the License.
     <th>Email</th>
     <th>Phone</th>
     <th>Organization</th>
-    <th>Security Type</th>
+    <!-- <th>Security Type</th> -->
     <th>Action</th>
   </tr>
   <tr ng-repeat="contact in contacts | orderBy:predicate['contacts']:reverse['contacts']" >
@@ -441,7 +435,7 @@ limitations under the License.
     <td>{{contact.email}}</td>
     <td>{{contact.phone}}</td>
     <td>{{contact.organization}}</td>
-    <td>{{contact.securityMarkingDescription}}</td>
+    <!-- <td>{{contact.securityMarkingDescription}}</td> -->
     <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
       <button class="btn btn-default btn-sm" ng-click="editEntity('contactForm', contact);"  title="Edit"><i class="fa fa-edit"></i></button>
       <button class="btn btn-warning btn-sm" ng-click="toggleContactStatus(contact);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>
@@ -492,7 +486,7 @@ limitations under the License.
             ng-focus />
           </div>
         </div>
-        <div class="form-group" show-errors >
+<!--         <div class="form-group" show-errors >
           <label class="col-sm-2 control-label">Security Type</label>
           <div class="col-sm-10">
             <select smartselect type="text" class="form-control" id="resource_securityType" name="securityType" ng-model="resourceForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
@@ -500,7 +494,7 @@ limitations under the License.
             </select>
           </div>        
         </div> 
-        <div class="form-group"  >
+ -->        <div class="form-group"  >
           <label class="col-sm-2 control-label">Upload Local Resource</label>
           <div class="col-sm-10">
             <input type="file" nv-file-select onchange="utils.handleFileQueue(angular.element(this).scope().resourceUploader, this); angular.element(this).scope().setUploadInput('resourceUploader', 'resourceForm')" uploader="resourceUploader" name="uploadFile" width="100" ng-disabled="resourceForm.originalLink" />
@@ -527,7 +521,7 @@ limitations under the License.
       <th>Mime Type</th>
       <th>Local Resource Name</th>
       <th>Restricted</th>
-      <th>Security Type</th>
+      <!-- <th>Security Type</th> -->
       <th>Action</th>
     </tr>
     <tr ng-repeat="resource in resources | orderBy:predicate['resources']:reverse['resources']" >
@@ -537,7 +531,7 @@ limitations under the License.
       <td>{{resource.mimeType}}</td>
       <td><p ng-show="resource.localResourceName">{{resource.originalFileName}} ({{resource.localResourceName}})</p></td>
       <td>{{resource.restricted}}</td>
-      <td>{{resource.securityMarkingDescription}}</td>
+      <!-- <td>{{resource.securityMarkingDescription}}</td> -->
       <td style="padding:0px 3px !important; width: 125px; vertical-align: middle;">&nbsp;
         <button class="btn btn-default btn-sm" ng-click="editEntity('resourceForm', resource);"  title="Edit"><i class="fa fa-edit"></i></button>
         <button class="btn btn-warning btn-sm" ng-click="toggleResourceStatus(resource);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>
@@ -594,14 +588,14 @@ limitations under the License.
           ng-focus />
         </div>
       </div>
-      <div class="form-group" show-errors >
+<!--       <div class="form-group" show-errors >
         <label class="col-sm-2 control-label">Security Type</label>
         <div class="col-sm-10">
           <select smartselect type="text" class="form-control" id="media_securityType" name="securityType" ng-model="mediaForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
             <option style="display:none" value="">Select a Type</option>
           </select>
         </div>        
-      </div> 
+      </div>  -->
       <button type="submit" class="btn btn-primary" ng-disabled="mediaUIForm.$invalid || !(mediaForm.uploadInput || mediaForm.originalLink || mediaForm.fileName)"><i class="fa fa-save"></i>&nbsp;{{mediaForm.saveText}}</button>
       <a  ng-href=""  name="cancelSave" ng-click="cancelMediaEdit()" ng-show="mediaForm.edit"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>
     </form>
@@ -619,7 +613,7 @@ limitations under the License.
       <th>Mime Type</th>
       <th>Local Media Name</th>
       <th>Link</th>
-      <th>Security Type</th>
+      <!-- <th>Security Type</th> -->
       <th>Action</th>
     </tr>
     <tr ng-repeat="mediaItem in media | orderBy:predicate['media']:reverse['media']" >
@@ -628,7 +622,7 @@ limitations under the License.
       <td>{{mediaItem.mimeType}}</td>
       <td><p ng-show="mediaItem.fileName">{{mediaItem.originalFileName}} ({{mediaItem.fileName}})</p></td>
       <td>{{mediaItem.originalLink}}</td>
-      <td>{{mediaItem.securityMarkingDescription}}</td>
+      <!-- <td>{{mediaItem.securityMarkingDescription}}</td> -->
       <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
         <button class="btn btn-default btn-sm" ng-click="editEntity('mediaForm', mediaItem);"  title="Edit"><i class="fa fa-edit"></i></button>
         <button class="btn btn-warning btn-sm" ng-click="toggleMediaStatus(mediaItem);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>
@@ -771,7 +765,7 @@ limitations under the License.
         <p ng-show="metadataUIForm.value.$error.minlength && !metadataUIForm.value.$focused" class="help-block">Value must be longer than 1 character in length.</p>
         <p ng-show="metadataUIForm.value.$error.required && !metadataUIForm.value.$focused" class="help-block">Value is required.</p>
       </div>
-      <div class="form-group" show-errors >
+<!--       <div class="form-group" show-errors >
         <label class="col-sm-2 control-label">Security Type</label>
         <div class="col-sm-10">
           <select smartselect type="text" class="form-control" id="metadata_securityType" name="securityType" ng-model="metadataForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
@@ -779,7 +773,7 @@ limitations under the License.
           </select>
         </div>        
       </div> 
-      <button type="submit" class="btn btn-primary" ng-disabled="metadataUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;{{metadataForm.saveText}}</button>
+ -->      <button type="submit" class="btn btn-primary" ng-disabled="metadataUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;{{metadataForm.saveText}}</button>
       <a id="lnkCancelSave" ng-href=""  name="cancelSave" ng-click="cancelEdit('metadataForm')" ng-show="metadataForm.edit"><span style="color:blue; vertical-align: bottom; cursor:pointer;">Cancel</span></a>
     </form>
   </panel>
@@ -793,13 +787,13 @@ limitations under the License.
     <tr>
       <th><a href="" ng-click="setPredicate('Label', 'meta');">Label<span ng-show="predicate['meta'] === 'key'"><i ng-show="!reverse['meta']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['meta']" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th>Value</th>
-      <th>Security Type</th>
+      <!-- <th>Security Type</th> -->
       <th>Action</th>
     </tr>
     <tr ng-repeat="meta in metadata | orderBy:predicate['meta']:reverse['meta']" >
       <td>{{meta.label}}</td>
       <td>{{meta.value}}</td>
-      <td>{{meta.securityMarkingDescription}}</td>
+      <!-- <td>{{meta.securityMarkingDescription}}</td> -->
       <td style="padding:0px 3px !important; width: 90px; vertical-align: middle;">&nbsp;
         <button class="btn btn-default btn-sm" ng-click="editEntity('metadataForm', meta);"  title="Edit"><i class="fa fa-edit"></i></button>
         <button class="btn btn-warning btn-sm" ng-click="toggleMetadataStatus(meta);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>
@@ -901,7 +895,7 @@ limitations under the License.
       <th>Cons</th>
       <th>User</th>
       <th>Update Date</th>
-      <th>Security Type</th>
+      <!-- <th>Security Type</th> -->
       <th>Action</th>
     </tr>
     <tr ng-repeat="review in reviews | orderBy:predicate['review']:reverse['review']" >
@@ -924,7 +918,7 @@ limitations under the License.
       </td>
       <td>{{review.username}}</td>
       <td>{{review.updateDate | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
-      <td>{{review.securityMarkingDescription}}</td>
+      <!-- <td>{{review.securityMarkingDescription}}</td> -->
       <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
         <button class="btn btn-warning btn-sm" ng-click="toggleReviewStatus(review);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>
       </td>
@@ -948,7 +942,7 @@ limitations under the License.
       <th><a href="" ng-click="setPredicate('userType', 'question');">User Type<span ng-show="predicate['question'] === 'userType'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th><a href="" ng-click="setPredicate('organization', 'question');">Organization<span ng-show="predicate['question'] === 'organization'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
       <th><a href="" ng-click="setPredicate('updateDts', 'question');">Update Date<span ng-show="predicate['question'] === 'updateDts'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-      <th><a href="" ng-click="setPredicate('securityMarkingType', 'question');">Security Type<span ng-show="predicate['question'] === 'securityMarkingType'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <!-- <th><a href="" ng-click="setPredicate('securityMarkingType', 'question');">Security Type<span ng-show="predicate['question'] === 'securityMarkingType'"><i ng-show="!reverse['question']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['question']" class="fa fa-sort-alpha-desc"></i></span></a></th> -->
       <th>Action</th>
     </tr>
     <tr ng-repeat-start="question in questions | orderBy:predicate['question']:reverse['question']">
@@ -957,7 +951,7 @@ limitations under the License.
       <td>{{question.userType}}</td>
       <td>{{question.organization}}</td>
       <td>{{question.questionUpdateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
-      <td>{{question.securityMarkingDescription}}</td>
+      <!-- <td>{{question.securityMarkingDescription}}</td> -->
       <td style="padding:0px 3px !important; width: 90px; vertical-align: middle;">&nbsp;
         <button class="btn btn-default btn-sm" ng-click="showQuestionResponses(question);"  title="ShowResponse">{{questionDetailsShow[question.questionId].showResponsesText}} Responses</button>
         <button class="btn btn-warning btn-sm" ng-click="toggleQuestionStatus(question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>
@@ -972,7 +966,7 @@ limitations under the License.
             <th><a href="" ng-click="setPredicate('userType', 'questionResponse');">User Type<span ng-show="predicate['questionResponse'] === 'userType'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
             <th><a href="" ng-click="setPredicate('organization', 'questionResponse');">Organization<span ng-show="predicate['questionResponse'] === 'organization'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
             <th><a href="" ng-click="setPredicate('updateDts', 'questionResponse');">Update Date<span ng-show="predicate['questionResponse'] === 'updateDts'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-            <th><a href="" ng-click="setPredicate('securityMarkingType', 'questionResponse');">Security Type<span ng-show="predicate['questionResponse'] === 'securityMarkingType'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+            <!-- <th><a href="" ng-click="setPredicate('securityMarkingType', 'questionResponse');">Security Type<span ng-show="predicate['questionResponse'] === 'securityMarkingType'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th> -->
             <th><a href="" ng-click="setPredicate('activeStatus', 'questionResponse');">Active Status<span ng-show="predicate['questionResponse'] === 'activeStatus'"><i ng-show="!reverse['questionResponse']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['questionResponse']" class="fa fa-sort-alpha-desc"></i></span></a></th>
             <th>Action</th>
           </tr>
@@ -982,7 +976,7 @@ limitations under the License.
             <td>{{response.userType}}</td>
             <td>{{response.organization}}</td>
             <td>{{response.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
-            <td>{{response.securityMarkingDescription}}</td>
+            <!-- <td>{{response.securityMarkingDescription}}</td> -->
             <td align="center">{{response.activeStatus}}</td>
             <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
               <button class="btn btn-warning btn-sm" ng-click="toggleQuestionResponseStatus(response, question);"  title="Toggle Status"><i class="fa fa-power-off"></i></button>
@@ -1015,14 +1009,14 @@ limitations under the License.
         <p ng-show="tagUIForm.text.$error.minlength && !tagUIForm.text.$focused" class="help-block">Tag must be longer than 1 character in length.</p>
         <p ng-show="tagUIForm.text.$error.required && !tagUIForm.text.$focused" class="help-block">Tag is required.</p>
       </div>
-      <div class="form-group" show-errors >
+<!--       <div class="form-group" show-errors >
         <label class="col-sm-2 control-label">Security Type</label>
         <div class="col-sm-10">
           <select smartselect type="text" class="form-control" id="tags_securityType" name="securityType" ng-model="tagForm.securityMarkingType" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="status.code as status.description for status in securityTypes">
             <option style="display:none" value="">Select a Type</option>
           </select>
         </div>        
-      </div> 
+      </div>  -->
       <button type="submit" class="btn btn-primary" ng-disabled="tagUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;Add</button>
     </form>
   </panel>
@@ -1033,12 +1027,12 @@ limitations under the License.
   <table class="table table-striped table-bordered admin-table">
     <tr>
       <th><a href="" ng-click="setPredicate('text', 'tag');">Tag<span ng-show="predicate['tag'] === 'text'"><i ng-show="!reverse['tag']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tag']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-      <th><a href="" ng-click="setPredicate('securityMarkingType', 'tag');">Security Type<span ng-show="predicate['tag'] === 'securityMarkingType'"><i ng-show="!reverse['tag']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tag']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+      <!-- <th><a href="" ng-click="setPredicate('securityMarkingType', 'tag');">Security Type<span ng-show="predicate['tag'] === 'securityMarkingType'"><i ng-show="!reverse['tag']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['tag']" class="fa fa-sort-alpha-desc"></i></span></a></th> -->
       <th>Action</th>
     </tr>
     <tr ng-repeat="tag in tags | orderBy:predicate['tag']:reverse['tag']" >
       <td>{{tag.text}}</td>
-      <td>{{tag.securityMarkingDescription}}</td>
+      <!-- <td>{{tag.securityMarkingDescription}}</td> -->
       <td style="padding:0px 3px !important; vertical-align: middle;">&nbsp;
         <button class="btn btn-danger btn-sm" ng-click="removeTag(tag);"  title="Remove"><i class="fa fa-trash"></i></button>
       </td>
