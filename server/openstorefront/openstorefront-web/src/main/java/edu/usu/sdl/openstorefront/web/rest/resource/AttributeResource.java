@@ -48,6 +48,7 @@ import edu.usu.sdl.openstorefront.core.view.ArticleTrackingResult;
 import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
+import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
@@ -593,8 +594,15 @@ public class AttributeResource
 	@APIDescription("Adds a new attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes")
-	public Response postAttributeType(AttributeType attributeType)
+	public Response postAttributeType(AttributeTypeSave attributeTypeSave)
 	{
+		AttributeType attributeType = attributeTypeSave.getAttributeType();
+		if (attributeTypeSave.getComponentTypeRestrictions() != null
+				&& attributeTypeSave.getComponentTypeRestrictions().isEmpty() == false) {
+			attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
+		} else if (attributeTypeSave.getComponentTypeRestrictions() == null) {
+			attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
+		}
 		return handleAttributePostPutType(attributeType, true);
 	}
 
@@ -606,11 +614,18 @@ public class AttributeResource
 	public Response updateAttributeType(
 			@PathParam("type")
 			@RequiredParam String type,
-			AttributeType attributeType)
+			AttributeTypeSave attributeTypeSave)
 	{
 		AttributeType existing = service.getPersistenceService().findById(AttributeType.class, type);
 		if (existing != null) {
-			attributeType.setAttributeType(type.toUpperCase());
+			AttributeType attributeType = attributeTypeSave.getAttributeType();
+			if (attributeTypeSave.getComponentTypeRestrictions() != null
+					&& attributeTypeSave.getComponentTypeRestrictions().isEmpty() == false) {
+				attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
+			} else if (attributeTypeSave.getComponentTypeRestrictions() == null) {
+				attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
+			}
+			attributeType.setAttributeType(type);
 			return handleAttributePostPutType(attributeType, true);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing type.", "Make sure type exists before call PUT");

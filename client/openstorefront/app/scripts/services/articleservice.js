@@ -443,7 +443,7 @@ app.factory('articleservice', ['$http', '$q', 'localCache', function($http, $q, 
         url = 'api/v1/resource/attributes/attributetypes/';
       } else {
         method = 'PUT';
-        url = 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent(type.attributeType);
+        url = 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent(type.attributeType.attributeType);
       }
       $http({
         method: method,
