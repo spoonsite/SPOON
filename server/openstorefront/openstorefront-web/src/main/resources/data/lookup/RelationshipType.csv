@@ -9,7 +9,6 @@ INCIN,included in
 REF,references
 DEP,depends on
 SUB,subject to
-CON,conforms to
 ACC,accessible by
 PRV,provides access to
 HOST,hosts

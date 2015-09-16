@@ -234,8 +234,15 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
           }
         }, function(){
           console.log('type', type);
-          delete type.restrictions
-          Business.articleservice.saveType(type, $scope.addTypeFlg).then(function(result){
+          delete type.restrictions;
+          
+           var attributeSave = {
+              attributeType: type,
+              componentTypeRestrictions: type.requiredRestrictions
+          };
+          delete attributeSave.attributeType.requiredRestrictions;          
+          
+          Business.articleservice.saveType(attributeSave, $scope.addTypeFlg).then(function(result){
             if (result) {
               $scope.addTypeFlg = false;
               $scope.changed = true;
@@ -247,11 +254,11 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
             }
           }, function(){
             $scope.getCodes();
-          })
-        })
+          });
+        });
       } //
     }
-  }
+  };
 
   $scope.deleteCode = function(code){
     var cont = confirm("You are about to permanently remove an attribute code from the system. This will affect all related components. Continue?");
