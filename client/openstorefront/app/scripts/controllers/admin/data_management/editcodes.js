@@ -210,8 +210,15 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
           }
           if (cont) {
             console.log('type', type);
-            delete type.restrictions
-            Business.articleservice.saveType(type, $scope.addTypeFlg).then(function(result){
+            delete type.restrictions;
+            
+            var attributeSave = {
+              attributeType: type,
+              componentTypeRestrictions: type.requiredRestrictions
+            };
+            delete attributeSave.attributeType.requiredRestrictions;
+            
+            Business.articleservice.saveType(attributeSave, $scope.addTypeFlg).then(function(result){
               if (result) {
                 $scope.addTypeFlg = false;
                 $scope.changed = true;
