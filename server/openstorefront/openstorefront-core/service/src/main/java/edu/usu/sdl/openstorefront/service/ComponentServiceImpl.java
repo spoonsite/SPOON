@@ -1364,17 +1364,17 @@ public class ComponentServiceImpl
 		}
 		deleteComponentIntegration(componentId);
 
-		//Delete child relationships
-		String parentClearUpdate = "update component set parentComponentId = null where parentComponentId = :parentComponentIdParam";
-		Map<String, Object> params = new HashMap<>();
-		params.put("parentComponentIdParam", componentId);
-		persistenceService.runDbCommand(parentClearUpdate, params);
+		//Delete relationships pointed to this asset
+		ComponentRelationship componentRelationship = new ComponentRelationship();
+		componentRelationship.setRelatedComponentId(componentId);
+		persistenceService.deleteByExample(componentRelationship);
 
 		Component component = persistenceService.findById(Component.class, componentId);
 		persistenceService.delete(component);
 
 		getUserService().removeAllWatchesForComponent(componentId);
 		getSearchService().deleteById(componentId);
+		cleanupCache(componentId);
 	}
 
 	private <T extends BaseComponent> void deleteBaseComponent(T example, String componentId)
