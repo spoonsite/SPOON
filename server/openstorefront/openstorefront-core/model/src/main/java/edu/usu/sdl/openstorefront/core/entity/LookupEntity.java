@@ -66,7 +66,7 @@ public abstract class LookupEntity
 	@Sanitize(BasicHTMLSanitizer.class)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
 	@APIDescription("This is a long description")
-	private String detailedDecription;
+	private String detailedDescription;
 
 	@APIDescription("Used to force order")
 	@ConsumeField
@@ -122,7 +122,7 @@ public abstract class LookupEntity
 			lookup.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 			lookup.setCode(code);
 			lookup.setDescription(description);
-			lookup.setDetailedDecription(detailedDescription);
+			lookup.setDetailedDescription(detailedDescription);
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to create lookup", ex);
 		}
@@ -136,7 +136,7 @@ public abstract class LookupEntity
 		CSVWriter writer = new CSVWriter(stringWriter);
 		writer.writeNext(new String[]{getCode(),
 									  getDescription(),
-									  getDetailedDecription(),
+									  getDetailedDescription(),
 									  getSortOrder() != null ? sortOrder.toString() : "",
 									  getHighlightStyle()
 		});
@@ -158,7 +158,7 @@ public abstract class LookupEntity
 			setDescription(data[DESCRIPTION].trim());
 
 			if (data.length > DETAILED_DESCRIPTION) {
-				setDetailedDecription(data[DETAILED_DESCRIPTION].trim());
+				setDetailedDescription(data[DETAILED_DESCRIPTION].trim());
 			}
 			if (data.length > SORT_ORDER) {
 				setSortOrder(Convert.toInteger(data[SORT_ORDER].trim()));
@@ -191,14 +191,14 @@ public abstract class LookupEntity
 		this.description = description;
 	}
 
-	public String getDetailedDecription()
+	public String getDetailedDescription()
 	{
-		return detailedDecription;
+		return detailedDescription;
 	}
 
-	public void setDetailedDecription(String detailedDecription)
+	public void setDetailedDescription(String detailedDescription)
 	{
-		this.detailedDecription = detailedDecription;
+		this.detailedDescription = detailedDescription;
 	}
 
 	public Integer getSortOrder()

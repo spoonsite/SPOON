@@ -249,7 +249,7 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
     $scope.getReportDesc = function(type){
       var found = _.find($scope.reportTypes, {'code': type});
       if (found) {
-        return found.detailedDecription;
+        return found.detailedDescription;
       } else {
         return type;
       }
