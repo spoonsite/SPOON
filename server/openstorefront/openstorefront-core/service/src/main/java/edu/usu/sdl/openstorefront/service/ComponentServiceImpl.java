@@ -309,6 +309,7 @@ public class ComponentServiceImpl
 	public void deactivateComponent(String componentId)
 	{
 		doDeactivateComponent(componentId);
+		cleanupCache(componentId);
 		getUserService().removeAllWatchesForComponent(componentId);
 		getSearchService().deleteById(componentId);
 	}
@@ -323,6 +324,7 @@ public class ComponentServiceImpl
 			component.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(component);
 			getUserService().removeAllWatchesForComponent(componentId);
+			cleanupCache(componentId);
 		}
 
 	}
@@ -336,6 +338,8 @@ public class ComponentServiceImpl
 			component.setUpdateDts(TimeUtil.currentDate());
 			component.setUpdateUser(SecurityUtil.getCurrentUserName());
 			persistenceService.persist(component);
+
+			cleanupCache(componentId);
 			List<Component> componentsToIndex = new ArrayList<>();
 			componentsToIndex.add(component);
 			getSearchService().indexComponents(componentsToIndex);
@@ -2406,9 +2410,10 @@ public class ComponentServiceImpl
 				approved = true;
 			}
 		} else {
-			String query = "select componentId, approvalState from " + Component.class.getSimpleName() + " where approvalState = :approvalStateParam";
+			String query = "select componentId, approvalState from " + Component.class.getSimpleName() + " where approvalState = :approvalStateParam and activeStatus = :activeStatusParam";
 			Map<String, Object> parameters = new HashMap<>();
 			parameters.put("approvalStateParam", ApprovalStatus.APPROVED);
+			parameters.put("activeStatusParam", Component.ACTIVE_STATUS);
 			List<ODocument> documents = persistenceService.query(query, parameters);
 			for (ODocument document : documents) {
 				Element newElement = new Element(document.field("componentId"), document.field("approvalState"));
