@@ -243,7 +243,7 @@ public class LookupTypeResource
 				LookupEntity newLookupEntity = (LookupEntity) lookupClass.newInstance();
 				newLookupEntity.setCode(lookupEntity.getCode());
 				newLookupEntity.setDescription(lookupEntity.getDescription());
-				newLookupEntity.setDetailedDecription(lookupEntity.getDetailedDecription());
+				newLookupEntity.setDetailedDescription(lookupEntity.getDetailedDescription());
 				newLookupEntity.setSortOrder(lookupEntity.getSortOrder());
 
 				newLookupEntity.setActiveStatus(LookupEntity.ACTIVE_STATUS);

@@ -141,7 +141,7 @@ app.directive('compareview', ['$timeout', 'business', function ($timeout, Busine
       ***************************************************************/
       scope.getEvalDescription = function(col){
         var section = _.find(scope.evalSectionDescriptionMap, {'description': col.name});
-        return section? section.detailedDecription: '';
+        return section? section.detailedDescription: '';
       };
 
       var timeout;
