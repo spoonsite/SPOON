@@ -292,9 +292,9 @@ limitations under the License.
       <th>Action</th>
     </tr>
     <tr ng-repeat="relationship in componentRelationshipsView | orderBy:predicate['relationship']:reverse['relationship']" >
-      <td>{{relationship.ownerComponentName}}</td>
+		<td>{{relationship.ownerComponentName}} <span class="btn-danger" title="This relationship will not be visible" ng-show="!relationship.ownerApproved">Not Approved</span></td>
       <td>{{relationship.relationshipTypeDescription}}</td>
-      <td>{{relationship.targetComponentName}}</td>
+      <td>{{relationship.targetComponentName}}  <span class="btn-danger" title="This relationship will not be visible" ng-show="!relationship.targetApproved">Not Approved</span></td>
       <!-- <td>{{relationship.securityMarkingDescription}}</td> -->
       <td style="padding: 0px 3px !important;">&nbsp;
         <button class="btn btn-danger btn-sm" ng-click="deleteRelationship(relationship);"  title="Delete Relationship"><i class="fa fa-trash"></i></button>

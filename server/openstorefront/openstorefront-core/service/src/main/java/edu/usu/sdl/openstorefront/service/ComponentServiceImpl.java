@@ -136,6 +136,7 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -426,13 +427,18 @@ public class ComponentServiceImpl
 
 		//Pull relationships direct relationships
 		ComponentRelationship componentRelationshipExample = new ComponentRelationship();
+		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
 		componentRelationshipExample.setComponentId(componentId);
 		result.getRelationships().addAll(ComponentRelationshipView.toViewList(componentRelationshipExample.findByExample()));
+		result.setRelationships(result.getRelationships().stream().filter(r -> r.getTargetApproved()).collect(Collectors.toList()));
 
 		//Pull indirect
 		componentRelationshipExample = new ComponentRelationship();
+		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
 		componentRelationshipExample.setRelatedComponentId(componentId);
-		result.getRelationships().addAll(ComponentRelationshipView.toViewList(componentRelationshipExample.findByExample()));
+		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(componentRelationshipExample.findByExample());
+		relationshipViews = relationshipViews.stream().filter(r -> r.getOwnerApproved()).collect(Collectors.toList());
+		result.getRelationships().addAll(relationshipViews);
 
 		UserWatch tempWatch = new UserWatch();
 		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
@@ -605,6 +611,7 @@ public class ComponentServiceImpl
 
 		OSFCacheManager.getComponentCache().remove(componentId);
 		OSFCacheManager.getComponentLookupCache().remove(componentId);
+		OSFCacheManager.getComponentApprovalCache().remove(componentId);
 	}
 
 	@Override
@@ -2386,6 +2393,35 @@ public class ComponentServiceImpl
 			approvalStatus = document.field("approvalState");
 		}
 		return approvalStatus;
+	}
+
+	@Override
+	public boolean checkComponentApproval(String componentId)
+	{
+		boolean approved = false;
+		Element element = OSFCacheManager.getComponentApprovalCache().get(componentId);
+		if (element != null) {
+			String approvalState = (String) element.getObjectValue();
+			if (StringUtils.isNotBlank(approvalState)) {
+				approved = true;
+			}
+		} else {
+			String query = "select componentId, approvalState from " + Component.class.getSimpleName() + " where approvalState = :approvalStateParam";
+			Map<String, Object> parameters = new HashMap<>();
+			parameters.put("approvalStateParam", ApprovalStatus.APPROVED);
+			List<ODocument> documents = persistenceService.query(query, parameters);
+			for (ODocument document : documents) {
+				Element newElement = new Element(document.field("componentId"), document.field("approvalState"));
+				if (document.field("componentId").equals(componentId)) {
+					String approvalState = (String) document.field("approvalState");
+					if (StringUtils.isNotBlank(approvalState)) {
+						approved = true;
+					}
+				}
+				OSFCacheManager.getComponentApprovalCache().put(newElement);
+			}
+		}
+		return approved;
 	}
 
 }

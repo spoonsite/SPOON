@@ -42,6 +42,7 @@ public class OSFCacheManager
 	private static Cache userAgentCache;
 	private static Cache componentCache;
 	private static Cache componentLookupCache;
+	private static Cache componentApprovalCache;
 
 	public static void init()
 	{
@@ -80,6 +81,10 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("componentLookupCache", 50000, false, false, 300, 300);
 			singletonManager.addCache(memoryOnlyCache);
 			componentLookupCache = singletonManager.getCache("componentLookupCache");
+
+			memoryOnlyCache = new Cache("componentApprovalCache", 50000, false, false, 300, 300);
+			singletonManager.addCache(memoryOnlyCache);
+			componentApprovalCache = singletonManager.getCache("componentApprovalCache");
 
 		} finally {
 			lock.unlock();
@@ -130,6 +135,11 @@ public class OSFCacheManager
 	public static void setAttributeCodeAllCache(Cache aAttributeCodeAllCache)
 	{
 		attributeCodeAllCache = aAttributeCodeAllCache;
+	}
+
+	public static Cache getComponentApprovalCache()
+	{
+		return componentApprovalCache;
 	}
 
 	@Override

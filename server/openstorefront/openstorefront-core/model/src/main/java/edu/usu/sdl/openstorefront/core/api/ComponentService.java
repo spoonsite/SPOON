@@ -144,6 +144,14 @@ public interface ComponentService
 	public String getComponentName(String componentId);
 
 	/**
+	 * High-speed check for approval
+	 *
+	 * @param componentId
+	 * @return true if approved
+	 */
+	public boolean checkComponentApproval(String componentId);
+
+	/**
 	 * Lookup approval status on a component
 	 *
 	 * @param componentId

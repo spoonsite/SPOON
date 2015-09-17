@@ -36,8 +36,10 @@ public class ComponentRelationshipView
 	private String relationshipId;
 	private String ownerComponentId;
 	private String ownerComponentName;
+	private boolean ownerApproved;
 	private String targetComponentId;
 	private String targetComponentName;
+	private boolean targetApproved;
 	private String relationshipType;
 	private String relationshipTypeDescription;
 	private Date updateDts;
@@ -55,11 +57,14 @@ public class ComponentRelationshipView
 		relationshipView.setRelationshipId(componentRelationship.getComponentRelationshipId());
 		relationshipView.setOwnerComponentId(componentRelationship.getComponentId());
 		relationshipView.setOwnerComponentName(service.getComponentService().getComponentName(componentRelationship.getComponentId()));
+		relationshipView.setOwnerApproved(service.getComponentService().checkComponentApproval(componentRelationship.getComponentId()));
 		relationshipView.setTargetComponentId(componentRelationship.getRelatedComponentId());
 		relationshipView.setTargetComponentName(service.getComponentService().getComponentName(componentRelationship.getRelatedComponentId()));
+		relationshipView.setTargetApproved(service.getComponentService().checkComponentApproval(componentRelationship.getRelatedComponentId()));
 		relationshipView.setRelationshipType(componentRelationship.getRelationshipType());
 		relationshipView.setRelationshipTypeDescription(TranslateUtil.translate(RelationshipType.class, componentRelationship.getRelationshipType()));
 		relationshipView.setUpdateDts(componentRelationship.getUpdateDts());
+
 		relationshipView.toStandardView(componentRelationship);
 
 		return relationshipView;
@@ -152,6 +157,26 @@ public class ComponentRelationshipView
 	public void setRelationshipId(String relationshipId)
 	{
 		this.relationshipId = relationshipId;
+	}
+
+	public boolean getTargetApproved()
+	{
+		return targetApproved;
+	}
+
+	public void setTargetApproved(boolean targetApproved)
+	{
+		this.targetApproved = targetApproved;
+	}
+
+	public boolean getOwnerApproved()
+	{
+		return ownerApproved;
+	}
+
+	public void setOwnerApproved(boolean ownerApproved)
+	{
+		this.ownerApproved = ownerApproved;
 	}
 
 }
