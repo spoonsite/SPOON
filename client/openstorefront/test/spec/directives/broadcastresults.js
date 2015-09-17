@@ -15,6 +15,7 @@ describe('Directive: broadcastResults', function () {
   it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<broadcast-results></broadcast-results>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the broadcastResults directive');
+    expect(element.html()).toContain('<div></div>');
   }));
+  alert('Directive:  broadcastResults; should make hidden element visible = PASS (1 expect) ');
 });

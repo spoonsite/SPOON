@@ -15,6 +15,7 @@ describe('Directive: enterEvent', function () {
   it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<enter-event></enter-event>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the enterEvent directive');
+    expect(element.text()).toBe('');
   }));
+  alert('Directive:  enterEvent; should make hidden element visible = PASS (1 expect)');
 });

@@ -1,0 +1,332 @@
+<div  ng-controller="AdminSystemCtrl" style="padding-left: 15px; padding-right: 15px;">
+	<ul class="nav nav-tabs" ng-class="{'nav-stacked': vertical, 'nav-justified': justified}">
+		<li ng-class="{active: tabs.general}" heading="General" >
+			<a ng-click="selectTab('general')"  class="ng-binding">General</a>
+		</li>
+		<li ng-class="{active: tabs.error}" heading="Error Tickets" >
+			<a ng-click="selectTab('error')" class="ng-binding">Error Tickets</a>
+		</li>
+		<li ng-class="{active: tabs.app}" heading="Application Properties" >
+			<a ng-click="selectTab('app')"  class="ng-binding">Application Properties</a>
+		</li>
+		<li ng-class="{active: tabs.system}" heading="System Config Properties" >
+			<a ng-click="selectTab('system')"  class="ng-binding">System Config Properties</a>
+		</li>
+		<li ng-class="{active: tabs.logging}" heading="Logging" >
+			<a ng-click="selectTab('logging')"  class="ng-binding">Logging</a>
+		</li>
+		<li ng-class="{active: tabs.plugins}" heading="Status" >
+			<a ng-click="selectTab('plugins')" class="ng-binding">Plugins</a>
+		</li>
+		<li ng-class="{active: tabs.status}" heading="Status" >
+			<a ng-click="selectTab('status')" class="ng-binding">Status</a>
+		</li>		
+	</ul>	
+		<div ng-show="tabs.general">			
+			<panel class-list="edges" open-state="true" title="Search Control">				
+				<button class="btn btn-danger" ng-click="removeAllTooltips(); reindexListings();" popover data-trigger="hover" data-placement="right" data-html="true"  data-original-title="" data-container="body" data-content="This will re-index the listing.  This will effect search results while running."><i class="fa fa-refresh"></i>&nbsp;Re-Index Listings</button>
+				<br>
+			</panel>	
+			<panel class-list="edges" open-state="true" title="Recent Changes Email">
+				Last Automated Email Sent:  {{recentChangesStatus.lastSentDts | date:'MM/dd/yyyy h:mm a'}}<br>
+				Next Automated Email: {{recentChangesStatus.nextSendDts | date:'MM/dd/yyyy h:mm a'}}<br><br>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<div class="row" style="margin:0px;">
+								<label class="control-label">Last Sent Date:&nbsp;</label>
+							</div>
+							<div class="form-group" >
+								<input type="text" id="lastUsed" class="form-control" style="width: 325px; display:inline-block;" data-date-format="MM/dd/yyyy" data-start-view="0" data-min-view="0" autoclose="true" ng-model="recentChangesForm.lastRunDts" data-max-date="{{untilDate}}" placeholder="Last Sent Date" data-date-type="number" bs-datepicker> 
+								&nbsp;<i class="fa fa-calendar"></i> <span><small>Defaults to Today (shows change from last sent date until now)</small></span>
+							</div>
+						</div>
+					</div>
+				</div>	
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<div class="row" style="margin:0px;">
+								<label class="control-label">Only Send to this Email: </label>
+							</div>
+							<div class="form-group" >
+								<input  type="text" 
+										style="width: 325px;"
+										ng-pattern="EMAIL_REGEXP"
+										id="email"
+										name="email"
+										placeholder="Email"										
+										class="form-control" 
+										ng-model="recentChangesForm.emailAddress" 
+										ng-minlength=6 
+										ng-maxlength=200 
+										maxlength=200 
+										required 
+										ng-focus />	
+								&nbsp;
+								<span><small>Defaults to all users marked to be notified</small></span>
+							</div>
+						</div>
+					</div>					
+				</div>	
+				<button class="btn btn-warning" ng-click="removeAllTooltips(); sendRecentChangesEmail();" popover data-trigger="hover" data-placement="right" data-html="true"  data-original-title="" data-container="body" data-content="Sends a recent change email now. Note: this doesn't effect the schedule email."><i class="fa fa-envelope-o"></i>&nbsp;Send Email</button>
+			</panel>	
+		</div>
+		<div ng-show="tabs.error">	
+			<loader trigger="ticketLoader"></loader>
+			<div>
+				<br><br>
+				Error tickets are generated for system errors primarily triggered by the user.<br>				
+				<stickydiv fixed-offset-top=".top" fixed-offset-left="" element-id="errorTicketToolbar">
+				      <filterquery data="errorTickets.errorTickets" url="api/v1/resource/errortickets" sort-by="updateDts" sort-order="DESC" type="default" set-features="pagination.features" control="pagination.control"></filterquery>
+				</stickydiv>								
+			</div>
+			<table class="table table-striped table-bordered admin-table stickytable">
+				<thead>
+					<tr>
+						<th><a href="" ng-click="setPredicate('errorTicketId', 'error');">Ticket Id <span ng-show="predicate['error'] === 'errorTicketId'"><i ng-show="!reverse['error']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['error']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('updateDts', 'error');">Update Date <span ng-show="predicate['error'] === 'updateDts'"><i ng-show="!reverse['error']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['error']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('clientIp', 'error');">Client IP<span ng-show="predicate['error'] === 'clientIp'"><i ng-show="!reverse['error']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['error']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('calledAction', 'error');">Called Action<span ng-show="predicate['error'] === 'calledAction'"><i ng-show="!reverse['error']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['error']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th ><a href="" ng-click="setPredicate('message', 'error');">Message<span ng-show="predicate['message'] === 'input'"><i ng-show="!reverse['error']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['error']" class="fa fa-sort-alpha-desc"></i></span></a></th>						
+						<th><a href="" ng-click="setPredicate('errorTypeCode', 'error');">Type <span ng-show="predicate['error'] === 'errorTypeCode'"><i ng-show="!reverse['error']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['error']" class="fa fa-sort-alpha-desc"></i></span></a></th>										
+						<th>Action</th>
+					</tr>					
+				</thead>
+				<tbody>
+					<tr ng-repeat-start="ticket in errorTickets.errorTickets.errorTickets" >
+						<td>{{ticket.errorTicketId}}</td>
+						<td>{{ticket.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
+						<td>{{ticket.clientIp}}</td>
+						<td>{{ticket.calledAction}}</td>
+						<td ><b>{{ticket.message}}</b><br>
+							{{ticket.potentialResolution}}
+						</td>
+						<td>{{ticket.errorTypeCode}}</td>										
+						<td style="padding:0px 3px !important; width: 200px;">&nbsp;
+							<button class="btn btn-default btn-sm" ng-click="showErrorDetails(ticket)"><i class="fa fa-view"></i>{{ticket.detailText ? ticket.detailText : 'View Details'}}</button>
+						</td>
+					</tr>
+					<tr ng-show="ticket.details" ng-repeat-end  >
+						<td colspan="7">
+							<p ng-bind-html="ticket.loadedDetails"></p>
+						</td>
+					</tr>
+				</tbody>	
+			</table>
+		</div>
+		<div ng-show="tabs.app">
+			<loader trigger="appPropLoader"></loader>
+			<div>	
+				<br>
+				Application properties are properties that hold the application's internal state.<br>
+				<button class="btn btn-default" ng-click="refreshAppProperties()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+			</div>	
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th><a href="" ng-click="setPredicate('key', 'appProp');">Key <span ng-show="predicate['appProp'] === 'key'"><i ng-show="!reverse['appProp']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['appProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th>Value</th>
+						<th>Update User</th>
+						<th>Update Date</th>									
+						<th>Action</th>
+					</tr>
+					<tr ng-repeat="prop in appProperties | orderBy:predicate['appProp']:reverse['appProp']" >
+						<td>{{prop.key}}</td>
+						<td>{{prop.value}}</td>
+						<td>{{prop.updateUser}}</td>
+						<td>{{prop.updateDts | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>																
+						<td style="padding:0px 3px !important; width: 200px;">&nbsp;
+							<button class="btn btn-default btn-sm" ng-click="editAppProperty(prop);"  title="Edit"><i class="fa fa-edit"></i></button>
+						</td>
+					</tr>					
+			</table>			
+		</div>
+		<div ng-show="tabs.system">
+			<loader trigger="configPropLoader"></loader>
+			<div>	
+				<br>
+				Configuration properties are the properties use to initialize the system they are reflected from the configuration file.  
+				The system admin maintains these properties and they are applied upon restart.<br>
+				<button class="btn btn-default" ng-click="refreshConfigProps()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+			</div>	
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th><a href="" ng-click="setPredicate('code', 'confProp');">Key <span ng-show="predicate['confProp']  === 'code'"><i ng-show="!reverse['confProp'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['confProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th>Value</th>																						
+					</tr>
+					<tr ng-repeat="prop in configProperties | orderBy:predicate['confProp']:reverse['confProp']" >
+						<td>{{prop.code}}</td>
+						<td>{{prop.description}}</td>						
+					</tr>
+					
+			</table>			
+		</div>
+		<div ng-show="tabs.logging">
+			<loader trigger="loggingLoader"></loader>
+			<div>	
+				<br>
+				Displays all loggers in the system.  A blank Level means the logger inherits its level from the parent logger. Note: changes made here reset upon application restart.<br>
+				<button class="btn btn-default" ng-click="refreshLoggers()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+				<button class="btn btn-default pull-right" ng-click="viewLog()"><i class="fa fa-view"></i>&nbsp;View Logs</button>
+			</div>	
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th><a href="" ng-click="setPredicate('name', 'loggers');">Name <span ng-show="predicate['loggers'] === 'name'"><i ng-show="!reverse['loggers']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['loggers']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('level', 'loggers');">Level <span ng-show="predicate['loggers'] === 'level'"><i ng-show="!reverse['loggers']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['loggers']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('handlers', 'loggers');">Handlers <span ng-show="predicate['loggers'] == 'handlers'"><i ng-show="!reverse['loggers']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['loggers']" class="fa fa-sort-alpha-desc"></i></span></a></th>									
+						<th>Action</th>
+					</tr>
+					<tr ng-repeat="log in loggers | orderBy:predicate['loggers']:reverse['loggers']" >
+						<td>{{log.name}}</td>
+						<td>{{log.level}}</td>
+						<td>{{log.handlers}}</td>						
+						<td style="padding:0px 3px !important; width: 200px;">&nbsp;
+							<button class="btn btn-default btn-sm" ng-click="editLogger(log);" title="Edit"><i class="fa fa-edit"></i></button>
+						</td>
+					</tr>
+			</table>			
+		</div>
+		<div ng-show="tabs.plugins">
+			<loader trigger="pluginsLoader"></loader>
+			<div>	
+				<br>
+				Plugins are runtime extensions that add functionality beyond the core features.  Typically, extensions are specific to a certain environment or use-case.<br>
+				<button class="btn btn-default" ng-click="refreshPlugins()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+				<button class="btn btn-default pull-right" ng-click="addPlugin()"><i class="fa fa-plus"></i>&nbsp;Add</button>
+				<div ng-show="flags.showPluginUpload" style="border: 2px #989898 solid; padding: 20px;" >			
+				  <div class="form-group">
+					<label>File Input</label>
+					<input type="file" nv-file-select onchange="utils.handleFileQueue(angular.element(this).scope().uploader, this)" uploader="uploader" id ="uploadFile" name="uploadFile" width="100" />
+					<p class="help-block">OSGi jar/war</p>	
+				  </div>
+				  <button ng-click="uploadPlugin()" class="btn btn-primary"><i class="fa fa-upload"></i>&nbsp;Upload</button> 			
+				</div>					
+			</div>	
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th><a href="" ng-click="setPredicate('pluginId', 'plugins');">Id <span ng-show="predicate['plugins'] === 'pluginId'"><i ng-show="!reverse['plugins']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['plugins']" class="fa fa-sort-alpha-desc"></i></span></a></th>						
+						<th><a href="" ng-click="setPredicate('name', 'plugins');">Name <span ng-show="predicate['plugins'] === 'name'"><i ng-show="!reverse['plugins']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['plugins']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('description', 'plugins');">Description <span ng-show="predicate['plugins'] === 'description'"><i ng-show="!reverse['plugins']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['plugins']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('version', 'plugins');">Version <span ng-show="predicate['plugins'] === 'version'"><i ng-show="!reverse['plugins']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['plugins']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('lastModifed', 'plugins');">Last Modified Date <span ng-show="predicate['plugins'] === 'lastModifed'"><i ng-show="!reverse['plugins']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['plugins']" class="fa fa-sort-alpha-desc"></i></span></a></th>									
+						<th><a href="" ng-click="setPredicate('pluginRuntimeState', 'plugins');">State <span ng-show="predicate['plugins'] === 'pluginRuntimeState'"><i ng-show="!reverse['plugins']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['plugins']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('runtimeId', 'plugins');">Runtime Id <span ng-show="predicate['plugins'] === 'runtimeId'"><i ng-show="!reverse['plugins']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['plugins']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('coreModule', 'plugins');">Core Module <span ng-show="predicate['plugins'] === 'coreModule'"><i ng-show="!reverse['plugins']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['plugins']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('actualFilename', 'plugins');">Actual Filename <span ng-show="predicate['plugins'] === 'actualFilename'"><i ng-show="!reverse['plugins']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['plugins']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('pluginType', 'plugins');">Type <span ng-show="predicate['plugins'] === 'pluginType'"><i ng-show="!reverse['plugins']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['plugins']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th>Action</th>
+					</tr>
+					<tr ng-repeat="plugin in plugins | orderBy:predicate['plugins']:reverse['plugins']" >
+						<td>{{plugin.pluginId}}</td>
+						<td>{{plugin.name}}</td>
+						<td>{{plugin.description}}</td>
+						<td>{{plugin.version}}</td>
+						<td>{{plugin.lastModifed | date:'MM/dd/yyyy h:mm:ss a' }}</td>
+						<td ng-class="plugin.pluginRuntimeState === 'Installed' ? 'warning' :  plugin.pluginRuntimeState === 'Active' ?  'success' : plugin.pluginRuntimeState === 'Resolved' ?  'warning' : '' ">{{plugin.pluginRuntimeState}}</td>		
+						<td>{{plugin.runtimeId}}</td>		
+						<td>{{plugin.coreModule}}</td>
+						<td>{{plugin.actualFilename}}</td>
+						<td>{{plugin.pluginType}}</td>
+						<td style="padding:0px 3px !important; width: 200px;">&nbsp;
+							<span ng-show="plugin.pluginId">
+								<button class="btn btn-default btn-sm" ng-click="startPlugin(plugin.pluginId);" title="Start" ng-disabled="plugin.pluginRuntimeState === 'Active'"><i class="fa fa-play"></i></button>
+								<button class="btn btn-warning btn-sm" ng-click="stopPlugin(plugin.pluginId);" title="Stop" ng-disabled="plugin.pluginRuntimeState === 'Installed' || plugin.pluginRuntimeState === 'Resolved'"><i class="fa fa-stop"></i></button>
+								<button class="btn btn-primary btn-sm" ng-click="downloadPlugin(plugin.pluginId);" title="Download"><i class="fa fa-download"></i></button>
+								<button class="btn btn-danger btn-sm" ng-click="uninstallPlugin(plugin.pluginId);" title="Uninstall"><i class="fa fa-close"></i></button>
+							</span>
+						</td>
+					</tr>
+			</table>			
+		</div>	
+		<div ng-show="tabs.status">
+			<loader trigger="statusLoader"></loader>
+			<div>	
+				<br>
+				Shows the system status which provides useful information for troubleshooting.<br>
+				<button class="btn btn-default" ng-click="refreshAppStatus()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+			</div>
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th>Application Version</th>
+						<td>{{appStatus.applicationVersion}}</td>
+						<th>Processors</th>
+						<td>{{appStatus.processorCount}}</td>
+					</tr>					
+					<tr>
+						<th>System Load</th>
+						<td>{{appStatus.systemLoad}}</td>
+						<th>Start Date</th>						
+						<td>{{appStatus.startTime | date:'MM/dd/yyyy h:mm:ss.sss a'}}</td>
+					</tr>	
+					<tr>
+						<th >Uptime</th>	
+						<td>{{appStatus.upTime}}</td>
+						<th>Live Threads / Total Threads</th>			
+						<td>{{appStatus.liveThreadCount}} / {{appStatus.totalThreadCount}} </td>
+					</tr>	
+					<tr>
+						<th>Heap Memory</th>
+						<td>
+							<progressbar class="progress-striped active" value="getPercent(appStatus.heapMemoryStatus.usedKb, appStatus.heapMemoryStatus.maxKb)"  type="{{getPercentColor(getPercent(appStatus.heapMemoryStatus.usedKb, appStatus.heapMemoryStatus.maxKb))}}">{{getPercent(appStatus.heapMemoryStatus.usedKb, appStatus.heapMemoryStatus.maxKb)}}%</progressbar>
+							<small>{{appStatus.heapMemoryStatus.details}}</small>
+						</td>
+						<th>Non-Heap Memory</th>						
+						<td>
+							<progressbar value="getPercent(appStatus.nonHeapMemoryStatus.usedKb, appStatus.nonHeapMemoryStatus.usedKb)"  type="success">{{getPercent(appStatus.nonHeapMemoryStatus.usedKb, appStatus.nonHeapMemoryStatus.usedKb)}}%</progressbar>
+							<small>{{appStatus.nonHeapMemoryStatus.details}}</small>
+						</td>
+					</tr>						
+					<tr>
+						<th>Memory Pools</th>
+						<td>
+							<ul>
+								<li ng-repeat="info in appStatus.memoryPools">
+									<b>{{info.name}}</b><br>
+									<progressbar value="getPercent(info.usedKb, info.maxKb)"  type="{{getPercentColor(getPercent(info.usedKb, info.maxKb))}}">{{getPercent(info.usedKb, info.maxKb)}}%</progressbar>
+									<small>{{info.details}}</small>									
+								</li>
+							</ul>
+						</td>
+						<th>Garbage Collection</th>
+						<td>
+							<ul>
+								<li ng-repeat="gcInfo in appStatus.garbageCollectionInfos">
+									{{gcInfo}}
+								</li>
+							</ul>
+						</td>
+					</tr>										
+			</table>
+			<br>
+			<b>Threads Status</b>
+			<div>					
+				<button class="btn btn-default" ng-click="refreshThreads()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+			</div>
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th>Id</th>
+						<th><a href="" ng-click="setPredicate('name', 'threads');">Name <span ng-show="predicate['threads'] === 'name'"><i ng-show="!reverse['threads']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['threads']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th><a href="" ng-click="setPredicate('status', 'threads');">Status <span ng-show="predicate['threads'] === 'status'"><i ng-show="!reverse['threads']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['threads']" class="fa fa-sort-alpha-desc"></i></span></a></th>									
+						<th>Details</th>
+					</tr>
+					<tr ng-repeat="thread in threads | orderBy:predicate['threads']:reverse['threads']" >
+						<td>{{thread.id}}</td>
+						<td>{{thread.name}}</td>
+						<td>{{thread.status}}</td>
+						<td ><p ng-bind-html="thread.details"></p></td>
+					</tr>
+			</table>
+			<br>
+			<b>System Properties</b>
+			<table class="table table-striped table-bordered">
+					<tr>
+						<th><a href="" ng-click="setPredicate('key', 'sysProps');">Key <span ng-show="predicate['sysProps'] === 'key'"><i ng-show="!reverse['sysProps']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['sysProps']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+						<th>Value</th>						
+					</tr>
+					<tr ng-repeat="prop in appStatus.systemProperties.entry | orderBy:predicate['sysProps']:reverse['sysProps']" >
+						<td>{{prop.key}}</td>
+						<td>{{prop.value}}</td>					
+					</tr>
+			</table>
+		</div>			
+</div>

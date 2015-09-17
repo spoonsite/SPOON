@@ -15,8 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.action;
 
-import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.file.Files;

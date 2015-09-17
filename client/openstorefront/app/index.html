@@ -136,7 +136,6 @@ limitations under the License.
   <script src="bower_components/angular-bindonce/bindonce.js"></script>
   <!-- endbower -->
   <!-- endbuild -->
-  <!-- <script src="bower_components/sass-bootstrap/dist/js/bootstrap.js"></script> -->
 
   <!-- THINGS IN THIS SECTION WILL NOT BE MINIFIED -->
   <!-- Grab our Common js -->
@@ -147,6 +146,7 @@ limitations under the License.
   <script type="text/javascript" src="scripts/common/angular-multi-select.js"></script>
   <script type="text/javascript" src="scripts/common/cronGen.js"></script>
   <script type="text/javascript" src="scripts/common/dropzone.js"></script>
+  <script type="text/javascript" src="scripts/common/combobox.js"></script>
 
   <!-- THINGS IN THIS SECTION WILL NOT BE MINIFIED -->
 
@@ -154,6 +154,7 @@ limitations under the License.
   <!-- Grab our app -->
   <script type="text/javascript" src="scripts/modules/notifications.js"></script>
   <script type="text/javascript" src="scripts/modules/infinitescroll.js"></script>
+  <script type="text/javascript" src="scripts/modules/d3.js"></script>
   <script type="text/javascript" src="scripts/app.js"></script>
 
   <!-- Grab our factories -->
@@ -174,6 +175,7 @@ limitations under the License.
   <script type="text/javascript" src="scripts/services/reportservice.js"></script>
   <script type="text/javascript" src="scripts/services/alertservice.js"></script>  
   <script type="text/javascript" src="scripts/services/submission.js"></script>  
+  <script type="text/javascript" src="scripts/services/organization.js"></script>  
 
   <!-- Grab our Directives -->
   <script type="text/javascript" src="scripts/directives/raty.js"></script>
@@ -207,6 +209,10 @@ limitations under the License.
   <script type="text/javascript" src="scripts/directives/content/draggable.js"></script>
   <script type="text/javascript" src="scripts/directives/content/alwaysontop.js"></script>
   <script type="text/javascript" src="scripts/directives/content/collapse.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/smartselect.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/classification.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/typeahead.js"></script>
+  <script type="text/javascript" src="scripts/directives/content/selectall.js"></script>
 
   <!-- Grab our Controller -->
   <script type="text/javascript" src="scripts/controllers/main.js"></script>
@@ -216,32 +222,35 @@ limitations under the License.
   <script type="text/javascript" src="scripts/controllers/userprofile.js"></script>
   <script type="text/javascript" src="scripts/controllers/admin.js"></script>
   <script type="text/javascript" src="scripts/controllers/landing.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/editattributes.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/editcodes.js"></script>
   <script type="text/javascript" src="scripts/controllers/single.js"></script>
   <script type="text/javascript" src="scripts/controllers/details/fulldetails.js"></script>
   <script type="text/javascript" src="scripts/controllers/login.js"></script>
   <script type="text/javascript" src="scripts/controllers/compare.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/editcomponent.js"></script>
   <script type="text/javascript" src="scripts/controllers/admin/configuration/configuration.js"></script>
   <script type="text/javascript" src="scripts/controllers/admin/configuration/savecompconf.js"></script>
   <script type="text/javascript" src="scripts/controllers/details/review.js"></script>
   <script type="text/javascript" src="scripts/controllers/base.js"></script>
   <script type="text/javascript" src="scripts/controllers/print.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/jobs.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/system.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/userMessage.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/userProfile.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/editarticles.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/edithighlights.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/manageLookups.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/questions.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/reviews.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/tags.js"></script>  
-  <script type="text/javascript" src="scripts/controllers/admin/tracking.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/media.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/alerts.js"></script>
-  <script type="text/javascript" src="scripts/controllers/admin/reports.js"></script>  
+  <script type="text/javascript" src="scripts/controllers/user.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/application_management/alerts.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/application_management/jobs.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/application_management/reports.js"></script>  
+  <script type="text/javascript" src="scripts/controllers/admin/application_management/system.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/application_management/tracking.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/application_management/userMessage.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/data_management/editarticles.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/data_management/editattributes.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/data_management/editcodes.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/data_management/editcomponent.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/data_management/edithighlights.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/data_management/manageLookups.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/data_management/manageOrganizations.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/data_management/media.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/data_management/questions.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/data_management/reviews.js"></script>
+  <script type="text/javascript" src="scripts/controllers/admin/data_management/tags.js"></script>  
+  <script type="text/javascript" src="scripts/controllers/admin/data_management/userProfile.js"></script>
+  <script type="text/javascript" src="scripts/controllers/user/managereports.js"></script>
   <script type="text/javascript" src="scripts/controllers/submissions.js"></script>
   <script type="text/javascript" src="scripts/controllers/help.js"></script>
 
@@ -250,12 +259,11 @@ limitations under the License.
   <script type="text/javascript" src="scripts/filters/partition.js"></script>
   <script type="text/javascript" src="scripts/filters/tagfilter.js"></script>
   <script type="text/javascript" src="scripts/filters/ratingfilter.js"></script>
-
+  <script type="text/javascript" src="scripts/filters/loosefilter.js"></script>
 
   <!-- Grab our page-specific stuff -->
   <script type="text/javascript" src="scripts/page_specific/main.js"></script>
   <script type="text/javascript" src="scripts/page_specific/results.js"></script>
-
 
   <!-- Grab our common js -->
   <script type="text/javascript" src="scripts/common/animations.js"></script>

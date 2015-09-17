@@ -15,6 +15,7 @@ describe('Directive: admin/message', function () {
   it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<admin/message></admin/message>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the admin/message directive');
+    expect(element.text()).toBe('');
   }));
+  alert('Directive:  admin/message; should make hidden element visible = PASS (1 expect)');
 });

@@ -43,7 +43,9 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       blankTarget: '=',
       showResultCount: '=',
       hideMore: '@',
-      handler: '='
+      handler: '=',
+      classList: '@',
+      me: '='
       // list: '=',
       // search: '&',
       // setFilters: '=',
@@ -81,6 +83,9 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
       }
       scope.internalHandler.resumeLimit = function(thing){
         scope.paused = false;
+      }
+      scope.isArticle = function(item){
+        return item.listingType === 'Article' || item.componentType === 'ARTICLE';
       }
       scope.internalHandler.dotdotdotFinished = function(){
         var timeout;
@@ -362,6 +367,7 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
             $(this).addClass('moreContentSection');
           });
           scope.showMore = true;
+          scope.limit = 3;
         } else {
           element.find('.hideMore').removeClass('moreContent');
           element.find('.hideMoreArticle').removeClass('moreContentArticle');
@@ -370,6 +376,47 @@ app.directive('componentList', ['localCache', 'business', '$timeout', '$location
           });
         }
       };
+
+      $timeout(function(){
+        if (scope.hideMore && scope.hideMore === 'true') {
+          scope.showMore = true;
+          scope.limit = 3;
+        } else if(scope.hideMore && scope.hideMore === 'false') {
+          scope.limit = scope.data.length;
+        } else {
+          scope.limit = 10;
+        }
+      })
+
+      scope.lastLimit = 0;
+
+      scope.shoMore = function(){
+        scope.limit = scope.limit + 10;
+        if (scope.limit > scope.data.length){
+          scope.lastLimit = scope.limit - scope.data.length;
+          scope.limit = scope.data.length;
+        }
+      }
+      scope.shoAll = function(){
+        while(scope.limit < scope.data.length){
+          scope.limit = scope.limit + 10;
+          if (scope.limit > scope.data.length){
+            scope.lastLimit = scope.limit - scope.data.length;
+            scope.limit = scope.data.length;
+          }
+        }
+      }
+      scope.shoLess = function(){
+        if (scope.lastLimit) {
+          scope.limit = scope.limit - scope.lastLimit;
+          scope.lastLimit = 0;
+        } else {
+          scope.limit = scope.limit - 10;
+        }
+        if (scope.limit < 3) {
+          scope.limit = 3;
+        }
+      }
 
       /***************************************************************
       * This function sets up the tooltips that are available on this page.

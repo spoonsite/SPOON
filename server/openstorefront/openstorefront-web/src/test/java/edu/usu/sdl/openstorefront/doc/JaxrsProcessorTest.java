@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.doc;
 
+import edu.usu.sdl.openstorefront.doc.model.APIResourceModel;
+import edu.usu.sdl.openstorefront.web.rest.RestConfiguration;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +45,7 @@ public class JaxrsProcessorTest
 		classList.addAll(resolverUtil.getClasses());
 		for (Class resourceClass : classList) {
 			System.out.println("Resources: " + resourceClass.getName());
-			APIResourceModel result = JaxrsProcessor.processRestClass(resourceClass);
+			APIResourceModel result = JaxrsProcessor.processRestClass(resourceClass, RestConfiguration.APPLICATION_BASE_PATH);
 		}
 		System.out.println("Done");
 	}

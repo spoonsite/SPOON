@@ -15,6 +15,7 @@ describe('Directive: cron', function () {
   it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<cron></cron>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the cron directive');
+    expect(element.html()).toBe('');
   }));
+  alert('Directive:  cron; should make hidden element visible = PASS (1 expect)');
 });

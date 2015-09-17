@@ -15,13 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.web.test.attribute;
 
+import edu.usu.sdl.openstorefront.core.entity.Article;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.view.ArticleView;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.storage.model.Article;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
-import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.List;
 
@@ -95,7 +95,9 @@ public class ArticleTest
 		attributeCode.setLabel("A");
 		attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 		attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
+		attributeCode.populateBaseCreateFields();
 		serviceProxy.getAttributeService().saveAttributeCode(attributeCode, false);
+
 		return attributeCode;
 	}
 

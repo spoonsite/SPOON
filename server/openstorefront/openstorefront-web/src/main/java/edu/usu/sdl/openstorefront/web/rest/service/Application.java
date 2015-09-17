@@ -15,28 +15,28 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
-import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
-import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
-import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
-import edu.usu.sdl.openstorefront.storage.model.DBLogRecord;
-import edu.usu.sdl.openstorefront.util.Convert;
-import edu.usu.sdl.openstorefront.util.ReflectionUtil;
-import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.DBLogRecord;
+import edu.usu.sdl.openstorefront.core.view.ApplicationStatus;
+import edu.usu.sdl.openstorefront.core.view.DBLogRecordWrapper;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.LoggerView;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.MemoryPoolStatus;
+import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
+import edu.usu.sdl.openstorefront.core.view.ThreadStatus;
+import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import edu.usu.sdl.openstorefront.web.rest.model.ApplicationStatus;
-import edu.usu.sdl.openstorefront.web.rest.model.DBLogRecordWrapper;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.rest.model.LoggerView;
-import edu.usu.sdl.openstorefront.web.rest.model.MemoryPoolStatus;
-import edu.usu.sdl.openstorefront.web.rest.model.ThreadStatus;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
-import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
-import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -331,7 +331,7 @@ public class Application
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(logEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		queryByExample.setMaxResults(filterQueryParams.getMax());

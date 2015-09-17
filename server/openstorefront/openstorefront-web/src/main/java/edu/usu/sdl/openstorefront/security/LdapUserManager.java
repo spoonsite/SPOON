@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
+import edu.usu.sdl.openstorefront.core.api.ExternalUserManager;
 import edu.usu.sdl.openstorefront.service.manager.LDAPManager;
 import java.util.List;
 

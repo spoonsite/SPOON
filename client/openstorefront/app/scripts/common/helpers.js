@@ -43,6 +43,29 @@
     }
   }
 
+  //This function is used with Organization references
+  utils.getLinkByType = function(type){
+    console.log('type', type);
+    
+    switch(type.referenceType){
+      case 'Component':
+        return 'single?id='+type.referenceId;
+        break;
+      case 'ComponentContact':
+      case 'ComponentReview':
+      case 'ComponentQuestion':
+      case 'ComponentQuestionResponse':
+        return 'single?id='+type.componentId;
+        break;
+      // case '':
+        // return 'single?id='+type.referenceId;
+        // break;
+      case 'UserProfile':
+      default:
+        return '';
+        break;
+    }
+  }
 
   utils.getMimeTypeClass = function(type){
     if (type) {
@@ -196,6 +219,7 @@
         }
       });
       if (!angular.equals({}, r)){
+        // console.log('r', r);
         return r;
       }
       return false;

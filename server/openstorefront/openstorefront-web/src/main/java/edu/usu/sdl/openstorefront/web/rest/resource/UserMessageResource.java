@@ -15,19 +15,19 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
-import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
-import edu.usu.sdl.openstorefront.service.query.GenerateStatementOption;
-import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.service.query.SpecialOperatorModel;
-import edu.usu.sdl.openstorefront.storage.model.UserMessage;
-import edu.usu.sdl.openstorefront.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.UserMessage;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.UserMessageWrapper;
+import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.rest.model.UserMessageWrapper;
 import java.lang.reflect.Field;
 import java.util.List;
 import javax.ws.rs.BeanParam;
@@ -83,7 +83,7 @@ public class UserMessageResource
 		specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(userMessageEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-		specialOperatorModel.getGenerateStatementOption().setParamaterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		queryByExample.setMaxResults(filterQueryParams.getMax());
@@ -145,7 +145,7 @@ public class UserMessageResource
 		UserMessage userMessageExample = new UserMessage();
 		userMessageExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
 		taskRequest.setDetails("Sending messages: " + service.getPersistenceService().countByExample(userMessageExample));
-		service.getAyncProxy(service.getUserService(), taskRequest).processAllUserMessages(true);
+		service.getAsyncProxy(service.getUserService(), taskRequest).processAllUserMessages(true);
 		return Response.ok().build();
 	}
 

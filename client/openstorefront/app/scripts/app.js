@@ -50,7 +50,8 @@ var app = angular
     'com.2fdevs.videogular.plugins.overlayplay',
     'com.2fdevs.videogular.plugins.poster',
     'pasvaz.bindonce',
-    'infinite-scroll'
+    'infinite-scroll',
+    'd3'
   // end of dependency injections
   ]
 // end of the module creation
@@ -67,36 +68,48 @@ var app = angular
   $routeProvider
   .when('/', {
     templateUrl: 'views/main.html',
-    controller: 'MainCtrl'
+    controller: 'MainCtrl',
+    label: 'Home'
   })
   .when('/userprofile', {
     templateUrl: 'views/userprofile.html',
-    controller: 'UserProfileCtrl'
+    controller: 'UserProfileCtrl',
+    label: 'Profile'
   })
   .when('/results', {
     templateUrl: 'views/results.html',
-    controller: 'ResultsCtrl'
+    controller: 'ResultsCtrl',
+    label: 'Search Results'
   })
   .when('/admin', {
     templateUrl: 'views/admin.html',
     controller: 'AdminCtrl',
-    reloadOnSearch: false
+    reloadOnSearch: false,
+    label: 'Admin'
   })
   .when('/landing', {
     templateUrl: 'views/landing.html',
-    controller: 'LandingCtrl'
+    controller: 'LandingCtrl',
+    label: 'Landing Page'
   })
   .when('/single', {
     templateUrl: 'views/single.html',
-    controller: 'SingleCtrl'
+    controller: 'SingleCtrl',
+    label: 'Single Page'
   })
   .when('/compare', {
     templateUrl: 'views/compare.html',
-    controller: 'CompareCtrl'
+    controller: 'CompareCtrl',
+    label: 'Compare Page'
   })
   .when('/print', {
     templateUrl: 'views/print.html',
-    controller: 'PrintCtrl'
+    controller: 'PrintCtrl',
+    label: 'Print Page'
+  })  .when('/tools', {
+    templateUrl: 'views/user.html',
+    controller: 'UserCtrl',
+    label: 'Tools Page'
   })
   .when('/help', {
     templateUrl: 'views/helpSingle.html',
@@ -105,7 +118,8 @@ var app = angular
       printView: function() {
         return {};
       }
-    }
+    },
+    label: 'Help Page'
   })
   .when('/helpprint', {
     templateUrl: 'views/helpPrint.html',
@@ -116,8 +130,9 @@ var app = angular
           print: true
         };
       }
-    }
-  })  
+    },
+    label: 'Help Page'
+  }) 
   .otherwise({
     redirectTo: '/'
   });
@@ -230,6 +245,38 @@ var app = angular
       $rootScope.messageContacts = null;
       $rootScope.ieVersionCheck = false;
       $rootScope.loaded = false;
+      $rootScope.eventHistory = [];
+
+      $rootScope.business = Business;
+
+      $rootScope.$on('$routeChangeSuccess', function() {
+        var label = $route.routes[$location.$$path].label || $location.$$path;
+        if ($location.$$path === '/single'){
+          label = 'Component ' + $location.search().id;
+        }
+        $rootScope.eventHistory.push({path: $location.$$path, search: $location.search(), label: label});
+      });
+
+      $rootScope.goToBreadcrumb = function(breadcrumb){
+        console.log('breadcrumbs', breadcrumb);
+        if ($rootScope.eventHistory.length){
+          var prevUrl = _.find($rootScope.eventHistory, breadcrumb);
+          if (prevUrl) {
+            var index = _.indexOf($rootScope.eventHistory, prevUrl);
+            $rootScope.eventHistory = $rootScope.eventHistory.slice(0, index);
+          }
+          $location.path(prevUrl.path);
+          $location.search(prevUrl.search);
+        }
+      }
+
+      $rootScope.back = function () {
+        if ($rootScope.eventHistory.length > 1) {
+          var prevUrl = $rootScope.eventHistory.length > 1 ? $rootScope.eventHistory.splice(-2)[0] : "/";
+          $location.path(prevUrl);
+        }
+      };
+
 
       $timeout(function() {
         // this is called only on first view of the '/' route (login)
@@ -299,6 +346,8 @@ var app = angular
         //   });
         // }, 500);
         //
+        // console.log('routeParams', $routeParams);
+        
         $rootScope.$broadcast('$LOAD', 'bodyLoad');
       });
 
@@ -317,6 +366,7 @@ var app = angular
           && $location.path() !== '/landing' 
           && $location.path() !== '/compare' 
           && $location.path() !== '/admin' 
+          && $location.path() !== '/tools' 
           && $location.path() !== '/print')) {
           $location.search({});
       }

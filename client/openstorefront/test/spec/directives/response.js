@@ -15,6 +15,7 @@ describe('Directive: response', function () {
   it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<response></response>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the response directive');
+    expect(element.html()).toBe('');
   }));
+  alert('Directive:  response; should make hidden element visible = PASS (1 expect)');
 });

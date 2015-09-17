@@ -45,7 +45,7 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
     },
     link: function postLink(scope, element, attrs) {
       scope.defaultMax = 50;
-      scope.setFeatures = scope.setFeatures || {'dates': true, 'max': true};
+      scope.setFeatures = scope.setFeatures || {'dates': true, 'max': true, 'activeState': true};
       scope.internalControl = scope.control || {};
       
       scope.defaultMax = scope.max? parseInt(scope.max): 50;
@@ -94,6 +94,10 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
         query.filterObj.approvalState = scope.internalControl.approvalState;
         if (query.filterObj.approvalState === 'ALL') {
           query.filterObj.approvalState = null;
+        }
+        query.filterObj.componentType = scope.internalControl.componentType;
+        if (query.filterObj.componentType === 'ALL') {
+          query.filterObj.componentType = null;
         }
         if (query.filterObj.end) {
           var d = new Date(query.filterObj.end);

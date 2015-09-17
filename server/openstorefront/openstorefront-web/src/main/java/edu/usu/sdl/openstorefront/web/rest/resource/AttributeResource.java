@@ -16,49 +16,51 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
-import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.service.manager.model.TaskFuture;
-import edu.usu.sdl.openstorefront.service.manager.model.TaskRequest;
-import edu.usu.sdl.openstorefront.service.manager.resource.AsyncTaskCallback;
-import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.service.transfermodel.Architecture;
-import edu.usu.sdl.openstorefront.service.transfermodel.AttributeAll;
-import edu.usu.sdl.openstorefront.sort.AttributeCodeArchComparator;
-import edu.usu.sdl.openstorefront.sort.AttributeCodeArchViewComparator;
-import edu.usu.sdl.openstorefront.sort.AttributeCodeComparator;
-import edu.usu.sdl.openstorefront.sort.AttributeCodeViewComparator;
-import edu.usu.sdl.openstorefront.sort.AttributeTypeViewComparator;
-import edu.usu.sdl.openstorefront.storage.model.Article;
-import edu.usu.sdl.openstorefront.storage.model.ArticleTracking;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
-import edu.usu.sdl.openstorefront.storage.model.AttributeType;
-import edu.usu.sdl.openstorefront.storage.model.AttributeXRefMap;
-import edu.usu.sdl.openstorefront.storage.model.AttributeXRefType;
-import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant.TaskStatus;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.util.StringProcessor;
-import edu.usu.sdl.openstorefront.util.TimeUtil;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.NetworkUtil;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.model.AsyncTaskCallback;
+import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
+import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.entity.Article;
+import edu.usu.sdl.openstorefront.core.entity.ArticleTracking;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
+import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
+import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.model.Architecture;
+import edu.usu.sdl.openstorefront.core.model.AttributeAll;
+import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchComparator;
+import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchViewComparator;
+import edu.usu.sdl.openstorefront.core.sort.AttributeCodeComparator;
+import edu.usu.sdl.openstorefront.core.sort.AttributeCodeViewComparator;
+import edu.usu.sdl.openstorefront.core.sort.AttributeTypeViewComparator;
+import edu.usu.sdl.openstorefront.core.view.ArticleTrackingResult;
+import edu.usu.sdl.openstorefront.core.view.ArticleView;
+import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
+import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
+import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
+import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
+import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
+import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
+import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.UserTrackingWrapper;
+import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import edu.usu.sdl.openstorefront.web.rest.model.ArticleTrackingResult;
-import edu.usu.sdl.openstorefront.web.rest.model.ArticleView;
-import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeView;
-import edu.usu.sdl.openstorefront.web.rest.model.AttributeCodeWrapper;
-import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeView;
-import edu.usu.sdl.openstorefront.web.rest.model.AttributeTypeWrapper;
-import edu.usu.sdl.openstorefront.web.rest.model.AttributeXRefView;
-import edu.usu.sdl.openstorefront.web.rest.model.AttributeXrefMapView;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.rest.model.UserTrackingWrapper;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -462,7 +464,7 @@ public class AttributeResource
 			ArticleTracking articleTracking = new ArticleTracking();
 			articleTracking.setAttributeCode(code);
 			articleTracking.setAttributeType(type);
-			articleTracking.setClientIp(SecurityUtil.getClientIp(request));
+			articleTracking.setClientIp(NetworkUtil.getClientIp(request));
 			articleTracking.setEventDts(TimeUtil.currentDate());
 			articleTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
 			service.getAttributeService().addArticleTrackEvent(articleTracking);
@@ -492,7 +494,7 @@ public class AttributeResource
 			ArticleTracking articleTracking = new ArticleTracking();
 			articleTracking.setAttributeCode(code);
 			articleTracking.setAttributeType(type);
-			articleTracking.setClientIp(SecurityUtil.getClientIp(request));
+			articleTracking.setClientIp(NetworkUtil.getClientIp(request));
 			articleTracking.setEventDts(TimeUtil.currentDate());
 			articleTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
 			service.getAttributeService().addArticleTrackEvent(articleTracking);
@@ -592,8 +594,15 @@ public class AttributeResource
 	@APIDescription("Adds a new attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes")
-	public Response postAttributeType(AttributeType attributeType)
+	public Response postAttributeType(AttributeTypeSave attributeTypeSave)
 	{
+		AttributeType attributeType = attributeTypeSave.getAttributeType();
+		if (attributeTypeSave.getComponentTypeRestrictions() != null
+				&& attributeTypeSave.getComponentTypeRestrictions().isEmpty() == false) {
+			attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
+		} else if (attributeTypeSave.getComponentTypeRestrictions() == null) {
+			attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
+		}
 		return handleAttributePostPutType(attributeType, true);
 	}
 
@@ -605,11 +614,18 @@ public class AttributeResource
 	public Response updateAttributeType(
 			@PathParam("type")
 			@RequiredParam String type,
-			AttributeType attributeType)
+			AttributeTypeSave attributeTypeSave)
 	{
 		AttributeType existing = service.getPersistenceService().findById(AttributeType.class, type);
 		if (existing != null) {
-			attributeType.setAttributeType(type.toUpperCase());
+			AttributeType attributeType = attributeTypeSave.getAttributeType();
+			if (attributeTypeSave.getComponentTypeRestrictions() != null
+					&& attributeTypeSave.getComponentTypeRestrictions().isEmpty() == false) {
+				attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
+			} else if (attributeTypeSave.getComponentTypeRestrictions() == null) {
+				attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
+			}
+			attributeType.setAttributeType(type);
 			return handleAttributePostPutType(attributeType, true);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find existing type.", "Make sure type exists before call PUT");
@@ -674,7 +690,7 @@ public class AttributeResource
 				}
 
 			});
-			service.getAyncProxy(service.getAttributeService(), taskRequest).removeAttributeType(type);
+			service.getAsyncProxy(service.getAttributeService(), taskRequest).removeAttributeType(type);
 		}
 	}
 
@@ -713,7 +729,7 @@ public class AttributeResource
 				}
 
 			});
-			service.getAyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeType(type);
+			service.getAsyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeType(type);
 		}
 	}
 
@@ -752,7 +768,7 @@ public class AttributeResource
 				}
 
 			});
-			service.getAyncProxy(service.getAttributeService(), taskRequest).activateAttributeType(type);
+			service.getAsyncProxy(service.getAttributeService(), taskRequest).activateAttributeType(type);
 		}
 	}
 
@@ -886,7 +902,7 @@ public class AttributeResource
 				}
 
 			});
-			service.getAyncProxy(service.getAttributeService(), taskRequest).removeAttributeCode(attributeCodePk);
+			service.getAsyncProxy(service.getAttributeService(), taskRequest).removeAttributeCode(attributeCodePk);
 		}
 	}
 
@@ -937,7 +953,7 @@ public class AttributeResource
 				}
 
 			});
-			service.getAyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeCode(attributeCodePk);
+			service.getAsyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeCode(attributeCodePk);
 		}
 	}
 
@@ -989,7 +1005,7 @@ public class AttributeResource
 				}
 
 			});
-			service.getAyncProxy(service.getAttributeService(), taskRequest).activateAttributeCode(attributeCodePk);
+			service.getAsyncProxy(service.getAttributeService(), taskRequest).activateAttributeCode(attributeCodePk);
 		}
 	}
 

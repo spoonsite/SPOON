@@ -15,8 +15,8 @@
 */
 'use strict';
 
-app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'configurationservice', 'jobservice', 'systemservice', 'mediaservice', 'trackingservice', 'alertservice', 'reportservice', 'submissionservice',
-  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, configurationservice, jobservice, systemservice, mediaservice, trackingservice, alertservice, reportservice, submissionservice) { /*jshint unused: false*/
+app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'organizationservice', 'configurationservice', 'jobservice', 'systemservice', 'mediaservice', 'trackingservice', 'alertservice', 'reportservice', 'submissionservice',
+  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, organizationservice, configurationservice, jobservice, systemservice, mediaservice, trackingservice, alertservice, reportservice, submissionservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
   var minute = 60 * 1000;
@@ -79,6 +79,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.alertservice = alertservice;
   business.reportservice = reportservice;
   business.submissionservice = submissionservice;
+  business.organizationservice = organizationservice;
 
 
   business.updateCache = function(name, value) {
@@ -223,10 +224,13 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     } else {
       //check local cache
       var cachedResults = localCache.get("CMPNames", 'object');
-      
+      var lowerSearch = search;
+      if (search && typeof search === 'string'){
+        lowerSearch = search.toLowerCase();
+      }
       var getNames = function(names, deferred) {
         var found = _.filter(names, function(item){
-          return item.description.toLowerCase().indexOf(search.toLowerCase()) !== -1;
+          return item.description.toLowerCase().indexOf(lowerSearch) !== -1;
         });
         deferred.resolve(found);           
       };
@@ -241,6 +245,36 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
         getNames(cachedResults, deferred);
       }
       
+    }
+    return deferred.promise;
+  };
+
+  // This function builds the typeahead options.
+  business.orgTypeahead = function(search) {
+    var deferred = $q.defer();
+    // lets refresh the typeahead every 15 min until we actually get this
+    // working with a http request upon user interaction.
+    if (!search) {
+      deferred.reject('There was no search');
+    } else {
+      //check local cache
+      business.organizationservice.getLookupList().then(function(data){
+        var lowerSearch = search;
+        if (search && typeof search === 'string'){
+          lowerSearch = search.toLowerCase();
+        }
+        var items = lowerSearch.split(' ');
+        var found = _.filter(data, function(item){
+          var foundIt = false;
+          _.each(items, function(testItem){
+            if (item.description.toLowerCase().indexOf(testItem) !== -1) {
+              foundIt = true;
+            }
+          })
+          return foundIt;
+        });
+        deferred.resolve(found);           
+      });
     }
     return deferred.promise;
   };

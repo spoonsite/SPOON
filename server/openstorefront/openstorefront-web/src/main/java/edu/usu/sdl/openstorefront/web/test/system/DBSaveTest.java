@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.test.system;
 
-import edu.usu.sdl.openstorefront.storage.model.TestEntity;
+import edu.usu.sdl.openstorefront.core.entity.TestEntity;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.Arrays;
 

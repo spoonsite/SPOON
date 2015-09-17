@@ -16,10 +16,10 @@
 package edu.usu.sdl.openstorefront.web.extension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
+import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.service.transfermodel.ErrorInfo;
-import edu.usu.sdl.openstorefront.util.StringProcessor;
-import edu.usu.sdl.openstorefront.web.viewmodel.SystemErrorModel;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;

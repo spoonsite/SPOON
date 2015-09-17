@@ -23,8 +23,22 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   $scope.editQuestion       = [];
   $scope.currentTab         = null;
   $scope.sendAdminMessage   = $rootScope.openAdminMessage;
+  $scope.currentAttribute   = null;
 
   resetUpdateNotify();
+  $scope.predicate = [];
+  $scope.reverse = [];
+  $scope.setPredicate = function (predicate, table) {
+    if ($scope.predicate[table] === predicate) {
+      $scope.reverse[table] = !$scope.reverse[table];
+    } else {
+      $scope.predicate[table] = predicate;
+      $scope.reverse[table] = false;
+    }
+    if (table === 'components') {
+      $scope.pagination.control.changeSortOrder(predicate);
+    }
+  };
 
   $scope.setupTagList = $scope.setupTagList || function() {
     Business.getTagsList(true).then(function(result) {
@@ -80,6 +94,27 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     // console.log('section', result);
     
   })
+
+  $scope.goTo = function(location){
+    console.log('location', location);
+    
+    $location.path(location.path);
+    $location.search(location.search);
+  }
+
+  $scope.title = "DemoCtrl";
+  $scope.d3Data = [
+  {name: "Greg", score:98},
+  {name: "Ari", score:96},
+  {name: "Loser", score: 48}
+  ];
+  $scope.d3OnClick = function(item){
+    alert(item.name);
+  };
+
+  $scope.setCurrentAttribute = function(row){
+    $scope.currentAttribute = row;
+  }
 
   /***************************************************************
   * This function is used by the reviews section in the details to remove
@@ -768,15 +803,26 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           }, 300);
           setupUpdateFlags();
           onlyOnce = $scope.details.details.componentId;
-          $scope.detailResultsTabs = [
+          if ($scope.details.details.componentType === 'COMP' || !$scope.details.details.componentType) {
+            $scope.detailResultsTabs = [
+              //
+              { title:'DETAILS', id:'detailsTab', content:'2', relpath:'views/details/details.html', class:$scope.detailsUpdated.length > 0? 'updatedTab' : ''},
+              { title:'REVIEWS', id:'reviewsTab', content:'3', relpath:'views/details/reviews.html', class:$scope.reviewsUpdated.length > 0? 'updatedTab' : ''},
+              { title:'Q&A', id:'qaTab', content:'4', relpath:'views/details/comments.html', class:$scope.commentsUpdated.length > 0? 'updatedTab' : ''}
+              // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
             //
-            { title:'DETAILS', id:'detailsTab', content:'2', relpath:'views/details/details.html', class:$scope.detailsUpdated.length > 0? 'updatedTab' : ''},
-            { title:'REVIEWS', id:'reviewsTab', content:'3', relpath:'views/details/reviews.html', class:$scope.reviewsUpdated.length > 0? 'updatedTab' : ''},
-            { title:'Q&A', id:'qaTab', content:'4', relpath:'views/details/comments.html', class:$scope.commentsUpdated.length > 0? 'updatedTab' : ''}
-            // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
-          //
-          ];
-          
+            ];
+          }else if ($scope.details.details.componentType === 'ARTICLE') {
+            $scope.detailResultsTabs = [
+              //
+              { title:'DETAILS', id:'detailsTab', content:'2', relpath:'views/details/detailsarticles.html', class:$scope.detailsUpdated.length > 0? 'updatedTab' : ''},
+              // { title:'REVIEWS', id:'reviewsTab', content:'3', relpath:'views/details/reviews.html', class:$scope.reviewsUpdated.length > 0? 'updatedTab' : ''},
+              { title:'Q&A', id:'qaTab', content:'4', relpath:'views/details/comments.html', class:$scope.commentsUpdated.length > 0? 'updatedTab' : ''}
+              // { title:'QUESTIONS & ANSWERS', content:'4', relpath:'views/details/comments.html', class:"questionandanswer" },
+            //
+            ];
+          }
+
           $scope.currentTab = $scope.detailResultsTabs[0].id;
           $scope.selectedTab = $scope.detailResultsTabs[0];
           $scope.evaluationDetails($scope.details.details.attributes);

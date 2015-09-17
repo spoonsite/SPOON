@@ -2,7 +2,7 @@
 
 describe('Controller: AdminTrackingCtrl', function () {
 
-  // load the controller's module
+// load the controller's module
   beforeEach(module('openstorefrontApp'));
 
   var AdminTrackingCtrl,
@@ -16,7 +16,13 @@ describe('Controller: AdminTrackingCtrl', function () {
     });
   }));
 
-  it('should attach a list of awesomeThings to the scope', function () {
-    expect(scope.awesomeThings.length).toBe(3);
+  it('should have the correct initializations', function () {
+    expect(scope.user.control).toEqual({});
+    expect(scope.user.features).toEqual({'dates': true, 'max': true});
+    expect(scope.component.control).toEqual({});
+    expect(scope.component.features).toEqual({'dates': true, 'max': true});
+    expect(scope.article.control).toEqual({});
+    expect(scope.article.features).toEqual({'dates': true, 'max': true});
   });
+  alert('Controller:  AdminTrackingCtrl; should have the correct initializations = PASS (6 expects)');
 });

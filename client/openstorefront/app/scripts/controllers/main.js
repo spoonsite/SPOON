@@ -30,7 +30,6 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.openAdminMessage = $rootScope.openAdminMessage;
   $scope.appverison = '';
 
-
   Business.systemservice.getAppVersion().then(function(result){
     $scope.appverison = result;
   });  

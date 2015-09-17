@@ -12,14 +12,5 @@
                 <skipTests>true</skipTests>
             </properties>
         </action>
-        <action>
-            <actionName>CUSTOM-war-inplace</actionName>
-            <displayName>war-inplace</displayName>
-            <goals>
-                <goal>war:inplace</goal>
-            </goals>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
-        </action>
+        
     </actions>

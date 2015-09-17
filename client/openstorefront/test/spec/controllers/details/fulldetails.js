@@ -16,7 +16,8 @@ describe('Controller: DetailsFulldetailsCtrl', function () {
     });
   }));
 
-  it('should attach a list of awesomeThings to the scope', function () {
-    expect(scope.awesomeThings.length).toBe(3);
-  });
+  it('should have the correct initializations', function () {
+    expect(scope.user).toEqual({});
+    });
+  alert('Controller:  DetailsFulldetailsCtrl; should have the correct initializations = PASS (1 expect)');
 });

@@ -14,6 +14,7 @@
   <div ng-show="toField.value === 'users'" ng-class="to.length > 2? 'toField': ''" class="form-control" style="oveflow: auto !important;">
     <span ng-repeat="userprofile in to track by $index" style="font-size: 10; display:inline-block;">{{userprofile.firstName}}&nbsp;{{userprofile.lastName}}&nbsp;<span style="font-size: 9px;">({{userprofile.email}})</span><span ng-if="($index + 1) < to.length">;&nbsp;</span></span>
   </div>
+  <tags-input ng-show="toField.value === 'users'" class="bootstrap nomargin" min-length="1" ng-model="to" replace-spaces-with-dashes="false" on-tag-added="addTag($tag, contacts);" placeholder="Add Email"><auto-complete min-length="1" source="checkTagsList($query, to, users)"></auto-complete></tags-input>
 </span>
 <h5 ng-show="toField.value !== 'all'" style="display:inline-block; float:right; text-align: right;">
   To:&nbsp;

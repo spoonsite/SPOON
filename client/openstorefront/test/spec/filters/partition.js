@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Filter: partition', function () {
-
   // load the filter's module
   beforeEach(module('openstorefrontApp'));
 
@@ -11,9 +10,10 @@ describe('Filter: partition', function () {
     partition = $filter('partition');
   }));
 
-  it('should return the input prefixed with "partition filter:"', function () {
-    var text = 'angularjs';
-    expect(partition(text)).toBe('partition filter: ' + text);
+  it('should return the input in an x dimensional array"', function () {
+    var myArray = ["hello", "world", "testing", 1, 2, 3];
+    var x = 2;
+    expect(partition(myArray, x).toString()).toBe([ ["hello", "world"], ["testing", 1], [2,3]].toString());
   });
-
+  alert('Filter:  partition; should return the input in an x dimensional array = PASS (1 expect)');
 });

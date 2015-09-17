@@ -16,7 +16,11 @@ describe('Controller: DetailsReviewCtrl', function () {
     });
   }));
 
-  it('should attach a list of awesomeThings to the scope', function () {
-    expect(scope.awesomeThings.length).toBe(3);
+  it('should have the correct initializations', function () {
+    expect(scope.review).toEqual({});
+    expect(scope.user).toEqual({});
+    expect(scope.backup).toEqual({});
+    expect(scope.untilDate.toString()).toEqual(new Date().toString());
   });
+  alert('Controller:  DetailsReviewCtrl; should have the correct initializations = PASS (4 expects)');
 });

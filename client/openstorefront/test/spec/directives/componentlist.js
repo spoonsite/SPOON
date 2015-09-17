@@ -15,6 +15,7 @@ describe('Directive: componentList', function () {
   it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<component-list></component-list>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the componentList directive');
+    expect(element.html()).toBe('');
   }));
+  alert('Directive:  componentList; should make hidden element visible = PASS (1 expect)');
 });

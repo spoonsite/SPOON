@@ -14,39 +14,39 @@
     <br />
     <div ng-class="listOfClasses">
       <loader trigger="resultsLoader"></loader>
-      <div ng-show="isTitle" class="componentListTitle">{{title}}</div>
+      <div ng-show="isTitle" class="componentListTitle">{{title}} <button ng-show="hideMore === 'true' " class="btn btn-sm btn-default" ng-disabled="limit === data.length" ng-click="shoAll()"><i class="fa fa-arrow-down"></i>&nbsp; Show All</button><button ng-show="hideMore === 'true' " class="btn btn-sm btn-default" ng-disabled="limit === data.length" ng-click="shoMore()"><i class="fa fa-arrow-down"></i>&nbsp; Show More</button><button ng-show="hideMore === 'true' " class="btn btn-sm btn-default" ng-disabled="limit === 3" ng-click="shoLess()"><i class="fa fa-arrow-up"></i>&nbsp; Show Less</button></div>
       <div ng-show="showResultCount">
         <p ng-show="!data.length">No items found</p>
         <p ng-show="data.length">Found: {{data.length}}</p>
       </div>  
       <table class="table table-striped" id="resultsTable">
         <tbody infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check='true' window-element="page1">
-          <tr ng-repeat="item in data | limitTo: limit" class="moreSection" style="margin-bottom: 20px;">
+          <tr ng-repeat="item in data | limitTo: limit" class="moreSection" style="margin-bottom: 20px;" ng-if="item.componentId !== me">
             <td ng-show="showitem(item)" style="white-space: inherit;" id="{{getComponentScroll(item)}}">
               <div class="container-fluid">
                 <div class="row" style="margin-left: 0px; margin-right: 0px">
                   <div class="results-content">
                     <div class="results-content-title" ng-click="clickCallback(item.componentId, item)">
                       <div ng-show="blankTarget" style="display:inline-block">
-                        <a ng-if="item.listingType === 'Article'" ng-href="#/landing?type={{item.articleAttributeType}}&code={{item.articleAttributeCode}}" target="_blank">
-                          <div class="results-content-title-content" ><span ng-bind="item.name"></span>
+                        <a ng-if="isArticle(item)" ng-href="#/{{item.listingType === 'Article'?  'landing': 'single'}}?{{( item.listingType === 'Article'?  'type=' + item.articleAttributeType + '&code=' + item.articleAttributeCode: 'id='+item.componentId)}}" target="_blank">
+                          <div class="results-content-title-content" ><span ng-bind="item.name"></span><classification ls style="font-size:14px;" ng-model="item"></classification>
                             <span style="font-size:13px;">&nbsp;(Article)</span>
                           </div>
                         </a>
-                        <a ng-if="item.listingType !== 'Article'" ng-href="#/single?id={{item.componentId}}" target="_blank">
-                          <div class="results-content-title-content" ><span ng-bind="item.name"></span>
+                        <a ng-if="!isArticle(item)" ng-href="#/single?id={{item.componentId}}" target="_blank">
+                          <div class="results-content-title-content" ><span ng-bind="item.name"></span><classification ls style="font-size:14px;" ng-model="item"></classification>
                           </div>
                         </a>
                       </div>
                       <div ng-show="!blankTarget" id="{{item.componentId}}" style="display:inline-block">
-                        <div class="results-content-title-content" ><span ng-bind="item.name"></span>
+                        <div class="results-content-title-content" ><span ng-bind="item.name"></span><classification ls style="font-size:14px;" ng-model="item"></classification>
                           <br ng-show="item.attributes.length">
 
                           <div bindonce ng-repeat="attribute in item.attributes" style="display:inline-block;">
                             <img ng-show="attribute.badgeUrl" ng-src="{{attribute.badgeUrl}}" alt="Attribute Badge" data-toggle="tooltip" data-placement="bottom" data-title="{{attribute.label}}" data-trigger="hover" style="padding-left: 5px; margin-top:-5px; width: 40px; height: auto;">
                           </div>
 
-                          <span ng-if="item.listingType === 'Article'" style="font-size:13px;">&nbsp;(Article)</span>
+                          <span ng-if="isArticle(item)" style="font-size:13px;">&nbsp;(Article)</span>
                         </div>
                       </div>
                     </div>

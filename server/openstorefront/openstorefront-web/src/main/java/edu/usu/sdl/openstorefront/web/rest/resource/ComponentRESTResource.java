@@ -16,80 +16,82 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
-import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.service.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.util.NetworkUtil;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.QueryType;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
+import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
+import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSectionPk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
+import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
+import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
+import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
+import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
+import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
+import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReviewCon;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReviewConPk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
+import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
+import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.sort.SortUtil;
+import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
+import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
+import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
+import edu.usu.sdl.openstorefront.core.view.ComponentContactView;
+import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
+import edu.usu.sdl.openstorefront.core.view.ComponentEvaluationSectionView;
+import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
+import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
+import edu.usu.sdl.openstorefront.core.view.ComponentIntegrationView;
+import edu.usu.sdl.openstorefront.core.view.ComponentMediaView;
+import edu.usu.sdl.openstorefront.core.view.ComponentMetadataView;
+import edu.usu.sdl.openstorefront.core.view.ComponentPrintView;
+import edu.usu.sdl.openstorefront.core.view.ComponentQuestionResponseView;
+import edu.usu.sdl.openstorefront.core.view.ComponentQuestionView;
+import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
+import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
+import edu.usu.sdl.openstorefront.core.view.ComponentReviewProCon;
+import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.ComponentTrackingWrapper;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
+import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
+import edu.usu.sdl.openstorefront.core.view.TagView;
+import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
-import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.service.query.QueryType;
-import edu.usu.sdl.openstorefront.service.transfermodel.ComponentAll;
-import edu.usu.sdl.openstorefront.sort.BeanComparator;
-import edu.usu.sdl.openstorefront.sort.SortUtil;
-import edu.usu.sdl.openstorefront.storage.model.ApprovalStatus;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCode;
-import edu.usu.sdl.openstorefront.storage.model.AttributeCodePk;
-import edu.usu.sdl.openstorefront.storage.model.BaseComponent;
-import edu.usu.sdl.openstorefront.storage.model.Component;
-import edu.usu.sdl.openstorefront.storage.model.ComponentAttribute;
-import edu.usu.sdl.openstorefront.storage.model.ComponentAttributePk;
-import edu.usu.sdl.openstorefront.storage.model.ComponentContact;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSectionPk;
-import edu.usu.sdl.openstorefront.storage.model.ComponentExternalDependency;
-import edu.usu.sdl.openstorefront.storage.model.ComponentIntegration;
-import edu.usu.sdl.openstorefront.storage.model.ComponentIntegrationConfig;
-import edu.usu.sdl.openstorefront.storage.model.ComponentMedia;
-import edu.usu.sdl.openstorefront.storage.model.ComponentMetadata;
-import edu.usu.sdl.openstorefront.storage.model.ComponentQuestion;
-import edu.usu.sdl.openstorefront.storage.model.ComponentQuestionResponse;
-import edu.usu.sdl.openstorefront.storage.model.ComponentResource;
-import edu.usu.sdl.openstorefront.storage.model.ComponentReview;
-import edu.usu.sdl.openstorefront.storage.model.ComponentReviewCon;
-import edu.usu.sdl.openstorefront.storage.model.ComponentReviewConPk;
-import edu.usu.sdl.openstorefront.storage.model.ComponentReviewPro;
-import edu.usu.sdl.openstorefront.storage.model.ComponentReviewProPk;
-import edu.usu.sdl.openstorefront.storage.model.ComponentTag;
-import edu.usu.sdl.openstorefront.storage.model.ComponentTracking;
-import edu.usu.sdl.openstorefront.storage.model.LookupEntity;
-import edu.usu.sdl.openstorefront.storage.model.ReviewCon;
-import edu.usu.sdl.openstorefront.storage.model.ReviewPro;
-import edu.usu.sdl.openstorefront.storage.model.StandardEntity;
-import edu.usu.sdl.openstorefront.storage.model.TrackEventCode;
-import edu.usu.sdl.openstorefront.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
-import edu.usu.sdl.openstorefront.util.StringProcessor;
-import edu.usu.sdl.openstorefront.util.TimeUtil;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentAdminWrapper;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentAttributeView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentContactView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentDetailView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentEvaluationSectionView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentExternalDependencyView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentFilterParams;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentIntegrationView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentMediaView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentMetadataView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentPrintView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionResponseView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentQuestionView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentResourceView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewProCon;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentReviewView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentSearchView;
-import edu.usu.sdl.openstorefront.web.rest.model.ComponentTrackingWrapper;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.rest.model.RequiredForComponent;
-import edu.usu.sdl.openstorefront.web.rest.model.TagView;
-import edu.usu.sdl.openstorefront.web.viewmodel.LookupModel;
-import edu.usu.sdl.openstorefront.web.viewmodel.RestErrorModel;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -421,24 +423,7 @@ public class ComponentRESTResource
 		componentTagExample.setActiveStatus(Component.ACTIVE_STATUS);
 
 		List<ComponentTag> tags = service.getPersistenceService().queryByExample(ComponentTag.class, componentTagExample);
-		if (!tags.isEmpty()) {
-
-			tags.forEach(tag -> {
-				TagView tagView = new TagView();
-				tagView.setTagId(tag.getTagId());
-				tagView.setText(tag.getText());
-				tagView.setCreateDts(tag.getCreateDts());
-				tagView.setCreateUser(tag.getCreateUser());
-				tagView.setComponentId(tag.getComponentId());
-				String componentName = service.getComponentService().getComponentName(tag.getComponentId());
-				if (componentName != null) {
-					tagView.setComponentName(componentName);
-				} else {
-					tagView.setComponentName("Missing Component (Orphaned Tag)");
-				}
-				views.add(tagView);
-			});
-		}
+		views.addAll(TagView.toView(tags));
 
 		GenericEntity<List<TagView>> entity = new GenericEntity<List<TagView>>(views)
 		{
@@ -621,7 +606,7 @@ public class ComponentRESTResource
 		//Track Views
 		if (componentDetail != null || componentPrint != null) {
 			ComponentTracking componentTracking = new ComponentTracking();
-			componentTracking.setClientIp(SecurityUtil.getClientIp(request));
+			componentTracking.setClientIp(NetworkUtil.getClientIp(request));
 			componentTracking.setComponentId(componentId);
 			componentTracking.setEventDts(TimeUtil.currentDate());
 			componentTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
@@ -1234,6 +1219,7 @@ public class ComponentRESTResource
 	public Response saveComponentEvaluationSections(
 			@PathParam("id")
 			@RequiredParam String componentId,
+			@DataType(ComponentEvaluationSection.class)
 			@RequiredParam List<ComponentEvaluationSection> sections)
 	{
 		ValidationResult allValidationResult = new ValidationResult();
@@ -2423,6 +2409,7 @@ public class ComponentRESTResource
 		componentReview.setTitle(review.getTitle());
 		componentReview.setUserTimeCode(review.getUserTimeCode());
 		componentReview.setUserTypeCode(review.getUserTypeCode());
+		componentReview.setSecurityMarkingType(review.getSecurityMarkingType());
 
 		List<ComponentReviewPro> pros = new ArrayList<>();
 		for (ComponentReviewProCon pro : review.getPros()) {
@@ -2730,6 +2717,19 @@ public class ComponentRESTResource
 	}
 
 	@GET
+	@APIDescription("Get all the tag list for a specified component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(TagView.class)
+	@Path("/{id}/tagsview")
+	public List<TagView> getComponentTagView(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		List<ComponentTag> tags = service.getComponentService().getBaseComponent(ComponentTag.class, componentId);
+		return TagView.toView(tags);
+	}
+
+	@GET
 	@APIDescription("Get a tag for a component")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTag.class)
@@ -2904,6 +2904,99 @@ public class ComponentRESTResource
 	}
 	// </editor-fold>
 
+	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource Relationships section">
+	@GET
+	@APIDescription("Get all direct relationship for a specified component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentRelationshipView.class)
+	@Path("/{id}/relationships")
+	public Response getComponentRelationships(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@BeanParam FilterQueryParams filterQueryParams)
+	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		ComponentRelationship componentRelationship = new ComponentRelationship();
+		componentRelationship.setComponentId(componentId);
+		componentRelationship.setActiveStatus(filterQueryParams.getStatus());
+		List<ComponentRelationship> relationships = componentRelationship.findByExample();
+		relationships = filterQueryParams.filter(relationships);
+		List<ComponentRelationshipView> views = ComponentRelationshipView.toViewList(relationships);
+
+		GenericEntity<List<ComponentRelationshipView>> entity = new GenericEntity<List<ComponentRelationshipView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Get a relationship entity for a specified component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentRelationship.class)
+	@Path("/{id}/relationships/{relationshipId}")
+	public Response getComponentRelationship(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("relationshipId")
+			@RequiredParam String relationshipId)
+	{
+		ComponentRelationship relationshipExample = new ComponentRelationship();
+		relationshipExample.setComponentRelationshipId(relationshipId);
+		relationshipExample.setComponentId(componentId);
+		return sendSingleEntityResponse(relationshipExample.find());
+	}
+
+	@POST
+	@APIDescription("Save a new component relationship")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(ComponentRelationship.class)
+	@Path("/{id}/relationships")
+	public Response addComponentRelationship(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam ComponentRelationship relationship)
+	{
+
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+
+		//check that the component exists
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+		relationship.setComponentId(componentId);
+		if (component != null) {
+			ValidationModel validationModel = new ValidationModel(relationship);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				relationship = service.getComponentService().saveComponentRelationship(relationship);
+
+				return Response.created(URI.create("v1/resource/components/"
+						+ relationship.getComponentId()
+						+ "/relationships/"
+						+ relationship.getComponentRelationshipId())).entity(relationship).build();
+			}
+		}
+
+		return response;
+	}
+
+	@DELETE
+	@APIDescription("Delete a relationship for a specified component")
+	@Path("/{id}/relationships/{relationshipId}")
+	public void deleteRelationship(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("relationshipId")
+			@RequiredParam String relationshipId)
+	{
+		service.getComponentService().deleteBaseComponent(ComponentRelationship.class, relationshipId);
+	}
+
+	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
 	@RequireAdmin
@@ -3345,18 +3438,5 @@ public class ComponentRESTResource
 		}
 	}
 
-	private Response ownerCheck(StandardEntity entity)
-	{
-		if (SecurityUtil.isCurrentUserTheOwner(entity)
-				|| SecurityUtil.isAdminUser()) {
-			return null;
-		} else {
-			return Response.status(Response.Status.FORBIDDEN)
-					.type(MediaType.TEXT_PLAIN)
-					.entity("User cannot modify resource.")
-					.build();
-		}
-	}
 	// </editor-fold>
-
 }

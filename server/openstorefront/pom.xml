@@ -3,14 +3,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront</artifactId>
-	<version>1.4</version>
+	<version>1.5</version>
 	<packaging>pom</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
 	</properties>
 	<modules>
-	 <module>openstorefront-web</module>
-	 <module>apiclient</module>
+		<module>openstorefront-web</module>
+		<module>apiclient</module>
+		<module>wso2client</module>
+		<module>openstorefront-core</module>
+		<module>openstorefront-plugin</module>
 	</modules>
 	
 	<dependencies>
@@ -26,16 +29,6 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.9.2</version>			  
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.1</version>			  
-		</dependency>	  	
 	</dependencies>
     <name>openstorefront</name>
 </project>

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.web.rest;
 
 import javax.ws.rs.ApplicationPath;
@@ -25,7 +24,9 @@ import javax.ws.rs.core.Application;
  */
 @ApplicationPath("api")
 public class RestConfiguration
-	extends Application
+		extends Application
 {
-	
+
+	public static final String APPLICATION_BASE_PATH = "api";
+
 }

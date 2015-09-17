@@ -15,9 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.test.system;
 
-import edu.usu.sdl.openstorefront.service.query.QueryByExample;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSection;
-import edu.usu.sdl.openstorefront.storage.model.ComponentEvaluationSectionPk;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
+import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSectionPk;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 
 /**

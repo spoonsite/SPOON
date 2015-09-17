@@ -15,17 +15,18 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.doc.APIDescription;
-import edu.usu.sdl.openstorefront.doc.DataType;
-import edu.usu.sdl.openstorefront.doc.RequireAdmin;
-import edu.usu.sdl.openstorefront.doc.RequiredParam;
-import edu.usu.sdl.openstorefront.storage.model.Report;
-import edu.usu.sdl.openstorefront.storage.model.ScheduledReport;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportType;
+import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.ScheduledReportView;
+import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import edu.usu.sdl.openstorefront.web.rest.model.FilterQueryParams;
-import edu.usu.sdl.openstorefront.web.rest.model.ScheduledReportView;
 import java.net.URI;
 import java.util.List;
 import javax.ws.rs.BeanParam;
@@ -52,7 +53,6 @@ public class ScheduledReportResource
 {
 
 	@GET
-	@RequireAdmin
 	@APIDescription("Gets scheduled report records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ScheduledReportView.class)
@@ -65,6 +65,10 @@ public class ScheduledReportResource
 
 		ScheduledReport reportExample = new ScheduledReport();
 		reportExample.setActiveStatus(filterQueryParams.getStatus());
+		if (SecurityUtil.isAdminUser() == false) {
+			reportExample.setCreateUser(SecurityUtil.getCurrentUserName());
+		}
+
 		List<ScheduledReport> reports = service.getPersistenceService().queryByExample(ScheduledReport.class, reportExample);
 		reports = filterQueryParams.filter(reports);
 
@@ -75,7 +79,6 @@ public class ScheduledReportResource
 	}
 
 	@GET
-	@RequireAdmin
 	@APIDescription("Gets a schedule report record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Report.class)
@@ -87,11 +90,14 @@ public class ScheduledReportResource
 		ScheduledReport reportExample = new ScheduledReport();
 		reportExample.setScheduleReportId(scheduleReportId);
 		ScheduledReport report = service.getPersistenceService().queryOneByExample(ScheduledReport.class, reportExample);
-		return sendSingleEntityResponse(report);
+		Response response = ownerCheck(report);
+		if (response == null) {
+			response = sendSingleEntityResponse(report);
+		}
+		return response;
 	}
 
 	@POST
-	@RequireAdmin
 	@APIDescription("Schedules a new Report")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postAlert(ScheduledReport scheduledReport)
@@ -100,7 +106,6 @@ public class ScheduledReportResource
 	}
 
 	@PUT
-	@RequireAdmin
 	@APIDescription("Updates a Scheduled Report Record")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -114,8 +119,12 @@ public class ScheduledReportResource
 		if (existing == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-		scheduledReport.setScheduleReportId(scheduledReportId);
-		return handleSaveScheduledReport(scheduledReport, false);
+		Response response = ownerCheck(existing);
+		if (response == null) {
+			scheduledReport.setScheduleReportId(scheduledReportId);
+			return handleSaveScheduledReport(scheduledReport, false);
+		}
+		return response;
 	}
 
 	private Response handleSaveScheduledReport(ScheduledReport scheduledReport, boolean post)
@@ -124,7 +133,19 @@ public class ScheduledReportResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			service.getReportService().saveScheduledReport(scheduledReport);
+			//check that user can run that report
+			ReportType reportType = service.getLookupService().getLookupEnity(ReportType.class, scheduledReport.getReportType());
+			boolean run = true;
+			if (reportType.getAdminOnly()) {
+				if (SecurityUtil.isAdminUser() == false) {
+					run = false;
+				}
+			}
+			if (run) {
+				service.getReportService().saveScheduledReport(scheduledReport);
+			} else {
+				return Response.status(Response.Status.FORBIDDEN).build();
+			}
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -136,7 +157,6 @@ public class ScheduledReportResource
 	}
 
 	@POST
-	@RequireAdmin
 	@APIDescription("Activates a Scheduled Report")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ScheduledReport.class)
@@ -144,28 +164,53 @@ public class ScheduledReportResource
 	public Response activatesAlert(
 			@PathParam("id") String scheduleReportId)
 	{
-		ScheduledReport scheduledReport = service.getPersistenceService().setStatusOnEntity(ScheduledReport.class, scheduleReportId, ScheduledReport.ACTIVE_STATUS);
+		ScheduledReport scheduledReport = new ScheduledReport();
+		scheduledReport.setScheduleReportId(scheduleReportId);
+		scheduledReport = scheduledReport.find();
+		if (scheduledReport != null) {
+			Response response = ownerCheck(scheduledReport);
+			if (response == null) {
+				scheduledReport = service.getPersistenceService().setStatusOnEntity(ScheduledReport.class, scheduleReportId, ScheduledReport.ACTIVE_STATUS);
+				return sendSingleEntityResponse(scheduledReport);
+			} else {
+				return response;
+			}
+		}
 		return sendSingleEntityResponse(scheduledReport);
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Inactivates a Scheduled Report")
 	@Path("/{id}")
 	public void inactiveAlert(
 			@PathParam("id") String scheduleReportId)
 	{
-		service.getPersistenceService().setStatusOnEntity(ScheduledReport.class, scheduleReportId, ScheduledReport.INACTIVE_STATUS);
+		ScheduledReport scheduledReport = new ScheduledReport();
+		scheduledReport.setScheduleReportId(scheduleReportId);
+		scheduledReport = scheduledReport.find();
+		if (scheduledReport != null) {
+			Response response = ownerCheck(scheduledReport);
+			if (response == null) {
+				service.getPersistenceService().setStatusOnEntity(ScheduledReport.class, scheduleReportId, ScheduledReport.INACTIVE_STATUS);
+			}
+		}
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Deletes a schedule report record")
 	@Path("/{id}/force")
 	public void deleteReport(
 			@PathParam("id") String scheduleReportId)
 	{
-		service.getReportService().deleteScheduledReport(scheduleReportId);
+		ScheduledReport scheduledReport = new ScheduledReport();
+		scheduledReport.setScheduleReportId(scheduleReportId);
+		scheduledReport = scheduledReport.find();
+		if (scheduledReport != null) {
+			Response response = ownerCheck(scheduledReport);
+			if (response == null) {
+				service.getReportService().deleteScheduledReport(scheduleReportId);
+			}
+		}
 	}
 
 }

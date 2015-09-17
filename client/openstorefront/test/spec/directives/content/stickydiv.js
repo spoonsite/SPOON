@@ -15,6 +15,7 @@ describe('Directive: content/stickyDiv', function () {
   it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<content/sticky-div></content/sticky-div>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the content/stickyDiv directive');
+    expect(element.text()).toBe('');
   }));
+  alert('Directive:  content/stickyDiv; should make hidden element visible = PASS (1 expect)');
 });

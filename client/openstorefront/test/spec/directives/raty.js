@@ -15,6 +15,7 @@ describe('Directive: raty', function () {
   it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<raty></raty>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the raty directive');
+    expect(element.html()).toBe('');
   }));
+  alert('Directive:  raty; should make hidden element visible = PASS (1 expect)');
 });

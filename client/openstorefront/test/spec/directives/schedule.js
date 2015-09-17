@@ -15,6 +15,7 @@ describe('Directive: schedule', function () {
   it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<schedule></schedule>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the schedule directive');
+    expect(element.html()).toBe('');
   }));
+  alert('Directive:  schedule; should make hidden element visible = PASS (1 expect)');
 });

@@ -63,7 +63,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   $scope.pageNumber         = 1;
   $scope.maxPageNumber      = 1;
   $scope.noDataMessage      = $sce.trustAsHtml('<p>There are no results for your search</p> <p>&mdash; Or &mdash;</p> <p>You have filtered out all of the results.</p><button class="btn btn-default" ng-click="clearFilters()">Reset Filters</button>');
-
+  $scope.showBreadCrumbs    = false;
 
   // grab what we need from the server.
 
@@ -143,16 +143,20 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $scope.selectedTab = tab;
   };
 
+  $scope.isItAnArticle = function(item){
+    return item.listingType === 'Article' || item.componentType === 'ARTICLE';
+  }
+
   $scope.getNumThings = function(article){
     if ($scope.data && $scope.data.data && $scope.data.data.length) {
       var count = 0;
       _.each($scope.data.data, function(item){
         if (article) {
-          if (item.listingType === 'Article') {
+          if ($scope.isItAnArticle(item)) {
             count++; 
           }
         } else if (!article) {
-          if (item.listingType !== 'Article')
+          if (!$scope.isItAnArticle(item))
             count++;
         }
       })

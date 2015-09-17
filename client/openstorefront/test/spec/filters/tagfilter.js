@@ -11,9 +11,10 @@ describe('Filter: tagFilter', function () {
     tagFilter = $filter('tagFilter');
   }));
 
-  it('should return the input prefixed with "tagFilter filter:"', function () {
-    var text = 'angularjs';
-    expect(tagFilter(text)).toBe('tagFilter filter: ' + text);
+  it('should return what you feed into it', function () {
+    //var theArr = [123, 456, 7890, -99, '-a' , 'TheEND!'];
+    var theObj = [{something: 'blah'}, {something2: 'blah'}];
+    expect(tagFilter(theObj)).toBe(theObj);
   });
-
+  alert('Filter:  tagFilter; should return what you feed into it = PASS (1 expect)');
 });

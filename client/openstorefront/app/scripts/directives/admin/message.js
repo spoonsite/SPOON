@@ -34,10 +34,10 @@ app.directive('message', ['$uiModal', '$draggable', 'business', function ($uiMod
       })
 
       scope.open = function(size, type, contacts, subject, message, modal){
-        
+
         modal?
         (function(size, type, contacts, subject, message, modal){
-          
+
           var draggableInstance = $draggable.open({
             alwaysontop: true,
             templateUrl: 'views/admin/component/messagesubmitter.html',
@@ -118,8 +118,56 @@ app.directive('contactList', ['$uiModal', 'business', '$q', function ($uiModal, 
       isDisabled: '@'
     },
     link: function(scope, element, attrs) {
+      scope.users = [];
 
-      
+      scope.getUsers = function(){
+        Business.userservice.getAllUserProfiles().then(function(result){
+          _.each(result.data, function(user) {
+            user.text = user.firstName + ' ' + user.lastName + ' (' + user.organization + ')';
+          })
+          scope.users = result.data;
+        }, function(result){
+          scope.users = result.data;
+        })
+        _.each(scope.contacts, function(user){
+          user.text = user.firstName + ' ' + user.lastName + ' (' + user.organization + ')';
+        })
+      }
+      scope.getUsers();
+
+      scope.checkTagsList = function(query, list, source) {
+        var deferred = $q.defer();
+        var subList = null;
+        if (query === ' ') {
+          subList = _.reject(source, function(item) {
+            return !!(_.find(list, {'text': item}));
+          });
+        } else {
+          subList = _.filter(source, function(item) {
+            if (item && typeof item === 'object'){
+              return (item.email.toLowerCase().indexOf(query.toLowerCase()) > -1 || item.text.toLowerCase().indexOf(query.toLowerCase()) > -1);
+            } else {
+              return null;
+            }
+          });
+        }
+        deferred.resolve(subList);
+        return deferred.promise;
+      };
+
+      scope.addTag = function(tag, selectedUsers){
+        if (typeof tag === 'object' && !(tag.email || tag.firstName || tag.lastName)) {
+          var index = _.indexOf(selectedUsers, tag);
+          if (index && utils.EMAIL_REGEXP.test(tag.text)) {
+            selectedUsers[index].firstName = '';
+            selectedUsers[index].lastName = 'Unknown';
+            selectedUsers[index].email = tag.text;
+          } else {
+            selectedUsers.splice(-1, index);
+          }
+        }
+      }
+
       var oldContacts;
       scope.disableTo = true;
       scope.getContactList = function() {
@@ -414,9 +462,9 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', '
     }) 
   } else if ($scope.type === 'users') {
     Business.userservice.getAllUserProfiles().then(function(result) {
-      $scope.userProfiles = result? result: [];
-      _.each($scope.userProfiles, function(user){
-        console.log('user', user);
+      
+      $scope.userProfiles = result;
+      _.each($scope.userProfiles.data, function(user){
         if (user && typeof user === 'object') {
           user.text = user.firstName + ' ' + user.lastName + ' (' + user.organization + ')';
         }
@@ -424,11 +472,12 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', '
       if ($scope.data.selectedUsers) {
         _.each ($scope.data.selectedUsers, function(user){
           user.text = user.firstName + ' ' + user.lastName + ' (' + user.organization + ')';
-          var found = _.find($scope.userProfiles, {'username': user.username});
+          var found = _.find($scope.userProfiles.data, {'username': user.username});
           if (found) {
-            var index = _.indexOf($scope.userProfiles, found);
+            var index = _.indexOf($scope.userProfiles.data, found);
             if (index > -1) {
-              $scope.userProfiles.splice(index, 1);
+              $scope.userProfiles.data.splice(index, 1);
+              $scope.userProfiles.totalNumber--;
             }
           }
         })
@@ -437,7 +486,7 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', '
     }, function(){
       //there were no profiles?
     })
-  }
+  } //
 
   $scope.ok = function (result) {
     if (!result && $scope.type === 'users') {
@@ -467,11 +516,12 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', '
       found = false;
     }
     if (!found) {
-      var found = _.find($scope.userProfiles, {'username': tag.username});
+      var found = _.find($scope.userProfiles.data, {'username': tag.username});
       if (found) {
-        var index = _.indexOf($scope.userProfiles, found);
+        var index = _.indexOf($scope.userProfiles.data, found);
         if (index > -1) {
-          $scope.userProfiles.splice(index, 1);
+          $scope.userProfiles.data.splice(index, 1);
+          $scope.userProfiles.totalNumber--;
         }
       }
       $scope.data.selectedUsers.push(tag);
@@ -485,7 +535,8 @@ app.controller('contactCtrl',['$scope', '$uiModalInstance', 'type','contacts', '
   $scope.removeTag = function(tag, tags){
     var found = _.find($scope.data.selectedUsers, {'username': tag.username});
     if (found) {
-      $scope.userProfiles.push(found);
+      $scope.userProfiles.data.push(found);
+      $scope.userProfiles.totalNumber++;
       var index = _.indexOf($scope.data.selectedUsers, found);
       if (index > -1) {
         $scope.data.selectedUsers.splice(index, 1);

@@ -42,7 +42,7 @@
   <!-- <div class="component-div-title">Component Reviews</div> -->
   <div ng-class="getIsUpdated('reviews'+$index)? 'updatedForUser': ''" id="reviews{{$index}}Update" class="container component2-div" ng-repeat="review in details.details.reviews">
     <div class="col-sm-12">
-      <H3 style="margin-top: 0px"><strong>{{review.title}} &mdash;</strong> <button title="Delete" class="btn btn-sm btn-default" ng-if="review.username === user.info.username || user.info.admin === true" ng-click="deleteReview(review.reviewId)"><i class="fa fa-trash"></i></button><button title="Message reviewer" class="btn btn-sm btn-default" ng-if="user.info.admin === true" ng-click="messageUser(review)"><i class="fa fa-envelope"></i></button>
+      <H3 style="margin-top: 0px"><strong>{{review.title}}<classification ls style="font-weight:normal" ng-model="review"></classification>&nbsp;&mdash;</strong> <button title="Delete" class="btn btn-sm btn-default" ng-if="review.username === user.info.username || user.info.admin === true" ng-click="deleteReview(review.reviewId)"><i class="fa fa-trash"></i></button><button title="Message reviewer" class="btn btn-sm btn-default" ng-if="user.info.admin === true" ng-click="messageUser(review)"><i class="fa fa-envelope"></i></button>
         <raty class="large-raty" read-only id="star{{$index}}" style="min-width:110px; height: 100%; " score="{{review.rating}}" number="5" path="images/raty/" data-container="star{{$index}}">
         </raty>
         <strong  ng-if="review.recommend" style="font-size: 14px;">&dash;I would recommend this component&dash;</strong>

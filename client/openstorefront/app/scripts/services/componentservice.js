@@ -1055,6 +1055,92 @@ componentservice.saveAttribute = function (componentId, componentAttribute) {
 };     
 //</editor-fold> 
 
+//<editor-fold   desc="Relationships">
+componentservice.getComponentRelationships = function (componentId, queryParamFilter) {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/relationships?' + queryParamFilter.toQuery()
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
+  }).error(function (data, status, headers, config) {
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+};  
+
+componentservice.getComponentRelationship = function (componentId, relationshipId) {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/relationships/' + encodeURIComponent(relationshipId)
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
+  }).error(function (data, status, headers, config) {
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+}; 
+
+componentservice.deleteRelationship = function (componentId, relationshipId) {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'DELETE',
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/relationships/' + encodeURIComponent(relationshipId)
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
+  }).error(function (data, status, headers, config) {
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+};   
+
+componentservice.saveRelationship = function (componentId, relationship) {
+  var deferred = $q.defer();
+  $http({
+    'method': 'POST',
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/relationships',
+    data: relationship
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
+  }).error(function (data, status, headers, config) {
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+};     
+//</editor-fold> 
+
 //<editor-fold  desc="Common Base Entity">
 
 componentservice.getComponentSubEntity = function (loadOptions) {
@@ -1281,6 +1367,28 @@ componentservice.getComponentTags = function (componentId) {
   $http({
     'method': 'GET',
     'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/tags'
+  }).success(function (data, status, headers, config) { /*jshint unused:false*/
+    if (data && isNotRequestError(data)) {
+      removeError();
+      deferred.resolve(data);
+    } else {
+      deferred.resolve(data);
+    }
+  }).error(function (data, status, headers, config) { /*jshint unused:false*/
+    showServerError(data, 'body');
+    deferred.reject('There was an error');
+  });
+
+  return deferred.promise;
+};
+
+
+componentservice.getComponentTagViews = function (componentId) {
+  var deferred = $q.defer();
+
+  $http({
+    'method': 'GET',
+    'url': 'api/v1/resource/components/' + encodeURIComponent(componentId) + '/tagsview'
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     if (data && isNotRequestError(data)) {
       removeError();

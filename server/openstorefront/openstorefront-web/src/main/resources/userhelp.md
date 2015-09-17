@@ -118,20 +118,20 @@ FraMewoRk
 
 Avoid searching with noise words, unless they are part of a
 double-quote-enclosed exact phrase search. Some common noise words
-include: a, an, and, are, as, at, be, but, by, for, if, in, into, is,
+include: a, an, and, are, as, at, be, but, by, for, if, in, into, is,
 it, no, not, of, on, or, such, that, the, their, then, there, these,
 they, this, to, was, will, with.
 
-Search example: create a common framework
+Search example: create a common framework
 
-This search works, but the 'a' will return more results than are desired
+This search works, but the 'a' will return more results than are desired
 since results with the word 'a' will be returned in the search.
 
-Search example: create common framework
+Search example: create common framework
 
 This search works, and will return fewer, more specific results. It will
-return *only* those places where the three words *create*, *common*,
-and *framework* are found.
+return *only* those places where the three words *create*, *common*,
+and *framework* are found.
 
 The only time that including noise words may be recommended is when
 performing an exact search and the words are a necessary part of the
@@ -480,7 +480,12 @@ messages – just messages going forward.
 ## 3.2 Components *
 ----------
 
-Components can be managed using the Components Tool.
+
+
+### 3.2.1 Managing *
+----------
+
+Components can be managed using the Components Tool.  Components are created by an application administrator.
 
 **To create a component:**
 
@@ -524,7 +529,7 @@ Inactive components are not visible to or searchable by users.
 **To remove a component:**
 
 **WARNING:** This is a hard delete and it will remove all associated data
-(media, user reviews, question…etc.)
+(media, user reviews, questions, etc.)
 
 1.  Click the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to remove.
 
@@ -551,7 +556,7 @@ Inactive components are not visible to or searchable by users.
     new task will be created to handle the import. The application will
     notify the admin when the task is complete or if there was an issue.
 
-### 3.2.1 Approval *
+### 3.2.2 Approval *
 ------
 
 Approved components are searchable by all users. Pending/Not submitted
@@ -574,7 +579,53 @@ the home page.
 step above and selecting **Pending**. Marking the component as
 **Pending** makes it unapproved.
 
-### 3.2.2 Resources *
+
+### 3.2.3 General *
+------
+
+General information about the component is found here such as the Name, 
+Description, Organization, etc.
+
+**To edit General fields:**
+
+1.  Navigate to the Component Tool.
+
+2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
+
+3.  Click the **General** tab.
+
+**Other Fields**  
+a. Approval State:  Pending | Approved | Not Submitted  
+b. Component Type:  ARTICLE *(allows for watches to be put on the article)* | Component  
+c. Security Type:   *select the security level of the component or article*
+  
+
+### 3.2.4 Relationships *
+------
+
+Relationships between components can be added as a Relationship Type to 
+a Relationship Target with a Security Type as well.  
+ 
+**To add a relationship:**
+
+1.  Navigate to the Component Tool.
+
+2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
+
+3.  Click the **Relationship** tab.
+
+4.  Fill in the form and press the Add button.  You will see the new relationship below.  
+
+**NOTE:** To view the graphical representation of relationships, go to
+the *DETAILS* tab of that component (in the search results) and scroll
+to the bottom to the Component Relationships section.  The relationship
+can be viewed either in either a graphic or table form.
+
+![edit](../../../../../../client/openstorefront/app/images/help/graphic.png)  
+![edit](../../../../../../client/openstorefront/app/images/help/table.png)
+
+
+### 3.2.5 Resources *
 ------
 
 Resources are links to documentation, the home page, sources, etc. that
@@ -596,7 +647,7 @@ they can be hosted locally.
 Inactivating makes it not visible to the users. However, the resource is
 still there so it can be reactivated.
 
-### 3.2.3 Media *
+### 3.2.6 Media *
 ------
 
 Media provides visual/audio descriptions of the component. A common
@@ -619,7 +670,7 @@ hosted externally.
 it not visible to the users. However, the media is still there so it can
 be reactivated.
 
-### 3.2.4 Evaluation *
+### 3.2.7 Evaluation *
 ------
 
 Components may be evaluated and, if so, that evaluation information may
@@ -644,7 +695,7 @@ sections until a value is entered. The existing column shows the value
 that is currently saved, if any. To remove the value click the delete
 ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) icon.
 
-### 3.3  Attributes *
+## 3.3  Attributes *
 ----------
 
 Attributes are used to group and filter catalog items and articles.
@@ -654,7 +705,7 @@ Attributes are used to group and filter catalog items and articles.
 
 Attribute Types represent a related group of specific categories or
 represent a single attribute of a listing (Eg. "Funded" would be a type
-with the corresponding value "Yes" or "No"). A type may have many codes.
+with the corresponding value "Yes" or "No"). A type may have many codes.  
 
 Deleting a type will delete the associated codes and component
 attributes. Inactivating a type will inactivate associated data such as
@@ -883,6 +934,10 @@ notification or not. The tools also allow for manually processing the
 queue immediately, but in most cases this is not needed or desired as
 the automatic process will take handling the message queue.
 
+Watches can be placed on Components or Articles by selecting either in
+the drop-down "Component Type" in the General tab when editing or adding
+a component.
+
 **NOTE:** Other user messages besides watches, such as alerts, flow
 through the message queue as well.
 
@@ -1080,6 +1135,65 @@ System Tools and their Purpose:
 -  **System Configuration** -     Provides a read-only view in the current properties.
 -  **Logging** -                  Allows for adjusting log levels at run time to log more/less information from a software component. **NOTE:** Logs are hierarchically organized so set a level from a parent will affect all children who are set to delegate to the parent logger. Loggers under: edu.usu.sdl.openstorefront are application specific. A logger will only appear when the software component is loaded.
 -  **Status** -                   Shows the run status of the application (i.e. memory, load, thread status and properties). Refer to Java platform documentation for the interpretation of the information.
+
+## 3.12 Organizations *
+---------------
+
+ Organizations provide information on specific organizations that are linked with the components listed on the site. The information these objects contain include:
+
+ - **Description** -            What the organization does
+ - **Type** -                   The type of organization (i.e. Commercial Business, Contractor, US Organization, etc.)
+ - **Website** -                The website for the specific organization if provided
+ - **Address** -                The address for the organization
+ - **Contact Information** -    A way to contact the organization
+
+### 3.12.1 Managing
+--------------
+
+**To add a new organization:**
+
+1.  Click **Add New Organization** from the Organizations section of the Admin Tools.
+
+2.  Enter the information and click **Save Changes**.
+
+**Note:** When a new component is added if an unrecognized organization is added, it will automatically be saved to the 
+  organization list.  However, details such as the Description and Main Contact Information will need to be added here.
+
+**To edit an organization**
+
+1.  From Organizations in the Admin Tools, select an organization.
+
+2.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) next to the organization.
+
+    a.  Update Organization information as desired including:  Name, Description, Organization Link, and Organization Type.
+
+    b.  Update Main Contact information as desired including:  Contact Name, Phone Number, Email, Agency, Department, 
+         Address, and Security Type.
+    
+3.  When finished, click **Save Changes**.
+
+**To remove an organization:**
+
+1.  From Organizations in the Admin Tools, select an organization.
+
+2.  Click on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the organization.
+
+3.  Confirm that you wish to delete the organization by cliking **OK**.
+
+
+**"No Organization" References:**
+This displays a list of references where no organization is listed.  
+
+**Run Extract:**
+This runs a query to get current component and organization information to update the table.  
+
+**Show Contact info:**
+Clicking this button ![Show Contact Info](../../../../../../client/openstorefront/app/images/help/showcontactinfo.png)
+ shows the Agency, Department, Contact Name, Contact Phone, and Contact Email for the organization.
+
+**View References:**
+Clicking this icon ![View References](../../../../../../client/openstorefront/app/images/help/viewreferences.png)
+ shows all of the references for the organization.  
 
 # 4.  Glossary
 ----------

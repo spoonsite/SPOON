@@ -3813,12 +3813,21 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
 
   .filter('typeaheadHighlight', function() {
 
-    function escapeRegexp(queryToEscape) {
-      return queryToEscape.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
+    function escapeRegexp(queryToEscape, index) {
+      return queryToEscape.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$' + index + 1);
     }
 
+    // modified to highlight ALL occurances of any string in the query seperated by ' '
     return function(matchItem, query) {
-      return query ? ('' + matchItem).replace(new RegExp(escapeRegexp(query), 'gi'), '<strong>$&</strong>') : matchItem;
+      if (query) {
+        query = query.split(' ');
+        var escapedQuery = '';
+        for(var i = 0; i < query.length; i++){
+          escapedQuery += ((i + 1) !== query.length) ? escapeRegexp(query[i], i) + '|' : escapeRegexp(query[i], i);
+        }
+        matchItem = ('' + matchItem).replace(new RegExp(escapedQuery, 'gi'), '<strong>$&</strong>')
+      }
+      return matchItem;
     };
   });
 

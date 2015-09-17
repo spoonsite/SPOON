@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
+import edu.usu.sdl.openstorefront.doc.security.CustomRequireHandler;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ResourceInfo;
 

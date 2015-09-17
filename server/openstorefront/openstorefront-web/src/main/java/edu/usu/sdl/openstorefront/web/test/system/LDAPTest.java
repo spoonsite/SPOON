@@ -15,10 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.web.test.system;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.service.manager.LDAPManager;
 import edu.usu.sdl.openstorefront.service.manager.model.LdapRecord;
 import edu.usu.sdl.openstorefront.service.manager.resource.LdapClient;
-import edu.usu.sdl.openstorefront.util.StringProcessor;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 
 /**

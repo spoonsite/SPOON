@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.test.system;
 
-import edu.usu.sdl.openstorefront.storage.model.TestEntity;
+import edu.usu.sdl.openstorefront.core.entity.TestEntity;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.Arrays;
 import java.util.List;
@@ -63,7 +63,7 @@ public class DBQueryTest
 		TestEntity testEntityExample = new TestEntity();
 		testEntityExample.setActiveStatus(TestEntity.ACTIVE_STATUS);
 
-		List<TestEntity> testActiveRecords = service.getPersistenceService().queryByExample(TestEntity.class, testEntityExample);
+		List<TestEntity> testActiveRecords = testEntityExample.findByExample();
 		testActiveRecords.stream().forEach(record -> {
 			results.append(String.join("-", record.getCode(), record.getDescription())).append("<br>");
 		});

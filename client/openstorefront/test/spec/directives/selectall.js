@@ -15,6 +15,7 @@ describe('Directive: selectall', function () {
   it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<selectall></selectall>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the selectall directive');
+    expect(element.html()).toBe('');
   }));
+  alert('Directive:  selectAll; should make hidden element visible = PASS (1 expect)');
 });

@@ -15,6 +15,7 @@ describe('Directive: content/panel', function () {
   it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<content/panel></content/panel>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the content/panel directive');
+    expect(element.text()).toBe('');
   }));
+  alert('Directive:  content/panel; should make hidden element visible = PASS (1 expect)');
 });

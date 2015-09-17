@@ -15,10 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.service.manager.PropertiesManager;
-import edu.usu.sdl.openstorefront.storage.model.UserProfile;
-import edu.usu.sdl.openstorefront.util.SecurityUtil;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;

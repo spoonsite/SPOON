@@ -85,7 +85,7 @@ limitations under the License.
             <ul style="list-style-type:square;">
               <li class="imitateLink" style="padding-bottom: 20px;" ng-repeat="highlight in highlights">      
                 <a href="{{highlight.link}}">
-                  <span class="listing_short_title_text">{{highlight.title}}</span>     
+                  <span class="listing_short_title_text">{{highlight.title}}<classification ls style="font-size:12px; font-weight:normal"  ng-model="highlight"></classification></span>     
                 </a>
                 <div read-more>
                   <div style="font-size: 12px; color: #555555;" dynamichtml="highlight.description">
@@ -108,13 +108,13 @@ limitations under the License.
             <li ng-repeat="item in recentlyAdded">
               <div ng-if="item.listingType === 'ARTICLE'" class="imitateLink" ng-click="goToLanding(item.articleAttributeType, item.articleAttributeCode)">
                 <a>
-                  <span class="listing_short_title_text">{{item.name}}</span>
+                  <span class="listing_short_title_text">{{item.name}}<classification ls style="font-size:12px; font-weight:normal"  ng-model="item"></classification></span>
                 </a>
                 <div class="shortDescription"  style="font-size: 12px; color: #555555;"><span ng-bind-html="item.description"></span></div>
               </div>
               <div ng-if="item.listingType === 'COMPONENT'" class="imitateLink" ng-click="goTo('single', {id: item.componentId})">
                 <a>
-                  <span class="listing_short_title_text">{{item.name}}</span>
+                  <span class="listing_short_title_text">{{item.name}}<classification ls style="font-size:12px; font-weight:normal"  ng-model="item"></classification></span>
                 </a>
                 <div class="shortDescription"  style="font-size: 12px; color: #555555;"><span ng-bind-html="item.description"></span></div>
               </div>
