@@ -4,12 +4,12 @@
     <parent>
     <artifactId>openstorefront-plugin</artifactId>
     <groupId>edu.usu.sdl</groupId>
-    <version>1.5</version>
+    <version>1.6</version>
   </parent>
 
     <groupId>edu.usu.sdl</groupId>
     <artifactId>openstorefront-plugin-wso2</artifactId>
-    <version>1.5</version>
+    <version>1.6</version>
     <packaging>bundle</packaging>
 
     <name>openstorefront-plugin-wso2</name>
