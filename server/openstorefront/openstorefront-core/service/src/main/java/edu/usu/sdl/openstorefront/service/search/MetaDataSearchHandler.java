@@ -47,9 +47,6 @@ public class MetaDataSearchHandler
 			if (StringUtils.isBlank(searchElement.getKeyField())) {
 				validationResult.getRuleResults().add(getRuleResult("keyfield", "Required"));
 			}
-			if (StringUtils.isBlank(searchElement.getKeyValue())) {
-				validationResult.getRuleResults().add(getRuleResult("keyValue", "Required"));
-			}
 		}
 
 		return validationResult;
@@ -72,24 +69,26 @@ public class MetaDataSearchHandler
 			}
 			componentMetadata.setLabel(label);
 
-			String likeValue = null;
-			switch (searchElement.getStringOperation()) {
-				case EQUALS:
-					componentMetadata.setValue(searchElement.getKeyValue());
-					break;
-				default:
-					likeValue = searchElement.getStringOperation().toQueryString(searchElement.getKeyValue());
-					break;
-			}
-
-			if (likeValue != null) {
-				ComponentMetadata componentMetadataLike = new ComponentMetadata();
-				if (searchElement.getCaseInsensitive()) {
-					likeValue = likeValue.toLowerCase();
-					queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+			if (StringUtils.isNotBlank(searchElement.getKeyValue())) {
+				String likeValue = null;
+				switch (searchElement.getStringOperation()) {
+					case EQUALS:
+						componentMetadata.setValue(searchElement.getKeyValue());
+						break;
+					default:
+						likeValue = searchElement.getStringOperation().toQueryString(searchElement.getKeyValue());
+						break;
 				}
-				componentMetadataLike.setValue(likeValue);
-				queryByExample.setLikeExample(componentMetadataLike);
+
+				if (likeValue != null) {
+					ComponentMetadata componentMetadataLike = new ComponentMetadata();
+					if (searchElement.getCaseInsensitive()) {
+						likeValue = likeValue.toLowerCase();
+						queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+					}
+					componentMetadataLike.setValue(likeValue);
+					queryByExample.setLikeExample(componentMetadataLike);
+				}
 			}
 
 			List<ComponentMetadata> metadata = serviceProxy.getPersistenceService().queryByExample(ComponentMetadata.class, queryByExample);
