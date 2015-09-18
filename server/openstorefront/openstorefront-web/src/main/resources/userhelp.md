@@ -1147,7 +1147,7 @@ System Tools and their Purpose:
  - **Address** -                The address for the organization
  - **Contact Information** -    A way to contact the organization
 
-### 3.12.1 Managing
+### 3.12.1 Managing *
 --------------
 
 **To add a new organization:**
