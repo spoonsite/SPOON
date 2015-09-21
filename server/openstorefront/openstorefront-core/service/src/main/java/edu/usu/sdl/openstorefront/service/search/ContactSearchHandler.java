@@ -76,12 +76,30 @@ public class ContactSearchHandler
 			QueryByExample queryByExample = new QueryByExample(componentContact);
 			try {
 				//all fields are strings
-				String fieldValue = searchElement.getValue();
-				if (searchElement.getCaseInsensitive()) {
-					fieldValue = fieldValue.toLowerCase();
-					queryByExample.getExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+				String likeValue = null;
+				switch (searchElement.getStringOperation()) {
+					case EQUALS:
+						String value = searchElement.getValue();
+						if (searchElement.getCaseInsensitive()) {
+							queryByExample.getExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+							value = value.toLowerCase();
+						}
+						field.set(componentContact, value);
+						break;
+					default:
+						likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
+						break;
 				}
-				field.set(componentContact, fieldValue);
+
+				if (likeValue != null) {
+					ComponentContact componentContactLike = new ComponentContact();
+					if (searchElement.getCaseInsensitive()) {
+						likeValue = likeValue.toLowerCase();
+						queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+					}
+					field.set(componentContactLike, likeValue);
+					queryByExample.setLikeExample(componentContactLike);
+				}
 			} catch (IllegalArgumentException | IllegalAccessException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to set value on field for a contact search.", ex);
 			}
