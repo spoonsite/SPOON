@@ -82,14 +82,15 @@ public class AdvanceSearchTest
 		searchElement.setValue("Visualization");
 		searchElement.setCaseInsensitive(true);
 		searchElement.setStringOperation(SearchOperation.StringOperation.STARTS_LIKE);
+		searchElement.setMergeCondition(SearchOperation.MergeCondition.OR);
 		searchModel.getSearchElements().add(searchElement);
 
-		searchModel = new SearchModel();
 		searchElement = new SearchElement();
 		searchElement.setSearchType(SearchOperation.SearchType.TAG);
 		searchElement.setValue("map");
 		searchElement.setCaseInsensitive(true);
 		searchElement.setStringOperation(SearchOperation.StringOperation.STARTS_LIKE);
+		searchElement.setMergeCondition(SearchOperation.MergeCondition.OR);
 		searchModel.getSearchElements().add(searchElement);
 
 		doSearch(searchModel);
@@ -99,7 +100,7 @@ public class AdvanceSearchTest
 		searchElement = new SearchElement();
 		searchElement.setSearchType(SearchOperation.SearchType.CONTACT);
 		searchElement.setField("email");
-		searchElement.setValue("a");
+		searchElement.setValue("c");
 		searchElement.setCaseInsensitive(true);
 		searchElement.setStringOperation(SearchOperation.StringOperation.STARTS_LIKE);
 		searchModel.getSearchElements().add(searchElement);

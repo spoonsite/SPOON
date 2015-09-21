@@ -73,7 +73,7 @@ public class TagSearchHandler
 					componentTag.setText(tagValue);
 					break;
 				default:
-					likeValue = searchElement.getStringOperation().toQueryString(searchElement.getKeyValue());
+					likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
 					break;
 			}
 
@@ -88,8 +88,6 @@ public class TagSearchHandler
 
 				queryByExample.setLikeExample(componentTagLike);
 			}
-
-			componentTag.setText(tagValue);
 
 			List<ComponentTag> componentTags = serviceProxy.getPersistenceService().queryByExample(ComponentTag.class, queryByExample);
 			List<String> results = new ArrayList<>();
