@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.model.search;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.MergeCondition;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.NumberOperation;
@@ -34,38 +35,51 @@ public class SearchElement
 	@NotNull
 	@APIDescription("Default: COMPONENT")
 	@ValidValueType(value = {}, enumClass = SearchType.class)
+	@ConsumeField
 	private SearchType searchType = SearchType.COMPONENT;
 
 	@APIDescription("Field on the entity to be searched. Doesn't apply in all search types.")
+	@ConsumeField
 	private String field;
+
 	@APIDescription("Value to look for.  It will be interrpeted base on the field type. ")
+	@ConsumeField
 	private String value;
 
 	@APIDescription("Used in Attribute and Metadata searches.  This should be the main type code/key")
+	@ConsumeField
 	private String keyField;
+
 	@APIDescription("Used in Attribute and Metadata searches.  This should be the code or value.")
+	@ConsumeField
 	private String keyValue;
 
 	@APIDescription("Used for date data types")
+	@ConsumeField
 	private Date startDate;
 
 	@APIDescription("Used for date data types")
+	@ConsumeField
 	private Date endDate;
 
 	@APIDescription("Used for string data types")
+	@ConsumeField
 	private boolean caseInsensitive;
 
 	@APIDescription("Default: EQUALS")
 	@ValidValueType(value = {}, enumClass = NumberOperation.class)
+	@ConsumeField
 	private NumberOperation numberOperation = NumberOperation.EQUALS;
 
 	@APIDescription("Default: EQUALS")
 	@ValidValueType(value = {}, enumClass = StringOperation.class)
+	@ConsumeField
 	private StringOperation stringOperation = StringOperation.EQUALS;
 
 	@NotNull
-	@APIDescription("Default: AND")
+	@APIDescription("Default: OR")
 	@ValidValueType(value = {}, enumClass = MergeCondition.class)
+	@ConsumeField
 	private MergeCondition mergeCondition = MergeCondition.OR;
 
 	public SearchElement()
