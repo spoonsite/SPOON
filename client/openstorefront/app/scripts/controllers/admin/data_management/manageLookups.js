@@ -235,7 +235,7 @@ app.controller('AdminEditLookupCodeCtrl', ['$scope', '$uiModalInstance', 'lookup
       var formData = {
         code: $scope.lookupCodeForm.code,
         description: $scope.lookupCodeForm.description,
-        detailedDecription: $scope.lookupCodeForm.detailedDecription,
+        detailedDescription: $scope.lookupCodeForm.detailedDescription,
         sortOrder: $scope.lookupCodeForm.sortOrder
       };
            

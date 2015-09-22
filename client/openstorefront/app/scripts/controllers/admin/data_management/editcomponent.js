@@ -1466,8 +1466,8 @@ $scope.loadTags = function() {
     }, function(){
     });
   }     
-  $scope.tagForm.securityMarkingType = '';
-  $scope.tagForm.text = '';
+  $scope.tagForm.securityMarkingType = null;
+  $scope.tagForm.text = null;
 };
 $scope.loadTags();
 

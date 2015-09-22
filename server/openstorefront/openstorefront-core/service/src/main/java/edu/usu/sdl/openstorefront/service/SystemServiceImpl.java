@@ -526,6 +526,11 @@ public class SystemServiceImpl
 
 		int sectionNumber = 1;
 		for (HelpSectionAll helpSection : helpSectionAll.getChildSections()) {
+			if (helpSection.getHelpSection().getTitle() == null) {
+				helpSection.getHelpSection().setTitle("");
+				log.log(Level.FINE, "This is a stub help section.  Check help data to make sure that is desired.  *=admin sections; make sure child sections are appropriately starred.");
+			}
+
 			String titleSplit[] = helpSection.getHelpSection().getTitle().split(" ");
 			String titleNumber;
 			if (StringUtils.isBlank(parentSection)) {

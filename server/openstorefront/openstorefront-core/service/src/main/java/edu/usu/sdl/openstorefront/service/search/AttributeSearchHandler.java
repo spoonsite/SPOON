@@ -47,9 +47,6 @@ public class AttributeSearchHandler
 			if (StringUtils.isBlank(searchElement.getKeyField())) {
 				validationResult.getRuleResults().add(getRuleResult("keyfield", "Required"));
 			}
-			if (StringUtils.isBlank(searchElement.getKeyValue())) {
-				validationResult.getRuleResults().add(getRuleResult("keyValue", "Required"));
-			}
 		}
 
 		return validationResult;
@@ -69,22 +66,24 @@ public class AttributeSearchHandler
 
 			QueryByExample<ComponentAttribute> queryByExample = new QueryByExample(componentAttribute);
 
-			String likeValue = null;
-			switch (searchElement.getStringOperation()) {
-				case EQUALS:
-					componentAttributePk.setAttributeCode(searchElement.getKeyValue());
-					break;
-				default:
-					likeValue = searchElement.getStringOperation().toQueryString(searchElement.getKeyValue());
-					break;
-			}
+			if (StringUtils.isNotBlank(searchElement.getKeyValue())) {
+				String likeValue = null;
+				switch (searchElement.getStringOperation()) {
+					case EQUALS:
+						componentAttributePk.setAttributeCode(searchElement.getKeyValue());
+						break;
+					default:
+						likeValue = searchElement.getStringOperation().toQueryString(searchElement.getKeyValue());
+						break;
+				}
 
-			if (likeValue != null) {
-				ComponentAttribute componentAttributeLike = new ComponentAttribute();
-				ComponentAttributePk componentAttributePkLike = new ComponentAttributePk();
-				componentAttributePkLike.setAttributeCode(likeValue);
-				componentAttributeLike.setComponentAttributePk(componentAttributePkLike);
-				queryByExample.setLikeExample(componentAttributeLike);
+				if (likeValue != null) {
+					ComponentAttribute componentAttributeLike = new ComponentAttribute();
+					ComponentAttributePk componentAttributePkLike = new ComponentAttributePk();
+					componentAttributePkLike.setAttributeCode(likeValue);
+					componentAttributeLike.setComponentAttributePk(componentAttributePkLike);
+					queryByExample.setLikeExample(componentAttributeLike);
+				}
 			}
 
 			List<ComponentAttribute> attributes = serviceProxy.getPersistenceService().queryByExample(ComponentAttribute.class, queryByExample);
