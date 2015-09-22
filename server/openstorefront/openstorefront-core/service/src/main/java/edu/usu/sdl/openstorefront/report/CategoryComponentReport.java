@@ -81,8 +81,7 @@ public class CategoryComponentReport
 
 		if (Convert.toBoolean(attributeType.getArchitectureFlg())) {
 			codes.sort(new AttributeCodeArchComparator<>());
-		}
-		else {
+		} else {
 			codes.sort(new AttributeCodeComparator<>());
 		}
 
@@ -98,8 +97,7 @@ public class CategoryComponentReport
 		attributes.forEach(attribute -> {
 			if (codeComponentMap.containsKey(attribute.getComponentAttributePk().getAttributeCode())) {
 				codeComponentMap.get(attribute.getComponentAttributePk().getAttributeCode()).add(attribute.getComponentId());
-			}
-			else {
+			} else {
 				List<String> componentIds = new ArrayList<>();
 				componentIds.add(attribute.getComponentId());
 				codeComponentMap.put(attribute.getComponentAttributePk().getAttributeCode(), componentIds);
@@ -112,10 +110,10 @@ public class CategoryComponentReport
 
 		List<Component> components = componentExample.findByExample();
 
-		if (!report.getIds().isEmpty()) {
-			components = components.stream().filter(c -> report.getIds().contains(c.getComponentId())).collect(Collectors.toList());
+		if (!report.dataIdSet().isEmpty()) {
+			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 		}
-		
+
 		Map<String, Component> componentMap = new HashMap<>();
 		components.forEach(component -> {
 			componentMap.put(component.getComponentId(), component);

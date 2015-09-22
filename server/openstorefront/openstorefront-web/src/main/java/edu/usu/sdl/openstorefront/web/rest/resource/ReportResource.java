@@ -193,12 +193,12 @@ public class ReportResource
 	@DataType(ReportType.class)
 	@Path("/reporttypes")
 	public Response getReportTypeForUser(
-		@QueryParam("componentType") boolean componentType)
+			@QueryParam("componentType") boolean componentType)
 	{
-		
+
 		List<ReportType> reportTypes = service.getLookupService().findLookup(ReportType.class);
-		if (componentType){
-			reportTypes = reportTypes.stream().filter(r -> r.getComponentType() == true).collect(Collectors.toList());
+		if (componentType) {
+			reportTypes = reportTypes.stream().filter(r -> r.getComponentReport() == true).collect(Collectors.toList());
 		}
 		if (SecurityUtil.isAdminUser() == false) {
 			reportTypes = reportTypes.stream().filter(r -> r.getAdminOnly() == false).collect(Collectors.toList());

@@ -53,8 +53,8 @@ public class ComponentReport
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		components = service.getPersistenceService().queryByExample(Component.class, componentExample);
-		if (!report.getIds().isEmpty()) {
-			components = components.stream().filter(c -> report.getIds().contains(c.getComponentId())).collect(Collectors.toList());
+		if (!report.dataIdSet().isEmpty()) {
+			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
 		}
 	}
 
