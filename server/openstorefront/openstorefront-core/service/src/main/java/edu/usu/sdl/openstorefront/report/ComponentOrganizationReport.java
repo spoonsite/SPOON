@@ -60,20 +60,17 @@ public class ComponentOrganizationReport
 				"Approve Status"
 		);
 
-		Map<String, Object> params;
-		List<ODocument> documents;
-		if (!report.getIds().isEmpty()) {
+		Map<String, Object> params = new HashMap<>();
+		String componentFilter = "";
+		if (!report.dataIdSet().isEmpty()) {
 			params = new HashMap<>();
-			params.put(":list", report.getIds());
-			documents = service.getPersistenceService().query("Select DISTINCT(organization) as organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
-					+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
-					+ " activeStatus= '" + Component.ACTIVE_STATUS + "' and componentId in :list order by sortname", new HashMap<>());
-		} else {
-			documents = service.getPersistenceService().query("Select DISTINCT(organization) as organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
-					+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
-					+ " activeStatus= '" + Component.ACTIVE_STATUS + "' order by sortname", new HashMap<>());
-
+			params.put(":idlistParam", report.dataIdSet());
+			componentFilter = " and componentId in :idlistParam";
 		}
+		List<ODocument> documents = service.getPersistenceService().query("Select DISTINCT(organization) as organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
+				+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
+				+ " activeStatus= '" + Component.ACTIVE_STATUS + "' " + componentFilter + " order by sortname", params);
+
 		//group by org
 		Map<String, List<ODocument>> orgMap = new HashMap<>();
 
@@ -85,8 +82,7 @@ public class ComponentOrganizationReport
 					}
 					if (orgMap.containsKey(org)) {
 						orgMap.get(org).add(document);
-					}
-					else {
+					} else {
 						List<ODocument> records = new ArrayList<>();
 						records.add(document);
 						orgMap.put(org, records);
@@ -106,10 +102,10 @@ public class ComponentOrganizationReport
 
 				//String securityMarking = document.field("securityMarkingType");
 				cvsGenerator.addLine("",
-									 document.field("name"),
-									 //securityMarking == null ? "" : "(" + securityMarking + ") - " + TranslateUtil.translate(SecurityMarkingType.class, securityMarking),
-									 document.field("lastActivityDts"),
-									 document.field("approvalState"));
+						document.field("name"),
+						//securityMarking == null ? "" : "(" + securityMarking + ") - " + TranslateUtil.translate(SecurityMarkingType.class, securityMarking),
+						document.field("lastActivityDts"),
+						document.field("approvalState"));
 
 				totalComponents++;
 			}

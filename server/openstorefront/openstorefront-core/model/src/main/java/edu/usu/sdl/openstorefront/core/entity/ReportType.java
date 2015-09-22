@@ -44,7 +44,7 @@ public class ReportType
 	public static final String COMPONENT_DETAIL = "TYPECOMP";
 
 	private boolean adminOnly;
-	private boolean componentType;
+	private boolean componentReport;
 	private List<String> supportedFormats = new ArrayList<>();
 
 	public ReportType()
@@ -71,13 +71,12 @@ public class ReportType
 		((ReportType) codeMap.get(USER)).setAdminOnly(true);
 		((ReportType) codeMap.get(SUBMISSION)).setAdminOnly(true);
 		((ReportType) codeMap.get(ORGANIZATION)).setAdminOnly(true);
-		
+
 		//update metadata for component type reports
-		((ReportType) codeMap.get(COMPONENT_ORGANIZATION)).setComponentType(true);
-		((ReportType) codeMap.get(COMPONENT_DETAIL)).setComponentType(true);
-		((ReportType) codeMap.get(CATEGORY_COMPONENT)).setComponentType(true);
-		((ReportType) codeMap.get(COMPONENT)).setComponentType(true);
-		
+		((ReportType) codeMap.get(COMPONENT_ORGANIZATION)).setComponentReport(true);
+		((ReportType) codeMap.get(COMPONENT_DETAIL)).setComponentReport(true);
+		((ReportType) codeMap.get(CATEGORY_COMPONENT)).setComponentReport(true);
+		((ReportType) codeMap.get(COMPONENT)).setComponentReport(true);
 
 		//Add  formats
 		for (LookupEntity lookupEntity : codeMap.values()) {
@@ -108,20 +107,14 @@ public class ReportType
 		this.supportedFormats = supportedFormats;
 	}
 
-	/**
-	 * @return the componentType
-	 */
-	public boolean getComponentType()
+	public boolean getComponentReport()
 	{
-		return componentType;
+		return componentReport;
 	}
 
-	/**
-	 * @param componentType the componentType to set
-	 */
-	public void setComponentType(boolean componentType)
+	public void setComponentReport(boolean componentReport)
 	{
-		this.componentType = componentType;
+		this.componentReport = componentReport;
 	}
 
 }

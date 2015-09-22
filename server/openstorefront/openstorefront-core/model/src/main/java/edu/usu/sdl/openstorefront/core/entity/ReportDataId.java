@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
@@ -31,11 +30,12 @@ import javax.validation.constraints.Size;
 public class ReportDataId
 		implements Serializable
 {
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	private String id;
-	
+
 	@Version
 	private String storageVersion;
 
@@ -43,39 +43,24 @@ public class ReportDataId
 	{
 	}
 
-	/**
-	 * @return the id
-	 */
 	public String getId()
 	{
 		return id;
 	}
 
-	/**
-	 * @param id the id to set
-	 */
 	public void setId(String id)
 	{
 		this.id = id;
 	}
 
-	/**
-	 * @return the storageVersion
-	 */
 	public String getStorageVersion()
 	{
 		return storageVersion;
 	}
 
-	/**
-	 * @param storageVersion the storageVersion to set
-	 */
 	public void setStorageVersion(String storageVersion)
 	{
 		this.storageVersion = storageVersion;
 	}
-	
-	
-	
-	
+
 }
