@@ -26,8 +26,10 @@ import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -38,7 +40,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author dshurtleff
  */
-@APIDescription("Hold report history record")
+@APIDescription("Holds a report history record")
 public class Report
 		extends StandardEntity<Report>
 {
@@ -90,6 +92,15 @@ public class Report
 			path = Paths.get(reportDir.getPath() + "/" + getReportId());
 		}
 		return path;
+	}
+
+	public Set<String> dataIdSet()
+	{
+		Set<String> dataSet = new HashSet<>();
+		if (ids != null) {
+			ids.stream().collect(Collectors.groupingBy(ReportDataId::getId));
+		}
+		return dataSet;
 	}
 
 	public String getReportId()
@@ -152,21 +163,11 @@ public class Report
 		this.reportFormat = reportFormat;
 	}
 
-	/**
-	 * @return the ids
-	 */
 	public List<ReportDataId> getIds()
 	{
-		if (ids != null) {
-			return ids;
-		} else {
-			return new ArrayList<>();
-		}
+		return ids;
 	}
 
-	/**
-	 * @param ids the ids to set
-	 */
 	public void setIds(List<ReportDataId> ids)
 	{
 		this.ids = ids;
