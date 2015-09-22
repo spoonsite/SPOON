@@ -5,12 +5,12 @@
 </div>
 <div class="component-details">
   <div class="container component-title">
-    <ol ng-show="eventHistory.length > 1 && showBreadCrumbs" class="ab-nav breadcrumb" style="margin-left: -15px; margin-right: -15px;">
+<!--     <ol ng-show="eventHistory.length > 1 && showBreadCrumbs" class="ab-nav breadcrumb" style="margin-left: -15px; margin-right: -15px;">
       <li ng-repeat="breadcrumb in eventHistory" ng-class="{ active: $last }">
         <a ng-if="!$last" href="javascript: void(0)" ng-click="goToBreadcrumb(breadcrumb)" ng-bind="breadcrumb.label" class="margin-right-xs"></a>
         <span ng-if="$last" ng-bind="breadcrumb.label"></span>
       </li>
-    </ol>
+    </ol> -->
     <div class="col-sm-12">
       <div style="display:inline-block; width: 100%">
         <div class="input-group" ng-if="details.details.approvalState !== 'A'" style="margin-top: 10px;">
