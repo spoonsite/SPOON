@@ -19,12 +19,16 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -62,6 +66,11 @@ public class Report
 	@ValidValueType(value = {}, lookupClass = RunStatus.class)
 	@FK(RunStatus.class)
 	private String runStatus;
+
+	@ConsumeField
+	@DataType(ReportDataId.class)
+	@OneToMany(orphanRemoval = true)
+	private List<ReportDataId> ids;
 
 	@ConsumeField
 	@OneToOne(orphanRemoval = true)
@@ -141,6 +150,26 @@ public class Report
 	public void setReportFormat(String reportFormat)
 	{
 		this.reportFormat = reportFormat;
+	}
+
+	/**
+	 * @return the ids
+	 */
+	public List<ReportDataId> getIds()
+	{
+		if (ids != null) {
+			return ids;
+		} else {
+			return new ArrayList<>();
+		}
+	}
+
+	/**
+	 * @param ids the ids to set
+	 */
+	public void setIds(List<ReportDataId> ids)
+	{
+		this.ids = ids;
 	}
 
 }

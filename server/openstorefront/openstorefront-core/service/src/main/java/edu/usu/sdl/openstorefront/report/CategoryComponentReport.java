@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -80,7 +81,8 @@ public class CategoryComponentReport
 
 		if (Convert.toBoolean(attributeType.getArchitectureFlg())) {
 			codes.sort(new AttributeCodeArchComparator<>());
-		} else {
+		}
+		else {
 			codes.sort(new AttributeCodeComparator<>());
 		}
 
@@ -96,7 +98,8 @@ public class CategoryComponentReport
 		attributes.forEach(attribute -> {
 			if (codeComponentMap.containsKey(attribute.getComponentAttributePk().getAttributeCode())) {
 				codeComponentMap.get(attribute.getComponentAttributePk().getAttributeCode()).add(attribute.getComponentId());
-			} else {
+			}
+			else {
 				List<String> componentIds = new ArrayList<>();
 				componentIds.add(attribute.getComponentId());
 				codeComponentMap.put(attribute.getComponentAttributePk().getAttributeCode(), componentIds);
@@ -108,6 +111,11 @@ public class CategoryComponentReport
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 
 		List<Component> components = componentExample.findByExample();
+
+		if (!report.getIds().isEmpty()) {
+			components = components.stream().filter(c -> report.getIds().contains(c.getComponentId())).collect(Collectors.toList());
+		}
+		
 		Map<String, Component> componentMap = new HashMap<>();
 		components.forEach(component -> {
 			componentMap.put(component.getComponentId(), component);

@@ -113,6 +113,10 @@ public class ComponentDetailReport
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		components = componentExample.findByExample();
+		
+		if (!report.getIds().isEmpty()) {
+			components = components.stream().filter(c -> report.getIds().contains(c.getComponentId())).collect(Collectors.toList());
+		}
 
 	}
 

@@ -54,6 +54,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
@@ -191,10 +192,14 @@ public class ReportResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportType.class)
 	@Path("/reporttypes")
-	public Response getReportTypeForUser()
+	public Response getReportTypeForUser(
+		@QueryParam("componentType") boolean componentType)
 	{
+		
 		List<ReportType> reportTypes = service.getLookupService().findLookup(ReportType.class);
-
+		if (componentType){
+			reportTypes = reportTypes.stream().filter(r -> r.getComponentType() == true).collect(Collectors.toList());
+		}
 		if (SecurityUtil.isAdminUser() == false) {
 			reportTypes = reportTypes.stream().filter(r -> r.getAdminOnly() == false).collect(Collectors.toList());
 		}
