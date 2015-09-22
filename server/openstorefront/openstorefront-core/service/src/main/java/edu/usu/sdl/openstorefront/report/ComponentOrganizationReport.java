@@ -60,29 +60,45 @@ public class ComponentOrganizationReport
 				"Approve Status"
 		);
 
-		List<ODocument> documents = service.getPersistenceService().query("Select DISTINCT(organization) as organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
-				+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
-				+ " activeStatus= '" + Component.ACTIVE_STATUS + "' order by sortname", new HashMap<>());
+		Map<String, Object> params;
+		List<ODocument> documents;
+		if (!report.getIds().isEmpty()) {
+			params = new HashMap<>();
+			params.put(":list", report.getIds());
+			documents = service.getPersistenceService().query("Select DISTINCT(organization) as organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
+					+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
+					+ " activeStatus= '" + Component.ACTIVE_STATUS + "' and componentId in :list order by sortname", new HashMap<>());
+		} else {
+			documents = service.getPersistenceService().query("Select DISTINCT(organization) as organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
+					+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
+					+ " activeStatus= '" + Component.ACTIVE_STATUS + "' order by sortname", new HashMap<>());
 
+		}
 		//group by org
 		Map<String, List<ODocument>> orgMap = new HashMap<>();
-		documents.forEach(document -> {
-			String org = document.field("organization");
-			if (StringUtils.isBlank(org)) {
-				org = "No Organization Specified";
-			}
-			if (orgMap.containsKey(org)) {
-				orgMap.get(org).add(document);
-			} else {
-				List<ODocument> records = new ArrayList<>();
-				records.add(document);
-				orgMap.put(org, records);
-			}
-		});
+
+		documents.forEach(document
+				-> {
+					String org = document.field("organization");
+					if (StringUtils.isBlank(org)) {
+						org = "No Organization Specified";
+					}
+					if (orgMap.containsKey(org)) {
+						orgMap.get(org).add(document);
+					}
+					else {
+						List<ODocument> records = new ArrayList<>();
+						records.add(document);
+						orgMap.put(org, records);
+					}
+				}
+		);
 
 		long totalComponents = 0;
 		List<String> sortedOrganizations = new ArrayList<>(orgMap.keySet());
-		sortedOrganizations.sort(null);
+
+		sortedOrganizations.sort(
+				null);
 
 		for (String organization : sortedOrganizations) {
 			cvsGenerator.addLine(organization);
@@ -90,20 +106,25 @@ public class ComponentOrganizationReport
 
 				//String securityMarking = document.field("securityMarkingType");
 				cvsGenerator.addLine("",
-						document.field("name"),
-						//securityMarking == null ? "" : "(" + securityMarking + ") - " + TranslateUtil.translate(SecurityMarkingType.class, securityMarking),
-						document.field("lastActivityDts"),
-						document.field("approvalState"));
+									 document.field("name"),
+									 //securityMarking == null ? "" : "(" + securityMarking + ") - " + TranslateUtil.translate(SecurityMarkingType.class, securityMarking),
+									 document.field("lastActivityDts"),
+									 document.field("approvalState"));
 
 				totalComponents++;
 			}
 			cvsGenerator.addLine("Total", orgMap.get(organization).size());
 			cvsGenerator.addLine("");
 		}
-		cvsGenerator.addLine("");
-		cvsGenerator.addLine("Report Totals");
-		cvsGenerator.addLine("Total Organizations: " + orgMap.keySet().size());
-		cvsGenerator.addLine("Total Component: " + totalComponents);
+
+		cvsGenerator.addLine(
+				"");
+		cvsGenerator.addLine(
+				"Report Totals");
+		cvsGenerator.addLine(
+				"Total Organizations: " + orgMap.keySet().size());
+		cvsGenerator.addLine(
+				"Total Component: " + totalComponents);
 	}
 
 }
