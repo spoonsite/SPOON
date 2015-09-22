@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>edu.usu.sdl</groupId>
 		<artifactId>openstorefront</artifactId>
-		<version>1.5</version>
+		<version>1.6</version>
 	</parent>
 	<artifactId>wso2client</artifactId>
 	<packaging>jar</packaging>
