@@ -274,7 +274,7 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
 
     $scope.getCategories = function () {
       var filterQueryObj = angular.copy(utils.queryFilter);
-      filterQueryObj.status = 'A'
+      filterQueryObj.status = 'A';
       $scope.$emit('$TRIGGERLOAD', 'reportFormLoader');
       Business.articleservice.getTypes(filterQueryObj, true).then(function (results) {
         $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
@@ -380,7 +380,7 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
       //custom validation
       if ($scope.flag.schedule) {
         if (!($scope.reportForm.scheduleIntervalDays)) {
-          triggerAlert('interval is required on a scheduled report', 'reportId', 'body', 3000);
+          triggerAlert('Interval is required on a scheduled report', 'reportId', 'body', 3000);
           return;
         }
       }
@@ -438,7 +438,21 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
       } else {
         console.log('$scope.reportForm', $scope.reportForm);
         
-        Business.reportservice.generateReport($scope.reportForm).then(function(results) {      
+        var reportDataIds = [];
+        _.forEach($scope.reportForm.ids, function(id){
+          reportDataIds.push({
+            id: id
+          });
+        });
+        
+        
+        var reportView = {
+          report: $scope.reportForm,
+          reportDataId: reportDataIds
+        };
+        delete reportView.report.ids;
+                
+        Business.reportservice.generateReport(reportView).then(function(results) {      
           $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
           
           if (results) {
