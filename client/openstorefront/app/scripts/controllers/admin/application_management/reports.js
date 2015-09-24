@@ -294,37 +294,38 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
       var option = {
         '$viewValue': report.$viewValue
       }
+      console.log('found', found, option);
       
       if (option.$viewValue === 'USAGE') {
         $scope.options.useage=true;
         $scope.options.link=false;
         $scope.options.submission=false;
         $scope.options.category=false;
-        $scope.options.ids = found? found.componentType: false;
+        $scope.options.ids = found? found.componentReport: false;
       }else if (option.$viewValue === 'SUBMISSION') {
         $scope.options.submission=true;
         $scope.options.useage=false;
         $scope.options.link=false;
         $scope.options.category=false;
-        $scope.options.ids = found? found.componentType: false;
+        $scope.options.ids = found? found.componentReport: false;
       } else if (option.$viewValue === 'LINKVALID') {
         $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=true;
         $scope.options.category=false;
-        $scope.options.ids = found? found.componentType: false;
+        $scope.options.ids = found? found.componentReport: false;
       } else if (option.$viewValue === 'CATCOMP') {
         $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=false;
         $scope.options.category=true;
-        $scope.options.ids = found? found.componentType: false;
+        $scope.options.ids = found? found.componentReport: false;
       } else {
         $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=false;
         $scope.options.category=false;
-        $scope.options.ids = found? found.componentType: false;
+        $scope.options.ids = found? found.componentReport: false;
       }      
     };  
     
@@ -435,6 +436,8 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
           triggerAlert('Validation Error: <br> Make sure Email(s) are valid', 'alertId', 'body', 3000);
         });        
       } else {
+        console.log('$scope.reportForm', $scope.reportForm);
+        
         Business.reportservice.generateReport($scope.reportForm).then(function(results) {      
           $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
           
