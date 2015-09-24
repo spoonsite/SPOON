@@ -40,7 +40,7 @@ public class ComponentFilterParams
 	private String approvalState;
 
 	@QueryParam("componentType")
-	@DefaultValue(ComponentType.COMPONENT)
+	@DefaultValue(ComponentType.ALL)
 	@Sanitize(TextSanitizer.class)
 	private String componentType;
 	
