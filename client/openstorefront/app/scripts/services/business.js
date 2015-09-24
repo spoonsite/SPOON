@@ -215,37 +215,43 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   };
 
   // This function builds the typeahead options.
-  business.typeahead = function(search) {
+  business.typeahead = function(search, override, filterObj) {
+    // console.log('arguments', arguments);
+    
     var deferred = $q.defer();
     // lets refresh the typeahead every 15 min until we actually get this
     // working with a http request upon user interaction.
-    if (!search) {
+    //check local cache
+    var cachedResults = localCache.get("CMPNames", 'object');
+    var lowerSearch = search;
+    if (!search && !override) {
       deferred.reject('There was no search');
     } else {
-      //check local cache
-      var cachedResults = localCache.get("CMPNames", 'object');
-      var lowerSearch = search;
       if (search && typeof search === 'string'){
         lowerSearch = search.toLowerCase();
       }
-      var getNames = function(names, deferred) {
+    }
+    var getNames = function(names, deferred) {
+      if (override) {
+        deferred.resolve(names);
+      } else {
         var found = _.filter(names, function(item){
           return item.description.toLowerCase().indexOf(lowerSearch) !== -1;
         });
         deferred.resolve(found);           
-      };
-      
-      if (!cachedResults) { 
-        business.componentservice.getComponentLookupList().then(function(data){
-          localCache.save("CMPNames", data);
-          cachedResults = data;
-          getNames(cachedResults, deferred);
-        });
-      }  else {
-        getNames(cachedResults, deferred);
       }
-      
+    };
+
+    if (!cachedResults || override) { 
+      business.componentservice.getComponentLookupList(filterObj).then(function(data){
+        localCache.save("CMPNames", data);
+        cachedResults = data;
+        getNames(cachedResults, deferred);
+      });
+    }  else {
+      getNames(cachedResults, deferred);
     }
+
     return deferred.promise;
   };
 
