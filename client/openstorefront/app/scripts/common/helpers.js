@@ -421,6 +421,8 @@
     start: null,
     end: null,
     status: null,
+    approvalState: null,
+    componentType: null,
     max: null,
     sortField: null,
     sortOrder: null,

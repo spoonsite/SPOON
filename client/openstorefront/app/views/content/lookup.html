@@ -1,0 +1,18 @@
+<div style="border:1px solid darkgray; margin-left:-1px; margin-right: -1px;">
+  <div style="position:relative; width: 100%;">
+    <input type="text" class="form-control" ng-model="search.description" placeholder="Filter By Text">
+  </div>
+  <filterquery data="typeahead" callback="getCallback(true)" all="true" sort-by="name" sort-order="DESC" type="default" max="300" set-features="pagination.features" control="pagination.control"></filterquery>
+</div>
+<div style="max-height: 400px; overflow:auto; display:block; position:relative; width: 100%;">
+  <table class="table table-striped table-bordered admin-table" selectall="selectedRowsLookup">
+    <tr>
+      <th masterselect></th>
+      <th>{{title}} ({{selectedRowsLookup.length}} items selected)</th>
+    </tr>
+    <tr ng-repeat="thing in typeahead | filter:search track by $index" render-after-repeat="selectedRowsLookup">
+      <td childselect='thing.code'></td>
+      <td>{{thing.description}}</td>
+    </tr>
+  </table>
+</div>

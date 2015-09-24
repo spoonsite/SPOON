@@ -20,6 +20,7 @@
   $scope.predicate = [];
   $scope.reverse = [];
   $scope.selectedRows = [];
+  $scope.business = Business;
 
   $scope.setPredicate = function (predicate, table) {
     if ($scope.predicate[table] === predicate) {
@@ -278,7 +279,6 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
       Business.articleservice.getTypes(filterQueryObj, true).then(function (results) {
         $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
         if (results) {
-          console.log('results', results);
           
           $scope.categories = results;
         }
@@ -289,34 +289,42 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
     };
     $scope.getCategories();
 
-    $scope.showOptions = function(option){
-      console.log('option', option.$viewValue);
+    $scope.showOptions = function(report){
+      var found = _.find($scope.reportTypes, {'code': report.$viewValue});
+      var option = {
+        '$viewValue': report.$viewValue
+      }
       
       if (option.$viewValue === 'USAGE') {
         $scope.options.useage=true;
         $scope.options.link=false;
         $scope.options.submission=false;
         $scope.options.category=false;
+        $scope.options.ids = found? found.componentType: false;
       }else if (option.$viewValue === 'SUBMISSION') {
         $scope.options.submission=true;
         $scope.options.useage=false;
         $scope.options.link=false;
         $scope.options.category=false;
+        $scope.options.ids = found? found.componentType: false;
       } else if (option.$viewValue === 'LINKVALID') {
         $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=true;
         $scope.options.category=false;
+        $scope.options.ids = found? found.componentType: false;
       } else if (option.$viewValue === 'CATCOMP') {
         $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=false;
         $scope.options.category=true;
+        $scope.options.ids = found? found.componentType: false;
       } else {
         $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=false;
         $scope.options.category=false;
+        $scope.options.ids = found? found.componentType: false;
       }      
     };  
     
