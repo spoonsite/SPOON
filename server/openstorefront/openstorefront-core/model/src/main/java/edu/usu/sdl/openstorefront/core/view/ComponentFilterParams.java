@@ -16,7 +16,13 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import javax.validation.constraints.Size;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 
 /**
@@ -28,11 +34,16 @@ public class ComponentFilterParams
 {
 
 	@QueryParam("approvalState")
+	@DefaultValue(ApprovalStatus.APPROVED)
+	@Size(min = 0, max = 3)
+	@Sanitize(TextSanitizer.class)
 	private String approvalState;
 
 	@QueryParam("componentType")
+	@DefaultValue(ComponentType.ALL)
+	@Sanitize(TextSanitizer.class)
 	private String componentType;
-
+	
 	public static ComponentFilterParams defaultFilter()
 	{
 		ComponentFilterParams filterQueryParams = new ComponentFilterParams();

@@ -89,6 +89,12 @@ limitations under the License.
             <option style="display:none" value="">Select a Type</option>
           </select>
         </div>  
+      </div>      
+    </panel>  
+    <panel class-list="edges" open-state="true" title="Report Options" ng-show="options.ids">
+      <div class="form-group" show-errors >
+        <label class="control-label col-sm-12" style="text-align:left">Select Specific Entities for report (will override default entity selection)</label>
+        <lookup ng-model="reportForm.ids" callback="business.typeahead" title="Components"></lookup>
       </div> 			
     </panel>		
 
