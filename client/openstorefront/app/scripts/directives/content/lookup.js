@@ -122,6 +122,14 @@ app.directive('lookup', ['$document', '$timeout', 'business', function($document
           scope.getCallback = function(){
             return scope.func;
           }
+          scope.getThing = function(id){
+            var found = _.find(scope.typeahead, {'code': id});
+            if (found){
+              return found.description;
+            } else {
+              return 'Item ' + id;
+            }
+          }
         }
       }
     }
