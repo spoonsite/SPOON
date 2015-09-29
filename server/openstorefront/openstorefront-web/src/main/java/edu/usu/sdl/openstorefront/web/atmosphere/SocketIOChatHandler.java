@@ -48,17 +48,19 @@ public class SocketIOChatHandler
 	public void onStateChange(AtmosphereResourceEvent event) throws IOException
 	{
 		AtmosphereResource r = event.getResource();
-		AtmosphereResponse res = r.getResponse();
+		if (r.isCancelled() == false) {
+			AtmosphereResponse res = r.getResponse();
 
-		if (event.isSuspended() && event.getMessage() != null) {
-			String body = event.getMessage().toString();
+			if (event.isSuspended() && event.getMessage() != null) {
+				String body = event.getMessage().toString();
 
-			// Simple JSON -- Use Jackson for more complex structure
-			// Message looks like { "author" : "foo", "message" : "bar" }
-			String author = body.substring(body.indexOf(":") + 2, body.indexOf(",") - 1);
-			String message = body.substring(body.lastIndexOf(":") + 2, body.length() - 2);
+				// Simple JSON -- Use Jackson for more complex structure
+				// Message looks like { "author" : "foo", "message" : "bar" }
+				String author = body.substring(body.indexOf(":") + 2, body.indexOf(",") - 1);
+				String message = body.substring(body.lastIndexOf(":") + 2, body.length() - 2);
 
-			res.getWriter().write(new Data(author, message).toString());
+				res.getWriter().write(new Data(author, message).toString());
+			}
 		}
 	}
 
