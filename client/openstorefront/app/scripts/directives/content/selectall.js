@@ -147,7 +147,7 @@ app.directive('selectall', ['$timeout','$parse', function($timeout, $parse) {
                 if (scopeItem) {
                   thing.find('input[type=checkbox]').prop('checked', false);
                   var found = _.indexOf(scope.selectall, scopeItem);
-                  if (found) {
+                  if (found >= 0) {
                     scope.internalChange = true;
                     scope.selectall.splice(found, 1);
                   }
