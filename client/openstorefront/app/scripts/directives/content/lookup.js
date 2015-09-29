@@ -109,8 +109,26 @@ app.directive('lookup', ['$document', '$timeout', 'business', function($document
             }
           }, true)
 
+          scope.$watch('ngModel', function(newval, oldval){
+            if (!angular.equals(scope.selectedRowsLookup, newval)){
+              scope.selectedRowsLookup = newval;
+            }
+          }, true)
+
+          scope.clearSelection = function(){
+            scope.selectedRowsLookup = [];
+            iElem.find('[childselect]').find('input[type=checkbox]').prop('checked', false);
+          }
           scope.getCallback = function(){
             return scope.func;
+          }
+          scope.getThing = function(id){
+            var found = _.find(scope.typeahead, {'code': id});
+            if (found){
+              return found.description;
+            } else {
+              return 'Item ' + id;
+            }
           }
         }
       }
