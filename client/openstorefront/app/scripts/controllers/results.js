@@ -19,7 +19,7 @@
 fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass, resetAnimations,
 filtClick, setPageHeight*/
 
-app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$sce', function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $sce) { /*jshint unused: false*/
+app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$sce', '$uiModal', function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $sce, $uiModal) { /*jshint unused: false*/
 
   //////////////////////////////////////////////////////////////////////////////
   // Here we put our variables...
@@ -472,6 +472,32 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       'code': code
     });
     $scope.reAdjust([{ 'key': type, 'code': code }]);
+  }
+
+  $scope.exportSearch = function() {
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/application_management/editReport.html',
+      controller: 'AdminEditReportCtrl',
+      backdrop: 'static',
+      size: 'sm',
+      resolve: {
+        report: function () {
+          return null;
+        },
+        sheduleFlag: function () {
+          return false;
+        },
+        ids: function() {
+          return $.grep(_.pluck($scope.data.data, 'componentId'),function(n){ return(n) });
+        }
+      }
+    });
+
+    modalInstance.result.then(function (result) {
+      triggerAlert('Your report has been generated. Navigate to the <a href="">reports tool</a> to download the content.', 'reportAlert', 'body', 7000);
+    }, function (result) {
+      triggerAlert('Your report has been generated. Navigate to the <a href="">reports tool</a> to download the content.', 'reportAlert', 'body', 7000);
+    });       
   }
 
   /***************************************************************

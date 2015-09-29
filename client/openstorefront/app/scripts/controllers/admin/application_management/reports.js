@@ -120,6 +120,9 @@
         },
         sheduleFlag: function () {
           return $scope.sheduleFlag;
+        },
+        ids: function() {
+          return null;
         }
       }
     });       
@@ -137,6 +140,9 @@
         },
         sheduleFlag: function () {
           return $scope.sheduleFlag;
+        },
+        ids: function() {
+          return null;
         }
       }
     });         
@@ -190,8 +196,8 @@
 
 }]);
 
-app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', 'business', '$uiModal', '$filter', '$timeout', 'sheduleFlag',
-  function ($scope, $uiModalInstance, report, Business, $uiModal, $filter, $timeout, sheduleFlag) {
+app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', 'ids', 'business', '$uiModal', '$filter', '$timeout', 'sheduleFlag',
+  function ($scope, $uiModalInstance, report, ids, Business, $uiModal, $filter, $timeout, sheduleFlag) {
 
     $scope.reportForm = angular.copy(report);
     $scope.actionText = 'Generate';
@@ -237,7 +243,13 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
       Business.reportservice.getReportTypes().then(function (results) {
         $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
         if (results) {
-          $scope.reportTypes = results;
+          if (ids && ids.length) {
+            $scope.reportTypes = _.filter(results, function(result){
+              return result.componentReport;
+            })
+          } else {
+            $scope.reportTypes = results;
+          }
         } else {
           $scope.reportTypes = [];
         }
@@ -294,7 +306,6 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
       var option = {
         '$viewValue': report.$viewValue
       }
-      console.log('found', found, option);
       
       if (option.$viewValue === 'USAGE') {
         $scope.options.useage=true;
@@ -302,30 +313,45 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
         $scope.options.submission=false;
         $scope.options.category=false;
         $scope.options.ids = found? found.componentReport: false;
+        $timeout(function(){
+          $scope.reportForm.ids = ids;
+        });
       }else if (option.$viewValue === 'SUBMISSION') {
         $scope.options.submission=true;
         $scope.options.useage=false;
         $scope.options.link=false;
         $scope.options.category=false;
         $scope.options.ids = found? found.componentReport: false;
+        $timeout(function(){
+          $scope.reportForm.ids = ids;
+        });
       } else if (option.$viewValue === 'LINKVALID') {
         $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=true;
         $scope.options.category=false;
         $scope.options.ids = found? found.componentReport: false;
+        $timeout(function(){
+          $scope.reportForm.ids = ids;
+        });
       } else if (option.$viewValue === 'CATCOMP') {
         $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=false;
         $scope.options.category=true;
         $scope.options.ids = found? found.componentReport: false;
+        $timeout(function(){
+          $scope.reportForm.ids = ids;
+        });
       } else {
         $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=false;
         $scope.options.category=false;
         $scope.options.ids = found? found.componentReport: false;
+        $timeout(function(){
+          $scope.reportForm.ids = ids;
+        });
       }      
     };  
     
