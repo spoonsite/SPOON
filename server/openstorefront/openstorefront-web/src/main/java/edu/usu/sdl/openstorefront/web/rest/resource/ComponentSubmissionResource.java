@@ -23,9 +23,9 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.core.model.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -237,9 +237,9 @@ public class ComponentSubmissionResource
 
 	private Response handleSaveComponent(ComponentAll componentAll, String approveStatus, boolean update)
 	{
-		ComponentUploadOption componentUploadOption = new ComponentUploadOption();
-		componentUploadOption.setUploadQuestions(true);
-		componentUploadOption.setUploadTags(true);
+		FileHistoryOption fileHistoryOption = new FileHistoryOption();
+		fileHistoryOption.setUploadQuestions(true);
+		fileHistoryOption.setUploadTags(true);
 
 		//validate all pieces
 		if (componentAll.getComponent() != null) {
@@ -301,7 +301,7 @@ public class ComponentSubmissionResource
 
 							componentAll.populateCreateUpdateFields(false);
 							componentAll.getComponent().setSubmittedDts(exstingComponent.getSubmittedDts());
-							componentAll = service.getComponentService().saveFullComponent(componentAll, componentUploadOption);
+							componentAll = service.getComponentService().saveFullComponent(componentAll, fileHistoryOption);
 
 							response = Response.status(Response.Status.OK).entity(componentAll).build();
 						} else {
@@ -315,7 +315,7 @@ public class ComponentSubmissionResource
 				return response;
 			} else {
 				componentAll.populateCreateUpdateFields(false);
-				componentAll = service.getComponentService().saveFullComponent(componentAll, componentUploadOption);
+				componentAll = service.getComponentService().saveFullComponent(componentAll, fileHistoryOption);
 				return Response.created(URI.create("v1/resource/componentsubmissions/" + componentAll.getComponent().getComponentId())).entity(componentAll).build();
 			}
 		} else {
