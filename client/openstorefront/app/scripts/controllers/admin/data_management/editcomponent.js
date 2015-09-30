@@ -1637,7 +1637,7 @@ app.filter('requiredByComponentType', function () {
             if (!inverse){
               results.push(thing);
             }
-          } else if (_.find(thing.requiredRestrictions, {'componentType': type})){
+          } else if (thing.requiredRestrictions && _.find(thing.requiredRestrictions, {'componentType': type})){
             // console.log('is required and has the right type', thing);
             if (!inverse){
               results.push(thing);
