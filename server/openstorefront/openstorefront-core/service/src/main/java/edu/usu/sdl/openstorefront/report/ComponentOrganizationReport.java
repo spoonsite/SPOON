@@ -64,7 +64,7 @@ public class ComponentOrganizationReport
 		String componentFilter = "";
 		if (!report.dataIdSet().isEmpty()) {
 			params = new HashMap<>();
-			params.put(":idlistParam", report.dataIdSet());
+			params.put("idlistParam", report.dataIdSet());
 			componentFilter = " and componentId in :idlistParam";
 		}
 		List<ODocument> documents = service.getPersistenceService().query("Select DISTINCT(organization) as organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
