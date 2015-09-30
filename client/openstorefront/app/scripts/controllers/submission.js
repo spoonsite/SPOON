@@ -90,7 +90,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   };
 
   $scope.addTo = function(item, attr, collection){
-    console.log('collection', collection);
+    // console.log('collection', collection);
     
     if (!collection) {
       collection = {};
@@ -115,7 +115,7 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
       collection = [];
     }
     _.contains(collection, item)? '': collection.push(item);
-    console.log('item', item);
+    // console.log('item', item);
   }
   $scope.removeFrom = function(item, collection){
     collection.splice(item, 1);
@@ -134,6 +134,12 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
             $event.stopPropagation();
           }
         })
+      }
+    } else {
+      triggerAlert('You are missing required information. Please review your submission before re-submitting your entry.', 'setEditable', 'body', 6000);
+      if ($scope.component.component) {
+        $scope.component.component.approvalState = 'N';
+        $scope.scrollTo('vitals', 'vitals', '', $event, 'componentName');
       }
     } 
   }
@@ -250,7 +256,7 @@ $scope.getSubmission = function(){
         $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
         $scope.componentId = result.component.componentId;
         $scope.component = angular.copy(result);
-        console.log('$scope.component', $scope.component);
+        // console.log('$scope.component', $scope.component);
         
         $scope.component.media = _.uniq($scope.component.media, 'componentMediaId');
         $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');
@@ -587,13 +593,14 @@ $scope.getSubmission = function(){
             delete compare.component.notifyOfApprovalEmail;
           }
         }
-        console.log('compare', compare);
         
+        //console.log('compare', compare);
         if (_.diff(compare,$scope.backup) || $scope.difMinusAttributes(_.diff($scope.backup, compare))) {
           delete compare.component.trigger;
           $scope.notDif = false;
           Business.submissionservice.createSubmission(compare).then(function(result){
             if (result && result.component && result.component.componentId){
+              // console.log('result', result);
               $scope.backup = angular.copy(result);
               $scope.backup.media = _.uniq($scope.backup.media, 'componentMediaId');              
               $scope.backup.resources = _.uniq($scope.backup.resources, 'resourceId');              
@@ -626,6 +633,8 @@ $scope.getSubmission = function(){
         // console.log('$scope.component', component);
         var compare = angular.copy(component);
         compare.attributes = $scope.getCompactAttributes(true);
+        // console.log('compare', compare);
+        
         if ($scope.optIn) {
           // console.log('we opted in');
           compare.component.notifyOfApprovalEmail = $scope.submitter.email;
@@ -735,26 +744,33 @@ $scope.getSubmission = function(){
   $scope.checkAttributes = function(){
     // console.log('Compact list', _.compact($scope.component.attributes));
     // we need to compact the attributes list because it may have unused indexes.
-    var list = angular.copy($scope.component.attributes);
-    
-    list = _.pluck(list, 'items');
-    var requiredAttributes = [];
-    _.each(list, function(item){
-      requiredAttributes.push(item[0]);
-    })
-    console.log('items', requiredAttributes);
-    
-    requiredAttributes = _.filter(requiredAttributes, function(n){
-      if (n) {
-        return n.requiredFlg && !n.hideOnSubmission;
-      } else {
-        return false;
+    if ($scope.component) {
+      var list = angular.copy($scope.component.attributes);
+      list = _.remove(_.compact(_.pluck(list, 'items')), function(item){
+        return item.length;
+      });
+      // console.log('list', list);
+      
+      var requiredAttributes = [];
+      if (list && list.length) {
+        _.each(list, function(item){
+          if (item && item.length){
+            requiredAttributes.push(item[0]);
+          }
+        })
+        requiredAttributes = _.filter(requiredAttributes, function(n){
+          if (n) {
+            return n.requiredFlg && !n.hideOnSubmission;
+          } else {
+            return false;
+          }
+        });
+        requiredAttributes = $filter('requiredByComponentType')(requiredAttributes, 'COMP', false);
+        if (requiredAttributes && requiredAttributes.length === $filter('requiredByComponentType')($scope.requiredAttributes, 'COMP', false).length) {
+          return true;
+        }
       }
-    });
-    requiredAttributes = $filter('requiredByComponentType')(requiredAttributes, 'COMP', false);
-    if (requiredAttributes.length === $filter('requiredByComponentType')($scope.requiredAttributes, 'COMP', false).length) {
-      return true;
-    }
+    } 
     return false;
   }
 
@@ -812,11 +828,15 @@ $scope.getSubmission = function(){
   }
 
   $scope.setupAttributes = function(attributes){
+    // console.log('attributes', attributes);
+    
     var result = {};
     // cycle through the given attributes on a component to merge the models for the form/view/directives etc...
     _.each(attributes, function(attribute){
       // if the attribute is found within our list of attributes
       var foundAttr = _.find($scope.allAttributes, {'attributeType': attribute.componentAttributePk.attributeType});
+      // console.log('found', foundAttr);
+      
       if (foundAttr) {
         // grab the new model through our filter
         var foundAttr = $filter('makeattribute')(foundAttr.codes, foundAttr);
@@ -824,16 +844,10 @@ $scope.getSubmission = function(){
         var found = _.find(foundAttr, {'code': attribute.componentAttributePk.attributeCode});
         // and merge them
         var merged = _.merge(found, attribute);
-        if (merged.requiredFlg) {
-          // if it is a required attribute it doesn't go into the array and isn't used in the multiple select
-          result[attribute.componentAttributePk.attributeType] = merged;
-        } else {
-          // otherwise it needs to be put into the array...
-          if (!result[attribute.componentAttributePk.attributeType] || !result[attribute.componentAttributePk.attributeType].items) {
-            result[attribute.componentAttributePk.attributeType] = {items:[]};
-          }
-          result[attribute.componentAttributePk.attributeType].items.push(merged);
+        if (!result[attribute.componentAttributePk.attributeType] || !result[attribute.componentAttributePk.attributeType].items) {
+          result[attribute.componentAttributePk.attributeType] = {items:[]};
         }
+        result[attribute.componentAttributePk.attributeType].items.push(merged);
       }
     })
 
