@@ -45,6 +45,7 @@ public class FileSystemManager
 	public static final String SYSTEM_TEMP_DIR = System.getProperty("java.io.tmpdir");
 	public static final String CONFIG_DIR = MAIN_DIR + "/config";
 	public static final String IMPORT_DIR = MAIN_DIR + "/import";
+	public static final String IMPORT_HISTORY_DIR = MAIN_DIR + "/import/history";
 	public static final String IMPORT_LOOKUP_DIR = MAIN_DIR + "/import/lookup";
 	public static final String IMPORT_ATTRIBUTE_DIR = MAIN_DIR + "/import/attribute";
 	public static final String IMPORT_ARTICLE_DIR = MAIN_DIR + "/import/article";
@@ -173,6 +174,7 @@ public class FileSystemManager
 		FileSystemManager.getDir(FileSystemManager.MEDIA_DIR);
 		FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
 		FileSystemManager.getDir(FileSystemManager.REPORT_DIR);
+		FileSystemManager.getDir(FileSystemManager.IMPORT_HISTORY_DIR);
 	}
 
 	public static void cleanup()

@@ -119,6 +119,11 @@ public class Component
 	@APIDescription("Email to notify of approval.")
 	private String notifyOfApprovalEmail;
 
+	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = DataSource.class)
+	@FK(ApprovalStatus.class)
+	private String dataSource;
+
 	public Component()
 	{
 	}
@@ -321,6 +326,16 @@ public class Component
 	public void setComponentType(String componentType)
 	{
 		this.componentType = componentType;
+	}
+
+	public String getDataSource()
+	{
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource)
+	{
+		this.dataSource = dataSource;
 	}
 
 }

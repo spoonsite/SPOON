@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.job.BaseJob;
 import edu.usu.sdl.openstorefront.service.job.ComponentUpdateJob;
+import edu.usu.sdl.openstorefront.service.job.ImportJob;
 import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.job.NotificationJob;
 import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
@@ -103,6 +104,7 @@ public class JobManager
 		addComponentUpdate();
 		addComponentIntegrationJobs();
 		addUserProfileSyncjob();
+		addImportJob();
 	}
 
 	private static void addComponentIntegrationJobs() throws SchedulerException
@@ -210,6 +212,26 @@ public class JobManager
 
 		Trigger trigger = newTrigger()
 				.withIdentity("ComponentUpdateJobTrigger", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInSeconds(5)
+						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
+	}
+
+	private static void addImportJob() throws SchedulerException
+	{
+		log.log(Level.INFO, "Adding ImportJob");
+
+		JobDetail job = JobBuilder.newJob(ImportJob.class)
+				.withIdentity("ImportJob", JOB_GROUP_SYSTEM)
+				.withDescription("This batches the uploads to allow for better data consistency.")
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("ImportJobTrigger", JOB_GROUP_SYSTEM)
 				.startNow()
 				.withSchedule(simpleSchedule()
 						.withIntervalInSeconds(5)
