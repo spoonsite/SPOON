@@ -58,7 +58,8 @@ public class CategoryComponentReport
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		String category = AttributeType.DI2E_SVCV4;
-		if (StringUtils.isNotBlank(report.getReportOption().getCategory())) {
+		if (report.getReportOption() != null
+				&& StringUtils.isNotBlank(report.getReportOption().getCategory())) {
 			category = report.getReportOption().getCategory();
 		}
 

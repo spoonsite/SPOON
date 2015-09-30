@@ -29,7 +29,6 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -97,8 +96,10 @@ public class Report
 	public Set<String> dataIdSet()
 	{
 		Set<String> dataSet = new HashSet<>();
-		if (ids != null) {
-			ids.stream().collect(Collectors.groupingBy(ReportDataId::getId));
+		if (getIds() != null) {
+			for (ReportDataId dataId : getIds()) {
+				dataSet.add(dataId.getId());
+			}
 		}
 		return dataSet;
 	}
