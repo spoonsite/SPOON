@@ -152,7 +152,7 @@ public class Convert
 	 * MM/dd/yyyy yyyy-mm-dd date standard milliseconds
 	 *
 	 * @param dateString
-	 * @return date
+	 * @return date or null if it can't be converted
 	 */
 	public static Date toDate(String dateString)
 	{
@@ -169,6 +169,7 @@ public class Convert
 						"MM/dd/yyyy HH:mm:ss z ",
 						"yyyy-mm-dd HH:mm:ss z ",
 						"yyyy-MM-dd'T'HH:mm:ss.SSS'Z",
+						"dd MMM yyyy hh:mm:ss a z",
 						"MM/dd/yyyy",
 						"yyyy-mm-dd ",};
 

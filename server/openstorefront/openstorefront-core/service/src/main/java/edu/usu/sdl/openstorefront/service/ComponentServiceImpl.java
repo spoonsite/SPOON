@@ -62,6 +62,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
@@ -73,7 +74,6 @@ import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.core.model.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.core.model.IntegrationAll;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
@@ -1113,7 +1113,7 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void importComponents(List<ComponentAll> components, ComponentUploadOption options)
+	public void importComponents(List<ComponentAll> components, FileHistoryOption options)
 	{
 		List<Component> componentsToIndex = new ArrayList<>();
 		components.forEach(component -> {
@@ -1126,16 +1126,16 @@ public class ComponentServiceImpl
 	@Override
 	public ComponentAll saveFullComponent(ComponentAll componentAll)
 	{
-		return saveFullComponent(componentAll, new ComponentUploadOption(), true);
+		return saveFullComponent(componentAll, new FileHistoryOption(), true);
 	}
 
 	@Override
-	public ComponentAll saveFullComponent(ComponentAll componentAll, ComponentUploadOption options)
+	public ComponentAll saveFullComponent(ComponentAll componentAll, FileHistoryOption options)
 	{
 		return saveFullComponent(componentAll, options, true);
 	}
 
-	private ComponentAll saveFullComponent(ComponentAll componentAll, ComponentUploadOption options, boolean updateIndex)
+	private ComponentAll saveFullComponent(ComponentAll componentAll, FileHistoryOption options, boolean updateIndex)
 	{
 		LockSwitch lockSwitch = new LockSwitch();
 
