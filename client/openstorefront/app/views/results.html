@@ -169,6 +169,9 @@ limitations under the License.
               <button class='btn btn-info detailsTitleButton' ng-click="resetSearch();"  data-toggle="tooltip" data-container="body" data-placement="bottom" data-title="Clear Search" data-trigger="hover">
                 <i class="fa fa-search imitateLink"></i>
               </button>
+              <button class='btn btn-info detailsTitleButton' ng-click="exportSearch();"  data-toggle="tooltip" data-container="body" data-placement="bottom" data-title="Export Search Results (Currently only works with Components)" data-trigger="hover">
+                <i class="fa fa-download imitateLink"></i>
+              </button>
               Search &mdash; {{searchTitle}} <div ng-if="data && data.data && data.data.length" style="font-size: 12px;">({{getNumThings(false)}} Component<span ng-show="getNumThings(false) > 1">s</span><span ng-show="getNumThings(true)">&nbsp;and {{getNumThings(true)}} Article<span ng-show="getNumThings(true) > 1">s</span>)</span><span ng-show="!getNumThings(true)">)</span></div>
             </div>
             <div class="searchDescription">

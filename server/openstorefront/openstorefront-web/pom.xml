@@ -96,6 +96,17 @@
 			<version>1.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.atmosphere</groupId>
+			<artifactId>atmosphere-runtime</artifactId>
+			<version>2.3.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.atmosphere</groupId>
+			<artifactId>atmosphere-socketio</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+
 		<!--
 		<dependency>
 			<groupId>org.owasp.esapi</groupId>

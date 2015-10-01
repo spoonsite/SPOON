@@ -389,6 +389,7 @@ module.exports = function (grunt) {
           'bower_components/bootstrap-combobox/css/bootstrap-combobox.css',
           'bower_components/bootstrap-combobox/js/bootstrap-combobox.js',
           'scripts/common/angular-lightbox.js',
+          'scripts/common/combobox.js',
           'scripts/common/ng-ckeditor.js',
           'scripts/common/d3.js',
           'scripts/common/d3tip.js',

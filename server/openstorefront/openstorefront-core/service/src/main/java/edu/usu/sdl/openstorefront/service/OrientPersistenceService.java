@@ -640,9 +640,19 @@ public class OrientPersistenceService
 							String fieldName = complexFieldStack.getQueryFieldName() + field.toString() + generateStatementOption.getMethod();
 							String fieldParamName = complexFieldStack.getQueryFieldName() + field.toString();
 							where.append(fieldName)
-									.append(" ").append(generateStatementOption.getOperation()).append(" :")
-									.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
-									.append(generateStatementOption.getParameterSuffix());
+									.append(" ").append(generateStatementOption.getOperation());
+
+							boolean addParameter = true;
+							if (GenerateStatementOption.OPERATION_NULL.equals(generateStatementOption.getOperation())
+									|| GenerateStatementOption.OPERATION_NOT_NULL.equals(generateStatementOption.getOperation())) {
+								addParameter = false;
+							}
+
+							if (addParameter) {
+								where.append(" :")
+										.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
+										.append(generateStatementOption.getParameterSuffix());
+							}
 						}
 					}
 				}

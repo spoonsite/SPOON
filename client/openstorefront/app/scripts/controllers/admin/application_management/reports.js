@@ -20,6 +20,7 @@
   $scope.predicate = [];
   $scope.reverse = [];
   $scope.selectedRows = [];
+  $scope.business = Business;
 
   $scope.setPredicate = function (predicate, table) {
     if ($scope.predicate[table] === predicate) {
@@ -119,6 +120,9 @@
         },
         sheduleFlag: function () {
           return $scope.sheduleFlag;
+        },
+        ids: function() {
+          return null;
         }
       }
     });       
@@ -136,6 +140,9 @@
         },
         sheduleFlag: function () {
           return $scope.sheduleFlag;
+        },
+        ids: function() {
+          return null;
         }
       }
     });         
@@ -189,8 +196,8 @@
 
 }]);
 
-app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', 'business', '$uiModal', '$filter', '$timeout', 'sheduleFlag',
-  function ($scope, $uiModalInstance, report, Business, $uiModal, $filter, $timeout, sheduleFlag) {
+app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', 'ids', 'business', '$uiModal', '$filter', '$timeout', 'sheduleFlag',
+  function ($scope, $uiModalInstance, report, ids, Business, $uiModal, $filter, $timeout, sheduleFlag) {
 
     $scope.reportForm = angular.copy(report);
     $scope.actionText = 'Generate';
@@ -236,7 +243,13 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
       Business.reportservice.getReportTypes().then(function (results) {
         $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
         if (results) {
-          $scope.reportTypes = results;
+          if (ids && ids.length) {
+            $scope.reportTypes = _.filter(results, function(result){
+              return result.componentReport;
+            })
+          } else {
+            $scope.reportTypes = results;
+          }
         } else {
           $scope.reportTypes = [];
         }
@@ -273,12 +286,11 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
 
     $scope.getCategories = function () {
       var filterQueryObj = angular.copy(utils.queryFilter);
-      filterQueryObj.status = 'A'
+      filterQueryObj.status = 'A';
       $scope.$emit('$TRIGGERLOAD', 'reportFormLoader');
       Business.articleservice.getTypes(filterQueryObj, true).then(function (results) {
         $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
         if (results) {
-          console.log('results', results);
           
           $scope.categories = results;
         }
@@ -289,34 +301,57 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
     };
     $scope.getCategories();
 
-    $scope.showOptions = function(option){
-      console.log('option', option.$viewValue);
+    $scope.showOptions = function(report){
+      var found = _.find($scope.reportTypes, {'code': report.$viewValue});
+      var option = {
+        '$viewValue': report.$viewValue
+      }
       
       if (option.$viewValue === 'USAGE') {
         $scope.options.useage=true;
         $scope.options.link=false;
         $scope.options.submission=false;
         $scope.options.category=false;
+        $scope.options.ids = found? found.componentReport: false;
+        $timeout(function(){
+          $scope.reportForm.ids = ids;
+        });
       }else if (option.$viewValue === 'SUBMISSION') {
         $scope.options.submission=true;
         $scope.options.useage=false;
         $scope.options.link=false;
         $scope.options.category=false;
+        $scope.options.ids = found? found.componentReport: false;
+        $timeout(function(){
+          $scope.reportForm.ids = ids;
+        });
       } else if (option.$viewValue === 'LINKVALID') {
         $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=true;
         $scope.options.category=false;
+        $scope.options.ids = found? found.componentReport: false;
+        $timeout(function(){
+          $scope.reportForm.ids = ids;
+        });
       } else if (option.$viewValue === 'CATCOMP') {
         $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=false;
         $scope.options.category=true;
+        $scope.options.ids = found? found.componentReport: false;
+        $timeout(function(){
+          $scope.reportForm.ids = ids;
+        });
       } else {
         $scope.options.submission=false;
         $scope.options.useage=false;
         $scope.options.link=false;
         $scope.options.category=false;
+        $scope.options.ids = found? found.componentReport: false;
+        $timeout(function(){
+          $scope.reportForm.ids = ids;
+        });
       }      
     };  
     
@@ -371,7 +406,7 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
       //custom validation
       if ($scope.flag.schedule) {
         if (!($scope.reportForm.scheduleIntervalDays)) {
-          triggerAlert('interval is required on a scheduled report', 'reportId', 'body', 3000);
+          triggerAlert('Interval is required on a scheduled report', 'reportId', 'body', 3000);
           return;
         }
       }
@@ -427,7 +462,23 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
           triggerAlert('Validation Error: <br> Make sure Email(s) are valid', 'alertId', 'body', 3000);
         });        
       } else {
-        Business.reportservice.generateReport($scope.reportForm).then(function(results) {      
+        console.log('$scope.reportForm', $scope.reportForm);
+        
+        var reportDataIds = [];
+        _.forEach($scope.reportForm.ids, function(id){
+          reportDataIds.push({
+            id: id
+          });
+        });
+        
+        
+        var reportView = {
+          report: $scope.reportForm,
+          reportDataId: reportDataIds
+        };
+        delete reportView.report.ids;
+                
+        Business.reportservice.generateReport(reportView).then(function(results) {      
           $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
           
           if (results) {

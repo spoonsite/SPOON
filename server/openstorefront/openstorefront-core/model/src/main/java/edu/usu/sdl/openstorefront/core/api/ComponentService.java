@@ -34,9 +34,9 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.core.model.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
@@ -377,7 +377,7 @@ public interface ComponentService
 	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public ComponentAll saveFullComponent(ComponentAll componentAll, ComponentUploadOption options);
+	public ComponentAll saveFullComponent(ComponentAll componentAll, FileHistoryOption options);
 
 	/**
 	 * Submits a component for Approval
@@ -393,7 +393,7 @@ public interface ComponentService
 	 * @param components
 	 * @param options
 	 */
-	public void importComponents(List<ComponentAll> components, ComponentUploadOption options);
+	public void importComponents(List<ComponentAll> components, FileHistoryOption options);
 
 	/**
 	 * Deletes the component and all related entities

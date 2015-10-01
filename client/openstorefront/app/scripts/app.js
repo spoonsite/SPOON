@@ -36,7 +36,6 @@ var app = angular
     'ngAnimate',
     'ngCkeditor',    
     'ngGrid',
-    'ngMockE2E',
     'bootstrapLightbox',
     'angular-carousel',
     'angulartics.google.analytics',
@@ -229,7 +228,6 @@ var app = angular
     '$location',
     '$route',
     '$timeout',
-    '$httpBackend',
     '$q',
     'auth',
     '$anchorScroll',
@@ -238,7 +236,7 @@ var app = angular
     '$idle',
     '$keepalive',
     '$uiModal',
-    function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams, $analytics, $idle, $keepalive, $uiModal) {/* jshint unused: false*/
+    function ($rootScope, localCache, Business, $location, $route, $timeout, $q, Auth, $anchorScroll, $routeParams, $analytics, $idle, $keepalive, $uiModal) {/* jshint unused: false*/
 
       // initialization stuff.
       $rootScope.messageType = '';
@@ -582,17 +580,17 @@ var app = angular
       // HttpBackend
       //////////////////////////////////////////////////////////////////////////////
       //Mock Back End  (use passThrough to route to server)
-      $httpBackend.whenGET(/views.*/).passThrough();
-      $httpBackend.whenGET(/Article.*/).passThrough();
-      $httpBackend.whenPOST(/Article.*/).passThrough();
-      $httpBackend.whenGET('System.action?UserAgent').passThrough();
-      $httpBackend.whenGET('System.action?AppVersion').passThrough();
+      // $httpBackend.whenGET(/views.*/).passThrough();
+      // $httpBackend.whenGET(/Article.*/).passThrough();
+      // $httpBackend.whenPOST(/Article.*/).passThrough();
+      // $httpBackend.whenGET('System.action?UserAgent').passThrough();
+      // $httpBackend.whenGET('System.action?AppVersion').passThrough();
 
       // LET THEM ALL THROUGH      
-      $httpBackend.whenGET(/api\/v1\/*/).passThrough();
-      $httpBackend.whenPUT(/api\/v1\/*/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/*/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/*/).passThrough();
+      // $httpBackend.whenGET(/api\/v1\/*/).passThrough();
+      // $httpBackend.whenPUT(/api\/v1\/*/).passThrough();
+      // $httpBackend.whenDELETE(/api\/v1\/*/).passThrough();
+      // $httpBackend.whenPOST(/api\/v1\/*/).passThrough();
 
 
 

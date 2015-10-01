@@ -24,9 +24,9 @@ import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.core.model.ComponentUploadOption;
 import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.parser.BaseAttributeParser;
@@ -75,7 +75,7 @@ public class UploadAction
 	@Validate(required = true, on = "UploadLookup")
 	private String entityName;
 
-	private ComponentUploadOption componentUploadOptions = new ComponentUploadOption();
+	private FileHistoryOption componentUploadOptions = new FileHistoryOption();
 
 	@HandlesEvent("UploadLookup")
 	public Resolution uploadLookup()
@@ -404,12 +404,12 @@ public class UploadAction
 		this.entityName = entityName;
 	}
 
-	public ComponentUploadOption getComponentUploadOptions()
+	public FileHistoryOption getComponentUploadOptions()
 	{
 		return componentUploadOptions;
 	}
 
-	public void setComponentUploadOptions(ComponentUploadOption componentUploadOptions)
+	public void setComponentUploadOptions(FileHistoryOption componentUploadOptions)
 	{
 		this.componentUploadOptions = componentUploadOptions;
 	}

@@ -115,4 +115,10 @@ public interface Service
 	 */
 	public UserService getUserService();
 
+	/**
+	 * Handles importing data and file history
+	 *
+	 * @return
+	 */
+	public ImportService getImportService();
 }

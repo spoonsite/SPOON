@@ -883,12 +883,16 @@ componentservice.getComponent = function (componentId) {
   return deferred.promise;
 };
 
-componentservice.getComponentLookupList = function () {
+componentservice.getComponentLookupList = function (queryParamFilter) {
+  var url = 'api/v1/resource/components/lookup?';
+  if (queryParamFilter) {
+    url = url + queryParamFilter.toQuery()
+  }
   var deferred = $q.defer();
 
   $http({
     'method': 'GET',
-    'url': 'api/v1/resource/components/lookup'
+    'url': url
   }).success(function (data, status, headers, config) { /*jshint unused:false*/
     if (data && isNotRequestError(data)) {
       removeError();

@@ -18,7 +18,7 @@ package edu.usu.sdl.openstorefront.service.job;
 import org.quartz.JobExecutionContext;
 
 /**
- * Reaps the errors
+ * Cleans up old data
  *
  * @author dshurtleff
  */
@@ -31,6 +31,7 @@ public class SystemCleanupJob
 	{
 		service.getSystemService().cleanupOldErrors();
 		service.getSystemService().cleanUpOldLogRecords();
+		service.getImportService().cleanupOldFileHistory();
 	}
 
 }

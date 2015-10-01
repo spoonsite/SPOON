@@ -258,6 +258,11 @@
 	  <artifactId>openstorefront-core-apidoc</artifactId>
 	  <version>${project.version}</version>
 	 </dependency>
+	 <dependency>
+	  <groupId>${project.groupId}</groupId>
+	  <artifactId>er2-xmlparser</artifactId>
+	  <version>1.0</version>
+	 </dependency>
 	</dependencies>
 
 	<build>
