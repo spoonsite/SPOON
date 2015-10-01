@@ -39,7 +39,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       $scope.pagination.control.changeSortOrder(predicate);
     }
   };
-
   $scope.setupTagList = $scope.setupTagList || function() {
     Business.getTagsList(true).then(function(result) {
       if (result) {
@@ -584,7 +583,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   {
     return _.contains(updateList, item);
   };
-
+  
   /***************************************************************
   * This function sets up the 'show updated flags' and creates the tooltips.
   ***************************************************************/  

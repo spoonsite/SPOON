@@ -34,8 +34,8 @@ app.directive('dynamicPopover', ['$compile', '$timeout', function($compile, $tim
             }, 
             content: $compile(content)(scope),
             placement: attrs['placement'] || 'top',
-            trigger: attrs['trigger'] || 'click',
-          })
+            trigger: attrs['trigger'] || 'click'
+          });
           $timeout(function(){
             element.popover('show');
             // $timeout(function(){
@@ -44,7 +44,7 @@ app.directive('dynamicPopover', ['$compile', '$timeout', function($compile, $tim
             //     element.popover('show');
             //   }, 100)
             // },100)
-          },150)
+          },150);
           element.off('click', addPopover); 
         }
         $('body').on('click', function (e) {
@@ -52,12 +52,12 @@ app.directive('dynamicPopover', ['$compile', '$timeout', function($compile, $tim
             element.popover('hide');
           }
         });
-      }
+      };
 
       // define popover for this element
       scope.$watch('content', function() {
         element.on('click', addPopover);
       });
     }
-  }
-}])
+  };
+}]);
