@@ -260,7 +260,7 @@
 	 </dependency>
 	 <dependency>
 	  <groupId>${project.groupId}</groupId>
-	  <artifactId>er2-xmlpaser</artifactId>
+	  <artifactId>er2-xmlparser</artifactId>
 	  <version>1.0</version>
 	 </dependency>
 	</dependencies>
