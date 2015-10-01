@@ -104,6 +104,10 @@ public class ServiceTest
 		testSuiteModel.setName("Help Tests");
 		testSuiteModels.add(testSuiteModel);
 
+		testSuiteModel = new TestSuiteModel("edu.usu.sdl.openstorefront.web.test.format");
+		testSuiteModel.setName("Import Tests");
+		testSuiteModels.add(testSuiteModel);
+
 		return testSuiteModels;
 	}
 

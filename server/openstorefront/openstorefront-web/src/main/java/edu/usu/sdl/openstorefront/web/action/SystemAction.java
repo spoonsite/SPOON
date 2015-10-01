@@ -15,28 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.web.action;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
-import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
-import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
-import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
-import edu.usu.sdl.openstorefront.core.entity.ContactType;
-import edu.usu.sdl.openstorefront.core.entity.ResourceType;
-import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -146,72 +131,6 @@ public class SystemAction
 			return new StreamingResolution("text/html", dupCount + " Duplicate Component Attribute Remove on: " + attributeType + " attribute Type. <br> Details: <br>" + details);
 		}
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
-	}
-
-	@HandlesEvent("CompReport")
-	public Resolution compReport()
-	{
-		StringBuilder errors = new StringBuilder();
-		try (InputStream in = new FileInputStream("C:\\temp\\allComponents.json"); BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("C:\\temp\\compreport.html")))) {
-			List<ComponentAll> components = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ComponentAll>>()
-			{
-			});
-
-			for (ComponentAll componentAll : components) {
-				out.write("<h2>" + componentAll.getComponent().getName() + "</h2>");
-				out.write("<b>Organization: </b> " + componentAll.getComponent().getOrganization() + "<br>");
-				out.write("<b>Description:</b> <br>" + componentAll.getComponent().getDescription() + "<br>");
-				out.write("<b>Component Vitals</b> <br>");
-				out.write("<table border='1'>");
-				for (ComponentAttribute componentAttribute : componentAll.getAttributes()) {
-					out.write("<tr>");
-					AttributeType attributeType = service.getAttributeService().findType(componentAttribute.getComponentAttributePk().getAttributeType());
-					if (attributeType == null) {
-						errors.append("Missing Type : " + componentAttribute.getComponentAttributePk().getAttributeType()).append("<br>");
-					} else {
-						AttributeCodePk attributeCodePk = new AttributeCodePk();
-						attributeCodePk.setAttributeCode(componentAttribute.getComponentAttributePk().getAttributeCode());
-						attributeCodePk.setAttributeType(attributeType.getAttributeType());
-						AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
-						if (attributeCode == null) {
-							errors.append("Missing code : " + componentAttribute.getComponentAttributePk().pkValue()).append("<br>");
-						} else {
-							out.write("<td><b>" + attributeType.getDescription() + "</b></td>");
-							out.write("<td>" + attributeCode.getLabel() + "</td>");
-						}
-					}
-					out.write("</tr>");
-				}
-				out.write("</table><br>");
-				out.write("<b>Contacts:</b> <br>");
-				out.write("<table border='1'><tr><th>Name</th><th>Postion</th><th>Organization</th><th>Phone</th><th>Email</th></tr>");
-				for (ComponentContact contact : componentAll.getContacts()) {
-					out.write("<tr>");
-					out.write("<td>" + contact.getFirstName() + " " + StringProcessor.blankIfNull(contact.getLastName()) + "</td>");
-					out.write("<td>" + TranslateUtil.translate(ContactType.class, contact.getContactType()) + "</td>");
-					out.write("<td>" + StringProcessor.blankIfNull(contact.getOrganization()) + "</td>");
-					out.write("<td>" + StringProcessor.blankIfNull(contact.getPhone()) + "</td>");
-					out.write("<td>" + StringProcessor.blankIfNull(contact.getEmail()) + "</td>");
-					out.write("</tr>");
-				}
-				out.write("</table><br>");
-
-				out.write("<b>Resources:</b> <br>");
-				out.write("<table border='1'><tr><th>Name</th><th>Link</th></tr>");
-				for (ComponentResource resource : componentAll.getResources()) {
-					out.write("<tr>");
-					out.write("<td>" + TranslateUtil.translate(ResourceType.class, resource.getResourceType()) + "</td>");
-					out.write("<td>" + StringProcessor.blankIfNull(resource.getLink()) + "</td>");
-					out.write("</tr>");
-				}
-				out.write("</table>");
-				out.write("<br><hr><br>");
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return new StreamingResolution("text/html", errors.toString());
 	}
 
 	public String getAttributeType()

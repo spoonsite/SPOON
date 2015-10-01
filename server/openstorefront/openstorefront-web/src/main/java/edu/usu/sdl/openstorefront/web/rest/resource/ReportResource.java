@@ -241,7 +241,7 @@ public class ReportResource
 	@POST
 	@APIDescription("Generates a new report")
 	@Consumes({MediaType.APPLICATION_JSON})
-	public Response postAlert(ReportGenerateView reportView)
+	public Response generateReport(ReportGenerateView reportView)
 	{
 		Report report = reportView.getReport();
 		ValidationModel validationModel = new ValidationModel(report);
