@@ -520,6 +520,52 @@
       return result.promise;
     };
 
+    componentservice.searchByAttribute = function (attribute) {
+      var result = $q.defer();
+      var searchObj = {
+        "sortField" : null,
+        "sortDirection" : "DESC",
+        "startOffset" : 0,
+        "max" : 2147483647,
+        "searchElements" : [{
+            "searchType" : "ATTRIBUTE",
+            "field" : null,
+            "value" : null,
+            "keyField" : attribute.type,
+            "keyValue" : attribute.code,
+            "startDate" : null,
+            "endDate" : null,
+            "caseInsensitive" : false,
+            "numberOperation" : "EQUALS",
+            "stringOperation" : "EQUALS",
+            "mergeCondition" : "OR"
+          }]
+      }	
+      var url = 'api/v1/service/search/advance/';
+      if (attribute && attribute.type && attribute.code) {
+        $http({
+          method: 'POST',
+          url: url,
+          data: searchObj
+        }).success(function (data, status, headers, config) {
+          if (data && !isEmpty(data) && isNotRequestError(data)) {
+            removeError();
+            result.resolve(data);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
+          result.reject(false);
+        });
+      } else {
+        result.reject(false);
+      }
+
+      return result.promise;
+    };
+
     componentservice.doSearch = function (type, key, architecture) {
       var result = $q.defer();
       var url = 'api/v1/service/search/all';
