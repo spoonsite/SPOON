@@ -42,7 +42,6 @@ public class SocketIOChatHandler
 	public void onRequest(AtmosphereResource r) throws IOException
 	{
 		r.getBroadcaster().broadcast(r.getRequest().getReader().readLine());
-		r.
 	}
 
 	@Override
@@ -51,7 +50,7 @@ public class SocketIOChatHandler
 		AtmosphereResource r = event.getResource();
 		if (r.isCancelled() == false) {
 			AtmosphereResponse res = r.getResponse();
-			
+
 			if (event.isSuspended() && event.getMessage() != null) {
 				String body = event.getMessage().toString();
 
