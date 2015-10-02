@@ -132,6 +132,18 @@ var app = angular
     },
     label: 'Help Page'
   }) 
+  .when('/test', {
+    templateUrl: 'views/test.html',
+    controller: 'BaseCtrl',
+    resolve: {
+      printView: function() {
+        return {
+          print: true
+        };
+      }
+    },
+    label: 'Test'
+  }) 
   .otherwise({
     redirectTo: '/'
   });
@@ -410,7 +422,6 @@ var app = angular
         }, 10);
       });
       $rootScope.$on('$TRIGGEREVENT', function(event, trigger, data, data2){
-        console.log(trigger);
         $timeout(function() {
           $rootScope.$broadcast(trigger, data, data2);
         }, 10);

@@ -23,26 +23,48 @@
 * # socket
 * Factory in the openstorefrontApp.
 */
-app.factory('socket', ['$rootScope', function ($rootScope) {
-  var socket = io.connect();
+app.factory('socket', ['$rootScope', 'business', '$q',  function ($rootScope, Business, $q) {
+  var socket;
+  var deferred = $q.defer();
+  Business.userservice.getCurrentUserProfile().then(function(result){
+    if (result){
+      socket = io.connect('', {'resource':'openstorefront/chat', 'query': 'id='+result.username+'' });
+    }
+    deferred.resolve();
+  }, function(){
+    deferred.resolve()
+  })
+
   return {
-    on: function (eventName, callback) {
-      socket.on(eventName, function () {  
-        var args = arguments;
-        $rootScope.$apply(function () {
-          callback.apply(socket, args);
-        });
+    on: function(eventName, callback) {
+      var thing = function (eventName, callback, $rootScope, socket) {
+        socket.on(eventName, function () {  
+          var args = arguments;
+          $rootScope.$apply(function () {
+            callback.apply(socket, args);
+          });
+        })
+      };
+      var temp = thing.bind(null, eventName, callback, $rootScope);
+      deferred.promise.then(function(){
+        temp(socket);
       });
     },
-    emit: function (eventName, data, callback) {
-      socket.emit(eventName, data, function () {
-        var args = arguments;
-        $rootScope.$apply(function () {
-          if (callback) {
-            callback.apply(socket, args);
-          }
-        });
-      })
+    emit: function(eventName, data, callback){
+      var thing = function (eventName, data, callback, $rootScope, socket) {
+        socket.emit(eventName, data, function () {
+          var args = arguments;
+          $rootScope.$apply(function () {
+            if (callback) {
+              callback.apply(socket, args);
+            }
+          });
+        })
+      };
+      var temp = thing.bind(null, eventName, data, callback, $rootScope);
+      deferred.promise.then(function(){
+        temp(socket);
+      });
     }
-  };
+  }
 }]);
