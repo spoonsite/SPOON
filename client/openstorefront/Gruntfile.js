@@ -401,7 +401,8 @@ module.exports = function (grunt) {
           'scripts/common/jquery-cron.js',
           'scripts/common/angular-multi-select.js',
           'scripts/common/cronGen.js',
-          'scripts/common/ckeditor/**/*'
+          'scripts/common/ckeditor/**/*',
+          'scripts/common/socket.io.js'
           ]
         }, {
           expand: true,
