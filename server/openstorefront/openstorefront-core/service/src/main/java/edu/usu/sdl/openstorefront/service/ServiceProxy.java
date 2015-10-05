@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.core.api.AlertService;
 import edu.usu.sdl.openstorefront.core.api.AsyncService;
 import edu.usu.sdl.openstorefront.core.api.AttributeService;
+import edu.usu.sdl.openstorefront.core.api.BrandingService;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
@@ -64,6 +65,7 @@ public class ServiceProxy
 	private PluginServicePrivate pluginServicePrivate;
 	private ImportService importService;
 	private ImportServicePrivate importServicePrivate;
+	private BrandingService brandingService;
 
 	public ServiceProxy()
 	{
@@ -213,7 +215,6 @@ public class ServiceProxy
 		return attributeServicePrivate;
 	}
 
-	@Override
 	public ImportService getImportService()
 	{
 		if (importService == null) {
@@ -245,6 +246,22 @@ public class ServiceProxy
 		Objects.requireNonNull(originalProxy, "Original Service is required");
 		T asyncService = AsyncProxy.newInstance(originalProxy, taskRequest);
 		return asyncService;
+	}
+
+	/**
+	 * @return the brandingService
+	 */
+	public BrandingService getBrandingService()
+	{
+		return brandingService;
+	}
+
+	/**
+	 * @param brandingService the brandingService to set
+	 */
+	public void setBrandingService(BrandingService brandingService)
+	{
+		this.brandingService = brandingService;
 	}
 
 }
