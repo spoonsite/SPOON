@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.TopicSearchItem;
@@ -24,11 +23,12 @@ import java.util.List;
  *
  * @author jlaw
  */
-public interface BrandingService 
+public interface BrandingService
 		extends AsyncService
 {
+
 	/**
-	 * High-speed component name lookup
+	 * Finds a branding
 	 *
 	 * @param brandingId
 	 * @return Name or null if not found
@@ -75,6 +75,7 @@ public interface BrandingService
 	/**
 	 * High-speed component name lookup
 	 *
+	 * @param brandingId
 	 */
 	public void deleteTopicSearchItems(String brandingId);
 

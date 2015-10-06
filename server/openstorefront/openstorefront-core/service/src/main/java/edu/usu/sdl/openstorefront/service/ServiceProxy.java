@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.api.BrandingService;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
+import edu.usu.sdl.openstorefront.core.api.NotificationService;
 import edu.usu.sdl.openstorefront.core.api.OrganizationService;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.PluginService;
@@ -66,6 +67,7 @@ public class ServiceProxy
 	private ImportService importService;
 	private ImportServicePrivate importServicePrivate;
 	private BrandingService brandingService;
+	private NotificationService notificationService;
 
 	public ServiceProxy()
 	{
@@ -215,6 +217,7 @@ public class ServiceProxy
 		return attributeServicePrivate;
 	}
 
+	@Override
 	public ImportService getImportService()
 	{
 		if (importService == null) {
@@ -232,6 +235,24 @@ public class ServiceProxy
 	}
 
 	@Override
+	public BrandingService getBrandingService()
+	{
+		if (brandingService == null) {
+			brandingService = DynamicProxy.newInstance(new BrandingServiceImpl());
+		}
+		return brandingService;
+	}
+
+	@Override
+	public NotificationService getNotificationService()
+	{
+		if (notificationService == null) {
+			notificationService = DynamicProxy.newInstance(new NotificationServiceImpl());
+		}
+		return notificationService;
+	}
+
+	@Override
 	public <T extends AsyncService> T getAsyncProxy(T originalProxy)
 	{
 		TaskRequest taskRequest = new TaskRequest();
@@ -246,22 +267,6 @@ public class ServiceProxy
 		Objects.requireNonNull(originalProxy, "Original Service is required");
 		T asyncService = AsyncProxy.newInstance(originalProxy, taskRequest);
 		return asyncService;
-	}
-
-	/**
-	 * @return the brandingService
-	 */
-	public BrandingService getBrandingService()
-	{
-		return brandingService;
-	}
-
-	/**
-	 * @param brandingService the brandingService to set
-	 */
-	public void setBrandingService(BrandingService brandingService)
-	{
-		this.brandingService = brandingService;
 	}
 
 }

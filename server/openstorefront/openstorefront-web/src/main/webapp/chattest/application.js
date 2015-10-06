@@ -16,7 +16,10 @@ $(function () {
         loginurl = pathname.substr(1, lastdot);
     }
    // var socket = io.connect('', {'resource':loginurl + 'chat'});
-    var socket = io.connect('', {'resource':'openstorefront/chat'});
+    var socket = io.connect('', {
+      'resource':'openstorefront/event', 
+      query: 'id=admin'
+    });
 
     socket.on('connect', function () {
         content.html($('<p>', { text: 'Atmosphere connected using ' + this.socket.transport.name}));
@@ -28,7 +31,7 @@ $(function () {
         });
     });
 
-    socket.on('chat message', message);
+    socket.on('notification', message);
 
     socket.on('error', function (e) {
         content.html($('<p>', { text: 'Sorry, but there\'s some problem with your '
@@ -44,7 +47,7 @@ $(function () {
                 author = msg;
             }
 
-            socket.emit('chat message', $.stringifyJSON({ author: author, message: msg }));
+            socket.emit('notification', $.stringifyJSON({ author: author, message: msg }));
             $(this).val('');
 
             input.attr('disabled', 'disabled');
@@ -55,31 +58,27 @@ $(function () {
     });
 
     function message(msg) {
-        try {
-            var json = jQuery.parseJSON(msg);
-        } catch (e) {
-            console.log('This doesn\'t look like a valid JSON: ', message.data);
-            return;
-        }
+//        try {
+//            var json = jQuery.parseJSON(msg);
+//        } catch (e) {
+//            console.log('This doesn\'t look like a valid JSON: ', message.data);
+//            return;
+//        }
 
-        if (!logged) {
-            logged = true;
-            status.text(myName + ': ').css('color', 'blue');
-            input.removeAttr('disabled').focus();
-        } else {
+//        if (!logged) {
+//            logged = true;
+//            status.text(myName + ': ').css('color', 'blue');
+//            input.removeAttr('disabled').focus();
+//        } else {
             input.removeAttr('disabled');
 
-            var me = json.author == author;
-            var date = typeof(json.time) == 'string' ? parseInt(json.time) : json.time;
-            addMessage(json.author, json.text, me ? 'blue' : 'black', new Date(date));
-        }
+            addMessage('', msg,  'blue', new Date());
+//        }
     }
 
     function addMessage(author, message, color, datetime) {
-        content.append('<p><span style="color:' + color + '">' + author + '</span> @ ' +
-            + (datetime.getHours() < 10 ? '0' + datetime.getHours() : datetime.getHours()) + ':'
-            + (datetime.getMinutes() < 10 ? '0' + datetime.getMinutes() : datetime.getMinutes())
-            + ': ' + message + '</p>');
+        content.append('<p><span style="color:' + color + '"> Server: </span> @ ' 
+            + message + '</p>');
     }
 });
 

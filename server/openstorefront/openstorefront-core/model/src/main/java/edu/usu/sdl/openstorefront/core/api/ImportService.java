@@ -27,6 +27,7 @@ import java.util.List;
  * @author dshurtleff
  */
 public interface ImportService
+		extends AsyncService
 {
 
 	/**
@@ -35,7 +36,7 @@ public interface ImportService
 	 * @param importContext
 	 * @return File history
 	 */
-	String importData(ImportContext importContext);
+	public String importData(ImportContext importContext);
 
 	/**
 	 * Saves a file history record; Note: it's expected the record has the
@@ -45,7 +46,7 @@ public interface ImportService
 	 * @return FileHistory saved
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	FileHistory saveFileHistory(FileHistoryAll fileHistoryAll);
+	public FileHistory saveFileHistory(FileHistoryAll fileHistoryAll);
 
 	/**
 	 * Deletes a file history record and any associated data
@@ -53,7 +54,7 @@ public interface ImportService
 	 * @param fileHistoryId
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	void removeFileHistory(String fileHistoryId);
+	public void removeFileHistory(String fileHistoryId);
 
 	/**
 	 * Finds all formats for a given file type
@@ -61,11 +62,11 @@ public interface ImportService
 	 * @param fileType
 	 * @return
 	 */
-	List<FileFormat> findFileFormats(String fileType);
+	public List<FileFormat> findFileFormats(String fileType);
 
 	/**
-	 * Removes record old than the clean up property is set to
+	 * Removes records older than the clean up property is set to
 	 */
-	void cleanupOldFileHistory();
+	public void cleanupOldFileHistory();
 
 }

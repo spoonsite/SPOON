@@ -108,7 +108,8 @@ public class ComponentER2Parser
 			description = OpenStorefrontConstant.NOT_AVAILABLE;
 		}
 		component.setDescription(description);
-		component.setGuid(Integer.toString(asset.id));
+		component.setExternalId(Integer.toString(asset.id));
+		component.setGuid(asset.mandatoryData.uuid);
 		component.setVersion(asset.mandatoryData.version);
 		component.setSubmittedDts(Convert.toDate(asset.loadDate));
 
@@ -139,7 +140,9 @@ public class ComponentER2Parser
 		//dependanices
 		if (asset.customData != null && asset.customData.dependencies != null) {
 			ComponentExternalDependency dependency = new ComponentExternalDependency();
-			dependency.setDependencyName(StringUtils.left(asset.customData.dependencies, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
+			dependency.setDependencyName(OpenStorefrontConstant.NOT_AVAILABLE);
+			dependency.setComment(StringUtils.left(asset.customData.dependencies, OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION));
+			dependency.setVersion(OpenStorefrontConstant.NOT_AVAILABLE);
 			componentAll.getExternalDependencies().add(dependency);
 		}
 

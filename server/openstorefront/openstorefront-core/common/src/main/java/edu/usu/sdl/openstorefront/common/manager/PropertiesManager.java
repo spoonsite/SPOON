@@ -59,6 +59,7 @@ public class PropertiesManager
 	public static final String KEY_DBLOG_LOG_SECURITY = "dblog.logSecurityFilter";
 	public static final String KEY_ALLOW_JIRA_FEEDBACK = "jirafeedback.show";
 	public static final String KEY_FILE_HISTORY_KEEP_DAYS = "filehistory.max.days";
+	public static final String KEY_NOTIFICATION_MAX_DAYS = "filehistory.max.days";
 
 	public static final String KEY_OPENAM_URL = "openam.url";
 	public static final String KEY_LOGOUT_URL = "logout.url";

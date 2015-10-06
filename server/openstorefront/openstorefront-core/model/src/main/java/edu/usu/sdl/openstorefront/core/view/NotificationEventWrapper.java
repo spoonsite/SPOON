@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.job;
+package edu.usu.sdl.openstorefront.core.view;
 
-import org.quartz.JobExecutionContext;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Cleans up old data
  *
  * @author dshurtleff
  */
-public class SystemCleanupJob
-		extends BaseJob
+public class NotificationEventWrapper
+		extends ListWrapper
 {
 
-	@Override
-	protected void executeInternaljob(JobExecutionContext context)
+	private List<NotificationEventView> data = new ArrayList<>();
+
+	public NotificationEventWrapper()
 	{
-		service.getSystemService().cleanupOldErrors();
-		service.getSystemService().cleanUpOldLogRecords();
-		service.getImportService().cleanupOldFileHistory();
-		service.getNotificationService().cleanupOldEvents();
+	}
+
+	public List<NotificationEventView> getData()
+	{
+		return data;
+	}
+
+	public void setData(List<NotificationEventView> data)
+	{
+		this.data = data;
 	}
 
 }
