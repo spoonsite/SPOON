@@ -35,6 +35,8 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
@@ -416,7 +418,7 @@ public class UserServiceImpl
 
 				saveUserTracking(userTracking);
 			} else {
-				log.log(Level.INFO, MessageFormat.format("Login handled for user: {0} (Not a external client request...not tracking", profile.getUsername()));
+				log.log(Level.INFO, MessageFormat.format("Login handled for user: {0} (Not an external client request...not tracking", profile.getUsername()));
 			}
 			String adminLog = "";
 			if (userContext.isAdmin()) {
@@ -476,6 +478,14 @@ public class UserServiceImpl
 				userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
 				userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 				getUserService().queueUserMessage(userMessage);
+
+				NotificationEvent notificationEvent = new NotificationEvent();
+				notificationEvent.setEventType(NotificationEventType.IMPORT);
+				notificationEvent.setUsername(userWatch.getUsername());
+				notificationEvent.setMessage("Component: " + component.getName() + " has been updated.");
+				notificationEvent.setEntityName(Component.class.getSimpleName());
+				notificationEvent.setEntityId(component.getComponentId());
+				getNotificationService().postEvent(notificationEvent);
 			}
 		}
 	}

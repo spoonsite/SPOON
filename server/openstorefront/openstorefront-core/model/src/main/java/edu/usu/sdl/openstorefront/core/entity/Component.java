@@ -72,8 +72,13 @@ public class Component
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
 	@ConsumeField
-	@APIDescription("External system id")
+	@APIDescription("External system guid")
 	private String guid;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	@ConsumeField
+	@APIDescription("External system id")
+	private String externalId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
@@ -123,6 +128,13 @@ public class Component
 	@ValidValueType(value = {}, lookupClass = DataSource.class)
 	@FK(ApprovalStatus.class)
 	private String dataSource;
+
+	@ValidValueType(value = {}, lookupClass = ModificationType.class)
+	@FK(ModificationType.class)
+	private String lastModificationType;
+
+	@FK(ModificationType.class)
+	private String fileHistoryId;
 
 	public Component()
 	{
@@ -183,6 +195,10 @@ public class Component
 		this.setVersion(component.getVersion());
 		this.setNotifyOfApprovalEmail(component.getNotifyOfApprovalEmail());
 		this.setSubmittedDts(component.getSubmittedDts());
+		this.setDataSource(component.getDataSource());
+		this.setExternalId(component.getExternalId());
+		this.setFileHistoryId(component.getFileHistoryId());
+		this.setLastModificationType(component.getLastModificationType());
 
 	}
 
@@ -336,6 +352,36 @@ public class Component
 	public void setDataSource(String dataSource)
 	{
 		this.dataSource = dataSource;
+	}
+
+	public String getLastModificationType()
+	{
+		return lastModificationType;
+	}
+
+	public void setLastModificationType(String lastModificationType)
+	{
+		this.lastModificationType = lastModificationType;
+	}
+
+	public String getFileHistoryId()
+	{
+		return fileHistoryId;
+	}
+
+	public void setFileHistoryId(String fileHistoryId)
+	{
+		this.fileHistoryId = fileHistoryId;
+	}
+
+	public String getExternalId()
+	{
+		return externalId;
+	}
+
+	public void setExternalId(String externalId)
+	{
+		this.externalId = externalId;
 	}
 
 }

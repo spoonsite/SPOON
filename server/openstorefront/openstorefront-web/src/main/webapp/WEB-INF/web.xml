@@ -123,7 +123,7 @@
 	<filter-mapping>
 		<filter-name>StripesFilter</filter-name>
 		<url-pattern>*.html</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>REQUEST</dispatcher>		
 	</filter-mapping>
 	
 	<filter-mapping>
@@ -135,7 +135,7 @@
 	<servlet>
 		<servlet-name>StripesDispatcher</servlet-name>
 		<servlet-class>net.sourceforge.stripes.controller.DispatcherServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
+		<load-on-startup>1</load-on-startup>		
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>StripesDispatcher</servlet-name>
@@ -185,7 +185,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>AtmosphereServlet</servlet-name>
-		<url-pattern>/chat/*</url-pattern>
+		<url-pattern>/event/*</url-pattern>
 	</servlet-mapping>
 
 	<error-page>

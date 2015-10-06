@@ -57,7 +57,7 @@ public class ComponentExternalDependency
 	private String dependancyReferenceLink;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
 	@Sanitize(BasicHTMLSanitizer.class)
 	private String comment;
 

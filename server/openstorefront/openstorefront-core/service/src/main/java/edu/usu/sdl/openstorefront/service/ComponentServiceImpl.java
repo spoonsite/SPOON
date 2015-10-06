@@ -1183,10 +1183,10 @@ public class ComponentServiceImpl
 		lockSwitch.setSwitched(handleBaseComponetSave(ComponentResource.class, componentAll.getResources(), component.getComponentId()));
 		lockSwitch.setSwitched(handleBaseComponetSave(ComponentRelationship.class, componentAll.getRelationships(), component.getComponentId()));
 
-		if (options.getUploadTags()) {
+		if (Convert.toBoolean(options.getUploadTags())) {
 			lockSwitch.setSwitched(handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId()));
 		}
-		if (options.getUploadQuestions()) {
+		if (Convert.toBoolean(options.getUploadQuestions())) {
 			for (QuestionAll question : componentAll.getQuestions()) {
 				List<ComponentQuestion> questions = new ArrayList<>(1);
 				questions.add(question.getQuestion());
@@ -1195,7 +1195,7 @@ public class ComponentServiceImpl
 			}
 		}
 
-		if (options.getUploadReviews()) {
+		if (Convert.toBoolean(options.getUploadReviews())) {
 			for (ReviewAll reviewAll : componentAll.getReviews()) {
 				List<ComponentReview> reviews = new ArrayList<>(1);
 				reviews.add(reviewAll.getComponentReview());
@@ -1205,7 +1205,7 @@ public class ComponentServiceImpl
 			}
 		}
 
-		if (options.getUploadIntegration()) {
+		if (Convert.toBoolean(options.getUploadIntegration())) {
 			if (componentAll.getIntegrationAll() != null) {
 				//Note: this should effect watches or component updating.
 

@@ -24,6 +24,8 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,8 @@ public abstract class BaseComponentParser
 		component.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
 		component.setUpdateUser(fileHistoryAll.getFileHistory().getUpdateUser());
 		component.setDataSource(fileHistoryAll.getFileHistory().getDataSource());
+		updateComponentStandardFields(component);
+
 		componentAll.setComponent(component);
 
 		//required Attributes
@@ -83,6 +87,12 @@ public abstract class BaseComponentParser
 		return componentAll;
 	}
 
+	protected void updateComponentStandardFields(Component component)
+	{
+		component.setFileHistoryId(fileHistoryAll.getFileHistory().getFileHistoryId());
+		component.setLastModificationType(ModificationType.IMPORT);
+	}
+
 	@Override
 	protected <T> List<T> getStorageBucket()
 	{
@@ -98,6 +108,10 @@ public abstract class BaseComponentParser
 	@Override
 	protected void performStorage()
 	{
-		service.getComponentService().importComponents(componentsAll, fileHistoryAll.getFileHistory().getFileHistoryOption());
+		if (fileHistoryAll.getFileHistory().getFileHistoryOption() == null) {
+			service.getComponentService().importComponents(componentsAll, new FileHistoryOption());
+		} else {
+			service.getComponentService().importComponents(componentsAll, fileHistoryAll.getFileHistory().getFileHistoryOption());
+		}
 	}
 }

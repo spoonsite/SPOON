@@ -143,6 +143,7 @@ public class ComponentStandardParser
 	protected <T> Object parseRecord(T record)
 	{
 		ComponentAll componentAll = (ComponentAll) record;
+		updateComponentStandardFields(componentAll.getComponent());
 		return componentAll;
 	}
 
