@@ -267,6 +267,35 @@ var app = angular
         $rootScope.eventHistory.push({path: $location.$$path, search: $location.search(), label: label});
       });
 
+        $rootScope.getConfigInit = function () {
+            var deferred = $q.defer();
+//      Business.getConfig().then(function(config){
+//          if (config){
+            Business.brandingservice.getBrandingView('1').then(function (brandingView) {
+                $rootScope.brandingView = brandingView;
+                deferred.resolve(brandingView);
+            }, function () {
+                deferred.reject(false);
+                $rootScope.brandingView = {};
+            });
+
+//          }
+//      });
+            return deferred.promise;
+        };
+
+
+        $rootScope.getConfig = function () {
+            var deferred = $q.defer();
+
+            $rootScope.getConfigInit().then(function (brandingView) {
+                deferred.resolve({'brandingView': brandingView});
+            }, function(){
+                deferred.reject(false);
+            });
+            return deferred.promise;
+        };
+
       $rootScope.goToBreadcrumb = function(breadcrumb){
         console.log('breadcrumbs', breadcrumb);
         if ($rootScope.eventHistory.length){

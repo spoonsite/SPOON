@@ -83,6 +83,34 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.brandingservice = brandingservice;
 
 
+  business.getConfig = function(override){
+    var deferred = $q.defer();
+    var config;
+    config = checkExpire('APP_CONFIG', minute * 1440);
+    if (config && !override) {
+      deferred.resolve(config);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/attributes'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          save('APP_CONFIG', data);
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject('There was an error grabbing the filters');
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error grabbing the filters');
+      });
+    }
+    return deferred.promise;
+  };
+
   business.updateCache = function(name, value) {
     var deferred = $q.defer();
     updateCache(name, value);
