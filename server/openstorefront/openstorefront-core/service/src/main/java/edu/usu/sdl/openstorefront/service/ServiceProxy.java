@@ -217,6 +217,7 @@ public class ServiceProxy
 		return attributeServicePrivate;
 	}
 
+
 	@Override
 	public ImportService getImportService()
 	{
@@ -267,6 +268,15 @@ public class ServiceProxy
 		Objects.requireNonNull(originalProxy, "Original Service is required");
 		T asyncService = AsyncProxy.newInstance(originalProxy, taskRequest);
 		return asyncService;
+	}
+
+    @Override
+	public BrandingService getBrandingService()
+	{
+		if (brandingService == null) {
+			brandingService = DynamicProxy.newInstance(new BrandingServiceImpl());
+		}
+		return brandingService;		
 	}
 
 }

@@ -133,9 +133,9 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     var result = [];
     _.each(tags, function(tag){
       result.push(tag.text);
-    })
+    });
     return result;
-  }
+  };
 
 
   business.getTagsList = function(override) {
@@ -277,7 +277,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
             if (item.description.toLowerCase().indexOf(testItem) !== -1) {
               foundIt = true;
             }
-          })
+          });
           return foundIt;
         });
         deferred.resolve(found);           
@@ -297,7 +297,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
       }
     }
     return false;    
-  }
+  };
 
   // This function builds the typeahead options.
   business.ieCheck = function() {
@@ -314,7 +314,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
 
   business.saveLocal = function(key, value){
     save(key, value);
-  }
+  };
 
   business.getLocal = function(key){
     if (key) {
@@ -323,14 +323,14 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     } else {
       return null;
     }
-  }
+  };
   business.get = function(query, override) {
     var deferred = $q.defer();
     if (query) { 
       var url = query.url + '?' + query.filterObj.toQuery();
       $http({
         'method': 'GET',
-        'url': url,
+        'url': url
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
@@ -348,7 +348,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
       deferred.reject(false);
     }
     return deferred.promise;
-  }
+  };
 
 
 
