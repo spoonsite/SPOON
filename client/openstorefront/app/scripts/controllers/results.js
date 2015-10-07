@@ -343,6 +343,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       // var time = end - start;
       // console.log('Total Execution time ****: ' + time);
       Business.deleteLocal('ADVANCED_SEARCH');
+      Business.deleteLocal('ADVANCED_SEARCH-time');
       $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
       $scope.initializeData('ADVANCED_SEARCH');
     }, function(result){
@@ -354,6 +355,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       }
       $scope.data.data = $scope.total;
       Business.deleteLocal('ADVANCED_SEARCH');
+      Business.deleteLocal('ADVANCED_SEARCH-time');
       $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
       $scope.initializeData('ADVANCED_SEARCH');
       $scope.showMessage = true;
@@ -512,7 +514,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       }
     }
 
-    var advancedSearch = Business.getLocal('AdvancedSearch');
+    var advancedSearch = Business.getLocal('ADVANCED_SEARCH');
     if (!advancedSearch) {
       $scope.reAdjust([{ 'key': type, 'code': code }]);
       // $scope.advancedSearch(advancedSearch);
