@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.view.FileHistoryView;
 import edu.usu.sdl.openstorefront.core.view.FileHistoryViewWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
@@ -49,7 +48,6 @@ public class FileHistoryResource
 {
 
 	@GET
-	@RequireAdmin
 	@APIDescription("Gets file history records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileHistoryViewWrapper.class)
@@ -105,4 +103,8 @@ public class FileHistoryResource
 		return sendSingleEntityResponse(fileHistoryViewWrapper);
 	}
 
+	//TODO: get errors
+	//TODO: get rollback effect (Check what the rollback would do)
+	//TODO: rollback (Option to restore record; override or sync)
+	//TODO: formats for file type
 }

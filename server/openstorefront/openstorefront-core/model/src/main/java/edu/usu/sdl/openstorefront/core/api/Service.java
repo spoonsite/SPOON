@@ -121,11 +121,18 @@ public interface Service
 	 * @return
 	 */
 	public ImportService getImportService();
-        
-        /**
-	 * Handles Branding
+
+	/**
+	 * Handles Notification Events
 	 *
 	 * @return
 	 */
 	public BrandingService getBrandingService();
+
+	/**
+	 * Handles Notification Events
+	 *
+	 * @return
+	 */
+	public NotificationService getNotificationService();
 }

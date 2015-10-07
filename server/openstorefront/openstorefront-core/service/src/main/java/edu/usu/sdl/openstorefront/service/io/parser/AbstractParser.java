@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.io.parser;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
@@ -117,6 +118,11 @@ public abstract class AbstractParser
 			log.log(Level.INFO, MessageFormat.format("Results for processing: {0}", fileHistoryAll.getFileHistory().getOriginalFilename()));
 			log.log(Level.INFO, MessageFormat.format("Records Total processed: {0}", currentRecordNumber));
 			log.log(Level.INFO, MessageFormat.format("Records Total Failed: {0}", fileHistoryAll.getErrors().size()));
+			log.log(Level.FINE, "Error Message(s):");
+			for (FileHistoryError error : fileHistoryAll.getErrors()) {
+				log.log(Level.FINE, MessageFormat.format("{0} -  Message: {1}", new Object[]{error.getFileHistoryErrorType(), error.getErrorMessage().replace("<br>", "\n")}));
+			}
+			log.log(Level.FINE, "----------------->");
 			fileHistoryAll.getFileHistory().setNumberRecords(currentRecordNumber);
 
 		} else {

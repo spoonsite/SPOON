@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.api.BrandingService;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
+import edu.usu.sdl.openstorefront.core.api.NotificationService;
 import edu.usu.sdl.openstorefront.core.api.OrganizationService;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.PluginService;
@@ -66,6 +67,7 @@ public class ServiceProxy
 	private ImportService importService;
 	private ImportServicePrivate importServicePrivate;
 	private BrandingService brandingService;
+	private NotificationService notificationService;
 
 	public ServiceProxy()
 	{
@@ -215,7 +217,8 @@ public class ServiceProxy
 		return attributeServicePrivate;
 	}
 
-        @Override
+
+	@Override
 	public ImportService getImportService()
 	{
 		if (importService == null) {
@@ -230,6 +233,24 @@ public class ServiceProxy
 			importServicePrivate = DynamicProxy.newInstance(new ImportServiceImpl());
 		}
 		return importServicePrivate;
+	}
+
+	@Override
+	public BrandingService getBrandingService()
+	{
+		if (brandingService == null) {
+			brandingService = DynamicProxy.newInstance(new BrandingServiceImpl());
+		}
+		return brandingService;
+	}
+
+	@Override
+	public NotificationService getNotificationService()
+	{
+		if (notificationService == null) {
+			notificationService = DynamicProxy.newInstance(new NotificationServiceImpl());
+		}
+		return notificationService;
 	}
 
 	@Override
@@ -249,7 +270,7 @@ public class ServiceProxy
 		return asyncService;
 	}
 
-        @Override
+    @Override
 	public BrandingService getBrandingService()
 	{
 		if (brandingService == null) {

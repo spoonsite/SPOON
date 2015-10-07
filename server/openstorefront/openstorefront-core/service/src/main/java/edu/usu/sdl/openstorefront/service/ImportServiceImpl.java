@@ -27,6 +27,8 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -111,6 +113,17 @@ public class ImportServiceImpl
 			Class parserClass = this.getClass().getClassLoader().loadClass("edu.usu.sdl.openstorefront.service.io.parser." + fileFormat.getParserClass());
 			AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
 			abstractParser.processData(fileHistoryAll);
+
+			if (OpenStorefrontConstant.ANONYMOUS_USER.equals(fileHistory.getCreateUser()) != false) {
+				NotificationEvent notificationEvent = new NotificationEvent();
+				notificationEvent.setEventType(NotificationEventType.IMPORT);
+				notificationEvent.setUsername(fileHistory.getCreateUser());
+				notificationEvent.setMessage("File: " + fileHistory.getOriginalFilename() + " has finished processing.");
+				notificationEvent.setEntityName(FileHistory.class.getSimpleName());
+				notificationEvent.setEntityId(fileHistoryId);
+				getNotificationService().postEvent(notificationEvent);
+			}
+
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			log.log(Level.SEVERE, "Unable to load parser class: " + fileFormat.getParserClass(), e);
 			fileHistoryAll.addError(FileHistoryErrorType.SYSTEM, "Unable to load parser class: " + fileFormat.getParserClass());
