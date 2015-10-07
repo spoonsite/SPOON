@@ -93,8 +93,9 @@ public class BrandingResource
 	@Path("/{id}/topicSearchItems")
 	public Response addTopicSearchItem(
 			@PathParam("id") String brandingId,
-			@RequiredParam List<TopicSearchItem> items)
+			@RequiredParam BrandingView view)
 	{
+		List<TopicSearchItem> items = view.getTopicSearchItems();
 		for (TopicSearchItem item : items) {
 			item.setBrandingId(brandingId);
 			List<TopicSearchItem> temp = item.findByExample();
