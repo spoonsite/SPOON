@@ -94,7 +94,7 @@ public class ReportServiceImpl
 			managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 			managedReport = persistenceService.persist(managedReport);
 
-			if (OpenStorefrontConstant.ANONYMOUS_USER.equals(managedReport.getCreateUser()) != false) {
+			if (OpenStorefrontConstant.ANONYMOUS_USER.equals(managedReport.getCreateUser()) == false) {
 				NotificationEvent notificationEvent = new NotificationEvent();
 				notificationEvent.setEventType(NotificationEventType.REPORT);
 				notificationEvent.setUsername(managedReport.getCreateUser());

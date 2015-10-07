@@ -103,11 +103,11 @@ public class TaskThreadExecutor
 						serviceProxy.getSystemService().saveAsyncTask(taskFuture);
 					}
 
-					if (OpenStorefrontConstant.ANONYMOUS_USER.equals(taskFuture.getCreateUser()) != false) {
+					if (OpenStorefrontConstant.ANONYMOUS_USER.equals(taskFuture.getCreateUser()) == false) {
 						NotificationEvent notificationEvent = new NotificationEvent();
-						notificationEvent.setEventType(NotificationEventType.REPORT);
+						notificationEvent.setEventType(NotificationEventType.TASK);
 						notificationEvent.setUsername(taskFuture.getCreateUser());
-						notificationEvent.setMessage("Task: " + taskFuture.getTaskName() + " has finished processing with status: " + taskFuture.getError());
+						notificationEvent.setMessage("Task: " + taskFuture.getTaskName() + " has finished processing with status: " + taskFuture.getStatus());
 						notificationEvent.setEntityName(AsyncTask.class.getSimpleName());
 						notificationEvent.setEntityId(taskFuture.getTaskId());
 						ServiceProxy.getProxy().getNotificationService().postEvent(notificationEvent);
@@ -230,6 +230,17 @@ public class TaskThreadExecutor
 			taskFuture.setTaskName(taskRequest.getName());
 			taskFuture.setCallback(taskRequest.getCallback());
 			tasks.add(taskFuture);
+
+			if (OpenStorefrontConstant.ANONYMOUS_USER.equals(taskFuture.getCreateUser()) == false) {
+				NotificationEvent notificationEvent = new NotificationEvent();
+				notificationEvent.setEventType(NotificationEventType.TASK);
+				notificationEvent.setUsername(taskFuture.getCreateUser());
+				notificationEvent.setMessage("Task: " + taskFuture.getTaskName() + " has been queued for processing. ");
+				notificationEvent.setEntityName(AsyncTask.class.getSimpleName());
+				notificationEvent.setEntityId(taskFuture.getTaskId());
+				ServiceProxy.getProxy().getNotificationService().postEvent(notificationEvent);
+			}
+
 		}
 		return taskFuture;
 	}

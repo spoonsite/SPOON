@@ -32,6 +32,10 @@ $(function () {
     });
 
     socket.on('ADMIN', message);
+    socket.on('TASK', message);
+    socket.on('REPORT', message);
+    socket.on('WATCH', message);
+    socket.on('IMPORT', message);
 
     socket.on('error', function (e) {
         content.html($('<p>', { text: 'Sorry, but there\'s some problem with your '
