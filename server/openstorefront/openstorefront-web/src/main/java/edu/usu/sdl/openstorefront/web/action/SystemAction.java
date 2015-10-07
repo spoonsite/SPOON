@@ -35,8 +35,6 @@ import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.validation.Validate;
-import org.atmosphere.cpr.AtmosphereFramework;
-import org.atmosphere.cpr.Broadcaster;
 
 /**
  * System Actions
@@ -133,21 +131,6 @@ public class SystemAction
 			return new StreamingResolution("text/html", dupCount + " Duplicate Component Attribute Remove on: " + attributeType + " attribute Type. <br> Details: <br>" + details);
 		}
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
-	}
-
-	@HandlesEvent("SendMessage")
-	public Resolution sendMessage()
-	{
-		AtmosphereFramework atmosphereFramework = (AtmosphereFramework) getContext().getServletContext().getAttribute("AtmosphereServlet");
-		//AtmosphereResourceFactory atmosphereResourceFactory = atmosphereFramework.atmosphereFactory();
-		Broadcaster broadcaster = atmosphereFramework.getBroadcasterFactory().lookup(SecurityUtil.getCurrentUserName());
-		if (broadcaster != null) {
-			broadcaster.broadcast("{\"name\":\"notification\",\"args\":[\"Hello from server\"]}");
-			return new StreamingResolution("text/html", "Sent");
-		} else {
-			return new StreamingResolution("text/html", "Unable to find broadcaster.");
-		}
-
 	}
 
 	public String getAttributeType()

@@ -31,7 +31,7 @@ $(function () {
         });
     });
 
-    socket.on('notification', message);
+    socket.on('ADMIN', message);
 
     socket.on('error', function (e) {
         content.html($('<p>', { text: 'Sorry, but there\'s some problem with your '
@@ -78,7 +78,7 @@ $(function () {
 
     function addMessage(author, message, color, datetime) {
         content.append('<p><span style="color:' + color + '"> Server: </span> @ ' 
-            + message + '</p>');
+            + message.message + '</p>');
     }
 });
 

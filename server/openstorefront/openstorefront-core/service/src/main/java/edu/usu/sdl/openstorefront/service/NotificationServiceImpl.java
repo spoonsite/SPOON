@@ -107,7 +107,6 @@ public class NotificationServiceImpl
 		notificationEventExample = new NotificationEvent();
 		notificationEventExample.setActiveStatus(NotificationEvent.ACTIVE_STATUS);
 		notificationEventExample.setUsername(username);
-		notificationEvents.addAll(notificationEventExample.findByExample());
 		queryByExample = new QueryByExample(notificationEventExample);
 		queryByExample.getExtraWhereCauses().add(specialOperatorStartModel);
 		queryByExample.getExtraWhereCauses().add(specialOperatorEndModel);
@@ -144,19 +143,20 @@ public class NotificationServiceImpl
 	}
 
 	@Override
-	public void postEvent(NotificationEvent notificationEvent)
+	public NotificationEvent postEvent(NotificationEvent notificationEvent)
 	{
-		notificationEvent.setEntityId(persistenceService.generateId());
+		notificationEvent.setEventId(persistenceService.generateId());
 		notificationEvent.populateBaseCreateFields();
-		persistenceService.persist(notificationEvent);
+		notificationEvent = persistenceService.persist(notificationEvent);
 
 		Element element = OSFCacheManager.getApplicationCache().get(LISTENER_KEY);
 		if (element != null) {
 			List<NotificationEventListerner> listerners = (List<NotificationEventListerner>) element.getObjectValue();
 			for (NotificationEventListerner listerner : listerners) {
-				listerner.processEvent(notificationEvent);
+				listerner.processEvent(persistenceService.deattachAll(notificationEvent));
 			}
 		}
+		return notificationEvent;
 	}
 
 	@Override
