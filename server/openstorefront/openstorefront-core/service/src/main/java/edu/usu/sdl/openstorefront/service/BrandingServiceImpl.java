@@ -66,6 +66,7 @@ public class BrandingServiceImpl
 	@Override
 	public TopicSearchItem addTopicSearchItem(TopicSearchItem item)
 	{
+		item.populateBaseCreateFields();
 		item.setEntityId(ServiceProxy.getProxy().persistenceService.generateId());
 		ServiceProxy.getProxy().persistenceService.persist(item);
 		return item;

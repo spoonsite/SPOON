@@ -103,7 +103,8 @@ public class BrandingResource
 				item = service.getBrandingService().addTopicSearchItem(item);
 			}
 		}
-		return sendSingleEntityResponse(items);
+		view.setTopicSearchItems(items);
+		return sendSingleEntityResponse(view);
 	}
 
 	@DELETE
