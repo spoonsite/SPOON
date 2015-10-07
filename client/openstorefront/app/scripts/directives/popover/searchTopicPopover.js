@@ -16,19 +16,54 @@
 
 'use strict';
 /*global angular,$,console,$compile,$q,$http,$templateCache, app*/
-app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http', 'business', '$timeout', function ($compile, $templateCache, $q, $http, Business, $timeout) {
+app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http', 'business', '$timeout', '$rootScope', '$location', function ($compile, $templateCache, $q, $http, Business, $timeout, $rootScope, $location) {
 
         //
         // loadDataForPopup: Gets the data from the database needed for this popup.
         //
-        var loadDataForPopup = function (scope) {
-                        
-            Business.brandingservice.getAllTopicSearchItems().then(function (result) {
-                console.log("Result", result);
-                scope.topicList = result;
-            }, function (result) {
-                console.log("Error Result:", result);
-                scope.topicList = [];
+        var mapped = function (types, key) {
+            var found = _.find(types, {'attributeType': key.attributeType});
+            if (found) {
+                return found;
+            } else {
+                return key;
+            }
+        };
+        var loadTopicDataForPopup = function (scope) {
+            $rootScope.getConfig().then(function (config) {
+                if (config) {
+                    var filterObj = angular.copy(utils.queryFilter);
+
+                    Business.articleservice.getTypes(filterObj, true).then(function (attributeTypes) {
+                        scope.topicList = [];
+                        _.each(config.brandingView.topicSearchItems, function (topicSearchItem) {
+                            scope.topicList.push(mapped(attributeTypes.data, topicSearchItem));
+                        });
+                    }, function () {
+                        scope.attributeTypes = [];
+
+                        scope.topicList = config.brandingView.topicSearchItems;
+
+                    });
+
+                } else {
+                    Business.brandingservice.getAllTopicSearchItems().then(function (result) {
+//                        console.log("Result", result);
+                        scope.topicList = result;
+                    }, function (result) {
+//                        console.log("Error Result:", result);
+                        scope.topicList = [];
+                    });
+                }
+
+            }, function () {
+                Business.brandingservice.getAllTopicSearchItems().then(function (result) {
+//                    console.log("Result", result);
+                    scope.topicList = result;
+                }, function (result) {
+//                    console.log("Error Result:", result);
+                    scope.topicList = [];
+                });
             });
         };
 
@@ -38,10 +73,9 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
         var getPopupView = function () {
 
             var def = $q.defer(), tplate = $templateCache.get("popSearchTopic.html");
-            
-            console.log("template:", tplate);
+
             if (typeof tplate === "undefined") {
-               
+
                 $http.get("views/popover/popSearchTopic.html")
                         .success(function (data) {
                             $templateCache.put("popSearchTopic.html", data);
@@ -52,7 +86,7 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
             }
             return def.promise;
         };
-  
+
         return {
             restrict: 'E',
             template: '',
@@ -60,35 +94,69 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
                 popVis: "=?visible"
             },
             link: function (scope, element) {
-               
-               
-                loadDataForPopup(scope);
-                
-                
+
+                loadTopicDataForPopup(scope);
+
                 getPopupView().then(function (loadedHTML) {
-                    console.log("html:"+loadedHTML+" topicList:"+scope.topicList);
                     element.html(loadedHTML);
                     $compile(element.contents())(scope);
-                    console.log("html2:"+loadedHTML);
                 });
-                
+
                 scope.topicsClicked = function () {
-                    console.log("topicsClicked");
-                    if(scope.popVis){
-                        scope.popVis = false;       
+                    if (scope.popVis) {
+                        scope.popVis = false;
+                        scope.subTopicList = [];
                     }
-                    else{
+                    else {
                         scope.popVis = true;
                     }
                 };
-                
-                scope.$on('setVis', function(){
+
+                scope.currentTopic;
+                scope.loadSubTopicDataForPopup = function (type) {
+                    scope.currentTopic=type;
+                    Business.articleservice.getCodeViews(type.attributeType).then(function (result) {
+                        scope.subTopicList = [];
+                        if (result.data) {
+                            scope.subTopicList = result.data;
+                        }
+                    }, function () {
+                        scope.subTopicList = [];
+                    });
+                };
+
+                scope.goToResults = function (attribute) {
+                    var searchObj = {
+                        "sortField": null,
+                        "sortDirection": "DESC",
+                        "startOffset": 0,
+                        "max": 2147483647,
+                        "searchElements": [{
+                                "searchType": "ATTRIBUTE",
+                                "field": null,
+                                "value": null,
+                                "keyField": attribute.type,
+                                "keyValue": attribute.code,
+                                "startDate": null,
+                                "endDate": null,
+                                "caseInsensitive": false,
+                                "numberOperation": "EQUALS",
+                                "stringOperation": "EQUALS",
+                                "mergeCondition": attribute.condition  //OR.. NOT.. AND..
+                            }]
+                    };
+                    Business.saveLocal('ADVANCED_SEARCH', searchObj);
+                    $location.search({});
+                    $location.path('results');
+                };
+
+                scope.$on('setVis', function () {
                     console.log("Got setVis");
-                   scope.topicsClicked();
+                    scope.topicsClicked();
                 });
             }
-            
-            
         };
-
     }]);
+
+
+
