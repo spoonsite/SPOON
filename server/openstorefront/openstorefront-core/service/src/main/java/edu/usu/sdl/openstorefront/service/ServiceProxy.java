@@ -270,13 +270,4 @@ public class ServiceProxy
 		return asyncService;
 	}
 
-    @Override
-	public BrandingService getBrandingService()
-	{
-		if (brandingService == null) {
-			brandingService = DynamicProxy.newInstance(new BrandingServiceImpl());
-		}
-		return brandingService;		
-	}
-
 }
