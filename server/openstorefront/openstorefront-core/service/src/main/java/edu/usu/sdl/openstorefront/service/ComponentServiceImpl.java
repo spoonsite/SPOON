@@ -1000,9 +1000,13 @@ public class ComponentServiceImpl
 	public RequiredForComponent saveComponent(RequiredForComponent component)
 	{
 		getComponentServicePrivate().doSaveComponent(component);
+
 		List<Component> componentsToIndex = new ArrayList<>();
 		componentsToIndex.add(component.getComponent());
 		getSearchService().indexComponents(componentsToIndex);
+
+		getUserService().checkComponentWatches(component.getComponent());
+
 		return component;
 	}
 

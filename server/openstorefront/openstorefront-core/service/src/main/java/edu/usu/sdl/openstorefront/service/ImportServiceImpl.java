@@ -114,7 +114,7 @@ public class ImportServiceImpl
 			AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
 			abstractParser.processData(fileHistoryAll);
 
-			if (OpenStorefrontConstant.ANONYMOUS_USER.equals(fileHistory.getCreateUser()) != false) {
+			if (OpenStorefrontConstant.ANONYMOUS_USER.equals(fileHistory.getCreateUser()) == false) {
 				NotificationEvent notificationEvent = new NotificationEvent();
 				notificationEvent.setEventType(NotificationEventType.IMPORT);
 				notificationEvent.setUsername(fileHistory.getCreateUser());
