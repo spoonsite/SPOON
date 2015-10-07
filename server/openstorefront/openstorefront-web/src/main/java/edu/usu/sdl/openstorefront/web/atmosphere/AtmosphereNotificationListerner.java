@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.atmosphere;
 
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
+import edu.usu.sdl.openstorefront.core.model.NotificationMessage;
 import edu.usu.sdl.openstorefront.core.spi.NotificationEventListerner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,13 +58,15 @@ public class AtmosphereNotificationListerner
 			sendToAll = true;
 		}
 
+		NotificationMessage notificationMessage = NotificationMessage.toMessage(notificationEvent);
+
 		if (sendToAll) {
 			for (Broadcaster broadcasterInstance : atmosphereFramework.getBroadcasterFactory().lookupAll()) {
-				broadcasterInstance.broadcast(notificationEvent.toString());
+				broadcasterInstance.broadcast(notificationMessage.messageToJson());
 			}
 		} else {
 			if (broadcaster != null) {
-				broadcaster.broadcast(notificationEvent.toString());
+				broadcaster.broadcast(notificationMessage.messageToJson());
 			} else {
 				log.log(Level.FINEST, "Unable to find broadcaster");
 			}
