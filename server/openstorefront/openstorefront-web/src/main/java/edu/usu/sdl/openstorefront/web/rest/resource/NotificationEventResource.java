@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import java.net.URI;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -78,6 +79,27 @@ public class NotificationEventResource
 		return sendSingleEntityResponse(notificationEventWrapper);
 	}
 
+	@GET
+	@APIDescription("Gets an notification event record")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/{eventId}")
+	public Response getEvent(@PathParam("eventId") String eventId)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+
+		NotificationEvent notificationEvent = new NotificationEvent();
+		notificationEvent.setEventId(eventId);
+		notificationEvent = notificationEvent.find();
+		if (notificationEvent != null) {
+
+			response = ownerCheck(notificationEvent);
+			if (response == null) {
+				return sendSingleEntityResponse(notificationEvent);
+			}
+		}
+		return response;
+	}
+
 	@POST
 	@RequireAdmin
 	@APIDescription("Posts a new Notification Event")
@@ -89,21 +111,25 @@ public class NotificationEventResource
 		notificationEvent.setEventType(NotificationEventType.ADMIN);
 
 		ValidationModel validationModel = new ValidationModel(notificationEvent);
+		validationModel.setConsumeFieldsOnly(true);
+
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			service.getNotificationService().postEvent(notificationEvent);
+			notificationEvent = service.getNotificationService().postEvent(notificationEvent);
+
+			return Response.created(URI.create("v1/resource/notificationevent/" + notificationEvent.getEventId())).entity(notificationEvent).build();
 		}
 		return sendSingleEntityResponse(validationResult.toRestError());
 	}
 
 	@DELETE
 	@APIDescription("Deletes a notification event")
-	@Path("/{id}")
+	@Path("/{eventId}")
 	public void deleteNotificationEvent(
-			@PathParam("id") String eventId)
+			@PathParam("eventId") String eventId)
 	{
 		NotificationEvent notificationEvent = new NotificationEvent();
-		notificationEvent.setEntityId(eventId);
+		notificationEvent.setEventId(eventId);
 		notificationEvent = notificationEvent.find();
 		if (notificationEvent != null) {
 			if (ownerCheck(notificationEvent) == null) {

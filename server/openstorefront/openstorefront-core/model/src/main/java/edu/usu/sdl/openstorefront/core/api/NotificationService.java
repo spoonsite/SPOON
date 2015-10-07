@@ -51,7 +51,7 @@ public interface NotificationService
 	 * @param notificationEvent
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void postEvent(NotificationEvent notificationEvent);
+	public NotificationEvent postEvent(NotificationEvent notificationEvent);
 
 	/**
 	 * Remove an event from the system
