@@ -197,7 +197,7 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
       $http({
         'method': 'POST',
         'url': url,
-        'data': items
+        'data': {'brandingId': brandingId, 'topicSearchItems': items}
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
