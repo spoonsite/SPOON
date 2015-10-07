@@ -234,6 +234,12 @@ $scope.$watch('searchKey', function(newValue, oldValue){
   $scope.focusOnSearch = function() {
     $('#mainSearchBar').focus();
   };
+  
+  $scope.showTopicsViewInitially=false;
+  $scope.showTopics = function() {
+      console.log("SHOW TOPICS");
+      $scope.$broadcast('setVis');
+  };
 
 
   //////////////////////////////////////////////////////////////////////////////

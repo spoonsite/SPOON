@@ -93,7 +93,7 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
       deferred.reject(false);
     }
     return deferred.promise;
-  }
+  };
 
   branding.getTopicSearchItems = function(brandingId, override) {
     var deferred = $q.defer();
@@ -105,7 +105,7 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
       } else {
         $http({
           'method': 'GET',
-          'url': url,
+          'url': url
         }).success(function(data, status, headers, config) { /*jshint unused:false*/
           if (data && data !== 'false' && isNotRequestError(data)) {
             removeError();
@@ -125,7 +125,7 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
       deferred.reject(false);
     }
     return deferred.promise;
-  }
+  };
 
 
   branding.getAllTopicSearchItems = function(override) {
@@ -154,7 +154,7 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
       });
     } 
     return deferred.promise;
-  }
+  };
 
 
   branding.getTopicSearchItemById = function(entityId, override) {
