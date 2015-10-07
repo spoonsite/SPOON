@@ -1,0 +1,18 @@
+<div style="margin-top:15px;">
+    <div ng-show="popVis" class="panel panel-default">
+        <div class="panel-heading topics-heading" style="font-size:1.3em;">Topics</div>
+        <div class="panel-body container-fluid" style="padding:0px;">
+            <div class="row-fluid" style="background-color:#efefef;">
+                <div id="leftPane" class="col-sm-4 col-xs-4 topics-body" style="padding-left:10px; background-color:#eeeeee;">
+                    <div class="button-group btn-group-vertical" ng-show="topicList.length" ng-repeat="topic in topicList">
+                        <button class="topics-buttons" ng-show="topic.attributeType">{{topic.attributeType}}</button>
+                    </div>
+                </div>
+                <div id="rightPane" class="col-sm-8 col-xs-4 topics-body" style="padding-left:3px;">
+                                  
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>

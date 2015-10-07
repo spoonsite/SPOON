@@ -332,7 +332,7 @@
         result.reject('A unique ID and review object is required to save a component review');
       }
       return result.promise;
-    }
+    };
 
     componentservice.saveReviewPros = function (id, reviewId, pro) {
       var result = $q.defer();
@@ -360,7 +360,7 @@
         result.reject('A unique ID and pro object is required to save a component pro');
       }
       return result.promise;
-    }
+    };
 
     componentservice.saveReviewCons = function (id, reviewId, con) {
       var result = $q.defer();
@@ -388,7 +388,7 @@
         result.reject('A unique ID and con object is required to save a component con');
       }
       return result.promise;
-    }
+    };
 
 
     componentservice.getComponentDetails = function (id, override) {
@@ -540,7 +540,7 @@
             "stringOperation" : "EQUALS",
             "mergeCondition" : "OR"
           }]
-      }	
+      };	
       var url = 'api/v1/service/search/advance/';
       if (attribute && attribute.type && attribute.code) {
         $http({
@@ -886,7 +886,7 @@ componentservice.getComponent = function (componentId) {
 componentservice.getComponentLookupList = function (queryParamFilter) {
   var url = 'api/v1/resource/components/lookup?';
   if (queryParamFilter) {
-    url = url + queryParamFilter.toQuery()
+    url = url + queryParamFilter.toQuery();
   }
   var deferred = $q.defer();
 

@@ -215,6 +215,7 @@ public class ServiceProxy
 		return attributeServicePrivate;
 	}
 
+        @Override
 	public ImportService getImportService()
 	{
 		if (importService == null) {
@@ -248,20 +249,13 @@ public class ServiceProxy
 		return asyncService;
 	}
 
-	/**
-	 * @return the brandingService
-	 */
+        @Override
 	public BrandingService getBrandingService()
 	{
-		return brandingService;
-	}
-
-	/**
-	 * @param brandingService the brandingService to set
-	 */
-	public void setBrandingService(BrandingService brandingService)
-	{
-		this.brandingService = brandingService;
+		if (brandingService == null) {
+			brandingService = DynamicProxy.newInstance(new BrandingServiceImpl());
+		}
+		return brandingService;		
 	}
 
 }

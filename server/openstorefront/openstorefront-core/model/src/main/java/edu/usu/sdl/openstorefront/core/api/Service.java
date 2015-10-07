@@ -121,4 +121,11 @@ public interface Service
 	 * @return
 	 */
 	public ImportService getImportService();
+        
+        /**
+	 * Handles Branding
+	 *
+	 * @return
+	 */
+	public BrandingService getBrandingService();
 }
