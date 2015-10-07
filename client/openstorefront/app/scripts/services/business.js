@@ -61,6 +61,10 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     return localCache.get(key, 'object');
   };
 
+  var remove = function(key) {
+    return localCache.clear(key);
+  };
+
   var updateCache = function(name, value) {
     save(name, value);
   };
@@ -352,6 +356,13 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
       return null;
     }
   };
+  
+  business.deleteLocal = function(key){
+    if (key) {
+      remove(key);
+    } 
+  };
+
   business.get = function(query, override) {
     var deferred = $q.defer();
     if (query) { 
