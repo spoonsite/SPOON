@@ -17,10 +17,10 @@ package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
-import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -34,12 +34,11 @@ public class TopicSearchItem
 
 	@PK(generated = true)
 	@NotNull
-	private String entityId;
-	
+	private String topicSearchItemId;
+
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@FK(Branding.class)
 	private String brandingId;
 
 	@NotNull
@@ -52,52 +51,34 @@ public class TopicSearchItem
 	{
 	}
 
-	/**
-	 * @return the brandingId
-	 */
 	public String getBrandingId()
 	{
 		return brandingId;
 	}
 
-	/**
-	 * @param brandingId the brandingId to set
-	 */
 	public void setBrandingId(String brandingId)
 	{
 		this.brandingId = brandingId;
 	}
 
-	/**
-	 * @return the attributeType
-	 */
 	public String getAttributeType()
 	{
 		return attributeType;
 	}
 
-	/**
-	 * @param attributeType the attributeType to set
-	 */
 	public void setAttributeType(String attributeType)
 	{
 		this.attributeType = attributeType;
 	}
 
-	/**
-	 * @return the entityId
-	 */
-	public String getEntityId()
+	public String getTopicSearchItemId()
 	{
-		return entityId;
+		return topicSearchItemId;
 	}
 
-	/**
-	 * @param entityId the entityId to set
-	 */
-	public void setEntityId(String entityId)
+	public void setTopicSearchItemId(String topicSearchItemId)
 	{
-		this.entityId = entityId;
+		this.topicSearchItemId = topicSearchItemId;
 	}
 
 }

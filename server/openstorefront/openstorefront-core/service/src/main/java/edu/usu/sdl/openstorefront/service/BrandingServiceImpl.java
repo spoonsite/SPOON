@@ -66,7 +66,7 @@ public class BrandingServiceImpl
 	@Override
 	public TopicSearchItem addTopicSearchItem(TopicSearchItem item)
 	{
-		item.setEntityId(ServiceProxy.getProxy().persistenceService.generateId());
+		item.setTopicSearchItemId(ServiceProxy.getProxy().persistenceService.generateId());
 		ServiceProxy.getProxy().persistenceService.persist(item);
 		return item;
 	}
@@ -88,7 +88,7 @@ public class BrandingServiceImpl
 		List<TopicSearchItem> list = ServiceProxy.getProxy().persistenceService.queryByExample(TopicSearchItem.class, example);
 		for (TopicSearchItem item : list) {
 			if (item != null) {
-				TopicSearchItem temp = ServiceProxy.getProxy().persistenceService.findById(TopicSearchItem.class, item.getEntityId());
+				TopicSearchItem temp = ServiceProxy.getProxy().persistenceService.findById(TopicSearchItem.class, item.getTopicSearchItemId());
 				ServiceProxy.getProxy().persistenceService.delete(temp);
 			}
 		}
