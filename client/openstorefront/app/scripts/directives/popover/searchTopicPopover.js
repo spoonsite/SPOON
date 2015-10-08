@@ -106,13 +106,14 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
                     if (scope.popVis) {
                         scope.popVis = false;
                         scope.subTopicList = [];
+                        scope.currentTopic={};
                     }
                     else {
                         scope.popVis = true;
                     }
                 };
 
-                scope.currentTopic;
+                scope.currentTopic={};
                 scope.loadSubTopicDataForPopup = function (type) {
                     scope.currentTopic=type;
                     Business.articleservice.getCodeViews(type.attributeType).then(function (result) {
@@ -126,6 +127,7 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
                 };
 
                 scope.goToResults = function (attribute) {
+                    console.log(attribute);
                     var searchObj = {
                         "sortField": null,
                         "sortDirection": "DESC",
@@ -148,6 +150,7 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
                     Business.saveLocal('ADVANCED_SEARCH', searchObj);
                     $location.search({});
                     $location.path('results');
+                    
                 };
 
                 scope.$on('setVis', function () {
