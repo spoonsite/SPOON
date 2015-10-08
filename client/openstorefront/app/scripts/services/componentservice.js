@@ -528,19 +528,19 @@
         "startOffset" : 0,
         "max" : 2147483647,
         "searchElements" : [{
-            "searchType" : "ATTRIBUTE",
-            "field" : null,
-            "value" : null,
-            "keyField" : attribute.type,
-            "keyValue" : attribute.code,
-            "startDate" : null,
-            "endDate" : null,
-            "caseInsensitive" : false,
-            "numberOperation" : "EQUALS",
-            "stringOperation" : "EQUALS",
-            "mergeCondition" : "OR"
-          }]
-      };	
+          "searchType" : "ATTRIBUTE",
+          "field" : null,
+          "value" : null,
+          "keyField" : attribute.type,
+          "keyValue" : attribute.code,
+          "startDate" : null,
+          "endDate" : null,
+          "caseInsensitive" : false,
+          "numberOperation" : "EQUALS",
+          "stringOperation" : "EQUALS",
+          "mergeCondition" : "OR"
+        }]
+      };  
       var url = 'api/v1/service/search/advance/';
       if (attribute && attribute.type && attribute.code) {
         $http({
@@ -563,6 +563,32 @@
         result.reject(false);
       }
 
+      return result.promise;
+    };
+    
+    componentservice.advancedSearch = function (advancedSearch) {
+      var result = $q.defer();
+      if (advancedSearch) {
+        var url = 'api/v1/service/search/advance/';
+        $http({
+          method: 'POST',
+          url: url,
+          data: advancedSearch
+        }).success(function (data, status, headers, config) {
+          if (data && !isEmpty(data) && isNotRequestError(data)) {
+            removeError();
+            result.resolve(data);
+          } else {
+            removeError();
+            triggerError(data);
+            result.reject(false);
+          }
+        }).error(function (data, status, headers, config) {
+          result.reject(false);
+        });
+      } else {
+        result.reject(false);
+      }
       return result.promise;
     };
 

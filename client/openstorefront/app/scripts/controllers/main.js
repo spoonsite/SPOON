@@ -63,7 +63,7 @@ Business.highlightservice.getRecentlyAdded().then(function(result){
     _.each(result, function(item){
       var temp = item;
       recents.push(temp);
-    })
+    });
     $scope.recentlyAdded = recents;
     $timeout(function(){
       $('.shortDescription').dotdotdot({
@@ -101,8 +101,8 @@ Business.highlightservice.getRecentlyAdded().then(function(result){
             the last character of the truncated text. */
             noEllipsis  : []
           }
-        })
-      })//
+        });
+      });//
     } else { //
       $scope.recentlyAdded = null;
     }
@@ -118,15 +118,15 @@ $scope.getTypeahead = function(){
     $scope.typeahead = result;
   }, function(){
     $scope.typeahead = [];
-  })
-}
+  });
+};
 
 $scope.$watch('searchKey', function(newValue, oldValue){
   if ($scope.searchKey) {
     $rootScope.searchKey = $scope.searchKey;
     $scope.getTypeahead();
   }
-})
+});
 
   //////////////////////////////////////////////////////////////////////////////
   // Event Watchers
