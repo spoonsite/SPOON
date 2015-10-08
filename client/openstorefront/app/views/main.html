@@ -53,13 +53,13 @@ limitations under the License.
                         <div style="display:block">
                             <div class="input-group">
                                 <div class="input-group-btn">
-                                    <button class="btn btn-default" type="button" style="font-size:1.5em; background-color:#efefef;" ng-click="showTopics();"><i class="glyphicon glyphicon-list-alt"></i></button>
+                                    <button class="btn btn-default" data-toggle="tooltip" title="Topic Search" type="button" style="font-size:1.5em; background-color:#efefef;" ng-click="showTopics();"><i class="glyphicon glyphicon-list-alt"></i></button>
                                 </div>
                                 <input type="text" class="form-control" ng-model="searchKey"  placeholder="Search" typeahead="key.description as key.description for key in typeahead | filter:$viewValue | limitTo:8" autofocus id="mainSearchBar">
                                 <div class="input-group-btn">
-                                    <button type="submit" class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
-                                    <button type="button" ng-click="searchKey = 'all'; goToSearch('search', 'all', true);" style="font-size: 1.5em; height: 50px;" class="btn btn-primary">Show All Listings</button>
-                                    <button type="button" ng-click="svcv4Mode = !svcv4Mode" style="font-size: 1.5em; height: 50px;" class="btn btn-primary">SvcV-4</button>
+                                    <button type="submit" data-container="body" data-toggle="tooltip" title="Search" class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+                                    <button type="button" data-container="body" data-toggle="tooltip" title="Search All" ng-click="searchKey = 'all'; goToSearch('search', 'all', true);" style="font-size: 1.5em; height: 50px;" class="btn btn-primary">Show All Listings</button>
+                                    <button type="button" data-container="body" data-toggle="tooltip" title="SvcV-4 Search" ng-click="svcv4Mode = !svcv4Mode" style="font-size: 1.5em; height: 50px;" class="btn btn-primary">SvcV-4</button>
                                 </div>
                             </div>
                         </div>

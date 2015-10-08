@@ -116,14 +116,18 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
                 scope.currentTopic={};
                 scope.loadSubTopicDataForPopup = function (type) {
                     scope.currentTopic=type;
+                    scope.$emit('$TRIGGERLOAD', 'topicLoader');
                     Business.articleservice.getCodeViews(type.attributeType).then(function (result) {
                         scope.subTopicList = [];
                         if (result.data) {
                             scope.subTopicList = result.data;
+                            scope.$emit('$TRIGGERUNLOAD', 'topicLoader');
                         }
                     }, function () {
                         scope.subTopicList = [];
+                        scope.$emit('$TRIGGERUNLOAD', 'topicLoader');
                     });
+                    
                 };
 
                 scope.goToResults = function (attribute) {

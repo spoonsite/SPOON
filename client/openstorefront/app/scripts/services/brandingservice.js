@@ -215,7 +215,7 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
       deferred.reject(false);
     }
     return deferred.promise;
-  }
+  };
 
 
   branding.deleteTopicSearchItems = function(brandingId, override) {
