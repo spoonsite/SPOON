@@ -465,22 +465,23 @@ public class UserServiceImpl
 	{
 		UserWatch userWatchExample = new UserWatch();
 		userWatchExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
-		userWatchExample.setNotifyFlg(Boolean.TRUE);
 		userWatchExample.setComponentId(component.getComponentId());
 
 		List<UserWatch> userWatches = persistenceService.queryByExample(UserWatch.class, userWatchExample);
 		for (UserWatch userWatch : userWatches) {
 			if (component.getLastActivityDts().after(userWatch.getLastViewDts())) {
-				UserMessage userMessage = new UserMessage();
-				userMessage.setUsername(userWatch.getUsername());
-				userMessage.setComponentId(component.getComponentId());
-				userMessage.setUserMessageType(UserMessageType.COMPONENT_WATCH);
-				userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
-				userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-				getUserService().queueUserMessage(userMessage);
+				if (Convert.toBoolean(userWatch.getNotifyFlg())) {
+					UserMessage userMessage = new UserMessage();
+					userMessage.setUsername(userWatch.getUsername());
+					userMessage.setComponentId(component.getComponentId());
+					userMessage.setUserMessageType(UserMessageType.COMPONENT_WATCH);
+					userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
+					userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+					getUserService().queueUserMessage(userMessage);
+				}
 
 				NotificationEvent notificationEvent = new NotificationEvent();
-				notificationEvent.setEventType(NotificationEventType.IMPORT);
+				notificationEvent.setEventType(NotificationEventType.WATCH);
 				notificationEvent.setUsername(userWatch.getUsername());
 				notificationEvent.setMessage("Component: " + component.getName() + " has been updated.");
 				notificationEvent.setEntityName(Component.class.getSimpleName());
