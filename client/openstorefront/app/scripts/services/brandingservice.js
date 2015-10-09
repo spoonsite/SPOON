@@ -66,7 +66,7 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
   branding.getBrandingView = function(id, override) {
     var deferred = $q.defer();
     if (id) { 
-      var url = base + encodeURIComponent(id); 
+      var url = base; 
       var found = checkExpire('brandingView_'+id, 2 * minute);
       if (found && !override){
         deferred.resolve(found);
@@ -98,10 +98,10 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
   branding.getTopicSearchItems = function(brandingId, override) {
     var deferred = $q.defer();
     if (brandingId) { 
-      var url = base + encodeURIComponent(brandingId) + '/topicSearchItems'; 
+      var url = base; 
       var found = checkExpire('topicSearchItems_' + brandingId, 2 * minute);
       if (found && !override){
-        deferred.resolve(found);
+        deferred.resolve(found.topicSearchViews);
       } else {
         $http({
           'method': 'GET',
@@ -110,7 +110,7 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
           if (data && data !== 'false' && isNotRequestError(data)) {
             removeError();
             save('topicSearchItems_' + brandingId, data);
-            deferred.resolve(data);
+            deferred.resolve(data.topicSearchViews);
           } else {
             removeError();
             triggerError(data);
@@ -130,14 +130,14 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
 
   branding.getAllTopicSearchItems = function(override) {
     var deferred = $q.defer();
-    var url = base + 'topicSearchItems'; 
+    var url = base; 
     var found = checkExpire('allTopicSearchItems', 2 * minute);
     if (found && !override){
       deferred.resolve(found);
     } else {
       $http({
         'method': 'GET',
-        'url': url,
+        'url': url
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();

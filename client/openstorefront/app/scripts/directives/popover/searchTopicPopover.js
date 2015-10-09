@@ -36,13 +36,13 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
 
                     Business.articleservice.getTypes(filterObj, true).then(function (attributeTypes) {
                         scope.topicList = [];
-                        _.each(config.brandingView.topicSearchItems, function (topicSearchItem) {
+                        _.each(config.brandingView.topicSearchViews, function (topicSearchItem) {
                             scope.topicList.push(mapped(attributeTypes.data, topicSearchItem));
                         });
                     }, function () {
                         scope.attributeTypes = [];
 
-                        scope.topicList = config.brandingView.topicSearchItems;
+                        scope.topicList = config.brandingView.topicSearchViews;
 
                     });
 
@@ -136,7 +136,7 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
                         "sortField": null,
                         "sortDirection": "DESC",
                         "startOffset": 0,
-                        "max": 2147483647,
+                        "max": 250,
                         "searchElements": [{
                                 "searchType": "ATTRIBUTE",
                                 "field": null,
@@ -158,7 +158,7 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
                 };
 
                 scope.$on('setVis', function () {
-                    console.log("Got setVis");
+                    //console.log("Got setVis");
                     scope.topicsClicked();
                 });
             }
