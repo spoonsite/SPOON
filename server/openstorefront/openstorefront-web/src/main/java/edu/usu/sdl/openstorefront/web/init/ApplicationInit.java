@@ -18,6 +18,8 @@ package edu.usu.sdl.openstorefront.web.init;
 import edu.usu.sdl.core.CoreSystem;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.web.atmosphere.AtmosphereNotificationListerner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -37,6 +39,12 @@ public class ApplicationInit
 	public void contextInitialized(ServletContextEvent sce)
 	{
 		CoreSystem.startup();
+
+		//curb some noisy logs by default
+		Logger atmospshereLog = Logger.getLogger("org.atmosphere");
+		if (atmospshereLog != null) {
+			atmospshereLog.setLevel(Level.OFF);
+		}
 
 		AtmosphereFramework atmosphereFramework = (AtmosphereFramework) sce.getServletContext().getAttribute("AtmosphereServlet");
 		AtmosphereNotificationListerner atmosphereNotificationListerner = new AtmosphereNotificationListerner(atmosphereFramework);

@@ -15,11 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
+import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.TopicSearchItem;
+import edu.usu.sdl.openstorefront.core.model.BrandingModel;
 import edu.usu.sdl.openstorefront.core.view.BrandingView;
 import java.util.List;
 
 /**
+ * Handles Branding
  *
  * @author jlaw
  */
@@ -28,55 +31,54 @@ public interface BrandingService
 {
 
 	/**
-	 * Finds a branding
+	 * Finds the currently active branding or returns a default one if none
+	 * exists
 	 *
-	 * @param brandingId
-	 * @return Name or null if not found
+	 * @return BrandingView
 	 */
-	public BrandingView getBrandingView(String brandingId);
+	public BrandingView getCurrentBrandingView();
 
 	/**
-	 * High-speed component name lookup
-	 *
-	 * @return Name or null if not found
-	 */
-	public List<TopicSearchItem> getTopicSearchItems();
-
-	/**
-	 * High-speed component name lookup
-	 *
-	 * @param brandingId
-	 * @return Name or null if not found
-	 */
-	public List<TopicSearchItem> getTopicSearchItems(String brandingId);
-
-	/**
-	 * High-speed component name lookup
-	 *
-	 * @param brandingId
-	 * @return Name or null if not found
-	 */
-	public TopicSearchItem getTopicSearchItem(String entityId);
-
-	/**
-	 * High-speed component name lookup
-	 *
-	 * @param item
-	 */
-	public TopicSearchItem addTopicSearchItem(TopicSearchItem item);
-
-	/**
-	 * High-speed component name lookup
-	 *
-	 * @param item
-	 */
-	public void deleteTopicSearchItem(String entityId);
-
-	/**
-	 * High-speed component name lookup
+	 * Set the branding if found to active and set the other brandings to
+	 * inactive
 	 *
 	 * @param brandingId
 	 */
-	public void deleteTopicSearchItems(String brandingId);
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void setBrandingAsCurrent(String brandingId);
+
+	/**
+	 * Save a branding full branding entity
+	 *
+	 * @param brandingModel
+	 * @return newly saved branding
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public BrandingModel saveFullBanding(BrandingModel brandingModel);
+
+	/**
+	 * Save a branding entity
+	 *
+	 * @param branding
+	 * @return newly saved branding
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Branding saveBanding(Branding branding);
+
+	/**
+	 * Removes existing topic search items and saves this list
+	 *
+	 * @param items
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveTopicSearchItems(String brandingId, List<TopicSearchItem> items);
+
+	/**
+	 * Delete branding entity and all related data
+	 *
+	 * @param brandingId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteBranding(String brandingId);
 
 }

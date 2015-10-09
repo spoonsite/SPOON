@@ -83,7 +83,7 @@ public class AttributeType
 
 	@NotNull
 	@ConsumeField
-	@APIDescription("This attribute type represents an architechture and has special handling")
+	@APIDescription("This has special handling")
 	private Boolean importantFlg;
 
 	@NotNull

@@ -16,11 +16,12 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
-import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -28,76 +29,59 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
+@APIDescription("Used to define quick search topics fro a branding.")
 public class TopicSearchItem
-		extends StandardEntity
+		extends StandardEntity<TopicSearchItem>
 {
 
 	@PK(generated = true)
 	@NotNull
-	private String entityId;
-	
+	private String topicSearchItemId;
+
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@FK(Branding.class)
 	private String brandingId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
+	@FK(AttributeType.class)
 	private String attributeType;
 
 	public TopicSearchItem()
 	{
 	}
 
-	/**
-	 * @return the brandingId
-	 */
 	public String getBrandingId()
 	{
 		return brandingId;
 	}
 
-	/**
-	 * @param brandingId the brandingId to set
-	 */
 	public void setBrandingId(String brandingId)
 	{
 		this.brandingId = brandingId;
 	}
 
-	/**
-	 * @return the attributeType
-	 */
 	public String getAttributeType()
 	{
 		return attributeType;
 	}
 
-	/**
-	 * @param attributeType the attributeType to set
-	 */
 	public void setAttributeType(String attributeType)
 	{
 		this.attributeType = attributeType;
 	}
 
-	/**
-	 * @return the entityId
-	 */
-	public String getEntityId()
+	public String getTopicSearchItemId()
 	{
-		return entityId;
+		return topicSearchItemId;
 	}
 
-	/**
-	 * @param entityId the entityId to set
-	 */
-	public void setEntityId(String entityId)
+	public void setTopicSearchItemId(String topicSearchItemId)
 	{
-		this.entityId = entityId;
+		this.topicSearchItemId = topicSearchItemId;
 	}
 
 }

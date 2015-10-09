@@ -17,11 +17,16 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.TopicSearchItem;
+import edu.usu.sdl.openstorefront.core.model.BrandingModel;
 import edu.usu.sdl.openstorefront.core.view.BrandingView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
-import java.util.List;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import java.net.URI;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -35,6 +40,7 @@ import javax.ws.rs.core.Response;
 /**
  *
  * @author jlaw
+ * @author dshurlteff
  */
 @Path("v1/resource/branding")
 @APIDescription("Branding endpoints for manipulating branding content.")
@@ -43,88 +49,72 @@ public class BrandingResource
 {
 
 	@GET
+	@APIDescription("Get's the current branding view")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(BrandingView.class)
+	public Response getCurrentBrandingView()
+	{
+		BrandingView brandingView = service.getBrandingService().getCurrentBrandingView();
+		return sendSingleEntityResponse(brandingView);
+	}
+
+	@GET
 	@APIDescription("Get the branding view from a given id")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(BrandingView.class)
 	@Path("/{id}")
-	public BrandingView getBrandingView(
-			@PathParam("id") String brandingId)
+	public Response getBrandingView(
+			@PathParam("id") String brandingId
+	)
 	{
-		return service.getBrandingService().getBrandingView(brandingId);
-	}
+		BrandingView brandingView = null;
 
-	@GET
-	@APIDescription("Get the topic search items by branding id")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(TopicSearchItem.class)
-	@Path("/{id}/topicSearchItems")
-	public List<TopicSearchItem> getTopicSearchItems(
-			@PathParam("id") String brandingId)
-	{
-		return service.getBrandingService().getTopicSearchItems(brandingId);
-	}
-
-	@GET
-	@APIDescription("Get all topic search items")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(TopicSearchItem.class)
-	@Path("/topicSearchItems")
-	public List<TopicSearchItem> getAllTopicSearchItems()
-	{
-		return service.getBrandingService().getTopicSearchItems();
-	}
-
-	@GET
-	@APIDescription("Get the topic search items by id")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(TopicSearchItem.class)
-	@Path("/topicSearchItems/{id}")
-	public TopicSearchItem getTopicSearchItemById(
-			@PathParam("id") String entityId)
-	{
-		return service.getBrandingService().getTopicSearchItem(entityId);
+		Branding branding = new Branding();
+		branding.setBrandingId(brandingId);
+		branding = branding.find();
+		if (branding != null) {
+			TopicSearchItem topicSearchItemExample = new TopicSearchItem();
+			topicSearchItemExample.setBrandingId(brandingId);
+			brandingView = BrandingView.toView(branding, topicSearchItemExample.findByExample());
+		}
+		return sendSingleEntityResponse(brandingView);
 	}
 
 	@POST
-	@APIDescription("Add a new topic search item")
+	@APIDescription("Saves branding")
 	@RequireAdmin
+	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@DataType(TopicSearchItem.class)
-	@Path("/{id}/topicSearchItems")
 	public Response addTopicSearchItem(
-			@PathParam("id") String brandingId,
-			@RequiredParam BrandingView view)
+			@RequiredParam BrandingModel brandingModel
+	)
 	{
-		List<TopicSearchItem> items = view.getTopicSearchItems();
-		for (TopicSearchItem item : items) {
-			item.setBrandingId(brandingId);
-			List<TopicSearchItem> temp = item.findByExample();
-			if (temp == null || temp.isEmpty()) {
-				item = service.getBrandingService().addTopicSearchItem(item);
-			}
+		ValidationModel validationModel = new ValidationModel(brandingModel.getBranding());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
+		for (TopicSearchItem topicSearchItem : brandingModel.getTopicSearchItems()) {
+			validationModel = new ValidationModel(brandingModel.getBranding());
+			validationModel.setConsumeFieldsOnly(true);
+			validationResult.merge(ValidationUtil.validate(validationModel));
 		}
-		view.setTopicSearchItems(items);
-		return sendSingleEntityResponse(view);
+		if (validationResult.valid()) {
+			brandingModel = service.getBrandingService().saveFullBanding(brandingModel);
+			BrandingView view = BrandingView.toView(brandingModel.getBranding(), brandingModel.getTopicSearchItems());
+			return Response.created(URI.create("v1/resource/branding/" + brandingModel.getBranding().getBrandingId())).entity(view).build();
+		}
+		return sendSingleEntityResponse(validationResult.toRestError());
 	}
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Delete all topic search items for a certain branding")
-	@Path("/{id}/topicSearchItems")
+	@APIDescription("Deletes branding and related data")
+	@Path("/{id}")
 	public void deleteTopicSearchItems(
-			@PathParam("id") String brandingId)
+			@PathParam("id") String brandingId
+	)
 	{
-		service.getBrandingService().deleteTopicSearchItems(brandingId);
-	}
-
-	@DELETE
-	@RequireAdmin
-	@APIDescription("Delete a topic search item")
-	@Path("/topicSearchItems/{entityId}")
-	public void deleteTopicSearchItem(
-			@PathParam("entityId") String entityId)
-	{
-		service.getBrandingService().deleteTopicSearchItem(entityId);
+		service.getBrandingService().deleteBranding(brandingId);
 	}
 
 }
