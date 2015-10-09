@@ -45,14 +45,17 @@
      ]);
    expect(scope.systemTools).toEqual([
        { label: 'Alerts', location: 'views/admin/application_management/manageAlerts.html', toolTitle: 'Manage Alerts', detailedDesc: 'Alerts are triggers set up to watch the data, that an administrator can subscribe to.', key: 'alerts' },
-       { label: 'Jobs', location: 'views/admin/application_management/manageJobs.html', toolTitle: 'Job Management', detailedDesc: 'Allows for controling and viewing scheduled jobs and background tasks', key: 'JOBS' },
+       { label: 'Branding', location: 'views/admin/application_management/manageBranding.html', toolTitle: 'Branding', detailedDesc: 'Allows the ability to set the graphic design and theme characteristics for the site.', key: 'BRANDING' },
+       { label: 'Jobs', location: 'views/admin/application_management/manageJobs.html', toolTitle: 'Job Management', detailedDesc: 'Allows for controlling and viewing scheduled jobs and background tasks.', key: 'JOBS' },
        { label: 'Reports', location: 'views/admin/application_management/manageReports.html', toolTitle: 'Manage Reports', detailedDesc: 'System generated hard reports.', key: 'reports' },
-       { label: 'System', location: 'views/admin/application_management/manageSystem.html', toolTitle: 'System Management', detailedDesc: 'Allows for viewing system status and managing system properties', key: 'SYSTEM' },
-       { label: 'Tracking', location: 'views/admin/application_management/tracking.html', toolTitle: 'Manage Tracking', detailedDesc: 'Track system, user, and component data.', key: 'tracking' },
-       { label: 'User Messages', location: 'views/admin/application_management/manageUserMessages.html', toolTitle: 'User Message Management', detailedDesc: 'User messages are queued messages for users.  This primary usage is for watches.  This tool allows for viewing of queued message as well as viewing of archived messages. ', key: 'USER_MESSAGE' } ]);
+       { label: 'System', location: 'views/admin/application_management/manageSystem.html', toolTitle: 'System Management', detailedDesc: 'Allows for viewing system status and managing system properties.', key: 'SYSTEM' },
+       { label: 'Tracking', location:  'views/admin/application_management/tracking.html', toolTitle: 'Manage Tracking', detailedDesc: 'Track system, user, and component data.', key: 'tracking' },
+       { label: 'User Messages', location: 'views/admin/application_management/manageUserMessages.html', toolTitle: 'User Message Management', detailedDesc: 'User messages are queued messages for users.  This primary usage is for watches.  This tool allows for viewing of queued message as well as viewing of archived messages.', key: 'USER_MESSAGE' }
+    ]);
    expect(scope.menuPanel).toEqual({data: {open: true}, system: {open: true}});
    expect(scope.menuPanel.data).toEqual({ open: true });
    expect(scope.menuPanel.system).toEqual({ open: true });
  });
  alert('Controller: AdminCtrl; should have the correct initializations = PASS (16 expects)');
 });
+

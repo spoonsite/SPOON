@@ -31,7 +31,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
   $scope.incLoc = '';
   $scope.saveContent = '';
   $scope.editedTopic = 'Types';
-  $scope.toolTitle = 'Admin Tools'
+  $scope.toolTitle = 'Admin Tools';
   $scope.menuPanel = {};
   $scope.menuPanel.data = {};
   $scope.menuPanel.data.open = true;
@@ -330,7 +330,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
       'label': 'Jobs', 
       'location':'views/admin/application_management/manageJobs.html',      
       'toolTitle': 'Job Management', 
-      'detailedDesc': 'Allows for controling and viewing scheduled jobs and background tasks',
+      'detailedDesc': 'Allows for controlling and viewing scheduled jobs and background tasks.',
       'key': 'JOBS' 
     });
 
@@ -345,7 +345,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
     $scope.systemTools.push({
       'label': 'System', 'location':'views/admin/application_management/manageSystem.html', 
       'toolTitle': 'System Management', 
-      'detailedDesc': 'Allows for viewing system status and managing system properties',
+      'detailedDesc': 'Allows for viewing system status and managing system properties.',
       'key': 'SYSTEM'
     });
 
@@ -361,7 +361,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
       'label': 'User Messages', 
       'location':'views/admin/application_management/manageUserMessages.html', 
       'toolTitle': 'User Message Management', 
-      'detailedDesc': 'User messages are queued messages for users.  This primary usage is for watches.  This tool allows for viewing of queued message as well as viewing of archived messages. ',
+      'detailedDesc': 'User messages are queued messages for users.  This primary usage is for watches.  This tool allows for viewing of queued message as well as viewing of archived messages.',
       'key': 'USER_MESSAGE' 
     });    
     
