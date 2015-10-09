@@ -15,14 +15,23 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.api.BrandingService;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.TopicSearchItem;
+import edu.usu.sdl.openstorefront.core.model.BrandingModel;
 import edu.usu.sdl.openstorefront.core.view.BrandingView;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
+ * Handle branding related items
  *
  * @author jlaw
+ * @author dshurtleff
  */
 public class BrandingServiceImpl
 		extends ServiceProxy
@@ -30,67 +39,130 @@ public class BrandingServiceImpl
 {
 
 	@Override
-	public BrandingView getBrandingView(String brandingId)
+	public BrandingView getCurrentBrandingView()
 	{
-		BrandingView view = new BrandingView();
+		Branding branding = new Branding();
+		branding.setActiveStatus(Branding.ACTIVE_STATUS);
+		branding = branding.find();
 
-		view.setTopicSearchItems(getTopicSearchItems(brandingId));
+		List<TopicSearchItem> topicSearchItems = new ArrayList<>();
 
-		return view;
-	}
+		if (branding == null) {
+			branding = new Branding();
+			branding.setName("Default");
 
-	@Override
-	public List<TopicSearchItem> getTopicSearchItems()
-	{
-		return getTopicSearchItems("");
-	}
+			AttributeType attributeType = new AttributeType();
+			attributeType.setVisibleFlg(Boolean.TRUE);
+			attributeType.setActiveStatus(AttributeType.ACTIVE_STATUS);
 
-	@Override
-	public List<TopicSearchItem> getTopicSearchItems(String brandingId)
-	{
-		TopicSearchItem example = new TopicSearchItem();
-		if (!brandingId.isEmpty()) {
-			example.setBrandingId(brandingId);
-		}
-
-		List<TopicSearchItem> temp = example.findByExample();
-		return temp;
-	}
-
-	@Override
-	public TopicSearchItem getTopicSearchItem(String entityId)
-	{
-		return ServiceProxy.getProxy().persistenceService.findById(TopicSearchItem.class, entityId);
-	}
-
-	@Override
-	public TopicSearchItem addTopicSearchItem(TopicSearchItem item)
-	{
-		item.setTopicSearchItemId(ServiceProxy.getProxy().persistenceService.generateId());
-		ServiceProxy.getProxy().persistenceService.persist(item);
-		return item;
-	}
-
-	@Override
-	public void deleteTopicSearchItem(String entityId)
-	{
-		TopicSearchItem temp = ServiceProxy.getProxy().persistenceService.findById(TopicSearchItem.class, entityId);
-		if (temp != null) {
-			ServiceProxy.getProxy().persistenceService.delete(temp);
-		}
-	}
-
-	@Override
-	public void deleteTopicSearchItems(String brandingId)
-	{
-		TopicSearchItem example = new TopicSearchItem();
-		example.setBrandingId(brandingId);
-		List<TopicSearchItem> list = ServiceProxy.getProxy().persistenceService.queryByExample(TopicSearchItem.class, example);
-		for (TopicSearchItem item : list) {
-			if (item != null) {
-				TopicSearchItem temp = ServiceProxy.getProxy().persistenceService.findById(TopicSearchItem.class, item.getTopicSearchItemId());
-				ServiceProxy.getProxy().persistenceService.delete(temp);
+			List<AttributeType> attributeTypes = attributeType.findByExample();
+			for (AttributeType attributeTypeLocal : attributeTypes) {
+				TopicSearchItem topicSearchItem = new TopicSearchItem();
+				topicSearchItem.setAttributeType(attributeTypeLocal.getAttributeType());
+				topicSearchItems.add(topicSearchItem);
 			}
+
+		} else {
+			TopicSearchItem topicSearchItemExample = new TopicSearchItem();
+			topicSearchItemExample.setBrandingId(branding.getBrandingId());
+			topicSearchItems = topicSearchItemExample.findByExample();
+		}
+
+		//set defaults if not set
+		if (branding.getAllowJiraFeedbackFlg() == null) {
+			branding.setAllowJiraFeedbackFlg(Convert.toBoolean(PropertiesManager.getValue(PropertiesManager.KEY_ALLOW_JIRA_FEEDBACK, "true")));
+		}
+
+		if (branding.getAllowSecurityMarkingsFlg() == null) {
+			branding.setAllowSecurityMarkingsFlg(Boolean.FALSE);
+		}
+
+		if (branding.getShowComponentTypeSearchFlg() == null) {
+			branding.setAllowSecurityMarkingsFlg(Boolean.TRUE);
+		}
+
+		if (branding.getApplicationName() == null) {
+			branding.setApplicationName(PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "DI2E ClearingHouse"));
+		}
+
+		if (branding.getLandingPageTitle() == null) {
+			branding.setLandingPageTitle(branding.getLandingPageTitle());
+		}
+
+		return BrandingView.toView(branding, topicSearchItems);
+	}
+
+	@Override
+	public void setBrandingAsCurrent(String brandingId)
+	{
+		Objects.requireNonNull(brandingId);
+
+		Branding brandingExample = new Branding();
+		List<Branding> brandings = brandingExample.findByExampleProxy();
+		for (Branding branding : brandings) {
+			if (branding.getBrandingId().equals(brandingId)) {
+				branding.setActiveStatus(Branding.ACTIVE_STATUS);
+			} else {
+				branding.setActiveStatus(Branding.INACTIVE_STATUS);
+			}
+			branding.populateBaseUpdateFields();
+			persistenceService.persist(branding);
+		}
+	}
+
+	@Override
+	public BrandingModel saveFullBanding(BrandingModel brandingModel)
+	{
+		Branding branding = saveBanding(brandingModel.getBranding());
+		brandingModel.setBranding(branding);
+		saveTopicSearchItems(branding.getBrandingId(), brandingModel.getTopicSearchItems());
+		return brandingModel;
+	}
+
+	@Override
+	public Branding saveBanding(Branding branding)
+	{
+		Objects.requireNonNull(branding);
+
+		Branding brandingExisting = persistenceService.findById(Branding.class, branding.getBrandingId());
+		if (brandingExisting != null) {
+			brandingExisting.updateFields(branding);
+			branding = persistenceService.persist(brandingExisting);
+		} else {
+			branding.setBrandingId(persistenceService.generateId());
+			branding.populateBaseCreateFields();
+			branding = persistenceService.persist(branding);
+		}
+		return branding;
+	}
+
+	@Override
+	public void saveTopicSearchItems(String brandingId, List<TopicSearchItem> items)
+	{
+		Objects.requireNonNull(brandingId, "Branding Id is Required");
+
+		TopicSearchItem topicSearchItemExample = new TopicSearchItem();
+		topicSearchItemExample.setBrandingId(brandingId);
+		persistenceService.deleteByExample(topicSearchItemExample);
+
+		for (TopicSearchItem item : items) {
+			item.setTopicSearchItemId(persistenceService.generateId());
+			item.setBrandingId(brandingId);
+			persistenceService.persist(item);
+		}
+	}
+
+	@Override
+	public void deleteBranding(String brandingId)
+	{
+		Branding branding = persistenceService.findById(Branding.class, brandingId);
+
+		if (branding != null) {
+			TopicSearchItem topicSearchItemExample = new TopicSearchItem();
+			topicSearchItemExample.setBrandingId(brandingId);
+			persistenceService.deleteByExample(topicSearchItemExample);
+
+			persistenceService.delete(branding);
 		}
 	}
 

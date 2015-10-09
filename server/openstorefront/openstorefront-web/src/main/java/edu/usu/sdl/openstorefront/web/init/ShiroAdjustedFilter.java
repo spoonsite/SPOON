@@ -58,6 +58,7 @@ public class ShiroAdjustedFilter
 				httpServletRequest.getSession().setAttribute(REFERENCED_FILTER_URL_ATTRIBUTE, url);
 			}
 		}
+		//servletRequest.setAttribute("org.apache.catalina.ASYNC_SUPPORTED", true);
 		super.doFilterInternal(servletRequest, servletResponse, chain);
 	}
 

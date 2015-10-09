@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
@@ -28,8 +29,9 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
+@APIDescription("Used to define quick search topics fro a branding.")
 public class TopicSearchItem
-		extends StandardEntity
+		extends StandardEntity<TopicSearchItem>
 {
 
 	@PK(generated = true)
@@ -45,6 +47,7 @@ public class TopicSearchItem
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
+	@FK(AttributeType.class)
 	private String attributeType;
 
 	public TopicSearchItem()

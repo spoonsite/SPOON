@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
@@ -29,6 +30,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@APIDescription("Allows for dynamic changing of the application look and feel")
 public class Branding
 		extends StandardEntity<Branding>
 {
@@ -99,6 +101,29 @@ public class Branding
 
 	public Branding()
 	{
+	}
+
+	@Override
+	public void updateFields(StandardEntity entity)
+	{
+		super.updateFields(entity);
+
+		Branding branding = (Branding) entity;
+
+		setAllowJiraFeedbackFlg(branding.getAllowJiraFeedbackFlg());
+		setAllowSecurityMarkingsFlg(branding.getAllowSecurityMarkingsFlg());
+		setApplicationName(branding.getApplicationName());
+		setArchtectureSearchLabel(branding.getArchtectureSearchLabel());
+		setArchtectureSearchType(branding.getArchtectureSearchType());
+		setLandingPageBanner(branding.getLandingPageBanner());
+		setLandingPageFooter(branding.getLandingPageFooter());
+		setLandingPageTitle(branding.getLandingPageTitle());
+		setLoginWarning(branding.getLoginWarning());
+		setName(branding.getName());
+		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
+		setSecondaryLogoUrl(branding.getSecondaryLogoUrl());
+		setShowComponentTypeSearchFlg(branding.getShowComponentTypeSearchFlg());
+
 	}
 
 	public String getBrandingId()
