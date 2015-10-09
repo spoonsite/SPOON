@@ -8,14 +8,16 @@
                         <button class="btn btn-default" ng-click="loadSubTopicDataForPopup(topic);" style="width:100%;" ng-show="topic.attributeType">{{topic.description}}</button>
                     </div>
                 </div>
-                <div id="rightPane" class="col-sm-8 col-xs-4" style="padding-left:5px; padding-top:10px; max-height: 400px;overflow-y: auto;">
+                <div id="rightPane" class="col-sm-8 col-xs-4" style="padding-left:5px; padding-top:10px; max-height: 400px;overflow-y: auto;"> 
+                    <loader trigger="topicLoader"></loader>
+                    <input ng-show="subTopicList.length > 25" style="margin-bottom:10px;" class="form-control" type="text" ng-model="search" placeholder="Filter by text"></input>
                     <div class="col-xs-6 letter-box">
                         <button class="btn btn-link btn-xs" ng-show="subTopicList.length" ng-click="goToResults({'type': currentTopic.attributeType, 'code': '', 'condition':'OR'})">[ All Containing {{currentTopic.description}} ]</button>
                     </div>
                     <div class="col-xs-6 letter-box">
                         <button class="btn btn-link btn-xs" ng-show="subTopicList.length" ng-click="goToResults({'type': currentTopic.attributeType, 'code': '', 'condition':'NOT'})">[ All Not Containing {{currentTopic.description}} ]</button>
                     </div>
-                    <div ng-show="subTopicList.length" role="group"  ng-repeat="topics in (subTopicList | orderBy:'label') | groupBy:2">
+                    <div ng-show="subTopicList.length" role="group"  ng-repeat="topics in (subTopicList | filter:search | orderBy:'label') | groupBy:2">
                         <div class="col-xs-6 letter-box" ng-repeat="topic in topics">
                         <button class="btn btn-link btn-xs" ng-show="topic.code" ng-click="goToResults({'type': currentTopic.attributeType, 'code': topic.code, 'condition':'OR'})">{{topic.label}}</button>
                         </div>

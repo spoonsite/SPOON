@@ -316,7 +316,15 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
       'toolTitle': 'Manage Alerts',
       'detailedDesc': "Alerts are triggers set up to watch the data, that an administrator can subscribe to.",
       'key': 'alerts'
-    });    
+    }); 
+    
+    $scope.systemTools.push({
+      'label': 'Branding', 
+      'location':'views/admin/application_management/manageBranding.html', 
+      'toolTitle': 'Branding',
+      'detailedDesc': "Allows the ability to set the graphic design and theme characteristics for the site.",
+      'key': 'BRANDING'
+    });
 
     $scope.systemTools.push({
       'label': 'Jobs', 
