@@ -33,6 +33,7 @@ public class NotificationEventView
 {
 
 	private String eventTypeDescription;
+	private boolean readMessage;
 
 	public NotificationEventView()
 	{
@@ -70,6 +71,16 @@ public class NotificationEventView
 	public void setEventTypeDescription(String eventTypeDescription)
 	{
 		this.eventTypeDescription = eventTypeDescription;
+	}
+
+	public boolean getReadMessage()
+	{
+		return readMessage;
+	}
+
+	public void setReadMessage(boolean readMessage)
+	{
+		this.readMessage = readMessage;
 	}
 
 }
