@@ -31,23 +31,43 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
       });
       socket.on('WATCH', function (args) {
         console.log('this', args);
-        var alert = {'type': 'watch', 'msg': 'A watch has been updated. View the changes <a href="single?id='+args.entityId+'">here</a>.', 'id': 'watch_'+ args.eventId};
+        var alert = {'type': 'watch', 'msg': args.message + '<i>View the changes <a href="single?id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
         bumpIcon();
         scope.getSize();
         scope.addAlert(alert);
-        setTimeout(closeAlertTrigger.bind(null, alert), 7000);
+        setTimeout(closeAlertTrigger.bind(null, alert), 10000);
       });
       socket.on('IMPORT', function (args) {
         console.log('this', args);
+        var alert = {'type': 'import', 'msg': args.message, 'id': 'import_'+ args.eventId};
+        bumpIcon();
+        scope.getSize();
+        scope.addAlert(alert);
+        setTimeout(closeAlertTrigger.bind(null, alert), 10000);
       });
       socket.on('TASK', function (args) {
         console.log('this', args);
+        var alert = {'type': 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
+        bumpIcon();
+        scope.getSize();
+        scope.addAlert(alert);
+        setTimeout(closeAlertTrigger.bind(null, alert), 10000);
       });
       socket.on('REPORT', function (args) {
         console.log('this', args);
+        var alert = {'type': 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};
+        bumpIcon();
+        scope.getSize();
+        scope.addAlert(alert);
+        setTimeout(closeAlertTrigger.bind(null, alert), 15000);
       });
       socket.on('ADMIN', function (args) {
         console.log('this', args);
+        var alert = {'type': 'admin', 'msg': '<i class="fa fa-warning"></i>&nbsp;' + args.message, 'id': 'admin_'+ args.eventId};
+        bumpIcon();
+        scope.getSize();
+        scope.addAlert(alert);
+        setTimeout(closeAlertTrigger.bind(null, alert), 10000);
       });
 
       scope.history = [];
@@ -67,7 +87,7 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
       //           var found = _.find(total, {'taskId': item.taskId});
       //           // console.log('total', total);
       //           // console.log('item', item);
-                
+
       //           var message = '';
       //           var type = '';
       //           var id = '';
@@ -153,11 +173,11 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
       //   }
       // })
 
-      scope.getSize = function () {
-        return Factory.get().length;
-      }
+scope.getSize = function () {
+  return Factory.get().length;
+}
 
-      var closeAlertTrigger = function(alert){
+var closeAlertTrigger = function(alert){
         // console.log('closing alert', alert);
         scope.closeAlert(alert);
         if(!scope.$$phase) {
