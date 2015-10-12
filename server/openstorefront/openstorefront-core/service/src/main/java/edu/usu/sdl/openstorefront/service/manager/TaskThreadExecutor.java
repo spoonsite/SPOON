@@ -108,6 +108,7 @@ public class TaskThreadExecutor
 						notificationEvent.setEventType(NotificationEventType.TASK);
 						notificationEvent.setUsername(taskFuture.getCreateUser());
 						notificationEvent.setMessage("Task: " + taskFuture.getTaskName() + " has finished processing with status: " + taskFuture.getStatus());
+						notificationEvent.setEntityMetaDataStatus(taskFuture.getStatus().name());
 						notificationEvent.setEntityName(AsyncTask.class.getSimpleName());
 						notificationEvent.setEntityId(taskFuture.getTaskId());
 						ServiceProxy.getProxy().getNotificationService().postEvent(notificationEvent);
@@ -238,6 +239,7 @@ public class TaskThreadExecutor
 				notificationEvent.setMessage("Task: " + taskFuture.getTaskName() + " has been queued for processing. ");
 				notificationEvent.setEntityName(AsyncTask.class.getSimpleName());
 				notificationEvent.setEntityId(taskFuture.getTaskId());
+				notificationEvent.setEntityMetaDataStatus(OpenStorefrontConstant.TaskStatus.QUEUED.name());
 				ServiceProxy.getProxy().getNotificationService().postEvent(notificationEvent);
 			}
 
