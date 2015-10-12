@@ -18,8 +18,10 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -32,6 +34,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -100,10 +103,36 @@ public class NotificationEventResource
 		return response;
 	}
 
+	@PUT
+	@APIDescription("Marks event as read")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{eventId}")
+	@DataType(NotificationEventView.class)
+	public Response putNewEvent(
+			@PathParam("eventId") String eventId,
+			NotificationEventReadStatus readStatus
+	)
+	{
+		NotificationEventView view = null;
+
+		NotificationEvent notificationEvent = new NotificationEvent();
+		notificationEvent.setEventId(eventId);
+		notificationEvent = notificationEvent.find();
+		if (notificationEvent != null) {
+			service.getNotificationService().markEventAsRead(eventId, readStatus.getUsername());
+
+			view = NotificationEventView.toView(notificationEvent);
+			view.setReadMessage(true);
+		}
+		return sendSingleEntityResponse(view);
+	}
+
 	@POST
 	@RequireAdmin
 	@APIDescription("Posts a new Notification Event")
+	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(NotificationEvent.class)
 	public Response postNewEvent(
 			NotificationEvent notificationEvent
 	)
@@ -132,7 +161,10 @@ public class NotificationEventResource
 		notificationEvent.setEventId(eventId);
 		notificationEvent = notificationEvent.find();
 		if (notificationEvent != null) {
-			if (ownerCheck(notificationEvent) == null) {
+			//only allow deleting of user notifications unless admin
+			if (SecurityUtil.isAdminUser()
+					|| (notificationEvent.getUsername() != null
+					&& SecurityUtil.getCurrentUserName().equals(notificationEvent.getUsername()))) {
 				service.getNotificationService().deleteEvent(eventId);
 			}
 		}
