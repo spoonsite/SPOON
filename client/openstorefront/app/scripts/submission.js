@@ -43,7 +43,6 @@ var app = angular
     'ngIdle',    
     'multi-select',
     'angular.filter',
-    'notifications',
     "com.2fdevs.videogular",
     "com.2fdevs.videogular.plugins.controls",
     "com.2fdevs.videogular.plugins.overlayplay",

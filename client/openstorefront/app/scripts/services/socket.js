@@ -26,6 +26,7 @@
 app.factory('socket', ['$rootScope', 'business', '$q',  function ($rootScope, Business, $q) {
   var socket;
   var deferred = $q.defer();
+  
   Business.userservice.getCurrentUserProfile().then(function(result){
     if (result){
       socket = io.connect('', {'resource':'openstorefront/event', 'query': 'id='+result.username+'' });
@@ -38,8 +39,6 @@ app.factory('socket', ['$rootScope', 'business', '$q',  function ($rootScope, Bu
   return {
     on: function(eventName, callback) {
       var thing = function (eventName, callback, $rootScope, socket) {
-        console.log('eventName', eventName);
-        
         socket.on(eventName, function () {  
           var args = arguments;
           $rootScope.$apply(function () {

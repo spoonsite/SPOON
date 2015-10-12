@@ -14,6 +14,26 @@
 .notificationsBox.warning{
   background-color: #ff811a;
 }
+.notificationsBox.watch{
+  background-color: white;
+  border: 1px solid red;
+}
+.notificationsBox.import{
+  background-color: white;
+  border: 1px solid red;
+}
+.notificationsBox.task{
+  background-color: white;
+  border: 1px solid red;
+}
+.notificationsBox.report{
+  background-color: white;
+  border: 1px solid red;
+}
+.notificationsBox.admin{
+  background-color: white;
+  border: 1px solid red;
+}
 
 notifications .alert{
   margin-bottom:10px;

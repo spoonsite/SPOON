@@ -43,7 +43,6 @@ var app = angular
     'ngIdle',    
     'multi-select',
     'angular.filter',
-    'notifications',
     'com.2fdevs.videogular',
     'com.2fdevs.videogular.plugins.controls',
     'com.2fdevs.videogular.plugins.overlayplay',
@@ -131,19 +130,7 @@ var app = angular
       }
     },
     label: 'Help Page'
-  }) 
-  .when('/test', {
-    templateUrl: 'views/test.html',
-    controller: 'BaseCtrl',
-    resolve: {
-      printView: function() {
-        return {
-          print: true
-        };
-      }
-    },
-    label: 'Test'
-  }) 
+  })  
   .otherwise({
     redirectTo: '/'
   });
