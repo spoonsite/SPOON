@@ -44,6 +44,7 @@ import java.util.Objects;
 import java.util.Set;
 import net.sf.ehcache.Element;
 import net.sourceforge.stripes.util.bean.BeanUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles Notification Events
@@ -108,6 +109,7 @@ public class NotificationServiceImpl
 		notificationEventWrapper.setTotalNumber(persistenceService.countByExample(queryByExample));
 
 		//TODO: groups (lookup userprofile and get the users groups and then query for those groups.)
+		//////////////////
 		notificationEventExample = new NotificationEvent();
 		notificationEventExample.setActiveStatus(NotificationEvent.ACTIVE_STATUS);
 		notificationEventExample.setUsername(username);
@@ -124,7 +126,12 @@ public class NotificationServiceImpl
 			BeanUtil.setPropertyValue(sortField.getName(), notificationEventSortExample, QueryByExample.getFlagForType(sortField.getType()));
 			queryByExample.setOrderBy(notificationEventSortExample);
 		}
-		notificationEvents.addAll(persistenceService.queryByExample(NotificationEvent.class, queryByExample));
+		List<NotificationEvent> userEvents = persistenceService.queryByExample(NotificationEvent.class, queryByExample);
+		for (NotificationEvent event : userEvents) {
+			if (StringUtils.isNotBlank(event.getUsername())) {
+				notificationEvents.add(event);
+			}
+		}
 		notificationEventWrapper.setTotalNumber(notificationEventWrapper.getTotalNumber() + persistenceService.countByExample(queryByExample));
 
 		notificationEvents = queryParams.filter(notificationEvents);
@@ -198,7 +205,7 @@ public class NotificationServiceImpl
 
 			NotificationEventReadStatus notificationEventReadStatus = new NotificationEventReadStatus();
 			notificationEventReadStatus.setEventId(eventId);
-			persistenceService.deleteByExample(notificationEvent);
+			persistenceService.deleteByExample(notificationEventReadStatus);
 
 			persistenceService.delete(notificationEvent);
 		}
