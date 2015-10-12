@@ -49,6 +49,7 @@ public interface NotificationService
 	 * Save a new Notification event and notify Listerner
 	 *
 	 * @param notificationEvent
+	 * @return NotificationEvent posted
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public NotificationEvent postEvent(NotificationEvent notificationEvent);
@@ -66,5 +67,14 @@ public interface NotificationService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void cleanupOldEvents();
+
+	/**
+	 * Marks a event notification as being read by the username
+	 *
+	 * @param eventId (required)
+	 * @param username (required)
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void markEventAsRead(String eventId, String username);
 
 }
