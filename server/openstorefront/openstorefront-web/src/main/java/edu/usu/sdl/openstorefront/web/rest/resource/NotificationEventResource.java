@@ -83,7 +83,7 @@ public class NotificationEventResource
 	}
 
 	@GET
-	@APIDescription("Gets an notification event record")
+	@APIDescription("Gets a notification event record")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{eventId}")
 	public Response getEvent(@PathParam("eventId") String eventId)
@@ -120,6 +120,28 @@ public class NotificationEventResource
 		notificationEvent = notificationEvent.find();
 		if (notificationEvent != null) {
 			service.getNotificationService().markEventAsRead(eventId, readStatus.getUsername());
+
+			view = NotificationEventView.toView(notificationEvent);
+			view.setReadMessage(true);
+		}
+		return sendSingleEntityResponse(view);
+	}
+
+	@DELETE
+	@APIDescription("Marks event as unread")
+	@Path("/readstatus/{eventId}")
+	public Response deleteNewEvent(
+			@PathParam("eventId") String eventId,
+			NotificationEventReadStatus readStatus
+	)
+	{
+		NotificationEventView view = null;
+
+		NotificationEvent notificationEvent = new NotificationEvent();
+		notificationEvent.setEventId(eventId);
+		notificationEvent = notificationEvent.find();
+		if (notificationEvent != null) {
+			service.getNotificationService().markEventAsUnRead(eventId, readStatus.getUsername());
 
 			view = NotificationEventView.toView(notificationEvent);
 			view.setReadMessage(true);

@@ -70,8 +70,8 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
         setTimeout(closeAlertTrigger.bind(null, alert), 10000);
       });
 
-      scope.history = [];
-      scope.interval = null;
+      // scope.history = [];
+      // scope.interval = null;
       // scope.getTasks = function(data){
       //   var time = data || 100;
       //   if (isNaN(time)) {
@@ -174,7 +174,7 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
       // })
 
 scope.getSize = function () {
-  return Factory.get().length;
+  return Factory.get(true).length;
 }
 
 var closeAlertTrigger = function(alert){
@@ -204,7 +204,7 @@ var closeAlertTrigger = function(alert){
       scope.alerts = [];
 
       scope.checkDanger = function() {
-        var found = _.find(Factory.get(), {'status': 'FAILED'});
+        var found = _.find(Factory.get(true), {'status': 'FAILED'});
         if (found) {
           return true;
         } else {
@@ -329,11 +329,12 @@ var closeAlertTrigger = function(alert){
     }
   };
 }])
-.factory('notificationsFactory', ['$rootScope', '$http', '$q', '$location', function ($rootScope, $http, $q, $location) {
+.factory('notificationsFactory', ['$rootScope', '$http', '$q', '$location', 'business', function ($rootScope, $http, $q, $location, Business) {
   // This variable will hold the state. (there is only 1 per factory -- singleton)  
   var notifications = {};
 
   var data = {};
+  var notBlocking = true;
   data.tasks = [];
   notifications.update = function (task, type, message) {
     // console.log('updating a task');
@@ -378,20 +379,22 @@ var closeAlertTrigger = function(alert){
     }
 
   };
-  notifications.get = function (url) {
-    if (!url) {
-      return data.tasks;
+  notifications.get = function (cached) {
+    if (cached && data.tasks && notBlocking) {
+      return data.tasks; 
+    } else if (cached && notBlocking){ 
+      notBlocking = false;
+      Business.notificationservice.getUserEvents().then(function(events){
+        data.tasks = events;
+        notBlocking = true;
+      }, function(){
+        data.tasks = [];
+        notBlocking = true;
+      })
+    } else if (cached) {
+      return [];
     } else {
-      var deferred = $q.defer();
-      $http({
-        'method': 'GET',
-        'url': url
-      }).success(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.resolve(data);
-      }).error(function (data, status, headers, config) { /*jshint unused:false*/
-        deferred.reject('There was an error');
-      });
-      return deferred.promise;
+      return Business.notificationservice.getUserEvents();
     }
   };
 
@@ -415,9 +418,10 @@ var closeAlertTrigger = function(alert){
 
   return notifications;
 }])
-.controller('notificationsModalCtrl', ['$scope', '$uiModalInstance', 'size', 'notificationsFactory', '$timeout', function ($scope, $uiModalInstance, size, Factory, $timeout) {
-  $scope.data = angular.copy(Factory.get());
-
+.controller('notificationsModalCtrl', ['$scope', '$uiModalInstance', 'size', 'notificationsFactory', '$timeout', 'business', function ($scope, $uiModalInstance, size, Factory, $timeout, Business) {
+  Factory.get().then(function(data){
+    $scope.data = data.data;
+  });
   $scope.predicate = 'expireDts';
   $scope.reverse = false;
 
@@ -431,13 +435,14 @@ var closeAlertTrigger = function(alert){
   };
 
   $scope.refresh = function(){
-    Factory.get('api/v1/service/jobs/tasks/status').then(function(data){
-      $scope.data = data? angular.copy(data.tasks):[];
+    Factory.get().then(function(data){
+      $scope.data = data? data.data: [];
       $scope.$emit('$N-EVENT', '$REFRESHTASKS', 100);
       if(!$scope.$$phase) {
         $scope.$apply();
       }
     }, function(){
+      $scope.data = [];
       //something broke the refresh...
     });
   }
@@ -461,6 +466,29 @@ var closeAlertTrigger = function(alert){
     return utils.getStatus(status);
   }
 
+  $scope.getReadMessage = function(item){
+    return item.readMessage? 'Mark as <i>Unread</i>': 'Mark as <i>Read</i>';
+  }
+  
+  $scope.getMessage = function(item){
+    switch(item.eventType){
+      case 'WATCH':
+      return item.message + '<i>View the changes <a href="single?id='+item.entityId+'"><strong>here</strong></a>.</i>';
+      break;
+      case 'REPORT':
+      return item.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.';
+      break;
+      case 'ADMIN':
+      return '<i class="fa fa-warning"></i>&nbsp;' + item.message;
+      break;
+      case 'TASK':
+      case 'IMPORT':
+      default:
+      return item.message;
+      break;
+    }
+  }
+
   $scope.checkStatus = function(val){
     switch(val){
       case 'DONE':
@@ -473,6 +501,21 @@ var closeAlertTrigger = function(alert){
       default:
       return true
       break;
+    }
+  }
+
+  $scope.toggleReadStatus = function(item){
+    if (item.readMessage) {
+      Business.notificationservice.deleteNewEvent(item.eventId).then(function(){
+      }, function(){
+        item.readMessage = !item.readMessage;
+        setupTooltips();
+      });
+    } else {
+      Business.notificationservice.putNewEvent(item.eventId).then(function(){
+        item.readMessage = !item.readMessage;
+        setupTooltips();
+      });
     }
   }
 
@@ -521,6 +564,20 @@ var closeAlertTrigger = function(alert){
   $scope.cancel = function () {
     $uiModalInstance.dismiss('cancel');
   };
+
+  var setupTooltips = function(){
+    $timeout(function() {
+      $('.isRead[data-toggle=\'tooltip\']').tooltip({
+        title: function(){
+          var that = $(this);
+          var thing = _.find($scope.data, {'eventId': that.attr('data-id')});
+          return thing? $scope.getReadMessage(thing): '';
+        }
+      });
+    }, 300);
+  }
+  setupTooltips();
+
 }]);
 
 
@@ -539,7 +596,7 @@ var closeAlertTrigger = function(alert){
         });
 
         $templateCache.put('notifications/notifications.tpl.html', '<div class="notificationsBox imitateLink" ng-click="openModal();" ng-class="checkDanger()? \'warning\':\'\'">{{getSize()}}</div><div-stick fixed-offset-top="100" style="position:fixed; top:65px; right: 20px; width: 300px;"><alert ng-repeat="alert in alerts track by $index" type="{{alert.type}}" close="closeAlert(alert)"><span dynamichtml="alert.msg"></span></alert></div-stick>');
-        $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"><h3 class="modal-title">Tasks Queue</h3> </div> <div class="modal-body"> <button class="btn btn-default" ng-click="refresh()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button> <table class="table table-bordered table-striped admin-table"> <tr> <th><a href="" ng-click="setPredicate(\'taskName\');">Name&nbsp;<span ng-show="predicate === \'taskName\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th><a href="" ng-click="setPredicate(\'details\');">Details&nbsp;<span ng-show="predicate === \'details\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th><a href="" ng-click="setPredicate(\'status\', false);">Status&nbsp;<span ng-show="predicate === \'status\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th><a href="" ng-click="setPredicate(\'expireDts\', false);">Expires In&nbsp;<span ng-show="predicate === \'expireDts\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th> <th style="padding: 8px 3px;">Actions</th> </tr> <tr ng-repeat="item in data| orderBy:predicate:reverse"> <td>{{item.taskName}}</td> <td>{{item.details}}</td> <td ng-class="getStatus(item.status)">{{item.status}}</td> <td ng-class="">{{item.countDown}}</td> <td style="padding: 0px 3px;"> <button type="button" title="Remove Old Task" class="btn btn-danger btn-sm" ng-click="deleteTask(item)" ng-disabled="checkStatus(item.status)"><i class="fa fa-trash fa-aw"></i></button> </td> </tr> </table> </div> <div class="modal-footer"> <button class="btn btn-default" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Close</button> </div>');
+        $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"><h3 class="modal-title">Tasks Queue</h3></div><div class="modal-body"><button class="btn btn-default" ng-click="refresh()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button><table class="table table-bordered table-striped admin-table"><tr><th><a href="" ng-click="setPredicate(\'entityType\');">Type&nbsp;<span ng-show="predicate === \'entityType\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th><th><a href="" ng-click="setPredicate(\'message\');">Message&nbsp;<span ng-show="predicate === \'message\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th><th style="padding: 8px 3px;">Actions</th></tr><tr ng-repeat="item in data| orderBy:predicate:reverse"><td style="padding: 0px !important; height:1px; vertical-align: inherit;"><div style="width: 5px; height:100%; padding-right:3px; border-right:1px solid darkgray; border-top:1px solid darkgray; border-bottom:1px solid darkgray; float:left;" class="imitateLink isRead" data-id="{{item.eventId}}" ng-click="toggleReadStatus(item)" ng-class="{\'unreadTableItem\':!item.readMessage}" data-html="true" data-toggle="tooltip" data-placement="right">&nbsp;</div><div style="padding: 5px !important;">{{item.entityName}}</div></td><td><span dynamichtml="getMessage(item)"></span></td><td style="padding: 0px 3px;"><button type="button" title="Remove Old Task" class="btn btn-danger btn-sm" ng-click="deleteTask(item)" ng-disabled="checkStatus(item.status)"><i class="fa fa-trash fa-aw"></i></button></td></tr></table></div><div class="modal-footer"><button class="btn btn-default" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Close</button></div>');
       }]);
 
 

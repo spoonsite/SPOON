@@ -15,8 +15,8 @@
 */
 'use strict';
 
-app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'organizationservice', 'configurationservice', 'jobservice', 'systemservice', 'mediaservice', 'trackingservice', 'alertservice', 'reportservice', 'submissionservice','brandingservice',
-  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, organizationservice, configurationservice, jobservice, systemservice, mediaservice, trackingservice, alertservice, reportservice, submissionservice, brandingservice) { /*jshint unused: false*/
+app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'organizationservice', 'configurationservice', 'jobservice', 'systemservice', 'mediaservice', 'trackingservice', 'alertservice', 'reportservice', 'submissionservice','brandingservice', 'notificationservice',
+  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, organizationservice, configurationservice, jobservice, systemservice, mediaservice, trackingservice, alertservice, reportservice, submissionservice, brandingservice, notificationservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
   var minute = 60 * 1000;
@@ -85,6 +85,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.submissionservice = submissionservice;
   business.organizationservice = organizationservice;
   business.brandingservice = brandingservice;
+  business.notificationservice = notificationservice;
 
 
   business.getConfig = function(override){
