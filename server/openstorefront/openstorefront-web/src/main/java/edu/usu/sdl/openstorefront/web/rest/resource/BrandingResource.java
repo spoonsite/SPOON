@@ -94,7 +94,7 @@ public class BrandingResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 
 		for (TopicSearchItem topicSearchItem : brandingModel.getTopicSearchItems()) {
-			validationModel = new ValidationModel(brandingModel.getBranding());
+			validationModel = new ValidationModel(topicSearchItem);
 			validationModel.setConsumeFieldsOnly(true);
 			validationResult.merge(ValidationUtil.validate(validationModel));
 		}

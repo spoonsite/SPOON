@@ -148,6 +148,7 @@ public class BrandingServiceImpl
 		for (TopicSearchItem item : items) {
 			item.setTopicSearchItemId(persistenceService.generateId());
 			item.setBrandingId(brandingId);
+			item.populateBaseCreateFields();
 			persistenceService.persist(item);
 		}
 	}
