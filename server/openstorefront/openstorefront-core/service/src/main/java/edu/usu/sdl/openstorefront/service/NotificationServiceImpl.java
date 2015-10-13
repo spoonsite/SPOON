@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
 import edu.usu.sdl.openstorefront.core.spi.NotificationEventListerner;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
@@ -36,10 +37,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import net.sf.ehcache.Element;
 import net.sourceforge.stripes.util.bean.BeanUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles Notification Events
@@ -104,6 +109,7 @@ public class NotificationServiceImpl
 		notificationEventWrapper.setTotalNumber(persistenceService.countByExample(queryByExample));
 
 		//TODO: groups (lookup userprofile and get the users groups and then query for those groups.)
+		//////////////////
 		notificationEventExample = new NotificationEvent();
 		notificationEventExample.setActiveStatus(NotificationEvent.ACTIVE_STATUS);
 		notificationEventExample.setUsername(username);
@@ -120,12 +126,44 @@ public class NotificationServiceImpl
 			BeanUtil.setPropertyValue(sortField.getName(), notificationEventSortExample, QueryByExample.getFlagForType(sortField.getType()));
 			queryByExample.setOrderBy(notificationEventSortExample);
 		}
-		notificationEvents.addAll(persistenceService.queryByExample(NotificationEvent.class, queryByExample));
+		List<NotificationEvent> userEvents = persistenceService.queryByExample(NotificationEvent.class, queryByExample);
+		for (NotificationEvent event : userEvents) {
+			if (StringUtils.isNotBlank(event.getUsername())) {
+				notificationEvents.add(event);
+			}
+		}
 		notificationEventWrapper.setTotalNumber(notificationEventWrapper.getTotalNumber() + persistenceService.countByExample(queryByExample));
 
 		notificationEvents = queryParams.filter(notificationEvents);
 		notificationEventWrapper.setResults(notificationEvents.size());
 		notificationEventWrapper.setData(NotificationEventView.toView(notificationEvents));
+
+		//mark read flag
+		Set<String> eventIds = new HashSet<>();
+		for (NotificationEventView view : notificationEventWrapper.getData()) {
+			eventIds.add(view.getEventId());
+		}
+
+		if (eventIds.isEmpty() == false) {
+			String query = "select from " + NotificationEventReadStatus.class.getSimpleName() + " where username = :usernameParam and eventId in :eventIdSetParam ";
+			Map<String, Object> paramMap = new HashMap<>();
+			paramMap.put("usernameParam", username);
+			paramMap.put("eventIdSetParam", eventIds);
+
+			List<NotificationEventReadStatus> readStatuses = persistenceService.query(query, paramMap);
+
+			Set<String> readSet = new HashSet<>();
+			for (NotificationEventReadStatus readStatus : readStatuses) {
+				readSet.add(readStatus.getEventId());
+			}
+
+			for (NotificationEventView view : notificationEventWrapper.getData()) {
+				if (readSet.contains(view.getEventId())) {
+					view.setReadMessage(true);
+				}
+			}
+
+		}
 
 		return notificationEventWrapper;
 	}
@@ -164,6 +202,11 @@ public class NotificationServiceImpl
 	{
 		NotificationEvent notificationEvent = persistenceService.findById(NotificationEvent.class, eventId);
 		if (notificationEvent != null) {
+
+			NotificationEventReadStatus notificationEventReadStatus = new NotificationEventReadStatus();
+			notificationEventReadStatus.setEventId(eventId);
+			persistenceService.deleteByExample(notificationEventReadStatus);
+
 			persistenceService.delete(notificationEvent);
 		}
 	}
@@ -185,6 +228,20 @@ public class NotificationServiceImpl
 		queryParams.put("maxUpdateDts", archiveDts);
 
 		persistenceService.deleteByQuery(NotificationEvent.class, deleteQuery, queryParams);
+	}
+
+	@Override
+	public void markEventAsRead(String eventId, String username)
+	{
+		Objects.requireNonNull(eventId);
+		Objects.requireNonNull(username);
+
+		NotificationEventReadStatus notificationEventReadStatus = new NotificationEventReadStatus();
+		notificationEventReadStatus.setReadStatusId(persistenceService.generateId());
+		notificationEventReadStatus.setEventId(eventId);
+		notificationEventReadStatus.setUsername(username);
+
+		persistenceService.persist(notificationEventReadStatus);
 	}
 
 }

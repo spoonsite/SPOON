@@ -60,6 +60,10 @@ public class OpenStorefrontConstant
 	public static final int FIELD_SIZE_ADMIN_MESSAGE = 32000;
 	public static final int FIELD_SIZE_TAG = 60;
 	public static final int FIELD_SIZE_ARTICLE_SIZE = 10485760;
+	public static final int FIELD_SIZE_4K = 4096;
+	public static final int FIELD_SIZE_16K = 16384;
+	public static final int FIELD_SIZE_32K = 32768;
+	public static final int FIELD_SIZE_64K = 65536;
 
 	public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 

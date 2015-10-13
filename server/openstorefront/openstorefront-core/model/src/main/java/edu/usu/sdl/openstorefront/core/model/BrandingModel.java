@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.view;
+package edu.usu.sdl.openstorefront.core.model;
 
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.TopicSearchItem;
 import java.util.ArrayList;
@@ -22,36 +24,20 @@ import java.util.List;
 
 /**
  *
- * @author jlaw
  * @author dshurtleff
  */
-public class BrandingView
+public class BrandingModel
 {
 
+	@ConsumeField
 	private Branding branding;
-	private List<TopicSearchView> topicSearchViews = new ArrayList<>();
 
-	public BrandingView()
+	@ConsumeField
+	@DataType(TopicSearchItem.class)
+	private List<TopicSearchItem> topicSearchItems = new ArrayList<>();
+
+	public BrandingModel()
 	{
-	}
-
-	public static BrandingView toView(Branding branding, List<TopicSearchItem> topicSearchItems)
-	{
-		BrandingView view = new BrandingView();
-		view.setBranding(branding);
-		view.setTopicSearchViews(TopicSearchView.toView(topicSearchItems));
-
-		return view;
-	}
-
-	public List<TopicSearchView> getTopicSearchViews()
-	{
-		return topicSearchViews;
-	}
-
-	public void setTopicSearchViews(List<TopicSearchView> topicSearchViews)
-	{
-		this.topicSearchViews = topicSearchViews;
 	}
 
 	public Branding getBranding()
@@ -62,6 +48,16 @@ public class BrandingView
 	public void setBranding(Branding branding)
 	{
 		this.branding = branding;
+	}
+
+	public List<TopicSearchItem> getTopicSearchItems()
+	{
+		return topicSearchItems;
+	}
+
+	public void setTopicSearchItems(List<TopicSearchItem> topicSearchItems)
+	{
+		this.topicSearchItems = topicSearchItems;
 	}
 
 }

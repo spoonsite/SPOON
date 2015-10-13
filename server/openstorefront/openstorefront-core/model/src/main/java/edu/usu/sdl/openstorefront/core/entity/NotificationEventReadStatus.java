@@ -20,68 +20,63 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
-import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
-import edu.usu.sdl.openstorefront.validation.Sanitize;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
  *
- * @author jlaw
+ * @author dshurtleff
  */
-@APIDescription("Used to define quick search topics fro a branding.")
-public class TopicSearchItem
-		extends StandardEntity<TopicSearchItem>
+@APIDescription("Holds read status")
+public class NotificationEventReadStatus
+		extends BaseEntity<NotificationEventReadStatus>
 {
 
 	@PK(generated = true)
 	@NotNull
-	private String topicSearchItemId;
+	private String readStatusId;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@FK(Branding.class)
-	private String brandingId;
+	@FK(NotificationEvent.class)
+	private String eventId;
 
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@Sanitize(CleanKeySanitizer.class)
+	@FK(value = UserProfile.class, softReference = true)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
 	@ConsumeField
-	@FK(AttributeType.class)
-	private String attributeType;
+	private String username;
 
-	public TopicSearchItem()
+	public NotificationEventReadStatus()
 	{
 	}
 
-	public String getBrandingId()
+	public String getReadStatusId()
 	{
-		return brandingId;
+		return readStatusId;
 	}
 
-	public void setBrandingId(String brandingId)
+	public void setReadStatusId(String readStatusId)
 	{
-		this.brandingId = brandingId;
+		this.readStatusId = readStatusId;
 	}
 
-	public String getAttributeType()
+	public String getEventId()
 	{
-		return attributeType;
+		return eventId;
 	}
 
-	public void setAttributeType(String attributeType)
+	public void setEventId(String eventId)
 	{
-		this.attributeType = attributeType;
+		this.eventId = eventId;
 	}
 
-	public String getTopicSearchItemId()
+	public String getUsername()
 	{
-		return topicSearchItemId;
+		return username;
 	}
 
-	public void setTopicSearchItemId(String topicSearchItemId)
+	public void setUsername(String username)
 	{
-		this.topicSearchItemId = topicSearchItemId;
+		this.username = username;
 	}
 
 }

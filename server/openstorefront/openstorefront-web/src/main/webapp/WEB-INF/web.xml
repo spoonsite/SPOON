@@ -33,7 +33,7 @@
         <filter-name>UrlRewriteFilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>FORWARD</dispatcher>			
     </filter-mapping>
 	
  <!--   
@@ -50,11 +50,12 @@
 		<dispatcher>ERROR</dispatcher> 
 	</filter-mapping>	
 -->
-	
-    <filter>
-        <filter-name>ShiroFilter</filter-name>
-        <filter-class>edu.usu.sdl.openstorefront.web.init.ShiroAdjustedFilter</filter-class>
-    </filter>
+
+	<filter>
+		<filter-name>ShiroFilter</filter-name>
+		<filter-class>edu.usu.sdl.openstorefront.web.init.ShiroAdjustedFilter</filter-class>
+	</filter>
+
     <!--
 	<context-param>
 		<param-name>shiroConfigLocations</param-name>
@@ -69,11 +70,12 @@
         <dispatcher>FORWARD</dispatcher>        
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
-			
+		
     <filter>
         <filter-name>noCache</filter-name>
         <filter-class>com.samaxes.filter.NoCacheFilter</filter-class>
     </filter>
+
 	
     <filter-mapping>
         <filter-name>noCache</filter-name>
@@ -91,7 +93,7 @@
 		<url-pattern>*.css</url-pattern>
 	</filter-mapping>	
 	-->
-	
+
 	<filter>
 		<display-name>Stripes Filter</display-name>
 		<filter-name>StripesFilter</filter-name>
@@ -132,15 +134,22 @@
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 	
+	<filter-mapping>
+		<filter-name>StripesFilter</filter-name>
+		<servlet-name>AtmosphereServlet</servlet-name>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>	
+	
 	<servlet>
 		<servlet-name>StripesDispatcher</servlet-name>
 		<servlet-class>net.sourceforge.stripes.controller.DispatcherServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>		
+		<load-on-startup>1</load-on-startup>			
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>StripesDispatcher</servlet-name>
 		<url-pattern>*.action</url-pattern>
 	</servlet-mapping>
+	
 	<!--
 		<servlet>
 			<servlet-name>Jersey Web Application</servlet-name>
@@ -162,10 +171,10 @@
 	<servlet>
 		<description>AtmosphereServlet</description>
 		<servlet-name>AtmosphereServlet</servlet-name>
-		<servlet-class>org.atmosphere.cpr.AtmosphereServlet</servlet-class>
+		<servlet-class>org.atmosphere.cpr.AtmosphereServlet</servlet-class>		
 		<init-param>
 			<param-name>socketio-transport</param-name>
-			<param-value>websocket,xhr-polling,jsonp-polling</param-value>
+			<param-value>websocket</param-value>
 		</init-param>
 		<init-param>
 			<param-name>socketio-timeout</param-name>
@@ -179,8 +188,7 @@
 			<param-name>socketio-suspendTime</param-name>
 			<param-value>300000</param-value>
 		</init-param>
-
-		<load-on-startup>0</load-on-startup>
+		<load-on-startup>0</load-on-startup>		
 		<async-supported>true</async-supported>
 	</servlet>
 	<servlet-mapping>

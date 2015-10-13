@@ -61,6 +61,9 @@ public class NotificationEvent
 	@APIDescription("The entity id that event occured on")
 	private String entityId;
 
+	@APIDescription("Internal Entity, if applicable")
+	private String entityMetaDataStatus;
+
 	public NotificationEvent()
 	{
 	}
@@ -133,6 +136,16 @@ public class NotificationEvent
 	public void setEntityId(String entityId)
 	{
 		this.entityId = entityId;
+	}
+
+	public String getEntityMetaDataStatus()
+	{
+		return entityMetaDataStatus;
+	}
+
+	public void setEntityMetaDataStatus(String entityMetaDataStatus)
+	{
+		this.entityMetaDataStatus = entityMetaDataStatus;
 	}
 
 }
