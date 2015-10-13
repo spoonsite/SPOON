@@ -35,6 +35,8 @@ public class ApplicationInit
 		implements ServletContextListener
 {
 
+	private static final Logger log = Logger.getLogger(ApplicationInit.class.getName());
+
 	@Override
 	public void contextInitialized(ServletContextEvent sce)
 	{
@@ -54,6 +56,12 @@ public class ApplicationInit
 	@Override
 	public void contextDestroyed(ServletContextEvent sce)
 	{
+		AtmosphereFramework atmosphereFramework = (AtmosphereFramework) sce.getServletContext().getAttribute("AtmosphereServlet");
+		if (atmosphereFramework != null) {
+			log.log(Level.INFO, "Shutdown Atmosphere");
+			atmosphereFramework.destroy();
+		}
+
 		CoreSystem.shutdown();
 	}
 
