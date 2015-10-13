@@ -17,7 +17,7 @@
 
 /*global setUpDropdown*/
 
-app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'business', '$route', '$timeout', 'auth', '$draggable', function ($scope, $location, localCache, $rootScope, Business, $route, $timeout, Auth, $draggable) { /*jshint unused: false*/
+app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'business', '$route', '$timeout', 'auth', '$draggable', '$uiModal', function ($scope, $location, localCache, $rootScope, Business, $route, $timeout, Auth, $draggable, $uiModal) { /*jshint unused: false*/
 
   /*******************************************************************************
   * This Controller gives us a place to add functionality to the navbar
@@ -116,15 +116,15 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
       $scope.typeahead = result;
     }, function(){
       $scope.typeahead = [];
-    })
-  }
+    });
+  };
 
   $scope.$watch('searchKey', function(newValue, oldValue){
     if ($scope.searchKey) {
       $rootScope.searchKey = $scope.searchKey;
       $scope.getTypeahead();
     }
-  })
+  });
 
   /***************************************************************
   * Catch the navigation location change event here
@@ -141,19 +141,20 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
   * This function sends the routing to the results page with a specified
   * search key saved in the localCache
   ***************************************************************/
-  $scope.goToSearch = function(){ /*jshint unused:false*/
-    $scope.closeNavbarItem('searchNavButton');
-    var key = 'All';
-    if ($scope.searchKey) {
-      key = $scope.searchKey;
-      $rootScope.searchKey = $scope.searchKey;
-    }
-    $location.search({
-      'type': 'search',
-      'code': key
-    });
-    $location.path('/results');
-  };
+  $scope.goToSearch = function () { /*jshint unused:false*/
+            console.log("Made it goto search in navjs");
+            $scope.closeNavbarItem('searchNavButton');
+            var key = 'All';
+            if ($scope.searchKey) {
+                key = $scope.searchKey;
+                $rootScope.searchKey = $scope.searchKey;
+            }
+            $location.search({
+                'type': 'search',
+                'code': key
+            });
+            $location.path('/results');
+        };
 
   /***************************************************************
   * This function sends the routing to the results page with a specified

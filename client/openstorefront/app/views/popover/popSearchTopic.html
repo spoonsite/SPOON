@@ -1,6 +1,6 @@
 <div style="margin-top:15px;">
-    <div ng-show="popVis" class="panel panel-default">
-        <div class="panel-heading" style="font-size:1.3em; text-align:center;">Topic Search</div>
+    <div class="panel panel-default">
+        <!--<div class="panel-heading" style="font-size:1.3em; text-align:center;">Topic Search</div>-->
         <div class="panel-body container-fluid" style="padding:0px;">
             <div class="row-fluid" style="background-color:#efefef;">
                 <div id="leftPane" class="col-sm-4 col-xs-4" style="padding:0px; background-color:#eeeeee; max-height: 400px;overflow-y: auto;">
@@ -19,7 +19,7 @@
                     </div>
                     <div ng-show="subTopicList.length" role="group"  ng-repeat="topics in (subTopicList | filter:search | orderBy:'label') | groupBy:2">
                         <div class="col-xs-6 letter-box" ng-repeat="topic in topics">
-                        <button class="btn btn-link btn-xs" ng-show="topic.code" ng-click="goToResults({'type': currentTopic.attributeType, 'code': topic.code, 'condition':'OR'})">{{topic.label}}</button>
+                        <button class="btn btn-link btn-xs" ng-show="topic.code" ng-click="goToResults({'type': currentTopic.attributeType, 'code': topic.code, 'condition':'OR'});">{{topic.label}}</button>
                         </div>
                      </div>                  
                     <div ng-hide="subTopicList.length">Select a topic on the left.</div>         

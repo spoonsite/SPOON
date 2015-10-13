@@ -17,8 +17,7 @@
 'use strict';
 
 app.controller('Svc4ArchDiagramController', ['$scope', 'business', function($scope, Business) {
-
-  $scope.svcv4Mode = false;
+        
   $scope.diagramToggleAllState = true;
   $scope.diagramToggleAllText = 'Expand All';
   
