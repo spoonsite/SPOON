@@ -80,16 +80,10 @@
   notification.deleteNewEvent = function (eventId) {
     var deferred = $q.defer();
     userservice.getCurrentUserProfile().then(function(user){
-      var notificationEventReadStatus = {
-        'eventId': eventId,
-        'username': user.username   
-      }
-
-      if (notificationEventReadStatus.eventId) {
+      if (eventId && user && user.username) {
         $http({
           'method': 'DELETE',
-          'url': base + 'readstatus/' + encodeURIComponent(notificationEventReadStatus.eventId),
-          'data': notificationEventReadStatus
+          'url': base + encodeURIComponent(eventId) + '/' + encodeURIComponent(user.username)
         }).success(function (data, status, headers, config) { /*jshint unused:false*/
           if (data && isNotRequestError(data)) {
             deferred.resolve(data);            
@@ -105,6 +99,31 @@
     }, function(){
       deferred.reject(false);
     })
+    return deferred.promise;
+  };   
+
+  notification.deleteEvent = function (eventId) {
+    var deferred = $q.defer();
+    if (eventId) {
+      $http({
+        'method': 'DELETE',
+        'url': base + encodeURIComponent(eventId)
+      }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        if (data && isNotRequestError(data)) {
+          deferred.resolve(data);            
+        } else {
+          deferred.reject(data);
+        }
+      }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        if (status === 204) {
+          deferred.resolve(true);
+        } else {
+          deferred.reject(false);
+        }
+      });
+    } else {
+      deferred.reject(false);
+    }
     return deferred.promise;
   };          
 
