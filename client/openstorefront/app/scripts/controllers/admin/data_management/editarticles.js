@@ -91,9 +91,9 @@ $scope.getArticles = function(override){
     $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'adminArticlesEdit');
     deferred.resolve();
     $scope.selectedTypes = [];
-  })
+  });
   return deferred.promise;
-}
+};
 $scope.getArticles(true);
 
 
@@ -102,7 +102,7 @@ $scope.getArticleDesc = function(desc){
     return desc;
   }
   return ' ';
-}
+};
 
 $scope.editContent = function(type, code){
   var modalInstance = $uiModal.open({
@@ -125,7 +125,7 @@ $scope.editContent = function(type, code){
   }, function (result) {
     $scope.getArticles(true);
   });
-}
+};
 
 $scope.changeActivity = function(article){
   if (article && article.attributeType && article.attributeCode) {
