@@ -1,3 +1,5 @@
+
+
 <div class="top" ng-controller="NavCtrl">
   <div class="color_primary_background navbar navbar-default navigation"> 
     <div class="container-fluid">
@@ -82,22 +84,39 @@
               <li><a href="javascript: void(0)" class="feedbackBtn"><b>Provide Feedback</b></a></li>	  
               <li class="divider"></li>
               <li ng-show="user.isLoggedIn"><a href="/openstorefront/Login.action?Logout" ng-click="localCache.clear()">Logout</a></li>   
-            </ul></li>
-
-          </li>
+            </ul>
+        </li>
         </ul>
       </div>
       <!-- /.userNav-collapse -->
 
       <div class="collapse navbar-collapse center navSearch" id="bs-example-navbar-collapse-1">
-        <form class="navbar-form navbar-left navSearchForm" id="globalSearchForm" role="search" ng-submit="goToSearch()">
-          <div class="pull-right searchBoxButton">
-            <button type="submit" class="btn btn-warning pull-right"><i class="fa fa-search"></i></button>
-          </div>
+        <form class="navbar-form navbar-left navSearchForm" id="globalSearchForm" role="search" ng-submit="goToSearch();">
           <div class="navSearchBar">
-            <input type="text" class="form-control searchBar" id="globalSearch" ng-model="searchKey" typeahead="key.description as key.description for key in typeahead | filter:$viewValue | limitTo:8" placeholder="New Search">
-          </div>
+            <div class="input-group">
+               <div ng-controller="SearchToolsCtrl" class="input-group-btn">
+                     <button 
+                         class="btn btn-default" 
+                         dynamic-popover 
+                         container="body" 
+                         title="Search Tools" 
+                         content="getSearchToolsHTML(0)"
+                         placement="bottom"
+                         trigger="click"
+                         type="button" 
+                         style-override="z-index:1046; padding:0px; margin:0px; min-width:50px; max-width:200px;"
+                         style="padding-left:6px; padding-top:5px; padding-bottom:4px; background-color:#efefef;"  >
+                         <i style="font-size:1.3em; padding-left:2px;" class="glyphicon glyphicon-th"></i>
+                     </button>
+               </div>
+               <input type="text" class="form-control searchBar" id="globalSearch" ng-model="searchKey" typeahead="key.description as key.description for key in typeahead | filter:$viewValue | limitTo:8" placeholder="New Search">
+               <div class="input-group-btn searchBoxButton">
+                   <button type="submit" class="btn btn-warning"><i class="fa fa-search"></i></button>
+               </div>
+            </div>
+         </div>
         </form>
+        
       </div>
       <div class="collapse navbar-collapse center navSearch" id="bs-example-navbar-collapse-2">
         <ul class="nav navbar-nav">

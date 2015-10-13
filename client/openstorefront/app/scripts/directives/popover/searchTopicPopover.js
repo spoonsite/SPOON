@@ -16,7 +16,7 @@
 
 'use strict';
 /*global angular,$,console,$compile,$q,$http,$templateCache, app*/
-app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http', 'business', '$timeout', '$rootScope', '$location', function ($compile, $templateCache, $q, $http, Business, $timeout, $rootScope, $location) {
+app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http', 'business', '$timeout', '$rootScope', '$location', '$route', function ($compile, $templateCache, $q, $http, Business, $timeout, $rootScope, $location, $route) {
 
         //
         // loadDataForPopup: Gets the data from the database needed for this popup.
@@ -91,7 +91,8 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
             restrict: 'E',
             template: '',
             scope: {
-                popVis: "=?visible"
+                popVis: "=?visible",
+                modalMethod: "&" 
             },
             link: function (scope, element) {
 
@@ -101,17 +102,6 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
                     element.html(loadedHTML);
                     $compile(element.contents())(scope);
                 });
-
-                scope.topicsClicked = function () {
-                    if (scope.popVis) {
-                        scope.popVis = false;
-                        scope.subTopicList = [];
-                        scope.currentTopic={};
-                    }
-                    else {
-                        scope.popVis = true;
-                    }
-                };
 
                 scope.currentTopic={};
                 scope.loadSubTopicDataForPopup = function (type) {
@@ -131,7 +121,8 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
                 };
 
                 scope.goToResults = function (attribute) {
-                    console.log(attribute);
+                    //console.log("The Attribute Clicked:",attribute);
+                    scope.modalMethod();
                     var searchObj = {
                         "sortField": null,
                         "sortDirection": "DESC",
@@ -152,15 +143,14 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
                             }]
                     };
                     Business.saveLocal('ADVANCED_SEARCH', searchObj);
+                    //console.log("Change Location", $location.path());
                     $location.search({});
-                    $location.path('results');
-                    
+                    if ($location.path() !== '/results') {
+                        $location.path('results');                      
+                    } else {
+                        $route.reload();
+                    }
                 };
-
-                scope.$on('setVis', function () {
-                    console.log("Got setVis");
-                    scope.topicsClicked();
-                });
             }
         };
     }]);
