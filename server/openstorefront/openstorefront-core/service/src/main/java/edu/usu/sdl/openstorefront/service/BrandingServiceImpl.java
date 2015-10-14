@@ -95,8 +95,6 @@ public class BrandingServiceImpl
 	@Override
 	public void setBrandingAsCurrent(String brandingId)
 	{
-		Objects.requireNonNull(brandingId);
-
 		Branding brandingExample = new Branding();
 		List<Branding> brandings = brandingExample.findByExampleProxy();
 		for (Branding branding : brandings) {

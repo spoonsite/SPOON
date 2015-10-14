@@ -27,13 +27,16 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -49,9 +52,26 @@ public class BrandingResource
 {
 
 	@GET
+	@RequireAdmin
+	@APIDescription("Get's all brandings")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Branding.class)
+	public Response getBranding()
+	{
+		Branding branding = new Branding();
+		List<Branding> brandings = branding.findByExample();
+
+		GenericEntity<List<Branding>> entity = new GenericEntity<List<Branding>>(brandings)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
 	@APIDescription("Get's the current branding view")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(BrandingView.class)
+	@Path("/current")
 	public Response getCurrentBrandingView()
 	{
 		BrandingView brandingView = service.getBrandingService().getCurrentBrandingView();
@@ -104,6 +124,36 @@ public class BrandingResource
 			return Response.created(URI.create("v1/resource/branding/" + brandingModel.getBranding().getBrandingId())).entity(view).build();
 		}
 		return sendSingleEntityResponse(validationResult.toRestError());
+	}
+
+	@PUT
+	@APIDescription("Set Branding as active")
+	@RequireAdmin
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/current/default")
+	public Response setCurrentBrandingToDefault()
+	{
+		service.getBrandingService().setBrandingAsCurrent(null);
+		return getCurrentBrandingView();
+	}
+
+	@PUT
+	@APIDescription("Set Branding as active")
+	@RequireAdmin
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{id}/active")
+	public Response setCurrentBranding(
+			@PathParam("id") String brandingId
+	)
+	{
+		Branding branding = new Branding();
+		branding.setBrandingId(brandingId);
+		branding = branding.find();
+		if (branding != null) {
+			service.getBrandingService().setBrandingAsCurrent(brandingId);
+			branding = branding.find();
+		}
+		return sendSingleEntityResponse(branding);
 	}
 
 	@DELETE
