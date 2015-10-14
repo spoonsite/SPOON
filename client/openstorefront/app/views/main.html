@@ -48,29 +48,24 @@ limitations under the License.
         </div>
         <div>
             <div class="center navSearch defaultSearch">
-                <div ng-show="!svcv4Mode">
                     <form ng-submit="goToSearch('search', searchKey)">
                         <div style="display:block">
                             <div class="input-group">
                                 <div class="input-group-btn">
-                                    <button class="btn btn-default" data-toggle="tooltip" title="Topic Search" type="button" style="font-size:1.5em; background-color:#efefef;" ng-click="showTopics();"><i class="glyphicon glyphicon-list-alt"></i></button>
+                                    <button slide-toggle="#SearchToolsBar" class="btn btn-default" data-toggle="tooltip" title="Search Tools" type="button" style="font-size:1.5em; background-color:#efefef;"><i class="glyphicon glyphicon-th"></i></button>
                                 </div>
                                 <input type="text" class="form-control" ng-model="searchKey"  placeholder="Search" typeahead="key.description as key.description for key in typeahead | filter:$viewValue | limitTo:8" autofocus id="mainSearchBar">
                                 <div class="input-group-btn">
-                                    <button type="submit" data-container="body" data-toggle="tooltip" title="Search" class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
-                                    <button type="button" data-container="body" data-toggle="tooltip" title="Search All" ng-click="searchKey = 'all'; goToSearch('search', 'all', true);" style="font-size: 1.5em; height: 50px;" class="btn btn-primary">Show All Listings</button>
-                                    <button type="button" data-container="body" data-toggle="tooltip" title="SvcV-4 Search" ng-click="svcv4Mode = !svcv4Mode" style="font-size: 1.5em; height: 50px;" class="btn btn-primary">SvcV-4</button>
+                                    <button type="submit" data-container="body" data-toggle="tooltip" title="Keyword Search" class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
                                 </div>
                             </div>
                         </div>
                     </form>
-                    <search-topic-popover id="searchTopicView" visible="$scope.showTopicsViewInitially"></search-topic-popover>  
-                </div>
-                <div ng-show="svcv4Mode">
-                    <button ng-click="svcv4Mode = !svcv4Mode"  style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Search</button>
-                    <!-- <svcv4-diagram ng-controller="Svc4ArchDiagramController"></svcv4-diagram>   -->
-                    <architecture></architecture>
-                </div>
+                    <div  class="slideable" duration="0.1s" id="SearchToolsBar" style="margin-top:10px;">
+                        <button type="button" data-container="body" data-toggle="tooltip" title="Show All" ng-click="searchKey = 'all'; goToSearch('search', 'all', true);" style="font-size: 1.3em; height: 50px; width: 50px;" class="btn btn-primary"><i class="glyphicon glyphicon-asterisk"></i></button>
+                        <button type="button" data-container="body" data-toggle="tooltip" title="Topic Search"  ng-click="openSearchModal('Topic Search', {mode: 'topics'});" style="font-size:1.3em; height:50px; width:50px;" class="btn btn-primary"><i class="glyphicon glyphicon-th-list"></i></button>   
+                        <button type="button" data-container="body" data-toggle="tooltip" title="Architecture Search" ng-click="openSearchModal('Architecture Search', {mode: 'architecture'})" style="font-size: 1.3em; height: 50px; width:50px;" class="btn btn-primary"><i class="glyphicon glyphicon-book"></i></button>
+                    </div>
             </div>
         </div>
     </div>

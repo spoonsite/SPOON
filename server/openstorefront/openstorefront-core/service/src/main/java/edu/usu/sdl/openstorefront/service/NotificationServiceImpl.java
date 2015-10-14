@@ -244,4 +244,19 @@ public class NotificationServiceImpl
 		persistenceService.persist(notificationEventReadStatus);
 	}
 
+	@Override
+	public void markEventAsUnRead(String eventId, String username)
+	{
+		Objects.requireNonNull(eventId);
+		Objects.requireNonNull(username);
+
+		NotificationEventReadStatus notificationEventReadStatus = new NotificationEventReadStatus();
+		notificationEventReadStatus.setEventId(eventId);
+		notificationEventReadStatus.setUsername(username);
+		
+		NotificationEventReadStatus temp = notificationEventReadStatus.findProxy();
+
+		persistenceService.delete(temp);
+	}
+
 }

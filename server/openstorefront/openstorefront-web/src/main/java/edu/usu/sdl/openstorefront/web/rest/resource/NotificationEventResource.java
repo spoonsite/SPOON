@@ -83,7 +83,7 @@ public class NotificationEventResource
 	}
 
 	@GET
-	@APIDescription("Gets an notification event record")
+	@APIDescription("Gets a notification event record")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{eventId}")
 	public Response getEvent(@PathParam("eventId") String eventId)
@@ -125,6 +125,17 @@ public class NotificationEventResource
 			view.setReadMessage(true);
 		}
 		return sendSingleEntityResponse(view);
+	}
+
+	@DELETE
+	@APIDescription("Marks event as unread")
+	@Path("/{eventId}/{username}")
+	public void deleteNewEvent(
+			@PathParam("eventId") String eventId,
+			@PathParam("username") String username
+	)
+	{
+		service.getNotificationService().markEventAsUnRead(eventId, username);
 	}
 
 	@POST

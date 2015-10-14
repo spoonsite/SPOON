@@ -1117,7 +1117,7 @@
 
   parser.decodePacket = function (data) {
   	
-  	console.log("parser.decodePacket data=" + data);
+  	// console.log("parser.decodePacket data=" + data);
   	
     var pieces = data.match(regexp);
 
@@ -1626,7 +1626,7 @@
           xhr.onreadystatechange = empty;
 
           if (xhr.status == 200) {
-          	console.log("xhr.responseText=" + xhr.responseText);
+          	// console.log("xhr.responseText=" + xhr.responseText);
             complete(xhr.responseText);
           } else {
             !self.reconnecting && self.onError(xhr.responseText);
@@ -2324,7 +2324,7 @@
       Socket = global.MozWebSocket || global.WebSocket;
     }
 
-	  console.log("WS open url=" + this.prepareUrl() + query);
+	  // console.log("WS open url=" + this.prepareUrl() + query);
     this.websocket = new Socket(this.prepareUrl() + query);
 
     this.websocket.onopen = function () {
@@ -2354,7 +2354,7 @@
    */
 
   WS.prototype.send = function (data) {
-    console.log("WS sending=" + data);
+    // console.log("WS sending=" + data);
     this.websocket.send(data);
     return this;
   };
@@ -3070,7 +3070,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
    */
 
   XHR.prototype.send = function (data) {
-  	console.log("XHR sending=" + data);
+  	// console.log("XHR sending=" + data);
     this.post(data);
     return this;
   };

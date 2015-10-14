@@ -17,7 +17,7 @@
 
 /*global setupMain*/
 
-app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$rootScope', '$timeout', function ($scope, Business, localCache, $location, $rootScope, $timeout) {/*jshint unused: false*/
+app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$rootScope', '$timeout', '$q', '$uiModal', function ($scope, Business, localCache, $location, $rootScope, $timeout, $q, $uiModal) {/*jshint unused: false*/
   //////////////////////////////////////////////////////////////////////////////
   // Variables
   //////////////////////////////////////////////////////////////////////////////
@@ -29,6 +29,7 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.searchKey  = $rootScope.searchKey;
   $scope.openAdminMessage = $rootScope.openAdminMessage;
   $scope.appverison = '';
+  
 
   Business.systemservice.getAppVersion().then(function(result){
     $scope.appverison = result;
@@ -108,6 +109,34 @@ Business.highlightservice.getRecentlyAdded().then(function(result){
     }
   });
 
+    $scope.openSearchModal = function(title, data){
+        title = title || 'Advanced Search';
+        data = data || {
+            'mode': 'topics'
+        };
+      var modalInstance = $uiModal.open({
+        templateUrl: 'views/search/searchmodal.html',
+        controller: 'DefaultModalCtrl',
+        size: 'lg',
+        backdrop: 'static',
+        resolve: {
+          title: function () {
+            return title;
+          },
+          data: function () {
+            return data;
+          },
+          closeEventName: function(){
+            return '$CLOSE_MODALS';
+          }
+        }
+      });
+
+      modalInstance.result.then(function (result) {
+      }, function (result) {
+      });
+    };
+
 $scope.getTypeahead = function(){
   Business.typeahead($scope.searchKey).then(function(result){
     result = result || [];
@@ -160,6 +189,7 @@ $scope.$watch('searchKey', function(newValue, oldValue){
   * params: type -- This is the code of the type that was clicked on
   *******************************************************************************/
   $scope.goToSearch = function(searchType, searchKey, override){ /*jshint unused:false*/
+    // console.log("Made it to search!");
     $(window).scrollTop(0);
     var search = null;
     if (searchType === 'search' && !override) {
@@ -234,14 +264,7 @@ $scope.$watch('searchKey', function(newValue, oldValue){
   $scope.focusOnSearch = function() {
     $('#mainSearchBar').focus();
   };
-  
-  $scope.showTopicsViewInitially=false;
-  $scope.showTopics = function() {
-      console.log("SHOW TOPICS");
-      $scope.$broadcast('setVis');
-  };
-
-
+ 
   //////////////////////////////////////////////////////////////////////////////
   // Scope Watchers
   //////////////////////////////////////////////////////////////////////////////

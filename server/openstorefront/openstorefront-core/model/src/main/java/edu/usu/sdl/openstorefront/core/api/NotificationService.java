@@ -77,4 +77,13 @@ public interface NotificationService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void markEventAsRead(String eventId, String username);
 
+	/**
+	 * Marks an event notification as being unread by the username
+	 *
+	 * @param eventId (required)
+	 * @param username (required)
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void markEventAsUnRead(String eventId, String username);
+
 }

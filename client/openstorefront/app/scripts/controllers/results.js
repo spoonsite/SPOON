@@ -565,9 +565,9 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     });
 
     modalInstance.result.then(function (result) {
-      triggerAlert('Your report has been generated. Navigate to the <a style="color: yellow;" href="tools?tool=Reports">reports tool</a> to download the content.', 'reportAlert', 'body', 7000);
+      // triggerAlert('Your report has been generated. Navigate to the <a style="color: yellow;" href="tools?tool=Reports">reports tool</a> to download the content.', 'reportAlert', 'body', 7000);
     }, function (result) {
-      triggerAlert('Your report has been generated. Navigate to the <a style="color: yellow;" href="tools?tool=Reports">reports tool</a> to download the content.', 'reportAlert', 'body', 7000);
+      // triggerAlert('Your report has been generated. Navigate to the <a style="color: yellow;" href="tools?tool=Reports">reports tool</a> to download the content.', 'reportAlert', 'body', 7000);
     });       
   }
 
