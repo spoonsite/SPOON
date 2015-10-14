@@ -20,7 +20,9 @@ app.directive('architecture',['business', '$timeout', function (Business, $timeo
   return {
     templateUrl: 'views/component/architecture.html',
     restrict: 'E',
-    scope: {},
+    scope: {
+      sizeable: '@'
+    },
     compile: function(tElem, tAttrs){
       return {
         pre: function(scope, element, attrs){
@@ -58,10 +60,12 @@ app.directive('architecture',['business', '$timeout', function (Business, $timeo
 
           scope.oldCss = $('body').css('overflow'); 
           scope.$watch('full', function(){
-            if (scope.full){
-              $('body').css('overflow','hidden');
-            } else {
-              $('body').css('overflow', scope.oldCss);
+            if (scope.sizeable === 'true') {
+              if (scope.full){
+                $('body').css('overflow','hidden');
+              } else {
+                $('body').css('overflow', scope.oldCss);
+              }
             }
           })
 

@@ -854,7 +854,7 @@ $scope.saveRelationship = function(){
   var componentRelationship = {
     relationshipType: $scope.relationshipForm.type,
     relatedComponentId: $scope.relationshipForm.target,
-    securityMarkingType: $scope.relationshipForm.securityMarkingType
+    // securityMarkingType: $scope.relationshipForm.securityMarkingType
   };
   Business.componentservice.saveRelationship($scope.componentForm.componentId, componentRelationship).then(function (result) {
     $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'relationshipFormLoader');
@@ -864,7 +864,7 @@ $scope.saveRelationship = function(){
         triggerAlert('Saved successfully', 'saveRelationships', 'componentWindowDiv', 3000);
         $scope.relationshipForm.type = "";
         $scope.relationshipForm.target = "";
-        $scope.relationshipForm.securityMarkingType = "";
+        // $scope.relationshipForm.securityMarkingType = "";
         $scope.loadComponentRelationshipsView();
       } else {
         removeError();
@@ -1022,9 +1022,9 @@ $scope.resourceUploader = new FileUploader({
     item.formData.push({
       "componentResource.restricted" : $scope.resourceForm.restricted
     });
-    item.formData.push({
-      "componentResource.securityMarkingType" : $scope.resourceForm.securityMarkingType
-    });        
+    // item.formData.push({
+    //   "componentResource.securityMarkingType" : $scope.resourceForm.securityMarkingType
+    // });        
     if ($scope.resourceForm.resourceId) {
       item.formData.push({
         "componentResource.resourceId" : $scope.resourceForm.resourceId
@@ -1170,9 +1170,9 @@ $scope.mediaUploader = new FileUploader({
     item.formData.push({
       "componentMedia.mediaTypeCode" : $scope.mediaForm.mediaTypeCode
     });
-    item.formData.push({
-      "componentMedia.securityMarkingType" : $scope.mediaForm.securityMarkingType
-    });
+    // item.formData.push({
+    //   "componentMedia.securityMarkingType" : $scope.mediaForm.securityMarkingType
+    // });
     if ($scope.mediaForm.caption) {
       item.formData.push({
         "componentMedia.caption": $scope.mediaForm.caption
@@ -1466,7 +1466,7 @@ $scope.loadTags = function() {
     }, function(){
     });
   }     
-  $scope.tagForm.securityMarkingType = null;
+  // $scope.tagForm.securityMarkingType = null;
   $scope.tagForm.text = null;
 };
 $scope.loadTags();

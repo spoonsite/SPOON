@@ -43,7 +43,6 @@ app.directive('slideToggle', function() {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
-            console.log("slideToggle:",attrs.expanded);
             var target = document.querySelector(attrs.slideToggle);
             attrs.expanded = false;
             element.bind('click', function() {
