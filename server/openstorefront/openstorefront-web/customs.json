@@ -1,8 +1,20 @@
 {
-    "elements": {},
-    "attributes": {
-        "vital-popover": {
-            "context": "span"
-        }
-    }
+	"elements": {
+		"tab": {
+			"attributes": {
+				"heading": {}
+			}
+		},
+		"loader": {
+			"attributes": {
+				"trigger": {}
+			}
+		},
+		"tabset": {}
+	},
+	"attributes": {
+		"vital-popover": {
+			"context": "span"
+		}
+	}
 }
