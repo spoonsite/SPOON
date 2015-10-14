@@ -321,7 +321,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
     $scope.systemTools.push({
       'label': 'Branding', 
       'location':'views/admin/application_management/manageBranding.html', 
-      'toolTitle': 'Branding',
+      'toolTitle': 'Branding Template Management',
       'detailedDesc': "Allows the ability to set the graphic design and theme characteristics for the site.",
       'key': 'BRANDING'
     });

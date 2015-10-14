@@ -64,6 +64,8 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
 
 
   branding.getBrandingView = function(id, override) {
+      
+    console.log("Loading data:",id);
     var deferred = $q.defer();
     if (id) { 
       var url = base; 
@@ -75,6 +77,7 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
           'method': 'GET',
           'url': url,
         }).success(function(data, status, headers, config) { /*jshint unused:false*/
+            
           if (data && data !== 'false' && isNotRequestError(data)) {
             removeError();
             save('brandingView_'+id, data);
