@@ -189,7 +189,7 @@ $scope.$watch('searchKey', function(newValue, oldValue){
   * params: type -- This is the code of the type that was clicked on
   *******************************************************************************/
   $scope.goToSearch = function(searchType, searchKey, override){ /*jshint unused:false*/
-    console.log("Made it to search!");
+    // console.log("Made it to search!");
     $(window).scrollTop(0);
     var search = null;
     if (searchType === 'search' && !override) {

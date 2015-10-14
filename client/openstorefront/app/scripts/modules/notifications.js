@@ -27,81 +27,75 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
         $('.notificationsBox').stop(true, true).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
       }
       socket.on('connect', function () {
-        console.warn(this.socket.transport.name + ' contected');
+        // console.warn(this.socket.transport.name + ' contected');
       });
       socket.on('WATCH', function (args) {
-        console.log('this', args);
+        // console.log('this', args);
         var alert = {'type': args.entityMetaDataStatus? scope.getStatus(args.entityMetaDataStatus): 'watch', 'msg': args.message + '<i>View the changes <a href="single?id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
         bumpIcon();
         scope.getSize();
-        scope.addAlert(alert);
-        setTimeout(closeAlertTrigger.bind(null, alert), 10000);
+        scope.addAlert(alert, 10000);
       });
       socket.on('IMPORT', function (args) {
-        console.log('this', args);
+        // console.log('this', args);
         var alert = {'type': args.entityMetaDataStatus? scope.getStatus(args.entityMetaDataStatus): 'import', 'msg': args.message, 'id': 'import_'+ args.eventId};
         bumpIcon();
         scope.getSize();
-        scope.addAlert(alert);
-        setTimeout(closeAlertTrigger.bind(null, alert), 10000);
+        scope.addAlert(alert, 10000);
       });
       socket.on('TASK', function (args) {
-        console.log('this', args);
+        // console.log('this', args);
         var alert = {'type': args.entityMetaDataStatus? scope.getStatus(args.entityMetaDataStatus): 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
         bumpIcon();
         scope.getSize();
-        scope.addAlert(alert);
-        setTimeout(closeAlertTrigger.bind(null, alert), 10000);
+        scope.addAlert(alert, 10000);
       });
       socket.on('REPORT', function (args) {
-        console.log('this', args);
+        // console.log('this', args);
         var alert = {'type': args.entityMetaDataStatus? scope.getStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};
         bumpIcon();
         scope.getSize();
-        scope.addAlert(alert);
-        setTimeout(closeAlertTrigger.bind(null, alert), 15000);
+        scope.addAlert(alert, 10000);
       });
       socket.on('ADMIN', function (args) {
-        console.log('this', args);
+        // console.log('this', args);
         var alert = {'type': args.entityMetaDataStatus? scope.getStatus(args.entityMetaDataStatus): 'admin', 'msg': '<i class="fa fa-warning"></i>&nbsp;' + args.message, 'id': 'admin_'+ args.eventId};
         bumpIcon();
         scope.getSize();
-        scope.addAlert(alert);
-        setTimeout(closeAlertTrigger.bind(null, alert), 10000);
+        scope.addAlert(alert, 10000);
       });
 
-      Factory.get().then(function(result){
-        _.each(result.data, function(args){
-          if (!args.readMessage){
-            var alert = '';
-            switch(args.eventType){
-              case 'WATCH':
-              alert = {'type': 'watch', 'msg': args.message + '<i>View the changes <a href="single?id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
-              break;
-              case 'REPORT':
-              alert = {'type': 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};
-              break;
-              case 'ADMIN':
-              alert = {'type': 'admin', 'msg': '<i class="fa fa-warning"></i>&nbsp;' + args.message, 'id': 'admin_'+ args.eventId};
-              break;
-              case 'TASK':
-              alert = {'type': 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
-              break;
-              case 'IMPORT':
-              alert = {'type': 'import', 'msg': args.message, 'id': 'import_'+ args.eventId};
-              break;
-              default:
-              alert = {'type': 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
-              break;
-            }
-            scope.addAlert(alert);
-            setTimeout(closeAlertTrigger.bind(null, alert), 10000);
-          }
-        })
-        bumpIcon();//
-        scope.getAlertTypes();
-        scope.getSize();
-      });
+      // Factory.get().then(function(result){
+      //   _.each(result.data, function(args){
+      //     if (!args.readMessage){
+      //       var alert = '';
+      //       switch(args.eventType){
+      //         case 'WATCH':
+      //         alert = {'type': 'watch', 'msg': args.message + '<i>View the changes <a href="single?id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
+      //         break;
+      //         case 'REPORT':
+      //         alert = {'type': 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};
+      //         break;
+      //         case 'ADMIN':
+      //         alert = {'type': 'admin', 'msg': '<i class="fa fa-warning"></i>&nbsp;' + args.message, 'id': 'admin_'+ args.eventId};
+      //         break;
+      //         case 'TASK':
+      //         alert = {'type': 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
+      //         break;
+      //         case 'IMPORT':
+      //         alert = {'type': 'import', 'msg': args.message, 'id': 'import_'+ args.eventId};
+      //         break;
+      //         default:
+      //         alert = {'type': 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
+      //         break;
+      //       }
+      //       scope.addAlert(alert, 10000);
+      //     }
+      //   })
+      //   bumpIcon();//
+      //   scope.getAlertTypes();
+      //   scope.getSize();
+      // });
 
       scope.getSize = function () { //
         Factory.get().then(function(result){
@@ -113,7 +107,7 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
       
       scope.getAlertTypes = function(){
         Factory.get().then(function(result){
-          console.log('result', result);
+          // console.log('result', result);
           
           var alerts = angular.copy(result.data);
           var count = _.countBy(alerts, function(n) {
@@ -143,12 +137,15 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
               break;
             }
             if (alert) {
+              bumpIcon();
+              scope.getSize();
               scope.addType(alert);
               setTimeout(closeTypeTrigger.bind(null, alert), 10000);
             }
           })
         });//
       }//
+      scope.getAlertTypes();
 
 
       scope.getAlertType = function(alert){
@@ -178,17 +175,12 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
       scope.$on('$NOTIFICATIONADDED', function (event, alert) {
         $('.notificationsBox').stop(true, true).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
         scope.getSize();
-        scope.addAlert(alert);
-        // console.log('alert', alert);
-        setTimeout(closeAlertTrigger.bind(null, alert), 7000);
+        scope.addAlert(alert, 7000);
       });
       scope.$on('$NOTIFICATIONREMOVED', function (event, alert) {
         $('.notificationsBox').stop(true, true).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
-        // console.log('We\'re refreshing notifications');
         scope.getSize();
-        scope.addAlert(alert);
-        // console.log('alert', alert);
-        setTimeout(closeAlertTrigger.bind(null, alert), 7000);
+        scope.addAlert(alert, 7000);
       });
 
       scope.alerts = [];
@@ -202,8 +194,30 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
         }
       }
 
-      scope.addAlert = function(alert) {
-        scope.alerts.push(alert);
+      var stack = [];
+      var timer = null;
+      scope.addAlert = function(alert, timeout) {
+        scope.types = [];
+        stack.push({'alert': alert, 'timeout': timeout});
+        function addToStack() {
+          // console.log('stack', scope.alerts);
+          
+          timer = setTimeout(function(){
+            scope.$apply(function(){
+              if (stack.length) {
+                var thing = stack.shift();
+                scope.alerts.push(thing.alert);
+                setTimeout(closeAlertTrigger.bind(null, thing.alert), thing.timeout);
+                addToStack();
+              } else {
+                timer = null;
+              }
+            })
+          },1000);
+        };
+        if (timer === null){
+          addToStack(alert, timeout);
+        }
       };
 
       scope.closeAlert = function(alert) {
@@ -394,12 +408,12 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
     } else if (cached && notBlocking){ 
       notBlocking = false;
       Business.notificationservice.getUserEvents().then(function(events){
-        console.log('event', events);
+        // console.log('event', events);
         
         data.tasks = events;
         notBlocking = true;
       }, function(){
-        console.log('event', events);
+        // console.log('event', events);
         data.tasks = [];
         notBlocking = true;
       })
@@ -468,7 +482,7 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
   })
 
   $scope.deleteTask = function(task){    
-    console.log('task', task);
+    // console.log('task', task);
     
     var response = window.confirm("Are you sure you want DELETE this " + task.eventTypeDescription + " notification? (This may take a few seconds to apply)");
     if (response) {
@@ -621,7 +635,7 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
           $rootScope.$broadcast(newEvent, infoArray);
         });
 
-        $templateCache.put('notifications/notifications.tpl.html', '<div class="notificationsBox imitateLink" ng-click="openModal();" ng-class="checkDanger()? \'warning\':\'\'">{{size}}</div><div-stick fixed-offset-top="100" style="position:fixed; top:65px; right: 20px; width: 300px;"><div ng-show="alerts.length <= 6"><alert ng-repeat="alert in alerts track by alert.id" type="{{getAlertType(alert);}}" close="closeAlert(alert)"><span dynamichtml="alert.msg"></span></alert></div><div ng-show="alerts.length > 6"><alert ng-repeat="alert in types track by alert.id" type="{{getAlertType(alert);}}" close="closeAlert(alert)"><span dynamichtml="alert.msg"></span></alert></div></div-stick>');
+        $templateCache.put('notifications/notifications.tpl.html', '<div class="notificationsBox imitateLink" ng-click="openModal();" ng-class="checkDanger()? \'warning\':\'\'">{{size}}</div><div-stick fixed-offset-top="100" style="position:fixed; top:65px; right: 20px; width: 300px;"><div ng-show="alerts.length && !types.length"><alert ng-repeat="alert in alerts track by alert.id" type="{{getAlertType(alert);}}" close="closeAlert(alert)"><span dynamichtml="alert.msg"></span></alert></div><div ng-show="types.length"><alert ng-repeat="alert in types track by alert.id" type="{{getAlertType(alert);}}" close="closeType(alert)"><span dynamichtml="alert.msg"></span></alert></div></div-stick>');
         $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"><h3 class="modal-title">Tasks Queue <small>(Notifications time out after a week)</small></h3></div><div class="modal-body"><button class="btn btn-default" ng-click="refresh()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button><table class="table table-bordered table-striped admin-table"><tr><th><a href="" ng-click="setPredicate(\'entityType\');">Type&nbsp;<span ng-show="predicate === \'entityType\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th><th><a href="" ng-click="setPredicate(\'message\');">Message&nbsp;<span ng-show="predicate === \'message\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th><th style="padding: 8px 3px;">Actions</th></tr><tr ng-repeat="item in data| orderBy:predicate:reverse"><td style="padding: 0px !important; height:1px; vertical-align: inherit;"><div style="width: 7px; height:100%; margin-right:3px; border-right:1px solid darkgray; border-top:1px solid darkgray; border-bottom:1px solid darkgray; float:left;" class="imitateLink isRead" ng-click="toggleReadStatus(item)" ng-class="{\'unreadTableItem\':!item.readMessage}" data-id="{{item.eventId}}" data-html="true" data-toggle="tooltip" data-placement="right">&nbsp;</div><div style="padding: 5px !important;">{{item.entityName}}</div></td><td><span dynamichtml="getMessage(item)"></span></td><td style="padding: 0px 3px;"><button ng-show="user.username === item.username" type="button" title="Remove Old Task" class="btn btn-danger btn-sm" ng-click="deleteTask(item)"><i class="fa fa-trash fa-aw"></i></button></td></tr></table></div><div class="modal-footer"><button class="btn btn-default" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Close</button></div>');
       }]);
 
