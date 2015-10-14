@@ -259,7 +259,7 @@ var app = angular
             var deferred = $q.defer();
 //      Business.getConfig().then(function(config){
 //          if (config){
-            Business.brandingservice.getBrandingView('1').then(function (brandingView) {
+            Business.brandingservice.getCurrentBrandingView(true).then(function (brandingView) {
                 $rootScope.brandingView = brandingView;
                 deferred.resolve(brandingView);
             }, function () {
@@ -277,7 +277,7 @@ var app = angular
             var deferred = $q.defer();
 
             $rootScope.getConfigInit().then(function (brandingView) {
-                deferred.resolve({'brandingView': brandingView});
+                deferred.resolve(brandingView);
             }, function(){
                 deferred.reject(false);
             });

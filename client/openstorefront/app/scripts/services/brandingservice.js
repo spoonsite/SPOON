@@ -63,21 +63,54 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
   var base = 'api/v1/resource/branding/';
 
 
-  branding.getBrandingView = function(id, override) {
+  branding.getBrandingViews = function(override) {
+      
+    console.log("Loading Brangin data:",override);
     var deferred = $q.defer();
-    if (id) { 
-      var url = base; 
-      var found = checkExpire('brandingView_'+id, 2 * minute);
-      if (found && !override){
+
+    var url = base;
+    var found = checkExpire('allBrandingViews', 2 * minute);
+    if (found && !override) {
         deferred.resolve(found);
+    } else {
+        $http({
+            'method': 'GET',
+            'url': url,
+        }).success(function (data, status, headers, config) { /*jshint unused:false*/
+
+            if (data && data !== 'false' && isNotRequestError(data)) {
+                removeError();
+                save('allBrandingViews', data);
+                deferred.resolve(data);
+            } else {
+                removeError();
+                triggerError(data);
+                deferred.reject(false);
+            }
+        }).error(function (data, status, headers, config) { /*jshint unused:false*/
+            showServerError(data, 'body');
+            deferred.reject('There was an error');
+        });
+    }
+
+    return deferred.promise;
+  };
+
+  branding.getCurrentBrandingView = function(override) {
+    var deferred = $q.defer();
+    
+      var url = base+'current'; 
+      var found = checkExpire('currentTopicSearchItems', 2 * minute);
+      if (found && !override){
+        deferred.resolve(found.topicSearchViews);
       } else {
         $http({
           'method': 'GET',
-          'url': url,
+          'url': url
         }).success(function(data, status, headers, config) { /*jshint unused:false*/
           if (data && data !== 'false' && isNotRequestError(data)) {
             removeError();
-            save('brandingView_'+id, data);
+            save('currentTopicSearchItems', data);
             deferred.resolve(data);
           } else {
             removeError();
@@ -89,12 +122,9 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
           deferred.reject('There was an error');
         });
       } 
-    } else {
-      deferred.reject(false);
-    }
     return deferred.promise;
   };
-
+  
   branding.getTopicSearchItems = function(brandingId, override) {
     var deferred = $q.defer();
     if (brandingId) { 
