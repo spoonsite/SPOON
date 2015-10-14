@@ -22,7 +22,7 @@
                     <td>{{template.name}}</td>
                     <td>{{template.applicationName}}</td>
                     <td><img ng-src="{{template.primaryLogoUrl}}" alt="Logo" style="width:200px;"/></td>
-                    <td style="padding: 8px 3px 3px 3px;">
+                    <td style="padding: 8px 3px 3px 3px; vertical-align: middle;">
                         <button type="button" title="Edit" class="btn btn-default btn-sm" ng-click="editTemplate(template)" ng-disabled="filter.activeStatus === 'I' || deactivateButtons"><i class="fa fa-edit"></i></button>
                         <button type="button" title="Activate/Deactivate" class="btn btn-warning btn-sm" ng-click="changeActivity(template)" ng-class="filter.activeStatus === 'I'? 'inverted':''" ng-disabled="deactivateButtons"><i class="fa fa-power-off"></i></button>
                         <button type="button" title="Duplicate" class="btn btn-success btn-sm" ng-click="cloneTemplate(template)" ng-disabled="deactivateButtons"><i class="fa fa-files-o"></i></button>

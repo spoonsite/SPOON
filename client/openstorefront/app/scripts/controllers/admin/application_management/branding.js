@@ -49,10 +49,10 @@ app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiMod
         };
         
         $scope.loadFullBrandingList = function() {
-             Business.brandingservice.getBrandingView().then(function (brandingViews){
+             Business.brandingservice.getBrandingViews(true).then(function (brandingViews){
                  $scope.fullBrandingList = [];
                  console.log("Branding:", brandingViews);
-                 $scope.fullBrandingList = brandingViews.data;
+                 $scope.fullBrandingList = brandingViews;
              }, function () {
                  console.log("Error: Couldn't load the branding views.");
                  $scope.fullBrandingList = [];

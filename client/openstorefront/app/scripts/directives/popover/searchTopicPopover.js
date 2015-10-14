@@ -38,29 +38,34 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
 
                     Business.articleservice.getTypes(filterObj, true).then(function (attributeTypes) {
                         scope.topicList = [];
-                        _.each(config.brandingView.topicSearchViews, function (topicSearchItem) {
+                        _.each(config.topicSearchViews, function (topicSearchItem) {
                             scope.topicList.push(mapped(attributeTypes.data, topicSearchItem));
                         });
                     }, function () {
                         scope.attributeTypes = [];
-                        scope.topicList = config.brandingView.topicSearchViews;
+                        scope.topicList = config.topicSearchViews;
 
                     });
 
-                } else {
-                    Business.brandingservice.getAllTopicSearchItems().then(function (result) {
-                    
-                        scope.topicList = result;
-                    }, function (result) {
-//                        console.log("Error Result:", result);
-                        scope.topicList = [];
-                    });
+                }else{
+                    scope.topicList = [];
+                    scope.attributeTypes = [];
                 }
 
             }, function () {
-                Business.brandingservice.getAllTopicSearchItems().then(function (result) {
-                    console.log("Result", result);
-                    scope.topicList = result.topicSearchViews;
+                Business.brandingservice.getCurrentBrandingView(true).then(function (config) {
+                    var filterObj = angular.copy(utils.queryFilter);
+
+                    Business.articleservice.getTypes(filterObj, true).then(function (attributeTypes) {
+                        scope.topicList = [];
+                        _.each(config.topicSearchViews, function (topicSearchItem) {
+                            scope.topicList.push(mapped(attributeTypes.data, topicSearchItem));
+                        });
+                    }, function () {
+                        scope.attributeTypes = [];
+                        scope.topicList = config.topicSearchViews;
+
+                    });
                 }, function (result) {
 //                    console.log("Error Result:", result);
                     scope.topicList = [];
