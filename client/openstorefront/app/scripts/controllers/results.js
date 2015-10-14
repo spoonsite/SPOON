@@ -728,9 +728,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     _.each($scope.data.data, function(item) {
       list.push(item.componentId);
     });
-    $location.search({
-      'id': list
-    });
+    Business.saveLocal('COMPARE', {'id': list});
     $location.path('/compare');
   };
 
