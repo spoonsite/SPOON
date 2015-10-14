@@ -21,17 +21,17 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
     scope: {},
     template: $templateCache.get('notifications/notifications.tpl.html'),
     link: function (scope, ele, attrs) {
-
+      scope.size = 0;
+      scope.types = [];
       var bumpIcon = function(){
         $('.notificationsBox').stop(true, true).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
       }
-
       socket.on('connect', function () {
         console.warn(this.socket.transport.name + ' contected');
       });
       socket.on('WATCH', function (args) {
         console.log('this', args);
-        var alert = {'type': 'watch', 'msg': args.message + '<i>View the changes <a href="single?id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
+        var alert = {'type': args.entityMetaDataStatus? scope.getStatus(args.entityMetaDataStatus): 'watch', 'msg': args.message + '<i>View the changes <a href="single?id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
         bumpIcon();
         scope.getSize();
         scope.addAlert(alert);
@@ -39,7 +39,7 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
       });
       socket.on('IMPORT', function (args) {
         console.log('this', args);
-        var alert = {'type': 'import', 'msg': args.message, 'id': 'import_'+ args.eventId};
+        var alert = {'type': args.entityMetaDataStatus? scope.getStatus(args.entityMetaDataStatus): 'import', 'msg': args.message, 'id': 'import_'+ args.eventId};
         bumpIcon();
         scope.getSize();
         scope.addAlert(alert);
@@ -47,7 +47,7 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
       });
       socket.on('TASK', function (args) {
         console.log('this', args);
-        var alert = {'type': 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
+        var alert = {'type': args.entityMetaDataStatus? scope.getStatus(args.entityMetaDataStatus): 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
         bumpIcon();
         scope.getSize();
         scope.addAlert(alert);
@@ -55,7 +55,7 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
       });
       socket.on('REPORT', function (args) {
         console.log('this', args);
-        var alert = {'type': 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};
+        var alert = {'type': args.entityMetaDataStatus? scope.getStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};
         bumpIcon();
         scope.getSize();
         scope.addAlert(alert);
@@ -63,123 +63,113 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
       });
       socket.on('ADMIN', function (args) {
         console.log('this', args);
-        var alert = {'type': 'admin', 'msg': '<i class="fa fa-warning"></i>&nbsp;' + args.message, 'id': 'admin_'+ args.eventId};
+        var alert = {'type': args.entityMetaDataStatus? scope.getStatus(args.entityMetaDataStatus): 'admin', 'msg': '<i class="fa fa-warning"></i>&nbsp;' + args.message, 'id': 'admin_'+ args.eventId};
         bumpIcon();
         scope.getSize();
         scope.addAlert(alert);
         setTimeout(closeAlertTrigger.bind(null, alert), 10000);
       });
 
-      // scope.history = [];
-      // scope.interval = null;
-      // scope.getTasks = function(data){
-      //   var time = data || 100;
-      //   if (isNaN(time)) {
-      //     time = 100;
-      //   }
-      //   clearTimeout(scope.interval);
-      //   scope.interval = setTimeout(function(){
-      //     Factory.get('api/v1/service/jobs/tasks/status').then(function(result){
-      //       if (result) {
+      Factory.get().then(function(result){
+        _.each(result.data, function(args){
+          if (!args.readMessage){
+            var alert = '';
+            switch(args.eventType){
+              case 'WATCH':
+              alert = {'type': 'watch', 'msg': args.message + '<i>View the changes <a href="single?id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
+              break;
+              case 'REPORT':
+              alert = {'type': 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};
+              break;
+              case 'ADMIN':
+              alert = {'type': 'admin', 'msg': '<i class="fa fa-warning"></i>&nbsp;' + args.message, 'id': 'admin_'+ args.eventId};
+              break;
+              case 'TASK':
+              alert = {'type': 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
+              break;
+              case 'IMPORT':
+              alert = {'type': 'import', 'msg': args.message, 'id': 'import_'+ args.eventId};
+              break;
+              default:
+              alert = {'type': 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
+              break;
+            }
+            scope.addAlert(alert);
+            setTimeout(closeAlertTrigger.bind(null, alert), 10000);
+          }
+        })
+        bumpIcon();//
+        scope.getAlertTypes();
+        scope.getSize();
+      });
 
-      //         var total = angular.copy(scope.history);
-      //         _.each(result.tasks, function(item){
-      //           var found = _.find(total, {'taskId': item.taskId});
-      //           // console.log('total', total);
-      //           // console.log('item', item);
+      scope.getSize = function () { //
+        Factory.get().then(function(result){
+          scope.size = _.countBy(result.data, function(n) {
+            return n.readMessage;
+          }).false;
+        })
+      }
+      
+      scope.getAlertTypes = function(){
+        Factory.get().then(function(result){
+          console.log('result', result);
+          
+          var alerts = angular.copy(result.data);
+          var count = _.countBy(alerts, function(n) {
+            return !n.readMessage? n.eventType: 'ALREADY_READ';
+          });
+          _.each(count, function(item, type){
+            var alert = '';
+            switch(type){
+              case 'ALREADY_READ':
+              break;
+              case 'ADMIN':
+              alert = item !== 1? {'type': 'admin', 'msg': 'There are '+item+' admin notifications for you to view.', 'id': 'admin_all'}: {'type': 'admin', 'msg': 'There is '+item+' admin notification for you to view.', 'id': 'admin_all'};
+              break;
+              case 'IMPORT':
+              alert = item !== 1? {'type': 'import', 'msg': 'There are '+item+' import notifications for you to view.', 'id': 'import_all'}: {'type': 'import', 'msg': 'There is '+item+' import notification for you to view.', 'id': 'import_all'};
+              break;
+              case 'REPORT':
+              alert = item !== 1? {'type': 'report', 'msg': 'There are '+item+' report notifications for you to view.', 'id': 'report_all'}: {'type': 'report', 'msg': 'There is '+item+' report notification for you to view.', 'id': 'report_all'};
+              break;
+              case 'TASK':
+              alert = item !== 1? {'type': 'task', 'msg': 'There are '+item+' task notifications for you to view.', 'id': 'task_all'}: {'type': 'task', 'msg': 'There is '+item+' task notification for you to view.', 'id': 'task_all'};
+              break;
+              case 'WATCH':
+              alert = item !== 1? {'type': 'watch', 'msg': 'There are '+item+' watch notifications for you to view.', 'id': 'watch_all'} : {'type': 'watch', 'msg': 'There is '+item+' watch notification for you to view.', 'id': 'watch_all'};
+              break;
+              default:
+              break;
+            }
+            if (alert) {
+              scope.addType(alert);
+              setTimeout(closeTypeTrigger.bind(null, alert), 10000);
+            }
+          })
+        });//
+      }//
 
-      //           var message = '';
-      //           var type = '';
-      //           var id = '';
-      //           if (found && found.status !== item.status) {
-      //             message = 'Task "' + item.taskName + '"\'s status has changed and is now: "' + item.status +'"';
-      //             type = utils.getStatus(item.status);
-      //             id = item.taskId + type;
-      //             Factory.update(item, type, message);
-      //             var index = _.find(scope.history, {'taskId': item.taskId});
-      //             if (index) {
-      //               index = _.indexOf(scope.history, index);
-      //               scope.history[index] = item;
-      //             } 
-      //             index = _.indexOf(total, found);
-      //             total.splice(index, 1);
-      //           } else if (!found && item.status !== 'DONE' && item.status !== 'CANCELLED' && item.status !== 'FAILED') {
-      //             if (item.status === 'QUEUED') {
-      //               message = 'Task "' + item.taskName + '" has been queued';
-      //             } else {
-      //               message = 'Task "' + item.taskName + '" has started';
-      //             }
-      //             type = utils.getStatus(item.status);
-      //             Factory.add(item, type, message);
-      //             scope.history.push(item);
-      //           } else if (!found && item.status !== 'QUEUED' && item.status !== 'WORKING') {
-      //             if (item.status === 'DONE') {
-      //               message = 'Task "' + item.taskName + '" was started and is now complete';
-      //             } else if (item.status === 'CANCELLED') {
-      //               message = 'Task "' + item.taskName + '" was started and has been cancelled';
-      //             } else {
-      //               message = 'Task "' + item.taskName + '" was started and has failed';
-      //             }
-      //             type = utils.getStatus(item.status);
-      //             Factory.add(item, type, message);
-      //             scope.history.push(item);
-      //           } else if (found) {
-      //             var index = _.indexOf(total, found);
-      //             total.splice(index, 1);
-      //           }
-      //         });
-      //         _.each(total, function(item){ //
-      //           Factory.remove(item)
-      //           var alert = {'type': 'warning', 'msg': 'Task "' + item.taskName + '" has been removed from the task queue.', 'id': item.taskId + 'removed'};
-      //           scope.addAlert(alert);
-      //           setTimeout(closeAlertTrigger.bind(null, alert), 7000);
-      //           var index = _.find(scope.history, {'taskId': item.taskId});
-      //           if (index) {
-      //             index = _.indexOf(scope.history, index);
-      //             scope.history.splice(index, 1);
-      //           } 
-      //         })
-      //       } 
-      //     }, function(){
-      //       // console.log('There was an error getting the status');
-      //     })
-      //     scope.getTasks(30000); //
-      //   }, time); //
-      // } //
 
-      // var refreshTimer;
-      // scope.refresh = function(data, override){
+      scope.getAlertType = function(alert){
+        return alert.type;
+      }
 
-      //   var time = data || 100;
-      //   if (isNaN(time)) {
-      //     time = 100;
-      //   }        
-      //   if (isNaN(override)) {
-      //     override = null;
-      //   }
-      //   clearTimeout(refreshTimer);
-      //   refreshTimer = setTimeout(function(){
-      //     scope.getTasks(override);
-      //     if(!scope.$$phase) {
-      //       scope.$apply();
-      //     }
-      //   }, time);
-      // }
-      // scope.refresh(30000, 100);
-      // scope.$on('$REFRESHTASKS', function(event, data){
-      //   scope.refresh(data, 100);
-      //   if(!scope.$$phase) {
-      //     scope.$apply();
-      //   }
-      // })
-
-scope.getSize = function () {
-  return Factory.get(true).length;
-}
-
-var closeAlertTrigger = function(alert){
+      scope.getStatus = function(status){
+        return utils.getStatus(status);
+      }
+      
+      var closeAlertTrigger = function(alert){
         // console.log('closing alert', alert);
         scope.closeAlert(alert);
+        if(!scope.$$phase) {
+          scope.$apply();
+        }
+      }
+
+      var closeTypeTrigger = function(alert){
+        // console.log('closing alert', alert);
+        scope.closeType(alert);
         if(!scope.$$phase) {
           scope.$apply();
         }
@@ -224,6 +214,21 @@ var closeAlertTrigger = function(alert){
           scope.alerts.splice(index, 1);
         }
       };
+
+      scope.addType = function(alert) {
+        scope.types.push(alert);
+      };
+
+      scope.closeType = function(alert) {
+        // console.log('scope.alerts', scope.alerts);
+        var index = _.find(scope.types, alert);
+        if (index) {
+          index = _.indexOf(scope.types, index);
+          scope.types.splice(index, 1);
+        }
+      };
+
+
 
       scope.openModal = function(){
         var modalInstance = $uiModal.open({
@@ -380,14 +385,21 @@ var closeAlertTrigger = function(alert){
 
   };
   notifications.get = function (cached) {
+    // console.log('cached', cached);
+    // console.log('data', data);
+    // console.log('notBlo', notBlocking);
+    
     if (cached && data.tasks && notBlocking) {
       return data.tasks; 
     } else if (cached && notBlocking){ 
       notBlocking = false;
       Business.notificationservice.getUserEvents().then(function(events){
+        console.log('event', events);
+        
         data.tasks = events;
         notBlocking = true;
       }, function(){
+        console.log('event', events);
         data.tasks = [];
         notBlocking = true;
       })
@@ -424,6 +436,10 @@ var closeAlertTrigger = function(alert){
   });
   $scope.predicate = 'expireDts';
   $scope.reverse = false;
+  $scope.user;
+  Business.userservice.getCurrentUserProfile().then(function(profile){
+    $scope.user = profile;
+  })
 
   $scope.setPredicate = function(predicate, override){
     if ($scope.predicate === predicate){
@@ -452,18 +468,28 @@ var closeAlertTrigger = function(alert){
   })
 
   $scope.deleteTask = function(task){    
-    var response = window.confirm("Are you sure you want DELETE " + task.taskName + "? (This may take a few seconds to apply)");
+    console.log('task', task);
+    
+    var response = window.confirm("Are you sure you want DELETE this " + task.eventTypeDescription + " notification? (This may take a few seconds to apply)");
     if (response) {
-      Factory.deleteTask('api/v1/service/jobs/tasks/', task.taskId).then(function (results) {
+      Business.notificationservice.deleteEvent(task.eventId).then(function (results) {
         $timeout(function(){
           $scope.refresh();
-        }, 300);
+        });
+      }, function(){
+        $timeout(function(){
+          $scope.refresh();
+        });
       });
     }
   }; 
 
   $scope.getStatus = function(status){
     return utils.getStatus(status);
+  }
+
+  $scope.getAlertType = function(alert){
+    return alert.type;
   }
 
   $scope.getReadMessage = function(item){
@@ -595,8 +621,8 @@ var closeAlertTrigger = function(alert){
           $rootScope.$broadcast(newEvent, infoArray);
         });
 
-        $templateCache.put('notifications/notifications.tpl.html', '<div class="notificationsBox imitateLink" ng-click="openModal();" ng-class="checkDanger()? \'warning\':\'\'">{{getSize()}}</div><div-stick fixed-offset-top="100" style="position:fixed; top:65px; right: 20px; width: 300px;"><alert ng-repeat="alert in alerts track by $index" type="{{alert.type}}" close="closeAlert(alert)"><span dynamichtml="alert.msg"></span></alert></div-stick>');
-        $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"><h3 class="modal-title">Tasks Queue</h3></div><div class="modal-body"><button class="btn btn-default" ng-click="refresh()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button><table class="table table-bordered table-striped admin-table"><tr><th><a href="" ng-click="setPredicate(\'entityType\');">Type&nbsp;<span ng-show="predicate === \'entityType\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th><th><a href="" ng-click="setPredicate(\'message\');">Message&nbsp;<span ng-show="predicate === \'message\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th><th style="padding: 8px 3px;">Actions</th></tr><tr ng-repeat="item in data| orderBy:predicate:reverse"><td style="padding: 0px !important; height:1px; vertical-align: inherit;"><div style="width: 5px; height:100%; padding-right:3px; border-right:1px solid darkgray; border-top:1px solid darkgray; border-bottom:1px solid darkgray; float:left;" class="imitateLink isRead" data-id="{{item.eventId}}" ng-click="toggleReadStatus(item)" ng-class="{\'unreadTableItem\':!item.readMessage}" data-html="true" data-toggle="tooltip" data-placement="right">&nbsp;</div><div style="padding: 5px !important;">{{item.entityName}}</div></td><td><span dynamichtml="getMessage(item)"></span></td><td style="padding: 0px 3px;"><button type="button" title="Remove Old Task" class="btn btn-danger btn-sm" ng-click="deleteTask(item)" ng-disabled="checkStatus(item.status)"><i class="fa fa-trash fa-aw"></i></button></td></tr></table></div><div class="modal-footer"><button class="btn btn-default" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Close</button></div>');
+        $templateCache.put('notifications/notifications.tpl.html', '<div class="notificationsBox imitateLink" ng-click="openModal();" ng-class="checkDanger()? \'warning\':\'\'">{{size}}</div><div-stick fixed-offset-top="100" style="position:fixed; top:65px; right: 20px; width: 300px;"><div ng-show="alerts.length <= 6"><alert ng-repeat="alert in alerts track by alert.id" type="{{getAlertType(alert);}}" close="closeAlert(alert)"><span dynamichtml="alert.msg"></span></alert></div><div ng-show="alerts.length > 6"><alert ng-repeat="alert in types track by alert.id" type="{{getAlertType(alert);}}" close="closeAlert(alert)"><span dynamichtml="alert.msg"></span></alert></div></div-stick>');
+        $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"><h3 class="modal-title">Tasks Queue <small>(Notifications time out after a week)</small></h3></div><div class="modal-body"><button class="btn btn-default" ng-click="refresh()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button><table class="table table-bordered table-striped admin-table"><tr><th><a href="" ng-click="setPredicate(\'entityType\');">Type&nbsp;<span ng-show="predicate === \'entityType\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th><th><a href="" ng-click="setPredicate(\'message\');">Message&nbsp;<span ng-show="predicate === \'message\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th><th style="padding: 8px 3px;">Actions</th></tr><tr ng-repeat="item in data| orderBy:predicate:reverse"><td style="padding: 0px !important; height:1px; vertical-align: inherit;"><div style="width: 7px; height:100%; margin-right:3px; border-right:1px solid darkgray; border-top:1px solid darkgray; border-bottom:1px solid darkgray; float:left;" class="imitateLink isRead" ng-click="toggleReadStatus(item)" ng-class="{\'unreadTableItem\':!item.readMessage}" data-id="{{item.eventId}}" data-html="true" data-toggle="tooltip" data-placement="right">&nbsp;</div><div style="padding: 5px !important;">{{item.entityName}}</div></td><td><span dynamichtml="getMessage(item)"></span></td><td style="padding: 0px 3px;"><button ng-show="user.username === item.username" type="button" title="Remove Old Task" class="btn btn-danger btn-sm" ng-click="deleteTask(item)"><i class="fa fa-trash fa-aw"></i></button></td></tr></table></div><div class="modal-footer"><button class="btn btn-default" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Close</button></div>');
       }]);
 
 

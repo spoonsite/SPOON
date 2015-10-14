@@ -129,24 +129,13 @@ public class NotificationEventResource
 
 	@DELETE
 	@APIDescription("Marks event as unread")
-	@Path("/readstatus/{eventId}")
-	public Response deleteNewEvent(
+	@Path("/{eventId}/{username}")
+	public void deleteNewEvent(
 			@PathParam("eventId") String eventId,
-			NotificationEventReadStatus readStatus
+			@PathParam("username") String username
 	)
 	{
-		NotificationEventView view = null;
-
-		NotificationEvent notificationEvent = new NotificationEvent();
-		notificationEvent.setEventId(eventId);
-		notificationEvent = notificationEvent.find();
-		if (notificationEvent != null) {
-			service.getNotificationService().markEventAsUnRead(eventId, readStatus.getUsername());
-
-			view = NotificationEventView.toView(notificationEvent);
-			view.setReadMessage(true);
-		}
-		return sendSingleEntityResponse(view);
+		service.getNotificationService().markEventAsUnRead(eventId, username);
 	}
 
 	@POST
