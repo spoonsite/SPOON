@@ -107,7 +107,7 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
       
       scope.getAlertTypes = function(){
         Factory.get().then(function(result){
-          // console.log('result', result);
+          console.log('result', result);
           
           var alerts = angular.copy(result.data);
           var count = _.countBy(alerts, function(n) {
@@ -119,6 +119,8 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
               case 'ALREADY_READ':
               break;
               case 'ADMIN':
+              // console.log('item', item);
+              
               alert = item !== 1? {'type': 'admin', 'msg': 'There are '+item+' admin notifications for you to view.', 'id': 'admin_all'}: {'type': 'admin', 'msg': 'There is '+item+' admin notification for you to view.', 'id': 'admin_all'};
               break;
               case 'IMPORT':
@@ -506,6 +508,10 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
     return alert.type;
   }
 
+  $scope.getItemName = function(item){
+    return item.entityName? item.entityName: item.eventTypeDescription;
+  }
+
   $scope.getReadMessage = function(item){
     return item.readMessage? 'Mark as <i>Unread</i>': 'Mark as <i>Read</i>';
   }
@@ -636,7 +642,7 @@ app.directive('notifications', ['$templateCache', 'notificationsFactory', '$uiMo
         });
 
         $templateCache.put('notifications/notifications.tpl.html', '<div class="notificationsBox imitateLink" ng-click="openModal();" ng-class="checkDanger()? \'warning\':\'\'">{{size}}</div><div-stick fixed-offset-top="100" style="position:fixed; top:65px; right: 20px; width: 300px;"><div ng-show="alerts.length && !types.length"><alert ng-repeat="alert in alerts track by alert.id" type="{{getAlertType(alert);}}" close="closeAlert(alert)"><span dynamichtml="alert.msg"></span></alert></div><div ng-show="types.length"><alert ng-repeat="alert in types track by alert.id" type="{{getAlertType(alert);}}" close="closeType(alert)"><span dynamichtml="alert.msg"></span></alert></div></div-stick>');
-        $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"><h3 class="modal-title">Tasks Queue <small>(Notifications time out after a week)</small></h3></div><div class="modal-body"><button class="btn btn-default" ng-click="refresh()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button><table class="table table-bordered table-striped admin-table"><tr><th><a href="" ng-click="setPredicate(\'entityType\');">Type&nbsp;<span ng-show="predicate === \'entityType\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th><th><a href="" ng-click="setPredicate(\'message\');">Message&nbsp;<span ng-show="predicate === \'message\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th><th style="padding: 8px 3px;">Actions</th></tr><tr ng-repeat="item in data| orderBy:predicate:reverse"><td style="padding: 0px !important; height:1px; vertical-align: inherit;"><div style="width: 7px; height:100%; margin-right:3px; border-right:1px solid darkgray; border-top:1px solid darkgray; border-bottom:1px solid darkgray; float:left;" class="imitateLink isRead" ng-click="toggleReadStatus(item)" ng-class="{\'unreadTableItem\':!item.readMessage}" data-id="{{item.eventId}}" data-html="true" data-toggle="tooltip" data-placement="right">&nbsp;</div><div style="padding: 5px !important;">{{item.entityName}}</div></td><td><span dynamichtml="getMessage(item)"></span></td><td style="padding: 0px 3px;"><button ng-show="user.username === item.username" type="button" title="Remove Old Task" class="btn btn-danger btn-sm" ng-click="deleteTask(item)"><i class="fa fa-trash fa-aw"></i></button></td></tr></table></div><div class="modal-footer"><button class="btn btn-default" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Close</button></div>');
+        $templateCache.put('notifications/notificationsModal.tpl.html', '<div class="modal-header"><h3 class="modal-title">Tasks Queue <small>(Notifications time out after a week)</small></h3></div><div class="modal-body"><button class="btn btn-default" ng-click="refresh()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button><table class="table table-bordered table-striped admin-table"><tr><th><a href="" ng-click="setPredicate(\'entityType\');">Type&nbsp;<span ng-show="predicate === \'entityType\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th><th><a href="" ng-click="setPredicate(\'message\');">Message&nbsp;<span ng-show="predicate === \'message\'"><i ng-show="!reverse" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse" class="fa fa-sort-alpha-desc"></i></span></a></th><th style="padding: 8px 3px;">Actions</th></tr><tr ng-repeat="item in data| orderBy:predicate:reverse"><td style="padding: 0px !important; height:1px; vertical-align: inherit;"><div style="width: 7px; height:100%; margin-right:3px; border-right:1px solid darkgray; border-top:1px solid darkgray; border-bottom:1px solid darkgray; float:left;" class="imitateLink isRead" ng-click="toggleReadStatus(item)" ng-class="{\'unreadTableItem\':!item.readMessage}" data-id="{{item.eventId}}" data-html="true" data-toggle="tooltip" data-placement="right">&nbsp;</div><div style="padding: 5px !important;">{{getItemName(item)}}</div></td><td><span dynamichtml="getMessage(item)"></span></td><td style="padding: 0px 3px;"><button ng-show="user.username === item.username" type="button" title="Remove Old Task" class="btn btn-danger btn-sm" ng-click="deleteTask(item)"><i class="fa fa-trash fa-aw"></i></button></td></tr></table></div><div class="modal-footer"><button class="btn btn-default" ng-click="cancel()"><i class="fa fa-close"></i>&nbsp;Close</button></div>');
       }]);
 
 
