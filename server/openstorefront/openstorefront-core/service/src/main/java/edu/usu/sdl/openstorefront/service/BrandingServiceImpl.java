@@ -129,6 +129,7 @@ public class BrandingServiceImpl
 		} else {
 			branding.setBrandingId(persistenceService.generateId());
 			branding.populateBaseCreateFields();
+			branding.setActiveStatus(Branding.INACTIVE_STATUS);
 			branding = persistenceService.persist(branding);
 		}
 		return branding;

@@ -31,7 +31,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
   $scope.incLoc = '';
   $scope.saveContent = '';
   $scope.editedTopic = 'Types';
-  $scope.toolTitle = 'Admin Tools';
+  $scope.toolTitle = 'Admin Tools'
   $scope.menuPanel = {};
   $scope.menuPanel.data = {};
   $scope.menuPanel.data.open = true;
@@ -230,12 +230,21 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
     $scope.data.push(attributes);
     
     $scope.data.push({
-      'label': 'Components', 
+      'label': 'Entries', 
       'location':'views/admin/managecomponents.html', 
-      'toolTitle': 'Manage Components', 
-      'detailedDesc': "Components represent the main listing item in the application.  This tool allows for manipulating all data related to a component.",
+      'toolTitle': 'Manage Entries', 
+      'detailedDesc': "This tool allows for manipulating all data related to an entry.",
       'key': 'components' 
     });
+
+    $scope.data.push({
+      'label': 'Entry Type', 
+      'location':'views/admin/data_management/manageEntryType.html', 
+      'toolTitle': 'Entry Types', 
+      'detailedDesc': "Allows for defining entry types",
+      'key': 'entrytypes' 
+    });
+
 
     $scope.data.push({
       'label': 'Highlights', 
@@ -246,12 +255,20 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
     });
 
     $scope.data.push({
-      'label': 'Integration Management', 
+      'label': 'Integrations', 
       'location':'views/admin/configuration/default.html', 
       'toolTitle': 'Integration Management', 
       'detailedDesc': "Allows for the configuration of data integration with external systems such as JIRA",
       'key': 'integration' 
     });
+    
+    $scope.data.push({
+      'label': 'Imports', 
+      'location':'views/admin/application_management/manageImports.html', 
+      'toolTitle': 'Import Management', 
+      'detailedDesc': "Allows for management of the data imports and their mappings",
+      'key': 'imports' 
+    });    
     
     $scope.data.push({
       'label': 'Lookups', 
@@ -330,7 +347,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
       'label': 'Jobs', 
       'location':'views/admin/application_management/manageJobs.html',      
       'toolTitle': 'Job Management', 
-      'detailedDesc': 'Allows for controlling and viewing scheduled jobs and background tasks.',
+      'detailedDesc': 'Allows for controling and viewing scheduled jobs and background tasks',
       'key': 'JOBS' 
     });
 
@@ -345,7 +362,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
     $scope.systemTools.push({
       'label': 'System', 'location':'views/admin/application_management/manageSystem.html', 
       'toolTitle': 'System Management', 
-      'detailedDesc': 'Allows for viewing system status and managing system properties.',
+      'detailedDesc': 'Allows for viewing system status and managing system properties',
       'key': 'SYSTEM'
     });
 
@@ -358,10 +375,11 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
     });
 
     $scope.systemTools.push({
-      'label': 'User Messages', 
+      'label': 'Messages', 
       'location':'views/admin/application_management/manageUserMessages.html', 
-      'toolTitle': 'User Message Management', 
-      'detailedDesc': 'User messages are queued messages for users.  This primary usage is for watches.  This tool allows for viewing of queued message as well as viewing of archived messages.',
+      'toolTitle': 'Message Management', 
+      'detailedDesc': 'User messages are queued messages for users.  This primary usage is for watches.  This tool allows for viewing of queued message as well as viewing of archived messages. \n\
+                                        Event Notification are message sent internally to user to notify them of event in the application.  ',
       'key': 'USER_MESSAGE' 
     });    
     

@@ -462,7 +462,7 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
           triggerAlert('Validation Error: <br> Make sure Email(s) are valid', 'alertId', 'body', 3000);
         });        
       } else {
-        console.log('$scope.reportForm', $scope.reportForm);
+        // console.log('$scope.reportForm', $scope.reportForm);
         
         var reportDataIds = [];
         _.forEach($scope.reportForm.ids, function(id){
