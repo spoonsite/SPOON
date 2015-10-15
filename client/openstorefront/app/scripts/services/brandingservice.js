@@ -62,10 +62,32 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
   var branding = {};
   var base = 'api/v1/resource/branding/';
 
-
+  branding.createBrandingView = function(brandingtemplate) {
+    var deferred = $q.defer();
+    var url = base; 
+    var data = brandingtemplate;
+    $http({
+        'method': 'POST',
+        'url': url,
+        'data': data
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false' && isNotRequestError(data)) {
+            removeError();
+            deferred.resolve(data);
+        } else {
+            removeError();
+            triggerError(data);
+            deferred.reject(false);
+        }
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error');
+    });    
+    return deferred.promise;
+  };
+  
   branding.getBrandingViews = function(override) {
       
-    console.log("Loading Brangin data:",override);
     var deferred = $q.defer();
 
     var url = base;
@@ -125,13 +147,13 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
     return deferred.promise;
   };
   
-  branding.getTopicSearchItems = function(brandingId, override) {
+  branding.getBrandingView = function(brandingId, override) {
     var deferred = $q.defer();
     if (brandingId) { 
-      var url = base; 
-      var found = checkExpire('topicSearchItems_' + brandingId, 2 * minute);
+      var url = base+brandingId; 
+      var found = checkExpire('brandingView_' + brandingId, 2 * minute);
       if (found && !override){
-        deferred.resolve(found.topicSearchViews);
+        deferred.resolve(found);
       } else {
         $http({
           'method': 'GET',
@@ -139,69 +161,7 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
         }).success(function(data, status, headers, config) { /*jshint unused:false*/
           if (data && data !== 'false' && isNotRequestError(data)) {
             removeError();
-            save('topicSearchItems_' + brandingId, data);
-            deferred.resolve(data.topicSearchViews);
-          } else {
-            removeError();
-            triggerError(data);
-            deferred.reject(false);
-          }
-        }).error(function(data, status, headers, config) { /*jshint unused:false*/
-          showServerError(data, 'body');
-          deferred.reject('There was an error');
-        });
-      } 
-    } else {
-      deferred.reject(false);
-    }
-    return deferred.promise;
-  };
-
-
-  branding.getAllTopicSearchItems = function(override) {
-    var deferred = $q.defer();
-    var url = base; 
-    var found = checkExpire('allTopicSearchItems', 2 * minute);
-    if (found && !override){
-      deferred.resolve(found);
-    } else {
-      $http({
-        'method': 'GET',
-        'url': url
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false' && isNotRequestError(data)) {
-          removeError();
-          save('allTopicSearchItems', data);
-          deferred.resolve(data);
-        } else {
-          removeError();
-          triggerError(data);
-          deferred.reject(false);
-        }
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
-    } 
-    return deferred.promise;
-  };
-
-
-  branding.getTopicSearchItemById = function(entityId, override) {
-    var deferred = $q.defer();
-    if (entityId) { 
-      var url = base + 'topicSearchItems/' + encodeURIComponent(entityId); 
-      var found = checkExpire('topicSearchItem_' + entityId, 2 * minute);
-      if (found && !override){
-        deferred.resolve(found);
-      } else {
-        $http({
-          'method': 'GET',
-          'url': url,
-        }).success(function(data, status, headers, config) { /*jshint unused:false*/
-          if (data && data !== 'false' && isNotRequestError(data)) {
-            removeError();
-            save('topicSearchItem_' + entityId, data);
+            save('brandingView_' + brandingId, data);
             deferred.resolve(data);
           } else {
             removeError();
@@ -217,88 +177,218 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
       deferred.reject(false);
     }
     return deferred.promise;
-  }
-
-
-  branding.addTopicSearchItem = function(items, brandingId, override) {
-    var deferred = $q.defer();
-    if (items && items.length) { 
-      var url = base + encodeURIComponent(brandingId) + '/topicSearchItems' ; 
-      $http({
-        'method': 'POST',
-        'url': url,
-        'data': {'brandingId': brandingId, 'topicSearchItems': items}
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        if (data && data !== 'false' && isNotRequestError(data)) {
-          removeError();
-          deferred.resolve(data);
-        } else {
-          removeError();
-          triggerError(data);
-          deferred.reject(false);
-        }
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
-        showServerError(data, 'body');
-        deferred.reject('There was an error');
-      });
-    } else {
-      deferred.reject(false);
-    }
-    return deferred.promise;
   };
 
-
-  branding.deleteTopicSearchItems = function(brandingId, override) {
+  branding.deleteBranding = function(brandingId, override) {
     var deferred = $q.defer();
-    if (items && items.length) { 
-      var url = base + encodeURIComponent(brandingId) + '/topicSearchItems' ; 
-      $http({
-        'method': 'DELETE',
-        'url': url,
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+    var url = base + encodeURIComponent(brandingId); 
+    $http({
+      'method': 'DELETE',
+      'url': url
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
-          removeError();
-          deferred.resolve(data);
+            removeError();
+            deferred.resolve(data);
         } else {
-          removeError();
-          triggerError(data);
-          deferred.reject(false);
+            removeError();
+            triggerError(data);
+            deferred.reject(false);
         }
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
         showServerError(data, 'body');
         deferred.reject('There was an error');
-      });
-    } else {
-      deferred.reject(false);
-    }
+    });
+   
     return deferred.promise;
-  }
-
-  branding.deleteTopicSearchItem = function(entityId, override) {
+  };
+  
+  branding.setBrandingToDefault = function() {
     var deferred = $q.defer();
-    if (items && items.length) { 
-      var url = base + '/topicSearchItems' + encodeURIComponent(entityId); 
-      $http({
-        'method': 'DELETE',
-        'url': url,
-      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+    var url = base +'current/default'; 
+    $http({
+      'method': 'PUT',
+      'url': url
+    }).success(function (data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
-          removeError();
-          deferred.resolve(data);
+            removeError();
+            deferred.resolve(data);
         } else {
-          removeError();
-          triggerError(data);
-          deferred.reject(false);
+            removeError();
+            triggerError(data);
+            deferred.reject(false);
         }
-      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+    }).error(function (data, status, headers, config) { /*jshint unused:false*/
         showServerError(data, 'body');
         deferred.reject('There was an error');
-      });
-    } else {
-      deferred.reject(false);
-    }
+    });
+   
     return deferred.promise;
-  }
+  };
+  
+  branding.setBrandingActive = function(brandingId) {
+    var deferred = $q.defer();
+    if (brandingId) { 
+      var url = base+brandingId+'/active'; 
+      
+    $http({
+      'method': 'PUT',
+      'url': url
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
+      if (data && data !== 'false' && isNotRequestError(data)) {
+        removeError();
+        deferred.resolve(data);
+      } else {
+        removeError();
+        triggerError(data);
+        deferred.reject(false);
+      }
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      showServerError(data, 'body');
+      deferred.reject('There was an error');
+    });
+  }    
+    return deferred.promise;
+};
+  
+ 
+//  branding.getAllTopicSearchItems = function(override) {
+//    var deferred = $q.defer();
+//    var url = base; 
+//    var found = checkExpire('allTopicSearchItems', 2 * minute);
+//    if (found && !override){
+//      deferred.resolve(found);
+//    } else {
+//      $http({
+//        'method': 'GET',
+//        'url': url
+//      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+//        if (data && data !== 'false' && isNotRequestError(data)) {
+//          removeError();
+//          save('allTopicSearchItems', data);
+//          deferred.resolve(data);
+//        } else {
+//          removeError();
+//          triggerError(data);
+//          deferred.reject(false);
+//        }
+//      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+//        showServerError(data, 'body');
+//        deferred.reject('There was an error');
+//      });
+//    } 
+//    return deferred.promise;
+//  };
+
+
+//  branding.getTopicSearchItemById = function(entityId, override) {
+//    var deferred = $q.defer();
+//    if (entityId) { 
+//      var url = base + 'topicSearchItems/' + encodeURIComponent(entityId); 
+//      var found = checkExpire('topicSearchItem_' + entityId, 2 * minute);
+//      if (found && !override){
+//        deferred.resolve(found);
+//      } else {
+//        $http({
+//          'method': 'GET',
+//          'url': url,
+//        }).success(function(data, status, headers, config) { /*jshint unused:false*/
+//          if (data && data !== 'false' && isNotRequestError(data)) {
+//            removeError();
+//            save('topicSearchItem_' + entityId, data);
+//            deferred.resolve(data);
+//          } else {
+//            removeError();
+//            triggerError(data);
+//            deferred.reject(false);
+//          }
+//        }).error(function(data, status, headers, config) { /*jshint unused:false*/
+//          showServerError(data, 'body');
+//          deferred.reject('There was an error');
+//        });
+//      } 
+//    } else {
+//      deferred.reject(false);
+//    }
+//    return deferred.promise;
+//  }
+
+//  branding.addTopicSearchItem = function(items, brandingId, override) {
+//    var deferred = $q.defer();
+//    if (items && items.length) { 
+//      var url = base + encodeURIComponent(brandingId) + '/topicSearchItems' ; 
+//      $http({
+//        'method': 'POST',
+//        'url': url,
+//        'data': {'brandingId': brandingId, 'topicSearchItems': items}
+//      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+//        if (data && data !== 'false' && isNotRequestError(data)) {
+//          removeError();
+//          deferred.resolve(data);
+//        } else {
+//          removeError();
+//          triggerError(data);
+//          deferred.reject(false);
+//        }
+//      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+//        showServerError(data, 'body');
+//        deferred.reject('There was an error');
+//      });
+//    } else {
+//      deferred.reject(false);
+//    }
+//    return deferred.promise;
+//  }; 
+//  branding.deleteTopicSearchItems = function(brandingId, override) {
+//    var deferred = $q.defer();
+//    if (items && items.length) { 
+//      var url = base + encodeURIComponent(brandingId) + '/topicSearchItems' ; 
+//      $http({
+//        'method': 'DELETE',
+//        'url': url,
+//      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+//        if (data && data !== 'false' && isNotRequestError(data)) {
+//          removeError();
+//          deferred.resolve(data);
+//        } else {
+//          removeError();
+//          triggerError(data);
+//          deferred.reject(false);
+//        }
+//      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+//        showServerError(data, 'body');
+//        deferred.reject('There was an error');
+//      });
+//    } else {
+//      deferred.reject(false);
+//    }
+//    return deferred.promise;
+//  }
+//
+//  branding.deleteTopicSearchItem = function(entityId, override) {
+//    var deferred = $q.defer();
+//    if (items && items.length) { 
+//      var url = base + '/topicSearchItems' + encodeURIComponent(entityId); 
+//      $http({
+//        'method': 'DELETE',
+//        'url': url,
+//      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+//        if (data && data !== 'false' && isNotRequestError(data)) {
+//          removeError();
+//          deferred.resolve(data);
+//        } else {
+//          removeError();
+//          triggerError(data);
+//          deferred.reject(false);
+//        }
+//      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+//        showServerError(data, 'body');
+//        deferred.reject('There was an error');
+//      });
+//    } else {
+//      deferred.reject(false);
+//    }
+//    return deferred.promise;
+//  }
 
   return branding;
 }]);

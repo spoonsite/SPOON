@@ -18,21 +18,25 @@
 /*global angular,$,app,utils*/
 app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiModal', '$timeout',
     function ($scope, Business, $rootScope, $uiModal, $timeout) {
-        console.log("Branding Controller Loaded");
         $scope.predicate = 'description';
         $scope.reverse = false;
-        $scope.flags = {};
-        $scope.flags.showUpload = false;
+        $scope.pagination = {};
+        $scope.pagination.control = {};
+        $scope.data = {};
+        $scope.data.allTypes = {};
+  
         
-        $scope.fullBrandingList = [];
-        $scope.fullTopicList = [];
-        $scope.allSelected = false;
-        $scope.selectedBrandTopicList = [];
-        $scope.selectedTopicTypes = [];
-        $scope.editBrandingId=-1;
-        $scope.saveNeeded = false;
-        
-        
+        $scope.getFilters = function (override, all) {
+            $scope.$emit('$TRIGGERLOAD', 'topicsLoader');
+            if ($scope.pagination.control && $scope.pagination.control.refresh) {
+                $scope.pagination.control.refresh().then(function () {
+                    $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
+                });
+            } else {
+                $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
+            }
+        };
+       
         $scope.setPredicate = function (predicate, override) {
             if ($scope.predicate === predicate) {
                 $scope.reverse = !$scope.reverse;
@@ -43,11 +47,13 @@ app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiMod
             $scope.pagination.control.changeSortOrder(predicate);
         };
         
-        
-        $scope.turnOnSaveNeeded = function(){
-            $scope.saveNeeded =true;
-        };
-        
+        if ($scope.pagination.control) {
+            $scope.pagination.control.onRefresh = function () {
+                $scope.selectedTypes = [];
+                $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
+            };
+        }
+
         $scope.loadFullBrandingList = function() {
              Business.brandingservice.getBrandingViews(true).then(function (brandingViews){
                  $scope.fullBrandingList = [];
@@ -58,74 +64,13 @@ app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiMod
                  $scope.fullBrandingList = [];
              }); 
         }; 
-        
-        $scope.loadFullTopicList = function () {
-            var filterObj = angular.copy(utils.queryFilter);
-            Business.articleservice.getTypes(filterObj, true).then(function (attributeTypes) {
-                $scope.fullTopicList = [];
-                $scope.fullTtopicList = attributeTypes.data;
-                
-                $scope.loadBrandingViewTopicList();
-            }, function () {
-                $scope.fullTopicList = [];
-            });
-        };
-        
-        $scope.loadBrandingViewTopicList = function(){
-          
-          if($scope.editBrandingId === -1){
-              console.log("Error: You must have the branding selection set to a value");
-              return;
-          }
-          Business.brandingservice.getTopicSearchItems($scope.editBrandingId, true).then(function(brandTopicList) {
-              $scope.selectedBrandTopicList = brandTopicList;
-              _.forEach($scope.selectedBrandTopicList, function (topic) {
-                  var found = _.find($scope.topicList, {'attributeType': topic.attributeType});
-                  if(found){
-                      found.selected = true;
-                  }
-                  $scope.selectType(topic);
-              });
-          }, function () {
-              $scope.selectedBrandTopicList = [];
-              $scope.selectedTopicTypes = [];
-          });  
-        };
-       
-
-        $scope.selectType = function (topic) {
-            
-            if (topic.selected) {
-                topic.selected = !topic.selected;
-                if (topic.selected === false) {
-                    $scope.selectedTopicTypes = _.reject($scope.selectedTopicTypes, function (type) {
-                        return type === topic.attributeType;
-                    });
-                    $scope.selectAllTypes.flag = false;
-                } else {
-                    $scope.selectedTopicTypes.push(topic.attributeType);
-                }
-            } else {
-                topic.selected = true;
-                $scope.selectedTopicTypes.push(topic.attributeType);
-            }
-
-        };
-
-        $scope.selectAllTypes = function () {
-            $scope.selectedTopicTypes = [];
-            
-            _.forEach($scope.fullTopicList, function (topic) {
-                topic.selected = !$scope.selectAllTypes.flag; //click happens before state change
-                if (topic.selected) {
-                    $scope.selectedTopicTypes.push(topic.attributeType);
-                }
-            });
-        };
 
         $scope.loadAllData = function(){
-            $scope.loadFullBrandingList();
-            $scope.loadFullTopicList();
+            
+            $timeout(function () {
+               $scope.getFilters();
+               $scope.loadFullBrandingList();
+            }, 20);
             
             console.log("Branding list:",$scope.fullBrandingList);
         };
@@ -133,96 +78,127 @@ app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiMod
         
         $scope.deleteTemplate = function (template) {
           console.log("Delete Template");
-//            var cont = confirm("You are about to permanently remove an attribute from the system. This will affect all related components.  Continue?");
-//            if (cont) {
-//                $scope.deactivateButtons = true;
-//                $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-//                Business.articleservice.deleteFilter(filter.attributeType).then(function () {
-//                    $timeout(function () {
-//                        triggerAlert('Summited a task to apply the status change.  The status will update when the task is complete.', 'statusAttributes', 'body', 3000);
-//                        $scope.getFilters(true);
-//                        $scope.deactivateButtons = false;
-//                        $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-//                    }, 1000);
-//                }, function () {
-//                    $timeout(function () {
-//                        $scope.getFilters(true);
-//                        $scope.deactivateButtons = false;
-//                        $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-//                    }, 1000);
-//                });
-//            }
+            var cont = confirm("You are about to permanently remove a branding template from the system.  Continue?");
+            if (cont) {
+                $scope.deactivateButtons = true;
+                $scope.$emit('$TRIGGERLOAD', 'topicsLoader');
+                Business.brandingservice.deleteBranding(template.brandingId).then(function () {
+                    $timeout(function () {
+                        triggerAlert('Summited a task to apply the status change.  The status will update when the task is complete.', 'statusBranding', 'body', 3000);
+                        $scope.loadAllData();
+                        $scope.deactivateButtons = false;
+                        $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
+                    }, 1000);
+                }, function () {
+                    $timeout(function () {
+                        $scope.loadAllData();
+                        $scope.deactivateButtons = false;
+                        $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
+                    }, 1000);
+                });
+            }
         };
         
-        $scope.editTemplate = function(type){
-          console.log("Edit Template");
-//        var modalInstance = $uiModal.open({
-//        templateUrl: 'views/admin/data_management/editcodes.html',
-//                controller: 'AdminEditcodesCtrl',
-//                size: 'lg',
-//                backdrop: 'static',
-//                resolve: {
-//                type: function () {
-//                return type;
-//                },
-//                        size: function() {
-//                        return 'lg';
-//                        }
-               };
+        $scope.editTemplate = function (brandingtemplate) {
+             
+                var modalInstance = $uiModal.open({
+                    templateUrl: 'views/admin/application_management/editbranding.html',
+                    controller: 'AdminEditBrandingCtrl',
+                    size: 'lg',
+                    backdrop: 'static',
+                    resolve: {
+                        brandingtemplate: function () {
+                            return brandingtemplate;
+                        },
+                        size: function () {
+                            return 'lg';
+                        }
+                    }
+                });
 
+                modalInstance.result.then(function (result) {
+                    console.log("Result from modal:",result);
+                }, function () {
+                    console.log("Modal Cancelled");
+                });
+        };
         
-        $scope.changeActivity = function (filter) {
-            
+        
+        $scope.changeActivity = function (brandingtemplate) {   
             console.log("Change Activity");
-//            var cont = confirm("You are about to change the active status of an Attribute (Enabled or disabled). This will affect all related component attributes.  Continue?");
-//            if (cont) {
-//                $scope.deactivateButtons = true;
-//                if (filter.activeStatus === 'A') {
-//                    $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-//                    Business.articleservice.deactivateFilter(filter.attributeType).then(function () {
-//                        $timeout(function () {
-//                            triggerAlert('Summited a task to apply the status change.  The status will update when the task is complete.', 'statusAttributes', 'body', 3000);
-//                            $scope.getFilters(true);
-//                            $scope.deactivateButtons = false;
-//                            $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-//                        }, 1000);
-//                    }, function () {
-//                        $timeout(function () {
-//                            $scope.getFilters(true);
-//                            $scope.deactivateButtons = false;
-//                            $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-//                        }, 1000);
-//                    })
-//                } else {
-//                    $scope.$emit('$TRIGGERLOAD', 'adminAttributes');
-//                    Business.articleservice.activateFilter(filter.attributeType).then(function () {
-//                        $timeout(function () {
-//                            triggerAlert('Summited a task to apply the status change.  The status will update when the task is complete.', 'statusAttributes', 'body', 3000);
-//                            $scope.getFilters(true);
-//                            $scope.deactivateButtons = false;
-//                            $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-//                        }, 1000);
-//                    }, function () {
-//                        $timeout(function () {
-//                            $scope.getFilters(true);
-//                            $scope.deactivateButtons = false;
-//                            $scope.$emit('$TRIGGERUNLOAD', 'adminAttributes');
-//                        }, 1000);
-//                    })
-//                }
-//            }
+            var cont = confirm("You are about to change the active status of a branding template (Enabled or disabled). Continue?");
+            if (cont) {
+                $scope.deactivateButtons = true;
+                if (brandingtemplate.activeStatus === 'A') {
+                    $scope.$emit('$TRIGGERLOAD', 'topicsLoader');
+                    Business.brandingservice.setBrandingToDefault().then(function () {
+                        $timeout(function () {
+                            //triggerAlert('Summited a task to apply the status change.  The status will update when the task is complete.', 'statusBranding', 'body', 3000);
+                            $scope.loadAllData();
+                            $scope.deactivateButtons = false;
+                            $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
+                        }, 1000);
+                    }, function () {
+                        $timeout(function () {
+                            $scope.loadAllData();
+                            $scope.deactivateButtons = false;
+                            $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
+                        }, 1000);
+                    });
+                } else {
+                    $scope.$emit('$TRIGGERLOAD', 'topicsLoader');
+                    Business.brandingservice.setBrandingActive(brandingtemplate.brandingId).then(function () {
+                        $timeout(function () {
+                            //triggerAlert('Summited a task to apply the status change.  The status will update when the task is complete.', 'statusBranding', 'body', 3000);
+                            $scope.loadAllData();
+                            $scope.deactivateButtons = false;
+                            $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
+                        }, 1000);
+                    }, function () {
+                        $timeout(function () {
+                            $scope.loadAllData();
+                            $scope.deactivateButtons = false;
+                            $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
+                        }, 1000);
+                    });
+                }
+            }
         };
         
-        $scope.cloneTemplate = function() {
-            
-            console.log("Clone Template");
-            
-        };
-        
-        
-        
-        $scope.saveTemplate = function () {
-            console.log("Saving Changes");
+        $scope.cloneTemplate = function (brandingtemplate) {
 
+            console.log("Clone Template");
+            $scope.$emit('$TRIGGERLOAD', 'topicsLoader');
+            Business.brandingservice.getBrandingView(brandingtemplate.brandingId, true).then(function (brandingView) {
+                brandingView.branding.name += 'copy';
+                brandingView.branding.brandingId = null;
+                Business.brandingservice.createBrandingView(brandingView).then(function () {
+                    console.log("Successfully Created");
+                    $scope.loadAllData();
+                    $scope.deactivateButtons = false;
+                    $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
+                }, function () {
+                    $scope.loadAllData();
+                    $scope.deactivateButtons = false;
+                    $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
+                    console.log("Could not create new template on the server");
+                });
+            }, function () {
+
+                $scope.deactivateButtons = false;
+                $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
+                console.log("Could not clone branding template:", brandingtemplate);
+            });
         };
     }]);
+        
+app.filter('formatActive', function() {
+    return function(input) {
+      input = input || '';
+      var out = "";
+      if(input === "I"){out="Inactive";}
+      else if(input === "A"){out="Active";}
+      else if(input === "P"){out="Pending";}
+      return out;
+    };
+  });
