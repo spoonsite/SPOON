@@ -189,7 +189,20 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         $scope.reviews = null;
       }
     });  
-  }
+  };
+
+  $scope.$watch('nav', function(newval, oldval){
+    if (newval && newval.current){
+      if (newval.current === 'Watches'){
+        $scope.$emit('$TRIGGEREVENT', '$updatedWatches');
+      } else if (newval.current === 'Component Reviews') {
+        loadReviews();
+      } else if (newval.current === 'Submissions'){
+        $scope.$emit('$TRIGGEREVENT', '$UPDATED_SUBMISSIONS');
+      }
+    }
+  }, true);
+
 
 
   /***************************************************************

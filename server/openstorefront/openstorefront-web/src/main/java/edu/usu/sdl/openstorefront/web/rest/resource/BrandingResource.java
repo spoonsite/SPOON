@@ -101,13 +101,39 @@ public class BrandingResource
 	}
 
 	@POST
-	@APIDescription("Saves branding")
+	@APIDescription("Add a branding")
 	@RequireAdmin
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response addTopicSearchItem(
+	public Response addBranding(
 			@RequiredParam BrandingModel brandingModel
 	)
+	{
+		return handleSave(brandingModel, true);
+	}
+
+	@PUT
+	@APIDescription("Update a branding")
+	@RequireAdmin
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{id}")
+	public Response addBranding(
+			@PathParam("id") String brandingId,
+			@RequiredParam BrandingModel brandingModel
+	)
+	{
+		Branding branding = new Branding();
+		branding.setBrandingId(brandingId);
+		branding = branding.find();
+		if (branding != null) {
+			brandingModel.getBranding().setBrandingId(brandingId);
+			return handleSave(brandingModel, false);
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	private Response handleSave(BrandingModel brandingModel, boolean post)
 	{
 		ValidationModel validationModel = new ValidationModel(brandingModel.getBranding());
 		validationModel.setConsumeFieldsOnly(true);
@@ -121,7 +147,11 @@ public class BrandingResource
 		if (validationResult.valid()) {
 			brandingModel = service.getBrandingService().saveFullBanding(brandingModel);
 			BrandingView view = BrandingView.toView(brandingModel.getBranding(), brandingModel.getTopicSearchItems());
-			return Response.created(URI.create("v1/resource/branding/" + brandingModel.getBranding().getBrandingId())).entity(view).build();
+			if (post) {
+				return Response.created(URI.create("v1/resource/branding/" + brandingModel.getBranding().getBrandingId())).entity(view).build();
+			} else {
+				return sendSingleEntityResponse(view);
+			}
 		}
 		return sendSingleEntityResponse(validationResult.toRestError());
 	}

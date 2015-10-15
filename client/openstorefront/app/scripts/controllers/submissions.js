@@ -129,6 +129,11 @@ app.controller('UserSubmissionCtrl', ['$scope', 'business', '$rootScope', '$loca
     });
     return deferred.promise;//
   }
+
+  $scope.$on('$UPDATED_SUBMISSIONS', function(){
+    $scope.getSubmissions();
+  })
+
   $scope.getSubmissions(true);
 }]);
 
