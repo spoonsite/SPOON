@@ -6,10 +6,10 @@ body {
 }
 
 .help-text{
-	color: grey;
-	font-weight: normal;
-	font-style: italic;
-	padding-left: 5px;
+  color: grey;
+  font-weight: normal;
+  font-style: italic;
+  padding-left: 5px;
 }
 
 </style>
@@ -250,7 +250,7 @@ body {
         </div>
         <div style="padding-top:15px;">
           <label for="requiredAttributes">Required Attributes</label>
-          <div class="help-text">Vitals that categorize the component</div>	  
+          <div class="help-text">Vitals that categorize the component</div>   
           <table id="requiredAttributes" class="table table-striped table-bordered">
             <tbody>
               <tr>
@@ -698,7 +698,7 @@ body {
 <h2 id="resources">External Links:<small><button class="btn btn-small btn-default" ng-click="vitalsCheck()? scrollTo('media', 'vitals', 'details', $event, 'dependencyFormName'): ''">Skip</button></small></h2>
 <panel class-list="edges" open-state="true" title="Add External Links" style="position:relative">
   <loader trigger="resourcePreviewLoader"></loader>
-  <div class="help-text">External Links show up under the 'External Links' section on the details page for this component.<br><br>Add links to home page, documentation, binaries, etc... If there is no external link for a resource it may be uploaded so that it may be shared with the community.  Preferably, the resource should be managed externally.</div>	  	
+  <div class="help-text">External Links show up under the 'External Links' section on the details page for this component.<br><br>Add links to home page, documentation, binaries, etc... If there is no external link for a resource it may be uploaded so that it may be shared with the community.  Preferably, the resource should be managed externally.</div>     
   Current max upload size &lt; 100Mb
         <!--[if lt IE 10]>
         <div class="input-group" style="margin:5px 0px; padding:0px 15px;">
@@ -863,7 +863,7 @@ body {
       <h2 id="media">Media:</h2>
       <panel class-list="edges" open-state="true" title="Add Media" style="position:relative">
         <div masked="mediaLoader" >
-         <div class="help-text">Media show up in the media carousel section on the details page for this component.<br><br>Add screen shots, company logos, short videos clips, etc... Typically, media is uploaded as that makes it the most accessible.  External resources can be pointed to by using an external link. External resources work best with a valid SSL certificate and are unrestricted (ie. no login).</div>	  			
+         <div class="help-text">Media show up in the media carousel section on the details page for this component.<br><br>Add screen shots, company logos, short videos clips, etc... Typically, media is uploaded as that makes it the most accessible.  External resources can be pointed to by using an external link. External resources work best with a valid SSL certificate and are unrestricted (ie. no login).</div>         
          Current max upload size &lt; 100Mb
           <!--[if lt IE 10]>
           <div class="input-group" style="margin:5px 0px; padding:0px 15px;">
@@ -999,7 +999,7 @@ body {
                   <td>{{item.file.mimeType}}</td>
                   <!-- <td>{{getSecurityDesc(item.file.securityMarkingType)}}</td> -->
                   <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width:300px;">
-                    <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="top" trigger="click">
+                    <button type="button" class="btn btn-sm btn-default" dynamic-popover container="body" title="" content="item.dom" placement="auto top" trigger="click">
                       <i ng-class="getMimeTypeClass(item.file.mimeType)" class="fa fa-lg"></i>
                     </button>
                   </td>
