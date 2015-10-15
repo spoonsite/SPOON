@@ -74,7 +74,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -92,7 +91,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.codemonkey.simplejavamail.Email;
 import org.codemonkey.simplejavamail.MailException;
-import org.codemonkey.simplejavamail.Recipient;
 
 /**
  * Handles all user business logic
@@ -451,7 +449,7 @@ public class UserServiceImpl
 				TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
 				Email email = testMessageGenerator.generateMessage();
 				MailManager.send(email);
-				log.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", Arrays.toString(email.getRecipients().toArray(new Recipient[0]))));
+				log.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", userProfile.getEmail()));
 			} else {
 				throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
 			}

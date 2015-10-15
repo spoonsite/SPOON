@@ -93,11 +93,13 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   });
   Business.userservice.getWatches().then(function(result) {
     if (result) {
+      
       $scope.watches        = result;
     } else {
       $scope.watches        = null;
     }
-  }, function(){
+  }, function(result){
+    
     $scope.watches        = null;
   });
   Business.lookupservice.getExpertise().then(function(result) {
@@ -221,7 +223,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
   var setupFilters = function() {
     Business.getFilters(false, false).then(function(result) {
-      // console.log('Filters', result);
       
       if (result) {
         result = _.sortBy(result, function(item){
@@ -288,7 +289,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
       adjustFilters();
       // var end = new Date().getTime();
       // var time = end - start;
-      // console.log('Total Execution time ****: ' + time);
       $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
       $scope.initializeData(key);
     }, function(result){
@@ -401,8 +401,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         
         foundFilter = _.find($scope.filters, {'attributeType': $scope.searchCode.type});
         foundCollection = _.find(foundFilter.codes, {'code': $scope.searchCode.key});
-        // console.log('found', foundFilter);
-        // console.log('found', foundCollection);
         
         // if the search group is based on one of those filters do this
         if ($scope.searchCode !== 'all' && foundFilter && foundCollection) {
@@ -625,7 +623,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   ***************************************************************/
   $scope.updateDetails = function(id, article){
     // $scope.$emit('$TRIGGERLOAD', 'fullDetailsLoader');
-    // console.log('article', article);
     if (article && article.listingType === 'Article') {
       $scope.isArticle = true;
       localCache.save('type', article.articleAttributeType);
@@ -654,7 +651,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         buttonOpen();
       }
       $scope.showDetails = false;
-      // console.log('id', id);
       
       Business.componentservice.getComponentDetails(id, true).then( function (result){
         if (result)

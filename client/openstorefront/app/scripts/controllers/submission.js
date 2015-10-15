@@ -90,8 +90,6 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   };
 
   $scope.addTo = function(item, attr, collection){
-    // console.log('collection', collection);
-    
     if (!collection) {
       collection = {};
       collection[attr.attributeType] = {
@@ -114,8 +112,11 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
     if (!_.isArray(collection)){
       collection = [];
     }
-    _.contains(collection, item)? '': collection.push(item);
-    // console.log('item', item);
+    if (attr.allowMultipleFlg){
+      _.contains(collection, item)? '': collection.push(item);
+    } else {
+      collection[0] = item;
+    }
   }
   $scope.removeFrom = function(item, collection){
     collection.splice(item, 1);
@@ -262,6 +263,8 @@ $scope.getSubmission = function(){
         $scope.component.resources = _.uniq($scope.component.resources, 'resourceId');
         $scope.hideMultiSelect = true;
         $scope.component.attributes = $scope.setupAttributes($scope.component.attributes);
+        console.log('$scope.component.attributes', $scope.component.attributes);
+        
         $scope.hideMultiSelect = false;
         if ($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N') {
           $scope.scrollTo('reviewAndSubmit', 'submit', '', null)
@@ -362,7 +365,7 @@ $scope.getSubmission = function(){
     //
     $scope.loadLookup('ContactType', 'contactTypes', 'submissionLoader'),
     $scope.loadLookup('MediaType', 'mediaTypes', 'submissionLoader'),
-    $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'),
+    // $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'),
     $scope.loadLookup('ResourceType', 'resourceTypes', 'submissionLoader')).then(function(){
       $scope.init();
     })
@@ -827,9 +830,7 @@ $scope.getSubmission = function(){
     return attributes;      
   }
 
-  $scope.setupAttributes = function(attributes){
-    // console.log('attributes', attributes);
-    
+  $scope.setupAttributes = function(attributes){    
     var result = {};
     // cycle through the given attributes on a component to merge the models for the form/view/directives etc...
     _.each(attributes, function(attribute){
@@ -857,6 +858,7 @@ $scope.getSubmission = function(){
       // make sure it exists in the array so that angular is happy...
       result[attribute.attributeType] = result[attribute.attributeType] || {items:[]};
     })
+    console.log('attributes after', result);
 
     return result;
   }
@@ -936,7 +938,7 @@ $scope.getSubmission = function(){
       $scope.mediaForm.mediaTypeCode = null;
       $scope.mediaForm.caption = null;
       $scope.mediaForm.link = null;
-      $scope.mediaForm.securityMarkingType = null;
+      // $scope.mediaForm.securityMarkingType = null;
       $scope.lastMediaFile = '';
     }
   }
@@ -946,7 +948,7 @@ $scope.getSubmission = function(){
     $('#mediaUploadInput').val(null);
     $scope.mediaForm.mediaTypeCode = null;
     $scope.mediaForm.caption = null;
-    $scope.mediaForm.securityMarkingType = null;
+    // $scope.mediaForm.securityMarkingType = null;
     $scope.lastMediaFile = '';
   }
 
@@ -956,7 +958,7 @@ $scope.getSubmission = function(){
     $scope.mediaForm.mediaTypeCode = null;
     $scope.mediaForm.link = null;
     $scope.mediaForm.caption = null;
-    $scope.mediaForm.securityMarkingType = null;
+    // $scope.mediaForm.securityMarkingType = null;
     $scope.lastMediaFile = '';
   }  
 
@@ -970,7 +972,7 @@ $scope.getSubmission = function(){
       $scope.resourceForm.resourceType = null;
       $scope.resourceForm.description = null;
       $scope.resourceForm.link = null;
-      $scope.resourceForm.securityMarkingType = null;
+      // $scope.resourceForm.securityMarkingType = null;
       $scope.lastResourceFile = '';
     }
   }
@@ -980,7 +982,7 @@ $scope.getSubmission = function(){
     $('#resourceUploadInput').val(null);
     $scope.resourceForm.resourceType = null;
     $scope.resourceForm.description = null;
-    $scope.resourceForm.securityMarkingType = null;
+    // $scope.resourceForm.securityMarkingType = null;
     $scope.lastResourceFile = '';
   }
 
@@ -990,7 +992,7 @@ $scope.getSubmission = function(){
     $scope.resourceForm.resourceType = null;
     $scope.resourceForm.link = null;
     $scope.resourceForm.description = null;
-    $scope.resourceForm.securityMarkingType = null;
+    // $scope.resourceForm.securityMarkingType = null;
     $scope.lastResourceFile = '';
   }
 
@@ -1064,7 +1066,8 @@ $scope.getSubmission = function(){
   $scope.srcList = []; //
   $scope.queue = [];
   $scope.resourceQueue = [];
-  $scope.addMedia = function (inputFile, queue, form, loader, caption, securityMarkingType, typeCode) { //
+  $scope.addMedia = function (inputFile, queue, form, loader, caption, typeCode) { //
+  // $scope.addMedia = function (inputFile, queue, form, loader, caption, securityMarkingType, typeCode) { //
     // if ($scope.mediaForm.link || 
     //   $scope.mediaUploader.queue.length === 0) {
 
@@ -1090,7 +1093,7 @@ $scope.getSubmission = function(){
       var file = {}
       file[typeCode] = $scope[form][typeCode];
       file[caption] = $scope[form][caption];
-      file[securityMarkingType] = $scope[form][securityMarkingType];
+      // file[securityMarkingType] = $scope[form][securityMarkingType];
       file.mimeType = inputFile._file? inputFile._file.type: inputFile.file.type;
       
       if (inputFile._file){
@@ -1258,11 +1261,11 @@ $scope.getSubmission = function(){
       } else if (file.file) {
         $scope.lastMediaFile = file.file.name;
       }
-      $scope.addMedia(file, $scope.queue, 'mediaForm', 'mediaLoader', 'caption', 'securityMarkingType', 'mediaTypeCode');
+      $scope.addMedia(file, $scope.queue, 'mediaForm', 'mediaLoader', 'caption', /*'securityMarkingType', */'mediaTypeCode');
       file.componentId = $scope.componentId;
       file.mediaTypeCode = $scope.mediaForm.mediaTypeCode;
       file.caption = $scope.mediaForm.caption || '';
-      file.securityMarkingType = $scope.mediaForm.securityMarkingType || '';
+      // file.securityMarkingType = $scope.mediaForm.securityMarkingType || '';
       file.componentMediaId = $scope.mediaForm.componentMediaId;
       $scope.resetMediaInput();
     },
@@ -1273,10 +1276,10 @@ $scope.getSubmission = function(){
       item.formData.push({
         "componentMedia.mediaTypeCode" : item.mediaTypeCode
       });
-      item.formData.push({
-        "componentMedia.securityMarkingType" : item.securityMarkingType
-      }); 
-      if (item.caption) {
+      // item.formData.push({
+      //   "componentMedia.securityMarkingType" : item.securityMarkingType
+      // }); 
+if (item.caption) {
         // console.log('we happened to hit this');
         
         item.formData.push({
@@ -1399,11 +1402,11 @@ $scope.getSubmission = function(){
       } else if (file.file) {
         $scope.lastResourceFile = file.file.name;
       }
-      $scope.addMedia(file, $scope.resourceQueue, 'resourceForm', 'submissionLoader', 'description', 'securityMarkingType', 'resourceType');
+      $scope.addMedia(file, $scope.resourceQueue, 'resourceForm', 'submissionLoader', 'description', /*'securityMarkingType', */'resourceType');
       file.componentId = $scope.componentId;
       file.resourceType = $scope.resourceForm.resourceType;
       file.description = $scope.resourceForm.description || '';
-      file.securityMarkingType = $scope.resourceForm.securityMarkingType || '';
+      // file.securityMarkingType = $scope.resourceForm.securityMarkingType || '';
       file.resourceId = $scope.resourceForm.resourceId;
       $scope.resetResourceInput();
     },
@@ -1420,17 +1423,17 @@ $scope.getSubmission = function(){
       item.formData.push({
         "componentResource.restricted" : item.restricted
       }); 
-      item.formData.push({
-        "componentResource.securityMarkingType" : item.securityMarkingType
-      });       
-      if (item.resourceId) {
-        item.formData.push({
-          "componentResource.resourceId" : item.resourceId
-        });
-      }
-    },
-    onSuccessItem: function (item, response, status, headers) {
-      $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
+      // item.formData.push({
+      //   "componentResource.securityMarkingType" : item.securityMarkingType
+      // });       
+if (item.resourceId) {
+  item.formData.push({
+    "componentResource.resourceId" : item.resourceId
+  });
+}
+},
+onSuccessItem: function (item, response, status, headers) {
+  $scope.$emit('$TRIGGERUNLOAD', 'submissionLoader', 100000);
 
       //check response for a fail ticket or a error model
       if (response.success) {
