@@ -371,19 +371,10 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
       //custom validation
       if ($scope.flag.schedule) {
         if (!($scope.reportForm.scheduleIntervalDays)) {
-          triggerAlert('interval is required on a scheduled report', 'reportId', 'body', 3000);
+          triggerAlert('Interval is required on a scheduled report', 'reportId', 'body', 3000);
           return;
         }
       }
-      
-      //check report options 
-      if ($scope.reportForm.reportType === 'USAGE') {
-        if ( (!($scope.reportForm.reportOption.startDts) && !($scope.reportForm.reportOption.endDts))
-          &&  !($scope.reportForm.reportOption.previousDays)) {
-          triggerAlert('A Start and End date or Previous Days must be set on this report.', 'reportId', 'body', 3000);
-        return;
-      }         
-    }    
 
 
     $scope.$emit('$TRIGGERLOAD', 'reportFormLoader');
@@ -424,7 +415,14 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
           }          
         }, function(failData) {
           $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
-          triggerAlert('Validation Error: <br> Make sure Email(s) are valid', 'alertId', 'body', 3000);
+          var errorMessage = 'Check Input';
+          if (failData && failData.errors.entry) {
+            errorMessage = '';
+            _.forEach(failData.errors.entry, function(item){
+              errorMessage += "field: " + item.key + " value: " + item.value + '<br>';
+            });
+          }
+          triggerAlert('Validation Error(s):  <br>' + errorMessage, 'alertId', 'body', 3000);
         });        
       } else {
         Business.reportservice.generateReport($scope.reportForm).then(function(results) {      
@@ -438,7 +436,14 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
           
         }, function(failData) {
           $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
-          triggerAlert('Validation Error: <br> Make sure Email(s) are valid', 'alertId', 'body', 3000);
+          var errorMessage = 'Check Input';
+          if (failData && failData.errors.entry) {
+            errorMessage = '';
+            _.forEach(failData.errors.entry, function(item){
+              errorMessage += "field: " + item.key + " value: " + item.value + '<br>';
+            });
+          }
+          triggerAlert('Validation Error(s): <br>' + errorMessage, 'alertId', 'body', 3000);
         });        
       }      
     };    
