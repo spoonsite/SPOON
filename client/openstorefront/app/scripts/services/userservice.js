@@ -178,7 +178,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
         'method': 'PUT',
         'url': 'api/v1/resource/userprofiles/'+encodeURIComponent(userId)+'/reactivate',
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        
+
         if (data && isNotRequestError(data)) {
           removeError();
           deferred.resolve(data);
@@ -187,7 +187,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
           deferred.reject(false);
         }
       }, function(data, status, headers, config){
-        
+
         deferred.reject('There was an error');
       });
     } else {
@@ -259,7 +259,6 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
         'method': 'POST',
         'url': 'api/v1/resource/userprofiles/'+ encodeURIComponent(userId) + '/test-email',
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        // console.log('data', data);
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
           deferred.resolve(data);
@@ -309,7 +308,6 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
         'url': 'api/v1/resource/userprofiles/'+ encodeURIComponent(username),
         'data': userProfile
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
-        // console.log('data', data);
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
           updateCache('currentUserProfile', data);
@@ -332,36 +330,59 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   var getWatches = function(userId, override) {
     var deferred = $q.defer();
     if (userId) {
-      // console.log('userId', userId);
-      
-      var watches = checkExpire('watches', minute * 0.5);
-      if (watches && !override) {
-        deferred.resolve(watches);
-      } else {
-        var url = 'api/v1/resource/userprofiles/'+encodeURIComponent(userId)+'/watches';
-        $http({
-          'method': 'GET',
-          'url': url
-        }).success(function(data, status, headers, config) { /*jshint unused:false*/
-          if (data && data !== 'false' && isNotRequestError(data)) {
-            removeError();
-            save('watches', data);
-            deferred.resolve(data);
+      getWatchesFunc(userId, override).then(function(result){
+        if (result){
+          deferred.resolve(result);
+        } else {
+          deferred.reject(false);
+        }
+      }, function(){
+        deferred.reject(false);
+      })
+    } else {
+      getCurrentUserProfile().then(function(userProfile){
+        getWatchesFunc(userProfile.username, override).then(function(result){
+          if (result){
+            deferred.resolve(result);
           } else {
-            removeError();
-            triggerError(data);
             deferred.reject(false);
           }
-        }).error(function(data, status, headers, config) { /*jshint unused:false*/
-          deferred.reject('There was an error');
-        });
-      }
-    } else {
-      deferred.reject('You didn\'t provide a username');
+        }, function(){
+          deferred.reject(false);
+        })
+      }, function(){
+        deferred.reject('The call failed hard');
+      })
     }
 
     return deferred.promise;
   };
+  var getWatchesFunc = function(userId, override){
+    var deferred = $q.defer();
+    var watches = checkExpire('watches', minute * 0.5);
+    if (watches && !override) {
+      deferred.resolve(watches);
+    } else {
+      var url = 'api/v1/resource/userprofiles/'+encodeURIComponent(userId)+'/watches';
+      $http({
+        'method': 'GET',
+        'url': url
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          save('watches', data);
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.resolve([]);
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('there was an error on the call');
+      });
+    }
+    return deferred.promise;
+  }
 
   var setWatches = function(watches) {
     var deferred = $q.defer();
@@ -388,9 +409,6 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   };
 
   var saveWatch = function(userId, watch, watchId) {
-    // console.log('userId', userId);
-    // console.log('watch', watch);
-    // console.log('watchId', watchId);
     
     var deferred = $q.defer();
     if (userId && watch) {
@@ -551,7 +569,6 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
   };  
 
   var getUserByUsername = function(username){
-    // console.log('user requested', username);
     
     var deferred = $q.defer();
     var userInfo = checkExpire(username, minute * 1440);
