@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.report;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportOption;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
@@ -40,7 +41,12 @@ public abstract class BaseReport
 
 	public BaseReport(Report report)
 	{
+		Objects.requireNonNull(report, "Report must set");
+
 		this.report = report;
+		if (this.report.getReportOption() == null) {
+			this.report.setReportOption(new ReportOption());
+		}
 		generator = BaseGenerator.getGenerator(report);
 	}
 

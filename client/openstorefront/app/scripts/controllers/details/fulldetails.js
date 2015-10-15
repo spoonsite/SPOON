@@ -70,6 +70,14 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   Business.userservice.getWatches().then(function(result) {
     if (result) {
       $scope.watches = result;
+      if ($scope.details && $scope.details.details && $scope.details.details.componentId){
+        var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
+        if (found) {
+          $scope.details.details.watched = true;
+        } else {
+          $scope.details.details.watched = false;
+        }
+      }
     } else {
       $scope.watches = null;
     }
@@ -90,12 +98,10 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
 
   Business.lookupservice.getEvaluationSections().then(function(result) {
     $scope.evalSectionDescriptionMap = result? result : [];
-    // console.log('section', result);
     
   })
 
   $scope.goTo = function(location){
-    console.log('location', location);
     
     $location.path(location.path);
     $location.search(location.search);
@@ -131,13 +137,20 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   }
 
   $scope.resetWatches = function(hard) {
-    if ($scope.user.info) {
+    if ($scope.user.info && $scope.user.info.username) {
       Business.userservice.getWatches($scope.user.info.username, hard).then(function(result){
         if (result) {
-          // console.log('Watches', result);
-
           $scope.watches = result;
+          if ($scope.details && $scope.details.details && $scope.details.details.componentId){
+            var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
+            if (found) {
+              $scope.details.details.watched = true;
+            } else {
+              $scope.details.details.watched = false;
+            }
+          }
         }
+      }, function(){
       });
     } else {
       Business.userservice.getCurrentUserProfile().then(function(result){
@@ -150,14 +163,23 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
             if (!$scope.user.info) {
               $scope.user.info = result;
             }
-            // console.log('Watches', result);
-
             $scope.watches = result;
+
+            if ($scope.details && $scope.details.details && $scope.details.details.componentId){
+              var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
+              if (found) {
+                $scope.details.details.watched = true;
+              } else {
+                $scope.details.details.watched = false;
+              }
+            }
           }
         }); 
        } else {
         $scope.watches = {};
       }
+    }, function(){
+      
     })
     }
   }
@@ -215,7 +237,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     modalInstance.result.then(function (result) {
     }, function (result) {
     });
-    console.log('file', file);
   }
 
   /***************************************************************
@@ -324,7 +345,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
     delete watch.watchId;
     delete watch.createDts;
     delete watch.$$hashKey;
-    // console.log('watch', watch);
     if ($scope.user.info) {
       Business.userservice.saveWatch($scope.user.info.username, watch, watchId).then(function(result){
         if (result) {
@@ -340,11 +360,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   ***************************************************************/
   $scope.saveTags = function(id, tags, tag){
     Business.componentservice.saveTags(id, tags).then(function(result){
-      // console.log('result', result);
       $scope.$emit('$TRIGGEREVENT', '$REFRESHTAGLIST');
       $scope.$emit('$TRIGGEREVENT', '$CHANGESEARCHRESULTTAGS', id, tags);
     }, function(result){
-      // console.log('Error Result', result);
 
     });
     if ($scope.applyFilters){
@@ -410,9 +428,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   //Thing needs an property called 'username' that contains the userID for whoever
   // you want to send the message to.
   $scope.messageUser = function(thing) {
-    // console.log('thing', thing);
     Business.userservice.getUserByUsername(thing.username).then(function(result){
-      // console.log('User Profile', result);
       if (result && typeof result !== 'array') {
         var temp = [];
         temp.push(result);
@@ -567,7 +583,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
   };
 
   $scope.deleteReview = function(reviewId) {
-    // console.log('reviewId', reviewId);
     Business.componentservice.deleteReview($scope.details.details.componentId, reviewId).then(function(result) {
       $scope.$emit('$TRIGGEREVENT', '$detailsUpdated', $scope.details.details.componentId);
       $scope.$emit('$TRIGGEREVENT', '$newReview');
@@ -606,8 +621,6 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
       var lastViewedDts = sqlToJsDate(component.lastViewedDts);
       var shown = false;
       _.each(component.componentMedia, function(media){
-        // console.log('media date', sqlToJsDate(media.updateDts));
-        // console.log('lastViewed', lastViewedDts);
         
         if (!shown && sqlToJsDate(media.updateDts) > lastViewedDts) {
           //media.updateDts is more recent. We should show it as updated
@@ -751,13 +764,9 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           $('#qaTab').tooltip(settings);
         }
       });
-      // console.log('summaryUpdated', $scope.summaryUpdated);
 
-      // console.log('detailsUpdated', $scope.detailsUpdated);
 
-      // console.log('reviewsUpdated', $scope.reviewsUpdated);
 
-      // console.log('commentsUpdated', $scope.commentsUpdated);
 
     }
   }
@@ -787,6 +796,8 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
         var found = _.find($scope.watches, {'componentId': $scope.details.details.componentId});
         if (found) {
           $scope.details.details.watched = true;
+        } else {
+          $scope.details.details.watched = false;
         }
         if ($scope.details.details.reviews) {
           if ($scope.details.details.reviews[0] !== undefined) {
@@ -874,7 +885,6 @@ app.controller('OpenFilePreviewCtrl',['$scope', '$uiModalInstance', 'file', 'fil
   };
 
   $scope.cancel = function () {
-    console.log('we hit this');
     
     $uiModalInstance.dismiss('cancel');
   };
