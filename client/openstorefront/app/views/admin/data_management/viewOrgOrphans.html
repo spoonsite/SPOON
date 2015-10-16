@@ -21,7 +21,8 @@
             <tbody>
               <tr class="imitateLink" ng-repeat="thing in data" title="View Reference" ng-click="goToReference(thing)">
                 <td>{{thing.referenceName}}</td>
-                <td>{{thing.referenceType}}</td>
+                <td><b>{{thing.referenceType}}</b>
+					<div style="font-size: 10px;" ng-if="thing.componentName">Component: {{thing.componentName}}</div> </td>	  
               </tr>
             </tbody>
           </table>
