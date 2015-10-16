@@ -238,6 +238,7 @@ var app = angular
     function ($rootScope, localCache, Business, $location, $route, $timeout, $q, Auth, $anchorScroll, $routeParams, $analytics, $idle, $keepalive, $uiModal) {/* jshint unused: false*/
 
       // initialization stuff.
+      $rootScope._ = window._;
       $rootScope.messageType = '';
       $rootScope.messageContacts = null;
       $rootScope.ieVersionCheck = false;
