@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * Handles Organizations
  *
  * @author dshurtleff
  */
@@ -81,6 +82,17 @@ public class OrganizationServiceImpl
 		}
 
 		if (organizationExisting != null) {
+
+			if (organizationExisting.getName().equals(organization.getName()) == false) {
+				//update assiociated data
+				updateOrganizationOnEntity(new Component(), organizationExisting.getName(), organization);
+				updateOrganizationOnEntity(new ComponentContact(), organizationExisting.getName(), organization);
+				updateOrganizationOnEntity(new UserProfile(), organizationExisting.getName(), organization);
+				updateOrganizationOnEntity(new ComponentReview(), organizationExisting.getName(), organization);
+				updateOrganizationOnEntity(new ComponentQuestion(), organizationExisting.getName(), organization);
+				updateOrganizationOnEntity(new ComponentQuestionResponse(), organizationExisting.getName(), organization);
+			}
+
 			organizationExisting.updateFields(organization);
 			persistenceService.persist(organizationExisting);
 		} else {
@@ -88,6 +100,7 @@ public class OrganizationServiceImpl
 			organization.populateBaseCreateFields();
 			persistenceService.persist(organization);
 		}
+
 	}
 
 	@Override
@@ -125,12 +138,12 @@ public class OrganizationServiceImpl
 			if (organizationMerge != null) {
 
 				//Note: this is internal transformaion so no need to update indexes or alert users
-				updateOrganizationOnEntity(new Component(), toMergeOrganizationId, organizationTarget);
-				updateOrganizationOnEntity(new ComponentContact(), toMergeOrganizationId, organizationTarget);
-				updateOrganizationOnEntity(new UserProfile(), toMergeOrganizationId, organizationTarget);
-				updateOrganizationOnEntity(new ComponentReview(), toMergeOrganizationId, organizationTarget);
-				updateOrganizationOnEntity(new ComponentQuestion(), toMergeOrganizationId, organizationTarget);
-				updateOrganizationOnEntity(new ComponentQuestionResponse(), toMergeOrganizationId, organizationTarget);
+				updateOrganizationOnEntity(new Component(), organizationMerge.getName(), organizationTarget);
+				updateOrganizationOnEntity(new ComponentContact(), organizationMerge.getName(), organizationTarget);
+				updateOrganizationOnEntity(new UserProfile(), organizationMerge.getName(), organizationTarget);
+				updateOrganizationOnEntity(new ComponentReview(), organizationMerge.getName(), organizationTarget);
+				updateOrganizationOnEntity(new ComponentQuestion(), organizationMerge.getName(), organizationTarget);
+				updateOrganizationOnEntity(new ComponentQuestionResponse(), organizationMerge.getName(), organizationTarget);
 
 				persistenceService.delete(organizationMerge);
 
@@ -142,11 +155,11 @@ public class OrganizationServiceImpl
 		}
 	}
 
-	private <T extends BaseEntity> void updateOrganizationOnEntity(T entityExample, String toMergeOrg, Organization organizationTarget)
+	private <T extends BaseEntity> void updateOrganizationOnEntity(T entityExample, String existingOrgName, Organization organizationTarget)
 	{
 		if (entityExample instanceof OrganizationModel) {
 			log.log(Level.FINE, MessageFormat.format("Updating organizations on {0}", entityExample.getClass().getSimpleName()));
-			((OrganizationModel) entityExample).setOrganization(toMergeOrg);
+			((OrganizationModel) entityExample).setOrganization(existingOrgName);
 
 			List<T> entities = entityExample.findByExampleProxy();
 			entities.forEach(entity -> {
