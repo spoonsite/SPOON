@@ -1,21 +1,8 @@
-<h3 style="margin-left:15px; margin-right:15px;">Select options <span class="pull-right"> <a ng-href="{{generateDownloadLink()}}" class="btn btn-default">Export&nbsp;<i class="fa fa-sign-out"></i></a></span></h3>
-<div class="form-group col-xs-6">
-  <label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i>&nbsp;Show date range</label><br>
-  <div class="form-group col-xs-6" style="padding-left:0px; padding-right:0px;">
-    <input type="text" class="form-control" ng-model="query.filterObj.start" data-max-date="{{today}}" placeholder="From" bs-datepicker>
-  </div>
-  <div class="form-group col-xs-6" style="padding-left:0px; padding-right:0px;">
-    <input type="text" class="form-control" ng-model="query.filterObj.end" data-min-date="{{query.filterObj.start}}" data-max-date="{{today}}" placeholder="Until" bs-datepicker>
-  </div>
-</div>
-<div class="form-group col-xs-6">
-  <label class="control-label">Show # of results <small>(up to 10000 &mdash; removes paging)</small></label><br>
-  <input type="number" class="form-control" ng-model="maxResults" ng-change="checkMax();" placeholder="Max" max="10000">
-</div>
-
-<div style="clear:both;">
-  <button type="button" style="margin-left:15px; display:inline-block;" class="btn btn-default" ng-click="sendRequest()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
-  <button type="button" style="display:inline-block;" class="btn btn-default" ng-click="clearSort();"><span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
+<div>
+  <br>
+  <button style="margin-left:15px; display:inline-block;" class="btn btn-default" ng-click="sendRequest()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+  <a ng-href="{{generateDownloadLink()}}" target="_self" class="btn btn-default">Export&nbsp;<i class="fa fa-sign-out"></i></a>
+  <button style="display:inline-block;" class="btn btn-default" ng-click="clearSort();"><span class="fa-stack fa-lg" style="margin: -6px 0px; font-size:14px">
     <i class="fa fa-sort fa-stack-1x"></i>
     <i class="fa fa-ban fa-stack-2x text-danger"></i>
   </span>&nbsp;Clear Sort</button>

@@ -93,6 +93,15 @@ public class UsageReport
 			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date(instant.toEpochMilli())));
 			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date(instant.toEpochMilli())));
 		}
+
+		if (report.getReportOption().getStartDts() == null) {
+			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(TimeUtil.currentDate()));
+		}
+
+		if (report.getReportOption().getEndDts() == null) {
+			report.getReportOption().setEndDts(TimeUtil.endOfDay(TimeUtil.currentDate()));
+		}
+
 	}
 
 	@Override

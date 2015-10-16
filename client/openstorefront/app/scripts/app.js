@@ -252,6 +252,10 @@ var app = angular
         if ($location.$$path === '/single'){
           label = 'Component ' + $location.search().id;
         }
+        $timeout(function(){
+          $('.tooltip').remove(); 
+          $('.popover').remove(); 
+        })
         $rootScope.$broadcast('$CLOSE_MODALS');
         $rootScope.eventHistory.push({path: $location.$$path, search: $location.search(), label: label});
       });
