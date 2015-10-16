@@ -26,12 +26,13 @@ app.controller('AdminEditBrandingCtrl', ['$scope', '$uiModalInstance', '$uiModal
 
     $scope.fullBrandingList= [];
     $scope.fullTopicList = [];
+    $scope.fullArchList = [];
     $scope.allSelected = false;
     $scope.selectedTopicTypes = [];
     $scope.editBrandingId=brandingtemplate.brandingId;
     $scope.saveNeeded = false;
     $scope.selectAllTypes = {};
-    
+    $scope.topicSearchItems = [];
     $scope.turnOnSaveNeeded = function(){
               $scope.saveNeeded =true;
     };
@@ -41,62 +42,28 @@ app.controller('AdminEditBrandingCtrl', ['$scope', '$uiModalInstance', '$uiModal
         Business.articleservice.getTypes(filterObj, true).then(function (attributeTypes) {
             $scope.fullTopicList = [];
             $scope.fullTopicList = attributeTypes.data;
-            console.log("Load Full Topic List:",$scope.fullTopicList);
             $scope.loadBrandingViewTopicList();
+            $scope.loadArchList();
         }, function () {
             $scope.fullTopicList = [];
         });
     };
 
     $scope.loadBrandingViewTopicList = function () {
-        console.log("Branding View ID:",$scope.editBrandingId);
         Business.brandingservice.getBrandingView($scope.editBrandingId, true).then(function (brandingView) {
-            console.log("brandingView",brandingView);
-            $scope.fullBrandingList = brandingView.topicSearchViews;
-            console.log("Load Selected Topic List:",$scope.fullBrandingList);
-            
-            _.forEach($scope.fullBrandingList, function (topic) {
-                var found = _.find(topic, {'attributeType': topic.attributeType});
-                if (found) {
-                    found.selected = true;
-                }
-                $scope.selectType(topic);
-            });
+            $scope.topicSearchItems = _.pluck(brandingView.topicSearchViews, 'attributeType');
         }, function () {
-            $scope.fullBrandingList = [];
-            $scope.selectedTopicTypes = [];
+            $scope.topicSearchItems = [];
         });
     };
 
-
-    $scope.selectType = function (topic) {
-
-        if (topic.selected) {
-            topic.selected = !topic.selected;
-            if (topic.selected === false) {
-                $scope.selectedTopicTypes = _.reject($scope.selectedTopicTypes, function (type) {
-                    return type.attributeType === topic.attributeType;
-                });
-                $scope.selectAllTypes.flag = false;
-            } else {
-                $scope.selectedTopicTypes.push(topic);
-            }
-        } else {
-            topic.selected = true;
-            $scope.selectedTopicTypes.push(topic);
-        }
-
-    };
-
-    $scope.selectAllTypes = function () {
-        $scope.selectedTopicTypes = [];
-
-        _.forEach($scope.fullTopicList, function (topic) {
-            topic.selected = !$scope.selectAllTypes.flag; //click happens before state change
-            if (topic.selected) {
-                $scope.selectedTopicTypes.push(topic);
-            }
-        });
+    $scope.loadArchList = function(){
+       _.forEach($scope.fullTopicList, function(topic){
+           if(topic.architectureFlg){
+               $scope.fullArchList.push(topic.attributeType);
+               console.log("ArchList:",$scope.fullArchList);
+           }
+       })  
     };
 
     $scope.loadAllData = function () {
@@ -113,7 +80,6 @@ app.controller('AdminEditBrandingCtrl', ['$scope', '$uiModalInstance', '$uiModal
     };
 
     $scope.cancel = function () {
-      // console.log('we closed the edit code');
 
       var result = {};
       result.brandingtemplate = $scope.brandingtemplate;
@@ -121,30 +87,25 @@ app.controller('AdminEditBrandingCtrl', ['$scope', '$uiModalInstance', '$uiModal
       $uiModalInstance.dismiss(result);
     };
 
-    $scope.save = function(validity){
-        
-        if(validity){
-            console.log("Valid:",validity);
-            console.log("Template",$scope.brandingtemplate);
-            console.log("Topics",$scope.selectedTopicTypes);
-            
-            var convertTopics = [];
-            
-            _.forEach($scope.selectedTopicTypes, function (topic) {
-                var tmp = {'attributeType':topic};
-                convertTopics.push(tmp);
-            });
-            
-            console.log("Converted Topics",convertTopics);
-            
-            var sndObj = {'branding':$scope.brandingtemplate,'topicSearchItems':convertTopics};
-            //Send this to server
-            
-            
-         }
-    };
+    $scope.save = function (validity) {
 
-    
+        if (validity) {
+            var convertTopics = [];
+            _.each($scope.topicSearchItems, function(attr){
+                convertTopics.push({'attributeType': attr});
+            });
+            var sndObj = {'branding': $scope.brandingtemplate, 'topicSearchItems': convertTopics };
+            console.log("Saving Object", sndObj);
+            //Send this to server
+            Business.brandingservice.saveBrandingView($scope.editBrandingId, sndObj).then(function (result) {
+                $uiModalInstance.close(result);
+            }, function () {
+            sndObj = {};
+            console.log("Error: Save template failed.");
+        });
+               
+        }
+    };
 
     $timeout(function() {
       $('[data-toggle=\'tooltip\']').tooltip();

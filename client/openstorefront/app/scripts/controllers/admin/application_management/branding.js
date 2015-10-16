@@ -18,25 +18,10 @@
 /*global angular,$,app,utils*/
 app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiModal', '$timeout',
     function ($scope, Business, $rootScope, $uiModal, $timeout) {
-        $scope.predicate = 'description';
+        $scope.predicate = 'activeStatus';
         $scope.reverse = false;
-        $scope.pagination = {};
-        $scope.pagination.control = {};
-        $scope.data = {};
-        $scope.data.allTypes = {};
-  
         
-        $scope.getFilters = function (override, all) {
-            $scope.$emit('$TRIGGERLOAD', 'topicsLoader');
-            if ($scope.pagination.control && $scope.pagination.control.refresh) {
-                $scope.pagination.control.refresh().then(function () {
-                    $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
-                });
-            } else {
-                $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
-            }
-        };
-       
+
         $scope.setPredicate = function (predicate, override) {
             if ($scope.predicate === predicate) {
                 $scope.reverse = !$scope.reverse;
@@ -44,15 +29,8 @@ app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiMod
                 $scope.predicate = predicate;
                 $scope.reverse = !!override;
             }
-            $scope.pagination.control.changeSortOrder(predicate);
+          
         };
-        
-        if ($scope.pagination.control) {
-            $scope.pagination.control.onRefresh = function () {
-                $scope.selectedTypes = [];
-                $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');
-            };
-        }
 
         $scope.loadFullBrandingList = function() {
              Business.brandingservice.getBrandingViews(true).then(function (brandingViews){
@@ -68,7 +46,7 @@ app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiMod
         $scope.loadAllData = function(){
             
             $timeout(function () {
-               $scope.getFilters();
+            
                $scope.loadFullBrandingList();
             }, 20);
             
@@ -118,8 +96,10 @@ app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiMod
 
                 modalInstance.result.then(function (result) {
                     console.log("Result from modal:",result);
+                    $scope.loadFullBrandingList();
                 }, function () {
                     console.log("Modal Cancelled");
+                    $scope.loadFullBrandingList();
                 });
         };
         

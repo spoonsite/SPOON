@@ -249,6 +249,37 @@ app.factory('brandingservice', [ 'localCache', '$http', '$q',function ( localCac
   }    
     return deferred.promise;
 };
+
+branding.saveBrandingView = function(brandingId,changedBrandingView) {
+    var deferred = $q.defer();
+    if (brandingId && changedBrandingView) { 
+      var url = base+brandingId; 
+      
+    $http({
+      'method': 'PUT',
+      'url': url,
+      'data': changedBrandingView
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
+      if (data && data !== 'false' && isNotRequestError(data)) {
+        console.log("success data:",data);
+        removeError();
+        deferred.resolve(data);
+      } else {
+          
+        console.log("success no data:",data);
+        removeError();
+        triggerError(data);
+        deferred.reject(false);
+      }
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      console.log("error data:",data);
+      console.log("error status:",status);
+      showServerError(data, 'body');
+      deferred.reject('There was an error');
+    });
+  }    
+    return deferred.promise;
+};
   
  
 //  branding.getAllTopicSearchItems = function(override) {

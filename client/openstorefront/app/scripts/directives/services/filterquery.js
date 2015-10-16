@@ -85,13 +85,13 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
         scope.eventCodes = result? result: [];
       }, function(){
         scope.eventCodes = [];
-      })
+      });
 
       Business.lookupservice.getLookupCodes('UserTypeCode').then(function(result){
         scope.userCodes = result? result: [];
       }, function(){
         scope.userCodes = [];
-      })
+      });
 
       scope.sendRequest = function(){
         var deferred = $q.defer();
