@@ -112,6 +112,12 @@ public class Component
 	@APIDescription("When the component was approved for the site")
 	private Date approvedDts;
 
+	@ValidValueType(value = {}, lookupClass = ApprovalMode.class)
+	@ConsumeField
+	@APIDescription("Sets the approval method of changes")
+	@FK(ApprovalMode.class)
+	private String changeApprovalMode;
+
 	@NotNull
 	@APIDescription("Updated when any of the component's related data has changed.  Used for watches.")
 	private Date lastActivityDts;
@@ -199,6 +205,7 @@ public class Component
 		this.setExternalId(component.getExternalId());
 		this.setFileHistoryId(component.getFileHistoryId());
 		this.setLastModificationType(component.getLastModificationType());
+		this.setChangeApprovalMode(component.getChangeApprovalMode());
 
 	}
 
@@ -382,6 +389,16 @@ public class Component
 	public void setExternalId(String externalId)
 	{
 		this.externalId = externalId;
+	}
+
+	public String getChangeApprovalMode()
+	{
+		return changeApprovalMode;
+	}
+
+	public void setChangeApprovalMode(String changeApprovalMode)
+	{
+		this.changeApprovalMode = changeApprovalMode;
 	}
 
 }

@@ -61,6 +61,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
+import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
@@ -74,6 +75,7 @@ import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.core.model.IntegrationAll;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
@@ -107,6 +109,9 @@ import edu.usu.sdl.openstorefront.core.view.SearchResultAttribute;
 import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
+import edu.usu.sdl.openstorefront.service.component.CoreComponentServiceImpl;
+import edu.usu.sdl.openstorefront.service.component.IntegrationComponentServiceImpl;
+import edu.usu.sdl.openstorefront.service.component.SubComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.io.integration.BaseIntegrationHandler;
 import static edu.usu.sdl.openstorefront.service.io.integration.JiraIntegrationHandler.STATUS_FIELD;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
@@ -156,13 +161,25 @@ public class ComponentServiceImpl
 
 	private static final Logger log = Logger.getLogger(ComponentServiceImpl.class.getName());
 
+	private CoreComponentServiceImpl core;
+	private SubComponentServiceImpl sub;
+	private IntegrationComponentServiceImpl integration;
+
 	public ComponentServiceImpl()
 	{
+		this.core = new CoreComponentServiceImpl(this);
+		this.sub = new SubComponentServiceImpl(this);
+		this.integration = new IntegrationComponentServiceImpl(this);
+
 	}
 
 	public ComponentServiceImpl(PersistenceService persistenceService)
 	{
 		super(persistenceService);
+
+		this.core = new CoreComponentServiceImpl(this);
+		this.sub = new SubComponentServiceImpl(this);
+		this.integration = new IntegrationComponentServiceImpl(this);
 	}
 
 	@Override
@@ -2426,6 +2443,51 @@ public class ComponentServiceImpl
 			}
 		}
 		return approved;
+	}
+
+	@Override
+	public Component copy(String orignalComponentId)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public ComponentVersionHistory snapshotVersion(String componentId)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public Component restoreSnapshot(String versionHistoryId, ComponentRestoreOptions options)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void deleteSnapshot(String versionHistoryId)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public Component merge(String toMergeComponentId, String targetComponentId)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	public CoreComponentServiceImpl getCore()
+	{
+		return core;
+	}
+
+	public SubComponentServiceImpl getSub()
+	{
+		return sub;
+	}
+
+	public IntegrationComponentServiceImpl getIntegration()
+	{
+		return integration;
 	}
 
 }
