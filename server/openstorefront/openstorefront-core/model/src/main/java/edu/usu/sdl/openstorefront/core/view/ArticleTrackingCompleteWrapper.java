@@ -16,8 +16,11 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.Article;
 import edu.usu.sdl.openstorefront.core.entity.ArticleTracking;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.util.ExportImport;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -68,16 +71,29 @@ public class ArticleTrackingCompleteWrapper
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		if (getData() != null) {
+			String title;
+			if (getArticle() != null) {
+				title = getArticle().getTitle();
+			} else {
+				AttributeCodePk attributeCodePk = new AttributeCodePk();
+				attributeCodePk.setAttributeCode(getData().getAttributeCode());
+				attributeCodePk.setAttributeType(getData().getAttributeType());
 
-		writer.writeNext(new String[]{getArticle().getTitle(),
-									  getData().getAttributeType(),
-									  getData().getAttributeCode(),
-									  df.format(getData().getCreateDts()),
-									  TranslateUtil.translate(TrackEventCode.class, getData().getTrackEventTypeCode()),
-									  getData().getArticleTrackingId(),
-									  getData().getCreateUser(),
-									  getData().getClientIp()
-		});
+				AttributeCode attributeCode = ServiceProxyFactory.getServiceProxy().getAttributeService().findCodeForType(attributeCodePk);
+				title = attributeCode.getLabel();
+			}
+
+			writer.writeNext(new String[]{title,
+										  getData().getAttributeType(),
+										  getData().getAttributeCode(),
+										  df.format(getData().getCreateDts()),
+										  TranslateUtil.translate(TrackEventCode.class, getData().getTrackEventTypeCode()),
+										  getData().getArticleTrackingId(),
+										  getData().getCreateUser(),
+										  getData().getClientIp()
+			});
+		}
 		return stringWriter.toString();
 	}
 
