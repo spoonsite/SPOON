@@ -22,8 +22,8 @@
 
 /*global isEmpty*/
 
-app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$anchorScroll', 'FileUploader', '$templateCache', '$uiModal', '$sce',
-  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $anchorScroll, FileUploader, $templateCache, $uiModal, $sce) { /*jshint unused: false*/
+app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$anchorScroll', 'FileUploader', '$templateCache', '$uiModal', '$sce', '$window',
+  function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $anchorScroll, FileUploader, $templateCache, $uiModal, $sce, $window) { /*jshint unused: false*/
 
 
   //
@@ -124,26 +124,29 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   }
 
   $scope.setEditable = function($event){
-    var response = window.confirm("Are you sure you want to resume editing your submission? This action remove your submission from the admin's pending queue and you will have to re-submit it for approval.");
-    if (response && $scope.vitalsCheck()){
-      if ($scope.component.component) {
-        $scope.component.component.approvalState = 'N';
-        $scope.submit(true).then(function(){
-          $scope.scrollTo('vitals', 'vitals', '', $event, 'componentName');
-        }, function(){
-          if($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
+      if (!$scope.finishedForm)
+      {
+        var response = window.confirm("Are you sure you want to resume editing your submission? This action remove your submission from the admin's pending queue and you will have to re-submit it for approval.");
+        if (response && $scope.vitalsCheck()) {
+          if ($scope.component.component) {
+            $scope.component.component.approvalState = 'N';
+            $scope.submit(true).then(function () {
+              $scope.scrollTo('vitals', 'vitals', '', $event, 'componentName');
+            }, function () {
+              if ($event) {
+                $event.preventDefault();
+                $event.stopPropagation();
+              }
+            })
           }
-        })
+        } else {
+          triggerAlert('You are missing required information. Please review your submission before re-submitting your entry.', 'setEditable', 'body', 6000);
+          if ($scope.component.component) {
+            $scope.component.component.approvalState = 'N';
+            $scope.scrollTo('vitals', 'vitals', '', $event, 'componentName');
+          }
+        }
       }
-    } else {
-      triggerAlert('You are missing required information. Please review your submission before re-submitting your entry.', 'setEditable', 'body', 6000);
-      if ($scope.component.component) {
-        $scope.component.component.approvalState = 'N';
-        $scope.scrollTo('vitals', 'vitals', '', $event, 'componentName');
-      }
-    } 
   }
 
   $scope.setupTagList = $scope.setupTagList || function() {
@@ -268,7 +271,9 @@ $scope.getSubmission = function(){
         
         $scope.hideMultiSelect = false;
         if ($scope.component.component.approvalState && $scope.component.component.approvalState !== 'N') {
-          $scope.scrollTo('reviewAndSubmit', 'submit', '', null)
+          $scope.scrollTo('top', 'top', '', null);
+          $scope.component.component.approvalState = 'N'; 
+          //$scope.scrollTo('reviewAndSubmit', 'submit', '', null);
         }
       }
       deferred.resolve();
@@ -439,6 +444,7 @@ $scope.getSubmission = function(){
     if ($scope.vitalsCheck()){
       $scope.submit(true).then(function(){
         $scope.scrollTo('details', 'vitals', '', $event, 'tagLabel');
+        $scope.current = 'extra';
       }, function(){
         if($event) {
           $event.preventDefault();
@@ -482,6 +488,9 @@ $scope.getSubmission = function(){
       $scope.submitForAproval(false).then(function(){
         $scope.scrollTo('reviewAndSubmit', 'submit', '', $event)
         $scope.detailsDone = true;
+        $scope.current='thanks';
+        $scope.finishedForm = true;
+        $scope.leaveOverride = true;
       }, function(){
         if($event) {
           $event.preventDefault();
@@ -494,9 +503,13 @@ $scope.getSubmission = function(){
       $scope.mediaUploader.uploadAll();
       _.each($scope.resourceUploader.queue, function(){
         $scope.$emit('$TRIGGERLOAD', 'submissionLoader', 'Uploading Files')
-      })
-    } 
-  }
+      });
+    }; 
+  };
+  
+  $scope.newSubmission = function(){
+    $window.location.reload();
+  };
 
   $scope.createInitialSubmit = function(){
     $scope.component.component = $scope.component.component || {};
@@ -712,7 +725,7 @@ $scope.getSubmission = function(){
         Business.submissionservice.submit($scope.component.component.componentId).then(function(){
           $scope.backup.component.approvalState = 'P';              
           $scope.component.component.approvalState = 'P';
-          triggerAlert('Your component has been successfully submitted!', 'submitAlert', 'body', 8000);
+          //triggerAlert('Your component has been successfully submitted!', 'submitAlert', 'body', 8000);
           deferred.resolve();
         }, function(result){
           deferred.reject();
