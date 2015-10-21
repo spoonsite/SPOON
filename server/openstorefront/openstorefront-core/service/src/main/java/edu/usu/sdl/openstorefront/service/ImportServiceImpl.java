@@ -227,4 +227,10 @@ public class ImportServiceImpl
 		persistenceService.deleteByQuery(FileHistory.class, deleteQuery, queryParams);
 	}
 
+	@Override
+	public void rollback(String fileHistoryId)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
 }

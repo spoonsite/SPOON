@@ -30,7 +30,7 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   $scope.details.details   = null;
   $scope.modal.isLanding   = false;
   $scope.showDetails       = false;
-  $scope.showBreadCrumbs    = true;
+  $scope.showBreadCrumbs    = false;
 
   $scope.eventHistory = $rootScope.eventHistory;
   $scope.goToBreadcrumb = $rootScope.goToBreadcrumb;

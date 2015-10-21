@@ -42,6 +42,8 @@ public class CategoryComponentReport
 		extends BaseReport
 {
 
+	private static final String NO_CATEGORY = "None";
+
 	public CategoryComponentReport(Report report)
 	{
 		super(report);
@@ -57,15 +59,14 @@ public class CategoryComponentReport
 	{
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
-		String category = AttributeType.DI2E_SVCV4;
-		if (report.getReportOption() != null
-				&& StringUtils.isNotBlank(report.getReportOption().getCategory())) {
+		String category = NO_CATEGORY;
+		if (StringUtils.isNotBlank(report.getReportOption().getCategory())) {
 			category = report.getReportOption().getCategory();
 		}
 
 		//write header
 		cvsGenerator.addLine("Category Component Report", sdf.format(TimeUtil.currentDate()));
-		cvsGenerator.addLine("Category:" + category);
+		cvsGenerator.addLine("Category: " + category);
 		cvsGenerator.addLine("");
 		cvsGenerator.addLine(
 				"Category Label",
@@ -76,72 +77,95 @@ public class CategoryComponentReport
 				"Last Update Date"
 		);
 
-		//Only grab approved/active components
-		AttributeType attributeType = service.getAttributeService().findType(category);
-		List<AttributeCode> codes = service.getAttributeService().findCodesForType(category);
+		if (NO_CATEGORY.equals(category)) {
 
-		if (Convert.toBoolean(attributeType.getArchitectureFlg())) {
-			codes.sort(new AttributeCodeArchComparator<>());
+			Component componentExample = new Component();
+			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+			componentExample.setApprovalState(ApprovalStatus.APPROVED);
+
+			List<Component> components = componentExample.findByExample();
+			components.forEach(component -> {
+				cvsGenerator.addLine(
+						"",
+						"",
+						component.getName(),
+						component.getDescription(),
+						//component.getSecurityMarkingType(),
+						sdf.format(component.getLastActivityDts())
+				);
+			});
+
 		} else {
-			codes.sort(new AttributeCodeComparator<>());
-		}
 
-		ComponentAttribute componentAttributeExample = new ComponentAttribute();
-		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-		componentAttributePk.setAttributeType(category);
-		componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-		componentAttributeExample.setComponentAttributePk(componentAttributePk);
+			//Only grab approved/active components
+			AttributeType attributeType = service.getAttributeService().findType(category);
+			List<AttributeCode> codes = service.getAttributeService().findCodesForType(category);
 
-		List<ComponentAttribute> attributes = componentAttributeExample.findByExample();
-
-		Map<String, List<String>> codeComponentMap = new HashMap<>();
-		attributes.forEach(attribute -> {
-			if (codeComponentMap.containsKey(attribute.getComponentAttributePk().getAttributeCode())) {
-				codeComponentMap.get(attribute.getComponentAttributePk().getAttributeCode()).add(attribute.getComponentId());
+			if (Convert.toBoolean(attributeType.getArchitectureFlg())) {
+				codes.sort(new AttributeCodeArchComparator<>());
 			} else {
-				List<String> componentIds = new ArrayList<>();
-				componentIds.add(attribute.getComponentId());
-				codeComponentMap.put(attribute.getComponentAttributePk().getAttributeCode(), componentIds);
+				codes.sort(new AttributeCodeComparator<>());
 			}
-		});
 
-		Component componentExample = new Component();
-		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		componentExample.setApprovalState(ApprovalStatus.APPROVED);
+			ComponentAttribute componentAttributeExample = new ComponentAttribute();
+			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+			componentAttributePk.setAttributeType(category);
+			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+			componentAttributeExample.setComponentAttributePk(componentAttributePk);
 
-		List<Component> components = componentExample.findByExample();
+			List<ComponentAttribute> attributes = componentAttributeExample.findByExample();
 
-		if (!report.dataIdSet().isEmpty()) {
-			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
-		}
+			Map<String, List<String>> codeComponentMap = new HashMap<>();
+			attributes.forEach(attribute -> {
+				if (codeComponentMap.containsKey(attribute.getComponentAttributePk().getAttributeCode())) {
+					codeComponentMap.get(attribute.getComponentAttributePk().getAttributeCode()).add(attribute.getComponentId());
+				} else {
+					List<String> componentIds = new ArrayList<>();
+					componentIds.add(attribute.getComponentId());
+					codeComponentMap.put(attribute.getComponentAttributePk().getAttributeCode(), componentIds);
+				}
+			});
 
-		Map<String, Component> componentMap = new HashMap<>();
-		components.forEach(component -> {
-			componentMap.put(component.getComponentId(), component);
-		});
+			Component componentExample = new Component();
+			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+			componentExample.setApprovalState(ApprovalStatus.APPROVED);
 
-		for (AttributeCode code : codes) {
-			cvsGenerator.addLine(
-					code.getLabel(),
-					code.getDescription()
-			);
+			List<Component> components = componentExample.findByExample();
 
-			List<String> componentIds = codeComponentMap.get(code.getAttributeCodePk().getAttributeCode());
-			if (componentIds != null) {
-				for (String componentId : codeComponentMap.get(code.getAttributeCodePk().getAttributeCode())) {
-					Component component = componentMap.get(componentId);
-					if (component != null) {
-						cvsGenerator.addLine(
-								"",
-								"",
-								component.getName(),
-								component.getDescription(),
-								//component.getSecurityMarkingType(),
-								sdf.format(component.getLastActivityDts())
-						);
+			if (!report.dataIdSet().isEmpty()) {
+				components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
+			}
+
+			Map<String, Component> componentMap = new HashMap<>();
+			components.forEach(component -> {
+				componentMap.put(component.getComponentId(), component);
+			});
+
+			for (AttributeCode code : codes) {
+				cvsGenerator.addLine(
+						code.getLabel(),
+						code.getDescription()
+				);
+
+				List<String> componentIds = codeComponentMap.get(code.getAttributeCodePk().getAttributeCode());
+				if (componentIds != null) {
+					for (String componentId : codeComponentMap.get(code.getAttributeCodePk().getAttributeCode())) {
+						Component component = componentMap.get(componentId);
+						if (component != null) {
+							cvsGenerator.addLine(
+									"",
+									"",
+									component.getName(),
+									component.getDescription(),
+									//component.getSecurityMarkingType(),
+									sdf.format(component.getLastActivityDts())
+							);
+						}
+
 					}
 				}
 			}
+
 		}
 	}
 

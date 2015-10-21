@@ -85,9 +85,9 @@ limitations under the License.
       <div class="form-group" show-errors >
         <label class="control-label col-sm-2">Category (Attribute)</label>
         <div class="col-sm-10">
-          <select smartselect type="text" class="form-control" id="category" name="category" ng-model="reportForm.reportOption.category" placeholder="Select a category" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="thing.attributeType as thing.description for thing in categories.data"> 
-            <option style="display:none" value="">Select a Type</option>
-          </select>
+          <select   class="form-control" id="category" name="category" ng-model="reportForm.reportOption.category" placeholder="None" data-min-length="0" data-html="1" data-animation="am-flip-x" ng-options="thing.attributeType as thing.description for thing in categories.data">      
+			<option value=""  selected>None</option>
+	</select>
         </div>  
       </div>      
     </panel>  

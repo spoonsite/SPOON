@@ -34,9 +34,11 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
@@ -549,5 +551,50 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void checkComponentCancelStatus(String componentId, String newApprovalStatus);
+
+	/**
+	 * Copy a component and create a newId; this will copy all related data as
+	 * well even media and resources. Note the Copy will be in Pending status
+	 * and the name will have Copy
+	 *
+	 * @param orignalComponentId
+	 * @return Top level component of the copy
+	 */
+	public Component copy(String orignalComponentId);
+
+	/**
+	 * Creates a version of the component and all related data
+	 *
+	 * @param componentId
+	 * @return
+	 */
+	public ComponentVersionHistory snapshotVersion(String componentId);
+
+	/**
+	 * Restores a snapshot and replaces the live version (according to options)
+	 *
+	 * @param versionHistoryId
+	 * @param options
+	 * @return
+	 */
+	public Component restoreSnapshot(String versionHistoryId, ComponentRestoreOptions options);
+
+	/**
+	 * Removes a snapshot
+	 *
+	 * @param versionHistoryId
+	 */
+	public void deleteSnapshot(String versionHistoryId);
+
+	/**
+	 * Merges components together. Affects contacts, media, resources,
+	 * attributes, review, Q and A...etc This target base component remains
+	 * unaffected. This can be used to clean up duplicates.
+	 *
+	 * @param toMergeComponentId
+	 * @param targetComponentId
+	 * @return
+	 */
+	public Component merge(String toMergeComponentId, String targetComponentId);
 
 }

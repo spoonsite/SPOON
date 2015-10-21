@@ -69,4 +69,6 @@ public interface ImportService
 	 */
 	public void cleanupOldFileHistory();
 
+	public void rollback(String fileHistoryId);
+
 }
