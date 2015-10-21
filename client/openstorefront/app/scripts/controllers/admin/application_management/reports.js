@@ -273,7 +273,8 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
 
     $scope.getCategories = function () {
       var filterQueryObj = angular.copy(utils.queryFilter);
-      filterQueryObj.status = 'A'
+      filterQueryObj.status = 'A';
+      filterQueryObj.sortOrder = 'ASC';
       $scope.$emit('$TRIGGERLOAD', 'reportFormLoader');
       Business.articleservice.getTypes(filterQueryObj, true).then(function (results) {
         $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
