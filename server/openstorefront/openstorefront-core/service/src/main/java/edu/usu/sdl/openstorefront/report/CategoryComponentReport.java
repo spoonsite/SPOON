@@ -41,7 +41,7 @@ public class CategoryComponentReport
 		extends BaseReport
 {
 
-	private static final String ALL = "All";
+	private static final String NO_CATEGORY = "None";
 
 	public CategoryComponentReport(Report report)
 	{
@@ -58,14 +58,14 @@ public class CategoryComponentReport
 	{
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
-		String category = ALL;
+		String category = NO_CATEGORY;
 		if (StringUtils.isNotBlank(report.getReportOption().getCategory())) {
 			category = report.getReportOption().getCategory();
 		}
 
 		//write header
 		cvsGenerator.addLine("Category Component Report", sdf.format(TimeUtil.currentDate()));
-		cvsGenerator.addLine("Category:" + category);
+		cvsGenerator.addLine("Category: " + category);
 		cvsGenerator.addLine("");
 		cvsGenerator.addLine(
 				"Category Label",
@@ -76,7 +76,7 @@ public class CategoryComponentReport
 				"Last Update Date"
 		);
 
-		if (ALL.equals(category)) {
+		if (NO_CATEGORY.equals(category)) {
 
 			Component componentExample = new Component();
 			componentExample.setActiveStatus(Component.ACTIVE_STATUS);

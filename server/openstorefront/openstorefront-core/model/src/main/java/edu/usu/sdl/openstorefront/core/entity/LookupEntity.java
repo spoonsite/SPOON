@@ -47,6 +47,8 @@ public abstract class LookupEntity
 		implements ExportImport
 {
 
+	public static final String FIELD_DESCRIPTION = "description";
+
 	@PK
 	@NotNull
 	@ConsumeField
