@@ -278,8 +278,8 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
       Business.articleservice.getTypes(filterQueryObj, true).then(function (results) {
         $scope.$emit('$TRIGGERUNLOAD', 'reportFormLoader');
         if (results) {
-          console.log('results', results);
-          
+          //console.log('results', results);
+
           $scope.categories = results;
         }
       }, function(){
