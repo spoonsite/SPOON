@@ -52,7 +52,7 @@ public class ReportOption
 	private Integer maxWaitSeconds;
 
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	private String category;
 
 	@Version

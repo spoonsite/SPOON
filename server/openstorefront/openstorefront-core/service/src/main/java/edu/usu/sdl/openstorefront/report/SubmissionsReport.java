@@ -111,6 +111,7 @@ public class SubmissionsReport
 		cvsGenerator.addLine("Data Time Range:  ", sdf.format(report.getReportOption().getStartDts()) + " - " + sdf.format(report.getReportOption().getEndDts()));
 		cvsGenerator.addLine(
 				"Name",
+				"Create Date",
 				"Submitted Date",
 				"Submitter Name",
 				"Submitter Email",
@@ -146,6 +147,7 @@ public class SubmissionsReport
 
 			cvsGenerator.addLine(
 					component.getName() + componentSecurityMarking,
+					sdf.format(component.getCreateDts()),
 					component.getSubmittedDts() != null ? sdf.format(component.getSubmittedDts()) : "",
 					submitter.getFirstName() + " " + submitter.getLastName() + submitterSecurityMarking,
 					submitter.getEmail(),

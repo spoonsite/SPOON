@@ -27,10 +27,10 @@
                   <small ng-show="!userInfo.email">You must add an email to your profile to be able to recieve notification emails</small>
                 </td>
                 <td>
-                  <a ng-show="submission.approvalState !== 'A'" href="submission.html#?id={{submission.componentId}}" target="_blank" class="btn btn-default"><i class="fa fa-edit"></i></a>
-                  <a ng-show="submission.approvalState !== 'N'" href="single?id={{submission.componentId}}" target="_blank" class="btn btn-info"><i class="fa fa fa-binoculars"></i></a>
-                  <button ng-show="submission.approvalState === 'P'" class="btn btn-warning" ng-click="submit(submission, true)"><i class="fa fa-power-off"></i></button>
-                  <button ng-show="submission.approvalState === 'N'" class="btn btn-danger" ng-click="deactivateSubmission(submission)"><i class="fa fa-trash"></i></button>
+	        <button ng-show="submission.approvalState !== 'A'"  target="_blank" class="btn btn-default" title="Edit" ng-click="edit(submission)"><i class="fa fa-edit"></i></button>
+                  <a ng-show="submission.approvalState !== 'N'" href="single?id={{submission.componentId}}" target="_blank" class="btn btn-info" title="Preview"><i class="fa fa fa-binoculars"></i></a>
+                  <button ng-show="submission.approvalState === 'P'" class="btn btn-warning" ng-click="submit(submission, true)" title="Unsubmit"><i class="fa fa-power-off"></i></button>
+                  <button ng-show="submission.approvalState === 'N'" class="btn btn-danger" ng-click="deactivateSubmission(submission)" title="Delete"><i class="fa fa-trash"></i></button>
                 </td>
               </tr>
             </table>
