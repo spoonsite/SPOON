@@ -23,9 +23,11 @@ import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
@@ -198,6 +200,7 @@ public class ReportResource
 		if (SecurityUtil.isAdminUser() == false) {
 			reportTypes = reportTypes.stream().filter(r -> r.getAdminOnly() == false).collect(Collectors.toList());
 		}
+		reportTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupEntity.FIELD_DESCRIPTION));
 
 		GenericEntity<List<ReportType>> entity = new GenericEntity<List<ReportType>>(reportTypes)
 		{
@@ -224,6 +227,7 @@ public class ReportResource
 			lookupModel.setDescription(TranslateUtil.translate(ReportFormat.class, format));
 			formats.add(lookupModel);
 		}
+		formats.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupModel.DESCRIPTION_FIELD));
 
 		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(formats)
 		{
