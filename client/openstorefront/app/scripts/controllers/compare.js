@@ -20,7 +20,8 @@
 
 app.controller('CompareCtrl', ['$scope', 'business', '$location', function ($scope, Business, $location) {
 
-  $scope.list = Business.getLocal('COMPARE')? Business.getLocal('COMPARE').id : [];
+  $scope.list = $location.search().id ? $location.search().id : Business.getLocal('COMPARE') ? Business.getLocal('COMPARE').id : [];
+ // $scope.list = $location.search().id? $location.search().id : [];
   $scope.pair = [];
   $scope.showChoices = false;
   $scope.data = null;
