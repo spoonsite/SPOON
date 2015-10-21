@@ -724,7 +724,11 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     _.each($scope.data.data, function(item) {
       list.push(item.componentId);
     });
+    
     Business.saveLocal('COMPARE', {'id': list});
+//    $location.search({
+//      'id': list
+//    });    
     $location.path('/compare');
   };
   
