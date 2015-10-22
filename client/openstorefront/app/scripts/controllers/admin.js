@@ -31,7 +31,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
   $scope.incLoc = '';
   $scope.saveContent = '';
   $scope.editedTopic = 'Types';
-  $scope.toolTitle = 'Admin Tools'
+  $scope.toolTitle = 'Admin Tools';
   $scope.menuPanel = {};
   $scope.menuPanel.data = {};
   $scope.menuPanel.data.open = true;
@@ -347,7 +347,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
       'label': 'Jobs', 
       'location':'views/admin/application_management/manageJobs.html',      
       'toolTitle': 'Job Management', 
-      'detailedDesc': 'Allows for controling and viewing scheduled jobs and background tasks',
+      'detailedDesc': 'Allows for controlling and viewing scheduled jobs and background tasks',
       'key': 'JOBS' 
     });
 
