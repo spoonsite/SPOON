@@ -68,6 +68,12 @@ public class ComponentQuestion
 	}
 
 	@Override
+	public String uniqueKey()
+	{
+		return getQuestion();
+	}
+	
+	@Override
 	public void updateFields(StandardEntity entity)
 	{
 		super.updateFields(entity);

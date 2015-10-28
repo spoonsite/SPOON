@@ -22,4 +22,53 @@ package edu.usu.sdl.openstorefront.core.model;
 public class ComponentRestoreOptions
 {
 
+	private boolean restoreReviews;
+	private boolean restoreQuestions;
+	private boolean restoreTags;
+	private boolean restoreIntegration;
+
+	public ComponentRestoreOptions()
+	{
+	}
+
+	public boolean getRestoreReviews()
+	{
+		return restoreReviews;
+	}
+
+	public void setRestoreReviews(boolean restoreReviews)
+	{
+		this.restoreReviews = restoreReviews;
+	}
+
+	public boolean getRestoreQuestions()
+	{
+		return restoreQuestions;
+	}
+
+	public void setRestoreQuestions(boolean restoreQuestions)
+	{
+		this.restoreQuestions = restoreQuestions;
+	}
+
+	public boolean getRestoreTags()
+	{
+		return restoreTags;
+	}
+
+	public void setRestoreTags(boolean restoreTags)
+	{
+		this.restoreTags = restoreTags;
+	}
+
+	public boolean getRestoreIntegration()
+	{
+		return restoreIntegration;
+	}
+
+	public void setRestoreIntegration(boolean restoreIntegration)
+	{
+		this.restoreIntegration = restoreIntegration;
+	}
+
 }

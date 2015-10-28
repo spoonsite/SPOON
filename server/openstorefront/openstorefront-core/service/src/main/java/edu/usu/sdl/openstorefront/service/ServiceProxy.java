@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.UserService;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
+import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
@@ -48,6 +49,8 @@ import java.util.Objects;
 public class ServiceProxy
 		implements Service
 {
+
+	private String modificationType = ModificationType.API;
 
 	protected PersistenceService persistenceService = new OrientPersistenceService();
 	private LookupService lookupService;
@@ -73,6 +76,11 @@ public class ServiceProxy
 	{
 	}
 
+	public ServiceProxy(String modificationType)
+	{
+		this.modificationType = modificationType;
+	}
+
 	public ServiceProxy(PersistenceService persistenceService)
 	{
 		this.persistenceService = persistenceService;
@@ -81,6 +89,11 @@ public class ServiceProxy
 	public static ServiceProxy getProxy()
 	{
 		return new ServiceProxy();
+	}
+
+	public static ServiceProxy getProxy(String modificationType)
+	{
+		return new ServiceProxy(modificationType);
 	}
 
 	@Override
@@ -217,7 +230,6 @@ public class ServiceProxy
 		return attributeServicePrivate;
 	}
 
-
 	@Override
 	public ImportService getImportService()
 	{
@@ -268,6 +280,16 @@ public class ServiceProxy
 		Objects.requireNonNull(originalProxy, "Original Service is required");
 		T asyncService = AsyncProxy.newInstance(originalProxy, taskRequest);
 		return asyncService;
+	}
+
+	public String getModificationType()
+	{
+		return modificationType;
+	}
+
+	public void setModificationType(String modificationType)
+	{
+		this.modificationType = modificationType;
 	}
 
 }

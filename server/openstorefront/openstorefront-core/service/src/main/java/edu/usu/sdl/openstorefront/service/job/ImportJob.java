@@ -19,6 +19,8 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
+import edu.usu.sdl.openstorefront.core.entity.ModificationType;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.logging.Level;
@@ -60,7 +62,7 @@ public class ImportJob
 		for (FileHistory fileHistory : fileHistories) {
 			log.log(Level.FINE, MessageFormat.format("Found upload to process: {0}", fileHistory.getOriginalFilename()));
 			try {
-				service.getImportServicePrivate().processImport(fileHistory.getFileHistoryId());
+				ServiceProxy.getProxy(ModificationType.IMPORT).getImportServicePrivate().processImport(fileHistory.getFileHistoryId());
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "Failed to process file.", e);
 			}

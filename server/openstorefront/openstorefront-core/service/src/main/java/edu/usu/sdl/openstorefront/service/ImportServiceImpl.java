@@ -22,15 +22,20 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
+import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
 import edu.usu.sdl.openstorefront.service.io.parser.AbstractParser;
@@ -230,7 +235,62 @@ public class ImportServiceImpl
 	@Override
 	public void rollback(String fileHistoryId)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Objects.requireNonNull(fileHistoryId, "File History Id is required");
+
+		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryId);
+		if (fileHistory != null) {
+
+			log.log(Level.INFO, MessageFormat.format("(Undo) Rolling back of import: {0}", TimeUtil.dateToString(fileHistory.getUpdateDts())));
+
+			//find records with batch id  (For now only components )
+			Component componentExample = new Component();
+			componentExample.setFileHistoryId(fileHistoryId);
+			componentExample.setLastModificationType(ModificationType.IMPORT);
+
+			List<Component> componentsToRollback = componentExample.findByExample();
+			for (Component component : componentsToRollback) {
+				//get versions/find previous to current file history
+				ComponentVersionHistory componentVersionHistory = new ComponentVersionHistory();
+				componentVersionHistory.setFileHistoryId(fileHistoryId);
+
+				List<ComponentVersionHistory> versionHistories = persistenceService.queryByExample(ComponentVersionHistory.class, componentVersionHistory);
+				versionHistories.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentVersionHistory.FIELD_CREATE_DTS));
+
+				ComponentVersionHistory batchVersion = null;
+				ComponentVersionHistory previousVersion = null;
+				boolean setPrevious = false;
+				for (ComponentVersionHistory versionHistory : versionHistories) {
+					if (fileHistoryId.equals(versionHistory.getFileHistoryId())) {
+						batchVersion = versionHistory;
+						setPrevious = true;
+						continue;
+					}
+
+					if (setPrevious) {
+						previousVersion = versionHistory;
+						break;
+					}
+				}
+
+				//restore or delete if there was no record
+				if (batchVersion != null) {
+					if (previousVersion != null) {
+						ComponentRestoreOptions options = new ComponentRestoreOptions();
+						getComponentService().restoreSnapshot(fileHistoryId, options);
+					} else {
+						getComponentService().cascadeDeleteOfComponent(component.getComponentId());
+					}
+				} else {
+					log.log(Level.WARNING, MessageFormat.format("(Undo) Unable to undo import for component. No snapshot exists for component:   {0} FileHistory DTS: {1}", new Object[]{component.getName(), fileHistory.getCreateDts()}));
+				}
+
+			}
+
+			removeFileHistory(fileHistoryId);
+		} else {
+			log.log(Level.WARNING, "File history doesn't exist unable to rollback.");
+		}
+
 	}
 
 }

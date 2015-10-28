@@ -44,6 +44,9 @@ public abstract class StandardEntity<T>
 	public static final String INACTIVE_STATUS = "I";
 	public static final String PENDING_STATUS = "P";
 
+	public static final String FIELD_CREATE_DTS = "createDts";
+	public static final String FIELD_UPDATE_DTS = "updateDts";
+
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = SecurityMarkingType.class)

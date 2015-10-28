@@ -188,6 +188,12 @@
 			<param-name>socketio-suspendTime</param-name>
 			<param-value>300000</param-value>
 		</init-param>
+		<init-param>
+			<param-name>ANALYTICS</param-name>
+			<param-value>false</param-value>			
+		</init-param>		
+		
+		
 		<load-on-startup>0</load-on-startup>		
 		<async-supported>true</async-supported>
 	</servlet>
