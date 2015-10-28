@@ -560,15 +560,18 @@ public interface ComponentService
 	 * @param orignalComponentId
 	 * @return Top level component of the copy
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component copy(String orignalComponentId);
 
 	/**
 	 * Creates a version of the component and all related data
 	 *
 	 * @param componentId
+	 * @param fileHistoryId
 	 * @return
 	 */
-	public ComponentVersionHistory snapshotVersion(String componentId);
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public ComponentVersionHistory snapshotVersion(String componentId, String fileHistoryId);
 
 	/**
 	 * Restores a snapshot and replaces the live version (according to options)
@@ -577,6 +580,7 @@ public interface ComponentService
 	 * @param options
 	 * @return
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component restoreSnapshot(String versionHistoryId, ComponentRestoreOptions options);
 
 	/**
@@ -584,6 +588,7 @@ public interface ComponentService
 	 *
 	 * @param versionHistoryId
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteSnapshot(String versionHistoryId);
 
 	/**
@@ -595,6 +600,7 @@ public interface ComponentService
 	 * @param targetComponentId
 	 * @return
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component merge(String toMergeComponentId, String targetComponentId);
 
 }

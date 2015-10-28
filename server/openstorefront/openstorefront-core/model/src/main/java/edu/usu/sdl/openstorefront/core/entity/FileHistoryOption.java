@@ -41,6 +41,9 @@ public class FileHistoryOption
 	@ConsumeField
 	private Boolean uploadIntegration;
 
+	@ConsumeField
+	private Boolean skipRequiredAttributes;	
+	
 	@Version
 	private String storageVersion;
 
@@ -96,6 +99,16 @@ public class FileHistoryOption
 	public void setStorageVersion(String storageVersion)
 	{
 		this.storageVersion = storageVersion;
+	}
+
+	public Boolean getSkipRequiredAttributes()
+	{
+		return skipRequiredAttributes;
+	}
+
+	public void setSkipRequiredAttributes(Boolean skipRequiredAttributes)
+	{
+		this.skipRequiredAttributes = skipRequiredAttributes;
 	}
 
 }

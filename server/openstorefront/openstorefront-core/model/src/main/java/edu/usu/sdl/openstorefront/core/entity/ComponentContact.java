@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -78,6 +79,17 @@ public class ComponentContact
 
 	public ComponentContact()
 	{
+	}
+	
+	@Override
+	public String uniqueKey()
+	{
+		if (StringUtils.isNotBlank(getEmail()))
+		{
+			return getEmail();
+		} else {
+			return getPhone();
+		}
 	}
 
 	@Override

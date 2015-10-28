@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
@@ -38,6 +39,14 @@ public class ComponentAttribute
 	{
 	}
 
+	@Override
+	public String uniqueKey()
+	{
+		return getComponentAttributePk().getAttributeType() + 
+			OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + 
+			getComponentAttributePk().getAttributeCode();
+	}
+	
 	public ComponentAttributePk getComponentAttributePk()
 	{
 		return componentAttributePk;
