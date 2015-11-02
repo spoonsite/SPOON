@@ -141,9 +141,9 @@ app.controller('AdminAddMediaCtrl', ['$scope', '$uiModalInstance', 'title', 'url
             item.formData.push({
               "generalMedia.name": $scope.mediaForm.name
             });
-            item.formData.push({
-              "generalMedia.securityMarkingType": $scope.mediaForm.securityMarkingType
-            });
+//            item.formData.push({
+//              "generalMedia.securityMarkingType": $scope.mediaForm.securityMarkingType
+//            });
           }
         },
         onSuccessItem: function (item, response, status, headers) {
