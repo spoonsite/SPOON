@@ -1001,9 +1001,11 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **external.usermanager**   -              Specifies the manager that is used for external user management. The manager must be supported by the application. ( IniRealmManager or LdapUserManager)                   ( **IniRealmManager** )
 -  **external.sync.activate**  -             Set to 'true' to run the sync                                                                                                                                              (**False**)
 -  **dblog.on**        -                     Activates logging records to the database; Note: All log record are still logged in the server logs regardless of setting this. This just controls the database logging.   ( **True** )
--  **dblog.maxrecords**     -                Maximum database records to store                                                                                                                                          ( **100000** )
+-  **dblog.maxrecords**     -                Maximum database records to store                                                                                                                                          ( **50000** )
 -  **dblog.logSecurityFilter**  -            Log security API audit records; Note: setting this to true can cause noise when using the application log viewer.                                                          ( **False** )
 -  **jirafeedback.show** - Allows users to provide jira feedback (True/False) ( **True** )
+-  **filehistory.max.days** - Sets the max days to keep file history ( **180** )
+-  **notification.max.days** - Set the max days to keep nofitication messages ( **7** )
 
 #6. Database Management
 -----
