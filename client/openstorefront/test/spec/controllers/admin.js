@@ -31,7 +31,7 @@
    expect(scope.systemTree).toEqual({});
    expect(scope.data).toEqual([
        { label: 'Articles', location: 'views/admin/managelanding.html', toolTitle: 'Manage Articles', detailedDesc: 'Articles, also called topic landing pages, are detail pages of topics of interest with optional related listings.  Articles are assigned to an Attribute Code which allows for searching and filter by topic. ', key: 'landing' },
-       { label: 'Attributes', location: 'views/admin/data_management/editattributes.html', children: [  ], toolTitle: 'Manage Attributes', detailedDesc: 'Attributes are used to categorize components and other listings.  They can be searched on and  filtered.  They represent the metadata for a listing.  Attribute Types represent a category and a code respresents a specific value.  The data is linked by the type and code which allows for a simple change of the description.', key: 'attributes', parentKey: null, data: undefined },
+       { label: 'Attributes', location: 'views/admin/data_management/editattributes.html', children: [  ], toolTitle: 'Manage Attributes', detailedDesc: 'Attributes are used to categorize components and other listings.  They can be searched on and  filtered.  They represent the metadata for a listing.  Attribute Types represent a category and a code represents a specific value.  The data is linked by the type and code which allows for a simple change of the description.', key: 'attributes', parentKey: null, data: undefined },
        { label: 'Entries', location:'views/admin/managecomponents.html', toolTitle:'Manage Entries', detailedDesc: 'This tool allows for manipulating all data related to an entry.',  key:'components' },
        { label: 'Entry Type', location:'views/admin/data_management/manageEntryType.html', toolTitle:'Entry Types', detailedDesc: 'Allows for defining entry types',  key:'entrytypes' },
        { label: 'Highlights', location: 'views/admin/managehighlights.html', toolTitle: 'Manage Highlights', detailedDesc: 'Allows for the configuration of highlights that show up on the front page', key: 'highlights' },
@@ -53,8 +53,7 @@
        { label: 'System', location: 'views/admin/application_management/manageSystem.html', toolTitle: 'System Management', detailedDesc: 'Allows for viewing system status and managing system properties', key: 'SYSTEM' },
        { label: 'Tracking', location:  'views/admin/application_management/tracking.html', toolTitle: 'Manage Tracking', detailedDesc: 'Track system, user, and component data.', key: 'tracking' },
        { label: 'Messages', location:  'views/admin/application_management/manageUserMessages.html', toolTitle: 'Message Management', detailedDesc: 'User messages are queued messages for users.  This primary usage is for watches.  This tool allows for viewing of queued message as well as viewing of archived messages. \n\
-                                        Event Notification are message sent internally to user to notify them of event in the application.  ', key: 'USER_MESSAGE' }
-   ]);
+                                        Event Notification are message sent internally to user to notify them of event in the application.  ', key: 'usermessages' }]);
    expect(scope.menuPanel).toEqual({data: {open: true}, system: {open: true}});
    expect(scope.menuPanel.data).toEqual({ open: true });
    expect(scope.menuPanel.system).toEqual({ open: true });
