@@ -51,6 +51,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentTrackingResult;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
+import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.component.CoreComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.component.IntegrationComponentServiceImpl;
@@ -518,6 +519,12 @@ public class ComponentServiceImpl
 	public Component merge(String toMergeComponentId, String targetComponentId)
 	{
 		return core.merge(toMergeComponentId, targetComponentId);
+	}
+
+	@Override
+	public List<ComponentRecordStatistic> findTopViewedComponents(Integer maxRecords)
+	{
+		return core.findTopViewedComponents(maxRecords);
 	}
 
 	public CoreComponentServiceImpl getCore()

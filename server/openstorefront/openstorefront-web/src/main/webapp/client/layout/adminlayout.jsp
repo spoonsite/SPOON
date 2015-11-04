@@ -41,6 +41,7 @@
 	
 	<%-- Custom Components --%>		
 	<script src="scripts/component/standardComboBox.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/notificationPanel.js" type="text/javascript"></script>
 	<script src="scripts/component/notificationWindow.js?v=${appVersion}" type="text/javascript"></script>
 	
 	<title>Admin Tools</title>
