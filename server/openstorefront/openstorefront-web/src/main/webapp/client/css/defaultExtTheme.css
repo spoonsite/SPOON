@@ -459,3 +459,8 @@ div.x-border-layout-ct {
 .x-btn-default-small {
     border-color: #6F6F6F;
 }
+
+.x-progress-default .x-progress-bar-default {
+    background-image: none;
+    background-color: #FF811A;
+}

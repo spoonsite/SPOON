@@ -95,6 +95,7 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import edu.usu.sdl.openstorefront.core.view.SearchResultAttribute;
+import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
@@ -1662,6 +1663,29 @@ public class CoreComponentServiceImpl
 				targetEntities.add(entity);
 			}
 		}
+	}
+
+	public List<ComponentRecordStatistic> findTopViewedComponents(Integer maxRecords)
+	{
+		List<ComponentRecordStatistic> recordStatistics = new ArrayList<>();
+
+		String limit = "";
+		if (maxRecords != null) {
+			limit = "LIMIT " + maxRecords;
+		}
+
+		String query = "select count(*) as views, componentId from " + ComponentTracking.class.getSimpleName() + " group by componentId order by views DESC " + limit;
+
+		List<ODocument> documents = persistenceService.query(query, null);
+		for (ODocument document : documents) {
+			ComponentRecordStatistic componentRecordStatistic = new ComponentRecordStatistic();
+			componentRecordStatistic.setComponentId(document.field("componentId"));
+			componentRecordStatistic.setViews(document.field("views"));
+			componentRecordStatistic.setComponentName(getComponentName(componentRecordStatistic.getComponentId()));
+			recordStatistics.add(componentRecordStatistic);
+		}
+
+		return recordStatistics;
 	}
 
 }

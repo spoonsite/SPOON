@@ -48,6 +48,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentTrackingResult;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
+import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
 import java.util.List;
@@ -602,5 +603,13 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component merge(String toMergeComponentId, String targetComponentId);
+
+	/**
+	 * Find the top viewed components
+	 *
+	 * @param maxRecords
+	 * @return
+	 */
+	public List<ComponentRecordStatistic> findTopViewedComponents(Integer maxRecords);
 
 }
