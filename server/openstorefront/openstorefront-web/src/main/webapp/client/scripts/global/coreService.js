@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,35 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.view;
 
-import edu.usu.sdl.openstorefront.core.annotation.DataType;
-import java.util.ArrayList;
-import java.util.List;
+/* global Ext */
 
-/**
- *
- * @author dshurtleff
- */
-public class NotificationEventWrapper
-		extends ListWrapper
-{
+var CoreService = {
+  
+  usersevice: {    
+    
+    getCurrentUser: function(forceReload){
+      var me = this;     
+    
+      //for now don't cache    
+  
+      var promise = Ext.Ajax.request({
+        url: '../api/v1/resource/userprofiles/currentuser'
+      });
+      
+      return promise;
+    }
+    
+  },
+  systemservice: {
+    
+    getConfigProperties: function(){
+      var me = this;     
+            
+      var promise = Ext.Ajax.request({
+        url: '../api/v1/service/application/configproperties'
+      });
+      
+      return promise;
+    }    
+    
+  }
+  
+  
+  
+};
 
-	@DataType(NotificationEventView.class)
-	private List<NotificationEventView> data = new ArrayList<>();
-
-	public NotificationEventWrapper()
-	{
-	}
-
-	public List<NotificationEventView> getData()
-	{
-		return data;
-	}
-
-	public void setData(List<NotificationEventView> data)
-	{
-		this.data = data;
-	}
-
-}

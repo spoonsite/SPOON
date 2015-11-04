@@ -18,7 +18,7 @@
 
 /*global getCkConfig*/
 
-app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', function ($scope, Business, $location, $timeout) {
+app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', '$rootScope', function ($scope, Business, $location, $timeout, $rootScope) {
 
   //this object is used to contain the tree functions
   $scope.myTree = {};
@@ -38,6 +38,8 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
   $scope.menuPanel.system = {};
   $scope.menuPanel.system.open = true;
   $scope.oneAtATime = false;
+  $rootScope.navOption = {};
+  $rootScope.navOption.hideNav = true;
 
   Business.getFilters().then(function(result) {
     if (result) {
@@ -62,7 +64,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
   * This function changes the content in the admin tool section to the tool the
   * admin clicks on
   ***************************************************************/
-  $scope.editor = function(branch, tree, otherTree) {
+  $scope.editor = function(branch, tree, otherTree) {    
     $location.search('tool', branch.label);
     $scope.incLoc = branch.location;
     $scope.toolTitle = branch.toolTitle;
@@ -72,8 +74,10 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
       $scope.code = null;
     }
     if (tree && otherTree) {
-      tree.selectBranch(branch);
-      otherTree.selectBranch(branch);
+      if (tree.selectBranch){        
+        tree.selectBranch(branch);
+        otherTree.selectBranch(branch);
+      }
     }
   };
 
@@ -380,7 +384,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
       'toolTitle': 'Message Management', 
       'detailedDesc': 'User messages are queued messages for users.  This primary usage is for watches.  This tool allows for viewing of queued message as well as viewing of archived messages. \n\
                                         Event Notification are message sent internally to user to notify them of event in the application.  ',
-      'key': 'USER_MESSAGE' 
+      'key': 'usermessages' 
     });    
     
     // $scope.data.push({'label': 'About Admin Tools', 'location':'views/admin/about.html', 'toolTitle': 'About Admin Tools', 'key': 'tools' });

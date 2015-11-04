@@ -60,3 +60,5 @@ project*.properties
 /server/openstorefront/er2-xmlparser/target/
 /client/metacatalog/target/
 /client/metaregistry/extjs/target/
+/client/metaregistry/metaregistry-web/target/
+/server/openstorefront/extjs/target/

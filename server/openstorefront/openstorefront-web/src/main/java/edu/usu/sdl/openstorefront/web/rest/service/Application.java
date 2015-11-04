@@ -191,6 +191,26 @@ public class Application
 	}
 
 	@GET
+	@APIDescription("Get a config property")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/configproperties/{key}")
+	public Response getConfigPropertiesForKey(@PathParam("key") String key)
+	{
+		String value = PropertiesManager.getValueDefinedDefault(key);
+
+		LookupModel lookupModel = new LookupModel();
+		lookupModel.setCode(key);
+		if (key.contains(PropertiesManager.PW_PROPERTY)) {
+			lookupModel.setDescription(StringUtils.leftPad("", value.length(), "*"));
+		} else {
+			lookupModel.setDescription(value);
+		}
+
+		return sendSingleEntityResponse(lookupModel);
+	}
+
+	@GET
 	@RequireAdmin
 	@APIDescription("Gets Loggers in the system")
 	@Produces({MediaType.APPLICATION_JSON})
