@@ -425,16 +425,22 @@ app.run(['$templateCache', '$rootScope', '$timeout', function ($templateCache, $
     }
 
   };
-  notifications.get = function (cached) {
+  notifications.get = function (cached, all) {
     // console.log('cached', cached);
     // console.log('data', data);
     // console.log('notBlo', notBlocking);
     
+      var queryFilter = utils.queryFilter;
+      if (all) {
+        queryFilter.all = true;
+      }
+      
     if (cached && data.tasks && notBlocking) {
       return data.tasks; 
     } else if (cached && notBlocking){ 
       notBlocking = false;
-      Business.notificationservice.getUserEvents().then(function(events){
+
+      Business.notificationservice.getUserEvents(queryFilter).then(function(events){
         // console.log('event', events);
         
         data.tasks = events;
@@ -447,7 +453,7 @@ app.run(['$templateCache', '$rootScope', '$timeout', function ($templateCache, $
     } else if (cached) {
       return [];
     } else {
-      return Business.notificationservice.getUserEvents();
+      return Business.notificationservice.getUserEvents(queryFilter);
     }
   };
 
@@ -485,11 +491,12 @@ app.run(['$templateCache', '$rootScope', '$timeout', function ($templateCache, $
     $timeout(function(){
       if (bool){
         $scope.readFlg = 'active';
-        $scope.unreadFlg = '';
+        $scope.unreadFlg = '';        
       } else {
         $scope.unreadFlg = 'active';
         $scope.readFlg = '';
       }
+      $scope.refresh(bool);
     },10)
   }
   Business.userservice.getCurrentUserProfile().then(function(profile){
@@ -505,8 +512,8 @@ app.run(['$templateCache', '$rootScope', '$timeout', function ($templateCache, $
     }
   };
 
-  $scope.refresh = function(){
-    Factory.get().then(function(data){
+  $scope.refresh = function(loadAll){
+    Factory.get(false, loadAll).then(function(data){
       $scope.data = data? data.data: [];
       $scope.$emit('$N-EVENT', '$REFRESHTASKS', 100);
       if(!$scope.$$phase) {

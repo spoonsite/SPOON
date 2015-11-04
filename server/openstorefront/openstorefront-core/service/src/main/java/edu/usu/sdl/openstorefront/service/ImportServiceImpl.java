@@ -216,7 +216,7 @@ public class ImportServiceImpl
 	@Override
 	public void cleanupOldFileHistory()
 	{
-		int maxDays = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_FILE_HISTORY_KEEP_DAYS, "30"));
+		int maxDays = Convert.toInteger(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_FILE_HISTORY_KEEP_DAYS));
 
 		LocalDateTime archiveTime = LocalDateTime.now();
 		archiveTime = archiveTime.minusDays(maxDays);
