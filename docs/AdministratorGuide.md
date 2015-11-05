@@ -574,6 +574,8 @@ a.  \#Security Header
 >
 > openam.header.email=mail
 >
+> openam.header.phone=telephonenumber
+>
 > openam.header.group=memberOf
 >
 > openam.header.ldapguid=memberid
