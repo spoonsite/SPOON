@@ -188,23 +188,20 @@ public class UserServiceImpl
 				userProfile.setActiveStatus(user.getActiveStatus());
 			}
 			userProfile.setEmail(user.getEmail());
+			userProfile.setPhone(user.getPhone());
 			userProfile.setFirstName(user.getFirstName());
 			userProfile.setLastName(user.getLastName());
 			userProfile.setNotifyOfNew(user.getNotifyOfNew());
 			userProfile.setOrganization(user.getOrganization());
 			userProfile.setUserTypeCode(user.getUserTypeCode());
-			userProfile.setUpdateUser(SecurityUtil.getCurrentUserName());
 			if (StringUtils.isNotBlank(userProfile.getInternalGuid())) {
 				userProfile.setInternalGuid(persistenceService.generateId());
 			}
+			userProfile.populateBaseUpdateFields();
 			persistenceService.persist(userProfile);
 		} else {
-			user.setActiveStatus(UserProfile.ACTIVE_STATUS);
 			user.setInternalGuid(persistenceService.generateId());
-			user.setCreateDts(TimeUtil.currentDate());
-			user.setUpdateDts(TimeUtil.currentDate());
-			user.setCreateUser(SecurityUtil.getCurrentUserName());
-			user.setUpdateUser(SecurityUtil.getCurrentUserName());
+			user.populateBaseCreateFields();
 			userProfile = persistenceService.persist(user);
 		}
 

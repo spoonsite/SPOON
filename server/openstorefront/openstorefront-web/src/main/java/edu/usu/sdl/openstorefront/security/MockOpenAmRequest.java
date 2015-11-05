@@ -45,6 +45,7 @@ public class MockOpenAmRequest
 		fakeHeaders.put("givenname", "Test");
 		fakeHeaders.put("sn", "Account");
 		fakeHeaders.put("mail", "test@test.com");
+		fakeHeaders.put("telephonenumber", "555-255-5555");
 		//fakeHeaders.put("memberOf", "CN=STORE-Admin, OU=USU");
 		fakeHeaders.put("memberid", "55555");
 
