@@ -162,65 +162,12 @@ Ext.onReady(function() {
         trackMouse: true
     });
     **/
-    Ext.ns('CoreApp');
-   
-    CoreApp.BTN_OK = 'ok';
-    CoreApp.BTN_YES = 'yes';
-    
-    // 1 min. before notifying the user session will expire. Change this to a reasonable interval.    
-    CoreApp.SESSION_ABOUT_TO_TIMEOUT_PROMT_INTERVAL_IN_MIN = 25;
-    // 1 min. to kill the session after the user is notified.
-    CoreApp.GRACE_PERIOD_BEFORE_EXPIRING_SESSION_IN_MIN = 1;
-    // The page that kills the server-side session variables.
-    CoreApp.SESSION_KILL_URL = '/openstorefront/Login.action?Logout';
-    CoreApp.toMilliseconds = function (minutes) {
-      return minutes * 60 * 1000;
-    };
-    
-    CoreApp.sessionAboutToTimeoutPromptTask = new Ext.util.DelayedTask(function () {
-        Ext.Msg.confirm(
-            'Your Session is About to Expire',
-            String.format('Your session will expire in {0} minute(s). Would you like to continue your session?',
-                CoreApp.GRACE_PERIOD_BEFORE_EXPIRING_SESSION_IN_MIN),
-            function (btn, text) {
-                if (btn == CoreApp.BTN_YES) {
-                    // Simulate resetting the server-side session timeout timer
-                    // by sending an AJAX request.
-                    CoreApp.simulateAjaxRequest();
-                } else {
-                    // Send request to kill server-side session.
-                    window.location.replace(CoreApp.SESSION_KILL_URL);
-                }
-            }
-        );
-        CoreApp.killSessionTask.delay(CoreApp.toMilliseconds(
-        CoreApp.GRACE_PERIOD_BEFORE_EXPIRING_SESSION_IN_MIN));
-    });
-    CoreApp.killSessionTask = new Ext.util.DelayedTask(function () {        
-        window.location.replace(CoreApp.SESSION_KILL_URL);
-    });
+
    
     Ext.Ajax.timeout = 300000;
     Ext.Ajax.listeners = {
       
       requestcomplete: function (conn, response, options) {
-       if (options.url !== CoreApp.SESSION_KILL_URL) {
-            // Reset the client-side session timeout timers.
-            // Note that you must not reset if the request was to kill the server-side session.
-            CoreApp.sessionAboutToTimeoutPromptTask.delay(CoreApp.toMilliseconds(CoreApp.SESSION_ABOUT_TO_TIMEOUT_PROMT_INTERVAL_IN_MIN));
-            CoreApp.killSessionTask.cancel();
-        } else {
-            // Notify user her session timed out.
-            Ext.Msg.alert(
-                'Session Expired',
-                'Your session expired. Please login to start a new session.',
-                function (btn, text) {
-                    if (btn == CoreApp.BTN_OK) {
-                        window.location.replace('/openstorefront/Login.action');
-                    }
-                }
-            );
-        }
 
         
       },

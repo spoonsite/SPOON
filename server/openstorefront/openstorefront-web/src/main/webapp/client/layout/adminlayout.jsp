@@ -43,6 +43,7 @@
 	<script src="scripts/component/standardComboBox.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/notificationPanel.js" type="text/javascript"></script>
 	<script src="scripts/component/notificationWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/framePanel.js" type="text/javascript"></script>
 	
 	<title>Admin Tools</title>
         <stripes:layout-component name="html_head"/>
