@@ -31,6 +31,7 @@ public class HeaderAuthToken
 	private String firstname;
 	private String lastname;
 	private String email;
+	private String phone;
 	private String group;
 	private String guid;
 	private String organization;
@@ -153,6 +154,16 @@ public class HeaderAuthToken
 	public void setUserContext(UserContext userContext)
 	{
 		this.userContext = userContext;
+	}
+
+	public String getPhone()
+	{
+		return phone;
+	}
+
+	public void setPhone(String phone)
+	{
+		this.phone = phone;
 	}
 
 }

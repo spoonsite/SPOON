@@ -58,6 +58,11 @@ public class UserProfile
 	@ConsumeField
 	private String email;
 
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_PHONE)
+	@Sanitize(TextSanitizer.class)
+	@ConsumeField
+	private String phone;
+
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
@@ -194,6 +199,16 @@ public class UserProfile
 	public void setNotifyOfNew(Boolean notifyOfNew)
 	{
 		this.notifyOfNew = notifyOfNew;
+	}
+
+	public String getPhone()
+	{
+		return phone;
+	}
+
+	public void setPhone(String phone)
+	{
+		this.phone = phone;
 	}
 
 }

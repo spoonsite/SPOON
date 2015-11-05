@@ -67,6 +67,7 @@ public class PropertiesManager
 	public static final String KEY_OPENAM_HEADER_FIRSTNAME = "openam.header.firstname";
 	public static final String KEY_OPENAM_HEADER_LASTNAME = "openam.header.lastname";
 	public static final String KEY_OPENAM_HEADER_EMAIL = "openam.header.email";
+	public static final String KEY_OPENAM_HEADER_PHONE = "openam.header.phone";
 	public static final String KEY_OPENAM_HEADER_GROUP = "openam.header.group";
 	public static final String KEY_OPENAM_HEADER_LDAPGUID = "openam.header.ldapguid";
 	public static final String KEY_OPENAM_HEADER_ORGANIZATION = "openam.header.organization";
