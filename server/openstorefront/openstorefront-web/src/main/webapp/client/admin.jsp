@@ -473,7 +473,7 @@
 			CoreApp.sessionAboutToTimeoutPromptTask = new Ext.util.DelayedTask(function () {
 				Ext.Msg.confirm(
 					'Your Session is About to Expire',
-					String.format('Your session will expire in {0} minute(s). Would you like to continue your session?',
+					Ext.String.format('Your session will expire in {0} minute(s). Would you like to continue your session?',
 						CoreApp.GRACE_PERIOD_BEFORE_EXPIRING_SESSION_IN_MIN),
 					function (btn, text) {
 						if (btn == CoreApp.BTN_YES) {

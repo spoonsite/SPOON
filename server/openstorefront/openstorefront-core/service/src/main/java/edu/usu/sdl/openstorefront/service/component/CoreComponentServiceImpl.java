@@ -55,6 +55,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
@@ -503,21 +504,26 @@ public class CoreComponentServiceImpl
 			componentService.getOrganizationService().addOrganization(component.getComponent().getOrganization());
 
 			if (approved) {
-				if (StringUtils.isNotBlank(component.getComponent().getNotifyOfApprovalEmail())) {
-					UserMessage userMessage = new UserMessage();
-					userMessage.setEmailAddress(component.getComponent().getNotifyOfApprovalEmail());
-					userMessage.setComponentId(component.getComponent().getComponentId());
-					userMessage.setUserMessageType(UserMessageType.APPROVAL_NOTIFICATION);
-					userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
-					userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-					componentService.getUserService().queueUserMessage(userMessage);
-				}
+				sendApprovalNotification(component.getComponent());
 			}
 			cleanupCache(component.getComponent().getComponentId());
 		} else {
 			throw new OpenStorefrontRuntimeException(validationResult.toString());
 		}
 		return component;
+	}
+
+	private void sendApprovalNotification(Component component)
+	{
+		if (StringUtils.isNotBlank(component.getNotifyOfApprovalEmail())) {
+			UserMessage userMessage = new UserMessage();
+			userMessage.setEmailAddress(component.getNotifyOfApprovalEmail());
+			userMessage.setComponentId(component.getComponentId());
+			userMessage.setUserMessageType(UserMessageType.APPROVAL_NOTIFICATION);
+			userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
+			userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+			componentService.getUserService().queueUserMessage(userMessage);
+		}
 	}
 
 	public void importComponents(List<ComponentAll> components, FileHistoryOption options)
@@ -1686,6 +1692,61 @@ public class CoreComponentServiceImpl
 		}
 
 		return recordStatistics;
+	}
+
+	public ComponentType saveComponentType(ComponentType componentType)
+	{
+		ComponentType existing = persistenceService.findById(ComponentType.class, componentType.getType());
+		if (existing != null) {
+			existing.updateFields(componentType);
+			componentType = persistenceService.persist(existing);
+		} else {
+			componentType.populateBaseCreateFields();
+			componentType = persistenceService.persist(componentType);
+		}
+		return componentType;
+	}
+
+	public void removeComponentType(String componentType)
+	{
+		ComponentType componentTypeFound = persistenceService.findById(ComponentType.class, componentType);
+		if (componentTypeFound != null) {
+			componentTypeFound.setActiveStatus(ComponentType.INACTIVE_STATUS);
+			componentTypeFound.populateBaseUpdateFields();
+			persistenceService.persist(componentTypeFound);
+		}
+	}
+
+	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	public void removeComponentTypeTemplate(String templateCode)
+	{
+		ComponentTypeTemplate template = persistenceService.findById(ComponentTypeTemplate.class, templateCode);
+		if (template != null) {
+			template.setActiveStatus(ComponentType.INACTIVE_STATUS);
+			template.populateBaseUpdateFields();
+			persistenceService.persist(template);
+		}
+	}
+
+	public Component approveComponent(String componentId)
+	{
+		Component component = persistenceService.findById(Component.class, componentId);
+		if (component != null) {
+			if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+				component.setApprovedUser(SecurityUtil.getCurrentUserName());
+				component.setApprovedDts(TimeUtil.currentDate());
+				component.populateBaseUpdateFields();
+				persistenceService.persist(component);
+
+				sendApprovalNotification(component);
+				updateComponentLastActivity(componentId);
+			}
+		}
+		return component;
 	}
 
 }

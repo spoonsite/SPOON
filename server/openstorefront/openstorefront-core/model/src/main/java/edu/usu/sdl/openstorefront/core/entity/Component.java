@@ -64,10 +64,9 @@ public class Component
 
 	@NotNull
 	@ConsumeField
-	@ValidValueType(value = {}, lookupClass = ComponentType.class)
 	@DefaultFieldValue(ComponentType.COMPONENT)
 	@APIDescription("Type of listing")
-	@FK(ComponentType.class)
+	@FK(value = ComponentType.class, enforce = true)
 	private String componentType;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
