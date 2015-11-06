@@ -37,6 +37,8 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
@@ -540,6 +542,36 @@ public class ComponentServiceImpl
 	public IntegrationComponentServiceImpl getIntegration()
 	{
 		return integration;
+	}
+
+	@Override
+	public ComponentType saveComponentType(ComponentType componentType)
+	{
+		return core.saveComponentType(componentType);
+	}
+
+	@Override
+	public void removeComponentType(String componentType)
+	{
+		core.removeComponentType(componentType);
+	}
+
+	@Override
+	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
+	{
+		return core.saveComponentTemplate(componentTypeTemplate);
+	}
+
+	@Override
+	public void removeComponentTypeTemplate(String templateCode)
+	{
+		core.removeComponentTypeTemplate(templateCode);
+	}
+
+	@Override
+	public Component approveComponent(String componentId)
+	{
+		return core.approveComponent(componentId);
 	}
 
 }

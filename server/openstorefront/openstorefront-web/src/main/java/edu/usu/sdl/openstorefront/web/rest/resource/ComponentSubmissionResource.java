@@ -341,6 +341,30 @@ public class ComponentSubmissionResource
 		return response;
 	}
 
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@APIDescription("Create a copy of a component")
+	@DataType(Component.class)
+	@Path("/{id}/copy")
+	public Response copyComponent(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+
+		Component component = new Component();
+		component.setComponentId(componentId);
+		component = component.find();
+		if (component != null) {
+			response = ownerAnonymousCheck(component);
+			if (response == null) {
+				component = service.getComponentService().copy(componentId);
+				response = Response.created(URI.create("v1/resource/components/" + component.getComponentId())).entity(component).build();
+			}
+		}
+		return response;
+	}
+
 	@DELETE
 	@APIDescription("Removes media from the specified component")
 	@Path("/{id}/media/{mediaId}/force")

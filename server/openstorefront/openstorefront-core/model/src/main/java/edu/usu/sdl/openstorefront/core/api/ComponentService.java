@@ -34,6 +34,8 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
@@ -611,5 +613,46 @@ public interface ComponentService
 	 * @return
 	 */
 	public List<ComponentRecordStatistic> findTopViewedComponents(Integer maxRecords);
+
+	/**
+	 * Save a component type
+	 *
+	 * @param componentType
+	 * @return
+	 */
+	public ComponentType saveComponentType(ComponentType componentType);
+
+	/**
+	 * This just inActivates. Deleting would be dangerous as there is data
+	 * attached to it. (Components, Attribute Restrictions...etc)
+	 *
+	 * @param componentType
+	 */
+	public void removeComponentType(String componentType);
+
+	/**
+	 * Saves a new template
+	 *
+	 * @param componentTypeTemplate
+	 * @return
+	 */
+	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate);
+
+	/**
+	 * This just inActivates. Deleting would be dangerous as there likely
+	 * existing data that would still need it
+	 *
+	 * @param templateCode
+	 */
+	public void removeComponentTypeTemplate(String templateCode);
+
+	/**
+	 * Approves a component and triggers notification if requested component is
+	 * already approved this does nothing.
+	 *
+	 * @param componentId
+	 * @return Component Approved or null if not found
+	 */
+	public Component approveComponent(String componentId);
 
 }
