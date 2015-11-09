@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
 import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -165,6 +166,11 @@ public class NotificationServiceImpl
 
 		}
 
+		//apply read filter
+		if (Convert.toBoolean(queryParams.getAll()) == false) {
+			notificationEventWrapper.setData(notificationEventWrapper.getData().stream().filter(r -> r.getReadMessage() == false).collect(Collectors.toList()));
+		}
+
 		return notificationEventWrapper;
 	}
 
@@ -214,7 +220,7 @@ public class NotificationServiceImpl
 	@Override
 	public void cleanupOldEvents()
 	{
-		int maxDays = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_FILE_HISTORY_KEEP_DAYS, "7"));
+		int maxDays = Convert.toInteger(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_NOTIFICATION_MAX_DAYS));
 
 		LocalDateTime archiveTime = LocalDateTime.now();
 		archiveTime = archiveTime.minusDays(maxDays);
@@ -253,7 +259,7 @@ public class NotificationServiceImpl
 		NotificationEventReadStatus notificationEventReadStatus = new NotificationEventReadStatus();
 		notificationEventReadStatus.setEventId(eventId);
 		notificationEventReadStatus.setUsername(username);
-		
+
 		NotificationEventReadStatus temp = notificationEventReadStatus.findProxy();
 
 		persistenceService.delete(temp);

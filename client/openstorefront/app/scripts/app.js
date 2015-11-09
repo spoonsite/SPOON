@@ -643,8 +643,12 @@ var app = angular
       }
 
       $rootScope.logout = function() {
-        window.location.replace('/openstorefront/Login.action?Logout');
-      }
+        if (window.parent) {
+          window.parent.location.replace('/openstorefront/Login.action?Logout');
+        } else {
+          window.location.replace('/openstorefront/Login.action?Logout');
+        }
+      };
 
       $rootScope.print = function(type, id) {
         $location.search({

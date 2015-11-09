@@ -52,6 +52,12 @@ public class ComponentRelationship
 	public ComponentRelationship()
 	{
 	}
+	
+	@Override
+	public String uniqueKey()
+	{
+		return getRelationshipType() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getRelatedComponentId();
+	}	
 
 	@Override
 	public void updateFields(StandardEntity entity)

@@ -52,7 +52,7 @@ public class ComponentSubmissionMessageGenerator
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z");
 
 		Instant instant = Instant.ofEpochMilli(messageContext.getUserMessage().getCreateDts().getTime());
-		instant = instant.minusSeconds(3);
+		instant = instant.minusSeconds(10);
 		Date checkDate = new Date(instant.toEpochMilli());
 
 		Component componentExample = new Component();
@@ -60,7 +60,7 @@ public class ComponentSubmissionMessageGenerator
 		componentExample.setApprovalState(ApprovalStatus.PENDING);
 
 		Component componentStartExample = new Component();
-		componentStartExample.setCreateDts(checkDate);
+		componentStartExample.setUpdateDts(checkDate);
 
 		QueryByExample queryByExample = new QueryByExample(componentExample);
 		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
@@ -90,7 +90,7 @@ public class ComponentSubmissionMessageGenerator
 			message.append("<ul>");
 			for (Component component : components) {
 				message.append(" <li>").append(component.getName())
-						.append("  submitted by:  ").append(component.getCreateUser())
+						.append("  originally submitted by:  ").append(component.getCreateUser())
 						.append(" at ").append(sdf.format(component.getSubmittedDts()))
 						.append("</li>");
 			}

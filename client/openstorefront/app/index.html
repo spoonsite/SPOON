@@ -70,7 +70,7 @@ limitations under the License.
   </div>
 
   <!-- Bring in the navigation -->
-  <div ng-include="'views/nav.html'" style="position: relative; z-index: 1011" id="nav"></div>
+  <div ng-include="'views/nav.html'" style="position: relative; z-index: 1011" id="nav"  ng-show="!navOption.hideNav"></div>
 
   <!-- Add your site or application content here -->
   <div class="container-fluid fullHeight printMe" ng-view="">
@@ -131,6 +131,7 @@ limitations under the License.
   <script src="bower_components/ng-grid/build/ng-grid.js"></script>
   <script src="bower_components/ng-idle/angular-idle.js"></script>
   <script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
+  <script src="bower_components/angular-filter/dist/angular-filter.js"></script>
   <script src="bower_components/videogular/videogular.js"></script>
   <script src="bower_components/videogular-buffering/vg-buffering.js"></script>
   <script src="bower_components/videogular-controls/vg-controls.js"></script>

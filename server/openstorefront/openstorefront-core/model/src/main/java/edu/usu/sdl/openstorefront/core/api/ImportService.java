@@ -67,6 +67,10 @@ public interface ImportService
 	/**
 	 * Removes records older than the clean up property is set to
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public void cleanupOldFileHistory();
+
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void rollback(String fileHistoryId);
 
 }

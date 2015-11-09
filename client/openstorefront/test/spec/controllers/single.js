@@ -24,7 +24,6 @@ describe('Controller: SingleCtrl', function () {
    expect(scope.details.details).toEqual(null);
    expect(scope.modal.isLanding).toEqual(false);
    expect(scope.showDetails).toEqual(false);
-   expect(scope.showBreadCrumbs).toEqual(true);
  });
 
   it('should validate properly using spies', function() {

@@ -15,6 +15,7 @@
 		<module>wso2client</module>
 		<module>openstorefront-core</module>
 		<module>openstorefront-plugin</module>
+	 <module>atmosphere-socketio</module>
 	</modules>
 	
 	<dependencies>

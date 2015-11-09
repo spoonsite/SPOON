@@ -57,6 +57,12 @@ public class ComponentEvaluationSection
 	public ComponentEvaluationSection()
 	{
 	}
+	
+	@Override
+	public String uniqueKey()
+	{
+		return getComponentEvaluationSectionPk().getEvaluationSection();
+	}	
 
 	@Override
 	public void updateFields(StandardEntity entity)

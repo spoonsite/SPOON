@@ -35,10 +35,16 @@ public class ComponentReviewCon
 	@ConsumeField
 	@OneToOne(orphanRemoval = true)
 	private ComponentReviewConPk componentReviewConPk;
-
+		
 	public ComponentReviewCon()
 	{
 	}
+	
+	@Override
+	public String uniqueKey()
+	{
+		return getComponentReviewConPk().pkValue();
+	}	
 
 	public ComponentReviewConPk getComponentReviewConPk()
 	{

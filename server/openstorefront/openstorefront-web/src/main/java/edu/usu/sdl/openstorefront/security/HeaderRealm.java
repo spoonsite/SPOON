@@ -93,6 +93,7 @@ public class HeaderRealm
 			userProfile.setLastName(headerAuthToken.getLastname());
 			userProfile.setOrganization(headerAuthToken.getOrganization());
 			userProfile.setEmail(headerAuthToken.getEmail());
+			userProfile.setPhone(headerAuthToken.getPhone());
 			userProfile.setExternalGuid(headerAuthToken.getGuid());
 
 			if (StringUtils.isNotBlank(headerAuthToken.getGroup())
@@ -137,10 +138,11 @@ public class HeaderRealm
 			HeaderAuthToken headerAuthToken = new HeaderAuthToken();
 			headerAuthToken.setRequest(request);
 			headerAuthToken.setAdminGroupName(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ADMIN_GROUP));
-			headerAuthToken.setEmail(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_EMAIL, STUB_HEADER)));
-			headerAuthToken.setFirstname(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_FIRSTNAME, STUB_HEADER)));
+			headerAuthToken.setEmail(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_EMAIL, "mail")));
+			headerAuthToken.setPhone(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_EMAIL, "telephonenumber")));
+			headerAuthToken.setFirstname(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_FIRSTNAME, "givenname")));
 
-			Enumeration<String> groupValues = request.getHeaders(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_GROUP, STUB_HEADER));
+			Enumeration<String> groupValues = request.getHeaders(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_GROUP, "memberOf"));
 			StringBuilder group = new StringBuilder();
 			while (groupValues.hasMoreElements()) {
 				group.append(groupValues.nextElement());
@@ -149,9 +151,9 @@ public class HeaderRealm
 
 			headerAuthToken.setGroup(group.toString());
 			headerAuthToken.setGuid(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LDAPGUID, STUB_HEADER)));
-			headerAuthToken.setLastname(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LASTNAME, STUB_HEADER)));
+			headerAuthToken.setLastname(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_LASTNAME, "sn")));
 			headerAuthToken.setOrganization(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ORGANIZATION, STUB_HEADER)));
-			headerAuthToken.setUsername(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_USERNAME, STUB_HEADER)));
+			headerAuthToken.setUsername(request.getHeader(PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_USERNAME, "sAMAccountName")));
 
 			try {
 				Subject currentUser = SecurityUtils.getSubject();

@@ -87,13 +87,16 @@ app.controller('UserSubmissionCtrl', ['$scope', 'business', '$rootScope', '$loca
     }
   }
 
-  $scope.deactivateSubmission = function(submission){
+  $scope.deactivateSubmission = function(submission){    
     if (submission.componentId) {
-      Business.submissionservice.deactivateSubmission(submission.componentId).then(function(result){
-        $scope.getSubmissions(true);
-      }, function(){
-        $scope.getSubmissions(true);
-      });
+      var response = window.confirm("Are you sure you want to remove " + submission.name + " submission?");
+      if (response) {
+        Business.submissionservice.deactivateSubmission(submission.componentId).then(function (result) {
+          $scope.getSubmissions(true);
+        }, function () {
+          $scope.getSubmissions(true);
+        });
+      }
     }
   }
 
@@ -105,7 +108,17 @@ app.controller('UserSubmissionCtrl', ['$scope', 'business', '$rootScope', '$loca
       $scope.reverse = false;
     }
   };
-
+  
+  $scope.edit = function(submission){
+    if (submission.approvalState === 'P') {
+      var response = window.confirm("Are you sure you want to resume editing your submission? This action remove your submission from the admin's pending queue and you will have to re-submit it for approval.");
+      if (response) {
+        window.location.href = 'submission.html#?id=' + submission.componentId;
+      }      
+    } else {
+      window.location.href = 'submission.html#?id=' + submission.componentId;
+    }
+  };
 
   $scope.getSubmissions = function(override){
     var deferred = $q.defer();

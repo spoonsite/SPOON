@@ -18,7 +18,7 @@
 
 /*global getCkConfig*/
 
-app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', function ($scope, Business, $location, $timeout) {
+app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', '$rootScope', function ($scope, Business, $location, $timeout, $rootScope) {
 
   //this object is used to contain the tree functions
   $scope.myTree = {};
@@ -31,13 +31,15 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
   $scope.incLoc = '';
   $scope.saveContent = '';
   $scope.editedTopic = 'Types';
-  $scope.toolTitle = 'Admin Tools'
+  $scope.toolTitle = 'Admin Tools';
   $scope.menuPanel = {};
   $scope.menuPanel.data = {};
   $scope.menuPanel.data.open = true;
   $scope.menuPanel.system = {};
   $scope.menuPanel.system.open = true;
   $scope.oneAtATime = false;
+  $rootScope.navOption = {};
+  $rootScope.navOption.hideNav = true;
 
   Business.getFilters().then(function(result) {
     if (result) {
@@ -62,7 +64,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
   * This function changes the content in the admin tool section to the tool the
   * admin clicks on
   ***************************************************************/
-  $scope.editor = function(branch, tree, otherTree) {
+  $scope.editor = function(branch, tree, otherTree) {    
     $location.search('tool', branch.label);
     $scope.incLoc = branch.location;
     $scope.toolTitle = branch.toolTitle;
@@ -72,8 +74,10 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
       $scope.code = null;
     }
     if (tree && otherTree) {
-      tree.selectBranch(branch);
-      otherTree.selectBranch(branch);
+      if (tree.selectBranch){        
+        tree.selectBranch(branch);
+        otherTree.selectBranch(branch);
+      }
     }
   };
 
@@ -185,7 +189,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
     attributes.location='views/admin/data_management/editattributes.html';
     attributes.children = [];
     attributes.toolTitle = 'Manage Attributes';
-    attributes.detailedDesc = "Attributes are used to categorize components and other listings.  They can be searched on and  filtered.  They represent the metadata for a listing.  Attribute Types represent a category and a code respresents a specific value.  The data is linked by the type and code which allows for a simple change of the description.";
+    attributes.detailedDesc = "Attributes are used to categorize components and other listings.  They can be searched on and  filtered.  They represent the metadata for a listing.  Attribute Types represent a category and a code represents a specific value.  The data is linked by the type and code which allows for a simple change of the description.";
     attributes.key = 'attributes';
     attributes.parentKey = null;
     attributes.data = $scope.filters;   
@@ -347,7 +351,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
       'label': 'Jobs', 
       'location':'views/admin/application_management/manageJobs.html',      
       'toolTitle': 'Job Management', 
-      'detailedDesc': 'Allows for controling and viewing scheduled jobs and background tasks',
+      'detailedDesc': 'Allows for controlling and viewing scheduled jobs and background tasks',
       'key': 'JOBS' 
     });
 
@@ -380,7 +384,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', func
       'toolTitle': 'Message Management', 
       'detailedDesc': 'User messages are queued messages for users.  This primary usage is for watches.  This tool allows for viewing of queued message as well as viewing of archived messages. \n\
                                         Event Notification are message sent internally to user to notify them of event in the application.  ',
-      'key': 'USER_MESSAGE' 
+      'key': 'usermessages' 
     });    
     
     // $scope.data.push({'label': 'About Admin Tools', 'location':'views/admin/about.html', 'toolTitle': 'About Admin Tools', 'key': 'tools' });

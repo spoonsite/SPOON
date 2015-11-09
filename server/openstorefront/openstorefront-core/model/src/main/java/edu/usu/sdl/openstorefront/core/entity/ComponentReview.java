@@ -96,6 +96,12 @@ public class ComponentReview
 	}
 
 	@Override
+	public String uniqueKey()
+	{
+		return getTitle() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getCreateUser();
+	}	
+	
+	@Override
 	public void updateFields(StandardEntity entity)
 	{
 		super.updateFields(entity);

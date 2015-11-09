@@ -179,6 +179,10 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
   $scope.send = function(route) {
     $location.path(route);
   };
+  
+  $scope.gotoAdmin = function() {
+    window.location.replace('client/admin.jsp');
+  };
 
   /***************************************************************
   * Log out the user
