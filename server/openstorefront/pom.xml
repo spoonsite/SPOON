@@ -11,11 +11,11 @@
 	<modules>
 		<module>openstorefront-web</module>
 		<module>er2-xmlparser</module>
-		<module>apiclient</module>
-		<module>wso2client</module>
+		<module>apiclient</module>		
 		<module>openstorefront-core</module>
 		<module>openstorefront-plugin</module>
-	 <module>atmosphere-socketio</module>
+		<module>atmosphere-socketio</module>
+		<module>extjs</module>
 	</modules>
 	
 	<dependencies>
