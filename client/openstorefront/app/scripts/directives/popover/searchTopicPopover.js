@@ -32,7 +32,7 @@ app.directive('searchTopicPopover', ['$compile', '$templateCache', '$q', '$http'
         var loadTopicDataForPopup = function (scope) {
             
             $rootScope.getConfig().then(function (config) {
-                console.log("Load Data:",config);
+                //console.log("Load Data:",config);
                 if (config) {
                     var filterObj = angular.copy(utils.queryFilter);
 
