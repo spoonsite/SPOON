@@ -61,9 +61,8 @@ app.controller('AdminEditBrandingCtrl', ['$scope', '$uiModalInstance', '$uiModal
        _.forEach($scope.fullTopicList, function(topic){
            if(topic.architectureFlg){
                $scope.fullArchList.push(topic.attributeType);
-               console.log("ArchList:",$scope.fullArchList);
            }
-       })  
+       });  
     };
 
     $scope.loadAllData = function () {
@@ -107,6 +106,15 @@ app.controller('AdminEditBrandingCtrl', ['$scope', '$uiModalInstance', '$uiModal
         }
     };
 
+    $scope.checkColor = function(color){
+       console.log("Color"+color); 
+       var isOk  = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(color);
+       console.log("isOk",isOk);
+       if(!isOk){
+           color="#";
+       }
+    };
+    
     $timeout(function() {
       $('[data-toggle=\'tooltip\']').tooltip();
     }, 300);

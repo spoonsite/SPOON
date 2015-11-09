@@ -35,7 +35,7 @@ app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiMod
         $scope.loadFullBrandingList = function() {
              Business.brandingservice.getBrandingViews(true).then(function (brandingViews){
                  $scope.fullBrandingList = [];
-                 console.log("Branding:", brandingViews);
+                 //console.log("Branding:", brandingViews);
                  $scope.fullBrandingList = brandingViews;
              }, function () {
                  console.log("Error: Couldn't load the branding views.");
@@ -50,12 +50,12 @@ app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiMod
                $scope.loadFullBrandingList();
             }, 20);
             
-            console.log("Branding list:",$scope.fullBrandingList);
+            //console.log("Branding list:",$scope.fullBrandingList);
         };
         $scope.loadAllData();
         
         $scope.deleteTemplate = function (template) {
-          console.log("Delete Template");
+          //console.log("Delete Template");
             var cont = confirm("You are about to permanently remove a branding template from the system.  Continue?");
             if (cont) {
                 $scope.deactivateButtons = true;
@@ -80,7 +80,7 @@ app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiMod
         $scope.editTemplate = function (brandingtemplate) {
              
                 var modalInstance = $uiModal.open({
-                    templateUrl: 'views/admin/application_management/editbranding.html',
+                    templateUrl: 'views/admin/application_management/editBranding.html',
                     controller: 'AdminEditBrandingCtrl',
                     size: 'lg',
                     backdrop: 'static',
@@ -95,17 +95,17 @@ app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiMod
                 });
 
                 modalInstance.result.then(function (result) {
-                    console.log("Result from modal:",result);
+                    //console.log("Result from modal:",result);
                     $scope.loadFullBrandingList();
                 }, function () {
-                    console.log("Modal Cancelled");
+                    //console.log("Modal Cancelled");
                     $scope.loadFullBrandingList();
                 });
         };
         
         
         $scope.changeActivity = function (brandingtemplate) {   
-            console.log("Change Activity");
+            //console.log("Change Activity");
             var cont = confirm("You are about to change the active status of a branding template (Enabled or disabled). Continue?");
             if (cont) {
                 $scope.deactivateButtons = true;
@@ -147,13 +147,13 @@ app.controller('AdminBrandingCtrl', ['$scope', 'business', '$rootScope', '$uiMod
         
         $scope.cloneTemplate = function (brandingtemplate) {
 
-            console.log("Clone Template");
+            //console.log("Clone Template");
             $scope.$emit('$TRIGGERLOAD', 'topicsLoader');
             Business.brandingservice.getBrandingView(brandingtemplate.brandingId, true).then(function (brandingView) {
                 brandingView.branding.name += 'copy';
                 brandingView.branding.brandingId = null;
                 Business.brandingservice.createBrandingView(brandingView).then(function () {
-                    console.log("Successfully Created");
+                    //console.log("Successfully Created");
                     $scope.loadAllData();
                     $scope.deactivateButtons = false;
                     $scope.$emit('$TRIGGERUNLOAD', 'topicsLoader');

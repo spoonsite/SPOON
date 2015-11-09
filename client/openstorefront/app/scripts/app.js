@@ -49,6 +49,7 @@ var app = angular
     'com.2fdevs.videogular.plugins.poster',
     'pasvaz.bindonce',
     'infinite-scroll',
+    'colorpicker.module',
     'd3'
   // end of dependency injections
   ]
