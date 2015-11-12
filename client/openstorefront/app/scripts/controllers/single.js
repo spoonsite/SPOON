@@ -41,6 +41,11 @@ app.controller('SingleCtrl', ['$scope', 'localCache', 'business', '$filter', '$t
   }
   // $rootScope.eventHistory.push({path: $location.$$path, search: $location.search(), label: label});
 
+  if ($location.search().hideNav) {
+      $rootScope.navOption = {};
+      $rootScope.navOption.hideNav = true;
+  }
+
   $rootScope.$watch('eventHistory', function(){
     $scope.eventHistory = $rootScope.eventHistory;
   })

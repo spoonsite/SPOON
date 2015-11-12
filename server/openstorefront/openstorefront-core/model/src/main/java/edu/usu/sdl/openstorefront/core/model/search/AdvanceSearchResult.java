@@ -29,6 +29,7 @@ public class AdvanceSearchResult
 
 	private List<ComponentSearchView> results = new ArrayList<>();
 	private ValidationResult validationResult = new ValidationResult();
+	private long totalNumber;
 
 	public AdvanceSearchResult()
 	{
@@ -52,6 +53,16 @@ public class AdvanceSearchResult
 	public void setValidationResult(ValidationResult validationResult)
 	{
 		this.validationResult = validationResult;
+	}
+
+	public long getTotalNumber()
+	{
+		return totalNumber;
+	}
+
+	public void setTotalNumber(long totalNumber)
+	{
+		this.totalNumber = totalNumber;
 	}
 
 }

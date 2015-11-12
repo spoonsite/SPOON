@@ -34,6 +34,9 @@ public class ApprovalStatus
 	public static final String PENDING = "P";
 	public static final String NOT_SUBMITTED = "N";
 
+	//this is just for filtering
+	public static final String FILTER_ALL = "ALL";
+
 	public ApprovalStatus()
 	{
 	}

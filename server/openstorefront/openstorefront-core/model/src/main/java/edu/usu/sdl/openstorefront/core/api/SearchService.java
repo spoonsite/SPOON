@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import java.util.List;
@@ -48,7 +49,7 @@ public interface SearchService
 	 * @param filter
 	 * @return
 	 */
-	public List<ComponentSearchView> getSearchItems(SearchQuery query, FilterQueryParams filter);
+	public ComponentSearchWrapper getSearchItems(SearchQuery query, FilterQueryParams filter);
 
 	/**
 	 * Performs the search according to search elements and then gathers all

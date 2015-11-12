@@ -165,20 +165,14 @@ Ext.onReady(function() {
 
    
     Ext.Ajax.timeout = 300000;
-    Ext.Ajax.listeners = {
-      
-      requestcomplete: function (conn, response, options) {
-
-        
-      },
-      
-      requestexception: function(conn, response, options, eOpts) {
-       if (response.result) {
-          var data = response.result; 
+    Ext.Ajax.on('requestexception', function(conn, response, options, eOpts){
+       var errorTicket = Ext.decode(response.responseText);
+       if (errorTicket) {
+          var data = errorTicket;
           
           var message = 'Server was unable to process request.';
           if (data.message) {
-            message = 'Message: ' + data.message;
+            message = data.message;
           }
           if (data.potentialResolution) {
             message = message + '<br> Potential Resolution: ' + data.potentialResolution;
@@ -205,8 +199,8 @@ Ext.onReady(function() {
             }
           });
         }
-      }
-    };
+    });
+    
 });
 
 //if (Ext.supports.LocalStorage)

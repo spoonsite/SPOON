@@ -91,6 +91,7 @@ import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -661,8 +662,17 @@ public class ComponentRESTResource
 		targetComponent.setComponentId(mergeId);
 		targetComponent = targetComponent.find();
 		if (mergeComponent != null && targetComponent != null) {
-			Component component = service.getComponentService().merge(mergeId, targetId);
-			response = sendSingleEntityResponse(component);
+			if (mergeComponent.equals(targetComponent)) {
+				ValidationResult validationResult = new ValidationResult();
+				RuleResult ruleResult = new RuleResult();
+				ruleResult.setMessage("Merge Component Id cannot be the same as the Target ComponentId");
+				ruleResult.setFieldName("targetComponentId");
+				validationResult.getRuleResults().add(ruleResult);
+				response = sendSingleEntityResponse(validationResult.toRestError());
+			} else {
+				Component component = service.getComponentService().merge(mergeId, targetId);
+				response = sendSingleEntityResponse(component);
+			}
 		} else {
 			if (mergeComponent == null) {
 				log.log(Level.FINE, MessageFormat.format("Unable to merge Component....merge component not found: {0}", mergeId));
