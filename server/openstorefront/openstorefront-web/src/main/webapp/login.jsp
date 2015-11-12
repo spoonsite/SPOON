@@ -10,6 +10,16 @@
 	<head>
 		<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
 		
+		<script type="text/javascript">
+		   try {
+			if (window.self !== window.top) {
+				window.parent.location.href = "/openstorefront/login.jsp?gotoPage="+window.parent.location.pathname;
+			}
+		   } catch (e) {
+			//top
+		   } 
+		</script>
+		
 		<style>
 			.disclaimer{
 				

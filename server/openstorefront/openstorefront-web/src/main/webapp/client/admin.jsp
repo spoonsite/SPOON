@@ -47,7 +47,8 @@
 			var pageMap = [];
 			pageMap['Attributes'] = '/openstorefront/admin?tool=Attributes';
 			pageMap['Dashboard'] = 'Router.action?page=admin/adminDashboard.jsp';
-			pageMap['Entries'] = '/openstorefront/admin?tool=Entries';
+			pageMap['Entries'] = 'Router.action?page=admin/data/components.jsp';//'/openstorefront/admin?tool=Entries';
+			pageMap['EntriesOld'] = '/openstorefront/admin?tool=Entries';
 			pageMap['EntryType'] = '/openstorefront/admin?tool=Entry%20Type';
 			pageMap['Highlights'] = '/openstorefront/admin?tool=Highlights';
 			pageMap['Integrations'] = '/openstorefront/admin?tool=Integrations';
@@ -123,6 +124,12 @@
 				handler: function(){
 					actionLoadContent('Organizations');
 				}				
+			});
+			dataMenu.push({
+				text: 'OLD Entries',
+				handler: function(){
+					actionLoadContent('EntriesOld');
+				}
 			});
 			dataMenu.push({
 				text: 'User Data',

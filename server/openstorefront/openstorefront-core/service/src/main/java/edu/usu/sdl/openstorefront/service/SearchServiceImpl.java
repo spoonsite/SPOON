@@ -37,6 +37,7 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.SearchType;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager;
@@ -100,8 +101,10 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public List<ComponentSearchView> getSearchItems(SearchQuery query, FilterQueryParams filter)
+	public ComponentSearchWrapper getSearchItems(SearchQuery query, FilterQueryParams filter)
 	{
+		ComponentSearchWrapper componentSearchWrapper = new ComponentSearchWrapper();
+
 		// use for advanced search with And - Or combinations on separate fields
 		String queryOperator = " " + SolrAndOr.OR + " ";
 		String myQueryString;
@@ -139,6 +142,7 @@ public class SearchServiceImpl
 
 		// execute the searchComponent method and bring back from solr a list array
 		List<SolrComponentModel> resultsList = new ArrayList<>();
+		long totalFound = 0;
 		try {
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(myQueryString);
@@ -166,6 +170,7 @@ public class SearchServiceImpl
 
 			QueryResponse response = SolrManager.getServer().query(solrQuery);
 			SolrDocumentList results = response.getResults();
+			totalFound = results.getNumFound();
 			DocumentObjectBinder binder = new DocumentObjectBinder();
 			resultsList = binder.getBeans(SolrComponentModel.class, results);
 		} catch (SolrServerException ex) {
@@ -195,6 +200,7 @@ public class SearchServiceImpl
 			if (goodComponentIdSet.contains(componentId) == false) {
 				log.log(Level.FINE, MessageFormat.format("Removing bad index: {0}", componentId));
 				deleteById(componentId);
+				totalFound--;
 			}
 		}
 		views.addAll(componentSearchViews);
@@ -221,7 +227,15 @@ public class SearchServiceImpl
 		}
 
 		//TODO: Get the score and sort by score
-		return views;
+		componentSearchWrapper.setData(views);
+		componentSearchWrapper.setResults(views.size());
+
+		//This could happen if the index were all bad
+		if (totalFound < 0) {
+			totalFound = 0;
+		}
+		componentSearchWrapper.setTotalNumber(totalFound);
+		return componentSearchWrapper;
 	}
 
 	@Override
@@ -586,6 +600,8 @@ public class SearchServiceImpl
 			if (StringUtils.isNotBlank(searchModel.getSortField())) {
 				Collections.sort(views, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
 			}
+			searchResult.setTotalNumber(views.size());
+
 			//window
 			if (searchModel.getStartOffset() < views.size() && searchModel.getMax() > 0) {
 				int count = 0;
