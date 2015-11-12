@@ -52,7 +52,7 @@ limitations under the License.
                         <div style="display:block">
                             <div class="input-group">
                                 <div class="input-group-btn">
-                                    <button slide-toggle="#SearchToolsBar" class="btn btn-default" data-toggle="tooltip" title="Search Tools" type="button" style="font-size:1.5em; background-color:#efefef;"><i class="glyphicon glyphicon-th"></i></button>
+                                    <button  class="btn btn-default" data-toggle="tooltip" title="Search Tools" type="button" style="font-size:1.5em; background-color:#efefef;" ng-click="openSearchTools()"><i class="fa fa-lg fa-th"></i></button>
                                 </div>
                                 <input type="text" class="form-control" ng-model="searchKey"  placeholder="Search" typeahead="key.description as key.description for key in typeahead | filter:$viewValue | limitTo:8" autofocus id="mainSearchBar">
                                 <div class="input-group-btn">
@@ -61,11 +61,6 @@ limitations under the License.
                             </div>
                         </div>
                     </form>
-                    <div  class="slideable" duration="0.1s" id="SearchToolsBar" style="margin-top:10px;">
-                        <button type="button" data-container="body" data-toggle="tooltip" title="Show All" ng-click="searchKey = 'all'; goToSearch('search', 'all', true);" style="font-size: 1.3em; height: 50px; width: 50px;" class="btn btn-primary"><i class="glyphicon glyphicon-asterisk"></i></button>
-                        <button type="button" data-container="body" data-toggle="tooltip" title="Topic Search"  ng-click="openSearchModal('Topic Search', {mode: 'topics'});" style="font-size:1.3em; height:50px; width:50px;" class="btn btn-primary"><i class="glyphicon glyphicon-th-list"></i></button>   
-                        <button type="button" data-container="body" data-toggle="tooltip" title="Architecture Search" ng-click="openSearchModal('Architecture Search', {mode: 'architecture'})" style="font-size: 1.3em; height: 50px; width:50px;" class="btn btn-primary"><i class="glyphicon glyphicon-book"></i></button>
-                    </div>
             </div>
         </div>
     </div>

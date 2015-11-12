@@ -95,18 +95,8 @@
           <div class="navSearchBar">
             <div class="input-group">
                <div ng-controller="SearchToolsCtrl" class="input-group-btn">
-                     <button 
-                         class="btn btn-default" 
-                         dynamic-popover 
-                         container="body" 
-                         title="Search Tools" 
-                         content="getSearchToolsHTML(0)"
-                         placement="bottom"
-                         trigger="click"
-                         type="button" 
-                         style-override="z-index:1046; padding:0px; margin:0px; min-width:50px; max-width:200px;"
-                         style="padding-left:6px; padding-top:5px; padding-bottom:4px; background-color:#efefef;"  >
-                         <i style="font-size:1.3em; padding-left:2px;" class="glyphicon glyphicon-th"></i>
+                     <button class="btn btn-default" ng-click="openSearchTools();">                          
+                         <i class="fa fa-lg fa-th"></i>
                      </button>
                </div>
                <input type="text" class="form-control searchBar" id="globalSearch" ng-model="searchKey" typeahead="key.description as key.description for key in typeahead | filter:$viewValue | limitTo:8" placeholder="New Search">
