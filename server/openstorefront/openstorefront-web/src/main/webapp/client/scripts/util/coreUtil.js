@@ -51,14 +51,26 @@ var CoreUtil = {
       autoLoad = options.autoLoad;
     }
 
-    var store =  Ext.create('Ext.data.Store', {
-      model: model,
-      autoLoad: autoLoad,
-      proxy: {
-        type: 'ajax',
-        url: options.url
+    var store;
+    if (options.customStore) {
+       store = Ext.create('Ext.data.Store', options.customStore);
+    } else {
+       store = Ext.create('Ext.data.Store', {
+        model: model,
+        autoLoad: autoLoad,
+        proxy: {
+         type: 'ajax',
+          url: options.url
+        }
+      });      
+      store = Ext.applyIf(store, options);
+      if (options.addRecords) {
+        store.on('load', function(myStore, records, sucessful, opts){
+            myStore.add(options.addRecords);
+        });
       }
-    });	
+    }
+    
     return store;
   }, 
     
@@ -208,6 +220,24 @@ var CoreUtil = {
       }
     });
     
+  },
+  
+  pagingProxy: function(options) {
+    var proxy = Ext.create('Ext.data.proxy.Ajax', {
+        url: options.url,
+        method: options.method ? options.method : 'GET',
+        params: options.params ? options.params : {},
+        extraParams: options.extraParams ? options.extraParams : {},
+        directionParam: 'sortOrder',
+        sortParam: 'sortField',
+        startParam: 'offset',
+        limitParam: 'max',
+        simpleSortMode: true,
+        reader: options.reader ? options.reader : {type: 'json'}
+    });
+    proxy = Ext.applyIf(proxy, options);
+    
+    return proxy;
   }
   
 

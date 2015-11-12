@@ -11,6 +11,7 @@ and open the template in the editor.
 body.x-border-layout-ct,
 div.x-border-layout-ct {
     background-color: #f5f5f5;
+    background: url('/openstorefront/images/squared_metal.png');	
 }
 
 .x-toolbar-default {
@@ -20,6 +21,7 @@ div.x-border-layout-ct {
     border-width: 1px;
     background-image: none;
     background-color: #f5f5f5;
+    background: url('/openstorefront/images/squared_metal.png');
 }
 
 .x-window-header-default-top {

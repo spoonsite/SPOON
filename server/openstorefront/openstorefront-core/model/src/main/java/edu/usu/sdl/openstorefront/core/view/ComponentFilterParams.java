@@ -43,7 +43,7 @@ public class ComponentFilterParams
 	@DefaultValue(ComponentType.ALL)
 	@Sanitize(TextSanitizer.class)
 	private String componentType;
-	
+
 	public static ComponentFilterParams defaultFilter()
 	{
 		ComponentFilterParams filterQueryParams = new ComponentFilterParams();

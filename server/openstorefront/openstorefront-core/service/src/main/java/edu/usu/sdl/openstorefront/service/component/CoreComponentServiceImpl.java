@@ -677,6 +677,14 @@ public class CoreComponentServiceImpl
 		for (BaseComponent baseComponent : baseComponents) {
 			baseComponent.setComponentId(componentId);
 
+			//Set Composite keys
+			if (baseComponent instanceof ComponentEvaluationSection) {
+				ComponentEvaluationSection evaluationSection = (ComponentEvaluationSection) baseComponent;
+				if (evaluationSection.getComponentEvaluationSectionPk() != null) {
+					evaluationSection.getComponentEvaluationSectionPk().setComponentId(componentId);
+				}
+			}
+
 			//validate
 			ValidationModel validationModel = new ValidationModel(baseComponent);
 			validationModel.setConsumeFieldsOnly(true);
@@ -1086,14 +1094,22 @@ public class CoreComponentServiceImpl
 		ComponentAdminWrapper result = new ComponentAdminWrapper();
 
 		Component componentExample = new Component();
-		if (!filter.getAll()) {
-			componentExample.setActiveStatus(filter.getStatus());
+		if (ComponentFilterParams.FILTER_ALL.equalsIgnoreCase(filter.getStatus()) == false) {
+			if (StringUtils.isNotBlank(filter.getStatus())) {
+				componentExample.setActiveStatus(filter.getStatus());
+			}
 		}
 		componentExample.setComponentId(componentId);
-		componentExample.setApprovalState(filter.getApprovalState());
-		componentExample.setComponentType(filter.getComponentType());
-		if (componentExample.getComponentType() != null && componentExample.getComponentType().equals(ComponentType.ALL)) {
-			componentExample.setComponentType(null);
+
+		if (ApprovalStatus.FILTER_ALL.equalsIgnoreCase(filter.getApprovalState()) == false) {
+			if (StringUtils.isNotBlank(filter.getApprovalState())) {
+				componentExample.setApprovalState(filter.getApprovalState());
+			}
+		}
+		if (ComponentType.ALL.equalsIgnoreCase(filter.getComponentType()) == false) {
+			if (StringUtils.isNotBlank(filter.getComponentType())) {
+				componentExample.setComponentType(filter.getComponentType());
+			}
 		}
 
 		QueryByExample queryByExample = new QueryByExample(componentExample);
@@ -1339,7 +1355,7 @@ public class CoreComponentServiceImpl
 
 			componentAll.getRelationships().forEach(relation -> {
 				relation.setComponentId(null);
-				relation.setRelatedComponentId(null);
+				relation.setComponentRelationshipId(null);
 			});
 
 			componentAll.getTags().forEach(tag -> {
@@ -1585,6 +1601,10 @@ public class CoreComponentServiceImpl
 
 	public Component merge(String toMergeComponentId, String targetComponentId)
 	{
+		if (toMergeComponentId.equals(targetComponentId)) {
+			throw new OpenStorefrontRuntimeException("Target Component and Merge Component cannot be the same.");
+		}
+
 		ComponentAll mergeComponent = getFullComponent(toMergeComponentId);
 		ComponentAll targetComponent = getFullComponent(targetComponentId);
 		if (mergeComponent != null) {
@@ -1605,6 +1625,13 @@ public class CoreComponentServiceImpl
 
 				for (ReviewAll reviewAll : mergeComponent.getReviews()) {
 					if (targetReviewKey.contains(reviewAll.getComponentReview().uniqueKey()) == false) {
+						reviewAll.getComponentReview().setComponentId(targetComponentId);
+						for (ComponentReviewPro componentReviewPro : reviewAll.getPros()) {
+							componentReviewPro.setComponentId(targetComponentId);
+						}
+						for (ComponentReviewCon componentReviewCon : reviewAll.getCons()) {
+							componentReviewCon.setComponentId(targetComponentId);
+						}
 						targetComponent.getReviews().add(reviewAll);
 					}
 				}
@@ -1615,6 +1642,10 @@ public class CoreComponentServiceImpl
 
 				for (QuestionAll questionAll : mergeComponent.getQuestions()) {
 					if (targetQuestionKey.contains(questionAll.getQuestion().uniqueKey()) == false) {
+						questionAll.getQuestion().setComponentId(targetComponentId);
+						for (ComponentQuestionResponse response : questionAll.getResponds()) {
+							response.setComponentId(targetComponentId);
+						}
 						targetComponent.getQuestions().add(questionAll);
 					}
 				}
@@ -1633,7 +1664,7 @@ public class CoreComponentServiceImpl
 				List<UserWatch> userWatches = userWatchExample.findByExampleProxy();
 				for (UserWatch userWatch : userWatches) {
 					userWatch.setComponentId(targetComponentId);
-					userWatch.populateBaseCreateFields();
+					userWatch.populateBaseUpdateFields();
 					persistenceService.persist(userWatch);
 				}
 
@@ -1657,10 +1688,10 @@ public class CoreComponentServiceImpl
 
 	private <T extends BaseComponent> void mergeSubEntities(List<T> entities, List<T> targetEntities, String targetComponentId)
 	{
-		Map<String, List<T>> keyMap = entities.stream().collect(Collectors.groupingBy(T::uniqueKey));
+		Map<String, List<T>> keyMap = targetEntities.stream().collect(Collectors.groupingBy(T::uniqueKey));
 		for (T entity : entities) {
 			boolean add = false;
-			if (keyMap.containsKey(entity.uniqueKey())) {
+			if (keyMap.containsKey(entity.uniqueKey()) == false) {
 				add = true;
 			}
 
@@ -1719,7 +1750,15 @@ public class CoreComponentServiceImpl
 
 	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ComponentTypeTemplate existing = persistenceService.findById(ComponentTypeTemplate.class, componentTypeTemplate.getTemplateCode());
+		if (existing != null) {
+			existing.updateFields(componentTypeTemplate);
+			componentTypeTemplate = persistenceService.persist(existing);
+		} else {
+			componentTypeTemplate.populateBaseCreateFields();
+			componentTypeTemplate = persistenceService.persist(componentTypeTemplate);
+		}
+		return componentTypeTemplate;
 	}
 
 	public void removeComponentTypeTemplate(String templateCode)
@@ -1739,6 +1778,7 @@ public class CoreComponentServiceImpl
 			if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 				component.setApprovedUser(SecurityUtil.getCurrentUserName());
 				component.setApprovedDts(TimeUtil.currentDate());
+				component.setApprovalState(ApprovalStatus.APPROVED);
 				component.populateBaseUpdateFields();
 				persistenceService.persist(component);
 

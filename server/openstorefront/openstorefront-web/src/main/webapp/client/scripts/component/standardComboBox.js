@@ -15,7 +15,7 @@ Ext.define('OSF.component.StandardComboBox', {
 	width: 175,
 	margin: '0 20 0 0',
 	valueField: 'code',
-	displayField: 'desc',
+	displayField: 'description',
 	typeAhead: true,
 	forceSelection: true,	
 	queryMode: 'local',

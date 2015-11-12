@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.sort.ComponentSearchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.ListingStats;
 import edu.usu.sdl.openstorefront.core.view.RecentlyAddedView;
@@ -71,6 +72,7 @@ public class Search
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
 	public Response searchListing(
+			@QueryParam("paging") @APIDescription("Returns the data wrapped for paging") boolean paging,
 			@BeanParam SearchQuery query,
 			@BeanParam FilterQueryParams filterQueryParams)
 	{
@@ -79,12 +81,16 @@ public class Search
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		List<ComponentSearchView> results = service.getSearchService().getSearchItems(query, filterQueryParams);
-		results.sort(new ComponentSearchViewComparator());
-		GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(results)
-		{
-		};
-		return sendSingleEntityResponse(entity);
+		ComponentSearchWrapper results = service.getSearchService().getSearchItems(query, filterQueryParams);
+		results.getData().sort(new ComponentSearchViewComparator());
+		if (paging) {
+			return sendSingleEntityResponse(results);
+		} else {
+			GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(results.getData())
+			{
+			};
+			return sendSingleEntityResponse(entity);
+		}
 	}
 
 	@POST
@@ -93,20 +99,40 @@ public class Search
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
 	@Path("/advance")
-	public Response advanceSearch(SearchModel searchModel)
+	public Response advanceSearch(
+			@QueryParam("paging") @APIDescription("Returns the data wrapped for paging") boolean paging,
+			@BeanParam FilterQueryParams filterQueryParams,
+			SearchModel searchModel)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		if (searchModel == null) {
 			RestErrorModel restErrorModel = new RestErrorModel();
-			restErrorModel.getErrors().put("searchModel", "Search Model must be pass to this call see api documentation");
+			restErrorModel.getErrors().put("searchModel", "Search Model must be pass to this call see API documentation");
 			return sendSingleEntityResponse(restErrorModel);
 		}
+		searchModel.setStartOffset(filterQueryParams.getOffset());
+		searchModel.setMax(filterQueryParams.getMax());
+		searchModel.setSortField(filterQueryParams.getSortField());
+		searchModel.setSortDirection(filterQueryParams.getSortOrder());
 
 		AdvanceSearchResult result = service.getSearchService().advanceSearch(searchModel);
 		if (result.getValidationResult().valid()) {
-			GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result.getResults())
-			{
-			};
-			return sendSingleEntityResponse(entity);
+			if (paging) {
+				ComponentSearchWrapper searchWrapper = new ComponentSearchWrapper();
+				searchWrapper.setData(result.getResults());
+				searchWrapper.setResults(result.getResults().size());
+				searchWrapper.setTotalNumber(result.getTotalNumber());
+				return sendSingleEntityResponse(searchWrapper);
+			} else {
+				GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result.getResults())
+				{
+				};
+				return sendSingleEntityResponse(entity);
+			}
 		} else {
 			return sendSingleEntityResponse(result.getValidationResult().toRestError());
 		}
