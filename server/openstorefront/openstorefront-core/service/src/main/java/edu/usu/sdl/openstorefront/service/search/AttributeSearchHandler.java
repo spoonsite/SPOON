@@ -15,12 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.service.search;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -65,6 +69,45 @@ public class AttributeSearchHandler
 			componentAttribute.setComponentAttributePk(componentAttributePk);
 
 			QueryByExample<ComponentAttribute> queryByExample = new QueryByExample(componentAttribute);
+
+			if (StringUtils.isNotBlank(searchElement.getField())) {
+				Field field = ReflectionUtil.getField(new ComponentAttribute(), searchElement.getField());
+				field.setAccessible(true);
+
+				Class type = field.getType();
+				if (type.getSimpleName().equals(String.class.getSimpleName())) {
+					String likeValue = null;
+					try {
+						switch (searchElement.getStringOperation()) {
+							case EQUALS:
+								String value = searchElement.getValue();
+								if (searchElement.getCaseInsensitive()) {
+									queryByExample.getExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+									value = value.toLowerCase();
+								}
+								field.set(componentAttribute, value);
+								break;
+							default:
+								likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
+								break;
+						}
+
+						if (likeValue != null) {
+							ComponentAttribute componentAttributeLike = new ComponentAttribute();
+							if (searchElement.getCaseInsensitive()) {
+								likeValue = likeValue.toLowerCase();
+								queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+							}
+							field.set(componentAttributeLike, likeValue);
+							queryByExample.setLikeExample(componentAttributeLike);
+						}
+					} catch (SecurityException | IllegalArgumentException | IllegalAccessException | OpenStorefrontRuntimeException e) {
+						throw new OpenStorefrontRuntimeException("Unable to handle search request", e);
+					}
+				} else {
+					throw new OpenStorefrontRuntimeException("Type: " + type.getSimpleName() + " is not support in this query handler", "Add support");
+				}
+			}
 
 			if (StringUtils.isNotBlank(searchElement.getKeyValue())) {
 				String likeValue = null;

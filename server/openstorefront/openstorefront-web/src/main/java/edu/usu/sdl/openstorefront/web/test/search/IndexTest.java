@@ -20,7 +20,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.view.ArticleView;
-import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
@@ -55,12 +55,12 @@ public class IndexTest
 			results.append("Searching Component Index...<br>");
 			SearchQuery query = new SearchQuery();
 			query.setQuery(componentAll.getComponent().getName());
-			List<ComponentSearchView> searchViews = service.getSearchService().getSearchItems(query, FilterQueryParams.defaultFilter());
+			ComponentSearchWrapper searchViews = service.getSearchService().getSearchItems(query, FilterQueryParams.defaultFilter());
 			results.append("Results...").append("<br><br>");
-			searchViews.forEach(view -> {
+			searchViews.getData().forEach(view -> {
 				results.append(view.getName()).append("   Type:").append(view.getListingType()).append("<br>");
 			});
-			if (searchViews.size() < 1) {
+			if (searchViews.getData().size() < 1) {
 				failureReason.append("Unable able to find added component<br>");
 			}
 
@@ -88,12 +88,12 @@ public class IndexTest
 			SearchQuery query = new SearchQuery();
 			query.setQuery("DUMMY-TEST");
 
-			List<ComponentSearchView> searchViews = service.getSearchService().getSearchItems(query, FilterQueryParams.defaultFilter());
+			ComponentSearchWrapper searchViews = service.getSearchService().getSearchItems(query, FilterQueryParams.defaultFilter());
 			results.append("Results...").append("<br><br>");
-			searchViews.forEach(view -> {
+			searchViews.getData().forEach(view -> {
 				results.append(view.getName()).append("   Type:").append(view.getListingType()).append("<br>");
 			});
-			if (searchViews.size() < 1) {
+			if (searchViews.getData().size() < 1) {
 				failureReason.append("Unable able to find added article<br>");
 			}
 

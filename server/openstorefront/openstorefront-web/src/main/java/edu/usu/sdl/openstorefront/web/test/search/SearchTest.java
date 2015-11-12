@@ -15,11 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.web.test.search;
 
-import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
-import java.util.List;
 
 /**
  *
@@ -41,9 +40,9 @@ public class SearchTest
 		SearchQuery query = new SearchQuery();
 		FilterQueryParams filterQueryParams = FilterQueryParams.defaultFilter();
 		filterQueryParams.setSortField("name");
-		List<ComponentSearchView> componentSearchViews = service.getSearchService().getSearchItems(query, filterQueryParams);
+		ComponentSearchWrapper searchViews = service.getSearchService().getSearchItems(query, filterQueryParams);
 		results.append("Results...").append("<br><br>");
-		componentSearchViews.forEach(view -> {
+		searchViews.getData().forEach(view -> {
 			results.append(view.getName()).append("   Type:").append(view.getListingType()).append("<br>");
 		});
 	}
