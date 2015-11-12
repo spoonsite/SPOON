@@ -30,16 +30,9 @@ public class SearchModel
 		implements Serializable
 {
 
-	@ConsumeField
 	private String sortField;
-
-	@ConsumeField
 	private String sortDirection = OpenStorefrontConstant.SORT_DESCENDING;
-
-	@ConsumeField
 	private int startOffset;
-
-	@ConsumeField
 	private int max = Integer.MAX_VALUE;
 
 	@ConsumeField

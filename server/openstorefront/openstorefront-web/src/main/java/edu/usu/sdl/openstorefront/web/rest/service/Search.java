@@ -101,13 +101,23 @@ public class Search
 	@Path("/advance")
 	public Response advanceSearch(
 			@QueryParam("paging") @APIDescription("Returns the data wrapped for paging") boolean paging,
+			@BeanParam FilterQueryParams filterQueryParams,
 			SearchModel searchModel)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		if (searchModel == null) {
 			RestErrorModel restErrorModel = new RestErrorModel();
 			restErrorModel.getErrors().put("searchModel", "Search Model must be pass to this call see API documentation");
 			return sendSingleEntityResponse(restErrorModel);
 		}
+		searchModel.setStartOffset(filterQueryParams.getOffset());
+		searchModel.setMax(filterQueryParams.getMax());
+		searchModel.setSortField(filterQueryParams.getSortField());
+		searchModel.setSortDirection(filterQueryParams.getSortOrder());
 
 		AdvanceSearchResult result = service.getSearchService().advanceSearch(searchModel);
 		if (result.getValidationResult().valid()) {
