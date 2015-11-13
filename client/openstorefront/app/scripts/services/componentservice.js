@@ -569,7 +569,7 @@
     componentservice.advancedSearch = function (advancedSearch) {
       var result = $q.defer();
       if (advancedSearch) {
-        var url = 'api/v1/service/search/advance/';
+        var url = 'api/v1/service/search/advance?sortOrder=' + advancedSearch.sortDirection + '&sortField='+advancedSearch.sortField;
         $http({
           method: 'POST',
           url: url,

@@ -386,11 +386,9 @@ Ext.define('OSF.component.SearchToolWindow', {
                 "startOffset": 0,
                 "max": 2147483647,
                 "searchElements": [{
-                        "searchType": "ATTRIBUTE",
-                        "field": 'architectureCode',
-                        "value": item.get('attributeCode'),
+                        "searchType": "ARCHITECTURE", 
                         "keyField": item.get('attributeType'),
-                        "keyValue": null,
+                        "keyValue": item.get('attributeCode'),
                         "startDate": null,
                         "endDate": null,
                         "caseInsensitive": false,
