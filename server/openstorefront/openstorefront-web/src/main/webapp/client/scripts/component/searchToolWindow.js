@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*global Ext*/
 Ext.define('OSF.component.SearchToolWindow', {
     extend: 'Ext.window.Window',
     alias: 'osf.widget.SearchToolWindow',
@@ -25,12 +26,11 @@ Ext.define('OSF.component.SearchToolWindow', {
     maximizable: true,
     layout: 'fit',
     id: 'searchToolWindow',
-    
     initComponent: function () {
         this.callParent();
-         
+
         var searchToolWin = this;
-        
+
         //
         //  topicSearchPanel Tab
         //  This is the panel tab for the topic search tool
@@ -46,7 +46,7 @@ Ext.define('OSF.component.SearchToolWindow', {
                 })
             ]
         });
-        
+
         //
         //  categorySearchPanel Tab
         //  This is the panel tab for the category search tool
@@ -91,36 +91,49 @@ Ext.define('OSF.component.SearchToolWindow', {
             ]
 
         });
-        
+
         //***************************
         //  Utility Methods 
         //***************************
-        var sortList = function (theArray,fieldname) {
+        var sortList = function (theArray, fieldname, direction) {
 
-            var tData = theArray.sort(function (a, b) {
-                if (a[fieldname] < b[fieldname])
-                    return -1;
-                if (a[fieldname] > b[fieldname])
-                    return 1;
-                return 0;
-                
-            });
-            
+            if (direction === 'ASC') {
+                var tData = theArray.sort(function (a, b) {
+                    if (a[fieldname] > b[fieldname])
+                        return -1;
+                    if (a[fieldname] < b[fieldname])
+                        return 1;
+                    return 0;
+
+                });
+            }
+            else if (direction === 'DESC') {
+                var tData = theArray.sort(function (a, b) {
+                    if (a[fieldname] < b[fieldname])
+                        return -1;
+                    if (a[fieldname] > b[fieldname])
+                        return 1;
+                    return 0;
+
+                });
+            }
+
+
             return tData;
         };
-        
-        
-        
-        
+
+
+
+
         //***************************
         //  Topic Methods 
         //***************************
         //
-        
+
         //
         //  Topic Load Search
         //
-        var topicButtonHandler = function (newTab,item) {
+        var topicButtonHandler = function (newTab, item) {
 
             var desc = item.description;
             if (desc === '')
@@ -128,8 +141,8 @@ Ext.define('OSF.component.SearchToolWindow', {
                 desc = 'None';
             }
             newTab.getComponent('topicPanel').infoPanel.update(desc);
-            
-            
+
+
             //Do the search on the category attribute
             searchToolWin.searchObj = {
                 "sortField": null,
@@ -150,59 +163,28 @@ Ext.define('OSF.component.SearchToolWindow', {
                         "mergeCondition": "OR"  //OR.. NOT.. AND..
                     }]
             };
-            newTab.setLoading(true);
-            Ext.Ajax.request({
-                url: 'api/v1/service/search/advance',
-                method: 'POST',
-                jsonData: Ext.util.JSON.encode(searchToolWin.searchObj),
-                success: function (response, opts) {
-                    newTab.setLoading(false);
-                    var dta = Ext.decode(response.responseText);
-                    console.log("Advanced Search Success", dta);
-                    if (dta.length === 0) {
-                        newTab.getComponent('topicPanel').resultsGridPanel.hide();
-                        newTab.getComponent('topicPanel').resultsPanel.update('There were no results returned for that topic.');
-                    }
-                    else {
-                        newTab.getComponent('topicPanel').resultsGridPanel.show();
-                        var theStore = newTab.getComponent('topicPanel').resultsGridPanel.getStore();
-                        
-                        
-                        theStore.loadData(dta);
-                        theStore.getProxy().getReader().setTotalProperty(dta.length);
-                        console.log("Totals",theStore.getProxy().getReader());
-
-                    }
-
-                },
-                failure: function (response, opts) {
-                    newTab.setLoading(false);
-                    console.log("Advance Search Failed", response);
-                    newTab.getComponent('topicPanel').resultsGridPanel.hide();
-                    newTab.getComponent('topicPanel').resultsPanel.update('Search was unable to return results. <br>' + response);
-                }
-            });
+            newTab.getComponent('topicPanel').loadGrid(searchToolWin.searchObj);
         };
-        
-        
-        
+
+
+
         //
         //  This method calls an API call to get all the topics and creates a list of buttons inside the navPanel.
         //
         //
         var loadTopicNav = function (newTab) {
-            console.log("Loading Topic Nav");
+            //console.log("Loading Topic Nav");
             newTab.setLoading(true);
             Ext.Ajax.request({
                 url: 'api/v1/resource/componenttypes',
                 success: function (response, opts) {
                     newTab.setLoading(false);
                     var data = Ext.decode(response.responseText);
-                    var tData = sortList(data,'label');
-                    //console.log("tData",tData);
+                    var tData = sortList(data, 'label', 'DESC');
+                    ////console.log("tData",tData);
                     Ext.Array.each(tData, function (item) {
-                        //console.log("newTab",newTab);
-                   
+                        ////console.log("newTab",newTab);
+
                         newTab.getComponent('topicPanel').navPanel.add({
                             xtype: 'button',
                             cls: 'list-button',
@@ -210,9 +192,9 @@ Ext.define('OSF.component.SearchToolWindow', {
                             text: item.label,
                             desc: item.description,
                             width: '100%',
-                            handler: function() {
-                                console.log("Comp clicked",this.text);
-                                topicButtonHandler(newTab,item);
+                            handler: function () {
+                                //console.log("Comp clicked", this.text);
+                                topicButtonHandler(newTab, item);
                             }
                         });
                     });
@@ -223,8 +205,8 @@ Ext.define('OSF.component.SearchToolWindow', {
             });
             newTab.doneLoad = true;
         };
-        
-        
+
+
         //
         //  Topic Tab Processing
         //
@@ -233,13 +215,13 @@ Ext.define('OSF.component.SearchToolWindow', {
                 loadTopicNav(newTab);
             }
         };
-        
-        
-        
+
+
+
         //***************************
         //  Category Methods 
         //***************************
-        
+
         //
         // This is the button handler for the category list button
         // This does an advanced search on the category list button clicked. 
@@ -273,41 +255,15 @@ Ext.define('OSF.component.SearchToolWindow', {
                         "mergeCondition": "OR"  //OR.. NOT.. AND..
                     }]
             };
-            newTab.setLoading(true);
-            Ext.Ajax.request({
-                url: 'api/v1/service/search/advance',
-                method: 'POST',
-                jsonData: Ext.util.JSON.encode(searchToolWin.searchObj),
-                success: function (response, opts) {
-                    newTab.setLoading(false);
-                    var dta = Ext.decode(response.responseText);
-                    console.log("Advanced Search Success", dta);
-                    if (dta.length === 0) {
-                        newTab.getComponent('contentPanel').resultsGridPanel.hide();
-                        newTab.getComponent('contentPanel').resultsPanel.update('There were no results returned for that category.');
-                    }
-                    else {
-                        newTab.getComponent('contentPanel').resultsGridPanel.show();
-                        var theStore = newTab.getComponent('contentPanel').resultsGridPanel.getStore();
-                        theStore.loadData(dta);
-
-                    }
-
-                },
-                failure: function (response, opts) {
-                    newTab.setLoading(false);
-                    console.log("Advance Search Failed", response);
-                    newTab.getComponent('contentPanel').resultsGridPanel.hide();
-                    newTab.getComponent('contentPanel').resultsPanel.update('Search was unable to return results. <br>' + response);
-                }
-            });
+            // newTab.setLoading(true);
+            newTab.getComponent('contentPanel').loadGrid(searchToolWin.searchObj);
         };
 
         //
         // This is the loader handler when a category is selected. The category list buttons load below and the panel expands.
         // The list buttons are loaded from the api call if they have not been loaded before.
         //
-        
+
         var categoryBeforePanelExpandHandler = function (p, animate, eOpts, newTab, item) {
             //Add description when selected
             newTab.getComponent('contentPanel').infoPanel.update(item.attributeTypeDescription + '<br/> Item Code: ' + item.attributeType);
@@ -318,11 +274,11 @@ Ext.define('OSF.component.SearchToolWindow', {
                     success: function (response, opts) {
                         newTab.setLoading(false);
                         var aData = Ext.decode(response.responseText);
-                        
+
                         //Sort the aData
                         var dataArray = aData.data;
-                        var tData = sortList(dataArray,'label');
-                        
+                        var tData = sortList(dataArray, 'label', 'DESC');
+
                         Ext.Array.each(tData, function (item2) {
                             p.add({
                                 xtype: 'button',
@@ -335,17 +291,17 @@ Ext.define('OSF.component.SearchToolWindow', {
                                 }
                             });
                         });
-                       
+
                         p.setHeight(null); //This is required to make the panel collapse/expand work.
                         p.loadedUp = true;
-                        
+
                     },
                     failure: function (response, opts) {
                         newTab.setLoading(false);
                         p.update("Failed to load data.");
-                        console.log("Failed to load data:" + response);
+                        //console.log("Failed to load data:" + response);
                         p.setHeight(null);
-                        
+
                     }
 
                 });
@@ -365,13 +321,9 @@ Ext.define('OSF.component.SearchToolWindow', {
                     newTab.setLoading(false);
                     var data = Ext.decode(response.responseText);
                     var dArray = data.topicSearchViews;
-                    var tData = dArray.sort(function (a, b) {
-                        if (a.attributeTypeDescription < b.attributeTypeDescription)
-                            return -1;
-                        if (a.attributeTypeDescription > b.attributeTypeDescription)
-                            return 1;
-                        return 0;
-                    });
+
+                    tData = sortList(dArray, 'attributeTypeDescription', 'DESC');
+
                     Ext.Array.each(tData, function (item) {
 
                         newTab.getComponent('contentPanel').navPanel.add({
@@ -379,15 +331,15 @@ Ext.define('OSF.component.SearchToolWindow', {
                             collapsible: true,
                             collapsed: true,
                             titleCollapse: true,
-                            height:100,
+                            height: 100,
                             header: {
                                 cls: 'panel-header',
                                 title: item.attributeTypeDescription
                             },
-                            bodyCls:'search-tools-nav-body-panel-item',
-                            width: '100%',                            
+                            bodyCls: 'search-tools-nav-body-panel-item',
+                            width: '100%',
                             listeners: {
-                                beforeexpand: function (p, animate, eOpts) {                                     
+                                beforeexpand: function (p, animate, eOpts) {
                                     categoryBeforePanelExpandHandler(p, animate, eOpts, newTab, item);
                                 }
                             }
@@ -409,11 +361,11 @@ Ext.define('OSF.component.SearchToolWindow', {
                 loadCategoryNav(newTab);
             }
         };
-         
+
         //***************************
         //  Architecture Methods 
         //***************************
-        
+
         //
         // This is the button handler for the category list button
         // This does an advanced search on the category list button clicked. 
@@ -435,10 +387,10 @@ Ext.define('OSF.component.SearchToolWindow', {
                 "max": 2147483647,
                 "searchElements": [{
                         "searchType": "ATTRIBUTE",
-                        "field": null,
-                        "value": null,
+                        "field": 'architectureCode',
+                        "value": item.get('attributeCode'),
                         "keyField": item.get('attributeType'),
-                        "keyValue": item.get('attributeCode'),
+                        "keyValue": null,
                         "startDate": null,
                         "endDate": null,
                         "caseInsensitive": false,
@@ -447,40 +399,12 @@ Ext.define('OSF.component.SearchToolWindow', {
                         "mergeCondition": "OR"  //OR.. NOT.. AND..
                     }]
             };
-            newTab.setLoading(true);
-            Ext.Ajax.request({
-                url: 'api/v1/service/search/advance',
-                method: 'POST',
-                jsonData: Ext.util.JSON.encode(searchToolWin.searchObj),
-                success: function (response, opts) {
-                    newTab.setLoading(false);
-                    var dta = Ext.decode(response.responseText);
-                    console.log("Advanced Search Success", dta);
-                    if (dta.length === 0) {
-                        newTab.getComponent('archPanel').resultsGridPanel.hide();
-                        newTab.getComponent('archPanel').resultsPanel.update('There were no results returned for that architecture type.');
-                    }
-                    else {
-                        newTab.getComponent('archPanel').resultsGridPanel.show();
-                        var theStore = newTab.getComponent('archPanel').resultsGridPanel.getStore();
-                        
-                        theStore.loadData(dta);
-
-                    }
-
-                },
-                failure: function (response, opts) {
-                    newTab.setLoading(false);
-                    console.log("Advance Search Failed", response);
-                    newTab.getComponent('archPanel').resultsGridPanel.hide();
-                    newTab.getComponent('archPanel').resultsPanel.update('Search was unable to return results. <br>' + response);
-                }
-            });
+            newTab.getComponent('archPanel').loadGrid(searchToolWin.searchObj);
         };
-        
-        
-        
-        
+
+
+
+
         //
         //  This method calls an API call to get all the SVC-V4-A tree arcg and creates a tree inside the navPanel.
         //
@@ -489,7 +413,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 
             newTab.setLoading(true);
             Ext.Ajax.request({
-                url: 'api/v1/resource/attributes/attributetypes/'+encodeURIComponent('DI2E-SVCV4-A')+'/architecture',
+                url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent('DI2E-SVCV4-A') + '/architecture',
                 success: function (response, opts) {
                     newTab.setLoading(false);
                     var data = Ext.decode(response.responseText);
@@ -510,20 +434,20 @@ Ext.define('OSF.component.SearchToolWindow', {
                         ],
                         data: data
                     });
-                   
-                    
+
+
                     newTab.getComponent('archPanel').navPanel.add({
                         xtype: 'treepanel',
                         store: tStore,
                         width: '100%',
                         rootVisible: false,
                         listeners: {
-                            beforeselect: function(thetree,therecord,theindex,theOpts){
-                                       archSelectHandler(newTab,therecord);
-                                     }           
+                            beforeselect: function (thetree, therecord, theindex, theOpts) {
+                                archSelectHandler(newTab, therecord);
+                            }
                         }
                     });
-                    
+
                 },
                 failure: function (response, opts) {
                     newTab.setLoading(false);
@@ -531,10 +455,10 @@ Ext.define('OSF.component.SearchToolWindow', {
             });
             newTab.doneLoad = true;
         };
-        
-        
-        
-         //
+
+
+
+        //
         //  Architecture Tab Processing
         //
         var archTabProcessing = function (tabpanel, newTab, oldtab, opts) {
@@ -542,23 +466,23 @@ Ext.define('OSF.component.SearchToolWindow', {
                 loadArchNav(newTab);
             }
         };
-        
-        
+
+
         //***************************
         //  Tab Panel  Methods 
         //***************************
         //
         //  This is the tab panel tab change handler
         //
-        
-        
+
+
         tabPanel.on('tabchange', function (tabpanel, newTab, oldtab, opts) {
-           
+
             if (newTab.getTitle() === 'Topic') {
                 topicTabProcessing(tabpanel, newTab, oldtab, opts);
             }
             else if (newTab.getTitle() === 'Category') {
-                
+
                 categoryTabProcessing(tabpanel, newTab, oldtab, opts);
             }
             else if (newTab.getTitle() === 'Architecture') {
@@ -566,17 +490,17 @@ Ext.define('OSF.component.SearchToolWindow', {
             }
         });
         searchToolWin.add(tabPanel);
-        
-        
+
+
         var setActiveTabByTitle = function (tabTitle) {
-            
-            console.log('Setting Active Tab to:'+tabTitle);
+
+            //console.log('Setting Active Tab to:' + tabTitle);
             var tabs = tabPanel.items.findIndex('title', tabTitle);
             tabPanel.setActiveTab(tabs);
         };
         setActiveTabByTitle("Category");
         setActiveTabByTitle("Topic");
-        
+
     } //End Init Component
 
 });

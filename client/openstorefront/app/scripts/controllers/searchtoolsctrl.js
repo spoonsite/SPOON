@@ -17,27 +17,29 @@
 
 /*global setupMain*/
 
-app.controller('SearchToolsCtrl', ['$scope', 'business', '$uiModal', '$location', '$rootScope', function ($scope, Business, $uiModal, $location, $rootScope) {/*jshint unused: false*/
+app.controller('SearchToolsCtrl', ['$scope','$route','business', '$uiModal', '$location', '$rootScope', function ($scope, $route, Business, $uiModal, $location, $rootScope) {/*jshint unused: false*/
   
   $scope.searchToolWin = null;
 
   $scope.closeSearchTools = function(saveData){
       
     Business.saveLocal('ADVANCED_SEARCH', saveData);
-    //console.log("Change Location", $location.path());
+    console.log("Change Location", $location.path());
     $location.search({});
-    //if ($location.path() !== '/results') {
+    if ($location.path() !== '/results') {
         $location.path('results');
-    //} else {
-    //    $route.reload();
-    //}  
+    } else {
+        $route.reload();
+    }  
   };
 
   $scope.openSearchTools = function(){
+      console.log('Open Search Tools Window');
          var searchToolWin = Ext.create('OSF.component.SearchToolWindow', { 
          closeAction: 'destroy',
          angularScope: $scope
      });     
-     searchToolWin.show();      
+     searchToolWin.show();
+     return false;
   };
 }]);

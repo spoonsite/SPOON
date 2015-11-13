@@ -224,8 +224,8 @@ var CoreUtil = {
   
   pagingProxy: function(options) {
     var proxy = Ext.create('Ext.data.proxy.Ajax', {
-        url: options.url,
-        method: options.method ? options.method : 'GET',
+        url: options.url, 
+        actionMethods: options.actionMethods ? options.actionMethods : {create: 'POST', read: 'GET', update: 'POST', destroy: 'POST'},  
         params: options.params ? options.params : {},
         extraParams: options.extraParams ? options.extraParams : {},
         directionParam: 'sortOrder',
@@ -234,8 +234,7 @@ var CoreUtil = {
         limitParam: 'max',
         simpleSortMode: true,
         reader: options.reader ? options.reader : {type: 'json'}
-    });
-    proxy = Ext.applyIf(proxy, options);
+    });   
     
     return proxy;
   }

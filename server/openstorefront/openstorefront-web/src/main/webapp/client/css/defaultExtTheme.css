@@ -492,7 +492,7 @@ div.x-border-layout-ct {
 }
 
 .search-tools-column-orange-text {
-    color:#DA7522!important;
+    color:#FF811A!important;
     font-size: 12px;
     font-weight: bold;
 }
@@ -505,14 +505,14 @@ div.x-border-layout-ct {
 }
 
 .x-view-item-focused {
-    outline: 1px dashed #DA7522!important;
+    outline: 1px dashed #FF811A!important;
     outline-offset: -1px;
 }
 
 .x-mask.x-focus {
     border-style: solid;
     border-width: 1px;
-    border-color: #DA7522;
+    border-color: #FF811A;
 }
 
 .x-panel-default {
@@ -528,15 +528,15 @@ div.x-border-layout-ct {
 .x-tab-bar-strip-default {
     border-style: solid;
     border-color: #A7C4E4;
-    background-color: #DA7522;
+    background-color: #FF811A;
 }
 
 .x-tab.x-tab-active.x-tab-default {
-    border-color: #DA7522;
-    background-color: #DA7522;
+    border-color: #FF811A;
+    background-color: #FF811A;
 }
 .x-box-scroller-tab-bar-default {
-    background-color: #DA7522;
+    background-color: #FF811A;
 }
 
 .x-tab.x-tab-active.x-tab-default .x-tab-inner-default {
@@ -574,46 +574,47 @@ div.x-border-layout-ct {
 }
 
 .x-tab-default{
-    border-color:#DA7522;
+    border-color:#FF811A;
     cursor: pointer;
     outline:none;
 }
 
 .x-tab-focus.x-tab-active.x-tab-default {
-    border-color: #DA7522;
-    background-color: #DA7522;
+    border-color: #FF811A;
+    background-color: #FF811A;
     outline:none;
 }
 
 .x-tab-focus.x-tab-default {
-    border-color: #DA7522;
-    background-color: #DA7522;
+    border-color: #FF811A;
+    background-color: #FF811A;
     outline:none;
 }
 
 .x-tab-focus.x-tab-over.x-tab-default {
-    border-color: #DA7522;
-    background-color: #DA7522;
+    border-color: #FF811A;
+    background-color: #FF811A;
     outline:none;
 }
 
 .x-tab-default-top.x-tab-focus {
-    -webkit-box-shadow: #DA7522 0 1px 0px 0 inset, #DA7522 0 -1px 0px 0 inset, #DA7522 -1px 0 0px 0 inset, #DA7522 1px 0 0px 0 inset;
-    -moz-box-shadow: #DA7522 0 1px 0px 0 inset, #DA7522 0 -1px 0px 0 inset, #DA7522 -1px 0 0px 0 inset, #DA7522 1px 0 0px 0 inset;
-    box-shadow: #DA7522 0 1px 0px 0 inset, #DA7522 0 -1px 0px 0 inset, #DA7522 -1px 0 0px 0 inset, #DA7522 1px 0 0px 0 inset;
+    -webkit-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    -moz-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
 }
-/* http://localhost:1843/classic/theme-neutral/sass/src/tab/Tab.scss:1691 */
+
+
 .x-tab-default-top.x-tab-focus.x-tab-over {
-    
-    -webkit-box-shadow: #DA7522 0 1px 0px 0 inset, #DA7522 0 -1px 0px 0 inset, #DA7522 -1px 0 0px 0 inset, #DA7522 1px 0 0px 0 inset;
-    -moz-box-shadow: #DA7522 0 1px 0px 0 inset, #DA7522 0 -1px 0px 0 inset, #DA7522 -1px 0 0px 0 inset, #DA7522 1px 0 0px 0 inset;
-    box-shadow: #DA7522 0 1px 0px 0 inset, #DA7522 0 -1px 0px 0 inset, #DA7522 -1px 0 0px 0 inset, #DA7522 1px 0 0px 0 inset;
+
+    -webkit-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    -moz-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
 }
-/* http://localhost:1843/classic/theme-neutral/sass/src/tab/Tab.scss:1720 */
+
 .x-tab-default-top.x-tab-focus.x-tab-active {
-    -webkit-box-shadow: #DA7522 0 1px 0px 0 inset, #DA7522 0 -1px 0px 0 inset, #DA7522 -1px 0 0px 0 inset, #DA7522 1px 0 0px 0 inset;
-    -moz-box-shadow: #DA7522 0 1px 0px 0 inset, #DA7522 0 -1px 0px 0 inset, #DA7522 -1px 0 0px 0 inset, #DA7522 1px 0 0px 0 inset;
-    box-shadow: #DA7522 0 1px 0px 0 inset, #DA7522 0 -1px 0px 0 inset, #DA7522 -1px 0 0px 0 inset, #DA7522 1px 0 0px 0 inset;
+    -webkit-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    -moz-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
 }
 
 .x-panel-header-title-default {
