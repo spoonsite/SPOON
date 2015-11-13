@@ -7,6 +7,9 @@
 	table {
 		width: 100%
 	}
+	th {
+		background-color: lightgrey;
+	}
 </style>
 
 <h3>{name}</h3>
