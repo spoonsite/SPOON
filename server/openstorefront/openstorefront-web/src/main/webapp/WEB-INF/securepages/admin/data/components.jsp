@@ -27,7 +27,7 @@
 				});
 				
 				var versionWin = Ext.create('Ext.window.Window', {
-					title: 'Versions',
+					title: 'Versions',					
 					maximizable: true,
 					width: '80%',
 					height: '80%',
@@ -35,6 +35,14 @@
 					layout: {
 						type: 'hbox',
 						align: 'stretch'
+					},
+					listeners: {
+						selectionchange: function(grid, record, index, opts){
+							if (grid.getSelectionModel().getCount() === 1) {
+								
+							}
+							
+						}	
 					},
 					dockedItems: [
 						{
@@ -105,7 +113,20 @@
 											iconCls: 'fa fa-plus',
 											tooltip: 'Creates snapshot of the current verison',
 											handler: function(){
-												
+												var versionWin = this.up('window');
+												versionWin.setLoading("Snapshoting current version...");
+												var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
+												Ext.Ajax.request({
+													url: '../api/v1/resource/components/' + componentId + '/versionhistory',
+													method: 'POST',
+													success: function(response, opts) {
+														versionWin.setLoading(false);
+														Ext.getCmp('versionGrid').getStore().reload();
+													},
+													failure: function(response, opts) {
+														versionWin.setLoading(false);														
+													}
+												});
 											}
 										},
 										{

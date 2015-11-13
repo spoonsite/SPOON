@@ -199,6 +199,7 @@ public class SearchOperation
 
 		COMPONENT,
 		ATTRIBUTE,
+		ARCHITECTURE,
 		TAG,
 		METADATA,
 		USER_RATING,

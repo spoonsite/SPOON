@@ -43,6 +43,7 @@ import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager.SolrAndOr;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager.SolrEquals;
+import edu.usu.sdl.openstorefront.service.search.ArchitectureSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.AttributeSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.BaseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ComponentSearchHandler;
@@ -545,6 +546,9 @@ public class SearchServiceImpl
 		for (SearchType searchType : searchGroup.keySet()) {
 			List<SearchElement> searchElements = searchGroup.get(searchType);
 			switch (searchType) {
+				case ARCHITECTURE:
+					handlers.add(new ArchitectureSearchHandler(searchElements));
+					break;
 				case ATTRIBUTE:
 					handlers.add(new AttributeSearchHandler(searchElements));
 					break;

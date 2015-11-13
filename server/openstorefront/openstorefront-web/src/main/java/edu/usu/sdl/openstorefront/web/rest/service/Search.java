@@ -164,7 +164,7 @@ public class Search
 	}
 
 	@GET
-	@APIDescription("Searches listing according to parameters.  (Components, Articles)")
+	@APIDescription("Searches listing by an archtecture.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
 	@Path("/attribute/{type}/{code}")

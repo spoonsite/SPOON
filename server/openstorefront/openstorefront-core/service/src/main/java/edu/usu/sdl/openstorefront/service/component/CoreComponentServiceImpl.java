@@ -1472,7 +1472,13 @@ public class CoreComponentServiceImpl
 						String name = mediaPath.getFileName().toString();
 						if (fileNameMediaSet.contains(name) == false) {
 							java.nio.file.Path archiveMediaPath = new TPath(archiveName + "/media/" + name);
-							Files.copy(mediaPath, archiveMediaPath);
+
+							TFile source = new TFile(mediaPath.toString());
+							TFile destination = new TFile(archiveMediaPath.toString());
+							if (destination.isArchive() || destination.isDirectory()) {
+								destination = new TFile(destination, source.getName());
+							}
+							source.toFile().cp_rp(destination);
 							fileNameMediaSet.add(name);
 						}
 					}
@@ -1485,17 +1491,28 @@ public class CoreComponentServiceImpl
 						String name = resourcePath.getFileName().toString();
 						if (fileNameResourceSet.contains(name) == false) {
 							java.nio.file.Path archiveResourcePath = new TPath(archiveName + "/resources/" + name);
-							Files.copy(resourcePath, archiveResourcePath);
+
+							TFile source = new TFile(resourcePath.toString());
+							TFile destination = new TFile(archiveResourcePath.toString());
+							if (destination.isArchive() || destination.isDirectory()) {
+								destination = new TFile(destination, source.getName());
+							}
+							source.toFile().cp_rp(destination);
 							fileNameResourceSet.add(name);
 						}
 					}
 				}
 
-				TVFS.umount();
 			} catch (JsonProcessingException | FsSyncException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to snapshot component.", ex);
 			} catch (IOException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to snapshot component.", ex);
+			} finally {
+				try {
+					TVFS.umount();
+				} catch (FsSyncException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to unable to unmount snapshot...it may be unreadable.", ex);
+				}
 			}
 			persistenceService.persist(versionHistory);
 
