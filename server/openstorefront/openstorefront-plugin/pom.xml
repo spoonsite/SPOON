@@ -10,7 +10,6 @@
 	<packaging>pom</packaging>
 	<name>openstorefront-plugin</name>
 	<modules>
-		<module>openstorefront-plugin-wso2</module>
     <module>example</module>
   </modules>
  

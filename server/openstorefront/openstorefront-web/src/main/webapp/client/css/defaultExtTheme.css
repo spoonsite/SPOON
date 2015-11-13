@@ -466,3 +466,183 @@ div.x-border-layout-ct {
     background-image: none;
     background-color: #FF811A;
 }
+
+.x-splitter-horizontal {
+    background-color: #dedede;
+}
+
+.x-splitter-vertical {
+    background-color: #dedede;
+}
+
+.list-button {
+    background-color: #989898!important;
+    color: #484848;
+    border-color: #ffffff;
+    background-image: none;
+    text-decoration:none!important;
+}
+
+.panel-header {
+    background-color: #ababab!important;
+    color: black!important;
+    border-color: #787878!important;
+    border-width: 1px!important;
+    background-image:none;
+}
+
+.search-tools-column-orange-text {
+    color:#FF811A!important;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.search-tools-nav-body-panel-item {
+    padding-top:5px;
+    padding-bottom:5px;
+    padding-left:2px;
+    padding-right:2px;
+}
+
+.x-view-item-focused {
+    outline: 1px dashed #FF811A!important;
+    outline-offset: -1px;
+}
+
+.x-mask.x-focus {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #FF811A;
+}
+
+.x-panel-default {
+    border-color: #A7C4E4;
+    padding: 0;
+}
+
+.x-tab-bar-default {
+    background-color:#FFFFFF;
+    padding-top:5px;
+}
+
+.x-tab-bar-strip-default {
+    border-style: solid;
+    border-color: #A7C4E4;
+    background-color: #FF811A;
+}
+
+.x-tab.x-tab-active.x-tab-default {
+    border-color: #FF811A;
+    background-color: #FF811A;
+}
+.x-box-scroller-tab-bar-default {
+    background-color: #FF811A;
+}
+
+.x-tab.x-tab-active.x-tab-default .x-tab-inner-default {
+    color: #ffffff;
+}
+
+.x-tab.x-tab-active.x-tab-default .x-tab-icon-el {
+    color: #ffffff;
+}
+
+.x-tab-default-top {
+    -moz-border-radius-topleft: 3px;
+    -webkit-border-top-left-radius: 3px;
+    border-top-left-radius: 3px;
+    -moz-border-radius-topright: 3px;
+    -webkit-border-top-right-radius: 3px;
+    border-top-right-radius: 3px;
+    -moz-border-radius-bottomright: 0;
+    -webkit-border-bottom-right-radius: 0;
+    border-bottom-right-radius: 0;
+    -moz-border-radius-bottomleft: 0;
+    -webkit-border-bottom-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding: 7px 12px 6px 12px;
+    border-width: 1px;
+    border-style: solid;
+    background-color: #989898;
+    outline:none;
+}
+
+.x-tab-over.x-tab-default{
+    border-color: #989898;
+    background-color: #555555;
+    outline:none;
+}
+
+.x-tab-default{
+    border-color:#FF811A;
+    cursor: pointer;
+    outline:none;
+}
+
+.x-tab-focus.x-tab-active.x-tab-default {
+    border-color: #FF811A;
+    background-color: #FF811A;
+    outline:none;
+}
+
+.x-tab-focus.x-tab-default {
+    border-color: #FF811A;
+    background-color: #FF811A;
+    outline:none;
+}
+
+.x-tab-focus.x-tab-over.x-tab-default {
+    border-color: #FF811A;
+    background-color: #FF811A;
+    outline:none;
+}
+
+.x-tab-default-top.x-tab-focus {
+    -webkit-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    -moz-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+}
+
+
+.x-tab-default-top.x-tab-focus.x-tab-over {
+
+    -webkit-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    -moz-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+}
+
+.x-tab-default-top.x-tab-focus.x-tab-active {
+    -webkit-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    -moz-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+}
+
+.x-panel-header-title-default {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: bold;
+    font-family: helvetica, arial, verdana, sans-serif;
+    line-height: 16px;
+}
+
+.x-grid-item-selected {
+    color: #000;
+    background-color:#e2e2e2;
+    outline:none;
+}
+
+.x-grid-item-over {
+    color: #000;
+    background-color:#e2e2e2;
+    outline:none;
+}
+
+.x-grid-item-focused {
+    color: #000;
+    background-color:#e2e2e2;
+    outline:none;
+}
+
+.x-grid-item {
+    outline:none;
+}

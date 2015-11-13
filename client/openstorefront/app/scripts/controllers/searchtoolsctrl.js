@@ -17,60 +17,29 @@
 
 /*global setupMain*/
 
-app.controller('SearchToolsCtrl', ['$scope','$uiModal', '$location', '$rootScope', function ($scope, $uiModal, $location, $rootScope) {/*jshint unused: false*/
-        $scope.openSearchModal = function (title, data) {
-//            console.log("searchtoolsctrl open search modal");
-            title = title || 'Advanced Search';
-            data = data || {
-                'mode': 'topics'
-            };
-            var modalInstance = $uiModal.open({
-                templateUrl: 'views/search/searchmodal.html',
-                controller: 'DefaultModalCtrl',
-                size: 'lg',
-                backdrop: 'static',
-                resolve: {
-                    title: function () {
-                        return title;
-                    },
-                    data: function () {
-                        return data;
-                    },
-                    closeEventName: function () {
-                        return '$CLOSE_MODALS';
-                    }
-                }
-            });
+app.controller('SearchToolsCtrl', ['$scope','$route','business', '$uiModal', '$location', '$rootScope', function ($scope, $route, Business, $uiModal, $location, $rootScope) {/*jshint unused: false*/
+  
+  $scope.searchToolWin = null;
 
-            modalInstance.result.then(function (result) {
-            }, function (result) {
-            });
-        };
+  $scope.closeSearchTools = function(saveData){
+      
+    Business.saveLocal('ADVANCED_SEARCH', saveData);
+    console.log("Change Location", $location.path());
+    $location.search({});
+    if ($location.path() !== '/results') {
+        $location.path('results');
+    } else {
+        $route.reload();
+    }  
+  };
 
-        $scope.buttons = [
-            '<div ng-controller="SearchToolsCtrl"><button type="button" data-container="body" data-toggle="tooltip" title="Show All" ng-click="searchKey=\'all\'; goToSearch(\'search\', \'all\', true);" style="padding:0px; margin-left:5px; width:35px; height:35px;  background-color:#efefef;" class="btn btn-default"><i class="glyphicon glyphicon-asterisk" style="font-size:1.3em;"></i></button>'
-            + '<button type="button" data-container="body" data-toggle="tooltip" title="Topic Search"  ng-click="openSearchModal(\'Topic Search\', {mode: \'topics\'});" style="padding:0px; margin-left:5px; width:35px; height:35px; background-color:#efefef;"  class="btn btn-default"><i class="glyphicon glyphicon-th-list" style="font-size:1.3em;"></i></button>'
-            + '<button type="button" data-container="body" data-toggle="tooltip" title="Architecture Search" ng-click="openSearchModal(\'Architecture Search\', {mode: \'architecture\'})" style="padding:0px; margin-left:5px; width:35px; height:35px; background-color:#efefef;" class="btn btn-default"><i class="glyphicon glyphicon-book" style="font-size:1.3em;"></i></button></div>'
-        ];
-
-        $scope.getSearchToolsHTML = function (index) {
-            //create a in-memory div, set it's inner text(which jQuery automatically encodes)
-            //then grab the encoded contents back out.  The div never exists on the page.
-            //console.log("getSearchToolsHTML called");
-            return $scope.buttons[index];//$('<div/>').text($scope.buttons[index]).html();
-        };
-
-     
-        $scope.goToSearch = function () { /*jshint unused:false*/
-            var key = 'All';
-            if ($scope.searchKey) {
-                key = $scope.searchKey;
-                $rootScope.searchKey = $scope.searchKey;
-            }
-            $location.search({
-                'type': 'search',
-                'code': key
-            });
-            $location.path('/results');
-        };
+  $scope.openSearchTools = function(){
+      console.log('Open Search Tools Window');
+         var searchToolWin = Ext.create('OSF.component.SearchToolWindow', { 
+         closeAction: 'destroy',
+         angularScope: $scope
+     });     
+     searchToolWin.show();
+     return false;
+  };
 }]);

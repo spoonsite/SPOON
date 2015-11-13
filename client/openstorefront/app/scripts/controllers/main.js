@@ -29,8 +29,28 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.searchKey  = $rootScope.searchKey;
   $scope.openAdminMessage = $rootScope.openAdminMessage;
   $scope.appverison = '';
-  
+  $scope.searchToolWin = null;
 
+  $scope.closeSearchTools = function(saveData){
+      
+    Business.saveLocal('ADVANCED_SEARCH', saveData);
+    //console.log("Change Location", $location.path());
+    $location.search({});
+    if ($location.path() !== '/results') {
+        $location.path('results');
+    } else {
+        $route.reload();
+    }  
+  };
+
+  $scope.openSearchTools = function(){
+         var searchToolWin = Ext.create('OSF.component.SearchToolWindow', { 
+         closeAction: 'destroy',
+         angularScope: $scope
+     });     
+     searchToolWin.show();      
+  };
+  
   Business.systemservice.getAppVersion().then(function(result){
     $scope.appverison = result;
   });  

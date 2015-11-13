@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1447087653285
+Build-Jdk: 1.8.0_45
+Built-By: rnethercott
+Bundle-ManifestVersion: 2
+Bundle-Name: atmosphere-socketio
+Bundle-SymbolicName: org.atmosphere.socketio
+Bundle-Version: 2.3.3.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.atmosphere.socketio;version="2.3.3";uses:="org.atmos
+ phere.cpr,org.atmosphere.socketio.transport,org.atmosphere.websocket",o
+ rg.atmosphere.socketio.cache;version="2.3.3";uses:="org.atmosphere.cach
+ e,org.atmosphere.cpr",org.atmosphere.socketio.cpr;version="2.3.3";uses:
+ ="org.atmosphere.config.service,org.atmosphere.cpr,org.atmosphere.socke
+ tio,org.atmosphere.socketio.transport,org.atmosphere.websocket",org.atm
+ osphere.socketio.transport;version="2.3.3";uses:="com.fasterxml.jackson
+ .databind,org.atmosphere.cpr,org.atmosphere.socketio,org.atmosphere.soc
+ ketio.cpr,org.atmosphere.websocket"
+Import-Package: com.fasterxml.jackson.databind;version="[2.5,3)",javax.s
+ ervlet;version="[2.6,3)",javax.servlet.http;version="[2.6,3)",org.apach
+ e.commons.lang3;version="[3.1,4)",org.atmosphere.cache;version="[2.3,3)
+ ",org.atmosphere.config.service;version="[2.3,3)",org.atmosphere.cpr;ve
+ rsion="[2.3,3)",org.atmosphere.websocket;version="[2.3,3)",org.slf4j;ve
+ rsion="[1.7,2)"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.5))"
+Tool: Bnd-2.4.1.201501161923
