@@ -62,3 +62,4 @@ project*.properties
 /client/metaregistry/extjs/target/
 /client/metaregistry/metaregistry-web/target/
 /server/openstorefront/extjs/target/
+/server/openstorefront/atmosphere-socketio/target/
