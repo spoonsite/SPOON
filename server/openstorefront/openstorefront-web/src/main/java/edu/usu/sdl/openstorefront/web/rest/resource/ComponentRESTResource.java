@@ -684,117 +684,6 @@ public class ComponentRESTResource
 		return response;
 	}
 
-	@GET
-	@APIDescription("Gets all version history for a component")
-	@Produces({MediaType.APPLICATION_JSON})
-	@RequireAdmin
-	@DataType(ComponentVersionHistory.class)
-	@Path("/{id}/versionhistory")
-	public Response getComponentVersionHistory()
-	{
-		ComponentVersionHistory versionHistory = new ComponentVersionHistory();
-		versionHistory.setActiveStatus(ComponentVersionHistory.ACTIVE_STATUS);
-
-		List<ComponentVersionHistory> versionHistories = service.getPersistenceService().queryByExample(ComponentVersionHistory.class, versionHistory);
-
-		GenericEntity<List<ComponentVersionHistory>> entity = new GenericEntity<List<ComponentVersionHistory>>(versionHistories)
-		{
-		};
-		return sendSingleEntityResponse(entity);
-	}
-
-	@GET
-	@APIDescription("Gets a version history record")
-	@Produces({MediaType.APPLICATION_JSON})
-	@RequireAdmin
-	@DataType(ComponentVersionHistory.class)
-	@Path("/{id}/versionhistory/{versionHistoryId}")
-	public Response getComponentVersionHistoryRecord(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@PathParam("versionHistoryId")
-			@RequiredParam String versionHistoryId)
-	{
-		ComponentVersionHistory componentVersionHistory = new ComponentVersionHistory();
-		componentVersionHistory.setVersionHistoryId(versionHistoryId);
-		componentVersionHistory.setComponentId(componentId);
-		componentVersionHistory = (ComponentVersionHistory) componentVersionHistory.find();
-		return sendSingleEntityResponse(componentVersionHistory);
-	}
-
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
-	@APIDescription("Create a version of the current component")
-	@DataType(ComponentVersionHistory.class)
-	@Path("/{id}/versionhistory")
-	public Response snapshotComponent(
-			@PathParam("id")
-			@RequiredParam String componentId)
-	{
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
-
-		Component component = new Component();
-		component.setComponentId(componentId);
-		component = component.find();
-		if (component != null) {
-			ComponentVersionHistory versionHistory = service.getComponentService().snapshotVersion(componentId, null);
-			response = Response.created(URI.create("v1/resource/components/" + component.getComponentId())).entity(versionHistory).build();
-		}
-		return response;
-	}
-
-	@PUT
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@RequireAdmin
-	@APIDescription("Restores a version of the current component")
-	@DataType(ComponentVersionHistory.class)
-	@Path("/{id}/versionhistory/{versionHistoryId}/restore")
-	public Response restoreSnapshot(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@PathParam("versionHistoryId")
-			@RequiredParam String versionHistoryId,
-			ComponentRestoreOptions options)
-	{
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
-
-		ComponentVersionHistory componentVersionHistory = new ComponentVersionHistory();
-		componentVersionHistory.setVersionHistoryId(versionHistoryId);
-		componentVersionHistory.setComponentId(componentId);
-		componentVersionHistory = (ComponentVersionHistory) componentVersionHistory.find();
-		if (componentVersionHistory != null) {
-			if (options == null) {
-				options = new ComponentRestoreOptions();
-			}
-
-			Component component = service.getComponentService().restoreSnapshot(versionHistoryId, options);
-			response = sendSingleEntityResponse(component);
-		}
-		return response;
-	}
-
-	@DELETE
-	@RequireAdmin
-	@APIDescription("Delete a version history record")
-	@Path("/{id}/versionhistory/{versionHistoryId}")
-	public void deleteVersionHistory(
-			@PathParam("id")
-			@RequiredParam String componentId,
-			@PathParam("versionHistoryId")
-			@RequiredParam String versionHistoryId)
-	{
-		//confirm that the version belong to the component
-		ComponentVersionHistory componentVersionHistory = new ComponentVersionHistory();
-		componentVersionHistory.setVersionHistoryId(versionHistoryId);
-		componentVersionHistory.setComponentId(componentId);
-		componentVersionHistory = (ComponentVersionHistory) componentVersionHistory.find();
-		if (componentVersionHistory != null) {
-			service.getComponentService().deleteSnapshot(versionHistoryId);
-		}
-	}
-
 	@PUT
 	@RequireAdmin
 	@APIDescription("Activates a component")
@@ -875,6 +764,138 @@ public class ComponentRESTResource
 	}
 	// </editor-fold>
 
+	// <editor-fold defaultstate="collapse" desc=" Version history">
+	@GET
+	@APIDescription("Gets all version history for a component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@RequireAdmin
+	@DataType(ComponentVersionHistory.class)
+	@Path("/{id}/versionhistory")
+	public Response getComponentVersionHistory(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		ComponentVersionHistory versionHistory = new ComponentVersionHistory();
+		versionHistory.setActiveStatus(ComponentVersionHistory.ACTIVE_STATUS);
+		versionHistory.setComponentId(componentId);
+
+		List<ComponentVersionHistory> versionHistories = service.getPersistenceService().queryByExample(ComponentVersionHistory.class, versionHistory);
+
+		GenericEntity<List<ComponentVersionHistory>> entity = new GenericEntity<List<ComponentVersionHistory>>(versionHistories)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Gets a version history record")
+	@Produces({MediaType.APPLICATION_JSON})
+	@RequireAdmin
+	@DataType(ComponentVersionHistory.class)
+	@Path("/{id}/versionhistory/{versionHistoryId}")
+	public Response getComponentVersionHistoryRecord(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("versionHistoryId")
+			@RequiredParam String versionHistoryId)
+	{
+		ComponentVersionHistory componentVersionHistory = new ComponentVersionHistory();
+		componentVersionHistory.setVersionHistoryId(versionHistoryId);
+		componentVersionHistory.setComponentId(componentId);
+		componentVersionHistory = (ComponentVersionHistory) componentVersionHistory.find();
+		return sendSingleEntityResponse(componentVersionHistory);
+	}
+
+	@GET
+	@APIDescription("Gets the detail of a component version")
+	@Produces({MediaType.APPLICATION_JSON})
+	@RequireAdmin
+	@DataType(ComponentDetailView.class)
+	@Path("/{id}/versionhistory/{versionHistoryId}/view")
+	public Response viewComponentVerison(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("versionHistoryId")
+			@RequiredParam String versionHistoryId)
+	{
+		ComponentDetailView componentDetailView = service.getComponentService().viewSnapshot(versionHistoryId);
+		return sendSingleEntityResponse(componentDetailView);
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@RequireAdmin
+	@APIDescription("Create a version of the current component")
+	@DataType(ComponentVersionHistory.class)
+	@Path("/{id}/versionhistory")
+	public Response snapshotComponent(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+
+		Component component = new Component();
+		component.setComponentId(componentId);
+		component = component.find();
+		if (component != null) {
+			ComponentVersionHistory versionHistory = service.getComponentService().snapshotVersion(componentId, null);
+			response = Response.created(URI.create("v1/resource/components/" + component.getComponentId())).entity(versionHistory).build();
+		}
+		return response;
+	}
+
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@RequireAdmin
+	@APIDescription("Restores a version of the current component")
+	@DataType(ComponentVersionHistory.class)
+	@Path("/{id}/versionhistory/{versionHistoryId}/restore")
+	public Response restoreSnapshot(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("versionHistoryId")
+			@RequiredParam String versionHistoryId,
+			ComponentRestoreOptions options)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+
+		ComponentVersionHistory componentVersionHistory = new ComponentVersionHistory();
+		componentVersionHistory.setVersionHistoryId(versionHistoryId);
+		componentVersionHistory.setComponentId(componentId);
+		componentVersionHistory = (ComponentVersionHistory) componentVersionHistory.find();
+		if (componentVersionHistory != null) {
+			if (options == null) {
+				options = new ComponentRestoreOptions();
+			}
+
+			Component component = service.getComponentService().restoreSnapshot(versionHistoryId, options);
+			response = sendSingleEntityResponse(component);
+		}
+		return response;
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete a version history record")
+	@Path("/{id}/versionhistory/{versionHistoryId}")
+	public void deleteVersionHistory(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("versionHistoryId")
+			@RequiredParam String versionHistoryId)
+	{
+		//confirm that the version belong to the component
+		ComponentVersionHistory componentVersionHistory = new ComponentVersionHistory();
+		componentVersionHistory.setVersionHistoryId(versionHistoryId);
+		componentVersionHistory.setComponentId(componentId);
+		componentVersionHistory = (ComponentVersionHistory) componentVersionHistory.find();
+		if (componentVersionHistory != null) {
+			service.getComponentService().deleteSnapshot(versionHistoryId);
+		}
+	}
+
+	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource ATTRIBUTE Section">
 	@GET
 	@APIDescription("Gets attributes for a component")

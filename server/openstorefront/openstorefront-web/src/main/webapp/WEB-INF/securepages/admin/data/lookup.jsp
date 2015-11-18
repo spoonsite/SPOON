@@ -47,7 +47,7 @@
 
 
 			var lookupGrid = Ext.create('Ext.grid.Panel', {			
-				title: 'Manage Lookups',
+				title: 'Manage Lookups <i class="fa fa-question-circle"  data-qtip="Lookups are tables of valid values that are used to classify data in a consistent way."></i>',
 				id: 'lookupGrid',
 				store: Ext.data.StoreManager.lookup('lookupStore'),
 				columnLines: true,
@@ -56,12 +56,6 @@
 					{ text: 'Description', dataIndex: 'description', flex: 1 }
 				],
 				dockedItems: [
-					{
-						dock: 'top',
-						xtype: 'panel',
-						bodyStyle: 'padding: 20px;',
-						html: 'Lookups are tables of valid values that are used to classify data in a consistent way.'
-					},
 					{
 						dock: 'top',
 						xtype: 'toolbar',

@@ -79,12 +79,18 @@ public class ComponentMedia
 	public ComponentMedia()
 	{
 	}
-	
+
 	@Override
 	public String uniqueKey()
 	{
-		return StringUtils.isNotBlank(getLink()) ?  getLink() :  getOriginalName();
-	}	
+		return StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName();
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setComponentMediaId(null);
+	}
 
 	@Override
 	public void updateFields(StandardEntity entity)

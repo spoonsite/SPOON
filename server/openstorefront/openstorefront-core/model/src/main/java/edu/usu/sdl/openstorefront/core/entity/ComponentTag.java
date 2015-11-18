@@ -46,12 +46,18 @@ public class ComponentTag
 	public ComponentTag()
 	{
 	}
-	
+
 	@Override
 	public String uniqueKey()
 	{
 		return getText();
-	}	
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setTagId(null);
+	}
 
 	@Override
 	public void updateFields(StandardEntity entity)

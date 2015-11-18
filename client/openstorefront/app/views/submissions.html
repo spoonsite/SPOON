@@ -29,6 +29,7 @@
                 <td>
 	        <button ng-show="submission.approvalState !== 'A'"  target="_blank" class="btn btn-default" title="Edit" ng-click="edit(submission)"><i class="fa fa-edit"></i></button>
                   <a ng-show="submission.approvalState !== 'N'" href="single?id={{submission.componentId}}" target="_blank" class="btn btn-info" title="Preview"><i class="fa fa fa-binoculars"></i></a>
+	        <button  class="btn btn-default" ng-click="copy(submission)" title="Copy"><i class="fa fa-copy"></i></button>
                   <button ng-show="submission.approvalState === 'P'" class="btn btn-warning" ng-click="submit(submission, true)" title="Unsubmit"><i class="fa fa-power-off"></i></button>
                   <button ng-show="submission.approvalState === 'N'" class="btn btn-danger" ng-click="deactivateSubmission(submission)" title="Delete"><i class="fa fa-trash"></i></button>
                 </td>

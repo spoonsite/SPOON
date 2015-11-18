@@ -414,23 +414,35 @@ public class CoreComponentServiceImpl
 		return doSaveComponent(component, new FileHistoryOption());
 	}
 
-	public RequiredForComponent doSaveComponent(RequiredForComponent component, FileHistoryOption options)
+	/**
+	 * This try to locate the component; use for duplicate protection.
+	 *
+	 * @param componentToLookFor
+	 * @return component or null if not found
+	 */
+	private Component findExistingComponent(Component componentToLookFor)
 	{
-		Component oldComponent = persistenceService.findById(Component.class, component.getComponent().getComponentId());
+		Component oldComponent = persistenceService.findById(Component.class, componentToLookFor.getComponentId());
 
 		//Duplicate protection; check External id
-		if (oldComponent == null && StringUtils.isNotBlank(component.getComponent().getExternalId())) {
+		if (oldComponent == null && StringUtils.isNotBlank(componentToLookFor.getExternalId())) {
 			Component componentCheck = new Component();
-			componentCheck.setExternalId(component.getComponent().getExternalId());
+			componentCheck.setExternalId(componentToLookFor.getExternalId());
 			oldComponent = componentCheck.findProxy();
 		}
 
 		//check name
-		if (oldComponent == null && StringUtils.isNotBlank(component.getComponent().getName())) {
+		if (oldComponent == null && StringUtils.isNotBlank(componentToLookFor.getName())) {
 			Component componentCheck = new Component();
-			componentCheck.setName(component.getComponent().getName());
+			componentCheck.setName(componentToLookFor.getName());
 			oldComponent = componentCheck.findProxy();
 		}
+		return oldComponent;
+	}
+
+	public RequiredForComponent doSaveComponent(RequiredForComponent component, FileHistoryOption options)
+	{
+		Component oldComponent = findExistingComponent(component.getComponent());
 
 		EntityUtil.setDefaultsOnFields(component.getComponent());
 
@@ -441,6 +453,9 @@ public class CoreComponentServiceImpl
 		if (validationResult.valid()) {
 			boolean approved = false;
 			if (oldComponent != null) {
+
+				//Set id as if may not have been set
+				component.getComponent().setComponentId(oldComponent.getComponentId());
 
 				if (component.getComponent().compareTo(oldComponent) != 0) {
 
@@ -461,6 +476,15 @@ public class CoreComponentServiceImpl
 						component.getComponent().setApprovedDts(null);
 					}
 					oldComponent.updateFields(component.getComponent());
+					if (component.getUpdateVersion()) {
+						Integer version = component.getComponent().getRecordVersion();
+						if (version == null) {
+							version = 1;
+						} else {
+							version++;
+						}
+						component.getComponent().setRecordVersion(version);
+					}
 
 					persistenceService.persist(oldComponent);
 					component.setComponentChanged(true);
@@ -478,6 +502,7 @@ public class CoreComponentServiceImpl
 				}
 				component.getComponent().populateBaseCreateFields();
 				component.getComponent().setLastActivityDts(TimeUtil.currentDate());
+				component.getComponent().setRecordVersion(1);
 
 				if (ApprovalStatus.APPROVED.equals(component.getComponent().getApprovalState())) {
 					if (StringUtils.isBlank(component.getComponent().getApprovedUser())) {
@@ -530,7 +555,11 @@ public class CoreComponentServiceImpl
 	{
 		List<Component> componentsToIndex = new ArrayList<>();
 		components.forEach(component -> {
-			snapshotVersion(component.getComponent().getComponentId(), component.getComponent().getFileHistoryId());
+			Component existing = findExistingComponent(component.getComponent());
+			if (existing != null) {
+				component.getComponent().setComponentId(existing.getComponentId());
+				snapshotVersion(component.getComponent().getComponentId(), component.getComponent().getFileHistoryId());
+			}
 			saveFullComponent(component, options, false);
 			componentsToIndex.add(component.getComponent());
 		});
@@ -1231,6 +1260,13 @@ public class CoreComponentServiceImpl
 					if (component != null) {
 						component.setLastActivityDts(componentUpdate.getUpdateDts());
 						component.setLastModificationType(componentUpdate.getModificationType());
+						Integer version = component.getRecordVersion();
+						if (version == null) {
+							version = 1;
+						} else {
+							version++;
+						}
+						component.setRecordVersion(version);
 						persistenceService.persist(component);
 						componentService.getUserService().checkComponentWatches(component);
 						componentsToIndex.add(component);
@@ -1328,40 +1364,13 @@ public class CoreComponentServiceImpl
 			componentAll.getComponent().setApprovedDts(null);
 			componentAll.getComponent().setApprovedUser(null);
 
-			componentAll.getAttributes().forEach(attribute -> {
-				attribute.setComponentId(null);
-				attribute.getComponentAttributePk().setComponentId(null);
-			});
-
-			componentAll.getContacts().forEach(contact -> {
-				contact.setComponentId(null);
-				contact.setContactId(null);
-			});
-
-			componentAll.getEvaluationSections().forEach(evaluationSection -> {
-				evaluationSection.setComponentId(null);
-				evaluationSection.getComponentEvaluationSectionPk().setComponentId(null);
-			});
-
-			componentAll.getExternalDependencies().forEach(externalDependency -> {
-				externalDependency.setComponentId(null);
-				externalDependency.setDependencyId(null);
-			});
-
-			componentAll.getMetadata().forEach(metadata -> {
-				metadata.setComponentId(null);
-				metadata.setMetadataId(null);
-			});
-
-			componentAll.getRelationships().forEach(relation -> {
-				relation.setComponentId(null);
-				relation.setComponentRelationshipId(null);
-			});
-
-			componentAll.getTags().forEach(tag -> {
-				tag.setComponentId(null);
-				tag.setTagId(null);
-			});
+			clearBaseComponentKey(componentAll.getAttributes());
+			clearBaseComponentKey(componentAll.getContacts());
+			clearBaseComponentKey(componentAll.getEvaluationSections());
+			clearBaseComponentKey(componentAll.getExternalDependencies());
+			clearBaseComponentKey(componentAll.getMetadata());
+			clearBaseComponentKey(componentAll.getRelationships());
+			clearBaseComponentKey(componentAll.getTags());
 
 			//Don't copy these item
 			componentAll.setIntegrationAll(null);
@@ -1375,9 +1384,7 @@ public class CoreComponentServiceImpl
 				if (media.getFileName() != null) {
 					localMedia.add(componentAll.getMedia().remove(i));
 				} else {
-					media.setComponentId(null);
-					media.setComponentMediaId(null);
-
+					media.clearKeys();
 				}
 			}
 
@@ -1388,8 +1395,7 @@ public class CoreComponentServiceImpl
 				if (resource.getFileName() != null) {
 					localResources.add(componentAll.getResources().remove(i));
 				} else {
-					resource.setComponentId(null);
-					resource.setResourceId(null);
+					resource.clearKeys();
 				}
 			}
 
@@ -1436,6 +1442,13 @@ public class CoreComponentServiceImpl
 		}
 	}
 
+	private <T extends BaseComponent> void clearBaseComponentKey(List<T> entities)
+	{
+		for (T component : entities) {
+			component.clearKeys();
+		}
+	}
+
 	public ComponentVersionHistory snapshotVersion(String componentId, String fileHistoryId)
 	{
 		ComponentVersionHistory versionHistory = new ComponentVersionHistory();
@@ -1445,9 +1458,9 @@ public class CoreComponentServiceImpl
 			versionHistory.setComponentId(componentId);
 			versionHistory.setFileHistoryId(fileHistoryId);
 			versionHistory.setVersionHistoryId(persistenceService.generateId());
-			String version = componentAll.getComponent().getStorageVersion();
-			if (StringUtils.isBlank(version)) {
-				version = "1";
+			Integer version = componentAll.getComponent().getRecordVersion();
+			if (version == null) {
+				version = 1;
 			}
 			versionHistory.setVersion(version);
 			versionHistory.populateBaseCreateFields();
@@ -1522,63 +1535,111 @@ public class CoreComponentServiceImpl
 		return versionHistory;
 	}
 
-	public Component restoreSnapshot(String versionHistoryId, ComponentRestoreOptions options)
+	public ComponentDetailView viewSnapshot(String versionHistoryId)
 	{
+		ComponentDetailView componentDetailView = null;
+
 		ComponentVersionHistory versionHistory = persistenceService.findById(ComponentVersionHistory.class, versionHistoryId);
 		if (versionHistory != null) {
 
-			//delete existing (keep watches, other entities if requested)
-			ComponentDeleteOptions deleteOptions = new ComponentDeleteOptions();
-			deleteOptions.setRemoveWatches(false);
-			if (options.getRestoreIntegration() == false) {
-				deleteOptions.getIgnoreClasses().add(ComponentIntegration.class.getSimpleName());
-			}
-			if (options.getRestoreQuestions() == false) {
-				deleteOptions.getIgnoreClasses().add(ComponentQuestion.class.getSimpleName());
-				deleteOptions.getIgnoreClasses().add(ComponentQuestionResponse.class.getSimpleName());
-			}
-			if (options.getRestoreReviews() == false) {
-				deleteOptions.getIgnoreClasses().add(ComponentReview.class.getSimpleName());
-				deleteOptions.getIgnoreClasses().add(ComponentReviewCon.class.getSimpleName());
-				deleteOptions.getIgnoreClasses().add(ComponentReviewPro.class.getSimpleName());
-			}
-			if (options.getRestoreTags() == false) {
-				deleteOptions.getIgnoreClasses().add(ComponentTag.class.getSimpleName());
-			}
-			cascadeDeleteOfComponent(versionHistory.getComponentId(), deleteOptions);
-
-			//Get Version
 			ComponentAll archivedVersion = null;
 			TFile archive = new TFile(versionHistory.pathToFile().toFile());
 			for (TFile file : archive.listFiles()) {
 				if (file.isFile()) {
 					try (InputStream inTemp = new TFileInputStream(file)) {
-						archivedVersion = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<List<ComponentAll>>()
+						archivedVersion = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<ComponentAll>()
 						{
 						});
 					} catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException(ex);
 					}
-				} else if (file.isDirectory() && "media".equalsIgnoreCase(file.getName())) {
-					for (TFile mediaFile : file.listFiles()) {
-						try {
-							Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
-						} catch (IOException ex) {
-							log.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
-						}
-					}
-				} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
-					for (TFile resourceFile : file.listFiles()) {
-						try {
-							Files.copy(resourceFile.toPath(), FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()), StandardCopyOption.REPLACE_EXISTING);
-						} catch (IOException ex) {
-							log.log(Level.WARNING, MessageFormat.format("Failed to copy resource to path file: {0}", resourceFile.getName()), ex);
-						}
+				}
+			}
+			if (archivedVersion != null) {
+				componentDetailView = ComponentDetailView.toView(archivedVersion);
+			}
+		}
+
+		return componentDetailView;
+	}
+
+	public Component restoreSnapshot(String versionHistoryId, ComponentRestoreOptions options)
+	{
+		ComponentVersionHistory versionHistory = persistenceService.findById(ComponentVersionHistory.class, versionHistoryId);
+		if (versionHistory != null) {
+
+			//Get Version (only the component so we don't wipe out the restored resources)
+			ComponentAll archivedVersion = null;
+			TFile archive = new TFile(versionHistory.pathToFile().toFile());
+			for (TFile file : archive.listFiles()) {
+				if (file.isFile()) {
+					try (InputStream inTemp = new TFileInputStream(file)) {
+						archivedVersion = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<ComponentAll>()
+						{
+						});
+					} catch (IOException ex) {
+						throw new OpenStorefrontRuntimeException(ex);
 					}
 				}
 			}
 
 			if (archivedVersion != null) {
+
+				//delete existing (keep watches, other entities if requested)
+				ComponentDeleteOptions deleteOptions = new ComponentDeleteOptions();
+				deleteOptions.setRemoveWatches(false);
+				if (options.getRestoreIntegration() == false) {
+					deleteOptions.getIgnoreClasses().add(ComponentIntegration.class.getSimpleName());
+				}
+				if (options.getRestoreQuestions() == false) {
+					deleteOptions.getIgnoreClasses().add(ComponentQuestion.class.getSimpleName());
+					deleteOptions.getIgnoreClasses().add(ComponentQuestionResponse.class.getSimpleName());
+				}
+				if (options.getRestoreReviews() == false) {
+					deleteOptions.getIgnoreClasses().add(ComponentReview.class.getSimpleName());
+					deleteOptions.getIgnoreClasses().add(ComponentReviewCon.class.getSimpleName());
+					deleteOptions.getIgnoreClasses().add(ComponentReviewPro.class.getSimpleName());
+				}
+				if (options.getRestoreTags() == false) {
+					deleteOptions.getIgnoreClasses().add(ComponentTag.class.getSimpleName());
+				}
+				//Always leave versions
+				deleteOptions.getIgnoreClasses().add(ComponentVersionHistory.class.getSimpleName());
+				cascadeDeleteOfComponent(versionHistory.getComponentId(), deleteOptions);
+
+				//copy resources
+				archive = new TFile(versionHistory.pathToFile().toFile());
+				for (TFile file : archive.listFiles()) {
+					if (file.isDirectory() && "media".equalsIgnoreCase(file.getName())) {
+						for (TFile mediaFile : file.listFiles()) {
+							try {
+								TFile source = mediaFile;
+								TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()).toFile());
+								if (destination.isArchive() || destination.isDirectory()) {
+									destination = new TFile(destination, source.getName());
+								}
+								source.toFile().cp_rp(destination);
+
+							} catch (IOException ex) {
+								log.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+							}
+						}
+					} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
+						for (TFile resourceFile : file.listFiles()) {
+							try {
+								TFile source = resourceFile;
+								TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()).toFile());
+								if (destination.isArchive() || destination.isDirectory()) {
+									destination = new TFile(destination, source.getName());
+								}
+								source.toFile().cp_rp(destination);
+
+							} catch (IOException ex) {
+								log.log(Level.WARNING, MessageFormat.format("Failed to copy resource to path file: {0}", resourceFile.getName()), ex);
+							}
+						}
+					}
+				}
 
 				//save old version (keep in mind the update date will reflect now.)
 				FileHistoryOption fileHistoryOptions = new FileHistoryOption();
@@ -1588,6 +1649,12 @@ public class CoreComponentServiceImpl
 				fileHistoryOptions.setUploadTags(options.getRestoreTags());
 				fileHistoryOptions.setUploadIntegration(options.getRestoreIntegration());
 
+				//Decrement so it will match on update
+				if (archivedVersion.getComponent().getRecordVersion() == null) {
+					archivedVersion.getComponent().setRecordVersion(0);
+				} else {
+					archivedVersion.getComponent().setRecordVersion(archivedVersion.getComponent().getRecordVersion() - 1);
+				}
 				saveFullComponent(archivedVersion, fileHistoryOptions);
 
 				cleanupCache(archivedVersion.getComponent().getComponentId());
@@ -1627,14 +1694,14 @@ public class CoreComponentServiceImpl
 		if (mergeComponent != null) {
 			if (targetComponent != null) {
 				//a merge mashes together sub-enties from Merge to target
-				mergeSubEntities(mergeComponent.getAttributes(), targetComponent.getAttributes(), targetComponentId);
-				mergeSubEntities(mergeComponent.getContacts(), targetComponent.getContacts(), targetComponentId);
-				mergeSubEntities(mergeComponent.getExternalDependencies(), targetComponent.getExternalDependencies(), targetComponentId);
-				mergeSubEntities(mergeComponent.getRelationships(), targetComponent.getRelationships(), targetComponentId);
-				mergeSubEntities(mergeComponent.getMedia(), targetComponent.getMedia(), targetComponentId);
-				mergeSubEntities(mergeComponent.getMetadata(), targetComponent.getMetadata(), targetComponentId);
-				mergeSubEntities(mergeComponent.getTags(), targetComponent.getTags(), targetComponentId);
-				mergeSubEntities(mergeComponent.getResources(), targetComponent.getResources(), targetComponentId);
+				mergeSubEntities(mergeComponent.getAttributes(), targetComponent.getAttributes());
+				mergeSubEntities(mergeComponent.getContacts(), targetComponent.getContacts());
+				mergeSubEntities(mergeComponent.getExternalDependencies(), targetComponent.getExternalDependencies());
+				mergeSubEntities(mergeComponent.getRelationships(), targetComponent.getRelationships());
+				mergeSubEntities(mergeComponent.getMedia(), targetComponent.getMedia());
+				mergeSubEntities(mergeComponent.getMetadata(), targetComponent.getMetadata());
+				mergeSubEntities(mergeComponent.getTags(), targetComponent.getTags());
+				mergeSubEntities(mergeComponent.getResources(), targetComponent.getResources());
 
 				Set<String> targetReviewKey = targetComponent.getReviews().stream().map(review -> {
 					return review.getComponentReview().uniqueKey();
@@ -1643,11 +1710,12 @@ public class CoreComponentServiceImpl
 				for (ReviewAll reviewAll : mergeComponent.getReviews()) {
 					if (targetReviewKey.contains(reviewAll.getComponentReview().uniqueKey()) == false) {
 						reviewAll.getComponentReview().setComponentId(targetComponentId);
+						reviewAll.getComponentReview().clearKeys();
 						for (ComponentReviewPro componentReviewPro : reviewAll.getPros()) {
-							componentReviewPro.setComponentId(targetComponentId);
+							componentReviewPro.clearKeys();
 						}
 						for (ComponentReviewCon componentReviewCon : reviewAll.getCons()) {
-							componentReviewCon.setComponentId(targetComponentId);
+							componentReviewCon.clearKeys();
 						}
 						targetComponent.getReviews().add(reviewAll);
 					}
@@ -1660,8 +1728,10 @@ public class CoreComponentServiceImpl
 				for (QuestionAll questionAll : mergeComponent.getQuestions()) {
 					if (targetQuestionKey.contains(questionAll.getQuestion().uniqueKey()) == false) {
 						questionAll.getQuestion().setComponentId(targetComponentId);
+						questionAll.getQuestion().clearKeys();
 						for (ComponentQuestionResponse response : questionAll.getResponds()) {
 							response.setComponentId(targetComponentId);
+							response.clearKeys();
 						}
 						targetComponent.getQuestions().add(questionAll);
 					}
@@ -1703,7 +1773,7 @@ public class CoreComponentServiceImpl
 		return targetComponent.getComponent();
 	}
 
-	private <T extends BaseComponent> void mergeSubEntities(List<T> entities, List<T> targetEntities, String targetComponentId)
+	private <T extends BaseComponent> void mergeSubEntities(List<T> entities, List<T> targetEntities)
 	{
 		Map<String, List<T>> keyMap = targetEntities.stream().collect(Collectors.groupingBy(T::uniqueKey));
 		for (T entity : entities) {
@@ -1713,7 +1783,7 @@ public class CoreComponentServiceImpl
 			}
 
 			if (add) {
-				entity.setComponentId(targetComponentId);
+				entity.clearKeys();
 				targetEntities.add(entity);
 			}
 		}

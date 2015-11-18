@@ -48,6 +48,7 @@ public class RequiredForComponent
 
 	private boolean componentChanged;
 	private boolean attributeChanged;
+	private boolean updateVersion = true;
 
 	public RequiredForComponent()
 	{
@@ -136,6 +137,16 @@ public class RequiredForComponent
 	public void setAttributeChanged(boolean attributeChanged)
 	{
 		this.attributeChanged = attributeChanged;
+	}
+
+	public boolean getUpdateVersion()
+	{
+		return updateVersion;
+	}
+
+	public void setUpdateVersion(boolean updateVersion)
+	{
+		this.updateVersion = updateVersion;
 	}
 
 }

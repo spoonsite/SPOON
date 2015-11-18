@@ -99,8 +99,14 @@ public class ComponentReview
 	public String uniqueKey()
 	{
 		return getTitle() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getCreateUser();
-	}	
-	
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setComponentReviewId(null);
+	}
+
 	@Override
 	public void updateFields(StandardEntity entity)
 	{

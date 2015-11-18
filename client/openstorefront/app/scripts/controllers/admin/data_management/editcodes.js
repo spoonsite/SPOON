@@ -132,7 +132,17 @@ app.controller('AdminEditcodesCtrl', ['$scope', '$uiModalInstance', '$uiModal', 
   };
   $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
 
-  $scope.loadLookup('ComponentType', 'componentTypes', 'generalFormLoader'); 
+  $scope.loadComponentType = function(){
+    $scope.$emit('$TRIGGERLOAD', 'generalFormLoader');
+
+    Business.componentservice.getComponentTypes().then(function (results) {
+      $scope.$emit('$TRIGGERUNLOAD', 'generalFormLoader');
+      if (results) {
+        $scope['componentTypes']= results;
+      }        
+    });      
+  };
+  $scope.loadComponentType(); 
 
   $scope.addToRequiredRestrictions = function(type, old){
     if (type !== old) {

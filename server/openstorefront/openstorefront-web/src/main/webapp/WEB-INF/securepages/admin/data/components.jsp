@@ -26,24 +26,10 @@
 					}
 				});
 				
-				var versionWin = Ext.create('Ext.window.Window', {
-					title: 'Versions',					
-					maximizable: true,
-					width: '80%',
-					height: '80%',
-					modal: true,
-					layout: {
-						type: 'hbox',
-						align: 'stretch'
-					},
-					listeners: {
-						selectionchange: function(grid, record, index, opts){
-							if (grid.getSelectionModel().getCount() === 1) {
-								
-							}
-							
-						}	
-					},
+				var versionWinRestorePrompt = Ext.create('Ext.window.Window', {
+					modal: true,								
+					width: 300,
+					bodyStyle: 'padding: 10px;',
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -52,10 +38,103 @@
 								{
 									text: 'Restore',
 									iconCls: 'fa fa-reply',
+									handler: function(){
+										this.up('window').hide();
+										
+										var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
+										var versionHistoryId = Ext.getCmp('versionGrid').getSelection()[0].get('versionHistoryId');										
+										var options = this.up('window').down('form').getValues();
+										
+										//load
+										Ext.getCmp('versionWin').setLoading("Restoring version...");
+										Ext.Ajax.request({
+											url: '../api/v1/resource/components/' + componentId + '/versionhistory/' + versionHistoryId + '/restore',
+											method: 'PUT',
+											jsonData: options,
+											success: function(response, opts){
+												Ext.getCmp('versionWin').setLoading(false);
+												Ext.toast('Restored Version Successfully.');
+												versionLoadCurrent();
+												Ext.getCmp('versionGrid').getSelectionModel().deselectAll();
+											},
+											failure: function(response, opts) {
+												Ext.getCmp('versionWin').setLoading(false);
+											}
+										});
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Cancel',
+									iconCls: 'fa fa-close',
+									handler: function(){
+										this.up('window').hide();
+									}									
+								}
+							]
+						}
+					],						
+					items: [
+						{
+							xtype: 'panel',
+							html: 'Select Restore Options:'
+						},
+						{
+							xtype: 'form',
+							items: [
+								{
+									xtype: 'checkbox',
+									boxLabel: 'Reviews',
+									name: 'restoreReviews'
+								},
+								{
+									xtype: 'checkbox',
+									boxLabel: 'Questions',
+									name: 'restoreQuestions'
+								},
+								{
+									xtype: 'checkbox',
+									boxLabel: 'Tags',
+									name: 'restoreTags'
+								},
+								{
+									xtype: 'checkbox',
+									boxLabel: 'Integration',
+									name: 'restoreIntegration'
+								}								
+							]
+						}
+					],	
+					title:'Restore Version?',
+					message: 'Select Restore Options'
+				});
+				
+				var versionWin = Ext.create('Ext.window.Window', {
+					id: 'versionWin',
+					title: 'Versions',					
+					maximizable: true,
+					width: '80%',
+					height: '80%',
+					modal: true,
+					layout: {
+						type: 'hbox',
+						align: 'stretch'
+					},					
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Restore',
+									id: 'versionWin-tool-restoreBtn',
+									iconCls: 'fa fa-reply',
 									disabled: true,
 									handler: function(){
 										//prompt
-
+										versionWinRestorePrompt.show();
 									}
 								},
 								{
@@ -79,7 +158,7 @@
 							split: true,
 							border: true,
 							columnLines: true,
-							width: '34%',
+							width: '33%',
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,
 								fields: [
@@ -103,6 +182,33 @@
 								{ text: 'Archive User', dataIndex: 'createUser', width: 150 },
 								{ text: 'Archive Date', dataIndex: 'createDts', flex: 1, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 							],
+							listeners: {
+								selectionchange: function(grid, record, index, opts){
+									if (grid.getSelected().length === 1) {
+										Ext.getCmp('versionWin-tool-restoreBtn').setDisabled(false);
+										Ext.getCmp('versionWin-tool-removeBtn').setDisabled(false);
+									} else {
+										Ext.getCmp('versionWin-tool-restoreBtn').setDisabled(true);
+										Ext.getCmp('versionWin-tool-removeBtn').setDisabled(true);
+									}
+
+									//load preview
+									if (record && record[0]){
+										var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
+										Ext.Ajax.request({
+											url: '../api/v1/resource/components/' + componentId + '/versionhistory/' + record[0].get('versionHistoryId') + '/view',
+											success: function(response, opts) {
+												var data = Ext.decode(response.responseText);
+												Ext.getCmp('versionWin-snapshotVersionPanel').update(data);
+												Ext.getCmp('versionWin-snapshotVersionPanel').setTitle('Selected Version - ' + record[0].get('version'));
+											}
+										});
+									} else {
+										Ext.getCmp('versionWin-snapshotVersionPanel').update(undefined);
+										Ext.getCmp('versionWin-snapshotVersionPanel').setTitle('Selected Version');	
+									}
+								}	
+							},
 							dockedItems: [
 								{
 									xtype: 'toolbar',
@@ -134,10 +240,39 @@
 										},
 										{
 											text: '<span style="color: white">Remove</span>',
+											id: 'versionWin-tool-removeBtn',
 											iconCls: 'icon-color-light fa fa-trash',
 											ui: 'danger',
 											disabled: true,
 											handler: function(){
+												var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
+												var versionHistoryId = Ext.getCmp('versionGrid').getSelection()[0].get('versionHistoryId');
+												var version = Ext.getCmp('versionGrid').getSelection()[0].get('version');
+												var versionWin = this.up('window');
+												
+												Ext.Msg.show({
+													title: 'Delete Version?',
+													message: 'Are you sure you want to delete version:  ' + version +' ?',
+													buttons: Ext.Msg.YESNO,
+													icon: Ext.Msg.QUESTION,
+													fn: function(btn) {
+														if (btn === 'yes') {
+															versionWin.setLoading('Removing version...');
+															Ext.Ajax.request({
+																url: '../api/v1/resource/components/' + componentId + '/versionhistory/' + versionHistoryId,
+																method: 'DELETE',
+																success: function(response, opts) {
+																	versionWin.setLoading(false);
+																	Ext.getCmp('versionGrid').getStore().reload();
+																},
+																failure: function(response, opts) {
+																	versionWin.setLoading(false);
+																}
+															});
+														} 
+													}
+												});
+
 												
 											}
 										}
@@ -147,27 +282,32 @@
 						},
 						{
 							xtype: 'panel',
+							id: 'versionWin-snapshotVersionPanel',
+							region: 'east',
+							width: '33%',
+							title: 'Selected Version',
+							autoScroll: true,
+							scrollable: true,
+							border: true,
+							split: true,
+							bodyStyle: 'padding: 10px;',
+							tpl: versionViewTemplate							
+						},						
+						{
+							xtype: 'panel',
 							id: 'versionWin-currentVersionPanel',
 							region: 'center',
-							width: '34%',
+							width: '33%',
 							title: 'Current Version',
+							header: {
+								cls: 'accent-background'
+							},
 							autoScroll: true,
 							border: true,
 							split: true,
 							bodyStyle: 'padding: 10px;',
 							tpl: versionViewTemplate
-						},
-						{
-							xtype: 'panel',
-							region: 'east',
-							width: '34%',							
-							title: 'Selected Version',
-							autoScroll: true,
-							border: true,
-							split: true,
-							bodyStyle: 'padding: 10px;',
-							tpl: versionViewTemplate							
-						}
+						}						
 					]
 				});			
 				
@@ -416,10 +556,11 @@
 				});				
 				
 				var componentGrid = Ext.create('Ext.grid.Panel', {	
-					title: 'Manage Entries',
+					title: 'Manage Entries <i class="fa fa-question-circle"  data-qtip="This tool allows for manipulating all data related to an entry" ></i>',
 					id: 'componentGrid',
 					store: maingridStore,
-					columnLines: true,
+					columnLines: true,				
+					bodyCls: 'border_accent',
 					selModel: {
 						   selType: 'checkboxmodel'        
 					},
@@ -440,7 +581,7 @@
 						 renderer: function(value){
 							return Ext.util.Format.stripTags(value);
 						}},
-						{ text: 'Last Activity Date', dataIndex: 'lastActivityDts', width: 150 },
+						{ text: 'Last Activity Date', dataIndex: 'lastActivityDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Submitted Date', dataIndex: 'submittedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },						
 						{ text: 'Approval State', align: 'center', dataIndex: 'approvalState', width: 150 },
 						{ text: 'Approval Date', dataIndex: 'approvedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
@@ -455,13 +596,7 @@
 					dockedItems: [
 						{
 							dock: 'top',
-							xtype: 'panel',
-							bodyStyle: 'padding: 20px;',
-							html: 'This tool allows for manipulating all data related to an entry.'
-						},
-						{
-							dock: 'top',
-							xtype: 'toolbar',
+							xtype: 'toolbar',							
 							items: [
 								Ext.create('OSF.component.StandardComboBox', {
 									id: 'componentGridFilter-ActiveStatus',
@@ -853,14 +988,21 @@
 					});
 					
 					//load current verison
+					versionLoadCurrent();
+				};
+				
+				var versionLoadCurrent = function() {
+					var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
 					Ext.Ajax.request({
 						url: '../api/v1/resource/components/' + componentId + '/detail',
 						success: function(response, opts) {
 							var data = Ext.decode(response.responseText);
-							Ext.getCmp('versionWin-currentVersionPanel').update(data);							
+							Ext.getCmp('versionWin-currentVersionPanel').update(data);								
+							Ext.getCmp('versionWin-currentVersionPanel').setTitle('Current Version - ' + data.recordVersion);
+							Ext.getCmp('versionWin-snapshotVersionPanel').update(undefined);
+							Ext.getCmp('versionWin-snapshotVersionPanel').setTitle('Selected Version');	
 						}
-					})					
-					
+					});					
 				};
 				
 				var actionExportComponents = function() {

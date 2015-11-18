@@ -80,12 +80,11 @@ public class ComponentContact
 	public ComponentContact()
 	{
 	}
-	
+
 	@Override
 	public String uniqueKey()
 	{
-		if (StringUtils.isNotBlank(getEmail()))
-		{
+		if (StringUtils.isNotBlank(getEmail())) {
 			return getEmail();
 		} else {
 			return getPhone();
@@ -106,6 +105,12 @@ public class ComponentContact
 		this.setOrganization(contact.getOrganization());
 		this.setPhone(contact.getPhone());
 
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setContactId(null);
 	}
 
 	public String getContactId()

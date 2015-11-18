@@ -38,8 +38,8 @@ public class ComponentVersionHistory
 	private String versionHistoryId;
 
 	@NotNull
-	@APIDescription("Based on the DB storage verison; so it not necessarily sequential.")
-	private String version;
+	@APIDescription("Based on the record verison; so it not necessarily sequential.")
+	private Integer version;
 
 	@APIDescription("If version was based on file history (Taken before batch was applied)")
 	private String fileHistoryId;
@@ -51,9 +51,15 @@ public class ComponentVersionHistory
 	@Override
 	public String uniqueKey()
 	{
-		return version;
-	}	
-	
+		return Integer.toString(version);
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setVersionHistoryId(null);
+	}
+
 	/**
 	 * Get the path to the media on disk. Note: this may be ran from a proxy so
 	 * don't use variable directly
@@ -80,12 +86,12 @@ public class ComponentVersionHistory
 		this.versionHistoryId = versionHistoryId;
 	}
 
-	public String getVersion()
+	public Integer getVersion()
 	{
 		return version;
 	}
 
-	public void setVersion(String version)
+	public void setVersion(Integer version)
 	{
 		this.version = version;
 	}
