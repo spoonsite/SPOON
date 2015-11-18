@@ -141,6 +141,9 @@ public class Component
 	@FK(ModificationType.class)
 	private String fileHistoryId;
 
+	@APIDescription("Overall record verison for the component")
+	private Integer recordVersion;
+
 	public Component()
 	{
 	}
@@ -205,6 +208,7 @@ public class Component
 		this.setFileHistoryId(component.getFileHistoryId());
 		this.setLastModificationType(component.getLastModificationType());
 		this.setChangeApprovalMode(component.getChangeApprovalMode());
+		this.setRecordVersion(component.getRecordVersion());
 
 	}
 
@@ -398,6 +402,16 @@ public class Component
 	public void setChangeApprovalMode(String changeApprovalMode)
 	{
 		this.changeApprovalMode = changeApprovalMode;
+	}
+
+	public Integer getRecordVersion()
+	{
+		return recordVersion;
+	}
+
+	public void setRecordVersion(Integer recordVersion)
+	{
+		this.recordVersion = recordVersion;
 	}
 
 }

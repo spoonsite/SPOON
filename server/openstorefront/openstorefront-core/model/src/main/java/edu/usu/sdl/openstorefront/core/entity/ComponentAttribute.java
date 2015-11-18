@@ -42,11 +42,20 @@ public class ComponentAttribute
 	@Override
 	public String uniqueKey()
 	{
-		return getComponentAttributePk().getAttributeType() + 
-			OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + 
-			getComponentAttributePk().getAttributeCode();
+		return getComponentAttributePk().getAttributeType()
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
+				+ getComponentAttributePk().getAttributeCode();
 	}
-	
+
+	@Override
+	protected void customKeyClear()
+	{
+		//Leave the other key items
+		if (getComponentAttributePk() != null) {
+			getComponentAttributePk().setComponentId(null);
+		}
+	}
+
 	public ComponentAttributePk getComponentAttributePk()
 	{
 		return componentAttributePk;
@@ -56,4 +65,5 @@ public class ComponentAttribute
 	{
 		this.componentAttributePk = componentAttributePk;
 	}
+
 }

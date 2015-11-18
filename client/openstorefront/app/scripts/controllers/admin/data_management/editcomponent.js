@@ -656,7 +656,18 @@ $scope.getCodesForType = function(type){
   return foundType !== undefined ? foundType.codes : [];
 };  
 
-$scope.loadLookup('ComponentType', 'componentTypes', 'generalFormLoader'); 
+$scope.loadComponentType = function(loader){
+  $scope.$emit('$TRIGGERLOAD', 'generalFormLoader');
+
+  Business.componentservice.getComponentTypes().then(function (results) {
+    $scope.$emit('$TRIGGERUNLOAD', 'generalFormLoader');
+    if (results) {
+      $scope['componentTypes']= results;
+    }        
+  });      
+};
+$scope.loadComponentType(); 
+
 $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
 $scope.saveComponent = function(){
   $scope.$emit('$TRIGGERLOAD', 'generalFormLoader');

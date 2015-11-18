@@ -92,6 +92,7 @@ Ext.define('OSF.component.NotificationPanel', {
      notPanel.notificationGrid = Ext.create('Ext.grid.Panel', {
         store: dataStore,
         columnLines: true,
+        bodyStyle: 'background-color: white',
         columns: [
           {
             text: 'Unread',

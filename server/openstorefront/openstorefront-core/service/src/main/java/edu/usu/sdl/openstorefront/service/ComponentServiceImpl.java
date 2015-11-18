@@ -574,4 +574,10 @@ public class ComponentServiceImpl
 		return core.approveComponent(componentId);
 	}
 
+	@Override
+	public ComponentDetailView viewSnapshot(String versionHistoryId)
+	{
+		return core.viewSnapshot(versionHistoryId);
+	}
+
 }

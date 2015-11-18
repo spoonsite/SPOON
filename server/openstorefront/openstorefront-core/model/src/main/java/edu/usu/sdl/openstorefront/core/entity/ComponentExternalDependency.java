@@ -64,12 +64,18 @@ public class ComponentExternalDependency
 	public ComponentExternalDependency()
 	{
 	}
-	
+
 	@Override
 	public String uniqueKey()
 	{
-		return getDependencyName() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR +  getVersion();
-	}	
+		return getDependencyName() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getVersion();
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setDependencyId(null);
+	}
 
 	@Override
 	public void updateFields(StandardEntity entity)

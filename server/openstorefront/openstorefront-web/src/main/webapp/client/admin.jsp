@@ -234,7 +234,7 @@
 						{ 
 							xtype: 'panel',
 							cls: 'nav-back-color border_accent',
-							padding: '10 8 8 10',
+							padding: '10 8 10 10',
 							layout: 'hbox',
 							items: [
 								{
@@ -476,8 +476,10 @@
 				});
 			};
 
-
+//FIXME: Handle this better
 			CoreApp.sessionAboutToTimeoutPromptTask = new Ext.util.DelayedTask(function () {
+				CoreApp.simulateAjaxRequest();
+/**				
 				Ext.Msg.confirm(
 					'Your Session is About to Expire',
 					Ext.String.format('Your session will expire in {0} minute(s). Would you like to continue your session?',
@@ -493,6 +495,7 @@
 						}
 					}
 				);
+**/				
 				CoreApp.killSessionTask.delay(CoreApp.toMilliseconds(
 				CoreApp.GRACE_PERIOD_BEFORE_EXPIRING_SESSION_IN_MIN));
 			});

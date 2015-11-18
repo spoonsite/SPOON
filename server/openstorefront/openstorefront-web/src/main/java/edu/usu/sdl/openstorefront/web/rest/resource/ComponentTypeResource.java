@@ -18,11 +18,13 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -65,6 +67,39 @@ public class ComponentTypeResource
 
 		List<ComponentType> componentTypes = componentType.findByExample();
 		GenericEntity<List<ComponentType>> entity = new GenericEntity<List<ComponentType>>(componentTypes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Gets  component types")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/lookup")
+	public Response getComponentTypeLookup(
+			@QueryParam("status") String status,
+			@QueryParam("all") boolean all
+	)
+	{
+		List<LookupModel> lookups = new ArrayList<>();
+
+		ComponentType componentType = new ComponentType();
+		if (status == null && all == false) {
+			componentType.setActiveStatus(ComponentType.ACTIVE_STATUS);
+		} else if (status != null && all == false) {
+			componentType.setActiveStatus(status);
+		}
+
+		List<ComponentType> componentTypes = componentType.findByExample();
+		componentTypes.forEach(type -> {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(type.getType());
+			lookupModel.setDescription(type.getLabel());
+			lookups.add(lookupModel);
+		});
+
+		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookups)
 		{
 		};
 		return sendSingleEntityResponse(entity);

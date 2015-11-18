@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
+import edu.usu.sdl.openstorefront.core.model.QuestionAll;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -87,6 +88,15 @@ public class ComponentQuestionView
 		}
 
 		return view;
+	}
+
+	public static List<ComponentQuestionView> toViewListAll(List<QuestionAll> questions)
+	{
+		List<ComponentQuestionView> views = new ArrayList<>();
+		questions.forEach(question -> {
+			views.add(toView(question.getQuestion(), ComponentQuestionResponseView.toViewList(question.getResponds())));
+		});
+		return views;
 	}
 
 	public static List<ComponentQuestionView> toViewList(List<ComponentQuestion> questions, Map<String, List<ComponentQuestionResponseView>> responseMap)

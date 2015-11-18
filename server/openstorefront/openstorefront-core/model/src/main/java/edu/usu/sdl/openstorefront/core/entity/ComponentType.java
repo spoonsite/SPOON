@@ -20,6 +20,8 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
@@ -37,7 +39,7 @@ public class ComponentType
 	@PK(generated = false)
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@NotNull
-	@Sanitize(TextSanitizer.class)
+	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
 	private String type;
 
@@ -48,7 +50,7 @@ public class ComponentType
 	private String label;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@Sanitize(TextSanitizer.class)
+	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String description;
 

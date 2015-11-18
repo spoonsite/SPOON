@@ -72,7 +72,13 @@ public class ComponentQuestion
 	{
 		return getQuestion();
 	}
-	
+
+	@Override
+	protected void customKeyClear()
+	{
+		setQuestionId(null);
+	}
+
 	@Override
 	public void updateFields(StandardEntity entity)
 	{

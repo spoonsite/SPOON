@@ -14,6 +14,16 @@ div.x-border-layout-ct {
     background: url('/openstorefront/images/squared_metal.png');	
 }
 
+.x-body {
+    color: #000;
+    margin-right: 1px;
+    font-size: 14px;
+    line-height: 20px;
+    font-family: helvetica, arial, verdana, sans-serif;
+    background-color: #f5f5f5;
+    background: url('/openstorefront/images/squared_metal.png');
+}
+
 .x-toolbar-default {
     padding: 6px 0 6px 8px;
     border-style: solid;
@@ -473,35 +483,6 @@ div.x-border-layout-ct {
 
 .x-splitter-vertical {
     background-color: #dedede;
-}
-
-.list-button {
-    background-color: #989898!important;
-    color: #484848;
-    border-color: #ffffff;
-    background-image: none;
-    text-decoration:none!important;
-}
-
-.panel-header {
-    background-color: #ababab!important;
-    color: black!important;
-    border-color: #787878!important;
-    border-width: 1px!important;
-    background-image:none;
-}
-
-.search-tools-column-orange-text {
-    color:#FF811A!important;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.search-tools-nav-body-panel-item {
-    padding-top:5px;
-    padding-bottom:5px;
-    padding-left:2px;
-    padding-right:2px;
 }
 
 .x-view-item-focused {

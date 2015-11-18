@@ -60,12 +60,18 @@ public class ComponentTracking
 	public ComponentTracking()
 	{
 	}
-	
+
 	@Override
 	public String uniqueKey()
 	{
 		return getTrackEventTypeCode() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getEventDts();
-	}	
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setComponentTrackingId(null);
+	}
 
 	public String getComponentTrackingId()
 	{

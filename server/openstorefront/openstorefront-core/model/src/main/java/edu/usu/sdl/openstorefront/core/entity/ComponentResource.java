@@ -83,12 +83,18 @@ public class ComponentResource
 	public ComponentResource()
 	{
 	}
-	
+
 	@Override
 	public String uniqueKey()
 	{
-		return StringUtils.isNotBlank(getLink()) ?  getLink() :  getOriginalName(); 
-	}	
+		return StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName();
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setResourceId(null);
+	}
 
 	@Override
 	public void updateFields(StandardEntity entity)

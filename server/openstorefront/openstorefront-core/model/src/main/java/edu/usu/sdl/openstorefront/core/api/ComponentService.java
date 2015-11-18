@@ -577,6 +577,14 @@ public interface ComponentService
 	public ComponentVersionHistory snapshotVersion(String componentId, String fileHistoryId);
 
 	/**
+	 * Loads a view a snapshot
+	 *
+	 * @param versionHistoryId
+	 * @return View model or null it doesn't exist
+	 */
+	public ComponentDetailView viewSnapshot(String versionHistoryId);
+
+	/**
 	 * Restores a snapshot and replaces the live version (according to options)
 	 *
 	 * @param versionHistoryId

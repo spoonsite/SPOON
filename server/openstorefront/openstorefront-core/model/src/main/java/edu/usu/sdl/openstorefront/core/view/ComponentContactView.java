@@ -18,7 +18,9 @@ package edu.usu.sdl.openstorefront.core.view;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -65,6 +67,16 @@ public class ComponentContactView
 			view.setName(contact.getFirstName() + " " + contact.getLastName());
 		}
 		return view;
+	}
+
+	public static List<ComponentContactView> toViewList(List<ComponentContact> contacts)
+	{
+		List<ComponentContactView> views = new ArrayList<>();
+		contacts.forEach(contact -> {
+			views.add(toView(contact));
+		});
+
+		return views;
 	}
 
 	public String getPositionDescription()

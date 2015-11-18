@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -97,6 +98,9 @@ public class ComponentDetailView
 	private String componentSecurityMarkingDescription;
 	private Integer componentSecurityMarkingRank;
 	private String componentSecurityMarkingStyle;
+	private String dataSource;
+	private String storageVersion;
+	private Integer recordVersion;
 
 	private ComponentEvaluationView evaluation = new ComponentEvaluationView();
 
@@ -133,6 +137,26 @@ public class ComponentDetailView
 	{
 	}
 
+	public static ComponentDetailView toView(ComponentAll componentAll)
+	{
+		ComponentDetailView detailView = new ComponentDetailView();
+
+		detailView.setRelationships(ComponentRelationshipView.toViewList(componentAll.getRelationships()));
+		detailView.setContacts(ComponentContactView.toViewList(componentAll.getContacts()));
+		detailView.setAttributes(ComponentAttributeView.toViewList(componentAll.getAttributes()));
+		detailView.setComponentMedia(ComponentMediaView.toViewList(componentAll.getMedia()));
+		detailView.setResources(ComponentResourceView.toViewList(componentAll.getResources()));
+		detailView.setReviews(ComponentReviewView.toViewListAll(componentAll.getReviews()));
+		detailView.setQuestions(ComponentQuestionView.toViewListAll(componentAll.getQuestions()));
+		detailView.setDependencies(ComponentExternalDependencyView.toViewList(componentAll.getExternalDependencies()));
+		detailView.setMetadata(ComponentMetadataView.toViewList(componentAll.getMetadata()));
+		detailView.setTags(componentAll.getTags());
+		detailView.setEvaluation(ComponentEvaluationView.toViewFromStorage(componentAll.getEvaluationSections()));
+
+		detailView.setComponentDetails(componentAll.getComponent());
+		return detailView;
+	}
+
 	public void setComponentDetails(Component component)
 	{
 		name = component.getName();
@@ -151,6 +175,12 @@ public class ComponentDetailView
 		notifyOfApprovalEmail = component.getNotifyOfApprovalEmail();
 		lastActivityDts = component.getLastActivityDts();
 		componentType = component.getComponentType();
+		dataSource = component.getDataSource();
+		storageVersion = component.getStorageVersion();
+		recordVersion = component.getRecordVersion();
+		if (recordVersion == null) {
+			recordVersion = 1;
+		}
 
 		componentSecurityMarkingType = component.getSecurityMarkingType();
 
@@ -549,6 +579,36 @@ public class ComponentDetailView
 	public void setComponentSecurityMarkingStyle(String componentSecurityMarkingStyle)
 	{
 		this.componentSecurityMarkingStyle = componentSecurityMarkingStyle;
+	}
+
+	public String getDataSource()
+	{
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource)
+	{
+		this.dataSource = dataSource;
+	}
+
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
+	}
+
+	public Integer getRecordVersion()
+	{
+		return recordVersion;
+	}
+
+	public void setRecordVersion(Integer recordVersion)
+	{
+		this.recordVersion = recordVersion;
 	}
 
 }

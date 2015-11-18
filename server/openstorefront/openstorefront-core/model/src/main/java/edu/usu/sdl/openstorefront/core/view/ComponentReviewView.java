@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.core.entity.ExperienceTimeType;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
+import edu.usu.sdl.openstorefront.core.model.ReviewAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,6 +99,11 @@ public class ComponentReviewView
 
 	public static ComponentReviewView toView(ComponentReview review)
 	{
+		return toView(review, null, null);
+	}
+
+	public static ComponentReviewView toView(ComponentReview review, List<ComponentReviewPro> pros, List<ComponentReviewCon> cons)
+	{
 		Service service = ServiceProxyFactory.getServiceProxy();
 		ComponentReviewView view = new ComponentReviewView();
 		view.setUsername(review.getCreateUser());
@@ -110,27 +116,35 @@ public class ComponentReviewView
 		view.setName(service.getComponentService().getComponentName(review.getComponentId()));
 		view.setUserTimeCode(TranslateUtil.translate(ExperienceTimeType.class, review.getUserTimeCode()));
 
-		ComponentReviewPro reviewProExample = new ComponentReviewPro();
-		reviewProExample.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
-		ComponentReviewProPk reviewProPk = new ComponentReviewProPk();
-		reviewProPk.setComponentReviewId(review.getComponentReviewId());
-		reviewProExample.setComponentReviewProPk(reviewProPk);
-		List<ComponentReviewPro> componentReviewPros = service.getPersistenceService().queryByExample(ComponentReviewPro.class, reviewProExample);
-		for (ComponentReviewPro pro : componentReviewPros) {
-			view.toStandardView(pro);
+		if (pros == null) {
+			ComponentReviewPro reviewProExample = new ComponentReviewPro();
+			reviewProExample.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
+			ComponentReviewProPk reviewProPk = new ComponentReviewProPk();
+			reviewProPk.setComponentReviewId(review.getComponentReviewId());
+			reviewProExample.setComponentReviewProPk(reviewProPk);
+			List<ComponentReviewPro> componentReviewPros = service.getPersistenceService().queryByExample(ComponentReviewPro.class, reviewProExample);
+			for (ComponentReviewPro pro : componentReviewPros) {
+				view.toStandardView(pro);
+			}
+			view.setPros(ComponentReviewProCon.toViewListPro(componentReviewPros));
+		} else {
+			view.setPros(ComponentReviewProCon.toViewListPro(pros));
 		}
-		view.setPros(ComponentReviewProCon.toViewListPro(componentReviewPros));
 
-		ComponentReviewCon reviewConExample = new ComponentReviewCon();
-		reviewConExample.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
-		ComponentReviewConPk reviewConPk = new ComponentReviewConPk();
-		reviewConPk.setComponentReviewId(review.getComponentReviewId());
-		reviewConExample.setComponentReviewConPk(reviewConPk);
-		List<ComponentReviewCon> componentReviewCons = service.getPersistenceService().queryByExample(ComponentReviewCon.class, reviewConExample);
-		for (ComponentReviewCon con : componentReviewCons) {
-			view.toStandardView(con);
+		if (cons == null) {
+			ComponentReviewCon reviewConExample = new ComponentReviewCon();
+			reviewConExample.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
+			ComponentReviewConPk reviewConPk = new ComponentReviewConPk();
+			reviewConPk.setComponentReviewId(review.getComponentReviewId());
+			reviewConExample.setComponentReviewConPk(reviewConPk);
+			List<ComponentReviewCon> componentReviewCons = service.getPersistenceService().queryByExample(ComponentReviewCon.class, reviewConExample);
+			for (ComponentReviewCon con : componentReviewCons) {
+				view.toStandardView(con);
+			}
+			view.setCons(ComponentReviewProCon.toViewListCon(componentReviewCons));
+		} else {
+			view.setPros(ComponentReviewProCon.toViewListCon(cons));
 		}
-		view.setCons(ComponentReviewProCon.toViewListCon(componentReviewCons));
 
 		view.setActiveStatus(review.getActiveStatus());
 		view.setLastUsed(review.getLastUsed());
@@ -147,6 +161,15 @@ public class ComponentReviewView
 		List<ComponentReviewView> componentReviewViews = new ArrayList<>();
 		reviews.forEach(review -> {
 			componentReviewViews.add(toView(review));
+		});
+		return componentReviewViews;
+	}
+
+	public static List<ComponentReviewView> toViewListAll(List<ReviewAll> reviews)
+	{
+		List<ComponentReviewView> componentReviewViews = new ArrayList<>();
+		reviews.forEach(review -> {
+			componentReviewViews.add(toView(review.getComponentReview(), review.getPros(), review.getCons()));
 		});
 		return componentReviewViews;
 	}

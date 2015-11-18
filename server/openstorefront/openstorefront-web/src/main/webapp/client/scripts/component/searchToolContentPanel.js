@@ -35,6 +35,7 @@ Ext.define('OSF.component.SearchToolContentPanel', {
             width: '30%',
             autoScroll: true,
             layout: 'vbox',
+            bodyStyle: 'background-color: white',
             split: true
         });
 

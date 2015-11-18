@@ -136,11 +136,12 @@ Ext.define('OSF.component.SearchToolWindow', {
         var topicButtonHandler = function (newTab, item) {
 
             var desc = item.description;
-            if (desc === '')
+            var descriptionText = '<h3>' + item.label + '</h3>';
+            if (desc)
             {
-                desc = 'None';
+               descriptionText += '<hr>' + desc;
             }
-            newTab.getComponent('topicPanel').infoPanel.update(desc);
+            newTab.getComponent('topicPanel').infoPanel.update(descriptionText);
 
 
             //Do the search on the category attribute
@@ -229,11 +230,12 @@ Ext.define('OSF.component.SearchToolWindow', {
         var categoryButtonHandler = function (newTab, item, item2) {
 
             var desc = item2.description;
-            if (desc === '')
+            var descriptionText = '<h3>' + item2.label + '</h3>';
+            if (desc)
             {
-                desc = 'None';
-            }
-            newTab.getComponent('contentPanel').infoPanel.update(item2.label + '<br/> Item Code: ' + item2.code + '<br/> Description: ' + desc);
+               descriptionText += '<hr>' + desc;
+            }                        
+            newTab.getComponent('contentPanel').infoPanel.update(descriptionText);
 
             //Do the search on the category attribute
             searchToolWin.searchObj = {
@@ -373,11 +375,12 @@ Ext.define('OSF.component.SearchToolWindow', {
         var archSelectHandler = function (newTab, item) {
 
             var desc = item.get('description');
-            if (desc === '')
+            var descriptionText = '<h3>' + item.get('name') + '</h3>';
+            if (desc)
             {
-                desc = 'None';
-            }
-            newTab.getComponent('archPanel').infoPanel.update(desc);
+               descriptionText += '<hr>' + desc;
+            }   
+            newTab.getComponent('archPanel').infoPanel.update(descriptionText);
 
             //Do the search on the category attribute
             searchToolWin.searchObj = {
@@ -433,6 +436,29 @@ Ext.define('OSF.component.SearchToolWindow', {
                         data: data
                     });
 
+                    newTab.getComponent('archPanel').navPanel.addDocked({
+                        xtype: 'toolbar',
+                        dock: 'top', 
+                        items: [
+                          {
+                            text: 'Expand All',
+                            iconCls: 'fa fa-expand',
+                            handler: function(){
+                              this.up('panel').down('treepanel').expandAll();
+                            }
+                          },
+                          {
+                            xtype: 'tbfill'
+                          },
+                          {
+                            text: 'Collapse All',
+                            iconCls: 'fa fa-compress',
+                            handler: function(){
+                              this.up('panel').down('treepanel').collapseAll();
+                            }                                
+                          }
+                        ]                      
+                    });                          
 
                     newTab.getComponent('archPanel').navPanel.add({
                         xtype: 'treepanel',
