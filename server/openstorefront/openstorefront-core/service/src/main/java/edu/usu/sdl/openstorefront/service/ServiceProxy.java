@@ -37,6 +37,7 @@ import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.PluginServicePrivate;
+import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import java.util.Objects;
 
@@ -59,6 +60,7 @@ public class ServiceProxy
 	private ComponentService componentService;
 	private ComponentServicePrivate componentServicePrivate;
 	private SearchService searchService;
+	private SearchServicePrivate searchServicePrivate;
 	private UserService userService;
 	private UserServicePrivate userServicePrivate;
 	private SystemService systemService;
@@ -150,6 +152,14 @@ public class ServiceProxy
 			searchService = DynamicProxy.newInstance(new SearchServiceImpl());
 		}
 		return searchService;
+	}
+
+	public SearchServicePrivate getSearchServicePrivate()
+	{
+		if (searchServicePrivate == null) {
+			searchServicePrivate = DynamicProxy.newInstance(new SearchServiceImpl());
+		}
+		return searchServicePrivate;
 	}
 
 	@Override
