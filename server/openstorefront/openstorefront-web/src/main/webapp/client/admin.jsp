@@ -3,6 +3,8 @@
 <stripes:layout-render name="layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 		
+	<script src="scripts/component/feedbackWindow.js" type="text/javascript"></script>
+		
 	<div id="header"	class="hidden">
 		<div  class="nav-back-color border_accent" style="width: 100%">
 			<table style="width: 100%; border-collapse: collapse;" >
@@ -218,6 +220,8 @@
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	
 
+			var feedbackWin = Ext.create('OSF.component.FeedbackWindow',{				
+			});
 
 			Ext.create('Ext.container.Viewport', {
 				layout: 'border',
@@ -268,6 +272,13 @@
 												iconCls: 'fa fa-question-circle',
 												href: '../help',
 												hrefTarget: '_blank'
+											},
+											{
+												text: '<b>Feedback / issues</b>',
+												iconCls: 'fa fa-commenting',
+												handler: function() {
+													feedbackWin.show();
+												}
 											},
 											{
 												xtype: 'menuseparator'

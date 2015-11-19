@@ -24,7 +24,7 @@ Ext.define('OSF.component.FeedbackWindow', {
     modal: true,
     maximizable: false,
     layout: 'fit',
-    id: 'feedbackWindow',
+    
     initComponent: function () {
         this.callParent();
 
@@ -46,8 +46,7 @@ Ext.define('OSF.component.FeedbackWindow', {
         //  This is the panel tab for the topic search tool
         //
       
-        var formPanel = Ext.create('Ext.form.Panel', {
-            id: 'feedbackForm',
+        var formPanel = Ext.create('Ext.form.Panel', {           
             layout: 'vbox',
             scrollable: true,
             bodyStyle: 'padding: 10px;',
@@ -95,7 +94,7 @@ Ext.define('OSF.component.FeedbackWindow', {
                             text: 'Cancel',
                             iconCls: 'fa fa-close',
                             handler: function () {
-                                Ext.getCmp('feedbackWindow').close();
+                                feedbackWin.close();
                             }
                         }
                     ]
