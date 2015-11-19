@@ -65,9 +65,15 @@ Ext.define('OSF.component.FeedbackWindow', {
                             iconCls: 'fa fa-save',
                             handler: function () {
                                 var method = 'POST';
-                                var url = '';
+                                var url = '/openstorefront/api/v1/service/jira/submitticket';
                                 var data = Ext.getCmp('feedbackForm').getValues();
-
+                                data.webInformation={
+                                    location: window.location.href, 
+                                    userAgent: navigator.userAgent,
+                                    referrer: document.referrer,
+                                    screenResolution:window.screen.availWidth+'x'+window.screen.availHeight
+                                };
+                                
                                 CoreUtil.submitForm({
                                     url: url,
                                     method: method,
@@ -98,8 +104,7 @@ Ext.define('OSF.component.FeedbackWindow', {
             items: [
                 {
                     xtype: 'combobox',
-                    id: 'feedbackType',
-                    name: 'feedbackType',
+                    name: 'ticketType',
                     fieldLabel: 'Choose Type<span class="field-required" />',
                     width: '100%',
                     maxLength: 50,
@@ -110,7 +115,6 @@ Ext.define('OSF.component.FeedbackWindow', {
                 },
                 {
                     xtype: 'textfield',
-                    id: 'summary',
                     name: 'summary',
                     fieldLabel: 'Summary<span class="field-required" />',
                     width: '100%',
@@ -119,7 +123,6 @@ Ext.define('OSF.component.FeedbackWindow', {
                 },
                 {
                     xtype: 'textarea',
-                    id: 'description',
                     name: 'description',
                     fieldLabel: 'Description<span class="field-required" />',
                     width: '100%',
@@ -127,6 +130,7 @@ Ext.define('OSF.component.FeedbackWindow', {
                     maxLength: 255,
                     allowBlank: false
                 }
+                
             ]
 
 
