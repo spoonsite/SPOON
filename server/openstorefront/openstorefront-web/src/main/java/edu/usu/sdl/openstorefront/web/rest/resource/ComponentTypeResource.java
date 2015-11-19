@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -94,7 +95,7 @@ public class ComponentTypeResource
 		List<ComponentType> componentTypes = componentType.findByExample();
 		componentTypes.forEach(type -> {
 			LookupModel lookupModel = new LookupModel();
-			lookupModel.setCode(type.getType());
+			lookupModel.setCode(type.getComponentType());
 			lookupModel.setDescription(type.getLabel());
 			lookups.add(lookupModel);
 		});
@@ -115,7 +116,7 @@ public class ComponentTypeResource
 	)
 	{
 		ComponentType componentType = new ComponentType();
-		componentType.setType(type);
+		componentType.setComponentType(type);
 		return sendSingleEntityResponse(componentType.find());
 	}
 
@@ -145,10 +146,10 @@ public class ComponentTypeResource
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 
 		ComponentType found = new ComponentType();
-		found.setType(type);
+		found.setComponentType(type);
 		found = found.find();
 		if (found != null) {
-			componentType.setType(type);
+			componentType.setComponentType(type);
 			response = handleSaveComponentType(componentType, false);
 		}
 		return response;
@@ -162,12 +163,33 @@ public class ComponentTypeResource
 		if (validationResult.valid()) {
 			componentType = service.getComponentService().saveComponentType(componentType);
 			if (post) {
-				return Response.created(URI.create("v1/resource/componenttypes/" + componentType.getType())).entity(componentType).build();
+				return Response.created(URI.create("v1/resource/componenttypes/" + componentType.getComponentType())).entity(componentType).build();
 			} else {
 				return sendSingleEntityResponse(componentType);
 			}
 		}
 		return sendSingleEntityResponse(validationResult.toRestError());
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Activate a component type")
+	@Path("/{type}/activate")
+	public Response activateComponentType(
+			@PathParam("type") String type
+	)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+
+		ComponentType found = new ComponentType();
+		found.setComponentType(type);
+		found = found.find();
+		if (found != null) {
+			service.getPersistenceService().setStatusOnEntity(ComponentType.class, type, StandardEntity.ACTIVE_STATUS);
+			found.setActiveStatus(StandardEntity.ACTIVE_STATUS);
+			response = sendSingleEntityResponse(found);
+		}
+		return response;
 	}
 
 	@DELETE

@@ -18,11 +18,14 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -48,7 +51,7 @@ public class ComponentTypeTemplateResource
 {
 
 	@GET
-	@APIDescription("Gets  component types")
+	@APIDescription("Gets  component type templates")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTypeTemplate.class)
 	public Response getComponentTypeTemplate(
@@ -71,16 +74,50 @@ public class ComponentTypeTemplateResource
 	}
 
 	@GET
-	@APIDescription("Gets  component types")
+	@APIDescription("Gets  component type templates")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTypeTemplate.class)
+	@Path("/lookup")
+	public Response getTemplateLookup(
+			@QueryParam("status") String status,
+			@QueryParam("all") boolean all
+	)
+	{
+		List<LookupModel> lookups = new ArrayList<>();
+
+		ComponentTypeTemplate componentTypeTemplate = new ComponentTypeTemplate();
+		if (status == null && all == false) {
+			componentTypeTemplate.setActiveStatus(ComponentTypeTemplate.ACTIVE_STATUS);
+		} else if (status != null && all == false) {
+			componentTypeTemplate.setActiveStatus(status);
+		}
+
+		List<ComponentTypeTemplate> componentTypeTemplates = componentTypeTemplate.findByExample();
+
+		componentTypeTemplates.forEach(template -> {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(template.getTemplateCode());
+			lookupModel.setDescription(template.getLabel());
+			lookups.add(lookupModel);
+		});
+
+		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookups)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Gets  a component type template")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTypeTemplate.class)
 	@Path("/{templateCode}")
 	public Response getComponentTypeTemplateById(
-			@PathParam("templateCode") String type
+			@PathParam("templateCode") String templateCode
 	)
 	{
 		ComponentTypeTemplate componentType = new ComponentTypeTemplate();
-		componentType.setTemplateCode(type);
+		componentType.setTemplateCode(templateCode);
 		return sendSingleEntityResponse(componentType.find());
 	}
 
@@ -101,20 +138,20 @@ public class ComponentTypeTemplateResource
 	@APIDescription("Update a component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{type}")
+	@Path("/{templateCode}")
 	public Response updateComponentTypeTemplate(
-			@PathParam("type") String type,
-			ComponentTypeTemplate componentType
+			@PathParam("templateCode") String templateCode,
+			ComponentTypeTemplate template
 	)
 	{
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 
 		ComponentTypeTemplate found = new ComponentTypeTemplate();
-		found.setTemplateCode(type);
+		found.setTemplateCode(templateCode);
 		found = found.find();
 		if (found != null) {
-			componentType.setTemplateCode(type);
-			response = handleSaveComponentTypeTemplate(componentType, false);
+			template.setTemplateCode(templateCode);
+			response = handleSaveComponentTypeTemplate(template, false);
 		}
 		return response;
 	}
@@ -127,7 +164,7 @@ public class ComponentTypeTemplateResource
 		if (validationResult.valid()) {
 			componentTypeTemplate = service.getComponentService().saveComponentTemplate(componentTypeTemplate);
 			if (post) {
-				return Response.created(URI.create("v1/resource/componenttypes/" + componentTypeTemplate.getTemplate())).entity(componentTypeTemplate).build();
+				return Response.created(URI.create("v1/resource/componenttypetemplates/" + componentTypeTemplate.getTemplate())).entity(componentTypeTemplate).build();
 			} else {
 				return sendSingleEntityResponse(componentTypeTemplate);
 			}
@@ -135,15 +172,37 @@ public class ComponentTypeTemplateResource
 		return sendSingleEntityResponse(validationResult.toRestError());
 	}
 
-	@DELETE
+	@PUT
 	@RequireAdmin
-	@APIDescription("Inactives component type")
-	@Path("/{type}")
-	public void deleteNewEvent(
-			@PathParam("type") String type
+	@APIDescription("Activate a component type template")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/{templateCode}/activate")
+	public Response activateComponentTypeTemplate(
+			@PathParam("templateCode") String templateCode
 	)
 	{
-		service.getComponentService().removeComponentTypeTemplate(type);
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+
+		ComponentTypeTemplate found = new ComponentTypeTemplate();
+		found.setTemplateCode(templateCode);
+		found = found.find();
+		if (found != null) {
+			service.getPersistenceService().setStatusOnEntity(ComponentTypeTemplate.class, templateCode, StandardEntity.ACTIVE_STATUS);
+			found.setActiveStatus(StandardEntity.ACTIVE_STATUS);
+			response = sendSingleEntityResponse(found);
+		}
+		return response;
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Inactives component type template")
+	@Path("/{templateCode}")
+	public void deleteNewEvent(
+			@PathParam("templateCode") String templateCode
+	)
+	{
+		service.getComponentService().removeComponentTypeTemplate(templateCode);
 	}
 
 }

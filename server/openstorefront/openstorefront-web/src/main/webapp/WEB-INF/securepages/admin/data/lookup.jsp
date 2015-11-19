@@ -250,7 +250,7 @@
 										iconCls: 'fa fa-save',
 										handler: function() {
 											var method = edit ? 'PUT' : 'POST'; 
-											var url = edit ? '/openstorefront/api/v1/resource/lookuptypes/' + selectedTable.get('code') + '/' + Ext.getCmp('editCodeForm-codeField').getValue() : '/openstorefront/api/v1/resource/lookuptypes/' + selectedTable.get('code');       
+											var url = edit ? '../api/v1/resource/lookuptypes/' + selectedTable.get('code') + '/' + Ext.getCmp('editCodeForm-codeField').getValue() : '../api/v1/resource/lookuptypes/' + selectedTable.get('code');       
 											var data = Ext.getCmp('editCodeForm').getValues();
 										
 											CoreUtil.submitForm({

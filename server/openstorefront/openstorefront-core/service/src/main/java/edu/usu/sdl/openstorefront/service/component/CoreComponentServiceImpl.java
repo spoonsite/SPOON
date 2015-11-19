@@ -1814,7 +1814,7 @@ public class CoreComponentServiceImpl
 
 	public ComponentType saveComponentType(ComponentType componentType)
 	{
-		ComponentType existing = persistenceService.findById(ComponentType.class, componentType.getType());
+		ComponentType existing = persistenceService.findById(ComponentType.class, componentType.getComponentType());
 		if (existing != null) {
 			existing.updateFields(componentType);
 			componentType = persistenceService.persist(existing);

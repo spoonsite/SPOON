@@ -199,7 +199,7 @@ var CoreUtil = {
       });
     }
     
-    options.form.setLoading(true);
+    options.form.setLoading('Saving...');
     Ext.Ajax.request({
       url: options.url,
       method: options.method,
