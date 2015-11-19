@@ -49,7 +49,7 @@
 			pageMap['Dashboard'] = 'Router.action?page=admin/adminDashboard.jsp';
 			pageMap['Entries'] = 'Router.action?page=admin/data/components.jsp';//'/openstorefront/admin?tool=Entries';
 			pageMap['EntriesOld'] = '/openstorefront/admin?tool=Entries';
-			pageMap['EntryType'] = '/openstorefront/admin?tool=Entry%20Type';
+			pageMap['EntryType'] = 'Router.action?page=admin/data/entryType.jsp';
 			pageMap['Highlights'] = '/openstorefront/admin?tool=Highlights';
 			pageMap['Integrations'] = '/openstorefront/admin?tool=Integrations';
 			pageMap['Imports'] = '/openstorefront/admin?tool=Imports';

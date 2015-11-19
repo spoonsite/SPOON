@@ -577,7 +577,7 @@
 								type: 'list'
 							}	
 						},
-						{ text: 'Description', dataIndex: 'description', flex: 1, 
+						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 150,
 						 renderer: function(value){
 							return Ext.util.Format.stripTags(value);
 						}},

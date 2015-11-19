@@ -101,14 +101,21 @@ Ext.define('LookupDataModel', {
 
 
 //Overrides
-Ext.define('Tess.defaults.fieldbase', {
+Ext.define('OSF.defaults.fieldbase', {
     override: 'Ext.form.field.Base',
 
 	msgTarget: 'side'
 
 });
 
-Ext.define('Tess.defaults.Window', {
+Ext.define('OSF.defaults.checkbox', {
+    override: 'Ext.form.field.Checkbox',
+
+	 inputValue : 'true'
+
+});
+
+Ext.define('OSF.defaults.Window', {
     override: 'Ext.window.Window',
 	
   ghost: false,
@@ -116,19 +123,19 @@ Ext.define('Tess.defaults.Window', {
 	
 });
 
-Ext.define('Tess.defaults.CheckboxModel', {
+Ext.define('OSF.defaults.CheckboxModel', {
     override: 'Ext.selection.CheckboxModel',
 	
 	ignoreRightMouseSelection : true	
 });
 
-Ext.define('Tess.defaults.fieldTime', {
+Ext.define('OSF.defaults.fieldTime', {
     override: 'Ext.form.field.Time',
 	
 	altFormats : 'g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H|gi a|hi a|giA|hiA|gi A|hi A|H:i:s'
 });
 
-Ext.define('Tess.defaults.ComboBox', {
+Ext.define('OSF.defaults.ComboBox', {
     override: 'Ext.form.field.ComboBox'/*,
 			
 	onBlur: function(cb, e, opts){
