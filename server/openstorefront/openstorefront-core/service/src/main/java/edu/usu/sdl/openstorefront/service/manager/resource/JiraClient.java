@@ -18,14 +18,21 @@ package edu.usu.sdl.openstorefront.service.manager.resource;
 import com.atlassian.jira.rest.client.api.GetCreateIssueMetadataOptions;
 import com.atlassian.jira.rest.client.api.GetCreateIssueMetadataOptionsBuilder;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
 import com.atlassian.jira.rest.client.api.domain.CimProject;
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.IssueType;
 import com.atlassian.jira.rest.client.api.domain.ServerInfo;
+import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import com.atlassian.util.concurrent.Promise;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
+import edu.usu.sdl.openstorefront.core.model.FeedbackTicket;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.model.ConnectionModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
@@ -98,6 +105,57 @@ public class JiraClient
 	public Issue getTicket(String ticket)
 	{
 		return getRestClient().getIssueClient().getIssue(ticket).claim();
+	}
+
+	public BasicIssue submitTicket(FeedbackTicket feedbackTicket)
+	{
+		StringBuilder description = new StringBuilder();
+		description.append("*Reported Issue Type*: ").append(feedbackTicket.getTicketType()).append("\n");
+		description.append("*Reporter Username*: ").append(feedbackTicket.getUsername()).append("\n");
+		description.append("*Reporter Firstname*: ").append(StringProcessor.blankIfNull(feedbackTicket.getFirstname())).append("\n");
+		description.append("*Reporter Lastname*: ").append(StringProcessor.blankIfNull(feedbackTicket.getLastname())).append("\n");
+		description.append("*Reporter Organization*: ").append(StringProcessor.blankIfNull(feedbackTicket.getOrganization())).append("\n");
+		description.append("*Reporter Email*: ").append(StringProcessor.blankIfNull(feedbackTicket.getEmail())).append("\n");
+		description.append("*Reporter Phone*: ").append(StringProcessor.blankIfNull(feedbackTicket.getPhone())).append("\n\n");
+		description.append("*Web Location*: ").append(StringProcessor.blankIfNull(feedbackTicket.getWebInformation().getLocation())).append("\n");
+		description.append("*Web User-agent*: ").append(StringProcessor.blankIfNull(feedbackTicket.getWebInformation().getUserAgent())).append("\n");
+		description.append("*Web Referrer*: ").append(StringProcessor.blankIfNull(feedbackTicket.getWebInformation().getReferrer())).append("\n");
+		description.append("*Web Screen Resolution*: ").append(StringProcessor.blankIfNull(feedbackTicket.getWebInformation().getScreenResolution())).append("\n");
+		description.append("*Application Version*: ").append(PropertiesManager.getApplicationVersion()).append("\n");
+		description.append("\n");
+		description.append(feedbackTicket.getDescription());
+
+		BasicProject basicProject = null;
+		IssueType issueType = null;
+
+		GetCreateIssueMetadataOptions options = new GetCreateIssueMetadataOptionsBuilder()
+				.withProjectKeys(PropertiesManager.getDefault(PropertiesManager.KEY_JIRA_FEEDBACK_PROJECT))
+				.build();
+		Iterable<CimProject> cimProjects = getRestClient().getIssueClient().getCreateIssueMetadata(options).claim();
+		if (cimProjects != null) {
+			for (CimProject cimProject : cimProjects) {
+				//There should only be one
+				basicProject = cimProject;
+				for (IssueType issueTypeInProject : cimProject.getIssueTypes()) {
+					if (issueTypeInProject.getName().equalsIgnoreCase(PropertiesManager.getDefault(PropertiesManager.KEY_JIRA_FEEDBACK_ISSUETYPE))) {
+						issueType = issueTypeInProject;
+						break;
+					}
+				}
+			}
+		}
+
+		if (basicProject == null || issueType == null) {
+			throw new OpenStorefrontRuntimeException("Unable to find project or issue type in jira.", "Check application properties and JIRA for correct values.");
+		}
+
+		IssueInputBuilder issueBuilder = new IssueInputBuilder(basicProject, issueType);
+		issueBuilder.setDescription(description.toString());
+		issueBuilder.setSummary(feedbackTicket.getSummary());
+
+		Promise<BasicIssue> promise = getRestClient().getIssueClient().createIssue(issueBuilder.build());
+		BasicIssue issue = promise.claim();
+		return issue;
 	}
 
 	public Iterable<CimProject> getAllProjectMetaInformation(String projectKey, String issueTypeName)

@@ -12,10 +12,18 @@
 			/* global Ext, CoreUtil */
 			Ext.onReady(function(){	
 				
+			//Add/Edit forms ------>				
+			
+				var mainAddEditWin = Ext.create('Ext.window.Window', {
+
+
+
+				});
+			
+
 
 		
-			//MAIN GRID 
-				
+			//MAIN GRID -------------->			
 				var versionViewTemplate = new Ext.XTemplate(						
 				);
 		
@@ -878,6 +886,27 @@
 							componentType: Ext.getCmp('componentGridFilter-ComponentType').getValue() ? Ext.getCmp('componentGridFilter-ComponentType').getValue() : 'ALL'
 						}
 					});
+				};
+				
+				
+				var actionAddEditComponent = function(record) {
+					mainAddEditWin.show();
+					
+					if (record) {
+						
+					} else {
+						
+					}
+				};
+				
+				var checkFormTabs = function(componentType) {
+					Ext.Ajax.request({
+						url: '../api/v1/resource/componenttypes/' + componentType,
+						success: function(response, opts) {
+							var data = Ext.decode(response.responseText);
+														
+						}						
+					});					
 				};
 				
 				var actionApproveComponent = function() {
