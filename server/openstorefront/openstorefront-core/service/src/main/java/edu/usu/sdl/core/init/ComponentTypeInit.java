@@ -32,7 +32,7 @@ public class ComponentTypeInit
 
 		//defaults
 		ComponentType componentType = new ComponentType();
-		componentType.setType(ComponentType.COMPONENT);
+		componentType.setComponentType(ComponentType.COMPONENT);
 		componentType.setLabel("DI2E Component");
 		componentType.setDescription("Main entry representing a DI2E Component");
 		componentType.setDataEntryAttributes(Boolean.TRUE);
@@ -47,7 +47,7 @@ public class ComponentTypeInit
 		service.getComponentService().saveComponentType(componentType);
 
 		componentType = new ComponentType();
-		componentType.setType(ComponentType.ARTICLE);
+		componentType.setComponentType(ComponentType.ARTICLE);
 		componentType.setDataEntryAttributes(Boolean.TRUE);
 		componentType.setLabel("Article");
 		componentType.setDescription("Use to display information on a topic and show related items");

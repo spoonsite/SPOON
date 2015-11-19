@@ -41,7 +41,7 @@ public class ComponentType
 	@NotNull
 	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
-	private String type;
+	private String componentType;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -97,30 +97,30 @@ public class ComponentType
 	{
 		super.updateFields(entity);
 
-		ComponentType componentType = (ComponentType) entity;
+		ComponentType componentTypeLocal = (ComponentType) entity;
 
-		this.setLabel(componentType.getLabel());
-		this.setDescription(componentType.getDescription());
-		this.setComponentTypeTemplate(componentType.getComponentTypeTemplate());
-		this.setDataEntryAttributes(componentType.getDataEntryAttributes());
-		this.setDataEntryContacts(componentType.getDataEntryContacts());
-		this.setDataEntryDependancies(componentType.getDataEntryDependancies());
-		this.setDataEntryEvaluationInformation(componentType.getDataEntryEvaluationInformation());
-		this.setDataEntryMedia(componentType.getDataEntryMedia());
-		this.setDataEntryMetadata(componentType.getDataEntryMetadata());
-		this.setDataEntryRelationships(componentType.getDataEntryRelationships());
-		this.setDataEntryResources(componentType.getDataEntryResources());
+		this.setLabel(componentTypeLocal.getLabel());
+		this.setDescription(componentTypeLocal.getDescription());
+		this.setComponentTypeTemplate(componentTypeLocal.getComponentTypeTemplate());
+		this.setDataEntryAttributes(componentTypeLocal.getDataEntryAttributes());
+		this.setDataEntryContacts(componentTypeLocal.getDataEntryContacts());
+		this.setDataEntryDependancies(componentTypeLocal.getDataEntryDependancies());
+		this.setDataEntryEvaluationInformation(componentTypeLocal.getDataEntryEvaluationInformation());
+		this.setDataEntryMedia(componentTypeLocal.getDataEntryMedia());
+		this.setDataEntryMetadata(componentTypeLocal.getDataEntryMetadata());
+		this.setDataEntryRelationships(componentTypeLocal.getDataEntryRelationships());
+		this.setDataEntryResources(componentTypeLocal.getDataEntryResources());
 
 	}
 
-	public String getType()
+	public String getComponentType()
 	{
-		return type;
+		return componentType;
 	}
 
-	public void setType(String type)
+	public void setComponentType(String componentType)
 	{
-		this.type = type;
+		this.componentType = componentType;
 	}
 
 	public String getLabel()
