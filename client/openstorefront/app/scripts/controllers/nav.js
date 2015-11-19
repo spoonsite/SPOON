@@ -137,6 +137,15 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
   // Functions
   //////////////////////////////////////////////////////////////////////////////
 
+
+  $scope.openFeedback = function(){
+         var feedbackWin = Ext.create('OSF.component.FeedbackWindow', { 
+         closeAction: 'destroy',
+         angularScope: $scope
+     });     
+     feedbackWin.show();      
+  };
+
   /***************************************************************
   * This function sends the routing to the results page with a specified
   * search key saved in the localCache
@@ -217,7 +226,7 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
     }, 500);
   });
 
-
+  
   $scope.openHelp = function() {
     var draggableInstance = $draggable.open({
       alwaysontop: true,

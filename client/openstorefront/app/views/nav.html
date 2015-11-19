@@ -81,7 +81,7 @@
               <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'Component Reviews')">Component Reviews</a></li>
               <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'Submissions')">Submissions</a></li>
               <li><a href="javascript: void(0)" ng-click="openHelp()"><b>Help</b></a></li>    
-              <li><a href="javascript: void(0)" class="feedbackBtn"><b>Provide Feedback</b></a></li>	  
+              <li><a href="javascript: void(0)" ng-click="openFeedback();"><b>Feedback / Issues</b></a></li>	  
               <li class="divider"></li>
               <li ng-show="user.isLoggedIn"><a href="/openstorefront/Login.action?Logout" ng-click="localCache.clear()">Logout</a></li>   
             </ul>
@@ -124,7 +124,7 @@
 
   </div> 
 
-  <script type="text/javascript" src="https://jira.di2e.net/s/3d8ffec248fd313edcbb45e79a5fa8d8-T/en_US-ukkg1g/64019/8/1.4.25/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=fc4dac85"></script>
+  <!--<script type="text/javascript" src="https://jira.di2e.net/s/3d8ffec248fd313edcbb45e79a5fa8d8-T/en_US-ukkg1g/64019/8/1.4.25/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=fc4dac85"></script>
   <script type="text/javascript">
   window.ATL_JQ_PAGE_PROPS =  {
    "triggerFunction": function(showCollectorDialog) {
@@ -134,7 +134,7 @@
      showCollectorDialog();
    });
   }};
-  </script>
+  </script>-->
 
 
 </div>
