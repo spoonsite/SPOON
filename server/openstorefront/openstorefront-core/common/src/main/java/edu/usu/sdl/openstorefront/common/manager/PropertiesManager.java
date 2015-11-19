@@ -80,6 +80,8 @@ public class PropertiesManager
 	public static final String KEY_JIRA_CONNECTION_WAIT_TIME = "jira.connection.wait.seconds";
 	public static final String KEY_JIRA_URL = "jira.server.url";
 	public static final String KEY_JOB_WORKING_STATE_OVERRIDE = "job.working.state.override.minutes";
+	public static final String KEY_JIRA_FEEDBACK_PROJECT = "jira.feedback.project";
+	public static final String KEY_JIRA_FEEDBACK_ISSUETYPE = "jira.feedback.issuetype";
 
 	public static final String KEY_MAIL_SERVER = "mail.smtp.url";
 	public static final String KEY_MAIL_SERVER_USER = "mail.server.user";
@@ -200,6 +202,8 @@ public class PropertiesManager
 			defaults.put(KEY_DBLOG_MAX_RECORD, "50000");
 			defaults.put(KEY_DBLOG_ON, "true");
 			defaults.put(KEY_ALLOW_JIRA_FEEDBACK, "true");
+			defaults.put(KEY_JIRA_FEEDBACK_PROJECT, "STORE");
+			defaults.put(KEY_JIRA_FEEDBACK_ISSUETYPE, "Help Desk Ticket");
 
 			if (Paths.get(PROPERTIES_FILENAME).toFile().createNewFile()) {
 				log.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);

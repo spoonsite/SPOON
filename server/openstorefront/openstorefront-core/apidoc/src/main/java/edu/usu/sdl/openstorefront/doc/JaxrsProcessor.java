@@ -15,17 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.doc;
 
-import edu.usu.sdl.openstorefront.doc.annotation.ValidationRequirement;
-import edu.usu.sdl.openstorefront.doc.annotation.ParameterRestrictions;
-import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.annotation.ReturnType;
-import edu.usu.sdl.openstorefront.doc.sort.ApiMethodComparator;
-import edu.usu.sdl.openstorefront.doc.model.APITypeModel;
-import edu.usu.sdl.openstorefront.doc.model.APIParamModel;
-import edu.usu.sdl.openstorefront.doc.model.APIValueFieldModel;
-import edu.usu.sdl.openstorefront.doc.model.APIValueModel;
-import edu.usu.sdl.openstorefront.doc.model.APIMethodModel;
-import edu.usu.sdl.openstorefront.doc.model.APIResourceModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -37,7 +26,18 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ParamTypeDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.doc.annotation.ParameterRestrictions;
+import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.annotation.ReturnType;
+import edu.usu.sdl.openstorefront.doc.annotation.ValidationRequirement;
+import edu.usu.sdl.openstorefront.doc.model.APIMethodModel;
+import edu.usu.sdl.openstorefront.doc.model.APIParamModel;
+import edu.usu.sdl.openstorefront.doc.model.APIResourceModel;
+import edu.usu.sdl.openstorefront.doc.model.APITypeModel;
+import edu.usu.sdl.openstorefront.doc.model.APIValueFieldModel;
+import edu.usu.sdl.openstorefront.doc.model.APIValueModel;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.sort.ApiMethodComparator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -376,11 +376,13 @@ public class JaxrsProcessor
 					} else {
 						if (fieldClass.isInterface() == false) {
 							try {
-								typeModel.setObject(objectMapper.writeValueAsString(fieldClass.newInstance()));
-
-								String cleanUpJson = StringProcessor.stripeFieldJSON(typeModel.getObject(), fieldList);
-								typeModel.setObject(cleanUpJson);
-
+								if (fieldClass.isMemberClass()) {
+									typeModel.setObject("{ See Parent Object }");
+								} else {
+									typeModel.setObject(objectMapper.writeValueAsString(fieldClass.newInstance()));
+									String cleanUpJson = StringProcessor.stripeFieldJSON(typeModel.getObject(), fieldList);
+									typeModel.setObject(cleanUpJson);
+								}
 							} catch (InstantiationException | IllegalAccessException | JsonProcessingException ex) {
 								log.log(Level.WARNING, "Unable to process/map complex field: " + fieldClass.getSimpleName(), ex);
 								typeModel.setObject("{ Unable to view }");
