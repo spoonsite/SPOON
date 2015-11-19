@@ -15,13 +15,56 @@
 			//Add/Edit forms ------>				
 			
 				var mainAddEditWin = Ext.create('Ext.window.Window', {
-
-
-
+					title: 'Entry Form',
+					modal: true,
+					maximizable: true,
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'tabpanel',
+							id: 'mainFormTabPanel',
+							items: [
+								{
+									xtype: 'form',
+									id: 'generalForm',
+									title: 'General',
+									layout: 'fit',
+									defaults: {
+										labelAlign: 'top'
+									},
+									dockedItems: [
+										{
+											xtype: 'toolbar',
+											dock: 'bottom',
+											items: [
+												{
+													text: 'Save',
+													iconCls: 'fa fa-save',
+													handler: function() {
+														
+													}
+												},
+												{
+													xtype: 'tbfill'
+												},
+												{
+													text: 'Cancel',
+													iconCls: 'fa fa-close',
+													handler: function() {
+														this.up('window').hide();
+													}													
+												}
+											]
+										}
+									],
+									items: [
+										
+									]
+								}
+							]
+						}
+					]
 				});
-			
-
-
 		
 			//MAIN GRID -------------->			
 				var versionViewTemplate = new Ext.XTemplate(						
@@ -708,7 +751,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-plus',
 									handler: function () {
-										
+										actionAddEditComponent();
 									}
 								},
 								{
@@ -721,7 +764,7 @@
 									iconCls: 'fa fa-2x fa-edit',
 									disabled: true,
 									handler: function () {
-										
+										actionAddEditComponent(Ext.getCmp('componentGrid').getSelection()[0]);
 									}								
 								},
 								{
@@ -813,7 +856,7 @@
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
-							actionEditCompomentForm(record);
+							actionAddEditComponent(record);
 						},
 						selectionchange: function(grid, record, index, opts){
 							checkComponetGridTools();
@@ -891,9 +934,11 @@
 				
 				var actionAddEditComponent = function(record) {
 					mainAddEditWin.show();
-					
+										
 					if (record) {
 						
+						
+						checkFormTabs(record.get('componetType'));
 					} else {
 						
 					}
