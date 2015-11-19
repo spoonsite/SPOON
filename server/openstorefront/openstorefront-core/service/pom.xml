@@ -78,7 +78,15 @@
 			<artifactId>stripes</artifactId>
 			<version>1.6.0</version>
 		</dependency>
-				
+
+		<!--						
+		<dependency>
+			<groupId>com.atlassian.jira</groupId>
+			<artifactId>jira-api</artifactId>
+			<version>6.4-OD-08-006</version>		
+		</dependency>		
+		-->
+						
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
 			<artifactId>jira-rest-java-client-api</artifactId>
