@@ -627,3 +627,7 @@ div.x-border-layout-ct {
 .x-grid-item {
     outline:none;
 }
+
+.activecell .x-grid-cell {
+    background-color: #ccffcc !important;
+}

@@ -61,7 +61,7 @@
 			pageMap['Tags'] = '/openstorefront/admin?tool=Tags';
 			pageMap['UserProfiles'] = '/openstorefront/admin?tool=User%20Profiles';
 			pageMap['Alerts'] = '/openstorefront/admin?tool=Alerts';
-			pageMap['Branding'] = '/openstorefront/admin?tool=Branding';
+			pageMap['Branding'] = 'Router.action?page=admin/application/branding.jsp';
 			pageMap['Jobs'] = '/openstorefront/admin?tool=Jobs';
 			pageMap['Reports'] = '/openstorefront/admin?tool=Reports';
 			pageMap['System'] = '/openstorefront/admin?tool=System';
