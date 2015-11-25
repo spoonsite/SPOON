@@ -584,7 +584,6 @@ div.x-border-layout-ct {
     box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
 }
 
-
 .x-tab-default-top.x-tab-focus.x-tab-over {
 
     -webkit-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
@@ -596,6 +595,12 @@ div.x-border-layout-ct {
     -webkit-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
     -moz-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
     box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+}
+
+.x-tab.x-tab-disabled.x-tab-default {
+    border-color: #CACACA;
+    background-color: #AFAFAF;
+    cursor: default;
 }
 
 .x-panel-header-title-default {
@@ -626,4 +631,13 @@ div.x-border-layout-ct {
 
 .x-grid-item {
     outline:none;
+}
+
+.x-toolbar-footer {
+    padding: 6px 0 6px 6px;
+    border-style: solid;
+    border-color: #c2c2c2;
+    border-width: 0;
+    background-image: none;
+    background-color: #E8E8E8;
 }

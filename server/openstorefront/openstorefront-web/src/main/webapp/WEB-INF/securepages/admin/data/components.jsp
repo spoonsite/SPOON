@@ -12,55 +12,2575 @@
 			/* global Ext, CoreUtil */
 			Ext.onReady(function(){	
 				
-			//Add/Edit forms ------>				
+			//Add/Edit forms ------>	
 			
+				//common stores
+				var statusFilterStore = Ext.create('Ext.data.Store', {
+					fields: ['code', 'desc'],
+					data : [
+						{"code":"A", "desc":"Active"},
+						{"code":"I", "desc":"Inactive"}
+					]
+				});
+			
+				//entry form common actions
+				var actionSubComponentToggleStatus = function(grid, idField, entity, subEntityId, subEntity, forceDelete, successFunc) {
+					var status = grid.getSelection()[0].get('activeStatus');
+					var recordId = grid.getSelection()[0].get(idField);
+					var componentId = grid.getSelection()[0].get('componentId'); 
+					if (!componentId) {
+						componentId = grid.componentRecord.get('componentId');
+					}
+					subEntityId = subEntityId ? '/' + grid.getSelection()[0].get(subEntityId) : '';
+					subEntity = subEntity ? '/' + subEntity : '';
+										
+					var urlEnding = '';
+					var method = 'DELETE';
+					
+					if (status === 'I') {
+						urlEnding = '/activate';
+						method = 'PUT';
+					} 
+										
+					if (forceDelete)
+					{
+						urlEnding = '/force';
+					}
+					
+					grid.setLoading('Updating status....');
+					Ext.Ajax.request({
+						url: '../api/v1/resource/components/' + componentId + '/' + entity + '/' + recordId + subEntity + subEntityId + urlEnding,
+						method: method,
+						callback: function(opt, success, response){
+							grid.setLoading(false);
+						},
+						success: function(response, opts){
+							if (successFunc) {
+								successFunc();
+							} else {
+								grid.getStore().reload();
+							}
+						}
+					});
+					
+				};
+			
+				//Sub Forms
+				var actionAddTag = function(form, grid) {				
+					var data = form.getValues();
+					var componentId = grid.componentRecord.get('componentId');
+
+					CoreUtil.submitForm({
+						url: '../api/v1/resource/components/' + componentId + '/tags',
+						method: 'POST',
+						data: data,
+						form: form,
+						success: function(){
+							grid.getStore().reload();
+							form.reset();
+						}
+					});				
+				};
+				
+				var tagGrid = Ext.create('Ext.grid.Panel', {
+					id: 'tagGrid',
+					title: 'Tags',					 
+					tooltip: 'Searchable labels',
+					columnLines: true,
+					store: Ext.create('Ext.data.Store', {
+						fields: [
+							"text",
+							"tagId",
+							"activeStatus",
+							"createUser",
+							"createDts"
+						],
+						autoLoad: false,
+						proxy: {
+							type: 'ajax'							
+						}
+					}),
+					columns: [
+						{ text: 'Title', dataIndex: 'text', flex: 1, minWidth: 200 },
+						{ text: 'Create User', align: 'center', dataIndex: 'createUser', width: 150 },
+						{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+					],
+					listeners: {
+						selectionchange: function(grid, record, index, opts){
+							var fullgrid = Ext.getCmp('tagGrid');
+							if (fullgrid.getSelectionModel().getCount() === 1) {
+								fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
+							} else {
+								fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
+							}
+						}						
+					},
+					dockedItems: [
+						{
+							xtype: 'form',
+							layout: 'hbox',
+							padding: 10,
+							items: [
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Tag<span class="field-required" />',
+									allowBlank: false,
+									margin: '0 20 0 0',
+									width: '40%',
+									name: 'text',
+									listeners: {
+										specialkey: function(field, e){
+											if (e.getKey() == e.ENTER) {
+											   actionAddTag(this.up('form'), Ext.getCmp('tagGrid'));
+											}
+										}
+									}
+								}, 
+								{
+									xtype: 'button',
+									text: 'Add',
+									formBind: true,
+									iconCls: 'fa fa-plus',
+									handler: function(){
+										actionAddTag(this.up('form'), Ext.getCmp('tagGrid'));
+									}
+								}
+							]
+						},						
+						{
+							xtype: 'toolbar',
+							items: [							
+								{
+									text: 'Refresh',
+									iconCls: 'fa fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Remove',
+									itemId: 'removeBtn',
+									iconCls: 'fa fa-trash',
+									ui: 'danger',
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('tagGrid'), 'tagId', 'tags');
+									}
+								}
+							]
+						}
+					]					
+				});
+
+				var questionGrid = Ext.create('Ext.grid.Panel', {
+					id: 'questionGrid',
+					width: '100%',
+					flex: 1,
+					columnLines: true,
+					store: Ext.create('Ext.data.Store', {
+						fields: [
+							"questionId",
+							"question",
+							"organization",							
+	   					     "createUser",							 
+							"createDts",
+							"updateUser",
+							"updateDts",
+							"componentId",
+							"userTypeCode",
+							"activeStatus",
+							"organization"										
+						],
+						autoLoad: false,
+						proxy: {
+							type: 'ajax'							
+						}
+					}),
+					columns: [
+						{ text: 'Question', dataIndex: 'question',  flex: 1, minWidth: 200 },
+						{ text: 'Organization', dataIndex: 'organization', width: 150 },
+						{ text: 'User', dataIndex: 'createUser', flex: 1, minWidth: 150 },					
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+					],
+					listeners: {
+						selectionchange: function(selectionModel, selectedRecords, opts){
+							var fullgrid = Ext.getCmp('questionGrid');
+							if (fullgrid.getSelectionModel().getCount() === 1) {
+								fullgrid.down('toolbar').getComponent('statusToggleBtn').setDisabled(false);
+								var componentId = fullgrid.componentRecord.get('componentId');						
+								var questionId = selectedRecords[0].get('questionId');
+							
+								Ext.getCmp('questionResponseGrid').getStore().load({
+									url: '../api/v1/resource/components/'+componentId+'/questions/'+questionId+'/responses'
+								});								
+							} else {
+								fullgrid.down('toolbar').getComponent('statusToggleBtn').setDisabled(true);
+								Ext.getCmp('questionResponseGrid').getStore().removeAll();
+							}
+						}						
+					},
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							items: [
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Filter Status',
+									store: statusFilterStore,
+									forceSelection: true,
+									queryMode: 'local',
+									displayField: 'desc',
+									valueField: 'code',
+									value: 'A',
+									listeners: {
+										change: function(combo, newValue, oldValue, opts){
+											this.up('grid').getStore().load({
+												url: '../api/v1/resource/components/' + Ext.getCmp('questionGrid').componentRecord.get('componentId') + '/questions/view',
+												params: {
+													status: newValue
+												}
+											});
+										}
+									}
+								}, 
+								{
+									text: 'Refresh',
+									iconCls: 'fa fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'ToggleStatus',
+									itemId: 'statusToggleBtn',
+									iconCls: 'fa fa-power-off',
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('questionGrid'), 'questionId', 'questions');
+									}
+								}
+							]
+						}
+					]					
+				});
+				
+				var questionContainer = Ext.create('Ext.panel.Panel', {
+					title: 'Question',
+					tooltip: 'User questions and answers',
+					layout: 'vbox',
+					items: [
+						questionGrid,
+						{
+							xtype: 'grid',
+							id: 'questionResponseGrid',
+							title: 'Responses',
+							columnLines: true,
+							width: '100%',
+							flex: 1,
+							store: Ext.create('Ext.data.Store', {
+								fields: [
+									"questionId",
+									"response",
+									"organization",							
+									'responseId',
+									"createUser",							 
+									"createDts",
+									"updateUser",
+									"updateDts",
+									"componentId",
+									"userTypeCode",
+									"activeStatus",
+									"organization"										
+								],
+								autoLoad: false,
+								proxy: {
+									type: 'ajax'							
+								}
+							}),
+							columns: [
+								{ text: 'Response', dataIndex: 'response',  flex: 1, minWidth: 200 },
+								{ text: 'Organization', dataIndex: 'organization', width: 150 },
+								{ text: 'User', dataIndex: 'createUser', wdth: 150 },	
+								{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },					
+								{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }								
+							],
+							listeners: {
+								selectionchange: function(selectionModel, selectedRecords, opts){
+									var fullgrid = Ext.getCmp('questionResponseGrid');
+									if (fullgrid.getSelectionModel().getCount() === 1) {
+										fullgrid.down('toolbar').getComponent('statusToggleBtn').setDisabled(false);
+									} else {
+										fullgrid.down('toolbar').getComponent('statusToggleBtn').setDisabled(true);
+									}
+								}						
+							},							
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									items: [
+										{
+											text: 'ToggleStatus',
+											itemId: 'statusToggleBtn',
+											iconCls: 'fa fa-power-off',
+											disabled: true,
+											handler: function(){
+												actionSubComponentToggleStatus(this.up('grid'), 'questionId', 'questions', 'responseId', 'responses');
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				});
+
+				var reviewGrid = Ext.create('Ext.grid.Panel', {
+					id: 'reviewGrid',
+					title: 'Reviews',
+					tooltip: 'User Reviews',
+					columnLines: true,
+					store: Ext.create('Ext.data.Store', {
+						fields: [
+							"username",
+							"userTypeCode",
+							"comment",
+							"rating",
+							"title",
+							"userTimeCode",
+							"lastUsed",
+							"updateDate",
+							"organization",
+							"recommend",
+							"componentId",
+							"reviewId",
+							"activeStatus",
+							"name",
+							{ name: "pros", mapping: function(data) {
+									var proList='<ul>';							
+									Ext.Array.each(data.pros, function(pro){
+										proList += '<li>'+pro.text+'</li>';
+									});	
+									proList +='</ul>';
+									return proList;
+								}
+							},
+							{ name: "cons", mapping: function(data) {
+									var conList='<ul>';							
+									Ext.Array.each(data.cons, function(con){
+										conList += '<li>'+con.text+'</li>';
+									});	
+									conList +='</ul>';
+									return conList;
+								}
+							}														
+						],
+						autoLoad: false,
+						proxy: {
+							type: 'ajax'							
+						}
+					}),
+					columns: [
+						{ text: 'Title', dataIndex: 'title', width: 200 },
+						{ text: 'Rating', align: 'center', dataIndex: 'rating', width: 100 },
+						{ text: 'Comment', dataIndex: 'comment', flex: 1, minWidth: 200 },
+						{ text: 'Pros', dataIndex: 'pros', width: 200 },
+						{ text: 'Cons', dataIndex: 'cons', width: 200 },
+						{ text: 'User', dataIndex: 'username', width: 150 },
+						{ text: 'Update Date', dataIndex: 'updateDate', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+					],
+					listeners: {
+						selectionchange: function(grid, record, index, opts){
+							var fullgrid = Ext.getCmp('reviewGrid');
+							if (fullgrid.getSelectionModel().getCount() === 1) {
+								fullgrid.down('toolbar').getComponent('statusToggleBtn').setDisabled(false);
+							} else {
+								fullgrid.down('toolbar').getComponent('statusToggleBtn').setDisabled(true);
+							}
+						}						
+					},
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							items: [
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Filter Status',
+									store: statusFilterStore,
+									forceSelection: true,
+									queryMode: 'local',
+									displayField: 'desc',
+									valueField: 'code',
+									value: 'A',
+									listeners: {
+										change: function(combo, newValue, oldValue, opts){
+											this.up('grid').getStore().load({
+												url: '../api/v1/resource/components/' + Ext.getCmp('reviewGrid').componentRecord.get('componentId') + '/reviews/view',
+												params: {
+													status: newValue
+												}
+											});
+										}
+									}
+								}, 
+								{
+									text: 'Refresh',
+									iconCls: 'fa fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'ToggleStatus',
+									itemId: 'statusToggleBtn',
+									iconCls: 'fa fa-power-off',
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('reviewGrid'), 'reviewId', 'reviews');
+									}
+								}
+							]
+						}
+					]
+				});
+
+				var evaluationGrid = Ext.create('Ext.grid.Panel', {
+					id: 'evaluationGrid',
+					title: 'Evaluation',
+					tooltip: 'Evaluation scores',
+					columnLines: true,
+					selModel: 'cellmodel',
+					plugins: {
+						ptype: 'cellediting',
+						clicksToEdit: 1												
+					},					
+					store: Ext.create('Ext.data.Store', {
+						fields: [
+							"code",
+							"description",
+							"notAvailable",
+							"evaluationSection",
+							"actualScore",
+							"existing",
+							"name"
+						],
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: '../api/v1/resource/lookuptypes/EvaluationSection'
+						}
+					}),
+					columns: [
+						{ text: 'Section', dataIndex: 'description', flex: 1, minWidth: 200 },
+						{ text: 'Not Available', align: 'center', dataIndex: 'notAvailable', width: 150, 
+							xtype: 'checkcolumn',
+							listeners: {
+								checkchange: function(checkColumn, rowIndex, checked, opt) {
+									var record = Ext.getCmp('evaluationGrid').getStore().getAt(rowIndex);
+									if (checked) {										
+										record.actualScoreField.setDisabled(true);
+									} else {
+										record.actualScoreField.setDisabled(false);
+									}
+								}
+							}
+						},
+						{ text: 'Score', dataIndex: 'actualScore', width: 200, 
+							xtype: 'widgetcolumn',
+							widget: {
+								xtype: 'numberfield',
+								minValue: 1,
+								maxValue: 5,
+								step: .5,
+								decimalPrecision: 1,
+								listeners: {
+									afterrender: function(field){
+										var record = field.getWidgetRecord();
+										record.actualScoreField = field;
+									},
+									change: function(field, newValue, oldValue, opts) {
+										var record = field.getWidgetRecord();
+										record.set('actualScore', newValue);
+										if (newValue) {
+											record.set('notAvailable', false);
+										}
+									}
+								}
+							}
+						},
+						{ text: 'Existing', align: 'center', dataIndex: 'existing', width: 150,
+							renderer: function(value) {
+								if (value) {
+									return "<i class='fa fa-check'></i>";
+								} else {
+									return "";
+								}
+							}
+						},
+						{
+						 text: 'Action', 
+						 dataIndex: '',
+						 sortable: false,
+						 xtype: 'widgetcolumn',
+						 align: 'center',
+						 width: 75,               
+						 widget: {
+						   xtype: 'button',
+						   iconCls: 'fa fa-trash',
+						   maxWidth: 25,
+						   ui: 'danger',
+						   handler: function() {
+							 var record = this.getWidgetRecord();
+							 var componentId = Ext.getCmp('evaluationGrid').componentRecord.get('componentId');
+								Ext.getCmp('evaluationGrid').setLoading('Clearing Section...');
+								Ext.Ajax.request({
+									url: '../api/v1/resource/components/' + componentId + '/sections/'+ record.get('code'),
+									method: 'DELETE',
+									callback: function(){
+										Ext.getCmp('evaluationGrid').setLoading(false);
+									},
+									success: function(response, opts) {
+										Ext.toast('Cleared evaluation Record', 'Success');
+										record.set('notAvailable', null, { dirty: false });
+										record.set('actualScore', null, { dirty: false });
+										record.set('existing', null, { dirty: false });
+									}
+							 });
+						   }
+						 }
+					   }
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Save All',
+									iconCls: 'fa fa-save',
+									handler: function(){
+										var componentId = Ext.getCmp('evaluationGrid').componentRecord.get('componentId');
+										var records = this.up('grid').getStore().getData();
+										var sectionsToPost = [];
+										Ext.Array.each(records.items, function(record){
+											if (record.get('actualScore') || record.get('notAvailable')) {
+												sectionsToPost.push({
+													componentEvaluationSectionPk: {
+														componentId: componentId,
+														evaluationSection: record.get('code')
+													},
+													actualScore: record.get('actualScore'),
+													notAvailable: record.get('notAvailable')
+												});
+										     }
+										});
+										Ext.getCmp('evaluationGrid').setLoading('Saving...');
+										Ext.Ajax.request({
+											url: '../api/v1/resource/components/' + componentId + '/sections/all',
+											method: 'POST',
+											jsonData: sectionsToPost,
+											callback: function(){
+												Ext.getCmp('evaluationGrid').setLoading(false);
+											},
+											success: function(response, opts) {
+												Ext.toast('Saved Records', 'Success');
+												loadEvalationData(componentId);
+											}
+										});
+										
+										
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Clear All Sections',
+									iconCls: 'fa fa-trash',
+									ui: 'danger',
+									handler: function(){			
+										Ext.Msg.show({
+											title:'Clear All Sections?',
+											message: 'Are you sure you would like to clear all sections?',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+													var componentId = Ext.getCmp('evaluationGrid').componentRecord.get('componentId');
+													Ext.getCmp('evaluationGrid').setLoading('Clearing All Sections...');
+													Ext.Ajax.request({
+														url: '../api/v1/resource/components/' + componentId + '/sections',
+														method: 'DELETE',
+														callback: function(){
+															Ext.getCmp('evaluationGrid').setLoading(false);
+														},
+														success: function(response, opts) {
+															Ext.toast('Cleared evaluation records', 'Success');
+															loadEvalationData(componentId);
+														}
+													});
+												} 
+											}
+										});	
+									}
+								}
+							]
+						}
+					]
+				});
+				
+				var loadEvalationData = function(componentId){
+					Ext.getCmp('evaluationGrid').setLoading(true);
+					
+					//clear data
+					Ext.getCmp('evaluationGrid').getStore().each(function(record){
+						record.set('notAvailable', null, { dirty: false });
+						record.set('actualScore', null, { dirty: false });
+						record.set('existing', null, { dirty: false });
+						if (record.actualScoreField)
+						{
+							record.actualScoreField.setDisabled(false);
+						}
+					});
+					
+					Ext.Ajax.request({
+						url: '../api/v1/resource/components/' + componentId + '/sections',
+						callback: function(){
+							Ext.getCmp('evaluationGrid').setLoading(false);
+						},
+						success: function(response, opt){
+							var data = Ext.decode(response.responseText);
+														
+							Ext.getCmp('evaluationGrid').getStore().each(function(record){
+								Ext.Array.each(data, function(section){
+									if (section.componentEvaluationSectionPk.evaluationSection === record.get('code')) {
+										record.set('notAvailable', section.notAvailable, { dirty: false });
+										record.set('actualScore', section.actualScore, { dirty: false });
+										record.set('existing', true, { dirty: false });										
+									}	
+								});							
+							});
+						}
+					});
+				};
+	
+				var metadataGrid = Ext.create('Ext.grid.Panel', {
+					id: 'metadataGrid',
+					title: 'Metadata',
+					tooltip: 'Extra non-filterable information about a component.',
+					columnLines: true,
+					store: Ext.create('Ext.data.Store', {
+						fields: [
+							"metadataId",
+							"label",
+							"value",
+							"updateDts",
+							"activeStatus"
+						],
+						autoLoad: false,
+						proxy: {
+							type: 'ajax'							
+						}
+					}),
+					columns: [
+						{ text: 'Label', dataIndex: 'label',  width: 200 },
+						{ text: 'Value',  dataIndex: 'value', flex: 1, minWidth: 200 },
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+					],
+					listeners: {
+						itemdblclick: function(grid, record, item, index, e, opts){
+							this.down('form').loadRecord(record);
+						},
+						selectionchange: function(grid, record, index, opts){
+							var fullgrid = Ext.getCmp('metadataGrid');
+							if (fullgrid.getSelectionModel().getCount() === 1) {
+								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
+								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
+							} else {
+								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(true);
+								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
+							}
+						}						
+					},
+					dockedItems: [
+						{
+							xtype: 'form',
+							title: 'Add/Edit Metadata',
+							collapsible: true,
+							titleCollapse: true,
+							border: true,
+							layout: 'vbox',
+							bodyStyle: 'padding: 10px;',
+							margin: '0 0 5 0', 
+							defaults: {
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: '100%'
+							},
+							buttonAlign: 'center',
+							buttons: [
+								{
+									xtype: 'button',
+									text: 'Save',
+									formBind: true,
+									margin: '0 20 0 0',
+									iconCls: 'fa fa-save',
+									handler: function(){	
+										var form = this.up('form');
+										var data = form.getValues();
+										var componentId = Ext.getCmp('metadataGrid').componentRecord.get('componentId');
+
+										var method = 'POST';
+										var update = '';
+										if (data.metadataId) {
+											update = '/' + data.metadataId;
+											method = 'PUT';
+										}
+
+										CoreUtil.submitForm({
+											url: '../api/v1/resource/components/' + componentId + '/metadata' + update,
+											method: method,
+											data: data,
+											form: form,
+											success: function(){
+												Ext.getCmp('metadataGrid').getStore().reload();
+												form.reset();
+											}
+										});
+									}
+								},
+								{
+									xtype: 'button',
+									text: 'Cancel',										
+									iconCls: 'fa fa-close',
+									handler: function(){
+										this.up('form').reset();
+									}									
+								}								
+							],
+							items: [
+								{
+									xtype: 'hidden',
+									name: 'metadataId'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Label <span class="field-required" />',									
+									allowBlank: false,									
+									maxLength: '255',									
+									name: 'label'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Value <span class="field-required" />',									
+									allowBlank: false,									
+									maxLength: '255',									
+									name: 'value'
+								}
+							]
+						},						
+						{
+							xtype: 'toolbar',
+							items: [
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Filter Status',
+									store: statusFilterStore,
+									forceSelection: true,
+									queryMode: 'local',
+									displayField: 'desc',
+									valueField: 'code',
+									value: 'A',
+									listeners: {
+										change: function(combo, newValue, oldValue, opts){
+											this.up('grid').getStore().load({
+												url: '../api/v1/resource/components/' + Ext.getCmp('metadataGrid').componentRecord.get('componentId') + '/metadata/view',
+												params: {
+													status: newValue
+												}
+											});
+										}
+									}
+								}, 								
+								{
+									text: 'Refresh',
+									iconCls: 'fa fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Edit',
+									itemId: 'editBtn',									
+									iconCls: 'fa fa-edit',
+									handler: function(){
+										this.up('grid').down('form').loadRecord(Ext.getCmp('metadataGrid').getSelection()[0]);
+									}									
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Toggle Status',
+									itemId: 'toggleStatusBtn',
+									iconCls: 'fa fa-power-off',									
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('metadataGrid'), 'metadataId', 'metadata');
+									}
+								}
+							]
+						}
+					]									
+				});
+
+				var dependenciesGrid = Ext.create('Ext.grid.Panel', {
+					id: 'dependenciesGrid',
+					title: 'Dependencies',
+					tooltip: 'External dependences for a component',
+					columnLines: true,
+					store: Ext.create('Ext.data.Store', {
+						fields: [
+							"dependencyId",
+							"dependencyName",
+							"version",
+							"dependancyReferenceLink",
+							"comment",
+							"updateDts",
+							"activeStatus"
+						],
+						autoLoad: false,
+						proxy: {
+							type: 'ajax'							
+						}
+					}),
+					columns: [
+						{ text: 'Name', dataIndex: 'dependencyName',  width: 200 },
+						{ text: 'Version',  dataIndex: 'version', width: 150 },
+						{ text: 'Link',  dataIndex: 'dependancyReferenceLink', width: 200 },
+						{ text: 'Comment',  dataIndex: 'comment', flex: 1, minWidth: 200 },
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+					],
+					listeners: {
+						itemdblclick: function(grid, record, item, index, e, opts){
+							this.down('form').loadRecord(record);
+						},
+						selectionchange: function(grid, record, index, opts){
+							var fullgrid = Ext.getCmp('dependenciesGrid');
+							if (fullgrid.getSelectionModel().getCount() === 1) {
+								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
+								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
+							} else {
+								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(true);
+								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
+							}
+						}						
+					},
+					dockedItems: [
+						{
+							xtype: 'form',
+							title: 'Add/Edit Dependancy',
+							collapsible: true,
+							titleCollapse: true,
+							border: true,
+							layout: 'vbox',
+							bodyStyle: 'padding: 10px;',
+							margin: '0 0 5 0', 
+							defaults: {
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: '100%'
+							},
+							buttonAlign: 'center',
+							buttons: [
+								{
+									xtype: 'button',
+									text: 'Save',
+									formBind: true,
+									margin: '0 20 0 0',
+									iconCls: 'fa fa-save',
+									handler: function(){	
+										var form = this.up('form');
+										var data = form.getValues();
+										var componentId = Ext.getCmp('dependenciesGrid').componentRecord.get('componentId');
+
+										var method = 'POST';
+										var update = '';
+										if (data.dependencyId) {
+											update = '/' + data.dependencyId;
+											method = 'PUT';
+										}
+
+										CoreUtil.submitForm({
+											url: '../api/v1/resource/components/' + componentId + '/dependencies' + update,
+											method: method,
+											data: data,
+											form: form,
+											success: function(){
+												Ext.getCmp('dependenciesGrid').getStore().reload();
+												form.reset();
+											}
+										});
+									}
+								},
+								{
+									xtype: 'button',
+									text: 'Cancel',										
+									iconCls: 'fa fa-close',
+									handler: function(){
+										this.up('form').reset();
+									}									
+								}								
+							],
+							items: [
+								{
+									xtype: 'hidden',
+									name: 'dependencyId'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Name <span class="field-required" />',									
+									allowBlank: false,									
+									maxLength: '255',
+									name: 'dependencyName'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Version <span class="field-required" />',									
+									allowBlank: false,								
+									maxLength: '255',
+									name: 'version'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'External Link',															
+									emptyText: 'External Link',									
+									maxLength: '255',
+									name: 'dependancyReferenceLink'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Comment',																											
+									maxLength: '255',
+									name: 'comment'
+								}								
+							]
+						},						
+						{
+							xtype: 'toolbar',
+							items: [
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Filter Status',
+									store: statusFilterStore,
+									forceSelection: true,
+									queryMode: 'local',
+									displayField: 'desc',
+									valueField: 'code',
+									value: 'A',
+									listeners: {
+										change: function(combo, newValue, oldValue, opts){
+											this.up('grid').getStore().load({
+												url: '../api/v1/resource/components/' + Ext.getCmp('dependenciesGrid').componentRecord.get('componentId') + '/dependencies/view',
+												params: {
+													status: newValue
+												}
+											});
+										}
+									}
+								}, 								
+								{
+									text: 'Refresh',
+									iconCls: 'fa fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Edit',
+									itemId: 'editBtn',
+									iconCls: 'fa fa-edit',
+									handler: function(){
+										this.up('grid').down('form').loadRecord(Ext.getCmp('dependenciesGrid').getSelection()[0]);
+									}									
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Toggle Status',
+									itemId: 'toggleStatusBtn',
+									iconCls: 'fa fa-power-off',									
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('dependenciesGrid'), 'dependencyId', 'dependencies');
+									}
+								}
+							]
+						}
+					]						
+				});
+
+				var mediaGrid = Ext.create('Ext.grid.Panel', {
+					id: 'mediaGrid',
+					title: 'Media',
+					tooltip: 'Screenshots, video, other media for a entry.',
+					columnLines: true,
+					store: Ext.create('Ext.data.Store', {
+						fields: [
+							"componentMediaId",
+							"contentType",
+							"mediaTypeCode",
+							"link",
+							"mimeType",
+							"caption",
+							"fileName",
+							"originalFileName",
+							"originalLink",
+							"updateDts",
+							"activeStatus"
+						],
+						autoLoad: false,
+						proxy: {
+							type: 'ajax'							
+						}
+					}),
+					forceFit: true,
+					columns: [
+						{ text: 'Media Type', dataIndex: 'contentType',  width: 200 },
+						{ text: 'Caption',  dataIndex: 'caption', width: 200 },
+						{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
+						{ text: 'Local Media Name',  dataIndex: 'originalFileName', width: 200 },
+						{ text: 'Link',  dataIndex: 'originalLink', width: 200 },						
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+					],
+					listeners: {
+						itemdblclick: function(grid, record, item, index, e, opts){
+							this.down('form').loadRecord(record);
+							if (record.get('originalFileName')) {
+								this.down('form').getComponent('upload').setFieldLabel('Current File: ' + record.get('originalFileName'));
+							} else {
+								this.down('form').getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
+							}
+						},
+						selectionchange: function(grid, record, index, opts){
+							var fullgrid = Ext.getCmp('mediaGrid');
+							if (fullgrid.getSelectionModel().getCount() === 1) {
+								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
+								fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
+								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
+							} else {
+								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(true);
+								fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
+								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
+							}
+						}						
+					},
+					dockedItems: [
+						{
+							xtype: 'form',
+							title: 'Add/Edit Media',
+							collapsible: true,
+							titleCollapse: true,
+							border: true,
+							layout: 'vbox',
+							bodyStyle: 'padding: 10px;',
+							margin: '0 0 5 0', 
+							defaults: {
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: '100%'
+							},
+							buttonAlign: 'center',
+							buttons: [
+								{
+									xtype: 'button',
+									text: 'Save',
+									formBind: true,
+									margin: '0 20 0 0',
+									iconCls: 'fa fa-save',
+									handler: function(){	
+										var form = this.up('form');
+										var data = form.getValues();
+										var componentId = Ext.getCmp('mediaGrid').componentRecord.get('componentId');
+										
+										data.fileSelected = form.getComponent('upload').getValue();
+										data.link = data.originalLink;
+										data.originalName = data.originalFileName;
+									
+										if (!data.originalFileName && ((!data.link && !data.fileSelected) || (data.link && data.fileSelected))) {
+											
+											form.getForm().markInvalid({
+												file: 'Either a link or a file must be entered',
+												originalLink: 'Either a link or a file must be entered'
+											});
+											
+										} else {
+											if (!data.fileSelected) {
+												var method = 'POST';
+												var update = '';
+												if (data.componentMediaId) {
+													update = '/' + data.componentMediaId;
+													method = 'PUT';
+												}
+
+												CoreUtil.submitForm({
+													url: '../api/v1/resource/components/' + componentId + '/media' + update,
+													method: method,
+													removeBlankDataItems: true,
+													data: data,
+													form: form,
+													success: function(){
+														Ext.getCmp('mediaGrid').getStore().reload();
+														form.reset();
+														form.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
+													}
+												});
+											} else {
+												//upload
+												form.submit({
+													url: '../Media.action?UploadMedia',
+													params: {
+														'componentMedia.mediaTypeCode' : data.mediaTypeCode,
+														'componentMedia.caption': data.caption,
+														'componentMedia.link': data.link,
+														'componentMedia.componentMediaId': data.componentMediaId,
+														'componentMedia.componentId': componentId
+													},
+													method: 'POST',
+													submitEmptyText: false,
+													success: function(form, action, opt){
+														Ext.getCmp('mediaGrid').getStore().reload();
+														form.reset();
+														form.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
+													}, 
+													failure: function(form, action, opt) {
+														var errorResponse = Ext.decode(action.response.responseText);
+														var errorObj = {};        
+														Ext.Array.each(errorResponse.errors.entry, function(item, index, entry) {
+															errorObj[item.key.replace('componentMedia', '')] = item.value;
+														});
+														form.markInvalid(errorObj);
+													}
+												});
+												
+											}
+										}
+									}
+								},
+								{
+									xtype: 'button',
+									text: 'Cancel',										
+									iconCls: 'fa fa-close',
+									handler: function(){
+										this.up('form').reset();
+										this.up('form').getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
+									}									
+								}								
+							],
+							items: [
+								{
+									xtype: 'hidden',
+									name: 'componentMediaId'
+								},
+								{
+									xtype: 'hidden',
+									name: 'originalFileName'
+								},
+								{
+									xtype: 'hidden',
+									name: 'fileName'
+								},
+								{
+									xtype: 'hidden',
+									name: 'mimeType'
+								},
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'mediaTypeCode',									
+									allowBlank: false,								
+									margin: '0 0 0 0',
+									editable: false,
+									typeAhead: false,
+									width: '100%',
+									fieldLabel: 'Media Type <span class="field-required" />',
+									storeConfig: {
+										url: '../api/v1/resource/lookuptypes/MediaType'
+									}
+								}),
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Caption <span class="field-required" />',									
+									allowBlank: false,									
+									maxLength: '255',
+									name: 'caption'
+								},
+								{
+									xtype: 'filefield',
+									itemId: 'upload',
+									fieldLabel: 'Upload Media (Limit of 1GB)',																											
+									name: 'file'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Link',																																	
+									maxLength: '255',									
+									emptyText: 'http://www.example.com/image.png',
+									name: 'originalLink'
+								}							
+							]
+						},						
+						{
+							xtype: 'toolbar',
+							items: [
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Filter Status',
+									store: statusFilterStore,
+									forceSelection: true,
+									queryMode: 'local',
+									displayField: 'desc',
+									valueField: 'code',
+									value: 'A',
+									listeners: {
+										change: function(combo, newValue, oldValue, opts){
+											this.up('grid').getStore().load({
+												url: '../api/v1/resource/components/' + Ext.getCmp('mediaGrid').componentRecord.get('componentId') + '/media/view',
+												params: {
+													status: newValue
+												}
+											});
+										}
+									}
+								}, 								
+								{
+									text: 'Refresh',
+									iconCls: 'fa fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Edit',
+									itemId: 'editBtn',
+									iconCls: 'fa fa-edit',
+									handler: function(){
+										var record = Ext.getCmp('mediaGrid').getSelection()[0];
+										this.up('grid').down('form').loadRecord(record);
+										if (record.get('originalFileName')) {
+											this.up('grid').down('form').getComponent('upload').setFieldLabel('Current File: ' + record.get('originalFileName'));
+										} else {
+											this.up('grid').down('form').getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
+										}
+									}									
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Toggle Status',
+									itemId: 'toggleStatusBtn',
+									iconCls: 'fa fa-power-off',									
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('mediaGrid'), 'componentMediaId', 'media');
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Remove',
+									itemId: 'removeBtn',
+									iconCls: 'fa fa-trash',									
+									ui: 'danger',
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('mediaGrid'), 'componentMediaId', 'media', undefined, undefined, true);
+									}									
+								}
+							]
+						}
+					]																
+				});
+
+				var resourcesGrid = Ext.create('Ext.grid.Panel', {
+					id: 'resourcesGrid',
+					title: 'Resources',
+					tooltip: 'Location of entry artifacts.',
+					columnLines: true,
+					store: Ext.create('Ext.data.Store', {
+						fields: [
+							"resourceId",
+							"resourceType",
+							"resourceTypeDesc",
+							"description",
+							"link",
+							"localResourceName",
+							"mimeType",
+							"originalFileName",
+							"actualLink",
+							"restricted",
+							"originalLink",
+							"componentId",
+							"updateDts",
+							"activeStatus"
+						],
+						autoLoad: false,
+						proxy: {
+							type: 'ajax'							
+						}
+					}),					
+					columns: [
+						{ text: 'Resource Type', dataIndex: 'resourceTypeDesc',  width: 200 },
+						{ text: 'Description',  dataIndex: 'description', width: 150 },
+						{ text: 'Link',  dataIndex: 'originalLink', flex: 1, minWidth: 200 },
+						{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
+						{ text: 'Local Resource Name',  dataIndex: 'originalFileName', width: 200 },
+						{ text: 'Restricted',  dataIndex: 'restricted', width: 150 },						
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+					],
+					listeners: {
+						itemdblclick: function(grid, record, item, index, e, opts){
+							this.down('form').loadRecord(record);
+							if (record.get('originalFileName')) {
+								this.down('form').getComponent('upload').setFieldLabel('Current File: ' + record.get('originalFileName'));
+							} else {
+								this.down('form').getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
+							}
+						},
+						selectionchange: function(grid, record, index, opts){
+							var fullgrid = Ext.getCmp('resourcesGrid');
+							if (fullgrid.getSelectionModel().getCount() === 1) {
+								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
+								fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
+								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
+							} else {
+								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(true);
+								fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
+								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
+							}
+						}						
+					},
+					dockedItems: [
+						{
+							xtype: 'form',
+							title: 'Add/Edit Resources',
+							collapsible: true,
+							titleCollapse: true,
+							border: true,
+							layout: 'vbox',
+							bodyStyle: 'padding: 10px;',
+							margin: '0 0 5 0', 
+							defaults: {
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: '100%'
+							},
+							buttonAlign: 'center',
+							buttons: [
+								{
+									xtype: 'button',
+									text: 'Save',
+									formBind: true,
+									margin: '0 20 0 0',
+									iconCls: 'fa fa-save',
+									handler: function(){	
+										var form = this.up('form');
+										var data = form.getValues();
+										var componentId = Ext.getCmp('resourcesGrid').componentRecord.get('componentId');
+										
+										data.fileSelected = form.getComponent('upload').getValue();
+										data.link = data.originalLink;
+										data.originalName = data.originalFileName;
+									
+										if (!data.originalFileName && ((!data.link && !data.fileSelected) || (data.link && data.fileSelected))) {
+											
+											form.getForm().markInvalid({
+												file: 'Either a link or a file must be entered',
+												originalLink: 'Either a link or a file must be entered'
+											});
+											
+										} else {
+											if (!data.fileSelected) {
+												var method = 'POST';
+												var update = '';
+												if (data.resourceId) {
+													update = '/' + data.resourceId;
+													method = 'PUT';
+												}
+
+												CoreUtil.submitForm({
+													url: '../api/v1/resource/components/' + componentId + '/resources' + update,
+													method: method,
+													removeBlankDataItems: true,
+													data: data,
+													form: form,
+													success: function(){
+														Ext.getCmp('resourcesGrid').getStore().reload();
+														form.reset();
+														form.getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
+													}
+												});
+											} else {
+												//upload
+												form.submit({
+													url: '../Resource.action?UploadResource',
+													params: {
+														'componentResource.resourceType' : data.resourceType,
+														'componentResource.description': data.description,
+														'componentResource.restricted': data.restricted,
+														'componentResource.link': data.link,
+														'componentResource.resourceId': data.resourceId,
+														'componentResource.componentId': componentId
+													},
+													method: 'POST',
+													submitEmptyText: false,
+													success: function(form, action, opt){
+														Ext.getCmp('resourcesGrid').getStore().reload();
+														form.reset();
+														form.getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
+													}, 
+													failure: function(form, action, opt) {
+														var errorResponse = Ext.decode(action.response.responseText);
+														var errorObj = {};        
+														Ext.Array.each(errorResponse.errors.entry, function(item, index, entry) {
+															errorObj[item.key.replace('componentResource', '')] = item.value;
+														});
+														form.markInvalid(errorObj);
+													}
+												});
+												
+											}
+										}
+									}
+								},
+								{
+									xtype: 'button',
+									text: 'Cancel',										
+									iconCls: 'fa fa-close',
+									handler: function(){
+										this.up('form').reset();
+										this.up('form').getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
+									}									
+								}								
+							],
+							items: [
+								{
+									xtype: 'hidden',
+									name: 'resourceId'
+								},
+								{
+									xtype: 'hidden',
+									name: 'originalFileName'
+								},
+								{
+									xtype: 'hidden',
+									name: 'fileName'
+								},
+								{
+									xtype: 'hidden',
+									name: 'mimeType'
+								},
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'resourceType',									
+									allowBlank: false,								
+									margin: '0 0 0 0',
+									editable: false,
+									typeAhead: false,
+									width: '100%',
+									fieldLabel: 'Resource Type <span class="field-required" />',
+									storeConfig: {
+										url: '../api/v1/resource/lookuptypes/ResourceType'
+									}
+								}),
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Description',																									
+									maxLength: '255',
+									name: 'description'
+								},
+								{
+									xtype: 'checkbox',
+									name: 'restricted',
+									boxLabel: 'Restricted'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Link',																																	
+									maxLength: '255',									
+									emptyText: 'http://www.example.com/resource',
+									name: 'originalLink'
+								},
+								{
+									xtype: 'filefield',
+									itemId: 'upload',
+									fieldLabel: 'Upload Resource (Limit of 1GB)',																											
+									name: 'file'
+								}															
+							]
+						},						
+						{
+							xtype: 'toolbar',
+							items: [
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Filter Status',
+									store: statusFilterStore,
+									forceSelection: true,
+									queryMode: 'local',
+									displayField: 'desc',
+									valueField: 'code',
+									value: 'A',
+									listeners: {
+										change: function(combo, newValue, oldValue, opts){
+											this.up('grid').getStore().load({
+												url: '../api/v1/resource/components/' + Ext.getCmp('resourcesGrid').componentRecord.get('componentId') + '/resource/view',
+												params: {
+													status: newValue
+												}
+											});
+										}
+									}
+								}, 								
+								{
+									text: 'Refresh',
+									iconCls: 'fa fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Edit',
+									itemId: 'editBtn',
+									iconCls: 'fa fa-edit',
+									handler: function(){
+										var record = Ext.getCmp('resourcesGrid').getSelection()[0];
+										this.up('grid').down('form').loadRecord(record);
+										if (record.get('originalFileName')) {
+											this.up('grid').down('form').getComponent('upload').setFieldLabel('Current File: ' + record.get('originalFileName'));
+										} else {
+											this.up('grid').down('form').getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
+										}
+									}									
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Toggle Status',
+									itemId: 'toggleStatusBtn',
+									iconCls: 'fa fa-power-off',									
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('resourcesGrid'), 'resourceId', 'resources');
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Remove',
+									itemId: 'removeBtn',
+									iconCls: 'fa fa-trash',									
+									ui: 'danger',
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('resourcesGrid'), 'resourceId', 'resources', undefined, undefined, true);
+									}									
+								}
+							]
+						}
+					]					
+				});
+
+				var contactGrid = Ext.create('Ext.grid.Panel', {
+					id: 'contactGrid',
+					title: 'Contacts',
+					tooltip: 'Point of contacts for component.',
+					columnLines: true,
+					store: Ext.create('Ext.data.Store', {
+						fields: [
+							"contactId",
+							"positionDescription",
+							"contactType",
+							"name",
+							"firstName",
+							"lastName",
+							"email",
+							"phone",
+							"organization",
+							"updateDts",
+							"activeStatus"
+						],
+						autoLoad: false,
+						proxy: {
+							type: 'ajax'							
+						}
+					}),
+					forceFit: true,
+					columns: [
+						{ text: 'Contact Type', dataIndex: 'positionDescription',  width: 200 },
+						{ text: 'First Name',  dataIndex: 'firstName', width: 200 },
+						{ text: 'Last Name',  dataIndex: 'lastName', width: 200 },
+						{ text: 'Email',  dataIndex: 'email', width: 200 },
+						{ text: 'Phone',  dataIndex: 'phone', width: 150 },
+						{ text: 'Organization',  dataIndex: 'organization', width: 200 },
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+					],
+					listeners: {
+						itemdblclick: function(grid, record, item, index, e, opts){
+							this.down('form').loadRecord(record);
+						},
+						selectionchange: function(grid, record, index, opts){
+							var fullgrid = Ext.getCmp('contactGrid');
+							if (fullgrid.getSelectionModel().getCount() === 1) {
+								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
+								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
+							} else {
+								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(true);
+								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
+							}
+						}						
+					},
+					dockedItems: [
+						{
+							xtype: 'form',
+							title: 'Add/Edit Contact',
+							collapsible: true,
+							titleCollapse: true,
+							border: true,
+							layout: 'vbox',
+							bodyStyle: 'padding: 10px;',
+							margin: '0 0 5 0', 
+							defaults: {
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: '100%'
+							},
+							buttonAlign: 'center',
+							buttons: [
+								{
+									xtype: 'button',
+									text: 'Save',
+									formBind: true,
+									margin: '0 20 0 0',
+									iconCls: 'fa fa-save',
+									handler: function(){	
+										var form = this.up('form');
+										var data = form.getValues();
+										var componentId = Ext.getCmp('contactGrid').componentRecord.get('componentId');
+
+										var method = 'POST';
+										var update = '';
+										if (data.contactId) {
+											update = '/' + data.contactId;
+											method = 'PUT';
+										}
+
+										CoreUtil.submitForm({
+											url: '../api/v1/resource/components/' + componentId + '/contacts' + update,
+											method: method,
+											data: data,
+											form: form,
+											success: function(){
+												Ext.getCmp('contactGrid').getStore().reload();
+												form.reset();
+											}
+										});
+									}
+								},
+								{
+									xtype: 'button',
+									text: 'Cancel',										
+									iconCls: 'fa fa-close',
+									handler: function(){
+										this.up('form').reset();
+									}									
+								}								
+							],
+							items: [
+								{
+									xtype: 'hidden',
+									name: 'contactId'
+								},
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'contactType',									
+									allowBlank: false,								
+									margin: '0 0 0 0',
+									editable: false,
+									typeAhead: false,
+									width: '100%',
+									fieldLabel: 'Contact Type <span class="field-required" />',
+									storeConfig: {
+										url: '../api/v1/resource/lookuptypes/ContactType'
+									}
+								}),
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'organization',									
+									allowBlank: false,									
+									margin: '0 0 0 0',
+									width: '100%',
+									fieldLabel: 'Organization <span class="field-required" />',
+									forceSelection: false,
+									storeConfig: {
+										url: '../api/v1/resource/organizations/lookup'
+									}
+								}),								
+								{
+									xtype: 'textfield',
+									fieldLabel: 'First Name <span class="field-required" />',									
+									allowBlank: false,									
+									maxLength: '80',
+									name: 'firstName'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Last Name <span class="field-required" />',									
+									allowBlank: false,								
+									maxLength: '80',
+									name: 'lastName'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Email',																																	
+									maxLength: '255',
+									regex: new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*", "i"),
+									regexText: 'Must be a valid email address. Eg. xxx@xxx.xxx',
+									name: 'email'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Phone',																											
+									maxLength: '120',
+									name: 'phone'
+								}								
+							]
+						},						
+						{
+							xtype: 'toolbar',
+							items: [
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Filter Status',
+									store: statusFilterStore,
+									forceSelection: true,
+									queryMode: 'local',
+									displayField: 'desc',
+									valueField: 'code',
+									value: 'A',
+									listeners: {
+										change: function(combo, newValue, oldValue, opts){
+											this.up('grid').getStore().load({
+												url: '../api/v1/resource/components/' + Ext.getCmp('contactGrid').componentRecord.get('componentId') + '/contacts/view',
+												params: {
+													status: newValue
+												}
+											});
+										}
+									}
+								}, 								
+								{
+									text: 'Refresh',
+									iconCls: 'fa fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Edit',
+									itemId: 'editBtn',
+									iconCls: 'fa fa-edit',
+									handler: function(){
+										this.up('grid').down('form').loadRecord(Ext.getCmp('contactGrid').getSelection()[0]);
+									}									
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Toggle Status',
+									itemId: 'toggleStatusBtn',
+									iconCls: 'fa fa-power-off',									
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('contactGrid'), 'contactId', 'contacts');
+									}
+								}
+							]
+						}
+					]											
+				});
+
+				var relationshipsGrid = Ext.create('Ext.grid.Panel', {
+					id: 'relationshipsGrid',
+					title: 'Relationships',
+					tooltip: 'Relationships are graphable connections between entries.',
+					columnLines: true,
+					store: Ext.create('Ext.data.Store', {
+						fields: [
+							"relationshipId",
+							"ownerComponentId",
+							"ownerComponentName",
+							"ownerApproved",
+							"targetComponentId",
+							"targetComponentName",
+							"targetApproved",
+							"relationshipType",
+							"relationshipTypeDescription",
+							"updateDts"
+						],
+						autoLoad: false,
+						proxy: {
+							type: 'ajax'							
+						}
+					}),
+					forceFit: true,
+					columns: [
+						{ text: 'Relationship Owner', dataIndex: 'ownerComponentName',  width: 200 },
+						{ text: 'Owner Approved', dataIndex: 'ownerApproved',  width: 150 },
+						{ text: 'Type',  dataIndex: 'relationshipTypeDescription', width: 200 },
+						{ text: 'Target',  dataIndex: 'targetComponentName', width: 200 },						
+						{ text: 'Target Approved',  dataIndex: 'targetApproved', width: 150 },		
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+					],
+					listeners: {
+						selectionchange: function(grid, record, index, opts){
+							var fullgrid = Ext.getCmp('relationshipsGrid');
+							if (fullgrid.getSelectionModel().getCount() === 1) {								
+								fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
+							} else {								
+								fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
+							}
+						}						
+					},
+					dockedItems: [
+						{
+							xtype: 'form',
+							title: 'Add/Edit Relationship',
+							collapsible: true,
+							titleCollapse: true,
+							border: true,
+							layout: 'vbox',
+							bodyStyle: 'padding: 10px;',
+							margin: '0 0 5 0', 
+							defaults: {
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: '100%'
+							},
+							buttonAlign: 'center',
+							buttons: [
+								{
+									xtype: 'button',
+									text: 'Save',
+									formBind: true,
+									margin: '0 20 0 0',
+									iconCls: 'fa fa-save',
+									handler: function(){	
+										var form = this.up('form');
+										var data = form.getValues();
+										var componentId = Ext.getCmp('relationshipsGrid').componentRecord.get('componentId');
+
+										var method = 'POST';
+										var update = '';
+										
+										CoreUtil.submitForm({
+											url: '../api/v1/resource/components/' + componentId + '/relationships' + update,
+											method: method,
+											data: data,
+											form: form,
+											success: function(){
+												Ext.getCmp('relationshipsGrid').getStore().reload();
+												form.reset();
+											}
+										});
+									}
+								},
+								{
+									xtype: 'button',
+									text: 'Cancel',										
+									iconCls: 'fa fa-close',
+									handler: function(){
+										this.up('form').reset();
+									}									
+								}								
+							],
+							items: [								
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'relationshipType',									
+									allowBlank: false,
+									editable: false,
+									typeAhead: false,
+									margin: '0 0 0 0',
+									width: '100%',
+									fieldLabel: 'Type <span class="field-required" />',
+									storeConfig: {
+										url: '../api/v1/resource/lookuptypes/RelationshipType'
+									}
+								}),
+								Ext.create('OSF.component.StandardComboBox', {
+									id: 'relationshipTargetCB',
+									name: 'relatedComponentId',									
+									allowBlank: false,									
+									margin: '0 0 0 0',
+									width: '100%',
+									fieldLabel: 'Target <span class="field-required" />',
+									forceSelection: false,
+									storeConfig: {
+										url: '../api/v1/resource/components/lookup?all=true',
+										autoLoad: false
+									}
+								})				
+							]
+						},						
+						{
+							xtype: 'toolbar',
+							items: [						
+								{
+									text: 'Refresh',
+									iconCls: 'fa fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},								
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Remove',
+									itemId: 'removeBtn',
+									iconCls: 'fa fa-trash',
+									ui: 'danger',
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('relationshipsGrid'), 'relationshipId', 'relationships');
+									}
+								}
+							]
+						}
+					]																
+				});
+		
+				var attributeGrid = Ext.create('Ext.grid.Panel', {
+					id: 'attributeGrid',
+					title: 'Attributes',
+					tooltip: 'Attributes are filterable metadata about the entry.',
+					columnLines: true,
+					store: Ext.create('Ext.data.Store', {
+						fields: [
+							"type",
+							"code",
+							"typeDescription",
+							"codeDescription",
+							"orphan",
+							"activeStatus",
+							"updateDts"
+						],
+						autoLoad: false,
+						proxy: {
+							type: 'ajax'							
+						}
+					}),
+					forceFit: true,
+					columns: [
+						{ text: 'Attribute Type', dataIndex: 'typeDescription',  width: 200 },
+						{ text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, width: 200 },
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 175, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+					],
+					listeners: {
+						selectionchange: function(grid, record, index, opts){
+							var fullgrid = Ext.getCmp('attributeGrid');
+							if (fullgrid.getSelectionModel().getCount() === 1) {								
+								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
+								fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
+							} else {								
+								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
+								fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
+							}
+						}						
+					},
+					dockedItems: [
+						{
+							xtype: 'form',
+							title: 'Add Attribute',
+							collapsible: true,
+							titleCollapse: true,
+							border: true,
+							layout: 'vbox',
+							bodyStyle: 'padding: 10px;',
+							margin: '0 0 5 0', 
+							defaults: {
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: '100%'
+							},
+							buttonAlign: 'center',
+							buttons: [
+								{
+									xtype: 'button',
+									text: 'Save',
+									formBind: true,
+									margin: '0 20 0 0',
+									iconCls: 'fa fa-save',
+									handler: function(){	
+										var form = this.up('form');
+										var data = form.getValues();
+										var componentId = Ext.getCmp('attributeGrid').componentRecord.get('componentId');
+											
+										data.componentAttributePk = {
+											attributeType: data.attributeType,
+											attributeCode: data.attributeCode
+										};
+											
+										var method = 'POST';
+										var update = '';										
+
+										CoreUtil.submitForm({
+											url: '../api/v1/resource/components/' + componentId + '/attributes' + update,
+											method: method,
+											data: data,
+											form: form,
+											success: function(){
+												loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
+												form.reset();
+											}
+										});
+									}
+								},
+								{
+									xtype: 'button',
+									text: 'Cancel',										
+									iconCls: 'fa fa-close',
+									handler: function(){
+										this.up('form').reset();
+									}									
+								}								
+							],
+							items: [
+								{
+									xtype: 'combobox',
+									itemId: 'attributeTypeCB',
+									fieldLabel: 'Attribute Type <span class="field-required" />',
+									name: 'attributeType',
+									forceSelection: true,	
+									queryMode: 'local',
+									editable: false,
+									typeAhead: false,										
+									allowBlank: false,
+									valueField: 'attributeType',
+									displayField: 'description',										
+									store: Ext.create('Ext.data.Store', {
+										fields: [
+											"attributeType",
+											"description"
+										]																							
+									}),
+									listeners: {
+										change: function (field, newValue, oldValue, opts) {
+											field.up('form').getComponent('attributeCodeCB').clearValue();
+											
+											var record = field.getSelection();		
+											if (record) {
+												field.up('form').getComponent('attributeCodeCB').getStore().loadData(record.data.codes);
+											} else {
+												field.up('form').getComponent('attributeCodeCB').getStore().removeAll();
+											}
+										}
+									}
+								},
+								{
+									xtype: 'combobox',
+									itemId: 'attributeCodeCB',
+									fieldLabel: 'Attribute Code <span class="field-required" />',
+									name: 'attributeCode',
+									forceSelection: true,	
+									queryMode: 'local',
+									editable: false,
+									typeAhead: false,										
+									allowBlank: false,
+									valueField: 'code',
+									displayField: 'label',										
+									store: Ext.create('Ext.data.Store', {
+										fields: [
+											"code",
+											"label"
+										]																							
+									})									
+								}
+							]
+						},						
+						{
+							xtype: 'toolbar',
+							items: [
+								{
+									xtype: 'combobox',
+									id: 'attributeFilterActiveStatus',
+									fieldLabel: 'Filter Status',
+									store: statusFilterStore,
+									forceSelection: true,
+									queryMode: 'local',
+									displayField: 'desc',
+									valueField: 'code',
+									value: 'A',
+									listeners: {
+										change: function(combo, newValue, oldValue, opts){
+											loadComponentAttributes(newValue);
+										}
+									}
+								}, 								
+								{
+									text: 'Refresh',
+									iconCls: 'fa fa-refresh',
+									handler: function(){
+										loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
+									}
+								},								
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Toggle Status',
+									itemId: 'toggleStatusBtn',
+									iconCls: 'fa fa-power-off',									
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('attributeGrid'), 'type', 'attributes', 'code', null, null, function(){
+											loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
+										});
+									}
+								},								
+								{
+									text: 'Remove',
+									itemId: 'removeBtn',
+									iconCls: 'fa fa-trash',
+									ui: 'danger',
+									disabled: true,
+									handler: function(){
+										actionSubComponentToggleStatus(Ext.getCmp('attributeGrid'), 'type', 'attributes', 'code', null, true, function(){
+											loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
+										});
+									}
+								}
+							]
+						}
+					]																					
+				});
+				
+				var loadComponentAttributes = function(status) {
+					var componentId = Ext.getCmp('generalForm').componentRecord.get('componentId');
+					Ext.Ajax.request({
+						url: '../api/v1/resource/components/' + componentId + '/attributes/view',
+						method: 'GET',
+						params: {
+							status: status
+						},
+						success: function(response, opts) {
+							var data = Ext.decode(response.responseText);
+							
+							var requiredStore = Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore();
+							
+							var optionalAttributes = [];
+							Ext.Array.each(data, function(attribute) {
+								if (attribute.requiredFlg) {
+									var found = false;
+									requiredStore.each(function(record){
+										if (record.get('attributeType') === attribute.type) {
+											record.set('attributeCode', attribute.code, { dirty: false });
+											found = true;
+										}
+									});
+									if (!found) {
+										//the component type  may not require this
+										optionalAttributes.push(attribute);
+									}
+								} else {
+									optionalAttributes.push(attribute);
+								}
+							});
+							optionalAttributes.reverse();
+							Ext.getCmp('attributeGrid').getStore().loadData(optionalAttributes);
+						}
+					});
+				};
+				
+				var handleAttributes = function(componentType) {
+					
+					var requiredAttributes = [];
+					var optionalAttributes = [];
+					Ext.Array.each(allAttributes, function(attribute){
+						if (attribute.requiredFlg) {
+							if (attribute.requiredRestrictions) {
+								var found = Ext.Array.findBy(attribute.requiredRestrictions, function(item){
+									if (item.componentType === componentType) {
+										return true;
+									} else {
+										return false;
+									}
+								});
+								if (found) {
+									requiredAttributes.push(attribute);
+								}
+							} else {
+								requiredAttributes.push(attribute);
+							}
+						} else {
+							optionalAttributes.push(attribute);
+						}
+					});
+					
+					var requiredStore = Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore();
+					
+					requiredAttributes.reverse();
+					requiredStore.loadData(requiredAttributes);
+					
+					Ext.getCmp('attributeGrid').down('form').getComponent('attributeTypeCB').getStore().loadData(optionalAttributes);
+					loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
+				};
+			
+				var generalForm = Ext.create('Ext.form.Panel', {
+					id: 'generalForm',
+					title: 'General',
+					tooltip: 'General and required information on an entry.',					
+					autoScroll: true,					
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Message Submitter',
+									iconCls: 'fa fa-envelope',
+									handler: function() {
+										
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Integration',
+									iconCls: 'fa fa-gear',
+									handler: function() {
+										
+									}									
+								}
+							]
+						},
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Save',
+									iconCls: 'fa fa-save',
+									formBind: true,
+									handler: function() {
+										
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Cancel',
+									ui: 'danger',
+									iconCls: 'fa fa-close',
+									handler: function() {
+										this.up('window').hide();
+									}													
+								}
+							]
+						}
+					],
+					items: [
+						{
+							xtype: 'panel',
+							title: 'Information',
+							layout: 'hbox',
+							collapsible: true,
+							titleCollapse: true,
+							border: true,
+							bodyStyle: 'padding: 10px;',
+							items: [
+								{
+									xtype: 'panel',
+									width: '50%',		
+									defaults: {
+										labelWidth: 150,
+										labelStyle: 'font-weight: bold;',
+										width: '80%',
+										xtype: 'displayfield',										
+										readOnly: true
+									},
+									items: [
+										{		
+											xtype: 'displayfield',
+											name: 'lastActivityDts',											
+											fieldLabel: 'Last Activity Date',
+											renderer: function(value, field){										
+												return Ext.util.Format.date(value, 'm/d/y H:i:s');
+											}
+										},
+										{											
+											name: 'submittedDts',											
+											fieldLabel: 'User Submitted Date',
+											renderer: function(value, field){										
+												return Ext.util.Format.date(value, 'm/d/y H:i:s');
+											}
+										},
+										{
+											name: 'lastModificationType',
+											fieldLabel: 'Last Entry Method'
+										},
+										{
+											name: 'approvedDts',
+											fieldLabel: 'Approval Date',
+											renderer: function(value, field){										
+												return Ext.util.Format.date(value, 'm/d/y H:i:s');
+											}
+										},
+										{											
+											name: 'approvedUser',											
+											fieldLabel: 'Approval User'
+										}
+									]
+								},
+								{
+									xtype: 'panel',
+									width: '50%',
+									defaults: {
+										labelWidth: 150,
+										labelStyle: 'font-weight: bold;',
+										width: '80%',
+										xtype: 'displayfield',
+										readOnly: true
+									},
+									items: [
+										{
+											name: 'externalId',
+											fieldLabel: 'External Id'
+										},
+										{
+											name: 'recordVersion',
+											fieldLabel: 'Record Version'
+										},
+										{
+											name: 'createDts',
+											fieldLabel: 'Create Date',
+											renderer: function(value, field){										
+												return Ext.util.Format.date(value, 'm/d/y H:i:s');
+											}							
+										},
+										{
+											name: 'createUser',
+											fieldLabel: 'Create User'
+										},
+										{
+											name: 'updateUser',
+											fieldLabel: 'Update User'
+										}										
+									]
+								}
+							]
+						},
+						{
+							xtype: 'panel',
+							bodyStyle: 'padding: 10px;',	
+							layout: 'vbox',
+							defaults: {
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: '100%'
+							},
+							items: [
+								Ext.create('OSF.component.StandardComboBox', {														
+									fieldLabel: 'Entry Type',
+									name: 'componentType',
+									allowBlank: false,								
+									margin: '0 0 0 0',
+									width: '100%',
+									editable: false,
+									typeAhead: false,										
+									storeConfig: {
+										url: '../api/v1/resource/componenttypes/lookup'																				
+									},
+									listeners: {
+										change: function(field, newValue, oldValue, opts) {
+											handleAttributes(newValue);
+											checkFormTabs(Ext.getCmp('generalForm').componentRecord, newValue);
+										}
+									}
+								}),						
+								{
+									xtype: 'textfield',
+									name: 'name',
+									fieldLabel: 'Name <span class="field-required" />',
+									allowBlank: false,
+									maxLength: 255														
+								},
+								{
+									xtype: 'panel',
+									html: 'Description <span class="field-required" />'
+								},
+								//{
+								//	xtype: 'htmleditor',
+								//	fieldLabel: 'Description <span class="field-required" />',
+								//	fieldBodyCls: 'form-comp-htmleditor-border',
+								//	height: 300,
+								//	width: '100%',
+								//	name: 'description'
+								//},
+								Ext.create('OSF.component.CKEditorField', {																
+									allowBlank: false,
+									name: 'description',
+									height: 300,
+									maxLength: 32000	
+								}),
+								{
+									xtype: 'datefield',
+									fieldLabel: 'Release Date',
+									name: 'releaseDate'									
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Version',
+									name: 'version'																		
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'GUID',
+									name: 'guid'																		
+								},
+								Ext.create('OSF.component.StandardComboBox', {														
+									fieldLabel: 'Data Source',
+									name: 'dataSource',	
+									width: '100%',
+									margin: '0 0 0 0',
+									editable: false,
+									typeAhead: false,
+									storeConfig: {
+										url: '../api/v1/resource/lookuptypes/DataSource'										
+									}
+								})								
+							]							
+						},
+						{
+							xtype: 'grid',
+							itemId: 'requiredAttributeGrid',
+							title: 'Required Attributes',
+							margin: '0 0 20 0',
+							columnLines: true,
+							store: Ext.create('Ext.data.Store', {
+								fields: [
+									"attributeType",
+									"attributeCode",
+									"description"
+								],
+								autoLoad: false
+							}),
+							columns: [
+								{ text: 'Attribute Type', dataIndex: 'description', width: 250, 
+									renderer: function(value) {
+										return value + ' <span class="field-required" />';
+									} 
+								},
+								{ text: 'Attribute Code', dataIndex: 'attributeCode', flex: 1, minWidth: 250, 
+									xtype: 'widgetcolumn',
+									widget: {
+										xtype: 'combobox',
+										forceSelection: true,	
+										queryMode: 'local',
+										editable: false,
+										typeAhead: false,										
+										allowBlank: false,
+										valueField: 'code',
+										displayField: 'label',																				
+										listeners: {
+											afterrender: function(field){
+												var record = field.getWidgetRecord();
+												record.actualScoreField = field;
+												field.setStore(Ext.create('Ext.data.Store', {
+													fields: [
+														"code",
+														"label"
+													],
+													data: record.data.codes
+												}));
+											},
+											change: function(field, newValue, oldValue, opts) {
+												var record = field.getWidgetRecord();
+												record.set('attributeCode', newValue);												
+											}
+										}
+									}									
+								}
+							]
+						}
+					]
+				});
+				
+				var allAttributes = [];
+				var loadAllAttributes = function(){
+					Ext.Ajax.request({
+						url: '../api/v1/resource/attributes',
+						success: function(response, opts){
+							allAttributes = Ext.decode(response.responseText);
+						}
+					});
+				};
+				loadAllAttributes();
+						
 				var mainAddEditWin = Ext.create('Ext.window.Window', {
 					title: 'Entry Form',
 					modal: true,
 					maximizable: true,
 					layout: 'fit',
+					width: '80%',
+					height: '90%',
+					iconCls: 'fa fa-lg fa-edit',
 					items: [
 						{
 							xtype: 'tabpanel',
 							id: 'mainFormTabPanel',
 							items: [
-								{
-									xtype: 'form',
-									id: 'generalForm',
-									title: 'General',
-									layout: 'fit',
-									defaults: {
-										labelAlign: 'top'
-									},
-									dockedItems: [
-										{
-											xtype: 'toolbar',
-											dock: 'bottom',
-											items: [
-												{
-													text: 'Save',
-													iconCls: 'fa fa-save',
-													handler: function() {
-														
-													}
-												},
-												{
-													xtype: 'tbfill'
-												},
-												{
-													text: 'Cancel',
-													iconCls: 'fa fa-close',
-													handler: function() {
-														this.up('window').hide();
-													}													
-												}
-											]
-										}
-									],
-									items: [
-										
-									]
-								}
+								generalForm,
+								attributeGrid,
+								relationshipsGrid,
+								contactGrid,
+								resourcesGrid,
+								mediaGrid,
+								dependenciesGrid,
+								metadataGrid,
+								evaluationGrid,
+								reviewGrid,
+								questionContainer,
+								tagGrid
 							]
 						}
 					]
@@ -474,6 +2994,9 @@
 						{name: 'approvedDts', mapping: function(data){
 							return data.component.approvedDts;
 						}},
+						{name: 'approvedUser', mapping: function(data){
+							return data.component.approvedUser;
+						}},
 						{name: 'componentId', mapping: function(data){
 							return data.component.componentId;
 						}},
@@ -489,6 +3012,30 @@
 						{name: 'lastActivityDts', mapping: function(data){
 							return data.component.lastActivityDts;
 						}},
+						{name: 'guid', mapping: function(data){
+							return data.component.guid;
+						}},					
+						{name: 'externalId', mapping: function(data){
+							return data.component.externalId;
+						}},					
+						{name: 'changeApprovalMode', mapping: function(data){
+							return data.component.changeApprovalMode;
+						}},					
+						{name: 'notifyOfApprovalEmail', mapping: function(data){
+							return data.component.notifyOfApprovalEmail;
+						}},	
+						{name: 'dataSource', mapping: function(data){
+							return data.component.dataSource;
+						}},						
+						{name: 'lastModificationType', mapping: function(data){
+							return data.component.lastModificationType;
+						}},						
+						{name: 'fileHistoryId', mapping: function(data){
+							return data.component.fileHistoryId;
+						}},						
+						{name: 'recordVersion', mapping: function(data){
+							return data.component.recordVersion;
+						}},											
 						{name: 'submittedDts', mapping: function(data){
 							return data.component.submittedDts;
 						}},
@@ -933,25 +3480,100 @@
 				
 				
 				var actionAddEditComponent = function(record) {
-					mainAddEditWin.show();
-										
-					if (record) {
+					mainAddEditWin.show();		
+					
 						
-						
-						checkFormTabs(record.get('componetType'));
-					} else {
-						
+					generalForm.reset();
+					generalForm.componentRecord = record;
+					Ext.getCmp('mainFormTabPanel').setActiveTab(generalForm);
+					
+					if (record) {			
+						mainAddEditWin.setTitle('Entry Form: ' + record.get('name'));
+						checkFormTabs(record);
+						generalForm.loadRecord(record);
+					} else {								
+						mainAddEditWin.setTitle('Entry Form:  NEW ENTRY');						
+						hideSubComponentTabs();
 					}
 				};
 				
-				var checkFormTabs = function(componentType) {
-					Ext.Ajax.request({
-						url: '../api/v1/resource/componenttypes/' + componentType,
-						success: function(response, opts) {
-							var data = Ext.decode(response.responseText);
-														
-						}						
-					});					
+				var hideSubComponentTabs = function(){
+					attributeGrid.setDisabled(true);					
+					relationshipsGrid.setDisabled(true);
+					contactGrid.setDisabled(true);
+					resourcesGrid.setDisabled(true);
+					mediaGrid.setDisabled(true);
+					dependenciesGrid.setDisabled(true);
+					metadataGrid.setDisabled(true);
+					evaluationGrid.setDisabled(true);
+					reviewGrid.setDisabled(true);
+					questionContainer.setDisabled(true);
+					tagGrid.setDisabled(true);
+				};
+								
+				var checkFormTabs = function(record, componentType) {
+					hideSubComponentTabs();
+					if (record) {
+						var showSubTab = function(grid, url, container){
+							grid.setDisabled(false);
+							grid.componentRecord = record;
+							if (url) {
+								grid.getStore().load({
+									url: url
+								});
+							}
+							if (container) {
+								container.setDisabled(false);
+							}
+						};
+						
+						if (!componentType) {
+							componentType = record.get('componentType');
+						}
+
+						Ext.Ajax.request({
+							url: '../api/v1/resource/componenttypes/' + componentType,
+							success: function(response, opts) {
+								var data = Ext.decode(response.responseText);
+
+								if (data.dataEntryAttributes) {	
+									showSubTab(attributeGrid);  //, '../api/v1/resource/components/' + record.get('componentId')+ '/attributes/view');
+								}
+								if (data.dataEntryRelationships) {	
+									showSubTab(relationshipsGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/relationships');
+									Ext.getCmp('relationshipTargetCB').getStore().load();
+								}
+								if (data.dataEntryContacts) {	
+									showSubTab(contactGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/contacts/view');
+								}
+								if (data.dataEntryResources) {	
+									showSubTab(resourcesGrid, '../api/v1/resource/components/' + record.get('componentId') + '/resources/view');
+								}
+								if (data.dataEntryMedia) {	
+									showSubTab(mediaGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/media/view');
+								}							
+								if (data.dataEntryDependancies) {	
+									showSubTab(dependenciesGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/dependencies/view');
+								}
+								if (data.dataEntryMetadata) {	
+									showSubTab(metadataGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/metadata/view');
+								}
+								if (data.dataEntryEvaluationInformation) {	
+									showSubTab(evaluationGrid); 
+									loadEvalationData(record.get('componentId'));
+								}							
+								if (data.dataEntryReviews) {	
+									showSubTab(reviewGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/reviews/view');
+								}
+								if (data.dataEntryQuestions) {	
+									showSubTab(questionGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/questions/view', questionContainer);
+								}	
+
+								//tags should be on all entries
+								showSubTab(tagGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/tags');
+							}						
+						});	
+					}
 				};
 				
 				var actionApproveComponent = function() {

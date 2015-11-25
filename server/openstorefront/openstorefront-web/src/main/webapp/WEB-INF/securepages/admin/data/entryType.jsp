@@ -93,6 +93,16 @@
 									boxLabel: 'Evaluation Information',
 									name: 'dataEntryEvaluationInformation'
 								},
+								{
+									xtype: 'checkbox',
+									boxLabel: 'Reviews',
+									name: 'dataEntryReviews'
+								},
+								{
+									xtype: 'checkbox',
+									boxLabel: 'Questions',
+									name: 'dataEntryQuestions'
+								},								
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'componentTypeTemplate',																		
 									width: '100%',
