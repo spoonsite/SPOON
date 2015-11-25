@@ -43,12 +43,15 @@ public class ComponentTypeInit
 		componentType.setDataEntryMetadata(Boolean.TRUE);
 		componentType.setDataEntryRelationships(Boolean.TRUE);
 		componentType.setDataEntryResources(Boolean.TRUE);
+		componentType.setDataEntryReviews(Boolean.TRUE);
+		componentType.setDataEntryQuestions(Boolean.TRUE);
 
 		service.getComponentService().saveComponentType(componentType);
 
 		componentType = new ComponentType();
 		componentType.setComponentType(ComponentType.ARTICLE);
 		componentType.setDataEntryAttributes(Boolean.TRUE);
+		componentType.setDataEntryQuestions(Boolean.TRUE);
 		componentType.setLabel("Article");
 		componentType.setDescription("Use to display information on a topic and show related items");
 

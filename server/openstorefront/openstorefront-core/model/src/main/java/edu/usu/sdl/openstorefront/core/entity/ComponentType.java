@@ -78,6 +78,12 @@ public class ComponentType
 	@ConsumeField
 	private Boolean dataEntryEvaluationInformation;
 
+	@ConsumeField
+	private Boolean dataEntryReviews;
+
+	@ConsumeField
+	private Boolean dataEntryQuestions;
+
 	@FK(value = ComponentTypeTemplate.class, enforce = true)
 	@ConsumeField
 	private String componentTypeTemplate;
@@ -110,6 +116,8 @@ public class ComponentType
 		this.setDataEntryMetadata(componentTypeLocal.getDataEntryMetadata());
 		this.setDataEntryRelationships(componentTypeLocal.getDataEntryRelationships());
 		this.setDataEntryResources(componentTypeLocal.getDataEntryResources());
+		this.setDataEntryReviews(componentTypeLocal.getDataEntryReviews());
+		this.setDataEntryQuestions(componentTypeLocal.getDataEntryQuestions());
 
 	}
 
@@ -231,6 +239,26 @@ public class ComponentType
 	public void setComponentTypeTemplate(String componentTypeTemplate)
 	{
 		this.componentTypeTemplate = componentTypeTemplate;
+	}
+
+	public Boolean getDataEntryReviews()
+	{
+		return dataEntryReviews;
+	}
+
+	public void setDataEntryReviews(Boolean dataEntryReviews)
+	{
+		this.dataEntryReviews = dataEntryReviews;
+	}
+
+	public Boolean getDataEntryQuestions()
+	{
+		return dataEntryQuestions;
+	}
+
+	public void setDataEntryQuestions(Boolean dataEntryQuestions)
+	{
+		this.dataEntryQuestions = dataEntryQuestions;
 	}
 
 }
