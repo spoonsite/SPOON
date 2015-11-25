@@ -9,30 +9,7 @@
             Ext.onReady(function () {
 
                 var brandingObj={};
-               
-            
-                //Add/Edit forms ------>				
-                
-                //
-                //  Branding Configuration Panel
-                //
-//                var loadFullAttributeList = function() {
-//                    
-//                    Ext.Ajax.request({
-//                        url: '../api/v1/resource/attributes/attributetypes',
-//                        method: 'GET',
-//                        success: function(response, opts){
-//                            fullAttributeList = Ext.decode(response.responseText);
-//                            console.log("Full Attributes List",fullAttributeList);
-//                        }
-//                    });   
-//                }; 
-//                loadFullAttributeList();
-                
-                
-                
-                
-                
+                 
                 var brandingConfigForm = Ext.create('Ext.form.Panel',{
                     id: 'brandingConfigForm',
                     title: 'Site Configuration  <i class="fa fa-question-circle"  data-qtip="These are the sites configuration settings." ></i>',
