@@ -2190,40 +2190,42 @@
 				});
 				
 				var loadComponentAttributes = function(status) {
-					var componentId = Ext.getCmp('generalForm').componentRecord.get('componentId');
-					Ext.Ajax.request({
-						url: '../api/v1/resource/components/' + componentId + '/attributes/view',
-						method: 'GET',
-						params: {
-							status: status
-						},
-						success: function(response, opts) {
-							var data = Ext.decode(response.responseText);
-							
-							var requiredStore = Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore();
-							
-							var optionalAttributes = [];
-							Ext.Array.each(data, function(attribute) {
-								if (attribute.requiredFlg) {
-									var found = false;
-									requiredStore.each(function(record){
-										if (record.get('attributeType') === attribute.type) {
-											record.set('attributeCode', attribute.code, { dirty: false });
-											found = true;
+					if (Ext.getCmp('generalForm').componentRecord) {
+						var componentId = Ext.getCmp('generalForm').componentRecord.get('componentId');
+						Ext.Ajax.request({
+							url: '../api/v1/resource/components/' + componentId + '/attributes/view',
+							method: 'GET',
+							params: {
+								status: status
+							},
+							success: function(response, opts) {
+								var data = Ext.decode(response.responseText);
+
+								var requiredStore = Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore();
+
+								var optionalAttributes = [];
+								Ext.Array.each(data, function(attribute) {
+									if (attribute.requiredFlg) {
+										var found = false;
+										requiredStore.each(function(record){
+											if (record.get('attributeType') === attribute.type) {
+												record.set('attributeCode', attribute.code, { dirty: false });
+												found = true;
+											}
+										});
+										if (!found) {
+											//the component type  may not require this
+											optionalAttributes.push(attribute);
 										}
-									});
-									if (!found) {
-										//the component type  may not require this
+									} else {
 										optionalAttributes.push(attribute);
 									}
-								} else {
-									optionalAttributes.push(attribute);
-								}
-							});
-							optionalAttributes.reverse();
-							Ext.getCmp('attributeGrid').getStore().loadData(optionalAttributes);
-						}
-					});
+								});
+								optionalAttributes.reverse();
+								Ext.getCmp('attributeGrid').getStore().loadData(optionalAttributes);
+							}
+						});
+					}
 				};
 				
 				var handleAttributes = function(componentType) {
@@ -2301,7 +2303,43 @@
 									iconCls: 'fa fa-save',
 									formBind: true,
 									handler: function() {
+										var form = this.up('form');
+										var data = form.getValues();
+										var componentId = '';
+										var method = 'POST';
+										var update = '';
+										if (Ext.getCmp('generalForm').componentRecord){
+											componentId = Ext.getCmp('generalForm').componentRecord.get('componentId');											
+											update = '/' + componentId;
+											method = 'PUT';
+										}												
+
+										var requireComponent = {
+											component: data,
+											attributes: []
+										};
 										
+										Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore().each(function(record){
+											requireComponent.attributes.push({
+												componentAttributePk: {
+													attributeType: record.attributeType,
+													attributeCode: record.attributeCode
+												}
+											});
+										});
+
+										CoreUtil.submitForm({
+											url: '../api/v1/resource/components' + update,
+											method: method,
+											data: requireComponent,
+											form: form,
+											success: function(response, opt){
+												var data = Ext.decode(response.responseText);
+												var record = Ext.getCmp('componentGrid').getStore().add(data);
+	    										     actionAddEditComponent(record);
+												
+											}
+										});
 									}
 								},
 								{
