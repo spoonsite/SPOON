@@ -135,6 +135,7 @@
                                         return null;
                                     }
                                 }
+                                mCheckNavButtons();
                                 return val;
                             }
                         },
@@ -152,69 +153,112 @@
                             dock: 'top',
                             xtype: 'toolbar',
                             items: [
-                                {
-                                    text: 'Refresh',
-                                    scale: 'medium',
-                                    id: 'refreshButton',
-                                    iconCls: 'fa fa-2x fa-refresh',
-                                    handler: function () {
-                                       refreshGrid();
+                                  Ext.create('OSF.component.StandardComboBox', {
+                                            id: 'userMessageFilter-ActiveStatus',
+                                            emptyText: 'All',
+                                            fieldLabel: 'Active Status',
+                                            name: 'activeStatus',	
+                                            listeners: {
+                                                change: function(filter, newValue, oldValue, opts){
+                                                    mRefreshGrid();
+                                                }
+                                            },
+                                            storeConfig: {
+										customStore: {
+											fields: [
+												'code',
+												'description'
+											],
+											data: [												
+												{
+													code: 'A',
+													description: 'Active'
+												},
+												{
+													code: 'I',
+													description: 'Inactive'
+												},
+												{
+													code: 'All',
+													description: 'All'
+												}
+											]
+										}
+									}
+                            })]
+                       },
+                       {
+                                    dock: 'top',
+							        xtype: 'toolbar',
+							        items: [
+                                    {
+                                        text: 'Refresh',
+                                        scale: 'medium',
+                                        id: 'mRefreshButton',
+                                        iconCls: 'fa fa-2x fa-refresh',
+                                        tip: 'Refresh the list of messages',
+                                        handler: function () {
+                                           mRefreshGrid();
+                                        },
+                                        tooltip: 'Refresh the list of messages'
+                                    },
+                                    {
+                                        text: 'View',
+                                        id: 'mViewButton',
+                                        scale: 'medium',
+                                        iconCls: 'fa fa-2x fa-eye',
+                                        disabled: true,
+                                        handler: function () {
+                                            mViewMessage();
+                                        },
+                                        tooltip: 'View the message data',
+                                    },
+                                    {
+                                        text: 'Delete',
+                                        id: 'mDeleteButton',
+                                        cls: 'alert-danger',
+                                        scale: 'medium',
+                                        iconCls: 'fa fa-2x fa-trash',
+                                        disabled: true,
+                                        handler: function () {
+                                            mDeleteMessage();  
+                                        },
+                                        tooltip: 'Delete a message'
+                                    },
+                                    {
+                                        text: 'Process Messages Now',
+                                        scale: 'medium',
+                                        id: 'mProcessNowButton',
+                                        iconCls: 'fa fa-2x fa-bolt',
+                                        disabled: true,
+                                        handler: function () {
+                                          mProcessMessagesNow();
+                                        },
+                                        tooltip: 'Process all active messages and send them immediately.'
+
+                                    },
+                                    {
+                                        text: 'Cleanup Old Messages Now',
+                                        id: 'mCleanUpNowButton',
+                                        scale: 'medium',
+                                        iconCls: 'fa fa-2x fa-eraser',
+                                        disabled: true,
+                                        handler: function () {
+                                           mCleanupOldMessagesNow();         
+                                        },
+                                        tooltip:'Removes old archive data now. Default is 28 days.'
+
+                                    },
+                                    {
+                                        xtype: 'tbfill'
                                     }
-                                },
-                                {
-                                    text: 'View',
-                                    id: 'mViewButton',
-                                    scale: 'medium',
-                                    iconCls: 'fa fa-2x fa-eye',
-                                    disabled: true,
-                                    handler: function () {
-                                        viewEntry();
-                                    }
-                                },
-                                {
-                                    text: 'Process Now',
-                                    scale: 'medium',
-                                    id: 'mProcessButton',
-                                    iconCls: 'fa fa-2x fa-bolt',
-                                    handler: function () {
-                                      processAll();
-                                    }
-                                },
-                                {
-                                    text: 'Cleanup Now',
-                                    id: 'mCleanUpButton',
-                                    scale: 'medium',
-                                    iconCls: 'fa fa-2x fa-eraser',
-                                    disabled: true,
-                                    handler: function () {
-                                       cleanupEntry();         
-                                    }
-                                },
-                                {
-                                    text: 'Delete',
-                                    id: 'mDeleteButton',
-                                    cls: 'alert-danger',
-                                    scale: 'medium',
-                                    iconCls: 'fa fa-2x fa-trash',
-                                    disabled: true,
-                                    handler: function () {
-                                        deleteEntry();  
-                                    }
-                                },
-                                {
-                                    text: 'Filter Options',
-                                    scale: 'medium',
-                                    id: 'mFilterButton',
-                                    iconCls: 'fa fa-2x fa-filter',
-                                    handler: function () {
-                                       filterAll(0);
-                                    }
-                                },
-                                
-                                {
-                                    xtype: 'tbfill'
-                                }
-                            ]
+                                ]
+                        },
+                        { 
+                            xtype: 'pagingtoolbar',
+                            dock: 'bottom',
+                            store: userMessageGridStore,
+                            displayInfo: true   
                         }
                     ],
                     listeners: {
@@ -222,6 +266,7 @@
                             console.log("Double Clicked Row:"+index);
                         },
                         selectionchange: function (grid, record, index, opts) {
+                           mCheckNavButtons(); 
                            console.log("Check Buttons");
                         }
                     }
@@ -229,9 +274,161 @@
                 
                 
                 //
+                //   USER MESSAGE FUNCTIONS
+                //
+                
+                //
+                // Check which buttons should be on and which should be off
+                //
+                var mCheckNavButtons = function() {
+                    
+                    if (userMessageGrid.getSelectionModel().getCount() === 1) {
+                        Ext.getCmp('mViewButton').setDisabled(false);
+                        Ext.getCmp('mDeleteButton').setDisabled(false);
+                        
+                    } else if (userMessageGrid.getSelectionModel().getCount() > 1) {
+                        Ext.getCmp('mViewButton').setDisabled(true);
+                        Ext.getCmp('mDeleteButton').setDisabled(true);
+                        
+                    } else {
+                        Ext.getCmp('mViewButton').setDisabled(true);
+                        Ext.getCmp('mDeleteButton').setDisabled(true);
+                    }
+                    
+                    if(Ext.getCmp('userMessageGrid').getStore().getCount()>0){
+                            
+                      Ext.getCmp('mProcessNowButton').setDisabled(false);
+                      Ext.getCmp('mCleanUpNowButton').setDisabled(false);
+                    }
+                    else {
+                        
+                      Ext.getCmp('mProcessNowButton').setDisabled(true);
+                      Ext.getCmp('mCleanUpNowButton').setDisabled(true); 
+                    }
+                };
+                
+                //
+                //  Refresh and reload the grid
+                //
+                var mRefreshGrid = function(){ 
+                     Ext.getCmp('userMessageGrid').getStore().load({
+						params: {
+							status: Ext.getCmp('userMessageFilter-ActiveStatus').getValue() ? Ext.getCmp('userMessageFilter-ActiveStatus').getValue() : '',
+						    all: (Ext.getCmp('userMessageFilter-ActiveStatus').getValue() === 'All')
+                             
+                        }
+					});
+                };
+                
+                //
+                //  Delete a message
+                //
+                var mDeleteMessage = function() {
+                    
+                    var selectedObj = Ext.getCmp('userMessageGrid').getSelection()[0];
+                    console.log("Selected Obj:",selectedObj);
+                    Ext.Msg.show({
+                        title: 'Delete Message?',
+                        message: 'Are you sure you want to delete the selected message?',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        fn: function (btn) {
+                            if (btn === 'yes') {
+                                Ext.getCmp('userMessageGrid').setLoading(true);
+                                var messageId = selectedObj.data.userMessageId;
+                                //console.log("Message ID:",messageId);
+                                Ext.Ajax.request({
+                                    url: '../api/v1/resource/usermessages/' + messageId,
+                                    method: 'DELETE',
+                                    success: function (response, opts) {
+                                        Ext.getCmp('userMessageGrid').setLoading(false);
+                                        mRefreshGrid();
+                                    },
+                                    failure: function (response, opts) {
+                                        Ext.getCmp('userMessageGrid').setLoading(false);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                };
+                
+                //
+                // View Message
+                //
+                var  mViewMessage = function (whichone){
+                    
+                    var selectedObj = Ext.getCmp('userMessageGrid').getSelection()[0];
+                    console.log("Selected Obj",selectedObj);
+                    
+                    Ext.create('Ext.window.Window', {
+                        title: 'View Message',
+                        iconCls: 'fa fa-info-circle',
+                        width: '30%',
+                        bodyStyle: 'padding: 10px;',
+                        y: 40,
+                        modal: true,
+                        maximizable: false,
+                        layout: 'vbox',
+                        items:[{
+                             xtype: 'textfield',
+                             name: 'Subject',
+                             fieldLabel: 'Subject',
+                             width: '100%',
+                             maxLength: 50,
+                             editable:false,
+                             text: selectedObj.subject
+                        },
+                        {
+                             xtype: 'textareafield',
+                             name: 'msgBody',
+                             fieldLabel: 'Message Body',
+                             width: '100%',
+                             height: 200,
+                             maxLength: 300,
+                             editable: false,
+                             text: selectedObj.bodyOfMessage
+                        }]
+                        
+                    }).show();                    
+                };
+                
+                //
+                // Process Messages Now
+                //
+                var  mProcessMessagesNow = function (){
+                    Ext.toast('Processing Messages...');
+                    Ext.Ajax.request({
+                        url: '../api/v1/resource/usermessages/processnow',
+                        method: 'POST',
+                        success: function (response, opts) {
+                            mRefreshGrid();
+                            
+                        }
+                    });
+                };
+                
+                //
+                // Cleanup Messages Now
+                //
+                var  mCleanupOldMessagesNow = function (){
+                    Ext.toast('Cleaning Up Old Messages...');
+                    Ext.Ajax.request({
+                        url: '../api/v1/resource/usermessages/cleanold',
+                        method: 'POST',
+                        success: function (response, opts) {
+                            Ext.toast('Successful Cleaning Up Old Messages');
+                            mRefreshGrid();
+                        }
+                    });
+                    
+                };
+                
+                //
                 //  Notifications
                 //
                 var notificationsGridStore = Ext.create('Ext.data.Store', {
+                    id: 'notificationsGridStore',
                     autoLoad: false,
                     pageSize: 300,
                     remoteSort: true,
@@ -271,10 +468,11 @@
                                     }}
                             ],
                     proxy: CoreUtil.pagingProxy({
-                                url: '../api/v1/resource/branding/',
+                                url: '../api/v1/resource/notificationevent',
+                                method: 'GET',
                                 reader: {
                                     type: 'json',
-                                    rootProperty: 'components',
+                                    rootProperty: 'data',
                                     totalProperty: 'totalNumber'
                                 }
                             })
@@ -282,23 +480,12 @@
 
                 var notificationsGrid = Ext.create('Ext.grid.Panel', {
                     title: '',
-                    id: 'notificationGrid',
+                    id: 'notificationsGrid',
                     store: notificationsGridStore,
                     columnLines: true,
                     bodyCls: 'border_accent',
                     selModel: {
                         selType: 'checkboxmodel'
-                    },
-                    viewConfig:{
-                      getRowClass: function (record, index){
-                          if(record.get('activeStatus')==='A'){
-                              return 'activecell';
-                          }
-                          else
-                          {
-                              return null;
-                          }
-                      }  
                     },
                     plugins: 'gridfilters',
                     enableLocking: true,
@@ -308,7 +495,8 @@
                                 type: 'string'
                             }
                         },
-                        {text: 'Message', dataIndex: 'messate', width: 200, flex:1},
+                        {text: 'Message', dataIndex: 'message', width: 200, flex:1},
+                        {text: 'Status', dataIndex: 'activeStatus', width: 75},
                         {text: 'Event Type', dataIndex: 'eventTypeDescription', width: 150,
                             filter: {
                                 type: 'string'
@@ -327,22 +515,60 @@
                             dock: 'top',
                             xtype: 'toolbar',
                             items: [
+                                  Ext.create('OSF.component.StandardComboBox', {
+                                            id: 'notificationsFilter-ActiveStatus',
+                                            emptyText: 'All',
+                                            fieldLabel: 'Active Status',
+                                            name: 'activeStatus',	
+                                            listeners: {
+                                                change: function(filter, newValue, oldValue, opts){
+                                                    nRefresh();
+                                                }
+                                            },
+                                            storeConfig: {
+										customStore: {
+											fields: [
+												'code',
+												'description'
+											],
+											data: [												
+												{
+													code: 'A',
+													description: 'Active'
+												},
+												{
+													code: 'I',
+													description: 'Inactive'
+												},
+												{
+													code: 'All',
+													description: 'All'
+												}
+											]
+										}
+									}
+                            })]
+                        },
+                        {
+                            dock: 'top',
+                            xtype: 'toolbar',
+                            items: [
                                 {
                                     text: 'Refresh',
                                     scale: 'medium',
-                                    id: 'brandingRefreshButton',
+                                    id: 'nRefreshButton',
                                     iconCls: 'fa fa-2x fa-refresh',
                                     handler: function () {
-                                       refreshGrid();
+                                       nRefresh();
                                     }
                                 },
                                 {
                                     text: 'Admin Message',
                                     scale: 'medium',
-                                    id: 'nProcessButton',
+                                    id: 'nAdminMessageButton',
                                     iconCls: 'fa fa-2x fa-plus',
                                     handler: function () {
-                                      adminMessage();
+                                      nAdminMessage();
                                     }
                                 },
                                 {
@@ -353,23 +579,19 @@
                                     iconCls: 'fa fa-2x fa-trash',
                                     disabled: true,
                                     handler: function () {
-                                        deleteEntry();  
+                                        nDelete();  
                                     }
                                 },
-                                {
-                                    text: 'Filter Options',
-                                    scale: 'medium',
-                                    id: 'nFilterButton',
-                                    iconCls: 'fa fa-2x fa-filter',
-                                    handler: function () {
-                                       filterAll(0);
-                                    }
-                                },
-                                
                                 {
                                     xtype: 'tbfill'
                                 }
                             ]
+                        },
+                        {
+                            xtype: 'pagingtoolbar',
+                            dock: 'bottom',
+                            store: notificationsGridStore,
+                            displayInfo: true    
                         }
                     ],
                     listeners: {
@@ -377,7 +599,7 @@
                             console.log("Double Clicked Row:"+index);
                         },
                         selectionchange: function (grid, record, index, opts) {
-                          console.log("Check Buttons");
+                          nCheckNavButtons();
                         }
                     }
                 });
@@ -407,7 +629,18 @@
                     items: [
                         messagePanel,
                         notificationsPanel
-                    ]
+                    ],
+                    listeners: {
+                        tabchange: function(tabPanel, newTab, oldTab, index){
+                            
+                            if(newTab.title === 'User Messages'){
+                               mRefreshGrid(); 
+                            }
+                            else if(newTab.title === 'Event Notifications'){
+                               nRefresh();
+                            }
+                        }
+                    }
                 });
                 
                 Ext.create('Ext.container.Viewport', {
@@ -418,56 +651,200 @@
                 });
                 
                 //
-                //  Refresh and reload the grid
+                //   NOTIFICATION FUNCTIONS
                 //
-                var refreshGrid = function(){
-                    
-                     Ext.getCmp('userMessageGrid').getStore().load();
-                };
                 
                 //
                 // Check which buttons should be on and which should be off
                 //
-                var checkNavButtons = function() {
+                var nCheckNavButtons = function() {
                     
-                    if (userMessageGrid.getSelectionModel().getCount() === 1) {
-                        Ext.getCmp('brandingEditButton').setDisabled(false);
-                        Ext.getCmp('brandingDuplicateButton').setDisabled(false);
-                        Ext.getCmp('brandingDeleteButton').setDisabled(false);
+                    if (notificationsGrid.getSelectionModel().getCount() === 1) {
+                        Ext.getCmp('nDeleteButton').setDisabled(false);
                         
-                        var currentStatus = Ext.getCmp('brandingGrid').getSelection()[0].get('activeStatus');
-                        if(currentStatus!=='A'){
-                             Ext.getCmp('brandingActivateButton').setDisabled(false);
-                        }   
-                    } else if (userMessageGrid.getSelectionModel().getCount() > 1) {
-                        Ext.getCmp('brandingDeleteButton').setDisabled(false);
-                        Ext.getCmp('brandingEditButton').setDisabled(true);
-                        Ext.getCmp('brandingDuplicateButton').setDisabled(true);
-                        Ext.getCmp('brandingActivateButton').setDisabled(true);
-                        
+                    } else if (notificationsGrid.getSelectionModel().getCount() > 1) {
+                        Ext.getCmp('nDeleteButton').setDisabled(true);
                     } else {
-                        Ext.getCmp('brandingEditButton').setDisabled(true);
-                        Ext.getCmp('brandingDuplicateButton').setDisabled(true);
-                        Ext.getCmp('brandingDeleteButton').setDisabled(true);
-                        Ext.getCmp('brandingActivateButton').setDisabled(true);
+                        Ext.getCmp('nDeleteButton').setDisabled(true);
                     }
                 };
                 
+                //
+                //  Refresh and reload the grid
+                //
+                var nRefresh = function(){
+                    
+                     Ext.getCmp('notificationsGrid').getStore().load({
+                         
+                        params: {
+							status: Ext.getCmp('notificationsFilter-ActiveStatus').getValue() ? Ext.getCmp('notificationsFilter-ActiveStatus').getValue() : 'ALL',
+						    all: (Ext.getCmp('notificationsFilter-ActiveStatus').getValue() === 'All')
+                             
+                        } 
+                     });
+                };
                 
                 //
-                //  Delete a message
+                //  Send to Users list
                 //
-                var deleteMessage = function() {
-                    
+                var userStore = Ext.create('Ext.data.Store', {
+                    id: 'userStore',
+                    autoLoad: true,
+                    remoteSort: true,
+                    sorters: [
+                                new Ext.util.Sorter({
+                                     property: 'username',
+                                     direction: 'ASC'
+                                })
+                            ],
+                    fields: [
+                                {name: 'username', mapping: function (data) {
+                                        return data.username;
+                                    }}
+                            ],
+                    proxy: CoreUtil.pagingProxy({
+                                    url: '../api/v1/resource/userprofiles/',
+                                    method: 'GET',
+                                    jsonData:'"all":true',
+                                    reader: {
+                                        type: 'json',
+                                        rootProperty: 'data',
+                                        totalProperty: 'totalNumber'
+                                }
+                    })
+                });
+                
+                //
+                //  Send an Admin Message
+                //
+                var nAdminMessage = function() {
+                   
+                    var sendAdminMsgWin = Ext.create('Ext.window.Window', {
+                        id: 'sendAdminMsgWin',
+                        title: 'Send Admin Message',
+                        iconCls: 'fa fa-envelope-o',
+                        width: '30%',
+                        bodyStyle: 'padding: 10px;',
+                        y: 40,
+                        modal: true,
+                        maximizable: false,
+                        closeAction: 'destroy',
+                        layout: 'vbox',
+                        items:[{
+                             xtype: 'combobox',
+                             id:'username_combo',
+                             name: 'username',
+                             fieldLabel: 'Send to',
+                             width: '100%',
+                             displayField: 'username',
+                             valueField: 'username',
+                             value:'All Users',
+                             editable: false,
+                             store: userStore
+                        },
+                        {
+                             xtype: 'textareafield',
+                             id: 'message_adm',
+                             name: 'message',
+                             fieldLabel: 'Message',
+                             width: '100%',
+                             height: 200,
+                             maxLength: 300
+                        }],
+                        dockedItems: [
+                            {
+                                dock: 'bottom',
+                                xtype: 'toolbar',
+                                items: [
+                                    
+                                    {
+                                        text: 'Send',
+                                        formBind: true,
+                                        iconCls: 'fa fa-save',
+                                        handler: function () {
+                                           var msgtosend ={};
+                                           
+                                           if(Ext.getCmp('username_combo').value !== 'All Users'){
+                                               msgtosend.username = Ext.getCmp('username_combo').value;
+                                           }
+                                           
+                                           msgtosend.message = Ext.getCmp('message_adm').getValue();
+                                           console.log("Message",msgtosend);
+                                          
+                                           if(msgtosend.message === '' || msgtosend.message === 'Message Required')
+                                           {
+                                             Ext.getCmp('message_adm').setValue('Message Required');  
+                                             return; 
+                                           }
+                                           
+                                           msgtosend.message=Ext.getCmp('message_adm').value;
+                                           Ext.toast('Sending Admin Message..');
+                                           Ext.Ajax.request({
+                                                url: '../api/v1/resource/notificationevent',
+                                                method: 'POST',
+                                                jsonData: msgtosend,
+                                                success: function (response, opts) {
+                                                    Ext.toast('Admin Message Sent Successfully');
+                                                    Ext.getCmp('notificationsGrid').getStore().load();
+                                                    Ext.getCmp('sendAdminMsgWin').close();
+                                                }
+                                            });
+                                        }
+                                    },
+                                    {
+                                        xtype: 'tbfill'
+                                    },
+                                    {
+                                        text: 'Cancel',
+                                        iconCls: 'fa fa-close',
+                                        handler: function () {
+                                            Ext.getCmp('sendAdminMsgWin').close();
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                        
+                        
+                    }).show();  
                 };
                 
                 //
                 // View Message
                 //
-                var  viewMessage = function (whichone){
+                var nDelete = function (){
                     
-                    
+                    var selectedObj = Ext.getCmp('notificationsGrid').getSelection()[0];
+                    //console.log("Selected Notification Obj:",selectedObj);
+                    Ext.Msg.show({
+                        title: 'Delete Notification                                                                                                                               `?',
+                        message: 'Are you sure you want to delete the selected notification?',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        fn: function (btn) {
+                            if (btn === 'yes') {
+                                Ext.getCmp('notificationsGrid').setLoading(true);
+                                var eventId = selectedObj.data.eventId;
+                                //console.log("Message ID:",messageId);
+                                Ext.Ajax.request({
+                                    url: '../api/v1/resource/notificationevent/' + eventId,
+                                    method: 'DELETE',
+                                    success: function (response, opts) {
+                                        Ext.getCmp('notificationsGrid').setLoading(false);
+                                        Ext.getCmp('notificationsGrid').getStore().load();
+                                    },
+                                    failure: function (response, opts) {
+                                        Ext.getCmp('notificationsGrid').setLoading(false);
+                                    }
+                                });
+                            }
+                        }
+                    });        
+                            
+                            
                 };
+                
+                
         });
 
         </script>
