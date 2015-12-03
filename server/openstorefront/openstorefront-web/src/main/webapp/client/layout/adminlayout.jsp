@@ -32,6 +32,7 @@
 	<script src="../webjars/extjs/6.0.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
 	<script src="../webjars/extjs/6.0.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
 	<script src="scripts/socket.io.js" type="text/javascript"></script>
+	<script src="../webjars/ckeditor/4.5.4/full/ckeditor.js" type="text/javascript"></script>
 	
 	<%-- Core Utils --%>	
 	<script src="scripts/global/override.js?v=${appVersion}" type="text/javascript"></script>		
@@ -41,9 +42,10 @@
 	
 	<%-- Custom Components --%>		
 	<script src="scripts/component/standardComboBox.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/notificationPanel.js" type="text/javascript"></script>
+	<script src="scripts/component/notificationPanel.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/notificationWindow.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/framePanel.js" type="text/javascript"></script>
+	<script src="scripts/component/framePanel.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/ckeditorField.js?v=${appVersion}" type="text/javascript"></script>
 	
 	<title>Admin Tools</title>
         <stripes:layout-component name="html_head"/>

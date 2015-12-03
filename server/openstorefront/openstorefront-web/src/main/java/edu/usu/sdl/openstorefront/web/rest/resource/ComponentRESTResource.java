@@ -264,7 +264,7 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Get a list of all components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(Component.class)
+	@DataType(ComponentAdminWrapper.class)
 	@Path("/filterable")
 	public Response getComponentList(@BeanParam ComponentFilterParams filterQueryParams
 	)
@@ -1443,7 +1443,6 @@ public class ComponentRESTResource
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Removes an evaluation section from the component")
-	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/sections/{evalSection}")
 	public void deleteComponentEvaluationSection(
 			@PathParam("id")
