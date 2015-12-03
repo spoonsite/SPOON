@@ -67,7 +67,7 @@
 			pageMap['Jobs'] = '/openstorefront/admin?tool=Jobs';
 			pageMap['Reports'] = '/openstorefront/admin?tool=Reports';
 			pageMap['System'] = '/openstorefront/admin?tool=System';
-			pageMap['Tracking'] = '/openstorefront/admin?tool=Tracking';
+			pageMap['Tracking'] = 'Router.action?page=admin/application/tracking.jsp';
 			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
 			
 
