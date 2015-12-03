@@ -14,10 +14,10 @@
                          type: "text/csv;charset="+ charset + ";"
                     });
                     if (window.navigator.msSaveOrOpenBlob) {
-                        console.log("Save Blob");
+                        //console.log("Save Blob");
                          window.navigator.msSaveBlob(blob, filename);
                     } else {
-                        console.log("Create Link");
+                        //console.log("Create Link");
                         var link = document.createElement("a");
                         if (link.download !== undefined) { // feature detection
                             // Browsers that support HTML5 download attribute
