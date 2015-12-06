@@ -47,7 +47,7 @@
 						urlEnding = '/force';
 					}
 					
-					grid.setLoading('Updating status....');
+					grid.setLoading('Updating status...');
 					Ext.Ajax.request({
 						url: '../api/v1/resource/components/' + componentId + '/' + entity + '/' + recordId + subEntity + subEntityId + urlEnding,
 						method: method,
@@ -2322,24 +2322,54 @@
 										Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore().each(function(record){
 											requireComponent.attributes.push({
 												componentAttributePk: {
-													attributeType: record.attributeType,
-													attributeCode: record.attributeCode
+													attributeType: record.get('attributeType'),
+													attributeCode: record.get('attributeCode')
 												}
 											});
 										});
+										
+										if (!data.description) {
+											form.getForm().markInvalid({
+												description: 'Required'
+											});
+										} else {
+											//make sure required 
+											var validAttributes=true;
+											Ext.Array.each(requireComponent.attributes, function(attribute){
+												if (!attribute.componentAttributePk.attributeCode){
+													validAttributes = false;
+												}
+											});
 
-										CoreUtil.submitForm({
-											url: '../api/v1/resource/components' + update,
-											method: method,
-											data: requireComponent,
-											form: form,
-											success: function(response, opt){
-												var data = Ext.decode(response.responseText);
-												var record = Ext.getCmp('componentGrid').getStore().add(data);
-	    										     actionAddEditComponent(record);
-												
+											if (!validAttributes) {
+												Ext.Msg.show({
+													title:'Validation Check',
+													message: 'Missing Required Attributes; Check input.',
+													buttons: Ext.Msg.OK,
+													icon: Ext.Msg.ERROR,
+													fn: function(btn) {													 
+													}
+												});
+
+											} else {	
+												CoreUtil.submitForm({
+													url: '../api/v1/resource/components' + update,
+													method: method,
+													data: requireComponent,
+													form: form,
+													success: function(response, opt){
+														var data = Ext.decode(response.responseText);														
+														var record = Ext.getCmp('componentGrid').getStore().add(data);
+														actionAddEditComponent(record);		
+																												
+														//Ext.getCmp('componentGrid').getStore().reload();
+													},
+													failure: function(response, opt){
+
+													}
+												});
 											}
-										});
+										}
 									}
 								},
 								{
@@ -2458,7 +2488,7 @@
 							},
 							items: [
 								Ext.create('OSF.component.StandardComboBox', {														
-									fieldLabel: 'Entry Type',
+									fieldLabel: 'Entry Type <span class="field-required" />',
 									name: 'componentType',
 									allowBlank: false,								
 									margin: '0 0 0 0',
@@ -2495,11 +2525,36 @@
 								//	name: 'description'
 								//},
 								Ext.create('OSF.component.CKEditorField', {																
-									allowBlank: false,
+									//allowBlank: false,
 									name: 'description',
 									height: 300,
 									maxLength: 32000	
 								}),
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'organization',									
+									allowBlank: false,									
+									margin: '0 0 0 0',
+									width: '100%',
+									fieldLabel: 'Organization <span class="field-required" />',
+									forceSelection: false,
+									valueField: 'description',
+									editable: true,
+									storeConfig: {
+										url: '../api/v1/resource/organizations/lookup'
+									}
+								}),
+								Ext.create('OSF.component.StandardComboBox', {														
+									fieldLabel: 'Approval Status <span class="field-required" />',
+									name: 'approvalState',
+									allowBlank: false,								
+									margin: '0 0 0 0',
+									width: '100%',
+									editable: false,
+									typeAhead: false,										
+									storeConfig: {
+										url: '../api/v1/resource/lookuptypes/ApprovalStatus'																				
+									}
+								}),								
 								{
 									xtype: 'datefield',
 									fieldLabel: 'Release Date',
@@ -3041,6 +3096,9 @@
 						{name: 'componentType', mapping: function(data){
 							return data.component.componentType;
 						}},
+						{name: 'organization', mapping: function(data){
+							return data.component.organization;
+						}},					
 						{name: 'createDts', mapping: function(data){
 							return data.component.createDts;
 						}},
