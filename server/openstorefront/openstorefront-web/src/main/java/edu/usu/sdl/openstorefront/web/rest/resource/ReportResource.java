@@ -245,6 +245,8 @@ public class ReportResource
 	@POST
 	@APIDescription("Generates a new report")
 	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Report.class)
 	public Response generateReport(ReportGenerateView reportView)
 	{
 		Report report = reportView.getReport();
