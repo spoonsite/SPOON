@@ -189,6 +189,14 @@ var CoreUtil = {
     }	
   }, 
   
+  removeBlankDataItem: function(originalData){
+     Ext.Object.each(originalData, function(key, value, data){
+        if (value === "") {
+          delete data[key];
+        }
+      }); 
+  },
+  
   submitForm: function(options){
     
     if (options.removeBlankDataItems) {
@@ -199,16 +207,7 @@ var CoreUtil = {
       });
     }
     
-    options.form.setLoading('Saving...');
-    Ext.Ajax.request({
-      url: options.url,
-      method: options.method,
-      jsonData: options.data,
-      success: function (response, opts) {
-        options.form.setLoading(false);
-        options.success(response, opts);
-      },
-      failure: function (response, opts) {
+    var failurehandler = function(response, opts) {
         options.form.setLoading(false);
         
         var errorResponse = Ext.decode(response.responseText);
@@ -216,8 +215,30 @@ var CoreUtil = {
         Ext.Array.each(errorResponse.errors.entry, function(item, index, entry) {
             errorObj[item.key] = item.value;
         });
-        options.form.markInvalid(errorObj);
-		options.failure(response, opts);
+        options.form.getForm().markInvalid(errorObj);
+        options.failure(response, opts);      
+    };
+    
+    options.form.setLoading('Saving...');
+    Ext.Ajax.request({
+      url: options.url,
+      method: options.method,
+      jsonData: options.data,
+      success: function (response, opts) {
+        options.form.setLoading(false);
+        if (response) {
+          var data = Ext.decode(response.responseText);	
+          if ((data.success !== undefined && data.success !== null && data.success) ||
+              data.success === undefined) 
+          {
+            options.success(response, opts);
+          } else {
+            failurehandler(response, opts);
+          }
+        }
+      },
+      failure: function (response, opts) {
+          failurehandler(response, opts);
       }
     });
     

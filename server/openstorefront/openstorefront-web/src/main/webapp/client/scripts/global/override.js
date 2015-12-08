@@ -123,6 +123,13 @@ Ext.define('OSF.defaults.Window', {
 	
 });
 
+Ext.define('OSF.defaults.Toast', {
+    override: 'Ext.window.Toast',
+	
+  alwaysOnTop: true
+	
+});
+
 Ext.define('OSF.defaults.CheckboxModel', {
     override: 'Ext.selection.CheckboxModel',
 	
