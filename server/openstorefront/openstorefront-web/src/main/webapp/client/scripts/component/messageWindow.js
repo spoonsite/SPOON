@@ -13,41 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+Ext.define('OSF.component.MessageWindow', {
+	extend: 'Ext.window.Window',
+	alias: 'osf.widget.MessageWindow',
+	initComponent: function () {
+		this.callParent();
 
-/* global Ext */
+		var messageWindow = this;
 
-var CoreService = {
-  
-  usersevice: {    
-    
-    getCurrentUser: function(forceReload){
-      var me = this;     
-    
-      //for now don't cache    
-  
-      var promise = Ext.Ajax.request({
-        url: '/openstorefront/api/v1/resource/userprofiles/currentuser'
-      });
-      
-      return promise;
-    }
-    
-  },
-  systemservice: {
-    
-    getConfigProperties: function(){
-      var me = this;     
-            
-      var promise = Ext.Ajax.request({
-        url: '../api/v1/service/application/configproperties'
-      });
-      
-      return promise;
-    }    
-    
-  }
-  
-  
-  
-};
+
+	}
+
+
+});
 

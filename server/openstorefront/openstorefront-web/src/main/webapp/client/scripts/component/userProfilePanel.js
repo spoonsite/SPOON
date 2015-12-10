@@ -1,0 +1,173 @@
+/* 
+ * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* global Ext */
+
+Ext.define('OSF.component.UserProfilePanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'osf.widget.UserProfilePanel',
+	bodyStyle: 'padding: 20px;',
+	extraTools: [],
+	initComponent: function () {
+		this.callParent();
+
+		var profileForm = this;
+
+		var formItems = [
+			{
+				xtype: 'displayfield',
+				fieldLabel: 'Username',
+				name: 'username',
+				submitValue: true
+			},
+			{
+				xtype: 'hidden',
+				name: 'guid'
+			},
+			{
+				xtype: 'textfield',
+				name: 'firstName',
+				fieldLabel: 'First Name <span class="field-required" />',
+				width: '100%',
+				maxLength: 80,
+				allowBlank: false
+			},
+			{
+				xtype: 'textfield',
+				name: 'lastName',
+				fieldLabel: 'Last Name <span class="field-required" />',
+				width: '100%',
+				maxLength: 80,
+				allowBlank: false
+			},
+			{
+				xtype: 'textfield',
+				name: 'email',
+				fieldLabel: 'Email <span class="field-required" />',
+				width: '100%',
+				maxLength: 1000,
+				allowBlank: false
+			},
+			{
+				xtype: 'textfield',
+				name: 'phone',
+				fieldLabel: 'Phone',
+				width: '100%',
+				maxLength: 80,
+				allowBlank: false
+			},
+			Ext.create('OSF.component.StandardComboBox', {
+				name: 'organization',
+				allowBlank: false,
+				margin: '0 0 0 0',
+				width: '100%',
+				maxLength: 120,
+				fieldLabel: 'Organization ',
+				forceSelection: false,
+				valueField: 'description',
+				storeConfig: {
+					url: '/openstorefront/api/v1/resource/organizations/lookup'
+				}
+			}),
+			Ext.create('OSF.component.StandardComboBox', {
+				itemId: 'userTypeCodeCB',
+				name: 'userTypeCode',
+				allowBlank: false,
+				margin: '0 0 0 0',
+				width: '100%',
+				fieldLabel: 'Role',
+				editable: false,
+				typeAhead: false,
+				storeConfig: {
+					url: '/openstorefront/api/v1/resource/lookuptypes/UserTypeCode'
+				}
+			}),
+			{
+				xtype: 'checkboxfield',
+				boxLabel: 'Receive periodic email about recent changes',
+				name: 'notifyOfNew'
+			},
+			{
+				xtype: 'displayfield',
+				fieldLabel: 'Member Since',
+				name: 'createDts',
+				renderer: function (value, field) {
+					return '<b>' + Ext.util.Format.date(value, 'F d, Y') + '</b>';
+				}
+			}
+		];
+
+		var toolbarItems = [
+			{
+				text: 'Save',
+				formBind: true,
+				iconCls: 'fa fa-save',
+				handler: function () {
+					var data = profileForm.getValues();
+					data.externalGuid = data.guid;
+
+					//update user profile  
+					Ext.Ajax.request({
+						url: '/openstorefront/api/v1/resource/userprofiles/' + data.username,
+						method: 'PUT',
+						jsonData: data,
+						success: function (response, opts) {
+							Ext.toast('Updated User Profile', '', 'tr');
+							if (profileForm.saveCallback) {
+								profileForm.saveCallback(response, opts);
+							}
+							if (profileForm.profileWindow) {
+								profileForm.profileWindow.close();
+							}
+						}
+					});
+
+				}
+			}
+		];
+		toolbarItems = toolbarItems.concat(profileForm.extraTools);
+
+		var dockedItems = [
+			{
+				xtype: 'toolbar',
+				dock: 'bottom',
+				items: toolbarItems
+
+			}
+		];
+		profileForm.add(formItems);
+		profileForm.addDocked(dockedItems);
+
+		profileForm.getComponent('userTypeCodeCB').getStore().on('load', function () {
+			if (profileForm.loadUser){
+				Ext.Ajax.request({
+					url: '/openstorefront/api/v1/resource/userprofiles/' + profileForm.loadUser,
+					success: function(response, opts) {
+						var usercontext = Ext.decode(response.responseText);
+						profileForm.getForm().setValues(usercontext);						
+					}
+				});
+			} else {
+				CoreService.usersevice.getCurrentUser().then(function (response) {
+					var usercontext = Ext.decode(response.responseText);
+					profileForm.getForm().setValues(usercontext);
+				});
+			}
+		});
+
+	}
+
+});
+

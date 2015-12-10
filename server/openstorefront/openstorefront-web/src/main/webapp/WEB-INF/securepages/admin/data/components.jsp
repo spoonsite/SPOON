@@ -2,7 +2,9 @@
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
           <stripes:layout-component name="contents">
-
+			  
+		<script src="scripts/component/importWindow.js" type="text/javascript"></script>
+			  
 		<form name="exportForm" action="../api/v1/resource/components/export" method="POST" >
 			<p style="display: none;" id="exportFormIds">
 			</p>      
@@ -13,6 +15,12 @@
 			Ext.onReady(function(){	
 				
 			//Add/Edit forms ------>	
+				
+				//External Windows
+				var importWindow = Ext.create('OSF.component.ImportWindow', {					
+				});
+				
+			
 			
 				//common stores
 				var statusFilterStore = Ext.create('Ext.data.Store', {
@@ -2540,7 +2548,7 @@
 								},
 								{
 									xtype: 'panel',
-									html: 'Description <span class="field-required" />'
+									html: '<b>Description</b> <span class="field-required" />'
 								},
 								//{
 								//	xtype: 'htmleditor',
@@ -3520,7 +3528,7 @@
 									iconCls: 'fa fa-2x fa-upload',
 									scale: 'medium',
 									handler: function () {
-										
+										importWindow.show();
 									}
 								}
 							]
