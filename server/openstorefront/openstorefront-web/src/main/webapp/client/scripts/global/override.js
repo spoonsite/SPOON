@@ -104,7 +104,16 @@ Ext.define('LookupDataModel', {
 Ext.define('OSF.defaults.fieldbase', {
     override: 'Ext.form.field.Base',
 
-	msgTarget: 'side'
+	msgTarget: 'side',
+   labelClsExtra: 'field-label-basic'
+
+});
+
+Ext.define('OSF.defaults.fieldcontainer', {
+    override: 'Ext.form.FieldContainer',
+
+	msgTarget: 'side',
+   labelClsExtra: 'field-label-basic'
 
 });
 
@@ -120,6 +129,13 @@ Ext.define('OSF.defaults.Window', {
 	
   ghost: false,
   closeAction: 'hide'
+	
+});
+
+Ext.define('OSF.defaults.Toast', {
+    override: 'Ext.window.Toast',
+	
+  alwaysOnTop: true
 	
 });
 

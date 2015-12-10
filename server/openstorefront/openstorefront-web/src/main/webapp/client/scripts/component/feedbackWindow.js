@@ -13,129 +13,198 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*global Ext*/
+/*global Ext, CoreService*/
 Ext.define('OSF.component.FeedbackWindow', {
-    extend: 'Ext.window.Window',
-    alias: 'osf.widget.FeedbackWindow',
-    title: 'Feedback / Issues',
-    iconCls: 'fa fa-exclamation-triangle',
-    width: '50%',
-    y: 40,
-    modal: true,
-    maximizable: false,
-    layout: 'fit',
-    
-    initComponent: function () {
-        this.callParent();
+	extend: 'Ext.window.Window',
+	alias: 'osf.widget.FeedbackWindow',
+	title: 'Feedback / Issues',
+	iconCls: 'fa fa-exclamation-triangle',
+	width: '50%',
+	y: 40,
+	modal: true,
+	maximizable: false,
+	layout: 'fit',
+	initComponent: function () {
+		this.callParent();
 
-        var feedbackWin = this;
-        //
-        // Selection Combobox feedbackTypes items
-        //
-        var feedbackTypes = Ext.create('Ext.data.Store',{
-           fields: ['name'],
-           data:[
-               {"name":"Send Comment"},
-               {"name":"Report Issue"}
-               
-           ]
-        });
-        
-        //
-        //  Feedback Panel
-        //  This is the panel tab for the topic search tool
-        //
-      
-        var formPanel = Ext.create('Ext.form.Panel', {           
-            layout: 'vbox',
-            scrollable: true,
-            bodyStyle: 'padding: 10px;',
-            defaults: {
-                labelAlign: 'top'
-            },
-            dockedItems: [
-                {
-                    dock: 'bottom',
-                    xtype: 'toolbar',
-                    items: [
-                        {
-                            text: 'Send',
-                            formBind: true,
-                            iconCls: 'fa fa-save',
-                            handler: function () {
-                                var method = 'POST';
-                                var url = '/openstorefront/api/v1/service/jira/submitticket';
-                                var data = Ext.getCmp('feedbackForm').getValues();
-                                data.webInformation={
-                                    location: window.location.href, 
-                                    userAgent: navigator.userAgent,
-                                    referrer: document.referrer,
-                                    screenResolution:window.screen.availWidth+'x'+window.screen.availHeight
-                                };
-                                
-                                CoreUtil.submitForm({
-                                    url: url,
-                                    method: method,
-                                    data: data,
-                                    removeBlankDataItems: true,
-                                    form: Ext.getCmp('feedbackForm'),
-                                    success: function (response, opts) {
-                                        Ext.toast('Sent Successfully', '', 'tr');
-                                        Ext.getCmp('feedbackForm').setLoading(false);
-                                        Ext.getCmp('feedbackWindow').close();
-                                    }
-                                });
-                            }
-                        },
-                        {
-                            xtype: 'tbfill'
-                        },
-                        {
-                            text: 'Cancel',
-                            iconCls: 'fa fa-close',
-                            handler: function () {
-                                feedbackWin.close();
-                            }
-                        }
-                    ]
-                }
-            ],
-            items: [
-                {
-                    xtype: 'combobox',
-                    name: 'ticketType',
-                    fieldLabel: 'Choose Type<span class="field-required" />',
-                    width: '100%',
-                    maxLength: 50,
-                    store: feedbackTypes,
-                    displayField:'name',
-                    valueField:'name',
-                    editable:false
-                },
-                {
-                    xtype: 'textfield',
-                    name: 'summary',
-                    fieldLabel: 'Summary<span class="field-required" />',
-                    width: '100%',
-                    maxLength: 50,
-                    allowBlank: false
-                },
-                {
-                    xtype: 'textarea',
-                    name: 'description',
-                    fieldLabel: 'Description<span class="field-required" />',
-                    width: '100%',
-                    height: 200,
-                    maxLength: 255,
-                    allowBlank: false
-                }
-                
-            ]
+		var feedbackWin = this;
+		//
+		// Selection Combobox feedbackTypes items
+		//
+		var feedbackTypes = Ext.create('Ext.data.Store', {
+			fields: ['name'],
+			data: [
+				{"name": "Help"},
+				{"name": "Improvement"},
+				{"name": "New Feature"},
+				{"name": "Report Issue"}
+			]
+		});
+
+		//
+		//  Feedback Panel
+		//  This is the panel tab for the topic search tool
+		//
+
+		var formPanel = Ext.create('Ext.form.Panel', {
+			layout: 'vbox',
+			scrollable: true,
+			bodyStyle: 'padding: 10px;',
+			defaults: {
+				labelAlign: 'top'
+			},
+			dockedItems: [
+				{
+					dock: 'bottom',
+					xtype: 'toolbar',
+					items: [
+						{
+							text: 'Send',
+							formBind: true,
+							iconCls: 'fa fa-save',
+							handler: function () {
+								var feedbackForm = this.up('form');
+								var method = 'POST';
+								var url = '/openstorefront/api/v1/service/jira/submitticket';
+								var data = feedbackForm.getValues();
+								data.webInformation = {
+									location: window.location.href,
+									userAgent: navigator.userAgent,
+									referrer: document.referrer,
+									screenResolution: window.screen.availWidth + 'x' + window.screen.availHeight
+								};
+
+								//submit ticket
+								CoreUtil.submitForm({
+									loadingText: 'Submitting Feedback...',
+									url: url,
+									method: method,
+									data: data,
+									removeBlankDataItems: true,
+									form: feedbackForm,
+									success: function (response, opts) {
+										Ext.toast('Sent Feedback Successfully', 'Thanks', 'br');
+										feedbackForm.setLoading(false);
+										feedbackForm.reset();										
+										feedbackWin.close();
+									}
+								});
+							}
+						},
+						{
+							xtype: 'tbfill'
+						},
+						{
+							text: 'Cancel',
+							iconCls: 'fa fa-close',
+							handler: function () {
+								feedbackWin.close();
+							}
+						}
+					]
+				}
+			],
+			items: [
+				{
+					xtype: 'combobox',
+					name: 'ticketType',
+					fieldLabel: 'Choose Type<span class="field-required" />',
+					width: '100%',
+					maxLength: 50,
+					store: feedbackTypes,
+					value: 'Help',
+					displayField: 'name',
+					valueField: 'name',
+					editable: false
+				},
+				{
+					xtype: 'textfield',
+					name: 'summary',
+					fieldLabel: 'Summary<span class="field-required" />',
+					width: '100%',
+					maxLength: 50,
+					allowBlank: false
+				},
+				{
+					xtype: 'textarea',
+					name: 'description',
+					fieldLabel: 'Description<span class="field-required" />',
+					width: '100%',
+					height: 200,
+					maxLength: 255,
+					allowBlank: false
+				},
+				{
+					xtype: 'fieldset',
+					title: 'Contact Information',					
+					collapsible: true,
+					padding: 10,
+					width: '100%',
+					items: [
+						{
+							xtype: 'displayfield',
+							name: 'firstName',
+							fieldLabel: 'First Name',
+							width: '100%'
+						},
+						{
+							xtype: 'displayfield',
+							name: 'lastName',
+							fieldLabel: 'Last Name',
+							width: '100%'
+						},
+						{
+							xtype: 'displayfield',
+							name: 'email',
+							fieldLabel: 'Email',
+							width: '100%'
+						},
+						{
+							xtype: 'displayfield',
+							name: 'phone',
+							fieldLabel: 'Phone',
+							width: '100%'
+						},
+						{
+							xtype: 'displayfield',
+							name: 'organization',
+							fieldLabel: 'Organization',
+							width: '100%'
+						},
+						{
+							xtype: 'button',
+							text: 'Update Profile',
+							handler: function () {
+								var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
+									closeMethod: 'destroy',
+									saveCallback: function (response, opts) {
+										CoreService.usersevice.getCurrentUser().then(function (response) {
+											var usercontext = Ext.decode(response.responseText);
+											formPanel.getForm().setValues(usercontext);
+										});
+									}
+								}).show();
+							}
+						}
+					]
+				}
+			]
+		});
 
 
-        });
-        
-        feedbackWin.add(formPanel);
-    }
+
+		feedbackWin.add(formPanel);
+		
+		
+		feedbackWin.resetForm = function(fbWin, opts){
+			formPanel.reset();
+			CoreService.usersevice.getCurrentUser().then(function (response) {
+				var usercontext = Ext.decode(response.responseText);
+				formPanel.getForm().setValues(usercontext);
+			});			
+		};
+		
+		feedbackWin.on('show', feedbackWin.resetForm);
+	}
 });
 

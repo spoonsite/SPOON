@@ -370,7 +370,7 @@ public class JaxrsProcessor
 						typeModel.setDescription(aPIDescription.value());
 					}
 
-					Set<String> fieldList = mapValueField(typeModel.getFields(), fieldClass.getDeclaredFields(), onlyConsumeField);
+					Set<String> fieldList = mapValueField(typeModel.getFields(), ReflectionUtil.getAllFields(fieldClass).toArray(new Field[0]), onlyConsumeField);
 					if (fieldClass.isEnum()) {
 						typeModel.setObject(Arrays.toString(fieldClass.getEnumConstants()));
 					} else {
@@ -387,7 +387,7 @@ public class JaxrsProcessor
 								log.log(Level.WARNING, "Unable to process/map complex field: " + fieldClass.getSimpleName(), ex);
 								typeModel.setObject("{ Unable to view }");
 							}
-							mapComplexTypes(typeModels, fieldClass.getDeclaredFields(), onlyConsumeField);
+							mapComplexTypes(typeModels, ReflectionUtil.getAllFields(fieldClass).toArray(new Field[0]), onlyConsumeField);
 						}
 					}
 					typeModels.add(typeModel);

@@ -59,6 +59,10 @@ and open the template in the editor.
 	content: "*"
 }
 
+.field-label-basic {
+	font-weight: bold;
+}
+
 .popup-message {
 	color:  white;
 	opacity: .7;

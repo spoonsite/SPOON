@@ -2,7 +2,9 @@
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
           <stripes:layout-component name="contents">
-
+			  
+		<script src="scripts/component/importWindow.js" type="text/javascript"></script>
+			  
 		<form name="exportForm" action="../api/v1/resource/components/export" method="POST" >
 			<p style="display: none;" id="exportFormIds">
 			</p>      
@@ -13,6 +15,12 @@
 			Ext.onReady(function(){	
 				
 			//Add/Edit forms ------>	
+				
+				//External Windows
+				var importWindow = Ext.create('OSF.component.ImportWindow', {					
+				});
+				
+			
 			
 				//common stores
 				var statusFilterStore = Ext.create('Ext.data.Store', {
@@ -47,7 +55,7 @@
 						urlEnding = '/force';
 					}
 					
-					grid.setLoading('Updating status....');
+					grid.setLoading('Updating status...');
 					Ext.Ajax.request({
 						url: '../api/v1/resource/components/' + componentId + '/' + entity + '/' + recordId + subEntity + subEntityId + urlEnding,
 						method: method,
@@ -1742,6 +1750,7 @@
 									width: '100%',
 									fieldLabel: 'Organization <span class="field-required" />',
 									forceSelection: false,
+									valueField: 'description',
 									storeConfig: {
 										url: '../api/v1/resource/organizations/lookup'
 									}
@@ -2225,6 +2234,11 @@
 								Ext.getCmp('attributeGrid').getStore().loadData(optionalAttributes);
 							}
 						});
+					} else {
+						var requiredStore = Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore();
+						requiredStore.each(function(record) {
+							record.set('attributeCode', null, { dirty: false} );
+						});
 					}
 				};
 				
@@ -2262,6 +2276,7 @@
 					loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
 				};
 			
+							
 				var generalForm = Ext.create('Ext.form.Panel', {
 					id: 'generalForm',
 					title: 'General',
@@ -2308,10 +2323,12 @@
 										var componentId = '';
 										var method = 'POST';
 										var update = '';
+										var edit = false;
 										if (Ext.getCmp('generalForm').componentRecord){
 											componentId = Ext.getCmp('generalForm').componentRecord.get('componentId');											
 											update = '/' + componentId;
 											method = 'PUT';
+											edit = true;
 										}												
 
 										var requireComponent = {
@@ -2322,24 +2339,70 @@
 										Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore().each(function(record){
 											requireComponent.attributes.push({
 												componentAttributePk: {
-													attributeType: record.attributeType,
-													attributeCode: record.attributeCode
+													attributeType: record.get('attributeType'),
+													attributeCode: record.get('attributeCode')
 												}
 											});
 										});
+										
+										if (!data.description) {
+											form.getForm().markInvalid({
+												description: 'Required'
+											});
+										} else {
+											//make sure required 
+											var validAttributes=true;
+											Ext.Array.each(requireComponent.attributes, function(attribute){
+												if (!attribute.componentAttributePk.attributeCode){
+													validAttributes = false;
+												}
+											});
 
-										CoreUtil.submitForm({
-											url: '../api/v1/resource/components' + update,
-											method: method,
-											data: requireComponent,
-											form: form,
-											success: function(response, opt){
-												var data = Ext.decode(response.responseText);
-												var record = Ext.getCmp('componentGrid').getStore().add(data);
-	    										     actionAddEditComponent(record);
-												
+											if (!validAttributes) {
+												Ext.Msg.show({
+													title:'Validation Check',
+													message: 'Missing Required Attributes; Check input.',
+													buttons: Ext.Msg.OK,
+													icon: Ext.Msg.ERROR,
+													fn: function(btn) {													 
+													}
+												});
+
+											} else {	
+												CoreUtil.removeBlankDataItem(requireComponent.component);												
+												CoreUtil.submitForm({
+													url: '../api/v1/resource/components' + update,
+													method: method,
+													data: requireComponent,
+													removeBlankDataItems: true,
+													form: form,
+													success: function(response, opt){
+														Ext.toast('Successfully Saved Record');
+														var data = Ext.decode(response.responseText);														
+														
+														var componentView = {};
+														componentView.component = data.component;
+														
+														var record;
+														if (!edit) {
+															var record = Ext.getCmp('componentGrid').getStore().add(componentView.component);
+															record = record[0];
+															Ext.getCmp('componentGrid').getStore().reload();
+														} else {
+															Ext.Object.each(componentView.component, function(key, value, myself) {
+																Ext.getCmp('generalForm').componentRecord.set(key, value, { dirty: false}); 
+															});	
+															record = Ext.getCmp('generalForm').componentRecord;
+														}
+														actionAddEditComponent(record);																																									
+														
+													},
+													failure: function(response, opt){
+
+													}
+												});
 											}
-										});
+										}
 									}
 								},
 								{
@@ -2457,8 +2520,9 @@
 								width: '100%'
 							},
 							items: [
-								Ext.create('OSF.component.StandardComboBox', {														
-									fieldLabel: 'Entry Type',
+								Ext.create('OSF.component.StandardComboBox', {
+									id: 'componentTypeMainCB',
+									fieldLabel: 'Entry Type <span class="field-required" />',
 									name: 'componentType',
 									allowBlank: false,								
 									margin: '0 0 0 0',
@@ -2484,7 +2548,7 @@
 								},
 								{
 									xtype: 'panel',
-									html: 'Description <span class="field-required" />'
+									html: '<b>Description</b> <span class="field-required" />'
 								},
 								//{
 								//	xtype: 'htmleditor',
@@ -2495,11 +2559,36 @@
 								//	name: 'description'
 								//},
 								Ext.create('OSF.component.CKEditorField', {																
-									allowBlank: false,
+									//allowBlank: false,
 									name: 'description',
 									height: 300,
 									maxLength: 32000	
 								}),
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'organization',									
+									allowBlank: false,									
+									margin: '0 0 0 0',
+									width: '100%',
+									fieldLabel: 'Organization <span class="field-required" />',
+									forceSelection: false,
+									valueField: 'description',
+									editable: true,
+									storeConfig: {
+										url: '../api/v1/resource/organizations/lookup'
+									}
+								}),
+								Ext.create('OSF.component.StandardComboBox', {														
+									fieldLabel: 'Approval Status <span class="field-required" />',
+									name: 'approvalState',
+									allowBlank: false,								
+									margin: '0 0 0 0',
+									width: '100%',
+									editable: false,
+									typeAhead: false,										
+									storeConfig: {
+										url: '../api/v1/resource/lookuptypes/ApprovalStatus'																				
+									}
+								}),								
 								{
 									xtype: 'datefield',
 									fieldLabel: 'Release Date',
@@ -2555,7 +2644,8 @@
 										forceSelection: true,	
 										queryMode: 'local',
 										editable: false,
-										typeAhead: false,										
+										typeAhead: false,	
+										emptyText: 'Select',
 										allowBlank: false,
 										valueField: 'code',
 										displayField: 'label',																				
@@ -2569,11 +2659,13 @@
 														"label"
 													],
 													data: record.data.codes
-												}));
+												}));												
 											},
 											change: function(field, newValue, oldValue, opts) {
-												var record = field.getWidgetRecord();
-												record.set('attributeCode', newValue);												
+												var record = field.getWidgetRecord();	
+												if (record) {
+													record.set('attributeCode', newValue);																								
+												}
 											}
 										}
 									}									
@@ -3041,6 +3133,9 @@
 						{name: 'componentType', mapping: function(data){
 							return data.component.componentType;
 						}},
+						{name: 'organization', mapping: function(data){
+							return data.component.organization;
+						}},					
 						{name: 'createDts', mapping: function(data){
 							return data.component.createDts;
 						}},
@@ -3433,7 +3528,7 @@
 									iconCls: 'fa fa-2x fa-upload',
 									scale: 'medium',
 									handler: function () {
-										
+										importWindow.show();
 									}
 								}
 							]
@@ -3520,6 +3615,7 @@
 				var actionAddEditComponent = function(record) {
 					mainAddEditWin.show();		
 					
+					Ext.getCmp('componentTypeMainCB').suspendEvent('change');
 						
 					generalForm.reset();
 					generalForm.componentRecord = record;
@@ -3529,10 +3625,17 @@
 						mainAddEditWin.setTitle('Entry Form: ' + record.get('name'));
 						checkFormTabs(record);
 						generalForm.loadRecord(record);
+						handleAttributes(record.get('componentType'));
 					} else {								
 						mainAddEditWin.setTitle('Entry Form:  NEW ENTRY');						
 						hideSubComponentTabs();
+						var requiredStore = Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore();
+						requiredStore.removeAll();
+												
+						Ext.getCmp('componentGrid').getSelectionModel().deselectAll(); 
+						
 					}
+					Ext.getCmp('componentTypeMainCB').resumeEvent('change');
 				};
 				
 				var hideSubComponentTabs = function(){

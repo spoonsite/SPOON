@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportDataId;
 import java.util.ArrayList;
@@ -27,7 +29,11 @@ import java.util.List;
 public class ReportGenerateView
 {
 
+	@ConsumeField
 	private Report report;
+
+	@ConsumeField
+	@DataType(ReportDataId.class)
 	private List<ReportDataId> reportDataId = new ArrayList<>();
 
 	public ReportGenerateView()
