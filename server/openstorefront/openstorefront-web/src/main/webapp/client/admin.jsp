@@ -63,12 +63,13 @@
 			pageMap['Tags'] = '/openstorefront/admin?tool=Tags';
 			pageMap['UserProfiles'] = '/openstorefront/admin?tool=User%20Profiles';
 			pageMap['Alerts'] = '/openstorefront/admin?tool=Alerts';
-			pageMap['Branding'] = '/openstorefront/admin?tool=Branding';
+			pageMap['Branding'] = 'Router.action?page=admin/application/branding.jsp';
 			pageMap['Jobs'] = '/openstorefront/admin?tool=Jobs';
-			pageMap['Reports'] = '/openstorefront/admin?tool=Reports';
+			pageMap['Reports'] = 'Router.action?page=admin/application/reports.jsp';
+            //pageMap['Reports'] = '/openstorefront/admin?tool=Reports';
 			pageMap['System'] = '/openstorefront/admin?tool=System';
-			pageMap['Tracking'] = '/openstorefront/admin?tool=Tracking';
-			pageMap['Messages'] = '/openstorefront/admin?tool=Messages';
+			pageMap['Tracking'] = 'Router.action?page=admin/application/tracking.jsp';
+			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
 			
 
 			//Data Menu
