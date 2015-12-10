@@ -21,17 +21,21 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.view.FileHistoryView;
 import edu.usu.sdl.openstorefront.core.view.FileHistoryViewWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -106,5 +110,33 @@ public class FileHistoryResource
 	//TODO: get errors
 	//TODO: get rollback effect (Check what the rollback would do)
 	//TODO: rollback (Option to restore record; override or sync)
-	//TODO: formats for file type
+	@GET
+	@APIDescription("Gets file format for a type")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(FileFormat.class)
+	@Path("filetypes/{type}/formats")
+	public List<FileFormat> getFileTypesForFormat(
+			@PathParam("type") String type
+	)
+	{
+		List<FileFormat> formats = service.getImportService().findFileFormats(type);
+		return formats;
+	}
+
+	@GET
+	@APIDescription("Gets data mappings for a format.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("filetypes/{type}/formats/{format}/mappings")
+	public List<LookupModel> getFileTypesForFormat(
+			@PathParam("type") String type,
+			@PathParam("format") String format
+	)
+	{
+		List<LookupModel> mappings = new ArrayList<>();
+
+		//implement mappings
+		return mappings;
+	}
+
 }
