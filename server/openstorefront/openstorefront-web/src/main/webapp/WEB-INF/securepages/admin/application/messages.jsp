@@ -604,51 +604,7 @@
                     }
                 });
                 
-                var messagePanel = Ext.create('Ext.panel.Panel', {
-                    title: 'User Messages',
-                    iconCls: 'fa fa-user',
-                    layout: 'fit',
-                    items: [
-                             userMessageGrid
-                           ]
-                });
                 
-                var notificationsPanel = Ext.create('Ext.panel.Panel', {
-                    title: 'Event Notifications',
-                    iconCls: 'fa fa-bell-o',
-                    layout: 'fit',
-                    items: [
-                             notificationsGrid
-                           ]
-                });
-                
-                
-                var msgTabPanel = Ext.create('Ext.tab.Panel', {
-                    title:'Manage Messages <i class="fa fa-question-circle"  data-qtip="User messages are queued messages from users. The primary usage for messages is from watches. This tool allows for viewing of queued messages as well as viewing of archived messages. Event Notifications are messages sent internally to user to notify them of event in the application." ></i>',
-                    layout: 'fit',
-                    items: [
-                        messagePanel,
-                        notificationsPanel
-                    ],
-                    listeners: {
-                        tabchange: function(tabPanel, newTab, oldTab, index){
-                            
-                            if(newTab.title === 'User Messages'){
-                               mRefreshGrid(); 
-                            }
-                            else if(newTab.title === 'Event Notifications'){
-                               nRefresh();
-                            }
-                        }
-                    }
-                });
-                
-                Ext.create('Ext.container.Viewport', {
-                    layout: 'fit',
-                    items: [
-                        msgTabPanel
-                    ]
-                });
                 
                 //
                 //   NOTIFICATION FUNCTIONS
@@ -844,7 +800,51 @@
                             
                 };
                 
+                var messagePanel = Ext.create('Ext.panel.Panel', {
+                    title: 'User Messages',
+                    iconCls: 'fa fa-user',
+                    layout: 'fit',
+                    items: [
+                             userMessageGrid
+                           ]
+                });
                 
+                var notificationsPanel = Ext.create('Ext.panel.Panel', {
+                    title: 'Event Notifications',
+                    iconCls: 'fa fa-bell-o',
+                    layout: 'fit',
+                    items: [
+                             notificationsGrid
+                           ]
+                });
+                
+                
+                var msgTabPanel = Ext.create('Ext.tab.Panel', {
+                    title:'Manage Messages <i class="fa fa-question-circle"  data-qtip="User messages are queued messages from users. The primary usage for messages is from watches. This tool allows for viewing of queued messages as well as viewing of archived messages. Event Notifications are messages sent internally to user to notify them of event in the application." ></i>',
+                    layout: 'fit',
+                    items: [
+                        messagePanel,
+                        notificationsPanel
+                    ],
+                    listeners: {
+                        tabchange: function(tabPanel, newTab, oldTab, index){
+                            
+                            if(newTab.title === 'User Messages'){
+                               mRefreshGrid(); 
+                            }
+                            else if(newTab.title === 'Event Notifications'){
+                               nRefresh();
+                            }
+                        }
+                    }
+                });
+                
+                Ext.create('Ext.container.Viewport', {
+                    layout: 'fit',
+                    items: [
+                        msgTabPanel
+                    ]
+                });
         });
 
         </script>

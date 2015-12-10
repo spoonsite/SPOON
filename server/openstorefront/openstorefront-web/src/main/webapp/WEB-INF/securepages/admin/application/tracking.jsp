@@ -7,30 +7,7 @@
             /* global Ext, CoreUtil */
             
             Ext.onReady(function () {
-                var downloadFile = function(filename, csvContent ){
-                    
-                    var charset = "utf-8";
-                    var blob = new Blob([csvContent], {
-                         type: "text/csv;charset="+ charset + ";"
-                    });
-                    if (window.navigator.msSaveOrOpenBlob) {
-                        //console.log("Save Blob");
-                         window.navigator.msSaveBlob(blob, filename);
-                    } else {
-                        //console.log("Create Link");
-                        var link = document.createElement("a");
-                        if (link.download !== undefined) { // feature detection
-                            // Browsers that support HTML5 download attribute
-                            var url = URL.createObjectURL(blob);
-                            link.setAttribute("href", url);
-                            link.setAttribute("download", filename);
-                            link.style.visibility = 'hidden';
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                        } 
-                    }
-                };
+                
                 
                 //
                 //  User Tracking Tab-------------->
@@ -279,7 +256,7 @@
                     ],
                     listeners: {
                         itemdblclick: function (grid, record, item, index, e, opts) {
-                            console.log("Double Clicked Row:"+index);
+                            //console.log("Double Clicked Row:"+index);
                             userViewMessage();
                         },
                         selectionchange: function (grid, record, index, opts) {
@@ -351,7 +328,7 @@
                 var  userViewMessage = function (whichone){
                     
                     var selectedObj = Ext.getCmp('userTrackingGrid').getSelection()[0].data;
-                    console.log("Selected Obj",selectedObj);
+                    //console.log("Selected Obj",selectedObj);
                     
                     Ext.create('Ext.window.Window', {
                         title: 'View Record Information',
@@ -377,7 +354,7 @@
                         method: 'GET',
                         success: function (response, opts) {
                             
-                            downloadFile('userTracking.csv', response.responseText );
+                            CoreUtil.downloadCSVFile('userTracking.csv', response.responseText );
                         }
                     });
                 };
@@ -414,7 +391,7 @@
                                         
                                     }},
                                 {name: 'name', mapping: function (data) {
-                                        console.log("Entry Data:", data);
+                                       // console.log("Entry Data:", data);
                                         return data.name;
                                         
                                     }},
@@ -633,7 +610,7 @@
                         method: 'GET',
                         success: function (response, opts) {
                             
-                            downloadFile('entryTracking.csv', response.responseText );
+                            CoreUtil.downloadCSVFile('entryTracking.csv', response.responseText );
                         }
                     });
                 };
@@ -668,7 +645,7 @@
                                         
                                     }},
                                 {name: 'name', mapping: function (data) {
-                                        console.log("Entry Data:", data);
+                                        //console.log("Entry Data:", data);
                                         return data.article.title;
                                         
                                     }},
@@ -864,7 +841,7 @@
                     ],
                     listeners: {
                         itemdblclick: function (grid, record, item, index, e, opts) {
-                            console.log("Double Clicked Row:"+index);
+                            //console.log("Double Clicked Row:"+index);
                         },
                         selectionchange: function (grid, record, index, opts) {
                            //articleCheckNavButtons(); 
@@ -901,7 +878,7 @@
                         method: 'GET',
                         success: function (response, opts) {
                             
-                            downloadFile('articleTracking.csv', response.responseText );
+                            CoreUtil.downloadCSVFile('articleTracking.csv', response.responseText );
                         }
                     });
                 };
