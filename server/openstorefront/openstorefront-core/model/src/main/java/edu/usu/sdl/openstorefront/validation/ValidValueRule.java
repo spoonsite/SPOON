@@ -52,7 +52,8 @@ public class ValidValueRule
 					Service serviceProxy = ServiceProxyFactory.getServiceProxy();
 					if (validValueType.lookupClass().length > 0) {
 						for (Class lookupClass : validValueType.lookupClass()) {
-							List<LookupEntity> lookups = serviceProxy.getLookupService().findLookup(lookupClass);
+							//get all records / active inactive
+							List<LookupEntity> lookups = serviceProxy.getLookupService().findLookup(lookupClass, null);
 							lookups.forEach(item -> {
 								validValueSet.add(item.getCode());
 							});

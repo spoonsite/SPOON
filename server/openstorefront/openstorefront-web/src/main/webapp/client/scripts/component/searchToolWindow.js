@@ -153,7 +153,7 @@ Ext.define('OSF.component.SearchToolWindow', {
                 "searchElements": [{
                         "searchType": "COMPONENT",
                         "field": "componentType",
-                        "value": item.type,
+                        "value": item.componentType,
                         "keyField": null,
                         "keyValue": null,
                         "startDate": null,
