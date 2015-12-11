@@ -246,7 +246,7 @@
 									}
 								},
 								{
-									xtype: 'tbseparator',
+									xtype: 'tbseparator'
 								},
 								{
 									xtype: 'button',
@@ -289,7 +289,7 @@
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());
-											}					
+											}
 										}
 									}
 								}
