@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
@@ -49,6 +50,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -291,6 +293,33 @@ public class ImportServiceImpl
 			log.log(Level.WARNING, "File history doesn't exist unable to rollback.");
 		}
 
+	}
+
+	@Override
+	public Map<String, List<FileHistoryError>> fileHistoryErrorMap()
+	{
+		Map<String, List<FileHistoryError>> errorMap = new HashMap<>();
+
+		String query = "select fileHistoryId, fileHistoryErrorType from " + FileHistoryError.class.getSimpleName();
+
+		List<ODocument> results = persistenceService.query(query, new HashMap<>());
+		for (ODocument result : results) {
+			String fileHistoryId = result.field("fileHistoryId");
+			String fileHistoryErrorType = result.field("fileHistoryErrorType");
+			FileHistoryError error = new FileHistoryError();
+			error.setFileHistoryId(fileHistoryId);
+			error.setFileHistoryErrorType(fileHistoryErrorType);
+
+			if (errorMap.containsKey(fileHistoryId)) {
+				errorMap.get(fileHistoryId).add(error);
+			} else {
+				List<FileHistoryError> fileHistoryErrors = new ArrayList<>();
+				fileHistoryErrors.add(error);
+				errorMap.put(fileHistoryId, fileHistoryErrors);
+			}
+		}
+
+		return errorMap;
 	}
 
 }

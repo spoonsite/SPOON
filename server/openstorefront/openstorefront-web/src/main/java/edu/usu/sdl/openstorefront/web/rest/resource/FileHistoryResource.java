@@ -23,6 +23,8 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.view.FileHistoryView;
 import edu.usu.sdl.openstorefront.core.view.FileHistoryViewWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -32,6 +34,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -104,10 +107,34 @@ public class FileHistoryResource
 		fileHistoryViewWrapper.getData().addAll(FileHistoryView.toView(fileHistories));
 		fileHistoryViewWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
+		//gather warnings and errors
+		Map<String, List<FileHistoryError>> errorMap = service.getImportService().fileHistoryErrorMap();
+		fileHistoryViewWrapper.getData().forEach(record -> {
+			List<FileHistoryError> errors = errorMap.get(record.getFileHistoryId());
+			if (errors != null) {
+				long warningCount = errors.stream().filter(error -> error.getFileHistoryErrorType().equals(FileHistoryErrorType.WARNING)).count();
+				record.setWarningsCount(warningCount);
+				record.setErrorsCount(errors.size() - warningCount);
+			}
+		});
+
 		return sendSingleEntityResponse(fileHistoryViewWrapper);
 	}
 
-	//TODO: get errors
+	@GET
+	@APIDescription("Gets file format for a type")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(FileHistoryError.class)
+	@Path("{fileHistoryId}/errors")
+	public List<FileHistoryError> getErrors(
+			@PathParam("fileHistoryId") String fileHistoryId
+	)
+	{
+		FileHistoryError fileHistoryError = new FileHistoryError();
+		fileHistoryError.setFileHistoryId(fileHistoryId);
+		return fileHistoryError.findByExample();
+	}
+
 	//TODO: get rollback effect (Check what the rollback would do)
 	//TODO: rollback (Option to restore record; override or sync)
 	@GET

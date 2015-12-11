@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author dshurtleff
  */
-@APIDescription("Hold error information for file history")
+@APIDescription("Holds error information for file history")
 public class FileHistoryError
 		extends StandardEntity<FileHistoryError>
 {

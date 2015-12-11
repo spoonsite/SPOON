@@ -3387,7 +3387,7 @@
 									emptyText: 'All',
 									fieldLabel: 'Entry Type',
 									name: 'componentType',
-									valueField: 'type',
+									valueField: 'componentType',
 									displayField: 'label',									
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
@@ -3398,7 +3398,7 @@
 										url: '../api/v1/resource/componenttypes',
 										model: undefined,										
 										fields: [
-											'type',
+											'componentType',
 											'label'
 										],
 										addRecords: [
