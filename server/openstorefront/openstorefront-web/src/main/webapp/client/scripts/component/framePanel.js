@@ -116,16 +116,18 @@ Ext.define('OSF.ux.IFrame', {
                 // the event reaches listeners on elements like the document body. The effected
                 // mechanisms that depend on this bubbling behavior are listed to the right
                 // of the event.
-                Ext.get(doc).on(
-                    me._docListeners = {
-                        mousedown: fn, // menu dismisal (MenuManager) and Window onMouseDown (toFront)
-                        mousemove: fn, // window resize drag detection
-                        mouseup: fn,   // window resize termination
-                        click: fn,     // not sure, but just to be safe
-                        dblclick: fn,  // not sure again
-                        scope: me
-                    }
-                );
+				if (!Ext.isGecko) {
+					Ext.get(doc).on(
+							me._docListeners = {
+								mousedown: fn, // menu dismisal (MenuManager) and Window onMouseDown (toFront)
+								mousemove: fn, // window resize drag detection
+								mouseup: fn, // window resize termination
+								click: fn, // not sure, but just to be safe
+								dblclick: fn, // not sure again
+								scope: me
+							}
+					);
+				}
             } catch(e) {
                 // cannot do this xss
             }
