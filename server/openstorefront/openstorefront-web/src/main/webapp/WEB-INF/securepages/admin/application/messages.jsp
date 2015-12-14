@@ -94,9 +94,9 @@
                     store: userMessageGridStore,
                     columnLines: true,
                     bodyCls: 'border_accent',
-                    selModel: {
-                        selType: 'checkboxmodel'
-                    },
+//                    selModel: {
+//                        selType: 'checkboxmodel'
+//                    },
                     plugins: 'gridfilters',
                     enableLocking: true,
                     columns: [
@@ -155,9 +155,9 @@
                             items: [
                                   Ext.create('OSF.component.StandardComboBox', {
                                             id: 'userMessageFilter-ActiveStatus',
-                                            emptyText: 'All',
                                             fieldLabel: 'Active Status',
-                                            name: 'activeStatus',	
+                                            name: 'activeStatus',
+                                            value:'A',
                                             listeners: {
                                                 change: function(filter, newValue, oldValue, opts){
                                                     mRefreshGrid();
@@ -177,10 +177,6 @@
 												{
 													code: 'I',
 													description: 'Inactive'
-												},
-												{
-													code: 'All',
-													description: 'All'
 												}
 											]
 										}
@@ -190,6 +186,8 @@
                        {
                                     dock: 'top',
 							        xtype: 'toolbar',
+                                    flex:1,
+                                    width:'100%',
 							        items: [
                                     {
                                         text: 'Refresh',
@@ -226,11 +224,15 @@
                                         tooltip: 'Delete a message'
                                     },
                                     {
+                                        xtype:'tbfill'
+                                        
+                                    },
+                                    {
                                         text: 'Process Messages Now',
                                         scale: 'medium',
                                         id: 'mProcessNowButton',
                                         iconCls: 'fa fa-2x fa-bolt',
-                                        disabled: true,
+                                        disabled: false,
                                         handler: function () {
                                           mProcessMessagesNow();
                                         },
@@ -242,15 +244,12 @@
                                         id: 'mCleanUpNowButton',
                                         scale: 'medium',
                                         iconCls: 'fa fa-2x fa-eraser',
-                                        disabled: true,
+                                        disabled: false,
                                         handler: function () {
                                            mCleanupOldMessagesNow();         
                                         },
                                         tooltip:'Removes old archive data now. Default is 28 days.'
 
-                                    },
-                                    {
-                                        xtype: 'tbfill'
                                     }
                                 ]
                         },
@@ -314,7 +313,7 @@
                      Ext.getCmp('userMessageGrid').getStore().load({
 						params: {
 							status: Ext.getCmp('userMessageFilter-ActiveStatus').getValue() ? Ext.getCmp('userMessageFilter-ActiveStatus').getValue() : '',
-						    all: (Ext.getCmp('userMessageFilter-ActiveStatus').getValue() === 'All')
+						    
                              
                         }
 					});
@@ -430,45 +429,23 @@
                 var notificationsGridStore = Ext.create('Ext.data.Store', {
                     id: 'notificationsGridStore',
                     autoLoad: false,
-                    pageSize: 300,
+                    pageSize: 100,
                     remoteSort: true,
                     sorters: [
                                 new Ext.util.Sorter({
-                                     property: 'name',
+                                     property: 'updateDts',
                                      direction: 'DESC'
                                 })
                             ],
-                    fields: [
-                                {name: 'name', mapping: function (data) {
-                                        return data.name;
-                                    }},
-                                {name: 'applicationName', mapping: function (data) {
-                                        return data.applicationName;
-                                    }},
-                                {name: 'description', mapping: function (data) {
-                                        return data.description;
-                                    }},
-                                {name: 'activeStatus', mapping: function (data) {
-                                        return data.activeStatus;
-                                    }},
-                                {name: 'landingPageTitle', mapping: function (data) {
-                                        return data.landingPageTitle;
-                                    }},
-                                {name: 'Update Date', mapping: function (data) {
-                                        return data.updateDts;
-                                    }},
-                                {name: 'Update User', mapping: function (data) {
-                                        return data.updateUser;
-                                    }},
-                                {name: 'CreateDate', mapping: function (data) {
-                                        return data.createDts;
-                                    }},
-                                {name: 'Create User', mapping: function (data) {
-                                        return data.createUser;
-                                    }}
-                            ],
+//                    fields: [
+//                                {name: 'username', mapping: function (data) {
+//                                        console.log("Data:",data);
+//                                        return data.username;
+//                                    }}
+//                              
+//                            ],
                     proxy: CoreUtil.pagingProxy({
-                                url: '../api/v1/resource/notificationevent',
+                                url: '../api/v1/resource/notificationevent/all',
                                 method: 'GET',
                                 reader: {
                                     type: 'json',
@@ -484,71 +461,71 @@
                     store: notificationsGridStore,
                     columnLines: true,
                     bodyCls: 'border_accent',
-                    selModel: {
-                        selType: 'checkboxmodel'
-                    },
+//                    selModel: {
+//                        selType: 'checkboxmodel'
+//                    },
                     plugins: 'gridfilters',
                     enableLocking: true,
                     columns: [
-                        {text: 'Username', dataIndex: 'username', width: 150,  lockable: true,
-                            filter: {
-                                type: 'string'
+                        {text: 'Target User', dataIndex: 'username', width: 150,  lockable: true,
+                            renderer: function(val, meta, record, rowIndex) {
+                                console.log("Val",val);
+                                if(typeof val === "undefined"){
+                                    return 'All';
+                                }
+                                else
+                                {
+                                    return val;
+                                }
                             }
                         },
                         {text: 'Message', dataIndex: 'message', width: 200, flex:1},
                         {text: 'Status', dataIndex: 'activeStatus', width: 75},
                         {text: 'Event Type', dataIndex: 'eventTypeDescription', width: 150,
-                            filter: {
-                                type: 'string'
-                            }
+                           
                         },
                         {text: 'Entity', dataIndex: 'entityName', width: 150,
-                            filter: {
-                                type: 'string'
-                            }
+                            hidden:true
                         },
                         {text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
                         
                     ],
                     dockedItems: [
-                        {
-                            dock: 'top',
-                            xtype: 'toolbar',
-                            items: [
-                                  Ext.create('OSF.component.StandardComboBox', {
-                                            id: 'notificationsFilter-ActiveStatus',
-                                            emptyText: 'All',
-                                            fieldLabel: 'Active Status',
-                                            name: 'activeStatus',	
-                                            listeners: {
-                                                change: function(filter, newValue, oldValue, opts){
-                                                    nRefresh();
-                                                }
-                                            },
-                                            storeConfig: {
-										customStore: {
-											fields: [
-												'code',
-												'description'
-											],
-											data: [												
-												{
-													code: 'A',
-													description: 'Active'
-												},
-												{
-													code: 'I',
-													description: 'Inactive'
-												},
-												{
-													code: 'All',
-													description: 'All'
-												}
-											]
-										}
-									}
-                            })]
-                        },
+//                        {
+//                            dock: 'top',
+//                            xtype: 'toolbar',
+//                            items: [
+//                                  Ext.create('OSF.component.StandardComboBox', {
+//                                            id: 'notificationsFilter-ActiveStatus',
+//                                            fieldLabel: 'Active Status',
+//                                            name: 'activeStatus',
+//                                            value:'A',
+//                                            listeners: {
+//                                                change: function(filter, newValue, oldValue, opts){
+//                                                    nRefresh();
+//                                                }
+//                                            },
+//                                            storeConfig: {
+//										customStore: {
+//											fields: [
+//												'code',
+//												'description'
+//											],
+//											data: [												
+//												{
+//													code: 'A',
+//													description: 'Active'
+//												},
+//												{
+//													code: 'I',
+//													description: 'Inactive'
+//                                                }
+//								
+//											]
+//										}
+//									}
+//                            })]
+//                        },
                         {
                             dock: 'top',
                             xtype: 'toolbar',
@@ -633,9 +610,8 @@
                      Ext.getCmp('notificationsGrid').getStore().load({
                          
                         params: {
-							status: Ext.getCmp('notificationsFilter-ActiveStatus').getValue() ? Ext.getCmp('notificationsFilter-ActiveStatus').getValue() : 'ALL',
-						    all: (Ext.getCmp('notificationsFilter-ActiveStatus').getValue() === 'All')
-                             
+							//status: Ext.getCmp('notificationsFilter-ActiveStatus').getValue() ? Ext.getCmp('notificationsFilter-ActiveStatus').getValue() : ''
+                            status:'A'
                         } 
                      });
                 };

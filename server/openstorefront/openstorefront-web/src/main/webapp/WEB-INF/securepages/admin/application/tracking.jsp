@@ -23,8 +23,7 @@
                     remoteSort: true,
                     sorters: [
                                 new Ext.util.Sorter({
-                                     id: 'userSorter',
-                                     property: 'createUser',
+                                     property: 'eventDts',
                                      direction: 'DESC'
                                 })
                             ],
@@ -125,85 +124,58 @@
                     store: userTrackingGridStore,
                     columnLines: true,
                     bodyCls: 'border_accent',
-                    selModel: {
-                        selType: 'checkboxmodel'
-                    },
+//                    selModel: {
+//                        selType: 'checkboxmodel'
+//                    },
                     plugins: 'gridfilters',
                     enableLocking: true,
                     columns: [
-                        {text: 'Name', dataIndex: 'createUser', width: 125, flex:1, lockable: true,
-                            filter: {
-                                type: 'string'
-                            }
-                        },
-                        {text: 'Organization', dataIndex: 'organization', width: 250,
-                            filter: {
-                                type: 'string'
-                            }
-                        },
-                        {text: 'User Type', dataIndex: 'userTypeCode', width: 150,
-                            filter: {
-                                type: 'string'
-                            }
-                        },
+                        {text: 'Name', dataIndex: 'createUser', width: 125, flex:1, lockable: true},
+                        {text: 'Organization', dataIndex: 'organization', width: 250},
+                        {text: 'User Type', dataIndex: 'userTypeCode', width: 150},
                         {text: 'Event Date', dataIndex: 'eventDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
                         {text: 'Event Type', dataIndex: 'trackEventTypeCode', width: 250},
                         {text: 'Client IP', dataIndex: 'clientIp', width: 150},
-                        {text: 'Browser', dataIndex: 'browser', width: 150,
-                            filter: {
-                                type:'string'
-                            }
-                        },
-                        {text: 'Browser Version', dataIndex: 'browserVersion', width: 150,
-                            filter: {
-                                type:'string'
-                            }
-                        },
-                        {text: 'OS', dataIndex: 'osPlatform', width: 200,
-                            filter: {
-                                type:'string'
-                            }
-                        } 
+                        {text: 'Browser', dataIndex: 'browser', width: 150},
+                        {text: 'Browser Version', dataIndex: 'browserVersion', width: 150},
+                        {text: 'OS', dataIndex: 'osPlatform', width: 200} 
                     ],
                     dockedItems: [
-//                        {
-//                            dock: 'top',
-//                            xtype: 'toolbar',
-//                            items: [
-//                                  Ext.create('OSF.component.StandardComboBox', {
-//                                            id: 'userTrackingFilter-ActiveStatus',
-//                                            emptyText: 'All',
-//                                            fieldLabel: 'Active Status',
-//                                            name: 'activeStatus',	
-//                                            listeners: {
-//                                                change: function(filter, newValue, oldValue, opts){
-//                                                    userRefreshGrid();
-//                                                }
-//                                            },
-//                                            storeConfig: {
-//										customStore: {
-//											fields: [
-//												'code',
-//												'description'
-//											],
-//											data: [												
-//												{
-//													code: 'A',
-//													description: 'Active'
-//												},
-//												{
-//													code: 'I',
-//													description: 'Inactive'
-//												},
-//												{
-//													code: 'All',
-//													description: 'All'
-//												}
-//											]
-//										}
-//									}
-//                            })]
-//                       },
+                        {
+                            dock: 'top',
+                            xtype: 'toolbar',
+                            items: [{
+                                        xtype: 'datefield',
+                                        id: 'from_date',
+                                        labelAlign:'top',
+                                        fieldLabel: 'From',
+                                        name: 'from_date',
+                                        maxValue: new Date(),  // limited to the current date or prior
+                                        listeners:{
+                                            change:function(){
+                                               if(Ext.getCmp('to_date').getValue()!==null){
+                                                  processUserDateFilter();
+                                                }
+                                            }
+                                        }
+                                    }, 
+                                    {
+                                        xtype: 'datefield',
+                                        labelAlign:'top',
+                                        fieldLabel: 'To',
+                                        id:'to_date',
+                                        name: 'to_date',
+                                        maxValue: new Date(),
+                                        listeners:{
+                                            change:function(){
+                                               if(Ext.getCmp('from_date').getValue()!==null){
+                                                  processUserDateFilter();
+                                               }
+                                            }
+                                        }
+                                    }
+                                ]
+                       },
                        {
                             dock: 'top',
                             xtype: 'toolbar',
@@ -231,7 +203,18 @@
                                 tooltip: 'View the message data',
                             },
                             
+                            
                             {
+                                xtype: 'tbfill'
+                            }]
+                        },
+                        { 
+                            xtype: 'pagingtoolbar',
+                            dock: 'bottom',
+                            store: 'userTrackingGridStore',
+                            displayInfo: true, 
+                            items:[
+                                {
                                 text: 'Export',
                                 id: 'userExportButton',
                                 scale: 'medium',
@@ -242,16 +225,8 @@
                                 },
                                 tooltip:'Export data and download to .csv format'
 
-                            },
-                            {
-                                xtype: 'tbfill'
-                            }]
-                        },
-                        { 
-                            xtype: 'pagingtoolbar',
-                            dock: 'bottom',
-                            store: 'userTrackingGridStore',
-                            displayInfo: true   
+                            }
+                            ]
                         }
                     ],
                     listeners: {
@@ -270,6 +245,7 @@
                 //   USER Tracking FUNCTIONS
                 //
                 
+        
                 //
                 // Check which buttons should be on and which should be off
                 //
@@ -291,13 +267,42 @@
                 //  Refresh and reload the grid
                 //
                 var userRefreshGrid = function(){ 
-                     Ext.getCmp('userTrackingGrid').getStore().load({
-//						params: {
-//							status: Ext.getCmp('userTrackingFilter-ActiveStatus').getValue() ? Ext.getCmp('userTrackingFilter-ActiveStatus').getValue() : 'ALL',
-//						    all: (Ext.getCmp('userTrackingFilter-ActiveStatus').getValue() === 'All')
-//                             
-//                        }
-				    });
+                     processUserDateFilter();
+                };
+                
+                var processUserDateFilter = function(){
+                    
+                    var startDate=null;
+                    var endDate=null;
+                    
+                    startDate = Ext.getCmp('from_date').getValue();
+                    endDate = Ext.getCmp('to_date').getValue();
+                    
+                    console.log("startDate:",startDate);
+                    console.log("endDate:",endDate);
+                    
+                    if(startDate === null || 
+                       endDate === null || 
+                       typeof startDate === 'undefined' || 
+                       typeof endDate === 'undefined' ||
+                       startDate === '' ||
+                       endDate === '')
+                    {
+                        Ext.getCmp('userTrackingGrid').getStore().load(); 
+                    }
+                    else if(startDate>endDate){
+                       Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");                          
+                    }
+                    else{
+                       //Ext.toast('Filtering data by date range...');
+                       Ext.getCmp('userTrackingGrid').getStore().loadPage(1,{
+						params: {
+							start: Ext.Date.format(startDate,'Y-m-d\\TH:i:s.u'), 
+						    end: Ext.Date.format(endDate,'Y-m-d\\TH:i:s.u')
+                             
+                        }
+				       });
+                    }
                 };
                 
                 //
@@ -322,15 +327,13 @@
                     
                 };
                 
+                
                 //
-                // View Record
+                //  Create and hide the view window
                 //
-                var  userViewMessage = function (whichone){
-                    
-                    var selectedObj = Ext.getCmp('userTrackingGrid').getSelection()[0].data;
-                    //console.log("Selected Obj",selectedObj);
-                    
+                var createViewMessageWindow = function(){
                     Ext.create('Ext.window.Window', {
+                        id:'viewUserTrackingInfo',
                         title: 'View Record Information',
                         iconCls: 'fa fa-info-circle',
                         width: '30%',
@@ -338,10 +341,75 @@
                         y: 40,
                         modal: true,
                         maximizable: false,
-                        layout: 'fit',
-                        html: createHTMLViewString(selectedObj)
-                        
-                    }).show();                    
+                        layout: 'vbox',
+                        listeners:{
+                          show: function(){
+                              getContentForCurrentRecord();
+                              checkPreviewButtons();
+                          }  
+                        },
+                        items:[
+                            {
+                                xtype:'panel',
+                                id:'viewUserTrackingDataPanel',
+                                width:'100%'
+                            },
+                            {
+                                xtype: 'tbfill',
+                                bodyStyle:'background-color:000;'
+                            },
+                            {
+                                xtype:'panel',
+                                width:'100%',
+                                layout:'hbox',
+                                
+                                items:[
+                                    {
+                                        xtype:'button',
+                                        text: 'Previous',
+                                        id: 'previewWinTools-previousBtn',
+                                        iconCls: 'fa fa-arrow-left',									
+                                        handler: function() {
+                                            actionPreviewNextRecord(false);
+                                        }									
+                                    },
+                                    {
+                                        xtype: 'tbfill'
+                                    },
+                                    {
+                                        xtype:'button',
+                                        text: 'Close',
+                                        iconCls: 'fa fa-close',
+                                        handler: function() {
+                                            this.up('window').hide();
+                                        }
+                                    },
+                                    {
+                                        xtype: 'tbfill'
+                                    },
+                                    {
+                                        xtype:'button',
+                                        text: 'Next',
+                                        id: 'previewWinTools-nextBtn',
+                                        iconCls: 'fa fa-arrow-right',
+                                        iconAlign: 'right',
+                                        handler: function() {
+                                            actionPreviewNextRecord(true);
+                                        }									
+                                    }
+                                ]
+                            }
+                            
+                        ]
+                    });
+                };
+                createViewMessageWindow();
+                
+                //
+                // View Record
+                //
+                var  userViewMessage = function (whichone){
+                    Ext.getCmp('viewUserTrackingInfo').show();
                 };
                 
                 //
@@ -359,9 +427,39 @@
                     });
                 };
                 
+                //
+                //  Record Preview methods
+                //
+                var getContentForCurrentRecord = function(){
+                    var selectedObj = Ext.getCmp('userTrackingGrid').getSelection()[0].data;
+                    Ext.getCmp('viewUserTrackingDataPanel').update(createHTMLViewString(selectedObj));
+                };
                 
+                var actionPreviewNextRecord = function(next) {
+					if (next) {
+						Ext.getCmp('userTrackingGrid').getSelectionModel().selectNext();						
+					} else {
+						Ext.getCmp('userTrackingGrid').getSelectionModel().selectPrevious();						
+					}
+                    
+                    getContentForCurrentRecord();
+					checkPreviewButtons();
+                    	
+				};
                 
-                
+                var checkPreviewButtons = function(){
+                    if (Ext.getCmp('userTrackingGrid').getSelectionModel().hasPrevious()) {
+						Ext.getCmp('previewWinTools-previousBtn').setDisabled(false);
+					} else {
+						Ext.getCmp('previewWinTools-previousBtn').setDisabled(true);
+					}
+					
+					if (Ext.getCmp('userTrackingGrid').getSelectionModel().hasNext()) {
+						Ext.getCmp('previewWinTools-nextBtn').setDisabled(false);
+					} else {
+						Ext.getCmp('previewWinTools-nextBtn').setDisabled(true);
+					}
+                };
                 
                 //
                 //Entry Tracking Tab-------------->
@@ -380,7 +478,7 @@
                     sorters: [
                                 new Ext.util.Sorter({
                                      id: 'entrySorter',
-                                     property: 'name',
+                                     property: 'eventDts',
                                      direction: 'DESC'
                                 })
                             ],
@@ -474,65 +572,53 @@
                     plugins: 'gridfilters',
                     enableLocking: true,
                     columns: [
-                        {text: 'Name', dataIndex: 'name', width: 125, flex:1, lockable: true,
-                            filter: {
-                                type: 'string'
-                            }
-                        },
+                        {text: 'Name', dataIndex: 'name', width: 125, flex:1, lockable: true},
                         {text: 'Entry ID', dataIndex: 'componentId', width: 300,
-                            filter: {
-                                type: 'string'
-                            }
+                            
+                            hidden:true
                         },
                         
                         {text: 'Event Date', dataIndex: 'eventDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
                         {text: 'Event Type', dataIndex: 'trackEventTypeCode', width: 150},
                         {text: 'Client IP', dataIndex: 'clientIp', width: 125},
-                        {text: 'User', dataIndex: 'createUser', width: 150,
-                            filter: {
-                                type:'string'
-                            }
-                        }
+                        {text: 'User', dataIndex: 'createUser', width: 150}
                     ],
                     dockedItems: [
-//                        {
-//                            dock: 'top',
-//                            xtype: 'toolbar',
-//                            items: [
-//                                  Ext.create('OSF.component.StandardComboBox', {
-//                                            id: 'entryTrackingFilter-ActiveStatus',
-//                                            emptyText: 'All',
-//                                            fieldLabel: 'Active Status',
-//                                            name: 'activeStatus',	
-//                                            listeners: {
-//                                                change: function(filter, newValue, oldValue, opts){
-//                                                    entryRefreshGrid();
-//                                                }
-//                                            },
-//                                            storeConfig: {
-//										customStore: {
-//											fields: [
-//												'code',
-//												'description'
-//											],
-//											data: [												
-//												{
-//													code: 'A',
-//													description: 'Active'
-//												},
-//												{
-//													code: 'I',
-//													description: 'Inactive'
-//												},
-//												{
-//													code: 'All',
-//													description: 'All'
-//												}
-//											]
-//										}
-//									}
-//                            })]
-//                       },
+                        {
+                            dock: 'top',
+                            xtype: 'toolbar',
+                            items: [{
+                                        xtype: 'datefield',
+                                        id: 'from_entry_date',
+                                        labelAlign:'top',
+                                        fieldLabel: 'From',
+                                        name: 'from_entry_date',
+                                        maxValue: new Date(),  // limited to the current date or prior
+                                        listeners:{
+                                            change:function(){
+                                               if(Ext.getCmp('to_entry_date').getValue()!==null){
+                                                  processEntryDateFilter();
+                                                }
+                                            }
+                                        }
+                                    }, 
+                                    {
+                                        xtype: 'datefield',
+                                        labelAlign:'top',
+                                        fieldLabel: 'To',
+                                        id:'to_entry_date',
+                                        name: 'to_entry_date',
+                                        maxValue: new Date(),
+                                        listeners:{
+                                            change:function(){
+                                               if(Ext.getCmp('from_entry_date').getValue()!==null){
+                                                  processEntryDateFilter();
+                                               }
+                                            }
+                                        }
+                                    }
+                                ]
+                       },
                        {
                             dock: 'top',
                             xtype: 'toolbar',
@@ -548,18 +634,6 @@
                                 tooltip: 'Refresh the list of records'
                             }, 
                             {
-                                text: 'Export',
-                                id: 'entryExportButton',
-                                scale: 'medium',
-                                iconCls: 'fa fa-2x fa-download',
-                                disabled: false,
-                                handler: function () {
-                                   entryExport();         
-                                },
-                                tooltip:'Export data and download to .csv format'
-
-                            },
-                            {
                                 xtype: 'tbfill'
                             }]
                         },
@@ -567,7 +641,20 @@
                             xtype: 'pagingtoolbar',
                             dock: 'bottom',
                             store: 'entryTrackingGridStore',
-                            displayInfo: true   
+                            displayInfo: true,  
+                            items:[
+                                {
+                                    text: 'Export',
+                                    id: 'entryExportButton',
+                                    scale: 'medium',
+                                    iconCls: 'fa fa-2x fa-download',
+                                    disabled: false,
+                                    handler: function () {
+                                       entryExport();         
+                                    },
+                                    tooltip:'Export data and download to .csv format'
+                               }
+                            ]
                         }
                     ],
                     listeners: {
@@ -590,13 +677,42 @@
                 //  Refresh and reload the grid
                 //
                 var entryRefreshGrid = function(){ 
-                     Ext.getCmp('entryTrackingGrid').getStore().load({
-//						params: {
-//							status: Ext.getCmp('entryTrackingFilter-ActiveStatus').getValue() ? Ext.getCmp('entryTrackingFilter-ActiveStatus').getValue() : '',
-//						    all: (Ext.getCmp('entryTrackingFilter-ActiveStatus').getValue() === 'All')
-//                             
-//                        }
-					});
+                     processEntryDateFilter();
+                };
+                
+                var processEntryDateFilter = function(){
+                    
+                    var startDate=null;
+                    var endDate=null;
+                    
+                    startDate = Ext.getCmp('from_entry_date').getValue();
+                    endDate = Ext.getCmp('to_entry_date').getValue();
+                    
+                    console.log("startDate:",startDate);
+                    console.log("endDate:",endDate);
+                    
+                    if(startDate === null || 
+                       endDate === null || 
+                       typeof startDate === 'undefined' || 
+                       typeof endDate === 'undefined' ||
+                       startDate === '' ||
+                       endDate === '')
+                    {
+                        Ext.getCmp('entryTrackingGrid').getStore().load(); 
+                    }
+                    else if(startDate>endDate){
+                       Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");                          
+                    }
+                    else{
+                       //Ext.toast('Filtering data by date range...');
+                       Ext.getCmp('entryTrackingGrid').getStore().loadPage(1,{
+						params: {
+							start: Ext.Date.format(startDate,'Y-m-d\\TH:i:s.u'), 
+						    end: Ext.Date.format(endDate,'Y-m-d\\TH:i:s.u')
+                             
+                        }
+				       });
+                    }
                 };
                 
 
@@ -614,276 +730,6 @@
                         }
                     });
                 };
-                
-                
-                 
-                //
-                //Article Tracking Tab-------------->
-                //
-                
-                //
-                // Article Tracking Store
-                //
-                
-                
-                var articleTrackingGridStore = Ext.create('Ext.data.Store', {
-                    id: 'articleTrackingGridStore',
-                    autoLoad: false,
-                    pageSize: 100,
-                    remoteSort: true,
-                    sorters: [
-                                new Ext.util.Sorter({
-                                     id: 'entrySorter',
-                                     property: 'name',
-                                     direction: 'DESC'
-                                })
-                            ],
-                    fields: [
-                                
-                                {name: 'componentId', mapping: function (data) {
-                                        return data.data.componentId;
-                                        
-                                    }},
-                                {name: 'name', mapping: function (data) {
-                                        //console.log("Entry Data:", data);
-                                        return data.article.title;
-                                        
-                                    }},
-                                {name: 'attributeType', mapping: function (data) {
-                                        
-                                        return data.data.attributeType;
-                                        
-                                    }},
-                                {name: 'attributeCode', mapping: function (data) {
-                                        
-                                        return data.data.attributeCode;
-                                        
-                                    }},
-                                {name: 'description', mapping: function (data) {
-                                        return data.description;
-                                    }},
-                                
-                                {name: 'componentType', mapping: function (data) {
-                                        return data.componentType;
-                                    }},
-                                {name: 'eventType', mapping: function (data) {
-                                        return data.componentType;
-                                    }},
-                                
-                                {name: 'eventDts', mapping: function (data) {
-                                        return data.data.eventDts;
-                                    }},
-                                {name: 'trackingId', mapping: function (data) {
-                                        return data.trackingId;
-                                    }},
-                                {name: 'trackEventTypeCode', mapping: function (data) {
-                                        if(data.data.trackEventTypeCode === 'SYNC'){
-                                            return 'Component Sync';
-                                        }
-                                        else if(data.data.trackEventTypeCode === 'ELC'){
-                                            return 'External Link Click';
-                                        }
-                                        else if(data.data.trackEventTypeCode === 'L'){
-                                            return 'Login';
-                                        }
-                                        else if(data.data.trackEventTypeCode === 'V'){
-                                            return 'View';
-                                        }
-                                        else{
-                                            return data.data.trackEventTypeCode;
-                                        }
-                                    }},
-                                
-                                {name: 'activeStatus', mapping: function (data) {
-                                        return data.data.activeStatus;
-                                    }},
-                                {name: 'updateDts', mapping: function (data) {
-                                        return data.data.updateDts;
-                                    }},
-                                {name: 'updateUser', mapping: function (data) {
-                                        return data.data.updateUser;
-                                    }},
-                                {name: 'createDts', mapping: function (data) {
-                                        return data.data.createDts;
-                                    }},
-                                {name: 'createUser', mapping: function (data) {
-                                        return data.data.createUser;
-                                    }},
-                                {name: 'attributes', mapping: function (data) {
-                                        return data.attributes;
-                                    }},
-                                {name: 'clientIp', mapping: function (data) {
-                                        return data.data.clientIp;
-                                    }} 
-                            ],
-                    proxy: CoreUtil.pagingProxy({
-                                url: '../api/v1/resource/articletracking',
-                                reader: {
-                                    type: 'json',
-                                    rootProperty: 'result',
-                                    totalProperty: 'count'
-                                }
-                            })
-                });
-
-                var articleTrackingGrid = Ext.create('Ext.grid.Panel', {
-                    title: '',
-                    id: 'articleTrackingGrid',
-                    store: articleTrackingGridStore,
-                    columnLines: true,
-                    bodyCls: 'border_accent',
-                    selModel: {
-                        selType: 'checkboxmodel'
-                    },
-                    plugins: 'gridfilters',
-                    enableLocking: true,
-                    columns: [
-                        {text: 'Name', dataIndex: 'name', width: 125, flex:1, lockable: true,
-                            filter: {
-                                type: 'string'
-                            }
-                        },
-                        {text: 'Attribute Type', dataIndex: 'attributeType', width: 150,
-                            filter: {
-                                type: 'string'
-                            }
-                        },
-                        {text: 'Attribute Code', dataIndex: 'attributeCode', width: 150,
-                            filter: {
-                                type: 'string'
-                            }
-                        },
-                        
-                        {text: 'Event Date', dataIndex: 'eventDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
-                        {text: 'Event Type', dataIndex: 'trackEventTypeCode', width: 150},
-                        {text: 'Client IP', dataIndex: 'clientIp', width: 150},
-                        {text: 'User', dataIndex: 'createUser', width: 150,
-                            filter: {
-                                type:'string'
-                            }
-                        }
-                    ],
-                    dockedItems: [
-//                        {
-//                            dock: 'top',
-//                            xtype: 'toolbar',
-//                            items: [
-//                                  Ext.create('OSF.component.StandardComboBox', {
-//                                            id: 'articleTrackingFilter-ActiveStatus',
-//                                            emptyText: 'All',
-//                                            fieldLabel: 'Active Status',
-//                                            name: 'activeStatus',	
-//                                            listeners: {
-//                                                change: function(filter, newValue, oldValue, opts){
-//                                                    entryRefreshGrid();
-//                                                }
-//                                            },
-//                                            storeConfig: {
-//										customStore: {
-//											fields: [
-//												'code',
-//												'description'
-//											],
-//											data: [												
-//												{
-//													code: 'A',
-//													description: 'Active'
-//												},
-//												{
-//													code: 'I',
-//													description: 'Inactive'
-//												},
-//												{
-//													code: 'All',
-//													description: 'All'
-//												}
-//											]
-//										}
-//									}
-//                            })]
-//                       },
-                       {
-                            dock: 'top',
-                            xtype: 'toolbar',
-                            items: [
-                            {
-                                text: 'Refresh',
-                                scale: 'medium',
-                                id: 'articleRefreshButton',
-                                iconCls: 'fa fa-2x fa-refresh',
-                                handler: function () {
-                                   articleRefreshGrid();
-                                },
-                                tooltip: 'Refresh the list of records'
-                            }, 
-                            {
-                                text: 'Export',
-                                id: 'artcileExportButton',
-                                scale: 'medium',
-                                iconCls: 'fa fa-2x fa-download',
-                                disabled: false,
-                                handler: function () {
-                                   articleExport();         
-                                },
-                                tooltip:'Export data and download to .csv format'
-
-                            },
-                            {
-                                xtype: 'tbfill'
-                            }]
-                        },
-                        { 
-                            xtype: 'pagingtoolbar',
-                            dock: 'bottom',
-                            store: 'articleTrackingGridStore',
-                            displayInfo: true   
-                        }
-                    ],
-                    listeners: {
-                        itemdblclick: function (grid, record, item, index, e, opts) {
-                            //console.log("Double Clicked Row:"+index);
-                        },
-                        selectionchange: function (grid, record, index, opts) {
-                           //articleCheckNavButtons(); 
-                        }
-                    }
-                });
-                
-                
-                //
-                //   Article Tracking FUNCTIONS
-                //
-                
-                
-                //
-                //  Refresh and reload the grid
-                //
-                var articleRefreshGrid = function(){ 
-                     Ext.getCmp('articleTrackingGrid').getStore().load({
-//						params: {
-//							status: Ext.getCmp('articleTrackingFilter-ActiveStatus').getValue() ? Ext.getCmp('articleTrackingFilter-ActiveStatus').getValue() : '',
-//						    all: (Ext.getCmp('articleTrackingFilter-ActiveStatus').getValue() === 'All')
-//                             
-//                        }
-					});
-                };
-
-                //
-                // Entry Export
-                //
-                var  articleExport = function (){
-                    Ext.toast('Exporting Article Tracking Data ...');
-                    Ext.Ajax.request({
-                        url: '../api/v1/resource/articletracking/export',
-                        method: 'GET',
-                        success: function (response, opts) {
-                            
-                            CoreUtil.downloadCSVFile('articleTracking.csv', response.responseText );
-                        }
-                    });
-                };
-                
-                
                 
                 var userPanel = Ext.create('Ext.panel.Panel', {
                     title: 'User',
@@ -903,36 +749,27 @@
                            ]
                 });
                 
-                var articlePanel = Ext.create('Ext.panel.Panel', {
-                    title: 'Article',
-                    iconCls: 'fa fa-file-text-o',
-                    layout: 'fit',
-                    items: [
-                             articleTrackingGrid
-                           ]
-                });
-                
-                
                 var msgTabPanel = Ext.create('Ext.tab.Panel', {
                     title:'Manage Tracking <i class="fa fa-question-circle"  data-qtip="Track user, entry, and article data." ></i>',
                     layout: 'fit',
                     items: [
                         userPanel,
-                        entryPanel,
-                        articlePanel,
+                        entryPanel
+                        
                     ],
                     listeners: {
                         tabchange: function(tabPanel, newTab, oldTab, index){
-                            
                             if(newTab.title === 'User'){
-                               userRefreshGrid(); 
+                              if(!Ext.getCmp('userTrackingGrid').getStore().isLoaded()){
+                                  userRefreshGrid(); 
+                              }
                             }
                             else if(newTab.title === 'Entry'){
-                               entryRefreshGrid();
+                              if(!Ext.getCmp('entryTrackingGrid').getStore().isLoaded()){
+                                  entryRefreshGrid();
+                              }
                             }
-                            else if(newTab.title === 'Article'){
-                               articleRefreshGrid();
-                            }
+                            
                         }
                     }
                 });

@@ -200,12 +200,11 @@
                 //                
                 var historyGridStore = Ext.create('Ext.data.Store', {
                     id: 'historyGridStore',
-                    autoLoad: true,
+                    autoLoad: false,
                     pageSize: 100,
                     remoteSort: true,
                     sorters: [
                                 new Ext.util.Sorter({
-                                     id: 'hsorter',
                                      property: 'createDts',
                                      direction: 'DESC'
                                 })
@@ -290,20 +289,9 @@
                     plugins: 'gridfilters',
                     enableLocking: true,
                     columns: [
-                        {text: 'Report Type', dataIndex: 'reportTypeDescription', width: 200, flex:1, lockable: true,
-                            filter: {
-                                type: 'string'
-                            }
-                        },
-                        {text: 'Format', dataIndex: 'reportFormatDescription', width: 250,
-                            filter: {
-                                type: 'string'
-                            }
-                        },
+                        {text: 'Report Type', dataIndex: 'reportTypeDescription', width: 200, flex:1, lockable: true},
+                        {text: 'Format', dataIndex: 'reportFormatDescription', width: 250},
                         {text: 'Run Status', dataIndex: 'runStatusDescription', width: 150,
-                            filter: {
-                                type: 'string'
-                            },
                             renderer: function(value, meta){
                                 if(value === 'Error'){
                                     meta.style = "background-color:#ce0000;color:#FFFFFF;";
@@ -317,9 +305,6 @@
                         {text: 'Create User', dataIndex: 'createUser', width: 150},
                         {text: 'Scheduled', dataIndex: 'scheduled', width: 100},
                         {text: 'Options', dataIndex: 'reportOption', width: 300, flex:1,
-                            filter: {
-                                type:'string'
-                            },
                             renderer: function(v,meta){
                                 if(v){
                                     //console.log("V:",v);
@@ -339,51 +324,9 @@
                             }
                             
                         },
-                        {text: 'Active Status', dataIndex: 'activeStatus', width: 125,
-                            filter: {
-                                type:'string'
-                            }
-                        }
+                        {text: 'Active Status', dataIndex: 'activeStatus', width: 125}
                     ],
                     dockedItems: [
-//                        {
-//                            dock: 'top',
-//                            xtype: 'toolbar',
-//                            items: [
-//                                  Ext.create('OSF.component.StandardComboBox', {
-//                                            id: 'userTrackingFilter-ActiveStatus',
-//                                            emptyText: 'All',
-//                                            fieldLabel: 'Active Status',
-//                                            name: 'activeStatus',	
-//                                            listeners: {
-//                                                change: function(filter, newValue, oldValue, opts){
-//                                                    userRefreshGrid();
-//                                                }
-//                                            },
-//                                            storeConfig: {
-//										customStore: {
-//											fields: [
-//												'code',
-//												'description'
-//											],
-//											data: [												
-//												{
-//													code: 'A',
-//													description: 'Active'
-//												},
-//												{
-//													code: 'I',
-//													description: 'Inactive'
-//												},
-//												{
-//													code: 'All',
-//													description: 'All'
-//												}
-//											]
-//										}
-//									}
-//                            })]
-//                       },
                        {
                             dock: 'top',
                             xtype: 'toolbar',
@@ -448,6 +391,9 @@
                         }
                     ],
                     listeners: {
+                         itemdblclick: function (grid, record, item, index, e, opts) {
+                            viewHistory();
+                        },
                         
                         selectionchange: function (grid, record, index, opts) {
                            historyCheckNavButtons(); 
@@ -486,13 +432,7 @@
                 //  Refresh and reload the grid
                 //
                 var historyRefreshGrid = function(){ 
-                     Ext.getCmp('historyGrid').getStore().load({
-//						params: {
-//							status: Ext.getCmp('userTrackingFilter-ActiveStatus').getValue() ? Ext.getCmp('userTrackingFilter-ActiveStatus').getValue() : 'ALL',
-//						    all: (Ext.getCmp('userTrackingFilter-ActiveStatus').getValue() === 'All')
-//                             
-//                        }
-				    });
+                     Ext.getCmp('historyGrid').getStore().load();
                 };
                 
                
@@ -593,17 +533,7 @@
                 var  historyExport = function (){
                     Ext.toast('Exporting Report Data ...');
                      var selectedObj = Ext.getCmp('historyGrid').getSelection()[0].data;
-                    //console.log("Selected Obj:",selectedObj);
                     window.location.href='../api/v1/resource/reports/'+selectedObj.reportId+'/report';
-//                    Ext.Ajax.request(
-//                        url: '../api/v1/resource/reports/'+selectedObj.reportId+'/report',
-//                        method: 'GET',
-//                        success: function (response, opts) {
-//                           // console.log("Export Report:",response);
-//                            if(selectedObj.)
-//                            CoreUtil.downloadCSVFile('report.csv', response.responseText );
-//                        }
-//                    });
                 };
                 
                 
@@ -621,7 +551,6 @@
                     remoteSort: true,
                     sorters: [
                                 new Ext.util.Sorter({
-                                     id: 'sorter',
                                      property: 'createDts',
                                      direction: 'DESC'
                                 })
@@ -696,9 +625,9 @@
                     store: scheduleReportsGridStore,
                     columnLines: true,
                     bodyCls: 'border_accent',
-                    selModel: {
-                        selType: 'checkboxmodel'
-                    },
+//                    selModel: {
+//                        selType: 'checkboxmodel'
+//                    },
                     plugins: 'gridfilters',
                     enableLocking: true,
                     columns: [
@@ -844,9 +773,13 @@
                                     scheduleReportEdit();
                                 },
                                 tooltip: 'Edit a record'
+                            },        
+                            
+                            {
+                                xtype: 'tbfill'
                             },
                             {
-                                text: 'Toggle Active',
+                                text: 'Toggle Status',
                                 id: 'reportActivateButton',
                                 scale: 'medium',
                                 iconCls: 'fa fa-2x fa-power-off',
@@ -855,7 +788,7 @@
                                    scheduleReportActivate();         
                                 },
                                 tooltip: 'Toggle activation of a record'
-                            },         
+                            },
                             {
                                 text: 'Delete',
                                 id: 'reportDeleteButton',
@@ -866,10 +799,8 @@
                                     scheduleReportDelete();
                                 },
                                 tooltip: 'Delete the record'
-                            },
-                            {
-                                xtype: 'tbfill'
-                            }]
+                            }
+                            ]
                         },
                         { 
                             xtype: 'pagingtoolbar',
@@ -879,7 +810,10 @@
                         }
                     ],
                     listeners: {
-                        
+                        itemdblclick: function (grid, record, item, index, e, opts) {
+                            console.log("Double Click Edit");
+                            scheduleReportEdit();
+                        },
                         selectionchange: function (grid, record, index, opts) {
                            scheduledReportCheckNavButtons(); 
                         }
@@ -939,6 +873,8 @@
                 // Edit Record
                 //
                 var scheduleReportEdit = function(){
+                    
+                    //console.log("Edit Report:",Ext.getCmp('scheduleReportsGrid').getSelection()[0]);
                     scheduleReportWin(Ext.getCmp('scheduleReportsGrid').getSelection()[0]); 
                 };
   
@@ -1098,11 +1034,11 @@
                         var method ='';
                         if(scheduleReportId){
                             url = '../api/v1/resource/scheduledreports/'+scheduleReportId;
-                            method ='PUT'
+                            method ='PUT';
                         }
                         else{
                             url = '../api/v1/resource/scheduledreports';
-                            method = 'POST'
+                            method = 'POST';
                         }
                         
                         CoreUtil.submitForm({
@@ -1168,7 +1104,6 @@
                         },
                         sorters: [
                                     new Ext.util.Sorter({
-                                         id: 'sorter',
                                          property: 'description',
                                          direction: 'DESC'
                                     })
@@ -1245,7 +1180,6 @@
                         remoteSort: true,
                         sorters: [
                                     new Ext.util.Sorter({
-                                         id: 'sorter',
                                          property: 'description',
                                          direction: 'DESC'
                                     })
@@ -1280,7 +1214,6 @@
                         remoteSort: true,
                         sorters: [
                                     new Ext.util.Sorter({
-                                         id: 'sorter',
                                          property: 'name',
                                          direction: 'DESC'
                                     })
@@ -1313,7 +1246,7 @@
                         remoteSort: true,
                         sorters: [
                                     new Ext.util.Sorter({
-                                         id: 'sorter',
+                                         
                                          property: 'description',
                                          direction: 'ASC'
                                     })
@@ -1814,10 +1747,15 @@
                         tabchange: function(tabPanel, newTab, oldTab, index){
                             
                             if(newTab.title === 'History'){
-                               historyRefreshGrid(); 
+                               if(!Ext.getCmp('historyGrid').getStore().isLoaded()){
+                                   historyRefreshGrid(); 
+                               }
+                               
                             }
                             else if(newTab.title === 'Schedule'){
-                               scheduleReportRefreshGrid();
+                               if(!Ext.getCmp('scheduleReportsGrid').getStore().isLoaded()){
+                                     scheduleReportRefreshGrid();
+                               }
                             }
                         }
                     }
