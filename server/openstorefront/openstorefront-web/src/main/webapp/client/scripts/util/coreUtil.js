@@ -44,7 +44,7 @@ var CoreUtil = {
 		}
 
 		var autoLoad = true;
-		if (options.autoLoad)
+		if (options.autoLoad !== undefined && options.autoLoad !== null)
 		{
 			autoLoad = options.autoLoad;
 		}
@@ -53,15 +53,14 @@ var CoreUtil = {
 		if (options.customStore) {
 			store = Ext.create('Ext.data.Store', options.customStore);
 		} else {
-			store = Ext.create('Ext.data.Store', {
+			store = Ext.create('Ext.data.Store', Ext.applyIf({
 				model: model,
 				autoLoad: autoLoad,
 				proxy: {
 					type: 'ajax',
 					url: options.url
 				}
-			});
-			store = Ext.applyIf(store, options);
+			}, options));			
 			if (options.addRecords) {
 				store.on('load', function (myStore, records, sucessful, opts) {
 					myStore.add(options.addRecords);

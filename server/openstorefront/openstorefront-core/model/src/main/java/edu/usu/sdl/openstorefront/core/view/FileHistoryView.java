@@ -36,6 +36,8 @@ public class FileHistoryView
 
 	private String fileFormatDescription;
 	private String fileTypeDescription;
+	private long warningsCount;
+	private long errorsCount;
 
 	public FileHistoryView()
 	{
@@ -84,6 +86,26 @@ public class FileHistoryView
 	public void setFileTypeDescription(String fileTypeDescription)
 	{
 		this.fileTypeDescription = fileTypeDescription;
+	}
+
+	public long getErrorsCount()
+	{
+		return errorsCount;
+	}
+
+	public void setErrorsCount(long errorsCount)
+	{
+		this.errorsCount = errorsCount;
+	}
+
+	public long getWarningsCount()
+	{
+		return warningsCount;
+	}
+
+	public void setWarningsCount(long warningsCount)
+	{
+		this.warningsCount = warningsCount;
 	}
 
 }

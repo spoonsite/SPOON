@@ -1252,35 +1252,42 @@ public class CoreComponentServiceImpl
 					}
 				}
 
-				List<Component> componentsToIndex = new ArrayList<>();
-				for (ComponentUpdateQueue componentUpdate : componentMap.values()) {
-					String componentId = componentUpdate.getComponentId();
+				try {
+					List<Component> componentsToIndex = new ArrayList<>();
+					for (ComponentUpdateQueue componentUpdate : componentMap.values()) {
+						String componentId = componentUpdate.getComponentId();
 
-					Component component = persistenceService.findById(Component.class, componentId);
-					if (component != null) {
-						component.setLastActivityDts(componentUpdate.getUpdateDts());
-						component.setLastModificationType(componentUpdate.getModificationType());
-						Integer version = component.getRecordVersion();
-						if (version == null) {
-							version = 1;
-						} else {
-							version++;
+						//critical block try each record separately
+						try {
+							Component component = persistenceService.findById(Component.class, componentId);
+							if (component != null) {
+								component.setLastActivityDts(componentUpdate.getUpdateDts());
+								component.setLastModificationType(componentUpdate.getModificationType());
+								Integer version = component.getRecordVersion();
+								if (version == null) {
+									version = 1;
+								} else {
+									version++;
+								}
+								component.setRecordVersion(version);
+								persistenceService.persist(component);
+								componentService.getUserService().checkComponentWatches(component);
+								componentsToIndex.add(component);
+							} else {
+								log.log(Level.FINE, MessageFormat.format("Component not found to update last Activity. Component may have been removed.  Check component id: {0}", componentId));
+							}
+						} catch (Exception e) {
+							log.log(Level.SEVERE, "Fail to update component.  Check data on component id: " + componentId, e);
 						}
-						component.setRecordVersion(version);
-						persistenceService.persist(component);
-						componentService.getUserService().checkComponentWatches(component);
-						componentsToIndex.add(component);
-					} else {
-						log.log(Level.FINE, "Component not found to update last Activity. Component may have been removed.", "Check component Id: " + componentId);
 					}
-				}
-				componentService.getSearchService().indexComponents(componentsToIndex);
-
-				//remove processed records
-				for (ComponentUpdateQueue updateQueue : componentUpdateQueues) {
-					ComponentUpdateQueue componentUpdateQueue = persistenceService.findById(ComponentUpdateQueue.class, updateQueue.getUpdateId());
-					if (componentUpdateQueue != null) {
-						persistenceService.delete(componentUpdateQueue);
+					componentService.getSearchService().indexComponents(componentsToIndex);
+				} finally {
+					//remove processed records (must remove them to avoid looping when there are issues
+					for (ComponentUpdateQueue updateQueue : componentUpdateQueues) {
+						ComponentUpdateQueue componentUpdateQueue = persistenceService.findById(ComponentUpdateQueue.class, updateQueue.getUpdateId());
+						if (componentUpdateQueue != null) {
+							persistenceService.delete(componentUpdateQueue);
+						}
 					}
 				}
 			}

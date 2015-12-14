@@ -51,7 +51,7 @@
 								},				
 								{
 									xtype: 'panel',
-									html: 'Data Entry'
+									html: '<b>Data Entry</b>'
 								},
 								{
 									xtype: 'checkbox',
@@ -230,7 +230,7 @@
 									}								
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbfill'
 								},								
 								{
 									text: 'Toggle Status',
@@ -298,7 +298,7 @@
 				
 				var actionToggleStatus = function() {
 					Ext.getCmp('entryGrid').setLoading("Updating Status");
-					var type = Ext.getCmp('entryGrid').getSelection()[0].get('type');
+					var type = Ext.getCmp('entryGrid').getSelection()[0].get('componentType');
 					var currentStatus = Ext.getCmp('entryGrid').getSelection()[0].get('activeStatus');
 					
 					var method = 'PUT';

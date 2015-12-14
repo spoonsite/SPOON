@@ -4,31 +4,7 @@
     <stripes:layout-component name="contents">
 		
 	<script src="scripts/component/feedbackWindow.js" type="text/javascript"></script>
-		
-	<div id="header"	class="hidden">
-		<div  class="nav-back-color border_accent" style="width: 100%">
-			<table style="width: 100%; border-collapse: collapse;" >
-				<tr>					
-					<td style="width: 33%">
-						<div class="logo-small" style="    display: inline-block;">
-							<img src="../images/logo/logo-only-words.svg" alt="" onclick="window.location.replace('../');" title="Go back to Home Page" style="height: 49px; margin: 3px 15px 0px 15px">
-						</div>						
-					</td>
-					<td align="center" style="width: 33%">
-						<span style="text-align: center; width: 100%; font-size: 35px; color: white;">
-							Admin Tools
-						</span>
-					</td>
-					<td style="width: 33%">
-						<div id="userMenu" style="float: right; padding-right: 10px;">						
-						</div>						
-					</td>
-				</tr>
-			</table>
-		</div>	
-	</div>			
-
-		
+	
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */	
 		Ext.onReady(function(){
@@ -221,36 +197,62 @@
 			Ext.create('Ext.container.Viewport', {
 				layout: 'border',
 				items: [{
+					xtype: 'panel',
 					region: 'north',					
 					border: false,
-					margin: '0 0 5 0',
-					layout: 'hbox',
-					items: [
+					//margin: '0 0 5 0',
+					cls: 'border_accent',
+					dockedItems: [						
 						{
-							html: document.getElementById('header').innerHTML,				
-							flex: 1
-						}, 
-						{ 
-							xtype: 'panel',
-							cls: 'nav-back-color border_accent',
-							padding: '10 8 10 10',
-							layout: 'hbox',
+							xtype: 'toolbar',
+							dock: 'top',								
+							cls: 'nav-back-color',
 							items: [
+								{
+									xtype: 'image',
+									cls: 'logo-small',									
+									width: 250,
+									height: 53,
+									title: 'Go back to Home Page',
+									src: '../images/logo/logo-only-words.svg',
+									listeners: {
+										el: {
+											click: function() {
+												window.location.replace('../');
+											}
+										}
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									xtype: 'tbtext',
+									text: 'Admin Tools',
+									style: 'text-align: center; font-size: 35px; color: white;'
+								},
+								{
+									xtype: 'tbfill'
+								},
 								{
 									xtype: 'button',
 									scale   : 'large',
+									ui: 'default',
 									iconCls: 'fa fa-2x fa-envelope icon-top-padding',
-									iconAlign: 'center',
-									margin: '0 10 0 0',
+									iconAlign: 'center',									
 									handler: function() {
 										notificationWin.show();
 										notificationWin.refreshData();
 									}
 								},
 								{
+									xtype: 'tbseparator'
+								},
+								{
 									xtype: 'button',
 									id: 'userMenuBtn',
-									scale   : 'large',									
+									scale   : 'large',
+									ui: 'default',
 									text: 'User Menu',
 									menu: {						
 										items: [
@@ -287,12 +289,12 @@
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());
-											}					
+											}
 										}
 									}
-								}								
+								}
 							]
-						}
+						}						
 					]
 				},
 				{
@@ -364,35 +366,36 @@
 				Ext.getCmp('userMenuBtn').setText(userMenuText);				
 				
 				
-				var socket = io.connect('', {
-				  'resource':'openstorefront/event', 
-				   query: 'id=' + usercontext.username
-				});
-				
-				  socket.on('connect', function () {
-					// console.warn(this.socket.transport.name + ' contected');
-				  });
-				  socket.on('WATCH', function (args) {
-					
-					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'watch', 'msg': args.message + '<i>View the changes <a href="single?id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
-					handleAlert(alert, args);
-				  });
-				  socket.on('IMPORT', function (args) {					
-					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'import', 'msg': args.message, 'id': 'import_'+ args.eventId};					
-					handleAlert(alert, args);
-				  });
-				  socket.on('TASK', function (args) {				
-					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
-					handleAlert(alert, args);
-				  });
-				  socket.on('REPORT', function (args) {					
-					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};					
-					handleAlert(alert, args);
-				  });
-				  socket.on('ADMIN', function (args) {					
-					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'admin', 'msg': '<i class="fa fa-warning"></i>&nbsp;' + args.message, 'id': 'admin_'+ args.eventId};
-					handleAlert(alert, args);
-				  });				
+				//FIX ME: Websockets 
+//				var socket = io.connect('', {
+//				  'resource':'openstorefront/event', 
+//				   query: 'id=' + usercontext.username
+//				});
+//				
+//				  socket.on('connect', function () {
+//					// console.warn(this.socket.transport.name + ' contected');
+//				  });
+//				  socket.on('WATCH', function (args) {
+//					
+//					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'watch', 'msg': args.message + '<i>View the changes <a href="single?id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
+//					handleAlert(alert, args);
+//				  });
+//				  socket.on('IMPORT', function (args) {					
+//					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'import', 'msg': args.message, 'id': 'import_'+ args.eventId};					
+//					handleAlert(alert, args);
+//				  });
+//				  socket.on('TASK', function (args) {				
+//					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
+//					handleAlert(alert, args);
+//				  });
+//				  socket.on('REPORT', function (args) {					
+//					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};					
+//					handleAlert(alert, args);
+//				  });
+//				  socket.on('ADMIN', function (args) {					
+//					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'admin', 'msg': '<i class="fa fa-warning"></i>&nbsp;' + args.message, 'id': 'admin_'+ args.eventId};
+//					handleAlert(alert, args);
+//				  });				
 				
 			});
 			

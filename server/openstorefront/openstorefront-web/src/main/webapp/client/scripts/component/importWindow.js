@@ -16,194 +16,212 @@
 /* global Ext */
 
 Ext.define('OSF.component.ImportWindow', {
-  extend: 'Ext.window.Window',
-  alias: 'osf.widget.ImportWindow',
-  
-   title: 'Import Data',
-   modal: true,
-   width: '50%',
-   y: 100,
-   fileTypeReadyOnly: true,
-   fileTypeValue: 'COMPONENT',
-     
-   initComponent: function() {
-     this.callParent();
-     
-     var importWindow = this;
-     
-     importWindow.formPanel = Ext.create('Ext.form.Panel', {                  
-          bodyStyle: 'padding: 20px;',
-          dockedItems: [
-            {
-              xtype: 'toolbar',
-              dock: 'bottom',
-              items: [
-                {
-                  text: 'Upload',
-                  formBind: true,
-                  iconCls: 'fa fa-upload',
-                  handler: function(){
-                    
-                  }
-                },
-                {
-                  xtype: 'tbfill'
-                },
-                {
-                  text: 'Cancel',
-                  iconCls: 'fa fa-close',
-                  handler: function(){
-                    importWindow.close();
-                  }
-                }
-              ]
-            }
-          ],
-          items: [
-            Ext.create('OSF.component.StandardComboBox', {
-              itemId: 'fileTypeCB',
-              name: 'fileType',									
-              allowBlank: false,								
-              margin: '0 0 0 0',
-              editable: false,
-              typeAhead: false,
-              width: '100%',
-              readOnly: importWindow.fileTypeReadyOnly,              
-              fieldLabel: 'File Type <span class="field-required" />',
-              storeConfig: {
-                  url: '../api/v1/resource/lookuptypes/FileType'
-              },
-              listeners: {
-                change: function(field, newValue, oldvalue, opts) {
-                  field.up('form').getComponent('fileFormatCB').getStore().load({
-                    url: '../api/v1/resource/filehistory/filetypes/' + newValue + '/formats'
-                  });
-                  
-                  //set options
-                  var optionPanel = field.up('form').getComponent('optionPanel');
-                  optionPanel.getLayout().setActiveItem(optionPanel.getComponent('optionPanel-' + newValue));
-                }
-              }
-            }),
-            Ext.create('OSF.component.StandardComboBox', {
-              itemId: 'fileFormatCB',
-              name: 'fileFormat',									
-              allowBlank: false,								
-              margin: '0 0 0 0',
-              editable: false,
-              typeAhead: false,
-              width: '100%',
-              fieldLabel: 'File Format <span class="field-required" />',
-              storeConfig: {
-                  url: '../api/v1/resource/filehistory/filetypes/' + importWindow.fileTypeValue + '/formats',
-                  autoLoad: false
-              },
-              listeners: {
-                change: function(field, newValue, oldvalue, opts) {
-                  var selectedType = field.up('form').getComponent('fileTypeCB').getValue();
-                  
-                  field.up('form').getComponent('fileFormatMappingCB').getStore().load({
-                    url: '../api/v1/resource/filehistory/filetypes/' + selectedType + '/formats/' + newValue + '/mappings'
-                  });                  
-                }
-              }
-            }),
-            Ext.create('OSF.component.StandardComboBox', {
-              itemId: 'fileFormatMappingCB',
-              name: 'mapping',									              
-              margin: '0 0 0 0',
-              editable: false,
-              typeAhead: false,
-              width: '100%',
-              fieldLabel: 'Data Mapping',
-              storeConfig: {
-                  url: '../api/v1/resource/lookuptypes/FileType',
-                  autoLoad: false
-              }
-            }),
-            Ext.create('OSF.component.StandardComboBox', {            
-              name: 'dataSource',									              
-              margin: '0 0 0 0',
-              editable: false,
-              typeAhead: false,
-              width: '100%',
-              fieldLabel: 'Data Source',
-              storeConfig: {
-                  url: '../api/v1/resource/lookuptypes/DataSource'
-              }
-            }),             
-            {
-              xtype: 'filefield',
-              name: 'uploadFile',
-              width: '100%',
-              labelAlign: 'top',
-              labelSeparator: '',
-              allowBlank: false,
-              fieldLabel: 'Import <span class="field-required" />',
-              buttonText: 'Select File...'              
-            },
-            {
-              xtype: 'fieldset',
-              itemId: 'optionPanel',
-              title: 'Options',
-              layout: 'card',
-              items: [
-                {
-                  xtype: 'panel',
-                  itemId: 'optionPanel-NONE'
-                },
-                {
-                  xtype: 'panel',
-                  itemId: 'optionPanel-SYSTEM'
-                },
-                {
-                  xtype: 'panel',
-                  itemId: 'optionPanel-ATTRIBUTE'
-                },                
-                {
-                  xtype: 'panel',
-                  itemId: 'optionPanel-COMPONENT',
-                  items: [
-                    {
-                      xtype: 'checkboxfield',
-                      name: 'uploadReviews',
-                      boxLabel: 'Upload Reviews'
-                    },
-                    {
-                      xtype: 'checkboxfield',
-                      name: 'uploadQuestions',
-                      boxLabel: 'Upload Questions'
-                    },
-                    {
-                      xtype: 'checkboxfield',
-                      name: 'uploadTags',
-                      boxLabel: 'Upload Tags'
-                    },
-                    {
-                      xtype: 'checkboxfield',
-                      name: 'uploadIntegration',
-                      boxLabel: 'Upload Integration'
-                    },
-                    {
-                      xtype: 'checkboxfield',
-                      name: 'skipRequiredAttributes',
-                      checked: true,
-                      boxLabel: 'Skip Required Attributes'
-                    }                    
-                  ]
-                }
-              ]
-            }
-            
-          ]
-     });
-     
-     importWindow.add(importWindow.formPanel);
-     importWindow.formPanel.getComponent('fileTypeCB').setValue(importWindow.fileTypeValue);
-     
-   }
-  
-  
+	extend: 'Ext.window.Window',
+	alias: 'osf.widget.ImportWindow',
+	title: 'Import Data',
+	modal: true,
+	width: '50%',
+	y: 100,
+	fileTypeReadyOnly: true,
+	fileTypeValue: 'COMPONENT',
+	initComponent: function () {
+		this.callParent();
+
+		var importWindow = this;
+
+		importWindow.formPanel = Ext.create('Ext.form.Panel', {
+			bodyStyle: 'padding: 20px;',
+			dockedItems: [
+				{
+					xtype: 'toolbar',
+					dock: 'bottom',
+					items: [
+						{
+							text: 'Upload',
+							formBind: true,
+							iconCls: 'fa fa-upload',
+							handler: function () {
+
+							}
+						},
+						{
+							xtype: 'tbfill'
+						},
+						{
+							text: 'Cancel',
+							iconCls: 'fa fa-close',
+							handler: function () {
+								importWindow.close();
+							}
+						}
+					]
+				}
+			],
+			items: [
+				Ext.create('OSF.component.StandardComboBox', {
+					itemId: 'fileTypeCB',
+					name: 'fileType',
+					allowBlank: false,
+					margin: '0 0 0 0',
+					editable: false,
+					typeAhead: false,
+					width: '100%',
+					readOnly: importWindow.fileTypeReadyOnly,
+					fieldLabel: 'File Type <span class="field-required" />',
+					storeConfig: {
+						url: '../api/v1/resource/lookuptypes/FileType'
+					},
+					listeners: {
+						change: function (field, newValue, oldvalue, opts) {
+							field.up('form').getComponent('fileFormatCB').getStore().load({
+								url: '../api/v1/resource/filehistory/filetypes/' + newValue + '/formats'
+							});
+
+							//set options
+							var optionPanel = field.up('form').getComponent('optionPanel');
+							optionPanel.getLayout().setActiveItem(optionPanel.getComponent('optionPanel-' + newValue));
+						}
+					}
+				}),
+				Ext.create('OSF.component.StandardComboBox', {
+					itemId: 'fileFormatCB',
+					name: 'fileFormat',
+					allowBlank: false,
+					margin: '0 0 0 0',
+					editable: false,
+					typeAhead: false,
+					width: '100%',
+					fieldLabel: 'File Format <span class="field-required" />',
+					storeConfig: {
+						url: '../api/v1/resource/filehistory/filetypes/' + importWindow.fileTypeValue + '/formats',
+						autoLoad: false
+					},
+					listeners: {
+						change: function (field, newValue, oldvalue, opts) {
+							var selectedType = field.up('form').getComponent('fileTypeCB').getValue();
+
+							field.up('form').getComponent('fileFormatMappingCB').getStore().load({
+								url: '../api/v1/resource/filehistory/filetypes/' + selectedType + '/formats/' + newValue + '/mappings'
+							});
+						}
+					}
+				}),
+				Ext.create('OSF.component.StandardComboBox', {
+					itemId: 'fileFormatMappingCB',
+					name: 'mapping',
+					margin: '0 0 0 0',
+					editable: false,
+					typeAhead: false,
+					width: '100%',
+					fieldLabel: 'Data Mapping',
+					storeConfig: {
+						url: '../api/v1/resource/lookuptypes/FileType',
+						autoLoad: false
+					}
+				}),
+				{
+					xtype: 'combobox',
+					name: 'dataSource',
+					editable: false,
+					typeAhead: false,
+					width: '100%',
+					fieldLabel: 'Data Source',
+					valueField: 'code',
+					displayField: 'description',					
+					labelAlign: 'top',	
+					labelSeparator: '',
+					emptyText: 'Select',
+					store: {
+						field: [
+							'code',
+							'description'
+						],
+						listeners: {
+							load: function(myStore){
+								myStore.add([{
+									code: null,
+									description: 'Select'
+								}]);
+							}
+						},
+						proxy: {
+							type: 'ajax',
+							url: '../api/v1/resource/lookuptypes/DataSource'
+						}
+					}
+				},			
+				{
+					xtype: 'filefield',
+					name: 'uploadFile',
+					width: '100%',
+					labelAlign: 'top',
+					labelSeparator: '',
+					allowBlank: false,
+					fieldLabel: 'Import <span class="field-required" />',
+					buttonText: 'Select File...'
+				},
+				{
+					xtype: 'fieldset',
+					itemId: 'optionPanel',
+					title: 'Options',
+					layout: 'card',
+					items: [
+						{
+							xtype: 'panel',
+							itemId: 'optionPanel-NONE'
+						},
+						{
+							xtype: 'panel',
+							itemId: 'optionPanel-SYSTEM'
+						},
+						{
+							xtype: 'panel',
+							itemId: 'optionPanel-ATTRIBUTE'
+						},
+						{
+							xtype: 'panel',
+							itemId: 'optionPanel-COMPONENT',
+							items: [
+								{
+									xtype: 'checkboxfield',
+									name: 'uploadReviews',
+									boxLabel: 'Upload Reviews'
+								},
+								{
+									xtype: 'checkboxfield',
+									name: 'uploadQuestions',
+									boxLabel: 'Upload Questions'
+								},
+								{
+									xtype: 'checkboxfield',
+									name: 'uploadTags',
+									boxLabel: 'Upload Tags'
+								},
+								{
+									xtype: 'checkboxfield',
+									name: 'uploadIntegration',
+									boxLabel: 'Upload Integration'
+								},
+								{
+									xtype: 'checkboxfield',
+									name: 'skipRequiredAttributes',
+									checked: true,
+									boxLabel: 'Skip Required Attributes'
+								}
+							]
+						}
+					]
+				}
+
+			]
+		});
+
+		importWindow.add(importWindow.formPanel);
+		importWindow.formPanel.getComponent('fileTypeCB').setValue(importWindow.fileTypeValue);
+
+	}
+
+
 });
 
 

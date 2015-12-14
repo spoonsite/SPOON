@@ -17,9 +17,11 @@ package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Handles importing of data; file history
@@ -72,5 +74,12 @@ public interface ImportService
 
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void rollback(String fileHistoryId);
+
+	/**
+	 * Groups all Errors by fileHistoryId Tries to pull efficiently
+	 *
+	 * @return
+	 */
+	public Map<String, List<FileHistoryError>> fileHistoryErrorMap();
 
 }

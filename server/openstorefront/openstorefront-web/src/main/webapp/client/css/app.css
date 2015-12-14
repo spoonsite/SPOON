@@ -16,8 +16,9 @@ and open the template in the editor.
 
 .nav-back-color {
     min-height: 52px;
-    background-color: #414e68;
-    border-color: #343f54;	
+ //   background-color: #414e68;
+    border-color: #343f54;
+    background: #414e68;
 }
 .nav-back-color-only {
 	background-color: #414e68;
@@ -33,6 +34,7 @@ and open the template in the editor.
 
 .logo-small {
     width: 250px;
+    padding: 2px;
     text-align: left;
     border-radius: 0px 8px 8px 0px;
     background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 81%, rgba(255,255,255,0) 100%);
