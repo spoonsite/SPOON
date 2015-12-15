@@ -26,13 +26,21 @@
                     
                     for(ctr=0;ctr<lines.length; ctr++){
                         var tmpRow = lines[ctr].split('",');
+                        
+                        if(tmpRow[0]==='' && tmpRow.length === 1)
+                        {
+                            continue;
+                        }
+                        
                         for(ctr2=0; ctr2<tmpRow.length; ctr2++){
                             tmpRow[ctr2]=tmpRow[ctr2].replace(/["]+/g, '');
                         }
                         if(tmpRow.length>maxCols){
                             maxCols = tmpRow.length;
                         }
-                        rows[ctr]=tmpRow;
+                        
+                        rows.push(tmpRow);  
+                       
                     }
                     console.log("Max Cols:"+maxCols);
                     console.log("rows",rows);
