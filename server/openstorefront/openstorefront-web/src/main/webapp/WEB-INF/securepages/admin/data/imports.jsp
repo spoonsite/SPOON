@@ -10,7 +10,10 @@
 		Ext.onReady(function(){	
 			
 			var importWindow = Ext.create('OSF.component.ImportWindow', {					
-				fileTypeReadyOnly: false
+				fileTypeReadyOnly: false,
+				uploadSuccess: function(form, action) {
+					Ext.getCmp('fileHistoryGrid').getStore().reload();
+				}
 			});
 			
 			var mappingPanel = Ext.create('Ext.panel.Panel', {
@@ -172,7 +175,30 @@
 						dock: 'bottom',
 						displayInfo: true,
 						displayMsg: 'Displaying Record {0} - {1} of {2}',
-						emptyMsg: "No records to display"
+						emptyMsg: "No records to display",
+						items: [
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Download',
+								id: 'downloadBtn',
+								scale: 'medium',								
+								iconCls: 'fa fa-2x fa-download',
+								disabled: true,
+								handler: function () {
+									actionDownload(Ext.getCmp('fileHistoryGrid').getSelectionModel().getSelection()[0]);
+								}
+							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								xtype: 'panel',
+								id: 'historyKeepTimePanel',
+								html: ''
+							}
+						]
 					})
 				],
 				listeners: {
@@ -185,20 +211,22 @@
 							Ext.getCmp('fileHistoryGrid').getComponent('mainToolbar').getComponent('viewDetailsBtn').setDisabled(false);
 							Ext.getCmp('fileHistoryGrid').getComponent('mainToolbar').getComponent('reprocessBtn').setDisabled(false);
 							Ext.getCmp('fileHistoryGrid').getComponent('mainToolbar').getComponent('rollbackBtn').setDisabled(false);							
+							Ext.getCmp('downloadBtn').setDisabled(false);
 						} else {
 							Ext.getCmp('fileHistoryGrid').getComponent('mainToolbar').getComponent('viewDetailsBtn').setDisabled(true);
 							Ext.getCmp('fileHistoryGrid').getComponent('mainToolbar').getComponent('reprocessBtn').setDisabled(true);
 							Ext.getCmp('fileHistoryGrid').getComponent('mainToolbar').getComponent('rollbackBtn').setDisabled(true);
+							Ext.getCmp('downloadBtn').setDisabled(true);
 						}
 					}
 				} 				
-			});
+			});			
 			
 			var mainPanel = Ext.create('Ext.tab.Panel', {
 				title: 'Manage Imports <i class="fa fa-question-circle"  data-qtip="Allows for management of the data imports and their mappings."></i>',
 				items: [
-					fileHistoryGrid,
-					mappingPanel					
+					fileHistoryGrid
+					//mappingPanel					
 				]
 			});
 			
@@ -208,6 +236,21 @@
 					mainPanel
 				]
 			});
+			
+			var actionUpdateHistoryKeepTime = function() {				
+				Ext.Ajax.request({
+					url: '../api/v1/service/application/configproperties/filehistory.max.days',
+					success: function (response) {
+						var keyData = Ext.decode(response.responseText);
+						Ext.getCmp('historyKeepTimePanel').update('*History is only kept for <b>' + keyData.description + '</b> day(s)');
+					}
+				});
+			};
+			actionUpdateHistoryKeepTime();
+			
+			var actionDownload = function(record) {
+				window.location.href = '../api/v1/resource/filehistory/' + record.get('fileHistoryId') + '/download';
+			};
 			
 			var detailWindow = Ext.create('Ext.window.Window', {
 				title: 'Details',
@@ -325,11 +368,35 @@
 			};
 			
 			var actionReprocess = function(record){
-				
+				Ext.Ajax.request({
+					url: '../api/v1/resource/filehistory/'+ record.get('fileHistoryId') + '/reprocess',
+					method: 'POST',
+					success: function(response, opts){
+						Ext.toast('Queued File for reprocessing', 'Success', 'br');
+						Ext.getCmp('fileHistoryGrid').getStore().reload();
+					}
+				});
 			};
 			
 			var actionRollback = function(record){
-				
+				Ext.Msg.show({
+					title:'Rollback Changes?',
+					message: 'Are you sure you want to rollback selected file? (May affect live data)',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							Ext.Ajax.request({
+								url: '../api/v1/resource/filehistory/'+ record.get('fileHistoryId') + '/rollback',
+								method: 'POST',
+								success: function(response, opts){
+									Ext.toast('Rolledback file', 'Success', 'br');
+									Ext.getCmp('fileHistoryGrid').getStore().reload();
+								}
+							});							
+						} 
+					}
+				});
 			};			
 			
 		});		

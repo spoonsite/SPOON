@@ -13,21 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.api;
+package edu.usu.sdl.openstorefront.core.model;
+
+import java.io.InputStream;
 
 /**
- * Internal methods
  *
  * @author dshurtleff
  */
-public interface ImportServicePrivate
+public class FileFormatCheck
 {
 
-	/**
-	 * Handles the actual processing (Works with existing records)
-	 *
-	 * @param fileHistoryId
-	 */
-	void processImport(String fileHistoryId);
+	private String fileFormat;
+	private String mimeType;
+	private InputStream input;
+
+	public FileFormatCheck()
+	{
+	}
+
+	public String getFileFormat()
+	{
+		return fileFormat;
+	}
+
+	public void setFileFormat(String fileFormat)
+	{
+		this.fileFormat = fileFormat;
+	}
+
+	public String getMimeType()
+	{
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType)
+	{
+		this.mimeType = mimeType;
+	}
+
+	public InputStream getInput()
+	{
+		return input;
+	}
+
+	public void setInput(InputStream input)
+	{
+		this.input = input;
+	}
 
 }
