@@ -41,7 +41,20 @@ Ext.define('OSF.component.ImportWindow', {
 							formBind: true,
 							iconCls: 'fa fa-upload',
 							handler: function () {
-
+								var uploadForm = this.up('form');
+								uploadForm.submit({
+									submitEmptyText: false,
+									url: '/openstorefront/Upload.action?ImportData',
+									success: function(form, action) {
+										Ext.toast('File has been queue for processing.', 'Upload Successfully', 'br');	
+										if (importWindow.uploadSuccess) {
+											importWindow.uploadSuccess(form, action);
+										}
+										uploadForm.reset();
+										uploadForm.getComponent('fileTypeCB').setValue(importWindow.fileTypeValue);
+										importWindow.close();
+									}
+								});
 							}
 						},
 						{
@@ -108,7 +121,7 @@ Ext.define('OSF.component.ImportWindow', {
 				}),
 				Ext.create('OSF.component.StandardComboBox', {
 					itemId: 'fileFormatMappingCB',
-					name: 'mapping',
+					name: 'dataMappingId',
 					margin: '0 0 0 0',
 					editable: false,
 					typeAhead: false,
@@ -184,27 +197,27 @@ Ext.define('OSF.component.ImportWindow', {
 							items: [
 								{
 									xtype: 'checkboxfield',
-									name: 'uploadReviews',
+									name: 'componentUploadOptions.uploadReviews',
 									boxLabel: 'Upload Reviews'
 								},
 								{
 									xtype: 'checkboxfield',
-									name: 'uploadQuestions',
+									name: 'componentUploadOptions.uploadQuestions',
 									boxLabel: 'Upload Questions'
 								},
 								{
 									xtype: 'checkboxfield',
-									name: 'uploadTags',
+									name: 'componentUploadOptions.uploadTags',
 									boxLabel: 'Upload Tags'
 								},
 								{
 									xtype: 'checkboxfield',
-									name: 'uploadIntegration',
+									name: 'componentUploadOptions.uploadIntegration',
 									boxLabel: 'Upload Integration'
 								},
 								{
 									xtype: 'checkboxfield',
-									name: 'skipRequiredAttributes',
+									name: 'componentUploadOptions.skipRequiredAttributes',
 									checked: true,
 									boxLabel: 'Skip Required Attributes'
 								}

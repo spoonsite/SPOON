@@ -4,7 +4,8 @@
           <stripes:layout-component name="contents">
 			  
 		<script src="scripts/component/importWindow.js" type="text/javascript"></script>
-			  
+		<script src="scripts/component/messageWindow.js" type="text/javascript"></script>
+		
 		<form name="exportForm" action="../api/v1/resource/components/export" method="POST" >
 			<p style="display: none;" id="exportFormIds">
 			</p>      
@@ -19,9 +20,7 @@
 				//External Windows
 				var importWindow = Ext.create('OSF.component.ImportWindow', {					
 				});
-				
-			
-			
+							
 				//common stores
 				var statusFilterStore = Ext.create('Ext.data.Store', {
 					fields: ['code', 'desc'],
@@ -2295,6 +2294,12 @@
 									iconCls: 'fa fa-envelope',
 									handler: function() {
 										
+										//get submiter  
+										
+										var messageWindow = Ext.create('OSF.component.MessageWindow', {					
+											closeAction: 'destory',
+											initialToUsers: ''
+										}).show();
 									}
 								},
 								{

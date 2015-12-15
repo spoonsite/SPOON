@@ -29,19 +29,25 @@ import edu.usu.sdl.openstorefront.core.view.FileHistoryView;
 import edu.usu.sdl.openstorefront.core.view.FileHistoryViewWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.BeanParam;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import net.sourceforge.stripes.util.bean.BeanUtil;
 
 /**
@@ -55,6 +61,7 @@ public class FileHistoryResource
 {
 
 	@GET
+	@RequireAdmin
 	@APIDescription("Gets file history records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileHistoryViewWrapper.class)
@@ -122,7 +129,8 @@ public class FileHistoryResource
 	}
 
 	@GET
-	@APIDescription("Gets file format for a type")
+	@RequireAdmin
+	@APIDescription("Gets errors for a file")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileHistoryError.class)
 	@Path("{fileHistoryId}/errors")
@@ -135,9 +143,77 @@ public class FileHistoryResource
 		return fileHistoryError.findByExample();
 	}
 
-	//TODO: get rollback effect (Check what the rollback would do)
-	//TODO: rollback (Option to restore record; override or sync)
 	@GET
+	@RequireAdmin
+	@APIDescription("Download the original file")
+	@Produces({MediaType.WILDCARD})
+	@Path("{fileHistoryId}/download")
+	public Response downloadFileHistory(
+			@PathParam("fileHistoryId") String fileHistoryId
+	)
+	{
+		FileHistory fileHistory = new FileHistory();
+		fileHistory.setFileHistoryId(fileHistoryId);
+		fileHistory = fileHistory.find();
+		if (fileHistory != null) {
+
+			java.nio.file.Path path = fileHistory.pathToFileName();
+
+			if (path.toFile().exists()) {
+				Response.ResponseBuilder responseBuilder = Response.ok((StreamingOutput) (OutputStream output) -> {
+					Files.copy(path, output);
+				});
+				responseBuilder.header("Content-Disposition", "attachment; filename=\"" + fileHistory.getFilename() + "\"");
+				return responseBuilder.build();
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	@POST
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(FileHistory.class)
+	@Path("/{fileHistoryId}/reprocess")
+	public Response reprocessFile(
+			@PathParam("fileHistoryId") String fileHistoryId
+	)
+	{
+		FileHistory fileHistory = new FileHistory();
+		fileHistory.setFileHistoryId(fileHistoryId);
+		fileHistory = fileHistory.find();
+		if (fileHistory != null) {
+			service.getImportService().reprocessFile(fileHistoryId);
+		}
+
+		return sendSingleEntityResponse(fileHistory);
+	}
+
+	//TODO: get rollback effect (Check what the rollback would do)
+	@POST
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{fileHistoryId}/rollback")
+	public Response rollbackFile(
+			@PathParam("fileHistoryId") String fileHistoryId
+	)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+
+		FileHistory fileHistory = new FileHistory();
+		fileHistory.setFileHistoryId(fileHistoryId);
+		fileHistory = fileHistory.find();
+		if (fileHistory != null) {
+			service.getImportService().rollback(fileHistoryId);
+			response = Response.ok().build();
+		}
+
+		return response;
+	}
+
+	@GET
+	@RequireAdmin
 	@APIDescription("Gets file format for a type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileFormat.class)
@@ -151,6 +227,7 @@ public class FileHistoryResource
 	}
 
 	@GET
+	@RequireAdmin
 	@APIDescription("Gets data mappings for a format.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)

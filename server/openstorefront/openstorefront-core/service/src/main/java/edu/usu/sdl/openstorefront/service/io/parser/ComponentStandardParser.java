@@ -60,7 +60,6 @@ public class ComponentStandardParser
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
 	{
-		String validFormat = null;
 		StringBuilder sb = new StringBuilder();
 
 		if (allowTextTypes.contains(mimeType) == false
@@ -68,7 +67,7 @@ public class ComponentStandardParser
 			sb.append("Format not supported.  Requires json text file or zip file.");
 		}
 
-		return validFormat;
+		return sb.toString();
 	}
 
 	@Override
@@ -93,7 +92,11 @@ public class ComponentStandardParser
 					}
 				} else {
 
-					TFile archive = new TFile(fileHistoryAll.getFileHistory().pathToFileName().toFile());
+					TFile archive = new TFile(fileHistoryAll.getFileHistory().pathToFileName().toFile().toString());
+					if (archive == null || archive.listFiles() == null) {
+						throw new OpenStorefrontRuntimeException("Unsupported format.", "Check file; this format only accpets JSON or ZIP with vaild JSON record.");
+					}
+
 					for (TFile file : archive.listFiles()) {
 						if (file.isFile()) {
 							try (InputStream inTemp = new TFileInputStream(file)) {

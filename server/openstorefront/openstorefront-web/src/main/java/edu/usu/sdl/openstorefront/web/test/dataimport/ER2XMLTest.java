@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.test.format;
+package edu.usu.sdl.openstorefront.web.test.dataimport;
 
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.core.entity.DataSource;
