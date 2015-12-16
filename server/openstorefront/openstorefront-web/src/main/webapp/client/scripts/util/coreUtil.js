@@ -60,7 +60,7 @@ var CoreUtil = {
 					type: 'ajax',
 					url: options.url
 				}
-			}, options));			
+			}, options));
 			if (options.addRecords) {
 				store.on('load', function (myStore, records, sucessful, opts) {
 					myStore.add(options.addRecords);
@@ -70,30 +70,168 @@ var CoreUtil = {
 
 		return store;
 	},
+	downloadCSVFile: function (filename, csvContent) {
+		var charset = "utf-8";
+		var blob = new Blob([csvContent], {
+			type: "text/csv;charset=" + charset + ";"
+		});
+		if (window.navigator.msSaveOrOpenBlob) {
+			//console.log("Save Blob");
+			window.navigator.msSaveBlob(blob, filename);
+		} else {
+			//console.log("Create Link");
+			var link = document.createElement("a");
+			if (link.download !== undefined) { // feature detection
+				// Browsers that support HTML5 download attribute
+				var url = URL.createObjectURL(blob);
+				link.setAttribute("href", url);
+				link.setAttribute("download", filename);
+				link.style.visibility = 'hidden';
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			}
+		}
+	},
+	csvToHTML: function (csvData) {
 
-    downloadCSVFile: function(filename, csvContent) {
-        var charset = "utf-8";
-        var blob = new Blob([csvContent], {
-             type: "text/csv;charset="+ charset + ";"
-        });
-        if (window.navigator.msSaveOrOpenBlob) {
-            //console.log("Save Blob");
-             window.navigator.msSaveBlob(blob, filename);
-        } else {
-            //console.log("Create Link");
-            var link = document.createElement("a");
-            if (link.download !== undefined) { // feature detection
-                // Browsers that support HTML5 download attribute
-                var url = URL.createObjectURL(blob);
-                link.setAttribute("href", url);
-                link.setAttribute("download", filename);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } 
-        }
-      },
+		var lines = csvData.split("\n");
+		var rows = [];
+		var maxCols = 0;
+		var htmlData = '';
+		var foundHeaderFlag = 0;
+		var lengthCheck = 3;
+		var lengthCheckFlag = 0;
+
+		for (ctr = 0; ctr < lines.length; ctr++) {
+			var tmpRow = lines[ctr].split('",');
+
+			if (tmpRow[0] === '' && tmpRow.length === 1)
+			{
+				continue;
+			}
+
+			for (ctr2 = 0; ctr2 < tmpRow.length; ctr2++) {
+				tmpRow[ctr2] = tmpRow[ctr2].replace(/["]+/g, '');
+			}
+			if (tmpRow.length > maxCols) {
+				maxCols = tmpRow.length;
+			}
+
+			rows.push(tmpRow);
+
+		}
+
+		htmlData += '<html><head><style> table{border-collapse: collapse; border: 2px black solid; font: 12px sans-serif} td{border: 1px black solid; padding:5px;} th{padding:5px;}</style></head>';
+
+		for (ctr = 0; ctr < rows.length; ctr++) {
+			for (ctr2 = 0; ctr2 < rows[ctr].length; ctr2++) {
+				if (foundHeaderFlag === 0) {
+					if (rows[ctr].length === maxCols) //This is the header
+					{
+						if (ctr2 === 0) { //Start Header
+							htmlData += '<table><tr><th>' + rows[ctr][ctr2] + '</th>';
+						}
+
+						if ((ctr2 + 1) === maxCols) { //End Row
+							foundHeaderFlag = 1;
+							if (ctr2 !== 0) {
+								htmlData += '<th>' + rows[ctr][ctr2] + '</th></tr>';
+							}
+							else {
+								htmlData += '</tr>';
+							}
+
+						}
+						else if (ctr2 !== 0) {//Normal Header Col
+							htmlData += '<th>' + rows[ctr][ctr2] + '</th>';
+						}
+					}
+					else  //Data before the header
+					{
+
+						if (ctr2 === 0) {
+							if (rows[ctr].length > lengthCheck) {
+
+								if (!lengthCheckFlag) {
+									htmlData += '<table>';
+									lengthCheckFlag = 1;
+								}
+								htmlData += '<tr><td>' + rows[ctr][ctr2] + '</td>';
+
+							}
+							else {
+								if (lengthCheckFlag) {
+									htmlData += '</table>';
+									lengthCheckFlag = 0;
+								}
+								htmlData += '<div>' + rows[ctr][ctr2];
+							}
+
+						}
+
+						if ((ctr2 + 1) === rows[ctr].length) { //Last Col
+
+							if (rows[ctr].length > lengthCheck) {
+								if (ctr2 !== 0) {
+									htmlData += '<td>' + rows[ctr][ctr2] + '</td></tr>';
+								}
+								else {
+									htmlData += '</tr>';
+								}
+							}
+							else {
+								if (ctr2 !== 0) {
+									htmlData += rows[ctr][ctr2] + '</div>';
+								}
+								else
+								{
+									htmlData += '</div>';
+								}
+
+							}
+						}
+						else if (ctr2 !== 0) { //Middle Col
+							if (rows[ctr].length > lengthCheck) {
+
+								htmlData += '<td>' + rows[ctr][ctr2] + '</td>';
+							}
+							else {
+								htmlData += rows[ctr][ctr2];
+							}
+
+						}
+					}
+				}
+				else { //Regular table data
+
+					if (ctr2 === 0) { //Start new row
+						htmlData += '<tr><td>' + rows[ctr][ctr2] + '</td>';
+					}
+
+					if ((ctr2 + 1) === rows[ctr].length) { //End row
+						if (ctr2 !== 0) {
+							htmlData += '<td>' + rows[ctr][ctr2] + '</td></tr>';
+						}
+						else {
+							htmlData += '</tr>';
+						}
+
+
+					}
+					else if (ctr2 !== 0) { //Normal Data
+
+						htmlData += '<td>' + rows[ctr][ctr2] + '</td>';
+					}
+
+				}
+			}
+		}
+		htmlData += '</table></html>';
+		htmlData = htmlData.replace(/<td><\/td>/g, '<td>&nbsp</td>');
+
+		return htmlData;
+	},
 	popupMessage: function (title, message, delay) {
 		if (delay)
 		{
@@ -202,7 +340,8 @@ var CoreUtil = {
 		} else {
 			CoreUtil.popupMessage('Local Storage', 'Not Supported');
 			return null;
-		}	},
+		}
+	},
 	removeBlankDataItem: function (originalData) {
 		Ext.Object.each(originalData, function (key, value, data) {
 			if (value === "") {
