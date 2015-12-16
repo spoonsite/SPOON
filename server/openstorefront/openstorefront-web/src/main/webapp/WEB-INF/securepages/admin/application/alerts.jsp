@@ -271,7 +271,8 @@
 								{
 									xtype: 'textfield',
 									fieldLabel: 'Email Addresses<span class="field-required"></span>',
-									id: 'alertEntryForm-Email',
+									// id is 'email' for validation purposes.
+									id: 'email',
 									name: 'emailAddresses'
 								},
 								{
@@ -404,14 +405,41 @@
 													removeBlankDataItems: true,
 													form: Ext.getCmp('editAlertForm'),
 													success: function (response, opts) {
-														console.log(response);
-														Ext.toast('Saved Successfully', '', 'tr');
-														Ext.getCmp('editAlertForm').setLoading(false);
-														Ext.getCmp('editAlertForm').reset();
-														Ext.getCmp('alertAddEditWin').hide();
-														Ext.getCmp('alertGrid').getStore().load();
-														Ext.getCmp('alertGrid').getSelectionModel().deselectAll();
-														Ext.getCmp('alertGrid-tools-edit').setDisabled(true);
+														// Server responded OK
+														// Now we check for actual success based on
+														// the server's response object.
+														var errorResponse = Ext.decode(response.responseText);
+
+														// Confusingly, you will only see the "success"
+														// property in the response if the success
+														// is success = false. Therefore
+														// the appearance of the success property actually
+														// means there was a failure.
+
+														if (!errorResponse.hasOwnProperty('success')) {
+															// Validation succeeded.
+															Ext.toast('Saved Successfully', '', 'tr');
+															Ext.getCmp('editAlertForm').setLoading(false);
+															Ext.getCmp('editAlertForm').reset();
+															Ext.getCmp('alertAddEditWin').hide();
+															Ext.getCmp('alertGrid').getStore().load();
+															Ext.getCmp('alertGrid').getSelectionModel().deselectAll();
+															Ext.getCmp('alertGrid-tools-edit').setDisabled(true);
+														} else {
+															// Validation failed
+
+															// Compile an object to pass to ExtJS Form
+															// that allows validation messages
+															// using the markInvalid() method.
+															var errorObj = {};
+															Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+																errorObj[item.key] = item.value;
+															});
+															var form = Ext.getCmp('editAlertForm').getForm();
+															form.markInvalid(errorObj);
+
+
+														}
 													},
 												});
 											}
@@ -453,7 +481,7 @@
 							value += data.email;
 							value += "; ";
 						});
-						Ext.getCmp('alertEntryForm-Email').setValue(value);
+						Ext.getCmp('email').setValue(value);
 
 						// Process User Data Options
 						if (record.data.userDataAlertOption) {
