@@ -84,6 +84,7 @@ public class ComponentTrackingResource
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		writer.writeNext(new String[]{"Name",
+									  "Component Type",
 									  "Component ID",
 									  "Tracking ID",
 									  "Create Date",

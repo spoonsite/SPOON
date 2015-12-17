@@ -732,9 +732,17 @@ public class ComponentRESTResource
 		}
 		//Track Views
 		if (componentDetail != null || componentPrint != null) {
+			String componentType = null;
+			if (componentDetail != null) {
+				componentType = componentDetail.getComponentType();
+			} else if (componentPrint != null) {
+				componentType = componentPrint.getComponentType();
+			}
+
 			ComponentTracking componentTracking = new ComponentTracking();
 			componentTracking.setClientIp(NetworkUtil.getClientIp(request));
 			componentTracking.setComponentId(componentId);
+			componentTracking.setComponentType(componentType);
 			componentTracking.setEventDts(TimeUtil.currentDate());
 			componentTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
 			componentTracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);

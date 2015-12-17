@@ -51,7 +51,7 @@ public class UserTrackingResource
 	@APIDescription("Get the list of tracking details on users passing in a filter")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTracking.class)
-	public Response getActiveComponentTracking(
+	public Response getActiveUserTrackings(
 			@PathParam("id")
 			@RequiredParam String userId,
 			@BeanParam FilterQueryParams filterQueryParams)

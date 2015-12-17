@@ -69,6 +69,7 @@ public class ComponentTrackingCompleteWrapper
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
 		writer.writeNext(new String[]{getName(),
+									  getData().getComponentType(),
 									  getData().getComponentId(),
 									  getData().getComponentTrackingId(),
 									  df.format(getData().getEventDts()),
