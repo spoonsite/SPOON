@@ -1152,22 +1152,10 @@
 				//  HISTORY VIEW WINDOW CSV OR HTML 
 				//
 				//
-				var historyViewWin = function (data, data_type) {
-					var theItems = [];
-					var contentData = '';
-					if (data_type === 'text-html') {
-
-						contentData = data;
-					}
-					else if (data_type === 'text-csv') {
-
-						contentData = CoreUtil.csvToHTML(data);
-					}
-					else
-					{
-
-						contentData = data;
-					}
+				
+				var historyViewWin = function () {
+					
+					setHistoryContentData();
 
 					Ext.create('Ext.window.Window', {
 						title: 'View Report Data',
@@ -1179,11 +1167,50 @@
 						closeAction: 'destroy',
 						modal: true,
 						maximizable: true,
+						scrollable:true,
 						layout: 'fit',
-						items: theItems,
-						html: contentData,
 						bodyStyle: 'padding: 10px;',
-						scrollable: true
+						html: contentData,
+						dockedItems: [
+						{
+							dock: 'bottom',
+							xtype: 'toolbar',
+							items: [
+								{
+									xtype: 'button',
+									text: 'Previous',
+									id: 'previewWinTools-previousBtn',
+									iconCls: 'fa fa-arrow-left',
+									handler: function () {
+										actionPreviewNextRecord(false);
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									xtype: 'button',
+									text: 'Download',
+									iconCls: 'fa fa-arrow-down',
+									handler: function () {
+										historyExport();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									xtype: 'button',
+									text: 'Next',
+									id: 'previewWinTools-nextBtn',
+									iconCls: 'fa fa-arrow-right',
+									iconAlign: 'right',
+									handler: function () {
+										actionPreviewNextRecord(true);
+									}
+								}
+							]
+						}]
 					}).show();
 				};
 
@@ -1211,6 +1238,58 @@
 						Ext.getCmp('historyExportButton').setDisabled(true);
 					}
 				};
+                
+				//
+				//  Record Preview methods
+				//
+				var contentData ='';
+				var setHistoryContentData = function(){
+					
+					var selectedObj = Ext.getCmp('historyGrid').getSelection()[0];
+				    Ext.Ajax.request({
+						url: '../api/v1/resource/reports/' + selectedObj.data.reportId + '/report',
+						method: 'GET',
+						success: function (response, opts) {
+							var reportData = response.responseText;
+							var reportFormat = selectedObj.data.reportFormat;
+							if (reportFormat === 'text-html') {
+								contentData = reportData;
+							}
+							else if (reportFormat === 'text-csv') {
+								contentData = CoreUtil.csvToHTML(reportData);
+							}
+							else{
+								contentData = reportData;
+							}
+		                    Ext.getCmp('viewHistoryData').update(contentData);
+						}
+					});
+				};
+				
+				var actionPreviewNextRecord = function (next) {
+					if (next) {
+						Ext.getCmp('historyGrid').getSelectionModel().selectNext();
+					} else {
+						Ext.getCmp('historyGrid').getSelectionModel().selectPrevious();
+					}
+
+					setHistoryContentData();
+					checkPreviewButtons();
+				};
+				
+				var checkPreviewButtons = function () {
+					if (Ext.getCmp('historyGrid').getSelectionModel().hasPrevious()) {
+						Ext.getCmp('previewWinTools-previousBtn').setDisabled(false);
+					} else {
+						Ext.getCmp('previewWinTools-previousBtn').setDisabled(true);
+					}
+
+					if (Ext.getCmp('historyGrid').getSelectionModel().hasNext()) {
+						Ext.getCmp('previewWinTools-nextBtn').setDisabled(false);
+					} else {
+						Ext.getCmp('previewWinTools-nextBtn').setDisabled(true);
+					}
+				};
 
 				//
 				//  Refresh and reload the grid
@@ -1225,15 +1304,7 @@
 				//
 				var viewHistory = function () {
 
-					var selectedObj = Ext.getCmp('historyGrid').getSelection()[0];
-
-					Ext.Ajax.request({
-						url: '../api/v1/resource/reports/' + selectedObj.data.reportId + '/report',
-						method: 'GET',
-						success: function (response, opts) {
-							historyViewWin(response.responseText, selectedObj.data.reportFormat);
-						}
-					});
+					historyViewWin();
 				};
 
 				//
