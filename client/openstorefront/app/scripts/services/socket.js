@@ -29,12 +29,16 @@ app.factory('socket', ['$rootScope', 'business', '$q',  function ($rootScope, Bu
   
   Business.userservice.getCurrentUserProfile().then(function(result){
     if (result){
-      socket = io.connect('', {'resource':'openstorefront/event', 'query': 'id='+result.username+'' });
+      socket = io.connect('', {'resource':'openstorefront/event', 'query': 'id='+result.username+'', 
+					transports: [
+					'websocket',
+					'xhr-polling'
+				   ]});
     }
     deferred.resolve();
   }, function(){
-    deferred.resolve()
-  })
+    deferred.resolve();
+  });
 
   return {
     on: function(eventName, callback) {
