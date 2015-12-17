@@ -205,8 +205,8 @@
 								Ext.getCmp('alertGrid-tools-edit').enable(true);
 								Ext.getCmp('alertGrid-tools-toggleActivation').enable(true);
 							} else {
-								Ext.getCmp('alertGrid-tools-edit').enable(false);
-								Ext.getCmp('alertGrid-tools-toggleActivation').enable(false);
+								Ext.getCmp('alertGrid-tools-edit').disable();
+								Ext.getCmp('alertGrid-tools-toggleActivation').disable();
 							}
 						}
 					}
