@@ -174,7 +174,7 @@
 		<servlet-class>org.atmosphere.cpr.AtmosphereServlet</servlet-class>		
 		<init-param>
 			<param-name>socketio-transport</param-name>
-			<param-value>websocket</param-value>
+			<param-value>websocket, polling</param-value>
 		</init-param>
 		<init-param>
 			<param-name>socketio-timeout</param-name>
