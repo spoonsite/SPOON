@@ -378,7 +378,7 @@
 				   query: 'id=' + usercontext.username,
 				   transports: [
 					'websocket',
-					'xhr-polling'
+					'polling'
 				   ]
 				});
 												

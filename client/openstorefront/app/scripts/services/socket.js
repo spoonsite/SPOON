@@ -32,7 +32,7 @@ app.factory('socket', ['$rootScope', 'business', '$q',  function ($rootScope, Bu
       socket = io.connect('', {'resource':'openstorefront/event', 'query': 'id='+result.username+'', 
 					transports: [
 					'websocket',
-					'xhr-polling'
+					'polling'
 				   ]});
     }
     deferred.resolve();
