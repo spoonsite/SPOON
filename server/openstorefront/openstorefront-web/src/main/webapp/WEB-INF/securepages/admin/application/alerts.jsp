@@ -185,6 +185,7 @@
 								{
 									text: 'Deactivate',
 									id: 'alertGrid-tools-toggleActivation',
+									iconCls: 'fa fa-2x fa-power-off',
 									disabled: true,
 									scale: 'medium',
 									handler: function () {
@@ -195,6 +196,7 @@
 								{
 									text: 'Delete',
 									id: 'alertGrid-tools-delete',
+									iconCls: 'fa fa-2x fa-trash',
 									disabled: true,
 									scale: 'medium',
 									handler: function () {

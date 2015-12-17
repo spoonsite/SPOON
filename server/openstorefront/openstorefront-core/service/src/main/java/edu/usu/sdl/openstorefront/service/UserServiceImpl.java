@@ -438,11 +438,14 @@ public class UserServiceImpl
 	}
 
 	@Override
-	public void sendTestEmail(String username)
+	public void sendTestEmail(String username, String overrideEmail)
 	{
 		UserProfile userProfile = getUserProfile(username);
 		if (userProfile != null) {
-			if (StringUtils.isNotBlank(userProfile.getEmail())) {
+			if (StringUtils.isNotBlank(overrideEmail) || StringUtils.isNotBlank(userProfile.getEmail())) {
+				if (StringUtils.isNotBlank(overrideEmail)) {
+					userProfile.setEmail(overrideEmail);
+				}
 				TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
 				Email email = testMessageGenerator.generateMessage();
 				MailManager.send(email);

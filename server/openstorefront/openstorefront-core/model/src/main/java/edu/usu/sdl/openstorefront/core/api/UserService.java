@@ -172,11 +172,13 @@ public interface UserService
 	public UserContext handleLogin(UserProfile userprofile, HttpServletRequest request, Boolean admin);
 
 	/**
-	 * This will send a test email to the address on the user profile.
+	 * This will send a test email to the address on the user profile. or to
+	 * override email if set.
 	 *
-	 * @param username
+	 * @param username (required)
+	 * @param overrideEmail (optional)
 	 */
-	public void sendTestEmail(String username);
+	public void sendTestEmail(String username, String overrideEmail);
 
 	/**
 	 * Pulls active watches for the component and create messages for 'notfiy'

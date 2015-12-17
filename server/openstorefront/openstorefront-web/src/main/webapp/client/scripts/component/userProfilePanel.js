@@ -53,12 +53,48 @@ Ext.define('OSF.component.UserProfilePanel', {
 				allowBlank: false
 			},
 			{
-				xtype: 'textfield',
-				name: 'email',
-				fieldLabel: 'Email <span class="field-required" />',
-				width: '100%',
-				maxLength: 1000,
-				allowBlank: false
+				xtype: 'panel',
+				layout: 'hbox',
+				items: [
+					{
+						xtype: 'textfield',
+						name: 'email',
+						inputType: 'email',
+						fieldLabel: 'Email <span class="field-required" />',
+						width: '81%',
+						maxLength: 1000,
+						allowBlank: false
+					},
+					{
+						xtype: 'button',
+						width: '19%',
+						text: 'Send Test Message',
+						iconCls: 'fa fa-envelope',
+						handler: function(){
+							var user = this.up('form').getForm().findField('username');
+							var email = this.up('form').getForm().findField('email');
+							if (email.getValue()) {
+								Ext.Ajax.request({
+									url: '/openstorefront/api/v1/resource/userprofiles/' + user.getValue() + '/test-email',
+									method: 'POST',									
+									rawData: email.getValue(),
+									success: function(){
+										Ext.toast('Sent test email message to: ' + email.getValue());
+									}
+								});
+							} else {
+								Ext.Msg.show({
+									title: 'Validation',
+									message: 'A email address is required.',
+									buttons: Ext.Msg.OK,
+									icon: Ext.Msg.ERROR,
+									fn: function(btn) {
+									}
+								});								
+							}
+						}
+					}
+				]
 			},
 			{
 				xtype: 'textfield',
