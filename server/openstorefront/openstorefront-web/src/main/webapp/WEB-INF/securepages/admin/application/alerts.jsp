@@ -191,6 +191,16 @@
 										var record = Ext.getCmp('alertGrid').getSelection()[0];
 										actionToggleActivation(record);
 									}
+								},
+								{
+									text: 'Delete',
+									id: 'alertGrid-tools-delete',
+									disabled: true,
+									scale: 'medium',
+									handler: function () {
+										var record = Ext.getCmp('alertGrid').getSelection()[0];
+										actionDeleteAlert(record);
+									}
 								}
 
 							]
@@ -204,9 +214,11 @@
 							if (Ext.getCmp('alertGrid').getSelectionModel().hasSelection()) {
 								Ext.getCmp('alertGrid-tools-edit').enable(true);
 								Ext.getCmp('alertGrid-tools-toggleActivation').enable(true);
+								Ext.getCmp('alertGrid-tools-delete').enable(true);
 							} else {
 								Ext.getCmp('alertGrid-tools-edit').disable();
 								Ext.getCmp('alertGrid-tools-toggleActivation').disable();
+								Ext.getCmp('alertGrid-tools-delete').disable();
 							}
 						}
 					}
@@ -556,10 +568,11 @@
 								Ext.getCmp('alertGrid').getSelectionModel().deselectAll();
 								Ext.getCmp('alertGrid-tools-toggleActivation').disable();
 								Ext.getCmp('alertGrid-tools-edit').disable();
+								Ext.getCmp('alertGrid-tools-delete').disable();
 							},
 							failure: function (response, opts) {
 								Ext.MessageBox.alert('Failed to' + what,
-								"Error: Could not " + what + ' "' + record.data.name + '"' );
+										"Error: Could not " + what + ' "' + record.data.name + '"');
 							}
 						});
 
@@ -567,6 +580,47 @@
 						Ext.MessageBox.alert("No Record Selected", "Error: You have not selected a record.");
 					}
 				};
+
+
+				var actionDeleteAlert = function (record) {
+					if (record) {
+						var alertId = record.data.alertId;
+						var title = 'Delete Alert';
+						var msg = 'Are you sure you want to delete "' + record.data.name + '"?';
+						Ext.MessageBox.confirm(title, msg, function (btn) {
+							if (btn === 'yes') {
+								var url = '/openstorefront/api/v1/resource/alerts/' + alertId + "/force";
+								var method = "DELETE";
+								Ext.Ajax.request({
+									url: url,
+									method: method,
+									success: function (response, opts) {
+										var message = 'Successfully deleted "' + record.data.name + '"';
+										Ext.toast(message, '', 'tr');
+										// The ordering below is necessary
+										// to get Ext to disable the buttons.
+										Ext.getCmp('alertGrid').getStore().load();
+										Ext.getCmp('alertGrid').getSelectionModel().deselectAll();
+										Ext.getCmp('alertGrid-tools-toggleActivation').disable();
+										Ext.getCmp('alertGrid-tools-edit').disable();
+										Ext.getCmp('alertGrid-tools-delete').disable();
+									},
+									failure: function (response, opts) {
+										Ext.MessageBox.alert('Failed to delete',
+												'Error: Could not delete "' + record.data.name + '"');
+									}
+								});
+							}
+						});
+
+
+
+					} else {
+						Ext.MessageBox.alert("No Record Selected", "Error: You have not selected a record.");
+					}
+				};
+
+
 				Ext.create('Ext.container.Viewport', {
 					layout: 'fit',
 					items: [
