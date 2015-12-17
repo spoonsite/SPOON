@@ -32,7 +32,7 @@ public class AlertView
 		extends Alert
 {
 
-	private String alertTypeDesciption;
+	private String alertTypeDescription;
 
 	public AlertView()
 	{
@@ -46,7 +46,7 @@ public class AlertView
 		} catch (IllegalAccessException | InvocationTargetException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
-		alertView.setAlertTypeDesciption(TranslateUtil.translate(AlertType.class, alert.getAlertType()));
+		alertView.setAlertTypeDescription(TranslateUtil.translate(AlertType.class, alert.getAlertType()));
 		return alertView;
 	}
 
@@ -59,14 +59,14 @@ public class AlertView
 		return views;
 	}
 
-	public String getAlertTypeDesciption()
+	public String getAlertTypeDescription()
 	{
-		return alertTypeDesciption;
+		return alertTypeDescription;
 	}
 
-	public void setAlertTypeDesciption(String alertTypeDesciption)
+	public void setAlertTypeDescription(String alertTypeDescription)
 	{
-		this.alertTypeDesciption = alertTypeDesciption;
+		this.alertTypeDescription = alertTypeDescription;
 	}
 
 }
