@@ -247,10 +247,11 @@ public class UserProfileResource
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Path("/{id}/test-email")
 	public Response sendTestEmail(
-			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM) String username
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM) String username,
+			String email
 	)
 	{
-		service.getUserService().sendTestEmail(username);
+		service.getUserService().sendTestEmail(username, email);
 		return Response.ok().build();
 	}
 
