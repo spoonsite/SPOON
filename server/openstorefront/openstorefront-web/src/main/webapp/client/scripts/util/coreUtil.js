@@ -103,133 +103,64 @@ var CoreUtil = {
 		var lengthCheck = 3;
 		var lengthCheckFlag = 0;
 
-		for (ctr = 0; ctr < lines.length; ctr++) {
-			var tmpRow = lines[ctr].split('",');
-
-			if (tmpRow[0] === '' && tmpRow.length === 1)
+        var csv= Ext.util.CSV.decode(csvData);
+		//console.log("CSV:",csv);
+		for (ctr=0; ctr<csv.length; ctr++){
+			if(csv[ctr][0] === '' && csv[ctr].length === 1)
 			{
-				continue;
+			  csv.splice(ctr,1);
+			  continue;
 			}
-
-			for (ctr2 = 0; ctr2 < tmpRow.length; ctr2++) {
-				tmpRow[ctr2] = tmpRow[ctr2].replace(/["]+/g, '');
+			if(csv[ctr].length>maxCols){
+				maxCols = csv[ctr].length;
 			}
-			if (tmpRow.length > maxCols) {
-				maxCols = tmpRow.length;
-			}
-
-			rows.push(tmpRow);
-
 		}
 
-		htmlData += '<html><head><style> table{border-collapse: collapse; border: 2px black solid; font: 12px sans-serif} td{border: 1px black solid; padding:5px;} th{padding:5px;}</style></head>';
+		htmlData += '<html><head><style> table{border-collapse: collapse; border: 2px black solid; font: 12px sans-serif} td{border: 1px black solid; padding:5px;} th{padding:5px;}</style></head><body><table>';
 
-		for (ctr = 0; ctr < rows.length; ctr++) {
-			for (ctr2 = 0; ctr2 < rows[ctr].length; ctr2++) {
-				if (foundHeaderFlag === 0) {
-					if (rows[ctr].length === maxCols) //This is the header
-					{
-						if (ctr2 === 0) { //Start Header
-							htmlData += '<table><tr><th>' + rows[ctr][ctr2] + '</th>';
+		for (ctr = 0; ctr < csv.length; ctr++) {
+			for (ctr2 = 0; ctr2 < csv[ctr].length; ctr2++) {
+				if(typeof csv[ctr][ctr2]=== 'undefined'){
+					csv[ctr][ctr2] = '&nbsp;';
+				}
+				
+				var colDiff = maxCols-ctr2;
+				if (ctr2 === 0) { //Start new row
+
+					if ((ctr2 + 1) === csv[ctr].length) {
+						if(colDiff !==0 ){
+							htmlData += '<tr><td colspan="'+colDiff+'">' + csv[ctr][ctr2] + '</td></tr>';
 						}
-
-						if ((ctr2 + 1) === maxCols) { //End Row
-							foundHeaderFlag = 1;
-							if (ctr2 !== 0) {
-								htmlData += '<th>' + rows[ctr][ctr2] + '</th></tr>';
-							}
-							else {
-								htmlData += '</tr>';
-							}
-
-						}
-						else if (ctr2 !== 0) {//Normal Header Col
-							htmlData += '<th>' + rows[ctr][ctr2] + '</th>';
+						else{
+							htmlData += '<tr><td>' + csv[ctr][ctr2] + '</td></tr>';
 						}
 					}
-					else  //Data before the header
-					{
+					else{
+						htmlData += '<tr><td>' + csv[ctr][ctr2] + '</td>';
+					}
 
-						if (ctr2 === 0) {
-							if (rows[ctr].length > lengthCheck) {
 
-								if (!lengthCheckFlag) {
-									htmlData += '<table>';
-									lengthCheckFlag = 1;
-								}
-								htmlData += '<tr><td>' + rows[ctr][ctr2] + '</td>';
+				}
 
-							}
-							else {
-								if (lengthCheckFlag) {
-									htmlData += '</table>';
-									lengthCheckFlag = 0;
-								}
-								htmlData += '<div>' + rows[ctr][ctr2];
-							}
-
+				if ((ctr2 + 1) === csv[ctr].length) { //End row
+					if (ctr2 !== 0) {
+						if(colDiff !==0 ){
+							htmlData += '<td colspan="'+colDiff+'">' + csv[ctr][ctr2] + '</td></tr>';
 						}
-
-						if ((ctr2 + 1) === rows[ctr].length) { //Last Col
-
-							if (rows[ctr].length > lengthCheck) {
-								if (ctr2 !== 0) {
-									htmlData += '<td>' + rows[ctr][ctr2] + '</td></tr>';
-								}
-								else {
-									htmlData += '</tr>';
-								}
-							}
-							else {
-								if (ctr2 !== 0) {
-									htmlData += rows[ctr][ctr2] + '</div>';
-								}
-								else
-								{
-									htmlData += '</div>';
-								}
-
-							}
-						}
-						else if (ctr2 !== 0) { //Middle Col
-							if (rows[ctr].length > lengthCheck) {
-
-								htmlData += '<td>' + rows[ctr][ctr2] + '</td>';
-							}
-							else {
-								htmlData += rows[ctr][ctr2];
-							}
-
+						else{
+							htmlData += '<td>' + csv[ctr][ctr2] + '</td></tr>';
 						}
 					}
 				}
-				else { //Regular table data
+				else if (ctr2 !== 0) { //Normal Data
 
-					if (ctr2 === 0) { //Start new row
-						htmlData += '<tr><td>' + rows[ctr][ctr2] + '</td>';
-					}
-
-					if ((ctr2 + 1) === rows[ctr].length) { //End row
-						if (ctr2 !== 0) {
-							htmlData += '<td>' + rows[ctr][ctr2] + '</td></tr>';
-						}
-						else {
-							htmlData += '</tr>';
-						}
-
-
-					}
-					else if (ctr2 !== 0) { //Normal Data
-
-						htmlData += '<td>' + rows[ctr][ctr2] + '</td>';
-					}
-
+					htmlData += '<td>' + csv[ctr][ctr2] + '</td>';
 				}
 			}
 		}
-		htmlData += '</table></html>';
+		htmlData += '</table></body></html>';
 		htmlData = htmlData.replace(/<td><\/td>/g, '<td>&nbsp</td>');
-
+        //console.log("htmlData",htmlData);
 		return htmlData;
 	},
 	popupMessage: function (title, message, delay) {
