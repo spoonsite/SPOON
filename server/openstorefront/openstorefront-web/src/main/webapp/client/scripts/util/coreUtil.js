@@ -299,7 +299,9 @@ var CoreUtil = {
 				errorObj[item.key] = item.value;
 			});
 			options.form.getForm().markInvalid(errorObj);
-			options.failure(response, opts);
+			if (options.failure) {
+				options.failure(response, opts);
+			}
 		};
 
 		var loadingText = options.loadingText ? options.loadingText : 'Saving...';
@@ -312,13 +314,17 @@ var CoreUtil = {
 			success: function (response, opts) {
 				options.form.setLoading(false);
 				if (response) {
-					var data = Ext.decode(response.responseText);
-					if ((data.success !== undefined && data.success !== null && data.success) ||
-							data.success === undefined)
-					{
+					if (response.status === 304){
 						options.success(response, opts);
 					} else {
-						failurehandler(response, opts);
+						var data = Ext.decode(response.responseText);
+						if ((data.success !== undefined && data.success !== null && data.success) ||
+								data.success === undefined)
+						{
+							options.success(response, opts);
+						} else {
+							failurehandler(response, opts);
+						}
 					}
 				}
 			},

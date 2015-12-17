@@ -38,7 +38,7 @@
 			pageMap['Reviews'] = '/openstorefront/admin?tool=Reviews';
 			pageMap['Tags'] = '/openstorefront/admin?tool=Tags';
 			pageMap['UserProfiles'] = '/openstorefront/admin?tool=User%20Profiles';
-			pageMap['Alerts'] = '/openstorefront/admin?tool=Alerts';
+			pageMap['Alerts'] = 'Router.action?page=admin/application/alerts.jsp';
 			pageMap['Branding'] = 'Router.action?page=admin/application/branding.jsp';
 			pageMap['Jobs'] = '/openstorefront/admin?tool=Jobs';
 			pageMap['Reports'] = 'Router.action?page=admin/application/reports.jsp';

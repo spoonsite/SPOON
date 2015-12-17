@@ -292,6 +292,9 @@ public class IntegrationComponentServiceImpl
 							log.log(Level.FINE, MessageFormat.format("Working on {1} Configuration for Integration for: {0}", component.getName(), integrationConfig.getIntegrationType()));
 
 							liveConfig.setStatus(RunStatus.WORKING);
+							liveConfig.setErrorMessage(null);
+							liveConfig.setErrorTicketNumber(null);
+							liveConfig.setPotentialResolution(null);
 							liveConfig.setLastStartTime(TimeUtil.currentDate());
 							liveConfig.setUpdateDts(TimeUtil.currentDate());
 							liveConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);

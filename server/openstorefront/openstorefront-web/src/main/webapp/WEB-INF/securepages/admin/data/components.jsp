@@ -5,6 +5,7 @@
 			  
 		<script src="scripts/component/importWindow.js" type="text/javascript"></script>
 		<script src="scripts/component/messageWindow.js" type="text/javascript"></script>
+		<script src="scripts/component/integrationConfigWindow.js" type="text/javascript"></script>
 		
 		<form name="exportForm" action="../api/v1/resource/components/export" method="POST" >
 			<p style="display: none;" id="exportFormIds">
@@ -20,6 +21,9 @@
 				//External Windows
 				var importWindow = Ext.create('OSF.component.ImportWindow', {					
 				});
+				
+				var integrationWindow = Ext.create('OSF.component.IntegrationWindow', {					
+				});				
 							
 				//common stores
 				var statusFilterStore = Ext.create('Ext.data.Store', {
@@ -2295,10 +2299,18 @@
 									handler: function() {
 										
 										//get submiter  
+										var emails = '';
+										Ext.getCmp('contactGrid').getStore().each(function(record){
+											if (record.get('contactType') === 'SUB') {
+												if (record.get('email')) {
+													emails += record.get('email') + '; ';
+												}
+											}
+										});
 										
 										var messageWindow = Ext.create('OSF.component.MessageWindow', {					
 											closeAction: 'destory',
-											initialToUsers: ''
+											initialToUsers: emails
 										}).show();
 									}
 								},
@@ -2307,9 +2319,12 @@
 								},
 								{
 									text: 'Integration',
+									id: 'integrationBtn',
 									iconCls: 'fa fa-gear',
+									disabled: true,
 									handler: function() {
-										
+										integrationWindow.show();
+										integrationWindow.loadConfigs(Ext.getCmp('generalForm').componentRecord.get('componentId'));
 									}									
 								}
 							]
@@ -3543,7 +3558,7 @@
 						itemdblclick: function(grid, record, item, index, e, opts){
 							actionAddEditComponent(record);
 						},
-						selectionchange: function(grid, record, index, opts){
+						selectionchange: function(selectionModel, records, opts){
 							checkComponetGridTools();
 						}
 					},
@@ -3631,6 +3646,7 @@
 						checkFormTabs(record);
 						generalForm.loadRecord(record);
 						handleAttributes(record.get('componentType'));
+						Ext.getCmp('integrationBtn').setDisabled(false);
 					} else {								
 						mainAddEditWin.setTitle('Entry Form:  NEW ENTRY');						
 						hideSubComponentTabs();
@@ -3638,6 +3654,7 @@
 						requiredStore.removeAll();
 												
 						Ext.getCmp('componentGrid').getSelectionModel().deselectAll(); 
+						Ext.getCmp('integrationBtn').setDisabled(true);
 						
 					}
 					Ext.getCmp('componentTypeMainCB').resumeEvent('change');
