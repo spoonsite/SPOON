@@ -15,11 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
 import edu.usu.sdl.openstorefront.core.entity.Component;
@@ -33,6 +35,7 @@ import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
+import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
@@ -49,6 +52,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -78,7 +82,8 @@ public class ImportServiceImpl
 		//create history record
 		FileHistory fileHistory = importContext.getFileHistoryAll().getFileHistory();
 		fileHistory.setFileHistoryId(persistenceService.generateId());
-		fileHistory.setFilename(fileHistory.getFileHistoryId());
+		String extension = StringProcessor.getFileExtension(importContext.getFileHistoryAll().getFileHistory().getOriginalFilename());
+		fileHistory.setFilename(fileHistory.getFileHistoryId() + "." + extension);
 		fileHistory.setRecordsStored(0);
 		if (fileHistory.getFileHistoryOption() == null) {
 			fileHistory.setFileHistoryOption(new FileHistoryOption());
@@ -95,6 +100,44 @@ public class ImportServiceImpl
 		FileHistory historySaved = saveFileHistory(importContext.getFileHistoryAll());
 
 		return historySaved.getFileHistoryId();
+	}
+
+	@Override
+	public String checkFormat(FileFormatCheck formatCheck)
+	{
+		Objects.requireNonNull(formatCheck);
+
+		FileFormat fileFormat = getLookupService().getLookupEnity(FileFormat.class, formatCheck.getFileFormat());
+		StringBuilder errors = new StringBuilder();
+		try (InputStream in = formatCheck.getInput()) {
+			Class parserClass = this.getClass().getClassLoader().loadClass("edu.usu.sdl.openstorefront.service.io.parser." + fileFormat.getParserClass());
+			AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
+			String message = abstractParser.checkFormat(formatCheck.getMimeType(), in);
+			if (StringUtils.isNotBlank(message)) {
+				errors.append(message);
+			}
+		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			log.log(Level.SEVERE, "Unable to load parser class: " + fileFormat.getParserClass(), e);
+			errors.append("(System Error)File Format not supported.");
+		}
+		return StringUtils.isNotBlank(errors.toString()) ? errors.toString() : null;
+	}
+
+	@Override
+	public void reprocessFile(String fileHistoryId)
+	{
+		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryId);
+		if (fileHistory == null) {
+			throw new OpenStorefrontRuntimeException("Unable to find file history.", "Check id: " + fileHistoryId + " it may have been deleted.");
+		}
+
+		fileHistory.setStartDts(null);
+		fileHistory.setNumberRecords(0);
+		fileHistory.setRecordsProcessed(0);
+		fileHistory.setRecordsStored(0);
+		fileHistory.populateBaseUpdateFields();
+		persistenceService.persist(fileHistory);
+		log.log(Level.FINE, "Queued:  {0} to be reprocessed.", fileHistory.getOriginalFilename());
 	}
 
 	@Override
@@ -291,6 +334,33 @@ public class ImportServiceImpl
 			log.log(Level.WARNING, "File history doesn't exist unable to rollback.");
 		}
 
+	}
+
+	@Override
+	public Map<String, List<FileHistoryError>> fileHistoryErrorMap()
+	{
+		Map<String, List<FileHistoryError>> errorMap = new HashMap<>();
+
+		String query = "select fileHistoryId, fileHistoryErrorType from " + FileHistoryError.class.getSimpleName();
+
+		List<ODocument> results = persistenceService.query(query, new HashMap<>());
+		for (ODocument result : results) {
+			String fileHistoryId = result.field("fileHistoryId");
+			String fileHistoryErrorType = result.field("fileHistoryErrorType");
+			FileHistoryError error = new FileHistoryError();
+			error.setFileHistoryId(fileHistoryId);
+			error.setFileHistoryErrorType(fileHistoryErrorType);
+
+			if (errorMap.containsKey(fileHistoryId)) {
+				errorMap.get(fileHistoryId).add(error);
+			} else {
+				List<FileHistoryError> fileHistoryErrors = new ArrayList<>();
+				fileHistoryErrors.add(error);
+				errorMap.put(fileHistoryId, fileHistoryErrors);
+			}
+		}
+
+		return errorMap;
 	}
 
 }

@@ -36,8 +36,7 @@ import javax.validation.constraints.Size;
 public class AdminMessage
 {
 
-	@APIDescription("List of usernames")
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_EMAIL_LIST_SIZE)
+	@APIDescription("List of usernames or email addresses")
 	@ConsumeField
 	private List<String> usersToEmail = new ArrayList<>();
 

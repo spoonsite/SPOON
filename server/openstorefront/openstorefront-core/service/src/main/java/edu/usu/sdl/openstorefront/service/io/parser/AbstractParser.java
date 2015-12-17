@@ -112,7 +112,7 @@ public abstract class AbstractParser
 				PrintWriter printWriter = new PrintWriter(stringWriter);
 				e.printStackTrace(printWriter);
 
-				fileHistoryAll.addError(FileHistoryErrorType.SYSTEM, "Unable to process all of the records the failed read the data. Error Trace: <br>" + stringWriter.toString());
+				fileHistoryAll.addError(FileHistoryErrorType.SYSTEM, "Unable to process all of the records;  Failed reading the data. <br> Error Trace: <br>" + stringWriter.toString());
 			}
 
 			log.log(Level.INFO, MessageFormat.format("Results for processing: {0}", fileHistoryAll.getFileHistory().getOriginalFilename()));

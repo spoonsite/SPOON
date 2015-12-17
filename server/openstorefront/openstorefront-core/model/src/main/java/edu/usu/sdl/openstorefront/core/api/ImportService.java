@@ -17,9 +17,12 @@ package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
+import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Handles importing of data; file history
@@ -37,6 +40,22 @@ public interface ImportService
 	 * @return File history
 	 */
 	public String importData(ImportContext importContext);
+
+	/**
+	 * Checked the file for the correct format. Note: this will close the
+	 * inputstream when complete
+	 *
+	 * @param formatCheck
+	 * @return Error message or null
+	 */
+	public String checkFormat(FileFormatCheck formatCheck);
+
+	/**
+	 * Re-queue file for processing
+	 *
+	 * @param fileHistoryId
+	 */
+	public void reprocessFile(String fileHistoryId);
 
 	/**
 	 * Saves a file history record; Note: it's expected the record has the
@@ -72,5 +91,12 @@ public interface ImportService
 
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void rollback(String fileHistoryId);
+
+	/**
+	 * Groups all Errors by fileHistoryId Tries to pull efficiently
+	 *
+	 * @return
+	 */
+	public Map<String, List<FileHistoryError>> fileHistoryErrorMap();
 
 }

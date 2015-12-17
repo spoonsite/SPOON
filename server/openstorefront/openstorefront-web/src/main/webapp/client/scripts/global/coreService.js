@@ -26,7 +26,7 @@ var CoreService = {
       //for now don't cache    
   
       var promise = Ext.Ajax.request({
-        url: '../api/v1/resource/userprofiles/currentuser'
+        url: '/openstorefront/api/v1/resource/userprofiles/currentuser'
       });
       
       return promise;

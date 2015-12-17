@@ -633,6 +633,11 @@ div.x-border-layout-ct {
     outline:none;
 }
 
+
+.activecell .x-grid-cell {
+    background-color: #ccffcc !important;
+}
+
 .x-toolbar-footer {
     padding: 6px 0 6px 6px;
     border-style: solid;

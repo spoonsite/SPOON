@@ -216,15 +216,11 @@ public class Search
 	{
 		List<RecentlyAddedView> recentlyAddedViews = new ArrayList<>();
 
+		//We only need to look at components now (all types)
 		List<Component> components = service.getComponentService().findRecentlyAdded(maxResults);
-		List<AttributeCode> attributeCodes = service.getAttributeService().findRecentlyAddedArticles(maxResults);
 
 		for (Component component : components) {
 			recentlyAddedViews.add(RecentlyAddedView.toView(component));
-		}
-
-		for (AttributeCode attributeCode : attributeCodes) {
-			recentlyAddedViews.add(RecentlyAddedView.toView(attributeCode));
 		}
 
 		recentlyAddedViews.sort(new RecentlyAddedViewComparator<>());

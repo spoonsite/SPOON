@@ -2,7 +2,11 @@
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
           <stripes:layout-component name="contents">
-
+			  
+		<script src="scripts/component/importWindow.js" type="text/javascript"></script>
+		<script src="scripts/component/messageWindow.js" type="text/javascript"></script>
+		<script src="scripts/component/integrationConfigWindow.js" type="text/javascript"></script>
+		
 		<form name="exportForm" action="../api/v1/resource/components/export" method="POST" >
 			<p style="display: none;" id="exportFormIds">
 			</p>      
@@ -13,7 +17,14 @@
 			Ext.onReady(function(){	
 				
 			//Add/Edit forms ------>	
-			
+				
+				//External Windows
+				var importWindow = Ext.create('OSF.component.ImportWindow', {					
+				});
+				
+				var integrationWindow = Ext.create('OSF.component.IntegrationWindow', {					
+				});				
+							
 				//common stores
 				var statusFilterStore = Ext.create('Ext.data.Store', {
 					fields: ['code', 'desc'],
@@ -1742,6 +1753,7 @@
 									width: '100%',
 									fieldLabel: 'Organization <span class="field-required" />',
 									forceSelection: false,
+									valueField: 'description',
 									storeConfig: {
 										url: '../api/v1/resource/organizations/lookup'
 									}
@@ -2225,6 +2237,11 @@
 								Ext.getCmp('attributeGrid').getStore().loadData(optionalAttributes);
 							}
 						});
+					} else {
+						var requiredStore = Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore();
+						requiredStore.each(function(record) {
+							record.set('attributeCode', null, { dirty: false} );
+						});
 					}
 				};
 				
@@ -2262,6 +2279,7 @@
 					loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
 				};
 			
+							
 				var generalForm = Ext.create('Ext.form.Panel', {
 					id: 'generalForm',
 					title: 'General',
@@ -2280,6 +2298,20 @@
 									iconCls: 'fa fa-envelope',
 									handler: function() {
 										
+										//get submiter  
+										var emails = '';
+										Ext.getCmp('contactGrid').getStore().each(function(record){
+											if (record.get('contactType') === 'SUB') {
+												if (record.get('email')) {
+													emails += record.get('email') + '; ';
+												}
+											}
+										});
+										
+										var messageWindow = Ext.create('OSF.component.MessageWindow', {					
+											closeAction: 'destory',
+											initialToUsers: emails
+										}).show();
 									}
 								},
 								{
@@ -2287,9 +2319,12 @@
 								},
 								{
 									text: 'Integration',
+									id: 'integrationBtn',
 									iconCls: 'fa fa-gear',
+									disabled: true,
 									handler: function() {
-										
+										integrationWindow.show();
+										integrationWindow.loadConfigs(Ext.getCmp('generalForm').componentRecord.get('componentId'));
 									}									
 								}
 							]
@@ -2308,10 +2343,12 @@
 										var componentId = '';
 										var method = 'POST';
 										var update = '';
+										var edit = false;
 										if (Ext.getCmp('generalForm').componentRecord){
 											componentId = Ext.getCmp('generalForm').componentRecord.get('componentId');											
 											update = '/' + componentId;
 											method = 'PUT';
+											edit = true;
 										}												
 
 										var requireComponent = {
@@ -2352,17 +2389,33 @@
 												});
 
 											} else {	
+												CoreUtil.removeBlankDataItem(requireComponent.component);												
 												CoreUtil.submitForm({
 													url: '../api/v1/resource/components' + update,
 													method: method,
 													data: requireComponent,
+													removeBlankDataItems: true,
 													form: form,
 													success: function(response, opt){
+														Ext.toast('Successfully Saved Record');
 														var data = Ext.decode(response.responseText);														
-														var record = Ext.getCmp('componentGrid').getStore().add(data);
-														actionAddEditComponent(record);		
-																												
-														//Ext.getCmp('componentGrid').getStore().reload();
+														
+														var componentView = {};
+														componentView.component = data.component;
+														
+														var record;
+														if (!edit) {
+															var record = Ext.getCmp('componentGrid').getStore().add(componentView.component);
+															record = record[0];
+															Ext.getCmp('componentGrid').getStore().reload();
+														} else {
+															Ext.Object.each(componentView.component, function(key, value, myself) {
+																Ext.getCmp('generalForm').componentRecord.set(key, value, { dirty: false}); 
+															});	
+															record = Ext.getCmp('generalForm').componentRecord;
+														}
+														actionAddEditComponent(record);																																									
+														
 													},
 													failure: function(response, opt){
 
@@ -2487,7 +2540,8 @@
 								width: '100%'
 							},
 							items: [
-								Ext.create('OSF.component.StandardComboBox', {														
+								Ext.create('OSF.component.StandardComboBox', {
+									id: 'componentTypeMainCB',
 									fieldLabel: 'Entry Type <span class="field-required" />',
 									name: 'componentType',
 									allowBlank: false,								
@@ -2514,7 +2568,7 @@
 								},
 								{
 									xtype: 'panel',
-									html: 'Description <span class="field-required" />'
+									html: '<b>Description</b> <span class="field-required" />'
 								},
 								//{
 								//	xtype: 'htmleditor',
@@ -2610,7 +2664,8 @@
 										forceSelection: true,	
 										queryMode: 'local',
 										editable: false,
-										typeAhead: false,										
+										typeAhead: false,	
+										emptyText: 'Select',
 										allowBlank: false,
 										valueField: 'code',
 										displayField: 'label',																				
@@ -2624,11 +2679,13 @@
 														"label"
 													],
 													data: record.data.codes
-												}));
+												}));												
 											},
 											change: function(field, newValue, oldValue, opts) {
-												var record = field.getWidgetRecord();
-												record.set('attributeCode', newValue);												
+												var record = field.getWidgetRecord();	
+												if (record) {
+													record.set('attributeCode', newValue);																								
+												}
 											}
 										}
 									}									
@@ -3350,7 +3407,7 @@
 									emptyText: 'All',
 									fieldLabel: 'Entry Type',
 									name: 'componentType',
-									valueField: 'type',
+									valueField: 'componentType',
 									displayField: 'label',									
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
@@ -3361,7 +3418,7 @@
 										url: '../api/v1/resource/componenttypes',
 										model: undefined,										
 										fields: [
-											'type',
+											'componentType',
 											'label'
 										],
 										addRecords: [
@@ -3491,7 +3548,7 @@
 									iconCls: 'fa fa-2x fa-upload',
 									scale: 'medium',
 									handler: function () {
-										
+										importWindow.show();
 									}
 								}
 							]
@@ -3501,7 +3558,7 @@
 						itemdblclick: function(grid, record, item, index, e, opts){
 							actionAddEditComponent(record);
 						},
-						selectionchange: function(grid, record, index, opts){
+						selectionchange: function(selectionModel, records, opts){
 							checkComponetGridTools();
 						}
 					},
@@ -3578,6 +3635,7 @@
 				var actionAddEditComponent = function(record) {
 					mainAddEditWin.show();		
 					
+					Ext.getCmp('componentTypeMainCB').suspendEvent('change');
 						
 					generalForm.reset();
 					generalForm.componentRecord = record;
@@ -3587,10 +3645,19 @@
 						mainAddEditWin.setTitle('Entry Form: ' + record.get('name'));
 						checkFormTabs(record);
 						generalForm.loadRecord(record);
+						handleAttributes(record.get('componentType'));
+						Ext.getCmp('integrationBtn').setDisabled(false);
 					} else {								
 						mainAddEditWin.setTitle('Entry Form:  NEW ENTRY');						
 						hideSubComponentTabs();
+						var requiredStore = Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore();
+						requiredStore.removeAll();
+												
+						Ext.getCmp('componentGrid').getSelectionModel().deselectAll(); 
+						Ext.getCmp('integrationBtn').setDisabled(true);
+						
 					}
+					Ext.getCmp('componentTypeMainCB').resumeEvent('change');
 				};
 				
 				var hideSubComponentTabs = function(){
