@@ -3606,6 +3606,57 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireAdmin
+	@APIDescription("Updates a component integration model")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{componentId}/integration/configs/{integrationConfigId}")
+	public Response updateIntegrationConfig(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@PathParam("integrationConfigId")
+			@RequiredParam String integrationConfigId,
+			ComponentIntegrationConfig integrationConfig)
+	{
+		integrationConfig.setComponentId(componentId);
+		integrationConfig.setIntegrationConfigId(integrationConfigId);
+
+		ComponentIntegrationConfig configExample = new ComponentIntegrationConfig();
+		configExample.setComponentId(componentId);
+		configExample.setIntegrationConfigId(integrationConfigId);
+
+		configExample = service.getPersistenceService().queryOneByExample(ComponentIntegrationConfig.class, configExample);
+		if (configExample != null) {
+			ValidationModel validationModel = new ValidationModel(integrationConfig);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
+			if (validationResult.valid()) {
+				//check for exsiting config with the same ticket
+				configExample = new ComponentIntegrationConfig();
+				configExample.setComponentId(componentId);
+				configExample.setIntegrationType(integrationConfig.getIntegrationType());
+				configExample.setProjectType(integrationConfig.getProjectType());
+				configExample.setIssueType(integrationConfig.getIssueType());
+				configExample.setIssueNumber(integrationConfig.getIssueNumber());
+
+				long count = service.getPersistenceService().countByExample(configExample);
+				if (count > 0) {
+					RestErrorModel restErrorModel = new RestErrorModel();
+					restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
+					return Response.status(Response.Status.NOT_MODIFIED).entity(restErrorModel).build();
+				} else {
+					integrationConfig.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
+					integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
+					return Response.ok(integrationConfig).build();
+				}
+			} else {
+				return Response.ok(validationResult.toRestError()).build();
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	@PUT
+	@RequireAdmin
 	@APIDescription("Activates a component integration config")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{configId}/activate")

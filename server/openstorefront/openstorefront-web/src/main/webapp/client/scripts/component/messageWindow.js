@@ -21,10 +21,10 @@ Ext.define('OSF.component.MessageWindow', {
 	
 	title: 'Send Mail',
 	iconCls: 'fa fa-lg fa-envelope-o',
-	modal: true,
-	maximizable: true,
+	modal: true,	
 	layout: 'fit',
 	width: '60%',	
+	resizable: false,
 	initialToUsers: '',
 	
 	initComponent: function () {
@@ -34,20 +34,28 @@ Ext.define('OSF.component.MessageWindow', {
 		
 		var messageForm = Ext.create('Ext.form.Panel', {
 			bodyStyle: 'padding: 10px;',
+			defaults: {
+				labelAlign: 'top',
+				labelSeparator: ''
+			},
 			items: [
 				{
 					xtype: 'panel',
 					itemId: 'toPanel',
 					layout: 'hbox',
+					width: '100%',
+					defaults: {
+						labelAlign: 'top',
+						labelSeparator: ''
+					},					
 					items: [
 						{
 							xtype: 'textfield',
 							itemId: 'toText',
-							fieldLabel: 'To <span class="field-required" />',
+							fieldLabel: 'To <span class="field-required" /> <span style="color: grey">(semi-colon list of email addresses)</span>',
 							width: '90%',
 							emptyText: 'email@mail.com; ..',
 							allowBlank: false,
-							toolTip: 'semi-colon list of addresses',
 							name: 'emailAddresses',
 							value: messageWindow.initialToUsers,
 							maxLength: 2048
@@ -56,6 +64,8 @@ Ext.define('OSF.component.MessageWindow', {
 							xtype: 'button',
 							text: 'Select Users',
 							iconCls: 'fa fa-users',
+							width: '10%',
+							margin: '25 0  0  0',
 							handler: function(){
 								var messageFormInternal = this.up('form');								
 								var selectUserWindow = Ext.create('Ext.window.Window', {
@@ -88,15 +98,33 @@ Ext.define('OSF.component.MessageWindow', {
 														rootProperty: 'data',
 														totalProperty: 'totalNumber'
 													}
+												},
+												listeners: {
+													load: function(store, records, successfu, operation, opts) {
+														store.filterBy(function(record){
+															return record.get('email');
+														});
+													}
 												}
 											},
 											columns: [
 												{ text: 'User', dataIndex: '', flex: 1,
 													renderer: function(value, metaData, record) {
-														return record.get('firstName') + ', ' + 
-															record.get('lastName') + 
-															'<br><style="color:lightgrey">' + 	
-															record.get('email') + '</style>'; 
+														var display = '';
+														if (record.get('email')) {
+															if (record.get('firstName')) {
+																display += record.get('firstName') + ' ';
+															}
+															if (record.get('lastName')) {
+																display += record.get('lastName');
+															}
+															if (record.get('email')) {
+																display += '<br><span style="color: grey;">' + 
+																		record.get('email') +
+																		'</span>';
+															}
+														}
+														return display;
 													}
 												}
 											]
@@ -105,7 +133,7 @@ Ext.define('OSF.component.MessageWindow', {
 									dockedItems: [
 										{
 											xtype: 'textfield',
-											fieldLabel: 'Filter',
+											emptyText: 'Search',											
 											width: '100%',
 											listeners: {
 												change: function(field, newValue, oldValue, eOpts){
@@ -129,7 +157,7 @@ Ext.define('OSF.component.MessageWindow', {
 														var selected = this.up('window').getComponent('userGrid').getSelectionModel().getSelection();
 														var addresses = "";
 														
-														Ext.Array(selected, function(record){
+														Ext.Array.each(selected, function(record){
 															addresses += record.get('email') + "; ";
 														});
 														
@@ -159,14 +187,17 @@ Ext.define('OSF.component.MessageWindow', {
 					xtype: 'textfield',
 					fieldLabel: 'Subject <span class="field-required" />',
 					width: '100%',
+					allowBlank: false,
 					name: 'subject',
 					maxLength: 255
 				},
 				{
 					xtype: 'htmleditor',
 					name: 'message',
+					allowBlank: false,
 					fieldLabel: 'Message <span class="field-required" />',
 					width: '100%',
+					height: 300,
 					fieldBodyCls: 'form-comp-htmleditor-border',
 					maxLength: 4000					
 				}
@@ -179,9 +210,46 @@ Ext.define('OSF.component.MessageWindow', {
 					items: [
 						{
 							text: 'Send',
+							formBind: true,
 							iconCls: 'fa fa-envelope',
 							handler: function() {
+								var mainForm = this.up('form');
+								var data = mainForm.getValues();
+								
+								if (data.message) {								
+									var message ={};
+									message.subject = data.subject;
+									message.message = data.message;								
+									message.userToEmail = [];
 
+									var emails = data.emailAddresses.split(';');
+									Ext.Array.each(emails, function(email){
+										message.userToEmail.push(email);
+									});
+
+									Ext.Ajax.request({
+										url: '../api/v1/service/notification/admin-message',
+										method: 'POST',
+										jsonData: data,
+										success: function(response, opts){
+											Ext.toast('Sent message successfully<br> Individual email delivery success will depend on the email servers.');
+											mainForm.reset();
+											messageWindow.close();
+										}
+									});
+							     } else {
+									mainForm.getForm().markInvalid({
+										message: 'Required'
+									});
+									Ext.Msg.show({
+										title:'Validation',
+										message: 'The message body is required.',
+										buttons: Ext.Msg.OK,
+										icon: Ext.Msg.ERROR,
+										fn: function(btn) {
+										}
+									});									
+								}
 							}
 						},
 						{
