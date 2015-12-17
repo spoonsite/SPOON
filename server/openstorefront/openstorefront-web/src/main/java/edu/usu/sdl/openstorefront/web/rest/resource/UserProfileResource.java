@@ -386,7 +386,7 @@ public class UserProfileResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTrackingWrapper.class)
 	@Path("/{id}/tracking")
-	public Response getComponentTracking(
+	public Response getUserTracking(
 			@PathParam("id")
 			@RequiredParam String userId,
 			@BeanParam FilterQueryParams filterQueryParams)

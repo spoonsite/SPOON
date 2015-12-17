@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../client/layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 
         <script type="text/javascript">

@@ -184,6 +184,12 @@ public class ResourceAction
 		ComponentTracking componentTracking = new ComponentTracking();
 		componentTracking.setClientIp(NetworkUtil.getClientIp(getContext().getRequest()));
 		componentTracking.setComponentId(componentResource.getComponentId());
+		Component component = service.getPersistenceService().findById(Component.class, componentResource.getComponentId());
+		if (component != null) {
+			componentTracking.setComponentType(component.getComponentType());
+		} else {
+			log.log(Level.WARNING, MessageFormat.format("Unable to find Component for the resource.  Component Id: {0}.  Check Data.", componentResource.getComponentId()));
+		}
 		String link = StringProcessor.stripHtml(componentResource.getLink());
 		if (componentResource.getFileName() != null) {
 			componentTracking.setResourceLink(componentResource.pathToResource().toString());

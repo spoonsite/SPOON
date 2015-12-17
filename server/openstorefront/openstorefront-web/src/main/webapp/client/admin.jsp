@@ -41,7 +41,7 @@
 			pageMap['Alerts'] = 'Router.action?page=admin/application/alerts.jsp';
 			pageMap['Branding'] = 'Router.action?page=admin/application/branding.jsp';
 			pageMap['Jobs'] = '/openstorefront/admin?tool=Jobs';
-			pageMap['Reports'] = 'Router.action?page=admin/application/reports.jsp';
+			pageMap['Reports'] = 'Router.action?page=shared/reports.jsp';
             //pageMap['Reports'] = '/openstorefront/admin?tool=Reports';
 			pageMap['System'] = '/openstorefront/admin?tool=System';
 			pageMap['Tracking'] = 'Router.action?page=admin/application/tracking.jsp';
@@ -143,12 +143,14 @@
 					actionLoadContent('Alerts');
 				}
 			});
+			/**
 			alertMenu.push({
 				text: 'Branding',
 				handler: function(){
 					actionLoadContent('Branding');
 				}				
 			});
+			**/
 			alertMenu.push({
 				text: 'Jobs',
 				handler: function(){

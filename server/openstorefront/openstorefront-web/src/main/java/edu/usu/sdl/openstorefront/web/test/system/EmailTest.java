@@ -33,7 +33,7 @@ public class EmailTest
 	@Override
 	protected void runInternalTest()
 	{
-		service.getUserService().sendTestEmail("admin");
+		service.getUserService().sendTestEmail("admin", null);
 	}
 
 }
