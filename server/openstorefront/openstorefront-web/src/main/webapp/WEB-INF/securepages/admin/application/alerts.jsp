@@ -109,16 +109,19 @@
 														type: 'ajax',
 														url: '../api/v1/resource/alerts?status=A'
 													});
+													Ext.getCmp('alertGrid-tools-toggleActivation').setText("Deactivate");
 												} else {
 													store.setProxy({
 														id: 'alertStoreProxy',
 														type: 'ajax',
 														url: '../api/v1/resource/alerts?status=I'
 													});
+													Ext.getCmp('alertGrid-tools-toggleActivation').setText("Activate");
 												}
 												store.load();
 												Ext.getCmp('alertGrid').getSelectionModel().deselectAll();
 												Ext.getCmp('alertGrid-tools-edit').setDisabled(true);
+												Ext.getCmp('alertGrid-tools-toggleActivation').setDisabled(true);
 											}
 										}
 									},
@@ -178,7 +181,18 @@
 										var record = Ext.getCmp('alertGrid').getSelection()[0];
 										actionEditAlertForm(record);
 									}
+								},
+								{
+									text: 'Deactivate',
+									id: 'alertGrid-tools-toggleActivation',
+									disabled: true,
+									scale: 'medium',
+									handler: function () {
+										var record = Ext.getCmp('alertGrid').getSelection()[0];
+										actionToggleActivation(record);
+									}
 								}
+
 							]
 						}
 					],
@@ -189,8 +203,10 @@
 						selectionchange: function (grid, record, index, opts) {
 							if (Ext.getCmp('alertGrid').getSelectionModel().hasSelection()) {
 								Ext.getCmp('alertGrid-tools-edit').enable(true);
+								Ext.getCmp('alertGrid-tools-toggleActivation').enable(true);
 							} else {
 								Ext.getCmp('alertGrid-tools-edit').enable(false);
+								Ext.getCmp('alertGrid-tools-toggleActivation').enable(false);
 							}
 						}
 					}
@@ -425,6 +441,7 @@
 															Ext.getCmp('alertGrid').getStore().load();
 															Ext.getCmp('alertGrid').getSelectionModel().deselectAll();
 															Ext.getCmp('alertGrid-tools-edit').setDisabled(true);
+															Ext.getCmp('alertGrid-tools-toggleActivation').setDisabled(true);
 														} else {
 															// Validation failed
 
@@ -437,10 +454,8 @@
 															});
 															var form = Ext.getCmp('editAlertForm').getForm();
 															form.markInvalid(errorObj);
-
-
 														}
-													},
+													}
 												});
 											}
 										},
@@ -511,6 +526,47 @@
 				};
 
 
+
+				var actionToggleActivation = function (record) {
+					if (record) {
+						var alertId = record.data.alertId;
+						var active = record.data.activeStatus;
+						if (active === 'A') {
+							var method = "DELETE";
+							var url = '/openstorefront/api/v1/resource/alerts/' + alertId;
+							var what = "deactivate";
+						} else if (active === 'I') {
+							var method = "POST";
+							var url = '/openstorefront/api/v1/resource/alerts/' + alertId + "/activate";
+							var what = "activate";
+						} else {
+							Ext.MessageBox.alert("Record Not Recognized", "Error: Record is not active or inactive.");
+							return false;
+						}
+
+						Ext.Ajax.request({
+							url: url,
+							method: method,
+							success: function (response, opts) {
+								var message = 'Successfully ' + what + 'd "' + record.data.name + '"';
+								Ext.toast(message, '', 'tr');
+								// The ordering below is necessary
+								// to get Ext to disable the buttons.
+								Ext.getCmp('alertGrid').getStore().load();
+								Ext.getCmp('alertGrid').getSelectionModel().deselectAll();
+								Ext.getCmp('alertGrid-tools-toggleActivation').disable();
+								Ext.getCmp('alertGrid-tools-edit').disable();
+							},
+							failure: function (response, opts) {
+								Ext.MessageBox.alert('Failed to' + what,
+								"Error: Could not " + what + ' "' + record.data.name + '"' );
+							}
+						});
+
+					} else {
+						Ext.MessageBox.alert("No Record Selected", "Error: You have not selected a record.");
+					}
+				};
 				Ext.create('Ext.container.Viewport', {
 					layout: 'fit',
 					items: [
