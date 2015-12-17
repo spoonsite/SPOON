@@ -559,13 +559,20 @@ public class UserServiceImpl
 			}
 		} else if (adminMessage.getUsersToEmail().isEmpty() == false) {
 			log.log(Level.INFO, "(Admin Message) Sending email to specfic users");
+			List<String> emailList = new ArrayList<>();
+			for (String email : adminMessage.getUsersToEmail()) {
+				if (StringUtils.isNotBlank(email)) {
+					emailList.add(email.trim());
+				}
+			}
+
 			StringBuilder query = new StringBuilder();
 			query.append("select from ").append(UserProfile.class.getSimpleName()).append(" where email IS NOT NULL AND username IN :userList OR email IN :userList2");
 			Map<String, Object> params = new HashMap<>();
-			params.put("userList", adminMessage.getUsersToEmail());
-			params.put("userList2", adminMessage.getUsersToEmail());
+			params.put("userList", emailList);
+			params.put("userList2", emailList);
 			usersToSend = persistenceService.query(query.toString(), params);
-			for (String email : adminMessage.getUsersToEmail()) {
+			for (String email : emailList) {
 				Boolean found = false;
 				for (UserProfile user : usersToSend) {
 					if (StringUtils.equalsIgnoreCase(user.getEmail(), email)) {
