@@ -544,7 +544,7 @@
 					},
 					columns: [
 						{text: 'Name', dataIndex: 'name', width: 125, flex: 1, lockable: true},
-						{text: 'Component Type', dataIndex: 'componentType', width: 200},
+						{text: 'Entry Type', dataIndex: 'componentType', width: 200},
 						{text: 'Event Date', dataIndex: 'eventDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 						{text: 'Event Type', dataIndex: 'trackEventTypeCode', width: 150},
 						{text: 'Client IP', dataIndex: 'clientIp', width: 125},
