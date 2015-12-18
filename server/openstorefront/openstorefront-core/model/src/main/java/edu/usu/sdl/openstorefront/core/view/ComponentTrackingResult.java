@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import java.util.List;
 public class ComponentTrackingResult
 {
 
+	@DataType(ComponentTrackingCompleteWrapper.class)
 	private List<ComponentTrackingCompleteWrapper> result = new ArrayList<>();
 	private long count;
 
