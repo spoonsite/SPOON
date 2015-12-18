@@ -35,7 +35,7 @@
 				border-image-repeat: initial;
 				border-radius: 10px;
 				padding: 10px;
-				background: rgb(42, 58, 92);
+				background: rgb(68, 30, 90);
 				color: white;
 			}			
 			.auth-forms {

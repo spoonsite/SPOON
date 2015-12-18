@@ -18,18 +18,18 @@ and open the template in the editor.
     min-height: 52px;
  //   background-color: #414e68;
     border-color: #343f54;
-    background: #414e68;
+    background: rgba(68,30,90,1);
 }
 .nav-back-color-only {
-	background-color: #414e68;
+	background-color: rgba(68,30,90,1);
 }
 
 .accent-background {
-	background-color: #FF811A;
+	background-color: rgba(191,191,191,1);
 }
 
 .border_accent {
-	border-bottom: 3px solid #FF811A;
+	border-bottom: 3px solid rgba(191,191,191,1);
 }
 
 .logo-small {
@@ -68,7 +68,7 @@ and open the template in the editor.
 .popup-message {
 	color:  white;
 	opacity: .7;
-	background-color: #414e68;
+	background-color: rgba(68,30,90,1);
 }
 
 .icon-top-padding {
@@ -82,7 +82,7 @@ and open the template in the editor.
 /** Search tool styles **/
 
 .list-button {
-    background-color: #414E68 !important;
+    background-color: rgba(68,30,90,1) !important;
     color: #484848;
     border-color: #747679;
     background-image: none;
@@ -98,7 +98,7 @@ and open the template in the editor.
 }
 
 .search-tools-column-orange-text {
-    color:#FF811A!important;
+    color: rgba(68,30,90,1) !important;
     font-size: 12px;
     font-weight: bold;
 }

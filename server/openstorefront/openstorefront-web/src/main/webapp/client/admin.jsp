@@ -212,11 +212,11 @@
 							items: [
 								{
 									xtype: 'image',
-									cls: 'logo-small',									
+																	
 									width: 250,
 									height: 53,
 									title: 'Go back to Home Page',
-									src: '../images/logo/logo-only-words.svg',
+									src: 'images/di2elogo-sm.png',
 									listeners: {
 										el: {
 											click: function() {

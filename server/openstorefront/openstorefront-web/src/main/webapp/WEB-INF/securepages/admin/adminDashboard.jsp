@@ -38,7 +38,7 @@
 				white-space: nowrap;
 				text-align: center;
 				float: right;
-				background-color: #414E68;
+				background-color: rgba(68,30,90,1);
 				border-radius: 10px;
 			}
 			.green-highlight{
@@ -407,7 +407,7 @@
 							{	
 								bodyStyle: 'background-color: white; border-left: 1px solid lightgrey;',
 								width: '50%',
-								margin: '0 10 0 0',
+								margin: '0 10 0 0',								
 								items: [
 									{
 										xtype: 'panel',
@@ -415,10 +415,12 @@
 										tpl: tplSystemDetailStats
 									}, 
 									{
+										padding: '0 10 0 10',
 										html: '<b>Working Memory</b>'
 									},
 									{
 										xtype: 'progressbar',
+										padding: '0 10 0 10',
 										id: 'detailedSystemPanel-memory',
 										text: ''
 									}

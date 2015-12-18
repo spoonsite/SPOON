@@ -50,17 +50,17 @@ div.x-border-layout-ct {
     padding: 5px 5px 5px 5px;
     border-width: 5px 5px 5px 5px;
     border-style: solid;
-    background-color: #414e68;
+    background-color: rgba(68,30,90,1);
 }
 
 .x-window-header-default {
     font-size: 13px;
-    border-color: #414e68;
-    background-color: #414e68;
+    border-color: rgba(68,30,90,1);
+    background-color: rgba(68,30,90,1);
 }
 
 .x-window-body-default {
-    border-color: #414e68;
+    border-color: rgba(68,30,90,1);
     border-width: 1px;
     border-style: solid;
     background: #fff;
@@ -127,7 +127,7 @@ div.x-border-layout-ct {
     background-color: transparent;
 }
 .x-window-default {
-    border-color: #414e68;
+    border-color: rgba(68,30,90,1);
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     -ms-border-radius: 4px;
@@ -474,7 +474,7 @@ div.x-border-layout-ct {
 
 .x-progress-default .x-progress-bar-default {
     background-image: none;
-    background-color: #FF811A;
+    background-color: rgba(191,191,191,1);
 }
 
 .x-splitter-horizontal {
@@ -486,14 +486,14 @@ div.x-border-layout-ct {
 }
 
 .x-view-item-focused {
-    outline: 1px dashed #FF811A!important;
+    outline: 1px dashed rgba(191,191,191,1) !important;
     outline-offset: -1px;
 }
 
 .x-mask.x-focus {
     border-style: solid;
     border-width: 1px;
-    border-color: #FF811A;
+    border-color: rgba(191,191,191,1);
 }
 
 .x-panel-default {
@@ -508,16 +508,17 @@ div.x-border-layout-ct {
 
 .x-tab-bar-strip-default {
     border-style: solid;
-    border-color: #A7C4E4;
-    background-color: #FF811A;
+    border-color:  rgba(68,30,90,1);
+    background-color: rgba(68	,30,90,1);
 }
 
 .x-tab.x-tab-active.x-tab-default {
-    border-color: #FF811A;
-    background-color: #FF811A;
+    border-color: rgba(68,30,90,1);
+    background-color: rgba(68	,30,90,1);
+    	
 }
 .x-box-scroller-tab-bar-default {
-    background-color: #FF811A;
+    background-color: rgba(191,191,191,1);
 }
 
 .x-tab.x-tab-active.x-tab-default .x-tab-inner-default {
@@ -555,46 +556,46 @@ div.x-border-layout-ct {
 }
 
 .x-tab-default{
-    border-color:#FF811A;
+    border-color:rgba(191,191,191,1);
     cursor: pointer;
     outline:none;
 }
 
 .x-tab-focus.x-tab-active.x-tab-default {
-    border-color: #FF811A;
-    background-color: #FF811A;
+    border-color: rgba(68,30,90,1);
+    background-color: rgba(68,30,90,1);
     outline:none;
 }
 
 .x-tab-focus.x-tab-default {
-    border-color: #FF811A;
-    background-color: #FF811A;
+    border-color: rgba(68,30,90,1);
+    background-color: rgba(68,30,90,1);
     outline:none;
 }
 
 .x-tab-focus.x-tab-over.x-tab-default {
-    border-color: #FF811A;
-    background-color: #FF811A;
+    border-color: rgba(68,30,90,1);
+    background-color: rgba(68,30,90,1);
     outline:none;
 }
 
 .x-tab-default-top.x-tab-focus {
-    -webkit-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
-    -moz-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
-    box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    -webkit-box-shadow: rgba(68,30,90,1) 0 1px 0px 0 inset, rgba(68,30,90,1) 0 -1px 0px 0 inset, rgba(68,30,90,1) -1px 0 0px 0 inset, rgba(68,30,90,1) 1px 0 0px 0 inset;
+    -moz-box-shadow: rgba(68,30,90,1) 0 1px 0px 0 inset, rgba(68,30,90,1) 0 -1px 0px 0 inset, rgba(68,30,90,1) -1px 0 0px 0 inset, rgba(68,30,90,1) 1px 0 0px 0 inset;
+    box-shadow: rgba(68,30,90,1) 0 1px 0px 0 inset, rgba(68,30,90,1) 0 -1px 0px 0 inset, rgba(68,30,90,1) -1px 0 0px 0 inset, rgba(68,30,90,1) 1px 0 0px 0 inset;
 }
 
 .x-tab-default-top.x-tab-focus.x-tab-over {
 
-    -webkit-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
-    -moz-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
-    box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    -webkit-box-shadow: rgba(68,30,90,1) 0 1px 0px 0 inset, rgba(68,30,90,1) 0 -1px 0px 0 inset, rgba(68,30,90,1) -1px 0 0px 0 inset, rgba(68,30,90,1) 1px 0 0px 0 inset;
+    -moz-box-shadow: rgba(68,30,90,1) 0 1px 0px 0 inset, rgba(68,30,90,1) 0 -1px 0px 0 inset, rgba(68,30,90,1) -1px 0 0px 0 inset, rgba(68,30,90,1) 1px 0 0px 0 inset;
+    box-shadow: rgba(68,30,90,1) 0 1px 0px 0 inset, rgba(68,30,90,1) 0 -1px 0px 0 inset, rgba(68,30,90,1) -1px 0 0px 0 inset, rgba(68,30,90,1) 1px 0 0px 0 inset;
 }
 
 .x-tab-default-top.x-tab-focus.x-tab-active {
-    -webkit-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
-    -moz-box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
-    box-shadow: #FF811A 0 1px 0px 0 inset, #FF811A 0 -1px 0px 0 inset, #FF811A -1px 0 0px 0 inset, #FF811A 1px 0 0px 0 inset;
+    -webkit-box-shadow: rgba(68,30,90,1) 0 1px 0px 0 inset, rgba(68,30,90,1) 0 -1px 0px 0 inset, rgba(68,30,90,1) -1px 0 0px 0 inset, rgba(68,30,90,1) 1px 0 0px 0 inset;
+    -moz-box-shadow: rgba(68,30,90,1) 0 1px 0px 0 inset, rgba(68,30,90,1) 0 -1px 0px 0 inset, rgba(68,30,90,1) -1px 0 0px 0 inset, rgba(68,30,90,1) 1px 0 0px 0 inset;
+    box-shadow: rgba(68,30,90,1) 0 1px 0px 0 inset, rgba(68,30,90,1) 0 -1px 0px 0 inset, rgba(68,30,90,1) -1px 0 0px 0 inset, rgba(68,30,90,1) 1px 0 0px 0 inset;
 }
 
 .x-tab.x-tab-disabled.x-tab-default {
