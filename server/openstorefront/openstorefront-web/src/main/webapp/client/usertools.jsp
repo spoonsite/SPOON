@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="layout/adminlayout.jsp">
+<stripes:layout-render name="layout/usertoolslayout.jsp">
     <stripes:layout-component name="contents">
 		
 	<script src="scripts/component/feedbackWindow.js" type="text/javascript"></script>
@@ -23,173 +23,34 @@
 			});
 			
 			var pageMap = [];
-			pageMap['Attributes'] = '/openstorefront/admin?tool=Attributes';
-			pageMap['Dashboard'] = 'Router.action?page=admin/adminDashboard.jsp';
-			pageMap['Entries'] = 'Router.action?page=admin/data/components.jsp';
-			pageMap['EntriesOld'] = '/openstorefront/admin?tool=Entries';
-			pageMap['EntryType'] = 'Router.action?page=admin/data/entryType.jsp';
-			pageMap['Highlights'] = '/openstorefront/admin?tool=Highlights';
-			pageMap['Integrations'] = '/openstorefront/admin?tool=Integrations';
-			pageMap['Imports'] = 'Router.action?page=admin/data/imports.jsp';
-			pageMap['Lookups'] = 'Router.action?page=admin/data/lookup.jsp';
-			pageMap['Media'] = '/openstorefront/admin?tool=Media';
-			pageMap['Organizations'] = '/openstorefront/admin?tool=Organizations';
-			pageMap['Questions'] = '/openstorefront/admin?tool=Questions';
-			pageMap['Reviews'] = '/openstorefront/admin?tool=Reviews';
-			pageMap['Tags'] = '/openstorefront/admin?tool=Tags';
-			pageMap['UserProfiles'] = '/openstorefront/admin?tool=User%20Profiles';
-			pageMap['Alerts'] = 'Router.action?page=admin/application/alerts.jsp';
-			pageMap['Branding'] = 'Router.action?page=admin/application/branding.jsp';
-			pageMap['Jobs'] = '/openstorefront/admin?tool=Jobs';
+			pageMap['UserProfile'] = 'Router.action?page=user/userProfile.jsp';
+			pageMap['Watches'] = '/openstorefront/tools?tool=Watches';
+			pageMap['Reviews'] = '/openstorefront/tools?tool=Component%20Reviews';
+			pageMap['Submissions'] = '/openstorefront/tools?tool=Submissions';
 			pageMap['Reports'] = 'Router.action?page=shared/reports.jsp';
-            //pageMap['Reports'] = '/openstorefront/admin?tool=Reports';
-			pageMap['System'] = '/openstorefront/admin?tool=System';
-			pageMap['Tracking'] = 'Router.action?page=admin/application/tracking.jsp';
-			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
-			
+
 
 			//Data Menu
-			var dataMenu = [];
-			dataMenu.push({
-				text: 'Attributes',
+			var toolsMenu = [];
+			toolsMenu.push({
+				text: 'Watches',
 				handler: function(){
-					actionLoadContent('Attributes');
+					actionLoadContent('Watches');
 				}
 			});
-			dataMenu.push({
-				text: 'Entries',
+			toolsMenu.push({
+				text: 'Reviews',
 				handler: function(){
-					actionLoadContent('Entries');
-				}
-			});
-			dataMenu.push({
-				text: 'Entry Types',
-				handler: function(){
-					actionLoadContent('EntryType');
-				}
-			});
-			dataMenu.push({
-				text: 'Highlights',
-				handler: function(){
-					actionLoadContent('Highlights');
-				}
-			});
-			dataMenu.push({
-				text: 'Integrations',
-				handler: function(){
-					actionLoadContent('Integrations');
-				}
-			});
-			dataMenu.push({
-				text: 'Imports',
-				handler: function(){
-					actionLoadContent('Imports');
-				}
-			});
-			dataMenu.push({
-				text: 'Lookups',
-				handler: function(){
-					actionLoadContent('Lookups');
-				}
-			});
-			dataMenu.push({
-				text: 'Media',
-				handler: function(){
-					actionLoadContent('Media');
+					actionLoadContent('Reviews');
 				}
 			});			
-			dataMenu.push({
-				text: 'Organizations',
-				handler: function(){
-					actionLoadContent('Organizations');
-				}				
-			});			
-			dataMenu.push({
-				text: 'User Data',
-				menu: {
-					items: [
-						{
-							text: 'Questions',
-							handler: function(){
-								actionLoadContent('Questions');
-							}							
-						},
-						{
-							text: 'Reviews',
-							handler: function(){
-								actionLoadContent('Reviews');
-							}							
-						},
-						{
-							text: 'Tags',
-							handler: function(){
-								actionLoadContent('Tags');
-							}							
-						},
-						{
-							text: 'User Profiles',
-							handler: function(){
-								actionLoadContent('UserProfiles');
-							}							
-						}
-					]
-				}
-			});
-			
-			var alertMenu = [];
-			alertMenu.push({
-				text: 'Alerts',
-				handler: function(){
-					actionLoadContent('Alerts');
-				}
-			});
-			/**
-			alertMenu.push({
-				text: 'Branding',
-				handler: function(){
-					actionLoadContent('Branding');
-				}				
-			});
-			**/
-			alertMenu.push({
-				text: 'Jobs',
-				handler: function(){
-					actionLoadContent('Jobs');
-				}				
-			});
-			alertMenu.push({
+			toolsMenu.push({
 				text: 'Reports',
 				handler: function(){
 					actionLoadContent('Reports');
-				}				
+				}
 			});
-			alertMenu.push({
-				text: 'System',
-				handler: function(){
-					actionLoadContent('System');
-				}				
-			});
-			alertMenu.push({
-				text: 'Tracking',
-				handler: function(){
-					actionLoadContent('Tracking');
-				}				
-			});			
-			alertMenu.push({
-				text: 'Messages',
-				handler: function(){
-					actionLoadContent('Messages');
-				}				
-			});
-			alertMenu.push({
-				xtype: 'menuseparator'				
-			});
-			alertMenu.push({
-				text: 'API Documentation',
-				href: '/openstorefront/API.action',
-				hrefTarget: '_blank'
-			});			
-
+			
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	
 
@@ -230,7 +91,7 @@
 								},
 								{
 									xtype: 'tbtext',
-									text: 'Admin Tools',
+									text: 'User Tools',
 									style: 'text-align: center; font-size: 35px; color: white;'
 								},
 								{
@@ -264,9 +125,11 @@
 												href: '../'
 											},
 											{
-												text: 'User Tools',
-												iconCls: 'fa fa-user',
-												href: 'usertools.jsp'
+												text: 'Admin Tools',
+												id: 'menuAdminTools',
+												iconCls: 'fa fa-gear',
+												hidden: true,
+												href: 'admin.jsp'
 											},											
 											{
 												xtype: 'menuseparator'
@@ -314,35 +177,30 @@
 							xtype: 'toolbar',														
 							items:[
 								{
-									text: 'Dashboard',
+									text: 'Profile',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-home',
+									iconCls: 'fa fa-2x fa-user',
 									handler: function(){
-										actionLoadContent('Dashboard');
+										actionLoadContent('UserProfile');
 									}									
 								},
 								{
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Data Management',
+									text: 'Submissions',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-database',
-									menu: {										
-										items: dataMenu,
-										listeners: {
-											beforerender: function () {
-											 this.setWidth(this.up('button').getWidth());
-											}					
-										}
-									}
-								},
+									iconCls: 'fa fa-2x fa-list',
+									handler: function(){
+										actionLoadContent('Submissions');
+									}									
+								},								
 								{
-									text: 'Application Management',
+									text: 'Tools',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-gears',
+									iconCls: 'fa fa-2x fa-wrench',
 									menu: {										
-										items: alertMenu,
+										items: toolsMenu,
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());
@@ -370,7 +228,10 @@
 				{
 					userMenuText = usercontext.firstName + ' ' + usercontext.lastName;
 				}
-				Ext.getCmp('userMenuBtn').setText(userMenuText);				
+				Ext.getCmp('userMenuBtn').setText(userMenuText);	
+				if (usercontext.admin) {
+					Ext.getCmp('menuAdminTools').setHidden(false);
+				}
 				
 				
 				//FIX ME: Websockets 
@@ -468,7 +329,7 @@
 					Ext.util.History.add(key);				
 				} else {
 					Ext.toast("Page key Not Found");
-					contents.load('Router.action?page=admin/adminDashboard.jsp');	
+					contents.load('Router.action?page=user/userProfile.jsp');	
 				}
 			};
 			
@@ -476,7 +337,7 @@
 			if (historyToken) {
 				actionLoadContent(historyToken);
 			} else {	
-				actionLoadContent('Dashboard');
+				actionLoadContent('UserProfile');
 			}	
 			
 			//Idle timeout check (Note: this probably as it doesn't cover all cases.)

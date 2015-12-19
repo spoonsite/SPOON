@@ -18,7 +18,7 @@
 
 /*global getCkConfig*/
 
-app.controller('UserCtrl', ['$scope', 'business', '$location', '$timeout', function ($scope, Business, $location, $timeout) {
+app.controller('UserCtrl', ['$scope', 'business', '$location', '$timeout', '$rootScope', function ($scope, Business, $location, $timeout, $rootScope) {
 
   //this object is used to contain the tree functions
   $scope.myTree = {};
@@ -38,6 +38,8 @@ app.controller('UserCtrl', ['$scope', 'business', '$location', '$timeout', funct
   $scope.menuPanel.system = {};
   $scope.menuPanel.system.open = true;
   $scope.oneAtATime = false;
+  $rootScope.navOption = {};
+  $rootScope.navOption.hideNav = true;  
 
   Business.getFilters().then(function(result) {
     if (result) {

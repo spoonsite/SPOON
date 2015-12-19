@@ -192,6 +192,10 @@ app.controller('NavCtrl', ['$scope', '$location', 'localCache', '$rootScope', 'b
   $scope.gotoAdmin = function() {
     window.location.replace('client/admin.jsp');
   };
+  
+  $scope.gotoUserTools = function() {
+    window.location.replace('client/usertools.jsp');
+  };  
 
   /***************************************************************
   * Log out the user

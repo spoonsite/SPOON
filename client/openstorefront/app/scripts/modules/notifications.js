@@ -75,7 +75,7 @@ app.run(['$templateCache', '$rootScope', '$timeout', function ($templateCache, $
       });
       socket.on('REPORT', function (args) {
         // console.log('this', args);
-        var alert = {'type': args.entityMetaDataStatus? scope.getStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};
+        var alert = {'type': args.entityMetaDataStatus? scope.getStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + ' View/Download from User Tools reports.', 'id': 'report_'+ args.eventId};
         bumpIcon();
         scope.getSize();
         scope.addAlert(alert, 10000);
@@ -568,7 +568,7 @@ app.run(['$templateCache', '$rootScope', '$timeout', function ($templateCache, $
       return item.message + '<i>View the changes <a href="single?id='+item.entityId+'"><strong>here</strong></a>.</i>';
       break;
       case 'REPORT':
-      return item.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.';
+      return item.message + ' View/Download from User Tools reports.';
       break;
       case 'ADMIN':
       return '<i class="fa fa-warning"></i>&nbsp;' + item.message;

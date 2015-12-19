@@ -20,11 +20,14 @@ Ext.define('OSF.component.UserProfilePanel', {
 	alias: 'osf.widget.UserProfilePanel',
 	bodyStyle: 'padding: 20px;',
 	extraTools: [],
+	defaults: {
+		labelAlign: 'right'
+	},
 	initComponent: function () {
 		this.callParent();
 
 		var profileForm = this;
-
+		
 		var formItems = [
 			{
 				xtype: 'displayfield',
@@ -40,6 +43,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 				xtype: 'textfield',
 				name: 'firstName',
 				fieldLabel: 'First Name <span class="field-required" />',
+				labelSeparator: '',
 				width: '100%',
 				maxLength: 80,
 				allowBlank: false
@@ -48,6 +52,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 				xtype: 'textfield',
 				name: 'lastName',
 				fieldLabel: 'Last Name <span class="field-required" />',
+				labelSeparator: '',
 				width: '100%',
 				maxLength: 80,
 				allowBlank: false
@@ -55,21 +60,26 @@ Ext.define('OSF.component.UserProfilePanel', {
 			{
 				xtype: 'panel',
 				layout: 'hbox',
+				padding: '0 0 5 0',
+				defaults: profileForm.defaults,
 				items: [
 					{
 						xtype: 'textfield',
 						name: 'email',
-						inputType: 'email',
+						inputType: 'email',						
 						fieldLabel: 'Email <span class="field-required" />',
-						width: '81%',
+						labelSeparator: '',
+						flex: 1,
 						maxLength: 1000,
 						allowBlank: false
 					},
 					{
 						xtype: 'button',
-						width: '19%',
+						width: '175',
+						margin: profileForm.defaults ? profileForm.defaults.labelAlign === 'top' ? '25 0 0 0' : '0 0 0 0' : '0 0 0 0',
 						text: 'Send Test Message',
 						iconCls: 'fa fa-envelope',
+						maxWidth: 175,
 						handler: function(){
 							var user = this.up('form').getForm().findField('username');
 							var email = this.up('form').getForm().findField('email');
@@ -107,7 +117,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 			Ext.create('OSF.component.StandardComboBox', {
 				name: 'organization',
 				allowBlank: false,
-				margin: '0 0 0 0',
+				margin: '0 0 5 0',
 				width: '100%',
 				maxLength: 120,
 				fieldLabel: 'Organization ',
@@ -121,7 +131,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 				itemId: 'userTypeCodeCB',
 				name: 'userTypeCode',
 				allowBlank: false,
-				margin: '0 0 0 0',
+				margin: '0 0 5 0',
 				width: '100%',
 				fieldLabel: 'Role',
 				editable: false,
