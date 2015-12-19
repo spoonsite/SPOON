@@ -115,7 +115,7 @@ Ext.define('OSF.component.NotificationPanel', {
 								return value + '<i>View the changes <a href="../single?id=' + record.get('entityId') + '"><strong>here</strong></a>.</i>';
 								break;
 							case 'REPORT':
-								return value + '<i>View/Download the report <a href="../tools?tool=Reports"><strong>here</strong></a></i>.';
+								return value + '<i>View/Download the report <a href="usertools.jsp?dc=' + Math.random() + '#Reports"><strong>here</strong></a></i>.';
 								break;
 							case 'ADMIN':
 								return '<i class="fa fa-warning"></i>&nbsp;' + value;

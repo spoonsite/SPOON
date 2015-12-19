@@ -71,11 +71,7 @@
             <ul class="dropdown-menu">
               <li ng-show="user.info.admin"><a href="javascript: void(0)" ng-click="gotoAdmin();">Admin Tools</a></li>
               <li ng-show="user.info.admin" class="divider"></li>
-              <li><a href="javascript: void(0)" ng-click="send('/tools')">User Tools</a></li>
-              <!--               <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'User Profile')">User Profile</a></li> -->
-              <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'Watches')">Watches</a></li>   
-              <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'Component Reviews')">Component Reviews</a></li>
-              <li><a href="javascript: void(0)" ng-click="openModal('profileModal', 'Submissions')">Submissions</a></li>
+              <li><a href="javascript: void(0)" ng-click="gotoUserTools();">User Tools</a></li>
               <li><a href="javascript: void(0)" ng-click="openHelp()"><b>Help</b></a></li>    
               <li><a href="javascript: void(0)" ng-click="openFeedback();"><b>Feedback / Issues</b></a></li>  
               <li class="divider"></li>
@@ -108,10 +104,7 @@
         <ul class="nav navbar-nav">
           <li ng-show="user.info.admin"><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); gotoAdmin(); ">Admin Tools</a></li>
           <li ng-show="user.info.admin" class="divider"></li>
-          <li><a href="javascript: void(0)" ng-click="send('/tools')">User Tools</a></li>
-          <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'User Profile'); ">User Profile</a></li>
-          <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'Watches'); ">Watches</a></li>   
-          <li><a href="javascript: void(0)" ng-click="closeNavbarItem('openUserMenu'); openModal('profileModal', 'Component Feedback'); ">Component Feedback</a></li>
+          <li><a href="javascript: void(0)" ng-click="gotoUserTools();">User Tools</a></li>
           <li class="divider"></li>
           <li ng-show="user.isLoggedIn"><a href="/openstorefront/Login.action?Logout" ng-click="localCache.clear()">Logout</a></li>   
         </ul>

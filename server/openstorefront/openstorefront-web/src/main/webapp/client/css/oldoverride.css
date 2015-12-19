@@ -161,3 +161,8 @@ nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active
     color: rgba(68,30,90,1); 
     background-color:  rgba(221,221,221,1);
 }
+
+.row {
+    margin-left: 0px; 
+    margin-right: 0px;
+}
