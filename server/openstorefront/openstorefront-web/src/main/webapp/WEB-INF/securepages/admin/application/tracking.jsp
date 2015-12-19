@@ -15,7 +15,11 @@
 
 				//
 				//  User Tracking Store
-				//                
+				//
+				var sortField='eventDts';
+				var sortDirection ='DESC';
+				
+				
 				var userTrackingGridStore = Ext.create('Ext.data.Store', {
 					id: 'userTrackingGridStore',
 					autoLoad: true,
@@ -171,6 +175,12 @@
 						},
 						selectionchange: function (grid, record, index, opts) {
 							userCheckNavButtons();
+						},
+						sortchange: function(thisGrid, col, dir, eOpts) {
+							//console.log(col.dataIndex, col.sortState);
+							sortField=col.dataIndex;
+							sortDirection=col.sortState;
+							    
 						}
 					}
 				});
@@ -202,7 +212,7 @@
 				//  Refresh and reload the grid
 				//
 				var userRefreshGrid = function () {
-					processUserDateFilter();
+					processUserDateFilter('refresh');
 				};
 
 
@@ -224,7 +234,7 @@
 							startDate === '' ||
 							endDate === '')
 					{
-						Ext.getCmp('userTrackingGrid').getStore().load();
+					    Ext.getCmp('userTrackingGrid').getStore().load();
 					}
 					else if (startDate > endDate) {
 						Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
@@ -351,10 +361,46 @@
 				// User Export
 				//
 				var userExport = function () {
+					
+					var params='';
+					var startDate = null;
+					var endDate = null;
+
+					startDate = Ext.getCmp('from_date').getValue();
+					endDate = Ext.getCmp('to_date').getValue();
+
+					if (startDate === null ||
+							endDate === null ||
+							typeof startDate === 'undefined' ||
+							typeof endDate === 'undefined' ||
+							startDate === '' ||
+							endDate === '')
+					{
+					    params = {
+							sortField: sortField,
+							sortOrder: sortDirection
+						};
+					}
+					else if (startDate > endDate) {
+						Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
+						return;
+					}
+					else {
+						params={
+						    start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
+						    end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u'),
+							sortField: sortField,
+							sortOrder: sortDirection
+						};
+					}
+					
+					console.log("Grid Sorting", Ext.getCmp('userTrackingGrid').sortInfo);
+					
 					Ext.toast('Exporting User Tracking Data ...');
 					Ext.Ajax.request({
 						url: '../api/v1/resource/usertracking/export',
 						method: 'GET',
+						params: params,
 						success: function (response, opts) {
 
 							CoreUtil.downloadCSVFile('userTracking.csv', response.responseText);
@@ -404,7 +450,9 @@
 				// Entry Tracking Store
 				//
 
-
+                var eSortField='eventDts';
+				var eSortDirection ='DESC';
+				
 				var entryTrackingGridStore = Ext.create('Ext.data.Store', {
 					id: 'entryTrackingGridStore',
 					autoLoad: false,
@@ -420,27 +468,12 @@
 					fields: [
 						{name: 'componentId', mapping: function (data) {
 								return data.data.componentId;
-
-							}},
-						{name: 'name', mapping: function (data) {
-
-								return data.name;
-
-							}},
-						{name: 'description', mapping: function (data) {
-								return data.description;
 							}},
 						{name: 'componentType', mapping: function (data) {
-								return data.componentType;
-							}},
-						{name: 'eventType', mapping: function (data) {
-								return data.componentType;
+								return data.data.componentType;
 							}},
 						{name: 'eventDts', mapping: function (data) {
 								return data.data.eventDts;
-							}},
-						{name: 'trackingId', mapping: function (data) {
-								return data.trackingId;
 							}},
 						{name: 'trackEventTypeCode', mapping: function (data) {
 								if (data.data.trackEventTypeCode === 'SYNC') {
@@ -474,9 +507,6 @@
 						{name: 'createUser', mapping: function (data) {
 								return data.data.createUser;
 							}},
-						{name: 'attributes', mapping: function (data) {
-								return data.attributes;
-							}},
 						{name: 'clientIp', mapping: function (data) {
 								return data.data.clientIp;
 							}}
@@ -502,16 +532,19 @@
 					store: entryTrackingGridStore,
 					columnLines: true,
 					bodyCls: 'border_accent',
-					selModel: {
-						selType: 'checkboxmodel'
-					},
 					plugins: 'gridfilters',
 					enableLocking: true,
+					listeners:{
+						sortchange: function(thisGrid, col, dir, eOpts) {
+							//console.log(col.dataIndex, col.sortState);
+							eSortField=col.dataIndex;
+							eSortDirection=col.sortState;
+							    
+						}
+					},
 					columns: [
 						{text: 'Name', dataIndex: 'name', width: 125, flex: 1, lockable: true},
-						{text: 'Entry ID', dataIndex: 'componentId', width: 300,
-							hidden: true
-						},
+						{text: 'Entry Type', dataIndex: 'componentType', width: 200},
 						{text: 'Event Date', dataIndex: 'eventDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 						{text: 'Event Type', dataIndex: 'trackEventTypeCode', width: 150},
 						{text: 'Client IP', dataIndex: 'clientIp', width: 125},
@@ -643,11 +676,50 @@
 				//
 				// Entry Export
 				//
+				//
+				// User Export
+				//
 				var entryExport = function () {
+					
+					var params='';
+					var startDate = null;
+					var endDate = null;
+
+					startDate = Ext.getCmp('from_entry_date').getValue();
+					endDate = Ext.getCmp('to_entry_date').getValue();
+
+					if (startDate === null ||
+							endDate === null ||
+							typeof startDate === 'undefined' ||
+							typeof endDate === 'undefined' ||
+							startDate === '' ||
+							endDate === '')
+					{
+					    params = {
+							sortField: eSortField,
+							sortOrder: eSortDirection
+						};
+					}
+					else if (startDate > endDate) {
+						Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
+						return;
+					}
+					else {
+						params={
+						    start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
+						    end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u'),
+							sortField: eSortField,
+							sortOrder: eSortDirection
+						};
+					}
+					
+					console.log("Grid Sorting", Ext.getCmp('userTrackingGrid').sortInfo);
+					
 					Ext.toast('Exporting Entry Tracking Data ...');
 					Ext.Ajax.request({
 						url: '../api/v1/resource/componenttracking/export',
 						method: 'GET',
+						params: params,
 						success: function (response, opts) {
 
 							CoreUtil.downloadCSVFile('entryTracking.csv', response.responseText);
