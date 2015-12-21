@@ -301,7 +301,7 @@ app.controller('AdminCtrl', ['$scope', 'business', '$location', '$timeout', '$ro
     $scope.data.push({
       'label': 'Reviews', 
       'location':'views/admin/manageReviews.html', 
-      'toolTitle': 'Manage User Reivews', 
+      'toolTitle': 'Manage User Reviews', 
       'detailedDesc': "User reviews and ratings about a component.",
       'key': 'reviews' 
     });    
