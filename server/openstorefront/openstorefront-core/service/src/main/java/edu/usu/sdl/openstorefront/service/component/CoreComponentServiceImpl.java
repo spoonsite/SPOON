@@ -1883,4 +1883,17 @@ public class CoreComponentServiceImpl
 		return component;
 	}
 
+	public Component changeOwner(String componentId, String newOwner)
+	{
+		Component component = persistenceService.findById(Component.class, componentId);
+		if (component != null) {
+			component.setCreateUser(newOwner);
+			component.populateBaseUpdateFields();
+			persistenceService.persist(component);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id passed: " + componentId);
+		}
+		return component;
+	}
+
 }

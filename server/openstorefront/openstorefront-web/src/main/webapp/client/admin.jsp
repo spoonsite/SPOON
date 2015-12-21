@@ -256,6 +256,8 @@
 									scale   : 'large',
 									ui: 'default',
 									text: 'User Menu',
+									minWidth: 150,
+									maxWidth: 250,
 									menu: {						
 										items: [
 											{

@@ -663,4 +663,14 @@ public interface ComponentService
 	 */
 	public Component approveComponent(String componentId);
 
+	/**
+	 * This updates a components owner.
+	 *
+	 * @param componentId
+	 * @param newOwner
+	 * @return component modified
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Component changeOwner(String componentId, String newOwner);
+
 }
