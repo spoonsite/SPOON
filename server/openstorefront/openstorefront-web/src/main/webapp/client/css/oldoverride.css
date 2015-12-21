@@ -34,12 +34,12 @@ limitations under the License.
     /* -webkit-box-shadow: inset 0px 0px 9px 0px; */
     /* -moz-box-shadow: inset 0px 0px 9px 0px rgba(68, 68, 68, 0.6); */
     /* box-shadow: inset 0px 0px 9px 0px rgba(68,68,68,0.6); */
-    background: #826D94;
+    background: #826D94 !important;
 }
 
 .bannerText {
     padding: 20px 20%;
-    color: #FFFFFF;
+    color: #FFFFFF !important;
 }
 
 .home_footer {
