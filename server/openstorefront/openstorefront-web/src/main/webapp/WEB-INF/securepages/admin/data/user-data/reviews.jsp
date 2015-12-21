@@ -178,11 +178,49 @@
 				});
 
 
-				var actionToggleActivation = function(record) {
-					var reviewId = record.data.reviewId;
-					var componentId = record.data.componentId;
-					console.log(reviewId);
-					console.log(componentId);
+				var actionToggleActivation = function (record) {
+					if (record) {
+						var reviewId = record.data.reviewId;
+						var componentId = record.data.componentId;
+						var active = record.data.activeStatus;
+						if (active === 'A') {
+							var method = "DELETE";
+							var url = '/openstorefront/api/v1/resource/components/';
+							url += componentId + '/reviews/';
+							url += reviewId;
+							var what = "deactivate";
+						} else if (active === 'I') {
+							var method = "PUT";
+							var url = '/openstorefront/api/v1/resource/components/';
+							url += componentId + '/reviews/';
+							url += reviewId + '/activate';
+							var what = "activate";
+						} else {
+							Ext.MessageBox.alert("Record Not Recognized", "Error: Record is not active or inactive.");
+							return false;
+						}
+
+						Ext.Ajax.request({
+							url: url,
+							method: method,
+							success: function (response, opts) {
+								var message = 'Successfully ' + what + 'd review for "' + record.data.name + '"';
+								Ext.toast(message, '', 'tr');
+								// The ordering below is necessary
+								// to get Ext to disable the buttons.
+								Ext.getCmp('reviewGrid').getStore().load();
+								Ext.getCmp('reviewGrid').getSelectionModel().deselectAll();
+								Ext.getCmp('reviewGrid-tools-toggleActivation').disable();
+							},
+							failure: function (response, opts) {
+								Ext.MessageBox.alert('Failed to' + what,
+										"Error: Could not " + what + ' review for "' + record.data.name + '"');
+							}
+						});
+
+					} else {
+						Ext.MessageBox.alert("No Review Selected", "Error: You have not selected a review.");
+					}
 
 				};
 
