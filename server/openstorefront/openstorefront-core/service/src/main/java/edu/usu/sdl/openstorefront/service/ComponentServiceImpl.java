@@ -580,4 +580,10 @@ public class ComponentServiceImpl
 		return core.viewSnapshot(versionHistoryId);
 	}
 
+	@Override
+	public Component changeOwner(String componentId, String newOwner)
+	{
+		return core.changeOwner(componentId, newOwner);
+	}
+
 }

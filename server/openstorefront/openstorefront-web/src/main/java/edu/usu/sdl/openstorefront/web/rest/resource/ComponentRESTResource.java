@@ -699,6 +699,24 @@ public class ComponentRESTResource
 		return sendSingleEntityResponse(view);
 	}
 
+	@PUT
+	@RequireAdmin
+	@APIDescription("Changes owner of component")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Path("/{id}/changeowner")
+	public Response changeOwner(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			String newOwner)
+	{
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+		if (component != null) {
+			service.getComponentService().changeOwner(componentId, newOwner);
+			component.setCreateUser(newOwner);
+		}
+		return sendSingleEntityResponse(component);
+	}
+
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Inactivates Component and removes any assoicated user watches.")

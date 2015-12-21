@@ -463,8 +463,8 @@
 			actionLoadSystemData();
 			
 			var mainPanel = Ext.create('Ext.panel.Panel', {
-				scrollable: true,				
-				items: [
+				scrollable: true,		
+				items: [					
 					{
 						xtype: 'panel',
 						layout: {
