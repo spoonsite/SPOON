@@ -209,6 +209,47 @@
 				};
 				
 				var deleteRecord = function(){
+					selectedObj = Ext.getCmp('orgGrid').getSelection()[0].data;
+					Ext.Ajax.request({
+						url: '../api/v1/resource/organizations/'+encodeURIComponent(selectedObj.organizationId)+'/references',
+						method: 'GET',
+						success: function (response, opts) {
+							theData = response.responseText;
+							if(theData.length!==0){
+								Ext.toast('That organization has references and cannot be deleted.');
+								return;
+							}
+							else{
+								Ext.Msg.show({
+									title: 'Delete Organization?',
+									message: 'Are you sure you want to delete the selected organization?',
+									buttons: Ext.Msg.YESNO,
+									icon: Ext.Msg.QUESTION,
+									fn: function (btn) {
+										if (btn === 'yes') {
+											Ext.getCmp('orgGrid').setLoading(true);
+											Ext.Ajax.request({
+												url: '../api/v1/resource/organizations/'+encodeURIComponent(selectedObj.organizationId),
+												method: 'DELETE',
+												success: function (response, opts) {
+													Ext.getCmp('orgGrid').setLoading(false);
+													refreshGrid();
+												},
+												failure: function (response, opts) {
+													Ext.getCmp('orgGrid').setLoading(false);
+												}
+											});
+										}
+									}
+								});
+							}
+						},
+						failure: function (response, opts) {
+							Ext.toast('Failed to check for organization references.');
+						}
+					});
+					
+					
 					
 				};
 				
