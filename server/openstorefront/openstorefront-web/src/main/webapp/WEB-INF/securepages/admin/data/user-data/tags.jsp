@@ -19,6 +19,7 @@
 						'createDts',
 						'securityMarkingType'
 					],
+					sorters: 'componentName',
 					proxy: {
 						id: 'tagStoreProxy',
 						type: 'ajax',
