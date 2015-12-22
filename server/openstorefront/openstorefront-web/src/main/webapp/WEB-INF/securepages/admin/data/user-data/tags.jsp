@@ -135,6 +135,168 @@
 				});
 
 
+				var tagAddWin = Ext.create('Ext.window.Window', {
+					id: 'tagAddWin',
+					title: 'Add Tag',
+					modal: true,
+					width: '30%',
+					y: '10em',
+					iconCls: 'fa fa-lg fa-plus',
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							id: 'addTagForm',
+							layout: 'vbox',
+							scrollable: true,
+							bodyStyle: 'padding: 10px;',
+							defaults: {
+								labelAlign: 'top',
+								width: '100%'
+							},
+							items: [
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Component<span class="field-required"></span>',
+									id: 'addTagForm-component',
+									forceSelection: true,
+									displayField: 'description',
+									valueField: 'code',
+									emptyText: 'Select a Component',
+									allowBlank: false,
+									name: 'component',
+									store: Ext.create('Ext.data.Store', {
+										storeId: 'componentStore',
+										autoLoad: true,
+										sorters: "description",
+										fields: [
+											'code',
+											'description'
+										],
+										proxy: {
+											id: 'componentStoreProxy',
+											type: 'ajax',
+											url: '../api/v1/resource/components/lookup'
+										}
+									})
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Tag<span class="field-required"></span>',
+									id: 'adddTagForm-tag',
+									name: 'text',
+									allowBlank: false
+								},
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Security Type',
+									id: 'addTagForm-securityType',
+									displayField: 'description',
+									valueField: 'code',
+									emptyText: 'Select a Security Type',
+									name: 'securityType',
+									store: Ext.data.StoreManager.lookup('securityTypeStore')
+								}
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											iconCls: 'fa fa-save',
+											formBind: true,
+											handler: function () {
+												var form = Ext.getCmp('addTagForm');
+												// Submit Data
+												if (form.isValid()) {
+													var formData = form.getValues();
+													var url = '/openstorefront/api/v1/resource/components/';
+													url += formData.component + "/tags";
+													var method = 'POST';
+
+													// Compile properly formatted data
+													data = {};
+													data.text = formData.text;
+													data.securityMarkingType = formData.securityType;
+
+													CoreUtil.submitForm({
+														url: url,
+														method: method,
+														data: data,
+														removeBlankDataItems: true,
+														form: Ext.getCmp('addTagForm'),
+														success: function (response, opts) {
+															// Server responded OK
+															var errorResponse = Ext.decode(response.responseText);
+
+															// Confusingly, you will only see the "success"
+															// property in the response if the success
+															// is success = false. Therefore
+															// the appearance of the success property actually
+															// means there was a failure.
+
+															if (!errorResponse.hasOwnProperty('success')) {
+																// Validation succeeded.
+																Ext.toast('Saved Successfully', '', 'tr');
+																Ext.getCmp('addTagForm').setLoading(false);
+																Ext.getCmp('addTagForm').reset();
+																Ext.getCmp('tagAddWin').hide();
+																Ext.getCmp('tagGrid').getStore().load();
+																Ext.getCmp('tagGrid').getSelectionModel().deselectAll();
+																Ext.getCmp('tagGrid-tools-delete').setDisabled(true);
+															} else {
+																// Validation failed
+
+																// Compile an object to pass to ExtJS Form
+																// that allows validation messages
+																// using the markInvalid() method.
+																var errorObj = {};
+																Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+																	errorObj[item.key] = item.value;
+																});
+																var form = Ext.getCmp('addTagForm').getForm();
+																form.markInvalid(errorObj);
+															}
+														},
+														failure: function (response, opts) {
+															// The same failure procedure as seen above
+															var errorResponse = Ext.decode(response.responseText);
+															var errorObj = {};
+															Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+																errorObj[item.key] = item.value;
+															});
+															var form = Ext.getCmp('addTagForm').getForm();
+															form.markInvalid(errorObj);
+														}
+													});
+												}
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function () {
+												Ext.getCmp('addTagForm').reset();
+												Ext.getCmp('tagAddWin').hide();
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				});
+
+				var actionAddTagForm = function () {
+					tagAddWin.show();
+					Ext.getCmp('addTagForm').reset(true);
+				};
+
 				var actionDeleteTag = function (record) {
 					if (record) {
 						var tagId = record.data.tagId;
