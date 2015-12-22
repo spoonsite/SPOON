@@ -135,6 +135,37 @@
 				});
 
 
+				var actionDeleteTag = function (record) {
+					if (record) {
+						var tagId = record.data.tagId;
+						var componentId = record.data.componentId;
+						var method = 'DELETE';
+						var url = '/openstorefront/api/v1/resource/components/';
+						url += componentId + '/tags/' + tagId;
+
+						Ext.Ajax.request({
+							url: url,
+							method: method,
+							success: function (response, opts) {
+								var message = 'Successfully deleted tag "' + record.data.text + '"';
+								Ext.toast(message, '', 'tr');
+								Ext.getCmp('tagGrid').getStore().load();
+								Ext.getCmp('tagGrid').getSelectionModel().deselectAll();
+								Ext.getCmp('tagGrid-tools-delete').disable();
+							},
+							failure: function (response, opts) {
+								Ext.MessageBox.alert('Failed to delete',
+										'Error: Could not delete tag "' + record.data.name + '"');
+							}
+						});
+
+					} 
+					else {
+						Ext.MessageBox.alert('No Record Selected', 'Error: You have not selected a record.');
+					}
+				};
+
+
 				Ext.create('Ext.container.Viewport', {
 					layout: 'fit',
 					items: [
