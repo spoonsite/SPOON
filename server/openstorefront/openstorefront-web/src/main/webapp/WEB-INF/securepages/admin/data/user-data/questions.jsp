@@ -20,6 +20,22 @@
 						id: 'componentStoreProxy',
 						type: 'ajax',
 						url: '../api/v1/resource/components/questionviews'
+					},
+					listeners: {
+						load: function (theStore) {
+							// Since the API returns multiple listings,
+							// we must remove duplicate entries of components
+							theStore.each(function (i) {
+								theStore.each(function (j) {
+									// check first if i and j exist
+									// then if they are different entries
+									// and then if they have the same componentId
+									if (i && j && i.internalId !== j.internalId && i.data.componentId === j.data.componentId) {
+										theStore.remove(j);
+									}
+								});
+							});
+						}
 					}
 				});
 
