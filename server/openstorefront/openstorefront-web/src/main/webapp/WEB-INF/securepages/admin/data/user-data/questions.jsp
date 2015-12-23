@@ -39,6 +39,11 @@
 					}
 				});
 
+				var questionStore = Ext.create('Ext.data.Store', {
+					// This store gets modified heavily when actionSelectedComponent() invokes.
+					storeId: 'questionStore'
+				});
+
 				var componentPanel = Ext.create('Ext.grid.Panel', {
 					flex: 2,
 					store: componentStore,
@@ -49,12 +54,18 @@
 							dataIndex: 'componentName',
 							flex: 1
 						}
-					]
+					],
+					listeners: {
+						select: function(rowModel, record) {
+							actionSelectedComponent(record.data.componentId);
+						}
+					}
 				});
 
 				var questionPanel = Ext.create('Ext.grid.Panel', {
 					flex: 3,
 					layout: 'fit',
+					store: questionStore,
 					viewConfig: {
 						emptyText: 'Please select a component.',
 						deferEmptyText: false
@@ -62,7 +73,7 @@
 					columns: [
 						{
 							text: 'Questions',
-							dataIndex: 'componentName',
+							dataIndex: 'question',
 							flex: 1
 						}
 					]
@@ -115,6 +126,18 @@
 						mainPanel
 					]
 				});
+
+				var actionSelectedComponent = function actionSelectedComponent(componentId) {
+					// Set Proxy and Load Questions
+					questionStore.setProxy({
+						id: 'questionStoreProxy',
+						url: '/openstorefront/api/v1/resource/components/' + componentId + '/questions',
+						type: 'ajax'
+					});
+					questionStore.load();
+				};
+
+
 			});
 
 		</script>
