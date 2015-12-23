@@ -1,0 +1,106 @@
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
+<stripes:layout-render name="../../../../../client/layout/adminlayout.jsp">
+	<stripes:layout-component name="contents">
+
+		<script type="text/javascript">
+			/* global Ext, CoreUtil */
+			Ext.onReady(function () {
+				var componentStore = Ext.create('Ext.data.Store', {
+					// This store only grabs components which have Questions.
+					storeId: 'componentStore',
+					autoLoad: true,
+					sorters: 'componentName',
+					fields: [
+						'componentId',
+						'componentName'
+					],
+					proxy: {
+						id: 'componentStoreProxy',
+						type: 'ajax',
+						url: '../api/v1/resource/components/questionviews'
+					}
+				});
+
+				var componentPanel = Ext.create('Ext.grid.Panel', {
+					flex: 2,
+					store: componentStore,
+					layout: 'fit',
+					columns: [
+						{
+							text: 'Components',
+							dataIndex: 'componentName',
+							flex: 1
+						}
+					]
+				});
+
+				var questionPanel = Ext.create('Ext.grid.Panel', {
+					flex: 3,
+					layout: 'fit',
+					viewConfig: {
+						emptyText: 'Please select a component.',
+						deferEmptyText: false
+					},
+					columns: [
+						{
+							text: 'Questions',
+							dataIndex: 'componentName',
+							flex: 1
+						}
+					]
+				});
+
+
+				var answerPanel = Ext.create('Ext.grid.Panel', {
+					flex: 3,
+					layout: 'fit',
+					viewConfig: {
+						emptyText: 'Please select a component.',
+						deferEmptyText: false
+					},
+					columns: [
+						{
+							text: 'Answers',
+							dataIndex: 'componentName',
+							flex: 1
+						}
+					]
+				});
+
+
+				var mainPanel = Ext.create('Ext.panel.Panel', {
+					title: 'Manage Questions <i class="fa fa-question-circle"  data-qtip="User questions and answers about a component."></i>',
+					bodyPadding: '6em',
+					layout: {
+						type: 'hbox',
+						align: 'stretch',
+						pack: 'start',
+						fit: 'fit'
+					},
+					defaults: {
+					},
+					items: [
+						componentPanel,
+						{
+							xtype: 'splitter'
+						},
+						questionPanel,
+						{
+							xtype: 'splitter'
+						},
+						answerPanel
+					]
+				});
+				Ext.create('Ext.container.Viewport', {
+					layout: 'fit',
+					items: [
+						mainPanel
+					]
+				});
+			});
+
+		</script>
+	</stripes:layout-component>
+</stripes:layout-render>
