@@ -182,9 +182,19 @@ public class ComponentRESTResource
 			List<LookupModel> lookupModels = new ArrayList<>();
 
 			Component componentExample = new Component();
+
 			if (!filterQueryParams.getAll()) {
-				componentExample.setActiveStatus(filterQueryParams.getStatus());
-				componentExample.setApprovalState(filterQueryParams.getApprovalState());
+				if (OpenStorefrontConstant.STATUS_VIEW_ALL.equalsIgnoreCase(filterQueryParams.getStatus())) {
+					componentExample.setActiveStatus(null);
+				} else {
+					componentExample.setActiveStatus(filterQueryParams.getStatus());
+				}
+
+				if (OpenStorefrontConstant.STATUS_VIEW_ALL.equalsIgnoreCase(filterQueryParams.getApprovalState())) {
+					componentExample.setApprovalState(null);
+				} else {
+					componentExample.setApprovalState(filterQueryParams.getApprovalState());
+				}
 			}
 			componentExample.setComponentType(filterQueryParams.getComponentType());
 			if (componentExample.getComponentType() != null && componentExample.getComponentType().equals(ComponentType.ALL)) {

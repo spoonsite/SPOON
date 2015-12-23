@@ -35,6 +35,7 @@ public class ComponentTypeInit
 		componentType.setComponentType(ComponentType.COMPONENT);
 		componentType.setLabel("DI2E Component");
 		componentType.setDescription("Main entry representing a DI2E Component");
+		componentType.setAllowOnSubmission(true);
 		componentType.setDataEntryAttributes(Boolean.TRUE);
 		componentType.setDataEntryContacts(Boolean.TRUE);
 		componentType.setDataEntryDependancies(Boolean.TRUE);
@@ -50,6 +51,7 @@ public class ComponentTypeInit
 
 		componentType = new ComponentType();
 		componentType.setComponentType(ComponentType.ARTICLE);
+		componentType.setAllowOnSubmission(false);
 		componentType.setDataEntryAttributes(Boolean.TRUE);
 		componentType.setDataEntryQuestions(Boolean.TRUE);
 		componentType.setLabel("Article");

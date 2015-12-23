@@ -18,7 +18,7 @@
 				font-size: 14px;
 			}
 			.list-group {
-				//margin-bottom: 20px;
+				/* margin-bottom: 20px; */
 				padding-left: 0;
 				color: white;
 			}
@@ -80,6 +80,7 @@
 				iconCls: 'fa fa-lg fa-database',				
 				margin: "0 20 0 0",
 				border: 1,
+				frame: true,
 				style: 'box-shadow: 7px 7px 7px #888888;',
 				float: true,
 				flex: 1,
@@ -260,6 +261,7 @@
 				margin: "0 20 0 0",
 				style: 'box-shadow: 7px 7px 7px #888888;',
 				float: true,
+				frame: true,
 				flex: 1,
 				tools: [
 					{
@@ -337,6 +339,7 @@
 				margin: "0 10 0 0",
 				border: 1,
 				float: true,
+				frame: true,
 				flex: 1,
 				tools: [
 					{
@@ -379,6 +382,7 @@
 				border: 1,
 				style: 'box-shadow: 7px 7px 7px #888888;',
 				float: true,
+				frame: true,
 				flex: 1,
 				bodyStyle: 'background-color: white',
 				tools: [

@@ -1301,8 +1301,10 @@ public class CoreComponentServiceImpl
 	{
 		Component existingComponent = persistenceService.findById(Component.class, componentId);
 
-		if (ApprovalStatus.PENDING.equals(existingComponent.getApprovalState())
+		if ((ApprovalStatus.PENDING.equals(existingComponent.getApprovalState())
+				|| ApprovalStatus.APPROVED.equals(existingComponent.getApprovalState()))
 				&& ApprovalStatus.NOT_SUBMITTED.equals(newApprovalStatus)) {
+
 			//cancel submission
 			existingComponent.setApprovalState(newApprovalStatus);
 			existingComponent.setUpdateUser(SecurityUtil.getCurrentUserName());
@@ -1313,6 +1315,7 @@ public class CoreComponentServiceImpl
 			alertContext.setAlertType(AlertType.COMPONENT_SUBMISSION);
 			alertContext.setDataTrigger(existingComponent);
 			componentService.getAlertService().checkAlert(alertContext);
+
 		}
 	}
 

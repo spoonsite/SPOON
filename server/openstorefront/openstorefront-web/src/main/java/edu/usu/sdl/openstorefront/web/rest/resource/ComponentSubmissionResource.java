@@ -122,10 +122,10 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@APIDescription("Updates Component Submission. Note: reviews are not saved.")
+	@APIDescription("Updates Component Submission Notification Email")
 	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(ComponentAll.class)
+	@Consumes({MediaType.TEXT_PLAIN})
+	@DataType(Component.class)
 	@Path("/{componentId}/setNotifyMe")
 	public Response setNotifyMe(
 			@PathParam("componentId")
@@ -137,12 +137,12 @@ public class ComponentSubmissionResource
 		if (component != null) {
 			response = ownerAnonymousCheck(component);
 			if (response == null) {
-				response = Response.ok().build();
 				if (email.isEmpty()) {
 					email = null;
 				}
 				component.setNotifyOfApprovalEmail(email);
 				service.getPersistenceService().persist(component);
+				response = Response.ok(component).build();
 			} else {
 				response = Response.status(Response.Status.FORBIDDEN)
 						.type(MediaType.TEXT_PLAIN)
@@ -194,22 +194,15 @@ public class ComponentSubmissionResource
 		if (component != null) {
 			response = ownerAnonymousCheck(component);
 			if (response == null) {
-				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
-					service.getComponentService().checkComponentCancelStatus(componentId, ApprovalStatus.NOT_SUBMITTED);
-					response = Response.ok().build();
-				} else {
-					response = Response.status(Response.Status.FORBIDDEN)
-							.type(MediaType.TEXT_PLAIN)
-							.entity("Unable to modify an approved submission.")
-							.build();
-				}
+				service.getComponentService().checkComponentCancelStatus(componentId, ApprovalStatus.NOT_SUBMITTED);
+				response = Response.ok().build();
 			}
 		}
 		return response;
 	}
 
 	@PUT
-	@APIDescription("Inactivates a incomplete Component Submission .")
+	@APIDescription("Inactivates a incomplete Component Submission.")
 	@Path("/{componentId}/inactivate")
 	public Response inactivateComponent(
 			@PathParam("componentId")
