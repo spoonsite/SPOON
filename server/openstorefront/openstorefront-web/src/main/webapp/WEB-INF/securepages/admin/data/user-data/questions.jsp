@@ -44,6 +44,34 @@
 					storeId: 'questionStore'
 				});
 
+
+				var userTypeStore = Ext.create('Ext.data.Store', {
+					storeId: 'userTypeStore',
+					autoLoad: true,
+					fields: ['code', 'description'],
+					proxy: {type: 'ajax', url: '../api/v1/resource/lookuptypes/UserTypeCode/view'}
+				});
+
+				var getUserType = function getUserType(code) {
+					if (code)
+						return userTypeStore.getData().find('code', code).data.description;
+					return '';
+				};
+
+
+				var securityTypeStore = Ext.create('Ext.data.Store', {
+					storeId: 'securityTypeStore',
+					autoLoad: true,
+					fields: ['code', 'description'],
+					proxy: {type: 'ajax', url: '../api/v1/resource/lookuptypes/SecurityMarkingType/view'}
+				});
+
+				var getSecurityType = function getSecurityType(code) {
+					if (code)
+						return securityTypeStore.getData().find('code', code).data.description;
+					return '';
+				};
+
 				var componentPanel = Ext.create('Ext.grid.Panel', {
 					flex: 2,
 					store: componentStore,
