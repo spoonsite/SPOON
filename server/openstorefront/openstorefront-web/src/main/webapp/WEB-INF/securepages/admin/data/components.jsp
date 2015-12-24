@@ -112,7 +112,7 @@
 						}
 					}),
 					columns: [
-						{ text: 'Title', dataIndex: 'text', flex: 1, minWidth: 200 },
+						{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 },
 						{ text: 'Create User', align: 'center', dataIndex: 'createUser', width: 150 },
 						{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 					],
@@ -138,6 +138,7 @@
 									allowBlank: false,
 									margin: '0 20 0 0',
 									width: '40%',
+									maxLength: 120,
 									name: 'text',
 									listeners: {
 										specialkey: function(field, e){
@@ -686,7 +687,7 @@
 				var metadataGrid = Ext.create('Ext.grid.Panel', {
 					id: 'metadataGrid',
 					title: 'Metadata',
-					tooltip: 'Extra non-filterable information about a component.',
+					tooltip: 'Extra non-filterable information about an entry.',
 					columnLines: true,
 					store: Ext.create('Ext.data.Store', {
 						fields: [
@@ -1627,7 +1628,7 @@
 				var contactGrid = Ext.create('Ext.grid.Panel', {
 					id: 'contactGrid',
 					title: 'Contacts',
-					tooltip: 'Point of contacts for component.',
+					tooltip: 'Add government, technical, and other points of contact',
 					columnLines: true,
 					store: Ext.create('Ext.data.Store', {
 						fields: [
@@ -1962,7 +1963,7 @@
 									fieldLabel: 'Target <span class="field-required" />',
 									forceSelection: false,
 									storeConfig: {
-										url: '../api/v1/resource/components/lookup?all=true',
+										url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL',
 										autoLoad: false
 									}
 								})				
@@ -2741,7 +2742,7 @@
 				);
 		
 				Ext.Ajax.request({
-					url: 'Router.action?page=admin/data/componentVersionTemplate.jsp',
+					url: 'Router.action?page=shared/entrySimpleViewTemplate.jsp',
 					success: function(response, opts){
 						versionViewTemplate.set(response.responseText, true);
 					}

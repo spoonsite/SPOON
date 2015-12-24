@@ -16,7 +16,7 @@ and open the template in the editor.
 
 .nav-back-color {
     min-height: 52px;
- //   background-color: #414e68;
+ /*  background-color: #414e68; */
     border-color: #343f54;
     background: rgba(68,30,90,1);
 }
@@ -120,6 +120,14 @@ and open the template in the editor.
     background-image: -o-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
     background-image: -ms-linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
     background-image: linear-gradient(top, #Ae0000, #ce0000 50%, #ce0000 51%, #Ae0000);
+}
+
+.app-info-box{
+	background-color: #441E5A;
+	padding: 10px;
+	height: 100%;
+	color: white;
+	margin: 0px 10px 0px 0px;
 }
 
 .alert-danger {

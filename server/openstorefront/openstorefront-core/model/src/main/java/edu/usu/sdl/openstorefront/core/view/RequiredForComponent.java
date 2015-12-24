@@ -93,7 +93,7 @@ public class RequiredForComponent
 			ruleResult.setMessage("Missing Required Attributes");
 			ruleResult.setEntityClassName(ComponentAttribute.class.getSimpleName());
 			ruleResult.setFieldName("componentAttributes");
-			ruleResult.setValidationRule("Must has required attributes");
+			ruleResult.setValidationRule("Must have required attributes");
 			validationResult.getRuleResults().add(ruleResult);
 		}
 		return validationResult;
