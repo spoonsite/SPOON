@@ -51,8 +51,11 @@ public class ComponentTypeResource
 {
 
 	@GET
-	@APIDescription("Gets  component types")
-	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Gets component types")
+	@Produces(
+	{
+		MediaType.APPLICATION_JSON
+	})
 	@DataType(ComponentType.class)
 	public Response getComponentType(
 			@QueryParam("status") String status,
@@ -60,9 +63,12 @@ public class ComponentTypeResource
 	)
 	{
 		ComponentType componentType = new ComponentType();
-		if (status == null && all == false) {
+		if (status == null && all == false)
+		{
 			componentType.setActiveStatus(ComponentType.ACTIVE_STATUS);
-		} else if (status != null && all == false) {
+		}
+		else if (status != null && all == false)
+		{
 			componentType.setActiveStatus(status);
 		}
 
@@ -74,8 +80,32 @@ public class ComponentTypeResource
 	}
 
 	@GET
-	@APIDescription("Gets  component types")
-	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Gets submission component types")
+	@Produces(
+	{
+		MediaType.APPLICATION_JSON
+	})
+	@DataType(ComponentType.class)
+	@Path("/submission")
+	public Response getSubmissionComponentTyped()
+	{
+		ComponentType componentType = new ComponentType();
+		componentType.setActiveStatus(ComponentType.ACTIVE_STATUS);
+		componentType.setAllowOnSubmission(Boolean.TRUE);
+
+		List<ComponentType> componentTypes = componentType.findByExample();
+		GenericEntity<List<ComponentType>> entity = new GenericEntity<List<ComponentType>>(componentTypes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	@GET
+	@APIDescription("Gets component types")
+	@Produces(
+	{
+		MediaType.APPLICATION_JSON
+	})
 	@DataType(LookupModel.class)
 	@Path("/lookup")
 	public Response getComponentTypeLookup(
@@ -86,14 +116,18 @@ public class ComponentTypeResource
 		List<LookupModel> lookups = new ArrayList<>();
 
 		ComponentType componentType = new ComponentType();
-		if (status == null && all == false) {
+		if (status == null && all == false)
+		{
 			componentType.setActiveStatus(ComponentType.ACTIVE_STATUS);
-		} else if (status != null && all == false) {
+		}
+		else if (status != null && all == false)
+		{
 			componentType.setActiveStatus(status);
 		}
 
 		List<ComponentType> componentTypes = componentType.findByExample();
-		componentTypes.forEach(type -> {
+		componentTypes.forEach(type ->
+		{
 			LookupModel lookupModel = new LookupModel();
 			lookupModel.setCode(type.getComponentType());
 			lookupModel.setDescription(type.getLabel());
@@ -107,8 +141,11 @@ public class ComponentTypeResource
 	}
 
 	@GET
-	@APIDescription("Gets  component types")
-	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Gets component type")
+	@Produces(
+	{
+		MediaType.APPLICATION_JSON
+	})
 	@DataType(ComponentType.class)
 	@Path("/{type}")
 	public Response getComponentTypeById(
@@ -123,8 +160,14 @@ public class ComponentTypeResource
 	@POST
 	@RequireAdmin
 	@APIDescription("Adds a new component type")
-	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces(
+	{
+		MediaType.APPLICATION_JSON
+	})
+	@Consumes(
+	{
+		MediaType.APPLICATION_JSON
+	})
 	public Response createNewComponentType(
 			ComponentType componentType
 	)
@@ -135,8 +178,14 @@ public class ComponentTypeResource
 	@PUT
 	@RequireAdmin
 	@APIDescription("Update a component type")
-	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces(
+	{
+		MediaType.APPLICATION_JSON
+	})
+	@Consumes(
+	{
+		MediaType.APPLICATION_JSON
+	})
 	@Path("/{type}")
 	public Response updateComponentType(
 			@PathParam("type") String type,
@@ -148,7 +197,8 @@ public class ComponentTypeResource
 		ComponentType found = new ComponentType();
 		found.setComponentType(type);
 		found = found.find();
-		if (found != null) {
+		if (found != null)
+		{
 			componentType.setComponentType(type);
 			response = handleSaveComponentType(componentType, false);
 		}
@@ -160,11 +210,15 @@ public class ComponentTypeResource
 		ValidationModel validationModel = new ValidationModel(componentType);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
+		if (validationResult.valid())
+		{
 			componentType = service.getComponentService().saveComponentType(componentType);
-			if (post) {
+			if (post)
+			{
 				return Response.created(URI.create("v1/resource/componenttypes/" + componentType.getComponentType())).entity(componentType).build();
-			} else {
+			}
+			else
+			{
 				return sendSingleEntityResponse(componentType);
 			}
 		}
@@ -184,7 +238,8 @@ public class ComponentTypeResource
 		ComponentType found = new ComponentType();
 		found.setComponentType(type);
 		found = found.find();
-		if (found != null) {
+		if (found != null)
+		{
 			service.getPersistenceService().setStatusOnEntity(ComponentType.class, type, StandardEntity.ACTIVE_STATUS);
 			found.setActiveStatus(StandardEntity.ACTIVE_STATUS);
 			response = sendSingleEntityResponse(found);

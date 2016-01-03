@@ -158,7 +158,7 @@ public class ComponentRESTResource
 	// <editor-fold defaultstate="collapsed"  desc="COMPONENT GENERAL FUNCTIONS">
 	@GET
 	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentSearchView.class)
 	public List<ComponentSearchView> getComponents()
 	{
@@ -167,7 +167,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get a list of active and approved components for selection list.")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(LookupModel.class)
 	@Path("/lookup")
 	public Response getComponentLookupList(@BeanParam ComponentFilterParams filterQueryParams)
@@ -235,7 +235,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get all resources for ")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentResourceView.class)
 	@Path("/resources")
 	public Response getComponentAllResources()
@@ -254,7 +254,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get valid component approval statuses")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(LookupModel.class)
 	@Path("/approvalStatus")
 	public List<LookupModel> getComponentApprovalStatus()
@@ -273,7 +273,7 @@ public class ComponentRESTResource
 	@GET
 	@RequireAdmin
 	@APIDescription("Get a list of all components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAdminWrapper.class)
 	@Path("/filterable")
 	public Response getComponentList(@BeanParam ComponentFilterParams filterQueryParams
@@ -291,7 +291,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get a list of all components from search query")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(Component.class)
 	@Path("/typeahead")
 	public Set<LookupModel> getTypeahead(
@@ -307,7 +307,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get a list of components by an id set.  If it can't find a component for a griven id it's not returned.")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(Component.class)
 	@Path("/list")
 	public List<Component> batchGetComponents(
@@ -328,7 +328,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Gets a component <br>(Note: this only the top level component object only)")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(Component.class)
 	@Path("/{id}")
 	public Response getComponentSingle(
@@ -343,7 +343,7 @@ public class ComponentRESTResource
 	@GET
 	@RequireAdmin
 	@APIDescription("Gets a component  admin view")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAdminView.class)
 	@Path("/{id}/admin")
 	public Response getComponentAdminView(
@@ -469,7 +469,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get a list of components tags")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(TagView.class)
 	@Path("/tagviews")
 	public Response getAllComponentTags()
@@ -490,7 +490,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get a list of components reviews")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentReviewView.class)
 	@Path("/reviewviews")
 	public Response getAllComponentReviews(@BeanParam FilterQueryParams filterQueryParams)
@@ -515,7 +515,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get a list of components questions")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentQuestionView.class)
 	@Path("/questionviews")
 	public Response getAllComponentQuestions(@BeanParam FilterQueryParams filterQueryParams)
@@ -552,12 +552,15 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
 	@APIDescription("Creates a component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createComponent(
 			@RequiredParam RequiredForComponent component)
 	{
+		if (!SecurityUtil.isAdminUser()) {
+			component.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
+		}
+
 		ValidationModel validationModel = new ValidationModel(component);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
@@ -573,7 +576,6 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
 	@APIDescription("Updates a component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
@@ -582,6 +584,11 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam RequiredForComponent component)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		component.getComponent().setComponentId(componentId);
 		Set<String> attributeKeySet = new HashSet<>();
 		component.getAttributes().forEach(attribute -> {
@@ -740,7 +747,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentDetailView.class)
 	@Path("/{id}/detail")
 	public Response getComponentDetails(
@@ -803,7 +810,7 @@ public class ComponentRESTResource
 	// <editor-fold defaultstate="collapse" desc=" Version history">
 	@GET
 	@APIDescription("Gets all version history for a component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RequireAdmin
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory")
@@ -825,7 +832,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Gets a version history record")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RequireAdmin
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}")
@@ -844,7 +851,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Gets the detail of a component version")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RequireAdmin
 	@DataType(ComponentDetailView.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}/view")
@@ -935,7 +942,7 @@ public class ComponentRESTResource
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource ATTRIBUTE Section">
 	@GET
 	@APIDescription("Gets attributes for a component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAttribute.class)
 	@Path("/{id}/attributes")
 	public Response getComponentAttribute(
@@ -964,7 +971,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Gets attributes for a component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAttributeView.class)
 	@Path("/{id}/attributes/view")
 	public Response getComponentAttributeView(
@@ -992,7 +999,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Gets attributes for component and a given type")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAttribute.class)
 	@Path("/{id}/attributes/{attributeType}")
 	public List<ComponentAttribute> getComponentAttribute(
@@ -1012,7 +1019,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get the codes for a specified attribute type of an entity")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(AttributeCode.class)
 	@Path("/{id}/attributes/{attributeType}/codes")
 	public List<AttributeCode> getComponentAttributeCodes(
@@ -1044,7 +1051,7 @@ public class ComponentRESTResource
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Remove all attributes from the entity")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes")
 	public void deleteComponentAttributes(
 			@PathParam("id")
@@ -1056,11 +1063,10 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
-	@APIDescription("Remove an attribute from the entity")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@APIDescription("Inactivates an attribute")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes/{attributeType}/{attributeCode}")
-	public void inactivateComponentAttribute(
+	public Response inactivateComponentAttribute(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("attributeType")
@@ -1068,17 +1074,22 @@ public class ComponentRESTResource
 			@PathParam("attributeCode")
 			@RequiredParam String attributeCode)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setAttributeCode(attributeCode);
 		pk.setAttributeType(attributeType);
 		pk.setComponentId(componentId);
 		service.getComponentService().deactivateBaseComponent(ComponentAttribute.class, pk);
+		return Response.ok().build();
 	}
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Delete an attribute from the entity (Hard Removal")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@APIDescription("Delete an attribute from the entity (Hard Removal)")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes/{attributeType}/{attributeCode}/force")
 	public void deleteComponentAttribute(
 			@PathParam("id")
@@ -1098,7 +1109,7 @@ public class ComponentRESTResource
 	@PUT
 	@RequireAdmin
 	@APIDescription("Activates an attribute on the component")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes/{attributeType}/{attributeCode}/activate")
 	public Response activateComponentAttribute(
 			@PathParam("id")
@@ -1118,7 +1129,6 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
 	@APIDescription("Add an attribute to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentContact.class)
@@ -1128,6 +1138,11 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentAttribute attribute)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		attribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 		attribute.setComponentId(componentId);
 		attribute.getComponentAttributePk().setComponentId(componentId);
@@ -1152,7 +1167,7 @@ public class ComponentRESTResource
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource DEPENDENCY section">
 	@GET
 	@APIDescription("Get the dependencies for the component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentExternalDependency.class)
 	@Path("/{id}/dependencies")
 	public List<ComponentExternalDependency> getComponentDependencies(
@@ -1164,7 +1179,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Gets a dependency for a component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentExternalDependency.class)
 	@Path("/{id}/dependencies/{dependencyId}")
 	public Response getComponentDependency(
@@ -1210,20 +1225,25 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Inactivates a dependency from the component")
 	@Path("/{id}/dependencies/{dependencyId}")
-	public void deleteComponentDependency(
+	public Response deleteComponentDependency(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("dependencyId")
 			@RequiredParam String dependencyId)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentExternalDependency componentExternalDependency = service.getPersistenceService().findById(ComponentExternalDependency.class, dependencyId);
 		if (componentExternalDependency != null) {
 			checkBaseComponentBelongsToComponent(componentExternalDependency, componentId);
 			service.getComponentService().deactivateBaseComponent(ComponentExternalDependency.class, dependencyId);
 		}
+		return Response.ok().build();
 	}
 
 	@PUT
@@ -1247,7 +1267,6 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
 	@APIDescription("Add a dependency to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentExternalDependency.class)
@@ -1257,13 +1276,17 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentExternalDependency dependency)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		dependency.setComponentId(componentId);
 		return saveDependency(dependency, true);
 	}
 
 	@PUT
-	@RequireAdmin
-	@APIDescription("Update a contact associated to the entity")
+	@APIDescription("Update a dependency associated to the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentExternalDependency.class)
 	@Path("/{id}/dependencies/{dependencyId}")
@@ -1274,7 +1297,12 @@ public class ComponentRESTResource
 			@RequiredParam String dependencyId,
 			ComponentExternalDependency dependency)
 	{
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
+		response = Response.status(Response.Status.NOT_FOUND).build();
 		ComponentExternalDependency componentExternalDependency = service.getPersistenceService().findById(ComponentExternalDependency.class, dependencyId);
 		if (componentExternalDependency != null) {
 			checkBaseComponentBelongsToComponent(componentExternalDependency, componentId);
@@ -1309,7 +1337,10 @@ public class ComponentRESTResource
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource CONTACT section">
 	@GET
 	@APIDescription("Gets all contact for a component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentContact.class)
 	@Path("/{id}/contacts")
 	public List<ComponentContact> getComponentContact(
@@ -1321,7 +1352,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Gets all contact for a component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentContactView.class)
 	@Path("/{id}/contacts/view")
 	public Response getComponentContact(
@@ -1351,22 +1385,26 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Remove a contact from the component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/contacts/{contactId}")
-	public void deleteComponentContact(
+	public Response deleteComponentContact(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("contactId")
 			@RequiredParam String contactId)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
 
 		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, contactId);
 		if (componentContact != null) {
 			checkBaseComponentBelongsToComponent(componentContact, componentId);
 			service.getComponentService().deactivateBaseComponent(ComponentContact.class, contactId);
 		}
+		return Response.ok().build();
 	}
 
 	@PUT
@@ -1390,7 +1428,6 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
 	@APIDescription("Add a contact to the component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentContact.class)
@@ -1400,12 +1437,16 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentContact contact)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		contact.setComponentId(componentId);
 		return saveContact(contact, true);
 	}
 
 	@PUT
-	@RequireAdmin
 	@APIDescription("Update a contact associated to the component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/contacts/{contactId}")
@@ -1416,7 +1457,12 @@ public class ComponentRESTResource
 			@RequiredParam String contactId,
 			ComponentContact contact)
 	{
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
+		response = Response.status(Response.Status.NOT_FOUND).build();
 		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, contactId);
 		if (componentContact != null) {
 			checkBaseComponentBelongsToComponent(componentContact, componentId);
@@ -1451,7 +1497,10 @@ public class ComponentRESTResource
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource Evaluation Section section">
 	@GET
 	@APIDescription("Gets evaluation sections associated to the component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentEvaluationSection.class)
 	@Path("/{id}/sections")
 	public List<ComponentEvaluationSection> getComponentEvaluationSection(
@@ -1463,7 +1512,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Gets  evaluation sections associated to the component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentEvaluationSectionView.class)
 	@Path("/{id}/sections/view")
 	public List<ComponentEvaluationSectionView> getComponentEvaluationSectionView(
@@ -1495,7 +1547,10 @@ public class ComponentRESTResource
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Removes all evaluation section from the component")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@Path("/{id}/sections")
 	public void deleteAllComponentEvaluationSections(
 			@PathParam("id")
@@ -1668,16 +1723,20 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Inactivates a given resource from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/resources/{resourceId}")
-	public void inactivateComponentResource(
+	public Response inactivateComponentResource(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("resourceId")
 			@RequiredParam String resourceId)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
@@ -1685,19 +1744,24 @@ public class ComponentRESTResource
 		if (componentResource != null) {
 			service.getComponentService().deactivateBaseComponent(ComponentResource.class, resourceId);
 		}
+		return Response.ok().build();
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Remove a given resource from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/resources/{resourceId}/force")
-	public void deleteComponentResource(
+	public Response deleteComponentResource(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("resourceId")
 			@RequiredParam String resourceId)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
@@ -1705,6 +1769,7 @@ public class ComponentRESTResource
 		if (componentResource != null) {
 			service.getComponentService().deleteBaseComponent(ComponentResource.class, resourceId);
 		}
+		return Response.ok().build();
 	}
 
 	@PUT
@@ -1730,7 +1795,6 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
 	@APIDescription("Add a resource to the given entity.  Use a form to POST Resource.action?UploadResource to upload file.  "
 			+ "To upload: pass the componentResource.resourceType...etc and 'file'.")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -1741,12 +1805,16 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentResource resource)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		resource.setComponentId(componentId);
 		return saveResource(resource, true);
 	}
 
 	@PUT
-	@RequireAdmin
 	@APIDescription("Update a resource associated with a given entity. Use a form to POST Resource.action?UploadResource to upload file. "
 			+ " To upload: pass the componentResource.resourceType...etc and 'file'.")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -1758,7 +1826,12 @@ public class ComponentRESTResource
 			@RequiredParam String resourceId,
 			@RequiredParam ComponentResource resource)
 	{
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
+		response = Response.status(Response.Status.NOT_FOUND).build();
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
@@ -1795,7 +1868,10 @@ public class ComponentRESTResource
 	// <editor-fold  defaultstate="collapsed"  desc="ComponentRESTResource MEDIA section">
 	@GET
 	@APIDescription("Gets the list of media associated to an entity")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentMedia.class)
 	@Path("/{id}/media")
 	public List<ComponentMedia> getComponentMedia(
@@ -1807,7 +1883,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get the resources associated to the given component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentMediaView.class)
 	@Path("/{id}/media/view")
 	public Response getComponentMediaView(
@@ -1835,7 +1914,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get a media item associated to the given component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentMedia.class)
 	@Path("/{id}/media/{mediaId}")
 	public Response getComponentMedia(
@@ -1852,41 +1934,50 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Inactivates media from the specified component")
 	@Path("/{id}/media/{mediaId}")
-	public void inactivateComponentMedia(
+	public Response inactivateComponentMedia(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("mediaId")
 			@RequiredParam String mediaId)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentMedia componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);
 		if (componentMedia != null) {
 			checkBaseComponentBelongsToComponent(componentMedia, componentId);
 			service.getComponentService().deactivateBaseComponent(ComponentMedia.class, mediaId);
 		}
+		return Response.ok().build();
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Removes media from the specified entity")
 	@Path("/{id}/media/{mediaId}/force")
-	public void deleteComponentMedia(
+	public Response deleteComponentMedia(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("mediaId")
 			@RequiredParam String mediaId)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentMedia componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);
 		if (componentMedia != null) {
 			checkBaseComponentBelongsToComponent(componentMedia, componentId);
 			service.getComponentService().deleteBaseComponent(ComponentMedia.class, mediaId);
 		}
+		return Response.ok().build();
 	}
 
 	@PUT
-	@RequireAdmin
 	@APIDescription("Activates media from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentMedia.class)
@@ -1897,6 +1988,11 @@ public class ComponentRESTResource
 			@PathParam("mediaId")
 			@RequiredParam String mediaId)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentMedia componentMediaExample = new ComponentMedia();
 		componentMediaExample.setComponentId(componentId);
 		componentMediaExample.setComponentMediaId(mediaId);
@@ -1910,7 +2006,6 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
 	@APIDescription("Add media to the specified entity (leave the fileName blank if you want your supplied link to be it's location) "
 			+ " Use a form to POST Media.action?UploadMedia to upload file.  To upload: pass the componentMedia.mediaTypeCode...etc and 'file'.")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -1921,12 +2016,15 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMedia media)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
 		media.setComponentId(componentId);
 		return saveMedia(media, true);
 	}
 
 	@PUT
-	@RequireAdmin
 	@APIDescription("Update media associated to the specified entity (leave the fileName blank if you want your supplied link to be it's location) "
 			+ " Use a form to POST Media.action?UploadMedia to upload file.  To upload: pass the componentMedia.mediaTypeCode...etc and 'file'.")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -1938,7 +2036,12 @@ public class ComponentRESTResource
 			@RequiredParam String mediaId,
 			@RequiredParam ComponentMedia media)
 	{
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
+		response = Response.status(Response.Status.NOT_FOUND).build();
 		ComponentMedia componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);
 		if (componentMedia != null) {
 			checkBaseComponentBelongsToComponent(componentMedia, componentId);
@@ -1973,7 +2076,10 @@ public class ComponentRESTResource
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource METADATA section">
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentMetadata.class)
 	@Path("/{id}/metadata")
 	public List<ComponentMetadata> getComponentMetadata(
@@ -1985,7 +2091,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Gets a metadata entity for a component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentMetadata.class)
 	@Path("/{id}/metadata/{metadataId}")
 	public Response getComponentMetadataEntity(
@@ -2003,7 +2112,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get the dependencies from the entity")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentMetadataView.class)
 	@Path("/{id}/metadata/view")
 	public Response getComponentMetadataView(
@@ -2031,24 +2143,28 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Inactivates metadata from the specified component")
 	@Path("/{id}/metadata/{metadataId}")
-	public void deleteComponentMetadata(
+	public Response deleteComponentMetadata(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("metadataId")
 			@RequiredParam String metadataId)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentMetadata componentMetadata = service.getPersistenceService().findById(ComponentMetadata.class, metadataId);
 		if (componentMetadata != null) {
 			checkBaseComponentBelongsToComponent(componentMetadata, componentId);
 			service.getComponentService().deactivateBaseComponent(ComponentMetadata.class, metadataId);
 		}
+		return Response.ok().build();
 	}
 
 	@PUT
-	@RequireAdmin
 	@APIDescription("Removes metadata from the specified component")
 	@Path("/{id}/metadata/{metadataId}/activate")
 	public Response activateComponentMetadata(
@@ -2057,6 +2173,11 @@ public class ComponentRESTResource
 			@PathParam("metadataId")
 			@RequiredParam String metadataId)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		ComponentMetadata metadataExample = new ComponentMetadata();
 		metadataExample.setMetadataId(metadataId);
 		metadataExample.setComponentId(componentId);
@@ -2068,7 +2189,6 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
 	@APIDescription("Add metadata to the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentMetadata.class)
@@ -2078,12 +2198,16 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMetadata metadata)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		metadata.setComponentId(componentId);
 		return saveMetadata(metadata, true);
 	}
 
 	@PUT
-	@RequireAdmin
 	@APIDescription("Update metadata associated to the specified entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/metadata/{metadataId}")
@@ -2094,7 +2218,12 @@ public class ComponentRESTResource
 			@RequiredParam String metadataId,
 			@RequiredParam ComponentMetadata metadata)
 	{
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
+		response = Response.status(Response.Status.NOT_FOUND).build();
 		ComponentMetadata componentMetadata = service.getPersistenceService().findById(ComponentMetadata.class, metadataId);
 		if (componentMetadata != null) {
 			checkBaseComponentBelongsToComponent(componentMetadata, componentId);
@@ -2129,7 +2258,10 @@ public class ComponentRESTResource
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource QUESTION section">
 	@GET
 	@APIDescription("Get the questions associated with the specified component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentQuestion.class)
 	@Path("/{id}/questions")
 	public List<ComponentQuestion> getComponentQuestions(
@@ -2141,7 +2273,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get the questions associated with the specified component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentQuestionView.class)
 	@Path("/{id}/questions/view")
 	public Response getComponentQuestionView(
@@ -2185,7 +2320,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get the questions associated with the specified component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentQuestionView.class)
 	@Path("/{id}/questions/details")
 	public List<ComponentQuestionView> getDetailComponentQuestions(
@@ -2208,7 +2346,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get a question for the specified component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentQuestion.class)
 	@Path("/{id}/questions/{questionId}")
 	public Response getComponentQuestionResponses(
@@ -2226,7 +2367,10 @@ public class ComponentRESTResource
 
 	@DELETE
 	@APIDescription("Inactivates a question from the specified entity")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@Path("/{id}/questions/{questionId}")
 	public Response deleteComponentQuestion(
 			@PathParam("id")
@@ -2250,7 +2394,10 @@ public class ComponentRESTResource
 	@PUT
 	@RequireAdmin
 	@APIDescription("Activates a question from the specified entity")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@Path("/{id}/questions/{questionId}/activate")
 	public Response activateComponentQuestion(
 			@PathParam("id")
@@ -2333,7 +2480,10 @@ public class ComponentRESTResource
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource QUESTION RESPONSE section">
 	@GET
 	@APIDescription("Gets the responses for a given question associated to the specified component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentQuestionResponse.class)
 	@Path("/{id}/questions/{questionId}/responses")
 	public List<ComponentQuestionResponse> getComponentQuestionResponse(
@@ -2351,7 +2501,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Gets the responses for a given question associated to the specified component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentQuestionResponse.class)
 	@Path("/{id}/questions/{questionId}/responses/{responseId}")
 	public Response getComponentQuestionResponse(
@@ -2372,7 +2525,10 @@ public class ComponentRESTResource
 
 	@DELETE
 	@APIDescription("Inactivates a response from the given question on the specified component")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@Path("/{id}/questions/{questionId}/responses/{responseId}")
 	public Response deleteComponentQuestionResponse(
 			@PathParam("id")
@@ -2401,7 +2557,10 @@ public class ComponentRESTResource
 	@PUT
 	@RequireAdmin
 	@APIDescription("Activates a response from the given question on the specified component")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@Path("/{id}/questions/{questionId}/responses/{responseId}/activate")
 	public Response activateComponentQuestionResponse(
 			@PathParam("id")
@@ -2497,7 +2656,10 @@ public class ComponentRESTResource
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource REVIEW section">
 	@GET
 	@APIDescription("Get the reviews for a specified entity")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentReview.class)
 	@Path("/{id}/reviews")
 	public List<ComponentReview> getComponentReview(
@@ -2509,7 +2671,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get the reviews for a specified entity")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentReviewView.class)
 	@Path("/{id}/reviews/view")
 	public Response getComponentReviewView(
@@ -2538,7 +2703,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get the reviews for a specified user")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentReviewView.class)
 	@Path("/reviews/{username}")
 	public List<ComponentReviewView> getComponentReviewsByUsername(
@@ -2550,7 +2718,10 @@ public class ComponentRESTResource
 
 	@DELETE
 	@APIDescription("Remove a review from the specified entity")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@Path("/{id}/reviews/{reviewId}")
 	public Response deleteComponentReview(
 			@PathParam("id")
@@ -2572,7 +2743,10 @@ public class ComponentRESTResource
 	@PUT
 	@RequireAdmin
 	@APIDescription("Activate a review on  the specified component")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@Path("/{id}/reviews/{reviewId}/activate")
 	public Response activateComponentReview(
 			@PathParam("id")
@@ -2739,7 +2913,10 @@ public class ComponentRESTResource
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource REVIEW CON section">
 	@GET
 	@APIDescription("Get the cons associated to a review")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentReviewCon.class)
 	@Path("/{id}/reviews/{reviewId}/cons")
 	public List<ComponentReviewCon> getComponentReviewCon(
@@ -2758,7 +2935,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get the cons associated to a review")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentReviewCon.class)
 	@Path("/{id}/reviews/{reviewId}/cons/{conId}")
 	public Response getComponentReviewCon(
@@ -2782,7 +2962,10 @@ public class ComponentRESTResource
 
 	@DELETE
 	@APIDescription("Removes all cons from the given review accociated with the specified entity")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@Path("/{id}/reviews/{reviewId}/cons")
 	public Response deleteComponentReviewCon(
 			@PathParam("id")
@@ -2865,7 +3048,10 @@ public class ComponentRESTResource
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource REVIEW PRO section">
 	@GET
 	@APIDescription("Get the pros for a review associated with the given entity")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentReviewPro.class)
 	@Path("/{id}/reviews/{reviewId}/pros")
 	public List<ComponentReviewPro> getComponentReviewPro(
@@ -2884,7 +3070,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get the pros for a review associated with the given entity")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentReviewPro.class)
 	@Path("/{id}/reviews/{reviewId}/pros/{proId}")
 	public Response getComponentReviewPro(
@@ -2907,7 +3096,10 @@ public class ComponentRESTResource
 
 	@DELETE
 	@APIDescription("Removes all pros from the review associated with a specified entity")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Consumes(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@Path("/{id}/reviews/{reviewId}/pros")
 	public Response deleteComponentReviewPro(
 			@PathParam("id")
@@ -3201,7 +3393,10 @@ public class ComponentRESTResource
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource Relationships section">
 	@GET
 	@APIDescription("Get all direct relationship for a specified component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentRelationshipView.class)
 	@Path("/{id}/relationships")
 	public Response getComponentRelationships(
@@ -3229,7 +3424,10 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Get a relationship entity for a specified component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentRelationship.class)
 	@Path("/{id}/relationships/{relationshipId}")
 	public Response getComponentRelationship(
@@ -3255,39 +3453,45 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentRelationship relationship)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
 
-		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		response = Response.status(Response.Status.NOT_FOUND).build();
 
-		//check that the component exists
-		Component component = service.getPersistenceService().findById(Component.class, componentId);
 		relationship.setComponentId(componentId);
-		if (component != null) {
-			ValidationModel validationModel = new ValidationModel(relationship);
-			validationModel.setConsumeFieldsOnly(true);
-			ValidationResult validationResult = ValidationUtil.validate(validationModel);
-			if (validationResult.valid()) {
-				relationship = service.getComponentService().saveComponentRelationship(relationship);
+		ValidationModel validationModel = new ValidationModel(relationship);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			relationship = service.getComponentService().saveComponentRelationship(relationship);
 
-				return Response.created(URI.create("v1/resource/components/"
-						+ relationship.getComponentId()
-						+ "/relationships/"
-						+ relationship.getComponentRelationshipId())).entity(relationship).build();
-			}
+			return Response.created(URI.create("v1/resource/components/"
+					+ relationship.getComponentId()
+					+ "/relationships/"
+					+ relationship.getComponentRelationshipId())).entity(relationship).build();
 		}
 
 		return response;
 	}
 
 	@DELETE
-	@APIDescription("Delete a relationship for a specified component")
+	@APIDescription("Deletes a relationship for a specified component")
 	@Path("/{id}/relationships/{relationshipId}")
-	public void deleteRelationship(
+	public Response deleteRelationship(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("relationshipId")
 			@RequiredParam String relationshipId)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
 		service.getComponentService().deleteBaseComponent(ComponentRelationship.class, relationshipId);
+		return Response.ok().build();
 	}
 
 	// </editor-fold>
@@ -3295,7 +3499,10 @@ public class ComponentRESTResource
 	@GET
 	@RequireAdmin
 	@APIDescription("Get the list of tracking details on a specified component. Always sorts by create date.")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentTrackingWrapper.class)
 	@Path("/{id}/tracking")
 	public Response getActiveComponentTracking(
@@ -3330,7 +3537,10 @@ public class ComponentRESTResource
 	@GET
 	@RequireAdmin
 	@APIDescription("Get the list of tracking details on a specified component")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentTracking.class)
 	@Path("/{id}/tracking/{trackingId}")
 	public Response getComponentTracking(
@@ -3381,7 +3591,10 @@ public class ComponentRESTResource
 	@GET
 	@RequireAdmin
 	@APIDescription("Gets all integration models from the database.")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentIntegration.class)
 	@Path("/integration")
 	public List<ComponentIntegrationView> getIntegrations(
@@ -3403,7 +3616,10 @@ public class ComponentRESTResource
 	@GET
 	@RequireAdmin
 	@APIDescription("Gets a integration model")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentIntegration.class)
 	@Path("/{id}/integration")
 	public Response getIntegration(
@@ -3570,7 +3786,10 @@ public class ComponentRESTResource
 	@GET
 	@RequireAdmin
 	@APIDescription("Gets all component integration configs")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentIntegrationConfig.class)
 	@Path("/{componentId}/integration/configs")
 	public List<ComponentIntegrationConfig> getIntegrationConfigs(
@@ -3586,7 +3805,10 @@ public class ComponentRESTResource
 	@GET
 	@RequireAdmin
 	@APIDescription("Gets all component integration configs")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces(
+			{
+				MediaType.APPLICATION_JSON
+			})
 	@DataType(ComponentIntegrationConfig.class)
 	@Path("/{componentId}/integration/configs/{configId}")
 	public Response getIntegrationConfigs(
@@ -3781,6 +4003,28 @@ public class ComponentRESTResource
 		if (component.getComponentId().equals(componentId) == false) {
 			throw new OpenStorefrontRuntimeException("Entity does not belong to component", "Check input.");
 		}
+	}
+
+	private Response checkComponentOwner(String componentId)
+	{
+		Response response;
+
+		Component component = new Component();
+		component.setComponentId(componentId);
+		component = component.find();
+		if (component != null) {
+			response = ownerCheck(component);
+			if (response == null) {
+				if (!SecurityUtil.isAdminUser()) {
+					if (ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
+						response = Response.status(Response.Status.FORBIDDEN).build();
+					}
+				}
+			}
+		} else {
+			response = Response.status(Response.Status.NOT_FOUND).build();
+		}
+		return response;
 	}
 
 	// </editor-fold>

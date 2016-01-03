@@ -586,4 +586,16 @@ public class ComponentServiceImpl
 		return core.changeOwner(componentId, newOwner);
 	}
 
+	@Override
+	public Component createPendingChangeComponent(String parentComponentId)
+	{
+		return core.createPendingChangeComponent(parentComponentId);
+	}
+
+	@Override
+	public Component mergePendingChange(String componentIdOfPendingChange)
+	{
+		return core.mergePendingChange(componentIdOfPendingChange);
+	}
+
 }

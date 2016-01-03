@@ -21,14 +21,18 @@ import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -59,36 +63,72 @@ public class RequiredForComponent
 		ValidationResult validationResult = new ValidationResult();
 
 		List<AttributeType> requireds = ServiceProxyFactory.getServiceProxy().getAttributeService().getRequiredAttributes();
-		Set<String> requiredTypeSet = new HashSet<>();
-		for (AttributeType attributeType : requireds) {
+		Map<String, AttributeType> requiredTypeMap = new HashMap<>();
+		for (AttributeType attributeType : requireds)
+		{
 			boolean add = true;
 			if (attributeType.getRequiredRestrictions() != null
-					&& attributeType.getRequiredRestrictions().isEmpty() == false) {
-				if (component.getComponentType() != null) {
+					&& attributeType.getRequiredRestrictions().isEmpty() == false)
+			{
+				if (component.getComponentType() != null)
+				{
 					boolean found = false;
-					for (ComponentTypeRestriction componentTypeRestriction : attributeType.getRequiredRestrictions()) {
-						if (component.getComponentType().equals(componentTypeRestriction.getComponentType())) {
+					for (ComponentTypeRestriction componentTypeRestriction : attributeType.getRequiredRestrictions())
+					{
+						if (component.getComponentType().equals(componentTypeRestriction.getComponentType()))
+						{
 							found = true;
 						}
 					}
-					if (!found) {
+					if (!found)
+					{
 						add = false;
 					}
 				}
 			}
-			if (add) {
-				requiredTypeSet.add(attributeType.getAttributeType());
+			if (add)
+			{
+				requiredTypeMap.put(attributeType.getAttributeType(), attributeType);
+			}
+		}
+
+		Set<String> inSetAttributeType = new HashSet<>();
+		for (ComponentAttribute attribute : attributes)
+		{
+			inSetAttributeType.add(attribute.getComponentAttributePk().getAttributeType());
+		}
+
+		//set defaults if missing
+		for (String type : requiredTypeMap.keySet())
+		{
+			AttributeType attributeType = requiredTypeMap.get(type);
+
+			if (StringUtils.isNotBlank(attributeType.getDefaultAttributeCode()))
+			{
+				if (!inSetAttributeType.contains(type))
+				{
+					ComponentAttribute componentAttribute = new ComponentAttribute();
+					ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+					componentAttributePk.setAttributeType(type);
+					componentAttributePk.setAttributeCode(attributeType.getDefaultAttributeCode());
+					componentAttribute.setComponentAttributePk(componentAttributePk);
+					attributes.add(componentAttribute);
+				}
 			}
 		}
 
 		Set<String> matchedAttributes = new HashSet<>();
-		for (ComponentAttribute attribute : attributes) {
+		for (ComponentAttribute attribute : attributes)
+		{
 			String type = attribute.getComponentAttributePk().getAttributeType();
-			if (requiredTypeSet.contains(type)) {
+			if (requiredTypeMap.containsKey(type))
+			{
 				matchedAttributes.add(type);
 			}
 		}
-		if (matchedAttributes.size() < requiredTypeSet.size()) {
+
+		if (matchedAttributes.size() < requiredTypeMap.size())
+		{
 			RuleResult ruleResult = new RuleResult();
 			ruleResult.setMessage("Missing Required Attributes");
 			ruleResult.setEntityClassName(ComponentAttribute.class.getSimpleName());
