@@ -43,6 +43,12 @@ limitations under the License.
 						Ext.getCmp('submissionWindow').close();
 						Ext.getCmp('submissionWindow').completeClose=false;
 						actionRefreshSubmission();
+					},
+					handleSubmissionSuccess: function(response, opts) {
+						Ext.getCmp('submissionWindow').completeClose=true;
+						Ext.getCmp('submissionWindow').close();
+						Ext.getCmp('submissionWindow').completeClose=false;
+						actionRefreshSubmission();
 					}
 				});
 				
@@ -54,7 +60,8 @@ limitations under the License.
 					modal: true,
 					width: '90%',
 					height: '90%',					
-					maximizable: true,					
+					maximizable: true,
+					completeClose: false,
 					items: [
 						submissionPanel
 					],
@@ -223,7 +230,9 @@ limitations under the License.
 									disabled: true,
 									iconCls: 'fa fa-2x fa-edit',
 									handler: function () {
-
+										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
+										Ext.getCmp('submissionWindow').show();
+										Ext.getCmp('submissionPanel').editSubmission(componentId);
 									}
 								},
 								{
@@ -276,7 +285,7 @@ limitations under the License.
 											if (currentEmail) {
 												newEmail = null;												
 											}
-											Ext.getCmp('submissionGrid').setLoading('Unsubmitting...');
+											Ext.getCmp('submissionGrid').setLoading('Updating Notification...');
 											Ext.Ajax.request({
 												url: '../api/v1/resource/componentsubmissions/' + componentId + '/setNotifyMe',
 												method: 'PUT',

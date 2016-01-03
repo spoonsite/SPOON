@@ -83,7 +83,7 @@ public class ComponentSubmissionResource
 	}
 
 	@POST
-	@APIDescription("Creates a new Component Submission. Note: reviews are not saved.")
+	@APIDescription("Creates a new Component Submission.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentAll.class)
@@ -98,7 +98,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@APIDescription("Updates Component Submission. Note: reviews are not saved.")
+	@APIDescription("Updates Component Submission.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentAll.class)
@@ -167,7 +167,7 @@ public class ComponentSubmissionResource
 		if (component != null) {
 			response = ownerAnonymousCheck(component);
 			if (response == null) {
-				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 					service.getComponentService().submitComponentSubmission(componentId);
 					response = Response.ok().build();
 				} else {
@@ -247,7 +247,7 @@ public class ComponentSubmissionResource
 				if (exstingComponent != null) {
 					response = ownerAnonymousCheck(exstingComponent);
 					if (response == null) {
-						if (ApprovalStatus.APPROVED.equals(exstingComponent.getApprovalState()) == false || true) {
+						if (ApprovalStatus.APPROVED.equals(exstingComponent.getApprovalState()) == false) {
 
 							//Pull in existing media and resources (they may be saved seperately)
 							ComponentMedia componentMediaExample = new ComponentMedia();
@@ -379,7 +379,7 @@ public class ComponentSubmissionResource
 
 				//Need to check component to make sure it's not approved.
 				Component component = service.getPersistenceService().findById(Component.class, componentId);
-				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 					service.getComponentService().deleteBaseComponent(ComponentMedia.class, mediaId);
 				} else {
 					return Response.status(Response.Status.FORBIDDEN)
@@ -411,7 +411,7 @@ public class ComponentSubmissionResource
 			response = ownerAnonymousCheck(componentResource);
 			if (response == null) {
 				Component component = service.getPersistenceService().findById(Component.class, componentId);
-				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 					service.getComponentService().deleteBaseComponent(ComponentResource.class, resourceId);
 				} else {
 					return Response.status(Response.Status.FORBIDDEN)
