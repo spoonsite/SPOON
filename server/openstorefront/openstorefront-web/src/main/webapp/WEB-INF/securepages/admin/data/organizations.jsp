@@ -140,11 +140,11 @@
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
-							console.log("double click");
+							//console.log("double click");
 							editRecord();
 						},
 						selectionchange: function(grid, record, index, opts){
-							console.log("change selection");
+							//console.log("change selection");
 							checkButtonChanges();
 						}
 					}
@@ -202,7 +202,7 @@
 				var mergeRecords = function() {
 				    selectedObj = Ext.getCmp('orgGrid').getSelection()[0].data;
 					
-					console.log("Org ID", selectedObj);
+					//console.log("Org ID", selectedObj);
 					Ext.getCmp('mergeForm').reset(true);
 					
 				    Ext.getCmp('targetId').setValue(selectedObj.organizationId);
@@ -216,7 +216,7 @@
 				
 				var referenceRecords = function(){
 				     selectedObj = Ext.getCmp('orgGrid').getSelection()[0].data;
-					 console.log("selObj",selectedObj);
+					 //console.log("selObj",selectedObj);
 					 
 					 Ext.getCmp('refWin').show();
 				};
@@ -230,7 +230,7 @@
 							
 							var theData=[];
 							theData = JSON.parse(response.responseText);
-							console.log("response:",theData.length);
+							//console.log("response:",theData.length);
 							if(0 < theData.length){
 								Ext.toast('That organization has references and cannot be deleted.');
 								return;
@@ -360,7 +360,7 @@
 					listeners:{
 						show: function () {
 							var refurl = '../api/v1/resource/organizations/'+encodeURIComponent(selectedObj.organizationId)+ '/references';
-							console.log("url",refurl);
+							//console.log("url",refurl);
 							var store = Ext.data.StoreManager.lookup('refGridStore');
 							store.setProxy({
 									type: 'ajax',
@@ -390,7 +390,7 @@
 								],
 								fields: [
 									{name: 'referenceType', mapping: function (data) {
-											console.log("Data",data);
+											//console.log("Data",data);
 											var retStr ='';
 											if(typeof data.componentName !== 'undefined'){
 												retStr=data.referenceType+'<br/><div style="font-size:.7em;">Entry: '+data.componentName+'</div>';
@@ -693,7 +693,7 @@
 												var method = Ext.getCmp('entryForm').edit ? 'PUT' : 'POST'; 												
 												var data = Ext.getCmp('entryForm').getValues();
 												var url = Ext.getCmp('entryForm').edit ? '../api/v1/resource/organizations/' + selectedObj.data.organizationId : '../api/v1/resource/organizations';       
-                                                console.log("Made It ",selectedObj);
+                                                //console.log("Made It ",selectedObj);
 												CoreUtil.submitForm({
 													url: url,
 													method: method,
