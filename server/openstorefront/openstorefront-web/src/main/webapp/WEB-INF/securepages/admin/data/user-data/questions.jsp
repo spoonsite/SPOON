@@ -247,6 +247,9 @@
 						type: 'ajax'
 					});
 					questionStore.load();
+					answerStore.setProxy(undefined);
+					answerPanel.getView().emptyText = '<div class="x-grid-empty">Please select a question.</div>';
+					answerStore.load();
 				};
 
 
