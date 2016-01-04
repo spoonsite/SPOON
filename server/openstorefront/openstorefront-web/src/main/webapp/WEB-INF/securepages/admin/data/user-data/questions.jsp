@@ -100,9 +100,53 @@
 					},
 					columns: [
 						{
-							text: 'Questions',
+							text: 'Question',
 							dataIndex: 'question',
+							renderer: function (value, metaData, record) {
+								var userType = getUserType(record.data.userTypeCode);
+								var html = "<strong>" + value + "</strong>";
+								html += '<p style="color: #999; margin-bottom: 0.5em;">';
+								html += '<i class="fa fa-user fa-fw"></i> ' + record.data.createUser + " (";
+								html += userType + ') &middot; ';
+								html += record.data.organization + "";
+								html += "</p>";
+								return html;
+							},
+							flex: 5
+						},
+						{
+							text: 'Created',
+							dataIndex: 'createDts',
+							flex: 1.5,
+							xtype: 'datecolumn',
+							format: 'm/d/y H:i:s'
+						},
+						{
+							hidden: true,
+							text: 'User',
+							dataIndex: 'createUser',
 							flex: 1
+						},
+						{
+							hidden: true,
+							text: 'Organization',
+							dataIndex: 'organization',
+							flex: 1
+						},
+						{
+							hidden: true,
+							text: 'Update Date',
+							dataIndex: 'updateDts',
+							flex: 2,
+							xtype: 'datecolumn',
+							format: 'm/d/y H:i:s'
+						},
+						{
+							hidden: true,
+							text: 'Security Type',
+							dataIndex: 'securityMarkingType',
+							flex: 2,
+							renderer: getSecurityType()
 						}
 					]
 				});
@@ -112,12 +156,12 @@
 					flex: 3,
 					layout: 'fit',
 					viewConfig: {
-						emptyText: 'Please select a component.',
+						emptyText: 'Please select a component and question.',
 						deferEmptyText: false
 					},
 					columns: [
 						{
-							text: 'Answers',
+							text: 'Answer',
 							dataIndex: 'componentName',
 							flex: 1
 						}
