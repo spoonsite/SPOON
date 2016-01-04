@@ -12,12 +12,15 @@
 					title: 'Entry',
 					modal: true,
 					width: '40%',
+					height: '90%',
+					layout: 'fit',
 					items: [
 						{
 							xtype: 'form',
 							id: 'entryForm',
 							layout: 'vbox',
-							scrollable: true,
+							autoScroll: true,
+							scrollable: true,							
 							bodyStyle: 'padding: 10px;',
 							defaults: {
 								labelAlign: 'top'
@@ -47,12 +50,18 @@
 									allowBlank: false,
 									width: '100%',
 									fieldBodyCls: 'form-comp-htmleditor-border',
-									maxLength: 255
-								},				
+									maxLength: 255,
+									margin: '0 0 30 0'
+								},																
 								{
 									xtype: 'panel',
 									html: '<b>Data Entry</b>'
 								},
+								{
+									xtype: 'checkbox',
+									boxLabel: '<b>Allow On Submission Form</b>',
+									name: 'allowOnSubmission'
+								},								
 								{
 									xtype: 'checkbox',
 									boxLabel: 'Attributes',

@@ -55,6 +55,9 @@ public class ComponentType
 	private String description;
 
 	@ConsumeField
+	private Boolean allowOnSubmission;
+
+	@ConsumeField
 	private Boolean dataEntryAttributes;
 
 	@ConsumeField
@@ -118,6 +121,7 @@ public class ComponentType
 		this.setDataEntryResources(componentTypeLocal.getDataEntryResources());
 		this.setDataEntryReviews(componentTypeLocal.getDataEntryReviews());
 		this.setDataEntryQuestions(componentTypeLocal.getDataEntryQuestions());
+		this.setAllowOnSubmission(componentTypeLocal.getAllowOnSubmission());
 
 	}
 
@@ -259,6 +263,16 @@ public class ComponentType
 	public void setDataEntryQuestions(Boolean dataEntryQuestions)
 	{
 		this.dataEntryQuestions = dataEntryQuestions;
+	}
+
+	public Boolean getAllowOnSubmission()
+	{
+		return allowOnSubmission;
+	}
+
+	public void setAllowOnSubmission(Boolean allowOnSubmission)
+	{
+		this.allowOnSubmission = allowOnSubmission;
 	}
 
 }

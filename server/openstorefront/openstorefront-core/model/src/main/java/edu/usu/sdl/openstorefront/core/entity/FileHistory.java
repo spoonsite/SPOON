@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
@@ -32,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author dshurtleff
  */
+@APIDescription("History of an data import")
 public class FileHistory
 		extends StandardEntity<FileHistory>
 {

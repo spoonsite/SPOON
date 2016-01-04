@@ -311,6 +311,7 @@ var CoreUtil = {
 			url: options.url,
 			method: options.method,
 			jsonData: options.data,
+			callback: options.callback,
 			success: function (response, opts) {
 				options.form.setLoading(false);
 				if (response) {

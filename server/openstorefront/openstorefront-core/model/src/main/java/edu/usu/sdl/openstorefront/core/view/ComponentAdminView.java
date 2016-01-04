@@ -26,6 +26,7 @@ public class ComponentAdminView
 
 	private Component component;
 	private String integrationManagement;
+	private Integer numberOfPendingChanges;
 
 	public ComponentAdminView()
 	{
@@ -49,6 +50,16 @@ public class ComponentAdminView
 	public void setIntegrationManagement(String integrationManagement)
 	{
 		this.integrationManagement = integrationManagement;
+	}
+
+	public Integer getNumberOfPendingChanges()
+	{
+		return numberOfPendingChanges;
+	}
+
+	public void setNumberOfPendingChanges(Integer numberOfPendingChanges)
+	{
+		this.numberOfPendingChanges = numberOfPendingChanges;
 	}
 
 }

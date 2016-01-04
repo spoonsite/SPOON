@@ -112,7 +112,7 @@
 						}
 					}),
 					columns: [
-						{ text: 'Title', dataIndex: 'text', flex: 1, minWidth: 200 },
+						{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 },
 						{ text: 'Create User', align: 'center', dataIndex: 'createUser', width: 150 },
 						{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 					],
@@ -138,6 +138,7 @@
 									allowBlank: false,
 									margin: '0 20 0 0',
 									width: '40%',
+									maxLength: 120,
 									name: 'text',
 									listeners: {
 										specialkey: function(field, e){
@@ -686,7 +687,7 @@
 				var metadataGrid = Ext.create('Ext.grid.Panel', {
 					id: 'metadataGrid',
 					title: 'Metadata',
-					tooltip: 'Extra non-filterable information about a component.',
+					tooltip: 'Extra non-filterable information about an entry.',
 					columnLines: true,
 					store: Ext.create('Ext.data.Store', {
 						fields: [
@@ -1627,7 +1628,7 @@
 				var contactGrid = Ext.create('Ext.grid.Panel', {
 					id: 'contactGrid',
 					title: 'Contacts',
-					tooltip: 'Point of contacts for component.',
+					tooltip: 'Add government, technical, and other points of contact',
 					columnLines: true,
 					store: Ext.create('Ext.data.Store', {
 						fields: [
@@ -1962,7 +1963,7 @@
 									fieldLabel: 'Target <span class="field-required" />',
 									forceSelection: false,
 									storeConfig: {
-										url: '../api/v1/resource/components/lookup?all=true',
+										url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL',
 										autoLoad: false
 									}
 								})				
@@ -2741,7 +2742,7 @@
 				);
 		
 				Ext.Ajax.request({
-					url: 'Router.action?page=admin/data/componentVersionTemplate.jsp',
+					url: 'Router.action?page=shared/entrySimpleViewTemplate.jsp',
 					success: function(response, opts){
 						versionViewTemplate.set(response.responseText, true);
 					}
@@ -3118,6 +3119,184 @@
 					}					
 				};
 				
+				var changeOwnerWin = Ext.create('Ext.window.Window', {
+					id: 'changeOwnerWin',
+					title: 'Change Owner - ',
+					iconCls: 'fa fa-user',
+					width: '35%',
+					y: 200,
+					modal: true,
+					layout: 'fit',					
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'changeOwnerForm',
+							bodyStyle: 'padding: 10px',
+							items: [
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Username <span class="field-required" />',
+									labelAlign: 'top',
+									labelSeparator: '',
+									typeAhead: true,
+									editable: true,
+									allowBlank: false,
+									name: 'createUser',
+									width: '100%',
+									valueField: 'username',
+									forceSelection: false,	
+									queryMode: 'local',									
+									displayField: 'username',
+									store: {
+										autoLoad: true,
+										proxy: {
+											type: 'ajax',
+											url: '../api/v1/resource/userprofiles',
+											reader: {
+												type: 'json',
+												rootProperty: 'data',
+												totalProperty: 'totalNumber'
+											}
+										}
+									}
+								}
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Update',
+											formBind: true,
+											iconCls: 'fa fa-save',
+											handler: function(){
+												var ownerWindow = this.up('window');
+												var form = this.up('form');
+												var username = form.getForm().findField('createUser').getValue();
+												form.setLoading('Updating Owner...');
+												Ext.Ajax.request({
+													url: '../api/v1/resource/components/' + ownerWindow.componentId + '/changeowner',
+													method: 'PUT',
+													rawData: username,
+													callback: function(opts, success, response){
+														form.setLoading(false);
+													},
+													success: function(response, opts) {
+														ownerWindow.close();
+														actionRefreshComponentGrid();														
+													}
+												})
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function(){
+												this.up('window').close();
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				});
+				
+				var mergeComponentWin = Ext.create('Ext.window.Window', {
+					id: 'mergeComponentWin',
+					title: 'Merge',
+					width: '40%',
+					modal: true,
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'mergeForm',
+							layout: 'vbox',
+							bodyStyle: 'padding: 10px;',
+							defaults: {
+								labelAlign: 'top'
+							},							
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Merge',
+											formBind: true,
+											iconCls: 'fa fa-exchange',
+											handler: function() {
+												
+												var mergeForm = this.up('form');
+												var data = mergeForm.getValues();
+												
+												//check data for same id
+												if (data.mergeComponentId === data.targetComponentId) {
+													mergeForm.getComponent('targetComponent').markInvalid('Target Component must be different than merge component.');													
+												} else {	
+													mergeForm.setLoading("Merging...");
+													Ext.Ajax.request({
+														url: '../api/v1/resource/components/' + data.mergeComponentId + '/' + data.targetComponentId + '/merge',
+														method: 'POST',
+														success: function(response, opts){
+															mergeForm.setLoading(false);
+
+															Ext.getCmp('mergeComponentWin').hide();
+															actionRefreshComponentGrid();
+														},
+														failure: function(response, opts){
+															mergeForm.setLoading(false);
+														}
+													});
+												}
+											}
+										}, 
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function() {
+												this.up('window').hide();
+											}																						
+										}
+									]
+								}
+							], 
+							items: [
+								{
+									xtype: 'combobox',
+									name: 'mergeComponentId',
+									fieldLabel: 'Merge Component',
+									store: maingridStore,
+									valueField: 'componentId',
+									width: '100%',
+									displayField: 'name',
+									readOnly: true
+								},
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'targetComponentId',
+									itemId: 'targetComponent',
+									allowBlank: false,
+									width: '100%',
+									margin: '0 0 0 0',
+									fieldLabel: 'Target Component',
+									storeConfig: {
+										url: '../api/v1/resource/components/lookup?all=true',
+										autoLoad: false
+									}
+								})
+							]
+						}
+					]
+				});	
+				
 				var maingridStore = Ext.create('Ext.data.Store', {				
 					autoLoad: true,
 					pageSize: 300,
@@ -3215,97 +3394,6 @@
 					})
 				});	
 				
-				var mergeComponentWin = Ext.create('Ext.window.Window', {
-					id: 'mergeComponentWin',
-					title: 'Merge',
-					width: '40%',
-					modal: true,
-					layout: 'fit',
-					items: [
-						{
-							xtype: 'form',
-							itemId: 'mergeForm',
-							layout: 'vbox',
-							bodyStyle: 'padding: 10px;',
-							defaults: {
-								labelAlign: 'top'
-							},							
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									items: [
-										{
-											text: 'Merge',
-											formBind: true,
-											iconCls: 'fa fa-exchange',
-											handler: function() {
-												
-												var mergeForm = this.up('form');
-												var data = mergeForm.getValues();
-												
-												//check data for same id
-												if (data.mergeComponentId === data.targetComponentId) {
-													mergeForm.getComponent('targetComponent').markInvalid('Target Component must be different than merge component.');													
-												} else {	
-													mergeForm.setLoading("Merging...");
-													Ext.Ajax.request({
-														url: '../api/v1/resource/components/' + data.mergeComponentId + '/' + data.targetComponentId + '/merge',
-														method: 'POST',
-														success: function(response, opts){
-															mergeForm.setLoading(false);
-
-															Ext.getCmp('mergeComponentWin').hide();
-															actionRefreshComponentGrid();
-														},
-														failure: function(response, opts){
-															mergeForm.setLoading(false);
-														}
-													});
-												}
-											}
-										}, 
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Cancel',
-											iconCls: 'fa fa-close',
-											handler: function() {
-												this.up('window').hide();
-											}																						
-										}
-									]
-								}
-							], 
-							items: [
-								{
-									xtype: 'combobox',
-									name: 'mergeComponentId',
-									fieldLabel: 'Merge Component',
-									store: maingridStore,
-									valueField: 'componentId',
-									width: '100%',
-									displayField: 'name',
-									readOnly: true
-								},
-								Ext.create('OSF.component.StandardComboBox', {
-									name: 'targetComponentId',
-									itemId: 'targetComponent',
-									allowBlank: false,
-									width: '100%',
-									margin: '0 0 0 0',
-									fieldLabel: 'Target Component',
-									storeConfig: {
-										url: '../api/v1/resource/components/lookup?all=true',
-										autoLoad: false
-									}
-								})
-							]
-						}
-					]
-				});				
-				
 				var componentGrid = Ext.create('Ext.grid.Panel', {	
 					title: 'Manage Entries <i class="fa fa-question-circle"  data-qtip="This tool allows for manipulating all data related to an entry" ></i>',
 					id: 'componentGrid',
@@ -3341,7 +3429,7 @@
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s'},
 						{ text: 'Update User', dataIndex: 'updateUser', width: 175, hidden: true },
 						{ text: 'Create Date', dataIndex: 'createDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-						{ text: 'Create User', dataIndex: 'createUser', width: 175, hidden: true },
+						{ text: 'Create User (Owner)', dataIndex: 'createUser', width: 175, hidden: true },
 						{ text: 'Component Id', dataIndex: 'componentId', width: 175, hidden: true }
 					],
 					dockedItems: [
@@ -3497,6 +3585,16 @@
 									disabled: true,
 									menu: [
 										{
+											text: 'Change Owner',											
+											iconCls: 'fa fa-user',
+											handler: function(){
+												actionChangeOwner(Ext.getCmp('componentGrid').getSelection()[0]);
+											}
+										},										
+										{
+											xtype: 'menuseparator'
+										},										
+										{
 											text: 'Copy',											
 											iconCls: 'fa fa-copy',
 											handler: function(){
@@ -3620,6 +3718,13 @@
 						Ext.getCmp('lookupGrid-tools-action').setDisabled(true);
 					}
 				};
+				
+				var actionChangeOwner = function(record) {
+					Ext.getCmp('changeOwnerWin').show();
+					Ext.getCmp('changeOwnerWin').componentId = record.get('componentId');
+					Ext.getCmp('changeOwnerWin').setTitle('Change Owner - ' + record.get('name'));
+					Ext.getCmp('changeOwnerWin').getComponent('changeOwnerForm').loadRecord(record);
+				}
 				
 				var actionRefreshComponentGrid = function() {
 					Ext.getCmp('componentGrid').getStore().load({

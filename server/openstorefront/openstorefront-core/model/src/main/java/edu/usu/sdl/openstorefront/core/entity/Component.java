@@ -98,7 +98,8 @@ public class Component
 	private String version;
 
 	@NotNull
-	@ValidValueType(value = {}, lookupClass = ApprovalStatus.class)
+	@ValidValueType(value
+			= {}, lookupClass = ApprovalStatus.class)
 	@ConsumeField
 	@APIDescription("Status of an approval")
 	@FK(ApprovalStatus.class)
@@ -111,7 +112,8 @@ public class Component
 	@APIDescription("When the component was approved for the site")
 	private Date approvedDts;
 
-	@ValidValueType(value = {}, lookupClass = ApprovalMode.class)
+	@ValidValueType(value
+			= {}, lookupClass = ApprovalMode.class)
 	@ConsumeField
 	@APIDescription("Sets the approval method of changes")
 	@FK(ApprovalMode.class)
@@ -130,11 +132,13 @@ public class Component
 	private String notifyOfApprovalEmail;
 
 	@ConsumeField
-	@ValidValueType(value = {}, lookupClass = DataSource.class)
+	@ValidValueType(value
+			= {}, lookupClass = DataSource.class)
 	@FK(ApprovalStatus.class)
 	private String dataSource;
 
-	@ValidValueType(value = {}, lookupClass = ModificationType.class)
+	@ValidValueType(value
+			= {}, lookupClass = ModificationType.class)
 	@FK(ModificationType.class)
 	private String lastModificationType;
 
@@ -143,6 +147,9 @@ public class Component
 
 	@APIDescription("Overall record verison for the component")
 	private Integer recordVersion;
+
+	@APIDescription("Component Id of the pending change component.")
+	private String pendingChangeId;
 
 	public Component()
 	{
@@ -209,6 +216,7 @@ public class Component
 		this.setLastModificationType(component.getLastModificationType());
 		this.setChangeApprovalMode(component.getChangeApprovalMode());
 		this.setRecordVersion(component.getRecordVersion());
+		this.setPendingChangeId(component.getPendingChangeId());
 
 	}
 
@@ -412,6 +420,16 @@ public class Component
 	public void setRecordVersion(Integer recordVersion)
 	{
 		this.recordVersion = recordVersion;
+	}
+
+	public String getPendingChangeId()
+	{
+		return pendingChangeId;
+	}
+
+	public void setPendingChangeId(String pendingChangeId)
+	{
+		this.pendingChangeId = pendingChangeId;
 	}
 
 }

@@ -663,4 +663,33 @@ public interface ComponentService
 	 */
 	public Component approveComponent(String componentId);
 
+	/**
+	 * This updates a components owner.
+	 *
+	 * @param componentId
+	 * @param newOwner
+	 * @return component modified
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Component changeOwner(String componentId, String newOwner);
+
+	/**
+	 * Creates a pending component record for the given component Id
+	 *
+	 * @param parentComponentId
+	 * @return Pending Change component
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Component createPendingChangeComponent(String parentComponentId);
+
+	/**
+	 * Merges pending changes to the old component (effectively Replacing the
+	 * old component)
+	 *
+	 * @param componentIdOfPendingChange
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Component mergePendingChange(String componentIdOfPendingChange);
+
 }

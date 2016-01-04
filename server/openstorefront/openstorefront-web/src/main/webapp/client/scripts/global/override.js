@@ -174,55 +174,71 @@ Ext.define('OSF.defaults.ComboBox', {
 
 Ext.onReady(function() {
     
-    Ext.tip.QuickTipManager.init();
-    Ext.util.History.init();
+     Ext.tip.QuickTipManager.init();
+	Ext.util.History.init();
 
-  /**
-    Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
-        maxWidth: 200,
-        minWidth: 100,
-        showDelay: 50,
-        trackMouse: true
-    });
-    **/
+	/**
+	 Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
+	 maxWidth: 200,
+	 minWidth: 100,
+	 showDelay: 50,
+	 trackMouse: true
+	 });
+	 **/
 
-   
-    Ext.Ajax.timeout = 300000;
-    Ext.Ajax.on('requestexception', function(conn, response, options, eOpts){
-       var errorTicket = Ext.decode(response.responseText);
-       if (errorTicket) {
-          var data = errorTicket;
-          
-          var message = 'Server was unable to process request.';
-          if (data.message) {
-            message = data.message;
-          }
-          if (data.potentialResolution) {
-            message = message + '<br> Potential Resolution: ' + data.potentialResolution;
-          }
-          if (data.errorTicketNumber) {
-            message = message + '<br> Error Ticket: ' + data.errorTicketNumber;
-          }
-          
-          Ext.Msg.show({
-              title: 'Server Error',
-              message: message,
-              buttons: Ext.Msg.OK,
-              icon: Ext.Msg.Error,
-              fn: function(btn) {                  
-              }
-          });          
-        } else {
-          Ext.Msg.show({
-            title: 'Connection Error',
-            message: 'Unable to connect to server or there was internal server error.',
-            buttons: Ext.Msg.OK,
-            icon: Ext.Msg.Error,
-            fn: function (btn) {
-            }
-          });
-        }
-    });
+
+	Ext.Ajax.timeout = 300000;
+	Ext.Ajax.on('requestexception', function (conn, response, options, eOpts) {
+		if (response.status === 403) {
+			Ext.Msg.show({
+				title: 'Forbidden',
+				message: 'Check request',
+				buttons: Ext.Msg.OK,
+				icon: Ext.Msg.Error,
+				fn: function (btn) {
+				}
+			});			
+		} else {
+			var errorTicket = null;
+			try {
+				errorTicket = Ext.decode(response.responseText);
+			} catch (e){		
+				Ext.log({level: 'error', stack: true}, 'Unable to decode response');
+			}
+			if (errorTicket) {
+				var data = errorTicket;
+
+				var message = 'Server was unable to process request.';
+				if (data.message) {
+					message = data.message;
+				}
+				if (data.potentialResolution) {
+					message = message + '<br> Potential Resolution: ' + data.potentialResolution;
+				}
+				if (data.errorTicketNumber) {
+					message = message + '<br> Error Ticket: ' + data.errorTicketNumber;
+				}
+
+				Ext.Msg.show({
+					title: 'Server Error',
+					message: message,
+					buttons: Ext.Msg.OK,
+					icon: Ext.Msg.Error,
+					fn: function (btn) {
+					}
+				});
+			} else {
+				Ext.Msg.show({
+					title: 'Connection Error',
+					message: 'Unable to connect to server or there was internal server error.',
+					buttons: Ext.Msg.OK,
+					icon: Ext.Msg.Error,
+					fn: function (btn) {
+					}
+				});
+			}
+		}
+	});
     
 });
 
