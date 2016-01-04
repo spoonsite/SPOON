@@ -44,6 +44,10 @@
 					storeId: 'questionStore'
 				});
 
+				var answerStore = Ext.create('Ext.data.Store', {
+					// This store gets modified heavily when actionSelectedQuestion() invokes.
+					storeId: 'answerStore'
+				});
 
 				var userTypeStore = Ext.create('Ext.data.Store', {
 					storeId: 'userTypeStore',
@@ -97,6 +101,13 @@
 					viewConfig: {
 						emptyText: 'Please select a component.',
 						deferEmptyText: false
+					},
+					listeners: {
+						select: function(rowModel, record) {
+							var componentId = componentPanel.getSelection()[0].data.componentId;
+							var questionId = record.data.questionId;
+							actionSelectedQuestion(componentId, questionId);
+						}
 					},
 					columns: [
 						{
@@ -155,6 +166,7 @@
 				var answerPanel = Ext.create('Ext.grid.Panel', {
 					flex: 3,
 					layout: 'fit',
+					store: answerStore,
 					viewConfig: {
 						emptyText: 'Please select a component and question.',
 						deferEmptyText: false
@@ -162,7 +174,7 @@
 					columns: [
 						{
 							text: 'Answer',
-							dataIndex: 'componentName',
+							dataIndex: 'response',
 							flex: 1
 						}
 					]
@@ -218,6 +230,22 @@
 						type: 'ajax'
 					});
 					questionStore.load();
+				};
+
+
+				var actionSelectedQuestion = function actionSelectedQuestion(componentId, questionId) {
+					// Set Proxy and Load Answers
+					var apiUrl = '/openstorefront/api/v1/resource/components/';
+					apiUrl += componentId + '/questions/' + questionId + '/responses';
+					answerStore.setProxy({
+						id: 'answerStoreProxy',
+						url: apiUrl,
+						type: 'ajax'
+					});
+					// Since x-grid-empty is only applied on the intial viewConfig,
+					// we must add it to our emptyText if we want proper styling.
+					answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers.</div>';
+					answerStore.load();
 				};
 
 
