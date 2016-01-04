@@ -35,7 +35,7 @@
 					columns: [						
 						{ text: 'Name', dataIndex: 'name', minWidth: 200, flex:1},
 						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200 },
-						{ text: 'Type', dataIndex: 'organizationType', width: 200 },
+						{ text: 'Type', dataIndex: 'organizationTypeDescription', width: 200 },
 						{ text: 'Web Site', dataIndex: 'homeUrl', width: 200, hidden:true },
 						{ text: 'Address', dataIndex: 'address', width: 150, hidden:true },
 						{ text: 'Agency', dataIndex: 'agency', width: 150, hidden:true },
@@ -141,6 +141,7 @@
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
 							console.log("double click");
+							editRecord();
 						},
 						selectionchange: function(grid, record, index, opts){
 							console.log("change selection");
@@ -155,7 +156,7 @@
 						orgGrid
 					]
 				});
-				
+		
 				var selectedObj=null;
 				
 				var checkButtonChanges = function() {
@@ -178,26 +179,38 @@
 				};
 				
 				var addRecord = function() {
-//					addEditWin.show();
-//					
+					addEditWin.show();
+					addEditWin.setTitle("Add Organization");
 //					//reset form
-//					Ext.getCmp('entryForm').reset(true);
-//					Ext.getCmp('entryForm').edit = false;
-//					Ext.getCmp('entryForm-type').setReadOnly(false);
+					Ext.getCmp('entryForm').reset(true);
+					Ext.getCmp('entryForm').edit = false;
+					Ext.getCmp('organizationType').setReadOnly(false);
 				};
 				
-				var editRecord = function(record) {
-//					addEditWin.show();
-//					
-//					Ext.getCmp('entryForm').reset(true);
-//					Ext.getCmp('entryForm').edit = true;
-//					
-//					//load form
-//					Ext.getCmp('entryForm').loadRecord(record);
-//					Ext.getCmp('entryForm-type').setReadOnly(true);
+				var editRecord = function() {
+					
+					addEditWin.show();
+					addEditWin.setTitle("Edit Organization");
+					selectedObj = Ext.getCmp('orgGrid').getSelection()[0];
+					Ext.getCmp('entryForm').reset(true);
+					Ext.getCmp('entryForm').edit = true;
+					//load form
+					Ext.getCmp('entryForm').loadRecord(selectedObj);
+				    Ext.getCmp('organizationType').setReadOnly(true);
 				};
 				
-				var mergeRecord = function() {
+				var mergeRecords = function() {
+				    selectedObj = Ext.getCmp('orgGrid').getSelection()[0].data;
+					
+					console.log("Org ID", selectedObj);
+					Ext.getCmp('mergeForm').reset(true);
+					
+				    Ext.getCmp('targetId').setValue(selectedObj.organizationId);
+					Ext.getCmp('targetOrganization').setValue(selectedObj.name);
+				 
+					Ext.getCmp('mergeId').setStore(Ext.getCmp('orgGrid').getStore());
+					
+		            mergeWin.show();
 					
 				};
 				
@@ -214,8 +227,11 @@
 						url: '../api/v1/resource/organizations/'+encodeURIComponent(selectedObj.organizationId)+'/references',
 						method: 'GET',
 						success: function (response, opts) {
-							theData = response.responseText;
-							if(theData.length!==0){
+							
+							var theData=[];
+							theData = JSON.parse(response.responseText);
+							console.log("response:",theData.length);
+							if(0 < theData.length){
 								Ext.toast('That organization has references and cannot be deleted.');
 								return;
 							}
@@ -254,9 +270,7 @@
 				};
 				
 				var noOrg = function(){
-
                     Ext.getCmp('noOrgWin').show();
-  
 				};
 				
 				var runExtraction = function(){
@@ -338,7 +352,7 @@
 					id: 'refWin',
 					title: 'Organization References',
 					modal: true,
-					width: '40%',
+					width: '50%',
 					height: '50%',
 					layout:'fit',
 					maximizable: true,
@@ -375,8 +389,16 @@
 									})
 								],
 								fields: [
-									{name: 'componentName', mapping: function (data) {
-											console.log("DATA",data);
+									{name: 'referenceType', mapping: function (data) {
+											console.log("Data",data);
+											var retStr ='';
+											if(typeof data.componentName !== 'undefined'){
+												retStr=data.referenceType+'<br/><div style="font-size:.7em;">Entry: '+data.componentName+'</div>';
+											}
+											else{
+												retStr=data.referenceType;
+											}
+											return retStr;
 										}} 
 											
 								]
@@ -384,168 +406,325 @@
 							}),
 							columnLines: true,
 							columns: [						
-								{ text: 'Name', dataIndex: 'componentName', minWidth: 200, flex:1},
 								{ text: 'Reference Name', dataIndex: 'referenceName', flex: 1, minWidth: 200 },
-								{ text: 'Reference Type', dataIndex: 'referenceType', width: 200 }
+								{ text: 'Reference Type', dataIndex: 'referenceType', width: 300 }
 							]
 						}
 					]
-					});
+					});	
+				//
+				//
+				//  Merge Window
+				//
+				//
+				var mergeWin = Ext.create('Ext.window.Window', {
+					id: 'mergeWin',
+					title: 'Merge Organizations',
+					modal: true,
+					width: '50%',
+					y: 40,
+					resizable: false,
+					items: [
+						{	xtype: 'form',
+							id: 'mergeForm',
+							scrollable: true,
+							style: 'padding: 10px;',
+							layout:'vbox',
+							defaults: {
+								labelAlign: 'top'
+							},
+							items: [
+								{
+									xtype: 'textfield',
+									id: 'targetId',
+									name: 'targetId',
+									style: 'padding-top: 5px;',
+									width: '100%',
+									hidden: true
+								},
+								{
+									xtype: 'combobox',
+									name: 'mergeId',
+									id: 'mergeId',
+									fieldLabel: 'Merge this',
+									width: '100%',
+									maxLength: 50,
+									displayField: 'name',
+									valueField: 'organizationId',
+									editable: false,
+									allowBlank: false
+								},
+								{
+									xtype: 'textfield',
+									id: 'targetOrganization',
+									fieldLabel: 'Into Target',
+									name: 'targetOrganization',
+									style: 'padding-top: 5px;',
+									width: '100%',
+									readOnly:true
+								}
+								
+							]
+					}],
+				    dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Save',
+									iconCls: 'fa fa-save',
+									formBind: true,
+									handler: function(){
+                                        var data = Ext.getCmp('mergeForm').getValues();
+										if(data.mergeId === ''){
+											Ext.toast('You must enter an merge organization that merges into the target.', '', 'tr');
+											return;
+										}
+										else if(data.mergeId === data.targetId){
+											Ext.toast('You cannot merge the same organizations together.', '', 'tr');
+											return;
+										}
+										
+										var url = '../api/v1/resource/organizations/'+data.targetId+'/merge/'+data.mergeId;     
+										Ext.getCmp('mergeForm').setLoading(true);
+										
+										CoreUtil.submitForm({
+											url: url,
+											method: 'POST',
+											removeBlankDataItems: true,
+											form: Ext.getCmp('mergeForm'),
+											success: function(response, opts) {
+												Ext.toast('Merged Successfully', '', 'tr');
+												Ext.getCmp('mergeForm').setLoading(false);
+												Ext.getCmp('mergeWin').hide();													
+												refreshGrid();												
+											}
+										});												
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Cancel',
+									iconCls: 'fa fa-close',
+									handler: function(){
+										Ext.getCmp('mergeWin').close();
+									}											
+								}
+							]
+						}
+					]
+				});
 				
+				//
+				//
+				//  ADD EDIT ORG WINDOW
+				//
+				//
+				var orgTypeStore = Ext.create('Ext.data.Store', {
+					id:'orgTypeStore',
+					autoLoad: true,
+					remoteSort: true,
+					pageSize: 500,
+					sorters: [
+						new Ext.util.Sorter({
+							property: 'description',
+							direction: 'DESC'
+						})
+					],
+					proxy: CoreUtil.pagingProxy({
+						url: '../api/v1/resource/lookuptypes/OrganizationType',
+						reader: {
+							type: 'json',
+							rootProperty: 'data',
+							totalProperty: 'totalNumber'
+						}
+					})
+				});
 				
-				
-//				var addEditWin = Ext.create('Ext.window.Window', {
-//					id: 'addEditWin',
-//					title: 'Entry',
-//					modal: true,
-//					width: '40%',
-//					items: [
-//						{
-//							xtype: 'form',
-//							id: 'entryForm',
-//							layout: 'vbox',
-//							scrollable: true,
-//							bodyStyle: 'padding: 10px;',
-//							defaults: {
-//								labelAlign: 'top'
-//							},
-//							items: [
-//								{
-//									xtype: 'textfield',
-//									id: 'entryForm-type',
-//									fieldLabel: 'Type Code<span class="field-required" />',
-//									name: 'componentType',
-//									width: '100%',
-//									allowBlank: false,
-//									maxLength: 20									
-//								},
-//								{
-//									xtype: 'textfield',									
-//									fieldLabel: 'Label<span class="field-required" />',
-//									name: 'label',
-//									allowBlank: false,
-//									width: '100%',
-//									maxLength: 80																		
-//								},
-//								{
-//									xtype: 'htmleditor',
-//									name: 'description',
-//									fieldLabel: ' Description<span class="field-required" />',
-//									allowBlank: false,
-//									width: '100%',
-//									fieldBodyCls: 'form-comp-htmleditor-border',
-//									maxLength: 255
-//								},				
-//								{
-//									xtype: 'panel',
-//									html: '<b>Data Entry</b>'
-//								},
-//								{
-//									xtype: 'checkbox',
-//									boxLabel: 'Attributes',
-//									name: 'dataEntryAttributes'
-//								},
-//								{
-//									xtype: 'checkbox',
-//									boxLabel: 'Relationships ',
-//									name: 'dataEntryRelationships'
-//								},
-//								{
-//									xtype: 'checkbox',
-//									boxLabel: 'Contacts',
-//									name: 'dataEntryContacts'
-//								},
-//								{
-//									xtype: 'checkbox',
-//									boxLabel: 'Resources',
-//									name: 'dataEntryResources'
-//								},
-//								{
-//									xtype: 'checkbox',
-//									boxLabel: 'Media',
-//									name: 'dataEntryMedia'
-//								},
-//								{
-//									xtype: 'checkbox',
-//									boxLabel: 'Dependancies',
-//									name: 'dataEntryDependancies'
-//								},
-//								{
-//									xtype: 'checkbox',
-//									boxLabel: 'Metadata',
-//									name: 'dataEntryMetadata'
-//								},
-//								{
-//									xtype: 'checkbox',
-//									boxLabel: 'Evaluation Information',
-//									name: 'dataEntryEvaluationInformation'
-//								},
-//								{
-//									xtype: 'checkbox',
-//									boxLabel: 'Reviews',
-//									name: 'dataEntryReviews'
-//								},
-//								{
-//									xtype: 'checkbox',
-//									boxLabel: 'Questions',
-//									name: 'dataEntryQuestions'
-//								},								
-//								Ext.create('OSF.component.StandardComboBox', {
-//									name: 'componentTypeTemplate',																		
-//									width: '100%',
-//									margin: '0 0 0 0',
-//									fieldLabel: 'Override Template',
-//									emptyText: 'Default',
-//									storeConfig: {
-//										url: '../api/v1/resource/componenttypetemplates/lookup'
-//									}
-//								})
-//							],
-//							dockedItems: [
-//								{
-//									xtype: 'toolbar',
-//									dock: 'bottom',
-//									items: [
-//										{
-//											text: 'Save',
-//											iconCls: 'fa fa-save',
-//											formBind: true,
-//											handler: function(){
-//												var method = Ext.getCmp('entryForm').edit ? 'PUT' : 'POST'; 												
-//												var data = Ext.getCmp('entryForm').getValues();
-//												var url = Ext.getCmp('entryForm').edit ? '../api/v1/resource/componenttypes/' + data.componentType : '../api/v1/resource/componenttypes';       
-//
-//												CoreUtil.submitForm({
-//													url: url,
-//													method: method,
-//													data: data,
-//													removeBlankDataItems: true,
-//													form: Ext.getCmp('entryForm'),
-//													success: function(response, opts) {
-//														Ext.toast('Saved Successfully', '', 'tr');
-//														Ext.getCmp('entryForm').setLoading(false);
-//														Ext.getCmp('addEditWin').hide();													
-//														actionRefreshEntryGrid();												
-//													}
-//												});												
-//											}
-//										},
-//										{
-//											xtype: 'tbfill'
-//										},
-//										{
-//											text: 'Cancel',
-//											iconCls: 'fa fa-close',
-//											handler: function(){
-//												Ext.getCmp('addEditWin').close();
-//											}											
-//										}
-//									]
-//								}
-//							]
-//						}
-//					]
-//				});
+				var addEditWin = Ext.create('Ext.window.Window', {
+					id: 'addEditWin',
+					title: 'Organization',
+					modal: true,
+					width: '70%',
+					resizable: false,
+					items: [
+						{
+							xtype: 'form',
+							id: 'entryForm',
+							scrollable: true,
+							layout:'column',
+							defaults: {
+								labelAlign: 'top'
+							},
+							items: [
+								{
+									xtype: 'panel',
+									columnWidth: 0.5,
+									title: 'Organization Information',
+									defaults: {
+										labelAlign: 'top'
+									},
+									style: 'padding: 10px;',
+									items: [
+										{
+											xtype: 'textfield',
+											id: 'name',
+											fieldLabel: 'Name<span class="field-required" />',
+											name: 'name',
+											style: 'padding-top: 5px;',
+											width: '100%',
+											allowBlank: false,
+											maxLength: 30		
+										},
+										{
+											xtype: 'textarea',
+											id: 'description',
+											fieldLabel: 'Description',
+											name: 'description',
+											style: 'padding-top: 5px;',
+											width: '100%',
+											maxLength: 255		
+										},
+										{
+											xtype: 'textfield',
+											id: 'homeUrl',
+											fieldLabel: 'Organization URL',
+											name: 'homeUrl',
+											style: 'padding-top: 5px;',
+											width: '100%',
+											maxLength: 150		
+										},
+										{
+											xtype: 'combobox',
+											name: 'organizationType',
+											id: 'organizationType',
+											fieldLabel: 'Organization Type',
+											width: '100%',
+											maxLength: 50,
+											store: orgTypeStore,
+											displayField: 'description',
+											valueField: 'code',
+											editable: false,
+											allowBlank: true		
+										}
+										
+									]
+								},
+								{
+									xtype: 'panel',
+									columnWidth: 0.5,
+									title: 'Main Contact Information',
+									defaults: {
+										labelAlign: 'top'
+									},
+									style: 'padding: 10px;',
+									items: [
+										{
+											xtype: 'textfield',
+											id: 'contactName',
+											fieldLabel: 'Contact Name',
+											name: 'contactName',
+											style: 'padding-top: 5px;',
+											width: '100%',
+											maxLength: 30	
+										},
+										{
+											xtype: 'textfield',
+											id: 'contactPhone',
+											fieldLabel: 'Phone',
+											name: 'contactPhone',
+											style: 'padding-top: 5px;',
+											width: '100%',
+											maxLength: 20	
+										},
+										{
+											xtype: 'textfield',
+											id: 'contactEmail',
+											fieldLabel: 'Email',
+											name: 'contactEmail',
+											style: 'padding-top: 5px;',
+											width: '100%',
+											maxLength: 120	
+										},
+										{
+											xtype: 'textfield',
+											id: 'agency',
+											fieldLabel: 'Agency',
+											name: 'agency',
+											style: 'padding-top: 5px;',
+											width: '100%',
+											maxLength: 30	
+										},
+										{
+											xtype: 'textfield',
+											id: 'department',
+											fieldLabel: 'Department',
+											name: 'department',
+											style: 'padding-top: 5px;',
+											width: '100%',
+											maxLength: 30	
+										},
+										{
+											xtype: 'textfield',
+											id: 'address',
+											fieldLabel: 'Address',
+											name: 'address',
+											style: 'padding-top: 5px;',
+											width: '100%',
+											maxLength: 50	
+										}
+									]
+								}
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											iconCls: 'fa fa-save',
+											formBind: true,
+											handler: function(){
+												
+												var method = Ext.getCmp('entryForm').edit ? 'PUT' : 'POST'; 												
+												var data = Ext.getCmp('entryForm').getValues();
+												var url = Ext.getCmp('entryForm').edit ? '../api/v1/resource/organizations/' + selectedObj.data.organizationId : '../api/v1/resource/organizations';       
+                                                console.log("Made It ",selectedObj);
+												CoreUtil.submitForm({
+													url: url,
+													method: method,
+													data: data,
+													removeBlankDataItems: true,
+													form: Ext.getCmp('entryForm'),
+													success: function(response, opts) {
+														Ext.toast('Saved Successfully', '', 'tr');
+														Ext.getCmp('entryForm').setLoading(false);
+														Ext.getCmp('addEditWin').hide();													
+														refreshGrid();												
+													}
+												});												
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function(){
+												Ext.getCmp('addEditWin').close();
+											}											
+										}
+									]
+								}
+							]
+						}
+					]
+				});
 				
 			});
 		</script>	
