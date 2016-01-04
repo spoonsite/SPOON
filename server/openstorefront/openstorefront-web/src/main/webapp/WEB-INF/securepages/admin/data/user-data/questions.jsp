@@ -175,7 +175,24 @@
 						{
 							text: 'Answer',
 							dataIndex: 'response',
-							flex: 1
+							flex: 5,
+							renderer: function (value, metaData, record) {
+								var userType = getUserType(record.data.userTypeCode);
+								var html = value;
+								html += '<p style="color: #999; margin-bottom: 0.5em;">';
+								html += '<i class="fa fa-user fa-fw"></i> ' + record.data.createUser + " (";
+								html += userType + ') &middot; ';
+								html += record.data.organization + "";
+								html += "</p>";
+								return html;
+							}
+						},
+						{
+							text: 'Created',
+							dataIndex: 'createDts',
+							flex: 1.5,
+							xtype: 'datecolumn',
+							format: 'm/d/y H:i:s'
 						}
 					]
 				});
