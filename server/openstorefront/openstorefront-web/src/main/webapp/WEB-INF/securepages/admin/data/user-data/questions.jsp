@@ -193,6 +193,33 @@
 							flex: 1.5,
 							xtype: 'datecolumn',
 							format: 'm/d/y H:i:s'
+						},
+						{
+							hidden: true,
+							text: 'User',
+							dataIndex: 'createUser',
+							flex: 1
+						},
+						{
+							hidden: true,
+							text: 'Organization',
+							dataIndex: 'organization',
+							flex: 1
+						},
+						{
+							hidden: true,
+							text: 'Update Date',
+							dataIndex: 'updateDts',
+							flex: 2,
+							xtype: 'datecolumn',
+							format: 'm/d/y H:i:s'
+						},
+						{
+							hidden: true,
+							text: 'Security Type',
+							dataIndex: 'securityMarkingType',
+							flex: 2,
+							renderer: getSecurityType()
 						}
 					]
 				});
