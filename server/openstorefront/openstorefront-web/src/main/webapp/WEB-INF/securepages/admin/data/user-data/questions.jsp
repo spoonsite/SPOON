@@ -136,6 +136,17 @@
 					},
 					defaults: {
 					},
+					dockedItems: [{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh'
+								}
+							]
+						}],
 					items: [
 						componentPanel,
 						{
