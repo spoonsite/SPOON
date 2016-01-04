@@ -48,7 +48,7 @@ limitations under the License.
 			pageMap['Imports'] = 'Router.action?page=admin/data/imports.jsp';
 			pageMap['Lookups'] = 'Router.action?page=admin/data/lookup.jsp';
 			pageMap['Media'] = '/openstorefront/admin?tool=Media';
-			pageMap['Organizations'] = '/openstorefront/admin?tool=Organizations';
+			pageMap['Organizations'] = 'Router.action?page=admin/data/organizations.jsp';
 			pageMap['Questions'] = '/openstorefront/admin?tool=Questions';
 			pageMap['Reviews'] = '/openstorefront/admin?tool=Reviews';
 			pageMap['Tags'] = '/openstorefront/admin?tool=Tags';
@@ -57,7 +57,6 @@ limitations under the License.
 			pageMap['Branding'] = 'Router.action?page=admin/application/branding.jsp';
 			pageMap['Jobs'] = '/openstorefront/admin?tool=Jobs';
 			pageMap['Reports'] = 'Router.action?page=shared/reports.jsp';
-            //pageMap['Reports'] = '/openstorefront/admin?tool=Reports';
 			pageMap['System'] = '/openstorefront/admin?tool=System';
 			pageMap['Tracking'] = 'Router.action?page=admin/application/tracking.jsp';
 			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
@@ -112,7 +111,7 @@ limitations under the License.
 				handler: function(){
 					actionLoadContent('Media');
 				}
-			});			
+			});
 			dataMenu.push({
 				text: 'Organizations',
 				handler: function(){
