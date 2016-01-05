@@ -271,6 +271,7 @@
 				
 				var noOrg = function(){
                     Ext.getCmp('noOrgWin').show();
+					
 				};
 				
 				var runExtraction = function(){
@@ -299,12 +300,19 @@
 					modal: true,
 					width: '40%',
 					height: '50%',
+					listeners:{
+								show: function(){
+									console.log("Loading No Org");
+									Ext.getCmp('noOrgGrid').getStore().load();
+								}
+							},
 					items:[
 						{
+							xtype:'grid',
 							id: 'noOrgGrid',
 							title: '',
 							store: Ext.create('Ext.data.Store', {
-								autoLoad: true,
+								autoLoad: false,
 								id: 'noOrgGridStore',
 								pageSize: 100,
 								remoteSort: true,
@@ -313,6 +321,34 @@
 										property: 'componentName',
 										direction: 'ASC'
 									})
+								],
+								fields: [
+									{name: 'referenceType', mapping: function (data) {
+											
+											var retStr ='';
+											if(typeof data.componentName !== 'undefined'){
+												retStr=data.referenceType+'<br/><div style="font-size:.7em;">Entry: '+data.componentName+'</div>';
+											}
+											else{
+												retStr=data.referenceType;
+											}
+											return retStr;
+										}},
+									{name: 'referenceName', mapping: function (data) {
+											
+											var retStr ='';
+											if(data.referenceName.trim() !== ''){
+												retStr=data.referenceName;
+											}
+											else if(typeof data.referenceId !== 'undefined'){
+												retStr=data.referenceId;
+											}
+											else{
+												retStr='No Reference Name';
+											}
+											return retStr;
+										}}
+											
 								],
 								proxy: CoreUtil.pagingProxy({
 									type: 'ajax',
@@ -326,10 +362,10 @@
 							}),
 							columnLines: true,
 							columns: [						
-								{ text: 'Name', dataIndex: 'componentName', minWidth: 200, flex:1},
 								{ text: 'Reference Name', dataIndex: 'referenceName', flex: 1, minWidth: 200 },
-								{ text: 'Reference Type', dataIndex: 'referenceType', width: 200 }
+								{ text: 'Reference Type', dataIndex: 'referenceType', flex: 1, minWidth: 200 }
 							]
+							
 						}
 					],
 					dockedItems: [
@@ -407,7 +443,7 @@
 							columnLines: true,
 							columns: [						
 								{ text: 'Reference Name', dataIndex: 'referenceName', flex: 1, minWidth: 200 },
-								{ text: 'Reference Type', dataIndex: 'referenceType', width: 300 }
+								{ text: 'Reference Type', dataIndex: 'referenceType', flex: 1, minWidth: 200 }
 							]
 						}
 					]
@@ -428,94 +464,100 @@
 						{	xtype: 'form',
 							id: 'mergeForm',
 							scrollable: true,
-							style: 'padding: 10px;',
-							layout:'vbox',
-							defaults: {
-								labelAlign: 'top'
-							},
+							layout:'fit',
 							items: [
 								{
-									xtype: 'textfield',
-									id: 'targetId',
-									name: 'targetId',
-									style: 'padding-top: 5px;',
-									width: '100%',
-									hidden: true
-								},
-								{
-									xtype: 'combobox',
-									name: 'mergeId',
-									id: 'mergeId',
-									fieldLabel: 'Merge this',
-									width: '100%',
-									maxLength: 50,
-									displayField: 'name',
-									valueField: 'organizationId',
-									editable: false,
-									allowBlank: false
-								},
-								{
-									xtype: 'textfield',
-									id: 'targetOrganization',
-									fieldLabel: 'Into Target',
-									name: 'targetOrganization',
-									style: 'padding-top: 5px;',
-									width: '100%',
-									readOnly:true
+									xtype: 'panel',
+									style: 'padding: 10px;',
+									layout: 'vbox',
+									defaults: {
+										labelAlign: 'top'
+									},
+									items:[
+										{
+											xtype: 'textfield',
+											id: 'targetId',
+											name: 'targetId',
+											style: 'padding-top: 5px;',
+											width: '100%',
+											hidden: true
+										},
+										{
+											xtype: 'combobox',
+											name: 'mergeId',
+											id: 'mergeId',
+											fieldLabel: 'Merge references from',
+											width: '100%',
+											maxLength: 50,
+											displayField: 'name',
+											valueField: 'organizationId',
+											editable: false,
+											allowBlank: false
+										},
+										{
+											xtype: 'textfield',
+											id: 'targetOrganization',
+											fieldLabel: 'Into this target organization',
+											name: 'targetOrganization',
+											style: 'padding-top: 5px;',
+											width: '100%',
+											readOnly:true
+										}
+									]
 								}
-								
-							]
-					}],
-				    dockedItems: [
-						{
-							xtype: 'toolbar',
-							dock: 'bottom',
-							items: [
-								{
-									text: 'Save',
-									iconCls: 'fa fa-save',
-									formBind: true,
-									handler: function(){
-                                        var data = Ext.getCmp('mergeForm').getValues();
-										if(data.mergeId === ''){
-											Ext.toast('You must enter an merge organization that merges into the target.', '', 'tr');
-											return;
-										}
-										else if(data.mergeId === data.targetId){
-											Ext.toast('You cannot merge the same organizations together.', '', 'tr');
-											return;
-										}
-										
-										var url = '../api/v1/resource/organizations/'+data.targetId+'/merge/'+data.mergeId;     
-										Ext.getCmp('mergeForm').setLoading(true);
-										
-										CoreUtil.submitForm({
-											url: url,
-											method: 'POST',
-											removeBlankDataItems: true,
-											form: Ext.getCmp('mergeForm'),
-											success: function(response, opts) {
-												Ext.toast('Merged Successfully', '', 'tr');
-												Ext.getCmp('mergeForm').setLoading(false);
-												Ext.getCmp('mergeWin').hide();													
-												refreshGrid();												
+							],
+							 dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Save',
+										iconCls: 'fa fa-save',
+										formBind: true,
+										handler: function(){
+											var data = Ext.getCmp('mergeForm').getValues();
+											if(data.mergeId === ''){
+												Ext.toast('You must enter an merge organization that merges into the target.', '', 'tr');
+												return;
 											}
-										});												
+											else if(data.mergeId === data.targetId){
+												Ext.toast('You cannot merge the same organizations together.', '', 'tr');
+												return;
+											}
+
+											var url = '../api/v1/resource/organizations/'+data.targetId+'/merge/'+data.mergeId;     
+											Ext.getCmp('mergeForm').setLoading(true);
+
+											CoreUtil.submitForm({
+												url: url,
+												method: 'POST',
+												removeBlankDataItems: true,
+												form: Ext.getCmp('mergeForm'),
+												success: function(response, opts) {
+													Ext.toast('Merged Successfully', '', 'tr');
+													Ext.getCmp('mergeForm').setLoading(false);
+													Ext.getCmp('mergeWin').hide();													
+													refreshGrid();												
+												}
+											});												
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										iconCls: 'fa fa-close',
+										handler: function(){
+											Ext.getCmp('mergeWin').close();
+										}											
 									}
-								},
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Cancel',
-									iconCls: 'fa fa-close',
-									handler: function(){
-										Ext.getCmp('mergeWin').close();
-									}											
-								}
-							]
-						}
-					]
+								]
+							}
+						]
+					}]
+				   
 				});
 				
 				//
