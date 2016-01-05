@@ -80,6 +80,9 @@
 					flex: 2,
 					store: componentStore,
 					layout: 'fit',
+					viewConfig: {
+						emptyText: 'No components exist with the selected status.'
+					},
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -128,37 +131,8 @@
 							dock: 'top',
 							items: [
 								{
-									xtype: 'combobox',
-									id: 'question-activeStatus',
-									emptyText: 'Active',
-									fieldLabel: 'Active Status',
-									name: 'question-activeStatus',
-									displayField: 'description',
-									valueField: 'code',
-									listeners: {
-										change: function (filter, newValue, oldValue, opts) {
-
-										}
-									},
-									store: Ext.create('Ext.data.Store', {
-										fields: [
-											'code',
-											'description'
-										],
-										data: [
-											{
-												code: 'A',
-												description: 'Active'
-											},
-											{
-												code: 'I',
-												description: 'Inactive'
-											}
-										]
-									})
-								},
-								{
 									text: 'Deactivate',
+									id: 'question-activateButton',
 									scale: 'medium',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-power-off'
@@ -228,6 +202,14 @@
 						emptyText: 'Please select a component.',
 						deferEmptyText: false
 					},
+					listeners: {
+						select: function(rowModel, record) {
+							var componentId = componentPanel.getSelection()[0].data.componentId;
+							var questionId = questionPanel.getSelection()[0].data.questionId;
+							var answerId = record.data.answerId;
+							actionSelectedAnswer(componentId, questionId, answerId);
+						}
+					},
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -243,7 +225,15 @@
 									valueField: 'code',
 									listeners: {
 										change: function (filter, newValue, oldValue, opts) {
-
+											answerPanel.getStore().filter('activeStatus', newValue);
+											var actButton = Ext.getCmp('answer-activateButton');
+											if (newValue === 'A') {
+												actButton.setText('Deactivate');
+											}
+											else {
+												actButton.setText('Activate');
+											}
+											actButton.disable();
 										}
 									},
 									store: Ext.create('Ext.data.Store', {
@@ -265,6 +255,7 @@
 								},
 								{
 									text: 'Deactivate',
+									id: 'answer-activateButton',
 									scale: 'medium',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-power-off'
@@ -337,6 +328,57 @@
 					},
 					defaults: {
 					},
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									xtype: 'combobox',
+									id: 'question-activeStatus',
+									emptyText: 'Active questions',
+									fieldLabel: 'Show Components with:',
+									labelWidth: '250px',
+									name: 'question-activeStatus',
+									displayField: 'description',
+									valueField: 'code',
+									listeners: {
+										change: function (filter, newValue, oldValue, opts) {
+											var qButton = Ext.getCmp('question-activateButton');
+											var newUrl = '../api/v1/resource/components/questionviews';
+											if (newValue === 'A') {
+												qButton.setText('Deactivate');
+												newUrl += '?status=A';
+											}
+											else {
+												qButton.setText('Activate');
+												newUrl += '?status=I';
+											}
+											qButton.disable();
+											componentPanel.getStore().getProxy().setUrl(newUrl);
+											componentPanel.getStore().load();
+										}
+									},
+									store: Ext.create('Ext.data.Store', {
+										fields: [
+											'code',
+											'description'
+										],
+										data: [
+											{
+												code: 'A',
+												description: 'Active questions'
+											},
+											{
+												code: 'I',
+												description: 'Inactive questions'
+											}
+										]
+									})
+								}
+							]
+						}
+					],
 					items: [
 						componentPanel,
 						{
@@ -385,6 +427,13 @@
 					// we must add it to our emptyText if we want proper styling.
 					answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers.</div>';
 					answerStore.load();
+					Ext.getCmp('question-activateButton').enable();
+					Ext.getCmp('answer-activateButton').disable();
+				};
+
+				
+				var actionSelectedAnswer = function actionSelectedAnswer(componentId, questionId, answerId)  {
+					Ext.getCmp('answer-activateButton').enable();
 				};
 
 
