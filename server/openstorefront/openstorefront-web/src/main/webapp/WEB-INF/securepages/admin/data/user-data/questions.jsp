@@ -80,6 +80,19 @@
 					flex: 2,
 					store: componentStore,
 					layout: 'fit',
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh'
+								}
+							]
+						}
+					],
 					columns: [
 						{
 							text: 'Components',
@@ -109,6 +122,50 @@
 							actionSelectedQuestion(componentId, questionId);
 						}
 					},
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									xtype: 'combobox',
+									id: 'question-activeStatus',
+									emptyText: 'Active',
+									fieldLabel: 'Active Status',
+									name: 'question-activeStatus',
+									displayField: 'description',
+									valueField: 'code',
+									listeners: {
+										change: function (filter, newValue, oldValue, opts) {
+
+										}
+									},
+									store: Ext.create('Ext.data.Store', {
+										fields: [
+											'code',
+											'description'
+										],
+										data: [
+											{
+												code: 'A',
+												description: 'Active'
+											},
+											{
+												code: 'I',
+												description: 'Inactive'
+											}
+										]
+									})
+								},
+								{
+									text: 'Deactivate',
+									scale: 'medium',
+									disabled: true,
+									iconCls: 'fa fa-2x fa-power-off'
+								}
+							]
+						}
+					],
 					columns: [
 						{
 							text: 'Question',
@@ -168,9 +225,53 @@
 					layout: 'fit',
 					store: answerStore,
 					viewConfig: {
-						emptyText: 'Please select a component and question.',
+						emptyText: 'Please select a component.',
 						deferEmptyText: false
 					},
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									xtype: 'combobox',
+									id: 'answer-activeStatus',
+									emptyText: 'Active',
+									fieldLabel: 'Active Status',
+									name: 'answer-activeStatus',
+									displayField: 'description',
+									valueField: 'code',
+									listeners: {
+										change: function (filter, newValue, oldValue, opts) {
+
+										}
+									},
+									store: Ext.create('Ext.data.Store', {
+										fields: [
+											'code',
+											'description'
+										],
+										data: [
+											{
+												code: 'A',
+												description: 'Active'
+											},
+											{
+												code: 'I',
+												description: 'Inactive'
+											}
+										]
+									})
+								},
+								{
+									text: 'Deactivate',
+									scale: 'medium',
+									disabled: true,
+									iconCls: 'fa fa-2x fa-power-off'
+								}
+							]
+						}
+					],
 					columns: [
 						{
 							text: 'Answer',
@@ -236,25 +337,16 @@
 					},
 					defaults: {
 					},
-					dockedItems: [{
-							xtype: 'toolbar',
-							dock: 'top',
-							items: [
-								{
-									text: 'Refresh',
-									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh'
-								}
-							]
-						}],
 					items: [
 						componentPanel,
 						{
-							xtype: 'splitter'
+							xtype: 'splitter',
+							style: 'background-color: transparent;'
 						},
 						questionPanel,
 						{
-							xtype: 'splitter'
+							xtype: 'splitter',
+							style: 'background-color: transparent;'
 						},
 						answerPanel
 					]
