@@ -47,7 +47,7 @@ limitations under the License.
 			pageMap['Integrations'] = '/openstorefront/admin?tool=Integrations';
 			pageMap['Imports'] = 'Router.action?page=admin/data/imports.jsp';
 			pageMap['Lookups'] = 'Router.action?page=admin/data/lookup.jsp';
-			pageMap['Media'] = '/openstorefront/admin?tool=Media';
+			pageMap['Media'] = 'Router.action?page=admin/data/media.jsp';
 			pageMap['Organizations'] = 'Router.action?page=admin/data/organizations.jsp';
 			pageMap['Questions'] = '/openstorefront/admin?tool=Questions';
 			pageMap['Reviews'] = '/openstorefront/admin?tool=Reviews';
