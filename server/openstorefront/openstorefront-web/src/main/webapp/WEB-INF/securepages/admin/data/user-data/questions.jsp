@@ -91,7 +91,15 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh'
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function () {
+										componentPanel.getStore().load();
+										componentPanel.getSelectionModel().deselectAll();
+										answerStore.setProxy(undefined);
+										answerStore.load();
+										questionStore.setProxy(undefined);
+										questionStore.load();
+									}
 								}
 							]
 						}
@@ -135,7 +143,16 @@
 									id: 'question-activateButton',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-power-off'
+									iconCls: 'fa fa-2x fa-power-off',
+									handler: function () {
+										var cmpSel = componentPanel.getSelectionModel().hasSelection();
+										var qSel = questionPanel.getSelectionModel().hasSelection();
+										if (cmpSel && qSel) {
+											var componentId = componentPanel.getSelection()[0].data.componentId;
+											var questionId = questionPanel.getSelection()[0].data.questionId;
+											toggleQuestion(componentId, questionId);
+										}
+									}
 								}
 							]
 						}
@@ -219,6 +236,7 @@
 									xtype: 'combobox',
 									id: 'answer-activeStatus',
 									emptyText: 'Active',
+									value: 'A',
 									fieldLabel: 'Active Status',
 									name: 'answer-activeStatus',
 									displayField: 'description',
@@ -258,7 +276,18 @@
 									id: 'answer-activateButton',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-power-off'
+									iconCls: 'fa fa-2x fa-power-off',
+									handler: function () {
+										var cmpSel = componentPanel.getSelectionModel().hasSelection();
+										var qSel = questionPanel.getSelectionModel().hasSelection();
+										var aSel = answerPanel.getSelectionModel().hasSelection();
+										if (cmpSel && qSel && aSel) {
+											var componentId = componentPanel.getSelection()[0].data.componentId;
+											var questionId = questionPanel.getSelection()[0].data.questionId;
+											var answerId = answerPanel.getSelection()[0].data.responseId;
+											toggleAnswer(componentId, questionId, answerId);
+										}
+									}
 								}
 							]
 						}
@@ -402,6 +431,8 @@
 
 				var actionSelectedComponent = function actionSelectedComponent(componentId) {
 					// Set Proxy and Load Questions
+					Ext.getCmp('question-activateButton').disable();
+					Ext.getCmp('answer-activateButton').disable();
 					questionStore.setProxy({
 						id: 'questionStoreProxy',
 						url: '/openstorefront/api/v1/resource/components/' + componentId + '/questions',
@@ -425,8 +456,10 @@
 					});
 					// Since x-grid-empty is only applied on the intial viewConfig,
 					// we must add it to our emptyText if we want proper styling.
-					answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers.</div>';
+					answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers with the selected status.</div>';
 					answerStore.load();
+					var filterSelection = Ext.getCmp('answer-activeStatus').getValue();
+					answerStore.filter('activeStatus', filterSelection);
 					Ext.getCmp('question-activateButton').enable();
 					Ext.getCmp('answer-activateButton').disable();
 				};
@@ -434,6 +467,15 @@
 				
 				var actionSelectedAnswer = function actionSelectedAnswer(componentId, questionId, answerId)  {
 					Ext.getCmp('answer-activateButton').enable();
+				};
+
+
+				var toggleQuestion = function toggleQuestion(componentId, questionId) {
+					console.log('Toggle Question ' + questionId);
+				};
+
+				var toggleAnswer = function toggleAnswer(componentId, questionId, answerId) {
+					console.log('Toggle Answer ' + answerId);
 				};
 
 
