@@ -163,6 +163,8 @@
 									displayField: 'description',
 									valueField: 'code',
 									emptyText: 'Select a Component',
+									typeAhead: true,
+									minChars: 3,
 									allowBlank: false,
 									name: 'component',
 									store: Ext.create('Ext.data.Store', {
