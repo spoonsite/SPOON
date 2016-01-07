@@ -31,7 +31,7 @@ licensed under Apache V2.**
 # 2.  User Features
 ------
 
-These features that are available to users to be able to access the information in a variety of ways.
+The features that are available to users to be able to access the information in a variety of ways.
 
 ##   2.1  Searching
 ------
@@ -138,7 +138,42 @@ performing an exact search and the words are a necessary part of the
 phrase being searched. For more information on exact searches, see
 section 1.1.3.
 
-## 2.2 SvcV-4
+## 2.2 User Tools
+------------
+
+All user information can be set on the main page of **User Tools**. Initially the user
+profile is populated with information from the user's external security
+account.
+
+**To edit your profile:**
+
+1.  Select **User Tools**** from the user menu.
+
+2.  Update the form.
+
+3.  Click **Save**.
+
+### 2.2.1 Submissions
+-----------
+
+
+### 2.2.2 Tools
+-----------
+
+
+#### 2.2.2.1 Watches
+------------
+
+
+#### 2.2.2.2 Reviews
+------------
+
+
+#### 2.2.2.3 Reports
+--------
+
+
+## 2.3 SvcV-4
 ------
 
 SvcV-4 is a DI2E architecture taxonomy. The application provides
@@ -159,7 +194,7 @@ in the DI2E community.
 **NOTE:** All child branches are searched. (Eg. 1.2 …will also show
 1.2.1, 1.2.2…etc)
 
-## 2.3 Filtering
+## 2.4 Filtering
 ---------
 
 Filters are applied to a set of search results from the search results
@@ -174,7 +209,7 @@ Available Filters
 -   *By Rating*   -  Filters results by User Review Rating
 -   *By Attribute*  - Filters results by the listing the match the selected Attributes (Vitals).
 
-## 2.4 Tags
+## 2.5 Tags
 ------
 
 Users can "Tag" listings so that they can be used to later find and
@@ -198,7 +233,7 @@ screen and on the home page.
 
 **NOTE:** Recall that you may only remove your own tags.
 
-## 2.5 Watches
+## 2.6 Watches -- **Move to 2.2.2.1**
 -------
 
 A watch is set on a component to allow for a user to be notified of
@@ -241,7 +276,7 @@ place.
 **NOTE:** Watches can also be removed from the component detail view of
 the component being watched.
 
-## 2.6 Reviews
+## 2.7 Reviews -- **Move to 2.2.2.2**
 -------
 
 Reviews are user-submitted feedback on a component. A user may view
@@ -287,7 +322,7 @@ specific component of the interface with the rest of the community.
 by then clicking on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the
 title of the review. You can only remove reviews you post.
 
-## 2.7 Questions
+## 2.8 Questions
 ---------
 
 Questions or "Q&A" allow users to post questions about components and
@@ -340,7 +375,7 @@ with the component.
 Once you have answered a question, your answer may be edited and removed
 using the buttons next to the answer.
 
-## 2.8 Comparing
+## 2.9 Comparing
 ---------
 
 The comparison feature allows for side-by-side viewing of multiple
@@ -361,7 +396,7 @@ better suited your project's needs.
 3.  You can customize the details being viewed by checking the items
     available in the **Sections to compare** area.
 
-## 2.9  Printing
+## 2.10  Printing
 --------
 
 Allows for customizable print view of a component listing that can be
@@ -380,23 +415,6 @@ In the print window, you can customize what is printed by selecting
 **Custom Template**. Once what you view in the print window is ready,
 click the Print icon ![print](../../../../../../client/openstorefront/app/images/help/print.png) to bring up the browser
 print dialog and complete printing.
-
-## 2.10 User Profile
-------------
-
-All user information can be set in the profile. Initially the user
-profile is populated with information from the user's external security
-account.
-
-**To edit your profile:**
-
-1.  Select **User Profile** from the user menu.
-
-2.  Click on the **Update User Info** checkbox.
-
-3.  Update the form.
-
-4.  Click **Save User Profile**.
 
 ## 2.11 Changes Notification
 --------------------
@@ -418,13 +436,84 @@ listings on the application.
 
 5.  Click **Save User Profile**.
 
-
-# 3.  Application Administration  *
+# 3. Admin Tools*
 ----------
 
 Admin tools allow for the management of all data in the system.
  
 (Sections marked with a * requires admin account access)
+
+
+## 3.1 Dashboard
+--------
+
+The dashboard is the homepage of the Admin Tools, where various statistics are shown 
+about storefront.  There are four main sections in the dashboard: Entry Statistics, Notifications, 
+User Statistics, and System Statistics.
+
+
+## 3.2 Data Management
+--------
+
+### 3.2.1 Attributes
+-------
+
+### 3.2.2 Entries
+-----
+
+### 3.2.3 Entry Types
+------
+
+### 3.2.4 Highlights
+-------
+
+### 3.2.5 Integrations
+-------
+
+### 3.2.6 Imports
+-------
+
+### 3.2.7 Lookups
+--------
+
+### 3.2.8 Organizations
+--------
+
+### 3.2.9 User Data
+---------
+
+## 3.3 Application Management
+--------
+
+### 3.3.1 Alerts
+------
+
+### 3.3.2 Jobs
+------
+
+### 3.3.3 Reports
+------
+
+### 3.3.4 System
+------
+
+### 3.3.5 Tracking
+------
+
+### 3.3.6 Messages
+------
+
+### 3.3.7 API Documentation
+------
+
+
+# 3.  Application Administration  *
+----------
+
+## 3.1 Dashboard
+------
+
+ 
 
 ## 3.1  Users *
 ------
