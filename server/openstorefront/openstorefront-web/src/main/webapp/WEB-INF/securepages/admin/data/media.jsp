@@ -169,7 +169,7 @@
 				    selectedObj = Ext.getCmp('mediaGrid').getSelection()[0].data;
 					viewMediaWin.html=null;
 					viewMediaWin.setWidth(600);
-					viewMediaWin.setHeight(450);
+					viewMediaWin.setHeight(470);
 					viewMediaWin.setScrollable(true);
 					//show display media based on mime type
 					 if (selectedObj && selectedObj.mimeType){
@@ -177,18 +177,13 @@
 						var type = selectedObj.mimeType;
 					    if (type.match('video.*')) {
 							viewMediaWin.setTitle('Video Preview');
-							viewMediaWin.setWidth(600);
-							viewMediaWin.setHeight(500);
 					        viewMediaWin.update('<video autoplay="autoplay" controls="controls" src="../'+ selectedObj.mediaLink+'" width="100%" heigh="100%"></video>');
 						}
 						else if(type.match('audio.*')){
 							viewMediaWin.setTitle('Audio Preview');
-							viewMediaWin.setWidth(325);
-							viewMediaWin.setHeight(85);
 							viewMediaWin.setScrollable(false);
 							viewMediaWin.update('<audio autoplay="autoplay" width="100%" controls="controls" src="../'+ selectedObj.mediaLink+'"/>');
-						
-							
+				
 						}
 						else if(type.match('image.*')){
 							
