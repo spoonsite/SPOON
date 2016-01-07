@@ -1,19 +1,19 @@
 
 <span style="font-size: 24px;">User Guide</span>
 
-Version 1.4
+Version 1.6
                                                       
 
 
 # 1. Overview
 ------
 
-The Open Storefront application is a software cataloging system that is used to catalog components
-of interest to the DI2E community. Components include Government off
-the shelf (GOTS), commercial off the shelf (COTS), and Open Source
-software (OSS). The component evaluations done by DI2E's Centers of
-Excellence are displayed in the Storefront and give details on the
-following:
+The DI2E Clearinghouse application is a software cataloging system that
+is used to catalog components of interest to the DI2E community. 
+Components include Government off the shelf (GOTS), commercial off the
+shelf (COTS), and Open Source software (OSS). The component evaluations
+done by DI2E's Centers of Excellence are displayed in the Clearinghouse 
+and give details on the following:
 
 -   Ownership
 -   Where/How to access the software
@@ -22,7 +22,7 @@ following:
 -   Links to documentation, source code and other artifacts
 -   Evaluation information
 
-**Open Storefront is developed by Space Dynamics Laboratory for DI2E and is
+**DI2E Clearinghouse is developed by Space Dynamics Laboratory for DI2E and is
 licensed under Apache V2.**
 
 ![Logo](../../../../../../client/openstorefront/app/images/logo2.png)
@@ -37,7 +37,7 @@ The features that are available to users to be able to access the information in
 ------
 
 
-Storefront Search provides a way to find component lists and articles
+Clearinghouse Search provides a way to find component lists and articles
 matching search criteria. Several types of searches are supported. The
 types of searches that can be performed are:
 
@@ -138,49 +138,55 @@ performing an exact search and the words are a necessary part of the
 phrase being searched. For more information on exact searches, see
 section 1.1.3.
 
-## 2.1.6 SvcV-4  **Make a section for the new search from home page?**
+## 2.2. Search Tools and other search methods
 ------
 
-SvcV-4 is a DI2E architecture taxonomy. The application provides
-functionality to search for listing by SvcV-4 taxonomy.
+From the DI2E Clearinghouse home page clicking on this icon ![Logo](../../../../../../client/openstorefront/app/images/searchtools.png)
+will bring up the Search Tools.  Three types of unique searches are available from here:
 
-A user may use this feature to look for capabilities that are available
-in the DI2E community.
+1.  Topic
 
-**To search by SvcV-4:**
+2.  Category
 
-1.  Go to home page
+3.  Architecture
 
-2.  Click on SvcV-4
+### 2.2.1 Topic Search Tool
+------
 
-3.  Navigate the search tree on the left and the application will show
-    the description of the taxonomy and the related search results.
+The topic tab in the Search Tools window allows searching by Articles, 
+DI2E Components, or other topic search types.  
 
-**NOTE:** All child branches are searched. (Eg. 1.2 …will also show
-1.2.1, 1.2.2…etc)
-
-## 2.1.7 Filtering 
----------
-
-Filters are applied to a set of search results from the search results
-page.
-
-Here is a list of filters that may be applied:
-
-Available Filters
-
--   *By Text*     - Filters results by the title of the listing.
--   *By Tag*      - Filters results by matching tags
--   *By Rating*   -  Filters results by User Review Rating
--   *By Attribute*  - Filters results by the listing the match the selected Attributes (Vitals).
+After clicking on the topic on the left the results are shown on the right.  
+Click on the column name to sort or click the link button to link to the 
+individual Clearinghouse entry.  Results of all of the topics can also be 
+shown in a new window.
 
 
-## 2.2 User Tools
+### 2.2.3 Category Search Tool
+------
+
+The Category tab in the Search Tools window displays many categories that
+are expandable by clicking on the down arrow icon.  Click on the lowest 
+subcategory to display search results.  Clicking on the column name sorts
+the table by that column.  Clicking on the link button opens the 
+individual entry, or all results can be displayed in a new window.
+
+### 2.2.3 Architecture Search Tool
+------
+
+The Architecture tab window displays a heiarchy of results per SvcV-4 
+taxonomy.  Expand All and Collapse All buttons are provided.  Clicking 
+on the **+** button expands an individual folder and **-** collapses the folder.  
+Search results are displayed with sortable columns and links to individual 
+results or the entire search results can be opened in a new page.
+
+
+## 2.3 User Tools
 ------------
 
-All user information can be set on the main page of **User Tools**. Initially the user
-profile is populated with information from the user's external security
-account.
+All user information can be set on the main page of **User Tools**. 
+Initially the user profile is populated with information from the user's 
+external security account.
 
 **To edit your profile:**
 
@@ -190,15 +196,24 @@ account.
 
 3.  Click **Save**.
 
-### 2.2.1 Submissions
+### 2.3.1 Submissions
+-----------
+
+This page displays all of the submissions you, the current logged in user, have
+made.  In the User Submissions table the columns can be sorted by clicking on 
+the column header.  
+
+In addition icons for preview, copy, unsubmit, and delete can be found.  Finally,
+a **+ Create new submission** button allows for a new entry to be made.
+
+**FINISH WRITTING WHEN THE SUBMISSION FORM HAS CHANGED**
+**SUBMISSION FORM DETAILS HERE**
+
+### 2.3.2 Tools
 -----------
 
 
-### 2.2.2 Tools
------------
-
-
-#### 2.2.2.1 Watches
+#### 2.3.2.1 Watches
 ------------
 A watch is set on a component to allow for a user to be notified of
 changes to a component. There are two ways notifications occur in the
@@ -240,7 +255,7 @@ place.
 **NOTE:** Watches can also be removed from the component detail view of
 the component being watched.
 
-#### 2.2.2.2 Reviews
+#### 2.3.2.2 Reviews
 ------------
 Reviews are user-submitted feedback on a component. A user may view
 other users' reviews or write a review to share experiences with a
@@ -286,12 +301,12 @@ by then clicking on the delete icon ![trash](../../../../../../client/openstoref
 title of the review. You can only remove reviews you post.
 
 
-#### 2.2.2.3 Reports
+#### 2.3.2.3 Reports
 --------
 **Write Stuff HERE**
 
 
-## 2.3 Tags  
+## 2.4 Tags  
 ------
 Users can "Tag" listings so that they can be used to later find and
 refine search results. User-created tags are visible to all users.
@@ -314,7 +329,7 @@ screen and on the home page.
 
 **NOTE:** Recall that you may only remove your own tags.
 
-## 2.4 Questions  
+## 2.5 Questions  
 ---------
 
 Questions or "Q&A" allow users to post questions about components and
@@ -367,7 +382,7 @@ with the component.
 Once you have answered a question, your answer may be edited and removed
 using the buttons next to the answer.
 
-## 2.5 Comparing
+## 2.6 Comparing
 ---------
 
 The comparison feature allows for side-by-side viewing of multiple
@@ -388,7 +403,7 @@ better suited your project's needs.
 3.  You can customize the details being viewed by checking the items
     available in the **Sections to compare** area.
 
-## 2.6  Printing
+## 2.7  Printing
 --------
 
 Allows for customizable print view of a component listing that can be
@@ -408,7 +423,7 @@ In the print window, you can customize what is printed by selecting
 click the Print icon ![print](../../../../../../client/openstorefront/app/images/help/print.png) to bring up the browser
 print dialog and complete printing.
 
-## 2.7 Changes Notification
+## 2.8 Changes Notification
 --------------------
 
 The application sends out notification emails about any changes that
@@ -442,7 +457,7 @@ Admin tools allow for the management of all data in the system.
 --------
 
 The dashboard is the homepage of the Admin Tools, where various statistics are shown 
-about storefront.  There are four main sections in the dashboard: Entry Statistics, Notifications, 
+about the Clearinghouse.  There are four main sections in the dashboard: Entry Statistics, Notifications, 
 User Statistics, and System Statistics.
 
 
