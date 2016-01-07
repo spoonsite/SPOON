@@ -138,42 +138,7 @@ performing an exact search and the words are a necessary part of the
 phrase being searched. For more information on exact searches, see
 section 1.1.3.
 
-## 2.2 User Tools
-------------
-
-All user information can be set on the main page of **User Tools**. Initially the user
-profile is populated with information from the user's external security
-account.
-
-**To edit your profile:**
-
-1.  Select **User Tools**** from the user menu.
-
-2.  Update the form.
-
-3.  Click **Save**.
-
-### 2.2.1 Submissions
------------
-
-
-### 2.2.2 Tools
------------
-
-
-#### 2.2.2.1 Watches
-------------
-
-
-#### 2.2.2.2 Reviews
-------------
-
-
-#### 2.2.2.3 Reports
---------
-
-
-## 2.3 SvcV-4
+## 2.1.6 SvcV-4  **Make a section for the new search from home page?**
 ------
 
 SvcV-4 is a DI2E architecture taxonomy. The application provides
@@ -194,7 +159,7 @@ in the DI2E community.
 **NOTE:** All child branches are searched. (Eg. 1.2 …will also show
 1.2.1, 1.2.2…etc)
 
-## 2.4 Filtering
+## 2.1.7 Filtering 
 ---------
 
 Filters are applied to a set of search results from the search results
@@ -209,33 +174,32 @@ Available Filters
 -   *By Rating*   -  Filters results by User Review Rating
 -   *By Attribute*  - Filters results by the listing the match the selected Attributes (Vitals).
 
-## 2.5 Tags
-------
 
-Users can "Tag" listings so that they can be used to later find and
-refine search results. User-created tags are visible to all users.
-However, only the owner of the tag or an admin user may remove a tag.
-Tags are used in the main Omni-search field shown at the top of the
-screen and on the home page.
+## 2.2 User Tools
+------------
 
-**To create a tag:**
+All user information can be set on the main page of **User Tools**. Initially the user
+profile is populated with information from the user's external security
+account.
 
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
+**To edit your profile:**
 
-2.  Click on the Tag icon ![tag](../../../../../../client/openstorefront/app/images/help/tags.png) to open the tag panel.
+1.  Select **User Tools** from the user menu.
 
-3.  Enter a new tag in the text field.
+2.  Update the form.
 
-**To remove a tag:**
+3.  Click **Save**.
 
-1.  Click the "x" on the tag in the tag panel (see create tag)
+### 2.2.1 Submissions
+-----------
 
-**NOTE:** Recall that you may only remove your own tags.
 
-## 2.6 Watches -- **Move to 2.2.2.1**
--------
+### 2.2.2 Tools
+-----------
 
+
+#### 2.2.2.1 Watches
+------------
 A watch is set on a component to allow for a user to be notified of
 changes to a component. There are two ways notifications occur in the
 application and there is no limit to the amount of watches a user may
@@ -276,9 +240,8 @@ place.
 **NOTE:** Watches can also be removed from the component detail view of
 the component being watched.
 
-## 2.7 Reviews -- **Move to 2.2.2.2**
--------
-
+#### 2.2.2.2 Reviews
+------------
 Reviews are user-submitted feedback on a component. A user may view
 other users' reviews or write a review to share experiences with a
 specific component of the interface with the rest of the community.
@@ -322,7 +285,36 @@ specific component of the interface with the rest of the community.
 by then clicking on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the
 title of the review. You can only remove reviews you post.
 
-## 2.8 Questions
+
+#### 2.2.2.3 Reports
+--------
+**Write Stuff HERE**
+
+
+## 2.3 Tags  
+------
+Users can "Tag" listings so that they can be used to later find and
+refine search results. User-created tags are visible to all users.
+However, only the owner of the tag or an admin user may remove a tag.
+Tags are used in the main Omni-search field shown at the top of the
+screen and on the home page.
+
+**To create a tag:**
+
+1.  View Component Details by clicking on the listing title in the
+    search results screen.
+
+2.  Click on the Tag icon ![tag](../../../../../../client/openstorefront/app/images/help/tags.png) to open the tag panel.
+
+3.  Enter a new tag in the text field.
+
+**To remove a tag:**
+
+1.  Click the "x" on the tag in the tag panel (see create tag)
+
+**NOTE:** Recall that you may only remove your own tags.
+
+## 2.4 Questions  
 ---------
 
 Questions or "Q&A" allow users to post questions about components and
@@ -375,7 +367,7 @@ with the component.
 Once you have answered a question, your answer may be edited and removed
 using the buttons next to the answer.
 
-## 2.9 Comparing
+## 2.5 Comparing
 ---------
 
 The comparison feature allows for side-by-side viewing of multiple
@@ -396,7 +388,7 @@ better suited your project's needs.
 3.  You can customize the details being viewed by checking the items
     available in the **Sections to compare** area.
 
-## 2.10  Printing
+## 2.6  Printing
 --------
 
 Allows for customizable print view of a component listing that can be
@@ -416,7 +408,7 @@ In the print window, you can customize what is printed by selecting
 click the Print icon ![print](../../../../../../client/openstorefront/app/images/help/print.png) to bring up the browser
 print dialog and complete printing.
 
-## 2.11 Changes Notification
+## 2.7 Changes Notification
 --------------------
 
 The application sends out notification emails about any changes that
@@ -435,6 +427,8 @@ listings on the application.
 4.  Check the **Notification** checkbox.
 
 5.  Click **Save User Profile**.
+
+
 
 # 3. Admin Tools*
 ----------
@@ -458,120 +452,112 @@ User Statistics, and System Statistics.
 ### 3.2.1 Attributes
 -------
 
+#### 3.2.1.2 Types *
+------
+
+Attribute Types represent a related group of specific categories or
+represent a single attribute of a listing (Eg. "Funded" would be a type
+with the corresponding value "Yes" or "No"). A type may have many codes.  
+
+Deleting a type will delete the associated codes and component
+attributes. Inactivating a type will inactivate associated data such as
+component attributes.
+
+**NOTE**: Avoid "/" and special characters in type codes. For example,
+use: \[A-Z\]\[0-9\].
+
+**To add or edit a type:**
+
+1.  From the Attribute Tool, click on the **Add** or the
+    **Edit** button.
+
+2.  Fill in the form.
+
+**NOTE:** The Attribute Type Code field should be all caps and should not
+contain spaces or "/".
+
+3.  Save the form and you can proceed to editing the codes for the type.
+
+**To export a type:**
+
+1.  Select which types to export.
+
+2.  Click **Export**.
+
+Exports are in JSON format and contain the type and all related codes.
+
+**To import a type:**
+
+1.  Use the Attribute File Import.
+
+2.  Click **Import**.
+
+3.  Select an Attribute File. This should be a JSON attribute file.
+
+4.  Click **Upload**.
+
+ The Import will be processed in the background. The task notification
+ area next to the user menu will indicate when the import task has
+ completed.
+
+ The processing behavior is: for every code not in the import, the
+ existing code will be inactivated. If the code already exists and
+ doesn't match, then it will be updated. For code that matches, the
+ code in the file will not be processed. If a type doesn't exist, a new
+ one will be created. If the type matches, it will be updated. Other
+ existing types not found in the file will not be affected.
+
+**Importing SvcV-4:**
+
+1.  Use SvcV-4 import.
+
+2.  Make sure the SvcV-4 file is in the correct format (CVS) and it
+    contains the correct columns. (See warning on upload for the
+    expected fields)
+
+3.  Select a SvcV-4 import file.
+
+4.  Click **Upload**.
+
+ **WARNING:** UID in the file should match what is stored in application.
+    The application support both 1 and 0001 matching to 1.
+
+Processing behavior works the same as the Attribute import process.
+
+### 3.2.1.3 Codes *
+------
+
+An attribute code is a specific category value that can be applied to a
+component. For example: Component listing may contain and attribute for
+"Funded" as "Yes".
+
+**To add and edit a code:**
+
+1.  Select which Type to edit.
+
+2.  Select **Manage Codes**.
+
+3.  Click **Add New Code** or the ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) edit icon.
+
+4.  Fill out the form.
+
+5.  Click **Save**.
+
+Field  Descriptions:
+
+-  **Label**              - Human readable value of the code
+-  **Code**                - System reference key
+-  **Description**       - This is a detail description of the meaning of the value. It's used in popup to help users interpolate the data.
+-  **Group Code**        - Using to create sub groups in the code. Typically used only in special cases.
+-  **Sort Order**          - Use to force a specific sort order. (Default is sort by Label)
+-  **Architecture Code**   - Used for special hieratical sorting. Only applies to Architecture attribute types.
+-  **Badge URL**           - Set to add a graphical badge for a code
+-  **Highlight Class**     - Used to add color emphasis to a code.
+
 ### 3.2.2 Entries
 -----
 
-### 3.2.3 Entry Types
-------
-
-### 3.2.4 Highlights
--------
-
-### 3.2.5 Integrations
--------
-
-### 3.2.6 Imports
--------
-
-### 3.2.7 Lookups
---------
-
-### 3.2.8 Organizations
---------
-
-### 3.2.9 User Data
----------
-
-## 3.3 Application Management
---------
-
-### 3.3.1 Alerts
-------
-
-### 3.3.2 Jobs
-------
-
-### 3.3.3 Reports
-------
-
-### 3.3.4 System
-------
-
-### 3.3.5 Tracking
-------
-
-### 3.3.6 Messages
-------
-
-### 3.3.7 API Documentation
-------
-
-
-# 3.  Application Administration  *
-----------
-
-## 3.1 Dashboard
-------
-
- 
-
-## 3.1  Users *
-------
-
-Every user in the system has a user profile.  A user profile contains information
-about the user and their user specific settings.   The initial creation of the profile
-at first login will contain the information gathered from the external security application.
-
-### 3.1.1 Creation *
-------
-
-The application doesn't directly manage user-only profiles. When a user
-first securely logs in, a profile is created. It's up to the applicable
-security utility (Open AM, LDAP, Database…etc.) to define the users.
-
-### 3.1.2 Messaging *
-------
-
-Users can message other users using User Profiles. The message will be
-emailed to the email address listed in their profile.
-
-**To message a user or a group of users:**
-
-1.  Navigate to the User Profiles Tool.
-
-2.  Click on the message icon ![mail](../../../../../../client/openstorefront/app/images/help/mail.png) next to the user
-    (or users) that you want to message.
-
-3.  Fill out the form.
-
-4.  Click **Send** to send the message immediately.
-
-**NOTE:** Messages are sent to email addresses one at a time so no email
-addresses are leaked to other users.
-
-### 3.1.3 Control *
-------
-
-An admin may edit, activate or inactivate a profile. Inactivating a
-profile does not prevent login. Upon login, the user's profile will be
-reactivated. Once a profile has been inactivated, that user's watches
-and messages are also inactivated. Reactivating the profile will
-activate the user's existing watches, but it won't send any previous
-messages – just messages going forward.
-
-**To toggle active status:**
-
-1.  Navigate to User Profiles Tool.
-
-2.  Click on the activate/inactivate ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) icon and use
-    the filter option to view active/inactive users.
-
-## 3.2 Components *
-----------
-
-
-
-### 3.2.1 Managing *
+#### 3.2.2.1 Managing *
 ----------
 
 Components can be managed using the Components Tool.  Components are created by an application administrator.
@@ -645,7 +631,7 @@ Inactive components are not visible to or searchable by users.
     new task will be created to handle the import. The application will
     notify the admin when the task is complete or if there was an issue.
 
-### 3.2.2 Approval *
+#### 3.2.2.2 Approval *
 ------
 
 Approved components are searchable by all users. Pending/Not submitted
@@ -669,7 +655,7 @@ step above and selecting **Pending**. Marking the component as
 **Pending** makes it unapproved.
 
 
-### 3.2.3 General *
+#### 3.2.2.3 General *
 ------
 
 General information about the component is found here such as the Name, 
@@ -689,7 +675,336 @@ b. Component Type:  ARTICLE *(allows for watches to be put on the article)* | Co
 c. Security Type:   *select the security level of the component or article*
   
 
-### 3.2.4 Relationships *
+### 3.2.3 Entry Types
+------
+
+### 3.2.4 Highlights
+-------
+
+### 3.2.5 Integrations
+-------
+
+Component Integration allows for pulling information from an external
+system and mapping that back to a component in the application. This
+allows for automatic sync of the data source. Currently the application
+only supports integration with Jira.
+
+**To setup a Jira Integration:**
+
+1.  Navigate to Integration Management Admin Tool using the admin
+    navigation menu.
+
+**Add Mappings:**
+
+1.  Select Jira Project.
+2.  Select Issue Type.
+3.  Select Attribute in application.
+4.  Select Jira field to which to map.
+5.  Create mapping by moving them from the available list to
+        attribute codes.
+6.  Click **Save**.
+
+ **NOTE:** More than one field in JIRA can be mapped to an attribute
+        code.
+
+**Add Configuration:**
+
+1.  Create a new Configuration by clicking **Add** on the Component
+    Configuration tab.
+2.  Select a Component.
+3.  Click **Add**
+4.  Select JIRA Project (only projects with mappings will be available).
+5.  Enter the Jira Issue Number (Eg. ASSET-14)
+6.  Click **Save**.
+
+The Component Job will be scheduled when it's saved. The job will run on
+an interval based on the global refresh rate. The default is once a day
+at 10:00 am server time. The component configuration table will show
+when the integration last ran. Also, the scheduled integration job can
+be viewed using the Jobs Tool by clicking **Show Integration Jobs**.
+
+The Integration Tool allows for manual control. However, it's not
+necessary to run the integration manually as the automated job will
+handle that.
+
+If the integration fails for any reason, the configuration table will so
+indicate and an error ticket will be created for further analysis. The
+integration may fail if the server it's connecting to is unavailable.
+This may be a temporary condition. The system will try again on the next
+interval. If the configuration job continues to have issues it may
+deactivated manually using the tools and then reactivated when the issue
+is resolved.
+
+### 3.2.6 Imports
+-------
+
+### 3.2.7 Lookups
+--------
+
+### 3.2.8 Organizations
+--------
+
+ Organizations provide information on specific organizations that are linked with the components listed on the site. The information these objects contain include:
+
+ - **Description** -            What the organization does
+ - **Type** -                   The type of organization (i.e. Commercial Business, Contractor, US Organization, etc.)
+ - **Website** -                The website for the specific organization if provided
+ - **Address** -                The address for the organization
+ - **Contact Information** -    A way to contact the organization
+
+#### 3.2.8.1 Managing *
+--------------
+
+**To add a new organization:**
+
+1.  Click **Add New Organization** from the Organizations section of the Admin Tools.
+
+2.  Enter the information and click **Save Changes**.
+
+**Note:** When a new component is added if an unrecognized organization is added, it will automatically be saved to the 
+  organization list.  However, details such as the Description and Main Contact Information will need to be added here.
+
+**To edit an organization**
+
+1.  From Organizations in the Admin Tools, select an organization.
+
+2.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) next to the organization.
+
+    a.  Update Organization information as desired including:  Name, Description, Organization Link, and Organization Type.
+
+    b.  Update Main Contact information as desired including:  Contact Name, Phone Number, Email, Agency, Department, 
+         Address, and Security Type.
+    
+3.  When finished, click **Save Changes**.
+
+**To remove an organization:**
+
+1.  From Organizations in the Admin Tools, select an organization.
+
+2.  Click on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the organization.
+
+3.  Confirm that you wish to delete the organization by cliking **OK**.
+
+
+**"No Organization" References:**
+This displays a list of references where no organization is listed.  
+
+**Run Extract:**
+This runs a query to get current component and organization information to update the table.  
+
+**Show Contact info:**
+Clicking this button ![Show Contact Info](../../../../../../client/openstorefront/app/images/help/showcontactinfo.png)
+ shows the Agency, Department, Contact Name, Contact Phone, and Contact Email for the organization.
+
+**View References:**
+Clicking this icon ![View References](../../../../../../client/openstorefront/app/images/help/viewreferences.png)
+ shows all of the references for the organization.  
+
+ 
+### 3.2.9 User Data
+---------
+Every user in the system has a user profile.  A user profile contains information
+about the user and their user specific settings.   The initial creation of the profile
+at first login will contain the information gathered from the external security application.
+
+#### 3.2.9.1 Creation *
+------
+
+The application doesn't directly manage user-only profiles. When a user
+first securely logs in, a profile is created. It's up to the applicable
+security utility (Open AM, LDAP, Database…etc.) to define the users.
+
+#### 3.2.9.2 Messaging *
+------
+
+Users can message other users using User Profiles. The message will be
+emailed to the email address listed in their profile.
+
+**To message a user or a group of users:**
+
+1.  Navigate to the User Profiles Tool.
+
+2.  Click on the message icon ![mail](../../../../../../client/openstorefront/app/images/help/mail.png) next to the user
+    (or users) that you want to message.
+
+3.  Fill out the form.
+
+4.  Click **Send** to send the message immediately.
+
+**NOTE:** Messages are sent to email addresses one at a time so no email
+addresses are leaked to other users.
+
+#### 3.2.9.3 Control *
+------
+
+An admin may edit, activate or inactivate a profile. Inactivating a
+profile does not prevent login. Upon login, the user's profile will be
+reactivated. Once a profile has been inactivated, that user's watches
+and messages are also inactivated. Reactivating the profile will
+activate the user's existing watches, but it won't send any previous
+messages – just messages going forward.
+
+**To toggle active status:**
+
+1.  Navigate to User Profiles Tool.
+
+2.  Click on the activate/inactivate ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) icon and use
+    the filter option to view active/inactive users.
+
+
+## 3.3 Application Management
+--------
+
+### 3.3.1 Alerts
+------
+
+Alerts are triggers set up to watch the data that an administrator can
+subscribe to. This allows for "reactive" administration of the
+application by setting up alerts when events occur in the system. The
+application will monitor the data as it flows in and trigger alerts that
+have been setup.
+
+Descriptions of Alert Triggers:
+
+-  **Component Submission** - Alerts on component submissions and cancellations.
+-  **System Error**         - Alerts on system error according to trigger options.
+-  **User Data**            - Alerts on user data changes according to trigger options.
+
+**To set up an Alert:**
+
+1.  Navigate to the Alerts Tool.
+
+2.  Click **Add**.
+
+3.  Fill in the form and select an Alert Type.
+
+4.  Select any appropriate report options.
+
+5.  Click **Save**.
+
+**To cancel an Alert:**
+
+1.  Navigate to the Alerts Tool.
+
+2.  Click **Inactivate** ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) or **Delete**
+    ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to cancel the scheduled report. Click
+    **Inactivate** to temporarily pause it.
+	
+
+### 3.3.2 Jobs
+------
+The Jobs Tool allows for viewing and managing both scheduled background
+jobs and background tasks. An Admin can use the tool to pause, start,
+and run scheduled jobs. This tool helps in troubleshooting and view of
+the status of the application. If an operation is known to potentially
+run for an extended period of time, then it will process in the
+background allowing for faster feedback to the user while the operation
+completes. Scheduled jobs that run periodically such as the notification
+job also run in the background to provide automatic handling of
+services.
+
+### 3.3.3 Reports
+------
+
+Descriptions of the Reports:
+
+-  **Component**        - Reports on a component's statistics
+-  **Link Validation** - Checks all component links and verifies the status of the links to determine potentially bad links.
+-  **Organization**   -  Reports on organization's statistics based on information in user profiles. The report attempts to group users by an organization.
+-  **Usage**            -  Reports on the application's usage statistics for a specified time period.
+-  **User**             - Reports on user statistics (views, logins, etc.)
+
+A report can be either manually generated on demand or set to
+auto-generate according to a specific schedule.
+
+### 3.8.1 Manually Generated Reports *
+------
+
+**To manually generate a report:**
+
+1.  Navigate to the Report Tool.
+
+2.  Click **New Report**.
+
+3.  Select Report Type and Format.
+
+4.  Set any options.
+
+5.  Click **Generate**.
+
+The Report is generated in the background and the status of the report
+is shown in the table. Once the report is complete, it can be downloaded
+by clicking the report title link.
+
+### 3.8.2 Scheduled Reports *
+------
+
+**To create a scheduled report:**
+
+1.  Navigate to the Report Tool.
+
+2.  Click **New Report**.
+
+3.  Select Report Type and Format.
+
+4.  Set any options.
+
+5.  Check the **Schedule** box.
+
+6.  Set the interval to run the report and enter an email address.
+
+7.  Click **Generate** to save the scheduled report.
+
+**NOTE:** The report will run initially and then it will run on the next
+scheduled interval.
+
+**To cancel a scheduled report:**
+
+1.  Navigate to the Reports Tool.
+
+2.  Select the Scheduled tab.
+
+3.  Click **Inactivate** ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) or **Delete**
+    ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to cancel the scheduled report. Click
+    **Inactivate** to temporarily pause it.
+	
+	
+
+### 3.3.4 System
+------
+System Tools are provided to aid in troubleshooting.
+
+System Tools and their Purpose:
+
+-  **Search Control** -           Allows for re-indexing listings
+-  **Recent Changes Email** -     Allows for sending/previewing a recent change email.
+-  **Error Tickets** -            View error tickets generated by the system and view their details.
+-  **Application Properties** -   Can be used to adjust application run state.
+-  **System Configuration** -     Provides a read-only view in the current properties.
+-  **Logging** -                  Allows for adjusting log levels at run time to log more/less information from a software component. **NOTE:** Logs are hierarchically organized so set a level from a parent will affect all children who are set to delegate to the parent logger. Loggers under: edu.usu.sdl.openstorefront are application specific. A logger will only appear when the software component is loaded.
+-  **Status** -                   Shows the run status of the application (i.e. memory, load, thread status and properties). Refer to Java platform documentation for the interpretation of the information.
+
+
+### 3.3.5 Tracking
+
+The application tracks internal user logins, Component/Resources views,
+and Article views. The application also can be integrated with external
+analytics such as google analytics for additional information. Also, the
+application server can be configured for access logging and the
+application logs audit message for all admin API access.
+
+The primary tracking events can be viewed using the Tracking Admin Tool.
+As well as the events are aggregated into various system generated
+report accessible via the Reports Admin Tool.
+
+### 3.3.6 Messages
+------
+
+### 3.3.7 API Documentation
+------
+
+
+### 3.4 Relationships * **PUT THIS UNDER SUBMISSIONS?**
 ------
 
 Relationships between components can be added as a Relationship Type to 
@@ -714,7 +1029,7 @@ can be viewed either in either a graphic or table form.
 ![edit](../../../../../../client/openstorefront/app/images/help/table.png)
 
 
-### 3.2.5 Resources *
+### 3.5 Resources *  **PUT THIS UNDER SUBMISSIONS?**
 ------
 
 Resources are links to documentation, the home page, sources, etc. that
@@ -736,7 +1051,7 @@ they can be hosted locally.
 Inactivating makes it not visible to the users. However, the resource is
 still there so it can be reactivated.
 
-### 3.2.6 Media *
+### 3.6 Media *  **PUT THIS UNDER SUBMISSIONS?**
 ------
 
 Media provides visual/audio descriptions of the component. A common
@@ -759,7 +1074,7 @@ hosted externally.
 it not visible to the users. However, the media is still there so it can
 be reactivated.
 
-### 3.2.7 Evaluation *
+### 3.7 Evaluation *  **PUT THIS UNDER SUBMISSIONS?**
 ------
 
 Components may be evaluated and, if so, that evaluation information may
@@ -784,114 +1099,8 @@ sections until a value is entered. The existing column shows the value
 that is currently saved, if any. To remove the value click the delete
 ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) icon.
 
-## 3.3  Attributes *
-----------
 
-Attributes are used to group and filter catalog items and articles.
-
-### 3.3.1 Types *
-------
-
-Attribute Types represent a related group of specific categories or
-represent a single attribute of a listing (Eg. "Funded" would be a type
-with the corresponding value "Yes" or "No"). A type may have many codes.  
-
-Deleting a type will delete the associated codes and component
-attributes. Inactivating a type will inactivate associated data such as
-component attributes.
-
-**NOTE**: Avoid "/" and special characters in type codes. For example,
-use: \[A-Z\]\[0-9\].
-
-**To add or edit a type:**
-
-1.  From the Attribute Tool, click on the **Add** or the
-    **Edit** button.
-
-2.  Fill in the form.
-
-**NOTE:** The Attribute Type Code field should be all caps and should not
-contain spaces or "/".
-
-3.  Save the form and you can proceed to editing the codes for the type.
-
-**To export a type:**
-
-1.  Select which types to export.
-
-2.  Click **Export**.
-
-Exports are in JSON format and contain the type and all related codes.
-
-**To import a type:**
-
-1.  Use the Attribute File Import.
-
-2.  Click **Import**.
-
-3.  Select an Attribute File. This should be a JSON attribute file.
-
-4.  Click **Upload**.
-
- The Import will be processed in the background. The task notification
- area next to the user menu will indicate when the import task has
- completed.
-
- The processing behavior is: for every code not in the import, the
- existing code will be inactivated. If the code already exists and
- doesn't match, then it will be updated. For code that matches, the
- code in the file will not be processed. If a type doesn't exist, a new
- one will be created. If the type matches, it will be updated. Other
- existing types not found in the file will not be affected.
-
-**Importing SvcV-4:**
-
-1.  Use SvcV-4 import.
-
-2.  Make sure the SvcV-4 file is in the correct format (CVS) and it
-    contains the correct columns. (See warning on upload for the
-    expected fields)
-
-3.  Select a SvcV-4 import file.
-
-4.  Click **Upload**.
-
- **WARNING:** UID in the file should match what is stored in application.
-    The application support both 1 and 0001 matching to 1.
-
-Processing behavior works the same as the Attribute import process.
-
-### 3.3.2 Codes *
-------
-
-An attribute code is a specific category value that can be applied to a
-component. For example: Component listing may contain and attribute for
-"Funded" as "Yes".
-
-**To add and edit a code:**
-
-1.  Select which Type to edit.
-
-2.  Select **Manage Codes**.
-
-3.  Click **Add New Code** or the ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) edit icon.
-
-4.  Fill out the form.
-
-5.  Click **Save**.
-
-Field  Descriptions:
-
--  **Label**              - Human readable value of the code
--  **Code**                - System reference key
--  **Description**       - This is a detail description of the meaning of the value. It's used in popup to help users interpolate the data.
--  **Group Code**        - Using to create sub groups in the code. Typically used only in special cases.
--  **Sort Order**          - Use to force a specific sort order. (Default is sort by Label)
--  **Architecture Code**   - Used for special hieratical sorting. Only applies to Architecture attribute types.
--  **Badge URL**           - Set to add a graphical badge for a code
--  **Highlight Class**     - Used to add color emphasis to a code.
-
-### 3.3.3 Badges *
+### 3.8 Badges *
 ------
 
 Allow associating an image with a specific code value. Badges show up on
@@ -931,7 +1140,7 @@ images can be accomplished with having to manually update all links.
 
 4.  Add the attribute by selecting the type and code with the badge.
 
-### 3.3.4 Highlighting *
+### 3.9 Highlighting *
 ------
 
 Highlighting allows specific code to be visually highlighted in the
@@ -951,11 +1160,13 @@ admin to apply that behavior to a value.
 
 4.  Click **Save**.
 
-## 3.4  Articles *
---------
 
-Articles (topic landing pages) can provide information about a specific category 
-or set of components.   Articles are created by an application administrator.
+
+
+
+--------------------------------------------
+LEFTOVER STUFF NOT SURE WHERE TO PUT THIS
+--------------------------------------------
 
 ### 3.4.1 Managing *
 ------
@@ -1030,259 +1241,12 @@ a component.
 **NOTE:** Other user messages besides watches, such as alerts, flow
 through the message queue as well.
 
-## 3.6 Integrations (External Systems/Jira) *
-------------------------------------
+--------------------------------------------
+LEFTOVER STUFF NOT SURE WHERE TO PUT THIS
+--------------------------------------------
 
-Component Integration allows for pulling information from an external
-system and mapping that back to a component in the application. This
-allows for automatic sync of the data source. Currently the application
-only supports integration with Jira.
 
-**To setup a Jira Integration:**
 
-1.  Navigate to Integration Management Admin Tool using the admin
-    navigation menu.
-
-**Add Mappings:**
-
-1.  Select Jira Project.
-2.  Select Issue Type.
-3.  Select Attribute in application.
-4.  Select Jira field to which to map.
-5.  Create mapping by moving them from the available list to
-        attribute codes.
-6.  Click **Save**.
-
- **NOTE:** More than one field in JIRA can be mapped to an attribute
-        code.
-
-**Add Configuration:**
-
-1.  Create a new Configuration by clicking **Add** on the Component
-    Configuration tab.
-2.  Select a Component.
-3.  Click **Add**
-4.  Select JIRA Project (only projects with mappings will be available).
-5.  Enter the Jira Issue Number (Eg. ASSET-14)
-6.  Click **Save**.
-
-The Component Job will be scheduled when it's saved. The job will run on
-an interval based on the global refresh rate. The default is once a day
-at 10:00 am server time. The component configuration table will show
-when the integration last ran. Also, the scheduled integration job can
-be viewed using the Jobs Tool by clicking **Show Integration Jobs**.
-
-The Integration Tool allows for manual control. However, it's not
-necessary to run the integration manually as the automated job will
-handle that.
-
-If the integration fails for any reason, the configuration table will so
-indicate and an error ticket will be created for further analysis. The
-integration may fail if the server it's connecting to is unavailable.
-This may be a temporary condition. The system will try again on the next
-interval. If the configuration job continues to have issues it may
-deactivated manually using the tools and then reactivated when the issue
-is resolved.
-
-## 3.7 Alerts *
-------
-
-Alerts are triggers set up to watch the data that an administrator can
-subscribe to. This allows for "reactive" administration of the
-application by setting up alerts when events occur in the system. The
-application will monitor the data as it flows in and trigger alerts that
-have been setup.
-
-Descriptions of Alert Triggers:
-
--  **Component Submission** - Alerts on component submissions and cancellations.
--  **System Error**         - Alerts on system error according to trigger options.
--  **User Data**            - Alerts on user data changes according to trigger options.
-
-**To set up an Alert:**
-
-1.  Navigate to the Alerts Tool.
-
-2.  Click **Add**.
-
-3.  Fill in the form and select an Alert Type.
-
-4.  Select any appropriate report options.
-
-5.  Click **Save**.
-
-**To cancel an Alert:**
-
-1.  Navigate to the Alerts Tool.
-
-2.  Click **Inactivate** ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) or **Delete**
-    ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to cancel the scheduled report. Click
-    **Inactivate** to temporarily pause it.
-
-## 3.8 Reports * 
---------
-
-Descriptions of the Reports:
-
--  **Component**        - Reports on a component's statistics
--  **Link Validation** - Checks all component links and verifies the status of the links to determine potentially bad links.
--  **Organization**   -  Reports on organization's statistics based on information in user profiles. The report attempts to group users by an organization.
--  **Usage**            -  Reports on the application's usage statistics for a specified time period.
--  **User**             - Reports on user statistics (views, logins, etc.)
-
-A report can be either manually generated on demand or set to
-auto-generate according to a specific schedule.
-
-### 3.8.1 Manually Generated Reports *
-------
-
-**To manually generate a report:**
-
-1.  Navigate to the Report Tool.
-
-2.  Click **New Report**.
-
-3.  Select Report Type and Format.
-
-4.  Set any options.
-
-5.  Click **Generate**.
-
-The Report is generated in the background and the status of the report
-is shown in the table. Once the report is complete, it can be downloaded
-by clicking the report title link.
-
-### 3.8.2 Scheduled Reports *
-------
-
-**To create a scheduled report:**
-
-1.  Navigate to the Report Tool.
-
-2.  Click **New Report**.
-
-3.  Select Report Type and Format.
-
-4.  Set any options.
-
-5.  Check the **Schedule** box.
-
-6.  Set the interval to run the report and enter an email address.
-
-7.  Click **Generate** to save the scheduled report.
-
-**NOTE:** The report will run initially and then it will run on the next
-scheduled interval.
-
-**To cancel a scheduled report:**
-
-1.  Navigate to the Reports Tool.
-
-2.  Select the Scheduled tab.
-
-3.  Click **Inactivate** ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) or **Delete**
-    ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to cancel the scheduled report. Click
-    **Inactivate** to temporarily pause it.
-
-### 3.9 Event Tracking *
---------------
-
-The application tracks internal user logins, Component/Resources views,
-and Article views. The application also can be integrated with external
-analytics such as google analytics for additional information. Also, the
-application server can be configured for access logging and the
-application logs audit message for all admin API access.
-
-The primary tracking events can be viewed using the Tracking Admin Tool.
-As well as the events are aggregated into various system generated
-report accessible via the Reports Admin Tool.
-
-## 3.10 Jobs Tool *
----------
-
-The Jobs Tool allows for viewing and managing both scheduled background
-jobs and background tasks. An Admin can use the tool to pause, start,
-and run scheduled jobs. This tool helps in troubleshooting and view of
-the status of the application. If an operation is known to potentially
-run for an extended period of time, then it will process in the
-background allowing for faster feedback to the user while the operation
-completes. Scheduled jobs that run periodically such as the notification
-job also run in the background to provide automatic handling of
-services.
-
-## 3.11 System Tools *
-------------
-
-System Tools are provided to aid in troubleshooting.
-
-System Tools and their Purpose:
-
--  **Search Control** -           Allows for re-indexing listings
--  **Recent Changes Email** -     Allows for sending/previewing a recent change email.
--  **Error Tickets** -            View error tickets generated by the system and view their details.
--  **Application Properties** -   Can be used to adjust application run state.
--  **System Configuration** -     Provides a read-only view in the current properties.
--  **Logging** -                  Allows for adjusting log levels at run time to log more/less information from a software component. **NOTE:** Logs are hierarchically organized so set a level from a parent will affect all children who are set to delegate to the parent logger. Loggers under: edu.usu.sdl.openstorefront are application specific. A logger will only appear when the software component is loaded.
--  **Status** -                   Shows the run status of the application (i.e. memory, load, thread status and properties). Refer to Java platform documentation for the interpretation of the information.
-
-## 3.12 Organizations *
----------------
-
- Organizations provide information on specific organizations that are linked with the components listed on the site. The information these objects contain include:
-
- - **Description** -            What the organization does
- - **Type** -                   The type of organization (i.e. Commercial Business, Contractor, US Organization, etc.)
- - **Website** -                The website for the specific organization if provided
- - **Address** -                The address for the organization
- - **Contact Information** -    A way to contact the organization
-
-### 3.12.1 Managing *
---------------
-
-**To add a new organization:**
-
-1.  Click **Add New Organization** from the Organizations section of the Admin Tools.
-
-2.  Enter the information and click **Save Changes**.
-
-**Note:** When a new component is added if an unrecognized organization is added, it will automatically be saved to the 
-  organization list.  However, details such as the Description and Main Contact Information will need to be added here.
-
-**To edit an organization**
-
-1.  From Organizations in the Admin Tools, select an organization.
-
-2.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) next to the organization.
-
-    a.  Update Organization information as desired including:  Name, Description, Organization Link, and Organization Type.
-
-    b.  Update Main Contact information as desired including:  Contact Name, Phone Number, Email, Agency, Department, 
-         Address, and Security Type.
-    
-3.  When finished, click **Save Changes**.
-
-**To remove an organization:**
-
-1.  From Organizations in the Admin Tools, select an organization.
-
-2.  Click on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the organization.
-
-3.  Confirm that you wish to delete the organization by cliking **OK**.
-
-
-**"No Organization" References:**
-This displays a list of references where no organization is listed.  
-
-**Run Extract:**
-This runs a query to get current component and organization information to update the table.  
-
-**Show Contact info:**
-Clicking this button ![Show Contact Info](../../../../../../client/openstorefront/app/images/help/showcontactinfo.png)
- shows the Agency, Department, Contact Name, Contact Phone, and Contact Email for the organization.
-
-**View References:**
-Clicking this icon ![View References](../../../../../../client/openstorefront/app/images/help/viewreferences.png)
- shows all of the references for the organization.  
 
 # 4.  Glossary
 ----------
