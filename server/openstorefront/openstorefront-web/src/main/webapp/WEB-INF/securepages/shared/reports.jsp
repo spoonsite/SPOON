@@ -663,7 +663,7 @@
 										xtype: 'toolbar',
 										items: [
 											{
-												text: 'Save',
+												text: 'Generate',
 												formBind: true,
 												iconCls: 'fa fa-save',
 												handler: function () {
@@ -680,7 +680,7 @@
 													if (data.scheduleIntervalDays === '0')
 													{
 														data.scheduleIntervalDays = null;
-													}
+													}	
 
 													if (Ext.getCmp('categorySelect').isVisible()) {
 														reportOpt.category = Ext.getCmp('categorySelect').getValue();
@@ -846,7 +846,7 @@
 										allowBlank: false,
 										listeners: {
 											change: function (cb, newVal, oldVal, opts) {
-
+                                                var emailTA=Ext.getCmp('emailAddresses');
 												if (oldVal !== null && newVal === '0' && scheduleReportId) {
 													Ext.toast('You cannot run that report now, you are editing a scheduled report. Click the Add + button to run a report now.');
 													Ext.getCmp('scheduledHours').setValue(String(scheduleData.data.scheduleIntervalDays));
@@ -855,11 +855,22 @@
 
 													Ext.getCmp('filterForEntries').setHidden(true);
 													Ext.getCmp('scheduleOptionsGrid').setHidden(true);
+													
+													emailTA.setFieldLabel('Enter email addresses separated by semi-colons<span class="field-required"/>');
+													emailTA.allowBlank=false;
+													emailTA.validate();
 												}
 												else {
 													Ext.getCmp('filterForEntries').setHidden(false);
 													Ext.getCmp('scheduleOptionsGrid').setHidden(false);
+													emailTA.setFieldLabel('Enter email addresses separated by semi-colons');
+													emailTA.allowBlank=true;
+													emailTA.validate();
+													
 												}
+												
+												
+												
 											}
 										}
 									},
@@ -867,12 +878,12 @@
 										xtype: 'textarea',
 										name: 'emailAddresses',
 										id: 'emailAddresses',
-										fieldLabel: 'Enter email addresses separated by semi-colons.<span class="field-required" />',
+										fieldLabel: 'Enter email addresses separated by semi-colons',
 										width: '100%',
 										maxLength: 300,
 										editable: true,
 										hidden: true,
-										allowBlank: false
+										allowBlank: true
 									},
 									{
 										xtype: 'combobox',
@@ -1103,19 +1114,9 @@
 									},
 									tooltip: 'View Record'
 								},
+								
 								{
-									text: 'Delete',
-									id: 'historyDeleteButton',
-									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash',
-									disabled: true,
-									handler: function () {
-										historyDelete();
-									},
-									tooltip: 'Delete the record'
-								},
-								{
-									text: 'Export',
+									text: 'Download',
 									id: 'historyExportButton',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-download',
@@ -1128,7 +1129,19 @@
 								},
 								{
 									xtype: 'tbfill'
-								}]
+								},
+								{
+									text: 'Delete',
+									id: 'historyDeleteButton',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-trash',
+									disabled: true,
+									handler: function () {
+										historyDelete();
+									},
+									tooltip: 'Delete the record'
+								}
+							]
 						},
 						{
 							xtype: 'pagingtoolbar',
@@ -1158,7 +1171,7 @@
 					setHistoryContentData();
 
 					Ext.create('Ext.window.Window', {
-						title: 'View Report Data',
+						title: historyTitle,
 						id: 'viewHistoryData',
 						iconCls: 'fa fa-eye',
 						width: '50%',
@@ -1191,7 +1204,7 @@
 								{
 									xtype: 'button',
 									text: 'Download',
-									iconCls: 'fa fa-arrow-down',
+									iconCls: 'fa fa-download',
 									handler: function () {
 										historyExport();
 									}
@@ -1243,9 +1256,12 @@
 				//  Record Preview methods
 				//
 				var contentData ='';
+				var historyTitle='';
 				var setHistoryContentData = function(){
 					
 					var selectedObj = Ext.getCmp('historyGrid').getSelection()[0];
+					var formattedDate = Ext.util.Format.date(selectedObj.data.createDts,'m/d/y H:i:s');
+					historyTitle="View Report Data - "+selectedObj.data.reportType+' '+formattedDate;
 				    Ext.Ajax.request({
 						url: '../api/v1/resource/reports/' + selectedObj.data.reportId + '/report',
 						method: 'GET',
