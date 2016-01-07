@@ -165,7 +165,7 @@
 								var userType = getUserType(record.data.userTypeCode);
 								var html = "<strong>" + value + "</strong>";
 								html += '<p style="color: #999; margin-bottom: 0.5em;">';
-								html += '<i class="fa fa-user fa-fw"></i> ' + record.data.createUser + " (";
+								html += '<i class="fa fa-user fa-fw"></i> ' + record.data.username + " (";
 								html += userType + ') &middot; ';
 								html += record.data.organization + "";
 								html += "</p>";
@@ -183,7 +183,7 @@
 						{
 							hidden: true,
 							text: 'User',
-							dataIndex: 'createUser',
+							dataIndex: 'username',
 							flex: 1
 						},
 						{
@@ -365,6 +365,7 @@
 								{
 									xtype: 'combobox',
 									id: 'question-activeStatus',
+									value: 'A',
 									emptyText: 'Active questions',
 									fieldLabel: 'Show Components with:',
 									labelWidth: '250px',
@@ -433,9 +434,10 @@
 					// Set Proxy and Load Questions
 					Ext.getCmp('question-activateButton').disable();
 					Ext.getCmp('answer-activateButton').disable();
+					var activeStatus = Ext.getCmp('question-activeStatus').getValue();
 					questionStore.setProxy({
 						id: 'questionStoreProxy',
-						url: '/openstorefront/api/v1/resource/components/' + componentId + '/questions',
+						url: '/openstorefront/api/v1/resource/components/' + componentId + '/questions/view?status=' + activeStatus,
 						type: 'ajax'
 					});
 					questionStore.load();
