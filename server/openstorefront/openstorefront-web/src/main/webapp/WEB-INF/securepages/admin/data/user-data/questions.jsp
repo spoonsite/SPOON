@@ -511,6 +511,7 @@
 								// for any given component, therefore, it should no 
 								// longer be listed in the component list.
 								componentPanel.getStore().load();
+								Ext.getCmp('question-activateButton').disable();
 							},
 							failure: function (response, opts) {
 								Ext.MessageBox.alert('Failed to' + what,
@@ -543,6 +544,7 @@
 								var message = 'Successfully ' + what + 'd answer.';
 								Ext.toast(message, '', 'tr');
 								answerPanel.getStore().load();
+								Ext.getCmp('answer-activateButton').disable();
 							},
 							failure: function (response, opts) {
 								Ext.MessageBox.alert('Failed to' + what,
