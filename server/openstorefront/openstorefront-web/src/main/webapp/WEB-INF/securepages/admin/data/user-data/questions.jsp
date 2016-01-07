@@ -375,6 +375,7 @@
 									listeners: {
 										change: function (filter, newValue, oldValue, opts) {
 											var qButton = Ext.getCmp('question-activateButton');
+											var aButton = Ext.getCmp('answer-activateButton');
 											var newUrl = '../api/v1/resource/components/questionviews';
 											if (newValue === 'A') {
 												qButton.setText('Deactivate');
@@ -385,8 +386,15 @@
 												newUrl += '?status=I';
 											}
 											qButton.disable();
+											aButton.disable();
 											componentPanel.getStore().getProxy().setUrl(newUrl);
 											componentPanel.getStore().load();
+											questionPanel.getStore().setProxy(undefined);
+											questionPanel.getStore().load();
+											answerPanel.getStore().setProxy(undefined);
+											answerPanel.getView().emptyText = '<div class="x-grid-empty">Please select a question.</div>';
+											answerPanel.getStore().load();
+
 										}
 									},
 									store: Ext.create('Ext.data.Store', {
