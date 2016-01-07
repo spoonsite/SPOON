@@ -481,11 +481,75 @@
 
 
 				var toggleQuestion = function toggleQuestion(componentId, questionId) {
-					console.log('Toggle Question ' + questionId);
+					var activeStatus = Ext.getCmp('question-activeStatus').getValue();
+					if (activeStatus === 'A') {
+						var method = 'DELETE';
+						var url = '/openstorefront/api/v1/resource/components/';
+						url += componentId + '/questions/' + questionId;
+						var what = 'deactivate';
+					}
+					else {
+						var method = 'PUT';
+						var url = '/openstorefront/api/v1/resource/components/';
+						url += componentId + '/questions/' + questionId + '/activate';
+						var what = 'activate';
+					}
+
+					Ext.Ajax.request({
+							url: url,
+							method: method,
+							success: function (response, opts) {
+								var message = 'Successfully ' + what + 'd question.';
+								Ext.toast(message, '', 'tr');
+								questionPanel.getStore().load();
+								questionPanel.getSelectionModel().deselectAll();
+								answerPanel.getStore().setProxy(undefined);
+								answerPanel.getView().emptyText = '<div class="x-grid-empty">Please select a question.</div>';
+								answerPanel.getStore().load();
+								// The component panel should be refreshed
+								// because the user may have toggled the last question 
+								// for any given component, therefore, it should no 
+								// longer be listed in the component list.
+								componentPanel.getStore().load();
+							},
+							failure: function (response, opts) {
+								Ext.MessageBox.alert('Failed to' + what,
+										"Error: Could not " + what + ' the question.');
+							}
+						});
 				};
 
 				var toggleAnswer = function toggleAnswer(componentId, questionId, answerId) {
-					console.log('Toggle Answer ' + answerId);
+					var activeStatus = Ext.getCmp('answer-activeStatus').getValue();
+					if (activeStatus === 'A') {
+						var method = 'DELETE';
+						var url = '/openstorefront/api/v1/resource/components/';
+						url += componentId + '/questions/' + questionId;
+						url += '/responses/' + answerId;
+						var what = 'deactivate';
+					}
+					else {
+						var method = 'PUT';
+						var url = '/openstorefront/api/v1/resource/components/';
+						url += componentId + '/questions/' + questionId;
+						url += '/responses/' + answerId + '/activate';
+						var what = 'activate';
+					}
+
+					Ext.Ajax.request({
+							url: url,
+							method: method,
+							success: function (response, opts) {
+								var message = 'Successfully ' + what + 'd answer.';
+								Ext.toast(message, '', 'tr');
+								answerPanel.getStore().load();
+							},
+							failure: function (response, opts) {
+								Ext.MessageBox.alert('Failed to' + what,
+										"Error: Could not " + what + ' the answer.');
+							}
+						});
+
 				};
 
 
