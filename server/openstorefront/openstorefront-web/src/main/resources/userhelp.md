@@ -141,13 +141,12 @@ section 1.1.3.
 ## 2.2 Search Tools and other search methods
 ------
 
-From the DI2E Clearinghouse home page clicking on this icon ![Logo](../../../../../../client/openstorefront/app/images/searchtools.png)
-will bring up the Search Tools.  Three types of unique searches are available from here:
+To the left of the search text field is an icon for Search Tools.  Click
+on the icon to display the Search Tools.  Three types of unique searches 
+are available:
 
 1.  Topic
-
 2.  Category
-
 3.  Architecture
 
 ### 2.2.1 Topic Search Tool
@@ -254,9 +253,7 @@ external security account.
 **To edit your profile:**
 
 1.  Select **User Tools** from the user menu.
-
 2.  Update the form.
-
 3.  Click **Save**.
 
 ### 2.3.1 Submissions
@@ -309,7 +306,7 @@ place.
 
 **To remove a watch:**
 
-1.  Click on the ![removewatch](../../../../../../client/openstorefront/app/images/help/removewatch.png) icon.
+1.  Click on the delete icon.
 
 2.  Click OK to confirm the watch deletion.
 
@@ -331,8 +328,7 @@ From this screen in the User Tools you can inspect, edit, and delete your compon
 
 **To inspect a review:**
 
-Expand the desired review by clicking the expand
-    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
+Expand the desired review by clicking the expand (down arrow) icon.
 
 
 **To edit a review:**
@@ -344,28 +340,23 @@ click the **Edit** button and adjust the information in the form.
 
 **To remove a review:**
 
-1.  Expand the desired review by clicking the expand
-    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
+1.  Expand the desired review by clicking the expand (down arrow) icon.
 
 3.  Click on the **Delete** button.
 
 **To create a review:**
 
 1.  From a search results screen, view Component Details by clicking on the title.
-
 2.  Click on the Reviews tab.
-
 3.  Click on **Write a Review**.
-
 4.  Fill out the form starting with marking the Stars according to
     your experience.
-
 5.  Save the review. The review will now show in the review tab for
     other users to read.
 
 **NOTE:** A review may also be removed from the component detail screen
-by then clicking on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the
-title of the review. You can only remove reviews you post.
+by then clicking on the delete icon next to the title of the review. 
+You can only remove reviews you post.
 
 
 #### 2.3.2.3 Manage Reports
@@ -424,7 +415,7 @@ available such as creating a custom template or including and excluding certain
 labels or display areas.  
 
 
-# 3. Admin Tools*
+# 3. Admin Tools *
 ----------
 
 Admin tools allow for the management of all data in the system.
@@ -432,22 +423,38 @@ Admin tools allow for the management of all data in the system.
 (Sections marked with a * requires admin account access)
 
 
-## 3.1 Dashboard
+## 3.1 Dashboard *
 --------
 
 The dashboard is the homepage of the Admin Tools, where various statistics are shown 
-about the Clearinghouse.  There are four main sections in the dashboard: Entry Statistics, Notifications, 
-User Statistics, and System Statistics.
+about the Clearinghouse.  There are four main sections in the dashboard: 
+Entry Statistics, Notifications, User Statistics, and System Statistics.
 
 
-## 3.2 Data Management
+## 3.2 Data Management *
 --------
 
-### 3.2.1 Attributes
+The Data Management menu is used to navigate to different tools for managing the data
+for Storefront.
+
+
+### 3.2.1 Attributes *
 -------
 
-#### 3.2.1.2 Types *
+Attributes are used to group and filter catalog items such as components and articles. 
+To access the attributes page, go to Admin Tools > Data Management > Attributes.
+
+Some of the major functionality of Managing Attributes includes:
+
+  1. Types
+  2. Codes
+  3. Exporting
+  4. Importing
+    
+#### 3.2.1.1 Types *
 ------
+
+When adding or editing an attribute the first tab is the Type tab.
 
 Attribute Types represent a related group of specific categories or
 represent a single attribute of a listing (Eg. "Funded" would be a type
@@ -464,31 +471,11 @@ use: \[A-Z\]\[0-9\].
 
 1.  From the Attribute Tool, click on the **Add** or the
     **Edit** button.
-
 2.  Fill in the form.
+3.  Save the form and you can proceed to editing the codes for the type.
 
 **NOTE:** The Attribute Type Code field should be all caps and should not
 contain spaces or "/".
-
-3.  Save the form and you can proceed to editing the codes for the type.
-
-**To export a type:**
-
-1.  Select which types to export.
-
-2.  Click **Export**.
-
-Exports are in JSON format and contain the type and all related codes.
-
-**To import a type:**
-
-1.  Use the Attribute File Import.
-
-2.  Click **Import**.
-
-3.  Select an Attribute File. This should be a JSON attribute file.
-
-4.  Click **Upload**.
 
  The Import will be processed in the background. The task notification
  area next to the user menu will indicate when the import task has
@@ -501,24 +488,8 @@ Exports are in JSON format and contain the type and all related codes.
  one will be created. If the type matches, it will be updated. Other
  existing types not found in the file will not be affected.
 
-**Importing SvcV-4:**
 
-1.  Use SvcV-4 import.
-
-2.  Make sure the SvcV-4 file is in the correct format (CVS) and it
-    contains the correct columns. (See warning on upload for the
-    expected fields)
-
-3.  Select a SvcV-4 import file.
-
-4.  Click **Upload**.
-
- **WARNING:** UID in the file should match what is stored in application.
-    The application support both 1 and 0001 matching to 1.
-
-Processing behavior works the same as the Attribute import process.
-
-### 3.2.1.3 Codes *
+#### 3.2.1.2 Codes *
 ------
 
 An attribute code is a specific category value that can be applied to a
@@ -527,26 +498,44 @@ component. For example: Component listing may contain and attribute for
 
 **To add and edit a code:**
 
-1.  Select which Type to edit.
-
-2.  Select **Manage Codes**.
-
-3.  Click **Add New Code** or the ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) edit icon.
-
-4.  Fill out the form.
-
-5.  Click **Save**.
+1.  In the Edit or add window under the tab **Manage Codes**
+2.  Click **Add New Code** or the edit icon next to an existing code.
+3.  Fill out the form.
+4.  Click **Save**.
 
 Field  Descriptions:
 
--  **Label**              - Human readable value of the code
+-  **Label**               - Human readable value of the code
 -  **Code**                - System reference key
--  **Description**       - This is a detail description of the meaning of the value. It's used in popup to help users interpolate the data.
--  **Group Code**        - Using to create sub groups in the code. Typically used only in special cases.
+-  **Description**         - This is a detail description of the meaning of the value. It's used in popup to help users interpolate the data.
+-  **Group Code**          - Using to create sub groups in the code. Typically used only in special cases.
 -  **Sort Order**          - Use to force a specific sort order. (Default is sort by Label)
 -  **Architecture Code**   - Used for special hieratical sorting. Only applies to Architecture attribute types.
 -  **Badge URL**           - Set to add a graphical badge for a code
 -  **Highlight Class**     - Used to add color emphasis to a code.
+
+
+#### 3.2.1.3 Exporting Attributes *
+------
+
+From the Manage Attributes page select one or more attributes.  Click the Export button.
+Follow the browser download instructions to download the JSON File.
+
+#### 3.2.1.4  Importing Attributes or SvcV-4 *
+------
+
+Clicking the **Import** button from Manage Attributes will show buttons to brows and upload
+files for either Attributes or SvcV-4.  
+1.  Browse to the desired file to be uploaded (imported).
+2.  Make sure the Attributes or SvcV-4 file is in the correct format (CVS) and it
+    contains the correct columns. (See warning on upload for the
+    expected fields)
+3.  Select the proper file.
+4.  Click **Upload**.
+
+ **WARNING:** UID in the file should match what is stored in application.
+    The application supports both 1 and 0001 matching to 1.
+
 
 ### 3.2.2 Entries
 -----
@@ -559,9 +548,7 @@ Components can be managed using the Components Tool.  Components are created by 
 **To create a component:**
 
 1.  Click on the **Add** button in the toolbar.
-
 2.  In the Add/Edit dialog, fill in the form.
-
 3.  Click **Save**.
 
 **NOTE:** Setting a component's Approval State to **Approved** will make
@@ -672,8 +659,12 @@ c. Security Type:   *select the security level of the component or article*
 ### 3.2.3 Entry Types
 ------
 
+
+
 ### 3.2.4 Highlights
 -------
+
+
 
 ### 3.2.5 Integrations
 -------
@@ -846,10 +837,10 @@ messages – just messages going forward.
     the filter option to view active/inactive users.
 
 
-## 3.3 Application Management
+## 3.3 Application Management *
 --------
 
-### 3.3.1 Alerts
+### 3.3.1 Alerts *
 ------
 
 Alerts are triggers set up to watch the data that an administrator can
@@ -885,7 +876,7 @@ Descriptions of Alert Triggers:
     **Inactivate** to temporarily pause it.
 	
 
-### 3.3.2 Jobs
+### 3.3.2 Jobs *
 ------
 The Jobs Tool allows for viewing and managing both scheduled background
 jobs and background tasks. An Admin can use the tool to pause, start,
@@ -897,7 +888,7 @@ completes. Scheduled jobs that run periodically such as the notification
 job also run in the background to provide automatic handling of
 services.
 
-### 3.3.3 Reports
+### 3.3.3 Reports * 
 ------
 
 Descriptions of the Reports:
@@ -911,7 +902,7 @@ Descriptions of the Reports:
 A report can be either manually generated on demand or set to
 auto-generate according to a specific schedule.
 
-### 3.8.1 Manually Generated Reports *
+#### 3.3.3.1 Manually Generated Reports *
 ------
 
 **To manually generate a report:**
@@ -930,7 +921,7 @@ The Report is generated in the background and the status of the report
 is shown in the table. Once the report is complete, it can be downloaded
 by clicking the report title link.
 
-### 3.8.2 Scheduled Reports *
+#### 3.3.3.2 Scheduled Reports *
 ------
 
 **To create a scheduled report:**
@@ -963,7 +954,6 @@ scheduled interval.
     **Inactivate** to temporarily pause it.
 	
 	
-
 ### 3.3.4 System
 ------
 System Tools are provided to aid in troubleshooting.
@@ -998,7 +988,7 @@ report accessible via the Reports Admin Tool.
 ------
 
 
-### 3.4 Relationships * **PUT THIS UNDER SUBMISSIONS?**
+## 3.4 Relationships * **PUT THIS UNDER SUBMISSIONS?**
 ------
 
 Relationships between components can be added as a Relationship Type to 
@@ -1023,7 +1013,7 @@ can be viewed either in either a graphic or table form.
 ![edit](../../../../../../client/openstorefront/app/images/help/table.png)
 
 
-### 3.5 Resources *  **PUT THIS UNDER SUBMISSIONS?**
+## 3.5 Resources *  **PUT THIS UNDER SUBMISSIONS?**
 ------
 
 Resources are links to documentation, the home page, sources, etc. that
@@ -1045,7 +1035,7 @@ they can be hosted locally.
 Inactivating makes it not visible to the users. However, the resource is
 still there so it can be reactivated.
 
-### 3.6 Media *  **PUT THIS UNDER SUBMISSIONS?**
+## 3.6 Media *  **PUT THIS UNDER SUBMISSIONS?**
 ------
 
 Media provides visual/audio descriptions of the component. A common
@@ -1068,7 +1058,7 @@ hosted externally.
 it not visible to the users. However, the media is still there so it can
 be reactivated.
 
-### 3.7 Evaluation *  **PUT THIS UNDER SUBMISSIONS?**
+## 3.7 Evaluation *  **PUT THIS UNDER SUBMISSIONS?**
 ------
 
 Components may be evaluated and, if so, that evaluation information may
@@ -1094,7 +1084,7 @@ that is currently saved, if any. To remove the value click the delete
 ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) icon.
 
 
-### 3.8 Badges *
+## 3.8 Badges *
 ------
 
 Allow associating an image with a specific code value. Badges show up on
@@ -1134,7 +1124,7 @@ images can be accomplished with having to manually update all links.
 
 4.  Add the attribute by selecting the type and code with the badge.
 
-### 3.9 Highlighting *
+## 3.9 Highlighting *
 ------
 
 Highlighting allows specific code to be visually highlighted in the
@@ -1162,7 +1152,7 @@ admin to apply that behavior to a value.
 LEFTOVER STUFF NOT SURE WHERE TO PUT THIS
 --------------------------------------------
 
-### 3.4.1 Managing *
+## 3.10 Managing 
 ------
 
 Articles are tied to specific categories (Attribute Type and Code). This
@@ -1195,14 +1185,14 @@ Type and Code articles will update existing and non-matched will create
 new articles. Any internal images in the articles will need to be
 manually set up using the Media Tool in-order for them to be displayed.
 
-### 3.4.2 Media *
+## 3.11 Media *
 ------
 
 Adding media (specific images) to an article can be accomplished by
 first adding the media using the Media Tool. The URL can then be copied
 and used in an article by using the Rich Text Edit Tools.
 
-### 3.4.3 Component Lists *
+## 3.12 Component Lists *
 ------
 
 The contents of an article may be mostly HTML tags (the Edit Tool
@@ -1214,7 +1204,7 @@ and are only visible by using the **Source** button of the editor. Only
 **Title**, **Type** and **Code** need to be set; the other options are
 for advanced cases only.
 
-## 3.5 Watches *
+## 3.13 Watches *
 -------
 
 The user can create watches that can send notifications to the user. The
