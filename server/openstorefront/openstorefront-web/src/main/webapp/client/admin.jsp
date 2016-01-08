@@ -18,7 +18,7 @@ limitations under the License.
 <stripes:layout-render name="layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 		
-	<script src="scripts/component/feedbackWindow.js" type="text/javascript"></script>
+	<script src="scripts/component/feedbackWindow.js?v=${appVersion}" type="text/javascript"></script>
 	
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */	
@@ -255,15 +255,13 @@ limitations under the License.
 									scale   : 'large',
 									ui: 'default',
 									iconCls: 'fa fa-2x fa-envelope icon-top-padding',
-									iconAlign: 'center',									
+									iconAlign: 'left',
+									text: 'Notifications',
 									handler: function() {
 										notificationWin.show();
 										notificationWin.refreshData();
 									}
-								},
-								{
-									xtype: 'tbseparator'
-								},
+								},								
 								{
 									xtype: 'button',
 									id: 'userMenuBtn',

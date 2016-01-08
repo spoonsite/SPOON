@@ -96,6 +96,7 @@ public class PluginResource
 				Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
 					Files.copy(path, output);
 				});
+				response.header("Content-Type", "application/" + plugin.getPluginType());
 				response.header("Content-Disposition", "attachment; filename=\"" + plugin.getOriginalFilename() + "\"");
 				return response.build();
 			}

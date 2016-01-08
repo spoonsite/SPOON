@@ -23,7 +23,9 @@ limitations under the License.
 <stripes:layout-render name="../../../client/layout/usertoolslayout.jsp">
     <stripes:layout-component name="contents">
 
-	<script src="scripts/component/submissionPanel.js" type="text/javascript"></script>
+	<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/feedbackWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
         <script type="text/javascript">
 			/* global Ext, CoreUtil, CoreService */
@@ -49,7 +51,7 @@ limitations under the License.
 						Ext.getCmp('submissionWindow').close();
 						Ext.getCmp('submissionWindow').completeClose=false;
 						actionRefreshSubmission();
-					}
+					}					
 				});
 				
 				var submissionWindow = Ext.create('Ext.window.Window', {
@@ -74,6 +76,16 @@ limitations under the License.
 						}
 					}
 				});
+				//Ckeditor fix (issue popularing the first time, if not rendered first)
+				submissionWindow.show();
+				submissionWindow.hide();
+				
+				var changeRequestWindow = Ext.create('OSF.component.EntryChangeRequestWindow', {
+					successHandler: function() {
+						Ext.getCmp('submissionGrid').getStore().reload();
+					}
+				});
+				
 				
 				var previewContents = Ext.create('OSF.ux.IFrame', {
 					src: ''
@@ -195,7 +207,8 @@ limitations under the License.
 							}
 						},
 						{ text: 'Submission Date', dataIndex: 'submittedDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-						{ text: 'Approval Email', dataIndex: 'notifyOfApprovalEmail', width: 200 }						
+						{ text: 'Approval Email', dataIndex: 'notifyOfApprovalEmail', width: 200 },
+						{ text: 'Pending Changes', align: 'center', dataIndex: 'numberOfPendingChanges', width: 150 }	
 					],
 					dockedItems: [
 						{
@@ -311,17 +324,45 @@ limitations under the License.
 									}
 								},								
 								{
-									text: 'Submit Change',
+									text: 'Change Requests',
 									itemId: 'tbSubmitChange',
 									hidden: true,									
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-edit',
 									handler: function () {
-
+										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
+										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
+										changeRequestWindow.show();
+										changeRequestWindow.loadComponent(componentId, name);
 									}
 								},							
 								{
 									xtype: 'tbfill'
+								},
+								{
+									text: 'Request Removal',
+									itemId: 'tbUnapprove',
+									toolTip: 'This will send a request to the administation asking for the selected record to be unapproved.',
+									hidden: true,									
+									scale: 'medium',								
+									iconCls: 'fa fa-2x fa-comment',
+									handler: function () {
+										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
+										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
+										
+										var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {
+											closeAction: 'destroy',
+											title: 'Request Removal',
+											extraDescription: 'Entry Name: ' + name,
+											hideType: 'Request entry to be Unapproved',
+											hideSummary: Ext.String.ellipsis(name, 50),
+											labelForDescription: 'Reason',
+											successHandler: function() {
+												Ext.getCmp('submissionGrid').getStore().reload();
+											}
+										});
+										feedbackWin.show();
+									}
 								},
 								{
 									text: 'Unsubmit',
@@ -409,11 +450,13 @@ limitations under the License.
 								tools.getComponent('tbSubmitChange').setHidden(true);
 								tools.getComponent('tbUnsubmit').setHidden(true);
 								tools.getComponent('tbDelete').setHidden(true);
+								tools.getComponent('tbUnapprove').setHidden(true);
 								
 								if (record.get('approvalState') === 'A'){
 									tools.getComponent('tbSubmitChange').setHidden(false);
+									tools.getComponent('tbUnapprove').setHidden(false);
 								}
-								if (record.get('approvalState') === 'A' || record.get('approvalState') === 'P'){
+								if (record.get('approvalState') === 'P'){
 									tools.getComponent('tbUnsubmit').setHidden(false);
 								}
 								if (record.get('approvalState') === 'N'){
@@ -431,6 +474,7 @@ limitations under the License.
 								tools.getComponent('tbSubmitChange').setHidden(true);
 								tools.getComponent('tbUnsubmit').setHidden(true);
 								tools.getComponent('tbDelete').setHidden(true);
+								tools.getComponent('tbUnapprove').setHidden(true);
 							}							
 						}
 					}

@@ -163,6 +163,7 @@ public class FileHistoryResource
 				Response.ResponseBuilder responseBuilder = Response.ok((StreamingOutput) (OutputStream output) -> {
 					Files.copy(path, output);
 				});
+				responseBuilder.header("Content-Type", fileHistory.getMimeType());
 				responseBuilder.header("Content-Disposition", "attachment; filename=\"" + fileHistory.getFilename() + "\"");
 				return responseBuilder.build();
 			}

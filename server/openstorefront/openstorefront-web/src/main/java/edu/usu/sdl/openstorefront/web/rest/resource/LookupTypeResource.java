@@ -89,10 +89,8 @@ public class LookupTypeResource
 							if (systemTable != null) {
 								add = false;
 							}
-						} else {
-							if (systemTable == null) {
-								add = false;
-							}
+						} else if (systemTable == null) {
+							add = false;
 						}
 					}
 
@@ -176,6 +174,7 @@ public class LookupTypeResource
 		}
 
 		ResponseBuilder response = Response.ok(data.toString());
+		response.header("Content-Type", "application/csv");
 		response.header("Content-Disposition", "attachment; filename=\"" + entityName + ".csv\"");
 		return response.build();
 	}

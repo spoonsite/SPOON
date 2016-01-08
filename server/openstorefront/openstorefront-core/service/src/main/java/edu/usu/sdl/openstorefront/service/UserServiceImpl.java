@@ -55,6 +55,8 @@ import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
 import edu.usu.sdl.openstorefront.service.message.ApprovalMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.BaseMessageGenerator;
+import edu.usu.sdl.openstorefront.service.message.ChangeRequestApprovedMessageGenerator;
+import edu.usu.sdl.openstorefront.service.message.ChangeRequestMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.ComponentSubmissionMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.ComponentWatchMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.MessageContext;
@@ -712,6 +714,12 @@ public class UserServiceImpl
 						break;
 					case UserMessageType.APPROVAL_NOTIFICATION:
 						generator = new ApprovalMessageGenerator(messageContext);
+						break;
+					case UserMessageType.CHANGE_REQUEST_APPROVAL_NOTIFICATION:
+						generator = new ChangeRequestApprovedMessageGenerator(messageContext);
+						break;
+					case UserMessageType.CHANGE_REQUEST_ALERT:
+						generator = new ChangeRequestMessageGenerator(messageContext);
 						break;
 				}
 			}

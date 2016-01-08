@@ -17,8 +17,10 @@ package edu.usu.sdl.openstorefront.core.util;
 
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +45,21 @@ public class TranslateUtil
 				translated = lookupEntity.getDescription();
 			} else {
 				log.log(Level.WARNING, MessageFormat.format("Unable to find: {0} in lookup: {1}", new Object[]{code, lookupClass.getName()}));
+			}
+		}
+		return translated;
+	}
+
+	public static String translateComponentType(String typeCode)
+	{
+		String translated = typeCode;
+		if (StringUtils.isNotBlank(typeCode)) {
+			Service serviceProxy = ServiceProxyFactory.getServiceProxy();
+			List<ComponentType> componentTypes = serviceProxy.getComponentService().getAllComponentTypes();
+			for (ComponentType componentType : componentTypes) {
+				if (componentType.getComponentType().equals(typeCode)) {
+					translated = componentType.getLabel();
+				}
 			}
 		}
 		return translated;

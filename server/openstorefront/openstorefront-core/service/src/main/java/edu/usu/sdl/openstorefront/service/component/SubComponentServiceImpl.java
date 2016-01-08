@@ -363,6 +363,21 @@ public class SubComponentServiceImpl
 			media = oldMedia;
 		} else {
 			media.setComponentMediaId(persistenceService.generateId());
+
+			//On a merge there may be a pre-existing file that needs to be rename
+			if (StringUtils.isNotBlank(media.getFileName())) {
+				if (media.getFileName().equals(media.getComponentMediaId()) == false) {
+					Path oldPath = media.pathToMedia();
+					if (oldPath != null) {
+						try {
+							Files.move(oldPath, oldPath.resolveSibling(media.getComponentMediaId()));
+						} catch (IOException ioe) {
+							throw new OpenStorefrontRuntimeException("Failed to rename media; trying to re-point record.", "Download media; delete original media record and then re-upload.", ioe);
+						}
+						media.setFileName(media.getComponentMediaId());
+					}
+				}
+			}
 			media.populateBaseCreateFields();
 			persistenceService.persist(media);
 		}
@@ -500,6 +515,22 @@ public class SubComponentServiceImpl
 			resource = oldResource;
 		} else {
 			resource.setResourceId(persistenceService.generateId());
+
+			//On a merge there may be a pre-existing file that needs to be rename
+			if (StringUtils.isNotBlank(resource.getFileName())) {
+				if (resource.getFileName().equals(resource.getResourceId()) == false) {
+					Path oldPath = resource.pathToResource();
+					if (oldPath != null) {
+						try {
+							Files.move(oldPath, oldPath.resolveSibling(resource.getResourceId()));
+						} catch (IOException ioe) {
+							throw new OpenStorefrontRuntimeException("Failed to rename resource; trying to re-point record.", "Download resource; delete original media resource and then re-upload.", ioe);
+						}
+						resource.setFileName(resource.getResourceId());
+					}
+				}
+			}
+
 			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
 		}

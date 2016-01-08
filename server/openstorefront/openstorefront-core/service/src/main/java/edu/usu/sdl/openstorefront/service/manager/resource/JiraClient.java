@@ -151,7 +151,7 @@ public class JiraClient
 
 		IssueInputBuilder issueBuilder = new IssueInputBuilder(basicProject, issueType);
 		issueBuilder.setDescription(description.toString());
-		issueBuilder.setSummary(feedbackTicket.getSummary());
+		issueBuilder.setSummary(feedbackTicket.getTicketType() + " - " + feedbackTicket.getSummary());
 
 		Promise<BasicIssue> promise = getRestClient().getIssueClient().createIssue(issueBuilder.build());
 		BasicIssue issue = promise.claim();

@@ -285,8 +285,12 @@
 										data: [
 											{
 												code: 'CMPSUB',
-												name: 'Component Submission'
+												name: 'Entry Submission'
 											},
+											{
+												code: 'CHGREQ',
+												name: 'Change Request'
+											},											
 											{
 												code: 'SYSERROR',
 												name: 'System Error'

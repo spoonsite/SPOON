@@ -36,6 +36,7 @@ public class ComponentTrackingCompleteWrapper
 
 	private String name;
 	private ComponentTracking data;
+	private String componentTypeLabel;
 
 	public ComponentTrackingCompleteWrapper()
 	{
@@ -69,16 +70,16 @@ public class ComponentTrackingCompleteWrapper
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
 		writer.writeNext(new String[]{getName(),
-									  getData().getComponentType(),
-									  getData().getComponentId(),
-									  getData().getComponentTrackingId(),
-									  df.format(getData().getEventDts()),
-									  getData().getClientIp(),
-									  TranslateUtil.translate(TrackEventCode.class, getData().getTrackEventTypeCode()),
-									  getData().getResourceLink(),
-									  getData().getResourceType(),
-									  getData().getRestrictedResouce() != null ? Boolean.toString(getData().getRestrictedResouce()) : "",
-									  getData().getCreateUser()
+			TranslateUtil.translateComponentType(getData().getComponentType()),
+			getData().getComponentId(),
+			getData().getComponentTrackingId(),
+			df.format(getData().getEventDts()),
+			getData().getClientIp(),
+			TranslateUtil.translate(TrackEventCode.class, getData().getTrackEventTypeCode()),
+			getData().getResourceLink(),
+			getData().getResourceType(),
+			getData().getRestrictedResouce() != null ? Boolean.toString(getData().getRestrictedResouce()) : "",
+			getData().getCreateUser()
 		});
 		return stringWriter.toString();
 	}
@@ -87,6 +88,16 @@ public class ComponentTrackingCompleteWrapper
 	public void importData(String[] data)
 	{
 		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public String getComponentTypeLabel()
+	{
+		return componentTypeLabel;
+	}
+
+	public void setComponentTypeLabel(String componentTypeLabel)
+	{
+		this.componentTypeLabel = componentTypeLabel;
 	}
 
 }

@@ -18,6 +18,9 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
@@ -26,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -34,6 +38,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -63,7 +68,7 @@ public class ComponentSubmissionResource
 	//  there, you just need to remove the '|| true'
 	@GET
 	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this only the top level component object)")
-	@DataType(Component.class)
+	@DataType(ComponentView.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getSubmissionsForUser()
 	{
@@ -73,7 +78,29 @@ public class ComponentSubmissionResource
 			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 
 			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
-			GenericEntity<List<Component>> entity = new GenericEntity<List<Component>>(components)
+
+			List<ComponentView> views = ComponentView.toViewList(components);
+
+			Component pendingChangeExample = new Component();
+			pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
+
+			QueryByExample queryPendingChanges = new QueryByExample(new Component());
+
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			specialOperatorModel.setExample(pendingChangeExample);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
+			queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
+
+			List<Component> pendingChanges = service.getPersistenceService().queryByExample(Component.class, queryPendingChanges);
+			Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
+			for (ComponentView componentView : views) {
+				List<Component> pendingChangesList = pendingChangesMap.get(componentView.getComponentId());
+				if (pendingChangesList != null) {
+					componentView.setNumberOfPendingChanges(pendingChangesList.size());
+				}
+			}
+
+			GenericEntity<List<ComponentView>> entity = new GenericEntity<List<ComponentView>>(views)
 			{
 			};
 			return sendSingleEntityResponse(entity);
@@ -182,6 +209,33 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
+	@APIDescription("Submits a change request for approval.")
+	@Path("/{componentId}/submitchangerequest")
+	public Response submitChangeRequest(
+			@PathParam("componentId")
+			@RequiredParam String componentId
+	)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+		if (component != null) {
+			response = ownerAnonymousCheck(component);
+			if (response == null) {
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+					service.getComponentService().submitChangeRequest(componentId);
+					response = Response.ok().build();
+				} else {
+					response = Response.status(Response.Status.FORBIDDEN)
+							.type(MediaType.TEXT_PLAIN)
+							.entity("Unable to modify an approved submission.")
+							.build();
+				}
+			}
+		}
+		return response;
+	}
+
+	@PUT
 	@APIDescription("Unsubmits Component Submission for approval.")
 	@Path("/{componentId}/unsubmit")
 	public Response unsubmitComponent(
@@ -195,6 +249,26 @@ public class ComponentSubmissionResource
 			response = ownerAnonymousCheck(component);
 			if (response == null) {
 				service.getComponentService().checkComponentCancelStatus(componentId, ApprovalStatus.NOT_SUBMITTED);
+				response = Response.ok().build();
+			}
+		}
+		return response;
+	}
+
+	@PUT
+	@APIDescription("Unsubmits Change Request for approval.")
+	@Path("/{componentId}/unsubmitchangerequest")
+	public Response unsubmitChangeRequest(
+			@PathParam("componentId")
+			@RequiredParam String componentId
+	)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+		if (component != null) {
+			response = ownerAnonymousCheck(component);
+			if (response == null) {
+				service.getComponentService().checkChangeRequestCancelStatus(componentId, ApprovalStatus.NOT_SUBMITTED);
 				response = Response.ok().build();
 			}
 		}

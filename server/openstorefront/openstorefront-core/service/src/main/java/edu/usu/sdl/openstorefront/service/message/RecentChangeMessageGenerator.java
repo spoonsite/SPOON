@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.message;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import java.text.SimpleDateFormat;
 import org.codemonkey.simplejavamail.Email;
 
@@ -48,32 +49,51 @@ public class RecentChangeMessageGenerator
 		message.append("Changes since: <b>").append(lastRunDate).append("</b><br><br>");
 		boolean changes = false;
 		if (messageContext.getRecentChangeMessage().getComponentsAdded().isEmpty() == false) {
-			message.append(messageContext.getRecentChangeMessage().getComponentsAdded().size()).append(" component(s) added.<br>");
+
+			message.append(messageContext.getRecentChangeMessage().getComponentsAdded().size())
+					.append(" ")
+					.append(StringProcessor.puralize(messageContext.getRecentChangeMessage().getComponentsAdded().size(), "entry", "entries"))
+					.append(" added.<br>");
 			changes = true;
 		}
 
 		if (messageContext.getRecentChangeMessage().getComponentsUpdated().isEmpty() == false) {
-			message.append(messageContext.getRecentChangeMessage().getComponentsUpdated().size()).append(" component(s) updated.<br>");
+			message.append(messageContext.getRecentChangeMessage().getComponentsUpdated().size())
+					.append(" ")
+					.append(StringProcessor.puralize(messageContext.getRecentChangeMessage().getComponentsUpdated().size(), "entry", "entries"))
+					.append(" updated.<br>");
 			changes = true;
 		}
 
 		if (messageContext.getRecentChangeMessage().getArticlesAdded().isEmpty() == false) {
-			message.append(messageContext.getRecentChangeMessage().getArticlesAdded().size()).append(" article(s) added.<br>");
+			message.append(messageContext.getRecentChangeMessage().getArticlesAdded().size())
+					.append(" ")
+					.append(StringProcessor.puralize(messageContext.getRecentChangeMessage().getArticlesAdded().size(), "article", null))
+					.append(" added.<br>");
 			changes = true;
 		}
 
 		if (messageContext.getRecentChangeMessage().getArticlesUpdated().isEmpty() == false) {
-			message.append(messageContext.getRecentChangeMessage().getArticlesUpdated().size()).append(" article(s) updated.<br>");
+			message.append(messageContext.getRecentChangeMessage().getArticlesUpdated().size())
+					.append(" ")
+					.append(StringProcessor.puralize(messageContext.getRecentChangeMessage().getArticlesAdded().size(), "article", null))
+					.append(" updated.<br>");
 			changes = true;
 		}
 
 		if (messageContext.getRecentChangeMessage().getHighlightsAdded().isEmpty() == false) {
-			message.append(messageContext.getRecentChangeMessage().getHighlightsAdded().size()).append(" hightlight(s) added.<br>");
+			message.append(messageContext.getRecentChangeMessage().getHighlightsAdded().size())
+					.append(" ")
+					.append(StringProcessor.puralize(messageContext.getRecentChangeMessage().getHighlightsAdded().size(), "hightlight", null))
+					.append(" added.<br>");
 			changes = true;
 		}
 
 		if (messageContext.getRecentChangeMessage().getHighlightsUpdated().isEmpty() == false) {
-			message.append(messageContext.getRecentChangeMessage().getHighlightsUpdated().size()).append(" hightlight(s) updated.<br>");
+			message.append(messageContext.getRecentChangeMessage().getHighlightsUpdated().size())
+					.append(" ")
+					.append(StringProcessor.puralize(messageContext.getRecentChangeMessage().getHighlightsUpdated().size(), "hightlight", null))
+					.append(" updated.<br>");
 			changes = true;
 		}
 

@@ -82,6 +82,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentTrackingWrapper;
+import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
@@ -453,6 +454,7 @@ public class ComponentRESTResource
 					}
 
 				});
+				response.header("Content-Type", "application/zip");
 				response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.zip\"");
 				return response.build();
 			} catch (JsonProcessingException | FsSyncException ex) {
@@ -462,6 +464,7 @@ public class ComponentRESTResource
 			}
 		} else {
 			Response.ResponseBuilder response = Response.ok("[]");
+			response.header("Content-Type", MediaType.APPLICATION_JSON);
 			response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.json\"");
 			return response.build();
 		}
@@ -565,9 +568,6 @@ public class ComponentRESTResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
-			component.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
-			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
 			RequiredForComponent savedComponent = service.getComponentService().saveComponent(component);
 			return Response.created(URI.create("v1/resource/components/" + savedComponent.getComponent().getComponentId())).entity(savedComponent).build();
 		} else {
@@ -601,7 +601,7 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 
-			//pick up all existing active attribute not already in the update
+			//pick up all existing active attributes not already in the update
 			ComponentAttribute componentAttributeExample = new ComponentAttribute();
 			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 			componentAttributeExample.setComponentId(componentId);
@@ -612,9 +612,6 @@ public class ComponentRESTResource
 				}
 			}
 
-			component.getComponent().setActiveStatus(Component.ACTIVE_STATUS);
-			component.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
-			component.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
 			return Response.ok(service.getComponentService().saveComponent(component)).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
@@ -796,17 +793,87 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Delete component and all related entities")
 	@Path("/{id}/cascade")
-	public void deleteComponentTag(
+	public Response deleteComponentTag(
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		service.getComponentService().cascadeDeleteOfComponent(componentId);
-	}
-	// </editor-fold>
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
 
+		service.getComponentService().cascadeDeleteOfComponent(componentId);
+		return Response.ok().build();
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(Component.class)
+	@APIDescription("Create a change request component")
+	@Path("/{id}/changerequest")
+	public Response createChangeRequest(
+			@PathParam("id")
+			@RequiredParam String componentId
+	)
+	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
+		Component component = service.getComponentService().createPendingChangeComponent(componentId);
+		response = Response.created(URI.create("v1/resource/components/" + component.getComponentId())).entity(component).build();
+		return response;
+	}
+
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(Component.class)
+	@APIDescription("Merges change request component with it parent component")
+	@Path("/{changeRequestId}/mergechangerequest")
+	public Response mergeChangeRequest(
+			@PathParam("changeRequestId")
+			@RequiredParam String componentId
+	)
+	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
+		Component component = service.getComponentService().mergePendingChange(componentId);
+		response = Response.ok(component).build();
+		return response;
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(ComponentView.class)
+	@APIDescription("Merges change request component with it parent component")
+	@Path("/{id}/pendingchanges")
+	public Response getPendingChanges(
+			@PathParam("id")
+			@RequiredParam String componentId
+	)
+	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+
+		Component componentExample = new Component();
+		componentExample.setPendingChangeId(componentId);
+
+		List<Component> components = componentExample.findByExample();
+		GenericEntity<List<ComponentView>> entity = new GenericEntity<List<ComponentView>>(ComponentView.toViewList(components))
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	// </editor-fold>
 	// <editor-fold defaultstate="collapse" desc=" Version history">
 	@GET
 	@APIDescription("Gets all version history for a component")

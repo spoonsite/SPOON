@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*global Ext, CoreService*/
+/*global Ext, CoreService, CoreUtil*/
 Ext.define('OSF.component.FeedbackWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.FeedbackWindow',
@@ -73,17 +73,29 @@ Ext.define('OSF.component.FeedbackWindow', {
 									referrer: document.referrer,
 									screenResolution: window.screen.availWidth + 'x' + window.screen.availHeight
 								};
+								
+								if (feedbackWin.extraDescription) {
+									data.description = feedbackWin.extraDescription + '\n\n' + data.description;
+								}
+								
+								if (feedbackWin.hideType) {
+									data.ticketType = feedbackWin.hideType;
+								}
+								
+								if (feedbackWin.hideSummary) {	
+									data.summary = feedbackWin.hideSummary;
+								}								
 
 								//submit ticket
 								CoreUtil.submitForm({
-									loadingText: 'Submitting Feedback...',
+									loadingText: 'Submitting...',
 									url: url,
 									method: method,
 									data: data,
 									removeBlankDataItems: true,
 									form: feedbackForm,
 									success: function (response, opts) {
-										Ext.toast('Sent Feedback Successfully', 'Thanks', 'br');
+										Ext.toast('Sent Successfully', 'Thanks', 'br');
 										feedbackForm.setLoading(false);
 										feedbackForm.reset();										
 										feedbackWin.close();
@@ -111,6 +123,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 					fieldLabel: 'Choose Type<span class="field-required" />',
 					width: '100%',
 					maxLength: 50,
+					hidden: feedbackWin.hideType ? true : false,
 					store: feedbackTypes,
 					value: 'Help',
 					displayField: 'name',
@@ -120,15 +133,16 @@ Ext.define('OSF.component.FeedbackWindow', {
 				{
 					xtype: 'textfield',
 					name: 'summary',
+					hidden: feedbackWin.hideSummary ? true : false,
 					fieldLabel: 'Summary<span class="field-required" />',
 					width: '100%',
 					maxLength: 50,
-					allowBlank: false
+					allowBlank: feedbackWin.hideSummary ? true : false
 				},
 				{
 					xtype: 'textarea',
 					name: 'description',
-					fieldLabel: 'Description<span class="field-required" />',
+					fieldLabel: (feedbackWin.labelForDescription ? feedbackWin.labelForDescription : 'Description') + '<span class="field-required" />',
 					width: '100%',
 					height: 200,
 					maxLength: 255,
