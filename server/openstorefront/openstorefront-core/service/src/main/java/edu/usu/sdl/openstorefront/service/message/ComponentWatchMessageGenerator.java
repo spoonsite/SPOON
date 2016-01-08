@@ -74,12 +74,12 @@ public class ComponentWatchMessageGenerator
 
 		boolean changes = false;
 		if (componentAll.getComponent().getUpdateDts().after(userWatch.getLastViewDts())) {
-			message.append(" - Component Summary<br>");
+			message.append(" - Summary<br>");
 			changes = true;
 		}
 
 		if (changed(componentAll.getAttributes(), userWatch.getLastViewDts())) {
-			message.append(" - Component Vitals<br>");
+			message.append(" - Vitals<br>");
 			changes = true;
 		}
 
@@ -174,7 +174,7 @@ public class ComponentWatchMessageGenerator
 	@Override
 	protected String getUnsubscribe()
 	{
-		return "To stop receiving updates on this component, please login and uncheck the notify flag for this component from your \"Watches\". ";
+		return "To stop receiving updates on this entry, please login and uncheck the notify flag for this entry from your \"Watches\". ";
 	}
 
 	private <T extends StandardEntity> boolean changed(List<T> entities, Date lastViewDts)

@@ -19,12 +19,19 @@ Ext.define('OSF.component.SubmissionPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.SubmissionPanel',
 	layout: 'border',
+	formWarningMessage: '<span class="app-info-box"><i class="fa fa-2x fa-info-circle"></i></span>This form will submit a component to the DI2E Framework PMO for review and consideration.' +
+						'A DI2E Storefront Manager will contact you regarding your submission.' +
+						'For help, contact <a href="mailto:helpdesk@di2e.net">helpdesk@di2e.net</a>',
+
+	submitForReviewUrl: function (componentId){
+		return '../api/v1/resource/componentsubmissions/' + componentId+ '/submit';
+	},
 	
 	initComponent: function () {
 		this.callParent();
 		
 		var submissionPanel = this;
-		
+				
 		submissionPanel.cancelSubmissionHandler = function() {
 			Ext.Msg.show({
 				title:'Confirm Cancel?',
@@ -191,9 +198,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					width: '100%',
 					margin: '40 0 0 0',
 					padding: '0 0 0 0',
-					html: '<span class="app-info-box"><i class="fa fa-2x fa-info-circle"></i></span>This form will submit a component to the DI2E Framework PMO for review and consideration.' +
-						'A DI2E Storefront Manager will contact you regarding your submission.' +
-						'For help, contact <a href="mailto:helpdesk@di2e.net">helpdesk@di2e.net</a>'
+					html: submissionPanel.formWarningMessage
 				}
 			]
 		});
@@ -394,7 +399,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				{
 					xtype: 'grid',
 					itemId: 'requiredAttributeGrid',
-					title: 'Required Attributes',
+					title: 'Attributes',
 					frame: true,
 					margin: '20 0 20 0',
 					columnLines: true,
@@ -526,14 +531,33 @@ Ext.define('OSF.component.SubmissionPanel', {
 								storeConfig: {
 									url: '../api/v1/resource/organizations/lookup'
 								}
-							}),								
-							{
-								xtype: 'textfield',
-								fieldLabel: 'First Name <span class="field-required" />',									
+							}),							
+							Ext.create('OSF.component.StandardComboBox', {
+								name: 'firstName',									
 								allowBlank: false,									
-								maxLength: '80',
-								name: 'firstName'
-							},
+								margin: '0 0 5 0',
+								width: '100%',
+								fieldLabel: 'First Name  <span class="field-required" />',
+								forceSelection: false,
+								valueField: 'firstName',
+								displayField: 'firstName',
+								maxLength: '80',							
+								listConfig: {
+									itemTpl: [
+										 '{firstName} <span style="color: grey">({email})</span>'
+									]
+								},								
+								storeConfig: {
+									url: '../api/v1/resource/contacts/filtered'
+								},
+								listeners: {
+									select: function(combo, record, opts) {
+										record.set('contactId', null);
+										combo.up('form').reset();
+										combo.up('form').loadRecord(record);
+									}
+								}
+							}),							
 							{
 								xtype: 'textfield',
 								fieldLabel: 'Last Name <span class="field-required" />',									
@@ -1622,6 +1646,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										{
 											text: 'Edit',
 											itemId: 'editBtn',
+											disabled: true,
 											iconCls: 'fa fa-plus',
 											handler: function(){
 												var grid = this.up('grid');
@@ -2204,33 +2229,38 @@ Ext.define('OSF.component.SubmissionPanel', {
 								
 								submissionPanel.setLoading('Submitting Entry...');
 								Ext.Ajax.request({
-									url: '../api/v1/resource/componentsubmissions/' + submissionPanel.componentId + '/submit',
+									url: submissionPanel.submitForReviewUrl(submissionPanel.componentId),
 									method: 'PUT',
 									callback: function(){
 										submissionPanel.setLoading(false);
 									},
 									success: function(response, opts){
 										Ext.toast('Entry has been submitted for approval.', 'Success');
-										if (submissionPanel.handleSubmissionSuccess) {
-											submissionPanel.handleSubmissionSuccess(response, opts);
-										}										
+										
+										//set notification
+										var newEmail = submissionPanel.submitterForm.getForm().findField('email').getValue();
+										if (submissionPanel.reviewPanel.getComponent('approvalNotification').getValue() === false) {																
+											newEmail = null;												
+										}
+										
+										submissionPanel.setLoading('Updating Notification...');
+										Ext.Ajax.request({
+											url: '../api/v1/resource/componentsubmissions/' + submissionPanel.componentId + '/setNotifyMe',
+											method: 'PUT',
+											rawData: newEmail,
+											callback: function(){
+												submissionPanel.setLoading(false);
+											},
+											success: function(response, opts) {
+												Ext.toast('Updated notification');
+												
+												if (submissionPanel.handleSubmissionSuccess) {
+													submissionPanel.handleSubmissionSuccess(response, opts);
+												}
+											}
+										});	
 									}
-								});		
-								
-								//set notification
-								var newEmail = submissionPanel.submitterForm.getForm().findField('email').getValue();
-								if (submissionPanel.reviewPanel.getComponent('approvalNotification').getValue() === false) {																
-									newEmail = null;												
-								}
-								
-								Ext.Ajax.request({
-									url: '../api/v1/resource/componentsubmissions/' + submissionPanel.componentId + '/setNotifyMe',
-									method: 'PUT',
-									rawData: newEmail,									
-									success: function(response, opts) {
-										Ext.toast('Updated notification');
-									}
-								});									
+								});								
 																
 							}
 						},												
@@ -2414,6 +2444,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 												success: function(response, opts) {
 													submissionPanel.currentStep=3;	
 													submissionPanel.changeSteps(true);
+													contactStore.load({
+														url: '../api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view'		
+													});
 												}												
 											});																						
 

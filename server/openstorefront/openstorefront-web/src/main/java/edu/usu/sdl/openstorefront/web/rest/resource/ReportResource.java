@@ -182,6 +182,7 @@ public class ReportResource
 						}
 
 					});
+					responseBuilder.header("Content-Type", ReportFormat.mimeType(report.getReportFormat()));
 					responseBuilder.header("Content-Disposition", "attachment; filename=\"" + TranslateUtil.translate(ReportType.class, report.getReportType()) + extenstion + "\"");
 					response = responseBuilder.build();
 				}

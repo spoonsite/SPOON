@@ -33,7 +33,7 @@
 	<tpl if="releaseDate">
 		<p><b>Release Date:</b> {releaseDate}</p>
 	</tpl>
-	<p><b>Type:</b> {componentType}</p>
+	<p><b>Entry Type:</b> {componentTypeLabel}</p>
 	<br>
 	<b>Description</b>
 	<hr>

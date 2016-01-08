@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ import org.codemonkey.simplejavamail.Email;
  *
  * @author dshurtleff
  */
-public class ComponentSubmissionMessageGenerator
+public class ChangeRequestMessageGenerator
 		extends BaseMessageGenerator
 {
 
-	public ComponentSubmissionMessageGenerator(MessageContext messageContext)
+	public ChangeRequestMessageGenerator(MessageContext messageContext)
 	{
 		super(messageContext);
 	}
@@ -43,7 +43,7 @@ public class ComponentSubmissionMessageGenerator
 	@Override
 	protected String getSubject()
 	{
-		return "Entry Submission";
+		return "Entry Change Requests";
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class ComponentSubmissionMessageGenerator
 		Date checkDate = new Date(instant.toEpochMilli());
 
 		Component componentExample = new Component();
-		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		componentExample.setActiveStatus(Component.PENDING_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.PENDING);
 
 		Component componentStartExample = new Component();
@@ -75,7 +75,7 @@ public class ComponentSubmissionMessageGenerator
 			message.append(components.size())
 					.append(" ")
 					.append(StringProcessor.puralize(components.size(), "entry", "entries"))
-					.append(" submitted for <b>Approval</b> since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
+					.append(" submitted changes for <b>Approval</b> since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
 			message.append("<ul>");
 			for (Component component : components) {
 				message.append(" <li>").append(component.getName())
@@ -93,7 +93,9 @@ public class ComponentSubmissionMessageGenerator
 			message.append(components.size())
 					.append(" ")
 					.append(StringProcessor.puralize(components.size(), "entry", "entries"))
-					.append(" submission <b>Canceled</b> for approval since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
+					.append(" ")
+					.append(StringProcessor.puralize(components.size(), "change request", null))
+					.append(" <b>Canceled</b> for approval since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
 			message.append("<ul>");
 			for (Component component : components) {
 				message.append(" <li>").append(component.getName())

@@ -437,4 +437,16 @@ public class StringProcessor
 		return badFileName;
 	}
 
+	public static String puralize(int size, String nonPuralForm, String puralForm)
+	{
+		if (size == 1) {
+			return nonPuralForm;
+		} else {
+			if (StringUtils.isNotBlank(puralForm)) {
+				return puralForm;
+			}
+			return nonPuralForm + "s";
+		}
+	}
+
 }

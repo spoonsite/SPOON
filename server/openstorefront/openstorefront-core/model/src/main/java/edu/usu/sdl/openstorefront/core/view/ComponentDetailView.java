@@ -19,10 +19,12 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.ParamTypeDescription;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -101,6 +103,8 @@ public class ComponentDetailView
 	private String dataSource;
 	private String storageVersion;
 	private Integer recordVersion;
+	private String componentTypeLabel;
+	private String approvalStateLabel;
 
 	private ComponentEvaluationView evaluation = new ComponentEvaluationView();
 
@@ -181,6 +185,8 @@ public class ComponentDetailView
 		if (recordVersion == null) {
 			recordVersion = 1;
 		}
+		approvalStateLabel = TranslateUtil.translate(ApprovalStatus.class, component.getApprovalState());
+		componentTypeLabel = TranslateUtil.translateComponentType(component.getComponentType());
 
 		componentSecurityMarkingType = component.getSecurityMarkingType();
 
@@ -609,6 +615,26 @@ public class ComponentDetailView
 	public void setRecordVersion(Integer recordVersion)
 	{
 		this.recordVersion = recordVersion;
+	}
+
+	public String getComponentTypeLabel()
+	{
+		return componentTypeLabel;
+	}
+
+	public void setComponentTypeLabel(String componentTypeLabel)
+	{
+		this.componentTypeLabel = componentTypeLabel;
+	}
+
+	public String getApprovalStateLabel()
+	{
+		return approvalStateLabel;
+	}
+
+	public void setApprovalStateLabel(String approvalStateLabel)
+	{
+		this.approvalStateLabel = approvalStateLabel;
 	}
 
 }

@@ -84,16 +84,16 @@ public class ComponentTrackingResource
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		writer.writeNext(new String[]{"Name",
-									  "Component Type",
-									  "Component ID",
-									  "Tracking ID",
-									  "Create Date",
-									  "Client IP",
-									  "Event",
-									  "Resource Link",
-									  "Resource Type",
-									  "Restricted Resource",
-									  "Create User"
+			"Component Type",
+			"Component ID",
+			"Tracking ID",
+			"Create Date",
+			"Client IP",
+			"Event",
+			"Resource Link",
+			"Resource Type",
+			"Restricted Resource",
+			"Create User"
 		});
 		data.append(stringWriter.toString());
 
@@ -102,6 +102,7 @@ public class ComponentTrackingResource
 		}
 
 		ResponseBuilder response = Response.ok(data.toString());
+		response.header("Content-Type", "application/csv");
 		response.header("Content-Disposition", "attachment; filename=\"componentTrackingExport.csv\"");
 		return response.build();
 	}

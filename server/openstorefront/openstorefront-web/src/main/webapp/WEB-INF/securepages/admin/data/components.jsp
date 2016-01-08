@@ -3,9 +3,11 @@
 <stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
           <stripes:layout-component name="contents">
 			  
-		<script src="scripts/component/importWindow.js" type="text/javascript"></script>
-		<script src="scripts/component/messageWindow.js" type="text/javascript"></script>
-		<script src="scripts/component/integrationConfigWindow.js" type="text/javascript"></script>
+		<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/integrationConfigWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
 		<form name="exportForm" action="../api/v1/resource/components/export" method="POST" >
 			<p style="display: none;" id="exportFormIds">
@@ -23,7 +25,14 @@
 				});
 				
 				var integrationWindow = Ext.create('OSF.component.IntegrationWindow', {					
-				});				
+				});			
+				
+				var changeRequestWindow = Ext.create('OSF.component.EntryChangeRequestWindow', {
+					adminMode: true,
+					successHandler: function() {
+						actionRefreshComponentGrid();
+					}
+				});
 							
 				//common stores
 				var statusFilterStore = Ext.create('Ext.data.Store', {
@@ -860,7 +869,7 @@
 				var dependenciesGrid = Ext.create('Ext.grid.Panel', {
 					id: 'dependenciesGrid',
 					title: 'Dependencies',
-					tooltip: 'External dependences for a component',
+					tooltip: 'External dependencies for a component',
 					columnLines: true,
 					store: Ext.create('Ext.data.Store', {
 						fields: [
@@ -886,6 +895,7 @@
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
+							this.down('form').reset();
 							this.down('form').loadRecord(record);
 						},
 						selectionchange: function(grid, record, index, opts){
@@ -902,7 +912,7 @@
 					dockedItems: [
 						{
 							xtype: 'form',
-							title: 'Add/Edit Dependancy',
+							title: 'Add/Edit Dependency',
 							collapsible: true,
 							titleCollapse: true,
 							border: true,
@@ -977,7 +987,7 @@
 								{
 									xtype: 'textfield',
 									fieldLabel: 'External Link',															
-									emptyText: 'External Link',									
+									emptyText: 'http://dependency.com/download',									
 									maxLength: '255',
 									name: 'dependancyReferenceLink'
 								},
@@ -1027,6 +1037,7 @@
 									itemId: 'editBtn',
 									iconCls: 'fa fa-edit',
 									handler: function(){
+										this.up('grid').down('form').reset();
 										this.up('grid').down('form').loadRecord(Ext.getCmp('dependenciesGrid').getSelection()[0]);
 									}									
 								},
@@ -1082,6 +1093,7 @@
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
+							this.down('form').reset();
 							this.down('form').loadRecord(record);
 							if (record.get('originalFileName')) {
 								this.down('form').getComponent('upload').setFieldLabel('Current File: ' + record.get('originalFileName'));
@@ -1126,17 +1138,17 @@
 									margin: '0 20 0 0',
 									iconCls: 'fa fa-save',
 									handler: function(){	
-										var form = this.up('form');
-										var data = form.getValues();
+										var mainForm = this.up('form');
+										var data = mainForm.getValues();
 										var componentId = Ext.getCmp('mediaGrid').componentRecord.get('componentId');
 										
-										data.fileSelected = form.getComponent('upload').getValue();
+										data.fileSelected = mainForm.getComponent('upload').getValue();
 										data.link = data.originalLink;
 										data.originalName = data.originalFileName;
 									
 										if (!data.originalFileName && ((!data.link && !data.fileSelected) || (data.link && data.fileSelected))) {
 											
-											form.getForm().markInvalid({
+											mainForm.getForm().markInvalid({
 												file: 'Either a link or a file must be entered',
 												originalLink: 'Either a link or a file must be entered'
 											});
@@ -1155,16 +1167,16 @@
 													method: method,
 													removeBlankDataItems: true,
 													data: data,
-													form: form,
+													form: mainForm,
 													success: function(){
 														Ext.getCmp('mediaGrid').getStore().reload();
-														form.reset();
-														form.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
+														mainForm.reset();
+														mainForm.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
 													}
 												});
 											} else {
 												//upload
-												form.submit({
+												mainForm.submit({
 													url: '../Media.action?UploadMedia',
 													params: {
 														'componentMedia.mediaTypeCode' : data.mediaTypeCode,
@@ -1177,8 +1189,8 @@
 													submitEmptyText: false,
 													success: function(form, action, opt){
 														Ext.getCmp('mediaGrid').getStore().reload();
-														form.reset();
-														form.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
+														mainForm.reset();
+														mainForm.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
 													}, 
 													failure: function(form, action, opt) {
 														var errorResponse = Ext.decode(action.response.responseText);
@@ -1186,7 +1198,7 @@
 														Ext.Array.each(errorResponse.errors.entry, function(item, index, entry) {
 															errorObj[item.key.replace('componentMedia', '')] = item.value;
 														});
-														form.markInvalid(errorObj);
+														mainForm.markInvalid(errorObj);
 													}
 												});
 												
@@ -1294,6 +1306,7 @@
 									iconCls: 'fa fa-edit',
 									handler: function(){
 										var record = Ext.getCmp('mediaGrid').getSelection()[0];
+										this.up('grid').down('form').reset();
 										this.up('grid').down('form').loadRecord(record);
 										if (record.get('originalFileName')) {
 											this.up('grid').down('form').getComponent('upload').setFieldLabel('Current File: ' + record.get('originalFileName'));
@@ -1370,6 +1383,7 @@
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
+							this.down('form').reset();
 							this.down('form').loadRecord(record);
 							if (record.get('originalFileName')) {
 								this.down('form').getComponent('upload').setFieldLabel('Current File: ' + record.get('originalFileName'));
@@ -1587,6 +1601,7 @@
 									iconCls: 'fa fa-edit',
 									handler: function(){
 										var record = Ext.getCmp('resourcesGrid').getSelection()[0];
+										this.up('grid').down('form').reset();
 										this.up('grid').down('form').loadRecord(record);
 										if (record.get('originalFileName')) {
 											this.up('grid').down('form').getComponent('upload').setFieldLabel('Current File: ' + record.get('originalFileName'));
@@ -1661,6 +1676,7 @@
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
+							this.down('form').reset();
 							this.down('form').loadRecord(record);
 						},
 						selectionchange: function(grid, record, index, opts){
@@ -1759,13 +1775,32 @@
 										url: '../api/v1/resource/organizations/lookup'
 									}
 								}),								
-								{
-									xtype: 'textfield',
-									fieldLabel: 'First Name <span class="field-required" />',									
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'firstName',									
 									allowBlank: false,									
-									maxLength: '80',
-									name: 'firstName'
-								},
+									margin: '0 0 5 0',
+									width: '100%',
+									fieldLabel: 'First Name  <span class="field-required" />',
+									forceSelection: false,
+									valueField: 'firstName',
+									displayField: 'firstName',
+									maxLength: '80',							
+									listConfig: {
+										itemTpl: [
+											 '{firstName} <span style="color: grey">({email})</span>'
+										]
+									},								
+									storeConfig: {
+										url: '../api/v1/resource/contacts/filtered'
+									},
+									listeners: {
+										select: function(combo, record, opts) {
+											record.set('contactId', null);
+											combo.up('form').reset();
+											combo.up('form').loadRecord(record);
+										}
+									}
+								}),
 								{
 									xtype: 'textfield',
 									fieldLabel: 'Last Name <span class="field-required" />',									
@@ -1827,6 +1862,7 @@
 									itemId: 'editBtn',
 									iconCls: 'fa fa-edit',
 									handler: function(){
+										this.up('grid').down('form').reset();
 										this.up('grid').down('form').loadRecord(Ext.getCmp('contactGrid').getSelection()[0]);
 									}									
 								},
@@ -3019,7 +3055,7 @@
 							xtype: 'panel',
 							id: 'versionWin-currentVersionPanel',
 							region: 'center',
-							width: '33%',
+							flex: 1,
 							title: 'Current Version',
 							header: {
 								cls: 'accent-background'
@@ -3320,6 +3356,9 @@
 						{name: 'approvalState', mapping: function(data){
 							return data.component.approvalState;
 						}},
+						{name: 'approvalStateLabel', mapping: function(data){
+							return data.component.approvalStateLabel;
+						}},
 						{name: 'approvedDts', mapping: function(data){
 							return data.component.approvedDts;
 						}},
@@ -3332,6 +3371,9 @@
 						{name: 'componentType', mapping: function(data){
 							return data.component.componentType;
 						}},
+						{name: 'componentTypeLabel', mapping: function(data){
+							return data.component.componentTypeLabel;
+						}},					
 						{name: 'organization', mapping: function(data){
 							return data.component.organization;
 						}},					
@@ -3377,6 +3419,9 @@
 						{name: 'updateUser', mapping: function(data){
 							return data.component.updateUser;
 						}},
+						{name: 'numberOfPendingChanges', mapping: function(data){
+							return data.component.numberOfPendingChanges;
+						}},
 						'integrationManagement'						
 					],
 					proxy: CoreUtil.pagingProxy({
@@ -3411,7 +3456,7 @@
 								type: 'string'
 							}	
 						},
-						{ text: 'Type', align: 'center', dataIndex: 'componentType', width: 125,
+						{ text: 'Type', align: 'center', dataIndex: 'componentTypeLabel', width: 125,
 							filter: {
 								type: 'list'
 							}	
@@ -3420,11 +3465,12 @@
 						 renderer: function(value){
 							return Ext.util.Format.stripTags(value);
 						}},
+						{ text: 'Pending Changes', align: 'center', dataIndex: 'numberOfPendingChanges', width: 150 },
 						{ text: 'Last Activity Date', dataIndex: 'lastActivityDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Submitted Date', dataIndex: 'submittedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },						
-						{ text: 'Approval State', align: 'center', dataIndex: 'approvalState', width: 150 },
+						{ text: 'Approval State', align: 'center', dataIndex: 'approvalStateLabel', width: 125 },
 						{ text: 'Approval Date', dataIndex: 'approvedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },
+						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 125 },
 						{ text: 'Integration Management', dataIndex: 'integrationManagement', width: 175 },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s'},
 						{ text: 'Update User', dataIndex: 'updateUser', width: 175, hidden: true },
@@ -3590,6 +3636,13 @@
 											handler: function(){
 												actionChangeOwner(Ext.getCmp('componentGrid').getSelection()[0]);
 											}
+										},
+										{
+											text: 'Change Requests',																		
+											iconCls: 'fa fa-edit',
+											handler: function () {												
+												actionChangeRequests(Ext.getCmp('componentGrid').getSelection()[0]);
+											}
 										},										
 										{
 											xtype: 'menuseparator'
@@ -3719,12 +3772,19 @@
 					}
 				};
 				
+				var actionChangeRequests = function(record) {
+					var componentId = record.get('componentId');
+					var name = record.get('name');
+					changeRequestWindow.show();
+					changeRequestWindow.loadComponent(componentId, name);
+				};
+				
 				var actionChangeOwner = function(record) {
 					Ext.getCmp('changeOwnerWin').show();
 					Ext.getCmp('changeOwnerWin').componentId = record.get('componentId');
 					Ext.getCmp('changeOwnerWin').setTitle('Change Owner - ' + record.get('name'));
 					Ext.getCmp('changeOwnerWin').getComponent('changeOwnerForm').loadRecord(record);
-				}
+				};
 				
 				var actionRefreshComponentGrid = function() {
 					Ext.getCmp('componentGrid').getStore().load({

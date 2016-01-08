@@ -393,6 +393,14 @@ public interface ComponentService
 	public void submitComponentSubmission(String componentId);
 
 	/**
+	 * Submits a change request for Approval
+	 *
+	 * @param componentId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void submitChangeRequest(String componentId);
+
+	/**
 	 * This will handle syncing all the component of the list.
 	 *
 	 * @param components
@@ -556,6 +564,16 @@ public interface ComponentService
 	public void checkComponentCancelStatus(String componentId, String newApprovalStatus);
 
 	/**
+	 * This checks the component approval state and handle alerting about
+	 * pending to not submitted state.
+	 *
+	 * @param componentId
+	 * @param newApprovalStatus
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void checkChangeRequestCancelStatus(String componentId, String newApprovalStatus);
+
+	/**
 	 * Copy a component and create a newId; this will copy all related data as
 	 * well even media and resources. Note the Copy will be in Pending status
 	 * and the name will have Copy
@@ -621,6 +639,13 @@ public interface ComponentService
 	 * @return
 	 */
 	public List<ComponentRecordStatistic> findTopViewedComponents(Integer maxRecords);
+
+	/**
+	 * Get all component types (Cached)
+	 *
+	 * @return all defined component types
+	 */
+	public List<ComponentType> getAllComponentTypes();
 
 	/**
 	 * Save a component type

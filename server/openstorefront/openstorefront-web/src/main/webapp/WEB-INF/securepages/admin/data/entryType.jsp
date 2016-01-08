@@ -194,7 +194,7 @@
 					columnLines: true,
 					columns: [						
 						{ text: 'Type Code', dataIndex: 'componentType', width: 125 },
-						{ text: 'Type', dataIndex: 'label', width: 200 },
+						{ text: 'Label', dataIndex: 'label', width: 200 },
 						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200 },
 						{ text: 'Template Override', dataIndex: 'componentTypeTemplate', width: 150 },
 						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },

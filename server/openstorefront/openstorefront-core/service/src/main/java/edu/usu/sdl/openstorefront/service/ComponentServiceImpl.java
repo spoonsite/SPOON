@@ -598,4 +598,22 @@ public class ComponentServiceImpl
 		return core.mergePendingChange(componentIdOfPendingChange);
 	}
 
+	@Override
+	public List<ComponentType> getAllComponentTypes()
+	{
+		return core.getAllComponentTypes();
+	}
+
+	@Override
+	public void submitChangeRequest(String componentId)
+	{
+		core.submitChangeRequest(componentId);
+	}
+
+	@Override
+	public void checkChangeRequestCancelStatus(String componentId, String newApprovalStatus)
+	{
+		core.checkChangeRequestCancelStatus(componentId, newApprovalStatus);
+	}
+
 }

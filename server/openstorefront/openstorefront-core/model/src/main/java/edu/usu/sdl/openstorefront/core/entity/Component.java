@@ -216,7 +216,6 @@ public class Component
 		this.setLastModificationType(component.getLastModificationType());
 		this.setChangeApprovalMode(component.getChangeApprovalMode());
 		this.setRecordVersion(component.getRecordVersion());
-		this.setPendingChangeId(component.getPendingChangeId());
 
 	}
 
