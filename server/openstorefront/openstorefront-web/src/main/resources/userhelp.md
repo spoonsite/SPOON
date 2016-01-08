@@ -1,7 +1,7 @@
 
 <span style="font-size: 24px;">User Guide</span>
 
-Version 1.6
+Version 1.6 [BETA]
                                                       
 
 
@@ -138,7 +138,7 @@ performing an exact search and the words are a necessary part of the
 phrase being searched. For more information on exact searches, see
 section 1.1.3.
 
-## 2.2. Search Tools and other search methods
+## 2.2 Search Tools and other search methods
 ------
 
 From the DI2E Clearinghouse home page clicking on this icon ![Logo](../../../../../../client/openstorefront/app/images/searchtools.png)
@@ -162,7 +162,7 @@ individual Clearinghouse entry.  Results of all of the topics can also be
 shown in a new window.
 
 
-### 2.2.3 Category Search Tool
+### 2.2.2 Category Search Tool
 ------
 
 The Category tab in the Search Tools window displays many categories that
@@ -179,6 +179,69 @@ taxonomy.  Expand All and Collapse All buttons are provided.  Clicking
 on the **+** button expands an individual folder and **-** collapses the folder.  
 Search results are displayed with sortable columns and links to individual 
 results or the entire search results can be opened in a new page.
+
+### 2.2.4 Tags  
+------
+Users can "Tag" listings so that they can be used to later find and
+refine search results. User-created tags are visible to all users.
+However, only the owner of the tag or an admin user may remove a tag.
+Tags are used in the search field shown at the top of the screen and 
+on the home page.
+
+**To create a tag:**
+
+ 1.  From the search results screen, view the details by by clicking on the title.
+ 2.  Click on the View/ Edit Tag icon to open the tag panel.
+ 3.  Enter a new tag in the text field OR a single space to view existing tags.
+
+### 2.2.5 Questions  
+---------
+
+Questions or "Q&A" allow users to post questions about components and
+allow other users to answer those questions based on their experience
+with the component.
+
+**To post a question:**
+
+1.  From the search results screen, view the details by by clicking on the title.
+2.  Click on the Q&A tab.
+3.  Fill out the form at the bottom.
+4.  Click the **Post** button.
+
+**To answer a question:**
+
+1.  Expand the question by clicking on the expand (down arrow) icon.
+2.  Fill out the form under Give an Answer.
+3.  Click **Post**.
+
+Once you have answered a question, your answer may be edited and removed
+using the buttons next to the answer.
+
+**Message User***
+Clicking on this next to a question or answer will allow a message (email) to be
+sent to the user that submitted the question or answer.  This can be used to 
+gain additional clarification.
+
+### 2.2.6 Comparing
+---------
+
+The comparison feature allows for side-by-side viewing of multiple
+listings. For example, there may be several components that provide the
+same kind of features (e.g. Cesium and Google maps). You can use the
+comparison feature to view their details together to find the component
+better suited your project's needs.
+
+**To compare components:**
+
+1.  From the Search Results Screen click **Compare All** or click the
+    check on 2 or more components and then click on the
+    **Compare** button.
+
+2.  In the compare screen, click on two of the listings to display
+    them side-by-side.
+
+3.  You can customize the details being viewed by checking the items
+    available in the **Sections to compare** area.
 
 
 ## 2.3 User Tools
@@ -307,127 +370,37 @@ title of the review. You can only remove reviews you post.
 
 #### 2.3.2.3 Manage Reports
 --------
-**Write Stuff HERE**
 
+This section displays scheduled user reports as well as the history or log of reports that have ran.
 
-## 2.4 Tags  
-------
-Users can "Tag" listings so that they can be used to later find and
-refine search results. User-created tags are visible to all users.
-However, only the owner of the tag or an admin user may remove a tag.
-Tags are used in the main Omni-search field shown at the top of the
-screen and on the home page.
+**Schedule tab**
+This default view shows all of the scheduled reports.  A drop-down at the top
+allows viewing of the Active or Inactive reports.  Select a report in the table
+and click Toggle Status to change from one status to the other.
 
-**To create a tag:**
+Reports can be added or edited.  Selctions can be made to run a report one time
+only or at regular intervals.  Some reports have the option of HTML or Comma-
+Seperated Values as the report format.  If slecting Previous days, the 
+selected number of prior days will be included in the report output.  
 
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
+Types of reports available include:
+  
+  - Component
+  - Component by Organization
+  - Component Detail
+  - Components by Category
+  - Link Validation
+  - Submissions
+  - Usage
+  - User
+  - User Organization
 
-2.  Click on the Tag icon ![tag](../../../../../../client/openstorefront/app/images/help/tags.png) to open the tag panel.
+**History tab**
+This table is helpful to view old reports or see what has been run and when.  Select
+a report and click view to see the output of the report and that particular date and
+time.  A report can be downloaded / exported for archiving or offline use.
 
-3.  Enter a new tag in the text field.
-
-**To remove a tag:**
-
-1.  Click the "x" on the tag in the tag panel (see create tag)
-
-**NOTE:** Recall that you may only remove your own tags.
-
-## 2.5 Questions  
----------
-
-Questions or "Q&A" allow users to post questions about components and
-allow other users to answer those questions based on their experience
-with the component.
-
-**To post a question:**
-
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
-
-2.  Click on the Q&A tab.
-
-3.  Fill out the form at the bottom.
-
-4.  Click the **Post** button.
-
-**To edit your question:**
-
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
-
-2.  Click on the "Q&A" tab.
-
-3.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) next to the question.
-
-4.  Fill out the form.
-
-5.  Click **Save**.
-
-**To remove your question:**
-
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
-
-2.  Click on the "Q&A" tab.
-
-3.  Click on the delete icon ![delete](../../../../../../client/openstorefront/app/images/help/trash.png) next to the
-    question .
-
-**To answer a question:**
-
-1.  Expand the question by clicking on the expand
-    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
-
-2.  Fill out the form.
-
-3.  Click **Post**.
-
-Once you have answered a question, your answer may be edited and removed
-using the buttons next to the answer.
-
-## 2.6 Comparing
----------
-
-The comparison feature allows for side-by-side viewing of multiple
-listings. For example, there may be several components that provide the
-same kind of features (e.g. Cesium and Google maps). You can use the
-comparison feature to view their details together to find the component
-better suited your project's needs.
-
-**To compare components:**
-
-1.  From the Search Results Screen click **Compare All** or click the
-    check on 2 or more components and then click on the
-    **Compare** button.
-
-2.  In the compare screen, click on two of the listings to display
-    them side-by-side.
-
-3.  You can customize the details being viewed by checking the items
-    available in the **Sections to compare** area.
-
-## 2.7  Printing
---------
-
-Allows for customizable print view of a component listing that can be
-used in printing or for converting to PDF using the web browser's
-features.
-
-**To view a print version of a component:**
-
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
-
-2.  Click on the Print icon ![print](../../../../../../client/openstorefront/app/images/help/print.png) to bring up the
-    print window.
-
-In the print window, you can customize what is printed by selecting
-**Custom Template**. Once what you view in the print window is ready,
-click the Print icon ![print](../../../../../../client/openstorefront/app/images/help/print.png) to bring up the browser
-print dialog and complete printing.
-
-## 2.8 Changes Notification
+## 2.4 Changes Notification
 --------------------
 
 The application sends out notification emails about any changes that
@@ -437,16 +410,18 @@ listings on the application.
 
 **To receive the notification:**
 
-1.  Select **User Profile** from the user menu.
+1.  Select **User Tools** from the drop-down menu in the upper-right with the username.
+2.  Ensure that a valid email address is present in the **User Profile** section.
+4.  Check the checkbox, **Receive periodic email about recent changes**.
+5.  Click **Save**.
 
-2.  Click on the **Update User Info** checkbox.
+## 2.5  Printing
+--------
 
-3.  Enter in a valid email address.
-
-4.  Check the **Notification** checkbox.
-
-5.  Click **Save User Profile**.
-
+Many areas of the website have a **Go To Print View** icon to facilitate printing
+of the displayed information.  In the print view, various customizations are
+available such as creating a custom template or including and excluding certain
+labels or display areas.  
 
 
 # 3. Admin Tools*
