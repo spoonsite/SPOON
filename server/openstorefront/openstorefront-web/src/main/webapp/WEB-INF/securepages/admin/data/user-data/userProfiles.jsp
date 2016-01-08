@@ -22,6 +22,19 @@
 					}
 				});
 
+				var userTypeStore = Ext.create('Ext.data.Store', {
+					storeId: 'userTypeStore',
+					autoLoad: true,
+					fields: ['code', 'description'],
+					proxy: {type: 'ajax', url: '../api/v1/resource/lookuptypes/UserTypeCode/view'}
+				});
+
+				var getUserType = function getUserType(code) {
+					if (code)
+						return userTypeStore.getData().find('code', code).data.description;
+					return '';
+				};
+
 
 				var userProfileGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Manage User Profiles <i class="fa fa-question-circle"  data-qtip="A user profile represents a user in the system and contains the user\'s information."></i>',
@@ -57,7 +70,10 @@
 							{
 								flex: 1,
 								text: 'User Type', 
-								dataIndex: 'userTypeCode'
+								dataIndex: 'userTypeCode',
+								renderer: function (value, metaData, record) {
+									return getUserType(value);
+								}
 							},
 							{
 								flex: 2,
