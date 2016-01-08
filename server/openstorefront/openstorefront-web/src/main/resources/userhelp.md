@@ -9,9 +9,9 @@ Version 1.6
 ------
 
 The DI2E Clearinghouse application is a software cataloging system that
-is used to catalog components of interest to the DI2E community. 
-Components include Government off the shelf (GOTS), commercial off the
-shelf (COTS), and Open Source software (OSS). The component evaluations
+is used to catalog entries of interest to the DI2E community. 
+Entries include Government off the shelf (GOTS), commercial off the
+shelf (COTS), and Open Source software (OSS). The evaluations
 done by DI2E's Centers of Excellence are displayed in the Clearinghouse 
 and give details on the following:
 
@@ -37,11 +37,11 @@ The features that are available to users to be able to access the information in
 ------
 
 
-Clearinghouse Search provides a way to find component lists and articles
+Clearinghouse Search provides a way to find entry lists and articles
 matching search criteria. Several types of searches are supported. The
 types of searches that can be performed are:
 
-1.  Searching across multiple fields (component name and description,
+1.  Searching across multiple fields (entry name and description,
     tags, attribute types, codes, and descriptions)
 
 2.  Wildcard searching (\* and ?)
@@ -56,7 +56,7 @@ The user can then select the suggestion by clicking on it or continue with a ful
 ### 2.1.1 Search Field Differentiation or Specificity
 -------
 
-Currently, there is no differentiation among Component Name, Component
+Currently, there is no differentiation among entry Name, entry
 Description, Tags, or Attributes as to the preference, specificity, or
 coverage of the search. A search term or phrase is searched via a single
 search box, and applied across all fields equally. Advanced search per a
@@ -206,14 +206,21 @@ the column header.
 In addition icons for preview, copy, unsubmit, and delete can be found.  Finally,
 a **+ Create new submission** button allows for a new entry to be made.
 
-**FINISH WRITTING WHEN THE SUBMISSION FORM HAS CHANGED**
+**FINISH WITTING WHEN THE SUBMISSION FORM HAS CHANGED**
 **SUBMISSION FORM DETAILS HERE**
 
 ### 2.3.2 Tools
 -----------
 
+The Tools drop-down contains three options:
 
-#### 2.3.2.1 Watches
+1.  Watches
+
+2.  Reviews
+
+3.  Reports
+
+#### 2.3.2.1 Manage Watches
 ------------
 A watch is set on a component to allow for a user to be notified of
 changes to a component. There are two ways notifications occur in the
@@ -230,41 +237,58 @@ place.
     of the component information as to what has changed. A user then can
     login to view the exact changes.
 
+**To activate email:**
+
+1.  Make sure your user profile contains a valid email. View your
+    profile from the Profile button at the top of the screen in User Tools.
+
+2.  Check the Send Email Notification box on any of the watches.
+
+**To remove a watch:**
+
+1.  Click on the ![removewatch](../../../../../../client/openstorefront/app/images/help/removewatch.png) icon.
+
+2.  Click OK to confirm the watch deletion.
+
+**NOTE:** Watches can also be removed from the component detail view 
+(in search results) of the component being watched.
+
 **To create a watch:**
 
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
+1.  From the search results screen of an entry:
 
 2.  Click on the Watch icon ![watch](../../../../../../client/openstorefront/app/images/help/view.png) to add the component
     to your watch list.
 
-**To activate email:**
 
-1.  Make sure your user profile contains a valid email. View your
-    profile from the user menu at the top right of the screen.
-
-2.  Open the watches use the user menu at the top of the screen. Check
-    the Send Email Notification box on any of the watches.
-
-**To remove watch:**
-
-1.  Open the watch list from the user menu.
-
-2.  Click on the ![removewatch](../../../../../../client/openstorefront/app/images/help/removewatch.png) icon.
-
-**NOTE:** Watches can also be removed from the component detail view of
-the component being watched.
-
-#### 2.3.2.2 Reviews
+#### 2.3.2.2 Manage Reviews
 ------------
-Reviews are user-submitted feedback on a component. A user may view
-other users' reviews or write a review to share experiences with a
-specific component of the interface with the rest of the community.
+
+From this screen in the User Tools you can inspect, edit, and delete your component reviews.
+
+**To inspect a review:**
+
+Expand the desired review by clicking the expand
+    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
+
+
+**To edit a review:**
+
+1.  Once the review has been expanded by clicking on the down arrow, 
+click the **Edit** button and adjust the information in the form.
+
+2.  Click **Update Review**.
+
+**To remove a review:**
+
+1.  Expand the desired review by clicking the expand
+    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
+
+3.  Click on the **Delete** button.
 
 **To create a review:**
 
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
+1.  From a search results screen, view Component Details by clicking on the title.
 
 2.  Click on the Reviews tab.
 
@@ -276,32 +300,12 @@ specific component of the interface with the rest of the community.
 5.  Save the review. The review will now show in the review tab for
     other users to read.
 
-**To edit a review:**
-
-1.  Open the component review dialog from the user menu.
-
-2.  Expand the desired review by clicking the expand
-    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
-
-3.  Click the **Edit** button and adjust the information in the form.
-
-4.  Click **Update Review**.
-
-**To remove a review:**
-
-1.  Open the component review dialog from the user menu.
-
-2.  Expand the desired review by clicking the expand
-    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
-
-3.  Click on the **Delete** button.
-
 **NOTE:** A review may also be removed from the component detail screen
 by then clicking on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the
 title of the review. You can only remove reviews you post.
 
 
-#### 2.3.2.3 Reports
+#### 2.3.2.3 Manage Reports
 --------
 **Write Stuff HERE**
 
