@@ -632,6 +632,50 @@
 					});
 
 
+					var handleReportOptions = function() {
+						//Hide and clear data from all the form elements at first and turn them on based on what rtype is selected
+						Ext.getCmp('filterForEntries').setHidden(true);
+						Ext.getCmp('scheduleOptionsGrid').setHidden(true);
+						Ext.getCmp('categorySelect').setHidden(true);
+						Ext.getCmp('waitSeconds').setHidden(true);
+						Ext.getCmp('startDate').setHidden(true);
+						Ext.getCmp('endDate').setHidden(true);
+						Ext.getCmp('previousDaysSelect').setHidden(true);
+						Ext.getCmp('waitSeconds').setValue('');
+						Ext.getCmp('filterForEntries').setValue('');
+						Ext.getCmp('scheduleOptionsGrid').getSelectionModel().clearSelections();											
+						var dt = new Date();
+						Ext.getCmp('startDate').setValue(dt);
+						Ext.getCmp('endDate').setValue(dt);
+						Ext.getCmp('previousDaysSelect').clearValue();
+
+						var rType = Ext.getCmp('reportType').value;
+						if (rType === "COMPONENT" || rType === 'CMPORG' || rType === 'TYPECOMP') {
+
+							Ext.getCmp('filterForEntries').setHidden(false);
+							Ext.getCmp('scheduleOptionsGrid').setHidden(false);
+						}
+						else if (rType === 'CATCOMP') {
+
+							Ext.getCmp('categorySelect').setHidden(false);
+							Ext.getCmp('filterForEntries').setHidden(false);
+							Ext.getCmp('scheduleOptionsGrid').setHidden(false);
+						}
+						else if (rType === 'LINKVALID') {
+
+							Ext.getCmp('waitSeconds').setHidden(false);
+						}
+						else if (rType === 'SUBMISSION' || rType === 'USAGE') {
+
+							Ext.getCmp('startDate').setHidden(false);
+							Ext.getCmp('endDate').setHidden(false);
+							Ext.getCmp('previousDaysSelect').setHidden(false);
+						}
+						else if (rType === 'USER' || rType === 'ORGANIZATION') {
+							//Do nothing just the base form which is already active.
+						}
+					};
+							
 					//
 					//  scheduleReportWin
 					//  The popup window to schedule are report to run now or on a set repeating schedule
@@ -646,6 +690,8 @@
 						closeAction: 'destroy',
 						modal: true,
 						maximizable: false,
+						autoScroll: true,
+						maxHeight: '90%',
 						layout: 'fit',
 						items: [{
 								xtype: 'form',
@@ -768,50 +814,7 @@
 												Ext.getCmp('scheduledHours').setHidden(false);
 												Ext.getCmp('emailAddresses').setHidden(false);
 
-
-												//Hide and clear data from all the form elements at first and turn them on based on what rtype is selected
-												Ext.getCmp('filterForEntries').setHidden(true);
-												Ext.getCmp('scheduleOptionsGrid').setHidden(true);
-												Ext.getCmp('categorySelect').setHidden(true);
-												Ext.getCmp('waitSeconds').setHidden(true);
-												Ext.getCmp('startDate').setHidden(true);
-												Ext.getCmp('endDate').setHidden(true);
-												Ext.getCmp('previousDaysSelect').setHidden(true);
-												Ext.getCmp('waitSeconds').setValue('');
-												Ext.getCmp('filterForEntries').setValue('');
-												Ext.getCmp('scheduleOptionsGrid').getSelectionModel().clearSelections();
-												var dt = new Date();
-												Ext.getCmp('startDate').setValue(dt);
-												Ext.getCmp('endDate').setValue(dt);
-												Ext.getCmp('previousDaysSelect').clearValue();
-
-												var rType = Ext.getCmp('reportType').value;
-												if (rType === "COMPONENT" || rType === 'CMPORG' || rType === 'TYPECOMP') {
-
-													Ext.getCmp('filterForEntries').setHidden(false);
-													Ext.getCmp('scheduleOptionsGrid').setHidden(false);
-												}
-												else if (rType === 'CATCOMP') {
-
-													Ext.getCmp('categorySelect').setHidden(false);
-													Ext.getCmp('filterForEntries').setHidden(false);
-													Ext.getCmp('scheduleOptionsGrid').setHidden(false);
-												}
-												else if (rType === 'LINKVALID') {
-
-													Ext.getCmp('waitSeconds').setHidden(false);
-												}
-												else if (rType === 'SUBMISSION' || rType === 'USAGE') {
-
-													Ext.getCmp('startDate').setHidden(false);
-													Ext.getCmp('endDate').setHidden(false);
-													Ext.getCmp('previousDaysSelect').setHidden(false);
-												}
-												else if (rType === 'USER' || rType === 'ORGANIZATION') {
-													//Do nothing just the base form which is already active.
-												}
-
-
+												handleReportOptions();
 											}
 										}
 
@@ -846,7 +849,7 @@
 										allowBlank: false,
 										listeners: {
 											change: function (cb, newVal, oldVal, opts) {
-                                                var emailTA=Ext.getCmp('emailAddresses');
+												var emailTA=Ext.getCmp('emailAddresses');
 												if (oldVal !== null && newVal === '0' && scheduleReportId) {
 													Ext.toast('You cannot run that report now, you are editing a scheduled report. Click the Add + button to run a report now.');
 													Ext.getCmp('scheduledHours').setValue(String(scheduleData.data.scheduleIntervalDays));
@@ -854,7 +857,7 @@
 												} else if (newVal !== '0') {
 
 													Ext.getCmp('filterForEntries').setHidden(true);
-													Ext.getCmp('scheduleOptionsGrid').setHidden(true);
+													handleReportOptions();
 													
 													emailTA.setFieldLabel('Enter email addresses separated by semi-colons<span class="field-required"/>');
 													emailTA.allowBlank=false;
@@ -862,15 +865,12 @@
 												}
 												else {
 													Ext.getCmp('filterForEntries').setHidden(false);
-													Ext.getCmp('scheduleOptionsGrid').setHidden(false);
+													handleReportOptions();
+													
 													emailTA.setFieldLabel('Enter email addresses separated by semi-colons');
 													emailTA.allowBlank=true;
-													emailTA.validate();
-													
+													emailTA.validate();													
 												}
-												
-												
-												
 											}
 										}
 									},
@@ -1054,9 +1054,10 @@
 						{text: 'Format', dataIndex: 'reportFormatDescription', width: 250},
 						{text: 'Run Status', dataIndex: 'runStatusDescription', width: 150,
 							renderer: function (value, meta) {
-								if (value === 'Error') {
-									meta.style = "background-color:#ce0000;color:#FFFFFF;";
-
+								if (value === 'Error') {									
+									meta.tdCls = 'alert-danger';
+								} else if (value === 'Working') {
+									meta.tdCls = 'alert-warning';
 								}
 								return value;
 							}
@@ -1071,8 +1072,18 @@
 									if (v.category) {
 										return 'Category:' + v.category;
 									}
-									else if (v.startDts) {
-										return 'Start Date:' + v.startDts + '<br/>End Date:' + v.endDts + '<br/>Previous Days:' + v.previousDays;
+									else if (v.startDts) {										
+										var details = '';
+										if (v.startDts) {
+											details += 'Start Date:' + v.startDts + '<br>';
+										}
+										if (v.endDts) {
+											details += 'End Date:' + v.endDts + '<br>';
+										}
+										if (v.previousDays) {
+											details += 'Previous Days:' + v.previousDays + '';
+										}										
+										return details;
 									}
 									else if (v.maxWaitSeconds) {
 										return 'Max Wait Seconds:' + v.maxWaitSeconds;

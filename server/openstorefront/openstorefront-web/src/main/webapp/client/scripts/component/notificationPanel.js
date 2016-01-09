@@ -200,6 +200,39 @@ Ext.define('OSF.component.NotificationPanel', {
 									}
 								});
 							}
+						},
+						{
+							xtype: 'tbfill'
+						}, 
+						{
+							text: 'Clear All',
+							scale: 'medium',
+							iconCls: 'fa fa-2x fa-trash',
+							handler: function () {
+								var notificationStore = this.up('grid').getStore();
+								
+								Ext.Msg.show({
+									title:'Remove All Notifications?',
+									message: 'Are you sure you want to remove all notifications?',
+									buttons: Ext.Msg.YESNO,
+									icon: Ext.Msg.QUESTION,
+									fn: function(btn) {
+										if (btn === 'yes') {
+											notPanel.notificationGrid.setLoading("Clearing notifications...");
+											Ext.Ajax.request({
+												url: '/openstorefront/api/v1/resource/notificationevent/currentuser',
+												method: 'DELETE',
+												callback: function(){
+													notPanel.notificationGrid.setLoading(false);
+												},
+												success: function(){
+													notificationStore.load();													
+												}
+											});										
+										} 
+									}
+								});
+							}
 						}
 					]
 				},

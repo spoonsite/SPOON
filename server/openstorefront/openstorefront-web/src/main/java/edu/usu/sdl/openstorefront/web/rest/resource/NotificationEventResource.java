@@ -181,4 +181,12 @@ public class NotificationEventResource
 		}
 	}
 
+	@DELETE
+	@APIDescription("Deletes all notification events for the current user only")
+	@Path("/currentuser")
+	public void clearUserNotificationEvents()
+	{
+		service.getNotificationService().deleteEventsForUser(SecurityUtil.getCurrentUserName());
+	}
+
 }
