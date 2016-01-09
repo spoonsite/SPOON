@@ -11,7 +11,7 @@
   <div ng-if="mode === 'custom'" style="position:relative">
     <div >
       <strong>-Custom menu-</strong>
-      <div class="checkbox" ng-repeat="detail in details">
+      <div class="checkbox" ng-repeat="detail in details" ng-if="detail.checkedLabel">
         <label>
           <input type="checkbox" ng-model="detail.checked" ng-checked="detail.checked"> {{detail.checkedLabel}}
         </label>

@@ -86,4 +86,12 @@ public interface NotificationService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void markEventAsUnRead(String eventId, String username);
 
+	/**
+	 * Deletes all Events for user
+	 *
+	 * @param username
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteEventsForUser(String username);
+
 }

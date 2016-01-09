@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
@@ -263,6 +264,37 @@ public class NotificationServiceImpl
 		NotificationEventReadStatus temp = notificationEventReadStatus.findProxy();
 
 		persistenceService.delete(temp);
+	}
+
+	@Override
+	public void deleteEventsForUser(String username)
+	{
+		if (StringUtils.isNotBlank(username)) {
+			//mark all event global events and read
+			NotificationEvent notificationEventExample = new NotificationEvent();
+			notificationEventExample.setActiveStatus(NotificationEvent.ACTIVE_STATUS);
+			QueryByExample queryByExample = new QueryByExample(notificationEventExample);
+
+			NotificationEvent notificationNotExample = new NotificationEvent();
+			notificationNotExample.setUsername(QueryByExample.STRING_FLAG);
+			notificationNotExample.setRoleGroup(QueryByExample.STRING_FLAG);
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel(notificationNotExample);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NULL);
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+			List<NotificationEvent> notificationEvents = persistenceService.queryByExample(NotificationEvent.class, queryByExample);
+			for (NotificationEvent notificationEvent : notificationEvents) {
+				markEventAsRead(notificationEvent.getEntityId(), notificationEvent.getUsername());
+			}
+
+			//delete user events
+			NotificationEvent notificationEvent = new NotificationEvent();
+			notificationEvent.setUsername(username);
+			persistenceService.deleteByExample(notificationEvent);
+		} else {
+			throw new OpenStorefrontRuntimeException("Username is required.", "Check data passed in.");
+		}
+
 	}
 
 }

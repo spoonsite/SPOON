@@ -58,14 +58,14 @@
           <li id="dropTheMenu" class="dropdown">
             <notifications style="  display: inline-block; margin-left: -158px; padding-right: 10px;  vertical-align: text-bottom;"></notifications>
             <a ng-show="user.isLoggedIn" href="" class="dropdown-toggle" data-toggle="dropdown" style="display: inline; padding-bottom: 10px;"><span ng-if="!user.info">User Menu</span>
-              <span style="display:inline-block">
+              <span style="display:inline-block;  padding-right: 15px;">
                 <span ng-if="(user.info.firstName && user.info.firstName!== '') || (user.info.lastName && user.info.lastName!== '')" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; text-align: right; max-width: 130px; ">
                   <span ng-if="(user.info.firstName && user.info.firstName!== '')">{{user.info.firstName}}&nbsp;</span>
                   <span ng-if="(user.info.lastName && user.info.lastName!== '')">{{user.info.lastName}}&nbsp;</span>
                 </span>
                 <span ng-if="!(user.info.firstName && user.info.firstName!== '') && !(user.info.lastName && user.info.lastName!== '') && (user.info.username && user.info.username!== '')">{{user.info.username}}&nbsp;</span>
-              </span>
-              <b class="caret" style="position: relative; top: -5px;"></b>
+		 <b class="caret" style="position: relative; display: block; margin-left: auto;  margin-right: auto;"></b>
+              </span>             
             </a>
             <a ng-show="!user.isLoggedIn" href="" ng-click="goToLogin()">Log in</a>
             <ul class="dropdown-menu">
