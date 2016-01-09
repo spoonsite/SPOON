@@ -36,17 +36,42 @@
 						}
 					})
 				});
+				
+				var optionsRender = function(v, meta) {
+					if (v) {									
+						if (v.category) {
+							return 'Category: ' + v.category;
+						}
+						else if (v.startDts) {										
+							var details = '';
+							if (v.startDts) {
+								details = details + 'Start Date: ' + v.startDts + '<br>';
+							}
+							if (v.endDts) {
+								details = details + 'End Date: ' + v.endDts + '<br>';
+							}
+							if (v.previousDays) {
+								details = details + 'Previous Days: ' + v.previousDays + '';
+							}										
+							return details;
+						}
+						else if (v.maxWaitSeconds) {
+							return 'Max Wait Seconds: ' + v.maxWaitSeconds;
+						}									
+						return '';
+					}									
+					return '';
+				};
 
 				var scheduleReportsGrid = Ext.create('Ext.grid.Panel', {
-					title: '',
+					title: 'Schedule',
 					id: 'scheduleReportsGrid',
+					iconCls: 'fa fa-calendar-plus-o',
 					store: scheduleReportsGridStore,
 					columnLines: true,
 					bodyCls: 'border_accent',
-					plugins: 'gridfilters',
-					enableLocking: true,
 					columns: [
-						{text: 'Report Type', dataIndex: 'reportTypeDescription', width: 300, flex: 1, lockable: true,
+						{text: 'Report Type', dataIndex: 'reportTypeDescription', width: 200, 
 							filter: {
 								type: 'string'
 							}
@@ -82,25 +107,8 @@
 								return emailStr;
 							}
 						},
-						{text: 'Options', dataIndex: 'reportOption', width: 200, flex: 1,
-							renderer: function (v, meta) {
-								if (v) {
-
-									if (v.category) {
-										return 'Category:' + v.category;
-									}
-									else if (v.startDts) {
-										return 'Start Date:' + v.startDts + '<br/>End Date:' + v.endDts + '<br/>Previous Days:' + v.previousDays;
-									}
-									else if (v.maxWaitSeconds) {
-										return 'Max Wait Seconds:' + v.maxWaitSeconds;
-									}
-								}
-								else {
-									return '';
-								}
-							}
-
+						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1,
+							renderer: optionsRender
 						},
 						{text: 'Active Status', dataIndex: 'activeStatus', width: 125,
 							filter: {
@@ -109,6 +117,7 @@
 						}
 
 					],
+					bufferedRenderer: false,
 					dockedItems: [
 						{
 							dock: 'top',
@@ -213,7 +222,7 @@
 						{
 							xtype: 'pagingtoolbar',
 							dock: 'bottom',
-							store: 'scheduleReportsGridStore',
+							store: scheduleReportsGridStore,
 							displayInfo: true
 						}
 					],
@@ -1039,18 +1048,18 @@
 				});
 
 				var historyGrid = Ext.create('Ext.grid.Panel', {
-					title: '',
 					id: 'historyGrid',
+					title: 'History',
+					iconCls: 'fa fa-clock-o',					
 					store: historyGridStore,
 					columnLines: true,
 					bodyCls: 'border_accent',
 					selModel: {
 						selType: 'checkboxmodel'
 					},
-					plugins: 'gridfilters',
-					enableLocking: true,
+					bufferedRenderer: false,
 					columns: [
-						{text: 'Report Type', dataIndex: 'reportTypeDescription', width: 200, flex: 1, lockable: true},
+						{text: 'Report Type', dataIndex: 'reportTypeDescription', width: 200},
 						{text: 'Format', dataIndex: 'reportFormatDescription', width: 250},
 						{text: 'Run Status', dataIndex: 'runStatusDescription', width: 150,
 							renderer: function (value, meta) {
@@ -1058,6 +1067,8 @@
 									meta.tdCls = 'alert-danger';
 								} else if (value === 'Working') {
 									meta.tdCls = 'alert-warning';
+								} else {
+									meta.tdCls = '';
 								}
 								return value;
 							}
@@ -1065,36 +1076,7 @@
 						{text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 						{text: 'Create User', dataIndex: 'createUser', width: 150},
 						{text: 'Scheduled', dataIndex: 'scheduled', width: 100},
-						{text: 'Options', dataIndex: 'reportOption', width: 300, flex: 1,
-							renderer: function (v, meta) {
-								if (v) {
-
-									if (v.category) {
-										return 'Category:' + v.category;
-									}
-									else if (v.startDts) {										
-										var details = '';
-										if (v.startDts) {
-											details += 'Start Date:' + v.startDts + '<br>';
-										}
-										if (v.endDts) {
-											details += 'End Date:' + v.endDts + '<br>';
-										}
-										if (v.previousDays) {
-											details += 'Previous Days:' + v.previousDays + '';
-										}										
-										return details;
-									}
-									else if (v.maxWaitSeconds) {
-										return 'Max Wait Seconds:' + v.maxWaitSeconds;
-									}
-								}
-								else {
-									return '';
-								}
-							}
-						},
-						{text: 'Active Status', dataIndex: 'activeStatus', width: 125}
+						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1,	renderer: optionsRender }
 					],
 					dockedItems: [
 						{
@@ -1157,7 +1139,7 @@
 						{
 							xtype: 'pagingtoolbar',
 							dock: 'bottom',
-							store: 'historyGridStore',
+							store: historyGridStore,
 							displayInfo: true
 						}
 					],
@@ -1418,31 +1400,12 @@
 				//  TABS SETUP WITH PANELS
 				//
 				//
-				var historyPanel = Ext.create('Ext.panel.Panel', {
-					title: 'History',
-					iconCls: 'fa fa-clock-o',
-					layout: 'fit',
-					items: [
-						historyGrid
-					]
-				});
-
-				var scheduleReportsPanel = Ext.create('Ext.panel.Panel', {
-					title: 'Schedule',
-					iconCls: 'fa fa-calendar-plus-o',
-					layout: 'fit',
-					items: [
-						scheduleReportsGrid
-					]
-				});
-
 				var reportTabPanel = Ext.create('Ext.tab.Panel', {
 					id: 'reportTabPanel',
-					title: 'Manage Reports <i class="fa fa-question-circle"  data-qtip="System scheduled and hard reports" ></i>',
-					layout: 'fit',
+					title: 'Manage Reports <i class="fa fa-question-circle"  data-qtip="System scheduled and hard reports" ></i>',				
 					items: [
-						scheduleReportsPanel,
-						historyPanel
+						scheduleReportsGrid,
+						historyGrid
 					],
 					listeners: {
 						tabchange: function (tabPanel, newTab, oldTab, index) {
@@ -1457,7 +1420,7 @@
 								if (!Ext.getCmp('scheduleReportsGrid').getStore().isLoaded()) {
 									scheduleReportRefreshGrid();
 								}
-							}
+							}						
 						}
 					}
 				});
