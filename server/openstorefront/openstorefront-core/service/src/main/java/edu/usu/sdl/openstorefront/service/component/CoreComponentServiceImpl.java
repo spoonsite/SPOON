@@ -472,14 +472,8 @@ public class CoreComponentServiceImpl
 
 					if ((ApprovalStatus.PENDING.equals(oldComponent.getApprovalState()) || ApprovalStatus.NOT_SUBMITTED.equals(oldComponent.getApprovalState()))
 							&& ApprovalStatus.APPROVED.equals(component.getComponent().getApprovalState())) {
-						oldComponent.setApprovalState(component.getComponent().getApprovalState());
-
-						if (StringUtils.isBlank(component.getComponent().getApprovedUser())) {
-							component.getComponent().setApprovedUser(SecurityUtil.getCurrentUserName());
-						}
-						if (component.getComponent().getApprovedDts() == null) {
-							component.getComponent().setApprovedDts(TimeUtil.currentDate());
-						}
+						component.getComponent().setApprovedUser(SecurityUtil.getCurrentUserName());
+						component.getComponent().setApprovedDts(TimeUtil.currentDate());
 						approved = true;
 					} else if (ApprovalStatus.APPROVED.equals(oldComponent.getApprovalState())
 							&& (ApprovalStatus.PENDING.equals(component.getComponent().getApprovalState())) || ApprovalStatus.NOT_SUBMITTED.equals(component.getComponent().getApprovalState())) {

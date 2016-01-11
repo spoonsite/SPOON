@@ -33,7 +33,6 @@ import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -184,13 +183,9 @@ public class Component
 		if ((ApprovalStatus.PENDING.equals(this.getApprovalState()) || ApprovalStatus.NOT_SUBMITTED.equals(this.getApprovalState()))
 				&& ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
 			this.setApprovalState(component.getApprovalState());
+			component.setApprovedUser(SecurityUtil.getCurrentUserName());
+			component.setApprovedDts(TimeUtil.currentDate());
 
-			if (StringUtils.isBlank(component.getApprovedUser())) {
-				component.setApprovedUser(SecurityUtil.getCurrentUserName());
-			}
-			if (component.getApprovedDts() == null) {
-				component.setApprovedDts(TimeUtil.currentDate());
-			}
 			this.setApprovedUser(component.getApprovedUser());
 			this.setApprovedDts(component.getApprovedDts());
 

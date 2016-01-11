@@ -2450,6 +2450,7 @@
 																Ext.getCmp('generalForm').componentRecord.set(key, value, { dirty: false}); 
 															});	
 															record = Ext.getCmp('generalForm').componentRecord;
+															Ext.getCmp('componentGrid').getStore().reload();
 														}
 														actionAddEditComponent(record);																																									
 														
@@ -3456,10 +3457,13 @@
 								type: 'string'
 							}	
 						},
-						{ text: 'Type', align: 'center', dataIndex: 'componentTypeLabel', width: 125,
+						{ text: 'Type', align: 'center', dataIndex: 'componentType', width: 125,
 							filter: {
 								type: 'list'
-							}	
+							},
+							renderer: function (value, meta, record) {
+								return record.get('componentTypeLabel');
+							}							
 						},
 						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 150,
 						 renderer: function(value){
@@ -3468,7 +3472,11 @@
 						{ text: 'Pending Changes', align: 'center', dataIndex: 'numberOfPendingChanges', width: 150 },
 						{ text: 'Last Activity Date', dataIndex: 'lastActivityDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Submitted Date', dataIndex: 'submittedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },						
-						{ text: 'Approval State', align: 'center', dataIndex: 'approvalStateLabel', width: 125 },
+						{ text: 'Approval State', align: 'center', dataIndex: 'approvalState', width: 125,
+							renderer: function (value, meta, record) {
+								return record.get('approvalStateLabel');
+							}
+						},
 						{ text: 'Approval Date', dataIndex: 'approvedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 125 },
 						{ text: 'Integration Management', dataIndex: 'integrationManagement', width: 175 },
