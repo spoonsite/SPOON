@@ -84,7 +84,7 @@
 				style: 'box-shadow: 7px 7px 7px #888888;',
 				float: true,
 				flex: 1,
-							
+				plugins: 'responsive',			
 				tools: [
 					{
 						type: 'refresh',
@@ -211,8 +211,7 @@
 								}]
 							}
 						]
-					}
-					
+					}					
 				]
 					
 			});
@@ -341,6 +340,7 @@
 				float: true,
 				frame: true,
 				flex: 1,
+				plugins: 'responsive',
 				tools: [
 					{
 						type: 'refresh',
@@ -466,35 +466,80 @@
 			};			
 			actionLoadSystemData();
 			
+			var getDashboard = function(width) {
+				var items = [];
+				
+				var topLayout, bottomLayout;				
+				if (width && width < 1400) {
+				  topLayout = {
+					type: 'vbox',							
+					padding: 10,
+					align: 'stretch'
+				  };
+				 bottomLayout = {
+					type: 'vbox',							
+					padding: 10,
+					align: 'stretch'
+				  };	
+				  
+				  componentStats.setMargin('0 20 20 0');
+				  messages.setMargin('0 20 0 0');
+				  userStats.setMargin('0 20 20 0');
+				  systemStats.setMargin('0 20 0 0');
+					
+				} else {
+				  topLayout = {
+					type: 'hbox',							
+					padding: 10,
+					align: 'stretch'
+				  };
+				  bottomLayout = {
+					type: 'hbox',							
+					padding: 10,
+					align: 'stretch'
+				  };				  
+				  
+				  componentStats.setMargin('0 20 0 0');
+				  messages.setMargin('0 10 0 0');
+				  userStats.setMargin('0 20 0 0');
+				  systemStats.setMargin('0 10 0 0');
+				}
+				
+				items.push(	{
+					xtype: 'panel',
+					itemId: 'top',
+					layout: topLayout,					
+					items: [
+						componentStats,
+						messages								
+					]
+				});
+				
+				items.push(	{
+					xtype: 'panel',					
+					itemId: 'bottom',
+					layout: bottomLayout,					
+					items: [
+						userStats,
+						systemStats								
+					]
+				});				
+				return items;
+			};
+			
 			var mainPanel = Ext.create('Ext.panel.Panel', {
-				scrollable: true,		
-				items: [					
-					{
-						xtype: 'panel',
-						layout: {
-							type: 'hbox',						
-							padding: 10,
-							align: 'stretch'
-						},
-						items: [
-							componentStats,
-							messages
-														
-						]
-					},
-					{
-						xtype: 'panel',
-						layout: {
-							type: 'hbox',							
-							padding: 10,
-							align: 'stretch'
-						},
-						items: [
-							userStats,
-							systemStats
-						]
+				scrollable: true,					
+				listeners: {
+					resize: function(panel, width, height, oldWidth, oldHeight, eOpts) {
+						if (panel.getComponent('top')) {
+							panel.getComponent('top').removeAll(false);
+							panel.getComponent('bottom').removeAll(false);
+							panel.removeAll();
+						}
+						panel.add(getDashboard(width));
+						panel.updateLayout(true, true);
 					}
-				]
+				}
 			});
 			
 			Ext.create('Ext.container.Viewport', {
