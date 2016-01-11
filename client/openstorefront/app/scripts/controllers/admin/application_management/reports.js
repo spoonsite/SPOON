@@ -527,7 +527,7 @@ app.controller('AdminEditReportCtrl', ['$scope', '$uiModalInstance', 'report', '
        });
      }, 250);             
     } else {
-      $scope.title = "New Report";
+      $scope.title = "Create Report";
     }
 
 
