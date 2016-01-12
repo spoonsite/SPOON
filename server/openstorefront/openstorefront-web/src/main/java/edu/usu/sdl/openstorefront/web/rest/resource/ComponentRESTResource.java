@@ -445,7 +445,7 @@ public class ComponentRESTResource
 									fileNameResourceSet.add(name);
 								}
 							} else {
-								log.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", archiveResourcePath.getFileName()));
+								log.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
 							}
 						}
 					}
