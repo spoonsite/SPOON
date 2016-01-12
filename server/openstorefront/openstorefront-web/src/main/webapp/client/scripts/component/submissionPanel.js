@@ -223,7 +223,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					success: function(response, opts) {
 						var data = Ext.decode(response.responseText);
 
-						var requiredStore = submissionPanel.requiredForm.getComponent('requiredAttributeGrid').getStore();
+						var requiredStore = submissionPanel.requiredAttributeStore;
 
 						var optionalAttributes = [];
 						Ext.Array.each(data, function(attribute) {
@@ -251,7 +251,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					}
 				});
 			} else {
-				var requiredStore = submissionPanel.requiredForm.getComponent('requiredAttributeGrid').getStore();
+				var requiredStore = submissionPanel.requiredAttributeStore;
 				requiredStore.each(function(record) {
 					record.set('attributeCode', null, { dirty: false} );
 				});
@@ -285,13 +285,65 @@ Ext.define('OSF.component.SubmissionPanel', {
 				}
 			});
 
-			var requiredStore = submissionPanel.requiredForm.getComponent('requiredAttributeGrid').getStore();
+			var requiredStore = submissionPanel.requiredAttributeStore;
 
 			requiredAttributes.reverse();
 			requiredStore.loadData(requiredAttributes);
 
 			submissionPanel.optionalAttributes = optionalAttributes;						
 		};		
+		
+		submissionPanel.requiredAttributeStore = Ext.create('Ext.data.Store', {
+			fields: [
+				"attributeType",
+				"attributeCode",
+				"description"
+			],
+			autoLoad: false,
+			listeners: {
+				datachanged: function(store) {
+					var panel = submissionPanel.requiredForm.getComponent('requiredAttributePanel');					
+					panel.removeAll();
+					
+					store.each(function(record) {
+						
+						var field = Ext.create('Ext.form.field.ComboBox', {
+							record: record,
+							fieldLabel: record.get('description') + ' <span class="field-required" />',
+							forceSelection: true,
+							queryMode: 'local',
+							editable: false,
+							typeAhead: false,
+							allowBlank: false,
+							width: '100%',							
+							labelWidth: 300,
+							labelSepartor: '',							
+							valueField: 'code',
+							displayField: 'label',
+							store: Ext.create('Ext.data.Store', {
+								data: record.data.codes								
+							}),
+							listeners: {
+								change: function(fieldLocal, newValue, oldValue, opts) {
+									var recordLocal = fieldLocal.record;
+									if (recordLocal) {
+										recordLocal.set('attributeCode', newValue);																								
+									}
+								}
+							}
+						});						
+						record.formField = field;
+						panel.add(field);
+					});
+					panel.updateLayout(true, true);					
+				},
+				update: function(store, record, operation, modifiedFieldNames, details, opts) {
+					if (record.formField) {
+						record.formField.setValue(record.get('attributeCode'));
+					}
+				}
+			}
+		});
 						
 		submissionPanel.requiredForm = Ext.create('Ext.form.Panel', {
 			autoScroll: true,
@@ -397,62 +449,13 @@ Ext.define('OSF.component.SubmissionPanel', {
 					}
 				}),
 				{
-					xtype: 'grid',
-					itemId: 'requiredAttributeGrid',
+					xtype: 'panel',
+					itemId: 'requiredAttributePanel',
 					title: 'Attributes',
 					frame: true,
-					margin: '20 0 20 0',
-					columnLines: true,
-					store: Ext.create('Ext.data.Store', {
-						fields: [
-							"attributeType",
-							"attributeCode",
-							"description"
-						],
-						autoLoad: false
-					}),
-					columns: [
-						{ text: 'Attribute Type', dataIndex: 'description', width: 250, 
-							renderer: function(value) {
-								return value + ' <span class="field-required" />';
-							} 
-						},
-						{ text: 'Attribute', dataIndex: 'attributeCode', flex: 1, minWidth: 250, 
-							xtype: 'widgetcolumn',
-							widget: {
-								xtype: 'combobox',
-								forceSelection: true,	
-								queryMode: 'local',
-								editable: false,
-								typeAhead: false,	
-								emptyText: 'Select',
-								allowBlank: false,
-								valueField: 'code',
-								displayField: 'label',																				
-								listeners: {
-									afterrender: function(field){
-										var record = field.getWidgetRecord();
-										record.actualScoreField = field;
-										field.setStore(Ext.create('Ext.data.Store', {
-											fields: [
-												"code",
-												"label"
-											],
-											data: record.data.codes
-										}));												
-									},
-									change: function(field, newValue, oldValue, opts) {
-										var record = field.getWidgetRecord();	
-										if (record) {
-											record.set('attributeCode', newValue);																								
-										}
-									}
-								}
-							}									
-						}
-					]
-				}				
-				
+					bodyStyle: 'padding: 10px;',
+					margin: '20 0 20 0'									
+				}
 			]			
 		});
 		
@@ -2317,7 +2320,24 @@ Ext.define('OSF.component.SubmissionPanel', {
 				
 			} else if (submissionPanel.currentStep === 3) {
 				
-				if (!submissionPanel.submitterForm.isValid()) {
+				if (!submissionPanel.requiredForm.isValid()) {
+					Ext.Msg.show({
+						title: 'Validation',
+						message: 'All required fields must be filled in with valid values.',
+						buttons: Ext.Msg.OK,
+						icon: Ext.Msg.ERROR,
+						fn: function(btn) {
+						}
+					});	
+					var form = submissionPanel.requiredForm;
+					var data = form.getValues();
+					
+					if (!data.description) {
+						form.getForm().markInvalid({
+								description: 'Required'
+						});
+					}
+					
 					submissionPanel.currentStep=2;
 				} else {
 					
@@ -2341,7 +2361,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						attributes: []
 					};
 
-					submissionPanel.requiredForm.getComponent('requiredAttributeGrid').getStore().each(function(record){
+					submissionPanel.requiredAttributeStore.each(function(record){
 						requireComponent.attributes.push({
 							componentAttributePk: {
 								attributeType: record.get('attributeType'),
@@ -2364,9 +2384,16 @@ Ext.define('OSF.component.SubmissionPanel', {
 						});
 
 						if (!validAttributes) {
+							
+							submissionPanel.requiredAttributeStore.each(function(record){
+								if (!record.get('attributeCode')) {
+									record.formField.markInvalid('Required');
+								}
+							});							
+							
 							Ext.Msg.show({
 								title:'Validation Check',
-								message: 'Missing Required Attributes; Check input.',
+								message: 'Missing Required Attributes',
 								buttons: Ext.Msg.OK,
 								icon: Ext.Msg.ERROR,
 								fn: function(btn) {													 
@@ -2615,6 +2642,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 		submissionPanel.changeSteps();
 				
 		submissionPanel.requiredForm.reset();
+		
+		//clear required attributes		
+		submissionPanel.loadComponentAttributes();
+		submissionPanel.requiredAttributeStore.removeAll();		
 		
 		//clear details
 		var detailSection = submissionPanel.detailsPanel.getComponent('detailSections');
