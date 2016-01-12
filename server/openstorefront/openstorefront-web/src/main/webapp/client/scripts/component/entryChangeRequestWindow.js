@@ -36,33 +36,6 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 			dock: 'bottom',
 			items: [
 				{
-					text: 'Approve Change',
-					itemId: 'tool-approveBtn',
-					iconCls: 'fa fa-reply',
-					disabled: true,
-					hidden: true,
-					handler: function(){
-						var changeRequestWindow = this.up('window');
-						var changeRequestComponentId = changeRequestWindow.changeGrid.getSelection()[0].get('componentId');
-						
-						changeRequestWindow.setLoading('Approving Change...');
-						Ext.Ajax.request({
-							url: '../api/v1/resource/components/' + changeRequestComponentId + '/mergechangerequest',
-							method: 'PUT',
-							callback: function(){
-								changeRequestWindow.setLoading(false);
-							},
-							success: function(response, opts) {
-								changeRequestWindow.changeGrid.getStore().reload();
-								changeRequestWindow.loadCurrentView();								
-								if (changeRequestWindow.successHandler) {
-									changeRequestWindow.successHandler();
-								}
-							}
-						});												
-					}
-				},
-				{
 					xtype: 'tbfill'
 				}, 
 				{
@@ -213,6 +186,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 					}
 				},
 				{ text: 'Update Date', dataIndex: 'updateDts', flex: 1, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+				{ text: 'Update User', dataIndex: 'updateUser', width: 200, hidden: true },
 				{ text: 'Approval Email', dataIndex: 'notifyOfApprovalEmail', width: 200, hidden: true }
 			],
 			listeners: {
@@ -223,12 +197,12 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 						tools.getComponent('editBtn').setDisabled(false);
 						tools.getComponent('unsubmitBtn').setDisabled(false);
 						tools.getComponent('removeBtn').setDisabled(false);
-						changeRequestWindow.getComponent('tools').getComponent('tool-approveBtn').setDisabled(false);
+						tools.getComponent('tool-approveBtn').setDisabled(false);
 					} else {
 						tools.getComponent('editBtn').setDisabled(true);
 						tools.getComponent('unsubmitBtn').setDisabled(true);
 						tools.getComponent('removeBtn').setDisabled(true);
-						changeRequestWindow.getComponent('tools').getComponent('tool-approveBtn').setDisabled(true);
+						tools.getComponent('tool-approveBtn').setDisabled(true);
 					}
 
 					//load preview
@@ -257,6 +231,33 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 					dock: 'top',
 					itemId: 'tools',
 					items: [
+						{
+							text: 'Approve Change',
+							itemId: 'tool-approveBtn',
+							iconCls: 'fa fa-reply',
+							disabled: true,
+							hidden: true,
+							handler: function(){
+								var changeRequestWindow = this.up('window');
+								var changeRequestComponentId = changeRequestWindow.changeGrid.getSelection()[0].get('componentId');
+
+								changeRequestWindow.setLoading('Approving Change...');
+								Ext.Ajax.request({
+									url: '../api/v1/resource/components/' + changeRequestComponentId + '/mergechangerequest',
+									method: 'PUT',
+									callback: function(){
+										changeRequestWindow.setLoading(false);
+									},
+									success: function(response, opts) {
+										changeRequestWindow.changeGrid.getStore().reload();
+										changeRequestWindow.loadCurrentView();								
+										if (changeRequestWindow.successHandler) {
+											changeRequestWindow.successHandler();
+										}
+									}
+								});												
+							}
+						},						
 						{
 							text: 'New Change Request',
 							itemId: 'newBtn',
@@ -404,9 +405,9 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 			var grid = changeRequestWindow.changeGrid;
 			var tools = grid.getComponent('tools');
 			tools.getComponent('newBtn').setHidden(true);
-			tools.getComponent('editBtn').setHidden(true);	
-			
-			changeRequestWindow.getComponent('tools').getComponent('tool-approveBtn').setHidden(false);
+			tools.getComponent('editBtn').setHidden(true);		
+			tools.getComponent('unsubmitBtn').setHidden(true);	
+			tools.getComponent('tool-approveBtn').setHidden(false);
 		} 
 		
 	},

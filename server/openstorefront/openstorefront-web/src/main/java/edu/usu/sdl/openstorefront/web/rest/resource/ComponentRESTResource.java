@@ -807,7 +807,7 @@ public class ComponentRESTResource
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, true);
 		if (response != null) {
 			return response;
 		}
@@ -826,7 +826,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId
 	)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, true);
 		if (response != null) {
 			return response;
 		}
@@ -837,6 +837,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
+	@RequireAdmin
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(Component.class)
 	@APIDescription("Merges change request component with it parent component")
@@ -846,27 +847,22 @@ public class ComponentRESTResource
 			@RequiredParam String componentId
 	)
 	{
-		Response response = checkComponentOwner(componentId);
-		if (response != null) {
-			return response;
-		}
-
 		Component component = service.getComponentService().mergePendingChange(componentId);
-		response = Response.ok(component).build();
+		Response response = Response.ok(component).build();
 		return response;
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentView.class)
-	@APIDescription("Merges change request component with it parent component")
+	@APIDescription("Get change requests for a component")
 	@Path("/{id}/pendingchanges")
 	public Response getPendingChanges(
 			@PathParam("id")
 			@RequiredParam String componentId
 	)
 	{
-		Response response = checkComponentOwner(componentId);
+		Response response = checkComponentOwner(componentId, true);
 		if (response != null) {
 			return response;
 		}
@@ -4082,6 +4078,11 @@ public class ComponentRESTResource
 
 	private Response checkComponentOwner(String componentId)
 	{
+		return checkComponentOwner(componentId, false);
+	}
+
+	private Response checkComponentOwner(String componentId, boolean skipApproveCheck)
+	{
 		Response response;
 
 		Component component = new Component();
@@ -4091,8 +4092,10 @@ public class ComponentRESTResource
 			response = ownerCheck(component);
 			if (response == null) {
 				if (!SecurityUtil.isAdminUser()) {
-					if (ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
-						response = Response.status(Response.Status.FORBIDDEN).build();
+					if (skipApproveCheck == false) {
+						if (ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
+							response = Response.status(Response.Status.FORBIDDEN).build();
+						}
 					}
 				}
 			}
