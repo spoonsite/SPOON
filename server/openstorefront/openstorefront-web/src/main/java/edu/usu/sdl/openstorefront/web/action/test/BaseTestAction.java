@@ -60,7 +60,7 @@ public abstract class BaseTestAction
 			for (BaseTestCase test : testSuiteModel.getTests()) {
 				String passed = "<span style='padding: 5px; border-radius: 2px; 2px; 2px; 2px; background-color: green; color: white; font-weight: bold; font-size: 16px'> PASSED </span>";
 				if (test.isSuccess() == false) {
-					passed = "<span style='padding: 5px; border-radius: 2px; 2px; 2px; 2px; background-color: red; color: white; font-weight: bold; font-size: 16px> FAILED </span>";
+					passed = "<span style='padding: 5px; border-radius: 2px; 2px; 2px; 2px; background-color: red; color: white; font-weight: bold; font-size: 16px'> FAILED </span>";
 				}
 				output.append("Test: <b>").append(test.getDescription()).append("</b>...").append(passed).append("<br>");
 
