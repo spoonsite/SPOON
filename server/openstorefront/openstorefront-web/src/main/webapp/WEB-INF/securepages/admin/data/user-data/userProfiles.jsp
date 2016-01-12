@@ -18,7 +18,7 @@
 							type: 'json',
 							rootProperty: 'data'
 						},
-						url: '/openstorefront/api/v1/resource/userprofiles'
+						url: '/openstorefront/api/v1/resource/userprofiles?status=A'
 					}
 				});
 
@@ -68,9 +68,8 @@
 								dataIndex: 'organization'
 							},
 							{
-								flex: 1,
-								text: 'User Type', 
 								flex: 1.5,
+								text: 'User Type', 
 								dataIndex: 'userTypeCode',
 								renderer: function (value, metaData, record) {
 									return getUserType(value);
@@ -105,6 +104,7 @@
 									emptyText: 'Active',
 									fieldLabel: 'Active Status',
 									name: 'activeStatus',
+									value: 'A',
 									listeners: {
 										change: function (filter, newValue, oldValue, opts) {
 											if (newValue) {
