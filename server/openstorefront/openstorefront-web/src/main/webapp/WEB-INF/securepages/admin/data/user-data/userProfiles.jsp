@@ -70,6 +70,7 @@
 							{
 								flex: 1,
 								text: 'User Type', 
+								flex: 1.5,
 								dataIndex: 'userTypeCode',
 								renderer: function (value, metaData, record) {
 									return getUserType(value);
@@ -99,6 +100,63 @@
 							dock: 'top',
 							xtype: 'toolbar',
 							items: [
+								Ext.create('OSF.component.StandardComboBox', {
+									id: 'userProfileGrid-filter-ActiveStatus',
+									emptyText: 'Active',
+									fieldLabel: 'Active Status',
+									name: 'activeStatus',
+									listeners: {
+										change: function (filter, newValue, oldValue, opts) {
+											if (newValue) {
+												var store = userProfileStore;
+												var url = '/openstorefront/api/v1/resource/userprofiles?';
+												if (newValue === 'A') {
+													url += 'status=A';
+													Ext.getCmp('userProfileGrid-tools-toggleActivation').setText("Deactivate");
+												} else {
+													url += 'status=I';
+													Ext.getCmp('userProfileGrid-tools-toggleActivation').setText("Activate");
+												}
+												store.setProxy({
+													type: 'ajax',
+													url: url,
+													reader: {
+														type: 'json',
+														rootProperty: 'data'
+													}
+												});
+												store.load();
+												Ext.getCmp('userProfileGrid').getSelectionModel().deselectAll();
+												Ext.getCmp('userProfileGrid-tools-edit').disable();
+												Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
+											}
+										}
+									},
+									storeConfig: {
+										customStore: {
+											fields: [
+												'code',
+												'description'
+											],
+											data: [
+												{
+													code: 'A',
+													description: 'Active'
+												},
+												{
+													code: 'I',
+													description: 'Inactive'
+												}
+											]
+										}
+									}
+								})
+							]
+						},
+						{
+							dock: 'top',
+							xtype: 'toolbar',
+							items: [
 								{
 									text: 'Refresh',
 									scale: 'medium',
@@ -109,6 +167,28 @@
 								},
 								{
 									xtype: 'tbseparator'
+								},
+								{
+									text: 'Edit',
+									id: 'userProfileGrid-tools-edit',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-edit',
+									handler: function () {
+										var record = Ext.getCmp('userProfileGrid').getSelection()[0];
+										actionEditUser(record);
+									}
+								},
+								{
+									text: 'Deactivate',
+									id: 'userProfileGrid-tools-toggleActivation',
+									iconCls: 'fa fa-2x fa-power-off',
+									disabled: true,
+									scale: 'medium',
+									handler: function () {
+										var record = Ext.getCmp('userProfileGrid').getSelection()[0];
+										actionToggleUser(record);
+									}
 								}
 							]
 						}
