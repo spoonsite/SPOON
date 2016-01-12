@@ -89,8 +89,8 @@
 								},
 								{
 									xtype: 'checkbox',
-									boxLabel: 'Dependancies',
-									name: 'dataEntryDependancies'
+									boxLabel: 'Dependencies',
+									name: 'dataEntryDependencies'
 								},
 								{
 									xtype: 'checkbox',
