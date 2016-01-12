@@ -191,6 +191,12 @@
 									}
 								}
 							]
+						},
+						{
+									xtype: 'pagingtoolbar',
+									dock: 'bottom',
+									store: 'userProfileStore',
+									displayInfo: true
 						}
 					],
 					listeners: {
