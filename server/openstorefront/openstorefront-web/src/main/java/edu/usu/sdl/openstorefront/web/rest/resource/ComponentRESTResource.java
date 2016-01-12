@@ -420,11 +420,15 @@ public class ComponentRESTResource
 					for (ComponentMedia componentMedia : componentAll.getMedia()) {
 						java.nio.file.Path mediaPath = componentMedia.pathToMedia();
 						if (mediaPath != null) {
-							String name = mediaPath.getFileName().toString();
-							if (fileNameMediaSet.contains(name) == false) {
-								java.nio.file.Path archiveMediaPath = new TPath(archiveName + "/media/" + name);
-								Files.copy(mediaPath, archiveMediaPath);
-								fileNameMediaSet.add(name);
+							if (mediaPath.toFile().exists()) {
+								String name = mediaPath.getFileName().toString();
+								if (fileNameMediaSet.contains(name) == false) {
+									java.nio.file.Path archiveMediaPath = new TPath(archiveName + "/media/" + name);
+									Files.copy(mediaPath, archiveMediaPath);
+									fileNameMediaSet.add(name);
+								}
+							} else {
+								log.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
 							}
 						}
 					}
@@ -433,11 +437,15 @@ public class ComponentRESTResource
 					for (ComponentResource componentResource : componentAll.getResources()) {
 						java.nio.file.Path resourcePath = componentResource.pathToResource();
 						if (resourcePath != null) {
-							String name = resourcePath.getFileName().toString();
-							if (fileNameResourceSet.contains(name) == false) {
-								java.nio.file.Path archiveResourcePath = new TPath(archiveName + "/resources/" + name);
-								Files.copy(resourcePath, archiveResourcePath);
-								fileNameResourceSet.add(name);
+							if (resourcePath.toFile().exists()) {
+								String name = resourcePath.getFileName().toString();
+								if (fileNameResourceSet.contains(name) == false) {
+									java.nio.file.Path archiveResourcePath = new TPath(archiveName + "/resources/" + name);
+									Files.copy(resourcePath, archiveResourcePath);
+									fileNameResourceSet.add(name);
+								}
+							} else {
+								log.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", archiveResourcePath.getFileName()));
 							}
 						}
 					}
