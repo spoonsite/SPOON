@@ -195,6 +195,13 @@ public interface SystemService
 	public void cleanUpOldLogRecords();
 
 	/**
+	 * This active/deactivates database logging
+	 *
+	 * @param activate
+	 */
+	public void toggleDBlogger(boolean activate);
+
+	/**
 	 * Warning: This will clear all database log records Keep in mind the
 	 * purpose of DB logs is for troubleshooting and it works in conjunction
 	 * with run-time log Level switching. Server log are the primary long term

@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -150,6 +151,15 @@ public class PropertiesManager
 		return getProperties().getProperty(key);
 	}
 
+	public static void removeProperty(String key)
+	{
+		Object valueRemoved = getProperties().remove(key);
+		if (valueRemoved != null) {
+			log.log(Level.INFO, MessageFormat.format("Property removed: {0}", key));
+		}
+		saveProperties();
+	}
+
 	/**
 	 * Note: this will trim the value....the extra spaces can cause issues
 	 *
@@ -168,7 +178,7 @@ public class PropertiesManager
 
 	public static void setProperty(String key, String value)
 	{
-		getProperties().setProperty(value, value);
+		getProperties().setProperty(key, value);
 		saveProperties();
 	}
 
@@ -200,7 +210,7 @@ public class PropertiesManager
 			defaults.put(KEY_MAX_ERROR_TICKETS, "5000");
 			defaults.put(KEY_JOB_WORKING_STATE_OVERRIDE, "30");
 			defaults.put(KEY_DBLOG_MAX_RECORD, "50000");
-			defaults.put(KEY_DBLOG_ON, "true");
+			defaults.put(KEY_DBLOG_ON, "false");
 			defaults.put(KEY_ALLOW_JIRA_FEEDBACK, "true");
 			defaults.put(KEY_JIRA_FEEDBACK_PROJECT, "STORE");
 			defaults.put(KEY_JIRA_FEEDBACK_ISSUETYPE, "Help Desk Ticket");

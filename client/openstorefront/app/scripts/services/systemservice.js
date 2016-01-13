@@ -259,6 +259,21 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
     return deferred.promise;
   };
   
+  var useDBLogging = function(use) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'PUT',
+        'url': 'api/v1/service/application/dblogger/' + encodeURIComponent(use)      
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };  
+  
   var getAppProperties = function() {
     var deferred = $q.defer();
     
@@ -281,6 +296,37 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
         'method': 'PUT',
         'url': 'api/v1/resource/applicationproperties/' + encodeURIComponent(key),
         data: value
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+          deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };   
+  
+  var saveConfigProperty = function(data) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'POST',
+        'url': 'api/v1/service/application/configproperties',
+        data: data
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.resolve(data);       
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        deferred.reject('There was an error');
+      });
+    
+    return deferred.promise;
+  };  
+  
+  var removeConfigProperty = function(key) {
+    var deferred = $q.defer();
+    
+      $http({
+        'method': 'DELETE',
+        'url': 'api/v1/service/application/configproperties/' + encodeURIComponent(key)
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
           deferred.resolve(data);       
       }).error(function(data, status, headers, config) { /*jshint unused:false*/
@@ -373,7 +419,10 @@ app.factory('systemservice', ['$http', '$q', 'localCache', function($http, $q, l
       getPlugins: getPlugins,
       startPlugin: startPlugin,
       stopPlugin: stopPlugin,
-      uninstallPlugin: uninstallPlugin      
+      uninstallPlugin: uninstallPlugin,
+	 saveConfigProperty: saveConfigProperty,
+	 removeConfigProperty: removeConfigProperty,
+	 useDBLogging: useDBLogging
   };
     
 }]);
