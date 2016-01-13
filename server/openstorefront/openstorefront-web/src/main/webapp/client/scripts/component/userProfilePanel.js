@@ -102,7 +102,6 @@ Ext.define('OSF.component.UserProfilePanel', {
 				fieldLabel: 'Phone',
 				width: '100%',
 				maxLength: 80,
-				allowBlank: false
 			},
 			Ext.create('OSF.component.StandardComboBox', {
 				name: 'organization',
