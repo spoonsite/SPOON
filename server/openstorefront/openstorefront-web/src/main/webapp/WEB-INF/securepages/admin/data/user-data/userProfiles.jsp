@@ -201,7 +201,13 @@
 					],
 					listeners: {
 						selectionchange: function (grid, record, index, opts) {
-
+							if (Ext.getCmp('userProfileGrid').getSelectionModel().hasSelection()) {
+								Ext.getCmp('userProfileGrid-tools-toggleActivation').enable();
+								Ext.getCmp('userProfileGrid-tools-edit').enable();
+							} else {
+								Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
+								Ext.getCmp('userProfileGrid-tools-edit').disable();
+							}
 						}
 					}
 				});
