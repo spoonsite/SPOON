@@ -18,7 +18,10 @@ package edu.usu.sdl.openstorefront.core.view;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import java.io.Serializable;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -31,7 +34,13 @@ public class LookupModel
 	public static final String CODE_FIELD = "code";
 	public static final String DESCRIPTION_FIELD = "description";
 
+	@ConsumeField
+	@NotNull
+	@Size(min = 1, max = 255)
 	private String code;
+
+	@ConsumeField
+	@Size(max = 1000)
 	private String description;
 
 	public LookupModel()

@@ -2250,7 +2250,7 @@
 							success: function(response, opts) {
 								var data = Ext.decode(response.responseText);
 
-								var requiredStore = Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore();
+								var requiredStore = Ext.data.StoreManager.lookup('requiredAttributeStore');
 
 								var optionalAttributes = [];
 								Ext.Array.each(data, function(attribute) {
@@ -2275,7 +2275,7 @@
 							}
 						});
 					} else {
-						var requiredStore = Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore();
+						var requiredStore = Ext.data.StoreManager.lookup('requiredAttributeStore');
 						requiredStore.each(function(record) {
 							record.set('attributeCode', null, { dirty: false} );
 						});
@@ -2307,7 +2307,7 @@
 						}
 					});
 					
-					var requiredStore = Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore();
+					var requiredStore = Ext.data.StoreManager.lookup('requiredAttributeStore');
 					
 					requiredAttributes.reverse();
 					requiredStore.loadData(requiredAttributes);
@@ -2316,6 +2316,58 @@
 					loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
 				};
 			
+				var requiredAttributeStore = Ext.create('Ext.data.Store', {
+					storeId: 'requiredAttributeStore',
+					fields: [
+						"attributeType",
+						"attributeCode",
+						"description"
+					],
+					autoLoad: false,
+					listeners: {
+						datachanged: function(store) {
+							var panel = Ext.getCmp('generalForm').getComponent('requiredAttributePanel');					
+							panel.removeAll();
+
+							store.each(function(record) {
+
+								var field = Ext.create('Ext.form.field.ComboBox', {
+									record: record,
+									fieldLabel: record.get('description') + ' <span class="field-required" />',
+									forceSelection: true,
+									queryMode: 'local',
+									editable: false,
+									typeAhead: false,
+									allowBlank: false,
+									width: '100%',							
+									labelWidth: 300,
+									labelSepartor: '',							
+									valueField: 'code',
+									displayField: 'label',
+									store: Ext.create('Ext.data.Store', {
+										data: record.data.codes								
+									}),
+									listeners: {
+										change: function(fieldLocal, newValue, oldValue, opts) {
+											var recordLocal = fieldLocal.record;
+											if (recordLocal) {
+												recordLocal.set('attributeCode', newValue);																								
+											}
+										}
+									}
+								});						
+								record.formField = field;
+								panel.add(field);
+							});
+							panel.updateLayout(true, true);					
+						},
+						update: function(store, record, operation, modifiedFieldNames, details, opts) {
+							if (record.formField) {
+								record.formField.setValue(record.get('attributeCode'));
+							}
+						}
+					}
+				});
 							
 				var generalForm = Ext.create('Ext.form.Panel', {
 					id: 'generalForm',
@@ -2393,7 +2445,7 @@
 											attributes: []
 										};
 										
-										Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore().each(function(record){
+										Ext.data.StoreManager.lookup('requiredAttributeStore').each(function(record){
 											requireComponent.attributes.push({
 												componentAttributePk: {
 													attributeType: record.get('attributeType'),
@@ -2676,59 +2728,12 @@
 							]							
 						},
 						{
-							xtype: 'grid',
-							itemId: 'requiredAttributeGrid',
+							xtype: 'panel',
+							itemId: 'requiredAttributePanel',
 							title: 'Required Attributes',
-							margin: '0 0 20 0',
-							columnLines: true,
-							store: Ext.create('Ext.data.Store', {
-								fields: [
-									"attributeType",
-									"attributeCode",
-									"description"
-								],
-								autoLoad: false
-							}),
-							columns: [
-								{ text: 'Attribute Type', dataIndex: 'description', width: 250, 
-									renderer: function(value) {
-										return value + ' <span class="field-required" />';
-									} 
-								},
-								{ text: 'Attribute Code', dataIndex: 'attributeCode', flex: 1, minWidth: 250, 
-									xtype: 'widgetcolumn',
-									widget: {
-										xtype: 'combobox',
-										forceSelection: true,	
-										queryMode: 'local',
-										editable: false,
-										typeAhead: false,	
-										emptyText: 'Select',
-										allowBlank: false,
-										valueField: 'code',
-										displayField: 'label',																				
-										listeners: {
-											afterrender: function(field){
-												var record = field.getWidgetRecord();
-												record.actualScoreField = field;
-												field.setStore(Ext.create('Ext.data.Store', {
-													fields: [
-														"code",
-														"label"
-													],
-													data: record.data.codes
-												}));												
-											},
-											change: function(field, newValue, oldValue, opts) {
-												var record = field.getWidgetRecord();	
-												if (record) {
-													record.set('attributeCode', newValue);																								
-												}
-											}
-										}
-									}									
-								}
-							]
+							frame: true,
+							bodyStyle: 'padding: 10px;',
+							margin: '20 0 20 0'									
 						}
 					]
 				});
@@ -2773,7 +2778,7 @@
 						}
 					]
 				});
-		
+	
 			//MAIN GRID -------------->			
 				var versionViewTemplate = new Ext.XTemplate(						
 				);
@@ -3820,10 +3825,13 @@
 						generalForm.loadRecord(record);
 						handleAttributes(record.get('componentType'));
 						Ext.getCmp('integrationBtn').setDisabled(false);
+						Ext.defer(function(){
+							generalForm.getForm().findField('description').setValue(record.get('description'));
+						}, 100);
 					} else {								
 						mainAddEditWin.setTitle('Entry Form:  NEW ENTRY');						
 						hideSubComponentTabs();
-						var requiredStore = Ext.getCmp('generalForm').getComponent('requiredAttributeGrid').getStore();
+						var requiredStore = Ext.data.StoreManager.lookup('requiredAttributeStore');
 						requiredStore.removeAll();
 												
 						Ext.getCmp('componentGrid').getSelectionModel().deselectAll(); 

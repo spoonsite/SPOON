@@ -41,6 +41,7 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
   $scope.tabs.general = true;
   $scope.flags = {};
   $scope.flags.showPluginUpload = false;
+  $scope.configProp={};
   
   $scope.plugins = [];
   
@@ -217,6 +218,11 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
     Business.systemservice.getConfigProperties().then(function (results) {
       if (results) {          
         $scope.configProperties = results;
+	   _.each(results, function(item){
+		if (item.code === 'dblog.on') {
+			$scope.configProp.dblogging = item.description;
+		}	
+	   });	
       }  
       $scope.$emit('$TRIGGERUNLOAD', 'configPropLoader');        
     });      
@@ -272,10 +278,50 @@ app.controller('AdminSystemCtrl', ['$scope', 'business', '$rootScope', '$uiModal
     }); 
 
   };
-  $scope.$on('$REFRESH_APP_PROPS', function(){
+  $scope.$on('$REFRESH_CONFIG_PROPS', function(){
     triggerAlert('Saved successfully', 'editAppProperty', 'body', 3000);
-    $scope.refreshAppProperties();
+    $scope.refreshConfigProps();
   });
+  
+  $scope.deleteConfigProperty = function(property){
+	var response = window.confirm("Are you sure you want to remove property?  (Reverts to default; Some properties may require restart.)");
+     
+	if (response) {
+		Business.systemservice.removeConfigProperty(property.code).then(function (results) {
+		 $scope.refreshConfigProps(); 
+	     });
+	}
+  };
+  
+  $scope.toggleLogging = function(){
+	if ($scope.configProp.dblogging === 'false'){
+		$scope.configProp.dblogging = 'true';
+	} else {
+		$scope.configProp.dblogging = 'false';
+	}
+	Business.systemservice.useDBLogging($scope.configProp.dblogging).then(function (results) {
+		 $scope.refreshConfigProps(); 
+	});	
+  };
+  
+  
+  $scope.editConfigProperty = function(property){
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/application_management/editConfigProperty.html',
+      controller: 'adminEditConfigPropertyCtrl',
+      size: 'lg',
+      resolve: {
+        property: function () {
+          return property;
+        }
+      }
+    }); 
+
+  };
+  $scope.$on('$REFRESH_APP_PROPS', function(){
+    triggerAlert('Saved successfully', 'editConfigProperty', 'body', 3000);
+    $scope.refreshAppProperties();
+  });  
 
   $scope.editLogger = function(logger){
     var modalInstance = $uiModal.open({
@@ -427,6 +473,30 @@ app.controller('adminEditAppPropertyCtrl', ['$scope', '$uiModalInstance', 'prope
       Business.systemservice.updateAppProperty($scope.propetyForm.key, $scope.propetyForm.value).then(function (results) {      
        $scope.$emit('$TRIGGERUNLOAD', 'formLoader');
        $scope.$emit('$TRIGGEREVENT', '$REFRESH_APP_PROPS');       
+       $uiModalInstance.dismiss('success');
+      }, function(){
+        triggerAlert('Unable to save. ', 'editLogger', 'body', 3000);
+        $scope.$emit('$TRIGGERUNLOAD', 'formLoader'); 
+      });
+    };
+    
+}]);
+
+app.controller('adminEditConfigPropertyCtrl', ['$scope', '$uiModalInstance', 'property', 'business', function ($scope, $uiModalInstance, property, Business) {
+    $scope.propetyForm = angular.copy(property);
+    if (!$scope.propetyForm) {
+	$scope.propetyForm = {};	
+    }
+        
+    $scope.cancel = function(){
+     $uiModalInstance.dismiss('cancel');
+    };
+    
+    $scope.save = function(){
+      $scope.$emit('$TRIGGERLOAD', 'formLoader'); 
+      Business.systemservice.saveConfigProperty($scope.propetyForm).then(function (results) {      
+       $scope.$emit('$TRIGGERUNLOAD', 'formLoader');
+       $scope.$emit('$TRIGGEREVENT', '$REFRESH_CONFIG_PROPS');       
        $uiModalInstance.dismiss('success');
       }, function(){
         triggerAlert('Unable to save. ', 'editLogger', 'body', 3000);

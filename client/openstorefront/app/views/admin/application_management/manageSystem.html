@@ -148,15 +148,21 @@
 				Configuration properties are the properties use to initialize the system they are reflected from the configuration file.  
 				The system admin maintains these properties and they are applied upon restart.<br>
 				<button class="btn btn-default" ng-click="refreshConfigProps()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
+				<button class="btn btn-default pull-right" ng-click="editConfigProperty()"><i class="fa fa-plus"></i>&nbsp;Add Property</button>
 			</div>	
 			<table class="table table-striped table-bordered">
 					<tr>
 						<th><a href="" ng-click="setPredicate('code', 'confProp');">Key <span ng-show="predicate['confProp']  === 'code'"><i ng-show="!reverse['confProp'] " class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['confProp']" class="fa fa-sort-alpha-desc"></i></span></a></th>
-						<th>Value</th>																						
+						<th>Value</th>
+						<th>Action</th>
 					</tr>
 					<tr ng-repeat="prop in configProperties | orderBy:predicate['confProp']:reverse['confProp']" >
 						<td>{{prop.code}}</td>
 						<td>{{prop.description}}</td>						
+						<td>
+							<button class="btn btn-default btn-sm" ng-click="editConfigProperty(prop);"  title="Edit"><i class="fa fa-edit"></i></button>
+							<button class="btn btn-danger btn-sm" ng-click="deleteConfigProperty(prop);"  title="Remove"><i class="fa fa-trash"></i></button>
+						</td>
 					</tr>
 					
 			</table>			
@@ -168,6 +174,7 @@
 				Displays all loggers in the system.  A blank Level means the logger inherits its level from the parent logger. Note: changes made here reset upon application restart.<br>
 				<button class="btn btn-default" ng-click="refreshLoggers()"><i class="fa fa-refresh"></i>&nbsp;Refresh</button>
 				<button class="btn btn-default pull-right" ng-click="viewLog()"><i class="fa fa-view"></i>&nbsp;View Logs</button>
+				<button class="btn btn-warning pull-right" ng-click="toggleLogging()"><i class="fa fa-view"></i>&nbsp;DB logging: <b ng-if="configProp.dblogging === 'true'">ON</b><b ng-if="!configProp.dblogging">OFF</b> <b ng-if="configProp.dblogging === 'false'">OFF</b></button>
 			</div>	
 			<table class="table table-striped table-bordered">
 					<tr>

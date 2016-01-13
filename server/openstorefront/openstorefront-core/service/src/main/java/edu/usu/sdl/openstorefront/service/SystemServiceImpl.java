@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
@@ -565,6 +566,16 @@ public class SystemServiceImpl
 
 			sectionNumber++;
 		}
+	}
+
+	@Override
+	public void toggleDBlogger(boolean activate)
+	{
+		PropertiesManager.setProperty(PropertiesManager.KEY_DBLOG_ON, "" + Convert.toBoolean(activate));
+
+		//restart
+		DBLogManager.cleanup();
+		DBLogManager.init();
 	}
 
 }
