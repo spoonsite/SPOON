@@ -90,6 +90,12 @@
 								dataIndex: 'email'
 							},
 							{
+								hidden: true,
+								flex: 1,
+								text: 'Phone',
+								dataIndex: 'phone'
+							},
+							{
 								flex: 5,
 								text: 'GUID', 
 								dataIndex: 'guid'
