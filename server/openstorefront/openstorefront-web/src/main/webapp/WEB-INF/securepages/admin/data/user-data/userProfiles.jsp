@@ -213,6 +213,47 @@
 				});
 
 
+				var actionToggleUser = function actionToggleUser(record) {
+					if (record) {
+						var active = record.data.activeStatus;
+						var username = record.data.username;
+						if (active === 'A') {
+							var method = "DELETE";
+							var url = '/openstorefront/api/v1/resource/userprofiles/';
+							url += username;
+							var what = "deactivate";
+						} else if (active === 'I') {
+							var method = "PUT";
+							var url = '/openstorefront/api/v1/resource/userprofiles/';
+							url += username + '/reactivate';
+							var what = "activate";
+						} else {
+							Ext.MessageBox.alert("Record Not Recognized", "Error: Record is not active or inactive.");
+							return false;
+						}
+
+						Ext.Ajax.request({
+							url: url,
+							method: method,
+							success: function (response, opts) {
+								var message = 'Successfully ' + what + 'd user "' + username + '"';
+								Ext.toast(message, '', 'tr');
+								Ext.getCmp('userProfileGrid').getStore().load();
+								Ext.getCmp('userProfileGrid').getSelectionModel().deselectAll();
+								Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
+								Ext.getCmp('userProfileGrid-tools-edit').disable();
+							},
+							failure: function (response, opts) {
+								Ext.MessageBox.alert('Failed to' + what,
+										"Error: Could not " + what + ' user "' + username + '"');
+							}
+						});
+
+					} else {
+						Ext.MessageBox.alert("No User Selected", "Error: You have not selected a user.");
+					}	
+				};
+
 
 				Ext.create('Ext.container.Viewport', {
 					layout: 'fit',
