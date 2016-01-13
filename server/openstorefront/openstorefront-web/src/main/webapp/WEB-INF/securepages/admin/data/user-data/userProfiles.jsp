@@ -211,7 +211,10 @@
 						selectionchange: function (grid, record, index, opts) {
 							if (Ext.getCmp('userProfileGrid').getSelectionModel().hasSelection()) {
 								Ext.getCmp('userProfileGrid-tools-toggleActivation').enable();
-								Ext.getCmp('userProfileGrid-tools-edit').enable();
+								// Only allow editing when the grid is showing active users.
+								if (Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() === 'A') {
+									Ext.getCmp('userProfileGrid-tools-edit').enable();
+								}
 							} else {
 								Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
 								Ext.getCmp('userProfileGrid-tools-edit').disable();
