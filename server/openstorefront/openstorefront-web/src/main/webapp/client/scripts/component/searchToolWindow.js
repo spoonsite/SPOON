@@ -21,6 +21,8 @@ Ext.define('OSF.component.SearchToolWindow', {
     iconCls: 'fa fa-lg fa-th',
     width: '70%',
     height: '70%',
+	minHeight: 600,
+	minWidth: 800,
     y: 40,
     modal: true,
     maximizable: true,
@@ -514,8 +516,8 @@ Ext.define('OSF.component.SearchToolWindow', {
             }
         });
         searchToolWin.add(tabPanel);
-
-
+	   searchToolWin.setHeight(600);
+	
         var setActiveTabByTitle = function (tabTitle) {
 
             //console.log('Setting Active Tab to:' + tabTitle);

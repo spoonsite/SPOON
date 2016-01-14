@@ -128,7 +128,16 @@ Ext.define('OSF.defaults.Window', {
     override: 'Ext.window.Window',
 	
   ghost: false,
-  closeAction: 'hide'
+  closeAction: 'hide',
+  onRender: function (ct, position) {
+	  this.callParent();
+	  var win = this;
+	  if (Ext.isIE9) {		  
+		  win.toggleMaximize(); 
+		  win.restore();		  
+		  win.setHeight(win.getHeight());
+	  }
+  }
 	
 });
 

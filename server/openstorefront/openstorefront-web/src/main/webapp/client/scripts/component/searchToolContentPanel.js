@@ -108,78 +108,12 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 		//
 		// This is the results Grid panel in the bottom right of the layout.
 		//
-		searchContentPanel.resultsGridPanel = Ext.create('Ext.grid.Panel', {
-			store: gStore,
-			columnLines: true,
-			columns: [
-				{text: 'Name',
-					cellWrap: true,
-					dataIndex: 'name',
-					width: '20%',
-					autoSizeColumn: false,
-					renderer: function (value) {
-						return '<span class="search-tools-column-orange-text">' + value + '</span>';
-					}
-				},
-				{text: 'Description',
-					dataIndex: 'description',
-					width: '77%',
-					autoSizeColumn: true,
-					cellWrap: true,
-					renderer: function (value) {
-						value = Ext.util.Format.stripTags(value);
-						var str = value.substring(0, 500);
-						if (str === value) {
-							return str;
-						}
-						else {
-							str = str.substr(0, Math.min(str.length, str.lastIndexOf(' ')));
-							return str += ' ... <br/>';
-						}
-
-
-					}
-				},
-				{xtype: 'actioncolumn',
-					width: '25',
-					resizable: false,
-					sortable: false,
-					menuDisabled: true,
-					items: [{
-							iconCls: 'fa fa-link',
-							tooltip: 'Link to page',
-							handler: function (grid, rowIndex, colIndex) {
-								var theStore = grid.getStore();
-								var newUrl = '/openstorefront/single?id=' + theStore.getAt(rowIndex).data.componentId;
-								window.location.assign(window.location.origin + newUrl);
-
-								var win = Ext.getCmp('searchToolWindow');
-								win.close();
-
-							}
-						}]
-				}
-			],
-			width: '100%',
-			dockedItems: [{
-					xtype: 'pagingtoolbar',
-					store: gStore,
-					dock: 'bottom',
-					displayInfo: true
-				}]
-
-		});
-		//
-		//  This is the results panel in the bottom right holds the grid panel
-		//
-		searchContentPanel.resultsPanel = Ext.create('Ext.panel.Panel', {
+		searchContentPanel.resultsGridPanel = Ext.create('Ext.grid.Panel', {	
 			region: 'center',
 			title: 'Search Results',
-			split: true,
-			layout: 'fit',
-			items: [
-				searchContentPanel.resultsGridPanel
-			],
+			split: true,					
+			store: gStore,
+			columnLines: true,
 			header: {
 				items: [{
 						xtype: 'button',
@@ -199,7 +133,63 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 							}
 						}
 					}]
-			}
+			},			
+			columns: [
+				{text: 'Name',
+					cellWrap: true,
+					dataIndex: 'name',
+					width: 150,
+					autoSizeColumn: false,
+					renderer: function (value) {
+						return '<span class="search-tools-column-orange-text">' + value + '</span>';
+					}
+				},
+				{text: 'Description',
+					dataIndex: 'description',
+					flex: 1,
+					autoSizeColumn: true,
+					cellWrap: true,
+					renderer: function (value) {
+						value = Ext.util.Format.stripTags(value);
+						var str = value.substring(0, 500);
+						if (str === value) {
+							return str;
+						}
+						else {
+							str = str.substr(0, Math.min(str.length, str.lastIndexOf(' ')));
+							return str += ' ... <br/>';
+						}
+
+
+					}
+				},
+				{xtype: 'actioncolumn',
+					width: 25,
+					resizable: false,
+					sortable: false,
+					menuDisabled: true,
+					items: [{
+							iconCls: 'fa fa-link',
+							tooltip: 'Link to page',
+							handler: function (grid, rowIndex, colIndex) {
+								var theStore = grid.getStore();
+								var newUrl = '/openstorefront/single?id=' + theStore.getAt(rowIndex).data.componentId;
+								window.location.assign(window.location.origin + newUrl);
+
+								var win = Ext.getCmp('searchToolWindow');
+								win.close();
+
+							}
+						}]
+				}
+			],			
+			dockedItems: [{
+					xtype: 'pagingtoolbar',
+					store: gStore,
+					dock: 'bottom',
+					displayInfo: true
+			}]
+
 		});
 
 		//
@@ -210,14 +200,15 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 			region: 'center',
 			items: [
 				searchContentPanel.infoPanel,
-				searchContentPanel.resultsPanel
+				searchContentPanel.resultsGridPanel
 			]
 		});
 
 
 
 		searchContentPanel.add(centerPanel);
-		searchContentPanel.add(searchContentPanel.navPanel);
+		searchContentPanel.add(searchContentPanel.navPanel);		 
+		searchContentPanel.updateLayout(true, true);	
 
 	}
 

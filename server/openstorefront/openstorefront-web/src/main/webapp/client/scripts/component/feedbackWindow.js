@@ -152,6 +152,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 					xtype: 'fieldset',
 					title: 'Contact Information',					
 					collapsible: true,
+					margin: '20 0 10 0',
 					padding: 10,
 					width: '100%',
 					items: [

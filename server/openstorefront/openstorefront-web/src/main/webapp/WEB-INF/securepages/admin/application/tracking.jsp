@@ -59,7 +59,21 @@
 							rootProperty: 'result',
 							totalProperty: 'count'
 						}
-					})
+					}),
+					listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							var startDate = Ext.getCmp('from_date').getValue();
+							var endDate = Ext.getCmp('to_date').getValue();
+							if (endDate) {
+								endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
+								endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
+							}
+							store.getProxy().extraParams = {
+								start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
+								end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
+							};
+						}
+					}													
 				});
 
 				var userTrackingGrid = Ext.create('Ext.grid.Panel', {
@@ -67,11 +81,9 @@
 					id: 'userTrackingGrid',
 					store: userTrackingGridStore,
 					columnLines: true,
-					bodyCls: 'border_accent',
-					plugins: 'gridfilters',
-					enableLocking: true,
+					bodyCls: 'border_accent',									
 					columns: [
-						{text: 'Name', dataIndex: 'createUser', width: 125, flex: 1, lockable: true},
+						{text: 'Name', dataIndex: 'createUser', width: 125, flex: 1},
 						{text: 'Organization', dataIndex: 'organization', width: 250},
 						{text: 'User Type', dataIndex: 'userTypeCode', width: 150},
 						{text: 'Event Date', dataIndex: 'eventDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
@@ -240,6 +252,10 @@
 						Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
 					}
 					else {
+						if (endDate) {
+							endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
+							endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
+						}						
 						//Ext.toast('Filtering data by date range...');
 						Ext.getCmp('userTrackingGrid').getStore().loadPage(1, {
 							params: {
@@ -386,6 +402,10 @@
 						return;
 					}
 					else {
+						if (endDate) {
+							endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
+							endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
+						}						
 						params={
 						    start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
 						    end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u'),
@@ -518,7 +538,21 @@
 							rootProperty: 'result',
 							totalProperty: 'count'
 						}
-					})
+					}),
+					listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							var startDate = Ext.getCmp('from_entry_date').getValue();
+							var endDate = Ext.getCmp('to_entry_date').getValue();
+							if (endDate) {
+								endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
+								endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
+							}
+							store.getProxy().extraParams = {
+								start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
+								end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
+							};
+						}
+					}
 				});
 
 
@@ -531,9 +565,7 @@
 					id: 'entryTrackingGrid',
 					store: entryTrackingGridStore,
 					columnLines: true,
-					bodyCls: 'border_accent',
-					plugins: 'gridfilters',
-					enableLocking: true,
+					bodyCls: 'border_accent',					
 					listeners:{
 						sortchange: function(thisGrid, col, dir, eOpts) {
 							//console.log(col.dataIndex, col.sortState);
@@ -543,7 +575,7 @@
 						}
 					},
 					columns: [
-						{text: 'Name', dataIndex: 'name', width: 125, flex: 1, lockable: true},
+						{text: 'Name', dataIndex: 'name', width: 125, flex: 1 },
 						{text: 'Entry Type', dataIndex: 'componentType', width: 200},
 						{text: 'Event Date', dataIndex: 'eventDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 						{text: 'Event Type', dataIndex: 'trackEventTypeCode', width: 150},
@@ -662,6 +694,10 @@
 						Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
 					}
 					else {
+						if (endDate) {
+							endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
+							endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
+						}
 						Ext.getCmp('entryTrackingGrid').getStore().loadPage(1, {
 							params: {
 								start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
@@ -705,6 +741,10 @@
 						return;
 					}
 					else {
+						if (endDate) {
+							endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
+							endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
+						}						
 						params={
 						    start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
 						    end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u'),

@@ -38,6 +38,7 @@ limitations under the License.
 			});
 			
 			var pageMap = [];
+			pageMap['Articles'] = '/openstorefront/admin?tool=Articles';
 			pageMap['Attributes'] = '/openstorefront/admin?tool=Attributes';
 			pageMap['Dashboard'] = 'Router.action?page=admin/adminDashboard.jsp';
 			pageMap['Entries'] = 'Router.action?page=admin/data/components.jsp';
@@ -64,6 +65,12 @@ limitations under the License.
 
 			//Data Menu
 			var dataMenu = [];
+			dataMenu.push({
+				text: 'Articles (Deprecated)',
+				handler: function(){
+					actionLoadContent('Articles');
+				}
+			});			
 			dataMenu.push({
 				text: 'Attributes',
 				handler: function(){
