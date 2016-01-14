@@ -28,6 +28,17 @@ licensed under Apache V2.**
 ![Logo](../../../../../../client/openstorefront/app/images/logo2.png)
 ![Logo](../../../../../../client/openstorefront/app/images/help/sdl.png)
 
+## 1.1 Release Notes
+------
+
+**What's new, etc. for the general user**
+
+### 1.1.1 Known Issues, v1.6 * (Admin use and explanation)
+ * https://jira.di2e.net/browse/STORE-721 **Describe in admin-terms here, leave the link?**
+ * https://jira.di2e.net/browse/STORE-722 **Describe in user-terms here, leave the link?**
+ * Others ???
+
+
 # 2.  User Features
 ------
 
@@ -263,11 +274,54 @@ This page displays all of the submissions you, the current logged in user, have
 made.  In the User Submissions table the columns can be sorted by clicking on 
 the column header.  
 
-In addition icons for preview, copy, unsubmit, and delete can be found.  Finally,
-a **+ Create new submission** button allows for a new entry to be made.
+In addition icons for Edit, Preview, Copy, Toggle Notify, Unsubmit, and 
+Request Removal can be found along the top of the table.  Finally,
+a **+ New submission** button allows for a new entry to be made.
 
-**FINISH WITTING WHEN THE SUBMISSION FORM HAS CHANGED**
-**SUBMISSION FORM DETAILS HERE**
+#### 2.3.1.1 Submission Form- Getting Started
+-----------
+
+The first tab of a new submission should be pre-filled with your logged in user information.  
+Make any necessary corrections and click on the Next button at the bottom.
+
+Please be aware:
+This form will submit a component to the DI2E Framework PMO for review and consideration.
+A DI2E Storefront Manager will contact you regarding your submission. 
+For help, contact helpdesk@di2e.net
+
+
+#### 2.3.1.2 Submission Form- Required Information
+-----------
+
+The following fields are on the Required Information section:
+| Field | Values | Notes |
+| -----: | :------ | :----- |
+| Entry Type | DI2E Component, Article, etc. | What you enter here will determine what other fields show up on this entry form below |
+| Entry Name | The name of the article or component | | 
+| Description | Detailed description body | You can use highlights, colored text, links, etc. |
+| Organization | Name of Company or responsible party for the entry | These can be set by an administrator |
+| Attributes | Required attributes are shown here and must be selected | |
+
+
+#### 2.3.1.3 Submission Form- Details
+-----------
+
+This allows for many different items to be added.  Each section can have one or multiple 
+items added with the use of the Add, Edit, and Remove buttons.  When finished click the
+Next button to go to the final section.
+
+Items that can be added here depend on the Entry Type selected in Required Information,
+but may include:
+Additional Attributes, Contacts, External Links, Media, Dependencies, Metadata, 
+Relationships, Tags, Evaluation Information, Reviews, Questions, and so forth.
+
+
+#### 2.3.1.4 Submission Form- Review
+-----------
+
+On the final submission screen all of the previously entered information is available
+for review.  The entry can then be submitted for review.
+
 
 ### 2.3.2 Tools
 -----------
@@ -659,11 +713,22 @@ c. Security Type:   *select the security level of the component or article*
 ### 3.2.3 Entry Types
 ------
 
+Currently, the main entry types are DI2E Component and Article.  However, other custom 
+types can be added, edited, activated, and made inactive here.  
+
+On the Add form data entry can be selected such as whether or not to allow on the 
+submission form, and to allow or not allow the following:
+
+Attributes, Relationships, Contacts, Resources, Media, Dependencies, Metadata,
+Evaluation Information, Reviews, and Questions.
 
 
 ### 3.2.4 Highlights
 -------
 
+A highlight to the home page can be added, deleted, activated, or deactivated deactivated here. 
+A highlight code (Article, Component, etc.) can be added or edited as well as a link,
+ and the description.
 
 
 ### 3.2.5 Integrations
@@ -723,8 +788,23 @@ is resolved.
 ### 3.2.6 Imports
 -------
 
+This allows for data imports and mappings.  This is done by importing a ZIP
+or JSON file.  Once imported warnings and/ or errors can be viewed, the data 
+can be reprocessed, or rolled back.
+
+**NOTE:**  The history is only kept for **180 days** in this section.
+
+
 ### 3.2.7 Lookups
 --------
+
+This is used to organize and classify data in a consistent manner.  The codes can
+be added, deleted, edited, and made active or inactive.  In addition they can be
+imported or exported as .csv files.
+
+Some examples of Lookups are:
+Media Types, Data Source, Contact Types, Relationship Types, and Organization Types
+
 
 ### 3.2.8 Organizations
 --------
@@ -984,8 +1064,15 @@ report accessible via the Reports Admin Tool.
 ### 3.3.6 Messages
 ------
 
+Shows a log of messages sent to users in the Inactive filtered table.  Allows for
+the cleanup of old messages and the ability to process all queued messages now.
+
+
 ### 3.3.7 API Documentation
 ------
+
+This contains the documentation for the Application Programming Interface, or API.  It
+is viewable in a web page or is printable by clicking on Print View.
 
 
 ## 3.4 Relationships * **PUT THIS UNDER SUBMISSIONS?**
@@ -1149,7 +1236,7 @@ admin to apply that behavior to a value.
 
 
 --------------------------------------------
-LEFTOVER STUFF NOT SURE WHERE TO PUT THIS
+Begin- LEFTOVER STUFF NOT SURE WHERE TO PUT THIS
 --------------------------------------------
 
 ## 3.10 Managing 
@@ -1226,7 +1313,7 @@ a component.
 through the message queue as well.
 
 --------------------------------------------
-LEFTOVER STUFF NOT SURE WHERE TO PUT THIS
+End- LEFTOVER STUFF NOT SURE WHERE TO PUT THIS
 --------------------------------------------
 
 
