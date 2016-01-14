@@ -31,7 +31,10 @@ licensed under Apache V2.**
 ## 1.1 Release Notes
 ------
 
-**What's new, etc. for the general user**
+**Insert the build notes here of major tickets**
+
+
+
 
 ### 1.1.1 Known Issues, v1.6 * 
  * JIRA [STORE-662](https://jira.di2e.net/browse/STORE-662): Search -> Wildcard Searches:  If using wildcards in multiple words you need to include that in quotes such as "softwar* eng?neering".  Help documentation and/ or website operation needs to be updated.
