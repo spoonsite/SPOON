@@ -350,7 +350,32 @@ var CoreUtil = {
 		});
 
 		return proxy;
-	}
+	},
+	/**
+	 *  Return predfined configs
+	 * @param {type} type (optional)
+	 * @returns {CoreUtil.tinymceConfig.defaultConfig}
+	 */
+	tinymceConfig: function(type) {
+		var defaultConfig = {
+			plugins: [
+			"advlist autolink lists link image charmap print preview hr anchor pagebreak",
+			"searchreplace wordcount visualblocks visualchars code fullscreen",
+			"insertdatetime media nonbreaking save table contextmenu directionality",
+			"emoticons template paste textcolor"
+			],
 
+			toolbar1: "newdocument fullpage | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
+			toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code | inserttime preview | forecolor backcolor",
+			toolbar3: "table | hr removeformat | subscript superscript | charmap emoticons | print fullscreen | ltr rtl | spellchecker | visualchars visualblocks nonbreaking template pagebreak restoredraft",
+
+			content_css : "contents.css",
+
+			menubar: true,
+			toolbar_items_size: 'small'				
+		};
+		
+		return defaultConfig;
+	}
 
 };

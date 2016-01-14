@@ -49,8 +49,9 @@ limitations under the License.
 	<script src="../webjars/extjs/6.0.0/build/classic/theme-neptune/theme-neptune.js" type="text/javascript"></script>
 	<script src="../webjars/extjs/6.0.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
 	<script src="../webjars/extjs/6.0.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
-	<script src="scripts/socket.io.js" type="text/javascript"></script>
-	<script src="../webjars/ckeditor/4.5.4/full/ckeditor.js" type="text/javascript"></script>
+	<script src="scripts/socket.io.js" type="text/javascript"></script>	
+	<script src="../webjars/tinymcetextarea/5.1/tinymce/tinymce.min.js" type="text/javascript"></script>
+	<script src="../webjars/tinymcetextarea/5.1/TinyMCETextArea.js" type="text/javascript"></script>
 	
 	<%-- Core Utils --%>	
 	<script src="scripts/global/override.js?v=${appVersion}" type="text/javascript"></script>

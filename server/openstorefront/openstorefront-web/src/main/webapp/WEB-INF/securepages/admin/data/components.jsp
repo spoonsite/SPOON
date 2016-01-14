@@ -2668,12 +2668,22 @@
 								//	width: '100%',
 								//	name: 'description'
 								//},
-								Ext.create('OSF.component.CKEditorField', {																
-									//allowBlank: false,
+//								Ext.create('OSF.component.CKEditorField', {																
+//									//allowBlank: false,
+//									name: 'description',
+//									height: 300,
+//									maxLength: 32000	
+//								}),
+								{
+									xtype: 'tinymce_textarea',
+									fieldStyle: 'font-family: Courier New; font-size: 12px;',
+									style: { border: '0' },
 									name: 'description',
+									width: '100%',
 									height: 300,
-									maxLength: 32000	
-								}),
+									maxLength: 32000,
+									tinyMCEConfig: CoreUtil.tinymceConfig()
+								},								
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'organization',									
 									allowBlank: false,									
