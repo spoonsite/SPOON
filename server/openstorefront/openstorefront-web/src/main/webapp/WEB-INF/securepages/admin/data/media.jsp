@@ -11,10 +11,7 @@
 					id: 'mediaGrid',
 					title: 'Manage Media <i class="fa fa-question-circle"  data-qtip="Media that can be used for articles and badges." ></i>',
 					store: Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						id: 'mediaGridStore',
-						pageSize: 100,
-						remoteSort: true,
+						autoLoad: true,						
 						sorters: [
 							new Ext.util.Sorter({
 								property: 'name',
