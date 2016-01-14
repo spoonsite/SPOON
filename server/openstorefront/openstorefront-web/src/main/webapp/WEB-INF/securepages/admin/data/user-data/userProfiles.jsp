@@ -265,9 +265,20 @@
 					}	
 				};
 
-				var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
-					closeMethod: 'destroy'
-				});
+
+				var actionEditUser = function actionEditUser(record) {
+					if (record) {
+						var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
+							closeMethod: 'destroy',
+							loadUser: record.data.username,
+							saveCallback: function() {
+								Ext.getCmp('userProfileGrid').getStore().load();
+							}
+						}).show();
+					} else {
+						Ext.MessageBox.alert("No User Selected", "Error: You have not selected a user.");
+					}
+				};
 
 				Ext.create('Ext.container.Viewport', {
 					layout: 'fit',
