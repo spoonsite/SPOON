@@ -16,6 +16,7 @@
 		<module>openstorefront-plugin</module>
 		<module>atmosphere-socketio</module>
 		<module>extjs</module>
+	 <module>tinymcetextarea</module>
 	</modules>
 	
 	<dependencies>
