@@ -623,7 +623,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 												data: data,
 												form: form,
 												success: function(){
-													grid.getStore().reload();
+													grid.getStore().load({
+														url: '../api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view'
+													});
 													formWindow.close();
 												}
 											});
@@ -791,7 +793,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 														data: data,
 														form: form,
 														success: function(){
-															grid.getStore().reload();
+															grid.getStore().load({
+																url: '../api/v1/resource/components/' + submissionPanel.componentId + '/resources/view'
+															});
 															resourceWindow.close();
 														}
 													});
@@ -810,7 +814,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 														method: 'POST',
 														submitEmptyText: false,
 														success: function(form, action, opt){
-															grid.getStore().reload();
+															grid.getStore().load({
+																url: '../api/v1/resource/components/' + submissionPanel.componentId + '/resources/view'
+															});
 															resourceWindow.close();
 														}, 
 														failure: function(form, action, opt) {
@@ -985,7 +991,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 														data: data,
 														form: form,
 														success: function(){
-															grid.getStore().reload();
+															grid.getStore().load({
+																url: '../api/v1/resource/components/' + submissionPanel.componentId + '/media/view'
+															});
 															mediaWindow.close();
 														}
 													});
@@ -1003,7 +1011,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 														method: 'POST',
 														submitEmptyText: false,
 														success: function(form, action, opt){
-															grid.getStore().reload();
+															grid.getStore().load({
+																url: '../api/v1/resource/components/' + submissionPanel.componentId + '/media/view'
+															});
 															mediaWindow.close();
 														}, 
 														failure: function(form, action, opt) {
@@ -1120,7 +1130,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 												data: data,
 												form: form,
 												success: function(){
-													grid.getStore().reload();
+													grid.getStore().load({
+														url: '../api/v1/resource/components/' + submissionPanel.componentId + '/dependencies/view'
+													});
 													depWindow.close();
 												}
 											});
@@ -1213,7 +1225,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 												data: data,
 												form: form,
 												success: function(){
-													grid.getStore().reload();
+													grid.getStore().load({
+														url: '../api/v1/resource/components/' + submissionPanel.componentId + '/metadata/view'
+													});
 													metaWindow.close();
 												}
 											});
@@ -1922,8 +1936,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 																		url: '../api/v1/resource/lookuptypes/RelationshipType'
 																	}
 																}),
-																Ext.create('OSF.component.StandardComboBox', {
-																	id: 'relationshipTargetCB',
+																Ext.create('OSF.component.StandardComboBox', {																	
 																	name: 'relatedComponentId',									
 																	allowBlank: false,									
 																	margin: '0 0 0 0',
@@ -1960,7 +1973,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 																					data: data,
 																					form: form,
 																					success: function(){
-																						grid.getStore().reload();
+																						grid.getStore().load({
+																							url: '../api/v1/resource/components/' + submissionPanel.componentId + '/relationships'
+																						});
 																						relationShipWindow.close();
 																					}
 																				});
@@ -2058,7 +2073,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 														data: data,
 														form: form,
 														success: function(){
-															grid.getStore().reload();
+															grid.getStore().load({
+																url: '../api/v1/resource/components/' + submissionPanel.componentId + '/tags'
+															});
 															addWindow.close();
 														}
 													});												
