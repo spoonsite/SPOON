@@ -372,7 +372,7 @@
 					url: '../api/v1/resource/filehistory/'+ record.get('fileHistoryId') + '/reprocess',
 					method: 'POST',
 					success: function(response, opts){
-						Ext.toast('Queued File for reprocessing', 'Success', 'br');
+						Ext.toast('Queued file for reprocessing', 'Success', 'br');
 						Ext.getCmp('fileHistoryGrid').getStore().reload();
 					}
 				});

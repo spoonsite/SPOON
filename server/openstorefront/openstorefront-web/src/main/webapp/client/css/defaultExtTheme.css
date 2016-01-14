@@ -118,6 +118,7 @@ div.x-border-layout-ct {
 .x-panel-default-framed {	
     border-color: #441E5A;
     padding: 0;
+    background-color: rgba(68,30,90,1);
 }
 
 .x-panel-header-default .x-tool-img {
@@ -700,3 +701,44 @@ div.x-border-layout-ct {
     background-image: none;
     background-color: #E8E8E8;
 }
+
+/* IE 9 */
+.x-window-header-default-top-mc{
+   background-color: rgba(68,30,90,1);
+}
+
+.x-tab-default-top-mc{
+   background-color: rgba(68,30,90,1);
+}
+
+.x-btn-focus .x-btn-default-small-mc{
+	background-image: url("images/btn/btn-default-small-focus-fbg.gif");
+	background-color: rgba(68,30,90,1);	
+}
+
+.x-btn-focus .x-btn-default-medium-mc{
+	background-image: url("images/btn/btn-default-medium-focus-fbg.gif");
+	background-color: rgba(68,30,90,1);	
+}
+
+.x-panel-header-default-framed-top-mc{
+   background-color: rgba(68,30,90,1);	
+}
+
+.x-nbr .x-panel-header-default-framed-top {
+    padding: 0 !important;
+    border-width: 0 !important;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+   /* background-color: transparent !important; */
+    box-shadow: none !important;
+}
+
+.x-nbr .x-panel-default-framed {
+   /* background-color: transparent !important; */
+}
+
+/* end of IE 9 */

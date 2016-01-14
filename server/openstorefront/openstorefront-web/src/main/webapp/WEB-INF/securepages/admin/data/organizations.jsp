@@ -184,7 +184,7 @@
 //					//reset form
 					Ext.getCmp('entryForm').reset(true);
 					Ext.getCmp('entryForm').edit = false;
-					Ext.getCmp('organizationType').setReadOnly(false);
+					
 				};
 				
 				var editRecord = function() {
@@ -196,7 +196,7 @@
 					Ext.getCmp('entryForm').edit = true;
 					//load form
 					Ext.getCmp('entryForm').loadRecord(selectedObj);
-				    Ext.getCmp('organizationType').setReadOnly(true);
+				    
 				};
 				
 				var mergeRecords = function() {
@@ -568,8 +568,6 @@
 				var orgTypeStore = Ext.create('Ext.data.Store', {
 					id:'orgTypeStore',
 					autoLoad: true,
-					remoteSort: true,
-					pageSize: 500,
 					sorters: [
 						new Ext.util.Sorter({
 							property: 'description',
@@ -579,9 +577,7 @@
 					proxy: CoreUtil.pagingProxy({
 						url: '../api/v1/resource/lookuptypes/OrganizationType',
 						reader: {
-							type: 'json',
-							rootProperty: 'data',
-							totalProperty: 'totalNumber'
+							type: 'json',							
 						}
 					})
 				});

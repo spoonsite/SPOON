@@ -17,9 +17,7 @@
 				//                
 				var scheduleReportsGridStore = Ext.create('Ext.data.Store', {
 					id: 'scheduleReportsGridStore',
-					autoLoad: true,
-					pageSize: 100,
-					remoteSort: true,
+					autoLoad: true,										
 					sorters: [
 						new Ext.util.Sorter({
 							property: 'createDts',
@@ -71,16 +69,16 @@
 					columnLines: true,
 					bodyCls: 'border_accent',
 					columns: [
-						{text: 'Report Type', dataIndex: 'reportTypeDescription', width: 200, 
-							filter: {
-								type: 'string'
+						{text: 'Report Type', dataIndex: 'reportType', width: 200, 
+							renderer: function (value, meta, record) {
+								return record.get('reportTypeDescription');
 							}
 						},
-						{text: 'Format', dataIndex: 'reportFormatDescription', width: 300,
-							filter: {
-								type: 'string'
+						{text: 'Format', dataIndex: 'reportFormat', width: 250,
+							renderer: function (value, meta, record) {
+								return record.get('reportFormatDescription');
 							}
-						},
+						},						
 						{text: 'Create User', dataIndex: 'createUser', width: 150},
 						{text: 'Scheduled Interval', dataIndex: 'scheduleIntervalDays', width: 200,
 							renderer: function (v, meta) {
@@ -107,7 +105,7 @@
 								return emailStr;
 							}
 						},
-						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1,
+						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false,
 							renderer: optionsRender
 						},
 						{text: 'Active Status', dataIndex: 'activeStatus', width: 125,
@@ -218,12 +216,6 @@
 									tooltip: 'Delete the record'
 								}
 							]
-						},
-						{
-							xtype: 'pagingtoolbar',
-							dock: 'bottom',
-							store: scheduleReportsGridStore,
-							displayInfo: true
 						}
 					],
 					listeners: {
@@ -517,9 +509,7 @@
 					//
 					var reportFormatsStore = Ext.create('Ext.data.Store', {
 						id: 'reportFormatsStore',
-						autoLoad: false,
-						pageSize: 100,
-						remoteSort: true,
+						autoLoad: false,						
 						sorters: [
 							new Ext.util.Sorter({
 								property: 'description',
@@ -909,12 +899,14 @@
 										allowBlank: true
 									},
 									{
-										xtype: 'textfield',
+										xtype: 'numberfield',
 										name: 'waitSeconds',
 										id: 'waitSeconds',
 										fieldLabel: 'Enter how many seconds to wait (default: 5 sec, min 1 second up to max 300 seconds)',
 										width: '100%',
-										maxLength: 30,
+										maxLength: 3,
+										minValue: 1,
+										maxValue: 300,
 										value: '5',
 										editable: true,
 										hidden: true,
@@ -1059,10 +1051,18 @@
 					},
 					bufferedRenderer: false,
 					columns: [
-						{text: 'Report Type', dataIndex: 'reportTypeDescription', width: 200},
-						{text: 'Format', dataIndex: 'reportFormatDescription', width: 250},
-						{text: 'Run Status', dataIndex: 'runStatusDescription', width: 150,
-							renderer: function (value, meta) {
+						{text: 'Report Type', dataIndex: 'reportType', width: 200, 
+							renderer: function (value, meta, record) {
+								return record.get('reportTypeDescription');
+							}
+						},
+						{text: 'Format', dataIndex: 'reportFormat', width: 250,
+							renderer: function (value, meta, record) {
+								return record.get('reportFormatDescription');
+							}
+						},
+						{text: 'Run Status', dataIndex: 'runStatus', width: 150,
+							renderer: function (value, meta, record) {
 								if (value === 'Error') {									
 									meta.tdCls = 'alert-danger';
 								} else if (value === 'Working') {
@@ -1070,13 +1070,13 @@
 								} else {
 									meta.tdCls = '';
 								}
-								return value;
+								return record.get('runStatusDescription');
 							}
 						},
 						{text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 						{text: 'Create User', dataIndex: 'createUser', width: 150},
 						{text: 'Scheduled', dataIndex: 'scheduled', width: 100},
-						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1,	renderer: optionsRender }
+						{text: 'Options', dataIndex: 'reportOption', minWidth: 200, flex: 1, sortable: false, renderer: optionsRender }
 					],
 					dockedItems: [
 						{
@@ -1196,6 +1196,7 @@
 								},
 								{
 									xtype: 'button',
+									id: 'previewWinTools-download',
 									text: 'Download',
 									iconCls: 'fa fa-download',
 									handler: function () {
@@ -1231,9 +1232,21 @@
 				var historyCheckNavButtons = function () {
 					var cnt = historyGrid.getSelectionModel().getCount();
 					if (cnt === 1) {
-						Ext.getCmp('historyDeleteButton').setDisabled(false);
-						Ext.getCmp('historyViewButton').setDisabled(false);
-						Ext.getCmp('historyExportButton').setDisabled(false);
+						var record = historyGrid.getSelectionModel().getSelection()[0];
+						if (record.get('runStatus') !== 'C') {
+							Ext.getCmp('historyViewButton').setDisabled(true);
+							Ext.getCmp('historyExportButton').setDisabled(true);	
+						} else {
+							Ext.getCmp('historyViewButton').setDisabled(false);
+							Ext.getCmp('historyExportButton').setDisabled(false);							
+						}						
+						
+						if (record.get('runStatus') !== 'W') {
+							Ext.getCmp('historyDeleteButton').setDisabled(false);
+						} else {
+							Ext.getCmp('historyDeleteButton').setDisabled(true);
+						}
+						
 					} else if (cnt > 1) {
 						Ext.getCmp('historyDeleteButton').setDisabled(false);
 						Ext.getCmp('historyViewButton').setDisabled(true);
@@ -1254,7 +1267,7 @@
 					
 					var selectedObj = Ext.getCmp('historyGrid').getSelection()[0];
 					var formattedDate = Ext.util.Format.date(selectedObj.data.createDts,'m/d/y H:i:s');
-					historyTitle="View Report Data - "+selectedObj.data.reportType+' '+formattedDate;
+					historyTitle="View Report Data - "+selectedObj.data.reportTypeDescription +' '+formattedDate;
 				    Ext.Ajax.request({
 						url: '../api/v1/resource/reports/' + selectedObj.data.reportId + '/report',
 						method: 'GET',
@@ -1270,7 +1283,7 @@
 							else{
 								contentData = reportData;
 							}
-		                    Ext.getCmp('viewHistoryData').update(contentData);
+						     Ext.getCmp('viewHistoryData').update(contentData);
 						}
 					});
 				};
@@ -1281,8 +1294,20 @@
 					} else {
 						Ext.getCmp('historyGrid').getSelectionModel().selectPrevious();
 					}
-
-					setHistoryContentData();
+					
+					var record = historyGrid.getSelectionModel().getSelection()[0]; 
+					Ext.getCmp('previewWinTools-download').setDisabled(true);
+					var formattedDate = Ext.util.Format.date(record.get('createDts'),'m/d/y H:i:s');
+					Ext.getCmp('viewHistoryData').setTitle("View Report Data - "+record.get('reportTypeDescription') +' '+formattedDate);
+					
+					if (record.get('runStatus') === 'C') {
+						Ext.getCmp('previewWinTools-download').setDisabled(false);
+						setHistoryContentData();
+					} else if (record.get('runStatus') === 'W') {						
+						Ext.getCmp('viewHistoryData').update("Generating...");						
+					} else if (record.get('runStatus') === 'E') {
+						Ext.getCmp('viewHistoryData').update("Failed to generate.");						
+					}
 					checkPreviewButtons();
 				};
 				
@@ -1312,8 +1337,10 @@
 				// viewHistory
 				//
 				var viewHistory = function () {
-
-					historyViewWin();
+					var record = historyGrid.getSelectionModel().getSelection()[0]; 
+					if (record.get('runStatus') === 'C') {
+						historyViewWin();
+					}
 				};
 
 				//

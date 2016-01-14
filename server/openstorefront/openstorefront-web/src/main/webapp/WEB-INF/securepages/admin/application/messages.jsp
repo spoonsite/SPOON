@@ -23,15 +23,22 @@
 							property: 'username',
 							direction: 'DESC'
 						})
-					],
+					],					
 					proxy: CoreUtil.pagingProxy({
-						url: '../api/v1/resource/usermessages',
+						url: '../api/v1/resource/usermessages',											
 						reader: {
 							type: 'json',
 							rootProperty: 'data',
 							totalProperty: 'totalNumber'
 						}
-					})
+					}),
+					listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							store.getProxy().extraParams = {
+								'status': Ext.getCmp('userMessageFilter-ActiveStatus').getValue() ? Ext.getCmp('userMessageFilter-ActiveStatus').getValue() : 'A'
+							};
+						}
+					}
 				});
 
 				var userMessageGrid = Ext.create('Ext.grid.Panel', {
@@ -228,7 +235,7 @@
 				var mRefreshGrid = function () {
 					Ext.getCmp('userMessageGrid').getStore().load({
 						params: {
-							status: Ext.getCmp('userMessageFilter-ActiveStatus').getValue() ? Ext.getCmp('userMessageFilter-ActiveStatus').getValue() : ''
+							status: Ext.getCmp('userMessageFilter-ActiveStatus').getValue() ? Ext.getCmp('userMessageFilter-ActiveStatus').getValue() : 'A'
 						}
 					});
 				};
@@ -605,7 +612,7 @@
 
 					var selectedObj = Ext.getCmp('notificationsGrid').getSelection()[0];
 					Ext.Msg.show({
-						title: 'Delete Notification                                                                                                                               `?',
+						title: 'Delete Notification?',
 						message: 'Are you sure you want to delete the selected notification?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,

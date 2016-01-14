@@ -3442,7 +3442,16 @@
 						   rootProperty: 'components',
 						   totalProperty: 'totalNumber'
 						}
-					})
+					}),
+					listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							store.getProxy().extraParams = {
+								status: Ext.getCmp('componentGridFilter-ActiveStatus').getValue() ? Ext.getCmp('componentGridFilter-ActiveStatus').getValue() : 'ALL',
+								approvalState: Ext.getCmp('componentGridFilter-ApprovalStatus').getValue() ? Ext.getCmp('componentGridFilter-ApprovalStatus').getValue() : 'ALL',
+								componentType: Ext.getCmp('componentGridFilter-ComponentType').getValue() ? Ext.getCmp('componentGridFilter-ComponentType').getValue() : 'ALL'
+							};
+						}
+					}					
 				});	
 				
 				var componentGrid = Ext.create('Ext.grid.Panel', {	
@@ -3474,7 +3483,7 @@
 						 renderer: function(value){
 							return Ext.util.Format.stripTags(value);
 						}},
-						{ text: 'Pending Changes', align: 'center', dataIndex: 'numberOfPendingChanges', width: 150 },
+						{ text: 'Pending Changes', tooltip: 'See Action->Change Requests to view; Sort is not supported. ', align: 'center', dataIndex: 'numberOfPendingChanges', width: 150, sortable: false },
 						{ text: 'Last Activity Date', dataIndex: 'lastActivityDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Submitted Date', dataIndex: 'submittedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },						
 						{ text: 'Approval State', align: 'center', dataIndex: 'approvalState', width: 125,

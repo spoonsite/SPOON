@@ -35,6 +35,10 @@ Ext.define('OSF.component.IntegrationWindow', {
 			title: 'Add/Update  Configuration',
 			modal: true,
 			width: '40%',
+			minWidth: 300,
+			minHeigth: 300,
+			layout: 'fit',
+			resizable: false,
 			items: [
 				{
 					xtype: 'form',
@@ -97,7 +101,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 							items: [
 								{
 									xtype: 'textfield',
-									width: '90%',
+									flex: 1,
 									fieldLabel: 'Jira Issue Number <span class="field-required" />',
 									name: 'issueNumber',
 									allowBlank: false,
@@ -105,7 +109,8 @@ Ext.define('OSF.component.IntegrationWindow', {
 								},
 								{
 									xtype: 'button',
-									width: '10%',
+									width: 100,
+									minWidth: 100,
 									text: 'Check',
 									margin: '25 0 0 0',
 									iconCls: 'fa fa-check',

@@ -28,8 +28,10 @@ limitations under the License.
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 	<%
 		String appVersion = PropertiesManager.getApplicationVersion();
@@ -41,8 +43,8 @@ limitations under the License.
 	<link href="../webjars/extjs/6.0.0/build/packages/charts/classic/neptune/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="../webjars/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 	<link href="css/defaultExtTheme.css?v=${appVersion}" rel="stylesheet" type="text/css"/>
-	<link href="css/app.css?v=${appVersion}" rel="stylesheet" type="text/css"/>	
-
+	<link href="css/app.css?v=${appVersion}" rel="stylesheet" type="text/css"/>
+	
 	<script src="../webjars/extjs/6.0.0/ext-bootstrap.js" type="text/javascript"></script>
 	<script src="../webjars/extjs/6.0.0/build/classic/theme-neptune/theme-neptune.js" type="text/javascript"></script>
 	<script src="../webjars/extjs/6.0.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
@@ -51,7 +53,7 @@ limitations under the License.
 	<script src="../webjars/ckeditor/4.5.4/full/ckeditor.js" type="text/javascript"></script>
 	
 	<%-- Core Utils --%>	
-	<script src="scripts/global/override.js?v=${appVersion}" type="text/javascript"></script>		
+	<script src="scripts/global/override.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/util/coreUtil.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/util/dateUtil.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/global/coreService.js?v=${appVersion}" type="text/javascript"></script>	
