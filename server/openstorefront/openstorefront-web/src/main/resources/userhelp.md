@@ -32,7 +32,7 @@ licensed under Apache V2.**
 ------
 
 To see what is new in [v1.6](https://github.com/di2e/openstorefront/releases/tag/v1.6), and subsequent releases, please see the releases page in GitHub at:
-https://github.com/di2e/openstorefront/releases
+[https://github.com/di2e/openstorefront/releases](https://github.com/di2e/openstorefront/releases)
 
 
 ## 1.2 Known Issues, v1.6 * 
