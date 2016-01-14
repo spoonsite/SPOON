@@ -31,12 +31,16 @@ licensed under Apache V2.**
 ## 1.1 Release Notes
 ------
 
-**What's new, etc. for the general user**
+**Insert the build notes here of major tickets**
 
-### 1.1.1 Known Issues, v1.6 * (Admin use and explanation)
- * https://jira.di2e.net/browse/STORE-721 **Describe in admin-terms here, leave the link?**
- * https://jira.di2e.net/browse/STORE-722 **Describe in user-terms here, leave the link?**
- * Others ???
+
+### 1.1.1 Known Issues, v1.6 * 
+ * JIRA [STORE-662](https://jira.di2e.net/browse/STORE-662): Search -> Wildcard Searches:  If using wildcards in multiple words you need to include that in quotes such as "softwar* eng?neering".  Help documentation and/ or website operation needs to be updated.
+ * JIRA [STORE-721](https://jira.di2e.net/browse/STORE-721): Admin Tools -> Data Management -> Attributes -> New Type -> Manage Codes:  When adding a new code, it may not show up in the table below even after refreshing the table (refresh button click).  WORKAROUND:  Exit this section and come back into it by selecting the type again and then Manage Codes.
+ * JIRA [STORE-731](https://jira.di2e.net/browse/STORE-731): Admin Tools -> Data Management -> Integrations -> Jira Configuration tab:  Drop-down mennu information is not in alphabetical order as expected.  When delting a mapping the row is deleted above, but the data persists in the boxes below and is not cleared.
+ * JIRA [STORE-722](https://jira.di2e.net/browse/STORE-722): Admin Tools -> Data Management -> Organizations -> Merge: **NOTE** that the merge feature ONLY merges references and NOT the organization information.
+ * JIRA [STORE-674](https://jira.di2e.net/browse/STORE-674): Admin Tools -> Data Management -> User Data -> User Profiles:  When filtering by Status a blank or none status assumes only Active (Inactive results are not included).
+ 
 
 
 # 2.  User Features
@@ -312,7 +316,7 @@ Next button to go to the final section.
 
 Items that can be added here depend on the Entry Type selected in Required Information,
 but may include:
-Additional Attributes, Contacts, External Links, Media, Dependencies, Metadata, 
+Additional Attributes, Contacts, Resources, External Links, Media, Dependencies, Metadata, 
 Relationships, Tags, Evaluation Information, Reviews, Questions, and so forth.
 
 
@@ -336,6 +340,18 @@ The Tools drop-down contains three options:
 
 #### 2.3.2.1 Manage Watches
 ------------
+
+The user can create watches that can send notifications to the user. The
+messages that the watches generate are viewable from the User Message
+Tool. The User Message Tool allows for queued messages to be processed
+after a delayed time period. The queue delay allows for messages to be
+pooled by type thereby reducing the amount of emails rapid changes can
+create. The User Message can also be used to view previously sent
+messages in cases of troubleshooting whether the system sent a
+notification or not. The tools also allow for manually processing the
+queue immediately, but in most cases this is not needed or desired as
+the automatic process will take handling the message queue.
+
 A watch is set on a component to allow for a user to be notified of
 changes to a component. There are two ways notifications occur in the
 application and there is no limit to the amount of watches a user may
@@ -1073,249 +1089,6 @@ the cleanup of old messages and the ability to process all queued messages now.
 
 This contains the documentation for the Application Programming Interface, or API.  It
 is viewable in a web page or is printable by clicking on Print View.
-
-
-## 3.4 Relationships * **PUT THIS UNDER SUBMISSIONS?**
-------
-
-Relationships between components can be added as a Relationship Type to 
-a Relationship Target with a Security Type as well.  
- 
-**To add a relationship:**
-
-1.  Navigate to the Component Tool.
-
-2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
-
-3.  Click the **Relationship** tab.
-
-4.  Fill in the form and press the Add button.  You will see the new relationship below.  
-
-**NOTE:** To view the graphical representation of relationships, go to
-the *DETAILS* tab of that component (in the search results) and scroll
-to the bottom to the Component Relationships section.  The relationship
-can be viewed either in either a graphic or table form.
-
-![edit](../../../../../../client/openstorefront/app/images/help/graphic.png)  
-![edit](../../../../../../client/openstorefront/app/images/help/table.png)
-
-
-## 3.5 Resources *  **PUT THIS UNDER SUBMISSIONS?**
-------
-
-Resources are links to documentation, the home page, sources, etc. that
-are related to the component. Resources are typically external, however,
-they can be hosted locally.
-
-**To add a resource:**
-
-1.  Navigate to the Component Tool.
-
-2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
-
-3.  Click the **Resources** tab.
-
-4.  Fill in the form and upload a file or enter in an external link, but
-    not both.
-
-**NOTE:** You can edit, activate/inactive, or delete a resource.
-Inactivating makes it not visible to the users. However, the resource is
-still there so it can be reactivated.
-
-## 3.6 Media *  **PUT THIS UNDER SUBMISSIONS?**
-------
-
-Media provides visual/audio descriptions of the component. A common
-example is a screenshot. Media is typically hosted locally and
-previewers for common types are available. However, media can also be
-hosted externally.
-
-**To add media:**
-
-1.  Navigate to the Component Tool.
-
-2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
-
-3.  Click the **Media** tab.
-
-4.  Fill in the form and either upload a file or enter in an external
-    link, but not both.
-
-**NOTE:** You can edit, activate/inactive, or delete. Inactivating make
-it not visible to the users. However, the media is still there so it can
-be reactivated.
-
-## 3.7 Evaluation *  **PUT THIS UNDER SUBMISSIONS?**
-------
-
-Components may be evaluated and, if so, that evaluation information may
-be captured on the component so that it can be displayed to the user.
-Right now, only evaluation sections can have a score associated with
-them.
-
-**To add/update evaluation scores to a component:**
-
-1.  Navigate to the Component Tool.
-
-2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
-
-3.  Click the Evaluation Information tab.
-
-4.  Enter in the scores or mark **Not Applicable**.
-
-**NOTE:** A section can have no value which allows for controlling which
-evaluation section shows for a component. For example, if a new section
-is added, existing components would show their existing evaluation
-sections until a value is entered. The existing column shows the value
-that is currently saved, if any. To remove the value click the delete
-![trash](../../../../../../client/openstorefront/app/images/help/trash.png) icon.
-
-
-## 3.8 Badges *
-------
-
-Allow associating an image with a specific code value. Badges show up on
-listings and can be used as visual indication that a component meets a
-specific criteria. Badges are referenced using a URL that URL can be
-internal (setup by using the Media Tool) or external which allows for
-dynamic badges. Internal Media is referred to by name so that switching
-images can be accomplished with having to manually update all links.
-
-**To add a badge to an attribute code:**
-
-1.  Navigate to the Media Tool.
-
-2.  Click **Add**.
-
-3.  Fill out the form and upload image. (Note that SVG may need to be
-    adjusted to be used by IE. Typically, this involves adjusting the
-    viewport attributes so the image scales properly.)
-
-4.  Select and copy the Resource URL.
-
-5.  Navigate to the Attributes Tool.
-
-6.  Edit Type and then edit the Code to which the badge applies.
-
-7.  Paste the URL into the Badge URL field.
-
-8.  Click **Save**.
-
-**To add a badge to a component:**
-
-1.  Navigate to the Component Tool.
-
-2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
-
-3.  Select **Attributes** tab.
-
-4.  Add the attribute by selecting the type and code with the badge.
-
-## 3.9 Highlighting *
-------
-
-Highlighting allows specific code to be visually highlighted in the
-application. If a particular value is determined to be desirable, it may
-be highlighted in green, or if a value represents something the user
-should be cautioned about then it may be red. Highlighting allows an
-admin to apply that behavior to a value.
-
-**To apply Highlighting to an attribute:**
-
-1.  Navigate to the Attributes Tool.
-
-2.  Edit Type and then edit the Code to which the highlighting should
-    be applied.
-
-3.  Select desired highlight color from the dropdown.
-
-4.  Click **Save**.
-
-
-
-
-
---------------------------------------------
-Begin- LEFTOVER STUFF NOT SURE WHERE TO PUT THIS
---------------------------------------------
-
-## 3.10 Managing 
-------
-
-Articles are tied to specific categories (Attribute Type and Code). This
-allows for filtering and association with components. Articles are only
-visible when the Attribute Code associated with the article is active.
-Any attribute code may have an article associated with it.
-
-**To create an article:**
-
-1.  Click **Create Article** from the Article Tool.
-
-2.  Select the Type and Code with which the article should
-    be associated.
-
-3.  Enter a Title for the article. This will be shown as the title in
-    the search results.
-
-4.  Enter a short description of the article to be displayed in the
-    search results.
-
-5.  Enter the Article using the rich text editor.
-
-6.  Click **Save** when ready to publish the article. It will be
-    immediately viewable by users. Use **Preview** to view changes
-    before saving.
-
-**NOTE:** Clicking **Export** will export selected articles to a JSON
-file which can be imported using the Import Tool. On import, the matched
-Type and Code articles will update existing and non-matched will create
-new articles. Any internal images in the articles will need to be
-manually set up using the Media Tool in-order for them to be displayed.
-
-## 3.11 Media *
-------
-
-Adding media (specific images) to an article can be accomplished by
-first adding the media using the Media Tool. The URL can then be copied
-and used in an article by using the Rich Text Edit Tools.
-
-## 3.12 Component Lists *
-------
-
-The contents of an article may be mostly HTML tags (the Edit Tool
-defines the available formatting options). It may also contain a special
-widget that shows a list of components matching an admin-defined set of
-criteria. Beware of copying and pasting values into the component list
-configuration form. It can introduce errors that are hidden in the form
-and are only visible by using the **Source** button of the editor. Only
-**Title**, **Type** and **Code** need to be set; the other options are
-for advanced cases only.
-
-## 3.13 Watches *
--------
-
-The user can create watches that can send notifications to the user. The
-messages that the watches generate are viewable from the User Message
-Tool. The User Message Tool allows for queued messages to be processed
-after a delayed time period. The queue delay allows for messages to be
-pooled by type thereby reducing the amount of emails rapid changes can
-create. The User Message can also be used to view previously sent
-messages in cases of troubleshooting whether the system sent a
-notification or not. The tools also allow for manually processing the
-queue immediately, but in most cases this is not needed or desired as
-the automatic process will take handling the message queue.
-
-Watches can be placed on Components or Articles by selecting either in
-the drop-down "Component Type" in the General tab when editing or adding
-a component.
-
-**NOTE:** Other user messages besides watches, such as alerts, flow
-through the message queue as well.
-
---------------------------------------------
-End- LEFTOVER STUFF NOT SURE WHERE TO PUT THIS
---------------------------------------------
-
 
 
 
