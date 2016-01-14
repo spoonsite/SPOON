@@ -197,6 +197,7 @@ results or the entire search results can be opened in a new page.
 
 ### 2.2.4 Tags  
 ------
+
 Users can "Tag" listings so that they can be used to later find and
 refine search results. User-created tags are visible to all users.
 However, only the owner of the tag or an admin user may remove a tag.
@@ -611,6 +612,10 @@ files for either Attributes or SvcV-4.
 ### 3.2.2 Entries *
 -----
 
+Entries can consist of DI2E Components, Articles, or other custom-defined data structure types.
+This section allows for the manipulating of all data related to an entry.
+
+
 #### 3.2.2.1 Managing *
 ----------
 
@@ -885,6 +890,7 @@ Clicking this icon ![View References](../../../../../../client/openstorefront/ap
  
 ### 3.2.9 User Data *
 ---------
+
 Every user in the system has a user profile.  A user profile contains information
 about the user and their user specific settings.   The initial creation of the profile
 at first login will contain the information gathered from the external security application.
@@ -937,6 +943,9 @@ messages – just messages going forward.
 ## 3.3 Application Management *
 --------
 
+The Application Management menu is used to navigate to the Alerts, Jobs, Reports, 
+System, Tracking, Messages, and API Documentation sections.
+
 ### 3.3.1 Alerts *
 ------
 
@@ -975,6 +984,7 @@ Descriptions of Alert Triggers:
 
 ### 3.3.2 Jobs *
 ------
+
 The Jobs Tool allows for viewing and managing both scheduled background
 jobs and background tasks. An Admin can use the tool to pause, start,
 and run scheduled jobs. This tool helps in troubleshooting and view of
@@ -1053,6 +1063,7 @@ scheduled interval.
 	
 ### 3.3.4 System *
 ------
+
 System Tools are provided to aid in troubleshooting.
 
 System Tools and their Purpose:
