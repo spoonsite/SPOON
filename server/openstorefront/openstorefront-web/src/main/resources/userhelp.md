@@ -31,15 +31,16 @@ licensed under Apache V2.**
 ## 1.1 Release Notes
 ------
 
-**Insert the build notes here of major tickets**
+To see what is new in [v1.6](https://github.com/di2e/openstorefront/releases/tag/v1.6), and subsequent releases, please see the releases page in GitHub at:
+https://github.com/di2e/openstorefront/releases
 
 
-### 1.1.1 Known Issues, v1.6 * 
- * JIRA [STORE-662](https://jira.di2e.net/browse/STORE-662): Search -> Wildcard Searches:  If using wildcards in multiple words you need to include that in quotes such as "softwar* eng?neering".  Help documentation and/ or website operation needs to be updated.
- * JIRA [STORE-721](https://jira.di2e.net/browse/STORE-721): Admin Tools -> Data Management -> Attributes -> New Type -> Manage Codes:  When adding a new code, it may not show up in the table below even after refreshing the table (refresh button click).  WORKAROUND:  Exit this section and come back into it by selecting the type again and then Manage Codes.
- * JIRA [STORE-731](https://jira.di2e.net/browse/STORE-731): Admin Tools -> Data Management -> Integrations -> Jira Configuration tab:  Drop-down mennu information is not in alphabetical order as expected.  When delting a mapping the row is deleted above, but the data persists in the boxes below and is not cleared.
- * JIRA [STORE-722](https://jira.di2e.net/browse/STORE-722): Admin Tools -> Data Management -> Organizations -> Merge: **NOTE** that the merge feature ONLY merges references and NOT the organization information.
- * JIRA [STORE-674](https://jira.di2e.net/browse/STORE-674): Admin Tools -> Data Management -> User Data -> User Profiles:  When filtering by Status a blank or none status assumes only Active (Inactive results are not included).
+## 1.2 Known Issues, v1.6 * 
+ * [STORE-662](https://jira.di2e.net/browse/STORE-662): Search -> Wildcard Searches:  If using wildcards in multiple words you need to include that in quotes such as "softwar* eng?neering".  Help documentation and/ or website operation needs to be updated.
+ * [STORE-721](https://jira.di2e.net/browse/STORE-721): Admin Tools -> Data Management -> Attributes -> New Type -> Manage Codes:  When adding a new code, it may not show up in the table below even after refreshing the table (refresh button click).  WORKAROUND:  Exit this section and come back into it by selecting the type again and then Manage Codes.
+ * [STORE-731](https://jira.di2e.net/browse/STORE-731): Admin Tools -> Data Management -> Integrations -> Jira Configuration tab:  Drop-down mennu information is not in alphabetical order as expected.  When delting a mapping the row is deleted above, but the data persists in the boxes below and is not cleared.
+ * [STORE-722](https://jira.di2e.net/browse/STORE-722): Admin Tools -> Data Management -> Organizations -> Merge: **NOTE** that the merge feature ONLY merges references and NOT the organization information.
+ * [STORE-674](https://jira.di2e.net/browse/STORE-674): Admin Tools -> Data Management -> User Data -> User Profiles:  When filtering by Status a blank or none status assumes only Active (Inactive results are not included).
  
 
 
