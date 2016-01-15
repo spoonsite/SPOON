@@ -32,16 +32,17 @@ licensed under Apache V2.**
 ------
 
 To see what is new in [v1.6](https://github.com/di2e/openstorefront/releases/tag/v1.6), and subsequent releases, please see the releases page in GitHub at:
-https://github.com/di2e/openstorefront/releases
+[https://github.com/di2e/openstorefront/releases](https://github.com/di2e/openstorefront/releases)
 
 
 ## 1.2 Known Issues, v1.6 * 
  * [STORE-662](https://jira.di2e.net/browse/STORE-662): Search -> Wildcard Searches:  If using wildcards in multiple words you need to include that in quotes such as "softwar* eng?neering".  Help documentation and/ or website operation needs to be updated.
+ * [STORE-746](https://jira.di2e.net/browse/STORE-746): Entries:  Sometimes the Rich Text (colored text, background colors, etc.) gets 'sanitized' and taken out from the rich text preview and then searching for and viewing the search results of the component or entry.
  * [STORE-721](https://jira.di2e.net/browse/STORE-721): Admin Tools -> Data Management -> Attributes -> New Type -> Manage Codes:  When adding a new code, it may not show up in the table below even after refreshing the table (refresh button click).  WORKAROUND:  Exit this section and come back into it by selecting the type again and then Manage Codes.
  * [STORE-731](https://jira.di2e.net/browse/STORE-731): Admin Tools -> Data Management -> Integrations -> Jira Configuration tab:  Drop-down mennu information is not in alphabetical order as expected.  When delting a mapping the row is deleted above, but the data persists in the boxes below and is not cleared.
  * [STORE-722](https://jira.di2e.net/browse/STORE-722): Admin Tools -> Data Management -> Organizations -> Merge: **NOTE** that the merge feature ONLY merges references and NOT the organization information.
  * [STORE-674](https://jira.di2e.net/browse/STORE-674): Admin Tools -> Data Management -> User Data -> User Profiles:  When filtering by Status a blank or none status assumes only Active (Inactive results are not included).
- 
+
 
 
 # 2.  User Features
@@ -197,6 +198,7 @@ results or the entire search results can be opened in a new page.
 
 ### 2.2.4 Tags  
 ------
+
 Users can "Tag" listings so that they can be used to later find and
 refine search results. User-created tags are visible to all users.
 However, only the owner of the tag or an admin user may remove a tag.
@@ -608,8 +610,12 @@ files for either Attributes or SvcV-4.
     The application supports both 1 and 0001 matching to 1.
 
 
-### 3.2.2 Entries
+### 3.2.2 Entries *
 -----
+
+Entries can consist of DI2E Components, Articles, or other custom-defined data structure types.
+This section allows for the manipulating of all data related to an entry.
+
 
 #### 3.2.2.1 Managing *
 ----------
@@ -727,7 +733,7 @@ b. Component Type:  ARTICLE *(allows for watches to be put on the article)* | Co
 c. Security Type:   *select the security level of the component or article*
   
 
-### 3.2.3 Entry Types
+### 3.2.3 Entry Types *
 ------
 
 Currently, the main entry types are DI2E Component and Article.  However, other custom 
@@ -740,7 +746,7 @@ Attributes, Relationships, Contacts, Resources, Media, Dependencies, Metadata,
 Evaluation Information, Reviews, and Questions.
 
 
-### 3.2.4 Highlights
+### 3.2.4 Highlights *
 -------
 
 A highlight to the home page can be added, deleted, activated, or deactivated deactivated here. 
@@ -748,7 +754,7 @@ A highlight code (Article, Component, etc.) can be added or edited as well as a 
  and the description.
 
 
-### 3.2.5 Integrations
+### 3.2.5 Integrations *
 -------
 
 Component Integration allows for pulling information from an external
@@ -802,7 +808,7 @@ interval. If the configuration job continues to have issues it may
 deactivated manually using the tools and then reactivated when the issue
 is resolved.
 
-### 3.2.6 Imports
+### 3.2.6 Imports * 
 -------
 
 This allows for data imports and mappings.  This is done by importing a ZIP
@@ -812,7 +818,7 @@ can be reprocessed, or rolled back.
 **NOTE:**  The history is only kept for **180 days** in this section.
 
 
-### 3.2.7 Lookups
+### 3.2.7 Lookups *
 --------
 
 This is used to organize and classify data in a consistent manner.  The codes can
@@ -823,7 +829,7 @@ Some examples of Lookups are:
 Media Types, Data Source, Contact Types, Relationship Types, and Organization Types
 
 
-### 3.2.8 Organizations
+### 3.2.8 Organizations *
 --------
 
  Organizations provide information on specific organizations that are linked with the components listed on the site. The information these objects contain include:
@@ -883,8 +889,9 @@ Clicking this icon ![View References](../../../../../../client/openstorefront/ap
  shows all of the references for the organization.  
 
  
-### 3.2.9 User Data
+### 3.2.9 User Data *
 ---------
+
 Every user in the system has a user profile.  A user profile contains information
 about the user and their user specific settings.   The initial creation of the profile
 at first login will contain the information gathered from the external security application.
@@ -937,6 +944,9 @@ messages – just messages going forward.
 ## 3.3 Application Management *
 --------
 
+The Application Management menu is used to navigate to the Alerts, Jobs, Reports, 
+System, Tracking, Messages, and API Documentation sections.
+
 ### 3.3.1 Alerts *
 ------
 
@@ -975,6 +985,7 @@ Descriptions of Alert Triggers:
 
 ### 3.3.2 Jobs *
 ------
+
 The Jobs Tool allows for viewing and managing both scheduled background
 jobs and background tasks. An Admin can use the tool to pause, start,
 and run scheduled jobs. This tool helps in troubleshooting and view of
@@ -1051,8 +1062,9 @@ scheduled interval.
     **Inactivate** to temporarily pause it.
 	
 	
-### 3.3.4 System
+### 3.3.4 System *
 ------
+
 System Tools are provided to aid in troubleshooting.
 
 System Tools and their Purpose:
@@ -1066,7 +1078,7 @@ System Tools and their Purpose:
 -  **Status** -                   Shows the run status of the application (i.e. memory, load, thread status and properties). Refer to Java platform documentation for the interpretation of the information.
 
 
-### 3.3.5 Tracking
+### 3.3.5 Tracking *
 
 The application tracks internal user logins, Component/Resources views,
 and Article views. The application also can be integrated with external
@@ -1078,14 +1090,14 @@ The primary tracking events can be viewed using the Tracking Admin Tool.
 As well as the events are aggregated into various system generated
 report accessible via the Reports Admin Tool.
 
-### 3.3.6 Messages
+### 3.3.6 Messages *
 ------
 
 Shows a log of messages sent to users in the Inactive filtered table.  Allows for
 the cleanup of old messages and the ability to process all queued messages now.
 
 
-### 3.3.7 API Documentation
+### 3.3.7 API Documentation *
 ------
 
 This contains the documentation for the Application Programming Interface, or API.  It
