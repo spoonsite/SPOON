@@ -813,7 +813,7 @@ app.controller('DetailsFulldetailsCtrl', ['$rootScope', '$scope', 'business', '$
           }, 300);
           setupUpdateFlags();
           onlyOnce = $scope.details.details.componentId;
-          if ($scope.details.details.componentType === 'COMP' || !$scope.details.details.componentType) {
+          if ($scope.details.details.componentType !== 'ARTICLE' || !$scope.details.details.componentType) {
             $scope.detailResultsTabs = [
               //
               { title:'DETAILS', id:'detailsTab', content:'2', relpath:'views/details/details.html', class:$scope.detailsUpdated.length > 0? 'updatedTab' : ''},

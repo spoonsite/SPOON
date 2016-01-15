@@ -164,17 +164,15 @@
 				
 				var viewRecord = function() {
 				    selectedObj = Ext.getCmp('mediaGrid').getSelection()[0].data;
-					viewMediaWin.html=null;
-					viewMediaWin.setWidth(600);
-					viewMediaWin.setHeight(470);
-					viewMediaWin.setScrollable(true);
+					viewMediaWin.html=null;				
+					
 					//show display media based on mime type
 					 if (selectedObj && selectedObj.mimeType){
 						
 						var type = selectedObj.mimeType;
 					    if (type.match('video.*')) {
 							viewMediaWin.setTitle('Video Preview');
-					        viewMediaWin.update('<video autoplay="autoplay" controls="controls" src="../'+ selectedObj.mediaLink+'" width="100%" heigh="100%"></video>');
+					        viewMediaWin.update('<video autoplay="autoplay" controls="controls" src="../'+ selectedObj.mediaLink+'" width="100%" ></video>');
 						}
 						else if(type.match('audio.*')){
 							viewMediaWin.setTitle('Audio Preview');
@@ -266,9 +264,11 @@
 					id: 'viewMediaWin',
 					title: '',
 					modal: true,
-					style:'padding:5px;',
+					style: 'padding:5px;',
 					maximizable: true,
-					scrollable:true,
+					scrollable: true,	
+					width: 600,	
+					height: '50%',
 					html:'',
 					listeners:{
 						close: function(){
@@ -277,7 +277,7 @@
 							theWin.update(null);
 						}
 					}
-					});
+				});
 				
 				
 				//
@@ -290,8 +290,10 @@
 					title: 'Add Media',
 					modal: true,
 					width: '40%',
+					height: 215,
 					y: 40,
 					resizable: false,
+					layout: 'fit',
 					items: [
 						{	xtype: 'form',
 							id: 'addMediaForm',
@@ -367,8 +369,8 @@
 								]
 							}
 						]
-					}]
-				   
+					}
+					]				   
 				});
 			});
 

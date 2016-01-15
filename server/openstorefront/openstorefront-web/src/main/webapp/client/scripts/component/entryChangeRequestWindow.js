@@ -137,7 +137,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 			changeRequestWindow.changeRequestId = changeRequestId;
 			
 			//open form
-			changeRequestWindow.submissionWindow.show();
+			changeRequestWindow.submissionWindow.show();			
 			changeRequestWindow.submissionPanel.editSubmission(changeRequestId);			
 		};
 		
@@ -330,10 +330,9 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							xtype: 'tbfill'
 						},
 						{
-							text: '<span style="color: white">Remove</span>',	
+							text: 'Remove',	
 							itemId: 'removeBtn',
-							iconCls: 'icon-color-light fa fa-trash',
-							ui: 'danger',
+							iconCls: 'fa fa-trash',							
 							disabled: true,
 							handler: function(){
 								var changesGrid = this.up('grid');

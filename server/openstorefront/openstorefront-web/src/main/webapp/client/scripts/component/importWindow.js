@@ -21,9 +21,11 @@ Ext.define('OSF.component.ImportWindow', {
 	title: 'Import Data',
 	modal: true,
 	width: '50%',
+	height: '70%',
+	layout: 'fit',	
 	y: 100,
 	fileTypeReadyOnly: true,
-	fileTypeValue: 'COMPONENT',
+	fileTypeValue: 'COMPONENT',	
 	initComponent: function () {
 		this.callParent();
 
@@ -31,6 +33,7 @@ Ext.define('OSF.component.ImportWindow', {
 
 		importWindow.formPanel = Ext.create('Ext.form.Panel', {
 			bodyStyle: 'padding: 20px;',
+			autoScroll: true,
 			dockedItems: [
 				{
 					xtype: 'toolbar',

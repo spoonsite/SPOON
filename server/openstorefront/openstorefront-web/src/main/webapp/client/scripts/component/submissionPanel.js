@@ -37,7 +37,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				title:'Confirm Cancel?',
 				message: 'Are you sure you want to cancel your submission? <br><br><b>Yes</b>, will remove submission<br> <b>No</b>, will cancel the form and will NOT remove existing submission',
 				buttons: Ext.Msg.YESNOCANCEL,
-				icon: Ext.Msg.QUESTION,
+				icon: Ext.Msg.QUESTION,				
 				fn: function(btn) {
 					if (btn === 'yes') {
 						//remove submmision
@@ -195,6 +195,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				{
 					xtype: 'panel',					
 					frame: true,
+					border: true,
 					width: '100%',
 					margin: '40 0 0 0',
 					padding: '0 0 0 0',
@@ -437,6 +438,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 //				}),
 				{
 					xtype: 'tinymce_textarea',
+					itemId: 'descriptionField',
 					fieldStyle: 'font-family: Courier New; font-size: 12px;',
 					style: { border: '0' },
 					name: 'description',
@@ -501,6 +503,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 				title: 'Add Contact',
 				alwaysOnTop: true,
 				width: '50%',
+				height: 300,
+				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
@@ -660,6 +664,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add External Link',
 				width: '50%',
+				height: 310,
+				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
@@ -862,6 +868,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Media',
 				width: '50%',
+				height: 300,
+				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
@@ -1059,6 +1067,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Dependency',
 				width: '50%',
+				height: 320,
+				layout: 'fit',				
 				items: [
 					{
 						xtype: 'form',
@@ -1167,6 +1177,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Metadata',
 				width: '50%',
+				height: 200,
+				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
@@ -1274,7 +1286,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							collapsible: true,
 							titleCollapse: true,
 							margin: '0 0 20 0',
-							frame: true,				
+							frame: true,	
+							border: true,
 							columnLines: true,
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,
@@ -1316,6 +1329,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 													alwaysOnTop: true,
 													title: 'Add Attribute',
 													width: '50%',
+													height: 150,
+													layout: 'fit',
 													items: [
 														{
 															xtype: 'form',
@@ -1435,8 +1450,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
-											ui: 'danger',
+											text: 'Remove',											
 											iconCls: 'fa fa-trash',
 											disabled: true,
 											handler: function(){
@@ -1459,7 +1473,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							collapsible: true,
 							titleCollapse: true,
 							margin: '0 0 20 0',
-							frame: true,				
+							frame: true,	
+							border: true,
 							columnLines: true,
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,								
@@ -1520,8 +1535,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										},
 										{
 											text: 'Remove',
-											itemId: 'removeBtn',
-											ui: 'danger',
+											itemId: 'removeBtn',											
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -1543,7 +1557,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							collapsible: true,
 							titleCollapse: true,
 							margin: '0 0 20 0',
-							frame: true,				
+							frame: true,	
+							border: true,
 							columnLines: true,
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,
@@ -1603,8 +1618,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
-											ui: 'danger',
+											text: 'Remove',											
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -1626,7 +1640,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							collapsible: true,
 							titleCollapse: true,
 							margin: '0 0 20 0',
-							frame: true,				
+							frame: true,	
+							border: true,
 							columnLines: true,
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,
@@ -1685,8 +1700,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
-											ui: 'danger',
+											text: 'Remove',											
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -1708,7 +1722,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							collapsible: true,
 							titleCollapse: true,
 							margin: '0 0 20 0',
-							frame: true,				
+							frame: true,	
+							border: true,
 							columnLines: true,
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,
@@ -1766,8 +1781,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
-											ui: 'danger',
+											text: 'Remove',											
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -1789,7 +1803,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							collapsible: true,
 							titleCollapse: true,
 							margin: '0 0 20 0',
-							frame: true,				
+							frame: true,	
+							border: true,
 							columnLines: true,
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,
@@ -1845,8 +1860,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
-											ui: 'danger',
+											text: 'Remove',											
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -1868,7 +1882,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							collapsible: true,
 							titleCollapse: true,
 							margin: '0 0 20 0',
-							frame: true,				
+							frame: true,	
+							border: true,
 							columnLines: true,
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,
@@ -1914,6 +1929,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 													title: 'Add Relationship',
 													alwaysOnTop: true,
 													width: '50%',
+													height: 200,
+													layout: 'fit',
 													items: [
 														{
 															xtype: 'form',
@@ -2003,8 +2020,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
-											ui: 'danger',
+											text: 'Remove',											
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -2026,7 +2042,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							collapsible: true,
 							titleCollapse: true,
 							margin: '0 0 20 0',
-							frame: true,				
+							frame: true,	
+							border: true,
 							columnLines: true,
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,
@@ -2087,6 +2104,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 													alwaysOnTop: true,
 													title: 'Add Tag',
 													width: '40%',
+													height: 150,
+													layout: 'fit',
 													items: [
 														{
 															xtype: 'form',
@@ -2146,8 +2165,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										},
 										{
 											text: 'Remove',
-											itemId: 'removeBtn',
-											ui: 'danger',
+											itemId: 'removeBtn',											
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -2186,6 +2204,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				{		
 					xtype: 'panel',					
 					frame: true,
+					border: true,
 					width: '100%',					
 					padding: '0 0 0 0',
 					html: '<span class="app-info-box"><i class="fa fa-2x fa-info-circle"></i></span> This entry must be submitted before an admin can approve it.'
@@ -2204,6 +2223,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					flex: 1,
 					width: '100%',
 					frame: true,
+					border: true,
 					autoScroll: true,
 					bodyStyle: 'padding: 10px;',
 					tpl: reviewViewTemplate					
@@ -2296,8 +2316,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						},												
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-close',
-							ui: 'danger',
+							iconCls: 'fa fa-close',							
 							handler: function () {	
 								submissionPanel.cancelSubmissionHandler();								
 							}
@@ -2624,6 +2643,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 				//set notify checkbox
 				if (!data.notifyOfApprovalEmail) {
 					submissionPanel.reviewPanel.getComponent('approvalNotification').setValue(false);
+				} else {
+					submissionPanel.reviewPanel.getComponent('approvalNotification').setValue(true);
 				}
 				
 			}
@@ -2684,10 +2705,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 		detailSection.getComponent('resourceGrid').getStore().removeAll();
 		detailSection.getComponent('contactGrid').getStore().removeAll();
 		detailSection.getComponent('optionalAttributes').getStore().removeAll();
-		
-		
+				
 		//set notification to checked
 		submissionPanel.reviewPanel.getComponent('approvalNotification').setValue(true);
+				
 	}	
 	
 	

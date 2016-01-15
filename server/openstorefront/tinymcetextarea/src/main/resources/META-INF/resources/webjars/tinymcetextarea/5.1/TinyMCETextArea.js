@@ -168,14 +168,16 @@ Ext.define('Ext.ux.form.TinyMCETextArea', {
         var elm = Ext.getDom(me.getId() + "-inputWrap");
         if(!elm) return;
         
-        if(state) elm.classList.remove("tinymce-hide-border");
-        else      elm.classList.add("tinymce-hide-border");
+	   if (elm.classList) {
+			if(state) elm.classList.remove("tinymce-hide-border");
+			else      elm.classList.add("tinymce-hide-border");
 
-        var elm = Ext.getDom(me.getId() + "-triggerWrap");
-        if(!elm) return;
+			var elm = Ext.getDom(me.getId() + "-triggerWrap");
+			if(!elm) return;
         
-        if(state) elm.classList.remove("tinymce-hide-border");
-        else      elm.classList.add("tinymce-hide-border");
+			if(state) elm.classList.remove("tinymce-hide-border");
+			else      elm.classList.add("tinymce-hide-border");
+	   }
     },
     //-----------------------------------------------------------------
     initEditor: function (height) {

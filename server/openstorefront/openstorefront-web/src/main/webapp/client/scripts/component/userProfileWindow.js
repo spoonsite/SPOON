@@ -21,6 +21,8 @@ Ext.define('OSF.component.UserProfileWindow', {
 	layout: 'hbox',
 	modal: true,
 	width: '50%',
+	alwaysOnTop: true,
+	height: 385,
 	initComponent: function () {
 		this.callParent();
 

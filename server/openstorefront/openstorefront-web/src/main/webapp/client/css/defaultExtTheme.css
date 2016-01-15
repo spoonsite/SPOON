@@ -177,6 +177,32 @@ div.x-border-layout-ct {
     background-color: rgba(68,30,90,1);
 }
 
+.x-panel-default-framed-outer-border-rbl {
+    border-right-color: rgba(68,30,90,1) !important;
+    border-right-width: 1px !important;
+    border-bottom-color: rgba(68,30,90,1) !important;
+    border-bottom-width: 1px !important;
+    border-left-color: rgba(68,30,90,1) !important;
+    border-left-width: 1px !important;
+}
+
+.x-panel-default-framed-outer-border-trl {
+    border-top-color: rgba(68,30,90,1) !important;
+    border-top-width: 1px !important;
+    border-right-color: rgba(68,30,90,1) !important;
+    border-right-width: 1px !important;
+    border-left-color: rgba(68,30,90,1) !important;
+    border-left-width: 1px !important;
+}
+
+.x-panel-default-framed-outer-border-rl {
+    border-right-color: rgba(68,30,90,1) !important;
+    border-right-width: 1px !important;
+    border-left-color: rgba(68,30,90,1) !important;
+    border-left-width: 1px !important;
+}
+
+
 .x-window-header-default .x-tool-img {
     background-color: transparent;
 }
@@ -568,7 +594,7 @@ div.x-border-layout-ct {
 
 .x-tab.x-tab-active.x-tab-default {
     border-color: rgba(68,30,90,1);
-    background-color: rgba(68	,30,90,1);
+    background-color: rgba(68	,30,90,1) !important; 	
     	
 }
 .x-box-scroller-tab-bar-default {
@@ -739,6 +765,14 @@ div.x-border-layout-ct {
 
 .x-nbr .x-panel-default-framed {
    /* background-color: transparent !important; */
+}
+
+.x-nbr .x-window-default {
+	background-color: rgba(68,30,90,1) !important; 	 
+}
+
+.x-nbr .x-tab-default-top {
+	background-color: rgba(151,151,151,1) !important; 	 
 }
 
 /* end of IE 9 */
