@@ -1,7 +1,7 @@
 
 <span style="font-size: 24px;">User Guide</span>
 
-Version 1.6 [BETA]
+Version 1.6
                                                       
 
 
@@ -25,7 +25,7 @@ and give details on the following:
 **DI2E Clearinghouse is developed by Space Dynamics Laboratory for DI2E and is
 licensed under Apache V2.**
 
-![Logo](../../../../../../client/openstorefront/app/images/logo2.png)
+![Logo](../../../../../../client/openstorefront/app/images/help/di2elogo-sm.png)
 ![Logo](../../../../../../client/openstorefront/app/images/help/sdl.png)
 
 ## 1.1 Release Notes
@@ -301,13 +301,13 @@ For help, contact helpdesk@di2e.net
 -----------
 
 The following fields are on the Required Information section:
-| Field | Values | Notes |
-| -----: | :------ | :----- |
-| Entry Type | DI2E Component, Article, etc. | What you enter here will determine what other fields show up on this entry form below |
-| Entry Name | The name of the article or component | | 
-| Description | Detailed description body | You can use highlights, colored text, links, etc. |
-| Organization | Name of Company or responsible party for the entry | These can be set by an administrator |
-| Attributes | Required attributes are shown here and must be selected | |
+
+
+ -  **Entry Type:**  DI2E Component, Article, etc.  -  What you enter here will determine what other fields show up on this entry form below 
+ -  **Entry Name:**  The name of the article or component 
+ -  **Description:** Detailed description body - You can use highlights, colored text, links, etc.
+ -  **Organization:** Name of Company or responsible party for the entry  -  These can be set by an administrator
+ -  **Attributes:**  Required attributes are shown here and must be selected 
 
 
 #### 2.3.1.3 Submission Form- Details
@@ -689,6 +689,19 @@ Inactive components are not visible to or searchable by users.
     new task will be created to handle the import. The application will
     notify the admin when the task is complete or if there was an issue.
 
+**Note: In-line Description images issue**
+
+
+For articles in maybe desirable to add images to the description.  
+Note: the path to the image if locally store is relative because of this the correct path
+will not show in the editor but, it will be correct in the entry preview.  
+
+Example:
+
+              (local image:) Media.action?GeneralMedia&name=Test 
+              will show as missing in the editor but correct in the preview.
+
+
 #### 3.2.2.2 Approval *
 ------
 
@@ -899,7 +912,7 @@ at first login will contain the information gathered from the external security 
 #### 3.2.9.1 Creation *
 ------
 
-The application doesn't directly manage user-only profiles. When a user
+The application doesn't directly manage users, only profiles. When a user
 first securely logs in, a profile is created. It's up to the applicable
 security utility (Open AM, LDAP, Database…etc.) to define the users.
 
