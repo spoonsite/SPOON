@@ -168,7 +168,7 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-vertical-correction',
 									handler: function () {
 										userProfileStore.load();
 									}
@@ -197,6 +197,20 @@
 										var record = Ext.getCmp('userProfileGrid').getSelection()[0];
 										actionToggleUser(record);
 									}
+								},
+								{
+									// For cryptic reasons, we must add a space before message
+									// to get proper spacing for this button
+									text: '&nbsp;Message',
+									id: 'userProfileGrid-tools-message',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',
+									iconAlign: 'left',
+									handler: function () {
+										var record = Ext.getCmp('userProfileGrid').getSelection()[0];
+										actionMessageUser(record);
+									}
 								}
 							]
 						},
@@ -211,9 +225,10 @@
 						selectionchange: function (grid, record, index, opts) {
 							if (Ext.getCmp('userProfileGrid').getSelectionModel().hasSelection()) {
 								Ext.getCmp('userProfileGrid-tools-toggleActivation').enable();
-								// Only allow editing when the grid is showing active users.
+								// Only allow editing or messaging when the grid is showing active users.
 								if (Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() === 'A') {
 									Ext.getCmp('userProfileGrid-tools-edit').enable();
+									Ext.getCmp('userProfileGrid-tools-message').enable();
 								}
 							} else {
 								Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
