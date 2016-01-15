@@ -72,6 +72,11 @@ limitations under the License.
 							<ul style="list-style: none">
 								<li ng-repeat="sectionLevel3 in sectionLevel2.childSections">
 									<a href="" ng-click="showHelpSection(sectionLevel3.helpSection)" ng-class="sectionLevel3.helpSection.selected ? 'help_selected' : ''">{{sectionLevel3.helpSection.title}}</a>
+									<ul style="list-style: none">
+										<li ng-repeat="sectionLevel4 in sectionLevel3.childSections">
+										<a href="" ng-click="showHelpSection(sectionLevel4.helpSection)" ng-class="sectionLevel4.helpSection.selected ? 'help_selected' : ''">{{sectionLevel4.helpSection.title}}</a>
+										</li>	
+									</ul>									
 								</li>	
 							</ul>
 						</li>	
