@@ -92,7 +92,7 @@ public class SystemErrorAlertMessageGenerator
 
 			int max = tickets.size();
 			if (tickets.size() > MAX_TICKETS_TO_ATTACH) {
-				message.append("(Only ").append(MAX_TICKETS_TO_ATTACH).append(" are attached login to view more.<br>");
+				message.append("(Only ").append(MAX_TICKETS_TO_ATTACH).append(" are attached login to view more.)<br>");
 				max = MAX_TICKETS_TO_ATTACH;
 			}
 
