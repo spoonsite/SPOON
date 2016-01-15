@@ -23,7 +23,8 @@ Ext.define('OSF.component.MessageWindow', {
 	iconCls: 'fa fa-lg fa-envelope-o',
 	modal: true,	
 	layout: 'fit',
-	width: '60%',	
+	width: '60%',
+	height: 510,
 	resizable: false,
 	initialToUsers: '',
 	
@@ -34,6 +35,7 @@ Ext.define('OSF.component.MessageWindow', {
 		
 		var messageForm = Ext.create('Ext.form.Panel', {
 			bodyStyle: 'padding: 10px;',
+			autoScroll: true,
 			defaults: {
 				labelAlign: 'top',
 				labelSeparator: ''
@@ -73,6 +75,7 @@ Ext.define('OSF.component.MessageWindow', {
 									modal: true,
 									width: '30%',
 									height: '50%',
+									alwaysOnTop: true,
 									layout: 'fit',
 									closeAction: 'destory',
 									items: [

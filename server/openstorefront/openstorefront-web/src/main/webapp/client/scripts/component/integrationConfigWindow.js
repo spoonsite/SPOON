@@ -35,8 +35,10 @@ Ext.define('OSF.component.IntegrationWindow', {
 			title: 'Add/Update  Configuration',
 			modal: true,
 			width: '40%',
+			height: 300,
 			minWidth: 300,
 			minHeigth: 300,
+			alwaysOnTop: true,
 			layout: 'fit',
 			resizable: false,
 			items: [
@@ -355,8 +357,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 						{
 							text: 'Delete',
 							itemId: 'tbDelete',
-							disabled: true,
-							ui: 'danger',
+							disabled: true,							
 							iconCls: 'fa fa-trash',
 							handler: function(){
 								var grid = this.up('grid');

@@ -24,7 +24,8 @@
 				var importWindow = Ext.create('OSF.component.ImportWindow', {					
 				});
 				
-				var integrationWindow = Ext.create('OSF.component.IntegrationWindow', {					
+				var integrationWindow = Ext.create('OSF.component.IntegrationWindow', {	
+					alwaysOnTop: true
 				});			
 				
 				var changeRequestWindow = Ext.create('OSF.component.EntryChangeRequestWindow', {
@@ -184,8 +185,7 @@
 								{
 									text: 'Remove',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-trash',
-									ui: 'danger',
+									iconCls: 'fa fa-trash',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('tagGrid'), 'tagId', 'tags');
@@ -556,8 +556,7 @@
 						 widget: {
 						   xtype: 'button',
 						   iconCls: 'fa fa-trash',
-						   maxWidth: 25,
-						   ui: 'danger',
+						   maxWidth: 25,						   
 						   handler: function() {
 							 var record = this.getWidgetRecord();
 							 var componentId = Ext.getCmp('evaluationGrid').componentRecord.get('componentId');
@@ -625,8 +624,7 @@
 								},
 								{
 									text: 'Clear All Sections',
-									iconCls: 'fa fa-trash',
-									ui: 'danger',
+									iconCls: 'fa fa-trash',									
 									handler: function(){			
 										Ext.Msg.show({
 											title:'Clear All Sections?',
@@ -1333,8 +1331,7 @@
 								{
 									text: 'Remove',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-trash',									
-									ui: 'danger',
+									iconCls: 'fa fa-trash',
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('mediaGrid'), 'componentMediaId', 'media', undefined, undefined, true);
@@ -1628,8 +1625,7 @@
 								{
 									text: 'Remove',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-trash',									
-									ui: 'danger',
+									iconCls: 'fa fa-trash',																		
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('resourcesGrid'), 'resourceId', 'resources', undefined, undefined, true);
@@ -2021,8 +2017,7 @@
 								{
 									text: 'Remove',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-trash',
-									ui: 'danger',
+									iconCls: 'fa fa-trash',								
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('relationshipsGrid'), 'relationshipId', 'relationships');
@@ -2224,8 +2219,7 @@
 								{
 									text: 'Remove',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-trash',
-									ui: 'danger',
+									iconCls: 'fa fa-trash',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('attributeGrid'), 'type', 'attributes', 'code', null, true, function(){
@@ -2399,6 +2393,7 @@
 										
 										var messageWindow = Ext.create('OSF.component.MessageWindow', {					
 											closeAction: 'destory',
+											alwaysOnTop: true,
 											initialToUsers: emails
 										}).show();
 									}
@@ -2519,8 +2514,7 @@
 									xtype: 'tbfill'
 								},
 								{
-									text: 'Cancel',
-									ui: 'danger',
+									text: 'Cancel',									
 									iconCls: 'fa fa-close',
 									handler: function() {
 										this.up('window').hide();
@@ -2891,7 +2885,7 @@
 					maximizable: true,
 					width: '80%',
 					height: '80%',
-					modal: true,
+					modal: true,					
 					layout: {
 						type: 'hbox',
 						align: 'stretch'
@@ -3013,10 +3007,9 @@
 											xtype: 'tbfill'
 										},
 										{
-											text: '<span style="color: white">Remove</span>',
+											text: 'Remove',
 											id: 'versionWin-tool-removeBtn',
-											iconCls: 'icon-color-light fa fa-trash',
-											ui: 'danger',
+											iconCls: 'fa fa-trash',											
 											disabled: true,
 											handler: function(){
 												var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
@@ -3176,6 +3169,7 @@
 					title: 'Change Owner - ',
 					iconCls: 'fa fa-user',
 					width: '35%',
+					height: 150,
 					y: 200,
 					modal: true,
 					layout: 'fit',					
@@ -3262,6 +3256,7 @@
 					id: 'mergeComponentWin',
 					title: 'Merge',
 					width: '40%',
+					height: 210,
 					modal: true,
 					layout: 'fit',
 					items: [

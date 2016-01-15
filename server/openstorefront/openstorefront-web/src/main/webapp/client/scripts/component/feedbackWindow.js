@@ -20,6 +20,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 	title: 'Feedback / Issues',
 	iconCls: 'fa fa-exclamation-triangle',
 	width: '50%',
+	height: '70%',
 	y: 40,
 	modal: true,
 	maximizable: false,

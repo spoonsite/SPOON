@@ -225,8 +225,10 @@
 				id: 'editCodeFormWin',
 				title: 'Add/Edit Code',
 				width: '40%',
+				height: 480,
 				closeAction: 'hide',
 				modal: true,
+				alwaysOnTop: true,
 				layout: 'fit',
 				iconCls: 'fa fa-lg fa-edit',				
 				items: [
@@ -305,6 +307,7 @@
 								fieldLabel: 'Detailed Description',
 								width: '100%',
 								fieldBodyCls: 'form-comp-htmleditor-border',
+								margin: '0 0 30 0',
 								maxLength: 4000
 							},
 							{
@@ -326,9 +329,11 @@
 			var importWin = Ext.create('Ext.window.Window', {
 				title: 'Import',
 				width: '40%',
+				height: 175,
 				closeAction: 'hide',
 				modal: true,
 				layout: 'fit',
+				alwaysOnTop: true,
 				iconCls: 'fa fa-lg fa-upload',				
 				y: 100,
 				items: [

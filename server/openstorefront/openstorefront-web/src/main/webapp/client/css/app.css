@@ -154,6 +154,16 @@ and open the template in the editor.
     border-color: #d6e9c6;
 }
 
+.tinymce-error-field
+{
+  border: 1px solid red !important;
+}
+
+.tinymce-hide-border
+{
+  border-width: 0px;
+}
+
 /**
 UI: Button Overrides for specfic buttons
 to use set the ui: danger
@@ -330,3 +340,4 @@ to use set the ui: danger
     border-width: 1px;
     border-color: #dd0303;
 }
+

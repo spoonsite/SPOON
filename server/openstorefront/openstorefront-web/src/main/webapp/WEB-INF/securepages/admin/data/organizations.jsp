@@ -458,7 +458,9 @@
 					title: 'Merge Organizations',
 					modal: true,
 					width: '50%',
+					height: 215,
 					y: 40,
+					layout: 'fit',
 					resizable: false,
 					items: [
 						{	xtype: 'form',
@@ -556,8 +558,8 @@
 								]
 							}
 						]
-					}]
-				   
+					}
+					]				   
 				});
 				
 				//
@@ -586,8 +588,9 @@
 					id: 'addEditWin',
 					title: 'Organization',
 					modal: true,
-					width: '70%',
+					width: '70%',					
 					resizable: false,
+					layout: 'fit',
 					items: [
 						{
 							xtype: 'form',

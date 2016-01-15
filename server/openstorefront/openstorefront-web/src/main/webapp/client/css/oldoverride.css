@@ -96,7 +96,7 @@ limitations under the License.
 }
 
 .page2Styles h1 {
-    color: rgba(68,30,90,1);
+    color: rgba(68,30,90,1) !important;
     padding: 15px 10px;
     font-weight: 300;
     font-size: 2.4em;

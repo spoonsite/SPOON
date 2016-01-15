@@ -116,7 +116,12 @@ var CoreUtil = {
 			}
 		}
 
-		htmlData += '<html><head><style> table{border-collapse: collapse; border: 2px black solid; font: 12px sans-serif} td{border: 1px black solid; padding:5px;} th{padding:5px;}</style></head><body><table>';
+		htmlData += '<html><head><style>' +
+				' .reportview-table{border-collapse: collapse; border: 2px black solid; font: 12px sans-serif} '+
+				' .reportview-td{border: 1px black solid; padding:5px;}' +
+				' .reportview-th{padding:5px;}' +
+				'</style>'+
+				'</head><body><table class="reportview-table">';
 
 		for (ctr = 0; ctr < csv.length; ctr++) {
 			for (ctr2 = 0; ctr2 < csv[ctr].length; ctr2++) {
@@ -129,14 +134,14 @@ var CoreUtil = {
 
 					if ((ctr2 + 1) === csv[ctr].length) {
 						if(colDiff !==0 ){
-							htmlData += '<tr><td colspan="'+colDiff+'">' + csv[ctr][ctr2] + '</td></tr>';
+							htmlData += '<tr><td class="reportview-td" colspan="'+colDiff+'">' + csv[ctr][ctr2] + '</td></tr>';
 						}
 						else{
-							htmlData += '<tr><td>' + csv[ctr][ctr2] + '</td></tr>';
+							htmlData += '<tr><td class="reportview-td" >' + csv[ctr][ctr2] + '</td></tr>';
 						}
 					}
 					else{
-						htmlData += '<tr><td>' + csv[ctr][ctr2] + '</td>';
+						htmlData += '<tr><td class="reportview-td" >' + csv[ctr][ctr2] + '</td>';
 					}
 
 
@@ -145,21 +150,21 @@ var CoreUtil = {
 				if ((ctr2 + 1) === csv[ctr].length) { //End row
 					if (ctr2 !== 0) {
 						if(colDiff !==0 ){
-							htmlData += '<td colspan="'+colDiff+'">' + csv[ctr][ctr2] + '</td></tr>';
+							htmlData += '<td class="reportview-td"  colspan="'+colDiff+'">' + csv[ctr][ctr2] + '</td></tr>';
 						}
 						else{
-							htmlData += '<td>' + csv[ctr][ctr2] + '</td></tr>';
+							htmlData += '<td class="reportview-td" >' + csv[ctr][ctr2] + '</td></tr>';
 						}
 					}
 				}
 				else if (ctr2 !== 0) { //Normal Data
 
-					htmlData += '<td>' + csv[ctr][ctr2] + '</td>';
+					htmlData += '<td class="reportview-td" >' + csv[ctr][ctr2] + '</td>';
 				}
 			}
 		}
 		htmlData += '</table></body></html>';
-		htmlData = htmlData.replace(/<td><\/td>/g, '<td>&nbsp</td>');
+		htmlData = htmlData.replace(/<td class="reportview-td" ><\/td>/g, '<td>&nbsp</td>');
         //console.log("htmlData",htmlData);
 		return htmlData;
 	},

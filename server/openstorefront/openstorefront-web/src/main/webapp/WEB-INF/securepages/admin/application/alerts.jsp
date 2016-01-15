@@ -233,6 +233,7 @@
 					title: 'Add/Edit Alert',
 					modal: true,
 					width: '35%',
+					height: 325,
 					y: '10em',
 					iconCls: 'fa fa-lg fa-edit',
 					layout: 'fit',

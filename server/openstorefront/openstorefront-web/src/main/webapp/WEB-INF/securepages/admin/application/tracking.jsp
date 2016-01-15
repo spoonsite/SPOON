@@ -299,6 +299,8 @@
 						title: 'View Record Information',
 						iconCls: 'fa fa-info-circle',
 						width: '30%',
+						height: 400,
+						autoScroll: true,
 						bodyStyle: 'padding: 10px;',
 						y: 40,
 						modal: true,
@@ -315,15 +317,12 @@
 								xtype: 'panel',
 								id: 'viewUserTrackingDataPanel',
 								width: '100%'
-							},
+							}
+						],
+						dockedItems: [
 							{
-								xtype: 'tbfill',
-								bodyStyle: 'background-color:000;'
-							},
-							{
-								xtype: 'panel',
-								width: '100%',
-								layout: 'hbox',
+								xtype: 'toolbar',
+								dock: 'bottom',
 								items: [
 									{
 										xtype: 'button',
@@ -357,10 +356,9 @@
 										handler: function () {
 											actionPreviewNextRecord(true);
 										}
-									}
+									}									
 								]
 							}
-
 						]
 					});
 				};

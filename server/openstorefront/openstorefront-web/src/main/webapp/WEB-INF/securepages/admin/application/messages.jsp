@@ -278,37 +278,29 @@
 				//
 				var mViewMessage = function (whichone) {
 
-					var selectedObj = Ext.getCmp('userMessageGrid').getSelection()[0];
+					var record = Ext.getCmp('userMessageGrid').getSelectionModel().getSelection()[0];
 
+
+					var message = "No message was generated or sent.";
+					if (record.get('subject')) {
+						message = "<b>Subject:</b><br><br>" + record.get('subject') + "<br><br>";
+						if (record.get('bodyOfMessage')) {
+							message += "<b>Message:</b><br><br> " + record.get('bodyOfMessage');
+						}						
+					}
+					
 					Ext.create('Ext.window.Window', {
 						title: 'View Message',
 						iconCls: 'fa fa-info-circle',
 						width: '30%',
+						height: '70%',
 						bodyStyle: 'padding: 10px;',
 						y: 40,
 						modal: true,
 						maximizable: false,
-						layout: 'vbox',
-						items: [{
-								xtype: 'textfield',
-								name: 'Subject',
-								fieldLabel: 'Subject',
-								width: '100%',
-								maxLength: 50,
-								editable: false,
-								text: selectedObj.subject
-							},
-							{
-								xtype: 'textareafield',
-								name: 'msgBody',
-								fieldLabel: 'Message Body',
-								width: '100%',
-								height: 200,
-								maxLength: 300,
-								editable: false,
-								text: selectedObj.bodyOfMessage
-							}]
-
+						closeAction: 'destroy',						
+						autoScroll: true,
+						html: message
 					}).show();
 				};
 
@@ -524,6 +516,7 @@
 						title: 'Send Admin Message',
 						iconCls: 'fa fa-envelope-o',
 						width: '30%',
+						height: 350,
 						bodyStyle: 'padding: 10px;',
 						y: 40,
 						modal: true,
