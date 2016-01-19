@@ -412,12 +412,15 @@ memory affects the amount of concurrent users the server can support.
 >
 > 8GB -&gt; -Xmx6144m (Make sure to use a 64bit VM)
 
-**OPTIONAL:** In the conf/server.xml
+**OPTIONAL:** In the conf/server.xml (In Connector section)
 
--   Add http compression on. Compression="on"
+-   Add http compression on. 
+    Compression="on"
+    compressableMimeType="text/html,text/xml,text/plain,application/json,text/css,application/javascript"
 
-    Compressible
-    MimeType="text/html,text/xml,text/plain,application/json,text/css"
+- Set to use NIO Protocal
+  protocol="org.apache.coyote.http11.Http11NioProtocol"
+  maxThreads="1000"
 
 > Also, you may consider setting more aggressive connection settings
 > than the default depending on your expected load. See Tomcat
