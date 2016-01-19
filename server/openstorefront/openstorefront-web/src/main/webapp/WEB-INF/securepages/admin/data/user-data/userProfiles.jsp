@@ -38,92 +38,6 @@
 				};
 
 
-				var sendAdminMsgWin = Ext.create('Ext.window.Window', {
-					id: 'sendAdminMsgWin',
-					title: 'Send Admin Message',
-					iconCls: 'fa fa-envelope-o',
-					width: '30%',
-					bodyStyle: 'padding: 10px;',
-					y: 40,
-					modal: true,
-					maximizable: false,
-					layout: 'vbox',
-					items: [{
-							xtype: 'combobox',
-							id: 'username_combo',
-							name: 'username',
-							fieldLabel: 'Send to',
-							width: '100%',
-							displayField: 'username',
-							valueField: 'username',
-							value: 'All Users',
-							editable: false,
-							store: userProfileStore
-						},
-						{
-							xtype: 'textareafield',
-							id: 'message_adm',
-							name: 'message',
-							fieldLabel: 'Message',
-							width: '100%',
-							height: 200,
-							maxLength: 300
-						}],
-					dockedItems: [
-						{
-							dock: 'bottom',
-							xtype: 'toolbar',
-							items: [
-								{
-									text: 'Send',
-									formBind: true,
-									iconCls: 'fa fa-save',
-									handler: function () {
-										var msgtosend = {};
-
-										if (Ext.getCmp('username_combo').value !== 'All Users') {
-											msgtosend.username = Ext.getCmp('username_combo').value;
-										}
-
-										msgtosend.message = Ext.getCmp('message_adm').getValue();
-
-										if (msgtosend.message === '' || msgtosend.message === 'Message Required')
-										{
-											Ext.getCmp('message_adm').setValue('Message Required');
-											return;
-										}
-
-										msgtosend.message = Ext.getCmp('message_adm').value;
-										Ext.Ajax.request({
-											url: '../api/v1/resource/notificationevent',
-											method: 'POST',
-											jsonData: msgtosend,
-											success: function (response, opts) {
-												Ext.toast('Admin Message Sent Successfully');
-												Ext.getCmp('sendAdminMsgWin').close();
-											},
-											failure: function (response, opts) {
-												Ext.toast('Error: Could not send admin message');
-											}
-										});
-									}
-								},
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Cancel',
-									iconCls: 'fa fa-close',
-									handler: function () {
-										Ext.getCmp('sendAdminMsgWin').close();
-									}
-								}
-							]
-						}
-					]
-				});
-
-
 				var userProfileGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Manage User Profiles <i class="fa fa-question-circle"  data-qtip="A user profile represents a user in the system and contains the user\'s information."></i>',
 					id: 'userProfileGrid',
@@ -392,9 +306,11 @@
 
 				var actionMessageUser = function actionMessageUser(record) {
 					if (record) {
-						sendAdminMsgWin.show();	
-						Ext.getCmp('username_combo').setValue(record.data.username);
-						Ext.getCmp('message_adm').setValue('');
+						var messageWindow = Ext.create('OSF.component.MessageWindow', {					
+							closeAction: 'destroy',
+							initialToUsers: [record.data.email]
+						}).show();
+
 					} else {
 						Ext.MessageBox.alert("No User Selected", "Error: You have not selected a user.");
 					}

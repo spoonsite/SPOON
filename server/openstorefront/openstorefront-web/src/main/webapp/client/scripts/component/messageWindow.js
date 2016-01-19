@@ -73,8 +73,9 @@ Ext.define('OSF.component.MessageWindow', {
 									modal: true,
 									width: '30%',
 									height: '50%',
+									alwaysOnTop: true,
 									layout: 'fit',
-									closeAction: 'destory',
+									closeAction: 'destroy',
 									items: [
 										{
 											xtype: 'grid',
