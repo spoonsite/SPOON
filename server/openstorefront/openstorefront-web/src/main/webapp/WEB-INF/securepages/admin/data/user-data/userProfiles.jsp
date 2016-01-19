@@ -47,7 +47,6 @@
 					y: 40,
 					modal: true,
 					maximizable: false,
-					closeAction: 'destroy',
 					layout: 'vbox',
 					items: [{
 							xtype: 'combobox',
@@ -95,7 +94,6 @@
 										}
 
 										msgtosend.message = Ext.getCmp('message_adm').value;
-										Ext.toast('Sending Admin Message..');
 										Ext.Ajax.request({
 											url: '../api/v1/resource/notificationevent',
 											method: 'POST',
@@ -103,6 +101,9 @@
 											success: function (response, opts) {
 												Ext.toast('Admin Message Sent Successfully');
 												Ext.getCmp('sendAdminMsgWin').close();
+											},
+											failure: function (response, opts) {
+												Ext.toast('Error: Could not send admin message');
 											}
 										});
 									}
@@ -300,10 +301,10 @@
 							]
 						},
 						{
-									xtype: 'pagingtoolbar',
-									dock: 'bottom',
-									store: 'userProfileStore',
-									displayInfo: true
+							xtype: 'pagingtoolbar',
+							dock: 'bottom',
+							store: 'userProfileStore',
+							displayInfo: true
 						}
 					],
 					listeners: {
@@ -318,6 +319,7 @@
 							} else {
 								Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
 								Ext.getCmp('userProfileGrid-tools-edit').disable();
+								Ext.getCmp('userProfileGrid-tools-message').disable();
 							}
 						}
 					}
@@ -386,6 +388,17 @@
 						userProfileGrid
 					]
 				});
+
+
+				var actionMessageUser = function actionMessageUser(record) {
+					if (record) {
+						sendAdminMsgWin.show();	
+						Ext.getCmp('username_combo').setValue(record.data.username);
+						Ext.getCmp('message_adm').setValue('');
+					} else {
+						Ext.MessageBox.alert("No User Selected", "Error: You have not selected a user.");
+					}
+				};
 			});
 
 		</script>
