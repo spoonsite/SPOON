@@ -36,6 +36,8 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.core.entity.ReportOption;
+import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import edu.usu.sdl.openstorefront.core.entity.TopicSearchItem;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeXrefModel;
@@ -487,6 +489,12 @@ public class AttributeServiceImpl
 			TopicSearchItem topicSearchItemExample = new TopicSearchItem();
 			topicSearchItemExample.setAttributeType(type);
 			persistenceService.deleteByExample(topicSearchItemExample);
+
+			ScheduledReport scheduledReport = new ScheduledReport();
+			ReportOption reportOption = new ReportOption();
+			reportOption.setCategory(type);
+			scheduledReport.setReportOption(reportOption);
+			persistenceService.deleteByExample(scheduledReport);
 
 			persistenceService.delete(attributeType);
 

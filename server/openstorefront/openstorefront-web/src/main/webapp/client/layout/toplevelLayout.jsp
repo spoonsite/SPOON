@@ -85,40 +85,95 @@ limitations under the License.
 //					'websocket',
 //					'xhr-polling'					
 //				]);
-			var socket = io.connect('', {
-			  'resource':'openstorefront/event', 
-			   query: 'id=' + usercontext.username,
-			   transports: [
-				'websocket',
-				'xhr-polling'
-			   ]
-			});
+			var pollingHandler = function(){
+				
+				var eventState = {
+					eventIds: [],
+					initalPoll: true
+				};
+				Ext.util.TaskManager.start({
+					run: function(){
+						//poll events
+						Ext.Ajax.request({
+							url: '../api/v1/resource/notificationevent',
+							method: 'GET',
+							params: {
+								max: 5, 
+								sortField: 'createDts'
+							},
+							success: function(response, opts) {
+								var data = Ext.decode(response.responseText);
+								
+								if (eventState.initalPoll) {									
+									Ext.Array.each(data.data, function(event){
+										eventState.eventIds.push(event.eventId);
+									});
+									eventState.initalPoll = false;
+								} else {
+									Ext.Array.each(data.data, function(event){
+										if (Ext.Array.contains(eventState.eventIds, event.eventId) === false) {
+											eventState.eventIds.push(event.eventId);
+											
+											handleAlert({
+												eventId: event.eventId,
+												msg: event.message,
+												type: event.entityMetaDataStatus ? alertStatus(event.entityMetaDataStatus) : event.eventTypeDescription
+											}, {
+												eventType: event.eventType
+											});
+										} 
+									});
+								}
+							}
+						});	
+					},
+					interval: 20000,
+					fireOnStart: true
+				});				
+			};
+			
+			if (Ext.isIE9m === false) {			
+				var socket = io.connect('', {
+				  'resource':'openstorefront/event', 
+				   query: 'id=' + usercontext.username,
+				   transports: [
+					'websocket',
+					'xhr-polling'
+				   ]
+				});
 
 
-			  socket.on('connect', function () {
-				// console.warn(this.socket.transport.name + ' contected');
-			  });
-			  socket.on('WATCH', function (args) {
+				  socket.on('connect', function () {
+					// console.warn(this.socket.transport.name + ' contected');
+				  });
+				  socket.on('error', function (e) {
+					//activate polling
+					pollingHandler();
+				  });
+				  socket.on('WATCH', function (args) {
 
-				var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'watch', 'msg': args.message + '<i>View the changes <a href="single?id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
-				handleAlert(alert, args);
-			  });
-			  socket.on('IMPORT', function (args) {					
-				var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'import', 'msg': args.message, 'id': 'import_'+ args.eventId};					
-				handleAlert(alert, args);
-			  });
-			  socket.on('TASK', function (args) {				
-				var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
-				handleAlert(alert, args);
-			  });
-			  socket.on('REPORT', function (args) {					
-				var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};					
-				handleAlert(alert, args);
-			  });
-			  socket.on('ADMIN', function (args) {					
-				var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'admin', 'msg': '<i class="fa fa-warning"></i>&nbsp;' + args.message, 'id': 'admin_'+ args.eventId};
-				handleAlert(alert, args);
-			  });	
+					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'watch', 'msg': args.message + '<i>View the changes <a href="single?id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
+					handleAlert(alert, args);
+				  });
+				  socket.on('IMPORT', function (args) {					
+					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'import', 'msg': args.message, 'id': 'import_'+ args.eventId};					
+					handleAlert(alert, args);
+				  });
+				  socket.on('TASK', function (args) {				
+					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'task', 'msg': args.message, 'id': 'task_'+ args.eventId};
+					handleAlert(alert, args);
+				  });
+				  socket.on('REPORT', function (args) {					
+					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};					
+					handleAlert(alert, args);
+				  });
+				  socket.on('ADMIN', function (args) {					
+					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'admin', 'msg': '<i class="fa fa-warning"></i>&nbsp;' + args.message, 'id': 'admin_'+ args.eventId};
+					handleAlert(alert, args);
+				  });	
+		     } else {
+				pollingHandler(); 
+			}
 			  
 			var alertStatus = function(status) {
 				switch(status) {
@@ -160,6 +215,7 @@ limitations under the License.
 						bodyPadding: 'padding: 40px;',
 						closable: true,					
 						minWidth: 200,
+						minHeight: 60,
 						align: 'br'
 					});
 					lastNotificationEventId = alert.id;

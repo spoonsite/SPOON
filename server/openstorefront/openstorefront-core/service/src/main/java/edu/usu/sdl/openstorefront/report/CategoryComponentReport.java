@@ -60,13 +60,19 @@ public class CategoryComponentReport
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		String category = NO_CATEGORY;
+		String categoryMessage = "";
 		if (StringUtils.isNotBlank(report.getReportOption().getCategory())) {
-			category = report.getReportOption().getCategory();
+			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, category);
+			if (attributeType != null) {
+				category = report.getReportOption().getCategory();
+			} else {
+				categoryMessage = " (Selected category was not found.  Check report options and select another category.)";
+			}
 		}
 
 		//write header
 		cvsGenerator.addLine("Category Component Report", sdf.format(TimeUtil.currentDate()));
-		cvsGenerator.addLine("Category: " + category);
+		cvsGenerator.addLine("Category: " + category + categoryMessage);
 		cvsGenerator.addLine("");
 		cvsGenerator.addLine(
 				"Category Label",
@@ -98,7 +104,7 @@ public class CategoryComponentReport
 		} else {
 
 			//Only grab approved/active components
-			AttributeType attributeType = service.getAttributeService().findType(category);
+			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, category);
 			List<AttributeCode> codes = service.getAttributeService().findCodesForType(category);
 
 			if (Convert.toBoolean(attributeType.getArchitectureFlg())) {
