@@ -49,7 +49,12 @@
 								else {
 									return data.trackEventTypeCode;
 								}
-							}}
+							}},
+						{
+							name: 'eventDts',
+							type:	'date',
+							dateFormat: 'c'
+						}
 					],
 					proxy: CoreUtil.pagingProxy({
 						url: '../api/v1/resource/usertracking',
@@ -490,7 +495,10 @@
 						{name: 'componentType', mapping: function (data) {
 								return data.data.componentType;
 							}},
-						{name: 'eventDts', mapping: function (data) {
+						{name: 'eventDts', 
+							type:	'date',
+							dateFormat: 'c',
+							mapping: function (data) {
 								return data.data.eventDts;
 							}},
 						{name: 'trackEventTypeCode', mapping: function (data) {

@@ -180,6 +180,13 @@ limitations under the License.
 							direction: 'ASC'
 						}],						
 						autoLoad: true,
+						fields: [
+							{
+								name: 'submittedDts',
+								type:	'date',
+								dateFormat: 'c'
+							}
+						],
 						proxy: {
 							type: 'ajax',
 							url: '../api/v1/resource/componentsubmissions'

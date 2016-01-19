@@ -114,7 +114,11 @@
 							"tagId",
 							"activeStatus",
 							"createUser",
-							"createDts"
+							{
+								name: 'createDts',
+								type:	'date',
+								dateFormat: 'c'
+							}														
 						],
 						autoLoad: false,
 						proxy: {
@@ -207,9 +211,17 @@
 							"question",
 							"organization",							
 	   					     "createUser",							 
-							"createDts",
+							{
+								name: 'createDts',
+								type:	'date',
+								dateFormat: 'c'
+							},							
 							"updateUser",
-							"updateDts",
+							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							},
 							"componentId",
 							"userTypeCode",
 							"activeStatus",
@@ -310,10 +322,18 @@
 									"response",
 									"organization",							
 									'responseId',
-									"createUser",							 
-									"createDts",
-									"updateUser",
-									"updateDts",
+									"createUser",							 									
+									{
+										name: 'createDts',
+										type:	'date',
+										dateFormat: 'c'
+									},
+									"updateUser",									
+									{
+										name: 'updateDts',
+										type:	'date',
+										dateFormat: 'c'
+									},
 									"componentId",
 									"userTypeCode",
 									"activeStatus",
@@ -375,7 +395,11 @@
 							"title",
 							"userTimeCode",
 							"lastUsed",
-							"updateDate",
+							{
+								name: 'updateDate',
+								type:	'date',
+								dateFormat: 'c'
+							},							
 							"organization",
 							"recommend",
 							"componentId",
@@ -701,7 +725,11 @@
 							"metadataId",
 							"label",
 							"value",
-							"updateDts",
+							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							},							
 							"activeStatus"
 						],
 						autoLoad: false,
@@ -876,7 +904,11 @@
 							"version",
 							"dependancyReferenceLink",
 							"comment",
-							"updateDts",
+							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							},														
 							"activeStatus"
 						],
 						autoLoad: false,
@@ -1072,7 +1104,11 @@
 							"fileName",
 							"originalFileName",
 							"originalLink",
-							"updateDts",
+							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							},							
 							"activeStatus"
 						],
 						autoLoad: false,
@@ -1360,8 +1396,12 @@
 							"actualLink",
 							"restricted",
 							"originalLink",
-							"componentId",
-							"updateDts",
+							"componentId",							
+							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							},							
 							"activeStatus"
 						],
 						autoLoad: false,
@@ -1652,7 +1692,11 @@
 							"email",
 							"phone",
 							"organization",
-							"updateDts",
+							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							},
 							"activeStatus"
 						],
 						autoLoad: false,
@@ -1895,7 +1939,11 @@
 							"targetApproved",
 							"relationshipType",
 							"relationshipTypeDescription",
-							"updateDts"
+							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							}
 						],
 						autoLoad: false,
 						proxy: {
@@ -2041,7 +2089,11 @@
 							"codeDescription",
 							"orphan",
 							"activeStatus",
-							"updateDts"
+							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							}
 						],
 						autoLoad: false,
 						proxy: {
@@ -2932,8 +2984,17 @@
 								fields: [
 									  "createUser",
 									  "createDts",
-									  "updateUser",
-									  "updateDts",
+									{
+										name: 'createDts',
+										type:	'date',
+										dateFormat: 'c'
+									},									
+									{			
+										name: 'updateDts',
+										type:	'date',
+										dateFormat: 'c'
+									},									
+									  "updateUser",									 
 									  "adminModified",
 									  "componentId",
 									  "versionHistoryId",
@@ -3369,8 +3430,11 @@
 						}},
 						{name: 'approvalStateLabel', mapping: function(data){
 							return data.component.approvalStateLabel;
-						}},
-						{name: 'approvedDts', mapping: function(data){
+						}},					
+						{name: 'approvedDts', 
+							type:	'date',
+							dateFormat: 'c',									
+							mapping: function(data){								
 							return data.component.approvedDts;
 						}},
 						{name: 'approvedUser', mapping: function(data){
@@ -3388,13 +3452,19 @@
 						{name: 'organization', mapping: function(data){
 							return data.component.organization;
 						}},					
-						{name: 'createDts', mapping: function(data){
+						{name: 'createDts', 
+							type:	'date',
+							dateFormat: 'c',																
+							mapping: function(data){
 							return data.component.createDts;
 						}},
 						{name: 'createUser', mapping: function(data){
 							return data.component.createUser;
 						}},
-						{name: 'lastActivityDts', mapping: function(data){
+						{name: 'lastActivityDts', 
+							type:	'date',
+							dateFormat: 'c',																
+							mapping: function(data){
 							return data.component.lastActivityDts;
 						}},
 						{name: 'guid', mapping: function(data){
@@ -3421,10 +3491,16 @@
 						{name: 'recordVersion', mapping: function(data){
 							return data.component.recordVersion;
 						}},											
-						{name: 'submittedDts', mapping: function(data){
+						{name: 'submittedDts', 
+							type:	'date',
+							dateFormat: 'c',							
+							mapping: function(data){
 							return data.component.submittedDts;
 						}},
-						{name: 'updateDts', mapping: function(data){
+						{name: 'updateDts', 
+							type:	'date',
+							dateFormat: 'c',																
+							mapping: function(data){
 							return data.component.updateDts;
 						}},	
 						{name: 'updateUser', mapping: function(data){

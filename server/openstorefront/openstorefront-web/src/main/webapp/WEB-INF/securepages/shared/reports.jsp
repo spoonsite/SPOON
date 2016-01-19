@@ -24,6 +24,18 @@
 							direction: 'DESC'
 						})
 					],
+					fields: [
+						{
+							name: 'createDts',
+							type: 'date',
+							dateFormat: 'c'
+						},
+						{
+							name: 'lastRanDts',
+							type: 'date',
+							dateFormat: 'c'
+						}						
+					],
 					proxy: CoreUtil.pagingProxy({
 						url: '../api/v1/resource/scheduledreports',
 						method: 'GET',
@@ -1022,6 +1034,13 @@
 					autoLoad: false,
 					pageSize: 100,
 					remoteSort: true,
+					fields: [
+						{
+							name: 'createDts',
+							type: 'date',
+							dateFormat: 'c'
+						}
+					],
 					sorters: [
 						new Ext.util.Sorter({
 							property: 'createDts',

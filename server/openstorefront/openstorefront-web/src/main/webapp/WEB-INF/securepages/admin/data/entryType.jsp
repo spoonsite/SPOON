@@ -175,8 +175,12 @@
 					store: Ext.create('Ext.data.Store', {
 						fields: [
 							'componentType',
-							'updateUser',
-							'updateDts',	
+							'updateUser',							
+							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							},							
 							'activeStatus',
 							'label',
 							'description',
