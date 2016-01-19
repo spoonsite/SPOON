@@ -4,7 +4,8 @@
 <stripes:layout-render name="../../../../../client/layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 
-		<script src="scripts/component/userProfileWindow.js" type="text/javascript"></script>
+		<script src="scripts/component/userProfileWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
 
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
