@@ -63,3 +63,4 @@ project*.properties
 /client/metaregistry/metaregistry-web/target/
 /server/openstorefront/extjs/target/
 /server/openstorefront/atmosphere-socketio/target/
+/server/openstorefront/tinymcetextarea/target/
