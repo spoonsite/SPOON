@@ -596,6 +596,17 @@ public class UserServiceImpl
 			}
 		}
 
+		//filter out duplicate email addresses
+		Set<String> emailAddressSet = new HashSet<>();
+		for (int i = usersToSend.size() - 1; i >= 0; i--) {
+			UserProfile userProfile = usersToSend.get(i);
+			if (emailAddressSet.contains(userProfile.getEmail())) {
+				usersToSend.remove(i);
+			} else {
+				emailAddressSet.add(userProfile.getEmail());
+			}
+		}
+
 		int emailCount = 0;
 		for (UserProfile userProfile : usersToSend) {
 			Email email = MailManager.newEmail();

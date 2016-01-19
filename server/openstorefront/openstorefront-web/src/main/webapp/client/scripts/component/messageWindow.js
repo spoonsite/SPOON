@@ -223,17 +223,19 @@ Ext.define('OSF.component.MessageWindow', {
 									var message ={};
 									message.subject = data.subject;
 									message.message = data.message;								
-									message.userToEmail = [];
+									message.usersToEmail = [];
 
 									var emails = data.emailAddresses.split(';');
 									Ext.Array.each(emails, function(email){
-										message.userToEmail.push(email);
+										if (Ext.String.trim(email) !== '') {
+											message.usersToEmail.push(email);
+										}
 									});
 
 									Ext.Ajax.request({
 										url: '../api/v1/service/notification/admin-message',
 										method: 'POST',
-										jsonData: data,
+										jsonData: message,
 										success: function(response, opts){
 											Ext.toast('Sent message successfully<br> Individual email delivery success will depend on the email servers.');
 											mainForm.reset();
