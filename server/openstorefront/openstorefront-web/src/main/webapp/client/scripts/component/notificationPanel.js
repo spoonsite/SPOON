@@ -38,8 +38,16 @@ Ext.define('OSF.component.NotificationPanel', {
 				'entityName',
 				'entityId',
 				'entityMetaDataStatus',
-				'createDts',
-				'updateDts',
+				{
+					name: 'createDts',
+					type: 'date',
+					dateFormat: 'c'
+				},
+				{
+					name: 'updateDts',
+					type: 'date',
+					dateFormat: 'c'
+				},
 				'readMessage'
 			],
 			proxy: {

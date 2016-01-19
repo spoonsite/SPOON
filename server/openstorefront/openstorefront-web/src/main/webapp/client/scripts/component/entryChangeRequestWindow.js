@@ -153,6 +153,13 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 					url: '',
 					type: 'ajax'
 				}, 
+				fields: [
+					{
+						name: 'updateDts',
+						type:	'date',
+						dateFormat: 'c'
+					}					
+				],
 				listeners: {
 					load: function(store, records) {
 						var grid = changeRequestWindow.changeGrid;

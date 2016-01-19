@@ -33,10 +33,22 @@
 					"fileHistoryId",
 					"fileFormatDescription",
 					"fileTypeDescription",
-					"createDts",
+					{
+						name: 'createDts',
+						type:	'date',
+						dateFormat: 'c'
+					},
+					{
+						name: 'startDts',
+						type:	'date',
+						dateFormat: 'c'
+					},
+					{
+						name: 'completeDts',
+						type:	'date',
+						dateFormat: 'c'
+					},					
 					"createUser",
-					"startDts",
-					"completeDts",
 					"mimeType",
 					"originalFilename",
 					"dataSource",

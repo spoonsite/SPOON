@@ -23,7 +23,14 @@
 							property: 'username',
 							direction: 'DESC'
 						})
-					],					
+					],	
+					fields: [
+						{
+							name: 'updateDts',
+							type:	'date',
+							dateFormat: 'c'
+						}
+					],
 					proxy: CoreUtil.pagingProxy({
 						url: '../api/v1/resource/usermessages',											
 						reader: {
@@ -351,6 +358,13 @@
 							direction: 'DESC'
 						})
 					],
+					fields: [
+						{
+							name: 'updateDts',
+							type:	'date',
+							dateFormat: 'c'
+						}
+					],					
 					proxy: CoreUtil.pagingProxy({
 						url: '../api/v1/resource/notificationevent/all',
 						method: 'GET',

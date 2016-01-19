@@ -18,6 +18,13 @@
 								direction: 'ASC'
 							})
 						],
+						fields: [
+							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							}
+						],
 						proxy: CoreUtil.pagingProxy({
 							type: 'ajax',
 							url: '../api/v1/resource/generalmedia',

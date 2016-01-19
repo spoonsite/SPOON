@@ -37,7 +37,11 @@
 					'sortOrder',
 					'activeStatus',
 					'updateUser',
-					'updateDts'
+					{
+						name: 'updateDts',
+						type:	'date',
+						dateFormat: 'c'
+					}										
 				],
 				proxy: {
 					type: 'ajax',
