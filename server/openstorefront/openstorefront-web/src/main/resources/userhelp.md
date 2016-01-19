@@ -39,7 +39,7 @@ To see what is new in [v1.6](https://github.com/di2e/openstorefront/releases/tag
  * [STORE-662](https://jira.di2e.net/browse/STORE-662): Search -> Wildcard Searches:  If using wildcards in multiple words you need to include that in quotes such as "softwar* eng?neering".  Help documentation and/ or website operation needs to be updated.
  * [STORE-746](https://jira.di2e.net/browse/STORE-746): Entries:  Sometimes the Rich Text (colored text, background colors, etc.) gets 'sanitized' and taken out from the rich text preview and then searching for and viewing the search results of the component or entry.
  * [STORE-721](https://jira.di2e.net/browse/STORE-721): Admin Tools -> Data Management -> Attributes -> New Type -> Manage Codes:  When adding a new code, it may not show up in the table below even after refreshing the table (refresh button click).  WORKAROUND:  Exit this section and come back into it by selecting the type again and then Manage Codes.
- * [STORE-731](https://jira.di2e.net/browse/STORE-731): Admin Tools -> Data Management -> Integrations -> Jira Configuration tab:  Drop-down mennu information is not in alphabetical order as expected.  When delting a mapping the row is deleted above, but the data persists in the boxes below and is not cleared.
+ * [STORE-731](https://jira.di2e.net/browse/STORE-731): Admin Tools -> Data Management -> Integrations -> Jira Configuration tab:  Drop-down menu information is not in alphabetical order as expected.  When deleting a mapping the row is deleted above, but the data persists in the boxes below and is not cleared.
  * [STORE-722](https://jira.di2e.net/browse/STORE-722): Admin Tools -> Data Management -> Organizations -> Merge: **NOTE** that the merge feature ONLY merges references and NOT the organization information.
  * [STORE-674](https://jira.di2e.net/browse/STORE-674): Admin Tools -> Data Management -> User Data -> User Profiles:  When filtering by Status a blank or none status assumes only Active (Inactive results are not included).
 
@@ -190,7 +190,7 @@ individual entry, or all results can be displayed in a new window.
 ### 2.2.3 Architecture Search Tool
 ------
 
-The Architecture tab window displays a heiarchy of results per SvcV-4 
+The Architecture tab window displays a hierarchy of results per SvcV-4 
 taxonomy.  Expand All and Collapse All buttons are provided.  Clicking 
 on the **+** button expands an individual folder and **-** collapses the folder.  
 Search results are displayed with sortable columns and links to individual 
@@ -207,7 +207,7 @@ on the home page.
 
 **To create a tag:**
 
- 1.  From the search results screen, view the details by by clicking on the title.
+ 1.  From the search results screen, view the details by clicking on the title.
  2.  Click on the View/ Edit Tag icon to open the tag panel.
  3.  Enter a new tag in the text field OR a single space to view existing tags.
 
@@ -220,7 +220,7 @@ with the component.
 
 **To post a question:**
 
-1.  From the search results screen, view the details by by clicking on the title.
+1.  From the search results screen, view the details by clicking on the title.
 2.  Click on the Q&A tab.
 3.  Fill out the form at the bottom.
 4.  Click the **Post** button.
@@ -442,9 +442,9 @@ This default view shows all of the scheduled reports.  A drop-down at the top
 allows viewing of the Active or Inactive reports.  Select a report in the table
 and click Toggle Status to change from one status to the other.
 
-Reports can be added or edited.  Selctions can be made to run a report one time
+Reports can be added or edited.  Selections  can be made to run a report one time
 only or at regular intervals.  Some reports have the option of HTML or Comma-
-Seperated Values as the report format.  If slecting Previous days, the 
+Separated Values as the report format.  If selecting Previous days, the 
 selected number of prior days will be included in the report output.  
 
 Types of reports available include:
@@ -576,7 +576,7 @@ component. For example: Component listing may contain and attribute for
 3.  Fill out the form.
 4.  Click **Save**.
 
-Field  Descriptions:
+Field Descriptions:
 
 -  **Label**               - Human readable value of the code
 -  **Code**                - System reference key
@@ -762,7 +762,7 @@ Evaluation Information, Reviews, and Questions.
 ### 3.2.4 Highlights *
 -------
 
-A highlight to the home page can be added, deleted, activated, or deactivated deactivated here. 
+A highlight to the home page can be added, deleted, activated, or deactivated here. 
 A highlight code (Article, Component, etc.) can be added or edited as well as a link,
  and the description.
 
@@ -835,7 +835,7 @@ can be reprocessed, or rolled back.
 --------
 
 This is used to organize and classify data in a consistent manner.  The codes can
-be added, deleted, edited, and made active or inactive.  In addition they can be
+be added, deleted, edited, and made active or inactive.  In addition, they can be
 imported or exported as .csv files.
 
 Some examples of Lookups are:
@@ -884,7 +884,7 @@ Media Types, Data Source, Contact Types, Relationship Types, and Organization Ty
 
 2.  Click on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the organization.
 
-3.  Confirm that you wish to delete the organization by cliking **OK**.
+3.  Confirm that you wish to delete the organization by clicking **OK**.
 
 
 **"No Organization" References:**
