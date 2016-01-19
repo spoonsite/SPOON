@@ -66,6 +66,7 @@
 					if (forceDelete)
 					{
 						urlEnding = '/force';
+						method = 'DELETE';
 					}
 					
 					grid.setLoading('Updating status...');
@@ -1614,7 +1615,7 @@
 									listeners: {
 										change: function(combo, newValue, oldValue, opts){
 											this.up('grid').getStore().load({
-												url: '../api/v1/resource/components/' + Ext.getCmp('resourcesGrid').componentRecord.get('componentId') + '/resource/view',
+												url: '../api/v1/resource/components/' + Ext.getCmp('resourcesGrid').componentRecord.get('componentId') + '/resources/view',
 												params: {
 													status: newValue
 												}
