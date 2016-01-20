@@ -57,25 +57,33 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
     private static final int BUFFER_SIZE_DEFAULT = 8192;
     private final SocketIOSessionManager sessionManager = new SocketIOSessionManagerImpl();
     /**
-     * See <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
-     * The timeout for the server when it should send a new heartbeat to the client. <br>
+     * See
+     * <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
+     * The timeout for the server when it should send a new heartbeat to the
+     * client. <br>
      * In milliseconds.
      */
     private long heartbeatInterval = 25000;
     /**
-     * See <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
-     * The timeout for the client – when it closes the connection it still has X amounts of seconds to re-open the connection. <b>This value is sent to the client after a successful handshake.</b><br>
+     * See
+     * <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
+     * The timeout for the client – when it closes the connection it still has X
+     * amounts of seconds to re-open the connection. <b>This value is sent to
+     * the client after a successful handshake.</b><br>
      * In milliseconds.
      */
     private long timeout = 60000;
-    
+
     /**
-     * See <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
-     * The timeout for the client, we should receive a heartbeat from the server within this interval. This should be greater than the heartbeat interval. <b>This value is sent to the client after a successful handshake.</b><br>
+     * See
+     * <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
+     * The timeout for the client, we should receive a heartbeat from the server
+     * within this interval. This should be greater than the heartbeat interval.
+     * <b>This value is sent to the client after a successful handshake.</b><br>
      * In milliseconds.
      */
     private long heartbeatTimeout = 60000;
-    
+
     private static int suspendTime = 20000;
     private final Map<String, Transport> transports = new HashMap<String, Transport>();
     private String availableTransports;
@@ -86,7 +94,6 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
     public static final String SOCKETIO_HEARTBEAT = "socketio-heartbeat";
     public static final String SOCKETIO_HEARTBEAT_TIMEOUT = "socketio-heartbeat-timeout";
     public static final String SOCKETIO_SUSPEND = "socketio-suspendTime";
-
 
     private SocketIOSessionManager getSessionManager(String version) {
         if (version.equals("1")) {
@@ -159,11 +166,11 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
             } else if (protocol == null && version != null) {
                 // create a session and send the available transports to the client
                 response.setStatus(200);
-                
+
                 response.setContentType("plain/text");
-                
+
                 SocketIOSession session = getSessionManager(version).createSession((AtmosphereResourceImpl) r, atmosphereHandler);
-                response.getWriter().print(session.getSessionId() + ":" + (heartbeatTimeout/1000) + ":" + (timeout/1000) + ":" + availableTransports);
+                response.getWriter().print(session.getSessionId() + ":" + (heartbeatTimeout / 1000) + ":" + (timeout / 1000) + ":" + availableTransports);
 
                 return Action.CANCELLED;
             } else if (protocol != null && version == null) {
@@ -176,10 +183,8 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
                     response.asyncIOWriter(new AsyncIOWriterAdapter() {
                         @Override
                         public AsyncIOWriter write(AtmosphereResponse r, String data) throws IOException {
-                            SocketIOSessionOutbound outbound = (SocketIOSessionOutbound)
-                                    request.getAttribute(SocketIOAtmosphereHandler.SOCKETIO_SESSION_OUTBOUND);
-                            SocketIOSessionManagerImpl.SocketIOProtocol p = (SocketIOSessionManagerImpl.SocketIOProtocol)
-                                    r.request().getAttribute(SOCKETIO_PACKET);
+                            SocketIOSessionOutbound outbound = (SocketIOSessionOutbound) request.getAttribute(SocketIOAtmosphereHandler.SOCKETIO_SESSION_OUTBOUND);
+                            SocketIOSessionManagerImpl.SocketIOProtocol p = (SocketIOSessionManagerImpl.SocketIOProtocol) r.request().getAttribute(SOCKETIO_PACKET);
 
                             String msg = p == null ? data : mapper.writeValueAsString(p.clearArgs().addArgs(data));
 
@@ -193,8 +198,7 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
 
                         @Override
                         public AsyncIOWriter write(AtmosphereResponse r, byte[] data) throws IOException {
-                            SocketIOSessionManagerImpl.SocketIOProtocol p = (SocketIOSessionManagerImpl.SocketIOProtocol)
-                                    r.request().getAttribute(SOCKETIO_PACKET);
+                            SocketIOSessionManagerImpl.SocketIOProtocol p = (SocketIOSessionManagerImpl.SocketIOProtocol) r.request().getAttribute(SOCKETIO_PACKET);
                             if (p == null) {
                                 r.getResponse().getOutputStream().write(data);
                             } else {
@@ -205,8 +209,7 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
 
                         @Override
                         public AsyncIOWriter write(AtmosphereResponse r, byte[] data, int offset, int length) throws IOException {
-                            SocketIOSessionManagerImpl.SocketIOProtocol p = (SocketIOSessionManagerImpl.SocketIOProtocol)
-                                    r.request().getAttribute(SOCKETIO_PACKET);
+                            SocketIOSessionManagerImpl.SocketIOProtocol p = (SocketIOSessionManagerImpl.SocketIOProtocol) r.request().getAttribute(SOCKETIO_PACKET);
                             if (p == null) {
                                 r.getResponse().getOutputStream().write(data, offset, length);
                             } else {
@@ -248,7 +251,7 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
 
     @Override
     public void destroy() {
-        sessionManager.destory();
+        sessionManager.destroy();
     }
 
     @Override
@@ -269,7 +272,7 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
         if (heartbeatWebXML != null) {
             heartbeatInterval = Integer.parseInt(heartbeatWebXML);
         }
-        
+
         String heartbeatTimeoutWebXML = config.getInitParameter(SOCKETIO_HEARTBEAT_TIMEOUT);
         if (heartbeatTimeoutWebXML != null) {
             heartbeatTimeout = Integer.parseInt(heartbeatTimeoutWebXML);
