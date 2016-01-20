@@ -23,7 +23,8 @@ Ext.define('OSF.component.MessageWindow', {
 	iconCls: 'fa fa-lg fa-envelope-o',
 	modal: true,	
 	layout: 'fit',
-	width: '60%',	
+	width: '60%',
+	height: 510,
 	resizable: false,
 	initialToUsers: '',
 	
@@ -34,6 +35,7 @@ Ext.define('OSF.component.MessageWindow', {
 		
 		var messageForm = Ext.create('Ext.form.Panel', {
 			bodyStyle: 'padding: 10px;',
+			autoScroll: true,
 			defaults: {
 				labelAlign: 'top',
 				labelSeparator: ''
@@ -221,17 +223,19 @@ Ext.define('OSF.component.MessageWindow', {
 									var message ={};
 									message.subject = data.subject;
 									message.message = data.message;								
-									message.userToEmail = [];
+									message.usersToEmail = [];
 
 									var emails = data.emailAddresses.split(';');
 									Ext.Array.each(emails, function(email){
-										message.userToEmail.push(email);
+										if (Ext.String.trim(email) !== '') {
+											message.usersToEmail.push(email);
+										}
 									});
 
 									Ext.Ajax.request({
 										url: '../api/v1/service/notification/admin-message',
 										method: 'POST',
-										jsonData: data,
+										jsonData: message,
 										success: function(response, opts){
 											Ext.toast('Sent message successfully<br> Individual email delivery success will depend on the email servers.');
 											mainForm.reset();
@@ -276,4 +280,3 @@ Ext.define('OSF.component.MessageWindow', {
 
 
 });
-
