@@ -174,7 +174,7 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 							handler: function (grid, rowIndex, colIndex) {
 								var theStore = grid.getStore();
 								var newUrl = '/openstorefront/single?id=' + theStore.getAt(rowIndex).data.componentId;
-								window.location.assign(window.location.origin + newUrl);
+								window.location.href = newUrl;
 
 								var win = Ext.getCmp('searchToolWindow');
 								win.close();
