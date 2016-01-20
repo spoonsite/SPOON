@@ -3594,6 +3594,8 @@
 									emptyText: 'All',
 									fieldLabel: 'Active Status',
 									name: 'activeStatus',									
+									typeAhead: false,
+									editable: false,
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefreshComponentGrid();
@@ -3626,7 +3628,9 @@
 									id: 'componentGridFilter-ApprovalStatus',
 									emptyText: 'All',
 									fieldLabel: 'Approval State',
-									name: 'approvalState',								
+									name: 'approvalState',	
+									typeAhead: false,
+									editable: false,									
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefreshComponentGrid();
@@ -3648,7 +3652,9 @@
 									fieldLabel: 'Entry Type',
 									name: 'componentType',
 									valueField: 'componentType',
-									displayField: 'label',									
+									displayField: 'label',
+									typeAhead: false,
+									editable: false,
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefreshComponentGrid();
