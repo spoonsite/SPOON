@@ -40,7 +40,6 @@ To see what is new in [v1.6](https://github.com/di2e/openstorefront/releases/tag
  * [STORE-746](https://jira.di2e.net/browse/STORE-746): Entries:  Sometimes the Rich Text (colored text, background colors, etc.) gets 'sanitized' and taken out from the rich text preview and then searching for and viewing the search results of the component or entry.
  * [STORE-721](https://jira.di2e.net/browse/STORE-721): Admin Tools -> Data Management -> Attributes -> New Type -> Manage Codes:  When adding a new code, it may not show up in the table below even after refreshing the table (refresh button click).  WORKAROUND:  Exit this section and come back into it by selecting the type again and then Manage Codes.
  * [STORE-731](https://jira.di2e.net/browse/STORE-731): Admin Tools -> Data Management -> Integrations -> Jira Configuration tab:  Drop-down menu information is not in alphabetical order as expected.  When deleting a mapping the row is deleted above, but the data persists in the boxes below and is not cleared.
- * [STORE-722](https://jira.di2e.net/browse/STORE-722): Admin Tools -> Data Management -> Organizations -> Merge: **NOTE** that the merge feature ONLY merges references and NOT the organization information.
  * [STORE-674](https://jira.di2e.net/browse/STORE-674): Admin Tools -> Data Management -> User Data -> User Profiles:  When filtering by Status a blank or none status assumes only Active (Inactive results are not included).
 
 
@@ -893,13 +892,13 @@ This displays a list of references where no organization is listed.
 **Run Extract:**
 This runs a query to get current component and organization information to update the table.  
 
-**Show Contact info:**
-Clicking this button ![Show Contact Info](../../../../../../client/openstorefront/app/images/help/showcontactinfo.png)
- shows the Agency, Department, Contact Name, Contact Phone, and Contact Email for the organization.
+**References:**
+Clicking this button shows all of the references for the organization.  
+ 
+**Merge**
+Allows merging of references from one organization to another.  **NOTE** that the merge feature 
+ONLY merges references and NOT the organization information.
 
-**View References:**
-Clicking this icon ![View References](../../../../../../client/openstorefront/app/images/help/viewreferences.png)
- shows all of the references for the organization.  
 
  
 ### 3.2.9 User Data *
