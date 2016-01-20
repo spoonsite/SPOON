@@ -544,17 +544,15 @@
 					//
 					var scheduleOptionsStore = Ext.create('Ext.data.Store', {
 						id: 'scheduleOptionsStore',
-						autoLoad: true,
-						pageSize: 100,
-						remoteSort: true,
+						autoLoad: true,												
 						sorters: [
 							new Ext.util.Sorter({
-								property: 'name',
-								direction: 'DESC'
+								property: 'description',
+								direction: 'ASC'
 							})
 						],
 						proxy: CoreUtil.pagingProxy({
-							url: '../api/v1/resource/components',
+							url: '../api/v1/resource/components/lookup',
 							method: 'GET',
 							reader: {
 								type: 'json',
@@ -766,7 +764,7 @@
 															theData.reportDataId = [];
 															for (ctr = 0; ctr < gridSelections.length; ctr++)
 															{
-																theData.reportDataId.push({id: gridSelections[ctr].data.componentId});
+																theData.reportDataId.push({id: gridSelections[ctr].data.code});
 															}
 															generateReport(theData);
 														}
@@ -985,7 +983,7 @@
 											change: function (tb, newVal, oldVal, opts) {
 												Ext.getCmp('scheduleOptionsGrid').getStore().filter([
 													{
-														property: 'name',
+														property: 'description',
 														value: tb.value
 													}
 												]);
@@ -994,7 +992,7 @@
 									},
 									{
 										xtype: 'gridpanel',
-										title: 'Report Options',
+										title: 'Restrict By Entry',
 										id: 'scheduleOptionsGrid',
 										store: 'scheduleOptionsStore',
 										width: '100%',
@@ -1004,10 +1002,9 @@
 										selModel: {
 											selType: 'checkboxmodel'
 										},
-										plugins: 'gridfilters',
-										enableLocking: true,
+										plugins: 'gridfilters',										
 										columns: [
-											{text: 'Entry Name', dataIndex: 'name', flex: 1, lockable: true,
+											{text: 'Entry Name', dataIndex: 'description', flex: 1,
 												filter: {
 													type: 'string'
 												}
