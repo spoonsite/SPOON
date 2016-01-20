@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 
 /**
  *
@@ -34,6 +35,10 @@ public class ComponentUpdateQueue
 	@FK(Component.class)
 	private String componentId;
 	private String nodeId;
+
+	@ValidValueType(value = {}, lookupClass = ModificationType.class)
+	@FK(ModificationType.class)
+	private String modificationType;
 
 	public ComponentUpdateQueue()
 	{
@@ -67,6 +72,16 @@ public class ComponentUpdateQueue
 	public void setUpdateId(String updateId)
 	{
 		this.updateId = updateId;
+	}
+
+	public String getModificationType()
+	{
+		return modificationType;
+	}
+
+	public void setModificationType(String modificationType)
+	{
+		this.modificationType = modificationType;
 	}
 
 }

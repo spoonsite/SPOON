@@ -257,7 +257,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     if (userId) {
       $http({
         'method': 'POST',
-        'url': 'api/v1/resource/userprofiles/'+ encodeURIComponent(userId) + '/test-email',
+        'url': 'api/v1/resource/userprofiles/'+ encodeURIComponent(userId) + '/test-email'
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
@@ -274,7 +274,7 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
       deferred.reject('It Failed');
     }
     return deferred.promise;
-  }
+  };
 
 
   /**
@@ -567,7 +567,38 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     
     return deferred.promise;
   };  
-
+  
+  var removeNotificationEvent = function(id) {
+    var deferred = $q.defer();
+    
+    $http({
+      'method': 'DELETE',
+      'url': 'api/v1/resource/notificationevent/' + encodeURIComponent(id)
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
+    
+    return deferred.promise;
+  }; 
+  
+  var postNotificationEvent = function(notificationEvent) {
+    var deferred = $q.defer();
+    
+    $http({
+      'method': 'POST',
+      'url': 'api/v1/resource/notificationevent',
+      'data': notificationEvent
+    }).success(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.resolve(data);        
+    }).error(function(data, status, headers, config) { /*jshint unused:false*/
+      deferred.reject('There was an error');
+    });
+    
+    return deferred.promise;
+  };   
+  
   var getUserByUsername = function(username){
     
     var deferred = $q.defer();
@@ -616,7 +647,9 @@ app.factory('userservice', ['localCache', '$http', '$q', function(localCache, $h
     getUserMessages: getUserMessages,
     processUserMessagesNow: processUserMessagesNow,
     cleanoldUserMessagesNow: cleanoldUserMessagesNow,
-    removeUserMessages: removeUserMessages
+    removeUserMessages: removeUserMessages,
+    removeNotificationEvent: removeNotificationEvent,
+    postNotificationEvent: postNotificationEvent
   };
 
 }]);

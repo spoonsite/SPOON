@@ -17,7 +17,7 @@
 
 /*global setupMain*/
 
-app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$rootScope', '$timeout', function ($scope, Business, localCache, $location, $rootScope, $timeout) {/*jshint unused: false*/
+app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$rootScope', '$timeout', '$q', '$uiModal', function ($scope, Business, localCache, $location, $rootScope, $timeout, $q, $uiModal) {/*jshint unused: false*/
   //////////////////////////////////////////////////////////////////////////////
   // Variables
   //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,28 @@ app.controller('MainCtrl', ['$scope', 'business', 'localCache', '$location', '$r
   $scope.searchKey  = $rootScope.searchKey;
   $scope.openAdminMessage = $rootScope.openAdminMessage;
   $scope.appverison = '';
+  $scope.searchToolWin = null;
 
+  $scope.closeSearchTools = function(saveData){
+      
+    Business.saveLocal('ADVANCED_SEARCH', saveData);
+    //console.log("Change Location", $location.path());
+    $location.search({});
+    if ($location.path() !== '/results') {
+        $location.path('results');
+    } else {
+        $route.reload();
+    }  
+  };
+
+  $scope.openSearchTools = function(){
+         var searchToolWin = Ext.create('OSF.component.SearchToolWindow', { 
+         closeAction: 'destroy',
+         angularScope: $scope
+     });     
+     searchToolWin.show();      
+  };
+  
   Business.systemservice.getAppVersion().then(function(result){
     $scope.appverison = result;
   });  
@@ -63,7 +84,7 @@ Business.highlightservice.getRecentlyAdded().then(function(result){
     _.each(result, function(item){
       var temp = item;
       recents.push(temp);
-    })
+    });
     $scope.recentlyAdded = recents;
     $timeout(function(){
       $('.shortDescription').dotdotdot({
@@ -101,12 +122,40 @@ Business.highlightservice.getRecentlyAdded().then(function(result){
             the last character of the truncated text. */
             noEllipsis  : []
           }
-        })
-      })//
+        });
+      });//
     } else { //
       $scope.recentlyAdded = null;
     }
   });
+
+    $scope.openSearchModal = function(title, data){
+        title = title || 'Advanced Search';
+        data = data || {
+            'mode': 'topics'
+        };
+      var modalInstance = $uiModal.open({
+        templateUrl: 'views/search/searchmodal.html',
+        controller: 'DefaultModalCtrl',
+        size: 'lg',
+        backdrop: 'static',
+        resolve: {
+          title: function () {
+            return title;
+          },
+          data: function () {
+            return data;
+          },
+          closeEventName: function(){
+            return '$CLOSE_MODALS';
+          }
+        }
+      });
+
+      modalInstance.result.then(function (result) {
+      }, function (result) {
+      });
+    };
 
 $scope.getTypeahead = function(){
   Business.typeahead($scope.searchKey).then(function(result){
@@ -118,15 +167,15 @@ $scope.getTypeahead = function(){
     $scope.typeahead = result;
   }, function(){
     $scope.typeahead = [];
-  })
-}
+  });
+};
 
 $scope.$watch('searchKey', function(newValue, oldValue){
   if ($scope.searchKey) {
     $rootScope.searchKey = $scope.searchKey;
     $scope.getTypeahead();
   }
-})
+});
 
   //////////////////////////////////////////////////////////////////////////////
   // Event Watchers
@@ -160,6 +209,7 @@ $scope.$watch('searchKey', function(newValue, oldValue){
   * params: type -- This is the code of the type that was clicked on
   *******************************************************************************/
   $scope.goToSearch = function(searchType, searchKey, override){ /*jshint unused:false*/
+    // console.log("Made it to search!");
     $(window).scrollTop(0);
     var search = null;
     if (searchType === 'search' && !override) {
@@ -234,8 +284,7 @@ $scope.$watch('searchKey', function(newValue, oldValue){
   $scope.focusOnSearch = function() {
     $('#mainSearchBar').focus();
   };
-
-
+ 
   //////////////////////////////////////////////////////////////////////////////
   // Scope Watchers
   //////////////////////////////////////////////////////////////////////////////

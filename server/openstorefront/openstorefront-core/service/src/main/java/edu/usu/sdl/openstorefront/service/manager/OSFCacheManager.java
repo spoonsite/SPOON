@@ -43,6 +43,8 @@ public class OSFCacheManager
 	private static Cache componentCache;
 	private static Cache componentLookupCache;
 	private static Cache componentApprovalCache;
+	private static Cache componentTypeCache;
+	private static Cache applicationCache;
 
 	public static void init()
 	{
@@ -85,6 +87,14 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("componentApprovalCache", 50000, false, false, 300, 300);
 			singletonManager.addCache(memoryOnlyCache);
 			componentApprovalCache = singletonManager.getCache("componentApprovalCache");
+
+			memoryOnlyCache = new Cache("componentTypeCache", 1, false, false, 300, 300);
+			singletonManager.addCache(memoryOnlyCache);
+			componentTypeCache = singletonManager.getCache("componentTypeCache");
+
+			memoryOnlyCache = new Cache("applicationCache", 100, false, true, 0, 0);
+			singletonManager.addCache(memoryOnlyCache);
+			applicationCache = singletonManager.getCache("applicationCache");
 
 		} finally {
 			lock.unlock();
@@ -140,6 +150,16 @@ public class OSFCacheManager
 	public static Cache getComponentApprovalCache()
 	{
 		return componentApprovalCache;
+	}
+
+	public static Cache getApplicationCache()
+	{
+		return applicationCache;
+	}
+
+	public static Cache getComponentTypeCache()
+	{
+		return componentTypeCache;
 	}
 
 	@Override

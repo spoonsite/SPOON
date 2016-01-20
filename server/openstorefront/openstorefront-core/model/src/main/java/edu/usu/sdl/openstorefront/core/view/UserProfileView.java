@@ -46,6 +46,9 @@ public class UserProfileView
 	private String email;
 
 	@ConsumeField
+	private String phone;
+
+	@ConsumeField
 	private String organization;
 
 	@NotNull
@@ -94,6 +97,7 @@ public class UserProfileView
 	{
 		UserProfileView view = new UserProfileView();
 		view.setEmail(profile.getEmail());
+		view.setPhone(profile.getPhone());
 		view.setFirstName(profile.getFirstName());
 		view.setLastName(profile.getLastName());
 		view.setOrganization(profile.getOrganization());
@@ -272,6 +276,16 @@ public class UserProfileView
 	public void setLastLoginDts(Date lastLoginDts)
 	{
 		this.lastLoginDts = lastLoginDts;
+	}
+
+	public String getPhone()
+	{
+		return phone;
+	}
+
+	public void setPhone(String phone)
+	{
+		this.phone = phone;
 	}
 
 }

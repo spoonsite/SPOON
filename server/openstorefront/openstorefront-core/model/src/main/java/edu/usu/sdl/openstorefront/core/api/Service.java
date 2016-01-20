@@ -115,4 +115,24 @@ public interface Service
 	 */
 	public UserService getUserService();
 
+	/**
+	 * Handles importing data and file history
+	 *
+	 * @return
+	 */
+	public ImportService getImportService();
+
+	/**
+	 * Handles Notification Events
+	 *
+	 * @return
+	 */
+	public BrandingService getBrandingService();
+
+	/**
+	 * Handles Notification Events
+	 *
+	 * @return
+	 */
+	public NotificationService getNotificationService();
 }

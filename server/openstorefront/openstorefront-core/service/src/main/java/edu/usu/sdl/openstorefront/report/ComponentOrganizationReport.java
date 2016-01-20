@@ -60,29 +60,41 @@ public class ComponentOrganizationReport
 				"Approve Status"
 		);
 
+		Map<String, Object> params = new HashMap<>();
+		String componentFilter = "";
+		if (!report.dataIdSet().isEmpty()) {
+			params = new HashMap<>();
+			params.put("idlistParam", report.dataIdSet());
+			componentFilter = " and componentId in :idlistParam";
+		}
 		List<ODocument> documents = service.getPersistenceService().query("Select DISTINCT(organization) as organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
 				+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
-				+ " activeStatus= '" + Component.ACTIVE_STATUS + "' order by sortname", new HashMap<>());
+				+ " activeStatus= '" + Component.ACTIVE_STATUS + "' " + componentFilter + " order by sortname", params);
 
 		//group by org
 		Map<String, List<ODocument>> orgMap = new HashMap<>();
-		documents.forEach(document -> {
-			String org = document.field("organization");
-			if (StringUtils.isBlank(org)) {
-				org = "No Organization Specified";
-			}
-			if (orgMap.containsKey(org)) {
-				orgMap.get(org).add(document);
-			} else {
-				List<ODocument> records = new ArrayList<>();
-				records.add(document);
-				orgMap.put(org, records);
-			}
-		});
+
+		documents.forEach(document
+				-> {
+					String org = document.field("organization");
+					if (StringUtils.isBlank(org)) {
+						org = "No Organization Specified";
+					}
+					if (orgMap.containsKey(org)) {
+						orgMap.get(org).add(document);
+					} else {
+						List<ODocument> records = new ArrayList<>();
+						records.add(document);
+						orgMap.put(org, records);
+					}
+				}
+		);
 
 		long totalComponents = 0;
 		List<String> sortedOrganizations = new ArrayList<>(orgMap.keySet());
-		sortedOrganizations.sort(null);
+
+		sortedOrganizations.sort(
+				null);
 
 		for (String organization : sortedOrganizations) {
 			cvsGenerator.addLine(organization);
@@ -100,10 +112,15 @@ public class ComponentOrganizationReport
 			cvsGenerator.addLine("Total", orgMap.get(organization).size());
 			cvsGenerator.addLine("");
 		}
-		cvsGenerator.addLine("");
-		cvsGenerator.addLine("Report Totals");
-		cvsGenerator.addLine("Total Organizations: " + orgMap.keySet().size());
-		cvsGenerator.addLine("Total Component: " + totalComponents);
+
+		cvsGenerator.addLine(
+				"");
+		cvsGenerator.addLine(
+				"Report Totals");
+		cvsGenerator.addLine(
+				"Total Organizations: " + orgMap.keySet().size());
+		cvsGenerator.addLine(
+				"Total Component: " + totalComponents);
 	}
 
 }

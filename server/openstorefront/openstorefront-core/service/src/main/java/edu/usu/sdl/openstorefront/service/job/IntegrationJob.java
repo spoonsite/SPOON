@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.service.job;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
+import edu.usu.sdl.openstorefront.core.entity.ModificationType;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 
@@ -45,7 +47,7 @@ public class IntegrationJob
 				configId = configIdObj.toString();
 			}
 
-			service.getComponentService().processComponentIntegration(componentId, configId);
+			ServiceProxy.getProxy(ModificationType.EXTERNAL).getComponentService().processComponentIntegration(componentId, configId);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to get component id.  Job failed.", "Check config data.", ErrorTypeCode.INTEGRATION);
 		}

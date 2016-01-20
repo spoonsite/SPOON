@@ -119,6 +119,17 @@ app.controller('UserSubmissionCtrl', ['$scope', 'business', '$rootScope', '$loca
       window.location.href = 'submission.html#?id=' + submission.componentId;
     }
   };
+  
+  $scope.copy = function(submission){
+    $scope.$emit('$TRIGGERLOAD', 'userLoad');
+    
+    Business.submissionservice.copySubmission(submission.componentId).then(function(result){
+      $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+      $scope.getSubmissions(true);
+    }, function(results){
+      $scope.$emit('$TRIGGERUNLOAD', 'userLoad');
+    });
+  };
 
   $scope.getSubmissions = function(override){
     var deferred = $q.defer();
@@ -142,6 +153,11 @@ app.controller('UserSubmissionCtrl', ['$scope', 'business', '$rootScope', '$loca
     });
     return deferred.promise;//
   }
+
+  $scope.$on('$UPDATED_SUBMISSIONS', function(){
+    $scope.getSubmissions();
+  })
+
   $scope.getSubmissions(true);
 }]);
 

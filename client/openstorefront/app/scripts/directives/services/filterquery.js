@@ -41,17 +41,22 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
       data: '=',
       setFeatures: '=',
       control: '=',
-      all: '@'
+      all: '@',
+      callback: '=?' /*This callback is actually an array that contains the pointer function,
+      and then the array of arguments expecting the query object to be the last parameter*/
     },
     link: function postLink(scope, element, attrs) {
       scope.defaultMax = 50;
-      scope.setFeatures = scope.setFeatures || {'dates': true, 'max': true, 'activeState': true};
+      scope.setFeatures = scope.setFeatures || {'dates': true, 'max': true, 'activeState': true, 'approvalState': false, 'componentType': false, 'clear': true, 'pages': true};
       scope.internalControl = scope.control || {};
       
       scope.defaultMax = scope.max? parseInt(scope.max): 50;
       scope.today = new Date();
       scope.query = {};
       scope.query.filterObj = angular.copy(utils.queryFilter);
+      if (scope.callback && scope.callback[1]) {
+        scope.callback[1].push(scope.query.filterObj);
+      }
       scope.query.url = scope.url || '';
       scope.query.filterObj.offset = 0;
       scope.query.filterObj.max = scope.defaultMax;
@@ -80,13 +85,13 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
         scope.eventCodes = result? result: [];
       }, function(){
         scope.eventCodes = [];
-      })
+      });
 
       Business.lookupservice.getLookupCodes('UserTypeCode').then(function(result){
         scope.userCodes = result? result: [];
       }, function(){
         scope.userCodes = [];
-      })
+      });
 
       scope.sendRequest = function(){
         var deferred = $q.defer();
@@ -108,19 +113,22 @@ app.directive('filterquery',['business', '$q', function (Business, $q) {
           query.filterObj.start = new Date(query.filterObj.start).toISOString();
         }
         if (attrs.type === 'user' || attrs.type === 'component' || attrs.type === 'article') {
+          
           // for tracking types
-          Business.trackingservice.get(query).then(function(result){
+          var func = (scope.callback && scope.callback.length)? scope.callback[0].apply(null, scope.callback[1]) : Business.trackingservice.get(query);
+          func.then(function(result){
             scope.backupResult = result;
             scope.data = result? result.result: [];
             scope.pagination.totalItems = result.count;
-            deferred.resolve();
+            deferred.resolve(result);
           }, function(){
             deferred.resolve();
             scope.data = [];
           }); 
         }else {
           
-          Business.get(query).then(function(result){
+          var func = (scope.callback && scope.callback.length)? scope.callback[0].apply(null, scope.callback[1]) : Business.get(query);
+          func.then(function(result){
             scope.backupResult = result;
             scope.data = result? result: [];
             scope.pagination.totalItems = result.totalNumber;

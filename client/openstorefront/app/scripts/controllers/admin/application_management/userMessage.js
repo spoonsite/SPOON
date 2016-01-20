@@ -16,7 +16,7 @@
 
 'use strict';
 
-app.controller('AdminUserMessageCtrl', ['$scope', 'business', function ($scope, Business) {
+app.controller('AdminUserMessageCtrl', ['$scope', 'business', '$uiModal', function ($scope, Business, $uiModal) {
   
   $scope.userMessages = [];
   $scope.statusFilterOptions = [
@@ -32,6 +32,11 @@ app.controller('AdminUserMessageCtrl', ['$scope', 'business', function ($scope, 
   $scope.pagination.control;
   $scope.pagination.features = {'dates': true, 'max': true};  
   
+  $scope.paginationEvent = {};
+  $scope.paginationEvent.control;
+  $scope.paginationEvent.features = {'dates': true, 'max': true};  
+  
+  
   $scope.setPredicate = function (predicate, table) {
     if ($scope.predicate[table] === predicate) {
       $scope.reverse[table] = !$scope.reverse[table];
@@ -41,6 +46,8 @@ app.controller('AdminUserMessageCtrl', ['$scope', 'business', function ($scope, 
     }
     if (table === 'userM') {
       $scope.pagination.control.changeSortOrder(predicate);
+    } else if (table === 'notEvent') {
+      $scope.paginationEvent.control.changeSortOrder(predicate);
     }
   }; 
   
@@ -59,7 +66,27 @@ app.controller('AdminUserMessageCtrl', ['$scope', 'business', function ($scope, 
         $scope.refreshData();          
       });
     }
-  };    
+  };  
+  
+  $scope.deleteNotificationEvent = function(event){   
+    var response = window.confirm("Are you sure you want to delete this event for " + (event.username ? event.username : event.rolegroup ? event.rolegroup : 'All') + " ?");
+    if (event.eventId && response){
+      Business.userservice.removeNotificationEvent(event.eventId).then(function(results){
+        $scope.refreshNotificationEventData();          
+      });
+    }    
+  };
+  
+  $scope.refreshNotificationEventData = function() {  
+    $scope.$emit('$TRIGGERLOAD', 'messageLoader');
+    if ($scope.paginationEvent.control && $scope.paginationEvent.control.refresh) {
+      $scope.paginationEvent.control.refresh().then(function(){
+        $scope.$emit('$TRIGGERUNLOAD', 'messageLoader');
+      });
+    } else {
+      $scope.$emit('$TRIGGERUNLOAD', 'messageLoader');
+    }     
+  };  
   
   $scope.refreshData = function() {  
     $scope.$emit('$TRIGGERLOAD', 'messageLoader');
@@ -90,4 +117,65 @@ app.controller('AdminUserMessageCtrl', ['$scope', 'business', function ($scope, 
     });                
   };
   
+  $scope.postAdminEvent = function(){
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/application_management/postNotificationEvent.html',
+      controller: 'AdminPostNotifcationCtrl',
+      backdrop: 'static',
+      size: 'sm',
+      resolve: {        
+      }
+    });       
+  };
+  
+    $scope.$on('$REFRESH_EVENTS', function(){
+        triggerAlert('Posted successfully', 'postMessage', 'body', 3000);
+        $scope.refreshData();
+    });   
+  
+}]);
+
+app.controller('AdminPostNotifcationCtrl', ['$scope', 'business', '$uiModal', '$uiModalInstance',  function ($scope, Business, $uiModal, $uiModalInstance) {
+    
+   $scope.notEventForm = {};
+   $scope.users = [];
+    
+    $scope.loadUsers = function () {
+      $scope.$emit('$TRIGGERLOAD', 'messageLoader');
+
+      Business.userservice.getAllUserProfiles(false, false).then(function (results) {
+        $scope.$emit('$TRIGGERUNLOAD', 'messageLoader');
+        if (results) {
+            
+            $scope.users = results.data;
+            $scope.users.splice(0, 0, {username: null});
+        } else {
+          $scope.users = [];
+        }
+      }, function(){
+        $scope.users = [];
+      });
+    };
+    $scope.loadUsers();    
+    
+    $scope.postNotification = function()
+    {
+        $scope.$emit('$TRIGGERLOAD', 'messageLoader'); 
+
+
+        Business.userservice.postNotificationEvent($scope.notEventForm).then(function (results) {
+          $scope.$emit('$TRIGGERUNLOAD', 'messageLoader');
+          $scope.$emit('$TRIGGEREVENT', '$REFRESH_EVENTS');  
+          $uiModalInstance.dismiss('success');
+        }, function(){
+            triggerAlert('Unable to post message. ', 'postMessage', '#postWindowDiv', 3000);
+            $scope.$emit('$TRIGGERUNLOAD', 'messageLoader');
+        });        
+      
+    };
+    
+    $scope.close = function () {
+      $uiModalInstance.dismiss('cancel');
+    }; 
+    
 }]);

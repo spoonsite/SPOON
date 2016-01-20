@@ -10,6 +10,16 @@
 	<head>
 		<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
 		
+		<script type="text/javascript">
+		   try {
+			if (window.self !== window.top) {
+				window.parent.location.href = "/openstorefront/login.jsp?gotoPage="+window.parent.location.pathname;
+			}
+		   } catch (e) {
+			//top
+		   } 
+		</script>
+		
 		<style>
 			.disclaimer{
 				
@@ -25,7 +35,7 @@
 				border-image-repeat: initial;
 				border-radius: 10px;
 				padding: 10px;
-				background: rgb(42, 58, 92);
+				background: rgb(68, 30, 90);
 				color: white;
 			}			
 			.auth-forms {

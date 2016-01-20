@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--
+Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<h2>&nbsp;&nbsp;<i class="fa fa-edit"></i>&nbsp;Add Entry Type</h2>
+<hr>
+<div  style="padding-left: 15px; padding-right: 15px;" id="postWindowDiv">
+	<loader trigger="notificationFormLoader"></loader>
+
+	<form class="form-horizontal" name='notEventUIForm' role="form"  ng-submit="postNotification()" style="padding-left: 10px; padding-right: 10px;">
+		<div class="form-group" show-errors >
+			<label class="control-label col-sm-2">Type</label>
+			<div class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">
+				<input  type="text" 				
+						id="type"
+						name="type"									
+						class="form-control" 
+						ng-model="notEventForm.rolegroup" 									 
+						ng-maxlength=20
+						maxlength=20															
+						ng-focus />	
+			</div>
+		</div>
+		<div class="form-group" show-errors >
+			<label class="control-label col-sm-2">Label</label>
+			<div class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">
+				<input  type="text" 				
+						id="label"
+						name="label"									
+						class="form-control" 
+						ng-model="notEventForm.rolegroup" 									 
+						ng-maxlength=20
+						maxlength=20															
+						ng-focus />	
+			</div>
+		</div>
+		<div class="form-group" show-errors >
+			<label class="control-label col-sm-2">Description</label>
+			<div class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">
+				<input  type="text" 				
+						id="label"
+						name="label"									
+						class="form-control" 
+						ng-model="notEventForm.rolegroup" 									 
+						ng-maxlength=20
+						maxlength=20															
+						ng-focus />	
+			</div>
+		</div>
+		<br><b>Data Entry</b><hr>
+				<input  type="checkbox" 				
+						id="attributes"
+						name="attributes"															
+						ng-model="notEventForm.attributes" 									 
+						ng-maxlength=20
+						maxlength=20
+						ng-focus /> Attributes	
+				<br>
+				<input  type="checkbox" 				
+						id="relationship"
+						name="relationship"									
+						ng-model="notEventForm.relationship" 									 
+						ng-maxlength=20
+						maxlength=20															
+						ng-focus /> Relationships	
+				<br>
+				<input  type="checkbox" 				
+						id="contacts"
+						name="contacts"															
+						ng-model="notEventForm.contacts" 									 
+						ng-maxlength=20
+						maxlength=20															
+						ng-focus /> Contacts	
+				<br>
+				<input  type="checkbox" 				
+						id="resources"
+						name="resources"															
+						ng-model="notEventForm.resources" 									 
+						ng-maxlength=20
+						maxlength=20															
+						ng-focus /> Resources	
+				<br>
+				<input  type="checkbox" 				
+						id="media"
+						name="media"															
+						ng-model="notEventForm.media" 									 
+						ng-maxlength=20
+						maxlength=20															
+						ng-focus /> Media	
+				<br>
+				<input  type="checkbox" 				
+						id="dependencies"
+						name="dependencies"															
+						ng-model="notEventForm.dependencies" 									 
+						ng-maxlength=20
+						maxlength=20															
+						ng-focus /> Dependencies	
+				<br>
+				<input  type="checkbox" 				
+						id="metadata"
+						name="metadata"															
+						ng-model="notEventForm.metadata" 									 
+						ng-maxlength=20
+						maxlength=20															
+						ng-focus /> Metadata
+				<br>
+				<input  type="checkbox" 				
+						id="evaluationinformation"
+						name="evaluationinformation"
+						ng-model="notEventForm.evaluationinformation" 									 
+						ng-maxlength=20
+						maxlength=20															
+						ng-focus /> Evaluation Information	
+				<br>
+				<hr>
+				<b>Display</b>
+				<hr>
+				<div class="form-group" show-errors >
+					<label class="control-label col-sm-2">Template</label>
+					<div class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">
+						<select placeholder="Select Template"class="form-control"  >
+							<option>Standard</option>
+							<option>Article</option>
+						</select>	
+					</div>
+				</div>
+				<button type="submit" class="btn btn-default" ng-disabled="notEventUIForm.$invalid"><i class="fa fa-plus"></i>&nbsp;Add Template</button>		 
+		<hr>
+		<br><br>		
+		<span style="float: left; margin-top: -45px;">   
+			<button type="submit" class="btn btn-primary" ng-disabled="notEventUIForm.$invalid"><i class="fa fa-save"></i>&nbsp;Save</button>		 
+		</span>			
+	</form>	
+	<span style="float: right; margin-top: -45px;">   	
+		<button  class="btn btn-warning" ng-click="close()"><i class="fa fa-close"></i>&nbsp;Cancel</button>	
+	</span>	
+
+</div>

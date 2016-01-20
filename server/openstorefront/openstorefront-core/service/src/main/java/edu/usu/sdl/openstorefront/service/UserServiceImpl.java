@@ -35,6 +35,8 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
@@ -53,6 +55,8 @@ import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
 import edu.usu.sdl.openstorefront.service.message.ApprovalMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.BaseMessageGenerator;
+import edu.usu.sdl.openstorefront.service.message.ChangeRequestApprovedMessageGenerator;
+import edu.usu.sdl.openstorefront.service.message.ChangeRequestMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.ComponentSubmissionMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.ComponentWatchMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.MessageContext;
@@ -186,23 +190,20 @@ public class UserServiceImpl
 				userProfile.setActiveStatus(user.getActiveStatus());
 			}
 			userProfile.setEmail(user.getEmail());
+			userProfile.setPhone(user.getPhone());
 			userProfile.setFirstName(user.getFirstName());
 			userProfile.setLastName(user.getLastName());
 			userProfile.setNotifyOfNew(user.getNotifyOfNew());
 			userProfile.setOrganization(user.getOrganization());
 			userProfile.setUserTypeCode(user.getUserTypeCode());
-			userProfile.setUpdateUser(SecurityUtil.getCurrentUserName());
 			if (StringUtils.isNotBlank(userProfile.getInternalGuid())) {
 				userProfile.setInternalGuid(persistenceService.generateId());
 			}
+			userProfile.populateBaseUpdateFields();
 			persistenceService.persist(userProfile);
 		} else {
-			user.setActiveStatus(UserProfile.ACTIVE_STATUS);
 			user.setInternalGuid(persistenceService.generateId());
-			user.setCreateDts(TimeUtil.currentDate());
-			user.setUpdateDts(TimeUtil.currentDate());
-			user.setCreateUser(SecurityUtil.getCurrentUserName());
-			user.setUpdateUser(SecurityUtil.getCurrentUserName());
+			user.populateBaseCreateFields();
 			userProfile = persistenceService.persist(user);
 		}
 
@@ -414,7 +415,7 @@ public class UserServiceImpl
 
 				saveUserTracking(userTracking);
 			} else {
-				log.log(Level.INFO, MessageFormat.format("Login handled for user: {0} (Not a external client request...not tracking", profile.getUsername()));
+				log.log(Level.INFO, MessageFormat.format("Login handled for user: {0} (Not an external client request...not tracking", profile.getUsername()));
 			}
 			String adminLog = "";
 			if (userContext.isAdmin()) {
@@ -439,11 +440,14 @@ public class UserServiceImpl
 	}
 
 	@Override
-	public void sendTestEmail(String username)
+	public void sendTestEmail(String username, String overrideEmail)
 	{
 		UserProfile userProfile = getUserProfile(username);
 		if (userProfile != null) {
-			if (StringUtils.isNotBlank(userProfile.getEmail())) {
+			if (StringUtils.isNotBlank(overrideEmail) || StringUtils.isNotBlank(userProfile.getEmail())) {
+				if (StringUtils.isNotBlank(overrideEmail)) {
+					userProfile.setEmail(overrideEmail);
+				}
 				TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
 				Email email = testMessageGenerator.generateMessage();
 				MailManager.send(email);
@@ -461,19 +465,28 @@ public class UserServiceImpl
 	{
 		UserWatch userWatchExample = new UserWatch();
 		userWatchExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
-		userWatchExample.setNotifyFlg(Boolean.TRUE);
 		userWatchExample.setComponentId(component.getComponentId());
 
 		List<UserWatch> userWatches = persistenceService.queryByExample(UserWatch.class, userWatchExample);
 		for (UserWatch userWatch : userWatches) {
 			if (component.getLastActivityDts().after(userWatch.getLastViewDts())) {
-				UserMessage userMessage = new UserMessage();
-				userMessage.setUsername(userWatch.getUsername());
-				userMessage.setComponentId(component.getComponentId());
-				userMessage.setUserMessageType(UserMessageType.COMPONENT_WATCH);
-				userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
-				userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-				getUserService().queueUserMessage(userMessage);
+				if (Convert.toBoolean(userWatch.getNotifyFlg())) {
+					UserMessage userMessage = new UserMessage();
+					userMessage.setUsername(userWatch.getUsername());
+					userMessage.setComponentId(component.getComponentId());
+					userMessage.setUserMessageType(UserMessageType.COMPONENT_WATCH);
+					userMessage.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
+					userMessage.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+					getUserService().queueUserMessage(userMessage);
+				}
+
+				NotificationEvent notificationEvent = new NotificationEvent();
+				notificationEvent.setEventType(NotificationEventType.WATCH);
+				notificationEvent.setUsername(userWatch.getUsername());
+				notificationEvent.setMessage("Component: " + component.getName() + " has been updated.");
+				notificationEvent.setEntityName(Component.class.getSimpleName());
+				notificationEvent.setEntityId(component.getComponentId());
+				getNotificationService().postEvent(notificationEvent);
 			}
 		}
 	}
@@ -551,13 +564,20 @@ public class UserServiceImpl
 			}
 		} else if (adminMessage.getUsersToEmail().isEmpty() == false) {
 			log.log(Level.INFO, "(Admin Message) Sending email to specfic users");
+			List<String> emailList = new ArrayList<>();
+			for (String email : adminMessage.getUsersToEmail()) {
+				if (StringUtils.isNotBlank(email)) {
+					emailList.add(email.trim());
+				}
+			}
+
 			StringBuilder query = new StringBuilder();
 			query.append("select from ").append(UserProfile.class.getSimpleName()).append(" where email IS NOT NULL AND username IN :userList OR email IN :userList2");
 			Map<String, Object> params = new HashMap<>();
-			params.put("userList", adminMessage.getUsersToEmail());
-			params.put("userList2", adminMessage.getUsersToEmail());
+			params.put("userList", emailList);
+			params.put("userList2", emailList);
 			usersToSend = persistenceService.query(query.toString(), params);
-			for (String email : adminMessage.getUsersToEmail()) {
+			for (String email : emailList) {
 				Boolean found = false;
 				for (UserProfile user : usersToSend) {
 					if (StringUtils.equalsIgnoreCase(user.getEmail(), email)) {
@@ -573,6 +593,17 @@ public class UserServiceImpl
 					temp.setLastName("");
 					usersToSend.add(temp);
 				}
+			}
+		}
+
+		//filter out duplicate email addresses
+		Set<String> emailAddressSet = new HashSet<>();
+		for (int i = usersToSend.size() - 1; i >= 0; i--) {
+			UserProfile userProfile = usersToSend.get(i);
+			if (emailAddressSet.contains(userProfile.getEmail())) {
+				usersToSend.remove(i);
+			} else {
+				emailAddressSet.add(userProfile.getEmail());
 			}
 		}
 
@@ -694,6 +725,12 @@ public class UserServiceImpl
 						break;
 					case UserMessageType.APPROVAL_NOTIFICATION:
 						generator = new ApprovalMessageGenerator(messageContext);
+						break;
+					case UserMessageType.CHANGE_REQUEST_APPROVAL_NOTIFICATION:
+						generator = new ChangeRequestApprovedMessageGenerator(messageContext);
+						break;
+					case UserMessageType.CHANGE_REQUEST_ALERT:
+						generator = new ChangeRequestMessageGenerator(messageContext);
 						break;
 				}
 			}

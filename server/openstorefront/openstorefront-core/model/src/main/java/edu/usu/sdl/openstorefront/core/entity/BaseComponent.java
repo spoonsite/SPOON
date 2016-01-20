@@ -39,6 +39,14 @@ public abstract class BaseComponent<T>
 	{
 	}
 
+	/**
+	 * This is typically a non-pk field or combination of fields that makes the
+	 * record unique
+	 *
+	 * @return
+	 */
+	public abstract String uniqueKey();
+
 	@Override
 	public int compareTo(BaseComponent o)
 	{
@@ -59,6 +67,19 @@ public abstract class BaseComponent<T>
 	{
 		return 0;
 	}
+
+	/**
+	 * Resets the primary keys and component key This is useful for copy
+	 * entities.
+	 */
+	public void clearKeys()
+	{
+		setComponentId(null);
+		customKeyClear();
+	}
+
+	//Override to add primary key clearing
+	protected abstract void customKeyClear();
 
 	public String getComponentId()
 	{

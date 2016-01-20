@@ -3,17 +3,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront</artifactId>
-	<version>1.5</version>
+	<version>1.6</version>
 	<packaging>pom</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
 	</properties>
 	<modules>
 		<module>openstorefront-web</module>
-		<module>apiclient</module>
-		<module>wso2client</module>
+		<module>er2-xmlparser</module>
+		<module>apiclient</module>		
 		<module>openstorefront-core</module>
 		<module>openstorefront-plugin</module>
+		<module>atmosphere-socketio</module>
+		<module>extjs</module>
+	 <module>tinymcetextarea</module>
 	</modules>
 	
 	<dependencies>

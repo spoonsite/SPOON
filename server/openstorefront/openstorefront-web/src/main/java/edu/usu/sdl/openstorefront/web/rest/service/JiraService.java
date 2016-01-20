@@ -15,29 +15,40 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
+import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.ServerInfo;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.model.FeedbackTicket;
+import edu.usu.sdl.openstorefront.core.view.JiraIssueView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraFieldInfoModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueType;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraStats;
 import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -214,6 +225,50 @@ public class JiraService
 			restErrorModel.setSuccess(false);
 			restErrorModel.getErrors().put("issuefIelds", "Unable to retrieve issue fields.  Check project code, issue type, and jira connection");
 			return sendSingleEntityResponse(restErrorModel);
+		}
+	}
+
+	@POST
+	@APIDescription("Submit Feedback Ticket")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(JiraIssueView.class)
+	@Path("/submitticket")
+	public Response submitTicket(
+			FeedbackTicket feedbackTicket
+	)
+	{
+		ValidationModel validationModel = new ValidationModel(feedbackTicket);
+		validationModel.setConsumeFieldsOnly(true);
+
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+
+			try (JiraClient jiraClient = JiraManager.getClient()) {
+
+				UserContext userContext = SecurityUtil.getUserContext();
+				if (userContext != null) {
+					UserProfile userProfile = userContext.getUserProfile();
+					feedbackTicket.setFirstname(userProfile.getFirstName());
+					feedbackTicket.setLastname(userProfile.getLastName());
+					feedbackTicket.setOrganization(userProfile.getOrganization());
+					feedbackTicket.setEmail(userProfile.getEmail());
+					feedbackTicket.setPhone(userProfile.getPhone());
+					feedbackTicket.setUsername(userProfile.getUsername());
+				}
+
+				JiraIssueView jiraIssueView = null;
+				BasicIssue issue = jiraClient.submitTicket(feedbackTicket);
+				if (issue != null) {
+					jiraIssueView = new JiraIssueView();
+					jiraIssueView.setTicketId(issue.getKey());
+					jiraIssueView.setId(Long.toString(issue.getId()));
+					jiraIssueView.setUrl(issue.getSelf().toString());
+				}
+				return sendSingleEntityResponse(jiraIssueView);
+			}
+		} else {
+			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 	}
 

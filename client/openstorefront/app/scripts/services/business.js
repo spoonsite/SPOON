@@ -15,8 +15,8 @@
 */
 'use strict';
 
-app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'organizationservice', 'configurationservice', 'jobservice', 'systemservice', 'mediaservice', 'trackingservice', 'alertservice', 'reportservice', 'submissionservice',
-  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, organizationservice, configurationservice, jobservice, systemservice, mediaservice, trackingservice, alertservice, reportservice, submissionservice) { /*jshint unused: false*/
+app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice', 'lookupservice', 'componentservice', 'highlightservice', 'articleservice', 'organizationservice', 'configurationservice', 'jobservice', 'systemservice', 'mediaservice', 'trackingservice', 'alertservice', 'reportservice', 'submissionservice','brandingservice', 'notificationservice',
+  function($rootScope, localCache, $http, $q, userservice, lookupservice, componentservice, highlightservice, articleservice, organizationservice, configurationservice, jobservice, systemservice, mediaservice, trackingservice, alertservice, reportservice, submissionservice, brandingservice, notificationservice) { /*jshint unused: false*/
 
   // 60 seconds until expiration
   var minute = 60 * 1000;
@@ -61,6 +61,10 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     return localCache.get(key, 'object');
   };
 
+  var remove = function(key) {
+    return localCache.clear(key);
+  };
+
   var updateCache = function(name, value) {
     save(name, value);
   };
@@ -80,7 +84,37 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   business.reportservice = reportservice;
   business.submissionservice = submissionservice;
   business.organizationservice = organizationservice;
+  business.brandingservice = brandingservice;
+  business.notificationservice = notificationservice;
 
+
+  business.getConfig = function(override){
+    var deferred = $q.defer();
+    var config;
+    config = checkExpire('APP_CONFIG', minute * 1440);
+    if (config && !override) {
+      deferred.resolve(config);
+    } else {
+      $http({
+        'method': 'GET',
+        'url': 'api/v1/resource/attributes'
+      }).success(function(data, status, headers, config) { /*jshint unused:false*/
+        if (data && data !== 'false' && isNotRequestError(data)) {
+          removeError();
+          save('APP_CONFIG', data);
+          deferred.resolve(data);
+        } else {
+          removeError();
+          triggerError(data);
+          deferred.reject('There was an error grabbing the filters');
+        }
+      }).error(function(data, status, headers, config) { /*jshint unused:false*/
+        showServerError(data, 'body');
+        deferred.reject('There was an error grabbing the filters');
+      });
+    }
+    return deferred.promise;
+  };
 
   business.updateCache = function(name, value) {
     var deferred = $q.defer();
@@ -132,9 +166,9 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     var result = [];
     _.each(tags, function(tag){
       result.push(tag.text);
-    })
+    });
     return result;
-  }
+  };
 
 
   business.getTagsList = function(override) {
@@ -215,37 +249,43 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
   };
 
   // This function builds the typeahead options.
-  business.typeahead = function(search) {
+  business.typeahead = function(search, override, filterObj) {
+    // console.log('arguments', arguments);
+    
     var deferred = $q.defer();
     // lets refresh the typeahead every 15 min until we actually get this
     // working with a http request upon user interaction.
-    if (!search) {
+    //check local cache
+    var cachedResults = localCache.get("CMPNames", 'object');
+    var lowerSearch = search;
+    if (!search && !override) {
       deferred.reject('There was no search');
     } else {
-      //check local cache
-      var cachedResults = localCache.get("CMPNames", 'object');
-      var lowerSearch = search;
       if (search && typeof search === 'string'){
         lowerSearch = search.toLowerCase();
       }
-      var getNames = function(names, deferred) {
+    }
+    var getNames = function(names, deferred) {
+      if (override) {
+        deferred.resolve(names);
+      } else {
         var found = _.filter(names, function(item){
           return item.description.toLowerCase().indexOf(lowerSearch) !== -1;
         });
         deferred.resolve(found);           
-      };
-      
-      if (!cachedResults) { 
-        business.componentservice.getComponentLookupList().then(function(data){
-          localCache.save("CMPNames", data);
-          cachedResults = data;
-          getNames(cachedResults, deferred);
-        });
-      }  else {
-        getNames(cachedResults, deferred);
       }
-      
+    };
+
+    if (!cachedResults || override) { 
+      business.componentservice.getComponentLookupList(filterObj).then(function(data){
+        localCache.save("CMPNames", data);
+        cachedResults = data;
+        getNames(cachedResults, deferred);
+      });
+    }  else {
+      getNames(cachedResults, deferred);
     }
+
     return deferred.promise;
   };
 
@@ -270,7 +310,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
             if (item.description.toLowerCase().indexOf(testItem) !== -1) {
               foundIt = true;
             }
-          })
+          });
           return foundIt;
         });
         deferred.resolve(found);           
@@ -290,7 +330,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
       }
     }
     return false;    
-  }
+  };
 
   // This function builds the typeahead options.
   business.ieCheck = function() {
@@ -307,7 +347,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
 
   business.saveLocal = function(key, value){
     save(key, value);
-  }
+  };
 
   business.getLocal = function(key){
     if (key) {
@@ -316,14 +356,21 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
     } else {
       return null;
     }
-  }
+  };
+  
+  business.deleteLocal = function(key){
+    if (key) {
+      remove(key);
+    } 
+  };
+
   business.get = function(query, override) {
     var deferred = $q.defer();
     if (query) { 
       var url = query.url + '?' + query.filterObj.toQuery();
       $http({
         'method': 'GET',
-        'url': url,
+        'url': url
       }).success(function(data, status, headers, config) { /*jshint unused:false*/
         if (data && data !== 'false' && isNotRequestError(data)) {
           removeError();
@@ -341,7 +388,7 @@ app.factory('business', ['$rootScope','localCache', '$http', '$q', 'userservice'
       deferred.reject(false);
     }
     return deferred.promise;
-  }
+  };
 
 
 

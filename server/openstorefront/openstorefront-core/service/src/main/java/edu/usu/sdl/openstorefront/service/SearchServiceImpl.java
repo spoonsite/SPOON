@@ -37,15 +37,19 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.SearchType;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
+import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager.SolrAndOr;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager.SolrEquals;
+import edu.usu.sdl.openstorefront.service.search.ArchitectureSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.AttributeSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.BaseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ComponentSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ContactSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
 import edu.usu.sdl.openstorefront.service.search.MetaDataSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ReviewSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
@@ -81,7 +85,7 @@ import org.apache.solr.common.SolrDocumentList;
  */
 public class SearchServiceImpl
 		extends ServiceProxy
-		implements SearchService
+		implements SearchService, SearchServicePrivate
 {
 
 	private static final Logger log = Logger.getLogger(SearchServiceImpl.class.getName());
@@ -100,79 +104,13 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public List<ComponentSearchView> getSearchItems(SearchQuery query, FilterQueryParams filter)
+	public ComponentSearchWrapper getSearchItems(SearchQuery query, FilterQueryParams filter)
 	{
-		// use for advanced search with And - Or combinations on separate fields
-		String queryOperator = " " + SolrAndOr.OR + " ";
-		String myQueryString;
+		ComponentSearchWrapper componentSearchWrapper = new ComponentSearchWrapper();
 
-		// If incoming query string is blank, default to solar *:* for the full query
-		if (StringUtils.isNotBlank(query.getQuery())) {
-			StringBuilder queryData = new StringBuilder();
-
-			Field fields[] = SolrComponentModel.class.getDeclaredFields();
-			for (Field field : fields) {
-				org.apache.solr.client.solrj.beans.Field fieldAnnotation = field.getAnnotation(org.apache.solr.client.solrj.beans.Field.class);
-				if (fieldAnnotation != null && field.getType() == String.class) {
-					String name = field.getName();
-					if (StringUtils.isNotBlank(fieldAnnotation.value())
-							&& org.apache.solr.client.solrj.beans.Field.DEFAULT.equals(fieldAnnotation.value()) == false) {
-						name = fieldAnnotation.value();
-					}
-
-					queryData.append(SolrEquals.EQUAL.getSolrOperator())
-							.append(name)
-							.append(SolrManager.SOLR_QUERY_SEPERATOR)
-							.append(query.getQuery())
-							.append(queryOperator);
-				}
-			}
-			myQueryString = queryData.toString();
-			if (myQueryString.endsWith(queryOperator)) {
-				queryData.delete((myQueryString.length() - (queryOperator.length())), myQueryString.length());
-				myQueryString = queryData.toString();
-			}
-		} else {
-			myQueryString = SolrManager.SOLR_ALL_QUERY;
-		}
-		log.log(Level.FINER, myQueryString);
-
-		// execute the searchComponent method and bring back from solr a list array
-		List<SolrComponentModel> resultsList = new ArrayList<>();
-		try {
-			SolrQuery solrQuery = new SolrQuery();
-			solrQuery.setQuery(myQueryString);
-
-			// fields to be returned back from solr
-			solrQuery.setFields(SolrComponentModel.ID_FIELD, SolrComponentModel.ISCOMPONENT_FIELD);
-			solrQuery.setStart(filter.getOffset());
-			solrQuery.setRows(filter.getMax());
-
-			Field sortField = ReflectionUtil.getField(new SolrComponentModel(), filter.getSortField());
-			if (sortField != null) {
-				String sortFieldText = filter.getSortField();
-				org.apache.solr.client.solrj.beans.Field fieldAnnotation = sortField.getAnnotation(org.apache.solr.client.solrj.beans.Field.class);
-				if (fieldAnnotation != null) {
-					sortFieldText = fieldAnnotation.value();
-				}
-				SolrQuery.ORDER order = SolrQuery.ORDER.desc;
-				if (OpenStorefrontConstant.SORT_ASCENDING.equalsIgnoreCase(filter.getSortOrder())) {
-					order = SolrQuery.ORDER.asc;
-				}
-				solrQuery.addSort(sortFieldText, order);
-			}
-
-			solrQuery.setIncludeScore(true);
-
-			QueryResponse response = SolrManager.getServer().query(solrQuery);
-			SolrDocumentList results = response.getResults();
-			DocumentObjectBinder binder = new DocumentObjectBinder();
-			resultsList = binder.getBeans(SolrComponentModel.class, results);
-		} catch (SolrServerException ex) {
-			throw new OpenStorefrontRuntimeException("Search Failed", "Contact System Admin.  Seach server maybe Unavailable", ex);
-		} catch (Exception ex) {
-			log.log(Level.WARNING, "Solr query failed unexpectly; likely bad input.", ex);
-		}
+		IndexSearchResult indexSearchResult = doIndexSearch(query.getQuery(), filter);
+		List<SolrComponentModel> resultsList = indexSearchResult.getResultsList();
+		long totalFound = indexSearchResult.getTotalResults();
 
 		//Pulling the full object on the return
 		List<ComponentSearchView> views = new ArrayList<>();
@@ -195,6 +133,7 @@ public class SearchServiceImpl
 			if (goodComponentIdSet.contains(componentId) == false) {
 				log.log(Level.FINE, MessageFormat.format("Removing bad index: {0}", componentId));
 				deleteById(componentId);
+				totalFound--;
 			}
 		}
 		views.addAll(componentSearchViews);
@@ -221,7 +160,15 @@ public class SearchServiceImpl
 		}
 
 		//TODO: Get the score and sort by score
-		return views;
+		componentSearchWrapper.setData(views);
+		componentSearchWrapper.setResults(views.size());
+
+		//This could happen if the index were all bad
+		if (totalFound < 0) {
+			totalFound = 0;
+		}
+		componentSearchWrapper.setTotalNumber(totalFound);
+		return componentSearchWrapper;
 	}
 
 	@Override
@@ -531,6 +478,9 @@ public class SearchServiceImpl
 		for (SearchType searchType : searchGroup.keySet()) {
 			List<SearchElement> searchElements = searchGroup.get(searchType);
 			switch (searchType) {
+				case ARCHITECTURE:
+					handlers.add(new ArchitectureSearchHandler(searchElements));
+					break;
 				case ATTRIBUTE:
 					handlers.add(new AttributeSearchHandler(searchElements));
 					break;
@@ -586,6 +536,8 @@ public class SearchServiceImpl
 			if (StringUtils.isNotBlank(searchModel.getSortField())) {
 				Collections.sort(views, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
 			}
+			searchResult.setTotalNumber(views.size());
+
 			//window
 			if (searchModel.getStartOffset() < views.size() && searchModel.getMax() > 0) {
 				int count = 0;
@@ -602,4 +554,90 @@ public class SearchServiceImpl
 
 		return searchResult;
 	}
+
+	@Override
+	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
+	{
+		IndexSearchResult indexSearchResult = new IndexSearchResult();
+
+		List<SolrComponentModel> resultsList = new ArrayList<>();
+
+		// use for advanced search with And - Or combinations on separate fields
+		String queryOperator = " " + SolrAndOr.OR + " ";
+		String myQueryString;
+
+		// If incoming query string is blank, default to solar *:* for the full query
+		if (StringUtils.isNotBlank(query)) {
+			StringBuilder queryData = new StringBuilder();
+
+			Field fields[] = SolrComponentModel.class.getDeclaredFields();
+			for (Field field : fields) {
+				org.apache.solr.client.solrj.beans.Field fieldAnnotation = field.getAnnotation(org.apache.solr.client.solrj.beans.Field.class);
+				if (fieldAnnotation != null && field.getType() == String.class) {
+					String name = field.getName();
+					if (StringUtils.isNotBlank(fieldAnnotation.value())
+							&& org.apache.solr.client.solrj.beans.Field.DEFAULT.equals(fieldAnnotation.value()) == false) {
+						name = fieldAnnotation.value();
+					}
+
+					queryData.append(SolrEquals.EQUAL.getSolrOperator())
+							.append(name)
+							.append(SolrManager.SOLR_QUERY_SEPERATOR)
+							.append(query)
+							.append(queryOperator);
+				}
+			}
+			myQueryString = queryData.toString();
+			if (myQueryString.endsWith(queryOperator)) {
+				queryData.delete((myQueryString.length() - (queryOperator.length())), myQueryString.length());
+				myQueryString = queryData.toString();
+			}
+		} else {
+			myQueryString = SolrManager.SOLR_ALL_QUERY;
+		}
+		log.log(Level.FINER, myQueryString);
+
+		// execute the searchComponent method and bring back from solr a list array
+		long totalFound = 0;
+		try {
+			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setQuery(myQueryString);
+
+			// fields to be returned back from solr
+			solrQuery.setFields(SolrComponentModel.ID_FIELD, SolrComponentModel.ISCOMPONENT_FIELD);
+			solrQuery.setStart(filter.getOffset());
+			solrQuery.setRows(filter.getMax());
+
+			Field sortField = ReflectionUtil.getField(new SolrComponentModel(), filter.getSortField());
+			if (sortField != null) {
+				String sortFieldText = filter.getSortField();
+				org.apache.solr.client.solrj.beans.Field fieldAnnotation = sortField.getAnnotation(org.apache.solr.client.solrj.beans.Field.class);
+				if (fieldAnnotation != null) {
+					sortFieldText = fieldAnnotation.value();
+				}
+				SolrQuery.ORDER order = SolrQuery.ORDER.desc;
+				if (OpenStorefrontConstant.SORT_ASCENDING.equalsIgnoreCase(filter.getSortOrder())) {
+					order = SolrQuery.ORDER.asc;
+				}
+				solrQuery.addSort(sortFieldText, order);
+			}
+
+			solrQuery.setIncludeScore(true);
+
+			QueryResponse response = SolrManager.getServer().query(solrQuery);
+			SolrDocumentList results = response.getResults();
+			totalFound = results.getNumFound();
+			DocumentObjectBinder binder = new DocumentObjectBinder();
+			resultsList = binder.getBeans(SolrComponentModel.class, results);
+		} catch (SolrServerException ex) {
+			throw new OpenStorefrontRuntimeException("Search Failed", "Contact System Admin.  Seach server maybe Unavailable", ex);
+		} catch (Exception ex) {
+			log.log(Level.WARNING, "Solr query failed unexpectly; likely bad input.", ex);
+		}
+		indexSearchResult.getResultsList().addAll(resultsList);
+		indexSearchResult.setTotalResults(totalFound);
+
+		return indexSearchResult;
+	}
+
 }

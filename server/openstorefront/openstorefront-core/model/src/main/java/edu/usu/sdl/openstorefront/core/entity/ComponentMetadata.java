@@ -57,6 +57,18 @@ public class ComponentMetadata
 	}
 
 	@Override
+	public String uniqueKey()
+	{
+		return getLabel() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getValue();
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setMetadataId(null);
+	}
+
+	@Override
 	public void updateFields(StandardEntity entity)
 	{
 		super.updateFields(entity);

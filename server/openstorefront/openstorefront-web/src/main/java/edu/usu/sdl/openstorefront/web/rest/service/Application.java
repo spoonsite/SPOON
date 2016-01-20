@@ -35,7 +35,9 @@ import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.ThreadStatus;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
@@ -60,6 +62,7 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -191,6 +194,60 @@ public class Application
 	}
 
 	@GET
+	@APIDescription("Get a config property")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/configproperties/{key}")
+	public Response getConfigPropertiesForKey(@PathParam("key") String key)
+	{
+		String value = PropertiesManager.getValueDefinedDefault(key);
+
+		LookupModel lookupModel = new LookupModel();
+		lookupModel.setCode(key);
+		if (key.contains(PropertiesManager.PW_PROPERTY)) {
+			lookupModel.setDescription(StringUtils.leftPad("", value.length(), "*"));
+		} else {
+			lookupModel.setDescription(value);
+		}
+
+		return sendSingleEntityResponse(lookupModel);
+	}
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Save a config property")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@DataType(LookupModel.class)
+	@Path("/configproperties")
+	public Response addConfigProperty(
+			LookupModel lookupModel
+	)
+	{
+		return handleSaveConfigProperty(lookupModel);
+	}
+
+	private Response handleSaveConfigProperty(LookupModel lookupModel)
+	{
+		ValidationModel validationModel = new ValidationModel(lookupModel);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			PropertiesManager.setProperty(lookupModel.getCode(), lookupModel.getDescription());
+		}
+		return sendSingleEntityResponse(validationResult.toRestError());
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Removes config property (Allow it to fallback to the Default)")
+	@Path("/configproperties/{key}")
+	public void removeConfigProperties(@PathParam("key") String key)
+	{
+		PropertiesManager.removeProperty(key);
+	}
+
+	@GET
 	@RequireAdmin
 	@APIDescription("Gets Loggers in the system")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -263,15 +320,13 @@ public class Application
 			if (StringUtils.isBlank(level)) {
 				logger.setLevel(null);
 				saved = true;
+			} else if (levels.contains(level)) {
+				logger.setLevel(Level.parse(level));
+				saved = true;
 			} else {
-				if (levels.contains(level)) {
-					logger.setLevel(Level.parse(level));
-					saved = true;
-				} else {
-					RestErrorModel restErrorModel = new RestErrorModel();
-					restErrorModel.getErrors().put("level", "Log level is not valid. Check level value passed in.");
-					response = Response.ok(restErrorModel).build();
-				}
+				RestErrorModel restErrorModel = new RestErrorModel();
+				restErrorModel.getErrors().put("level", "Log level is not valid. Check level value passed in.");
+				response = Response.ok(restErrorModel).build();
 			}
 			if (saved) {
 				LoggerView loggerView = new LoggerView();
@@ -362,6 +417,19 @@ public class Application
 	public void clearAllDBLogs()
 	{
 		service.getSystemService().clearAllLogRecord();
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Toggle Database logging; pass use=true or use=false")
+	@DataType(LookupModel.class)
+	@Path("/dblogger/{use}")
+	public Response updateConfigProperty(
+			@PathParam("use") String use
+	)
+	{
+		service.getSystemService().toggleDBlogger(Convert.toBoolean(use));
+		return Response.ok().build();
 	}
 
 	@GET

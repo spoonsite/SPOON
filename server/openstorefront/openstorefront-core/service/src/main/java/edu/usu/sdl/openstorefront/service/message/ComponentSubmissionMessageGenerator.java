@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.message;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
@@ -42,7 +43,7 @@ public class ComponentSubmissionMessageGenerator
 	@Override
 	protected String getSubject()
 	{
-		return "Component Submission";
+		return "Entry Submission";
 	}
 
 	@Override
@@ -52,7 +53,7 @@ public class ComponentSubmissionMessageGenerator
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z");
 
 		Instant instant = Instant.ofEpochMilli(messageContext.getUserMessage().getCreateDts().getTime());
-		instant = instant.minusSeconds(3);
+		instant = instant.minusSeconds(10);
 		Date checkDate = new Date(instant.toEpochMilli());
 
 		Component componentExample = new Component();
@@ -60,7 +61,7 @@ public class ComponentSubmissionMessageGenerator
 		componentExample.setApprovalState(ApprovalStatus.PENDING);
 
 		Component componentStartExample = new Component();
-		componentStartExample.setCreateDts(checkDate);
+		componentStartExample.setUpdateDts(checkDate);
 
 		QueryByExample queryByExample = new QueryByExample(componentExample);
 		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
@@ -71,7 +72,10 @@ public class ComponentSubmissionMessageGenerator
 		//submitted
 		List<Component> components = serviceProxy.getPersistenceService().queryByExample(Component.class, queryByExample);
 		if (components.isEmpty() == false) {
-			message.append(components.size()).append(" component(s) submitted for <b>Approval</b> since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
+			message.append(components.size())
+					.append(" ")
+					.append(StringProcessor.puralize(components.size(), "entry", "entries"))
+					.append(" submitted for <b>Approval</b> since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
 			message.append("<ul>");
 			for (Component component : components) {
 				message.append(" <li>").append(component.getName())
@@ -86,11 +90,14 @@ public class ComponentSubmissionMessageGenerator
 		componentExample.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 		components = serviceProxy.getPersistenceService().queryByExample(Component.class, queryByExample);
 		if (components.isEmpty() == false) {
-			message.append(components.size()).append(" component(s) submission <b>Canceled</b> for approval since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
+			message.append(components.size())
+					.append(" ")
+					.append(StringProcessor.puralize(components.size(), "entry", "entries"))
+					.append(" submission <b>Canceled</b> for approval since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
 			message.append("<ul>");
 			for (Component component : components) {
 				message.append(" <li>").append(component.getName())
-						.append("  submitted by:  ").append(component.getCreateUser())
+						.append("  originally submitted by:  ").append(component.getCreateUser())
 						.append(" at ").append(sdf.format(component.getSubmittedDts()))
 						.append("</li>");
 			}

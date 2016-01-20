@@ -389,6 +389,7 @@ module.exports = function (grunt) {
           'bower_components/bootstrap-combobox/css/bootstrap-combobox.css',
           'bower_components/bootstrap-combobox/js/bootstrap-combobox.js',
           'scripts/common/angular-lightbox.js',
+          'scripts/common/combobox.js',
           'scripts/common/ng-ckeditor.js',
           'scripts/common/d3.js',
           'scripts/common/d3tip.js',
@@ -400,7 +401,8 @@ module.exports = function (grunt) {
           'scripts/common/jquery-cron.js',
           'scripts/common/angular-multi-select.js',
           'scripts/common/cronGen.js',
-          'scripts/common/ckeditor/**/*'
+          'scripts/common/ckeditor/**/*',
+          'scripts/common/socket.io.js'
           ]
         }, {
           expand: true,

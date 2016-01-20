@@ -189,7 +189,20 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
         $scope.reviews = null;
       }
     });  
-  }
+  };
+
+  $scope.$watch('nav', function(newval, oldval){
+    if (newval && newval.current){
+      if (newval.current === 'Watches'){
+        $scope.$emit('$TRIGGEREVENT', '$updatedWatches');
+      } else if (newval.current === 'Component Reviews') {
+        loadReviews();
+      } else if (newval.current === 'Submissions'){
+        $scope.$emit('$TRIGGEREVENT', '$UPDATED_SUBMISSIONS');
+      }
+    }
+  }, true);
+
 
 
   /***************************************************************
@@ -264,6 +277,9 @@ app.controller('UserProfileCtrl', ['$scope', 'business', '$rootScope', '$locatio
     } else if ($scope.userProfileForm.email.length > 80){
       errorObjt.errors.entry.push({'key':'email', 'value':'Your email has exceeded the accepted input length'});
     }
+    if ($scope.userProfileForm.phone.length > 80){
+      errorObjt.errors.entry.push({'key':'phone', 'value':'Your phone has exceeded the accepted input length'});
+    }    
     if (!$scope.userProfileForm.organization){
       errorObjt.errors.entry.push({'key':'organization', 'value':'An organization is required.'});
     } else if ($scope.userProfileForm.organization.length > 120){

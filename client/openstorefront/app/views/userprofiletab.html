@@ -27,7 +27,7 @@ limitations under the License.
                 <form class="form-horizontal" name='userForm' role="form"  ng-submit="saveUserProfile()">
                   <div class="form-group" >
                     <label class="col-sm-3 control-label">
-                      <img src="images/1.jpg" width="96" height="96" />
+			<i class="fa fa-5x fa-user" style=" margin-top: 46px;"></i>				                     
                     </label>
                     <div class="col-sm-6"  style="vertical-align:bottom;height:96">
                       <br /><br /><br /><br /> 
@@ -100,6 +100,21 @@ limitations under the License.
                     </div>
                     <p ng-show="!userProfileForm.mySwitch && !(userForm.email.$error.minlength && !userForm.email.$focused && userForm.email.$error.required && userForm.email.$invalid) && validateEmail(userProfileForm.email)" class="help-block" style="margin-top: 0px;"><button class="btn btn-default" type="button" ng-click="sendTestEmail()">Send Test Email&nbsp;<i class="fa fa-envelope"></i></button></p>
                   </div>	
+                  <div class="form-group" show-errors >
+                    <label class="col-sm-3 control-label">Phone:</label>
+                    <div class="col-sm-6">
+                      <input  type="text"                       
+                      id="phone"
+                      name="phone"
+                      placeholder="Phone"
+                      ng-disabled="!userProfileForm.mySwitch"
+                      class="form-control" 
+                      ng-model="userProfileForm.phone" 
+                      ng-minlength=0 
+                      ng-maxlength=80                      
+                      ng-focus />                    	                    
+                    </div>                 
+                  </div>						
                   <div class="form-group" show-errors>
                     <label class="col-sm-3 control-label">Organization:</label>
                     <div class="col-sm-6">

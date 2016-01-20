@@ -128,11 +128,13 @@ app.directive('selectall', ['$timeout','$parse', function($timeout, $parse) {
               that.each(function(e){
                 var thing = $(this);
                 var scopeItem = resolve(angular.element(thing).scope(), thing.attr('childselect'));
-                thing.find('input[type=checkbox]').prop('checked', true);
-                var found = _.contains(scope.selectall, scopeItem);
-                if (!found) {
-                  scope.internalChange = true;
-                  scope.selectall.push(scopeItem);
+                if (scopeItem) {
+                  thing.find('input[type=checkbox]').prop('checked', true);
+                  var found = _.contains(scope.selectall, scopeItem);
+                  if (!found) {
+                    scope.internalChange = true;
+                    scope.selectall.push(scopeItem);
+                  }
                 }
               })
               scope.count = children.length;
@@ -141,11 +143,16 @@ app.directive('selectall', ['$timeout','$parse', function($timeout, $parse) {
             (function(that){
               that.each(function(e){
                 var thing = $(this);
-                thing.find('input[type=checkbox]').prop('checked', false);
+                var scopeItem = resolve(angular.element(thing).scope(), thing.attr('childselect'));
+                if (scopeItem) {
+                  thing.find('input[type=checkbox]').prop('checked', false);
+                  var found = _.indexOf(scope.selectall, scopeItem);
+                  if (found >= 0) {
+                    scope.internalChange = true;
+                    scope.selectall.splice(found, 1);
+                  }
+                }
               })
-              scope.internalChange = true;
-              scope.selectall = [];
-              scope.count = 0;
             })(children);
           });
         }

@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import net.sourceforge.stripes.action.DefaultHandler;
+import net.sourceforge.stripes.action.ErrorResolution;
+import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 
 /**
@@ -27,10 +29,28 @@ public class ErrorAction
 		extends BaseAction
 {
 
+	private int errorCode;
+
 	@DefaultHandler
 	public Resolution errorTrap()
 	{
 		throw new OpenStorefrontRuntimeException("This is just a stub", "Expection is already handled.");
+	}
+
+	@HandlesEvent("Error")
+	public Resolution generateError()
+	{
+		return new ErrorResolution(errorCode, "The is a test response");
+	}
+
+	public int getErrorCode()
+	{
+		return errorCode;
+	}
+
+	public void setErrorCode(int errorCode)
+	{
+		this.errorCode = errorCode;
 	}
 
 }

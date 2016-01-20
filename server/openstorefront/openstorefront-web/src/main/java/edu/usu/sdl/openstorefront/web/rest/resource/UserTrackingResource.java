@@ -51,7 +51,7 @@ public class UserTrackingResource
 	@APIDescription("Get the list of tracking details on users passing in a filter")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTracking.class)
-	public Response getActiveComponentTracking(
+	public Response getActiveUserTrackings(
 			@PathParam("id")
 			@RequiredParam String userId,
 			@BeanParam FilterQueryParams filterQueryParams)
@@ -84,17 +84,17 @@ public class UserTrackingResource
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		writer.writeNext(new String[]{"User Name",
-									  "Organization",
-									  "User Type",
-									  "Event Date",
-									  "Event",
-									  "Client IP",
-									  "Browser",
-									  "Browser Version",
-									  "OS Platform",
-									  "User Agent",
-									  "Device Type",
-									  "Tracking ID"
+			"Organization",
+			"User Type",
+			"Event Date",
+			"Event",
+			"Client IP",
+			"Browser",
+			"Browser Version",
+			"OS Platform",
+			"User Agent",
+			"Device Type",
+			"Tracking ID"
 		});
 
 		data.append(stringWriter.toString());
@@ -104,6 +104,7 @@ public class UserTrackingResource
 		}
 
 		ResponseBuilder response = Response.ok(data.toString());
+		response.header("Content-Type", "application/csv");
 		response.header("Content-Disposition", "attachment; filename=\"userTrackingExport.csv\"");
 		return response.build();
 	}

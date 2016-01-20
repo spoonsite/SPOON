@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>openstorefront</artifactId>
 		<groupId>edu.usu.sdl</groupId>
-		<version>1.5</version>
+		<version>1.6</version>
 	</parent>
 
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront-web</artifactId>
-	<version>1.5</version>
+	<version>1.6</version>
 	<packaging>war</packaging>
 
 	<name>openstorefront-web</name>
@@ -65,6 +65,26 @@
 	<dependencies>
 			
 		<dependency>
+			<groupId>com.sencha</groupId>
+			<artifactId>extjs</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>font-awesome</artifactId>
+			<version>4.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.pointconstructor</groupId>
+			<artifactId>tinymcetextarea</artifactId>
+			<version>5.1</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>ckeditor</artifactId>
+			<version>4.5.4</version>
+		</dependency>				
+		<dependency>
 			<groupId>org.tuckey</groupId>
 			<artifactId>urlrewritefilter</artifactId>
 			<version>4.0.4</version>
@@ -95,6 +115,19 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.atmosphere</groupId>
+			<artifactId>atmosphere-runtime</artifactId>
+			<version>2.3.5</version>
+		</dependency>	
+	
+		<dependency>
+			<groupId>org.atmosphere</groupId>
+			<artifactId>atmosphere-socketio</artifactId>
+			<version>2.3.3-SNAPSHOT</version>
+		</dependency>
+		
 
 		<!--
 		<dependency>

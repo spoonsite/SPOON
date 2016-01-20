@@ -20,11 +20,14 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.ReportService;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.BaseReport;
 import java.nio.file.Path;
 import java.text.MessageFormat;
@@ -79,22 +82,35 @@ public class ReportServiceImpl
 		managedReport.setRunStatus(RunStatus.WORKING);
 		managedReport.setUpdateDts(TimeUtil.currentDate());
 		managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-		managedReport = persistenceService.persist(managedReport);
+		persistenceService.persist(managedReport);
 
 		//run report
 		try {
 			BaseReport reportGenerator = BaseReport.getReport(report);
 			reportGenerator.generateReport();
 
+			managedReport = persistenceService.findById(Report.class, report.getReportId());
 			managedReport.setRunStatus(RunStatus.COMPLETE);
 			managedReport.setUpdateDts(TimeUtil.currentDate());
 			managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-			managedReport = persistenceService.persist(managedReport);
+			persistenceService.persist(managedReport);
+
+			if (OpenStorefrontConstant.ANONYMOUS_USER.equals(managedReport.getCreateUser()) == false) {
+				NotificationEvent notificationEvent = new NotificationEvent();
+				notificationEvent.setEventType(NotificationEventType.REPORT);
+				notificationEvent.setUsername(managedReport.getCreateUser());
+				notificationEvent.setMessage("Report: " + TranslateUtil.translate(ReportType.class, managedReport.getReportType()) + " has finished generating.");
+				notificationEvent.setEntityName(Report.class.getSimpleName());
+				notificationEvent.setEntityId(managedReport.getReportId());
+				getNotificationService().postEvent(notificationEvent);
+			}
+
 		} catch (Exception e) {
+			managedReport = persistenceService.findById(Report.class, report.getReportId());
 			managedReport.setRunStatus(RunStatus.ERROR);
 			managedReport.setUpdateDts(TimeUtil.currentDate());
 			managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-			managedReport = persistenceService.persist(managedReport);
+			persistenceService.persist(managedReport);
 
 			ErrorInfo errorInfo = new ErrorInfo(e, null);
 			errorInfo.setErrorTypeCode(ErrorTypeCode.REPORT);

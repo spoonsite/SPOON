@@ -40,6 +40,20 @@ public class ComponentReviewCon
 	{
 	}
 
+	@Override
+	public String uniqueKey()
+	{
+		return getComponentReviewConPk().pkValue();
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		if (getComponentReviewConPk() != null) {
+			getComponentReviewConPk().setComponentReviewId(null);
+		}
+	}
+
 	public ComponentReviewConPk getComponentReviewConPk()
 	{
 		return componentReviewConPk;

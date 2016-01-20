@@ -247,10 +247,11 @@ public class UserProfileResource
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Path("/{id}/test-email")
 	public Response sendTestEmail(
-			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM) String username
+			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM) String username,
+			String email
 	)
 	{
-		service.getUserService().sendTestEmail(username);
+		service.getUserService().sendTestEmail(username, email);
 		return Response.ok().build();
 	}
 
@@ -385,7 +386,7 @@ public class UserProfileResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTrackingWrapper.class)
 	@Path("/{id}/tracking")
-	public Response getComponentTracking(
+	public Response getUserTracking(
 			@PathParam("id")
 			@RequiredParam String userId,
 			@BeanParam FilterQueryParams filterQueryParams)

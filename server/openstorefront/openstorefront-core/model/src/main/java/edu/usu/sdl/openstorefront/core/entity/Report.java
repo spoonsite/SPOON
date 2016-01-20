@@ -19,12 +19,17 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -34,7 +39,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author dshurtleff
  */
-@APIDescription("Hold report history record")
+@APIDescription("Holds a report history record")
 public class Report
 		extends StandardEntity<Report>
 {
@@ -64,6 +69,11 @@ public class Report
 	private String runStatus;
 
 	@ConsumeField
+	@DataType(ReportDataId.class)
+	@OneToMany(orphanRemoval = true)
+	private List<ReportDataId> ids;
+
+	@ConsumeField
 	@OneToOne(orphanRemoval = true)
 	private ReportOption reportOption;
 
@@ -81,6 +91,17 @@ public class Report
 			path = Paths.get(reportDir.getPath() + "/" + getReportId());
 		}
 		return path;
+	}
+
+	public Set<String> dataIdSet()
+	{
+		Set<String> dataSet = new HashSet<>();
+		if (getIds() != null) {
+			for (ReportDataId dataId : getIds()) {
+				dataSet.add(dataId.getId());
+			}
+		}
+		return dataSet;
 	}
 
 	public String getReportId()
@@ -141,6 +162,16 @@ public class Report
 	public void setReportFormat(String reportFormat)
 	{
 		this.reportFormat = reportFormat;
+	}
+
+	public List<ReportDataId> getIds()
+	{
+		return ids;
+	}
+
+	public void setIds(List<ReportDataId> ids)
+	{
+		this.ids = ids;
 	}
 
 }

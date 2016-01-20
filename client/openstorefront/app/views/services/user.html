@@ -13,11 +13,11 @@
 <div style="">
   <div style="text-align:left; padding-left:15px; padding-right:15px;">
     <h4>Additional Sort By options:
-      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('osPlatform')">OS Platform<span ng-show="query.filterObj.sortField === 'osPlatform' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'osPlatform' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
-      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('userAgent')">User Agent<span ng-show="query.filterObj.sortField === 'userAgent' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'userAgent' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
-      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('deviceType')">Device Type<span ng-show="query.filterObj.sortField === 'deviceType' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'deviceType' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
-      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('browserVersion')">Browser Version<span ng-show="query.filterObj.sortField === 'browserVersion' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'browserVersion' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
-      <button class="btn btn-sm btn-default" ng-click="changeSortOrder('trackingId')">Tracking ID<span ng-show="query.filterObj.sortField === 'trackingId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'trackingId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
+      <button type="button" class="btn btn-sm btn-default" ng-click="changeSortOrder('osPlatform')">OS Platform<span ng-show="query.filterObj.sortField === 'osPlatform' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'osPlatform' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
+      <button type="button" class="btn btn-sm btn-default" ng-click="changeSortOrder('userAgent')">User Agent<span ng-show="query.filterObj.sortField === 'userAgent' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'userAgent' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
+      <button type="button" class="btn btn-sm btn-default" ng-click="changeSortOrder('deviceType')">Device Type<span ng-show="query.filterObj.sortField === 'deviceType' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'deviceType' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
+      <button type="button" class="btn btn-sm btn-default" ng-click="changeSortOrder('browserVersion')">Browser Version<span ng-show="query.filterObj.sortField === 'browserVersion' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'browserVersion' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
+      <button type="button" class="btn btn-sm btn-default" ng-click="changeSortOrder('trackingId')">Tracking ID<span ng-show="query.filterObj.sortField === 'trackingId' && query.filterObj.sortOrder === 'DESC'"><i class="fa fa-sort-desc"></i></span><span ng-show="query.filterObj.sortField === 'trackingId' && query.filterObj.sortOrder === 'ASC'"><i class="fa fa-sort-asc"></i></span></button>
     </h4>
     <div style="clear:both;"></div>
     <table class="table table-striped table-bordered">
@@ -40,7 +40,7 @@
         <td>{{item.clientIp}}</td>
         <td>{{item.browser}}</td>
         <td style="padding:0px; width: 200px;">&nbsp;
-          <button class="btn btn-default" ng-click="item.show = !item.show"><i class="fa fa-view"></i>View Details</button>
+          <button type="button" class="btn btn-default" ng-click="item.show = !item.show"><i class="fa fa-view"></i>View Details</button>
         </td>
       </tr>
       <tr ng-show="item.show" ng-repeat-end>

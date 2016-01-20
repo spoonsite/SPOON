@@ -15,8 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
-import edu.usu.sdl.openstorefront.core.entity.Component;
-
 /**
  *
  * @author dshurtleff
@@ -24,19 +22,19 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 public class ComponentAdminView
 {
 
-	private Component component;
+	private ComponentView component;
 	private String integrationManagement;
 
 	public ComponentAdminView()
 	{
 	}
 
-	public Component getComponent()
+	public ComponentView getComponent()
 	{
 		return component;
 	}
 
-	public void setComponent(Component component)
+	public void setComponent(ComponentView component)
 	{
 		this.component = component;
 	}

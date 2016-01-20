@@ -41,6 +41,8 @@ public class OrganizationReport
 		extends BaseReport
 {
 
+	private static final String NO_ORG = "No Organization";
+
 	private List<UserProfile> userProfiles;
 
 	public OrganizationReport(Report report)
@@ -79,12 +81,10 @@ public class OrganizationReport
 		for (UserProfile userProfile : userProfiles) {
 			String organization = userProfile.getOrganization();
 			if (StringUtils.isBlank(organization)) {
-				if (StringUtils.isNotBlank(userProfile.getEmail())) {
-					String splitEmail[] = userProfile.getEmail().split("@");
-					if (splitEmail.length > 1) {
-						organization = splitEmail[1] + " (Based on Email)";
-					}
+				if (orgMap.get(NO_ORG) == null) {
+					orgMap.put(NO_ORG, new ArrayList<>());
 				}
+				orgMap.get(NO_ORG).add(userProfile);
 			}
 
 			if (StringUtils.isNotBlank(organization)) {

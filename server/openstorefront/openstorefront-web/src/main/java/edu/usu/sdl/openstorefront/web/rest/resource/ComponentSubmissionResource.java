@@ -18,14 +18,18 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.core.model.ComponentUploadOption;
+import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -34,6 +38,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -63,7 +68,7 @@ public class ComponentSubmissionResource
 	//  there, you just need to remove the '|| true'
 	@GET
 	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this only the top level component object)")
-	@DataType(Component.class)
+	@DataType(ComponentView.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getSubmissionsForUser()
 	{
@@ -73,7 +78,29 @@ public class ComponentSubmissionResource
 			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 
 			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
-			GenericEntity<List<Component>> entity = new GenericEntity<List<Component>>(components)
+
+			List<ComponentView> views = ComponentView.toViewList(components);
+
+			Component pendingChangeExample = new Component();
+			pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
+
+			QueryByExample queryPendingChanges = new QueryByExample(new Component());
+
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			specialOperatorModel.setExample(pendingChangeExample);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
+			queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
+
+			List<Component> pendingChanges = service.getPersistenceService().queryByExample(Component.class, queryPendingChanges);
+			Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
+			for (ComponentView componentView : views) {
+				List<Component> pendingChangesList = pendingChangesMap.get(componentView.getComponentId());
+				if (pendingChangesList != null) {
+					componentView.setNumberOfPendingChanges(pendingChangesList.size());
+				}
+			}
+
+			GenericEntity<List<ComponentView>> entity = new GenericEntity<List<ComponentView>>(views)
 			{
 			};
 			return sendSingleEntityResponse(entity);
@@ -83,7 +110,7 @@ public class ComponentSubmissionResource
 	}
 
 	@POST
-	@APIDescription("Creates a new Component Submission. Note: reviews are not saved.")
+	@APIDescription("Creates a new Component Submission.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentAll.class)
@@ -98,7 +125,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@APIDescription("Updates Component Submission. Note: reviews are not saved.")
+	@APIDescription("Updates Component Submission.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentAll.class)
@@ -122,10 +149,10 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@APIDescription("Updates Component Submission. Note: reviews are not saved.")
+	@APIDescription("Updates Component Submission Notification Email")
 	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(ComponentAll.class)
+	@Consumes({MediaType.TEXT_PLAIN})
+	@DataType(Component.class)
 	@Path("/{componentId}/setNotifyMe")
 	public Response setNotifyMe(
 			@PathParam("componentId")
@@ -137,12 +164,12 @@ public class ComponentSubmissionResource
 		if (component != null) {
 			response = ownerAnonymousCheck(component);
 			if (response == null) {
-				response = Response.ok().build();
 				if (email.isEmpty()) {
 					email = null;
 				}
 				component.setNotifyOfApprovalEmail(email);
 				service.getPersistenceService().persist(component);
+				response = Response.ok(component).build();
 			} else {
 				response = Response.status(Response.Status.FORBIDDEN)
 						.type(MediaType.TEXT_PLAIN)
@@ -167,8 +194,35 @@ public class ComponentSubmissionResource
 		if (component != null) {
 			response = ownerAnonymousCheck(component);
 			if (response == null) {
-				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 					service.getComponentService().submitComponentSubmission(componentId);
+					response = Response.ok().build();
+				} else {
+					response = Response.status(Response.Status.FORBIDDEN)
+							.type(MediaType.TEXT_PLAIN)
+							.entity("Unable to modify an approved submission.")
+							.build();
+				}
+			}
+		}
+		return response;
+	}
+
+	@PUT
+	@APIDescription("Submits a change request for approval.")
+	@Path("/{componentId}/submitchangerequest")
+	public Response submitChangeRequest(
+			@PathParam("componentId")
+			@RequiredParam String componentId
+	)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+		if (component != null) {
+			response = ownerAnonymousCheck(component);
+			if (response == null) {
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
+					service.getComponentService().submitChangeRequest(componentId);
 					response = Response.ok().build();
 				} else {
 					response = Response.status(Response.Status.FORBIDDEN)
@@ -194,22 +248,35 @@ public class ComponentSubmissionResource
 		if (component != null) {
 			response = ownerAnonymousCheck(component);
 			if (response == null) {
-				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
-					service.getComponentService().checkComponentCancelStatus(componentId, ApprovalStatus.NOT_SUBMITTED);
-					response = Response.ok().build();
-				} else {
-					response = Response.status(Response.Status.FORBIDDEN)
-							.type(MediaType.TEXT_PLAIN)
-							.entity("Unable to modify an approved submission.")
-							.build();
-				}
+				service.getComponentService().checkComponentCancelStatus(componentId, ApprovalStatus.NOT_SUBMITTED);
+				response = Response.ok().build();
 			}
 		}
 		return response;
 	}
 
 	@PUT
-	@APIDescription("Inactivates a incomplete Component Submission .")
+	@APIDescription("Unsubmits Change Request for approval.")
+	@Path("/{componentId}/unsubmitchangerequest")
+	public Response unsubmitChangeRequest(
+			@PathParam("componentId")
+			@RequiredParam String componentId
+	)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+		if (component != null) {
+			response = ownerAnonymousCheck(component);
+			if (response == null) {
+				service.getComponentService().checkChangeRequestCancelStatus(componentId, ApprovalStatus.NOT_SUBMITTED);
+				response = Response.ok().build();
+			}
+		}
+		return response;
+	}
+
+	@PUT
+	@APIDescription("Inactivates a incomplete Component Submission.")
 	@Path("/{componentId}/inactivate")
 	public Response inactivateComponent(
 			@PathParam("componentId")
@@ -237,9 +304,9 @@ public class ComponentSubmissionResource
 
 	private Response handleSaveComponent(ComponentAll componentAll, String approveStatus, boolean update)
 	{
-		ComponentUploadOption componentUploadOption = new ComponentUploadOption();
-		componentUploadOption.setUploadQuestions(true);
-		componentUploadOption.setUploadTags(true);
+		FileHistoryOption fileHistoryOption = new FileHistoryOption();
+		fileHistoryOption.setUploadQuestions(true);
+		fileHistoryOption.setUploadTags(true);
 
 		//validate all pieces
 		if (componentAll.getComponent() != null) {
@@ -254,7 +321,7 @@ public class ComponentSubmissionResource
 				if (exstingComponent != null) {
 					response = ownerAnonymousCheck(exstingComponent);
 					if (response == null) {
-						if (ApprovalStatus.APPROVED.equals(exstingComponent.getApprovalState()) == false || true) {
+						if (ApprovalStatus.APPROVED.equals(exstingComponent.getApprovalState()) == false) {
 
 							//Pull in existing media and resources (they may be saved seperately)
 							ComponentMedia componentMediaExample = new ComponentMedia();
@@ -301,7 +368,7 @@ public class ComponentSubmissionResource
 
 							componentAll.populateCreateUpdateFields(false);
 							componentAll.getComponent().setSubmittedDts(exstingComponent.getSubmittedDts());
-							componentAll = service.getComponentService().saveFullComponent(componentAll, componentUploadOption);
+							componentAll = service.getComponentService().saveFullComponent(componentAll, fileHistoryOption);
 
 							response = Response.status(Response.Status.OK).entity(componentAll).build();
 						} else {
@@ -315,7 +382,7 @@ public class ComponentSubmissionResource
 				return response;
 			} else {
 				componentAll.populateCreateUpdateFields(false);
-				componentAll = service.getComponentService().saveFullComponent(componentAll, componentUploadOption);
+				componentAll = service.getComponentService().saveFullComponent(componentAll, fileHistoryOption);
 				return Response.created(URI.create("v1/resource/componentsubmissions/" + componentAll.getComponent().getComponentId())).entity(componentAll).build();
 			}
 		} else {
@@ -336,6 +403,30 @@ public class ComponentSubmissionResource
 			response = ownerAnonymousCheck(componentAll.getComponent());
 			if (response == null) {
 				response = Response.ok(componentAll).build();
+			}
+		}
+		return response;
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@APIDescription("Create a copy of a component")
+	@DataType(Component.class)
+	@Path("/{id}/copy")
+	public Response copyComponent(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+
+		Component component = new Component();
+		component.setComponentId(componentId);
+		component = component.find();
+		if (component != null) {
+			response = ownerAnonymousCheck(component);
+			if (response == null) {
+				component = service.getComponentService().copy(componentId);
+				response = Response.created(URI.create("v1/resource/components/" + component.getComponentId())).entity(component).build();
 			}
 		}
 		return response;
@@ -362,7 +453,7 @@ public class ComponentSubmissionResource
 
 				//Need to check component to make sure it's not approved.
 				Component component = service.getPersistenceService().findById(Component.class, componentId);
-				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 					service.getComponentService().deleteBaseComponent(ComponentMedia.class, mediaId);
 				} else {
 					return Response.status(Response.Status.FORBIDDEN)
@@ -394,7 +485,7 @@ public class ComponentSubmissionResource
 			response = ownerAnonymousCheck(componentResource);
 			if (response == null) {
 				Component component = service.getPersistenceService().findById(Component.class, componentId);
-				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false || true) {
+				if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 					service.getComponentService().deleteBaseComponent(ComponentResource.class, resourceId);
 				} else {
 					return Response.status(Response.Status.FORBIDDEN)

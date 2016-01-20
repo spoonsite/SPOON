@@ -70,6 +70,18 @@ public class ComponentQuestionResponse
 	}
 
 	@Override
+	public String uniqueKey()
+	{
+		return getQuestionId() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getResponse();
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setResponseId(null);
+	}
+
+	@Override
 	public void updateFields(StandardEntity entity)
 	{
 		super.updateFields(entity);

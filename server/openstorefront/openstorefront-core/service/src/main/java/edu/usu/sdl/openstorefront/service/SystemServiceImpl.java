@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
@@ -526,6 +527,11 @@ public class SystemServiceImpl
 
 		int sectionNumber = 1;
 		for (HelpSectionAll helpSection : helpSectionAll.getChildSections()) {
+			if (helpSection.getHelpSection().getTitle() == null) {
+				helpSection.getHelpSection().setTitle("");
+				log.log(Level.FINE, "This is a stub help section.  Check help data to make sure that is desired.  *=admin sections; make sure child sections are appropriately starred.");
+			}
+
 			String titleSplit[] = helpSection.getHelpSection().getTitle().split(" ");
 			String titleNumber;
 			if (StringUtils.isBlank(parentSection)) {
@@ -560,6 +566,16 @@ public class SystemServiceImpl
 
 			sectionNumber++;
 		}
+	}
+
+	@Override
+	public void toggleDBlogger(boolean activate)
+	{
+		PropertiesManager.setProperty(PropertiesManager.KEY_DBLOG_ON, "" + Convert.toBoolean(activate));
+
+		//restart
+		DBLogManager.cleanup();
+		DBLogManager.init();
 	}
 
 }

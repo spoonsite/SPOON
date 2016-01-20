@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
-import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.io.Serializable;
 import javax.persistence.Version;
 
@@ -33,8 +32,7 @@ public class ComponentTypeRestriction
 {
 
 	@ConsumeField
-	@ValidValueType(value = {}, lookupClass = ComponentType.class)
-	@FK(ComponentType.class)
+	@FK(value = ComponentType.class, enforce = true)
 	private String componentType;
 
 	@Version

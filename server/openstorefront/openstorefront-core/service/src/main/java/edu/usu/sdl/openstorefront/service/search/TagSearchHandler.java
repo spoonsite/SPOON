@@ -67,7 +67,27 @@ public class TagSearchHandler
 				tagValue = tagValue.toLowerCase();
 				queryByExample.getExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
 			}
-			componentTag.setText(tagValue);
+			String likeValue = null;
+			switch (searchElement.getStringOperation()) {
+				case EQUALS:
+					componentTag.setText(tagValue);
+					break;
+				default:
+					likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
+					break;
+			}
+
+			if (likeValue != null) {
+				ComponentTag componentTagLike = new ComponentTag();
+
+				if (searchElement.getCaseInsensitive()) {
+					likeValue = likeValue.toLowerCase();
+					queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+				}
+				componentTagLike.setText(likeValue);
+
+				queryByExample.setLikeExample(componentTagLike);
+			}
 
 			List<ComponentTag> componentTags = serviceProxy.getPersistenceService().queryByExample(ComponentTag.class, queryByExample);
 			List<String> results = new ArrayList<>();

@@ -1,7 +1,7 @@
 
 #Clearinghouse Administrator Guide
 
-Version 1.4
+Version 1.6
 
 
 Space Dynamics Laboratory
@@ -412,12 +412,15 @@ memory affects the amount of concurrent users the server can support.
 >
 > 8GB -&gt; -Xmx6144m (Make sure to use a 64bit VM)
 
-**OPTIONAL:** In the conf/server.xml
+**OPTIONAL:** In the conf/server.xml (In Connector section)
 
--   Add http compression on. Compression="on"
+-   Add http compression on. 
+    Compression="on"
+    compressableMimeType="text/html,text/xml,text/plain,application/json,text/css,application/javascript"
 
-    Compressible
-    MimeType="text/html,text/xml,text/plain,application/json,text/css"
+- Set to use NIO Protocal
+  protocol="org.apache.coyote.http11.Http11NioProtocol"
+  maxThreads="1000"
 
 > Also, you may consider setting more aggressive connection settings
 > than the default depending on your expected load. See Tomcat
@@ -573,6 +576,8 @@ a.  \#Security Header
 > openam.header.lastname=sn
 >
 > openam.header.email=mail
+>
+> openam.header.phone=telephonenumber
 >
 > openam.header.group=memberOf
 >
@@ -992,7 +997,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **db.connectionpool.max** -               DB max pool size                                                                                                                                                           ( **40** )
 -  **db.user**             -                 Should match orientdb-server-config.xml                                                                                                                                    
 -  **db.pw**            -                    Should match orientdb-server-config.xml                                                                                                                                    
--  **ob.working.state.override.minutes** -  Max job running time. Use for Integrations. To determine if a job got stuck.                                                                                               ( **30** )
+-  **job.working.state.override.minutes** -  Max job running time. Use for Integrations. To determine if a job got stuck.                                                                                               ( **30** )
 -  **message.archive.days**        -         User message max age of archives                                                                                                                                           ( **30** )
 -  **message.queue.minmintues**    -         User message queue time or the time the message waits before sending.                                                                                                      ( **10** )
 -  **message.maxretires**    -               Max times the user message will try to send if unable to deliver.                                                                                                          ( **5** )
@@ -1000,10 +1005,12 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **app.title**   -                         Title of the application. Used in emails but, also other places.                                                                                                           ( **DI2E Storefront** )
 -  **external.usermanager**   -              Specifies the manager that is used for external user management. The manager must be supported by the application. ( IniRealmManager or LdapUserManager)                   ( **IniRealmManager** )
 -  **external.sync.activate**  -             Set to 'true' to run the sync                                                                                                                                              (**False**)
--  **dblog.on**        -                     Activates logging records to the database; Note: All log record are still logged in the server logs regardless of setting this. This just controls the database logging.   ( **True** )
--  **dblog.maxrecords**     -                Maximum database records to store                                                                                                                                          ( **100000** )
+-  **dblog.on**        -                     Activates logging records to the database; Note: All log record are still logged in the server logs regardless of setting this. This just controls the database logging.   ( **false** )
+-  **dblog.maxrecords**     -                Maximum database records to store                                                                                                                                          ( **50000** )
 -  **dblog.logSecurityFilter**  -            Log security API audit records; Note: setting this to true can cause noise when using the application log viewer.                                                          ( **False** )
 -  **jirafeedback.show** - Allows users to provide jira feedback (True/False) ( **True** )
+-  **filehistory.max.days** - Sets the max days to keep file history ( **180** )
+-  **notification.max.days** - Set the max days to keep nofitication messages ( **7** )
 
 #6. Database Management
 -----

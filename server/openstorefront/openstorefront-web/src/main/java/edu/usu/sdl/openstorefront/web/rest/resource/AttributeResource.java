@@ -204,6 +204,7 @@ public class AttributeResource
 		}
 
 		Response.ResponseBuilder response = Response.ok(data);
+		response.header("Content-Type", MediaType.APPLICATION_JSON);
 		response.header("Content-Disposition", "attachment; filename=\"allattributes.json\"");
 		return response.build();
 	}
@@ -232,6 +233,7 @@ public class AttributeResource
 			throw new OpenStorefrontRuntimeException("Unable to export articles.", ex);
 		}
 		Response.ResponseBuilder response = Response.ok(articleJson);
+		response.header("Content-Type", MediaType.APPLICATION_JSON);
 		response.header("Content-Disposition", "attachment; filename=\"articlesExport.json\"");
 		return response.build();
 	}

@@ -4,13 +4,12 @@
 	<parent>
 		<groupId>edu.usu.sdl</groupId>
 		<artifactId>openstorefront</artifactId>
-		<version>1.5</version>
+		<version>1.6</version>
 	</parent>
 	<artifactId>openstorefront-plugin</artifactId>
 	<packaging>pom</packaging>
 	<name>openstorefront-plugin</name>
 	<modules>
-		<module>openstorefront-plugin-wso2</module>
     <module>example</module>
   </modules>
  

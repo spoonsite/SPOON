@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>edu.usu.sdl</groupId>
 		<artifactId>openstorefront</artifactId>
-		<version>1.5</version>
+		<version>1.6</version>
 	</parent>
 	<artifactId>openstorefront-core</artifactId>
 	<packaging>pom</packaging>
@@ -14,7 +14,7 @@
 		<module>apidoc</module>
 		<module>common</module>
 		<module>service</module>
-		<module>model</module>
+		<module>model</module>		
 	</modules>
 	
 	<dependencies>

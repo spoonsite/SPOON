@@ -24,9 +24,12 @@ import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.FileHistory;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.core.model.ComponentUploadOption;
+import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
+import edu.usu.sdl.openstorefront.core.model.ImportContext;
 import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.parser.BaseAttributeParser;
@@ -34,6 +37,7 @@ import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -58,6 +62,7 @@ import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.validation.Validate;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -69,13 +74,29 @@ public class UploadAction
 
 	private static final Logger log = Logger.getLogger(UploadAction.class.getName());
 
-	@Validate(required = true, on = {"UploadLookup", "UploadComponent", "UploadArticles", "UploadAttributes", "UploadSvcv4", "UploadPlugin"})
+	@Validate(required = true, on = {
+		"UploadLookup",
+		"UploadComponent",
+		"UploadArticles",
+		"UploadAttributes",
+		"UploadSvcv4",
+		"UploadPlugin",
+		"ImportData"
+	})
 	private FileBean uploadFile;
 
 	@Validate(required = true, on = "UploadLookup")
 	private String entityName;
 
-	private ComponentUploadOption componentUploadOptions = new ComponentUploadOption();
+	private FileHistoryOption componentUploadOptions = new FileHistoryOption();
+
+	@Validate(required = true, on = "ImportData")
+	private String fileType;
+
+	@Validate(required = true, on = "ImportData")
+	private String fileFormat;
+	private String dataMappingId;
+	private String dataSource;
 
 	@HandlesEvent("UploadLookup")
 	public Resolution uploadLookup()
@@ -384,6 +405,70 @@ public class UploadAction
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
 
+	@HandlesEvent("ImportData")
+	public Resolution importData()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+
+			File tempFile = null;
+			try {
+				tempFile = File.createTempFile("import-", "tmp", FileSystemManager.getDir(FileSystemManager.MAIN_TEMP_DIR));
+				uploadFile.save(tempFile);
+
+				try (InputStream input = new FileInputStream(tempFile)) {
+					FileFormatCheck fileFormatCheck = new FileFormatCheck();
+					fileFormatCheck.setMimeType(uploadFile.getContentType());
+					fileFormatCheck.setFileFormat(fileFormat);
+					fileFormatCheck.setInput(input);
+
+					String formatError = service.getImportService().checkFormat(fileFormatCheck);
+					if (StringUtils.isNotBlank(formatError)) {
+						errors.put("uploadFile", formatError);
+					}
+				} catch (IOException ioe) {
+					throw ioe;
+				}
+
+				if (errors.isEmpty()) {
+					ImportContext importContext = new ImportContext();
+					importContext.setInput(new FileInputStream(tempFile));
+
+					FileHistory fileHistory = new FileHistory();
+					fileHistory.setMimeType(uploadFile.getContentType());
+					if (StringUtils.isNotBlank(dataSource)) {
+						fileHistory.setDataSource(dataSource);
+					}
+					fileHistory.setOriginalFilename(uploadFile.getFileName());
+					fileHistory.setFileFormat(fileFormat);
+					fileHistory.setFileHistoryOption(componentUploadOptions);
+					importContext.getFileHistoryAll().setFileHistory(fileHistory);
+
+					service.getImportService().importData(importContext);
+				}
+
+			} catch (IOException ex) {
+				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
+				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
+			} finally {
+				try {
+					if (uploadFile != null) {
+						uploadFile.delete();
+					}
+					if (tempFile != null) {
+						tempFile.delete();
+					}
+				} catch (IOException ex) {
+					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+				}
+			}
+
+			return streamUploadResponse(errors);
+		}
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
 	public FileBean getUploadFile()
 	{
 		return uploadFile;
@@ -404,14 +489,54 @@ public class UploadAction
 		this.entityName = entityName;
 	}
 
-	public ComponentUploadOption getComponentUploadOptions()
+	public FileHistoryOption getComponentUploadOptions()
 	{
 		return componentUploadOptions;
 	}
 
-	public void setComponentUploadOptions(ComponentUploadOption componentUploadOptions)
+	public void setComponentUploadOptions(FileHistoryOption componentUploadOptions)
 	{
 		this.componentUploadOptions = componentUploadOptions;
+	}
+
+	public String getFileType()
+	{
+		return fileType;
+	}
+
+	public void setFileType(String fileType)
+	{
+		this.fileType = fileType;
+	}
+
+	public String getFileFormat()
+	{
+		return fileFormat;
+	}
+
+	public void setFileFormat(String fileFormat)
+	{
+		this.fileFormat = fileFormat;
+	}
+
+	public String getDataMappingId()
+	{
+		return dataMappingId;
+	}
+
+	public void setDataMappingId(String dataMappingId)
+	{
+		this.dataMappingId = dataMappingId;
+	}
+
+	public String getDataSource()
+	{
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource)
+	{
+		this.dataSource = dataSource;
 	}
 
 }

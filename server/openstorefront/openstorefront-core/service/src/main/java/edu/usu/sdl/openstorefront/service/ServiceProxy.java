@@ -18,8 +18,11 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.core.api.AlertService;
 import edu.usu.sdl.openstorefront.core.api.AsyncService;
 import edu.usu.sdl.openstorefront.core.api.AttributeService;
+import edu.usu.sdl.openstorefront.core.api.BrandingService;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
+import edu.usu.sdl.openstorefront.core.api.ImportService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
+import edu.usu.sdl.openstorefront.core.api.NotificationService;
 import edu.usu.sdl.openstorefront.core.api.OrganizationService;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.PluginService;
@@ -29,9 +32,12 @@ import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.UserService;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
+import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
+import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.PluginServicePrivate;
+import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import java.util.Objects;
 
@@ -45,6 +51,8 @@ public class ServiceProxy
 		implements Service
 {
 
+	private String modificationType = ModificationType.API;
+
 	protected PersistenceService persistenceService = new OrientPersistenceService();
 	private LookupService lookupService;
 	private AttributeService attributeService;
@@ -52,6 +60,7 @@ public class ServiceProxy
 	private ComponentService componentService;
 	private ComponentServicePrivate componentServicePrivate;
 	private SearchService searchService;
+	private SearchServicePrivate searchServicePrivate;
 	private UserService userService;
 	private UserServicePrivate userServicePrivate;
 	private SystemService systemService;
@@ -60,9 +69,18 @@ public class ServiceProxy
 	private OrganizationService organizationService;
 	private PluginService pluginService;
 	private PluginServicePrivate pluginServicePrivate;
+	private ImportService importService;
+	private ImportServicePrivate importServicePrivate;
+	private BrandingService brandingService;
+	private NotificationService notificationService;
 
 	public ServiceProxy()
 	{
+	}
+
+	public ServiceProxy(String modificationType)
+	{
+		this.modificationType = modificationType;
 	}
 
 	public ServiceProxy(PersistenceService persistenceService)
@@ -73,6 +91,11 @@ public class ServiceProxy
 	public static ServiceProxy getProxy()
 	{
 		return new ServiceProxy();
+	}
+
+	public static ServiceProxy getProxy(String modificationType)
+	{
+		return new ServiceProxy(modificationType);
 	}
 
 	@Override
@@ -129,6 +152,14 @@ public class ServiceProxy
 			searchService = DynamicProxy.newInstance(new SearchServiceImpl());
 		}
 		return searchService;
+	}
+
+	public SearchServicePrivate getSearchServicePrivate()
+	{
+		if (searchServicePrivate == null) {
+			searchServicePrivate = DynamicProxy.newInstance(new SearchServiceImpl());
+		}
+		return searchServicePrivate;
 	}
 
 	@Override
@@ -210,6 +241,41 @@ public class ServiceProxy
 	}
 
 	@Override
+	public ImportService getImportService()
+	{
+		if (importService == null) {
+			importService = DynamicProxy.newInstance(new ImportServiceImpl());
+		}
+		return importService;
+	}
+
+	public ImportServicePrivate getImportServicePrivate()
+	{
+		if (importServicePrivate == null) {
+			importServicePrivate = DynamicProxy.newInstance(new ImportServiceImpl());
+		}
+		return importServicePrivate;
+	}
+
+	@Override
+	public BrandingService getBrandingService()
+	{
+		if (brandingService == null) {
+			brandingService = DynamicProxy.newInstance(new BrandingServiceImpl());
+		}
+		return brandingService;
+	}
+
+	@Override
+	public NotificationService getNotificationService()
+	{
+		if (notificationService == null) {
+			notificationService = DynamicProxy.newInstance(new NotificationServiceImpl());
+		}
+		return notificationService;
+	}
+
+	@Override
 	public <T extends AsyncService> T getAsyncProxy(T originalProxy)
 	{
 		TaskRequest taskRequest = new TaskRequest();
@@ -224,6 +290,16 @@ public class ServiceProxy
 		Objects.requireNonNull(originalProxy, "Original Service is required");
 		T asyncService = AsyncProxy.newInstance(originalProxy, taskRequest);
 		return asyncService;
+	}
+
+	public String getModificationType()
+	{
+		return modificationType;
+	}
+
+	public void setModificationType(String modificationType)
+	{
+		this.modificationType = modificationType;
 	}
 
 }

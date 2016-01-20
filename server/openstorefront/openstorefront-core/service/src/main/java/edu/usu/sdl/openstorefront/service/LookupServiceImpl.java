@@ -114,7 +114,7 @@ public class LookupServiceImpl
 		}
 		if (oldEntity != null) {
 			oldEntity.setDescription(lookupEntity.getDescription());
-			oldEntity.setDetailedDecription(lookupEntity.getDetailedDecription());
+			oldEntity.setDetailedDescription(lookupEntity.getDetailedDescription());
 			oldEntity.setSortOrder(lookupEntity.getSortOrder());
 			oldEntity.setHighlightStyle(lookupEntity.getHighlightStyle());
 			oldEntity.setActiveStatus(lookupEntity.getActiveStatus());
@@ -146,7 +146,7 @@ public class LookupServiceImpl
 					LookupEntity existing = lookupMap.get(lookupEntity.getCode());
 					if (existing != null) {
 						existing.setDescription(lookupEntity.getDescription());
-						existing.setDetailedDecription(lookupEntity.getDetailedDecription());
+						existing.setDetailedDescription(lookupEntity.getDetailedDescription());
 						existing.setSortOrder(lookupEntity.getSortOrder());
 						existing.setHighlightStyle(lookupEntity.getHighlightStyle());
 						existing.setActiveStatus(LookupEntity.ACTIVE_STATUS);

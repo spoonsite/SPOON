@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -52,6 +53,9 @@ public class ComponentReport
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+		if (!report.dataIdSet().isEmpty()) {
+			components = components.stream().filter(c -> report.dataIdSet().contains(c.getComponentId())).collect(Collectors.toList());
+		}
 	}
 
 	@Override

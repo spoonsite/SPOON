@@ -16,6 +16,9 @@
 package edu.usu.sdl.openstorefront.core.model.search;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,12 +27,16 @@ import java.util.List;
  * @author dshurtleff
  */
 public class SearchModel
+		implements Serializable
 {
 
 	private String sortField;
 	private String sortDirection = OpenStorefrontConstant.SORT_DESCENDING;
 	private int startOffset;
 	private int max = Integer.MAX_VALUE;
+
+	@ConsumeField
+	@DataType(SearchElement.class)
 	private List<SearchElement> searchElements = new ArrayList<>();
 
 	public SearchModel()

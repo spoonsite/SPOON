@@ -16,117 +16,110 @@ limitations under the License.
 <div id="mainContent">
 
 
-  <div class="search2">
-    <div class="text-center bannerText">
-      <h4>
-        <blockquote>
-          <!-- <strong>DI2E Clearinghouse:</strong><br> -->
-          <small>A registry of applications, services, and components, as well as guidebooks and other <span >DI2E</span> guidance, to support the <span >DI2E</span> user community of developers, system integrators and operational end users.</small>
-          <!-- <br><span>&mdash;&nbsp;Anonymous</span> -->
-        </blockquote>
-      </h4>
-      <!-- <div style="margin-top:52px;"> <button class="btn btn-default" ng-click="print('component','67');">Print me</button></div> -->
-    </div>
-  </div>
-
-  <div class="search " style="position:relative;">
-    <div class="text-center getstarted">
-      <h4 >
-        <label class="imitateLink" ng-click="focusOnSearch()" for="search-header">
-          <img src="images/logo/logo-words.svg" alt="" style="height: 150px; width:100%">
-          <br>
-          <small ng-cloak>Browse through <span ng-show="componentCount" >{{componentCount.numberOfComponents}}</span> DI2E components
-          </small>
-          <br>
-          <!-- <i class="fa fa-caret-down"></i> -->
-        </label>
-      </h4>
-        <!--       
-        <div class="svcv4ModeButton imitate" ng-show="!svcv4Mode"><button ng-click="svcv4Mode = !svcv4Mode" class="btn btn-default">SVC-v4 Mode</button></div>
-        <div class="svcv4ModeButton imitate" ng-show="svcv4Mode"><button ng-click="svcv4Mode = !svcv4Mode" class="btn btn-default">Search Mode</button></div> 
-      -->
-    </div>
-    <div>
-      <div class="center navSearch defaultSearch">
-        <div  ng-show="!svcv4Mode">
-          <div class="pull-right searchAllButton" style="margin-left: 10px;">
-            <button ng-click="svcv4Mode = !svcv4Mode"  style="font-size: 1.5em; height: 50px;  margin-left:10px;" class="btn btn-primary pull-right">SvcV-4</button>
-            <button ng-click="searchKey = 'all'; goToSearch('search', 'all', true)" style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Show All Listings
-            </button>
-          </div>
-          <form ng-submit="goToSearch('search', searchKey)">
-            <div class="pull-right searchBoxButton">
-              <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-search"></i></button>
-            </div>
-            <div class="navSearchBar">
-              <input type="text" class="form-control searchBar" ng-model="searchKey"  placeholder="Search" typeahead="key.description as key.description for key in typeahead | filter:$viewValue | limitTo:8" autofocus id="mainSearchBar">
-            </div>
-          </form>
+    <div class="search2">
+        <div class="text-center bannerText">
+            <h4>
+                <blockquote style="text-align: center;">
+                    <!-- <strong>DI2E Clearinghouse:</strong><br> -->
+                    <small>One Registry for the IC, One Registry for the DOD, One Registry to bind them all</small>
+                    <!-- <br><span>&mdash;&nbsp;Anonymous</span> -->
+                </blockquote>
+            </h4>
+            <!-- <div style="margin-top:52px;"> <button class="btn btn-default" ng-click="print('component','67');">Print me</button></div> -->
         </div>
-        <div ng-show="svcv4Mode">
-          <button ng-click="svcv4Mode = !svcv4Mode"  style="font-size: 1.5em; height: 50px;" class="btn btn-primary pull-right">Search</button>
-          <!-- <svcv4-diagram ng-controller="Svc4ArchDiagramController"></svcv4-diagram>   -->
-          <architecture></architecture>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <div class="nifty2col color_background_white">
+    <div class="search " style="position:relative;">
+        <div class="text-center getstarted">
+            <h4 >
+                <label class="imitateLink" ng-click="focusOnSearch()" for="search-header">
+                    <img src="client/images/di2elogo-lg.png" alt="" style="height: 200px; width:100%">
+                    <br>
+                    <small ng-cloak>Browse through <span ng-show="componentCount" >{{componentCount.numberOfComponents}}</span> DI2E components
+                    </small>
+                    <br>
+                    <!-- <i class="fa fa-caret-down"></i> -->
+                </label>
+            </h4>
+            <!--       
+            <div class="svcv4ModeButton imitate" ng-show="!svcv4Mode"><button ng-click="svcv4Mode = !svcv4Mode" class="btn btn-default">SVC-v4 Mode</button></div>
+            <div class="svcv4ModeButton imitate" ng-show="svcv4Mode"><button ng-click="svcv4Mode = !svcv4Mode" class="btn btn-default">Search Mode</button></div> 
+            -->
+        </div>
+        <div>
+            <div class="center navSearch defaultSearch">
+                    <form ng-submit="goToSearch('search', searchKey)">
+                        <div style="display:block">
+                            <div class="input-group">
+                                <div class="input-group-btn">
+                                    <button  class="btn btn-default" data-toggle="tooltip" title="Search Tools" type="button" style="font-size:1.5em; background-color:#efefef;" ng-click="openSearchTools()"><i class="fa fa-lg fa-th"></i></button>
+                                </div>
+                                <input type="text" class="form-control" ng-model="searchKey"  placeholder="Search" typeahead="key.description as key.description for key in typeahead | filter:$viewValue | limitTo:8" autofocus id="mainSearchBar">
+                                <div class="input-group-btn">
+                                    <button type="submit" data-container="body" data-toggle="tooltip" title="Keyword Search" class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
 
-    <div class="col-sm-6 first" style="padding-bottom: 30px;" ng-cloak>
-      <div>
-        <h1>Highlights</h1> 
-        <hr>
-      </div>
-      <div class="content">
-        <div class="row">
-          <div  style="text-align: left" ng-if="highlights.length > 0">
-            <ul style="list-style-type:square;">
-              <li class="imitateLink" style="padding-bottom: 20px;" ng-repeat="highlight in highlights">      
-                <a href="{{highlight.link}}">
-                  <span class="listing_short_title_text">{{highlight.title}}<classification ls style="font-size:12px; font-weight:normal"  ng-model="highlight"></classification></span>     
-                </a>
-                <div read-more>
-                  <div style="font-size: 12px; color: #555555;" dynamichtml="highlight.description">
-                  </div>    
+    <div class="nifty2col color_background_white">
+
+        <div class="col-sm-6 first" style="padding-bottom: 30px;" ng-cloak>
+            <div>
+                <h1>Highlights</h1> 
+                <hr>
+            </div>
+            <div class="content">
+                <div class="row">
+                    <div  style="text-align: left" ng-if="highlights.length > 0">
+                        <ul style="list-style-type:square;">
+                            <li class="imitateLink" style="padding-bottom: 20px;" ng-repeat="highlight in highlights">      
+                                <a href="{{highlight.link}}">
+                                    <span class="listing_short_title_text">{{highlight.title}}<classification ls style="font-size:12px; font-weight:normal"  ng-model="highlight"></classification></span>     
+                                </a>
+                                <div read-more>
+                                    <div style="font-size: 12px; color: #555555;" dynamichtml="highlight.description">
+                                    </div>    
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div ng-if="highlights.length == 0" style="text-align: center">
+                        There are no highlights at this time.
+                    </div>
                 </div>
-              </li>
-            </ul>
-          </div>
-          <div ng-if="highlights.length == 0" style="text-align: center">
-            There are no highlights at this time.
-          </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="col-sm-6 second" ng-cloak>
-      <div><h1>Most Recently Added</h1> <hr></div>
-      <div class="content">
-        <div class="row">
-          <ul style="list-style-type:square;">
-            <li ng-repeat="item in recentlyAdded">
-              <div ng-if="item.listingType === 'ARTICLE'" class="imitateLink" ng-click="goToLanding(item.articleAttributeType, item.articleAttributeCode)">
-                <a>
-                  <span class="listing_short_title_text">{{item.name}}<classification ls style="font-size:12px; font-weight:normal"  ng-model="item"></classification></span>
-                </a>
-                <div class="shortDescription"  style="font-size: 12px; color: #555555;"><span ng-bind-html="item.description"></span></div>
-              </div>
-              <div ng-if="item.listingType === 'COMPONENT'" class="imitateLink" ng-click="goTo('single', {id: item.componentId})">
-                <a>
-                  <span class="listing_short_title_text">{{item.name}}<classification ls style="font-size:12px; font-weight:normal"  ng-model="item"></classification></span>
-                </a>
-                <div class="shortDescription"  style="font-size: 12px; color: #555555;"><span ng-bind-html="item.description"></span></div>
-              </div>
-            </li>
-          </ul>
+        <div class="col-sm-6 second" ng-cloak>
+            <div><h1>Most Recently Added</h1> <hr></div>
+            <div class="content">
+                <div class="row">
+                    <ul style="list-style-type:square;">
+                        <li ng-repeat="item in recentlyAdded">
+                            <div ng-if="item.listingType === 'ARTICLE'" class="imitateLink" ng-click="goToLanding(item.articleAttributeType, item.articleAttributeCode)">
+                                <a>
+                                    <span class="listing_short_title_text">{{item.name}}<classification ls style="font-size:12px; font-weight:normal"  ng-model="item"></classification></span>
+                                </a>
+                                <div class="shortDescription"  style="font-size: 12px; color: #555555;"><span ng-bind-html="item.description"></span></div>
+                            </div>
+                            <div ng-if="item.listingType === 'COMPONENT'" class="imitateLink" ng-click="goTo('single', {id: item.componentId})">
+                                <a>
+                                    <span class="listing_short_title_text">{{item.name}}<classification ls style="font-size:12px; font-weight:normal"  ng-model="item"></classification></span>
+                                </a>
+                                <div class="shortDescription"  style="font-size: 12px; color: #555555;"><span ng-bind-html="item.description"></span></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-      </div>
+        <div class="liner">
+        </div>
+        <div style="clear:both;"></div>
     </div>
-    <div class="liner">
-    </div>
-    <div style="clear:both;"></div>
-  </div>
 </div>
 
 
@@ -161,41 +154,41 @@ limitations under the License.
 </div>
 -->
 <footer style="padding-top: 20px; padding-bottom: 20px;" class="home_footer">
-  <div class="footer_content">
-    <div class="column">
-      <div class="title">About Us</div>
-      <ul>
-        <li><a href="https://intellipedia.intelink.gov/wiki/Defense_Intelligence_Information_Enterprise" title="Requires Intellipedia authentication">What is DI2E?</a>&nbsp;<i class="icon-lock" title="Authentication Required"></i></li>
-        <li><a href="https://intellipedia.intelink.gov/wiki/DI2E_Framework" title="Requires Intellipedia authentication">What is DI2E Framework?</a>&nbsp;<i class="icon-lock"></i></li>
-      </ul>
+    <div class="footer_content">
+        <div class="column">
+            <div class="title">About Us</div>
+            <ul>
+                <li><a href="https://intellipedia.intelink.gov/wiki/Defense_Intelligence_Information_Enterprise" title="Requires Intellipedia authentication">What is DI2E?</a>&nbsp;<i class="icon-lock" title="Authentication Required"></i></li>
+                <li><a href="https://intellipedia.intelink.gov/wiki/DI2E_Framework" title="Requires Intellipedia authentication">What is DI2E Framework?</a>&nbsp;<i class="icon-lock"></i></li>
+            </ul>
+        </div>
+        <div class="column">
+            <div class="title">Links</div>
+            <ul>
+                <li><a href="https://devtools.di2e.net">DI2E Dev tools</a></li>
+            </ul>
+        </div>
+        <div class="column">
+            <div class="title">F.A.Q.</div>
+            <ul>
+                <li><a href="https://devtools.di2e.net/sla.php">Our Service Commitment</a></li>
+                <li><a href="https://devtools.di2e.net/onboarding.php">Our Onboarding Process</a></li>
+                <li><a href="https://devtools.di2e.net/privacy.php">Our Privacy Policy</a></li>
+                <li><a href="https://devtools.di2e.net/terms_of_service.php">Our Terms of Service</a></li>
+            </ul>
+        </div>
+        <div class="column">
+            <div class="title">Contact Us</div>
+            <ul>
+                <li><a href="https://devtools.di2e.net/accounts.php">Request an Account</a></li>
+                <li><a href="mailto:di2eframeworkinfo@di2e.net">General Questions</a></li>
+                <li><a href="https://devtools.di2e.net/support.php">Contact Support</a></li>
+            </ul>
+        </div>
+        <div style="clear:both"></div>    
     </div>
-    <div class="column">
-      <div class="title">Links</div>
-      <ul>
-        <li><a href="https://devtools.di2e.net">DI2E Dev tools</a></li>
-      </ul>
-    </div>
-    <div class="column">
-      <div class="title">F.A.Q.</div>
-      <ul>
-        <li><a href="https://devtools.di2e.net/sla.php">Our Service Commitment</a></li>
-        <li><a href="https://devtools.di2e.net/onboarding.php">Our Onboarding Process</a></li>
-        <li><a href="https://devtools.di2e.net/privacy.php">Our Privacy Policy</a></li>
-        <li><a href="https://devtools.di2e.net/terms_of_service.php">Our Terms of Service</a></li>
-      </ul>
-    </div>
-    <div class="column">
-      <div class="title">Contact Us</div>
-      <ul>
-        <li><a href="https://devtools.di2e.net/accounts.php">Request an Account</a></li>
-        <li><a href="mailto:di2eframeworkinfo@di2e.net">General Questions</a></li>
-        <li><a href="https://devtools.di2e.net/support.php">Contact Support</a></li>
-      </ul>
-    </div>
-    <div style="clear:both"></div>    
-  </div>
-  <div class="copyright">&#169; DI2E&nbsp;|&nbsp;<a href="https://devtools.di2e.net/consent.php">Consent to Monitoring</a>&nbsp;|&nbsp;All rights reserved</div>
-  <div class="copyright"><span style="color: white;">{{appverison}}</span></div> 
+    <div class="copyright">&#169; DI2E&nbsp;|&nbsp;<a href="https://devtools.di2e.net/consent.php">Consent to Monitoring</a>&nbsp;|&nbsp;All rights reserved</div>
+    <div class="copyright"><span style="color: white;">{{appverison}}</span></div> 
 </footer>
 
 <!-- build:css({.tmp,app}) styles/homepage.css -->

@@ -36,7 +36,6 @@ var app = angular
     'ngAnimate',
     'ngCkeditor',    
     'ngGrid',
-    'ngMockE2E',
     'bootstrapLightbox',
     'angular-carousel',
     'angulartics.google.analytics',
@@ -44,13 +43,13 @@ var app = angular
     'ngIdle',    
     'multi-select',
     'angular.filter',
-    'notifications',
     'com.2fdevs.videogular',
     'com.2fdevs.videogular.plugins.controls',
     'com.2fdevs.videogular.plugins.overlayplay',
     'com.2fdevs.videogular.plugins.poster',
     'pasvaz.bindonce',
     'infinite-scroll',
+    'colorpicker.module',
     'd3'
   // end of dependency injections
   ]
@@ -132,7 +131,7 @@ var app = angular
       }
     },
     label: 'Help Page'
-  }) 
+  })  
   .otherwise({
     redirectTo: '/'
   });
@@ -229,7 +228,6 @@ var app = angular
     '$location',
     '$route',
     '$timeout',
-    '$httpBackend',
     '$q',
     'auth',
     '$anchorScroll',
@@ -238,9 +236,10 @@ var app = angular
     '$idle',
     '$keepalive',
     '$uiModal',
-    function ($rootScope, localCache, Business, $location, $route, $timeout, $httpBackend, $q, Auth, $anchorScroll, $routeParams, $analytics, $idle, $keepalive, $uiModal) {/* jshint unused: false*/
+    function ($rootScope, localCache, Business, $location, $route, $timeout, $q, Auth, $anchorScroll, $routeParams, $analytics, $idle, $keepalive, $uiModal) {/* jshint unused: false*/
 
       // initialization stuff.
+      $rootScope._ = window._;
       $rootScope.messageType = '';
       $rootScope.messageContacts = null;
       $rootScope.ieVersionCheck = false;
@@ -254,8 +253,42 @@ var app = angular
         if ($location.$$path === '/single'){
           label = 'Component ' + $location.search().id;
         }
+        $timeout(function(){
+          $('.tooltip').remove(); 
+          $('.popover').remove(); 
+        })
+        $rootScope.$broadcast('$CLOSE_MODALS');
         $rootScope.eventHistory.push({path: $location.$$path, search: $location.search(), label: label});
       });
+
+        $rootScope.getConfigInit = function () {
+            var deferred = $q.defer();
+//      Business.getConfig().then(function(config){
+//          if (config){
+            Business.brandingservice.getCurrentBrandingView(true).then(function (brandingView) {
+                $rootScope.brandingView = brandingView;
+                deferred.resolve(brandingView);
+            }, function () {
+                deferred.reject(false);
+                $rootScope.brandingView = {};
+            });
+
+//          }
+//      });
+            return deferred.promise;
+        };
+
+
+        $rootScope.getConfig = function () {
+            var deferred = $q.defer();
+
+            $rootScope.getConfigInit().then(function (brandingView) {
+                deferred.resolve(brandingView);
+            }, function(){
+                deferred.reject(false);
+            });
+            return deferred.promise;
+        };
 
       $rootScope.goToBreadcrumb = function(breadcrumb){
         console.log('breadcrumbs', breadcrumb);
@@ -581,17 +614,17 @@ var app = angular
       // HttpBackend
       //////////////////////////////////////////////////////////////////////////////
       //Mock Back End  (use passThrough to route to server)
-      $httpBackend.whenGET(/views.*/).passThrough();
-      $httpBackend.whenGET(/Article.*/).passThrough();
-      $httpBackend.whenPOST(/Article.*/).passThrough();
-      $httpBackend.whenGET('System.action?UserAgent').passThrough();
-      $httpBackend.whenGET('System.action?AppVersion').passThrough();
+      // $httpBackend.whenGET(/views.*/).passThrough();
+      // $httpBackend.whenGET(/Article.*/).passThrough();
+      // $httpBackend.whenPOST(/Article.*/).passThrough();
+      // $httpBackend.whenGET('System.action?UserAgent').passThrough();
+      // $httpBackend.whenGET('System.action?AppVersion').passThrough();
 
       // LET THEM ALL THROUGH      
-      $httpBackend.whenGET(/api\/v1\/*/).passThrough();
-      $httpBackend.whenPUT(/api\/v1\/*/).passThrough();
-      $httpBackend.whenDELETE(/api\/v1\/*/).passThrough();
-      $httpBackend.whenPOST(/api\/v1\/*/).passThrough();
+      // $httpBackend.whenGET(/api\/v1\/*/).passThrough();
+      // $httpBackend.whenPUT(/api\/v1\/*/).passThrough();
+      // $httpBackend.whenDELETE(/api\/v1\/*/).passThrough();
+      // $httpBackend.whenPOST(/api\/v1\/*/).passThrough();
 
 
 
@@ -610,8 +643,12 @@ var app = angular
       }
 
       $rootScope.logout = function() {
-        window.location.replace('/openstorefront/Login.action?Logout');
-      }
+        if (window.parent) {
+          window.parent.location.replace('/openstorefront/Login.action?Logout');
+        } else {
+          window.location.replace('/openstorefront/Login.action?Logout');
+        }
+      };
 
       $rootScope.print = function(type, id) {
         $location.search({

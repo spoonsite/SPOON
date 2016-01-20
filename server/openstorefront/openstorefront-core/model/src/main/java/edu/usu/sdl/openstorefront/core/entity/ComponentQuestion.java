@@ -68,6 +68,18 @@ public class ComponentQuestion
 	}
 
 	@Override
+	public String uniqueKey()
+	{
+		return getQuestion();
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setQuestionId(null);
+	}
+
+	@Override
 	public void updateFields(StandardEntity entity)
 	{
 		super.updateFields(entity);

@@ -33,7 +33,6 @@ import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -64,16 +63,20 @@ public class Component
 
 	@NotNull
 	@ConsumeField
-	@ValidValueType(value = {}, lookupClass = ComponentType.class)
 	@DefaultFieldValue(ComponentType.COMPONENT)
 	@APIDescription("Type of listing")
-	@FK(ComponentType.class)
+	@FK(value = ComponentType.class, enforce = true)
 	private String componentType;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
 	@ConsumeField
-	@APIDescription("External system id")
+	@APIDescription("External system guid")
 	private String guid;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	@ConsumeField
+	@APIDescription("External system id")
+	private String externalId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
@@ -94,7 +97,8 @@ public class Component
 	private String version;
 
 	@NotNull
-	@ValidValueType(value = {}, lookupClass = ApprovalStatus.class)
+	@ValidValueType(value
+			= {}, lookupClass = ApprovalStatus.class)
 	@ConsumeField
 	@APIDescription("Status of an approval")
 	@FK(ApprovalStatus.class)
@@ -107,6 +111,13 @@ public class Component
 	@APIDescription("When the component was approved for the site")
 	private Date approvedDts;
 
+	@ValidValueType(value
+			= {}, lookupClass = ApprovalMode.class)
+	@ConsumeField
+	@APIDescription("Sets the approval method of changes")
+	@FK(ApprovalMode.class)
+	private String changeApprovalMode;
+
 	@NotNull
 	@APIDescription("Updated when any of the component's related data has changed.  Used for watches.")
 	private Date lastActivityDts;
@@ -118,6 +129,26 @@ public class Component
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_EMAIL)
 	@APIDescription("Email to notify of approval.")
 	private String notifyOfApprovalEmail;
+
+	@ConsumeField
+	@ValidValueType(value
+			= {}, lookupClass = DataSource.class)
+	@FK(ApprovalStatus.class)
+	private String dataSource;
+
+	@ValidValueType(value
+			= {}, lookupClass = ModificationType.class)
+	@FK(ModificationType.class)
+	private String lastModificationType;
+
+	@FK(ModificationType.class)
+	private String fileHistoryId;
+
+	@APIDescription("Overall record verison for the component")
+	private Integer recordVersion;
+
+	@APIDescription("Component Id of the pending change component.")
+	private String pendingChangeId;
 
 	public Component()
 	{
@@ -152,13 +183,9 @@ public class Component
 		if ((ApprovalStatus.PENDING.equals(this.getApprovalState()) || ApprovalStatus.NOT_SUBMITTED.equals(this.getApprovalState()))
 				&& ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
 			this.setApprovalState(component.getApprovalState());
+			component.setApprovedUser(SecurityUtil.getCurrentUserName());
+			component.setApprovedDts(TimeUtil.currentDate());
 
-			if (StringUtils.isBlank(component.getApprovedUser())) {
-				component.setApprovedUser(SecurityUtil.getCurrentUserName());
-			}
-			if (component.getApprovedDts() == null) {
-				component.setApprovedDts(TimeUtil.currentDate());
-			}
 			this.setApprovedUser(component.getApprovedUser());
 			this.setApprovedDts(component.getApprovedDts());
 
@@ -178,6 +205,12 @@ public class Component
 		this.setVersion(component.getVersion());
 		this.setNotifyOfApprovalEmail(component.getNotifyOfApprovalEmail());
 		this.setSubmittedDts(component.getSubmittedDts());
+		this.setDataSource(component.getDataSource());
+		this.setExternalId(component.getExternalId());
+		this.setFileHistoryId(component.getFileHistoryId());
+		this.setLastModificationType(component.getLastModificationType());
+		this.setChangeApprovalMode(component.getChangeApprovalMode());
+		this.setRecordVersion(component.getRecordVersion());
 
 	}
 
@@ -321,6 +354,76 @@ public class Component
 	public void setComponentType(String componentType)
 	{
 		this.componentType = componentType;
+	}
+
+	public String getDataSource()
+	{
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource)
+	{
+		this.dataSource = dataSource;
+	}
+
+	public String getLastModificationType()
+	{
+		return lastModificationType;
+	}
+
+	public void setLastModificationType(String lastModificationType)
+	{
+		this.lastModificationType = lastModificationType;
+	}
+
+	public String getFileHistoryId()
+	{
+		return fileHistoryId;
+	}
+
+	public void setFileHistoryId(String fileHistoryId)
+	{
+		this.fileHistoryId = fileHistoryId;
+	}
+
+	public String getExternalId()
+	{
+		return externalId;
+	}
+
+	public void setExternalId(String externalId)
+	{
+		this.externalId = externalId;
+	}
+
+	public String getChangeApprovalMode()
+	{
+		return changeApprovalMode;
+	}
+
+	public void setChangeApprovalMode(String changeApprovalMode)
+	{
+		this.changeApprovalMode = changeApprovalMode;
+	}
+
+	public Integer getRecordVersion()
+	{
+		return recordVersion;
+	}
+
+	public void setRecordVersion(Integer recordVersion)
+	{
+		this.recordVersion = recordVersion;
+	}
+
+	public String getPendingChangeId()
+	{
+		return pendingChangeId;
+	}
+
+	public void setPendingChangeId(String pendingChangeId)
+	{
+		this.pendingChangeId = pendingChangeId;
 	}
 
 }

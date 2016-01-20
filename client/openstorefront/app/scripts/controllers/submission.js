@@ -90,7 +90,6 @@ app.controller('SubmissionCtrl', ['$scope', 'localCache', 'business', '$filter',
   };
 
   $scope.addTo = function(item, attr, collection){
-    
     if (!collection) {
       collection = {};
       collection[attr.attributeType] = {
@@ -844,9 +843,7 @@ $scope.getSubmission = function(){
     return attributes;      
   }
 
-  $scope.setupAttributes = function(attributes){
-    console.log('attributes', attributes);
-    
+  $scope.setupAttributes = function(attributes){    
     var result = {};
     // cycle through the given attributes on a component to merge the models for the form/view/directives etc...
     _.each(attributes, function(attribute){

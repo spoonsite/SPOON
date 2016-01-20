@@ -656,7 +656,18 @@ $scope.getCodesForType = function(type){
   return foundType !== undefined ? foundType.codes : [];
 };  
 
-$scope.loadLookup('ComponentType', 'componentTypes', 'generalFormLoader'); 
+$scope.loadComponentType = function(loader){
+  $scope.$emit('$TRIGGERLOAD', 'generalFormLoader');
+
+  Business.componentservice.getComponentTypes().then(function (results) {
+    $scope.$emit('$TRIGGERUNLOAD', 'generalFormLoader');
+    if (results) {
+      $scope['componentTypes']= results;
+    }        
+  });      
+};
+$scope.loadComponentType(); 
+
 $scope.loadLookup('SecurityMarkingType', 'securityTypes', 'generalFormLoader'); 
 $scope.saveComponent = function(){
   $scope.$emit('$TRIGGERLOAD', 'generalFormLoader');
@@ -854,7 +865,7 @@ $scope.saveRelationship = function(){
   var componentRelationship = {
     relationshipType: $scope.relationshipForm.type,
     relatedComponentId: $scope.relationshipForm.target,
-    securityMarkingType: $scope.relationshipForm.securityMarkingType
+    // securityMarkingType: $scope.relationshipForm.securityMarkingType
   };
   Business.componentservice.saveRelationship($scope.componentForm.componentId, componentRelationship).then(function (result) {
     $scope.$emit('$TRIGGEREVENT', '$TRIGGERUNLOAD', 'relationshipFormLoader');
@@ -1637,7 +1648,7 @@ app.filter('requiredByComponentType', function () {
             if (!inverse){
               results.push(thing);
             }
-          } else if (_.find(thing.requiredRestrictions, {'componentType': type})){
+          } else if (thing.requiredRestrictions && _.find(thing.requiredRestrictions, {'componentType': type})){
             // console.log('is required and has the right type', thing);
             if (!inverse){
               results.push(thing);

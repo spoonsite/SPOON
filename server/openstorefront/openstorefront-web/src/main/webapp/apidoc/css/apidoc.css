@@ -44,7 +44,7 @@ a:hover {
 	color: white;
 	width: 100%;
 	z-index: 99;
-	background-color: #414e68;
+	background-color: rgb(68, 30, 90);
 	-webkit-box-shadow: 0px 0px 9px 0px rgba (68, 68, 68, 0.6);
 	-moz-box-shadow: 0px 0px 9px 0px rgba(68, 68, 68, 0.6);
 	 box-shadow: 0px 0px 9px 0px rgba(68,68,68,0.6);	
@@ -123,7 +123,7 @@ table td,th {
 th {
 	color: white;
 	/* text-shadow: 2px 2px 2px black; */
-	background-color: #414e68;
+	background-color: rgb(68, 30, 90);
 	border: 1px lightgray solid;
 }
 td {
@@ -207,7 +207,7 @@ tr:nth-child(even) {
 	color: white;
 	text-shadow: 2px 2px 2px black;
 	text-align: center;
-	background-color: darkslategrey;
+	background-color: rgb(68, 30, 90);
 }
 
 .returnInfo-contents{

@@ -57,12 +57,24 @@ public class ComponentExternalDependency
 	private String dependancyReferenceLink;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
 	@Sanitize(BasicHTMLSanitizer.class)
 	private String comment;
 
 	public ComponentExternalDependency()
 	{
+	}
+
+	@Override
+	public String uniqueKey()
+	{
+		return getDependencyName() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getVersion();
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setDependencyId(null);
 	}
 
 	@Override

@@ -42,6 +42,8 @@ import org.apache.commons.lang3.StringUtils;
 public class FilterQueryParams
 {
 
+	public static final String FILTER_ALL = "ALL";
+
 	@QueryParam("max")
 	@DefaultValue("20000000")
 	@Min(0)

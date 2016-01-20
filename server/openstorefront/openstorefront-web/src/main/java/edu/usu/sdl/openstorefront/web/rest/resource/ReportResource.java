@@ -25,12 +25,14 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportDataId;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.ReportGenerateView;
 import edu.usu.sdl.openstorefront.core.view.ReportView;
 import edu.usu.sdl.openstorefront.core.view.ReportWrapper;
 import edu.usu.sdl.openstorefront.core.view.RequestEntity;
@@ -56,6 +58,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
@@ -179,6 +182,7 @@ public class ReportResource
 						}
 
 					});
+					responseBuilder.header("Content-Type", ReportFormat.mimeType(report.getReportFormat()));
 					responseBuilder.header("Content-Disposition", "attachment; filename=\"" + TranslateUtil.translate(ReportType.class, report.getReportType()) + extenstion + "\"");
 					response = responseBuilder.build();
 				}
@@ -193,10 +197,14 @@ public class ReportResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportType.class)
 	@Path("/reporttypes")
-	public Response getReportTypeForUser()
+	public Response getReportTypeForUser(
+			@QueryParam("componentType") boolean componentType)
 	{
-		List<ReportType> reportTypes = service.getLookupService().findLookup(ReportType.class);
 
+		List<ReportType> reportTypes = service.getLookupService().findLookup(ReportType.class);
+		if (componentType) {
+			reportTypes = reportTypes.stream().filter(r -> r.getComponentReport() == true).collect(Collectors.toList());
+		}
 		if (SecurityUtil.isAdminUser() == false) {
 			reportTypes = reportTypes.stream().filter(r -> r.getAdminOnly() == false).collect(Collectors.toList());
 		}
@@ -238,12 +246,25 @@ public class ReportResource
 	@POST
 	@APIDescription("Generates a new report")
 	@Consumes({MediaType.APPLICATION_JSON})
-	public Response generateReport(Report report)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Report.class)
+	public Response generateReport(ReportGenerateView reportView)
 	{
+		Report report = reportView.getReport();
 		ValidationModel validationModel = new ValidationModel(report);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
+		for (ReportDataId dataId : reportView.getReportDataId()) {
+			validationModel = new ValidationModel(dataId);
+			validationModel.setConsumeFieldsOnly(true);
+			validationResult.merge(ValidationUtil.validate(validationModel));
+		}
+
 		if (validationResult.valid()) {
+			if (!reportView.getReportDataId().isEmpty()) {
+				report.setIds(reportView.getReportDataId());
+			}
 
 			//check that user can run that report
 			ReportType reportType = service.getLookupService().getLookupEnity(ReportType.class, report.getReportType());

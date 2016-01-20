@@ -145,6 +145,10 @@ public class AlertServiceImpl
 					userMessageType = UserMessageType.COMPONENT_SUBMISSION_ALERT;
 					createUserMessage = true;
 					break;
+				case AlertType.CHANGE_REQUEST:
+					userMessageType = UserMessageType.CHANGE_REQUEST_ALERT;
+					createUserMessage = true;
+					break;
 			}
 
 			if (createUserMessage) {

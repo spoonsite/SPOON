@@ -34,9 +34,13 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
+import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.core.model.ComponentUploadOption;
+import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
@@ -46,6 +50,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentTrackingResult;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
+import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
 import java.util.List;
@@ -377,7 +382,7 @@ public interface ComponentService
 	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public ComponentAll saveFullComponent(ComponentAll componentAll, ComponentUploadOption options);
+	public ComponentAll saveFullComponent(ComponentAll componentAll, FileHistoryOption options);
 
 	/**
 	 * Submits a component for Approval
@@ -388,12 +393,20 @@ public interface ComponentService
 	public void submitComponentSubmission(String componentId);
 
 	/**
+	 * Submits a change request for Approval
+	 *
+	 * @param componentId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void submitChangeRequest(String componentId);
+
+	/**
 	 * This will handle syncing all the component of the list.
 	 *
 	 * @param components
 	 * @param options
 	 */
-	public void importComponents(List<ComponentAll> components, ComponentUploadOption options);
+	public void importComponents(List<ComponentAll> components, FileHistoryOption options);
 
 	/**
 	 * Deletes the component and all related entities
@@ -549,5 +562,159 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void checkComponentCancelStatus(String componentId, String newApprovalStatus);
+
+	/**
+	 * This checks the component approval state and handle alerting about
+	 * pending to not submitted state.
+	 *
+	 * @param componentId
+	 * @param newApprovalStatus
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void checkChangeRequestCancelStatus(String componentId, String newApprovalStatus);
+
+	/**
+	 * Copy a component and create a newId; this will copy all related data as
+	 * well even media and resources. Note the Copy will be in Pending status
+	 * and the name will have Copy
+	 *
+	 * @param orignalComponentId
+	 * @return Top level component of the copy
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Component copy(String orignalComponentId);
+
+	/**
+	 * Creates a version of the component and all related data
+	 *
+	 * @param componentId
+	 * @param fileHistoryId
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public ComponentVersionHistory snapshotVersion(String componentId, String fileHistoryId);
+
+	/**
+	 * Loads a view a snapshot
+	 *
+	 * @param versionHistoryId
+	 * @return View model or null it doesn't exist
+	 */
+	public ComponentDetailView viewSnapshot(String versionHistoryId);
+
+	/**
+	 * Restores a snapshot and replaces the live version (according to options)
+	 *
+	 * @param versionHistoryId
+	 * @param options
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Component restoreSnapshot(String versionHistoryId, ComponentRestoreOptions options);
+
+	/**
+	 * Removes a snapshot
+	 *
+	 * @param versionHistoryId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteSnapshot(String versionHistoryId);
+
+	/**
+	 * Merges components together. Affects contacts, media, resources,
+	 * attributes, review, Q and A...etc This target base component remains
+	 * unaffected. This can be used to clean up duplicates.
+	 *
+	 * @param toMergeComponentId
+	 * @param targetComponentId
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Component merge(String toMergeComponentId, String targetComponentId);
+
+	/**
+	 * Find the top viewed components
+	 *
+	 * @param maxRecords
+	 * @return
+	 */
+	public List<ComponentRecordStatistic> findTopViewedComponents(Integer maxRecords);
+
+	/**
+	 * Get all component types (Cached)
+	 *
+	 * @return all defined component types
+	 */
+	public List<ComponentType> getAllComponentTypes();
+
+	/**
+	 * Save a component type
+	 *
+	 * @param componentType
+	 * @return
+	 */
+	public ComponentType saveComponentType(ComponentType componentType);
+
+	/**
+	 * This just inActivates. Deleting would be dangerous as there is data
+	 * attached to it. (Components, Attribute Restrictions...etc)
+	 *
+	 * @param componentType
+	 */
+	public void removeComponentType(String componentType);
+
+	/**
+	 * Saves a new template
+	 *
+	 * @param componentTypeTemplate
+	 * @return
+	 */
+	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate);
+
+	/**
+	 * This just inActivates. Deleting would be dangerous as there likely
+	 * existing data that would still need it
+	 *
+	 * @param templateCode
+	 */
+	public void removeComponentTypeTemplate(String templateCode);
+
+	/**
+	 * Approves a component and triggers notification if requested component is
+	 * already approved this does nothing.
+	 *
+	 * @param componentId
+	 * @return Component Approved or null if not found
+	 */
+	public Component approveComponent(String componentId);
+
+	/**
+	 * This updates a components owner.
+	 *
+	 * @param componentId
+	 * @param newOwner
+	 * @return component modified
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Component changeOwner(String componentId, String newOwner);
+
+	/**
+	 * Creates a pending component record for the given component Id
+	 *
+	 * @param parentComponentId
+	 * @return Pending Change component
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Component createPendingChangeComponent(String parentComponentId);
+
+	/**
+	 * Merges pending changes to the old component (effectively Replacing the
+	 * old component)
+	 *
+	 * @param componentIdOfPendingChange
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Component mergePendingChange(String componentIdOfPendingChange);
 
 }

@@ -44,6 +44,7 @@ public class ReportType
 	public static final String COMPONENT_DETAIL = "TYPECOMP";
 
 	private boolean adminOnly;
+	private boolean componentReport;
 	private List<String> supportedFormats = new ArrayList<>();
 
 	public ReportType()
@@ -70,6 +71,12 @@ public class ReportType
 		((ReportType) codeMap.get(USER)).setAdminOnly(true);
 		((ReportType) codeMap.get(SUBMISSION)).setAdminOnly(true);
 		((ReportType) codeMap.get(ORGANIZATION)).setAdminOnly(true);
+
+		//update metadata for component type reports
+		((ReportType) codeMap.get(COMPONENT_ORGANIZATION)).setComponentReport(true);
+		((ReportType) codeMap.get(COMPONENT_DETAIL)).setComponentReport(true);
+		((ReportType) codeMap.get(CATEGORY_COMPONENT)).setComponentReport(true);
+		((ReportType) codeMap.get(COMPONENT)).setComponentReport(true);
 
 		//Add  formats
 		for (LookupEntity lookupEntity : codeMap.values()) {
@@ -98,6 +105,16 @@ public class ReportType
 	public void setSupportedFormats(List<String> supportedFormats)
 	{
 		this.supportedFormats = supportedFormats;
+	}
+
+	public boolean getComponentReport()
+	{
+		return componentReport;
+	}
+
+	public void setComponentReport(boolean componentReport)
+	{
+		this.componentReport = componentReport;
 	}
 
 }

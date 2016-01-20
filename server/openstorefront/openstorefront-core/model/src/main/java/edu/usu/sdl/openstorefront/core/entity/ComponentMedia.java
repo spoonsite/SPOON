@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  *
  * @author jlaw
+ * @author dshurtleff
  */
 @APIDescription("Holds the media information for a component")
 public class ComponentMedia
@@ -77,6 +78,18 @@ public class ComponentMedia
 
 	public ComponentMedia()
 	{
+	}
+
+	@Override
+	public String uniqueKey()
+	{
+		return StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName();
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setComponentMediaId(null);
 	}
 
 	@Override

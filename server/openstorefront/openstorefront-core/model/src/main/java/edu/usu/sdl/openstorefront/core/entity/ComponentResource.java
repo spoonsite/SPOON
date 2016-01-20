@@ -85,6 +85,18 @@ public class ComponentResource
 	}
 
 	@Override
+	public String uniqueKey()
+	{
+		return StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName();
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setResourceId(null);
+	}
+
+	@Override
 	public void updateFields(StandardEntity entity)
 	{
 		super.updateFields(entity);

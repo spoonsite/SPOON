@@ -19,7 +19,7 @@
 fullClick, openFiltersToggle, buttonOpen, buttonClose, toggleclass, resetAnimations,
 filtClick, setPageHeight*/
 
-app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$sce', function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $sce) { /*jshint unused: false*/
+app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$timeout', '$location', '$rootScope', '$q', '$route', '$sce', '$uiModal', function ($scope,  localCache, Business, $filter, $timeout, $location, $rootScope, $q, $route, $sce, $uiModal) { /*jshint unused: false*/
 
   //////////////////////////////////////////////////////////////////////////////
   // Here we put our variables...
@@ -307,6 +307,63 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     });
   }; //
 
+  /***************************************************************
+  * This function is called once we have the search request from the business layer
+  * The order and manner in which we do this call will most likely change once
+  * we get the httpbackend fleshed out.
+  ***************************************************************/
+  $scope.advancedSearch = function(advancedSearch) {
+    $location.search({}); 
+    Business.componentservice.advancedSearch(advancedSearch).then(function(result) {
+      // console.log('results', result);
+      
+      if (result && result.length > 0)
+      {
+        $scope.total = result || [];
+      } else {
+        $scope.total = [];
+      }
+      $scope.filteredTotal = $scope.total;
+
+      /*Simulate wait for the filters*/
+      /*This is simulating the wait time for building the data so that we get a loader*/
+      $scope.data.data = $scope.total;
+      _.each($scope.data.data, function(item){
+        if (item.description !== null && item.description !== undefined && item.description !== '') {
+          var desc = item.description.match(/^(.*?)[.?!]\s/);
+          item.shortdescription = (desc && desc[0])? desc[0] + '.': item.description;
+        } else {
+          item.shortdescription = 'This is a temporary short description';
+        }
+      });
+      $scope.setupData();
+      setupFilters();
+      adjustFilters();
+      // var end = new Date().getTime();
+      // var time = end - start;
+      // console.log('Total Execution time ****: ' + time);
+      Business.deleteLocal('ADVANCED_SEARCH');
+      Business.deleteLocal('ADVANCED_SEARCH-time');
+      $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+      $scope.initializeData('ADVANCED_SEARCH');
+    }, function(result){
+      if (result && result.length > 0)
+      {
+        $scope.total = result || [];
+      } else {
+        $scope.total = [];
+      }
+      $scope.data.data = $scope.total;
+      Business.deleteLocal('ADVANCED_SEARCH');
+      Business.deleteLocal('ADVANCED_SEARCH-time');
+      $scope.$emit('$TRIGGERUNLOAD', 'mainLoader');
+      $scope.initializeData('ADVANCED_SEARCH');
+      $scope.showMessage = true;
+      $scope.setupData();
+      setupFilters();
+    });
+  }; //
+
 
   /***************************************************************
   * This is used to initialize the scope title, key, and code. Once we have a 
@@ -339,8 +396,6 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
 
 
       // TODO: CLEAN UP THIS IF/ELSE switch!!!!!!!
-
-
       if (_.contains(keys, $scope.searchCode.type)) {
         $scope.showSearch         = true;
         
@@ -392,6 +447,14 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         $scope.searchDescription  = 'Search all results';
         $scope.modal.modalBody    = 'The results found on this page are not restricted by any implied filters.';
       }
+    } else if (key === 'ADVANCED_SEARCH'){
+      // In this case, our tempData doesn't exist
+      $scope.searchKey          = '';
+      $scope.showSearch         = true;
+      $scope.searchTitle        = 'Advanced Search';
+      $scope.modal.modalTitle   = 'Advanced Search';
+      $scope.searchDescription  = 'Search by advanced Search';
+      $scope.modal.modalBody    = 'The results found on this page were found through an advanced search.';
     } else {
       // In this case, our tempData doesn't exist
       $scope.searchKey          = 'DOALLSEARCH';
@@ -448,7 +511,15 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
         }
       }
     }
-    $scope.reAdjust([{ 'key': type, 'code': code }]);
+
+    var advancedSearch = Business.getLocal('ADVANCED_SEARCH');
+    if (!advancedSearch) {
+      $scope.reAdjust([{ 'key': type, 'code': code }]);
+      // $scope.advancedSearch(advancedSearch);
+    } else {
+      $scope.backupAdvancedSearch = advancedSearch;
+      $scope.advancedSearch(advancedSearch);
+    }
   };
 
   $scope.$on('$CHANGESEARCHRESULTTAGS', function(event, id, tags){
@@ -472,6 +543,32 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
     $scope.reAdjust([{ 'key': type, 'code': code }]);
   }
 
+  $scope.exportSearch = function() {
+    var modalInstance = $uiModal.open({
+      templateUrl: 'views/admin/application_management/editReport.html',
+      controller: 'AdminEditReportCtrl',
+      backdrop: 'static',
+      size: 'sm',
+      resolve: {
+        report: function () {
+          return null;
+        },
+        sheduleFlag: function () {
+          return false;
+        },
+        ids: function() {
+          return $.grep(_.pluck($scope.data.data, 'componentId'),function(n){ return(n) });
+        }
+      }
+    });
+
+    modalInstance.result.then(function (result) {
+      // triggerAlert('Your report has been generated. Navigate to the <a style="color: yellow;" href="tools?tool=Reports">reports tool</a> to download the content.', 'reportAlert', 'body', 7000);
+    }, function (result) {
+      // triggerAlert('Your report has been generated. Navigate to the <a style="color: yellow;" href="tools?tool=Reports">reports tool</a> to download the content.', 'reportAlert', 'body', 7000);
+    });       
+  }
+
   /***************************************************************
   * This function is used by the reviews section in the details to remove
   * and add the ellipsis
@@ -484,7 +581,7 @@ app.controller('ResultsCtrl', ['$scope', 'localCache', 'business', '$filter', '$
   * This function removes the inherent filter (if you click on apps, types no longer applies etc)
   ***************************************************************/
   var adjustFilters = function() {
-    if ($scope.searchGroup[0].key) {
+    if ($scope.searchGroup && $scope.searchGroup[0].key) {
       var temp = _.find($scope.filters, {'key': $scope.searchGroup[0].key});
       if (temp){
         var index = _.indexOf($scope.filters, temp);

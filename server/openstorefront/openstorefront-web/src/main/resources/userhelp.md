@@ -1,19 +1,19 @@
 
 <span style="font-size: 24px;">User Guide</span>
 
-Version 1.4
+Version 1.6
                                                       
 
 
 # 1. Overview
 ------
 
-The Open Storefront application is a software cataloging system that is used to catalog components
-of interest to the DI2E community. Components include Government off
-the shelf (GOTS), commercial off the shelf (COTS), and Open Source
-software (OSS). The component evaluations done by DI2E's Centers of
-Excellence are displayed in the Storefront and give details on the
-following:
+The DI2E Clearinghouse application is a software cataloging system that
+is used to catalog entries of interest to the DI2E community. 
+Entries include Government off the shelf (GOTS), commercial off the
+shelf (COTS), and Open Source software (OSS). The evaluations
+done by DI2E's Centers of Excellence are displayed in the Clearinghouse 
+and give details on the following:
 
 -   Ownership
 -   Where/How to access the software
@@ -22,26 +22,42 @@ following:
 -   Links to documentation, source code and other artifacts
 -   Evaluation information
 
-**Open Storefront is developed by Space Dynamics Laboratory for DI2E and is
+**DI2E Clearinghouse is developed by Space Dynamics Laboratory for DI2E and is
 licensed under Apache V2.**
 
-![Logo](../../../../../../client/openstorefront/app/images/logo2.png)
+![Logo](../../../../../../client/openstorefront/app/images/help/di2elogo-sm.png)
 ![Logo](../../../../../../client/openstorefront/app/images/help/sdl.png)
+
+## 1.1 Release Notes
+------
+
+To see what is new in [v1.6](https://github.com/di2e/openstorefront/releases/tag/v1.6), and subsequent releases, please see the releases page in GitHub at:
+[https://github.com/di2e/openstorefront/releases](https://github.com/di2e/openstorefront/releases)
+
+
+## 1.2 Known Issues, v1.6 * 
+ * [STORE-662](https://jira.di2e.net/browse/STORE-662): Search -> Wildcard Searches:  If using wildcards in multiple words you need to include that in quotes such as "softwar* eng?neering".  Help documentation and/ or website operation needs to be updated.
+ * [STORE-746](https://jira.di2e.net/browse/STORE-746): Entries:  Sometimes the Rich Text (colored text, background colors, etc.) gets 'sanitized' and taken out from the rich text preview and then searching for and viewing the search results of the component or entry.
+ * [STORE-721](https://jira.di2e.net/browse/STORE-721): Admin Tools -> Data Management -> Attributes -> New Type -> Manage Codes:  When adding a new code, it may not show up in the table below even after refreshing the table (refresh button click).  WORKAROUND:  Exit this section and come back into it by selecting the type again and then Manage Codes.
+ * [STORE-731](https://jira.di2e.net/browse/STORE-731): Admin Tools -> Data Management -> Integrations -> Jira Configuration tab:  Drop-down menu information is not in alphabetical order as expected.  When deleting a mapping the row is deleted above, but the data persists in the boxes below and is not cleared.
+ * [STORE-674](https://jira.di2e.net/browse/STORE-674): Admin Tools -> Data Management -> User Data -> User Profiles:  When filtering by Status a blank or none status assumes only Active (Inactive results are not included).
+
+
 
 # 2.  User Features
 ------
 
-These features that are available to users to be able to access the information in a variety of ways.
+The features that are available to users to be able to access the information in a variety of ways.
 
 ##   2.1  Searching
 ------
 
 
-Storefront Search provides a way to find component lists and articles
+Clearinghouse Search provides a way to find entry lists and articles
 matching search criteria. Several types of searches are supported. The
 types of searches that can be performed are:
 
-1.  Searching across multiple fields (component name and description,
+1.  Searching across multiple fields (entry name and description,
     tags, attribute types, codes, and descriptions)
 
 2.  Wildcard searching (\* and ?)
@@ -56,7 +72,7 @@ The user can then select the suggestion by clicking on it or continue with a ful
 ### 2.1.1 Search Field Differentiation or Specificity
 -------
 
-Currently, there is no differentiation among Component Name, Component
+Currently, there is no differentiation among entry Name, entry
 Description, Tags, or Attributes as to the preference, specificity, or
 coverage of the search. A search term or phrase is searched via a single
 search box, and applied across all fields equally. Advanced search per a
@@ -138,156 +154,63 @@ performing an exact search and the words are a necessary part of the
 phrase being searched. For more information on exact searches, see
 section 1.1.3.
 
-## 2.2 SvcV-4
+## 2.2 Search Tools and other search methods
 ------
 
-SvcV-4 is a DI2E architecture taxonomy. The application provides
-functionality to search for listing by SvcV-4 taxonomy.
+To the left of the search text field is an icon for Search Tools.  Click
+on the icon to display the Search Tools.  Three types of unique searches 
+are available:
 
-A user may use this feature to look for capabilities that are available
-in the DI2E community.
+1.  Topic
+2.  Category
+3.  Architecture
 
-**To search by SvcV-4:**
+### 2.2.1 Topic Search Tool
+------
 
-1.  Go to home page
+The topic tab in the Search Tools window allows searching by Articles, 
+DI2E Components, or other topic search types.  
 
-2.  Click on SvcV-4
+After clicking on the topic on the left the results are shown on the right.  
+Click on the column name to sort or click the link button to link to the 
+individual Clearinghouse entry.  Results of all of the topics can also be 
+shown in a new window.
 
-3.  Navigate the search tree on the left and the application will show
-    the description of the taxonomy and the related search results.
 
-**NOTE:** All child branches are searched. (Eg. 1.2 …will also show
-1.2.1, 1.2.2…etc)
+### 2.2.2 Category Search Tool
+------
 
-## 2.3 Filtering
----------
+The Category tab in the Search Tools window displays many categories that
+are expandable by clicking on the down arrow icon.  Click on the lowest 
+subcategory to display search results.  Clicking on the column name sorts
+the table by that column.  Clicking on the link button opens the 
+individual entry, or all results can be displayed in a new window.
 
-Filters are applied to a set of search results from the search results
-page.
+### 2.2.3 Architecture Search Tool
+------
 
-Here is a list of filters that may be applied:
+The Architecture tab window displays a hierarchy of results per SvcV-4 
+taxonomy.  Expand All and Collapse All buttons are provided.  Clicking 
+on the **+** button expands an individual folder and **-** collapses the folder.  
+Search results are displayed with sortable columns and links to individual 
+results or the entire search results can be opened in a new page.
 
-Available Filters
-
--   *By Text*     - Filters results by the title of the listing.
--   *By Tag*      - Filters results by matching tags
--   *By Rating*   -  Filters results by User Review Rating
--   *By Attribute*  - Filters results by the listing the match the selected Attributes (Vitals).
-
-## 2.4 Tags
+### 2.2.4 Tags  
 ------
 
 Users can "Tag" listings so that they can be used to later find and
 refine search results. User-created tags are visible to all users.
 However, only the owner of the tag or an admin user may remove a tag.
-Tags are used in the main Omni-search field shown at the top of the
-screen and on the home page.
+Tags are used in the search field shown at the top of the screen and 
+on the home page.
 
 **To create a tag:**
 
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
+ 1.  From the search results screen, view the details by clicking on the title.
+ 2.  Click on the View/ Edit Tag icon to open the tag panel.
+ 3.  Enter a new tag in the text field OR a single space to view existing tags.
 
-2.  Click on the Tag icon ![tag](../../../../../../client/openstorefront/app/images/help/tags.png) to open the tag panel.
-
-3.  Enter a new tag in the text field.
-
-**To remove a tag:**
-
-1.  Click the "x" on the tag in the tag panel (see create tag)
-
-**NOTE:** Recall that you may only remove your own tags.
-
-## 2.5 Watches
--------
-
-A watch is set on a component to allow for a user to be notified of
-changes to a component. There are two ways notifications occur in the
-application and there is no limit to the amount of watches a user may
-place.
-
-1.  The watched component's changes are visually shown to the user
-    anytime changes have been made since they last viewed the component.
-    This is seen in the watches tab and when viewing the details of
-    a component.
-
-2.  The user may opt to have an email sent anytime there is a change. To
-    opt in, see the steps listed below. The email will list the section
-    of the component information as to what has changed. A user then can
-    login to view the exact changes.
-
-**To create a watch:**
-
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
-
-2.  Click on the Watch icon ![watch](../../../../../../client/openstorefront/app/images/help/view.png) to add the component
-    to your watch list.
-
-**To activate email:**
-
-1.  Make sure your user profile contains a valid email. View your
-    profile from the user menu at the top right of the screen.
-
-2.  Open the watches use the user menu at the top of the screen. Check
-    the Send Email Notification box on any of the watches.
-
-**To remove watch:**
-
-1.  Open the watch list from the user menu.
-
-2.  Click on the ![removewatch](../../../../../../client/openstorefront/app/images/help/removewatch.png) icon.
-
-**NOTE:** Watches can also be removed from the component detail view of
-the component being watched.
-
-## 2.6 Reviews
--------
-
-Reviews are user-submitted feedback on a component. A user may view
-other users' reviews or write a review to share experiences with a
-specific component of the interface with the rest of the community.
-
-**To create a review:**
-
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
-
-2.  Click on the Reviews tab.
-
-3.  Click on **Write a Review**.
-
-4.  Fill out the form starting with marking the Stars according to
-    your experience.
-
-5.  Save the review. The review will now show in the review tab for
-    other users to read.
-
-**To edit a review:**
-
-1.  Open the component review dialog from the user menu.
-
-2.  Expand the desired review by clicking the expand
-    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
-
-3.  Click the **Edit** button and adjust the information in the form.
-
-4.  Click **Update Review**.
-
-**To remove a review:**
-
-1.  Open the component review dialog from the user menu.
-
-2.  Expand the desired review by clicking the expand
-    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
-
-3.  Click on the **Delete** button.
-
-**NOTE:** A review may also be removed from the component detail screen
-by then clicking on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the
-title of the review. You can only remove reviews you post.
-
-## 2.7 Questions
+### 2.2.5 Questions  
 ---------
 
 Questions or "Q&A" allow users to post questions about components and
@@ -296,51 +219,26 @@ with the component.
 
 **To post a question:**
 
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
-
+1.  From the search results screen, view the details by clicking on the title.
 2.  Click on the Q&A tab.
-
 3.  Fill out the form at the bottom.
-
 4.  Click the **Post** button.
-
-**To edit your question:**
-
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
-
-2.  Click on the "Q&A" tab.
-
-3.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) next to the question.
-
-4.  Fill out the form.
-
-5.  Click **Save**.
-
-**To remove your question:**
-
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
-
-2.  Click on the "Q&A" tab.
-
-3.  Click on the delete icon ![delete](../../../../../../client/openstorefront/app/images/help/trash.png) next to the
-    question .
 
 **To answer a question:**
 
-1.  Expand the question by clicking on the expand
-    ![expand](../../../../../../client/openstorefront/app/images/help/expand.png) icon.
-
-2.  Fill out the form.
-
+1.  Expand the question by clicking on the expand (down arrow) icon.
+2.  Fill out the form under Give an Answer.
 3.  Click **Post**.
 
 Once you have answered a question, your answer may be edited and removed
 using the buttons next to the answer.
 
-## 2.8 Comparing
+**Message User***
+Clicking on this next to a question or answer will allow a message (email) to be
+sent to the user that submitted the question or answer.  This can be used to 
+gain additional clarification.
+
+### 2.2.6 Comparing
 ---------
 
 The comparison feature allows for side-by-side viewing of multiple
@@ -361,44 +259,211 @@ better suited your project's needs.
 3.  You can customize the details being viewed by checking the items
     available in the **Sections to compare** area.
 
-## 2.9  Printing
---------
 
-Allows for customizable print view of a component listing that can be
-used in printing or for converting to PDF using the web browser's
-features.
-
-**To view a print version of a component:**
-
-1.  View Component Details by clicking on the listing title in the
-    search results screen.
-
-2.  Click on the Print icon ![print](../../../../../../client/openstorefront/app/images/help/print.png) to bring up the
-    print window.
-
-In the print window, you can customize what is printed by selecting
-**Custom Template**. Once what you view in the print window is ready,
-click the Print icon ![print](../../../../../../client/openstorefront/app/images/help/print.png) to bring up the browser
-print dialog and complete printing.
-
-## 2.10 User Profile
+## 2.3 User Tools
 ------------
 
-All user information can be set in the profile. Initially the user
-profile is populated with information from the user's external security
-account.
+All user information can be set on the main page of **User Tools**. 
+Initially the user profile is populated with information from the user's 
+external security account.
 
 **To edit your profile:**
 
-1.  Select **User Profile** from the user menu.
+1.  Select **User Tools** from the user menu.
+2.  Update the form.
+3.  Click **Save**.
 
-2.  Click on the **Update User Info** checkbox.
+### 2.3.1 Submissions
+-----------
 
-3.  Update the form.
+This page displays all of the submissions you, the current logged in user, have
+made.  In the User Submissions table the columns can be sorted by clicking on 
+the column header.  
 
-4.  Click **Save User Profile**.
+In addition icons for Edit, Preview, Copy, Toggle Notify, Unsubmit, and 
+Request Removal can be found along the top of the table.  Finally,
+a **+ New submission** button allows for a new entry to be made.
 
-## 2.11 Changes Notification
+#### 2.3.1.1 Submission Form- Getting Started
+-----------
+
+The first tab of a new submission should be pre-filled with your logged in user information.  
+Make any necessary corrections and click on the Next button at the bottom.
+
+Please be aware:
+This form will submit a component to the DI2E Framework PMO for review and consideration.
+A DI2E Storefront Manager will contact you regarding your submission. 
+For help, contact helpdesk@di2e.net
+
+
+#### 2.3.1.2 Submission Form- Required Information
+-----------
+
+The following fields are on the Required Information section:
+
+
+ -  **Entry Type:**  DI2E Component, Article, etc.  -  What you enter here will determine what other fields show up on this entry form below 
+ -  **Entry Name:**  The name of the article or component 
+ -  **Description:** Detailed description body - You can use highlights, colored text, links, etc.
+ -  **Organization:** Name of Company or responsible party for the entry  -  These can be set by an administrator
+ -  **Attributes:**  Required attributes are shown here and must be selected 
+
+
+#### 2.3.1.3 Submission Form- Details
+-----------
+
+This allows for many different items to be added.  Each section can have one or multiple 
+items added with the use of the Add, Edit, and Remove buttons.  When finished click the
+Next button to go to the final section.
+
+Items that can be added here depend on the Entry Type selected in Required Information,
+but may include:
+Additional Attributes, Contacts, Resources, External Links, Media, Dependencies, Metadata, 
+Relationships, Tags, Evaluation Information, Reviews, Questions, and so forth.
+
+
+#### 2.3.1.4 Submission Form- Review
+-----------
+
+On the final submission screen all of the previously entered information is available
+for review.  The entry can then be submitted for review.
+
+
+### 2.3.2 Tools
+-----------
+
+The Tools drop-down contains three options:
+
+1.  Watches
+
+2.  Reviews
+
+3.  Reports
+
+#### 2.3.2.1 Manage Watches
+------------
+
+The user can create watches that can send notifications to the user. The
+messages that the watches generate are viewable from the User Message
+Tool. The User Message Tool allows for queued messages to be processed
+after a delayed time period. The queue delay allows for messages to be
+pooled by type thereby reducing the amount of emails rapid changes can
+create. The User Message can also be used to view previously sent
+messages in cases of troubleshooting whether the system sent a
+notification or not. The tools also allow for manually processing the
+queue immediately, but in most cases this is not needed or desired as
+the automatic process will take handling the message queue.
+
+A watch is set on a component to allow for a user to be notified of
+changes to a component. There are two ways notifications occur in the
+application and there is no limit to the amount of watches a user may
+place.
+
+1.  The watched component's changes are visually shown to the user
+    anytime changes have been made since they last viewed the component.
+    This is seen in the watches tab and when viewing the details of
+    a component.
+
+2.  The user may opt to have an email sent anytime there is a change. To
+    opt in, see the steps listed below. The email will list the section
+    of the component information as to what has changed. A user then can
+    login to view the exact changes.
+
+**To activate email:**
+
+1.  Make sure your user profile contains a valid email. View your
+    profile from the Profile button at the top of the screen in User Tools.
+
+2.  Check the Send Email Notification box on any of the watches.
+
+**To remove a watch:**
+
+1.  Click on the delete icon.
+
+2.  Click OK to confirm the watch deletion.
+
+**NOTE:** Watches can also be removed from the component detail view 
+(in search results) of the component being watched.
+
+**To create a watch:**
+
+1.  From the search results screen of an entry:
+
+2.  Click on the Watch icon ![watch](../../../../../../client/openstorefront/app/images/help/view.png) to add the component
+    to your watch list.
+
+
+#### 2.3.2.2 Manage Reviews
+------------
+
+From this screen in the User Tools you can inspect, edit, and delete your component reviews.
+
+**To inspect a review:**
+
+Expand the desired review by clicking the expand (down arrow) icon.
+
+
+**To edit a review:**
+
+1.  Once the review has been expanded by clicking on the down arrow, 
+click the **Edit** button and adjust the information in the form.
+
+2.  Click **Update Review**.
+
+**To remove a review:**
+
+1.  Expand the desired review by clicking the expand (down arrow) icon.
+
+3.  Click on the **Delete** button.
+
+**To create a review:**
+
+1.  From a search results screen, view Component Details by clicking on the title.
+2.  Click on the Reviews tab.
+3.  Click on **Write a Review**.
+4.  Fill out the form starting with marking the Stars according to
+    your experience.
+5.  Save the review. The review will now show in the review tab for
+    other users to read.
+
+**NOTE:** A review may also be removed from the component detail screen
+by then clicking on the delete icon next to the title of the review. 
+You can only remove reviews you post.
+
+
+#### 2.3.2.3 Manage Reports
+--------
+
+This section displays scheduled user reports as well as the history or log of reports that have ran.
+
+**Schedule tab**
+This default view shows all of the scheduled reports.  A drop-down at the top
+allows viewing of the Active or Inactive reports.  Select a report in the table
+and click Toggle Status to change from one status to the other.
+
+Reports can be added or edited.  Selections  can be made to run a report one time
+only or at regular intervals.  Some reports have the option of HTML or Comma-
+Separated Values as the report format.  If selecting Previous days, the 
+selected number of prior days will be included in the report output.  
+
+Types of reports available include:
+  
+  - Component
+  - Component by Organization
+  - Component Detail
+  - Components by Category
+  - Link Validation
+  - Submissions
+  - Usage
+  - User
+  - User Organization
+
+**History tab**
+This table is helpful to view old reports or see what has been run and when.  Select
+a report and click view to see the output of the report and that particular date and
+time.  A report can be downloaded / exported for archiving or offline use.
+
+## 2.4 Changes Notification
 --------------------
 
 The application sends out notification emails about any changes that
@@ -408,81 +473,150 @@ listings on the application.
 
 **To receive the notification:**
 
-1.  Select **User Profile** from the user menu.
+1.  Select **User Tools** from the drop-down menu in the upper-right with the username.
+2.  Ensure that a valid email address is present in the **User Profile** section.
+4.  Check the checkbox, **Receive periodic email about recent changes**.
+5.  Click **Save**.
 
-2.  Click on the **Update User Info** checkbox.
+## 2.5  Printing
+--------
 
-3.  Enter in a valid email address.
+Many areas of the website have a **Go To Print View** icon to facilitate printing
+of the displayed information.  In the print view, various customizations are
+available such as creating a custom template or including and excluding certain
+labels or display areas.  
 
-4.  Check the **Notification** checkbox.
 
-5.  Click **Save User Profile**.
-
-
-# 3.  Application Administration  *
+# 3. Admin Tools *
 ----------
 
 Admin tools allow for the management of all data in the system.
  
 (Sections marked with a * requires admin account access)
 
-## 3.1  Users *
+
+## 3.1 Dashboard *
+--------
+
+The dashboard is the homepage of the Admin Tools, where various statistics are shown 
+about the Clearinghouse.  There are four main sections in the dashboard: 
+Entry Statistics, Notifications, User Statistics, and System Statistics.
+
+
+## 3.2 Data Management *
+--------
+
+The Data Management menu is used to navigate to different tools for managing the data
+for Storefront.
+
+
+### 3.2.1 Attributes *
+-------
+
+Attributes are used to group and filter catalog items such as components and articles. 
+To access the attributes page, go to Admin Tools > Data Management > Attributes.
+
+Some of the major functionality of Managing Attributes includes:
+
+  1. Types
+  2. Codes
+  3. Exporting
+  4. Importing
+    
+#### 3.2.1.1 Types *
 ------
 
-Every user in the system has a user profile.  A user profile contains information
-about the user and their user specific settings.   The initial creation of the profile
-at first login will contain the information gathered from the external security application.
+When adding or editing an attribute the first tab is the Type tab.
 
-### 3.1.1 Creation *
+Attribute Types represent a related group of specific categories or
+represent a single attribute of a listing (Eg. "Funded" would be a type
+with the corresponding value "Yes" or "No"). A type may have many codes.  
+
+Deleting a type will delete the associated codes and component
+attributes. Inactivating a type will inactivate associated data such as
+component attributes.
+
+**NOTE**: Avoid "/" and special characters in type codes. For example,
+use: \[A-Z\]\[0-9\].
+
+**To add or edit a type:**
+
+1.  From the Attribute Tool, click on the **Add** or the
+    **Edit** button.
+2.  Fill in the form.
+3.  Save the form and you can proceed to editing the codes for the type.
+
+**NOTE:** The Attribute Type Code field should be all caps and should not
+contain spaces or "/".
+
+ The Import will be processed in the background. The task notification
+ area next to the user menu will indicate when the import task has
+ completed.
+
+ The processing behavior is: for every code not in the import, the
+ existing code will be inactivated. If the code already exists and
+ doesn't match, then it will be updated. For code that matches, the
+ code in the file will not be processed. If a type doesn't exist, a new
+ one will be created. If the type matches, it will be updated. Other
+ existing types not found in the file will not be affected.
+
+
+#### 3.2.1.2 Codes *
 ------
 
-The application doesn't directly manage user-only profiles. When a user
-first securely logs in, a profile is created. It's up to the applicable
-security utility (Open AM, LDAP, Database…etc.) to define the users.
+An attribute code is a specific category value that can be applied to a
+component. For example: Component listing may contain and attribute for
+"Funded" as "Yes".
 
-### 3.1.2 Messaging *
-------
+**To add and edit a code:**
 
-Users can message other users using User Profiles. The message will be
-emailed to the email address listed in their profile.
-
-**To message a user or a group of users:**
-
-1.  Navigate to the User Profiles Tool.
-
-2.  Click on the message icon ![mail](../../../../../../client/openstorefront/app/images/help/mail.png) next to the user
-    (or users) that you want to message.
-
+1.  In the Edit or add window under the tab **Manage Codes**
+2.  Click **Add New Code** or the edit icon next to an existing code.
 3.  Fill out the form.
+4.  Click **Save**.
 
-4.  Click **Send** to send the message immediately.
+Field Descriptions:
 
-**NOTE:** Messages are sent to email addresses one at a time so no email
-addresses are leaked to other users.
+-  **Label**               - Human readable value of the code
+-  **Code**                - System reference key
+-  **Description**         - This is a detail description of the meaning of the value. It's used in popup to help users interpolate the data.
+-  **Group Code**          - Using to create sub groups in the code. Typically used only in special cases.
+-  **Sort Order**          - Use to force a specific sort order. (Default is sort by Label)
+-  **Architecture Code**   - Used for special hieratical sorting. Only applies to Architecture attribute types.
+-  **Badge URL**           - Set to add a graphical badge for a code
+-  **Highlight Class**     - Used to add color emphasis to a code.
 
-### 3.1.3 Control *
+
+#### 3.2.1.3 Exporting Attributes *
 ------
 
-An admin may edit, activate or inactivate a profile. Inactivating a
-profile does not prevent login. Upon login, the user's profile will be
-reactivated. Once a profile has been inactivated, that user's watches
-and messages are also inactivated. Reactivating the profile will
-activate the user's existing watches, but it won't send any previous
-messages – just messages going forward.
+From the Manage Attributes page select one or more attributes.  Click the Export button.
+Follow the browser download instructions to download the JSON File.
 
-**To toggle active status:**
+#### 3.2.1.4  Importing Attributes or SvcV-4 *
+------
 
-1.  Navigate to User Profiles Tool.
+Clicking the **Import** button from Manage Attributes will show buttons to brows and upload
+files for either Attributes or SvcV-4.  
+1.  Browse to the desired file to be uploaded (imported).
+2.  Make sure the Attributes or SvcV-4 file is in the correct format (CVS) and it
+    contains the correct columns. (See warning on upload for the
+    expected fields)
+3.  Select the proper file.
+4.  Click **Upload**.
 
-2.  Click on the activate/inactivate ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) icon and use
-    the filter option to view active/inactive users.
-
-## 3.2 Components *
-----------
+ **WARNING:** UID in the file should match what is stored in application.
+    The application supports both 1 and 0001 matching to 1.
 
 
+### 3.2.2 Entries *
+-----
 
-### 3.2.1 Managing *
+Entries can consist of DI2E Components, Articles, or other custom-defined data structure types.
+This section allows for the manipulating of all data related to an entry.
+
+
+#### 3.2.2.1 Managing *
 ----------
 
 Components can be managed using the Components Tool.  Components are created by an application administrator.
@@ -490,9 +624,7 @@ Components can be managed using the Components Tool.  Components are created by 
 **To create a component:**
 
 1.  Click on the **Add** button in the toolbar.
-
 2.  In the Add/Edit dialog, fill in the form.
-
 3.  Click **Save**.
 
 **NOTE:** Setting a component's Approval State to **Approved** will make
@@ -556,7 +688,20 @@ Inactive components are not visible to or searchable by users.
     new task will be created to handle the import. The application will
     notify the admin when the task is complete or if there was an issue.
 
-### 3.2.2 Approval *
+**Note: In-line Description images issue**
+
+
+For articles in maybe desirable to add images to the description.  
+Note: the path to the image if locally store is relative because of this the correct path
+will not show in the editor but, it will be correct in the entry preview.  
+
+Example:
+
+              (local image:) Media.action?GeneralMedia&name=Test 
+              will show as missing in the editor but correct in the preview.
+
+
+#### 3.2.2.2 Approval *
 ------
 
 Approved components are searchable by all users. Pending/Not submitted
@@ -580,7 +725,7 @@ step above and selecting **Pending**. Marking the component as
 **Pending** makes it unapproved.
 
 
-### 3.2.3 General *
+#### 3.2.2.3 General *
 ------
 
 General information about the component is found here such as the Name, 
@@ -600,349 +745,29 @@ b. Component Type:  ARTICLE *(allows for watches to be put on the article)* | Co
 c. Security Type:   *select the security level of the component or article*
   
 
-### 3.2.4 Relationships *
+### 3.2.3 Entry Types *
 ------
 
-Relationships between components can be added as a Relationship Type to 
-a Relationship Target with a Security Type as well.  
- 
-**To add a relationship:**
+Currently, the main entry types are DI2E Component and Article.  However, other custom 
+types can be added, edited, activated, and made inactive here.  
 
-1.  Navigate to the Component Tool.
+On the Add form data entry can be selected such as whether or not to allow on the 
+submission form, and to allow or not allow the following:
 
-2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
+Attributes, Relationships, Contacts, Resources, Media, Dependencies, Metadata,
+Evaluation Information, Reviews, and Questions.
 
-3.  Click the **Relationship** tab.
 
-4.  Fill in the form and press the Add button.  You will see the new relationship below.  
-
-**NOTE:** To view the graphical representation of relationships, go to
-the *DETAILS* tab of that component (in the search results) and scroll
-to the bottom to the Component Relationships section.  The relationship
-can be viewed either in either a graphic or table form.
-
-![edit](../../../../../../client/openstorefront/app/images/help/graphic.png)  
-![edit](../../../../../../client/openstorefront/app/images/help/table.png)
-
-
-### 3.2.5 Resources *
-------
-
-Resources are links to documentation, the home page, sources, etc. that
-are related to the component. Resources are typically external, however,
-they can be hosted locally.
-
-**To add a resource:**
-
-1.  Navigate to the Component Tool.
-
-2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
-
-3.  Click the **Resources** tab.
-
-4.  Fill in the form and upload a file or enter in an external link, but
-    not both.
-
-**NOTE:** You can edit, activate/inactive, or delete a resource.
-Inactivating makes it not visible to the users. However, the resource is
-still there so it can be reactivated.
-
-### 3.2.6 Media *
-------
-
-Media provides visual/audio descriptions of the component. A common
-example is a screenshot. Media is typically hosted locally and
-previewers for common types are available. However, media can also be
-hosted externally.
-
-**To add media:**
-
-1.  Navigate to the Component Tool.
-
-2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
-
-3.  Click the **Media** tab.
-
-4.  Fill in the form and either upload a file or enter in an external
-    link, but not both.
-
-**NOTE:** You can edit, activate/inactive, or delete. Inactivating make
-it not visible to the users. However, the media is still there so it can
-be reactivated.
-
-### 3.2.7 Evaluation *
-------
-
-Components may be evaluated and, if so, that evaluation information may
-be captured on the component so that it can be displayed to the user.
-Right now, only evaluation sections can have a score associated with
-them.
-
-**To add/update evaluation scores to a component:**
-
-1.  Navigate to the Component Tool.
-
-2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
-
-3.  Click the Evaluation Information tab.
-
-4.  Enter in the scores or mark **Not Applicable**.
-
-**NOTE:** A section can have no value which allows for controlling which
-evaluation section shows for a component. For example, if a new section
-is added, existing components would show their existing evaluation
-sections until a value is entered. The existing column shows the value
-that is currently saved, if any. To remove the value click the delete
-![trash](../../../../../../client/openstorefront/app/images/help/trash.png) icon.
-
-## 3.3  Attributes *
-----------
-
-Attributes are used to group and filter catalog items and articles.
-
-### 3.3.1 Types *
-------
-
-Attribute Types represent a related group of specific categories or
-represent a single attribute of a listing (Eg. "Funded" would be a type
-with the corresponding value "Yes" or "No"). A type may have many codes.  
-
-Deleting a type will delete the associated codes and component
-attributes. Inactivating a type will inactivate associated data such as
-component attributes.
-
-**NOTE**: Avoid "/" and special characters in type codes. For example,
-use: \[A-Z\]\[0-9\].
-
-**To add or edit a type:**
-
-1.  From the Attribute Tool, click on the **Add** or the
-    **Edit** button.
-
-2.  Fill in the form.
-
-**NOTE:** The Attribute Type Code field should be all caps and should not
-contain spaces or "/".
-
-3.  Save the form and you can proceed to editing the codes for the type.
-
-**To export a type:**
-
-1.  Select which types to export.
-
-2.  Click **Export**.
-
-Exports are in JSON format and contain the type and all related codes.
-
-**To import a type:**
-
-1.  Use the Attribute File Import.
-
-2.  Click **Import**.
-
-3.  Select an Attribute File. This should be a JSON attribute file.
-
-4.  Click **Upload**.
-
- The Import will be processed in the background. The task notification
- area next to the user menu will indicate when the import task has
- completed.
-
- The processing behavior is: for every code not in the import, the
- existing code will be inactivated. If the code already exists and
- doesn't match, then it will be updated. For code that matches, the
- code in the file will not be processed. If a type doesn't exist, a new
- one will be created. If the type matches, it will be updated. Other
- existing types not found in the file will not be affected.
-
-**Importing SvcV-4:**
-
-1.  Use SvcV-4 import.
-
-2.  Make sure the SvcV-4 file is in the correct format (CVS) and it
-    contains the correct columns. (See warning on upload for the
-    expected fields)
-
-3.  Select a SvcV-4 import file.
-
-4.  Click **Upload**.
-
- **WARNING:** UID in the file should match what is stored in application.
-    The application support both 1 and 0001 matching to 1.
-
-Processing behavior works the same as the Attribute import process.
-
-### 3.3.2 Codes *
-------
-
-An attribute code is a specific category value that can be applied to a
-component. For example: Component listing may contain and attribute for
-"Funded" as "Yes".
-
-**To add and edit a code:**
-
-1.  Select which Type to edit.
-
-2.  Select **Manage Codes**.
-
-3.  Click **Add New Code** or the ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) edit icon.
-
-4.  Fill out the form.
-
-5.  Click **Save**.
-
-Field  Descriptions:
-
--  **Label**              - Human readable value of the code
--  **Code**                - System reference key
--  **Description**       - This is a detail description of the meaning of the value. It's used in popup to help users interpolate the data.
--  **Group Code**        - Using to create sub groups in the code. Typically used only in special cases.
--  **Sort Order**          - Use to force a specific sort order. (Default is sort by Label)
--  **Architecture Code**   - Used for special hieratical sorting. Only applies to Architecture attribute types.
--  **Badge URL**           - Set to add a graphical badge for a code
--  **Highlight Class**     - Used to add color emphasis to a code.
-
-### 3.3.3 Badges *
-------
-
-Allow associating an image with a specific code value. Badges show up on
-listings and can be used as visual indication that a component meets a
-specific criteria. Badges are referenced using a URL that URL can be
-internal (setup by using the Media Tool) or external which allows for
-dynamic badges. Internal Media is referred to by name so that switching
-images can be accomplished with having to manually update all links.
-
-**To add a badge to an attribute code:**
-
-1.  Navigate to the Media Tool.
-
-2.  Click **Add**.
-
-3.  Fill out the form and upload image. (Note that SVG may need to be
-    adjusted to be used by IE. Typically, this involves adjusting the
-    viewport attributes so the image scales properly.)
-
-4.  Select and copy the Resource URL.
-
-5.  Navigate to the Attributes Tool.
-
-6.  Edit Type and then edit the Code to which the badge applies.
-
-7.  Paste the URL into the Badge URL field.
-
-8.  Click **Save**.
-
-**To add a badge to a component:**
-
-1.  Navigate to the Component Tool.
-
-2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
-
-3.  Select **Attributes** tab.
-
-4.  Add the attribute by selecting the type and code with the badge.
-
-### 3.3.4 Highlighting *
-------
-
-Highlighting allows specific code to be visually highlighted in the
-application. If a particular value is determined to be desirable, it may
-be highlighted in green, or if a value represents something the user
-should be cautioned about then it may be red. Highlighting allows an
-admin to apply that behavior to a value.
-
-**To apply Highlighting to an attribute:**
-
-1.  Navigate to the Attributes Tool.
-
-2.  Edit Type and then edit the Code to which the highlighting should
-    be applied.
-
-3.  Select desired highlight color from the dropdown.
-
-4.  Click **Save**.
-
-## 3.4  Articles *
---------
-
-Articles (topic landing pages) can provide information about a specific category 
-or set of components.   Articles are created by an application administrator.
-
-### 3.4.1 Managing *
-------
-
-Articles are tied to specific categories (Attribute Type and Code). This
-allows for filtering and association with components. Articles are only
-visible when the Attribute Code associated with the article is active.
-Any attribute code may have an article associated with it.
-
-**To create an article:**
-
-1.  Click **Create Article** from the Article Tool.
-
-2.  Select the Type and Code with which the article should
-    be associated.
-
-3.  Enter a Title for the article. This will be shown as the title in
-    the search results.
-
-4.  Enter a short description of the article to be displayed in the
-    search results.
-
-5.  Enter the Article using the rich text editor.
-
-6.  Click **Save** when ready to publish the article. It will be
-    immediately viewable by users. Use **Preview** to view changes
-    before saving.
-
-**NOTE:** Clicking **Export** will export selected articles to a JSON
-file which can be imported using the Import Tool. On import, the matched
-Type and Code articles will update existing and non-matched will create
-new articles. Any internal images in the articles will need to be
-manually set up using the Media Tool in-order for them to be displayed.
-
-### 3.4.2 Media *
-------
-
-Adding media (specific images) to an article can be accomplished by
-first adding the media using the Media Tool. The URL can then be copied
-and used in an article by using the Rich Text Edit Tools.
-
-### 3.4.3 Component Lists *
-------
-
-The contents of an article may be mostly HTML tags (the Edit Tool
-defines the available formatting options). It may also contain a special
-widget that shows a list of components matching an admin-defined set of
-criteria. Beware of copying and pasting values into the component list
-configuration form. It can introduce errors that are hidden in the form
-and are only visible by using the **Source** button of the editor. Only
-**Title**, **Type** and **Code** need to be set; the other options are
-for advanced cases only.
-
-## 3.5 Watches *
+### 3.2.4 Highlights *
 -------
 
-The user can create watches that can send notifications to the user. The
-messages that the watches generate are viewable from the User Message
-Tool. The User Message Tool allows for queued messages to be processed
-after a delayed time period. The queue delay allows for messages to be
-pooled by type thereby reducing the amount of emails rapid changes can
-create. The User Message can also be used to view previously sent
-messages in cases of troubleshooting whether the system sent a
-notification or not. The tools also allow for manually processing the
-queue immediately, but in most cases this is not needed or desired as
-the automatic process will take handling the message queue.
+A highlight to the home page can be added, deleted, activated, or deactivated here. 
+A highlight code (Article, Component, etc.) can be added or edited as well as a link,
+ and the description.
 
-Watches can be placed on Components or Articles by selecting either in
-the drop-down "Component Type" in the General tab when editing or adding
-a component.
 
-**NOTE:** Other user messages besides watches, such as alerts, flow
-through the message queue as well.
-
-## 3.6 Integrations (External Systems/Jira) *
-------------------------------------
+### 3.2.5 Integrations *
+-------
 
 Component Integration allows for pulling information from an external
 system and mapping that back to a component in the application. This
@@ -995,7 +820,146 @@ interval. If the configuration job continues to have issues it may
 deactivated manually using the tools and then reactivated when the issue
 is resolved.
 
-## 3.7 Alerts *
+### 3.2.6 Imports * 
+-------
+
+This allows for data imports and mappings.  This is done by importing a ZIP
+or JSON file.  Once imported warnings and/ or errors can be viewed, the data 
+can be reprocessed, or rolled back.
+
+**NOTE:**  The history is only kept for **180 days** in this section.
+
+
+### 3.2.7 Lookups *
+--------
+
+This is used to organize and classify data in a consistent manner.  The codes can
+be added, deleted, edited, and made active or inactive.  In addition, they can be
+imported or exported as .csv files.
+
+Some examples of Lookups are:
+Media Types, Data Source, Contact Types, Relationship Types, and Organization Types
+
+
+### 3.2.8 Organizations *
+--------
+
+ Organizations provide information on specific organizations that are linked with the components listed on the site. The information these objects contain include:
+
+ - **Description** -            What the organization does
+ - **Type** -                   The type of organization (i.e. Commercial Business, Contractor, US Organization, etc.)
+ - **Website** -                The website for the specific organization if provided
+ - **Address** -                The address for the organization
+ - **Contact Information** -    A way to contact the organization
+
+#### 3.2.8.1 Managing *
+--------------
+
+**To add a new organization:**
+
+1.  Click **Add New Organization** from the Organizations section of the Admin Tools.
+
+2.  Enter the information and click **Save Changes**.
+
+**Note:** When a new component is added if an unrecognized organization is added, it will automatically be saved to the 
+  organization list.  However, details such as the Description and Main Contact Information will need to be added here.
+
+**To edit an organization**
+
+1.  From Organizations in the Admin Tools, select an organization.
+
+2.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) next to the organization.
+
+    a.  Update Organization information as desired including:  Name, Description, Organization Link, and Organization Type.
+
+    b.  Update Main Contact information as desired including:  Contact Name, Phone Number, Email, Agency, Department, 
+         Address, and Security Type.
+    
+3.  When finished, click **Save Changes**.
+
+**To remove an organization:**
+
+1.  From Organizations in the Admin Tools, select an organization.
+
+2.  Click on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the organization.
+
+3.  Confirm that you wish to delete the organization by clicking **OK**.
+
+
+**"No Organization" References:**
+This displays a list of references where no organization is listed.  
+
+**Run Extract:**
+This runs a query to get current component and organization information to update the table.  
+
+**References:**
+Clicking this button shows all of the references for the organization.  
+ 
+**Merge**
+Allows merging of references from one organization to another.  **NOTE** that the merge feature 
+ONLY merges references and NOT the organization information.
+
+
+ 
+### 3.2.9 User Data *
+---------
+
+Every user in the system has a user profile.  A user profile contains information
+about the user and their user specific settings.   The initial creation of the profile
+at first login will contain the information gathered from the external security application.
+
+#### 3.2.9.1 Creation *
+------
+
+The application doesn't directly manage users, only profiles. When a user
+first securely logs in, a profile is created. It's up to the applicable
+security utility (Open AM, LDAP, Database…etc.) to define the users.
+
+#### 3.2.9.2 Messaging *
+------
+
+Users can message other users using User Profiles. The message will be
+emailed to the email address listed in their profile.
+
+**To message a user or a group of users:**
+
+1.  Navigate to the User Profiles Tool.
+
+2.  Click on the message icon ![mail](../../../../../../client/openstorefront/app/images/help/mail.png) next to the user
+    (or users) that you want to message.
+
+3.  Fill out the form.
+
+4.  Click **Send** to send the message immediately.
+
+**NOTE:** Messages are sent to email addresses one at a time so no email
+addresses are leaked to other users.
+
+#### 3.2.9.3 Control *
+------
+
+An admin may edit, activate or inactivate a profile. Inactivating a
+profile does not prevent login. Upon login, the user's profile will be
+reactivated. Once a profile has been inactivated, that user's watches
+and messages are also inactivated. Reactivating the profile will
+activate the user's existing watches, but it won't send any previous
+messages – just messages going forward.
+
+**To toggle active status:**
+
+1.  Navigate to User Profiles Tool.
+
+2.  Click on the activate/inactivate ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) icon and use
+    the filter option to view active/inactive users.
+
+
+## 3.3 Application Management *
+--------
+
+The Application Management menu is used to navigate to the Alerts, Jobs, Reports, 
+System, Tracking, Messages, and API Documentation sections.
+
+### 3.3.1 Alerts *
 ------
 
 Alerts are triggers set up to watch the data that an administrator can
@@ -1029,9 +993,23 @@ Descriptions of Alert Triggers:
 2.  Click **Inactivate** ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) or **Delete**
     ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to cancel the scheduled report. Click
     **Inactivate** to temporarily pause it.
+	
 
-## 3.8 Reports * 
---------
+### 3.3.2 Jobs *
+------
+
+The Jobs Tool allows for viewing and managing both scheduled background
+jobs and background tasks. An Admin can use the tool to pause, start,
+and run scheduled jobs. This tool helps in troubleshooting and view of
+the status of the application. If an operation is known to potentially
+run for an extended period of time, then it will process in the
+background allowing for faster feedback to the user while the operation
+completes. Scheduled jobs that run periodically such as the notification
+job also run in the background to provide automatic handling of
+services.
+
+### 3.3.3 Reports * 
+------
 
 Descriptions of the Reports:
 
@@ -1044,7 +1022,7 @@ Descriptions of the Reports:
 A report can be either manually generated on demand or set to
 auto-generate according to a specific schedule.
 
-### 3.8.1 Manually Generated Reports *
+#### 3.3.3.1 Manually Generated Reports *
 ------
 
 **To manually generate a report:**
@@ -1063,7 +1041,7 @@ The Report is generated in the background and the status of the report
 is shown in the table. Once the report is complete, it can be downloaded
 by clicking the report title link.
 
-### 3.8.2 Scheduled Reports *
+#### 3.3.3.2 Scheduled Reports *
 ------
 
 **To create a scheduled report:**
@@ -1094,35 +1072,10 @@ scheduled interval.
 3.  Click **Inactivate** ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) or **Delete**
     ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to cancel the scheduled report. Click
     **Inactivate** to temporarily pause it.
-
-### 3.9 Event Tracking *
---------------
-
-The application tracks internal user logins, Component/Resources views,
-and Article views. The application also can be integrated with external
-analytics such as google analytics for additional information. Also, the
-application server can be configured for access logging and the
-application logs audit message for all admin API access.
-
-The primary tracking events can be viewed using the Tracking Admin Tool.
-As well as the events are aggregated into various system generated
-report accessible via the Reports Admin Tool.
-
-## 3.10 Jobs Tool *
----------
-
-The Jobs Tool allows for viewing and managing both scheduled background
-jobs and background tasks. An Admin can use the tool to pause, start,
-and run scheduled jobs. This tool helps in troubleshooting and view of
-the status of the application. If an operation is known to potentially
-run for an extended period of time, then it will process in the
-background allowing for faster feedback to the user while the operation
-completes. Scheduled jobs that run periodically such as the notification
-job also run in the background to provide automatic handling of
-services.
-
-## 3.11 System Tools *
-------------
+	
+	
+### 3.3.4 System *
+------
 
 System Tools are provided to aid in troubleshooting.
 
@@ -1136,64 +1089,33 @@ System Tools and their Purpose:
 -  **Logging** -                  Allows for adjusting log levels at run time to log more/less information from a software component. **NOTE:** Logs are hierarchically organized so set a level from a parent will affect all children who are set to delegate to the parent logger. Loggers under: edu.usu.sdl.openstorefront are application specific. A logger will only appear when the software component is loaded.
 -  **Status** -                   Shows the run status of the application (i.e. memory, load, thread status and properties). Refer to Java platform documentation for the interpretation of the information.
 
-## 3.12 Organizations *
----------------
 
- Organizations provide information on specific organizations that are linked with the components listed on the site. The information these objects contain include:
+### 3.3.5 Tracking *
 
- - **Description** -            What the organization does
- - **Type** -                   The type of organization (i.e. Commercial Business, Contractor, US Organization, etc.)
- - **Website** -                The website for the specific organization if provided
- - **Address** -                The address for the organization
- - **Contact Information** -    A way to contact the organization
+The application tracks internal user logins, Component/Resources views,
+and Article views. The application also can be integrated with external
+analytics such as google analytics for additional information. Also, the
+application server can be configured for access logging and the
+application logs audit message for all admin API access.
 
-### 3.12.1 Managing *
---------------
+The primary tracking events can be viewed using the Tracking Admin Tool.
+As well as the events are aggregated into various system generated
+report accessible via the Reports Admin Tool.
 
-**To add a new organization:**
+### 3.3.6 Messages *
+------
 
-1.  Click **Add New Organization** from the Organizations section of the Admin Tools.
-
-2.  Enter the information and click **Save Changes**.
-
-**Note:** When a new component is added if an unrecognized organization is added, it will automatically be saved to the 
-  organization list.  However, details such as the Description and Main Contact Information will need to be added here.
-
-**To edit an organization**
-
-1.  From Organizations in the Admin Tools, select an organization.
-
-2.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) next to the organization.
-
-    a.  Update Organization information as desired including:  Name, Description, Organization Link, and Organization Type.
-
-    b.  Update Main Contact information as desired including:  Contact Name, Phone Number, Email, Agency, Department, 
-         Address, and Security Type.
-    
-3.  When finished, click **Save Changes**.
-
-**To remove an organization:**
-
-1.  From Organizations in the Admin Tools, select an organization.
-
-2.  Click on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the organization.
-
-3.  Confirm that you wish to delete the organization by cliking **OK**.
+Shows a log of messages sent to users in the Inactive filtered table.  Allows for
+the cleanup of old messages and the ability to process all queued messages now.
 
 
-**"No Organization" References:**
-This displays a list of references where no organization is listed.  
+### 3.3.7 API Documentation *
+------
 
-**Run Extract:**
-This runs a query to get current component and organization information to update the table.  
+This contains the documentation for the Application Programming Interface, or API.  It
+is viewable in a web page or is printable by clicking on Print View.
 
-**Show Contact info:**
-Clicking this button ![Show Contact Info](../../../../../../client/openstorefront/app/images/help/showcontactinfo.png)
- shows the Agency, Department, Contact Name, Contact Phone, and Contact Email for the organization.
 
-**View References:**
-Clicking this icon ![View References](../../../../../../client/openstorefront/app/images/help/viewreferences.png)
- shows all of the references for the organization.  
 
 # 4.  Glossary
 ----------

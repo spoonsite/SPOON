@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -58,6 +59,8 @@ public class PropertiesManager
 	public static final String KEY_DBLOG_ON = "dblog.on";
 	public static final String KEY_DBLOG_LOG_SECURITY = "dblog.logSecurityFilter";
 	public static final String KEY_ALLOW_JIRA_FEEDBACK = "jirafeedback.show";
+	public static final String KEY_FILE_HISTORY_KEEP_DAYS = "filehistory.max.days";
+	public static final String KEY_NOTIFICATION_MAX_DAYS = "notification.max.days";
 
 	public static final String KEY_OPENAM_URL = "openam.url";
 	public static final String KEY_LOGOUT_URL = "logout.url";
@@ -65,6 +68,7 @@ public class PropertiesManager
 	public static final String KEY_OPENAM_HEADER_FIRSTNAME = "openam.header.firstname";
 	public static final String KEY_OPENAM_HEADER_LASTNAME = "openam.header.lastname";
 	public static final String KEY_OPENAM_HEADER_EMAIL = "openam.header.email";
+	public static final String KEY_OPENAM_HEADER_PHONE = "openam.header.phone";
 	public static final String KEY_OPENAM_HEADER_GROUP = "openam.header.group";
 	public static final String KEY_OPENAM_HEADER_LDAPGUID = "openam.header.ldapguid";
 	public static final String KEY_OPENAM_HEADER_ORGANIZATION = "openam.header.organization";
@@ -77,6 +81,8 @@ public class PropertiesManager
 	public static final String KEY_JIRA_CONNECTION_WAIT_TIME = "jira.connection.wait.seconds";
 	public static final String KEY_JIRA_URL = "jira.server.url";
 	public static final String KEY_JOB_WORKING_STATE_OVERRIDE = "job.working.state.override.minutes";
+	public static final String KEY_JIRA_FEEDBACK_PROJECT = "jira.feedback.project";
+	public static final String KEY_JIRA_FEEDBACK_ISSUETYPE = "jira.feedback.issuetype";
 
 	public static final String KEY_MAIL_SERVER = "mail.smtp.url";
 	public static final String KEY_MAIL_SERVER_USER = "mail.server.user";
@@ -117,15 +123,41 @@ public class PropertiesManager
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 
+	private static Properties defaults = new Properties();
+
+	public static String getDefault(String key)
+	{
+		return defaults.getProperty(key);
+	}
+
+	public static String getDefault(String key, String defaultValue)
+	{
+		return defaults.getProperty(key, defaultValue);
+	}
+
 	public static String getApplicationVersion()
 	{
 		String key = "app.version";
 		return getValue(key);
 	}
 
+	public static String getValueDefinedDefault(String key)
+	{
+		return getProperties().getProperty(key, getDefault(key));
+	}
+
 	public static String getValue(String key)
 	{
 		return getProperties().getProperty(key);
+	}
+
+	public static void removeProperty(String key)
+	{
+		Object valueRemoved = getProperties().remove(key);
+		if (valueRemoved != null) {
+			log.log(Level.INFO, MessageFormat.format("Property removed: {0}", key));
+		}
+		saveProperties();
 	}
 
 	/**
@@ -146,7 +178,7 @@ public class PropertiesManager
 
 	public static void setProperty(String key, String value)
 	{
-		getProperties().setProperty(value, value);
+		getProperties().setProperty(key, value);
 		saveProperties();
 	}
 
@@ -162,16 +194,27 @@ public class PropertiesManager
 	private static Properties getProperties()
 	{
 		if (properties == null) {
-			loadProperties();
+			init();
 		}
 		return properties;
 	}
 
-	private static void loadProperties()
+	private static void init()
 	{
 		ReentrantLock lock = new ReentrantLock();
 		lock.lock();
 		try {
+			//Set defaults
+			defaults.put(KEY_NOTIFICATION_MAX_DAYS, "7");
+			defaults.put(KEY_FILE_HISTORY_KEEP_DAYS, "180");
+			defaults.put(KEY_MAX_ERROR_TICKETS, "5000");
+			defaults.put(KEY_JOB_WORKING_STATE_OVERRIDE, "30");
+			defaults.put(KEY_DBLOG_MAX_RECORD, "50000");
+			defaults.put(KEY_DBLOG_ON, "false");
+			defaults.put(KEY_ALLOW_JIRA_FEEDBACK, "true");
+			defaults.put(KEY_JIRA_FEEDBACK_PROJECT, "STORE");
+			defaults.put(KEY_JIRA_FEEDBACK_ISSUETYPE, "Help Desk Ticket");
+
 			if (Paths.get(PROPERTIES_FILENAME).toFile().createNewFile()) {
 				log.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
 			}
@@ -189,6 +232,7 @@ public class PropertiesManager
 			} catch (IOException e) {
 				throw new OpenStorefrontRuntimeException(e);
 			}
+
 		} catch (IOException e) {
 			throw new OpenStorefrontRuntimeException(e);
 		} finally {

@@ -52,14 +52,14 @@ limitations under the License.
 	
 </style>
 
-<h3 id="dragTarget"  style="color: white; border-bottom: 3px #E4771E solid; background: #414e68;  margin-top: 0px; margin-bottom: 0px; width: 1000px;">&nbsp;&nbsp;<i class="fa fa-question-circle"></i>&nbsp;&nbsp;Help <i class="pull-right"><i class="fa fa-external-link-square" ng-click="popout()"  style="padding-right: 3px;"></i><i class="fa fa-minus-square" ng-click="control.showHelp=!control.showHelp"  style="padding-right: 3px;"></i><i class="fa fa-close" style="padding-right: 3px;" id="closeTarget"></i></i></h3>
+<h3 id="dragTarget"  style="color: white; border-bottom: 3px rgb(191, 191, 191) solid; background: rgb(68, 30, 90);  margin-top: 0px; margin-bottom: 0px; width: 1000px;">&nbsp;&nbsp;<i class="fa fa-question-circle"></i>&nbsp;&nbsp;Help <i class="pull-right"><i class="fa fa-external-link-square" ng-click="popout()"  style="padding-right: 3px;"></i><i class="fa fa-minus-square" ng-click="control.showHelp=!control.showHelp"  style="padding-right: 3px;"></i><i class="fa fa-close" style="padding-right: 3px;" id="closeTarget"></i></i></h3>
 <div style="background: rgba(255, 255, 255, 1); width: 1000px; height: 600px;" ng-show="control.showHelp" >
 	<loader trigger="helpLoader"></loader>
 	<div class="help-nav">
 		<button class='btn btn-info detailsTitleButton' id="printLink" ng-click="print()" data-toggle="tooltip" data-placement="bottom" data-title="Go to Print View" data-trigger="hover">
 			      <i class="fa fa-print imitateLink"></i>
 		</button>
-		<button class="btn btn-default pull-right" style="margin-right: 10px;margin-top: 5px" id="feedbackBtn" ng-show="control.showFeedback">Provide Feedback</button>
+		<button class="btn btn-default pull-right" style="margin-right: 10px;margin-top: 5px" id="feedbackBtn" ng-show="control.showFeedback" ng-click="openFeedback();">Feedback / Issues</button>
 		<hr style="margin-top: 3px;">
 		<ul style="list-style: none; margin-left: -35px;">
 			<li ng-repeat="section in help.childSections">	
@@ -70,6 +70,11 @@ limitations under the License.
 						<ul style="list-style: none">
 							<li ng-repeat="sectionLevel3 in sectionLevel2.childSections">
 								<a href="" ng-click="showHelpSection(sectionLevel3.helpSection)" ng-class="sectionLevel3.helpSection.selected ? 'help_selected' : ''">{{sectionLevel3.helpSection.title}}</a>
+								<ul style="list-style: none">
+									<li ng-repeat="sectionLevel4 in sectionLevel3.childSections">
+									<a href="" ng-click="showHelpSection(sectionLevel4.helpSection)" ng-class="sectionLevel4.helpSection.selected ? 'help_selected' : ''">{{sectionLevel4.helpSection.title}}</a>
+									</li>	
+								</ul>								
 							</li>	
 						</ul>
 					</li>	
@@ -81,17 +86,5 @@ limitations under the License.
 		<h2 style="text-align: center">{{helpSection.title}}</h2>
 		<p ng-bind-html="helpSection.content"></p>
 	</div>
-	<div ng-if="control.showFeedback">
-	     <script type="text/javascript" src="https://jira.di2e.net/s/3d8ffec248fd313edcbb45e79a5fa8d8-T/en_US-ukkg1g/64019/8/1.4.25/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=fc4dac85"></script>
-              <script type="text/javascript">
-		window.ATL_JQ_PAGE_PROPS =  {
-		 "triggerFunction": function(showCollectorDialog) {
-			
-			 jQuery("#feedbackBtn").click(function(e) {
-				 e.preventDefault();
-				 showCollectorDialog();
-			 });
-		}};
-	    </script>
-	</div>
+
 </div>

@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>openstorefront-core</artifactId>
 		<groupId>edu.usu.sdl</groupId>
-		<version>1.5</version>
+		<version>1.6</version>
 	</parent>
 
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront-core-service</artifactId>
-	<version>1.5</version>
+	<version>1.6</version>
 	<packaging>bundle</packaging>
 
 	<name>openstorefront-core-service</name>
@@ -78,7 +78,15 @@
 			<artifactId>stripes</artifactId>
 			<version>1.6.0</version>
 		</dependency>
-				
+
+		<!--						
+		<dependency>
+			<groupId>com.atlassian.jira</groupId>
+			<artifactId>jira-api</artifactId>
+			<version>6.4-OD-08-006</version>		
+		</dependency>		
+		-->
+						
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
 			<artifactId>jira-rest-java-client-api</artifactId>
@@ -253,11 +261,16 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-	 <dependency>
-	  <groupId>${project.groupId}</groupId>
-	  <artifactId>openstorefront-core-apidoc</artifactId>
-	  <version>${project.version}</version>
-	 </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>openstorefront-core-apidoc</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>er2-xmlparser</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

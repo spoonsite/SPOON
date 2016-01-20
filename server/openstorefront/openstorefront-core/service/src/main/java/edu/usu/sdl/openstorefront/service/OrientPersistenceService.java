@@ -352,7 +352,7 @@ public class OrientPersistenceService
 		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
-			mappedParams.putAll(mapParameters(queryByExample.getExample()));
+			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption()));
 		}
 
 		queryByExample.getExtraWhereCauses().forEach(item -> {
@@ -468,7 +468,7 @@ public class OrientPersistenceService
 		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
-			mappedParams.putAll(mapParameters(queryByExample.getExample()));
+			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption()));
 		}
 
 		queryByExample.getExtraWhereCauses().forEach(item -> {
@@ -541,7 +541,7 @@ public class OrientPersistenceService
 		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
-			mappedParams.putAll(mapParameters(queryByExample.getExample()));
+			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption()));
 		}
 		if (queryByExample.getLikeExample() != null) {
 			String likeClause = generateWhereClause(queryByExample.getLikeExample(), new ComplexFieldStack(), queryByExample.getLikeExampleOption());
@@ -552,7 +552,7 @@ public class OrientPersistenceService
 					queryString.append(" where ");
 				}
 				queryString.append(likeClause);
-				mappedParams.putAll(mapParameters(queryByExample.getLikeExample()));
+				mappedParams.putAll(mapParameters(queryByExample.getLikeExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getLikeExampleOption()));
 			}
 		}
 		queryByExample.getExtraWhereCauses().forEach(item -> {
@@ -640,9 +640,19 @@ public class OrientPersistenceService
 							String fieldName = complexFieldStack.getQueryFieldName() + field.toString() + generateStatementOption.getMethod();
 							String fieldParamName = complexFieldStack.getQueryFieldName() + field.toString();
 							where.append(fieldName)
-									.append(" ").append(generateStatementOption.getOperation()).append(" :")
-									.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
-									.append(generateStatementOption.getParameterSuffix());
+									.append(" ").append(generateStatementOption.getOperation());
+
+							boolean addParameter = true;
+							if (GenerateStatementOption.OPERATION_NULL.equals(generateStatementOption.getOperation())
+									|| GenerateStatementOption.OPERATION_NOT_NULL.equals(generateStatementOption.getOperation())) {
+								addParameter = false;
+							}
+
+							if (addParameter) {
+								where.append(" :")
+										.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
+										.append(generateStatementOption.getParameterSuffix());
+							}
 						}
 					}
 				}

@@ -37,6 +37,7 @@ public class OpenStorefrontConstant
 	public static final String HEADER_USER_AGENT = "User-Agent";
 	public static final String STATUS_VIEW_ALL = "ALL";
 	public static final String DEFAULT_FROM_ADDRESS = "noreply@storefront.net";
+	public static final String GENERAL_KEY_SEPARATOR = ":";
 
 	//Field Max Sizes
 	public static final int FIELD_SIZE_CRON = 250;
@@ -47,6 +48,7 @@ public class OpenStorefrontConstant
 	public static final int FIELD_SIZE_EMAIL_LIST_SIZE = 32000;
 	public static final int FIELD_SIZE_ORGANIZATION = 120;
 	public static final int FIELD_SIZE_CODE = 20;
+	public static final int FIELD_SIZE_PHONE = 80;
 	public static final int FIELD_SIZE_DESCRIPTION = 255;
 	public static final int FIELD_SIZE_COMPONENT_NAME = 255;
 	public static final int FIELD_SIZE_COMPONENT_DESCRIPTION = 32000;
@@ -60,6 +62,13 @@ public class OpenStorefrontConstant
 	public static final int FIELD_SIZE_ADMIN_MESSAGE = 32000;
 	public static final int FIELD_SIZE_TAG = 60;
 	public static final int FIELD_SIZE_ARTICLE_SIZE = 10485760;
+	public static final int FIELD_SIZE_80 = 80;
+	public static final int FIELD_SIZE_60 = 60;
+	public static final int FIELD_SIZE_4K = 4096;
+	public static final int FIELD_SIZE_16K = 16384;
+	public static final int FIELD_SIZE_32K = 32768;
+	public static final int FIELD_SIZE_64K = 65536;
+	public static final int FIELD_SIZE_1MB = 1048576;
 
 	public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
@@ -75,37 +84,37 @@ public class OpenStorefrontConstant
 
 	private static Map<String, String> loadMimeXref()
 	{
-		Map<String, String> mimeXref = new HashMap<>();
-		mimeXref.put("text/html", ".html");
-		mimeXref.put("text/plain", ".txt");
-		mimeXref.put("text/json", ".json");
-		mimeXref.put("text/csv", ".csv");
-		mimeXref.put("text/tsv", ".tsv");
-		mimeXref.put("application/json", ".json");
-		mimeXref.put("text/xml", ".xml");
-		mimeXref.put("application/xml", ".xml");
-		mimeXref.put("image/jpeg", ".jpg");
-		mimeXref.put("image/jpg", ".jpg");
-		mimeXref.put("image/png", ".png");
-		mimeXref.put("image/gif", ".gif");
-		mimeXref.put("image/bmp", ".bmp");
-		mimeXref.put("video/mpg", ".mpg");
-		mimeXref.put("video/mpeg", ".mpg");
-		mimeXref.put("video/mp4", ".mp4");
-		mimeXref.put("video/avi", ".avi");
-		mimeXref.put("audio/mpg", ".mpg");
-		mimeXref.put("audio/mpeg", ".mpg");
-		mimeXref.put("audio/ogg", ".ogg");
-		mimeXref.put("audio/mp4", ".mp4");
-		mimeXref.put("application/doc", ".doc");
-		mimeXref.put("application/docx", ".docx");
-		mimeXref.put("application/xls", ".xls");
-		mimeXref.put("application/xlsx", ".xlsx");
-		mimeXref.put("application/vnd.ms-excel", ".csv");
-		mimeXref.put("application/pdf", ".pdf");
-		mimeXref.put("application/zip", ".zip");
-		mimeXref.put("application/gzip", ".gzip");
-		return mimeXref;
+		Map<String, String> mimeXrefLocal = new HashMap<>();
+		mimeXrefLocal.put("text/html", ".html");
+		mimeXrefLocal.put("text/plain", ".txt");
+		mimeXrefLocal.put("text/json", ".json");
+		mimeXrefLocal.put("text/csv", ".csv");
+		mimeXrefLocal.put("text/tsv", ".tsv");
+		mimeXrefLocal.put("application/json", ".json");
+		mimeXrefLocal.put("text/xml", ".xml");
+		mimeXrefLocal.put("application/xml", ".xml");
+		mimeXrefLocal.put("image/jpeg", ".jpg");
+		mimeXrefLocal.put("image/jpg", ".jpg");
+		mimeXrefLocal.put("image/png", ".png");
+		mimeXrefLocal.put("image/gif", ".gif");
+		mimeXrefLocal.put("image/bmp", ".bmp");
+		mimeXrefLocal.put("video/mpg", ".mpg");
+		mimeXrefLocal.put("video/mpeg", ".mpg");
+		mimeXrefLocal.put("video/mp4", ".mp4");
+		mimeXrefLocal.put("video/avi", ".avi");
+		mimeXrefLocal.put("audio/mpg", ".mpg");
+		mimeXrefLocal.put("audio/mpeg", ".mpg");
+		mimeXrefLocal.put("audio/ogg", ".ogg");
+		mimeXrefLocal.put("audio/mp4", ".mp4");
+		mimeXrefLocal.put("application/doc", ".doc");
+		mimeXrefLocal.put("application/docx", ".docx");
+		mimeXrefLocal.put("application/xls", ".xls");
+		mimeXrefLocal.put("application/xlsx", ".xlsx");
+		mimeXrefLocal.put("application/vnd.ms-excel", ".csv");
+		mimeXrefLocal.put("application/pdf", ".pdf");
+		mimeXrefLocal.put("application/zip", ".zip");
+		mimeXrefLocal.put("application/gzip", ".gzip");
+		return mimeXrefLocal;
 	}
 
 	public static String getFileExtensionForMime(String mimeType)

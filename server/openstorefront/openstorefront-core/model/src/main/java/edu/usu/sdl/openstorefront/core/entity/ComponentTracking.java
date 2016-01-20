@@ -53,12 +53,25 @@ public class ComponentTracking
 	@APIDescription("External resource type")
 	private String resourceType;
 	private Boolean restrictedResouce;
+	private String componentType;
 
 	@APIDescription("External resource url")
 	private String resourceLink;
 
 	public ComponentTracking()
 	{
+	}
+
+	@Override
+	public String uniqueKey()
+	{
+		return getTrackEventTypeCode() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getEventDts();
+	}
+
+	@Override
+	protected void customKeyClear()
+	{
+		setComponentTrackingId(null);
 	}
 
 	public String getComponentTrackingId()
@@ -129,6 +142,16 @@ public class ComponentTracking
 	public void setRestrictedResouce(Boolean restrictedResouce)
 	{
 		this.restrictedResouce = restrictedResouce;
+	}
+
+	public String getComponentType()
+	{
+		return componentType;
+	}
+
+	public void setComponentType(String componentType)
+	{
+		this.componentType = componentType;
 	}
 
 }

@@ -46,6 +46,14 @@ app.controller('helpCtrl', ['$scope', '$draggableInstance', 'business',
     };
     $scope.displayFeedback();
    
+   $scope.openFeedback = function() {
+     var feedbackWin = Ext.create('OSF.component.FeedbackWindow', { 
+         closeAction: 'destroy',
+         angularScope: $scope
+     });     
+     feedbackWin.show();        
+   };
+   
    $scope.showHelpSection = function(helpSection) {
      
      if ($scope.helpSection.selected) {
@@ -85,6 +93,14 @@ app.controller('helpSingleCtrl', ['$scope', 'business', 'printView', '$timeout',
           $scope.flattenHelp(section);
        });
     };
+    
+   $scope.openFeedback = function() {
+     var feedbackWin = Ext.create('OSF.component.FeedbackWindow', { 
+         closeAction: 'destroy',
+         angularScope: $scope
+     });     
+     feedbackWin.show();        
+   };    
     
     $scope.loadHelp = function() {
       $scope.$emit('$TRIGGERLOAD', 'helpLoader');   

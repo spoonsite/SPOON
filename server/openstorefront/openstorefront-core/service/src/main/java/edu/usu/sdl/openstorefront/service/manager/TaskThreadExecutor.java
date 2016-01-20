@@ -24,6 +24,8 @@ import static edu.usu.sdl.openstorefront.core.api.model.TaskFuture.MAX_ORPHAN_QU
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.AsyncTask;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -100,6 +102,18 @@ public class TaskThreadExecutor
 						ServiceProxy serviceProxy = ServiceProxy.getProxy();
 						serviceProxy.getSystemService().saveAsyncTask(taskFuture);
 					}
+
+					if (OpenStorefrontConstant.ANONYMOUS_USER.equals(taskFuture.getCreateUser()) == false) {
+						NotificationEvent notificationEvent = new NotificationEvent();
+						notificationEvent.setEventType(NotificationEventType.TASK);
+						notificationEvent.setUsername(taskFuture.getCreateUser());
+						notificationEvent.setMessage("Task: " + taskFuture.getTaskName() + " has finished processing with status: " + taskFuture.getStatus());
+						notificationEvent.setEntityMetaDataStatus(taskFuture.getStatus().name());
+						notificationEvent.setEntityName(AsyncTask.class.getSimpleName());
+						notificationEvent.setEntityId(taskFuture.getTaskId());
+						ServiceProxy.getProxy().getNotificationService().postEvent(notificationEvent);
+					}
+
 				}
 			}
 		}
@@ -217,6 +231,18 @@ public class TaskThreadExecutor
 			taskFuture.setTaskName(taskRequest.getName());
 			taskFuture.setCallback(taskRequest.getCallback());
 			tasks.add(taskFuture);
+
+			if (OpenStorefrontConstant.ANONYMOUS_USER.equals(taskFuture.getCreateUser()) == false) {
+				NotificationEvent notificationEvent = new NotificationEvent();
+				notificationEvent.setEventType(NotificationEventType.TASK);
+				notificationEvent.setUsername(taskFuture.getCreateUser());
+				notificationEvent.setMessage("Task: " + taskFuture.getTaskName() + " has been queued for processing. ");
+				notificationEvent.setEntityName(AsyncTask.class.getSimpleName());
+				notificationEvent.setEntityId(taskFuture.getTaskId());
+				notificationEvent.setEntityMetaDataStatus(OpenStorefrontConstant.TaskStatus.QUEUED.name());
+				ServiceProxy.getProxy().getNotificationService().postEvent(notificationEvent);
+			}
+
 		}
 		return taskFuture;
 	}

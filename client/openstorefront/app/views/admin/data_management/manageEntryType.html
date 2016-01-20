@@ -1,0 +1,69 @@
+<!--
+Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<div  ng-controller="AdminEntryTypeCtrl" style="padding-left: 20px; padding-right: 20px;">
+	<loader trigger="loader"></loader>
+	
+		<div style="padding-top: 20px;">	
+			<span style="float: left">
+				<button class="btn btn-default" ng-click="removeAllTooltips(); addEntryType();" popover data-trigger="hover" data-placement="left" data-html="true"  data-original-title="" data-container="body" data-content=""><i class="fa fa-plus"></i>&nbsp;Add Entry Type</button>
+			</span>								
+		</div>
+
+		<table class="table table-striped table-bordered admin-table">
+				<tr>
+					<th><a href="" ng-click="setPredicate('description', 'type');">Type<span ng-show="predicate['type'] == 'description'"><i ng-show="!reverse['type']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['type']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th><a href="" ng-click="setPredicate('detailedDescription', 'type');">Description<span ng-show="predicate['type'] == 'detailedDescription'"><i ng-show="!reverse['type']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['type']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th><a href="" ng-click="setPredicate('updateDts', 'type');">Update Date<span ng-show="predicate['type'] == 'updateDts'"><i ng-show="!reverse['type']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['type']" class="fa fa-sort-alpha-desc"></i></span></a></th>
+					<th><a href="" ng-click="setPredicate('updateUser', 'type');">Update User<span ng-show="predicate['type'] == 'updateUser'"><i ng-show="!reverse['type']" class="fa fa-sort-alpha-asc"></i><i ng-show="reverse['type']" class="fa fa-sort-alpha-desc"></i></span></a></th>					
+					<th>Action</th>
+
+				</tr>
+				<!--
+				<tr ng-repeat="type in entryTypes" >					
+					<td>{{type.description}}</td>
+					<td>{{type.detailedDescription}}</td>
+					<td>{{type.updateDts | date:'MM/dd/yyyy h:mm:ss a'}}</td>
+					<td>{{type.updateUser}}</td>
+					<td style="padding:0px 3px !important;">						
+						&nbsp;<button class="btn btn-warning btn-sm" ng-click="editEntryType(message)" title="Edit"><i class="fa fa-edit"></i></button>						
+						&nbsp;<button class="btn btn-danger btn-sm" ng-click="deleteEntryType(message)" title="Delete (Only if there is no entries)"><i class="fa fa-trash-o"></i></button>
+					</td>
+				</tr>				
+				-->
+				<tr >					
+					<td>Article</td>
+					<td>Use to display information on a topic and show related items</td>
+					<td>7/25/2015 10:00:00</td> 
+					<td>admin</td>
+					<td style="padding:0px 3px !important;">						
+						&nbsp;<button class="btn btn-default btn-sm" ng-click="editEntryType(message)" title="Edit"><i class="fa fa-edit"></i></button>						
+						&nbsp;<button class="btn btn-danger btn-sm" ng-click="deleteEntryType(message)" title="Delete (Only if there is no entries)"><i class="fa fa-trash-o"></i></button>
+					</td>
+				</tr>				
+				<tr >					
+					<td>Component</td>
+					<td>Main entry representing a DI2E Component</td>
+					<td>7/25/2015 10:00:00</td>
+					<td>admin</td>
+					<td style="padding:0px 3px !important;">						
+						&nbsp;<button class="btn btn-default btn-sm" ng-click="editEntryType(message)" title="Edit"><i class="fa fa-edit"></i></button>						
+						&nbsp;<button class="btn btn-danger btn-sm" ng-click="deleteEntryType(message)" title="Delete (Only if there is no entries)"><i class="fa fa-trash-o"></i></button>
+					</td>
+				</tr>								
+		</table>	
+	
+</div>		

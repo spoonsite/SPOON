@@ -46,10 +46,10 @@ public class ArticleTrackingResource
 
 	@GET
 	@RequireAdmin
-	@APIDescription("Get the list of tracking details on a specified component passing in a filter.")
+	@APIDescription("Get the list of tracking details on a specified article passing in a filter.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ArticleTrackingResult.class)
-	public Response getActiveComponentTracking(
+	public Response getActiveArticleTracking(
 			@BeanParam FilterQueryParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
@@ -80,13 +80,13 @@ public class ArticleTrackingResource
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		writer.writeNext(new String[]{"Title",
-									  "Attribute Type",
-									  "Attribute Code",
-									  "Create Date",
-									  "Event",
-									  "Tracking ID",
-									  "Create User",
-									  "Client IP"
+			"Attribute Type",
+			"Attribute Code",
+			"Create Date",
+			"Event",
+			"Tracking ID",
+			"Create User",
+			"Client IP"
 		});
 		data.append(stringWriter.toString());
 
@@ -95,6 +95,7 @@ public class ArticleTrackingResource
 		}
 
 		ResponseBuilder response = Response.ok(data.toString());
+		response.header("Content-Type", "application/csv");
 		response.header("Content-Disposition", "attachment; filename=\"articleTrackingExport.csv\"");
 		return response.build();
 	}
