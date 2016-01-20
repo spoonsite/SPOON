@@ -6,7 +6,7 @@
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */
 		Ext.onReady(function(){	
-		
+	
 			var selectedTable;
 			var edit;
 		

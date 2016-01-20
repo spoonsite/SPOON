@@ -198,13 +198,117 @@ Ext.onReady(function() {
 
 	Ext.Ajax.timeout = 300000;
 	Ext.Ajax.on('requestexception', function (conn, response, options, eOpts) {
+		
+		var feedbackButtonConfig = {
+			yes: 'Ok',
+			no: 'Report Issue'
+		};
+		
+		var feedbackHandler = function(){
+			var requestMessage = '';			
+			var request = response.request;
+			if (request) {
+				requestMessage = '( URL: ' + request.url + ' | ';
+			     requestMessage += '  Method: ' + request.requestOptions.method + ' | ';
+				if (request.requestOptions.data) {
+					try {
+						requestMessage += '  Data: ' + Ext.JSON.encode(request.requestOptions.data);
+					} catch (e) {						
+					}
+				}
+			}
+			
+			var feedbackWin = Ext.create('OSF.component.FeedbackWindow',{				
+				closeAction: 'destory',
+				hideType: 'Application Issue',
+				labelForDescription: 'Please provide detail as to what you are trying to accomplish',
+				extraDescription: 'Request: ' + requestMessage
+			});
+			feedbackWin.show();
+		};
+		
+		var requestUrl = '';
+		if (response.request) {
+			requestUrl = '<br><hr> ('+ response.request.url + ' <b>' + response.request.requestOptions.method + '</b>)'; 
+		}
+		
 		if (response.status === 403) {
 			Ext.Msg.show({
-				title: 'Forbidden',
-				message: 'Check request',
+				title: 'Forbidden (403)',
+				message: 'Check request.  User may not have access or the request is invalid.' + requestUrl,
+				buttons: Ext.MessageBox.YESNO,
+				buttonText: feedbackButtonConfig,
+				icon: Ext.Msg.Error,
+				fn: function (btn) {
+					if (btn === 'no') {
+						feedbackHandler();
+					}
+				}
+			});			
+		} else if (response.status === 404) {
+			Ext.Msg.show({
+				title: 'Resource Not Found (404)',
+				message: 'Refresh and try again.  Also, check request.' + requestUrl,
+				buttons: Ext.Msg.OK,
+				icon: Ext.Msg.Error,
+				fn: function (btn) {					
+				}
+			});			
+		} else if (response.status === 405) {
+			Ext.Msg.show({
+				title: 'Bad Client Request (405)',
+				message: 'HTTP method is not allowed.  Check request.' + requestUrl,
+				buttons: Ext.MessageBox.YESNO,
+				buttonText: feedbackButtonConfig,
+				icon: Ext.Msg.Error,
+				fn: function (btn) {
+					if (btn === 'no') {
+						feedbackHandler();
+					}
+				}
+			});			
+		} else if (response.status === 415) {
+			Ext.Msg.show({
+				title: 'Bad Client Request (415)',
+				message: 'Unsupported content type on the request.  Check request.' + requestUrl,
+				buttons: Ext.MessageBox.YESNO,
+				buttonText: feedbackButtonConfig,
+				icon: Ext.Msg.Error,
+				fn: function (btn) {
+					if (btn === 'no') {
+						feedbackHandler();
+					}					
+				}
+			});			
+		} else if (response.status === 400) {
+			Ext.Msg.show({
+				title: 'Bad Client Request (400)',
+				message: 'Check request. ' + requestUrl,
+				buttons: Ext.MessageBox.YESNO,
+				buttonText: feedbackButtonConfig,
+				icon: Ext.Msg.Error,
+				fn: function (btn) {
+					if (btn === 'no') {
+						feedbackHandler();
+					}					
+				}
+			});			
+		} else if (response.status === 502) {
+			Ext.Msg.show({
+				title: 'Server Communication Failure',
+				message: 'This likely a temporary condition.  Please try again later.<br>(Attention Admin): Application server is not responding to proxy. <br> Check connection and status of the Application Server. ',
 				buttons: Ext.Msg.OK,
 				icon: Ext.Msg.Error,
 				fn: function (btn) {
+				}
+			});			
+		} else if (response.status === 503) {
+			Ext.Msg.show({
+				title: 'Service Unavailable',
+				message: 'This likely a temporary condition.  Please try again later.<br>Application is unavaliable.',
+				buttons: Ext.Msg.OK,
+				icon: Ext.Msg.Error,
+				fn: function (btn) {					
 				}
 			});			
 		} else {
@@ -239,7 +343,7 @@ Ext.onReady(function() {
 			} else {
 				Ext.Msg.show({
 					title: 'Connection Error',
-					message: 'Unable to connect to server or there was internal server error.',
+					message: 'Unable to connect to server or there was internal server error.' + requestUrl,
 					buttons: Ext.Msg.OK,
 					icon: Ext.Msg.Error,
 					fn: function (btn) {
