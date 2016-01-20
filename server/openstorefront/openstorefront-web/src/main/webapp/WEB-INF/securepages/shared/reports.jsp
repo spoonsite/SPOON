@@ -695,11 +695,11 @@
 						id: 'scheduleReportWin',
 						iconCls: 'fa fa-calendar',
 						width: '30%',
+						minHeight: 500,
 						y: 40,
 						closeAction: 'destroy',
 						modal: true,
-						maximizable: false,
-						autoScroll: true,
+						maximizable: true,																
 						maxHeight: '90%',
 						layout: 'fit',
 						items: [{
