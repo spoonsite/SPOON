@@ -17,8 +17,7 @@ limitations under the License.
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
-		
-	<script src="scripts/component/feedbackWindow.js?v=${appVersion}" type="text/javascript"></script>
+	
 	
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */	
