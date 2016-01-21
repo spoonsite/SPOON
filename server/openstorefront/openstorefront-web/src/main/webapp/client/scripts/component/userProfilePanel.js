@@ -196,6 +196,12 @@ Ext.define('OSF.component.UserProfilePanel', {
 		profileForm.addDocked(dockedItems);
 
 		profileForm.getComponent('userTypeCodeCB').getStore().on('load', function () {
+
+			// Check to see if the user was set on a profileWindow.
+			if (profileForm.profileWindow.loadUser) {
+				profileForm.loadUser = profileForm.profileWindow.loadUser;
+			}
+
 			if (profileForm.loadUser){
 				Ext.Ajax.request({
 					url: '/openstorefront/api/v1/resource/userprofiles/' + profileForm.loadUser,
