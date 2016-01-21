@@ -3314,97 +3314,6 @@
 					]
 				});
 				
-				var mergeComponentWin = Ext.create('Ext.window.Window', {
-					id: 'mergeComponentWin',
-					title: 'Merge',
-					width: '40%',
-					height: 210,
-					modal: true,
-					layout: 'fit',
-					items: [
-						{
-							xtype: 'form',
-							itemId: 'mergeForm',
-							layout: 'vbox',
-							bodyStyle: 'padding: 10px;',
-							defaults: {
-								labelAlign: 'top'
-							},							
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									items: [
-										{
-											text: 'Merge',
-											formBind: true,
-											iconCls: 'fa fa-exchange',
-											handler: function() {
-												
-												var mergeForm = this.up('form');
-												var data = mergeForm.getValues();
-												
-												//check data for same id
-												if (data.mergeComponentId === data.targetComponentId) {
-													mergeForm.getComponent('targetComponent').markInvalid('Target Component must be different than merge component.');													
-												} else {	
-													mergeForm.setLoading("Merging...");
-													Ext.Ajax.request({
-														url: '../api/v1/resource/components/' + data.mergeComponentId + '/' + data.targetComponentId + '/merge',
-														method: 'POST',
-														success: function(response, opts){
-															mergeForm.setLoading(false);
-
-															Ext.getCmp('mergeComponentWin').hide();
-															actionRefreshComponentGrid();
-														},
-														failure: function(response, opts){
-															mergeForm.setLoading(false);
-														}
-													});
-												}
-											}
-										}, 
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Cancel',
-											iconCls: 'fa fa-close',
-											handler: function() {
-												this.up('window').hide();
-											}																						
-										}
-									]
-								}
-							], 
-							items: [
-								{
-									xtype: 'combobox',
-									name: 'mergeComponentId',
-									fieldLabel: 'Merge Component',
-									store: maingridStore,
-									valueField: 'componentId',
-									width: '100%',
-									displayField: 'name',
-									readOnly: true
-								},
-								Ext.create('OSF.component.StandardComboBox', {
-									name: 'targetComponentId',
-									itemId: 'targetComponent',
-									allowBlank: false,
-									width: '100%',
-									margin: '0 0 0 0',
-									fieldLabel: 'Target Component',
-									storeConfig: {
-										url: '../api/v1/resource/components/lookup?all=true',
-										autoLoad: false
-									}
-								})
-							]
-						}
-					]
-				});	
 				
 				var maingridStore = Ext.create('Ext.data.Store', {				
 					autoLoad: true,
@@ -3536,6 +3445,99 @@
 					}					
 				});	
 				
+				var mergeComponentWin = Ext.create('Ext.window.Window', {
+					id: 'mergeComponentWin',
+					title: 'Merge',
+					width: '40%',
+					height: 210,
+					modal: true,
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'mergeForm',
+							layout: 'vbox',
+							bodyStyle: 'padding: 10px;',
+							defaults: {
+								labelAlign: 'top'
+							},							
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Merge',
+											formBind: true,
+											iconCls: 'fa fa-exchange',
+											handler: function() {
+												
+												var mergeForm = this.up('form');
+												var data = mergeForm.getValues();
+												
+												//check data for same id
+												if (data.mergeComponentId === data.targetComponentId) {
+													mergeForm.getComponent('targetComponent').markInvalid('Target Component must be different than merge component.');													
+												} else {	
+													mergeForm.setLoading("Merging...");
+													Ext.Ajax.request({
+														url: '../api/v1/resource/components/' + data.mergeComponentId + '/' + data.targetComponentId + '/merge',
+														method: 'POST',
+														success: function(response, opts){
+															mergeForm.setLoading(false);
+
+															Ext.getCmp('mergeComponentWin').hide();
+															actionRefreshComponentGrid();
+														},
+														failure: function(response, opts){
+															mergeForm.setLoading(false);
+														}
+													});
+												}
+											}
+										}, 
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function() {
+												this.up('window').hide();
+											}																						
+										}
+									]
+								}
+							], 
+							items: [
+								{
+									xtype: 'combobox',
+									name: 'mergeComponentId',
+									fieldLabel: 'Merge Component',
+									store: maingridStore,
+									queryLocal: true,
+									valueField: 'componentId',
+									width: '100%',
+									displayField: 'name',
+									readOnly: true
+								},
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'targetComponentId',
+									itemId: 'targetComponent',
+									allowBlank: false,
+									width: '100%',
+									margin: '0 0 0 0',
+									fieldLabel: 'Target Component',
+									storeConfig: {
+										url: '../api/v1/resource/components/lookup?all=true',
+										autoLoad: false
+									}
+								})
+							]
+						}
+					]
+				});				
+				
 				var componentGrid = Ext.create('Ext.grid.Panel', {	
 					title: 'Manage Entries <i class="fa fa-question-circle"  data-qtip="This tool allows for manipulating all data related to an entry" ></i>',
 					id: 'componentGrid',
@@ -3592,6 +3594,8 @@
 									emptyText: 'All',
 									fieldLabel: 'Active Status',
 									name: 'activeStatus',									
+									typeAhead: false,
+									editable: false,
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefreshComponentGrid();
@@ -3624,7 +3628,9 @@
 									id: 'componentGridFilter-ApprovalStatus',
 									emptyText: 'All',
 									fieldLabel: 'Approval State',
-									name: 'approvalState',								
+									name: 'approvalState',	
+									typeAhead: false,
+									editable: false,									
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefreshComponentGrid();
@@ -3646,7 +3652,9 @@
 									fieldLabel: 'Entry Type',
 									name: 'componentType',
 									valueField: 'componentType',
-									displayField: 'label',									
+									displayField: 'label',
+									typeAhead: false,
+									editable: false,
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefreshComponentGrid();
