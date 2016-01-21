@@ -79,6 +79,11 @@ and open the template in the editor.
 	color: white
 }
 
+/* For icons that don't vertically center for cryptic reasons **/
+.icon-vertical-correction {
+	margin-top: -5px;
+}
+
 /** Search tool styles **/
 
 .list-button {

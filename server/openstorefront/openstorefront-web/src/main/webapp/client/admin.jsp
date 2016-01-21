@@ -47,11 +47,11 @@ limitations under the License.
 			pageMap['Imports'] = 'Router.action?page=admin/data/imports.jsp';
 			pageMap['Lookups'] = 'Router.action?page=admin/data/lookup.jsp';
 			pageMap['Media'] = 'Router.action?page=admin/data/media.jsp';
-			pageMap['Organizations'] = 'Router.action?page=admin/data/organizations.jsp';
-			pageMap['Questions'] = '/openstorefront/admin?tool=Questions';
-			pageMap['Reviews'] = '/openstorefront/admin?tool=Reviews';
-			pageMap['Tags'] = '/openstorefront/admin?tool=Tags';
-			pageMap['UserProfiles'] = '/openstorefront/admin?tool=User%20Profiles';
+			pageMap['Organizations'] = 'Router.action?page=admin/data/organizations.jsp';	
+			pageMap['Questions'] = 'Router.action?page=admin/data/user-data/questions.jsp';
+			pageMap['Reviews'] = 'Router.action?page=admin/data/user-data/reviews.jsp';
+			pageMap['Tags'] = 'Router.action?page=admin/data/user-data/tags.jsp';
+			pageMap['UserProfiles'] = 'Router.action?page=admin/data/user-data/userProfiles.jsp';		
 			pageMap['Alerts'] = 'Router.action?page=admin/application/alerts.jsp';
 			pageMap['Branding'] = 'Router.action?page=admin/application/branding.jsp';
 			pageMap['Jobs'] = '/openstorefront/admin?tool=Jobs';
