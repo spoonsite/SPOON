@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,6 @@ import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- *
- * @author dshurtleff
- */
 @APIDescription("Hold a highlight for the homepage")
 public class Highlight
 		extends StandardEntity
@@ -63,6 +59,10 @@ public class Highlight
 	@APIDescription("External URL link")
 	private String link;
 
+	@ConsumeField
+	@APIDescription("Position when ordered")
+	private Integer orderingPosition;
+
 	public static final String FIELD_TITLE = "title";
 	public static final String TYPE_COMPONENT = "C";
 	public static final String TYPE_ARTICLE = "A";
@@ -83,6 +83,7 @@ public class Highlight
 		this.setHighlightType(highlight.getHighlightType());
 		this.setLink(highlight.getLink());
 		this.setTitle(highlight.getTitle());
+		this.setOrderingPosition(highlight.getOrderingPosition());
 
 	}
 
@@ -134,6 +135,16 @@ public class Highlight
 	public void setLink(String link)
 	{
 		this.link = link;
+	}
+
+	public Integer getOrderingPosition()
+	{
+		return orderingPosition;
+	}
+
+	public void setOrderingPosition(Integer orderingPosition)
+	{
+		this.orderingPosition = orderingPosition;
 	}
 
 }
