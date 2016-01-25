@@ -50,7 +50,14 @@
 					{ text: 'No.', dataIndex: 'orderingPosition', flex: 0.2 },
 					{ text: 'Title', dataIndex: 'title', flex: 1 },
 					{ text: 'Description', dataIndex: 'description', flex: 4, cellWrap: true },
-					{ text: 'Type', dataIndex: 'highlightType', flex: 1 },
+					{ 
+						text: 'Type', 
+						dataIndex: 'highlightType',
+						flex: 1,
+						renderer: function (value, metaData, record) {
+									return getHighlightType(value);
+								}
+					},
 					{ text: 'Link', dataIndex: 'link', flex: 1 },
 					{ text: 'Security Type', dataIndex: 'securityMarkingType', flex: 1 }
 				],
@@ -156,7 +163,10 @@
 									fieldLabel: 'Highlight Type<span class="field-required" />',
 									id: 'highlightEntryForm-Type',
 									forceSelection: true,
-									name: 'highlightType'
+									name: 'highlightType',
+									valueField: 'code',
+									displayField: 'description',
+									store: highlightTypeStore
 								}
 							],	
 							dockedItems: [
