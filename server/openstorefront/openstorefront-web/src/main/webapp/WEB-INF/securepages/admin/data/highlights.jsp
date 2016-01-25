@@ -8,16 +8,37 @@
 		Ext.onReady(function(){	
 	
 		
+			
+
+
+			var highlightTypeStore = Ext.create('Ext.data.Store', {
+				storeId: 'highlightTypeStore',
+				autoLoad: true,
+				fields: ['code', 'description'],
+				proxy: {
+					type: 'ajax',
+					url: '/openstorefront/api/v1/resource/lookuptypes/HighlightType/view'
+				}
+			});
+
+			var getHighlightType = function getHighlightType(code) {
+				try {
+					return highlightTypeStore.getData().find('code', code).data.description;
+				}
+				catch(err) {
+					Ext.toast('Unable to find highlight type code: ' + code);
+					return '';
+				}
+				};
+			
 			var highlightStore = Ext.create('Ext.data.Store', {
 				storeId: 'highlightStore',
 				autoLoad: true,
-				fields:[ 'code', 'description'],
 				proxy: {
 					type: 'ajax',
 					url: '/openstorefront/api/v1/resource/highlights?sortField=orderingPosition'
 				}
 			});
-			
 
 
 			var highlightGrid = Ext.create('Ext.grid.Panel', {			
