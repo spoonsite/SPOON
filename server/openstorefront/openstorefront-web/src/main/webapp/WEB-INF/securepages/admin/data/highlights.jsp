@@ -78,6 +78,18 @@
 								xtype: 'tbseparator'
 							}, 
 							{
+									text: 'Add',
+									id: 'highlightGrid-tools-add',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-plus',
+									handler: function () {
+
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+							{
 								text: 'Edit',
 								id: 'highlightGrid-tools-edit',
 								scale: 'medium',								
@@ -85,6 +97,16 @@
 								disabled: true,
 								handler: function () {
 									actionEditHighlight(Ext.getCmp('highlightGrid').getSelection()[0]);
+								}								
+							},
+							{
+								text: 'Delete',
+								id: 'highlightGrid-tools-delete',
+								scale: 'medium',								
+								iconCls: 'fa fa-2x fa-trash',
+								disabled: true,
+								handler: function () {
+
 								}								
 							}
 						]
