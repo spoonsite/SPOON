@@ -8,7 +8,19 @@
 		Ext.onReady(function(){	
 	
 		
-			
+			var securityTypeStore = Ext.create('Ext.data.Store', {
+					storeId: 'securityTypeStore',
+					autoLoad: true,
+					fields: [
+						'code',
+						'description'
+					],
+					proxy: {
+						id: 'securityTypeStoreProxy',
+						type: 'ajax',
+						url: '../api/v1/resource/lookuptypes/SecurityMarkingType/view'
+					}
+				});	
 
 
 			var highlightTypeStore = Ext.create('Ext.data.Store', {
@@ -189,6 +201,21 @@
 									valueField: 'code',
 									displayField: 'description',
 									store: highlightTypeStore
+								},
+								{
+									xtype: 'textfield',
+									id: 'highlightEntryForm-Link',
+									fieldLabel: 'Link',
+									name: 'Link'
+								},
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Security Type',
+									id: 'highlightEntryForm-SecurityType',
+									name: 'securityMarkingType',
+									valueField: 'code',
+									displayField: 'description',
+									store: securityTypeStore
 								}
 							],	
 							dockedItems: [
