@@ -33,6 +33,19 @@
 				}
 			});
 
+			var getSecurityType = function getSecurityType(code) {
+				try {
+					return securityTypeStore.getData().find('code', code).data.description;
+				}
+				catch(err) {
+					if (code) {
+						Ext.toast('Unable to find security type code: ' + code);
+						return '';
+					}
+					else return '';
+				}
+				};
+
 			var getHighlightType = function getHighlightType(code) {
 				try {
 					return highlightTypeStore.getData().find('code', code).data.description;
@@ -71,7 +84,14 @@
 								}
 					},
 					{ text: 'Link', dataIndex: 'link', flex: 1 },
-					{ text: 'Security Type', dataIndex: 'securityMarkingType', flex: 1 }
+					{ 
+						text: 'Security Type',
+						dataIndex: 'securityMarkingType',
+						flex: 1,
+						renderer: function (value, metaData, record) {
+								return getSecurityType(value);
+						}
+					}
 				],
 				dockedItems: [
 					{
