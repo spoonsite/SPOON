@@ -227,7 +227,9 @@
 									xtype: 'textfield',
 									id: 'highlightEntryForm-Link',
 									fieldLabel: 'Link',
-									name: 'link'
+									name: 'link',
+									vtype: 'url',
+									allowBlank: true
 								},
 								{
 									xtype: 'combobox',
