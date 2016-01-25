@@ -168,6 +168,7 @@
 
 			var actionEditHighlight = function actionEditHighlight(record) {
 				Ext.getCmp('editHighlightForm').loadRecord(record);
+				Ext.getCmp('editHighlightForm').highlightId = record.data.highlightId;
 				highlightAddEditWin.show();
 			};
 
@@ -226,7 +227,7 @@
 									xtype: 'textfield',
 									id: 'highlightEntryForm-Link',
 									fieldLabel: 'Link',
-									name: 'Link'
+									name: 'link'
 								},
 								{
 									xtype: 'combobox',
@@ -248,7 +249,67 @@
 											iconCls: 'fa fa-save',
 											formBind: true,
 											handler: function () {
+												var form = Ext.getCmp('editHighlightForm');
+												// Submit Data
+												if (form.isValid()) {
+													var formData = form.getValues();
+													console.log(formData);
+													var highlightId = form.highlightId;
+													var url = '/openstorefront/api/v1/resource/highlights/';
+													url += highlightId;
+													var method = 'PUT';
 
+													CoreUtil.submitForm({
+														url: url,
+														method: method,
+														data: formData,
+														removeBlankDataItems: true,
+														form: Ext.getCmp('editHighlightForm'),
+														success: function (response, opts) {
+															// Server responded OK
+															var errorResponse = Ext.decode(response.responseText);
+
+															// Confusingly, you will only see the "success"
+															// property in the response if the success
+															// is success = false. Therefore
+															// the appearance of the success property actually
+															// means there was a failure.
+
+															if (!errorResponse.hasOwnProperty('success')) {
+																// Validation succeeded.
+																Ext.toast('Saved Successfully', '', 'tr');
+																Ext.getCmp('editHighlightForm').setLoading(false);
+																Ext.getCmp('editHighlightForm').reset();
+																Ext.getCmp('highlightAddEditWin').hide();
+																Ext.getCmp('highlightGrid').getStore().load();
+																Ext.getCmp('highlightGrid').getSelectionModel().deselectAll();
+																Ext.getCmp('highlightGrid-tools-delete').disable();
+															} else {
+																// Validation failed
+
+																// Compile an object to pass to ExtJS Form
+																// that allows validation messages
+																// using the markInvalid() method.
+																var errorObj = {};
+																Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+																	errorObj[item.key] = item.value;
+																});
+																var form = Ext.getCmp('editHighlightForm').getForm();
+																form.markInvalid(errorObj);
+															}
+														},
+														failure: function (response, opts) {
+															// The same failure procedure as seen above
+															var errorResponse = Ext.decode(response.responseText);
+															var errorObj = {};
+															Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+																errorObj[item.key] = item.value;
+															});
+															var form = Ext.getCmp('editHighlightForm').getForm();
+															form.markInvalid(errorObj);
+														}
+													});
+												}
 											}
 										},
 										{
