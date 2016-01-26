@@ -246,7 +246,7 @@
 								},
 								failure: function (response, opts) {
 									Ext.MessageBox.alert('Failed to delete',
-									'Error: Could not delete highlight: "' + record.data.name + '"');
+									'Error: Could not delete highlight: "' + record.data.title + '"');
 								}
 							});	
 						}
