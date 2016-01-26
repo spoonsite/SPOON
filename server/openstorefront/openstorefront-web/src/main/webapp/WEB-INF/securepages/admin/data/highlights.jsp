@@ -133,10 +133,37 @@
 									text: 'Delete',
 									id: 'highlightGrid-tools-delete',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash',
+									iconCls: 'fa fa-2x fa-trash icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										actionDeleteHighlight();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									xtype: 'label',
+									html: '<strong>Display Position:</strong>'
+								},
+								{
+									text: 'Up',
+									id: 'highlightGrid-tools-up',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-arrow-circle-o-up icon-vertical-correction',
+									disabled: true,
+									handler: function () {
+										actionUpHighlight();
+									}
+								},
+								{
+									text: 'Down',
+									id: 'highlightGrid-tools-down',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-arrow-circle-o-down icon-vertical-correction',
+									disabled: true,
+									handler: function () {
+										actionDownHighlight();
 									}
 								}
 							]
@@ -146,13 +173,31 @@
 						itemdblclick: function (grid, record, item, index, e, opts) {
 							actionEditCodes(record);
 						},
-						selectionchange: function (grid, record, index, opts) {
+						selectionchange: function (grid, record, eOpts) {
 							if (Ext.getCmp('highlightGrid').getSelectionModel().hasSelection()) {
 								Ext.getCmp('highlightGrid-tools-edit').enable();
 								Ext.getCmp('highlightGrid-tools-delete').enable();
+								var index = Ext.getCmp('highlightGrid').getSelectionModel().getCurrentPosition().rowIdx;
+								var maxIndex = highlightStore.getCount()-1;
+								console.log(index + '/' + maxIndex);
+								if (index === 0) {
+									Ext.getCmp('highlightGrid-tools-up').disable();
+								}
+								else {
+									Ext.getCmp('highlightGrid-tools-up').enable();
+								}
+								if (index === maxIndex) {
+									Ext.getCmp('highlightGrid-tools-down').disable();
+								}
+								else {
+									Ext.getCmp('highlightGrid-tools-down').enable();
+								}
+								
 							} else {
 								Ext.getCmp('highlightGrid-tools-edit').disable();
 								Ext.getCmp('highlightGrid-tools-delete').disable();
+								Ext.getCmp('highlightGrid-tools-up').disable();
+								Ext.getCmp('highlightGrid-tools-down').disable();
 							}
 						}
 					}
