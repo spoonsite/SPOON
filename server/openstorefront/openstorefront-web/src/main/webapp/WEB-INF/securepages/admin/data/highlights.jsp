@@ -136,7 +136,7 @@
 									iconCls: 'fa fa-2x fa-trash',
 									disabled: true,
 									handler: function () {
-
+										actionDeleteHighlight();
 									}
 								}
 							]
@@ -149,8 +149,10 @@
 						selectionchange: function (grid, record, index, opts) {
 							if (Ext.getCmp('highlightGrid').getSelectionModel().hasSelection()) {
 								Ext.getCmp('highlightGrid-tools-edit').enable();
+								Ext.getCmp('highlightGrid-tools-delete').enable();
 							} else {
 								Ext.getCmp('highlightGrid-tools-edit').disable();
+								Ext.getCmp('highlightGrid-tools-delete').disable();
 							}
 						}
 					}
@@ -175,6 +177,35 @@
 					Ext.getCmp('editHighlightForm').reset();
 					Ext.getCmp('editHighlightForm').edit = false;
 					highlightAddEditWin.show();
+				};
+
+				var actionDeleteHighlight = function actionDeleteHighlight() {
+					var record = highlightGrid.getSelection()[0];
+					var title = 'Delete Highlight';
+					var msg = 'Are you sure you want to delete "' + record.data.title + '"?';
+					Ext.MessageBox.confirm(title, msg, function (btn) {
+						if (btn === 'yes') {
+							var highlightId = record.data.highlightId;
+							var url = '/openstorefront/api/v1/resource/highlights';
+							url += '/' + highlightId + '/delete';
+							var method = 'DELETE';
+							Ext.Ajax.request({
+								url: url,
+								method: method,
+								success: function (response, opts) {
+									var message = 'Successfully deleted highlight: "'+ record.data.title + '"';
+									Ext.toast(message, '', 'tr');
+									Ext.getCmp('highlightGrid').getStore().load();
+									Ext.getCmp('highlightGrid-tools-edit').disable();
+									Ext.getCmp('highlightGrid-tools-delete').disable();
+								},
+								failure: function (response, opts) {
+									Ext.MessageBox.alert('Failed to delete',
+									'Error: Could not delete highlight: "' + record.data.name + '"');
+								}
+							});	
+						}
+					});
 				};
 
 				var highlightAddEditWin = Ext.create('Ext.window.Window', {
