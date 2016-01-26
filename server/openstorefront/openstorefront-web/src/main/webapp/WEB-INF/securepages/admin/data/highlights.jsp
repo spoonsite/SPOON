@@ -113,7 +113,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-plus',
 									handler: function () {
-
+										actionAddHighlight();
 									}
 								},
 								{
@@ -166,7 +166,14 @@
 
 				var actionEditHighlight = function actionEditHighlight(record) {
 					Ext.getCmp('editHighlightForm').loadRecord(record);
+					Ext.getCmp('editHighlightForm').edit = true;
 					Ext.getCmp('editHighlightForm').highlightId = record.data.highlightId;
+					highlightAddEditWin.show();
+				};
+
+				var actionAddHighlight = function actionAddHighlight() {
+					Ext.getCmp('editHighlightForm').reset();
+					Ext.getCmp('editHighlightForm').edit = false;
 					highlightAddEditWin.show();
 				};
 
@@ -219,6 +226,8 @@
 									name: 'highlightType',
 									valueField: 'code',
 									displayField: 'description',
+									typeAhead: false,
+									editable: false,
 									store: highlightTypeStore
 								},
 								{
@@ -236,6 +245,8 @@
 									name: 'securityMarkingType',
 									valueField: 'code',
 									displayField: 'description',
+									typeAhead: false,
+									editable: false,
 									store: securityTypeStore
 								}
 							],
@@ -255,9 +266,12 @@
 													var formData = form.getValues();
 													console.log(formData);
 													var highlightId = form.highlightId;
-													var url = '/openstorefront/api/v1/resource/highlights/';
-													url += highlightId;
-													var method = 'PUT';
+													var url = '/openstorefront/api/v1/resource/highlights';
+													var method = 'POST';
+													if (form.edit) {
+														url += '/' + highlightId;
+														method = 'PUT';
+													}
 
 													CoreUtil.submitForm({
 														url: url,
