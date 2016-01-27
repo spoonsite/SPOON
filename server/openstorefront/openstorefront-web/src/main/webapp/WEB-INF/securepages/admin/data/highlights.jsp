@@ -351,9 +351,13 @@
 													var highlightId = form.highlightId;
 													var url = '/openstorefront/api/v1/resource/highlights';
 													var method = 'POST';
+													// Set the ordering position to the last spot.
+													formData.orderingPosition = highlightStore.getCount();
 													if (form.edit) {
 														url += '/' + highlightId;
 														method = 'PUT';
+														// Set the orderingPosition to where it currently is on the grid.
+														formData.orderingPosition = Ext.getCmp('highlightGrid').getSelectionModel().getCurrentPosition().rowIdx;
 													}
 
 													CoreUtil.submitForm({
