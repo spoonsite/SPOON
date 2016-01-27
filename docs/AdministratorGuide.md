@@ -1,7 +1,7 @@
 
 #Clearinghouse Administrator Guide
 
-Version 1.6
+Version 2.0
 
 
 Space Dynamics Laboratory
