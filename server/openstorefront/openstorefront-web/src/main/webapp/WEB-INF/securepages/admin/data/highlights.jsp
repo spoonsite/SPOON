@@ -153,7 +153,7 @@
 									iconCls: 'fa fa-2x fa-arrow-circle-o-up icon-vertical-correction',
 									disabled: true,
 									handler: function () {
-										actionUpHighlight();
+										actionUpHighlight(Ext.getCmp('highlightGrid').getSelection()[0]);
 									}
 								},
 								{
@@ -163,7 +163,7 @@
 									iconCls: 'fa fa-2x fa-arrow-circle-o-down icon-vertical-correction',
 									disabled: true,
 									handler: function () {
-										actionDownHighlight();
+										actionDownHighlight(Ext.getCmp('highlightGrid').getSelection()[0]);
 									}
 								}
 							]
@@ -224,6 +224,13 @@
 					highlightAddEditWin.show();
 				};
 
+				var actionUpHighlight = function actionUpHighlight(record) {
+					actionMoveHighlight(record, -2);
+				};
+
+				var actionDownHighlight = function actionDownHighlight(record) {
+					actionMoveHighlight(record, 1);
+				};
 				var actionDeleteHighlight = function actionDeleteHighlight() {
 					var record = highlightGrid.getSelection()[0];
 					var title = 'Delete Highlight';
