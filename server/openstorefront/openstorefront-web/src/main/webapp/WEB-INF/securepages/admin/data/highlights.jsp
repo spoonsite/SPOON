@@ -236,14 +236,62 @@
 				var actionDownHighlight = function actionDownHighlight(record) {
 					actionMoveHighlight(record, 1);
 				};
+
+
 				var actionMoveHighlight = function actionMoveHighlight(record, direction) {
 
 					// Move the record on the grid to the new location (up or down)
 					var index = highlightGrid.getSelectionModel().getCurrentPosition().rowIdx+1;
 					highlightGrid.getStore().insert(index+direction, record);
+
+					// Each time a record is moved on the grid, it is necessary 
+					// to update all other records with their proper positions. Otherwise,
+					// you may end up with records that share the same orderingPosition,
+					// which will lead to unexpected results for the user.
+					 
+					// To do this, we loop through all records in the store and send
+					// an API request setting the new orderingPosition equal to that of 
+					// the record's grid row index position.
+					var storeData = highlightStore.getData();
+					var success = true;
+					for (var i = 0; i < storeData.length; i++) {
+						var thisRecord = storeData.getAt(i);
+						thisRecord.data.orderingPosition = highlightStore.indexOf(thisRecord);
+						delete thisRecord.data.storageVersion;
+						var url = '/openstorefront/api/v1/resource/highlights';
+						url += '/' + thisRecord.data.highlightId;
+						var method = 'PUT';
+						var successes = 0;
+
+						Ext.Ajax.request({
+							url: url,
+							method: method,
+							jsonData: thisRecord.data,
+							success: function (response, opts) {
+								successes++;
+								if (successes === storeData.length) {
+									if (success === true) {
+										var message = 'Successfully moved "' + record.data.title + '"';
+										Ext.toast(message, '', 'tr');
+									}
+									// If issues arise, loading the store will always help.
+									// Ext.getCmp('highlightGrid').getStore().load();
+								}
+							},
+							failure: function (response, opts) {
+								success = false;
+							}
+						});
+					}
+
+					// Finally, it is useful for buttons to think that 
+					// the selection has changed
 					highlightGrid.fireEvent('selectionchange');
 
 				};
+
+				
+
 				var actionDeleteHighlight = function actionDeleteHighlight() {
 					var record = highlightGrid.getSelection()[0];
 					var title = 'Delete Highlight';
