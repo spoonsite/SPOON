@@ -59,6 +59,7 @@ public class Highlight
 	@APIDescription("External URL link")
 	private String link;
 
+	@NotNull
 	@ConsumeField
 	@APIDescription("Position when ordered")
 	private Integer orderingPosition;
