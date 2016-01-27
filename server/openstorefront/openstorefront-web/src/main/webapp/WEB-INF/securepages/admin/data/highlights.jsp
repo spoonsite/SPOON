@@ -184,7 +184,6 @@
 								Ext.getCmp('highlightGrid-tools-delete').enable();
 								var index = Ext.getCmp('highlightGrid').getSelectionModel().getCurrentPosition().rowIdx;
 								var maxIndex = highlightStore.getCount()-1;
-								console.log(index + '/' + maxIndex);
 								if (index === 0) {
 									Ext.getCmp('highlightGrid-tools-up').disable();
 								}
@@ -408,7 +407,6 @@
 												// Submit Data
 												if (form.isValid()) {
 													var formData = form.getValues();
-													console.log(formData);
 													var highlightId = form.highlightId;
 													var url = '/openstorefront/api/v1/resource/highlights';
 													var method = 'POST';
