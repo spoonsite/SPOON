@@ -236,6 +236,14 @@
 				var actionDownHighlight = function actionDownHighlight(record) {
 					actionMoveHighlight(record, 1);
 				};
+				var actionMoveHighlight = function actionMoveHighlight(record, direction) {
+
+					// Move the record on the grid to the new location (up or down)
+					var index = highlightGrid.getSelectionModel().getCurrentPosition().rowIdx+1;
+					highlightGrid.getStore().insert(index+direction, record);
+					highlightGrid.fireEvent('selectionchange');
+
+				};
 				var actionDeleteHighlight = function actionDeleteHighlight() {
 					var record = highlightGrid.getSelection()[0];
 					var title = 'Delete Highlight';
