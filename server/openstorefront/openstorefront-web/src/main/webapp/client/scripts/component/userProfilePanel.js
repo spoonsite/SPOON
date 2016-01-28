@@ -198,7 +198,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 		profileForm.getComponent('userTypeCodeCB').getStore().on('load', function () {
 
 			// Check to see if the user was set on a profileWindow.
-			if (profileForm.profileWindow.loadUser) {
+			if (profileForm.profileWindow && profileForm.profileWindow.loadUser) {
 				profileForm.loadUser = profileForm.profileWindow.loadUser;
 			}
 

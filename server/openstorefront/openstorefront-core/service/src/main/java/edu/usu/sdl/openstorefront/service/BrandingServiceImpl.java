@@ -82,12 +82,75 @@ public class BrandingServiceImpl
 		}
 
 		if (branding.getApplicationName() == null) {
-			branding.setApplicationName(PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "DI2E ClearingHouse"));
+			branding.setApplicationName(PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "DI2E Clearinghouse"));
 		}
 
 		if (branding.getLandingPageTitle() == null) {
-			branding.setLandingPageTitle(branding.getLandingPageTitle());
+			branding.setLandingPageTitle("DI2E Clearinghouse");			
 		}
+		
+		if (branding.getLandingPageBanner()== null) {
+			branding.setLandingPageBanner("One Registry for the IC, One Registry for the DOD, One Registry to bind them all");			
+		}
+
+		if (branding.getPrimaryLogoUrl()== null) {
+			branding.setPrimaryLogoUrl("images/di2elogo-lg.png");			
+		}
+
+		if (branding.getLandingStatsText() == null) {
+			branding.setLandingStatsText("DI2E Components");			
+		}
+		
+		if (branding.getLandingPageFooter() == null) {
+			branding.setLandingPageFooter("<div class=\"footer_content\">\n" +
+			"        <div class=\"column\">\n" +
+			"            <div class=\"title\">About Us</div>\n" +
+			"            <ul>\n" +
+			"                <li><a href=\"https://intellipedia.intelink.gov/wiki/Defense_Intelligence_Information_Enterprise\" title=\"Requires Intellipedia authentication\">What is DI2E?</a>&nbsp;<i class=\"icon-lock\" title=\"Authentication Required\"></i></li>\n" +
+			"                <li><a href=\"https://intellipedia.intelink.gov/wiki/DI2E_Framework\" title=\"Requires Intellipedia authentication\">What is DI2E Framework?</a>&nbsp;<i class=\"icon-lock\"></i></li>\n" +
+			"            </ul>\n" +
+			"        </div>\n" +
+			"        <div class=\"column\">\n" +
+			"            <div class=\"title\">Links</div>\n" +
+			"            <ul>\n" +
+			"                <li><a href=\"https://devtools.di2e.net\">DI2E Dev tools</a></li>\n" +
+			"            </ul>\n" +
+			"        </div>\n" +
+			"        <div class=\"column\">\n" +
+			"            <div class=\"title\">F.A.Q.</div>\n" +
+			"            <ul>\n" +
+			"                <li><a href=\"https://devtools.di2e.net/sla.php\">Our Service Commitment</a></li>\n" +
+			"                <li><a href=\"https://devtools.di2e.net/onboarding.php\">Our Onboarding Process</a></li>\n" +
+			"                <li><a href=\"https://devtools.di2e.net/privacy.php\">Our Privacy Policy</a></li>\n" +
+			"                <li><a href=\"https://devtools.di2e.net/terms_of_service.php\">Our Terms of Service</a></li>\n" +
+			"            </ul>\n" +
+			"        </div>\n" +
+			"        <div class=\"column\">\n" +
+			"            <div class=\"title\">Contact Us</div>\n" +
+			"            <ul>\n" +
+			"                <li><a href=\"https://devtools.di2e.net/accounts.php\">Request an Account</a></li>\n" +
+			"                <li><a href=\"mailto:di2eframeworkinfo@di2e.net\">General Questions</a></li>\n" +
+			"                <li><a href=\"https://devtools.di2e.net/support.php\">Contact Support</a></li>\n" +
+			"            </ul>\n" +
+			"        </div>\n" +
+			"        <div style=\"clear:both\"></div>    \n" +
+			"    </div>\n" +
+			"    <div class=\"copyright\">&#169; DI2E&nbsp;|&nbsp;<a href=\"https://devtools.di2e.net/consent.php\">Consent to Monitoring</a>&nbsp;|&nbsp;All rights reserved</div>"
+			);			
+		}	
+		
+		if (branding.getLoginWarning() == null) {
+			branding.setLoginWarning(
+			"<span >By logging in you are consenting to these conditions</span>\n" +
+			"			<div class=\"disclaimer\">\n" +
+			"			  <h1>WARNING:</h1>\n" +
+			"			  <p>\n" +
+			"				You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions: 1) The USG routinely intercepts and monitors communication on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations, 2) At any time, the ISG may inspect and seize data stored on this IS, 3) Communications using, or data stored on this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG -authorized purpose. 4) This IS includes security measures (e.g. authentication and access controls) to protect USG interests not for your personal benefit or privacy. 5) Notwithstanding the above, using this IS does not constitute consent to PM, LE, or CI investigative searching or monitoring of the content of privileged communication, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communication and work product are private and confidential.\n" +
+			"			  </p>\n" +
+			"			</div>"
+			);			
+		}
+		
 
 		return BrandingView.toView(branding, topicSearchItems);
 	}

@@ -25,7 +25,6 @@ limitations under the License.
 
 	<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/feedbackWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
         <script type="text/javascript">
 			/* global Ext, CoreUtil, CoreService */

@@ -179,7 +179,7 @@ Ext.define('OSF.component.SearchToolWindow', {
             //console.log("Loading Topic Nav");
             newTab.setLoading(true);
             Ext.Ajax.request({
-                url: 'api/v1/resource/componenttypes',
+                url: '/openstorefront/api/v1/resource/componenttypes',
                 success: function (response, opts) {
                     newTab.setLoading(false);
                     var data = Ext.decode(response.responseText);
@@ -274,7 +274,7 @@ Ext.define('OSF.component.SearchToolWindow', {
             if (p.loadedUp === undefined) {
                 newTab.setLoading(true);
                 Ext.Ajax.request({
-                    url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(item.attributeType) + '/attributecodeviews',
+                    url: '/openstorefront/api/v1/resource/attributes/attributetypes/' + encodeURIComponent(item.attributeType) + '/attributecodeviews',
                     success: function (response, opts) {
                         newTab.setLoading(false);
                         var aData = Ext.decode(response.responseText);
@@ -320,7 +320,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 
             newTab.setLoading(true);
             Ext.Ajax.request({
-                url: 'api/v1/resource/branding/current',
+                url: '/openstorefront/api/v1/resource/branding/current',
                 success: function (response, opts) {
                     newTab.setLoading(false);
                     var data = Ext.decode(response.responseText);
@@ -416,7 +416,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 
             newTab.setLoading(true);
             Ext.Ajax.request({
-                url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent('DI2E-SVCV4-A') + '/architecture',
+                url: '/openstorefront/api/v1/resource/attributes/attributetypes/' + encodeURIComponent('DI2E-SVCV4-A') + '/architecture',
                 success: function (response, opts) {
                     newTab.setLoading(false);
                     var data = Ext.decode(response.responseText);

@@ -230,9 +230,8 @@ limitations under the License.
 							cls: 'nav-back-color',
 							items: [
 								{
-									xtype: 'image',
-																	
-									width: 250,
+									xtype: 'image',																	
+									width: 200,
 									height: 53,
 									title: 'Go back to Home Page',
 									src: 'images/di2elogo-sm.png',
@@ -250,7 +249,7 @@ limitations under the License.
 								{
 									xtype: 'tbtext',
 									text: 'Admin Tools',
-									style: 'text-align: center; font-size: 35px; color: white;'
+									cls: 'page-title'
 								},
 								{
 									xtype: 'tbfill'

@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
@@ -60,6 +61,8 @@ public class ComponentSearchView
 	private String listingSecurityMarkingDescription;
 	private Integer listingSecurityMarkingRank;
 	private String listingSecurityMarkingStyle;
+	
+	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
 
 	private String activeStatus;
@@ -68,6 +71,7 @@ public class ComponentSearchView
 	private String updateUser;
 	private Date updateDts;
 
+	@DataType(SearchResultAttribute.class)
 	private List<SearchResultAttribute> attributes = new ArrayList<>();
 
 	public ComponentSearchView()

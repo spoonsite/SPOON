@@ -69,6 +69,11 @@ public class Branding
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String landingPageTitle;
+	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(HTMLSanitizer.class)
+	@ConsumeField
+	private String landingStatsText;	
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@Sanitize(HTMLSanitizer.class)
@@ -222,6 +227,7 @@ public class Branding
 		setLandingPageBanner(branding.getLandingPageBanner());
 		setLandingPageFooter(branding.getLandingPageFooter());
 		setLandingPageTitle(branding.getLandingPageTitle());
+		setLandingStatsText(branding.getLandingStatsText());		
 		setLoginWarning(branding.getLoginWarning());
 		setName(branding.getName());
 		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
@@ -654,6 +660,16 @@ public class Branding
 	public void setLookButtonSucessColor(String lookButtonSucessColor)
 	{
 		this.lookButtonSucessColor = lookButtonSucessColor;
+	}
+
+	public String getLandingStatsText()
+	{
+		return landingStatsText;
+	}
+
+	public void setLandingStatsText(String landingStatsText)
+	{
+		this.landingStatsText = landingStatsText;
 	}
 
 }
