@@ -115,6 +115,13 @@ div.x-border-layout-ct {
     padding: 0;
 }
 
+.x-accordion-item .x-accordion-hd {
+    background: #D8DDE0;
+    border-width: 0;
+    border-color: #BDBDBD;
+    padding: 8px 10px;
+}
+
 .x-panel-default-framed {	
     border-color: #441E5A;
     padding: 0;
@@ -773,6 +780,10 @@ div.x-border-layout-ct {
 
 .x-nbr .x-tab-default-top {
 	background-color: rgba(151,151,151,1) !important; 	 
+}
+
+.x-nbr .x-btn-default-large {
+	background-color: rgb(85,85,85)  !important; 
 }
 
 /* end of IE 9 */

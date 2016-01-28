@@ -50,7 +50,7 @@ public class Highlight
 
 	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_32K)
 	@Sanitize(HTMLSanitizer.class)
 	private String description;
 

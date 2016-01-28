@@ -68,7 +68,7 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 				params = Ext.applyIf(initialParams, theStore.getProxy().getExtraParams() || {});
 
 				var request = new Ext.data.Request({
-					url: 'api/v1/service/search/advance',
+					url: '/openstorefront/api/v1/service/search/advance',
 					params: params,
 					operation: operation,
 					action: operation.getAction(),

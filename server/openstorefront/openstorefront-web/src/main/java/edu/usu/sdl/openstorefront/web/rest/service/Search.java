@@ -234,6 +234,7 @@ public class Search
 	@GET
 	@APIDescription("Get Listing Stats")
 	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ListingStats.class)
 	@Path("/stats")
 	public Response getListingStats()
 	{

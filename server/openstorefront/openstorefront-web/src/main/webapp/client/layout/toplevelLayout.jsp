@@ -131,7 +131,7 @@ limitations under the License.
 				});				
 			};
 			
-			if (Ext.isIE9m === false) {			
+			if (!Ext.isIE9m || Ext.isIE9m === false) {			
 				var socket = io.connect('', {
 				  'resource':'openstorefront/event', 
 				   query: 'id=' + usercontext.username,
