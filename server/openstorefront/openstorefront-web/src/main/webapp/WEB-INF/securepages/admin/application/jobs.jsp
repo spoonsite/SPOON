@@ -23,7 +23,47 @@
 					store: jobStore,
 					columnLines: true,
 					columns: [
-						{text: 'Job Name', dataIndex: 'jobName', flex: 1}
+						{
+							text: 'Job Name',
+							dataIndex: 'jobName',
+							flex: 3,
+							cellWrap: true
+						},
+						{
+							text: 'Group Name',
+							dataIndex: 'groupName',
+							flex: 1
+						},
+						{
+							text: 'Description', 
+							dataIndex: 'description',
+							flex: 4
+						},
+						{
+							text: 'Status', 
+							dataIndex: 'status',
+							flex: 1
+						},
+						{
+							text: 'Previous Fire Time', 
+							dataIndex: 'perviousFiredTime',
+							flex: 2,
+							xtype: 'datecolumn',
+							format: 'm/d/y H:i:s'
+						},
+						{
+							text: 'Next Fire Time',
+							dataIndex: 'nextFiredTime',
+							flex: 2,
+							xtype: 'datecolumn',
+							format: 'm/d/y H:i:s'
+						},
+						{
+							text: 'Job Data', 
+							dataIndex: 'jobData',
+							flex: 6,
+							cellWrap: true
+						}
 					],
 					dockedItems: [
 					],
