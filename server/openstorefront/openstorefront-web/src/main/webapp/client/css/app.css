@@ -144,8 +144,90 @@ and open the template in the editor.
 	color: rgba(68,30,90,.6) !important;
 }
 
+.review-summary-rating {
+	font-size: 20px;
+}
 
-@media >>> 800 .footer_content {
+.review-pro-con-header{
+	font-weight: bold;
+	width: 100%;	
+	padding: 5px 0px 5px 5px;
+	background-color: beige;
+	border-bottom: 1px solid lightgrey;
+}
+
+.rating-star-color {
+	color: gold;
+}
+
+.review-who-section {
+	color: darkgray;
+}
+
+.review-summary-count {
+	color: #999;
+	font-size: 11px;
+}
+
+.question-question {
+	font-size: 16px;
+}
+
+.question-response {
+	font-weight: bold;
+    font-size: 14px;
+}
+
+.question-response-letter {
+	color: #414e68;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.question-response-letter-q {
+    font-weight: bold;
+    font-size: 20px;	
+}
+
+.question-info {
+	color: #999;
+}
+
+.details-table {
+	 border-collapse: collapse;
+	 border: 1px solid grey;	 
+}
+
+th.details-table {
+	background-color: #BFBFBF;
+	border: 1px solid grey;
+	padding: 5px;
+	text-align: left;	
+}
+
+a.details-table {	
+    color: #555555;
+	border: 0px;
+	text-decoration: none;
+}
+
+a.details-table:hover  {	
+    color: #2f2f2f;
+	text-decoration: underline;
+}
+
+td.details-table {
+	border: 1px solid grey;
+	padding: 5px;
+	text-align: left;
+}
+
+tr.details-table:hover {
+	background-color: #f5f5f5
+}
+
+
+@media > 800 .footer_content {
     margin: 0px auto;
     white-space: nowrap;
     width: 800px;
@@ -357,6 +439,30 @@ and open the template in the editor.
 }
 
 .alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.highlight-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+.highlight-warning {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+
+.highlight-info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+.highlight-success {
     color: #3c763d;
     background-color: #dff0d8;
     border-color: #d6e9c6;

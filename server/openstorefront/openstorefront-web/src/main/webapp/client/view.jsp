@@ -18,6 +18,11 @@ limitations under the License.
 <stripes:layout-render name="layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 		
+	<script src="scripts/component/templateBlocks.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/mediaViewer.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/relationshipVisualization.js?v=${appVersion}" type="text/javascript"></script>		
+		
+	<div style="display:none" id="templateHolder"></div>	
 		
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */	
@@ -33,18 +38,18 @@ limitations under the License.
 					type: 'hbox',
 					align: 'stretch'
 				},
-				items: [
+				items: [				
 					{
 						xtype: 'panel',
 						id: 'titlePanel',
 						flex: 1,
-						minHeight: 100,						
+						minHeight: 120,						
 						tpl: new Ext.XTemplate(
-							'<div class="details-title-name">{name}</div>',
-							'<div class="details-title-info">',
+							'<div class="details-title-name">{name} <span class="details-title-info" style="font-size: 10px">({componentTypeLabel})</span> </div>',
+							'<div class="details-title-info">',							
 							'Organization: <b>{organization}</b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="version"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl><br>',
 							'<tpl if="version">Version: {version}</tpl>',
-							'<tpl if="version">Release Date: {[Ext.util.Format.date(values.releaseDate)]}</tpl>',
+							'<tpl if="releaseDate">Release Date: {[Ext.util.Format.date(values.releaseDate)]}</tpl>',
 							'</div>',
 							'  <tpl for="attributes">',
 							'    <tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>',
@@ -126,7 +131,10 @@ limitations under the License.
 			});
 			
 			var detailPanel = Ext.create('Ext.panel.Panel', {
-				title: 'Details'
+				id: 'detailPanel',
+				title: 'Details',
+				bodyStyle: 'padding: 10px;',
+				scrollable: true
 			});
 			
 			var reviews = Ext.create('Ext.panel.Panel', {				
@@ -138,6 +146,19 @@ limitations under the License.
 					type: 'vbox',
 					align: 'stretch'
 				},
+				dockedItems: [
+					{
+						xtype: 'button',
+						text: 'Write a Review',
+						maxWidth: 200,
+						scale: 'medium',
+						margin: 10,
+						iconCls: 'fa fa-lg fa-star-half-o icon-top-padding-5',
+						handler: function(){
+							
+						}
+					}
+				],				
 				items: [
 					{
 						xtype: 'panel',
@@ -145,45 +166,40 @@ limitations under the License.
 						title: 'Review Summary',
 						titleCollapse: true,
 						collapsible: true,
+						hidden: true,
 						margin: '0 0 1 0',
 						bodyStyle: 'padding: 10px;',
 						tpl: new Ext.XTemplate(
 							'<table style="width:100%"><tr>',
 							'	<td valign="top">',
-							'		Average Rating: <tpl for="averageRatingStars"><i class="fa fa-{star}"></i></tpl><br>',
-							'		<b>{recommended} out of {totalReviews} ({[Math.round((values.recommended/values.totalReviews)*100)]}%)</b> reviewers recommended',
+							'		<tpl if="totalReviews && totalReviews &gt; 0">',
+							'		    <div class="review-summary-rating">Average Rating: <tpl for="averageRatingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>',							
+							'			<b>{recommended} out of {totalReviews} ({[Math.round((values.recommended/values.totalReviews)*100)]}%)</b> reviewers recommended',
+							'		</tpl>',
 							'   <td>',
-							'	<td valign="top">',
+							'	<td valign="top" width="20%">',
 							'		<tpl if="pros.length &gt; 0">',
-							'		<b>Pros</b><hr>',
-							'		<tpl for="pros">',
-							'			{text} ({count})<br>',	
-							'		</tpl></tpl>',
+							'			<div class="review-pro-con-header">Pros</div>',
+							'			<tpl for="pros">',
+							'				- {text} <span class="review-summary-count">({count})</span><br>',	
+							'			</tpl>',
+							'		</tpl>',
 							'   <td>',
-							'	<td valign="top">',
+							'	<td valign="top" width="20%">',
 							'		<tpl if="cons.length &gt; 0">',
-							'		<b>Cons</b><hr>',
-							'		<tpl for="cons">',
-							'			{text} ({count})<br>',	
-							'		</tpl></tpl>',
+							'			<div class="review-pro-con-header">Cons</div>',							
+							'			<tpl for="cons">',
+							'				- {text} <span class="review-summary-count">({count})</span><br>',	
+							'			</tpl>',
+							'		</tpl>',
 							'   <td>',
 							'</tr></table>'
-						),
-						items: [
-							{
-								xtype: 'button',
-								text: 'Write a Review',
-								iconCls: 'fa fa-lg fa-star-half-o icon-top-padding-5',
-								scale: 'medium',
-								handler: function(){
-								}
-							}
-						]						
+						)						
 					},
 					{
 						xtype: 'panel',
 						itemId: 'reviews',
-						title: 'Reviews',
+						title: 'User Reviews',
 						hidden: true,						
 						titleCollapse: true,
 						collapsible: true,
@@ -192,29 +208,28 @@ limitations under the License.
 							'<tpl for=".">',	
 							'<table style="width:100%"><tr>',
 							'	<td valign="top">',
-							'		<h1>{title} <tpl for="ratingStars"><i class="fa fa-{star}"></i></tpl></h1>',								
-							'		<tpl if="recommend"><b>Recommend</b><br></tpl>',
-							'		{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<br>',
+							'		<h1>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
+							'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl></div><br>',
 							'		<b>Organization:</b> {organization}<br>',
-							'		<b>How long have you used it:</b> {userTimeCode}<br>',							
+							'		<b>Experience:</b> {userTimeCode}<br>',							
 							'		<b>Last Used:</b> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}<br>',
 							'   <td>',
-							'	<td valign="top">',
-							'		<tpl if="pros.length &gt; 0">',
-							'		<b>Pros</b><hr>',
+							'	<td valign="top" width="20%">',
+							'		<tpl if="pros.length &gt; 0">',									
+							'		<div class="review-pro-con-header">Pros</div>',
 							'		<tpl for="pros">',
-							'			{text} ({count})<br>',	
+							'			- {text}<br>',	
 							'		</tpl></tpl>',
 							'   <td>',
-							'	<td valign="top">',
+							'	<td valign="top" width="20%">',
 							'		<tpl if="cons.length &gt; 0">',
-							'		<b>Cons</b><hr>',
+							'		<div class="review-pro-con-header">Cons</div>',
 							'		<tpl for="cons">',
-							'			{text} ({count})<br>',	
+							'			- {text}<br>',	
 							'		</tpl></tpl>',
 							'   <td>',
 							'</tr></table>',
-							'<b>Comments:</b><br>{comment}',
+							'<br><b>Comments:</b><br>{comment}',
 							' <br><br><hr>',
 							'</tpl>'
 						)						
@@ -224,7 +239,27 @@ limitations under the License.
 			
 			var questionPanel = Ext.create('Ext.panel.Panel', {
 				title: 'Q&A',
-				id: 'questionPanel'
+				id: 'questionPanel',
+				bodyStyle: 'padding: 10px;',
+				scrollable: true,
+				layout: {
+					type: 'vbox',
+					align: 'stretch'
+				},
+				dockedItems: [
+					{
+						xtype: 'button',
+						text: 'Ask a Question',
+						maxWidth: 200,
+						scale: 'medium',
+						margin: 10,
+						iconCls: 'fa  fa-lg fa-comment icon-top-padding-5',
+						handler: function(){
+							
+						}
+					}
+				]
+				
 			});			
 			
 			var contentPanel = Ext.create('Ext.panel.Panel', {
@@ -268,6 +303,7 @@ limitations under the License.
 			});
 			
 			var entry;
+			var componentTypeDetail;
 			var loadDetails = function(){
 				if (componentId) {
 					headerPanel.setLoading(true);
@@ -275,8 +311,7 @@ limitations under the License.
 					Ext.Ajax.request({
 						url: '../api/v1/resource/components/' + componentId + '/detail',
 						callback: function(){
-							headerPanel.setLoading(false);
-							contentPanel.setLoading(false);
+							headerPanel.setLoading(false);							
 						},
 						success: function(response, opts) {
 							entry = Ext.decode(response.responseText);
@@ -284,11 +319,49 @@ limitations under the License.
 							Ext.getCmp('titlePanel').update(entry);
 							
 							//get component type and determine review & q&a
+							Ext.Ajax.request({
+								url: '../api/v1/resource/componenttypes/' + entry.componentType,								
+								success: function(response, opts) {
+									componentTypeDetail = Ext.decode(response.responseText);
+									
+									if (componentTypeDetail.dataEntryReviews) {
+										processReviews(entry);
+									}
+									if (componentTypeDetail.dataEntryQuestions) {
+										processQuestions(entry);
+									}
+									
+									var templateUrl;
+									if (componentTypeDetail.componentTypeTemplate) {
+										//load custom										
+										templateUrl= '../api/v1/resource/componenttypetemplates/' + componentTypeDetail.componentTypeTemplate + '/template';
+									} else if (entry.componentType === 'ARTICLE') {										
+										templateUrl= 'Router.action?page=template/article.jsp';
+									} else {
+										templateUrl= 'Router.action?page=template/standard.jsp';
+									}
+									
+									
+									//populate detail via template
+									Ext.Ajax.request({
+										url: templateUrl,
+										callback: function(){
+											contentPanel.setLoading(false);
+										},										
+										success: function(response, opt) {
+											var text = response.responseText;											
+											Ext.dom.Element.get("templateHolder").setHtml(text, true, function(){
+												template.refresh(Ext.getCmp('detailPanel'), entry);
+											});
+										}
+									});
+									
+									
+								}
+							});
 							
-							//process reviews
-							processReviews(entry);
 							
-							//populate detail via template
+							
 														
 							
 						}
@@ -357,6 +430,14 @@ limitations under the License.
 					Ext.Array.sort(review.cons, function(a, b){
 						return a.text.localeCompare(b.text);	
 					});	
+					
+					review.ratingStars = [];
+					for (var i=0; i<5; i++){					
+						review.ratingStars.push({						
+							star: i <= review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
+						});
+					}					
+					
 				});
 				var reviewPanelReviews = Ext.getCmp('reviewPanel').getComponent('reviews');
 				var reviewPanelSummary = Ext.getCmp('reviewPanel').getComponent('summary');
@@ -375,14 +456,58 @@ limitations under the License.
 					});
 				}
 				
-				reviewPanelSummary.update(summaryData);
-				
 				if (entryLocal.reviews.length > 0) {
+					reviewPanelSummary.setHidden(false);
+					reviewPanelSummary.update(summaryData);
 					reviewPanelReviews.setHidden(false);
-					reviewPanelReviews.update(entryLocal.reviews);
+					reviewPanelReviews.update(entryLocal.reviews);					
 				}
 				
 				
+			};
+		
+			var processQuestions = function(entryLocal) {
+				
+				var questionPanels = [];
+				Ext.Array.each(entryLocal.questions, function(question){
+					
+					var text = '<div class="question-question"><span class="question-response-letter-q">Q.</span> '+ question.question + '</div>';
+											
+					var panel = Ext.create('Ext.panel.Panel', {
+						titleCollapse: true,
+						collapsible: true,
+						title: text,
+						bodyStyle: 'padding: 10px;',
+						data: question.responses,
+						tpl: new Ext.XTemplate(
+							'<div class="question-info">',
+							question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y"),
+							'</div><br>',
+							'<tpl for=".">',
+							'	<div class="question-response"><span class="question-response-letter">A.</span> {response}</div>',
+							'	<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
+							'</tpl><hr>'
+						),
+						dockedItems: [
+							{
+								xtype: 'button',
+								text: 'Answer',
+								maxWidth: 150,
+								scale: 'medium',
+								margin: 10,
+								iconCls: 'fa  fa-lg fa-comments-o icon-top-padding-5',
+								handler: function(){
+
+								}
+							}
+						]				
+					});
+					questionPanels.push(panel);				
+					
+				});
+				Ext.getCmp('questionPanel').removeAll();
+				Ext.getCmp('questionPanel').add(questionPanels);
+		
 			};
 		
 		});
