@@ -153,6 +153,7 @@
 								},
 								{
 									xtype: 'label',
+									id: 'schedulerStatusLabel',
 									text: 'Running',
 									style: {
 										color: 'green',
@@ -162,12 +163,13 @@
 								{
 									scale: 'medium',
 									toggleGroup: 'scheduler',
-									id: 'jobGrid-schedulerPause',
+									id: 'jobGrid-schedulerToggleButton',
 									iconCls: 'fa fa-2x fa-pause',
 									text: 'Pause',
 									tooltip: 'Toggle the scheduler status',
 									name: 'schedulerControl',
 									handler: function () {
+										toggleScheduler();
 									}
 								}
 							]
@@ -234,6 +236,32 @@
 						jobsMainPanel
 					]
 				});
+
+
+				var toggleScheduler = function toggleScheduler() {
+					if (Ext.getCmp('schedulerStatusLabel').text === 'Running'){
+						var what = 'pause';
+						var url = '/openstorefront/api/v1/service/jobs/pause';
+						var method = 'POST';
+					}
+					else {
+						var what = 'resume';
+						var url = '/openstorefront/api/v1/service/jobs/resume';
+						var method = 'POST';
+					}
+					Ext.Ajax.request({
+						url: url,
+						method: method,
+						success: function (response, opts) {
+							var message = 'Successfully ' + what + 'd job scheduler';
+							Ext.toast(message, '', 'tr');
+							updateSchedulerStatus();
+						},
+						failure: function (response, opts) {
+							Ext.MessageBox.alert( "Error: Could not " + what + ' job scheduler');
+						}
+					});	
+				};
 
 
 				var updateSchedulerStatus = function updateSchedulerStatus() {
