@@ -66,6 +66,47 @@
 						}
 					],
 					dockedItems: [
+						{
+							dock: 'top',
+							xtype: 'toolbar',
+							items: [
+								{ 
+									xtype: 'label',
+									text: 'Show Integration Jobs:'
+								},
+								{
+									xtype: 'segmentedbutton',
+									scale: 'medium',
+									allowMultiple: true,
+									items: [  
+										{
+											enableToggle: true,
+											scale: 'medium',
+											toggleGroup: 'intJobs',
+											id: 'jobGrid-showIntegrationBox',
+											text: 'Yes',
+											name: 'showIntegration',
+											handler: function () {
+												jobStore.clearFilter();
+											}
+										},
+										{
+											enableToggle: true,
+											scale: 'medium',
+											toggleGroup: 'intJobs',
+											id: 'jobGrid-noshowIntegrationBox',
+											text: 'No',
+											name: 'showIntegration',
+											handler: function () {
+												jobStore.filterBy(function(record) {
+													return record.data.jobName.indexOf('ComponentJob');
+												});
+											}
+										}
+									]
+								}
+							]
+						}
 					],
 					listeners: {
 						itemdblclick: function (grid, record, item, index, e, opts) {
