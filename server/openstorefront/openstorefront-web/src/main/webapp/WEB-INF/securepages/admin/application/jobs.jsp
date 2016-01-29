@@ -70,6 +70,39 @@
 							dock: 'top',
 							xtype: 'toolbar',
 							items: [
+								{
+									scale: 'medium',
+									id: 'jobGrid-jobPause',
+									iconCls: 'fa fa-2x fa-pause',
+									text: 'Pause',
+									tooltip: 'Pause the selected job',
+									name: 'individualJobControl',
+									disabled: true,
+									handler: function () {
+									}
+								},
+								{
+									scale: 'medium',
+									id: 'jobGrid-jobResume',
+									iconCls: 'fa fa-2x fa-play',
+									text: 'Resume',
+									tooltip: 'Resume the selected job',
+									name: 'individualJobControl',
+									disabled: true,
+									handler: function () {
+									}
+								},
+								{
+									scale: 'medium',
+									id: 'jobGrid-jobExecute',
+									iconCls: 'fa fa-2x fa-bolt icon-vertical-correction',
+									text: 'Run',
+									tooltip: 'Execute the selected job',
+									name: 'individualJobControl',
+									disabled: true,
+									handler: function () {
+									}
+								},
 								{ 
 									xtype: 'tbfill'
 								},
@@ -108,9 +141,12 @@
 										}
 									]
 								},
+								{ 
+									xtype: 'tbseparator'
+								},
 								{
 									xtype: 'label',
-									html: '<ext title="The scheduler state is not persistent. When the web application is restarted, the scheduler state will be reset.">Scheduler:',
+									html: '<ext title="The scheduler state is not persistent. When the web application is restarted, the scheduler state will be reset.">System Job Scheduler:',
 									style: {
 										fontWeight: 'bold'
 									}
