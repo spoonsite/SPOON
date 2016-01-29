@@ -71,13 +71,15 @@
 							xtype: 'toolbar',
 							items: [
 								{ 
+									xtype: 'tbfill'
+								},
+								{ 
 									xtype: 'label',
 									text: 'Show Integration Jobs:'
 								},
 								{
 									xtype: 'segmentedbutton',
 									scale: 'medium',
-									allowMultiple: true,
 									items: [  
 										{
 											enableToggle: true,
@@ -85,6 +87,7 @@
 											toggleGroup: 'intJobs',
 											id: 'jobGrid-showIntegrationBox',
 											text: 'Yes',
+											pressed: true,
 											name: 'showIntegration',
 											handler: function () {
 												jobStore.clearFilter();
@@ -104,6 +107,32 @@
 											}
 										}
 									]
+								},
+								{
+									xtype: 'label',
+									html: '<ext title="The scheduler state is not persistent. When the web application is restarted, the scheduler state will be reset.">Scheduler:',
+									style: {
+										fontWeight: 'bold'
+									}
+								},
+								{
+									xtype: 'label',
+									text: 'Running',
+									style: {
+										color: 'green',
+										fontWeight: 'bold'
+									}
+								},
+								{
+									scale: 'medium',
+									toggleGroup: 'scheduler',
+									id: 'jobGrid-schedulerPause',
+									iconCls: 'fa fa-2x fa-pause',
+									text: 'Pause',
+									tooltip: 'Toggle the scheduler status',
+									name: 'schedulerControl',
+									handler: function () {
+									}
 								}
 							]
 						}
