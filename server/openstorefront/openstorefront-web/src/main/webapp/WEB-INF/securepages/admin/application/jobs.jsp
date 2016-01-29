@@ -79,6 +79,8 @@
 									name: 'individualJobControl',
 									disabled: true,
 									handler: function () {
+										var record = Ext.getCmp('jobGrid').getSelection()[0];
+										pauseJob(record);
 									}
 								},
 								{
@@ -90,6 +92,8 @@
 									name: 'individualJobControl',
 									disabled: true,
 									handler: function () {
+										var record = Ext.getCmp('jobGrid').getSelection()[0];
+										resumeJob(record);
 									}
 								},
 								{
@@ -99,8 +103,9 @@
 									text: 'Run',
 									tooltip: 'Execute the selected job',
 									name: 'individualJobControl',
-									disabled: true,
 									handler: function () {
+										var record = Ext.getCmp('jobGrid').getSelection()[0];
+										executeJob(record);
 									}
 								},
 								{ 
@@ -180,7 +185,15 @@
 						},
 						selectionchange: function (grid, record, eOpts) {
 							if (Ext.getCmp('jobGrid').getSelectionModel().hasSelection()) {
-
+								var record = Ext.getCmp('jobGrid').getSelection()[0];
+								if (record.data.status === 'NORMAL') {
+									Ext.getCmp('jobGrid-jobPause').enable();
+									Ext.getCmp('jobGrid-jobResume').disable();
+								}
+								else {
+									Ext.getCmp('jobGrid-jobPause').disable();
+									Ext.getCmp('jobGrid-jobResume').enable();
+								}
 
 							} else {
 
