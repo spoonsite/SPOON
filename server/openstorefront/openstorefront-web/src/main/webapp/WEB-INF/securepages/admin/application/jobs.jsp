@@ -236,6 +236,34 @@
 				});
 
 
+				var updateSchedulerStatus = function updateSchedulerStatus() {
+					Ext.Ajax.request({
+						url: '/openstorefront/api/v1/service/jobs/status',
+						success: function (response, opts) {
+							var rsp = Ext.decode(response.responseText);
+							var label = Ext.getCmp('schedulerStatusLabel');
+							var button = Ext.getCmp('jobGrid-schedulerToggleButton');
+							if (rsp.status === 'Running') {
+								label.setText('Running');
+								label.setStyle({color: 'green'});
+								button.setText('Pause');
+								button.setIconCls('fa fa-pause fa-2x');
+							}
+							else {
+								label.setText('Paused');
+								label.setStyle({color: 'red'});
+								button.setText('Resume');
+								button.setIconCls('fa fa-play fa-2x');
+							}
+						},
+						failure: function (response, opts) {
+							Ext.MessageBox.alert('Error', 'Unable to update system scheduler status.');
+						}
+					});		
+				};
+				
+				updateSchedulerStatus();
+
 
 			});
 
