@@ -78,6 +78,19 @@
 							items: [
 								{
 									scale: 'medium',
+									id: 'jobGrid-refresh',
+									iconCls: 'fa fa-2x fa-refresh',
+									text: 'Refresh',
+									tooltip: 'Refresh the list of jobs',
+									handler: function () {
+										jobStore.load();
+									}
+								},
+								{ 
+									xtype: 'tbseparator'
+								},
+								{
+									scale: 'medium',
 									id: 'jobGrid-jobPause',
 									iconCls: 'fa fa-2x fa-pause',
 									text: 'Pause',
