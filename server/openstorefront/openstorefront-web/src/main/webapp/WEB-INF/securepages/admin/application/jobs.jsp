@@ -239,6 +239,16 @@
 					}
 				});
 
+				var taskStatsStore = Ext.create('Ext.data.Store', {
+					storeId: 'taskStatsStore',
+					autoLoad: true,
+					proxy: {
+						id: 'taskStatsStoreProxy',
+						type: 'ajax',
+						url: '/openstorefront/api/v1/service/jobs/tasks/status'
+					}
+				});
+
 
 				var taskGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Tasks',
@@ -276,6 +286,26 @@
 					],
 					dockedItems: [
 						{
+							dock: 'bottom',
+							title: 'Task Statistics',
+							xtype: 'panel',
+							items: [
+								{
+									xtype: 'grid',
+									store: taskStatsStore,
+									columns: [
+										{text: 'Active Count', dataIndex: 'activeCount', flex: 1},
+										{text: 'Queued Count', dataIndex: 'queuedCount', flex: 1},
+										{text: 'Complete Count', dataIndex: 'completedCount', flex: 1},
+										{text: 'Total Count', dataIndex: 'totalTaskCount', flex: 1},
+										{text: 'Worker Pool Size', dataIndex: 'threadPoolSize', flex: 1},
+										{text: 'Largest Pool Size', dataIndex: 'largestPoolSize', flex: 1},
+										{text: 'Max Pool Size', dataIndex: 'maxPoolSize', flex: 1}
+									]
+								}
+							]
+						},
+						{
 							dock: 'top',
 							xtype: 'toolbar',
 							items: [
@@ -287,6 +317,7 @@
 									tooltip: 'Refresh the list of tasks',
 									handler: function () {
 										taskStore.load();
+										taskStatsStore.load();
 									}
 								}
 							]
