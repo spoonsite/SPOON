@@ -103,6 +103,7 @@
 									text: 'Run',
 									tooltip: 'Execute the selected job',
 									name: 'individualJobControl',
+									disabled: true,
 									handler: function () {
 										var record = Ext.getCmp('jobGrid').getSelection()[0];
 										executeJob(record);
@@ -185,6 +186,7 @@
 						},
 						selectionchange: function (grid, record, eOpts) {
 							if (Ext.getCmp('jobGrid').getSelectionModel().hasSelection()) {
+								Ext.getCmp('jobGrid-jobExecute').enable();
 								var record = Ext.getCmp('jobGrid').getSelection()[0];
 								if (record.data.status === 'NORMAL') {
 									Ext.getCmp('jobGrid-jobPause').enable();
@@ -196,7 +198,9 @@
 								}
 
 							} else {
-
+								Ext.getCmp('jobGrid-jobExecute').disable();
+								Ext.getCmp('jobGrid-jobPause').disable();
+								Ext.getCmp('jobGrid-jobResume').disable();
 							}
 						}
 					}
@@ -276,6 +280,60 @@
 					});	
 				};
 
+				var pauseJob = function pauseJob(record) {
+					var url = '/openstorefront/api/v1/service/jobs/';
+					url += record.data.jobName + '/pause';
+					var method = 'POST';
+					Ext.Ajax.request({
+						url: url,
+						method: method,
+						success: function (response, opts) {
+							var message = 'Successfully paused ' + record.data.jobName;
+							Ext.toast(message, '', 'tr');
+							jobStore.load();
+						},
+						failure: function (response, opts) {
+							Ext.MessageBox.alert('Error','Could not pause ' + record.data.jobName);
+						}
+					});	
+					
+				};
+
+				var resumeJob = function resumeJob(record) {
+					var url = '/openstorefront/api/v1/service/jobs/';
+					url += record.data.jobName + '/resume';
+					var method = 'POST';
+					Ext.Ajax.request({
+						url: url,
+						method: method,
+						success: function (response, opts) {
+							var message = 'Successfully resumed ' + record.data.jobName;
+							Ext.toast(message, '', 'tr');
+							jobStore.load();
+						},
+						failure: function (response, opts) {
+							Ext.MessageBox.alert('Error','Could not resume ' + record.data.jobName);
+						}
+					});	
+				};
+
+				var executeJob = function executeJob(record) {
+					var url = '/openstorefront/api/v1/service/jobs/';
+					url += record.data.jobName + '/' + record.data.groupName + '/runnow';
+					var method = 'POST';
+					Ext.Ajax.request({
+						url: url,
+						method: method,
+						success: function (response, opts) {
+							var message = 'Successfully executed ' + record.data.jobName;
+							Ext.toast(message, '', 'tr');
+							jobStore.load();
+						},
+						failure: function (response, opts) {
+							Ext.MessageBox.alert('Error','Could not execute ' + record.data.jobName);
+						}
+					});	
+				};
 
 				var updateSchedulerStatus = function updateSchedulerStatus() {
 					Ext.Ajax.request({
