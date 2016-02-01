@@ -229,8 +229,13 @@
 					storeId: 'taskStore',
 					autoLoad: true,
 					proxy: {
+						id: 'taskStoreProxy',
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/jobs/tasks/status'
+						url: '/openstorefront/api/v1/service/jobs/tasks/status',
+						reader: {
+							type: 'json',
+							rootProperty: 'tasks'
+						}
 					}
 				});
 
@@ -241,9 +246,51 @@
 					store: taskStore,
 					columnLines: true,
 					columns: [
-						{text: 'Task Name', dataIndex: 'taskName', flex: 1}
+						{text: 'Task Name', dataIndex: 'taskName', flex: 1},
+						{text: 'Details', dataIndex: 'details', flex: 4},
+						{text: 'Status', dataIndex: 'status', flex: 1},
+						{
+							text: 'Submitted Date',
+							dataIndex: 'submitedDts',
+							flex: 1,
+							xtype: 'datecolumn',
+							format: 'm/d/y H:i:s'
+						},
+						{
+							text: 'Completion Date',
+							dataIndex: 'completedDts',
+							flex: 1,
+							xtype: 'datecolumn',
+							format: 'm/d/y H:i:s'
+						},
+						{
+							text: 'Expiration Date',
+							dataIndex: 'expireDts',
+							hidden: true,
+							flex: 1,
+							xtype: 'datecolumn',
+							format: 'm/d/y H:i:s'
+						},
+						{text: 'Allows Multiple Tasks', dataIndex: 'allowMultiple', flex: 1}
+
 					],
 					dockedItems: [
+						{
+							dock: 'top',
+							xtype: 'toolbar',
+							items: [
+								{
+									scale: 'medium',
+									id: 'taskGrid-refresh',
+									iconCls: 'fa fa-2x fa-refresh',
+									text: 'Refresh',
+									tooltip: 'Refresh the list of tasks',
+									handler: function () {
+										taskStore.load();
+									}
+								}
+							]
+						}
 					],
 					listeners: {
 						itemdblclick: function (grid, record, item, index, e, opts) {
