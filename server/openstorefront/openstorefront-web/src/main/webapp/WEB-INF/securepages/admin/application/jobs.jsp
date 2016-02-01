@@ -42,7 +42,13 @@
 						{
 							text: 'Status', 
 							dataIndex: 'status',
-							flex: 1
+							flex: 1,
+							renderer: function(value) {
+								if (value === 'NORMAL')
+									return '<span style="color: green;">NORMAL</span>';
+								else
+									return '<span style="color: #c09853;">PAUSED</span>';
+							}
 						},
 						{
 							text: 'Previous Fire Time', 
