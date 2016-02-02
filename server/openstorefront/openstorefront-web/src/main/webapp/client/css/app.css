@@ -226,6 +226,69 @@ tr.details-table:hover {
 	background-color: #f5f5f5
 }
 
+.rolling-container {
+    width: 100%;        
+}
+
+.detail-eval-item {    
+	padding: 5px;
+	border: 1px solid grey;
+	min-width: 311px;
+	max-width: 100%;
+	width: 16.7%;
+	border-collapse: collapse;
+}
+
+.detail-eval-item:hover  { 
+	background-color: #f5f5f5;
+}
+
+.rolling-container-block {    
+    float: left;		
+}
+
+.detail-eval-label{	
+	min-width: 100px;
+	font-weight: bold;
+}
+
+.detail-eval-score{
+	float: right;
+	width: 60px;
+	color: #021233;
+}
+
+.detail-media-block{
+	padding: 5px;
+	border: 1px solid grey;
+	height: 163px;
+    float: left;
+	margin-right: 5px;	
+}
+
+.detail-media-block:hover{
+	background-color: lightgrey;
+	cursor: pointer;	
+}
+
+.detail-media-caption{
+	background: black;
+    color: white;
+    margin-top: -35px;
+    padding: 5px;
+    position: relative;
+    bottom: 0;
+    opacity: .6;
+    width: 100%;	
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;	
+}
+
+.mediaviewer-body{
+	background-color: rgba(0, 0, 0, .6);
+}
 
 @media > 800 .footer_content {
     margin: 0px auto;
