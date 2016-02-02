@@ -14,7 +14,8 @@
 						block.updateTemplate(entry);	
 					});
 					
-					container.add(template.blocks);					
+					container.add(template.blocks);	
+					container.updateLayout(true, true);
 				}
 			};
 			
@@ -26,10 +27,25 @@
 				});								
 				template.blocks.push(description);
 				
+				var media = Ext.create('OSF.component.template.Media', {
+					margin: '0 0 20 0'
+				});								
+				template.blocks.push(media);				
+								
 				var dependencies = Ext.create('OSF.component.template.Dependencies', {					
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(dependencies);					
+				template.blocks.push(dependencies);		
+				
+				var di2elevel = Ext.create('OSF.component.template.DI2EEvalLevel', {					
+					margin: '0 0 20 0'
+				});								
+				template.blocks.push(di2elevel);	
+
+				var evaluationSummary = Ext.create('OSF.component.template.EvaluationSummary', {					
+					margin: '0 0 20 0'
+				});								
+				template.blocks.push(evaluationSummary);	
 				
 				var resources = Ext.create('OSF.component.template.Resources', {					
 					margin: '0 0 20 0'

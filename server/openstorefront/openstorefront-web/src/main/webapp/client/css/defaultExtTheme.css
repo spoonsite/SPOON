@@ -24,6 +24,11 @@ div.x-border-layout-ct {
     background: url('/openstorefront/images/squared_metal.png');
 }
 
+.x-tip-default {
+    background-color: #E6E6E6;
+    border-color: #A2A2A2;
+}
+
 .x-toolbar-default {
     padding: 6px 0 6px 8px;
     border-style: solid;
