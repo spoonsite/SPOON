@@ -319,6 +319,17 @@
 										taskStore.load();
 										taskStatsStore.load();
 									}
+								},
+								{
+									scale: 'medium',
+									id: 'taskGrid-tools-delete',
+									iconCls: 'fa fa-2x fa-trash',
+									text: 'Delete',
+									tooltip: 'Delete the task',
+									disabled: true,
+									handler: function() {
+										actionDeleteTask(Ext.getCmp('taskGrid').getSelection()[0]);
+									}
 								}
 							]
 						}
@@ -328,14 +339,41 @@
 						},
 						selectionchange: function (grid, record, eOpts) {
 							if (Ext.getCmp('taskGrid').getSelectionModel().hasSelection()) {
-
-
+									Ext.getCmp('taskGrid-tools-delete').enable();
 							} else {
-
+									Ext.getCmp('taskGrid-tools-delete').disable();
 							}
 						}
 					}
 				});
+
+				var actionDeleteTask = function actionDeleteTask(record) {
+					var title = 'Delete Task';
+					var msg = 'Are you sure you want to delete "' + record.data.taskName + '"?';
+
+					Ext.MessageBox.confirm(title, msg, function (btn) {
+						if (btn === 'yes') {
+							var taskId = record.data.taskId;
+							var url = '/openstorefront/api/v1/service/jobs/tasks';
+							url += '/' + taskId;
+							var method = 'DELETE';
+							Ext.Ajax.request({
+								url: url,
+								method: method,
+								success: function (response, opts) {
+									var message = 'Successfully deleted task: "'+ record.data.taskName + '"';
+									Ext.toast(message, '', 'tr');
+									Ext.getCmp('taskGrid').getStore().load();
+									Ext.getCmp('taskGrid-tools-delete').disable();
+								},
+								failure: function (response, opts) {
+									Ext.MessageBox.alert('Failed to delete',
+									'Error: Could not delete task: "' + record.data.taskName + '"');
+								}
+							});	
+						}
+					});
+				};
 
 				var jobsMainPanel = Ext.create('Ext.tab.Panel', {
 					title: 'Manage Jobs <i class="fa fa-question-circle"  data-qtip="Control and view scheduled jobs and background tasks."></i>',
