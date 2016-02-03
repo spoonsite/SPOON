@@ -32,7 +32,7 @@ Ext.define('OSF.component.template.BaseBlock', {
 		var block = this;
 		var data = block.updateHandler(entry);
 		if (data) {
-			block.update(data);
+			block.update(data);			
 		}
 	}
 	
@@ -67,7 +67,7 @@ Ext.define('OSF.component.template.Resources', {
 		'	<tpl for="resources">',	
 		'		<tr class="details-table">',
 		'			<td class="details-table"><b>{resourceTypeDesc}</b></td>',
-		'			<td class="details-table"><a href="actualLink" class="details-table" target="_blank">{link}</a></td>',
+		'			<td class="details-table"><a href="{actualLink}" class="details-table" target="_blank">{link}</a></td>',
 		'		</tr>',
 		'	</tpl>',
 		'</table>'		
@@ -104,7 +104,7 @@ Ext.define('OSF.component.template.Contacts', {
 		'		<tr class="details-table">',
 		'			<td class="details-table"><b>{name}</b> <br> ({organization})</td>',
 		'			<td class="details-table">{positionDescription}</td>',
-		'			<td class="details-table"><tpl if="phone">{phone)</tpl><tpl if="!phone">—</tpl></td>',
+		'			<td class="details-table"><tpl if="phone">{phone}</tpl><tpl if="!phone">—</tpl></td>',
 		'			<td class="details-table"><a href="mailto:{email}" class="details-table">{email}</a></td>',
 		'		</tr>',
 		'	</tpl>',
@@ -172,8 +172,8 @@ Ext.define('OSF.component.template.Vitals', {
 					highlightStyle: item.highlightStyle,
 					type: item.type,
 					code: item.code,
-					tip: item.codeLongDescription
-				});
+					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '') : item.codeLongDescription
+				});				
 			});
 		}
 		
@@ -334,7 +334,7 @@ Ext.define('OSF.component.template.EvaluationSummary', {
 		} else {
 			Ext.Array.each(entry.evaluation.evaluationSections, function(section){
 				if (section.notAvailable || section.actualScore <= 0) {
-					section.display = null;
+					section.display = "N/A";
 				} else {
 					var score = Math.round(section.actualScore);
 					section.display = "";
@@ -359,6 +359,7 @@ Ext.define('OSF.component.template.Media', {
 	alias: 'osf.widget.template.Media',
 	
 	scrollable: 'x',
+	style: 'height: auto !important;',
 	
 	tpl: new Ext.XTemplate(
 		' <h2>Screenshots / Media</h2>',	
@@ -366,17 +367,17 @@ Ext.define('OSF.component.template.Media', {
 		'		<div class="detail-media-block">',
 		'		<tpl switch="mediaTypeCode">',
 		'				<tpl case="IMG">',
-		'					<img src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}" onclick="MediaViewer(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\');" />',		
+		'					<img src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');" />',		
 		'				<tpl case="AUD">',
-		'					<i class="fa fa-sound-o" onclick=""></i>',
+		'					<i class="fa fa-file-sound-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
 		'				<tpl case="VID">',
-		'					<i class="fa fa-video-o" onclick=""></i>',		
+		'					<i class="fa fa-file-video-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',		
 		'				<tpl case="ARC">',
-		'					<i class="fa fa-archive-o" onclick=""></i>',
+		'					<i class="fa fa-file-archive-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
 		'				<tpl case="TEX">',
-		'					<i class="fa fa-text-o" onclick=""></i>',
-		'				<tpl case="OTH">',
-		'					<i class="fa fa-file-o" onclick=""></i>',
+		'					<i class="fa fa-file-text-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
+		'				<tpl default>',
+		'					<i class="fa fa-file-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
 		'			</tpl>',
 		'			<tpl if="caption"><p class="detail-media-caption">{caption}</p></tpl>',
 		'		</div>',
@@ -390,9 +391,73 @@ Ext.define('OSF.component.template.Media', {
 	updateHandler: function(entry){
 		if (!entry.componentMedia || entry.componentMedia.length === 0) {
 			this.setHidden(true);
+		} else {
+			MediaViewer.mediaList = entry.componentMedia;
 		}
-	
 		return entry;
 	}	
 	
 });
+
+Ext.define('OSF.component.template.Relationships', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.Relationships',
+	
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Relationships',
+	
+		
+	initComponent: function () {
+		this.callParent();
+		
+		var relationshipPanel = this;
+		
+		relationshipPanel.tabPanel = Ext.create('Ext.tab.Panel', {
+			items: [
+				Ext.create('OSF.component.RelationshipVisPanel', {
+					title: 'Visualization'
+				}),
+				{
+					xtype: 'panel',
+					itemId: 'relationTable',
+					title: 'Table',
+					tpl: new Ext.XTemplate(
+						' <table class="details-table" width="100%">',	
+						'	<tr><th class="details-table">Entry</th><th class="details-table">Relationship Type</th><th class="details-table">Related Entry</th></tr>',
+						'	<tpl for="relationships">',	
+						'		<tr class="details-table">',
+						'			<td class="details-table">{ownerComponentName}</td>',
+						'			<td class="details-table" align="center"><b>{relationshipTypeDescription}</b></td>',
+						'			<td class="details-table"><a href="view.jsp?id={targetComponentId}" class="details-table" target="_blank">{targetComponentName}</a></td>',
+						'		</tr>',
+						'	</tpl>',
+						'</table>'		
+					)					
+				}
+			]
+		});
+		relationshipPanel.add(relationshipPanel.tabPanel);
+		
+	},
+	
+	updateHandler: function(entry){
+		var relationshipPanel = this;
+		
+		if (!entry.relationships || entry.relationships.length === 0) {
+			this.setHidden(true);
+			return null;
+		} else {
+			Ext.Array.sort(entry.relationships, function(a, b){
+				return a.relationshipTypeDescription.localeCompare(b.relationshipTypeDescription);	
+			});
+									
+			relationshipPanel.tabPanel.getComponent('relationTable').update(entry);
+			
+		}		
+				
+		return entry;
+	}	
+	
+});
+

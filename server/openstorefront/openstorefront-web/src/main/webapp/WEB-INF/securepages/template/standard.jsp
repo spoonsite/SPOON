@@ -15,7 +15,9 @@
 					});
 					
 					container.add(template.blocks);	
-					container.updateLayout(true, true);
+					Ext.defer(function(){
+						container.updateLayout(true, true);
+					}, 500);					
 				}
 			};
 			
@@ -62,8 +64,11 @@
 				});								
 				template.blocks.push(vitals);					
 				
-				
-				
+				var vitals = Ext.create('OSF.component.template.Relationships', {					
+					margin: '0 0 20 0'
+				});								
+				template.blocks.push(vitals);					
+								
 				
 			});
 
