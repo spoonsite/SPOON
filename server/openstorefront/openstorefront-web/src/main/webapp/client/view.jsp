@@ -43,7 +43,7 @@ limitations under the License.
 						xtype: 'panel',
 						id: 'titlePanel',
 						flex: 1,
-						minHeight: 120,						
+						minHeight: 125,						
 						tpl: new Ext.XTemplate(
 							'<div class="details-title-name">{name} <span class="details-title-info" style="font-size: 10px">({componentTypeLabel})</span> </div>',
 							'<div class="details-title-info">',							

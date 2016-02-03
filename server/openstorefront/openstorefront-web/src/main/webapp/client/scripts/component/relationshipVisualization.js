@@ -13,5 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global Ext */
 
+Ext.define('OSF.component.RelationshipVisPanel', {
+	extend: 'Ext.draw.Container',
+	alias: 'osf.widget.RelationshipVisPanel',
+		
+	initComponent: function () {
+		this.callParent();
 
+		var visPanel = this;
+		
+		
+
+	}
+	
+});
