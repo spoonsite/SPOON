@@ -7,9 +7,30 @@
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
 				
-				var statusPanel = Ext.create('Ext.grid.Panel', {
+				var statusStats = Ext.create('Ext.grid.Panel', {
+					title: 'Statistics',
+					id: 'statusStats'
+				});
+				
+				var threadStatus = Ext.create('Ext.grid.Panel', {
+					title: 'Threads Status',
+					id: 'threadStatus'
+				});
+
+				var systemProperties = Ext.create('Ext.grid.Panel', {
+					title: 'System Properties',
+					id: 'systemProperties'
+				});
+
+				var statusPanel = Ext.create('Ext.tab.Panel', {
 					title: 'Status',
-					id: 'statusPanel'
+					id: 'statusPanel',
+					tabPosition: 'left',
+					tabRotation: 0,
+					tabBar: {
+						border: false
+					},
+					items: [statusStats, threadStatus, systemProperties]
 				});
 
 				var errorTicketsGrid = Ext.create('Ext.grid.Panel', {
