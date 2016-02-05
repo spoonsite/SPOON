@@ -78,8 +78,7 @@
 									xtype: 'progressbar',
 									padding: '0 10 0 10',
 									id: 'heapMemoryBar',
-									text: '',
-									flex: 7
+									flex: 9
 								}]
 						},
 						{ xtype: 'panel', layout: 'hbox', items: [
@@ -88,11 +87,59 @@
 									xtype: 'progressbar',
 									padding: '0 10 0 10',
 									id: 'nonHeapMemoryBar',
-									text: '',
-									flex: 7
+									flex: 9
 								}]
 						}
 
+					]
+				});
+
+				var memoryPoolStore = Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					storeId: 'memoryPoolStore',
+					fields: [
+						{ 
+							name: "used",
+							mapping: function (data) {
+								var used = data.usedKb / data.maxKb;
+								if (used === Infinity) used = 0;
+								return used; 
+							}
+						}
+					],
+					proxy: {
+						id: 'memoryPoolStoreProxy',
+						type: 'ajax',
+						url: '/openstorefront/api/v1/service/application/status',
+						reader: {
+							type: 'json',
+							rootProperty: 'memoryPools'
+						}
+					}
+				});
+
+
+				var memoryPoolsGrid = Ext.create('Ext.grid.Panel', {
+					id: 'memoryPoolsGrid',
+					style: {
+						padding: '10px'
+					},
+					title: 'Memory Pools',
+					store: memoryPoolStore,
+					columnsLines: true,
+					columns: [
+						{text: 'Name', dataIndex: 'name', flex: 1},
+						{text: 'Init (K)', dataIndex: 'initKb', flex: 1},
+						{text: 'Used (K)', dataIndex: 'usedKb', flex: 1},
+						{text: 'Max (K)', dataIndex: 'maxKb', flex: 1},
+						{text: 'Committed (K)', dataIndex: 'commitedKb', flex: 1},
+						{text: '', dataIndex: 'used', flex: 1, 
+							xtype: 'widgetcolumn',
+							widget: {
+								xtype: 'progressbarwidget',
+								textTpl: '{value:percent}'
+							}
+						}
 					]
 				});
 
@@ -116,22 +163,27 @@
 									id: 'systemDetailStats',
 									tpl: tplSystemDetailStats,
 									flex: 1,
-									data: {
-										'applicationVersion': '1.1.1.1.1.'
-									}
 								},
 								{
 									xtype: 'panel',
 									id: 'systemDetailStats2',
 									tpl: tplSystemDetailStats2,
 									flex: 1,
-									data: {
-										'applicationVersion': '1.1.1.1.1.'
-									}
 								},
 							]
 						},
-						memoryPanel
+						memoryPanel,
+						memoryPoolsGrid,
+						{
+							xtype: 'panel',
+							title: 'Garbage Collection',
+							style: {
+								padding: '10px'
+							},
+							id: 'garbageCollectionPanel',
+							tpl: tplGarbageCollection,
+							flex: 1,
+						}
 					]
 				});
 				
