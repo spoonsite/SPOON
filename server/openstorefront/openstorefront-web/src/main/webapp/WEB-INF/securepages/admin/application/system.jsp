@@ -50,29 +50,88 @@
 			Ext.onReady(function () {
 
 				var tplSystemDetailStats = new Ext.XTemplate(
-					'<div>',
-					'<div style="padding:10px; float: left;" ><ul class="list-group">',	
+					'<div style="padding:10px;"><ul class="list-group">',	
 					'<li class="list-group-item">Application Version: <span class="badge">{applicationVersion}</span></li>',
-					'<li class="list-group-item">Up Time: <span class="badge">{upTime}</span></li>',
-					'<li class="list-group-item">Start Time: <span class="badge">{startTime}</span></li>',
-					'<li class="list-group-item">System Load: <span class="badge">{systemLoad}</span></li>',			
-					'</ul><div>',
-					'<div style="padding:10px;" ><ul class="list-group">',	
-					'<li class="list-group-item">Application Version: <span class="badge">{applicationVersion}</span></li>',
-					'<li class="list-group-item">Up Time: <span class="badge">{upTime}</span></li>',
-					'<li class="list-group-item">Start Time: <span class="badge">{startTime}</span></li>',
-					'<li class="list-group-item">System Load: <span class="badge">{systemLoad}</span></li>',			
+					'<li class="list-group-item">System Load: <span class="badge">{upTime}</span></li>',
+					'<li class="list-group-item">Uptime: <span class="badge">{startTime}</span></li>',
+					'<li class="list-group-item">Processors: <span class="badge">{systemLoad}</span></li>',			
+					'</ul><div>'
+				);
 
-					'</div>'
+				var tplSystemDetailStats2 = new Ext.XTemplate(
+					'<div style="padding:10px;"><ul class="list-group">',	
+					'<li class="list-group-item">Start Date: <span class="badge">{applicationVersion}</span></li>',
+					'<li class="list-group-item">Live Threads / Total Threads: <span class="badge">{upTime}</span></li>',
+					'<li class="list-group-item">Garbage Collection: <span class="badge">{startTime}</span></li>',
+					'<li class="list-group-item">System Load: <span class="badge">{systemLoad}</span></li>',			
+					'</ul><div>'
+
 				);	
+
+				var memoryPanel = Ext.create('Ext.panel.Panel', {
+					defaults: {
+						padding: '10px',
+					},
+					items: [
+						{ xtype: 'panel', layout: 'hbox', items: [
+								{xtype: 'label', html: '<strong>Heap Memory</strong>', flex: 1},
+								{
+									xtype: 'progressbar',
+									padding: '0 10 0 10',
+									id: 'heapMemoryBar',
+									text: '',
+									flex: 7
+								}]
+						},
+						{ xtype: 'panel', layout: 'hbox', items: [
+								{xtype: 'label', html: '<strong>Non-Heap Memory</strong>', flex: 1},
+								{
+									xtype: 'progressbar',
+									padding: '0 10 0 10',
+									id: 'nonHeapMemoryBar',
+									text: '',
+									flex: 7
+								}]
+						}
+
+					]
+				});
 
 				var statusStats = Ext.create('Ext.panel.Panel', {
 					title: 'Statistics',
 					id: 'statusStats',
-					tpl: tplSystemDetailStats,
-					data: {
-						'applicationVersion': '1.1.1.1.1.'
-					}
+					layout: {
+						type: 'vbox',
+						align: 'stretch'
+					},
+					items: [
+						{ 
+							xtype: 'panel',
+							layout: {
+								type: 'hbox',
+								align: 'stretch'
+							},
+							items: [
+								{
+									xtype: 'panel',
+									tpl: tplSystemDetailStats,
+									flex: 1,
+									data: {
+										'applicationVersion': '1.1.1.1.1.'
+									}
+								},
+								{
+									xtype: 'panel',
+									tpl: tplSystemDetailStats2,
+									flex: 1,
+									data: {
+										'applicationVersion': '1.1.1.1.1.'
+									}
+								},
+							]
+						},
+						memoryPanel
+					]
 				});
 				
 				var threadStatus = Ext.create('Ext.grid.Panel', {
