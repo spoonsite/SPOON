@@ -43,28 +43,28 @@
 			.green-highlight{
 				color: lightgreen
 			}
-		</style>	
+		</style>
 
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
 
 				var tplSystemDetailStats = new Ext.XTemplate(
-					'<div style="padding:10px;"><ul class="list-group">',	
+					'<div style="padding:10px;"><ul class="list-group">',
 					'<li class="list-group-item">Application Version: <span class="badge">{applicationVersion}</span></li>',
 					'<li class="list-group-item">Uptime: <span class="badge">{upTime}</span></li>',
-					'<li class="list-group-item">Start Time: <span class="badge">{startTime}</span></li>',			
+					'<li class="list-group-item">Start Time: <span class="badge">{startTime}</span></li>',
 					'</ul><div>'
 				);
 
 				var tplSystemDetailStats2 = new Ext.XTemplate(
-					'<div style="padding:10px;"><ul class="list-group">',	
+					'<div style="padding:10px;"><ul class="list-group">',
 					'<li class="list-group-item">Processor Count: <span class="badge">{processorCount}</span></li>',
 					'<li class="list-group-item">Live Threads / Total Threads: <span class="badge">{liveThreadCount}/{totalThreadCount}</span></li>',
 					'<li class="list-group-item">System Load: <span class="badge">{systemLoad}</span></li>',
 					'</ul><div>'
 
-				);	
+				);
 
 				var tplGarbageCollection = new Ext.XTemplate(
 					'<ul style="padding: 10px;"><tpl for="garbageCollectionInfos">',
@@ -103,12 +103,12 @@
 					autoLoad: true,
 					storeId: 'memoryPoolStore',
 					fields: [
-						{ 
+						{
 							name: "used",
 							mapping: function (data) {
 								var used = data.usedKb / data.maxKb;
 								if (used === Infinity) used = 0;
-								return used; 
+								return used;
 							}
 						}
 					],
@@ -141,7 +141,7 @@
 						{text: 'Used (K)', dataIndex: 'usedKb', flex: 1},
 						{text: 'Max (K)', dataIndex: 'maxKb', flex: 1},
 						{text: 'Committed (K)', dataIndex: 'commitedKb', flex: 1},
-						{text: '', dataIndex: 'used', flex: 1, 
+						{text: '', dataIndex: 'used', flex: 1,
 							xtype: 'widgetcolumn',
 							widget: {
 								xtype: 'progressbarwidget',
@@ -159,7 +159,7 @@
 						align: 'stretch'
 					},
 					items: [
-						{ 
+						{
 							xtype: 'panel',
 							layout: {
 								type: 'hbox',
@@ -243,7 +243,7 @@
 						},
 					]
 				});
-				
+
 				var threadStatus = Ext.create('Ext.grid.Panel', {
 					title: 'Threads Status',
 					id: 'threadStatus'
@@ -273,7 +273,7 @@
 				var appStatePropGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Application State Properties',
 					id: 'appStatePropGrid'
-				});	
+				});
 
 				var appInitPropGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Application Initilization Properties',
@@ -283,7 +283,7 @@
 				var logGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Logs and Logging',
 					id: 'logGrid'
-				});	
+				});
 
 				var pluginGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Plugins',
@@ -348,8 +348,7 @@
 						statusStats.setLoading(false);
 					}
 				});
-				
-			};			
+			};
 			actionLoadSystemData();
 
 				var systemDataUpdater = {
