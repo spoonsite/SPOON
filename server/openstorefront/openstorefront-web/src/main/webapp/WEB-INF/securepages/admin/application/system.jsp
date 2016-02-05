@@ -54,7 +54,6 @@
 					'<li class="list-group-item">Application Version: <span class="badge">{applicationVersion}</span></li>',
 					'<li class="list-group-item">Uptime: <span class="badge">{upTime}</span></li>',
 					'<li class="list-group-item">Start Time: <span class="badge">{startTime}</span></li>',			
-					'<li class="list-group-item">System Load: <span class="badge">{systemLoad}</span></li>',
 					'</ul><div>'
 				);
 
@@ -62,10 +61,16 @@
 					'<div style="padding:10px;"><ul class="list-group">',	
 					'<li class="list-group-item">Processor Count: <span class="badge">{processorCount}</span></li>',
 					'<li class="list-group-item">Live Threads / Total Threads: <span class="badge">{liveThreadCount}/{totalThreadCount}</span></li>',
-					'<li class="list-group-item">Garbage Collection: <span class="badge">{garbageCollectionInfos}</span></li>',
+					'<li class="list-group-item">System Load: <span class="badge">{systemLoad}</span></li>',
 					'</ul><div>'
 
 				);	
+
+				var tplGarbageCollection = new Ext.XTemplate(
+					'<ul style="padding: 10px;"><tpl for="garbageCollectionInfos">',
+					'<li><strong>{.}</strong></li>',
+					'</tpl></ul>'
+				);
 
 				var memoryPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
@@ -275,6 +280,7 @@
 						var data = Ext.decode(response.responseText);
 						Ext.getCmp('systemDetailStats').update(data);
 						Ext.getCmp('systemDetailStats2').update(data);
+						Ext.getCmp('garbageCollectionPanel').update(data);
 
 						Ext.getCmp('heapMemoryBar').setValue(data.heapMemoryStatus.usedKb/data.heapMemoryStatus.maxKb);
 						Ext.getCmp('nonHeapMemoryBar').setValue(data.nonHeapMemoryStatus.usedKb/data.nonHeapMemoryStatus.commitedKb);
