@@ -153,6 +153,10 @@ Ext.define('OSF.component.MediaViewerWindow', {
 			messageWindow.getComponent('previousBar').getComponent('previous').setHidden(true);
 			messageWindow.getComponent('nextBar').getComponent('next').setHidden(true);
 		}
+		
+		messageWindow.on('close', function(){
+			Ext.getDoc().un('keydown', messageWindow.keyHandler);
+		});
 
 	},
 	
@@ -160,7 +164,7 @@ Ext.define('OSF.component.MediaViewerWindow', {
 		this.callParent();
 		var messageWindow = this;
 	
-		Ext.getDoc().on('keydown', function(e, t, opts){
+		messageWindow.keyHandler = function(e, t, opts){
 			if (e.keyCode === 39) {
 				if (!messageWindow.getComponent('nextBar').getComponent('next').isDisabled()){
 					messageWindow.currentMediaIndex++;
@@ -174,7 +178,9 @@ Ext.define('OSF.component.MediaViewerWindow', {
 					messageWindow.showCurrentMedia();				
 				}
 			}
-		});
+		};
+	
+		Ext.getDoc().on('keydown', messageWindow.keyHandler);
 	},
 	
 	checkNextPrev: function(){

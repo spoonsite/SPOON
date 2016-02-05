@@ -97,6 +97,11 @@ div.x-border-layout-ct {
     border-style: solid;
 }
 
+.x-panel-default-outer-border-trbl {
+    border-color: #D6D6D6 !important;
+    border-width: 1px !important;
+}
+
 .x-panel-default-outer-border-rbl {
     border-right-color: lightgray !important;
     border-right-width: 1px !important;
