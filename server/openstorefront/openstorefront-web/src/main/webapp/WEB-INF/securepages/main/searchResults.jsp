@@ -260,16 +260,75 @@ limitations under the License.
 					data.push(record.data);
 				});
 				Ext.getCmp('resultsDisplayPanel').update(data);
+				
+				//update Stats
+				var statLine = 'No results Found';
+				if (records.length > 0) {
+					statLine = '';
+					var stats = {};
+					Ext.Array.each(records, function(record){
+						if (stats[record.get('componentType')]) {
+							stats[record.get('componentType')].count += 1;
+						} else {
+							stats[record.get('componentType')] = {
+								typeLabel: record.get('componentTypeDescription'),
+								count: 1
+							}
+						}
+					});
+					Ext.Object.each(stats, function(key, value, self) {
+						statLine += '<span style="font-size: 14px;">' + value.count + '</span> <b>'+ value.typeLabel + '(s)</b> '
+					});
+				}
+				
+				Ext.getCmp('searchStats').update(statLine);				
+				
 			});
 			
 			var performSearch = function(){
 				//pull session storage
 				Ext.getCmp('resultsDisplayPanel').setLoading("Searching...");
-				var searchRequest = CoreUtil.sessionStorage.searchRequest;
+				var searchRequest = CoreUtil.sessionStorage().getItem('searchRequest');
 				if (searchRequest) {
-					
+					searchRequest = Ext.decode(searchRequest);
+					if (searchRequest.type === 'SIMPLE') {
+						Ext.getCmp('searchResultsPanel').setTitle('Search Results - ' + searchRequest.query);
+						searchResultsStore.load({
+						url: '../api/v1/service/search',
+						params: {
+							paging: true,
+							query: searchRequest.query
+						}
+					});
+					} else {
+						//advanced 
+						Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advance');
+						searchResultsStore.getProxy().buildRequest = function (operation) {
+							var initialParams = Ext.apply({
+								paging: true,
+								sortField: operation.getSorters()[0].getProperty(),
+								sortOrder: operation.getSorters()[0].getDirection(),
+								offset: operation.getStart(),
+								max: operation.getLimit()
+							}, operation.getParams());
+							params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
+
+							var request = new Ext.data.Request({
+								url: '/openstorefront/api/v1/service/search/advance',
+								params: params,
+								operation: operation,
+								action: operation.getAction(),
+								jsonData: Ext.util.JSON.encode(searchObj)
+							});
+							operation.setRequest(request);
+
+							return request;
+						};
+						searchResultsStore.loadPage(1);						
+					}
 				} else {
 					//search all
+					Ext.getCmp('searchResultsPanel').setTitle('Search Results - ALL');
 					searchResultsStore.load({
 						url: '../api/v1/service/search',
 						params: {
@@ -296,6 +355,7 @@ limitations under the License.
 			
 			var searchResultsPanel = Ext.create('Ext.panel.Panel', {
 				region: 'center',
+				id: 'searchResultsPanel',
 				title: 'Search Results',
 				collapsible: true,
 				titleCollapse: true,
@@ -307,12 +367,9 @@ limitations under the License.
 					{
 						xtype: 'panel',
 						dock: 'top',
-						items: [
-							{
-								xtype: 'tbtext',
-								text: 'x components, x articles, x documents..etc'
-							}
-						]
+						id: 'searchStats',
+						bodyStyle: 'text-align: center;',
+						html: 'Loading...'
 					},
 					{
 						xtype: 'toolbar',
@@ -456,6 +513,7 @@ limitations under the License.
 									height: 53,
 									title: 'Go back to Home Page',
 									src: 'images/di2elogo-sm.png',
+									alt: 'logo',
 									listeners: {
 										el: {
 											click: function() {
@@ -495,10 +553,27 @@ limitations under the License.
 											}
 										}, 
 										{
-											xtype: 'textfield',										
+											xtype: 'textfield',
+											itemId: 'searchText',
 											flex: 1,
 											fieldCls: 'home-search-field',
-											emptyText: 'Search'								
+											emptyText: 'Search',
+											listeners:{
+												specialkey: function(field, e) {
+													var value = this.getValue();
+													if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {													
+														var query = value;
+														if (query && !Ext.isEmpty(query)) {
+															var searchRequest = {
+																type: 'SIMPLE',
+																query: query
+															}
+															CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+														}
+														window.location.href = 'Router.action?page=main/searchResults.jsp';														
+													}
+												}
+											}								
 										},
 										{
 											xtype: 'button',
@@ -509,8 +584,16 @@ limitations under the License.
 											width: 50,
 											handler: function(){
 
-												//TODO: Set up search
-
+												var query = this.up('panel').getComponent('searchText').getValue();
+												if (query && !Ext.isEmpty(query)) {
+													var searchRequest = {
+														type: 'SIMPLE',
+														query: query
+													}
+													CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+												} else {
+													delete CoreUtil.sessionStorage().searchRequest;
+												}												
 												window.location.href = 'Router.action?page=main/searchResults.jsp';
 
 											}

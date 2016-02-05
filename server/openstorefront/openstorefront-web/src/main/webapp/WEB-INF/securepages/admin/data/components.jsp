@@ -3159,7 +3159,7 @@
 							type: 'up',
 							tooltip: 'popout preview',
 							handler: function(){
-								window.open('../single?id=' + Ext.getCmp('componentGrid').getSelection()[0].get('componentId'), "Preview");
+								window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('componentGrid').getSelection()[0].get('componentId'), "Preview");
 							}
 						}
 					], 
@@ -4158,7 +4158,7 @@
 				
 				var actionPreviewComponent = function(id){	
 					previewComponentWin.show();	
-					previewContents.load('../single?id=' + id +'&hideNav=true');
+					previewContents.load('view.jsp?fullPage=true&id=' + id);
 					previewCheckButtons();
 				};
 

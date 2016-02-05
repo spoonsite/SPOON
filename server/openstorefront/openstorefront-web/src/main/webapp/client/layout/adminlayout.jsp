@@ -14,12 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --%>
 
+
 <%-- 
     Document   : adminlayout
     Created on : Oct 28, 2015, 4:55:30 PM
     Author     : dshurtleff
 --%>
 
+<%@page import="edu.usu.sdl.openstorefront.security.SecurityUtil"%>
 <%@page import="edu.usu.sdl.openstorefront.common.manager.PropertiesManager"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
@@ -36,6 +38,9 @@ limitations under the License.
 	<%
 		String appVersion = PropertiesManager.getApplicationVersion();
 		request.setAttribute("appVersion", appVersion);
+		request.setAttribute("user", SecurityUtil.getCurrentUserName());
+		request.setAttribute("usercontext", SecurityUtil.getUserContext());
+		request.setAttribute("admin", SecurityUtil.isAdminUser());			
 	%>	
 
 	<link href="../webjars/extjs/6.0.0/build/classic/theme-neptune/resources/theme-neptune-all-debug.css" rel="stylesheet" type="text/css"/>

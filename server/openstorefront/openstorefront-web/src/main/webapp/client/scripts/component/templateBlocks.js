@@ -153,7 +153,7 @@ Ext.define('OSF.component.template.Vitals', {
 		'	<tpl for="vitals">',	
 		'		<tr class="details-table">',
 		'			<td class="details-table"><b>{label}</b> <tpl if="tip"><i class="fa fa-question-circle" data-qtip="{tip}" data-qtitle="{value}" data-qalignTarget="bl-tl" data-qclosable="true" ></i></tpl></td>',
-		'			<td class="details-table highlight-{highlightStyle}"><a href="#" class="details-table" onclick="">{value}</a></td>',
+		'			<td class="details-table highlight-{highlightStyle}"><a href="#" class="details-table" onclick="DetailPage.showRelatedWindow(\'{type}\',\'{code}\',\'{value}\');">{value}</a></td>',
 		'		</tr>',
 		'	</tpl>',
 		'</table>'		

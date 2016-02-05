@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +54,7 @@ public class ComponentSearchView
 	private String articleAttributeType;
 	private String articleAttributeCode;
 	private String componentType;
+	private String componentTypeDescription;
 	private Integer averageRating;
 	private Date releaseDate;
 	private Date approvedDts;
@@ -107,7 +109,8 @@ public class ComponentSearchView
 		view.setReleaseDate(component.getReleaseDate());
 		view.setVersion(component.getVersion());
 		view.setComponentType(component.getComponentType());
-
+		view.setComponentTypeDescription(TranslateUtil.translateComponentType(component.getComponentType()));
+		
 		List<SearchResultAttribute> componentAttributes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
 
@@ -543,6 +546,16 @@ public class ComponentSearchView
 	public void setListingSecurityMarkingStyle(String listingSecurityMarkingStyle)
 	{
 		this.listingSecurityMarkingStyle = listingSecurityMarkingStyle;
+	}
+
+	public String getComponentTypeDescription()
+	{
+		return componentTypeDescription;
+	}
+
+	public void setComponentTypeDescription(String componentTypeDescription)
+	{
+		this.componentTypeDescription = componentTypeDescription;
 	}
 
 }

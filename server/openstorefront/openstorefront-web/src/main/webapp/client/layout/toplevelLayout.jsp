@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --%>
 
+<%@page import="edu.usu.sdl.openstorefront.security.SecurityUtil"%>
 <%@page import="edu.usu.sdl.openstorefront.common.manager.PropertiesManager"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
@@ -32,6 +33,10 @@ limitations under the License.
 		
 		String appTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
 		request.setAttribute("appTitle", appTitle);		
+
+		request.setAttribute("user", SecurityUtil.getCurrentUserName());
+		request.setAttribute("usercontext", SecurityUtil.getUserContext());
+		request.setAttribute("admin", SecurityUtil.isAdminUser());
 	%>	
 
 	<link href="../webjars/extjs/6.0.0/build/classic/theme-neptune/resources/theme-neptune-all-debug.css" rel="stylesheet" type="text/css"/>

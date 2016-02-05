@@ -22,14 +22,120 @@ limitations under the License.
 	<script src="scripts/component/mediaViewer.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/relationshipVisualization.js?v=${appVersion}" type="text/javascript"></script>		
 		
-	<div style="display:none" id="templateHolder"></div>	
+	<div style="display:none; visibility: hidden;" id="templateHolder"></div>	
 		
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */	
+		
+		var DetailPage = {
+			showRelatedWindow: function(attributeType, attributeCode, description) {
+				DetailPage.relatedWindow.show();
+				DetailPage.relatedWindow.setTitle('Related Entries - ' + description);
+				
+				var searchObj = {
+					"sortField": "name",
+					"sortDirection": "DESC",				
+					"searchElements": [{
+							"searchType": "ATTRIBUTE",
+							"keyField": attributeType,
+							"keyValue": attributeCode,
+							"caseInsensitive": false,
+							"numberOperation": "EQUALS",
+							"stringOperation": "EQUALS",
+							"mergeCondition": "OR" 
+					}]
+				 };
+				
+				var store = DetailPage.relatedWindow.getComponent('grid').getStore();
+				store.getProxy().buildRequest = function (operation) {
+					var initialParams = Ext.apply({
+						paging: true,
+						sortField: operation.getSorters()[0].getProperty(),
+						sortOrder: operation.getSorters()[0].getDirection(),
+						offset: operation.getStart(),
+						max: operation.getLimit()
+					}, operation.getParams());
+					params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
+
+					var request = new Ext.data.Request({
+						url: '/openstorefront/api/v1/service/search/advance',
+						params: params,
+						operation: operation,
+						action: operation.getAction(),
+						jsonData: Ext.util.JSON.encode(searchObj)
+					});
+					operation.setRequest(request);
+
+					return request;
+				};
+				store.loadPage(1);
+			}
+		};
+		
+		
 		Ext.onReady(function(){		
 			
 			var componentId = '${param.id}';
 			var fullPage = '${param.fullPage}' !== '' ? true : false;
+			
+			var relatedStore = Ext.create('Ext.data.Store', {
+							pageSize: 50,
+							autoLoad: false,
+							remoteSort: true,
+							sorters: [
+								new Ext.util.Sorter({
+								property: 'name',
+								direction: 'DESC'
+								})
+							],
+							proxy: CoreUtil.pagingProxy({
+								actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+								reader: {
+									type: 'json',
+									rootProperty: 'data',
+									totalProperty: 'totalNumber'
+								}
+							})							
+			});
+			
+			DetailPage.relatedWindow = Ext.create('Ext.window.Window', {
+				title: 'Related Entries - ',
+				//x: 5,		
+				//y: 220,
+				width: '50%',
+				height: '60%',
+				modal: true,				
+				layout: 'fit',
+				items: [
+					{
+						xtype: 'grid',
+						itemId: 'grid',
+						columnLines: true,
+						store: relatedStore,
+						columns: [
+							{ text: 'Name', dataIndex: 'name', width: 250, cellWrap: true, 
+								renderer: function (value, meta, record) {
+									return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>'
+								}
+							},
+							{ text: 'Description', dataIndex: 'description', flex: 1,
+								cellWrap: true,
+								renderer: function (value) {
+									value = Ext.util.Format.stripTags(value);
+									return Ext.String.ellipsis(value, 300);
+								}
+							},							
+							{ text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150 }							
+						],
+						dockedItems: [{
+							xtype: 'pagingtoolbar',							
+							dock: 'bottom',
+							store: relatedStore,
+							displayInfo: true
+						}]						
+					}				
+				]			
+			});			
 			
 			var headerPanel = Ext.create('Ext.panel.Panel', {
 				region: 'north',
@@ -67,12 +173,14 @@ limitations under the License.
 								tooltip: 'Tags',
 								scale: 'large',
 								margin: '0 10 0 0',
-								handler: function(){									
+								handler: function(){	
+									
 								}
 							},
 							{
 								xtype: 'button',
 								iconCls: 'fa fa-2x fa-binoculars icon-top-padding',
+								id: 'watchBtn',
 								tooltip: 'Watch',
 								scale: 'large',
 								margin: '0 10 0 0',
@@ -99,9 +207,10 @@ limitations under the License.
 								hrefTarget: '_blank'
 							},
 							{
-								xtype: 'button',
+								xtype: 'button',								
+								id: 'nonOwnerMenu',
 								iconCls: 'fa fa-2x fa-navicon icon-top-padding',								
-								scale: 'large',
+								scale: 'large',								
 								arrowVisible: false,
 								margin: '0 10 0 0',
 								menu: {
@@ -147,6 +256,12 @@ limitations under the License.
 								}
 							}							
 						]
+					}
+				],
+				dockedItems: [
+					{						
+						xtype: 'panel',
+						dock: 'bottom'
 					}
 				]
 			});
@@ -307,6 +422,7 @@ limitations under the License.
 							}
 						},						
 						items: [
+							
 							detailPanel,
 							reviews,
 							questionPanel
@@ -338,6 +454,21 @@ limitations under the License.
 							entry = Ext.decode(response.responseText);
 							
 							Ext.getCmp('titlePanel').update(entry);
+							
+							if (entry.createUser === '${user}'){
+								Ext.getCmp('nonOwnerMenu').setHidden(true);
+							}
+							
+							if (entry.approvalState !== "A") {
+								headerPanel.addDocked({
+									xtype: 'panel',
+									dock: 'top',
+									bodyCls: 'alert-warning',
+									bodyStyle: 'padding: 20px; font-size: 20px; text-align: center;',
+									html: 'This entry has not yet been approved for the site and is still under review.'
+								});
+								Ext.getCmp('watchBtn').setHidden(true);
+							}
 							
 							//get component type and determine review & q&a
 							Ext.Ajax.request({
