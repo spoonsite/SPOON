@@ -52,18 +52,17 @@
 				var tplSystemDetailStats = new Ext.XTemplate(
 					'<div style="padding:10px;"><ul class="list-group">',	
 					'<li class="list-group-item">Application Version: <span class="badge">{applicationVersion}</span></li>',
-					'<li class="list-group-item">System Load: <span class="badge">{upTime}</span></li>',
-					'<li class="list-group-item">Uptime: <span class="badge">{startTime}</span></li>',
-					'<li class="list-group-item">Processors: <span class="badge">{systemLoad}</span></li>',			
+					'<li class="list-group-item">Uptime: <span class="badge">{upTime}</span></li>',
+					'<li class="list-group-item">Start Time: <span class="badge">{startTime}</span></li>',			
+					'<li class="list-group-item">System Load: <span class="badge">{systemLoad}</span></li>',
 					'</ul><div>'
 				);
 
 				var tplSystemDetailStats2 = new Ext.XTemplate(
 					'<div style="padding:10px;"><ul class="list-group">',	
-					'<li class="list-group-item">Start Date: <span class="badge">{applicationVersion}</span></li>',
-					'<li class="list-group-item">Live Threads / Total Threads: <span class="badge">{upTime}</span></li>',
-					'<li class="list-group-item">Garbage Collection: <span class="badge">{startTime}</span></li>',
-					'<li class="list-group-item">System Load: <span class="badge">{systemLoad}</span></li>',			
+					'<li class="list-group-item">Processor Count: <span class="badge">{processorCount}</span></li>',
+					'<li class="list-group-item">Live Threads / Total Threads: <span class="badge">{liveThreadCount}/{totalThreadCount}</span></li>',
+					'<li class="list-group-item">Garbage Collection: <span class="badge">{garbageCollectionInfos}</span></li>',
 					'</ul><div>'
 
 				);	
@@ -114,6 +113,7 @@
 							items: [
 								{
 									xtype: 'panel',
+									id: 'systemDetailStats',
 									tpl: tplSystemDetailStats,
 									flex: 1,
 									data: {
@@ -122,6 +122,7 @@
 								},
 								{
 									xtype: 'panel',
+									id: 'systemDetailStats2',
 									tpl: tplSystemDetailStats2,
 									flex: 1,
 									data: {
@@ -212,6 +213,30 @@
 					layout: 'fit',
 					items: [systemMainPanel]
 				});
+				
+				var actionLoadSystemData = function() {
+				statusStats.setLoading(true);
+				
+				Ext.Ajax.request({
+					url: '/openstorefront/api/v1/service/application/status',
+					success: function(response, opt){
+						var data = Ext.decode(response.responseText);
+						Ext.getCmp('systemDetailStats').update(data);
+						Ext.getCmp('systemDetailStats2').update(data);
+
+						Ext.getCmp('heapMemoryBar').setValue(data.heapMemoryStatus.usedKb/data.heapMemoryStatus.maxKb);
+						Ext.getCmp('nonHeapMemoryBar').setValue(data.nonHeapMemoryStatus.usedKb/data.nonHeapMemoryStatus.commitedKb);
+						console.log(data.nonHeapMemoryStatus);
+						
+						statusStats.setLoading(false);
+					},
+					failure: function(response, opt){
+						statusStats.setLoading(false);
+					}
+				});
+				
+			};			
+			actionLoadSystemData();
 
 
 			});
