@@ -129,6 +129,9 @@
 					style: {
 						padding: '10px'
 					},
+					viewConfig: {
+						loadMask: false
+					},
 					title: 'Memory Pools',
 					store: memoryPoolStore,
 					columnsLines: true,
@@ -189,6 +192,55 @@
 							tpl: tplGarbageCollection,
 							flex: 1,
 						}
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function () {
+										actionLoadSystemData();
+									}
+								},
+								{
+									xtype: 'label',
+									text: 'Automatically Update:'
+								},
+								{
+									xtype: 'segmentedbutton',
+									scale: 'medium',
+									items: [
+										{
+											enableToggle: true,
+											scale: 'medium',
+											toggleGroup: 'auto',
+											id: 'autoYes',
+											text: 'Yes',
+											pressed: true,
+											name: 'autoUpdate',
+											handler: function () {
+												Ext.TaskManager.start(systemDataUpdater);
+											}
+										},
+										{
+											enableToggle: true,
+											scale: 'medium',
+											toggleGroup: 'auto',
+											id: 'autoNo',
+											text: 'No',
+											name: 'autoUpdate',
+											handler: function () {
+												Ext.TaskManager.stop(systemDataUpdater);
+											}
+										}
+									]
+								}
+							]
+						},
 					]
 				});
 				
@@ -270,10 +322,14 @@
 					layout: 'fit',
 					items: [systemMainPanel]
 				});
-				
-				var actionLoadSystemData = function() {
-				statusStats.setLoading(true);
-				
+
+			var actionLoadSystemData = function (update) {
+
+				if (update) {
+				} else {
+					statusStats.setLoading(true);
+				}
+
 				Ext.Ajax.request({
 					url: '/openstorefront/api/v1/service/application/status',
 					success: function(response, opt){
@@ -282,10 +338,10 @@
 						Ext.getCmp('systemDetailStats2').update(data);
 						Ext.getCmp('garbageCollectionPanel').update(data);
 
-						Ext.getCmp('heapMemoryBar').setValue(data.heapMemoryStatus.usedKb/data.heapMemoryStatus.maxKb);
-						Ext.getCmp('nonHeapMemoryBar').setValue(data.nonHeapMemoryStatus.usedKb/data.nonHeapMemoryStatus.commitedKb);
-						console.log(data.nonHeapMemoryStatus);
-						
+						Ext.getCmp('heapMemoryBar').setValue(data.heapMemoryStatus.usedKb / data.heapMemoryStatus.maxKb);
+						Ext.getCmp('nonHeapMemoryBar').setValue(data.nonHeapMemoryStatus.usedKb / data.nonHeapMemoryStatus.commitedKb);
+						memoryPoolStore.load();
+
 						statusStats.setLoading(false);
 					},
 					failure: function(response, opt){
@@ -295,6 +351,17 @@
 				
 			};			
 			actionLoadSystemData();
+
+				var systemDataUpdater = {
+					id: 'systemDataUpdater',
+					run: function () {
+						actionLoadSystemData(update = true)
+					},
+					interval: 1000
+				}
+
+
+				Ext.TaskManager.start(systemDataUpdater);
 
 
 			});
