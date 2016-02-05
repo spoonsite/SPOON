@@ -137,7 +137,16 @@ Ext.define('OSF.defaults.Window', {
 		  win.restore();		  
 		  win.setHeight(win.getHeight());
 	  }
-  }
+  },
+  afterRender: function(){
+		this.callParent();
+		
+		var win = this;
+		
+		win.getEl().on('resize', function(){
+			win.updateLayout(true, true);
+		});
+	}
 	
 });
 

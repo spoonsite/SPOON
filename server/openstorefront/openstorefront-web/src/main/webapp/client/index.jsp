@@ -136,7 +136,8 @@ limitations under the License.
 								{
 									flex: 1
 								},
-								{		
+								{	
+									xtype: 'panel',
 									width: '65%',
 									layout: {
 										type: 'hbox',
@@ -156,9 +157,26 @@ limitations under the License.
 										}, 
 										{
 											xtype: 'textfield',										
+											itemId: 'searchText',
 											flex: 1,
 											fieldCls: 'home-search-field',
-											emptyText: 'Search'								
+											emptyText: 'Search',
+											listeners:{
+												specialkey: function(field, e) {
+													var value = this.getValue();
+													if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {													
+														var query = value;
+														if (query && !Ext.isEmpty(query)) {
+															var searchRequest = {
+																type: 'SIMPLE',
+																query: query
+															}
+															CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+														}
+														window.location.href = 'Router.action?page=main/searchResults.jsp';														
+													}
+												}
+											} 
 										},
 										{
 											xtype: 'button',
@@ -168,9 +186,17 @@ limitations under the License.
 											scale   : 'large',											
 											width: 50,
 											handler: function(){
-												
-												//TODO: Set up search
-												
+											
+												var query = this.up('panel').getComponent('searchText').getValue();
+												if (query && !Ext.isEmpty(query)) {
+													var searchRequest = {
+														type: 'SIMPLE',
+														query: query
+													}
+													CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+												} else {
+													delete CoreUtil.sessionStorage().searchRequest;
+												}												
 												window.location.href = 'Router.action?page=main/searchResults.jsp';
 												
 											}

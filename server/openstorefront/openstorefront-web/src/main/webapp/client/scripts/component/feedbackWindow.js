@@ -223,17 +223,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 		};
 		
 		feedbackWin.on('show', feedbackWin.resetForm);
-	},
-	
-	afterRender: function(){
-		this.callParent();
-		
-		var feedbackWin = this;
-		
-		feedbackWin.getEl().on('resize', function(){
-			feedbackWin.updateLayout(true, true);
-		});
-	}
+	}	
 	
 });
 

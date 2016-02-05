@@ -135,6 +135,7 @@ and open the template in the editor.
 
 .details-title-name {
 	font-size: 36px;
+	line-height: 28px;
 	color: rgba(68,30,90,1) !important;
 	padding-top: 10px;
 	padding-bottom: 10px;
