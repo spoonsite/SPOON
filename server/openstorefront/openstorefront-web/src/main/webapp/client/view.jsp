@@ -29,7 +29,7 @@ limitations under the License.
 		Ext.onReady(function(){		
 			
 			var componentId = '${param.id}';
-			//var showFullPage =
+			var fullPage = '${param.fullPage}' !== '' ? true : false;
 			
 			var headerPanel = Ext.create('Ext.panel.Panel', {
 				region: 'north',
@@ -47,9 +47,7 @@ limitations under the License.
 						tpl: new Ext.XTemplate(
 							'<div class="details-title-name">{name} <span class="details-title-info" style="font-size: 10px">({componentTypeLabel})</span> </div>',
 							'<div class="details-title-info">',							
-							'Organization: <b>{organization}</b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="version"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl><br>',
-							'<tpl if="version">Version: {version}</tpl>',
-							'<tpl if="releaseDate">Release Date: {[Ext.util.Format.date(values.releaseDate)]}</tpl>',
+							'Organization: <b>{organization}</b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="version"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl><br>',						
 							'</div>',
 							'  <tpl for="attributes">',
 							'    <tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>',
@@ -94,10 +92,11 @@ limitations under the License.
 								xtype: 'button',
 								iconCls: 'fa fa-2x fa-arrows-alt icon-top-padding',
 								tooltip: 'Full Page',
+								hidden: fullPage,
 								scale: 'large',
 								margin: '0 10 0 0',
-								handler: function(){									
-								}
+								href: 'view.jsp?id=' + componentId + '&fullPage=true',
+								hrefTarget: '_blank'
 							},
 							{
 								xtype: 'button',
@@ -111,6 +110,17 @@ limitations under the License.
 											text: 'Submit Correction',
 											iconCls: 'fa fa-comment-o',
 											handler: function() {
+												var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {
+													closeAction: 'destroy',
+													title: 'Submit Correction',
+													extraDescription: 'Entry Name: ' + entry.name,
+													hideType: 'Correction Requested',
+													hideSummary: Ext.String.ellipsis(entry.name, 50),
+													labelForDescription: 'Correction: <br>(Please include the section needing the correction. Eg. Contacts)',
+													successHandler: function() {														
+													}
+												});
+												feedbackWin.show();
 											}
 										},
 										{	
@@ -120,6 +130,17 @@ limitations under the License.
 											text: 'Request Ownership',
 											iconCls: 'fa fa-envelope-square',
 											handler: function() {
+												var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {
+													closeAction: 'destroy',
+													title: 'Request Ownership',
+													extraDescription: 'Entry Name: ' + entry.name,												
+													hideType: 'Request Ownership',
+													hideSummary: Ext.String.ellipsis(entry.name, 50),
+													labelForDescription: 'Request Reason: <br>(Entries you own show in the User Tool->Submission which provides tools for management.',
+													successHandler: function() {														
+													}
+												});
+												feedbackWin.show();												
 											}
 										}										
 									]

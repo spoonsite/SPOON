@@ -49,7 +49,14 @@ Ext.define('OSF.component.template.Description', {
 		
 	initComponent: function () {
 		this.callParent();
-	}	
+	},
+	
+	updateHandler: function(entry){
+		entry.description = Ext.util.Format.escape(entry.description).replace(/"/g, '');		
+		return entry;
+	}
+	
+	
 	
 });
 
@@ -243,18 +250,24 @@ Ext.define('OSF.component.template.DI2EEvalLevel', {
 	
 	tpl: new Ext.XTemplate(
 		' <table class="details-table" width="100%">',					
-		'		<tr class="details-table">',
-		'			<th class="details-table"><b>{evalLevels.level.typeDesciption}</b></th>',
-		'			<td class="details-table highlight-{evalLevels.level.highlightStyle}" ><h3>{evalLevels.level.label}</h3>{evalLevels.level.description}</td>',
-		'		</tr>',	
-		'		<tr class="details-table">',
-		'			<th class="details-table"><b>{evalLevels.state.typeDesciption}</b></th>',
-		'			<td class="details-table highlight-{evalLevels.state.highlightStyle}" ><h3>{evalLevels.state.label}</h3>{evalLevels.state.description}</td>',
-		'		</tr>',	
-		'		<tr class="details-table">',
-		'			<th class="details-table"><b>{evalLevels.intent.typeDesciption}</b></th>',
-		'			<td class="details-table highlight-{evalLevels.intent.highlightStyle}" ><h3>{evalLevels.intent.label}</h3>{evalLevels.intent.description}</td>',
-		'		</tr>',			
+		'		<tpl if="evalLevels.level">',
+		'			<tr class="details-table">',
+		'				<th class="details-table"><b>{evalLevels.level.typeDesciption}</b></th>',
+		'				<td class="details-table highlight-{evalLevels.level.highlightStyle}" ><h3>{evalLevels.level.label}</h3>{evalLevels.level.description}</td>',
+		'			</tr>',	
+		'		</tpl>',
+		'		<tpl if="evalLevels.state">',		
+		'			<tr class="details-table">',
+		'				<th class="details-table"><b>{evalLevels.state.typeDesciption}</b></th>',
+		'				<td class="details-table highlight-{evalLevels.state.highlightStyle}" ><h3>{evalLevels.state.label}</h3>{evalLevels.state.description}</td>',
+		'			</tr>',	
+		'		</tpl>',
+		'		<tpl if="evalLevels.intent">',				
+		'			<tr class="details-table">',
+		'				<th class="details-table"><b>{evalLevels.intent.typeDesciption}</b></th>',
+		'				<td class="details-table highlight-{evalLevels.intent.highlightStyle}" ><h3>{evalLevels.intent.label}</h3>{evalLevels.intent.description}</td>',
+		'			</tr>',			
+		'		</tpl>',
 		'</table>'		
 	),
 		
@@ -412,11 +425,13 @@ Ext.define('OSF.component.template.Relationships', {
 		this.callParent();
 		
 		var relationshipPanel = this;
+				
 		
 		relationshipPanel.tabPanel = Ext.create('Ext.tab.Panel', {
 			items: [
 				Ext.create('OSF.component.RelationshipVisPanel', {
-					title: 'Visualization'
+					title: 'Visualization',
+					itemId: 'visual'
 				}),
 				{
 					xtype: 'panel',
@@ -453,7 +468,8 @@ Ext.define('OSF.component.template.Relationships', {
 			});
 									
 			relationshipPanel.tabPanel.getComponent('relationTable').update(entry);
-			
+			relationshipPanel.tabPanel.getComponent('visual').setHeight(entry.relationships.length*80);
+			relationshipPanel.tabPanel.getComponent('visual').updateDiagramData(entry);			
 		}		
 				
 		return entry;
