@@ -174,7 +174,11 @@ limitations under the License.
 								scale: 'large',
 								margin: '0 10 0 0',
 								handler: function(){	
-									
+									if (Ext.getCmp('tagPanel').isHidden()){
+										
+									} else {
+										
+									}
 								}
 							},
 							{
@@ -261,7 +265,25 @@ limitations under the License.
 				dockedItems: [
 					{						
 						xtype: 'panel',
-						dock: 'bottom'
+						id: 'tagPanel',
+						dock: 'bottom',
+						hidden: true,
+						items: [
+							Ext.create('OSF.component.StandardComboBox', {
+								name: 'text',									
+								allowBlank: false,									
+								margin: '0 0 0 0',
+								width: '100%',
+								fieldLabel: 'Tag<span class="field-required" />',
+								forceSelection: false,
+								valueField: 'text',
+								displayField: 'text',
+								maxLength: 120,
+								storeConfig: {
+									url: '../api/v1/resource/components/tags'
+								}
+							})
+						]
 					}
 				]
 			});
