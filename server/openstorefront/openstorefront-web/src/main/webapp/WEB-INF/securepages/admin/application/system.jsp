@@ -283,9 +283,45 @@
 					]
 				});
 
+				var systemPropertiesStore = Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					storeId: 'systemPropertiesStore',
+					proxy: {
+						id: 'systemPropertiesStoreProxy',
+						type: 'ajax',
+						url: '/openstorefront/api/v1/service/application/status',
+						reader: {
+							type: 'json',
+							rootProperty: 'systemProperties.entry'
+						}
+					}
+				});
+
 				var systemProperties = Ext.create('Ext.grid.Panel', {
 					title: 'System Properties',
-					id: 'systemProperties'
+					id: 'systemProperties',
+					store: systemPropertiesStore,
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function () {
+										systemPropertiesStore.load();
+									}
+								}
+							]
+						}
+					],
+					columnLines: true,
+					columns: [
+						{text: 'Key', dataIndex: 'key', flex: 1},
+						{text: 'Value', dataIndex: 'value', flex: 6, cellWrap: true}
+					]
 				});
 
 				var statusPanel = Ext.create('Ext.tab.Panel', {
