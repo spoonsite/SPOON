@@ -373,7 +373,22 @@
 									handler: function () {
 										errorTicketsStore.load();
 									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'View Details',
+									id: 'errorTicketsGrid-tools-view',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-binoculars icon-vertical-correction',
+									handler: function () {
+										var record = Ext.getCmp('errorTicketsGrid').getSelection()[0];
+										actionViewErrorTicket(record);
+									}
 								}
+
 							]
 						},
 						{
@@ -385,13 +400,29 @@
 					],
 					columnLines: true,
 					columns: [
-						{text: 'Ticket ID', dataIndex: 'errorTicketId', flex: 1},
-						{text: 'Update Date', dataIndex: 'updateDts', flex: 2},
+						{text: 'Ticket ID', dataIndex: 'errorTicketId', flex: 1.5, cellWrap: true},
+						{
+							text: 'Update Date', 
+							dataIndex: 'updateDts',
+							xtype: 'datecolumn',
+							format: 'm/d/y H:i:s',
+							flex: 1.5
+						},
 						{text: 'Client IP', dataIndex: 'clientIp', flex: 1},
-						{text: 'Called Action', dataIndex: 'calledAction', flex: 4.5},
-						{text: 'Message', dataIndex: 'message', flex: 9},
+						{text: 'Called Action', dataIndex: 'calledAction', flex: 4.5, cellWrap: true},
+						{text: 'Message', dataIndex: 'message', flex: 9, cellWrap: true},
 						{text: 'Type', dataIndex: 'errorTypeCode', flex: 0.5}
-					]
+					],
+					listeners: {
+						selectionchange: function (grid, record, index, opts) {
+							if (Ext.getCmp('errorTicketsGrid').getSelectionModel().hasSelection()) {
+								Ext.getCmp('errorTicketsGrid-tools-view').enable();
+							} else {
+								Ext.getCmp('errorTicketsGrid-tools-view').disable();
+							}
+						}
+					}
+
 				});
 
 				var appStatePropGrid = Ext.create('Ext.grid.Panel', {
