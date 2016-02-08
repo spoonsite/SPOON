@@ -41,8 +41,10 @@
             </button>
             <button class='btn btn-info detailsTitleButton' ng-show="!details.details.watched" ng-click="addToWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Add Component to Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i>
             </button>
+			<!--  
             <button class='btn btn-info detailsTitleButton' ng-show="details.details.watched" ng-click="openModal('profileModal', 'Watches')" data-toggle="tooltip" data-placement="bottom" data-title="View Watches" data-trigger="hover"><i class="fa fa-eye imitateLink"></i>
             </button>
+			-->
             <button class='btn btn-info detailsTitleButton' ng-show="details.details.watched" ng-click="removeFromWatches(details.details.componentId)" data-toggle="tooltip" data-placement="bottom" data-title="Remove From Watches" data-trigger="hover"><i class="ic ic-binoculars imitateLink"></i><i class="ic ic-blocked imitateLink" style="font-size: 44px; position: absolute; margin-left: -35px; margin-top: -9px; color: rgba(139, 139, 139, 0.72);"></i>
             </button>
             <button class='btn btn-info detailsTitleButton' id="printLink" ng-click="goToPrint('/print', {'type':'component', 'id': details.details.componentId})" data-toggle="tooltip" data-placement="bottom" data-title="Go to Print View" data-trigger="hover">

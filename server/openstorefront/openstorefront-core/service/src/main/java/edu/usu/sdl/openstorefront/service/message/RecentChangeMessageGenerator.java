@@ -84,7 +84,7 @@ public class RecentChangeMessageGenerator
 		if (messageContext.getRecentChangeMessage().getHighlightsAdded().isEmpty() == false) {
 			message.append(messageContext.getRecentChangeMessage().getHighlightsAdded().size())
 					.append(" ")
-					.append(StringProcessor.puralize(messageContext.getRecentChangeMessage().getHighlightsAdded().size(), "hightlight", null))
+					.append(StringProcessor.puralize(messageContext.getRecentChangeMessage().getHighlightsAdded().size(), "highlight", null))
 					.append(" added.<br>");
 			changes = true;
 		}
@@ -92,7 +92,7 @@ public class RecentChangeMessageGenerator
 		if (messageContext.getRecentChangeMessage().getHighlightsUpdated().isEmpty() == false) {
 			message.append(messageContext.getRecentChangeMessage().getHighlightsUpdated().size())
 					.append(" ")
-					.append(StringProcessor.puralize(messageContext.getRecentChangeMessage().getHighlightsUpdated().size(), "hightlight", null))
+					.append(StringProcessor.puralize(messageContext.getRecentChangeMessage().getHighlightsUpdated().size(), "highlight", null))
 					.append(" updated.<br>");
 			changes = true;
 		}

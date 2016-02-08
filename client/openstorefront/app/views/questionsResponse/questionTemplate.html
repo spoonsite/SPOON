@@ -1,7 +1,8 @@
 <div>
-  <br ng-if="!questionId">
+	
+  <br ng-if="!questionId">  
   <b ng-if="!questionId">Ask a Question</b>
-  <br ng-if="!questionId">
+  <div class="alert-warning"><i class="fa fa-warning"></i> Please do not enter any ITAR/FOUO/other sensitive information.</div>
   <form class="form-horizontal" role="form" ng-submit="submitQuestion($event)" style="padding: 10px; border: 1px solid lightgray">
 <!--     <div class="form-group" show-errors >
   <label class="col-sm-2 control-label">Security Type</label>

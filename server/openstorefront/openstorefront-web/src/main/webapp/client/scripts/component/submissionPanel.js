@@ -2243,6 +2243,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 			],
 			dockedItems: [
 				{
+					xtype: 'panel',
+					dock: 'top',
+					html: '<div class="alert-warning"><i class="fa fa-warning"></i> Please do not enter any ITAR/FOUO/other sensitive information.</div>'
+				},
+				{
 					xtype: 'toolbar',
 					dock: 'bottom',
 					itemId: 'tools',
