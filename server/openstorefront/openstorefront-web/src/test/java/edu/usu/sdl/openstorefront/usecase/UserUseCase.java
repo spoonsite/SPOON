@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.usecase;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.view.UserProfileView;
 import edu.usu.sdl.openstorefront.core.view.UserProfileWrapper;
@@ -38,7 +39,9 @@ public class UserUseCase
 		
 		for (UserProfileView view : userProfileWrapper.getData()) {
 			if (StringUtils.isNotBlank(view.getEmail())) {
-				System.out.println(view.getEmail());
+				if (Convert.toBoolean(view.getNotifyOfNew())) {
+					System.out.println(view.getEmail());
+				}
 			}
 		}
 		
