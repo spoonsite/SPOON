@@ -244,9 +244,43 @@
 					]
 				});
 
+				var threadStatusStore = Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					storeId: 'threadStatusStore',
+					proxy: {
+						id: 'threadStatusStoreProxy',
+						type: 'ajax',
+						url: '/openstorefront/api/v1/service/application/threads'
+					}
+				});
+
 				var threadStatus = Ext.create('Ext.grid.Panel', {
 					title: 'Threads Status',
-					id: 'threadStatus'
+					id: 'threadStatus',
+					store: threadStatusStore,
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function () {
+										threadStatusStore.load();
+									}
+								}
+							]
+						}
+					],
+					columnLines: true,
+					columns: [
+						{text: 'Thread ID', dataIndex: 'id', flex: 1},
+						{text: 'Name', dataIndex: 'name', flex: 4},
+						{text: 'Status', dataIndex: 'status', flex: 2},
+						{text: 'Details', dataIndex: 'details', flex: 12}
+					]
 				});
 
 				var systemProperties = Ext.create('Ext.grid.Panel', {
