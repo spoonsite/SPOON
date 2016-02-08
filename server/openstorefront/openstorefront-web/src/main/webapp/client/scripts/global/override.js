@@ -204,7 +204,7 @@ Ext.onReady(function() {
 			no: 'Report Issue'
 		};
 		
-		var feedbackHandler = function(){
+		var feedbackHandler = function(details){
 			var requestMessage = '';			
 			var request = response.request;
 			if (request) {
@@ -216,6 +216,10 @@ Ext.onReady(function() {
 					} catch (e) {						
 					}
 				}
+			}
+			
+			if (details) {
+				requestMessage += ' \n '  + details;
 			}
 			
 			var feedbackWin = Ext.create('OSF.component.FeedbackWindow',{				
@@ -246,14 +250,7 @@ Ext.onReady(function() {
 				}
 			});			
 		} else if (response.status === 404) {
-			Ext.Msg.show({
-				title: 'Resource Not Found (404)',
-				message: 'Refresh and try again.  Also, check request.' + requestUrl,
-				buttons: Ext.Msg.OK,
-				icon: Ext.Msg.Error,
-				fn: function (btn) {					
-				}
-			});			
+			Ext.toast('Refresh and try again.  Also, check request.' + requestUrl, 'Resource Not Found (404)');
 		} else if (response.status === 405) {
 			Ext.Msg.show({
 				title: 'Bad Client Request (405)',
@@ -294,23 +291,9 @@ Ext.onReady(function() {
 				}
 			});			
 		} else if (response.status === 502) {
-			Ext.Msg.show({
-				title: 'Server Communication Failure',
-				message: 'This likely a temporary condition.  Please try again later.<br>(Attention Admin): Application server is not responding to proxy. <br> Check connection and status of the Application Server. ',
-				buttons: Ext.Msg.OK,
-				icon: Ext.Msg.Error,
-				fn: function (btn) {
-				}
-			});			
+			Ext.toast('This likely a temporary condition.  Please try again later.<br>(Attention Admin): Application server is not responding to proxy. <br> Check connection and status of the Application Server. ', 'Server Communication Failure (502)');			
 		} else if (response.status === 503) {
-			Ext.Msg.show({
-				title: 'Service Unavailable',
-				message: 'This likely a temporary condition.  Please try again later.<br>Application is unavaliable.',
-				buttons: Ext.Msg.OK,
-				icon: Ext.Msg.Error,
-				fn: function (btn) {					
-				}
-			});			
+			Ext.toast('This likely a temporary condition.  Please try again later.<br>Application is unavaliable. ', 'Service Unavailable (503)');			
 		} else {
 			var errorTicket = null;
 			try {
@@ -335,20 +318,21 @@ Ext.onReady(function() {
 				Ext.Msg.show({
 					title: 'Server Error',
 					message: message,
-					buttons: Ext.Msg.OK,
+					buttons: Ext.MessageBox.YESNO,
+					buttonText: feedbackButtonConfig,
 					icon: Ext.Msg.Error,
 					fn: function (btn) {
+						if (btn === 'no') {
+							feedbackHandler(message);
+						}
 					}
 				});
 			} else {
-				Ext.Msg.show({
-					title: 'Connection Error',
-					message: 'Unable to connect to server or there was internal server error.' + requestUrl,
-					buttons: Ext.Msg.OK,
-					icon: Ext.Msg.Error,
-					fn: function (btn) {
-					}
-				});
+				if (response.responseText.indexOf('login.jsp') !== -1) {
+					window.parent.location.href = "/openstorefront/login.jsp?gotoPage="+window.parent.location.pathname;
+				} else {				
+					Ext.toast('Unable to connect to server or there was internal server error.' + requestUrl, 'Connection Error');
+				}
 			}
 		}
 	});

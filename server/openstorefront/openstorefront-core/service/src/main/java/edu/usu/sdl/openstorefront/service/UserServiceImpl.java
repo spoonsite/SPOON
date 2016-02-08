@@ -543,17 +543,7 @@ public class UserServiceImpl
 		//Sending messages one at a time as BCC may leak adresses to other users.
 		List<UserProfile> usersToSend = new ArrayList<>();
 
-		if (adminMessage.getUsersToEmail().isEmpty()
-				&& StringUtils.isBlank(adminMessage.getUserTypeCode())) {
-
-			log.log(Level.INFO, "(Admin Message) Sending email to all users");
-			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
-			for (UserProfile userProfile : userProfiles) {
-				if (StringUtils.isNotBlank(userProfile.getEmail())) {
-					usersToSend.add(userProfile);
-				}
-			}
-		} else if (StringUtils.isNotBlank(adminMessage.getUserTypeCode())) {
+		if (StringUtils.isNotBlank(adminMessage.getUserTypeCode())) {
 			log.log(Level.INFO, MessageFormat.format("(Admin Message) Sending email to users of type: {0}", adminMessage.getUserTypeCode()));
 			userProfileExample.setUserTypeCode(adminMessage.getUserTypeCode());
 			List<UserProfile> userProfiles = persistenceService.queryByExample(UserProfile.class, userProfileExample);
