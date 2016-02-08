@@ -335,9 +335,63 @@
 					items: [statusStats, threadStatus, systemProperties]
 				});
 
+				var errorTicketsStore = Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					storeId: 'errorTicketsStore',
+					pageSize: 100,
+					remoteSort: true,
+					sorters: [
+						new Ext.util.Sorter({
+							property: 'updateDts',
+							direction: 'DESC'
+						})
+					],
+					proxy: CoreUtil.pagingProxy({
+							type: 'ajax',
+							url: '/openstorefront/api/v1/resource/errortickets',
+							reader: {
+								type: 'json',
+								rootProperty: 'errorTickets',
+								totalProperty: 'totalNumber'
+							}
+						})
+				});
+
 				var errorTicketsGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Error Tickets',
-					id: 'errorTicketsGrid'
+					id: 'errorTicketsGrid',
+					store: errorTicketsStore,
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function () {
+										errorTicketsStore.load();
+									}
+								}
+							]
+						},
+						{
+							xtype: 'pagingtoolbar',
+							dock: 'bottom',
+							store: 'errorTicketsStore',
+							displayInfo: true
+						}
+					],
+					columnLines: true,
+					columns: [
+						{text: 'Ticket ID', dataIndex: 'errorTicketId', flex: 1},
+						{text: 'Update Date', dataIndex: 'updateDts', flex: 2},
+						{text: 'Client IP', dataIndex: 'clientIp', flex: 1},
+						{text: 'Called Action', dataIndex: 'calledAction', flex: 4.5},
+						{text: 'Message', dataIndex: 'message', flex: 9},
+						{text: 'Type', dataIndex: 'errorTypeCode', flex: 0.5}
+					]
 				});
 
 				var appStatePropGrid = Ext.create('Ext.grid.Panel', {
