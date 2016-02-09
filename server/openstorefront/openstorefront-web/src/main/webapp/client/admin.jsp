@@ -231,7 +231,6 @@ limitations under the License.
 							items: [
 								{
 									xtype: 'image',																	
-									width: 200,
 									height: 53,
 									title: 'Go back to Home Page',
 									src: 'images/di2elogo-sm.png',
