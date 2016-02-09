@@ -382,7 +382,7 @@
 									id: 'errorTicketsGrid-tools-view',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-binoculars icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-eye icon-vertical-correction',
 									handler: function () {
 										var record = Ext.getCmp('errorTicketsGrid').getSelection()[0];
 										actionViewErrorTicket(record);
@@ -424,6 +424,64 @@
 					}
 
 				});
+
+				var viewErrorTicketWindow = Ext.create('Ext.window.Window', {
+					id: 'viewErrorTicketWindow',
+					title: 'View Error Ticket Information',
+					iconCls: 'fa fa-info-circle',
+					width: '80%',
+					height: 600,
+					autoScroll: true,
+					bodyStyle: 'padding: 10px;',
+					y: 40,
+					modal: true,
+					maximizable: false,
+					layout: 'vbox',
+					items: [
+						{
+							xtype: 'panel',
+							id: 'errorTicketDetailPanel',
+							tpl: new Ext.XTemplate ('<p>{info}</p>'),
+							autoScroll: true,
+							width: '100%',
+							flex: 1
+						}
+					],
+					dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										xtype: 'tbfill'
+									},
+									{
+										xtype: 'button',
+										text: 'Close',
+										iconCls: 'fa fa-close',
+										handler: function () {
+											this.up('window').hide();
+										}
+									}							
+								]
+							}
+						]
+				});
+
+				var actionViewErrorTicket = function actionViewErrorTicket(record) {
+					console.log(record);
+					Ext.Ajax.request({
+						url: '/openstorefront/api/v1/resource/errortickets/' + record.data.errorTicketId + '/ticket',
+						success: function(response, opt){
+							var data = {};
+							data.info = response.responseText;
+							Ext.getCmp('errorTicketDetailPanel').update(data);
+							viewErrorTicketWindow.show();	
+						},
+						failure: function(response, opt){
+						}
+					});
+				};
 
 				var appStatePropGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Application State Properties',
