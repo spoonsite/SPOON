@@ -469,7 +469,6 @@
 				});
 
 				var actionViewErrorTicket = function actionViewErrorTicket(record) {
-					console.log(record);
 					Ext.Ajax.request({
 						url: '/openstorefront/api/v1/resource/errortickets/' + record.data.errorTicketId + '/ticket',
 						success: function(response, opt){
@@ -514,9 +513,53 @@
 							format: 'm/d/y H:i:s',
 							flex: 2
 						},
+					],
+					listeners: {
+						selectionchange: function (grid, record, index, opts) {
+							if (Ext.getCmp('appStatePropGrid').getSelectionModel().hasSelection()) {
+								Ext.getCmp('appStatePropGrid-tools-edit').enable();
+							}
+							else {
+								Ext.getCmp('appStatePropGrid-tools-edit').disable();
+							}
+						 }
+					},
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function () {
+										appStatePropStore.load();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Edit',
+									id: 'appStatePropGrid-tools-edit',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-edit',
+									handler: function () {
+										var record = Ext.getCmp('appStatePropGrid').getSelection()[0];
+										actionEditStateProp(record);
+									}
+								},
 
-					]
+							]
+						}
+				]
 				});
+
+				var actionEditStateProp = function actionEditStateProp(record) {
+					console.log(record);
+				};
 
 				var appInitPropGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Application Initilization Properties',
