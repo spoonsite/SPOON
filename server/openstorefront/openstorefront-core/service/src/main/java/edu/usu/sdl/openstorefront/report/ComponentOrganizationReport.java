@@ -120,7 +120,7 @@ public class ComponentOrganizationReport
 		cvsGenerator.addLine(
 				"Total Organizations: " + orgMap.keySet().size());
 		cvsGenerator.addLine(
-				"Total Component: " + totalComponents);
+				"Total Entries: " + totalComponents);
 	}
 
 }

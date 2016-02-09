@@ -110,9 +110,11 @@
 						{text: 'Email Addresses', dataIndex: 'emailAddresses', width: 150, flex: 1,
 							renderer: function (v, meta) {
 								var emailStr = '';
-								for (index = 0; index < v.length; ++index) {
+								if (v && v.length) {
+									for (index = 0; index < v.length; ++index) {
 
-									emailStr += v[index].email + '<br/>';
+										emailStr += v[index].email + '<br/>';
+									}
 								}
 								return emailStr;
 							}
@@ -821,7 +823,7 @@
 												Ext.getCmp('scheduledHours').setValue('0');
 												Ext.getCmp('reportFormat').setHidden(false);
 												Ext.getCmp('scheduledHours').setHidden(false);
-												Ext.getCmp('emailAddresses').setHidden(false);
+												Ext.getCmp('emailAddresses').setHidden(true);
 
 												handleReportOptions();
 											}
@@ -866,19 +868,15 @@
 												} else if (newVal !== '0') {
 
 													Ext.getCmp('filterForEntries').setHidden(true);
+													Ext.getCmp('emailAddresses').setHidden(false);
 													handleReportOptions();
 													
-													emailTA.setFieldLabel('Enter email addresses separated by semi-colons<span class="field-required"/>');
-													emailTA.allowBlank=false;
-													emailTA.validate();
 												}
 												else {
 													Ext.getCmp('filterForEntries').setHidden(false);
+													Ext.getCmp('emailAddresses').setHidden(true);
 													handleReportOptions();
 													
-													emailTA.setFieldLabel('Enter email addresses separated by semi-colons');
-													emailTA.allowBlank=true;
-													emailTA.validate();													
 												}
 											}
 										}
@@ -887,7 +885,7 @@
 										xtype: 'textarea',
 										name: 'emailAddresses',
 										id: 'emailAddresses',
-										fieldLabel: 'Enter email addresses separated by semi-colons',
+										fieldLabel: 'Enter email addresses separated by semi-colons<br>(To recieve a notification when the report is ready.)',										
 										width: '100%',
 										maxLength: 300,
 										editable: true,
