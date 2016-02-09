@@ -402,7 +402,7 @@
 					columns: [
 						{text: 'Ticket ID', dataIndex: 'errorTicketId', flex: 1.5, cellWrap: true},
 						{
-							text: 'Update Date', 
+							text: 'Update Date',
 							dataIndex: 'updateDts',
 							xtype: 'datecolumn',
 							format: 'm/d/y H:i:s',
@@ -483,9 +483,39 @@
 					});
 				};
 
+				var appStatePropStore = Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					storeId: 'appStatePropStore',
+					sorters: [
+						new Ext.util.Sorter({
+							property: 'key',
+							direction: 'ASC'
+						})
+					],
+					proxy: {
+						type: 'ajax',
+						url: '/openstorefront/api/v1/resource/applicationproperties'
+						}
+				});
+				
 				var appStatePropGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Application State Properties',
-					id: 'appStatePropGrid'
+					id: 'appStatePropGrid',
+					store: appStatePropStore,
+					columnLines: true,
+					columns: [
+						{text: 'Key', dataIndex: 'key', flex: 3},
+						{text: 'Value', dataIndex: 'value', flex: 5, cellWrap: true},
+						{text: 'Update User', dataIndex: 'updateUser', flex: 1},
+						{
+							text: 'Update Date', 
+							dataIndex: 'updateDts',
+							xtype: 'datecolumn',
+							format: 'm/d/y H:i:s',
+							flex: 2
+						},
+
+					]
 				});
 
 				var appInitPropGrid = Ext.create('Ext.grid.Panel', {
