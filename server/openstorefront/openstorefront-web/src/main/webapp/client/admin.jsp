@@ -230,9 +230,7 @@ limitations under the License.
 							cls: 'nav-back-color',
 							items: [
 								{
-									xtype: 'image',
-																	
-									width: 250,
+									xtype: 'image',								
 									height: 53,
 									title: 'Go back to Home Page',
 									src: 'images/di2elogo-sm.png',
