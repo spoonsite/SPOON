@@ -445,6 +445,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					width: '100%',
 					height: 300,
 					maxLength: 32000,
+					emptyText: 'Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.',
 					tinyMCEConfig: CoreUtil.tinymceConfig()
 				},
 				Ext.create('OSF.component.StandardComboBox', {
@@ -2245,7 +2246,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				{
 					xtype: 'panel',
 					dock: 'top',
-					html: '<div class="alert-warning"><i class="fa fa-warning"></i> Please do not enter any ITAR/FOUO/other sensitive information.</div>'
+					html: '<div class="alert-warning"><i class="fa fa-warning"></i> Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.</div>'
 				},
 				{
 					xtype: 'toolbar',

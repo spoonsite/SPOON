@@ -90,7 +90,7 @@ public class ScheduledReportJob
 					String replyAddress = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS);
 
 					StringBuilder message = new StringBuilder();
-					message.append("Report is ready to be viewed. Please login to view report.<br><br><br>");
+					message.append("Report is ready to be viewed. Please login then go to the reports section under History to view your report.<br><br><br>");
 					message.append("To stop receiving this message, please contact an administrator at ").append(replyAddress);
 
 					String applicationTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
