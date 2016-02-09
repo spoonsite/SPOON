@@ -556,9 +556,82 @@
 						}
 				]
 				});
+				
+				var editAppStatePropWin = Ext.create('Ext.window.Window', {
+					id: 'editAppStatePropWin',
+					title: 'Edit Application State Property',
+					modal: true,
+					width: '35%',
+					height: 275,
+					y: '10em',
+					iconCls: 'fa fa-lg fa-edit',
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							id: 'appStatePropForm',
+							layout: 'vbox',
+							scrollable: true,
+							bodyStyle: 'padding: 10px;',
+							defaults: {
+								labelAlign: 'top',
+								width: '100%'
+							},
+							items: [
+								{
+									xtype: 'textfield',
+									id: 'appStatePropForm-key',
+									fieldLabel: 'Key',
+									name: 'key',
+									readOnly: true
+								},
+								{
+									xtype: 'textfield',
+									id: 'appStatePropForm-value',
+									fieldLabel: 'Value<span class="field-required" />',
+									name: 'value'
+								},
+								{ 
+									xtype: 'label',
+									text: "Note: The proper syntax for the value depends upon the property to which it belongs. This is especially true for dates, which should have the format yyyy-MM-dd'T'HH:mm:ss.SSS'Z'.",
+									style: {
+										paddingTop: '20px'
+									}
+								},
+
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											iconCls: 'fa fa-save',
+											formBind: true,	
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function () {
+												Ext.getCmp('appStatePropForm').reset();
+												Ext.getCmp('editAppStatePropWin').hide();
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				});
 
 				var actionEditStateProp = function actionEditStateProp(record) {
-					console.log(record);
+					editAppStatePropWin.show();
+					var form = Ext.getCmp('appStatePropForm');
+					form.loadRecord(record);
 				};
 
 				var appInitPropGrid = Ext.create('Ext.grid.Panel', {
