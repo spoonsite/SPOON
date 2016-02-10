@@ -609,6 +609,31 @@
 											text: 'Save',
 											iconCls: 'fa fa-save',
 											formBind: true,	
+											handler: function() {
+												var key = Ext.getCmp('appStatePropForm').key;
+												var url = '/openstorefront/api/v1/resource/applicationproperties/';
+												url+= key;
+												var method = 'PUT';
+												var value = Ext.getCmp('appStatePropForm').getValues()['value'];
+												CoreUtil.submitForm({
+													url: url,
+													method: method,
+													data: value,
+													removeBlankDataItems: true,
+													form: Ext.getCmp('appStatePropForm'),
+													success: function (response, opts) {
+														Ext.getCmp('appStatePropGrid-tools-edit').disable();
+														Ext.getCmp('appStatePropForm').reset();
+														Ext.getCmp('editAppStatePropWin').hide();
+														appStatePropStore.load();
+														Ext.toast('Successfully saved property.', '', 'tr');
+													},
+													failure: function (response, opts) {
+														Ext.toast('Failed to save property.', '', 'tr');
+													}
+												});
+
+											}
 										},
 										{
 											xtype: 'tbfill'
@@ -632,6 +657,7 @@
 					editAppStatePropWin.show();
 					var form = Ext.getCmp('appStatePropForm');
 					form.loadRecord(record);
+					form.key = record.data.key;
 				};
 
 				var appInitPropGrid = Ext.create('Ext.grid.Panel', {
