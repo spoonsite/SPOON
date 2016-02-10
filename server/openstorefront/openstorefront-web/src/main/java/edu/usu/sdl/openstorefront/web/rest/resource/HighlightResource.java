@@ -19,7 +19,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.HighlightFilter;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -54,7 +54,7 @@ public class HighlightResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Highlight.class)
 	public Response getHighlights(
-			@BeanParam FilterQueryParams filterQueryParams,
+			@BeanParam HighlightFilter filterQueryParams,
 			@QueryParam("all")
 			@APIDescription("Setting force to true pulls inactivated highlights as well.")
 			@DefaultValue("false") boolean all
@@ -69,7 +69,7 @@ public class HighlightResource
 		if (!all) {
 			highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
 		}
-		List<Highlight> highlights = service.getPersistenceService().queryByExample(Highlight.class, new QueryByExample(highlightExample));
+		List<Highlight> highlights = service.getPersistenceService().queryByExample(Highlight.class, new QueryByExample(highlightExample));					
 		highlights = filterQueryParams.filter(highlights);
 		GenericEntity<List<Highlight>> entity = new GenericEntity<List<Highlight>>(highlights)
 		{
