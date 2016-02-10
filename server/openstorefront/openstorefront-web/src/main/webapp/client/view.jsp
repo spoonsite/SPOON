@@ -104,7 +104,8 @@ limitations under the License.
 				//y: 220,
 				width: '50%',
 				height: '60%',
-				modal: true,				
+				modal: true,
+				maximizable: true,
 				layout: 'fit',
 				items: [
 					{
@@ -175,9 +176,9 @@ limitations under the License.
 								margin: '0 10 0 0',
 								handler: function(){	
 									if (Ext.getCmp('tagPanel').isHidden()){
-										
+										Ext.getCmp('tagPanel').setHidden(false);
 									} else {
-										
+										Ext.getCmp('tagPanel').setHidden(true);
 									}
 								}
 							},
@@ -267,22 +268,39 @@ limitations under the License.
 						xtype: 'panel',
 						id: 'tagPanel',
 						dock: 'bottom',
+						bodyStyle: 'padding-left: 10px; padding-right: 10px;',
 						hidden: true,
 						items: [
-							Ext.create('OSF.component.StandardComboBox', {
-								name: 'text',									
-								allowBlank: false,									
-								margin: '0 0 0 0',
-								width: '100%',
-								fieldLabel: 'Tag<span class="field-required" />',
-								forceSelection: false,
-								valueField: 'text',
-								displayField: 'text',
-								maxLength: 120,
-								storeConfig: {
-									url: '../api/v1/resource/components/tags'
-								}
-							})
+							{
+								xtype: 'panel',
+								layout: 'hbox',
+								items: [
+									Ext.create('OSF.component.StandardComboBox', {
+										name: 'text',									
+										allowBlank: false,									
+										margin: '0 0 0 0',
+										flex: 1,
+										fieldLabel: 'Add Tag',
+										forceSelection: false,
+										valueField: 'text',
+										displayField: 'text',
+										margin: '0 10 10 0',
+										maxLength: 120,
+										storeConfig: {
+											url: '../api/v1/resource/components/tags'
+										}
+									}),
+									{
+										xtype: 'button',
+										text: 'Add',
+										iconCls: 'fa fa-plus',
+										minWidth: 75,
+										handler: function(){
+										}
+									}
+								]
+							}
+
 						]
 					}
 				]
@@ -424,13 +442,7 @@ limitations under the License.
 				region: 'center',
 				bodyStyle: 'background: white; padding: 5px;',
 				layout: 'border',
-				items: [
-					{
-						region: 'north',
-						xtype: 'panel',
-						id: 'tagPanel',
-						hidden: true
-					},
+				items: [				
 					{
 						region: 'center',
 						xtype: 'tabpanel',						
@@ -504,6 +516,7 @@ limitations under the License.
 									if (componentTypeDetail.dataEntryQuestions) {
 										processQuestions(entry);
 									}
+									processTags(entry);
 									
 									var templateUrl;
 									if (componentTypeDetail.componentTypeTemplate) {
@@ -543,6 +556,36 @@ limitations under the License.
 				}
 			};
 			loadDetails();
+			
+			var processTags = function(entryLocal){
+				
+				var tags = [];
+				Ext.Array.each(entryLocal.tags,  function(tag){
+					var tagButton;
+					
+					if (tag.createUser === '${user}') {
+						tagButton = Ext.create('Ext.button.Button', {
+							text: tag.text,
+							iconCls: 'fa fa-close',
+							iconAlign: 'right',
+							margin: '0 10 0 0',
+							handler: function(){
+								
+							}
+						});
+					} else {
+						tagButton = Ext.create('Ext.button.Button', {
+							text: tag.text,							
+							margin: '0 10 0 0'							
+						});						
+					}
+					
+					tags.push(tagButton);
+				});
+			
+				Ext.getCmp('tagPanel').add(tags);
+				
+			};
 			
 			var processReviews = function(entryLocal) {
 				
