@@ -660,9 +660,46 @@
 					form.key = record.data.key;
 				};
 
-				var appInitPropGrid = Ext.create('Ext.grid.Panel', {
-					title: 'Application Initilization Properties',
-					id: 'appInitPropGrid'
+				var sysConfigPropStore = Ext.create('Ext.data.Store', {
+					id: 'sysConfigPropStore',
+					autoLoad: true,
+					sorters: [
+						new Ext.util.Sorter({
+							property: 'code',
+							direction: 'ASC'
+						})
+					],
+					proxy: {
+						type: 'ajax',
+						url: '/openstorefront/api/v1/service/application/configproperties',
+					}
+				});
+
+				var sysConfigPropGrid = Ext.create('Ext.grid.Panel', {
+					title: 'System Configuration Properties',
+					id: 'sysConfigPropGrid',
+					store: sysConfigPropStore,
+					columnLines: true,
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function () {
+										sysConfigPropStore.load();
+									}
+								},
+							]
+						}
+					],
+					columns: [
+						{text: 'Key', dataIndex: 'code', flex: 2},
+						{text: 'Value', dataIndex: 'description', flex: 5, cellWrap: true}
+					]
 				});
 
 				var logGrid = Ext.create('Ext.grid.Panel', {
@@ -695,7 +732,7 @@
 						statusPanel,
 						errorTicketsGrid,
 						appStatePropGrid,
-						appInitPropGrid,
+						sysConfigPropGrid,
 						logGrid,
 						pluginGrid,
 						searchControlPanel,
