@@ -760,6 +760,97 @@
 					]
 				});
 
+				var actionEditLogger = function actionEditLogger(record) {
+					editLoggerWin.show();
+					var form = Ext.getCmp('loggerForm');
+					form.loadRecord(record);
+					form.name = record.data.name;
+				};
+				
+				var editLoggerWin = Ext.create('Ext.window.Window', {
+					id: 'editLoggerWin',
+					title: 'Edit Logger Level',
+					modal: true,
+					width: '35%',
+					height: 255,
+					y: '20em',
+					iconCls: 'fa fa-lg fa-edit',
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							id: 'loggerForm',
+							layout: 'vbox',
+							scrollable: true,
+							bodyStyle: 'padding: 10px;',
+							defaults: {
+								labelAlign: 'top',
+								width: '100%'
+							},
+							items: [
+								{
+									xtype: 'textfield',
+									id: 'loggerForm-key',
+									fieldLabel: 'Name',
+									name: 'name',
+									readOnly: true
+								},
+								{
+									xtype: 'combobox',
+									id: 'loggerForm-value',
+									fieldLabel: 'Level<span class="field-required" />',
+									name: 'level',
+									displayField: 'display',
+									valueField: 'level',
+									store: {
+										data: [
+											{level: '', display: 'Use Parent Level'},
+											{level: 'OFF', display: 'OFF'},
+											{level: 'SEVERE', display: 'SEVERE'},
+											{level: 'WARNING', display: 'WARNING'},
+											{level: 'CONFIG', display: 'CONFIG'},
+											{level: 'INFO', display: 'INFO'},
+											{level: 'FINE', display: 'FINE'},
+											{level: 'FINER', display: 'FINER'},
+											{level: 'FINEST', display: 'FINEST'},
+											{level: 'ALL', display: 'ALL'},
+										]
+									}
+								},
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											iconCls: 'fa fa-save',
+											formBind: true,	
+											handler: function() {
+												return;
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function () {
+												Ext.getCmp('loggerForm').reset();
+												Ext.getCmp('editLoggerWin').hide();
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				});
+
+
+
 				var pluginGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Plugins',
 					id: 'pluginGrid'
