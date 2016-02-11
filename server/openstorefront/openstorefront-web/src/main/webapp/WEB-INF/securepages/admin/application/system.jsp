@@ -702,9 +702,25 @@
 					]
 				});
 
-				var logGrid = Ext.create('Ext.grid.Panel', {
+				var loggerStore = Ext.create('Ext.data.Store', {
+					id: 'loggerStore',
+					autoLoad: true,
+					proxy: {
+						type: 'ajax',
+						url: '/openstorefront/api/v1/service/application/loggers'
+					},
+				});
+
+				var loggerGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Logs and Logging',
-					id: 'logGrid'
+					id: 'loggerGrid',
+					store: loggerStore,
+					columnLines: true,
+					columns: [
+						{text: 'Name', dataIndex: 'name', flex: 6},
+						{text: 'Level', dataIndex: 'level', flex: 1},
+						{text: 'Handlers', dataIndex: 'handlers', flex: 5}
+					]
 				});
 
 				var pluginGrid = Ext.create('Ext.grid.Panel', {
@@ -733,7 +749,7 @@
 						errorTicketsGrid,
 						appStatePropGrid,
 						sysConfigPropGrid,
-						logGrid,
+						loggerGrid,
 						pluginGrid,
 						searchControlPanel,
 						recentChangesPanel
