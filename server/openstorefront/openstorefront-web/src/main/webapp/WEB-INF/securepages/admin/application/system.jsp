@@ -715,6 +715,32 @@
 					title: 'Logs and Logging',
 					id: 'loggerGrid',
 					store: loggerStore,
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function () {
+										loggerStore.load();
+									}
+								},
+								{
+									text: 'Edit',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-edit',
+									handler: function () {
+										var record = Ext.getCmp('loggerGrid').getSelection()[0];
+										actionEditLogger(record);
+									}
+								},
+							]
+						}
+					],
+
 					columnLines: true,
 					columns: [
 						{text: 'Name', dataIndex: 'name', flex: 6},
