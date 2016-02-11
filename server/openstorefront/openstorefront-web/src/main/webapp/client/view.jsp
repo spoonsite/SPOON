@@ -250,7 +250,7 @@ limitations under the License.
 													extraDescription: 'Entry Name: ' + entry.name,												
 													hideType: 'Request Ownership',
 													hideSummary: Ext.String.ellipsis(entry.name, 50),
-													labelForDescription: 'Request Reason: <br>(Entries you own show in the User Tool->Submission which provides tools for management.',
+													labelForDescription: 'Request Reason: <br>(Entries you own show in the User Tools->Submissions which provides tools for management.',
 													successHandler: function() {														
 													}
 												});

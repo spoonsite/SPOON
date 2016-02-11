@@ -3813,7 +3813,20 @@
 									handler: function () {
 										importWindow.show();
 									}
-								}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Export',
+									id: 'lookupGrid-tools-export',
+									iconCls: 'fa fa-2x fa-download',
+									scale: 'medium',
+									disabled: true,
+									handler: function () {
+										actionExportComponents();
+									}
+								}	
 							]
 						}
 					],
@@ -3829,22 +3842,7 @@
 						store: maingridStore,
 						displayInfo: true,
 						displayMsg: 'Displaying Entries {0} - {1} of {2}',
-						emptyMsg: "No entries to display",
-						items: [
-							{
-								xtype: 'tbseparator'
-							},
-							{
-								text: 'Export',
-								id: 'lookupGrid-tools-export',
-								iconCls: 'fa fa-2x fa-download',
-								scale: 'medium',
-								disabled: true,
-								handler: function () {
-									actionExportComponents();
-								}
-							}
-						]
+						emptyMsg: "No entries to display"						
 					})
 				});
 				

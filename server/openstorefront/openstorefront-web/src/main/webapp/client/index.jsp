@@ -294,7 +294,7 @@ limitations under the License.
 					
 					var template = new Ext.XTemplate(
 						'<div class="home-highlight-item">',
-						'<h2><a href="view?id={componentId}" class="link" target="_blank">{name} <i class="fa fa-link"></i></a></h2>',
+						'<h2><a href="view.jsp?id={componentId}" class="link" target="_blank">{name} <i class="fa fa-link"></i></a></h2>',
 						'<div class="home-highlight-item-desc">{displayDesc}</div>',						
 						'</div>'
 					);					
