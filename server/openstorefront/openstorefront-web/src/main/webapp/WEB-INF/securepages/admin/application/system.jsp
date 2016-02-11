@@ -715,6 +715,15 @@
 					title: 'Logs and Logging',
 					id: 'loggerGrid',
 					store: loggerStore,
+					listeners: {
+						selectionchange: function (grid, record, index, opts) {
+							if (Ext.getCmp('loggerGrid').getSelectionModel().hasSelection()) {
+								Ext.getCmp('loggerGrid-tools-edit').enable();
+							} else {
+								Ext.getCmp('loggerGrid-tools-edit').disable();
+							}
+						}
+					},
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -731,7 +740,9 @@
 								{
 									text: 'Edit',
 									scale: 'medium',
+									id: 'loggerGrid-tools-edit',
 									iconCls: 'fa fa-2x fa-edit',
+									disabled: true,
 									handler: function () {
 										var record = Ext.getCmp('loggerGrid').getSelection()[0];
 										actionEditLogger(record);
