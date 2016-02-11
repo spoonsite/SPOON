@@ -764,7 +764,6 @@
 					editLoggerWin.show();
 					var form = Ext.getCmp('loggerForm');
 					form.loadRecord(record);
-					form.name = record.data.name;
 				};
 				
 				var editLoggerWin = Ext.create('Ext.window.Window', {
@@ -828,7 +827,30 @@
 											iconCls: 'fa fa-save',
 											formBind: true,	
 											handler: function() {
-												return;
+												var key = Ext.getCmp('loggerForm').getValues().name;
+												var url = '/openstorefront/api/v1/service/application/logger/';
+												url+= key;
+												url+= '/level';
+												var method = 'PUT';
+												var level = Ext.getCmp('loggerForm').getValues().level;
+												CoreUtil.submitForm({
+													url: url,
+													method: method,
+													data: level,
+													removeBlankDataItems: true,
+													form: Ext.getCmp('loggerForm'),
+													success: function (response, opts) {
+														Ext.getCmp('loggerGrid-tools-edit').disable();
+														Ext.getCmp('loggerForm').reset();
+														Ext.getCmp('editLoggerWin').hide();
+														loggerStore.load();
+														Ext.toast('Successfully saved level.', '', 'tr');
+													},
+													failure: function (response, opts) {
+														Ext.toast('Failed to save level.', '', 'tr');
+													}
+												});
+
 											}
 										},
 										{
