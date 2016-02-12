@@ -19,9 +19,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.SubmissionPanel',
 	layout: 'border',
-	formWarningMessage: '<span class="app-info-box"><i class="fa fa-2x fa-info-circle"></i></span>This form will submit a component to the DI2E Framework PMO for review and consideration.' +
+	formWarningMessage: '<div style="padding: 10px 0px 10px 10px;">This form will submit a component to the DI2E Framework PMO for review and consideration.' +
 						'A DI2E Storefront Manager will contact you regarding your submission.' +
-						'For help, contact <a href="mailto:helpdesk@di2e.net">helpdesk@di2e.net</a>',
+						'For help, contact <a href="mailto:helpdesk@di2e.net">helpdesk@di2e.net</a><div>',
 
 	submitForReviewUrl: function (componentId){
 		return '../api/v1/resource/componentsubmissions/' + componentId+ '/submit';
@@ -29,7 +29,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 	
 	initComponent: function () {
 		this.callParent();
-		
+	
 		var submissionPanel = this;
 				
 		submissionPanel.cancelSubmissionHandler = function() {
@@ -199,7 +199,23 @@ Ext.define('OSF.component.SubmissionPanel', {
 					width: '100%',
 					margin: '40 0 0 0',
 					padding: '0 0 0 0',
-					html: submissionPanel.formWarningMessage
+					layout: {
+						type: 'hbox',
+						align: 'stretch'
+					},
+					items: [
+						{
+							xtype: 'panel',	
+							bodyCls: 'app-info-box',						
+							html: '<table style="height: 100%"><tr><td valign="center"><i class="fa fa-2x fa-info-circle"></i></td></tr></table>'
+						},								
+						{
+							xtype: 'panel',
+							flex: 1,
+							html: submissionPanel.formWarningMessage
+						}
+					]
+					
 				}
 			]
 		});
@@ -2208,7 +2224,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					border: true,
 					width: '100%',					
 					padding: '0 0 0 0',
-					html: '<span class="app-info-box"><i class="fa fa-2x fa-info-circle"></i></span> This entry must be submitted before an admin can approve it.'
+					html: '<span class="app-info-box"><i class="fa fa-2x fa-info-circle"></i></span> <div style="padding: 10px 0px 10px 10px;">This entry must be submitted before an admin can approve it.</div>'
 				}, 
 				{
 					xtype: 'checkbox',
@@ -2542,14 +2558,21 @@ Ext.define('OSF.component.SubmissionPanel', {
 					proceed = true;
 				}
 			}
-			
+				
 			if (proceed) {
 				tools.getComponent('Submit').setHidden(true);
 
-				submissionPanel.navigation.getComponent('step1Btn').setDisabled(false);
-				submissionPanel.navigation.getComponent('step2Btn').setDisabled(true);			
-				submissionPanel.navigation.getComponent('step3Btn').setDisabled(true);
-				submissionPanel.navigation.getComponent('step4Btn').setDisabled(true);
+				if (submissionPanel.editMode) {
+					submissionPanel.navigation.getComponent('step1Btn').setDisabled(false);
+					submissionPanel.navigation.getComponent('step2Btn').setDisabled(false);			
+					submissionPanel.navigation.getComponent('step3Btn').setDisabled(false);
+					submissionPanel.navigation.getComponent('step4Btn').setDisabled(false);					
+				} else {
+					submissionPanel.navigation.getComponent('step1Btn').setDisabled(false);
+					submissionPanel.navigation.getComponent('step2Btn').setDisabled(true);			
+					submissionPanel.navigation.getComponent('step3Btn').setDisabled(true);
+					submissionPanel.navigation.getComponent('step4Btn').setDisabled(true);
+				}
 
 				submissionPanel.navigation.getComponent('step1Btn').setIconCls('');
 				submissionPanel.navigation.getComponent('step2Btn').setIconCls('');
@@ -2574,7 +2597,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 
 					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.requiredForm);
-
+					Ext.defer(function(){
+						submissionPanel.mainPanel.updateLayout(true, true);
+					}, 200)					
+					
 				} else if (submissionPanel.currentStep === 3) {
 					tools.getComponent('Previous').setDisabled(false);
 					tools.getComponent('Next').setDisabled(false);
@@ -2617,7 +2643,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					submissionPanel.navigation.getComponent('step4Btn').setDisabled(false);
 
 					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.reviewPanel);
-				}
+				}				
 			}
 		};		
 		
@@ -2627,11 +2653,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 	},
 	
 	editSubmission: function(componentId) {
-		var submissionPanel = this;		
-		submissionPanel.resetSubmission();
+		var submissionPanel = this;				
+		submissionPanel.resetSubmission(true);
 		
 		//load record
-		submissionPanel.componentId = componentId;
+		submissionPanel.componentId = componentId;		
+		
 		submissionPanel.setLoading('Loading...');
 		Ext.Ajax.request({
 			url: '../api/v1/resource/components/' + submissionPanel.componentId,
@@ -2683,9 +2710,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 		
 	},	
 	
-	resetSubmission: function() {
+	resetSubmission: function(editMode) {
 		var submissionPanel = this;
 		submissionPanel.componentId = null;
+		submissionPanel.editMode = editMode;
+		
 		CoreService.usersevice.getCurrentUser().then(function (response) {
 			var usercontext = Ext.decode(response.responseText);
 			submissionPanel.submitterForm.getForm().setValues(usercontext);

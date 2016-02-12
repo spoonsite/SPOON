@@ -482,6 +482,7 @@ tr.details-table:hover {
 	height: 100%;
 	color: white;
 	margin: 0px 10px 0px 0px;
+	float: left;
 }
 
 .alert-danger {

@@ -64,9 +64,9 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 		});
 		
 		changeRequestWindow.submissionPanel = Ext.create('OSF.component.SubmissionPanel', {											
-				formWarningMessage: '<span class="app-info-box"><i class="fa fa-2x fa-info-circle"></i></span>This form will submit a change request to the DI2E Framework PMO for review and consideration.' +
+				formWarningMessage: '<div style="padding: 10px 0px 10px 10px;">This form will submit a change request to the DI2E Framework PMO for review and consideration.' +
 						'A DI2E Storefront Manager may contact you regarding your submission.' +
-						'For help, contact <a href="mailto:helpdesk@di2e.net">helpdesk@di2e.net</a>',
+						'For help, contact <a href="mailto:helpdesk@di2e.net">helpdesk@di2e.net</a></div>',
 				submitForReviewUrl: function (componentId){
 					return '../api/v1/resource/componentsubmissions/' + componentId+ '/submitchangerequest';
 				},				
@@ -133,12 +133,16 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 			});
 		};		
 		
-		var editChangeRequest = function(changeRequestId) {					
+		var editChangeRequest = function(changeRequestId, record) {
 			changeRequestWindow.changeRequestId = changeRequestId;
 			
-			//open form
-			changeRequestWindow.submissionWindow.show();			
-			changeRequestWindow.submissionPanel.editSubmission(changeRequestId);			
+			if (!adminMode) {
+				//open form
+				changeRequestWindow.submissionWindow.show();			
+				changeRequestWindow.submissionPanel.editSubmission(changeRequestId);			
+			} else {
+				changeRequestWindow.adminEditHandler(record, changeRequestWindow);
+			}
 		};
 		
 		changeRequestWindow.changeGrid = Ext.create('Ext.grid.Panel', {
@@ -205,11 +209,13 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 						tools.getComponent('unsubmitBtn').setDisabled(false);
 						tools.getComponent('removeBtn').setDisabled(false);
 						tools.getComponent('tool-approveBtn').setDisabled(false);
+						tools.getComponent('messageBtn').setDisabled(false);
 					} else {
 						tools.getComponent('editBtn').setDisabled(true);
 						tools.getComponent('unsubmitBtn').setDisabled(true);
 						tools.getComponent('removeBtn').setDisabled(true);
 						tools.getComponent('tool-approveBtn').setDisabled(true);
+						tools.getComponent('messageBtn').setDisabled(true);
 					}
 
 					//load preview
@@ -297,7 +303,22 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							disabled: true,
 							handler: function(){ 
 								var changeRequestComponentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
-								editChangeRequest(changeRequestComponentId);
+								editChangeRequest(changeRequestComponentId, this.up('grid').getSelectionModel().getSelection()[0]);								
+							}
+						},
+						{
+							text: 'Message',
+							itemId: 'messageBtn',
+							iconCls: 'fa fa-envelope-o',
+							disabled: true,
+							hidden: true,
+							handler: function(){
+								var emails = changeRequestWindow.changeGrid.getSelection()[0].get('ownerEmail');
+								var messageWindow = Ext.create('OSF.component.MessageWindow', {					
+											closeAction: 'destory',
+											alwaysOnTop: true,
+											initialToUsers: emails
+								}).show();
 							}
 						},
 						{
@@ -410,10 +431,10 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 		if (adminMode) {
 			var grid = changeRequestWindow.changeGrid;
 			var tools = grid.getComponent('tools');
-			tools.getComponent('newBtn').setHidden(true);
-			tools.getComponent('editBtn').setHidden(true);		
+			tools.getComponent('newBtn').setHidden(true);		
 			tools.getComponent('unsubmitBtn').setHidden(true);	
 			tools.getComponent('tool-approveBtn').setHidden(false);
+			tools.getComponent('messageBtn').setHidden(false);
 		} 
 		
 	},

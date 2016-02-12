@@ -86,8 +86,10 @@ public class ComponentContact
 	{
 		if (StringUtils.isNotBlank(getEmail())) {
 			return getEmail();
-		} else {
+		} else if (StringUtils.isNotBlank(getPhone())) {
 			return getPhone();
+		} else {
+			return getFirstName() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getLastName();
 		}
 	}
 
