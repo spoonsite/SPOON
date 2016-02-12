@@ -787,6 +787,61 @@
 					},
 				});
 
+				var viewLogRecordWindow = Ext.create('Ext.window.Window', {
+					id: 'viewLogRecordWindow',
+					title: 'View Log Record',
+					iconCls: 'fa fa-info-circle',
+					width: '80%',
+					height: 600,
+					autoScroll: true,
+					bodyStyle: 'padding: 10px;',
+					y: 40,
+					modal: true,
+					maximizable: false,
+					layout: 'vbox',
+					items: [
+						{
+							xtype: 'panel',
+							id: 'logRecordViewPanel',
+							tpl: new Ext.XTemplate (
+								'<p>Level: {level}</p>',
+								'<p>Thread ID: {threadId}</p>',
+								'<p>Sequence Number: {sequenceNumber}</p>',
+								'<p>Source Class: {sourceClass}</p>',
+								'<p>Source Method: {sourceMethod}</p>',
+								'<p>Message: {message}</p>',
+								'<p>Stack Trace: {stackTrace}</p>'
+								),
+							autoScroll: true,
+							width: '100%',
+							flex: 1
+						}
+					],
+					dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										xtype: 'tbfill'
+									},
+									{
+										xtype: 'button',
+										text: 'Close',
+										iconCls: 'fa fa-close',
+										handler: function () {
+											this.up('window').hide();
+										}
+									}							
+								]
+							}
+						]
+				});
+
+				var actionViewLogDetail = function actionViewLogRecord(record) {
+					viewLogRecordWindow.show();
+				}
+
 				var loggerGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Logger Levels',
 					id: 'loggerGrid',
