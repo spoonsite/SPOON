@@ -147,7 +147,6 @@ public class ComponentDetailView
 
 		detailView.setRelationships(ComponentRelationshipView.toViewList(componentAll.getRelationships()));
 		detailView.setContacts(ComponentContactView.toViewList(componentAll.getContacts()));
-		detailView.setAttributes(ComponentAttributeView.toViewList(componentAll.getAttributes()));
 		detailView.setComponentMedia(ComponentMediaView.toViewList(componentAll.getMedia()));
 		detailView.setResources(ComponentResourceView.toViewList(componentAll.getResources()));
 		detailView.setReviews(ComponentReviewView.toViewListAll(componentAll.getReviews()));

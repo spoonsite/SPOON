@@ -61,11 +61,6 @@ public class RecentlyAddedView
 		recentlyAddedView.setArticleAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
 		recentlyAddedView.setArticleAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
 
-		ArticleView articleView = ArticleView.toView(attributeCode);
-		recentlyAddedView.setDescription(articleView.getDescription());
-		recentlyAddedView.setName(articleView.getTitle());
-		recentlyAddedView.setAddedDts(attributeCode.getUpdateDts());
-		recentlyAddedView.toStandardView(attributeCode);
 		return recentlyAddedView;
 	}
 

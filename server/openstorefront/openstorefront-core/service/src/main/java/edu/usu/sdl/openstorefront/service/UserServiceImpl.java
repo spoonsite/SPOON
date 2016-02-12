@@ -784,19 +784,6 @@ public class UserServiceImpl
 			}
 		}
 
-		String articleQuery = "select from " + AttributeCode.class.getSimpleName() + " where article is not null and article.createDts > :createDtsParam and activeStatus = :activeStatusParam";
-		queryParams = new HashMap<>();
-		queryParams.put("createDtsParam", lastRunDts);
-		queryParams.put("activeStatusParam", AttributeCode.ACTIVE_STATUS);
-		List<AttributeCode> attributeCodes = persistenceService.query(articleQuery, queryParams);
-		for (AttributeCode attributeCode : attributeCodes) {
-			if (attributeCode.getArticle().getCreateDts().after(lastRunDts)) {
-				recentChangeMessage.getArticlesAdded().add(attributeCode);
-			} else {
-				recentChangeMessage.getArticlesUpdated().add(attributeCode);
-			}
-		}
-
 		String highlightQuery = "select from " + Highlight.class.getSimpleName() + " where updateDts > :updateDtsParam and activeStatus = :activeStatusParam";
 		queryParams = new HashMap<>();
 		queryParams.put("updateDtsParam", lastRunDts);

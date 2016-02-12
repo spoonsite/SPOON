@@ -54,11 +54,7 @@ public class AttributeCodeView
 		attributeCodeView.setBadgeUrl(attributeCode.getBadgeUrl());
 		attributeCodeView.setArchitectureCode(attributeCode.getArchitectureCode());
 		attributeCodeView.setActiveStatus(attributeCode.getActiveStatus());
-		if (attributeCode.getArticle() != null) {
-			attributeCodeView.setDetailUrl("api/v1/resource/attributes/" + attributeCode.getAttributeCodePk().getAttributeType() + "/" + attributeCode.getAttributeCodePk().getAttributeCode() + "/article");
-		} else {
-			attributeCodeView.setDetailUrl(attributeCode.getDetailUrl());
-		}
+		attributeCodeView.setDetailUrl(attributeCode.getDetailUrl());
 		attributeCodeView.toStandardView(attributeCode);
 
 		return attributeCodeView;

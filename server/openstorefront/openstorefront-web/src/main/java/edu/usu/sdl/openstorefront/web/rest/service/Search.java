@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
@@ -245,9 +244,6 @@ public class Search
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
 		long numberOfActiveComponents = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, componentExample));
 		listingStats.setNumberOfComponents(numberOfActiveComponents);
-
-		List<AttributeCode> articles = service.getAttributeService().findRecentlyAddedArticles(Integer.MAX_VALUE);
-		listingStats.setNumberOfArticles(articles.size());
 
 		return Response.ok(listingStats).build();
 	}

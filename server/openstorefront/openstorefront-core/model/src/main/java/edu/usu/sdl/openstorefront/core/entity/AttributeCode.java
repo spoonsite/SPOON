@@ -62,10 +62,6 @@ public class AttributeCode
 	@ConsumeField
 	private String description;
 
-	@OneToOne(orphanRemoval = true)
-	@ConsumeField
-	private Article article;
-
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	@Sanitize(LinkSanitizer.class)
 	@ConsumeField
@@ -137,7 +133,6 @@ public class AttributeCode
 		hash = 79 * hash + Objects.hashCode(this.description);
 		hash = 79 * hash + Objects.hashCode(this.architectureCode);
 		hash = 79 * hash + Objects.hashCode(this.badgeUrl);
-		hash = 79 * hash + Objects.hashCode(this.article);
 		hash = 79 * hash + Objects.hashCode(this.detailUrl);
 		hash = 79 * hash + Objects.hashCode(this.groupCode);
 		hash = 79 * hash + Objects.hashCode(this.sortOrder);
@@ -161,9 +156,6 @@ public class AttributeCode
 			return false;
 		}
 		if (!Objects.equals(this.description, other.description)) {
-			return false;
-		}
-		if (!Objects.equals(this.article, other.article)) {
 			return false;
 		}
 		if (!Objects.equals(this.architectureCode, other.architectureCode)) {
@@ -254,16 +246,6 @@ public class AttributeCode
 	public void setGroupCode(String groupCode)
 	{
 		this.groupCode = groupCode;
-	}
-
-	public Article getArticle()
-	{
-		return article;
-	}
-
-	public void setArticle(Article article)
-	{
-		this.article = article;
 	}
 
 	public String getArchitectureCode()

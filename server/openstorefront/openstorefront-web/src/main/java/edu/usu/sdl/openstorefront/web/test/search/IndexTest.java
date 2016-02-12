@@ -15,16 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.web.test.search;
 
-import edu.usu.sdl.openstorefront.core.entity.Article;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
-import edu.usu.sdl.openstorefront.web.test.attribute.ArticleTest;
 import edu.usu.sdl.openstorefront.web.test.component.ComponentTest;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,39 +62,6 @@ public class IndexTest
 
 		} finally {
 			ComponentTest.deleteComponent(componentAll.getComponent().getComponentId());
-		}
-
-		try {
-			results.append("Save attribute code").append("<br>");
-			AttributeCode attributeCode = ArticleTest.createTestAttributeCode();
-
-			results.append("Save Article").append("<br>");
-			attributeCode.setArticle(new Article());
-			attributeCode.getArticle().setTitle("Test Title");
-			attributeCode.getArticle().setDescription("Test Description");
-			service.getAttributeService().saveArticle(attributeCode, "DUMMY-TEST");
-
-			results.append("Adding Article Index...<br>");
-			ArticleView article = service.getAttributeService().getArticleView(attributeCode.getAttributeCodePk());
-			List<ArticleView> articlesToIndex = new ArrayList<>();
-			articlesToIndex.add(article);
-			service.getSearchService().indexArticles(articlesToIndex);
-
-			results.append("Searching Article Index...<br>");
-			SearchQuery query = new SearchQuery();
-			query.setQuery("DUMMY-TEST");
-
-			ComponentSearchWrapper searchViews = service.getSearchService().getSearchItems(query, FilterQueryParams.defaultFilter());
-			results.append("Results...").append("<br><br>");
-			searchViews.getData().forEach(view -> {
-				results.append(view.getName()).append("   Type:").append(view.getListingType()).append("<br>");
-			});
-			if (searchViews.getData().size() < 1) {
-				failureReason.append("Unable able to find added article<br>");
-			}
-
-		} finally {
-			ArticleTest.deleteTestAttributeCode();
 		}
 
 	}
