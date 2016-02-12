@@ -255,13 +255,13 @@ public class LookupTypeResource
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
-		if (post) {
-			LookupEntity lookupEntityCreated = service.getLookupService().getLookupEnity(entityName, lookupEntity.getCode());
+		LookupEntity lookupEntityCreated = service.getLookupService().getLookupEnity(entityName, lookupEntity.getCode());
+		if (post) {			
 			return Response.created(URI.create("v1/resource/lookuptypes/"
 					+ entityName + "/"
 					+ StringProcessor.urlEncode(lookupEntity.getCode()))).entity(lookupEntityCreated).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(lookupEntityCreated).build();
 		}
 	}
 
