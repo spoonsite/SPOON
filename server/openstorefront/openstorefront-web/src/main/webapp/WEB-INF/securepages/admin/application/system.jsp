@@ -722,6 +722,15 @@
 					title: 'Logs',
 					id: 'logGrid',
 					store: logStore,
+					listeners: {
+						selectionchange: function (grid, record, index, opts) {
+							if (Ext.getCmp('logGrid').getSelectionModel().hasSelection()) {
+								Ext.getCmp('logGrid-tools-view').enable();
+							} else {
+								Ext.getCmp('logGrid-tools-view').disable();
+							}
+						}
+					},
 					columns: [
 						{ 
 							text: 'Event Time',
@@ -735,6 +744,31 @@
 						{text: 'Message', dataIndex: 'message', flex: 9, cellWrap: true},
 					],
 					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function () {
+										logStore.load();
+									}
+								},
+								{
+									text: 'View Details',
+									id: 'logGrid-tools-view',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-eye icon-vertical-correction',
+									handler: function () {
+										var record = Ext.getCmp('logGrid').getSelection()[0];
+										actionViewLogDetail(record);
+									}
+								}
+							]
+						},
 						{
 							xtype: 'pagingtoolbar',
 							dock: 'bottom',
