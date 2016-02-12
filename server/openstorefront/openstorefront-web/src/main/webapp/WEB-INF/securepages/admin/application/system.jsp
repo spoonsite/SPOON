@@ -791,7 +791,7 @@
 					id: 'viewLogRecordWindow',
 					title: 'View Log Record',
 					iconCls: 'fa fa-info-circle',
-					width: '80%',
+					width: '50%',
 					height: 600,
 					autoScroll: true,
 					bodyStyle: 'padding: 10px;',
@@ -839,6 +839,7 @@
 				});
 
 				var actionViewLogDetail = function actionViewLogRecord(record) {
+					Ext.getCmp('logRecordViewPanel').update(record);
 					viewLogRecordWindow.show();
 				}
 
