@@ -702,6 +702,26 @@
 					]
 				});
 
+				var logStore = Ext.create('Ext.data.Store', {
+					id: 'logStore',
+					autoLoad: true,
+					proxy: {
+						type: 'ajax',
+						url: '/openstorefront/api/v1/service/application/logrecords',
+						rootProperty: 'logRecords'
+					},
+				});
+			
+				var logGrid = Ext.create('Ext.grid.Panel', {
+					title: 'Logs',
+					id: 'logGrid',
+					store: logStore,
+					columns: [
+						{text: 'Event Time', dataIndex: 'eventDts', flex: 2},
+						{text: 'Level', dataIndex: 'level', flex: 5, cellWrap: true}
+					]
+				});
+
 				var loggerStore = Ext.create('Ext.data.Store', {
 					id: 'loggerStore',
 					autoLoad: true,
@@ -712,7 +732,7 @@
 				});
 
 				var loggerGrid = Ext.create('Ext.grid.Panel', {
-					title: 'Logs and Logging',
+					title: 'Logger Levels',
 					id: 'loggerGrid',
 					store: loggerStore,
 					listeners: {
@@ -871,6 +891,16 @@
 					]
 				});
 
+				var logPanel = Ext.create('Ext.tab.Panel', {
+					title: 'Logs and Logging',
+					id: 'logPanel',
+					tabPosition: 'left',
+					tabRotation: 0,
+					tabBar: {
+						border: false
+					},
+					items: [loggerGrid, logGrid]
+				});
 
 
 				var pluginGrid = Ext.create('Ext.grid.Panel', {
@@ -899,7 +929,7 @@
 						errorTicketsGrid,
 						appStatePropGrid,
 						sysConfigPropGrid,
-						loggerGrid,
+						logPanel,
 						pluginGrid,
 						searchControlPanel,
 						recentChangesPanel
