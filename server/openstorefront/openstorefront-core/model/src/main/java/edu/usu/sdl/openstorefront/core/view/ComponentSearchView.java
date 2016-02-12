@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
-import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
@@ -157,45 +156,7 @@ public class ComponentSearchView
 
 		return view;
 	}
-
-	public static ComponentSearchView toView(ArticleView article)
-	{
-		ComponentSearchView view = new ComponentSearchView();
-		view.setListingType(OpenStorefrontConstant.ListingType.ARTICLE.getDescription());
-		view.setComponentId(null);
-		view.setAverageRating(0);
-		view.setArticleAttributeType(article.getAttributeType());
-		view.setArticleAttributeCode(article.getAttributeCode());
-		view.setDescription(article.getDescription());
-		view.setName(article.getTitle());
-		view.setLastActivityDts(article.getUpdateDts());
-		view.setComponentType(ComponentType.ARTICLE);
-		List<ComponentAttribute> attributes = new ArrayList<>();
-		ComponentAttribute attribute = new ComponentAttribute();
-		ComponentAttributePk pk = new ComponentAttributePk();
-		pk.setAttributeCode(article.getAttributeCode());
-		pk.setAttributeType(article.getAttributeType());
-		attribute.setComponentAttributePk(pk);
-		attributes.add(attribute);
-		view.setAttributes(SearchResultAttribute.toViewList(attributes));
-		view.toStandardView(article);
-
-		view.setListingSecurityMarkingType(article.getSecurityMarkingType());
-
-		if (StringUtils.isNotBlank(article.getSecurityMarkingType())) {
-			Service service = ServiceProxyFactory.getServiceProxy();
-			SecurityMarkingType securityMarkingType = service.getLookupService().getLookupEnity(SecurityMarkingType.class, article.getSecurityMarkingType());
-
-			if (securityMarkingType != null) {
-				view.setListingSecurityMarkingDescription(securityMarkingType.getDescription());
-				view.setListingSecurityMarkingRank(securityMarkingType.getSortOrder());
-				view.setListingSecurityMarkingStyle(securityMarkingType.getHighlightStyle());
-			}
-		}
-
-		return view;
-	}
-
+	
 	public String getName()
 	{
 		return name;

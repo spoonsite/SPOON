@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.report;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
-import edu.usu.sdl.openstorefront.core.entity.ArticleTracking;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
@@ -104,8 +103,7 @@ public class OrganizationReport
 			long questions = getRecordCounts(ComponentQuestion.class, orgMap.get(org), null);
 			long response = getRecordCounts(ComponentQuestionResponse.class, orgMap.get(org), null);
 			long componentViews = getRecordCounts(ComponentTracking.class, orgMap.get(org), TrackEventCode.VIEW);
-			long componentResourceClick = getRecordCounts(ComponentTracking.class, orgMap.get(org), TrackEventCode.EXTERNAL_LINK_CLICK);
-			long articleViews = getRecordCounts(ArticleTracking.class, orgMap.get(org), TrackEventCode.VIEW);
+			long componentResourceClick = getRecordCounts(ComponentTracking.class, orgMap.get(org), TrackEventCode.EXTERNAL_LINK_CLICK);		
 			long logins = getRecordCounts(UserTracking.class, orgMap.get(org), TrackEventCode.LOGIN);
 
 			cvsGenerator.addLine(
@@ -115,8 +113,7 @@ public class OrganizationReport
 					questions,
 					response,
 					componentViews,
-					componentResourceClick,
-					articleViews,
+					componentResourceClick,		
 					logins
 			);
 

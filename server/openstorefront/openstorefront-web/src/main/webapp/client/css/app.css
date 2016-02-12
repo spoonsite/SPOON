@@ -291,18 +291,22 @@ tr.details-table:hover {
 	background-color: rgba(0, 0, 0, .6);
 }
 
-@media > 800 .footer_content {
-    margin: 0px auto;
-    white-space: nowrap;
-    width: 800px;
-    padding-left: 19%;
+@media (min-width: 800px) {
+	.footer_content {
+		margin: 0px auto;
+		white-space: nowrap;
+		width: 800px;
+		padding-left: 19%;
+	}
 }
 
-@media < 800 .footer_content {
-    margin: 0px auto;
-    white-space: nowrap;
-    width: 800px;
-    padding-left: 8%;
+@media (max-width: 800px) {
+	.footer_content {
+		margin: 0px auto;
+		white-space: nowrap;
+		width: 800px;
+		padding-left: 8%;	
+	}
 }
 
 .column {

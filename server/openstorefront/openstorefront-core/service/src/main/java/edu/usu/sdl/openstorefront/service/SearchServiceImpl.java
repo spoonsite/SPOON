@@ -35,7 +35,6 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.MergeCondition;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.SearchType;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
-import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -99,7 +98,6 @@ public class SearchServiceImpl
 		List<ComponentSearchView> list = new ArrayList<>();
 		List<ComponentSearchView> components = service.getComponentService().getComponents();
 		list.addAll(components);
-		list.addAll(service.getAttributeService().getArticlesSearchView());
 		return list;
 	}
 
@@ -137,27 +135,6 @@ public class SearchServiceImpl
 			}
 		}
 		views.addAll(componentSearchViews);
-
-		List<ComponentSearchView> articleViews = getAttributeService().getArticlesSearchView();
-		Map<String, ComponentSearchView> allViews = new HashMap<>();
-		for (ComponentSearchView componentSearchView : articleViews) {
-			AttributeCodePk attributeCodePk = new AttributeCodePk();
-			attributeCodePk.setAttributeType(componentSearchView.getArticleAttributeType());
-			attributeCodePk.setAttributeCode(componentSearchView.getArticleAttributeCode());
-			allViews.put(attributeCodePk.toKey(), componentSearchView);
-		}
-		for (SolrComponentModel result : resultsList) {
-
-			if (result.getIsComponent() == false) {
-				ComponentSearchView view = allViews.get(result.getId());
-				if (view != null) {
-					views.add(view);
-				} else {
-					log.log(Level.FINE, MessageFormat.format("Removing bad index: {0}", result.getId()));
-					deleteById(result.getId());
-				}
-			}
-		}
 
 		//TODO: Get the score and sort by score
 		componentSearchWrapper.setData(views);
@@ -283,69 +260,9 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void indexArticles(List<ArticleView> articles)
-	{
-
-		// initialize solr server
-		SolrServer solrService = SolrManager.getServer();
-
-		List<SolrComponentModel> solrDocs = new ArrayList<>();
-		for (ArticleView article : articles) {
-			if (StringUtils.isNotBlank(article.getHtml())) {
-
-				//add document using the example schema
-				SolrComponentModel solrDocModel = new SolrComponentModel();
-				AttributeCodePk pk = new AttributeCodePk();
-				pk.setAttributeCode(article.getAttributeCode());
-				pk.setAttributeType(article.getAttributeType());
-				AttributeCode code = getAttributeService().findCodeForType(pk);
-				AttributeType type = getAttributeService().findType(article.getAttributeType());
-				if (type == null || code == null) {
-					log.log(Level.FINE, MessageFormat.format("Unable to find attribute type and/or code (Skipping Index) for:  {0}", pk.toString()));
-				} else {
-
-					solrDocModel.setIsComponent(Boolean.FALSE);
-
-					solrDocModel.setId(pk.toKey());
-					solrDocModel.setNameString(article.getTitle());
-					solrDocModel.setName(article.getTitle());
-					solrDocModel.setDescription(article.getDescription());
-					solrDocModel.setUpdateDts(article.getUpdateDts());
-
-					String attributeList = type.getAttributeType() + "," + StringProcessor.blankIfNull(type.getDescription()) + "," + code.getLabel() + "," + StringProcessor.blankIfNull(code.getDescription());
-					solrDocModel.setTags("");
-					solrDocModel.setAttributes(attributeList);
-
-					String htmlArticle = article.getHtml();
-					String plainText = StringProcessor.stripHtml(htmlArticle);
-
-					solrDocModel.setArticleHtml(plainText.replace("<>", "").replace("\n", ""));
-					solrDocs.add(solrDocModel);
-				}
-			} else {
-				log.log(Level.FINE, "Html content is required to index article. (skipping)");
-			}
-		}
-
-		if (solrDocs.isEmpty() == false) {
-			try {
-				solrService.addBeans(solrDocs);
-				solrService.commit();
-			} catch (IOException | SolrServerException ex) {
-				throw new OpenStorefrontRuntimeException("Failed Adding Article", ex);
-			}
-		}
-	}
-
-	@Override
 	public List<ComponentSearchView> architectureSearch(AttributeCodePk pk, FilterQueryParams filter)
 	{
-		List<ArticleView> articles = this.getAttributeService().getArticlesForCodeLike(pk);
-
 		List<ComponentSearchView> views = new ArrayList<>();
-		for (ArticleView article : articles) {
-			views.add(ComponentSearchView.toView(article));
-		}
 
 		AttributeCode attributeCodeExample = new AttributeCode();
 		AttributeCodePk attributeCodePkExample = new AttributeCodePk();
@@ -435,17 +352,8 @@ public class SearchServiceImpl
 		Component temp = new Component();
 		temp.setActiveStatus(Component.ACTIVE_STATUS);
 		List<Component> components = persistenceService.queryByExample(Component.class, new QueryByExample(temp));
-		List<ArticleView> articles = getAttributeService().getArticles();
 
 		indexComponents(components);
-		indexArticles(articles);
-	}
-
-	@Override
-	public void indexArticlesAndComponents(List<ArticleView> articles, List<Component> components)
-	{
-		indexComponents(components);
-		indexArticles(articles);
 	}
 
 	@Override

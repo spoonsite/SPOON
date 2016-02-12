@@ -16,9 +16,7 @@
 package edu.usu.sdl.openstorefront.service.api;
 
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
-import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 
@@ -31,18 +29,9 @@ public interface AttributeServicePrivate
 {
 
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void performSaveArticle(AttributeCode attributeCode, String articleContents);
-
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public void performSaveArticle(ArticleView article);
-
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public void performSaveAttributeType(AttributeType attributeType);
 
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void performSaveAttributeCode(AttributeCode attributeCode);
-
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public void performDeleteArticle(AttributeCodePk attributeCodePk);
 
 }

@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
-import edu.usu.sdl.openstorefront.core.entity.ArticleTracking;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import java.text.MessageFormat;
@@ -76,21 +75,7 @@ public class TrackingCleanupJob
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		recordsRemoved = service.getPersistenceService().deleteByExample(queryByExample);
-		log.log(Level.FINEST, MessageFormat.format("Records removed: {0}", recordsRemoved));
-
-		log.log(Level.FINEST, "Deleting Article Tracking Records");
-		ArticleTracking articleTrackingExample = new ArticleTracking();
-
-		ArticleTracking articleTrackingEndExample = new ArticleTracking();
-		articleTrackingEndExample.setEventDts(new Date(maxInstant.toEpochMilli()));
-
-		queryByExample = new QueryByExample(articleTrackingExample);
-		specialOperatorModel = new SpecialOperatorModel(articleTrackingEndExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN);
-		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-		recordsRemoved = service.getPersistenceService().deleteByExample(queryByExample);
-		log.log(Level.FINEST, MessageFormat.format("Records removed: {0}", recordsRemoved));
+		log.log(Level.FINEST, MessageFormat.format("Component records removed: {0}", recordsRemoved));
 
 	}
 

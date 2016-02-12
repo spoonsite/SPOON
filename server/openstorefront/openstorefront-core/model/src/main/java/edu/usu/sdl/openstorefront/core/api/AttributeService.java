@@ -15,19 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
-import edu.usu.sdl.openstorefront.core.entity.ArticleTracking;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeXrefModel;
-import edu.usu.sdl.openstorefront.core.view.ArticleTrackingResult;
-import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
-import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import java.util.List;
 import java.util.Map;
@@ -57,14 +53,14 @@ public interface AttributeService
 	public List<AttributeCode> getAllAttributeCodes(String activeStatus);
 
 	/**
-	 *
+	 * This used to page filter results
 	 * @param filter
 	 * @return
 	 */
 	public AttributeTypeWrapper getFilteredTypes(FilterQueryParams filter);
 
 	/**
-	 *
+	 * This used to page filter results
 	 * @param filter
 	 * @param type
 	 * @return
@@ -135,78 +131,6 @@ public interface AttributeService
 	public void saveAttributeCode(AttributeCode attributeCode, boolean updateIndexes);
 
 	/**
-	 * Grabs the article and the contents for a give code or type
-	 *
-	 * @param attributeCodePk
-	 * @return complete article
-	 */
-	public ArticleView getArticle(AttributeCodePk attributeCodePk);
-
-	/**
-	 * Grabs the code that have articles.
-	 *
-	 * @param all
-	 * @return codes with articles
-	 */
-	public List<AttributeCode> getArticles(Boolean all);
-
-	/**
-	 * Grabs the article for a give code and type with the content
-	 *
-	 * @param attributeCodePk
-	 * @return the full article
-	 */
-	public ArticleView getArticleView(AttributeCodePk attributeCodePk);
-
-	/**
-	 * Grabs the article for a give code or type. Get the article codes only,
-	 * not the article html content
-	 *
-	 * @param attributeCodePk
-	 * @return article data or null for no article.
-	 */
-	public List<ArticleView> getArticlesForCodeLike(AttributeCodePk attributeCodePk);
-
-	/**
-	 * Saves a new article (This will scrub the article data prior to save)
-	 *
-	 * @param attributeCode
-	 * @param articleContents
-	 */
-	public void saveArticle(AttributeCode attributeCode, String articleContents);
-
-	/**
-	 * Saves a new article (This will scrub the article data prior to save)
-	 *
-	 * @param article
-	 */
-	public void saveArticle(ArticleView article);
-
-	/**
-	 * Deletes a article. WARNING: This will remove the link and delete any
-	 * internal file.
-	 *
-	 * @param attributeCodePk
-	 */
-	public void deleteArticle(AttributeCodePk attributeCodePk);
-
-	/**
-	 * Gather article tracking record for attribute code PK
-	 *
-	 * @param filter
-	 * @param attributeCodePk
-	 * @return
-	 */
-	public ArticleTrackingResult getAttributeTracking(FilterQueryParams filter, AttributeCodePk attributeCodePk);
-
-	/**
-	 * This will handle syncing all the component of the list.
-	 *
-	 * @param articles
-	 */
-	public void importArticles(List<ArticleView> articles);
-
-	/**
 	 * InActivates Type. Also it will inactive associated componentAttribute
 	 *
 	 * @param type
@@ -264,22 +188,6 @@ public interface AttributeService
 	 */
 	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap);
 
-	/**
-	 * Find the recently posted (created date) articles (Active Only)
-	 *
-	 * @param maxResults
-	 * @return
-	 */
-	public List<AttributeCode> findRecentlyAddedArticles(Integer maxResults);
-
-	/**
-	 * Find the recently posted (created date) articles
-	 *
-	 * @param maxResults
-	 * @param activeStatus
-	 * @return Codes with articles according to parameters
-	 */
-	public List<AttributeCode> findRecentlyAddedArticles(Integer maxResults, String activeStatus);
 
 	/**
 	 * Builds and Architecture given a attribute type NOTE: AttributeType must
@@ -290,27 +198,6 @@ public interface AttributeService
 	 */
 	public Architecture generateArchitecture(String attributeType);
 
-	/**
-	 * Saves a new article Tracking event
-	 *
-	 * @param articleTracking
-	 */
-	public void addArticleTrackEvent(ArticleTracking articleTracking);
-
-	/**
-	 * Get all articles as search results. Note: This doesn't pull the article
-	 * content.
-	 *
-	 * @return
-	 */
-	public List<ComponentSearchView> getArticlesSearchView();
-
-	/**
-	 * Get all articles as search results with content
-	 *
-	 * @return
-	 */
-	public List<ArticleView> getArticles();
 
 	/**
 	 * Gets the active xref types for an IntegrationType

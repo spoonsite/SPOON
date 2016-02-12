@@ -64,12 +64,6 @@ limitations under the License.
 			//Data Menu
 			var dataMenu = [];
 			dataMenu.push({
-				text: 'Articles (Deprecated)',
-				handler: function(){
-					actionLoadContent('Articles');
-				}
-			});			
-			dataMenu.push({
 				text: 'Attributes',
 				handler: function(){
 					actionLoadContent('Attributes');

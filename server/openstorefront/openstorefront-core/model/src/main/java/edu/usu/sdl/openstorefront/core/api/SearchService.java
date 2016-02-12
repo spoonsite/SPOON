@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
-import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -75,21 +74,6 @@ public interface SearchService
 	 * @param components
 	 */
 	public void indexComponents(List<Component> components);
-
-	/**
-	 * Indexes an article
-	 *
-	 * @param articles
-	 */
-	public void indexArticles(List<ArticleView> articles);
-
-	/**
-	 * Indexes articles and Components
-	 *
-	 * @param components
-	 * @param articles
-	 */
-	public void indexArticlesAndComponents(List<ArticleView> articles, List<Component> components);
 
 	/**
 	 * Removes a search index

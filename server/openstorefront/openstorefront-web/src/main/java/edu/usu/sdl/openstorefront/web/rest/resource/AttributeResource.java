@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.common.util.NetworkUtil;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
@@ -27,8 +26,6 @@ import edu.usu.sdl.openstorefront.core.api.model.AsyncTaskCallback;
 import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
-import edu.usu.sdl.openstorefront.core.entity.Article;
-import edu.usu.sdl.openstorefront.core.entity.ArticleTracking;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -36,7 +33,6 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
-import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchComparator;
@@ -44,8 +40,6 @@ import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeTypeViewComparator;
-import edu.usu.sdl.openstorefront.core.view.ArticleTrackingResult;
-import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
@@ -54,7 +48,6 @@ import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
-import edu.usu.sdl.openstorefront.core.view.UserTrackingWrapper;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -207,56 +200,6 @@ public class AttributeResource
 		response.header("Content-Type", MediaType.APPLICATION_JSON);
 		response.header("Content-Disposition", "attachment; filename=\"allattributes.json\"");
 		return response.build();
-	}
-
-	@POST
-	@APIDescription("Gets all articles")
-	@RequireAdmin
-	@Produces({MediaType.WILDCARD})
-	@DataType(ArticleView.class)
-	@Path("/articles/export")
-	public Response getComponentExport(
-			@FormParam("typeCode")
-			@RequiredParam List<String> typeCodes)
-	{
-		List<ArticleView> articles = new ArrayList<>();
-		for (String typeCode : typeCodes) {
-			AttributeCodePk attributeCodePk = AttributeCodePk.fromKey(typeCode);
-			ArticleView articleView = service.getAttributeService().getArticle(attributeCodePk);
-			articles.add(articleView);
-		}
-
-		String articleJson;
-		try {
-			articleJson = StringProcessor.defaultObjectMapper().writeValueAsString(articles);
-		} catch (JsonProcessingException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to export articles.", ex);
-		}
-		Response.ResponseBuilder response = Response.ok(articleJson);
-		response.header("Content-Type", MediaType.APPLICATION_JSON);
-		response.header("Content-Disposition", "attachment; filename=\"articlesExport.json\"");
-		return response.build();
-	}
-
-	@GET
-	@APIDescription("Gets codes with articles.")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(AttributeCode.class)
-	@Path("/allcodeswitharticles")
-	public Response getAllCodesWithArticles(@BeanParam FilterQueryParams filterQueryParams)
-	{
-		ValidationResult validationResult = filterQueryParams.validate();
-		if (!validationResult.valid()) {
-			return sendSingleEntityResponse(validationResult.toRestError());
-		}
-
-		List<AttributeCode> attributeCodes = service.getAttributeService().findRecentlyAddedArticles(filterQueryParams.getMax(), filterQueryParams.getStatus());
-		attributeCodes = filterQueryParams.filter(attributeCodes);
-
-		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(attributeCodes)
-		{
-		};
-		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
@@ -430,165 +373,6 @@ public class AttributeResource
 		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 
 		return sendSingleEntityResponse(attributeCode);
-	}
-
-	@GET
-	@APIDescription("Gets all codes that have an article.")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(AttributeCode.class)
-	@Path("/attributetypes/articlecodes")
-	public List<ArticleView> getAllCodesWithArticles(
-			@QueryParam("all")
-			@APIDescription("Get's all the articles (Active and Inactive)")
-			@DefaultValue("false") boolean all)
-	{
-		List<ArticleView> codes = ArticleView.toViewList(service.getAttributeService().getArticles(all));
-		return codes;
-	}
-
-	@GET
-	@APIDescription("Gets article if it existing for the given type and code.")
-	@Produces({MediaType.WILDCARD})
-	@Path("/attributetypes/{type}/attributecodes/{code}/article")
-	public Response getAttributeArticle(
-			@PathParam("type")
-			@RequiredParam String type,
-			@PathParam("code")
-			@RequiredParam String code)
-	{
-		type = type.toUpperCase();
-		code = code.toUpperCase();
-		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		attributeCodePk.setAttributeCode(code);
-		attributeCodePk.setAttributeType(type);
-		ArticleView articleView = service.getAttributeService().getArticle(attributeCodePk);
-		if (articleView != null) {
-			ArticleTracking articleTracking = new ArticleTracking();
-			articleTracking.setAttributeCode(code);
-			articleTracking.setAttributeType(type);
-			articleTracking.setClientIp(NetworkUtil.getClientIp(request));
-			articleTracking.setEventDts(TimeUtil.currentDate());
-			articleTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
-			service.getAttributeService().addArticleTrackEvent(articleTracking);
-			return Response.ok(articleView.getHtml()).build();
-		}
-		return Response.status(Response.Status.NOT_FOUND).build();
-	}
-
-	@GET
-	@APIDescription("Gets article if it existing for the given type and code.")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ArticleView.class)
-	@Path("/attributetypes/{type}/attributecodes/{code}/article/detail")
-	public Response getAttributeArticleView(
-			@PathParam("type")
-			@RequiredParam String type,
-			@PathParam("code")
-			@RequiredParam String code)
-	{
-		type = type.toUpperCase();
-		code = code.toUpperCase();
-		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		attributeCodePk.setAttributeCode(code);
-		attributeCodePk.setAttributeType(type);
-		ArticleView articleView = service.getAttributeService().getArticle(attributeCodePk);
-		if (articleView != null) {
-			ArticleTracking articleTracking = new ArticleTracking();
-			articleTracking.setAttributeCode(code);
-			articleTracking.setAttributeType(type);
-			articleTracking.setClientIp(NetworkUtil.getClientIp(request));
-			articleTracking.setEventDts(TimeUtil.currentDate());
-			articleTracking.setTrackEventTypeCode(TrackEventCode.VIEW);
-			service.getAttributeService().addArticleTrackEvent(articleTracking);
-		}
-		return sendSingleEntityResponse(articleView);
-	}
-
-	@GET
-	@APIDescription("Gets article tracking records for a given article")
-	@DataType(UserTrackingWrapper.class)
-	@Produces({MediaType.APPLICATION_JSON})
-	@Path("/attributetypes/{type}/attributecodes/{code}/article/tracking")
-	public Response getAttributeArticleTracking(
-			@PathParam("type")
-			@RequiredParam String type,
-			@PathParam("code")
-			@RequiredParam String code,
-			@BeanParam FilterQueryParams filterQueryParams)
-	{
-		ValidationResult validationResult = filterQueryParams.validate();
-		if (!validationResult.valid()) {
-			return sendSingleEntityResponse(validationResult.toRestError());
-		}
-
-		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		attributeCodePk.setAttributeCode(code.toUpperCase());
-		attributeCodePk.setAttributeType(type.toUpperCase());
-
-		AttributeCode attributeCodeExample = new AttributeCode();
-		attributeCodeExample.setAttributeCodePk(attributeCodePk);
-		AttributeCode attributeCode = service.getPersistenceService().queryOneByExample(AttributeCode.class, attributeCodeExample);
-		if (attributeCode != null) {
-
-			ArticleTrackingResult articleTrackingResult = service.getAttributeService().getAttributeTracking(filterQueryParams, attributeCodePk);
-			return sendSingleEntityResponse(articleTrackingResult);
-		} else {
-			return Response.status(Response.Status.NOT_FOUND).build();
-		}
-	}
-
-	@PUT
-	@RequireAdmin
-	@APIDescription("Updates article")
-	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/attributetypes/{type}/attributecodes/{code}/article")
-	public Response updateEntityValue(
-			@PathParam("type")
-			@RequiredParam String type,
-			@PathParam("code")
-			@RequiredParam String code,
-			ArticleView articleView)
-	{
-		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		attributeCodePk.setAttributeCode(code.toUpperCase());
-		attributeCodePk.setAttributeType(type.toUpperCase());
-
-		AttributeCode attributeCodeExample = new AttributeCode();
-		attributeCodeExample.setAttributeCodePk(attributeCodePk);
-		AttributeCode attributeCode = service.getPersistenceService().queryOneByExample(AttributeCode.class, attributeCodeExample);
-		if (attributeCode != null) {
-			ValidationModel validationModel = new ValidationModel(articleView);
-			validationModel.setConsumeFieldsOnly(true);
-			ValidationResult validationResult = ValidationUtil.validate(validationModel);
-			if (validationResult.valid()) {
-				Article article = new Article();
-				article.setTitle(articleView.getTitle());
-				article.setDescription(articleView.getDescription());
-				attributeCode.setArticle(article);
-				service.getAttributeService().saveArticle(attributeCode, articleView.getHtml());
-				return Response.ok(attributeCode).build();
-			} else {
-				return Response.ok(validationResult.toRestError()).build();
-			}
-		} else {
-			return Response.status(Response.Status.NOT_FOUND).build();
-		}
-	}
-
-	@DELETE
-	@RequireAdmin
-	@APIDescription("Deletes article")
-	@Path("/attributetypes/{type}/attributecodes/{code}/article")
-	public void deleteArticle(
-			@PathParam("type")
-			@RequiredParam String type,
-			@PathParam("code")
-			@RequiredParam String code)
-	{
-		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		attributeCodePk.setAttributeCode(code.toUpperCase());
-		attributeCodePk.setAttributeType(type.toUpperCase());
-		service.getAttributeService().deleteArticle(attributeCodePk);
 	}
 
 	@POST
