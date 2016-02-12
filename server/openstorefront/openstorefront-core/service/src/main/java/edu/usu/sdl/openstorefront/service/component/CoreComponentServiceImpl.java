@@ -137,6 +137,7 @@ import net.java.truevfs.kernel.spec.FsSyncException;
 import net.sf.ehcache.Element;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.helper.StringUtil;
 
 /**
  * Handles the basic
@@ -1875,6 +1876,14 @@ public class CoreComponentServiceImpl
 
 	private <T extends BaseComponent> void mergeSubEntities(List<T> entities, List<T> targetEntities)
 	{
+		//If there is bad data remove it from initial target
+		for (int i=targetEntities.size()-1; i >=0; i--) {
+			if (StringUtil.isBlank(targetEntities.get(i).uniqueKey())) {
+				T badRecord = targetEntities.remove(i);
+				log.log(Level.WARNING, "Bad record (found during merge...it was removed): " + StringProcessor.printObject(badRecord));				
+			}
+		}		
+		
 		Map<String, List<T>> keyMap = targetEntities.stream().collect(Collectors.groupingBy(T::uniqueKey));
 		for (T entity : entities) {
 			boolean add = false;

@@ -871,7 +871,7 @@ public class ComponentRESTResource
 		componentExample.setPendingChangeId(componentId);
 
 		List<Component> components = componentExample.findByExample();
-		GenericEntity<List<ComponentView>> entity = new GenericEntity<List<ComponentView>>(ComponentView.toViewList(components))
+		GenericEntity<List<ComponentView>> entity = new GenericEntity<List<ComponentView>>(ComponentView.toViewListWithUserInfo(components))
 		{
 		};
 		return sendSingleEntityResponse(entity);

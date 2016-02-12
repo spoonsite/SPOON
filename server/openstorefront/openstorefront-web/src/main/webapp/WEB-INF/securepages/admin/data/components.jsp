@@ -32,6 +32,14 @@
 					adminMode: true,
 					successHandler: function() {
 						actionRefreshComponentGrid();
+					},
+					adminEditHandler: function(record, changeRequestWindow) {
+						actionAddEditComponent(record);
+						mainAddEditWin.changeRequestCloseHandler = function(){
+							changeRequestWindow.changeGrid.getStore().reload();
+							mainAddEditWin.un('close', mainAddEditWin.changeRequestCloseHandler);
+						};
+						mainAddEditWin.on('close', mainAddEditWin.changeRequestCloseHandler);
 					}
 				});
 							
@@ -2472,6 +2480,7 @@
 							items: [
 								{
 									text: 'Save',
+									tooltip: 'Save General information and continue.',
 									iconCls: 'fa fa-save',
 									formBind: true,
 									handler: function() {
@@ -2567,10 +2576,11 @@
 									xtype: 'tbfill'
 								},
 								{
-									text: 'Cancel',									
+									text: 'Done',
+									tooltip: 'Close Add/Edit window.',
 									iconCls: 'fa fa-close',
 									handler: function() {
-										this.up('window').hide();
+										this.up('window').close();
 									}													
 								}
 							]
@@ -2806,7 +2816,7 @@
 				};
 				loadAllAttributes();
 						
-				var mainAddEditWin = Ext.create('Ext.window.Window', {
+				var mainAddEditWin = Ext.create('Ext.window.Window', {					
 					title: 'Entry Form',
 					modal: true,
 					maximizable: true,
@@ -3886,7 +3896,7 @@
 					var componentId = record.get('componentId');
 					var name = record.get('name');
 					changeRequestWindow.show();
-					changeRequestWindow.loadComponent(componentId, name);
+					changeRequestWindow.loadComponent(componentId, name);					
 				};
 				
 				var actionChangeOwner = function(record) {
