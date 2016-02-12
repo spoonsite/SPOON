@@ -705,11 +705,17 @@
 				var logStore = Ext.create('Ext.data.Store', {
 					id: 'logStore',
 					autoLoad: true,
-					proxy: {
-						type: 'ajax',
-						url: '/openstorefront/api/v1/service/application/logrecords',
-						rootProperty: 'logRecords'
-					},
+					pageSize: 100,
+					remoteSort: true,
+					proxy: CoreUtil.pagingProxy({
+							type: 'ajax',
+							url: '/openstorefront/api/v1/service/application/logrecords',
+							reader: {
+								type: 'json',
+								rootProperty: 'logRecords',
+								totalProperty: 'totalNumber'
+							}
+					})
 				});
 			
 				var logGrid = Ext.create('Ext.grid.Panel', {
@@ -717,8 +723,24 @@
 					id: 'logGrid',
 					store: logStore,
 					columns: [
-						{text: 'Event Time', dataIndex: 'eventDts', flex: 2},
-						{text: 'Level', dataIndex: 'level', flex: 5, cellWrap: true}
+						{ 
+							text: 'Event Time',
+							dataIndex: 'eventDts',
+							xtype: 'datecolumn',
+							format: 'm/d/y H:i:s:u',
+							flex: 1.5
+						},
+						{text: 'Level', dataIndex: 'level', flex: 1, cellWrap: true},
+						{text: 'Logger Name', dataIndex: 'loggerName', flex: 4, cellWrap: true},
+						{text: 'Message', dataIndex: 'message', flex: 9, cellWrap: true},
+					],
+					dockedItems: [
+						{
+							xtype: 'pagingtoolbar',
+							dock: 'bottom',
+							store: 'logStore',
+							displayInfo: true
+						}
 					]
 				});
 
