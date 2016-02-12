@@ -766,6 +766,49 @@
 										var record = Ext.getCmp('logGrid').getSelection()[0];
 										actionViewLogDetail(record);
 									}
+								},
+								{ 
+									xtype: 'tbfill'
+								},
+								{
+									xtype: 'label',
+								    html: '<strong>Database Logger:</strong>'
+								},
+								{
+									scale: 'medium',
+									id: 'dbLoggerYes',
+									text: 'Enable',
+									tooltip: 'WARNING: This can cause save a lot of information to the database very quickly.',
+									handler: function () {
+										Ext.Ajax.request({
+											url: '/openstorefront/api/v1/service/application/dblogger/true',
+											method: 'PUT',
+											success: function(response, opt){
+												Ext.toast('Started DB Logger', '', 'tr');
+											},
+											failure: function(response, opt){
+												Ext.toast('Failed to start DB Logger', '', 'tr');
+													}
+												});
+									}
+								},
+								{
+									scale: 'medium',
+									id: 'dbLoggerNo',
+									text: 'Disable',
+									handler: function () {
+										Ext.Ajax.request({
+											url: '/openstorefront/api/v1/service/application/dblogger/false',
+											method: 'PUT',
+											success: function(response, opt){
+												Ext.toast('Stopped DB Logger', '', 'tr');
+											},
+											failure: function(response, opt){
+												Ext.toast('Failed to stop DB Logger', '', 'tr');
+											}
+										});
+
+									}
 								}
 							]
 						},
