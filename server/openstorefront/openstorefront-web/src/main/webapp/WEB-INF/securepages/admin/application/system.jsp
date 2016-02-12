@@ -771,6 +771,26 @@
 									xtype: 'tbfill'
 								},
 								{
+									scale: 'medium',
+									id: 'clearDbLog',
+									text: 'Clear All Records',
+									iconCls: 'fa fa-trash fa-2x',
+									tooltip: "Doesn't affect server logs. Note: The application will automatically clear old records exceeding max allowed.",
+									handler: function () {
+										Ext.Ajax.request({
+											url: '/openstorefront/api/v1/service/application/logrecords',
+											method: 'DELETE',
+											success: function(response, opt){
+												Ext.toast('Cleared log records', '', 'tr');
+												logStore.load();
+											},
+											failure: function(response, opt){
+												Ext.toast('Failed to clear log records', '', 'tr');
+											}
+										});
+									}
+								},
+								{
 									xtype: 'label',
 								    html: '<strong>Database Logger:</strong>'
 								},
