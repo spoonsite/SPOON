@@ -141,7 +141,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 				labelAlign: 'right',
 				padding: '0 0 10 0'
 			},
-			items: [				
+			items: [
+				{
+					xtype: 'panel',					
+					html: '<h2>Verify/Update your information and hit Next</h2>'
+				},
 				{
 					xtype: 'textfield',
 					name: 'firstName',
@@ -371,7 +375,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			items: [
 				{
 					xtype: 'panel',
-					html: '<h1>2. Enter Required Information:</h1>'
+					html: '<h1>2. Enter Required Information:</h1><h2>Please fill in each field and hit Next</h2>'
 				},
 				Ext.create('OSF.component.StandardComboBox', {					
 					fieldLabel: 'Entry Type <span class="field-required" />',
@@ -440,30 +444,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 					allowBlank: false,
 					maxLength: 255														
 				},
-				{
-					xtype: 'panel',
-					html: '<b>Description</b> <span class="field-required" />'
-				},
-//				Ext.create('OSF.component.CKEditorField', {																
-//					//allowBlank: false,
-//					name: 'description',
-//					width: '100%',
-//					margin: '0 0 0 0',
-//					height: 300,
-//					maxLength: 32000	
-//				}),
-				{
-					xtype: 'tinymce_textarea',
-					itemId: 'descriptionField',
-					fieldStyle: 'font-family: Courier New; font-size: 12px;',
-					style: { border: '0' },
-					name: 'description',
-					width: '100%',
-					height: 300,
-					maxLength: 32000,
-					emptyText: 'Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.',
-					tinyMCEConfig: CoreUtil.tinymceConfig()
-				},
 				Ext.create('OSF.component.StandardComboBox', {
 					name: 'organization',									
 					allowBlank: false,									
@@ -476,7 +456,23 @@ Ext.define('OSF.component.SubmissionPanel', {
 					storeConfig: {
 						url: '../api/v1/resource/organizations/lookup'
 					}
-				}),
+				}),				
+				{
+					xtype: 'panel',
+					html: '<b>Description</b> <span class="field-required" />'
+				},
+				{
+					xtype: 'tinymce_textarea',
+					itemId: 'descriptionField',
+					fieldStyle: 'font-family: Courier New; font-size: 12px;',
+					style: { border: '0' },
+					name: 'description',
+					width: '100%',
+					height: 300,
+					maxLength: 32000,
+					emptyText: 'Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.<br><br>Include an easy to read description of the product, focusing on what it is and what it does.',
+					tinyMCEConfig: CoreUtil.tinymceConfig()
+				},
 				{
 					xtype: 'panel',
 					itemId: 'requiredAttributePanel',
@@ -1289,13 +1285,17 @@ Ext.define('OSF.component.SubmissionPanel', {
 			items: [
 				{
 					xtype: 'panel',
-					html: '<h1>3. Addtional Details:</h1>'
+					html: '<h1>3. Addtional Details:</h1><h3>Fill in as many details as possible. The more details the easier it is for other to discover this entry.<br>Including additional points of contact, related screenshots and attributes</h3>'
 				},
 				{
 					xtype: 'panel',
 					itemId: 'detailSections', 
 					bodyStyle: 'padding: 0px 20px 0px 20px;',
 					items: [
+						{
+							xtype: 'panel',
+							html: '<h3>Add all attributes that are appropriate.</h3>'
+						},
 						{
 							xtype: 'grid',
 							itemId: 'optionalAttributes',
@@ -1484,6 +1484,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 							]
 						},
 						{
+							xtype: 'panel',
+							html: '<h3>Add government, technical, and other points of contact.</h3>'
+						},						
+						{
 							xtype: 'grid',
 							itemId: 'contactGrid',
 							title: 'Contacts  <i class="fa fa-question-circle"  data-qtip="Add government, technical, and other points of contact."></i>',
@@ -1568,6 +1572,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 							]
 						},
 						{
+							xtype: 'panel',
+							html: '<h3>Add direct links external to Documentation, Binaries, Source Code, etc... where appropriate.</h3>'
+						},						
+						{
 							xtype: 'grid',
 							itemId: 'resourceGrid',
 							title: 'External Links  <i class="fa fa-question-circle"  data-qtip="Add links to home page, documentation, binaries, etc... If there is no external link for a resource it may be uploaded so that it may be shared with the community.  Typically, the resources are managed externally. "></i>',
@@ -1651,6 +1659,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 							]
 						},
 						{
+							xtype: 'panel',
+							html: '<h3>Upload screenshots and related media.</h3>'
+						},						
+						{
 							xtype: 'grid',
 							itemId: 'mediaGrid',
 							title: 'Media  <i class="fa fa-question-circle"  data-qtip="Media show up in the media carousel section on the details page for this component.<br><br>Add screen shots, company logos, short videos clips, etc... Typically, media is uploaded as that makes it the most accessible.  External resources can be pointed to by using an external link. External resources work best with a valid SSL certificate and are unrestricted (ie. no login)."></i>',
@@ -1733,6 +1745,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 							]
 						},
 						{
+							xtype: 'panel',
+							html: '<h3>Add necessary software/hardware dependancies not included with the component.</h3>'
+						},							
+						{
 							xtype: 'grid',
 							itemId: 'dependenciesGrid',
 							title: 'Dependencies  <i class="fa fa-question-circle"  data-qtip="Describe what is needed to utilize the component. Enter each dependency separately.  (Eg. Java 7+,  MySql 5+)"></i>',
@@ -1814,9 +1830,13 @@ Ext.define('OSF.component.SubmissionPanel', {
 							]
 						},
 						{
+							xtype: 'panel',
+							html: '<h3>Add relavant feature support or other metadata to describe the entry. Eg. Label: DIB Compatible  Value: 4.1+</h3>'
+						},						
+						{
 							xtype: 'grid',
 							itemId: 'metadataGrid',
-							title: 'Metadata  <i class="fa fa-question-circle"  data-qtip="Add non-filterable items of information. (Eg. Label: CMAP Compatible   Value: 1.3+)"></i>',
+							title: 'Metadata  <i class="fa fa-question-circle"  data-qtip="Add non-filterable items of information. (Eg. Label: CMAPI Compatible   Value: 1.3+)"></i>',
 							collapsible: true,
 							titleCollapse: true,
 							margin: '0 0 20 0',
@@ -1892,6 +1912,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 								}
 							]
 						},
+						{
+							xtype: 'panel',
+							html: '<h3>Add relationship links to existing entries. Eg. DDF is a component of DIB</h3>'
+						},						
 						{
 							xtype: 'grid',
 							itemId: 'relationshipsGrid',
@@ -2052,6 +2076,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 								}
 							]
 						},
+						{
+							xtype: 'panel',
+							html: '<h3>Add relevant tags to help with discovery.</h3>'
+						},						
 						{
 							xtype: 'grid',
 							itemId: 'tagGrid',
@@ -2262,7 +2290,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				{
 					xtype: 'panel',
 					dock: 'top',
-					html: '<div class="alert-warning"><i class="fa fa-warning"></i> Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.</div>'
+					html: '<div class="alert-warning" style="text-align: center"><i class="fa fa-warning"></i> Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.</div>'
 				},
 				{
 					xtype: 'toolbar',
@@ -2273,7 +2301,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							text: 'Previous',
 							itemId: 'Previous',
 							disabled: true,
-							iconCls: 'fa fa-arrow-left',
+							scale: 'large',
+							iconCls: 'fa fa-2x fa-arrow-left icon-top-padding-2',
 							handler: function () {
 								submissionPanel.currentStep--;
 								submissionPanel.changeSteps();
@@ -2286,7 +2315,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							text: 'Save and Exit',
 							itemId: 'SaveAndExit',
 							hidden: true,
-							iconCls: 'fa fa-save',
+							scale: 'large',
+							iconCls: 'fa fa-2x fa-save icon-top-padding-2',
 							handler: function () {
 																
 																
@@ -2296,7 +2326,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							text: 'Submit For Review',
 							itemId: 'Submit',
 							hidden: true,
-							iconCls: 'fa fa-check',														
+							scale: 'large',
+							iconCls: 'fa fa-2x fa-check icon-top-padding-2',														
 							handler: function () {
 								
 								submissionPanel.setLoading('Submitting Entry...');
@@ -2338,7 +2369,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 						},												
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-close',							
+							scale: 'large',
+							iconCls: 'fa fa-2x fa-close icon-top-padding-2',							
 							handler: function () {	
 								submissionPanel.cancelSubmissionHandler();								
 							}
@@ -2349,7 +2381,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 						{
 							text: 'Next',
 							itemId: 'Next',
-							iconCls: 'fa fa-arrow-right',
+							scale: 'large',
+							iconCls: 'fa fa-2x fa-arrow-right icon-top-padding-2',
 							iconAlign: 'right',
 							handler: function () {
 								submissionPanel.currentStep++;

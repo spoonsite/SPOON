@@ -323,13 +323,18 @@ var CoreUtil = {
 					if (response.status === 304){
 						options.success(response, opts);
 					} else {
-						var data = Ext.decode(response.responseText);
-						if ((data.success !== undefined && data.success !== null && data.success) ||
-								data.success === undefined)
-						{
-							options.success(response, opts);
+						if (response.responseText) {
+							var data = Ext.decode(response.responseText);
+							if ((data.success !== undefined && data.success !== null && data.success) ||
+									data.success === undefined)
+							{
+								options.success(response, opts);
+							} else {
+								failurehandler(response, opts);
+							}
 						} else {
-							failurehandler(response, opts);
+							//no response (assume success)
+							options.success(response, opts);
 						}
 					}
 				}
