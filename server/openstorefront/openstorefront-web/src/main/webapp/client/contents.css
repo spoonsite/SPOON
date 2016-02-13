@@ -17,4 +17,52 @@ limitations under the License.
     Created on : Feb 8, 2016, 1:58:52 PM
     Author     : dshurtleff
 */
+/**
+* see https://www.tinymce.com/docs/advanced/boilerplate-content-css/
+**/
 
+/* Image captions using the HTML5 figure element */
+figure.align-left {
+    float: left;
+}
+
+figure.align-right {
+    float: right;
+}
+
+figure.image {
+    display: inline-block;
+    border: 1px solid gray;
+    margin: 0 2px 0 1px;
+    background: #f5f2f0;
+}
+
+figure.image img {
+    margin: 8px 8px 0 8px;
+}
+
+figure.image figcaption {
+    margin: 6px 8px 6px 8px;
+    text-align: center;
+}
+
+/*
+ Alignment using classes rather than inline styles
+ check out the "formats" option
+*/
+img.align-left {
+    float: left;
+}
+
+img.align-right {
+    float: right;
+}
+
+/*
+ Removes margins on paragraphs,
+ might be useful for mail clients
+*/
+/*p { margin: 0 }*/
+
+/* Override CSS styles when within the editor only */
+/*.mce-content-body figure {...}*/

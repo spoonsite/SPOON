@@ -447,7 +447,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				Ext.create('OSF.component.StandardComboBox', {
 					name: 'organization',									
 					allowBlank: false,									
-					margin: '0 0 0 0',
+					margin: '0 0 10 0',
 					width: '100%',
 					fieldLabel: 'Organization/Company responsible for the Entry <span class="field-required" />',
 					forceSelection: false,
