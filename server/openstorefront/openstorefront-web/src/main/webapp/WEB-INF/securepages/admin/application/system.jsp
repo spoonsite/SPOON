@@ -1112,6 +1112,72 @@
 						{text: 'Actual Filename', dataIndex: 'actualFilename', flex: 2},
 						{text: 'Type', dataIndex: 'pluginType', flex: 1}
 					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function () {
+										pluginStore.load();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Add Plugin',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-plus',
+									handler: function () {
+										actionAddPlugin();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Start',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-play',
+									disabled: true,
+									handler: function () {
+										actionStartPlugin();
+									}
+								},
+								{
+									text: 'Stop',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-stop',
+									disabled: true,
+									handler: function () {
+										actionStopPlugin();
+									}
+								},
+								{
+									text: 'Download',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-download',
+									disabled: true,
+									handler: function () {
+										actionDownloadPlugin();
+									}
+								},
+								{
+									text: 'Uninstall',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-close',
+									disabled: true,
+									handler: function () {
+										actionUninstallPlugin();
+									}
+								}
+							]
+						}
+					],
 				});
 
 				var searchControlPanel = Ext.create('Ext.grid.Panel', {
