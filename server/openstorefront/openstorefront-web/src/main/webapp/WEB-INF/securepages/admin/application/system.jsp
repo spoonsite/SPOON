@@ -1083,6 +1083,14 @@
 					items: [loggerGrid, logGrid]
 				});
 
+				var pluginStore = Ext.create('Ext.data.Store', {
+					id: 'pluginStore',
+					autoLoad: true,
+					proxy: {
+						type: 'ajax',
+						url: '/openstorefront/api/v1/resource/plugins'
+					}
+				});
 
 				var pluginGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Plugins',
