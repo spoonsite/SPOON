@@ -1112,6 +1112,32 @@
 						{text: 'Actual Filename', dataIndex: 'actualFilename', flex: 2},
 						{text: 'Type', dataIndex: 'pluginType', flex: 1}
 					],
+					listeners: {
+						selectionchange: function (grid, record, index, opts) {
+							if (Ext.getCmp('pluginGrid').getSelectionModel().hasSelection()) {
+								console.log(record);
+								if (record[0].data.pluginRuntimeState === 'Active') {
+									Ext.getCmp('pluginGrid-tools-start').disable();
+								}
+								else  {
+									Ext.getCmp('pluginGrid-tools-start').enable();
+								}
+								if (record[0].data.pluginRuntimeState === 'Resolved') {
+									Ext.getCmp('pluginGrid-tools-stop').disable();
+								}
+								else {
+									Ext.getCmp('pluginGrid-tools-stop').enable();
+								}
+								Ext.getCmp('pluginGrid-tools-download').enable();
+								Ext.getCmp('pluginGrid-tools-uninstall').enable();
+							} else {
+								Ext.getCmp('pluginGrid-tools-start').disable();
+								Ext.getCmp('pluginGrid-tools-stop').disable();
+								Ext.getCmp('pluginGrid-tools-download').disable();
+								Ext.getCmp('pluginGrid-tools-uninstall').disable();
+							}
+						}
+					},
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -1130,6 +1156,7 @@
 								},
 								{
 									text: 'Add Plugin',
+									id: 'pluginGrid-tools-addPlugin',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-plus',
 									handler: function () {
@@ -1141,6 +1168,7 @@
 								},
 								{
 									text: 'Start',
+									id: 'pluginGrid-tools-start',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-play',
 									disabled: true,
@@ -1150,6 +1178,7 @@
 								},
 								{
 									text: 'Stop',
+									id: 'pluginGrid-tools-stop',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-stop',
 									disabled: true,
@@ -1159,6 +1188,7 @@
 								},
 								{
 									text: 'Download',
+									id: 'pluginGrid-tools-download',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-download',
 									disabled: true,
@@ -1168,6 +1198,7 @@
 								},
 								{
 									text: 'Uninstall',
+									id: 'pluginGrid-tools-uninstall',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-close',
 									disabled: true,
