@@ -1215,6 +1215,74 @@
 					],
 				});
 
+
+				var actionStartPlugin = function actionStartPlugin(record) {
+					var url = '/openstorefront/api/v1/resource/plugins/';
+					url += record.data.pluginId + '/start';
+					Ext.Ajax.request({
+						url: url,
+						method: 'POST',
+						success: function(response, opt){
+							Ext.toast('Successfully started plugin', '', 'tr');
+							pluginStore.load();
+						},
+						failure: function(response, opt){
+							Ext.toast('Failed to start plugin', '', 'tr');
+						}
+					});
+				};
+
+				var actionStopPlugin = function actionStopPlugin(record) {
+					var url = '/openstorefront/api/v1/resource/plugins/';
+					url += record.data.pluginId + '/stop';
+					Ext.Ajax.request({
+						url: url,
+						method: 'POST',
+						success: function(response, opt){
+							Ext.toast('Successfully stopped plugin', '', 'tr');
+							pluginStore.load();
+						},
+						failure: function(response, opt){
+							Ext.toast('Failed to stop plugin', '', 'tr');
+						}
+					});
+				};
+
+
+				var actionDownloadPlugin = function actionDownloadPlugin(record) {
+					var url = '/openstorefront/api/v1/resource/plugins/';
+					url += record.data.pluginId + '/download';
+					var filename = record.data.actualFilename;
+					var link = document.createElement("a");
+					if (link.download !== undefined) { // feature detection
+						// Browsers that support HTML5 download attribute
+						link.setAttribute("href", url);
+						link.setAttribute("download", filename);
+						link.style.visibility = 'hidden';
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+					}
+				};
+
+
+				var actionUninstallPlugin = function actionUninstallPlugin(record) {
+					var url = '/openstorefront/api/v1/resource/plugins/';
+					url += record.data.pluginId;
+					Ext.Ajax.request({
+						url: url,
+						method: 'DELETE',
+						success: function(response, opt){
+							Ext.toast('Successfully uninstalled plugin', '', 'tr');
+							pluginStore.load();
+						},
+						failure: function(response, opt){
+							Ext.toast('Failed to uninstall plugin', '', 'tr');
+						}
+					});
+
+				};
+
 				var searchControlPanel = Ext.create('Ext.grid.Panel', {
 					title: 'Search Control',
 					id: 'searchControlPanel'
