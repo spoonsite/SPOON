@@ -104,7 +104,7 @@ limitations under the License.
 							type: 'up',
 							tooltip: 'popout preview',
 							handler: function(){
-								window.open('../single?id=' + Ext.getCmp('submissionGrid').getSelection()[0].get('componentId'), "Preview");
+								window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('submissionGrid').getSelection()[0].get('componentId'), "Preview");
 							}
 						}
 					], 
@@ -500,7 +500,7 @@ limitations under the License.
 				var actionPreviewComponent = function(){
 					previewComponentWin.show();
 					var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-					previewContents.load('../single?id=' + componentId +'&hideNav=true');
+					previewContents.load('view.jsp?id=' + componentId +'&fullPage=true');
 					previewCheckButtons();					
 				};
 				

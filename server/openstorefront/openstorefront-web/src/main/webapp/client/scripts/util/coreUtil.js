@@ -117,7 +117,9 @@ var CoreUtil = {
 		}
 
 		htmlData += '<html><head><style>' +
-				' .reportview-table{border-collapse: collapse; border: 2px black solid; font: 12px sans-serif} '+
+				' .reportview-table {border-collapse: collapse; border: 2px black solid; font: 12px sans-serif} ' +
+				' tr.reportview-table:nth-child(odd) { background: white;} ' +
+				' tr.reportview-table:nth-child(even) { background: whitesmoke;} ' +
 				' .reportview-td{border: 1px black solid; padding:5px;}' +
 				' .reportview-th{padding:5px;}' +
 				'</style>'+
@@ -134,14 +136,14 @@ var CoreUtil = {
 
 					if ((ctr2 + 1) === csv[ctr].length) {
 						if(colDiff !==0 ){
-							htmlData += '<tr><td class="reportview-td" colspan="'+colDiff+'">' + csv[ctr][ctr2] + '</td></tr>';
+							htmlData += '<tr class="reportview-table"><td class="reportview-td" colspan="'+colDiff+'">' + csv[ctr][ctr2] + '</td></tr>';
 						}
 						else{
-							htmlData += '<tr><td class="reportview-td" >' + csv[ctr][ctr2] + '</td></tr>';
+							htmlData += '<tr class="reportview-table"><td class="reportview-td" >' + csv[ctr][ctr2] + '</td></tr>';
 						}
 					}
 					else{
-						htmlData += '<tr><td class="reportview-td" >' + csv[ctr][ctr2] + '</td>';
+						htmlData += '<tr class="reportview-table"><td class="reportview-td" >' + csv[ctr][ctr2] + '</td>';
 					}
 
 
