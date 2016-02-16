@@ -1114,7 +1114,9 @@
 					],
 					listeners: {
 						selectionchange: function (grid, record, index, opts) {
-							if (Ext.getCmp('pluginGrid').getSelectionModel().hasSelection()) {
+							if (Ext.getCmp('pluginGrid').getSelectionModel().hasSelection()
+							   	&& record[0].data.pluginId !== undefined)
+							   {
 								console.log(record);
 								if (record[0].data.pluginRuntimeState === 'Active') {
 									Ext.getCmp('pluginGrid-tools-start').disable();
