@@ -289,10 +289,15 @@ tinymce.PluginManager.add('image', function(editor) {
 		// General settings shared between simple and advanced dialogs
 		var generalFormItems = [
 			{
+				type: 'panel',
+				html: '<div style="background: white;">It is preferable to add <span style="font-weight: bold;">Images</span> to an entry using <span style="font-weight: bold;">Details->Media</span> form.<br>This will embed the image in the description.</div>'
+			},				
+			{
 				name: 'src',
 				type: 'filepicker',
 				filetype: 'image',
-				label: 'Source',
+				label: 'Source URL',
+				placeholder: 'http://media.com/image.png',
 				autofocus: true,
 				onchange: srcChange
 			},
@@ -360,7 +365,7 @@ tinymce.PluginManager.add('image', function(editor) {
 				title: 'Insert/edit image',
 				data: data,
 				bodyType: 'tabpanel',
-				body: [
+				body: [				
 					{
 						title: 'General',
 						type: 'form',
