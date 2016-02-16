@@ -707,6 +707,12 @@
 					autoLoad: true,
 					pageSize: 100,
 					remoteSort: true,
+					sorters: [
+						new Ext.util.Sorter({
+							property: 'eventDts',
+							direction: 'DESC'
+						})
+					],
 					proxy: CoreUtil.pagingProxy({
 							type: 'ajax',
 							url: '/openstorefront/api/v1/service/application/logrecords',
