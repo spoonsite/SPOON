@@ -259,7 +259,7 @@ tinymce.PluginManager.add('link', function(editor) {
 			body: [
 				{
 					type: 'panel',
-					html: 'It is preferable to add External Links to an entry using Details->External Links form.<br>This will create an embedded link.'
+					html: '<div style="background: white;">It is preferable to add <span style="font-weight: bold;">External Links</span> to an entry using <span style="font-weight: bold;">Details->External Links</span> form.<br>This will create an embedded link.</div>'
 				},
 				{
 					name: 'href',

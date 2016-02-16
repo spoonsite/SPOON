@@ -21,6 +21,7 @@ Ext.define('OSF.component.MediaViewerWindow', {
 	frame: false,
 	header: false,
 	maximized: true,
+	scrollable: true,
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -228,7 +229,7 @@ Ext.define('OSF.component.MediaViewerWindow', {
 		
 		switch (messageWindow.media.mediaTypeCode) {
 			case 'IMG':
-				messageWindow.mediaPanel.setHtml('<img src="' + messageWindow.media.link + '" style="max-height:100%; max-width: 100%; width:auto; height:auto;" />');
+				messageWindow.mediaPanel.setHtml('<img src="' + messageWindow.media.link + '" style="max-height:100%; max-width: 100%; width:auto;" />');
 			break;
 			case 'AUD':
 				messageWindow.mediaPanel.setHtml('<div style="width: 400px; background: rgba(255,255,255,.7); padding: 20px; text-align: center;"><i class="fa fa-file-sound-o" style="font-size: 11em;"></i><br><audio style="width: 100%" controls><source src="' + messageWindow.media.link + '" type="' + messageWindow.media.mimeType + '" ><i class="fa fa-5x fa-file-sound-o"></i></audio></div>');
