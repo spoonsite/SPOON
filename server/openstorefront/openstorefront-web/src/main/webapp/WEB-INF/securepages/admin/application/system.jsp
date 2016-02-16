@@ -1216,6 +1216,10 @@
 				});
 
 
+				var actionAddPlugin = function actionAddPlugin(record) {
+					addPluginWindow.show();
+				};
+
 				var actionStartPlugin = function actionStartPlugin(record) {
 					var url = '/openstorefront/api/v1/resource/plugins/';
 					url += record.data.pluginId + '/start';
@@ -1282,6 +1286,78 @@
 					});
 
 				};
+
+
+				var addPluginWindow = Ext.create('Ext.window.Window', {
+					id: 'addPluginWindow',
+					title: 'Add Plugin',
+					iconCls: 'fa fa-info-circle',
+					width: '40%',
+					height: 175,
+					y: 60,
+					modal: true,
+					maximizable: false,
+					bodyStyle : 'padding: 10px;',
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							id: 'pluginUploadForm',
+							layout: 'vbox',
+							defaults: {
+								labelAlign: 'top',
+								width: '100%'
+							},
+							items: [
+								{
+									xtype: 'filefield',
+									name: 'uploadFile',
+									width: '100%',
+									allowBlank: false,
+									fieldLabel: 'Choose a OSGi jar/war to upload <span class="field-required" />',
+									buttonText: 'Select File...'
+								}
+							]
+						}
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Upload Plugin',
+									iconCls: 'fa fa-save',
+									formBind: true,	
+									handler: function() {
+										var form = Ext.getCmp('pluginUploadForm');
+										if (form.isValid()) {
+											form.submit({
+												url: '/openstorefront/Upload.action?UploadPlugin',
+												waitMsg: 'Uploading plugin...',
+												success: function () {
+													Ext.toast('Successfully uploaded plugin.', '', 'tr');
+													Ext.Msg.alert('Success', 'The plugin will install at the run of the deployment job. Click the refresh button to confirm deployment.');
+													addPluginWindow.hide();
+												}
+											});
+										}
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Cancel',
+									iconCls: 'fa fa-close',
+									handler: function () {
+										Ext.getCmp('addPluginWindow').hide();
+									}
+								}
+							]
+						}
+					]
+				});
 
 				var searchControlPanel = Ext.create('Ext.grid.Panel', {
 					title: 'Search Control',
