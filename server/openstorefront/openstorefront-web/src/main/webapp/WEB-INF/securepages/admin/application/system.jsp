@@ -1173,7 +1173,8 @@
 									iconCls: 'fa fa-2x fa-play',
 									disabled: true,
 									handler: function () {
-										actionStartPlugin();
+										var record = Ext.getCmp('pluginGrid').getSelection()[0];
+										actionStartPlugin(record);
 									}
 								},
 								{
@@ -1183,7 +1184,8 @@
 									iconCls: 'fa fa-2x fa-stop',
 									disabled: true,
 									handler: function () {
-										actionStopPlugin();
+										var record = Ext.getCmp('pluginGrid').getSelection()[0];
+										actionStopPlugin(record);
 									}
 								},
 								{
@@ -1193,7 +1195,8 @@
 									iconCls: 'fa fa-2x fa-download',
 									disabled: true,
 									handler: function () {
-										actionDownloadPlugin();
+										var record = Ext.getCmp('pluginGrid').getSelection()[0];
+										actionDownloadPlugin(record);
 									}
 								},
 								{
@@ -1203,7 +1206,8 @@
 									iconCls: 'fa fa-2x fa-close',
 									disabled: true,
 									handler: function () {
-										actionUninstallPlugin();
+										var record = Ext.getCmp('pluginGrid').getSelection()[0];
+										actionUninstallPlugin(record);
 									}
 								}
 							]
