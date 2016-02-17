@@ -220,7 +220,6 @@
 											toggleGroup: 'auto',
 											id: 'autoYes',
 											text: 'Yes',
-											pressed: true,
 											name: 'autoUpdate',
 											handler: function () {
 												Ext.TaskManager.start(systemDataUpdater);
@@ -232,6 +231,7 @@
 											toggleGroup: 'auto',
 											id: 'autoNo',
 											text: 'No',
+											pressed: true,
 											name: 'autoUpdate',
 											handler: function () {
 												Ext.TaskManager.stop(systemDataUpdater);
@@ -1557,16 +1557,13 @@
 			};
 			actionLoadSystemData();
 
-				var systemDataUpdater = {
-					id: 'systemDataUpdater',
-					run: function () {
-						actionLoadSystemData(update = true)
-					},
-					interval: 1000
-				}
-
-
-				Ext.TaskManager.start(systemDataUpdater);
+			var systemDataUpdater = {
+				id: 'systemDataUpdater',
+				run: function () {
+					actionLoadSystemData(update = true)
+				},
+				interval: 2000
+			};
 
 
 			});
