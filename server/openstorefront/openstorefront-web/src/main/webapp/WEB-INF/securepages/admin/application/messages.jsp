@@ -26,6 +26,11 @@
 					],	
 					fields: [
 						{
+							name: 'createDts',
+							type:	'date',
+							dateFormat: 'c'
+						},						
+						{
 							name: 'updateDts',
 							type:	'date',
 							dateFormat: 'c'
@@ -86,7 +91,8 @@
 							}
 						},
 						{text: 'Status', dataIndex: 'activeStatus', width: 75},
-						{text: 'Update Date', dataIndex: 'updateDts', width: 125, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
+						{text: 'Create Date', dataIndex: 'createDts', width: 125, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
+						{text: 'Update Date', dataIndex: 'updateDts', width: 125, xtype: 'datecolumn', format: 'm/d/y H:i:s'},						
 						{text: 'Subject', dataIndex: 'subject', width: 150},
 						{text: 'Sent Email Address', dataIndex: 'sentEmailAddress', width: 200, flex: 1}
 					],
