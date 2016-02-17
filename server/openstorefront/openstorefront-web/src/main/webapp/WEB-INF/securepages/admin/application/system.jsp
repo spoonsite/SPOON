@@ -1456,6 +1456,28 @@
 											text: 'Send Recent Changes Email',
 											iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',
 											handler: function() {
+												var form = Ext.getCmp('recentChangeForm');
+												if (form.isValid()) {
+													data = {};
+													data.emailAddress = Ext.getCmp('toEmail').value;
+													data.lastRunDts = Ext.Date.format(Ext.getCmp('sinceDate').value,'m/d/Y');
+													// For some reason this uses URL parameters
+													var url = '/openstorefront/api/v1/service/notification/recent-changes';
+													url += '?emailAddress=' + data.emailAddress;
+													url += '&lastRunDts=' + data.lastRunDts;
+													Ext.Ajax.request({
+														url: url,
+														method: 'POST',
+														success: function(response, opt){
+															Ext.toast('Successfully sent request', '', 'tr');
+														},
+														failure: function(response, opt) {
+															Ext.toast('Email request failed', '', 'tr');
+														}
+
+
+													});
+												}
 											}
 										}
 									]
