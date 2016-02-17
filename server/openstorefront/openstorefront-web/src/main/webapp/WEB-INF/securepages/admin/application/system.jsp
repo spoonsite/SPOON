@@ -1412,6 +1412,25 @@
 				});
 
 
+				var actionLoadRecentChangesInfo = function actionLoadRecentChangesInfo() {
+					Ext.Ajax.request({
+						url: '/openstorefront/api/v1/service/notification/recent-changes/status',
+						success: function(response, opt){
+							var data = Ext.decode(response.responseText);
+							var nextAutoText = '<ul class="list-group">';
+							nextAutoText += '<li class="list-group-item">Last Automated Email Sent: <span class="badge">',
+							nextAutoText += Ext.Date.format(new Date(data.lastSentDts), 'm/d/y H:i:s A ');
+							nextAutoText += '</span></li>';
+							nextAutoText += '<li class="list-group-item">Next Automated Email: <span class="badge">',
+							nextAutoText += Ext.Date.format(new Date(data.nextSendDts), 'm/d/y H:i:s A ');
+							nextAutoText += '</span></li>';
+							Ext.getCmp('emailSendDates').setText(nextAutoText, false);
+						}
+					});
+				};
+
+				actionLoadRecentChangesInfo();
+
 
 				var systemMainPanel = Ext.create('Ext.tab.Panel', {
 					title: 'System Management <i class="fa fa-question-circle"  data-qtip="View the system status and manage system properties"></i>',
