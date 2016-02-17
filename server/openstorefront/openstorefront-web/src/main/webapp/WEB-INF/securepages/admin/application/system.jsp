@@ -1406,9 +1406,63 @@
 					]
 				});
 
-				var recentChangesPanel = Ext.create('Ext.grid.Panel', {
+				var recentChangesPanel = Ext.create('Ext.panel.Panel', {
 					title: 'Recent Changes E-mail',
-					id: 'recentChangesPanel'
+					id: 'recentChangesPanel',
+					items: [
+						{
+							xtype: 'form',
+							id: 'recentChangeForm',
+							padding: 20,
+							layout: 'vbox',
+							width: '30%',
+							defaults: {
+								labelAlign: 'top',
+								width: '100%',
+								padding: '20px',
+								style: 'font-weight: bold'
+							},
+							items: [
+								{ 
+									xtype: 'label',
+									id: 'emailSendDates',
+									text: 'E-mail Dates:',
+									style: 'font-weight: normal'
+								},
+								{
+									xtype: 'datefield',
+									id: 'sinceDate',
+									fieldLabel: 'Show Changes Since Date',
+									allowBlank: false,
+									maxValue: new Date(),
+								},
+								{
+									xtype: 'textfield',
+									id: 'toEmail',
+									vtype: 'email',
+									fieldLabel: 'Send to this Email: (leave blank to send to all users who have requested to be notified)',
+									allowBlank: true
+								},
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									style: 'padding: 20px;',
+									items: [
+										{
+											xtype: 'button',
+											scale: 'medium',
+											text: 'Send Recent Changes Email',
+											iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',
+											handler: function() {
+											}
+										}
+									]
+								}
+							]
+						}
+					]
 				});
 
 
