@@ -339,8 +339,8 @@ Ext.onReady(function() {
 						}
 					}
 				});
-			} else {
-				if (response.responseText.indexOf('login.jsp') !== -1) {
+			} else {				
+				if (response.responseText && response.responseText.indexOf('login.jsp') !== -1) {
 					window.parent.location.href = "/openstorefront/login.jsp?gotoPage="+window.parent.location.pathname;
 				} else {				
 					Ext.toast('Unable to connect to server or there was internal server error.' + requestUrl, 'Connection Error');
