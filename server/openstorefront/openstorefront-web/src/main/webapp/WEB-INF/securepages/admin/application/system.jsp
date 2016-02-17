@@ -74,7 +74,7 @@
 
 				var memoryPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
-						padding: '10px',
+						padding: '10px'
 					},
 					items: [
 						{ xtype: 'panel', layout: 'hbox', items: [
@@ -123,7 +123,6 @@
 					}
 				});
 
-
 				var memoryPoolsGrid = Ext.create('Ext.grid.Panel', {
 					id: 'memoryPoolsGrid',
 					style: {
@@ -170,14 +169,14 @@
 									xtype: 'panel',
 									id: 'systemDetailStats',
 									tpl: tplSystemDetailStats,
-									flex: 1,
+									flex: 1
 								},
 								{
 									xtype: 'panel',
 									id: 'systemDetailStats2',
 									tpl: tplSystemDetailStats2,
-									flex: 1,
-								},
+									flex: 1
+								}
 							]
 						},
 						memoryPanel,
@@ -190,7 +189,7 @@
 							},
 							id: 'garbageCollectionPanel',
 							tpl: tplGarbageCollection,
-							flex: 1,
+							flex: 1
 						}
 					],
 					dockedItems: [
@@ -240,7 +239,7 @@
 									]
 								}
 							]
-						},
+						}
 					]
 				});
 
@@ -512,7 +511,7 @@
 							xtype: 'datecolumn',
 							format: 'm/d/y H:i:s',
 							flex: 2
-						},
+						}
 					],
 					listeners: {
 						selectionchange: function (grid, record, index, opts) {
@@ -550,8 +549,7 @@
 										var record = Ext.getCmp('appStatePropGrid').getSelection()[0];
 										actionEditStateProp(record);
 									}
-								},
-
+								}
 							]
 						}
 				]
@@ -597,8 +595,7 @@
 									style: {
 										paddingTop: '20px'
 									}
-								},
-
+								}
 							],
 							dockedItems: [
 								{
@@ -671,7 +668,7 @@
 					],
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/application/configproperties',
+						url: '/openstorefront/api/v1/service/application/configproperties'
 					}
 				});
 
@@ -692,7 +689,7 @@
 									handler: function () {
 										sysConfigPropStore.load();
 									}
-								},
+								}
 							]
 						}
 					],
@@ -757,7 +754,7 @@
 							}
 						},
 						{text: 'Logger Name', dataIndex: 'loggerName', flex: 4, cellWrap: true},
-						{text: 'Message', dataIndex: 'message', flex: 9, cellWrap: true},
+						{text: 'Message', dataIndex: 'message', flex: 9, cellWrap: true}
 					],
 					dockedItems: [
 						{
@@ -863,7 +860,7 @@
 					proxy: {
 						type: 'ajax',
 						url: '/openstorefront/api/v1/service/application/loggers'
-					},
+					}
 				});
 
 				var viewLogRecordWindow = Ext.create('Ext.window.Window', {
@@ -920,7 +917,7 @@
 				var actionViewLogDetail = function actionViewLogRecord(record) {
 					Ext.getCmp('logRecordViewPanel').update(record);
 					viewLogRecordWindow.show();
-				}
+				};
 
 				var loggerGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Logger Levels',
@@ -958,7 +955,7 @@
 										var record = Ext.getCmp('loggerGrid').getSelection()[0];
 										actionEditLogger(record);
 									}
-								},
+								}
 							]
 						}
 					],
@@ -1023,10 +1020,10 @@
 											{level: 'FINE', display: 'FINE'},
 											{level: 'FINER', display: 'FINER'},
 											{level: 'FINEST', display: 'FINEST'},
-											{level: 'ALL', display: 'ALL'},
+											{level: 'ALL', display: 'ALL'}
 										]
 									}
-								},
+								}
 							],
 							dockedItems: [
 								{
@@ -1114,7 +1111,7 @@
 						{text: 'Version', dataIndex: 'version', flex: 1},
 						{text: 'Update Date', dataIndex: 'updateDts', flex: 1.5,
 							xtype: 'datecolumn',
-							format: 'm/d/y H:i:s:u',
+							format: 'm/d/y H:i:s:u'
 						},
 						{text: 'State', dataIndex: 'pluginRuntimeState', flex: 1,
 							renderer: function(value, metadata, record) {
@@ -1232,9 +1229,8 @@
 								}
 							]
 						}
-					],
+					]
 				});
-
 
 				var actionAddPlugin = function actionAddPlugin(record) {
 					addPluginWindow.show();
@@ -1272,7 +1268,6 @@
 					});
 				};
 
-
 				var actionDownloadPlugin = function actionDownloadPlugin(record) {
 					var url = '/openstorefront/api/v1/resource/plugins/';
 					url += record.data.pluginId + '/download';
@@ -1288,7 +1283,6 @@
 						document.body.removeChild(link);
 					}
 				};
-
 
 				var actionUninstallPlugin = function actionUninstallPlugin(record) {
 					var url = '/openstorefront/api/v1/resource/plugins/';
@@ -1306,7 +1300,6 @@
 					});
 
 				};
-
 
 				var addPluginWindow = Ext.create('Ext.window.Window', {
 					id: 'addPluginWindow',
@@ -1434,7 +1427,7 @@
 									id: 'sinceDate',
 									fieldLabel: 'Show Changes Since Date',
 									allowBlank: false,
-									maxValue: new Date(),
+									maxValue: new Date()
 								},
 								{
 									xtype: 'textfield',
@@ -1442,7 +1435,7 @@
 									vtype: 'email',
 									fieldLabel: 'Send to this Email: (leave blank to send to all users who have requested to be notified)',
 									allowBlank: true
-								},
+								}
 							],
 							dockedItems: [
 								{
@@ -1487,7 +1480,6 @@
 					]
 				});
 
-
 				var actionLoadRecentChangesInfo = function actionLoadRecentChangesInfo() {
 					Ext.Ajax.request({
 						url: '/openstorefront/api/v1/service/notification/recent-changes/status',
@@ -1506,7 +1498,6 @@
 				};
 
 				actionLoadRecentChangesInfo();
-
 
 				var systemMainPanel = Ext.create('Ext.tab.Panel', {
 					title: 'System Management <i class="fa fa-question-circle"  data-qtip="View the system status and manage system properties"></i>',
@@ -1529,45 +1520,45 @@
 					items: [systemMainPanel]
 				});
 
-			var actionLoadSystemData = function (update) {
+				var actionLoadSystemData = function (update) {
 
-				if (update) {
-				} else {
-					statusStats.setLoading(true);
-				}
-
-				Ext.Ajax.request({
-					url: '/openstorefront/api/v1/service/application/status',
-					success: function(response, opt){
-						var data = Ext.decode(response.responseText);
-						Ext.getCmp('systemDetailStats').update(data);
-						Ext.getCmp('systemDetailStats2').update(data);
-						Ext.getCmp('garbageCollectionPanel').update(data);
-
-						Ext.getCmp('heapMemoryBar').setValue(data.heapMemoryStatus.usedKb / data.heapMemoryStatus.maxKb);
-						Ext.getCmp('nonHeapMemoryBar').setValue(data.nonHeapMemoryStatus.usedKb / data.nonHeapMemoryStatus.commitedKb);
-						memoryPoolStore.load();
-
-						statusStats.setLoading(false);
-					},
-					failure: function(response, opt){
-						statusStats.setLoading(false);
+					if (update) {
+					} else {
+						statusStats.setLoading(true);
 					}
-				});
-			};
-			actionLoadSystemData();
 
-			var systemDataUpdater = {
-				id: 'systemDataUpdater',
-				run: function () {
-					actionLoadSystemData(update = true)
-				},
-				interval: 2000
-			};
+					Ext.Ajax.request({
+						url: '/openstorefront/api/v1/service/application/status',
+						success: function(response, opt){
+							var data = Ext.decode(response.responseText);
+							Ext.getCmp('systemDetailStats').update(data);
+							Ext.getCmp('systemDetailStats2').update(data);
+							Ext.getCmp('garbageCollectionPanel').update(data);
+
+							Ext.getCmp('heapMemoryBar').setValue(data.heapMemoryStatus.usedKb / data.heapMemoryStatus.maxKb);
+							Ext.getCmp('nonHeapMemoryBar').setValue(data.nonHeapMemoryStatus.usedKb / data.nonHeapMemoryStatus.commitedKb);
+							memoryPoolStore.load();
+
+							statusStats.setLoading(false);
+						},
+						failure: function(response, opt){
+							statusStats.setLoading(false);
+						}
+					});
+				};
+				actionLoadSystemData();
+
+				var systemDataUpdater = {
+					id: 'systemDataUpdater',
+					run: function () {
+						actionLoadSystemData(update=true);
+					},
+					interval: 2000
+				};
 
 
 			});
 
-		</script>
-    </stripes:layout-component>
+			</script>
+			</stripes:layout-component>
 </stripes:layout-render>
