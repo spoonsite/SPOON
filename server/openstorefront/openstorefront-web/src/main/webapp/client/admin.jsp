@@ -56,7 +56,7 @@ limitations under the License.
 			pageMap['Branding'] = 'Router.action?page=admin/application/branding.jsp';
 			pageMap['Jobs'] = 'Router.action?page=admin/application/jobs.jsp';
 			pageMap['Reports'] = 'Router.action?page=shared/reports.jsp';
-			pageMap['System'] = '/openstorefront/admin?tool=System';
+			pageMap['System'] = 'Router.action?page=admin/application/system.jsp';
 			pageMap['Tracking'] = 'Router.action?page=admin/application/tracking.jsp';
 			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
 			
