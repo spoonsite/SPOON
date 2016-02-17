@@ -18,7 +18,17 @@
 						'alertId',
 						'emailAddresses',
 						'userDataAlertOption',
-						'systemErrorAlertOption'
+						'systemErrorAlertOption',
+						{
+							name: 'createDts',
+							type: 'date',
+							dateFormat: 'c'
+						},
+						{
+							name: 'updateDts',
+							type: 'date',
+							dateFormat: 'c'
+						}						
 					],
 					proxy: {
 						id: 'alertStoreProxy',
@@ -86,8 +96,19 @@
 									return listOfOptions;
 								}
 							}
-						}
-
+						},
+						{
+							text: 'Create User', dataIndex: 'createUser', width: 150, hidden: true
+						},				
+						{
+							text: 'Create Date', dataIndex: 'createDts', xtype: 'datecolumn', format: 'm/d/y H:i:s', width: 150, hidden: true
+						},						
+						{
+							text: 'Update User', dataIndex: 'updateUser', width: 150, hidden: true
+						},
+						{
+							text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format: 'm/d/y H:i:s', width: 150, hidden: true
+						}						
 					],
 					dockedItems: [
 						{
