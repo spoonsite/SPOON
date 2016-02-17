@@ -1379,9 +1379,31 @@
 					]
 				});
 
-				var searchControlPanel = Ext.create('Ext.grid.Panel', {
+				var searchControlPanel = Ext.create('Ext.panel.Panel', {
 					title: 'Search Control',
-					id: 'searchControlPanel'
+					id: 'searchControlPanel',
+					style: 'padding: 10px',
+					items: [
+						{
+							xtype: 'button',
+							scale: 'medium',
+							iconCls: 'fa fa-2x fa-refresh',
+							text: 'Re-Index Listings',
+							tooltip: 'This will re-index the listings. The search results will be affected while running.',
+							handler: function () {
+								Ext.Ajax.request({
+									url: '/openstorefront/api/v1/service/search/resetSolr',
+									method: 'POST',
+									success: function(response, opt) {
+										Ext.toast('Successfully sent re-index request', '', 'tr');
+									},
+									failure: function(response, opt) {
+										Ext.toast('Failed to send re-index request', '', 'tr');
+									}
+								});
+							}
+						}
+					]
 				});
 
 				var recentChangesPanel = Ext.create('Ext.grid.Panel', {
