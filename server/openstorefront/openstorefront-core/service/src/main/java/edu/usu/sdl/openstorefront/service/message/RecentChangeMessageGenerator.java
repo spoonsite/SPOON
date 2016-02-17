@@ -98,7 +98,7 @@ public class RecentChangeMessageGenerator
 		}
 
 		if (changes == false) {
-			message.append("There has been no recent changes.");
+			message.append("No recent changes have occured.");
 		}
 
 		return message.toString();
