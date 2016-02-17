@@ -1472,6 +1472,9 @@
 
 													});
 												}
+												else {
+													Ext.Msg.alert('Errors', 'There are errors in the form. Please fill the form correctly.');
+												}
 											}
 										}
 									]
