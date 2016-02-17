@@ -1432,9 +1432,10 @@
 								{
 									xtype: 'textfield',
 									id: 'toEmail',
-									vtype: 'email',
 									fieldLabel: 'Send to this Email: (leave blank to send to all users who have requested to be notified)',
-									allowBlank: true
+									allowBlank: true,
+									maxLength: 100,
+									vtype: 'email',
 								}
 							],
 							dockedItems: [
