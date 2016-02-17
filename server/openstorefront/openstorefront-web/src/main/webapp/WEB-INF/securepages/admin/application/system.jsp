@@ -745,7 +745,17 @@
 							format: 'm/d/y H:i:s:u',
 							flex: 1.5
 						},
-						{text: 'Level', dataIndex: 'level', flex: 1, cellWrap: true},
+						{text: 'Level', dataIndex: 'level', flex: 1, cellWrap: true,
+							renderer: function(value, metadata, record) {
+								if (value === 'FINE') 
+									metadata.tdCls = 'alert-success';
+								else if (value === 'WARNING')
+									metadata.tdCls = 'alert-warning';
+								else if (value === 'SEVERE')
+									metadata.tdCls = 'alert-danger';
+								return value;
+							}
+						},
 						{text: 'Logger Name', dataIndex: 'loggerName', flex: 4, cellWrap: true},
 						{text: 'Message', dataIndex: 'message', flex: 9, cellWrap: true},
 					],
@@ -1106,7 +1116,15 @@
 							xtype: 'datecolumn',
 							format: 'm/d/y H:i:s:u',
 						},
-						{text: 'State', dataIndex: 'pluginRuntimeState', flex: 1},
+						{text: 'State', dataIndex: 'pluginRuntimeState', flex: 1,
+							renderer: function(value, metadata, record) {
+								if (value === 'Active') 
+									metadata.tdCls = 'alert-success';
+								else if (value === 'Resolved')
+									metadata.tdCls = 'alert-warning';
+								return value;
+							}
+						},
 						{text: 'Runtime ID', dataIndex: 'runtimeId', flex: 1},
 						{text: 'Core Module', dataIndex: 'coreModule', flex: 1},
 						{text: 'Actual Filename', dataIndex: 'actualFilename', flex: 2},
