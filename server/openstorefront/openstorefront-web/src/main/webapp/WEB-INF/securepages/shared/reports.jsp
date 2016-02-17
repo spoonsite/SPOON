@@ -384,20 +384,13 @@
 							removeBlankDataItems: true,
 							form: Ext.getCmp('scheduleReportForm'),
 							success: function (response, opts) {
-								Ext.toast('Saved Successfully', '', 'tr');
+								Ext.toast('Submitted report request.', '', 'tr');
 
-								Ext.getCmp('scheduleReportForm').setLoading(false);
-								Ext.getCmp('scheduleReportForm').destroy();
-
-								Ext.getCmp('scheduleReportWin').destroy();
-								Ext.getCmp('scheduleReportsGrid').getStore().load();
-
-								Ext.getCmp('reportTabPanel').setActiveTab(1);
+								Ext.getCmp('scheduleReportWin').close();
+								historyRefreshGrid();
 							},
 							failure: function (response, opts) {
-
-								Ext.toast('Failed to Save', '', 'tr');
-								Ext.getCmp('scheduleReportForm').setLoading(false);
+								Ext.toast('Failed to submit report generation request.', '', 'tr');
 							}
 						});
 					};
