@@ -169,7 +169,7 @@ limitations under the License.
 														if (query && !Ext.isEmpty(query)) {
 															var searchRequest = {
 																type: 'SIMPLE',
-																query: query
+																query: CoreUtil.searchQueryAdjustment(query)
 															}
 															CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 														}
@@ -188,10 +188,10 @@ limitations under the License.
 											handler: function(){
 											
 												var query = this.up('panel').getComponent('searchText').getValue();
-												if (query && !Ext.isEmpty(query)) {
+												if (query && !Ext.isEmpty(query)) {																										
 													var searchRequest = {
 														type: 'SIMPLE',
-														query: query
+														query: CoreUtil.searchQueryAdjustment(query)
 													}
 													CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 												} else {

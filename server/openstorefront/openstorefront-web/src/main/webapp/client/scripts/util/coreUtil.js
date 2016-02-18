@@ -388,6 +388,17 @@ var CoreUtil = {
 		};
 		
 		return defaultConfig;
+	},
+	/**
+	 * Defaults the search to wildcard
+	 */
+	searchQueryAdjustment: function(query) {
+		if (query && !Ext.isEmpty(query)) {	
+			if (query.indexOf('"') === -1) {
+				query += "*";
+			}
+		}
+		return query;
 	}
 
 };
