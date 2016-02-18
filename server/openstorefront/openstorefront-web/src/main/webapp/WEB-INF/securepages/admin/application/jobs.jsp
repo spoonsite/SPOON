@@ -43,11 +43,12 @@
 							text: 'Status', 
 							dataIndex: 'status',
 							flex: 1,
-							renderer: function(value) {
+							renderer: function(value, metadata, record) {
 								if (value === 'NORMAL')
-									return '<span style="color: green;">NORMAL</span>';
-								else
-									return '<span style="color: #c09853;">PAUSED</span>';
+									metadata.tdCls = 'alert-success';
+								else if (value === 'PAUSED')
+									metadata.tdCls = 'alert-warning';
+								return value;
 							}
 						},
 						{
