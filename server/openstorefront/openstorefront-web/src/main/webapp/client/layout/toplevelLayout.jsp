@@ -156,7 +156,7 @@ limitations under the License.
 				  });
 				  socket.on('WATCH', function (args) {
 
-					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'watch', 'msg': args.message + '<i>View the changes <a href="single?id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
+					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'watch', 'msg': args.message + '<i>View the changes <a href="view.jsp?fullPage=true&id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
 					handleAlert(alert, args);
 				  });
 				  socket.on('IMPORT', function (args) {					

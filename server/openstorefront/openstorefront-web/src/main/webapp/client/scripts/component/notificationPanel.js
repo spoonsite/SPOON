@@ -120,7 +120,7 @@ Ext.define('OSF.component.NotificationPanel', {
 					renderer: function (value, metadata, record) {
 						switch (record.get('eventType')) {
 							case 'WATCH':
-								return value + '<i>View the changes <a href="../single?id=' + record.get('entityId') + '"><strong>here</strong></a>.</i>';
+								return value + '<i>View the changes <a href="view.jsp?fullPage=true&id=' + record.get('entityId') + '"><strong>here</strong></a>.</i>';
 								break;
 							case 'REPORT':
 								return value + '<i>View/Download the report <a href="usertools.jsp?dc=' + Math.random() + '#Reports"><strong>here</strong></a></i>.';

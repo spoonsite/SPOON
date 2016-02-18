@@ -87,10 +87,22 @@ Ext.define('OSF.component.template.Resources', {
 	updateHandler: function(entry){
 		if (!entry.resources || entry.resources.length === 0) {
 			this.setHidden(true);
-		}		
-		Ext.Array.sort(entry.resources, function(a, b){
-			return a.resourceTypeDesc.localeCompare(b.resourceTypeDesc);	
-		});		
+		} else {
+			Ext.Array.sort(entry.resources, function(a, b){
+				return a.resourceTypeDesc.localeCompare(b.resourceTypeDesc);	
+			});	
+		
+			var updated = false;
+			Ext.Array.each(entry.resources, function(resource){
+				if (resource.updateDts > entry.lastViewedDts) {
+					updated = true;
+				}	
+			}, this);
+			if (updated) {
+				this.addBodyCls('watch-detail-update');
+			}				
+		}
+		
 		return entry;
 	}	
 	
@@ -125,16 +137,28 @@ Ext.define('OSF.component.template.Contacts', {
 	updateHandler: function(entry){
 		if (!entry.contacts || entry.contacts.length === 0) {
 			this.setHidden(true);
-		}
-		Ext.Array.each(entry.contacts, function(contact){
-			if (!contact.phone){
-				contact.phone = null;
-			}
-		});
+		} else {
+			Ext.Array.each(entry.contacts, function(contact){
+				if (!contact.phone){
+					contact.phone = null;
+				}
+			});
 		
-		Ext.Array.sort(entry.contacts, function(a, b){
-			return a.name.localeCompare(b.name);	
-		});				
+			Ext.Array.sort(entry.contacts, function(a, b){
+				return a.name.localeCompare(b.name);	
+			});		
+
+			var updated = false;
+			Ext.Array.each(entry.contacts, function(item){
+				if (item.updateDts > entry.lastViewedDts) {
+					updated = true;
+				}	
+			}, this);
+			if (updated) {
+				this.addBodyCls('watch-detail-update');
+			}				
+			
+		}		
 		return entry;
 	}	
 	
@@ -179,6 +203,7 @@ Ext.define('OSF.component.template.Vitals', {
 					highlightStyle: item.highlightStyle,
 					type: item.type,
 					code: item.code,
+					updateDts: item.updateDts,
 					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '') : item.codeLongDescription
 				});				
 			});
@@ -188,7 +213,8 @@ Ext.define('OSF.component.template.Vitals', {
 			Ext.Array.each(entry.metadata, function(item){
 				vitals.push({
 					label: item.label,
-					value: item.value
+					value: item.value,
+					updateDts: item.updateDts
 				});			
 			});
 		}
@@ -198,6 +224,15 @@ Ext.define('OSF.component.template.Vitals', {
 		});
 		entry.vitals = vitals;
 		
+		var updated = false;
+		Ext.Array.each(entry.vitals, function(item){
+			if (item.updateDts && item.updateDts > entry.lastViewedDts) {
+				updated = true;
+			}	
+		}, this);	
+		if (updated) {
+			this.addBodyCls('watch-detail-update');
+		}		
 		return entry;
 	}	
 	
@@ -231,10 +266,21 @@ Ext.define('OSF.component.template.Dependencies', {
 	updateHandler: function(entry){
 		if (!entry.dependencies || entry.dependencies.length === 0) {
 			this.setHidden(true);
-		}
-		Ext.Array.sort(entry.dependencies, function(a, b){
-			return a.dependencyName.localeCompare(b.dependencyName);	
-		});				
+		} else {
+			Ext.Array.sort(entry.dependencies, function(a, b){
+				return a.dependencyName.localeCompare(b.dependencyName);	
+			});	
+			
+			var updated = false;
+			Ext.Array.each(entry.dependencies, function(item){
+				if (item.updateDts > entry.lastViewedDts) {
+					updated = true;
+				}	
+			}, this);
+			if (updated) {
+				this.addBodyCls('watch-detail-update');
+			}			
+		}		
 		return entry;
 	}	
 	
@@ -281,6 +327,7 @@ Ext.define('OSF.component.template.DI2EEvalLevel', {
 		if (!entry.attributes) {
 			this.setHidden(true);
 		} else {
+			var updated = false;
 			Ext.Array.each(entry.attributes, function(item){
 				if (item.type === 'DI2ELEVEL') {
 					evalLevels.level = {};
@@ -289,6 +336,9 @@ Ext.define('OSF.component.template.DI2EEvalLevel', {
 					evalLevels.level.label = item.codeDescription; 
 					evalLevels.level.description = item.codeLongDescription;
 					evalLevels.level.highlightStyle = item.highlightStyle;
+					if (item.updateDts > entry.lastViewedDts) {
+						updated = true;
+					}
 				} else if (item.type === 'DI2ESTATE') {
 					evalLevels.state = {};
 					evalLevels.state.typeDesciption = item.typeDescription; 
@@ -296,6 +346,9 @@ Ext.define('OSF.component.template.DI2EEvalLevel', {
 					evalLevels.state.label = item.codeDescription; 
 					evalLevels.state.description = item.codeLongDescription;
 					evalLevels.state.highlightStyle = item.highlightStyle;
+					if (item.updateDts > entry.lastViewedDts) {
+						updated = true;
+					}					
 				} else if (item.type === 'DI2EINTENT') {
 					evalLevels.intent = {};
 					evalLevels.intent.typeDesciption = item.typeDescription; 
@@ -303,11 +356,18 @@ Ext.define('OSF.component.template.DI2EEvalLevel', {
 					evalLevels.intent.label = item.codeDescription; 
 					evalLevels.intent.description = item.codeLongDescription; 
 					evalLevels.intent.highlightStyle = item.highlightStyle;
+					if (item.updateDts > entry.lastViewedDts) {
+						updated = true;
+					}					
 				}
 			});			
+			
+			if (updated) {
+				this.addBodyCls('watch-detail-update');
+			}	
+			
 		}
-		entry.evalLevels = evalLevels;
-				
+		entry.evalLevels = evalLevels;					
 		return entry;
 	}	
 	
@@ -361,6 +421,16 @@ Ext.define('OSF.component.template.EvaluationSummary', {
 			Ext.Array.sort(entry.evaluation.evaluationSections, function(a, b){
 				return a.name.localeCompare(b.name);	
 			});
+			
+			var updated = false;
+			Ext.Array.each(entry.evaluation.evaluationSections, function(item){
+				if (item.updateDts > entry.lastViewedDts) {
+					updated = true;
+				}	
+			}, this);
+			if (updated) {
+				this.addBodyCls('watch-detail-update');
+			}			
 			return entry;
 		}
 	}	
@@ -406,6 +476,16 @@ Ext.define('OSF.component.template.Media', {
 			this.setHidden(true);
 		} else {
 			MediaViewer.mediaList = entry.componentMedia;
+			
+			var updated = false;
+			Ext.Array.each(entry.componentMedia, function(item){
+				if (item.updateDts > entry.lastViewedDts) {
+					updated = true;
+				}	
+			}, this);
+			if (updated) {
+				this.addBodyCls('watch-detail-update');
+			}			
 		}
 		return entry;
 	}	
@@ -469,7 +549,17 @@ Ext.define('OSF.component.template.Relationships', {
 									
 			relationshipPanel.tabPanel.getComponent('relationTable').update(entry);
 			relationshipPanel.tabPanel.getComponent('visual').setHeight(entry.relationships.length*80);
-			relationshipPanel.tabPanel.getComponent('visual').updateDiagramData(entry);			
+			relationshipPanel.tabPanel.getComponent('visual').updateDiagramData(entry);	
+			
+			var updated = false;
+			Ext.Array.each(entry.relationships, function(item){
+				if (item.updateDts > entry.lastViewedDts) {
+					updated = true;
+				}	
+			}, this);
+			if (updated) {
+				this.addBodyCls('watch-detail-update');
+			}			
 		}		
 				
 		return entry;

@@ -189,9 +189,45 @@ limitations under the License.
 								tooltip: 'Watch',
 								scale: 'large',
 								margin: '0 10 0 0',
-								handler: function(){									
+								handler: function(){
+									var watch = {
+											componentId: componentId,
+											lastViewDts: new Date(),
+											username: '${user}',
+											notifyFlg: false
+									};
+									Ext.Ajax.request({
+										url: '../api/v1/resource/userprofiles/' +'${user}'+ '/watches',
+										method: 'POST',
+										jsonData: watch,
+										success: function(response, opts){
+											currentWatch = Ext.decode(response);
+											Ext.getCmp('watchBtn').setHidden(true);
+											Ext.getCmp('watchRemoveBtn').setHidden(false);
+										}
+									});
 								}
 							},
+							{
+								xtype: 'button',								
+								text: '<span class="fa-stack" style="margin-left: -10px;margin-right: -10px;"><i class="fa fa-binoculars fa-stack-1x"></i><i class="fa fa-ban fa-stack-2x text-danger"></i></span>',
+								id: 'watchRemoveBtn',
+								tooltip: 'Remove Watch',
+								scale: 'large',								
+								margin: '0 10 0 0',
+								hidden: true,
+								handler: function(){
+									var watchId = currentWatch.userWatchId ? currentWatch.userWatchId : currentWatch.watchId;
+									Ext.Ajax.request({
+										url: '../api/v1/resource/userprofiles/' +'${user}'+ '/watches/' + watchId,
+										method: 'DELETE',										
+										success: function(response, opts){
+											Ext.getCmp('watchRemoveBtn').setHidden(true);
+											Ext.getCmp('watchBtn').setHidden(false);
+										}
+									})
+								}
+							},							
 							{
 								xtype: 'button',
 								iconCls: 'fa fa-2x fa-print icon-top-padding',
@@ -276,7 +312,8 @@ limitations under the License.
 								layout: 'hbox',
 								items: [
 									Ext.create('OSF.component.StandardComboBox', {
-										name: 'text',									
+										name: 'text',	
+										id: 'tagField',
 										allowBlank: false,									
 										margin: '0 0 0 0',
 										flex: 1,
@@ -288,23 +325,59 @@ limitations under the License.
 										maxLength: 120,
 										storeConfig: {
 											url: '../api/v1/resource/components/tags'
+										},
+										listeners:{
+											specialkey: function(field, e) {
+												var value = this.getValue();
+												if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {
+													actionAddTag(value);
+												}	
+											}
 										}
 									}),
 									{
 										xtype: 'button',
 										text: 'Add',
 										iconCls: 'fa fa-plus',
+										margin: '25 0 0 0',
 										minWidth: 75,
 										handler: function(){
+											var tagField = Ext.getCmp('tagField');
+											if (tagField.isValid()) {
+												actionAddTag(tagField.getValue());
+											}
 										}
 									}
 								]
 							}
-
 						]
 					}
 				]
 			});
+			
+			var actionAddTag = function(tag) {
+				
+				//add tag
+				Ext.getCmp('tagPanel').setLoading('Tagging Entry...');
+				Ext.Ajax.request({
+					url: '../api/v1/resource/components/' + componentId + '/tags',
+					method: 'POST',
+					jsonData: {
+						text: tag
+					},
+					callback: function(){
+						Ext.getCmp('tagPanel').setLoading(false);
+					},
+					success: function(response, opt){
+						var tag = Ext.decode(response.responseText);
+						processTags(tag);
+						
+						var tagField = Ext.getCmp('tagField');
+						tagField.reset();
+						tagField.getStore().load();
+					}
+				});				
+			};
 			
 			var detailPanel = Ext.create('Ext.panel.Panel', {
 				id: 'detailPanel',
@@ -502,6 +575,21 @@ limitations under the License.
 									html: 'This entry has not yet been approved for the site and is still under review.'
 								});
 								Ext.getCmp('watchBtn').setHidden(true);
+								Ext.getCmp('watchRemoveBtn').setHidden(true);
+							} else {
+								//check for watch
+								if (currentWatch) {
+									if (entry.lastActivityDts > currentWatch.lastViewDts) {
+									headerPanel.addDocked({
+										xtype: 'panel',
+										dock: 'top',
+										bodyCls: 'alert-warning',
+										bodyStyle: 'padding: 20px; font-size: 20px; text-align: center;',
+										html: 'This entry has recently been updated.'
+									});										
+									}
+								}
+								
 							}
 							
 							//get component type and determine review & q&a
@@ -516,7 +604,7 @@ limitations under the License.
 									if (componentTypeDetail.dataEntryQuestions) {
 										processQuestions(entry);
 									}
-									processTags(entry);
+									processTags(entry.tags);
 									
 									var templateUrl;
 									if (componentTypeDetail.componentTypeTemplate) {
@@ -555,22 +643,57 @@ limitations under the License.
 					});
 				}
 			};
-			loadDetails();
 			
-			var processTags = function(entryLocal){
+			var currentWatch;			
+			var loadWatches = function(){
+				Ext.Ajax.request({
+					url: '../api/v1/resource/userprofiles/' + '${user}' + '/watches',
+					success: function(response, opts) {
+						var watches = Ext.decode(response.responseText);
+						Ext.Array.each(watches, function(watch){
+							if (watch.componentId === componentId) {
+								currentWatch = watch;
+							}
+						});
+						if (currentWatch) {
+							Ext.getCmp('watchBtn').setHidden(true);
+							Ext.getCmp('watchRemoveBtn').setHidden(false);							
+						}
+						
+						loadDetails();
+					}
+				});
+			};
+			loadWatches();
+			
+			
+			var processTags = function(tagList){
 				
 				var tags = [];
-				Ext.Array.each(entryLocal.tags,  function(tag){
+				Ext.Array.each(tagList,  function(tag){
 					var tagButton;
 					
 					if (tag.createUser === '${user}') {
 						tagButton = Ext.create('Ext.button.Button', {
 							text: tag.text,
+							entryTag: tag,
 							iconCls: 'fa fa-close',
 							iconAlign: 'right',
 							margin: '0 10 0 0',
 							handler: function(){
-								
+								var tagButton = this;
+								var tag = this.entryTag;
+								Ext.getCmp('tagPanel').setLoading('Removing Tag...');
+								Ext.Ajax.request({
+									url: '../api/v1/resource/components/' + componentId + '/tags/' + tag.tagId,
+									method: 'DELETE',
+									callback: function(){
+										Ext.getCmp('tagPanel').setLoading(false);
+									},
+									success: function(response, opt){
+										Ext.getCmp('tagPanel').remove(tagButton, true);
+									}
+								});								
 							}
 						});
 					} else {
@@ -689,6 +812,10 @@ limitations under the License.
 				Ext.Array.each(entryLocal.questions, function(question){
 					
 					var text = '<div class="question-question"><span class="question-response-letter-q">Q.</span> '+ question.question + '</div>';
+					text += '<div class="question-info">' +
+							question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y") +
+							'</div>';
+					
 											
 					var panel = Ext.create('Ext.panel.Panel', {
 						titleCollapse: true,
@@ -696,14 +823,12 @@ limitations under the License.
 						title: text,
 						bodyStyle: 'padding: 10px;',
 						data: question.responses,
-						tpl: new Ext.XTemplate(
-							'<div class="question-info">',
-							question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y"),
-							'</div><br>',
+						tpl: new Ext.XTemplate(							
 							'<tpl for=".">',
 							'	<div class="question-response"><span class="question-response-letter">A.</span> {response}</div>',
 							'	<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
-							'</tpl><hr>'
+							'   <hr>',
+							'</tpl>'
 						),
 						dockedItems: [
 							{
