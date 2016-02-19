@@ -205,7 +205,7 @@ limitations under the License.
 	<tpl if="show.vitals ">
 		<tpl if="vitals && vitals.length &gt; 0">
 			<div class="print-left-block print-section ">
-				<b3>Vitals:</h3>
+				<h3>Vitals:</h3>
 				<table class="print-table" style="width: 100%">
 					<tpl for="vitals">
 						<tr class="print-table">
