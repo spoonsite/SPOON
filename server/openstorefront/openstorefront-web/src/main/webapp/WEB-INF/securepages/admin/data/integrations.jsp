@@ -10,10 +10,64 @@
 		Ext.onReady(function(){	
 
 
-
+			var componentConfigStore = Ext.create('Ext.data.Store', {
+				id: 'componentConfigStore',
+				autoLoad: true,
+				proxy: {
+					type: 'ajax',
+					url: '/openstorefront/api/v1/resource/components/integration?status=ALL'
+				}
+			});
 
 			var componentConfigGrid = Ext.create('Ext.grid.Panel', {
-				title: 'Component Configuration'
+				title: 'Component Configuration',
+				id: 'componentConfigGrid',
+				store: componentConfigStore,
+				columnLines: true,
+				columns: [
+					{ text: 'Component', dataIndex: 'componentName', flex: 2},
+					{ 
+						text: 'Start Time', 
+						dataIndex: 'lastStartTime', 
+						xtype: 'datecolumn',
+						format: 'm/d/y H:i:s A',
+						flex: 1
+					},
+					{ 
+						text: 'End Time', 
+						dataIndex: 'lastEndTime',
+						xtype: 'datecolumn',
+						format: 'm/d/y H:i:s A',
+						flex: 1
+					},
+					{ 
+						text: 'Status', 
+						dataIndex: 'status', 
+						flex: 1,
+						renderer: function(value, metadata) {
+							if (value === 'C') return 'Complete';
+							else if (value === 'E') return 'Error';
+							else if (value === 'P') return 'Pending';
+							else if (value === 'W') return 'Working';
+						}
+					},
+					{ 
+						text: 'Active Status', 
+						dataIndex: 'activeStatus', 
+						flex: 0.5,
+						renderer: function(value, metadata) {
+							if (value === 'A') {
+								metadata.tdCls = 'alert-success';
+								return "Active";
+							}
+							if (value === 'I') {
+								metadata.tdCls = 'alert-warning';
+								return "Inactive";
+							}
+						}
+					}
+
+				]
 			});
 
 			var jiraConfigGrid = Ext.create('Ext.grid.Panel', {
