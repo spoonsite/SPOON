@@ -61,7 +61,7 @@ limitations under the License.
 			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
 			
 
-			//Data Menu
+		//Data Menu
 			var dataMenu = [];
 			dataMenu.push({
 				text: 'Attributes',

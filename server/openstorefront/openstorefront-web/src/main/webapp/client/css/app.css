@@ -14,7 +14,14 @@ and open the template in the editor.
 	}
     .hidePrint{
 		display: none;
+	}
+	.pushToTop{
+		margin-top: -50px;
 	}	
+}
+
+.printBody{
+		background: white !important;
 }
 
 .link {
