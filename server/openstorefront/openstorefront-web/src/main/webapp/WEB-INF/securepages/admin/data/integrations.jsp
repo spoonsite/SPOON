@@ -67,6 +67,72 @@
 						}
 					}
 
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						items: [
+							{
+								text: 'Refresh',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-refresh',
+								handler: function () {
+									componentConfigStore.load();
+								}
+							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Add New Configuration',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-plus',
+								handler: function () {
+								}
+							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Run Job',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-bolt',
+								disabled: true,
+								handler: function () {
+
+								}
+							},
+							{
+								text: 'Edit',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-edit',
+								disabled: true,
+								handler: function () {
+
+								}
+							},
+							{
+								text: 'Deactivate',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-power-off',
+								disabled: true,
+								handler: function () {
+
+								}
+							},
+							{
+								text: 'Delete',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-trash',
+								disabled: true,
+								handler: function () {
+
+								}
+							},
+
+						]
+					}
 				]
 			});
 
@@ -83,7 +149,7 @@
 				]
 			});
 
-				
+
 			Ext.create('Ext.container.Viewport', {
 				layout: 'fit',
 				items: [
