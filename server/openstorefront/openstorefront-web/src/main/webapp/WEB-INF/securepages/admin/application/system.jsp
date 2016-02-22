@@ -694,6 +694,37 @@
 									handler: function () {
 										sysConfigPropStore.load();
 									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Add',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-plus',
+									handler: function() {
+										addSysConfigProp();
+									}
+								},
+								{
+									text: 'Edit',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-edit',
+									disabled: true,
+									handler: function() {
+										var record = Ext.getCmp('sysConfigPropGrid').getSelection()[0];
+										editSysConfigProp(record);
+									}
+								},
+								{
+									text: 'Delete',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-trash',
+									disabled: true,
+									handler: function() {
+										var record = Ext.getCmp('sysConfigPropGrid').getSelection()[0];
+										deleteSysConfigProp(record);
+									}
 								}
 							]
 						}
@@ -892,7 +923,7 @@
 						button.setText('Enable');
 					}
 
-					};
+				};
 
 
 
