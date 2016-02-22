@@ -8,9 +8,29 @@
 		Ext.onReady(function(){	
 	
 
+			var attributeStore = Ext.create('Ext.data.Store', {
+				id: 'attributeStore',
+				autoLoad: true,
+				proxy: {
+					type: 'ajax',
+					url: '/openstorefront/api/v1/resource/attributes/attributetypes',
+					reader: {
+						type: 'json',
+						rootProperty: 'data'
+					}
+				}
+			});
+
 			var attributeGrid = Ext.create('Ext.grid.Panel', {
 				id: 'attributeGrid',
 				title: 'Manage Attributes <i class="fa fa-question-circle"  data-qtip="Attributes are used to categorize components and other listings. They can be searched on and filtered. They represent the metadata for a listing. Attribute Types represent a category and a code represents a specific value. The data is linked by the type and code which allows for a simple change of the description."></i>',
+				store: 'attributeStore',
+				columnLines: true,
+				columns: [
+					{text: 'Description', dataIndex: 'description', flex: 1},
+					{text: 'Type Code', dataIndex: 'attributeType', flex: 1},
+
+				]
 			});
 
 			Ext.create('Ext.container.Viewport', {
