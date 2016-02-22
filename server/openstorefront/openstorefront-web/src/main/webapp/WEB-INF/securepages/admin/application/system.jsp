@@ -669,6 +669,11 @@
 					proxy: {
 						type: 'ajax',
 						url: '/openstorefront/api/v1/service/application/configproperties'
+					},
+					listeners: {
+						load: function () {
+							updateDbLoggerStatus(false);
+						}
 					}
 				});
 
@@ -688,6 +693,37 @@
 									iconCls: 'fa fa-2x fa-refresh',
 									handler: function () {
 										sysConfigPropStore.load();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Add',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-plus',
+									handler: function() {
+										addSysConfigProp();
+									}
+								},
+								{
+									text: 'Edit',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-edit',
+									disabled: true,
+									handler: function() {
+										var record = Ext.getCmp('sysConfigPropGrid').getSelection()[0];
+										editSysConfigProp(record);
+									}
+								},
+								{
+									text: 'Delete',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-trash',
+									disabled: true,
+									handler: function() {
+										var record = Ext.getCmp('sysConfigPropGrid').getSelection()[0];
+										deleteSysConfigProp(record);
 									}
 								}
 							]
@@ -767,6 +803,7 @@
 									iconCls: 'fa fa-2x fa-refresh',
 									handler: function () {
 										logStore.load();
+										updateDbLoggerStatus();
 									}
 								},
 								{
@@ -808,39 +845,20 @@
 								    html: '<strong>Database Logger:</strong>'
 								},
 								{
-									scale: 'medium',
-									id: 'dbLoggerYes',
-									text: 'Enable',
-									tooltip: 'WARNING: This can cause save a lot of information to the database very quickly.',
-									handler: function () {
-										Ext.Ajax.request({
-											url: '/openstorefront/api/v1/service/application/dblogger/true',
-											method: 'PUT',
-											success: function(response, opt){
-												Ext.toast('Started DB Logger', '', 'tr');
-											},
-											failure: function(response, opt){
-												Ext.toast('Failed to start DB Logger', '', 'tr');
-													}
-												});
+									xtype: 'label',
+									id: 'dbLogStatusLabel',
+									text: "On",
+									style: {
+										color: 'green',
+										fontWeight: 'bold'
 									}
 								},
 								{
 									scale: 'medium',
-									id: 'dbLoggerNo',
+									id: 'dbLoggerButton',
 									text: 'Disable',
 									handler: function () {
-										Ext.Ajax.request({
-											url: '/openstorefront/api/v1/service/application/dblogger/false',
-											method: 'PUT',
-											success: function(response, opt){
-												Ext.toast('Stopped DB Logger', '', 'tr');
-											},
-											failure: function(response, opt){
-												Ext.toast('Failed to stop DB Logger', '', 'tr');
-											}
-										});
-
+										toggleDbLogger();
 									}
 								}
 							]
@@ -853,6 +871,61 @@
 						}
 					]
 				});
+
+				var toggleDbLogger = function toggleDbLogger() {
+					if (Ext.getCmp('dbLogStatusLabel').text === 'On'){
+						var what = 'off';
+						var url = '/openstorefront/api/v1/service/application/dblogger/false';
+					}
+					else {
+						var what = 'on';
+						var url = '/openstorefront/api/v1/service/application/dblogger/true';
+					}
+					
+					Ext.Ajax.request({
+						url: url,
+						method: 'PUT',
+						success: function(response, opt){
+							Ext.toast('Successfuly turned DB logger ' + what, '', 'tr');
+							updateDbLoggerStatus();
+						},
+						failure: function(response, opt){
+							Ext.toast('Failed to turn DB logger ' + what, '', 'tr');
+							updateDbLoggerStatus();
+						}
+					});
+				};
+
+				var updateDbLoggerStatus = function updateDbLoggerStatus(reload) {
+					var label = Ext.getCmp('dbLogStatusLabel');
+					var button = Ext.getCmp('dbLoggerButton');
+					reload = typeof reload !== 'undefined' ? reload : true;
+
+					if (reload) {
+						sysConfigPropStore.load();	
+					}
+
+					var data = sysConfigPropStore.getData();
+					var find = data.find('code', 'dblog.on');
+					var status = false;
+					if (find) { 
+						status = find.data.description;
+					}
+
+					if (status === 'true') {
+						label.setText('On');
+						label.setStyle({color: 'green'});
+						button.setText('Disable');
+					}
+					else {
+						label.setText('Off');
+						label.setStyle({color: 'red'});
+						button.setText('Enable');
+					}
+
+				};
+
+
 
 				var loggerStore = Ext.create('Ext.data.Store', {
 					id: 'loggerStore',

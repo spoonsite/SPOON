@@ -14,15 +14,24 @@
 				var userProfileStore = Ext.create('Ext.data.Store', {
 					storeId: 'userProfileStore',
 					autoLoad: true,
-					proxy: {
+					pageSize: 100,
+					remoteSort: true,
+					sorters: [
+						new Ext.util.Sorter({
+							property: 'eventDts',
+							direction: 'DESC'
+						})
+					],
+					proxy: CoreUtil.pagingProxy({
 						id: 'userProfileStoreProxy',
 						type: 'ajax',
 						reader: {
 							type: 'json',
-							rootProperty: 'data'
+							rootProperty: 'data',
+							totalProperty: 'totalNumber'
 						},
 						url: '/openstorefront/api/v1/resource/userprofiles?status=A'
-					}
+					})
 				});
 
 				var userTypeStore = Ext.create('Ext.data.Store', {
