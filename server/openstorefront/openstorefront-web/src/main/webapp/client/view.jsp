@@ -28,18 +28,23 @@ limitations under the License.
 		/* global Ext, CoreService, CoreApp */	
 		
 		var DetailPage = {
-			showRelatedWindow: function(attributeType, attributeCode, description) {
+			showRelatedWindow: function(attributeType, attributeCode, description, vitalType, tip) {
 				DetailPage.relatedWindow.show();
-				DetailPage.relatedWindow.setTitle('Related Entries - ' + description);
+				DetailPage.relatedWindow.setTitle('Related Entries');
+				
+				DetailPage.relatedWindow.getComponent('grid').getComponent('description').update({
+					description: description,
+					tip: tip
+				});
 				
 				var searchObj = {
 					"sortField": "name",
 					"sortDirection": "DESC",				
 					"searchElements": [{
-							"searchType": "ATTRIBUTE",
+							"searchType": vitalType,
 							"keyField": attributeType,
 							"keyValue": attributeCode,
-							"caseInsensitive": false,
+							"caseInsensitive": true,
 							"numberOperation": "EQUALS",
 							"stringOperation": "EQUALS",
 							"mergeCondition": "OR" 
@@ -79,23 +84,30 @@ limitations under the License.
 			var fullPage = '${param.fullPage}' !== '' ? true : false;
 			
 			var relatedStore = Ext.create('Ext.data.Store', {
-							pageSize: 50,
-							autoLoad: false,
-							remoteSort: true,
-							sorters: [
-								new Ext.util.Sorter({
-								property: 'name',
-								direction: 'DESC'
-								})
-							],
-							proxy: CoreUtil.pagingProxy({
-								actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
-								reader: {
-									type: 'json',
-									rootProperty: 'data',
-									totalProperty: 'totalNumber'
-								}
-							})							
+				pageSize: 50,
+				autoLoad: false,
+				remoteSort: true,
+				sorters: [
+					new Ext.util.Sorter({
+					property: 'name',
+					direction: 'DESC'
+					})
+				],				
+				proxy: CoreUtil.pagingProxy({
+					actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+					reader: {
+						type: 'json',
+						rootProperty: 'data',
+						totalProperty: 'totalNumber'
+					}
+				}),
+				listeners: {
+					load: function(store, records) {
+						store.filterBy(function(record){
+							return record.get('componentId') !== componentId;
+						});
+					}
+				}
 			});
 			
 			DetailPage.relatedWindow = Ext.create('Ext.window.Window', {
@@ -128,12 +140,25 @@ limitations under the License.
 							},							
 							{ text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150 }							
 						],
-						dockedItems: [{
-							xtype: 'pagingtoolbar',							
-							dock: 'bottom',
-							store: relatedStore,
-							displayInfo: true
-						}]						
+						dockedItems: [
+							{
+								xtype: 'pagingtoolbar',							
+								dock: 'bottom',
+								store: relatedStore,
+								displayInfo: true
+							},
+							{
+								xtype: 'panel',
+								itemId: 'description',
+								maxHeight: 200,
+								bodyStyle: 'padding-left: 5px; padding-right: 5px;',
+								scrollable: true,
+								tpl: new Ext.XTemplate(
+									'<h2 style="text-align: center;">{description}</h2><hr>',
+									'{tip}'
+								)
+							}
+						]						
 					}				
 				]			
 			});			
@@ -234,7 +259,11 @@ limitations under the License.
 								tooltip: 'Print',
 								scale: 'large',
 								margin: '0 10 0 0',
-								handler: function(){									
+								handler: function(){	
+									var printWin = window.open('print.jsp?id=' + componentId, 'printwin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840');
+									if (!printWin) {
+										printWin = window.open('print.jsp?id=' + componentId, 'printwin');
+									}
 								}
 							},
 							{
