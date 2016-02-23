@@ -85,7 +85,10 @@ limitations under the License.
 			});
 			
 			var searchtoolsWin = Ext.create('OSF.component.SearchToolWindow', {	
-			});			
+			});	
+			
+			var helpWin = Ext.create('OSF.component.HelpWindow', {				
+			});
 
 			var quoteBanner = Ext.create('Ext.panel.Panel', {
 				width: '100%',				
@@ -485,8 +488,9 @@ limitations under the License.
 											{
 												text: '<b>Help</b>',
 												iconCls: 'fa fa-question-circle',
-												href: '../help',
-												hrefTarget: '_blank'
+												handler: function(){
+													helpWin.show();
+												}
 											},
 											{
 												text: '<b>Feedback / issues</b>',

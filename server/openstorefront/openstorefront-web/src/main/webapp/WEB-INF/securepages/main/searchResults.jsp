@@ -348,7 +348,7 @@ limitations under the License.
 				'    <tpl if="badgeUrl"><img src="{badgeUrl}" title="{label}" width="40" /></tpl>',
 				'  </tpl>',
 				'  <div class="home-highlight-item-desc">{[Ext.util.Format.ellipsis(Ext.util.Format.stripTags(values.description), 300)]}</div>',
-				'  <br><div class="searchresults-item-update">Last Updated: {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</div>',
+				'  <br><div class="searchresults-item-update">Last Updated: {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]} ({componentTypeDescription})</div>',
 				' </div>',
 				'</tpl>'		
 			);			
