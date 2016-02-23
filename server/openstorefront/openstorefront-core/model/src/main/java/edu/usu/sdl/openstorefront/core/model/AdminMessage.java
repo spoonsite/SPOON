@@ -20,7 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
-import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.ArrayList;
@@ -36,10 +36,18 @@ import javax.validation.constraints.Size;
 public class AdminMessage
 {
 
-	@APIDescription("List of usernames or email addresses")
+	@APIDescription("List of usernames or email addresses (To Field)")
 	@ConsumeField
 	private List<String> usersToEmail = new ArrayList<>();
 
+	@APIDescription("email addresses to carbon-copy")
+	@ConsumeField
+	private List<String> ccEmails = new ArrayList<>();
+	
+	@APIDescription("email addresses to blind-carbon-copy")
+	@ConsumeField
+	private List<String> bccEmails = new ArrayList<>();
+	
 	@APIDescription("Sends messages to only user of a specific type. Defaults: to all users  (Setting this overrides any specfic users specified.")
 	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
 	@ConsumeField
@@ -53,7 +61,7 @@ public class AdminMessage
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ADMIN_MESSAGE)
-	@Sanitize(BasicHTMLSanitizer.class)
+	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String message;
 
@@ -99,6 +107,26 @@ public class AdminMessage
 	public void setUsersToEmail(List<String> usersToEmail)
 	{
 		this.usersToEmail = usersToEmail;
+	}
+
+	public List<String> getCcEmails()
+	{
+		return ccEmails;
+	}
+
+	public void setCcEmails(List<String> ccEmails)
+	{
+		this.ccEmails = ccEmails;
+	}
+
+	public List<String> getBccEmails()
+	{
+		return bccEmails;
+	}
+
+	public void setBccEmails(List<String> bccEmails)
+	{
+		this.bccEmails = bccEmails;
 	}
 
 }

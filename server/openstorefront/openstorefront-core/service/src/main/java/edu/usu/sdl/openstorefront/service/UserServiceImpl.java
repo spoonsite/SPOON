@@ -535,12 +535,11 @@ public class UserServiceImpl
 	@Override
 	public void sendAdminMessage(AdminMessage adminMessage)
 	{
-		String appTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Storefront");
+		String appTitle = getBrandingService().getCurrentBrandingView().getBranding().getApplicationName();
 
 		UserProfile userProfileExample = new UserProfile();
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
-
-		//Sending messages one at a time as BCC may leak addresses to other users.
+		
 		List<UserProfile> usersToSend = new ArrayList<>();
 
 		if (StringUtils.isNotBlank(adminMessage.getUserTypeCode())) {
@@ -598,17 +597,25 @@ public class UserServiceImpl
 		}
 
 		int emailCount = 0;
+		Email email = MailManager.newEmail();
+		email.setSubject(appTitle + " - " + adminMessage.getSubject());
+		email.setTextHTML(adminMessage.getMessage());		
+		
 		for (UserProfile userProfile : usersToSend) {
-			Email email = MailManager.newEmail();
-			email.setSubject(appTitle + " - " + adminMessage.getSubject());
-			email.setTextHTML(adminMessage.getMessage());
-
 			String name = userProfile.getFirstName() + " " + userProfile.getLastName();
 			email.addRecipient(name, userProfile.getEmail(), Message.RecipientType.TO);
-			MailManager.send(email);
+			emailCount++;
+		}		
+		for (String emailAddress : adminMessage.getCcEmails()) {
+			email.addRecipient("", emailAddress, Message.RecipientType.CC);			
 			emailCount++;
 		}
-		log.log(Level.INFO, MessageFormat.format("(Admin Message) {0} email(s) sent", emailCount));
+		for (String emailAddress : adminMessage.getBccEmails()) {
+			email.addRecipient("", emailAddress, Message.RecipientType.BCC);			
+			emailCount++;
+		}
+		MailManager.send(email);		
+		log.log(Level.INFO, MessageFormat.format("(Admin Message) {0} email(s) sent (in one message)", emailCount));
 	}
 
 	@Override
