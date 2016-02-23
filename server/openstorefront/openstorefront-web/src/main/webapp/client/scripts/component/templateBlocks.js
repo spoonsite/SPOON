@@ -53,7 +53,7 @@ Ext.define('OSF.component.template.Description', {
 	},
 	
 	updateHandler: function(entry){
-		entry.description = Ext.util.Format.escape(entry.description).replace(/"/g, '').replace(/'/g, '');		
+		entry.description = Ext.util.Format.escape(entry.description);		
 		entry.showDescriptionHeader = this.showDescriptionHeader;
 		return entry;
 	}
