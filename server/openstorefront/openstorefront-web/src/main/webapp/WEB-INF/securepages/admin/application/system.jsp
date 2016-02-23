@@ -747,6 +747,93 @@
 						}
 					}
 				});
+
+				var editSysConfigPropWin = Ext.create('Ext.window.Window', {
+					id: 'editSysConfigPropWin',
+					title: 'Edit System Configuration Property',
+					modal: true,
+					width: '35%',
+					height: 250,
+					y: '10em',
+					iconCls: 'fa fa-lg fa-edit',
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							id: 'configPropForm',
+							layout: 'vbox',
+							scrollable: true,
+							bodyStyle: 'padding: 10px;',
+							defaults: {
+								labelAlign: 'top',
+								width: '100%'
+							},
+							items: [
+								{
+									xtype: 'textfield',
+									id: 'configPropForm-key',
+									fieldLabel: 'Key',
+									name: 'code',
+									allowBlank: false
+								},
+								{
+									xtype: 'textfield',
+									id: 'configPropForm-value',
+									fieldLabel: 'Value<span class="field-required" />',
+									name: 'description'
+								},
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											iconCls: 'fa fa-save',
+											formBind: true,	
+											handler: function() {
+												var url = '/openstorefront/api/v1/service/application/configproperties';
+												var method = 'POST';
+												var form = Ext.getCmp('configPropForm');
+												if (form.isValid()) {
+													formData = form.getValues();
+													CoreUtil.submitForm({
+														url: url,
+														method: method,
+														data: formData,
+														// Set false for this one -- it's different
+														removeBlankDataItems: false,
+														form: Ext.getCmp('configPropForm'),
+														success: function (response, opts) {
+															Ext.getCmp('sysConfigPropGrid-tools-edit').disable();
+															Ext.getCmp('configPropForm').reset();
+															Ext.getCmp('editSysConfigPropWin').hide();
+															sysConfigPropStore.load();
+															Ext.toast('Successfully saved property.', '', 'tr');
+														},
+														failure: function (response, opts) {
+														}
+													});
+
+												}
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function () {
+												Ext.getCmp('configPropForm').reset();
+												Ext.getCmp('editSysConfigPropWin').hide();
+											}
+										}
+									]
+								}
+							]
+						}
 					]
 				});
 
@@ -1035,7 +1122,6 @@
 								},
 								{
 									text: 'Edit',
-									id: 'sysConfigPropGrid-tools-edit',
 									scale: 'medium',
 									id: 'loggerGrid-tools-edit',
 									iconCls: 'fa fa-2x fa-edit',
