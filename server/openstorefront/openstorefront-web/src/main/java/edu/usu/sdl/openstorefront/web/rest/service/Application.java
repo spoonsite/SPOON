@@ -234,6 +234,9 @@ public class Application
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			PropertiesManager.setProperty(lookupModel.getCode(), lookupModel.getDescription());
+			RestErrorModel restSuccessModel = new RestErrorModel();
+			restSuccessModel.setSuccess(true);
+			return sendSingleEntityResponse(restSuccessModel);
 		}
 		return sendSingleEntityResponse(validationResult.toRestError());
 	}
