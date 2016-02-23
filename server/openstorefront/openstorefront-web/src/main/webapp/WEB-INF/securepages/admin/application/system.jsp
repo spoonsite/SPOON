@@ -750,7 +750,7 @@
 
 				var editSysConfigPropWin = Ext.create('Ext.window.Window', {
 					id: 'editSysConfigPropWin',
-					title: 'Edit System Configuration Property',
+					title: 'Add/Edit System Configuration Property',
 					modal: true,
 					width: '35%',
 					height: 250,
@@ -813,6 +813,7 @@
 															Ext.toast('Successfully saved property.', '', 'tr');
 														},
 														failure: function (response, opts) {
+															Ext.toast('Failed to save property.', '', 'tr');
 														}
 													});
 
@@ -836,6 +837,19 @@
 						}
 					]
 				});
+
+				var addSysConfigProp = function addSysConfigProp(record) {
+					editSysConfigPropWin.show();
+					var form = Ext.getCmp('configPropForm');
+					form.reset();
+				};
+
+				var editSysConfigProp = function editSysConfigProp(record) {
+					editSysConfigPropWin.show();
+					var form = Ext.getCmp('configPropForm');
+					form.loadRecord(record);
+				};
+
 
 				var logStore = Ext.create('Ext.data.Store', {
 					id: 'logStore',
