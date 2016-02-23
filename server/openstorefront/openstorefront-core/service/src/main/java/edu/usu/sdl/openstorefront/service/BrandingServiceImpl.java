@@ -96,6 +96,10 @@ public class BrandingServiceImpl
 		if (branding.getPrimaryLogoUrl()== null) {
 			branding.setPrimaryLogoUrl("images/di2elogo-lg.png");			
 		}
+		
+		if (branding.getSecondaryLogoUrl()== null) {
+			branding.setSecondaryLogoUrl("images/di2elogo-sm.png");			
+		}		
 
 		if (branding.getLandingStatsText() == null) {
 			branding.setLandingStatsText("DI2E Components");			

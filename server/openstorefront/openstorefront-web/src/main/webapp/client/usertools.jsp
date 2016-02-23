@@ -70,6 +70,9 @@ limitations under the License.
 
 			var feedbackWin = Ext.create('OSF.component.FeedbackWindow',{				
 			});
+			
+			var helpWin = Ext.create('OSF.component.HelpWindow', {				
+			});			
 
 			Ext.create('Ext.container.Viewport', {
 				layout: 'border',
@@ -149,8 +152,9 @@ limitations under the License.
 											{
 												text: '<b>Help</b>',
 												iconCls: 'fa fa-question-circle',
-												href: '../help',
-												hrefTarget: '_blank'
+												handler: function() {
+													helpWin.show();
+												}
 											},
 											{
 												text: '<b>Feedback / issues</b>',

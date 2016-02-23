@@ -21,13 +21,12 @@ Ext.define('OSF.component.HelpPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.HelpPanel',
 	layout: 'border',
+	autoLoad: false,
 	initComponent: function () {
 		this.callParent();
 		
 		var helpPanel = this;
 		helpPanel.helpFlat = [];
-		
-		//Add frame for print
 		
 		helpPanel.navPanel = Ext.create('Ext.panel.Panel', {
 			region: 'west',
@@ -46,7 +45,7 @@ Ext.define('OSF.component.HelpPanel', {
 					store: Ext.create('Ext.data.TreeStore', {		
 						rootVisible: false,
 						expand: true,
-						autoLoad: false,
+						autoLoad: helpPanel.autoLoad,
 						fields: [
 							{
                                 name: 'text',
@@ -100,7 +99,36 @@ Ext.define('OSF.component.HelpPanel', {
 							text: 'Print',
 							iconCls: 'fa fa-print',
 							handler: function(){
+								var frame = Ext.getDom(helpPanel.getId() + '-frame');
+																
+								var template = new Ext.XTemplate(
+									'<style>',
+									'	.help-content{',
+									'		background: white;',
+									'		font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;',
+									'		font-size: 16px;',
+									'		line-height: 1.6;',			
+									'	}',
+									'	@media print {',
+									'		.pageBreak {',
+									'			page-break-after: always;',
+									'		}',
+									'	}',
+									'</style>',										
+									'<tpl for=".">',
+									'	<div class="help-content pageBreak">',
+									'		<h2 style="text-align: center">{title}</h2>',
+									'		<p>{content}</p>',
+									'	</div>',
+									'</tpl>'
+								);
+						
+								var html = template.apply(helpPanel.helpFlat);
 								
+								frame.contentWindow.document.open();
+								frame.contentWindow.document.write(html);
+								frame.contentWindow.document.close();
+								frame.contentWindow.print();
 							}
 						},
 						{
@@ -123,12 +151,11 @@ Ext.define('OSF.component.HelpPanel', {
 					]
 				},
 				{
-					xtype: 'panel',
-					layout: 'hbox',
+					xtype: 'panel',					
 					items: [
 						{
 							xtype: 'triggerfield',
-							flex: 1,
+							width: '100%',
 							emptyText: 'Search',
 							triggerCls: 'x-form-clear-trigger',
 							onTriggerClick: function() {
@@ -182,13 +209,6 @@ Ext.define('OSF.component.HelpPanel', {
 								}
 							},
 							buffer: 250
-						},
-						{
-							xtype: 'button',
-							iconCls: 'fa fa-search',
-							handler: function(){
-								
-							}
 						}
 					]
 				}
@@ -210,6 +230,21 @@ Ext.define('OSF.component.HelpPanel', {
 		helpPanel.add(helpPanel.navPanel);
 		
 	},
+	
+	afterRender: function(){
+		this.callParent();
+		
+		var helpPanel = this;	
+		//Add frame for print
+		Ext.dom.Helper.append(helpPanel.getEl(), [
+			{
+				tag:'iframe', 
+				id: helpPanel.getId() + '-frame',
+				style: 'display: none; visiblity: hidden;'
+			}
+		]);
+	},
+	
 	
 	loadSections: function(){
 		var helpPanel = this;		
@@ -241,7 +276,10 @@ Ext.define('OSF.component.HelpWindow', {
 			type: 'toggle',
 			tooltip: 'Open in new window',
 			callback: function(panel, tool, event){
-				
+				var helpWin = window.open('help.jsp', 'helpwin');
+				if (!helWin) {
+					Ext.toast('Unable to open help. Check popup blocker.');
+				}
 			}
 		}
 	],

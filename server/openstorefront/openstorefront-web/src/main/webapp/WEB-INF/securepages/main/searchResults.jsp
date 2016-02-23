@@ -44,6 +44,9 @@ limitations under the License.
 			var searchtoolsWin = Ext.create('OSF.component.SearchToolWindow', {	
 			});	
 			
+			var helpWin = Ext.create('OSF.component.HelpWindow', {				
+			});												
+			
 			var loadAttributes = function() {
 				Ext.Ajax.request({
 					url: '../api/v1/resource/attributes/attributetypes',
@@ -652,8 +655,9 @@ limitations under the License.
 											{
 												text: '<b>Help</b>',
 												iconCls: 'fa fa-question-circle',
-												href: '../help',
-												hrefTarget: '_blank'
+												handler: function() {
+													helpWin.show();
+												}
 											},
 											{
 												text: '<b>Feedback / issues</b>',
