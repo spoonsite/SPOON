@@ -708,6 +708,7 @@
 								},
 								{
 									text: 'Edit',
+									id: 'sysConfigPropGrid-tools-edit',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-edit',
 									disabled: true,
@@ -718,6 +719,7 @@
 								},
 								{
 									text: 'Delete',
+									id: 'sysConfigPropGrid-tools-delete',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-trash',
 									disabled: true,
@@ -732,8 +734,140 @@
 					columns: [
 						{text: 'Key', dataIndex: 'code', flex: 2},
 						{text: 'Value', dataIndex: 'description', flex: 5, cellWrap: true}
+					],
+					listeners: {
+						selectionchange: function (grid, record, index, opts) {
+							if (Ext.getCmp('sysConfigPropGrid').getSelectionModel().hasSelection()) {
+								Ext.getCmp('sysConfigPropGrid-tools-edit').enable();
+								Ext.getCmp('sysConfigPropGrid-tools-delete').enable();
+							} else {
+								Ext.getCmp('sysConfigPropGrid-tools-edit').disable();
+								Ext.getCmp('sysConfigPropGrid-tools-delete').disable();
+							}
+						}
+					}
+				});
+
+				var editSysConfigPropWin = Ext.create('Ext.window.Window', {
+					id: 'editSysConfigPropWin',
+					title: 'Add/Edit System Configuration Property',
+					modal: true,
+					width: '35%',
+					height: 250,
+					y: '10em',
+					iconCls: 'fa fa-lg fa-edit',
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							id: 'configPropForm',
+							layout: 'vbox',
+							scrollable: true,
+							bodyStyle: 'padding: 10px;',
+							defaults: {
+								labelAlign: 'top',
+								width: '100%'
+							},
+							items: [
+								{
+									xtype: 'textfield',
+									id: 'configPropForm-key',
+									fieldLabel: 'Key',
+									name: 'code',
+									allowBlank: false
+								},
+								{
+									xtype: 'textfield',
+									id: 'configPropForm-value',
+									fieldLabel: 'Value<span class="field-required" />',
+									name: 'description'
+								},
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											iconCls: 'fa fa-save',
+											formBind: true,	
+											handler: function() {
+												var url = '/openstorefront/api/v1/service/application/configproperties';
+												var method = 'POST';
+												var form = Ext.getCmp('configPropForm');
+												if (form.isValid()) {
+													formData = form.getValues();
+													CoreUtil.submitForm({
+														url: url,
+														method: method,
+														data: formData,
+														// Set false for this one -- it's different
+														removeBlankDataItems: false,
+														form: Ext.getCmp('configPropForm'),
+														success: function (response, opts) {
+															Ext.getCmp('sysConfigPropGrid-tools-edit').disable();
+															Ext.getCmp('configPropForm').reset();
+															Ext.getCmp('editSysConfigPropWin').hide();
+															sysConfigPropStore.load();
+															Ext.toast('Successfully saved property.', '', 'tr');
+														},
+														failure: function (response, opts) {
+															Ext.toast('Failed to save property.', '', 'tr');
+														}
+													});
+
+												}
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function () {
+												Ext.getCmp('configPropForm').reset();
+												Ext.getCmp('editSysConfigPropWin').hide();
+											}
+										}
+									]
+								}
+							]
+						}
 					]
 				});
+
+				var addSysConfigProp = function addSysConfigProp(record) {
+					editSysConfigPropWin.show();
+					var form = Ext.getCmp('configPropForm');
+					form.reset();
+				};
+
+				var editSysConfigProp = function editSysConfigProp(record) {
+					editSysConfigPropWin.show();
+					var form = Ext.getCmp('configPropForm');
+					form.loadRecord(record);
+				};
+
+
+				var deleteSysConfigProp = function deleteSysConfigProp(record) {
+					var url = '/openstorefront/api/v1/service/application/configproperties/';
+					url += record.data.code;
+
+					Ext.Ajax.request({
+						url: url,
+						method: 'DELETE',
+						success: function(response, opt){
+							Ext.toast('Successfully deleted property', '', 'tr');
+							sysConfigPropStore.load();
+						},
+						failure: function(response, opt){
+							Ext.toast('Failed to delete property', '', 'tr');
+						}
+					});
+				};
+
 
 				var logStore = Ext.create('Ext.data.Store', {
 					id: 'logStore',
