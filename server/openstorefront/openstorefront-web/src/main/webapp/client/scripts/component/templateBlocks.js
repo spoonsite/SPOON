@@ -42,8 +42,9 @@ Ext.define('OSF.component.template.Description', {
 	extend: 'OSF.component.template.BaseBlock',
 	alias: 'osf.widget.template.Description',
 	
+	showDescriptionHeader: true,
 	tpl: new Ext.XTemplate(
-		'<h2>Description</h2>',	
+		'<tpl if="showDescriptionHeader"><h2>Description</h2></tpl>',	
 		'{description}'	
 	),
 		
@@ -52,7 +53,8 @@ Ext.define('OSF.component.template.Description', {
 	},
 	
 	updateHandler: function(entry){
-		entry.description = Ext.util.Format.escape(entry.description).replace(/"/g, '');		
+		entry.description = Ext.util.Format.escape(entry.description).replace(/"/g, '').replace(/'/g, '');		
+		entry.showDescriptionHeader = this.showDescriptionHeader;
 		return entry;
 	}
 	
@@ -328,10 +330,10 @@ Ext.define('OSF.component.template.DI2EEvalLevel', {
 	updateHandler: function(entry){
 		
 		var evalLevels = {};		
-		if (!entry.attributes) {
+		if (!entry.attributes && entry.attributes.length <= 0) {
 			this.setHidden(true);
 		} else {
-			var updated = false;
+			var updated = false;			
 			Ext.Array.each(entry.attributes, function(item){
 				if (item.type === 'DI2ELEVEL') {
 					evalLevels.level = {};
@@ -370,6 +372,9 @@ Ext.define('OSF.component.template.DI2EEvalLevel', {
 				this.addBodyCls('watch-detail-update');
 			}	
 			
+			if (!evalLevels.level && !evalLevels.state && !evalLevels.intent) {
+				this.setHidden(true);
+			}
 		}
 		entry.evalLevels = evalLevels;					
 		return entry;

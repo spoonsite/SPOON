@@ -87,55 +87,57 @@ limitations under the License.
 </tpl>
 
 <tpl if="!show.evaluation || !evaluation || !evaluation.evaluationSections || !evaluation.evaluationSections.length &gt; 0">
-	<div class="print-right-block print-general-block print-section">
-	<tpl if="show.vitals ">
-		<tpl if="vitals && vitals.length &gt; 0">		
-			<h3>Vitals:</h3>
-			<table class="print-table" style="width: 100%">
-				<tpl for="vitals">
-					<tr class="print-table">
-						<td class="print-table">
-							<b>{label}</b>								
-						</td>
-						<td class="print-table alert-{highlightStyle}">
-							{value}
-						</td>
-					</tr>
-				</tpl>					
-			</table>			
-		</tpl>			
-	</tpl>
-		<tpl if="show.contacts">
-			<tpl if="contacts && contacts.length &gt; 0">
-				<h3>Points of Contact:</h3>		
-				<tpl for="contacts">
-					<div style="font-size: 14px;">
-						{positionDescription}
-					</div>
+	<tpl if="(show.vitals && vitals.length &gt; 0) || (show.contacts && contacts.length &gt; 0)">
+		<div class="print-right-block print-general-block print-section">
+			<tpl if="show.vitals ">
+				<tpl if="vitals && vitals.length &gt; 0">		
+					<h3>Vitals:</h3>
 					<table class="print-table" style="width: 100%">
-						<tr class="print-table">
-							<td class="print-table">
-								Name
-							</td>
-							<td class="print-table">
-								<b>{name}</b><br>
-								{organization}
-							</td>
-						</tr>
-						<tr class="print-table">
-							<td class="print-table">
-								Email / Phone 
-							</td>
-							<td class="print-table">
-								<tpl if="email">{email}</tpl><br>
-								<tpl if="phone">{phone}</tpl>
-							</td>
-						</tr>						
-					</table>
-				</tpl>								
+						<tpl for="vitals">
+							<tr class="print-table">
+								<td class="print-table">
+									<b>{label}</b>								
+								</td>
+								<td class="print-table alert-{highlightStyle}">
+									{value}
+								</td>
+							</tr>
+						</tpl>					
+					</table>			
+				</tpl>			
 			</tpl>
-		</tpl>				
-	</div>	
+			<tpl if="show.contacts">
+				<tpl if="contacts && contacts.length &gt; 0">
+					<h3>Points of Contact:</h3>		
+					<tpl for="contacts">
+						<div style="font-size: 14px;">
+							{positionDescription}
+						</div>
+						<table class="print-table" style="width: 100%">
+							<tr class="print-table">
+								<td class="print-table">
+									Name
+								</td>
+								<td class="print-table">
+									<b>{name}</b><br>
+									{organization}
+								</td>
+							</tr>
+							<tr class="print-table">
+								<td class="print-table">
+									Email / Phone 
+								</td>
+								<td class="print-table">
+									<tpl if="email">{email}</tpl><br>
+									<tpl if="phone">{phone}</tpl>
+								</td>
+							</tr>						
+						</table>
+					</tpl>								
+				</tpl>
+			</tpl>				
+		</div>	
+	</tpl>
 </tpl>
 
 

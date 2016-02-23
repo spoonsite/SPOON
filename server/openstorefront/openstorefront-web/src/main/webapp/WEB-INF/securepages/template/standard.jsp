@@ -64,10 +64,10 @@
 				});								
 				template.blocks.push(vitals);					
 				
-				var vitals = Ext.create('OSF.component.template.Relationships', {					
+				var relationships = Ext.create('OSF.component.template.Relationships', {					
 					margin: '0 0 20 0'
 				});								
-				template.blocks.push(vitals);					
+				template.blocks.push(relationships);					
 								
 				
 			});
