@@ -708,6 +708,7 @@
 								},
 								{
 									text: 'Edit',
+									id: 'sysConfigPropGrid-tools-edit',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-edit',
 									disabled: true,
@@ -718,6 +719,7 @@
 								},
 								{
 									text: 'Delete',
+									id: 'sysConfigPropGrid-tools-delete',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-trash',
 									disabled: true,
@@ -732,6 +734,19 @@
 					columns: [
 						{text: 'Key', dataIndex: 'code', flex: 2},
 						{text: 'Value', dataIndex: 'description', flex: 5, cellWrap: true}
+					],
+					listeners: {
+						selectionchange: function (grid, record, index, opts) {
+							if (Ext.getCmp('sysConfigPropGrid').getSelectionModel().hasSelection()) {
+								Ext.getCmp('sysConfigPropGrid-tools-edit').enable();
+								Ext.getCmp('sysConfigPropGrid-tools-delete').enable();
+							} else {
+								Ext.getCmp('sysConfigPropGrid-tools-edit').disable();
+								Ext.getCmp('sysConfigPropGrid-tools-delete').disable();
+							}
+						}
+					}
+				});
 					]
 				});
 
@@ -1020,6 +1035,7 @@
 								},
 								{
 									text: 'Edit',
+									id: 'sysConfigPropGrid-tools-edit',
 									scale: 'medium',
 									id: 'loggerGrid-tools-edit',
 									iconCls: 'fa fa-2x fa-edit',
