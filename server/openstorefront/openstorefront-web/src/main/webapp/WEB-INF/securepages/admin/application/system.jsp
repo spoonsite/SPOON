@@ -851,6 +851,24 @@
 				};
 
 
+				var deleteSysConfigProp = function deleteSysConfigProp(record) {
+					var url = '/openstorefront/api/v1/service/application/configproperties/';
+					url += record.data.code;
+
+					Ext.Ajax.request({
+						url: url,
+						method: 'DELETE',
+						success: function(response, opt){
+							Ext.toast('Successfully deleted property', '', 'tr');
+							sysConfigPropStore.load();
+						},
+						failure: function(response, opt){
+							Ext.toast('Failed to delete property', '', 'tr');
+						}
+					});
+				};
+
+
 				var logStore = Ext.create('Ext.data.Store', {
 					id: 'logStore',
 					autoLoad: true,
