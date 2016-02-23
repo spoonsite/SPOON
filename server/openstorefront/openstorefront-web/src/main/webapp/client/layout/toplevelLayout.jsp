@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --%>
 
+<%@page import="edu.usu.sdl.openstorefront.core.view.BrandingView"%>
+<%@page import="edu.usu.sdl.openstorefront.service.ServiceProxy"%>
 <%@page import="edu.usu.sdl.openstorefront.security.SecurityUtil"%>
 <%@page import="edu.usu.sdl.openstorefront.common.manager.PropertiesManager"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -31,8 +33,9 @@ limitations under the License.
 		String appVersion = PropertiesManager.getApplicationVersion();		
 		request.setAttribute("appVersion", appVersion);
 		
-		String appTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Openstorefront");
-		request.setAttribute("appTitle", appTitle);		
+		BrandingView brandingView = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
+		
+		request.setAttribute("appTitle", brandingView.getBranding().getApplicationName());		
 
 		request.setAttribute("user", SecurityUtil.getCurrentUserName());
 		request.setAttribute("usercontext", SecurityUtil.getUserContext());

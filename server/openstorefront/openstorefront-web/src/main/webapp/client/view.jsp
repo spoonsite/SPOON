@@ -516,7 +516,7 @@ limitations under the License.
 			});
 			
 			var questionPanel = Ext.create('Ext.panel.Panel', {
-				title: 'Q&A',
+				title: 'Question & Answers',
 				id: 'questionPanel',
 				bodyStyle: 'padding: 10px;',
 				scrollable: true,
@@ -629,9 +629,13 @@ limitations under the License.
 									
 									if (componentTypeDetail.dataEntryReviews) {
 										processReviews(entry);
+									} else {
+										Ext.getCmp('reviewPanel').close();
 									}
 									if (componentTypeDetail.dataEntryQuestions) {
 										processQuestions(entry);
+									} else {
+										Ext.getCmp('questionPanel').close();
 									}
 									processTags(entry.tags);
 									
