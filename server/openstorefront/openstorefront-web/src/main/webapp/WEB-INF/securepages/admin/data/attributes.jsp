@@ -27,14 +27,65 @@
 				}
 			});
 
+
+			var gridColorRenderer = function gridColorRenderer(value, metadata, record) {
+				if (value) 
+					metadata.tdCls = 'alert-success';
+				else 
+					metadata.tdCls = 'alert-danger';
+				return value;
+			};
+
+
 			var attributeGrid = Ext.create('Ext.grid.Panel', {
 				id: 'attributeGrid',
 				title: 'Manage Attributes <i class="fa fa-question-circle"  data-qtip="Attributes are used to categorize components and other listings. They can be searched on and filtered. They represent the metadata for a listing. Attribute Types represent a category and a code represents a specific value. The data is linked by the type and code which allows for a simple change of the description."></i>',
 				store: 'attributeStore',
 				columnLines: true,
 				columns: [
-					{text: 'Description', dataIndex: 'description', flex: 1},
-					{text: 'Type Code', dataIndex: 'attributeType', flex: 1},
+					{text: 'Description', dataIndex: 'description', flex: 3},
+					{text: 'Type Code', dataIndex: 'attributeType', flex: 2},
+					{
+						text: 'Visible', 
+						dataIndex: 'visibleFlg', 
+						flex: 1, 
+						renderer: gridColorRenderer
+					},
+					{
+						text: 'Required',
+						dataIndex: 'requiredFlg',
+						flex: 1, 
+						renderer: gridColorRenderer
+					},
+					{
+						text: 'Important',
+						dataIndex: 'importantFlg',
+						flex: 1, 
+						renderer: gridColorRenderer
+					},
+					{
+						text: 'Architecture',
+						dataIndex: 'architectureFlg',
+						flex: 1, 
+						renderer: gridColorRenderer
+					},
+					{
+						text: 'Allow Multiple',
+						dataIndex: 'allowMultipleFlg',
+						flex: 1, 
+						renderer: gridColorRenderer
+					},
+					{
+						text: 'Hide On Submission',
+						dataIndex: 'hideOnSubmission',
+						flex: 1, 
+						renderer: gridColorRenderer
+					},
+					{
+						text: 'Default Code',
+						dataIndex: 'defaultAttributeCode',
+						flex: 1
+					}
 
 				]
 			});
