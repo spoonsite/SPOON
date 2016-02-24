@@ -86,7 +86,22 @@
 						dataIndex: 'defaultAttributeCode',
 						flex: 1
 					}
-
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						items: [
+							{
+								text: 'Refresh',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-refresh',
+								handler: function () {
+									attributeStore.load();
+								}
+							},
+						]
+					}
 				]
 			});
 
