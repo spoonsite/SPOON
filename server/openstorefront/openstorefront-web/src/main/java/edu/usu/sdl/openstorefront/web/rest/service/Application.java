@@ -233,7 +233,7 @@ public class Application
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			PropertiesManager.setProperty(lookupModel.getCode(), lookupModel.getDescription());	;
+			PropertiesManager.setProperty(lookupModel.getCode(), lookupModel.getDescription());
 			return Response.ok(lookupModel).build();
 		}
 		return sendSingleEntityResponse(validationResult.toRestError());
