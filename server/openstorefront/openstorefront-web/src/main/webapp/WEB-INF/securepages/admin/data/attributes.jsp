@@ -11,6 +11,12 @@
 			var attributeStore = Ext.create('Ext.data.Store', {
 				id: 'attributeStore',
 				autoLoad: true,
+				sorters: [
+					new Ext.util.Sorter({
+						property: 'description',
+						direction: 'ASC'
+					})
+				],	
 				proxy: {
 					type: 'ajax',
 					url: '/openstorefront/api/v1/resource/attributes/attributetypes',
