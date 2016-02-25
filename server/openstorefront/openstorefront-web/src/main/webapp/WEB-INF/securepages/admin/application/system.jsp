@@ -15,6 +15,7 @@
 				background-color: #8A8A8A;
 				border: 1px solid #464545;
 				font-size: 14px;
+				overflow: auto;
 			}
 			.list-group {
 				/* margin-bottom: 20px; */
