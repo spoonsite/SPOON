@@ -242,12 +242,14 @@
 			});
 
 			var actionAddAttribute = function actionAddAttribute() {
-
+				Ext.getCmp('editAttributeForm').reset();
+				editAttributeWin.show();
 			};
 
 
 			var actionEditAttribute = function actionEditAttribute(record) {
-
+				Ext.getCmp('editAttributeForm').loadRecord(record);
+				editAttributeWin.show();
 			};
 
 			var actionToggleAttributeStatus = function actionToggleAttributeStatus(record) {
@@ -298,6 +300,57 @@
 			var actionExportAttribute = function actionExportAttribute(record) {
 
 			};
+
+
+			var editAttributeWin = Ext.create('Ext.window.Window', {
+					id: 'editAttributeWin',
+					title: 'Add/Edit Attribute',
+					modal: true,
+					width: '50%',
+					y: '10em',
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							id: 'editAttributeForm',
+							layout: 'vbox',
+							scrollable: true,
+							bodyStyle: 'padding: 10px;',
+							defaults: {
+								labelAlign: 'top',
+								width: '100%'
+							},
+							items: [
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											iconCls: 'fa fa-save',
+											formBind: true,
+											handler: function () {
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function () {
+												Ext.getCmp('editAttributeForm').reset();
+												Ext.getCmp('editAttributeWin').hide();
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				});
 
 			Ext.create('Ext.container.Viewport', {
 				layout: 'fit',
