@@ -53,10 +53,12 @@
 								Ext.getCmp('attributeGrid-tools-toggleActivation').setText('Activate');
 							}
 							Ext.getCmp('attributeGrid-tools-delete').enable();
+							Ext.getCmp('attributeGrid-tools-export').enable();
 						} else {
 							Ext.getCmp('attributeGrid-tools-edit').disable();
 							Ext.getCmp('attributeGrid-tools-toggleActivation').disable();
 							Ext.getCmp('attributeGrid-tools-delete').disable();
+							Ext.getCmp('attributeGrid-tools-export').disable();
 						}
 					}
 				},
@@ -174,6 +176,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus',
 								handler: function() {
+									actionAddAttribute();
 								}
 							},
 							{
@@ -183,6 +186,7 @@
 								disabled: true,
 								iconCls: 'fa fa-2x fa-edit',
 								handler: function() {
+									actionEditAttribute(record);
 								}
 							},
 							{
@@ -192,6 +196,7 @@
 								disabled: true,
 								iconCls: 'fa fa-2x fa-power-off',
 								handler: function() {
+									actionToggleAttributeStatus(record);
 								}
 							},
 							{
@@ -201,6 +206,7 @@
 								disabled: true,
 								iconCls: 'fa fa-2x fa-trash',
 								handler: function() {
+									actionDeleteAttribute(record);
 								}
 							},
 							{
@@ -212,20 +218,48 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-upload',
 								handler: function() {
+									actionImportAttribute(record);
 								}
 							},
 							{
 								text: 'Export',
 								id: 'attributeGrid-tools-export',
 								scale: 'medium',
+								disabled: true,
 								iconCls: 'fa fa-2x fa-download',
 								handler: function() {
+									actionExportAttribute(record);
 								}
 							}
 						]
 					}
 				]
 			});
+
+			var actionAddAttribute = function actionAddAttribute() {
+
+			};
+
+
+			var actionEditAttribute = function actionEditAttribute(record) {
+
+			};
+
+			var actionToggleAttributeStatus = function actionToggleAttributeStatus(record) {
+
+			};
+
+			var actionDeleteAttribute = function actionDeleteAttribute(record) {
+
+			};
+
+			var actionImportAttribute = function actionImportAttribute(record) {
+
+			};
+
+			var actionExportAttribute = function actionExportAttribute(record) {
+
+			};
 
 			Ext.create('Ext.container.Viewport', {
 				layout: 'fit',
