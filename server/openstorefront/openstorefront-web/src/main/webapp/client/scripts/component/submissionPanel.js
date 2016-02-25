@@ -469,7 +469,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					name: 'description',
 					width: '100%',
 					height: 300,
-					maxLength: 32000,
+					maxLength: 65536,
 					emptyText: 'Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.<br><br>Include an easy to read description of the product, focusing on what it is and what it does.',
 					tinyMCEConfig: CoreUtil.tinymceConfig()
 				},
@@ -1285,7 +1285,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			items: [
 				{
 					xtype: 'panel',
-					html: '<h1>3. Addtional Details:</h1><h3>Fill in as many details as possible. The more details the easier it is for other to discover this entry.<br>Including additional points of contact, related screenshots and attributes</h3>'
+					html: '<h1>3. Additional Details:</h1><h3>Fill in as many details as possible. The more details the easier it is for other to discover this entry.<br>Include additional points of contact, related screenshots and attributes</h3>'
 				},
 				{
 					xtype: 'panel',

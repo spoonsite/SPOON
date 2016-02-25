@@ -345,7 +345,8 @@
 									xtype: 'textfield',
 									id: 'highlightEntryForm-Title',
 									fieldLabel: 'Title<span class="field-required" />',
-									name: 'title'
+									name: 'title',
+									maxLength: 255
 								},
 								{
 									xtype: 'panel',
@@ -358,7 +359,7 @@
 									name: 'description',
 									width: '100%',
 									height: 300,
-									maxLength: 32000,
+									maxLength: 65536,
 									tinyMCEConfig: CoreUtil.tinymceConfig()
 								},
 								{

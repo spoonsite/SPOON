@@ -21,7 +21,9 @@ limitations under the License.
 	<script src="scripts/component/templateBlocks.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/mediaViewer.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/relationshipVisualization.js?v=${appVersion}" type="text/javascript"></script>		
-		
+	<script src="scripts/component/reviewWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/questionWindow.js?v=${appVersion}" type="text/javascript"></script>
+	
 	<div style="display:none; visibility: hidden;" id="templateHolder"></div>	
 		
 	<script type="text/javascript">
@@ -177,9 +179,9 @@ limitations under the License.
 						flex: 1,
 						minHeight: 125,						
 						tpl: new Ext.XTemplate(
-							'<div class="details-title-name">{name} <span class="details-title-info" style="font-size: 10px">({componentTypeLabel})</span> </div>',
+							'<div class="details-title-name">{name} <span class="details-title-info" style="font-size: 10px">({componentTypeLabel})</span></div>',
 							'<div class="details-title-info">',							
-							'Organization: <b>{organization}</b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="version"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl><br>',						
+							'Organization: <b>{organization}</b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="version"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl>',							
 							'</div>',
 							'  <tpl for="attributes">',
 							'    <tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>',
@@ -192,6 +194,14 @@ limitations under the License.
 						layout: {
 							type: 'hbox'
 						},
+						dockedItems: [
+							{
+								xtype: 'panel',
+								itemId: 'updatedInfo',
+								dock: 'bottom',
+								tpl: 'Updated: {[Ext.util.Format.date(values.lastActivityDts, "m/d/y H:i:s")]}</span>'
+							}
+						],
 						items: [
 							{
 								xtype: 'button',
@@ -415,6 +425,25 @@ limitations under the License.
 				scrollable: true
 			});
 			
+			var reviewWindow = Ext.create('OSF.component.ReviewWindow', {	
+				componentId: componentId,
+				postHandler: function(reviewWin, response) {
+					Ext.getCmp('reviewPanel').setLoading('Refreshing...');
+					Ext.Ajax.request({
+						url: '../api/v1/resource/components/' + componentId + '/reviews/view',
+						callback: function(){
+							Ext.getCmp('reviewPanel').setLoading(false);
+						}, 						
+						success: function(response, opts){
+							var reviews = Ext.decode(response.responseText);
+							var entryLocal = {};
+							entryLocal.reviews = reviews;
+							processReviews(entryLocal);							
+						}
+					});
+				}
+			});			
+			
 			var reviews = Ext.create('Ext.panel.Panel', {				
 				id: 'reviewPanel',		
 				title: 'Reviews',
@@ -432,8 +461,9 @@ limitations under the License.
 						scale: 'medium',
 						margin: 10,
 						iconCls: 'fa fa-lg fa-star-half-o icon-top-padding-5',
-						handler: function(){
-							
+						handler: function(){							
+							reviewWindow.refresh();
+							reviewWindow.show();
 						}
 					}
 				],				
@@ -516,7 +546,7 @@ limitations under the License.
 			});
 			
 			var questionPanel = Ext.create('Ext.panel.Panel', {
-				title: 'Question & Answers',
+				title: 'Questions & Answers',
 				id: 'questionPanel',
 				bodyStyle: 'padding: 10px;',
 				scrollable: true,
@@ -594,6 +624,8 @@ limitations under the License.
 							if (entry.createUser === '${user}'){
 								Ext.getCmp('nonOwnerMenu').setHidden(true);
 							}
+							
+							Ext.getCmp('toolsPanel').getComponent('updatedInfo').update(entry);
 							
 							if (entry.approvalState !== "A") {
 								headerPanel.addDocked({

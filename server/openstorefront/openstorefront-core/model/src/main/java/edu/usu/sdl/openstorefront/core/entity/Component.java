@@ -56,7 +56,7 @@ public class Component
 	private String name;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_COMPONENT_DESCRIPTION)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_64K)
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String description;

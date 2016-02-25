@@ -2738,7 +2738,7 @@
 									name: 'description',
 									width: '100%',
 									height: 300,
-									maxLength: 32000,
+									maxLength: 65536,
 									tinyMCEConfig: CoreUtil.tinymceConfig()
 								},								
 								Ext.create('OSF.component.StandardComboBox', {
