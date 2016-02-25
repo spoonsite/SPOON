@@ -186,6 +186,7 @@
 								disabled: true,
 								iconCls: 'fa fa-2x fa-edit',
 								handler: function() {
+									var record = attributeGrid.getSelection()[0];
 									actionEditAttribute(record);
 								}
 							},
@@ -196,6 +197,7 @@
 								disabled: true,
 								iconCls: 'fa fa-2x fa-power-off',
 								handler: function() {
+									var record = attributeGrid.getSelection()[0];
 									actionToggleAttributeStatus(record);
 								}
 							},
@@ -206,6 +208,7 @@
 								disabled: true,
 								iconCls: 'fa fa-2x fa-trash',
 								handler: function() {
+									var record = attributeGrid.getSelection()[0];
 									actionDeleteAttribute(record);
 								}
 							},
@@ -218,6 +221,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-upload',
 								handler: function() {
+									var record = attributeGrid.getSelection()[0];
 									actionImportAttribute(record);
 								}
 							},
@@ -228,6 +232,7 @@
 								disabled: true,
 								iconCls: 'fa fa-2x fa-download',
 								handler: function() {
+									var record = attributeGrid.getSelection()[0];
 									actionExportAttribute(record);
 								}
 							}
@@ -246,11 +251,44 @@
 			};
 
 			var actionToggleAttributeStatus = function actionToggleAttributeStatus(record) {
+				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				url += record.data.attributeType;
+				if (record.data.activeStatus === 'A') {
+					var what = 'deactivate';
+					var method = 'DELETE';
+				}
+				else {
+					var what = 'activate';
+					var method = 'POST';
+				}
+				Ext.Ajax.request({
+					url: url,
+					method: method,
+					success: function(response, opt){
+						Ext.toast('Successfully' + what + 'd attribute type', '', 'tr');
+						attributeStore.load();
+					},
+					failure: function(response, opt){
+						Ext.toast('Failed to ' + what + ' attribute type', '', 'tr');
+					}
+				});
 
 			};
 
 			var actionDeleteAttribute = function actionDeleteAttribute(record) {
-
+				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				url += record.data.attributeType + '/force';
+				Ext.Ajax.request({
+					url: url,
+					method: 'DELETE',
+					success: function(response, opt){
+						Ext.toast('Successfully started deletion of attribute type. Refresh after task completes.', '', 'tr');
+						attributeStore.load();
+					},
+					failure: function(response, opt){
+						Ext.toast('Failed to start deletion of attribute type', '', 'tr');
+					}
+				});
 			};
 
 			var actionImportAttribute = function actionImportAttribute(record) {
