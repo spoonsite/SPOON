@@ -46,6 +46,12 @@
 						if (Ext.getCmp('attributeGrid').getSelectionModel().hasSelection()) {
 							Ext.getCmp('attributeGrid-tools-edit').enable();
 							Ext.getCmp('attributeGrid-tools-toggleActivation').enable();
+							if (record[0].data.activeStatus === 'A') {
+								Ext.getCmp('attributeGrid-tools-toggleActivation').setText('Deactivate');
+							}
+							else {
+								Ext.getCmp('attributeGrid-tools-toggleActivation').setText('Activate');
+							}
 							Ext.getCmp('attributeGrid-tools-delete').enable();
 						} else {
 							Ext.getCmp('attributeGrid-tools-edit').disable();
@@ -56,7 +62,7 @@
 				},
 				columnLines: true,
 				columns: [
-					{text: 'Description', dataIndex: 'description', flex: 3},
+					{text: 'Description', dataIndex: 'description', flex: 2},
 					{text: 'Type Code', dataIndex: 'attributeType', flex: 2},
 					{
 						text: 'Visible', 
@@ -98,7 +104,14 @@
 						text: 'Default Code',
 						dataIndex: 'defaultAttributeCode',
 						flex: 1
+					},
+					{
+						text: 'Status',
+						dataIndex: 'activeStatus',
+						align: 'center',
+						flex: 0.5
 					}
+
 				],
 				dockedItems: [
 					{
