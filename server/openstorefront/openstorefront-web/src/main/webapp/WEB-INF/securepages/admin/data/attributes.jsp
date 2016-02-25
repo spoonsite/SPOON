@@ -41,6 +41,19 @@
 				id: 'attributeGrid',
 				title: 'Manage Attributes <i class="fa fa-question-circle"  data-qtip="Attributes are used to categorize components and other listings. They can be searched on and filtered. They represent the metadata for a listing. Attribute Types represent a category and a code represents a specific value. The data is linked by the type and code which allows for a simple change of the description."></i>',
 				store: 'attributeStore',
+				listeners: {
+					selectionchange: function (grid, record, index, opts) {
+						if (Ext.getCmp('attributeGrid').getSelectionModel().hasSelection()) {
+							Ext.getCmp('attributeGrid-tools-edit').enable();
+							Ext.getCmp('attributeGrid-tools-toggleActivation').enable();
+							Ext.getCmp('attributeGrid-tools-delete').enable();
+						} else {
+							Ext.getCmp('attributeGrid-tools-edit').disable();
+							Ext.getCmp('attributeGrid-tools-toggleActivation').disable();
+							Ext.getCmp('attributeGrid-tools-delete').disable();
+						}
+					}
+				},
 				columnLines: true,
 				columns: [
 					{text: 'Description', dataIndex: 'description', flex: 3},
@@ -105,6 +118,7 @@
 							},
 							{
 								text: 'Add New Type',
+								id: 'attributeGrid-tools-add',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus',
 								handler: function() {
@@ -112,21 +126,27 @@
 							},
 							{
 								text: 'Edit',
+								id: 'attributeGrid-tools-edit',
 								scale: 'medium',
+								disabled: true,
 								iconCls: 'fa fa-2x fa-edit',
 								handler: function() {
 								}
 							},
 							{
 								text: 'Deactivate',
+								id: 'attributeGrid-tools-toggleActivation',
 								scale: 'medium',
+								disabled: true,
 								iconCls: 'fa fa-2x fa-power-off',
 								handler: function() {
 								}
 							},
 							{
 								text: 'Delete',
+								id: 'attributeGrid-tools-delete',
 								scale: 'medium',
+								disabled: true,
 								iconCls: 'fa fa-2x fa-trash',
 								handler: function() {
 								}
@@ -136,6 +156,7 @@
 							},
 							{
 								text: 'Import',
+								id: 'attributeGrid-tools-import',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-upload',
 								handler: function() {
@@ -143,6 +164,7 @@
 							},
 							{
 								text: 'Export',
+								id: 'attributeGrid-tools-export',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-download',
 								handler: function() {
