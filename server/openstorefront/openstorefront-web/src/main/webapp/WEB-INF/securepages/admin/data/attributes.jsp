@@ -19,7 +19,7 @@
 				],	
 				proxy: {
 					type: 'ajax',
-					url: '/openstorefront/api/v1/resource/attributes/attributetypes',
+					url: '/openstorefront/api/v1/resource/attributes/attributetypes?all=true',
 					reader: {
 						type: 'json',
 						rootProperty: 'data'
@@ -111,9 +111,48 @@
 						align: 'center',
 						flex: 0.5
 					}
-
 				],
 				dockedItems: [
+					{
+						dock: 'top',
+						xtype: 'toolbar',
+						items: [
+							Ext.create('OSF.component.StandardComboBox', {
+								id: 'attributeFilter-activeStatus',
+								emptyText: 'Show All',
+								fieldLabel: 'Active Status',
+								name: 'activeStatus',
+								listeners: {
+									change: function (filter, newValue, oldValue, opts) {
+										if (newValue === 'A') {
+											attributeStore.filter('activeStatus','A');
+										}
+										else {
+											attributeStore.filter('activeStatus', 'I');
+										}
+									},
+								},
+								storeConfig: {
+									customStore: {
+										fields: [
+											'code',
+											'description'
+										],
+										data: [
+											{
+												code: 'A',
+												description: 'Active'
+											},
+											{
+												code: 'I',
+												description: 'Inactive'
+											}
+										]
+									}
+								}
+							})
+						]
+					},
 					{
 						xtype: 'toolbar',
 						dock: 'top',
@@ -194,9 +233,9 @@
 					attributeGrid
 				]
 			});
-			
-				
+
+
 		});		
-	</script>
-    </stripes:layout-component>
-</stripes:layout-render>
+		</script>
+		</stripes:layout-component>
+		</stripes:layout-render>
