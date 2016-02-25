@@ -100,6 +100,54 @@
 									attributeStore.load();
 								}
 							},
+							{ 
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Add New Type',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-plus',
+								handler: function() {
+								}
+							},
+							{
+								text: 'Edit',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-edit',
+								handler: function() {
+								}
+							},
+							{
+								text: 'Deactivate',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-power-off',
+								handler: function() {
+								}
+							},
+							{
+								text: 'Delete',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-trash',
+								handler: function() {
+								}
+							},
+							{
+								xtype: 'tbfill',
+							},
+							{
+								text: 'Import',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-upload',
+								handler: function() {
+								}
+							},
+							{
+								text: 'Export',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-download',
+								handler: function() {
+								}
+							}
 						]
 					}
 				]
