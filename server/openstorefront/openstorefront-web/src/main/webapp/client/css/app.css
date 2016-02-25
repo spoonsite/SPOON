@@ -397,6 +397,11 @@ tr.details-table:hover {
 	padding-right: 5px;
 }
 
+.home-highlight-approved {
+	text-align: right;
+	font-size: 10px;
+}
+
 .logo-small {
     width: 250px;
     padding: 2px;

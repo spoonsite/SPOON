@@ -47,7 +47,7 @@ limitations under the License.
 							maximizable: true,
 							closeAction: 'destroy',
 							bodyStyle: 'padding: 20px;',
-							html: item.description,							
+							html: item.description + '<br><br><span style="font-size: 10px;">Updated: ' + Ext.util.Format.date(item.updateDts, "m/d/y") + '</span>',							
 							dockedItems: [
 								{
 									xtype: 'toolbar',
@@ -270,7 +270,7 @@ limitations under the License.
 					var highlightTemplate = new Ext.XTemplate(
 						'<div class="home-highlight-item">',
 						'<h2><tpl if="link"><a href="{link}" class="link" target="_blank">{title} <i class="fa fa-link"></i></a></tpl><tpl if="!link">{title}</tpl></h2>',
-						'<div class="home-highlight-item-desc">{displayDesc}</div>',
+						'<div class="home-highlight-item-desc">{displayDesc}<br><span style="font-size: 10px;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span></div>',
 						'<br><div style="text-align: right;"><a href="#" class="link" onclick="homepage.readToggleHighlight(\'{highlightId}\');">{moreText}</a></div>',
 						'</div>'
 					);
@@ -297,8 +297,9 @@ limitations under the License.
 					
 					var template = new Ext.XTemplate(
 						'<div class="home-highlight-item">',
-						'<h2><a href="view.jsp?id={componentId}" class="link" target="_blank">{name} <i class="fa fa-link"></i></a></h2>',
-						'<div class="home-highlight-item-desc">{displayDesc}</div>',						
+						'	<h2><a href="view.jsp?id={componentId}" class="link" target="_blank">{name} <i class="fa fa-link"></i></a></h2>',
+						'	<div class="home-highlight-item-desc">{displayDesc}</div>',
+						'	<div class="home-highlight-approved">Approved: {[Ext.util.Format.date(values.addedDts, "m/d/y")]}</div>',						
 						'</div>'
 					);					
 					

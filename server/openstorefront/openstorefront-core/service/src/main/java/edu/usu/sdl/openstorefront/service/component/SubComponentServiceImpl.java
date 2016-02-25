@@ -776,6 +776,8 @@ public class SubComponentServiceImpl
 			//delete existing pros
 			ComponentReviewPro componentReviewProExample = new ComponentReviewPro();
 			componentReviewProExample.setComponentId(review.getComponentId());
+			componentReviewProExample.setComponentReviewProPk(new ComponentReviewProPk());			
+			componentReviewProExample.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());			
 			persistenceService.deleteByExample(componentReviewProExample);
 
 			for (ComponentReviewPro reviewPro : pros) {
@@ -789,7 +791,9 @@ public class SubComponentServiceImpl
 
 			//delete existing cons
 			ComponentReviewCon componentReviewConExample = new ComponentReviewCon();
-			componentReviewConExample.setComponentId(review.getComponentReviewId());
+			componentReviewConExample.setComponentId(review.getComponentId());
+			componentReviewConExample.setComponentReviewConPk(new ComponentReviewConPk());			
+			componentReviewConExample.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());						
 			persistenceService.deleteByExample(componentReviewConExample);
 
 			for (ComponentReviewCon reviewCon : cons) {

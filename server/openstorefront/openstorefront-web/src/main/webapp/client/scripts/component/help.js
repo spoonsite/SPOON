@@ -154,14 +154,17 @@ Ext.define('OSF.component.HelpPanel', {
 					xtype: 'panel',					
 					items: [
 						{
-							xtype: 'triggerfield',
+							xtype: 'textfield',
 							width: '100%',
 							emptyText: 'Search',
-							triggerCls: 'x-form-clear-trigger',
-							onTriggerClick: function() {
-								// Will trigger the change listener
-								this.reset();
-							},
+							triggers: {
+								reset: {
+									cls: 'x-form-clear-trigger',
+									handler: function() {
+										this.reset();
+									}
+								}
+							},							
 							listeners: {								
 								change: function() {
 									var tree = helpPanel.navPanel.getComponent('tree'),
