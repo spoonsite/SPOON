@@ -39,7 +39,7 @@ limitations under the License.
 			var pageMap = [];
 			pageMap['UserProfile'] = 'Router.action?page=user/userProfile.jsp';
 			pageMap['Watches'] = '/openstorefront/tools?tool=Watches';
-			pageMap['Reviews'] = '/openstorefront/tools?tool=Component%20Reviews';
+			pageMap['Reviews'] = 'Router.action?page=user/reviews.jsp';
 			pageMap['Submissions'] = 'Router.action?page=user/submissionManagement.jsp';
 			pageMap['Reports'] = 'Router.action?page=shared/reports.jsp';
 

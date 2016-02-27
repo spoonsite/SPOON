@@ -45,10 +45,43 @@ and open the template in the editor.
   outline-offset: -2px;
 }
 
-
 .hidden {
 	display: none;
 	visibility: hidden;
+}
+
+.small-button-normal {
+	padding: 5px;
+    border: 1px solid grey;
+    border-radius: 2px 2px 2px 2px;
+    color: black;
+}
+
+.small-button-normal:hover {
+	background-color: lightgrey;
+	cursor: pointer;
+}
+
+.small-button-normal:pressed {
+	background-color: darkgrey;
+	cursor: pointer;
+}
+
+.small-button-danger {
+	padding: 5px;
+    border: 1px solid grey;
+    border-radius: 2px 2px 2px 2px;
+    color: red;	
+}
+
+.small-button-danger:hover {
+	background-color: lightgrey;
+	cursor: pointer;
+}
+
+.small-button-danger:pressed {
+	background-color: darkgrey;
+	cursor: pointer;
 }
 
 .page-title{

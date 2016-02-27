@@ -222,3 +222,41 @@ Ext.define('OSF.component.UserProfilePanel', {
 
 });
 
+Ext.define('OSF.component.UserProfileWindow', {
+	extend: 'Ext.window.Window',
+	alias: 'osf.widget.UserProfileWindow',
+	title: 'User Profile',
+	iconCls: 'fa fa-lg fa-user',
+	layout: 'hbox',
+	modal: true,
+	width: '50%',
+	alwaysOnTop: true,
+	height: 385,
+	initComponent: function () {
+		this.callParent();
+
+		var profileWindow = this;
+
+		var profilePanel = Ext.create('OSF.component.UserProfilePanel', {
+			width: '100%',
+			saveCallback: profileWindow.saveCallback,
+			profileWindow: profileWindow,
+			extraTools: [
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Cancel',
+					iconCls: 'fa fa-close',
+					handler: function () {
+						profileWindow.close();
+					}
+				}
+			]
+		});
+
+		profileWindow.add(profilePanel);
+	}
+
+});
+

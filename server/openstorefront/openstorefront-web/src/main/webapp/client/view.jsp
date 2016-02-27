@@ -79,6 +79,49 @@ limitations under the License.
 			}
 		};
 		
+		var ViewPage = {
+			editReview: function(reviewId) {
+				var reviewData;
+				Ext.Array.each(ViewPage.reviews, function(review){
+					if (review.reviewId === reviewId) {
+						reviewData = review;
+					}
+				});
+				
+				var record = Ext.create('Ext.data.Model', {					
+				});
+				record.set(reviewData);
+				
+				ViewPage.reviewWindow.show();
+				ViewPage.reviewWindow.editReview(record);
+			},
+			
+			deleteReview: function(reviewId, componentId) {
+				Ext.Msg.show({
+					title:'Remove Review?',
+					message: 'Are you sure you want to review this review?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							Ext.getCmp('reviewPanel').setLoading("Removing...");
+							Ext.Ajax.request({
+								url: '../api/v1/resource/components/'+componentId+'/reviews/'+reviewId,
+								method: 'DELETE',
+								callback: function(){
+									Ext.getCmp('reviewPanel').setLoading(false);
+								},
+								success: function(){
+									ViewPage.refreshReviews();
+								}
+							});
+						} 
+					}
+				});				
+			}
+		};	
+					
+		
 		
 		Ext.onReady(function(){		
 			
@@ -425,22 +468,26 @@ limitations under the License.
 				scrollable: true
 			});
 			
-			var reviewWindow = Ext.create('OSF.component.ReviewWindow', {	
+			ViewPage.refreshReviews = function() {
+				Ext.getCmp('reviewPanel').setLoading('Refreshing...');
+				Ext.Ajax.request({
+					url: '../api/v1/resource/components/' + componentId + '/reviews/view',
+					callback: function(){
+						Ext.getCmp('reviewPanel').setLoading(false);
+					}, 						
+					success: function(response, opts){
+						var reviews = Ext.decode(response.responseText);
+						var entryLocal = {};
+						entryLocal.reviews = reviews;
+						processReviews(entryLocal);							
+					}
+				});				
+			};
+			
+			ViewPage.reviewWindow = Ext.create('OSF.component.ReviewWindow', {	
 				componentId: componentId,
 				postHandler: function(reviewWin, response) {
-					Ext.getCmp('reviewPanel').setLoading('Refreshing...');
-					Ext.Ajax.request({
-						url: '../api/v1/resource/components/' + componentId + '/reviews/view',
-						callback: function(){
-							Ext.getCmp('reviewPanel').setLoading(false);
-						}, 						
-						success: function(response, opts){
-							var reviews = Ext.decode(response.responseText);
-							var entryLocal = {};
-							entryLocal.reviews = reviews;
-							processReviews(entryLocal);							
-						}
-					});
+					ViewPage.refreshReviews();
 				}
 			});			
 			
@@ -462,8 +509,8 @@ limitations under the License.
 						margin: 10,
 						iconCls: 'fa fa-lg fa-star-half-o icon-top-padding-5',
 						handler: function(){							
-							reviewWindow.refresh();
-							reviewWindow.show();
+							ViewPage.reviewWindow.refresh();
+							ViewPage.reviewWindow.show();
 						}
 					}
 				],				
@@ -517,9 +564,11 @@ limitations under the License.
 							'<table style="width:100%"><tr>',
 							'	<td valign="top">',
 							'		<h1>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
-							'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl></div><br>',
+							'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl>', 
+							'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editReview(\'{reviewId}\')"></i> <i class="fa fa-trash-o small-button-danger" title="Remove" onclick="ViewPage.deleteReview(\'{reviewId}\', \'{componentId}\')"></i></tpl>',			
+							'		</div><br>',
 							'		<b>Organization:</b> {organization}<br>',
-							'		<b>Experience:</b> {userTimeCode}<br>',							
+							'		<b>Experience:</b> {userTimeDescription}<br>',							
 							'		<b>Last Used:</b> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}<br>',
 							'   <td>',
 							'	<td valign="top" width="20%">',
@@ -839,11 +888,17 @@ limitations under the License.
 					review.ratingStars = [];
 					for (var i=0; i<5; i++){					
 						review.ratingStars.push({						
-							star: i <= review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
+							star: i < review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
 						});
-					}					
+					}
+					
+					if (review.username === '${user}') {
+						review.owner = true;
+					}
 					
 				});
+				ViewPage.reviews = entryLocal.reviews;
+				
 				var reviewPanelReviews = Ext.getCmp('reviewPanel').getComponent('reviews');
 				var reviewPanelSummary = Ext.getCmp('reviewPanel').getComponent('summary');
 				
