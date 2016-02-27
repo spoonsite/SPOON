@@ -64,7 +64,8 @@ public class ComponentReviewView
 	@NotNull
 	@ConsumeField
 	private String userTimeCode;
-
+	private String userTimeDescription;
+	
 	@NotNull
 	@ConsumeField
 	private Date lastUsed;
@@ -114,7 +115,8 @@ public class ComponentReviewView
 		view.setComponentId(review.getComponentId());
 		view.setReviewId(review.getComponentReviewId());
 		view.setName(service.getComponentService().getComponentName(review.getComponentId()));
-		view.setUserTimeCode(TranslateUtil.translate(ExperienceTimeType.class, review.getUserTimeCode()));
+		view.setUserTimeCode(review.getUserTimeCode());
+		view.setUserTimeDescription(TranslateUtil.translate(ExperienceTimeType.class, review.getUserTimeCode()));
 
 		if (pros == null) {
 			ComponentReviewPro reviewProExample = new ComponentReviewPro();
@@ -342,6 +344,16 @@ public class ComponentReviewView
 	public void setActiveStatus(String activeStatus)
 	{
 		this.activeStatus = activeStatus;
+	}
+
+	public String getUserTimeDescription()
+	{
+		return userTimeDescription;
+	}
+
+	public void setUserTimeDescription(String userTimeDescription)
+	{
+		this.userTimeDescription = userTimeDescription;
 	}
 
 }

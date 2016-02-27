@@ -71,8 +71,10 @@ Ext.define('OSF.component.ReviewWindow', {
 									data.rating = value;
 								
 									var method = 'POST';
+									var urlEnd = 'detail';
 									if (data.reviewId && data.reviewId !== '') {
-										method = 'PUT'
+										method = 'PUT';
+										urlEnd = data.reviewId + '/detail';
 									}
 									data.lastUsed += '-01';
 									data.lastUsed = Ext.Date.parse(data.lastUsed,'m-Y-d');
@@ -98,7 +100,7 @@ Ext.define('OSF.component.ReviewWindow', {
 									data.organization = reviewWindow.user.organization;
 
 									CoreUtil.submitForm({
-										url: '../api/v1/resource/components/' + reviewWindow.componentId + '/reviews/detail',
+										url: '../api/v1/resource/components/' + reviewWindow.componentId + '/reviews/' + urlEnd,
 										method: method,
 										data: data,
 										form: form,
@@ -166,6 +168,7 @@ Ext.define('OSF.component.ReviewWindow', {
 				},
 				{
 					xtype: 'datefield',
+					itemId: 'lastUsed',
 					name: 'lastUsed',
 					fieldLabel: 'Last Used <span class="field-required" />',
 					width: 200,
@@ -185,7 +188,8 @@ Ext.define('OSF.component.ReviewWindow', {
 				}),
 				{	
 					xtype: 'tagfield',
-					fieldLabel: 'Pros',
+					itemId: 'pros',
+					fieldLabel: 'Pros',					
 					name: 'prosRaw',	
 					displayField: 'description',
 					valueField: 'code',
@@ -201,6 +205,7 @@ Ext.define('OSF.component.ReviewWindow', {
 				},
 				{	
 					xtype: 'tagfield',
+					itemId: 'cons',
 					fieldLabel: 'Cons',
 					name: 'consRaw',
 					displayField: 'description',
@@ -234,9 +239,31 @@ Ext.define('OSF.component.ReviewWindow', {
 			reviewWindow.user = Ext.decode(response.responseText);
 						
 			//confirm that they have the required info
-			if (!reviewWindow.user.organization || !reviewWindow.user.userTypeCode) {
-				
-			}
+			reviewWindow.on('show', function(){
+				if (!reviewWindow.user.organization || !reviewWindow.user.userTypeCode) {
+					var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
+						alwaysOnTop: false,
+						saveCallback: function(response, opts){
+							CoreService.usersevice.getCurrentUser().then(function (response) {
+								reviewWindow.user = Ext.decode(response.responseText);
+								
+							});
+						}
+					});
+					userProfileWin.show();
+						
+					Ext.defer(function(){	
+						Ext.MessageBox.show({
+							title:'Update User Profile',
+							message: 'Please update you profile and fill in missing information to continue.',
+							buttons: Ext.Msg.OK,
+							icon: Ext.Msg.ERROR										
+						});						
+					}, 200);
+					
+					reviewWindow.close();
+				}				
+			});
 			
 		});
 		
@@ -252,9 +279,25 @@ Ext.define('OSF.component.ReviewWindow', {
 	editReview: function(reviewRecord) {
 		var reviewWindow = this;
 		
-		reviewWindow.formPanel.reset();
-		reviewWindow.componentId = reviewRecord.getComponentId;
+		reviewWindow.refresh();
+		reviewWindow.componentId = reviewRecord.get('componentId');		
 		reviewWindow.formPanel.loadRecord(reviewRecord);
+		
+		reviewWindow.formPanel.getComponent('rating').setValue(reviewRecord.get('rating'));
+		var allPros = [];
+		Ext.Array.each(reviewRecord.get('pros'), function(item){
+			allPros.push(item.code);
+		});
+		reviewWindow.formPanel.getComponent('pros').setValue(allPros);
+		
+		var allCons = [];
+		Ext.Array.each(reviewRecord.get('cons'), function(item){
+			allCons.push(item.code);
+		});	
+		reviewWindow.formPanel.getComponent('cons').setValue(allCons);
+		
+		reviewWindow.formPanel.getComponent('lastUsed').setValue(Ext.util.Format.date(reviewRecord.get('lastUsed'), 'm-Y'));
+		
 	}
 		
 });

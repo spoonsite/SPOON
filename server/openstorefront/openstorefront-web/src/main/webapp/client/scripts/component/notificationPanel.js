@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global Ext */
+/* global Ext, CoreService */
 
 Ext.define('OSF.component.NotificationPanel', {
 	extend: 'Ext.panel.Panel',
@@ -276,4 +276,39 @@ Ext.define('OSF.component.NotificationPanel', {
 
 });
 
+Ext.define('OSF.component.NotificationWindow', {
+  extend: 'Ext.window.Window',
+  alias: 'osf.widget.NotificationWindow',
+  
+  title: 'Notifications',
+  y: 40,
+  width: '80%',
+  modal: true,
+  closeAction: 'hide',
+  layout: 'fit',  
+  height: '50%',
+  maximizable: true,
+  
+  initComponent: function() {
+     this.callParent();
+     
+    var notWin = this;
+    notWin.notPanel = Ext.create('OSF.component.NotificationPanel', {      
+    });
+    notWin.notificationGrid = notWin.notPanel.notificationGrid;
+      
+    notWin.add(notWin.notPanel);
+   
+  },
+  
+  refreshData: function(){
+    this.notificationGrid.getStore().load({
+        params: {
+          all: this.loadAll
+        }
+    });
+  }
+  
+
+});
 

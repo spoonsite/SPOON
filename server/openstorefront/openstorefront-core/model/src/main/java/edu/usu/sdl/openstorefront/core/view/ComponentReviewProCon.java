@@ -37,6 +37,7 @@ public class ComponentReviewProCon
 	@NotNull
 	@ConsumeField
 	private String text;
+	private String code;
 	private Date updateDts;
 	private String componentId;
 	private String reviewId;
@@ -52,6 +53,7 @@ public class ComponentReviewProCon
 		view.setComponentId(pro.getComponentId());
 		view.setUpdateDts(pro.getUpdateDts());
 		view.setText(TranslateUtil.translate(ReviewPro.class, pro.getComponentReviewProPk().getReviewPro()));
+		view.setCode(pro.getComponentReviewProPk().getReviewPro());
 		view.setReviewId(pro.getComponentReviewProPk().getComponentReviewId());
 		view.toStandardView(pro);
 
@@ -64,6 +66,7 @@ public class ComponentReviewProCon
 		view.setComponentId(con.getComponentId());
 		view.setUpdateDts(con.getUpdateDts());
 		view.setText(TranslateUtil.translate(ReviewCon.class, con.getComponentReviewConPk().getReviewCon()));
+		view.setCode(con.getComponentReviewConPk().getReviewCon());
 		view.setReviewId(con.getComponentReviewConPk().getComponentReviewId());
 		view.toStandardView(con);
 		return view;
@@ -149,5 +152,15 @@ public class ComponentReviewProCon
 	public void setReviewId(String reviewId)
 	{
 		this.reviewId = reviewId;
+	}
+
+	public String getCode()
+	{
+		return code;
+	}
+
+	public void setCode(String code)
+	{
+		this.code = code;
 	}
 }
