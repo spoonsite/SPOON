@@ -255,7 +255,7 @@
 				// Retreive codes to populate form options
 				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
 				url += record.data.attributeType;
-				url += '/attributecodes';
+				url += '/attributecodeviews';
 				Ext.getCmp('editAttributeForm-defaultCode').setStore({
 					autoLoad: true,
 					proxy: {
@@ -354,9 +354,11 @@
 									xtype: 'combobox',
 									fieldLabel: 'Default Code',
 									id: 'editAttributeForm-defaultCode',
-									displayField: 'attributeCodePk.attributeCode',
-									valueField: 'attributeCodePk.attributeCode',
-									value: undefined,
+									displayField: 'code',
+									valueField: 'code',
+									typeAhead: false,
+									editable: false,
+									value: '',
 									name: 'alertType',
 									hidden: true,
 								},
@@ -409,7 +411,22 @@
 										},
 										{
 											name: 'hideOnSubmission',
-											boxLabel: 'Hide on Submission'
+											boxLabel: 'Hide on Submission',
+											listeners: {
+												change: function(box, newValue) {
+													var select = Ext.getCmp('editAttributeForm-defaultCode');
+													if (newValue === true) {
+														select.setFieldLabel('Default Code<span class="field-required" />');
+														select.allowBlank = false;
+													}
+													else {
+
+														select.setFieldLabel('Default Code');
+														select.allowBlank = true;
+														select.clearInvalid();
+													}
+												}
+											}
 										}
 									]
 								}
