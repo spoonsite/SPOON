@@ -244,12 +244,29 @@
 			var actionAddAttribute = function actionAddAttribute() {
 				Ext.getCmp('editAttributeForm').reset();
 				editAttributeWin.show();
+				Ext.getCmp('editAttributeForm-defaultCode').hide();
 			};
 
 
 			var actionEditAttribute = function actionEditAttribute(record) {
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 				editAttributeWin.show();
+				Ext.getCmp('editAttributeForm-defaultCode').show();
+				// Retreive codes to populate form options
+				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				url += record.data.attributeType;
+				url += '/attributecodes';
+				Ext.getCmp('editAttributeForm-defaultCode').setStore({
+					autoLoad: true,
+					proxy: {
+						type: 'ajax',
+						url: url,
+						reader: {
+							type: 'json',
+							rootProperty: 'data'
+						}
+					}
+				});
 			};
 
 			var actionToggleAttributeStatus = function actionToggleAttributeStatus(record) {
@@ -337,8 +354,8 @@
 									xtype: 'combobox',
 									fieldLabel: 'Default Code',
 									id: 'editAttributeForm-defaultCode',
-									displayField: 'name',
-									valueField: 'code',
+									displayField: 'attributeCodePk.attributeCode',
+									valueField: 'attributeCodePk.attributeCode',
 									value: undefined,
 									name: 'alertType',
 									hidden: true,
