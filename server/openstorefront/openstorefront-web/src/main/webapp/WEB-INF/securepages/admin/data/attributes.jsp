@@ -321,6 +321,72 @@
 								width: '100%'
 							},
 							items: [
+								{
+									xtype: 'textfield',
+									id: 'editAttributeForm-label',
+									fieldLabel: 'Label<span class="field-required" />',
+									name: 'description'
+								},
+								{
+									xtype: 'textfield',
+									id: 'editAttributeForm-code',
+									fieldLabel: 'Type Code',
+									name: 'attributeType',
+								},
+								{
+									xtype: 'panel',
+									html: '<b>Detailed Description</b>'
+								},
+								{
+									xtype: 'tinymce_textarea',
+									fieldStyle: 'font-family: Courier New; font-size: 12px;',
+									style: {border: '0'},
+									name: 'detailedDescription',
+									width: '100%',
+									height: 300,
+									maxLength: 255,
+									tinyMCEConfig: CoreUtil.tinymceConfig()
+								},
+								{
+									xtype: 'panel',
+									html: '<b>Flags:</b>'
+								},
+								{
+									xtype: 'fieldcontainer',
+									layout: 'hbox',
+									defaultType: 'checkboxfield',
+									defaultLayout: '100%',
+									defaults: {
+										flex: 1
+									},
+									items: [
+										{
+											name: 'requiredFlag',
+											boxLabel: 'Required'
+										},
+										{
+											name: 'visibleFlag',
+											boxLabel: 'Visible'
+										},
+										{
+											name: 'importantFlag',
+											boxLabel: 'Important'
+										},
+										{
+											name: 'architectureFlag',
+											boxLabel: 'Architecture'
+										},
+										{
+											name: 'allowMultipleFlag',
+											boxLabel: 'Allow Multiple'
+										},
+										{
+											name: 'hideOnSubmission',
+											boxLabel: 'Hide on Submission'
+										}
+									]
+								}
+
 							],
 							dockedItems: [
 								{
