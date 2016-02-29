@@ -330,8 +330,18 @@
 								{
 									xtype: 'textfield',
 									id: 'editAttributeForm-code',
-									fieldLabel: 'Type Code',
+									fieldLabel: 'Type Code<span class="field-required" />',
 									name: 'attributeType',
+								},
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Default Code',
+									id: 'editAttributeForm-defaultCode',
+									displayField: 'name',
+									valueField: 'code',
+									value: undefined,
+									name: 'alertType',
+									hidden: true,
 								},
 								{
 									xtype: 'panel',
@@ -361,23 +371,23 @@
 									},
 									items: [
 										{
-											name: 'requiredFlag',
+											name: 'requiredFlg',
 											boxLabel: 'Required'
 										},
 										{
-											name: 'visibleFlag',
+											name: 'visibleFlg',
 											boxLabel: 'Visible'
 										},
 										{
-											name: 'importantFlag',
+											name: 'importantFlg',
 											boxLabel: 'Important'
 										},
 										{
-											name: 'architectureFlag',
+											name: 'architectureFlg',
 											boxLabel: 'Architecture'
 										},
 										{
-											name: 'allowMultipleFlag',
+											name: 'allowMultipleFlg',
 											boxLabel: 'Allow Multiple'
 										},
 										{
