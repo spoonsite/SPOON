@@ -243,15 +243,21 @@
 
 			var actionAddAttribute = function actionAddAttribute() {
 				Ext.getCmp('editAttributeForm').reset();
+				editAttributeWin.edit = false;
+				editAttributeWin.setTitle('Add Attribute');
 				editAttributeWin.show();
+				Ext.getCmp('editAttributeForm-code').setEditable(true);
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
 			};
 
 
 			var actionEditAttribute = function actionEditAttribute(record) {
 				Ext.getCmp('editAttributeForm').loadRecord(record);
+				editAttributeWin.edit = true;
+				editAttributeWin.setTitle('Edit Attribute - ' + record.data.attributeType);
 				editAttributeWin.show();
 				Ext.getCmp('editAttributeForm-defaultCode').show();
+				Ext.getCmp('editAttributeForm-code').setEditable(false);
 				// Retreive codes to populate form options
 				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
 				url += record.data.attributeType;
@@ -359,7 +365,7 @@
 									typeAhead: false,
 									editable: false,
 									value: '',
-									name: 'alertType',
+									name: 'defaultCode',
 									hidden: true,
 								},
 								{
