@@ -361,7 +361,36 @@
 				columnLines: true,
 				store: codesStore,
 				columns: [
-					{text: 'Label', dataIndex: 'label', flex: 1},
+					{text: 'Label', dataIndex: 'label', flex: 2},
+					{
+						text: 'Code',
+						dataIndex: 'attributeCodePk',
+						flex: 1,
+						renderer: function (value, metadata, record) {
+							return value.attributeCode;	
+						}
+					},
+					{
+						text: 'Description', 
+						dataIndex: 'description', 
+						flex: 3,
+						cellWrap: true
+					},
+					{
+						text: 'Highlight Style',
+						dataIndex: 'highlightStyle',
+						flex: 1,
+						renderer: function (value, metadata, record) {
+							var classColor = 'alert-' + value;
+							metadata.tdCls = classColor;
+							return value;
+						}
+					},
+					{text: 'Link', dataIndex: 'detailUrl', flex: 1},
+					{text: 'Group Code', dataIndex: 'groupCode', flex: 1},
+					{text: 'Sort Order', dataIndex: 'sortOrder', flex: 1},
+					{text: 'Architecture Code', dataIndex: 'architectureCode', flex: 1.5},
+					{text: 'Badge URL', dataIndex: 'badgeUrl', flex: 1},
 				]
 			});
 
