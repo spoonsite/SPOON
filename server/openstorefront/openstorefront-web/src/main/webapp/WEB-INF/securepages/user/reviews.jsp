@@ -64,17 +64,17 @@ limitations under the License.
 					columns: [
 						{ text: 'Entry', dataIndex: 'name', width: 200 },
 						{ text: 'Title', dataIndex: 'title', width: 200 },
-						{ text: 'Rating', dataIndex: 'ratingStars', width: 125,
-							renderer: function(values) {
+						{ text: 'Rating', dataIndex: 'rating', width: 125,
+							renderer: function(values, meta, record) {
 								var display = '';
-								Ext.Array.each(values, function(star){
+								Ext.Array.each(record.get('ratingStars'), function(star){
 									display += '<i class="fa fa-lg fa-' + star.star + ' rating-star-color"></i>';
 								});								
 								return display;
 							}
 						},						
 						{ text: 'Comment', dataIndex: 'comment', flex: 1, minWidth: 200 },
-						{ text: 'Update Date', dataIndex: 'updateDate', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Update Date', dataIndex: 'updateDate', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 					],
 					dockedItems: [
 						{
@@ -141,13 +141,13 @@ limitations under the License.
 					Ext.getCmp('reviewGrid').getStore().load();
 				};
 						
+				var reviewWindow = Ext.create('OSF.component.ReviewWindow', {
+					title: 'Edit Review',						
+					postHandler: function(reviewWin, response) {
+						actionRefresh();
+					}
+				});						
 				var actionEdit = function(record) {
-					var reviewWindow = Ext.create('OSF.component.ReviewWindow', {
-						title: 'Edit Review',
-						postHandler: function(reviewWin, response) {
-							actionRefresh();
-						}
-					});
 					reviewWindow.show();
 					reviewWindow.editReview(record);
 				};
@@ -155,7 +155,7 @@ limitations under the License.
 				var actionDelete = function(record) {
 					Ext.Msg.show({
 						title:'Remove Review?',
-						message: 'Are you sure you want to review this review?',
+						message: 'Are you sure you want to remove this review?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {
