@@ -450,12 +450,14 @@
 									items: [
 										{
 											text: 'Save',
+											id: 'editAttributeWin-save',
 											iconCls: 'fa fa-save',
 											formBind: true,
 											handler: function () {
 												var form = Ext.getCmp('editAttributeForm');
 												if (form.isValid()) {
-													var formData = form.getValues();
+													// [asString], [dirtyOnly], [includeEmptyText], [useDataValues]
+													var formData = form.getValues(false,false,false,true);
 													var edit = editAttributeWin.edit;
 													var url = '/openstorefront/api/v1/resource/attributes/attributetypes'
 													var method = 'POST';
@@ -464,9 +466,27 @@
 														method = 'PUT';
 													}
 
-													console.log('url: ' + url);
-													console.log('me: ' + method);
-													console.log(formData);
+													// Modify formData to exist inside AttributeSaveType
+													var data = {};
+													data.attributeType = formData;
+
+
+													CoreUtil.submitForm({
+														url: url,
+														method: method,
+														data: data,
+														removeBlankDataItems: false,
+														form: Ext.getCmp('editAttributeForm'),
+														success: function (response, opts) {
+															Ext.toast('Saved Successfully', '', 'tr');
+															attributeStore.load();
+															Ext.getCmp('editAttributeForm').reset();
+															editAttributeWin.hide();
+														},
+														failure: function (response, opts) {
+															Ext.toast('Failed to save', '', 'tr');
+														}
+													});
 
 
 												}
