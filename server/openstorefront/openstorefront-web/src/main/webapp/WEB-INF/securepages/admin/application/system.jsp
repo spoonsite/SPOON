@@ -258,6 +258,7 @@
 					title: 'Threads Status',
 					id: 'threadStatus',
 					store: threadStatusStore,
+					bufferedRenderer: false,
 					dockedItems: [
 						{
 							xtype: 'toolbar',

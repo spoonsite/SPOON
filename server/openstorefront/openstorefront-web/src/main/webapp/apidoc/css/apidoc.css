@@ -83,7 +83,7 @@ a:hover {
 	border-right: 1px solid #dadfe5;
 	overflow: hidden;
 	overflow-y: auto;
-	width: 220px;	
+	width: 275px;	
 	z-index: 25;	
 	background-color: white;
 }
@@ -91,7 +91,7 @@ a:hover {
 .api-doc{
 	background: white;
 	margin-top: 25px;
-	margin-left: 220px;
+	margin-left: 275px;
 	min-width: 750px;		
 }
 
@@ -229,7 +229,7 @@ tr:nth-child(even) {
 	color: white;
 	font-size: 16px;
 	text-align: center;
-	width: 100px;
+	width: 175px;
 	margin-left: auto;
 	opacity: 0.8;
 	margin-right: auto;

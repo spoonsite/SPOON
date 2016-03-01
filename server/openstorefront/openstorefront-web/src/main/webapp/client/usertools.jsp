@@ -40,6 +40,7 @@ limitations under the License.
 			pageMap['UserProfile'] = 'Router.action?page=user/userProfile.jsp';
 			pageMap['Watches'] = '/openstorefront/tools?tool=Watches';
 			pageMap['Reviews'] = 'Router.action?page=user/reviews.jsp';
+			pageMap['Questions'] = 'Router.action?page=user/questions.jsp';
 			pageMap['Submissions'] = 'Router.action?page=user/submissionManagement.jsp';
 			pageMap['Reports'] = 'Router.action?page=shared/reports.jsp';
 
@@ -56,8 +57,14 @@ limitations under the License.
 				text: 'Reviews',
 				handler: function(){
 					actionLoadContent('Reviews');
+				}				
+			});	
+			toolsMenu.push({
+				text: 'Questions',
+				handler: function(){
+					actionLoadContent('Questions');
 				}
-			});			
+			});				
 			toolsMenu.push({
 				text: 'Reports',
 				handler: function(){

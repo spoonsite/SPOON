@@ -118,7 +118,50 @@ limitations under the License.
 						} 
 					}
 				});				
-			}
+			},
+			editResponse: function(responseId) {
+				var responseData;
+				Ext.Array.each(ViewPage.questions, function(question){
+					Ext.Array.each(question.responses, function(response){
+						if (response.responseId === responseId) {
+							responseData = response;							
+						}						
+					});
+				});
+				
+				var record = Ext.create('Ext.data.Model', {					
+				});
+				record.set(responseData);
+				
+				ViewPage.responseWindow.show();
+				ViewPage.responseWindow.edit(record);				
+				
+			},
+			deleteResponse: function(responseId, questionId, componentId){
+				
+				Ext.Msg.show({
+					title:'Remove Answer?',
+					message: 'Are you sure you want to review this answer?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							Ext.getCmp('questionPanel').setLoading("Removing...");
+							Ext.Ajax.request({
+								url: '../api/v1/resource/components/'+componentId+'/questions/' + questionId + '/responses/' + responseId,
+								method: 'DELETE',
+								callback: function(){
+									Ext.getCmp('questionPanel').setLoading(false);
+								},
+								success: function(){
+									ViewPage.refreshQuestions();
+								}
+							});
+						} 
+					}
+				});				
+			}			
+			
 		};	
 					
 		
@@ -565,7 +608,7 @@ limitations under the License.
 							'	<td valign="top">',
 							'		<h1>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
 							'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl>', 
-							'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editReview(\'{reviewId}\')"></i> <i class="fa fa-trash-o small-button-danger" title="Remove" onclick="ViewPage.deleteReview(\'{reviewId}\', \'{componentId}\')"></i></tpl>',			
+							'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash-o small-button-danger" title="Remove" onclick="ViewPage.deleteReview(\'{reviewId}\', \'{componentId}\')"> Remove</i></tpl>',			
 							'		</div><br>',
 							'		<b>Organization:</b> {organization}<br>',
 							'		<b>Experience:</b> {userTimeDescription}<br>',							
@@ -594,6 +637,36 @@ limitations under the License.
 				]
 			});
 			
+			ViewPage.refreshQuestions = function(){
+				Ext.getCmp('questionPanel').setLoading('Refreshing...');
+				Ext.Ajax.request({
+					url: '../api/v1/resource/components/' + componentId + '/questions/view',
+					callback: function(){
+						Ext.getCmp('questionPanel').setLoading(false);
+					}, 						
+					success: function(response, opts){
+						var questions = Ext.decode(response.responseText);
+						var entryLocal = {};
+						entryLocal.questions = questions;
+						processQuestions(entryLocal);							
+					}
+				});
+			};
+			
+			ViewPage.questionWindow = Ext.create('OSF.component.QuestionWindow', {
+				componentId: componentId,
+				postHandler: function(questionWin, response) {
+					ViewPage.refreshQuestions();
+				}				
+			});		
+			
+			ViewPage.responseWindow = Ext.create('OSF.component.ResponseWindow', {
+				componentId: componentId,
+				postHandler: function(responseWin, response) {
+					ViewPage.refreshQuestions();
+				}
+			});			
+			
 			var questionPanel = Ext.create('Ext.panel.Panel', {
 				title: 'Questions & Answers',
 				id: 'questionPanel',
@@ -611,8 +684,9 @@ limitations under the License.
 						scale: 'medium',
 						margin: 10,
 						iconCls: 'fa  fa-lg fa-comment icon-top-padding-5',
-						handler: function(){
-							
+						handler: function(){							
+							ViewPage.questionWindow.show();
+							ViewPage.questionWindow.refresh();
 						}
 					}
 				]
@@ -892,7 +966,7 @@ limitations under the License.
 						});
 					}
 					
-					if (review.username === '${user}') {
+					if (review.username === '${user}' || ${admin}) {
 						review.owner = true;
 					}
 					
@@ -929,6 +1003,7 @@ limitations under the License.
 			var processQuestions = function(entryLocal) {
 				
 				var questionPanels = [];
+				ViewPage.questions = entryLocal.questions;
 				Ext.Array.each(entryLocal.questions, function(question){
 					
 					var text = '<div class="question-question"><span class="question-response-letter-q">Q.</span> '+ question.question + '</div>';
@@ -936,7 +1011,12 @@ limitations under the License.
 							question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y") +
 							'</div>';
 					
-											
+					Ext.Array.each(question.responses, function(response){
+						response.questionId = question.questionId;
+						response.componentId = question.componentId;
+					});
+					
+				
 					var panel = Ext.create('Ext.panel.Panel', {
 						titleCollapse: true,
 						collapsible: true,
@@ -945,25 +1025,82 @@ limitations under the License.
 						data: question.responses,
 						tpl: new Ext.XTemplate(							
 							'<tpl for=".">',
-							'	<div class="question-response"><span class="question-response-letter">A.</span> {response}</div>',
-							'	<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
-							'   <hr>',
+							'	<tpl if="activeStatus === \'A\'">',
+							'		<div class="question-response"><span class="question-response-letter">A.</span> {response}</div>',
+							'		<tpl if="username === \'${user}\' || ${admin}"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editResponse(\'{responseId}\')"> Edit</i> <i class="fa fa-trash-o small-button-danger" title="Remove" onclick="ViewPage.deleteResponse(\'{responseId}\', \'{questionId}\', \'{componentId}\')"> Remove</i></tpl>',
+							'		<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
+							'		<hr>',
+							'	</tpl>',
 							'</tpl>'
 						),
 						dockedItems: [
 							{
 								xtype: 'button',
+								dock: 'bottom',
 								text: 'Answer',
 								maxWidth: 150,
-								scale: 'medium',
+								scale: 'medium',								
 								margin: 10,
 								iconCls: 'fa  fa-lg fa-comments-o icon-top-padding-5',
 								handler: function(){
-
+									ViewPage.responseWindow.questionId = question.questionId;
+									ViewPage.responseWindow.show();
+									ViewPage.responseWindow.refresh();
 								}
 							}
 						]				
 					});
+					if (question.username === '${user}' || ${admin}) {
+						panel.addDocked(
+							{
+								xtype: 'toolbar',
+								dock: 'top',								
+								items: [
+									{
+										text: 'Edit',
+										tooltip: 'Edit Question',
+										iconCls: 'fa fa-edit',
+										handler: function(){
+											ViewPage.questionWindow.show();
+											
+											var record = Ext.create('Ext.data.Model');
+											record.set(question);											
+											ViewPage.questionWindow.edit(record);
+										}
+									},
+									{	
+										text: 'Delete',
+										tooltip: 'Delete Question',
+										iconCls: 'fa fa-trash-o',
+										handler: function(){
+											Ext.Msg.show({
+												title:'Remove Question?',
+												message: 'Are you sure you want to review this Question?',
+												buttons: Ext.Msg.YESNO,
+												icon: Ext.Msg.QUESTION,
+												fn: function(btn) {
+													if (btn === 'yes') {
+														Ext.getCmp('questionPanel').setLoading("Removing...");
+														Ext.Ajax.request({
+															url: '../api/v1/resource/components/' + componentId + '/questions/' + question.questionId,
+															method: 'DELETE',
+															callback: function(){
+																Ext.getCmp('questionPanel').setLoading(false);
+															},
+															success: function(){
+																ViewPage.refreshQuestions();
+															}
+														});
+													} 
+												}
+											});
+										}										
+									}
+								]
+							}
+						);
+					}											
+					
 					questionPanels.push(panel);				
 					
 				});
