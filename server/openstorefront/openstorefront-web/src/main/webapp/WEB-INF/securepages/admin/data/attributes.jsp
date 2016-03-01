@@ -248,6 +248,7 @@
 				editAttributeWin.show();
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
+				Ext.getCmp('editAttributeForm-hideOnSubmission').disable();
 			};
 
 
@@ -257,6 +258,7 @@
 				editAttributeWin.setTitle('Edit Attribute - ' + record.data.attributeType);
 				editAttributeWin.show();
 				Ext.getCmp('editAttributeForm-defaultCode').show();
+				Ext.getCmp('editAttributeForm-hideOnSubmission').enable();
 				Ext.getCmp('editAttributeForm-code').setEditable(false);
 				// Retreive codes to populate form options
 				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
@@ -418,6 +420,8 @@
 										{
 											name: 'hideOnSubmission',
 											boxLabel: 'Hide on Submission',
+											id: 'editAttributeForm-hideOnSubmission',
+											toolTip: 'Hiding requires a default code. Codes must be created before this flag can be set.',
 											listeners: {
 												change: function(box, newValue) {
 													var select = Ext.getCmp('editAttributeForm-defaultCode');
@@ -431,12 +435,13 @@
 														select.allowBlank = true;
 														select.clearInvalid();
 													}
-												}
+													var form = Ext.getCmp('editAttributeForm');
+													form.getForm().checkValidity();
+												},
 											}
 										}
 									]
-								}
-
+								},
 							],
 							dockedItems: [
 								{
