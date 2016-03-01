@@ -448,6 +448,23 @@
 											iconCls: 'fa fa-save',
 											formBind: true,
 											handler: function () {
+												var form = Ext.getCmp('editAttributeForm');
+												if (form.isValid()) {
+													var formData = form.getValues();
+													var edit = editAttributeWin.edit;
+													var url = '/openstorefront/api/v1/resource/attributes/attributetypes'
+													var method = 'POST';
+													if (edit) {
+														url += '/' + formData.attributeType;
+														method = 'PUT';
+													}
+
+													console.log('url: ' + url);
+													console.log('me: ' + method);
+													console.log(formData);
+
+
+												}
 											}
 										},
 										{
