@@ -341,6 +341,13 @@
 
 
 			var actionManageCodes = function actionManageCodes(record) {
+				var url = '/openstorefront/api/v1/resource/attributes/attributetypes';
+				url += '/' + record.data.attributeType + '/attributecodes';
+				codesStore.setProxy({
+					type: 'ajax',
+					url: url
+				});
+				codesStore.load();
 				manageCodesWin.show();
 			};
 
