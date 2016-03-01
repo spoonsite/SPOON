@@ -45,6 +45,7 @@
 					selectionchange: function (grid, record, index, opts) {
 						if (Ext.getCmp('attributeGrid').getSelectionModel().hasSelection()) {
 							Ext.getCmp('attributeGrid-tools-edit').enable();
+							Ext.getCmp('attributeGrid-tools-manageCodes').enable();
 							Ext.getCmp('attributeGrid-tools-toggleActivation').enable();
 							if (record[0].data.activeStatus === 'A') {
 								Ext.getCmp('attributeGrid-tools-toggleActivation').setText('Deactivate');
@@ -56,6 +57,7 @@
 							Ext.getCmp('attributeGrid-tools-export').enable();
 						} else {
 							Ext.getCmp('attributeGrid-tools-edit').disable();
+							Ext.getCmp('attributeGrid-tools-manageCodes').disable();
 							Ext.getCmp('attributeGrid-tools-toggleActivation').disable();
 							Ext.getCmp('attributeGrid-tools-delete').disable();
 							Ext.getCmp('attributeGrid-tools-export').disable();
@@ -180,7 +182,7 @@
 								}
 							},
 							{
-								text: 'Edit',
+								text: 'Edit Attribute',
 								id: 'attributeGrid-tools-edit',
 								scale: 'medium',
 								disabled: true,
@@ -188,6 +190,17 @@
 								handler: function() {
 									var record = attributeGrid.getSelection()[0];
 									actionEditAttribute(record);
+								}
+							},
+							{
+								text: 'Manage Codes',
+								id: 'attributeGrid-tools-manageCodes',
+								scale: 'medium',
+								disabled: true,
+								iconCls: 'fa fa-2x fa-list-alt',
+								handler: function() {
+									var record = attributeGrid.getSelection()[0];
+									actionManageCodes(record);
 								}
 							},
 							{
@@ -327,14 +340,45 @@
 			};
 
 
+			var actionManageCodes = function actionManageCodes(record) {
+				manageCodesWin.show();
+			};
+
+
+			var codesStore = Ext.create('Ext.data.Store', {
+				id: 'codesStore',
+			});
+
+			var codesGrid = Ext.create('Ext.grid.Panel', {
+				id: 'codesGrid',
+				columnLines: true,
+				store: codesStore,
+				columns: [
+					{text: 'Label', dataIndex: 'label', flex: 1},
+				]
+			});
+
+			var manageCodesWin = Ext.create('Ext.window.Window', {
+				id: 'manageCodesWin',
+				title: 'Manage Codes',
+				modal: true,
+				width: '60%',
+				y: '10em',
+				layout: 'fit',
+				items: [
+					codesGrid
+				]
+			});
+
+
 			var editAttributeWin = Ext.create('Ext.window.Window', {
-					id: 'editAttributeWin',
-					title: 'Add/Edit Attribute',
-					modal: true,
-					width: '50%',
-					y: '10em',
-					layout: 'fit',
-					items: [
+				id: 'editAttributeWin',
+				title: 'Add/Edit Attribute',
+				modal: true,
+				width: '50%',
+				y: '10em',
+				layout: 'fit',
+				items: [
 						{
 							xtype: 'form',
 							id: 'editAttributeForm',
