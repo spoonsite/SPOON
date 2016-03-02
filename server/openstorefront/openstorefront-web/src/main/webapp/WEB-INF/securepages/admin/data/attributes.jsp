@@ -361,6 +361,27 @@
 				columnLines: true,
 				store: codesStore,
 				scrollable: true,
+				listeners: {
+					selectionchange: function (grid, record, index, opts) {
+						if (Ext.getCmp('codesGrid').getSelectionModel().hasSelection()) {
+							Ext.getCmp('codesGrid-tools-edit').enable();
+							Ext.getCmp('codesGrid-tools-editUrl').enable();
+							Ext.getCmp('codesGrid-tools-toggle').enable();
+							Ext.getCmp('codesGrid-tools-delete').enable();
+							if (record[0].data.activeStatus === 'A') {
+								Ext.getCmp('codesGrid-tools-toggle').setText('Deactivate');
+							}
+							else {
+								Ext.getCmp('codesGrid-tools-toggle').setText('Activate');
+							}
+						} else {
+							Ext.getCmp('codesGrid-tools-edit').disable();
+							Ext.getCmp('codesGrid-tools-editUrl').disable();
+							Ext.getCmp('codesGrid-tools-toggle').disable();
+							Ext.getCmp('codesGrid-tools-delete').disable();
+						}
+					}
+				},
 				dockedItems: [
 					{
 						xtype: 'toolbar',
@@ -382,6 +403,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus',
 								handler: function () {
+									actionAddCode();
 								}
 							},
 							{
@@ -389,34 +411,46 @@
 							},
 							{
 								text: 'Edit Code',
+								id: 'codesGrid-tools-edit',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-edit',
 								disabled: true,
 								handler: function () {
+									var record = codesGrid.getSelection()[0];
+									actionEditCode(record);
 								}
 							},
 							{
 								text: 'Edit Landing Page',
+								id: 'codesGrid-tools-editUrl',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-globe',
 								disabled: true,
 								handler: function () {
+									var record = codesGrid.getSelection()[0];
+									actionEditCodeUrl(record);
 								}
 							},
 							{
 								text: 'Deactivate',
+								id: 'codesGrid-tools-toggle',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-power-off',
 								disabled: true,
 								handler: function () {
+									var record = codesGrid.getSelection()[0];
+									actionToggleCode(record);
 								}
 							},
 							{
 								text: 'Delete',
+								id: 'codesGrid-tools-delete',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-trash',
 								disabled: true,
 								handler: function () {
+									var record = codesGrid.getSelection()[0];
+									actionDeleteCode(record);
 								}
 							}
 						]
