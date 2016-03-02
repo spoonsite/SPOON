@@ -50,6 +50,7 @@ limitations under the License.
 			pageMap['Organizations'] = 'Router.action?page=admin/data/organizations.jsp';	
 			pageMap['Questions'] = 'Router.action?page=admin/data/user-data/questions.jsp';
 			pageMap['Reviews'] = 'Router.action?page=admin/data/user-data/reviews.jsp';
+			pageMap['Watches'] = 'Router.action?page=admin/data/user-data/watches.jsp';
 			pageMap['Tags'] = 'Router.action?page=admin/data/user-data/tags.jsp';
 			pageMap['UserProfiles'] = 'Router.action?page=admin/data/user-data/userProfiles.jsp';		
 			pageMap['Alerts'] = 'Router.action?page=admin/application/alerts.jsp';
@@ -133,6 +134,12 @@ limitations under the License.
 								actionLoadContent('Reviews');
 							}							
 						},
+						{
+							text: 'Watches',
+							handler: function(){
+								actionLoadContent('Watches');
+							}							
+						},						
 						{
 							text: 'Tags',
 							handler: function(){
