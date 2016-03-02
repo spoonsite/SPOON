@@ -49,7 +49,7 @@ public class ComponentType
 	@ConsumeField
 	private String label;
 
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_64K)
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String description;

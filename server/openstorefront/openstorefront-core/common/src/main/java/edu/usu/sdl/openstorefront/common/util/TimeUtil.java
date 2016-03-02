@@ -17,12 +17,9 @@ package edu.usu.sdl.openstorefront.common.util;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
@@ -78,9 +75,10 @@ public class TimeUtil
 	 */
 	public static Date beginningOfDay(Date date)
 	{
-		if (date != null) {
-			Instant instant = Instant.ofEpochMilli(date.getTime()).truncatedTo(ChronoUnit.DAYS);
-			return new Date(instant.toEpochMilli());
+		if (date != null) {			
+			LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+			localDateTime = localDateTime.with(LocalTime.MIN);
+			return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 		}
 		return date;
 	}
@@ -93,14 +91,10 @@ public class TimeUtil
 	 */
 	public static Date endOfDay(Date date)
 	{
-		if (date != null) {
-			Instant instant = Instant.ofEpochMilli(date.getTime());
-			LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-			localDateTime = localDateTime.withHour(23)
-					.withMinute(59)
-					.withSecond(59)
-					.with(ChronoField.MILLI_OF_SECOND, 999);
-			return new Date(localDateTime.toInstant(ZoneOffset.UTC).toEpochMilli());
+		if (date != null) {			
+			LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+			localDateTime = localDateTime.with(LocalTime.MAX);
+			return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 		}
 		return date;
 

@@ -20,7 +20,9 @@ limitations under the License.
 		
 	<script type="text/javascript">
 		function printFrame(frame) {
-			if (frame.realLoad) {
+			if (frame.realLoad) {				
+				//var printButton = frame.contentDocument.getElementById('print');
+				//printButton.click();				
 				frame.contentWindow.print();				
 			} else {
 				frame.realLoad = true;
@@ -29,7 +31,7 @@ limitations under the License.
 	</script>
 		
 	
-	<iframe id="contentPrintFrame" style="display: none; visibility: hidden" onload="printFrame(this);"></iframe>	
+	<iframe id="contentPrintFrame" style="display: none; visibility: hidden; overflow: visible !important;" onload="printFrame(this);"></iframe>	
 		
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */				
@@ -40,7 +42,7 @@ limitations under the License.
 			var componentId = '${param.id}';
 			
 			var headerPanel = Ext.create('Ext.panel.Panel', {
-				region: 'north',
+				region: 'north',				
 				cls: 'hidePrint',
 				dockedItems: [
 					{
@@ -57,7 +59,10 @@ limitations under the License.
 								handler: function(){	
 									var frame = Ext.getDom('contentPrintFrame');
 									//frame.contentWindow.document.body.innerHTML = Ext.getCmp('contentInfo').body.getHtml();
-									var html = Ext.getCmp('contentInfo').body.getHtml();
+									//var html = '<div id="print" onclick="window.focus();window.print();"></div>';
+									//	html += Ext.getCmp('contentInfo').body.getHtml();									
+									var html = Ext.getCmp('contentInfo').body.getHtml();	
+									
 									frame.contentWindow.document.open();
 									frame.contentWindow.document.write(html);
 									frame.contentWindow.document.close();

@@ -22,6 +22,7 @@ and open the template in the editor.
 
 .printBody{
 		background: white !important;
+		overflow: visible;
 }
 
 .link {
