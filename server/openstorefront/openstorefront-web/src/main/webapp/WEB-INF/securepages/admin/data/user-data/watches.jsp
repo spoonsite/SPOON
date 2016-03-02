@@ -25,7 +25,7 @@ limitations under the License.
 				
 				var watchStore = Ext.create('Ext.data.Store', {			
 					sorters: [{
-						property: 'name',
+						property: 'componentName',
 						direction: 'ASC'
 					}],	
 					pageSize: 200,
@@ -49,7 +49,7 @@ limitations under the License.
 					],
 					proxy: CoreUtil.pagingProxy({
 						type: 'ajax',
-						url: '../api/v1/resource/userwatches/',
+						url: '../api/v1/resource/userwatches?all=true',
 						reader: {
 							type: 'json',
 							rootProperty: 'data',
@@ -59,8 +59,12 @@ limitations under the License.
 				});
 				
 				var watchesGrid = Ext.create('Ext.grid.Panel', {
+					title: 'Entry Watches  <i class="fa fa-question-circle"  data-qtip="Watches can be made on entries to provide notifications to users when update occur."></i>',
 					id: 'watchGrid',
 					columnLines: true,
+					selModel: {
+						   selType: 'checkboxmodel'        
+					},					
 					store: watchStore,
 					columns: [
 						{ text: 'Entry', dataIndex: 'componentName', flex: 1, minWidth: 200, 
@@ -123,33 +127,25 @@ limitations under the License.
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Toggle Active Status',
-									itemId: 'toggle',
+									text: 'Activate',
+									itemId: 'activate',
 									scale: 'medium',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-toggle-on',
 									handler: function () {
-										var grid = this.up('grid');
-										var record = this.up('grid').getSelectionModel().getSelection()[0];
-										if (record.get('notifyFlg')) {
-											record.set('notifyFlg', false);
-										} else {
-											record.set('notifyFlg', true);
-										}
-										grid.setLoading("Updating...");
-										Ext.Ajax.request({
-											url:'../api/v1/resource/userprofiles/'+grid.user+'/watches/'+record.get('watchId'),
-											method: 'PUT',
-											jsonData: record.data,
-											callback: function(){
-												grid.setLoading(false);
-											},
-											success: function(){
-												grid.actionRefresh();
-											}														
-										});
+										actionSetStatus('/activate');;
 									}									
-								}
+								},
+								{
+									text: 'Inactivate',
+									itemId: 'inactivate',
+									scale: 'medium',
+									disabled: true,
+									iconCls: 'fa fa-2x fa-toggle-off',
+									handler: function () {
+										actionSetStatus('/inactivate');
+									}									
+								}								
 							]
 						}		
 					],
@@ -158,10 +154,27 @@ limitations under the License.
 							var tools = this.getComponent('tools');
 
 							if (selected.length > 0) {								
-								tools.getComponent('toggle').setDisabled(false);								
-							} else {								
-								tools.getComponent('toggle').setDisabled(true);
+								var countActive = 0;								
+								Ext.Array.each(selected, function(record){
+									if (record.get('activeStatus') === 'A') {
+										countActive++;
+									}
+								});		
 								
+								tools.getComponent('activate').setDisabled(true);
+								tools.getComponent('inactivate').setDisabled(true);
+								
+								if (countActive === selected.length) {
+									//all active
+									tools.getComponent('inactivate').setDisabled(false);
+								} else if (countActive === 0) {
+									//all inactive
+									tools.getComponent('activate').setDisabled(false);
+								}
+								
+							} else {								
+								tools.getComponent('activate').setDisabled(true);
+								tools.getComponent('inactivate').setDisabled(true);
 							}
 						}
 					},
@@ -175,6 +188,33 @@ limitations under the License.
 				
 				var actionRefresh = function() {
 					Ext.getCmp('watchGrid').getStore().loadPage(1);
+				};
+				
+				var actionSetStatus = function(newStatusAction) {
+					var grid = Ext.getCmp('watchGrid');
+					var records = Ext.getCmp('watchGrid').getSelectionModel().getSelection();
+					
+					var ids = [];
+					Ext.Array.each(records, function(record){
+						ids.push(record.get('watchId'));
+					});
+					
+					var dataIds = {
+						ids: ids
+					}
+										
+					grid.setLoading("Updating...");
+					Ext.Ajax.request({
+						url:'../api/v1/resource/userwatches' + newStatusAction,
+						method: 'PUT',
+						jsonData: dataIds,
+						callback: function(){
+							grid.setLoading(false);
+						},
+						success: function(){
+							actionRefresh();
+						}														
+					});					
 				};
 				
 				Ext.create('Ext.container.Viewport', {

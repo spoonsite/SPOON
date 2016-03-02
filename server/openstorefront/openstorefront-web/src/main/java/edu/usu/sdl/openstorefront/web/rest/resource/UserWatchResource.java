@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
@@ -23,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.MulitpleIds;
 import edu.usu.sdl.openstorefront.core.view.UserWatchView;
 import edu.usu.sdl.openstorefront.core.view.UserWatchWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
@@ -30,10 +32,10 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.util.List;
 import javax.ws.rs.BeanParam;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -62,7 +64,9 @@ public class UserWatchResource
 		}
 
 		UserWatch userWatchExample = new UserWatch();
-		userWatchExample.setActiveStatus(filterQueryParams.getStatus());
+		if (Convert.toBoolean(filterQueryParams.getAll()) == false) {
+			userWatchExample.setActiveStatus(filterQueryParams.getStatus());
+		}
 
 		UserWatch userWatchStartExample = new UserWatch();
 		userWatchStartExample.setCreateDts(filterQueryParams.getStart());
@@ -102,47 +106,53 @@ public class UserWatchResource
 
 		return sendSingleEntityResponse(userWatchWrapper);		
 	}
-	
+
 	@PUT
-	@APIDescription("Activates a watch")
+	@APIDescription("Activates a set watches")
 	@RequireAdmin
-	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchResource.class)
-	@Path("/{watchId}/activate")
-	public Response activateWatch(
-		@PathParam("watchId") String watchId
+	@Path("/activate")
+	public Response activateWatches(
+		MulitpleIds mulitpleIds			
 	)
 	{
-		UserWatch userWatch = new UserWatch();
-		userWatch.setUserWatchId(watchId);
-		userWatch = (UserWatch) userWatch.find();
-		if (userWatch != null) {
-			userWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
-			userWatch = service.getUserService().saveWatch(userWatch);
-			return Response.ok(userWatch).build();
-		} 
-		return Response.status(Response.Status.NOT_FOUND).build();
+		if (mulitpleIds != null) {
+			for (String watchId : mulitpleIds.getIds()) {
+				UserWatch userWatch = new UserWatch();
+				userWatch.setUserWatchId(watchId);
+				userWatch = (UserWatch) userWatch.find();
+				if (userWatch != null) {
+					userWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
+					service.getUserService().saveWatch(userWatch);
+				}
+			}
+		}
+		return Response.ok().build();
 	}
 	
 	@PUT
-	@APIDescription("Activates a watch")
+	@APIDescription("Inactivates a set watches")
 	@RequireAdmin
-	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchResource.class)
-	@Path("/{watchId}/inactivate")
-	public Response inactivateWatch(
-		@PathParam("watchId") String watchId
+	@Path("/inactivate")
+	public Response inactivateWatches(
+		MulitpleIds mulitpleIds	
 	)
 	{
-		UserWatch userWatch = new UserWatch();
-		userWatch.setUserWatchId(watchId);
-		userWatch = (UserWatch) userWatch.find();
-		if (userWatch != null) {
-			userWatch.setActiveStatus(UserWatch.INACTIVE_STATUS);
-			userWatch = service.getUserService().saveWatch(userWatch);
-			return Response.ok(userWatch).build();			
-		} 
-		return Response.status(Response.Status.NOT_FOUND).build();		
-	}
+		if (mulitpleIds != null) {
+			for (String watchId : mulitpleIds.getIds()) {
+				UserWatch userWatch = new UserWatch();
+				userWatch.setUserWatchId(watchId);
+				userWatch = (UserWatch) userWatch.find();
+				if (userWatch != null) {
+					userWatch.setActiveStatus(UserWatch.INACTIVE_STATUS);
+					service.getUserService().saveWatch(userWatch);
+				}
+			}
+		}
+		return Response.ok().build();
+	}	
 	
 }
