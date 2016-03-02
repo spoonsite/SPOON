@@ -528,6 +528,22 @@
 			};
 
 			var actionDeleteCode = function acitionDeleteCode(record) {
+				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				url += record.data.attributeCodePk.attributeType;
+				url += '/attributecodes/' + record.data.attributeCodePk.attributeCode;
+				url += '/force';
+				var method = 'DELETE';
+				Ext.Ajax.request({
+					url: url,
+					method: method,
+					success: function(response, opt){
+						Ext.toast('Successfully sent deletion request for attribute code', '', 'tr');
+						codesStore.load();
+					},
+					failure: function(response, opt){
+						Ext.toast('Failed to send deletion request for attribute code', '', 'tr');
+					}
+				});
 
 			};
 
