@@ -19,7 +19,10 @@ import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
+import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.action.StreamingResolution;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Simple server router
@@ -33,7 +36,9 @@ public class RouterAction
 	protected ActionBeanContext context;
 
 	private String page;
-
+	private String content;
+	private boolean print;
+	
 	@Override
 	public void setContext(ActionBeanContext abc)
 	{
@@ -52,6 +57,17 @@ public class RouterAction
 		return new ForwardResolution("/WEB-INF/securepages/" + page);
 	}
 
+	@HandlesEvent("Echo")
+	public Resolution echo() {
+		if (StringUtils.isBlank(content)) {
+			content = "No Data";		
+		}
+		if (print) {
+			content += " <script type='text/javascript'> window.print(); </script>";
+		}		
+		return new StreamingResolution("text/html", content);
+	}	
+	
 	public String getPage()
 	{
 		return page;
@@ -60,6 +76,26 @@ public class RouterAction
 	public void setPage(String page)
 	{
 		this.page = page;
+	}
+
+	public String getContent()
+	{
+		return content;
+	}
+
+	public void setContent(String content)
+	{
+		this.content = content;
+	}
+
+	public boolean getPrint()
+	{
+		return print;
+	}
+
+	public void setPrint(boolean print)
+	{
+		this.print = print;
 	}
 
 }

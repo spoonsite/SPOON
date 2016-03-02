@@ -33,6 +33,10 @@ limitations under the License.
 	
 	<iframe id="contentPrintFrame" style="display: none; visibility: hidden; overflow: visible !important;" onload="printFrame(this);"></iframe>	
 		
+	<form id="printForm" action="Router.action?Echo&print=true"  method="POST">		
+		<input type="hidden" name="content" id="printContent" />
+	</form>
+	
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */				
 	
@@ -61,11 +65,20 @@ limitations under the License.
 									//frame.contentWindow.document.body.innerHTML = Ext.getCmp('contentInfo').body.getHtml();
 									//var html = '<div id="print" onclick="window.focus();window.print();"></div>';
 									//	html += Ext.getCmp('contentInfo').body.getHtml();									
-									var html = Ext.getCmp('contentInfo').body.getHtml();	
+									var html = Ext.getCmp('contentInfo').body.getHtml();
 									
-									frame.contentWindow.document.open();
-									frame.contentWindow.document.write(html);
-									frame.contentWindow.document.close();
+									if (Ext.isIE) {
+										var printForm = Ext.getDom('printForm');
+										var printContent = Ext.getDom('printContent');
+										var completeHtml = '<!DOCTYPE html> ' + html;
+										
+										printContent.value = completeHtml;										
+										printForm.submit();
+									} else {									
+										frame.contentWindow.document.open();
+										frame.contentWindow.document.write(html);
+										frame.contentWindow.document.close();
+									}
 									
 									//frame.contentWindow.print();
 									//window.print();
