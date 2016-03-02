@@ -88,10 +88,10 @@ public class SubmissionsReport
 	private void updateReportTimeRange()
 	{
 		if (report.getReportOption().getPreviousDays() != null) {
-			Instant instant = Instant.now();
-			instant = instant.minus(1, ChronoUnit.DAYS);
-			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date(instant.toEpochMilli())));
-			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date(instant.toEpochMilli())));
+			Instant instantEnd = Instant.now();
+			Instant instantStart = instantEnd.minus(report.getReportOption().getPreviousDays(), ChronoUnit.DAYS);
+			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date(instantStart.toEpochMilli())));
+			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date(instantEnd.toEpochMilli())));
 		}
 		if (report.getReportOption().getStartDts() == null) {
 			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date()));
@@ -108,10 +108,11 @@ public class SubmissionsReport
 
 		//write header
 		cvsGenerator.addLine("Component Submission Report", sdf.format(TimeUtil.currentDate()));
-		cvsGenerator.addLine("Data Time Range:  ", sdf.format(report.getReportOption().getStartDts()) + " - " + sdf.format(report.getReportOption().getEndDts()));
+		cvsGenerator.addLine("Data Time Range (Update Date):  ", sdf.format(report.getReportOption().getStartDts()) + " - " + sdf.format(report.getReportOption().getEndDts()));
 		cvsGenerator.addLine(
 				"Name",
 				"Create Date",
+				"Update Date",
 				"Submitted Date",
 				"Submitter Name",
 				"Submitter Email",
@@ -148,6 +149,7 @@ public class SubmissionsReport
 			cvsGenerator.addLine(
 					component.getName() + componentSecurityMarking,
 					sdf.format(component.getCreateDts()),
+					sdf.format(component.getUpdateDts()),
 					component.getSubmittedDts() != null ? sdf.format(component.getSubmittedDts()) : "",
 					submitter.getFirstName() + " " + submitter.getLastName() + submitterSecurityMarking,
 					submitter.getEmail(),
