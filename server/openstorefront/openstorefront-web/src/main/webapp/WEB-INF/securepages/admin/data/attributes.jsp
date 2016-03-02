@@ -490,6 +490,26 @@
 				]
 			});
 
+			var actionAddCode = function actionAddCode() {
+
+			};
+
+			var actionEditCode = function acitionEditCode(record) {
+
+			};
+
+			var actionToggleCode = function acitionToggleCode(record) {
+
+			};
+
+			var actionEditCodeUrl = function acitionEditCodeUrl(record) {
+
+			};
+
+			var actionDeleteCode = function acitionDeleteCode(record) {
+
+			};
+
 			var manageCodesWin = Ext.create('Ext.window.Window', {
 				id: 'manageCodesWin',
 				title: 'Manage Codes',
