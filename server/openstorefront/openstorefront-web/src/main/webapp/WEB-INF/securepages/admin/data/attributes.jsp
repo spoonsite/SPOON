@@ -499,7 +499,28 @@
 			};
 
 			var actionToggleCode = function acitionToggleCode(record) {
-
+				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				url += record.data.attributeCodePk.attributeType;
+				url += '/attributecodes/' + record.data.attributeCodePk.attributeCode;
+				if (record.data.activeStatus === 'A') {
+					var what = 'deactivate';
+					var method = 'DELETE';
+				}
+				else {
+					var what = 'activate';
+					var method = 'POST';
+				}
+				Ext.Ajax.request({
+					url: url,
+					method: method,
+					success: function(response, opt){
+						Ext.toast('Successfully' + what + 'd attribute code', '', 'tr');
+						codesStore.load();
+					},
+					failure: function(response, opt){
+						Ext.toast('Failed to ' + what + ' attribute code', '', 'tr');
+					}
+				});
 			};
 
 			var actionEditCodeUrl = function acitionEditCodeUrl(record) {
