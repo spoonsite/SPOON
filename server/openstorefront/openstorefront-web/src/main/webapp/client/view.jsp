@@ -322,7 +322,7 @@ limitations under the License.
 										method: 'POST',
 										jsonData: watch,
 										success: function(response, opts){
-											currentWatch = Ext.decode(response);
+											currentWatch = Ext.decode(response.responseText);
 											Ext.getCmp('watchBtn').setHidden(true);
 											Ext.getCmp('watchRemoveBtn').setHidden(false);
 										}
