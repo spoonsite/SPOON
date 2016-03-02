@@ -360,6 +360,7 @@
 				id: 'codesGrid',
 				columnLines: true,
 				store: codesStore,
+				scrollable: true,
 				dockedItems: [
 					{
 						xtype: 'toolbar',
@@ -459,7 +460,7 @@
 				id: 'manageCodesWin',
 				title: 'Manage Codes',
 				modal: true,
-				width: '60%',
+				width: '80%',
 				y: '10em',
 				layout: 'fit',
 				items: [
