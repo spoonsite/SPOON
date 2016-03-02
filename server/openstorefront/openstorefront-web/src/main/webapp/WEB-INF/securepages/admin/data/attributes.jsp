@@ -373,6 +373,51 @@
 									codesStore.load();
 								}
 							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Add New Code',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-plus',
+								handler: function () {
+								}
+							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Edit Code',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-edit',
+								disabled: true,
+								handler: function () {
+								}
+							},
+							{
+								text: 'Edit Landing Page',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-globe',
+								disabled: true,
+								handler: function () {
+								}
+							},
+							{
+								text: 'Deactivate',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-power-off',
+								disabled: true,
+								handler: function () {
+								}
+							},
+							{
+								text: 'Delete',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-trash',
+								disabled: true,
+								handler: function () {
+								}
+							}
 						]
 					}
 				],
