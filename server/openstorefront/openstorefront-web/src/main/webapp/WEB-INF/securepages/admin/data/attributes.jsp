@@ -360,6 +360,22 @@
 				id: 'codesGrid',
 				columnLines: true,
 				store: codesStore,
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						items: [
+							{
+								text: 'Refresh',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-refresh',
+								handler: function () {
+									codesStore.load();
+								}
+							},
+						]
+					}
+				],
 				columns: [
 					{text: 'Label', dataIndex: 'label', flex: 2},
 					{
