@@ -403,8 +403,8 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus',
 								handler: function () {
-									var record = codesGrid.getSelection()[0];
-									actionAddCode(record);
+									var parentAttributeRecord = attributeGrid.getSelection()[0];
+									actionAddCode(parentAttributeRecord);
 								}
 							},
 							{
@@ -615,10 +615,11 @@
 						]
 			});
 
-			var actionAddCode = function actionAddCode(record) {
+			var actionAddCode = function actionAddCode(parentAttributeRecord) {
 				Ext.getCmp('editCodeForm').reset();
 				editCodeWin.edit = false;
-				editCodeWin.attributeType = record.data.attributeCodePk.attributeType;
+				console.log(parentAttributeRecord);
+				editCodeWin.attributeType = parentAttributeRecord.data.attributeType;
 				editCodeWin.setTitle('Add New Code');
 				editCodeWin.show();
 			};
