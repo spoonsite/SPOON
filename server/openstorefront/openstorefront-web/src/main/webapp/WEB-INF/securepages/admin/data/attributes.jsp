@@ -567,7 +567,32 @@
 							},
 						]
 					}
-				]
+				],
+				dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Save',
+										id: 'editCodeWin-save',
+										iconCls: 'fa fa-save',
+										formBind: true,
+										handler: function () {
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										iconCls: 'fa fa-close',
+										handler: function () {
+										}
+									}
+								]
+							}
+						]
 			});
 
 			var actionAddCode = function actionAddCode() {
