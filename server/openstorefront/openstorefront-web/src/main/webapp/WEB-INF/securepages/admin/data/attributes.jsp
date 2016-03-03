@@ -490,8 +490,89 @@
 				]
 			});
 
-			var actionAddCode = function actionAddCode() {
+			var editCodeWin = Ext.create('Ext.window.Window' , {
+				id: 'editCodeWin',
+				title: 'Add/Edit Code Win',
+				modal: true,
+				width: '60%',
+				y: '0em',
+				layout: 'fit',
+				items: [
+					{
+							xtype: 'form',
+							id: 'editCodeForm',
+							layout: 'vbox',
+							scrollable: true,
+							bodyStyle: 'padding: 10px;',
+							defaults: {
+								labelAlign: 'top',
+								width: '100%'
+							},
+							items: [
+								{
+									xtype: 'textfield',
+									id: 'editCodeForm-label',
+									fieldLabel: 'Label<span class="field-required" />',
+									name: 'description'
+								},
+								{
+									xtype: 'textfield',
+									id: 'editCodeForm-code',
+									fieldLabel: 'Type Code<span class="field-required" />',
+									name: 'attributeType',
+								},
+								{
+									xtype: 'panel',
+									html: '<b>Description</b>'
+								},
+								{
+									xtype: 'tinymce_textarea',
+									fieldStyle: 'font-family: Courier New; font-size: 12px;',
+									style: {border: '0'},
+									name: 'description',
+									width: '100%',
+									height: 300,
+									maxLength: 255,
+									tinyMCEConfig: CoreUtil.tinymceConfig()
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Detail URL',
+									name: 'detailUrl'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Group Code',
+									name: 'groupCode'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Sort Order',
+									name: 'sortOrder'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Architecture Code',
+									name: 'architectureCode'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Badge URL',
+									name: 'badgeUrl'
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Highlight Class',
+									name: 'highlightStyle'
+								},
 
+							]
+					}
+				]
+			});
+
+			var actionAddCode = function actionAddCode() {
+				editCodeWin.show();
 			};
 
 			var actionEditCode = function acitionEditCode(record) {
