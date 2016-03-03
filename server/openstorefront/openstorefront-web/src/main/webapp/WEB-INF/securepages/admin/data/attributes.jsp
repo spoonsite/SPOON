@@ -499,74 +499,73 @@
 				layout: 'fit',
 				items: [
 					{
-							xtype: 'form',
-							id: 'editCodeForm',
-							layout: 'vbox',
-							scrollable: true,
-							bodyStyle: 'padding: 10px;',
-							defaults: {
-								labelAlign: 'top',
-								width: '100%'
+						xtype: 'form',
+						id: 'editCodeForm',
+						layout: 'vbox',
+						scrollable: true,
+						bodyStyle: 'padding: 10px;',
+						defaults: {
+							labelAlign: 'top',
+							width: '100%'
+						},
+						items: [
+							{
+								xtype: 'textfield',
+								id: 'editCodeForm-label',
+								fieldLabel: 'Label<span class="field-required" />',
+								name: 'label'
 							},
-							items: [
-								{
-									xtype: 'textfield',
-									id: 'editCodeForm-label',
-									fieldLabel: 'Label<span class="field-required" />',
-									name: 'description'
-								},
-								{
-									xtype: 'textfield',
-									id: 'editCodeForm-code',
-									fieldLabel: 'Type Code<span class="field-required" />',
-									name: 'attributeType',
-								},
-								{
-									xtype: 'panel',
-									html: '<b>Description</b>'
-								},
-								{
-									xtype: 'tinymce_textarea',
-									fieldStyle: 'font-family: Courier New; font-size: 12px;',
-									style: {border: '0'},
-									name: 'description',
-									width: '100%',
-									height: 300,
-									maxLength: 255,
-									tinyMCEConfig: CoreUtil.tinymceConfig()
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Detail URL',
-									name: 'detailUrl'
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Group Code',
-									name: 'groupCode'
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Sort Order',
-									name: 'sortOrder'
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Architecture Code',
-									name: 'architectureCode'
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Badge URL',
-									name: 'badgeUrl'
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Highlight Class',
-									name: 'highlightStyle'
-								},
-
-							]
+							{
+								xtype: 'textfield',
+								id: 'editCodeForm-code',
+								fieldLabel: 'Type Code<span class="field-required" />',
+								name: 'attributeType',
+							},
+							{
+								xtype: 'panel',
+								html: '<b>Description</b>'
+							},
+							{
+								xtype: 'tinymce_textarea',
+								fieldStyle: 'font-family: Courier New; font-size: 12px;',
+								style: {border: '0'},
+								name: 'description',
+								width: '100%',
+								height: 300,
+								maxLength: 255,
+								tinyMCEConfig: CoreUtil.tinymceConfig()
+							},
+							{
+								xtype: 'textfield',
+								fieldLabel: 'Detail URL',
+								name: 'detailUrl'
+							},
+							{
+								xtype: 'textfield',
+								fieldLabel: 'Group Code',
+								name: 'groupCode'
+							},
+							{
+								xtype: 'textfield',
+								fieldLabel: 'Sort Order',
+								name: 'sortOrder'
+							},
+							{
+								xtype: 'textfield',
+								fieldLabel: 'Architecture Code',
+								name: 'architectureCode'
+							},
+							{
+								xtype: 'textfield',
+								fieldLabel: 'Badge URL',
+								name: 'badgeUrl'
+							},
+							{
+								xtype: 'textfield',
+								fieldLabel: 'Highlight Class',
+								name: 'highlightStyle'
+							},
+						]
 					}
 				]
 			});
@@ -576,7 +575,11 @@
 			};
 
 			var actionEditCode = function acitionEditCode(record) {
-
+				Ext.getCmp('editCodeForm').loadRecord(record);
+				Ext.getCmp('editCodeForm-code').setValue(record.data.attributeCodePk.attributeCode);
+				editCodeWin.edit = true;
+				editCodeWin.setTitle('Edit Code - ' + record.data.attributeCodePk.attributeCode);
+				editCodeWin.show();
 			};
 
 			var actionToggleCode = function acitionToggleCode(record) {
@@ -649,180 +652,180 @@
 				y: '10em',
 				layout: 'fit',
 				items: [
-						{
-							xtype: 'form',
-							id: 'editAttributeForm',
-							layout: 'vbox',
-							scrollable: true,
-							bodyStyle: 'padding: 10px;',
-							defaults: {
-								labelAlign: 'top',
-								width: '100%'
+					{
+						xtype: 'form',
+						id: 'editAttributeForm',
+						layout: 'vbox',
+						scrollable: true,
+						bodyStyle: 'padding: 10px;',
+						defaults: {
+							labelAlign: 'top',
+							width: '100%'
+						},
+						items: [
+							{
+								xtype: 'textfield',
+								id: 'editAttributeForm-label',
+								fieldLabel: 'Label<span class="field-required" />',
+								name: 'description'
 							},
-							items: [
-								{
-									xtype: 'textfield',
-									id: 'editAttributeForm-label',
-									fieldLabel: 'Label<span class="field-required" />',
-									name: 'description'
+							{
+								xtype: 'textfield',
+								id: 'editAttributeForm-code',
+								fieldLabel: 'Type Code<span class="field-required" />',
+								name: 'attributeType',
+							},
+							{
+								xtype: 'combobox',
+								fieldLabel: 'Default Code',
+								id: 'editAttributeForm-defaultCode',
+								displayField: 'code',
+								valueField: 'code',
+								typeAhead: false,
+								editable: false,
+								value: '',
+								name: 'defaultCode',
+								hidden: true,
+							},
+							{
+								xtype: 'panel',
+								html: '<b>Detailed Description</b>'
+							},
+							{
+								xtype: 'tinymce_textarea',
+								fieldStyle: 'font-family: Courier New; font-size: 12px;',
+								style: {border: '0'},
+								name: 'detailedDescription',
+								width: '100%',
+								height: 300,
+								maxLength: 255,
+								tinyMCEConfig: CoreUtil.tinymceConfig()
+							},
+							{
+								xtype: 'panel',
+								html: '<b>Flags:</b>'
+							},
+							{
+								xtype: 'fieldcontainer',
+								layout: 'hbox',
+								defaultType: 'checkboxfield',
+								defaultLayout: '100%',
+								defaults: {
+									flex: 1
 								},
-								{
-									xtype: 'textfield',
-									id: 'editAttributeForm-code',
-									fieldLabel: 'Type Code<span class="field-required" />',
-									name: 'attributeType',
-								},
-								{
-									xtype: 'combobox',
-									fieldLabel: 'Default Code',
-									id: 'editAttributeForm-defaultCode',
-									displayField: 'code',
-									valueField: 'code',
-									typeAhead: false,
-									editable: false,
-									value: '',
-									name: 'defaultCode',
-									hidden: true,
-								},
-								{
-									xtype: 'panel',
-									html: '<b>Detailed Description</b>'
-								},
-								{
-									xtype: 'tinymce_textarea',
-									fieldStyle: 'font-family: Courier New; font-size: 12px;',
-									style: {border: '0'},
-									name: 'detailedDescription',
-									width: '100%',
-									height: 300,
-									maxLength: 255,
-									tinyMCEConfig: CoreUtil.tinymceConfig()
-								},
-								{
-									xtype: 'panel',
-									html: '<b>Flags:</b>'
-								},
-								{
-									xtype: 'fieldcontainer',
-									layout: 'hbox',
-									defaultType: 'checkboxfield',
-									defaultLayout: '100%',
-									defaults: {
-										flex: 1
+								items: [
+									{
+										name: 'requiredFlg',
+										boxLabel: 'Required'
 									},
-									items: [
-										{
-											name: 'requiredFlg',
-											boxLabel: 'Required'
-										},
-										{
-											name: 'visibleFlg',
-											boxLabel: 'Visible'
-										},
-										{
-											name: 'importantFlg',
-											boxLabel: 'Important'
-										},
-										{
-											name: 'architectureFlg',
-											boxLabel: 'Architecture'
-										},
-										{
-											name: 'allowMultipleFlg',
-											boxLabel: 'Allow Multiple'
-										},
-										{
-											name: 'hideOnSubmission',
-											boxLabel: 'Hide on Submission',
-											id: 'editAttributeForm-hideOnSubmission',
-											toolTip: 'Hiding requires a default code. Codes must be created before this flag can be set.',
-											listeners: {
-												change: function(box, newValue) {
-													var select = Ext.getCmp('editAttributeForm-defaultCode');
-													if (newValue === true) {
-														select.setFieldLabel('Default Code<span class="field-required" />');
-														select.allowBlank = false;
-													}
-													else {
-
-														select.setFieldLabel('Default Code');
-														select.allowBlank = true;
-														select.clearInvalid();
-													}
-													var form = Ext.getCmp('editAttributeForm');
-													form.getForm().checkValidity();
-												},
-											}
-										}
-									]
-								},
-							],
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									items: [
-										{
-											text: 'Save',
-											id: 'editAttributeWin-save',
-											iconCls: 'fa fa-save',
-											formBind: true,
-											handler: function () {
-												var form = Ext.getCmp('editAttributeForm');
-												if (form.isValid()) {
-													// [asString], [dirtyOnly], [includeEmptyText], [useDataValues]
-													var formData = form.getValues(false,false,false,true);
-													var edit = editAttributeWin.edit;
-													var url = '/openstorefront/api/v1/resource/attributes/attributetypes'
-													var method = 'POST';
-													if (edit) {
-														url += '/' + formData.attributeType;
-														method = 'PUT';
-													}
-
-													// Modify formData to exist inside AttributeSaveType
-													var data = {};
-													data.attributeType = formData;
-
-
-													CoreUtil.submitForm({
-														url: url,
-														method: method,
-														data: data,
-														removeBlankDataItems: false,
-														form: Ext.getCmp('editAttributeForm'),
-														success: function (response, opts) {
-															Ext.toast('Saved Successfully', '', 'tr');
-															attributeStore.load();
-															Ext.getCmp('editAttributeForm').reset();
-															editAttributeWin.hide();
-														},
-														failure: function (response, opts) {
-															Ext.toast('Failed to save', '', 'tr');
-														}
-													});
-
-
+									{
+										name: 'visibleFlg',
+										boxLabel: 'Visible'
+									},
+									{
+										name: 'importantFlg',
+										boxLabel: 'Important'
+									},
+									{
+										name: 'architectureFlg',
+										boxLabel: 'Architecture'
+									},
+									{
+										name: 'allowMultipleFlg',
+										boxLabel: 'Allow Multiple'
+									},
+									{
+										name: 'hideOnSubmission',
+										boxLabel: 'Hide on Submission',
+										id: 'editAttributeForm-hideOnSubmission',
+										toolTip: 'Hiding requires a default code. Codes must be created before this flag can be set.',
+										listeners: {
+											change: function(box, newValue) {
+												var select = Ext.getCmp('editAttributeForm-defaultCode');
+												if (newValue === true) {
+													select.setFieldLabel('Default Code<span class="field-required" />');
+													select.allowBlank = false;
 												}
-											}
-										},
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Cancel',
-											iconCls: 'fa fa-close',
-											handler: function () {
-												Ext.getCmp('editAttributeForm').reset();
-												Ext.getCmp('editAttributeWin').hide();
+												else {
+
+													select.setFieldLabel('Default Code');
+													select.allowBlank = true;
+													select.clearInvalid();
+												}
+												var form = Ext.getCmp('editAttributeForm');
+												form.getForm().checkValidity();
+											},
+										}
+									}
+								]
+							},
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Save',
+										id: 'editAttributeWin-save',
+										iconCls: 'fa fa-save',
+										formBind: true,
+										handler: function () {
+											var form = Ext.getCmp('editAttributeForm');
+											if (form.isValid()) {
+												// [asString], [dirtyOnly], [includeEmptyText], [useDataValues]
+												var formData = form.getValues(false,false,false,true);
+												var edit = editAttributeWin.edit;
+												var url = '/openstorefront/api/v1/resource/attributes/attributetypes'
+												var method = 'POST';
+												if (edit) {
+													url += '/' + formData.attributeType;
+													method = 'PUT';
+												}
+
+												// Modify formData to exist inside AttributeSaveType
+												var data = {};
+												data.attributeType = formData;
+
+
+												CoreUtil.submitForm({
+													url: url,
+													method: method,
+													data: data,
+													removeBlankDataItems: false,
+													form: Ext.getCmp('editAttributeForm'),
+													success: function (response, opts) {
+														Ext.toast('Saved Successfully', '', 'tr');
+														attributeStore.load();
+														Ext.getCmp('editAttributeForm').reset();
+														editAttributeWin.hide();
+													},
+													failure: function (response, opts) {
+														Ext.toast('Failed to save', '', 'tr');
+													}
+												});
+
+
 											}
 										}
-									]
-								}
-							]
-						}
-					]
-				});
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										iconCls: 'fa fa-close',
+										handler: function () {
+											Ext.getCmp('editAttributeForm').reset();
+											Ext.getCmp('editAttributeWin').hide();
+										}
+									}
+								]
+							}
+						]
+					}
+				]
+			});
 
 			Ext.create('Ext.container.Viewport', {
 				layout: 'fit',
