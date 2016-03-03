@@ -606,16 +606,23 @@
 												url += attributeType + '/attributecodes';
 
 												var method = 'POST';
+												var data = {};
+												data = formData;
 												if (edit) {
 													url += '/' + formData.typeCode;
 													method = 'PUT';
 												}
-												
+												else {
+													data.attributeCodePk = {};
+													data.attributeCodePk.attributeType = attributeType;
+													data.attributeCodePk.attributeCode = data.typeCode;
+												}
 
+												
 												CoreUtil.submitForm({
 													url: url,
 													method: method,
-													data: formData,
+													data: data,
 													removeBlankDataItems: true,
 													form: Ext.getCmp('editCodeForm'),
 													success: function (response, opts) {
