@@ -490,6 +490,18 @@
 				]
 			});
 
+			var highlightStyleStore = Ext.create('Ext.data.Store', {
+				fields: ['highlightStyle'],
+				data: [
+					{'highlightStyle': 'info'},
+					{'highlightStyle': 'success'},
+					{'highlightStyle': 'warning'},
+					{'highlightStyle': 'danger'},
+					{'highlightStyle': 'inverse'},
+					{'highlightStyle': 'default'}
+				]
+			});
+
 			var editCodeWin = Ext.create('Ext.window.Window' , {
 				id: 'editCodeWin',
 				title: 'Add/Edit Code Win',
@@ -561,10 +573,15 @@
 								name: 'badgeUrl'
 							},
 							{
-								xtype: 'textfield',
-								fieldLabel: 'Highlight Class',
-								name: 'highlightStyle'
-							},
+								xtype: 'combobox',
+								fieldLabel: 'Highlight Style',
+								displayField: 'highlightStyle',
+								valueField: 'highlightStyle',
+								name: 'highlightStyle',
+								store: highlightStyleStore,
+								typeAhead: false,
+								editable: false,
+							}	
 						]
 					}
 				],
@@ -588,6 +605,8 @@
 										text: 'Cancel',
 										iconCls: 'fa fa-close',
 										handler: function () {
+											Ext.getCmp('editCodeForm').reset();
+											editCodeWin.close();
 										}
 									}
 								]
