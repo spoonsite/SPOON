@@ -532,7 +532,7 @@
 								xtype: 'textfield',
 								id: 'editCodeForm-code',
 								fieldLabel: 'Type Code<span class="field-required" />',
-								name: 'attributeType',
+								name: 'typeCode',
 							},
 							{
 								xtype: 'panel',
@@ -597,6 +597,41 @@
 										iconCls: 'fa fa-save',
 										formBind: true,
 										handler: function () {
+											var form = Ext.getCmp('editCodeForm');
+											if (form.isValid()) {
+												var formData = form.getValues();
+												var edit = editCodeWin.edit;
+												var attributeType = editCodeWin.attributeType;
+												var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+												url += attributeType + '/attributecodes';
+
+												var method = 'POST';
+												if (edit) {
+													url += '/' + formData.typeCode;
+													method = 'PUT';
+												}
+												
+
+												CoreUtil.submitForm({
+													url: url,
+													method: method,
+													data: formData,
+													removeBlankDataItems: true,
+													form: Ext.getCmp('editCodeForm'),
+													success: function (response, opts) {
+														Ext.toast('Saved Successfully', '', 'tr');
+														codesStore.load();
+														Ext.getCmp('editCodeForm').reset();
+														editCodeWin.hide();
+													},
+													failure: function (response, opts) {
+														Ext.toast('Failed to save', '', 'tr');
+													}
+												});
+
+
+
+											}
 										}
 									},
 									{
@@ -618,7 +653,6 @@
 			var actionAddCode = function actionAddCode(parentAttributeRecord) {
 				Ext.getCmp('editCodeForm').reset();
 				editCodeWin.edit = false;
-				console.log(parentAttributeRecord);
 				editCodeWin.attributeType = parentAttributeRecord.data.attributeType;
 				editCodeWin.setTitle('Add New Code');
 				editCodeWin.show();
