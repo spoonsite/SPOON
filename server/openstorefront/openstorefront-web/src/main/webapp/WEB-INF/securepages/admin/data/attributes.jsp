@@ -361,6 +361,7 @@
 				columnLines: true,
 				store: codesStore,
 				scrollable: true,
+				autoScroll: true,
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
 						if (Ext.getCmp('codesGrid').getSelectionModel().hasSelection()) {
@@ -726,9 +727,11 @@
 			var manageCodesWin = Ext.create('Ext.window.Window', {
 				id: 'manageCodesWin',
 				title: 'Manage Codes',
-				modal: true,
-				width: '80%',
-				y: '10em',
+				scrollable: true,
+				autoScroll: true,
+				width: '90%',
+				height: 850,
+				y: '2em',
 				layout: 'fit',
 				items: [
 					codesGrid
