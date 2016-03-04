@@ -800,7 +800,9 @@ public class AttributeServiceImpl
 		pk.setAttributeType(type);
 		AttributeCode attributeExample = new AttributeCode();
 		attributeExample.setAttributeCodePk(pk);
-		attributeExample.setActiveStatus(filter.getStatus());
+		if (filter.getAll() == null || filter.getAll() == false) {
+			attributeExample.setActiveStatus(filter.getStatus());
+		}
 
 		QueryByExample queryByExample = new QueryByExample(attributeExample);
 
