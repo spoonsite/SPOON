@@ -351,7 +351,9 @@
 						rootProperty: 'data'
 					}
 				});
+				codesStore.filter('activeStatus', 'A');
 				codesStore.load();
+				manageCodesWin.attributeType = record.data.attributeType;
 				manageCodesWin.show();
 			};
 
@@ -392,7 +394,7 @@
 						items: [
 							Ext.create('OSF.component.StandardComboBox', {
 								id: 'codesFilter-activeStatus',
-								emptyText: 'Show All',
+								emptyText: 'Active',
 								fieldLabel: 'Active Status',
 								name: 'activeStatus',
 								listeners: {
@@ -400,10 +402,13 @@
 										if (newValue === 'A') {
 											codesStore.filter('activeStatus','A');
 										}
-										else {
+										else if (newValue === 'I') {
 											codesStore.filter('activeStatus', 'I');
 										}
-									},
+										else {
+											codesStore.clearFilter();
+										}
+									}
 								},
 								storeConfig: {
 									customStore: {
@@ -493,11 +498,8 @@
 					{text: 'Label', dataIndex: 'label', flex: 2},
 					{
 						text: 'Code',
-						dataIndex: 'attributeCodePk',
+						dataIndex: 'code',
 						flex: 1,
-						renderer: function (value, metadata, record) {
-							return value.attributeCode;	
-						}
 					},
 					{
 						text: 'Description', 
@@ -699,17 +701,17 @@
 
 			var actionEditCode = function acitionEditCode(record) {
 				Ext.getCmp('editCodeForm').loadRecord(record);
-				Ext.getCmp('editCodeForm-code').setValue(record.data.attributeCodePk.attributeCode);
+				Ext.getCmp('editCodeForm-code').setValue(record.data.code);
 				editCodeWin.edit = true;
-				editCodeWin.attributeType = record.data.attributeCodePk.attributeType;
-				editCodeWin.setTitle('Edit Code - ' + record.data.attributeCodePk.attributeCode);
+				editCodeWin.attributeType = manageCodesWin.attributeType;
+				editCodeWin.setTitle('Edit Code - ' + record.data.code);
 				editCodeWin.show();
 			};
 
 			var actionToggleCode = function acitionToggleCode(record) {
 				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
-				url += record.data.attributeCodePk.attributeType;
-				url += '/attributecodes/' + record.data.attributeCodePk.attributeCode;
+				url += manageCodesWin.attributeType;
+				url += '/attributecodes/' + record.data.code;
 				if (record.data.activeStatus === 'A') {
 					var what = 'deactivate';
 					var method = 'DELETE';
@@ -733,8 +735,8 @@
 
 			var actionDeleteCode = function acitionDeleteCode(record) {
 				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
-				url += record.data.attributeCodePk.attributeType;
-				url += '/attributecodes/' + record.data.attributeCodePk.attributeCode;
+				url += manageCodesWin.attributeType;
+				url += '/attributecodes/' + record.data.code;
 				url += '/force';
 				var method = 'DELETE';
 				Ext.Ajax.request({
