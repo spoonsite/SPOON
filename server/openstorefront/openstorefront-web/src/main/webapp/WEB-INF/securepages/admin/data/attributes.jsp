@@ -366,7 +366,6 @@
 					selectionchange: function (grid, record, index, opts) {
 						if (Ext.getCmp('codesGrid').getSelectionModel().hasSelection()) {
 							Ext.getCmp('codesGrid-tools-edit').enable();
-							Ext.getCmp('codesGrid-tools-editUrl').enable();
 							Ext.getCmp('codesGrid-tools-toggle').enable();
 							Ext.getCmp('codesGrid-tools-delete').enable();
 							if (record[0].data.activeStatus === 'A') {
@@ -377,7 +376,6 @@
 							}
 						} else {
 							Ext.getCmp('codesGrid-tools-edit').disable();
-							Ext.getCmp('codesGrid-tools-editUrl').disable();
 							Ext.getCmp('codesGrid-tools-toggle').disable();
 							Ext.getCmp('codesGrid-tools-delete').disable();
 						}
@@ -420,17 +418,6 @@
 								handler: function () {
 									var record = codesGrid.getSelection()[0];
 									actionEditCode(record);
-								}
-							},
-							{
-								text: 'Edit Landing Page',
-								id: 'codesGrid-tools-editUrl',
-								scale: 'medium',
-								iconCls: 'fa fa-2x fa-globe',
-								disabled: true,
-								handler: function () {
-									var record = codesGrid.getSelection()[0];
-									actionEditCodeUrl(record);
 								}
 							},
 							{
@@ -698,10 +685,6 @@
 						Ext.toast('Failed to ' + what + ' attribute code', '', 'tr');
 					}
 				});
-			};
-
-			var actionEditCodeUrl = function acitionEditCodeUrl(record) {
-
 			};
 
 			var actionDeleteCode = function acitionDeleteCode(record) {
