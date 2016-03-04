@@ -342,10 +342,14 @@
 
 			var actionManageCodes = function actionManageCodes(record) {
 				var url = '/openstorefront/api/v1/resource/attributes/attributetypes';
-				url += '/' + record.data.attributeType + '/attributecodes';
+				url += '/' + record.data.attributeType + '/attributecodeviews?all=true';
 				codesStore.setProxy({
 					type: 'ajax',
-					url: url
+					url: url,
+					reader: {
+						type: 'json',
+						rootProperty: 'data'
+					}
 				});
 				codesStore.load();
 				manageCodesWin.show();
@@ -382,6 +386,46 @@
 					}
 				},
 				dockedItems: [
+					{
+						dock: 'top',
+						xtype: 'toolbar',
+						items: [
+							Ext.create('OSF.component.StandardComboBox', {
+								id: 'codesFilter-activeStatus',
+								emptyText: 'Show All',
+								fieldLabel: 'Active Status',
+								name: 'activeStatus',
+								listeners: {
+									change: function (filter, newValue, oldValue, opts) {
+										if (newValue === 'A') {
+											codesStore.filter('activeStatus','A');
+										}
+										else {
+											codesStore.filter('activeStatus', 'I');
+										}
+									},
+								},
+								storeConfig: {
+									customStore: {
+										fields: [
+											'code',
+											'description'
+										],
+										data: [
+											{
+												code: 'A',
+												description: 'Active'
+											},
+											{
+												code: 'I',
+												description: 'Inactive'
+											}
+										]
+									}
+								}
+							})
+						]
+					},
 					{
 						xtype: 'toolbar',
 						dock: 'top',
