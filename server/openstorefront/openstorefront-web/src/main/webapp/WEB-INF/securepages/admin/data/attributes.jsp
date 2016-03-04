@@ -696,15 +696,17 @@
 				editCodeWin.edit = false;
 				editCodeWin.attributeType = parentAttributeRecord.data.attributeType;
 				editCodeWin.setTitle('Add New Code');
+				Ext.getCmp('editCodeForm-code').setEditable(true);
 				editCodeWin.show();
 			};
 
-			var actionEditCode = function acitionEditCode(record) {
+			var actionEditCode = function actionEditCode(record) {
 				Ext.getCmp('editCodeForm').loadRecord(record);
 				Ext.getCmp('editCodeForm-code').setValue(record.data.code);
 				editCodeWin.edit = true;
 				editCodeWin.attributeType = manageCodesWin.attributeType;
 				editCodeWin.setTitle('Edit Code - ' + record.data.code);
+				Ext.getCmp('editCodeForm-code').setEditable(false);
 				editCodeWin.show();
 			};
 
