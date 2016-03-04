@@ -150,7 +150,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@APIDescription("Exports attributes in json formt. POST to Upload.action?UploadAttributes and then the file to import attributes (Requires Admin)")
+	@APIDescription("Exports attributes in JSON format. To import attributes, POST to /Upload.action?UploadAttributes with the file (Requires Admin)")
 	@RequireAdmin
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
