@@ -31,7 +31,7 @@ public class SearchModel
 {
 
 	private String sortField;
-	private String sortDirection = OpenStorefrontConstant.SORT_DESCENDING;
+	private String sortDirection = OpenStorefrontConstant.SORT_ASCENDING;
 	private int startOffset;
 	private int max = Integer.MAX_VALUE;
 

@@ -20,20 +20,29 @@ limitations under the License.
     <stripes:layout-component name="contents">
 			
 	<script src="scripts/component/searchToolContentPanel.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/searchToolWindow.js?v=${appVersion}" type="text/javascript"></script>		
 		
+	<form id="exportForm" action="../api/v1/service/search/export" method="POST">		
+		<p style="display: none;" id="exportFormIds">
+		</p> 
+	</form>
+	
 	<script type="text/javascript">
 		var SearchPage = {
 			viewDetails: function(componentId) {
 				SearchPage.detailPanel.expand();
 				
 				//load component
-				SearchPage.detailContent.load('view.jsp?id=' + componentId);
+				if (!SearchPage.currentLoadedComponent ||  SearchPage.currentLoadedComponent !== componentId) { 
+					SearchPage.detailContent.load('view.jsp?id=' + componentId);
+					SearchPage.currentLoadedComponent = componentId;
+				}
 			}
 		};
 
 		/* global Ext, CoreService, CoreApp */	
 		Ext.onReady(function(){	
+			
+			var maxPageSize = 30;
 			
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	
@@ -82,11 +91,46 @@ limitations under the License.
 													Ext.Array.each(attributeData, function(attributeCode){
 														var check = Ext.create('Ext.form.field.Checkbox', {
 															boxLabel: attributeCode.label,
-															attributeCode: attributeCode.attributeCodePk.attributeCode															
+															attributeCode: attributeCode.attributeCodePk.attributeCode,
+															listeners: {
+																change: function(checkbox, newValue, oldValue, opts) {																	
+																	if (newValue){
+																		
+																		var containsAttribute = false;
+																		Ext.Array.each(attributeFilters, function(item) {
+																			if (item.type === attributeCode.attributeCodePk.attributeType &&
+																				item.code === attributeCode.attributeCodePk.attributeCode) {
+																				containsAttribute = true;
+																			}
+																		});
+																		
+																		if (!containsAttribute) {
+																			attributeFilters.push({
+																				type: attributeCode.attributeCodePk.attributeType,
+																				code: attributeCode.attributeCodePk.attributeCode,
+																				typeLabel: item.description,
+																				label: attributeCode.label,
+																				checkbox: checkbox
+																			});
+																		}
+																	} else {
+																		attributeFilters = Ext.Array.filter(attributeFilters, function(item) {
+																			var keep = true;
+																			if (item.type === attributeCode.attributeCodePk.attributeType &&
+																				item.code === attributeCode.attributeCodePk.attributeCode) {
+																				keep = false;																																								
+																			}
+																			return keep;
+																		});
+																	}
+																	filterResults();
+																}
+															}
 														});	
 														checkboxes.push(check);
 													});													
-													panel.add(checkboxes);													
+													panel.add(checkboxes);
+													panel.updateLayout(true, true);
 												}
 											});
 										}
@@ -99,27 +143,27 @@ limitations under the License.
 							} else {
 								nonvisible.push(panel);
 							}
-						});
-						visible.reverse();
-						nonvisible.reverse();
+						});						
 						Ext.getCmp('attributeFiltersContainer').add(visible);
 						Ext.getCmp('nonvisibleAttributes').add(nonvisible);						
 					}
 				});
 			};
 			loadAttributes();
-			
+		
+			var attributeFilters = [];
 			var filterPanel = Ext.create('Ext.panel.Panel', {
 				region: 'west',
 				title: 'Filters',
-				minWidth: 250,
+				minWidth: 300,
 				collapsible: true,
 				titleCollapse: true,
-				split: true,
+				split: true,				
 				autoScroll: true,
 				bodyStyle: 'padding: 10px; background: whitesmoke;',
 				defaults: {
-					labelAlign: 'top'
+					labelAlign: 'top',
+					labelSeparator: ''
 				},
 				layout: {
 					type: 'vbox',
@@ -128,19 +172,67 @@ limitations under the License.
 				items: [
 					{
 						xtype: 'textfield',
+						id: 'filterByName',
 						fieldLabel: 'By Name',						
-						name: 'filterName',
-						emptyText: 'Filter Search'
+						name: 'filterName',								
+						emptyText: 'Filter Search',
+						listeners: {
+							change: {
+								fn: function(field, newValue, oldValue, opts) {
+									filterResults();
+								},
+								buffer: 250
+							}
+						}
 					},
 					{
 						xtype: 'tagfield',
+						id: 'filterByTag',
 						fieldLabel: 'By Tag',						
 						name: 'tags',
-						emptyText: 'Select Tags'						
+						emptyText: 'Select Tags',
+						grow: false,
+						store: Ext.create('Ext.data.Store', {
+							autoLoad: true,
+							proxy: {
+								type: 'ajax',
+								url: '../api/v1/resource/components/tags'
+							}
+						}),
+						listeners: {
+							change: function(field, newValue, oldValue, opts) {
+								filterPanel.updateLayout(true, true);
+								filterResults();
+							}	
+						}						
 					},
+					Ext.create('OSF.component.StandardComboBox', {	
+						id: 'filterByType',
+						fieldLabel: 'By Topic',
+						name: 'componentType',						
+						margin: '0 0 10 0',					
+						editable: false,
+						typeAhead: false,
+						displayField: 'label',
+						valueField: 'componentType',
+						storeConfig: {
+							url: '../api/v1/resource/componenttypes',
+							addRecords: [
+								{
+									componentType: null,
+									label: '*All*'
+								}
+							]							
+						},
+						listeners: {
+							change: function(field, newValue, oldValue, opts) {
+								filterResults();
+							}	
+						}
+					}),
 					{
 						xtype: 'label',
-						html: '<b>User Rating:</b>'
+						html: '<b>By User Rating</b>'
 					},
 					{
 						xtype: 'container',
@@ -156,20 +248,30 @@ limitations under the License.
 								handler: function(){
 									var rating = this.up('container').getComponent('filterRating');
 									rating.setValue(null);
+									filterResults();
 								}
 							},
 							{
 								xtype: 'rating',
+								id: 'filterByRating',
 								itemId: 'filterRating',
 								scale: '200%',
 								overStyle: 'text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,-1px 1px 0 #000, 1px 1px 0 #000;',
-								selectedStyle: 'text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,-1px 1px 0 #000, 1px 1px 0 #000;'
+								selectedStyle: 'text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,-1px 1px 0 #000, 1px 1px 0 #000;',
+								listeners: {
+									click: {
+										element: 'element',
+										fn: function(){
+											filterResults();
+										}
+									}
+								}
 							}
 						]
 					},
 					{
 						xtype: 'label',
-						html: '<b>Attributes:</b>'
+						html: '<b>By Attributes:</b>'
 					},
 					{
 						xtype: 'container',
@@ -227,7 +329,23 @@ limitations under the License.
 							},
 							{
 								text: 'Reset Filters',
-								width: '80%'
+								scale: 'medium',
+								width: '80%',
+								handler: function(){
+									Ext.getCmp('filterByName').reset();
+									Ext.getCmp('filterByTag').reset();
+									Ext.getCmp('filterByType').reset();
+									Ext.getCmp('filterByRating').setValue(null);
+								
+									Ext.Array.each(attributeFilters, function(filter) {
+										filter.checkbox.suspendEvents(false);
+										filter.checkbox.setValue(false);
+										filter.checkbox.resumeEvents(true);
+									});
+									attributeFilters = [];
+									
+									filterResults();
+								}
 							},
 							{
 								xtype: 'tbfill'
@@ -236,10 +354,116 @@ limitations under the License.
 					}
 				]
 			});
-			
+
+			var filterResults = function() {
+				
+				//construct filter object
+				var filter = {
+					name: Ext.getCmp('filterByName').getValue(),
+					tags: Ext.getCmp('filterByTag').getValue(),
+					type: Ext.getCmp('filterByType').getValue(),
+					rating: Ext.getCmp('filterByRating').getValue(),
+					sortBy: Ext.getCmp('sortByCB').getSelection() ? Ext.getCmp('sortByCB').getSelection().data : null,
+					attributes: attributeFilters
+				};				
+				
+				//determine client side or server-side
+				if (searchResultsStore.getTotalCount() <= maxPageSize) {
+					//client side
+					
+					var filterSet = [];
+					
+					Ext.Array.each(allResultsSet, function(result) {
+						var keep = true;
+						
+						if (filter.name && filter.name !== '') {
+							if (result.name.toLowerCase().indexOf(filter.name.toLowerCase()) === -1) {
+								keep = false;
+							}
+						}
+						
+						if (filter.tags && filter.tags.length > 0) {
+							Ext.Array.each(filter.tags, function (tag) {
+								var containsTag = false;							
+								Ext.Array.each(result.tags, function (resultsTag) {
+									if (resultsTag.text === tag) {
+										containsTag= true;
+									}
+								});
+								if (!containsTag) {
+									keep = false;
+								}
+							});			
+						}
+						
+						if (filter.type) {
+							if (result.componentType !== filter.type) {
+								keep = false;
+							}
+						}
+						
+						if (filter.rating) {
+							if (result.averageRating < filter.rating){
+								keep = false;
+							}
+						}
+						
+						if (filter.attributes && filter.attributes.length > 0) {
+							var containsAttribute = false;	
+							Ext.Array.each(filter.attributes, function (attribute) {														
+								Ext.Array.each(result.attributes, function (resultsAttribute) {
+									if (resultsAttribute.type === attribute.type &&
+										resultsAttribute.code === attribute.code) {
+										containsAttribute = true;
+									}
+								});								
+							});	
+							if (!containsAttribute) {
+									keep = false;
+							}
+						}
+						
+						if (keep) {
+							filterSet.push(result);
+						}
+					});
+					
+					//sort
+					if (filter.sortBy) {						
+						Ext.Array.sort(filterSet, filter.sortBy.compare);
+					}
+					
+					processResults(filterSet);
+					
+				} else { 
+					//server side										
+					var searchRequest = originalSearchRequest;
+					var sort;
+					if (filter.sortBy) {
+						sort = {
+							field: filter.sortBy.field,
+							dir: filter.sortBy.dir
+						}
+					} else {
+						sort = {
+							field: 'name',
+							dir: 'ASC'
+						}
+					}
+					
+					//Transform Filters into search elements.
+					
+					
+					
+					doSearch(searchRequest, sort);
+				}
+				
+			};
+			SearchPage.filterResults = filterResults;
+		
 			var searchResultsStore = Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				pageSize: 300,
+				pageSize: maxPageSize,
 				sorters: [
 						new Ext.util.Sorter({
 							property : 'name',
@@ -253,41 +477,116 @@ limitations under the License.
 						   rootProperty: 'data',
 						   totalProperty: 'totalNumber'
 						}
-				})
+				}),
+				listeners: {
+					beforeload: function(store, operation, opts) {
+						Ext.getCmp('resultsDisplayPanel').setLoading("Searching...");
+					}
+				}
 			});
 			
-			searchResultsStore.on('load', function(store, records, success, opts){
-				Ext.getCmp('resultsDisplayPanel').setLoading(false);
-				var data = [];
-				Ext.Array.each(records, function(record){
-					data.push(record.data);
-				});
-				Ext.getCmp('resultsDisplayPanel').update(data);
-				
+			var currentDataSet;
+			var processResults = function(data) {
+				currentDataSet = data;
+				Ext.getCmp('resultsDisplayPanel').update(data);				
+		
 				//update Stats
 				var statLine = 'No results Found';
-				if (records.length > 0) {
+				if (data.length > 0) {
 					statLine = '';
 					var stats = {};
-					Ext.Array.each(records, function(record){
-						if (stats[record.get('componentType')]) {
-							stats[record.get('componentType')].count += 1;
+					Ext.Array.each(data, function(dataItem){
+						if (stats[dataItem.componentType]) {
+							stats[dataItem.componentType].count += 1;
 						} else {
-							stats[record.get('componentType')] = {
-								typeLabel: record.get('componentTypeDescription'),
+							stats[dataItem.componentType] = {
+								typeLabel: dataItem.componentTypeDescription,
+								type: dataItem.componentType,
 								count: 1
 							}
 						}
 					});
 					Ext.Object.each(stats, function(key, value, self) {
-						statLine += '<span style="font-size: 14px;">' + value.count + '</span> <b>'+ value.typeLabel + '(s)</b> '
+						statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + value.type + '\');SearchPage.filterResults();">' + value.count + '</a></span> <b>'+ value.typeLabel + '(s)</b> '
 					});
 				}
 				
 				Ext.getCmp('searchStats').update(statLine);				
 				
+			};
+			
+			
+			var displaySections = [					
+				{ text: 'Organization', section: 'organization', display: true },
+				{ text: 'Badges', section: 'badges', display: true },
+				{ text: 'Description', section: 'description', display: true },
+				{ text: 'Last Update', section: 'update', display: true },	
+				{ text: 'Attributes', section: 'attributes', display: false },
+				{ text: 'Tags', section: 'tags', display: false },
+				{ text: 'Average User Rating', section: 'rating', display: false },
+				{ text: 'Approved Date', section: 'approve', display: false }										
+			];			
+			var allResultsSet;
+			searchResultsStore.on('load', function(store, records, success, opts){
+				Ext.getCmp('resultsDisplayPanel').setLoading(false);
+				var data = [];
+				Ext.Array.each(records, function(record){
+					record.data.ratingStars = [];
+					var rating = record.data.averageRating;
+					for (var i=0; i<5; i++){					
+						record.data.ratingStars.push({						
+							star: i < rating? (rating - i) > 0 && (rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
+						});
+					}
+					data.push(record.data);
+				});
+				
+				//sorting Attributes
+				Ext.Array.each(data, function(dataItem) {
+					Ext.Array.sort(dataItem.attributes, function(a, b){
+						return a.typeLabel.localeCompare(b.typeLabel);	
+					});
+				});
+				
+				
+				//Custom Display
+				var menuItems = [];
+				
+				Ext.Array.each(data, function(dataItem) {
+					dataItem.show = {};
+					Ext.Array.each(displaySections, function(item){
+						dataItem.show[item.section] = item.display;
+					});	
+				});			
+				
+				Ext.Array.each(displaySections, function(item){					
+					menuItems.push({
+						xtype: 'menucheckitem',
+						text: item.text,
+						checked: item.display,
+						listeners: {
+							checkchange: function(menuItem, checked, opts) {
+								Ext.Array.each(data, function(dataItem) {
+									dataItem.show[item.section] = checked;
+								});
+								item.display = checked;
+								Ext.getCmp('resultsDisplayPanel').update(currentDataSet);							
+								Ext.getCmp('resultsDisplayPanel').updateLayout(true, true);
+							}
+						}
+					});
+				});		
+				
+				Ext.getCmp('customDisplay').setMenu({
+					items: menuItems
+				}, true);				
+								
+				allResultsSet = data;
+				//filterResults();
+				processResults(allResultsSet);
 			});
 			
+			var originalSearchRequest;
 			var performSearch = function(){
 				//pull session storage
 				Ext.getCmp('resultsDisplayPanel').setLoading("Searching...");
@@ -296,62 +595,101 @@ limitations under the License.
 					searchRequest = Ext.decode(searchRequest);
 					if (searchRequest.type === 'SIMPLE') {
 						Ext.getCmp('searchResultsPanel').setTitle('Search Results - ' + searchRequest.query);
-						searchResultsStore.load({
-						url: '../api/v1/service/search',
-						params: {
-							paging: true,
-							query: searchRequest.query
-						}
-					});
-					} else {
-						//advanced 
-						Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advance');
-						searchResultsStore.getProxy().buildRequest = function (operation) {
-							var initialParams = Ext.apply({
-								paging: true,
-								sortField: operation.getSorters()[0].getProperty(),
-								sortOrder: operation.getSorters()[0].getDirection(),
-								offset: operation.getStart(),
-								max: operation.getLimit()
-							}, operation.getParams());
-							params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
-
-							var request = new Ext.data.Request({
-								url: '/openstorefront/api/v1/service/search/advance',
-								params: params,
-								operation: operation,
-								action: operation.getAction(),
-								jsonData: Ext.util.JSON.encode(searchObj)
-							});
-							operation.setRequest(request);
-
-							return request;
+						searchRequest.query = 	{							
+							"searchElements": [{
+									"searchType": "INDEX",									
+									"value": searchRequest.query
+							}]
 						};
-						searchResultsStore.loadPage(1);						
+					} else {						
+						Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advance');					
 					}
+
+					
 				} else {
-					//search all
+					//search all					
 					Ext.getCmp('searchResultsPanel').setTitle('Search Results - ALL');
-					searchResultsStore.load({
-						url: '../api/v1/service/search',
-						params: {
-							paging: true,
-							query: '*'
-						}
-					});
-				}			
+					searchRequest = {};					
+					searchRequest.query = 	{							
+							"searchElements": [{
+									"searchType": "INDEX",									
+									"value": '*'
+							}]
+					};
+				}
+				originalSearchRequest = searchRequest;
+				doSearch(searchRequest, {
+					field: 'name',
+					dir: 'ASC'
+				});
 				
 			};
+			
+			var doSearch = function(searchRequest, sort) {
+				searchResultsStore.getProxy().setActionMethods({create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'});
+				searchResultsStore.getProxy().buildRequest = function (operation) {
+					var initialParams = Ext.apply({
+						paging: true,
+						sortField: sort ? sort.field : operation.getSorters() ? operation.getSorters()[0].getProperty() : null,
+						sortOrder: sort ? sort.dir : operation.getSorters() ? operation.getSorters()[0].getDirection() : null,
+						offset: operation.getStart(),
+						max: operation.getLimit()
+					}, operation.getParams());
+					params = Ext.applyIf(initialParams, searchResultsStore.getProxy().getExtraParams() || {});
+
+					var request = new Ext.data.Request({
+						url: '/openstorefront/api/v1/service/search/advance',
+						params: params,
+						operation: operation,
+						action: operation.getAction(),
+						jsonData: Ext.util.JSON.encode(searchRequest.query)
+					});
+					operation.setRequest(request);
+
+					return request;
+				};
+				searchResultsStore.loadPage(1);					
+			};
+			
+			
 			
 			var resultsTemplate = new Ext.XTemplate(
 				'<tpl for=".">',
 				' <div class="searchresults-item" onclick="SearchPage.viewDetails(\'{componentId}\')">',
-				'  <h2>{name}</h2>',
-				'  <tpl for="attributes">',
-				'    <tpl if="badgeUrl"><img src="{badgeUrl}" title="{label}" width="40" /></tpl>',
+				'	<h2>{name}</h2>',
+				'	<tpl if="show.organization">',
+				'		<p class="searchresults-item-org">{organization}</p>',
+				'	</tpl>',
+				'  <tpl if="show.badges">',
+				'	<tpl for="attributes">',
+				'		 <tpl if="badgeUrl"><img src="{badgeUrl}" title="{label}" width="40" /></tpl>',
+				'	 </tpl>',
 				'  </tpl>',
-				'  <div class="home-highlight-item-desc">{[Ext.util.Format.ellipsis(Ext.util.Format.stripTags(values.description), 300)]}</div>',
-				'  <br><div class="searchresults-item-update">Last Updated: {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]} ({componentTypeDescription})</div>',
+				'	<tpl if="show.rating">',				
+				'		<tpl if="averageRating"><tpl for="ratingStars"><i class="fa fa-2x fa-{star} rating-star-color" title="User Rating"></i></tpl></tpl>',
+				'	</tpl>',
+				'	<tpl if="show.description">',
+				'		<div class="home-highlight-item-desc">{[Ext.util.Format.ellipsis(Ext.util.Format.stripTags(values.description), 300)]}</div>',
+				'  </tpl>',
+				'	<tpl if="show.attributes">',	
+				'		<ul>',
+				'		<tpl for="attributes"><li><b>{typeLabel}: </b>{label}<v</li></tpl>',
+				'		</ul>',
+				'   </tpl>',
+				'	<tpl if="show.tags">',				
+				'		<tpl if="tags">',
+				'			<b>Tags: </b>',
+				'			<tpl for="tags">',
+				'				<span class="searchresults-tag">',
+				'					{text}',
+				'				</span>&nbsp;',
+				'			</tpl>',
+				'		</tpl>',
+				'	</tpl>',
+				'  <br><div class="searchresults-item-update">',
+				'  <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
+				'  <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
+				'   ({componentTypeDescription})</div>',
 				' </div>',
 				'</tpl>'		
 			);			
@@ -380,9 +718,102 @@ limitations under the License.
 						items: [				
 							{
 								xtype: 'combobox',
-								width: 150,
+								id: 'sortByCB',
+								width: 200,
 								tooltip: 'Sort By',
-								emptyText: 'Sort By'
+								emptyText: 'Sort By',
+								queryMode: 'local',
+								editable: false,
+								typeAhead: false,
+								displayField: 'label',
+								valueField: 'fieldCode',
+								listeners: {
+									change: function(cb, newValue, oldValue, opts) {
+										filterResults();
+									}
+								},
+								store: {
+									data: [
+										{
+											label: 'Name (A-Z)',
+											field: 'name',
+											fieldCode: 'name',
+											dir: 'ASC',
+											compare: function(a, b){
+												return a.name.localeCompare(b.name);
+											}
+										},
+										{
+											label: 'Name (Z-A)',
+											field: 'name',
+											fieldCode: 'name-desc',
+											dir: 'DESC',
+											compare: function(a, b){
+												return b.name.localeCompare(a.name);
+											}											
+										},
+										{
+											label: 'User Rating (High-Low)',
+											field: 'averageRating',
+											fieldCode: 'averageRating',
+											dir: 'DESC',
+											compare: function(b, a){
+												if (a.averageRating > b.averageRating) {
+													return 1;
+												} else if (a.averageRating < b.averageRating) {
+													return -1;
+												} else {
+													return 0;
+												}												
+											}											
+										},
+										{
+											label: 'User Rating (Low-High)',
+											field: 'averageRating',
+											fieldCode: 'averageRating-desc',
+											dir: 'ASC',
+											compare: function(a, b){
+												if (a.averageRating > b.averageRating) {
+													return 1;
+												} else if (a.averageRating < b.averageRating) {
+													return -1;
+												} else {
+													return 0;
+												}
+											}											
+										},										
+										{
+											label: 'Last Update (Newest)',
+											field: 'lastActivityDts',
+											fieldCode: 'lastUpdateDts',
+											dir: 'DESC',
+											compare: function(b, a){
+												if (a.lastActivityDts > b.lastActivityDts) {
+													return 1;
+												} else if (a.lastActivityDts < b.lastActivityDts) {
+													return -1;
+												} else {
+													return 0;
+												}
+											}											
+										},
+										{
+											label: 'Last Update (Oldest)',
+											field: 'lastActivityDts',
+											fieldCode: 'lastUpdateDts-desc',
+											dir: 'ASC',
+											compare: function(a, b){
+												if (a.lastActivityDts > b.lastActivityDts) {
+													return 1;
+												} else if (a.lastActivityDts < b.lastActivityDts) {
+													return -1;
+												} else {
+													return 0;
+												}
+											}											
+										}											
+									]
+								}
 							},
 							{
 								text: 'Compare',
@@ -396,9 +827,8 @@ limitations under the License.
 							},
 							{
 								iconCls: 'fa fa-gear',
-								handler: function(){
-									
-								}
+								tooltip: 'Customize Display',
+								id: 'customDisplay'
 							}
 						]						
 					},
@@ -416,10 +846,19 @@ limitations under the License.
 										xtype: 'tbseparator'
 									},
 									{
-										text: 'Export',										
+										text: 'Export',					
+										tooltip: 'Exports records in current view',
 										iconCls: 'fa fa fa-download',																			
 										handler: function () {
+											var exportForm = Ext.getDom('exportForm');
+											var exportFormIds = Ext.getDom('exportFormIds');
 											
+											var ids = '';
+											searchResultsStore.each(function(record){
+												ids += '<input type="hidden" name="multipleIds" value="' + record.get('componentId') + '" />'
+											});
+											exportFormIds.innerHTML = ids;
+											exportForm.submit();
 										}
 									}
 								]
@@ -559,7 +998,7 @@ limitations under the License.
 											xtype: 'textfield',
 											itemId: 'searchText',
 											flex: 1,
-											fieldCls: 'home-search-field',
+											fieldCls: 'home-search-field',										
 											emptyText: 'Search',
 											listeners:{
 												specialkey: function(field, e) {

@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
+import au.com.bytecode.opencsv.CSVWriter;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
@@ -38,6 +40,8 @@ import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +49,7 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -248,4 +253,44 @@ public class Search
 		return Response.ok(listingStats).build();
 	}
 
+	@POST
+	@APIDescription("Export a set entries")
+	@Produces({"application/csv"})	
+	@Path("/export")
+	public Response export(
+			@FormParam("multipleIds")					
+			@RequiredParam List<String> ids			
+	)
+	{
+		StringWriter writer = new StringWriter();
+		CSVWriter cvsWriter = new CSVWriter(writer);
+		
+		String header[] = {
+			"Name", 
+			"Organization",
+			"Description",
+			"Last Updated Dts",
+			"Entry Type"
+		};
+		cvsWriter.writeNext(header);
+		
+		SimpleDateFormat sdf = TimeUtil.standardDateFormater();
+		List<ComponentSearchView> views = service.getComponentService().getSearchComponentList(ids);
+		for (ComponentSearchView view : views) {
+			String data[] = {
+				view.getName(),
+				view.getOrganization(),
+				view.getDescription(),
+				sdf.format(view.getLastActivityDts()),
+				view.getComponentTypeDescription()
+			};
+			cvsWriter.writeNext(data);		
+		}
+		
+		Response.ResponseBuilder response = Response.ok(writer.toString());
+		response.header("Content-Type", "application/csv");
+		response.header("Content-Disposition", "attachment; filename=\"searchResults.csv\"");
+		return response.build();		
+	}
+	
 }

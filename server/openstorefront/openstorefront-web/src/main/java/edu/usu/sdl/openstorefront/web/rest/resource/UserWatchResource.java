@@ -24,7 +24,7 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
-import edu.usu.sdl.openstorefront.core.view.MulitpleIds;
+import edu.usu.sdl.openstorefront.core.view.MultipleIds;
 import edu.usu.sdl.openstorefront.core.view.UserWatchView;
 import edu.usu.sdl.openstorefront.core.view.UserWatchWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
@@ -114,7 +114,7 @@ public class UserWatchResource
 	@DataType(UserWatchResource.class)
 	@Path("/activate")
 	public Response activateWatches(
-		MulitpleIds mulitpleIds			
+		MultipleIds mulitpleIds			
 	)
 	{
 		if (mulitpleIds != null) {
@@ -138,7 +138,7 @@ public class UserWatchResource
 	@DataType(UserWatchResource.class)
 	@Path("/inactivate")
 	public Response inactivateWatches(
-		MulitpleIds mulitpleIds	
+		MultipleIds mulitpleIds	
 	)
 	{
 		if (mulitpleIds != null) {

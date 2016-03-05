@@ -214,12 +214,12 @@ limitations under the License.
 						columnLines: true,
 						store: relatedStore,
 						columns: [
-							{ text: 'Name', dataIndex: 'name', width: 250, cellWrap: true, 
+							{ text: 'Name', dataIndex: 'name', flex:2, minWidth: 250, cellWrap: true, 
 								renderer: function (value, meta, record) {
 									return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>'
 								}
 							},
-							{ text: 'Description', dataIndex: 'description', flex: 1,
+							{ text: 'Description', dataIndex: 'description', flex: 2,
 								cellWrap: true,
 								renderer: function (value) {
 									value = Ext.util.Format.stripTags(value);

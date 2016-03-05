@@ -57,7 +57,7 @@ public class FilterQueryParams
 	private String sortField;
 
 	@QueryParam("sortOrder")
-	@DefaultValue(OpenStorefrontConstant.SORT_DESCENDING)
+	@DefaultValue(OpenStorefrontConstant.SORT_ASCENDING)
 	@Size(min = 0, max = 4)
 	@Sanitize(TextSanitizer.class)
 	private String sortOrder;
@@ -104,7 +104,7 @@ public class FilterQueryParams
 		filterQueryParams.setStatus(StandardEntity.ACTIVE_STATUS);
 		filterQueryParams.setAll(false);
 		filterQueryParams.setSortField("description");
-		filterQueryParams.setSortOrder(OpenStorefrontConstant.SORT_DESCENDING);
+		filterQueryParams.setSortOrder(OpenStorefrontConstant.SORT_ASCENDING);
 		return filterQueryParams;
 	}
 

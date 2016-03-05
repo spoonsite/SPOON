@@ -133,7 +133,7 @@ limitations under the License.
 			});
 		
 			
-			Ext.create('Ext.container.Viewport', {
+			var viewport = Ext.create('Ext.container.Viewport', {
 				layout: 'border',
 				cls: 'printBody',
 				style: 'background: white !important;',
@@ -225,7 +225,7 @@ limitations under the License.
 							review.ratingStars = [];
 							for (var i=0; i<5; i++){					
 								review.ratingStars.push({						
-									star: i <= review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
+									star: i < review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
 								});
 							}	
 						});
@@ -279,8 +279,9 @@ limitations under the License.
 						
 						Ext.getCmp('contentInfo').update(entry);
 						Ext.defer(function(){							
-							Ext.getCmp('contentInfo').update(entry);
+							//Ext.getCmp('contentInfo').update(entry);
 							contentPanel.updateLayout(true, true);
+							viewport.updateLayout(true, true);
 						}, 500);
 					}
 				});				

@@ -40,6 +40,10 @@ public class TimeUtil
 		return minutes * MINTUE_TO_MILLIS;
 	}
 
+	public static SimpleDateFormat standardDateFormater() {
+		return new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z");
+	}
+	
 	public static Date fromString(String value)
 	{
 		Date newDate = null;
