@@ -52,7 +52,7 @@ public class ComponentFilterParams
 		filterQueryParams.setStatus(StandardEntity.ACTIVE_STATUS);
 		filterQueryParams.setAll(false);
 		filterQueryParams.setSortField("description");
-		filterQueryParams.setSortOrder(OpenStorefrontConstant.SORT_DESCENDING);
+		filterQueryParams.setSortOrder(OpenStorefrontConstant.SORT_ASCENDING);
 		return filterQueryParams;
 	}
 

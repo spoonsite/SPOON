@@ -35,7 +35,8 @@ import javax.validation.constraints.Size;
 public class ComponentType
 		extends StandardEntity<ComponentType>
 {
-
+	public static final String FIELD_LABEL = "label";
+	
 	@PK(generated = false)
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@NotNull

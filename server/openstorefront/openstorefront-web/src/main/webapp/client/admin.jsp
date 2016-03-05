@@ -241,7 +241,7 @@ limitations under the License.
 									listeners: {
 										el: {
 											click: function() {
-												window.location.replace('../');
+												window.location.replace('index.jsp');
 											}
 										}
 									}

@@ -20,7 +20,6 @@ limitations under the License.
     <stripes:layout-component name="contents">
 	
 	<script src="scripts/component/searchToolContentPanel.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/searchToolWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
 	<script type="text/javascript">
 		
@@ -117,7 +116,7 @@ limitations under the License.
 									xtype: 'image',
 									id: 'logoImage',
 									height: 200,						
-									src: ''
+									src: ''									
 								}
 							]
 					},					
@@ -215,6 +214,9 @@ limitations under the License.
 				]
 				
 			});
+			Ext.defer(function(){
+				searchPanel.updateLayout(true, true);
+			}, 1000);
 		
 			var loadedHighlightsRecently = false;		
 		

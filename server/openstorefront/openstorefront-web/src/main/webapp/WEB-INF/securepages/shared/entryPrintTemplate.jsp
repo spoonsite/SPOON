@@ -364,9 +364,9 @@ limitations under the License.
 						<tpl if="caption">{caption}<br></tpl>
 					</tpl>
 					<tpl if="mediaTypeCode != 'IMG'">
-						Non-Printable: {contentType}<tpl if="caption"> - {caption}</tpl><tpl if="originalFileName"> - {originalFileName}</tpl>
+						<b>Non-Printable:</b> {contentType}<tpl if="caption"> - {caption}</tpl><tpl if="originalFileName"> - {originalFileName}</tpl><br>
 					</tpl>			
-					
+					<br>
 				</tpl>
 			</div>	
 		</tpl>

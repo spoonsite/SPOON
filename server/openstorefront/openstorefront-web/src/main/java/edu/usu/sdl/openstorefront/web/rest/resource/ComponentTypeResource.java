@@ -15,10 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -73,6 +75,7 @@ public class ComponentTypeResource
 		}
 
 		List<ComponentType> componentTypes = componentType.findByExample();
+		componentTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentType.FIELD_LABEL));		
 		GenericEntity<List<ComponentType>> entity = new GenericEntity<List<ComponentType>>(componentTypes)
 		{
 		};
@@ -94,6 +97,7 @@ public class ComponentTypeResource
 		componentType.setAllowOnSubmission(Boolean.TRUE);
 
 		List<ComponentType> componentTypes = componentType.findByExample();
+		componentTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentType.FIELD_LABEL));
 		GenericEntity<List<ComponentType>> entity = new GenericEntity<List<ComponentType>>(componentTypes)
 		{
 		};

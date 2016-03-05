@@ -128,7 +128,7 @@ public class ComponentReport
 			QueryByExample queryByExample = new QueryByExample(componentTrackingExample);
 			queryByExample.setMaxResults(1);
 			queryByExample.setOrderBy(componentTrackingOrderExample);
-			queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
+			queryByExample.setSortDirection(OpenStorefrontConstant.SORT_ASCENDING);
 
 			ComponentTracking componentTracking = service.getPersistenceService().queryOneByExample(ComponentTracking.class, queryByExample);
 			String lastViewed = "";

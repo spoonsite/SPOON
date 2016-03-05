@@ -221,7 +221,7 @@ public class ComponentDetailReport
 			List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());
 			if (metaData != null) {
 				cvsGenerator.addLine("MetaData");
-				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentMetadata.FIELD_LABEL));
+				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentMetadata.FIELD_LABEL));
 
 				for (ComponentMetadata metadataItem : metaData) {
 
@@ -375,7 +375,7 @@ public class ComponentDetailReport
 			List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());
 			if (metaData != null) {
 				htmlGenerator.addLine("<h2>MetaData</h2>");
-				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentMetadata.FIELD_LABEL));
+				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentMetadata.FIELD_LABEL));
 
 				htmlGenerator.addLine("<table>");
 				htmlGenerator.addLine("<tr>");

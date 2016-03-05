@@ -24,13 +24,13 @@ import java.util.List;
  * Use to consume multiple ids
  * @author dshurtleff
  */
-public class MulitpleIds
+public class MultipleIds
 {
 	@ConsumeField
 	@DataType(String.class)		
 	private List<String> ids = new ArrayList<>();
 
-	public MulitpleIds()
+	public MultipleIds()
 	{
 	}
 

@@ -48,6 +48,7 @@ import edu.usu.sdl.openstorefront.service.search.AttributeSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.BaseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ComponentSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ContactSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.IndexSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
 import edu.usu.sdl.openstorefront.service.search.MetaDataSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ReviewSearchHandler;
@@ -398,6 +399,9 @@ public class SearchServiceImpl
 				case CONTACT:
 					handlers.add(new ContactSearchHandler(searchElements));
 					break;
+				case INDEX:
+					handlers.add(new IndexSearchHandler(searchElements));
+					break;					
 				case METADATA:
 					handlers.add(new MetaDataSearchHandler(searchElements));
 					break;
