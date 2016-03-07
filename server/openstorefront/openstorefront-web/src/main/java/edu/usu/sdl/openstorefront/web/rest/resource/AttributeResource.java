@@ -198,7 +198,7 @@ public class AttributeResource
 
 		Response.ResponseBuilder response = Response.ok(data);
 		response.header("Content-Type", MediaType.APPLICATION_JSON);
-		response.header("Content-Disposition", "attachment; filename=\"allattributes.json\"");
+		response.header("Content-Disposition", "attachment; filename=\"attributes.json\"");
 		return response.build();
 	}
 
