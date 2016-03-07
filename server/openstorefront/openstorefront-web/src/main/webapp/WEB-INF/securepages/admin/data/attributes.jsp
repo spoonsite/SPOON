@@ -86,36 +86,42 @@
 						text: 'Visible', 
 						dataIndex: 'visibleFlg', 
 						flex: 1, 
+						tooltip: 'Show in the list of filters?',
 						renderer: gridColorRenderer
 					},
 					{
 						text: 'Required',
 						dataIndex: 'requiredFlg',
 						flex: 1, 
+						tooltip: 'Is the attribute required upon adding a new component?',
 						renderer: gridColorRenderer
 					},
 					{
 						text: 'Important',
 						dataIndex: 'importantFlg',
 						flex: 1, 
+						tooltip: 'This shows on the summary page.',
 						renderer: gridColorRenderer
 					},
 					{
 						text: 'Architecture',
 						dataIndex: 'architectureFlg',
 						flex: 1, 
+						tooltip: 'Is the attribute an architecture?',
 						renderer: gridColorRenderer
 					},
 					{
 						text: 'Allow Multiple',
 						dataIndex: 'allowMultipleFlg',
 						flex: 1, 
+						tooltip: 'Should a component be allowed to have more than one code for this attribute?',
 						renderer: gridColorRenderer
 					},
 					{
 						text: 'Hide On Submission',
 						dataIndex: 'hideOnSubmission',
 						flex: 1, 
+						tooltip: 'Should the attribute type show on the submission form?',
 						renderer: gridColorRenderer
 					},
 					{
