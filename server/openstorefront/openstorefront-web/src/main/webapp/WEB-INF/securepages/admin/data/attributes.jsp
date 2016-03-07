@@ -2,7 +2,11 @@
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
-	
+
+	<form name="exportForm" action="/openstorefront/api/v1/resource/attributes/export" method="POST">
+			<p style="display: none;" id="exportFormAttributeTypes"></p>      
+	</form>
+
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */
 		Ext.onReady(function(){	
@@ -64,7 +68,7 @@
 							Ext.getCmp('attributeGrid-tools-manageCodes').disable();
 							Ext.getCmp('attributeGrid-tools-toggleActivation').disable();
 							Ext.getCmp('attributeGrid-tools-delete').disable();
-							if (Ext.getCmp('attributeGrid').getSelectionModel.getCount() > 1)
+							if (Ext.getCmp('attributeGrid').getSelectionModel().getCount() > 1)
 								{
 									Ext.getCmp('attributeGrid-tools-export').enable();
 								}
@@ -344,8 +348,14 @@
 
 			};
 
-			var actionExportAttribute = function actionExportAttribute(record) {
-
+			var actionExportAttribute = function actionExportAttribute(records) {
+				var attributeTypes = "";
+				Ext.Array.each(records, function(record) {
+					attributeTypes += '<input type="hidden" name="type" ';
+					attributeTypes += 'value="' + record.get('attributeType') +'" />';
+				});
+				document.getElementById('exportFormAttributeTypes').innerHTML = attributeTypes;
+				document.exportForm.submit();
 			};
 
 
