@@ -867,7 +867,12 @@
 								items: [
 									{
 										name: 'requiredFlg',
-										boxLabel: 'Required'
+										boxLabel: 'Required',
+										listeners: {
+											change: function(box, newValue) {
+												Ext.getCmp('editAttributeForm-typesRequiredFor').show();
+											}
+										}
 									},
 									{
 										name: 'visibleFlg',
@@ -910,6 +915,12 @@
 									}
 								]
 							},
+							{
+								xtype: 'label',
+								id: 'editAttributeForm-typesRequiredFor',
+								html: 'Types required for',
+								hidden: true
+							}
 						],
 						dockedItems: [
 							{
