@@ -41,9 +41,13 @@
 				id: 'attributeGrid',
 				title: 'Manage Attributes <i class="fa fa-question-circle"  data-qtip="Attributes are used to categorize components and other listings. They can be searched on and filtered. They represent the metadata for a listing. Attribute Types represent a category and a code represents a specific value. The data is linked by the type and code which allows for a simple change of the description."></i>',
 				store: 'attributeStore',
+				selModel: {
+					selType: 'checkboxmodel'        
+				},
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
-						if (Ext.getCmp('attributeGrid').getSelectionModel().hasSelection()) {
+						if (Ext.getCmp('attributeGrid').getSelectionModel().hasSelection()
+						   && Ext.getCmp('attributeGrid').getSelectionModel().getCount() === 1) {
 							Ext.getCmp('attributeGrid-tools-edit').enable();
 							Ext.getCmp('attributeGrid-tools-manageCodes').enable();
 							Ext.getCmp('attributeGrid-tools-toggleActivation').enable();
@@ -60,7 +64,13 @@
 							Ext.getCmp('attributeGrid-tools-manageCodes').disable();
 							Ext.getCmp('attributeGrid-tools-toggleActivation').disable();
 							Ext.getCmp('attributeGrid-tools-delete').disable();
-							Ext.getCmp('attributeGrid-tools-export').disable();
+							if (Ext.getCmp('attributeGrid').getSelectionModel.getCount() > 1)
+								{
+									Ext.getCmp('attributeGrid-tools-export').enable();
+								}
+								else {
+									Ext.getCmp('attributeGrid-tools-export').disable();
+								}
 						}
 					}
 				},
@@ -234,8 +244,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-upload',
 								handler: function() {
-									var record = attributeGrid.getSelection()[0];
-									actionImportAttribute(record);
+									actionImportAttribute();
 								}
 							},
 							{
@@ -245,8 +254,8 @@
 								disabled: true,
 								iconCls: 'fa fa-2x fa-download',
 								handler: function() {
-									var record = attributeGrid.getSelection()[0];
-									actionExportAttribute(record);
+									var records = attributeGrid.getSelection();
+									actionExportAttribute(records);
 								}
 							}
 						]
@@ -331,7 +340,7 @@
 				});
 			};
 
-			var actionImportAttribute = function actionImportAttribute(record) {
+			var actionImportAttribute = function actionImportAttribute() {
 
 			};
 
@@ -726,7 +735,7 @@
 					url: url,
 					method: method,
 					success: function(response, opt){
-						Ext.toast('Successfully' + what + 'd attribute code', '', 'tr');
+						Ext.toast('Successfully ' + what + 'd attribute code', '', 'tr');
 						codesStore.load();
 					},
 					failure: function(response, opt){
