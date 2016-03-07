@@ -28,11 +28,17 @@ limitations under the License.
 	
 	<script type="text/javascript">
 		var SearchPage = {
-			viewDetails: function(componentId) {
+			viewDetails: function(componentId, resultId) {
 				SearchPage.detailPanel.expand();
 				
 				//load component
 				if (!SearchPage.currentLoadedComponent ||  SearchPage.currentLoadedComponent !== componentId) { 
+					Ext.defer(function(){
+						var resultElm = Ext.get(resultId);
+						var container = Ext.getCmp('resultsDisplayPanel').body;
+						resultElm.scrollIntoView(container, null, true, true);						
+					}, 1000);					
+					
 					SearchPage.detailContent.load('view.jsp?id=' + componentId);
 					SearchPage.currentLoadedComponent = componentId;
 				}
@@ -42,7 +48,7 @@ limitations under the License.
 		/* global Ext, CoreService, CoreApp */	
 		Ext.onReady(function(){	
 			
-			var maxPageSize = 30;
+			var maxPageSize = 300;
 			
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	
@@ -73,6 +79,7 @@ limitations under the License.
 								collapsed: true,
 								margin: '0 0 1 0',
 								titleCollapse: true,
+								animCollapse: false,
 								html: '&nbsp;',								
 								listeners: {									
 									expand: function(panel, opts){
@@ -181,7 +188,7 @@ limitations under the License.
 								fn: function(field, newValue, oldValue, opts) {
 									filterResults();
 								},
-								buffer: 250
+								buffer: 1000
 							}
 						}
 					},
@@ -277,7 +284,7 @@ limitations under the License.
 						xtype: 'container',
 						id: 'attributeFiltersContainer',
 						layout: {
-							type: 'accordion',							
+							type: 'vbox',							
 							align: 'stretch'							
 						},
 						items: [
@@ -297,7 +304,7 @@ limitations under the License.
 							cls: 'searchresults-morefilter'
 						},
 						layout: {
-							type: 'accordion',							
+							type: 'vbox',							
 							align: 'stretch'							
 						},						
 						listeners: {
@@ -355,6 +362,7 @@ limitations under the License.
 				]
 			});
 
+			var filterMode;
 			var filterResults = function() {
 				
 				//construct filter object
@@ -368,7 +376,7 @@ limitations under the License.
 				};				
 				
 				//determine client side or server-side
-				if (searchResultsStore.getTotalCount() <= maxPageSize) {
+				if (filterMode === 'CLIENT') {
 					//client side
 					
 					var filterSet = [];
@@ -437,7 +445,7 @@ limitations under the License.
 					
 				} else { 
 					//server side										
-					var searchRequest = originalSearchRequest;
+					var searchRequest = Ext.clone(originalSearchRequest);
 					var sort;
 					if (filter.sortBy) {
 						sort = {
@@ -452,8 +460,62 @@ limitations under the License.
 					}
 					
 					//Transform Filters into search elements.
+					if (filter.name && filter.name !== '') {
+						searchRequest.query.searchElements.push({
+							searchType: 'COMPONENT',
+							field: 'name',
+							value: filter.name,
+							caseInsensitive: true,
+							stringOperation: 'CONTAINS',
+							mergeCondition: 'AND'
+						});
+					}
 					
+					if (filter.tags && filter.tags.length > 0) {
+						Ext.Array.each(filter.tags, function (tag) {
+							searchRequest.query.searchElements.push({
+								searchType: 'TAG',								
+								value: tag,
+								caseInsensitive: true,
+								stringOperation: 'EQUALS',
+								mergeCondition: 'AND'
+							});
+						});
+					}
 					
+					if (filter.type) {
+						searchRequest.query.searchElements.push({
+							searchType: 'COMPONENT',
+							field: 'componentType',
+							value: filter.type,
+							caseInsensitive: false,
+							stringOperation: 'EQUALS',
+							mergeCondition: 'AND'
+						});						
+					}
+					
+					if (filter.rating) {
+						searchRequest.query.searchElements.push({
+							searchType: 'USER_RATING',							
+							value: filter.rating,
+							caseInsensitive: false,
+							numberOperation: 'GREATERTHANEQUALS',
+							mergeCondition: 'AND'
+						});						
+					}
+					
+					if (filter.attributes && filter.attributes.length > 0) {
+						Ext.Array.each(filter.attributes, function (attribute) {
+							searchRequest.query.searchElements.push({
+								searchType: 'ATTRIBUTE',							
+								keyField: attribute.type,
+								keyValue: attribute.code,
+								caseInsensitive: false,
+								numberOperation: 'EQUALS',
+								mergeCondition: 'AND'
+							});	
+						});
+					}
 					
 					doSearch(searchRequest, sort);
 				}
@@ -491,27 +553,29 @@ limitations under the License.
 				Ext.getCmp('resultsDisplayPanel').update(data);				
 		
 				//update Stats
-				var statLine = 'No results Found';
-				if (data.length > 0) {
-					statLine = '';
-					var stats = {};
-					Ext.Array.each(data, function(dataItem){
-						if (stats[dataItem.componentType]) {
-							stats[dataItem.componentType].count += 1;
-						} else {
-							stats[dataItem.componentType] = {
-								typeLabel: dataItem.componentTypeDescription,
-								type: dataItem.componentType,
-								count: 1
+				if (filterMode === 'CLIENT') {
+					var statLine = 'No results Found';
+					if (data.length > 0) {
+						statLine = '';
+						var stats = {};
+						Ext.Array.each(data, function(dataItem){
+							if (stats[dataItem.componentType]) {
+								stats[dataItem.componentType].count += 1;
+							} else {
+								stats[dataItem.componentType] = {
+									typeLabel: dataItem.componentTypeDescription,
+									type: dataItem.componentType,
+									count: 1
+								}
 							}
-						}
-					});
-					Ext.Object.each(stats, function(key, value, self) {
-						statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + value.type + '\');SearchPage.filterResults();">' + value.count + '</a></span> <b>'+ value.typeLabel + '(s)</b> '
-					});
+						});
+						Ext.Object.each(stats, function(key, value, self) {
+							statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + value.type + '\');SearchPage.filterResults();">' + value.count + '</a></span> <b>'+ value.typeLabel + '(s)</b> '
+						});
+					}
+
+					Ext.getCmp('searchStats').update(statLine);	
 				}
-				
-				Ext.getCmp('searchStats').update(statLine);				
 				
 			};
 			
@@ -529,6 +593,16 @@ limitations under the License.
 			var allResultsSet;
 			searchResultsStore.on('load', function(store, records, success, opts){
 				Ext.getCmp('resultsDisplayPanel').setLoading(false);
+				
+				//determine: client filtering or remote
+				if (!filterMode) {
+					if (searchResultsStore.getTotalCount() <= maxPageSize) {
+						filterMode = 'CLIENT';
+					} else {
+						filterMode = 'REMOTE';
+					}										
+				}
+								
 				var data = [];
 				Ext.Array.each(records, function(record){
 					record.data.ratingStars = [];
@@ -540,6 +614,19 @@ limitations under the License.
 					}
 					data.push(record.data);
 				});
+				
+				if (filterMode === 'REMOTE') {
+					var statLine = 'No results Found';					
+					if (data.length > 0) {
+						statLine = '';
+						var response = opts.getResponse();
+						var dataResponse = Ext.decode(response.responseText);
+						Ext.Array.each(dataResponse.resultTypeStats, function(stat) {
+							statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + stat.componentType + '\');SearchPage.filterResults();">' + stat.count + '</a></span> <b>'+ stat.componentTypeDescription + '(s)</b> '	
+						});
+					}
+					Ext.getCmp('searchStats').update(statLine);
+				}
 				
 				//sorting Attributes
 				Ext.Array.each(data, function(dataItem) {
@@ -655,7 +742,7 @@ limitations under the License.
 			
 			var resultsTemplate = new Ext.XTemplate(
 				'<tpl for=".">',
-				' <div class="searchresults-item" onclick="SearchPage.viewDetails(\'{componentId}\')">',
+				' <div id="result{#}" class="searchresults-item" onclick="SearchPage.viewDetails(\'{componentId}\', \'result{#}\')">',
 				'	<h2>{name}</h2>',
 				'	<tpl if="show.organization">',
 				'		<p class="searchresults-item-org">{organization}</p>',

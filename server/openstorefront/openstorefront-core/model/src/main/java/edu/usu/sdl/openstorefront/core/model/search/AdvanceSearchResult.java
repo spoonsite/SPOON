@@ -30,6 +30,7 @@ public class AdvanceSearchResult
 	private List<ComponentSearchView> results = new ArrayList<>();
 	private ValidationResult validationResult = new ValidationResult();
 	private long totalNumber;
+	private List<ResultTypeStat> resultTypeStats = new ArrayList<>();
 
 	public AdvanceSearchResult()
 	{
@@ -63,6 +64,16 @@ public class AdvanceSearchResult
 	public void setTotalNumber(long totalNumber)
 	{
 		this.totalNumber = totalNumber;
+	}
+
+	public List<ResultTypeStat> getResultTypeStats()
+	{
+		return resultTypeStats;
+	}
+
+	public void setResultTypeStats(List<ResultTypeStat> resultTypeStats)
+	{
+		this.resultTypeStats = resultTypeStats;
 	}
 
 }
