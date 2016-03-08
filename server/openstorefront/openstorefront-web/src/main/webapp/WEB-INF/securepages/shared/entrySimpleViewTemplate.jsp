@@ -206,7 +206,7 @@ limitations under the License.
 				<tpl for="evaluation.evaluationSections">			
 					<tr>
 						<td class="quickView-tableall">{name}</td>
-						<td class="quickView-tableall">{actualScore}</td>
+						<td class="quickView-tableall" style="text-align: center;">{actualScore}</td>
 					</tr>
 				</tpl>
 			</table>		

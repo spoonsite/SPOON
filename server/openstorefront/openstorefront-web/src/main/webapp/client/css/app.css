@@ -191,7 +191,13 @@ and open the template in the editor.
 	color: grey;
 }
 
-.searchresults-item:hover{
+.searchresults-item-click {
+	margin: 0px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.searchresults-item-click:hover{
 	background: #d8e9f6;
 	cursor: pointer;
 }
@@ -336,7 +342,17 @@ tr.details-table:hover {
 	border: 1px solid grey;
 	height: 163px;
     float: left;	
-	margin-right: 5px;	
+	margin-right: 5px;
+    margin-top: 5px;	
+}
+
+.detail-media-block-quick{
+	padding: 5px;
+	border: 1px solid grey;
+	height: 163px;
+    float: left;	
+	margin-right: 5px;
+    margin-top: 5px;	
 }
 
 .detail-media-block:hover{
