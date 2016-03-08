@@ -686,7 +686,7 @@ limitations under the License.
 								keyValue: attribute.code,
 								caseInsensitive: false,
 								numberOperation: 'EQUALS',
-								mergeCondition: 'AND'
+								mergeCondition: 'OR'
 							});	
 						});
 					}
@@ -913,6 +913,10 @@ limitations under the License.
 			};
 			
 			
+			var badgeHeight = "";
+			if (Ext.isIE) {
+				badgeHeight = 'height="100%"';
+			}
 			
 			var resultsTemplate = new Ext.XTemplate(
 				'<tpl for=".">',
@@ -923,7 +927,7 @@ limitations under the License.
 				'	</tpl>',
 				'  <tpl if="show.badges">',
 				'	<tpl for="attributes">',
-				'		 <tpl if="badgeUrl"><img src="{badgeUrl}" title="{label}" width="40" /></tpl>',
+				'		 <tpl if="badgeUrl"><img src="{badgeUrl}" title="{label}" width="40" '+badgeHeight+' /></tpl>',
 				'	 </tpl>',
 				'  </tpl>',
 				'	<tpl if="show.rating">',				
