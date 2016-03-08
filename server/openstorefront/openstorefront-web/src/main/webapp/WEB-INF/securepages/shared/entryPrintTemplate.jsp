@@ -360,7 +360,7 @@ limitations under the License.
 				<hr>
 				<tpl for="componentMedia">
 					<tpl if="mediaTypeCode == 'IMG'">
-						<img src="{link}"><br>
+						<img src="{link}" style="width: 100%"><br>
 						<tpl if="caption">{caption}<br></tpl>
 					</tpl>
 					<tpl if="mediaTypeCode != 'IMG'">

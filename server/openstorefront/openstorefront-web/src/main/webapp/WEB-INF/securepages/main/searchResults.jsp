@@ -42,6 +42,39 @@ limitations under the License.
 					SearchPage.detailContent.load('view.jsp?id=' + componentId);
 					SearchPage.currentLoadedComponent = componentId;
 				}
+			},
+			addRemoveCompare: function(chk, labelId, componentId, componentName, nameId) {
+				var label = Ext.get(labelId);
+				var componentNameElm = Ext.get(nameId);
+				if (chk.checked) {
+					label.setHtml("Remove from Compare");
+					
+					Ext.getCmp('compareBtn').getMenu().add({
+						componentId: componentId,
+						text: componentName,
+						chkField: chk,
+						labelElm: label,
+						handler: function() {
+							var container = Ext.getCmp('resultsDisplayPanel').body;
+							componentNameElm.scrollIntoView(container, null, true, true);			
+						}
+					});
+					
+				} else {					
+					label.setHtml("Add to Compare");
+					var menuItemToRemove;
+					Ext.getCmp('compareBtn').getMenu().items.each(function(item){
+						if (item.componentId === componentId) {
+							menuItemToRemove = item;
+						}
+					});
+					if (menuItemToRemove) {
+						menuItemToRemove.chkField.checked = false;
+						menuItemToRemove.labelElm.setHtml("Add to Compare");
+						Ext.getCmp('compareBtn').getMenu().remove(menuItemToRemove);
+					}
+				}
+				
 			}
 		};
 
@@ -61,6 +94,147 @@ limitations under the License.
 			
 			var helpWin = Ext.create('OSF.component.HelpWindow', {				
 			});												
+			
+			var compareViewTemplate = new Ext.XTemplate(						
+			);
+		
+			Ext.Ajax.request({
+				url: 'Router.action?page=shared/entryCompareTemplate.jsp',
+				success: function(response, opts){
+					compareViewTemplate.set(response.responseText, true);
+				}
+			});			
+									
+			var compareWin = Ext.create('Ext.window.Window', {
+				title: 'Compare',
+				iconCls: 'fa fa-columns',
+				modal: true,
+				width: '80%',
+				height: '80%',
+				maximizable: true,
+				layout: {
+					type: 'hbox',
+					align: 'stretch'
+				},				
+				items: [	
+					{
+						xtype: 'panel',
+						itemId: 'compareAPanel',
+						width: '50%',
+						split: true,
+						scrollable: true,
+						bodyStyle: 'padding: 10px;',
+						tpl: compareViewTemplate,
+						dockedItems: [
+							{
+								xtype: 'combobox',
+								itemId: 'cb',
+								fieldLabel: '',								
+								queryMode: 'local',
+								name: 'componentA',
+								valueField: 'componentId',
+								displayField: 'name',
+								emptyText: 'Select Entry',
+								store: {									
+								},
+								flex: 1,
+								editable: false,
+								typeAhead: false,								
+								listeners: {
+									change: function(cb, newValue, oldValue, opts) {
+										var comparePanel = this.up('panel');
+										if (newValue) {										
+											//remove selection from other cb
+											var otherStore = comparePanel.up('panel').getComponent('compareBPanel').getComponent("cb").getStore();
+											otherStore.clearFilter();
+											otherStore.filterBy(function(record){
+												if (record.get('componentId') === newValue) {
+													return false;
+												} else {
+													return true;
+												}
+											});
+
+											comparePanel.setLoading(true);
+											Ext.Ajax.request({
+												url: '../api/v1/resource/components/' + newValue + '/detail',
+												callback: function(){
+													comparePanel.setLoading(false);
+												}, 
+												success: function(response, opts) {
+													var data = Ext.decode(response.responseText);
+													data = CoreUtil.processEntry(data);
+													comparePanel.update(data);
+												}
+											});
+										} else {
+											comparePanel.update(null);
+										}
+									}
+								}
+							}
+						]
+					},
+					{
+						xtype: 'panel',
+						itemId: 'compareBPanel',
+						flex: 1,
+						split: true,
+						scrollable: true,
+						bodyStyle: 'padding: 20px;',
+						tpl: compareViewTemplate,
+						dockedItems: [
+							{
+								xtype: 'combobox',
+								itemId: 'cb',
+								fieldLabel: '',								
+								queryMode: 'local',
+								name: 'componentB',
+								valueField: 'componentId',
+								displayField: 'name',
+								emptyText: 'Select Entry',
+								flex: 1,
+								store: {									
+								},								
+								editable: false,
+								typeAhead: false,								
+								listeners: {
+									change: function(cb, newValue, oldValue, opts) {
+										var comparePanel = this.up('panel');
+										
+										if (newValue) {	
+											var otherStore = comparePanel.up('panel').getComponent('compareAPanel').getComponent("cb").getStore();
+											otherStore.clearFilter();
+											otherStore.filterBy(function(record){
+												if (record.get('componentId') === newValue) {
+													return false;
+												} else {
+													return true;
+												}
+											});
+
+											comparePanel.setLoading(true);
+											Ext.Ajax.request({
+												url: '../api/v1/resource/components/' + newValue + '/detail',
+												callback: function(){
+													comparePanel.setLoading(false);
+												}, 
+												success: function(response, opts) {
+													var data = Ext.decode(response.responseText);
+													data = CoreUtil.processEntry(data);
+													comparePanel.update(data);
+												}
+											});	
+										} else {
+											comparePanel.update(null);
+										}
+									}
+								}
+							}							
+						]						
+					}
+				]
+			});
 			
 			var loadAttributes = function() {
 				Ext.Ajax.request({
@@ -278,7 +452,7 @@ limitations under the License.
 					},
 					{
 						xtype: 'label',
-						html: '<b>By Attributes:</b>'
+						html: '<b>By Vitals</b>'
 					},
 					{
 						xtype: 'container',
@@ -742,8 +916,8 @@ limitations under the License.
 			
 			var resultsTemplate = new Ext.XTemplate(
 				'<tpl for=".">',
-				' <div id="result{#}" class="searchresults-item" onclick="SearchPage.viewDetails(\'{componentId}\', \'result{#}\')">',
-				'	<h2>{name}</h2>',
+				' <div id="result{#}" class="searchresults-item">',
+				'	<h2 id="result{#}name" title="View Details" class="searchresults-item-click" onclick="SearchPage.viewDetails(\'{componentId}\', \'result{#}\')">{name} <i class="fa fa-link" style="opacity: .5; font-size: 14px;"></i></h2>',
 				'	<tpl if="show.organization">',
 				'		<p class="searchresults-item-org">{organization}</p>',
 				'	</tpl>',
@@ -776,7 +950,7 @@ limitations under the License.
 				'  <br><div class="searchresults-item-update">',
 				'  <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
 				'  <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
-				'   ({componentTypeDescription})</div>',
+				'   ({componentTypeDescription})<span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{name}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
 				' </div>',
 				'</tpl>'		
 			);			
@@ -903,11 +1077,95 @@ limitations under the License.
 								}
 							},
 							{
+								xtype: 'splitbutton',
+								id: 'compareBtn',
 								text: 'Compare',
 								iconCls: 'fa fa-columns',
-								handler: function(){
-									
-								}
+								menu: [
+									{
+										text: 'Clear All Selected Entries',
+										iconCls: 'fa fa-close',
+										handler : function() {
+											var menu = this.up('menu');
+											
+											var itemsToRemove = [];
+											menu.items.each(function(item) {
+												if (item.componentId) {
+													item.chkField.checked = false;
+													item.labelElm.setHtml("Add to Compare");
+													itemsToRemove.push(item);
+												}
+											});
+											Ext.Array.each(itemsToRemove, function(item) {
+												menu.remove(item);
+											});
+										}
+									},
+									{
+										xtype: 'menuseparator'
+									}
+								],
+								listeners: {
+									click: function(){
+										var menu = this.getMenu();
+										var compareAcb = compareWin.getComponent('compareAPanel').getComponent('cb');
+										var compareBcb = compareWin.getComponent('compareBPanel').getComponent('cb');
+										
+										compareAcb.setValue(null);
+										compareBcb.setValue(null);
+										
+										var selectedComponents = [];
+										menu.items.each(function(item) {
+											if (item.componentId) {
+												var record = Ext.create('Ext.data.Model', {													
+												});
+												record.set({
+													componentId: item.componentId,
+													name: item.text
+												});
+												selectedComponents.push(record);
+											}
+										});
+										
+										
+										//if nothing selected
+										if(selectedComponents.length > 0) {
+											if (selectedComponents.length === 1) {
+												compareAcb.getStore().loadRecords(selectedComponents);
+												compareAcb.setValue(selectedComponents[0].get('componentId'));
+												
+												var records = [];
+												searchResultsStore.each(function(record) {
+													records.push(record);
+												});
+												Ext.Array.sort(records, function(a, b){
+													return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
+												});
+												compareBcb.getStore().loadRecords(records);
+			
+											} else if (selectedComponents.length > 1) {
+												compareAcb.getStore().loadRecords(selectedComponents);	
+												compareBcb.getStore().loadRecords(selectedComponents);
+												
+												compareAcb.setValue(selectedComponents[0].get('componentId'));
+												compareBcb.setValue(selectedComponents[1].get('componentId'));
+											}											
+										} else {
+										
+											var records = [];
+											searchResultsStore.each(function(record) {
+												records.push(record);
+											});
+											Ext.Array.sort(records, function(a, b){
+												return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
+											});
+
+											compareAcb.getStore().loadRecords(records);
+											compareBcb.getStore().loadRecords(records);
+										}
+										compareWin.show();
+									}
+								}								
 							},
 							{
 								xtype: 'tbfill'
