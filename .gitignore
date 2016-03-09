@@ -17,7 +17,6 @@ client/openstorefront/npm-debug.log
 /server/openstorefront/openstorefront-web/src/main/webapp/404.html
 /server/openstorefront/openstorefront-web/src/main/webapp/favicon.ico
 /server/openstorefront/openstorefront-web/src/main/webapp/robots.txt
-/server/openstorefront/openstorefront-web/src/main/webapp/index.html
 /server/openstorefront/openstorefront-web/target/
 /site/mobile/nbproject/private/
 client/openstorefront/app/images/logo/DI2E (logo).eps
@@ -37,7 +36,6 @@ client/openstorefront/app/images/logo/DI2E (logo)-words.svg
 client/openstorefront/app/images/logo/DI2E (logo).ai
 client/openstorefront/app/images/logo/DI2E (logo).tif
 client/openstorefront/app/images/logo/DI2E-(logo).gif
-/server/openstorefront/openstorefront-web/src/main/webapp/submission.html
 /server/openstorefront/apiclient/target/
 /server/openstorefront/core/target/
 /server/openstorefront/core-modules/core/target/
@@ -64,3 +62,4 @@ project*.properties
 /server/openstorefront/extjs/target/
 /server/openstorefront/atmosphere-socketio/target/
 /server/openstorefront/tinymcetextarea/target/
+/server/openstorefront/openstorefront-web/src/main/webapp/indexOld.html
