@@ -15,22 +15,27 @@
  */
 package edu.usu.sdl.openstorefront.service.io.parser;
 
+import edu.usu.sdl.openstorefront.core.model.AttributeAll;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseAttributeParser
 		extends AbstractParser
 {
 
+	protected static final int MAX_BUCKET_SIZE = 100;
+	protected List<AttributeAll> attributesAll = new ArrayList<>();
+
 	@Override
 	protected <T> List<T> getStorageBucket()
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		return (List<T>) attributesAll;
 	}
 
 	@Override
 	protected int getMaxBucketSize()
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		return MAX_BUCKET_SIZE;
 	}
 
 	@Override
