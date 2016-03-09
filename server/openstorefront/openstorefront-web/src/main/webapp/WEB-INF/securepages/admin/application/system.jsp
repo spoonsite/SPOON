@@ -406,6 +406,7 @@
 					title: 'Error Tickets',
 					id: 'errorTicketsGrid',
 					store: errorTicketsStore,
+					plugins: 'gridfilters',
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -432,8 +433,21 @@
 										var record = Ext.getCmp('errorTicketsGrid').getSelection()[0];
 										actionViewErrorTicket(record);
 									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Delete',
+									id: 'errorTicketsGrid-tools-delete',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-trash icon-vertical-correction',
+									handler: function () {
+										var records = Ext.getCmp('errorTicketsGrid').getSelection();
+										actionDeleteTickets(records);
+									}									
 								}
-
 							]
 						},
 						{
@@ -444,8 +458,15 @@
 						}
 					],
 					columnLines: true,
+					selModel: {
+						selType: 'checkboxmodel' 
+					},
 					columns: [
-						{text: 'Ticket ID', dataIndex: 'errorTicketId', flex: 1.5, cellWrap: true},
+						{text: 'Ticket ID', dataIndex: 'errorTicketId', flex: 1.5, cellWrap: true,
+							filter: {
+								type: 'string'
+							}	
+						},
 						{
 							text: 'Update Date',
 							dataIndex: 'updateDts',
@@ -459,16 +480,59 @@
 						{text: 'Type', dataIndex: 'errorTypeCode', flex: 0.5}
 					],
 					listeners: {
-						selectionchange: function (grid, record, index, opts) {
+						selectionchange: function (grid, records, index, opts) {
 							if (Ext.getCmp('errorTicketsGrid').getSelectionModel().hasSelection()) {
-								Ext.getCmp('errorTicketsGrid-tools-view').enable();
+								if (records.length === 1) {
+									Ext.getCmp('errorTicketsGrid-tools-view').enable();
+								} else {
+									Ext.getCmp('errorTicketsGrid-tools-view').disable();
+								}
+								Ext.getCmp('errorTicketsGrid-tools-delete').enable();
 							} else {
 								Ext.getCmp('errorTicketsGrid-tools-view').disable();
+								Ext.getCmp('errorTicketsGrid-tools-delete').disable();
 							}
 						}
 					}
 
 				});
+				
+				var actionDeleteTickets = function(records) {
+					
+					
+					Ext.Msg.show({
+						title: 'Delete Tickets',
+						message: 'Are you sure you want to delete selected ticket(s)?',
+						buttons: Ext.Msg.YESNO,
+						icon: Ext.Msg.QUESTION,
+						fn: function(btn) {
+							if (btn === 'yes') {
+								
+								var ids = [];
+								Ext.Array.each(records, function(record){
+									ids.push(record.get('errorTicketId'));
+								});
+								
+								errorTicketsGrid.setLoading("Removing Tickets...");
+								Ext.Ajax.request({
+									url: '../api/v1/resource/errortickets',
+									method: 'DELETE',
+									jsonData: {
+										ids: ids
+									},
+									callback: function() {
+										errorTicketsGrid.setLoading(false);
+									},
+									success: function(response, opts) {
+										errorTicketsStore.load();
+									}
+								});
+																
+							} 
+						}
+					});					
+					
+				};
 
 				var viewErrorTicketWindow = Ext.create('Ext.window.Window', {
 					id: 'viewErrorTicketWindow',
