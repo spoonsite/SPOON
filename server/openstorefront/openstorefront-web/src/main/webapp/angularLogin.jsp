@@ -11,7 +11,7 @@
 	response.setDateHeader(HTTPCacheHeader.EXPIRES.getName(), 0L);	
 		
 	if (SecurityUtil.isLoggedIn()) {
-		RequestDispatcher rd = request.getRequestDispatcher("/index.html");
+		RequestDispatcher rd = request.getRequestDispatcher("/indexOld.html");
 		rd.include(request, response);		
 	} else {
 		
@@ -20,7 +20,7 @@
 			if (loginSuccessful == false) {						
 				response.sendRedirect(response.encodeRedirectURL("403-forbidden.jsp?goto="+request.getSession().getAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE)));			
 			} else {
-				RequestDispatcher rd = request.getRequestDispatcher("/index.html");
+				RequestDispatcher rd = request.getRequestDispatcher("/indexOld.html");
 				rd.include(request, response);
 			}
 		} else {
