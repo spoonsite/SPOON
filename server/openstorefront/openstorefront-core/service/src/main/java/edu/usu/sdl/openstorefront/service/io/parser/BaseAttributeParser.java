@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,42 +15,28 @@
  */
 package edu.usu.sdl.openstorefront.service.io.parser;
 
-import au.com.bytecode.opencsv.CSVReader;
-import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
-import edu.usu.sdl.openstorefront.core.entity.AttributeType;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-/**
- *
- * @author dshurtleff
- */
 public abstract class BaseAttributeParser
+		extends AbstractParser
 {
 
-	protected Map<AttributeType, List<AttributeCode>> attributeMap = new HashMap<>();
-
-	public Map<AttributeType, List<AttributeCode>> parse(InputStream in)
+	@Override
+	protected <T> List<T> getStorageBucket()
 	{
-		try (CSVReader reader = new CSVReader(new InputStreamReader(in));) {
-			internalParse(reader);
-		} catch (Exception e) {
-			throw new OpenStorefrontRuntimeException(e);
-		}
-		return attributeMap;
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	/**
-	 *
-	 * @return
-	 */
-	public abstract String getHEADER();
+	@Override
+	protected int getMaxBucketSize()
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-	protected abstract void internalParse(CSVReader reader) throws IOException;
+	@Override
+	protected void performStorage()
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
 }
