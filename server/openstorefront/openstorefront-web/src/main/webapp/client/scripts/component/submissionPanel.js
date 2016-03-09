@@ -1970,7 +1970,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 													title: 'Add Relationship',
 													alwaysOnTop: true,
 													width: '50%',
-													height: 200,
+													height: 250,
 													layout: 'fit',
 													items: [
 														{
@@ -1989,17 +1989,50 @@ Ext.define('OSF.component.SubmissionPanel', {
 																	typeAhead: false,
 																	margin: '0 0 0 0',
 																	width: '100%',
-																	fieldLabel: 'Type <span class="field-required" />',
+																	fieldLabel: 'Relationship Type <span class="field-required" />',
 																	storeConfig: {
 																		url: '../api/v1/resource/lookuptypes/RelationshipType'
 																	}
 																}),
+																Ext.create('OSF.component.StandardComboBox', {
+																	name: 'componentType',									
+																	allowBlank: true,
+																	editable: false,
+																	typeAhead: false,
+																	emptyText: 'All',
+																	margin: '0 0 0 0',
+																	width: '100%',
+																	fieldLabel: 'Entry Type',
+																	storeConfig: {
+																		url: '../api/v1/resource/componenttypes/lookup',
+																		addRecords: [
+																			{
+																				code: null,
+																				description: 'All'
+																			} 
+																		]
+																	},
+																	listeners: {
+																		change: function(cb, newValue, oldValue) {
+																			var form = cb.up('form');
+																			var componentType = '';
+																			if (newValue) {
+																				componentType = '&componentType=' + newValue;
+																			}
+																			form.getComponent('relationshipTargetCB').reset();
+																			form.getComponent('relationshipTargetCB').getStore().load({
+																				url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType,		
+																			});
+																		}
+																	}
+																}),	
 																Ext.create('OSF.component.StandardComboBox', {																	
+																	itemId: 'relationshipTargetCB',
 																	name: 'relatedComponentId',									
 																	allowBlank: false,									
 																	margin: '0 0 0 0',
 																	width: '100%',
-																	fieldLabel: 'Target <span class="field-required" />',
+																	fieldLabel: 'Target Entry <span class="field-required" />',
 																	forceSelection: true,
 																	storeConfig: {
 																		url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL',
