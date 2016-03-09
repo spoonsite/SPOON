@@ -3332,7 +3332,7 @@
 					sorters: [
 						new Ext.util.Sorter({
 							property : 'name',
-							direction: 'DESC'
+							direction: 'ASC'
 						})
 					],
 					fields:[ 

@@ -91,8 +91,8 @@ import net.sf.uadetector.ReadableUserAgent;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.codemonkey.simplejavamail.Email;
 import org.codemonkey.simplejavamail.MailException;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  * Handles all user business logic
