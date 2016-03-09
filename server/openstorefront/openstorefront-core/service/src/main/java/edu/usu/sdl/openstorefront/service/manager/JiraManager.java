@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
+import com.atlassian.jira.rest.client.api.domain.ServerInfo;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
@@ -26,6 +27,7 @@ import java.text.MessageFormat;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,8 +42,15 @@ public class JiraManager
 
 	private static final Logger log = Logger.getLogger(JiraManager.class.getName());
 
+	private static final long CHECK_EXPIRATION_MILLI = 600000;
+	
 	private static BlockingQueue<JiraClient> clientPool;
 	private static int maxPoolSize;
+	
+	private static long lastCheckTime;
+	private static boolean ableToConnect;
+	
+	
 
 	public static void init()
 	{
@@ -67,6 +76,38 @@ public class JiraManager
 				log.log(Level.WARNING, MessageFormat.format("{0} jira connections were in process. ", getAvavilableConnections()));
 			}
 		}
+	}
+	
+	/**
+	 * Check
+	 * @return true the connect is good;
+	 */
+	public static boolean checkJiraConnection() 
+	{
+		ReentrantLock lock = new ReentrantLock();
+		lock.lock();
+		try {			
+			if (System.currentTimeMillis() > (lastCheckTime + CHECK_EXPIRATION_MILLI)) {
+							
+				ableToConnect = false;
+				
+				try {
+					JiraClient client = getClient();
+					ServerInfo serverInfo = client.getServerInfo();
+					if (serverInfo != null) {
+						ableToConnect = true;
+					}
+				} catch (Exception e){
+					//critical block (must catch all)				
+					log.log(Level.WARNING, "Unable to connect to Jira("+PropertiesManager.getValue(PropertiesManager.KEY_JIRA_URL)+")...Jira maybe down or there is a configuration issue.", e);					
+				} finally {
+					lastCheckTime = System.currentTimeMillis();
+				}			
+			} 
+		} finally {
+			lock.unlock();
+		}
+		return ableToConnect;
 	}
 
 	public static JiraClient getClient()

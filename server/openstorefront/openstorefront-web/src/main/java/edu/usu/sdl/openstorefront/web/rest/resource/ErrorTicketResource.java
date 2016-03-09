@@ -24,12 +24,15 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
 import edu.usu.sdl.openstorefront.core.view.ErrorTicketWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.MultipleIds;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.util.List;
 import javax.ws.rs.BeanParam;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -129,4 +132,17 @@ public class ErrorTicketResource
 		}
 		return sendSingleEntityResponse(ticketData);
 	}
+	
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Deletes error tickets")
+	@Consumes({MediaType.APPLICATION_JSON})	
+	@DataType(MultipleIds.class)
+	public Response deleteErrorTickets(			
+			@RequiredParam MultipleIds multipleIds)
+	{
+		service.getSystemService().deleteErrorTickets(multipleIds.getIds());				
+		return Response.ok().build();
+	}
+
 }

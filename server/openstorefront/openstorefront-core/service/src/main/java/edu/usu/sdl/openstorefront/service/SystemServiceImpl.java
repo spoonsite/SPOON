@@ -54,6 +54,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -294,6 +295,17 @@ public class SystemServiceImpl
 		}
 		return ticketData;
 	}
+	
+	@Override
+	public void deleteErrorTickets(List<String> ticketIds)
+	{
+		List<ErrorTicket> errorTickets = new ArrayList<>();
+		for (String id : ticketIds) {
+			ErrorTicket errorTicket = persistenceService.findById(ErrorTicket.class, id);			
+			errorTickets.add(errorTicket);
+		}
+		performDelete(errorTickets);
+	}	
 
 	@Override
 	public void cleanupOldErrors()
@@ -307,14 +319,18 @@ public class SystemServiceImpl
 			long limit = count - max;
 			String query = "SELECT FROM ErrorTicket ORDER BY updateDts ASC LIMIT " + limit;
 			List<ErrorTicket> errorTickets = persistenceService.query(query, null);
-			errorTickets.stream().forEach((errorTicket) -> {
-				Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
-				if (path.toFile().exists()) {
-					path.toFile().delete();
-				}
-				persistenceService.delete(errorTicket);
-			});
+			performDelete(errorTickets);
 		}
+	}
+	
+	private void performDelete(List<ErrorTicket> errorTickets) {
+		errorTickets.stream().forEach((errorTicket) -> {
+			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
+			if (path.toFile().exists()) {
+				path.toFile().delete();
+			}
+			persistenceService.delete(errorTicket);
+		});
 	}
 
 	@Override
