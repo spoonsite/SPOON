@@ -271,7 +271,42 @@
 									handler: function () {
 										threadStatusStore.load();
 									}
-								}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'View',
+									id: 'threadStatus-view',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-eye',
+									handler: function () {
+										var record = Ext.getCmp('threadStatus').getSelectionModel().getSelection()[0];
+										
+										var detailWin = Ext.create('Ext.window.Window', {
+											title: 'Full Stack',
+											modal: true,
+											width: '80%',
+											height: '80%',
+											maximizable: true,
+											scrollable: true,
+											bodyStyle: 'padding: 20px;',
+											html: ''
+										});
+										detailWin.show();
+										
+										detailWin.setLoading(true);
+										Ext.Ajax.request({
+											url: '../api/v1/service/application/threads/' + record.get("id") + '/stack',
+											callback: function(){
+												detailWin.setLoading(false);
+											},
+											success: function(response, opts) {
+												detailWin.setHtml(response.responseText);
+											}
+										});
+									}									
+								}								
 							]
 						}
 					],
@@ -281,7 +316,16 @@
 						{text: 'Name', dataIndex: 'name', flex: 4},
 						{text: 'Status', dataIndex: 'status', flex: 2},
 						{text: 'Details', dataIndex: 'details', flex: 12}
-					]
+					],
+					listeners: {
+						selectionchange: function(selectionModel, records, opts) {
+							if (selectionModel.getCount() > 0) {
+								Ext.getCmp('threadStatus-view').setDisabled(false);
+							} else {
+								Ext.getCmp('threadStatus-view').setDisabled(true);
+							}
+						}
+					}
 				});
 
 				var systemPropertiesStore = Ext.create('Ext.data.Store', {

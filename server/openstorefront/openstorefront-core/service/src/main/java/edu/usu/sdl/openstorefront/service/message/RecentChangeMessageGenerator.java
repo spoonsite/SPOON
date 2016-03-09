@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.service.message;
 
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import java.text.SimpleDateFormat;
-import org.codemonkey.simplejavamail.Email;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  *

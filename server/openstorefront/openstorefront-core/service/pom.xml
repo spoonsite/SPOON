@@ -226,7 +226,7 @@
 		<dependency>
 			<groupId>org.codemonkey.simplejavamail</groupId>
 			<artifactId>simple-java-mail</artifactId>
-			<version>2.1</version>
+			<version>3.0.0</version>
 		</dependency>
 		<dependency>
   			<groupId>org.pegdown</groupId>

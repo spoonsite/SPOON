@@ -19,14 +19,15 @@ import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
-import org.codemonkey.simplejavamail.Email;
 import org.codemonkey.simplejavamail.Mailer;
-import org.codemonkey.simplejavamail.Recipient;
 import org.codemonkey.simplejavamail.TransportStrategy;
+import org.codemonkey.simplejavamail.email.Email;
+import org.codemonkey.simplejavamail.email.Recipient;
 
 /**
  * Used for Handling Email
@@ -45,9 +46,9 @@ public class MailManager
 	{
 		//pull properties
 		String server = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_SERVER);
-		String serverPort = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_SERVER_PORT);
-		String serverUser = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_SERVER_USER);
-		String serverPW = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_SERVER_PW);
+		String serverPort = StringProcessor.nullIfBlank(PropertiesManager.getValue(PropertiesManager.KEY_MAIL_SERVER_PORT));
+		String serverUser = StringProcessor.nullIfBlank(PropertiesManager.getValue(PropertiesManager.KEY_MAIL_SERVER_USER));
+		String serverPW = StringProcessor.nullIfBlank(PropertiesManager.getValue(PropertiesManager.KEY_MAIL_SERVER_PW));
 		String useSSL = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_USE_SSL);
 		String useTLS = PropertiesManager.getValue(PropertiesManager.KEY_MAIL_USE_TLS);
 

@@ -248,6 +248,14 @@ public class StringProcessor
 			return text.toString();
 		}
 	}
+	
+	public static String nullIfBlank(String text) {
+		if (StringUtils.isBlank(text)) {
+			return null;
+		} else {
+			return text;
+		}
+	}
 
 	public static Boolean isEmail(String text)
 	{
