@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.service.io.parser;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,26 @@ public abstract class BaseAttributeParser
 
 	protected static final int MAX_BUCKET_SIZE = 100;
 	protected List<AttributeAll> attributesAll = new ArrayList<>();
+
+	protected AttributeAll defaultAttributeAll()
+	{
+		AttributeAll attributeAll = new AttributeAll();
+		AttributeType attributeType = new AttributeType();
+
+		attributeType.setDescription(OpenStorefrontConstant.NOT_AVAILABLE);
+		attributeType.setVisibleFlg(Boolean.FALSE);
+		attributeType.setRequiredFlg(Boolean.FALSE);
+		attributeType.setArchitectureFlg(Boolean.FALSE);
+		attributeType.setImportantFlg(Boolean.FALSE);
+		attributeType.setAllowMultipleFlg(Boolean.FALSE);
+		attributeType.setHideOnSubmission(Boolean.FALSE);
+
+		attributeAll.setAttributeType(attributeType);
+		List<AttributeCode> attributeCodes = new ArrayList<>();
+		attributeAll.setAttributeCodes(attributeCodes);
+
+		return attributeAll;
+	}
 
 	@Override
 	protected <T> List<T> getStorageBucket()
