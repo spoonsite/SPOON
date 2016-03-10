@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.io.parser;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +65,11 @@ public abstract class BaseAttributeParser
 	@Override
 	protected void performStorage()
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		if (fileHistoryAll.getFileHistory().getFileHistoryOption() == null) {
+			service.getAttributeService().importAttributes(attributesAll, new FileHistoryOption());
+		} else {
+			service.getAttributeService().importAttributes(attributesAll, fileHistoryAll.getFileHistory().getFileHistoryOption());
+		}
 	}
 
 }
