@@ -52,7 +52,7 @@ public class Organization
 	@APIDescription("Name of the organization")
 	private String name;
 
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@ConsumeField
 	@Sanitize(BasicHTMLSanitizer.class)
 	private String description;
