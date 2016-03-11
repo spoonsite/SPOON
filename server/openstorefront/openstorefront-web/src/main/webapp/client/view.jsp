@@ -743,7 +743,10 @@ limitations under the License.
 							entry = Ext.decode(response.responseText);
 							
 							Ext.getCmp('titlePanel').update(entry);
-							
+							Ext.defer(function(){
+								headerPanel.updateLayout(true, true);
+							}, 1000);
+														
 							if (entry.createUser === '${user}'){
 								Ext.getCmp('nonOwnerMenu').setHidden(true);
 							}

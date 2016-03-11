@@ -209,6 +209,7 @@ and open the template in the editor.
 	color: white;
 	font-weight: bold;
 	padding: 5px;
+	line-height: 28px;
 }
 
 .details-title-name {

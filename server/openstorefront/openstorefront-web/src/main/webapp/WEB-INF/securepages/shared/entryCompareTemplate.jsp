@@ -63,11 +63,14 @@ limitations under the License.
 	<tpl for="attributes">
 		<tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>
 	</tpl>
-	<b>Tags: </b>
-	<tpl for="tags">
-		<span class="searchresults-tag">
-			{text}
-		</span>
+	<tpl if="releaseDate">
+		<br>
+		<b>Tags: </b>
+		<tpl for="tags">
+			<span class="searchresults-tag">
+				{text}
+			</span>
+		</tpl>		
 	</tpl>	
 	<br>
 	<br>

@@ -44,8 +44,9 @@ Ext.define('OSF.component.template.Description', {
 	
 	showDescriptionHeader: true,
 	tpl: new Ext.XTemplate(
-		'<tpl if="showDescriptionHeader"><h2>Description</h2></tpl>',	
-		'{description}'	
+		'<div><tpl if="showDescriptionHeader"><h2>Description</h2></tpl>',	
+		'	{description}',
+		'</div>'		
 	),
 		
 	initComponent: function () {
@@ -53,7 +54,7 @@ Ext.define('OSF.component.template.Description', {
 	},
 	
 	updateHandler: function(entry){
-		entry.description = Ext.util.Format.escape(entry.description);		
+		//entry.description = Ext.util.Format.escape(entry.description).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '');		
 		entry.showDescriptionHeader = this.showDescriptionHeader;
 		return entry;
 	}
@@ -558,6 +559,7 @@ Ext.define('OSF.component.template.Relationships', {
 									
 			relationshipPanel.tabPanel.getComponent('relationTable').update(entry);
 			relationshipPanel.tabPanel.getComponent('visual').setHeight(entry.relationships.length*80);
+			relationshipPanel.tabPanel.getComponent('visual').originalComponentId = entry.componentId;
 			relationshipPanel.tabPanel.getComponent('visual').updateDiagramData(entry);	
 			
 			var updated = false;
@@ -571,7 +573,7 @@ Ext.define('OSF.component.template.Relationships', {
 			}			
 		}		
 				
-		return entry;
+		return null;
 	}	
 	
 });
