@@ -244,7 +244,7 @@ module.exports = function (grunt) {
     bowerInstall: {
       app: {
         // src: ['<%= yeoman.app %>/index.html'],
-        src: ['<%= yeoman.app %>/index.html','<%= yeoman.app %>/submission.html'],
+        src: ['<%= yeoman.app %>/indexOld.html','<%= yeoman.app %>/submissionOld.html'],
         ignorePath: '<%= yeoman.app %>/'
       },
       sass: {
@@ -275,7 +275,7 @@ module.exports = function (grunt) {
     // additional tasks can operate on them
     useminPrepare: {
       // html: ['<%= yeoman.app %>/index.html', '<%= yeoman.app %>/views/results.html', '<%= yeoman.app %>/views/single.html', '<%= yeoman.app %>/views/main.html', '<%= yeoman.app %>/views/admin.html'],
-      html: ['<%= yeoman.app %>/index.html','<%= yeoman.app %>/submission.html','<%= yeoman.app %>/views/results.html', '<%= yeoman.app %>/views/single.html', '<%= yeoman.app %>/views/main.html', '<%= yeoman.app %>/views/admin.html'],
+      html: ['<%= yeoman.app %>/indexOld.html','<%= yeoman.app %>/submissionOld.html','<%= yeoman.app %>/views/results.html', '<%= yeoman.app %>/views/single.html', '<%= yeoman.app %>/views/main.html', '<%= yeoman.app %>/views/admin.html'],
       options: {
         dest: '<%= yeoman.dist %>',
         flow: {
@@ -458,8 +458,8 @@ module.exports = function (grunt) {
         'views/**/*',
         '404.html',
         'favicon.ico',
-        'index.html',
-        'submission.html',
+        'indexOld.html',
+        'submissionOld.html',
         'robots.txt'
         ]
       }
