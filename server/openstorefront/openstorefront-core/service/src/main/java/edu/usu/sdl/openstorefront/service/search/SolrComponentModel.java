@@ -27,6 +27,11 @@ public class SolrComponentModel
 
 	public static final String ID_FIELD = "id";
 	public static final String ISCOMPONENT_FIELD = "isComponentSearch_b_is";
+	public static final String FIELD_NAME = "title";
+	public static final String FIELD_ORGANIZATION = "organization_s_is";
+	public static final String FIELD_DESCRIPTION = "content_text";
+		
+	public static final String FIELD_SEARCH_WEIGHT = "searchWeight";
 
 	@Field
 	private String id;
@@ -70,6 +75,9 @@ public class SolrComponentModel
 
 	@Field("name_s_is")
 	private String nameString;
+	
+	private int searchWeight;
+	private float queryScore;
 
 	public SolrComponentModel()
 	{
@@ -233,6 +241,26 @@ public class SolrComponentModel
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	public int getSearchWeight()
+	{
+		return searchWeight;
+	}
+
+	public void setSearchWeight(int searchWeight)
+	{
+		this.searchWeight = searchWeight;
+	}
+
+	public float getQueryScore()
+	{
+		return queryScore;
+	}
+
+	public void setQueryScore(float queryScore)
+	{
+		this.queryScore = queryScore;
 	}
 
 }

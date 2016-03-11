@@ -158,11 +158,23 @@ limitations under the License.
 											}
 										}, 
 										{
-											xtype: 'textfield',										
+											xtype: 'combobox',										
 											itemId: 'searchText',
 											flex: 1,
 											fieldCls: 'home-search-field',
 											emptyText: 'Search',
+											queryMode: 'remote',
+											hideTrigger: true,
+											valueField: 'query',
+											displayField: 'name',											
+											autoSelect: false,
+											store: {
+												autoLoad: false,
+												proxy: {
+													type: 'ajax',
+													url: '../api/v1/service/search/suggestions'													
+												}
+											},
 											listeners:{
 												specialkey: function(field, e) {
 													var value = this.getValue();
@@ -172,7 +184,7 @@ limitations under the License.
 															var searchRequest = {
 																type: 'SIMPLE',
 																query: CoreUtil.searchQueryAdjustment(query)
-															}
+															};
 															CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 														}
 														window.location.href = 'Router.action?page=main/searchResults.jsp';														
@@ -215,7 +227,7 @@ limitations under the License.
 				
 			});
 			Ext.defer(function(){
-				searchPanel.updateLayout(true, true);
+				searchPanel.updateLayout(true, true);				
 			}, 1000);
 		
 			var loadedHighlightsRecently = false;		

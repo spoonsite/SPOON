@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
+import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.sort.ComponentSearchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
@@ -292,6 +293,22 @@ public class Search
 		response.header("Content-Type", "application/csv");
 		response.header("Content-Disposition", "attachment; filename=\"searchResults.csv\"");
 		return response.build();		
+	}
+	
+	@GET
+	@APIDescription("Get Search Suggestions")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(SearchSuggestion.class)
+	@Path("/suggestions")
+	public List<SearchSuggestion> getSearchSuggestions(
+		@QueryParam("query")
+		@DefaultValue("*") String query,
+		@QueryParam("max") 
+		@DefaultValue("6") int maxResults	
+	)			
+	{	
+		List<SearchSuggestion> suggestions = service.getSearchService().searchSuggestions(query, maxResults);		
+		return suggestions;
 	}
 	
 }

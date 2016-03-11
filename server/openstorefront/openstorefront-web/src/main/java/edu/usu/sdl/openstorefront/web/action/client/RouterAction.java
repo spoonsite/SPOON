@@ -15,8 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.action.client;
 
-import net.sourceforge.stripes.action.ActionBean;
-import net.sourceforge.stripes.action.ActionBeanContext;
+import edu.usu.sdl.openstorefront.web.action.BaseAction;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
@@ -30,26 +29,12 @@ import org.apache.commons.lang.StringUtils;
  * @author dshurtleff
  */
 public class RouterAction
-		implements ActionBean
+		extends BaseAction
 {
-
-	protected ActionBeanContext context;
 
 	private String page;
 	private String content;
 	private boolean print;
-	
-	@Override
-	public void setContext(ActionBeanContext abc)
-	{
-		context = abc;
-	}
-
-	@Override
-	public ActionBeanContext getContext()
-	{
-		return context;
-	}
 
 	@DefaultHandler
 	public Resolution loadPage()

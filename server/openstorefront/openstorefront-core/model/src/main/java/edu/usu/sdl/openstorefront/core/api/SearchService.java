@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
+import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -97,4 +98,14 @@ public interface SearchService
 	 */
 	public void resetIndexer();
 
+	/**
+	 * This will try to find suggestions based on the query and then 
+	 * weight the results.
+	 * 
+	 * @param query
+	 * @param maxResult
+	 * @return 
+	 */
+	public List<SearchSuggestion> searchSuggestions(String query, int maxResult);
+		
 }
