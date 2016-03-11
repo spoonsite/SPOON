@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,22 @@
  */
 package edu.usu.sdl.openstorefront.service.io.parser;
 
-/**
- *
- * @author dshurtleff
- */
+import java.io.InputStream;
+
 public class AttributeSvcv4Parser
+		extends BaseAttributeParser
 {
+
+	@Override
+	public String checkFormat(String mimeType, InputStream input)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	protected <T> Object parseRecord(T record)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 
 }
