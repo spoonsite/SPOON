@@ -113,6 +113,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -3464,10 +3465,7 @@ public class ComponentRESTResource
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource Relationships section">
 	@GET
 	@APIDescription("Get all direct relationship for a specified component")
-	@Produces(
-			{
-				MediaType.APPLICATION_JSON
-			})
+	@Produces({ MediaType.APPLICATION_JSON })
 	@DataType(ComponentRelationshipView.class)
 	@Path("/{id}/relationships")
 	public Response getComponentRelationships(
@@ -3490,8 +3488,42 @@ public class ComponentRESTResource
 		GenericEntity<List<ComponentRelationshipView>> entity = new GenericEntity<List<ComponentRelationshipView>>(views)
 		{
 		};
+		
 		return sendSingleEntityResponse(entity);
 	}
+	
+	@GET
+	@APIDescription("Gets approved relationships (direct and indirect) for a specified component")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@DataType(ComponentRelationshipView.class)
+	@Path("/{id}/relationships/all")
+	public Response getComponentAllRelationships(
+			@PathParam("id")
+			@RequiredParam String componentId
+	)
+	{
+		List<ComponentRelationshipView> views = new ArrayList<>();
+		
+		//Pull relationships direct relationships
+		ComponentRelationship componentRelationshipExample = new ComponentRelationship();
+		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
+		componentRelationshipExample.setComponentId(componentId);
+		views.addAll(ComponentRelationshipView.toViewList(componentRelationshipExample.findByExample()));
+		views = views.stream().filter(r -> r.getTargetApproved()).collect(Collectors.toList());
+
+		//Pull indirect
+		componentRelationshipExample = new ComponentRelationship();
+		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
+		componentRelationshipExample.setRelatedComponentId(componentId);
+		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(componentRelationshipExample.findByExample());
+		relationshipViews = relationshipViews.stream().filter(r -> r.getOwnerApproved()).collect(Collectors.toList());
+		views.addAll(relationshipViews);		
+
+		GenericEntity<List<ComponentRelationshipView>> entity = new GenericEntity<List<ComponentRelationshipView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}	
 
 	@GET
 	@APIDescription("Get a relationship entity for a specified component")

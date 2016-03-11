@@ -30,14 +30,90 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 
 		var visPanel = this;
 		
+		var compareViewTemplate = new Ext.XTemplate(						
+		);
+
+		Ext.Ajax.request({
+				url: 'Router.action?page=shared/entryCompareTemplate.jsp',
+				success: function(response, opts){
+					compareViewTemplate.set(response.responseText, true);
+				}
+		});	
+		visPanel.viewWin = Ext.create('Ext.window.Window', {			
+			title: 'Quick Details View',			
+			modal: true,
+			width: '80%',
+			height: '80%',
+			maximizable: true,
+			scrollable: true,		
+			bodyStyle: 'padding: 20px;',
+			tpl: compareViewTemplate,
+			dockedItems: [
+				{
+					xtype: 'toolbar',
+					dock: 'bottom',
+					items: [
+						{
+							xtype: 'tbfill'
+						},
+						{
+							text: 'Open Details',
+							iconCls: 'fa fa-arrows-alt',
+							handler: function() {
+								var relatedwin = window.open('view.jsp?fullPage=true&id=' + visPanel.viewWin.componentId, "RelatedWindow");
+							}
+						},
+						{
+							xtype: 'tbfill'
+						}
+					]
+				}
+			]
+		});		
+		
 		visPanel.on('resize', function(panel, width, height, oldWidth, oldHeight, eOpts){
 			panel.drawVisual();
 		});
 		
 		visPanel.on('spriteclick', function(item, event, eOpts){
 			var sprite = item && item.sprite;
-			if (sprite.componentId) {
-				var relatedwin = window.open('view.jsp?id=' + sprite.componentId, "RelatedWindow");
+			if (sprite.componentId && !sprite.openComponent) {
+				
+				visPanel.setLoading(true);
+				//load the 
+				Ext.Ajax.request({
+					url: '../api/v1/resource/components/' + sprite.componentId + '/relationships/all',
+					callback: function(){
+						visPanel.setLoading(false);
+					},
+					success: function(response, opts) {
+						var relationships = Ext.decode(response.responseText);
+						var entry = {
+							componentId: sprite.componentId,
+							name: sprite.componentName,
+							relationships: relationships
+						}
+						visPanel.updateDiagramData(entry);
+						visPanel.setHeight(entry.relationships.length*80);
+						visPanel.drawVisual();
+					}
+				});				
+			} else if (sprite.openComponent) {
+				visPanel.viewWin.show();
+				visPanel.viewWin.componentId = sprite.componentId;
+				visPanel.viewWin.setLoading(true);
+				Ext.Ajax.request({
+					url: '../api/v1/resource/components/' + sprite.componentId + '/detail',
+					callback: function(){
+						visPanel.viewWin.setLoading(false);
+					}, 
+					success: function(response, opts) {
+						var data = Ext.decode(response.responseText);
+						data = CoreUtil.processEntry(data);
+						visPanel.viewWin.update(data);
+					}
+				});
+				
 			}
 		});
 		
@@ -139,6 +215,21 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 				fillStyle: 'rgb(0, 0, 0)'			
 			});			
 			
+			if (visPanel.originalComponentId && 
+						visPanel.originalComponentId !== visPanel.entry.componentId) {					
+					
+				var plus = {
+					type: 'plus',
+					componentId: visPanel.entry.componentId,
+					openComponent: true,
+					x: mainBlockX + (mainBlockWidth- 10),
+					y: mainBlockY + 10,
+					fillStyle: '#1F6D91',					
+					size: 5
+				};
+				
+				sprites.push(plus);
+			}
 
 			var pointedToMe = [];
 			var pointedTo = [];
@@ -160,6 +251,7 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 					width: mainBlockWidth,
 					height: mainBlockHeight,
 					componentId: relation.targetComponentId,
+					componentName: relation.targetComponentName,
 					componentBlock: true,					
 					fillStyle: 'rgb(215, 189, 146)',
 					strokeStyle: 'rgb(100, 100, 100)',
@@ -221,6 +313,7 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 					textAlign: 'center',
 					componentBlock: true,
 					componentId: relation.targetComponentId,
+					componentName: relation.targetComponentName,
 					x: block.x + (block.width/2),
 					y: block.y + (block.height/2),									
 					fillStyle: 'rgb(0, 0, 0)'			
@@ -237,12 +330,26 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 					rotationRads: theta
 				};					
 				
+				var plus = {
+					type: 'plus',
+					componentId: relation.targetComponentId,
+					openComponent: true,
+					x: block.x + (block.width - 10),
+					y: block.y + 10,
+					fillStyle: '#1F6D91',					
+					size: 5
+				};
+				
 				sprites.push(block);
 				sprites.push(blockText);
 				sprites.push(blockLine);
 				sprites.push(arrowTop);
 				sprites.push(arrowBottom);
 				sprites.push(arrowText);
+				if (visPanel.originalComponentId && 
+						visPanel.originalComponentId !== relation.targetComponentId) {					
+					sprites.push(plus);
+				}
 			});
 
 			var offset = 0;	
@@ -254,6 +361,7 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 					width: mainBlockWidth,
 					height: mainBlockHeight,
 					componentId: relation.ownerComponentId,
+					componentName: relation.ownerComponentName,
 					componentBlock: true,										
 					fillStyle: 'rgb(234, 232, 230)',
 					strokeStyle: 'rgb(100, 100, 100)',
@@ -281,6 +389,7 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 					textAlign: 'center',
 					componentBlock: true,
 					componentId: relation.ownerComponentId,
+					componentName: relation.ownerComponentName,
 					x: block.x + (block.width/2),
 					y: block.y + (block.height/2),									
 					fillStyle: 'rgb(0, 0, 0)'					
@@ -329,14 +438,28 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 					y: blockLine.fromY + (blockLine.toY - blockLine.fromY)/ 2 - 10,									
 					fillStyle: 'rgb(0, 0, 0)',
 					rotationRads: theta
-				};					
+				};	
+				
+				var plus = {
+					type: 'plus',
+					componentId: relation.ownerComponentId,
+					openComponent: true,
+					x: block.x + (block.width - 10),
+					y: block.y + 10,
+					fillStyle: '#1F6D91',
+					size: 5
+				};				
 				
 				sprites.push(block);
 				sprites.push(blockText);
 				sprites.push(blockLine);
 				sprites.push(arrowTop);
 				sprites.push(arrowBottom);				
-				sprites.push(arrowText);				
+				sprites.push(arrowText);
+				if (visPanel.originalComponentId && 
+						visPanel.originalComponentId !== relation.ownerComponentId) {					
+					sprites.push(plus);
+				}
 			});
 			
 

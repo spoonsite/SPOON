@@ -225,10 +225,7 @@ limitations under the License.
 				
 				]
 				
-			});
-			Ext.defer(function(){
-				searchPanel.updateLayout(true, true);				
-			}, 1000);
+			});		
 		
 			var loadedHighlightsRecently = false;		
 		
@@ -585,6 +582,10 @@ limitations under the License.
 						Ext.getCmp('homeTitle').setText(branding.landingPageTitle);
 						Ext.getCmp('quote').update('<blockquote style="text-align: center;">' + branding.landingPageBanner + '</blockquote>');
 						Ext.getCmp('logoImage').setSrc(branding.primaryLogoUrl);
+						Ext.getCmp('logoImage').getEl().on('load', function(evt, target, opts){
+							searchPanel.updateLayout(true, true);							
+						});
+						
 						Ext.getCmp('customFooter').update(branding.landingPageFooter);
 											
 						loadStats();
