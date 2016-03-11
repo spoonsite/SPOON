@@ -37,6 +37,7 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.MergeCondition;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.SearchType;
+import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
@@ -73,6 +74,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -520,9 +522,14 @@ public class SearchServiceImpl
 
 		return searchResult;
 	}
-
+	
 	@Override
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
+	{
+		return doIndexSearch(query, filter, null);
+	}	
+	
+	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
 	{
 		IndexSearchResult indexSearchResult = new IndexSearchResult();
 
@@ -569,8 +576,14 @@ public class SearchServiceImpl
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(myQueryString);
 
-			// fields to be returned back from solr
+			// fields to be returned back from solr			
 			solrQuery.setFields(SolrComponentModel.ID_FIELD, SolrComponentModel.ISCOMPONENT_FIELD);
+			if (addtionalFieldsToReturn != null) {
+				for (String field : addtionalFieldsToReturn) {
+					solrQuery.addField(field);
+				}
+			}
+			
 			solrQuery.setStart(filter.getOffset());
 			solrQuery.setRows(filter.getMax());
 
@@ -586,15 +599,17 @@ public class SearchServiceImpl
 					order = SolrQuery.ORDER.asc;
 				}
 				solrQuery.addSort(sortFieldText, order);
-			}
+			} 
 
 			solrQuery.setIncludeScore(true);
 
 			QueryResponse response = SolrManager.getServer().query(solrQuery);
 			SolrDocumentList results = response.getResults();
-			totalFound = results.getNumFound();
+			totalFound = results.getNumFound();				
+						
 			DocumentObjectBinder binder = new DocumentObjectBinder();
-			resultsList = binder.getBeans(SolrComponentModel.class, results);
+			resultsList = binder.getBeans(SolrComponentModel.class, results);		
+			
 		} catch (SolrServerException ex) {
 			throw new OpenStorefrontRuntimeException("Search Failed", "Contact System Admin.  Seach server maybe Unavailable", ex);
 		} catch (Exception ex) {
@@ -604,6 +619,65 @@ public class SearchServiceImpl
 		indexSearchResult.setTotalResults(totalFound);
 
 		return indexSearchResult;
+	}
+
+	@Override
+	public List<SearchSuggestion> searchSuggestions(String query, int maxResult)
+	{
+		List<SearchSuggestion> suggestions = new ArrayList<>();
+		
+		FilterQueryParams filter = FilterQueryParams.defaultFilter();
+		
+		//query everything we can
+		String extraFields[] = {
+			SolrComponentModel.FIELD_NAME, 
+			SolrComponentModel.FIELD_ORGANIZATION, 
+			SolrComponentModel.FIELD_DESCRIPTION, 
+		};
+		IndexSearchResult indexSearchResult = doIndexSearch(query, filter, extraFields);
+		
+		//apply weight to items
+		if (StringUtils.isBlank(query)) {
+			query = "";
+		}
+		
+		String queryNoWild = query.replace("*", "").toLowerCase();
+		for (SolrComponentModel model : indexSearchResult.getResultsList()) {
+			int score = 0;
+						
+			if (StringUtils.isNotBlank(model.getName()) &&
+					model.getName().toLowerCase().contains(queryNoWild)) {
+				score += 100;
+			}
+			
+			if (StringUtils.isNotBlank(model.getOrganization()) &&
+					model.getOrganization().toLowerCase().contains(queryNoWild)) {
+				score += 50;
+			}
+			
+			int count = StringUtils.countMatches(model.getDescription().toLowerCase(), queryNoWild);
+			score += count * 5;	
+			
+			model.setSearchWeight(score);			
+		}
+		
+		//sort
+		indexSearchResult.getResultsList().sort((SolrComponentModel o1, SolrComponentModel o2) -> Integer.compare(o2.getSearchWeight(), o1.getSearchWeight()));
+		
+		//window
+		List<SolrComponentModel> topItems = indexSearchResult.getResultsList().stream().limit(maxResult).collect(Collectors.toList());
+		
+		for (SolrComponentModel model : topItems) {
+			
+			SearchSuggestion suggestion = new SearchSuggestion();
+			suggestion.setName(model.getName());
+			suggestion.setComponentId(model.getId());
+			suggestion.setQuery("\"" + model.getName() + "\"");
+			
+			suggestions.add(suggestion);
+		}
+				
+		return suggestions;
 	}
 
 }

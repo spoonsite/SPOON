@@ -27,6 +27,7 @@ public class IndexSearchResult
 
 	private List<SolrComponentModel> resultsList = new ArrayList<>();
 	private long totalResults = 0;
+	private float maxScore;
 
 	public IndexSearchResult()
 	{
@@ -50,6 +51,16 @@ public class IndexSearchResult
 	public void setTotalResults(long totalResults)
 	{
 		this.totalResults = totalResults;
+	}
+
+	public float getMaxScore()
+	{
+		return maxScore;
+	}
+
+	public void setMaxScore(float maxScore)
+	{
+		this.maxScore = maxScore;
 	}
 
 }
