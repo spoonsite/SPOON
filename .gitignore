@@ -63,3 +63,4 @@ project*.properties
 /server/openstorefront/atmosphere-socketio/target/
 /server/openstorefront/tinymcetextarea/target/
 /server/openstorefront/openstorefront-web/src/main/webapp/indexOld.html
+/server/openstorefront/openstorefront-web/src/main/webapp/submissionOld.html
