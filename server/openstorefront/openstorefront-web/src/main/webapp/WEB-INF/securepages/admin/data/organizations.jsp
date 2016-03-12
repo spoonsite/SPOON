@@ -627,7 +627,7 @@
 											name: 'description',
 											style: 'padding-top: 5px;',
 											width: '100%',
-											maxLength: 255		
+											maxLength: 16384		
 										},
 										{
 											xtype: 'textfield',

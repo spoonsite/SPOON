@@ -33,7 +33,7 @@ limitations under the License.
 			showRelatedWindow: function(attributeType, attributeCode, description, vitalType, tip) {
 				DetailPage.relatedWindow.show();
 				DetailPage.relatedWindow.setTitle('Related Entries');
-				
+								
 				DetailPage.relatedWindow.getComponent('grid').getComponent('description').update({
 					description: description,
 					tip: tip
@@ -76,6 +76,83 @@ limitations under the License.
 					return request;
 				};
 				store.loadPage(1);
+			},
+			showRelatedOrganizations: function(organization) {
+				DetailPage.relatedWindow.show();
+				DetailPage.relatedWindow.setTitle('Related Entries');
+							
+			    var descriptionPanel = DetailPage.relatedWindow.getComponent('grid').getComponent('description');
+				descriptionPanel.update({
+					description: organization,
+					tip: ''
+				});
+				
+				Ext.Ajax.request({
+					url: '../api/v1/resource/organizations/name/' + organization,
+					success: function(response, opts) {
+						var org = Ext.decode(response.responseText);
+						
+						var fullDescription = '';
+						if (org.organizationType) {
+							fullDescription += '<b>Organization Type:</b> ' + org.organizationType + '<br>';
+						}
+						if (org.agency) {
+							fullDescription += '<b>Agency:</b> ' + org.agency + '<br>';
+						}
+						if (org.department) {
+							fullDescription += '<b>Department:</b> ' + org.department + '<br>';
+						}	
+						if (org.department) {
+							fullDescription += '<b>Home Page:</b> ' + org.homeUrl + '<br>';
+						}						
+						if (org.description) {
+							fullDescription += org.description + '<br>';
+						}
+						
+						descriptionPanel.update({
+							description: organization,
+							tip: fullDescription
+						});
+					}
+				});
+				
+				var searchObj = {
+					"sortField": "name",
+					"sortDirection": "DESC",				
+					"searchElements": [{
+							"searchType": 'COMPONENT',
+							"field": 'organization',
+							"value": organization,
+							"caseInsensitive": true,
+							"numberOperation": "EQUALS",
+							"stringOperation": "EQUALS",
+							"mergeCondition": "OR" 
+					}]
+				 };
+				
+				var store = DetailPage.relatedWindow.getComponent('grid').getStore();
+				store.getProxy().buildRequest = function (operation) {
+					var initialParams = Ext.apply({
+						paging: true,
+						sortField: operation.getSorters()[0].getProperty(),
+						sortOrder: operation.getSorters()[0].getDirection(),
+						offset: operation.getStart(),
+						max: operation.getLimit()
+					}, operation.getParams());
+					params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
+
+					var request = new Ext.data.Request({
+						url: '/openstorefront/api/v1/service/search/advance',
+						params: params,
+						operation: operation,
+						action: operation.getAction(),
+						jsonData: Ext.util.JSON.encode(searchObj)
+					});
+					operation.setRequest(request);
+
+					return request;
+				};
+				store.loadPage(1);				
 			}
 		};
 		
@@ -249,8 +326,8 @@ limitations under the License.
 						]						
 					}				
 				]			
-			});			
-			
+			});		
+		
 			var headerPanel = Ext.create('Ext.panel.Panel', {
 				region: 'north',
 				bodyStyle: 'background: white; padding: 15px;',
@@ -267,7 +344,7 @@ limitations under the License.
 						tpl: new Ext.XTemplate(
 							'<div class="details-title-name">{name} <span class="details-title-info" style="font-size: 10px">({componentTypeLabel})</span></div>',
 							'<div class="details-title-info">',							
-							'Organization: <b>{organization}</b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="version"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl>',							
+							'Organization: <b><a href="#" onclick="DetailPage.showRelatedOrganizations(\'{organization}\')">{organization}</a></b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="version"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl>',							
 							'</div>',
 							'  <tpl for="attributes">',
 							'    <tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>',

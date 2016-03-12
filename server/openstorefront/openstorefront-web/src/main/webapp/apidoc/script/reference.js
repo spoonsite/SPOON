@@ -21,6 +21,7 @@ var doAttributes = function(contentId, callback) {
     }
     $.get("/openstorefront/api/v1/resource/attributes", function(data) {
         if (data && data.length > 0){
+			data.sort();
             if (data[0].codes !== undefined) {
               setupAttributes(data, contentId);
             } else {
@@ -33,6 +34,9 @@ var doAttributes = function(contentId, callback) {
 
 
 var setupAttributes = function(types, contentId) {
+	types.sort(function(a, b){
+		return a.attributeType.localeCompare(b.attributeType);
+	});
     for (var i = 0; i < types.length; i++) {
         var codes = types[i].codes;
         if (codes && codes.length > 0) {
@@ -65,6 +69,9 @@ var doLookups = function(contentId) {
             //console.log('data', data);
           if (data[0].code !== undefined) {
             var types = data;
+			types.sort(function(a, b){
+				return a.code.localeCompare(b.code);
+			});			
             for (var i = 0; i < types.length; i++) {
               setupLookups(types[i], contentId);
             }
