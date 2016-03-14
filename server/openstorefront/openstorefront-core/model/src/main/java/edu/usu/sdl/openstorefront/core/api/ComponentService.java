@@ -177,7 +177,7 @@ public interface ComponentService
 	 * full view)
 	 *
 	 * @param componentId
-	 * @return
+	 * @return details or null if not found
 	 */
 	public ComponentDetailView getComponentDetails(String componentId);
 

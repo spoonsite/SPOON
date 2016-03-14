@@ -797,7 +797,7 @@ public class ComponentRESTResource
 		} else if (componentPrint != null) {
 			return sendSingleEntityResponse(componentPrint);
 		} else {
-			return Response.ok().build();
+			return Response.status(Response.Status.NOT_FOUND).build();			
 		}
 	}
 
