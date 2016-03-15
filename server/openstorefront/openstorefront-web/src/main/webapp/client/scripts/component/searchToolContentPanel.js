@@ -124,7 +124,7 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 							if (!searchContentPanel.resultsGridPanel.hidden)
 							{
 								//perform search
-								var win = Ext.getCmp('searchToolWindow');								
+								var win = this.up('window');								
 								var searchRequest = {
 									type: 'Advance',
 									query: win.searchObj
@@ -181,7 +181,7 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 								var newUrl = 'view.jsp?fullPage=true&id=' + theStore.getAt(rowIndex).data.componentId;
 								window.location.href = newUrl;
 
-								var win = Ext.getCmp('searchToolWindow');
+								var win = this.up('window');
 								win.close();
 
 							}
@@ -232,7 +232,7 @@ Ext.define('OSF.component.SearchToolWindow', {
     modal: true,
     maximizable: true,
     layout: 'fit',
-    id: 'searchToolWindow',
+    
     initComponent: function () {
         this.callParent();
 
@@ -286,6 +286,59 @@ Ext.define('OSF.component.SearchToolWindow', {
             ]
         });
 
+		var advanceSearch = Ext.create('OSF.component.AdvanceSearchPanel', {
+			title: 'Advance',
+			iconCls: 'fa fa-search-plus',
+			dockedItems: [
+				{
+					xtype: 'toolbar',
+					dock: 'bottom',
+					items: [
+						{
+							text: 'Search',
+							iconCls: 'fa fa-search',
+							handler: function(){
+								var searchObj = this.up('panel').getSearch();
+								
+								if (searchObj) {							
+									var win = this.up('window');								
+									var searchRequest = {
+										type: 'Advance',
+										query: searchObj
+									}
+									CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+									window.location.href = 'Router.action?page=main/searchResults.jsp';	
+
+									//close window
+									win.close();	
+								}
+							}
+						},
+						{
+							xtype: 'tbfill'
+						},
+						{
+							text: 'Preview Results',
+							iconCls: 'fa fa-eye',
+							handler: function(){
+								this.up('panel').previewResults();
+							}							
+						},
+						{
+							xtype: 'tbseparator'
+						},
+						{
+							text: 'Save',
+							iconCls: 'fa fa-save',
+							handler: function(){
+								this.up('panel').saveSearch();
+							}							
+						}
+					]
+				}
+			]
+		});
+
         //
         //  tabPanel
         //  This is the panel to hold all the other tab panels
@@ -294,7 +347,8 @@ Ext.define('OSF.component.SearchToolWindow', {
             items: [
                 topicSearchPanel,
                 categorySearchPanel,
-                archSearchPanel
+                archSearchPanel,
+				advanceSearch
             ]
 
         });

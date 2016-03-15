@@ -53,10 +53,8 @@ public class ComponentSearchHandler
 			if (StringUtils.isBlank(searchElement.getField())) {
 				validationResult.getRuleResults().add(getRuleResult("field", "Required"));
 			}
-			if (StringUtils.isBlank(searchElement.getValue())) {
-				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
-			}
 
+			boolean checkValue = true; 			
 			Field field = ReflectionUtil.getField(new Component(), searchElement.getField());
 			if (field == null) {
 				validationResult.getRuleResults().add(getRuleResult("field", "Doesn't exist on component"));
@@ -69,6 +67,7 @@ public class ComponentSearchHandler
 						validationResult.getRuleResults().add(getRuleResult("value", "Value should be an integer for this field"));
 					}
 				} else if (type.getSimpleName().equals(Date.class.getSimpleName())) {
+					checkValue = false;
 					if (searchElement.getStartDate() == null && searchElement.getEndDate() == null) {
 						validationResult.getRuleResults().add(getRuleResult("startDate", "Start or End date should be entered for this field"));
 						validationResult.getRuleResults().add(getRuleResult("endDate", "Start or End date should be entered for this field"));
@@ -79,6 +78,10 @@ public class ComponentSearchHandler
 					validationResult.getRuleResults().add(getRuleResult("field", "Field type handling not supported"));
 				}
 			}
+			if (checkValue && StringUtils.isBlank(searchElement.getValue())) {
+				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
+			}
+			
 		}
 
 		return validationResult;
@@ -133,7 +136,7 @@ public class ComponentSearchHandler
 					field.set(componentStartExample, searchElement.getStartDate());
 					SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
 					specialOperatorModel.setExample(componentStartExample);
-					specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+					specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
 					queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 					Component componentEndExample = new Component();

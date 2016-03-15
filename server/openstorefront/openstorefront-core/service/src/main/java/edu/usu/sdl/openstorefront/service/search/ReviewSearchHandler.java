@@ -53,10 +53,7 @@ public class ReviewSearchHandler
 			if (StringUtils.isBlank(searchElement.getField())) {
 				validationResult.getRuleResults().add(getRuleResult("field", "Required"));
 			}
-			if (StringUtils.isBlank(searchElement.getValue())) {
-				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
-			}
-
+			boolean checkValue = true; 			
 			Field field = ReflectionUtil.getField(new ComponentReview(), searchElement.getField());
 			if (field == null) {
 				validationResult.getRuleResults().add(getRuleResult("field", "Doesn't exist on component review"));
@@ -69,15 +66,20 @@ public class ReviewSearchHandler
 						validationResult.getRuleResults().add(getRuleResult("value", "Value should be an integer for this field"));
 					}
 				} else if (type.getSimpleName().equals(Date.class.getSimpleName())) {
+					checkValue = false;
 					if (searchElement.getStartDate() == null && searchElement.getEndDate() == null) {
 						validationResult.getRuleResults().add(getRuleResult("startDate", "Start or End date should be entered for this field"));
 						validationResult.getRuleResults().add(getRuleResult("endDate", "Start or End date should be entered for this field"));
-					}
+					}					
 				} else if (type.getSimpleName().equals(Boolean.class.getSimpleName())) {
 					//Nothing to check
 				} else {
 					validationResult.getRuleResults().add(getRuleResult("field", "Field type handling not supported"));
 				}
+			}
+			
+			if (checkValue && StringUtils.isBlank(searchElement.getValue())) {
+				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
 			}
 		}
 
