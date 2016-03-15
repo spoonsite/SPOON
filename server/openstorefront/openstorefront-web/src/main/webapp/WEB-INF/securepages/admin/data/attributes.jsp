@@ -932,10 +932,29 @@
 								]
 							},
 							{
-								xtype: 'label',
+								xtype: 'multiselector',
 								id: 'editAttributeForm-typesRequiredFor',
-								html: 'Types required for',
-								hidden: true
+								hidden: true,
+								style: {
+									margin: '30px'
+								},
+								title: 'Required for entry types (click plus icon to add)',
+								fieldName: 'description',
+								fieldTitle: 'Entry Type',
+								viewConfig: {
+									deferEmptyText: false,
+									emptyText: 'No entry types selected'
+								},
+								search: {
+									field: 'description',
+									flex: 1,
+									store: {
+										proxy: {
+											type: 'ajax',
+											url: '../api/v1/resource/componenttypes/lookup'												
+										}
+									}
+								}
 							}
 						],
 						dockedItems: [
