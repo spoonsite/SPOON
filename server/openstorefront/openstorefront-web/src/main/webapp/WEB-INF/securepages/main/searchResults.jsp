@@ -19,6 +19,7 @@ limitations under the License.
 <stripes:layout-render name="../../../client/layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 			
+	<script src="scripts/component/advanceSearch.js?v=${appVersion}" type="text/javascript"></script>		
 	<script src="scripts/component/searchToolContentPanel.js?v=${appVersion}" type="text/javascript"></script>
 		
 	<form id="exportForm" action="../api/v1/service/search/export" method="POST">		
@@ -759,7 +760,7 @@ limitations under the License.
 				{ text: 'Badges', section: 'badges', display: true },
 				{ text: 'Description', section: 'description', display: true },
 				{ text: 'Last Update', section: 'update', display: true },	
-				{ text: 'Attributes', section: 'attributes', display: false },
+				{ text: 'Vitals', section: 'attributes', display: false },
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
 				{ text: 'Approved Date', section: 'approve', display: false }										
