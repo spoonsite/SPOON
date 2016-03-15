@@ -154,7 +154,7 @@
 										else {
 											attributeStore.filter('activeStatus', 'I');
 										}
-									},
+									}
 								},
 								storeConfig: {
 									customStore: {
@@ -246,7 +246,7 @@
 								}
 							},
 							{
-								xtype: 'tbfill',
+								xtype: 'tbfill'
 							},
 							{
 								text: 'Import',
@@ -384,7 +384,7 @@
 
 
 			var codesStore = Ext.create('Ext.data.Store', {
-				id: 'codesStore',
+				id: 'codesStore'
 			});
 
 			var codesGrid = Ext.create('Ext.grid.Panel', {
@@ -524,7 +524,7 @@
 					{
 						text: 'Code',
 						dataIndex: 'code',
-						flex: 1,
+						flex: 1
 					},
 					{
 						text: 'Description', 
@@ -546,7 +546,7 @@
 					{text: 'Group Code', dataIndex: 'groupCode', flex: 1},
 					{text: 'Sort Order', dataIndex: 'sortOrder', flex: 1},
 					{text: 'Architecture Code', dataIndex: 'architectureCode', flex: 1.5},
-					{text: 'Badge URL', dataIndex: 'badgeUrl', flex: 1},
+					{text: 'Badge URL', dataIndex: 'badgeUrl', flex: 1}
 				]
 			});
 
@@ -591,7 +591,7 @@
 								xtype: 'textfield',
 								id: 'editCodeForm-code',
 								fieldLabel: 'Type Code<span class="field-required" />',
-								name: 'typeCode',
+								name: 'typeCode'
 							},
 							{
 								xtype: 'panel',
@@ -640,7 +640,7 @@
 								name: 'highlightStyle',
 								store: highlightStyleStore,
 								typeAhead: false,
-								editable: false,
+								editable: false
 							}	
 						]
 					}
@@ -824,7 +824,7 @@
 								xtype: 'textfield',
 								id: 'editAttributeForm-code',
 								fieldLabel: 'Type Code<span class="field-required" />',
-								name: 'attributeType',
+								name: 'attributeType'
 							},
 							{
 								xtype: 'combobox',
@@ -836,7 +836,7 @@
 								editable: false,
 								value: '',
 								name: 'defaultCode',
-								hidden: true,
+								hidden: true
 							},
 							{
 								xtype: 'panel',
@@ -910,7 +910,7 @@
 												}
 												var form = Ext.getCmp('editAttributeForm');
 												form.getForm().checkValidity();
-											},
+											}
 										}
 									}
 								]
@@ -938,7 +938,7 @@
 												// [asString], [dirtyOnly], [includeEmptyText], [useDataValues]
 												var formData = form.getValues(false,false,false,true);
 												var edit = editAttributeWin.edit;
-												var url = '/openstorefront/api/v1/resource/attributes/attributetypes'
+												var url = '/openstorefront/api/v1/resource/attributes/attributetypes';
 												var method = 'POST';
 												if (edit) {
 													url += '/' + formData.attributeType;
