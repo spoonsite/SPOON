@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
+import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.model.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
@@ -28,10 +30,6 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- * @author dshurtleff
- */
 public interface AttributeService
 		extends AsyncService
 {
@@ -54,6 +52,7 @@ public interface AttributeService
 
 	/**
 	 * This used to page filter results
+	 *
 	 * @param filter
 	 * @return
 	 */
@@ -61,6 +60,7 @@ public interface AttributeService
 
 	/**
 	 * This used to page filter results
+	 *
 	 * @param filter
 	 * @param type
 	 * @return
@@ -188,7 +188,6 @@ public interface AttributeService
 	 */
 	public void syncAttribute(Map<AttributeType, List<AttributeCode>> attributeMap);
 
-
 	/**
 	 * Builds and Architecture given a attribute type NOTE: AttributeType must
 	 * an architecture with codes in the following format: 1.1.1
@@ -197,7 +196,6 @@ public interface AttributeService
 	 * @return
 	 */
 	public Architecture generateArchitecture(String attributeType);
-
 
 	/**
 	 * Gets the active xref types for an IntegrationType
@@ -247,4 +245,12 @@ public interface AttributeService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void changeAttributeCode(AttributeCodePk attributeCodePk, String newCode);
 
+	/**
+	 * Takes a list of AttributeAlls and saves the associated attribute types
+	 * and codes.
+	 *
+	 * @param attributes
+	 * @param options
+	 */
+	public void importAttributes(List<AttributeAll> attributes, FileHistoryOption options);
 }

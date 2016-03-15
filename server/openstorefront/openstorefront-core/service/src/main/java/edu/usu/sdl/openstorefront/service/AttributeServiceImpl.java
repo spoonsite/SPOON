@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,13 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.ReportOption;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import edu.usu.sdl.openstorefront.core.entity.TopicSearchItem;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
+import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.model.AttributeXrefModel;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.sort.ArchitectureComparator;
@@ -70,8 +72,6 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles Attribute information
- *
- * @author dshurtleff
  */
 public class AttributeServiceImpl
 		extends ServiceProxy
@@ -162,7 +162,7 @@ public class AttributeServiceImpl
 			ComponentAttribute componentAttribute = new ComponentAttribute();
 			componentAttribute.setComponentAttributePk(componentAttributePk);
 			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(ComponentAttribute.class, componentAttribute);
-		
+
 			List<Component> components = new ArrayList<>();
 			componentAttributes.stream().forEach((attr) -> {
 				components.add(persistenceService.findById(Component.class, attr.getComponentAttributePk().getComponentId()));
@@ -860,6 +860,21 @@ public class AttributeServiceImpl
 		persistenceService.runDbCommand(query, parameters);
 
 		cleanCaches(attributeCodePk.getAttributeType());
+	}
+
+	public void importAttributes(List<AttributeAll> attributes, FileHistoryOption options)
+	{
+		attributes.forEach(attribute
+				-> {
+			AttributeType existing = findType(attribute.getAttributeType().toString());
+			if (existing != null) {
+				attribute.getAttributeType().setAttributeType(existing.getAttributeType());
+			}
+			saveAttributeType(attribute.getAttributeType());
+			attribute.getAttributeCodes().forEach(code -> {
+				saveAttributeCode(code);
+			});
+		});
 	}
 
 }
