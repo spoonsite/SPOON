@@ -35,7 +35,11 @@ public class AttributeStandardParser
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
 	{
-		return "";
+		if (mimeType.contains("json") || mimeType.contains("text")) {
+			return "";
+		} else {
+			return "Invalid format. Please upload a JSON file in standard format. (Mimetype incorrect.)";
+		}
 	}
 
 	@Override

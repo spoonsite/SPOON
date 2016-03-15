@@ -53,7 +53,11 @@ public class AttributeSvcv4Parser
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
 	{
-		return "";
+		if (mimeType.contains("csv") || mimeType.contains("ms-excel")) {
+			return "";
+		} else {
+			return "Invalid format. Please upload a CSV in SVCV-4 Format. (Mimetype incorrect.)";
+		}
 	}
 
 	@Override
