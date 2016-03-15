@@ -809,7 +809,7 @@
 				title: 'Add/Edit Attribute',
 				modal: true,
 				width: '50%',
-				y: '10em',
+				y: '5em',
 				layout: 'fit',
 				items: [
 					{
@@ -879,7 +879,14 @@
 										boxLabel: 'Required',
 										listeners: {
 											change: function(box, newValue) {
-												Ext.getCmp('editAttributeForm-typesRequiredFor').show();
+												if (newValue)
+													{
+														Ext.getCmp('editAttributeForm-typesRequiredFor').show();
+													}
+													else {
+														Ext.getCmp('editAttributeForm-typesRequiredFor').hide();
+
+													}
 											}
 										}
 									},
