@@ -3,6 +3,8 @@
 <stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 
+	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>	
+
 	<form name="exportForm" action="/openstorefront/api/v1/resource/attributes/export" method="POST">
 			<p style="display: none;" id="exportFormAttributeTypes"></p>      
 	</form>
@@ -351,7 +353,7 @@
 			};
 
 			var actionImportAttribute = function actionImportAttribute() {
-
+				importWindow.show();
 			};
 
 			var actionExportAttribute = function actionExportAttribute(records) {
@@ -364,6 +366,13 @@
 				document.exportForm.submit();
 			};
 
+			var importWindow = Ext.create('OSF.component.ImportWindow', {					
+				fileTypeReadyOnly: false,
+				fileTypeValue: 'ATTRIBUTE',	
+				uploadSuccess: function(form, action) {
+					Ext.getCmp('attributeGrid').getStore().reload();
+				}
+			});
 
 			var actionManageCodes = function actionManageCodes(record) {
 				var url = '/openstorefront/api/v1/resource/attributes/attributetypes';
