@@ -488,7 +488,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			var grid = opts.grid;
 			var componentId = submissionPanel.componentId;
 			var recordId = grid.getSelection()[0].get(opts.idField);
-			var subEntityId = opts.subEntityId ? '/' + grid.getSelection()[0].get(subEntityId) : '';
+			var subEntityId = opts.subEntityId ? '/' + grid.getSelection()[0].get(opts.subEntityId) : '';
 			var subEntity = opts.subEntity ? '/' + opts.subEntity : '';
 			
 			grid.setLoading('Removing...');
@@ -498,7 +498,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				callback: function(opt, success, response){
 					grid.setLoading(false);
 				},
-				success: function(response, opts){
+				success: function(response, responseOpts){
 					if (opts.successFunc) {
 						opts.successFunc(response, opts);
 					} else {
@@ -1285,7 +1285,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			items: [
 				{
 					xtype: 'panel',
-					html: '<h1>3. Additional Details:</h1><h3>Fill in as many details as possible. The more details the easier it is for other to discover this entry.<br>Include additional points of contact, related screenshots and attributes</h3>'
+					html: '<h1>3. Additional Details:</h1><h3>Fill in as many details as possible. The more details the easier it is for others to discover this entry.<br>Include additional points of contact, related screenshots and attributes</h3>'
 				},
 				{
 					xtype: 'panel',
@@ -1309,7 +1309,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,
 								proxy: {
-									type: 'ajax'							
+									type: 'ajax',
+									url: ''
 								}
 							}),
 							forceFit: true,
@@ -1467,15 +1468,19 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',											
+											text: 'Remove',	
+											itemId: 'removeBtn',
 											iconCls: 'fa fa-trash',
 											disabled: true,
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
 													idField: 'type',
-													entity: 'attributes',
-													subEntity: 'code'
+													entity: 'attributes',													
+													subEntityId: 'code',
+													successFunc: function(reponse, opt) {
+														submissionPanel.loadComponentAttributes();
+													}
 												});
 											}
 										}								
