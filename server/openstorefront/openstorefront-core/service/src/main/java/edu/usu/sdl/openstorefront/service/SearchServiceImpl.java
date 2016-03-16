@@ -53,9 +53,13 @@ import edu.usu.sdl.openstorefront.service.search.AttributeSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.BaseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ComponentSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ContactSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.EvaluationScoreSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
 import edu.usu.sdl.openstorefront.service.search.MetaDataSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.QuestionResponseSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.QuestionSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.ReviewProConSeatchHandler;
 import edu.usu.sdl.openstorefront.service.search.ReviewSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
 import edu.usu.sdl.openstorefront.service.search.TagSearchHandler;
@@ -420,6 +424,19 @@ public class SearchServiceImpl
 				case USER_RATING:
 					handlers.add(new UserRatingSearchHandler(searchElements));
 					break;
+				case EVALUTATION_SCORE: 
+					handlers.add(new EvaluationScoreSearchHandler(searchElements));
+					break;
+				case QUESTION: 
+					handlers.add(new QuestionSearchHandler(searchElements));
+					break;					
+				case QUESTION_RESPONSE: 
+					handlers.add(new QuestionResponseSearchHandler(searchElements));
+					break;
+				case REVIEWCON: 
+				case REVIEWPRO: 
+					handlers.add(new ReviewProConSeatchHandler(searchElements));
+					break;					
 				default:
 					throw new OpenStorefrontRuntimeException("No handler defined for Search Type: " + searchType, "Add support; programming error");
 			}

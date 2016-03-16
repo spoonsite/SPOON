@@ -41,6 +41,7 @@ import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.entity.UserSavedSearch;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
@@ -954,6 +955,22 @@ public class UserServiceImpl
 				}
 			}
 		}
+	}
+
+	@Override
+	public UserSavedSearch saveUserSearch(UserSavedSearch userSavedSearch)
+	{
+		UserSavedSearch existing = persistenceService.findById(UserSavedSearch.class, userSavedSearch.getSearchName());
+		if (existing != null) {
+			existing.updateFields(userSavedSearch);
+			existing = persistenceService.persist(existing);
+		} else {
+			userSavedSearch.setUserSearchId(persistenceService.generateId());			
+			userSavedSearch.populateBaseCreateFields();
+			existing = persistenceService.persist(userSavedSearch);
+		}
+		
+		return existing;
 	}
 
 }
