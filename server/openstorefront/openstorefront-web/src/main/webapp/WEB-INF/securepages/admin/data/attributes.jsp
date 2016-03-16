@@ -939,6 +939,7 @@
 									margin: '30px'
 								},
 								title: 'Required for entry types (click plus icon to add)',
+								name: 'typesRequiredFor',
 								fieldName: 'description',
 								fieldTitle: 'Entry Type',
 								viewConfig: {
@@ -984,6 +985,15 @@
 												var data = {};
 												data.attributeType = formData;
 
+												var restrictedTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().getData().getValues('code','data');
+
+												data.componentTypeRestrictions = [];
+												
+												Ext.Array.each(restrictedTypes, function(type) {
+													data.componentTypeRestrictions.push({
+														componentType: type
+													});		
+												});
 
 												CoreUtil.submitForm({
 													url: url,
