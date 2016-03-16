@@ -288,6 +288,7 @@
 
 
 			var actionEditAttribute = function actionEditAttribute(record) {
+				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 				var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore()
 				var searchList = Ext.getCmp('editAttributeForm-typesRequiredFor').getSearch();
@@ -855,7 +856,7 @@
 								typeAhead: false,
 								editable: false,
 								value: '',
-								name: 'defaultCode',
+								name: 'defaultAttributeCode',
 								hidden: true
 							},
 							{
