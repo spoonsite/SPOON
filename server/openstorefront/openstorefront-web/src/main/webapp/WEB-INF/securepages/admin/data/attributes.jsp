@@ -289,6 +289,16 @@
 
 			var actionEditAttribute = function actionEditAttribute(record) {
 				Ext.getCmp('editAttributeForm').loadRecord(record);
+				var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore()
+				var searchList = Ext.getCmp('editAttributeForm-typesRequiredFor').getSearch();
+
+				var searchStore = Ext.getStore('requiredTypesSearchStore');
+				// Search the searchStore for the record matching the given code,
+				// that way we can display the name of the entry type rather than
+				// just the code.
+				Ext.Array.each(record.requiredRestrictions, function(type) {
+					requiredEntryTypes.add(searchStore.getData().getValues('code', type));
+				});
 				editAttributeWin.edit = true;
 				editAttributeWin.setTitle('Edit Attribute - ' + record.data.attributeType);
 				editAttributeWin.show();
@@ -951,10 +961,12 @@
 									field: 'description',
 									flex: 1,
 									store: {
+										id: 'requiredTypesSearchStore',
 										proxy: {
 											type: 'ajax',
 											url: '../api/v1/resource/componenttypes/lookup'												
-										}
+										},
+										autoLoad: true
 									}
 								}
 							}
