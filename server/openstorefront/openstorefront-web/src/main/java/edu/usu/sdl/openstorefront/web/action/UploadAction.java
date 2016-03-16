@@ -30,8 +30,8 @@ import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.io.parser.BaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
+import edu.usu.sdl.openstorefront.service.io.parser.OldBaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import java.io.File;
@@ -166,7 +166,7 @@ public class UploadAction
 		return handleAttributeUpload(new MainAttributeParser());
 	}
 
-	private Resolution handleAttributeUpload(BaseAttributeParser parser)
+	private Resolution handleAttributeUpload(OldBaseAttributeParser parser)
 	{
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
@@ -192,13 +192,11 @@ public class UploadAction
 						errors.put("uploadFile", "Format not supported.  Requires a CSV text file.");
 					}
 				}
-			} else {
-				if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
+			} else if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
 
-					bestGuessContentType = getContext().getServletContext().getMimeType(uploadFile.getFileName());
-					if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
-						errors.put("uploadFile", "Format not supported.  Requires a JSON text file.");
-					}
+				bestGuessContentType = getContext().getServletContext().getMimeType(uploadFile.getFileName());
+				if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
+					errors.put("uploadFile", "Format not supported.  Requires a JSON text file.");
 				}
 			}
 

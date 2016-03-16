@@ -37,7 +37,7 @@ limitations under the License.
 			
 			var pageMap = [];
 			pageMap['Articles'] = '/openstorefront/admin?tool=Articles';
-			pageMap['Attributes'] = '/openstorefront/admin?tool=Attributes';
+			pageMap['Attributes'] = 'Router.action?page=admin/data/attributes.jsp';
 			pageMap['Dashboard'] = 'Router.action?page=admin/adminDashboard.jsp';
 			pageMap['Entries'] = 'Router.action?page=admin/data/components.jsp';
 			pageMap['EntriesOld'] = '/openstorefront/admin?tool=Entries';

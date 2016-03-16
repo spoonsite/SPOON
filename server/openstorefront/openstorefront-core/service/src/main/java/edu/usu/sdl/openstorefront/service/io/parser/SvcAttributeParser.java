@@ -33,7 +33,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author dshurtleff
  */
 public class SvcAttributeParser
-		extends BaseAttributeParser
+		extends OldBaseAttributeParser
 {
 
 	private static final Logger log = Logger.getLogger(SvcAttributeParser.class.getName());
