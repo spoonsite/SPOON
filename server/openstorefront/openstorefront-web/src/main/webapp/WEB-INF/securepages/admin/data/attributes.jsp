@@ -283,6 +283,7 @@
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
 				Ext.getCmp('editAttributeForm-hideOnSubmission').disable();
+				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
 			};
 
 
@@ -944,7 +945,7 @@
 								fieldTitle: 'Entry Type',
 								viewConfig: {
 									deferEmptyText: false,
-									emptyText: 'No entry types selected'
+									emptyText: 'No entry types selected. If no entry type is selected, all entries will require this attribute.'
 								},
 								search: {
 									field: 'description',
