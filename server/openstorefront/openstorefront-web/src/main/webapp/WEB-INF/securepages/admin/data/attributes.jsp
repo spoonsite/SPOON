@@ -985,15 +985,17 @@
 												var data = {};
 												data.attributeType = formData;
 
-												var restrictedTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().getData().getValues('code','data');
+												if (formData.requiredFlg) {
+													var restrictedTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().getData().getValues('code','data');
 
-												data.componentTypeRestrictions = [];
-												
-												Ext.Array.each(restrictedTypes, function(type) {
-													data.componentTypeRestrictions.push({
-														componentType: type
-													});		
-												});
+													data.componentTypeRestrictions = [];
+
+													Ext.Array.each(restrictedTypes, function(type) {
+														data.componentTypeRestrictions.push({
+															componentType: type
+														});		
+													});
+												}
 
 												CoreUtil.submitForm({
 													url: url,
