@@ -36,7 +36,7 @@ public class Convert
 
 	/**
 	 * Converts an object to a boolean It's meant for handling different string
-	 * representation
+	 * representations
 	 *
 	 * @param data
 	 * @return

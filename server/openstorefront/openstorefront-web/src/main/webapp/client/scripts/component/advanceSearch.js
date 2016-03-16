@@ -921,7 +921,527 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 						}						
 					]
 				})
-			}		
+			},
+			{
+				searchType: 'REVIEWPRO',
+				label: 'User Review Pro',
+				options: Ext.create('Ext.panel.Panel', {
+					disabled: true,
+					defaults: {
+						labelAlign: 'top',
+						labelSeparator: ''
+					},	
+					items: [
+						{
+							xtype: 'textfield',
+							itemId: 'value',
+							name: 'value',
+							width: '100%',
+							fieldLabel: 'Value <span class="field-required" />',
+							allowBlank: false,
+							maxLength: 1024
+						},
+						{
+							xtype: 'checkbox',
+							name: 'caseInsensitive',
+							boxLabel: 'Case Insensitive'
+						},
+						{								
+							xtype: 'combobox',
+							itemId: 'stringOperation',
+							width: '100%',
+							name: 'stringOperation',
+							fieldLabel: 'String Operation',
+							queryMode: 'local',
+							displayField: 'description',
+							valueField: 'code',
+							value: 'EQUALS',					
+							editable: false,
+							store: {
+								data: [
+									{
+										code: 'EQUALS',
+										description: 'Equals'
+									},
+									{
+										code: 'STARTS_LIKE',
+										description: 'Starts Like'
+									},
+									{
+										code: 'ENDS_LIKE',
+										description: 'Ends Like'
+									},
+									{
+										code: 'CONTAINS',
+										description: 'Contains'
+									}							
+								]
+							}					
+						}
+					]
+				})
+			},
+			{
+				searchType: 'REVIECON',
+				label: 'User Review Con',
+				options: Ext.create('Ext.panel.Panel', {
+					disabled: true,
+					defaults: {
+						labelAlign: 'top',
+						labelSeparator: ''
+					},	
+					items: [
+						{
+							xtype: 'textfield',
+							itemId: 'value',
+							name: 'value',
+							width: '100%',
+							fieldLabel: 'Value <span class="field-required" />',
+							allowBlank: false,
+							maxLength: 1024
+						},
+						{
+							xtype: 'checkbox',
+							name: 'caseInsensitive',
+							boxLabel: 'Case Insensitive'
+						},
+						{								
+							xtype: 'combobox',
+							itemId: 'stringOperation',
+							width: '100%',
+							name: 'stringOperation',
+							fieldLabel: 'String Operation',
+							queryMode: 'local',
+							displayField: 'description',
+							valueField: 'code',
+							value: 'EQUALS',					
+							editable: false,
+							store: {
+								data: [
+									{
+										code: 'EQUALS',
+										description: 'Equals'
+									},
+									{
+										code: 'STARTS_LIKE',
+										description: 'Starts Like'
+									},
+									{
+										code: 'ENDS_LIKE',
+										description: 'Ends Like'
+									},
+									{
+										code: 'CONTAINS',
+										description: 'Contains'
+									}							
+								]
+							}					
+						}
+					]
+				})
+			},
+			{
+				searchType: 'QUESTION',
+				label: 'Question',
+				options: Ext.create('Ext.panel.Panel', {
+					disabled: true,
+					defaults: {
+						labelAlign: 'top',
+						labelSeparator: ''
+					},	
+					items: [
+						{
+							xtype: 'combobox', 
+							itemId: 'field',
+							width: '100%',
+							name: 'field',
+							fieldLabel: 'Field <span class="field-required" />',
+							allowBlank: false,
+							editable: false,
+							displayField: 'label',
+							valueField: 'code',					
+							store: {
+								data: [
+									{code: 'userTypeCode', label: 'User Type'},
+									{code: 'question', label: 'Question'},
+									{code: 'organization', label: 'Organization'},
+									{code: 'createDts', label: 'Post Date'},
+									{code: 'createUser', label: 'User'}
+								]
+							},
+							listeners: {
+								change: function(cb, newValue, oldValue, opt) {
+									var optionPanel = cb.up('panel');
+									
+									optionPanel.getComponent('userTypeCode').setHidden(true);
+									optionPanel.getComponent('userTypeCode').setDisabled(true);	
+									optionPanel.getComponent('startDate').setHidden(true);
+									optionPanel.getComponent('startDate').setDisabled(true);										
+									optionPanel.getComponent('endDate').setHidden(true);
+									optionPanel.getComponent('endDate').setDisabled(true);	
+									
+									optionPanel.getComponent('value').setHidden(false);
+									optionPanel.getComponent('value').setDisabled(false);
+									optionPanel.getComponent('stringOperation').setHidden(false);
+									optionPanel.getComponent('stringOperation').setDisabled(false);	
+									optionPanel.getComponent('caseInsensitive').setHidden(false);
+									optionPanel.getComponent('caseInsensitive').setDisabled(false);										
+									
+									if (newValue === 'userTypeCode') {
+										optionPanel.getComponent('userTypeCode').setHidden(false);
+										optionPanel.getComponent('userTypeCode').setDisabled(false);									
+									} 								
+									if ( newValue === 'createDts') {
+										optionPanel.getComponent('startDate').setHidden(false);
+										optionPanel.getComponent('startDate').setDisabled(false);
+										optionPanel.getComponent('endDate').setHidden(false);
+										optionPanel.getComponent('endDate').setDisabled(false);										
+									}									
+																		
+									if (newValue === 'userTypeCode' ||									
+										newValue === 'createDts') 
+									{
+										optionPanel.getComponent('value').setHidden(true);
+										optionPanel.getComponent('value').setDisabled(true);
+										optionPanel.getComponent('stringOperation').setHidden(true);
+										optionPanel.getComponent('stringOperation').setDisabled(true);
+										optionPanel.getComponent('caseInsensitive').setHidden(true);
+										optionPanel.getComponent('caseInsensitive').setDisabled(true);	
+									}
+								}
+							}
+						},
+						{
+							xtype: 'textfield',
+							itemId: 'value',
+							name: 'value',
+							width: '100%',
+							fieldLabel: 'Value  <span class="field-required" />',
+							allowBlank: false,
+							maxLength: 1024
+						},	
+						{
+							xtype: 'combobox', 
+							itemId: 'userTypeCode',
+							width: '100%',
+							name: 'value',
+							fieldLabel: 'Value <span class="field-required" />',
+							allowBlank: false,
+							editable: false,
+							disabled: true,
+							hidden: true,
+							displayField: 'description',
+							valueField: 'code',					
+							queryMode: 'remote',
+							store: {
+								proxy: {
+									type: 'ajax',
+									url: '../api/v1/resource/lookuptypes/UserTypeCode'									
+								}
+							}							
+						},
+						{
+							xtype: 'datefield',
+							itemId: 'startDate',
+							name: 'startDate',
+							allowBlank: false,
+							disabled: true,
+							hidden: true,								
+							width: '100%',
+							fieldLabel: 'Start Date <span class="field-required" />'					
+						},						
+						{
+							xtype: 'datefield',
+							itemId: 'endDate',
+							name: 'endDate',
+							allowBlank: false,
+							width: '100%',
+							disabled: true,
+							hidden: true,							
+							fieldLabel: 'End Date <span class="field-required" />'					
+						},	
+						{
+							xtype: 'checkbox',
+							itemId: 'caseInsensitive',
+							name: 'caseInsensitive',
+							boxLabel: 'Case Insensitive'
+						},						
+						{								
+							xtype: 'combobox',
+							itemId: 'stringOperation',
+							width: '100%',
+							name: 'stringOperation',
+							fieldLabel: 'String Operation',
+							queryMode: 'local',
+							displayField: 'description',
+							valueField: 'code',
+							value: 'EQUALS',					
+							editable: false,
+							store: {
+								data: [
+									{
+										code: 'EQUALS',
+										description: 'Equals'
+									},
+									{
+										code: 'STARTS_LIKE',
+										description: 'Starts Like'
+									},
+									{
+										code: 'ENDS_LIKE',
+										description: 'Ends Like'
+									},
+									{
+										code: 'CONTAINS',
+										description: 'Contains'
+									}							
+								]
+							}					
+						}						
+					]
+				})
+			},
+			{
+				searchType: 'QUESTION_RESPONSE',
+				label: 'Question Response',
+				options: Ext.create('Ext.panel.Panel', {
+					disabled: true,
+					defaults: {
+						labelAlign: 'top',
+						labelSeparator: ''
+					},	
+					items: [
+						{
+							xtype: 'combobox', 
+							itemId: 'field',
+							width: '100%',
+							name: 'field',
+							fieldLabel: 'Field <span class="field-required" />',
+							allowBlank: false,
+							editable: false,
+							displayField: 'label',
+							valueField: 'code',					
+							store: {
+								data: [
+									{code: 'userTypeCode', label: 'User Type'},
+									{code: 'response', label: 'Response'},
+									{code: 'organization', label: 'Organization'},
+									{code: 'createDts', label: 'Post Date'},
+									{code: 'createUser', label: 'User'}
+								]
+							},
+							listeners: {
+								change: function(cb, newValue, oldValue, opt) {
+									var optionPanel = cb.up('panel');
+									
+									optionPanel.getComponent('userTypeCode').setHidden(true);
+									optionPanel.getComponent('userTypeCode').setDisabled(true);	
+									optionPanel.getComponent('startDate').setHidden(true);
+									optionPanel.getComponent('startDate').setDisabled(true);										
+									optionPanel.getComponent('endDate').setHidden(true);
+									optionPanel.getComponent('endDate').setDisabled(true);	
+									
+									optionPanel.getComponent('value').setHidden(false);
+									optionPanel.getComponent('value').setDisabled(false);
+									optionPanel.getComponent('stringOperation').setHidden(false);
+									optionPanel.getComponent('stringOperation').setDisabled(false);	
+									optionPanel.getComponent('caseInsensitive').setHidden(false);
+									optionPanel.getComponent('caseInsensitive').setDisabled(false);										
+									
+									if (newValue === 'userTypeCode') {
+										optionPanel.getComponent('userTypeCode').setHidden(false);
+										optionPanel.getComponent('userTypeCode').setDisabled(false);									
+									} 								
+									if ( newValue === 'createDts') {
+										optionPanel.getComponent('startDate').setHidden(false);
+										optionPanel.getComponent('startDate').setDisabled(false);
+										optionPanel.getComponent('endDate').setHidden(false);
+										optionPanel.getComponent('endDate').setDisabled(false);										
+									}									
+																		
+									if (newValue === 'userTypeCode' ||									
+										newValue === 'createDts') 
+									{
+										optionPanel.getComponent('value').setHidden(true);
+										optionPanel.getComponent('value').setDisabled(true);
+										optionPanel.getComponent('stringOperation').setHidden(true);
+										optionPanel.getComponent('stringOperation').setDisabled(true);
+										optionPanel.getComponent('caseInsensitive').setHidden(true);
+										optionPanel.getComponent('caseInsensitive').setDisabled(true);	
+									}
+								}
+							}
+						},
+						{
+							xtype: 'textfield',
+							itemId: 'value',
+							name: 'value',
+							width: '100%',
+							fieldLabel: 'Value  <span class="field-required" />',
+							allowBlank: false,
+							maxLength: 1024
+						},	
+						{
+							xtype: 'combobox', 
+							itemId: 'userTypeCode',
+							width: '100%',
+							name: 'value',
+							fieldLabel: 'Value <span class="field-required" />',
+							allowBlank: false,
+							editable: false,
+							disabled: true,
+							hidden: true,
+							displayField: 'description',
+							valueField: 'code',					
+							queryMode: 'remote',
+							store: {
+								proxy: {
+									type: 'ajax',
+									url: '../api/v1/resource/lookuptypes/UserTypeCode'									
+								}
+							}							
+						},
+						{
+							xtype: 'datefield',
+							itemId: 'startDate',
+							name: 'startDate',
+							allowBlank: false,
+							disabled: true,
+							hidden: true,								
+							width: '100%',
+							fieldLabel: 'Start Date <span class="field-required" />'					
+						},						
+						{
+							xtype: 'datefield',
+							itemId: 'endDate',
+							name: 'endDate',
+							allowBlank: false,
+							width: '100%',
+							disabled: true,
+							hidden: true,							
+							fieldLabel: 'End Date <span class="field-required" />'					
+						},	
+						{
+							xtype: 'checkbox',
+							itemId: 'caseInsensitive',
+							name: 'caseInsensitive',
+							boxLabel: 'Case Insensitive'
+						},						
+						{								
+							xtype: 'combobox',
+							itemId: 'stringOperation',
+							width: '100%',
+							name: 'stringOperation',
+							fieldLabel: 'String Operation',
+							queryMode: 'local',
+							displayField: 'description',
+							valueField: 'code',
+							value: 'EQUALS',					
+							editable: false,
+							store: {
+								data: [
+									{
+										code: 'EQUALS',
+										description: 'Equals'
+									},
+									{
+										code: 'STARTS_LIKE',
+										description: 'Starts Like'
+									},
+									{
+										code: 'ENDS_LIKE',
+										description: 'Ends Like'
+									},
+									{
+										code: 'CONTAINS',
+										description: 'Contains'
+									}							
+								]
+							}					
+						}						
+					]
+				})
+			},
+			{
+				searchType: 'EVALUTATION_SCORE',
+				label: 'Evaluation Score',
+				options: Ext.create('Ext.panel.Panel', {
+					disabled: true,
+					defaults: {
+						labelAlign: 'top',
+						labelSeparator: ''
+					},	
+					items: [
+						{
+							xtype: 'combobox', 
+							itemId: 'evaluationSection',
+							width: '100%',
+							name: 'keyField',
+							fieldLabel: 'Section <span class="field-required" />',
+							allowBlank: false,	
+							editable: false,
+							displayField: 'description',
+							valueField: 'code',					
+							queryMode: 'remote',
+							store: {
+								proxy: {
+									type: 'ajax',
+									url: '../api/v1/resource/lookuptypes/EvaluationSection'									
+								}
+							}							
+						},
+						{
+							xtype: 'numberfield',
+							itemId: 'value',
+							name: 'value',
+							width: '100%',
+							fieldLabel: 'Value  <span class="field-required" />',
+							allowBlank: false,
+							allowDecimal: true,
+							maxValue: 5,
+							minValue: 0,
+							maxLength: 1
+						},
+						{								
+							xtype: 'combobox',
+							itemId: 'numberOperation',
+							width: '100%',
+							name: 'numberOperation',
+							fieldLabel: 'Number Operation',
+							queryMode: 'local',
+							displayField: 'description',
+							valueField: 'code',
+							value: 'EQUALS',					
+							editable: false,
+							store: {
+								data: [
+									{
+										code: 'EQUALS',
+										description: '='
+									},
+									{
+										code: 'GREATERTHAN',
+										description: '>'
+									},
+									{
+										code: 'GREATERTHANEQUALS',
+										description: '>='
+									},
+									{
+										code: 'LESSTHAN',
+										description: '<'
+									},
+									{
+										code: 'LESSTHANEQUALS',
+										description: '<='
+									}							
+								]
+							}					
+						}						
+					]
+				})
+			}			
+						
 		];
 				
 		advancePanel.entryForm = Ext.create('Ext.form.Panel', {
@@ -931,7 +1451,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 			defaults: {
 				labelAlign: 'top',
 				labelSeparator: ''
-			},
+			},			
 			items: [
 				{
 					xtype: 'combobox',
@@ -991,47 +1511,86 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}							
 						]
 					}					
-				},
+				}, 
 				{
-					xtype: 'button',
-					formBind: true,
-					text: 'Add',
-					iconCls: 'fa fa-plus',
-					handler: function() {						
-						var data = advancePanel.entryForm.getValues();						
-						data.typeDescription = advancePanel.entryForm.getComponent('searchType').getSelection().data.label;
-						if(data.startDate) {
-							data.startDate = Ext.Date.parse(data.startDate, 'm/d/Y');
-							data.startDate = Ext.Date.format(data.startDate, 'Y-m-d\\TH:i:s.u');
+					xtype: 'panel',
+					itemId: 'buttonPanel',
+					layout: 'hbox',
+					items: [
+						{
+							xtype: 'button',
+							itemId: 'saveButton',
+							formBind: true,
+							text: 'Add',
+							iconCls: 'fa fa-plus',
+							handler: function() {
+								var saveButton = this;
+								var data = advancePanel.entryForm.getValues();						
+								data.typeDescription = advancePanel.entryForm.getComponent('searchType').getSelection().data.label;
+								if(data.startDate) {
+									data.startDate = Ext.Date.parse(data.startDate, 'm/d/Y');
+									data.startDate = Ext.Date.format(data.startDate, 'Y-m-d\\TH:i:s.u');
+								}
+								if(data.endDate) {
+									data.endDate = Ext.Date.parse(data.endDate, 'm/d/Y');
+									data.endDate = Ext.Date.add(data.endDate, Ext.Date.DAY, 1);
+									data.endDate = Ext.Date.subtract(data.endDate, Ext.Date.MILLI, 1);
+									data.endDate = Ext.Date.format(data.endDate, 'Y-m-d\\TH:i:s.u');
+								}
+
+								var search = {
+									searchElements: [
+										data
+									]
+								};
+
+								CoreUtil.submitForm({
+									url: '../api/v1/service/search/advance',
+									method: 'POST',
+									data: search,
+									form: advancePanel.entryForm,
+									loadingText: 'Adding Search Criteria...',
+									success: function(response, opts) {
+										advancePanel.entryForm.reset();
+										saveButton.setText('Add');
+										var grid = advancePanel.entryForm.getComponent('searchGrid');
+										if (advancePanel.entryForm.updateRecord) {
+											grid.getStore().remove(advancePanel.entryForm.updateRecord);								
+										}
+										grid.getStore().add(data);								
+									},
+									failure: function(response, opts) {
+										var errorResponse = Ext.decode(response.responseText);
+										var errorMessage = '';
+										Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+											errorMessage += '<b>' + item.key + ': </b> ' + item.value + '<br>';									
+										});
+										Ext.Msg.show({
+											title:'Validation',
+											message: errorMessage,
+											buttons: Ext.Msg.OK,
+											icon: Ext.Msg.ERROR,
+											fn: function(btn) {
+											}
+										});								
+									}
+								});
+
+							}			
 						}
-						if(data.endDate) {
-							data.endDate = Ext.Date.parse(data.endDate, 'm/d/Y');
-							data.endDate = Ext.Date.add(data.endDate, Ext.Date.DAY, 1);
-							data.endDate = Ext.Date.subtract(data.endDate, Ext.Date.MILLI, 1);
-							data.endDate = Ext.Date.format(data.endDate, 'Y-m-d\\TH:i:s.u');
-						}
-				
-						var search = {
-							searchElements: [
-								data
-							]
-						};
-												
-						CoreUtil.submitForm({
-							url: '../api/v1/service/search/advance',
-							method: 'POST',
-							data: search,
-							form: advancePanel.entryForm,
-							loadingText: 'Adding Search Criteria...',
-							success: function(response, opts) {
-								advancePanel.entryForm.reset();
-								var grid = advancePanel.entryForm.getComponent('searchGrid');
-								grid.getStore().add(data);
-							}
-						});
-						
-					}
-				},
+//						{
+//							xtype: 'button',
+//							text: 'Cancel',							
+//							iconCls: 'fa fa-close',
+//							margin: '0 0 0 20',
+//							handler: function() {
+//								advancePanel.entryForm.reset();
+//								advancePanel.entryForm.updateRecord = null;
+//								advancePanel.entryForm.get('buttonPanel').getComponent('saveButton').setText('Add');
+//							}
+//						}						
+					]
+				},				
 				{
 					xtype: 'grid',
 					itemId: 'searchGrid',
@@ -1087,12 +1646,40 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							xtype:'actioncolumn',
 							width: 50,
 							items: [
+//								{
+//									iconCls: 'fa fa-edit action-icon',
+//									tooltip: 'Edit',									
+//									handler: function(grid, rowIndex, colIndex) {
+//										var rec = grid.getStore().getAt(rowIndex);
+//										advancePanel.entryForm.updateRecord = rec;
+//										
+//										//manually set
+//										advancePanel.entryForm.getComponent('searchType').setValue(rec.get('searchType'));
+//										
+//										//The rest is tricky since it's not normalized
+//										
+//										//change button to update
+//										advancePanel.entryForm.get('buttonPanel').getComponent('saveButton').setText('Update');										
+//										
+//									}									
+//								},
 								{
 									iconCls: 'fa fa-trash action-icon',
 									tooltip: 'Remove',									
 									handler: function(grid, rowIndex, colIndex) {
 										var rec = grid.getStore().getAt(rowIndex);
-										grid.getStore().removeAt(rowIndex);
+										
+										Ext.Msg.show({
+											title:'Remove?',
+											message: 'Remove search criteria?',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+													grid.getStore().removeAt(rowIndex);
+												} 
+											}
+										});																				
 									}
 								}
 							]
@@ -1126,9 +1713,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 			var search = {
 				sortField: 'name',
                 sortDirection: 'ASC',
-				searchElements: [
-					searchElements
-				]
+				searchElements: searchElements
 			};
 			
 			return search;
@@ -1163,7 +1748,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				sorters: [
 					new Ext.util.Sorter({
 						property: 'name',
-						direction: 'DESC'
+						direction: 'ASC'
 					})
 				],
 				proxy: CoreUtil.pagingProxy({

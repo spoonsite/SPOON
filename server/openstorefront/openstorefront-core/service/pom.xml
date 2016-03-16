@@ -188,6 +188,12 @@
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-server</artifactId>
 			<version>${orientdb.verison}</version>
+		 <exclusions>
+		  <exclusion>
+		   <groupId>javax.mail</groupId>
+		   <artifactId>mail</artifactId>
+		  </exclusion>
+		 </exclusions>
 		</dependency>	
 		  
 		<dependency>
