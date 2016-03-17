@@ -45,7 +45,7 @@ public class MetaDataSearchHandler
 
 		for (SearchElement searchElement : searchElements) {
 			if (StringUtils.isBlank(searchElement.getKeyField())) {
-				validationResult.getRuleResults().add(getRuleResult("keyfield", "Required"));
+				validationResult.getRuleResults().add(getRuleResult("keyField", "Required"));
 			}
 		}
 
@@ -60,6 +60,8 @@ public class MetaDataSearchHandler
 		for (SearchElement searchElement : searchElements) {
 
 			ComponentMetadata componentMetadata = new ComponentMetadata();
+			componentMetadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
+			
 			QueryByExample queryByExample = new QueryByExample(componentMetadata);
 
 			String label = searchElement.getKeyField();

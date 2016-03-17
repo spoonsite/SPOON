@@ -267,8 +267,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							itemId: 'keyValue',
 							width: '100%',
 							name: 'keyValue',
-							fieldLabel: 'Specific Category <span class="field-required" />',
-							allowBlank: false,
+							fieldLabel: 'Specific Category',
 							editable: false,
 							displayField: 'label',
 							valueField: 'code',	
@@ -350,21 +349,12 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							itemId: 'keyValue',
 							width: '100%',
 							name: 'keyValue',
-							fieldLabel: 'Category <span class="field-required" />',
-							allowBlank: false,
+							fieldLabel: 'Category',						
 							editable: false,
 							displayField: 'label',
-							valueField: 'code',	
+							valueField: 'architectureCode',	
 							queryMode: 'local',
-							store: {
-								fields: [
-									{
-										name: 'code',
-										mapping: function(data) {
-											return data.attributeCodePk.attributeCode;
-										}
-									}
-								],
+							store: {								
 								autoLoad: false,
 								proxy: {
 									type: 'ajax',
@@ -376,6 +366,38 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									}
 								}
 							}
+						},
+						{								
+							xtype: 'combobox',
+							itemId: 'stringOperation',
+							width: '100%',
+							name: 'stringOperation',
+							fieldLabel: 'String Operation',
+							queryMode: 'local',
+							displayField: 'description',
+							valueField: 'code',
+							value: 'EQUALS',					
+							editable: false,
+							store: {
+								data: [
+									{
+										code: 'EQUALS',
+										description: 'Equals'
+									},
+									{
+										code: 'STARTS_LIKE',
+										description: 'Starts Like'
+									},
+									{
+										code: 'ENDS_LIKE',
+										description: 'Ends Like'
+									},
+									{
+										code: 'CONTAINS',
+										description: 'Contains'
+									}							
+								]
+							}					
 						}						
 					]					
 				})
@@ -1471,9 +1493,11 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 					listeners: {
 						change: function(typeCB, newValue, oldValue, opts) {
 							var optionsPanel = advancePanel.entryForm.getComponent('options');
+							advancePanel.entryForm.getForm().clearInvalid();
 							optionsPanel.getLayout().getActiveItem().setDisabled(true);
 							optionsPanel.getLayout().setActiveItem(typeCB.getSelection().data.options);
 							optionsPanel.getLayout().getActiveItem().setDisabled(false);
+							advancePanel.entryForm.getForm().clearInvalid();							
 						}
 					}
 				},
@@ -1520,11 +1544,12 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 						{
 							xtype: 'button',
 							itemId: 'saveButton',
-							formBind: true,
+							//formBind: true,
 							text: 'Add',
 							iconCls: 'fa fa-plus',
 							handler: function() {
 								var saveButton = this;
+								
 								var data = advancePanel.entryForm.getValues();						
 								data.typeDescription = advancePanel.entryForm.getComponent('searchType').getSelection().data.label;
 								if(data.startDate) {
@@ -1641,7 +1666,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 								return options;
 							}							
 						},
-						{ text: 'Operation', dataIndex: 'mergeCondition', width: 200 },
+						{ text: 'Operation', align: 'center', dataIndex: 'mergeCondition', width: 200,
+							renderer: function(value, meta, record, rowIndex) {
+								if (rowIndex >= 1) {
+									return value;
+								} else {
+									return 'N/A';
+								}
+							}
+						},
 						{ 
 							xtype:'actioncolumn',
 							width: 50,

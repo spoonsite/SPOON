@@ -45,7 +45,7 @@ public class TagSearchHandler
 
 		for (SearchElement searchElement : searchElements) {
 			if (StringUtils.isBlank(searchElement.getValue())) {
-				validationResult.getRuleResults().add(getRuleResult("Value", "Required"));
+				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
 			}
 		}
 
@@ -60,6 +60,7 @@ public class TagSearchHandler
 		for (SearchElement searchElement : searchElements) {
 
 			ComponentTag componentTag = new ComponentTag();
+			componentTag.setActiveStatus(ComponentTag.ACTIVE_STATUS);			
 			QueryByExample queryByExample = new QueryByExample(componentTag);
 
 			String tagValue = searchElement.getValue();

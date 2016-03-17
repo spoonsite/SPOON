@@ -49,7 +49,7 @@ public class AttributeSearchHandler
 
 		for (SearchElement searchElement : searchElements) {
 			if (StringUtils.isBlank(searchElement.getKeyField())) {
-				validationResult.getRuleResults().add(getRuleResult("keyfield", "Required"));
+				validationResult.getRuleResults().add(getRuleResult("keyField", "Required"));
 			}
 		}
 
@@ -67,7 +67,8 @@ public class AttributeSearchHandler
 			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 			componentAttributePk.setAttributeType(searchElement.getKeyField());
 			componentAttribute.setComponentAttributePk(componentAttributePk);
-
+			componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+			
 			QueryByExample<ComponentAttribute> queryByExample = new QueryByExample(componentAttribute);
 
 			if (StringUtils.isNotBlank(searchElement.getField())) {

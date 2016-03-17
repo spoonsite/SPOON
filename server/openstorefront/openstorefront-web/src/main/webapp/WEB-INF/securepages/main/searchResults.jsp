@@ -398,13 +398,8 @@ limitations under the License.
 						displayField: 'label',
 						valueField: 'componentType',
 						storeConfig: {
-							url: '../api/v1/resource/componenttypes',
-							addRecords: [
-								{
-									componentType: null,
-									label: '*All*'
-								}
-							]							
+							autoLoad: false,
+							url: '../api/v1/resource/componenttypes'
 						},
 						listeners: {
 							change: function(field, newValue, oldValue, opts) {
@@ -744,9 +739,11 @@ limitations under the License.
 								}
 							}
 						});
+						
 						Ext.Object.each(stats, function(key, value, self) {
-							statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + value.type + '\');SearchPage.filterResults();">' + value.count + '</a></span> <b>'+ value.typeLabel + '(s)</b> '
+							statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + value.type + '\');SearchPage.filterResults();">' + value.count + '</a></span> <b>'+ value.typeLabel + '(s)</b> ';
 						});
+					
 					}
 
 					Ext.getCmp('searchStats').update(statLine);	
@@ -796,12 +793,35 @@ limitations under the License.
 						statLine = '';
 						var response = opts.getResponse();
 						var dataResponse = Ext.decode(response.responseText);
+						
 						Ext.Array.each(dataResponse.resultTypeStats, function(stat) {
-							statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + stat.componentType + '\');SearchPage.filterResults();">' + stat.count + '</a></span> <b>'+ stat.componentTypeDescription + '(s)</b> '	
+							statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + stat.componentType + '\');SearchPage.filterResults();">' + stat.count + '</a></span> <b>'+ stat.componentTypeDescription + '(s)</b> ';
 						});
+						
 					}
 					Ext.getCmp('searchStats').update(statLine);
 				}
+				
+				//add all topics found
+				var entryTypeInResults = [];
+				if (data.length > 0) {
+					entryTypeInResults.push({
+						label: '*All*',
+						componentType: null
+					});
+						
+					var response = opts.getResponse();
+					var dataResponse = Ext.decode(response.responseText);
+						
+					Ext.Array.each(dataResponse.resultTypeStats, function(stat) {
+						entryTypeInResults.push({
+							label: stat.componentTypeDescription,
+							componentType: stat.componentType
+						});					
+					});
+				}
+				Ext.getCmp('filterByType').getStore().removeAll();			
+				Ext.getCmp('filterByType').getStore().add(entryTypeInResults);
 				
 				//sorting Attributes
 				Ext.Array.each(data, function(dataItem) {

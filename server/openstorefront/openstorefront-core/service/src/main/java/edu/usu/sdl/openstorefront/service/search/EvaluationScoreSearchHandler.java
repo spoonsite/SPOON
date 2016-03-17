@@ -47,7 +47,7 @@ public class EvaluationScoreSearchHandler
 
 		for (SearchElement searchElement : searchElements) {
 			if (StringUtils.isBlank(searchElement.getKeyField())) {
-				validationResult.getRuleResults().add(getRuleResult("keyfield", "Required"));
+				validationResult.getRuleResults().add(getRuleResult("keyField", "Required"));
 			}
 			
 			if (StringUtils.isBlank(searchElement.getValue())) {
@@ -70,6 +70,8 @@ public class EvaluationScoreSearchHandler
 				ComponentEvaluationSectionPk evaluationSectionPk = new ComponentEvaluationSectionPk();
 				evaluationSectionPk.setEvaluationSection(searchElement.getKeyField());
 				evaluationSection.setComponentEvaluationSectionPk(evaluationSectionPk);
+				evaluationSection.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
+				
 				QueryByExample queryByExample = new QueryByExample(evaluationSection);
 
 				List<ComponentEvaluationSection> sections = serviceProxy.getPersistenceService().queryByExample(ComponentEvaluationSection.class, queryByExample);

@@ -67,10 +67,11 @@ public class ReviewProConSeatchHandler
 
 			if (SearchType.REVIEWPRO.equals(searchElement.getSearchType())) {
 				try {
-					ComponentReviewPro componentReviewPro = new ComponentReviewPro();
+					ComponentReviewPro componentReviewPro = new ComponentReviewPro();					
 					ComponentReviewProPk componentReviewProPk = new ComponentReviewProPk();
 					componentReviewPro.setComponentReviewProPk(componentReviewProPk);
-
+					componentReviewPro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
+					
 					QueryByExample queryByExample = new QueryByExample(componentReviewPro);
 
 					String likeValue = null;
@@ -118,7 +119,8 @@ public class ReviewProConSeatchHandler
 					ComponentReviewCon componentReviewCon = new ComponentReviewCon();
 					ComponentReviewConPk componentReviewConPk = new ComponentReviewConPk();
 					componentReviewCon.setComponentReviewConPk(componentReviewConPk);
-
+					componentReviewCon.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
+										
 					QueryByExample queryByExample = new QueryByExample(componentReviewCon);
 
 					String likeValue = null;

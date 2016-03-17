@@ -71,6 +71,8 @@ public class ContactSearchHandler
 		for (SearchElement searchElement : searchElements) {
 
 			ComponentContact componentContact = new ComponentContact();
+			componentContact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
+			
 			Field field = ReflectionUtil.getField(new ComponentContact(), searchElement.getField());
 			field.setAccessible(true);
 			QueryByExample queryByExample = new QueryByExample(componentContact);

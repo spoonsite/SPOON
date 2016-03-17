@@ -95,6 +95,8 @@ public class QuestionSearchHandler
 
 			try {
 				ComponentQuestion componentQuestion = new ComponentQuestion();
+				componentQuestion.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+				
 				Field field = ReflectionUtil.getField(new ComponentQuestion(), searchElement.getField());
 				field.setAccessible(true);
 				QueryByExample queryByExample = new QueryByExample(componentQuestion);

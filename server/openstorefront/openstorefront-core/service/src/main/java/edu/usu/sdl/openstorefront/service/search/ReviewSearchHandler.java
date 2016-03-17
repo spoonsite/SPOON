@@ -95,6 +95,8 @@ public class ReviewSearchHandler
 
 			try {
 				ComponentReview componentReview = new ComponentReview();
+				componentReview.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+				
 				Field field = ReflectionUtil.getField(new ComponentReview(), searchElement.getField());
 				field.setAccessible(true);
 				QueryByExample queryByExample = new QueryByExample(componentReview);
