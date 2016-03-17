@@ -36,6 +36,7 @@ public class CSVReader
 	public String[] nextRecord()
 	{
 		try {
+			currentRecordNumber++;
 			return reader.readNext();
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
