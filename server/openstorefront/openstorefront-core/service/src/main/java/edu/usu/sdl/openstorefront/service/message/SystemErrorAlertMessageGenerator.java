@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
-import org.codemonkey.simplejavamail.Email;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  *

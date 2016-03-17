@@ -38,8 +38,9 @@ limitations under the License.
 			
 			var pageMap = [];
 			pageMap['UserProfile'] = 'Router.action?page=user/userProfile.jsp';
-			pageMap['Watches'] = '/openstorefront/tools?tool=Watches';
-			pageMap['Reviews'] = '/openstorefront/tools?tool=Component%20Reviews';
+			pageMap['Watches'] = 'Router.action?page=user/watches.jsp';
+			pageMap['Reviews'] = 'Router.action?page=user/reviews.jsp';
+			pageMap['Questions'] = 'Router.action?page=user/questions.jsp';
 			pageMap['Submissions'] = 'Router.action?page=user/submissionManagement.jsp';
 			pageMap['Reports'] = 'Router.action?page=shared/reports.jsp';
 
@@ -56,8 +57,14 @@ limitations under the License.
 				text: 'Reviews',
 				handler: function(){
 					actionLoadContent('Reviews');
+				}				
+			});	
+			toolsMenu.push({
+				text: 'Questions',
+				handler: function(){
+					actionLoadContent('Questions');
 				}
-			});			
+			});				
 			toolsMenu.push({
 				text: 'Reports',
 				handler: function(){
@@ -70,6 +77,9 @@ limitations under the License.
 
 			var feedbackWin = Ext.create('OSF.component.FeedbackWindow',{				
 			});
+			
+			var helpWin = Ext.create('OSF.component.HelpWindow', {				
+			});			
 
 			Ext.create('Ext.container.Viewport', {
 				layout: 'border',
@@ -149,8 +159,9 @@ limitations under the License.
 											{
 												text: '<b>Help</b>',
 												iconCls: 'fa fa-question-circle',
-												href: '../help',
-												hrefTarget: '_blank'
+												handler: function() {
+													helpWin.show();
+												}
 											},
 											{
 												text: '<b>Feedback / issues</b>',

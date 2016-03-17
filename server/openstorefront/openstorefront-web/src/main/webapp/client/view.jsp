@@ -21,25 +21,32 @@ limitations under the License.
 	<script src="scripts/component/templateBlocks.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/mediaViewer.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/relationshipVisualization.js?v=${appVersion}" type="text/javascript"></script>		
-		
+	<script src="scripts/component/reviewWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/questionWindow.js?v=${appVersion}" type="text/javascript"></script>
+	
 	<div style="display:none; visibility: hidden;" id="templateHolder"></div>	
 		
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */	
 		
 		var DetailPage = {
-			showRelatedWindow: function(attributeType, attributeCode, description) {
+			showRelatedWindow: function(attributeType, attributeCode, description, vitalType, tip) {
 				DetailPage.relatedWindow.show();
-				DetailPage.relatedWindow.setTitle('Related Entries - ' + description);
+				DetailPage.relatedWindow.setTitle('Related Entries');
+								
+				DetailPage.relatedWindow.getComponent('grid').getComponent('description').update({
+					description: description,
+					tip: tip
+				});
 				
 				var searchObj = {
 					"sortField": "name",
 					"sortDirection": "DESC",				
 					"searchElements": [{
-							"searchType": "ATTRIBUTE",
+							"searchType": vitalType,
 							"keyField": attributeType,
 							"keyValue": attributeCode,
-							"caseInsensitive": false,
+							"caseInsensitive": true,
 							"numberOperation": "EQUALS",
 							"stringOperation": "EQUALS",
 							"mergeCondition": "OR" 
@@ -69,8 +76,171 @@ limitations under the License.
 					return request;
 				};
 				store.loadPage(1);
+			},
+			showRelatedOrganizations: function(organization) {
+				DetailPage.relatedWindow.show();
+				DetailPage.relatedWindow.setTitle('Related Entries');
+							
+			    var descriptionPanel = DetailPage.relatedWindow.getComponent('grid').getComponent('description');
+				descriptionPanel.update({
+					description: organization,
+					tip: ''
+				});
+				
+				Ext.Ajax.request({
+					url: '../api/v1/resource/organizations/name/' + organization,
+					success: function(response, opts) {
+						var org = Ext.decode(response.responseText);
+						
+						var fullDescription = '';
+						if (org.organizationType) {
+							fullDescription += '<b>Organization Type:</b> ' + org.organizationType + '<br>';
+						}
+						if (org.agency) {
+							fullDescription += '<b>Agency:</b> ' + org.agency + '<br>';
+						}
+						if (org.department) {
+							fullDescription += '<b>Department:</b> ' + org.department + '<br>';
+						}	
+						if (org.department) {
+							fullDescription += '<b>Home Page:</b> ' + org.homeUrl + '<br>';
+						}						
+						if (org.description) {
+							fullDescription += org.description + '<br>';
+						}
+						
+						descriptionPanel.update({
+							description: organization,
+							tip: fullDescription
+						});
+					}
+				});
+				
+				var searchObj = {
+					"sortField": "name",
+					"sortDirection": "DESC",				
+					"searchElements": [{
+							"searchType": 'COMPONENT',
+							"field": 'organization',
+							"value": organization,
+							"caseInsensitive": true,
+							"numberOperation": "EQUALS",
+							"stringOperation": "EQUALS",
+							"mergeCondition": "OR" 
+					}]
+				 };
+				
+				var store = DetailPage.relatedWindow.getComponent('grid').getStore();
+				store.getProxy().buildRequest = function (operation) {
+					var initialParams = Ext.apply({
+						paging: true,
+						sortField: operation.getSorters()[0].getProperty(),
+						sortOrder: operation.getSorters()[0].getDirection(),
+						offset: operation.getStart(),
+						max: operation.getLimit()
+					}, operation.getParams());
+					params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
+
+					var request = new Ext.data.Request({
+						url: '/openstorefront/api/v1/service/search/advance',
+						params: params,
+						operation: operation,
+						action: operation.getAction(),
+						jsonData: Ext.util.JSON.encode(searchObj)
+					});
+					operation.setRequest(request);
+
+					return request;
+				};
+				store.loadPage(1);				
 			}
 		};
+		
+		var ViewPage = {
+			editReview: function(reviewId) {
+				var reviewData;
+				Ext.Array.each(ViewPage.reviews, function(review){
+					if (review.reviewId === reviewId) {
+						reviewData = review;
+					}
+				});
+				
+				var record = Ext.create('Ext.data.Model', {					
+				});
+				record.set(reviewData);
+				
+				ViewPage.reviewWindow.show();
+				ViewPage.reviewWindow.editReview(record);
+			},
+			
+			deleteReview: function(reviewId, componentId) {
+				Ext.Msg.show({
+					title:'Remove Review?',
+					message: 'Are you sure you want to review this review?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							Ext.getCmp('reviewPanel').setLoading("Removing...");
+							Ext.Ajax.request({
+								url: '../api/v1/resource/components/'+componentId+'/reviews/'+reviewId,
+								method: 'DELETE',
+								callback: function(){
+									Ext.getCmp('reviewPanel').setLoading(false);
+								},
+								success: function(){
+									ViewPage.refreshReviews();
+								}
+							});
+						} 
+					}
+				});				
+			},
+			editResponse: function(responseId) {
+				var responseData;
+				Ext.Array.each(ViewPage.questions, function(question){
+					Ext.Array.each(question.responses, function(response){
+						if (response.responseId === responseId) {
+							responseData = response;							
+						}						
+					});
+				});
+				
+				var record = Ext.create('Ext.data.Model', {					
+				});
+				record.set(responseData);
+				
+				ViewPage.responseWindow.show();
+				ViewPage.responseWindow.edit(record);				
+				
+			},
+			deleteResponse: function(responseId, questionId, componentId){
+				
+				Ext.Msg.show({
+					title:'Remove Answer?',
+					message: 'Are you sure you want to review this answer?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							Ext.getCmp('questionPanel').setLoading("Removing...");
+							Ext.Ajax.request({
+								url: '../api/v1/resource/components/'+componentId+'/questions/' + questionId + '/responses/' + responseId,
+								method: 'DELETE',
+								callback: function(){
+									Ext.getCmp('questionPanel').setLoading(false);
+								},
+								success: function(){
+									ViewPage.refreshQuestions();
+								}
+							});
+						} 
+					}
+				});				
+			}			
+			
+		};	
+					
 		
 		
 		Ext.onReady(function(){		
@@ -79,23 +249,30 @@ limitations under the License.
 			var fullPage = '${param.fullPage}' !== '' ? true : false;
 			
 			var relatedStore = Ext.create('Ext.data.Store', {
-							pageSize: 50,
-							autoLoad: false,
-							remoteSort: true,
-							sorters: [
-								new Ext.util.Sorter({
-								property: 'name',
-								direction: 'DESC'
-								})
-							],
-							proxy: CoreUtil.pagingProxy({
-								actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
-								reader: {
-									type: 'json',
-									rootProperty: 'data',
-									totalProperty: 'totalNumber'
-								}
-							})							
+				pageSize: 50,
+				autoLoad: false,
+				remoteSort: true,
+				sorters: [
+					new Ext.util.Sorter({
+					property: 'name',
+					direction: 'DESC'
+					})
+				],				
+				proxy: CoreUtil.pagingProxy({
+					actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+					reader: {
+						type: 'json',
+						rootProperty: 'data',
+						totalProperty: 'totalNumber'
+					}
+				}),
+				listeners: {
+					load: function(store, records) {
+						store.filterBy(function(record){
+							return record.get('componentId') !== componentId;
+						});
+					}
+				}
 			});
 			
 			DetailPage.relatedWindow = Ext.create('Ext.window.Window', {
@@ -114,12 +291,12 @@ limitations under the License.
 						columnLines: true,
 						store: relatedStore,
 						columns: [
-							{ text: 'Name', dataIndex: 'name', width: 250, cellWrap: true, 
+							{ text: 'Name', dataIndex: 'name', flex:2, minWidth: 250, cellWrap: true, 
 								renderer: function (value, meta, record) {
 									return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>'
 								}
 							},
-							{ text: 'Description', dataIndex: 'description', flex: 1,
+							{ text: 'Description', dataIndex: 'description', flex: 2,
 								cellWrap: true,
 								renderer: function (value) {
 									value = Ext.util.Format.stripTags(value);
@@ -128,16 +305,29 @@ limitations under the License.
 							},							
 							{ text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150 }							
 						],
-						dockedItems: [{
-							xtype: 'pagingtoolbar',							
-							dock: 'bottom',
-							store: relatedStore,
-							displayInfo: true
-						}]						
+						dockedItems: [
+							{
+								xtype: 'pagingtoolbar',							
+								dock: 'bottom',
+								store: relatedStore,
+								displayInfo: true
+							},
+							{
+								xtype: 'panel',
+								itemId: 'description',
+								maxHeight: 200,
+								bodyStyle: 'padding-left: 5px; padding-right: 5px;',
+								scrollable: true,
+								tpl: new Ext.XTemplate(
+									'<h2 style="text-align: center;">{description}</h2><hr>',
+									'{tip}'
+								)
+							}
+						]						
 					}				
 				]			
-			});			
-			
+			});		
+		
 			var headerPanel = Ext.create('Ext.panel.Panel', {
 				region: 'north',
 				bodyStyle: 'background: white; padding: 15px;',
@@ -152,9 +342,9 @@ limitations under the License.
 						flex: 1,
 						minHeight: 125,						
 						tpl: new Ext.XTemplate(
-							'<div class="details-title-name">{name} <span class="details-title-info" style="font-size: 10px">({componentTypeLabel})</span> </div>',
+							'<div class="details-title-name">{name} <span class="details-title-info" style="font-size: 10px">({componentTypeLabel})</span></div>',
 							'<div class="details-title-info">',							
-							'Organization: <b>{organization}</b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="version"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl><br>',						
+							'Organization: <b><a href="#" onclick="DetailPage.showRelatedOrganizations(\'{organization}\')">{organization}</a></b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="version"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl>',							
 							'</div>',
 							'  <tpl for="attributes">',
 							'    <tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>',
@@ -167,6 +357,14 @@ limitations under the License.
 						layout: {
 							type: 'hbox'
 						},
+						dockedItems: [
+							{
+								xtype: 'panel',
+								itemId: 'updatedInfo',
+								dock: 'bottom',
+								tpl: 'Updated: {[Ext.util.Format.date(values.lastActivityDts, "m/d/y H:i:s")]}</span>'
+							}
+						],
 						items: [
 							{
 								xtype: 'button',
@@ -201,7 +399,7 @@ limitations under the License.
 										method: 'POST',
 										jsonData: watch,
 										success: function(response, opts){
-											currentWatch = Ext.decode(response);
+											currentWatch = Ext.decode(response.responseText);
 											Ext.getCmp('watchBtn').setHidden(true);
 											Ext.getCmp('watchRemoveBtn').setHidden(false);
 										}
@@ -234,7 +432,11 @@ limitations under the License.
 								tooltip: 'Print',
 								scale: 'large',
 								margin: '0 10 0 0',
-								handler: function(){									
+								handler: function(){	
+									var printWin = window.open('print.jsp?id=' + componentId, 'printwin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840');
+									if (!printWin) {
+										printWin = window.open('print.jsp?id=' + componentId, 'printwin');
+									}
 								}
 							},
 							{
@@ -386,6 +588,29 @@ limitations under the License.
 				scrollable: true
 			});
 			
+			ViewPage.refreshReviews = function() {
+				Ext.getCmp('reviewPanel').setLoading('Refreshing...');
+				Ext.Ajax.request({
+					url: '../api/v1/resource/components/' + componentId + '/reviews/view',
+					callback: function(){
+						Ext.getCmp('reviewPanel').setLoading(false);
+					}, 						
+					success: function(response, opts){
+						var reviews = Ext.decode(response.responseText);
+						var entryLocal = {};
+						entryLocal.reviews = reviews;
+						processReviews(entryLocal);							
+					}
+				});				
+			};
+			
+			ViewPage.reviewWindow = Ext.create('OSF.component.ReviewWindow', {	
+				componentId: componentId,
+				postHandler: function(reviewWin, response) {
+					ViewPage.refreshReviews();
+				}
+			});			
+			
 			var reviews = Ext.create('Ext.panel.Panel', {				
 				id: 'reviewPanel',		
 				title: 'Reviews',
@@ -403,8 +628,9 @@ limitations under the License.
 						scale: 'medium',
 						margin: 10,
 						iconCls: 'fa fa-lg fa-star-half-o icon-top-padding-5',
-						handler: function(){
-							
+						handler: function(){							
+							ViewPage.reviewWindow.refresh();
+							ViewPage.reviewWindow.show();
 						}
 					}
 				],				
@@ -458,9 +684,11 @@ limitations under the License.
 							'<table style="width:100%"><tr>',
 							'	<td valign="top">',
 							'		<h1>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
-							'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl></div><br>',
+							'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl>', 
+							'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash-o small-button-danger" title="Remove" onclick="ViewPage.deleteReview(\'{reviewId}\', \'{componentId}\')"> Remove</i></tpl>',			
+							'		</div><br>',
 							'		<b>Organization:</b> {organization}<br>',
-							'		<b>Experience:</b> {userTimeCode}<br>',							
+							'		<b>Experience:</b> {userTimeDescription}<br>',							
 							'		<b>Last Used:</b> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}<br>',
 							'   <td>',
 							'	<td valign="top" width="20%">',
@@ -486,8 +714,38 @@ limitations under the License.
 				]
 			});
 			
+			ViewPage.refreshQuestions = function(){
+				Ext.getCmp('questionPanel').setLoading('Refreshing...');
+				Ext.Ajax.request({
+					url: '../api/v1/resource/components/' + componentId + '/questions/view',
+					callback: function(){
+						Ext.getCmp('questionPanel').setLoading(false);
+					}, 						
+					success: function(response, opts){
+						var questions = Ext.decode(response.responseText);
+						var entryLocal = {};
+						entryLocal.questions = questions;
+						processQuestions(entryLocal);							
+					}
+				});
+			};
+			
+			ViewPage.questionWindow = Ext.create('OSF.component.QuestionWindow', {
+				componentId: componentId,
+				postHandler: function(questionWin, response) {
+					ViewPage.refreshQuestions();
+				}				
+			});		
+			
+			ViewPage.responseWindow = Ext.create('OSF.component.ResponseWindow', {
+				componentId: componentId,
+				postHandler: function(responseWin, response) {
+					ViewPage.refreshQuestions();
+				}
+			});			
+			
 			var questionPanel = Ext.create('Ext.panel.Panel', {
-				title: 'Q&A',
+				title: 'Questions & Answers',
 				id: 'questionPanel',
 				bodyStyle: 'padding: 10px;',
 				scrollable: true,
@@ -503,8 +761,9 @@ limitations under the License.
 						scale: 'medium',
 						margin: 10,
 						iconCls: 'fa  fa-lg fa-comment icon-top-padding-5',
-						handler: function(){
-							
+						handler: function(){							
+							ViewPage.questionWindow.show();
+							ViewPage.questionWindow.refresh();
 						}
 					}
 				]
@@ -561,10 +820,15 @@ limitations under the License.
 							entry = Ext.decode(response.responseText);
 							
 							Ext.getCmp('titlePanel').update(entry);
-							
+							Ext.defer(function(){
+								headerPanel.updateLayout(true, true);
+							}, 1000);
+														
 							if (entry.createUser === '${user}'){
 								Ext.getCmp('nonOwnerMenu').setHidden(true);
 							}
+							
+							Ext.getCmp('toolsPanel').getComponent('updatedInfo').update(entry);
 							
 							if (entry.approvalState !== "A") {
 								headerPanel.addDocked({
@@ -600,9 +864,13 @@ limitations under the License.
 									
 									if (componentTypeDetail.dataEntryReviews) {
 										processReviews(entry);
+									} else {
+										Ext.getCmp('reviewPanel').close();
 									}
 									if (componentTypeDetail.dataEntryQuestions) {
 										processQuestions(entry);
+									} else {
+										Ext.getCmp('questionPanel').close();
 									}
 									processTags(entry.tags);
 									
@@ -774,11 +1042,17 @@ limitations under the License.
 					review.ratingStars = [];
 					for (var i=0; i<5; i++){					
 						review.ratingStars.push({						
-							star: i <= review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
+							star: i < review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
 						});
-					}					
+					}
+					
+					if (review.username === '${user}' || ${admin}) {
+						review.owner = true;
+					}
 					
 				});
+				ViewPage.reviews = entryLocal.reviews;
+				
 				var reviewPanelReviews = Ext.getCmp('reviewPanel').getComponent('reviews');
 				var reviewPanelSummary = Ext.getCmp('reviewPanel').getComponent('summary');
 				
@@ -809,6 +1083,7 @@ limitations under the License.
 			var processQuestions = function(entryLocal) {
 				
 				var questionPanels = [];
+				ViewPage.questions = entryLocal.questions;
 				Ext.Array.each(entryLocal.questions, function(question){
 					
 					var text = '<div class="question-question"><span class="question-response-letter-q">Q.</span> '+ question.question + '</div>';
@@ -816,7 +1091,12 @@ limitations under the License.
 							question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y") +
 							'</div>';
 					
-											
+					Ext.Array.each(question.responses, function(response){
+						response.questionId = question.questionId;
+						response.componentId = question.componentId;
+					});
+					
+				
 					var panel = Ext.create('Ext.panel.Panel', {
 						titleCollapse: true,
 						collapsible: true,
@@ -825,25 +1105,82 @@ limitations under the License.
 						data: question.responses,
 						tpl: new Ext.XTemplate(							
 							'<tpl for=".">',
-							'	<div class="question-response"><span class="question-response-letter">A.</span> {response}</div>',
-							'	<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
-							'   <hr>',
+							'	<tpl if="activeStatus === \'A\'">',
+							'		<div class="question-response"><span class="question-response-letter">A.</span> {response}</div>',
+							'		<tpl if="username === \'${user}\' || ${admin}"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editResponse(\'{responseId}\')"> Edit</i> <i class="fa fa-trash-o small-button-danger" title="Remove" onclick="ViewPage.deleteResponse(\'{responseId}\', \'{questionId}\', \'{componentId}\')"> Remove</i></tpl>',
+							'		<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
+							'		<hr>',
+							'	</tpl>',
 							'</tpl>'
 						),
 						dockedItems: [
 							{
 								xtype: 'button',
+								dock: 'bottom',
 								text: 'Answer',
 								maxWidth: 150,
-								scale: 'medium',
+								scale: 'medium',								
 								margin: 10,
 								iconCls: 'fa  fa-lg fa-comments-o icon-top-padding-5',
 								handler: function(){
-
+									ViewPage.responseWindow.questionId = question.questionId;
+									ViewPage.responseWindow.show();
+									ViewPage.responseWindow.refresh();
 								}
 							}
 						]				
 					});
+					if (question.username === '${user}' || ${admin}) {
+						panel.addDocked(
+							{
+								xtype: 'toolbar',
+								dock: 'top',								
+								items: [
+									{
+										text: 'Edit',
+										tooltip: 'Edit Question',
+										iconCls: 'fa fa-edit',
+										handler: function(){
+											ViewPage.questionWindow.show();
+											
+											var record = Ext.create('Ext.data.Model');
+											record.set(question);											
+											ViewPage.questionWindow.edit(record);
+										}
+									},
+									{	
+										text: 'Delete',
+										tooltip: 'Delete Question',
+										iconCls: 'fa fa-trash-o',
+										handler: function(){
+											Ext.Msg.show({
+												title:'Remove Question?',
+												message: 'Are you sure you want to review this Question?',
+												buttons: Ext.Msg.YESNO,
+												icon: Ext.Msg.QUESTION,
+												fn: function(btn) {
+													if (btn === 'yes') {
+														Ext.getCmp('questionPanel').setLoading("Removing...");
+														Ext.Ajax.request({
+															url: '../api/v1/resource/components/' + componentId + '/questions/' + question.questionId,
+															method: 'DELETE',
+															callback: function(){
+																Ext.getCmp('questionPanel').setLoading(false);
+															},
+															success: function(){
+																ViewPage.refreshQuestions();
+															}
+														});
+													} 
+												}
+											});
+										}										
+									}
+								]
+							}
+						);
+					}											
+					
 					questionPanels.push(panel);				
 					
 				});

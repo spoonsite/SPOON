@@ -87,10 +87,10 @@ public class UsageReport
 	private void updateReportTimeRange()
 	{
 		if (report.getReportOption().getPreviousDays() != null) {
-			Instant instant = Instant.now();
-			instant = instant.minus(1, ChronoUnit.DAYS);
-			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date(instant.toEpochMilli())));
-			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date(instant.toEpochMilli())));
+			Instant instantEnd = Instant.now();
+			Instant instantStart = instantEnd.minus(report.getReportOption().getPreviousDays(), ChronoUnit.DAYS);
+			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date(instantStart.toEpochMilli())));
+			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date(instantEnd.toEpochMilli())));
 		}
 
 		if (report.getReportOption().getStartDts() == null) {
@@ -167,7 +167,7 @@ public class UsageReport
 				"User Email",
 				"# Logins",
 				"Component Viewed",
-				"Component Resources Click"
+				"Component Resources Clicked"
 		);
 
 		UserProfile userProfileExample = new UserProfile();

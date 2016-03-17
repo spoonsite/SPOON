@@ -49,7 +49,7 @@ public class SystemAction
 
 	@Validate(required = true, on = {"BulkAttributeStatusUpdate", "AttributeCleanup"})
 	private String attributeType;
-
+	
 	@HandlesEvent("UserAgent")
 	public Resolution userAgent()
 	{
@@ -64,7 +64,7 @@ public class SystemAction
 			}
 		};
 	}
-
+		
 	@HandlesEvent("AppVersion")
 	public Resolution appVersion()
 	{

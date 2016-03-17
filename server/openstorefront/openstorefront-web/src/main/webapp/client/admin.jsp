@@ -37,7 +37,7 @@ limitations under the License.
 			
 			var pageMap = [];
 			pageMap['Articles'] = '/openstorefront/admin?tool=Articles';
-			pageMap['Attributes'] = '/openstorefront/admin?tool=Attributes';
+			pageMap['Attributes'] = 'Router.action?page=admin/data/attributes.jsp';
 			pageMap['Dashboard'] = 'Router.action?page=admin/adminDashboard.jsp';
 			pageMap['Entries'] = 'Router.action?page=admin/data/components.jsp';
 			pageMap['EntriesOld'] = '/openstorefront/admin?tool=Entries';
@@ -50,6 +50,7 @@ limitations under the License.
 			pageMap['Organizations'] = 'Router.action?page=admin/data/organizations.jsp';	
 			pageMap['Questions'] = 'Router.action?page=admin/data/user-data/questions.jsp';
 			pageMap['Reviews'] = 'Router.action?page=admin/data/user-data/reviews.jsp';
+			pageMap['Watches'] = 'Router.action?page=admin/data/user-data/watches.jsp';
 			pageMap['Tags'] = 'Router.action?page=admin/data/user-data/tags.jsp';
 			pageMap['UserProfiles'] = 'Router.action?page=admin/data/user-data/userProfiles.jsp';		
 			pageMap['Alerts'] = 'Router.action?page=admin/application/alerts.jsp';
@@ -61,7 +62,7 @@ limitations under the License.
 			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
 			
 
-			//Data Menu
+		//Data Menu
 			var dataMenu = [];
 			dataMenu.push({
 				text: 'Attributes',
@@ -133,6 +134,12 @@ limitations under the License.
 								actionLoadContent('Reviews');
 							}							
 						},
+						{
+							text: 'Watches',
+							handler: function(){
+								actionLoadContent('Watches');
+							}							
+						},						
 						{
 							text: 'Tags',
 							handler: function(){
@@ -209,6 +216,9 @@ limitations under the License.
 			var feedbackWin = Ext.create('OSF.component.FeedbackWindow',{				
 			});
 
+			var helpWin = Ext.create('OSF.component.HelpWindow', {				
+			});	
+
 			Ext.create('Ext.container.Viewport', {
 				layout: 'border',
 				items: [{
@@ -231,7 +241,7 @@ limitations under the License.
 									listeners: {
 										el: {
 											click: function() {
-												window.location.replace('../');
+												window.location.replace('index.jsp');
 											}
 										}
 									}
@@ -285,8 +295,9 @@ limitations under the License.
 											{
 												text: '<b>Help</b>',
 												iconCls: 'fa fa-question-circle',
-												href: '../help',
-												hrefTarget: '_blank'
+												handler: function() {
+													helpWin.show();
+												}
 											},
 											{
 												text: '<b>Feedback / issues</b>',

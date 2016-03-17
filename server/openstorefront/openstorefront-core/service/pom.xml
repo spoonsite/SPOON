@@ -188,6 +188,12 @@
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-server</artifactId>
 			<version>${orientdb.verison}</version>
+		 <exclusions>
+		  <exclusion>
+		   <groupId>javax.mail</groupId>
+		   <artifactId>mail</artifactId>
+		  </exclusion>
+		 </exclusions>
 		</dependency>	
 		  
 		<dependency>
@@ -226,7 +232,7 @@
 		<dependency>
 			<groupId>org.codemonkey.simplejavamail</groupId>
 			<artifactId>simple-java-mail</artifactId>
-			<version>2.1</version>
+			<version>3.0.0</version>
 		</dependency>
 		<dependency>
   			<groupId>org.pegdown</groupId>

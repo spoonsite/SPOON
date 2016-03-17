@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -47,14 +48,19 @@ public class JiraIntegrationHandler
 		log.finer("Pull Component");
 		Component component = serviceProxy.getPersistenceService().findById(Component.class, integrationConfig.getComponentId());
 
-		log.finer("Pull Ticket");
-		try (JiraClient jiraClient = JiraManager.getClient()) {
-			Issue issue = jiraClient.getTicket(integrationConfig.getIssueNumber());
-			if (issue != null) {
-				serviceProxy.getComponentServicePrivate().mapComponentAttributes(issue, integrationConfig);
-			} else {
-				throw new OpenStorefrontRuntimeException("Unable to find Jira Ticket: " + integrationConfig.getIssueNumber() + " for component " + component.getName(), "Check the config also check Jira.", ErrorTypeCode.INTEGRATION);
+		log.finer("Check Jira connection");
+		if (JiraManager.checkJiraConnection()) {
+			log.finer("Pull Ticket");
+			try (JiraClient jiraClient = JiraManager.getClient()) {
+				Issue issue = jiraClient.getTicket(integrationConfig.getIssueNumber());
+				if (issue != null) {
+					serviceProxy.getComponentServicePrivate().mapComponentAttributes(issue, integrationConfig);
+				} else {
+					throw new OpenStorefrontRuntimeException("Unable to find Jira Ticket: " + integrationConfig.getIssueNumber() + " for component " + component.getName(), "Check the config also check Jira.", ErrorTypeCode.INTEGRATION);
+				}
 			}
+		} else {
+			log.log(Level.FINER, "Skipping processing config for " + component.getName() + ".  Unable to connect to jira. It will try again next interval.");
 		}
 	}
 

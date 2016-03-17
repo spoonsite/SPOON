@@ -42,9 +42,11 @@ Ext.define('OSF.component.template.Description', {
 	extend: 'OSF.component.template.BaseBlock',
 	alias: 'osf.widget.template.Description',
 	
+	showDescriptionHeader: true,
 	tpl: new Ext.XTemplate(
-		'<h2>Description</h2>',	
-		'{description}'	
+		'<div><tpl if="showDescriptionHeader"><h2>Description</h2></tpl>',	
+		'	{description}',
+		'</div>'		
 	),
 		
 	initComponent: function () {
@@ -52,7 +54,8 @@ Ext.define('OSF.component.template.Description', {
 	},
 	
 	updateHandler: function(entry){
-		entry.description = Ext.util.Format.escape(entry.description).replace(/"/g, '');		
+		//entry.description = Ext.util.Format.escape(entry.description).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '');		
+		entry.showDescriptionHeader = this.showDescriptionHeader;
 		return entry;
 	}
 	
@@ -176,8 +179,8 @@ Ext.define('OSF.component.template.Vitals', {
 		' <table class="details-table" width="100%">',			
 		'	<tpl for="vitals">',	
 		'		<tr class="details-table">',
-		'			<td class="details-table"><b>{label}</b> <tpl if="tip"><i class="fa fa-question-circle" data-qtip="{tip}" data-qtitle="{value}" data-qalignTarget="bl-tl" data-qclosable="true" ></i></tpl></td>',
-		'			<td class="details-table highlight-{highlightStyle}"><a href="#" class="details-table" onclick="DetailPage.showRelatedWindow(\'{type}\',\'{code}\',\'{label} - {value}\');">{value}</a></td>',
+		'			<td class="details-table"><b>{label}</b></td>',
+		'			<td class="details-table highlight-{highlightStyle}"><a href="#" class="details-table" title="Show related entries" onclick="DetailPage.showRelatedWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\');">{value}</a></td>',
 		'		</tr>',
 		'	</tpl>',
 		'</table>'		
@@ -204,7 +207,8 @@ Ext.define('OSF.component.template.Vitals', {
 					type: item.type,
 					code: item.code,
 					updateDts: item.updateDts,
-					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '') : item.codeLongDescription
+					vitalType: 'ATTRIBUTE',
+					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription
 				});				
 			});
 		}
@@ -214,6 +218,9 @@ Ext.define('OSF.component.template.Vitals', {
 				vitals.push({
 					label: item.label,
 					value: item.value,
+					type: item.label,
+					code: item.value,
+					vitalType: 'METADATA',
 					updateDts: item.updateDts
 				});			
 			});
@@ -324,10 +331,10 @@ Ext.define('OSF.component.template.DI2EEvalLevel', {
 	updateHandler: function(entry){
 		
 		var evalLevels = {};		
-		if (!entry.attributes) {
+		if (!entry.attributes && entry.attributes.length <= 0) {
 			this.setHidden(true);
 		} else {
-			var updated = false;
+			var updated = false;			
 			Ext.Array.each(entry.attributes, function(item){
 				if (item.type === 'DI2ELEVEL') {
 					evalLevels.level = {};
@@ -366,6 +373,9 @@ Ext.define('OSF.component.template.DI2EEvalLevel', {
 				this.addBodyCls('watch-detail-update');
 			}	
 			
+			if (!evalLevels.level && !evalLevels.state && !evalLevels.intent) {
+				this.setHidden(true);
+			}
 		}
 		entry.evalLevels = evalLevels;					
 		return entry;
@@ -549,6 +559,7 @@ Ext.define('OSF.component.template.Relationships', {
 									
 			relationshipPanel.tabPanel.getComponent('relationTable').update(entry);
 			relationshipPanel.tabPanel.getComponent('visual').setHeight(entry.relationships.length*80);
+			relationshipPanel.tabPanel.getComponent('visual').originalComponentId = entry.componentId;
 			relationshipPanel.tabPanel.getComponent('visual').updateDiagramData(entry);	
 			
 			var updated = false;
@@ -562,7 +573,7 @@ Ext.define('OSF.component.template.Relationships', {
 			}			
 		}		
 				
-		return entry;
+		return null;
 	}	
 	
 });

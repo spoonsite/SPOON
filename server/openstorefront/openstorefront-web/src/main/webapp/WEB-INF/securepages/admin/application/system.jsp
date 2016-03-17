@@ -15,6 +15,7 @@
 				background-color: #8A8A8A;
 				border: 1px solid #464545;
 				font-size: 14px;
+				overflow: auto;
 			}
 			.list-group {
 				/* margin-bottom: 20px; */
@@ -257,6 +258,7 @@
 					title: 'Threads Status',
 					id: 'threadStatus',
 					store: threadStatusStore,
+					bufferedRenderer: false,
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -269,7 +271,42 @@
 									handler: function () {
 										threadStatusStore.load();
 									}
-								}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'View',
+									id: 'threadStatus-view',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-eye',
+									handler: function () {
+										var record = Ext.getCmp('threadStatus').getSelectionModel().getSelection()[0];
+										
+										var detailWin = Ext.create('Ext.window.Window', {
+											title: 'Full Stack',
+											modal: true,
+											width: '80%',
+											height: '80%',
+											maximizable: true,
+											scrollable: true,
+											bodyStyle: 'padding: 20px;',
+											html: ''
+										});
+										detailWin.show();
+										
+										detailWin.setLoading(true);
+										Ext.Ajax.request({
+											url: '../api/v1/service/application/threads/' + record.get("id") + '/stack',
+											callback: function(){
+												detailWin.setLoading(false);
+											},
+											success: function(response, opts) {
+												detailWin.setHtml(response.responseText);
+											}
+										});
+									}									
+								}								
 							]
 						}
 					],
@@ -279,7 +316,16 @@
 						{text: 'Name', dataIndex: 'name', flex: 4},
 						{text: 'Status', dataIndex: 'status', flex: 2},
 						{text: 'Details', dataIndex: 'details', flex: 12}
-					]
+					],
+					listeners: {
+						selectionchange: function(selectionModel, records, opts) {
+							if (selectionModel.getCount() > 0) {
+								Ext.getCmp('threadStatus-view').setDisabled(false);
+							} else {
+								Ext.getCmp('threadStatus-view').setDisabled(true);
+							}
+						}
+					}
 				});
 
 				var systemPropertiesStore = Ext.create('Ext.data.Store', {
@@ -360,6 +406,7 @@
 					title: 'Error Tickets',
 					id: 'errorTicketsGrid',
 					store: errorTicketsStore,
+					plugins: 'gridfilters',
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -386,8 +433,21 @@
 										var record = Ext.getCmp('errorTicketsGrid').getSelection()[0];
 										actionViewErrorTicket(record);
 									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Delete',
+									id: 'errorTicketsGrid-tools-delete',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-trash icon-vertical-correction',
+									handler: function () {
+										var records = Ext.getCmp('errorTicketsGrid').getSelection();
+										actionDeleteTickets(records);
+									}									
 								}
-
 							]
 						},
 						{
@@ -398,8 +458,15 @@
 						}
 					],
 					columnLines: true,
+					selModel: {
+						selType: 'checkboxmodel' 
+					},
 					columns: [
-						{text: 'Ticket ID', dataIndex: 'errorTicketId', flex: 1.5, cellWrap: true},
+						{text: 'Ticket ID', dataIndex: 'errorTicketId', flex: 1.5, cellWrap: true,
+							filter: {
+								type: 'string'
+							}	
+						},
 						{
 							text: 'Update Date',
 							dataIndex: 'updateDts',
@@ -413,16 +480,59 @@
 						{text: 'Type', dataIndex: 'errorTypeCode', flex: 0.5}
 					],
 					listeners: {
-						selectionchange: function (grid, record, index, opts) {
+						selectionchange: function (grid, records, index, opts) {
 							if (Ext.getCmp('errorTicketsGrid').getSelectionModel().hasSelection()) {
-								Ext.getCmp('errorTicketsGrid-tools-view').enable();
+								if (records.length === 1) {
+									Ext.getCmp('errorTicketsGrid-tools-view').enable();
+								} else {
+									Ext.getCmp('errorTicketsGrid-tools-view').disable();
+								}
+								Ext.getCmp('errorTicketsGrid-tools-delete').enable();
 							} else {
 								Ext.getCmp('errorTicketsGrid-tools-view').disable();
+								Ext.getCmp('errorTicketsGrid-tools-delete').disable();
 							}
 						}
 					}
 
 				});
+				
+				var actionDeleteTickets = function(records) {
+					
+					
+					Ext.Msg.show({
+						title: 'Delete Tickets',
+						message: 'Are you sure you want to delete selected ticket(s)?',
+						buttons: Ext.Msg.YESNO,
+						icon: Ext.Msg.QUESTION,
+						fn: function(btn) {
+							if (btn === 'yes') {
+								
+								var ids = [];
+								Ext.Array.each(records, function(record){
+									ids.push(record.get('errorTicketId'));
+								});
+								
+								errorTicketsGrid.setLoading("Removing Tickets...");
+								Ext.Ajax.request({
+									url: '../api/v1/resource/errortickets',
+									method: 'DELETE',
+									jsonData: {
+										ids: ids
+									},
+									callback: function() {
+										errorTicketsGrid.setLoading(false);
+									},
+									success: function(response, opts) {
+										errorTicketsStore.load();
+									}
+								});
+																
+							} 
+						}
+					});					
+					
+				};
 
 				var viewErrorTicketWindow = Ext.create('Ext.window.Window', {
 					id: 'viewErrorTicketWindow',
@@ -669,6 +779,11 @@
 					proxy: {
 						type: 'ajax',
 						url: '/openstorefront/api/v1/service/application/configproperties'
+					},
+					listeners: {
+						load: function () {
+							updateDbLoggerStatus(false);
+						}
 					}
 				});
 
@@ -689,6 +804,39 @@
 									handler: function () {
 										sysConfigPropStore.load();
 									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Add',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-plus',
+									handler: function() {
+										addSysConfigProp();
+									}
+								},
+								{
+									text: 'Edit',
+									id: 'sysConfigPropGrid-tools-edit',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-edit',
+									disabled: true,
+									handler: function() {
+										var record = Ext.getCmp('sysConfigPropGrid').getSelection()[0];
+										editSysConfigProp(record);
+									}
+								},
+								{
+									text: 'Delete',
+									id: 'sysConfigPropGrid-tools-delete',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-trash',
+									disabled: true,
+									handler: function() {
+										var record = Ext.getCmp('sysConfigPropGrid').getSelection()[0];
+										deleteSysConfigProp(record);
+									}
 								}
 							]
 						}
@@ -696,8 +844,140 @@
 					columns: [
 						{text: 'Key', dataIndex: 'code', flex: 2},
 						{text: 'Value', dataIndex: 'description', flex: 5, cellWrap: true}
+					],
+					listeners: {
+						selectionchange: function (grid, record, index, opts) {
+							if (Ext.getCmp('sysConfigPropGrid').getSelectionModel().hasSelection()) {
+								Ext.getCmp('sysConfigPropGrid-tools-edit').enable();
+								Ext.getCmp('sysConfigPropGrid-tools-delete').enable();
+							} else {
+								Ext.getCmp('sysConfigPropGrid-tools-edit').disable();
+								Ext.getCmp('sysConfigPropGrid-tools-delete').disable();
+							}
+						}
+					}
+				});
+
+				var editSysConfigPropWin = Ext.create('Ext.window.Window', {
+					id: 'editSysConfigPropWin',
+					title: 'Add/Edit System Configuration Property',
+					modal: true,
+					width: '35%',
+					height: 250,
+					y: '10em',
+					iconCls: 'fa fa-lg fa-edit',
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							id: 'configPropForm',
+							layout: 'vbox',
+							scrollable: true,
+							bodyStyle: 'padding: 10px;',
+							defaults: {
+								labelAlign: 'top',
+								width: '100%'
+							},
+							items: [
+								{
+									xtype: 'textfield',
+									id: 'configPropForm-key',
+									fieldLabel: 'Key',
+									name: 'code',
+									allowBlank: false
+								},
+								{
+									xtype: 'textfield',
+									id: 'configPropForm-value',
+									fieldLabel: 'Value<span class="field-required" />',
+									name: 'description'
+								},
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											iconCls: 'fa fa-save',
+											formBind: true,	
+											handler: function() {
+												var url = '/openstorefront/api/v1/service/application/configproperties';
+												var method = 'POST';
+												var form = Ext.getCmp('configPropForm');
+												if (form.isValid()) {
+													formData = form.getValues();
+													CoreUtil.submitForm({
+														url: url,
+														method: method,
+														data: formData,
+														// Set false for this one -- it's different
+														removeBlankDataItems: false,
+														form: Ext.getCmp('configPropForm'),
+														success: function (response, opts) {
+															Ext.getCmp('sysConfigPropGrid-tools-edit').disable();
+															Ext.getCmp('configPropForm').reset();
+															Ext.getCmp('editSysConfigPropWin').hide();
+															sysConfigPropStore.load();
+															Ext.toast('Successfully saved property.', '', 'tr');
+														},
+														failure: function (response, opts) {
+															Ext.toast('Failed to save property.', '', 'tr');
+														}
+													});
+
+												}
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function () {
+												Ext.getCmp('configPropForm').reset();
+												Ext.getCmp('editSysConfigPropWin').hide();
+											}
+										}
+									]
+								}
+							]
+						}
 					]
 				});
+
+				var addSysConfigProp = function addSysConfigProp(record) {
+					editSysConfigPropWin.show();
+					var form = Ext.getCmp('configPropForm');
+					form.reset();
+				};
+
+				var editSysConfigProp = function editSysConfigProp(record) {
+					editSysConfigPropWin.show();
+					var form = Ext.getCmp('configPropForm');
+					form.loadRecord(record);
+				};
+
+
+				var deleteSysConfigProp = function deleteSysConfigProp(record) {
+					var url = '/openstorefront/api/v1/service/application/configproperties/';
+					url += record.data.code;
+
+					Ext.Ajax.request({
+						url: url,
+						method: 'DELETE',
+						success: function(response, opt){
+							Ext.toast('Successfully deleted property', '', 'tr');
+							sysConfigPropStore.load();
+						},
+						failure: function(response, opt){
+							Ext.toast('Failed to delete property', '', 'tr');
+						}
+					});
+				};
+
 
 				var logStore = Ext.create('Ext.data.Store', {
 					id: 'logStore',
@@ -767,6 +1047,7 @@
 									iconCls: 'fa fa-2x fa-refresh',
 									handler: function () {
 										logStore.load();
+										updateDbLoggerStatus();
 									}
 								},
 								{
@@ -808,39 +1089,20 @@
 								    html: '<strong>Database Logger:</strong>'
 								},
 								{
-									scale: 'medium',
-									id: 'dbLoggerYes',
-									text: 'Enable',
-									tooltip: 'WARNING: This can cause save a lot of information to the database very quickly.',
-									handler: function () {
-										Ext.Ajax.request({
-											url: '/openstorefront/api/v1/service/application/dblogger/true',
-											method: 'PUT',
-											success: function(response, opt){
-												Ext.toast('Started DB Logger', '', 'tr');
-											},
-											failure: function(response, opt){
-												Ext.toast('Failed to start DB Logger', '', 'tr');
-													}
-												});
+									xtype: 'label',
+									id: 'dbLogStatusLabel',
+									text: "On",
+									style: {
+										color: 'green',
+										fontWeight: 'bold'
 									}
 								},
 								{
 									scale: 'medium',
-									id: 'dbLoggerNo',
+									id: 'dbLoggerButton',
 									text: 'Disable',
 									handler: function () {
-										Ext.Ajax.request({
-											url: '/openstorefront/api/v1/service/application/dblogger/false',
-											method: 'PUT',
-											success: function(response, opt){
-												Ext.toast('Stopped DB Logger', '', 'tr');
-											},
-											failure: function(response, opt){
-												Ext.toast('Failed to stop DB Logger', '', 'tr');
-											}
-										});
-
+										toggleDbLogger();
 									}
 								}
 							]
@@ -853,6 +1115,61 @@
 						}
 					]
 				});
+
+				var toggleDbLogger = function toggleDbLogger() {
+					if (Ext.getCmp('dbLogStatusLabel').text === 'On'){
+						var what = 'off';
+						var url = '/openstorefront/api/v1/service/application/dblogger/false';
+					}
+					else {
+						var what = 'on';
+						var url = '/openstorefront/api/v1/service/application/dblogger/true';
+					}
+					
+					Ext.Ajax.request({
+						url: url,
+						method: 'PUT',
+						success: function(response, opt){
+							Ext.toast('Successfuly turned DB logger ' + what, '', 'tr');
+							updateDbLoggerStatus();
+						},
+						failure: function(response, opt){
+							Ext.toast('Failed to turn DB logger ' + what, '', 'tr');
+							updateDbLoggerStatus();
+						}
+					});
+				};
+
+				var updateDbLoggerStatus = function updateDbLoggerStatus(reload) {
+					var label = Ext.getCmp('dbLogStatusLabel');
+					var button = Ext.getCmp('dbLoggerButton');
+					reload = typeof reload !== 'undefined' ? reload : true;
+
+					if (reload) {
+						sysConfigPropStore.load();	
+					}
+
+					var data = sysConfigPropStore.getData();
+					var find = data.find('code', 'dblog.on');
+					var status = false;
+					if (find) { 
+						status = find.data.description;
+					}
+
+					if (status === 'true') {
+						label.setText('On');
+						label.setStyle({color: 'green'});
+						button.setText('Disable');
+					}
+					else {
+						label.setText('Off');
+						label.setStyle({color: 'red'});
+						button.setText('Enable');
+					}
+
+				};
+
+
 
 				var loggerStore = Ext.create('Ext.data.Store', {
 					id: 'loggerStore',

@@ -25,7 +25,8 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import org.codemonkey.simplejavamail.Email;
+import org.codemonkey.simplejavamail.email.Email;
+
 
 /**
  *

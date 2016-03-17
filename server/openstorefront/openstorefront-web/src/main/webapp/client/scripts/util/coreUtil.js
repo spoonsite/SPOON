@@ -399,6 +399,128 @@ var CoreUtil = {
 			}
 		}
 		return query;
-	}
+	},
+	/**
+	 * Sort and transfer entry for display
+	 */
+	processEntry: function(entry) {
+		
+		//sort and process						
+		Ext.Array.sort(entry.resources, function(a, b){
+			return a.resourceTypeDesc.localeCompare(b.resourceTypeDesc);	
+		});	
 
+		Ext.Array.sort(entry.contacts, function(a, b){
+			return a.name.localeCompare(b.name);	
+		});		
+
+		Ext.Array.sort(entry.dependencies, function(a, b){
+			return a.dependencyName.localeCompare(b.dependencyName);	
+		});							
+
+		var vitals = [];
+		if (entry.attributes) {
+			Ext.Array.each(entry.attributes, function(item){
+				vitals.push({
+					label: item.typeDescription,
+					value: item.codeDescription,
+					highlightStyle: item.highlightStyle,
+					type: item.type,
+					code: item.code,
+					updateDts: item.updateDts,
+					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '') : item.codeLongDescription
+				});				
+			});
+		}
+
+		if (entry.metadata) {
+			Ext.Array.each(entry.metadata, function(item){
+				vitals.push({
+					label: item.label,
+					value: item.value,
+					updateDts: item.updateDts
+				});			
+			});
+		}
+
+		Ext.Array.sort(vitals, function(a, b){
+			return a.label.localeCompare(b.label);	
+		});
+		entry.vitals = vitals;	
+
+		Ext.Array.each(entry.evaluation.evaluationSections, function(section){
+			if (section.notAvailable || section.actualScore <= 0) {
+				section.display = "N/A";
+			} else {
+				var score = Math.round(section.actualScore);
+				section.display = "";
+				for (var i= 0; i<score; i++){
+					section.display += '<i class="fa fa-circle detail-evalscore"></i>';
+				}
+			}				
+		});
+
+
+		Ext.Array.sort(entry.evaluation.evaluationSections, function(a, b){
+			return a.name.localeCompare(b.name);	
+		});
+
+
+		Ext.Array.each(entry.reviews, function(review){
+			Ext.Array.sort(review.pros, function(a, b){
+				return a.text.localeCompare(b.text);	
+			});
+			Ext.Array.sort(review.cons, function(a, b){
+				return a.text.localeCompare(b.text);	
+			});	
+
+			review.ratingStars = [];
+			for (var i=0; i<5; i++){					
+				review.ratingStars.push({						
+					star: i < review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
+				});
+			}	
+		});
+		
+		if (entry.attributes && entry.attributes.length > 0) {
+			var evalLevels = {};	
+			Ext.Array.each(entry.attributes, function(item){
+				if (item.type === 'DI2ELEVEL') {
+					evalLevels.level = {};
+					evalLevels.level.typeDesciption = item.typeDescription; 
+					evalLevels.level.code = item.code; 
+					evalLevels.level.label = item.codeDescription; 
+					evalLevels.level.description = item.codeLongDescription;
+					evalLevels.level.highlightStyle = item.highlightStyle;
+					if (item.updateDts > entry.lastViewedDts) {
+						updated = true;
+					}
+				} else if (item.type === 'DI2ESTATE') {
+					evalLevels.state = {};
+					evalLevels.state.typeDesciption = item.typeDescription; 
+					evalLevels.state.code = item.code; 
+					evalLevels.state.label = item.codeDescription; 
+					evalLevels.state.description = item.codeLongDescription;
+					evalLevels.state.highlightStyle = item.highlightStyle;
+					if (item.updateDts > entry.lastViewedDts) {
+						updated = true;
+					}					
+				} else if (item.type === 'DI2EINTENT') {
+					evalLevels.intent = {};
+					evalLevels.intent.typeDesciption = item.typeDescription; 
+					evalLevels.intent.code = item.code; 
+					evalLevels.intent.label = item.codeDescription; 
+					evalLevels.intent.description = item.codeLongDescription; 
+					evalLevels.intent.highlightStyle = item.highlightStyle;
+					if (item.updateDts > entry.lastViewedDts) {
+						updated = true;
+					}					
+				}
+			});	
+			entry.evalLevels = evalLevels;	
+		}
+	
+		
+		return entry;
+	}
 };

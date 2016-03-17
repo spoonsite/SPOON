@@ -124,8 +124,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 					xtype: 'combobox',
 					name: 'ticketType',
 					fieldLabel: 'Choose Type<span class="field-required" />',
-					width: '100%',
-					maxLength: 50,
+					width: '100%',					
 					hidden: feedbackWin.hideType ? true : false,
 					store: feedbackTypes,
 					value: 'Help',
@@ -139,7 +138,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 					hidden: feedbackWin.hideSummary ? true : false,
 					fieldLabel: 'Summary<span class="field-required" />',
 					width: '100%',
-					maxLength: 50,
+					maxLength: 200,
 					allowBlank: feedbackWin.hideSummary ? true : false
 				},
 				{
@@ -148,7 +147,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 					fieldLabel: (feedbackWin.labelForDescription ? feedbackWin.labelForDescription : 'Description') + '<span class="field-required" />',
 					width: '100%',
 					height: 200,
-					maxLength: 255,
+					maxLength: 4096,
 					allowBlank: false
 				},
 				{

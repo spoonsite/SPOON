@@ -16,9 +16,17 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -50,6 +58,10 @@ public class UserWatchView
 	@NotNull
 	@ConsumeField
 	private Boolean notifyFlg;
+	
+	private String activeStatus;
+	private String createUser;
+	private String updateUser;
 
 	public UserWatchView()
 	{
@@ -59,13 +71,45 @@ public class UserWatchView
 	{
 		UserWatchView view = new UserWatchView();
 		view.setComponentId(watch.getComponentId());
-		view.setComponentName(component.getName());
-		view.setCreateDts(watch.getCreateDts());
-		view.setLastUpdateDts(component.getLastActivityDts());
+		view.setCreateDts(watch.getCreateDts());	
+		if (component != null) {
+			view.setComponentName(component.getName());			
+			view.setLastUpdateDts(component.getLastActivityDts());
+		}
 		view.setLastViewDts(watch.getLastViewDts());
 		view.setNotifyFlg(watch.getNotifyFlg());
 		view.setWatchId(watch.getUserWatchId());
+		view.setActiveStatus(watch.getActiveStatus());
+		view.setUpdateUser(watch.getUpdateUser());
+		view.setCreateUser(watch.getCreateUser());		
 		return view;
+	}
+	
+	public static List<UserWatchView> toViewList(List<UserWatch> watches)
+	{
+		List<UserWatchView> views = new ArrayList<>();
+		
+		Set<String> componentIdSet = new HashSet<>();	
+		watches.forEach(watch->{
+			componentIdSet.add(watch.getComponentId());
+		});
+		
+		if (componentIdSet.isEmpty() == false) {
+			String query = "Select from " + Component.class.getSimpleName() + " where componentId in :idSet";
+			Map<String, Object> paramMap = new HashMap<>();
+			paramMap.put("idSet", componentIdSet);
+			
+			List<Component> components = ServiceProxyFactory.getServiceProxy().getPersistenceService().query(query, paramMap);
+			Map<String, List<Component>> componentMap = components.stream().collect(Collectors.groupingBy(Component::getComponentId));
+			watches.forEach(watch->{
+				List<Component> componentsList = componentMap.get(watch.getComponentId());
+				if (componentsList != null) {
+					views.add(toView(watch, componentsList.get(0)));
+				}
+			});
+		}
+		
+		return views;
 	}
 
 	public String getWatchId()
@@ -128,20 +172,44 @@ public class UserWatchView
 		this.componentId = componentId;
 	}
 
-	/**
-	 * @return the notifyFlg
-	 */
 	public Boolean getNotifyFlg()
 	{
 		return notifyFlg;
 	}
 
-	/**
-	 * @param notifyFlg the notifyFlg to set
-	 */
 	public void setNotifyFlg(Boolean notifyFlg)
 	{
 		this.notifyFlg = notifyFlg;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
+	}
+
+	public String getCreateUser()
+	{
+		return createUser;
+	}
+
+	public void setCreateUser(String createUser)
+	{
+		this.createUser = createUser;
+	}
+
+	public String getUpdateUser()
+	{
+		return updateUser;
+	}
+
+	public void setUpdateUser(String updateUser)
+	{
+		this.updateUser = updateUser;
 	}
 
 }

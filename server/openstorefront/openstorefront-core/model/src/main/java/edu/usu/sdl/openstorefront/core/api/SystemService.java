@@ -80,7 +80,7 @@ public interface SystemService
 	public void saveHightlight(Highlight highlight);
 
 	/**
-	 * Inactive Hightlight
+	 * Inactive Highlight
 	 *
 	 * @param hightlightId
 	 */
@@ -88,7 +88,7 @@ public interface SystemService
 	public void removeHighlight(String hightlightId);
 
 	/**
-	 * Delete Hightlight
+	 * Delete Highlight
 	 *
 	 * @param hightlightId
 	 */
@@ -96,7 +96,7 @@ public interface SystemService
 	public void deleteHighlight(String hightlightId);
 
 	/**
-	 * Activate Hightlight
+	 * Activate Highlight
 	 *
 	 * @param hightlightId
 	 */
@@ -128,6 +128,14 @@ public interface SystemService
 	 */
 	public String errorTicketInfo(String errorTicketId);
 
+	/**
+	 * Deletes a set of tickets 
+	 * This is a hard delete
+	 * @param ticketIds 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteErrorTickets(List<String> ticketIds);
+	
 	/**
 	 * Removes excess errors beyond max....deleting oldest first
 	 */

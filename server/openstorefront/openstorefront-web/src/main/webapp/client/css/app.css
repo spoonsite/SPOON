@@ -14,7 +14,19 @@ and open the template in the editor.
 	}
     .hidePrint{
 		display: none;
+	}
+	.pushToTop{
+		margin-top: -50px;
 	}	
+}
+
+.printBody{
+		background: white !important;
+		overflow: visible;
+}
+
+.action-icon {
+	font-size: 16px;
 }
 
 .link {
@@ -38,10 +50,43 @@ and open the template in the editor.
   outline-offset: -2px;
 }
 
-
 .hidden {
 	display: none;
 	visibility: hidden;
+}
+
+.small-button-normal {
+	padding: 5px;
+    border: 1px solid grey;
+    border-radius: 2px 2px 2px 2px;
+    color: black;
+}
+
+.small-button-normal:hover {
+	background-color: lightgrey;
+	cursor: pointer;
+}
+
+.small-button-normal:pressed {
+	background-color: darkgrey;
+	cursor: pointer;
+}
+
+.small-button-danger {
+	padding: 5px;
+    border: 1px solid grey;
+    border-radius: 2px 2px 2px 2px;
+    color: red;	
+}
+
+.small-button-danger:hover {
+	background-color: lightgrey;
+	cursor: pointer;
+}
+
+.small-button-danger:pressed {
+	background-color: darkgrey;
+	cursor: pointer;
 }
 
 .page-title{
@@ -95,6 +140,8 @@ and open the template in the editor.
 	background-color: white;
 	background-image: none;
 	border: 1px solid #cccccc;
+	border-left: 0px;
+    border-right: 0px;	
 	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 	-webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
@@ -124,12 +171,14 @@ and open the template in the editor.
 	background: white;
     padding: 10px;
 	border: 1px solid lightgray;
+	margin-top: -1px;
 }
 
 .searchresults-item:nth-child(even){
 	background: whitesmoke;
     padding: 10px;
 	border: 1px solid lightgray;
+	margin-top: -1px;
 }
 
 .searchresults-item-update{
@@ -137,9 +186,30 @@ and open the template in the editor.
 	color: darkgray;
 }
 
-.searchresults-item:hover{
+.searchresults-item-org {
+	font-size: 12px;
+	color: grey;
+}
+
+.searchresults-item-click {
+	margin: 0px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.searchresults-item-click:hover{
 	background: #d8e9f6;
 	cursor: pointer;
+}
+
+.searchresults-tag{
+	border: 1px solid lightgray;
+	border-radius: 5px 5px 5px 5px;
+	background: rgba(68,30,90,1);
+	color: white;
+	font-weight: bold;
+	padding: 5px;
+	line-height: 28px;
 }
 
 .details-title-name {
@@ -273,7 +343,17 @@ tr.details-table:hover {
 	border: 1px solid grey;
 	height: 163px;
     float: left;	
-	margin-right: 5px;	
+	margin-right: 5px;
+    margin-top: 5px;	
+}
+
+.detail-media-block-quick{
+	padding: 5px;
+	border: 1px solid grey;
+	height: 163px;
+    float: left;	
+	margin-right: 5px;
+    margin-top: 5px;	
 }
 
 .detail-media-block:hover{
@@ -386,8 +466,12 @@ tr.details-table:hover {
 }
 
 .home-highlight-item-desc {
-	padding-left: 5px;
-	padding-right: 5px;
+	padding: 5px;	
+}
+
+.home-highlight-approved {
+	text-align: right;
+	font-size: 10px;
 }
 
 .logo-small {

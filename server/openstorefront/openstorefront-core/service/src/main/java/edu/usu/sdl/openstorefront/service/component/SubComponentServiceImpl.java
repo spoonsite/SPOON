@@ -662,7 +662,7 @@ public class SubComponentServiceImpl
 		example.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 		example.setCreateUser(username);
 		List<ComponentReview> tempReviews = persistenceService.queryByExample(ComponentReview.class, new QueryByExample(example));
-		List<ComponentReviewView> reviews = new ArrayList();
+		List<ComponentReviewView> reviews = new ArrayList();		
 		tempReviews.forEach(review -> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
 			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
@@ -682,6 +682,15 @@ public class SubComponentServiceImpl
 
 			reviews.add(tempView);
 		});
+		
+		//filter out unapproved
+		for (int i = reviews.size() - 1; i >= 0; i--) {
+			ComponentReviewView reviewView = reviews.get(i);
+			if (core.checkComponentApproval(reviewView.getComponentId()) == false) {
+				reviews.remove(i);
+			}
+		}
+		
 		return reviews;
 	}
 
@@ -776,6 +785,8 @@ public class SubComponentServiceImpl
 			//delete existing pros
 			ComponentReviewPro componentReviewProExample = new ComponentReviewPro();
 			componentReviewProExample.setComponentId(review.getComponentId());
+			componentReviewProExample.setComponentReviewProPk(new ComponentReviewProPk());			
+			componentReviewProExample.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());			
 			persistenceService.deleteByExample(componentReviewProExample);
 
 			for (ComponentReviewPro reviewPro : pros) {
@@ -789,7 +800,9 @@ public class SubComponentServiceImpl
 
 			//delete existing cons
 			ComponentReviewCon componentReviewConExample = new ComponentReviewCon();
-			componentReviewConExample.setComponentId(review.getComponentReviewId());
+			componentReviewConExample.setComponentId(review.getComponentId());
+			componentReviewConExample.setComponentReviewConPk(new ComponentReviewConPk());			
+			componentReviewConExample.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());						
 			persistenceService.deleteByExample(componentReviewConExample);
 
 			for (ComponentReviewCon reviewCon : cons) {

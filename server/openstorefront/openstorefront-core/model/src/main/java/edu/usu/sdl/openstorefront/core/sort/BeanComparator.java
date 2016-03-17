@@ -56,7 +56,7 @@ public class BeanComparator<T>
 	{
 		T obj1 = o1;
 		T obj2 = o2;
-		if (OpenStorefrontConstant.SORT_ASCENDING.equals(sortDirection)) {
+		if (OpenStorefrontConstant.SORT_DESCENDING.equals(sortDirection)) {
 			obj1 = o2;
 			obj2 = o1;
 		}

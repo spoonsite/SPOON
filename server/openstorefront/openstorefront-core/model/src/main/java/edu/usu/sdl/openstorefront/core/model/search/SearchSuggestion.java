@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,5 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package edu.usu.sdl.openstorefront.core.model.search;
 
+/**
+ *
+ * @author dshurtleff
+ */
+public class SearchSuggestion
+{
+	private String componentId;
+	private String name;
+	private String query;
 
+	public SearchSuggestion()
+	{
+	}
+
+	public String getComponentId()
+	{
+		return componentId;
+	}
+
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public String getQuery()
+	{
+		return query;
+	}
+
+	public void setQuery(String query)
+	{
+		this.query = query;
+	}
+
+}

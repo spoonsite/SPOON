@@ -275,7 +275,7 @@ public class CoreComponentServiceImpl
 		ComponentDetailView result = new ComponentDetailView();
 		Component tempComponent = persistenceService.findById(Component.class, componentId);
 		if (tempComponent == null) {
-			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id: " + componentId);
+			return null;
 		}
 
 		result.setApprovalState(tempComponent.getApprovalState());

@@ -20,11 +20,11 @@
 							}
 							if (v.endDts) {
 								details = details + 'End Date: ' + Ext.util.Format.date(v.endDts, 'm/d/y H:i:s') + '<br>';
-							}
-							if (v.previousDays) {
-								details = details + 'Previous Days: ' + v.previousDays + '';
-							}										
+							}																
 							return details;
+						}
+						else if (v.previousDays) {
+							return 'Previous Days: ' + v.previousDays;
 						}
 						else if (v.maxWaitSeconds) {
 							return 'Max Wait Seconds: ' + v.maxWaitSeconds;
@@ -461,6 +461,9 @@
 									if (scheduleData.data.reportOption.startDts) {
 										Ext.getCmp('startDate').setValue(new Date(scheduleData.data.reportOption.startDts));
 										Ext.getCmp('endDate').setValue(new Date(scheduleData.data.reportOption.endDts));
+										
+									}
+									if (scheduleData.data.reportOption.previousDays) {
 										Ext.getCmp('previousDaysSelect').setValue(scheduleData.data.reportOption.previousDays);
 									}
 								}
@@ -572,8 +575,13 @@
 					//  This is the store list for the Previous Days combo
 					//
 					var days = [];
+					days.push({
+						code: null,
+						days: 'Select'
+					});
 					for (var i = 1; i<29; i++) {
 						days.push({
+							code: '' + i,
 							days: '' + i
 						})
 					}
@@ -862,7 +870,7 @@
 										xtype: 'numberfield',
 										name: 'waitSeconds',
 										id: 'waitSeconds',
-										fieldLabel: 'Enter how many seconds to wait (default: 5 sec, min 1 second up to max 300 seconds)',
+										fieldLabel: 'Enter how many seconds to wait (default: 5 sec, (1 - 300 seconds))',
 										width: '100%',
 										maxLength: 3,
 										minValue: 1,
@@ -879,7 +887,7 @@
 										xtype: 'datefield',
 										name: 'startDate',
 										id: 'startDate',
-										fieldLabel: 'Start Date',
+										fieldLabel: 'Start Date (Blank = Current Day)',
 										width: '100%',
 										format: 'm/d/Y',
 										submitFormat: 'Y-m-d\\TH:i:s.u',
@@ -894,7 +902,7 @@
 										xtype: 'datefield',
 										name: 'endDate',
 										id: 'endDate',
-										fieldLabel: 'End Date',
+										fieldLabel: 'End Date (Blank = Current Day)',
 										width: '100%',
 										format: 'm/d/Y',
 										editable: true,
@@ -910,10 +918,23 @@
 										maxLength: 50,
 										store: previousDaysStore,
 										displayField: 'days',
-										valueField: 'days',
+										valueField: 'code',
 										editable: false,
 										hidden: true,
-										allowBlank: true
+										allowBlank: true,
+										listeners: {
+											change: function(cb, newValue, oldValue, opts){
+												if (newValue){
+													Ext.getCmp('startDate').setValue(null);
+													Ext.getCmp('endDate').setValue(null);
+													Ext.getCmp('startDate').setDisabled(true);
+													Ext.getCmp('endDate').setDisabled(true);													
+												} else {
+													Ext.getCmp('startDate').setDisabled(false);
+													Ext.getCmp('endDate').setDisabled(false);													
+												}
+											}
+										}
 									},									
 									{
 										xtype: 'gridpanel',

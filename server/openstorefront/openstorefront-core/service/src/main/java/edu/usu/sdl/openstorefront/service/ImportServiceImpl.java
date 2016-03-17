@@ -297,7 +297,7 @@ public class ImportServiceImpl
 				componentVersionHistory.setFileHistoryId(fileHistoryId);
 
 				List<ComponentVersionHistory> versionHistories = persistenceService.queryByExample(ComponentVersionHistory.class, componentVersionHistory);
-				versionHistories.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentVersionHistory.FIELD_CREATE_DTS));
+				versionHistories.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentVersionHistory.FIELD_CREATE_DTS));
 
 				ComponentVersionHistory batchVersion = null;
 				ComponentVersionHistory previousVersion = null;

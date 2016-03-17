@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
@@ -27,14 +28,18 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
+import edu.usu.sdl.openstorefront.core.model.search.ResultTypeStat;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.MergeCondition;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.SearchType;
+import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -48,8 +53,13 @@ import edu.usu.sdl.openstorefront.service.search.AttributeSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.BaseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ComponentSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ContactSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.EvaluationScoreSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.IndexSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
 import edu.usu.sdl.openstorefront.service.search.MetaDataSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.QuestionResponseSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.QuestionSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.ReviewProConSeatchHandler;
 import edu.usu.sdl.openstorefront.service.search.ReviewSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
 import edu.usu.sdl.openstorefront.service.search.TagSearchHandler;
@@ -68,6 +78,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -398,6 +409,9 @@ public class SearchServiceImpl
 				case CONTACT:
 					handlers.add(new ContactSearchHandler(searchElements));
 					break;
+				case INDEX:
+					handlers.add(new IndexSearchHandler(searchElements));
+					break;					
 				case METADATA:
 					handlers.add(new MetaDataSearchHandler(searchElements));
 					break;
@@ -410,6 +424,19 @@ public class SearchServiceImpl
 				case USER_RATING:
 					handlers.add(new UserRatingSearchHandler(searchElements));
 					break;
+				case EVALUTATION_SCORE: 
+					handlers.add(new EvaluationScoreSearchHandler(searchElements));
+					break;
+				case QUESTION: 
+					handlers.add(new QuestionSearchHandler(searchElements));
+					break;					
+				case QUESTION_RESPONSE: 
+					handlers.add(new QuestionResponseSearchHandler(searchElements));
+					break;
+				case REVIEWCON: 
+				case REVIEWPRO: 
+					handlers.add(new ReviewProConSeatchHandler(searchElements));
+					break;					
 				default:
 					throw new OpenStorefrontRuntimeException("No handler defined for Search Type: " + searchType, "Add support; programming error");
 			}
@@ -437,34 +464,89 @@ public class SearchServiceImpl
 			Set<String> masterResults = new HashSet<>();
 			masterResults.addAll(componentIds);
 
-			//resolve results
-			List<ComponentSearchView> views = getComponentService().getSearchComponentList(new ArrayList<>(masterResults));
-
-			//sort and window
-			if (StringUtils.isNotBlank(searchModel.getSortField())) {
-				Collections.sort(views, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
-			}
-			searchResult.setTotalNumber(views.size());
-
-			//window
-			if (searchModel.getStartOffset() < views.size() && searchModel.getMax() > 0) {
-				int count = 0;
-				for (int i = searchModel.getStartOffset(); i < views.size(); i++) {
-					searchResult.getResults().add(views.get(i));
-					count++;
-					if (count >= searchModel.getMax()) {
-						break;
+						
+			//get intermediate Results 
+			if (!masterResults.isEmpty()) {
+				String query = "select componentId, componentType, name, lastUpdateDts from " + Component.class.getSimpleName() + " where componentId in :idList";
+				Map<String, Object> parameterMap = new HashMap<>();
+				parameterMap.put("idList", masterResults);				
+				List<ODocument> results = persistenceService.query(query, parameterMap);
+				
+				Map<String, ComponentSearchView> resultMap = new HashMap<>();
+				for (ODocument doc : results) {
+					ComponentSearchView view = new ComponentSearchView();
+					view.setComponentId(doc.field("componentId"));
+					view.setName(doc.field("name"));
+					view.setComponentType(doc.field("componentType"));
+					view.setLastActivityDts(doc.field("lastUpdateDts"));
+					resultMap.put(view.getComponentId(), view);
+				}
+				searchResult.setTotalNumber(resultMap.size());
+				
+				//get review average
+				query = "select componentId, avg(rating) as rating from " + ComponentReview.class.getSimpleName() + " group by componentId ";
+				List<ODocument> resultsRatings = persistenceService.query(query, new HashMap<>());
+				for (ODocument doc : resultsRatings) {
+					ComponentSearchView view = resultMap.get(doc.field("componentId"));
+					if (view != null) {
+						view.setAverageRating(doc.field("rating"));
 					}
 				}
+				
+				//gather stats
+				Map<String, ResultTypeStat> stats = new HashMap<>();
+				for (ComponentSearchView view : resultMap.values()) {
+					if(stats.containsKey(view.getComponentType())) {
+						ResultTypeStat stat = stats.get(view.getComponentType());
+						stat.setCount(stat.getCount() + 1);						
+					} else {
+						ResultTypeStat stat = new ResultTypeStat();
+						stat.setComponentType(view.getComponentType());
+						stat.setComponentTypeDescription(TranslateUtil.translateComponentType(view.getComponentType()));
+						stat.setCount(1);						
+						stats.put(view.getComponentType(), stat);
+					}
+				}
+				searchResult.getResultTypeStats().addAll(stats.values());				
+				List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
+								
+				//then sort/window
+				if (StringUtils.isNotBlank(searchModel.getSortField())) {
+					Collections.sort(intermediateViews, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
+				}				
+				
+				List<String> idsToResolve = new ArrayList<>();
+				if (searchModel.getStartOffset() < intermediateViews.size() && searchModel.getMax() > 0) {
+					int count = 0;
+					for (int i = searchModel.getStartOffset(); i < intermediateViews.size(); i++) {
+						idsToResolve.add(intermediateViews.get(i).getComponentId());
+						count++;
+						if (count >= searchModel.getMax()) {
+							break;
+						}
+					}
+				}
+				
+				//resolve results
+				List<ComponentSearchView> views = getComponentService().getSearchComponentList(idsToResolve);
+				if (StringUtils.isNotBlank(searchModel.getSortField())) {
+					Collections.sort(views, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
+				}				
+				searchResult.getResults().addAll(views);				
 			}
 		}
 		searchResult.setValidationResult(validationResultMain);
 
 		return searchResult;
 	}
-
+	
 	@Override
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
+	{
+		return doIndexSearch(query, filter, null);
+	}	
+	
+	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
 	{
 		IndexSearchResult indexSearchResult = new IndexSearchResult();
 
@@ -511,8 +593,14 @@ public class SearchServiceImpl
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(myQueryString);
 
-			// fields to be returned back from solr
+			// fields to be returned back from solr			
 			solrQuery.setFields(SolrComponentModel.ID_FIELD, SolrComponentModel.ISCOMPONENT_FIELD);
+			if (addtionalFieldsToReturn != null) {
+				for (String field : addtionalFieldsToReturn) {
+					solrQuery.addField(field);
+				}
+			}
+			
 			solrQuery.setStart(filter.getOffset());
 			solrQuery.setRows(filter.getMax());
 
@@ -528,15 +616,17 @@ public class SearchServiceImpl
 					order = SolrQuery.ORDER.asc;
 				}
 				solrQuery.addSort(sortFieldText, order);
-			}
+			} 
 
 			solrQuery.setIncludeScore(true);
 
 			QueryResponse response = SolrManager.getServer().query(solrQuery);
 			SolrDocumentList results = response.getResults();
-			totalFound = results.getNumFound();
+			totalFound = results.getNumFound();				
+						
 			DocumentObjectBinder binder = new DocumentObjectBinder();
-			resultsList = binder.getBeans(SolrComponentModel.class, results);
+			resultsList = binder.getBeans(SolrComponentModel.class, results);		
+			
 		} catch (SolrServerException ex) {
 			throw new OpenStorefrontRuntimeException("Search Failed", "Contact System Admin.  Seach server maybe Unavailable", ex);
 		} catch (Exception ex) {
@@ -546,6 +636,65 @@ public class SearchServiceImpl
 		indexSearchResult.setTotalResults(totalFound);
 
 		return indexSearchResult;
+	}
+
+	@Override
+	public List<SearchSuggestion> searchSuggestions(String query, int maxResult)
+	{
+		List<SearchSuggestion> suggestions = new ArrayList<>();
+		
+		FilterQueryParams filter = FilterQueryParams.defaultFilter();
+		
+		//query everything we can
+		String extraFields[] = {
+			SolrComponentModel.FIELD_NAME, 
+			SolrComponentModel.FIELD_ORGANIZATION, 
+			SolrComponentModel.FIELD_DESCRIPTION, 
+		};
+		IndexSearchResult indexSearchResult = doIndexSearch(query, filter, extraFields);
+		
+		//apply weight to items
+		if (StringUtils.isBlank(query)) {
+			query = "";
+		}
+		
+		String queryNoWild = query.replace("*", "").toLowerCase();
+		for (SolrComponentModel model : indexSearchResult.getResultsList()) {
+			int score = 0;
+						
+			if (StringUtils.isNotBlank(model.getName()) &&
+					model.getName().toLowerCase().contains(queryNoWild)) {
+				score += 100;
+			}
+			
+			if (StringUtils.isNotBlank(model.getOrganization()) &&
+					model.getOrganization().toLowerCase().contains(queryNoWild)) {
+				score += 50;
+			}
+			
+			int count = StringUtils.countMatches(model.getDescription().toLowerCase(), queryNoWild);
+			score += count * 5;	
+			
+			model.setSearchWeight(score);			
+		}
+		
+		//sort
+		indexSearchResult.getResultsList().sort((SolrComponentModel o1, SolrComponentModel o2) -> Integer.compare(o2.getSearchWeight(), o1.getSearchWeight()));
+		
+		//window
+		List<SolrComponentModel> topItems = indexSearchResult.getResultsList().stream().limit(maxResult).collect(Collectors.toList());
+		
+		for (SolrComponentModel model : topItems) {
+			
+			SearchSuggestion suggestion = new SearchSuggestion();
+			suggestion.setName(model.getName());
+			suggestion.setComponentId(model.getId());
+			suggestion.setQuery("\"" + model.getName() + "\"");
+			
+			suggestions.add(suggestion);
+		}
+				
+		return suggestions;
 	}
 
 }

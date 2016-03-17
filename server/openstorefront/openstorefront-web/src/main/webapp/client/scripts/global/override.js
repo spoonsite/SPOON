@@ -195,9 +195,12 @@ Ext.define('OSF.defaults.ComboBox', {
 
 Ext.onReady(function() {
     
-     Ext.tip.QuickTipManager.init();
+    Ext.tip.QuickTipManager.init();
 	Ext.util.History.init();
-
+	Ext.enableAria = false;
+	Ext.enableAriaButtons=false;
+	Ext.enableAriaPanels=false;
+	
 	/**
 	 Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
 	 maxWidth: 200,

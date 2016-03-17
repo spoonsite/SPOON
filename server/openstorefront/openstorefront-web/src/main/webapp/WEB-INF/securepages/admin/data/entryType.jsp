@@ -50,7 +50,7 @@
 									allowBlank: false,
 									width: '100%',
 									fieldBodyCls: 'form-comp-htmleditor-border',
-									maxLength: 255,
+									maxLength: 65536,
 									margin: '0 0 30 0'
 								},																
 								{

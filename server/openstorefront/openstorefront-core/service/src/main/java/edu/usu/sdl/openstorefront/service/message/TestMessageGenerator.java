@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.message;
 
-import org.codemonkey.simplejavamail.Email;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  *

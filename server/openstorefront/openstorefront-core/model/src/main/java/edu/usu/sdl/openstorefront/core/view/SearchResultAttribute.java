@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class SearchResultAttribute
 {
 
 	private String type;
+	private String typeLabel;	
 	private String code;
 	private String badgeUrl;
 	private String label;
@@ -53,6 +55,11 @@ public class SearchResultAttribute
 			view.setBadgeUrl(code.getBadgeUrl());
 			view.setLabel(code.getLabel());
 		}
+		AttributeType type = service.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
+		if (type != null) {
+			view.setTypeLabel(type.getDescription());			
+		}
+		
 		return view;
 	}
 
@@ -103,6 +110,16 @@ public class SearchResultAttribute
 	public void setLabel(String label)
 	{
 		this.label = label;
+	}
+
+	public String getTypeLabel()
+	{
+		return typeLabel;
+	}
+
+	public void setTypeLabel(String typeLabel)
+	{
+		this.typeLabel = typeLabel;
 	}
 
 }

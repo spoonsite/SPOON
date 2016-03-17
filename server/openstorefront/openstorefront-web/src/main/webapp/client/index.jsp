@@ -19,8 +19,8 @@ limitations under the License.
 <stripes:layout-render name="layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 	
+	<script src="scripts/component/advanceSearch.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/searchToolContentPanel.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/searchToolWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
 	<script type="text/javascript">
 		
@@ -47,7 +47,7 @@ limitations under the License.
 							maximizable: true,
 							closeAction: 'destroy',
 							bodyStyle: 'padding: 20px;',
-							html: item.description,							
+							html: item.description + '<br><br><span style="font-size: 10px;">Updated: ' + Ext.util.Format.date(item.updateDts, "m/d/y") + '</span>',							
 							dockedItems: [
 								{
 									xtype: 'toolbar',
@@ -85,7 +85,10 @@ limitations under the License.
 			});
 			
 			var searchtoolsWin = Ext.create('OSF.component.SearchToolWindow', {	
-			});			
+			});	
+			
+			var helpWin = Ext.create('OSF.component.HelpWindow', {				
+			});
 
 			var quoteBanner = Ext.create('Ext.panel.Panel', {
 				width: '100%',				
@@ -114,7 +117,7 @@ limitations under the License.
 									xtype: 'image',
 									id: 'logoImage',
 									height: 200,						
-									src: ''
+									src: ''									
 								}
 							]
 					},					
@@ -156,11 +159,23 @@ limitations under the License.
 											}
 										}, 
 										{
-											xtype: 'textfield',										
+											xtype: 'combobox',										
 											itemId: 'searchText',
 											flex: 1,
 											fieldCls: 'home-search-field',
 											emptyText: 'Search',
+											queryMode: 'remote',
+											hideTrigger: true,
+											valueField: 'query',
+											displayField: 'name',											
+											autoSelect: false,
+											store: {
+												autoLoad: false,
+												proxy: {
+													type: 'ajax',
+													url: '../api/v1/service/search/suggestions'													
+												}
+											},
 											listeners:{
 												specialkey: function(field, e) {
 													var value = this.getValue();
@@ -170,7 +185,7 @@ limitations under the License.
 															var searchRequest = {
 																type: 'SIMPLE',
 																query: CoreUtil.searchQueryAdjustment(query)
-															}
+															};
 															CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 														}
 														window.location.href = 'Router.action?page=main/searchResults.jsp';														
@@ -211,7 +226,7 @@ limitations under the License.
 				
 				]
 				
-			});
+			});		
 		
 			var loadedHighlightsRecently = false;		
 		
@@ -267,7 +282,7 @@ limitations under the License.
 					var highlightTemplate = new Ext.XTemplate(
 						'<div class="home-highlight-item">',
 						'<h2><tpl if="link"><a href="{link}" class="link" target="_blank">{title} <i class="fa fa-link"></i></a></tpl><tpl if="!link">{title}</tpl></h2>',
-						'<div class="home-highlight-item-desc">{displayDesc}</div>',
+						'<div class="home-highlight-item-desc">{displayDesc}<br><span style="font-size: 10px;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span></div>',
 						'<br><div style="text-align: right;"><a href="#" class="link" onclick="homepage.readToggleHighlight(\'{highlightId}\');">{moreText}</a></div>',
 						'</div>'
 					);
@@ -294,8 +309,9 @@ limitations under the License.
 					
 					var template = new Ext.XTemplate(
 						'<div class="home-highlight-item">',
-						'<h2><a href="view.jsp?id={componentId}" class="link" target="_blank">{name} <i class="fa fa-link"></i></a></h2>',
-						'<div class="home-highlight-item-desc">{displayDesc}</div>',						
+						'	<h2><a href="view.jsp?id={componentId}" class="link" target="_blank">{name} <i class="fa fa-link"></i></a></h2>',
+						'	<div class="home-highlight-item-desc">{displayDesc}</div>',
+						'	<div class="home-highlight-approved">Approved: {[Ext.util.Format.date(values.addedDts, "m/d/y")]}</div>',						
 						'</div>'
 					);					
 					
@@ -485,8 +501,9 @@ limitations under the License.
 											{
 												text: '<b>Help</b>',
 												iconCls: 'fa fa-question-circle',
-												href: '../help',
-												hrefTarget: '_blank'
+												handler: function(){
+													helpWin.show();
+												}
 											},
 											{
 												text: '<b>Feedback / issues</b>',
@@ -566,6 +583,10 @@ limitations under the License.
 						Ext.getCmp('homeTitle').setText(branding.landingPageTitle);
 						Ext.getCmp('quote').update('<blockquote style="text-align: center;">' + branding.landingPageBanner + '</blockquote>');
 						Ext.getCmp('logoImage').setSrc(branding.primaryLogoUrl);
+						Ext.getCmp('logoImage').getEl().on('load', function(evt, target, opts){
+							searchPanel.updateLayout(true, true);							
+						});
+						
 						Ext.getCmp('customFooter').update(branding.landingPageFooter);
 											
 						loadStats();

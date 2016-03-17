@@ -127,6 +127,7 @@ public class TaskThreadExecutor
 	@Override
 	protected void beforeExecute(Thread t, Runnable r)
 	{
+		t.setName("Async-Pool-Task-" + t.getId());		
 		if (r instanceof Future<?>) {
 			Future future = ((Future<?>) r);
 

@@ -66,11 +66,9 @@ limitations under the License.
 	
 	<%-- Custom Components --%>		
 	<script src="scripts/component/standardComboBox.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/notificationPanel.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/notificationWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/notificationPanel.js?v=${appVersion}" type="text/javascript"></script>	
 	<script src="scripts/component/framePanel.js?v=${appVersion}" type="text/javascript"></script>	
-	<script src="scripts/component/userProfilePanel.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/userProfileWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/userProfilePanel.js?v=${appVersion}" type="text/javascript"></script>	
 	<script src="scripts/component/feedbackWindow.js?v=${appVersion}" type="text/javascript"></script>
 	
 	<title>Admin Tools</title>

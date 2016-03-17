@@ -30,7 +30,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.codemonkey.simplejavamail.Email;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  *

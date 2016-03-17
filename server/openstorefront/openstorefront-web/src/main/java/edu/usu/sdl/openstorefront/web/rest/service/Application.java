@@ -162,11 +162,44 @@ public class Application
 			threadStatus.setName(info.getThreadName());
 			threadStatus.setStatus(info.getThreadState().name());
 			threadStatus.setDetails(info.toString().replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;").replace("\n", "<br>"));
-			threadStatuses.add(threadStatus);
-		}
-
+			threadStatuses.add(threadStatus);			
+		}		
+		
 		return threadStatuses;
 	}
+	
+	@GET
+	@RequireAdmin
+	@APIDescription("Attempts to get the full stack of a thread")
+	@Produces({MediaType.TEXT_HTML})	
+	@Path("/threads/{threadId}/stack")
+	public Response getThreadStack(
+			@PathParam("threadId") long threadId
+	)
+	{
+		StringBuilder stack = new StringBuilder();
+
+		ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+		ThreadInfo threadInfo = threadMXBean.getThreadInfo(threadId, Integer.MAX_VALUE);
+		if (threadInfo != null) {
+			for (StackTraceElement stackTraceElement : threadInfo.getStackTrace()) {
+				String style = "color: grey; font-size: 10px;";
+				if (stackTraceElement.getClassName().contains("edu.usu.sdl")) {
+					style = "color: black; font-size: 12px; font-wieght: bold;";
+				}				
+				stack.append("<span style='")
+						.append(style).append("'>")
+						.append(stackTraceElement.getClassName()).append(" (")
+						.append(stackTraceElement.getMethodName()).append(") : ")
+						.append(stackTraceElement.getLineNumber()).append(" ")
+						.append("</span><br>");
+			}
+			
+			return Response.ok(stack.toString()).build();
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+	}	
 
 	@GET
 	@RequireAdmin
@@ -234,6 +267,7 @@ public class Application
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			PropertiesManager.setProperty(lookupModel.getCode(), lookupModel.getDescription());
+			return Response.ok(lookupModel).build();
 		}
 		return sendSingleEntityResponse(validationResult.toRestError());
 	}

@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  * @author dshurtleff
  */
 public class MainAttributeParser
-		extends BaseAttributeParser
+		extends OldBaseAttributeParser
 {
 
 	private static final Logger log = Logger.getLogger(MainAttributeParser.class.getName());
