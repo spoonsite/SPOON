@@ -48,7 +48,7 @@ public class ArchitectureSearchHandler
 
 		for (SearchElement searchElement : searchElements) {
 			if (StringUtils.isBlank(searchElement.getKeyField())) {
-				validationResult.getRuleResults().add(getRuleResult("keyfield", "Required"));
+				validationResult.getRuleResults().add(getRuleResult("keyField", "Required"));
 			}
 		}
 
@@ -96,8 +96,9 @@ public class ArchitectureSearchHandler
 			List<ComponentAttribute> attributes = new ArrayList<>();
 			if (ids.isEmpty() == false) {
 
-				String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode IN :attributeCodeIdListParam";
+				String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where activeStatus = :activeStatus and componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode IN :attributeCodeIdListParam";
 				Map<String, Object> params = new HashMap<>();
+				params.put("activeStatus", ComponentAttribute.ACTIVE_STATUS);
 				params.put("attributeType", searchElement.getKeyField());
 				params.put("attributeCodeIdListParam", ids);
 				attributes = serviceProxy.getPersistenceService().query(componentAttributeQuery, params);

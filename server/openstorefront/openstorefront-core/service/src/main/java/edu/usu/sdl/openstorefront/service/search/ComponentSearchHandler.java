@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
@@ -96,6 +97,9 @@ public class ComponentSearchHandler
 
 			try {
 				Component component = new Component();
+				component.setActiveStatus(Component.ACTIVE_STATUS);
+				component.setApprovalState(ApprovalStatus.APPROVED);
+				
 				Field field = ReflectionUtil.getField(new Component(), searchElement.getField());
 				field.setAccessible(true);
 				QueryByExample queryByExample = new QueryByExample(component);

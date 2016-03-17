@@ -93,7 +93,7 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 			sorters: [
 				new Ext.util.Sorter({
 					property: 'name',
-					direction: 'DESC'
+					direction: 'ASC'
 				})
 			],
 			proxy: CoreUtil.pagingProxy({
@@ -358,7 +358,7 @@ Ext.define('OSF.component.SearchToolWindow', {
         //***************************
         var sortList = function (theArray, fieldname, direction) {
 
-            if (direction === 'ASC') {
+            if (direction === 'DESC') {
                 var tData = theArray.sort(function (a, b) {
                     if (a[fieldname] > b[fieldname])
                         return -1;
@@ -368,7 +368,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 
                 });
             }
-            else if (direction === 'DESC') {
+            else if (direction === 'ASC') {
                 var tData = theArray.sort(function (a, b) {
                     if (a[fieldname] < b[fieldname])
                         return -1;
@@ -408,7 +408,7 @@ Ext.define('OSF.component.SearchToolWindow', {
             //Do the search on the category attribute
             searchToolWin.searchObj = {
                 "sortField": null,
-                "sortDirection": "DESC",
+                "sortDirection": "ASC",
                 "startOffset": 0,
                 "max": 2147483647,
                 "searchElements": [{
@@ -442,7 +442,7 @@ Ext.define('OSF.component.SearchToolWindow', {
                 success: function (response, opts) {
                     newTab.setLoading(false);
                     var data = Ext.decode(response.responseText);
-                    var tData = sortList(data, 'label', 'DESC');
+                    var tData = sortList(data, 'label', 'ASC');
                     ////console.log("tData",tData);
                     Ext.Array.each(tData, function (item) {
                         ////console.log("newTab",newTab);
@@ -501,7 +501,7 @@ Ext.define('OSF.component.SearchToolWindow', {
             //Do the search on the category attribute
             searchToolWin.searchObj = {
                 "sortField": null,
-                "sortDirection": "DESC",
+                "sortDirection": "ASC",
                 "startOffset": 0,
                 "max": 2147483647,
                 "searchElements": [{
@@ -540,7 +540,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 
                         //Sort the aData
                         var dataArray = aData.data;
-                        var tData = sortList(dataArray, 'label', 'DESC');
+                        var tData = sortList(dataArray, 'label', 'ASC');
 
                         Ext.Array.each(tData, function (item2) {
                             p.add({
@@ -585,7 +585,7 @@ Ext.define('OSF.component.SearchToolWindow', {
                     var data = Ext.decode(response.responseText);
                     var dArray = data.topicSearchViews;
 
-                    tData = sortList(dArray, 'attributeTypeDescription', 'DESC');
+                    tData = sortList(dArray, 'attributeTypeDescription', 'ASC');
 
                     Ext.Array.each(tData, function (item) {
 
@@ -646,7 +646,7 @@ Ext.define('OSF.component.SearchToolWindow', {
             //Do the search on the category attribute
             searchToolWin.searchObj = {
                 "sortField": null,
-                "sortDirection": "DESC",
+                "sortDirection": "ASC",
                 "startOffset": 0,
                 "max": 2147483647,
                 "searchElements": [{

@@ -1279,7 +1279,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				addWindow.getComponent('metaForm').loadRecord(record);
 			}			
 		};
-		
+	
 		submissionPanel.detailsPanel = Ext.create('Ext.panel.Panel', {
 			autoScroll: true,
 			items: [
@@ -1315,7 +1315,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							}),
 							forceFit: true,
 							columns: [
-								{ text: 'Attribute Type', dataIndex: 'typeDescription',  width: 200 },
+								{ text: 'Attribute Type', dataIndex: 'typeDescription',  width: 250 },
 								{ text: 'Attribute', dataIndex: 'codeDescription', flex: 1, width: 200 }
 							],
 							listeners: {
@@ -1340,7 +1340,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Add',
 											iconCls: 'fa fa-plus',
 											handler: function(){
-												
 												var addWindow = Ext.create('Ext.window.Window', {
 													closeAction: 'destory',
 													modal: true,
@@ -1352,25 +1351,26 @@ Ext.define('OSF.component.SubmissionPanel', {
 													items: [
 														{
 															xtype: 'form',
+															itemId: 'attributeForm',
 															bodyStyle: 'padding: 10px;',
 															defaults: {
 																labelAlign: 'right',
 																labelSeparator: '',
 																width: '100%'
 															},
-															items:[
+															items: [
 																{
 																	xtype: 'combobox',
 																	itemId: 'attributeTypeCB',
 																	fieldLabel: 'Attribute Type <span class="field-required" />',
-																	name: 'attributeType',																	
-																	forceSelection: true,	
+																	name: 'attributeType',
+																	forceSelection: true,
 																	queryMode: 'local',
 																	editable: false,
-																	typeAhead: false,										
+																	typeAhead: false,
 																	allowBlank: false,
-																	valueField: 'attributeType',																	
-																	displayField: 'description',										
+																	valueField: 'attributeType',
+																	displayField: 'description',
 																	store: Ext.create('Ext.data.Store', {
 																		fields: [
 																			"attributeType",
@@ -1382,7 +1382,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 																		change: function (field, newValue, oldValue, opts) {
 																			field.up('form').getComponent('attributeCodeCB').clearValue();
 
-																			var record = field.getSelection();		
+																			var record = field.getSelection();
 																			if (record) {
 																				field.up('form').getComponent('attributeCodeCB').getStore().loadData(record.data.codes);
 																			} else {
@@ -1396,19 +1396,19 @@ Ext.define('OSF.component.SubmissionPanel', {
 																	itemId: 'attributeCodeCB',
 																	fieldLabel: 'Attribute Code <span class="field-required" />',
 																	name: 'attributeCode',
-																	forceSelection: true,	
-																	queryMode: 'local',																	
+																	forceSelection: true,
+																	queryMode: 'local',
 																	editable: false,
-																	typeAhead: false,										
+																	typeAhead: false,
 																	allowBlank: false,
 																	valueField: 'code',
-																	displayField: 'label',										
+																	displayField: 'label',
 																	store: Ext.create('Ext.data.Store', {
 																		fields: [
 																			"code",
 																			"label"
-																		]																							
-																	})									
+																		]
+																	})
 																}
 															],
 															dockedItems: [
@@ -1420,39 +1420,39 @@ Ext.define('OSF.component.SubmissionPanel', {
 																			text: 'Save',
 																			formBind: true,
 																			iconCls: 'fa fa-save',
-																			handler: function(){
-																					var attributeWindow = this.up('window');
-																					var form = this.up('form');
-																					var data = form.getValues();
-																					var componentId = submissionPanel.componentId;
+																			handler: function () {
+																				var attributeWindow = this.up('window');
+																				var form = this.up('form');
+																				var data = form.getValues();
+																				var componentId = submissionPanel.componentId;
 
-																					data.componentAttributePk = {
-																						attributeType: data.attributeType,
-																						attributeCode: data.attributeCode
-																					};
+																				data.componentAttributePk = {
+																					attributeType: data.attributeType,
+																					attributeCode: data.attributeCode
+																				};
 
-																					var method = 'POST';
-																					var update = '';										
+																				var method = 'POST';
+																				var update = '';
 
-																					CoreUtil.submitForm({
-																						url: '../api/v1/resource/components/' + componentId + '/attributes' + update,
-																						method: method,
-																						data: data,
-																						form: form,
-																						success: function(){																					
-																							submissionPanel.loadComponentAttributes();
-																							attributeWindow.close();
-																						}
-																					});
+																				CoreUtil.submitForm({
+																					url: '../api/v1/resource/components/' + componentId + '/attributes' + update,
+																					method: method,
+																					data: data,
+																					form: form,
+																					success: function () {
+																						submissionPanel.loadComponentAttributes();
+																						attributeWindow.close();
+																					}
+																				});
 																			}
 																		},
 																		{
 																			xtype: 'tbfill'
 																		},
 																		{
-																			text: 'Cancel',										
+																			text: 'Cancel',
 																			iconCls: 'fa fa-close',
-																			handler: function(){
+																			handler: function () {
 																				this.up('window').close();
 																			}
 																		}
@@ -1648,7 +1648,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',											
+											text: 'Remove',
+											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -1734,7 +1735,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',											
+											text: 'Remove',	
+											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -1819,7 +1821,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',											
+											text: 'Remove',	
+											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -1902,7 +1905,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',											
+											text: 'Remove',
+											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -2099,7 +2103,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',											
+											text: 'Remove',
+											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){

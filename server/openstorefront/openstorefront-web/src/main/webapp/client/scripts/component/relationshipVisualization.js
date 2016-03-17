@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global Ext */
+/* global Ext, CoreUtil */
 
 Ext.define('OSF.component.RelationshipVisPanel', {
 	extend: 'Ext.draw.Container',
@@ -92,7 +92,7 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 							componentId: sprite.componentId,
 							name: sprite.componentName,
 							relationships: relationships
-						}
+						};
 						visPanel.updateDiagramData(entry);
 						visPanel.setHeight(entry.relationships.length*80);
 						visPanel.drawVisual();
@@ -187,7 +187,7 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 					newText = Ext.String.ellipsis(newText, i);
 				}
 				return newText;
-			}
+			};
 
 
 			sprites.push({
