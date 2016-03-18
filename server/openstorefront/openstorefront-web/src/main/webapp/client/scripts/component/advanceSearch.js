@@ -53,7 +53,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									{code: 'organization', label: 'Organization'},
 									{code: 'version', label: 'Version'},
 									{code: 'releaseDate', label: 'Release Date'},
-									{code: 'approvalDts', label: 'Approval Date'},
+									{code: 'approvedDts', label: 'Approved Date'},
 									{code: 'lastActivityDts', label: 'Last Activity Date'},
 									{code: 'dataSource', label: 'Data Source'}
 								]
@@ -87,7 +87,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 										optionPanel.getComponent('dataSource').setDisabled(false);									
 									} 									
 									if (newValue === 'releaseDate' || 
-										newValue === 'approvalDts' ||
+										newValue === 'approvedDts' ||
 										newValue === 'lastActivityDts') {
 										optionPanel.getComponent('startDate').setHidden(false);
 										optionPanel.getComponent('startDate').setDisabled(false);
@@ -98,7 +98,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									if (newValue === 'componentType' ||
 										newValue === 'dataSource' ||
 										newValue === 'releaseDate' ||
-										newValue === 'approvalDts' ||
+										newValue === 'approvedDts' ||
 										newValue === 'lastActivityDts') 
 									{
 										optionPanel.getComponent('value').setHidden(true);
@@ -168,7 +168,13 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							disabled: true,
 							hidden: true,								
 							width: '100%',
-							fieldLabel: 'Start Date <span class="field-required" />'					
+							fieldLabel: 'Start Date <span class="field-required" />',
+							listeners: {
+								change: function(dateField, newValue, oldValue, opts) {
+									var optionPanel = dateField.up('panel');
+									optionPanel.getComponent('endDate').setMinValue(newValue);
+								}
+							}
 						},						
 						{
 							xtype: 'datefield',
@@ -178,7 +184,13 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							width: '100%',
 							disabled: true,
 							hidden: true,							
-							fieldLabel: 'End Date <span class="field-required" />'					
+							fieldLabel: 'End Date <span class="field-required" />',
+							listeners: {
+								change: function(dateField, newValue, oldValue, opts) {
+									var optionPanel = dateField.up('panel');
+									optionPanel.getComponent('startDate').setMaxValue(newValue);
+								}
+							}							
 						},	
 						{
 							xtype: 'checkbox',
@@ -225,7 +237,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'ATTRIBUTE',
 				label: 'Attribute',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -300,7 +311,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'ARCHITECTURE',
 				label: 'Architecture',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -406,7 +416,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'INDEX',
 				label: 'Index',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -427,7 +436,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'TAG',
 				label: 'Tag',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -486,7 +494,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'METADATA',
 				label: 'Meta Data',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -553,7 +560,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'USER_RATING',
 				label: 'User Rating',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -612,7 +618,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'CONTACT',
 				label: 'Contact',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -739,7 +744,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'REVIEW',
 				label: 'User Review',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -775,9 +779,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									optionPanel.getComponent('userTypeCode').setHidden(true);
 									optionPanel.getComponent('userTypeCode').setDisabled(true);	
 									optionPanel.getComponent('userTimeCode').setHidden(true);
-									optionPanel.getComponent('userTimeCode').setDisabled(true);										
-									optionPanel.getComponent('recommend').setHidden(true);
-									optionPanel.getComponent('recommend').setDisabled(true);										
+									optionPanel.getComponent('userTimeCode').setDisabled(true);																				
 									optionPanel.getComponent('startDate').setHidden(true);
 									optionPanel.getComponent('startDate').setDisabled(true);										
 									optionPanel.getComponent('endDate').setHidden(true);
@@ -804,14 +806,9 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 										optionPanel.getComponent('endDate').setHidden(false);
 										optionPanel.getComponent('endDate').setDisabled(false);										
 									}
-									if (newValue === 'recommend') {
-										optionPanel.getComponent('recommend').setHidden(false);
-										optionPanel.getComponent('recommend').setDisabled(false);									
-									} 
 																		
 									if (newValue === 'userTypeCode' ||
 										newValue === 'userTimeCode' ||
-										newValue === 'recommend' ||
 										newValue === 'lastUsed' ||
 										newValue === 'createDts') 
 									{
@@ -882,7 +879,13 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							disabled: true,
 							hidden: true,								
 							width: '100%',
-							fieldLabel: 'Start Date <span class="field-required" />'					
+							fieldLabel: 'Start Date <span class="field-required" />',
+							listeners: {
+								change: function(dateField, newValue, oldValue, opts) {
+									var optionPanel = dateField.up('panel');
+									optionPanel.getComponent('endDate').setMinValue(newValue);
+								}
+							}							
 						},						
 						{
 							xtype: 'datefield',
@@ -892,17 +895,24 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							width: '100%',
 							disabled: true,
 							hidden: true,							
-							fieldLabel: 'End Date <span class="field-required" />'					
-						},	
-						{
-							xtype: 'checkbox',
-							itemId: 'recommend',
-							name: 'value',
-							uncheckedValue: 'false',
-							disabled: true,
-							hidden: true,
-							boxLabel: 'Recommended'
+							fieldLabel: 'End Date <span class="field-required" />',
+							listeners: {
+								change: function(dateField, newValue, oldValue, opts) {
+									var optionPanel = dateField.up('panel');
+									optionPanel.getComponent('startDate').setMaxValue(newValue);
+								}
+							}							
 						},
+//There some Ext.js bug not reseting more than 10 field? This field disappears on reset of the first field.  						
+//						{
+//							xtype: 'checkbox',
+//							itemId: 'recommend',
+//							name: 'value',
+//							uncheckedValue: 'false',
+//							disabled: true,
+//							hidden: true,
+//							boxLabel: 'Recommended'
+//						},
 						{
 							xtype: 'checkbox',
 							itemId: 'caseInsensitive',
@@ -948,7 +958,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'REVIEWPRO',
 				label: 'User Review Pro',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -1007,7 +1016,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'REVIECON',
 				label: 'User Review Con',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -1066,7 +1074,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'QUESTION',
 				label: 'Question',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -1170,7 +1177,13 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							disabled: true,
 							hidden: true,								
 							width: '100%',
-							fieldLabel: 'Start Date <span class="field-required" />'					
+							fieldLabel: 'Start Date <span class="field-required" />',
+							listeners: {
+								change: function(dateField, newValue, oldValue, opts) {
+									var optionPanel = dateField.up('panel');
+									optionPanel.getComponent('endDate').setMinValue(newValue);
+								}
+							}							
 						},						
 						{
 							xtype: 'datefield',
@@ -1180,7 +1193,13 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							width: '100%',
 							disabled: true,
 							hidden: true,							
-							fieldLabel: 'End Date <span class="field-required" />'					
+							fieldLabel: 'End Date <span class="field-required" />',
+							listeners: {
+								change: function(dateField, newValue, oldValue, opts) {
+									var optionPanel = dateField.up('panel');
+									optionPanel.getComponent('startDate').setMaxValue(newValue);
+								}
+							}							
 						},	
 						{
 							xtype: 'checkbox',
@@ -1227,7 +1246,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'QUESTION_RESPONSE',
 				label: 'Question Response',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -1331,7 +1349,13 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							disabled: true,
 							hidden: true,								
 							width: '100%',
-							fieldLabel: 'Start Date <span class="field-required" />'					
+							fieldLabel: 'Start Date <span class="field-required" />',
+							listeners: {
+								change: function(dateField, newValue, oldValue, opts) {
+									var optionPanel = dateField.up('panel');
+									optionPanel.getComponent('endDate').setMinValue(newValue);
+								}
+							}							
 						},						
 						{
 							xtype: 'datefield',
@@ -1341,7 +1365,13 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							width: '100%',
 							disabled: true,
 							hidden: true,							
-							fieldLabel: 'End Date <span class="field-required" />'					
+							fieldLabel: 'End Date <span class="field-required" />',
+							listeners: {
+								change: function(dateField, newValue, oldValue, opts) {
+									var optionPanel = dateField.up('panel');
+									optionPanel.getComponent('startDate').setMaxValue(newValue);
+								}
+							}							
 						},	
 						{
 							xtype: 'checkbox',
@@ -1388,7 +1418,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				searchType: 'EVALUTATION_SCORE',
 				label: 'Evaluation Score',
 				options: Ext.create('Ext.panel.Panel', {
-					disabled: true,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -1493,11 +1522,12 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 					listeners: {
 						change: function(typeCB, newValue, oldValue, opts) {
 							var optionsPanel = advancePanel.entryForm.getComponent('options');
+							
 							advancePanel.entryForm.getForm().clearInvalid();
-							optionsPanel.getLayout().getActiveItem().setDisabled(true);
-							optionsPanel.getLayout().setActiveItem(typeCB.getSelection().data.options);
-							optionsPanel.getLayout().getActiveItem().setDisabled(false);
-							advancePanel.entryForm.getForm().clearInvalid();							
+							if (optionsPanel.getLayout().getActiveItem()) {
+								optionsPanel.remove(optionsPanel.getLayout().getActiveItem(), false);
+							}
+							optionsPanel.add(typeCB.getSelection().data.options);
 						}
 					}
 				},
@@ -1544,8 +1574,9 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 						{
 							xtype: 'button',
 							itemId: 'saveButton',
-							//formBind: true,
+							formBind: true,
 							text: 'Add',
+							minWidth: 175,
 							iconCls: 'fa fa-plus',
 							handler: function() {
 								var saveButton = this;
@@ -1602,18 +1633,18 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 								});
 
 							}			
-						}
-//						{
-//							xtype: 'button',
-//							text: 'Cancel',							
-//							iconCls: 'fa fa-close',
-//							margin: '0 0 0 20',
-//							handler: function() {
-//								advancePanel.entryForm.reset();
-//								advancePanel.entryForm.updateRecord = null;
-//								advancePanel.entryForm.get('buttonPanel').getComponent('saveButton').setText('Add');
-//							}
-//						}						
+						},
+						{
+							xtype: 'button',
+							text: 'Cancel',							
+							iconCls: 'fa fa-close',
+							margin: '0 0 0 20',
+							handler: function() {
+								advancePanel.entryForm.reset();
+								advancePanel.entryForm.updateRecord = null;
+								advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Add');
+							}
+						}						
 					]
 				},				
 				{
@@ -1649,9 +1680,6 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 								}
 								if (record.get('endDate')) {
 									options += '<b>End Date: </b>' + record.get('endDate') + '<br>';
-								}
-								if (record.get('endDate')) {
-									options += '<b>End Date: </b>' + record.get('endDate') + '<br>';
 								}								
 								if (record.get('caseInsensitive')) {
 									options += '<b>Case Insensitive: </b>' + record.get('caseInsensitive') + '<br>';
@@ -1679,23 +1707,98 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							xtype:'actioncolumn',
 							width: 50,
 							items: [
-//								{
-//									iconCls: 'fa fa-edit action-icon',
-//									tooltip: 'Edit',									
-//									handler: function(grid, rowIndex, colIndex) {
-//										var rec = grid.getStore().getAt(rowIndex);
-//										advancePanel.entryForm.updateRecord = rec;
-//										
-//										//manually set
-//										advancePanel.entryForm.getComponent('searchType').setValue(rec.get('searchType'));
-//										
-//										//The rest is tricky since it's not normalized
-//										
-//										//change button to update
-//										advancePanel.entryForm.get('buttonPanel').getComponent('saveButton').setText('Update');										
-//										
-//									}									
-//								},
+								{
+									iconCls: 'fa fa-edit action-icon',
+									tooltip: 'Edit',									
+									handler: function(grid, rowIndex, colIndex) {
+										var rec = grid.getStore().getAt(rowIndex);
+										advancePanel.entryForm.updateRecord = rec;
+										
+										//manually set
+										advancePanel.entryForm.getComponent('searchType').setValue(rec.get('searchType'));
+										
+										advancePanel.entryForm.loadRecord(rec);
+										
+										//The rest is tricky since multiple value fields
+										var optionsPanel = advancePanel.entryForm.getComponent('options').getLayout().getActiveItem();
+										
+										var searchType = rec.get('searchType');
+										var value = rec.get('value');										
+										if (searchType === 'COMPONENT') {
+											var fieldValue = optionsPanel.getComponent('field').getValue();
+											
+											optionsPanel.getComponent('componentType').setValue(null);
+											optionsPanel.getComponent('dataSource').setValue(null);	
+											optionsPanel.getComponent('value').setValue(null);
+											
+											if (fieldValue === 'componentType') {
+												optionsPanel.getComponent('componentType').setValue(value);
+											} else if (fieldValue === 'dataSource') {
+												optionsPanel.getComponent('dataSource').setValue(value);									
+											} else {
+												optionsPanel.getComponent('value').setValue(value);	
+											}											
+											
+										} else if (searchType === 'CONTACT') {
+											var fieldValue = optionsPanel.getComponent('field').getValue();
+											
+											optionsPanel.getComponent('contactType').setValue(null);											
+											optionsPanel.getComponent('value').setValue(null);
+											
+											if (fieldValue === 'contactType') {
+												optionsPanel.getComponent('contactType').setValue(value);
+											} else {
+												optionsPanel.getComponent('value').setValue(value);	
+											}
+											
+										} else if (searchType === 'REVIEW') {
+											var fieldValue = optionsPanel.getComponent('field').getValue();
+											
+											optionsPanel.getComponent('userTypeCode').setValue(null);	
+											optionsPanel.getComponent('userTimeCode').setValue(null);
+											//optionsPanel.getComponent('recommend').setValue(null);
+											optionsPanel.getComponent('value').setValue(null);
+											
+											if (fieldValue === 'userTypeCode') {
+												optionsPanel.getComponent('userTypeCode').setValue(value);
+											} else if (fieldValue === 'userTimeCode') {
+												optionsPanel.getComponent('userTimeCode').setValue(value);
+//											} else if (fieldValue === 'recommend') {
+//												optionsPanel.getComponent('recommend').setValue(value);
+											} else {
+												optionsPanel.getComponent('value').setValue(value);	
+											}
+											
+										} else if (searchType === 'QUESTION') {
+											var fieldValue = optionsPanel.getComponent('field').getValue();
+
+											optionsPanel.getComponent('userTypeCode').setValue(null);											
+											optionsPanel.getComponent('value').setValue(null);
+											
+											if (fieldValue === 'userTypeCode') {
+												optionsPanel.getComponent('userTypeCode').setValue(value);
+											} else {
+												optionsPanel.getComponent('value').setValue(value);	
+											}											
+											
+										} else if (searchType === 'QUESTION_RESPONSE') {
+											var fieldValue = optionsPanel.getComponent('field').getValue();
+											
+											optionsPanel.getComponent('userTypeCode').setValue(null);											
+											optionsPanel.getComponent('value').setValue(null);
+											
+											if (fieldValue === 'userTypeCode') {
+												optionsPanel.getComponent('userTypeCode').setValue(value);
+											} else {
+												optionsPanel.getComponent('value').setValue(value);	
+											}											
+										}
+										
+										//change button to update
+										advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Update');										
+										
+									}									
+								},
 								{
 									iconCls: 'fa fa-trash action-icon',
 									tooltip: 'Remove',									
@@ -1723,7 +1826,9 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 		});		
 		
 		Ext.Array.each(searchTypes, function(type) {
-			advancePanel.entryForm.getComponent('options').add(type.options);
+			if (type.searchType === 'COMPONENT') {
+				advancePanel.entryForm.getComponent('options').add(type.options);
+			}			
 		});
 		advancePanel.entryForm.getComponent('searchType').setValue('COMPONENT');
 		
@@ -1760,9 +1865,86 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 		//save
 		
 		if (advancePanel.checkForCriteria()) {
+			var search = advancePanel.getSearch();
 			
+			var saveWindow = Ext.create('Ext.window.Window', {
+				alwaysOnTop: true,
+				modal: true,
+				title: 'Save Search',
+				width: 300,
+				height: 150,
+				closeAction: 'destory',
+				layout: 'fit',
+				items: [
+					{
+						xtype: 'form',
+						bodyStyle: 'padding: 10px',
+						layout: 'anchor',
+						items: [
+							{
+								xtype: 'textfield',
+								width: '100%',
+								name: 'searchName',
+								allowBlank: false,
+								maxLength: 255,
+								labelAlign: 'top',
+								fieldLabel: 'Name',
+								labelSeparator: ''								
+							}
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Save',
+										formBind: true,
+										iconCls: 'fa fa-save',
+										handler: function(){			
+											var win = this.up('window');
+											var form  = this.up('form');											
+											var formData = form.getValues();
+											
+											var userSearch = {
+												searchName: formData.searchName,
+												searchRequest: Ext.encode(search)
+											};
+											
+											CoreUtil.submitForm({
+												url: '../api/v1/resource/usersavedsearches',
+												method: 'POST',
+												data: userSearch,
+												form: form,
+												success: function(response, opts){
+													Ext.toast("Save Search Successfully.");
+													if (advancePanel.saveHook) {
+														advancePanel.saveHook(response, opts);
+													}
+													win.close();
+												}
+											});											
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										formBind: true,
+										iconCls: 'fa fa-close',
+										handler: function(){
+											this.up('window').close();
+										}										
+									}
+								]
+							}
+						]
+					}
+				]
+			});
+			saveWindow.show();
 		}
-		
 	},	
 	
 	previewResults: function() {

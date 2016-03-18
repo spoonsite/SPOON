@@ -45,8 +45,7 @@ public class UserSavedSearch
 	private String searchRequest;
 	
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
-	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)	
 	@FK(UserProfile.class)
 	private String username;	
 	

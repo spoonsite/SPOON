@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.UserSavedSearch;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,34 +24,23 @@ import java.util.List;
  *
  * @author dshurtleff
  */
-public class UserProfileWrapper
+public class UserSavedSearchWrapper
+	extends ListWrapper
 {
-
-	private long totalNumber;
 	
-	@DataType(UserProfileView.class)
-	private List<UserProfileView> data = new ArrayList<>();
+	@DataType(UserSavedSearch.class)
+	private List<UserSavedSearch> data = new ArrayList<>();
 
-	public UserProfileWrapper()
+	public UserSavedSearchWrapper()
 	{
 	}
 
-	public long getTotalNumber()
-	{
-		return totalNumber;
-	}
-
-	public void setTotalNumber(long totalNumber)
-	{
-		this.totalNumber = totalNumber;
-	}
-
-	public List<UserProfileView> getData()
+	public List<UserSavedSearch> getData()
 	{
 		return data;
 	}
 
-	public void setData(List<UserProfileView> data)
+	public void setData(List<UserSavedSearch> data)
 	{
 		this.data = data;
 	}

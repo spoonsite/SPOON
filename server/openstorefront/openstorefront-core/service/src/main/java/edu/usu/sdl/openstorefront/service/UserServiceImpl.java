@@ -960,7 +960,7 @@ public class UserServiceImpl
 	@Override
 	public UserSavedSearch saveUserSearch(UserSavedSearch userSavedSearch)
 	{
-		UserSavedSearch existing = persistenceService.findById(UserSavedSearch.class, userSavedSearch.getSearchName());
+		UserSavedSearch existing = persistenceService.findById(UserSavedSearch.class, userSavedSearch.getUserSearchId());
 		if (existing != null) {
 			existing.updateFields(userSavedSearch);
 			existing = persistenceService.persist(existing);
@@ -971,6 +971,15 @@ public class UserServiceImpl
 		}
 		
 		return existing;
+	}
+
+	@Override
+	public void deleteUserSearch(UserSavedSearch userSavedSearch)
+	{
+		UserSavedSearch existing = persistenceService.findById(UserSavedSearch.class, userSavedSearch.getUserSearchId());
+		if (existing != null) {
+			persistenceService.delete(existing);
+		}
 	}
 
 }
