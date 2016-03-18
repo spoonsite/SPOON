@@ -89,6 +89,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus',
 								handler: function () {
+									actionAddNewConfiguration();
 								}
 							},
 							{
@@ -100,7 +101,7 @@
 								iconCls: 'fa fa-2x fa-bolt',
 								disabled: true,
 								handler: function () {
-
+									actionRunJob(record);
 								}
 							},
 							{
@@ -109,7 +110,7 @@
 								iconCls: 'fa fa-2x fa-edit',
 								disabled: true,
 								handler: function () {
-
+									actionEditIntegration(record);
 								}
 							},
 							{
@@ -118,7 +119,7 @@
 								iconCls: 'fa fa-2x fa-power-off',
 								disabled: true,
 								handler: function () {
-
+									actionToggleIntegration(record);
 								}
 							},
 							{
@@ -127,7 +128,7 @@
 								iconCls: 'fa fa-2x fa-trash',
 								disabled: true,
 								handler: function () {
-
+									actionDeleteIntegration(record);
 								}
 							},
 
@@ -135,6 +136,26 @@
 					}
 				]
 			});
+
+			var actionAddNewConfiguration = function actionAddNewConfiguration() {
+
+			};
+
+			var actionRunJob = function actionRunJob(record) {
+
+			};
+
+			var actionEditIntegration = function actionEditIntegration(record) {
+
+			};
+
+			var actionToggleIntegration = function actionToggleIntegration(record) {
+
+			};
+
+			var actionDeleteIntegration = function actionDeleteIntegration(record) {
+
+			};
 
 			var jiraConfigGrid = Ext.create('Ext.grid.Panel', {
 				title: 'Jira Configuration'
