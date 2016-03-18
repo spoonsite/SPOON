@@ -24,6 +24,28 @@
 				id: 'componentConfigGrid',
 				store: componentConfigStore,
 				columnLines: true,
+				listeners: {
+					selectionchange: function (grid, record, index, opts) {
+						if (Ext.getCmp('componentConfigGrid').getSelectionModel().hasSelection()) {
+								Ext.getCmp('componentConfigGrid-tools-run').enable();
+								Ext.getCmp('componentConfigGrid-tools-edit').enable();
+								Ext.getCmp('componentConfigGrid-tools-toggleActivation').enable();
+								Ext.getCmp('componentConfigGrid-tools-delete').enable();
+								if (record[0].data.activeStatus === 'A') {
+									Ext.getCmp('componentConfigGrid-tools-toggleActivation').setText('Deactivate');
+								}
+								else {
+									Ext.getCmp('componentConfigGrid-tools-toggleActivation').setText('Activate');
+								}
+							} 
+						else {
+								Ext.getCmp('componentConfigGrid-tools-run').disable();
+								Ext.getCmp('componentConfigGrid-tools-edit').disable();
+								Ext.getCmp('componentConfigGrid-tools-toggleActivation').disable();
+								Ext.getCmp('componentConfigGrid-tools-delete').disable();
+						}
+					}
+				},
 				columns: [
 					{ text: 'Component', dataIndex: 'componentName', flex: 2},
 					{ 
@@ -79,6 +101,7 @@
 								iconCls: 'fa fa-2x fa-refresh',
 								handler: function () {
 									componentConfigStore.load();
+									componentConfigGrid.getSelectionModel().deselectAll();
 								}
 							},
 							{
@@ -86,6 +109,7 @@
 							},
 							{
 								text: 'Add New Configuration',
+								id: 'componentConfigGrid-tools-add',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus',
 								handler: function () {
@@ -97,37 +121,45 @@
 							},
 							{
 								text: 'Run Job',
+								id: 'componentConfigGrid-tools-run',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-bolt',
 								disabled: true,
 								handler: function () {
+									var record = componentConfigGrid.getSelection()[0];
 									actionRunJob(record);
 								}
 							},
 							{
 								text: 'Edit',
+								id: 'componentConfigGrid-tools-edit',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-edit',
 								disabled: true,
 								handler: function () {
+									var record = componentConfigGrid.getSelection()[0];
 									actionEditIntegration(record);
 								}
 							},
 							{
 								text: 'Deactivate',
+								id: 'componentConfigGrid-tools-toggleActivation',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-power-off',
 								disabled: true,
 								handler: function () {
+									var record = componentConfigGrid.getSelection()[0];
 									actionToggleIntegration(record);
 								}
 							},
 							{
 								text: 'Delete',
+								id: 'componentConfigGrid-tools-delete',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-trash',
 								disabled: true,
 								handler: function () {
+									var record = componentConfigGrid.getSelection()[0];
 									actionDeleteIntegration(record);
 								}
 							},
