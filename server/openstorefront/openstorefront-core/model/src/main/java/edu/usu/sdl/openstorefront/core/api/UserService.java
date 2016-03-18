@@ -259,6 +259,13 @@ public interface UserService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public UserSavedSearch saveUserSearch(UserSavedSearch userSavedSearch);
 	
+	/**
+	 * Removes saved search
+	 * 
+	 * @param userSavedSearch 
+	 */
+	public void deleteUserSearch(UserSavedSearch userSavedSearch);
+	
 //  This will be fleshed out more later
 //	/**
 //	 * Get the most recently viewed components list for a user
