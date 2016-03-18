@@ -182,6 +182,37 @@
 			};
 
 			var actionToggleIntegration = function actionToggleIntegration(record) {
+				
+				var componentId = record.getData().componentId;
+				var componentName = record.getData().componentName;
+				var activeStatus = record.getData().activeStatus;
+				var url = '/openstorefront/api/v1/resource/components/';
+				url += componentId + '/integration/';
+				var method = 'PUT';
+				if (activeStatus === 'A') {
+					var what = 'deactivate';
+					url += 'inactivate';
+				}
+				else {
+					var what = 'activate';
+					url += 'activate';
+				}
+
+				Ext.Ajax.request({
+					url: url,
+					method: method,
+					success: function (response, opts) {
+						var message = 'Successfully ' + what + 'd integration for "' + componentName + '"';
+						Ext.toast(message, '', 'tr');
+						Ext.getCmp('componentConfigGrid').getStore().load();
+						Ext.getCmp('componentConfigGrid').getSelectionModel().deselectAll();
+					},
+					failure: function (response, opts) {
+						Ext.MessageBox.alert('Failed to' + what,
+											 "Error: Could not " + what + ' integration for "' + componentName + '"');
+					}
+				});
+
 
 			};
 
