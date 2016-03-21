@@ -974,9 +974,9 @@ public class UserServiceImpl
 	}
 
 	@Override
-	public void deleteUserSearch(UserSavedSearch userSavedSearch)
+	public void deleteUserSearch(String userSearchId)
 	{
-		UserSavedSearch existing = persistenceService.findById(UserSavedSearch.class, userSavedSearch.getUserSearchId());
+		UserSavedSearch existing = persistenceService.findById(UserSavedSearch.class, userSearchId);
 		if (existing != null) {
 			persistenceService.delete(existing);
 		}
