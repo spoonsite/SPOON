@@ -186,6 +186,33 @@
 			});
 
 			var actionAddNewConfiguration = function actionAddNewConfiguration() {
+				
+				Ext.create('Ext.window.Window' , {
+					id: 'entryPickWindow',
+					title: 'Choose Entry',
+					modal: true,
+					width: '40%',
+					y: '10em',
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							id: 'entryPickForm',
+							style: 'padding: 20px;',
+							items: [
+								{
+									xtype: 'label',
+									text: 'Choose an entry for integration configuration:'
+								},
+								{
+									xtype: 'combobox',
+								}
+
+							]
+						}
+					]
+				}).show();
+				
 				integrationWindow.show();
 			};
 
