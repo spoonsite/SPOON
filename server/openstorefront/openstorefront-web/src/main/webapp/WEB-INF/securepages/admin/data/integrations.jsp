@@ -3,12 +3,14 @@
 <stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 	
-	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>	
+	<script src="scripts/component/integrationConfigWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */
 		Ext.onReady(function(){	
 
+			var integrationWindow = Ext.create('OSF.component.IntegrationWindow', {	
+			});		
 
 			var componentConfigStore = Ext.create('Ext.data.Store', {
 				id: 'componentConfigStore',
@@ -184,7 +186,7 @@
 			});
 
 			var actionAddNewConfiguration = function actionAddNewConfiguration() {
-
+				integrationWindow.show();
 			};
 
 			var actionRunJob = function actionRunJob(record) {
@@ -230,7 +232,7 @@
 			}
 
 			var actionEditIntegration = function actionEditIntegration(record) {
-
+				integrationWindow.show();
 			};
 
 			var actionToggleIntegration = function actionToggleIntegration(record) {
