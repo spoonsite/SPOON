@@ -233,6 +233,7 @@
 
 			var actionEditIntegration = function actionEditIntegration(record) {
 				integrationWindow.show();
+				integrationWindow.loadConfigs(record.getData().componentId);
 			};
 
 			var actionToggleIntegration = function actionToggleIntegration(record) {
