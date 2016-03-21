@@ -163,6 +163,20 @@
 									actionDeleteIntegration(record);
 								}
 							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Run All Jobs',
+								id: 'componentConfigGrid-tools-runAll',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-bolt',
+								tooltip: 'Run all jobs with an active component configuration.',
+								handler: function () {
+									actionRunAllJobs();
+								}
+							},
+
 
 						]
 					}
@@ -196,6 +210,24 @@
 				});
 
 			};
+
+			var actionRunAllJobs = function actionRunAlljobs() {
+
+				Ext.Ajax.request({
+					url: '/openstorefront/api/v1/resource/components/integrations/run',
+					method: 'POST',
+					success: function (response, opts) {
+						Ext.toast('Sent request to run all jobs', '', 'tr');
+						Ext.getCmp('componentConfigGrid').getStore().load();
+						Ext.getCmp('componentConfigGrid').getSelectionModel().deselectAll();
+					},
+					failure: function (response, opts) {
+						Ext.MessageBox.alert('Failed', 'Could not complete request to run all jobs.');
+					}
+				});
+
+
+			}
 
 			var actionEditIntegration = function actionEditIntegration(record) {
 
