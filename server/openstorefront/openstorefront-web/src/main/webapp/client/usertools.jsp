@@ -43,22 +43,11 @@ limitations under the License.
 			pageMap['Questions'] = 'Router.action?page=user/questions.jsp';
 			pageMap['Submissions'] = 'Router.action?page=user/submissionManagement.jsp';
 			pageMap['Reports'] = 'Router.action?page=shared/reports.jsp';
+			pageMap['Searches'] = 'Router.action?page=user/searches.jsp';
 
 
 			//Data Menu
 			var toolsMenu = [];
-			toolsMenu.push({
-				text: 'Watches',
-				handler: function(){
-					actionLoadContent('Watches');
-				}
-			});
-			toolsMenu.push({
-				text: 'Reviews',
-				handler: function(){
-					actionLoadContent('Reviews');
-				}				
-			});	
 			toolsMenu.push({
 				text: 'Questions',
 				handler: function(){
@@ -69,8 +58,27 @@ limitations under the License.
 				text: 'Reports',
 				handler: function(){
 					actionLoadContent('Reports');
-				}
+				}			
 			});
+			toolsMenu.push({
+				text: 'Reviews',
+				handler: function(){
+					actionLoadContent('Reviews');
+				}				
+			});
+			toolsMenu.push({
+				text: 'Searches',
+				handler: function(){
+					actionLoadContent('Searches');
+				}				
+			});			
+			toolsMenu.push({
+				text: 'Watches',
+				handler: function(){
+					actionLoadContent('Watches');
+				}			
+			});
+			
 			
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	

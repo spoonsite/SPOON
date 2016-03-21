@@ -1836,6 +1836,18 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 		
 	},
 	
+	reset: function() {
+		var advancePanel = this;		
+		advancePanel.entryForm.reset();
+		advancePanel.entryForm.getComponent('searchGrid').getStore().removeAll();
+	},
+
+	edit: function(searchElements) {
+		var advancePanel = this;	
+		advancePanel.reset();
+		advancePanel.entryForm.getComponent('searchGrid').getStore().add(searchElements);		
+	},
+	
 	getSearch: function(){
 		var advancePanel = this;
 		
@@ -1888,7 +1900,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 								allowBlank: false,
 								maxLength: 255,
 								labelAlign: 'top',
-								fieldLabel: 'Name',
+								fieldLabel: 'Name <span class="field-required" />',
 								labelSeparator: ''								
 							}
 						],

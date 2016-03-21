@@ -239,6 +239,7 @@ public class UserSavedSearchResource
 		Response response = ownerCheck(userSavedSearch);
 		if (response == null)
 		{
+			service.getUserService().deleteUserSearch(userSearchId);			
 			response = Response.ok().build();
 		}		
 		return response;

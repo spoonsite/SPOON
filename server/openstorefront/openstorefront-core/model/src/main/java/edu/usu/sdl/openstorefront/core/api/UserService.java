@@ -262,9 +262,9 @@ public interface UserService
 	/**
 	 * Removes saved search
 	 * 
-	 * @param userSavedSearch 
+	 * @param userSearchId 
 	 */
-	public void deleteUserSearch(UserSavedSearch userSavedSearch);
+	public void deleteUserSearch(String userSearchId);
 	
 //  This will be fleshed out more later
 //	/**
