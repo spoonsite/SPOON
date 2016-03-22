@@ -344,8 +344,25 @@
 				});
 			};
 
+
+			var jiraConfigStore = Ext.create('Ext.data.Store', {
+				id: 'jiraConfigStore',
+				autoLoad: true,
+				proxy: {
+					type: 'ajax',
+					url: '/openstorefront/api/v1/resource/attributes/attributexreftypes/detail'
+				}
+			});
+
 			var jiraConfigGrid = Ext.create('Ext.grid.Panel', {
-				title: 'Jira Configuration'
+				title: 'Jira Mapping Configuration',
+				store: jiraConfigStore,
+				columns: [
+					{ text: 'Project Id', dataIndex: 'projectType', flex: 1},
+					{ text: 'Issue Type', dataIndex: 'issueType', flex: 1},
+					{ text: 'Attribute', dataIndex: 'attributeName', flex: 2},
+					{ text: 'Custom Field', dataIndex: 'fieldName', flex: 2},
+				]
 			});
 
 
