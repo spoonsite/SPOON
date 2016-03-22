@@ -354,6 +354,44 @@
 				}
 			});
 
+			var addEditMappingWin = Ext.create('Ext.window.Window', {
+				id: 'addEditMappingWin',
+				title: 'Add/Edit Mapping',
+				modal: true,
+				width: '40%',
+				y: '10em',
+				layout: 'fit',
+				items: [
+					{
+						xtype: 'form',
+						id: 'addEditMappingForm',
+						width: '100%',
+						padding: '10px',
+						defaults: {
+							width: '100%'
+						},
+						items: [
+							{
+								xtype: 'combobox',
+								fieldLabel: 'Select a Jira Project:'
+							},
+							{
+								xtype: 'combobox',
+								fieldLabel: 'Select a Jira Project Issue Type:'
+							},
+							{
+								xtype: 'combobox',
+								fieldLabel: 'Select a Storefront Attribute Type:'
+							},
+							{
+								xtype: 'combobox',
+								fieldLabel: 'Select the Jira Field:'
+							}
+						]
+					}
+				]
+			});
+
 			var jiraConfigGrid = Ext.create('Ext.grid.Panel', {
 				title: 'Jira Mapping Configuration',
 				id: 'jiraConfigGrid',
@@ -435,6 +473,7 @@
 			};
 
 			var actionEditMapping = function actionEditMapping(record) {
+				addEditMappingWin.show();
 
 			};
 
