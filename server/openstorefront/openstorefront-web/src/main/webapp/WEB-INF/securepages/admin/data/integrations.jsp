@@ -214,9 +214,21 @@
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
-										url: '/openstorefront/api/v1/resource/components/lookup'
+										url: '/openstorefront/api/v1/resource/components/lookup?'
+									},
+									sorters: [{
+										property: 'description',
+										direction: 'ASC'
+									}]
+								}),
+								listeners: {
+									select: function(combo, record, eOpts) {
+										integrationWindow.show();
+										integrationWindow.loadConfigs(record.getData().code);
+										integrationWindow.setTitle('Integration: ' + record.getData().description);
+										entryPickWindow.hide();
 									}
-								})
+								}
 							}
 
 						]
@@ -226,7 +238,7 @@
 
 			var actionAddNewConfiguration = function actionAddNewConfiguration() {
 				entryPickWindow.show();
-				
+				Ext.getCmp('entryPickForm').reset();
 			};
 
 			var actionRunJob = function actionRunJob(record) {
@@ -274,6 +286,7 @@
 			var actionEditIntegration = function actionEditIntegration(record) {
 				integrationWindow.show();
 				integrationWindow.loadConfigs(record.getData().componentId);
+				integrationWindow.setTitle('Integration: ' + record.getData().componentName);
 			};
 
 			var actionToggleIntegration = function actionToggleIntegration(record) {
