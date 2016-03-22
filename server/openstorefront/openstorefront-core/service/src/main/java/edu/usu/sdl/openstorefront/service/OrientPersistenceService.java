@@ -45,6 +45,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -304,9 +305,13 @@ public class OrientPersistenceService
 //
 //								Method method = pkObj.getClass().getMethod("get" + StringUtils.capitalize(pkField.getName()), (Class<?>[]) null);
 //								Object returnObj = method.invoke(pkObj, (Object[]) null);
-								Method method = id.getClass().getMethod("get" + StringUtils.capitalize(pkField.getName()), (Class<?>[]) null);
-								Object returnObj = method.invoke(id, (Object[]) null);
-								fieldValueMap.put(field.getName() + "." + pkField.getName(), returnObj);
+								if (Modifier.isStatic(pkField.getModifiers()) == false
+									&& Modifier.isFinal(pkField.getModifiers()) == false) 
+								{
+									Method method = id.getClass().getMethod("get" + StringUtils.capitalize(pkField.getName()), (Class<?>[]) null);
+									Object returnObj = method.invoke(id, (Object[]) null);
+									fieldValueMap.put(field.getName() + "." + pkField.getName(), returnObj);
+								}
 							} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 								throw new OpenStorefrontRuntimeException(ex);
 							}
@@ -349,15 +354,15 @@ public class OrientPersistenceService
 		queryString.append("delete from ").append(queryByExample.getExample().getClass().getSimpleName());
 
 		Map<String, Object> mappedParams = new HashMap<>();
-		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption());
+		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption(), queryByExample.getFieldOptions());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
-			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption()));
+			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption(), queryByExample.getFieldOptions()));
 		}
 
 		queryByExample.getExtraWhereCauses().forEach(item -> {
 			SpecialOperatorModel special = (SpecialOperatorModel) item;
-			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption());
+			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
 			if (StringUtils.isNotBlank(extraWhere)) {
 				if (queryString.indexOf(" where ") != -1) {
 					queryString.append(" AND ");
@@ -365,7 +370,7 @@ public class OrientPersistenceService
 					queryString.append(" where ");
 				}
 				queryString.append(extraWhere);
-				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption()));
+				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
 			}
 		});
 
@@ -407,11 +412,11 @@ public class OrientPersistenceService
 		GenerateStatementOption generateStatementOption = new GenerateStatementOptionBuilder().build();
 		generateStatementOption.setCondition(GenerateStatementOption.CONDITION_COMMA);
 		generateStatementOption.setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_SET);
-		queryString.append(" set ").append(generateWhereClause(exampleSet, new ComplexFieldStack(), generateStatementOption));
+		queryString.append(" set ").append(generateWhereClause(exampleSet, new ComplexFieldStack(), generateStatementOption, new HashMap<>()));
 		queryString.append(" where ").append(generateWhereClause(exampleWhere));
 
 		Map<String, Object> queryParams = new HashMap<>();
-		queryParams.putAll(mapParameters(exampleSet, new ComplexFieldStack(), generateStatementOption));
+		queryParams.putAll(mapParameters(exampleSet, new ComplexFieldStack(), generateStatementOption, new HashMap<>()));
 		queryParams.putAll(mapParameters(exampleWhere));
 
 		OObjectDatabaseTx db = getConnection();
@@ -465,15 +470,15 @@ public class OrientPersistenceService
 		queryString.append("from ").append(queryByExample.getExample().getClass().getSimpleName());
 
 		Map<String, Object> mappedParams = new HashMap<>();
-		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption());
+		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption(), queryByExample.getFieldOptions());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
-			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption()));
+			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption(), queryByExample.getFieldOptions()));
 		}
 
 		queryByExample.getExtraWhereCauses().forEach(item -> {
 			SpecialOperatorModel special = (SpecialOperatorModel) item;
-			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption());
+			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
 			if (StringUtils.isNotBlank(extraWhere)) {
 				if (queryString.indexOf(" where ") != -1) {
 					queryString.append(" AND ");
@@ -481,7 +486,7 @@ public class OrientPersistenceService
 					queryString.append(" where ");
 				}
 				queryString.append(extraWhere);
-				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption()));
+				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
 			}
 		});
 
@@ -538,13 +543,13 @@ public class OrientPersistenceService
 		queryString.append(" from ").append(queryByExample.getExample().getClass().getSimpleName());
 
 		Map<String, Object> mappedParams = new HashMap<>();
-		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption());
+		String whereClause = generateWhereClause(queryByExample.getExample(), new ComplexFieldStack(), queryByExample.getExampleOption(), queryByExample.getFieldOptions());
 		if (StringUtils.isNotBlank(whereClause)) {
 			queryString.append(" where ").append(whereClause);
-			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption()));
+			mappedParams.putAll(mapParameters(queryByExample.getExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getExampleOption(), queryByExample.getFieldOptions()));
 		}
 		if (queryByExample.getLikeExample() != null) {
-			String likeClause = generateWhereClause(queryByExample.getLikeExample(), new ComplexFieldStack(), queryByExample.getLikeExampleOption());
+			String likeClause = generateWhereClause(queryByExample.getLikeExample(), new ComplexFieldStack(), queryByExample.getLikeExampleOption(), queryByExample.getFieldOptions());
 			if (StringUtils.isNotBlank(likeClause)) {
 				if (StringUtils.isNotBlank(whereClause)) {
 					queryString.append(" AND ");
@@ -552,12 +557,12 @@ public class OrientPersistenceService
 					queryString.append(" where ");
 				}
 				queryString.append(likeClause);
-				mappedParams.putAll(mapParameters(queryByExample.getLikeExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getLikeExampleOption()));
+				mappedParams.putAll(mapParameters(queryByExample.getLikeExample(), new ComplexFieldStack(PARAM_NAME_SEPARATOR), queryByExample.getLikeExampleOption(), queryByExample.getFieldOptions()));
 			}
 		}
 		queryByExample.getExtraWhereCauses().forEach(item -> {
 			SpecialOperatorModel special = (SpecialOperatorModel) item;
-			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption());
+			String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
 			if (StringUtils.isNotBlank(extraWhere)) {
 				if (queryString.indexOf(" where ") != -1) {
 					queryString.append(" AND ");
@@ -565,7 +570,7 @@ public class OrientPersistenceService
 					queryString.append(" where ");
 				}
 				queryString.append(extraWhere);
-				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption()));
+				mappedParams.putAll(mapParameters(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions()));
 			}
 		});
 
@@ -600,10 +605,10 @@ public class OrientPersistenceService
 
 	private <T> String generateWhereClause(T example)
 	{
-		return generateWhereClause(example, new ComplexFieldStack(), new GenerateStatementOptionBuilder().build());
+		return generateWhereClause(example, new ComplexFieldStack(), new GenerateStatementOptionBuilder().build(), new HashMap<>());
 	}
 
-	private <T> String generateWhereClause(T example, ComplexFieldStack complexFieldStack, GenerateStatementOption generateStatementOption)
+	private <T> String generateWhereClause(T example, ComplexFieldStack complexFieldStack, GenerateStatementOption generateStatementOption, Map<String, GenerateStatementOption> fieldOptions)
 	{
 		StringBuilder where = new StringBuilder();
 
@@ -615,43 +620,49 @@ public class OrientPersistenceService
 				if ("class".equalsIgnoreCase(field.toString()) == false) {
 					Object value = fieldMap.get(field);
 					if (value != null) {
+						GenerateStatementOption fieldOperation = generateStatementOption;
+						if (fieldOptions != null && fieldOptions.containsKey(field.toString()))
+						{
+							fieldOperation = fieldOptions.get(field.toString());
+						}	
 
 						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
 						Object returnObj = method.invoke(example, (Object[]) null);
 						if (ReflectionUtil.isComplexClass(returnObj.getClass())) {
 							complexFieldStack.getFieldStack().push(field.toString());
 							if (addAnd) {
-								where.append(generateStatementOption.getCondition());
+								where.append(fieldOperation.getCondition());
 							} else {
 								addAnd = true;
 								where.append(" ");
 							}
 
-							where.append(generateWhereClause(returnObj, complexFieldStack, generateStatementOption));
+							where.append(generateWhereClause(returnObj, complexFieldStack, generateStatementOption, fieldOptions));
 							complexFieldStack.getFieldStack().pop();
 						} else {
+							
 							if (addAnd) {
-								where.append(generateStatementOption.getCondition());
+								where.append(fieldOperation.getCondition());
 							} else {
 								addAnd = true;
 								where.append(" ");
 							}
 
-							String fieldName = complexFieldStack.getQueryFieldName() + field.toString() + generateStatementOption.getMethod();
+							String fieldName = complexFieldStack.getQueryFieldName() + field.toString() + fieldOperation.getMethod();
 							String fieldParamName = complexFieldStack.getQueryFieldName() + field.toString();
 							where.append(fieldName)
-									.append(" ").append(generateStatementOption.getOperation());
+									.append(" ").append(fieldOperation.getOperation());
 
 							boolean addParameter = true;
-							if (GenerateStatementOption.OPERATION_NULL.equals(generateStatementOption.getOperation())
-									|| GenerateStatementOption.OPERATION_NOT_NULL.equals(generateStatementOption.getOperation())) {
+							if (GenerateStatementOption.OPERATION_NULL.equals(fieldOperation.getOperation())
+									|| GenerateStatementOption.OPERATION_NOT_NULL.equals(fieldOperation.getOperation())) {
 								addParameter = false;
 							}
 
 							if (addParameter) {
 								where.append(" :")
 										.append(fieldParamName.replace(".", PARAM_NAME_SEPARATOR))
-										.append(generateStatementOption.getParameterSuffix());
+										.append(fieldOperation.getParameterSuffix());
 							}
 						}
 					}
@@ -716,10 +727,10 @@ public class OrientPersistenceService
 
 	private <T> Map<String, Object> mapParameters(T example)
 	{
-		return mapParameters(example, new ComplexFieldStack(PARAM_NAME_SEPARATOR), new GenerateStatementOptionBuilder().build());
+		return mapParameters(example, new ComplexFieldStack(PARAM_NAME_SEPARATOR), new GenerateStatementOptionBuilder().build(), new HashMap<>());
 	}
 
-	private <T> Map<String, Object> mapParameters(T example, ComplexFieldStack complexFieldStack, GenerateStatementOption generateStatementOption)
+	private <T> Map<String, Object> mapParameters(T example, ComplexFieldStack complexFieldStack, GenerateStatementOption generateStatementOption, Map<String, GenerateStatementOption> fieldOptions)
 	{
 		Map<String, Object> parameterMap = new HashMap<>();
 		try {
@@ -731,13 +742,19 @@ public class OrientPersistenceService
 					//Note: this may not work for proxy object....they may need to be call through a get method
 					Object value = field.get(example);
 					if (value != null) {
+						GenerateStatementOption fieldOperation = generateStatementOption;
+						if (fieldOptions != null && fieldOptions.containsKey(field.toString()))
+						{
+							fieldOperation = fieldOptions.get(field.toString());
+						}	
+						
 						if (ReflectionUtil.isComplexClass(value.getClass())) {
 							complexFieldStack.getFieldStack().push(field.getName());
-							parameterMap.putAll(mapParameters(value, complexFieldStack, generateStatementOption));
+							parameterMap.putAll(mapParameters(value, complexFieldStack, generateStatementOption, fieldOptions));
 							complexFieldStack.getFieldStack().pop();
 						} else {
 							String fieldName = complexFieldStack.getQueryFieldName() + field.getName();
-							parameterMap.put(fieldName + generateStatementOption.getParameterSuffix(), value);
+							parameterMap.put(fieldName + fieldOperation.getParameterSuffix(), value);
 						}
 					}
 				}

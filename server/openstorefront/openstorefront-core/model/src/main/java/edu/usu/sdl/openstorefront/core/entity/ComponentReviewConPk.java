@@ -32,6 +32,8 @@ public class ComponentReviewConPk
 		extends BasePK
 {
 
+	public static final String FIELD_REVIEW_CON = "reviewCon";
+
 	@NotNull
 	@FK(ComponentReview.class)
 	private String componentReviewId;

@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.search;
 
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
@@ -66,7 +67,9 @@ public class TagSearchHandler
 			String tagValue = searchElement.getValue();
 			if (searchElement.getCaseInsensitive()) {
 				tagValue = tagValue.toLowerCase();
-				queryByExample.getExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+				queryByExample.getFieldOptions().put(ComponentTag.FIELD_TEXT,
+					new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
+
 			}
 			String likeValue = null;
 			switch (searchElement.getStringOperation()) {

@@ -50,6 +50,10 @@ and open the template in the editor.
   outline-offset: -2px;
 }
 
+.linkItem:hover {
+	cursor: pointer;
+}
+
 .hidden {
 	display: none;
 	visibility: hidden;

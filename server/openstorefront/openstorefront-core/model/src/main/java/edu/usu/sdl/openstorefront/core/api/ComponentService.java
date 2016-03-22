@@ -675,9 +675,9 @@ public interface ComponentService
 	 * This just inActivates. Deleting would be dangerous as there likely
 	 * existing data that would still need it
 	 *
-	 * @param templateCode
+	 * @param templateId
 	 */
-	public void removeComponentTypeTemplate(String templateCode);
+	public void removeComponentTypeTemplate(String templateId);
 
 	/**
 	 * Approves a component and triggers notification if requested component is

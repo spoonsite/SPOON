@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
@@ -108,7 +109,8 @@ public class QuestionSearchHandler
 						case EQUALS:
 							String value = searchElement.getValue();
 							if (searchElement.getCaseInsensitive()) {
-								queryByExample.getExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+								queryByExample.getFieldOptions().put(field.getName(),
+									new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
 								value = value.toLowerCase();
 							}
 							field.set(componentQuestion, value);
@@ -129,7 +131,8 @@ public class QuestionSearchHandler
 					}
 				} else if (type.getSimpleName().equals(Integer.class.getSimpleName())) {
 					field.set(componentQuestion, Convert.toInteger(searchElement.getValue()));
-					queryByExample.getExampleOption().setOperation(searchElement.getNumberOperation().toQueryOperation());
+					queryByExample.getFieldOptions().put(field.getName(),										
+							new GenerateStatementOptionBuilder().setOperation(searchElement.getNumberOperation().toQueryOperation()).build());
 				} else if (type.getSimpleName().equals(Date.class.getSimpleName())) {
 
 					ComponentQuestion componentQuestionStartExample = new ComponentQuestion();

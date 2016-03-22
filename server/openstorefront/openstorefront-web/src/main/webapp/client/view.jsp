@@ -41,7 +41,7 @@ limitations under the License.
 				
 				var searchObj = {
 					"sortField": "name",
-					"sortDirection": "DESC",				
+					"sortDirection": "ASC",				
 					"searchElements": [{
 							"searchType": vitalType,
 							"keyField": attributeType,
@@ -118,7 +118,7 @@ limitations under the License.
 				
 				var searchObj = {
 					"sortField": "name",
-					"sortDirection": "DESC",				
+					"sortDirection": "ASC",				
 					"searchElements": [{
 							"searchType": 'COMPONENT',
 							"field": 'organization',
@@ -255,7 +255,7 @@ limitations under the License.
 				sorters: [
 					new Ext.util.Sorter({
 					property: 'name',
-					direction: 'DESC'
+					direction: 'ASC'
 					})
 				],				
 				proxy: CoreUtil.pagingProxy({
