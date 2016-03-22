@@ -362,7 +362,54 @@
 					{ text: 'Issue Type', dataIndex: 'issueType', flex: 1},
 					{ text: 'Attribute', dataIndex: 'attributeName', flex: 2},
 					{ text: 'Custom Field', dataIndex: 'fieldName', flex: 2},
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						items: [
+							{
+								text: 'Refresh',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-refresh',
+								handler: function () {
+									jiraConfigStore.load();
+									jiraConfigGrid.getSelectionModel().deselectAll();
+								}
+							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Add New Mapping',
+								id: 'jiraConfigGrid-tools-add',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-plus',
+								handler: function () {
+								}
+							},
+							{
+								text: 'Edit',
+								id: 'jiraConfigGrid-tools-edit',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-edit',
+								disabled: true,
+								handler: function () {
+								}
+							},
+							{
+								text: 'Delete',
+								id: 'jiraConfigGrid-tools-delete',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-trash',
+								disabled: true,
+								handler: function () {
+								}
+							}	
+						]
+					}
 				]
+
 			});
 
 
