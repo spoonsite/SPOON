@@ -184,36 +184,49 @@
 					}
 				]
 			});
+			
+			var entryPickWindow = Ext.create('Ext.window.Window' , {
+				id: 'entryPickWindow',
+				title: 'Choose Entry',
+				modal: true,
+				width: '40%',
+				y: '10em',
+				layout: 'fit',
+				items: [
+					{
+						xtype: 'form',
+						id: 'entryPickForm',
+						style: 'padding: 20px;',
+						width: '100%',
+						items: [
+							{
+								xtype: 'label',
+								text: 'Choose an entry for integration configuration:'
+							},
+							{
+								xtype: 'combobox',
+								displayField: 'description',
+								valueField: 'code',
+								width: '100%',
+								emptyText: 'Select an entry',
+								store: Ext.create('Ext.data.Store', {
+									id: 'entryPickStore',
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: '/openstorefront/api/v1/resource/components/lookup'
+									}
+								})
+							}
+
+						]
+					}
+				]
+			})
 
 			var actionAddNewConfiguration = function actionAddNewConfiguration() {
+				entryPickWindow.show();
 				
-				Ext.create('Ext.window.Window' , {
-					id: 'entryPickWindow',
-					title: 'Choose Entry',
-					modal: true,
-					width: '40%',
-					y: '10em',
-					layout: 'fit',
-					items: [
-						{
-							xtype: 'form',
-							id: 'entryPickForm',
-							style: 'padding: 20px;',
-							items: [
-								{
-									xtype: 'label',
-									text: 'Choose an entry for integration configuration:'
-								},
-								{
-									xtype: 'combobox',
-								}
-
-							]
-						}
-					]
-				}).show();
-				
-				integrationWindow.show();
 			};
 
 			var actionRunJob = function actionRunJob(record) {
