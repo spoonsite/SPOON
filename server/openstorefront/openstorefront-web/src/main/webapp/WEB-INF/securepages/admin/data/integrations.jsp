@@ -356,6 +356,7 @@
 
 			var jiraConfigGrid = Ext.create('Ext.grid.Panel', {
 				title: 'Jira Mapping Configuration',
+				id: 'jiraConfigGrid',
 				store: jiraConfigStore,
 				columns: [
 					{ text: 'Project Id', dataIndex: 'projectType', flex: 1},
@@ -363,6 +364,18 @@
 					{ text: 'Attribute', dataIndex: 'attributeName', flex: 2},
 					{ text: 'Custom Field', dataIndex: 'fieldName', flex: 2},
 				],
+				listeners: {
+					selectionchange: function (grid, record, index, opts) {
+						if (Ext.getCmp('jiraConfigGrid').getSelectionModel().hasSelection()) {
+								Ext.getCmp('jiraConfigGrid-tools-edit').enable();
+								Ext.getCmp('jiraConfigGrid-tools-delete').enable();
+							} 
+						else {
+								Ext.getCmp('jiraConfigGrid-tools-edit').disable();
+								Ext.getCmp('jiraConfigGrid-tools-delete').disable();
+						}
+					}
+				},
 				dockedItems: [
 					{
 						xtype: 'toolbar',
