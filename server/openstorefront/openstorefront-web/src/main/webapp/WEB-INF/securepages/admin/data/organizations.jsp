@@ -35,7 +35,11 @@
 					columns: [						
 						{ text: 'Name', dataIndex: 'name', minWidth: 200, flex:1},
 						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200 },
-						{ text: 'Type', dataIndex: 'organizationTypeDescription', width: 200 },
+						{ text: 'Type', dataIndex: 'organizationType', width: 200,
+							renderer: function(value, meta, record) {
+								return record.get('organizationTypeDescription');
+							}
+						},
 						{ text: 'Web Site', dataIndex: 'homeUrl', width: 200, hidden:true },
 						{ text: 'Address', dataIndex: 'address', width: 150, hidden:true },
 						{ text: 'Agency', dataIndex: 'agency', width: 150, hidden:true },
