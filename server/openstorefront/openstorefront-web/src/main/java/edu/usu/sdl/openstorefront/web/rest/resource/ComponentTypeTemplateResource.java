@@ -96,8 +96,8 @@ public class ComponentTypeTemplateResource
 
 		componentTypeTemplates.forEach(template -> {
 			LookupModel lookupModel = new LookupModel();
-			lookupModel.setCode(template.getTemplateCode());
-			lookupModel.setDescription(template.getLabel());
+			lookupModel.setCode(template.getTemplateId());
+			lookupModel.setDescription(template.getName());
 			lookups.add(lookupModel);
 		});
 
@@ -111,13 +111,13 @@ public class ComponentTypeTemplateResource
 	@APIDescription("Gets  a component type template")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTypeTemplate.class)
-	@Path("/{templateCode}")
+	@Path("/{templateId}")
 	public Response getComponentTypeTemplateById(
-			@PathParam("templateCode") String templateCode
+			@PathParam("templateId") String templateCode
 	)
 	{
 		ComponentTypeTemplate componentType = new ComponentTypeTemplate();
-		componentType.setTemplateCode(templateCode);
+		componentType.setTemplateId(templateCode);
 		return sendSingleEntityResponse(componentType.find());
 	}
 
@@ -138,19 +138,19 @@ public class ComponentTypeTemplateResource
 	@APIDescription("Update a component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{templateCode}")
+	@Path("/{templateId}")
 	public Response updateComponentTypeTemplate(
-			@PathParam("templateCode") String templateCode,
+			@PathParam("templateId") String templateCode,
 			ComponentTypeTemplate template
 	)
 	{
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 
 		ComponentTypeTemplate found = new ComponentTypeTemplate();
-		found.setTemplateCode(templateCode);
+		found.setTemplateId(templateCode);
 		found = found.find();
 		if (found != null) {
-			template.setTemplateCode(templateCode);
+			template.setTemplateId(templateCode);
 			response = handleSaveComponentTypeTemplate(template, false);
 		}
 		return response;
@@ -176,15 +176,15 @@ public class ComponentTypeTemplateResource
 	@RequireAdmin
 	@APIDescription("Activate a component type template")
 	@Produces({MediaType.APPLICATION_JSON})
-	@Path("/{templateCode}/activate")
+	@Path("/{templateId}/activate")
 	public Response activateComponentTypeTemplate(
-			@PathParam("templateCode") String templateCode
+			@PathParam("templateId") String templateCode
 	)
 	{
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 
 		ComponentTypeTemplate found = new ComponentTypeTemplate();
-		found.setTemplateCode(templateCode);
+		found.setTemplateId(templateCode);
 		found = found.find();
 		if (found != null) {
 			service.getPersistenceService().setStatusOnEntity(ComponentTypeTemplate.class, templateCode, StandardEntity.ACTIVE_STATUS);
@@ -197,9 +197,9 @@ public class ComponentTypeTemplateResource
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Inactives component type template")
-	@Path("/{templateCode}")
+	@Path("/{templateId}")
 	public void deleteNewEvent(
-			@PathParam("templateCode") String templateCode
+			@PathParam("templateId") String templateCode
 	)
 	{
 		service.getComponentService().removeComponentTypeTemplate(templateCode);

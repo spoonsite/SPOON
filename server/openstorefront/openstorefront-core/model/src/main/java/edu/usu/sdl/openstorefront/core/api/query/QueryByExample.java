@@ -21,7 +21,9 @@ import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Query by Example model
@@ -42,6 +44,7 @@ public class QueryByExample<T extends BaseEntity>
 	private QueryType queryType = QueryType.SELECT;
 	private T example;
 	private GenerateStatementOption exampleOption = new GenerateStatementOptionBuilder().build();
+	private Map<String, GenerateStatementOption> fieldOptions = new HashMap<>();
 	private Integer firstResult;
 	private Integer maxResults;
 	private String distinctField;
@@ -249,6 +252,16 @@ public class QueryByExample<T extends BaseEntity>
 	public void setLikeExampleOption(GenerateStatementOption likeExampleOption)
 	{
 		this.likeExampleOption = likeExampleOption;
+	}
+
+	public Map<String, GenerateStatementOption> getFieldOptions()
+	{
+		return fieldOptions;
+	}
+
+	public void setFieldOptions(Map<String, GenerateStatementOption> fieldOptions)
+	{
+		this.fieldOptions = fieldOptions;
 	}
 
 }

@@ -1966,7 +1966,7 @@ public class CoreComponentServiceImpl
 
 	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
 	{
-		ComponentTypeTemplate existing = persistenceService.findById(ComponentTypeTemplate.class, componentTypeTemplate.getTemplateCode());
+		ComponentTypeTemplate existing = persistenceService.findById(ComponentTypeTemplate.class, componentTypeTemplate.getTemplateId());
 		if (existing != null) {
 			existing.updateFields(componentTypeTemplate);
 			componentTypeTemplate = persistenceService.persist(existing);
@@ -1977,9 +1977,9 @@ public class CoreComponentServiceImpl
 		return componentTypeTemplate;
 	}
 
-	public void removeComponentTypeTemplate(String templateCode)
+	public void removeComponentTypeTemplate(String templateId)
 	{
-		ComponentTypeTemplate template = persistenceService.findById(ComponentTypeTemplate.class, templateCode);
+		ComponentTypeTemplate template = persistenceService.findById(ComponentTypeTemplate.class, templateId);
 		if (template != null) {
 			template.setActiveStatus(ComponentType.INACTIVE_STATUS);
 			template.populateBaseUpdateFields();

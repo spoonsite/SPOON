@@ -202,14 +202,16 @@ public class ComponentRESTResource
 			if (componentExample.getComponentType() != null && componentExample.getComponentType().equals(ComponentType.ALL)) {
 				componentExample.setComponentType(null);
 			}
-			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
-			components.forEach(component -> {
+			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);			
+			for (Component component : components)
+			{	
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
 				lookupModel.setDescription(component.getName());
 				lookupModels.add(lookupModel);
-			});
-
+			}
+			lookupModels = filterQueryParams.filter(lookupModels);
+			
 			GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
 			{
 			};
@@ -220,12 +222,13 @@ public class ComponentRESTResource
 			Component componentExample = new Component();
 
 			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
-			components.forEach(component -> {
+			for (Component component : components)
+			{	
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
 				lookupModel.setDescription(component.getName());
 				lookupModels.add(lookupModel);
-			});
+			}
 
 			GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
 			{

@@ -42,7 +42,7 @@ limitations under the License.
 							cls: 'nav-back-color',
 							items: [
 								{
-									xtype: 'image',
+									xtype: 'image',									
 									height: 53,									
 									src: 'images/di2elogo-sm.png'
 								},

@@ -468,7 +468,7 @@ limitations under the License.
 					{
 						xtype: 'panel',
 						id: 'nonvisibleAttributes',
-						title: 'More Filters',
+						title: 'More Vitals',
 						iconCls: 'fa fa-filter',
 						header: {
 							cls: 'searchresults-morefilter'
@@ -479,10 +479,10 @@ limitations under the License.
 						},						
 						listeners: {
 							expand: function(panel){
-								panel.setTitle('Less Filters');
+								panel.setTitle('Less Vitals');
 							},
 							collapse: function(panel){
-								panel.setTitle('More Filters');
+								panel.setTitle('More Vitals');
 							}
 						},
 						items: [
@@ -1323,6 +1323,7 @@ limitations under the License.
 									xtype: 'image',				
 									width: 200,
 									height: 53,
+									cls: 'linkItem',
 									title: 'Go back to Home Page',
 									src: 'images/di2elogo-sm.png',
 									alt: 'logo',

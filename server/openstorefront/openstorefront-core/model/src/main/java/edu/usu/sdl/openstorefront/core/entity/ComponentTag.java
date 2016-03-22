@@ -32,6 +32,7 @@ import javax.validation.constraints.Size;
 public class ComponentTag
 		extends BaseComponent
 {
+	public static final String FIELD_TEXT = "text";
 
 	@PK(generated = true)
 	@NotNull

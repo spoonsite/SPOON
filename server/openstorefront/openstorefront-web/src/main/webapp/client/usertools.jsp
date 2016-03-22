@@ -106,6 +106,7 @@ limitations under the License.
 								{
 									xtype: 'image',
 									height: 53,
+									cls: 'linkItem',
 									title: 'Go back to Home Page',
 									src: 'images/di2elogo-sm.png',
 									listeners: {

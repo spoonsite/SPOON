@@ -60,6 +60,7 @@ limitations under the License.
 			pageMap['System'] = 'Router.action?page=admin/application/system.jsp';
 			pageMap['Tracking'] = 'Router.action?page=admin/application/tracking.jsp';
 			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
+			pageMap['EntryTemplate'] = 'Router.action?page=admin/data/entryTemplate.jsp';
 			
 
 		//Data Menu
@@ -82,6 +83,12 @@ limitations under the License.
 					actionLoadContent('EntryType');
 				}
 			});
+			dataMenu.push({
+				text: 'Entry Templates',
+				handler: function(){
+					actionLoadContent('EntryTemplate');
+				}
+			});			
 			dataMenu.push({
 				text: 'Highlights',
 				handler: function(){
@@ -236,6 +243,7 @@ limitations under the License.
 								{
 									xtype: 'image',																	
 									height: 53,
+									cls: 'linkItem',
 									title: 'Go back to Home Page',
 									src: 'images/di2elogo-sm.png',
 									listeners: {

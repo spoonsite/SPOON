@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Definable template for display a component")
+@APIDescription("Definable template for displaying a component")
 public class ComponentTypeTemplate
 		extends StandardEntity<ComponentTypeTemplate>
 {
@@ -38,15 +38,15 @@ public class ComponentTypeTemplate
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
-	private String templateCode;
+	private String templateId;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
-	private String label;
+	private String name;
 
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_64K)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
 	@ConsumeField
 	private String template;
 
@@ -54,24 +54,34 @@ public class ComponentTypeTemplate
 	{
 	}
 
-	public String getTemplateCode()
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
 	{
-		return templateCode;
+		super.updateFields(entity);
+		
+		ComponentTypeTemplate componentTypeTemplate = (ComponentTypeTemplate) entity;
+		this.setName(componentTypeTemplate.getName());
+		this.setTemplate(componentTypeTemplate.getTemplate());		
 	}
 
-	public void setTemplateCode(String templateCode)
+	public String getTemplateId()
 	{
-		this.templateCode = templateCode;
+		return templateId;
 	}
 
-	public String getLabel()
+	public void setTemplateId(String templateId)
 	{
-		return label;
+		this.templateId = templateId;
 	}
 
-	public void setLabel(String label)
+	public String getName()
 	{
-		this.label = label;
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
 	}
 
 	public String getTemplate()
