@@ -399,6 +399,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus',
 								handler: function () {
+									actionAddMapping();
 								}
 							},
 							{
@@ -408,6 +409,8 @@
 								iconCls: 'fa fa-2x fa-edit',
 								disabled: true,
 								handler: function () {
+									var record = jiraConfigGrid.getSelection()[0];
+									actionEditMapping(record);
 								}
 							},
 							{
@@ -417,6 +420,8 @@
 								iconCls: 'fa fa-2x fa-trash',
 								disabled: true,
 								handler: function () {
+									var record = jiraConfigGrid.getSelection()[0];
+									actionDeleteMapping(record);
 								}
 							}	
 						]
@@ -424,6 +429,18 @@
 				]
 
 			});
+
+			var actionAddMapping = function actionAddMapping() {
+
+			};
+
+			var actionEditMapping = function actionEditMapping(record) {
+
+			};
+
+			var actionDeleteMapping = function actionDeleteMapping(record) {
+
+			};
 
 
 			var mainPanel = Ext.create('Ext.tab.Panel', {
