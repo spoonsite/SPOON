@@ -373,7 +373,17 @@
 						items: [
 							{
 								xtype: 'combobox',
-								fieldLabel: 'Select a Jira Project:'
+								fieldLabel: 'Select a Jira Project:',
+								displayField: 'description',
+								valueField: 'code',
+								store: Ext.create('Ext.data.Store', {
+									id: 'jiraProjectStore',
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: '/openstorefront/api/v1/service/jira/projects'
+									}
+								})
 							},
 							{
 								xtype: 'combobox',
