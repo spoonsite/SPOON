@@ -383,11 +383,29 @@
 										type: 'ajax',
 										url: '/openstorefront/api/v1/service/jira/projects'
 									}
-								})
+								}),
+								listeners: {
+									select: function (combo, record, eOpts) {
+										var code = record.getData().code;
+										var url = '/openstorefront/api/v1/service/jira/projects/';
+										url += code;
+
+										Ext.getCmp('jiraProjectIssueSelection').setStore({
+											autoLoad: true,
+											proxy: {
+												type: 'ajax',
+												url: url
+											}
+										});
+									}
+								}
 							},
 							{
 								xtype: 'combobox',
-								fieldLabel: 'Select a Jira Project Issue Type:'
+								id: 'jiraProjectIssueSelection',
+								fieldLabel: 'Select a Jira Project Issue Type:',
+								displayField: 'description',
+								valueField: 'code',
 							},
 							{
 								xtype: 'combobox',
