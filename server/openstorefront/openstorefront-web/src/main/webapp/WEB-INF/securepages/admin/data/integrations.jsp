@@ -373,6 +373,7 @@
 						items: [
 							{
 								xtype: 'combobox',
+								id: 'jiraProjectSelection',
 								fieldLabel: 'Select a Jira Project:',
 								displayField: 'description',
 								valueField: 'code',
@@ -404,8 +405,28 @@
 								xtype: 'combobox',
 								id: 'jiraProjectIssueSelection',
 								fieldLabel: 'Select a Jira Project Issue Type:',
-								displayField: 'description',
+								displayField: 'name',
 								valueField: 'code',
+								editable: false,
+								listeners: {
+									select: function (combo, record, eOpts) {
+										var projectSelection = Ext.getCmp('jiraProjectSelection').getSelection();
+										var projectCode = projectSelection.getData().code;
+										var issueType = record.getData().name;
+										var url = '/openstorefront/api/v1/service/jira/projects/';
+										url += projectCode + '/' + issueType + '/fields';
+
+										console.log(url);
+
+										Ext.getCmp('jiraFieldSelection').setStore({
+											autoLoad: true,
+											proxy: {
+												type: 'ajax',
+												url: url
+											}
+										});
+									}
+								}
 							},
 							{
 								xtype: 'combobox',
@@ -413,7 +434,11 @@
 							},
 							{
 								xtype: 'combobox',
-								fieldLabel: 'Select the Jira Field:'
+								id: 'jiraFieldSelection',
+								displayField: 'name',
+								valueField: 'name',
+								fieldLabel: 'Select the Jira Field:',
+								editable: false
 							}
 						]
 					}
