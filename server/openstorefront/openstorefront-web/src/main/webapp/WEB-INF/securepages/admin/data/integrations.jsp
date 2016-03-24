@@ -416,8 +416,6 @@
 										var url = '/openstorefront/api/v1/service/jira/projects/';
 										url += projectCode + '/' + issueType + '/fields';
 
-										console.log(url);
-
 										Ext.getCmp('jiraFieldSelection').setStore({
 											autoLoad: true,
 											proxy: {
@@ -430,7 +428,17 @@
 							},
 							{
 								xtype: 'combobox',
-								fieldLabel: 'Select a Storefront Attribute Type:'
+								fieldLabel: 'Select a Storefront Attribute Type:',
+								valueField: 'attributeType',
+								displayField: 'description',
+								store: Ext.create('Ext.data.Store', {
+									id: 'attributeTypeStore',
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: '/openstorefront/api/v1/resource/attributes'
+									}
+								})
 							},
 							{
 								xtype: 'combobox',
