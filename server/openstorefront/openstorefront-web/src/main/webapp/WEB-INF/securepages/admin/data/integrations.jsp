@@ -446,7 +446,23 @@
 								displayField: 'name',
 								valueField: 'name',
 								fieldLabel: 'Select the Jira Field:',
-								editable: false
+								editable: false,
+								listeners: {
+									select: function (combo, record, eOpts) {
+										console.log(record);
+										var allowedValues = record.getData().allowedValues;
+										var form = Ext.getCmp('addEditMappingForm');
+
+										Ext.Array.each(allowedValues, function(value) {
+											form.add({
+												xtype: 'combobox',
+												fieldLabel: value.value
+											});
+		
+										});
+										
+									}
+								}
 							}
 						]
 					}
