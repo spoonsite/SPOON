@@ -130,8 +130,7 @@ limitations under the License.
 									text: 'Activate',
 									itemId: 'activate',
 									scale: 'medium',
-									disabled: true,
-									iconCls: 'fa fa-2x fa-toggle-on',
+									disabled: true,									
 									handler: function () {
 										actionSetStatus('/activate');;
 									}									
@@ -140,8 +139,7 @@ limitations under the License.
 									text: 'Inactivate',
 									itemId: 'inactivate',
 									scale: 'medium',
-									disabled: true,
-									iconCls: 'fa fa-2x fa-toggle-off',
+									disabled: true,									
 									handler: function () {
 										actionSetStatus('/inactivate');
 									}									

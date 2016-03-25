@@ -59,6 +59,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
@@ -1633,21 +1634,27 @@ public class CoreComponentServiceImpl
 		ComponentVersionHistory versionHistory = persistenceService.findById(ComponentVersionHistory.class, versionHistoryId);
 		if (versionHistory != null) {
 
-			ComponentAll archivedVersion = null;
+			ComponentAll archivedVersion = null;			
 			TFile archive = new TFile(versionHistory.pathToFile().toFile());
-			for (TFile file : archive.listFiles()) {
-				if (file.isFile()) {
-					try (InputStream inTemp = new TFileInputStream(file)) {
-						archivedVersion = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<ComponentAll>()
-						{
-						});
-					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException(ex);
+			TFile files[] = archive.listFiles();
+			if (files != null) {
+				for (TFile file : files) {
+					if (file.isFile()) {
+						try (InputStream inTemp = new TFileInputStream(file)) {
+							archivedVersion = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<ComponentAll>()
+							{
+							});
+						} catch (IOException ex) {
+							throw new OpenStorefrontRuntimeException(ex);
+						}
 					}
 				}
-			}
-			if (archivedVersion != null) {
-				componentDetailView = ComponentDetailView.toView(archivedVersion);
+				if (archivedVersion != null) {
+					componentDetailView = ComponentDetailView.toView(archivedVersion);
+				}
+			} else {
+				String componentName = getComponentName(versionHistory.getComponentId());
+				log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
 			}
 		}
 
@@ -1662,17 +1669,23 @@ public class CoreComponentServiceImpl
 			//Get Version (only the component so we don't wipe out the restored resources)
 			ComponentAll archivedVersion = null;
 			TFile archive = new TFile(versionHistory.pathToFile().toFile());
-			for (TFile file : archive.listFiles()) {
-				if (file.isFile()) {
-					try (InputStream inTemp = new TFileInputStream(file)) {
-						archivedVersion = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<ComponentAll>()
-						{
-						});
-					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException(ex);
+			TFile files[] = archive.listFiles();
+			if (files != null) {			
+				for (TFile file : files) {
+					if (file.isFile()) {
+						try (InputStream inTemp = new TFileInputStream(file)) {
+							archivedVersion = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<ComponentAll>()
+							{
+							});
+						} catch (IOException ex) {
+							throw new OpenStorefrontRuntimeException(ex);
+						}
 					}
 				}
-			}
+			} else {
+				String componentName = getComponentName(versionHistory.getComponentId());
+				log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
+			}			
 
 			if (archivedVersion != null) {
 
@@ -1700,37 +1713,49 @@ public class CoreComponentServiceImpl
 
 				//copy resources
 				archive = new TFile(versionHistory.pathToFile().toFile());
-				for (TFile file : archive.listFiles()) {
-					if (file.isDirectory() && "media".equalsIgnoreCase(file.getName())) {
-						for (TFile mediaFile : file.listFiles()) {
-							try {
-								TFile source = mediaFile;
-								TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()).toFile());
-								if (destination.isArchive() || destination.isDirectory()) {
-									destination = new TFile(destination, source.getName());
-								}
-								source.toFile().cp_rp(destination);
+				TFile allFiles[] = archive.listFiles();
+				if (allFiles != null) {					
+					for (TFile file : allFiles) {
+						if (file.isDirectory() && "media".equalsIgnoreCase(file.getName())) {
+							TFile mediaFiles[] = file.listFiles();
+							if (mediaFiles != null) {
+								for (TFile mediaFile : mediaFiles) {
+									try {
+										TFile source = mediaFile;
+										TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()).toFile());
+										if (destination.isArchive() || destination.isDirectory()) {
+											destination = new TFile(destination, source.getName());
+										}
+										source.toFile().cp_rp(destination);
 
-							} catch (IOException ex) {
-								log.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+									} catch (IOException ex) {
+										log.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+									}
+								}
 							}
-						}
-					} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
-						for (TFile resourceFile : file.listFiles()) {
-							try {
-								TFile source = resourceFile;
-								TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()).toFile());
-								if (destination.isArchive() || destination.isDirectory()) {
-									destination = new TFile(destination, source.getName());
-								}
-								source.toFile().cp_rp(destination);
+						} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
+							TFile resourceFiles[] = file.listFiles();
+							if (resourceFiles != null) {
+								for (TFile resourceFile : resourceFiles) {
+									try {
+										TFile source = resourceFile;
+										TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()).toFile());
+										if (destination.isArchive() || destination.isDirectory()) {
+											destination = new TFile(destination, source.getName());
+										}
+										source.toFile().cp_rp(destination);
 
-							} catch (IOException ex) {
-								log.log(Level.WARNING, MessageFormat.format("Failed to copy resource to path file: {0}", resourceFile.getName()), ex);
+									} catch (IOException ex) {
+										log.log(Level.WARNING, MessageFormat.format("Failed to copy resource to path file: {0}", resourceFile.getName()), ex);
+									}
+								}
 							}
 						}
 					}
-				}
+				} else {
+					String componentName = getComponentName(versionHistory.getComponentId());
+					log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
+				}	
 
 				//save old version (keep in mind the update date will reflect now.)
 				FileHistoryOption fileHistoryOptions = new FileHistoryOption();
@@ -1880,7 +1905,7 @@ public class CoreComponentServiceImpl
 		for (int i=targetEntities.size()-1; i >=0; i--) {
 			if (StringUtil.isBlank(targetEntities.get(i).uniqueKey())) {
 				T badRecord = targetEntities.remove(i);
-				log.log(Level.WARNING, "Bad record (found during merge...it was removed): " + StringProcessor.printObject(badRecord));				
+				log.log(Level.WARNING, MessageFormat.format("Bad record (found during merge...it was removed): {0}", StringProcessor.printObject(badRecord)));				
 			}
 		}		
 		
@@ -2084,4 +2109,25 @@ public class CoreComponentServiceImpl
 		return mergedComponent;
 	}
 
+	public void saveTemplateBlock(TemplateBlock templateBlock)
+	{
+		TemplateBlock existing = persistenceService.findById(TemplateBlock.class, templateBlock.getTemplateBlockId());
+		if (existing != null) {
+			existing.updateFields(templateBlock);
+			persistenceService.persist(existing);
+		} else {
+			templateBlock.setTemplateBlockId(persistenceService.generateId());			
+			templateBlock.populateBaseCreateFields();
+			persistenceService.persist(templateBlock);
+		}
+	}
+
+	public void deleteTemplateBlock(String templateBlockId)
+	{
+		TemplateBlock existing = persistenceService.findById(TemplateBlock.class, templateBlockId);
+		if (existing != null) {
+			persistenceService.delete(existing);
+		}		
+	}
+	
 }

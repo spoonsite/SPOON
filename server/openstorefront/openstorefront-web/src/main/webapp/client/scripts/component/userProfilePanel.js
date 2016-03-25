@@ -164,10 +164,14 @@ Ext.define('OSF.component.UserProfilePanel', {
 					data.externalGuid = data.guid;
 
 					//update user profile  
+					profileForm.setLoading("Saving...");
 					Ext.Ajax.request({
 						url: '/openstorefront/api/v1/resource/userprofiles/' + data.username,
 						method: 'PUT',
 						jsonData: data,
+						callback: function() {
+							profileForm.setLoading(false);
+						},
 						success: function (response, opts) {
 							Ext.toast('Updated User Profile', '', 'tr');
 							if (profileForm.saveCallback) {

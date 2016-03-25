@@ -30,53 +30,6 @@ limitations under the License.
 		/* global Ext, CoreService, CoreApp */	
 		
 		var DetailPage = {
-			showRelatedWindow: function(attributeType, attributeCode, description, vitalType, tip) {
-				DetailPage.relatedWindow.show();
-				DetailPage.relatedWindow.setTitle('Related Entries');
-								
-				DetailPage.relatedWindow.getComponent('grid').getComponent('description').update({
-					description: description,
-					tip: tip
-				});
-				
-				var searchObj = {
-					"sortField": "name",
-					"sortDirection": "ASC",				
-					"searchElements": [{
-							"searchType": vitalType,
-							"keyField": attributeType,
-							"keyValue": attributeCode,
-							"caseInsensitive": true,
-							"numberOperation": "EQUALS",
-							"stringOperation": "EQUALS",
-							"mergeCondition": "OR" 
-					}]
-				 };
-				
-				var store = DetailPage.relatedWindow.getComponent('grid').getStore();
-				store.getProxy().buildRequest = function (operation) {
-					var initialParams = Ext.apply({
-						paging: true,
-						sortField: operation.getSorters()[0].getProperty(),
-						sortOrder: operation.getSorters()[0].getDirection(),
-						offset: operation.getStart(),
-						max: operation.getLimit()
-					}, operation.getParams());
-					params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
-
-					var request = new Ext.data.Request({
-						url: '/openstorefront/api/v1/service/search/advance',
-						params: params,
-						operation: operation,
-						action: operation.getAction(),
-						jsonData: Ext.util.JSON.encode(searchObj)
-					});
-					operation.setRequest(request);
-
-					return request;
-				};
-				store.loadPage(1);
-			},
 			showRelatedOrganizations: function(organization) {
 				DetailPage.relatedWindow.show();
 				DetailPage.relatedWindow.setTitle('Related Entries');
@@ -279,7 +232,7 @@ limitations under the License.
 				title: 'Related Entries - ',
 				//x: 5,		
 				//y: 220,
-				width: '50%',
+				width: '95%',
 				height: '60%',
 				modal: true,
 				maximizable: true,

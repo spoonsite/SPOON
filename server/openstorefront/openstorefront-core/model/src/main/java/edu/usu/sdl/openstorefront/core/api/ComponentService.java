@@ -38,6 +38,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
@@ -653,6 +654,7 @@ public interface ComponentService
 	 * @param componentType
 	 * @return
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public ComponentType saveComponentType(ComponentType componentType);
 
 	/**
@@ -661,6 +663,7 @@ public interface ComponentService
 	 *
 	 * @param componentType
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeComponentType(String componentType);
 
 	/**
@@ -669,6 +672,7 @@ public interface ComponentService
 	 * @param componentTypeTemplate
 	 * @return
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate);
 
 	/**
@@ -677,7 +681,22 @@ public interface ComponentService
 	 *
 	 * @param templateId
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeComponentTypeTemplate(String templateId);
+	
+	/**
+	 * Save a template block for use in a template
+	 * @param templateBlock 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveTemplateBlock(TemplateBlock templateBlock);
+	
+	/**
+	 * Hard delete of a template block
+	 * @param templateBlockId 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteTemplateBlock(String templateBlockId);
 
 	/**
 	 * Approves a component and triggers notification if requested component is

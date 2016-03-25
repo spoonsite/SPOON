@@ -48,7 +48,23 @@ public class ComponentTypeTemplate
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
 	@ConsumeField
+	@APIDescription("This content the full template code")
 	private String template;
+	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@ConsumeField
+	@APIDescription("This is used to presist the template design")	
+	private String preTemplateCode;
+	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@ConsumeField
+	@APIDescription("This is used to presist the template design")	
+	private String postTemplateCode;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@APIDescription("This is used to presist the visual designer")
+	private String templateBlocks;
 
 	public ComponentTypeTemplate()
 	{
@@ -92,6 +108,36 @@ public class ComponentTypeTemplate
 	public void setTemplate(String template)
 	{
 		this.template = template;
+	}
+
+	public String getPreTemplateCode()
+	{
+		return preTemplateCode;
+	}
+
+	public void setPreTemplateCode(String preTemplateCode)
+	{
+		this.preTemplateCode = preTemplateCode;
+	}
+
+	public String getPostTemplateCode()
+	{
+		return postTemplateCode;
+	}
+
+	public void setPostTemplateCode(String postTemplateCode)
+	{
+		this.postTemplateCode = postTemplateCode;
+	}
+
+	public String getTemplateBlocks()
+	{
+		return templateBlocks;
+	}
+
+	public void setTemplateBlocks(String templateBlocks)
+	{
+		this.templateBlocks = templateBlocks;
 	}
 
 }

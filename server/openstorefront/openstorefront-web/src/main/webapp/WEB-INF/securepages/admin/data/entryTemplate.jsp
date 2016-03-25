@@ -23,14 +23,156 @@
 <stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 		
+		<script src="scripts/component/templateBlocks.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/mediaViewer.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/relationshipVisualization.js?v=${appVersion}" type="text/javascript"></script>		
+		
+		<div style="display:none; visibility: hidden;" id="templateHolder"></div>
+		<form id="viewForm" action="Template.action?PreviewTemplate"  method="POST">		
+			<input type="hidden" name="templateContents" id="viewContent" />
+		</form>
+		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function(){			
 				
+				var entryData;
+				var templateBlocks = [];
+				var templateCode = '';
+				
+				var predefinedBlocks = [
+					{
+						name: 'Description',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Description', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},							
+						generate: function(entryData) {
+							var description = Ext.create('OSF.component.template.Description', {
+								margin: '0 0 20 0'
+							});
+							return description;
+						}
+					},
+					{
+						name: 'Media',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Media', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},						
+						generate: function(entryData) {
+							var media = Ext.create('OSF.component.template.Media', {
+								margin: '0 0 20 0'
+							});
+							return media;
+						}
+					},
+					{
+						name: 'Dependencies',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Dependencies', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},						
+						generate: function(entryData) {
+							var dependencies = Ext.create('OSF.component.template.Dependencies', {	
+								margin: '0 0 20 0'
+							});
+							return dependencies;
+						}
+					},
+					{
+						name: 'DI2E Evaluation Level',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.DI2EEvalLevel', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},								
+						generate: function(entryData) {
+							var di2elevel = Ext.create('OSF.component.template.DI2EEvalLevel', {
+								margin: '0 0 20 0'
+							});
+							return di2elevel;
+						}
+					},
+					{
+						name: 'Evaluation Summary',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.EvaluationSummary', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},															
+						generate: function(entryData) {
+							var evaluationSummary = Ext.create('OSF.component.template.EvaluationSummary', {	
+								margin: '0 0 20 0'
+							});
+							return evaluationSummary;
+						}
+					},
+					{
+						name: 'Resources',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Resources', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},																						
+						generate: function(entryData) {
+							var resources = Ext.create('OSF.component.template.Resources', {
+								margin: '0 0 20 0'
+							});
+							return resources;
+						}
+					},
+					{
+						name: 'Contacts',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Contacts', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},								
+						generate: function(entryData) {
+							var contacts = Ext.create('OSF.component.template.Contacts', {
+								margin: '0 0 20 0'
+							});
+							return contacts;
+						}
+					},
+					{
+						name: 'Vitals',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Vitals', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},							
+						generate: function(entryData) {
+							var vitals = Ext.create('OSF.component.template.Vitals', {	
+								margin: '0 0 20 0'
+							});
+							return vitals;
+						}
+					},
+					{
+						name: 'Relationship',
+						blockCode: function(){
+							return 'var block_' + this.blockId + " = Ext.create('OSF.component.template.Relationships', {" +
+									"margin: '0 0 20 0'" +
+									"});";
+						},								
+						generate: function(entryData) {
+							var relationships = Ext.create('OSF.component.template.Relationships', {
+								margin: '0 0 20 0'
+							});
+							return relationships;
+						}
+					}
+				];
+				
 				var getAllDataField = function(data, output, parentLevel) {
 					
 					Ext.Object.each(data, function(key, value, myself) {
-						console.log(key + ":" + value);
+			
 						if (Ext.isArray(value)) {
 							parentLevel++;
 							Ext.Array.each(value, function(item){	
@@ -55,6 +197,105 @@
 					return output;
 				};
 				
+				var addEditCustomBlock = Ext.create('Ext.window.Window', {
+					id: 'addEditCustomBlock',
+					title: 'Add/Edit Custom Template Block',
+					modal: true,
+					width: '60%',
+					height: '80%', 
+					maximizable: true,
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'form',
+							layout: 'vbox',
+							bodyStyle: 'padding: 10px;',
+							defaults: {
+								labelAlign: 'top',
+								labelSeparator: ''
+							},
+							items: [
+								{
+									xtype: 'hiddenfield',
+									name: 'templateBlockId'
+								},
+								{
+									xtype: 'textfield',
+									name: 'name',
+									fieldLabel: 'Name <span class="field-required" />',
+									maxLength: 255,
+									width: '100%',
+									allowBlank: false
+								},
+								{
+									xtype: 'textarea',
+									name: 'codeBlock',
+									fieldLabel: 'Code <span class="field-required" />',
+									width: '100%',
+									flex: 1,
+									maxLength: 65000,
+									allowBlank: false,
+									value: "Ext.create('OSF.component.template.BaseBlock', {\n" + 
+											" margin: '0 0 20 0',\n" + 
+											" tpl: '', \n" +							
+											" updateHandler: function(entry){ \n" + 
+											"   return entry; \n"+
+											" } \n"+										
+											"});\n"
+								}
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											formBind: true,
+											iconCls: 'fa fa-save',
+											handler: function(){
+												var win = this.up('window');
+												var form = this.up('form');
+												var data = form.getValues();
+												
+												var method = 'POST';
+												var endUrl = '';
+												if (data.templateBlockId) {
+													method = 'PUT';
+													endUrl = '/' + data.templateBlockId
+												}
+												
+												CoreUtil.submitForm({
+													url: '../api/v1/resource/templateblocks' + endUrl,
+													method: method,
+													form: form,
+													data: data,
+													success: function(response, opt) {
+														initToolTemplateBlocks();
+														win.close();
+													}
+												});												
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function() {
+												this.up('window').close();
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				});
+				
+				
 				var addEditWindow = Ext.create('Ext.window.Window', {
 					id: 'addEditWindow',
 					title: 'Add/Edit Template',
@@ -75,7 +316,7 @@
 								{
 									xtype: 'panel',
 									title: 'Toolbox',
-									width: '40%',
+									width: '30%',
 									collapsible: true,
 									titleCollapse: true,
 									collapseDirection: 'left',
@@ -111,11 +352,11 @@
 																Ext.getCmp('dataFieldPanel').setLoading(false);
 															},
 															success: function(response, opts){
-																var data = Ext.decode(response.responseText);
+																entryData = Ext.decode(response.responseText);
 
-																var fieldDisplay = getAllDataField(data, '', 0);
-
+																var fieldDisplay = getAllDataField(entryData, '', 0);
 																Ext.getCmp('dataFieldPanel').update(fieldDisplay);
+																updateTemplate();
 															}
 														});
 													}
@@ -136,12 +377,30 @@
 										},
 										{
 											xtype: 'panel',
+											id: 'blocksPanel',
 											title: 'Template Blocks',											
 											width: '100%',
 											collapsible: true,											
 											titleCollapse: true,											
 											bodyStyle: 'padding: 10px;',
-											border: true											
+											layout: 'anchor',
+											border: true,
+											dockedItems: [
+												{
+													xtype: 'toolbar',
+													dock: 'top',
+													items: [
+														{
+															text: 'Add Custom',
+															iconCls: 'fa fa-plus',
+															handler: function() {
+																addEditCustomBlock.show();
+																addEditCustomBlock.getComponent('form').reset();																
+															}
+														}
+													]
+												}
+											]
 										}
 									]
 								},
@@ -156,14 +415,59 @@
 									items: [
 										{
 											xtype: 'panel',
+											id: 'visualPanel',
+											layout: 'anchor',											
+											scrollable: true,
 											title: 'Visual Design'											
 										},
 										{
 											xtype: 'panel',
-											title: 'Code'											
+											id: 'codePanel',
+											bodyStyle: 'padding: 10px;',
+											scrollable: true,
+											title: 'Code',
+											layout: 'vbox',
+											defaults: {
+												labelAlign: 'top',
+												labelSeparator: ''
+											},
+											items: [
+												{
+													xtype: 'textareafield',
+													itemId: 'precode',
+													name: 'precode',
+													split: true,
+													fieldLabel: 'Pre',
+													width: '100%',
+													flex: 1													
+												},
+												{
+													xtype: 'textareafield',
+													itemId: 'gencode',
+													name: 'gencode',
+													split: true,
+													fieldLabel: 'Generated',
+													readOnly: true,
+													fieldCls: 'generated-code',
+													width: '100%',
+													flex: 1													
+												},
+												{
+													xtype: 'textareafield',
+													itemId: 'postcode',
+													name: 'postcode',
+													split: true,
+													fieldLabel: 'Post',
+													width: '100%',
+													flex: 1													
+												}												
+											]
 										},
 										{
 											xtype: 'panel',
+											id: 'previewPanel',
+											scrollable: true,
+											bodyStyle: 'padding: 5px;',
 											title: 'Preview'											
 										}										
 									]
@@ -201,13 +505,256 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-close',
 									handler: function(){
-										
+										var win = this.up('window');
+										win.close();
 									}
 								}								
 							]
 						}
 					]					
 				});
+				
+				
+				//Load Template block
+				var initToolTemplateBlocks = function() {
+					var toolBox = Ext.getCmp('blocksPanel');
+					
+					toolBox.setLoading(true);
+					Ext.Ajax.request({
+						url: '../api/v1/resource/templateblocks',
+						callback: function(){
+							toolBox.setLoading(false);
+						},
+						success: function(response, opts){
+							var data = Ext.decode(response.responseText);
+							if (data) {
+								var allBlocks = [];
+								var allBasicBlocks = Ext.Array.clone(predefinedBlocks);
+								Ext.Array.each(data, function(block){
+									var newBlock ={
+										name: block.name,
+										templateBlock: block,										
+										blockCode: function(){
+											return 'var block_' + this.blockId + " = " + block.codeBlock;
+										},								
+										generate: function(entryData) {
+											var tempBlock = eval(block.codeBlock);														
+											return tempBlock;
+										}
+									};
+									allBasicBlocks.push(newBlock);
+								});
+								allBasicBlocks.sort(function(a, b) {
+									return a.name.localeCompare(b.name);
+								});
+								
+								Ext.Array.each(allBasicBlocks, function(block){
+									
+									var tools = [];
+									if(block.templateBlock) {
+										tools.push({
+											type: 'gear',
+											tooltip: 'Edit',
+											callback: function(panel, tool, event) {
+												var record = Ext.create('Ext.data.Model',{});
+												record.set(panel.block.templateBlock);
+												
+												addEditCustomBlock.show();
+												addEditCustomBlock.getComponent('form').reset();
+												addEditCustomBlock.getComponent('form').loadRecord(record);
+											}											
+										});
+										tools.push({
+											type: 'close',
+											tooltip: 'Remove',
+											callback: function(panel, tool, event) {
+												var templateBlockId = panel.block.templateBlock.templateBlockId;
+												Ext.Msg.show({
+													title:'Remove Template Block?',
+													message: 'Are you sure you want to remove this block?',
+													buttons: Ext.Msg.YESNO,
+													icon: Ext.Msg.QUESTION,
+													fn: function(btn) {
+														if (btn === 'yes') {
+															Ext.getCmp('blocksPanel').setLoading("Removing...");
+															Ext.Ajax.request({
+																url: '../api/v1/resource/templateblocks/' + templateBlockId,
+																method: 'DELETE',
+																callback: function(){
+																	Ext.getCmp('blocksPanel').setLoading(false);
+																},
+																success: function(){
+																	initToolTemplateBlocks();
+																}
+															});
+														} 
+													}
+												});	
+											}
+										});
+									}
+									
+									tools.push({
+										type: 'plus',
+										tooltip: 'Add Block',
+										callback: function(panel, tool, event) {
+											var newBlock = Ext.clone(panel.block);
+											newBlock.blockId = Ext.id().replace('-', '_');
+											templateBlocks.push(newBlock);
+											updateTemplate();
+										}										
+									});
+									
+									var panel = Ext.create('Ext.panel.Panel', {
+										title: block.name,
+										block: block,
+										header: {
+											cls: 'entry-template_block'
+										},
+										margin: '0 0 5 0',
+										tools: tools
+									});
+									allBlocks.push(panel);
+								});
+
+								toolBox.removeAll();
+								toolBox.add(allBlocks);								
+							}
+						}
+					});
+					
+
+				};								
+				initToolTemplateBlocks();
+				
+				var updateTemplate = function() {
+					updateVisual();
+					updateCode();
+					updatePreview();
+				};
+				
+				var updateVisual = function() {
+					
+					var visualPanels = [];					
+					Ext.Array.each(templateBlocks, function(block, index){
+						
+						var templateBlockPanel = block.generate();
+						if (entryData) {
+							templateBlockPanel.updateTemplate(entryData);
+						}
+						var tools = [];
+						var moveUpTool = {
+							type: 'plus',
+							tooltip: 'Move Up',
+							callback: function(panel, tool, event) {
+								var blockIndex = 0; 
+								Ext.Array.each(templateBlocks, function(item, index) {
+									if (panel.block.blockId === item.blockId) {
+										blockIndex = index;
+										return false;
+									}
+								});
+								var temp = templateBlocks[blockIndex];
+								templateBlocks[blockIndex] = templateBlocks[blockIndex-1];
+								templateBlocks[blockIndex-1] = temp;
+								updateTemplate();
+							}
+						};
+						
+						var moveDownTool = {
+							type: 'minus',
+							tooltip: 'Move Down',
+							callback: function(panel, tool, event) {
+								var blockIndex = 0; 
+								Ext.Array.each(templateBlocks, function(item, index) {
+									if (panel.block.blockId === item.blockId) {
+										blockIndex = index;
+										return false;
+									}
+								});
+								var temp = templateBlocks[blockIndex];
+								templateBlocks[blockIndex] = templateBlocks[blockIndex+1];
+								templateBlocks[blockIndex+1] = temp;
+								updateTemplate();
+							}
+						}
+						
+						if (index == 0) {
+							tools.push(moveDownTool);							
+						} else if (index === templateBlocks.length - 1){
+							tools.push(moveUpTool);
+						} else {
+							tools.push(moveUpTool);
+							tools.push(moveDownTool);	
+						}
+						
+						tools.push({
+							type: 'close',
+							tooltip: 'Remove',							
+							callback: function(panel, tool, event) {
+								Ext.Array.remove(templateBlocks, panel.block);
+								updateTemplate();
+							}							
+						});
+						
+						var wrapperPanel = Ext.create('Ext.panel.Panel', {
+							title: block.name,
+							collapsible: true,
+							block: block,
+							header: {
+								cls: 'entry-template_block'
+							},
+							margin: '0 0 5 0',
+							bodyStyle: 'padding: 5px;',
+							border: true,
+							tools: tools,
+							items: [
+								templateBlockPanel
+							]
+						});
+						visualPanels.push(wrapperPanel);
+					});					
+					Ext.getCmp('visualPanel').removeAll();
+					Ext.getCmp('visualPanel').add(visualPanels);
+					
+				};				
+				
+				var updateCode = function() {
+					
+					var generatedCode = '';				
+					var addBlockCode = '\n';
+					Ext.Array.each(templateBlocks, function(block, index){
+						generatedCode += block.blockCode() + "\n";						
+						addBlockCode += 'template.blocks.push(block_' + block.blockId + '); \n';
+					});
+					
+					Ext.getCmp('codePanel').getComponent('gencode').setValue(generatedCode + addBlockCode);
+				};
+				
+				var updatePreview = function() {
+					var viewContent = Ext.getDom('viewContent');
+					viewContent.value = Ext.getCmp('codePanel').getComponent('gencode').getValue();
+					
+					var previewPanel = Ext.getCmp('previewPanel');
+					previewPanel.setLoading(true);
+					Ext.Ajax.request({
+						url: 'Template.action?PreviewTemplate',
+						method: 'POST',
+						form: 'viewForm',
+						callback: function(){
+							previewPanel.setLoading(false);
+						},										
+						success: function(response, opt) {
+							var text = response.responseText;											
+							Ext.dom.Element.get("templateHolder").setHtml(text, true, function(){
+								if(template) {
+									template.refresh(previewPanel, entryData ? entryData : {});
+								} 
+							});
+						}
+					});		
+		
+				};				
 				
 				var templateGrid = Ext.create('Ext.grid.Panel', {
 					id: 'templateGrid',
