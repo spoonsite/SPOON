@@ -401,6 +401,142 @@ var CoreUtil = {
 		return query;
 	},
 	/**
+	 * Show related entries
+	 * @param {type} attributeType
+	 * @param {type} attributeCode
+	 * @param {type} description
+	 * @param {type} vitalType
+	 * @param {type} tip
+	 * @returns {undefined}
+	 */
+	showRelatedVitalWindow: function(attributeType, attributeCode, description, vitalType, tip, componentId) {
+		
+		var relatedStore = Ext.create('Ext.data.Store', {
+			pageSize: 50,
+			autoLoad: false,
+			remoteSort: true,
+			sorters: [
+				new Ext.util.Sorter({
+				property: 'name',
+				direction: 'ASC'
+				})
+			],				
+			proxy: CoreUtil.pagingProxy({
+				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+				reader: {
+					type: 'json',
+					rootProperty: 'data',
+					totalProperty: 'totalNumber'
+				}
+			}),
+			listeners: {
+				load: function(store, records) {
+					store.filterBy(function(record){
+						return record.get('componentId') !== componentId;
+					});
+				}
+			}
+		});
+
+		var relatedWindow = Ext.create('Ext.window.Window', {
+			title: 'Related Entries',
+			width: '95%',
+			height: '60%',
+			modal: true,
+			maximizable: true,
+			layout: 'fit',
+			items: [
+				{
+					xtype: 'grid',
+					itemId: 'grid',
+					columnLines: true,
+					store: relatedStore,
+					columns: [
+						{ text: 'Name', dataIndex: 'name', flex:2, minWidth: 250, cellWrap: true, 
+							renderer: function (value, meta, record) {
+								return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>'
+							}
+						},
+						{ text: 'Description', dataIndex: 'description', flex: 2,
+							cellWrap: true,
+							renderer: function (value) {
+								value = Ext.util.Format.stripTags(value);
+								return Ext.String.ellipsis(value, 300);
+							}
+						},							
+						{ text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150 }							
+					],
+					dockedItems: [
+						{
+							xtype: 'pagingtoolbar',							
+							dock: 'bottom',
+							store: relatedStore,
+							displayInfo: true
+						},
+						{
+							xtype: 'panel',
+							itemId: 'description',
+							maxHeight: 200,
+							bodyStyle: 'padding-left: 5px; padding-right: 5px;',
+							scrollable: true,
+							tpl: new Ext.XTemplate(
+								'<h2 style="text-align: center;">{description}</h2><hr>',
+								'{tip}'
+							)
+						}
+					]						
+				}				
+			]			
+		});		
+		
+		relatedWindow.show();
+		
+		relatedWindow.getComponent('grid').getComponent('description').update({
+			description: description,
+			tip: tip
+		});
+
+		var searchObj = {
+			"sortField": "name",
+			"sortDirection": "ASC",
+			"searchElements": [{
+					"searchType": vitalType,
+					"keyField": attributeType,
+					"keyValue": attributeCode,
+					"caseInsensitive": true,
+					"numberOperation": "EQUALS",
+					"stringOperation": "EQUALS",
+					"mergeCondition": "OR"
+				}]
+		};
+
+		var store = relatedWindow.getComponent('grid').getStore();
+		store.getProxy().buildRequest = function (operation) {
+			var initialParams = Ext.apply({
+				paging: true,
+				sortField: operation.getSorters()[0].getProperty(),
+				sortOrder: operation.getSorters()[0].getDirection(),
+				offset: operation.getStart(),
+				max: operation.getLimit()
+			}, operation.getParams());
+			params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
+
+			var request = new Ext.data.Request({
+				url: '/openstorefront/api/v1/service/search/advance',
+				params: params,
+				operation: operation,
+				action: operation.getAction(),
+				jsonData: Ext.util.JSON.encode(searchObj)
+			});
+			operation.setRequest(request);
+
+			return request;
+		};
+		store.loadPage(1);		
+		
+	},
+	
+	/**
 	 * Sort and transfer entry for display
 	 */
 	processEntry: function(entry) {

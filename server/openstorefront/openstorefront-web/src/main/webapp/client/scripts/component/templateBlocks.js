@@ -180,7 +180,7 @@ Ext.define('OSF.component.template.Vitals', {
 		'	<tpl for="vitals">',	
 		'		<tr class="details-table">',
 		'			<td class="details-table"><b>{label}</b></td>',
-		'			<td class="details-table highlight-{highlightStyle}"><a href="#" class="details-table" title="Show related entries" onclick="DetailPage.showRelatedWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\');">{value}</a></td>',
+		'			<td class="details-table highlight-{highlightStyle}"><a href="#" class="details-table" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\');">{value}</a></td>',
 		'		</tr>',
 		'	</tpl>',
 		'</table>'		
@@ -201,6 +201,7 @@ Ext.define('OSF.component.template.Vitals', {
 		if (entry.attributes) {
 			Ext.Array.each(entry.attributes, function(item){
 				vitals.push({
+					componentId: entry.componentId,
 					label: item.typeDescription,
 					value: item.codeDescription,
 					highlightStyle: item.highlightStyle,
@@ -216,6 +217,7 @@ Ext.define('OSF.component.template.Vitals', {
 		if (entry.metadata) {
 			Ext.Array.each(entry.metadata, function(item){
 				vitals.push({
+					componentId: entry.componentId,
 					label: item.label,
 					value: item.value,
 					type: item.label,

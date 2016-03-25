@@ -287,7 +287,7 @@ Ext.define('OSF.component.SearchToolWindow', {
         });
 
 		var advanceSearch = Ext.create('OSF.component.AdvanceSearchPanel', {
-			title: 'Advance',
+			title: 'Advanced',
 			iconCls: 'fa fa-search-plus',
 			saveHook: function(response, opts) {
 				savedSearches.getStore().reload();
