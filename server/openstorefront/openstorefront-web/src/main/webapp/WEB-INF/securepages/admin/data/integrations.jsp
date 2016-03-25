@@ -358,8 +358,8 @@
 				id: 'addEditMappingWin',
 				title: 'Add/Edit Mapping',
 				modal: true,
-				width: '40%',
-				y: '10em',
+				width: '60%',
+				y: '5em',
 				layout: 'fit',
 				items: [
 					{
@@ -451,11 +451,13 @@
 									select: function (combo, record, eOpts) {
 										console.log(record);
 										var allowedValues = record.getData().allowedValues;
-										var form = Ext.getCmp('addEditMappingForm');
+										var form = Ext.getCmp('fieldAssignmentForm');
+										var jiraCodesStore = Ext.getStore('jiraCodesStore');
 
 										Ext.Array.each(allowedValues, function(value) {
+											jiraCodesStore.add(value);
 											form.add({
-												xtype: 'combobox',
+												xtype: 'textfield',
 												fieldLabel: value.value
 											});
 		
@@ -463,6 +465,34 @@
 										
 									}
 								}
+							},
+							{
+								xtype: 'panel',
+								layout: {
+									type: 'hbox',
+									align: 'stretch',
+									padding: '10px;'
+								},
+								items: [
+									{
+										xtype: 'grid',
+										store: Ext.create('Ext.data.Store', {
+											id: 'jiraCodesStore'
+										}),
+										flex: 1,
+										columns: [
+											{ text: 'Jira Codes', dataIndex: 'value', flex: 1},
+										]
+									},
+									{
+										xtype: 'form',
+										style: {
+											paddingLeft: '20px'
+										},
+										flex: 1,
+										id: 'fieldAssignmentForm',
+									}
+								]
 							}
 						]
 					}
