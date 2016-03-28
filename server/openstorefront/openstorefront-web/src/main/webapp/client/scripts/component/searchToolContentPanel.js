@@ -299,7 +299,8 @@ Ext.define('OSF.component.SearchToolWindow', {
 					items: [
 						{
 							text: 'Search',
-							iconCls: 'fa fa-search',
+							scale: 'medium',
+							iconCls: 'fa fa-2x fa-search',
 							handler: function(){
 								var searchObj = this.up('panel').getSearch();
 								
@@ -322,7 +323,8 @@ Ext.define('OSF.component.SearchToolWindow', {
 						},
 						{
 							text: 'Preview Results',
-							iconCls: 'fa fa-eye',
+							scale: 'medium',							
+							iconCls: 'fa fa-2x fa-eye',
 							handler: function(){
 								this.up('panel').previewResults();
 							}							
@@ -332,7 +334,8 @@ Ext.define('OSF.component.SearchToolWindow', {
 						},
 						{
 							text: 'Save',
-							iconCls: 'fa fa-save',
+							scale: 'medium',
+							iconCls: 'fa fa-2x fa-save',
 							handler: function(){
 								this.up('panel').saveSearch();
 							}							
