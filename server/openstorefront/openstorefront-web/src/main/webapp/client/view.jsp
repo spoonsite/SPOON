@@ -830,7 +830,7 @@ limitations under the License.
 									var templateUrl;
 									if (componentTypeDetail.componentTypeTemplate) {
 										//load custom										
-										templateUrl= '../api/v1/resource/componenttypetemplates/' + componentTypeDetail.componentTypeTemplate + '/template';
+										templateUrl= 'Template.action?LoadTemplate&templateId=' + componentTypeDetail.componentTypeTemplate;
 									} else if (entry.componentType === 'ARTICLE') {										
 										templateUrl= 'Router.action?page=template/article.jsp';
 									} else {
