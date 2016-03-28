@@ -506,16 +506,20 @@
 								items: [
 									{
 										xtype: 'grid',
+										title: 'List of Jira Codes',
 										store: Ext.create('Ext.data.Store', {
 											id: 'jiraCodesStore'
 										}),
 										flex: 1,
+										hideHeaders: true,
 										columns: [
 											{ text: 'Jira Codes', dataIndex: 'value', flex: 1},
 										]
 									},
 									{
 										xtype: 'form',
+										title: 'Matching Storefront Code',
+										width: '100%',
 										style: {
 											paddingLeft: '20px'
 										},
