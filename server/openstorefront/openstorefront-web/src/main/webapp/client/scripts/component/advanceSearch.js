@@ -1494,6 +1494,10 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 			}			
 						
 		];
+		
+		searchTypes.sort(function(a, b){
+			return a.searchType.localeCompare(b.searchType);
+		});
 				
 		advancePanel.entryForm = Ext.create('Ext.form.Panel', {
 			layout: 'anchor',
