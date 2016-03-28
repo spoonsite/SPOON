@@ -438,7 +438,33 @@
 										type: 'ajax',
 										url: '/openstorefront/api/v1/resource/attributes'
 									}
-								})
+								}),
+								listeners: {
+									select: function (combo, record, eOpts) {
+										console.log(record);
+										var codes = record.getData().codes;
+										var form = Ext.getCmp('fieldAssignmentForm');
+
+										// Clear form upon new selection
+										form.removeAll();
+
+										// Create assignment fields for storefront codes
+										Ext.Array.each(codes, function(code) {
+											form.add({
+												xtype: 'textfield',
+												fieldLabel: code.label,
+												name: code.code,
+												anchor: '100%',
+												listeners: {
+													afterrender: function(thisField, eOpts) {
+														initializeDropTarget(thisField); 
+													}
+												}
+											});
+										});
+
+									}
+								}
 							},
 							{
 								xtype: 'combobox',
@@ -454,17 +480,21 @@
 										var form = Ext.getCmp('fieldAssignmentForm');
 										var jiraCodesStore = Ext.getStore('jiraCodesStore');
 
+										// Clear store upon selection
+										jiraCodesStore.removeAll();
+
+										// Add store entries for each Jira code
 										Ext.Array.each(allowedValues, function(value) {
 											jiraCodesStore.add(value);
-											form.add({
-												xtype: 'textfield',
-												fieldLabel: value.value
-											});
-		
 										});
+
 										
 									}
 								}
+							},
+							{
+								xtype: 'label',
+								text: 'Assign Jira codes to Storefront codes by dragging them from the list of Jira codes and dropping them into the Storefront fields.'
 							},
 							{
 								xtype: 'panel',
