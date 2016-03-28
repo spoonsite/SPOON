@@ -8,7 +8,7 @@
 			var template = {
 				blocks: [],
 				refresh: function(container, entry) {
-					container.removeAll();
+					container.removeAll(false);
 					
 					Ext.Array.each(template.blocks, function(block){
 						block.updateTemplate(entry);	

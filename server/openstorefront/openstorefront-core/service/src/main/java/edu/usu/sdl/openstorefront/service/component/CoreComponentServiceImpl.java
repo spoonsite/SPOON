@@ -1996,6 +1996,7 @@ public class CoreComponentServiceImpl
 			existing.updateFields(componentTypeTemplate);
 			componentTypeTemplate = persistenceService.persist(existing);
 		} else {
+			componentTypeTemplate.setTemplateId(persistenceService.generateId());			
 			componentTypeTemplate.populateBaseCreateFields();
 			componentTypeTemplate = persistenceService.persist(componentTypeTemplate);
 		}

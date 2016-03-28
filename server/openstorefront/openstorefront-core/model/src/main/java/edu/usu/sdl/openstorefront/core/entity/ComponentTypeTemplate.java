@@ -33,11 +33,8 @@ public class ComponentTypeTemplate
 		extends StandardEntity<ComponentTypeTemplate>
 {
 
-	@PK(generated = false)
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
+	@PK(generated = true)
+	@NotNull	
 	private String templateId;
 
 	@NotNull
@@ -77,7 +74,10 @@ public class ComponentTypeTemplate
 		
 		ComponentTypeTemplate componentTypeTemplate = (ComponentTypeTemplate) entity;
 		this.setName(componentTypeTemplate.getName());
-		this.setTemplate(componentTypeTemplate.getTemplate());		
+		this.setTemplate(componentTypeTemplate.getTemplate());
+		this.setPreTemplateCode(componentTypeTemplate.getPreTemplateCode());
+		this.setPostTemplateCode(componentTypeTemplate.getPostTemplateCode());
+		this.setTemplateBlocks(componentTypeTemplate.getTemplateBlocks());		
 	}
 
 	public String getTemplateId()

@@ -140,17 +140,17 @@ public class ComponentTypeTemplateResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{templateId}")
 	public Response updateComponentTypeTemplate(
-			@PathParam("templateId") String templateCode,
+			@PathParam("templateId") String templateId,
 			ComponentTypeTemplate template
 	)
 	{
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 
 		ComponentTypeTemplate found = new ComponentTypeTemplate();
-		found.setTemplateId(templateCode);
+		found.setTemplateId(templateId);
 		found = found.find();
 		if (found != null) {
-			template.setTemplateId(templateCode);
+			template.setTemplateId(templateId);
 			response = handleSaveComponentTypeTemplate(template, false);
 		}
 		return response;
@@ -164,7 +164,7 @@ public class ComponentTypeTemplateResource
 		if (validationResult.valid()) {
 			componentTypeTemplate = service.getComponentService().saveComponentTemplate(componentTypeTemplate);
 			if (post) {
-				return Response.created(URI.create("v1/resource/componenttypetemplates/" + componentTypeTemplate.getTemplate())).entity(componentTypeTemplate).build();
+				return Response.created(URI.create("v1/resource/componenttypetemplates/" + componentTypeTemplate.getTemplateId())).entity(componentTypeTemplate).build();
 			} else {
 				return sendSingleEntityResponse(componentTypeTemplate);
 			}
@@ -178,16 +178,16 @@ public class ComponentTypeTemplateResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{templateId}/activate")
 	public Response activateComponentTypeTemplate(
-			@PathParam("templateId") String templateCode
+			@PathParam("templateId") String templateId
 	)
 	{
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 
 		ComponentTypeTemplate found = new ComponentTypeTemplate();
-		found.setTemplateId(templateCode);
+		found.setTemplateId(templateId);
 		found = found.find();
 		if (found != null) {
-			service.getPersistenceService().setStatusOnEntity(ComponentTypeTemplate.class, templateCode, StandardEntity.ACTIVE_STATUS);
+			service.getPersistenceService().setStatusOnEntity(ComponentTypeTemplate.class, templateId, StandardEntity.ACTIVE_STATUS);
 			found.setActiveStatus(StandardEntity.ACTIVE_STATUS);
 			response = sendSingleEntityResponse(found);
 		}
@@ -199,10 +199,10 @@ public class ComponentTypeTemplateResource
 	@APIDescription("Inactives component type template")
 	@Path("/{templateId}")
 	public void deleteNewEvent(
-			@PathParam("templateId") String templateCode
+			@PathParam("templateId") String templateId
 	)
 	{
-		service.getComponentService().removeComponentTypeTemplate(templateCode);
+		service.getComponentService().removeComponentTypeTemplate(templateId);
 	}
 
 }

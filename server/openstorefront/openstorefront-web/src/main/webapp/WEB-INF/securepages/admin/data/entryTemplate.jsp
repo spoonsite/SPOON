@@ -37,8 +37,8 @@
 			Ext.onReady(function(){			
 				
 				var entryData;
-				var templateBlocks = [];
-				var templateCode = '';
+				var templateBlocks = [];				
+				var allBasicBlocks = [];
 				
 				var predefinedBlocks = [
 					{
@@ -259,23 +259,48 @@
 												var form = this.up('form');
 												var data = form.getValues();
 												
-												var method = 'POST';
-												var endUrl = '';
-												if (data.templateBlockId) {
-													method = 'PUT';
-													endUrl = '/' + data.templateBlockId
+												var valid = true;
+												if (!data.templateBlockId) {
+													//check for unique name
+													var unique = true;
+													Ext.Array.each(allBasicBlocks, function(block) {
+														if (data.name === block.name) {
+															unique = false;
+															return false;
+														}
+													});
+													if (!unique) {
+														valid = false;
+														Ext.Msg.show({
+															title:'Validation',
+															message: 'Template block name needs to be unique.',
+															buttons: Ext.Msg.OK,
+															icon: Ext.Msg.ERROR,
+															fn: function(btn) {
+															}
+														});															
+													}
 												}
 												
-												CoreUtil.submitForm({
-													url: '../api/v1/resource/templateblocks' + endUrl,
-													method: method,
-													form: form,
-													data: data,
-													success: function(response, opt) {
-														initToolTemplateBlocks();
-														win.close();
+												if (valid) {
+													var method = 'POST';
+													var endUrl = '';
+													if (data.templateBlockId) {
+														method = 'PUT';
+														endUrl = '/' + data.templateBlockId
 													}
-												});												
+
+													CoreUtil.submitForm({
+														url: '../api/v1/resource/templateblocks' + endUrl,
+														method: method,
+														form: form,
+														data: data,
+														success: function(response, opt) {
+															initToolTemplateBlocks();
+															win.close();
+														}
+													});												
+												}
 											}
 										},
 										{
@@ -406,6 +431,7 @@
 								},
 								{
 									xtype: 'tabpanel',
+									id: 'templateTabpanel',
 									flex: 1,
 									border: true,
 									split: true,
@@ -478,6 +504,7 @@
 					dockedItems: [
 						{
 							xtype: 'textfield',							
+							id: 'templateNameField',
 							dock: 'top',
 							name: 'name',
 							fieldLabel: 'Name<span class="field-required" />',
@@ -494,6 +521,73 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-save',
 									handler: function(){
+										var precode = Ext.getCmp('codePanel').getComponent('precode').getValue();
+										var gencode = Ext.getCmp('codePanel').getComponent('gencode').getValue();
+										var postcode = Ext.getCmp('codePanel').getComponent('postcode').getValue();
+										var fullCode = precode + '\n' + gencode + '\n' + postcode;
+										var templateName = Ext.getCmp('templateNameField').getValue();
+										
+										var valid = true;
+										if (!templateName) {
+											valid = false;
+											Ext.Msg.show({
+												title:'Validation',
+												message: 'Missing template name.',
+												buttons: Ext.Msg.OK,
+												icon: Ext.Msg.ERROR,
+												fn: function(btn) {
+												}
+											});	
+										}
+										if (!fullCode) {
+											valid = false;
+											Ext.Msg.show({
+												title:'Validation',
+												message: 'Add template blocks or custom code.',
+												buttons: Ext.Msg.OK,
+												icon: Ext.Msg.ERROR,
+												fn: function(btn) {
+												}
+											});	
+										}										
+										
+										if (valid) {
+											var blockNames = [];
+											Ext.Array.each(templateBlocks, function(block){
+												blockNames.push(block.name);
+											});
+											var visualState = blockNames.join(',');
+											
+											
+											var method = 'POST';
+											var endUrl = '';
+											if (addEditWindow.editTemplateId) {
+												method = 'PUT';
+												endUrl = '/' + addEditWindow.editTemplateId;
+											}
+											
+											Ext.getCmp('addEditWindow').setLoading("Saving...");
+											Ext.Ajax.request({
+												url: '../api/v1/resource/componenttypetemplates' + endUrl,
+												method: method,
+												jsonData: {
+													name: templateName,
+													template: fullCode,
+													preTemplateCode: precode,
+													postTemplateCode: postcode,
+													templateBlocks: visualState
+												},
+												callback: function(){
+													Ext.getCmp('addEditWindow').setLoading(false);
+												},
+												success: function(response, opts) {
+													actionRefresh();
+													Ext.toast("Saved Template Successfully.");
+													//Ext.getCmp('addEditWindow').close();
+												}												
+											});		
+											
+										}
 										
 									}
 								},															
@@ -529,7 +623,7 @@
 							var data = Ext.decode(response.responseText);
 							if (data) {
 								var allBlocks = [];
-								var allBasicBlocks = Ext.Array.clone(predefinedBlocks);
+								allBasicBlocks = Ext.Array.clone(predefinedBlocks);
 								Ext.Array.each(data, function(block){
 									var newBlock ={
 										name: block.name,
@@ -571,7 +665,7 @@
 												var templateBlockId = panel.block.templateBlock.templateBlockId;
 												Ext.Msg.show({
 													title:'Remove Template Block?',
-													message: 'Are you sure you want to remove this block?',
+													message: 'Are you sure you want to remove block: ' + panel.block.templateBlock.name + '?',
 													buttons: Ext.Msg.YESNO,
 													icon: Ext.Msg.QUESTION,
 													fn: function(btn) {
@@ -618,7 +712,8 @@
 								});
 
 								toolBox.removeAll();
-								toolBox.add(allBlocks);								
+								toolBox.add(allBlocks);
+								reloadTemplateBlocks();
 							}
 						}
 					});
@@ -626,6 +721,23 @@
 
 				};								
 				initToolTemplateBlocks();
+				
+				
+				var reloadTemplateBlocks = function() {
+					
+					var refreshedBlocks = [];					
+					Ext.Array.each(templateBlocks, function(existingBlock) {
+						Ext.Array.each(allBasicBlocks, function(block) {
+							if (existingBlock.name === block.name) {
+								var newBlock = Ext.clone(block);
+								newBlock.blockId = Ext.id().replace('-', '_');
+								refreshedBlocks.push(newBlock);							
+							}
+						});						
+					});					
+					templateBlocks = refreshedBlocks;
+					updateTemplate();
+				}
 				
 				var updateTemplate = function() {
 					updateVisual();
@@ -735,30 +847,38 @@
 					var viewContent = Ext.getDom('viewContent');
 					viewContent.value = Ext.getCmp('codePanel').getComponent('gencode').getValue();
 					
-					var previewPanel = Ext.getCmp('previewPanel');
-					previewPanel.setLoading(true);
-					Ext.Ajax.request({
-						url: 'Template.action?PreviewTemplate',
-						method: 'POST',
-						form: 'viewForm',
-						callback: function(){
-							previewPanel.setLoading(false);
-						},										
-						success: function(response, opt) {
-							var text = response.responseText;											
-							Ext.dom.Element.get("templateHolder").setHtml(text, true, function(){
-								if(template) {
-									template.refresh(previewPanel, entryData ? entryData : {});
-								} 
-							});
-						}
-					});		
+					if (viewContent.value && 
+							viewContent.value !== '' &&
+							viewContent.value !== '\n') {					
+						var previewPanel = Ext.getCmp('previewPanel');
+						previewPanel.setLoading(true);
+						Ext.Ajax.request({
+							url: 'Template.action?PreviewTemplate',
+							method: 'POST',
+							form: 'viewForm',
+							callback: function(){
+								previewPanel.setLoading(false);
+							},										
+							success: function(response, opt) {
+								var text = response.responseText;											
+								Ext.dom.Element.get("templateHolder").setHtml(text, true, function(){
+									try {
+										if(template !== undefined && template) {
+											template.refresh(previewPanel, entryData ? entryData : {});
+										} 
+									} catch (e){}
+								});
+							}
+						});	
+					} else {
+						Ext.getCmp('previewPanel').removeAll();
+					}
 		
 				};				
 				
 				var templateGrid = Ext.create('Ext.grid.Panel', {
 					id: 'templateGrid',
-					title: 'Entry Templates <i class="fa fa-question-circle"  data-qtip="Allows for defining custom template for entries" ></i>',
+					title: 'Entry Templates <i class="fa fa-question-circle"  data-qtip="Allows for defining custom templates for entries" ></i>',
 					store: {
 						fields: [
 							{
@@ -875,14 +995,42 @@
 				};
 
 				var actionAdd = function() {
-					addEditWindow.show();
-					
+					addEditWindow.show();		
+					Ext.getCmp('templateTabpanel').getLayout().setActiveItem(0);
+					addEditWindow.editTemplateId = null;
+					Ext.getCmp('codePanel').getComponent('precode').reset();
+					Ext.getCmp('codePanel').getComponent('postcode').reset();					
+					Ext.getCmp('templateNameField').reset();						
+					templateBlocks = [];
+					updateTemplate();
 				};
 
-				var actionEdit = function() {
+				var actionEdit = function(record) {
 					addEditWindow.show();
 					
-				};				
+					addEditWindow.editTemplateId = record.get('templateId');
+					
+					Ext.getCmp('codePanel').getComponent('precode').setValue(record.get('preTemplateCode'));
+					Ext.getCmp('codePanel').getComponent('postcode').setValue(record.get('postTemplateCode'));					
+					Ext.getCmp('templateNameField').setValue(record.get('name'));					
+					
+					templateBlocks = [];
+					var blockList = record.get('templateBlocks');
+					if (blockList) {
+						var blocks = blockList.split(',');
+						Ext.Array.each(blocks, function(blockName) {
+							Ext.Array.each(allBasicBlocks, function(block) {
+								if (blockName === block.name) {
+									var newBlock = Ext.clone(block);
+									newBlock.blockId = Ext.id().replace('-', '_');
+									templateBlocks.push(newBlock);							
+								}
+							});						
+						});
+					}					
+					updateTemplate();					
+				
+			   };				
 				
 				var actionToggleStatus = function() {
 					Ext.getCmp('templateGrid').setLoading("Updating Status...");
@@ -902,7 +1050,7 @@
 							Ext.getCmp('templateGrid').setLoading(false);
 						},
 						success: function(response, opts){
-							actionRefreshEntryGrid();
+							actionRefresh();
 						}
 					});					
 				};				

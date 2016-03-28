@@ -215,7 +215,7 @@
 						{ text: 'Type Code', dataIndex: 'componentType', width: 125 },
 						{ text: 'Label', dataIndex: 'label', width: 200 },
 						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200 },
-						{ text: 'Template Override', dataIndex: 'componentTypeTemplate', width: 150 },
+						{ text: 'Template Override', dataIndex: 'templateName', width: 150 },
 						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },
 						{ text: 'Update User', dataIndex: 'updateUser', width: 150 },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
