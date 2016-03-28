@@ -507,6 +507,14 @@
 									{
 										xtype: 'grid',
 										title: 'List of Jira Codes',
+										viewConfig: {
+											enableDD: true,
+											plugins: {
+												ptype: 'gridviewdragdrop',
+												enableDrop: false,
+												ddGroup: 'mapping'
+											}
+										},
 										store: Ext.create('Ext.data.Store', {
 											id: 'jiraCodesStore'
 										}),
@@ -532,6 +540,19 @@
 					}
 				]
 			});
+
+
+			var initializeDropTarget = function initializeDropTarget(targetField) {
+				var fieldDropTarget = new Ext.dd.DropTarget(targetField.id, {
+					ddGroup: 'mapping',
+					notifyDrop: function(ddSource, e, data) {
+						var selectedRecord = ddSource.dragData.records[0];
+						targetField.setValue(selectedRecord.getData().value);
+						ddSource.view.store.remove(selectedRecord);
+						return true;
+					}
+				});
+			};
 
 			var jiraConfigGrid = Ext.create('Ext.grid.Panel', {
 				title: 'Jira Mapping Configuration',
