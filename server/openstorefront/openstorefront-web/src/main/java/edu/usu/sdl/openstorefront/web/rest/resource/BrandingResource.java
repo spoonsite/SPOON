@@ -18,9 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
-import edu.usu.sdl.openstorefront.core.entity.TopicSearchItem;
 import edu.usu.sdl.openstorefront.core.model.BrandingModel;
-import edu.usu.sdl.openstorefront.core.view.BrandingView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -70,34 +68,27 @@ public class BrandingResource
 	@GET
 	@APIDescription("Get's the current branding view")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(BrandingView.class)
+	@DataType(Branding.class)
 	@Path("/current")
 	public Response getCurrentBrandingView()
 	{
-		BrandingView brandingView = service.getBrandingService().getCurrentBrandingView();
+		Branding brandingView = service.getBrandingService().getCurrentBrandingView();
 		return sendSingleEntityResponse(brandingView);
 	}
 
 	@GET
 	@APIDescription("Get the branding view from a given id")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(BrandingView.class)
+	@DataType(Branding.class)
 	@Path("/{id}")
 	public Response getBrandingView(
 			@PathParam("id") String brandingId
 	)
 	{
-		BrandingView brandingView = null;
-
 		Branding branding = new Branding();
 		branding.setBrandingId(brandingId);
 		branding = branding.find();
-		if (branding != null) {
-			TopicSearchItem topicSearchItemExample = new TopicSearchItem();
-			topicSearchItemExample.setBrandingId(brandingId);
-			brandingView = BrandingView.toView(branding, topicSearchItemExample.findByExample());
-		}
-		return sendSingleEntityResponse(brandingView);
+		return sendSingleEntityResponse(branding);
 	}
 
 	@POST
@@ -139,18 +130,12 @@ public class BrandingResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 
-		for (TopicSearchItem topicSearchItem : brandingModel.getTopicSearchItems()) {
-			validationModel = new ValidationModel(topicSearchItem);
-			validationModel.setConsumeFieldsOnly(true);
-			validationResult.merge(ValidationUtil.validate(validationModel));
-		}
 		if (validationResult.valid()) {
 			brandingModel = service.getBrandingService().saveFullBanding(brandingModel);
-			BrandingView view = BrandingView.toView(brandingModel.getBranding(), brandingModel.getTopicSearchItems());
 			if (post) {
-				return Response.created(URI.create("v1/resource/branding/" + brandingModel.getBranding().getBrandingId())).entity(view).build();
+				return Response.created(URI.create("v1/resource/branding/" + brandingModel.getBranding().getBrandingId())).entity(brandingModel.getBranding()).build();
 			} else {
-				return sendSingleEntityResponse(view);
+				return sendSingleEntityResponse(brandingModel.getBranding());
 			}
 		}
 		return sendSingleEntityResponse(validationResult.toRestError());

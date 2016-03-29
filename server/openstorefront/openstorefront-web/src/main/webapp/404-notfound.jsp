@@ -2,6 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+	<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
+	
     <title>Page Not Found :(</title>
     <style>
       ::-moz-selection {

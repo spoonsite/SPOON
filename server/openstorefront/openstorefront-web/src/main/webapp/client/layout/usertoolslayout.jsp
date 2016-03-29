@@ -27,10 +27,11 @@ limitations under the License.
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
 	
 	<%
 		String appVersion = PropertiesManager.getApplicationVersion();
@@ -44,8 +45,9 @@ limitations under the License.
 	<link href="../webjars/extjs/6.0.0/build/packages/ux/classic/neptune/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="../webjars/extjs/6.0.0/build/packages/charts/classic/neptune/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="../webjars/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-	<link href="css/defaultExtTheme.css?v=${appVersion}" rel="stylesheet" type="text/css"/>
-	<link href="css/app.css?v=${appVersion}" rel="stylesheet" type="text/css"/>	
+	<link href="Branding.action?CSS&template=extTheme.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
+	<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
+	<link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 
 	<script src="../webjars/extjs/6.0.0/ext-bootstrap.js" type="text/javascript"></script>
 	<script src="../webjars/extjs/6.0.0/build/classic/theme-neptune/theme-neptune.js" type="text/javascript"></script>

@@ -10,6 +10,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
 		<link href="apidoc/css/apidoc.css" rel="stylesheet" type="text/css"/>
 		<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
 		<link href="apidoc/css/apiprint.css" rel="stylesheet" type="text/css"/>

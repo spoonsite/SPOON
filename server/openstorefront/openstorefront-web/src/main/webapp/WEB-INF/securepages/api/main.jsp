@@ -23,7 +23,7 @@ limitations under the License.
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link href="apidoc/css/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css"/>
 		<link href="apidoc/css/apidoc.css" rel="stylesheet" type="text/css"/>
-		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+		<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
 		<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
 		<script src="apidoc/script/jquery/jquery-ui-1.10.4.custom.min.js" type="text/javascript"></script>
 	</head>

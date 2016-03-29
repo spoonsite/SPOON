@@ -4,12 +4,13 @@
     Author     : dshurtleff
 --%>
 
-<%@page import="edu.usu.sdl.openstorefront.core.view.BrandingView"%>
+<%@page import="edu.usu.sdl.openstorefront.core.entity.Branding"%>
 <%@page import="edu.usu.sdl.openstorefront.service.ServiceProxy"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 	<head>
+		<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
 		<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
 		
 		<script type="text/javascript">
@@ -155,7 +156,7 @@
 	</head>
 	<body>
 	<%
-		BrandingView brandingView = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
+		Branding branding = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
 	%>
 		
 	<div class="auth-forms">
@@ -163,7 +164,7 @@
 		<div class="row" style="padding-left: 20px;padding-right: 20px;">
 		  <h2>Log In</h2>
 		  <form id="loginForm" action="Login.action?Login" method="POST">
-			 <%=brandingView.getBranding().getLoginWarning() %>				 
+			 <%=branding.getLoginWarning() %>				 
 			<div style="width: 500px; margin: 0px auto;">
 				<p id="serverError" class="clearError" >
 					Unable to connect to server.  Refresh page and try again.
