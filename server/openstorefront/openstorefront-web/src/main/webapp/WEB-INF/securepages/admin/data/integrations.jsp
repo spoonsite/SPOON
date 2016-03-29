@@ -593,6 +593,22 @@
 									data.type.integrationType = 'JIRA';
 									data.type.fieldId = jiraFieldRecord.key;
 									data.map = map;
+									var url = '/openstorefront/api/v1/resource/attributes/attributexreftypes/';
+									url += 'detail';
+									var method = 'POST';
+
+									Ext.Ajax.request({
+										url: url,
+										method: method,
+										jsonData: data,
+										success: function (response, opts) {
+											var message = 'Successfully submitted mapping';
+											Ext.toast(message, '', 'tr');
+										},
+										failure: function (response, opts) {
+											Ext.MessageBox.alert('Failed', 'Could not submit mapping');
+										}
+									});
 								}
 							},
 							{
