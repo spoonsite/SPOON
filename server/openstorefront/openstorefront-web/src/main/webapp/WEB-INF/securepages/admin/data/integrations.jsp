@@ -561,6 +561,40 @@
 									}
 								]
 							}
+						],
+					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								text: 'Save',
+								handler: function() {
+									var fields = Ext.getCmp('fieldAssignmentForm').getForm().getValues();
+									var form = Ext.getCmp('addEditMappingForm').getForm().getValues();
+
+									
+									var map = [];
+									
+									for (var key in fields) {
+										if (fields.hasOwnProperty(key)) {
+											var thisMapping = {};
+											thisMapping.attributeType = form.attributeType;
+											thisMapping.localCode = key
+											thisMapping.externalCode = fields[key];
+											if (thisMapping.externalCode != '') map.push(thisMapping);	
+										}
+									};
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Cancel',
+							}
 						]
 					}
 				]
