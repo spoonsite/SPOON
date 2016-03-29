@@ -374,6 +374,7 @@
 							{
 								xtype: 'combobox',
 								id: 'jiraProjectSelection',
+								name: 'projectType',
 								fieldLabel: 'Select a Jira Project:',
 								displayField: 'description',
 								valueField: 'code',
@@ -404,6 +405,7 @@
 							{
 								xtype: 'combobox',
 								id: 'jiraProjectIssueSelection',
+								name: 'issueType',
 								fieldLabel: 'Select a Jira Project Issue Type:',
 								displayField: 'name',
 								valueField: 'code',
@@ -430,6 +432,7 @@
 								xtype: 'combobox',
 								fieldLabel: 'Select a Storefront Attribute Type:',
 								id: 'attributeTypeSelection',
+								name: 'attributeType',
 								valueField: 'attributeType',
 								displayField: 'description',
 								store: Ext.create('Ext.data.Store', {
@@ -470,6 +473,7 @@
 							{
 								xtype: 'combobox',
 								id: 'jiraFieldSelection',
+								name: 'fieldName',
 								displayField: 'name',
 								valueField: 'name',
 								fieldLabel: 'Select the Jira Field:',
