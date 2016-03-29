@@ -604,6 +604,7 @@
 										success: function (response, opts) {
 											var message = 'Successfully submitted mapping';
 											Ext.toast(message, '', 'tr');
+											addEditMappingWin.close();
 										},
 										failure: function (response, opts) {
 											Ext.MessageBox.alert('Failed', 'Could not submit mapping');
@@ -616,6 +617,12 @@
 							},
 							{
 								text: 'Cancel',
+								handler: function() {
+									Ext.getCmp('addEditMappingForm').reset();
+									addEditMappingWin.close();
+									Ext.getStore('jiraCodesStore').removeAll();
+									Ext.getCmp('fieldAssignmentForm').removeAll();
+								}
 							}
 						]
 					}
@@ -712,12 +719,11 @@
 			});
 
 			var actionAddMapping = function actionAddMapping() {
-
+				addEditMappingWin.show();
 			};
 
 			var actionEditMapping = function actionEditMapping(record) {
 				addEditMappingWin.show();
-
 			};
 
 			var actionDeleteMapping = function actionDeleteMapping(record) {
