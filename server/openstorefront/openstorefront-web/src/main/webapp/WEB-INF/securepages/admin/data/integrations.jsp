@@ -361,6 +361,7 @@
 				width: '60%',
 				y: '5em',
 				layout: 'fit',
+				closable: false,
 				items: [
 					{
 						xtype: 'form',
@@ -467,6 +468,10 @@
 											});
 										});
 
+										if (Ext.getCmp('jiraFieldSelection').getSelection() != undefined) {
+											Ext.getCmp('jiraAssignmentInstructions').show();
+											Ext.getCmp('jiraAssignmentPanel').show();
+										}
 									}
 								}
 							},
@@ -493,16 +498,24 @@
 											jiraCodesStore.add(value);
 										});
 
+										if (Ext.getCmp('attributeTypeSelection').getSelection() != undefined) {
+											Ext.getCmp('jiraAssignmentInstructions').show();
+											Ext.getCmp('jiraAssignmentPanel').show();
+										}
 										
 									}
 								}
 							},
 							{
 								xtype: 'label',
+								id: 'jiraAssignmentInstructions',
+								hidden: true,
 								text: 'Assign Jira codes to Storefront codes by dragging them from the list of Jira codes and dropping them into the Storefront fields.'
 							},
 							{
 								xtype: 'panel',
+								id: 'jiraAssignmentPanel',
+								hidden: true,
 								layout: {
 									type: 'hbox',
 									align: 'stretch',
@@ -617,11 +630,14 @@
 							},
 							{
 								text: 'Cancel',
+								id: 'cancelAddWindow',
 								handler: function() {
 									Ext.getCmp('addEditMappingForm').reset();
 									addEditMappingWin.close();
 									Ext.getStore('jiraCodesStore').removeAll();
 									Ext.getCmp('fieldAssignmentForm').removeAll();
+									Ext.getCmp('jiraAssignmentInstructions').hide();
+									Ext.getCmp('jiraAssignmentPanel').hide();
 								}
 							}
 						]
