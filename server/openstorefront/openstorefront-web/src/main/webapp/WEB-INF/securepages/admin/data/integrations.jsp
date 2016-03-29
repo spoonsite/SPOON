@@ -429,6 +429,7 @@
 							{
 								xtype: 'combobox',
 								fieldLabel: 'Select a Storefront Attribute Type:',
+								id: 'attributeTypeSelection',
 								valueField: 'attributeType',
 								displayField: 'description',
 								store: Ext.create('Ext.data.Store', {
@@ -527,6 +528,26 @@
 									{
 										xtype: 'form',
 										title: 'Matching Storefront Code',
+										dockedItems: [
+											{
+												xtype: 'toolbar',
+												dock: 'bottom',
+												items: [
+													{ xtype: 'tbfill' },
+													{
+														text: 'Reset',
+														handler: function() {
+															var jfs = Ext.getCmp('jiraFieldSelection');
+															var ats = Ext.getCmp('attributeTypeSelection');
+															var jfsSelection = jfs.getSelection();
+															var atsSelection = ats.getSelection();
+															jfs.fireEvent('select', jfs, jfsSelection);
+															ats.fireEvent('select', ats, atsSelection);
+														}
+													}
+												]
+											}
+										],
 										width: '100%',
 										style: {
 											paddingLeft: '20px'
