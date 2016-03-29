@@ -169,15 +169,13 @@ limitations under the License.
 				handler: function(){
 					actionLoadContent('Alerts');
 				}
-			});
-			/**
+			});			
 			alertMenu.push({
 				text: 'Branding',
 				handler: function(){
 					actionLoadContent('Branding');
 				}				
-			});
-			**/
+			});			
 			alertMenu.push({
 				text: 'Jobs',
 				handler: function(){

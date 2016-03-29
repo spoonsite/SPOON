@@ -577,8 +577,7 @@ limitations under the License.
 				Ext.Ajax.request({
 					url: '../api/v1/resource/branding/current',
 					success: function(response, opts) {
-						branding = Ext.decode(response.responseText);
-						branding = branding.branding;
+						branding = Ext.decode(response.responseText);					
 						
 						Ext.getCmp('homeTitle').setText(branding.landingPageTitle);
 						Ext.getCmp('quote').update('<blockquote style="text-align: center;">' + branding.landingPageBanner + '</blockquote>');

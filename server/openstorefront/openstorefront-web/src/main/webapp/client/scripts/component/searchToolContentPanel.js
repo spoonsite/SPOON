@@ -617,7 +617,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 
         var categoryBeforePanelExpandHandler = function (p, animate, eOpts, newTab, item) {
             //Add description when selected
-            newTab.getComponent('contentPanel').infoPanel.update(item.attributeTypeDescription + '<br/> Item Code: ' + item.attributeType);
+            newTab.getComponent('contentPanel').infoPanel.update(item.description + '<br/> Item Code: ' + item.attributeType);
             if (p.loadedUp === undefined) {
                 newTab.setLoading(true);
                 Ext.Ajax.request({
@@ -667,34 +667,35 @@ Ext.define('OSF.component.SearchToolWindow', {
 
             newTab.setLoading(true);
             Ext.Ajax.request({
-                url: '/openstorefront/api/v1/resource/branding/current',
+                url: '/openstorefront/api/v1/resource/attributes/attributetypes',
                 success: function (response, opts) {
                     newTab.setLoading(false);
                     var data = Ext.decode(response.responseText);
-                    var dArray = data.topicSearchViews;
-
-                    tData = sortList(dArray, 'attributeTypeDescription', 'ASC');
+		    data = data.data;
+                    tData = sortList(data, 'description', 'ASC');
 
                     Ext.Array.each(tData, function (item) {
 
-                        newTab.getComponent('contentPanel').navPanel.add({
-                            xtype: 'panel',
-                            collapsible: true,
-                            collapsed: true,
-                            titleCollapse: true,
-                            height: 100,
-                            header: {
-                                cls: 'panel-header',
-                                title: item.attributeTypeDescription
-                            },
-                            bodyCls: 'search-tools-nav-body-panel-item',
-                            width: '100%',
-                            listeners: {
-                                beforeexpand: function (p, animate, eOpts) {
-                                    categoryBeforePanelExpandHandler(p, animate, eOpts, newTab, item);
-                                }
-                            }
-                        });
+			if (item.visibleFlg) {
+				newTab.getComponent('contentPanel').navPanel.add({
+					xtype: 'panel',
+					collapsible: true,
+					collapsed: true,
+					titleCollapse: true,
+					height: 100,
+					header: {
+						cls: 'panel-header',
+						title: item.description
+					},
+					bodyCls: 'search-tools-nav-body-panel-item',
+					width: '100%',
+					listeners: {
+						beforeexpand: function (p, animate, eOpts) {
+							categoryBeforePanelExpandHandler(p, animate, eOpts, newTab, item);
+						}
+					}
+				});
+			}
                     });
                 },
                 failure: function (response, opts) {

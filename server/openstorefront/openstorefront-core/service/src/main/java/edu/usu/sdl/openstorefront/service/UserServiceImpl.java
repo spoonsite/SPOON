@@ -33,6 +33,7 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.Alert;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
@@ -536,7 +537,8 @@ public class UserServiceImpl
 	@Override
 	public void sendAdminMessage(AdminMessage adminMessage)
 	{
-		String appTitle = getBrandingService().getCurrentBrandingView().getBranding().getApplicationName();
+		Branding branding = getBrandingService().getCurrentBrandingView();
+		String appTitle = branding.getApplicationName();
 
 		UserProfile userProfileExample = new UserProfile();
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);

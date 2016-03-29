@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.Alert;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
@@ -34,7 +35,6 @@ import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
-import edu.usu.sdl.openstorefront.core.view.BrandingView;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentStatisticView;
 import edu.usu.sdl.openstorefront.core.view.statistic.SystemStatisticView;
@@ -204,8 +204,8 @@ public class StatisticService
 
 		systemStatisticView.setTasksRunning(AsyncTaskManager.managerStatus().getActiveCount());
 
-		BrandingView brandingView = service.getBrandingService().getCurrentBrandingView();
-		systemStatisticView.setCurrentBranding(brandingView.getBranding().getName());
+		Branding brandingView = service.getBrandingService().getCurrentBrandingView();
+		systemStatisticView.setCurrentBranding(brandingView.getName());
 
 		return sendSingleEntityResponse(systemStatisticView);
 	}

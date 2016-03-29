@@ -16,11 +16,7 @@
 package edu.usu.sdl.openstorefront.core.model;
 
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
-import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
-import edu.usu.sdl.openstorefront.core.entity.TopicSearchItem;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -31,10 +27,6 @@ public class BrandingModel
 
 	@ConsumeField
 	private Branding branding;
-
-	@ConsumeField
-	@DataType(TopicSearchItem.class)
-	private List<TopicSearchItem> topicSearchItems = new ArrayList<>();
 
 	public BrandingModel()
 	{
@@ -48,16 +40,6 @@ public class BrandingModel
 	public void setBranding(Branding branding)
 	{
 		this.branding = branding;
-	}
-
-	public List<TopicSearchItem> getTopicSearchItems()
-	{
-		return topicSearchItems;
-	}
-
-	public void setTopicSearchItems(List<TopicSearchItem> topicSearchItems)
-	{
-		this.topicSearchItems = topicSearchItems;
 	}
 
 }

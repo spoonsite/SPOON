@@ -16,10 +16,7 @@
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.Branding;
-import edu.usu.sdl.openstorefront.core.entity.TopicSearchItem;
 import edu.usu.sdl.openstorefront.core.model.BrandingModel;
-import edu.usu.sdl.openstorefront.core.view.BrandingView;
-import java.util.List;
 
 /**
  * Handles Branding
@@ -34,12 +31,12 @@ public interface BrandingService
 	 * Finds the currently active branding or returns a default one if none
 	 * exists
 	 *
-	 * @return BrandingView
+	 * @return Branding
 	 */
-	public BrandingView getCurrentBrandingView();
-
+	public Branding getCurrentBrandingView();
+	
 	/**
-	 * Set the branding if found to active and set the other brandings to
+	 * Set the branding if found to active and set the other branding configs to
 	 * inactive
 	 *
 	 * @param brandingId
@@ -64,14 +61,6 @@ public interface BrandingService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public Branding saveBanding(Branding branding);
-
-	/**
-	 * Removes existing topic search items and saves this list
-	 *
-	 * @param items
-	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveTopicSearchItems(String brandingId, List<TopicSearchItem> items);
 
 	/**
 	 * Delete branding entity and all related data

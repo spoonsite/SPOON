@@ -10,6 +10,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
 		<title>Openstorefront Entities</title>
 		<style>
 			body{

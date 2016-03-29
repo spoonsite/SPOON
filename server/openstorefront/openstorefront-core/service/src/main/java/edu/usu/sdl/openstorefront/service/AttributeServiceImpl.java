@@ -34,7 +34,6 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.ReportOption;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
-import edu.usu.sdl.openstorefront.core.entity.TopicSearchItem;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.model.AttributeXrefModel;
@@ -311,10 +310,6 @@ public class AttributeServiceImpl
 			persistenceService.deleteByExample(attributeCodeExample);
 
 			deleteAttributeXrefType(type);
-
-			TopicSearchItem topicSearchItemExample = new TopicSearchItem();
-			topicSearchItemExample.setAttributeType(type);
-			persistenceService.deleteByExample(topicSearchItemExample);
 
 			ScheduledReport scheduledReport = new ScheduledReport();
 			ReportOption reportOption = new ReportOption();

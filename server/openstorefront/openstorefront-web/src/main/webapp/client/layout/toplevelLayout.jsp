@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --%>
 
-<%@page import="edu.usu.sdl.openstorefront.core.view.BrandingView"%>
+<%@page import="edu.usu.sdl.openstorefront.core.entity.Branding"%>
 <%@page import="edu.usu.sdl.openstorefront.service.ServiceProxy"%>
 <%@page import="edu.usu.sdl.openstorefront.security.SecurityUtil"%>
 <%@page import="edu.usu.sdl.openstorefront.common.manager.PropertiesManager"%>
@@ -27,15 +27,15 @@ limitations under the License.
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="shortcut icon" href="/openstorefront/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
 	
 	<%
 		String appVersion = PropertiesManager.getApplicationVersion();		
 		request.setAttribute("appVersion", appVersion);
 		
-		BrandingView brandingView = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
+		Branding brandingView = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
 		
-		request.setAttribute("appTitle", brandingView.getBranding().getApplicationName());		
+		request.setAttribute("appTitle", brandingView.getApplicationName());		
 
 		request.setAttribute("user", SecurityUtil.getCurrentUserName());
 		request.setAttribute("usercontext", SecurityUtil.getUserContext());
@@ -46,8 +46,9 @@ limitations under the License.
 	<link href="../webjars/extjs/6.0.0/build/packages/ux/classic/neptune/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="../webjars/extjs/6.0.0/build/packages/charts/classic/neptune/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="../webjars/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-	<link href="css/defaultExtTheme.css?v=${appVersion}" rel="stylesheet" type="text/css"/>
-	<link href="css/app.css?v=${appVersion}" rel="stylesheet" type="text/css"/>	
+	<link href="Branding.action?CSS&template=extTheme.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
+	<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
+	<link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 
 	<script src="../webjars/extjs/6.0.0/ext-bootstrap.js" type="text/javascript"></script>
 	<script src="../webjars/extjs/6.0.0/build/classic/theme-neptune/theme-neptune.js" type="text/javascript"></script>
