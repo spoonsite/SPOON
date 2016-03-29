@@ -408,7 +408,7 @@
 								name: 'issueType',
 								fieldLabel: 'Select a Jira Project Issue Type:',
 								displayField: 'name',
-								valueField: 'code',
+								valueField: 'name',
 								editable: false,
 								listeners: {
 									select: function (combo, record, eOpts) {
@@ -574,8 +574,8 @@
 								handler: function() {
 									var fields = Ext.getCmp('fieldAssignmentForm').getForm().getValues();
 									var form = Ext.getCmp('addEditMappingForm').getForm().getValues();
+									var jiraFieldRecord = Ext.getCmp('jiraFieldSelection').getSelection().getData();
 
-									
 									var map = [];
 									
 									for (var key in fields) {
@@ -587,6 +587,12 @@
 											if (thisMapping.externalCode != '') map.push(thisMapping);	
 										}
 									};
+
+									var data = {};
+									data.type = form;
+									data.type.integrationType = 'JIRA';
+									data.type.fieldId = jiraFieldRecord.key;
+									data.map = map;
 								}
 							},
 							{
