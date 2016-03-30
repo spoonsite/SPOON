@@ -134,7 +134,13 @@
 									fieldLabel: 'Override Template',
 									emptyText: 'Default',
 									storeConfig: {
-										url: '../api/v1/resource/componenttypetemplates/lookup'
+										url: '../api/v1/resource/componenttypetemplates/lookup',
+										addRecords: [
+											{
+												code: null,
+												description: 'Default'
+											} 
+										]
 									}
 								})
 							],

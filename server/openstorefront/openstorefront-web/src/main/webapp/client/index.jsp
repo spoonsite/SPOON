@@ -148,17 +148,6 @@ limitations under the License.
 									},
 									items: [
 										{
-											xtype: 'button',
-											tooltip: 'Search Tools',								
-											iconCls: 'fa fa-2x fa-th icon-top-padding',
-											style: 'border-radius: 3px 0px 0px 3px;',
-											scale   : 'large',
-											width: 50,
-											handler: function(){
-												searchtoolsWin.show();
-											}
-										}, 
-										{
 											xtype: 'combobox',										
 											itemId: 'searchText',
 											flex: 1,
@@ -196,10 +185,9 @@ limitations under the License.
 										{
 											xtype: 'button',
 											tooltip: 'Keyword Search',
-											iconCls: 'fa fa-2x fa-search icon-top-padding',
-											style: 'border-radius: 0px 3px 3px 0px;',
-											scale   : 'large',											
-											width: 50,
+											iconCls: 'fa fa-2x fa-search icon-search-adjustment',
+											style: 'border-radius: 0px 3px 3px 0px;',																					
+											width: 50,											
 											handler: function(){
 											
 												var query = this.up('panel').getComponent('searchText').getValue();
@@ -214,6 +202,18 @@ limitations under the License.
 												}												
 												window.location.href = 'Router.action?page=main/searchResults.jsp';
 												
+											}
+										},
+										{
+											xtype: 'button',
+											text: '<span style="font-size: 10px;">Search Tools</span>',																		
+											iconCls: 'fa fa-2x fa-search-plus icon-top-padding',
+											iconAlign: 'top',
+											margin: '0 0 0 10',
+											style: 'border-radius: 3px 0px 0px 3px;',											
+											width: 100,
+											handler: function(){
+												searchtoolsWin.show();
 											}
 										}
 									]
@@ -281,7 +281,7 @@ limitations under the License.
 					
 					var highlightTemplate = new Ext.XTemplate(
 						'<div class="home-highlight-item">',
-						'<h2><tpl if="link"><a href="{link}" class="link" target="_blank">{title} <i class="fa fa-link"></i></a></tpl><tpl if="!link">{title}</tpl></h2>',
+						'<h2><tpl if="link"><a href="{link}" class="link" target="_blank">{title}</a></tpl><tpl if="!link">{title}</tpl></h2>',
 						'<div class="home-highlight-item-desc">{displayDesc}<br><span style="font-size: 10px;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span></div>',
 						'<br><div style="text-align: right;"><a href="#" class="link" onclick="homepage.readToggleHighlight(\'{highlightId}\');">{moreText}</a></div>',
 						'</div>'
@@ -309,7 +309,7 @@ limitations under the License.
 					
 					var template = new Ext.XTemplate(
 						'<div class="home-highlight-item">',
-						'	<h2><a href="view.jsp?id={componentId}" class="link" target="_blank">{name} <i class="fa fa-link"></i></a></h2>',
+						'	<h2><a href="view.jsp?id={componentId}" class="link" target="_blank">{name}</a></h2>',
 						'	<div class="home-highlight-item-desc">{displayDesc}</div>',
 						'	<div class="home-highlight-approved">Approved: {[Ext.util.Format.date(values.addedDts, "m/d/y")]}</div>',						
 						'</div>'

@@ -1614,10 +1614,12 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 										advancePanel.entryForm.reset();
 										saveButton.setText('Add');
 										var grid = advancePanel.entryForm.getComponent('searchGrid');
-										if (advancePanel.entryForm.updateRecord) {
-											grid.getStore().remove(advancePanel.entryForm.updateRecord);								
+										if (advancePanel.entryForm.editRecord) {
+											grid.getStore().remove(advancePanel.entryForm.editRecord);																			
+											grid.getStore().insert(advancePanel.entryForm.editRowIndex, data);
+										} else {
+											grid.getStore().add(data);																		
 										}
-										grid.getStore().add(data);								
 									},
 									failure: function(response, opts) {
 										var errorResponse = Ext.decode(response.responseText);
@@ -1645,7 +1647,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							margin: '0 0 0 20',
 							handler: function() {
 								advancePanel.entryForm.reset();
-								advancePanel.entryForm.updateRecord = null;
+								advancePanel.entryForm.editRecord = null;
 								advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Add');
 							}
 						}						
@@ -1662,8 +1664,8 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 					store: {						
 					},
 					columns: [
-						{ text: 'Type', dataIndex: 'typeDescription', width: 200 },
-						{ text: 'Criteria', dataIndex: 'value',flex: 1, minWidth: 200,
+						{ text: 'Type', dataIndex: 'typeDescription', width: 200, sortable: false },
+						{ text: 'Criteria', dataIndex: 'value',flex: 1, minWidth: 200, sortable: false,
 							renderer: function(value, meta, record) {
 								var options = '';
 								
@@ -1698,10 +1700,10 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 								return options;
 							}							
 						},
-						{ text: 'Operation', align: 'center', dataIndex: 'mergeCondition', width: 200,
-							renderer: function(value, meta, record, rowIndex) {
+						{ text: 'Operation', align: 'center', dataIndex: 'mergeCondition', width: 200, sortable: false,
+							renderer: function(value, meta, record, rowIndex) {							
 								if (rowIndex >= 1) {
-									return value;
+									return value;								
 								} else {
 									return 'N/A';
 								}
@@ -1716,7 +1718,8 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									tooltip: 'Edit',									
 									handler: function(grid, rowIndex, colIndex) {
 										var rec = grid.getStore().getAt(rowIndex);
-										advancePanel.entryForm.updateRecord = rec;
+										advancePanel.entryForm.editRecord = rec;
+										advancePanel.entryForm.editRowIndex = rowIndex;
 										
 										//manually set
 										advancePanel.entryForm.getComponent('searchType').setValue(rec.get('searchType'));
