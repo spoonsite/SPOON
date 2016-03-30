@@ -52,6 +52,7 @@ Clearinghouse Search provides a way to find entry lists and articles
 matching search criteria. Several types of searches are supported. The
 types of searches that can be performed are:
 
+0-    Searching the Help file
 1.  Searching across multiple fields (entry name and description,
     tags, attribute types, codes, and descriptions)
 2.  Wildcard searching (\* and ?)
@@ -64,14 +65,20 @@ types of searches that can be performed are:
 **Note:** The type ahead on the search field only looks at the title to see if  it contains the text.  
 The user can then select the suggestion by clicking on it or continue with a full text search.
 
+### 2.1.0 Searching the Help file
+-------
+
+A simple (exact text) search is provided in the help file by typing in the Search box in the 
+upper-left of the help file, above the tree structure.  
+
 ### 2.1.1 Search Field Differentiation or Specificity
 -------
 
 Currently, there is no differentiation among entry Name, entry
 Description, Tags, or Attributes as to the preference, specificity, or
 coverage of the search. A search term or phrase is searched via a single
-search box, and applied across all fields equally. Advanced search per a
-specific field is not currently available.
+search box, and applied across all fields equally. For a more specific search
+please see the Advanced Search under Search Tools in the help file.
 
 ### 2.1.2 Fuzzy Matching and Wildcards
 ------
@@ -393,7 +400,7 @@ scheduled report, edit, or delete it.
 
 #### 2.3.2.3 Reviews
 ------------
-
+-
 From this screen in the User Tools you can inspect, edit, and delete your component reviews.
 
 **To inspect a review:**
@@ -431,6 +438,10 @@ You can only remove reviews you post.
 #### 2.3.2.5 Searches
 ------------
 
+This tab displays the list of saved searches from the Advanced Search area.
+It also allows the user to Add, Edit, and Delete advanced searches.
+
+For more information see the Advanced Search Section under Search Tools.
 
 
 #### 2.3.2.5 Manage Watches
