@@ -389,6 +389,10 @@
 								}),
 								listeners: {
 									select: function (combo, record, eOpts) {
+										Ext.getCmp('jiraFieldSelection').select(null);
+										Ext.getCmp('jiraProjectIssueSelection').select(null);
+										Ext.getCmp('jiraAssignmentInstructions').hide();
+										Ext.getCmp('jiraAssignmentPanel').hide();
 										var code = record.getData().code;
 										var url = '/openstorefront/api/v1/service/jira/projects/';
 										url += code;
@@ -413,9 +417,12 @@
 								editable: false,
 								listeners: {
 									select: function (combo, record, eOpts) {
+										Ext.getCmp('jiraFieldSelection').select(null);
+										Ext.getCmp('jiraAssignmentInstructions').hide();
+										Ext.getCmp('jiraAssignmentPanel').hide();
 										var projectSelection = Ext.getCmp('jiraProjectSelection').getSelection();
 										var projectCode = projectSelection.getData().code;
-										var issueType = record.getData().name;
+										var issueType = combo.getValue();
 										var url = '/openstorefront/api/v1/service/jira/projects/';
 										url += projectCode + '/' + issueType + '/fields';
 
