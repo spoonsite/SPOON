@@ -223,7 +223,7 @@ Ext.define('OSF.component.SearchToolWindow', {
     extend: 'Ext.window.Window',
     alias: 'osf.widget.SearchToolWindow',
     title: 'Search Tools',
-    iconCls: 'fa fa-lg fa-th',
+    iconCls: 'fa fa-lg fa-search-plus',
     width: '70%',
     height: '70%',
 	minHeight: 600,
@@ -399,8 +399,9 @@ Ext.define('OSF.component.SearchToolWindow', {
 						{
 							text: 'Search',
 							itemId: 'search',
+							scale: 'medium',
 							disabled: true,
-							iconCls: 'fa fa-search',
+							iconCls: 'fa fa-2x fa-search',
 							handler: function(){
 
 								var grid = this.up('grid');

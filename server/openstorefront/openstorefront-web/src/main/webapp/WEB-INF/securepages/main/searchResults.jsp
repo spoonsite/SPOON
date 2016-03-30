@@ -942,7 +942,7 @@ limitations under the License.
 			var resultsTemplate = new Ext.XTemplate(
 				'<tpl for=".">',
 				' <div id="result{#}" class="searchresults-item">',
-				'	<h2 id="result{#}name" title="View Details" class="searchresults-item-click" onclick="SearchPage.viewDetails(\'{componentId}\', \'result{#}\')">{name} <i class="fa fa-link" style="opacity: .5; font-size: 14px;"></i></h2>',
+				'	<h2 id="result{#}name" title="View Details" class="searchresults-item-click" onclick="SearchPage.viewDetails(\'{componentId}\', \'result{#}\')">{name}</h2>',
 				'	<tpl if="show.organization">',
 				'		<p class="searchresults-item-org">{organization}</p>',
 				'	</tpl>',
@@ -1355,17 +1355,6 @@ limitations under the License.
 									},
 									items: [
 										{
-											xtype: 'button',
-											tooltip: 'Search Tools',								
-											iconCls: 'fa fa-2x fa-th icon-top-padding',
-											style: 'border-radius: 3px 0px 0px 3px;',
-											scale   : 'large',
-											width: 50,
-											handler: function(){
-												searchtoolsWin.show();
-											}
-										}, 
-										{
 											xtype: 'combobox',										
 											itemId: 'searchText',
 											flex: 1,
@@ -1422,7 +1411,19 @@ limitations under the License.
 												window.location.href = 'Router.action?page=main/searchResults.jsp';
 
 											}
-										}
+										},
+										{
+											xtype: 'button',
+											text: '<span style="font-size: 10px;">Search Tools</span>',																		
+											iconCls: 'fa fa-2x fa-search-plus icon-top-padding',
+											iconAlign: 'top',
+											margin: '0 0 0 10',
+											style: 'border-radius: 3px 0px 0px 3px;',											
+											width: 100,
+											handler: function(){
+												searchtoolsWin.show();
+											}
+										}										
 									]
 								},														
 								{
