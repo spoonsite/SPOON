@@ -539,7 +539,7 @@
 										flex: 1,
 										hideHeaders: true,
 										columns: [
-											{ text: 'Jira Codes', dataIndex: 'value', flex: 1},
+											{ text: 'Jira Codes', dataIndex: 'label', flex: 1},
 										]
 									},
 									{
@@ -743,7 +743,26 @@
 			};
 
 			var actionDeleteMapping = function actionDeleteMapping(record) {
+				var attributeType = record.getData().attributeType;
+				var attributeName = record.getData().attributeName;
+				var url = '/openstorefront/api/v1/resource/attributes/attributexreftypes/';
+				url += attributeType;
+				var method = 'DELETE';
 
+				Ext.Ajax.request({
+					url: url,
+					method: method,
+					success: function (response, opts) {
+						var message = 'Successfully deleted mapping for "' + attributeName + '"';
+						Ext.toast(message, '', 'tr');
+						Ext.getCmp('jiraConfigGrid').getStore().load();
+						Ext.getCmp('jiraConfigGrid').getSelectionModel().deselectAll();
+					},
+					failure: function (response, opts) {
+						Ext.MessageBox.alert('Failed to delete',
+											 'Error: Could not delete mapping for "' + attributeName + '"');
+					}
+				});
 			};
 
 
