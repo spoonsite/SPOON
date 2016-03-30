@@ -54,12 +54,12 @@ types of searches that can be performed are:
 
 1.  Searching across multiple fields (entry name and description,
     tags, attribute types, codes, and descriptions)
-
 2.  Wildcard searching (\* and ?)
-
 3.  Exact phrase searching
-
 4.  Case insensitivity
+5.  Noise Words
+6.  Tags
+7.  Comparing
 
 **Note:** The type ahead on the search field only looks at the title to see if  it contains the text.  
 The user can then select the suggestion by clicking on it or continue with a full text search.
@@ -149,16 +149,54 @@ performing an exact search and the words are a necessary part of the
 phrase being searched. For more information on exact searches, see
 section 1.1.3.
 
-## 2.2 Search Tools and other search methods
+### 2.1.6 Tags  
+------
+
+Users can "Tag" listings so that they can be used to later find and
+refine search results. User-created tags are visible to all users.
+However, only the owner of the tag or an admin user may remove a tag.
+Tags are used in the search field shown at the top of the screen and 
+on the home page.
+
+**To create a tag:**
+
+ 1.  From the search results screen, view the details by clicking on the title.
+ 2.  Click on the View/ Edit Tag icon to open the tag panel.
+ 3.  Enter a new tag in the text field OR a single space to view existing tags.
+
+### 2.1.7 Comparing
+---------
+
+The comparison feature allows for side-by-side viewing of multiple
+listings. For example, there may be several components that provide the
+same kind of features (e.g. Cesium and Google maps). You can use the
+comparison feature to view their details together to find the component
+better suited your project's needs.
+
+**To compare components:**
+
+1.  From the Search Results Screen click **Compare All** or click the
+    check on 2 or more components and then click on the
+    **Compare** button.
+
+2.  In the compare screen, click on two of the listings to display
+    them side-by-side.
+
+3.  You can customize the details being viewed by checking the items
+    available in the **Sections to compare** area.
+
+
+## 2.2 Search Tools
 ------
 
 To the left of the search text field is an icon for Search Tools.  Click
-on the icon to display the Search Tools.  Three types of unique searches 
-are available:
+on the icon to display the Search Tools.  Five tabs are displayed:
 
 1.  Topic
 2.  Category
 3.  Architecture
+4.  Advanced
+5.  Saved Searches
 
 ### 2.2.1 Topic Search Tool
 ------
@@ -190,69 +228,31 @@ on the **+** button expands an individual folder and **-** collapses the folder.
 Search results are displayed with sortable columns and links to individual 
 results or the entire search results can be opened in a new page.
 
-### 2.2.4 Tags  
+### 2.2.4 Advanced Search
 ------
 
-Users can "Tag" listings so that they can be used to later find and
-refine search results. User-created tags are visible to all users.
-However, only the owner of the tag or an admin user may remove a tag.
-Tags are used in the search field shown at the top of the screen and 
-on the home page.
+The Advanced Search tab provides a powerful tool to query the data in the Clearinghouse.
+This allows the user to refine a search based on:
+**Search Type:**  Search by Entry, Attribute, Tags, User Reviews, Questions, and more.
+**Field:** The search field associated with the search type choosen above
+**Value:**  alpha and/ or numerical value to search for
+**String/ Number Operation:** Contains, Equals, <, >, and so forth depending on the value
+**Merge Condition:** OR, AND, NOT to get a search results in conjuntion with the other advaned 
+                      search parameters.
+**Preview Results:**  Allows you to see the results of this advanced search, queries for results
+**Save:(Search)**  The advanced search can be saved, see the next section for details.
 
-**To create a tag:**
 
- 1.  From the search results screen, view the details by clicking on the title.
- 2.  Click on the View/ Edit Tag icon to open the tag panel.
- 3.  Enter a new tag in the text field OR a single space to view existing tags.
+### 2.2.5 Seaved Searches
+------
 
-### 2.2.5 Questions  
----------
+You can save complex advanced searches for later retreval and querying.  From the Advanced tab, 
+click the Save button and add a name for the saved search.  
 
-Questions or "Q&A" allow users to post questions about components and
-allow other users to answer those questions based on their experience
-with the component.
-
-**To post a question:**
-
-1.  From the search results screen, view the details by clicking on the title.
-2.  Click on the Q&A tab.
-3.  Fill out the form at the bottom.
-4.  Click the **Post** button.
-
-**To answer a question:**
-
-1.  Expand the question by clicking on the expand (down arrow) icon.
-2.  Fill out the form under Give an Answer.
-3.  Click **Post**.
-
-Once you have answered a question, your answer may be edited and removed
-using the buttons next to the answer.
-
-**Message User***
-Clicking on this next to a question or answer will allow a message (email) to be
-sent to the user that submitted the question or answer.  This can be used to 
-gain additional clarification.
-
-### 2.2.6 Comparing
----------
-
-The comparison feature allows for side-by-side viewing of multiple
-listings. For example, there may be several components that provide the
-same kind of features (e.g. Cesium and Google maps). You can use the
-comparison feature to view their details together to find the component
-better suited your project's needs.
-
-**To compare components:**
-
-1.  From the Search Results Screen click **Compare All** or click the
-    check on 2 or more components and then click on the
-    **Compare** button.
-
-2.  In the compare screen, click on two of the listings to display
-    them side-by-side.
-
-3.  You can customize the details being viewed by checking the items
-    available in the **Sections to compare** area.
+Once it is saved the advanced search is available from the Saved Searches tab. Select a saved
+search and click the Search button to see the results.  Or, click the Manage Searches button
+to be taken to User Tools -> Tools -> Searches where editing can be performed on the saved
+search.
 
 
 ## 2.3 User Tools
@@ -327,15 +327,113 @@ for review.  The entry can then be submitted for review.
 ### 2.3.2 Tools
 -----------
 
-The Tools drop-down contains three options:
+The Tools drop-down contains five options:
 
-1.  Watches
+1.  Questions
+2.  Reports
+3.  Reviews
+4.  Searches
+5.  Watches
 
-2.  Reviews
+#### 2.3.2.1 Questions & Answers
+--------
 
-3.  Reports
+Questions or "Q&A" allow users to post questions about components and
+allow other users to answer those questions based on their experience
+with the component.
 
-#### 2.3.2.1 Manage Watches
+**To post a question:**
+
+1.  From the search results screen, view the details by clicking on the title.
+2.  Click on the Q&A tab.
+3.  Fill out the form at the bottom.
+4.  Click the **Post** button.
+
+**To answer a question:**
+
+1.  Expand the question by clicking on the expand (down arrow) icon.
+2.  Fill out the form under Give an Answer.
+3.  Click **Post**.
+
+Once you have answered a question, your answer may be edited and removed
+using the buttons next to the answer.
+
+**Message User***
+Clicking on this next to a question or answer will allow a message (email) to be
+sent to the user that submitted the question or answer.  This can be used to 
+gain additional clarification.
+
+#### 2.3.2.2 Reports
+--------
+
+This section displays reports that have run as well as scheduled reports that will run in the future.
+
+Reports can be viewed, downloaded, or added.  Scheduled reports can be edited.  
+Selections  can be made to run a report one time only or at regular intervals.  
+Some reports have the option of HTML or Comma-Separated Values as the report format.  
+If selecting Previous days, the selected number of prior days will be included in the report output.  
+
+Types of reports available include:
+  
+  - User *
+  - User Organization *
+  - Usage *
+  - Submissions *
+  - Link Validation *  
+  - Entry
+  - Entry Detail
+  - Entries by Organization
+  - Entries by Category
+
+  
+**Scheduled Reports**
+Clicking this button opens a window that shows recurring reports, their details and frequency that 
+the report will run, as well as the last run date and time. You can add, activate or inactivate a 
+scheduled report, edit, or delete it.
+
+#### 2.3.2.3 Reviews
+------------
+
+From this screen in the User Tools you can inspect, edit, and delete your component reviews.
+
+**To inspect a review:**
+
+Expand the desired review by clicking the expand (down arrow) icon.
+
+
+**To edit a review:**
+
+1.  Once the review has been expanded by clicking on the down arrow, 
+click the **Edit** button and adjust the information in the form.
+
+2.  Click **Update Review**.
+
+**To remove a review:**
+
+1.  Expand the desired review by clicking the expand (down arrow) icon.
+
+3.  Click on the **Delete** button.
+
+**To create a review:**
+
+1.  From a search results screen, view Component Details by clicking on the title.
+2.  Click on the Reviews tab.
+3.  Click on **Write a Review**.
+4.  Fill out the form starting with marking the Stars according to
+    your experience.
+5.  Save the review. The review will now show in the review tab for
+    other users to read.
+
+**NOTE:** A review may also be removed from the component detail screen
+by then clicking on the delete icon next to the title of the review. 
+You can only remove reviews you post.
+
+#### 2.3.2.5 Searches
+------------
+
+
+
+#### 2.3.2.5 Manage Watches
 ------------
 
 The user can create watches that can send notifications to the user. The
@@ -388,75 +486,7 @@ place.
     to your watch list.
 
 
-#### 2.3.2.2 Manage Reviews
-------------
 
-From this screen in the User Tools you can inspect, edit, and delete your component reviews.
-
-**To inspect a review:**
-
-Expand the desired review by clicking the expand (down arrow) icon.
-
-
-**To edit a review:**
-
-1.  Once the review has been expanded by clicking on the down arrow, 
-click the **Edit** button and adjust the information in the form.
-
-2.  Click **Update Review**.
-
-**To remove a review:**
-
-1.  Expand the desired review by clicking the expand (down arrow) icon.
-
-3.  Click on the **Delete** button.
-
-**To create a review:**
-
-1.  From a search results screen, view Component Details by clicking on the title.
-2.  Click on the Reviews tab.
-3.  Click on **Write a Review**.
-4.  Fill out the form starting with marking the Stars according to
-    your experience.
-5.  Save the review. The review will now show in the review tab for
-    other users to read.
-
-**NOTE:** A review may also be removed from the component detail screen
-by then clicking on the delete icon next to the title of the review. 
-You can only remove reviews you post.
-
-
-#### 2.3.2.3 Manage Reports
---------
-
-This section displays scheduled user reports as well as the history or log of reports that have ran.
-
-**Schedule tab**
-This default view shows all of the scheduled reports.  A drop-down at the top
-allows viewing of the Active or Inactive reports.  Select a report in the table
-and click Toggle Status to change from one status to the other.
-
-Reports can be added or edited.  Selections  can be made to run a report one time
-only or at regular intervals.  Some reports have the option of HTML or Comma-
-Separated Values as the report format.  If selecting Previous days, the 
-selected number of prior days will be included in the report output.  
-
-Types of reports available include:
-  
-  - Component
-  - Component by Organization
-  - Component Detail
-  - Components by Category
-  - Link Validation
-  - Submissions
-  - Usage
-  - User
-  - User Organization
-
-**History tab**
-This table is helpful to view old reports or see what has been run and when.  Select
-a report and click view to see the output of the report and that particular date and
-time.  A report can be downloaded / exported for archiving or offline use.
 
 ## 2.4 Changes Notification
 --------------------
@@ -756,9 +786,16 @@ Evaluation Information, Reviews, and Questions.
 ### 3.2.4 Highlights *
 -------
 
-A highlight to the home page can be added, deleted, activated, or deactivated here. 
-A highlight code (Article, Component, etc.) can be added or edited as well as a link,
- and the description.
+A highlight to the home page can be added, edited, or deleted here. 
+A highlight can be an Article, a Component, or an external link.
+ 
+**How do I change the order of the highlights on the home page?**
+To change the order in which they appear select the highlight from 
+the table, then press the up or down buttons to reposition the order 
+in the table.  The highlights on the home page appear in the order that
+they do in the table in the Manage Highlights section.
+
+![updown](../../../../../../client/openstorefront/app/images/help/displayposition.png)
 
 
 ### 3.2.5 Integrations *
