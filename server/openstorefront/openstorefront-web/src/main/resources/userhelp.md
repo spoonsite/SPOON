@@ -58,9 +58,8 @@ types of searches that can be performed are:
 2.  Wildcard searching (\* and ?)
 3.  Exact phrase searching
 4.  Case insensitivity
-5.  Noise Words
-6.  Tags
-7.  Comparing
+5.  Tags
+6.  Comparing
 
 **Note:** The type ahead on the search field only looks at the title to see if  it contains the text.  
 The user can then select the suggestion by clicking on it or continue with a full text search.
@@ -94,25 +93,26 @@ represents a string of letters; whereas the ? acts as a placeholder for
 only a single character. The process works as shown in the queries
 below:
 
-Query: offi\* Matches office, officer, official, and so on
+Query: ```offi\*``` Matches office, officer, official, and so on
 
-Query: off\*r Matches offer, officer, officiator, and so on
+Query: ```off\*r``` Matches offer, officer, officiator, and so on
 
-Query: off?r Matches offer, but not officer
+Query: ```off?r``` Matches offer, but not officer
 
 ### 2.1.3 Phrase Searches and Exact Searches
 ------
 
-Exact searches must be enclosed by double quotes.
+Exact searches or searches for more than one word must be enclosed
+ by double quotes.
 
-Search example: "create a common framework"
+Search example: ```"create a common framework"```
+Search example: ```"Air Force"``` or ```"Company Name Inc."```
 
 Wildcards are only meant to work on individual search terms, not on
 phrase searches / exact searches, as demonstrated by this example:
 
-Works: softwar\* eng?neering
-
-Does not work: "softwar\* eng?neering"
+Works: ```eng?neering``` _(wildcard properly used)_
+Does not work: ```"eng?neering"``` _(quotes are treated as a literal string not a wildcard)_
 
 In the second example, the search would only return results that had the
 \* and ? characters exactly in their respective places instead of
@@ -125,38 +125,10 @@ Searching is case **insensitive** and allows mixing of case. In the
 examples below, the exact same results would be returned regardless of
 the capitalization.
 
-Search examples: "create a common framework" **OR** "Create a Common
-Framework"
+Search examples: 
+```"create a common framework"```, ```"Create a Common Framework"```, ```"cReatE A CoMmoN FraMewoRk"```
 
-Search examples: create common framework **OR** cReatE CoMmoN
-FraMewoRk
-
-### 2.1.5 Noise Words
-------
-
-Avoid searching with noise words, unless they are part of a
-double-quote-enclosed exact phrase search. Some common noise words
-include: a, an, and, are, as, at, be, but, by, for, if, in, into, is,
-it, no, not, of, on, or, such, that, the, their, then, there, these,
-they, this, to, was, will, with.
-
-Search example: create a common framework
-
-This search works, but the 'a' will return more results than are desired
-since results with the word 'a' will be returned in the search.
-
-Search example: create common framework
-
-This search works, and will return fewer, more specific results. It will
-return *only* those places where the three words *create*, *common*,
-and *framework* are found.
-
-The only time that including noise words may be recommended is when
-performing an exact search and the words are a necessary part of the
-phrase being searched. For more information on exact searches, see
-section 1.1.3.
-
-### 2.1.6 Tags  
+### 2.1.5 Tags  
 ------
 
 Users can "Tag" listings so that they can be used to later find and
@@ -171,7 +143,7 @@ on the home page.
  2.  Click on the View/ Edit Tag icon to open the tag panel.
  3.  Enter a new tag in the text field OR a single space to view existing tags.
 
-### 2.1.7 Comparing
+### 2.1.6 Comparing
 ---------
 
 The comparison feature allows for side-by-side viewing of multiple
@@ -182,27 +154,59 @@ better suited your project's needs.
 
 **To compare components:**
 
-1.  From the Search Results Screen click **Compare All** or click the
-    check on 2 or more components and then click on the
-    **Compare** button.
+From the Search Results Screen check "Add to compare" on 2 or more 
+entries and then click on the **Compare** button at the top of the
+search results.
 
-2.  In the compare screen, click on two of the listings to display
-    them side-by-side.
+If more than two entries were selected you can do a side-by-side comparison
+by using the drop-down list at the top to select the various entries.
 
-3.  You can customize the details being viewed by checking the items
-    available in the **Sections to compare** area.
+### 2.1.7 Customizing the Search Display
+---------
+
+On the search results page filtering can be done by Article, Component, or other
+specialized type by clicking on the hyperlink with the number of results, for example:
+**[131]()** DI2E Components, **[21]()** Articles where the numbers are hyperlinks
+that filter the results.
+
+The search results display can also be customized by clicking on the gear icon
+and down arrow at the top-right of the search results.  Check or uncheck the 
+items to be displayed or hidden such as:
+
+* Organization
+
+* Badges
+
+* Description
+
+* Last Update
+
+* Vitals
+
+* Tags
+
+* Average User Rating
+
+* Approved Date
+
+Finally, the columns can be collapsed or expanded by clicking on the left and right
+arrows in the column headers by Filters, Search Results, and Details. 
 
 
 ## 2.2 Search Tools
 ------
 
-To the left of the search text field is an icon for Search Tools.  Click
-on the icon to display the Search Tools.  Five tabs are displayed:
+To the right of the search icon and search field is an icon for Search Tools.  Click
+on the icon to display the Search Tools window.  Five tabs are displayed:
 
 1.  Topic
+
 2.  Category
+
 3.  Architecture
+
 4.  Advanced
+
 5.  Saved Searches
 
 ### 2.2.1 Topic Search Tool
@@ -803,6 +807,12 @@ submission form, and to allow or not allow the following:
 
 Attributes, Relationships, Contacts, Resources, Media, Dependencies, Metadata,
 Evaluation Information, Reviews, and Questions.
+
+Entry Types can be made active or inactive by using the Toggle Status button on the right. 
+**Note:** Making an entry type Inactive does **not** remove that entry type from existing
+          entries, it simply prevents that entry type from being added in future entry 
+          submissions.	  
+
 
 
 ### 3.2.4 Highlights *
