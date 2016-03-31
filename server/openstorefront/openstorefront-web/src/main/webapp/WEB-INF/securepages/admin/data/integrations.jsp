@@ -162,7 +162,13 @@
 								disabled: true,
 								handler: function () {
 									var record = componentConfigGrid.getSelection()[0];
-									actionDeleteIntegration(record);
+									var title = 'Delete Configuration';
+									var msg = 'Are you sure you want to delete this configuration?'
+									Ext.MessageBox.confirm(title, msg, function (btn) {
+										if (btn === 'yes') {
+											actionDeleteIntegration(record);
+										}
+									});
 								}
 							},
 							{
@@ -356,6 +362,7 @@
 
 			var addEditMappingWin = Ext.create('Ext.window.Window', {
 				id: 'addEditMappingWin',
+				iconCls: 'fa fa-lg fa-edit',
 				title: 'Add/Edit Mapping',
 				modal: true,
 				width: '60%',
@@ -731,7 +738,14 @@
 								disabled: true,
 								handler: function () {
 									var record = jiraConfigGrid.getSelection()[0];
-									actionDeleteMapping(record);
+									var title = 'Delete Mapping';
+									var msg = 'Are you sure you want to delete this mapping?'
+									Ext.MessageBox.confirm(title, msg, function (btn) {
+										if (btn === 'yes') {
+											actionDeleteMapping(record);
+										}
+									});
+
 								}
 							}	
 						]
@@ -741,11 +755,13 @@
 			});
 
 			var actionAddMapping = function actionAddMapping() {
+				addEditMappingWin.setTitle('Add Mapping');
 				addEditMappingWin.show();
 			};
 
 			var actionEditMapping = function actionEditMapping(record) {
 				var data = record.getData();
+				addEditMappingWin.setTitle('Edit Mapping');
 				addEditMappingWin.show();
 				var jps = Ext.getCmp('jiraProjectSelection');
 				var jpis = Ext.getCmp('jiraProjectIssueSelection');
