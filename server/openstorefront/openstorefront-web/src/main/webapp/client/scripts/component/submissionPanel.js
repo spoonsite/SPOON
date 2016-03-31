@@ -508,6 +508,158 @@ Ext.define('OSF.component.SubmissionPanel', {
 			});
 		};	
 		
+		var addEditAttribute = function(record) {
+			var addWindow = Ext.create('Ext.window.Window', {
+				closeAction: 'destory',
+				modal: true,
+				alwaysOnTop: true,
+				title: 'Add Attribute',
+				width: '50%',
+				height: 150,
+				layout: 'fit',
+				items: [
+					{
+						xtype: 'form',
+						itemId: 'attributeForm',
+						bodyStyle: 'padding: 10px;',
+						defaults: {
+							labelAlign: 'right',
+							labelSeparator: '',
+							width: '100%'
+						},
+						items: [
+							{
+								xtype: 'combobox',
+								itemId: 'attributeTypeCB',
+								fieldLabel: 'Attribute Type <span class="field-required" />',
+								name: 'type',
+								forceSelection: true,
+								queryMode: 'local',
+								editable: false,
+								typeAhead: false,
+								allowBlank: false,
+								valueField: 'attributeType',
+								displayField: 'description',
+								store: Ext.create('Ext.data.Store', {
+									fields: [
+										"attributeType",
+										"description"
+									],
+									data: submissionPanel.optionalAttributes
+								}),
+								listeners: {
+									change: function (field, newValue, oldValue, opts) {
+										field.up('form').getComponent('attributeCodeCB').clearValue();
+
+										var record = field.getSelection();
+										if (record) {
+											field.up('form').getComponent('attributeCodeCB').getStore().loadData(record.data.codes);
+										} else {
+											field.up('form').getComponent('attributeCodeCB').getStore().removeAll();
+										}
+									}
+								}
+							},
+							{
+								xtype: 'combobox',
+								itemId: 'attributeCodeCB',
+								fieldLabel: 'Attribute Code <span class="field-required" />',
+								name: 'code',
+								forceSelection: true,
+								queryMode: 'local',
+								editable: false,
+								typeAhead: false,
+								allowBlank: false,
+								valueField: 'code',
+								displayField: 'label',
+								store: Ext.create('Ext.data.Store', {
+									fields: [
+										"code",
+										"label"
+									]
+								})
+							}
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Save',
+										formBind: true,
+										iconCls: 'fa fa-save',
+										handler: function () {
+											var attributeWindow = this.up('window');
+											var form = this.up('form');
+											var data = form.getValues();
+											var componentId = submissionPanel.componentId;
+
+											var newAttribute = {
+												componentAttributePk: {
+													attributeType: data.type,
+													attributeCode: data.code
+												}
+											};											
+
+											var method = 'POST';
+											var update = '';
+
+											CoreUtil.submitForm({
+												url: '../api/v1/resource/components/' + componentId + '/attributes' + update,
+												method: method,
+												data: newAttribute,
+												form: form,
+												success: function () {
+													if (record) {
+														if (newAttribute.componentAttributePk.attributeType !== record.get('type')
+															|| newAttribute.componentAttributePk.attributeCode !== record.get('code'))
+														{
+															attributeWindow.setLoading(true);
+															Ext.Ajax.request({
+																url: '../api/v1/resource/components/' + componentId + '/attributes/' + record.get('type') + '/' + record.get('code') + '/force',
+																method: 'DELETE',
+																callback: function() {
+																	attributeWindow.setLoading(false);
+																},
+																success: function() {
+																	submissionPanel.loadComponentAttributes();
+																	attributeWindow.close();
+																}
+															});
+														} else {
+															attributeWindow.close();
+														}
+													} else {													
+														submissionPanel.loadComponentAttributes();
+														attributeWindow.close();
+													}
+												}
+											});
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										iconCls: 'fa fa-close',
+										handler: function () {
+											this.up('window').close();
+										}
+									}
+								]
+							}
+						]
+					}
+				]
+			}).show();
+			
+			if (record) {
+				addWindow.getComponent('attributeForm').loadRecord(record);
+			}			
+		}
+		
 		var addEditContact = function(record, grid) {
 			
 			var addWindow = Ext.create('Ext.window.Window', {
@@ -1279,6 +1431,150 @@ Ext.define('OSF.component.SubmissionPanel', {
 				addWindow.getComponent('metaForm').loadRecord(record);
 			}			
 		};
+		
+		var addEditRelationship = function(record, grid) {
+
+			var addWindow = Ext.create('Ext.window.Window', {
+				closeAction: 'destory',
+				modal: true,
+				title: 'Add Relationship',
+				alwaysOnTop: true,
+				width: '50%',
+				height: 250,
+				layout: 'fit',
+				items: [
+					{
+						xtype: 'form',
+						itemId: 'relationshipForm',
+						bodyStyle: 'padding: 10px;',
+						defaults: {
+							labelAlign: 'top',
+							labelSeparator: '',
+							width: '100%'
+						},
+						items: [
+							{
+								xtype: 'hidden',
+								name: 'relationshipId'
+							},							
+							Ext.create('OSF.component.StandardComboBox', {
+								name: 'relationshipType',									
+								allowBlank: false,
+								editable: false,
+								typeAhead: false,
+								margin: '0 0 0 0',
+								width: '100%',
+								fieldLabel: 'Relationship Type <span class="field-required" />',
+								storeConfig: {
+									url: '../api/v1/resource/lookuptypes/RelationshipType'
+								}
+							}),
+							Ext.create('OSF.component.StandardComboBox', {
+								name: 'componentType',									
+								allowBlank: true,
+								editable: false,
+								typeAhead: false,
+								emptyText: 'All',
+								margin: '0 0 0 0',
+								width: '100%',
+								fieldLabel: 'Entry Type',
+								storeConfig: {
+									url: '../api/v1/resource/componenttypes/lookup',
+									addRecords: [
+										{
+											code: null,
+											description: 'All'
+										} 
+									]
+								},
+								listeners: {
+									change: function(cb, newValue, oldValue) {
+										var form = cb.up('form');
+										var componentType = '';
+										if (newValue) {
+											componentType = '&componentType=' + newValue;
+										}
+										form.getComponent('relationshipTargetCB').reset();
+										form.getComponent('relationshipTargetCB').getStore().load({
+											url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType,		
+										});
+									}
+								}
+							}),	
+							Ext.create('OSF.component.StandardComboBox', {																	
+								itemId: 'relationshipTargetCB',
+								name: 'relatedComponentId',									
+								allowBlank: false,									
+								margin: '0 0 0 0',
+								width: '100%',
+								fieldLabel: 'Target Entry <span class="field-required" />',
+								forceSelection: true,
+								storeConfig: {
+									url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL',
+									autoLoad: true
+								}
+							})																
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Save',
+										formBind: true,
+										iconCls: 'fa fa-save',
+										handler: function(){
+											var relationShipWindow = this.up('window');
+											var form = this.up('form');
+											var data = form.getValues();
+											var componentId = submissionPanel.componentId;
+
+											var method = 'POST';
+											var update = '';
+											if (data.relationshipId) {
+												method = 'PUT',
+												update = '/' + data.relationshipId;		
+											}
+
+											CoreUtil.submitForm({
+												url: '../api/v1/resource/components/' + componentId + '/relationships' + update,
+												method: method,
+												data: data,
+												form: form,
+												success: function(){
+													grid.getStore().load({
+														url: '../api/v1/resource/components/' + submissionPanel.componentId + '/relationships'
+													});																										
+													relationShipWindow.close();
+												}
+											});
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',										
+										iconCls: 'fa fa-close',
+										handler: function(){
+											this.up('window').close();
+										}
+									}
+								]
+							}																
+						]															
+					}
+				]
+			}).show();	
+			
+		
+			if (record) {
+				record.set('relatedComponentId', record.get('targetComponentId'));
+				addWindow.getComponent('relationshipForm').loadRecord(record);
+			}				
+			
+		};
 	
 		submissionPanel.detailsPanel = Ext.create('Ext.panel.Panel', {
 			autoScroll: true,
@@ -1325,8 +1621,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 								selectionchange:  function(selectionModel, selection, opts){
 									var tools = selectionModel.grid.getComponent('tools');
 									if (selectionModel.getCount() > 0) {
+										tools.getComponent('editBtn').setDisabled(false);
 										tools.getComponent('removeBtn').setDisabled(false);
 									} else {
+										tools.getComponent('editBtn').setDisabled(true);
 										tools.getComponent('removeBtn').setDisabled(true);
 									}
 								}
@@ -1340,130 +1638,19 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Add',
 											iconCls: 'fa fa-plus',
 											handler: function(){
-												var addWindow = Ext.create('Ext.window.Window', {
-													closeAction: 'destory',
-													modal: true,
-													alwaysOnTop: true,
-													title: 'Add Attribute',
-													width: '50%',
-													height: 150,
-													layout: 'fit',
-													items: [
-														{
-															xtype: 'form',
-															itemId: 'attributeForm',
-															bodyStyle: 'padding: 10px;',
-															defaults: {
-																labelAlign: 'right',
-																labelSeparator: '',
-																width: '100%'
-															},
-															items: [
-																{
-																	xtype: 'combobox',
-																	itemId: 'attributeTypeCB',
-																	fieldLabel: 'Attribute Type <span class="field-required" />',
-																	name: 'attributeType',
-																	forceSelection: true,
-																	queryMode: 'local',
-																	editable: false,
-																	typeAhead: false,
-																	allowBlank: false,
-																	valueField: 'attributeType',
-																	displayField: 'description',
-																	store: Ext.create('Ext.data.Store', {
-																		fields: [
-																			"attributeType",
-																			"description"
-																		],
-																		data: submissionPanel.optionalAttributes
-																	}),
-																	listeners: {
-																		change: function (field, newValue, oldValue, opts) {
-																			field.up('form').getComponent('attributeCodeCB').clearValue();
-
-																			var record = field.getSelection();
-																			if (record) {
-																				field.up('form').getComponent('attributeCodeCB').getStore().loadData(record.data.codes);
-																			} else {
-																				field.up('form').getComponent('attributeCodeCB').getStore().removeAll();
-																			}
-																		}
-																	}
-																},
-																{
-																	xtype: 'combobox',
-																	itemId: 'attributeCodeCB',
-																	fieldLabel: 'Attribute Code <span class="field-required" />',
-																	name: 'attributeCode',
-																	forceSelection: true,
-																	queryMode: 'local',
-																	editable: false,
-																	typeAhead: false,
-																	allowBlank: false,
-																	valueField: 'code',
-																	displayField: 'label',
-																	store: Ext.create('Ext.data.Store', {
-																		fields: [
-																			"code",
-																			"label"
-																		]
-																	})
-																}
-															],
-															dockedItems: [
-																{
-																	xtype: 'toolbar',
-																	dock: 'bottom',
-																	items: [
-																		{
-																			text: 'Save',
-																			formBind: true,
-																			iconCls: 'fa fa-save',
-																			handler: function () {
-																				var attributeWindow = this.up('window');
-																				var form = this.up('form');
-																				var data = form.getValues();
-																				var componentId = submissionPanel.componentId;
-
-																				data.componentAttributePk = {
-																					attributeType: data.attributeType,
-																					attributeCode: data.attributeCode
-																				};
-
-																				var method = 'POST';
-																				var update = '';
-
-																				CoreUtil.submitForm({
-																					url: '../api/v1/resource/components/' + componentId + '/attributes' + update,
-																					method: method,
-																					data: data,
-																					form: form,
-																					success: function () {
-																						submissionPanel.loadComponentAttributes();
-																						attributeWindow.close();
-																					}
-																				});
-																			}
-																		},
-																		{
-																			xtype: 'tbfill'
-																		},
-																		{
-																			text: 'Cancel',
-																			iconCls: 'fa fa-close',
-																			handler: function () {
-																				this.up('window').close();
-																			}
-																		}
-																	]
-																}
-															]
-														}
-													]
-												}).show();
+												addEditAttribute();
 											}
 										},
+										{
+											text: 'Edit',
+											itemId: 'editBtn',
+											iconCls: 'fa fa-edit',
+											disabled: true,
+											handler: function(){												
+												var record = this.up('grid').getSelectionModel().getSelection()[0];
+												addEditAttribute(record);
+											}
+										},										
 										{
 											xtype: 'tbfill'
 										},
@@ -1938,7 +2125,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,
 								proxy: {
-									type: 'ajax'							
+									type: 'ajax',
+									url: ''
 								}
 							}),
 							forceFit: true,
@@ -1956,8 +2144,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 								selectionchange:  function(selectionModel, selection, opts){
 									var tools = selectionModel.grid.getComponent('tools');
 									if (selectionModel.getCount() > 0) {
+										tools.getComponent('editBtn').setDisabled(false);
 										tools.getComponent('removeBtn').setDisabled(false);
 									} else {
+										tools.getComponent('editBtn').setDisabled(true);
 										tools.getComponent('removeBtn').setDisabled(true);
 									}
 								}
@@ -1971,134 +2161,22 @@ Ext.define('OSF.component.SubmissionPanel', {
 											text: 'Add',
 											iconCls: 'fa fa-plus',
 											handler: function(){
-												var grid = this.up('grid');
+												var grid = this.up('grid');												
+												addEditRelationship(null, grid);
 												
-												var addWindow = Ext.create('Ext.window.Window', {
-													closeAction: 'destory',
-													modal: true,
-													title: 'Add Relationship',
-													alwaysOnTop: true,
-													width: '50%',
-													height: 250,
-													layout: 'fit',
-													items: [
-														{
-															xtype: 'form',
-															bodyStyle: 'padding: 10px;',
-															defaults: {
-																labelAlign: 'top',
-																labelSeparator: '',
-																width: '100%'
-															},
-															items: [
-																Ext.create('OSF.component.StandardComboBox', {
-																	name: 'relationshipType',									
-																	allowBlank: false,
-																	editable: false,
-																	typeAhead: false,
-																	margin: '0 0 0 0',
-																	width: '100%',
-																	fieldLabel: 'Relationship Type <span class="field-required" />',
-																	storeConfig: {
-																		url: '../api/v1/resource/lookuptypes/RelationshipType'
-																	}
-																}),
-																Ext.create('OSF.component.StandardComboBox', {
-																	name: 'componentType',									
-																	allowBlank: true,
-																	editable: false,
-																	typeAhead: false,
-																	emptyText: 'All',
-																	margin: '0 0 0 0',
-																	width: '100%',
-																	fieldLabel: 'Entry Type',
-																	storeConfig: {
-																		url: '../api/v1/resource/componenttypes/lookup',
-																		addRecords: [
-																			{
-																				code: null,
-																				description: 'All'
-																			} 
-																		]
-																	},
-																	listeners: {
-																		change: function(cb, newValue, oldValue) {
-																			var form = cb.up('form');
-																			var componentType = '';
-																			if (newValue) {
-																				componentType = '&componentType=' + newValue;
-																			}
-																			form.getComponent('relationshipTargetCB').reset();
-																			form.getComponent('relationshipTargetCB').getStore().load({
-																				url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType,		
-																			});
-																		}
-																	}
-																}),	
-																Ext.create('OSF.component.StandardComboBox', {																	
-																	itemId: 'relationshipTargetCB',
-																	name: 'relatedComponentId',									
-																	allowBlank: false,									
-																	margin: '0 0 0 0',
-																	width: '100%',
-																	fieldLabel: 'Target Entry <span class="field-required" />',
-																	forceSelection: true,
-																	storeConfig: {
-																		url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL',
-																		autoLoad: true
-																	}
-																})																
-															],
-															dockedItems: [
-																{
-																	xtype: 'toolbar',
-																	dock: 'bottom',
-																	items: [
-																		{
-																			text: 'Save',
-																			formBind: true,
-																			iconCls: 'fa fa-save',
-																			handler: function(){
-																				var relationShipWindow = this.up('window');
-																				var form = this.up('form');
-																				var data = form.getValues();
-																				var componentId = submissionPanel.componentId;
-
-																				var method = 'POST';
-																				var update = '';
-
-																				CoreUtil.submitForm({
-																					url: '../api/v1/resource/components/' + componentId + '/relationships' + update,
-																					method: method,
-																					data: data,
-																					form: form,
-																					success: function(){
-																						grid.getStore().load({
-																							url: '../api/v1/resource/components/' + submissionPanel.componentId + '/relationships'
-																						});
-																						relationShipWindow.close();
-																					}
-																				});
-																			}
-																		},
-																		{
-																			xtype: 'tbfill'
-																		},
-																		{
-																			text: 'Cancel',										
-																			iconCls: 'fa fa-close',
-																			handler: function(){
-																				this.up('window').close();
-																			}
-																		}
-																	]
-																}																
-															]															
-														}
-													]
-												}).show();
 											}
 										},
+										{
+											text: 'Edit',
+											itemId: 'editBtn',
+											iconCls: 'fa fa-edit',
+											disabled: true,
+											handler: function(){	
+												var grid = this.up('grid');	
+												var record = this.up('grid').getSelectionModel().getSelection()[0];
+												addEditRelationship(record, grid);
+											}
+										},										
 										{
 											xtype: 'tbfill'
 										},

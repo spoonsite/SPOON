@@ -882,6 +882,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapse" desc=" Version history">
 	@GET
 	@APIDescription("Gets all version history for a component")
@@ -1014,6 +1015,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource ATTRIBUTE Section">
 	@GET
 	@APIDescription("Gets attributes for a component")
@@ -3562,26 +3564,64 @@ public class ComponentRESTResource
 		Response response = checkComponentOwner(componentId);
 		if (response != null) {
 			return response;
+		}		
+		relationship.setComponentId(componentId);
+		
+		return handleSaveRelationship(relationship, true);
+	}
+	
+	private Response handleSaveRelationship(ComponentRelationship relationship, boolean post) 
+	{			
+		ValidationResult validationResult = relationship.validate(true);
+		if (validationResult.valid()) {
+			relationship = service.getComponentService().saveComponentRelationship(relationship);
+
+			if (post) {
+				return Response.created(URI.create("v1/resource/components/"
+						+ relationship.getComponentId()
+						+ "/relationships/"
+						+ relationship.getComponentRelationshipId())).entity(relationship).build();
+			} else {
+				return Response.ok(relationship).build();
+			}
+		} else {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+	}
+	
+	@PUT
+	@APIDescription("Updates a component relationship")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(ComponentRelationship.class)
+	@Path("/{id}/relationships/{relationshipId}")
+	public Response updateComponentRelationship(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("relationshipId")
+			@RequiredParam String relationshipId,			
+			@RequiredParam ComponentRelationship relationship)
+	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
 		}
 
 		response = Response.status(Response.Status.NOT_FOUND).build();
 
-		relationship.setComponentId(componentId);
-		ValidationModel validationModel = new ValidationModel(relationship);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			relationship = service.getComponentService().saveComponentRelationship(relationship);
-
-			return Response.created(URI.create("v1/resource/components/"
-					+ relationship.getComponentId()
-					+ "/relationships/"
-					+ relationship.getComponentRelationshipId())).entity(relationship).build();
+		ComponentRelationship existing = new  ComponentRelationship();
+		existing.setComponentId(componentId);
+		existing.setComponentRelationshipId(relationshipId);
+		existing = (ComponentRelationship) existing.find();
+		if (existing != null) {			
+			relationship.setComponentId(componentId);
+			relationship.setComponentRelationshipId(relationshipId);
+			response = handleSaveRelationship(relationship, false);
 		}
 
 		return response;
-	}
-
+	}	
+	
 	@DELETE
 	@APIDescription("Deletes a relationship for a specified component")
 	@Path("/{id}/relationships/{relationshipId}")
@@ -3601,6 +3641,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
 	@RequireAdmin
