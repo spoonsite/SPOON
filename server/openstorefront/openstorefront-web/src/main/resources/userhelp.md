@@ -265,6 +265,14 @@ search.
 ## 2.3 User Tools
 ------------
 
+The user tools contain a variety of useful features including:
+ 1.  User Profile
+ 2.  Submissions
+ 3.  User Tools (Questions, Reports, Reviews, Searches, Watches)
+     
+
+## 2.3.1 User Profile
+--------------------
 All user information can be set on the main page of **User Tools**. 
 Initially the user profile is populated with information from the user's 
 external security account.
@@ -275,7 +283,19 @@ external security account.
 2.  Update the form.
 3.  Click **Save**.
 
-### 2.3.1 Submissions
+The application sends out notification emails about any changes that
+have occurred since the last time a recent change notification email was
+sent out. This allows the user to be aware of all the new and modified
+listings on the application.
+
+**To receive the notification:**
+
+1.  Select **User Tools** from the drop-down menu in the upper-right with the username.
+2.  Ensure that a valid email address is present in the **User Profile** section.
+4.  Check the checkbox, **Receive periodic email about recent changes**.
+5.  Click **Save**.
+
+### 2.3.2 Submissions
 -----------
 
 This page displays all of the submissions you, the current logged in user, have
@@ -286,7 +306,7 @@ In addition icons for Edit, Preview, Copy, Toggle Notify, Unsubmit, and
 Request Removal can be found along the top of the table.  Finally,
 a **+ New submission** button allows for a new entry to be made.
 
-#### 2.3.1.1 Submission Form- Getting Started
+#### 2.3.2.1 Submission Form- Getting Started
 -----------
 
 The first tab of a new submission should be pre-filled with your logged in user information.  
@@ -298,7 +318,7 @@ A DI2E Storefront Manager will contact you regarding your submission.
 For help, contact helpdesk@di2e.net
 
 
-#### 2.3.1.2 Submission Form- Required Information
+#### 2.3.2.2 Submission Form- Required Information
 -----------
 
 The following fields are on the Required Information section:
@@ -311,7 +331,7 @@ The following fields are on the Required Information section:
  -  **Attributes:**  Required attributes are shown here and must be selected 
 
 
-#### 2.3.1.3 Submission Form- Details
+#### 2.3.2.3 Submission Form- Details
 -----------
 
 This allows for many different items to be added.  Each section can have one or multiple 
@@ -324,14 +344,14 @@ Additional Attributes, Contacts, Resources, External Links, Media, Dependencies,
 Relationships, Tags, Evaluation Information, Reviews, Questions, and so forth.
 
 
-#### 2.3.1.4 Submission Form- Review
+#### 2.3.2.4 Submission Form- Review
 -----------
 
 On the final submission screen all of the previously entered information is available
 for review.  The entry can then be submitted for review.
 
 
-### 2.3.2 Tools
+### 2.3.3 Tools
 -----------
 
 The Tools drop-down contains five options:
@@ -342,35 +362,26 @@ The Tools drop-down contains five options:
 4.  Searches
 5.  Watches
 
-#### 2.3.2.1 Questions & Answers
+#### 2.3.3.1 Questions & Answers
 --------
 
 Questions or "Q&A" allow users to post questions about components and
 allow other users to answer those questions based on their experience
 with the component.
 
-**To post a question:**
+Under User Tools, Tools, Questions there are two tabs, one for questions
+submitted under the current login, and another tab for Answers submitted.
 
-1.  From the search results screen, view the details by clicking on the title.
-2.  Click on the Q&A tab.
-3.  Fill out the form at the bottom.
-4.  Click the **Post** button.
+Select a question or answer then click on **View Entry** to see how it is displayed
+in the search results (go to the Questions & Answers tab).
 
-**To answer a question:**
+Clicking **Edit** will allow direct modification of the question or answer with a
+Post or Cancel button when the edit is finished.
 
-1.  Expand the question by clicking on the expand (down arrow) icon.
-2.  Fill out the form under Give an Answer.
-3.  Click **Post**.
+Finally, a **Delete** button is provided with confirmation before deleting a question
+or an answer.
 
-Once you have answered a question, your answer may be edited and removed
-using the buttons next to the answer.
-
-**Message User***
-Clicking on this next to a question or answer will allow a message (email) to be
-sent to the user that submitted the question or answer.  This can be used to 
-gain additional clarification.
-
-#### 2.3.2.2 Reports
+#### 2.3.3.2 Reports
 --------
 
 This section displays reports that have run as well as scheduled reports that will run in the future.
@@ -398,44 +409,36 @@ Clicking this button opens a window that shows recurring reports, their details 
 the report will run, as well as the last run date and time. You can add, activate or inactivate a 
 scheduled report, edit, or delete it.
 
-#### 2.3.2.3 Reviews
+#### 2.3.3.3 Reviews
 ------------
 -
-From this screen in the User Tools you can inspect, edit, and delete your component reviews.
-
-**To inspect a review:**
-
-Expand the desired review by clicking the expand (down arrow) icon.
-
+From this screen in the User Tools you can edit and delete your component reviews.
 
 **To edit a review:**
-
-1.  Once the review has been expanded by clicking on the down arrow, 
-click the **Edit** button and adjust the information in the form.
-
-2.  Click **Update Review**.
+ * Select a review and click Edit.  Update the fields as desired and click Post Review (or Cancel).
 
 **To remove a review:**
+ * Select a review and click Delete.  Confirm the deletion by clicking OK in the confirmation box.
 
-1.  Expand the desired review by clicking the expand (down arrow) icon.
-
-3.  Click on the **Delete** button.
+ **NOTE:** A review may also be removed from the search results detail screen
+by clicking on the delete icon next to the title of the review. You can only remove reviews you post.
 
 **To create a review:**
 
-1.  From a search results screen, view Component Details by clicking on the title.
-2.  Click on the Reviews tab.
-3.  Click on **Write a Review**.
-4.  Fill out the form starting with marking the Stars according to
+1. From a search results screen, view Entry Details by clicking on the title.
+
+2. Click on the Reviews tab.
+
+3. Click on **Write a Review**.
+
+4. Fill out the form starting with marking the Stars according to
     your experience.
-5.  Save the review. The review will now show in the review tab for
+
+5. Post the review. The review will now show in the review tab for
     other users to read.
 
-**NOTE:** A review may also be removed from the component detail screen
-by then clicking on the delete icon next to the title of the review. 
-You can only remove reviews you post.
 
-#### 2.3.2.5 Searches
+#### 2.3.3.4 Searches
 ------------
 
 This tab displays the list of saved searches from the Advanced Search area.
@@ -444,7 +447,7 @@ It also allows the user to Add, Edit, and Delete advanced searches.
 For more information see the Advanced Search Section under Search Tools.
 
 
-#### 2.3.2.5 Manage Watches
+#### 2.3.3.5 Manage Watches
 ------------
 
 The user can create watches that can send notifications to the user. The
@@ -478,41 +481,49 @@ place.
 1.  Make sure your user profile contains a valid email. View your
     profile from the Profile button at the top of the screen in User Tools.
 
-2.  Check the Send Email Notification box on any of the watches.
+2.  Select a watch from User Tools, Tools, Watches.  Click the Toggle 
+    Email Notification button to turn on or turn off the email notifications.
 
 **To remove a watch:**
 
-1.  Click on the delete icon.
+1.  Select a watch and click on the Remove Watch notification.
 
 2.  Click OK to confirm the watch deletion.
 
-**NOTE:** Watches can also be removed from the component detail view 
-(in search results) of the component being watched.
+**NOTE:** Watches can also be removed by clicking on View Entry which brings up
+the component detail view (in search results) of the component being watched.
+
 
 **To create a watch:**
 
-1.  From the search results screen of an entry:
+1.  From the search results screen/ View Entry:
 
 2.  Click on the Watch icon ![watch](../../../../../../client/openstorefront/app/images/help/view.png) to add the component
     to your watch list.
 
 
+## 2.4  Submit Correction and Request Ownership
+--------
 
+On a particular entry you can submit a correction for administrative review and/ or
+request ownership of an entry.  To do this:
 
-## 2.4 Changes Notification
---------------------
+ 1.  From the search results note the icons at the top (Tag, Watches, Print, etc.)
+ 2.  If a menu button (horizontal bars) icon appears it means you have authorization
+     to request a correction or ownership change.  Click the icon and the appropriate
+	 sub-menu.
+	 
+**Submit Correction/ Request Ownership forms:**
 
-The application sends out notification emails about any changes that
-have occurred since the last time a recent change notification email was
-sent out. This allows the user to be aware of all the new and modified
-listings on the application.
+* Fill out the form including the section needing correcton and the changes requested Or
+ the reason you are requesting the change of ownership
+ 
+* Ensure your contact information is current in the section below or update your profile.
 
-**To receive the notification:**
+* Click Send.
 
-1.  Select **User Tools** from the drop-down menu in the upper-right with the username.
-2.  Ensure that a valid email address is present in the **User Profile** section.
-4.  Check the checkbox, **Receive periodic email about recent changes**.
-5.  Click **Save**.
+* Your correction or ownership request will be reviewed by an administrator.
+
 
 ## 2.5  Printing
 --------
