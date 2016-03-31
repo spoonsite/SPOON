@@ -1808,10 +1808,10 @@
 							var data = Ext.decode(response.responseText);
 							var nextAutoText = '<ul class="list-group">';
 							nextAutoText += '<li class="list-group-item">Last Automated Email Sent: <span class="badge">',
-							nextAutoText += Ext.Date.format(new Date(data.lastSentDts), 'm/d/y H:i:s A ');
+							nextAutoText += Ext.Date.format(Ext.Date.parse(data.lastSentDts,'c'), 'm/d/y H:i:s A ');
 							nextAutoText += '</span></li>';
 							nextAutoText += '<li class="list-group-item">Next Automated Email: <span class="badge">',
-							nextAutoText += Ext.Date.format(new Date(data.nextSendDts), 'm/d/y H:i:s A ');
+							nextAutoText += Ext.Date.format(Ext.Date.parse(data.nextSendDts,'c'), 'm/d/y H:i:s A ');
 							nextAutoText += '</span></li>';
 							Ext.getCmp('emailSendDates').setText(nextAutoText, false);
 						}
