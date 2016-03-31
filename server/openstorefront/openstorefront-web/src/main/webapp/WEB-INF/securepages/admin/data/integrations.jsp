@@ -29,22 +29,22 @@
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
 						if (Ext.getCmp('componentConfigGrid').getSelectionModel().hasSelection()) {
-								Ext.getCmp('componentConfigGrid-tools-run').enable();
-								Ext.getCmp('componentConfigGrid-tools-edit').enable();
-								Ext.getCmp('componentConfigGrid-tools-toggleActivation').enable();
-								Ext.getCmp('componentConfigGrid-tools-delete').enable();
-								if (record[0].data.activeStatus === 'A') {
-									Ext.getCmp('componentConfigGrid-tools-toggleActivation').setText('Deactivate');
-								}
-								else {
-									Ext.getCmp('componentConfigGrid-tools-toggleActivation').setText('Activate');
-								}
-							} 
+							Ext.getCmp('componentConfigGrid-tools-run').enable();
+							Ext.getCmp('componentConfigGrid-tools-edit').enable();
+							Ext.getCmp('componentConfigGrid-tools-toggleActivation').enable();
+							Ext.getCmp('componentConfigGrid-tools-delete').enable();
+							if (record[0].data.activeStatus === 'A') {
+								Ext.getCmp('componentConfigGrid-tools-toggleActivation').setText('Deactivate');
+							}
+							else {
+								Ext.getCmp('componentConfigGrid-tools-toggleActivation').setText('Activate');
+							}
+						} 
 						else {
-								Ext.getCmp('componentConfigGrid-tools-run').disable();
-								Ext.getCmp('componentConfigGrid-tools-edit').disable();
-								Ext.getCmp('componentConfigGrid-tools-toggleActivation').disable();
-								Ext.getCmp('componentConfigGrid-tools-delete').disable();
+							Ext.getCmp('componentConfigGrid-tools-run').disable();
+							Ext.getCmp('componentConfigGrid-tools-edit').disable();
+							Ext.getCmp('componentConfigGrid-tools-toggleActivation').disable();
+							Ext.getCmp('componentConfigGrid-tools-delete').disable();
 						}
 					}
 				},
@@ -184,7 +184,7 @@
 					}
 				]
 			});
-			
+
 			var entryPickWindow = Ext.create('Ext.window.Window' , {
 				id: 'entryPickWindow',
 				title: 'Choose Entry',
@@ -453,7 +453,6 @@
 								}),
 								listeners: {
 									select: function (combo, record, eOpts) {
-										console.log(record);
 										var codes = record.getData().codes;
 										var form = Ext.getCmp('fieldAssignmentForm');
 
@@ -493,7 +492,6 @@
 								editable: false,
 								listeners: {
 									select: function (combo, record, eOpts) {
-										console.log(record);
 										var allowedValues = record.getData().allowedValues;
 										var form = Ext.getCmp('fieldAssignmentForm');
 										var jiraCodesStore = Ext.getStore('jiraCodesStore');
@@ -510,7 +508,7 @@
 											Ext.getCmp('jiraAssignmentInstructions').show();
 											Ext.getCmp('jiraAssignmentPanel').show();
 										}
-										
+
 									}
 								}
 							},
@@ -598,7 +596,7 @@
 									var jiraFieldRecord = Ext.getCmp('jiraFieldSelection').getSelection().getData();
 
 									var map = [];
-									
+
 									for (var key in fields) {
 										if (fields.hasOwnProperty(key)) {
 											var thisMapping = {};
@@ -679,12 +677,12 @@
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
 						if (Ext.getCmp('jiraConfigGrid').getSelectionModel().hasSelection()) {
-								Ext.getCmp('jiraConfigGrid-tools-edit').enable();
-								Ext.getCmp('jiraConfigGrid-tools-delete').enable();
-							} 
+							Ext.getCmp('jiraConfigGrid-tools-edit').enable();
+							Ext.getCmp('jiraConfigGrid-tools-delete').enable();
+						} 
 						else {
-								Ext.getCmp('jiraConfigGrid-tools-edit').disable();
-								Ext.getCmp('jiraConfigGrid-tools-delete').disable();
+							Ext.getCmp('jiraConfigGrid-tools-edit').disable();
+							Ext.getCmp('jiraConfigGrid-tools-delete').disable();
 						}
 					}
 				},
@@ -820,7 +818,7 @@
 					mainPanel
 				]
 			});
-			
+
 
 
 		});		
