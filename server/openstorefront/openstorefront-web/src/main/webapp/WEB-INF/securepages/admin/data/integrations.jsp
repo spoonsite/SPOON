@@ -466,6 +466,7 @@
 												xtype: 'textfield',
 												fieldLabel: code.label,
 												name: code.code,
+												id: code.code,
 												anchor: '100%',
 												listeners: {
 													afterrender: function(thisField, eOpts) {
@@ -746,7 +747,38 @@
 			};
 
 			var actionEditMapping = function actionEditMapping(record) {
+				var data = record.getData();
 				addEditMappingWin.show();
+				var jps = Ext.getCmp('jiraProjectSelection');
+				var jpis = Ext.getCmp('jiraProjectIssueSelection');
+				var ats = Ext.getCmp('attributeTypeSelection');
+				var jfs = Ext.getCmp('jiraFieldSelection');
+				addEditMappingWin.setLoading(true);
+				jps.getStore().load(function() {
+					jps.select(data.projectType);
+					jps.fireEvent('select',jps,jps.getSelection());
+					jpis.getStore().load(function() {
+						jpis.select(data.issueType);
+						jpis.fireEvent('select',jpis,jpis.getSelection());
+						ats.getStore().load(function() {
+							ats.select(data.attributeType);
+							ats.fireEvent('select',ats,ats.getSelection());
+							jfs.getStore().load(function() {
+								jfs.select(data.fieldName);
+								jfs.fireEvent('select',jfs,jfs.getSelection());
+								var form = Ext.getCmp('fieldAssignmentForm').getForm();
+								var store = Ext.getStore('jiraCodesStore');
+
+								Ext.Array.each(data.mapping, function(thisMap) {
+									var field = form.findField(thisMap.localCode);
+									field.setValue(thisMap.externalCode);
+									store.remove(store.findRecord('label', thisMap.externalCode));
+								});
+								addEditMappingWin.setLoading(false);
+							});
+						});
+					});
+				});
 			};
 
 			var actionDeleteMapping = function actionDeleteMapping(record) {
