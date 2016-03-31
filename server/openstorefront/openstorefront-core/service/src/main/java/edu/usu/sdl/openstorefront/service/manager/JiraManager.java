@@ -91,12 +91,12 @@ public class JiraManager
 							
 				ableToConnect = false;
 				
-				try {
-					JiraClient client = getClient();
-					ServerInfo serverInfo = client.getServerInfo();
+				try (JiraClient jiraClient = JiraManager.getClient()) {
+					
+					ServerInfo serverInfo = jiraClient.getServerInfo();
 					if (serverInfo != null) {
 						ableToConnect = true;
-					}
+					}			
 				} catch (Exception e){
 					//critical block (must catch all)				
 					log.log(Level.WARNING, "Unable to connect to Jira("+PropertiesManager.getValue(PropertiesManager.KEY_JIRA_URL)+")...Jira maybe down or there is a configuration issue.", e);					
