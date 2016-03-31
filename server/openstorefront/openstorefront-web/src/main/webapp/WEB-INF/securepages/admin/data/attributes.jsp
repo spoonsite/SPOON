@@ -540,7 +540,13 @@
 								disabled: true,
 								handler: function () {
 									var record = codesGrid.getSelection()[0];
-									actionDeleteCode(record);
+									var title = 'Delete Code';
+									var msg = 'Are you sure you want to delete this code?'
+									Ext.MessageBox.confirm(title, msg, function (btn) {
+										if (btn === 'yes') {
+											actionDeleteCode(record);
+										}
+									});
 								}
 							}
 						]
