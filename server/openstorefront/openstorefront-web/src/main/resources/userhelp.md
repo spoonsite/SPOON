@@ -52,17 +52,23 @@ Clearinghouse Search provides a way to find entry lists and articles
 matching search criteria. Several types of searches are supported. The
 types of searches that can be performed are:
 
+0-    Searching the Help file
 1.  Searching across multiple fields (entry name and description,
     tags, attribute types, codes, and descriptions)
-
 2.  Wildcard searching (\* and ?)
-
 3.  Exact phrase searching
-
 4.  Case insensitivity
+5.  Tags
+6.  Comparing
 
 **Note:** The type ahead on the search field only looks at the title to see if  it contains the text.  
 The user can then select the suggestion by clicking on it or continue with a full text search.
+
+### 2.1.0 Searching the Help file
+-------
+
+A simple (exact text) search is provided in the help file by typing in the Search box in the 
+upper-left of the help file, above the tree structure.  
 
 ### 2.1.1 Search Field Differentiation or Specificity
 -------
@@ -70,8 +76,8 @@ The user can then select the suggestion by clicking on it or continue with a ful
 Currently, there is no differentiation among entry Name, entry
 Description, Tags, or Attributes as to the preference, specificity, or
 coverage of the search. A search term or phrase is searched via a single
-search box, and applied across all fields equally. Advanced search per a
-specific field is not currently available.
+search box, and applied across all fields equally. For a more specific search
+please see the Advanced Search under Search Tools in the help file.
 
 ### 2.1.2 Fuzzy Matching and Wildcards
 ------
@@ -87,25 +93,26 @@ represents a string of letters; whereas the ? acts as a placeholder for
 only a single character. The process works as shown in the queries
 below:
 
-Query: offi\* Matches office, officer, official, and so on
+Query: ```offi\*``` Matches office, officer, official, and so on
 
-Query: off\*r Matches offer, officer, officiator, and so on
+Query: ```off\*r``` Matches offer, officer, officiator, and so on
 
-Query: off?r Matches offer, but not officer
+Query: ```off?r``` Matches offer, but not officer
 
 ### 2.1.3 Phrase Searches and Exact Searches
 ------
 
-Exact searches must be enclosed by double quotes.
+Exact searches or searches for more than one word must be enclosed
+ by double quotes.
 
-Search example: "create a common framework"
+Search example: ```"create a common framework"```
+Search example: ```"Air Force"``` or ```"Company Name Inc."```
 
 Wildcards are only meant to work on individual search terms, not on
 phrase searches / exact searches, as demonstrated by this example:
 
-Works: softwar\* eng?neering
-
-Does not work: "softwar\* eng?neering"
+Works: ```eng?neering``` _(wildcard properly used)_
+Does not work: ```"eng?neering"``` _(quotes are treated as a literal string not a wildcard)_
 
 In the second example, the search would only return results that had the
 \* and ? characters exactly in their respective places instead of
@@ -118,47 +125,89 @@ Searching is case **insensitive** and allows mixing of case. In the
 examples below, the exact same results would be returned regardless of
 the capitalization.
 
-Search examples: "create a common framework" **OR** "Create a Common
-Framework"
+Search examples: 
+```"create a common framework"```, ```"Create a Common Framework"```, ```"cReatE A CoMmoN FraMewoRk"```
 
-Search examples: create common framework **OR** cReatE CoMmoN
-FraMewoRk
-
-### 2.1.5 Noise Words
+### 2.1.5 Tags  
 ------
 
-Avoid searching with noise words, unless they are part of a
-double-quote-enclosed exact phrase search. Some common noise words
-include: a, an, and, are, as, at, be, but, by, for, if, in, into, is,
-it, no, not, of, on, or, such, that, the, their, then, there, these,
-they, this, to, was, will, with.
+Users can "Tag" listings so that they can be used to later find and
+refine search results. User-created tags are visible to all users.
+However, only the owner of the tag or an admin user may remove a tag.
+Tags are used in the search field shown at the top of the screen and 
+on the home page.
 
-Search example: create a common framework
+**To create a tag:**
 
-This search works, but the 'a' will return more results than are desired
-since results with the word 'a' will be returned in the search.
+ 1.  From the search results screen, view the details by clicking on the title.
+ 2.  Click on the View/ Edit Tag icon to open the tag panel.
+ 3.  Enter a new tag in the text field OR a single space to view existing tags.
 
-Search example: create common framework
+### 2.1.6 Comparing
+---------
 
-This search works, and will return fewer, more specific results. It will
-return *only* those places where the three words *create*, *common*,
-and *framework* are found.
+The comparison feature allows for side-by-side viewing of multiple
+listings. For example, there may be several components that provide the
+same kind of features (e.g. Cesium and Google maps). You can use the
+comparison feature to view their details together to find the component
+better suited your project's needs.
 
-The only time that including noise words may be recommended is when
-performing an exact search and the words are a necessary part of the
-phrase being searched. For more information on exact searches, see
-section 1.1.3.
+**To compare components:**
 
-## 2.2 Search Tools and other search methods
+From the Search Results Screen check "Add to compare" on 2 or more 
+entries and then click on the **Compare** button at the top of the
+search results.
+
+If more than two entries were selected you can do a side-by-side comparison
+by using the drop-down list at the top to select the various entries.
+
+### 2.1.7 Customizing the Search Display
+---------
+
+On the search results page filtering can be done by Article, Component, or other
+specialized type by clicking on the hyperlink with the number of results, for example:
+**[131]()** DI2E Components, **[21]()** Articles where the numbers are hyperlinks
+that filter the results.
+
+The search results display can also be customized by clicking on the gear icon
+and down arrow at the top-right of the search results.  Check or uncheck the 
+items to be displayed or hidden such as:
+
+* Organization
+
+* Badges
+
+* Description
+
+* Last Update
+
+* Vitals
+
+* Tags
+
+* Average User Rating
+
+* Approved Date
+
+Finally, the columns can be collapsed or expanded by clicking on the left and right
+arrows in the column headers by Filters, Search Results, and Details. 
+
+
+## 2.2 Search Tools
 ------
 
-To the left of the search text field is an icon for Search Tools.  Click
-on the icon to display the Search Tools.  Three types of unique searches 
-are available:
+To the right of the search icon and search field is an icon for Search Tools.  Click
+on the icon to display the Search Tools window.  Five tabs are displayed:
 
 1.  Topic
+
 2.  Category
+
 3.  Architecture
+
+4.  Advanced
+
+5.  Saved Searches
 
 ### 2.2.1 Topic Search Tool
 ------
@@ -190,74 +239,44 @@ on the **+** button expands an individual folder and **-** collapses the folder.
 Search results are displayed with sortable columns and links to individual 
 results or the entire search results can be opened in a new page.
 
-### 2.2.4 Tags  
+### 2.2.4 Advanced Search
 ------
 
-Users can "Tag" listings so that they can be used to later find and
-refine search results. User-created tags are visible to all users.
-However, only the owner of the tag or an admin user may remove a tag.
-Tags are used in the search field shown at the top of the screen and 
-on the home page.
+The Advanced Search tab provides a powerful tool to query the data in the Clearinghouse.
+This allows the user to refine a search based on:
+**Search Type:**  Search by Entry, Attribute, Tags, User Reviews, Questions, and more.
+**Field:** The search field associated with the search type choosen above
+**Value:**  alpha and/ or numerical value to search for
+**String/ Number Operation:** Contains, Equals, <, >, and so forth depending on the value
+**Merge Condition:** OR, AND, NOT to get a search results in conjuntion with the other advaned 
+                      search parameters.
+**Preview Results:**  Allows you to see the results of this advanced search, queries for results
+**Save:(Search)**  The advanced search can be saved, see the next section for details.
 
-**To create a tag:**
 
- 1.  From the search results screen, view the details by clicking on the title.
- 2.  Click on the View/ Edit Tag icon to open the tag panel.
- 3.  Enter a new tag in the text field OR a single space to view existing tags.
+### 2.2.5 Seaved Searches
+------
 
-### 2.2.5 Questions  
----------
+You can save complex advanced searches for later retreval and querying.  From the Advanced tab, 
+click the Save button and add a name for the saved search.  
 
-Questions or "Q&A" allow users to post questions about components and
-allow other users to answer those questions based on their experience
-with the component.
-
-**To post a question:**
-
-1.  From the search results screen, view the details by clicking on the title.
-2.  Click on the Q&A tab.
-3.  Fill out the form at the bottom.
-4.  Click the **Post** button.
-
-**To answer a question:**
-
-1.  Expand the question by clicking on the expand (down arrow) icon.
-2.  Fill out the form under Give an Answer.
-3.  Click **Post**.
-
-Once you have answered a question, your answer may be edited and removed
-using the buttons next to the answer.
-
-**Message User***
-Clicking on this next to a question or answer will allow a message (email) to be
-sent to the user that submitted the question or answer.  This can be used to 
-gain additional clarification.
-
-### 2.2.6 Comparing
----------
-
-The comparison feature allows for side-by-side viewing of multiple
-listings. For example, there may be several components that provide the
-same kind of features (e.g. Cesium and Google maps). You can use the
-comparison feature to view their details together to find the component
-better suited your project's needs.
-
-**To compare components:**
-
-1.  From the Search Results Screen click **Compare All** or click the
-    check on 2 or more components and then click on the
-    **Compare** button.
-
-2.  In the compare screen, click on two of the listings to display
-    them side-by-side.
-
-3.  You can customize the details being viewed by checking the items
-    available in the **Sections to compare** area.
+Once it is saved the advanced search is available from the Saved Searches tab. Select a saved
+search and click the Search button to see the results.  Or, click the Manage Searches button
+to be taken to User Tools -> Tools -> Searches where editing can be performed on the saved
+search.
 
 
 ## 2.3 User Tools
 ------------
 
+The user tools contain a variety of useful features including:
+ 1.  User Profile
+ 2.  Submissions
+ 3.  User Tools (Questions, Reports, Reviews, Searches, Watches)
+     
+
+## 2.3.1 User Profile
+--------------------
 All user information can be set on the main page of **User Tools**. 
 Initially the user profile is populated with information from the user's 
 external security account.
@@ -268,7 +287,19 @@ external security account.
 2.  Update the form.
 3.  Click **Save**.
 
-### 2.3.1 Submissions
+The application sends out notification emails about any changes that
+have occurred since the last time a recent change notification email was
+sent out. This allows the user to be aware of all the new and modified
+listings on the application.
+
+**To receive the notification:**
+
+1.  Select **User Tools** from the drop-down menu in the upper-right with the username.
+2.  Ensure that a valid email address is present in the **User Profile** section.
+4.  Check the checkbox, **Receive periodic email about recent changes**.
+5.  Click **Save**.
+
+### 2.3.2 Submissions
 -----------
 
 This page displays all of the submissions you, the current logged in user, have
@@ -279,7 +310,7 @@ In addition icons for Edit, Preview, Copy, Toggle Notify, Unsubmit, and
 Request Removal can be found along the top of the table.  Finally,
 a **+ New submission** button allows for a new entry to be made.
 
-#### 2.3.1.1 Submission Form- Getting Started
+#### 2.3.2.1 Submission Form- Getting Started
 -----------
 
 The first tab of a new submission should be pre-filled with your logged in user information.  
@@ -291,7 +322,7 @@ A DI2E Storefront Manager will contact you regarding your submission.
 For help, contact helpdesk@di2e.net
 
 
-#### 2.3.1.2 Submission Form- Required Information
+#### 2.3.2.2 Submission Form- Required Information
 -----------
 
 The following fields are on the Required Information section:
@@ -304,7 +335,7 @@ The following fields are on the Required Information section:
  -  **Attributes:**  Required attributes are shown here and must be selected 
 
 
-#### 2.3.1.3 Submission Form- Details
+#### 2.3.2.3 Submission Form- Details
 -----------
 
 This allows for many different items to be added.  Each section can have one or multiple 
@@ -317,25 +348,110 @@ Additional Attributes, Contacts, Resources, External Links, Media, Dependencies,
 Relationships, Tags, Evaluation Information, Reviews, Questions, and so forth.
 
 
-#### 2.3.1.4 Submission Form- Review
+#### 2.3.2.4 Submission Form- Review
 -----------
 
 On the final submission screen all of the previously entered information is available
 for review.  The entry can then be submitted for review.
 
 
-### 2.3.2 Tools
+### 2.3.3 Tools
 -----------
 
-The Tools drop-down contains three options:
+The Tools drop-down contains five options:
 
-1.  Watches
+1.  Questions
+2.  Reports
+3.  Reviews
+4.  Searches
+5.  Watches
 
-2.  Reviews
+#### 2.3.3.1 Questions & Answers
+--------
 
-3.  Reports
+Questions or "Q&A" allow users to post questions about components and
+allow other users to answer those questions based on their experience
+with the component.
 
-#### 2.3.2.1 Manage Watches
+Under User Tools, Tools, Questions there are two tabs, one for questions
+submitted under the current login, and another tab for Answers submitted.
+
+Select a question or answer then click on **View Entry** to see how it is displayed
+in the search results (go to the Questions & Answers tab).
+
+Clicking **Edit** will allow direct modification of the question or answer with a
+Post or Cancel button when the edit is finished.
+
+Finally, a **Delete** button is provided with confirmation before deleting a question
+or an answer.
+
+#### 2.3.3.2 Reports
+--------
+
+This section displays reports that have run as well as scheduled reports that will run in the future.
+
+Reports can be viewed, downloaded, or added.  Scheduled reports can be edited.  
+Selections  can be made to run a report one time only or at regular intervals.  
+Some reports have the option of HTML or Comma-Separated Values as the report format.  
+If selecting Previous days, the selected number of prior days will be included in the report output.  
+
+Types of reports available include:
+  
+  - User *
+  - User Organization *
+  - Usage *
+  - Submissions *
+  - Link Validation *  
+  - Entry
+  - Entry Detail
+  - Entries by Organization
+  - Entries by Category
+
+  
+**Scheduled Reports**
+Clicking this button opens a window that shows recurring reports, their details and frequency that 
+the report will run, as well as the last run date and time. You can add, activate or inactivate a 
+scheduled report, edit, or delete it.
+
+#### 2.3.3.3 Reviews
+------------
+-
+From this screen in the User Tools you can edit and delete your component reviews.
+
+**To edit a review:**
+ * Select a review and click Edit.  Update the fields as desired and click Post Review (or Cancel).
+
+**To remove a review:**
+ * Select a review and click Delete.  Confirm the deletion by clicking OK in the confirmation box.
+
+ **NOTE:** A review may also be removed from the search results detail screen
+by clicking on the delete icon next to the title of the review. You can only remove reviews you post.
+
+**To create a review:**
+
+1. From a search results screen, view Entry Details by clicking on the title.
+
+2. Click on the Reviews tab.
+
+3. Click on **Write a Review**.
+
+4. Fill out the form starting with marking the Stars according to
+    your experience.
+
+5. Post the review. The review will now show in the review tab for
+    other users to read.
+
+
+#### 2.3.3.4 Searches
+------------
+
+This tab displays the list of saved searches from the Advanced Search area.
+It also allows the user to Add, Edit, and Delete advanced searches.
+
+For more information see the Advanced Search Section under Search Tools.
+
+
+#### 2.3.3.5 Manage Watches
 ------------
 
 The user can create watches that can send notifications to the user. The
@@ -369,109 +485,49 @@ place.
 1.  Make sure your user profile contains a valid email. View your
     profile from the Profile button at the top of the screen in User Tools.
 
-2.  Check the Send Email Notification box on any of the watches.
+2.  Select a watch from User Tools, Tools, Watches.  Click the Toggle 
+    Email Notification button to turn on or turn off the email notifications.
 
 **To remove a watch:**
 
-1.  Click on the delete icon.
+1.  Select a watch and click on the Remove Watch notification.
 
 2.  Click OK to confirm the watch deletion.
 
-**NOTE:** Watches can also be removed from the component detail view 
-(in search results) of the component being watched.
+**NOTE:** Watches can also be removed by clicking on View Entry which brings up
+the component detail view (in search results) of the component being watched.
+
 
 **To create a watch:**
 
-1.  From the search results screen of an entry:
+1.  From the search results screen/ View Entry:
 
 2.  Click on the Watch icon ![watch](../../../../../../client/openstorefront/app/images/help/view.png) to add the component
     to your watch list.
 
 
-#### 2.3.2.2 Manage Reviews
-------------
-
-From this screen in the User Tools you can inspect, edit, and delete your component reviews.
-
-**To inspect a review:**
-
-Expand the desired review by clicking the expand (down arrow) icon.
-
-
-**To edit a review:**
-
-1.  Once the review has been expanded by clicking on the down arrow, 
-click the **Edit** button and adjust the information in the form.
-
-2.  Click **Update Review**.
-
-**To remove a review:**
-
-1.  Expand the desired review by clicking the expand (down arrow) icon.
-
-3.  Click on the **Delete** button.
-
-**To create a review:**
-
-1.  From a search results screen, view Component Details by clicking on the title.
-2.  Click on the Reviews tab.
-3.  Click on **Write a Review**.
-4.  Fill out the form starting with marking the Stars according to
-    your experience.
-5.  Save the review. The review will now show in the review tab for
-    other users to read.
-
-**NOTE:** A review may also be removed from the component detail screen
-by then clicking on the delete icon next to the title of the review. 
-You can only remove reviews you post.
-
-
-#### 2.3.2.3 Manage Reports
+## 2.4  Submit Correction and Request Ownership
 --------
 
-This section displays scheduled user reports as well as the history or log of reports that have ran.
+On a particular entry you can submit a correction for administrative review and/ or
+request ownership of an entry.  To do this:
 
-**Schedule tab**
-This default view shows all of the scheduled reports.  A drop-down at the top
-allows viewing of the Active or Inactive reports.  Select a report in the table
-and click Toggle Status to change from one status to the other.
+ 1.  From the search results note the icons at the top (Tag, Watches, Print, etc.)
+ 2.  If a menu button (horizontal bars) icon appears it means you have authorization
+     to request a correction or ownership change.  Click the icon and the appropriate
+	 sub-menu.
+	 
+**Submit Correction/ Request Ownership forms:**
 
-Reports can be added or edited.  Selections  can be made to run a report one time
-only or at regular intervals.  Some reports have the option of HTML or Comma-
-Separated Values as the report format.  If selecting Previous days, the 
-selected number of prior days will be included in the report output.  
+* Fill out the form including the section needing correcton and the changes requested Or
+ the reason you are requesting the change of ownership
+ 
+* Ensure your contact information is current in the section below or update your profile.
 
-Types of reports available include:
-  
-  - Component
-  - Component by Organization
-  - Component Detail
-  - Components by Category
-  - Link Validation
-  - Submissions
-  - Usage
-  - User
-  - User Organization
+* Click Send.
 
-**History tab**
-This table is helpful to view old reports or see what has been run and when.  Select
-a report and click view to see the output of the report and that particular date and
-time.  A report can be downloaded / exported for archiving or offline use.
+* Your correction or ownership request will be reviewed by an administrator.
 
-## 2.4 Changes Notification
---------------------
-
-The application sends out notification emails about any changes that
-have occurred since the last time a recent change notification email was
-sent out. This allows the user to be aware of all the new and modified
-listings on the application.
-
-**To receive the notification:**
-
-1.  Select **User Tools** from the drop-down menu in the upper-right with the username.
-2.  Ensure that a valid email address is present in the **User Profile** section.
-4.  Check the checkbox, **Receive periodic email about recent changes**.
-5.  Click **Save**.
 
 ## 2.5  Printing
 --------
@@ -752,13 +808,26 @@ submission form, and to allow or not allow the following:
 Attributes, Relationships, Contacts, Resources, Media, Dependencies, Metadata,
 Evaluation Information, Reviews, and Questions.
 
+Entry Types can be made active or inactive by using the Toggle Status button on the right. 
+**Note:** Making an entry type Inactive does **not** remove that entry type from existing
+          entries, it simply prevents that entry type from being added in future entry 
+          submissions.	  
+
+
 
 ### 3.2.4 Highlights *
 -------
 
-A highlight to the home page can be added, deleted, activated, or deactivated here. 
-A highlight code (Article, Component, etc.) can be added or edited as well as a link,
- and the description.
+A highlight to the home page can be added, edited, or deleted here. 
+A highlight can be an Article, a Component, or an external link.
+ 
+**How do I change the order of the highlights on the home page?**
+To change the order in which they appear select the highlight from 
+the table, then press the up or down buttons to reposition the order 
+in the table.  The highlights on the home page appear in the order that
+they do in the table in the Manage Highlights section.
+
+![updown](../../../../../../client/openstorefront/app/images/help/displayposition.png)
 
 
 ### 3.2.5 Integrations *
