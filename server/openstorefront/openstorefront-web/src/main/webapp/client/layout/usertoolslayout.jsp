@@ -31,8 +31,7 @@ limitations under the License.
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
-	
+		
 	<%
 		String appVersion = PropertiesManager.getApplicationVersion();
 		request.setAttribute("appVersion", appVersion);
@@ -49,6 +48,8 @@ limitations under the License.
 	<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
 	<link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 
+	<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
+	
 	<script src="../webjars/extjs/6.0.0/ext-bootstrap.js" type="text/javascript"></script>
 	<script src="../webjars/extjs/6.0.0/build/classic/theme-neptune/theme-neptune.js" type="text/javascript"></script>
 	<script src="../webjars/extjs/6.0.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
