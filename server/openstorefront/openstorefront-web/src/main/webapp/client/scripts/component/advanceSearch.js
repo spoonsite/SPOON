@@ -235,7 +235,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 			},
 			{
 				searchType: 'ATTRIBUTE',
-				label: 'Attribute',
+				label: 'Attribute',			
 				options: Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
@@ -1529,8 +1529,18 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							
 							advancePanel.entryForm.getForm().clearInvalid();
 							if (optionsPanel.getLayout().getActiveItem()) {
+								if (optionsPanel.getLayout().getActiveItem().reset) {
+									optionsPanel.getLayout().getActiveItem().reset();
+								}
 								optionsPanel.remove(optionsPanel.getLayout().getActiveItem(), false);
 							}
+							typeCB.getSelection().data.options.reset =  function() {
+								Ext.Array.each(this.items.items, function(item) {
+									if (item.reset) {
+										item.reset();
+									}	
+								});
+							};
 							optionsPanel.add(typeCB.getSelection().data.options);
 						}
 					}
@@ -1613,10 +1623,16 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									success: function(response, opts) {
 										advancePanel.entryForm.reset();
 										saveButton.setText('Add');
-										var grid = advancePanel.entryForm.getComponent('searchGrid');
+										var grid = advancePanel.entryForm.getComponent('searchGrid');										
 										if (advancePanel.entryForm.editRecord) {
-											grid.getStore().remove(advancePanel.entryForm.editRecord);																			
-											grid.getStore().insert(advancePanel.entryForm.editRowIndex, data);
+											
+											for (var i = 0; i < advancePanel.searchcriteriaRecords.length; i++) {
+												if (advancePanel.searchcriteriaRecords[i].getId() === advancePanel.entryForm.editRecord.getId()) {
+													advancePanel.searchcriteriaRecords[i] = data;
+												}
+											}											
+											grid.getStore().loadData(advancePanel.searchcriteriaRecords);											
+											advancePanel.entryForm.editRecord = null;											
 										} else {
 											grid.getStore().add(data);																		
 										}
@@ -1719,7 +1735,12 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									handler: function(grid, rowIndex, colIndex) {
 										var rec = grid.getStore().getAt(rowIndex);
 										advancePanel.entryForm.editRecord = rec;
-										advancePanel.entryForm.editRowIndex = rowIndex;
+										
+										advancePanel.searchcriteriaRecords = [];
+										
+										grid.getStore().each(function(item){
+											advancePanel.searchcriteriaRecords.push(item);	
+										});										
 										
 										//manually set
 										advancePanel.entryForm.getComponent('searchType').setValue(rec.get('searchType'));

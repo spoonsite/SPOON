@@ -61,6 +61,7 @@ limitations under the License.
 			pageMap['Tracking'] = 'Router.action?page=admin/application/tracking.jsp';
 			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
 			pageMap['EntryTemplate'] = 'Router.action?page=admin/data/entryTemplate.jsp';
+			pageMap['Searches'] = 'Router.action?page=admin/data/searches.jsp';
 			
 
 		//Data Menu
@@ -124,7 +125,13 @@ limitations under the License.
 				handler: function(){
 					actionLoadContent('Organizations');
 				}				
-			});			
+			});	
+			dataMenu.push({
+				text: 'Searches',
+				handler: function(){
+					actionLoadContent('Searches');
+				}				
+			});	
 			dataMenu.push({
 				text: 'User Data',
 				menu: {
