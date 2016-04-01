@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
-import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -27,14 +26,14 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Saves an advance search for a user")
-public class UserSavedSearch
+@APIDescription("Saves an advance search for application")
+public class SystemSearch
 		extends StandardEntity
 {
 	
 	@PK(generated = true)
 	@NotNull
-	private String userSearchId;
+	private String searchId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
@@ -45,13 +44,8 @@ public class UserSavedSearch
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_1MB)	
 	@ConsumeField
 	private String searchRequest;
-	
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)	
-	@FK(UserProfile.class)
-	private String username;	
-	
-	public UserSavedSearch()
+
+	public SystemSearch()
 	{
 	}
 
@@ -60,21 +54,9 @@ public class UserSavedSearch
 	{
 		super.updateFields(entity);
 		
-		UserSavedSearch userSaveSearch = (UserSavedSearch) entity;
+		SystemSearch userSaveSearch = (SystemSearch) entity;
 		this.setSearchName(userSaveSearch.getSearchName());
 		this.setSearchRequest(userSaveSearch.getSearchRequest());
-		this.setUsername(userSaveSearch.getUsername());
-		
-	}
-
-	public String getUserSearchId()
-	{
-		return userSearchId;
-	}
-
-	public void setUserSearchId(String userSearchId)
-	{
-		this.userSearchId = userSearchId;
 	}
 
 	public String getSearchName()
@@ -97,14 +79,14 @@ public class UserSavedSearch
 		this.searchRequest = searchRequest;
 	}
 
-	public String getUsername()
+	public String getSearchId()
 	{
-		return username;
+		return searchId;
 	}
 
-	public void setUsername(String username)
+	public void setSearchId(String searchId)
 	{
-		this.username = username;
+		this.searchId = searchId;
 	}
 	
 }

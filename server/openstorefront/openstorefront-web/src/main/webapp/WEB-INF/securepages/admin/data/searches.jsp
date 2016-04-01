@@ -20,7 +20,7 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/usertoolslayout.jsp">
+<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 		
 		<script src="scripts/component/advanceSearch.js?v=${appVersion}" type="text/javascript"></script>
@@ -42,7 +42,7 @@ limitations under the License.
 					hieght: '80%',
 					y: 50,
 					maximizable: true,
-					scrollable: true,	
+					scrollable: true,
 					layout: 'card',
 					items: [
 						advanceSearch
@@ -116,7 +116,7 @@ limitations under the License.
 										
 										searchPanel.setLoading('Saving...');
 										Ext.Ajax.request({
-											url: '../api/v1/resource/usersavedsearches' + endUrl,
+											url: '../api/v1/resource/systemsearches' + endUrl,
 											method: method,
 											jsonData: userSearch,
 											callback: function() {
@@ -158,15 +158,19 @@ limitations under the License.
 				});
 	
 				
-				var searchGrid = Ext.create('Ext.grid.Panel', {					
+				var searchGrid = Ext.create('Ext.grid.Panel', {
 					id: 'searchgrid',
-					title: 'Saved Searches <i class="fa fa-question-circle"  data-qtip="Allows for managing saved searches" ></i>',
+					title: 'Public Saved Searches <i class="fa fa-question-circle"  data-qtip="Allows for saving searches to be used in highlights and entries" ></i>',
 					columnLines: true,
 					store: {
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/usersavedsearches/user/current'
+							url: '../api/v1/resource/systemsearches',							
+							reader: {
+								type: 'json',
+								rootProperty: 'data'
+							}
 						}
 					},
 					columns: [
@@ -186,14 +190,52 @@ limitations under the License.
 							
 							if (selected.length > 0) {	
 								tools.getComponent('edit').setDisabled(false);
-								tools.getComponent('delete').setDisabled(false);
+								tools.getComponent('togglestatus').setDisabled(false);
 							} else {
 								tools.getComponent('edit').setDisabled(true);
-								tools.getComponent('delete').setDisabled(true);
+								tools.getComponent('togglestatus').setDisabled(true);
 							}
 						}
 					},
 					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								Ext.create('OSF.component.StandardComboBox', {
+									id: 'filterActiveStatus',									
+									emptyText: 'Active',
+									fieldLabel: 'Active Status',
+									name: 'activeStatus',									
+									typeAhead: false,
+									editable: false,
+									width: 200,							
+									listeners: {
+										change: function(filter, newValue, oldValue, opts){
+											actionRefresh();
+										}
+									},
+									storeConfig: {
+										customStore: {
+											fields: [
+												'code',
+												'description'
+											],
+											data: [												
+												{
+													code: 'A',
+													description: 'Active'
+												},
+												{
+													code: 'I',
+													description: 'Inactive'
+												}
+											]
+										}
+									}
+								})								
+							]
+						},
 						{
 							xtype: 'toolbar',
 							itemId: 'tools',
@@ -234,13 +276,13 @@ limitations under the License.
 									xtype: 'tbfill'
 								},
 								{
-									text: 'Delete',
-									itemId: 'delete',
+									text: 'Toggle Status',
+									itemId: 'togglestatus',
 									disabled: true,
 									scale: 'medium',									
-									iconCls: 'fa fa-2x fa-trash',
+									iconCls: 'fa fa-2x fa-power-off',
 									handler: function() {
-										actionDelete(Ext.getCmp('searchgrid').getSelectionModel().getSelection()[0]);	
+										actionToggleStatus(Ext.getCmp('searchgrid').getSelectionModel().getSelection()[0]);	
 									}
 								}
 							]
@@ -249,7 +291,12 @@ limitations under the License.
 				});		
 				
 				var actionRefresh = function() {
-					Ext.getCmp('searchgrid').getStore().reload();
+					Ext.getCmp('searchgrid').getStore().load({
+						url: '../api/v1/resource/systemsearches',
+						params: {
+							status: Ext.getCmp('filterActiveStatus').getValue()
+						}
+					});
 				};
 				
 				var actionAdd = function() {
@@ -267,28 +314,27 @@ limitations under the License.
 					searchWindow.getComponent('searchName').setValue(record.get('searchName'));
 				};
 
-				var actionDelete = function(record) {
-					Ext.Msg.show({
-						title:'Remove Search?',
-						message: 'Are you sure you want to remove this search?',
-						buttons: Ext.Msg.YESNO,
-						icon: Ext.Msg.QUESTION,
-						fn: function(btn) {
-							if (btn === 'yes') {
-								Ext.getCmp('searchgrid').setLoading("Removing...");
-								Ext.Ajax.request({
-									url: '../api/v1/resource/usersavedsearches/' + record.get('userSearchId'),
-									method: 'DELETE',
-									callback: function(){
-										Ext.getCmp('searchgrid').setLoading(false);
-									},
-									success: function(){
-										actionRefresh();
-									}
-								});
-							} 
+				var actionToggleStatus = function(record) {
+					
+					var method = 'DELETE';
+					var endUrl = '';
+					if (record.get('activeStatus') === 'I') {
+						method = 'PUT';
+						endUrl = '/activate';
+					} 
+					
+					Ext.getCmp('searchgrid').setLoading('Updating status...');
+					Ext.Ajax.request({
+						url: '../api/v1/resource/systemsearches/' + record.get('searchId') + endUrl,
+						method: method,
+						callback: function(){
+							Ext.getCmp('searchgrid').setLoading(false);
+						},
+						success: function(){
+							actionRefresh();
 						}
-					});						
+					});			
+			
 				};
 						
 				Ext.create('Ext.container.Viewport', {

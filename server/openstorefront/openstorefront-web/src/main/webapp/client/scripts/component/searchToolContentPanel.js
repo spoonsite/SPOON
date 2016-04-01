@@ -436,8 +436,8 @@ Ext.define('OSF.component.SearchToolWindow', {
                 topicSearchPanel,
                 categorySearchPanel,
                 archSearchPanel,
-				advanceSearch,
-				savedSearches
+		advanceSearch,
+		savedSearches
             ]
 
         });
