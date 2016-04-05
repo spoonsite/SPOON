@@ -37,7 +37,12 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 					xtype: 'tbfill'
 				},
 				{
-					text: 'Insert Link'
+					text: 'Insert Link',
+					handler: function(button) {
+						var window = button.up('window');
+						var editor = window.editor;
+						editor.execCommand('mceInsertContent', false, window.getLink());
+					}
 				}
 			]
 		}
@@ -49,7 +54,7 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 		var savedSearchLinkInsertWindow = this;
 
 
-		savedSearchLinkInsertWindow.getLink = function() {
+		savedSearchLinkInsertWindow.getLink = function getLink() {
 			return "Link text goes here.";
 		};
 	}
