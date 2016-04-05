@@ -31,8 +31,7 @@ licensed under Apache V2.**
 ## 1.1 Release Notes
 ------
 
-To see what is new in [v2.0](https://github.com/di2e/openstorefront/releases/tag/v2.0), and subsequent releases, please see the releases page in GitHub at:
-[https://github.com/di2e/openstorefront/releases](https://github.com/di2e/openstorefront/releases)
+To see what is new in <a href="https://github.com/di2e/openstorefront/releases/tag/v2.0" target="_blank">v2.0</a>, or all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
 
 ## 1.2 Known Issues, v2.0 * 
