@@ -244,17 +244,23 @@ results or the entire search results can be opened in a new page.
 
 The Advanced Search tab provides a powerful tool to query the data in the Clearinghouse.
 This allows the user to refine a search based on:
+
 **Search Type:**  Search by Entry, Attribute, Tags, User Reviews, Questions, and more.
+
 **Field:** The search field associated with the search type choosen above
+
 **Value:**  alpha and/ or numerical value to search for
+
 **String/ Number Operation:** Contains, Equals, <, >, and so forth depending on the value
-**Merge Condition:** OR, AND, NOT to get a search results in conjuntion with the other advaned 
-                      search parameters.
+
+**Merge Condition:** OR, AND, NOT to get a search results in conjuntion with the other advanced search parameters.
+
 **Preview Results:**  Allows you to see the results of this advanced search, queries for results
+
 **Save:(Search)**  The advanced search can be saved, see the next section for details.
 
 
-### 2.2.5 Seaved Searches
+### 2.2.5 Saved Searches
 ------
 
 You can save complex advanced searches for later retreval and querying.  From the Advanced tab, 
@@ -277,6 +283,7 @@ The user tools contain a variety of useful features including:
 
 ## 2.3.1 User Profile
 --------------------
+
 All user information can be set on the main page of **User Tools**. 
 Initially the user profile is populated with information from the user's 
 external security account.
@@ -397,22 +404,29 @@ If selecting Previous days, the selected number of prior days will be included i
 
 Types of reports available include:
   
-  - User *
-  - User Organization *
-  - Usage *
-  - Submissions *
-  - Link Validation *  
   - Entry
   - Entry Detail
   - Entries by Organization
   - Entries by Category
 
-  
 **Scheduled Reports**
 Clicking this button opens a window that shows recurring reports, their details and frequency that 
 the report will run, as well as the last run date and time. You can add, activate or inactivate a 
 scheduled report, edit, or delete it.
 
+
+#### 2.3.3.2 Admin Reports * 
+--------
+
+Additional reports available to administrators only include:
+
+  - **User**
+  - **User Organization**
+  - **Usage**
+  - **Submissions**
+  - **Link Validation**
+
+  
 #### 2.3.3.3 Reviews
 ------------
 -
