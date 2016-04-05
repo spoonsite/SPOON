@@ -25,6 +25,24 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 	width: '60%',
 	height: '50%',
 
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			items: [
+				{
+					text: 'Cancel'
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Insert Link'
+				}
+			]
+		}
+	],
+	
 	initComponent: function () {
 		this.callParent();
 
