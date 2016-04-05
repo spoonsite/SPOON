@@ -22,7 +22,7 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 
 	title: 'Insert Link to Saved Search',
 	modal: true,
-	width: '60%',
+	width: '40%',
 	height: '50%',
 
 	items: [
@@ -51,7 +51,14 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 						totalProperty: 'totalNumber'
 					}
 				}
-			})
+			}),
+			listeners: {
+				selectionchange: function (grid, record, eOpts) {
+					if (Ext.getCmp('savedSearchGrid').getSelectionModel().hasSelection()) {
+						Ext.getCmp('insertButton').enable();
+					}
+				}
+			}
 		}
 	],
 
@@ -68,6 +75,8 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 				},
 				{
 					text: 'Insert Link',
+					id: 'insertButton',
+					disabled: true,
 					handler: function(button) {
 						var window = button.up('window');
 						var editor = window.editor;
