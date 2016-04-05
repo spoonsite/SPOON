@@ -25,6 +25,36 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 	width: '60%',
 	height: '50%',
 
+	items: [
+		{
+			xtype: 'grid',
+			id: 'savedSearchGrid',
+			columns: [
+				{text: 'Name', dataIndex: 'searchName', flex: 2},
+				{
+					text: 'Last Updated', 
+					dataIndex: 'updateDts',
+					flex: 1,
+					xtype: 'datecolumn',
+					format: 'm/d/y H:i:s'
+				}
+			],
+			store: Ext.create('Ext.data.Store', {
+				id: 'savedSearchStore',
+				autoLoad: true,
+				proxy: {
+					type: 'ajax',
+					url: '/openstorefront/api/v1/resource/usersavedsearches',
+					reader: {
+						type: 'json',
+						rootProperty: 'data',
+						totalProperty: 'totalNumber'
+					}
+				}
+			})
+		}
+	],
+
 	dockedItems: [
 		{
 			xtype: 'toolbar',
