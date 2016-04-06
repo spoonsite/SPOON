@@ -816,19 +816,77 @@ Currently, the main entry types are DI2E Component and Article.  However, other 
 types can be added, edited, activated, and made inactive here.  
 
 On the Add form data entry can be selected such as whether or not to allow on the 
-submission form, and to allow or not allow the following:
+submission form, and to allow or not allow the following to be displayed:
 
-Attributes, Relationships, Contacts, Resources, Media, Dependencies, Metadata,
-Evaluation Information, Reviews, and Questions.
+*Attributes, Relationships, Contacts, Resources, Media, Dependencies, Metadata,
+Evaluation Information, Reviews, and Questions.*
 
 Entry Types can be made active or inactive by using the Toggle Status button on the right. 
+
 **Note:** Making an entry type Inactive does **not** remove that entry type from existing
           entries, it simply prevents that entry type from being added in future entry 
-          submissions.	  
+          submissions.
+		  
+		  
+### 3.2.4 Entry Templates *
+-------
 
+Entry Templates allow for the customization of the display fields of particular types of entries.
+To create and impliment a template:
 
+ 1. In the Entry **Templates** screen:
 
-### 3.2.4 Highlights *
+	a.  Add or Edit an Entry Template.
+ 
+    b.  Add Template Blocks to see the visual arrangement and order of fields that will be displayed.
+	
+	c.  Select some Sample Data from an existing entry to see how the data will be represented in
+	the Visual Design tab.
+	
+	d.  The Code tab allows for pre and post code to be added.
+	
+	e.  Finally, the Preview tab shows what an entry using this template will look like.
+	
+	f.  Name the template and click Save/Continue when finished.
+	
+	g.  The name should now appear in the Entry Templates table.  Ensyre that the template is Active.
+	
+	
+2. In the Entry **Types** section:
+
+	a.  Add or Edit an Entry Type. 
+	
+	b.  In the entry creation/ editing at the bottom of the window, select the Override Template (it
+		must be active to appear) from the dropdown list- that you created in the prior step.
+	
+	c.  Ensure that under Data Entry the checkboxes are checked for the areas you want displayed.  If
+		a box is **not** checked then data will not appear in the entry according to the order outlined
+		in the Entry Template in the prior step, that area will be skipped and not displayed.
+	
+	d.  Click Save.  In the table in the Template Override column the name of the template selected in 
+    the dropdown should appear.  Ensure that the Entry Type is Active.
+	
+3. In the **Entry** section:
+
+	a.  Add or Edit an Entry.
+	
+	b.  In the General Tab under Entry Type, select the Type created in the prior step.
+	
+	c.  Save and close the entry form.  If creating a new entry, ensure that the entry is approved and active.
+	
+4.  From the **Home Page** (or other search screen):
+
+	a.  Search for the name of the entry from the prior step.
+	
+	b.  View the search results details.  Note that the entry is displayed according to the Entry Template created
+	
+	c.  Note that some data fields in the template may not be displayed if they are not active in the Entry Type 
+	    (checkboxes under Data Entry).
+	
+	
+
+		  
+### 3.2.5 Highlights *
 -------
 
 A highlight to the home page can be added, edited, or deleted here. 
@@ -843,7 +901,7 @@ they do in the table in the Manage Highlights section.
 ![updown](../../../../../../client/openstorefront/app/images/help/displayposition.png)
 
 
-### 3.2.5 Integrations *
+### 3.2.6 Integrations *
 -------
 
 Component Integration allows for pulling information from an external
@@ -897,7 +955,7 @@ interval. If the configuration job continues to have issues it may
 deactivated manually using the tools and then reactivated when the issue
 is resolved.
 
-### 3.2.6 Imports * 
+### 3.2.7 Imports * 
 -------
 
 This allows for data imports and mappings.  This is done by importing a ZIP
@@ -907,7 +965,7 @@ can be reprocessed, or rolled back.
 **NOTE:**  The history is only kept for **180 days** in this section.
 
 
-### 3.2.7 Lookups *
+### 3.2.8 Lookups *
 --------
 
 This is used to organize and classify data in a consistent manner.  The codes can
@@ -918,7 +976,7 @@ Some examples of Lookups are:
 Media Types, Data Source, Contact Types, Relationship Types, and Organization Types
 
 
-### 3.2.8 Organizations *
+### 3.2.9 Organizations *
 --------
 
  Organizations provide information on specific organizations that are linked with the components listed on the site. The information these objects contain include:
@@ -929,7 +987,7 @@ Media Types, Data Source, Contact Types, Relationship Types, and Organization Ty
  - **Address** -                The address for the organization
  - **Contact Information** -    A way to contact the organization
 
-#### 3.2.8.1 Managing *
+#### 3.2.9.1 Managing *
 --------------
 
 **To add a new organization:**
@@ -978,47 +1036,41 @@ ONLY merges references and NOT the organization information.
 
 
  
-### 3.2.9 User Data *
+### 3.2.10 User Data *
 ---------
+
+
+#### 3.2.10.1 Questions (and Answers) *
+------
+
+
+#### 3.2.10.2 Reviews *
+------
+
+
+#### 3.2.10.3 Watches *
+------
+
+
+#### 3.2.10.4 Tags *
+------
+
+
+#### 3.2.10.5 User Profiles *
+------
 
 Every user in the system has a user profile.  A user profile contains information
 about the user and their user specific settings.   The initial creation of the profile
 at first login will contain the information gathered from the external security application.
 
-#### 3.2.9.1 Creation *
-------
-
 The application doesn't directly manage users, only profiles. When a user
 first securely logs in, a profile is created. It's up to the applicable
 security utility (Open AM, LDAP, Database…etc.) to define the users.
 
-#### 3.2.9.2 Messaging *
-------
-
-Users can message other users using User Profiles. The message will be
-emailed to the email address listed in their profile.
-
-**To message a user or a group of users:**
-
-1.  Navigate to the User Profiles Tool.
-
-2.  Click on the message icon ![mail](../../../../../../client/openstorefront/app/images/help/mail.png) next to the user
-    (or users) that you want to message.
-
-3.  Fill out the form.
-
-4.  Click **Send** to send the message immediately.
-
-**NOTE:** Messages are sent to email addresses one at a time so no email
-addresses are leaked to other users.
-
-#### 3.2.9.3 Control *
-------
-
-An admin may edit, activate or inactivate a profile. Inactivating a
+An admin may edit, activate or inactivate a profile. Deactivating a
 profile does not prevent login. Upon login, the user's profile will be
-reactivated. Once a profile has been inactivated, that user's watches
-and messages are also inactivated. Reactivating the profile will
+reactivated. Once a profile has been deactivated, that user's watches
+and messages are also deactivated. Reactivating the profile will
 activate the user's existing watches, but it won't send any previous
 messages – just messages going forward.
 
@@ -1026,8 +1078,22 @@ messages – just messages going forward.
 
 1.  Navigate to User Profiles Tool.
 
-2.  Click on the activate/inactivate ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) icon and use
+2.  Click on the activate/ deactivate icon and use
     the filter option to view active/inactive users.
+
+Users can message other users using User Profiles. The message will be
+emailed to the email address listed in their profile.
+
+**To message a user or a group of users:**
+
+1.  Click on the message icon next to the user (or users) that you want to message.
+
+2.  Fill out the form.
+
+3.  Click **Send** to send the message immediately.
+
+**NOTE:** Messages are sent to email addresses one at a time so no email
+addresses are leaked to other users.
 
 
 ## 3.3 Application Management *
@@ -1067,9 +1133,8 @@ Descriptions of Alert Triggers:
 
 1.  Navigate to the Alerts Tool.
 
-2.  Click **Inactivate** ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) or **Delete**
-    ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to cancel the scheduled report. Click
-    **Inactivate** to temporarily pause it.
+2.  Click **Deactivate** or **Delete** to cancel the scheduled report. Click
+    **Deactivate** to temporarily pause it.
 	
 
 ### 3.3.2 Jobs *
