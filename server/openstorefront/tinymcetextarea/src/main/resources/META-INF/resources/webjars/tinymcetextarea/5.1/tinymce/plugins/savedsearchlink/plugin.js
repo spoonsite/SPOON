@@ -24,13 +24,13 @@ tinymce.PluginManager.add('savedsearchlink', function(editor) {
 	});
 
 	editor.addButton('savedsearchlink', {
-		icon: 'hr',
+		image: tinymce.baseURL + '/plugins/savedsearchlink/icon/icon.gif',
 		tooltip: 'Insert a link to a saved search',
 		cmd: 'InsertSavedSearchLink'
 	});
 
 	editor.addMenuItem('savedsearchlink', {
-		icon: 'hr',
+		image: tinymce.baseURL + '/plugins/savedsearchlink/icon/icon.gif',
 		text: 'Insert saved search link',
 		cmd: 'InsertSavedSearchLink',
 		context: 'insert'
