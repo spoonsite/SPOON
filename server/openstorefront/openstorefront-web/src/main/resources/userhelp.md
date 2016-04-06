@@ -883,9 +883,7 @@ To create and impliment a template:
 	c.  Note that some data fields in the template may not be displayed if they are not active in the Entry Type 
 	    (checkboxes under Data Entry).
 	
-	
-
-		  
+  
 ### 3.2.5 Highlights *
 -------
 
@@ -898,7 +896,7 @@ the table, then press the up or down buttons to reposition the order
 in the table.  The highlights on the home page appear in the order that
 they do in the table in the Manage Highlights section.
 
-![updown](../../../../../../client/openstorefront/app/images/help/displayposition.png)
+![updown_graphic](../../../../../../../client/openstorefront/app/images/help/displayposition.png)
 
 
 ### 3.2.6 Integrations *
@@ -1039,21 +1037,67 @@ ONLY merges references and NOT the organization information.
 ### 3.2.10 User Data *
 ---------
 
+This section in the Admin Tools -> Data Management allows for the management of user-submitted data such as:
+
+ * Questions (and Answers)
+ 
+ * Reviews
+ 
+ * Watches
+ 
+ * Tags
+ 
+ * User Profiles
+ 
 
 #### 3.2.10.1 Questions (and Answers) *
 ------
+
+The Questions section of User Data in Data Management of the Admin Tools displays Questions and Answers given on the website.
+
+The table displays active questions, but the drop-down at the top of the page allows toggling to inactive questions as well.
+
+ * Select a component on the left to see the list of corresponding questions. 
+ 
+ * Select a question to see the assoiciated answers
+ 
+ * With a question or answer highlighted, click the associated Deactivate button to remove it from view on the website.
 
 
 #### 3.2.10.2 Reviews *
 ------
 
+The Reviews section of User Data in Data Management of the Admin Tools displays entry reviews from the website.
+
+The table displays the list of *active* reviews by default.  
+
+ * Active status can be filtered by Active or Inactive using the drop-down at the top of the table.
+ 
+ * Selecting an active review allows for the Deactivate button to be pressed, removing the review from view on the website.
+ 
+ * Slecting an inactive review allows for the Activate button to be pressed, adding the review back to view on the website.
+
 
 #### 3.2.10.3 Watches *
 ------
 
+The Watches section of User Data in Data Management of the Admin Tools displays all of the watches from all users.
 
+ * Watches highlighted in green text indicate that the entry has changed since the user viewed it, i.e. it is an "active" watch that has changed.
+ 
+ * When an entry (or multiple entries of the same status) are selected the Activate or Inactivate button can be used to toggle the status of the watches.
+ 
+ 
 #### 3.2.10.4 Tags *
 ------
+
+The Tags section of User Data in Data Management of the Admin Tools displays a list of all tags.
+
+ * If a tag is selected the Delete button is enabled, allowing for deletion of the tag.
+ 
+ * A new tag can be added by clicking on the + Add button and filling out the form.  
+ 
+ * In the event of a duplicate tag being added to the same component the added tag will override the exiting tag.
 
 
 #### 3.2.10.5 User Profiles *
