@@ -50,7 +50,7 @@ limitations under the License.
 					dockedItems: [
 						{
 							xtype: 'textfield',
-							itemId: 'searchName',
+							id: 'searchName',
 							width: '100%',
 							name: 'searchName',
 							allowBlank: false,
@@ -74,7 +74,7 @@ limitations under the License.
 									handler: function(){
 										var searchPanel = Ext.getCmp('advanceSearch');
 										var search = searchPanel.getSearch();
-										var searchName = searchPanel.getComponent('searchName').getValue();
+										var searchName = Ext.getCmp('searchName').getValue();
 										
 										//check name and search elements
 										if (!searchName || searchName === '') {
@@ -123,7 +123,7 @@ limitations under the License.
 												searchPanel.setLoading(false);
 											},
 											success: function(response, opts){
-												Ext.toast("Save Search Successfully.");
+												Ext.toast("Successfully saved search.");
 												actionRefresh();
 												Ext.getCmp('searchWindow').close();
 											}
@@ -205,6 +205,7 @@ limitations under the License.
 								Ext.create('OSF.component.StandardComboBox', {
 									id: 'filterActiveStatus',									
 									emptyText: 'Active',
+									value: 'A',
 									fieldLabel: 'Active Status',
 									name: 'activeStatus',									
 									typeAhead: false,
