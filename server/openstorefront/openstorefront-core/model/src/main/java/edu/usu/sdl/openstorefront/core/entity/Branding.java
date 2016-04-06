@@ -86,15 +86,18 @@ public class Branding
 	@ConsumeField
 	private String landingPageFooter;
 
+	@ConsumeField
+	private Boolean hideArchitectureSearchFlg;
+	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
-	private String archtectureSearchType;
+	private String architectureSearchType;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
-	private String archtectureSearchLabel;
+	private String architectureSearchLabel;
 
 	@ConsumeField
 	private Boolean allowSecurityMarkingsFlg;
@@ -118,6 +121,11 @@ public class Branding
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@Sanitize(HTMLSanitizer.class)	
 	private String userInputWarning;	
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Sanitize(HTMLSanitizer.class)	
+	private String submissionFormWarning;	
 
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = FeedbackHandleType.class)
@@ -125,7 +133,11 @@ public class Branding
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String primaryColor;		
+	private String primaryColor;	
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String primaryTextColor;	
 	
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
@@ -141,11 +153,19 @@ public class Branding
 	
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	private String linkVisitedColor;	
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
 	private String linkhoverColor;
 	
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
 	private String panelHeaderColor;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	private String panelHeaderTextColor;	
 			
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
@@ -164,8 +184,9 @@ public class Branding
 
 		setAllowSecurityMarkingsFlg(branding.getAllowSecurityMarkingsFlg());
 		setApplicationName(branding.getApplicationName());
-		setArchtectureSearchLabel(branding.getArchtectureSearchLabel());
-		setArchtectureSearchType(branding.getArchtectureSearchType());
+		setHideArchitectureSearchFlg(branding.getHideArchitectureSearchFlg());		
+		setArchitectureSearchLabel(branding.getArchitectureSearchLabel());
+		setArchitectureSearchType(branding.getArchitectureSearchType());
 		setLandingPageBanner(branding.getLandingPageBanner());
 		setLandingPageFooter(branding.getLandingPageFooter());
 		setLandingPageTitle(branding.getLandingPageTitle());
@@ -179,14 +200,18 @@ public class Branding
 		setSecurityBannerText(branding.getSecurityBannerText());
 		setSecurityBannerTextColor(branding.getSecurityBannerTextColor());
 		setUserInputWarning(branding.getUserInputWarning());
+		setSubmissionFormWarning(branding.getSubmissionFormWarning());		
 		setFeedbackHandler(branding.getFeedbackHandler());
 				
 		setPrimaryColor(branding.getPrimaryColor());
+		setPrimaryTextColor(branding.getPrimaryTextColor());		
 		setAccentColor(branding.getAccentColor());
 		setQuoteColor(branding.getQuoteColor());
 		setLinkColor(branding.getLinkColor());
+		setLinkVisitedColor(branding.getLinkVisitedColor());		
 		setLinkhoverColor(branding.getLinkhoverColor());
 		setPanelHeaderColor(branding.getPanelHeaderColor());
+		setPanelHeaderTextColor(branding.getPanelHeaderTextColor());
 		setOverrideCSS(branding.getOverrideCSS());
 	}
 
@@ -280,24 +305,24 @@ public class Branding
 		this.landingPageFooter = landingPageFooter;
 	}
 
-	public String getArchtectureSearchType()
+	public String getArchitectureSearchType()
 	{
-		return archtectureSearchType;
+		return architectureSearchType;
 	}
 
-	public void setArchtectureSearchType(String archtectureSearchType)
+	public void setArchitectureSearchType(String architectureSearchType)
 	{
-		this.archtectureSearchType = archtectureSearchType;
+		this.architectureSearchType = architectureSearchType;
 	}
 
-	public String getArchtectureSearchLabel()
+	public String getArchitectureSearchLabel()
 	{
-		return archtectureSearchLabel;
+		return architectureSearchLabel;
 	}
 
-	public void setArchtectureSearchLabel(String archtectureSearchLabel)
+	public void setArchitectureSearchLabel(String architectureSearchLabel)
 	{
-		this.archtectureSearchLabel = archtectureSearchLabel;
+		this.architectureSearchLabel = architectureSearchLabel;
 	}
 
 	public Boolean getAllowSecurityMarkingsFlg()
@@ -438,6 +463,56 @@ public class Branding
 	public void setOverrideCSS(String overrideCSS)
 	{
 		this.overrideCSS = overrideCSS;
+	}
+
+	public Boolean getHideArchitectureSearchFlg()
+	{
+		return hideArchitectureSearchFlg;
+	}
+
+	public void setHideArchitectureSearchFlg(Boolean hideArchitectureSearchFlg)
+	{
+		this.hideArchitectureSearchFlg = hideArchitectureSearchFlg;
+	}
+
+	public String getPrimaryTextColor()
+	{
+		return primaryTextColor;
+	}
+
+	public void setPrimaryTextColor(String primaryTextColor)
+	{
+		this.primaryTextColor = primaryTextColor;
+	}
+
+	public String getLinkVisitedColor()
+	{
+		return linkVisitedColor;
+	}
+
+	public void setLinkVisitedColor(String linkVisitedColor)
+	{
+		this.linkVisitedColor = linkVisitedColor;
+	}
+
+	public String getPanelHeaderTextColor()
+	{
+		return panelHeaderTextColor;
+	}
+
+	public void setPanelHeaderTextColor(String panelHeaderTextColor)
+	{
+		this.panelHeaderTextColor = panelHeaderTextColor;
+	}
+
+	public String getSubmissionFormWarning()
+	{
+		return submissionFormWarning;
+	}
+
+	public void setSubmissionFormWarning(String submissionFormWarning)
+	{
+		this.submissionFormWarning = submissionFormWarning;
 	}
 
 }
