@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global CoreService */
+
 Ext.define('OSF.component.ReviewWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.ReviewWindow',
@@ -26,15 +28,24 @@ Ext.define('OSF.component.ReviewWindow', {
 	dockedItems:[
 		{
 			xtype: 'panel',
-			html: '<h3 class="alert-warning" style="text-align: center;">' + 
-				'<i class="fa fa-warning"></i> Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.'+
-				'</h3>'
+			itemId: 'userInputWarning',
+			html: ''
 		}
 	],	
 	initComponent: function () {
 		this.callParent();
 
 		var reviewWindow = this;
+		
+		//Query Branding
+		CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+			var branding = Ext.decode(response.responseText);
+			if (branding.userInputWarning) {
+				reviewWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
+				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
+				'</h3>');
+			}
+		});
 		
 		reviewWindow.formPanel = Ext.create('Ext.form.Panel', {
 			bodyStyle: 'padding: 10px;',

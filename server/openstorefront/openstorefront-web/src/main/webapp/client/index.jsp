@@ -84,8 +84,7 @@ limitations under the License.
 			var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {				
 			});
 			
-			var searchtoolsWin = Ext.create('OSF.component.SearchToolWindow', {	
-			});	
+			var searchtoolsWin;
 			
 			var helpWin = Ext.create('OSF.component.HelpWindow', {				
 			});
@@ -385,10 +384,11 @@ limitations under the License.
 							xtype: 'panel',
 							width: '100%',
 							layout: 'center',
-							bodyStyle: 'padding: 20px 0px 0px 0px;',
+							bodyStyle: 'padding: 20px 0px 0px 0px;',							
 							items: [
 								{
-									id: 'customFooter'
+									id: 'customFooter',
+									bodyCls: 'home-footer-contents'
 								}
 							]
 					},
@@ -589,6 +589,10 @@ limitations under the License.
 						Ext.getCmp('customFooter').update(branding.landingPageFooter);
 											
 						loadStats();
+						
+						searchtoolsWin = Ext.create('OSF.component.SearchToolWindow', {
+							branding: branding
+						});							
 					}
 				});
 			}

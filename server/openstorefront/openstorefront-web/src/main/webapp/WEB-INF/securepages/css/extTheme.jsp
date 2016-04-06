@@ -130,7 +130,7 @@ div.x-border-layout-ct {
 }
 
 .x-panel-default {
-    border-color: #441E5A;
+    border-color: ${actionBean.branding.primaryColor};
     padding: 0;
 }
 
@@ -142,7 +142,7 @@ div.x-border-layout-ct {
 }
 
 .x-panel-default-framed {	
-    border-color: #441E5A;
+    border-color: ${actionBean.branding.primaryColor};
     padding: 0;
     background-color: ${actionBean.branding.primaryColor};
 }
@@ -152,7 +152,7 @@ div.x-border-layout-ct {
 }
 
 .x-panel-default-framed-outer-border-trbl {
-    border-color: #441E5A !important;
+    border-color: ${actionBean.branding.primaryColor} !important;
     border-width: 1px !important;
 }
 
@@ -172,12 +172,12 @@ div.x-border-layout-ct {
     padding: 5px 5px 5px 5px;
     border-width: 5px 5px 0 5px;
     border-style: solid;
-    background-color: #441E5A;
+    background-color: ${actionBean.branding.primaryColor};
 }
 
 .x-panel-header-default-framed {
     font-size: 13px;
-    border: 5px solid #441E5A;
+    border: 5px solid ${actionBean.branding.primaryColor};
 }
 
 .x-panel-header-default-framed .x-tool-img {
@@ -264,13 +264,13 @@ div.x-border-layout-ct {
     border-width: 1px;
     border-style: solid;
     background-image: none;
-    background-color: ${actionBean.branding.panelHeaderColor};
-    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, ${actionBean.branding.panelHeaderColor}), color-stop(51%, ${actionBean.branding.panelHeaderColor}), color-stop(0%, #676666));
-    background-image: -webkit-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -moz-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -o-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -ms-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);	
+    background-color: #555555;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, #555555), color-stop(51%, #555555), color-stop(0%, #676666));
+    background-image: -webkit-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -moz-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -o-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -ms-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);	
 }
 
 .x-btn-default-small {
@@ -283,30 +283,30 @@ div.x-border-layout-ct {
     border-width: 1px;
     border-style: solid;
     background-image: none;
-    background-color: ${actionBean.branding.panelHeaderColor};
-    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, ${actionBean.branding.panelHeaderColor}), color-stop(51%, ${actionBean.branding.panelHeaderColor}), color-stop(0%, #676666));
-    background-image: -webkit-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -moz-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -o-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -ms-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
+    background-color: #555555;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, #555555), color-stop(51%, #555555), color-stop(0%, #676666));
+    background-image: -webkit-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -moz-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -o-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -ms-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
 }
 
 .x-btn-default-small-mc {
     background-image: url(images/btn/btn-default-small-fbg.gif);
     background-position: 0 top;
-    background-color: ${actionBean.branding.panelHeaderColor};
+    background-color: #555555;
 }
 
 .x-btn-focus.x-btn-default-small {
     background-image: none;
-    background-color: ${actionBean.branding.panelHeaderColor};
-    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, ${actionBean.branding.panelHeaderColor}), color-stop(51%, ${actionBean.branding.panelHeaderColor}), color-stop(0%, #676666));
-    background-image: -webkit-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -moz-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -o-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -ms-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
+    background-color: #555555;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, #555555), color-stop(51%, #555555), color-stop(0%, #676666));
+    background-image: -webkit-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -moz-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -o-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -ms-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
     -webkit-box-shadow: #d7e9f6 0 1px 0px 0 inset, #d7e9f6 0 -1px 0px 0 inset, #d7e9f6 -1px 0 0px 0 inset, #d7e9f6 1px 0 0px 0 inset;
     -moz-box-shadow: #d7e9f6 0 1px 0px 0 inset, #d7e9f6 0 -1px 0px 0 inset, #d7e9f6 -1px 0 0px 0 inset, #d7e9f6 1px 0 0px 0 inset;
     box-shadow: #d7e9f6 0 1px 0px 0 inset, #d7e9f6 0 -1px 0px 0 inset, #d7e9f6 -1px 0 0px 0 inset, #d7e9f6 1px 0 0px 0 inset;
@@ -339,13 +339,13 @@ div.x-border-layout-ct {
 
 .x-btn.x-btn-disabled.x-btn-default-small {
     background-image: none;
-    background-color: ${actionBean.branding.panelHeaderColor};
-    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, ${actionBean.branding.panelHeaderColor}), color-stop(51%, ${actionBean.branding.panelHeaderColor}), color-stop(0%, #676666));
-    background-image: -webkit-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -moz-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -o-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -ms-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
+    background-color: #555555;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, #555555), color-stop(51%, #555555), color-stop(0%, #676666));
+    background-image: -webkit-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -moz-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -o-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -ms-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
 }
 
 .x-btn-over .x-btn-default-small-mc {
@@ -365,7 +365,7 @@ div.x-border-layout-ct {
 }
 
 .x-btn.x-btn-disabled .x-btn-default-small-mc {
-    background-color: ${actionBean.branding.panelHeaderColor};
+    background-color: #555555;
     background-image: url(images/btn/btn-default-small-disabled-fbg.gif);
 }
 
@@ -379,30 +379,30 @@ div.x-border-layout-ct {
     border-width: 1px;
     border-style: solid;
     background-image: none;
-    background-color: ${actionBean.branding.panelHeaderColor};
-    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, ${actionBean.branding.panelHeaderColor}), color-stop(51%, ${actionBean.branding.panelHeaderColor}), color-stop(0%, #676666));
-    background-image: -webkit-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -moz-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -o-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -ms-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
+    background-color: #555555;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, #555555), color-stop(51%, #555555), color-stop(0%, #676666));
+    background-image: -webkit-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -moz-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -o-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -ms-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
 }
 
 .x-btn-default-medium-mc {
     background-image: url(images/btn/btn-default-medium-fbg.gif);
     background-position: 0 top;
-    background-color: ${actionBean.branding.panelHeaderColor};
+    background-color: #555555;
 }
 
 .x-btn-focus.x-btn-default-medium {
     background-image: none;
-    background-color: ${actionBean.branding.panelHeaderColor};
-    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, ${actionBean.branding.panelHeaderColor}), color-stop(51%, ${actionBean.branding.panelHeaderColor}), color-stop(0%, #676666));
-    background-image: -webkit-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -moz-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -o-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -ms-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
+    background-color: #555555;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, #555555), color-stop(51%, #555555), color-stop(0%, #676666));
+    background-image: -webkit-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -moz-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -o-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -ms-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
     -webkit-box-shadow: #d7e9f6 0 1px 0px 0 inset, #d7e9f6 0 -1px 0px 0 inset, #d7e9f6 -1px 0 0px 0 inset, #d7e9f6 1px 0 0px 0 inset;
     -moz-box-shadow: #d7e9f6 0 1px 0px 0 inset, #d7e9f6 0 -1px 0px 0 inset, #d7e9f6 -1px 0 0px 0 inset, #d7e9f6 1px 0 0px 0 inset;
     box-shadow: #d7e9f6 0 1px 0px 0 inset, #d7e9f6 0 -1px 0px 0 inset, #d7e9f6 -1px 0 0px 0 inset, #d7e9f6 1px 0 0px 0 inset;
@@ -435,17 +435,17 @@ div.x-border-layout-ct {
 
 .x-btn.x-btn-disabled.x-btn-default-medium {
     background-image: none;
-    background-color: ${actionBean.branding.panelHeaderColor};
-    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, ${actionBean.branding.panelHeaderColor}), color-stop(51%, ${actionBean.branding.panelHeaderColor}), color-stop(0%, #676666));
-    background-image: -webkit-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -moz-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -o-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -ms-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
+    background-color: #555555;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, #555555), color-stop(51%, #555555), color-stop(0%, #676666));
+    background-image: -webkit-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -moz-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -o-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -ms-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
 }
 
 .x-btn-focus .x-btn-default-medium-mc {
-    background-color: ${actionBean.branding.panelHeaderColor};
+    background-color: #555555;
     background-image: url(images/btn/btn-default-medium-focus-fbg.gif);
 }
 
@@ -467,7 +467,7 @@ div.x-border-layout-ct {
 }
 
 .x-btn.x-btn-disabled .x-btn-default-medium-mc {
-    background-color: ${actionBean.branding.panelHeaderColor};
+    background-color: #555555;
     background-image: url(images/btn/btn-default-medium-disabled-fbg.gif);
 }
 
@@ -481,30 +481,30 @@ div.x-border-layout-ct {
     border-width: 1px;
     border-style: solid;
     background-image: none;
-    background-color: ${actionBean.branding.panelHeaderColor};
-    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, ${actionBean.branding.panelHeaderColor}), color-stop(51%, ${actionBean.branding.panelHeaderColor}), color-stop(0%, #676666));
-    background-image: -webkit-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -moz-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -o-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -ms-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
+    background-color: #555555;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, #555555), color-stop(51%, #555555), color-stop(0%, #676666));
+    background-image: -webkit-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -moz-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -o-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -ms-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
 }
 
 .x-btn-default-large-mc {
     background-image: url(images/btn/btn-default-large-fbg.gif);
     background-position: 0 top;
-    background-color: ${actionBean.branding.panelHeaderColor};
+    background-color: #555555;
 }
 
 .x-btn-focus.x-btn-default-large {
     background-image: none;
-    background-color: ${actionBean.branding.panelHeaderColor};
-    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, ${actionBean.branding.panelHeaderColor}), color-stop(51%, ${actionBean.branding.panelHeaderColor}), color-stop(0%, #676666));
-    background-image: -webkit-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -moz-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -o-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -ms-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
+    background-color: #555555;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, #555555), color-stop(51%, #555555), color-stop(0%, #676666));
+    background-image: -webkit-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -moz-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -o-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -ms-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
     -webkit-box-shadow: #d7e9f6 0 1px 0px 0 inset, #d7e9f6 0 -1px 0px 0 inset, #d7e9f6 -1px 0 0px 0 inset, #d7e9f6 1px 0 0px 0 inset;
     -moz-box-shadow: #d7e9f6 0 1px 0px 0 inset, #d7e9f6 0 -1px 0px 0 inset, #d7e9f6 -1px 0 0px 0 inset, #d7e9f6 1px 0 0px 0 inset;
     box-shadow: #d7e9f6 0 1px 0px 0 inset, #d7e9f6 0 -1px 0px 0 inset, #d7e9f6 -1px 0 0px 0 inset, #d7e9f6 1px 0 0px 0 inset;
@@ -538,13 +538,13 @@ div.x-border-layout-ct {
 
 .x-btn.x-btn-disabled.x-btn-default-large {
     background-image: none;
-    background-color: ${actionBean.branding.panelHeaderColor};
-    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, ${actionBean.branding.panelHeaderColor}), color-stop(51%, ${actionBean.branding.panelHeaderColor}), color-stop(0%, #676666));
-    background-image: -webkit-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -moz-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -o-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: -ms-linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
-    background-image: linear-gradient(top, #656464, ${actionBean.branding.panelHeaderColor} 50%, ${actionBean.branding.panelHeaderColor} 51%, #676666);
+    background-color: #555555;
+    background-image: -webkit-gradient(linear, top, bottom, color-stop(0%, #656464), color-stop(50%, #555555), color-stop(51%, #555555), color-stop(0%, #676666));
+    background-image: -webkit-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -moz-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -o-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: -ms-linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
+    background-image: linear-gradient(top, #656464, #555555 50%, #555555 51%, #676666);
 }
 
 .x-btn-over .x-btn-default-large-mc {
@@ -570,7 +570,7 @@ div.x-border-layout-ct {
 }
 
 .x-btn.x-btn-disabled .x-btn-default-large-mc {
-    background-color: ${actionBean.branding.panelHeaderColor};
+    background-color: #555555;
     background-image: url(images/btn/btn-default-large-disabled-fbg.gif);
 }
 
@@ -615,12 +615,12 @@ div.x-border-layout-ct {
 .x-tab-bar-strip-default {
     border-style: solid;
     border-color:  ${actionBean.branding.primaryColor};
-    background-color: rgba(68	,30,90,1);
+    background-color: ${actionBean.branding.primaryColor};
 }
 
 .x-tab.x-tab-active.x-tab-default {
     border-color: ${actionBean.branding.primaryColor};
-    background-color: rgba(68	,30,90,1) !important; 	
+    background-color: ${actionBean.branding.primaryColor} !important; 	
     	
 }
 .x-box-scroller-tab-bar-default {
@@ -628,11 +628,11 @@ div.x-border-layout-ct {
 }
 
 .x-tab.x-tab-active.x-tab-default .x-tab-inner-default {
-    color: #ffffff;
+    color: ${actionBean.branding.primaryTextColor};
 }
 
 .x-tab.x-tab-active.x-tab-default .x-tab-icon-el {
-    color: #ffffff;
+    color: ${actionBean.branding.primaryTextColor};
 }
 
 .x-tab-default-top, .x-tab-default-left {
@@ -730,7 +730,23 @@ div.x-border-layout-ct {
 }
 
 .x-panel-header-title-default {
-    color: #ffffff;
+    color: ${actionBean.branding.panelHeaderTextColor};
+    font-size: 13px;
+    font-weight: bold;
+    font-family: helvetica, arial, verdana, sans-serif;
+    line-height: 16px;
+}
+
+.x-panel-header-title-default-framed {
+    color: ${actionBean.branding.primaryTextColor};
+    font-size: 13px;
+    font-weight: bold;
+    font-family: helvetica, arial, verdana, sans-serif;
+    line-height: 16px;
+}
+
+.x-window-header-title-default {
+    color: ${actionBean.branding.primaryTextColor};
     font-size: 13px;
     font-weight: bold;
     font-family: helvetica, arial, verdana, sans-serif;

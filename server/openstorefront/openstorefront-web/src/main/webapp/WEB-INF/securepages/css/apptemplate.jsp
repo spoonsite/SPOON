@@ -44,7 +44,7 @@ limitations under the License.
 }
 
 .link:visited {
-    color: #3C3B3B;
+    color: ${actionBean.branding.linkVisitedColor};
     text-decoration: none;	
 }
 
@@ -106,7 +106,7 @@ limitations under the License.
 	text-align: center; 
 	font-size: 35px; 
 	font-family: Calibri; 
-	color: white
+	color: ${actionBean.branding.primaryTextColor};
 }
 
 .nav-back-color {
@@ -135,7 +135,7 @@ limitations under the License.
 	font-size: 19px;
 	font-style:  italic;
 	font-family: Georgia, serif;
-	color: #FFFFFF !important;
+	color: ${actionBean.branding.primaryTextColor} !important;
 }
 
 .home-search-panel {
@@ -171,8 +171,12 @@ limitations under the License.
 	background-color: ${actionBean.branding.primaryColor};	
 }
 
+.home-footer-contents {	
+	color: ${actionBean.branding.primaryTextColor};
+}
+
 .home-footer-version {
-	color: white;
+	color: ${actionBean.branding.primaryTextColor};
 }
 
 .searchresults-morefilter {

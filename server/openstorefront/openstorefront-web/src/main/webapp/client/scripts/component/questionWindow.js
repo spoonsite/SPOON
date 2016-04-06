@@ -29,15 +29,25 @@ Ext.define('OSF.component.QuestionWindow', {
 	dockedItems: [
 		{
 			xtype: 'panel',
-			html: '<h3 class="alert-warning" style="text-align: center;">' + 
-				'<i class="fa fa-warning"></i> Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.'+
-				'</h3>'
+			dock: 'top',
+			itemId: 'userInputWarning',
+			html: ''
 		}
 	],
 	initComponent: function () {
 		this.callParent();
 
 		var questionWindow = this;
+		
+		//Query Branding
+		CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+			var branding = Ext.decode(response.responseText);
+			if (branding.userInputWarning) {
+				questionWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
+				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
+				'</h3>');
+			}
+		});		
 		
 		questionWindow.form = Ext.create('Ext.form.Panel', {	
 			bodyStyle: 'padding-left: 10px;padding-right: 10px;',
@@ -178,16 +188,25 @@ Ext.define('OSF.component.ResponseWindow', {
 	dockedItems: [
 		{
 			xtype: 'panel',
-			html: '<h3 class="alert-warning" style="text-align: center;">' + 
-				'<i class="fa fa-warning"></i> Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.'+
-				'</h3>'
+			dock: 'top',
+			itemId: 'userInputWarning',
+			html: ''
 		}
 	],
 	initComponent: function () {
 		this.callParent();
 
 		var responseWindow = this;
-		
+				
+		//Query Branding
+		CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+			var branding = Ext.decode(response.responseText);
+			if (branding.userInputWarning) {
+				responseWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
+				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
+				'</h3>');
+			}
+		});			
 		
 		responseWindow.form = Ext.create('Ext.form.Panel', {			
 			bodyStyle: 'padding-left: 10px;padding-right: 10px;',

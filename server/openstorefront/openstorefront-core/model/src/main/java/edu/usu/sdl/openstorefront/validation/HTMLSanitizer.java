@@ -34,9 +34,9 @@ public class HTMLSanitizer
 		if (fieldData == null) {
 			return fieldData;
 		} else {
-			String safe = Jsoup.clean(fieldData.toString(), new Whitelist().preserveRelativeLinks(true)
+			String safe = Jsoup.clean(fieldData.toString(), new Whitelist().preserveRelativeLinks(true)					
 					.addTags(
-							"a", "b", "blockquote", "br", "caption", "cite", "code", "col",
+							"a", "base",  "b", "blockquote", "br", "caption", "cite", "code", "col",
 							"colgroup", "dd", "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6",
 							"i", "img", "li", "ol", "p", "pre", "q", "small", "strike", "strong",
 							"sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "u",
@@ -56,7 +56,7 @@ public class HTMLSanitizer
 							"th", "abbr", "axis", "colspan", "rowspan", "scope",
 							"width")
 					.addAttributes("ul", "type")
-					.addProtocols("a", "href", "ftp", "http", "https", "mailto")
+					//.addProtocols("a", "href", "ftp", "http", "https", "mailto")
 					.addProtocols("blockquote", "cite", "http", "https")
 					.addProtocols("cite", "cite", "http", "https")
 					.addProtocols("q", "cite", "http", "https")

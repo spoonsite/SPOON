@@ -44,7 +44,7 @@ limitations under the License.
 								{
 									xtype: 'image',									
 									height: 53,									
-									src: 'images/di2elogo-sm.png'
+									src: '${branding.secondaryLogoUrl}'
 								},
 								{
 									xtype: 'tbfill'

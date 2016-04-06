@@ -142,7 +142,7 @@ public class BrandingResource
 	}
 
 	@PUT
-	@APIDescription("Set Branding as active")
+	@APIDescription("Reset to default branding")
 	@RequireAdmin
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/current/default")
@@ -166,6 +166,8 @@ public class BrandingResource
 		branding = branding.find();
 		if (branding != null) {
 			service.getBrandingService().setBrandingAsCurrent(brandingId);
+			branding = new Branding();
+			branding.setBrandingId(brandingId);
 			branding = branding.find();
 		}
 		return sendSingleEntityResponse(branding);

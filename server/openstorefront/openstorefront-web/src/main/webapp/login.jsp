@@ -8,8 +8,13 @@
 <%@page import="edu.usu.sdl.openstorefront.service.ServiceProxy"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+<%
+	Branding branding = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
+	request.setAttribute("branding", branding);
+%>
 <html>
 	<head>
+		
 		<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
 		<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
 		
@@ -38,7 +43,7 @@
 				border-image-repeat: initial;
 				border-radius: 10px;
 				padding: 10px;
-				background: rgb(68, 30, 90);
+				background: ${branding.primaryColor};
 				color: white;
 			}			
 			.auth-forms {
@@ -155,9 +160,7 @@
 		</style>
 	</head>
 	<body>
-	<%
-		Branding branding = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
-	%>
+
 		
 	<div class="auth-forms">
 	  <div class="auth-content">
