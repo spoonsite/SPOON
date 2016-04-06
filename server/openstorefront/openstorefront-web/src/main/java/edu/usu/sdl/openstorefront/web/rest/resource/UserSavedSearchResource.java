@@ -105,11 +105,11 @@ public class UserSavedSearchResource
 
 		List<UserSavedSearch> userSavedSearches = service.getPersistenceService().queryByExample(UserSavedSearch.class, queryByExample);
 
-		UserSavedSearchWrapper UserSavedSearchWrapper = new UserSavedSearchWrapper();
-		UserSavedSearchWrapper.getData().addAll(userSavedSearches);
-		UserSavedSearchWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
+		UserSavedSearchWrapper userSavedSearchWrapper = new UserSavedSearchWrapper();
+		userSavedSearchWrapper.getData().addAll(userSavedSearches);
+		userSavedSearchWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
-		return sendSingleEntityResponse(UserSavedSearchWrapper);				
+		return sendSingleEntityResponse(userSavedSearchWrapper);				
 	}	
 		
 	@GET
@@ -126,7 +126,7 @@ public class UserSavedSearchResource
 	}	
 	
 	@GET
-	@APIDescription("Get saved searches for current User")	
+	@APIDescription("Get saved searches for a User")	
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearch.class)
@@ -142,7 +142,7 @@ public class UserSavedSearchResource
 	}	
 		
 	@GET
-	@APIDescription("Get saved searches for current User")	
+	@APIDescription("Get saved search by id (must be admin or owner)")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearch.class)
 	@Path("/{searchId}")
@@ -175,9 +175,8 @@ public class UserSavedSearchResource
 		return handleSave(search, true);
 	}
 	
-	//update search *owner or admin
 	@PUT
-	@APIDescription("Saves a search")	
+	@APIDescription("Updates a search")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearch.class)

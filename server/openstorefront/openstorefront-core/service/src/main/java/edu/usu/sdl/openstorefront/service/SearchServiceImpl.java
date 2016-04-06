@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.ResultTypeStat;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
@@ -700,6 +701,47 @@ public class SearchServiceImpl
 		}
 				
 		return suggestions;
+	}
+
+	@Override
+	public SystemSearch saveSearch(SystemSearch systemSearch)
+	{
+		SystemSearch existing = persistenceService.findById(SystemSearch.class, systemSearch.getSearchId());
+		if (existing != null) {
+			existing.updateFields(systemSearch);
+			systemSearch = persistenceService.persist(existing);
+		} else {
+			systemSearch.setSearchId(persistenceService.generateId());
+			systemSearch.populateBaseCreateFields();
+			systemSearch = persistenceService.persist(systemSearch);
+		}
+		return systemSearch;
+	}
+
+	@Override
+	public void inactivateSearch(String searchId)
+	{		
+		toggleStatusOnSearch(searchId, SystemSearch.INACTIVE_STATUS);		
+	}
+	
+	private void toggleStatusOnSearch(String searchId, String newStatus) 
+	{
+		Objects.requireNonNull(searchId);
+		
+		SystemSearch existing = persistenceService.findById(SystemSearch.class, searchId);
+		if (existing != null) {
+			existing.setActiveStatus(newStatus);
+			existing.populateBaseUpdateFields();
+			persistenceService.persist(existing);
+		} else {
+			throw new OpenStorefrontRuntimeException("Search not found", "Check Id: "  + searchId);
+		}		
+	}
+
+	@Override
+	public void activateSearch(String searchId)
+	{
+		toggleStatusOnSearch(searchId, SystemSearch.ACTIVE_STATUS);
 	}
 
 }

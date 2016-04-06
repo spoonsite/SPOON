@@ -264,6 +264,7 @@ public interface UserService
 	 * 
 	 * @param userSearchId 
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteUserSearch(String userSearchId);
 	
 //  This will be fleshed out more later
