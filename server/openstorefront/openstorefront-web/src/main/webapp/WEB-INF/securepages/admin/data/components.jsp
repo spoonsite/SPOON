@@ -2777,7 +2777,7 @@
 									width: '100%',
 									height: 300,
 									maxLength: 65536,
-									tinyMCEConfig: CoreUtil.tinymceConfig()
+									tinyMCEConfig: CoreUtil.tinymceSearchEntryConfig()
 								},								
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'organization',									
