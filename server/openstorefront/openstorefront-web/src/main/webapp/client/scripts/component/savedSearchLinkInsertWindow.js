@@ -80,7 +80,12 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 					handler: function(button) {
 						var window = button.up('window');
 						var editor = window.editor;
-						editor.execCommand('mceInsertContent', false, window.getLink());
+						var record = Ext.getCmp('savedSearchGrid').getSelection()[0];
+						var link = '<a href="#">';
+						link += record.getData().searchName;
+						link +=	'</a>';
+						editor.execCommand('mceInsertContent', false, link);
+						window.close();
 					}
 				}
 			]
@@ -92,10 +97,6 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 
 		var savedSearchLinkInsertWindow = this;
 
-
-		savedSearchLinkInsertWindow.getLink = function getLink() {
-			return "Link text goes here.";
-		};
 	}
 		
 
