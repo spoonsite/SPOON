@@ -470,7 +470,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					width: '100%',
 					height: 300,
 					maxLength: 65536,
-					emptyText: 'Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.<br><br>Include an easy to read description of the product, focusing on what it is and what it does.',
+					emptyText: (submissionPanel.userInputWarning ? submissionPanel.userInputWarning : '' ) + '<br><br>Include an easy to read description of the product, focusing on what it is and what it does.',
 					tinyMCEConfig: CoreUtil.tinymceConfig()
 				},
 				{
@@ -2410,8 +2410,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 			dockedItems: [
 				{
 					xtype: 'panel',
+					itemId: 'userInputWarning',
 					dock: 'top',
-					html: '<div class="alert-warning" style="text-align: center"><i class="fa fa-warning"></i> Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.</div>'
+					html: ''
 				},
 				{
 					xtype: 'toolbar',
@@ -2514,6 +2515,17 @@ Ext.define('OSF.component.SubmissionPanel', {
 				}
 			]
 		});
+		
+		//Query Branding
+		CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+			var branding = Ext.decode(response.responseText);
+			if (branding.userInputWarning) {
+				submissionPanel.mainPanel.getComponent('userInputWarning').update('<div class="alert-warning" style="text-align: center">' + 
+				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
+				'</div>');						
+			}
+		});
+		
 		
 		submissionPanel.currentStep = 1;
 		submissionPanel.changeSteps = function(forceProceed) {						

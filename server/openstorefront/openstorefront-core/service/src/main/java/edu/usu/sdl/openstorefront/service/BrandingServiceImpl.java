@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.api.BrandingService;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.FeedbackHandleType;
 import edu.usu.sdl.openstorefront.core.model.BrandingModel;
@@ -139,6 +140,18 @@ public class BrandingServiceImpl
 				);
 			}
 			
+			if (branding.getUserInputWarning() == null) {
+				branding.setUserInputWarning("Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.");				
+			}
+			
+			if (branding.getArchitectureSearchLabel() == null) {
+				branding.setArchitectureSearchLabel("SvcV4");				
+			}
+			
+			if (branding.getArchitectureSearchType() == null) {
+				branding.setArchitectureSearchType(AttributeType.DI2E_SVCV4);				
+			}
+			
 			if (branding.getFeedbackHandler() == null) {
 				branding.setFeedbackHandler(FeedbackHandleType.JIRA);				
 			}
@@ -147,6 +160,11 @@ public class BrandingServiceImpl
 			if (branding.getPrimaryColor() == null) {
 				branding.setPrimaryColor("rgba(68,30,90,1)");
 			}
+			
+			//Colors
+			if (branding.getPrimaryTextColor() == null) {
+				branding.setPrimaryTextColor("#FFFFFF");
+			}			
 
 			if (branding.getAccentColor() == null) {
 				branding.setAccentColor("rgba(191,191,191,1)");
@@ -155,6 +173,10 @@ public class BrandingServiceImpl
 			if (branding.getLinkColor() == null) {
 				branding.setLinkColor("#3C3B3B");
 			}
+			
+			if (branding.getLinkVisitedColor() == null) {
+				branding.setLinkVisitedColor("#3C3B3B");
+			}			
 
 			if (branding.getLinkhoverColor() == null) {
 				branding.setLinkhoverColor("#2f2f2f");
@@ -167,6 +189,10 @@ public class BrandingServiceImpl
 			if (branding.getPanelHeaderColor() == null) {
 				branding.setPanelHeaderColor("#555555");
 			}
+
+			if (branding.getPanelHeaderTextColor() == null) {
+				branding.setPanelHeaderTextColor("#FFFFFF");
+			}			
 			
 			element = new Element(CURRENT_BRANDING, branding);
 			OSFCacheManager.getApplicationCache().put(element);

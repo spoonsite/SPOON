@@ -508,8 +508,7 @@
                                 }
                             ]
                         }
-                    ],
-                    listeners: {
+                    ],                    listeners: {
                         itemdblclick: function (grid, record, item, index, e, opts) {
                             console.log("Double Clicked Row:"+index);
                         },
@@ -517,6 +516,7 @@
                           checkBrandingNavButtons();
                         }
                     }
+
                 });
 
                 Ext.create('Ext.container.Viewport', {

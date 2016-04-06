@@ -35,7 +35,7 @@ limitations under the License.
 		Branding brandingView = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
 		
 		request.setAttribute("appTitle", brandingView.getApplicationName());		
-
+		request.setAttribute("branding", brandingView);
 		request.setAttribute("user", SecurityUtil.getCurrentUserName());
 		request.setAttribute("usercontext", SecurityUtil.getUserContext());
 		request.setAttribute("admin", SecurityUtil.isAdminUser());

@@ -14,13 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --%>
 
-
 <%-- 
     Document   : adminlayout
     Created on : Oct 28, 2015, 4:55:30 PM
     Author     : dshurtleff
 --%>
 
+<%@page import="edu.usu.sdl.openstorefront.core.entity.Branding"%>
+<%@page import="edu.usu.sdl.openstorefront.service.ServiceProxy"%>
 <%@page import="edu.usu.sdl.openstorefront.security.SecurityUtil"%>
 <%@page import="edu.usu.sdl.openstorefront.common.manager.PropertiesManager"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -36,6 +37,9 @@ limitations under the License.
 	
 	
 	<%
+		Branding branding = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
+		request.setAttribute("branding", branding);
+	
 		String appVersion = PropertiesManager.getApplicationVersion();
 		request.setAttribute("appVersion", appVersion);
 		request.setAttribute("user", SecurityUtil.getCurrentUserName());

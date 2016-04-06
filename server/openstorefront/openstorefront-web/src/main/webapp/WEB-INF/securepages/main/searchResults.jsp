@@ -1320,12 +1320,11 @@ limitations under the License.
 							},
 							items: [
 								{
-									xtype: 'image',				
-									width: 200,
+									xtype: 'image',
 									height: 53,
 									cls: 'linkItem',
 									title: 'Go back to Home Page',
-									src: 'images/di2elogo-sm.png',
+									src: '${branding.secondaryLogoUrl}',
 									alt: 'logo',
 									listeners: {
 										el: {

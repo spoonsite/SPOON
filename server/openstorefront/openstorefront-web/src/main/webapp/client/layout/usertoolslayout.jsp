@@ -19,6 +19,8 @@ limitations under the License.
     Created on : Dec 18, 2015, 4:55:30 PM
     Author     : dshurtleff
 --%>
+<%@page import="edu.usu.sdl.openstorefront.core.entity.Branding"%>
+<%@page import="edu.usu.sdl.openstorefront.service.ServiceProxy"%>
 <%@page import="edu.usu.sdl.openstorefront.security.SecurityUtil"%>
 <%@page import="edu.usu.sdl.openstorefront.common.manager.PropertiesManager"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -33,6 +35,9 @@ limitations under the License.
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 		
 	<%
+		Branding branding = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
+		request.setAttribute("branding", branding);
+		
 		String appVersion = PropertiesManager.getApplicationVersion();
 		request.setAttribute("appVersion", appVersion);
 		request.setAttribute("user", SecurityUtil.getCurrentUserName());

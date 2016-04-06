@@ -250,7 +250,7 @@ limitations under the License.
 									height: 53,
 									cls: 'linkItem',
 									title: 'Go back to Home Page',
-									src: 'images/di2elogo-sm.png',
+									src: '${branding.secondaryLogoUrl}',
 									listeners: {
 										el: {
 											click: function() {

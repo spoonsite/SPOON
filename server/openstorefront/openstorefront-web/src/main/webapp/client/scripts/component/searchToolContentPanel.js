@@ -108,10 +108,10 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 		//
 		// This is the results Grid panel in the bottom right of the layout.
 		//
-		searchContentPanel.resultsGridPanel = Ext.create('Ext.grid.Panel', {	
+		searchContentPanel.resultsGridPanel = Ext.create('Ext.grid.Panel', {
 			region: 'center',
 			title: 'Search Results',
-			split: true,					
+			split: true,
 			store: gStore,
 			columnLines: true,
 			header: {
@@ -124,21 +124,21 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 							if (!searchContentPanel.resultsGridPanel.hidden)
 							{
 								//perform search
-								var win = this.up('window');								
+								var win = this.up('window');
 								var searchRequest = {
 									type: 'Advance',
 									query: win.searchObj
 								}
 								CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-								window.location.href = 'Router.action?page=main/searchResults.jsp';	
-								
+								window.location.href = 'Router.action?page=main/searchResults.jsp';
+
 								//close window
 								win.close();
 
 							}
 						}
 					}]
-			},			
+			},
 			columns: [
 				{text: 'Name',
 					cellWrap: true,
@@ -159,8 +159,7 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 						var str = value.substring(0, 500);
 						if (str === value) {
 							return str;
-						}
-						else {
+						} else {
 							str = str.substr(0, Math.min(str.length, str.lastIndexOf(' ')));
 							return str += ' ... <br/>';
 						}
@@ -174,7 +173,7 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 					sortable: false,
 					menuDisabled: true,
 					items: [{
-							iconCls: 'fa fa-link action-icon',														
+							iconCls: 'fa fa-link action-icon',
 							tooltip: 'Link to page',
 							handler: function (grid, rowIndex, colIndex) {
 								var theStore = grid.getStore();
@@ -187,13 +186,13 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 							}
 						}]
 				}
-			],			
+			],
 			dockedItems: [{
 					xtype: 'pagingtoolbar',
 					store: gStore,
 					dock: 'bottom',
 					displayInfo: true
-			}]
+				}]
 
 		});
 
@@ -212,84 +211,84 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 
 
 		searchContentPanel.add(centerPanel);
-		searchContentPanel.add(searchContentPanel.navPanel);		 
-		searchContentPanel.updateLayout(true, true);	
+		searchContentPanel.add(searchContentPanel.navPanel);
+		searchContentPanel.updateLayout(true, true);
 
 	}
 
 });
 
 Ext.define('OSF.component.SearchToolWindow', {
-    extend: 'Ext.window.Window',
-    alias: 'osf.widget.SearchToolWindow',
-    title: 'Search Tools',
-    iconCls: 'fa fa-lg fa-search-plus',
-    width: '70%',
-    height: '70%',
+	extend: 'Ext.window.Window',
+	alias: 'osf.widget.SearchToolWindow',
+	title: 'Search Tools',
+	iconCls: 'fa fa-lg fa-search-plus',
+	width: '70%',
+	height: '70%',
 	minHeight: 600,
 	minWidth: 800,
-    y: 40,
-    modal: true,
-    maximizable: true,
-    layout: 'fit',
-    
-    initComponent: function () {
-        this.callParent();
+	y: 40,
+	modal: true,
+	maximizable: true,
+	layout: 'fit',
+	initComponent: function () {
+		this.callParent();
 
-        var searchToolWin = this;
+		var searchToolWin = this;
 
-        //
-        //  topicSearchPanel Tab
-        //  This is the panel tab for the topic search tool
-        //
-        var topicSearchPanel = Ext.create('Ext.panel.Panel', {
-            title: 'Topic',
-            iconCls: 'fa fa-book',
-            layout: 'fit',
-            items: [
-                Ext.create('OSF.component.SearchToolContentPanel', {
-                    searchToolType: "topic",
-                    itemId: 'topicPanel'
-                })
-            ]
-        });
+		//
+		//  topicSearchPanel Tab
+		//  This is the panel tab for the topic search tool
+		//
+		var topicSearchPanel = Ext.create('Ext.panel.Panel', {
+			title: 'Topic',
+			iconCls: 'fa fa-book',
+			layout: 'fit',
+			items: [
+				Ext.create('OSF.component.SearchToolContentPanel', {
+					searchToolType: "topic",
+					itemId: 'topicPanel'
+				})
+			]
+		});
 
-        //
-        //  categorySearchPanel Tab
-        //  This is the panel tab for the category search tool
-        //
-        var categorySearchPanel = Ext.create('Ext.panel.Panel', {
-            title: 'Category',
-            iconCls: 'fa fa-list-ul',
-            layout: 'fit',
-            items: [
-                Ext.create('OSF.component.SearchToolContentPanel', {
-                    searchToolType: "category",
-                    itemId: 'contentPanel'
-                })
-            ]
-        });
+		//
+		//  categorySearchPanel Tab
+		//  This is the panel tab for the category search tool
+		//
+		var categorySearchPanel = Ext.create('Ext.panel.Panel', {
+			title: 'Category',
+			iconCls: 'fa fa-list-ul',
+			layout: 'fit',
+			items: [
+				Ext.create('OSF.component.SearchToolContentPanel', {
+					searchToolType: "category",
+					itemId: 'contentPanel'
+				})
+			]
+		});
 
-        //
-        //  archSearchPanel Tab
-        //  This is the panel tab for the architecture search tool
-        //
-        var archSearchPanel = Ext.create('Ext.panel.Panel', {
-            title: 'Architecture',
-            iconCls: 'fa fa-sitemap',
-            layout: 'fit',
-            items: [
-                Ext.create('OSF.component.SearchToolContentPanel', {
-                    searchToolType: "architecture",
-                    itemId: 'archPanel'
-                })
-            ]
-        });
+		//
+		//  archSearchPanel Tab
+		//  This is the panel tab for the architecture search tool
+		//
+		var archSearchPanel = Ext.create('Ext.panel.Panel', {
+			title: 'Architecture',
+			iconCls: 'fa fa-sitemap',
+			layout: 'fit',
+			items: [
+				Ext.create('OSF.component.SearchToolContentPanel', {
+					searchToolType: "architecture",
+					architectureType: searchToolWin.branding ?  searchToolWin.branding.architectureSearchType : null,
+					itemId: 'archPanel'
+				})
+			]
+		});
 
 		var advanceSearch = Ext.create('OSF.component.AdvanceSearchPanel', {
 			title: 'Advanced',
 			iconCls: 'fa fa-search-plus',
-			saveHook: function(response, opts) {
+			saveHook: function (response, opts) {
 				savedSearches.getStore().reload();
 			},
 			dockedItems: [
@@ -301,20 +300,20 @@ Ext.define('OSF.component.SearchToolWindow', {
 							text: 'Search',
 							scale: 'medium',
 							iconCls: 'fa fa-2x fa-search',
-							handler: function(){
+							handler: function () {
 								var searchObj = this.up('panel').getSearch();
-								
-								if (searchObj) {							
-									var win = this.up('window');								
+
+								if (searchObj) {
+									var win = this.up('window');
 									var searchRequest = {
 										type: 'Advance',
 										query: searchObj
 									}
 									CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-									window.location.href = 'Router.action?page=main/searchResults.jsp';	
+									window.location.href = 'Router.action?page=main/searchResults.jsp';
 
 									//close window
-									win.close();	
+									win.close();
 								}
 							}
 						},
@@ -323,11 +322,11 @@ Ext.define('OSF.component.SearchToolWindow', {
 						},
 						{
 							text: 'Preview Results',
-							scale: 'medium',							
+							scale: 'medium',
 							iconCls: 'fa fa-2x fa-eye',
-							handler: function(){
+							handler: function () {
 								this.up('panel').previewResults();
-							}							
+							}
 						},
 						{
 							xtype: 'tbseparator'
@@ -336,18 +335,18 @@ Ext.define('OSF.component.SearchToolWindow', {
 							text: 'Save',
 							scale: 'medium',
 							iconCls: 'fa fa-2x fa-save',
-							handler: function(){
+							handler: function () {
 								this.up('panel').saveSearch();
-							}							
+							}
 						}
 					]
 				}
 			]
 		});
-		
+
 		var savedSearches = Ext.create('Ext.grid.Panel', {
 			title: 'Saved Searches',
-			iconCls: 'fa fa-save',					
+			iconCls: 'fa fa-save',
 			itemId: 'savedGrid',
 			columnLines: true,
 			store: {
@@ -358,16 +357,16 @@ Ext.define('OSF.component.SearchToolWindow', {
 				}
 			},
 			columns: [
-				{ text: 'Select Search', dataIndex: 'searchName', flex: 1, minWidth: 200,
-					renderer: function(value, meta) {
+				{text: 'Select Search', dataIndex: 'searchName', flex: 1, minWidth: 200,
+					renderer: function (value, meta) {
 						meta.tdStyle = 'font-size: 16px';
 						return value;
 					}
 				}
 			],
 			listeners: {
-				selectionchange: function(selModel, selected, opts) {
-					var tools = savedSearches.getComponent('btools');							
+				selectionchange: function (selModel, selected, opts) {
+					var tools = savedSearches.getComponent('btools');
 					if (selModel.getCount() >= 1) {
 						tools.getComponent('search').setDisabled(false);
 					} else {
@@ -402,480 +401,491 @@ Ext.define('OSF.component.SearchToolWindow', {
 							scale: 'medium',
 							disabled: true,
 							iconCls: 'fa fa-2x fa-search',
-							handler: function(){
+							handler: function () {
 
 								var grid = this.up('grid');
 								var record = grid.getSelectionModel().getSelection()[0];
 								var searchObj = Ext.decode(record.get('searchRequest'));
 
-								if (searchObj) {							
-									var win = this.up('window');								
+								if (searchObj) {
+									var win = this.up('window');
 									var searchRequest = {
 										type: 'Advance',
 										query: searchObj
 									}
 									CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-									window.location.href = 'Router.action?page=main/searchResults.jsp';	
+									window.location.href = 'Router.action?page=main/searchResults.jsp';
 
 									//close window
-									win.close();	
+									win.close();
 								}
 							}
 						}
 					]
 				}
-			]			
+			]
 		});
-		
-        //
-        //  tabPanel
-        //  This is the panel to hold all the other tab panels
-        //
-        var tabPanel = Ext.create('Ext.tab.Panel', {
-            items: [
-                topicSearchPanel,
-                categorySearchPanel,
-                archSearchPanel,
-		advanceSearch,
-		savedSearches
-            ]
 
-        });
+		//
+		//  tabPanel
+		//  This is the panel to hold all the other tab panels
+		//
 
-        //***************************
-        //  Utility Methods 
-        //***************************
-        var sortList = function (theArray, fieldname, direction) {
+		var searchToolPanels = [];
+		searchToolPanels.push(topicSearchPanel);
+		searchToolPanels.push(categorySearchPanel);
 
-            if (direction === 'DESC') {
-                var tData = theArray.sort(function (a, b) {
-                    if (a[fieldname] > b[fieldname])
-                        return -1;
-                    if (a[fieldname] < b[fieldname])
-                        return 1;
-                    return 0;
+		if (searchToolWin.branding) {
+			if (!searchToolWin.branding.hideArchitectureSearchFlg) {
+				searchToolPanels.push(archSearchPanel);
+			}
+		} else {
+			searchToolPanels.push(archSearchPanel);
+		}
 
-                });
-            }
-            else if (direction === 'ASC') {
-                var tData = theArray.sort(function (a, b) {
-                    if (a[fieldname] < b[fieldname])
-                        return -1;
-                    if (a[fieldname] > b[fieldname])
-                        return 1;
-                    return 0;
+		searchToolPanels.push(advanceSearch);
+		searchToolPanels.push(savedSearches);
 
-                });
-            }
+		var tabPanel = Ext.create('Ext.tab.Panel', {
+			items: searchToolPanels
+		});
 
+		//***************************
+		//  Utility Methods 
+		//***************************
+		var sortList = function (theArray, fieldname, direction) {
 
-            return tData;
-        };
+			if (direction === 'DESC') {
+				var tData = theArray.sort(function (a, b) {
+					if (a[fieldname] > b[fieldname])
+						return -1;
+					if (a[fieldname] < b[fieldname])
+						return 1;
+					return 0;
 
+				});
+			} else if (direction === 'ASC') {
+				var tData = theArray.sort(function (a, b) {
+					if (a[fieldname] < b[fieldname])
+						return -1;
+					if (a[fieldname] > b[fieldname])
+						return 1;
+					return 0;
 
-
-
-        //***************************
-        //  Topic Methods 
-        //***************************
-        //
-
-        //
-        //  Topic Load Search
-        //
-        var topicButtonHandler = function (newTab, item) {
-
-            var desc = item.description;
-            var descriptionText = '<h3>' + item.label + '</h3>';
-            if (desc)
-            {
-               descriptionText += '<hr>' + desc;
-            }
-            newTab.getComponent('topicPanel').infoPanel.update(descriptionText);
-
-
-            //Do the search on the category attribute
-            searchToolWin.searchObj = {
-                "sortField": null,
-                "sortDirection": "ASC",
-                "startOffset": 0,
-                "max": 2147483647,
-                "searchElements": [{
-                        "searchType": "COMPONENT",
-                        "field": "componentType",
-                        "value": item.componentType,
-                        "keyField": null,
-                        "keyValue": null,
-                        "startDate": null,
-                        "endDate": null,
-                        "caseInsensitive": false,
-                        "numberOperation": "EQUALS",
-                        "stringOperation": "EQUALS",
-                        "mergeCondition": "OR"  //OR.. NOT.. AND..
-                    }]
-            };
-            newTab.getComponent('topicPanel').loadGrid(searchToolWin.searchObj);
-        };
-
-
-
-        //
-        //  This method calls an API call to get all the topics and creates a list of buttons inside the navPanel.
-        //
-        //
-        var loadTopicNav = function (newTab) {
-            //console.log("Loading Topic Nav");
-            newTab.setLoading(true);
-            Ext.Ajax.request({
-                url: '/openstorefront/api/v1/resource/componenttypes',
-                success: function (response, opts) {
-                    newTab.setLoading(false);
-                    var data = Ext.decode(response.responseText);
-                    var tData = sortList(data, 'label', 'ASC');
-                    ////console.log("tData",tData);
-                    Ext.Array.each(tData, function (item) {
-                        ////console.log("newTab",newTab);
-
-                        newTab.getComponent('topicPanel').navPanel.add({
-                            xtype: 'button',
-                            cls: 'list-button',
-                            height: 50,
-                            text: item.label,
-                            desc: item.description,
-                            width: '100%',
-                            handler: function () {
-                                //console.log("Comp clicked", this.text);
-                                topicButtonHandler(newTab, item);
-                            }
-                        });
-                    });
-                },
-                failure: function (response, opts) {
-                    newTab.setLoading(false);
-                }
-            });
-            newTab.doneLoad = true;
-        };
-
-
-        //
-        //  Topic Tab Processing
-        //
-        var topicTabProcessing = function (tabpanel, newTab, oldtab, opts) {
-            if (!newTab.doneLoad) {
-                loadTopicNav(newTab);
-            }
-        };
-
-
-
-        //***************************
-        //  Category Methods 
-        //***************************
-
-        //
-        // This is the button handler for the category list button
-        // This does an advanced search on the category list button clicked. 
-        //
-        var categoryButtonHandler = function (newTab, item, item2) {
-
-            var desc = item2.description;
-            var descriptionText = '<h3>' + item2.label + '</h3>';
-            if (desc)
-            {
-               descriptionText += '<hr>' + desc;
-            }                        
-            newTab.getComponent('contentPanel').infoPanel.update(descriptionText);
-
-            //Do the search on the category attribute
-            searchToolWin.searchObj = {
-                "sortField": null,
-                "sortDirection": "ASC",
-                "startOffset": 0,
-                "max": 2147483647,
-                "searchElements": [{
-                        "searchType": "ATTRIBUTE",
-                        "field": null,
-                        "value": null,
-                        "keyField": item.attributeType,
-                        "keyValue": item2.code,
-                        "startDate": null,
-                        "endDate": null,
-                        "caseInsensitive": false,
-                        "numberOperation": "EQUALS",
-                        "stringOperation": "EQUALS",
-                        "mergeCondition": "OR"  //OR.. NOT.. AND..
-                    }]
-            };
-            // newTab.setLoading(true);
-            newTab.getComponent('contentPanel').loadGrid(searchToolWin.searchObj);
-        };
-
-        //
-        // This is the loader handler when a category is selected. The category list buttons load below and the panel expands.
-        // The list buttons are loaded from the api call if they have not been loaded before.
-        //
-
-        var categoryBeforePanelExpandHandler = function (p, animate, eOpts, newTab, item) {
-            //Add description when selected
-            newTab.getComponent('contentPanel').infoPanel.update(item.description + '<br/> Item Code: ' + item.attributeType);
-            if (p.loadedUp === undefined) {
-                newTab.setLoading(true);
-                Ext.Ajax.request({
-                    url: '/openstorefront/api/v1/resource/attributes/attributetypes/' + encodeURIComponent(item.attributeType) + '/attributecodeviews',
-                    success: function (response, opts) {
-                        newTab.setLoading(false);
-                        var aData = Ext.decode(response.responseText);
-
-                        //Sort the aData
-                        var dataArray = aData.data;
-                        var tData = sortList(dataArray, 'label', 'ASC');
-
-                        Ext.Array.each(tData, function (item2) {
-                            p.add({
-                                xtype: 'button',
-                                text: item2.label,
-                                width: '100%',
-                                textAlign: 'left',
-                                cls: 'list-button',
-                                handler: function () {
-                                    categoryButtonHandler(newTab, item, item2);
-                                }
-                            });
-                        });
-
-                        p.setHeight(null); //This is required to make the panel collapse/expand work.
-                        p.loadedUp = true;
-
-                    },
-                    failure: function (response, opts) {
-                        newTab.setLoading(false);
-                        p.update("Failed to load data.");
-                        //console.log("Failed to load data:" + response);
-                        p.setHeight(null);
-
-                    }
-
-                });
-            }
-        };
-
-        //
-        //  This method calls an API call to get all the categories and creates a list of collapsible panels inside the navPanel.
-        //
-        //
-        var loadCategoryNav = function (newTab) {
-
-            newTab.setLoading(true);
-            Ext.Ajax.request({
-                url: '/openstorefront/api/v1/resource/attributes/attributetypes',
-                success: function (response, opts) {
-                    newTab.setLoading(false);
-                    var data = Ext.decode(response.responseText);
-		    data = data.data;
-                    tData = sortList(data, 'description', 'ASC');
-
-                    Ext.Array.each(tData, function (item) {
-
-			if (item.visibleFlg) {
-				newTab.getComponent('contentPanel').navPanel.add({
-					xtype: 'panel',
-					collapsible: true,
-					collapsed: true,
-					titleCollapse: true,
-					height: 100,
-					header: {
-						cls: 'panel-header',
-						title: item.description
-					},
-					bodyCls: 'search-tools-nav-body-panel-item',
-					width: '100%',
-					listeners: {
-						beforeexpand: function (p, animate, eOpts) {
-							categoryBeforePanelExpandHandler(p, animate, eOpts, newTab, item);
-						}
-					}
 				});
 			}
-                    });
-                },
-                failure: function (response, opts) {
-                    newTab.setLoading(false);
-                }
-            });
-            newTab.doneLoad = true;
-        };
 
-        //
-        //  Category Tab Processing
-        //
-        var categoryTabProcessing = function (tabpanel, newTab, oldtab, opts) {
-            if (!newTab.doneLoad) {
-                loadCategoryNav(newTab);
-            }
-        };
 
-        //***************************
-        //  Architecture Methods 
-        //***************************
-
-        //
-        // This is the button handler for the category list button
-        // This does an advanced search on the category list button clicked. 
-        //
-        var archSelectHandler = function (newTab, item) {
-
-            var desc = item.get('description');
-            var descriptionText = '<h3>' + item.get('name') + '</h3>';
-            if (desc)
-            {
-               descriptionText += '<hr>' + desc;
-            }   
-            newTab.getComponent('archPanel').infoPanel.update(descriptionText);
-
-            //Do the search on the category attribute
-            searchToolWin.searchObj = {
-                "sortField": null,
-                "sortDirection": "ASC",
-                "startOffset": 0,
-                "max": 2147483647,
-                "searchElements": [{
-                        "searchType": "ARCHITECTURE", 
-                        "keyField": item.get('attributeType'),
-                        "keyValue": item.get('attributeCode'),
-                        "startDate": null,
-                        "endDate": null,
-                        "caseInsensitive": false,
-                        "numberOperation": "EQUALS",
-                        "stringOperation": "STARTS_LIKE",
-                        "mergeCondition": "OR"  //OR.. NOT.. AND..
-                    }]
-            };
-            newTab.getComponent('archPanel').loadGrid(searchToolWin.searchObj);
-        };
+			return tData;
+		};
 
 
 
 
-        //
-        //  This method calls an API call to get all the SVC-V4-A tree arcg and creates a tree inside the navPanel.
-        //
-        //
-        var loadArchNav = function (newTab) {
+		//***************************
+		//  Topic Methods 
+		//***************************
+		//
 
-            newTab.setLoading(true);
-            Ext.Ajax.request({
-                url: '/openstorefront/api/v1/resource/attributes/attributetypes/' + encodeURIComponent('DI2E-SVCV4-A') + '/architecture',
-                success: function (response, opts) {
-                    newTab.setLoading(false);
-                    var data = Ext.decode(response.responseText);
-                    var tStore = Ext.create('Ext.data.TreeStore', {
-                        storeId: 'archStore',
-                        rootVisible: true,
-                        fields: [{
-                                name: 'text',
-                                mapping: 'name'
-                            },
-                            "description",
-                            "attributeType",
-                            "attributeCode",
-                            "originalAttributeCode",
-                            "architectureCode",
-                            "sortOrder"
+		//
+		//  Topic Load Search
+		//
+		var topicButtonHandler = function (newTab, item) {
 
-                        ],
-                        data: data
-                    });
+			var desc = item.description;
+			var descriptionText = '<h3>' + item.label + '</h3>';
+			if (desc)
+			{
+				descriptionText += '<hr>' + desc;
+			}
+			newTab.getComponent('topicPanel').infoPanel.update(descriptionText);
 
-                    newTab.getComponent('archPanel').navPanel.addDocked({
-                        xtype: 'toolbar',
-                        dock: 'top', 
-                        items: [
-                          {
-                            text: 'Expand All',
-                            iconCls: 'fa fa-expand',
-                            handler: function(){
-                              this.up('panel').down('treepanel').expandAll();
-                            }
-                          },
-                          {
-                            xtype: 'tbfill'
-                          },
-                          {
-                            text: 'Collapse All',
-                            iconCls: 'fa fa-compress',
-                            handler: function(){
-                              this.up('panel').down('treepanel').collapseAll();
-                            }                                
-                          }
-                        ]                      
-                    });                          
 
-                    newTab.getComponent('archPanel').navPanel.add({
-                        xtype: 'treepanel',
-                        store: tStore,
-                        width: '100%',
-                        rootVisible: false,
-                        listeners: {
-                            beforeselect: function (thetree, therecord, theindex, theOpts) {
-                                archSelectHandler(newTab, therecord);
-                            }
-                        }
-                    });
-
-                },
-                failure: function (response, opts) {
-                    newTab.setLoading(false);
-                }
-            });
-            newTab.doneLoad = true;
-        };
+			//Do the search on the category attribute
+			searchToolWin.searchObj = {
+				"sortField": null,
+				"sortDirection": "ASC",
+				"startOffset": 0,
+				"max": 2147483647,
+				"searchElements": [{
+						"searchType": "COMPONENT",
+						"field": "componentType",
+						"value": item.componentType,
+						"keyField": null,
+						"keyValue": null,
+						"startDate": null,
+						"endDate": null,
+						"caseInsensitive": false,
+						"numberOperation": "EQUALS",
+						"stringOperation": "EQUALS",
+						"mergeCondition": "OR"  //OR.. NOT.. AND..
+					}]
+			};
+			newTab.getComponent('topicPanel').loadGrid(searchToolWin.searchObj);
+		};
 
 
 
-        //
-        //  Architecture Tab Processing
-        //
-        var archTabProcessing = function (tabpanel, newTab, oldtab, opts) {
-            if (!newTab.doneLoad) {
-                loadArchNav(newTab);
-            }
-        };
+		//
+		//  This method calls an API call to get all the topics and creates a list of buttons inside the navPanel.
+		//
+		//
+		var loadTopicNav = function (newTab) {
+			//console.log("Loading Topic Nav");
+			newTab.setLoading(true);
+			Ext.Ajax.request({
+				url: '/openstorefront/api/v1/resource/componenttypes',
+				success: function (response, opts) {
+					newTab.setLoading(false);
+					var data = Ext.decode(response.responseText);
+					var tData = sortList(data, 'label', 'ASC');
+					////console.log("tData",tData);
+					Ext.Array.each(tData, function (item) {
+						////console.log("newTab",newTab);
+
+						newTab.getComponent('topicPanel').navPanel.add({
+							xtype: 'button',
+							cls: 'list-button',
+							height: 50,
+							text: item.label,
+							desc: item.description,
+							width: '100%',
+							handler: function () {
+								//console.log("Comp clicked", this.text);
+								topicButtonHandler(newTab, item);
+							}
+						});
+					});
+				},
+				failure: function (response, opts) {
+					newTab.setLoading(false);
+				}
+			});
+			newTab.doneLoad = true;
+		};
 
 
-        //***************************
-        //  Tab Panel  Methods 
-        //***************************
-        //
-        //  This is the tab panel tab change handler
-        //
+		//
+		//  Topic Tab Processing
+		//
+		var topicTabProcessing = function (tabpanel, newTab, oldtab, opts) {
+			if (!newTab.doneLoad) {
+				loadTopicNav(newTab);
+			}
+		};
 
 
-        tabPanel.on('tabchange', function (tabpanel, newTab, oldtab, opts) {
 
-            if (newTab.getTitle() === 'Topic') {
-                topicTabProcessing(tabpanel, newTab, oldtab, opts);
-            }
-            else if (newTab.getTitle() === 'Category') {
+		//***************************
+		//  Category Methods 
+		//***************************
 
-                categoryTabProcessing(tabpanel, newTab, oldtab, opts);
-            }
-            else if (newTab.getTitle() === 'Architecture') {
-                archTabProcessing(tabpanel, newTab, oldtab, opts);
-            }
-        });
-        searchToolWin.add(tabPanel);
-	   searchToolWin.setHeight(600);
-	
-        var setActiveTabByTitle = function (tabTitle) {
+		//
+		// This is the button handler for the category list button
+		// This does an advanced search on the category list button clicked. 
+		//
+		var categoryButtonHandler = function (newTab, item, item2) {
 
-            //console.log('Setting Active Tab to:' + tabTitle);
-            var tabs = tabPanel.items.findIndex('title', tabTitle);
-            tabPanel.setActiveTab(tabs);
-        };
-        setActiveTabByTitle("Category");
-        setActiveTabByTitle("Topic");
+			var desc = item2.description;
+			var descriptionText = '<h3>' + item2.label + '</h3>';
+			if (desc)
+			{
+				descriptionText += '<hr>' + desc;
+			}
+			newTab.getComponent('contentPanel').infoPanel.update(descriptionText);
 
-    } //End Init Component
+			//Do the search on the category attribute
+			searchToolWin.searchObj = {
+				"sortField": null,
+				"sortDirection": "ASC",
+				"startOffset": 0,
+				"max": 2147483647,
+				"searchElements": [{
+						"searchType": "ATTRIBUTE",
+						"field": null,
+						"value": null,
+						"keyField": item.attributeType,
+						"keyValue": item2.code,
+						"startDate": null,
+						"endDate": null,
+						"caseInsensitive": false,
+						"numberOperation": "EQUALS",
+						"stringOperation": "EQUALS",
+						"mergeCondition": "OR"  //OR.. NOT.. AND..
+					}]
+			};
+			// newTab.setLoading(true);
+			newTab.getComponent('contentPanel').loadGrid(searchToolWin.searchObj);
+		};
+
+		//
+		// This is the loader handler when a category is selected. The category list buttons load below and the panel expands.
+		// The list buttons are loaded from the api call if they have not been loaded before.
+		//
+
+		var categoryBeforePanelExpandHandler = function (p, animate, eOpts, newTab, item) {
+			//Add description when selected
+			newTab.getComponent('contentPanel').infoPanel.update(item.description + '<br/> Item Code: ' + item.attributeType);
+			if (p.loadedUp === undefined) {
+				newTab.setLoading(true);
+				Ext.Ajax.request({
+					url: '/openstorefront/api/v1/resource/attributes/attributetypes/' + encodeURIComponent(item.attributeType) + '/attributecodeviews',
+					success: function (response, opts) {
+						newTab.setLoading(false);
+						var aData = Ext.decode(response.responseText);
+
+						//Sort the aData
+						var dataArray = aData.data;
+						var tData = sortList(dataArray, 'label', 'ASC');
+
+						Ext.Array.each(tData, function (item2) {
+							p.add({
+								xtype: 'button',
+								text: item2.label,
+								width: '100%',
+								textAlign: 'left',
+								cls: 'list-button',
+								handler: function () {
+									categoryButtonHandler(newTab, item, item2);
+								}
+							});
+						});
+
+						p.setHeight(null); //This is required to make the panel collapse/expand work.
+						p.loadedUp = true;
+
+					},
+					failure: function (response, opts) {
+						newTab.setLoading(false);
+						p.update("Failed to load data.");
+						//console.log("Failed to load data:" + response);
+						p.setHeight(null);
+
+					}
+
+				});
+			}
+		};
+
+		//
+		//  This method calls an API call to get all the categories and creates a list of collapsible panels inside the navPanel.
+		//
+		//
+		var loadCategoryNav = function (newTab) {
+
+			newTab.setLoading(true);
+			Ext.Ajax.request({
+				url: '/openstorefront/api/v1/resource/attributes/attributetypes',
+				success: function (response, opts) {
+					newTab.setLoading(false);
+					var data = Ext.decode(response.responseText);
+					data = data.data;
+					tData = sortList(data, 'description', 'ASC');
+
+					Ext.Array.each(tData, function (item) {
+
+						if (item.visibleFlg) {
+							newTab.getComponent('contentPanel').navPanel.add({
+								xtype: 'panel',
+								collapsible: true,
+								collapsed: true,
+								titleCollapse: true,
+								height: 100,
+								header: {
+									cls: 'panel-header',
+									title: item.description
+								},
+								bodyCls: 'search-tools-nav-body-panel-item',
+								width: '100%',
+								listeners: {
+									beforeexpand: function (p, animate, eOpts) {
+										categoryBeforePanelExpandHandler(p, animate, eOpts, newTab, item);
+									}
+								}
+							});
+						}
+					});
+				},
+				failure: function (response, opts) {
+					newTab.setLoading(false);
+				}
+			});
+			newTab.doneLoad = true;
+		};
+
+		//
+		//  Category Tab Processing
+		//
+		var categoryTabProcessing = function (tabpanel, newTab, oldtab, opts) {
+			if (!newTab.doneLoad) {
+				loadCategoryNav(newTab);
+			}
+		};
+
+		//***************************
+		//  Architecture Methods 
+		//***************************
+
+		//
+		// This is the button handler for the category list button
+		// This does an advanced search on the category list button clicked. 
+		//
+		var archSelectHandler = function (newTab, item) {
+
+			var desc = item.get('description');
+			var descriptionText = '<h3>' + item.get('name') + '</h3>';
+			if (desc)
+			{
+				descriptionText += '<hr>' + desc;
+			}
+			newTab.getComponent('archPanel').infoPanel.update(descriptionText);
+
+			//Do the search on the category attribute
+			searchToolWin.searchObj = {
+				"sortField": null,
+				"sortDirection": "ASC",
+				"startOffset": 0,
+				"max": 2147483647,
+				"searchElements": [{
+						"searchType": "ARCHITECTURE",
+						"keyField": item.get('attributeType'),
+						"keyValue": item.get('attributeCode'),
+						"startDate": null,
+						"endDate": null,
+						"caseInsensitive": false,
+						"numberOperation": "EQUALS",
+						"stringOperation": "STARTS_LIKE",
+						"mergeCondition": "OR"  //OR.. NOT.. AND..
+					}]
+			};
+			newTab.getComponent('archPanel').loadGrid(searchToolWin.searchObj);
+		};
+
+
+
+
+		//
+		//  This method calls an API call to get all the SVC-V4-A tree arcg and creates a tree inside the navPanel.
+		//
+		//
+		var loadArchNav = function (newTab) {
+			
+			var architectureType = 'DI2E-SVCV4-A'
+			if  (searchToolWin.branding && searchToolWin.branding.architectureSearchType) {
+				architectureType = searchToolWin.branding.architectureSearchType;
+			}
+
+			newTab.setLoading(true);
+			Ext.Ajax.request({
+				url: '/openstorefront/api/v1/resource/attributes/attributetypes/' + encodeURIComponent(architectureType) + '/architecture',
+				success: function (response, opts) {
+					newTab.setLoading(false);
+					var data = Ext.decode(response.responseText);
+					var tStore = Ext.create('Ext.data.TreeStore', {
+						storeId: 'archStore',
+						rootVisible: true,
+						fields: [{
+								name: 'text',
+								mapping: 'name'
+							},
+							"description",
+							"attributeType",
+							"attributeCode",
+							"originalAttributeCode",
+							"architectureCode",
+							"sortOrder"
+
+						],
+						data: data
+					});
+
+					newTab.getComponent('archPanel').navPanel.addDocked({
+						xtype: 'toolbar',
+						dock: 'top',
+						items: [
+							{
+								text: 'Expand All',
+								iconCls: 'fa fa-expand',
+								handler: function () {
+									this.up('panel').down('treepanel').expandAll();
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Collapse All',
+								iconCls: 'fa fa-compress',
+								handler: function () {
+									this.up('panel').down('treepanel').collapseAll();
+								}
+							}
+						]
+					});
+
+					newTab.getComponent('archPanel').navPanel.add({
+						xtype: 'treepanel',
+						store: tStore,
+						width: '100%',
+						rootVisible: false,
+						listeners: {
+							beforeselect: function (thetree, therecord, theindex, theOpts) {
+								archSelectHandler(newTab, therecord);
+							}
+						}
+					});
+
+				},
+				failure: function (response, opts) {
+					newTab.setLoading(false);
+				}
+			});
+			newTab.doneLoad = true;
+		};
+
+
+
+		//
+		//  Architecture Tab Processing
+		//
+		var archTabProcessing = function (tabpanel, newTab, oldtab, opts) {
+			if (!newTab.doneLoad) {
+				loadArchNav(newTab);
+			}
+		};
+
+
+		//***************************
+		//  Tab Panel  Methods 
+		//***************************
+		//
+		//  This is the tab panel tab change handler
+		//
+
+
+		tabPanel.on('tabchange', function (tabpanel, newTab, oldtab, opts) {
+
+			if (newTab.getTitle() === 'Topic') {
+				topicTabProcessing(tabpanel, newTab, oldtab, opts);
+			} else if (newTab.getTitle() === 'Category') {
+
+				categoryTabProcessing(tabpanel, newTab, oldtab, opts);
+			} else if (newTab.getTitle() === 'Architecture') {
+				archTabProcessing(tabpanel, newTab, oldtab, opts);
+			}
+		});
+		searchToolWin.add(tabPanel);
+		searchToolWin.setHeight(600);
+
+		var setActiveTabByTitle = function (tabTitle) {
+
+			//console.log('Setting Active Tab to:' + tabTitle);
+			var tabs = tabPanel.items.findIndex('title', tabTitle);
+			tabPanel.setActiveTab(tabs);
+		};
+		setActiveTabByTitle("Category");
+		setActiveTabByTitle("Topic");
+
+	} //End Init Component
 
 });
