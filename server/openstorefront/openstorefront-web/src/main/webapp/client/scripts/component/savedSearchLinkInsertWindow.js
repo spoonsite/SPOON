@@ -44,7 +44,7 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 				autoLoad: true,
 				proxy: {
 					type: 'ajax',
-					url: '/openstorefront/api/v1/resource/usersavedsearches',
+					url: '/openstorefront/api/v1/resource/systemsearches',
 					reader: {
 						type: 'json',
 						rootProperty: 'data',
