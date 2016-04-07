@@ -51,6 +51,7 @@ limitations under the License.
 						{
 							xtype: 'textfield',
 							itemId: 'searchName',
+							id: 'searchName',
 							width: '100%',
 							name: 'searchName',
 							allowBlank: false,
@@ -74,7 +75,7 @@ limitations under the License.
 									handler: function(){
 										var searchPanel = Ext.getCmp('advanceSearch');
 										var search = searchPanel.getSearch();
-										var searchName = searchPanel.getComponent('searchName').getValue();
+										var searchName = Ext.getCmp('searchName').getValue();
 										
 										//check name and search elements
 										if (!searchName || searchName === '') {
