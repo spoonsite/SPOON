@@ -81,9 +81,11 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 						var window = button.up('window');
 						var editor = window.editor;
 						var record = Ext.getCmp('savedSearchGrid').getSelection()[0];
-						var link = '<a href="#">';
-						link += record.getData().searchName;
-						link +=	'</a>';
+						var link = '<a href="/openstorefront/client/searchResults.jsp?savedSearchId=';
+						link += record.getData().searchId;
+						link +=	'">';
+					    link += record.getData().searchName;
+						link += '</a>';
 						editor.execCommand('mceInsertContent', false, link);
 						window.close();
 					}
