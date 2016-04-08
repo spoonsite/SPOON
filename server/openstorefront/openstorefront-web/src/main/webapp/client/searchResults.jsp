@@ -81,6 +81,9 @@ limitations under the License.
 
 		/* global Ext, CoreService, CoreApp */	
 		Ext.onReady(function(){	
+
+
+			var savedSearchId = '${param.savedSearchId}';
 			
 			var maxPageSize = 300;
 			
