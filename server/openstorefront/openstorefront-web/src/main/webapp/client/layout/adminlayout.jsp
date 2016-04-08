@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --%>
 
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%-- 
     Document   : adminlayout
     Created on : Oct 28, 2015, 4:55:30 PM
@@ -89,6 +90,13 @@ limitations under the License.
 		  
 	
 	<stripes:layout-component name="body_footer" />	
+	
+	<%
+		if (StringUtils.isNotBlank(branding.getAnalyticsTrackingCode())) {
+			out.print(branding.getAnalyticsTrackingCode());			
+		}
+	%>	
+	
     </body>
 </html>
 </stripes:layout-definition>

@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --%>
 
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@page import="edu.usu.sdl.openstorefront.core.entity.Branding"%>
 <%@page import="edu.usu.sdl.openstorefront.service.ServiceProxy"%>
 <%@page import="edu.usu.sdl.openstorefront.security.SecurityUtil"%>
@@ -306,6 +307,13 @@ limitations under the License.
 		});
 		
 	</script>
+	
+	<%
+		if (StringUtils.isNotBlank(brandingView.getAnalyticsTrackingCode())) {
+			out.print(brandingView.getAnalyticsTrackingCode());			
+		}
+	%>	
+	
 	
     </body>
 </html>

@@ -15,6 +15,7 @@ limitations under the License.
 --%>
 
 
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%-- 
     Created on : Dec 18, 2015, 4:55:30 PM
     Author     : dshurtleff
@@ -87,6 +88,13 @@ limitations under the License.
 		  
 	
 	<stripes:layout-component name="body_footer" />	
+	
+	<%
+		if (StringUtils.isNotBlank(branding.getAnalyticsTrackingCode())) {
+			out.print(branding.getAnalyticsTrackingCode());			
+		}
+	%>
+	
     </body>
 </html>
 </stripes:layout-definition>

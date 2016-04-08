@@ -32,7 +32,8 @@ limitations under the License.
 				layout: 'border',
 				items: [{
 					xtype: 'panel',
-					region: 'north',					
+					region: 'north',
+					id: 'topNavPanel',
 					border: false,					
 					cls: 'border_accent',
 					dockedItems: [						
@@ -124,6 +125,15 @@ limitations under the License.
 						})
 					]
 				}]
+			});
+			
+			CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+				var branding = Ext.decode(response.responseText);
+				if (branding.securityBannerText && branding.securityBannerText !== '') {
+					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
+						securityBannerText: branding.securityBannerText
+					}), 0);
+				}
 			});
 			
 			CoreService.usersevice.getCurrentUser().then(function(response, opts){

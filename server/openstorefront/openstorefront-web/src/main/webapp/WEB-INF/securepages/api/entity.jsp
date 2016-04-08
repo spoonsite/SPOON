@@ -65,7 +65,7 @@
 			th {
 				color: white;
 				/* text-shadow: 2px 2px 2px black; */
-				background-color: #414e68;
+				background-color: #2C3342;
 				border: 1px lightgray solid;
 			}
 			td {

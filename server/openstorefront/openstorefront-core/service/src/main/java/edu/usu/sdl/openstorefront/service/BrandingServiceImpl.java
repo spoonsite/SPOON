@@ -144,6 +144,16 @@ public class BrandingServiceImpl
 				branding.setUserInputWarning("Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.");				
 			}
 			
+			if (branding.getSubmissionFormWarning() == null) {
+				branding.setSubmissionFormWarning("This form will submit a component to the DI2E Framework PMO for review and consideration.A DI2E Storefront Manager will contact you regarding your submission.For help, contact <a href=\"mailto:helpdesk@di2e.net\">helpdesk@di2e.net</a>");				
+			}
+			
+			if (branding.getChangeRequestWarning() == null) {
+				branding.setChangeRequestWarning("This form will submit a change request to the DI2E Framework PMO for review and consideration. " +
+											"A DI2E Storefront Manager may contact you regarding your submission." +
+											"For help, contact <a href=\"mailto:helpdesk@di2e.net\">helpdesk@di2e.net</a>");				
+			}			
+			
 			if (branding.getArchitectureSearchLabel() == null) {
 				branding.setArchitectureSearchLabel("SvcV4");				
 			}

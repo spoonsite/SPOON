@@ -283,6 +283,7 @@ limitations under the License.
 		
 			var headerPanel = Ext.create('Ext.panel.Panel', {
 				region: 'north',
+				id: 'topNavPanel',
 				bodyStyle: 'background: white; padding: 15px;',
 				layout: {
 					type: 'hbox',
@@ -509,6 +510,17 @@ limitations under the License.
 					}
 				]
 			});
+			
+			if (fullPage) {
+				CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+					var branding = Ext.decode(response.responseText);
+					if (branding.securityBannerText && branding.securityBannerText !== '') {
+						Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
+							securityBannerText: branding.securityBannerText
+						}), 0);
+					}
+				});			
+			}
 			
 			var actionAddTag = function(tag) {
 				
