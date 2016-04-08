@@ -109,17 +109,17 @@ public class SystemSearchResource
 	}	
 		
 	@GET
-	@APIDescription("Get saved searches for current User")	
+	@APIDescription("Get a saved search associated with a searchId")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SystemSearch.class)
 	@Path("/{searchId}")
 	public Response getSearch(
-		@PathParam("searchId") String userSearchId
+			@PathParam("searchId") String searchId
 	)
 	{
 		SystemSearch systemSearch = new SystemSearch();
-		systemSearch.setSearchId(userSearchId);
-		systemSearch = (SystemSearch) systemSearch.find();		
+		systemSearch.setSearchId(searchId);
+		systemSearch = (SystemSearch) systemSearch.find();
 		return sendSingleEntityResponse(systemSearch);
 	}	
 	
