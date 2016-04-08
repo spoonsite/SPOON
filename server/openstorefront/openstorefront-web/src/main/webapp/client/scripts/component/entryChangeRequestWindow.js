@@ -64,9 +64,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 		});
 		
 		changeRequestWindow.submissionPanel = Ext.create('OSF.component.SubmissionPanel', {											
-				formWarningMessage: '<div style="padding: 10px 0px 10px 10px;">This form will submit a change request to the DI2E Framework PMO for review and consideration.' +
-						'A DI2E Storefront Manager may contact you regarding your submission.' +
-						'For help, contact <a href="mailto:helpdesk@di2e.net">helpdesk@di2e.net</a></div>',
+				formWarningMessage: changeRequestWindow.changeRequestWarning,
 				submitForReviewUrl: function (componentId){
 					return '../api/v1/resource/componentsubmissions/' + componentId+ '/submitchangerequest';
 				},				

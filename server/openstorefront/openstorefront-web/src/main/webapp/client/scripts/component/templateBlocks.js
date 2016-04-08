@@ -55,11 +55,28 @@ Ext.define('OSF.component.template.Description', {
 	
 	updateHandler: function(entry){
 		//entry.description = Ext.util.Format.escape(entry.description).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '');		
+				
+		//get all links (replace embedded Search links with a popup window of the results)
+//		var dom = Ext.dom.Helper.createDom("<div><div>");	
+//		dom.innerHTML = entry.description;		
+//		var element = Ext.dom.Element.get(dom);
+//		var links = element.query('a');
+//		if (links && links.length > 0) {
+//			Ext.Array.each(links, function(item){
+//				//look for special links and transform
+//				if (item.href.indexOf('Search.action?Search') !== -1) {
+//					//special link
+//					var searchId = item.href.substr(item.href.indexOf('searchId='), item.href.length);
+//					searchId = searchId.replace('searchId=', '');
+//					item.href = "javascript:alert('" + searchId + "');";
+//				}	
+//			});
+//		}
+//		entry.description  = dom.innerHTML;
+				
 		entry.showDescriptionHeader = this.showDescriptionHeader;
 		return entry;
 	}
-	
-	
 	
 });
 

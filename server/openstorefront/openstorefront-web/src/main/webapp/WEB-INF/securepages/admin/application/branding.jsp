@@ -244,6 +244,15 @@ limitations under the License.
 													url: '../api/v1/resource/lookuptypes/FeedbackHandleType/view'													
 												}
 											}
+										},
+										{
+											xtype: 'textarea',
+											fieldLabel: 'Analytics Tracking Code <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
+											name: 'analyticsTrackingCode',
+											width: '100%',	
+											grow: true,
+											allowBlank: true,
+											maxLength: 16000										
 										}										
 									]
 								},
@@ -297,7 +306,25 @@ limitations under the License.
 											fieldBodyCls: 'form-comp-htmleditor-border',
 											allowBlank: true,
 											maxLength: 4000										
-										}										
+										},
+										{
+											xtype: 'htmleditor',
+											fieldLabel: 'Submission Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
+											name: 'submissionFormWarning',
+											width: '100%',
+											fieldBodyCls: 'form-comp-htmleditor-border',
+											allowBlank: true,
+											maxLength: 4000										
+										},
+										{
+											xtype: 'htmleditor',
+											fieldLabel: 'Change Request Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
+											name: 'changeRequestWarning',
+											width: '100%',
+											fieldBodyCls: 'form-comp-htmleditor-border',
+											allowBlank: true,
+											maxLength: 4000										
+										}											
 									]
 								},
 								{
@@ -492,6 +519,16 @@ limitations under the License.
 						},
 						success: function(response, opts){
 							successHandler(response, opts);
+						},
+						failure: function(response, opts) {
+							Ext.Msg.show({
+								title:'Validation Error',
+								message: 'Please check your input for missing required information.',
+								buttons: Ext.Msg.OK,
+								icon: Ext.Msg.Error,
+								fn: function(btn) {
+								}
+							});							
 						}
 					});
 				};
@@ -596,10 +633,26 @@ limitations under the License.
 									itemId: 'duplicate',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-clone',
-									disabled: true,
-									handler: function () {
-										var record = this.up('grid').getSelectionModel().getSelection()[0];
-										actionDuplicate(record);
+									menu: {
+										items: [
+											{
+												text: 'Selected Branding',	
+												id: 'duplicateSelected',
+												handler: function() {
+													var record = this.up('grid').getSelectionModel().getSelection()[0];	
+													actionDuplicate(record);
+												}
+											},
+											{
+												xtype: 'menuseparator'
+											},
+											{
+												text: 'Current Branding',	
+												handler: function() {														
+													actionDuplicate();
+												}												
+											}
+										]
 									}
 								},
 								{
@@ -638,7 +691,7 @@ limitations under the License.
 							var tools = Ext.getCmp('brandingGrid').getComponent('tools');
 							if (selectionModel.getCount() > 0) {
 								tools.getComponent('edit').setDisabled(false);
-								tools.getComponent('duplicate').setDisabled(false);
+								Ext.getCmp('duplicateSelected').setDisabled(false);
 								tools.getComponent('delete').setDisabled(false);
 
 								var record = selection[0];
@@ -649,7 +702,7 @@ limitations under the License.
 								}
 							} else {
 								tools.getComponent('edit').setDisabled(true);
-								tools.getComponent('duplicate').setDisabled(true);
+								Ext.getCmp('duplicateSelected').setDisabled(true);
 								tools.getComponent('delete').setDisabled(false);
 								tools.getComponent('activate').setDisabled(true);
 							}
@@ -699,12 +752,16 @@ limitations under the License.
 				};
 
 				var actionDuplicate = function (record) {
-					var cloneObj = {};
-					var selectedObj = Ext.getCmp('brandingGrid').getSelection()[0];
+					var cloneObj = {};			
+					
+					var endUrl = 'current';
+					if (record) {
+						endUrl = record.get('brandingId');
+					}
 
 					Ext.getCmp('brandingGrid').setLoading('Copying...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/branding/' + selectedObj.get('brandingId'),
+						url: '../api/v1/resource/branding/' + endUrl,
 						method: 'GET',
 						success: function (response, opts) {
 

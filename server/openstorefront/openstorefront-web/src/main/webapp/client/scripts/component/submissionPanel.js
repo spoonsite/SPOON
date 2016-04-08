@@ -19,9 +19,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.SubmissionPanel',
 	layout: 'border',
-	formWarningMessage: '<div style="padding: 10px 0px 10px 10px;">This form will submit a component to the DI2E Framework PMO for review and consideration.' +
-						'A DI2E Storefront Manager will contact you regarding your submission.' +
-						'For help, contact <a href="mailto:helpdesk@di2e.net">helpdesk@di2e.net</a><div>',
+	formWarningMessage: '',
 
 	submitForReviewUrl: function (componentId){
 		return '../api/v1/resource/componentsubmissions/' + componentId+ '/submit';
@@ -200,6 +198,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					xtype: 'panel',					
 					frame: true,
 					border: true,
+					hidden: submissionPanel.formWarningMessage ? false : true,
 					width: '100%',
 					margin: '40 0 0 0',
 					padding: '0 0 0 0',
@@ -216,7 +215,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						{
 							xtype: 'panel',
 							flex: 1,
-							html: submissionPanel.formWarningMessage
+							html: submissionPanel.formWarningMessage ? '<div style="padding: 10px 0px 10px 10px;">' + submissionPanel.formWarningMessage  + '</div>' : ''
 						}
 					]
 					
