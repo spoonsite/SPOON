@@ -16,7 +16,7 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/toplevelLayout.jsp">
+<stripes:layout-render name="layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 			
 	<script src="scripts/component/advanceSearch.js?v=${appVersion}" type="text/javascript"></script>		
@@ -1295,7 +1295,8 @@ limitations under the License.
 				layout: 'border',
 				items: [{
 					xtype: 'panel',
-					region: 'north',					
+					region: 'north',
+					id: 'topNavPanel',
 					border: false,					
 					cls: 'border_accent',
 					dockedItems: [						
@@ -1383,7 +1384,7 @@ limitations under the License.
 															};
 															CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 														}
-														window.location.href = 'Router.action?page=main/searchResults.jsp';														
+														window.location.href = 'searchResults.jsp';														
 													}
 												}
 											}
@@ -1407,7 +1408,7 @@ limitations under the License.
 												} else {
 													delete CoreUtil.sessionStorage().searchRequest;
 												}												
-												window.location.href = 'Router.action?page=main/searchResults.jsp';
+												window.location.href = 'searchResults.jsp';
 
 											}
 										},
@@ -1511,6 +1512,15 @@ limitations under the License.
 				mainContentPanel
 				]
 			});
+			
+			CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+				var branding = Ext.decode(response.responseText);
+				if (branding.securityBannerText && branding.securityBannerText !== '') {
+					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
+						securityBannerText: branding.securityBannerText
+					}), 0);
+				}
+			});	
 		
 			//Load 
 			performSearch();

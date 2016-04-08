@@ -24,6 +24,7 @@ limitations under the License.
 			
 			
 			var contents = Ext.create('OSF.ux.IFrame', {
+				frameName: 'toolFrame',
 				src: ''
 			});
 			
@@ -235,7 +236,8 @@ limitations under the License.
 				layout: 'border',
 				items: [{
 					xtype: 'panel',
-					region: 'north',					
+					region: 'north',
+					id: 'topNavPanel',
 					border: false,
 					//margin: '0 0 5 0',
 					cls: 'border_accent',
@@ -392,7 +394,16 @@ limitations under the License.
 						contentPanel
 					]
 				}]
-			});			
+			});		
+			
+			CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+				var branding = Ext.decode(response.responseText);
+				if (branding.securityBannerText && branding.securityBannerText !== '') {
+					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
+						securityBannerText: branding.securityBannerText
+					}), 0);
+				}
+			});				
 
 			CoreService.usersevice.getCurrentUser().then(function(response, opts){
 				var usercontext = Ext.decode(response.responseText);

@@ -86,6 +86,10 @@ public class Branding
 	@ConsumeField
 	private String landingPageFooter;
 
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
+	@ConsumeField
+	private String analyticsTrackingCode;
+	
 	@ConsumeField
 	private Boolean hideArchitectureSearchFlg;
 	
@@ -125,8 +129,13 @@ public class Branding
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@Sanitize(HTMLSanitizer.class)	
-	private String submissionFormWarning;	
+	private String submissionFormWarning;
 
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Sanitize(HTMLSanitizer.class)	
+	private String changeRequestWarning;	
+	
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = FeedbackHandleType.class)
 	private String feedbackHandler;
@@ -195,12 +204,14 @@ public class Branding
 		setName(branding.getName());
 		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
 		setSecondaryLogoUrl(branding.getSecondaryLogoUrl());
+		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());		
 		
 		setSecurityBannerBackgroundColor(branding.getSecurityBannerBackgroundColor());
 		setSecurityBannerText(branding.getSecurityBannerText());
 		setSecurityBannerTextColor(branding.getSecurityBannerTextColor());
 		setUserInputWarning(branding.getUserInputWarning());
-		setSubmissionFormWarning(branding.getSubmissionFormWarning());		
+		setSubmissionFormWarning(branding.getSubmissionFormWarning());
+		setChangeRequestWarning(branding.getChangeRequestWarning());		
 		setFeedbackHandler(branding.getFeedbackHandler());
 				
 		setPrimaryColor(branding.getPrimaryColor());
@@ -513,6 +524,26 @@ public class Branding
 	public void setSubmissionFormWarning(String submissionFormWarning)
 	{
 		this.submissionFormWarning = submissionFormWarning;
+	}
+
+	public String getAnalyticsTrackingCode()
+	{
+		return analyticsTrackingCode;
+	}
+
+	public void setAnalyticsTrackingCode(String analyticsTrackingCode)
+	{
+		this.analyticsTrackingCode = analyticsTrackingCode;
+	}
+
+	public String getChangeRequestWarning()
+	{
+		return changeRequestWarning;
+	}
+
+	public void setChangeRequestWarning(String changeRequestWarning)
+	{
+		this.changeRequestWarning = changeRequestWarning;
 	}
 
 }

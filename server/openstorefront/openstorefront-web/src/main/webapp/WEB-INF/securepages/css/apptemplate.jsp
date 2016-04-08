@@ -109,6 +109,14 @@ limitations under the License.
 	color: ${actionBean.branding.primaryTextColor};
 }
 
+.security-banner {
+	text-align: center;
+	font-size: 14px; 
+	font-weight: bold;
+	background-color: ${actionBean.branding.securityBannerBackgroundColor};
+	color: ${actionBean.branding.securityBannerTextColor};
+}
+
 .nav-back-color {
     min-height: 52px;
  /*  background-color: #414e68; */
@@ -606,10 +614,10 @@ tr.details-table:hover {
 }
 
 .app-info-box{
-	background-color: #441E5A;
+	background-color: ${actionBean.branding.primaryColor};
 	padding: 10px;
 	height: 100%;
-	color: white;
+	color: ${actionBean.branding.primaryTextColor};
 	margin: 0px 10px 0px 0px;
 	float: left;
 }

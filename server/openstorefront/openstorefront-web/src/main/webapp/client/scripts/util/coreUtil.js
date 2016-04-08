@@ -681,5 +681,18 @@ var CoreUtil = {
 	
 		
 		return entry;
+	},
+	securityBannerPanel: function(branding) {
+		
+		if (branding && branding.securityBannerText) {
+			var securityBanner = Ext.create('Ext.panel.Panel', {
+				bodyCls: 'security-banner',
+				dock: 'top',
+				width: '100%',
+				html: branding.securityBannerText
+			});
+			return securityBanner;
+		}
+		return null;
 	}
 };

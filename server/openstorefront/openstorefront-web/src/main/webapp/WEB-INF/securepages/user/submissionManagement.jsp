@@ -33,6 +33,8 @@ limitations under the License.
 				
 				var submissionPanel = Ext.create('OSF.component.SubmissionPanel', {							
 					id: 'submissionPanel',
+					userInputWarning: '${branding.userInputWarning}',
+					formWarningMessage: '${branding.submissionFormWarning}',
 					cancelSubmissionHandlerYes: function(){
 						Ext.getCmp('submissionWindow').completeClose=true;
 						Ext.getCmp('submissionWindow').close();
@@ -80,6 +82,7 @@ limitations under the License.
 				submissionWindow.hide();
 				
 				var changeRequestWindow = Ext.create('OSF.component.EntryChangeRequestWindow', {
+					changeRequestWarning: '${branding.changeRequestWarning}',
 					successHandler: function() {
 						Ext.getCmp('submissionGrid').getStore().reload();
 					}

@@ -130,7 +130,7 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 									query: win.searchObj
 								}
 								CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-								window.location.href = 'Router.action?page=main/searchResults.jsp';
+								window.location.href = 'searchResults.jsp';
 
 								//close window
 								win.close();
@@ -310,7 +310,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 										query: searchObj
 									}
 									CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-									window.location.href = 'Router.action?page=main/searchResults.jsp';
+									window.location.href = 'searchResults.jsp';
 
 									//close window
 									win.close();
@@ -414,7 +414,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 										query: searchObj
 									}
 									CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-									window.location.href = 'Router.action?page=main/searchResults.jsp';
+									window.location.href = 'searchResults.jsp';
 
 									//close window
 									win.close();

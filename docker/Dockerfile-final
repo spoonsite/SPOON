@@ -1,0 +1,13 @@
+FROM razaltan/storefront-tomcat
+MAINTAINER razaltan
+
+ENV DEPLOYMENT_DIR $CATALINA_HOME/webapps
+
+ADD https://github.com/di2e/openstorefront/releases/download/v1.6.1/openstorefront.war $DEPLOYMENT_DIR
+
+EXPOSE 8983
+EXPOSE 8080
+
+COPY ./startstorefrontenv.sh /
+RUN chmod 755 /startstorefrontenv.sh
+ENTRYPOINT ["/startstorefrontenv.sh"]

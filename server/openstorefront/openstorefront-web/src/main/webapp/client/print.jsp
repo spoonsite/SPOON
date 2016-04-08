@@ -48,10 +48,11 @@ limitations under the License.
 			var headerPanel = Ext.create('Ext.panel.Panel', {
 				region: 'north',				
 				cls: 'hidePrint',
+				id: 'topNavPanel',
 				dockedItems: [
 					{
 						xtype: 'toolbar',
-						dock: 'top',
+						dock: 'top',						
 						style: 'background: rgba(10, 10, 10, .7) !important;',
 						items: [
 							{
@@ -106,6 +107,15 @@ limitations under the License.
 						]
 					}
 				]
+			});
+
+			CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+				var branding = Ext.decode(response.responseText);
+				if (branding.securityBannerText && branding.securityBannerText !== '') {
+					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
+						securityBannerText: branding.securityBannerText
+					}), 0);
+				}
 			});
 
 			var printTemplate = new Ext.XTemplate();

@@ -176,7 +176,7 @@ limitations under the License.
 															};
 															CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 														}
-														window.location.href = 'Router.action?page=main/searchResults.jsp';														
+														window.location.href = 'searchResults.jsp';														
 													}
 												}
 											} 
@@ -199,7 +199,7 @@ limitations under the License.
 												} else {
 													delete CoreUtil.sessionStorage().searchRequest;
 												}												
-												window.location.href = 'Router.action?page=main/searchResults.jsp';
+												window.location.href = 'searchResults.jsp';
 												
 											}
 										},
@@ -415,11 +415,11 @@ limitations under the License.
 				]
 			});
 
-
 			Ext.create('Ext.container.Viewport', {
 				layout: 'border',
 				items: [{
 					xtype: 'panel',
+					id: 'topNavPanel',
 					region: 'north',					
 					border: false,					
 					cls: 'border_accent',
@@ -542,6 +542,14 @@ limitations under the License.
 				}]
 			});	
 			
+			CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+				var branding = Ext.decode(response.responseText);
+				if (branding.securityBannerText && branding.securityBannerText !== '') {
+					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
+						securityBannerText: branding.securityBannerText
+					}), 0);
+				}
+			});			
 			
 			CoreService.usersevice.getCurrentUser().then(function(response, opts){
 				var usercontext = Ext.decode(response.responseText);
