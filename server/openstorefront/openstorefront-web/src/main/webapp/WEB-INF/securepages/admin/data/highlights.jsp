@@ -3,9 +3,16 @@
 <stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 
+		<script src="scripts/component/savedSearchLinkInsertWindow.js?v=${appVersion}" type="text/javascript"></script>
+
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
+
+				var ssInsertWindow = Ext.create('OSF.component.SavedSearchLinkInsertWindow', {					
+					id: 'ssInsertWindow',
+					alwaysOnTop: true
+				});	
 
 
 				var securityTypeStore = Ext.create('Ext.data.Store', {

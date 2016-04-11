@@ -389,6 +389,11 @@ var CoreUtil = {
 		
 		return defaultConfig;
 	},
+	/**
+	 *  Return a config which includes the tinymce plugin/tools for the insertion of saved search links
+	 * @param {type} type (optional)
+	 * @returns {CoreUtil.tinymceConfig.searchEntryConfig}
+	 */
 	tinymceSearchEntryConfig: function(type) {
 		var searchEntryConfig = {
 			plugins: [
