@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.model;
+package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.PK;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,9 +28,13 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@APIDescription("Captures user feedback")
 public class FeedbackTicket
+		extends  StandardEntity<FeedbackTicket>
 {
-
+	@PK(generated = true)
+	private String feedbackId;
+	
 	@ConsumeField
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -49,10 +57,38 @@ public class FeedbackTicket
 	private String ticketType;
 
 	@ConsumeField
-	private WebInformation webInformation = new WebInformation();
+	private WebInformation webInformation;
 
 	public FeedbackTicket()
 	{
+	}
+	
+	public String fullSubject() {
+		return this.getTicketType() + " - " + this.getSummary();
+	}
+	
+	public String fullDescription()
+	{
+		if (getWebInformation() == null) {
+			setWebInformation(new WebInformation());			
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("*Reported Issue Type*: ").append(this.getTicketType()).append("\n");
+		sb.append("*Reporter Username*: ").append(this.getUsername()).append("\n");
+		sb.append("*Reporter Firstname*: ").append(StringProcessor.blankIfNull(this.getFirstname())).append("\n");
+		sb.append("*Reporter Lastname*: ").append(StringProcessor.blankIfNull(this.getLastname())).append("\n");
+		sb.append("*Reporter Organization*: ").append(StringProcessor.blankIfNull(this.getOrganization())).append("\n");
+		sb.append("*Reporter Email*: ").append(StringProcessor.blankIfNull(this.getEmail())).append("\n");
+		sb.append("*Reporter Phone*: ").append(StringProcessor.blankIfNull(this.getPhone())).append("\n\n");
+		sb.append("*Web Location*: ").append(StringProcessor.blankIfNull(this.getWebInformation().getLocation())).append("\n");
+		sb.append("*Web User-agent*: ").append(StringProcessor.blankIfNull(this.getWebInformation().getUserAgent())).append("\n");
+		sb.append("*Web Referrer*: ").append(StringProcessor.blankIfNull(this.getWebInformation().getReferrer())).append("\n");
+		sb.append("*Web Screen Resolution*: ").append(StringProcessor.blankIfNull(this.getWebInformation().getScreenResolution())).append("\n");
+		sb.append("*Application Version*: ").append(PropertiesManager.getApplicationVersion()).append("\n");
+		sb.append("\n");
+		sb.append(this.getDescription());		
+		return sb.toString();
 	}
 
 	public WebInformation getWebInformation()
@@ -153,6 +189,16 @@ public class FeedbackTicket
 	public void setTicketType(String ticketType)
 	{
 		this.ticketType = ticketType;
+	}
+
+	public String getFeedbackId()
+	{
+		return feedbackId;
+	}
+
+	public void setFeedbackId(String feedbackId)
+	{
+		this.feedbackId = feedbackId;
 	}
 
 }

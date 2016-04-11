@@ -68,7 +68,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 							handler: function () {
 								var feedbackForm = this.up('form');
 								var method = 'POST';
-								var url = '/openstorefront/api/v1/service/jira/submitticket';
+								var url = '/openstorefront/api/v1/resource/feedbacktickets';
 								var data = feedbackForm.getValues();
 								data.webInformation = {
 									location: window.location.href,
