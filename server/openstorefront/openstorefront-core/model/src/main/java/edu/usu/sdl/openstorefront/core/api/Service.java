@@ -135,4 +135,12 @@ public interface Service
 	 * @return
 	 */
 	public NotificationService getNotificationService();
+	
+	/**
+	 * Handles Feedback
+	 *
+	 * @return
+	 */
+	public FeedbackService getFeedbackService();
+	
 }

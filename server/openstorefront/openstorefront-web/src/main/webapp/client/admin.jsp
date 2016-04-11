@@ -63,6 +63,7 @@ limitations under the License.
 			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
 			pageMap['EntryTemplate'] = 'Router.action?page=admin/data/entryTemplate.jsp';
 			pageMap['Searches'] = 'Router.action?page=admin/data/searches.jsp';
+			pageMap['Feedback'] = 'Router.action?page=admin/application/feedback.jsp';
 			
 
 		//Data Menu
@@ -183,6 +184,12 @@ limitations under the License.
 				handler: function(){
 					actionLoadContent('Branding');
 				}				
+			});	
+			alertMenu.push({
+				text: 'Feedback',
+				handler: function(){
+					actionLoadContent('Feedback');
+				}				
 			});			
 			alertMenu.push({
 				text: 'Jobs',
@@ -190,6 +197,12 @@ limitations under the License.
 					actionLoadContent('Jobs');
 				}				
 			});
+			alertMenu.push({
+				text: 'Messages',
+				handler: function(){
+					actionLoadContent('Messages');
+				}				
+			});			
 			alertMenu.push({
 				text: 'Reports',
 				handler: function(){
@@ -208,12 +221,6 @@ limitations under the License.
 					actionLoadContent('Tracking');
 				}				
 			});			
-			alertMenu.push({
-				text: 'Messages',
-				handler: function(){
-					actionLoadContent('Messages');
-				}				
-			});
 			alertMenu.push({
 				xtype: 'menuseparator'				
 			});

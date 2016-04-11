@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.model;
+package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import java.io.Serializable;
 import javax.validation.constraints.Size;
 
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Part of the feedback ticket")
 public class WebInformation
+	implements Serializable
 {
 
 	@ConsumeField

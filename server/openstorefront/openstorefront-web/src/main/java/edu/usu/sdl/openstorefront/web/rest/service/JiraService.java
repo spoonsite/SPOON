@@ -23,7 +23,7 @@ import com.atlassian.jira.rest.client.api.domain.ServerInfo;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
-import edu.usu.sdl.openstorefront.core.model.FeedbackTicket;
+import edu.usu.sdl.openstorefront.core.entity.FeedbackTicket;
 import edu.usu.sdl.openstorefront.core.view.JiraIssueView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;

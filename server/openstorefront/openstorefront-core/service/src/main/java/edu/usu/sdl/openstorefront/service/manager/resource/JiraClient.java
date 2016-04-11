@@ -30,9 +30,8 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
 import com.atlassian.util.concurrent.Promise;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
-import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
-import edu.usu.sdl.openstorefront.core.model.FeedbackTicket;
+import edu.usu.sdl.openstorefront.core.entity.FeedbackTicket;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.model.ConnectionModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JiraIssueModel;
@@ -109,22 +108,6 @@ public class JiraClient
 
 	public BasicIssue submitTicket(FeedbackTicket feedbackTicket)
 	{
-		StringBuilder description = new StringBuilder();
-		description.append("*Reported Issue Type*: ").append(feedbackTicket.getTicketType()).append("\n");
-		description.append("*Reporter Username*: ").append(feedbackTicket.getUsername()).append("\n");
-		description.append("*Reporter Firstname*: ").append(StringProcessor.blankIfNull(feedbackTicket.getFirstname())).append("\n");
-		description.append("*Reporter Lastname*: ").append(StringProcessor.blankIfNull(feedbackTicket.getLastname())).append("\n");
-		description.append("*Reporter Organization*: ").append(StringProcessor.blankIfNull(feedbackTicket.getOrganization())).append("\n");
-		description.append("*Reporter Email*: ").append(StringProcessor.blankIfNull(feedbackTicket.getEmail())).append("\n");
-		description.append("*Reporter Phone*: ").append(StringProcessor.blankIfNull(feedbackTicket.getPhone())).append("\n\n");
-		description.append("*Web Location*: ").append(StringProcessor.blankIfNull(feedbackTicket.getWebInformation().getLocation())).append("\n");
-		description.append("*Web User-agent*: ").append(StringProcessor.blankIfNull(feedbackTicket.getWebInformation().getUserAgent())).append("\n");
-		description.append("*Web Referrer*: ").append(StringProcessor.blankIfNull(feedbackTicket.getWebInformation().getReferrer())).append("\n");
-		description.append("*Web Screen Resolution*: ").append(StringProcessor.blankIfNull(feedbackTicket.getWebInformation().getScreenResolution())).append("\n");
-		description.append("*Application Version*: ").append(PropertiesManager.getApplicationVersion()).append("\n");
-		description.append("\n");
-		description.append(feedbackTicket.getDescription());
-
 		BasicProject basicProject = null;
 		IssueType issueType = null;
 
@@ -150,8 +133,8 @@ public class JiraClient
 		}
 
 		IssueInputBuilder issueBuilder = new IssueInputBuilder(basicProject, issueType);
-		issueBuilder.setDescription(description.toString());
-		issueBuilder.setSummary(feedbackTicket.getTicketType() + " - " + feedbackTicket.getSummary());
+		issueBuilder.setDescription(feedbackTicket.fullDescription());
+		issueBuilder.setSummary(feedbackTicket.fullSubject());
 
 		Promise<BasicIssue> promise = getRestClient().getIssueClient().createIssue(issueBuilder.build());
 		BasicIssue issue = promise.claim();

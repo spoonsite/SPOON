@@ -331,6 +331,23 @@ tr.details-table:hover {
 	background-color: #f5f5f5
 }
 
+.info-table{
+	 border-collapse: collapse;
+	 border: 1px solid grey;	
+	 width: 100%;
+}
+
+tr.info-table:nth-child(even){
+	background-color: #f5f5f5;
+}
+
+td.info-table {
+	border: 1px solid grey;
+	padding: 5px;
+	text-align: left;
+}
+
+
 .rolling-container {
     width: 100%;        
 }

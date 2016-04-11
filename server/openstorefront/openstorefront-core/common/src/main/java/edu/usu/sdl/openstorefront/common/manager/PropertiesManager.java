@@ -83,6 +83,7 @@ public class PropertiesManager
 	public static final String KEY_JOB_WORKING_STATE_OVERRIDE = "job.working.state.override.minutes";
 	public static final String KEY_JIRA_FEEDBACK_PROJECT = "jira.feedback.project";
 	public static final String KEY_JIRA_FEEDBACK_ISSUETYPE = "jira.feedback.issuetype";
+	public static final String KEY_FEEDBACK_EMAIL = "feedback.email";
 
 	public static final String KEY_MAIL_SERVER = "mail.smtp.url";
 	public static final String KEY_MAIL_SERVER_USER = "mail.server.user";
