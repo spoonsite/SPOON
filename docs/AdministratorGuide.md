@@ -1011,6 +1011,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **jirafeedback.show** - Allows users to provide jira feedback (True/False) ( **True** )
 -  **filehistory.max.days** - Sets the max days to keep file history ( **180** )
 -  **notification.max.days** - Set the max days to keep nofitication messages ( **7** )
+-  **feedback.email** - Email address to send feedback to
 
 #6. Database Management
 -----
