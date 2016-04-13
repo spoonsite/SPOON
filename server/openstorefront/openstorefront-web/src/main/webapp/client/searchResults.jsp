@@ -81,6 +81,9 @@ limitations under the License.
 
 		/* global Ext, CoreService, CoreApp */	
 		Ext.onReady(function(){	
+
+
+			var savedSearchId = '${param.savedSearchId}';
 			
 			var maxPageSize = 300;
 			
@@ -870,41 +873,73 @@ limitations under the License.
 			
 			var originalSearchRequest;
 			var performSearch = function(){
-				//pull session storage
 				Ext.getCmp('resultsDisplayPanel').setLoading("Searching...");
-				var searchRequest = CoreUtil.sessionStorage().getItem('searchRequest');
-				if (searchRequest) {
-					searchRequest = Ext.decode(searchRequest);
-					if (searchRequest.type === 'SIMPLE') {
-						Ext.getCmp('searchResultsPanel').setTitle('Search Results - ' + searchRequest.query);
-						searchRequest.query = 	{							
-							"searchElements": [{
+				// First, check if we should load a savedSearch as given by an ID. If not,
+				// we assume that this is not a saved search and we can retreive the searchRequest
+				// from sessionStorage. If there is no searchRequest in sessionStorage, we default
+				// to a search for 'ALL'
+				if (savedSearchId !== '') {
+					// If an ID is set, we must obtain the searchRequest from the server in order 
+					// to actaully perform the search.
+					var url = '/openstorefront/api/v1/resource/systemsearches/';
+					url += savedSearchId;
+					Ext.Ajax.request({
+							url: url,
+							method: 'GET',
+							success: function (response, opts) {
+							    var responseObj = Ext.decode(response.responseText);
+								var searchRequest = Ext.decode(responseObj.searchRequest);
+							
+								Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advanced - Saved Search - "' + responseObj.searchName + '"');
+								// Adjust searchRequest to match doSearch() and API expectations
+								searchRequest.query = {
+									searchElements: searchRequest.searchElements
+								};
+								originalSearchRequest = searchRequest;
+								doSearch(searchRequest, {
+									field: 'name',
+									dir: 'ASC'
+								});
+							},
+							failure: function (response, opts) {
+								Ext.MessageBox.alert("Not found", "The saved search you requested was not found.", function() { });
+							}
+						});
+
+				}
+				else {
+					var searchRequest = CoreUtil.sessionStorage().getItem('searchRequest');
+					if (searchRequest) {
+						searchRequest = Ext.decode(searchRequest);
+						if (searchRequest.type === 'SIMPLE') {
+							Ext.getCmp('searchResultsPanel').setTitle('Search Results - ' + searchRequest.query);
+							searchRequest.query = 	{							
+								"searchElements": [{
 									"searchType": "INDEX",									
 									"value": searchRequest.query
+								}]
+							};
+						} else {						
+							Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advanced');					
+						}
+					}
+					else {
+						//search all					
+						Ext.getCmp('searchResultsPanel').setTitle('Search Results - ALL');
+						searchRequest = {};					
+						searchRequest.query = 	{							
+							"searchElements": [{
+								"searchType": "INDEX",									
+								"value": '*'
 							}]
 						};
-					} else {						
-						Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advance');					
 					}
-
-					
-				} else {
-					//search all					
-					Ext.getCmp('searchResultsPanel').setTitle('Search Results - ALL');
-					searchRequest = {};					
-					searchRequest.query = 	{							
-							"searchElements": [{
-									"searchType": "INDEX",									
-									"value": '*'
-							}]
-					};
+					originalSearchRequest = searchRequest;
+					doSearch(searchRequest, {
+						field: 'name',
+						dir: 'ASC'
+					});
 				}
-				originalSearchRequest = searchRequest;
-				doSearch(searchRequest, {
-					field: 'name',
-					dir: 'ASC'
-				});
-				
 			};
 			
 			var doSearch = function(searchRequest, sort) {
