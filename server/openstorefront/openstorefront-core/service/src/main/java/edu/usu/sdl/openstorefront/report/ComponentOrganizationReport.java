@@ -20,6 +20,8 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,14 +53,18 @@ public class ComponentOrganizationReport
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		//write header
-		cvsGenerator.addLine("Component Organization Report", sdf.format(TimeUtil.currentDate()));
-		cvsGenerator.addLine(
-				"Organization",
-				"Component Name",
-				//"Security Classification",
-				"Last Update Date",
-				"Approve Status"
-		);
+		cvsGenerator.addLine("Entry Organization Report", sdf.format(TimeUtil.currentDate()));
+		
+		List<String> header = new ArrayList<>();
+		header.add("Organization");
+		header.add("Entry Name");
+		header.add("Last Update Date");
+		header.add("Approve Status");
+	
+		if (getBranding().getAllowSecurityMarkingsFlg()) {
+			header.add("Security Marking");
+		}		
+		cvsGenerator.addLine(header.toArray());
 
 		Map<String, Object> params = new HashMap<>();
 		String componentFilter = "";
@@ -100,12 +106,17 @@ public class ComponentOrganizationReport
 			cvsGenerator.addLine(organization);
 			for (ODocument document : orgMap.get(organization)) {
 
-				//String securityMarking = document.field("securityMarkingType");
-				cvsGenerator.addLine("",
-						document.field("name"),
-						//securityMarking == null ? "" : "(" + securityMarking + ") - " + TranslateUtil.translate(SecurityMarkingType.class, securityMarking),
-						document.field("lastActivityDts"),
-						document.field("approvalState"));
+				List<String> data = new ArrayList<>();
+				data.add("");
+				data.add(document.field("name"));
+				data.add(document.field("lastActivityDts"));
+				data.add(document.field("approvalState"));
+
+				if (getBranding().getAllowSecurityMarkingsFlg()) {
+					String securityMarking = document.field("securityMarkingType");					
+					data.add(securityMarking == null ? "" : "(" + securityMarking + ") - " + TranslateUtil.translate(SecurityMarkingType.class, securityMarking));
+				}		
+				cvsGenerator.addLine(data.toArray());				
 
 				totalComponents++;
 			}

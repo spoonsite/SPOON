@@ -99,7 +99,7 @@ limitations under the License.
 									<b>{label}</b>								
 								</td>
 								<td class="print-table alert-{highlightStyle}">
-									{value}
+									<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{value}
 								</td>
 							</tr>
 						</tpl>					
@@ -119,7 +119,7 @@ limitations under the License.
 									Name
 								</td>
 								<td class="print-table">
-									<b>{name}</b><br>
+									<tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{name}</b><br>
 									{organization}
 								</td>
 							</tr>
@@ -153,6 +153,7 @@ limitations under the License.
 					<tpl if="show.views">
 						<b>Views:</b> {componentViews}<br>
 					</tpl>
+					<tpl if="securityMarkingType"><b>Highest Classification:</b> ({securityMarkingType})</tpl>
 					<tpl if="show.badges">
 						<tpl for="attributes">
 							<tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>
@@ -168,7 +169,7 @@ limitations under the License.
 				<b>Tags: </b>
 				<tpl for="tags">
 					<span class="print-tags">
-						{text}
+						<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{text}
 					</span>
 				</tpl>
 			</tpl>
@@ -176,7 +177,7 @@ limitations under the License.
 	</tpl>
 	<tpl if="show.description">
 		<div class="print-left-block print-section">
-			<h3>Description: </h3>
+			<h3><tpl if="componentSecurityMarkingType">({componentSecurityMarkingType}) </tpl>Description: </h3>
 			{description}
 		</div>
 	</tpl>
@@ -194,7 +195,7 @@ limitations under the License.
 						<tr class="print-table">
 							<td class="print-table">
 								<b>{resourceTypeDesc}</b><br>
-								{link}
+								<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{link}
 							</td>
 						</tr>
 					</tpl>					
@@ -215,7 +216,7 @@ limitations under the License.
 								<b>{label}</b>								
 							</td>
 							<td class="print-table alert-{highlightStyle}">
-								{value}
+								<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{value}
 							</td>
 						</tr>
 					</tpl>					
@@ -237,7 +238,7 @@ limitations under the License.
 								Name
 							</td>
 							<td class="print-table">
-								<b>{name}</b><br>
+								<tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{name}</b><br>
 								{organization}
 							</td>
 						</tr>
@@ -265,7 +266,7 @@ limitations under the License.
 					<tpl for="dependencies">
 						<tr class="print-table">
 							<td class="print-table">
-								<b>{dependencyName} {version}</b><br>
+								<tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{dependencyName} {version}</b><br>
 								{comment}
 							</td>
 						</tr>
@@ -305,7 +306,7 @@ limitations under the License.
 			<tpl for="reviews">
 					<table style="width:100%"><tr>
 							<td valign="top">
-								<h1>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>								
+								<h1><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>								
 								<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl></div><br>
 								<b>Organization:</b> {organization}<br>
 								<b>Experience:</b> {userTimeCode}<br>							
@@ -338,13 +339,13 @@ limitations under the License.
 				<h2>Questions</h2>
 				<hr>
 				<tpl for="questions">
-					<div class="question-question"><span class="question-response-letter-q">Q.</span> <b>{question}</b></div>
+					<div class="question-question"><span class="question-response-letter-q">Q.</span> <tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{question}</b></div>
 					<div class="question-info">
 						{username} ({userType}) - {[Ext.util.Format.date(values.questionUpdateDts, "m/Y")]}
 					</div>
 					<div style="padding-left: 10px; padding-right: 10px;">
 					<tpl for="responses">
-							<div class="question-response"><span class="question-response-letter">A.</span> {response}</div>
+							<div class="question-response"><span class="question-response-letter">A.</span> <tpl if="securityMarkingType">({securityMarkingType}) </tpl>{response}</div>
 							<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>	
 							<hr>
 					</tpl>
@@ -361,10 +362,10 @@ limitations under the License.
 				<tpl for="componentMedia">
 					<tpl if="mediaTypeCode == 'IMG'">
 						<img src="{link}" style="width: 100%"><br>
-						<tpl if="caption">{caption}<br></tpl>
+						<tpl if="securityMarkingType">({securityMarkingType}) </tpl><tpl if="caption">{caption}<br></tpl>
 					</tpl>
 					<tpl if="mediaTypeCode != 'IMG'">
-						<b>Non-Printable:</b> {contentType}<tpl if="caption"> - {caption}</tpl><tpl if="originalFileName"> - {originalFileName}</tpl><br>
+						<b>Non-Printable:</b> {contentType}<tpl if="securityMarkingType">({securityMarkingType}) </tpl><tpl if="caption"> - {caption}</tpl><tpl if="originalFileName"> - {originalFileName}</tpl><br>
 					</tpl>			
 					<br>
 				</tpl>

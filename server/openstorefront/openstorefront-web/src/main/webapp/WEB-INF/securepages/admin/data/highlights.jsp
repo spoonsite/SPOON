@@ -14,22 +14,6 @@
 					alwaysOnTop: true
 				});	
 
-
-				var securityTypeStore = Ext.create('Ext.data.Store', {
-					storeId: 'securityTypeStore',
-					autoLoad: true,
-					fields: [
-						'code',
-						'description'
-					],
-					proxy: {
-						id: 'securityTypeStoreProxy',
-						type: 'ajax',
-						url: '../api/v1/resource/lookuptypes/SecurityMarkingType/view'
-					}
-				});
-
-
 				var highlightTypeStore = Ext.create('Ext.data.Store', {
 					storeId: 'highlightTypeStore',
 					autoLoad: true,
@@ -39,18 +23,6 @@
 						url: '/openstorefront/api/v1/resource/lookuptypes/HighlightType/view'
 					}
 				});
-
-				var getSecurityType = function getSecurityType(code) {
-					try {
-						return securityTypeStore.getData().find('code', code).data.description;
-					} catch (err) {
-						if (code) {
-							Ext.toast('Unable to find security type code: ' + code);
-							return '';
-						} else
-							return '';
-					}
-				};
 
 				var getHighlightType = function getHighlightType(code) {
 					try {
@@ -93,14 +65,7 @@
 								}
 							},
 							{text: 'Link', dataIndex: 'link', flex: 1},
-							{
-								text: 'Security Type',
-								dataIndex: 'securityMarkingType',
-								flex: 1,
-								renderer: function (value, metaData, record) {
-									return getSecurityType(value);
-								}
-							}
+							{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 						]
 					},
 					dockedItems: [
@@ -389,17 +354,9 @@
 									vtype: 'url',
 									allowBlank: true
 								},
-								{
-									xtype: 'combobox',
-									fieldLabel: 'Security Type',
-									id: 'highlightEntryForm-SecurityType',
-									name: 'securityMarkingType',
-									valueField: 'code',
-									displayField: 'description',
-									typeAhead: false,
-									editable: false,
-									store: securityTypeStore
-								}
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})							
 							],
 							dockedItems: [
 								{
