@@ -33,15 +33,23 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 			columnLines: true,
 			store: Ext.create('Ext.data.Store', {
 				id: 'searchResultsStore',
+				pageSize: 50,
+				autoLoad: false,
+				remoteSort: true,
 				sorters: [
 					new Ext.util.Sorter({
 						property: 'name',
 						direction: 'ASC'
 					})
 				],
-				proxy: {
-					type: 'ajax'
-				}
+				proxy: CoreUtil.pagingProxy({
+					actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+					reader: {
+						type: 'json',
+						rootProperty: 'data',
+						totalProperty: 'totalNumber'
+					}
+				})
 			}),
 			columns: [
 				{
@@ -101,14 +109,11 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 					searchRequest.query = {
 						searchElements: searchRequest.searchElements
 					};
-					Ext.getCmp('searchResultsGrid').getStore().getProxy().setActionMethods({
-								create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'
-							});
 					Ext.getCmp('searchResultsGrid').getStore().getProxy().buildRequest = function buildRequest(operation) {
 						var initialParams = Ext.apply({
 							paging: true,
-							sortField: 'name',
-							sortOrder: 'ASC',
+							sortField: operation.getSorters()[0].getProperty(),
+							sortOrder: operation.getSorters()[0].getDirection(),
 							offset: operation.getStart(),
 							max: operation.getLimit()
 						}, operation.getParams());
@@ -116,6 +121,7 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 
 						var request = new Ext.data.Request({
 							url: '/openstorefront/api/v1/service/search/advance',
+							params: params,
 							operation: operation,
 							action: operation.getAction(),
 							jsonData: Ext.util.JSON.encode(searchRequest.query)
