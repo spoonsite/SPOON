@@ -23,7 +23,7 @@ Ext.define('OSF.component.QuestionWindow', {
 	iconCls: 'fa fa-lg fa-comment',
 	modal: true,
 	width: '70%',
-	height: 350,
+	height: 400,
 	maximizable: true,
 	layout: 'fit',
 	dockedItems: [
@@ -39,16 +39,6 @@ Ext.define('OSF.component.QuestionWindow', {
 
 		var questionWindow = this;
 		
-		//Query Branding
-		CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
-			var branding = Ext.decode(response.responseText);
-			if (branding.userInputWarning) {
-				questionWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
-				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
-				'</h3>');
-			}
-		});		
-		
 		questionWindow.form = Ext.create('Ext.form.Panel', {	
 			bodyStyle: 'padding-left: 10px;padding-right: 10px;',
 			items: [
@@ -61,7 +51,11 @@ Ext.define('OSF.component.QuestionWindow', {
 					allowBlank: false,
 					fieldBodyCls: 'form-comp-htmleditor-border',					
 					maxLength: 1024
-				}
+				},
+				Ext.create('OSF.component.SecurityComboBox', {	
+					itemId: 'securityMarkings',
+					hidden: true
+				})				
 			],
 			dockedItems: [
 				{
@@ -126,7 +120,19 @@ Ext.define('OSF.component.QuestionWindow', {
 		
 		questionWindow.add(questionWindow.form);
 		
-		
+		//query branding
+		CoreService.brandingservice.getCurrentBanding().then(function(response){
+			var branding = Ext.decode(response.responseText);
+			if (branding.userInputWarning) {
+				questionWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
+				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
+				'</h3>');
+			}			
+			if (branding.allowSecurityMarkingsFlg) {
+				questionWindow.form.getComponent('securityMarkings').setHidden(false);
+			}
+		});	
+				
 		//Query User
 		CoreService.usersevice.getCurrentUser().then(function(response){
 			questionWindow.user = Ext.decode(response.responseText);
@@ -183,7 +189,7 @@ Ext.define('OSF.component.ResponseWindow', {
 	modal: true,
 	maximizable: true,
 	width: '70%',
-	height: 350,
+	height: 400,
 	layout: 'fit',
 	dockedItems: [
 		{
@@ -198,16 +204,6 @@ Ext.define('OSF.component.ResponseWindow', {
 
 		var responseWindow = this;
 				
-		//Query Branding
-		CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
-			var branding = Ext.decode(response.responseText);
-			if (branding.userInputWarning) {
-				responseWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
-				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
-				'</h3>');
-			}
-		});			
-		
 		responseWindow.form = Ext.create('Ext.form.Panel', {			
 			bodyStyle: 'padding-left: 10px;padding-right: 10px;',
 			items: [
@@ -220,7 +216,11 @@ Ext.define('OSF.component.ResponseWindow', {
 					allowBlank: false,
 					fieldBodyCls: 'form-comp-htmleditor-border',					
 					maxLength: 1024
-				}
+				},
+				Ext.create('OSF.component.SecurityComboBox', {	
+					itemId: 'securityMarkings',
+					hidden: true
+				})				
 			],
 			dockedItems: [
 				{
@@ -286,6 +286,19 @@ Ext.define('OSF.component.ResponseWindow', {
 		});
 		
 		responseWindow.add(responseWindow.form);
+		
+		//query branding
+		CoreService.brandingservice.getCurrentBanding().then(function(response){
+			var branding = Ext.decode(response.responseText);
+			if (branding.userInputWarning) {
+				responseWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
+				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
+				'</h3>');
+			}			
+			if (branding.allowSecurityMarkingsFlg) {
+				responseWindow.form.getComponent('securityMarkings').setHidden(false);
+			}
+		});
 		
 		//Query User
 		CoreService.usersevice.getCurrentUser().then(function(response){

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global CoreService */
+/* global CoreService, Ext */
 
 Ext.define('OSF.component.ReviewWindow', {
 	extend: 'Ext.window.Window',
@@ -23,7 +23,7 @@ Ext.define('OSF.component.ReviewWindow', {
 	modal: true,
 	maximizable: true,
 	width: '80%',
-	height: 725,
+	height: '80%',
 	layout: 'fit',	
 	dockedItems:[
 		{
@@ -36,16 +36,6 @@ Ext.define('OSF.component.ReviewWindow', {
 		this.callParent();
 
 		var reviewWindow = this;
-		
-		//Query Branding
-		CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
-			var branding = Ext.decode(response.responseText);
-			if (branding.userInputWarning) {
-				reviewWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
-				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
-				'</h3>');
-			}
-		});
 		
 		reviewWindow.formPanel = Ext.create('Ext.form.Panel', {
 			bodyStyle: 'padding: 10px;',
@@ -238,12 +228,29 @@ Ext.define('OSF.component.ReviewWindow', {
 					allowBlank: false,
 					fieldBodyCls: 'form-comp-htmleditor-border',					
 					maxLength: 4096
-				}
+				},
+				Ext.create('OSF.component.SecurityComboBox', {	
+					itemId: 'securityMarkings',
+					hidden: true
+				})
 
 			]
 		});
 		
 		reviewWindow.add(reviewWindow.formPanel);
+		
+		//Query Branding
+		CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+			var branding = Ext.decode(response.responseText);
+			if (branding.userInputWarning) {
+				reviewWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
+				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
+				'</h3>');
+			}
+			if (branding.allowSecurityMarkingsFlg) {
+				reviewWindow.formPanel.getComponent('securityMarkings').setHidden(false);
+			}			
+		});
 		
 		//Query User
 		CoreService.usersevice.getCurrentUser().then(function(response){

@@ -308,7 +308,7 @@ limitations under the License.
 					
 					var template = new Ext.XTemplate(
 						'<div class="home-highlight-item">',
-						'	<h2><a href="view.jsp?id={componentId}" class="link" target="_blank">{name}</a></h2>',
+						'	<h2><a href="view.jsp?id={componentId}&fullPage=true" class="link" target="_blank">{name}</a></h2>',
 						'	<div class="home-highlight-item-desc">{displayDesc}</div>',
 						'	<div class="home-highlight-approved">Approved: {[Ext.util.Format.date(values.addedDts, "m/d/y")]}</div>',						
 						'</div>'

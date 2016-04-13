@@ -579,7 +579,8 @@
 					{text: 'Group Code', dataIndex: 'groupCode', flex: 1},
 					{text: 'Sort Order', dataIndex: 'sortOrder', flex: 1},
 					{text: 'Architecture Code', dataIndex: 'architectureCode', flex: 1.5},
-					{text: 'Badge URL', dataIndex: 'badgeUrl', flex: 1}
+					{text: 'Badge URL', dataIndex: 'badgeUrl', flex: 1},
+					{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 				]
 			});
 
@@ -674,7 +675,10 @@
 								store: highlightStyleStore,
 								typeAhead: false,
 								editable: false
-							}	
+							},
+							Ext.create('OSF.component.SecurityComboBox', {	
+								hidden: !${branding.allowSecurityMarkingsFlg}
+							})					
 						]
 					}
 				],
@@ -816,10 +820,10 @@
 			var manageCodesWin = Ext.create('Ext.window.Window', {
 				id: 'manageCodesWin',
 				title: 'Manage Codes',
-				scrollable: true,
-				autoScroll: true,
+				modal: true,
 				width: '90%',
-				height: 850,
+				height: '90%',
+				maximizable: true,
 				y: '2em',
 				layout: 'fit',
 				items: [

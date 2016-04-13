@@ -137,7 +137,8 @@
 					columns: [
 						{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 },
 						{ text: 'Create User', align: 'center', dataIndex: 'createUser', width: 150 },
-						{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						selectionchange: function(grid, record, index, opts){
@@ -152,15 +153,19 @@
 					dockedItems: [
 						{
 							xtype: 'form',
-							layout: 'hbox',
+							layout: 'anchor',
 							padding: 10,
+							defaults: {
+								labelAlign: 'top',
+								labelSeparator: ''
+							},
 							items: [
 								{
 									xtype: 'textfield',
 									fieldLabel: 'Tag<span class="field-required" />',
 									allowBlank: false,
 									margin: '0 20 0 0',
-									width: '40%',
+									width: '100%',
 									maxLength: 120,
 									name: 'text',
 									listeners: {
@@ -170,7 +175,10 @@
 											}
 										}
 									}
-								}, 
+								},
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								}),								
 								{
 									xtype: 'button',
 									text: 'Add',
@@ -245,7 +253,8 @@
 						{ text: 'Question', dataIndex: 'question',  flex: 1, minWidth: 200 },
 						{ text: 'Organization', dataIndex: 'organization', width: 150 },
 						{ text: 'User', dataIndex: 'createUser', flex: 1, minWidth: 150 },					
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						selectionchange: function(selectionModel, selectedRecords, opts){
@@ -358,7 +367,8 @@
 								{ text: 'Organization', dataIndex: 'organization', width: 150 },
 								{ text: 'User', dataIndex: 'createUser', wdth: 150 },	
 								{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },					
-								{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }								
+								{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+								{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 							],
 							listeners: {
 								selectionchange: function(selectionModel, selectedRecords, opts){
@@ -446,7 +456,8 @@
 						{ text: 'Pros', dataIndex: 'pros', width: 200 },
 						{ text: 'Cons', dataIndex: 'cons', width: 200 },
 						{ text: 'User', dataIndex: 'username', width: 150 },
-						{ text: 'Update Date', dataIndex: 'updateDate', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDate', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						selectionchange: function(grid, record, index, opts){
@@ -749,7 +760,8 @@
 					columns: [
 						{ text: 'Label', dataIndex: 'label',  width: 200 },
 						{ text: 'Value',  dataIndex: 'value', flex: 1, minWidth: 200 },
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
@@ -840,7 +852,10 @@
 									allowBlank: false,									
 									maxLength: '255',									
 									name: 'value'
-								}
+								},
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})								
 							]
 						},						
 						{
@@ -930,7 +945,8 @@
 						{ text: 'Version',  dataIndex: 'version', width: 150 },
 						{ text: 'Link',  dataIndex: 'dependancyReferenceLink', width: 200 },
 						{ text: 'Comment',  dataIndex: 'comment', flex: 1, minWidth: 200 },
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
@@ -1035,7 +1051,10 @@
 									fieldLabel: 'Comment',																											
 									maxLength: '255',
 									name: 'comment'
-								}								
+								},
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})								
 							]
 						},						
 						{
@@ -1132,7 +1151,8 @@
 						{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 						{ text: 'Local Media Name',  dataIndex: 'originalFileName', width: 200 },
 						{ text: 'Link',  dataIndex: 'originalLink', width: 200 },						
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
@@ -1307,7 +1327,10 @@
 									maxLength: '255',									
 									emptyText: 'http://www.example.com/image.png',
 									name: 'originalLink'
-								}							
+								},
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})								
 							]
 						},						
 						{
@@ -1425,7 +1448,8 @@
 						{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 						{ text: 'Local Resource Name',  dataIndex: 'originalFileName', width: 200 },
 						{ text: 'Restricted',  dataIndex: 'restricted', width: 150 },						
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
@@ -1605,7 +1629,10 @@
 									itemId: 'upload',
 									fieldLabel: 'Upload Resource (Limit of 1GB)',																											
 									name: 'file'
-								}															
+								},
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})								
 							]
 						},						
 						{
@@ -1721,7 +1748,8 @@
 						{ text: 'Email',  dataIndex: 'email', width: 200 },
 						{ text: 'Phone',  dataIndex: 'phone', width: 150 },
 						{ text: 'Organization',  dataIndex: 'organization', width: 200 },
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
@@ -1870,7 +1898,10 @@
 									fieldLabel: 'Phone',																											
 									maxLength: '120',
 									name: 'phone'
-								}								
+								},
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})								
 							]
 						},						
 						{
@@ -2069,7 +2100,7 @@
 											}
 											Ext.getCmp('relationshipTargetCB').reset();
 											Ext.getCmp('relationshipTargetCB').getStore().load({
-												url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType,		
+												url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType	
 											});
 										}
 									}
@@ -2822,7 +2853,10 @@
 									storeConfig: {
 										url: '../api/v1/resource/lookuptypes/DataSource'										
 									}
-								})								
+								}),
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})
 							]							
 						},
 						{
@@ -3432,6 +3466,9 @@
 						}},	
 						{name: 'dataSource', mapping: function(data){
 							return data.component.dataSource;
+						}},
+						{name: 'securityMarkingType', mapping: function(data){
+							return data.component.securityMarkingType;
 						}},						
 						{name: 'lastModificationType', mapping: function(data){
 							return data.component.lastModificationType;
@@ -3623,7 +3660,8 @@
 						{ text: 'Update User', dataIndex: 'updateUser', width: 175, hidden: true },
 						{ text: 'Create Date', dataIndex: 'createDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Create User (Owner)', dataIndex: 'createUser', width: 175, hidden: true },
-						{ text: 'Component Id', dataIndex: 'componentId', width: 175, hidden: true }
+						{ text: 'Component Id', dataIndex: 'componentId', width: 175, hidden: true },
+						{ text: 'Security Marking', dataIndex: 'securityMarkingDescription', width: 175, hidden: true }
 					],
 					dockedItems: [
 						{
@@ -4052,7 +4090,7 @@
 								}	
 
 								//tags should be on all entries
-								showSubTab(tagGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/tags');
+								showSubTab(tagGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/tagsview');
 							}						
 						});	
 					}
@@ -4197,7 +4235,7 @@
 				
 				var actionPreviewComponent = function(id){	
 					previewComponentWin.show();	
-					previewContents.load('view.jsp?fullPage=true&id=' + id);
+					previewContents.load('view.jsp?fullPage=true&hideSecurityBanner=true&id=' + id);
 					previewCheckButtons();
 				};
 
