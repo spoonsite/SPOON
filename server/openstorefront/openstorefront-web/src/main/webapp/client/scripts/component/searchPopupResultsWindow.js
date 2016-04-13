@@ -58,8 +58,12 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 					dataIndex: 'name',
 					flex: 1,
 					autoSizeColumn: false,
-					renderer: function (value) {
-						return '<span class="search-tools-column-orange-text">' + value + '</span>';
+					renderer: function (value, metaData, record) {
+						var url = '<a style="text-decoration: none" href="/openstorefront/client/view.jsp?id=';
+						url += record.getData().componentId;
+						url += '">';
+						url += '<span class="search-tools-column-orange-text">' + value + '</span></a>';
+						return url;
 					}
 				},
 				{
@@ -82,9 +86,28 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 			],
 			dockedItems: [
 				{
-					xtype: 'pagingtoolbar',
+					xtype: 'toolbar',
 					dock: 'bottom',
-					displayInfo: true
+					items: [
+						{
+							xtype: 'pagingtoolbar',
+							store: Ext.getStore('searchResultsStore'),
+							displayInfo: true
+						},
+						{
+							xtype: 'tbfill'
+						},
+						{
+							text: 'View Full Results Page',
+							iconCls: 'fa fa-2x fa-search',
+							scale: 'medium',
+							handler: function() {
+								var url = "/openstorefront/client/searchResults.jsp?savedSearchId=";
+								url += this.up('window').searchId;
+								top.window.location.href = url;
+							}
+						}
+					]
 				}
 			]
 		}
@@ -97,6 +120,7 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 		var resultsWindow = this;
 
 		this.showResults = function showResults(savedSearchId) {
+			this.searchId = savedSearchId;
 			var url = '/openstorefront/api/v1/resource/systemsearches/';
 			url += savedSearchId;
 			Ext.Ajax.request({
