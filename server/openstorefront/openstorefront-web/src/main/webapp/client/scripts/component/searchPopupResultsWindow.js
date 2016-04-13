@@ -33,15 +33,23 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 			columnLines: true,
 			store: Ext.create('Ext.data.Store', {
 				id: 'searchResultsStore',
+				pageSize: 50,
+				autoLoad: false,
+				remoteSort: true,
 				sorters: [
 					new Ext.util.Sorter({
 						property: 'name',
 						direction: 'ASC'
 					})
 				],
-				proxy: {
-					type: 'ajax'
-				}
+				proxy: CoreUtil.pagingProxy({
+					actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+					reader: {
+						type: 'json',
+						rootProperty: 'data',
+						totalProperty: 'totalNumber'
+					}
+				})
 			}),
 			columns: [
 				{
@@ -50,8 +58,12 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 					dataIndex: 'name',
 					flex: 1,
 					autoSizeColumn: false,
-					renderer: function (value) {
-						return '<span class="search-tools-column-orange-text">' + value + '</span>';
+					renderer: function (value, metaData, record) {
+						var url = '<a style="text-decoration: none" href="/openstorefront/client/view.jsp?id=';
+						url += record.getData().componentId;
+						url += '">';
+						url += '<span class="search-tools-column-orange-text">' + value + '</span></a>';
+						return url;
 					}
 				},
 				{
@@ -74,9 +86,28 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 			],
 			dockedItems: [
 				{
-					xtype: 'pagingtoolbar',
+					xtype: 'toolbar',
 					dock: 'bottom',
-					displayInfo: true
+					items: [
+						{
+							xtype: 'pagingtoolbar',
+							store: Ext.getStore('searchResultsStore'),
+							displayInfo: true
+						},
+						{
+							xtype: 'tbfill'
+						},
+						{
+							text: 'View Full Results Page',
+							iconCls: 'fa fa-2x fa-search',
+							scale: 'medium',
+							handler: function() {
+								var url = "/openstorefront/client/searchResults.jsp?savedSearchId=";
+								url += this.up('window').searchId;
+								top.window.location.href = url;
+							}
+						}
+					]
 				}
 			]
 		}
@@ -89,6 +120,7 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 		var resultsWindow = this;
 
 		this.showResults = function showResults(savedSearchId) {
+			this.searchId = savedSearchId;
 			var url = '/openstorefront/api/v1/resource/systemsearches/';
 			url += savedSearchId;
 			Ext.Ajax.request({
@@ -101,14 +133,11 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 					searchRequest.query = {
 						searchElements: searchRequest.searchElements
 					};
-					Ext.getCmp('searchResultsGrid').getStore().getProxy().setActionMethods({
-								create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'
-							});
 					Ext.getCmp('searchResultsGrid').getStore().getProxy().buildRequest = function buildRequest(operation) {
 						var initialParams = Ext.apply({
 							paging: true,
-							sortField: 'name',
-							sortOrder: 'ASC',
+							sortField: operation.getSorters()[0].getProperty(),
+							sortOrder: operation.getSorters()[0].getDirection(),
 							offset: operation.getStart(),
 							max: operation.getLimit()
 						}, operation.getParams());
@@ -116,6 +145,7 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 
 						var request = new Ext.data.Request({
 							url: '/openstorefront/api/v1/service/search/advance',
+							params: params,
 							operation: operation,
 							action: operation.getAction(),
 							jsonData: Ext.util.JSON.encode(searchRequest.query)
