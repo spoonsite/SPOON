@@ -68,14 +68,9 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 			dock: 'bottom',
 			items: [
 				{
-					text: 'Cancel'
-				},
-				{
-					xtype: 'tbfill'
-				},
-				{
 					text: 'Insert Link',
 					id: 'insertButton',
+					iconCls: 'fa fa-link',
 					disabled: true,
 					handler: function(button) {
 						var window = button.up('window');
@@ -87,6 +82,16 @@ Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
 					    link += record.getData().searchName;
 						link += '</a>';
 						editor.execCommand('mceInsertContent', false, link);
+						window.close();
+					}
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Cancel',
+					handler: function(button) {
+						var window = button.up('window');
 						window.close();
 					}
 				}
