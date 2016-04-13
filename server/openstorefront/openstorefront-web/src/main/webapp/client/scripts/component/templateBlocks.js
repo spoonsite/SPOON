@@ -51,6 +51,19 @@ Ext.define('OSF.component.template.Description', {
 		
 	initComponent: function () {
 		this.callParent();
+		Ext.Loader.loadScript({
+			url: '/openstorefront/client/scripts/component/searchPopupResultsWindow.js',
+			scope: this,
+			onLoad: function() {
+				var ssPopupResultsWindow = Ext.create('OSF.component.SearchPopupResultsWindow', {
+					id: 'ssPopupResultsWindow',
+					alwaysOnTop: true
+				});
+			},
+			onError: function() {
+				var ssPopupResultsWindow = {};
+			}
+		});
 	},
 	
 	updateHandler: function(entry){
