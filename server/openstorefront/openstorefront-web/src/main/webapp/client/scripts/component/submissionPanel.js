@@ -29,6 +29,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		this.callParent();
 	
 		var submissionPanel = this;
+		submissionPanel.hideSecurityMarkings = true;		
 				
 		submissionPanel.cancelSubmissionHandler = function() {
 			Ext.Msg.show({
@@ -472,6 +473,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 					emptyText: (submissionPanel.userInputWarning ? submissionPanel.userInputWarning : '' ) + '<br><br>Include an easy to read description of the product, focusing on what it is and what it does.',
 					tinyMCEConfig: CoreUtil.tinymceConfig()
 				},
+				Ext.create('OSF.component.SecurityComboBox', {	
+					itemId: 'securityMarkings',
+					hidden: true
+				}),				
 				{
 					xtype: 'panel',
 					itemId: 'requiredAttributePanel',
@@ -761,7 +766,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								allowBlank: false,	
 								maxLength: '120',
 								name: 'phone'
-							}																
+							},
+							Ext.create('OSF.component.SecurityComboBox', {	
+								itemId: 'securityMarkings',
+								hidden: submissionPanel.hideSecurityMarkings
+							})							
 						],
 						dockedItems: [
 							{
@@ -828,7 +837,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add External Link',
 				width: '50%',
-				height: 310,
+				height: 360,
 				layout: 'fit',
 				items: [
 					{
@@ -919,7 +928,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								hidden: true,
 								fieldLabel: 'Upload Resource (Limit of 1GB)',																											
 								name: 'file'
-							}																
+							},
+							Ext.create('OSF.component.SecurityComboBox', {	
+								itemId: 'securityMarkings',
+								hidden: submissionPanel.hideSecurityMarkings
+							})							
 						],
 						dockedItems: [
 							{
@@ -1032,7 +1045,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Media',
 				width: '50%',
-				height: 300,
+				height: 325,
 				layout: 'fit',
 				items: [
 					{
@@ -1119,7 +1132,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								maxLength: '255',									
 								emptyText: 'http://www.example.com/image.png',
 								name: 'originalLink'
-							}																
+							},
+							Ext.create('OSF.component.SecurityComboBox', {	
+								itemId: 'securityMarkings',
+								hidden: submissionPanel.hideSecurityMarkings
+							})							
 						],
 						dockedItems: [
 							{
@@ -1231,7 +1248,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Dependency',
 				width: '50%',
-				height: 320,
+				height: 370,
 				layout: 'fit',				
 				items: [
 					{
@@ -1274,7 +1291,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								fieldLabel: 'Comment',																											
 								maxLength: '255',
 								name: 'comment'
-							}																
+							},							
+							Ext.create('OSF.component.SecurityComboBox', {	
+								itemId: 'securityMarkings',
+								hidden: submissionPanel.hideSecurityMarkings
+							})
 						],
 						dockedItems: [
 							{
@@ -1341,7 +1362,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Metadata',
 				width: '50%',
-				height: 200,
+				height: 250,
 				layout: 'fit',
 				items: [
 					{
@@ -1371,7 +1392,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								allowBlank: false,									
 								maxLength: '255',									
 								name: 'value'
-							}																
+							},
+							Ext.create('OSF.component.SecurityComboBox', {	
+								itemId: 'securityMarkings',
+								hidden: submissionPanel.hideSecurityMarkings
+							})							
 						],
 						dockedItems: [
 							{
@@ -1701,7 +1726,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 								{ text: 'Last Name',  dataIndex: 'lastName', width: 200 },
 								{ text: 'Email',  dataIndex: 'email', width: 200 },
 								{ text: 'Phone',  dataIndex: 'phone', width: 150 },
-								{ text: 'Organization',  dataIndex: 'organization', width: 200 }
+								{ text: 'Organization',  dataIndex: 'organization', width: 200 },
+								{ text: 'Security Marking', itemId: 'securityMarking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true }								
 							],
 							listeners: {						
 								afterrender: function(grid, opts){
@@ -1789,7 +1815,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 								{ text: 'Link',  dataIndex: 'originalLink', flex: 1, minWidth: 200 },
 								{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 								{ text: 'Local Resource Name',  dataIndex: 'originalFileName', width: 200 },
-								{ text: 'Restricted',  dataIndex: 'restricted', width: 150 }
+								{ text: 'Restricted',  dataIndex: 'restricted', width: 150 },
+								{ text: 'Security Marking', itemId: 'securityMarking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true }								
 							],
 							listeners: {						
 								afterrender: function(grid, opts){
@@ -1876,7 +1903,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 								{ text: 'Caption',  dataIndex: 'caption', width: 200 },
 								{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 								{ text: 'Local Media Name',  dataIndex: 'originalFileName', width: 200 },
-								{ text: 'Link',  dataIndex: 'originalLink', width: 200 }
+								{ text: 'Link',  dataIndex: 'originalLink', width: 200 },
+								{ text: 'Security Marking', itemId: 'securityMarking', dataIndex: 'securityMarkingDescription', width: 150, hidden: true }								
 							],
 							listeners: {						
 								afterrender: function(grid, opts){
@@ -1962,7 +1990,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 								{ text: 'Name', dataIndex: 'dependencyName',  width: 200 },
 								{ text: 'Version',  dataIndex: 'version', width: 150 },
 								{ text: 'Link',  dataIndex: 'dependancyReferenceLink', width: 200 },
-								{ text: 'Comment',  dataIndex: 'comment', flex: 1, minWidth: 200 }						
+								{ text: 'Comment',  dataIndex: 'comment', flex: 1, minWidth: 200 },
+								{ text: 'Security Marking', itemId: 'securityMarking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true }								
 							],
 							listeners: {						
 								afterrender: function(grid, opts){
@@ -2046,7 +2075,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							forceFit: true,
 							columns: [
 								{ text: 'Label', dataIndex: 'label',  width: 200 },
-								{ text: 'Value',  dataIndex: 'value', flex: 1, minWidth: 200 }						
+								{ text: 'Value',  dataIndex: 'value', flex: 1, minWidth: 200 },
+								{ text: 'Security Marking',  itemId: 'securityMarking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true }
 							],
 							listeners: {						
 								afterrender: function(grid, opts){
@@ -2218,7 +2248,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							}),
 							forceFit: true,
 							columns: [
-								{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 }					
+								{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 },
+								{ text: 'Security Marking',  itemId: 'securityMarking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true }
 							],
 							listeners: {		
 								afterrender: function(grid, opts){
@@ -2269,7 +2300,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 													alwaysOnTop: true,
 													title: 'Add Tag',
 													width: '40%',
-													height: 150,
+													height: 200,
 													layout: 'fit',
 													items: [
 														{
@@ -2292,7 +2323,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 																	storeConfig: {
 																		url: '../api/v1/resource/components/tags'
 																	}
-																})
+																}),
+																Ext.create('OSF.component.SecurityComboBox', {	
+																	itemId: 'securityMarkings',
+																	hidden: submissionPanel.hideSecurityMarkings
+																})																
 															],
 															dockedItems: [
 																{
@@ -2522,6 +2557,22 @@ Ext.define('OSF.component.SubmissionPanel', {
 				submissionPanel.mainPanel.getComponent('userInputWarning').update('<div class="alert-warning" style="text-align: center">' + 
 				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
 				'</div>');						
+			}
+			if (branding.allowSecurityMarkingsFlg) {
+				submissionPanel.requiredForm.getComponent('securityMarkings').setHidden(false);
+				submissionPanel.hideSecurityMarkings = false;
+								
+				
+				var sections = submissionPanel.detailsPanel.getComponent('detailSections');					
+				
+				submissionPanel.detailsPanel.on('activate', function(panel, opts){
+					sections.getComponent('contactGrid').down('#securityMarking').setHidden(false);
+					sections.getComponent('resourceGrid').down('#securityMarking').setHidden(false);
+					sections.getComponent('mediaGrid').down('#securityMarking').setHidden(false);
+					sections.getComponent('dependenciesGrid').down('#securityMarking').setHidden(false);
+					sections.getComponent('metadataGrid').down('#securityMarking').setHidden(false);
+					sections.getComponent('tagGrid').down('#securityMarking').setHidden(false);						
+				});
 			}
 		});
 		
@@ -2795,6 +2846,15 @@ Ext.define('OSF.component.SubmissionPanel', {
 						},
 						success: function(response, opts){
 							var data = Ext.decode(response.responseText);
+							
+							//remove attribute that should be hidden
+							var attributesToShow = [];
+							Ext.Array.each(data.attributes, function(item){
+								if (!item.hideOnSubmission) {
+									attributesToShow.push(item);
+								}
+							});
+							data.attributes = attributesToShow;							
 							reviewEntryPanel.update(data);
 						}
 					});
@@ -2851,7 +2911,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		//load details
 		var detailSection = submissionPanel.detailsPanel.getComponent('detailSections');
 		detailSection.getComponent('tagGrid').getStore().load({
-			url: '../api/v1/resource/components/' + submissionPanel.componentId + '/tags'
+			url: '../api/v1/resource/components/' + submissionPanel.componentId + '/tagsview'
 		});
 		detailSection.getComponent('relationshipsGrid').getStore().load({
 			url: '../api/v1/resource/components/' + submissionPanel.componentId + '/relationships'

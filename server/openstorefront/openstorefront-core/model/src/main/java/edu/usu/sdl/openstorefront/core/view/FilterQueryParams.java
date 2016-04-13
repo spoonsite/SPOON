@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.Max;
@@ -109,7 +110,7 @@ public class FilterQueryParams
 	}
 
 	/**
-	 * This will apply everything but status it assume that was applied all
+	 * This will apply everything except status it assume that was applied all
 	 * ready
 	 *
 	 * @param <T>
@@ -118,11 +119,42 @@ public class FilterQueryParams
 	 */
 	public <T> List<T> filter(List<T> data)
 	{
-		List<T> results = new ArrayList<>();
 		//sort
 		if (StringUtils.isNotBlank(sortField)) {
 			Collections.sort(data, new BeanComparator<>(sortOrder, sortField));
 		}
+		List<T> results = windowData(data);
+
+		return results;
+	}
+	
+	/**
+	 * This applies sorting with custom sorter and windowing.
+	 *
+	 * @param <T>
+	 * @param data
+	 * @param sorter
+	 * @return
+	 */
+	public <T> List<T> filter(List<T> data, Comparator sorter) 
+	{
+		//sort
+		Collections.sort(data, sorter);		
+		List<T> results = windowData(data);
+
+		return results;
+	}	
+
+	/**
+	 * This applies just the windowing
+	 * @param <T>
+	 * @param data
+	 * @return windowed data set
+	 */
+	public <T> List<T> windowData(List<T> data) 
+	{
+		List<T> results = new ArrayList<>();
+		
 		//window
 		if (offset < data.size() && max > 0) {
 			int count = 0;
@@ -134,10 +166,9 @@ public class FilterQueryParams
 				}
 			}
 		}
-
 		return results;
 	}
-
+	
 	public int getMax()
 	{
 		return max;

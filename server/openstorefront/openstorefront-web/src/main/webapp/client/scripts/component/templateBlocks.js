@@ -44,7 +44,7 @@ Ext.define('OSF.component.template.Description', {
 	
 	showDescriptionHeader: true,
 	tpl: new Ext.XTemplate(
-		'<div><tpl if="showDescriptionHeader"><h2>Description</h2></tpl>',	
+		'<div><tpl if="showDescriptionHeader"><h2><tpl if="componentSecurityMarkingType">({componentSecurityMarkingType}) </tpl>Description</h2></tpl>',	
 		'	{description}',
 		'</div>'		
 	),
@@ -108,7 +108,7 @@ Ext.define('OSF.component.template.Resources', {
 		'	<tpl for="resources">',	
 		'		<tr class="details-table">',
 		'			<td class="details-table"><b>{resourceTypeDesc}</b></td>',
-		'			<td class="details-table"><a href="{actualLink}" class="details-table" target="_blank">{link}</a></td>',
+		'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="{actualLink}" class="details-table" target="_blank">{link}</a></td>',
 		'		</tr>',
 		'	</tpl>',
 		'</table>'		
@@ -155,7 +155,7 @@ Ext.define('OSF.component.template.Contacts', {
 		'	<tr><th class="details-table">Name</th><th class="details-table">Position</th><th class="details-table">Phone</th><th class="details-table">Email</th></tr>',
 		'	<tpl for="contacts">',	
 		'		<tr class="details-table">',
-		'			<td class="details-table"><b>{name}</b> <br> ({organization})</td>',
+		'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{name}</b> <br> ({organization})</td>',
 		'			<td class="details-table">{positionDescription}</td>',
 		'			<td class="details-table"><tpl if="phone">{phone}</tpl><tpl if="!phone">—</tpl></td>',
 		'			<td class="details-table"><a href="mailto:{email}" class="details-table">{email}</a></td>',
@@ -211,7 +211,7 @@ Ext.define('OSF.component.template.Vitals', {
 		'	<tpl for="vitals">',	
 		'		<tr class="details-table">',
 		'			<td class="details-table"><b>{label}</b></td>',
-		'			<td class="details-table highlight-{highlightStyle}"><a href="#" class="details-table" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\');">{value}</a></td>',
+		'			<td class="details-table highlight-{highlightStyle}"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="#" class="details-table" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\');">{value}</a></td>',
 		'		</tr>',
 		'	</tpl>',
 		'</table>'		
@@ -239,6 +239,7 @@ Ext.define('OSF.component.template.Vitals', {
 					type: item.type,
 					code: item.code,
 					updateDts: item.updateDts,
+					securityMarkingType: item.securityMarkingType,
 					vitalType: 'ATTRIBUTE',
 					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription
 				});				
@@ -254,6 +255,7 @@ Ext.define('OSF.component.template.Vitals', {
 					type: item.label,
 					code: item.value,
 					vitalType: 'METADATA',
+					securityMarkingType: item.securityMarkingType,
 					updateDts: item.updateDts
 				});			
 			});
@@ -290,7 +292,7 @@ Ext.define('OSF.component.template.Dependencies', {
 		' <table class="details-table" width="100%">',			
 		'	<tpl for="dependencies">',	
 		'		<tr class="details-table">',
-		'			<td class="details-table"><b>{dependencyName} {version}</b> <br>',
+		'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{dependencyName} {version}</b> <br>',
 		'			<tpl if="dependancyReferenceLink"><a href="{dependancyReferenceLink}" class="details-table" target="_blank">{dependancyReferenceLink}</a><br></tpl> ',
 		'			<tpl if="comment">{comment}</tpl> ',
 		'			</td>',
@@ -505,7 +507,7 @@ Ext.define('OSF.component.template.Media', {
 		'				<tpl default>',
 		'					<i class="fa fa-file-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
 		'			</tpl>',
-		'			<tpl if="caption"><p class="detail-media-caption">{caption}</p></tpl>',
+		'			<tpl if="caption || securityMarkingType"><p class="detail-media-caption"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{caption}</p></tpl>',
 		'		</div>',
 		'	</tpl>'
 	),

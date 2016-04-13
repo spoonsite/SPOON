@@ -200,6 +200,7 @@ limitations under the License.
 			
 			var componentId = '${param.id}';
 			var fullPage = '${param.fullPage}' !== '' ? true : false;
+			var hideSecurityBanner =  '${param.hideSecurityBanner}' !==  '' ? true : false;
 			
 			var relatedStore = Ext.create('Ext.data.Store', {
 				pageSize: 50,
@@ -316,7 +317,7 @@ limitations under the License.
 								xtype: 'panel',
 								itemId: 'updatedInfo',
 								dock: 'bottom',
-								tpl: 'Updated: {[Ext.util.Format.date(values.lastActivityDts, "m/d/y H:i:s")]}</span>'
+								tpl: '<span class="details-title-info" style="font-size: 10px">Updated: <b>{[Ext.util.Format.date(values.lastActivityDts, "m/d/y H:i:s")]}</b><tpl if="securityMarkingType"><br>Highest Classification:  <b>(<span title="{securityMarkingDescription}">{securityMarkingType}</span>)</b></span></tpl>'
 							}
 						],
 						items: [
@@ -511,7 +512,7 @@ limitations under the License.
 				]
 			});
 			
-			if (fullPage) {
+			if (fullPage && !hideSecurityBanner) {
 				CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
 					var branding = Ext.decode(response.responseText);
 					if (branding.securityBannerText && branding.securityBannerText !== '') {
@@ -648,7 +649,7 @@ limitations under the License.
 							'<tpl for=".">',	
 							'<table style="width:100%"><tr>',
 							'	<td valign="top">',
-							'		<h1>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
+							'		<h1><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
 							'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl>', 
 							'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash-o small-button-danger" title="Remove" onclick="ViewPage.deleteReview(\'{reviewId}\', \'{componentId}\')"> Remove</i></tpl>',			
 							'		</div><br>',
@@ -1051,7 +1052,12 @@ limitations under the License.
 				ViewPage.questions = entryLocal.questions;
 				Ext.Array.each(entryLocal.questions, function(question){
 					
-					var text = '<div class="question-question"><span class="question-response-letter-q">Q.</span> '+ question.question + '</div>';
+					var questionSecurity = '';
+					if (question.securityMarkingType) {
+						questionSecurity = '(' + question.securityMarkingType + ') '; 
+					}
+					
+					var text = '<div class="question-question"><span class="question-response-letter-q">Q.</span> '+ questionSecurity + question.question + '</div>';
 					text += '<div class="question-info">' +
 							question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y") +
 							'</div>';
@@ -1071,7 +1077,7 @@ limitations under the License.
 						tpl: new Ext.XTemplate(							
 							'<tpl for=".">',
 							'	<tpl if="activeStatus === \'A\'">',
-							'		<div class="question-response"><span class="question-response-letter">A.</span> {response}</div>',
+							'		<div class="question-response"><span class="question-response-letter">A.</span><tpl if="securityMarkingType">({securityMarkingType}) </tpl> {response}</div>',
 							'		<tpl if="username === \'${user}\' || ${admin}"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editResponse(\'{responseId}\')"> Edit</i> <i class="fa fa-trash-o small-button-danger" title="Remove" onclick="ViewPage.deleteResponse(\'{responseId}\', \'{questionId}\', \'{componentId}\')"> Remove</i></tpl>',
 							'		<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
 							'		<hr>',
