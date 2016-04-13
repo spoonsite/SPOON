@@ -51,28 +51,42 @@ Ext.define('OSF.component.template.Description', {
 		
 	initComponent: function () {
 		this.callParent();
+		Ext.Loader.loadScript({
+			url: '/openstorefront/client/scripts/component/searchPopupResultsWindow.js',
+			scope: this,
+			onLoad: function() {
+				var ssPopupResultsWindow = Ext.create('OSF.component.SearchPopupResultsWindow', {
+					id: 'ssPopupResultsWindow',
+					alwaysOnTop: true
+				});
+			},
+			onError: function() {
+				var ssPopupResultsWindow = {};
+			}
+		});
 	},
 	
 	updateHandler: function(entry){
-		//entry.description = Ext.util.Format.escape(entry.description).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '');		
+		entry.description = Ext.util.Format.escape(entry.description).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '');		
 				
 		//get all links (replace embedded Search links with a popup window of the results)
-//		var dom = Ext.dom.Helper.createDom("<div><div>");	
-//		dom.innerHTML = entry.description;		
-//		var element = Ext.dom.Element.get(dom);
-//		var links = element.query('a');
-//		if (links && links.length > 0) {
-//			Ext.Array.each(links, function(item){
-//				//look for special links and transform
-//				if (item.href.indexOf('Search.action?Search') !== -1) {
-//					//special link
-//					var searchId = item.href.substr(item.href.indexOf('searchId='), item.href.length);
-//					searchId = searchId.replace('searchId=', '');
-//					item.href = "javascript:alert('" + searchId + "');";
-//				}	
-//			});
-//		}
-//		entry.description  = dom.innerHTML;
+		// Saved Search Links within the description will be modified to pull up a popup window of the search results
+		var dom = Ext.dom.Helper.createDom("<div><div>");	
+		dom.innerHTML = entry.description;		
+		var element = Ext.dom.Element.get(dom);
+		var links = element.query('a',false);
+		if (links && links.length > 0) {
+			Ext.Array.each(links, function(item){
+				//look for special links and transform
+				if (item.getAttribute('href').indexOf('searchResults.jsp') !== -1) {
+					//special link
+					var searchId = item.getAttribute('href').substr(item.getAttribute('href').indexOf('savedSearchId='), item.getAttribute('href').length);
+					searchId = searchId.replace('savedSearchId=', '');
+					item.set({'onclick': "Ext.getCmp('ssPopupResultsWindow').showResults('" + searchId + "'); return false;"});
+				}	
+			});
+		}
+		entry.description  = dom.innerHTML;
 				
 		entry.showDescriptionHeader = this.showDescriptionHeader;
 		return entry;

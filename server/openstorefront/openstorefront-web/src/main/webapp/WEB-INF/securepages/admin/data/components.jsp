@@ -8,6 +8,7 @@
 		<script src="scripts/component/integrationConfigWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/savedSearchLinkInsertWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
 		<form name="exportForm" action="../api/v1/resource/components/export" method="POST" >
 			<p style="display: none;" id="exportFormIds">
@@ -21,6 +22,12 @@
 			//Add/Edit forms ------>	
 				
 				//External Windows
+
+				var ssInsertWindow = Ext.create('OSF.component.SavedSearchLinkInsertWindow', {					
+					id: 'ssInsertWindow',
+					alwaysOnTop: true
+				});	
+
 				var importWindow = Ext.create('OSF.component.ImportWindow', {					
 				});
 				
@@ -2770,7 +2777,7 @@
 									width: '100%',
 									height: 300,
 									maxLength: 65536,
-									tinyMCEConfig: CoreUtil.tinymceConfig()
+									tinyMCEConfig: CoreUtil.tinymceSearchEntryConfig()
 								},								
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'organization',									
