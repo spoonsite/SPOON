@@ -246,13 +246,13 @@ This allows the user to refine a search based on:
 
 **Search Type:**  Search by Entry, Attribute, Tags, User Reviews, Questions, and more.
 
-**Field:** The search field associated with the search type choosen above
+**Field:** The search field associated with the search type chosen above
 
 **Value:**  alpha and/ or numerical value to search for
 
 **String/ Number Operation:** Contains, Equals, <, >, and so forth depending on the value
 
-**Merge Condition:** OR, AND, NOT to get a search results in conjuntion with the other advanced search parameters.
+**Merge Condition:** OR, AND, NOT to get a search results in conjunction  with the other advanced search parameters.
 
 **Preview Results:**  Allows you to see the results of this advanced search, queries for results
 
@@ -262,7 +262,7 @@ This allows the user to refine a search based on:
 ### 2.2.5 Saved Searches
 ------
 
-You can save complex advanced searches for later retreval and querying.  From the Advanced tab, 
+You can save complex advanced searches for later retrieval and querying.  From the Advanced tab, 
 click the Save button and add a name for the saved search.  
 
 Once it is saved the advanced search is available from the Saved Searches tab. Select a saved
@@ -532,7 +532,7 @@ request ownership of an entry.  To do this:
 	 
 **Submit Correction/ Request Ownership forms:**
 
-* Fill out the form including the section needing correcton and the changes requested Or
+* Fill out the form including the section needing correction and the changes requested Or
  the reason you are requesting the change of ownership
  
 * Ensure your contact information is current in the section below or update your profile.
@@ -832,7 +832,7 @@ Entry Types can be made active or inactive by using the Toggle Status button on 
 -------
 
 Entry Templates allow for the customization of the display fields of particular types of entries.
-To create and impliment a template:
+To create and implement a template:
 
  1. In the Entry **Templates** screen:
 
@@ -849,7 +849,7 @@ To create and impliment a template:
 	
 	f.  Name the template and click Save/Continue when finished.
 	
-	g.  The name should now appear in the Entry Templates table.  Ensyre that the template is Active.
+	g.  The name should now appear in the Entry Templates table.  Ensure that the template is Active.
 	
 	
 2. In the Entry **Types** section:
@@ -1059,7 +1059,7 @@ The table displays active questions, but the drop-down at the top of the page al
 
  * Select a component on the left to see the list of corresponding questions. 
  
- * Select a question to see the assoiciated answers
+ * Select a question to see the associated answers
  
  * With a question or answer highlighted, click the associated Deactivate button to remove it from view on the website.
 
@@ -1075,7 +1075,7 @@ The table displays the list of *active* reviews by default.
  
  * Selecting an active review allows for the Deactivate button to be pressed, removing the review from view on the website.
  
- * Slecting an inactive review allows for the Activate button to be pressed, adding the review back to view on the website.
+ * Selecting an inactive review allows for the Activate button to be pressed, adding the review back to view on the website.
 
 
 #### 3.2.10.3 Watches *
