@@ -26,8 +26,11 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,27 +67,31 @@ public class ComponentReport
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		//write header
-		cvsGenerator.addLine("Component Report", sdf.format(TimeUtil.currentDate()));
-		cvsGenerator.addLine(
-				"Name",
-				"Organization",
-				//"Security Classification",
-				"Last Activity Date",
-				"Approval Status",
-				"Approval Date",
-				"Approval User",
-				"Active Status",
-				"Create Date",
-				"Create User",
-				"Last Viewed",
-				"Views",
-				"Resources Clicked",
-				"Active Reviews",
-				"Tags",
-				"Active Questions",
-				"Active Question Responses"
-		);
-
+		cvsGenerator.addLine("Entry Report", sdf.format(TimeUtil.currentDate()));
+		
+		List<String> header = new ArrayList<>();
+		header.add("Name");
+		header.add("Organization");
+		header.add("Last Activity Date");
+		header.add("Approval Status");	
+		header.add("Approval Date");
+		header.add("Approval User");
+		header.add("Active Status");
+		header.add("Create Date");
+		header.add("Create User");
+		header.add("Last Viewed");
+		header.add("Last Views");
+		header.add("Resources Clicked");
+		header.add("Active Reviews");
+		header.add("Tags");
+		header.add("Active Questions");
+		header.add("Active Question Responses");
+		
+		if (getBranding().getAllowSecurityMarkingsFlg()) {
+			header.add("Security Marking");
+		}		
+		cvsGenerator.addLine(header.toArray());		
+		
 		//write Body
 		for (Component component : components) {
 
@@ -135,26 +142,29 @@ public class ComponentReport
 			if (componentTracking != null) {
 				lastViewed = sdf.format(componentTracking.getEventDts());
 			}
+			
+			List<String> data = new ArrayList<>();
+			data.add(component.getName());
+			data.add(component.getOrganization());
+			data.add(sdf.format(component.getLastActivityDts()));
+			data.add(component.getApprovalState());
+			data.add(component.getApprovedDts() == null ? "" : sdf.format(component.getApprovedDts()));
+			data.add(component.getApprovedUser());
+			data.add(component.getActiveStatus());
+			data.add(sdf.format(component.getCreateDts()));
+			data.add(component.getCreateUser());
+			data.add(lastViewed);
+			data.add(Long.toString(views));
+			data.add(Long.toString(resourcesClicked));
+			data.add(Long.toString(reviews));
+			data.add(Long.toString(tags));
+			data.add(Long.toString(questions));
+			data.add(Long.toString(questionResponse));
 
-			cvsGenerator.addLine(
-					component.getName(),
-					component.getOrganization(),
-					//component.getSecurityMarkingType() == null ? "" : "(" + component.getSecurityMarkingType() + ") - " + TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()),
-					sdf.format(component.getLastActivityDts()),
-					component.getApprovalState(),
-					component.getApprovedDts() == null ? "" : sdf.format(component.getApprovedDts()),
-					component.getApprovedUser(),
-					component.getActiveStatus(),
-					sdf.format(component.getCreateDts()),
-					component.getCreateUser(),
-					lastViewed,
-					views,
-					resourcesClicked,
-					reviews,
-					tags,
-					questions,
-					questionResponse
-			);
+			if (getBranding().getAllowSecurityMarkingsFlg()) {
+				data.add(component.getSecurityMarkingType() == null ? "" : "(" + component.getSecurityMarkingType() + ") - " + TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()));
+			}		
+			cvsGenerator.addLine(data.toArray());				
 
 		}
 

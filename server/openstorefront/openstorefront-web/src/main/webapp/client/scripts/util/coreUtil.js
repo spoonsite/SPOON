@@ -592,6 +592,7 @@ var CoreUtil = {
 					type: item.type,
 					code: item.code,
 					updateDts: item.updateDts,
+					securityMarkingType: item.securityMarkingType,
 					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '') : item.codeLongDescription
 				});				
 			});
@@ -602,6 +603,7 @@ var CoreUtil = {
 				vitals.push({
 					label: item.label,
 					value: item.value,
+					securityMarkingType: item.securityMarkingType,
 					updateDts: item.updateDts
 				});			
 			});

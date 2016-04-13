@@ -236,6 +236,13 @@ limitations under the License.
 					url: '../api/v1/resource/highlights',
 					success: function(response, opt) {
 						highlights = Ext.decode(response.responseText);	
+						
+						Ext.Array.each(highlights, function(highlight){
+							if (!highlight.link) {
+								highlight.link = false;
+							}
+						});
+						
 						homepage.highlights = highlights;
 						
 						Ext.Ajax.request({
@@ -281,7 +288,7 @@ limitations under the License.
 					var highlightTemplate = new Ext.XTemplate(
 						'<div class="home-highlight-item">',
 						'<h2><tpl if="link"><a href="{link}" class="link" target="_blank">{title}</a></tpl><tpl if="!link">{title}</tpl></h2>',
-						'<div class="home-highlight-item-desc">{displayDesc}<br><span style="font-size: 10px;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span></div>',
+						'<div class="home-highlight-item-desc"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{displayDesc}<br><span style="font-size: 10px;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span></div>',
 						'<br><div style="text-align: right;"><a href="#" class="link" onclick="homepage.readToggleHighlight(\'{highlightId}\');">{moreText}</a></div>',
 						'</div>'
 					);
@@ -308,7 +315,7 @@ limitations under the License.
 					
 					var template = new Ext.XTemplate(
 						'<div class="home-highlight-item">',
-						'	<h2><a href="view.jsp?id={componentId}&fullPage=true" class="link" target="_blank">{name}</a></h2>',
+						'	<h2><a href="view.jsp?id={componentId}&fullPage=true" class="link" target="_blank"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{name}</a></h2>',
 						'	<div class="home-highlight-item-desc">{displayDesc}</div>',
 						'	<div class="home-highlight-approved">Approved: {[Ext.util.Format.date(values.addedDts, "m/d/y")]}</div>',						
 						'</div>'

@@ -521,15 +521,10 @@
 								direction: 'ASC'
 							})
 						],
-						proxy: CoreUtil.pagingProxy({
-							url: '../api/v1/resource/components/lookup',
-							method: 'GET',
-							reader: {
-								type: 'json',
-								rootProperty: '',
-								totalProperty: ''
-							}
-						})
+						proxy: {
+							type: 'ajax',
+							url: '../api/v1/resource/components/lookup'
+						}
 					});
 
 					//
@@ -616,10 +611,7 @@
 							Ext.getCmp('scheduleOptionsGrid').setHidden(false);
 						}
 						else if (rType === 'CATCOMP') {
-
-							Ext.getCmp('categorySelect').setHidden(false);
-							Ext.getCmp('filterForEntries').setHidden(false);
-							Ext.getCmp('scheduleOptionsGrid').setHidden(false);
+							Ext.getCmp('categorySelect').setHidden(false);														
 						}
 						else if (rType === 'LINKVALID') {
 

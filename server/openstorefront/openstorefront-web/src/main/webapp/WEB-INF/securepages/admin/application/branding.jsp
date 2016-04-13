@@ -33,7 +33,7 @@ limitations under the License.
 					src: ''					
 				});				
 				
-				var previewComponentWin = Ext.create('Ext.window.Window', {
+				var previewWin = Ext.create('Ext.window.Window', {
 					width: '70%',
 					height: '80%',
 					maximizable: true,
@@ -57,7 +57,7 @@ limitations under the License.
 									iconCls: 'fa fa-2x fa-close',
 									scale: 'medium',
 									handler: function() {
-										previewComponentWin.close();
+										previewWin.close();
 									}
 								},
 								{
@@ -427,6 +427,7 @@ limitations under the License.
 											width: '100%',
 											fieldLabel: 'Override Css <i class="fa fa-question-circle"  data-qtip="Enter CSS to override existing look not covered by the color set." ></i>',
 											name: 'overrideCSS',
+											grow: true,
 											maxLength: 1048576
 										}										
 									]
@@ -462,6 +463,7 @@ limitations under the License.
 											iconCls: 'fa fa-2x fa-eye',
 											scale: 'medium',
 											formBind: true,
+											hidden: true,
 											handler: function () {
 												var addEditWin = this.up('window');
 												var form = this.up('form');
@@ -469,7 +471,7 @@ limitations under the License.
 												actionSaveBranding(form, function(response, opt){
 													var branding = Ext.decode(response.responseText);
 													
-													previewComponentWin.show();													
+													previewWin.show();													
 													//previewContents.load('/openstorefront/client/index.jsp');
 												});												
 												

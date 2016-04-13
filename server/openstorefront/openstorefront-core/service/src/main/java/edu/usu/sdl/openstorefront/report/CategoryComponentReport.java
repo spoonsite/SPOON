@@ -62,7 +62,7 @@ public class CategoryComponentReport
 		String category = NO_CATEGORY;
 		String categoryMessage = "";
 		if (StringUtils.isNotBlank(report.getReportOption().getCategory())) {
-			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, category);
+			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, report.getReportOption().getCategory());
 			if (attributeType != null) {
 				category = report.getReportOption().getCategory();
 			} else {
@@ -71,17 +71,21 @@ public class CategoryComponentReport
 		}
 
 		//write header
-		cvsGenerator.addLine("Category Component Report", sdf.format(TimeUtil.currentDate()));
+		cvsGenerator.addLine("Category Entry Report", sdf.format(TimeUtil.currentDate()));
 		cvsGenerator.addLine("Category: " + category + categoryMessage);
 		cvsGenerator.addLine("");
-		cvsGenerator.addLine(
-				"Category Label",
-				"Category Description",
-				"Component Name",
-				"Component Description",
-				//"Security Classification",
-				"Last Update Date"
-		);
+		
+		List<String> header = new ArrayList<>();
+		header.add("Category Label");
+		header.add("Category Description");
+		header.add("Entry Name");
+		header.add("Entry Description");
+		header.add("Last Update Date");
+		
+		if (getBranding().getAllowSecurityMarkingsFlg()) {
+			header.add("Security Marking");
+		}		
+		cvsGenerator.addLine(header.toArray());
 
 		if (NO_CATEGORY.equals(category)) {
 
@@ -90,16 +94,22 @@ public class CategoryComponentReport
 			componentExample.setApprovalState(ApprovalStatus.APPROVED);
 
 			List<Component> components = componentExample.findByExample();
-			components.forEach(component -> {
-				cvsGenerator.addLine(
-						"",
-						"",
-						component.getName(),
-						component.getDescription(),
-						//component.getSecurityMarkingType(),
-						sdf.format(component.getLastActivityDts())
-				);
-			});
+			for (Component component : components) {
+				List<String> data = new ArrayList<>();
+				data.add("");
+				data.add("");
+				data.add(component.getName());
+				data.add(component.getDescription());
+				data.add(sdf.format(component.getLastActivityDts()));
+				if (getBranding().getAllowSecurityMarkingsFlg()) {
+					if (StringUtils.isNotBlank(component.getSecurityMarkingType())) {
+						data.add(component.getSecurityMarkingType());
+					} else {
+						data.add("");
+					}
+				}
+				cvsGenerator.addLine(data.toArray());
+			}
 
 		} else {
 
@@ -158,14 +168,20 @@ public class CategoryComponentReport
 					for (String componentId : codeComponentMap.get(code.getAttributeCodePk().getAttributeCode())) {
 						Component component = componentMap.get(componentId);
 						if (component != null) {
-							cvsGenerator.addLine(
-									"",
-									"",
-									component.getName(),
-									component.getDescription(),
-									//component.getSecurityMarkingType(),
-									sdf.format(component.getLastActivityDts())
-							);
+							List<String> data = new ArrayList<>();
+							data.add("");
+							data.add("");
+							data.add(component.getName());
+							data.add(component.getDescription());
+							data.add(sdf.format(component.getLastActivityDts()));
+							if (getBranding().getAllowSecurityMarkingsFlg()) {
+								if (StringUtils.isNotBlank(component.getSecurityMarkingType())) {
+									data.add(component.getSecurityMarkingType());
+								} else {
+									data.add("");
+								}
+							}
+							cvsGenerator.addLine(data.toArray());							
 						}
 
 					}
