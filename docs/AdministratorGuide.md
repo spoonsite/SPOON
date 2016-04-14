@@ -519,13 +519,13 @@ Use the following commands to control the server.
 > **NOTE:** Using this is not recommended as it not always successful
 > due the script not waiting for shutdown.
 
-###4.6 Deploying application
+##4.6 Deploying application
 ---------------------
 
 To deploy the application, copy openstorefront.war to
 /usr/local/tomcat/latest/webapps
 
-###4.7 Application Configuration
+##4.7 Application Configuration
 -------------------------
 
 The application configuration and data are stored in
@@ -610,6 +610,11 @@ b.  Edit shiro.ini under the config directory
 >> comment out
 >
 >> \#admin = administrator
+
+###4.7.1 Open AM Notes:
+-------------
+If when setting Open AM up with certificates you may need to use a truststore on openstorefront tomcat.  If so, remember to update the certificates in the truststore when the certificate changes.  Open AM, Openstorefront, and proxy if used will all need to hvae valid matching certificates.
+
 
 ##4.8 Importing Data
 --------------
