@@ -963,7 +963,7 @@
 
 				var deleteSysConfigProp = function deleteSysConfigProp(record) {
 					var url = '/openstorefront/api/v1/service/application/configproperties/';
-					url += record.data.code;
+					url += encodeURIComponent(record.data.code);
 
 					Ext.Ajax.request({
 						url: url,
