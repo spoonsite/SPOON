@@ -193,21 +193,23 @@ public class ValidationUtil
 							for (BaseRule rule : rules) {
 								//Stanize if requested
 								if (validateModel.getSantize()) {
-									Sanitize santize = field.getAnnotation(Sanitize.class);
-									if (santize != null) {
-										try {
-											Sanitizer santizer = santize.value().newInstance();
+									Sanitize santizers = field.getAnnotation(Sanitize.class);
+									if (santizers != null) {
+										for (Class<? extends Sanitizer>  sanitizeClass : santizers.value()) {
+											try {
+												Sanitizer santizer = sanitizeClass.newInstance();
 
-											Method method = dataClass.getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
-											Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
+												Method method = dataClass.getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
+												Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
 
-											Object newValue = santizer.santize(returnObj);
+												Object newValue = santizer.santize(returnObj);
 
-											method = dataClass.getMethod("set" + StringUtils.capitalize(field.getName()), String.class);
-											method.invoke(validateModel.getDataObject(), newValue);
+												method = dataClass.getMethod("set" + StringUtils.capitalize(field.getName()), String.class);
+												method.invoke(validateModel.getDataObject(), newValue);
 
-										} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
-											throw new OpenStorefrontRuntimeException(ex);
+											} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
+												throw new OpenStorefrontRuntimeException(ex);
+											}
 										}
 									}
 								}
