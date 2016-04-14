@@ -76,7 +76,7 @@ CoreDateUtil.previousPeriod = function(timeConfig){
 };
 
 /**
- * See the Pref Report Action
+ * 
  * @param periodType (String description of Period)
  */
 CoreDateUtil.periodTypeToPeriodMode = function(periodType){	

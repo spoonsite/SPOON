@@ -57,7 +57,7 @@ public class HelpImporter
 	private static final Logger log = Logger.getLogger(HelpImporter.class.getName());
 
 	private static final long PROCESSING_TIMEOUT = 100000L;
-	private static final String IMAGE_URL_REPLACE = "../../../../../../client/openstorefront/app/";
+	private static final String IMAGE_URL_REPLACE = "../webapp/client/";
 
 	@Override
 	public void initialize()

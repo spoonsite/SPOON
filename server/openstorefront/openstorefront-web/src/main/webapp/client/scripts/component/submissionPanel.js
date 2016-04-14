@@ -2551,7 +2551,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		});
 		
 		//Query Branding
-		CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+		CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
 			var branding = Ext.decode(response.responseText);
 			if (branding.userInputWarning) {
 				submissionPanel.mainPanel.getComponent('userInputWarning').update('<div class="alert-warning" style="text-align: center">' + 

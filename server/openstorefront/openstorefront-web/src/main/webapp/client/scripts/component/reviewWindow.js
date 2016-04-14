@@ -240,7 +240,7 @@ Ext.define('OSF.component.ReviewWindow', {
 		reviewWindow.add(reviewWindow.formPanel);
 		
 		//Query Branding
-		CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+		CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
 			var branding = Ext.decode(response.responseText);
 			if (branding.userInputWarning) {
 				reviewWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 

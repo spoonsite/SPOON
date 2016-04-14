@@ -462,17 +462,15 @@ limitations under the License.
 											tooltip: 'Saves and preview',
 											iconCls: 'fa fa-2x fa-eye',
 											scale: 'medium',
-											formBind: true,
-											hidden: true,
-											handler: function () {
-												var addEditWin = this.up('window');
+											formBind: true,											
+											handler: function () {												
 												var form = this.up('form');
 												
 												actionSaveBranding(form, function(response, opt){
 													var branding = Ext.decode(response.responseText);
 													
 													previewWin.show();													
-													//previewContents.load('/openstorefront/client/index.jsp');
+													previewContents.load('Branding.action?Preview&brandingId=' + branding.brandingId);
 												});												
 												
 											}

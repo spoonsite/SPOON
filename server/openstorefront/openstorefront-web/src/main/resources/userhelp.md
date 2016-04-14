@@ -25,8 +25,8 @@ and give details on the following:
 **DI2E Clearinghouse is developed by Space Dynamics Laboratory for DI2E and is
 licensed under Apache V2.**
 
-![Logo](../../../../../../client/openstorefront/app/images/help/di2elogo-sm.png)
-![Logo](../../../../../../client/openstorefront/app/images/help/sdl.png)
+![Logo](../webapp/client/images/help/di2elogo-sm.png)
+![Logo](../webapp/client/images/help/sdl.png)
 
 ## 1.1 Release Notes
 ------
@@ -515,7 +515,7 @@ the component detail view (in search results) of the component being watched.
 
 1.  From the search results screen/ View Entry:
 
-2.  Click on the Watch icon ![watch](../../../../../../client/openstorefront/app/images/help/view.png) to add the component
+2.  Click on the Watch icon ![watch](../webapp/client/images/help/view.png) to add the component
     to your watch list.
 
 
@@ -702,20 +702,20 @@ the component to **Pending** until all data is entered.
 
 **To edit component:**
 
-1.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) in the action column
+1.  Click on the edit icon ![edit](../webapp/client/images/help/edit.png) in the action column
     on the component you wish to edit.
 
 2.  Make changes by filling out the appropriate form.
 
 **To preview component:**
 
-1.  Click on the preview ![view](../../../../../../client/openstorefront/app/images/help/viewsm.png) icon in the action
+1.  Click on the preview ![view](../webapp/client/images/help/viewsm.png) icon in the action
     column on the component you wish to view. A new tab in browser will
     open and display the component detail page.
 
 **To toggle active status:**
 
-1.  Click on the activate/inactivate ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) icon in the
+1.  Click on the activate/inactivate ![toggle](../webapp/client/images/help/toggle.png) icon in the
     action column on the component you wish to edit.
 
 **NOTE:** Use Filter Options to show active/inactive components.
@@ -727,7 +727,7 @@ Inactive components are not visible to or searchable by users.
 **WARNING:** This is a hard delete and it will remove all associated data
 (media, user reviews, questions, etc.)
 
-1.  Click the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to remove.
+1.  Click the delete icon ![trash](../webapp/client/images/help/trash.png) to remove.
 
 2.  Confirm that you want to delete the component by clicking **OK** on
     the confirmation dialog.
@@ -777,7 +777,7 @@ the home page.
 
 1.  Navigate to the Component Tool.
 
-2.  Click on the Edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component
+2.  Click on the Edit icon ![edit](../webapp/client/images/help/edit.png) on the component
     to approve.
 
 3.  Select **Approved** in the approval status dropdown.
@@ -799,7 +799,7 @@ Description, Organization, etc.
 
 1.  Navigate to the Component Tool.
 
-2.  Click on the **Edit** icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) on the component.
+2.  Click on the **Edit** icon ![edit](../webapp/client/images/help/edit.png) on the component.
 
 3.  Click the **General** tab.
 
@@ -896,7 +896,7 @@ the table, then press the up or down buttons to reposition the order
 in the table.  The highlights on the home page appear in the order that
 they do in the table in the Manage Highlights section.
 
-![updown_graphic](../../../../../../../client/openstorefront/app/images/help/displayposition.png)
+![updown_graphic](../../webapp/client/images/help/displayposition.png)
 
 
 ### 3.2.6 Integrations *
@@ -1001,7 +1001,7 @@ Media Types, Data Source, Contact Types, Relationship Types, and Organization Ty
 
 1.  From Organizations in the Admin Tools, select an organization.
 
-2.  Click on the edit icon ![edit](../../../../../../client/openstorefront/app/images/help/edit.png) next to the organization.
+2.  Click on the edit icon ![edit](../webapp/client/images/help/edit.png) next to the organization.
 
     a.  Update Organization information as desired including:  Name, Description, Organization Link, and Organization Type.
 
@@ -1014,7 +1014,7 @@ Media Types, Data Source, Contact Types, Relationship Types, and Organization Ty
 
 1.  From Organizations in the Admin Tools, select an organization.
 
-2.  Click on the delete icon ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) next to the organization.
+2.  Click on the delete icon ![trash](../webapp/client/images/help/trash.png) next to the organization.
 
 3.  Confirm that you wish to delete the organization by clicking **OK**.
 
@@ -1255,8 +1255,8 @@ scheduled interval.
 
 2.  Select the Scheduled tab.
 
-3.  Click **Inactivate** ![toggle](../../../../../../client/openstorefront/app/images/help/toggle.png) or **Delete**
-    ![trash](../../../../../../client/openstorefront/app/images/help/trash.png) to cancel the scheduled report. Click
+3.  Click **Inactivate** ![toggle](../webapp/client/images/help/toggle.png) or **Delete**
+    ![trash](../webapp/client/images/help/trash.png) to cancel the scheduled report. Click
     **Inactivate** to temporarily pause it.
 	
 	
@@ -1313,7 +1313,7 @@ Contains definitions of term using in the application and in the help.  (See the
 
 -  **Article (Topic Landing Page)** -   An article is a central information page that contains information on a specific topic relating to an attribute.
 -  **Attribute (Vital)** -             An attribute is a specific category that has been applied to a listing. A listing (component) may have many attributes associated with it.
--  **Component (Listing)** -            A listing in the catalog. A component has the attributes that classify the information being represented by the listing
+-  **Entry (Listing)** -            A listing in the catalog. A component has the attributes that classify the information being represented by the listing
 -  **Highlight** -                      A news item shown on the home page.
 -  **Watch** -                          A way to track changes on a listing.
 
@@ -1324,4 +1324,4 @@ Contains definitions of term using in the application and in the help.  (See the
 -  **Attribute Code** -       A specific value for a type.
 -  **Job** -                  A scheduled unit of work.
 -  **Task** -                 Background process; used for long-running operations.
--  **Component Metadata** -   Non-filterable Component Vitals. It allows for an admin to put in non-restricted key/value pairs which get added to the vitals.
+-  **Entry Metadata** -   Non-filterable Component Vitals. It allows for an admin to put in non-restricted key/value pairs which get added to the vitals.

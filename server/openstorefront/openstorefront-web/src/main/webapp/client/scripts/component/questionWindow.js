@@ -121,7 +121,7 @@ Ext.define('OSF.component.QuestionWindow', {
 		questionWindow.add(questionWindow.form);
 		
 		//query branding
-		CoreService.brandingservice.getCurrentBanding().then(function(response){
+		CoreService.brandingservice.getCurrentBranding().then(function(response){
 			var branding = Ext.decode(response.responseText);
 			if (branding.userInputWarning) {
 				questionWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 
@@ -288,7 +288,7 @@ Ext.define('OSF.component.ResponseWindow', {
 		responseWindow.add(responseWindow.form);
 		
 		//query branding
-		CoreService.brandingservice.getCurrentBanding().then(function(response){
+		CoreService.brandingservice.getCurrentBranding().then(function(response){
 			var branding = Ext.decode(response.responseText);
 			if (branding.userInputWarning) {
 				responseWindow.getComponent('userInputWarning').update('<h3 class="alert-warning" style="text-align: center;">' + 

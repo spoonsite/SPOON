@@ -513,7 +513,7 @@ limitations under the License.
 			});
 			
 			if (fullPage && !hideSecurityBanner) {
-				CoreService.brandingservice.getCurrentBanding().then(function(response, opts){
+				CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
 					var branding = Ext.decode(response.responseText);
 					if (branding.securityBannerText && branding.securityBannerText !== '') {
 						Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
