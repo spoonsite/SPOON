@@ -638,6 +638,7 @@ limitations under the License.
 											{
 												text: 'Selected Branding',	
 												id: 'duplicateSelected',
+												disabled: true,
 												handler: function() {
 													var record = this.up('grid').getSelectionModel().getSelection()[0];	
 													actionDuplicate(record);
