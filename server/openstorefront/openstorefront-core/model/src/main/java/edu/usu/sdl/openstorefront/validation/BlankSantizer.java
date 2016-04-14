@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,23 +15,28 @@
  */
 package edu.usu.sdl.openstorefront.validation;
 
-import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- *
+ * If blank (empty string) set the value to null
  * @author dshurtleff
  */
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@APIDescription("Cleans up input")
-public @interface Sanitize
+public class BlankSantizer
+	extends Sanitizer
 {
 
-	Class<? extends Sanitizer>[] value();
+	@Override
+	public Object santize(Object fieldData)
+	{
+		if (fieldData == null) {
+			return fieldData;
+		} else {
+			if (StringUtils.isBlank(fieldData.toString())) {
+				return null;
+			} else {
+				return fieldData;
+			}
+		}
+	}
+	
 }

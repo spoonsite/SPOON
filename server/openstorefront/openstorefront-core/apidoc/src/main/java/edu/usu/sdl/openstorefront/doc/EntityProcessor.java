@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.doc.model.EntityConstraintModel;
 import edu.usu.sdl.openstorefront.doc.model.EntityDocModel;
 import edu.usu.sdl.openstorefront.doc.model.EntityFieldModel;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.Sanitizer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -170,7 +171,12 @@ public class EntityProcessor
 								entityConstraintModel.setRules("<b>Pattern:</b> " + pattern.regexp());
 							} else if (annObj instanceof Sanitize) {
 								Sanitize sanitize = (Sanitize) annObj;
-								entityConstraintModel.setRules("<b>Sanitize:</b> " + sanitize.value().getSimpleName());
+								List<String> sanitizerList = new ArrayList<>();
+								for (Class<? extends Sanitizer>  sanitizeClass : sanitize.value()) {
+									sanitizerList.add(sanitizeClass.getSimpleName());
+								}								
+								entityConstraintModel.setRules("<b>Sanitize:</b> " + String.join(", ", sanitizerList));								
+							
 							} else if (annObj instanceof Unique) {
 								Unique unique = (Unique) annObj;
 								entityConstraintModel.setRules("<b>Handler:</b> " + unique.value().getSimpleName());
