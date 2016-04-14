@@ -238,7 +238,7 @@
 					Ext.getCmp('ticketGrid').getStore().load({
 						url: '../api/v1/resource/feedbacktickets',
 						params: {
-							status: Ext.getCmp('filterActiveStatus').getValue()
+							status: Ext.getCmp('filterActiveStatus').getValue() ? Ext.getCmp('filterActiveStatus').getValue() : 'A'
 						}
 					});
 				};		
