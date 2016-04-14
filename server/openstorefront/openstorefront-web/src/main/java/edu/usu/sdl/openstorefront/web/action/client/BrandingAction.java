@@ -75,6 +75,12 @@ public class BrandingAction
 			return new ErrorResolution(404);			
 		}	
 	}
+		
+	@HandlesEvent("Preview") 
+	public Resolution previewBranding() 
+	{
+		return new ForwardResolution("/WEB-INF/securepages/admin/application/brandingPreview.jsp");
+	}	
 
 	public String getTemplate()
 	{
