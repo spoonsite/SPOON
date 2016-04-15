@@ -996,7 +996,15 @@ Some examples of Lookups are:
 Media Types, Data Source, Contact Types, Relationship Types, and Organization Types
 
 
-### 3.2.9 Organizations *
+### 3.2.9 Media *
+--------
+
+The Manage Media area is used to add, download, view and otherwise manage media that 
+can be used for articles and badges.  
+
+
+
+### 3.2.10 Organizations *
 --------
 
  Organizations provide information on specific organizations that are linked with the components listed on the site. The information these objects contain include:
@@ -1007,7 +1015,7 @@ Media Types, Data Source, Contact Types, Relationship Types, and Organization Ty
  - **Address** -                The address for the organization
  - **Contact Information** -    A way to contact the organization
 
-#### 3.2.9.1 Managing *
+#### 3.2.10.1 Managing *
 --------------
 
 **To add a new organization:**
@@ -1055,8 +1063,15 @@ Allows merging of references from one organization to another.  **NOTE** that th
 ONLY merges references and NOT the organization information.
 
 
+### 3.2.11 Searches (Public Saved Searches)
+---------
+
+This area displays a list of publicly available searches that can be edited, added, activated, or 
+made inactive.  Once the searches are set up they can be used for inclusion in articles and 
+entries.
+
  
-### 3.2.10 User Data *
+### 3.2.12 User Data *
 ---------
 
 This section in the Admin Tools -> Data Management allows for the management of user-submitted data such as:
@@ -1072,7 +1087,7 @@ This section in the Admin Tools -> Data Management allows for the management of 
  * User Profiles
  
 
-#### 3.2.10.1 Questions (and Answers) *
+#### 3.2.12.1 Questions (and Answers) *
 ------
 
 The Questions section of User Data in Data Management of the Admin Tools displays Questions and Answers given on the website.
@@ -1086,7 +1101,7 @@ The table displays active questions, but the drop-down at the top of the page al
  * With a question or answer highlighted, click the associated Deactivate button to remove it from view on the website.
 
 
-#### 3.2.10.2 Reviews *
+#### 3.2.12.2 Reviews *
 ------
 
 The Reviews section of User Data in Data Management of the Admin Tools displays entry reviews from the website.
@@ -1100,7 +1115,7 @@ The table displays the list of *active* reviews by default.
  * Selecting an inactive review allows for the Activate button to be pressed, adding the review back to view on the website.
 
 
-#### 3.2.10.3 Watches *
+#### 3.2.12.3 Watches *
 ------
 
 The Watches section of User Data in Data Management of the Admin Tools displays all of the watches from all users.
@@ -1110,7 +1125,7 @@ The Watches section of User Data in Data Management of the Admin Tools displays 
  * When an entry (or multiple entries of the same status) are selected the Activate or Inactivate button can be used to toggle the status of the watches.
  
  
-#### 3.2.10.4 Tags *
+#### 3.2.12.4 Tags *
 ------
 
 The Tags section of User Data in Data Management of the Admin Tools displays a list of all tags.
@@ -1122,7 +1137,7 @@ The Tags section of User Data in Data Management of the Admin Tools displays a l
  * In the event of a duplicate tag being added to the same component the added tag will override the exiting tag.
 
 
-#### 3.2.10.5 User Profiles *
+#### 3.2.12.5 User Profiles *
 ------
 
 Every user in the system has a user profile.  A user profile contains information
@@ -1203,7 +1218,43 @@ Descriptions of Alert Triggers:
     **Deactivate** to temporarily pause it.
 	
 
-### 3.3.2 Jobs *
+### 3.3.2 Branding *
+------
+
+This area allows for different graphic design and theme characteristics to be 
+ applied to the website in general.   
+ 
+ Start by duplicating the current branding then editing, and finally, activating
+ a brand.  In the Add/ Edit Branding the following can be specified:
+ 
+  * Application Name
+  * Login Warning message
+  * Landing Page Title
+  * Landing Stats Text
+  * Landing Banner text
+  * Landing Page Footer information (links, etc.)
+  * Architecture Search display and type
+  * Support feedback handling and tracking code
+  * Security Markings and Banner Text, colors, etc.
+  * User Input Warning message
+  * Submission form warning message
+  * Change request form warning message
+  * Customize Colors and Logos
+  * Customize Colors of :  Primary, Accent, Quote, Links, Links Visited, Link Hover, Panel, etc.
+  
+
+### 3.3.3 Feedback *
+------
+
+This area displays the user feedback that users give via the application.  
+Feedback can be Help, Improvement, New Feature, or Report Issue.
+
+From this section the feedback can be viewed, marked outstanding, or marked
+complete.  This provides an administrator task list regarding the user feedback
+items submitted.
+ 
+
+### 3.3.4 Jobs *
 ------
 
 The Jobs Tool allows for viewing and managing both scheduled background
@@ -1216,7 +1267,14 @@ completes. Scheduled jobs that run periodically such as the notification
 job also run in the background to provide automatic handling of
 services.
 
-### 3.3.3 Reports * 
+### 3.3.5 Messages *
+------
+
+Shows a log of messages sent to users in the Inactive filtered table.  Allows for
+the cleanup of old messages and the ability to process all queued messages now.
+
+
+### 3.3.6 Reports * 
 ------
 
 Descriptions of the Reports:
@@ -1230,7 +1288,7 @@ Descriptions of the Reports:
 A report can be either manually generated on demand or set to
 auto-generate according to a specific schedule.
 
-#### 3.3.3.1 Manually Generated Reports *
+#### 3.3.6.1 Manually Generated Reports *
 ------
 
 **To manually generate a report:**
@@ -1249,7 +1307,7 @@ The Report is generated in the background and the status of the report
 is shown in the table. Once the report is complete, it can be downloaded
 by clicking the report title link.
 
-#### 3.3.3.2 Scheduled Reports *
+#### 3.3.6.2 Scheduled Reports *
 ------
 
 **To create a scheduled report:**
@@ -1282,7 +1340,7 @@ scheduled interval.
     **Inactivate** to temporarily pause it.
 	
 	
-### 3.3.4 System *
+### 3.3.7 System *
 ------
 
 System Tools are provided to aid in troubleshooting.
@@ -1298,7 +1356,7 @@ System Tools and their Purpose:
 -  **Status** -                   Shows the run status of the application (i.e. memory, load, thread status and properties). Refer to Java platform documentation for the interpretation of the information.
 
 
-### 3.3.5 Tracking *
+### 3.3.8 Tracking *
 
 The application tracks internal user logins, Component/Resources views,
 and Article views. The application also can be integrated with external
@@ -1310,14 +1368,8 @@ The primary tracking events can be viewed using the Tracking Admin Tool.
 As well as the events are aggregated into various system generated
 report accessible via the Reports Admin Tool.
 
-### 3.3.6 Messages *
-------
 
-Shows a log of messages sent to users in the Inactive filtered table.  Allows for
-the cleanup of old messages and the ability to process all queued messages now.
-
-
-### 3.3.7 API Documentation *
+### 3.3.9 API Documentation *
 ------
 
 This contains the documentation for the Application Programming Interface, or API.  It
