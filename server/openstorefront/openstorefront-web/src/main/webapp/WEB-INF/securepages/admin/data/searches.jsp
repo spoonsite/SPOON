@@ -58,7 +58,12 @@ limitations under the License.
 							margin: '10 10 0 10',
 							labelAlign: 'top',
 							fieldLabel: 'Search Name <span class="field-required" />',
-							labelSeparator: ''
+							labelSeparator: '',							
+							listeners: {
+								change: function(field, newValue, oldvalue, opts){										
+									advanceSearch.changed = true;
+								}
+							}							
 						},
 						{
 							html: '<hr>',
@@ -72,67 +77,11 @@ limitations under the License.
 									text: 'Save',
 									iconCls: 'fa fa-save',
 									handler: function(){
-										var searchPanel = Ext.getCmp('advanceSearch');
-										var search = searchPanel.getSearch();
-										var searchName = Ext.getCmp('searchName').getValue();
-										
-										//check name and search elements
-										if (!searchName || searchName === '') {
-												Ext.Msg.show({
-													title:'Validation',
-													message: 'Please enter Search Name.',
-													buttons: Ext.Msg.OK,
-													icon: Ext.Msg.ERROR,
-													fn: function(btn) {							
-													}	
-												});
-											return;
-										}
-										
-										if (!search) {
-											Ext.Msg.show({
-												title:'Validation',
-												message: 'Enter at least one Search Criteria',
-												buttons: Ext.Msg.OK,
-												icon: Ext.Msg.ERROR,
-												fn: function(btn) {							
-												}	
-											});											
-											return;
-										}
-										
-										var userSearch = {
-											searchName: searchName,
-											searchRequest: Ext.encode(search)
-										};
-										
-										var method = 'POST';
-										var endUrl = '';
-										
-										if (searchPanel.searchId) {
-											method = 'PUT';
-											endUrl = '/' +searchPanel.searchId;
-										}
-										
-										searchPanel.setLoading('Saving...');
-										Ext.Ajax.request({
-											url: '../api/v1/resource/systemsearches' + endUrl,
-											method: method,
-											jsonData: userSearch,
-											callback: function() {
-												searchPanel.setLoading(false);
-											},
-											success: function(response, opts){
-												Ext.toast("Successfully saved search.");
-												actionRefresh();
-												Ext.getCmp('searchWindow').close();
-											}
-										});
-										
+										actionSaveSearch();
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbfill'
 								},								
 								{
 									text: 'Preview Results',
@@ -149,15 +98,89 @@ limitations under the License.
 									text: 'Cancel',
 									iconCls: 'fa fa-close',
 									handler: function () {
-										Ext.getCmp('searchWindow').close();
+										if (advanceSearch.changed) {
+											Ext.Msg.show({
+												title:'Save Changes?',
+												message: 'You are closing a search that has unsaved changes. Would you like to save your changes?',
+												buttons: Ext.Msg.YESNOCANCEL,
+												icon: Ext.Msg.QUESTION,
+												fn: function(btn) {
+													if (btn === 'yes') {
+														actionSaveSearch();														
+													} else if (btn === 'no') {
+														Ext.getCmp('searchWindow').close();
+													} 
+												}
+											});											
+										} else {
+											Ext.getCmp('searchWindow').close();
+										}
 									}
 								}
 							]
 						}
 					]					
 				});
-	
 				
+				var actionSaveSearch = function() {
+					var searchPanel = Ext.getCmp('advanceSearch');
+					var search = searchPanel.getSearch();
+					var searchName = Ext.getCmp('searchName').getValue();
+
+					//check name and search elements
+					if (!searchName || searchName === '') {
+							Ext.Msg.show({
+								title:'Validation',
+								message: 'Please enter Search Name.',
+								buttons: Ext.Msg.OK,
+								icon: Ext.Msg.ERROR,
+								fn: function(btn) {							
+								}	
+							});
+						return;
+					}
+
+					if (!search) {
+						Ext.Msg.show({
+							title:'Validation',
+							message: 'Enter at least one Search Criteria',
+							buttons: Ext.Msg.OK,
+							icon: Ext.Msg.ERROR,
+							fn: function(btn) {							
+							}	
+						});											
+						return;
+					}
+
+					var search = {
+						searchName: searchName,
+						searchRequest: Ext.encode(search)
+					};
+
+					var method = 'POST';
+					var endUrl = '';
+
+					if (searchPanel.searchId) {
+						method = 'PUT';
+						endUrl = '/' +searchPanel.searchId;
+					}
+
+					searchPanel.setLoading('Saving...');
+					Ext.Ajax.request({
+						url: '../api/v1/resource/systemsearches' + endUrl,
+						method: method,
+						jsonData: search,
+						callback: function() {
+							searchPanel.setLoading(false);
+						},
+						success: function(response, opts){
+							Ext.toast("Successfully saved search.");
+							actionRefresh();
+							Ext.getCmp('searchWindow').close();
+						}
+					});
+				};
+					
 				var searchGrid = Ext.create('Ext.grid.Panel', {
 					id: 'searchgrid',
 					title: 'Public Saved Searches <i class="fa fa-question-circle"  data-qtip="Allows for saving searches to be used in highlights and entries" ></i>',
@@ -310,7 +333,7 @@ limitations under the License.
 				var actionEdit = function(record) {
 					var searchRequest = Ext.decode(record.get('searchRequest'));
 					searchWindow.show();
-					advanceSearch.searchId = record.get('userSearchId');
+					advanceSearch.searchId = record.get('searchId');
 					advanceSearch.edit(searchRequest.searchElements);
 					searchWindow.getComponent('searchName').setValue(record.get('searchName'));
 				};
