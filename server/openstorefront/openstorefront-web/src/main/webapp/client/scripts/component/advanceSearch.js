@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global Ext, CoreService */
+/* global Ext, CoreService, CoreUtil */
 
 Ext.define('OSF.component.AdvanceSearchPanel', {
 	extend: 'Ext.panel.Panel',
@@ -1636,6 +1636,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 										} else {
 											grid.getStore().add(data);																		
 										}
+										advancePanel.changed = true;
 									},
 									failure: function(response, opts) {
 										var errorResponse = Ext.decode(response.responseText);
@@ -1841,6 +1842,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 											fn: function(btn) {
 												if (btn === 'yes') {
 													grid.getStore().removeAt(rowIndex);
+													advancePanel.changed = true;
 												} 
 											}
 										});																				
@@ -1890,7 +1892,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 			
 			var search = {
 				sortField: 'name',
-                sortDirection: 'ASC',
+				sortDirection: 'ASC',
 				searchElements: searchElements
 			};
 			
@@ -1929,7 +1931,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 								maxLength: 255,
 								labelAlign: 'top',
 								fieldLabel: 'Name <span class="field-required" />',
-								labelSeparator: ''								
+								labelSeparator: ''
 							}
 						],
 						dockedItems: [
