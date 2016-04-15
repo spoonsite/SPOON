@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
@@ -51,7 +52,7 @@ public class ComponentTypeTemplateResource
 {
 
 	@GET
-	@APIDescription("Gets  component type templates")
+	@APIDescription("Gets component type templates")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTypeTemplate.class)
 	public Response getComponentTypeTemplate(
@@ -74,7 +75,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@GET
-	@APIDescription("Gets  component type templates")
+	@APIDescription("Gets component type templates")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTypeTemplate.class)
 	@Path("/lookup")
@@ -108,7 +109,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@GET
-	@APIDescription("Gets  a component type template")
+	@APIDescription("Gets a component type template")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTypeTemplate.class)
 	@Path("/{templateId}")
@@ -120,6 +121,32 @@ public class ComponentTypeTemplateResource
 		componentType.setTemplateId(templateCode);
 		return sendSingleEntityResponse(componentType.find());
 	}
+	
+	@GET
+	@APIDescription("Gets any attached component types")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentType.class)
+	@Path("/{templateId}/attached")
+	public Response getAttachedComponeTypes(
+			@PathParam("templateId") String templateId
+	)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		
+		ComponentTypeTemplate componentTypeTemplate = new ComponentTypeTemplate();
+		componentTypeTemplate.setTemplateId(templateId);
+		componentTypeTemplate = componentTypeTemplate.find();
+		if (componentTypeTemplate != null) {
+			ComponentType componentType = new ComponentType();
+			componentType.setComponentTypeTemplate(templateId);
+			List<ComponentType> types = componentType.findByExample();
+			GenericEntity<List<ComponentType>> entity = new GenericEntity<List<ComponentType>>(types)
+			{
+			};
+			response = sendSingleEntityResponse(entity);
+		}
+		return response;
+	}	
 
 	@POST
 	@RequireAdmin
@@ -198,11 +225,23 @@ public class ComponentTypeTemplateResource
 	@RequireAdmin
 	@APIDescription("Inactives component type template")
 	@Path("/{templateId}")
-	public void deleteNewEvent(
+	public void inactiveTemplate(
 			@PathParam("templateId") String templateId
 	)
 	{
 		service.getComponentService().removeComponentTypeTemplate(templateId);
 	}
 
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete component type template; if not attached")
+	@Path("/{templateId}/force")
+	public void deleteTemplate(
+			@PathParam("templateId") String templateId
+	)
+	{
+		service.getComponentService().deleteComponentTypeTemplate(templateId);
+	}
+	
+	
 }

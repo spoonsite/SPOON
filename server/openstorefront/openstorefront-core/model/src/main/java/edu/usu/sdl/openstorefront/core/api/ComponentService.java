@@ -685,6 +685,13 @@ public interface ComponentService
 	public void removeComponentTypeTemplate(String templateId);
 	
 	/**
+	 * This is a Hard delete but it will fail if entry type are pointing to it.
+	 * @param templateId 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteComponentTypeTemplate(String templateId);
+	
+	/**
 	 * Save a template block for use in a template
 	 * @param templateBlock 
 	 */
