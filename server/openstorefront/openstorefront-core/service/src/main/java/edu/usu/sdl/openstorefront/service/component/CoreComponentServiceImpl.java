@@ -2012,6 +2012,22 @@ public class CoreComponentServiceImpl
 			persistenceService.persist(template);
 		}
 	}
+	
+	public void deleteComponentTypeTemplate(String templateId)
+	{
+		ComponentTypeTemplate template = persistenceService.findById(ComponentTypeTemplate.class, templateId);
+		if (template != null) {
+			ComponentType componentType = new ComponentType();
+			componentType.setComponentTypeTemplate(templateId);
+			
+			List<ComponentType> types = componentType.findByExample();
+			if (types.isEmpty()) {
+				persistenceService.delete(template);
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to delete; Entry types are point to the template.", "Remove the template from entry types (both active and inactive) and try again.");
+			}
+		}		
+	}	
 
 	public Component approveComponent(String componentId)
 	{

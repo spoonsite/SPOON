@@ -539,7 +539,7 @@
 												}
 											});	
 										}
-										if (!fullCode) {
+										if (fullCode === '\n\n\n') {
 											valid = false;
 											Ext.Msg.show({
 												title:'Validation',
@@ -581,6 +581,9 @@
 													Ext.getCmp('addEditWindow').setLoading(false);
 												},
 												success: function(response, opts) {
+													var template = Ext.decode(response.responseText);
+													addEditWindow.editTemplateId = template.templateId;
+															
 													actionRefresh();
 													Ext.toast("Saved Template Successfully.");
 													//Ext.getCmp('addEditWindow').close();
@@ -959,6 +962,19 @@
 									handler: function () {
 										actionToggleStatus();
 									}								
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Delete',
+									id: 'lookupGrid-tools-delete',
+									scale: 'medium',								
+									iconCls: 'fa fa-2x fa-close',
+									disabled: true,
+									handler: function () {
+										actionDelete(Ext.getCmp('templateGrid').getSelection()[0]);
+									}								
 								}								
 							]
 						}
@@ -984,9 +1000,11 @@
 					if (Ext.getCmp('templateGrid').getSelectionModel().getCount() === 1) {
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-status').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-delete').setDisabled(false);					
 					} else {
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);
-						Ext.getCmp('lookupGrid-tools-status').setDisabled(true);						
+						Ext.getCmp('lookupGrid-tools-status').setDisabled(true);	
+						Ext.getCmp('lookupGrid-tools-delete').setDisabled(true);
 					}
 				};
 				
@@ -1030,13 +1048,13 @@
 					}					
 					updateTemplate();					
 				
-			   };				
+				 };				
 				
 				var actionToggleStatus = function() {
 					Ext.getCmp('templateGrid').setLoading("Updating Status...");
 					var type = Ext.getCmp('templateGrid').getSelection()[0].get('templateId');
 					var currentStatus = Ext.getCmp('templateGrid').getSelection()[0].get('activeStatus');
-					
+
 					var method = 'PUT';
 					var urlEnd = '/activate';
 					if (currentStatus === 'A') {
@@ -1055,6 +1073,52 @@
 					});					
 				};				
 				
+				var actionDelete = function(record){
+					
+					//check if delete is possible
+					Ext.getCmp('templateGrid').setLoading("Checking delete...");
+					Ext.Ajax.request({
+						url: '../api/v1/resource/componenttypetemplates/' + record.get('templateId') + '/attached',
+						method: 'GET',
+						callback: function(){
+							Ext.getCmp('templateGrid').setLoading(false);
+						},
+						success: function(response, opts){
+							var attachedRecords = Ext.decode(response.responseText);
+							if (attachedRecords.length > 0) {
+								var entryTypeNames = [];
+								Ext.Array.each(attachedRecords, function(entryType) {
+									entryTypeNames.push(entryType.label);
+								});
+								Ext.Msg.alert('Template in Use', 'The template is being use by the following entry type(s):<br> ' + entryTypeNames.join());								
+								
+							} else {							
+								Ext.Msg.show({
+									title:'Remove Template?',
+									message: 'Are you sure you want to delete ' + Ext.util.Format.ellipsis(record.get('name'), 20) + '?',
+									buttons: Ext.Msg.YESNOCANCEL,
+									icon: Ext.Msg.QUESTION,
+									fn: function(btn) {
+										if (btn === 'yes') {
+											Ext.getCmp('templateGrid').setLoading("Deleting...");
+											Ext.Ajax.request({
+												url: '../api/v1/resource/componenttypetemplates/' + record.get('templateId') + '/force',
+												method: 'DELETE',
+												callback: function(){
+													Ext.getCmp('templateGrid').setLoading(false);
+												},
+												success: function(response, opts){
+													actionRefresh();
+												}
+											});
+										}
+									}
+								});
+							}
+						}
+					});
+					
+				};
 
 			});
 			

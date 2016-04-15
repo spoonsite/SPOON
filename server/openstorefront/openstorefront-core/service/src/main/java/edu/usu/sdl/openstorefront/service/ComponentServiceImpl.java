@@ -564,11 +564,18 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void removeComponentTypeTemplate(String templateCode)
+	public void removeComponentTypeTemplate(String templateId)
 	{
-		core.removeComponentTypeTemplate(templateCode);
+		core.removeComponentTypeTemplate(templateId);
 	}
 
+
+	@Override
+	public void deleteComponentTypeTemplate(String templateId)
+	{
+		core.deleteComponentTypeTemplate(templateId);		
+	}	
+	
 	@Override
 	public Component approveComponent(String componentId)
 	{
