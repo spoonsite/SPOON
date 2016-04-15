@@ -417,6 +417,20 @@ scheduled report, edit, or delete it.
 #### 2.3.3.2 Admin Reports * 
 --------
 
+This section displays reports that have run as well as scheduled reports that will run in the future.
+
+Reports can be viewed, downloaded, or added.  Scheduled reports can be edited.  
+Selections  can be made to run a report one time only or at regular intervals.  
+Some reports have the option of HTML or Comma-Separated Values as the report format.  
+If selecting Previous days, the selected number of prior days will be included in the report output.  
+
+Types of reports available include:
+  
+  - Entry
+  - Entry Detail
+  - Entries by Organization
+  - Entries by Category
+
 Additional reports available to administrators only include:
 
   - **User**
@@ -424,6 +438,14 @@ Additional reports available to administrators only include:
   - **Usage**
   - **Submissions**
   - **Link Validation**
+
+
+**Scheduled Reports**
+Clicking this button opens a window that shows recurring reports, their details and frequency that 
+the report will run, as well as the last run date and time. You can add, activate or inactivate a 
+scheduled report, edit, or delete it.
+
+
 
   
 #### 2.3.3.3 Reviews
