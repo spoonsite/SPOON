@@ -52,7 +52,7 @@ limitations under the License.
 					
 					Ext.getCmp('compareBtn').getMenu().add({
 						componentId: componentId,
-						text: componentName,
+						text: decodeURIComponent(componentName),
 						chkField: chk,
 						labelElm: label,
 						handler: function() {
@@ -1010,9 +1010,14 @@ limitations under the License.
 				'  <br><div class="searchresults-item-update">',
 				'  <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
 				'  <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
-				'   ({componentTypeDescription})<span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{name}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
+				'   ({componentTypeDescription})<span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
 				' </div>',
-				'</tpl>'		
+				'</tpl>',
+				{
+					escape: function(value) {
+						return Ext.String.escape(encodeURIComponent(value));
+					}
+				}
 			);			
 			
 			var searchResultsPanel = Ext.create('Ext.panel.Panel', {
