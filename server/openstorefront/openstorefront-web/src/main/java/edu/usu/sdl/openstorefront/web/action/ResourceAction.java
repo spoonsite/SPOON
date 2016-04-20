@@ -134,7 +134,7 @@ public class ResourceAction
 						componentResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 						componentResource.setUpdateUser(SecurityUtil.getCurrentUserName());
 						componentResource.setCreateUser(SecurityUtil.getCurrentUserName());
-						componentResource.setOriginalName(file.getFileName());
+						componentResource.setOriginalName(StringProcessor.getJustFileName(file.getFileName()));
 						componentResource.setMimeType(file.getContentType());
 
 						ValidationModel validationModel = new ValidationModel(componentResource);

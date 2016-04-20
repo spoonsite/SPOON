@@ -60,19 +60,40 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 			url: 'Router.action?page=shared/entrySimpleViewTemplate.jsp',
 			success: function(response, opts){
 				viewTemplate.set(response.responseText, true);
-				}
+			}
 		});
 		
 		changeRequestWindow.submissionPanel = Ext.create('OSF.component.SubmissionPanel', {											
 				formWarningMessage: changeRequestWindow.changeRequestWarning,
 				submitForReviewUrl: function (componentId){
 					return '../api/v1/resource/componentsubmissions/' + componentId+ '/submitchangerequest';
+				},
+				cancelSubmissionHandlerYes: function(){
+					changeRequestWindow.submissionWindow.completeClose=true;
+					changeRequestWindow.submissionWindow.close();
+					changeRequestWindow.submissionWindow.completeClose=false;
+					if (changeRequestWindow.successHandler) {
+						changeRequestWindow.successHandler();
+					}
+				},
+				cancelSubmissionHandlerNo: function(){
+					changeRequestWindow.submissionWindow.completeClose=true;
+					changeRequestWindow.submissionWindow.close();
+					changeRequestWindow.submissionWindow.completeClose=false;
+					if (changeRequestWindow.successHandler) {
+						changeRequestWindow.successHandler();
+					}
 				},				
 				handleSubmissionSuccess: function(response, opts) {
 					changeRequestWindow.submissionWindow.completeClose=true;
 					changeRequestWindow.submissionWindow.close();
 					changeRequestWindow.submissionWindow.completeClose=false;
-					changeRequestWindow.changeGrid.getStore().reload();
+					if (changeRequestWindow.changeGrid.getStore().getProxy().url) {
+						changeRequestWindow.changeGrid.getStore().reload();
+					}
+					if (changeRequestWindow.successHandler) {
+						changeRequestWindow.successHandler();
+					}					
 				}
 		});
 		
@@ -91,58 +112,117 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 			listeners: {
 				beforeclose: function(panel, opts) {
 					if (!(panel.completeClose)){
-						changeRequestWindow.submissionPanel.cancelSubmissionHandler();
+						changeRequestWindow.submissionPanel.cancelSubmissionHandler(true);
 					}
 					return panel.completeClose;
 				}
 			}
 		});
-		changeRequestWindow.submissionPanel.cancelSubmissionHandler = function() {
-			Ext.Msg.show({
-				title:'Confirm Cancel?',
-				message: 'Are you sure you want to cancel your change request? <br><br><b>Yes</b>, will remove change request<br> <b>No</b>, will cancel the form and will NOT remove existing change request',
-				buttons: Ext.Msg.YESNOCANCEL,
-				icon: Ext.Msg.QUESTION,
-				fn: function(btn) {
-					if (btn === 'yes') {
-							changeRequestWindow.submissionPanel.setLoading('Canceling Change Request...');
-							Ext.Ajax.request({
-								url: '../api/v1/resource/components/' + changeRequestWindow.changeRequestId + '/cascade',
-								method: 'DELETE',
-								callback: function () {
-									changeRequestWindow.submissionPanel.setLoading(false);
-								},
-								success: function (response, opts) {
-									changeRequestWindow.submissionWindow.completeClose=true;
-									changeRequestWindow.submissionWindow.close();
-									changeRequestWindow.submissionWindow.completeClose=false;
-									changeRequestWindow.changeGrid.getStore().reload();
-									if (changeRequestWindow.successHandler) {
-										changeRequestWindow.successHandler();
-									}
-								}
-							});							
-					} else if (btn === 'no') {
-						changeRequestWindow.submissionWindow.completeClose=true;
-						changeRequestWindow.submissionWindow.close();
-						changeRequestWindow.submissionWindow.completeClose=false;
-					} 
-				}				
-			});
-		};		
+//		changeRequestWindow.submissionPanel.cancelSubmissionHandler = function() {
+//			Ext.Msg.show({
+//				title:'Confirm Cancel?',
+//				message: 'Are you sure you want to cancel your change request? <br><br><b>Yes</b>, will remove change request<br> <b>No</b>, will cancel the form and will NOT remove existing change request',
+//				buttons: Ext.Msg.YESNOCANCEL,
+//				icon: Ext.Msg.QUESTION,
+//				fn: function(btn) {
+//					if (btn === 'yes') {
+//							changeRequestWindow.submissionPanel.setLoading('Canceling Change Request...');
+//							Ext.Ajax.request({
+//								url: '../api/v1/resource/components/' + changeRequestWindow.changeRequestId + '/cascade',
+//								method: 'DELETE',
+//								callback: function () {
+//									changeRequestWindow.submissionPanel.setLoading(false);
+//								},
+//								success: function (response, opts) {
+//									changeRequestWindow.submissionWindow.completeClose=true;
+//									changeRequestWindow.submissionWindow.close();
+//									changeRequestWindow.submissionWindow.completeClose=false;
+//									changeRequestWindow.changeGrid.getStore().reload();
+//									if (changeRequestWindow.successHandler) {
+//										changeRequestWindow.successHandler();
+//									}
+//								}
+//							});							
+//					} else if (btn === 'no') {
+//						changeRequestWindow.submissionWindow.completeClose=true;
+//						changeRequestWindow.submissionWindow.close();
+//						changeRequestWindow.submissionWindow.completeClose=false;
+//					} 
+//				}				
+//			});
+//		};		
 		
-		var editChangeRequest = function(changeRequestId, record) {
+		changeRequestWindow.editChangeRequest = function(changeRequestId, record, editCallback) {
 			changeRequestWindow.changeRequestId = changeRequestId;
 			
 			if (!adminMode) {
 				//open form
 				changeRequestWindow.submissionWindow.show();			
-				changeRequestWindow.submissionPanel.editSubmission(changeRequestId);			
+				changeRequestWindow.submissionPanel.editSubmission(changeRequestId);
+				if (editCallback) {
+					editCallback();
+				}
 			} else {
 				changeRequestWindow.adminEditHandler(record, changeRequestWindow);
 			}
 		};
 		
+		changeRequestWindow.newChangeRequest = function(currentComponentId, callback, external) {
+			Ext.Ajax.request({
+				url: '../api/v1/resource/components/' + currentComponentId + '/changerequest',
+				method: 'POST',
+				callback: function () {
+					changeRequestWindow.setLoading(false);
+					if (callback) {
+						callback();
+					}
+				},
+				success: function (response, opts) {
+					if (!external){
+						changeRequestWindow.changeGrid.getStore().reload();
+					}
+
+					var data = Ext.decode(response.responseText);										
+					changeRequestWindow.editChangeRequest(data.componentId);
+					if (changeRequestWindow.successHandler) {
+						changeRequestWindow.successHandler();
+					}
+				}
+			});
+		};
+		
+		changeRequestWindow.deleteChangeRequest = function(changeRequestId, external) {
+			
+			Ext.Msg.show({
+				title: 'Delete Change Request?',
+				message: 'Are you sure you want to delete selected change request? ',
+				buttons: Ext.Msg.YESNO,
+				icon: Ext.Msg.QUESTION,
+				fn: function(btn) {
+					if (btn === 'yes') {
+						changeRequestWindow.setLoading('Removing change request...');
+						Ext.Ajax.request({
+							url: '../api/v1/resource/components/' + changeRequestId + '/cascade',
+							method: 'DELETE',
+							callback: function() {
+								changeRequestWindow.setLoading(false);
+							},
+							success: function(response, opts) {	
+								if (!external) {
+									changeRequestWindow.changeGrid.getStore().reload();
+									changeRequestWindow.changeViewPanel.update(undefined);
+								}
+								
+								if (changeRequestWindow.successHandler) {
+									changeRequestWindow.successHandler();
+								}
+							}
+						});
+					} 
+				}
+			});			
+		};
+				
 		changeRequestWindow.changeGrid = Ext.create('Ext.grid.Panel', {
 			region: 'west',
 			split: true,
@@ -273,25 +353,9 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							text: 'New Change Request',
 							itemId: 'newBtn',
 							iconCls: 'fa fa-plus',						
-							handler: function(){
-								
+							handler: function(){								
 								changeRequestWindow.setLoading('Creating a new change request...');
-								Ext.Ajax.request({
-									url: '../api/v1/resource/components/' + changeRequestWindow.currentComponentId + '/changerequest',
-									method: 'POST',
-									callback: function () {
-										changeRequestWindow.setLoading(false);
-									},
-									success: function (response, opts) {
-										changeRequestWindow.changeGrid.getStore().reload();
-										
-										var data = Ext.decode(response.responseText);										
-										editChangeRequest(data.componentId);
-										if (changeRequestWindow.successHandler) {
-											changeRequestWindow.successHandler();
-										}
-									}
-								});	
+								changeRequestWindow.newChangeRequest(changeRequestWindow.currentComponentId);
 							}
 						},						
 						{
@@ -301,7 +365,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							disabled: true,
 							handler: function(){ 
 								var changeRequestComponentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
-								editChangeRequest(changeRequestComponentId, this.up('grid').getSelectionModel().getSelection()[0]);								
+								changeRequestWindow.editChangeRequest(changeRequestComponentId, this.up('grid').getSelectionModel().getSelection()[0]);								
 							}
 						},
 						{
@@ -363,32 +427,8 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							handler: function(){
 								var changesGrid = this.up('grid');
 								var changeRequestComponentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
-
-								Ext.Msg.show({
-									title: 'Delete Change Request?',
-									message: 'Are you sure you want to delete selected change request? ',
-									buttons: Ext.Msg.YESNO,
-									icon: Ext.Msg.QUESTION,
-									fn: function(btn) {
-										if (btn === 'yes') {
-											changeRequestWindow.setLoading('Removing change request...');
-											Ext.Ajax.request({
-												url: '../api/v1/resource/components/' + changeRequestComponentId + '/cascade',
-												method: 'DELETE',
-												callback: function() {
-													changeRequestWindow.setLoading(false);
-												},
-												success: function(response, opts) {													
-													changesGrid.getStore().reload();
-													changeRequestWindow.changeViewPanel.update(undefined);
-													if (changeRequestWindow.successHandler) {
-														changeRequestWindow.successHandler();
-													}
-												}
-											});
-										} 
-									}
-								});
+								
+								changeRequestWindow.deleteChangeRequest(changeRequestComponentId);
 							}
 						}
 					]
