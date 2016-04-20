@@ -16,8 +16,10 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -35,11 +37,26 @@ public class ComponentView
 	private String componentTypeLabel;
 	private String approvalStateLabel;
 	private Integer numberOfPendingChanges;
+	private String statusOfPendingChange;
+	private String pendingChangeComponentId;
+	private String ownerEmail;
 
 	public ComponentView()
 	{
 	}
-
+	
+	public static ComponentView toView(Component component, boolean populateOwnerInfo)
+	{
+		ComponentView componentView = toView(component);
+		if (populateOwnerInfo) {
+			UserProfile userProfile = ServiceProxyFactory.getServiceProxy().getUserService().getUserProfile(component.getCreateUser());
+			if (userProfile != null) {
+				componentView.setOwnerEmail(userProfile.getEmail());				
+			}			
+		}
+		return componentView;
+	}
+	
 	public static ComponentView toView(Component component)
 	{
 		ComponentView componentView = new ComponentView();
@@ -55,6 +72,15 @@ public class ComponentView
 		return componentView;
 	}
 
+	public static List<ComponentView> toViewListWithUserInfo(List<Component> components)
+	{
+		List<ComponentView> views = new ArrayList<>();
+		components.forEach(component -> {
+			views.add(toView(component, true));
+		});
+		return views;
+	}
+	
 	public static List<ComponentView> toViewList(List<Component> components)
 	{
 		List<ComponentView> views = new ArrayList<>();
@@ -92,6 +118,36 @@ public class ComponentView
 	public void setApprovalStateLabel(String approvalStateLabel)
 	{
 		this.approvalStateLabel = approvalStateLabel;
+	}
+
+	public String getOwnerEmail()
+	{
+		return ownerEmail;
+	}
+
+	public void setOwnerEmail(String ownerEmail)
+	{
+		this.ownerEmail = ownerEmail;
+	}
+
+	public String getStatusOfPendingChange()
+	{
+		return statusOfPendingChange;
+	}
+
+	public void setStatusOfPendingChange(String statusOfPendingChange)
+	{
+		this.statusOfPendingChange = statusOfPendingChange;
+	}
+
+	public String getPendingChangeComponentId()
+	{
+		return pendingChangeComponentId;
+	}
+
+	public void setPendingChangeComponentId(String pendingChangeComponentId)
+	{
+		this.pendingChangeComponentId = pendingChangeComponentId;
 	}
 
 }

@@ -1,9 +1,18 @@
 /* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 
 /* global Ext */
 
@@ -117,7 +126,9 @@ var CoreUtil = {
 		}
 
 		htmlData += '<html><head><style>' +
-				' .reportview-table{border-collapse: collapse; border: 2px black solid; font: 12px sans-serif} '+
+				' .reportview-table {border-collapse: collapse; border: 2px black solid; font: 12px sans-serif} ' +
+				' tr.reportview-table:nth-child(odd) { background: white;} ' +
+				' tr.reportview-table:nth-child(even) { background: whitesmoke;} ' +
 				' .reportview-td{border: 1px black solid; padding:5px;}' +
 				' .reportview-th{padding:5px;}' +
 				'</style>'+
@@ -134,14 +145,14 @@ var CoreUtil = {
 
 					if ((ctr2 + 1) === csv[ctr].length) {
 						if(colDiff !==0 ){
-							htmlData += '<tr><td class="reportview-td" colspan="'+colDiff+'">' + csv[ctr][ctr2] + '</td></tr>';
+							htmlData += '<tr class="reportview-table"><td class="reportview-td" colspan="'+colDiff+'">' + csv[ctr][ctr2] + '</td></tr>';
 						}
 						else{
-							htmlData += '<tr><td class="reportview-td" >' + csv[ctr][ctr2] + '</td></tr>';
+							htmlData += '<tr class="reportview-table"><td class="reportview-td" >' + csv[ctr][ctr2] + '</td></tr>';
 						}
 					}
 					else{
-						htmlData += '<tr><td class="reportview-td" >' + csv[ctr][ctr2] + '</td>';
+						htmlData += '<tr class="reportview-table"><td class="reportview-td" >' + csv[ctr][ctr2] + '</td>';
 					}
 
 
@@ -323,13 +334,18 @@ var CoreUtil = {
 					if (response.status === 304){
 						options.success(response, opts);
 					} else {
-						var data = Ext.decode(response.responseText);
-						if ((data.success !== undefined && data.success !== null && data.success) ||
-								data.success === undefined)
-						{
-							options.success(response, opts);
+						if (response.responseText) {
+							var data = Ext.decode(response.responseText);
+							if ((data.success !== undefined && data.success !== null && data.success) ||
+									data.success === undefined)
+							{
+								options.success(response, opts);
+							} else {
+								failurehandler(response, opts);
+							}
 						} else {
-							failurehandler(response, opts);
+							//no response (assume success)
+							options.success(response, opts);
 						}
 					}
 				}
@@ -381,6 +397,318 @@ var CoreUtil = {
 		};
 		
 		return defaultConfig;
-	}
+	},
+	/**
+	 *  Return a config which includes the tinymce plugin/tools for the insertion of saved search links
+	 * @param {type} type (optional)
+	 * @returns {CoreUtil.tinymceConfig.searchEntryConfig}
+	 */
+	tinymceSearchEntryConfig: function(type) {
+		var searchEntryConfig = {
+			plugins: [
+			"advlist autolink lists link image charmap print preview hr anchor pagebreak",
+			"searchreplace wordcount visualblocks visualchars code fullscreen",
+			"insertdatetime media nonbreaking save table contextmenu directionality",
+			"emoticons template paste textcolor placeholder savedsearchlink"
+			],
 
+			toolbar1: "newdocument fullpage | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
+			toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code | inserttime preview | forecolor backcolor",
+			toolbar3: "table | hr removeformat | subscript superscript | charmap emoticons | print fullscreen | ltr rtl | spellchecker | visualchars visualblocks nonbreaking template pagebreak restoredraft | savedsearchlink",
+
+			content_css : "contents.css",
+
+			menubar: true,
+			toolbar_items_size: 'small'				
+
+		};
+
+		return searchEntryConfig;
+
+	},
+	/**
+	 * Defaults the search to wildcard
+	 */
+	searchQueryAdjustment: function(query) {
+		if (query && !Ext.isEmpty(query)) {	
+			if (query.indexOf('"') === -1) {
+				query += "*";
+			}
+		}
+		return query;
+	},
+	/**
+	 * Show related entries
+	 * @param {type} attributeType
+	 * @param {type} attributeCode
+	 * @param {type} description
+	 * @param {type} vitalType
+	 * @param {type} tip
+	 * @returns {undefined}
+	 */
+	showRelatedVitalWindow: function(attributeType, attributeCode, description, vitalType, tip, componentId) {
+		
+		var relatedStore = Ext.create('Ext.data.Store', {
+			pageSize: 50,
+			autoLoad: false,
+			remoteSort: true,
+			sorters: [
+				new Ext.util.Sorter({
+				property: 'name',
+				direction: 'ASC'
+				})
+			],				
+			proxy: CoreUtil.pagingProxy({
+				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+				reader: {
+					type: 'json',
+					rootProperty: 'data',
+					totalProperty: 'totalNumber'
+				}
+			}),
+			listeners: {
+				load: function(store, records) {
+					store.filterBy(function(record){
+						return record.get('componentId') !== componentId;
+					});
+				}
+			}
+		});
+
+		var relatedWindow = Ext.create('Ext.window.Window', {
+			title: 'Related Entries',
+			width: '95%',
+			height: '60%',
+			modal: true,
+			maximizable: true,
+			layout: 'fit',
+			items: [
+				{
+					xtype: 'grid',
+					itemId: 'grid',
+					columnLines: true,
+					store: relatedStore,
+					columns: [
+						{ text: 'Name', dataIndex: 'name', flex:2, minWidth: 250, cellWrap: true, 
+							renderer: function (value, meta, record) {
+								return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>'
+							}
+						},
+						{ text: 'Description', dataIndex: 'description', flex: 2,
+							cellWrap: true,
+							renderer: function (value) {
+								value = Ext.util.Format.stripTags(value);
+								return Ext.String.ellipsis(value, 300);
+							}
+						},							
+						{ text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150 }							
+					],
+					dockedItems: [
+						{
+							xtype: 'pagingtoolbar',							
+							dock: 'bottom',
+							store: relatedStore,
+							displayInfo: true
+						},
+						{
+							xtype: 'panel',
+							itemId: 'description',
+							maxHeight: 200,
+							bodyStyle: 'padding-left: 5px; padding-right: 5px;',
+							scrollable: true,
+							tpl: new Ext.XTemplate(
+								'<h2 style="text-align: center;">{description}</h2><hr>',
+								'{tip}'
+							)
+						}
+					]						
+				}				
+			]			
+		});		
+		
+		relatedWindow.show();
+		
+		relatedWindow.getComponent('grid').getComponent('description').update({
+			description: description,
+			tip: tip
+		});
+
+		var searchObj = {
+			"sortField": "name",
+			"sortDirection": "ASC",
+			"searchElements": [{
+					"searchType": vitalType,
+					"keyField": attributeType,
+					"keyValue": attributeCode,
+					"caseInsensitive": true,
+					"numberOperation": "EQUALS",
+					"stringOperation": "EQUALS",
+					"mergeCondition": "OR"
+				}]
+		};
+
+		var store = relatedWindow.getComponent('grid').getStore();
+		store.getProxy().buildRequest = function (operation) {
+			var initialParams = Ext.apply({
+				paging: true,
+				sortField: operation.getSorters()[0].getProperty(),
+				sortOrder: operation.getSorters()[0].getDirection(),
+				offset: operation.getStart(),
+				max: operation.getLimit()
+			}, operation.getParams());
+			params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
+
+			var request = new Ext.data.Request({
+				url: '/openstorefront/api/v1/service/search/advance',
+				params: params,
+				operation: operation,
+				action: operation.getAction(),
+				jsonData: Ext.util.JSON.encode(searchObj)
+			});
+			operation.setRequest(request);
+
+			return request;
+		};
+		store.loadPage(1);		
+		
+	},
+	
+	/**
+	 * Sort and transfer entry for display
+	 */
+	processEntry: function(entry) {
+		
+		//sort and process						
+		Ext.Array.sort(entry.resources, function(a, b){
+			return a.resourceTypeDesc.localeCompare(b.resourceTypeDesc);	
+		});	
+
+		Ext.Array.sort(entry.contacts, function(a, b){
+			return a.name.localeCompare(b.name);	
+		});		
+
+		Ext.Array.sort(entry.dependencies, function(a, b){
+			return a.dependencyName.localeCompare(b.dependencyName);	
+		});							
+
+		var vitals = [];
+		if (entry.attributes) {
+			Ext.Array.each(entry.attributes, function(item){
+				vitals.push({
+					label: item.typeDescription,
+					value: item.codeDescription,
+					highlightStyle: item.highlightStyle,
+					type: item.type,
+					code: item.code,
+					updateDts: item.updateDts,
+					securityMarkingType: item.securityMarkingType,
+					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '') : item.codeLongDescription
+				});				
+			});
+		}
+
+		if (entry.metadata) {
+			Ext.Array.each(entry.metadata, function(item){
+				vitals.push({
+					label: item.label,
+					value: item.value,
+					securityMarkingType: item.securityMarkingType,
+					updateDts: item.updateDts
+				});			
+			});
+		}
+
+		Ext.Array.sort(vitals, function(a, b){
+			return a.label.localeCompare(b.label);	
+		});
+		entry.vitals = vitals;	
+
+		Ext.Array.each(entry.evaluation.evaluationSections, function(section){
+			if (section.notAvailable || section.actualScore <= 0) {
+				section.display = "N/A";
+			} else {
+				var score = Math.round(section.actualScore);
+				section.display = "";
+				for (var i= 0; i<score; i++){
+					section.display += '<i class="fa fa-circle detail-evalscore"></i>';
+				}
+			}				
+		});
+
+
+		Ext.Array.sort(entry.evaluation.evaluationSections, function(a, b){
+			return a.name.localeCompare(b.name);	
+		});
+
+
+		Ext.Array.each(entry.reviews, function(review){
+			Ext.Array.sort(review.pros, function(a, b){
+				return a.text.localeCompare(b.text);	
+			});
+			Ext.Array.sort(review.cons, function(a, b){
+				return a.text.localeCompare(b.text);	
+			});	
+
+			review.ratingStars = [];
+			for (var i=0; i<5; i++){					
+				review.ratingStars.push({						
+					star: i < review.rating ? (review.rating - i) > 0 && (review.rating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
+				});
+			}	
+		});
+		
+		if (entry.attributes && entry.attributes.length > 0) {
+			var evalLevels = {};	
+			Ext.Array.each(entry.attributes, function(item){
+				if (item.type === 'DI2ELEVEL') {
+					evalLevels.level = {};
+					evalLevels.level.typeDesciption = item.typeDescription; 
+					evalLevels.level.code = item.code; 
+					evalLevels.level.label = item.codeDescription; 
+					evalLevels.level.description = item.codeLongDescription;
+					evalLevels.level.highlightStyle = item.highlightStyle;
+					if (item.updateDts > entry.lastViewedDts) {
+						updated = true;
+					}
+				} else if (item.type === 'DI2ESTATE') {
+					evalLevels.state = {};
+					evalLevels.state.typeDesciption = item.typeDescription; 
+					evalLevels.state.code = item.code; 
+					evalLevels.state.label = item.codeDescription; 
+					evalLevels.state.description = item.codeLongDescription;
+					evalLevels.state.highlightStyle = item.highlightStyle;
+					if (item.updateDts > entry.lastViewedDts) {
+						updated = true;
+					}					
+				} else if (item.type === 'DI2EINTENT') {
+					evalLevels.intent = {};
+					evalLevels.intent.typeDesciption = item.typeDescription; 
+					evalLevels.intent.code = item.code; 
+					evalLevels.intent.label = item.codeDescription; 
+					evalLevels.intent.description = item.codeLongDescription; 
+					evalLevels.intent.highlightStyle = item.highlightStyle;
+					if (item.updateDts > entry.lastViewedDts) {
+						updated = true;
+					}					
+				}
+			});	
+			entry.evalLevels = evalLevels;	
+		}
+	
+		
+		return entry;
+	},
+	securityBannerPanel: function(branding) {
+		
+		if (branding && branding.securityBannerText) {
+			var securityBanner = Ext.create('Ext.panel.Panel', {
+				bodyCls: 'security-banner',
+				dock: 'top',
+				width: '100%',
+				html: branding.securityBannerText
+			});
+			return securityBanner;
+		}
+		return null;
+	}
 };

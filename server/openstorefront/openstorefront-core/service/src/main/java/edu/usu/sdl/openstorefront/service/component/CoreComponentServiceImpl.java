@@ -274,7 +274,7 @@ public class CoreComponentServiceImpl
 		ComponentDetailView result = new ComponentDetailView();
 		Component tempComponent = persistenceService.findById(Component.class, componentId);
 		if (tempComponent == null) {
-			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id: " + componentId);
+			return null;
 		}
 
 		result.setApprovalState(tempComponent.getApprovalState());
@@ -1634,19 +1634,25 @@ public class CoreComponentServiceImpl
 
 			ComponentAll archivedVersion = null;
 			TFile archive = new TFile(versionHistory.pathToFile().toFile());
-			for (TFile file : archive.listFiles()) {
-				if (file.isFile()) {
-					try (InputStream inTemp = new TFileInputStream(file)) {
-						archivedVersion = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<ComponentAll>()
-						{
-						});
-					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException(ex);
+			TFile files[] = archive.listFiles();
+			if (files != null) {
+				for (TFile file : files) {
+					if (file.isFile()) {
+						try (InputStream inTemp = new TFileInputStream(file)) {
+							archivedVersion = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<ComponentAll>()
+							{
+							});
+						} catch (IOException ex) {
+							throw new OpenStorefrontRuntimeException(ex);
+						}
 					}
 				}
-			}
-			if (archivedVersion != null) {
-				componentDetailView = ComponentDetailView.toView(archivedVersion);
+				if (archivedVersion != null) {
+					componentDetailView = ComponentDetailView.toView(archivedVersion);
+				}
+			} else {
+				String componentName = getComponentName(versionHistory.getComponentId());
+				log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
 			}
 		}
 
@@ -1661,17 +1667,23 @@ public class CoreComponentServiceImpl
 			//Get Version (only the component so we don't wipe out the restored resources)
 			ComponentAll archivedVersion = null;
 			TFile archive = new TFile(versionHistory.pathToFile().toFile());
-			for (TFile file : archive.listFiles()) {
-				if (file.isFile()) {
-					try (InputStream inTemp = new TFileInputStream(file)) {
-						archivedVersion = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<ComponentAll>()
-						{
-						});
-					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException(ex);
+			TFile files[] = archive.listFiles();
+			if (files != null) {
+				for (TFile file : files) {
+					if (file.isFile()) {
+						try (InputStream inTemp = new TFileInputStream(file)) {
+							archivedVersion = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<ComponentAll>()
+							{
+							});
+						} catch (IOException ex) {
+							throw new OpenStorefrontRuntimeException(ex);
+						}
 					}
 				}
-			}
+			} else {
+				String componentName = getComponentName(versionHistory.getComponentId());
+				log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
+			}		
 
 			if (archivedVersion != null) {
 
@@ -1699,36 +1711,48 @@ public class CoreComponentServiceImpl
 
 				//copy resources
 				archive = new TFile(versionHistory.pathToFile().toFile());
-				for (TFile file : archive.listFiles()) {
-					if (file.isDirectory() && "media".equalsIgnoreCase(file.getName())) {
-						for (TFile mediaFile : file.listFiles()) {
-							try {
-								TFile source = mediaFile;
-								TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()).toFile());
-								if (destination.isArchive() || destination.isDirectory()) {
-									destination = new TFile(destination, source.getName());
-								}
-								source.toFile().cp_rp(destination);
+				TFile allFiles[] = archive.listFiles();
+				if (allFiles != null) {
+					for (TFile file : allFiles) {
+						if (file.isDirectory() && "media".equalsIgnoreCase(file.getName())) {
+							TFile mediaFiles[] = file.listFiles();
+							if (mediaFiles != null) {
+								for (TFile mediaFile : mediaFiles) {
+									try {
+										TFile source = mediaFile;
+										TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()).toFile());
+										if (destination.isArchive() || destination.isDirectory()) {
+											destination = new TFile(destination, source.getName());
+										}
+										source.toFile().cp_rp(destination);
 
-							} catch (IOException ex) {
-								log.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+									} catch (IOException ex) {
+										log.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+									}
+								}
 							}
-						}
-					} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
-						for (TFile resourceFile : file.listFiles()) {
-							try {
-								TFile source = resourceFile;
-								TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()).toFile());
-								if (destination.isArchive() || destination.isDirectory()) {
-									destination = new TFile(destination, source.getName());
-								}
-								source.toFile().cp_rp(destination);
+						} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
+							TFile resourceFiles[] = file.listFiles();
+							if (resourceFiles != null) {
+								for (TFile resourceFile : resourceFiles) {
+									try {
+										TFile source = resourceFile;
+										TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()).toFile());
+										if (destination.isArchive() || destination.isDirectory()) {
+											destination = new TFile(destination, source.getName());
+										}
+										source.toFile().cp_rp(destination);
 
-							} catch (IOException ex) {
-								log.log(Level.WARNING, MessageFormat.format("Failed to copy resource to path file: {0}", resourceFile.getName()), ex);
+									} catch (IOException ex) {
+										log.log(Level.WARNING, MessageFormat.format("Failed to copy resource to path file: {0}", resourceFile.getName()), ex);
+									}
+								}
 							}
 						}
 					}
+				} else {
+					String componentName = getComponentName(versionHistory.getComponentId());
+					log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
 				}
 
 				//save old version (keep in mind the update date will reflect now.)
@@ -1875,6 +1899,14 @@ public class CoreComponentServiceImpl
 
 	private <T extends BaseComponent> void mergeSubEntities(List<T> entities, List<T> targetEntities)
 	{
+		//If there is bad data remove it from initial target
+		for (int i=targetEntities.size()-1; i >=0; i--) {
+			if (StringUtils.isBlank(targetEntities.get(i).uniqueKey())) {
+				T badRecord = targetEntities.remove(i);
+				log.log(Level.WARNING, MessageFormat.format("Bad record (found during merge...it was removed): {0}", StringProcessor.printObject(badRecord)));				
+			}
+		}		
+		
 		Map<String, List<T>> keyMap = targetEntities.stream().collect(Collectors.groupingBy(T::uniqueKey));
 		for (T entity : entities) {
 			boolean add = false;
