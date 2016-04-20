@@ -71,6 +71,30 @@ public class StringProcessor
 		}
 		return resource;
 	}
+	
+	/**
+	 * This get the last path name (handles both / \)
+	 * @param originalFilename
+	 * @return just file name
+	 */
+	public static String getJustFileName(String originalFilename)
+	{
+		StringBuilder filename = new StringBuilder();
+		if (StringUtils.isNotBlank(originalFilename)) {
+			for (int i = originalFilename.length() - 1; i >= 0; i--) {
+				char c = originalFilename.charAt(i);				
+				if (c == '/' || c == '\\') {
+					break;
+				} else {
+					filename.append(c);
+				}
+			}
+			filename.reverse();
+		} else {
+			return originalFilename;
+		}
+		return filename.toString();
+	}
 
 	/**
 	 * Looks for http link in a block of text
