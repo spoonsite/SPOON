@@ -363,7 +363,10 @@
 					};
 
 					var emailsArrayToString = function (emailArr) {
-						emailStr = '';
+						if (emailArr === undefined) {
+							return '';
+						}
+						var emailStr = '';
 						for (ctr = 0; ctr < emailArr.length; ctr++) {
 							emailStr += emailArr[ctr].email + "; ";
 						}
