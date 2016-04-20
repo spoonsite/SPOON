@@ -37,6 +37,8 @@ public class ComponentView
 	private String componentTypeLabel;
 	private String approvalStateLabel;
 	private Integer numberOfPendingChanges;
+	private String statusOfPendingChange;
+	private String pendingChangeComponentId;
 	private String ownerEmail;
 
 	public ComponentView()
@@ -126,6 +128,26 @@ public class ComponentView
 	public void setOwnerEmail(String ownerEmail)
 	{
 		this.ownerEmail = ownerEmail;
+	}
+
+	public String getStatusOfPendingChange()
+	{
+		return statusOfPendingChange;
+	}
+
+	public void setStatusOfPendingChange(String statusOfPendingChange)
+	{
+		this.statusOfPendingChange = statusOfPendingChange;
+	}
+
+	public String getPendingChangeComponentId()
+	{
+		return pendingChangeComponentId;
+	}
+
+	public void setPendingChangeComponentId(String pendingChangeComponentId)
+	{
+		this.pendingChangeComponentId = pendingChangeComponentId;
 	}
 
 }

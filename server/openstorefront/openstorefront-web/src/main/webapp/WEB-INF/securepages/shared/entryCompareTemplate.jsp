@@ -76,7 +76,9 @@ limitations under the License.
 	<br>
 	<b>Description</b>
 	<hr>
-	<p>{description}</p>
+	<section>
+		<p>{description}</p>
+	</section>
 	<br>
 	<br>
 	<tpl if="evaluation.evaluationSections && evaluation.evaluationSections.length &gt; 0">
@@ -212,7 +214,7 @@ limitations under the License.
 			<table class="quickView-table" border="1">				
 				<tpl for="vitals">
 					<tr class="quickView-table">
-						<td class="quickView-tableall"><b>{label}</b></td>
+						<td class="quickView-tableall" style="width: 30%;"><b>{label}</b></td>
 						<td class="quickView-tableall">{value}</td>
 					</tr>			
 				</tpl>

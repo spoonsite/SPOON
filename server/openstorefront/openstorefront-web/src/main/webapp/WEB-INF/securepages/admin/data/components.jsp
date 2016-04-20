@@ -1246,6 +1246,7 @@
 												});
 											} else {
 												//upload
+											
 												mainForm.submit({
 													url: '../Media.action?UploadMedia',
 													params: {
@@ -1257,12 +1258,14 @@
 													},
 													method: 'POST',
 													submitEmptyText: false,
-													success: function(form, action, opt){
+													waitMsg: 'Uploading media please wait...',
+													waitTitle: 'Uploading',
+													success: function(formBasic, action, opt){
 														Ext.getCmp('mediaGrid').getStore().reload();
 														mainForm.reset();
 														mainForm.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
 													}, 
-													failure: function(form, action, opt) {
+													failure: function(formBasic, action, opt) {
 														var errorResponse = Ext.decode(action.response.responseText);
 														var errorObj = {};        
 														Ext.Array.each(errorResponse.errors.entry, function(item, index, entry) {
@@ -1555,12 +1558,14 @@
 													},
 													method: 'POST',
 													submitEmptyText: false,
-													success: function(form, action, opt){
+													waitMsg: 'Uploading please wait...',
+													waitTitle: 'Uploading',													
+													success: function(formBasic, action, opt){
 														Ext.getCmp('resourcesGrid').getStore().reload();
 														form.reset();
 														form.getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
 													}, 
-													failure: function(form, action, opt) {
+													failure: function(formBasic, action, opt) {
 														var errorResponse = Ext.decode(action.response.responseText);
 														var errorObj = {};        
 														Ext.Array.each(errorResponse.errors.entry, function(item, index, entry) {
@@ -4024,24 +4029,41 @@
 					Ext.getCmp('componentTypeMainCB').resumeEvent('change');
 				};
 				
-				var hideSubComponentTabs = function(){
-					attributeGrid.setDisabled(true);					
-					relationshipsGrid.setDisabled(true);
-					contactGrid.setDisabled(true);
-					resourcesGrid.setDisabled(true);
-					mediaGrid.setDisabled(true);
-					dependenciesGrid.setDisabled(true);
-					metadataGrid.setDisabled(true);
-					evaluationGrid.setDisabled(true);
-					reviewGrid.setDisabled(true);
-					questionContainer.setDisabled(true);
-					tagGrid.setDisabled(true);
+				var hideSubComponentTabs = function(attempt){
+					if (!attempt) {
+						attempt = 1;
+					}
+					
+					if (attempt > 3) {
+						mainAddEditWin.hide();
+						Ext.Msg.alert('Error', 'Form is unstable please refresh page.');
+						return;
+					}
+					
+					//There seems to bug aria stuff that error after resource or media changed
+					//second time seems to work
+					try {						
+						attributeGrid.setDisabled(true);					
+						relationshipsGrid.setDisabled(true);
+						contactGrid.setDisabled(true);
+						resourcesGrid.setDisabled(true);
+						mediaGrid.setDisabled(true);
+						dependenciesGrid.setDisabled(true);
+						metadataGrid.setDisabled(true);
+						evaluationGrid.setDisabled(true);
+						reviewGrid.setDisabled(true);
+						questionContainer.setDisabled(true);
+						tagGrid.setDisabled(true);
+					} catch (e) {
+						attempt++;
+						hideSubComponentTabs(attempt);
+					}
 				};
 								
 				var checkFormTabs = function(record, componentType) {
 					hideSubComponentTabs();
 					if (record) {
-						var showSubTab = function(grid, url, container){
+						var showSubTab = function(grid, url, container){							
 							grid.setDisabled(false);
 							grid.componentRecord = record;
 							if (url) {
@@ -4075,9 +4097,15 @@
 								}
 								if (data.dataEntryResources) {	
 									showSubTab(resourcesGrid, '../api/v1/resource/components/' + record.get('componentId') + '/resources/view');
+									resourcesGrid.down('form').getComponent('upload').disabled = true;
+									resourcesGrid.down('form').getComponent('upload').enable();
 								}
 								if (data.dataEntryMedia) {	
 									showSubTab(mediaGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/media/view');
+									
+									//Fix: bug with disabled file fields
+									mediaGrid.down('form').getComponent('upload').disabled = true;
+									mediaGrid.down('form').getComponent('upload').enable();
 								}							
 								if (data.dataEntryDependancies) {	
 									showSubTab(dependenciesGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/dependencies/view');
