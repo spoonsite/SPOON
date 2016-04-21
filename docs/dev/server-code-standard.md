@@ -20,4 +20,4 @@ REST API
 4. Produce also needs a root object.  A GenericEntity can be used.
 5. Resource endpoint map to entities where Services act on the system or are cross entities.
 6. "Actions" supplement the API and are used for internal operations.  Also, use to handle uploads.
-7. 
+
