@@ -2,7 +2,7 @@
 ----
 
 1. Use Ext.js docs.  Look at them first for utility functions.  
-2. When making reusable components don't use "ID"s properties. Id are OK on individual pages; must be unique;   
+2. When making reusable components don't use "ID"s properties. Ids are OK on individual pages; must be unique;   
 
 
 
