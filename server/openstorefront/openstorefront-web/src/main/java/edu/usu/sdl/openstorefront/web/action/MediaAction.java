@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
@@ -144,7 +145,7 @@ public class MediaAction
 						componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 						componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 						componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-						componentMedia.setOriginalName(file.getFileName());
+						componentMedia.setOriginalName(StringProcessor.getJustFileName(file.getFileName()));
 						componentMedia.setMimeType(file.getContentType());
 
 						ValidationModel validationModel = new ValidationModel(componentMedia);
@@ -236,7 +237,7 @@ public class MediaAction
 				generalMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 				generalMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 				generalMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-				generalMedia.setOriginalFileName(file.getFileName());
+				generalMedia.setOriginalFileName(StringProcessor.getJustFileName(file.getFileName()));
 				generalMedia.setMimeType(file.getContentType());
 
 				ValidationModel validationModel = new ValidationModel(generalMedia);

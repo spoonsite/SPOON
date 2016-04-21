@@ -215,7 +215,7 @@ public class LoginAction
 		}
 
 		if (OpenStorefrontConstant.ANONYMOUS_USER.equals(userLoggedIn)) {
-			log.log(Level.INFO, "User was not logged when the logut was called.");
+			log.log(Level.INFO, "User was not logged when the logout was called.");
 		} else {
 			log.log(Level.INFO, MessageFormat.format("Logged off user: {0}", userLoggedIn));
 		}

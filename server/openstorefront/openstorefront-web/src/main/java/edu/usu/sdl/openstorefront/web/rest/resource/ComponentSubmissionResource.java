@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
@@ -97,6 +98,9 @@ public class ComponentSubmissionResource
 				List<Component> pendingChangesList = pendingChangesMap.get(componentView.getComponentId());
 				if (pendingChangesList != null) {
 					componentView.setNumberOfPendingChanges(pendingChangesList.size());
+					//Only one change is supported at the moment. 
+					componentView.setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, pendingChangesList.get(0).getApprovalState()));					
+					componentView.setPendingChangeComponentId(pendingChangesList.get(0).getComponentId());					
 				}
 			}
 

@@ -66,12 +66,13 @@ Ext.define('OSF.ux.IFrame', {
     },
 
     getWin: function() {
-        var me = this,
-            name = me.frameName,
-            win = Ext.isIE
-                ? me.iframeEl.dom.contentWindow
-                : window.frames[name];
-        return win;
+        var me = this;
+        var name = me.frameName;
+           // win = Ext.isIE
+              //  ? me.iframeEl.dom.contentWindow
+               // : window.frames[name];
+			   
+        return me.iframeEl.dom.contentWindow;
     },
 
     getFrame: function() {
@@ -116,18 +117,26 @@ Ext.define('OSF.ux.IFrame', {
                 // the event reaches listeners on elements like the document body. The effected
                 // mechanisms that depend on this bubbling behavior are listed to the right
                 // of the event.
-				if (!Ext.isGecko) {
-					Ext.get(doc).on(
-							me._docListeners = {
-								mousedown: fn, // menu dismisal (MenuManager) and Window onMouseDown (toFront)
-								mousemove: fn, // window resize drag detection
-								mouseup: fn, // window resize termination
-								click: fn, // not sure, but just to be safe
-								dblclick: fn, // not sure again
-								scope: me
-							}
-					);
-				}
+				//if (!Ext.isGecko) {
+				var topWindow = window;
+				doc.onmousedown = function(evt) {
+					var menus = topWindow.Ext.ComponentQuery.query('menu');
+					Ext.Array.each(menus, function(menu){
+						menu.hide();
+					});
+				};
+				
+//					Ext.get(doc).on(
+//							me._docListeners = {
+//								mousedown: fn, // menu dismisal (MenuManager) and Window onMouseDown (toFront)
+//								mousemove: fn, // window resize drag detection
+//								mouseup: fn, // window resize termination
+//								click: fn, // not sure, but just to be safe
+//								dblclick: fn, // not sure again
+//								scope: me
+//							}
+//					);
+				//}
             } catch(e) {
                 // cannot do this xss
             }
@@ -137,8 +146,8 @@ Ext.define('OSF.ux.IFrame', {
             
             // We need to be sure we remove all our events from the iframe on unload or we're going to LEAK!
             //FIXME: Firefox has issues with this.  The element has some how has changed.
-            var win = this.getWin();
-            Ext.get(win).on('beforeunload', me.cleanupListeners, me);
+            //var win = this.getWin();
+            //Ext.get(win).on('beforeunload', me.cleanupListeners, me);
                       
 
         } else if (me.src) {
@@ -206,4 +215,3 @@ Ext.define('OSF.ux.IFrame', {
  *     elements are orphaned.  Accessing the html and body elements or any of their properties
  *     results in a "Permission Denied" error.
  */
-
