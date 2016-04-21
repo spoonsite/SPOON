@@ -1606,10 +1606,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 			items: [
 				{
 					xtype: 'panel',
-					html: '<h1>3. Additional Details:</h1>'
-				},
-				{
-					xtype: 'panel',
 					itemId: 'detailSections', 
 					bodyStyle: 'padding: 0px 20px 0px 20px;',
 					items: [
@@ -1862,7 +1858,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',											
+											text: 'Remove',	
+											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -1949,7 +1946,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',											
+											text: 'Remove',
+											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -2035,7 +2033,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',											
+											text: 'Remove',	
+											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
@@ -2119,7 +2118,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',											
+											text: 'Remove',	
+											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
