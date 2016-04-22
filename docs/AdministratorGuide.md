@@ -1079,7 +1079,9 @@ The following key libraries were used in the development:
 -   Apache Shiro- Security
 
 -   Orient DB- No SQL/Multi-Model database
--   
+
+-   Ext.js and tinymce
+  
 ##8.3 Notes for Redhat/Centos users:
 -----
 
@@ -1132,7 +1134,7 @@ following steps:
 
 5.  Start Solr from (solr install dir)/example - java -jar start.jar
 
- ##8.8 Testing
+##8.8 Testing
 -------
 
 -   Unit test run as part of the Maven install.
@@ -1140,9 +1142,6 @@ following steps:
 -   Container/Integration tests login as admin go to
     <http://localhost:8080/openstorefront/test/ServiceTest.action>
 
--   Automated end to end testing: run from client/openstorefront/
-
-    -   npm test (requires Chrome Web Browser to be installed)
 
 ##8.9  Contributing Patches
 --------------------
