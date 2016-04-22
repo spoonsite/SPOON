@@ -1302,7 +1302,10 @@
 									xtype: 'filefield',
 									itemId: 'upload',
 									fieldLabel: 'Upload Media (Limit of 1GB)',																											
-									name: 'file'
+									name: 'file',
+									listeners: {
+										change: CoreUtil.handleMaxFileLimit
+									}
 								},
 								{
 									xtype: 'textfield',
@@ -1609,7 +1612,10 @@
 									xtype: 'filefield',
 									itemId: 'upload',
 									fieldLabel: 'Upload Resource (Limit of 1GB)',																											
-									name: 'file'
+									name: 'file',
+									listeners: {
+										change: CoreUtil.handleMaxFileLimit
+									}
 								}															
 							]
 						},						
