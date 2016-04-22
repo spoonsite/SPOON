@@ -501,7 +501,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			var grid = opts.grid;
 			var componentId = submissionPanel.componentId;
 			var recordId = grid.getSelection()[0].get(opts.idField);
-			var subEntityId = opts.subEntityId ? '/' + grid.getSelection()[0].get(subEntityId) : '';
+			var subEntityId = opts.subEntityId ? '/' + grid.getSelection()[0].get(opts.subEntityId) : '';
 			var subEntity = opts.subEntity ? '/' + opts.subEntity : '';
 			
 			grid.setLoading('Removing...');
@@ -511,7 +511,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				callback: function(opt, success, response){
 					grid.setLoading(false);
 				},
-				success: function(response, opts){
+				success: function(response, responseOpts){
 					if (opts.successFunc) {
 						opts.successFunc(response, opts);
 					} else {
