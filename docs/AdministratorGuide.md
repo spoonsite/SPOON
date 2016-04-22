@@ -45,41 +45,17 @@ licensed under Apache V2.**
 
 ##1.1 Client Architecture Diagram
 
-![clientarch](images/clientarch.png)
+![clientarch](images/client-archtechture-new.png)
 
 Figure 1. Client Architecture Diagram
 
 ##1.2 Client Details
 -----
 
-The client core structure is based on Angular.js. The UI core elements
-are based on Bootstrap, Angular-strap, and JQuery UI components.
-Component definitions are as shown below:
+The client core structure is based on Ext.js which provides UI components and utilities. This reduces third-part dependencies signficantly which in turn reduce mantainance, learning curve and improves quaility and consistency.
 
--   **Views:** Display the output. These consist of html template
-    snippets with an Angular.js directive that drives the display.
-
--   **Directives:** Allow for building reusable components for
-    the Views.
-
--   **Controllers:** Each view and some directives have a
-    backing controller. The controller function is used to handle the
-    interaction between the View and Services. This where the event
-    handling occurs and the data scope binding happens.
-
--   **Services:** Handle the interaction with the server and any
-    business logic associated with the data.
-
-##1.3 Client Build Platforms/Tools
------
-
-The client build environment relies on the following platforms/tools:
-
-  **Node.js** -             Provide the runtime environment for the build tools
-  **Ruby/Compass** -        Used for dynamic css generation
-  **Bower** -               Handles the third-party web components
-  **Yeoman** -              Used to generate the structure of the code artifacts
-  **Grunt** -               Builds the code
+Added to that is application specific overrides and high-level components created to facilate re-use.
+The application is simply composed by stripes layouts with top-level page and fragment tool pages.
 
 ## 2.  Server Architecture
 ------
@@ -911,24 +887,6 @@ The user types are:
 -   Administrator: This is an unrestricted user that can use the
     administrator tools in the application.
 
-###5.1.3 Allowing For Anonymous Submission
------
-
-Add these lines to the shiro.ini file:
--   /submission.html = anon
--   /bower_components/** = anon
--   /fonts/** = anon
--   /images/** = anon
--   /scripts/** = anon
--   /styles/** = anon
--   /views/** = anon
--   /Media.action = anon
--   /Resource.action = anon
--   /api/v1/resource/componentsubmissions/** = anon
--   /api/v1/resource/attributes = anon
--   /api/v1/resource/lookuptypes/** = anon
--   /api/v1/resource/userprofiles/currentuser = anon
-
 ##5.2  Integration External LDAP (User Syncing)
 ----------------------------------------
 
@@ -1089,315 +1047,10 @@ documentation can be accessed by login in as an admin and following the
 link from the admin tools. A print view of the API can be generated form
 there as well.
 
-#8.1  Development
+#8  Development
  ------
 
-#8.1 Development Client
-------------------
-
-###8.1.1 Quick start
------
-
-If you want to contribute to this project and you know Git, Yoeman,
-Bower, and Grunt, these build instructions should suffice:
-
-1)  To build Open-Storefront:
-
-> \$ git clone https://github.com/dshurt/Open-Storefront.git
->
-> \$ cd Open-Storefront
->
-> \$ grunt build
-
-2)  Install the following:
-
--   Git 1.9.4
-
--   npm (node.js): 1.4.13
-
--   yoeman and generator-angular (yoeman vanilla
-    [generator-angular](https://github.com/yeoman/generator-angular):
-    <https://github.com/yeoman/generator-angular>)
-
--   bower
-
--   grunt
-
--   ruby (with sass and compass)
-
-####8.1.1.1 Installing Components
-------
-
-####8.1.1.2 Installing and Configuring Git
-------
-
-Use the following steps to install and configure Git on your OS:
-
-1)  Linux: Install the package Git using \$ sudo apt-get install git
-
-2)  Tip, also install gitk to visualize your Git log using \$ sudo
-    apt-get install gitk
-
--   Windows, Mac OSX: Download from: [GIT]<http://git-scm.com/>
-
-3)  Tip for Mac OSX: Also
-    install[GitX](file:///\\hera\C4ISR_DSP\NRO\DI2E\Storefront\documentation\GitX) (<http://gitx.frim.nl/>)
-    to visualize your Git log.
-
--   More info [in github's git installation
-    > [instructions](http://help.github.com/git-installation-redirect):
-    > <https://help.github.com/articles/set-up-git/>
-
-4)  Check if Git is installed correctly:
-
-    \$ git --version
-
-    git version 1.7.1
-
->a)  Configure Git correctly:
-
-    \$ git config --global user.name "My Full Name"
-
-    \$ git config --global user.email myAccount@gmail.com
-
-    \$ git config --global -l
-
-    user.name=Geoffrey De Smet
-
-    user.email=gds...@gmail.com
-
-WARNING: the field user.name is your full name, not your username*.*
-
--   NOTE: the field user.email should match an email address of your
-    GitHub account.
-
--   More info on GitHub:
-    <https://help.github.com/articles/setting-your-email-in-git/>.
-
-\b.  Get a GitHub account
-
--   And add your public key on GitHub, using the instructions here:
-    <https://help.github.com/articles/generating-ssh-keys/>
-
--   To learn more about Git, read the free book [Git
-    Pro](http://progit.org/book/) (<http://git-scm.com/book/en/v2>).
-
-####8.1.1.3 Getting the Sources Locally
------
-
-You should fork the code before changing or cloning it (recommended).
-This will make it easier to share your changes later. For more info on
-forking, read [GitHub's help on forking](<https://help.github.com/articles/fork-a-repo/>).
-
-To fork the code:
-
-1.  For example, Open-Storefront:
-
-2.  Go to [the specific
-    repository (Open-Storefront)](https://github.com/dshurt/Open-Storefront)
-
-3.  Click the top right **Fork** button
-
-NOTE: By forking the repository, you can commit and push your changes
-without our consent and we can easily review and then merge your changes
-into the blessed repository.
-
-####8.1.1.4 Clone a Fork Locally
-------
-
-Use the following steps to locally clone a fork.
-
-\# First make a directory to hold the Open-Storefront project
-
-> \$ mkdir Open-Storefront-Project
->
-> \$ cd Open-Storefront-Project
-
-\# Then clone the repository you want to clone.
-
-> \$ git clone https://github.com/di2e/openstorefront.git
->
-> \$ cd Open-Storefront
->
-> \$ ls
-
-WARNING: You can clone with the *SSH URL*. It is possible that
-the *HTTPS URL* can be unreliable.
-
-NOTE: It's recommended to name the cloned directory the same as the
-repository (the default), so the helper scripts work.
-
-1.  By default you will be looking at the sources of the master branch,
-    which can be very unstable.
-
-2.  Use Git checkout \$ git checkout 5.2.0.Final to switch to a more
-    stable branch or tag.
-
-####8.1.1.5 Share your Changes with a Pull Request
----
-
-A pull request is like a patch file, but easier to apply, more powerful
-and you'll be credited as the author.
-
-1.  Creating a pull request:
-
->\a.  Push all your commits to a topic branch on your fork on GitHub (if
-    you haven't already).
-
--   You can only have one pull request per branch, so it's advisable to
-    use topic branches to avoid mixing your changes.
-
->\b.  Surf to that topic branch on your fork on GitHub.
-
->\c.  Click the **Pull Request** button at the top of the page.
-
-\2.  Accepting a pull request:
-
->\a.  Surf to the pull request page on GitHub.
-
->\b.  Review the changes
-
->\c.  Click the **Merge help** button on the bottom of the page and follow
-    the instructions of GitHub to apply those changes on the master.
-
--   Or, use the **Merge** button if there are no merge conflicts.
-
-###8.1.2 Installing and Configuring NPM
------
-
-Installing [node.js](https://nodejs.org/) on your computer will also
-install the node package manager (npm), but if you'd rather just go
-straight to the source, you can follow the
-instructions (<https://raw.githubusercontent.com/npm/npm/master/README.md>)
-in order to install the npm manually.
-
-No special configuration is required, but details on npm configuration
-can be found at <https://docs.npmjs.com/cli/config>.
-
-### Installing and Configuring Yoeman, Bower, and Grunt
-
-Use the following steps to insall and configure Yeoman, Bower, and
-Grunt.
-
-1.  To install Yeoman, enter the following:
-
--   \# The -g installs yoeman globally
-
--   \$ npm install -g yo
-
-1.  Once yeoman has finished installing, then install the AngularJS
-    scaffolding tool for Yeoman:
-
--   \# Once again the -g installs the generator globally so that you can
-    use it anywhere inside a yoeman project
-
--   \$ npm install -g generator-angular
-
-You can now start scaffolding your apps with Yeoman, managing
-dependencies with Bower, and building and running your application with
-Grunt. Grunt and Bower have also been installed globally, so you should
-be able to use them in other projects from now on.
-
-###8.1.4 Notes for Redhat/Centos users:
------
-
-See the following notes for Redhat/Centos users.
-
--   npm install /-g grunt-cli (was prompted by npm to install)
-
--   npm install grunt-contrib-compass --save-dev
-
--   npm install grunt-bower-install --save-dev
-
--   npm install grunt-wiredep --save-dev
-
--   yum install ruby yum install ruby-devel
-
--   gem install sass gem install compass
-
--   npm install karma --save-dev
-
--   npm install karma-coverage --save-dev
-
--   npm install karma-jasmine --save-dev
-
--   npm install karam-chrome-launcher --save-dev
-
--   yum install google-chrome-stable
-
--   yum install maven
-
-###8.1.5 Building with Grunt
-------
-
-####8.1.5.1  Before Running the Build
--------
-
-Before running the build, make sure all of the correct dependencies
-installed.
-
--   \#navigate to client/openstorefront/
-
--   \$ cd
-    \~/projects/Open-Storefront-Project/Open-Storefront/client/openstorefront/
-
--   \#and run npm install
-
--   \$ npm install
-
-This should create a node\_modules folder inside of the
-client/openstorefront/ directory with all of the node modules you'll
-need to do a build.
-
-It will also create a folder within client/openstorefront/app/ called
-'bower\_components' with all of the required bower components for the
-site.
-
-**NOTE:** If Bower is not installed correctly (globally), you will run
-into issues with the npm install creating the Bower components.
-
-####8.1.5.2 Running the build
-
-Go into a project's front end base directory, for example Open-
-
--   Storefront/client/openstorefront:
-
-    -   \$ cd
-        \~/projects/Open-Storefront-Project/Open-Storefront/client/openstorefront
-
-    -   \$ ls
-
-    -   app/ bower.json\* Gruntfile.js\* karma.conf.js\*
-        karma-e2e.conf.js\* node\_modules/ package.json\* test/
-
--   Run the build:
-
-    -   \$ grunt build --appPath=/openstorefront
-
-        or use
-
-    -   \$ grunt buildprod
-
-"appPath" is only needed when changing the root context. The first build
-will take a long time, because many dependencies will be downloaded (and
-cached locally). The first build might even fail (if certain servers are
-offline) or experience hiccups. In that case, you'll see an IO error, so
-just run the build again. After the first successful build, any
-subsequent build should be fast and stable.
-
-####8.1.5.3 Running tests
-
-Open-Storefront uses Karma to run tests for the frontend, so those tests
-need to be run differently than others.
-
--   \$ cd \~/projects/Open-Storefront-Project/Open-Storefront/frontend
-
--   \$ grunt test
-
-##8.2  Development Server
-------------------
-
-###8.2.1 Key Components Used
+##8.1 Key Components Used
 
 The following components were used in the development:
 
@@ -1411,7 +1064,8 @@ The application is a JEE webapp, so any JEE 6 (web-profile) compliant
 server should work with some server configuration. The current
 deployment target is Tomcat 7.
 
-###8.2.2 Key Libraries Used
+
+##8.2 Key Libraries Used
 
 The following key libraries were used in the development:
 
@@ -1425,35 +1079,28 @@ The following key libraries were used in the development:
 -   Apache Shiro- Security
 
 -   Orient DB- No SQL/Multi-Model database
+-   
+##8.3 Notes for Redhat/Centos users:
+-----
 
-###8.2.3 Building with Maven
+See the following note for Redhat/Centos users.
+
+-   yum install maven
+
+##8.4 Building with Maven
 
 run "mvn install" from \$PROJECT\_HOME/server/openstorefront
 
 (Skip tests)\
 Mav -Dmaven.test.skip=true or -DskipTests=true install
 
-###8.2.4 Deploying
+##8.5 Deploying
 
 Copy the war artifact to the webapp directory for Tomcat. Some IDEs can
-handle this. See application server documentation for other deployment
+handle this for you. See application server documentation for other deployment
 mechanisms.
 
-###8.2.5 Building 
-
-This puts the client and server pieces together for a simple deployment.
-
-1.  Build Client from client/openstorefront/
-
->\a.  npm install
-
->\b.  grunt build-prod or grunt build-debug for ease debugging
-
->>\1.  Build Server from server/openstorefront/
-
->\c.  mvn install
-
-##8.3  Running
+##8.6  Running
 -------
 
 The application is targeted to run in Tomcat 7; however, it may run in
@@ -1461,7 +1108,7 @@ other compatible containers with little or no changes.
 
 **NOTE:** Searching requires an external ESA/(Solr) instance setup.
 
-##8.4 Setting up Solr
+##8.7 Setting up Solr
 ---------------
 
 ESA uses Solr 4.3.1, so the application is setup to use that specific
@@ -1485,7 +1132,7 @@ following steps:
 
 5.  Start Solr from (solr install dir)/example - java -jar start.jar
 
- ##8.5 Testing
+ ##8.8 Testing
 -------
 
 -   Unit test run as part of the Maven install.
@@ -1497,7 +1144,7 @@ following steps:
 
     -   npm test (requires Chrome Web Browser to be installed)
 
-##8.6  Contributing Patches
+##8.9  Contributing Patches
 --------------------
 
 The code is hosted on the public GitHub
@@ -1510,7 +1157,7 @@ Please file bugs or enhancement by submitting a ticket to:
 If you are unable to obtain a login account then submit an issue ticket
 on the GitHub site.
 
-8.7 Versioning Strategy
+##8.10 Versioning Strategy
 -------------------
 
 The software is versioned based on the following:
