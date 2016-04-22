@@ -553,15 +553,10 @@
 								direction: 'ASC'
 							})
 						],
-						proxy: CoreUtil.pagingProxy({
-							url: '../api/v1/resource/components/lookup',
-							method: 'GET',
-							reader: {
-								type: 'json',
-								rootProperty: '',
-								totalProperty: ''
-							}
-						})
+						proxy: {
+							type: 'ajax',
+							url: '../api/v1/resource/components/lookup'							
+						}
 					});
 
 					//
