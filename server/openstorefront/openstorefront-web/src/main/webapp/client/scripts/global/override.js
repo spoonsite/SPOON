@@ -207,6 +207,8 @@ Ext.onReady(function() {
 	Ext.enableAriaButtons=false;
 	Ext.enableAriaPanels=false;
 	
+	Ext.MessageBox.alwaysOnTop=99999999;
+	
 	/**
 	 Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
 	 maxWidth: 200,
