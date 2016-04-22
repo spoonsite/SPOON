@@ -3,6 +3,9 @@
 
 1. Use Ext.js docs.  Look at them first for utility functions.  
 2. When making reusable components don't use "ID"s properties. Ids are OK on individual pages; must be unique;   
+3. Match validation from server where possible to make it easier for the user to get right and provide friendly messages.
+4. Pack related components (notification panel, notification) into a single script file.
+5. Avoid deeply nested component layout as it easier to read a fewer layers.
 
 
 
