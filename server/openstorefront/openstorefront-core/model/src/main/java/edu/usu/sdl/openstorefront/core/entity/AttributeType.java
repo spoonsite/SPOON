@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- *
- * @author jlaw
- */
 @APIDescription("Allows for grouping the metadata into categories")
 public class AttributeType
 		extends StandardEntity
@@ -75,6 +71,12 @@ public class AttributeType
 	@ConsumeField
 	@OneToMany(orphanRemoval = true)
 	private List<ComponentTypeRestriction> requiredRestrictions;
+
+	@DataType(ComponentTypeRestriction.class)
+	@ConsumeField
+	@APIDescription("The component/entry types for which this attribute is available")
+	@OneToMany(orphanRemoval = true)
+	private List<ComponentTypeRestriction> associatedComponentTypes;
 
 	@NotNull
 	@ConsumeField
@@ -125,6 +127,7 @@ public class AttributeType
 		this.setHideOnSubmission(attributeTypeUpdate.getHideOnSubmission());
 		this.setDefaultAttributeCode(attributeTypeUpdate.getDefaultAttributeCode());
 		this.setRequiredRestrictions(attributeTypeUpdate.getRequiredRestrictions());
+		this.setAssociatedComponentTypes(attributeTypeUpdate.getAssociatedComponentTypes());
 
 	}
 
@@ -279,6 +282,16 @@ public class AttributeType
 	public void setRequiredRestrictions(List<ComponentTypeRestriction> requiredRestrictions)
 	{
 		this.requiredRestrictions = requiredRestrictions;
+	}
+
+	public List<ComponentTypeRestriction> getAssociatedComponentTypes()
+	{
+		return associatedComponentTypes;
+	}
+
+	public void setAssociatedComponentTypes(List<ComponentTypeRestriction> associatedComponentTypes)
+	{
+		this.associatedComponentTypes = associatedComponentTypes;
 	}
 
 }
