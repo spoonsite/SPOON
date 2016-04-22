@@ -372,7 +372,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			items: [
 				{
 					xtype: 'panel',
-					html: '<h1>2. Enter Required Information:</h1>'
+					html: '<h1>2. Enter Required Information:</h1><h2>Please fill in each field and hit Next</h2>'
 				},
 				Ext.create('OSF.component.StandardComboBox', {					
 					fieldLabel: 'Entry Type <span class="field-required" />',
@@ -457,18 +457,23 @@ Ext.define('OSF.component.SubmissionPanel', {
 					allowBlank: false,
 					maxLength: 255														
 				},
+				Ext.create('OSF.component.StandardComboBox', {
+					name: 'organization',									
+					allowBlank: false,									
+					margin: '0 0 10 0',
+					width: '100%',
+					fieldLabel: 'Organization/Company responsible for the Entry <span class="field-required" />',
+					forceSelection: false,
+					valueField: 'description',
+					editable: true,
+					storeConfig: {
+						url: '../api/v1/resource/organizations/lookup'
+					}
+				}),				
 				{
 					xtype: 'panel',
 					html: '<b>Description</b> <span class="field-required" />'
 				},
-//				Ext.create('OSF.component.CKEditorField', {																
-//					//allowBlank: false,
-//					name: 'description',
-//					width: '100%',
-//					margin: '0 0 0 0',
-//					height: 300,
-//					maxLength: 32000	
-//				}),
 				{
 					xtype: 'tinymce_textarea',
 					itemId: 'descriptionField',
@@ -478,22 +483,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 					width: '100%',
 					height: 300,
 					maxLength: 32000,
-					emptyText: 'Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.',
+					emptyText: 'Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.' + '<br><br>Include an easy to read description of the product, focusing on what it is and what it does.',
 					tinyMCEConfig: CoreUtil.tinymceConfig()
 				},
-				Ext.create('OSF.component.StandardComboBox', {
-					name: 'organization',									
-					allowBlank: false,									
-					margin: '0 0 0 0',
-					width: '100%',
-					fieldLabel: 'Organization/Company responsible for the Entry <span class="field-required" />',
-					forceSelection: false,
-					valueField: 'description',
-					editable: true,
-					storeConfig: {
-						url: '../api/v1/resource/organizations/lookup'
-					}
-				}),
 				{
 					xtype: 'panel',
 					itemId: 'requiredAttributePanel',
@@ -940,7 +932,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 								itemId: 'upload',
 								hidden: true,
 								fieldLabel: 'Upload Resource (Limit of 1GB)',																											
-								name: 'file'
+								name: 'file',
+								listeners: {
+									change: CoreUtil.handleMaxFileLimit
+								}								
 							}																
 						],
 						dockedItems: [
@@ -1134,7 +1129,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 								xtype: 'filefield',
 								itemId: 'upload',
 								fieldLabel: 'Upload Media (Limit of 1GB)',																											
-								name: 'file'
+								name: 'file',
+								listeners: {
+									change: CoreUtil.handleMaxFileLimit
+								}
 							},
 							{
 								xtype: 'textfield',
