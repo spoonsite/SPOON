@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import java.util.List;
 /**
  * Helper to workaround moxy binding issue
  *
- * @author dshurtleff
  */
 public class AttributeTypeSave
 {
@@ -36,6 +35,10 @@ public class AttributeTypeSave
 	@DataType(ComponentTypeRestriction.class)
 	@ConsumeField
 	private List<ComponentTypeRestriction> componentTypeRestrictions = new ArrayList<>();
+
+	@DataType(ComponentTypeRestriction.class)
+	@ConsumeField
+	private List<ComponentTypeRestriction> associatedComponentTypes = new ArrayList<>();
 
 	public AttributeTypeSave()
 	{
@@ -59,6 +62,16 @@ public class AttributeTypeSave
 	public void setComponentTypeRestrictions(List<ComponentTypeRestriction> componentTypeRestrictions)
 	{
 		this.componentTypeRestrictions = componentTypeRestrictions;
+	}
+
+	public List<ComponentTypeRestriction> getAssociatedComponentTypes()
+	{
+		return associatedComponentTypes;
+	}
+
+	public void setAssociatedComponentTypes(List<ComponentTypeRestriction> associatedComponentTypes)
+	{
+		this.associatedComponentTypes = associatedComponentTypes;
 	}
 
 }
