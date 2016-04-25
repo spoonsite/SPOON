@@ -453,7 +453,10 @@ public class CoreComponentServiceImpl
 
 	public RequiredForComponent doSaveComponent(RequiredForComponent component, FileHistoryOption options)
 	{
-		Component oldComponent = findExistingComponent(component.getComponent());
+		Component oldComponent = null;
+		if (Convert.toBoolean(options.getSkipDuplicationCheck()) == false) {
+			oldComponent = findExistingComponent(component.getComponent());
+		}
 
 		EntityUtil.setDefaultsOnFields(component.getComponent());
 
@@ -1446,6 +1449,7 @@ public class CoreComponentServiceImpl
 
 	public Component copy(String orignalComponentId)
 	{
+		cleanupCache(orignalComponentId);		
 		ComponentAll componentAll = getFullComponent(orignalComponentId);
 		if (componentAll != null) {
 			componentAll.getComponent().setComponentId(null);
@@ -1453,6 +1457,7 @@ public class CoreComponentServiceImpl
 			componentAll.getComponent().setApprovalState(ApprovalStatus.PENDING);
 			componentAll.getComponent().setApprovedDts(null);
 			componentAll.getComponent().setApprovedUser(null);
+			componentAll.getComponent().setExternalId(null);			
 
 			clearBaseComponentKey(componentAll.getAttributes());
 			clearBaseComponentKey(componentAll.getContacts());
@@ -1488,8 +1493,12 @@ public class CoreComponentServiceImpl
 					resource.clearKeys();
 				}
 			}
-
-			componentAll = saveFullComponent(componentAll);
+			
+			FileHistoryOption fileHistoryOption = new FileHistoryOption();
+			fileHistoryOption.setSkipDuplicationCheck(true);
+			fileHistoryOption.setSkipRequiredAttributes(true);
+						
+			componentAll = saveFullComponent(componentAll, fileHistoryOption);			
 
 			//copy over local resources
 			for (ComponentMedia media : localMedia) {
@@ -1525,6 +1534,8 @@ public class CoreComponentServiceImpl
 					persistenceService.persist(resource);
 				}
 			}
+			cleanupCache(orignalComponentId);
+			cleanupCache(componentAll.getComponent().getComponentId());
 
 			return componentAll.getComponent();
 		} else {
