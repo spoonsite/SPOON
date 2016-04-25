@@ -68,12 +68,17 @@ tinymce.PluginManager.add('media', function(editor, url) {
 
 		var generalFormItems = [
 			{
+				type: 'panel',
+				html: '<div style="background: transparent;">It is preferable to add <span style="font-weight: bold;">Media</span> to an entry using <span style="font-weight: bold;">Details->Media</span> form.<br>This will embed the media in the description.</div>'
+			},			
+			{
 				name: 'source1',
 				type: 'filepicker',
 				filetype: 'media',
 				size: 40,
 				autofocus: true,
-				label: 'Source',
+				label: 'Source URL',
+				placeholder: 'http://media.com/media.mp4',
 				onchange: function(e) {
 					tinymce.each(e.meta, function(value, key) {
 						win.find('#' + key).value(value);
@@ -154,7 +159,7 @@ tinymce.PluginManager.add('media', function(editor, url) {
 			title: 'Insert/edit video',
 			data: data,
 			bodyType: 'tabpanel',
-			body: [
+			body: [				
 				{
 					title: 'General',
 					type: "form",

@@ -20,6 +20,9 @@ import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Version;
@@ -91,6 +94,13 @@ public abstract class BaseEntity<T>
 		queryByExample.setReturnNonProxied(false);
 		return (List<T>) serviceProxy.getPersistenceService().queryByExample(this.getClass(), queryByExample);
 	}
+	
+	public ValidationResult validate(boolean consumeFieldsOnly) 
+	{
+		ValidationModel validationModel = new ValidationModel(this);
+		validationModel.setConsumeFieldsOnly(consumeFieldsOnly);
+		return ValidationUtil.validate(validationModel);
+	}	
 
 	@Override
 	public int compareTo(T o)

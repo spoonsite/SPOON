@@ -137,7 +137,16 @@ Ext.define('OSF.defaults.Window', {
 		  win.restore();		  
 		  win.setHeight(win.getHeight());
 	  }
-  }
+  },
+  afterRender: function(){
+		this.callParent();
+		
+		var win = this;
+		
+		win.getEl().on('resize', function(){
+			win.updateLayout(true, true);
+		});
+	}
 	
 });
 
@@ -160,9 +169,18 @@ Ext.define('OSF.defaults.fieldTime', {
 	altFormats : 'g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H|gi a|hi a|giA|hiA|gi A|hi A|H:i:s'
 });
 
+Ext.define('OSF.defaults.fieldDate', {
+    override: 'Ext.form.field.Date',
+	
+	altFormats : 'c|m/d/Y|n/j/Y|n/j/y|m/j/y|n/d/y|m/j/Y|n/d/Y|m-d-y|m-d-Y|m/d|m-d|md|mdy|mdY|d|Y-m-d|n-j|n/j'
+});
+
 Ext.define('OSF.defaults.ComboBox', {
-    override: 'Ext.form.field.ComboBox'/*,
-			
+    override: 'Ext.form.field.ComboBox',
+		
+	queryMode: 'local'
+	
+	/*		
 	onBlur: function(cb, e, opts){
 		this.clearValue();
 	}*/
@@ -183,9 +201,14 @@ Ext.define('OSF.defaults.ComboBox', {
 
 Ext.onReady(function() {
     
-     Ext.tip.QuickTipManager.init();
+    Ext.tip.QuickTipManager.init();
 	Ext.util.History.init();
-
+	Ext.enableAria = false;
+	Ext.enableAriaButtons=false;
+	Ext.enableAriaPanels=false;
+	
+	Ext.MessageBox.alwaysOnTop=99999999;
+	
 	/**
 	 Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
 	 maxWidth: 200,
@@ -327,8 +350,8 @@ Ext.onReady(function() {
 						}
 					}
 				});
-			} else {
-				if (response.responseText.indexOf('login.jsp') !== -1) {
+			} else {				
+				if (response.responseText && response.responseText.indexOf('login.jsp') !== -1) {
 					window.parent.location.href = "/openstorefront/login.jsp?gotoPage="+window.parent.location.pathname;
 				} else {				
 					Ext.toast('Unable to connect to server or there was internal server error.' + requestUrl, 'Connection Error');
@@ -347,7 +370,3 @@ Ext.onReady(function() {
 //{
 //	Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 //}
-
-
-
- 

@@ -32,7 +32,15 @@
 					adminMode: true,
 					successHandler: function() {
 						actionRefreshComponentGrid();
-					}
+					},
+					adminEditHandler: function(record, changeRequestWindow) {
+						actionAddEditComponent(record);
+						mainAddEditWin.changeRequestCloseHandler = function(){
+							changeRequestWindow.changeGrid.getStore().reload();
+							mainAddEditWin.un('close', mainAddEditWin.changeRequestCloseHandler);
+						};
+						mainAddEditWin.on('close', mainAddEditWin.changeRequestCloseHandler);
+					}					
 				});
 							
 				//common stores
@@ -1211,6 +1219,7 @@
 												});
 											} else {
 												//upload
+											
 												mainForm.submit({
 													url: '../Media.action?UploadMedia',
 													params: {
@@ -1222,12 +1231,14 @@
 													},
 													method: 'POST',
 													submitEmptyText: false,
-													success: function(form, action, opt){
+													waitMsg: 'Uploading media please wait...',
+													waitTitle: 'Uploading',
+													success: function(formBasic, action, opt){
 														Ext.getCmp('mediaGrid').getStore().reload();
 														mainForm.reset();
 														mainForm.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
 													}, 
-													failure: function(form, action, opt) {
+													failure: function(formBasic, action, opt) {
 														var errorResponse = Ext.decode(action.response.responseText);
 														var errorObj = {};        
 														Ext.Array.each(errorResponse.errors.entry, function(item, index, entry) {
@@ -1291,7 +1302,10 @@
 									xtype: 'filefield',
 									itemId: 'upload',
 									fieldLabel: 'Upload Media (Limit of 1GB)',																											
-									name: 'file'
+									name: 'file',
+									listeners: {
+										change: CoreUtil.handleMaxFileLimit
+									}
 								},
 								{
 									xtype: 'textfield',
@@ -1516,12 +1530,14 @@
 													},
 													method: 'POST',
 													submitEmptyText: false,
-													success: function(form, action, opt){
+													waitMsg: 'Uploading please wait...',
+													waitTitle: 'Uploading',													
+													success: function(formBasic, action, opt){
 														Ext.getCmp('resourcesGrid').getStore().reload();
 														form.reset();
 														form.getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
 													}, 
-													failure: function(form, action, opt) {
+													failure: function(formBasic, action, opt) {
 														var errorResponse = Ext.decode(action.response.responseText);
 														var errorObj = {};        
 														Ext.Array.each(errorResponse.errors.entry, function(item, index, entry) {
@@ -1596,7 +1612,10 @@
 									xtype: 'filefield',
 									itemId: 'upload',
 									fieldLabel: 'Upload Resource (Limit of 1GB)',																											
-									name: 'file'
+									name: 'file',
+									listeners: {
+										change: CoreUtil.handleMaxFileLimit
+									}
 								}															
 							]
 						},						
@@ -2035,6 +2054,37 @@
 										url: '../api/v1/resource/lookuptypes/RelationshipType'
 									}
 								}),
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'componentType',									
+									allowBlank: true,
+									editable: false,
+									typeAhead: false,
+									emptyText: 'All',
+									margin: '0 0 0 0',
+									width: '100%',
+									fieldLabel: 'Entry Type',
+									storeConfig: {
+										url: '../api/v1/resource/componenttypes/lookup',
+										addRecords: [
+											{
+												code: null,
+												description: 'All'
+											} 
+										]
+									},
+									listeners: {
+										change: function(cb, newValue, oldValue) {
+											var componentType = '';
+											if (newValue) {
+												componentType = '&componentType=' + newValue;
+											}
+											Ext.getCmp('relationshipTargetCB').reset();
+											Ext.getCmp('relationshipTargetCB').getStore().load({
+												url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType	
+											});
+										}
+									}
+								}),								
 								Ext.create('OSF.component.StandardComboBox', {
 									id: 'relationshipTargetCB',
 									name: 'relatedComponentId',									
@@ -2567,7 +2617,8 @@
 									xtype: 'tbfill'
 								},
 								{
-									text: 'Cancel',									
+									text: 'Done',
+									tooltip: 'Close Add/Edit window',
 									iconCls: 'fa fa-close',
 									handler: function() {
 										this.up('window').hide();
@@ -3813,6 +3864,19 @@
 									handler: function () {
 										importWindow.show();
 									}
+								},	
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Export',
+									id: 'lookupGrid-tools-export',
+									iconCls: 'fa fa-2x fa-download',
+									scale: 'medium',
+									disabled: true,
+									handler: function () {
+										actionExportComponents();
+									}
 								}
 							]
 						}
@@ -3829,22 +3893,7 @@
 						store: maingridStore,
 						displayInfo: true,
 						displayMsg: 'Displaying Entries {0} - {1} of {2}',
-						emptyMsg: "No entries to display",
-						items: [
-							{
-								xtype: 'tbseparator'
-							},
-							{
-								text: 'Export',
-								id: 'lookupGrid-tools-export',
-								iconCls: 'fa fa-2x fa-download',
-								scale: 'medium',
-								disabled: true,
-								handler: function () {
-									actionExportComponents();
-								}
-							}
-						]
+						emptyMsg: "No entries to display"
 					})
 				});
 				
@@ -3868,7 +3917,7 @@
 							Ext.getCmp('lookupGrid-tools-approve').setDisabled(true);
 						}
 						Ext.getCmp('lookupGrid-tools-action').setDisabled(false);						
-					} else if (componentGrid.getSelectionModel().getCount() > 1){
+					} else if (componentGrid.getSelectionModel().getCount() > 1) {
 						Ext.getCmp('lookupGrid-tools-export').setDisabled(false);
 						
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);
@@ -3940,24 +3989,41 @@
 					Ext.getCmp('componentTypeMainCB').resumeEvent('change');
 				};
 				
-				var hideSubComponentTabs = function(){
-					attributeGrid.setDisabled(true);					
-					relationshipsGrid.setDisabled(true);
-					contactGrid.setDisabled(true);
-					resourcesGrid.setDisabled(true);
-					mediaGrid.setDisabled(true);
-					dependenciesGrid.setDisabled(true);
-					metadataGrid.setDisabled(true);
-					evaluationGrid.setDisabled(true);
-					reviewGrid.setDisabled(true);
-					questionContainer.setDisabled(true);
-					tagGrid.setDisabled(true);
+				var hideSubComponentTabs = function(attempt){
+					if (!attempt) {
+						attempt = 1;
+					}
+					
+					if (attempt > 3) {
+						mainAddEditWin.hide();
+						Ext.Msg.alert('Error', 'Form is unstable please refresh page.');
+						return;
+					}
+					
+					//There seems to bug aria stuff that error after resource or media changed
+					//second time seems to work
+					try {						
+						attributeGrid.setDisabled(true);					
+						relationshipsGrid.setDisabled(true);
+						contactGrid.setDisabled(true);
+						resourcesGrid.setDisabled(true);
+						mediaGrid.setDisabled(true);
+						dependenciesGrid.setDisabled(true);
+						metadataGrid.setDisabled(true);
+						evaluationGrid.setDisabled(true);
+						reviewGrid.setDisabled(true);
+						questionContainer.setDisabled(true);
+						tagGrid.setDisabled(true);
+					} catch (e) {
+						attempt++;
+						hideSubComponentTabs(attempt);
+					}
 				};
 								
 				var checkFormTabs = function(record, componentType) {
 					hideSubComponentTabs();
 					if (record) {
-						var showSubTab = function(grid, url, container){
+						var showSubTab = function(grid, url, container){							
 							grid.setDisabled(false);
 							grid.componentRecord = record;
 							if (url) {
@@ -3991,9 +4057,15 @@
 								}
 								if (data.dataEntryResources) {	
 									showSubTab(resourcesGrid, '../api/v1/resource/components/' + record.get('componentId') + '/resources/view');
+									resourcesGrid.down('form').getComponent('upload').disabled = true;
+									resourcesGrid.down('form').getComponent('upload').enable();
 								}
 								if (data.dataEntryMedia) {	
 									showSubTab(mediaGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/media/view');
+									
+									//Fix: bug with disabled file fields
+									mediaGrid.down('form').getComponent('upload').disabled = true;
+									mediaGrid.down('form').getComponent('upload').enable();
 								}							
 								if (data.dataEntryDependancies) {	
 									showSubTab(dependenciesGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/dependencies/view');

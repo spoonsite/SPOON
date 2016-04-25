@@ -25,7 +25,6 @@ limitations under the License.
 
 	<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/feedbackWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
         <script type="text/javascript">
 			/* global Ext, CoreUtil, CoreService */
@@ -53,7 +52,7 @@ limitations under the License.
 						actionRefreshSubmission();
 					}					
 				});
-				
+
 				var submissionWindow = Ext.create('Ext.window.Window', {
 					id: 'submissionWindow',
 					title: 'Submission Form',
@@ -70,23 +69,22 @@ limitations under the License.
 					listeners: {
 						beforeclose: function(panel, opts) {
 							if (!(Ext.getCmp('submissionWindow').completeClose)){
-								submissionPanel.cancelSubmissionHandler();
+								submissionPanel.cancelSubmissionHandler(true);
 							}
 							return panel.completeClose;
 						}
 					}
-				});
-				//Ckeditor fix (issue popularing the first time, if not rendered first)
-				submissionWindow.show();
-				submissionWindow.hide();
-				
+				});		
+
 				var changeRequestWindow = Ext.create('OSF.component.EntryChangeRequestWindow', {
+					id: 'changeRequestWindow',					
 					successHandler: function() {
+						Ext.getCmp('submissionGrid').setLoading(false);
 						Ext.getCmp('submissionGrid').getStore().reload();
 					}
 				});
-				
-				
+			
+			
 				var previewContents = Ext.create('OSF.ux.IFrame', {
 					src: ''
 				});								
@@ -215,7 +213,7 @@ limitations under the License.
 						},
 						{ text: 'Submission Date', dataIndex: 'submittedDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Approval Email', dataIndex: 'notifyOfApprovalEmail', width: 200 },
-						{ text: 'Pending Changes', align: 'center', dataIndex: 'numberOfPendingChanges', width: 150 }	
+						{ text: 'Pending Change', align: 'center', dataIndex: 'statusOfPendingChange', width: 150 }	
 					],
 					dockedItems: [
 						{
@@ -256,100 +254,122 @@ limitations under the License.
 									}
 								},
 								{
-									xtype: 'tbseparator'
-								},
-								{
-									text: 'Preview',
-									itemId: 'tbPreview',
-									disabled: true,
-									scale: 'medium',
-									iconCls: 'fa fa-2x fa-binoculars',
-									handler: function () {
-										actionPreviewComponent();
-									}
-								},
-								{
-									text: 'Copy',
-									itemId: 'tbCopy',
-									scale: 'medium',
-									disabled: true,
-									iconCls: 'fa fa-2x fa-copy',
-									handler: function () {
-										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-										
-										Ext.getCmp('submissionGrid').setLoading('Copying submission...');
-										Ext.Ajax.request({
-											url: '../api/v1/resource/componentsubmissions/' + componentId + '/copy',
-											method: 'POST',
-											callback: function(){
-												Ext.getCmp('submissionGrid').setLoading(false);
-											},
-											success: function(response, opts) {
-												actionRefreshSubmission();
-											}
-										});
-									}
-								},
-								{
-									text: 'Toggle Notify',
-									itemId: 'tbNotify',
-									scale: 'medium',
-									disabled: true,
-									iconCls: 'fa fa-2x fa-envelope',
-									handler: function () {
-										if (currentUser && currentUser.email) {
-											var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-											var currentEmail = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('notifyOfApprovalEmail');
-											
-											var newEmail = currentUser.email;
-											if (currentEmail) {
-												newEmail = null;												
-											}
-											Ext.getCmp('submissionGrid').setLoading('Updating Notification...');
-											Ext.Ajax.request({
-												url: '../api/v1/resource/componentsubmissions/' + componentId + '/setNotifyMe',
-												method: 'PUT',
-												rawData: newEmail,
-												callback: function(){
-													Ext.getCmp('submissionGrid').setLoading(false);
-												},
-												success: function(response, opts) {
-													actionRefreshSubmission();
-												}
-											});											
-											
-										} else {
-											Ext.Msg.show({
-												title:'Missing Email',
-												message: 'Please set an email on your profile first.',
-												buttons: Ext.Msg.OK,
-												icon: Ext.Msg.ERROR,
-												fn: function(btn) {													 
-												}
-											});											
-										}
-									}
-								},								
-								{
-									text: 'Change Requests',
+									text: 'Request Change',
 									itemId: 'tbSubmitChange',
+									tooltip: 'Create or edit a change request for an approved entry.',
 									hidden: true,									
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-edit',
 									handler: function () {
+										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];										
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
-										changeRequestWindow.show();
-										changeRequestWindow.loadComponent(componentId, name);
+										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
+										
+										if (record.get('statusOfPendingChange')) {		
+											Ext.getCmp('submissionGrid').setLoading(true);
+											Ext.getCmp('changeRequestWindow').editChangeRequest(record.get('pendingChangeComponentId'), function(){
+												Ext.getCmp('submissionGrid').setLoading(false);
+											});
+										} else {
+											Ext.getCmp('submissionGrid').setLoading("Creating Change Request...");
+											Ext.getCmp('changeRequestWindow').newChangeRequest(componentId, function(){
+												Ext.getCmp('submissionGrid').setLoading(false);
+											}, true);
+										}
 									}
-								},							
+								},								
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Options',
+									itemId: 'options',
+									scale: 'medium',	
+									disabled: true,									
+									menu: {
+										items: [
+											{
+												text: 'Preview',
+												itemId: 'tbPreview',
+												iconCls: 'fa fa-binoculars',
+												handler: function () {
+													actionPreviewComponent();
+												}
+											},
+											{
+												xtype: 'menuseparator'
+											},
+											{
+												text: 'Copy',
+												itemId: 'tbCopy',
+												iconCls: 'fa fa-copy',
+												handler: function () {
+													var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
+
+													Ext.getCmp('submissionGrid').setLoading('Copying submission...');
+													Ext.Ajax.request({
+														url: '../api/v1/resource/componentsubmissions/' + componentId + '/copy',
+														method: 'POST',
+														callback: function(){
+															Ext.getCmp('submissionGrid').setLoading(false);
+														},
+														success: function(response, opts) {
+															actionRefreshSubmission();
+														}
+													});
+												}
+											},
+											{
+												xtype: 'menuseparator'
+											},											
+											{
+												text: 'Toggle Notify',
+												itemId: 'tbNotify',
+												iconCls: 'fa fa-envelope',
+												handler: function () {
+													if (currentUser && currentUser.email) {
+														var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
+														var currentEmail = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('notifyOfApprovalEmail');
+
+														var newEmail = currentUser.email;
+														if (currentEmail) {
+															newEmail = null;												
+														}
+														Ext.getCmp('submissionGrid').setLoading('Updating Notification...');
+														Ext.Ajax.request({
+															url: '../api/v1/resource/componentsubmissions/' + componentId + '/setNotifyMe',
+															method: 'PUT',
+															rawData: newEmail,
+															callback: function(){
+																Ext.getCmp('submissionGrid').setLoading(false);
+															},
+															success: function(response, opts) {
+																actionRefreshSubmission();
+															}
+														});											
+
+													} else {
+														Ext.Msg.show({
+															title:'Missing Email',
+															message: 'Please set an email on your profile first.',
+															buttons: Ext.Msg.OK,
+															icon: Ext.Msg.ERROR,
+															fn: function(btn) {													 
+															}
+														});											
+													}
+												}
+											}											
+										]
+									}
+								},
 								{
 									xtype: 'tbfill'
 								},
 								{
 									text: 'Request Removal',
 									itemId: 'tbUnapprove',
-									toolTip: 'This will send a request to the administation asking for the selected record to be unapproved.',
+									tooltip: 'This will send a request to the administation asking for the selected record to be unapproved.',
 									hidden: true,									
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-comment',
@@ -434,7 +454,20 @@ limitations under the License.
 											}
 										});
 									}
-								}							
+								},
+								{
+									text: 'Remove Change Request',
+									itemId: 'tbRemoveChangeRequest',
+									hidden: true,
+									scale: 'medium',								
+									iconCls: 'fa fa-2x fa-trash',
+									handler: function () {
+										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
+										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
+										
+										Ext.getCmp('changeRequestWindow').deleteChangeRequest(record.get('pendingChangeComponentId'), true);
+									}									
+								}
 							]
 						}
 					],
@@ -449,19 +482,26 @@ limitations under the License.
 								var record = selected[0];	
 								
 								tools.getComponent('tbEdit').setDisabled(true);
-								tools.getComponent('tbPreview').setDisabled(false);
-								tools.getComponent('tbCopy').setDisabled(false);
-								tools.getComponent('tbNotify').setDisabled(false);
+								tools.getComponent('options').setDisabled(false);
+
 								
 								//hiddens
 								tools.getComponent('tbSubmitChange').setHidden(true);
+								tools.getComponent('tbRemoveChangeRequest').setHidden(true);
+								
 								tools.getComponent('tbUnsubmit').setHidden(true);
 								tools.getComponent('tbDelete').setHidden(true);
 								tools.getComponent('tbUnapprove').setHidden(true);
 								
-								if (record.get('approvalState') === 'A'){
+								if (record.get('approvalState') === 'A'){									
 									tools.getComponent('tbSubmitChange').setHidden(false);
 									tools.getComponent('tbUnapprove').setHidden(false);
+									
+									if (record.get('statusOfPendingChange')) {
+										tools.getComponent('tbSubmitChange').setText('Edit Change');
+									} else {
+										tools.getComponent('tbSubmitChange').setText('Request Change');
+									}
 								}
 								if (record.get('approvalState') === 'P'){
 									tools.getComponent('tbUnsubmit').setHidden(false);
@@ -471,14 +511,17 @@ limitations under the License.
 									tools.getComponent('tbEdit').setDisabled(false);
 								}
 								
+								if (record.get('statusOfPendingChange')) {
+									tools.getComponent('tbRemoveChangeRequest').setHidden(false);
+								}
+								
 							} else {
 								tools.getComponent('tbEdit').setDisabled(true);
-								tools.getComponent('tbPreview').setDisabled(true);
-								tools.getComponent('tbCopy').setDisabled(true);
-								tools.getComponent('tbNotify').setDisabled(true);								
+								tools.getComponent('options').setDisabled(true);							
 								
 								//hiddens
 								tools.getComponent('tbSubmitChange').setHidden(true);
+								tools.getComponent('tbRemoveChangeRequest').setHidden(true);
 								tools.getComponent('tbUnsubmit').setHidden(true);
 								tools.getComponent('tbDelete').setHidden(true);
 								tools.getComponent('tbUnapprove').setHidden(true);

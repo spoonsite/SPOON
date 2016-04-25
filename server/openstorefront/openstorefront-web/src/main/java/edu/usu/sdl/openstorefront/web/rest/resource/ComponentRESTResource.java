@@ -113,6 +113,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -201,14 +202,16 @@ public class ComponentRESTResource
 			if (componentExample.getComponentType() != null && componentExample.getComponentType().equals(ComponentType.ALL)) {
 				componentExample.setComponentType(null);
 			}
-			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
-			components.forEach(component -> {
+			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);			
+			for (Component component : components)
+			{	
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
 				lookupModel.setDescription(component.getName());
 				lookupModels.add(lookupModel);
-			});
-
+			}
+			lookupModels = filterQueryParams.filter(lookupModels);
+			
 			GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
 			{
 			};
@@ -219,12 +222,13 @@ public class ComponentRESTResource
 			Component componentExample = new Component();
 
 			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
-			components.forEach(component -> {
+			for (Component component : components)
+			{	
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
 				lookupModel.setDescription(component.getName());
 				lookupModels.add(lookupModel);
-			});
+			}
 
 			GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
 			{
@@ -796,14 +800,14 @@ public class ComponentRESTResource
 		} else if (componentPrint != null) {
 			return sendSingleEntityResponse(componentPrint);
 		} else {
-			return Response.ok().build();
+			return Response.status(Response.Status.NOT_FOUND).build();			
 		}
 	}
 
 	@DELETE
 	@APIDescription("Delete component and all related entities")
 	@Path("/{id}/cascade")
-	public Response deleteComponentTag(
+	public Response deleteComponent(
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
@@ -871,14 +875,15 @@ public class ComponentRESTResource
 		componentExample.setPendingChangeId(componentId);
 
 		List<Component> components = componentExample.findByExample();
-		GenericEntity<List<ComponentView>> entity = new GenericEntity<List<ComponentView>>(ComponentView.toViewList(components))
+		GenericEntity<List<ComponentView>> entity = new GenericEntity<List<ComponentView>>(ComponentView.toViewListWithUserInfo(components))
 		{
 		};
 		return sendSingleEntityResponse(entity);
 	}
 
 	// </editor-fold>
-	// <editor-fold defaultstate="collapse" desc=" Version history">
+	
+	// <editor-fold defaultstate="collapsed" desc="Version history">
 	@GET
 	@APIDescription("Gets all version history for a component")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1010,6 +1015,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource ATTRIBUTE Section">
 	@GET
 	@APIDescription("Gets attributes for a component")
@@ -1025,13 +1031,11 @@ public class ComponentRESTResource
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
-
-		List<ComponentAttribute> componentAttributes = new ArrayList<>();
-
+		
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
 		componentAttributeExample.setActiveStatus(filterQueryParams.getStatus());
 		componentAttributeExample.setComponentId(componentId);
-		componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
 		componentAttributes = filterQueryParams.filter(componentAttributes);
 
 		GenericEntity<List<ComponentAttribute>> entity = new GenericEntity<List<ComponentAttribute>>(componentAttributes)
@@ -1158,11 +1162,10 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Delete an attribute from the entity (Hard Removal)")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes/{attributeType}/{attributeCode}/force")
-	public void deleteComponentAttribute(
+	public Response deleteComponentAttribute(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("attributeType")
@@ -1170,11 +1173,17 @@ public class ComponentRESTResource
 			@PathParam("attributeCode")
 			@RequiredParam String attributeCode)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+		
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setAttributeCode(attributeCode);
 		pk.setAttributeType(attributeType);
 		pk.setComponentId(componentId);
 		service.getComponentService().deleteBaseComponent(ComponentAttribute.class, pk);
+		return Response.ok().build();
 	}
 
 	@PUT
@@ -3464,10 +3473,7 @@ public class ComponentRESTResource
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource Relationships section">
 	@GET
 	@APIDescription("Get all direct relationship for a specified component")
-	@Produces(
-			{
-				MediaType.APPLICATION_JSON
-			})
+	@Produces({ MediaType.APPLICATION_JSON })
 	@DataType(ComponentRelationshipView.class)
 	@Path("/{id}/relationships")
 	public Response getComponentRelationships(
@@ -3490,8 +3496,42 @@ public class ComponentRESTResource
 		GenericEntity<List<ComponentRelationshipView>> entity = new GenericEntity<List<ComponentRelationshipView>>(views)
 		{
 		};
+		
 		return sendSingleEntityResponse(entity);
 	}
+	
+	@GET
+	@APIDescription("Gets approved relationships (direct and indirect) for a specified component")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@DataType(ComponentRelationshipView.class)
+	@Path("/{id}/relationships/all")
+	public Response getComponentAllRelationships(
+			@PathParam("id")
+			@RequiredParam String componentId
+	)
+	{
+		List<ComponentRelationshipView> views = new ArrayList<>();
+		
+		//Pull relationships direct relationships
+		ComponentRelationship componentRelationshipExample = new ComponentRelationship();
+		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
+		componentRelationshipExample.setComponentId(componentId);
+		views.addAll(ComponentRelationshipView.toViewList(componentRelationshipExample.findByExample()));
+		views = views.stream().filter(r -> r.getTargetApproved()).collect(Collectors.toList());
+
+		//Pull indirect
+		componentRelationshipExample = new ComponentRelationship();
+		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
+		componentRelationshipExample.setRelatedComponentId(componentId);
+		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(componentRelationshipExample.findByExample());
+		relationshipViews = relationshipViews.stream().filter(r -> r.getOwnerApproved()).collect(Collectors.toList());
+		views.addAll(relationshipViews);		
+
+		GenericEntity<List<ComponentRelationshipView>> entity = new GenericEntity<List<ComponentRelationshipView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}	
 
 	@GET
 	@APIDescription("Get a relationship entity for a specified component")
@@ -3527,26 +3567,64 @@ public class ComponentRESTResource
 		Response response = checkComponentOwner(componentId);
 		if (response != null) {
 			return response;
+		}		
+		relationship.setComponentId(componentId);
+		
+		return handleSaveRelationship(relationship, true);
+	}
+	
+	private Response handleSaveRelationship(ComponentRelationship relationship, boolean post) 
+	{			
+		ValidationResult validationResult = relationship.validate(true);
+		if (validationResult.valid()) {
+			relationship = service.getComponentService().saveComponentRelationship(relationship);
+
+			if (post) {
+				return Response.created(URI.create("v1/resource/components/"
+						+ relationship.getComponentId()
+						+ "/relationships/"
+						+ relationship.getComponentRelationshipId())).entity(relationship).build();
+			} else {
+				return Response.ok(relationship).build();
+			}
+		} else {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+	}
+	
+	@PUT
+	@APIDescription("Updates a component relationship")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(ComponentRelationship.class)
+	@Path("/{id}/relationships/{relationshipId}")
+	public Response updateComponentRelationship(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("relationshipId")
+			@RequiredParam String relationshipId,			
+			@RequiredParam ComponentRelationship relationship)
+	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
 		}
 
 		response = Response.status(Response.Status.NOT_FOUND).build();
 
-		relationship.setComponentId(componentId);
-		ValidationModel validationModel = new ValidationModel(relationship);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			relationship = service.getComponentService().saveComponentRelationship(relationship);
-
-			return Response.created(URI.create("v1/resource/components/"
-					+ relationship.getComponentId()
-					+ "/relationships/"
-					+ relationship.getComponentRelationshipId())).entity(relationship).build();
+		ComponentRelationship existing = new  ComponentRelationship();
+		existing.setComponentId(componentId);
+		existing.setComponentRelationshipId(relationshipId);
+		existing = (ComponentRelationship) existing.find();
+		if (existing != null) {			
+			relationship.setComponentId(componentId);
+			relationship.setComponentRelationshipId(relationshipId);
+			response = handleSaveRelationship(relationship, false);
 		}
 
 		return response;
-	}
-
+	}	
+	
 	@DELETE
 	@APIDescription("Deletes a relationship for a specified component")
 	@Path("/{id}/relationships/{relationshipId}")
@@ -3566,6 +3644,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
 	@RequireAdmin

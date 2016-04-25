@@ -50,7 +50,7 @@ public abstract class BaseAction
 		implements ActionBean, ValidationErrorHandler
 {
 
-	private static final long MAX_UPLOAD_SIZE = 104857600L;
+	private static final long MAX_UPLOAD_SIZE = 1048576000L;
 
 	private static final Logger log = Logger.getLogger(BaseAction.class.getName());
 

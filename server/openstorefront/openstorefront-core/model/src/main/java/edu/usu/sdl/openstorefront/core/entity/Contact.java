@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
@@ -26,18 +25,15 @@ import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import org.apache.commons.lang3.StringUtils;
 
 /**
- *
+ * Holds all contact information
  * @author dshurtleff
  */
-@APIDescription("Hold component Contact information")
-public class ComponentContact
-		extends BaseComponent
-		implements OrganizationModel
+public class Contact
+	extends StandardEntity<Contact>	
+	implements OrganizationModel
 {
-
 	@PK(generated = true)
 	@NotNull
 	private String contactId;
@@ -77,28 +73,16 @@ public class ComponentContact
 	@FK(value = Organization.class, referencedField = "name", softReference = true)
 	private String organization;
 
-	public ComponentContact()
+	public Contact()
 	{
 	}
-
-	@Override
-	public String uniqueKey()
-	{
-		if (StringUtils.isNotBlank(getEmail())) {
-			return getEmail();
-		} else if (StringUtils.isNotBlank(getPhone())) {
-			return getPhone();
-		} else {
-			return getFirstName() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getLastName();
-		}
-	}
-
+	
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
 		super.updateFields(entity);
 
-		ComponentContact contact = (ComponentContact) entity;
+		Contact contact = (Contact) entity;
 
 		this.setContactType(contact.getContactType());
 		this.setEmail(contact.getEmail());
@@ -108,13 +92,7 @@ public class ComponentContact
 		this.setPhone(contact.getPhone());
 
 	}
-
-	@Override
-	protected void customKeyClear()
-	{
-		setContactId(null);
-	}
-
+	
 	public String getContactId()
 	{
 		return contactId;
@@ -186,5 +164,5 @@ public class ComponentContact
 	{
 		this.lastName = lastName;
 	}
-
+	
 }
