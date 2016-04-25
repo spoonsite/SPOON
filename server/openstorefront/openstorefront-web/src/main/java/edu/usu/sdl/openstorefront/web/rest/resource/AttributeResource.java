@@ -389,6 +389,14 @@ public class AttributeResource
 		} else if (attributeTypeSave.getComponentTypeRestrictions() == null) {
 			attributeType.setRequiredRestrictions(attributeTypeSave.getComponentTypeRestrictions());
 		}
+
+		if (attributeTypeSave.getAssociatedComponentTypes() != null
+				&& attributeTypeSave.getAssociatedComponentTypes().isEmpty() == false) {
+			attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
+		} else if (attributeTypeSave.getAssociatedComponentTypes() == null) {
+			attributeType.setAssociatedComponentTypes(attributeTypeSave.getAssociatedComponentTypes());
+		}
+
 		return handleAttributePostPutType(attributeType, true);
 	}
 
