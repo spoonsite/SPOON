@@ -11,4 +11,5 @@
 8. CSS should all be kept in the dynamic CSS file for branding.  However, page/feature specific styling can be approriate exceptionally if it's layout related specific to the page.
 9. Use a top-level page on for direct linking.
 
+![ui-guide](ui-guide.png)
 
