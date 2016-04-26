@@ -151,7 +151,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 //				}				
 //			});
 //		};		
-		
+
 		changeRequestWindow.editChangeRequest = function(changeRequestId, record, editCallback) {
 			changeRequestWindow.changeRequestId = changeRequestId;
 			
@@ -469,7 +469,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 		if (adminMode) {
 			var grid = changeRequestWindow.changeGrid;
 			var tools = grid.getComponent('tools');
-			tools.getComponent('newBtn').setHidden(true);		
+			tools.getComponent('newBtn').setHidden(true);	
 			tools.getComponent('unsubmitBtn').setHidden(true);	
 			tools.getComponent('tool-approveBtn').setHidden(false);
 			tools.getComponent('messageBtn').setHidden(false);

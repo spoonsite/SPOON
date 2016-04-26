@@ -100,7 +100,7 @@ public abstract class BaseEntity<T>
 		ValidationModel validationModel = new ValidationModel(this);
 		validationModel.setConsumeFieldsOnly(consumeFieldsOnly);
 		return ValidationUtil.validate(validationModel);
-	}
+	}	
 
 	@Override
 	public int compareTo(T o)

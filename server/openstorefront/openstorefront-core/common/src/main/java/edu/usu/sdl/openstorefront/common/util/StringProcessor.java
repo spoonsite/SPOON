@@ -95,7 +95,7 @@ public class StringProcessor
 		}
 		return filename.toString();
 	}
-
+	
 	/**
 	 * Looks for http link in a block of text
 	 *

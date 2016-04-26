@@ -47,7 +47,7 @@
 							mainAddEditWin.un('close', mainAddEditWin.changeRequestCloseHandler);
 						};
 						mainAddEditWin.on('close', mainAddEditWin.changeRequestCloseHandler);
-					}
+					}					
 				});
 							
 				//common stores
@@ -177,7 +177,7 @@
 									name: 'text',
 									listeners: {
 										specialkey: function(field, e){
-											if (e.getKey() == e.ENTER) {
+											if (e.getKey() === e.ENTER) {
 											   actionAddTag(this.up('form'), Ext.getCmp('tagGrid'));
 											}
 										}
@@ -1329,7 +1329,10 @@
 									xtype: 'filefield',
 									itemId: 'upload',
 									fieldLabel: 'Upload Media (Limit of 1GB)',																											
-									name: 'file'
+									name: 'file',
+									listeners: {
+										change: CoreUtil.handleMaxFileLimit
+									}
 								},
 								{
 									xtype: 'textfield',
@@ -1640,7 +1643,10 @@
 									xtype: 'filefield',
 									itemId: 'upload',
 									fieldLabel: 'Upload Resource (Limit of 1GB)',																											
-									name: 'file'
+									name: 'file',
+									listeners: {
+										change: CoreUtil.handleMaxFileLimit
+									}
 								},
 								Ext.create('OSF.component.SecurityComboBox', {	
 									hidden: !${branding.allowSecurityMarkingsFlg}
@@ -2651,7 +2657,7 @@
 								},
 								{
 									text: 'Done',
-									tooltip: 'Close Add/Edit window.',
+									tooltip: 'Close Add/Edit window',
 									iconCls: 'fa fa-close',
 									handler: function() {
 										this.up('window').close();
@@ -3381,7 +3387,7 @@
 														ownerWindow.close();
 														actionRefreshComponentGrid();														
 													}
-												})
+												});
 											}
 										},
 										{
@@ -3904,7 +3910,7 @@
 									handler: function () {
 										importWindow.show();
 									}
-								},
+								},	
 								{
 									xtype: 'tbseparator'
 								},
@@ -3917,7 +3923,7 @@
 									handler: function () {
 										actionExportComponents();
 									}
-								}	
+								}
 							]
 						}
 					],
@@ -3933,7 +3939,7 @@
 						store: maingridStore,
 						displayInfo: true,
 						displayMsg: 'Displaying Entries {0} - {1} of {2}',
-						emptyMsg: "No entries to display"						
+						emptyMsg: "No entries to display"
 					})
 				});
 				
@@ -3957,7 +3963,7 @@
 							Ext.getCmp('lookupGrid-tools-approve').setDisabled(true);
 						}
 						Ext.getCmp('lookupGrid-tools-action').setDisabled(false);						
-					} else if (componentGrid.getSelectionModel().getCount() > 1){
+					} else if (componentGrid.getSelectionModel().getCount() > 1) {
 						Ext.getCmp('lookupGrid-tools-export').setDisabled(false);
 						
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);

@@ -215,4 +215,3 @@ Ext.define('OSF.ux.IFrame', {
  *     elements are orphaned.  Accessing the html and body elements or any of their properties
  *     results in a "Permission Denied" error.
  */
-

@@ -44,6 +44,9 @@ public class FileHistoryOption
 	@ConsumeField
 	private Boolean skipRequiredAttributes;	
 	
+	@ConsumeField
+	private Boolean skipDuplicationCheck;
+	
 	@Version
 	private String storageVersion;
 
@@ -109,6 +112,16 @@ public class FileHistoryOption
 	public void setSkipRequiredAttributes(Boolean skipRequiredAttributes)
 	{
 		this.skipRequiredAttributes = skipRequiredAttributes;
+	}
+
+	public Boolean getSkipDuplicationCheck()
+	{
+		return skipDuplicationCheck;
+	}
+
+	public void setSkipDuplicationCheck(Boolean skipDuplicationCheck)
+	{
+		this.skipDuplicationCheck = skipDuplicationCheck;
 	}
 
 }
