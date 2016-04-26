@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global Ext */
+/* global Ext, CoreUtil */
 
 Ext.define('OSF.component.ImportWindow', {
 	extend: 'Ext.window.Window',
@@ -174,7 +174,10 @@ Ext.define('OSF.component.ImportWindow', {
 					labelSeparator: '',
 					allowBlank: false,
 					fieldLabel: 'Import <span class="field-required" />',
-					buttonText: 'Select File...'
+					buttonText: 'Select File...',
+					listeners: {
+						change: CoreUtil.handleMaxFileLimit
+					}
 				},
 				{
 					xtype: 'fieldset',

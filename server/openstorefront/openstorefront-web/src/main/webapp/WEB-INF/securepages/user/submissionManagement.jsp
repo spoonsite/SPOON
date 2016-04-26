@@ -88,11 +88,9 @@ limitations under the License.
 							Ext.getCmp('submissionGrid').setLoading(false);
 							Ext.getCmp('submissionGrid').getStore().reload();
 						}
-					});
-					
-				});
-								
-				
+					});										
+				});		
+
 				var previewContents = Ext.create('OSF.ux.IFrame', {
 					src: ''
 				});								

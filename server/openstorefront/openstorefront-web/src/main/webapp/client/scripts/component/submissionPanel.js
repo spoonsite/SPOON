@@ -20,7 +20,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 	alias: 'osf.widget.SubmissionPanel',
 	layout: 'border',
 	formWarningMessage: '',
-
+	
 	submitForReviewUrl: function (componentId){
 		return '../api/v1/resource/componentsubmissions/' + componentId+ '/submit';
 	},
@@ -38,7 +38,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				if (submissionPanel.cancelSubmissionHandlerYes) {
 					submissionPanel.cancelSubmissionHandlerYes();
 				}
-			}
+			};
 			
 			if (submissionPanel.currentStep === 2) {
 				if (promptForSave) {
@@ -190,7 +190,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					storeConfig: {
 						url: '/openstorefront/api/v1/resource/organizations/lookup'
 					}
-				}),				
+				}),	
 				{
 					xtype: 'panel',					
 					frame: true,
@@ -214,8 +214,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							flex: 1,
 							html: submissionPanel.formWarningMessage ? '<div style="padding: 10px 0px 10px 10px;">' + submissionPanel.formWarningMessage  + '</div>' : ''
 						}
-					]
-					
+					]					
 				}
 			]
 		});
@@ -674,7 +673,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			if (record) {
 				addWindow.getComponent('attributeForm').loadRecord(record);
 			}			
-		}
+		};		
 		
 		var addEditContact = function(record, grid) {
 			
@@ -939,7 +938,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 								itemId: 'upload',
 								hidden: true,
 								fieldLabel: 'Upload Resource (Limit of 1GB)',																											
-								name: 'file'
+								name: 'file',
+								listeners: {
+									change: CoreUtil.handleMaxFileLimit
+								}	
 							},
 							Ext.create('OSF.component.SecurityComboBox', {	
 								itemId: 'securityMarkings',
@@ -1137,7 +1139,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 								xtype: 'filefield',
 								itemId: 'upload',
 								fieldLabel: 'Upload Media (Limit of 1GB)',																											
-								name: 'file'
+								name: 'file',
+								listeners: {
+									change: CoreUtil.handleMaxFileLimit
+								}
 							},
 							{
 								xtype: 'textfield',
@@ -1536,7 +1541,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										}
 										form.getComponent('relationshipTargetCB').reset();
 										form.getComponent('relationshipTargetCB').getStore().load({
-											url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType,		
+											url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType		
 										});
 									}
 								}
@@ -1614,8 +1619,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 				addWindow.getComponent('relationshipForm').loadRecord(record);
 			}				
 			
-		};
-	
+		};		
+		
 		submissionPanel.detailsPanel = Ext.create('Ext.panel.Panel', {
 			autoScroll: true,
 			items: [
@@ -1636,7 +1641,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						{
 							xtype: 'grid',
 							itemId: 'optionalAttributes',
-							title: 'Addtional Attributes <i class="fa fa-question-circle"  data-qtip="Attributes are filterable metadata about the entry."></i>',
+							title: 'Additional Attributes <i class="fa fa-question-circle"  data-qtip="Attributes are filterable metadata about the entry."></i>',
 							collapsible: true,
 							titleCollapse: true,
 							margin: '0 0 20 0',
@@ -1880,7 +1885,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
+											text: 'Remove',	
 											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
@@ -1969,7 +1974,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',	
+											text: 'Remove',
 											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
@@ -2143,7 +2148,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
+											text: 'Remove',	
 											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
@@ -2667,12 +2672,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 					submissionPanel.navigation.getComponent('step1Btn').setDisabled(false);
 					submissionPanel.navigation.getComponent('step2Btn').setDisabled(false);			
 					submissionPanel.navigation.getComponent('step3Btn').setDisabled(false);
-					submissionPanel.navigation.getComponent('step4Btn').setDisabled(false);					
+					submissionPanel.navigation.getComponent('step4Btn').setDisabled(false);
 				} else {
 					submissionPanel.navigation.getComponent('step1Btn').setDisabled(false);
 					submissionPanel.navigation.getComponent('step2Btn').setDisabled(true);			
 					submissionPanel.navigation.getComponent('step3Btn').setDisabled(true);
-					submissionPanel.navigation.getComponent('step4Btn').setDisabled(true);
+					submissionPanel.navigation.getComponent('step4Btn').setDisabled(true);					
 				}
 
 				submissionPanel.navigation.getComponent('step1Btn').setIconCls('');
@@ -2701,7 +2706,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.requiredForm);
 					Ext.defer(function(){
 						submissionPanel.mainPanel.updateLayout(true, true);
-					}, 200)					
+					}, 200);					
 					
 					tools.getComponent('SaveLater').setHidden(false);
 					
@@ -2920,7 +2925,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 	},
 	
 	editSubmission: function(componentId) {
-		var submissionPanel = this;				
+		var submissionPanel = this;		
 		submissionPanel.resetSubmission(true);
 		
 		//load record

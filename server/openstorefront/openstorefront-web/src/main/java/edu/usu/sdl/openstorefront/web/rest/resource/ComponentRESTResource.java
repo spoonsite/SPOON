@@ -807,7 +807,7 @@ public class ComponentRESTResource
 	@DELETE
 	@APIDescription("Delete component and all related entities")
 	@Path("/{id}/cascade")
-	public Response deleteComponentTag(
+	public Response deleteComponent(
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
@@ -883,7 +883,8 @@ public class ComponentRESTResource
 
 	// </editor-fold>
 	
-	// <editor-fold defaultstate="collapse" desc=" Version history">
+	// <editor-fold defaultstate="collapsed" desc="Version history">
+
 	@GET
 	@APIDescription("Gets all version history for a component")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1031,13 +1032,11 @@ public class ComponentRESTResource
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
-
-		List<ComponentAttribute> componentAttributes = new ArrayList<>();
-
+		
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
 		componentAttributeExample.setActiveStatus(filterQueryParams.getStatus());
 		componentAttributeExample.setComponentId(componentId);
-		componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(ComponentAttribute.class, componentAttributeExample);
 		componentAttributes = filterQueryParams.filter(componentAttributes);
 
 		GenericEntity<List<ComponentAttribute>> entity = new GenericEntity<List<ComponentAttribute>>(componentAttributes)
@@ -1164,11 +1163,10 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
 	@APIDescription("Delete an attribute from the entity (Hard Removal)")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes/{attributeType}/{attributeCode}/force")
-	public void deleteComponentAttribute(
+	public Response deleteComponentAttribute(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("attributeType")
@@ -1176,11 +1174,17 @@ public class ComponentRESTResource
 			@PathParam("attributeCode")
 			@RequiredParam String attributeCode)
 	{
+		Response response = checkComponentOwner(componentId);
+		if (response != null) {
+			return response;
+		}
+		
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setAttributeCode(attributeCode);
 		pk.setAttributeType(attributeType);
 		pk.setComponentId(componentId);
 		service.getComponentService().deleteBaseComponent(ComponentAttribute.class, pk);
+		return Response.ok().build();
 	}
 
 	@PUT

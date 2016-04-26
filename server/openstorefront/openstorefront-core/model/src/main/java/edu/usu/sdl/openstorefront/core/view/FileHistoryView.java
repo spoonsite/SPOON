@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
@@ -53,9 +54,14 @@ public class FileHistoryView
 		}
 
 		FileFormat fileFormat = ServiceProxyFactory.getServiceProxy().getLookupService().getLookupEnity(FileFormat.class, fileHistory.getFileFormat());
-		view.setFileFormatDescription(fileFormat.getDescription());
-		view.setFileTypeDescription(TranslateUtil.translate(FileType.class, fileFormat.getFileType()));
-
+		if (fileFormat != null) {
+			view.setFileFormatDescription(fileFormat.getDescription());
+			view.setFileTypeDescription(TranslateUtil.translate(FileType.class, fileFormat.getFileType()));
+		} else {
+			view.setFileFormatDescription(fileHistory.getFileFormat());
+			view.setFileTypeDescription(OpenStorefrontConstant.NOT_AVAILABLE);
+		}
+		
 		return view;
 	}
 

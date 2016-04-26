@@ -1,13 +1,22 @@
 /* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
+/* global Ext, URL */
 
-/* global Ext */
-
-var CoreUtil = {
+var CoreUtil = {	
 	showContextMenu: function (menu, event) {
 
 		event.stopEvent();
@@ -419,11 +428,13 @@ var CoreUtil = {
 	},
 	/**
 	 * Defaults the search to wildcard
+	 * @param {string} query 
+	 * 
 	 */
 	searchQueryAdjustment: function(query) {
 		if (query && !Ext.isEmpty(query)) {	
 			if (query.indexOf('"') === -1) {
-				query += "*";
+				query = "*" + query + "*";
 			}
 		}
 		return query;
@@ -435,6 +446,7 @@ var CoreUtil = {
 	 * @param {type} description
 	 * @param {type} vitalType
 	 * @param {type} tip
+	 * @param {type} componentId
 	 * @returns {undefined}
 	 */
 	showRelatedVitalWindow: function(attributeType, attributeCode, description, vitalType, tip, componentId) {
@@ -482,7 +494,7 @@ var CoreUtil = {
 					columns: [
 						{ text: 'Name', dataIndex: 'name', flex:2, minWidth: 250, cellWrap: true, 
 							renderer: function (value, meta, record) {
-								return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>'
+								return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>';
 							}
 						},
 						{ text: 'Description', dataIndex: 'description', flex: 2,
@@ -566,6 +578,7 @@ var CoreUtil = {
 	
 	/**
 	 * Sort and transfer entry for display
+	 * @param {type} entry (componentAll)
 	 */
 	processEntry: function(entry) {
 		
@@ -701,5 +714,24 @@ var CoreUtil = {
 			return securityBanner;
 		}
 		return null;
+	},
+	maxFileSize: 1048576000,
+	handleMaxFileLimit: function(field, value, opts) {
+		var el = field.fileInputEl.dom;
+		
+		var errorMessage = ' <span style="color: red; font-weight: bold">File exceeded size limit.</span>';				
+		field.setFieldLabel(field.getFieldLabel().replace(errorMessage, ''));
+		
+		if (el.files && el.files.length > 0) {
+			var file = el.files[0];
+			if (file.size >  CoreUtil.maxFileSize) {
+				Ext.defer(function(){
+					field.reset();
+					field.markInvalid('File exceeds size limit.');
+					field.setFieldLabel(field.getFieldLabel() + errorMessage);					
+				}, 250);
+			}
+		}
+		
 	}
 };

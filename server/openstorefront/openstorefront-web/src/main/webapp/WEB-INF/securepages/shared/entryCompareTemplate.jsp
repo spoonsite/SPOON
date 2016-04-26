@@ -161,7 +161,7 @@ limitations under the License.
 				</tr>		
 				<tpl for="resources">
 					<tr class="quickView-table">
-						<td class="quickView-tableall" style="width: 175;">{resourceTypeDesc}</td>						
+						<td class="quickView-tableall" style="width: 175px;">{resourceTypeDesc}</td>						
 						<td class="quickView-tableall">
 							<a href='{actualLink}' target="_blank">{originalLink}</a><br>
 							{description}

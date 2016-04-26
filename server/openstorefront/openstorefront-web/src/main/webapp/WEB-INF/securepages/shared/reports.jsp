@@ -526,7 +526,7 @@
 						],
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/components/lookup'
+							url: '../api/v1/resource/components/lookup'							
 						}
 					});
 

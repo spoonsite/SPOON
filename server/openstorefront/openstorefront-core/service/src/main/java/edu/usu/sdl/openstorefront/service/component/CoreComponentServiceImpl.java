@@ -138,7 +138,6 @@ import net.java.truevfs.kernel.spec.FsSyncException;
 import net.sf.ehcache.Element;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.helper.StringUtil;
 
 /**
  * Handles the basic
@@ -455,7 +454,10 @@ public class CoreComponentServiceImpl
 
 	public RequiredForComponent doSaveComponent(RequiredForComponent component, FileHistoryOption options)
 	{
-		Component oldComponent = findExistingComponent(component.getComponent());
+		Component oldComponent = null;
+		if (Convert.toBoolean(options.getSkipDuplicationCheck()) == false) {
+			oldComponent = findExistingComponent(component.getComponent());
+		}
 
 		EntityUtil.setDefaultsOnFields(component.getComponent());
 
@@ -1448,6 +1450,7 @@ public class CoreComponentServiceImpl
 
 	public Component copy(String orignalComponentId)
 	{
+		cleanupCache(orignalComponentId);		
 		ComponentAll componentAll = getFullComponent(orignalComponentId);
 		if (componentAll != null) {
 			componentAll.getComponent().setComponentId(null);
@@ -1455,6 +1458,7 @@ public class CoreComponentServiceImpl
 			componentAll.getComponent().setApprovalState(ApprovalStatus.PENDING);
 			componentAll.getComponent().setApprovedDts(null);
 			componentAll.getComponent().setApprovedUser(null);
+			componentAll.getComponent().setExternalId(null);			
 
 			clearBaseComponentKey(componentAll.getAttributes());
 			clearBaseComponentKey(componentAll.getContacts());
@@ -1490,8 +1494,12 @@ public class CoreComponentServiceImpl
 					resource.clearKeys();
 				}
 			}
-
-			componentAll = saveFullComponent(componentAll);
+			
+			FileHistoryOption fileHistoryOption = new FileHistoryOption();
+			fileHistoryOption.setSkipDuplicationCheck(true);
+			fileHistoryOption.setSkipRequiredAttributes(true);
+						
+			componentAll = saveFullComponent(componentAll, fileHistoryOption);			
 
 			//copy over local resources
 			for (ComponentMedia media : localMedia) {
@@ -1527,6 +1535,8 @@ public class CoreComponentServiceImpl
 					persistenceService.persist(resource);
 				}
 			}
+			cleanupCache(orignalComponentId);
+			cleanupCache(componentAll.getComponent().getComponentId());
 
 			return componentAll.getComponent();
 		} else {
@@ -1670,7 +1680,7 @@ public class CoreComponentServiceImpl
 			ComponentAll archivedVersion = null;
 			TFile archive = new TFile(versionHistory.pathToFile().toFile());
 			TFile files[] = archive.listFiles();
-			if (files != null) {			
+			if (files != null) {
 				for (TFile file : files) {
 					if (file.isFile()) {
 						try (InputStream inTemp = new TFileInputStream(file)) {
@@ -1685,7 +1695,7 @@ public class CoreComponentServiceImpl
 			} else {
 				String componentName = getComponentName(versionHistory.getComponentId());
 				log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
-			}			
+			}		
 
 			if (archivedVersion != null) {
 
@@ -1714,7 +1724,7 @@ public class CoreComponentServiceImpl
 				//copy resources
 				archive = new TFile(versionHistory.pathToFile().toFile());
 				TFile allFiles[] = archive.listFiles();
-				if (allFiles != null) {					
+				if (allFiles != null) {
 					for (TFile file : allFiles) {
 						if (file.isDirectory() && "media".equalsIgnoreCase(file.getName())) {
 							TFile mediaFiles[] = file.listFiles();
@@ -1755,7 +1765,7 @@ public class CoreComponentServiceImpl
 				} else {
 					String componentName = getComponentName(versionHistory.getComponentId());
 					log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
-				}	
+				}
 
 				//save old version (keep in mind the update date will reflect now.)
 				FileHistoryOption fileHistoryOptions = new FileHistoryOption();
@@ -1903,7 +1913,7 @@ public class CoreComponentServiceImpl
 	{
 		//If there is bad data remove it from initial target
 		for (int i=targetEntities.size()-1; i >=0; i--) {
-			if (StringUtil.isBlank(targetEntities.get(i).uniqueKey())) {
+			if (StringUtils.isBlank(targetEntities.get(i).uniqueKey())) {
 				T badRecord = targetEntities.remove(i);
 				log.log(Level.WARNING, MessageFormat.format("Bad record (found during merge...it was removed): {0}", StringProcessor.printObject(badRecord)));				
 			}
