@@ -510,7 +510,8 @@ limitations under the License.
 									}
 								}
 								if (record.get('approvalState') === 'P'){
-									tools.getComponent('tbUnsubmit').setHidden(false);
+									//tools.getComponent('tbUnsubmit').setHidden(false);
+									tools.getComponent('tbEdit').setDisabled(false);
 								}
 								if (record.get('approvalState') === 'N'){
 									tools.getComponent('tbDelete').setHidden(false);
