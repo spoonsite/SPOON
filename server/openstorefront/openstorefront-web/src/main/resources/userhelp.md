@@ -36,6 +36,8 @@ To see what is new in <a href="https://github.com/di2e/openstorefront/releases/t
 
 ## 1.2 Known Issues, v2.0 * 
  
+1. Full Screen view button not availible in search results when not in full page. (Affects: IE 9, 10) 
+Workaround: Open entry details in full page mode.
 
 
 # 2.  User Features
