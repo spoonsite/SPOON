@@ -242,7 +242,7 @@ The following is the recommended VM configuration:
 
 -   RAM: 8GB
 
--   DISK: 40GB
+-   DISK: 40GB (Increase if storing a lot media and resources)
 
 -   Minimum:
 
