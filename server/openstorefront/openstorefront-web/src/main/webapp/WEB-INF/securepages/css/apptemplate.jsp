@@ -154,7 +154,7 @@ limitations under the License.
 }
 
 .home-search-field {
-	font-size: 1.9em;
+	font-size: 2.4em;
 	line-height: 1.428571429;
 	color: #555555;
 	vertical-align: middle;

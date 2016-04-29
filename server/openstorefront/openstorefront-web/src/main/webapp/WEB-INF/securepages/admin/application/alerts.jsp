@@ -75,6 +75,9 @@
 									if (option.alertOnQuestions) {
 										listOfOptions += '<li>Questions/Responses</li>';
 									}
+									if (option.alertOnContactUpdate) {
+										listOfOptions += '<li>Contact Update</li>';
+									}																		
 									listOfOptions += '</ul>';
 									return listOfOptions;
 								} else if (record.get('systemErrorAlertOption')) {
@@ -396,7 +399,12 @@
 											boxLabel: 'Questions/Responses',
 											name: 'alertOnQuestions',
 											id: 'userData-questions'
-										}
+										},
+										{
+											boxLabel: 'Contact Update',
+											name: 'alertOnContactUpdate',
+											id: 'userData-contactUpdate'
+										}							
 									]
 								}
 							],
@@ -438,6 +446,7 @@
 													ud.alertOnTags = (flatData.alertOnTags === "true");
 													ud.alertOnReviews = (flatData.alertOnReviews === "true");
 													ud.alertOnQuestions = (flatData.alertOnQuestions === "true");
+													ud.alertOnContactUpdate = (flatData.alertOnContactUpdate === "true");
 													data.userDataAlertOption = ud;
 												}
 

@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.entity.OrganizationModel;
@@ -205,16 +206,20 @@ public class OrganizationServiceImpl
 			));
 			return reference;
 		}));
-		references.addAll(findOrgReferences(new ComponentContact(), organization, (ComponentContact entity) -> {
+		references.addAll(findOrgReferences(new Contact(), organization, (Contact entity) -> {
 			OrgReference reference = new OrgReference();
+			ComponentContact componentContact = new ComponentContact();
+			componentContact.setContactId(entity.getContactId());
+			componentContact = (ComponentContact) componentContact.find();
+			
 			reference.setActiveStatus(entity.getActiveStatus());
-			reference.setComponentId(entity.getComponentId());
-			reference.setComponentName(getComponentService().getComponentName(entity.getComponentId()));
-			reference.setComponentApproveStatus(getComponentService().getComponentApprovalStatus(entity.getComponentId()));
+			reference.setComponentId(componentContact.getComponentId());
+			reference.setComponentName(getComponentService().getComponentName(componentContact.getComponentId()));
+			reference.setComponentApproveStatus(getComponentService().getComponentApprovalStatus(componentContact.getComponentId()));
 			reference.setReferenceId(entity.getContactId());
 			reference.setReferenceName(String.join(" ",
 					StringUtils.defaultString(StringProcessor.enclose(entity.getSecurityMarkingType())),
-					StringUtils.defaultString(TranslateUtil.translate(ContactType.class, entity.getContactType())),
+					StringUtils.defaultString(TranslateUtil.translate(ContactType.class, componentContact.getContactType())),
 					StringUtils.defaultString(entity.getFirstName()),
 					StringUtils.defaultString(entity.getLastName()),
 					StringUtils.defaultString(entity.getEmail())

@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
@@ -275,14 +276,15 @@ public class ComponentDetailReport
 						securityMarking = "(" + contact.getSecurityMarkingType() + ") ";
 					}					
 					
+					Contact contactFull = contact.fullContact();					
 					cvsGenerator.addLine(
 							"",
-							TranslateUtil.translate(ContactType.class, contact.getContactType()),
-							securityMarking + contact.getFirstName(),
-							contact.getLastName(),
-							contact.getOrganization(),
-							contact.getEmail(),
-							contact.getPhone()
+							TranslateUtil.translate(ContactType.class, contactFull.getContactType()),
+							securityMarking + contactFull.getFirstName(),
+							contactFull.getLastName(),
+							contactFull.getOrganization(),
+							contactFull.getEmail(),
+							contactFull.getPhone()
 					);
 				}
 			}
@@ -474,15 +476,17 @@ public class ComponentDetailReport
 						StringUtils.isNotBlank(contact.getSecurityMarkingType()))
 					{
 						securityMarking = "(" + contact.getSecurityMarkingType() + ") ";
-					}						
+					}				
+					
+					Contact contactFull = contact.fullContact();
 					
 					htmlGenerator.addLine("<tr>");
-					htmlGenerator.addLine("<td><b>" + TranslateUtil.translate(ContactType.class, contact.getContactType()) + "</b></td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(securityMarking + contact.getFirstName()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contact.getLastName()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contact.getOrganization()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contact.getEmail()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contact.getPhone()) + "</td>");
+					htmlGenerator.addLine("<td><b>" + TranslateUtil.translate(ContactType.class, contactFull.getContactType()) + "</b></td>");
+					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(securityMarking + contactFull.getFirstName()) + "</td>");
+					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getLastName()) + "</td>");
+					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getOrganization()) + "</td>");
+					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getEmail()) + "</td>");
+					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getPhone()) + "</td>");
 					htmlGenerator.addLine("</tr>");
 
 				}

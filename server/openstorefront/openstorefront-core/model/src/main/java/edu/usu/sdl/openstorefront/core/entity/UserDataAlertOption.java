@@ -37,7 +37,10 @@ public class UserDataAlertOption
 
 	@ConsumeField
 	private Boolean alertOnQuestions;
-
+	
+	@ConsumeField
+	private Boolean alertOnContactUpdate;
+	
 	@Version
 	private String storageVersion;
 
@@ -83,6 +86,16 @@ public class UserDataAlertOption
 	public void setStorageVersion(String storageVersion)
 	{
 		this.storageVersion = storageVersion;
+	}
+
+	public Boolean getAlertOnContactUpdate()
+	{
+		return alertOnContactUpdate;
+	}
+
+	public void setAlertOnContactUpdate(Boolean alertOnContactUpdate)
+	{
+		this.alertOnContactUpdate = alertOnContactUpdate;
 	}
 
 }

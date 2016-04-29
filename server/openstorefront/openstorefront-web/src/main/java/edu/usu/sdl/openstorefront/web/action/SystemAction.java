@@ -20,13 +20,17 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import net.sf.uadetector.ReadableUserAgent;
@@ -132,6 +136,44 @@ public class SystemAction
 		}
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
+	
+	@HandlesEvent("ContactCleanup")
+	public Resolution contactCleanup()
+	{
+		//remove component contacts that don't match to a contact
+		if (SecurityUtil.isAdminUser()) {
+			StringBuilder results = new StringBuilder();			
+			
+			Contact contact = new Contact();
+			List<Contact> allContacts = contact.findByExample();
+			Map<String, List<Contact>> contactMap = allContacts.stream().collect(Collectors.groupingBy(Contact::getContactId));
+			
+			int count = 0;
+			int internalDups = 0;
+			ComponentContact componentContact = new ComponentContact();
+			List<ComponentContact> componentContacts = componentContact.findByExampleProxy();
+			Set<String> internalDup = new HashSet<>();
+			for (ComponentContact componentContactFound : componentContacts) {
+				String internalKey = componentContactFound.getContactId() + "-" + componentContactFound.compareTo(componentContact.getComponentId());
+				if (internalDup.contains(internalKey)) {
+					service.getPersistenceService().delete(componentContactFound);
+					internalDups++;
+				} else {
+					internalDup.add(internalKey);					
+				}
+				if (contactMap.containsKey(componentContactFound.getContactId()) == false) {
+					service.getPersistenceService().delete(componentContactFound);
+					count++;
+				}
+			}
+			results.append("Duplicates removed: ").append(count).append("<br>");
+			results.append("Internal Duplicates removed: ").append(internalDups).append("<br>");
+			
+			return new StreamingResolution("text/html", results.toString());
+		}
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");		
+	}	
+	
 
 	public String getAttributeType()
 	{

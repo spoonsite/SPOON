@@ -1767,6 +1767,8 @@
 						{ text: 'Phone',  dataIndex: 'phone', width: 150 },
 						{ text: 'Organization',  dataIndex: 'organization', width: 200 },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+						{ text: 'Entry Contact Id',  dataIndex: 'componentContactId', width: 200, hidden: true },
+						{ text: 'Contact Id',  dataIndex: 'contactId', width: 200, hidden: true },
 						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
@@ -1778,9 +1780,11 @@
 							var fullgrid = Ext.getCmp('contactGrid');
 							if (fullgrid.getSelectionModel().getCount() === 1) {
 								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
+								fullgrid.down('toolbar').getComponent('delete').setDisabled(false);
 								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
 							} else {
 								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(true);
+								fullgrid.down('toolbar').getComponent('delete').setDisabled(true);
 								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
 							}
 						}						
@@ -1815,8 +1819,8 @@
 
 										var method = 'POST';
 										var update = '';
-										if (data.contactId) {
-											update = '/' + data.contactId;
+										if (data.componentContactId) {
+											update = '/' + data.componentContactId;
 											method = 'PUT';
 										}
 
@@ -1842,6 +1846,10 @@
 								}								
 							],
 							items: [
+								{
+									xtype: 'hidden',
+									name: 'componentContactId'
+								},								
 								{
 									xtype: 'hidden',
 									name: 'contactId'
@@ -1975,7 +1983,30 @@
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('contactGrid'), 'contactId', 'contacts');
 									}
-								}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Remove',
+									itemId: 'delete',
+									iconCls: 'fa fa-trash-o',									
+									disabled: true,
+									handler: function(){
+										
+										Ext.Msg.show({
+											title:'Remove Contact?',
+											message: 'Are you sure you want to delete the contact from this entry?',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+													actionSubComponentToggleStatus(Ext.getCmp('contactGrid'), 'contactId', 'contacts', undefined, undefined, true);
+												}  
+											}
+										});
+									}
+								}								
 							]
 						}
 					]											

@@ -19,12 +19,12 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
-import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Holds all contact information
@@ -34,15 +34,11 @@ public class Contact
 	extends StandardEntity<Contact>	
 	implements OrganizationModel
 {
+	public static final String FIELD_FIRSTNAME = "firstName";
+	
 	@PK(generated = true)
 	@NotNull
 	private String contactId;
-
-	@NotNull
-	@ConsumeField
-	@ValidValueType(value = {}, lookupClass = ContactType.class)
-	@FK(ContactType.class)
-	private String contactType;
 
 	@NotNull
 	@ConsumeField
@@ -77,14 +73,23 @@ public class Contact
 	{
 	}
 	
+	public String uniqueKey()
+	{
+		if (StringUtils.isNotBlank(getEmail())) {
+			return getEmail();
+		} else if (StringUtils.isNotBlank(getPhone())) {
+			return getPhone();
+		} else {
+			return getFirstName() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getLastName();
+		}		
+	}	
+	
 	@Override
 	public void updateFields(StandardEntity entity)
 	{
 		super.updateFields(entity);
 
 		Contact contact = (Contact) entity;
-
-		this.setContactType(contact.getContactType());
 		this.setEmail(contact.getEmail());
 		this.setFirstName(contact.getFirstName());
 		this.setLastName(contact.getLastName());
@@ -101,16 +106,6 @@ public class Contact
 	public void setContactId(String contactId)
 	{
 		this.contactId = contactId;
-	}
-
-	public String getContactType()
-	{
-		return contactType;
-	}
-
-	public void setContactType(String contactType)
-	{
-		this.contactType = contactType;
 	}
 
 	public String getEmail()

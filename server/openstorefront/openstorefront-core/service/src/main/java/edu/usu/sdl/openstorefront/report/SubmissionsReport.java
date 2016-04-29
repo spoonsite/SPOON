@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
@@ -126,13 +127,14 @@ public class SubmissionsReport
 		//write data
 		for (Component component : componentsSubmited) {
 			ComponentAll componentAll = service.getComponentService().getFullComponent(component.getComponentId());
-
-			ComponentContact submitter = new ComponentContact();
+	
+			Contact submitter = new Contact();
 			submitter.setFirstName(OpenStorefrontConstant.NOT_AVAILABLE);
 
 			for (ComponentContact componentContact : componentAll.getContacts()) {
-				if (ContactType.SUBMITTER.equals(componentContact.getContactType())) {
-					submitter = componentContact;
+				Contact contact = componentContact.fullContact();
+				if (ContactType.SUBMITTER.equals(contact.getContactType())) {
+					submitter = contact;
 				}
 			}
 

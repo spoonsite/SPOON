@@ -248,7 +248,7 @@ Ext.define('OSF.component.MediaViewerWindow', {
 			break;	
 		}
 		
-		messageWindow.add(messageWindow.mediaPanel);	
+		messageWindow.add(messageWindow.mediaPanel);
 		messageWindow.checkNextPrev();
 	}
 	

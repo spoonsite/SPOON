@@ -39,6 +39,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewConPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
@@ -278,12 +279,15 @@ public class SubComponentServiceImpl
 
 	public void saveComponentContact(ComponentContact contact, boolean updateLastActivity)
 	{
-		ComponentContact oldContact = persistenceService.findById(ComponentContact.class, contact.getContactId());
+		Contact contactFull = componentService.getContactService().saveContact(contact.toContact());
+		contact.setContactId(contactFull.getContactId());
+		
+		ComponentContact oldContact = persistenceService.findById(ComponentContact.class, contact.getComponentContactId());
+		
 		if (oldContact != null) {
 			oldContact.updateFields(contact);
 			persistenceService.persist(oldContact);
 		} else {
-			contact.setContactId(persistenceService.generateId());
 			contact.populateBaseCreateFields();
 			persistenceService.persist(contact);
 		}

@@ -40,7 +40,7 @@ public class HTMLSanitizer
 							"colgroup", "dd", "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6",
 							"i", "img", "li", "ol", "p", "pre", "q", "small", "strike", "strong",
 							"sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "u",
-							"ul", "label")
+							"ul", "label", "video", "audio", "source", "track")
 					.addAttributes("a", "href", "title")
 					.addAttributes("div", "ng-show", "class")
 					.addAttributes("p", "data-attributelabel", "class")
@@ -49,6 +49,11 @@ public class HTMLSanitizer
 					.addAttributes("colgroup", "span", "width")
 					.addAttributes("img", "align", "alt", "height", "src", "title", "width")
 					.addAttributes("ol", "start", "type")
+					.addAttributes("q", "cite")
+					.addAttributes("video", "id", "width", "height", "controls", "preload", "autoplay", "loop", "muted", "src", "poster")
+					.addAttributes("audio", "id", "width", "height", "controls", "preload", "autoplay", "loop", "muted", "src")
+					.addAttributes("source", "src", "type", "media")
+					.addAttributes("track", "src", "label", "kind", "srclang", "default")
 					.addAttributes("q", "cite")
 					.addAttributes("table", "summary", "width")
 					.addAttributes("td", "abbr", "axis", "colspan", "rowspan", "width")
