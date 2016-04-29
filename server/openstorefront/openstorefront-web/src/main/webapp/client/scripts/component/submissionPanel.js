@@ -698,6 +698,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 						items: [
 							{
 								xtype: 'hidden',
+								name: 'componentContactId'
+							},							
+							{
+								xtype: 'hidden',
 								name: 'contactId'
 							},
 							Ext.create('OSF.component.StandardComboBox', {
@@ -800,8 +804,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 											var method = 'POST';
 											var update = '';
-											if (data.contactId) {
-												update = '/' + data.contactId;
+											if (data.componentContactId) {
+												update = '/' + data.componentContactId;
 												method = 'PUT';
 											}
 

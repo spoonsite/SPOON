@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,32 +19,32 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Extracts organizations from the data
- *
+ * Remove after 2.0
  * @author dshurtleff
  */
-public class UpdateOrganizationsInit
-		extends ApplyOnceInit
+public class ContactExtractInit
+	extends ApplyOnceInit
 {
-
-	private static final Logger log = Logger.getLogger(UpdateOrganizationsInit.class.getName());
-
-	public UpdateOrganizationsInit()
+	private static final Logger log = Logger.getLogger(ContactExtractInit.class.getName());	
+	
+	public ContactExtractInit()
 	{
-		super("Update Organizations");
-	}
-
+		super("Convert Contacts");
+	}	
+	
 	@Override
 	protected String internalApply()
 	{
-		boolean success = false;
-		try {
-			service.getOrganizationService().extractOrganizations();
-			success = true;
+		StringBuilder results = new StringBuilder();
+		try
+		{
+			service.getContactService().convertContacts();
+			results.append("Converted Contacts");
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed extracting Organizations", e);
+			log.log(Level.WARNING, "Failed Converted Contacts", e);
 		}
-		return Boolean.toString(success);
+		
+		return results.toString();
 	}
-
+	
 }

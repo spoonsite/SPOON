@@ -214,6 +214,7 @@ public class OrganizationResource
 	@APIDescription("Creates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Organization.class)
 	public Response createOrganization(Organization organization)
 	{
 		return handleSaveOrganization(organization, true);
@@ -224,8 +225,9 @@ public class OrganizationResource
 	@APIDescription("Updates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Organization.class)
 	@Path("/{id}")
-	public Response createOrganization(
+	public Response updateOrganization(
 			@PathParam("id") String organizationId,
 			Organization organization)
 	{

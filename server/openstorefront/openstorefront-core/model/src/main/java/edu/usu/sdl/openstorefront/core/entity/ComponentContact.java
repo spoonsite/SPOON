@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
@@ -32,13 +33,17 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author dshurtleff
  */
-@APIDescription("Hold component Contact information")
+@APIDescription("Holds a link to a contact")
 public class ComponentContact
 		extends BaseComponent
 		implements OrganizationModel
 {
 
 	@PK(generated = true)
+	@NotNull
+	private String componentContactId;
+	
+	@FK(Contact.class)
 	@NotNull
 	private String contactId;
 
@@ -81,6 +86,29 @@ public class ComponentContact
 	{
 	}
 
+	public Contact fullContact()
+	{
+		Contact contact = ServiceProxyFactory.getServiceProxy().getContactService().findContact(getContactId());
+		if (contact != null) {
+			return contact;
+		} else {
+			return toContact();
+		}
+	}
+	
+	public Contact toContact()
+	{
+		Contact contact = new Contact();
+		contact.setContactId(this.contactId);		
+		contact.setEmail(this.getEmail());
+		contact.setFirstName(this.getFirstName());
+		contact.setLastName(this.getLastName());
+		contact.setOrganization(this.getOrganization());
+		contact.setPhone(this.getPhone());
+		
+		return contact;		
+	}
+	
 	@Override
 	public String uniqueKey()
 	{
@@ -99,7 +127,7 @@ public class ComponentContact
 		super.updateFields(entity);
 
 		ComponentContact contact = (ComponentContact) entity;
-
+		this.setContactId(contact.getContactId());
 		this.setContactType(contact.getContactType());
 		this.setEmail(contact.getEmail());
 		this.setFirstName(contact.getFirstName());
@@ -185,6 +213,16 @@ public class ComponentContact
 	public void setLastName(String lastName)
 	{
 		this.lastName = lastName;
+	}
+
+	public String getComponentContactId()
+	{
+		return componentContactId;
+	}
+
+	public void setComponentContactId(String componentContactId)
+	{
+		this.componentContactId = componentContactId;
 	}
 
 }

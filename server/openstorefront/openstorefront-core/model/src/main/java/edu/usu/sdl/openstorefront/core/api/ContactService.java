@@ -16,6 +16,8 @@
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.Contact;
+import edu.usu.sdl.openstorefront.core.model.ContactReference;
+import java.util.List;
 
 /**
  *
@@ -39,8 +41,55 @@ public interface ContactService
 	 * @return ContactService saved
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public Contact saveContact(ContactService contact);	
+	public Contact saveContact(Contact contact);	
 	
+	/**
+	 * This attempt to delete a contact (hard delete)
+	 * Can only delete contact that are not being referenced
+	 * 
+	 * @param contactId 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteContact(String contactId);
 	
+	/**
+	 * Inactivate a contact; optional inactivating contact associated with Entries
+	 * @param contactId
+	 * @param cascadeComponents 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void inactiveContact(String contactId, boolean cascadeComponents);
 	
+	/**
+	 * Inactivate a contact; optional activating contact associated with Entries
+	 * @param contactId
+	 * @param cascadeComponents 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void activeContact(String contactId, boolean cascadeComponents);	
+	
+	/**
+	 * Merges the references from one contact to the other and then removes
+	 * the merge contact.  This doesn't not change the target contact data.
+	 * @param targetContatId
+	 * @param mergeContactId 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void mergeContacts(String targetContactId, String mergeContactId);	
+	
+	/**
+	 * Finds the component references
+	 * @param contactId
+	 * @return references found
+	 */
+	public List<ContactReference> findReferences(String contactId);
+	
+	/**
+	 * This will pull all old component contacts
+	 * 1. de-dup 
+	 * 2. extract the contacts to the contact entity.
+	 * 
+	 */
+	public void convertContacts();			
+		
 }

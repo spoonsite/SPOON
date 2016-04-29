@@ -40,6 +40,7 @@ limitations under the License.
 			pageMap['Articles'] = '/openstorefront/admin?tool=Articles';
 			pageMap['Attributes'] = 'Router.action?page=admin/data/attributes.jsp';
 			pageMap['Dashboard'] = 'Router.action?page=admin/adminDashboard.jsp';
+			pageMap['Contacts'] = 'Router.action?page=admin/data/contacts.jsp';
 			pageMap['Entries'] = 'Router.action?page=admin/data/components.jsp';
 			pageMap['EntriesOld'] = '/openstorefront/admin?tool=Entries';
 			pageMap['EntryType'] = 'Router.action?page=admin/data/entryType.jsp';
@@ -74,6 +75,12 @@ limitations under the License.
 					actionLoadContent('Attributes');
 				}
 			});
+			dataMenu.push({
+				text: 'Contacts',
+				handler: function(){
+					actionLoadContent('Contacts');
+				}
+			});			
 			dataMenu.push({
 				text: 'Entries',
 				handler: function(){

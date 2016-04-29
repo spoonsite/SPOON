@@ -143,4 +143,10 @@ public interface Service
 	 */
 	public FeedbackService getFeedbackService();
 	
+	/**
+	 * Handles all Contacts
+	 * @return 
+	 */
+	public ContactService getContactService();
+
 }

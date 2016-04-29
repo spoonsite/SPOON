@@ -55,7 +55,11 @@
 						items: [
 							{text: 'Ordering Position', dataIndex: 'orderingPosition', flex: 1, hidden: true},
 							{text: 'Title', dataIndex: 'title', flex: 1},
-							{text: 'Description', dataIndex: 'description', flex: 4, cellWrap: true},
+							{text: 'Description', dataIndex: 'description', flex: 4, 
+								renderer: function (value, metaData, record) {
+									return Ext.util.Format.stripTags(value);
+								}
+							},
 							{
 								text: 'Type',
 								dataIndex: 'highlightType',
@@ -188,6 +192,7 @@
 
 
 				var actionEditHighlight = function actionEditHighlight(record) {
+					Ext.getCmp('editHighlightForm').reset();
 					Ext.getCmp('editHighlightForm').loadRecord(record);
 					Ext.getCmp('editHighlightForm').edit = true;
 					Ext.getCmp('editHighlightForm').highlightId = record.data.highlightId;

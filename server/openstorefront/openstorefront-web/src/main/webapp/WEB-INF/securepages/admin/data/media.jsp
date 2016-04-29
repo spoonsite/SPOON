@@ -179,7 +179,7 @@
 						var type = selectedObj.mimeType;
 					    if (type.match('video.*')) {
 							viewMediaWin.setTitle('Video Preview');
-					        viewMediaWin.update('<video autoplay="autoplay" controls="controls" src="../'+ selectedObj.mediaLink+'" width="100%" ></video>');
+					        viewMediaWin.update('<video autoplay="autoplay" controls="controls" src="../'+ selectedObj.mediaLink+'" style="width: 100%;max-width:100%;" ></video>');
 						}
 						else if(type.match('audio.*')){
 							viewMediaWin.setTitle('Audio Preview');
