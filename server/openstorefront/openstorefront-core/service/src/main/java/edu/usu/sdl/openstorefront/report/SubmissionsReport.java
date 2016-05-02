@@ -133,7 +133,7 @@ public class SubmissionsReport
 
 			for (ComponentContact componentContact : componentAll.getContacts()) {
 				Contact contact = componentContact.fullContact();
-				if (ContactType.SUBMITTER.equals(contact.getContactType())) {
+				if (ContactType.SUBMITTER.equals(componentContact.getContactType())) {
 					submitter = contact;
 				}
 			}

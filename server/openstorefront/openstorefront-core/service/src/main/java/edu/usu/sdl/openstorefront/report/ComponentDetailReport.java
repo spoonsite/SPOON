@@ -279,7 +279,7 @@ public class ComponentDetailReport
 					Contact contactFull = contact.fullContact();					
 					cvsGenerator.addLine(
 							"",
-							TranslateUtil.translate(ContactType.class, contactFull.getContactType()),
+							TranslateUtil.translate(ContactType.class, contact.getContactType()),
 							securityMarking + contactFull.getFirstName(),
 							contactFull.getLastName(),
 							contactFull.getOrganization(),
@@ -481,7 +481,7 @@ public class ComponentDetailReport
 					Contact contactFull = contact.fullContact();
 					
 					htmlGenerator.addLine("<tr>");
-					htmlGenerator.addLine("<td><b>" + TranslateUtil.translate(ContactType.class, contactFull.getContactType()) + "</b></td>");
+					htmlGenerator.addLine("<td><b>" + TranslateUtil.translate(ContactType.class, contact.getContactType()) + "</b></td>");
 					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(securityMarking + contactFull.getFirstName()) + "</td>");
 					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getLastName()) + "</td>");
 					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getOrganization()) + "</td>");

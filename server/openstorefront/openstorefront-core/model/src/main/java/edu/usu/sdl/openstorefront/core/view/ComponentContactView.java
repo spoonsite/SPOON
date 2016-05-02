@@ -62,7 +62,7 @@ public class ComponentContactView
 		view.setUpdateDts(contactFull.getUpdateDts());
 		view.setFirstName(contactFull.getFirstName());
 		view.setLastName(contactFull.getLastName());
-		view.setActiveStatus(contactFull.getActiveStatus());
+		view.setActiveStatus(contact.getActiveStatus());
 		view.setContactId(contactFull.getContactId());
 		view.toStandardView(contact);
 
