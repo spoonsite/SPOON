@@ -55,6 +55,7 @@
 					'<li class="list-group-item">Application Version: <span class="badge">{applicationVersion}</span></li>',
 					'<li class="list-group-item">Uptime: <span class="badge">{upTime}</span></li>',
 					'<li class="list-group-item">Start Time: <span class="badge">{startTime}</span></li>',
+					'<li class="list-group-item">Disk Space: <span class="badge">{freeDiskSpace} MB / {totalDiskSpace} MB</span></li>',
 					'</ul><div>'
 				);
 
@@ -63,6 +64,7 @@
 					'<li class="list-group-item">Processor Count: <span class="badge">{processorCount}</span></li>',
 					'<li class="list-group-item">Live Threads / Total Threads: <span class="badge">{liveThreadCount}/{totalThreadCount}</span></li>',
 					'<li class="list-group-item">System Load: <span class="badge">{systemLoad}</span></li>',
+					'<li class="list-group-item">Root Storage Path: <span class="badge">{rootStoragePath}</span></li>',
 					'</ul><div>'
 
 				);

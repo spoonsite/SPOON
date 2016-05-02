@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
@@ -39,6 +40,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import java.io.File;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -103,7 +105,13 @@ public class Application
 		applicationStatus.setProcessorCount(operatingSystemMXBean.getAvailableProcessors());
 		applicationStatus.setSystemLoad(operatingSystemMXBean.getSystemLoadAverage());
 		applicationStatus.setSystemProperties(runtimeMXBean.getSystemProperties());
-
+		
+		applicationStatus.setRootStoragePath(FileSystemManager.MAIN_DIR);
+		File file = new File(FileSystemManager.MAIN_DIR);
+		applicationStatus.setFreeDiskSpace(file.getUsableSpace()  / (1024*1024) );
+		applicationStatus.setTotalDiskSpace(file.getTotalSpace()  / (1024*1024) );
+		applicationStatus.setUsedDiskSpace(applicationStatus.getTotalDiskSpace() - applicationStatus.getFreeDiskSpace());
+		
 		applicationStatus.getHeapMemoryStatus().setName("Heap");
 		applicationStatus.getHeapMemoryStatus().setDetails(memoryMXBean.getHeapMemoryUsage().toString());
 		applicationStatus.getHeapMemoryStatus().setInitKb(memoryMXBean.getHeapMemoryUsage().getInit() != 0 ? memoryMXBean.getHeapMemoryUsage().getInit() / 1024 : 0);
