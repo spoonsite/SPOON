@@ -733,5 +733,53 @@ var CoreUtil = {
 			}
 		}
 		
+	},
+	descriptionOfAdvancedSearch : function(searchElements) {
+		if (searchElements) {
+			var desc = '';
+			var count =0;
+			
+			Ext.Array.each(searchElements, function(element) {
+				
+				if (element.searchType) {
+					desc += '<b>Search Type: </b>' + element.searchType + '<br>';
+				}				
+				if (element.field) {
+					desc += '<b>Field: </b>' + element.field + '<br>';
+				}
+				if (element.value) {
+					desc += '<b>Value: </b>' + element.value + '<br>';
+				}
+				if (element.keyField) {
+					desc += '<b>Key Field: </b>' + element.keyField + '<br>';
+				}
+				if (element.keyValue) {
+					desc += '<b>Key Value: </b>' + element.keyValue + '<br>';
+				}
+				if (element.startDate) {
+					desc += '<b>Start Date: </b>' + element.startDate + '<br>';
+				}
+				if (element.endDate) {
+					desc += '<b>End Date: </b>' + element.endDate + '<br>';
+				}								
+				if (element.caseInsensitive) {
+					desc += '<b>Case Insensitive: </b>' + element.caseInsensitive + '<br>';
+				}
+				if (element.numberOperation) {
+					desc += '<b>Number Operation: </b>' + element.numberOperation + '<br>';
+				}
+				if (element.stringOperation) {
+					desc += '<b>String Operation: </b>' + element.stringOperation + '<br>';
+				}
+				
+				if (count !== 0) {
+					desc += '<br>' + element.mergeCondition + '<br><br>';
+				}
+				
+				count++;
+			});
+			return desc;
+		}
+		return '';
 	}
 };
