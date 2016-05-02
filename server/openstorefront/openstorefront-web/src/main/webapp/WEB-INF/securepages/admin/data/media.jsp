@@ -327,9 +327,12 @@
 											xtype: 'filefield',
 											name: 'file',
 											id: 'file',
-											fieldLabel: 'Upload Media<span class="field-required" />',
+											fieldLabel: 'Upload Media  (Limit of 1GB)<span class="field-required" />',
 											width: '100%',
-											allowBlank: false
+											allowBlank: false,
+											listeners: {
+												change: CoreUtil.handleMaxFileLimit
+											}											
 										}
 									]
 								}
