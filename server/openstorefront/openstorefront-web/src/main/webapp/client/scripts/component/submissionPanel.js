@@ -705,7 +705,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 								name: 'contactId'
 							},
 							Ext.create('OSF.component.StandardComboBox', {
-								name: 'contactType',									
+								name: 'contactType',	
+								itemId: 'contactType',
 								allowBlank: false,								
 								margin: '0 0 5 0',
 								editable: false,
@@ -753,9 +754,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 								},
 								listeners: {
 									select: function(combo, record, opts) {
+										record.set('componentContactId', null);
 										record.set('contactId', null);
+										var contactType =  combo.up('form').getComponent('contactType').getValue();
 										combo.up('form').reset();
 										combo.up('form').loadRecord(record);
+										combo.up('form').getComponent('contactType').setValue(contactType);
 									}
 								}
 							}),							
@@ -1806,7 +1810,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
-													idField: 'contactId',
+													idField: 'componentContactId',
 													entity: 'contacts'
 												});
 											}
@@ -2884,7 +2888,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									var contactMethod = 'POST';
 									var update = '';
 									if (submitterData) {
-										update = '/' + submitterData.contactId;
+										update = '/' + submitterData.componentContactId;
 										contactMethod = 'PUT';
 									}
 

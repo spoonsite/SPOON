@@ -288,6 +288,7 @@ public class SubComponentServiceImpl
 			oldContact.updateFields(contact);
 			persistenceService.persist(oldContact);
 		} else {
+			contact.setComponentContactId(persistenceService.generateId());			
 			contact.populateBaseCreateFields();
 			persistenceService.persist(contact);
 		}

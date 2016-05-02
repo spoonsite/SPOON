@@ -1855,7 +1855,8 @@
 									name: 'contactId'
 								},
 								Ext.create('OSF.component.StandardComboBox', {
-									name: 'contactType',									
+									name: 'contactType',	
+									itemId: 'contactType',
 									allowBlank: false,								
 									margin: '0 0 0 0',
 									editable: false,
@@ -1898,9 +1899,12 @@
 									},
 									listeners: {
 										select: function(combo, record, opts) {
+											record.set('componentContactId', null);
 											record.set('contactId', null);
+											var contactType =  combo.up('form').getComponent('contactType').getValue();
 											combo.up('form').reset();
 											combo.up('form').loadRecord(record);
+											combo.up('form').getComponent('contactType').setValue(contactType);
 										}
 									}
 								}),
@@ -1981,7 +1985,7 @@
 									iconCls: 'fa fa-power-off',									
 									disabled: true,
 									handler: function(){
-										actionSubComponentToggleStatus(Ext.getCmp('contactGrid'), 'contactId', 'contacts');
+										actionSubComponentToggleStatus(Ext.getCmp('contactGrid'), 'componentContactId', 'contacts');
 									}
 								},
 								{
@@ -2001,7 +2005,7 @@
 											icon: Ext.Msg.QUESTION,
 											fn: function(btn) {
 												if (btn === 'yes') {
-													actionSubComponentToggleStatus(Ext.getCmp('contactGrid'), 'contactId', 'contacts', undefined, undefined, true);
+													actionSubComponentToggleStatus(Ext.getCmp('contactGrid'), 'componentContactId', 'contacts', undefined, undefined, true);
 												}  
 											}
 										});
