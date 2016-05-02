@@ -25,6 +25,48 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 
 		var advancePanel = this;
 		
+		var stringOperationData = [
+			{
+				code: 'CONTAINS',
+				description: 'Contains'
+			},									
+			{
+				code: 'EQUALS',
+				description: 'Equals'
+			},
+			{
+				code: 'ENDS_LIKE',
+				description: 'Ends Like'
+			},									
+			{
+				code: 'STARTS_LIKE',
+				description: 'Starts Like'
+			}							
+		];
+		
+		var numberOperationData = [
+				{
+					code: 'EQUALS',
+					description: '='
+				},
+				{
+					code: 'GREATERTHAN',
+					description: '>'
+				},
+				{
+					code: 'GREATERTHANEQUALS',
+					description: '>='
+				},
+				{
+					code: 'LESSTHAN',
+					description: '<'
+				},
+				{
+					code: 'LESSTHANEQUALS',
+					description: '<='
+				}							
+		];
+		
 		var searchTypes = [
 			{
 				searchType: 'COMPONENT',
@@ -207,27 +249,10 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							queryMode: 'local',
 							displayField: 'description',
 							valueField: 'code',
-							value: 'EQUALS',					
+							value: 'CONTAINS',					
 							editable: false,
 							store: {
-								data: [
-									{
-										code: 'EQUALS',
-										description: 'Equals'
-									},
-									{
-										code: 'STARTS_LIKE',
-										description: 'Starts Like'
-									},
-									{
-										code: 'ENDS_LIKE',
-										description: 'Ends Like'
-									},
-									{
-										code: 'CONTAINS',
-										description: 'Contains'
-									}							
-								]
+								data: stringOperationData
 							}					
 						}						
 					]					
@@ -386,27 +411,10 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							queryMode: 'local',
 							displayField: 'description',
 							valueField: 'code',
-							value: 'EQUALS',					
+							value: 'CONTAINS',					
 							editable: false,
 							store: {
-								data: [
-									{
-										code: 'EQUALS',
-										description: 'Equals'
-									},
-									{
-										code: 'STARTS_LIKE',
-										description: 'Starts Like'
-									},
-									{
-										code: 'ENDS_LIKE',
-										description: 'Ends Like'
-									},
-									{
-										code: 'CONTAINS',
-										description: 'Contains'
-									}							
-								]
+								data: stringOperationData
 							}					
 						}						
 					]					
@@ -464,27 +472,10 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							queryMode: 'local',
 							displayField: 'description',
 							valueField: 'code',
-							value: 'EQUALS',					
+							value: 'CONTAINS',					
 							editable: false,
 							store: {
-								data: [
-									{
-										code: 'EQUALS',
-										description: 'Equals'
-									},
-									{
-										code: 'STARTS_LIKE',
-										description: 'Starts Like'
-									},
-									{
-										code: 'ENDS_LIKE',
-										description: 'Ends Like'
-									},
-									{
-										code: 'CONTAINS',
-										description: 'Contains'
-									}							
-								]
+								data: stringOperationData
 							}					
 						}						
 					]					
@@ -530,27 +521,10 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							queryMode: 'local',
 							displayField: 'description',
 							valueField: 'code',
-							value: 'EQUALS',					
+							value: 'CONTAINS',					
 							editable: false,
 							store: {
-								data: [
-									{
-										code: 'EQUALS',
-										description: 'Equals'
-									},
-									{
-										code: 'STARTS_LIKE',
-										description: 'Starts Like'
-									},
-									{
-										code: 'ENDS_LIKE',
-										description: 'Ends Like'
-									},
-									{
-										code: 'CONTAINS',
-										description: 'Contains'
-									}							
-								]
+								data: stringOperationData
 							}					
 						}						
 					]
@@ -587,28 +561,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							value: 'EQUALS',					
 							editable: false,
 							store: {
-								data: [
-									{
-										code: 'EQUALS',
-										description: '='
-									},
-									{
-										code: 'GREATERTHAN',
-										description: '>'
-									},
-									{
-										code: 'GREATERTHANEQUALS',
-										description: '>='
-									},
-									{
-										code: 'LESSTHAN',
-										description: '<'
-									},
-									{
-										code: 'LESSTHANEQUALS',
-										description: '<='
-									}							
-								]
+								data: numberOperationData
 							}					
 						}						
 					]
@@ -714,27 +667,10 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							queryMode: 'local',
 							displayField: 'description',
 							valueField: 'code',
-							value: 'EQUALS',					
+							value: 'CONTAINS',					
 							editable: false,
 							store: {
-								data: [
-									{
-										code: 'EQUALS',
-										description: 'Equals'
-									},
-									{
-										code: 'STARTS_LIKE',
-										description: 'Starts Like'
-									},
-									{
-										code: 'ENDS_LIKE',
-										description: 'Ends Like'
-									},
-									{
-										code: 'CONTAINS',
-										description: 'Contains'
-									}							
-								]
+								data: stringOperationData
 							}					
 						}						
 					]
@@ -928,27 +864,10 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							queryMode: 'local',
 							displayField: 'description',
 							valueField: 'code',
-							value: 'EQUALS',					
+							value: 'CONTAINS',					
 							editable: false,
 							store: {
-								data: [
-									{
-										code: 'EQUALS',
-										description: 'Equals'
-									},
-									{
-										code: 'STARTS_LIKE',
-										description: 'Starts Like'
-									},
-									{
-										code: 'ENDS_LIKE',
-										description: 'Ends Like'
-									},
-									{
-										code: 'CONTAINS',
-										description: 'Contains'
-									}							
-								]
+								data: stringOperationData
 							}					
 						}						
 					]
@@ -986,27 +905,10 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							queryMode: 'local',
 							displayField: 'description',
 							valueField: 'code',
-							value: 'EQUALS',					
+							value: 'CONTAINS',					
 							editable: false,
 							store: {
-								data: [
-									{
-										code: 'EQUALS',
-										description: 'Equals'
-									},
-									{
-										code: 'STARTS_LIKE',
-										description: 'Starts Like'
-									},
-									{
-										code: 'ENDS_LIKE',
-										description: 'Ends Like'
-									},
-									{
-										code: 'CONTAINS',
-										description: 'Contains'
-									}							
-								]
+								data: stringOperationData
 							}					
 						}
 					]
@@ -1044,27 +946,10 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							queryMode: 'local',
 							displayField: 'description',
 							valueField: 'code',
-							value: 'EQUALS',					
+							value: 'CONTAINS',					
 							editable: false,
 							store: {
-								data: [
-									{
-										code: 'EQUALS',
-										description: 'Equals'
-									},
-									{
-										code: 'STARTS_LIKE',
-										description: 'Starts Like'
-									},
-									{
-										code: 'ENDS_LIKE',
-										description: 'Ends Like'
-									},
-									{
-										code: 'CONTAINS',
-										description: 'Contains'
-									}							
-								]
+								data: stringOperationData
 							}					
 						}
 					]
@@ -1216,27 +1101,10 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							queryMode: 'local',
 							displayField: 'description',
 							valueField: 'code',
-							value: 'EQUALS',					
+							value: 'CONTAINS',					
 							editable: false,
 							store: {
-								data: [
-									{
-										code: 'EQUALS',
-										description: 'Equals'
-									},
-									{
-										code: 'STARTS_LIKE',
-										description: 'Starts Like'
-									},
-									{
-										code: 'ENDS_LIKE',
-										description: 'Ends Like'
-									},
-									{
-										code: 'CONTAINS',
-										description: 'Contains'
-									}							
-								]
+								data: stringOperationData
 							}					
 						}						
 					]
@@ -1388,27 +1256,10 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							queryMode: 'local',
 							displayField: 'description',
 							valueField: 'code',
-							value: 'EQUALS',					
+							value: 'CONTAINS',					
 							editable: false,
 							store: {
-								data: [
-									{
-										code: 'EQUALS',
-										description: 'Equals'
-									},
-									{
-										code: 'STARTS_LIKE',
-										description: 'Starts Like'
-									},
-									{
-										code: 'ENDS_LIKE',
-										description: 'Ends Like'
-									},
-									{
-										code: 'CONTAINS',
-										description: 'Contains'
-									}							
-								]
+								data: stringOperationData
 							}					
 						}						
 					]
@@ -1465,28 +1316,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							value: 'EQUALS',					
 							editable: false,
 							store: {
-								data: [
-									{
-										code: 'EQUALS',
-										description: '='
-									},
-									{
-										code: 'GREATERTHAN',
-										description: '>'
-									},
-									{
-										code: 'GREATERTHANEQUALS',
-										description: '>='
-									},
-									{
-										code: 'LESSTHAN',
-										description: '<'
-									},
-									{
-										code: 'LESSTHANEQUALS',
-										description: '<='
-									}							
-								]
+								data: numberOperationData
 							}					
 						}						
 					]
@@ -1682,7 +1512,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 					},
 					columns: [
 						{ text: 'Type', dataIndex: 'typeDescription', width: 200, sortable: false },
-						{ text: 'Criteria', dataIndex: 'value',flex: 1, minWidth: 200, sortable: false,
+						{ text: 'Criteria', dataIndex: 'value', flex: 1, minWidth: 200, sortable: false,
 							renderer: function(value, meta, record) {
 								var options = '';
 								

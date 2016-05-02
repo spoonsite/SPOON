@@ -920,7 +920,12 @@ limitations under the License.
 								}]
 							};
 						} else {						
-							Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advanced');					
+							Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advanced <i id="advanceSearchInfoId" class="fa fa-question-circle"></i>');					
+							             Ext.tip.QuickTipManager.register({
+										 target: 'advanceSearchInfoId', 
+										 title : 'Search Criteria',  
+										 text  : CoreUtil.descriptionOfAdvancedSearch(searchRequest.query.searchElements) 
+								      });
 						}
 					}
 					else {
