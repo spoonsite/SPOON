@@ -294,6 +294,7 @@
 
 
 			var actionEditAttribute = function actionEditAttribute(record) {
+				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 				var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore()
