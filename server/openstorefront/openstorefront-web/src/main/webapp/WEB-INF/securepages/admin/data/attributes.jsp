@@ -541,7 +541,7 @@
 								handler: function () {
 									var record = codesGrid.getSelection()[0];
 									var title = 'Delete Code';
-									var msg = 'Are you sure you want to delete this code?'
+									var msg = 'Are you sure you want to delete this code?';
 									Ext.MessageBox.confirm(title, msg, function (btn) {
 										if (btn === 'yes') {
 											actionDeleteCode(record);
@@ -891,6 +891,50 @@
 							},
 							{
 								xtype: 'panel',
+								html: '<b>Associated Entry Types:</b>'
+							},
+							{
+								xtype: 'checkboxfield',
+								boxLabel: 'Allow For All Entry Types',
+								value: true,
+								handler: function(box, value) {
+									if (value) {
+										Ext.getCmp('editAttributeForm-associatedComponentTypes').hide();
+									} else {
+										Ext.getCmp('editAttributeForm-associatedComponentTypes').show();
+									}
+								}
+							},
+							{
+								xtype: 'multiselector',
+								id: 'editAttributeForm-associatedComponentTypes',
+								hidden: true,
+								style: {
+									margin: '30px'
+								},
+								title: 'Allow For Entry Types (click plus icon to add)',
+								name: 'allowForEntryTypes',
+								fieldName: 'description',
+								fieldTitle: 'Entry Type',
+								viewConfig: {
+									deferEmptyText: false,
+									emptyText: 'No entry types selected. If no entry types are selected, all entries will allow this attribute.'
+								},
+								search: {
+									field: 'description',
+									flex: 1,
+									store: {
+										id: 'allowForTypesSearchStore',
+										proxy: {
+											type: 'ajax',
+											url: '../api/v1/resource/componenttypes/lookup'												
+										},
+										autoLoad: true
+									}
+								}
+							},
+							{
+								xtype: 'panel',
 								html: '<b>Flags:</b>'
 							},
 							{
@@ -986,7 +1030,7 @@
 										autoLoad: true
 									}
 								}
-							}
+							},
 						],
 						dockedItems: [
 							{
