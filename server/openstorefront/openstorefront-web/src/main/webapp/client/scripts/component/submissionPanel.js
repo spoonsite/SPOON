@@ -297,7 +297,21 @@ Ext.define('OSF.component.SubmissionPanel', {
 							requiredAttributes.push(attribute);
 						}
 					} else {
-						optionalAttributes.push(attribute);
+						if (attribute.associatedComponentTypes) {
+							var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function(item){
+								if (item.componentType === componentType) {
+									return true;
+								} else {
+									return false;
+								}
+							});
+							if (optFound) {
+								optionalAttributes.push(attribute);
+							}
+						}
+						else {
+							optionalAttributes.push(attribute);
+						}
 					}
 				}
 			});
