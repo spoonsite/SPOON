@@ -895,6 +895,7 @@
 							},
 							{
 								xtype: 'checkboxfield',
+								id: 'allEntryTypes',
 								boxLabel: 'Allow For All Entry Types',
 								value: true,
 								handler: function(box, value) {
@@ -1059,6 +1060,23 @@
 												var data = {};
 												data.attributeType = formData;
 
+												// If we have a set of entry types for which this attribute is associated,
+												// compile them into the consumption format.
+												if (!Ext.getCmp('allEntryTypes').getValue()) { // If box is NOT checked, include the entry type associations.
+													var associatedTypes = Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().getData().getValues('code','data');
+
+													data.associatedComponentTypes = [];
+
+													Ext.Array.each(associatedTypes, function(type) {
+														data.associatedComponentTypes.push({
+															componentType: type
+														});		
+													});
+												}
+
+
+												// If we have a set of entry types for which this attribute is required,
+												// compile them into the consumption format.
 												if (formData.requiredFlg) {
 													var restrictedTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().getData().getValues('code','data');
 
