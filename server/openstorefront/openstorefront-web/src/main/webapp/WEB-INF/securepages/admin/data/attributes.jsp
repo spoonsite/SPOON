@@ -295,18 +295,21 @@
 
 			var actionEditAttribute = function actionEditAttribute(record) {
 				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
+				Ext.getCmp('requiredFlagCheckBox').setValue(false);
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
 				Ext.getCmp('editAttributeForm').loadRecord(record);
-				var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore()
-				var searchList = Ext.getCmp('editAttributeForm-typesRequiredFor').getSearch();
 
-				var searchStore = Ext.getStore('requiredTypesSearchStore');
+				var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore();
 				// Search the searchStore for the record matching the given code,
 				// that way we can display the name of the entry type rather than
 				// just the code.
-				Ext.Array.each(record.requiredRestrictions, function(type) {
-					requiredEntryTypes.add(searchStore.getData().getValues('code', type));
-				});
+				if (record.getData().requiredRestrictions) {
+					Ext.getCmp('requiredFlagCheckBox').setValue(true);
+					var searchStore = Ext.getStore('requiredTypesSearchStore');
+					Ext.Array.each(record.getData().requiredRestrictions, function(type) {
+						requiredEntryTypes.add(searchStore.getData().find('code', type.componentType));
+					});
+				}
 				editAttributeWin.edit = true;
 				editAttributeWin.setTitle('Edit Attribute - ' + record.data.attributeType);
 				editAttributeWin.show();
@@ -951,6 +954,7 @@
 								items: [
 									{
 										name: 'requiredFlg',
+										id: 'requiredFlagCheckBox',
 										boxLabel: 'Required',
 										listeners: {
 											change: function(box, newValue) {
@@ -1014,6 +1018,7 @@
 									margin: '30px'
 								},
 								title: 'Required for entry types (click plus icon to add)',
+								title: 'Require this attribute for these entry types: (click plus icon to add)',
 								name: 'typesRequiredFor',
 								fieldName: 'description',
 								fieldTitle: 'Entry Type',
