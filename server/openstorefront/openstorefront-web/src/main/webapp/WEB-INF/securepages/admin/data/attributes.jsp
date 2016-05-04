@@ -923,16 +923,17 @@
 									emptyText: 'No entry types selected. If no entry types are selected, all entries will allow this attribute.'
 								},
 								search: {
+									id: 'allowForTypesSearch',
 									field: 'description',
 									flex: 1,
-									store: {
+									store: Ext.create('Ext.data.Store', {
 										id: 'allowForTypesSearchStore',
 										proxy: {
 											type: 'ajax',
 											url: '../api/v1/resource/componenttypes/lookup'												
 										},
 										autoLoad: true
-									}
+									})
 								}
 							},
 							{
@@ -1023,14 +1024,14 @@
 								search: {
 									field: 'description',
 									flex: 1,
-									store: {
+									store: Ext.create('Ext.data.Store', {
 										id: 'requiredTypesSearchStore',
 										proxy: {
 											type: 'ajax',
 											url: '../api/v1/resource/componenttypes/lookup'												
 										},
 										autoLoad: true
-									}
+									})
 								}
 							},
 						],
