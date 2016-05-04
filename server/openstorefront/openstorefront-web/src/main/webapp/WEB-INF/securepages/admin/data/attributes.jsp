@@ -855,15 +855,16 @@
 				id: 'editAttributeWin',
 				title: 'Add/Edit Attribute',
 				modal: true,
-				width: '50%',
-				y: '5em',
+				width: '60%',
+				height: 750,
+				y: '2em',
 				layout: 'fit',
+				autoScroll: true,
 				items: [
 					{
 						xtype: 'form',
 						id: 'editAttributeForm',
-						layout: 'vbox',
-						scrollable: true,
+						autoScroll: true,
 						bodyStyle: 'padding: 10px;',
 						defaults: {
 							labelAlign: 'top',
@@ -930,7 +931,7 @@
 								id: 'editAttributeForm-associatedComponentTypes',
 								hidden: true,
 								style: {
-									margin: '30px'
+									padding: '30px'
 								},
 								title: 'Allow this attribute for these entry types: (click plus icon to add)',
 								name: 'associatedComponentTypes',
@@ -1030,7 +1031,7 @@
 								id: 'editAttributeForm-typesRequiredFor',
 								hidden: true,
 								style: {
-									margin: '30px'
+									padding: '30px'
 								},
 								title: 'Require this attribute for these entry types: (click plus icon to add)',
 								name: 'typesRequiredFor',
