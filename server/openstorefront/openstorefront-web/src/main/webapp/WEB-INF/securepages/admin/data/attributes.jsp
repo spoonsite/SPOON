@@ -290,13 +290,16 @@
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
 				Ext.getCmp('editAttributeForm-hideOnSubmission').disable();
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
+				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 			};
 
 
 			var actionEditAttribute = function actionEditAttribute(record) {
 				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
+				Ext.getCmp('allEntryTypes').setValue(true);
 				Ext.getCmp('requiredFlagCheckBox').setValue(false);
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
+				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 
 				var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore();
@@ -310,6 +313,18 @@
 						requiredEntryTypes.add(searchStore.getData().find('code', type.componentType));
 					});
 				}
+
+				// And the same for the associated component types, as well as disabling the 'All' checkbox.
+				if (record.getData().associatedComponentTypes) {
+					Ext.getCmp('allEntryTypes').setValue(false);
+					var associatedComponentTypes = Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore();
+					var allowForTypesSearchStore = Ext.getStore('allowForTypesSearchStore');
+					Ext.Array.each(record.getData().associatedComponentTypes , function(type) {
+						associatedComponentTypes.add(allowForTypesSearchStore.getData().find('code', type.componentType));
+					});
+				} 
+
+
 				editAttributeWin.edit = true;
 				editAttributeWin.setTitle('Edit Attribute - ' + record.data.attributeType);
 				editAttributeWin.show();
@@ -917,8 +932,8 @@
 								style: {
 									margin: '30px'
 								},
-								title: 'Allow For Entry Types (click plus icon to add)',
-								name: 'allowForEntryTypes',
+								title: 'Allow this attribute for these entry types: (click plus icon to add)',
+								name: 'associatedComponentTypes',
 								fieldName: 'description',
 								fieldTitle: 'Entry Type',
 								viewConfig: {
@@ -1017,7 +1032,6 @@
 								style: {
 									margin: '30px'
 								},
-								title: 'Required for entry types (click plus icon to add)',
 								title: 'Require this attribute for these entry types: (click plus icon to add)',
 								name: 'typesRequiredFor',
 								fieldName: 'description',
