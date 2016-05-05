@@ -290,22 +290,41 @@
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
 				Ext.getCmp('editAttributeForm-hideOnSubmission').disable();
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
+				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 			};
 
 
 			var actionEditAttribute = function actionEditAttribute(record) {
+				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
+				Ext.getCmp('allEntryTypes').setValue(true);
+				Ext.getCmp('requiredFlagCheckBox').setValue(false);
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
+				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 				Ext.getCmp('editAttributeForm').loadRecord(record);
-				var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore()
-				var searchList = Ext.getCmp('editAttributeForm-typesRequiredFor').getSearch();
 
-				var searchStore = Ext.getStore('requiredTypesSearchStore');
+				var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore();
 				// Search the searchStore for the record matching the given code,
 				// that way we can display the name of the entry type rather than
 				// just the code.
-				Ext.Array.each(record.requiredRestrictions, function(type) {
-					requiredEntryTypes.add(searchStore.getData().getValues('code', type));
-				});
+				if (record.getData().requiredRestrictions) {
+					Ext.getCmp('requiredFlagCheckBox').setValue(true);
+					var searchStore = Ext.getStore('requiredTypesSearchStore');
+					Ext.Array.each(record.getData().requiredRestrictions, function(type) {
+						requiredEntryTypes.add(searchStore.getData().find('code', type.componentType));
+					});
+				}
+
+				// And the same for the associated component types, as well as disabling the 'All' checkbox.
+				if (record.getData().associatedComponentTypes) {
+					Ext.getCmp('allEntryTypes').setValue(false);
+					var associatedComponentTypes = Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore();
+					var allowForTypesSearchStore = Ext.getStore('allowForTypesSearchStore');
+					Ext.Array.each(record.getData().associatedComponentTypes , function(type) {
+						associatedComponentTypes.add(allowForTypesSearchStore.getData().find('code', type.componentType));
+					});
+				} 
+
+
 				editAttributeWin.edit = true;
 				editAttributeWin.setTitle('Edit Attribute - ' + record.data.attributeType);
 				editAttributeWin.show();
@@ -541,7 +560,7 @@
 								handler: function () {
 									var record = codesGrid.getSelection()[0];
 									var title = 'Delete Code';
-									var msg = 'Are you sure you want to delete this code?'
+									var msg = 'Are you sure you want to delete this code?';
 									Ext.MessageBox.confirm(title, msg, function (btn) {
 										if (btn === 'yes') {
 											actionDeleteCode(record);
@@ -836,15 +855,16 @@
 				id: 'editAttributeWin',
 				title: 'Add/Edit Attribute',
 				modal: true,
-				width: '50%',
-				y: '5em',
+				width: '60%',
+				height: 750,
+				y: '2em',
 				layout: 'fit',
+				autoScroll: true,
 				items: [
 					{
 						xtype: 'form',
 						id: 'editAttributeForm',
-						layout: 'vbox',
-						scrollable: true,
+						autoScroll: true,
 						bodyStyle: 'padding: 10px;',
 						defaults: {
 							labelAlign: 'top',
@@ -891,6 +911,52 @@
 							},
 							{
 								xtype: 'panel',
+								html: '<b>Associated Entry Types:</b>'
+							},
+							{
+								xtype: 'checkboxfield',
+								id: 'allEntryTypes',
+								boxLabel: 'Allow For All Entry Types',
+								value: true,
+								handler: function(box, value) {
+									if (value) {
+										Ext.getCmp('editAttributeForm-associatedComponentTypes').hide();
+									} else {
+										Ext.getCmp('editAttributeForm-associatedComponentTypes').show();
+									}
+								}
+							},
+							{
+								xtype: 'multiselector',
+								id: 'editAttributeForm-associatedComponentTypes',
+								hidden: true,
+								style: {
+									padding: '30px'
+								},
+								title: 'Allow this attribute for these entry types: (click plus icon to add)',
+								name: 'associatedComponentTypes',
+								fieldName: 'description',
+								fieldTitle: 'Entry Type',
+								viewConfig: {
+									deferEmptyText: false,
+									emptyText: 'No entry types selected. If no entry types are selected, all entries will allow this attribute.'
+								},
+								search: {
+									id: 'allowForTypesSearch',
+									field: 'description',
+									flex: 1,
+									store: Ext.create('Ext.data.Store', {
+										id: 'allowForTypesSearchStore',
+										proxy: {
+											type: 'ajax',
+											url: '../api/v1/resource/componenttypes/lookup'												
+										},
+										autoLoad: true
+									})
+								}
+							},
+							{
+								xtype: 'panel',
 								html: '<b>Flags:</b>'
 							},
 							{
@@ -904,6 +970,7 @@
 								items: [
 									{
 										name: 'requiredFlg',
+										id: 'requiredFlagCheckBox',
 										boxLabel: 'Required',
 										listeners: {
 											change: function(box, newValue) {
@@ -964,9 +1031,9 @@
 								id: 'editAttributeForm-typesRequiredFor',
 								hidden: true,
 								style: {
-									margin: '30px'
+									padding: '30px'
 								},
-								title: 'Required for entry types (click plus icon to add)',
+								title: 'Require this attribute for these entry types: (click plus icon to add)',
 								name: 'typesRequiredFor',
 								fieldName: 'description',
 								fieldTitle: 'Entry Type',
@@ -977,16 +1044,16 @@
 								search: {
 									field: 'description',
 									flex: 1,
-									store: {
+									store: Ext.create('Ext.data.Store', {
 										id: 'requiredTypesSearchStore',
 										proxy: {
 											type: 'ajax',
 											url: '../api/v1/resource/componenttypes/lookup'												
 										},
 										autoLoad: true
-									}
+									})
 								}
-							}
+							},
 						],
 						dockedItems: [
 							{
@@ -1015,6 +1082,23 @@
 												var data = {};
 												data.attributeType = formData;
 
+												// If we have a set of entry types for which this attribute is associated,
+												// compile them into the consumption format.
+												if (!Ext.getCmp('allEntryTypes').getValue()) { // If box is NOT checked, include the entry type associations.
+													var associatedTypes = Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().getData().getValues('code','data');
+
+													data.associatedComponentTypes = [];
+
+													Ext.Array.each(associatedTypes, function(type) {
+														data.associatedComponentTypes.push({
+															componentType: type
+														});		
+													});
+												}
+
+
+												// If we have a set of entry types for which this attribute is required,
+												// compile them into the consumption format.
 												if (formData.requiredFlg) {
 													var restrictedTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().getData().getValues('code','data');
 

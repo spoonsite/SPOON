@@ -280,6 +280,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 			var optionalAttributes = [];
 			Ext.Array.each(allAttributes, function(attribute){
 				if (!attribute.hideOnSubmission) {
+					// This is slightly difficult to follow,
+					// but the basic gist is that we must check two lists to decide which attributes to show -
+					// requiredRestrictions is a list of types for which the attribute is required
+					// associatedComponentTypes is a list of types for which the attribute is optional
+					// but if associatedComponentTypes is empty, it is optional for all.
 					if (attribute.requiredFlg) {
 						if (attribute.requiredRestrictions) {
 							var found = Ext.Array.findBy(attribute.requiredRestrictions, function(item){
@@ -292,11 +297,56 @@ Ext.define('OSF.component.SubmissionPanel', {
 							if (found) {
 								requiredAttributes.push(attribute);
 							}
+							else {
+								// --- Checking for Optional
+								//
+								// In this case, the 'Required' Flag is set but the entry we are dealing with is not an entry
+								// type listed in the requiredRestrictions, i.e. not required for this entry type.
+								// As a result, we need to check if it's allowed as an optional and then add it.
+								// This is the same logic as seen below when the 'Required' flag is off.
+								if (attribute.associatedComponentTypes) {
+									var reqOptFound = Ext.Array.findBy(attribute.associatedComponentTypes, function(item) {
+										if (item.componentType === componentType) {
+											return true;
+										} else {
+											return false;
+										}
+									});
+									if (reqOptFound) {
+										optionalAttributes.push(attribute);
+									}
+								}
+								else {
+									// We have an empty list of associatedComponentTypes, therefore this attribute is
+									// allowed for all entry types.
+									optionalAttributes.push(attribute);
+								}
+								// 
+								// --- End Checking for Optional
+							}
 						} else {
+							// No list of types required for, so it's required for all. Add it.
 							requiredAttributes.push(attribute);
 						}
 					} else {
-						optionalAttributes.push(attribute);
+						if (attribute.associatedComponentTypes) {
+							var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function(item){
+								if (item.componentType === componentType) {
+									return true;
+								} else {
+									return false;
+								}
+							});
+							if (optFound) {
+								// This entry type allows this attribute.
+								optionalAttributes.push(attribute);
+							}
+						}
+						else {
+							// We have an empty list of associatedComponentTypes, therefore this attribute is
+							// allowed for all entry types.
+							optionalAttributes.push(attribute);
+						}
 					}
 				}
 			});

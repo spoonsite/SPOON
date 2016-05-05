@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
-/**
- *
- * @author dshurtleff
- */
 public class AttributeTypeView
 		extends StandardEntityView
 {
@@ -67,6 +63,9 @@ public class AttributeTypeView
 	@DataType(ComponentTypeRestriction.class)
 	private List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
 
+	@DataType(ComponentTypeRestriction.class)
+	private List<ComponentTypeRestriction> associatedComponentTypes = new ArrayList<>();
+
 	public AttributeTypeView()
 	{
 	}
@@ -86,9 +85,11 @@ public class AttributeTypeView
 		attributeTypeView.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
 		attributeTypeView.setActiveStatus(attributeType.getActiveStatus());
 		attributeTypeView.setRequiredRestrictions(attributeType.getRequiredRestrictions());
+		attributeTypeView.setAssociatedComponentTypes(attributeType.getAssociatedComponentTypes());
 		attributeTypeView.toStandardView(attributeType);
 
 		return attributeTypeView;
+
 	}
 
 	public String getAttributeType()
@@ -224,6 +225,16 @@ public class AttributeTypeView
 	public void setRequiredRestrictions(List<ComponentTypeRestriction> requiredRestrictions)
 	{
 		this.requiredRestrictions = requiredRestrictions;
+	}
+
+	public List<ComponentTypeRestriction> getAssociatedComponentTypes()
+	{
+		return associatedComponentTypes;
+	}
+
+	public void setAssociatedComponentTypes(List<ComponentTypeRestriction> associatedComponentTypes)
+	{
+		this.associatedComponentTypes = associatedComponentTypes;
 	}
 
 }
