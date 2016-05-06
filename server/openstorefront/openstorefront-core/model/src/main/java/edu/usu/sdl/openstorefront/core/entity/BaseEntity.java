@@ -95,6 +95,11 @@ public abstract class BaseEntity<T>
 		return (List<T>) serviceProxy.getPersistenceService().queryByExample(this.getClass(), queryByExample);
 	}
 	
+	public ValidationResult validate()
+	{
+		return validate(true);
+	}
+	
 	public ValidationResult validate(boolean consumeFieldsOnly) 
 	{
 		ValidationModel validationModel = new ValidationModel(this);
