@@ -697,14 +697,21 @@ files for either Attributes or SvcV-4.
     The application supports both 1 and 0001 matching to 1.
 
 
-### 3.2.2 Entries *
+### 3.2.2 Contacts *
+-----
+The Contacts Management area allows for the management of contacts in one place across all entries.  
+Contacts can be added, edited, viewed, merged, made active or inactive, or deleted. 
+In addition the references or components that reference each contact can be viewed.
+
+
+### 3.2.3 Entries *
 -----
 
 Entries can consist of DI2E Components, Articles, or other custom-defined data structure types.
 This section allows for the manipulating of all data related to an entry.
 
 
-#### 3.2.2.1 Managing *
+#### 3.2.3.1 Managing *
 ----------
 
 Components can be managed using the Components Tool.  Components are created by an application administrator.
@@ -789,7 +796,7 @@ Example:
               will show as missing in the editor but correct in the preview.
 
 
-#### 3.2.2.2 Approval *
+#### 3.2.3.2 Approval *
 ------
 
 Approved components are searchable by all users. Pending/Not submitted
@@ -813,7 +820,7 @@ step above and selecting **Pending**. Marking the component as
 **Pending** makes it unapproved.
 
 
-#### 3.2.2.3 General *
+#### 3.2.3.3 General *
 ------
 
 General information about the component is found here such as the Name, 
@@ -833,7 +840,7 @@ b. Component Type:  ARTICLE *(allows for watches to be put on the article)* | Co
 c. Security Type:   *select the security level of the component or article*
   
 
-### 3.2.3 Entry Types *
+### 3.2.4 Entry Types *
 ------
 
 Currently, the main entry types are DI2E Component and Article.  However, other custom 
@@ -852,7 +859,7 @@ Entry Types can be made active or inactive by using the Toggle Status button on 
           submissions.
 		  
 		  
-### 3.2.4 Entry Templates *
+### 3.2.5 Entry Templates *
 -------
 
 Entry Templates allow for the customization of the display fields of particular types of entries.
@@ -908,7 +915,7 @@ To create and implement a template:
 	    (checkboxes under Data Entry).
 	
   
-### 3.2.5 Highlights *
+### 3.2.6 Highlights *
 -------
 
 A highlight to the home page can be added, edited, or deleted here. 
@@ -923,7 +930,7 @@ they do in the table in the Manage Highlights section.
 ![updown_graphic](../../webapp/client/images/help/displayposition.png)
 
 
-### 3.2.6 Integrations *
+### 3.2.7 Integrations *
 -------
 
 Component Integration allows for pulling information from an external
@@ -977,7 +984,7 @@ interval. If the configuration job continues to have issues it may
 deactivated manually using the tools and then reactivated when the issue
 is resolved.
 
-### 3.2.7 Imports * 
+### 3.2.8 Imports * 
 -------
 
 This allows for data imports and mappings.  This is done by importing a ZIP
@@ -987,7 +994,7 @@ can be reprocessed, or rolled back.
 **NOTE:**  The history is only kept for **180 days** in this section.
 
 
-### 3.2.8 Lookups *
+### 3.2.9 Lookups *
 --------
 
 This is used to organize and classify data in a consistent manner.  The codes can
@@ -998,7 +1005,7 @@ Some examples of Lookups are:
 Media Types, Data Source, Contact Types, Relationship Types, and Organization Types
 
 
-### 3.2.9 Media *
+### 3.2.10 Media *
 --------
 
 The Manage Media area is used to add, download, view and otherwise manage media that 
@@ -1006,7 +1013,7 @@ can be used for articles and badges.
 
 
 
-### 3.2.10 Organizations *
+### 3.2.11 Organizations *
 --------
 
  Organizations provide information on specific organizations that are linked with the components listed on the site. The information these objects contain include:
@@ -1017,7 +1024,7 @@ can be used for articles and badges.
  - **Address** -                The address for the organization
  - **Contact Information** -    A way to contact the organization
 
-#### 3.2.10.1 Managing *
+#### 3.2.11.1 Managing *
 --------------
 
 **To add a new organization:**
@@ -1065,7 +1072,7 @@ Allows merging of references from one organization to another.  **NOTE** that th
 ONLY merges references and NOT the organization information.
 
 
-### 3.2.11 Searches (Public Saved Searches)
+### 3.2.12 Searches (Public Saved Searches)
 ---------
 
 This area displays a list of publicly available searches that can be edited, added, activated, or 
@@ -1073,7 +1080,7 @@ made inactive.  Once the searches are set up they can be used for inclusion in a
 entries.
 
  
-### 3.2.12 User Data *
+### 3.2.13 User Data *
 ---------
 
 This section in the Admin Tools -> Data Management allows for the management of user-submitted data such as:
@@ -1089,7 +1096,7 @@ This section in the Admin Tools -> Data Management allows for the management of 
  * User Profiles
  
 
-#### 3.2.12.1 Questions (and Answers) *
+#### 3.2.13.1 Questions (and Answers) *
 ------
 
 The Questions section of User Data in Data Management of the Admin Tools displays Questions and Answers given on the website.
@@ -1103,7 +1110,7 @@ The table displays active questions, but the drop-down at the top of the page al
  * With a question or answer highlighted, click the associated Deactivate button to remove it from view on the website.
 
 
-#### 3.2.12.2 Reviews *
+#### 3.2.13.2 Reviews *
 ------
 
 The Reviews section of User Data in Data Management of the Admin Tools displays entry reviews from the website.
@@ -1117,7 +1124,7 @@ The table displays the list of *active* reviews by default.
  * Selecting an inactive review allows for the Activate button to be pressed, adding the review back to view on the website.
 
 
-#### 3.2.12.3 Watches *
+#### 3.2.13.3 Watches *
 ------
 
 The Watches section of User Data in Data Management of the Admin Tools displays all of the watches from all users.
@@ -1127,7 +1134,7 @@ The Watches section of User Data in Data Management of the Admin Tools displays 
  * When an entry (or multiple entries of the same status) are selected the Activate or Inactivate button can be used to toggle the status of the watches.
  
  
-#### 3.2.12.4 Tags *
+#### 3.2.13.4 Tags *
 ------
 
 The Tags section of User Data in Data Management of the Admin Tools displays a list of all tags.
@@ -1139,7 +1146,7 @@ The Tags section of User Data in Data Management of the Admin Tools displays a l
  * In the event of a duplicate tag being added to the same component the added tag will override the exiting tag.
 
 
-#### 3.2.12.5 User Profiles *
+#### 3.2.13.5 User Profiles *
 ------
 
 Every user in the system has a user profile.  A user profile contains information

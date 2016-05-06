@@ -197,7 +197,7 @@ limitations under the License.
 						}
 					},
 					columns: [
-						{ text: 'name', dataIndex: 'name', flex: 1, minWidth: 200 },
+						{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200 },
 						{ text: 'Description', dataIndex: 'description', flex: 2, minWidth: 250,
 						 renderer: function(value){
 							return Ext.util.Format.stripTags(value);
