@@ -294,7 +294,7 @@ limitations under the License.
 						{ text: 'Create User', dataIndex: 'createUser', width: 200, hidden: true },
 						{ text: 'Create Date', dataIndex: 'createDts', width: 200, hidden: true },
 						{ text: 'Update User', dataIndex: 'updateUser', width: 200, hidden: true },
-						{ text: 'Update User', dataIndex: 'updateDts', width: 200, hidden: true }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 200, hidden: true }
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){

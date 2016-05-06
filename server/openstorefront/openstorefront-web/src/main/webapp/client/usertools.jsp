@@ -37,6 +37,7 @@ limitations under the License.
 			});
 			
 			var pageMap = [];
+			pageMap['Dashboard'] = 'Router.action?page=shared/dashboard.jsp';
 			pageMap['UserProfile'] = 'Router.action?page=user/userProfile.jsp';
 			pageMap['Watches'] = 'Router.action?page=user/watches.jsp';
 			pageMap['Reviews'] = 'Router.action?page=user/reviews.jsp';
@@ -210,6 +211,17 @@ limitations under the License.
 							xtype: 'toolbar',														
 							items:[
 								{
+									text: 'Dashboard',
+									scale   : 'large',
+									iconCls: 'fa fa-2x fa-home',
+									handler: function(){
+										actionLoadContent('Dashboard');
+									}									
+								},	
+								{
+									xtype: 'tbseparator'
+								},										
+								{
 									text: 'Profile',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-user',
@@ -218,16 +230,16 @@ limitations under the License.
 									}									
 								},
 								{
-									xtype: 'tbseparator'
-								},
-								{
 									text: 'Submissions',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-list',
 									handler: function(){
 										actionLoadContent('Submissions');
 									}									
-								},								
+								},
+								{							
+									xtype: 'tbseparator'
+								},										
 								{
 									text: 'Tools',
 									scale   : 'large',
@@ -282,7 +294,7 @@ limitations under the License.
 					Ext.util.History.add(key);				
 				} else {
 					Ext.toast("Page key Not Found");
-					contents.load('Router.action?page=user/userProfile.jsp');	
+					contents.load(pageMap['Dashboard']);	
 				}
 			};
 			
@@ -290,7 +302,7 @@ limitations under the License.
 			if (historyToken) {
 				actionLoadContent(historyToken);
 			} else {	
-				actionLoadContent('UserProfile');
+				actionLoadContent('Dashboard');
 			}	
 			
 		});	

@@ -120,10 +120,10 @@ Ext.define('OSF.component.NotificationPanel', {
 					renderer: function (value, metadata, record) {
 						switch (record.get('eventType')) {
 							case 'WATCH':
-								return value + '<i>View the changes <a href="view.jsp?fullPage=true&id=' + record.get('entityId') + '"><strong>here</strong></a>.</i>';
+								return value + '<i>View the changes <a href="view.jsp?fullPage=true&id=' + record.get('entityId') + '" target="_top"><strong>here</strong></a>.</i>';
 								break;
 							case 'REPORT':
-								return value + '<i>View/Download the report <a href="usertools.jsp?dc=' + Math.random() + '#Reports"><strong>here</strong></a></i>.';
+								return value + '<i>View/Download the report <a href="usertools.jsp?dc=' + Math.random() + '#Reports" target="_top"><strong>here</strong></a></i>.';
 								break;
 							case 'ADMIN':
 								return '<i class="fa fa-warning"></i>&nbsp;' + value;
@@ -281,6 +281,7 @@ Ext.define('OSF.component.NotificationWindow', {
   alias: 'osf.widget.NotificationWindow',
   
   title: 'Notifications',
+  iconCls: 'fa fa-envelope',
   y: 40,
   width: '80%',
   modal: true,

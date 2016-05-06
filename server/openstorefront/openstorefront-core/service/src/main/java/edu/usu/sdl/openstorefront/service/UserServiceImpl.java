@@ -35,10 +35,12 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.DashboardWidget;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.entity.UserDashboard;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
@@ -47,6 +49,8 @@ import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.model.AdminMessage;
+import edu.usu.sdl.openstorefront.core.model.Dashboard;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserTrackingResult;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -982,6 +986,65 @@ public class UserServiceImpl
 		if (existing != null) {
 			persistenceService.delete(existing);
 		}
+	}
+
+	@Override
+	public Dashboard getDashboard(String username)
+	{
+		Dashboard dashboard = new Dashboard();
+		
+		UserDashboard userDashboard = new UserDashboard();
+		userDashboard.setUsername(username);
+		userDashboard = userDashboard.find();
+		
+		if (userDashboard == null) {			
+			userDashboard = new UserDashboard();
+			userDashboard.setDashboardId(persistenceService.generateId());			
+			userDashboard.setUsername(username);
+			userDashboard.setName(UserDashboard.DEFAULT_NAME);
+			userDashboard.populateBaseCreateFields();
+			userDashboard = persistenceService.persist(userDashboard);
+		} else {
+			DashboardWidget widget = new DashboardWidget();
+			widget.setDashboardId(userDashboard.getDashboardId());
+			dashboard.setWidgets(widget.findByExample());
+			dashboard.getWidgets().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, DashboardWidget.FIELD_WIDGET_ORDER));			
+		}
+		dashboard.setDashboard(userDashboard);
+				
+		return dashboard;
+	}
+
+	@Override
+	public Dashboard saveDashboard(Dashboard dashboard)
+	{
+		Objects.requireNonNull(dashboard);
+		Objects.requireNonNull(dashboard.getDashboard());
+		
+		UserDashboard userDashboard =  persistenceService.findById(UserDashboard.class, dashboard.getDashboard().getDashboardId());
+		if (userDashboard != null) {
+			userDashboard.updateFields(dashboard.getDashboard());
+			userDashboard = persistenceService.persist(userDashboard);
+		} else {
+			dashboard.getDashboard().setDashboardId(persistenceService.generateId());
+			dashboard.getDashboard().populateBaseCreateFields();
+			userDashboard = persistenceService.persist(dashboard.getDashboard());
+		}
+		
+		//clear old widgets and replace
+		DashboardWidget widgetExample = new DashboardWidget();
+		widgetExample.setDashboardId(userDashboard.getDashboardId());
+		persistenceService.deleteByExample(widgetExample);
+		
+		for (DashboardWidget widget : dashboard.getWidgets()) {
+			widget.setWidgetId(persistenceService.generateId());
+			widget.populateBaseCreateFields();
+			widget.setDashboardId(userDashboard.getDashboardId());
+			persistenceService.persist(widget);
+		}	
+		
+		dashboard.setDashboard(userDashboard);
+		return dashboard;
 	}
 
 }

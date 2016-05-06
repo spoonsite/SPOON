@@ -194,14 +194,14 @@ limitations under the License.
 
 .searchresults-item:nth-child(odd){
 	background: white;
-    padding: 10px;
+	padding: 10px;
 	border: 1px solid lightgray;
 	margin-top: -1px;
 }
 
 .searchresults-item:nth-child(even){
 	background: whitesmoke;
-    padding: 10px;
+	padding: 10px;
 	border: 1px solid lightgray;
 	margin-top: -1px;
 }
@@ -538,6 +538,62 @@ td.info-table {
 	background-color: darkslategrey;
 	color: white;
 	font-weight: bold; 
+}
+
+.widget-picklist-item {
+	border-bottom: 1px solid lightgrey;
+}
+
+.widget-picklist-item-title:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.widget-picklist-item:nth-child(odd){
+	background-color: white;
+}
+
+.widget-picklist-item:nth-child(even){
+	background-color: whitesmoke;
+}
+
+.stat-list-group-item:first-child {
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+}
+.stat-list-group-item {
+	position: relative;
+	display: block;
+	padding: 10px 15px;
+	margin-bottom: -1px;
+	background-color: #8A8A8A;
+	border: 1px solid #464545;
+	font-size: 14px;
+	color: white;
+}
+.stat-list-group {
+	/* margin-bottom: 20px; */
+	padding-left: 0;
+	color: white;
+}
+ul.stat-list-group-item, ol.stat-list-group-item {
+	margin-top: 0;
+	margin-bottom: 10.5px;
+}
+.stat-badge {
+	display: inline-block;
+	min-width: 10px;
+	padding: 3px 7px;
+	font-size: 13px;
+	font-weight: bold;
+	color: ${actionBean.branding.primaryTextColor};
+	line-height: 1;
+	vertical-align: middle;
+	white-space: nowrap;
+	text-align: center;
+	float: right;
+	background-color: ${actionBean.branding.primaryColor};
+	border-radius: 10px;
 }
 
 .default_body {

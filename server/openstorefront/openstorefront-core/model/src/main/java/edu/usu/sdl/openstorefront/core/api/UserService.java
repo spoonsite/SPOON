@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserSavedSearch;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.model.AdminMessage;
+import edu.usu.sdl.openstorefront.core.model.Dashboard;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserTrackingResult;
 import edu.usu.sdl.openstorefront.security.UserContext;
@@ -267,12 +268,22 @@ public interface UserService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteUserSearch(String userSearchId);
 	
-//  This will be fleshed out more later
-//	/**
-//	 * Get the most recently viewed components list for a user
-//	 *
-//	 * @param userId
-//	 * @return
-//	 */
-//	public List<Component> getRecentlyViewed(String userId);
+	/**
+	 * Get a dashboard for a user.  
+	 * If the user doesn't have a dashboard it creates one.
+	 * @param username
+	 * @return 
+	 */
+	public Dashboard getDashboard(String username);
+	
+	/**
+	 *  Saves a dashboard and all it of widgets.
+	 *  Note: this clear the old widgets replaces with the new widgets.
+	 * 
+	 * @param dashboard
+	 * @return 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public Dashboard saveDashboard(Dashboard dashboard);
+
 }
