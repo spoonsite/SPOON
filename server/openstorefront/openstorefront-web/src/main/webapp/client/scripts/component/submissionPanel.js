@@ -515,7 +515,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 					valueField: 'description',
 					editable: true,
 					storeConfig: {
-						url: '../api/v1/resource/organizations/lookup'
+						url: '../api/v1/resource/organizations/lookup',
+						sorters: [{
+							property: 'description',
+							direction: 'ASC'
+						}]
+
 					}
 				}),				
 				{
