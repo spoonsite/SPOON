@@ -46,11 +46,12 @@
 					selModel: 'rowmodel',
 					columns: [
 						{text: 'Name', dataIndex: 'name', width: 225},
-						{text: 'Type', dataIndex: 'alertTypeDescription', width: 225},
+						{text: 'Type', dataIndex: 'alertTypeDescription', width: 225 },
 						{
 							text: 'Email Addresses',
 							dataIndex: 'emailAddresses',
 							width: 300,
+							sortable: false,
 							renderer: function (value) {
 								// Render a <UL> of Emails.
 								var emailList = '<ul>';
@@ -61,7 +62,7 @@
 								return emailList;
 							}
 						},
-						{text: 'Options', dataIndex: 'userDataAlertOption', flex: 1,
+						{text: 'Options', dataIndex: 'userDataAlertOption', flex: 1, sortable: false,
 							renderer: function (value, metaData, record) {
 								var option = record.get('userDataAlertOption');
 								if (option) {
