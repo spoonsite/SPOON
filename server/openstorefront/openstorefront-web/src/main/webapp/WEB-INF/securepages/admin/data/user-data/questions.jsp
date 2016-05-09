@@ -236,14 +236,22 @@
 									xtype: 'combobox',
 									id: 'answer-activeStatus',
 									emptyText: 'Active',
-									value: 'A',
+									value: 'ALL',
+									editable: false,
 									fieldLabel: 'Active Status',
 									name: 'answer-activeStatus',
 									displayField: 'description',
 									valueField: 'code',
 									listeners: {
 										change: function (filter, newValue, oldValue, opts) {
-											answerPanel.getStore().filter('activeStatus', newValue);
+											if (newValue === 'ALL') {
+												answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers.</div>';
+												answerPanel.getStore().clearFilter();
+											}
+											else {
+												answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers with the selected status.</div>';
+												answerPanel.getStore().filter('activeStatus', newValue);
+											}
 											var actButton = Ext.getCmp('answer-activateButton');
 											if (newValue === 'A') {
 												actButton.setText('Deactivate');
@@ -260,6 +268,10 @@
 											'description'
 										],
 										data: [
+											{
+												code: 'ALL',
+												description: 'All'
+											},
 											{
 												code: 'A',
 												description: 'Active'
@@ -307,6 +319,11 @@
 								html += "</p>";
 								return html;
 							}
+						},
+						{
+							text: 'Status',
+							dataIndex: 'activeStatus',
+							flex: 1
 						},
 						{
 							text: 'Created',
@@ -366,8 +383,9 @@
 									xtype: 'combobox',
 									id: 'question-activeStatus',
 									value: 'A',
+									editable: false,
 									emptyText: 'Active questions',
-									fieldLabel: 'Show Components with:',
+									fieldLabel: 'Show Entries with:',
 									labelWidth: '250px',
 									name: 'question-activeStatus',
 									displayField: 'description',
@@ -469,7 +487,14 @@
 					answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers with the selected status.</div>';
 					answerStore.load();
 					var filterSelection = Ext.getCmp('answer-activeStatus').getValue();
-					answerStore.filter('activeStatus', filterSelection);
+
+					if (filterSelection === 'ALL') {
+						answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers.</div>';
+					}
+					else {
+						answerStore.filter('activeStatus', filterSelection);
+					}
+
 					Ext.getCmp('question-activateButton').enable();
 					Ext.getCmp('answer-activateButton').disable();
 				};

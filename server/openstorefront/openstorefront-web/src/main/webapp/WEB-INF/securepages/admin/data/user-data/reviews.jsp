@@ -48,6 +48,7 @@
 							{
 								text: 'Pros', 
 								dataIndex: 'pros', 
+								sortable: false,
 								width: 200,
 								renderer: function (value) {
 									var pros = '<ul>';
@@ -61,6 +62,7 @@
 							{
 								text: 'Cons',
 								dataIndex: 'cons',
+								sortable: false,
 								width: 200,
 								renderer: function (value) {
 									var cons = '<ul>';
