@@ -1229,6 +1229,13 @@ public class CoreComponentServiceImpl
 			List<Component> pendingChangesList = pendingChangesMap.get(componentAdminView.getComponent().getComponentId());
 			if (pendingChangesList != null) {
 				componentAdminView.getComponent().setNumberOfPendingChanges(pendingChangesList.size());
+				if (pendingChangesList.size() > 0) {
+					Component changeComponent = pendingChangesList.get(0);
+					componentAdminView.getComponent().setPendingChangeComponentId(changeComponent.getComponentId());	
+					componentAdminView.getComponent().setPendingChangeSubmitDts(changeComponent.getSubmittedDts());
+					componentAdminView.getComponent().setPendingChangeSubmitUser(changeComponent.getCreateUser());
+					componentAdminView.getComponent().setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, changeComponent.getApprovalState()));				
+				}				
 			}
 		}
 
@@ -1399,7 +1406,7 @@ public class CoreComponentServiceImpl
 			alertContext.setAlertType(alertType);
 			alertContext.setDataTrigger(existingComponent);
 			componentService.getAlertService().checkAlert(alertContext);
-
+			
 		}
 	}
 

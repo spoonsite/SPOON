@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -39,6 +40,8 @@ public class ComponentView
 	private Integer numberOfPendingChanges;
 	private String statusOfPendingChange;
 	private String pendingChangeComponentId;
+	private Date pendingChangeSubmitDts;
+	private String pendingChangeSubmitUser;	
 	private String ownerEmail;
 
 	public ComponentView()
@@ -148,6 +151,26 @@ public class ComponentView
 	public void setPendingChangeComponentId(String pendingChangeComponentId)
 	{
 		this.pendingChangeComponentId = pendingChangeComponentId;
+	}
+
+	public Date getPendingChangeSubmitDts()
+	{
+		return pendingChangeSubmitDts;
+	}
+
+	public void setPendingChangeSubmitDts(Date pendingChangeSubmitDts)
+	{
+		this.pendingChangeSubmitDts = pendingChangeSubmitDts;
+	}
+
+	public String getPendingChangeSubmitUser()
+	{
+		return pendingChangeSubmitUser;
+	}
+
+	public void setPendingChangeSubmitUser(String pendingChangeSubmitUser)
+	{
+		this.pendingChangeSubmitUser = pendingChangeSubmitUser;
 	}
 
 }
