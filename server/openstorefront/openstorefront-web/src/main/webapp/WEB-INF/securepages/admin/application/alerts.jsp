@@ -50,6 +50,7 @@
 						{
 							text: 'Email Addresses',
 							dataIndex: 'emailAddresses',
+							sortable: false,
 							width: 300,
 							renderer: function (value) {
 								// Render a <UL> of Emails.
@@ -61,7 +62,11 @@
 								return emailList;
 							}
 						},
-						{text: 'Options', dataIndex: 'userDataAlertOption', flex: 1,
+						{
+							text: 'Options',
+							dataIndex: 'userDataAlertOption',
+							sortable: false,
+							flex: 1,
 							renderer: function (value, metaData, record) {
 								var option = record.get('userDataAlertOption');
 								if (option) {
