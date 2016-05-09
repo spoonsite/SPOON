@@ -45,7 +45,8 @@
 			Ext.require('OSF.widget.SystemStats');
 			Ext.require('OSF.widget.UserStats');
 			Ext.require('OSF.widget.EntryStats');
-			
+			Ext.require('OSF.widget.ApprovalRequests');
+						
 			Ext.onReady(function () {
 				var adminUser = ${admin};
 				
@@ -95,6 +96,19 @@
 						iconCls: 'fa fa-database',
 						jsClass: 'OSF.widget.EntryStats',						
 						height: 575,
+						adminOnly: true,
+						allowMultiples: false,
+						refresh: function(widget) {
+							widget.refresh();
+						}						
+					},
+					{
+						name: 'Pending Approval Requests',
+						code: 'APPROVEREQ',
+						description: 'Shows entry changes and submission that are waiting for approval',
+						iconCls: 'fa fa-list',
+						jsClass: 'OSF.widget.ApprovalRequests',						
+						height: 400,
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -338,7 +352,14 @@
 								//set other settings
 								
 								
-								addWidgetToDashboard(config);
+								if (config.adminOnly) {
+									//if the user is no longer admin don't add widget
+									if (adminUser) {
+										addWidgetToDashboard(config);
+									} 
+								} else {
+									addWidgetToDashboard(config);
+								}
 							});							
 						}
 					});

@@ -46,7 +46,7 @@
 					selModel: 'rowmodel',
 					columns: [
 						{text: 'Name', dataIndex: 'name', width: 225},
-						{text: 'Type', dataIndex: 'alertTypeDescription', width: 225},
+						{text: 'Type', dataIndex: 'alertTypeDescription', width: 225 },
 						{
 							text: 'Email Addresses',
 							dataIndex: 'emailAddresses',

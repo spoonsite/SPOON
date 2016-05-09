@@ -28,6 +28,12 @@ Ext.define('OSF.component.NotificationPanel', {
 
 		var dataStore = Ext.create('Ext.data.Store', {
 			autoLoad: true,
+			sorters: [
+				new Ext.util.Sorter({
+					property: 'createDts',
+					direction: 'DESC'
+				})
+			],			
 			fields: [
 				'eventId',
 				'eventType',

@@ -43,7 +43,7 @@ public class NotificationEvent
 	private String eventType;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@ConsumeField
 	private String message;
 

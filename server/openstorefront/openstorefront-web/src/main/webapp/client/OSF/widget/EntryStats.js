@@ -36,7 +36,7 @@ Ext.define('OSF.widget.EntryStats', {
 			'<li class="stat-list-group-item">Pending: <span class="stat-badge">{numberOfPendingEntries}</span></li>',
 			'<li class="stat-list-group-item">Not Submitted: <span class="stat-badge">{numberOfNotSubmited}</span></li>',
 			'<li class="stat-list-group-item">Categories (Attributes): <span class="stat-badge">{numberOfAttributesTypes}</span></li>',
-			'<li class="stat-list-group-item">Specific Categories (Attributes): <span class="badge">{numberOfAttributesCodes}</span></li>',
+			'<li class="stat-list-group-item">Specific Categories (Attributes): <span class="stat-badge">{numberOfAttributesCodes}</span></li>',
 			'</ul><div>'
 		);
 		var tplComponentStatsRecentViews = new Ext.XTemplate(
