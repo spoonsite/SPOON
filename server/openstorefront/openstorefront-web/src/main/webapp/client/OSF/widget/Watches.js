@@ -14,4 +14,19 @@
  * limitations under the License.
  */
 
+/* global Ext */
 
+Ext.define('OSF.widget.ApprovalRequests', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.widget.ApprovalRequests',
+
+	layout: 'fit',
+	
+	initComponent: function () {
+		this.callParent();
+		
+	}
+	
+	
+	
+});

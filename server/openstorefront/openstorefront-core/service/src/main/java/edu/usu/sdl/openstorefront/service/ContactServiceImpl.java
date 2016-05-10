@@ -139,9 +139,9 @@ public class ContactServiceImpl
 				for (ComponentContact refContact : referencedContacts) 
 				{
 					if (Contact.ACTIVE_STATUS.equals(activeStatus)) {
-						getComponentService().activateBaseComponent(ComponentContact.class, refContact.getContactId());
+						getComponentService().activateBaseComponent(ComponentContact.class, refContact.getComponentContactId());
 					} else {
-						getComponentService().deactivateBaseComponent(ComponentContact.class, refContact.getContactId());
+						getComponentService().deactivateBaseComponent(ComponentContact.class, refContact.getComponentContactId());
 					}
 				}
 			}
@@ -162,20 +162,24 @@ public class ContactServiceImpl
 		Contact merge = persistenceService.findById(Contact.class, mergeContactId);
 		if (target != null) {
 			if (merge != null) {
-				
-				ComponentContact componentContact = new ComponentContact();
-				componentContact.setContactId(mergeContactId);
-				List<ComponentContact> componentContacts = componentContact.findByExampleProxy();
-				for (ComponentContact contact : componentContacts) {
-					contact.setContactId(targetContactId);
-					contact.populateBaseUpdateFields();
-					persistenceService.persist(contact);
+				if (target.getContactId().equals(merge.getContactId()) == false) {
+
+					ComponentContact componentContact = new ComponentContact();
+					componentContact.setContactId(mergeContactId);
+					List<ComponentContact> componentContacts = componentContact.findByExampleProxy();
+					for (ComponentContact contact : componentContacts) {
+						contact.setContactId(targetContactId);
+						contact.populateBaseUpdateFields();
+						persistenceService.persist(contact);
+					}
+
+					persistenceService.delete(merge);
+
+					OSFCacheManager.getContactCache().remove(targetContactId);
+					OSFCacheManager.getContactCache().remove(mergeContactId);
+				} else {
+					throw new OpenStorefrontRuntimeException("Target and Merge Contact are the same. Unable to merge contact to itself.", "Check data. Merge Id: " + mergeContactId);
 				}
-				
-				persistenceService.delete(merge);
-				
-				OSFCacheManager.getContactCache().remove(targetContactId);				
-				OSFCacheManager.getContactCache().remove(mergeContactId);				
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to find merge Contact", "Check data. Id: " + mergeContactId);
 			}

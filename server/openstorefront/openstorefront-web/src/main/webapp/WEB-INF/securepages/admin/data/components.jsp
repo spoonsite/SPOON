@@ -1150,11 +1150,10 @@
 						proxy: {
 							type: 'ajax'							
 						}
-					}),
-					forceFit: true,
+					}),					
 					columns: [
 						{ text: 'Media Type', dataIndex: 'contentType',  width: 200 },
-						{ text: 'Caption',  dataIndex: 'caption', width: 200 },
+						{ text: 'Caption',  dataIndex: 'caption', flex: 1, minWidth: 200 },
 						{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 						{ text: 'Local Media Name',  dataIndex: 'originalFileName', width: 200 },
 						{ text: 'Link',  dataIndex: 'originalLink', width: 200 },						
@@ -1757,13 +1756,12 @@
 						proxy: {
 							type: 'ajax'							
 						}
-					}),
-					forceFit: true,
+					}),					
 					columns: [
 						{ text: 'Contact Type', dataIndex: 'positionDescription',  width: 200 },
 						{ text: 'First Name',  dataIndex: 'firstName', width: 200 },
 						{ text: 'Last Name',  dataIndex: 'lastName', width: 200 },
-						{ text: 'Email',  dataIndex: 'email', width: 200 },
+						{ text: 'Email',  dataIndex: 'email', flex: 1, minWidth: 200 },
 						{ text: 'Phone',  dataIndex: 'phone', width: 150 },
 						{ text: 'Organization',  dataIndex: 'organization', width: 200 },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
@@ -2042,13 +2040,12 @@
 						proxy: {
 							type: 'ajax'							
 						}
-					}),
-					forceFit: true,
+					}),					
 					columns: [
 						{ text: 'Relationship Owner', dataIndex: 'ownerComponentName',  width: 200 },
 						{ text: 'Owner Approved', dataIndex: 'ownerApproved',  width: 150 },
 						{ text: 'Type',  dataIndex: 'relationshipTypeDescription', width: 200 },
-						{ text: 'Target',  dataIndex: 'targetComponentName', width: 200 },						
+						{ text: 'Target',  dataIndex: 'targetComponentName', flex: 1, minWidth: 200 },						
 						{ text: 'Target Approved',  dataIndex: 'targetApproved', width: 150 },		
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
 					],
@@ -2223,11 +2220,10 @@
 						proxy: {
 							type: 'ajax'							
 						}
-					}),
-					forceFit: true,
+					}),				
 					columns: [
 						{ text: 'Attribute Type', dataIndex: 'typeDescription',  width: 200 },
-						{ text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, width: 200 },
+						{ text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, minWidth: 200 },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 175, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
 					],
 					listeners: {
