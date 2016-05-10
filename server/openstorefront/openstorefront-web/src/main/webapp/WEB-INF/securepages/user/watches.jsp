@@ -30,9 +30,8 @@ limitations under the License.
 
 			Ext.onReady(function() {
 				
-				var watchPanel = Ext.create('OSF.component.UserProfilePanel', {
-					title: 'Manage Watches <i class="fa fa-question-circle"  data-qtip="Watches are your way of recieving notification of changes to components in this site."></i>',
-					user: '${user}'
+				var watchPanel = Ext.create('OSF.component.UserWatchPanel', {
+					title: 'Manage Watches <i class="fa fa-question-circle"  data-qtip="Watches are your way of recieving notification of changes to components in this site."></i>'					
 				});
 				
 				Ext.create('Ext.container.Viewport', {

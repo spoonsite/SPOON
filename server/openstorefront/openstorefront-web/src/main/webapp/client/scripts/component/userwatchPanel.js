@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-/* global Ext */
+/* global Ext, CoreService */
 
-Ext.define('OSF.component.UserProfilePanel', {
+Ext.define('OSF.component.UserWatchPanel', {
 	extend: 'Ext.grid.Panel',
-	alias: 'osf.widget.UserProfilePanel',
+	alias: 'osf.widget.UserWatchPanel',
 	
 	columnLines: true,	
 	store: {
@@ -87,7 +87,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 				}
 			}
 		},
-		{ text: 'Create Date', align: 'center', dataIndex: 'createDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+		{ text: 'Create Date', align: 'center', dataIndex: 'createDts', width: 200, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 	],	
 	dockedItems: [
 		{
@@ -222,9 +222,14 @@ Ext.define('OSF.component.UserProfilePanel', {
 	initComponent: function () {
 		this.callParent();
 
-		var watchPanel = this;		
-		watchPanel.getStore().load({
-			url: '../api/v1/resource/userprofiles/'+ watchPanel.user +'/watches/'
+		var watchPanel = this;	
+		
+		CoreService.usersevice.getCurrentUser().then(function(response) {
+			var userProfile = Ext.decode(response.responseText);			
+			watchPanel.user = userProfile.username;
+			watchPanel.getStore().load({
+				url: '../api/v1/resource/userprofiles/'+ watchPanel.user +'/watches/'
+			});
 		});
 	},
 	

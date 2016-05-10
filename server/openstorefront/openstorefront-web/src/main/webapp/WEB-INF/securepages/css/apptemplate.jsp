@@ -542,6 +542,13 @@ td.info-table {
 
 .widget-picklist-item {
 	border-bottom: 1px solid lightgrey;
+	padding-bottom: 10px;
+}
+
+.widget-picklist-item-title {
+	font-size: 24px;
+	padding: 10px 10px 10px 10px;	
+	background-color: #E0E7EF;
 }
 
 .widget-picklist-item-title:hover {

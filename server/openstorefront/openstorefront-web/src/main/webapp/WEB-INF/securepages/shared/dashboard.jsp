@@ -23,6 +23,8 @@
 <stripes:layout-render name="../../../client/layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 
+	<script src="scripts/component/userwatchPanel.js?v=${appVersion}" type="text/javascript"></script>	
+		
         <script type="text/javascript">
 			/* global Ext, CoreUtil */
 			
@@ -38,7 +40,13 @@
 					} else {
 						widget.selected = true;
 					}
+					var pickWin = Ext.getCmp('addwidget-picklist').up('window');
+					var scrollY = pickWin.getScrollY();
+					var scrollX = pickWin.getScrollX();
+					
 					Ext.getCmp('addwidget-picklist').update(dashboardPage.widgets);
+					
+					pickWin.scrollTo(scrollX,scrollY);
 				}
 			};
 			
@@ -46,7 +54,10 @@
 			Ext.require('OSF.widget.UserStats');
 			Ext.require('OSF.widget.EntryStats');
 			Ext.require('OSF.widget.ApprovalRequests');
-						
+			Ext.require('OSF.widget.Submissions');
+			Ext.require('OSF.widget.SavedSearch');
+			
+									
 			Ext.onReady(function () {
 				var adminUser = ${admin};
 				
@@ -114,8 +125,55 @@
 						refresh: function(widget) {
 							widget.refresh();
 						}						
+					},
+					{
+						name: 'Watches',
+						code: 'WATCHES',
+						description: 'Shows all watches on entries',
+						iconCls: 'fa fa-binoculars',
+						jsClass: 'OSF.component.UserWatchPanel',						
+						height: 400,
+						adminOnly: false,
+						allowMultiples: false,
+						refresh: function(widget) {
+							widget.actionRefresh();
+						}
+					},
+					{
+						name: 'Submission Status',
+						code: 'SUBMISSIONSTATS',
+						description: 'Shows the status of your submissions',
+						iconCls: 'fa fa-list',
+						jsClass: 'OSF.widget.Submissions',						
+						height: 400,
+						adminOnly: false,
+						allowMultiples: false,
+						refresh: function(widget) {
+							widget.refresh();
+						}						
+					},
+					{
+						name: 'Saved Search',
+						code: 'SAVEDSEARCH',
+						description: 'Shows the results of a saved search',
+						iconCls: 'fa fa-search',
+						jsClass: 'OSF.widget.SavedSearch',						
+						height: 400,
+						adminOnly: false,
+						allowMultiples: true,
+						refresh: function(widget) {
+							widget.refresh();
+						},
+						save: function(widget) {
+							return widget.saveConfig();
+						},
+						restore: function(widget, config) {							
+							widget.restoreConfig(config);
+						},						
+						configChange: function() {
+							saveDashboard();
+						}
 					}					
-					
 				];
 				
 				var getAvailableWidgets = function() {
@@ -145,6 +203,9 @@
 						
 						return keep;
 					});
+					Ext.Array.sort(myAvailableWidgets, function(a, b) {
+						return a.name.localeCompare(b.name);
+					});
 					
 					return myAvailableWidgets;
 				};
@@ -157,7 +218,8 @@
 					height: '50%',
 					y: 100,
 					maximizable: true,
-					scrollable: true,					
+					scrollable: true,						
+					bodyStyle: 'padding: 10px 20px 10px 10px;',
 					items: [
 						{
 							xtype: 'panel',
@@ -167,11 +229,11 @@
 							tpl: new Ext.XTemplate(
 								'<tpl for=".">',
 								'  <div class="widget-picklist-item" onclick="dashboardPage.selectWidget(\'{code}\')">',								
-								'	<span style="float: left; width: 100px; padding-right: 20px;  margin-top: -12px">',
+								'	<span style="float: left; width: 100px; padding-right: 20px;">',
 								'		<tpl if="selected"><i class="fa fa-5x fa-check highlight-success "></i>',
 								'		</tpl><tpl if="!selected"><i class="fa-5x {iconCls}"></i></tpl>',
 								'	</span>',
-								'	<h2 class="widget-picklist-item-title" style="margin-top: 10px; background-color: beige;">{name}</h2> {description}',								
+								'	<div class="widget-picklist-item-title">{name}</div> {description}',								
 								'  </div>',
 								'</tpl>'
 							)
@@ -346,19 +408,25 @@
 										return true;
 									}
 								});
+								config = Ext.clone(config);								
 								config.name = widget.widgetName;
 								config.widgetColor = widget.widgetColor;
 								
-								//set other settings
-								
-								
+								var widgetPanel;
 								if (config.adminOnly) {
 									//if the user is no longer admin don't add widget
 									if (adminUser) {
-										addWidgetToDashboard(config);
+										widgetPanel = addWidgetToDashboard(config);										
 									} 
 								} else {
-									addWidgetToDashboard(config);
+									widgetPanel = addWidgetToDashboard(config);				
+								}
+								
+								//set other settings
+								if (widgetPanel) {
+									if (widget.widgetState) {
+										config.restore(widgetPanel.getComponent('actualWidget'), Ext.decode(widget.widgetState));
+									}
 								}
 							});							
 						}
@@ -541,7 +609,8 @@
 						],
 						items: [
 							Ext.create(widget.jsClass, {
-								itemId: 'actualWidget'
+								itemId: 'actualWidget',
+								configChange: widget.configChange
 							})
 						],
 						updateMoveTools: function(panel) {
@@ -600,16 +669,18 @@
 							}
 						}
 					});
+					widgetsOnDashBoard.push(widgetPanel);				
+					updateDashboard();
+					
 					if (widget.widgetColor) {
+						widgetPanel.headerColor = widget.widgetColor;
 						widgetPanel.headerStyle = {
 							'background': widget.widgetColor																
 						};	
 						widgetPanel.getHeader().setStyle(widgetPanel.headerStyle);					
-					}
+					}					
 					
-					widgetsOnDashBoard.push(widgetPanel);
-				
-					updateDashboard();
+					return widgetPanel;
 				};
 				
 				var saveTask;
@@ -625,10 +696,16 @@
 								dashboard.widgets = [];
 								
 								Ext.Array.each(widgetsOnDashBoard, function(widgetPanel){									
+									var widgetState = null;
+									if (widgetPanel.widgetConfig.save) {
+										widgetState = Ext.encode(widgetPanel.widgetConfig.save(widgetPanel.getComponent('actualWidget')));
+									}	
+								
 									dashboard.widgets.push({
 										systemWidgetCode: widgetPanel.widgetConfig.code,
 										widgetName: widgetPanel.getTitle(),
-										widgetColor: widgetPanel.getWidgetColor										
+										widgetColor: widgetPanel.headerColor,
+										widgetState: widgetState
 									});									
 								});
 								
