@@ -404,7 +404,6 @@
 							}
 						},
 						{text: 'Message', dataIndex: 'message', width: 200, flex: 1},
-						{text: 'Status', dataIndex: 'activeStatus', width: 75},
 						{text: 'Event Type', dataIndex: 'eventTypeDescription', width: 150},
 						{text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
 					],
