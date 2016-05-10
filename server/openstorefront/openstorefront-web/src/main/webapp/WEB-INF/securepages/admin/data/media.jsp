@@ -192,6 +192,14 @@
 							viewMediaWin.setTitle('Image Preview');
 					        viewMediaWin.update('<img src="../'+ selectedObj.mediaLink+'" width="100%"/>');
 						}
+						else {
+							Ext.Msg.show({
+								title: 'No Preview Available',
+								msg: 'No preview is available for this file format.',
+								buttons: Ext.Msg.OK
+							});
+							return;
+						}
 						
 						viewMediaWin.updateLayout();
 						viewMediaWin.show();
