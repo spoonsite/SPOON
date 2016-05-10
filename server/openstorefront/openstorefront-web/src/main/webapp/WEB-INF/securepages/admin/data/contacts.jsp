@@ -220,8 +220,9 @@ limitations under the License.
 								},
 								{
 									xtype: 'textfield',
-									fieldLabel: 'Email',																																	
+									fieldLabel: 'Email <span class="field-required" />',																																	
 									maxLength: '255',
+									allowBlank: false,
 									regex: new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*", "i"),
 									regexText: 'Must be a valid email address. Eg. xxx@xxx.xxx',
 									name: 'email'
@@ -292,9 +293,9 @@ limitations under the License.
 						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },
 						{ text: 'Contact Id', dataIndex: 'contactId', width: 200, hidden: true },
 						{ text: 'Create User', dataIndex: 'createUser', width: 200, hidden: true },
-						{ text: 'Create Date', dataIndex: 'createDts', width: 200, hidden: true },
+						{ text: 'Create Date', dataIndex: 'createDts', width: 200, hidden: true, xtype: 'datecolumn', format: 'm/d/y H:i:s'  },
 						{ text: 'Update User', dataIndex: 'updateUser', width: 200, hidden: true },
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 200, hidden: true }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 200, hidden: true, xtype: 'datecolumn', format: 'm/d/y H:i:s'  }
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
@@ -464,6 +465,7 @@ limitations under the License.
 				
 				var actionView = function(record) {
 					viewReferenceWindow.show();
+					viewReferenceWindow.setTitle('References - ' + record.get('firstName') + ', ' + record.get('lastName'));
 					viewReferenceWindow.getComponent('referenceGrid').getStore().load({
 						url: '../api/v1/resource/contacts/' + record.get('contactId') + '/references'
 					});
@@ -520,7 +522,7 @@ limitations under the License.
 										queryMode: 'remote',										
 										listConfig: {
 											itemTpl: [
-												 '{firstName} <span style="color: grey">({email})</span>'
+												 '{firstName} {lastName}<span style="color: grey">({email})</span>'
 											]
 										},
 										store: {
@@ -535,6 +537,17 @@ limitations under the License.
 											proxy: {
 												type: 'ajax',
 												url: '../api/v1/resource/contacts/filtered'
+											},
+											listeners: {
+												load: function(store, records, opts) {
+													store.filterBy(function(item) {
+														if  (item.get('contactId') === record.get('contactId')) {
+															return false;
+														} else {
+															return true;
+														}
+													});
+												}
 											}
 										}
 									}
@@ -611,11 +624,8 @@ limitations under the License.
 							if (proceed) {
 								contactGrid.setLoading('Updating Status...');
 								Ext.Ajax.request({
-									url: '../api/v1/resource/contacts/' + record.get('contactId') + '/' + urlEnding,
-									method: 'PUT',
-									params: {
-										includeReferences : includeReferences
-									},									
+									url: '../api/v1/resource/contacts/' + record.get('contactId') + '/' + urlEnding +  '?includeReferences=' + includeReferences,
+									method: 'PUT',																		
 									callback: function(){
 										contactGrid.setLoading(false);
 									},
