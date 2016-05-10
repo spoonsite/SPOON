@@ -189,7 +189,19 @@ limitations under the License.
 								name: 'submittedDts',
 								type:	'date',
 								dateFormat: 'c'
-							}
+							},
+							{
+								name: 'submitApproveDts',
+								type:	'date',
+								dateFormat: 'c',
+								mapping: function(data) {
+									if (data.approvalState === 'A') {
+										return data.approvedDts;
+									} else {
+										return data.submittedDts;
+									}
+								}
+							}							
 						],
 						proxy: {
 							type: 'ajax',
@@ -217,7 +229,7 @@ limitations under the License.
 								return text;
 							}
 						},
-						{ text: 'Submission Date', dataIndex: 'submittedDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Submit/Approve Date', align: 'center', dataIndex: 'submitApproveDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Approval Email', dataIndex: 'notifyOfApprovalEmail', width: 200 },
 						{ text: 'Pending Change', align: 'center', dataIndex: 'statusOfPendingChange', width: 150 }	
 					],
