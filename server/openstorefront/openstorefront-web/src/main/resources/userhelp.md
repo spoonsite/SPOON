@@ -88,15 +88,15 @@ terms in the search index. For example, this could be used to find all
 variations of prefixed or suffixed words and multiple spellings of a
 word.
 
-Fuzzy matching is done with the \* and the ? characters acting as
-wildcards. It is also known as wildcard searching. The \* character
+Fuzzy matching is done with the * and the ? characters acting as
+wildcards. It is also known as wildcard searching. The * character
 represents a string of letters; whereas the ? acts as a placeholder for
 only a single character. The process works as shown in the queries
 below:
 
-Query: ```offi\*``` Matches office, officer, official, and so on
+Query: ```offi*``` Matches office, officer, official, and so on
 
-Query: ```off\*r``` Matches offer, officer, officiator, and so on
+Query: ```off*r``` Matches offer, officer, officiator, and so on
 
 Query: ```off?r``` Matches offer, but not officer
 
