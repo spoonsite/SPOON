@@ -129,7 +129,7 @@ limitations under the License.
 			deleteReview: function(reviewId, componentId) {
 				Ext.Msg.show({
 					title:'Remove Review?',
-					message: 'Are you sure you want to review this review?',
+					message: 'Are you sure you want to remove this review?',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
@@ -1028,14 +1028,26 @@ limitations under the License.
 				Ext.Array.sort(summaryData.cons, function(a, b){
 					return a.text.localeCompare(b.text);	
 				});				
-				var averageRating = Math.round((summaryData.totalRatings / summaryData.totalReviews)* 10) / 10;
+				var averageRating = summaryData.totalRatings / summaryData.totalReviews;
 				summaryData.averageRating = averageRating;
-				for (var i=0; i<5; i++){					
-					summaryData.averageRatingStars.push({						
-						star: i <= averageRating ? (averageRating - i) > 0 && (averageRating - i) < 1 ? 'star-half-o' : 'star' : 'star-o'
-					});
+
+				var fullStars = Math.floor(averageRating);
+				for (var i=1; i<=fullStars; i++) {
+					summaryData.averageRatingStars.push({star: 'star'})
 				}
-				
+
+				// If the amount over the integer is at least 0.5 they get a half star, otherwise no half star.
+				var halfStar = Math.abs(fullStars - averageRating) >= 0.5;
+				if (halfStar) {
+					summaryData.averageRatingStars.push({star: 'star-half-o'});
+				}
+
+				// Add empty stars until there are 5 stars total.
+				while (summaryData.averageRatingStars.length < 5) {
+					summaryData.averageRatingStars.push({star: 'star-o'})
+				}
+
+								
 				if (entryLocal.reviews.length > 0) {
 					reviewPanelSummary.setHidden(false);
 					reviewPanelSummary.update(summaryData);
