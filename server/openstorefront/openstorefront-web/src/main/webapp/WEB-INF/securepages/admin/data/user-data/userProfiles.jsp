@@ -108,7 +108,8 @@
 							{
 								flex: 5,
 								text: 'GUID', 
-								dataIndex: 'guid'
+								dataIndex: 'guid',
+								sortable: false
 							}
 						]
 					},
