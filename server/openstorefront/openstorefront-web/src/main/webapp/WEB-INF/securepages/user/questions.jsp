@@ -61,7 +61,7 @@ limitations under the License.
 						{ text: 'Entry', dataIndex: 'componentName', width: 275	},
 						{ text: 'Answer', dataIndex: 'response', flex: 1, minWidth: 200 },
 						{ text: 'Post Date', dataIndex: 'answeredDate', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-						{ text: 'Update Date', dataIndex: 'questionUpdateDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 					],
 					dockedItems: [
 						{
@@ -346,6 +346,7 @@ limitations under the License.
 				
 				
 				var mainPanel = Ext.create("Ext.tab.Panel", {
+					title: 'Questions/Answers <i class="fa fa-question-circle"  data-qtip="Inspect and manage your questions and answers."></i>',
 					items: [
 						questionGrid,
 						responseGrid

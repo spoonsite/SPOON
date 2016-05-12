@@ -99,8 +99,7 @@
 									return value;
 								}
 							}
-						},
-						
+						}
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){

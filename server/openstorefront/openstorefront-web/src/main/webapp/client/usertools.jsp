@@ -38,7 +38,7 @@ limitations under the License.
 			
 			var pageMap = [];
 			pageMap['Dashboard'] = 'Router.action?page=shared/dashboard.jsp';
-			pageMap['UserProfile'] = 'Router.action?page=user/userProfile.jsp';
+			pageMap['User-Profile'] = 'Router.action?page=user/userProfile.jsp';
 			pageMap['Watches'] = 'Router.action?page=user/watches.jsp';
 			pageMap['Reviews'] = 'Router.action?page=user/reviews.jsp';
 			pageMap['Questions'] = 'Router.action?page=user/questions.jsp';
@@ -124,6 +124,7 @@ limitations under the License.
 								},
 								{
 									xtype: 'tbtext',
+									id: 'titleTextId',
 									text: 'User Tools',									
 									cls: 'page-title'
 								},
@@ -226,7 +227,7 @@ limitations under the License.
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-user',
 									handler: function(){
-										actionLoadContent('UserProfile');
+										actionLoadContent('User-Profile');
 									}									
 								},
 								{
@@ -289,7 +290,8 @@ limitations under the License.
 			
 			var actionLoadContent = function(key) {
 				var url = pageMap[key];
-				if (url){					
+				if (url){
+					Ext.getCmp('titleTextId').setText('User Tools - ' + key.replace('-', ' '));
 					contents.load(url);				
 					Ext.util.History.add(key);				
 				} else {
