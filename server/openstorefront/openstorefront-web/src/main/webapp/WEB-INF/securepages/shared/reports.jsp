@@ -1086,7 +1086,7 @@
 									handler: function () {
 										historyExport();
 									},
-									tooltip: 'Export data and download to .csv format'
+									tooltip: 'Export report'
 								},
 								{
 									xtype: 'tbseparator'

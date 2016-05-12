@@ -41,9 +41,8 @@ limitations under the License.
 			pageMap['Attributes'] = 'Router.action?page=admin/data/attributes.jsp';
 			pageMap['Dashboard'] = 'Router.action?page=shared/dashboard.jsp';
 			pageMap['Contacts'] = 'Router.action?page=admin/data/contacts.jsp';
-			pageMap['Entries'] = 'Router.action?page=admin/data/components.jsp';
-			pageMap['EntriesOld'] = '/openstorefront/admin?tool=Entries';
-			pageMap['EntryType'] = 'Router.action?page=admin/data/entryType.jsp';
+			pageMap['Entries'] = 'Router.action?page=admin/data/components.jsp';			
+			pageMap['Entry-Types'] = 'Router.action?page=admin/data/entryType.jsp';
 			pageMap['Highlights'] = 'Router.action?page=admin/data/highlights.jsp';
 			pageMap['Integrations'] = 'Router.action?page=admin/data/integrations.jsp';
 			pageMap['Imports'] = 'Router.action?page=admin/data/imports.jsp';
@@ -54,7 +53,7 @@ limitations under the License.
 			pageMap['Reviews'] = 'Router.action?page=admin/data/user-data/reviews.jsp';
 			pageMap['Watches'] = 'Router.action?page=admin/data/user-data/watches.jsp';
 			pageMap['Tags'] = 'Router.action?page=admin/data/user-data/tags.jsp';
-			pageMap['UserProfiles'] = 'Router.action?page=admin/data/user-data/userProfiles.jsp';		
+			pageMap['User-Profiles'] = 'Router.action?page=admin/data/user-data/userProfiles.jsp';		
 			pageMap['Alerts'] = 'Router.action?page=admin/application/alerts.jsp';
 			pageMap['Branding'] = 'Router.action?page=admin/application/branding.jsp';
 			pageMap['Jobs'] = 'Router.action?page=admin/application/jobs.jsp';
@@ -62,7 +61,7 @@ limitations under the License.
 			pageMap['System'] = 'Router.action?page=admin/application/system.jsp';
 			pageMap['Tracking'] = 'Router.action?page=admin/application/tracking.jsp';
 			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
-			pageMap['EntryTemplate'] = 'Router.action?page=admin/data/entryTemplate.jsp';
+			pageMap['Entry-Template'] = 'Router.action?page=admin/data/entryTemplate.jsp';
 			pageMap['Searches'] = 'Router.action?page=admin/data/searches.jsp';
 			pageMap['Feedback'] = 'Router.action?page=admin/application/feedback.jsp';
 			
@@ -90,13 +89,13 @@ limitations under the License.
 			dataMenu.push({
 				text: 'Entry Types',
 				handler: function(){
-					actionLoadContent('EntryType');
+					actionLoadContent('Entry-Types');
 				}
 			});
 			dataMenu.push({
 				text: 'Entry Templates',
 				handler: function(){
-					actionLoadContent('EntryTemplate');
+					actionLoadContent('Entry-Template');
 				}
 			});			
 			dataMenu.push({
@@ -172,7 +171,7 @@ limitations under the License.
 						{
 							text: 'User Profiles',
 							handler: function(){
-								actionLoadContent('UserProfiles');
+								actionLoadContent('User-Profiles');
 							}							
 						}
 					]
@@ -281,6 +280,7 @@ limitations under the License.
 								{
 									xtype: 'tbtext',
 									text: 'Admin Tools',
+									id: 'titleTextId',
 									cls: 'page-title'
 								},
 								{
@@ -433,12 +433,13 @@ limitations under the License.
 
 			var actionLoadContent = function(key) {
 				var url = pageMap[key];
-				if (url){					
+				if (url){				
+					Ext.getCmp('titleTextId').setText('Admin Tools - ' + key.replace('-', ' '));
 					contents.load(url);				
 					Ext.util.History.add(key);				
 				} else {
 					Ext.toast("Page key Not Found");
-					contents.load('Router.action?page=admin/adminDashboard.jsp');	
+					contents.load(pageMap['Dashboard']);	
 				}
 			};
 			

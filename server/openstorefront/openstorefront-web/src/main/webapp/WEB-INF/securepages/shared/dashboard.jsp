@@ -56,8 +56,12 @@
 			Ext.require('OSF.widget.ApprovalRequests');
 			Ext.require('OSF.widget.Submissions');
 			Ext.require('OSF.widget.SavedSearch');
+			Ext.require('OSF.widget.Feedback');
+			Ext.require('OSF.widget.Reports');
+			Ext.require('OSF.widget.Questions');
+			Ext.require('OSF.widget.RecentUserData');
 			
-									
+												
 			Ext.onReady(function () {
 				var adminUser = ${admin};
 				
@@ -173,7 +177,59 @@
 						configChange: function() {
 							saveDashboard();
 						}
-					}					
+					},
+					{
+						name: 'Outstanding Feedback',
+						code: 'OFEEDBACK',
+						description: 'Shows outstanding feedback from users.',
+						iconCls: 'fa fa-comment',
+						jsClass: 'OSF.widget.Feedback',						
+						height: 400,
+						adminOnly: true,
+						allowMultiples: false,
+						refresh: function(widget) {
+							widget.actionRefresh();
+						}
+					},
+					{
+						name: 'Reports',
+						code: 'REPORTS',
+						description: 'Shows your generated report history.',
+						iconCls: 'fa fa-file-text-o',
+						jsClass: 'OSF.widget.Reports',						
+						height: 400,
+						adminOnly: false,
+						allowMultiples: false,
+						refresh: function(widget) {
+							widget.actionRefresh();
+						}
+					},
+					{
+						name: 'Questions',
+						code: 'QUESTIONS',
+						description: 'Shows your question and allows for viewing responses.',
+						iconCls: 'fa fa-question',
+						jsClass: 'OSF.widget.Questions',						
+						height: 400,
+						adminOnly: false,
+						allowMultiples: false,
+						refresh: function(widget) {
+							widget.refresh();
+						}
+					},
+					{
+						name: 'Recent User Data',
+						code: 'RECENTUDATA',
+						description: 'Shows recent user data (questions, reviews, tags, contacts) added/updated in the past 30 days.',
+						iconCls: 'fa fa-list-alt',
+						jsClass: 'OSF.widget.RecentUserData',						
+						height: 400,
+						adminOnly: true,
+						allowMultiples: false,
+						refresh: function(widget) {
+							widget.refresh();
+						}						
+					}
 				];
 				
 				var getAvailableWidgets = function() {
@@ -353,6 +409,7 @@
 							
 				
 				var dashPanel = Ext.create('Ext.panel.Panel', {
+					title: 'Dashboard <i class="fa fa-question-circle"  data-qtip="Displays widgets and allows for quick mashup of data."></i>',
 					id: 'dashPanel',
 					columnWidths: [
 						0.5, 0.5
@@ -666,6 +723,7 @@
 									Ext.getCmp('dashPanel').update(addWidgetMessage);
 								}
 								saveDashboard();
+								updateDashboard();
 							}
 						}
 					});
