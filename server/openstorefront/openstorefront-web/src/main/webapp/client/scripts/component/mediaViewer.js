@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
+/* global Ext */
+
 Ext.define('OSF.component.MediaViewerWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.MediaViewerWindow',
 	
 	frame: false,
 	header: false,
-	maximized: true,
+	//maximized: true,
+	width: 500,
+	height: 300,
 	scrollable: true,
 	dockedItems: [
 		{
@@ -164,6 +168,7 @@ Ext.define('OSF.component.MediaViewerWindow', {
 	afterRender: function() {
 		this.callParent();
 		var messageWindow = this;
+		messageWindow.maximize();
 	
 		messageWindow.keyHandler = function(e, t, opts){
 			if (e.keyCode === 39) {
@@ -277,4 +282,4 @@ var MediaViewer ={
 
 	},
 	mediaList: []
-}
+};

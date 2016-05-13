@@ -992,6 +992,13 @@
 							direction: 'DESC'
 						})
 					],
+					fields: [
+						{
+							name: 'eventDts',
+							type:	'date',
+							dateFormat: 'c'
+						}
+					],
 					proxy: CoreUtil.pagingProxy({
 							type: 'ajax',
 							url: '/openstorefront/api/v1/service/application/logrecords',
