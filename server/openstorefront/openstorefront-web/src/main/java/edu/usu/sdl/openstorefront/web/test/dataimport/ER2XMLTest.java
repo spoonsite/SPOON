@@ -40,7 +40,7 @@ public class ER2XMLTest
 	protected void runInternalTest()
 	{
 		ImportContext importContext = new ImportContext();
-		importContext.setInput(FileSystemManager.getApplicatioResourceFile("/data/test/assettest.xml"));
+		importContext.setInput(FileSystemManager.getApplicationResourceFile("/data/test/assettest.xml"));
 
 		FileHistory fileHistory = new FileHistory();
 		fileHistory.setMimeType("application/xml");

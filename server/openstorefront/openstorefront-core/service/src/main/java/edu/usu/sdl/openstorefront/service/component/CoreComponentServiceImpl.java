@@ -511,7 +511,9 @@ public class CoreComponentServiceImpl
 				}
 				component.getComponent().populateBaseCreateFields();
 				component.getComponent().setLastActivityDts(TimeUtil.currentDate());
-				component.getComponent().setRecordVersion(1);
+				if (component.getComponent().getRecordVersion() == null) {
+					component.getComponent().setRecordVersion(1);
+				}
 
 				if (ApprovalStatus.APPROVED.equals(component.getComponent().getApprovalState())) {
 					if (StringUtils.isBlank(component.getComponent().getApprovedUser())) {
@@ -532,7 +534,7 @@ public class CoreComponentServiceImpl
 					attribute.getComponentAttributePk().setComponentId(component.getComponent().getComponentId());
 					attribute.setCreateUser(component.getComponent().getCreateUser());
 					attribute.setUpdateUser(component.getComponent().getUpdateUser());
-					componentService.getSub().saveComponentAttribute(attribute, false);
+					componentService.getSub().saveComponentAttribute(attribute, false, true);
 				});
 				component.setAttributeChanged(true);
 			}
@@ -764,7 +766,7 @@ public class CoreComponentServiceImpl
 				if (baseComponent instanceof ComponentContact) {
 					sub.saveComponentContact((ComponentContact) baseComponent, false);
 				} else if (baseComponent instanceof ComponentAttribute) {
-					sub.saveComponentAttribute((ComponentAttribute) baseComponent, false);
+					sub.saveComponentAttribute((ComponentAttribute) baseComponent, false, true);
 				} else if (baseComponent instanceof ComponentEvaluationSection) {
 					sub.saveComponentEvaluationSection((ComponentEvaluationSection) baseComponent, false);
 				} else if (baseComponent instanceof ComponentExternalDependency) {
@@ -1773,7 +1775,7 @@ public class CoreComponentServiceImpl
 					String componentName = getComponentName(versionHistory.getComponentId());
 					log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
 				}
-
+				
 				//save old version (keep in mind the update date will reflect now.)
 				FileHistoryOption fileHistoryOptions = new FileHistoryOption();
 				fileHistoryOptions.setSkipRequiredAttributes(Boolean.TRUE);
@@ -1782,12 +1784,6 @@ public class CoreComponentServiceImpl
 				fileHistoryOptions.setUploadTags(options.getRestoreTags());
 				fileHistoryOptions.setUploadIntegration(options.getRestoreIntegration());
 
-				//Decrement so it will match on update
-				if (archivedVersion.getComponent().getRecordVersion() == null) {
-					archivedVersion.getComponent().setRecordVersion(0);
-				} else {
-					archivedVersion.getComponent().setRecordVersion(archivedVersion.getComponent().getRecordVersion() - 1);
-				}
 				saveFullComponent(archivedVersion, fileHistoryOptions);
 
 				cleanupCache(archivedVersion.getComponent().getComponentId());

@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -223,6 +224,11 @@ public class SubComponentServiceImpl
 
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity)
 	{
+		saveComponentAttribute(attribute, updateLastActivity, false);		
+	}	
+	
+	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity, boolean skipMissingAttribute)
+	{
 		Objects.requireNonNull(attribute, "Requires Component Attrubute");
 		Objects.requireNonNull(attribute.getComponentAttributePk(), "Requires Component Attrubute PK");
 		Objects.requireNonNull(attribute.getComponentAttributePk().getAttributeType(), "Requires Component Attrubute PK Attribute Type");
@@ -267,8 +273,11 @@ public class SubComponentServiceImpl
 			if (code == null) {
 				error.append("Attribute Code not found. Code: ").append(attribute.getComponentAttributePk());
 			}
-
-			throw new OpenStorefrontRuntimeException(error.toString(), "Check data passed in.");
+			if (skipMissingAttribute) {
+				log.log(Level.WARNING, MessageFormat.format("Unable to save attribute. {0}", error.toString()));
+			} else {		
+				throw new OpenStorefrontRuntimeException(error.toString(), "Check data passed in.");
+			}
 		}
 	}
 
