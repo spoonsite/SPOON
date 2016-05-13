@@ -3569,7 +3569,10 @@
 						}},
 						{name: 'securityMarkingType', mapping: function(data){
 							return data.component.securityMarkingType;
-						}},						
+						}},	
+						{name: 'securityMarkingDescription', mapping: function(data){
+							return data.component.securityMarkingDescription;
+						}},					
 						{name: 'lastModificationType', mapping: function(data){
 							return data.component.lastModificationType;
 						}},						
