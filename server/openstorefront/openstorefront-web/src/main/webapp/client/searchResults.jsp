@@ -890,7 +890,7 @@ limitations under the License.
 							    var responseObj = Ext.decode(response.responseText);
 								var searchRequest = Ext.decode(responseObj.searchRequest);
 							
-								Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advanced - Saved Search - "' + responseObj.searchName + '"');
+								Ext.getCmp('searchResultsPanel').setTitle('Search Results - Saved Search - "' + responseObj.searchName + '"');
 								// Adjust searchRequest to match doSearch() and API expectations
 								searchRequest.query = {
 									searchElements: searchRequest.searchElements
@@ -920,12 +920,7 @@ limitations under the License.
 								}]
 							};
 						} else {						
-							Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advanced <i id="advanceSearchInfoId" class="fa fa-question-circle"></i>');					
-							             Ext.tip.QuickTipManager.register({
-										 target: 'advanceSearchInfoId', 
-										 title : 'Search Criteria',  
-										 text  : CoreUtil.descriptionOfAdvancedSearch(searchRequest.query.searchElements) 
-								      });
+							Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advanced');
 						}
 					}
 					else {
@@ -1030,11 +1025,27 @@ limitations under the License.
 				id: 'searchResultsPanel',
 				title: 'Search Results',
 				collapsible: true,
+				collapseFirst: false,
 				titleCollapse: true,
 				collapseDirection: 'left',
 				split: true,
 				layout: 'fit',
 				flex: 1,
+				tools: [
+					{
+						type: 'help',
+						callback: function(panel, tool, event) {
+							
+							var tip = Ext.create('Ext.tip.ToolTip', {
+								title: 'Search Criteria',  
+								closable: true,
+								html: CoreUtil.descriptionOfAdvancedSearch(originalSearchRequest.query.searchElements),
+								width: 300								
+							});
+							tip.showAt(tool.getXY());
+						}
+					}
+				],
 				dockedItems: [
 					{
 						xtype: 'panel',
