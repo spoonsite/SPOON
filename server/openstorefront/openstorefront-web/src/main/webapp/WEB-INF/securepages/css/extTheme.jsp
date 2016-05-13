@@ -840,4 +840,24 @@ div.x-border-layout-ct {
 	background-color: rgb(85,85,85)  !important; 
 }
 
+.x-nbr .x-btn-default-small {
+	background-color: rgb(85,85,85)  !important; 
+}
+
+.x-nbr .x-btn-default-toolbar-small {
+	background-color: rgb(245,245,245)  !important; 
+}
+
+.x-nbr .x-btn-default-toolbar-medium {
+	background-color: rgb(245,245,245)  !important; 
+}
+
+.x-nbr .x-btn-default-toolbar-large {
+	background-color: rgb(245,245,245)  !important; 
+}
+
+.x-nbr .x-panel-default-framed {
+	background-color: ${actionBean.branding.primaryColor} !important; 
+}
+
 /* end of IE 9 */

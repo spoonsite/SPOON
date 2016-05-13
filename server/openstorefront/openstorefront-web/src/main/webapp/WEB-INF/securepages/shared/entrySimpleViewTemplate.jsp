@@ -119,11 +119,13 @@ limitations under the License.
 			<h3 class="quickView">Relationships</h3>
 			<table class="quickView-table" border="1">	
 				<tr>
+					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Owner Entry</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Type</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Related Entry</th>
 				</tr>		
 				<tpl for="relationships">
 					<tr>
+						<td class="quickView-tableall">{ownerComponentName}</td>
 						<td class="quickView-tableall">{relationshipType}</td>
 						<td class="quickView-tableall">{targetComponentName}</td>
 					</tr>			

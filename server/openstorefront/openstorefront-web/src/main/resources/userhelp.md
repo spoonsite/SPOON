@@ -1072,7 +1072,7 @@ Allows merging of references from one organization to another.  **NOTE** that th
 ONLY merges references and NOT the organization information.
 
 
-### 3.2.12 Searches (Public Saved Searches)
+### 3.2.12 Searches (Public Saved Searches) *
 ---------
 
 This area displays a list of publicly available searches that can be edited, added, activated, or 

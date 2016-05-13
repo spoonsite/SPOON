@@ -147,6 +147,7 @@ Ext.define('OSF.component.ImportWindow', {
 					labelAlign: 'top',	
 					labelSeparator: '',
 					emptyText: 'Select',
+					queryMode: 'remote',
 					store: {
 						field: [
 							'code',

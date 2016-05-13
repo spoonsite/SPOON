@@ -125,10 +125,22 @@ Ext.define('OSF.component.HelpPanel', {
 						
 								var html = template.apply(helpPanel.helpFlat);
 								
-								frame.contentWindow.document.open();
-								frame.contentWindow.document.write(html);
-								frame.contentWindow.document.close();
-								frame.contentWindow.print();
+								if (Ext.isIE) {
+									var helpPrintWin = window.open('about:blank', 'helpPrintPin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=800, height=600');
+									if (!helpPrintWin) {
+										Ext.toast('Unable to open help. Check popup blocker.');
+									} else {
+										helpPrintWin.document.open();
+										helpPrintWin.document.write(html);
+										helpPrintWin.document.close();
+										helpPrintWin.print();
+									}
+								} else {								
+									frame.contentWindow.document.open();
+									frame.contentWindow.document.write(html);
+									frame.contentWindow.document.close();
+									frame.contentWindow.print();
+								}
 							}
 						},
 						{
@@ -186,6 +198,9 @@ Ext.define('OSF.component.HelpPanel', {
 
 														// Visibility of leaf nodes is whether they pass the test.
 														// Visibility of branch nodes depends on them having visible children.
+														if (!node.get('helpSection').content) {
+															node.get('helpSection').content = '';
+														}
 														var searchText = node.get('text').toLowerCase() + " " +  node.get('helpSection').content.toLowerCase();
 														var visible = searchText.indexOf(rawValue) !== -1 ? true : false ;
 														var i;
@@ -245,7 +260,7 @@ Ext.define('OSF.component.HelpPanel', {
 				id: helpPanel.getId() + '-frame',
 				style: 'display: none; visiblity: hidden;'
 			}
-		]);
+		]);		
 	},
 	
 	

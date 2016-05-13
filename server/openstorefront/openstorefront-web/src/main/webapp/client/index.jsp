@@ -209,7 +209,7 @@ limitations under the License.
 											iconCls: 'fa fa-2x fa-search-plus icon-top-padding',
 											iconAlign: 'top',
 											margin: '0 0 0 10',
-											style: 'border-radius: 3px 0px 0px 3px;',											
+											style: 'border-radius: 3px 3px 3px 3px;',											
 											width: 100,
 											handler: function(){
 												searchtoolsWin.show();

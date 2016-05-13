@@ -226,7 +226,7 @@ public class PropertiesManager
 				throw new OpenStorefrontRuntimeException(e);
 			}
 
-			try (InputStream in = FileSystemManager.getApplicatioResourceFile("/filter/version.properties")) {
+			try (InputStream in = FileSystemManager.getApplicationResourceFile("/filter/version.properties")) {
 				Properties versionProperties = new Properties();
 				versionProperties.load(in);
 				properties.putAll(versionProperties);
