@@ -280,8 +280,10 @@ Ext.define('OSF.component.HelpWindow', {
 			tooltip: 'Open in new window',
 			callback: function(panel, tool, event){
 				var helpWin = window.open('help.jsp', 'helpwin');
-				if (!helWin) {
+				if (!helpWin) {
 					Ext.toast('Unable to open help. Check popup blocker.');
+				} else {
+					this.up('window').close();
 				}
 			}
 		}
