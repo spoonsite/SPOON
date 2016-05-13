@@ -284,7 +284,7 @@ public class NotificationServiceImpl
 
 			List<NotificationEvent> notificationEvents = persistenceService.queryByExample(NotificationEvent.class, queryByExample);
 			for (NotificationEvent notificationEvent : notificationEvents) {
-				markEventAsRead(notificationEvent.getEntityId(), notificationEvent.getUsername());
+				markEventAsRead(notificationEvent.getEventId(), username);
 			}
 
 			//delete user events
