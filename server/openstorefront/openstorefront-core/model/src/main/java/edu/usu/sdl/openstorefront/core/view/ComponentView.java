@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
@@ -43,6 +44,7 @@ public class ComponentView
 	private Date pendingChangeSubmitDts;
 	private String pendingChangeSubmitUser;	
 	private String ownerEmail;
+	private String securityMarkingDescription;
 
 	public ComponentView()
 	{
@@ -71,6 +73,7 @@ public class ComponentView
 		}
 		componentView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, componentView.getApprovalState()));
 		componentView.setComponentTypeLabel(TranslateUtil.translateComponentType(component.getComponentType()));
+		componentView.setSecurityMarkingDescription(TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()));
 
 		return componentView;
 	}
@@ -171,6 +174,16 @@ public class ComponentView
 	public void setPendingChangeSubmitUser(String pendingChangeSubmitUser)
 	{
 		this.pendingChangeSubmitUser = pendingChangeSubmitUser;
+	}
+
+	public String getSecurityMarkingDescription()
+	{
+		return securityMarkingDescription;
+	}
+
+	public void setSecurityMarkingDescription(String securityMarkingDescription)
+	{
+		this.securityMarkingDescription = securityMarkingDescription;
 	}
 
 }
