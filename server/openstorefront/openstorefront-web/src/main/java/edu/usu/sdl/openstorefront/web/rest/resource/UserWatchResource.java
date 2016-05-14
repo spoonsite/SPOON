@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
@@ -29,7 +28,6 @@ import edu.usu.sdl.openstorefront.core.view.UserWatchView;
 import edu.usu.sdl.openstorefront.core.view.UserWatchWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import java.lang.reflect.Field;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -39,7 +37,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import net.sourceforge.stripes.util.bean.BeanUtil;
 
 /**
  *
@@ -48,9 +45,9 @@ import net.sourceforge.stripes.util.bean.BeanUtil;
 @Path("v1/resource/userwatches")
 @APIDescription("Watches on entries")
 public class UserWatchResource
-	extends BaseResource
+		extends BaseResource
 {
-	
+
 	@GET
 	@APIDescription("Get a list of user watches")
 	@RequireAdmin
@@ -87,24 +84,15 @@ public class UserWatchResource
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		queryByExample.setMaxResults(filterQueryParams.getMax());
-		queryByExample.setFirstResult(filterQueryParams.getOffset());
-		queryByExample.setSortDirection(filterQueryParams.getSortOrder());
-
-		UserWatch userWatchSortExample = new UserWatch();
-		Field sortField = ReflectionUtil.getField(userWatchSortExample, filterQueryParams.getSortField());
-		if (sortField != null) {
-			BeanUtil.setPropertyValue(sortField.getName(), userWatchSortExample, QueryByExample.getFlagForType(sortField.getType()));
-			queryByExample.setOrderBy(userWatchSortExample);
-		}
-
 		List<UserWatch> userWatches = service.getPersistenceService().queryByExample(UserWatch.class, queryByExample);
 
 		UserWatchWrapper userWatchWrapper = new UserWatchWrapper();
 		userWatchWrapper.getData().addAll(UserWatchView.toViewList(userWatches));
+		filterQueryParams.filter(userWatchWrapper.getData());
+
 		userWatchWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
-		return sendSingleEntityResponse(userWatchWrapper);		
+		return sendSingleEntityResponse(userWatchWrapper);
 	}
 
 	@PUT
@@ -114,7 +102,7 @@ public class UserWatchResource
 	@DataType(UserWatchResource.class)
 	@Path("/activate")
 	public Response activateWatches(
-		MultipleIds mulitpleIds			
+			MultipleIds mulitpleIds
 	)
 	{
 		if (mulitpleIds != null) {
@@ -130,7 +118,7 @@ public class UserWatchResource
 		}
 		return Response.ok().build();
 	}
-	
+
 	@PUT
 	@APIDescription("Inactivates a set watches")
 	@RequireAdmin
@@ -138,7 +126,7 @@ public class UserWatchResource
 	@DataType(UserWatchResource.class)
 	@Path("/inactivate")
 	public Response inactivateWatches(
-		MultipleIds mulitpleIds	
+			MultipleIds mulitpleIds
 	)
 	{
 		if (mulitpleIds != null) {
@@ -153,6 +141,6 @@ public class UserWatchResource
 			}
 		}
 		return Response.ok().build();
-	}	
-	
+	}
+
 }

@@ -30,6 +30,7 @@ limitations under the License.
 					}],	
 					pageSize: 200,
 					autoLoad: true,
+					remoteSort: true,
 					fields: [
 						{
 							name: 'createDts',
