@@ -227,16 +227,45 @@
 					textArea.value = location.protocol+'//'+location.host+location.pathname+'/../'+selectedObj.mediaLink;
 
 					document.body.appendChild(textArea);
-
+					
 					textArea.select();
 					try {
 						var successful = document.execCommand('copy');
 						var msg = successful ? 'successful' : 'unsuccessful';
 						console.log('Copying text command was ' + msg);
 					  } catch (err) {
-						console.log('Oops, unable to copy');
+						var copyWindow = Ext.create('Ext.window.Window', {
+							title: 'Copy Window - Select and Copy',
+							modal: true,
+							width: 400,
+							height: 150,
+							closeMode: 'destroy',
+							bodyStyle: 'padding: 10px;',
+							html: textArea.value,
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Close',
+											handler: function(){
+												this.up('window').close();
+											}
+										},
+										{
+											xtype: 'tbfill'
+										}
+									]
+								}
+							]
+						});
+						copyWindow.show();
 					  }
-
+					  
 					  document.body.removeChild(textArea);
 					  Ext.toast('Link copied to clipboard.', '', 'tr');
 				};
