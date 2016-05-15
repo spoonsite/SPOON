@@ -41,9 +41,7 @@
 						url: '../api/v1/resource/lookuptypes/SecurityMarkingType/view'
 					}
 				});
-
-
-
+			
 				var tagGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Manage Tags <i class="fa fa-question-circle"  data-qtip="Tags are user-definable labels that are associated with a component."></i>',
 					id: 'tagGrid',
@@ -55,11 +53,11 @@
 							cellWrap: true
 						},
 						items: [
-							{text: 'Component', dataIndex: 'componentName', width: 525},
-							{text: 'Tag', dataIndex: 'text', width: 325},
-							{text: 'Creator', dataIndex: 'createUser', width: 175},
+							{text: 'Component', dataIndex: 'componentName', flex: 1, minWidth: 250},
+							{text: 'Tag', dataIndex: 'text', width: 300},
+							{text: 'Create User', dataIndex: 'createUser', width: 175},
 							{
-								text: 'Creation Date',
+								text: 'Create Date',
 								dataIndex: 'createDts',
 								width: 275,
 								xtype: 'datecolumn',
@@ -67,18 +65,9 @@
 							},
 							{
 								text: 'Security Type', 
-								dataIndex: 'securityMarkingType',
-								flex: 1,
-								renderer: function (value) {
-									if (value) {
-										var typeStore = Ext.data.StoreManager.lookup('securityTypeStore');
-										var record = typeStore.getData().find('code', value);
-										return record.data.description;
-									}
-									else {
-										return '';
-									}
-								}
+								dataIndex: 'securityMarkingDescription',
+								width: 175,
+								hidden: true
 							}
 						]
 					},
@@ -197,6 +186,7 @@
 									valueField: 'code',
 									emptyText: 'Select a Security Type',
 									name: 'securityType',
+									hidden: !${branding.allowSecurityMarkingsFlg},
 									store: Ext.data.StoreManager.lookup('securityTypeStore')
 								}
 							],
