@@ -44,7 +44,7 @@
 							{text: 'Component', dataIndex: 'name', width: 225},
 							{text: 'Title', dataIndex: 'title', width: 225},
 							{text: 'Rating', dataIndex: 'rating', width: 75},
-							{text: 'Comment', dataIndex: 'comment', width: 575},
+							{text: 'Comment', dataIndex: 'comment', flex: 1, minWidth: 300},
 							{
 								text: 'Pros', 
 								dataIndex: 'pros', 
@@ -81,7 +81,7 @@
 								xtype: 'datecolumn',
 								format: 'm/d/y H:i:s'
 							},
-							{text: 'Security Type', dataIndex: 'securityMarkingType', flex: 1}
+							{text: 'Security Type', dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg}}
 						]
 					},
 					dockedItems: [
