@@ -53,7 +53,7 @@ public class ComponentSubmissionMessageGenerator
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z");
 
 		Instant instant = Instant.ofEpochMilli(messageContext.getUserMessage().getCreateDts().getTime());
-		instant = instant.minusSeconds(10);
+		instant = instant.minusSeconds(20);
 		Date checkDate = new Date(instant.toEpochMilli());
 
 		Component componentExample = new Component();
@@ -93,7 +93,9 @@ public class ComponentSubmissionMessageGenerator
 			message.append(components.size())
 					.append(" ")
 					.append(StringProcessor.puralize(components.size(), "entry", "entries"))
-					.append(" submission <b>Canceled</b> for approval since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
+					.append(" ")
+					.append(StringProcessor.puralize(components.size(), "submission", "submissions"))
+					.append(" have been <b>Canceled</b> for approval or have not yet submitted since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
 			message.append("<ul>");
 			for (Component component : components) {
 				message.append(" <li>").append(component.getName())
