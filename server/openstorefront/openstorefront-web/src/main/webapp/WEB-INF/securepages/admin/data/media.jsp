@@ -224,7 +224,7 @@
 					textArea.style.background = 'transparent';
 
 
-					textArea.value = location.protocol+'//'+location.host+location.pathname+'/../'+selectedObj.mediaLink;
+					textArea.value = encodeURI(selectedObj.mediaLink);
 
 					document.body.appendChild(textArea);
 					
@@ -234,14 +234,19 @@
 						var msg = successful ? 'successful' : 'unsuccessful';
 						console.log('Copying text command was ' + msg);
 					  } catch (err) {
+						successful = false;
+					  }
+
+					  if (!successful) {
 						var copyWindow = Ext.create('Ext.window.Window', {
 							title: 'Copy Window - Select and Copy',
 							modal: true,
-							width: 400,
+							width: 500,
 							height: 150,
 							closeMode: 'destroy',
 							bodyStyle: 'padding: 10px;',
 							html: textArea.value,
+							scrollable: true,
 							dockedItems: [
 								{
 									xtype: 'toolbar',
@@ -263,7 +268,7 @@
 								}
 							]
 						});
-						copyWindow.show();
+						copyWindow.show();						  
 					  }
 					  
 					  document.body.removeChild(textArea);
