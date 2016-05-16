@@ -11,6 +11,7 @@
 					id: 'mediaGrid',
 					title: 'Manage Media <i class="fa fa-question-circle"  data-qtip="Media that can be used for articles and badges." ></i>',
 					store: Ext.create('Ext.data.Store', {
+						storeId: 'mediaStore',
 						autoLoad: true,						
 						sorters: [
 							new Ext.util.Sorter({
@@ -391,6 +392,19 @@
 										handler: function(){     
 											Ext.getCmp('addMediaForm').setLoading(true);
                                             var data = Ext.getCmp('addMediaForm').getValues();
+
+											// Check if name is unique
+											var records = Ext.getStore('mediaStore').getData();
+											if (records.find('name', data.name) !== null) {
+												Ext.Msg.show({
+													title: 'Name Not Valid',
+													msg: 'Please choose a unique name for the file.',
+													buttons: Ext.Msg.OK
+												});
+												Ext.getCmp('addMediaForm').setLoading(false);
+												return;
+											}
+
 											Ext.getCmp('addMediaForm').submit({
 												url: '../Media.action?UploadGeneralMedia&generalMedia.name='+data.name,
 												method: 'POST',
@@ -401,7 +415,11 @@
 													refreshGrid();												
 												},
 												failure: function(response,opts){
-													Ext.toast('Upload Failed', '', 'tr');
+													Ext.Msg.show({
+														title: 'Upload Failed',
+														msg: 'The file upload was not successful. Check that the file meets the requirements and try again.',
+														buttons: Ext.Msg.OK
+													});
 													Ext.getCmp('addMediaForm').setLoading(false);									
 													refreshGrid();	
 												}
