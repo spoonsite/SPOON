@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.test.integration;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.entity.FeedbackTicket;
+import edu.usu.sdl.openstorefront.core.entity.WebInformation;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
@@ -50,6 +51,7 @@ public class JiraCreateTicket
 			feedbackTicket.setPhone("555-555-5555");
 			feedbackTicket.setSummary("TEST - AUTO TEST");
 			feedbackTicket.setDescription("This was generated from an auto test.");
+			feedbackTicket.setWebInformation(new WebInformation());			
 			feedbackTicket.getWebInformation().setLocation(PropertiesManager.getNodeName());
 			feedbackTicket.getWebInformation().setUserAgent(PropertiesManager.getApplicationVersion());
 			feedbackTicket.getWebInformation().setReferrer("Auto Test");
