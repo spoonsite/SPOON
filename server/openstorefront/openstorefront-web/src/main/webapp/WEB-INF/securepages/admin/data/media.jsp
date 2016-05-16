@@ -367,7 +367,11 @@
 													refreshGrid();												
 												},
 												failure: function(response,opts){
-													Ext.toast('Upload Failed', '', 'tr');
+													Ext.Msg.show({
+														title: 'Upload Failed',
+														msg: 'The file upload was not successful. Check that the file meets the requirements and try again.',
+														buttons: Ext.Msg.OK
+													});
 													Ext.getCmp('addMediaForm').setLoading(false);									
 													refreshGrid();	
 												}
