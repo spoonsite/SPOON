@@ -303,6 +303,8 @@ Once the desired widgets are added they can be refreshed, moved to next and prev
 display order, maximized, or closed.  In addition, certain settings such as the title
 and title bar color can be set.  This is done by clicking on the buttons in the 
 right of the title bar of each individual widget once added to the dashboard.
+
+NOTE:  If you are an administrator, additional widgets may be available to you.  
  
 
 ## 2.3.1 User Profile
