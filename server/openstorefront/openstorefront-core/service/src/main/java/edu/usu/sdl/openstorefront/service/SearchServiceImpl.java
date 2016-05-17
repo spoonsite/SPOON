@@ -23,14 +23,17 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.Attribute;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.ContentCollection;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.ResultTypeStat;
@@ -169,32 +172,22 @@ public class SearchServiceImpl
 
 		Map<String, List<ComponentAttribute>> attributeMap = new HashMap<>();
 		Map<String, List<ComponentTag>> tagMap = new HashMap<>();
+		Map<String, List<ComponentResource>> resourceMap = new HashMap<>();
 		if (components.size() > 1) {
 			ComponentAttribute componentAttributeExample = new ComponentAttribute();
 			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 			List<ComponentAttribute> allAttributes = persistenceService.queryByExample(ComponentAttribute.class, componentAttributeExample);
-			for (ComponentAttribute componentAttribute : allAttributes) {
-				if (attributeMap.containsKey(componentAttribute.getComponentAttributePk().getComponentId())) {
-					attributeMap.get(componentAttribute.getComponentAttributePk().getComponentId()).add(componentAttribute);
-				} else {
-					List<ComponentAttribute> componentAttributes = new ArrayList<>();
-					componentAttributes.add(componentAttribute);
-					attributeMap.put(componentAttribute.getComponentAttributePk().getComponentId(), componentAttributes);
-				}
-			}
-
+			attributeMap = allAttributes.stream().collect(Collectors.groupingBy(ComponentAttribute::getComponentId));
+			
 			ComponentTag componentTagExample = new ComponentTag();
 			componentTagExample.setActiveStatus(ComponentTag.ACTIVE_STATUS);
 			List<ComponentTag> allTags = persistenceService.queryByExample(ComponentTag.class, componentTagExample);
-			for (ComponentTag tag : allTags) {
-				if (tagMap.containsKey(tag.getComponentId())) {
-					tagMap.get(tag.getComponentId()).add(tag);
-				} else {
-					List<ComponentTag> componentTags = new ArrayList<>();
-					componentTags.add(tag);
-					tagMap.put(tag.getComponentId(), componentTags);
-				}
-			}
+			tagMap = allTags.stream().collect(Collectors.groupingBy(ComponentTag::getComponentId));
+			
+			ComponentResource componentResource = new ComponentResource();
+			componentResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
+			List<ComponentResource> resources = componentResource.findByExample();
+			resourceMap = resources.stream().collect(Collectors.groupingBy(ComponentResource::getComponentId));			
 		}
 
 		List<SolrComponentModel> solrDocs = new ArrayList<>();
@@ -212,6 +205,45 @@ public class SearchServiceImpl
 			solrDocModel.setUpdateDts(component.getUpdateDts());
 			solrDocModel.setOrganization(component.getOrganization());
 
+			List<ComponentResource> resources;
+			if (components.size() > 1) {
+				resources = resourceMap.get(component.getComponentId());
+				if (resources == null) {
+					resources = new ArrayList<>();
+				}
+			} else {
+				resources = getComponentService().getBaseComponent(ComponentResource.class, component.getComponentId());
+			}
+			for (ComponentResource resource : resources) {
+				solrDocModel.setResourceName(resource.getName());
+				solrDocModel.setResourceDescription(resource.getDescription());
+				if (resource.getAttributes() != null) {
+					StringBuilder sb = new StringBuilder();
+					for (Attribute attribute : resource.getAttributes()) {
+						sb.append(attributesToString(attribute.getAttributeType(), attribute.getAttributeCode()));					
+					}
+					solrDocModel.setResourceAttributes(sb.toString());					
+				} 
+				StringBuilder collectionNames = new StringBuilder();
+				StringBuilder collectionDescs = new StringBuilder();
+				if (resource.getContentCollections() != null) {
+					for (ContentCollection contentCollection : resource.getContentCollections()) {
+						collectionNames.append(contentCollection.getName()).append(" ");
+						collectionDescs.append(contentCollection.getDescription()).append(" ");
+						if (contentCollection.getAttributes() != null) {
+							StringBuilder sb = new StringBuilder();							
+							for (Attribute attribute : resource.getAttributes()) {
+								sb.append(attributesToString(attribute.getAttributeType(), attribute.getAttributeCode()));					
+							}
+							solrDocModel.setCollectionAttributes(sb.toString());								
+						}
+					}
+				}
+				solrDocModel.setContentCollectionName(collectionNames.toString());
+				solrDocModel.setContentCollectionDescription(collectionDescs.toString());				
+			}
+			
+			
 			List<ComponentTag> tags;
 			List<ComponentAttribute> attributes;
 			if (components.size() > 1) {
@@ -228,36 +260,20 @@ public class SearchServiceImpl
 				attributes = getComponentService().getBaseComponent(ComponentAttribute.class, component.getComponentId());
 			}
 
-			String tagList = "";
-			String attributeList = "";
+			StringBuilder tagList = new StringBuilder();
+			StringBuilder attributeList = new StringBuilder();
 
 			for (ComponentTag tag : tags) {
-				tagList = tagList + tag.getText() + ",";
+				tagList.append(tag.getText()).append(" ");
 			}
 
 			for (ComponentAttribute attribute : attributes) {
 				ComponentAttributePk pk = attribute.getComponentAttributePk();
-				AttributeCodePk codePk = new AttributeCodePk();
-				codePk.setAttributeCode(pk.getAttributeCode());
-				codePk.setAttributeType(pk.getAttributeType());
-				AttributeCode code = getAttributeService().findCodeForType(codePk);
-				AttributeType type = getAttributeService().findType(pk.getAttributeType());
-				attributeList = attributeList + pk.getAttributeCode() + ",";
-				attributeList = attributeList + pk.getAttributeType() + ",";
-
-				if (code != null && type != null) {
-					attributeList = attributeList + code.getLabel() + ",";
-					if (StringUtils.isNotBlank(code.getDescription())) {
-						attributeList = attributeList + code.getDescription() + ",";
-					}
-					if (StringUtils.isNotBlank(type.getDescription())) {
-						attributeList = attributeList + type.getDescription() + ",";
-					}
-				}
+				attributeList.append(attributesToString(pk.getAttributeType(), pk.getAttributeCode()));
 			}
 
-			solrDocModel.setTags(tagList);
-			solrDocModel.setAttributes(attributeList);
+			solrDocModel.setTags(tagList.toString());
+			solrDocModel.setAttributes(attributeList.toString());
 			solrDocModel.setArticleHtml("");
 			solrDocs.add(solrDocModel);
 		}
@@ -271,6 +287,30 @@ public class SearchServiceImpl
 			}
 		}
 	}
+	
+	private String attributesToString(String typeKey, String codeKey)
+	{
+		StringBuilder attributeList = new StringBuilder();
+		AttributeCodePk codePk = new AttributeCodePk();
+		codePk.setAttributeCode(typeKey);
+		codePk.setAttributeType(codeKey);
+		AttributeCode code = getAttributeService().findCodeForType(codePk);
+		AttributeType type = getAttributeService().findType(codePk.getAttributeType());
+		attributeList.append(codePk.getAttributeCode()).append(" ");
+		attributeList.append(codePk.getAttributeType()).append(" ");
+
+		if (code != null && type != null) {
+			attributeList.append(code.getLabel()).append(" ");
+			if (StringUtils.isNotBlank(code.getDescription())) {
+				attributeList.append(code.getDescription()).append(" ");
+			}
+			if (StringUtils.isNotBlank(type.getDescription())) {
+				attributeList.append(type.getDescription()).append(" ");
+			}
+		}
+		return attributeList.toString();
+	}
+	
 
 	@Override
 	public List<ComponentSearchView> architectureSearch(AttributeCodePk pk, FilterQueryParams filter)

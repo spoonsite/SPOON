@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This example shows the Describe response by a search provider with DI2E REST Search V1.1 service implementing default configuration and including the minimum information, i.e. no description for query language, response formats, etc-->
+<tdf:TrustedDataCollection xmlns="urn:us:gov:ic:edh" xmlns:icid="urn:us:gov:ic:id" xmlns:arh="urn:us:gov:ic:arh" xmlns:ism="urn:us:gov:ic:ism" xmlns:tdf="urn:us:gov:ic:tdf" xmlns:usagency="urn:us:gov:ic:usagency" xmlns:cdrdx="urn:cdr-ex:describe:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:n2="http://www.altova.com/samplexml/other-namespace" xsi:schemaLocation="urn:us:gov:ic:tdf ../schemas/describe/di2e-describe-tdc-example.xsd" tdf:version="201412">
+	<tdf:HandlingAssertion tdf:scope="TDC">
+		<tdf:HandlingStatement>
+			<edh:Edh xmlns:edh="urn:us:gov:ic:edh" xmlns:arh="urn:us:gov:ic:arh" xmlns:ism="urn:us:gov:ic:ism" xmlns:ntk="urn:us:gov:ic:ntk" edh:DESVersion="201508" arh:DESVersion="3" ism:DESVersion="10" ntk:DESVersion="201508" xmlns:usagency="urn:us:gov:ic:usagency" usagency:CESVersion="201502">
+				<icid:Identifier xmlns:icid="urn:us:gov:ic:id">guide://999001/Describe-Sample-TDC</icid:Identifier>
+				<edh:DataItemCreateDateTime>2012-05-29T09:00:00Z</edh:DataItemCreateDateTime>
+				<edh:ResponsibleEntity>
+					<edh:Country>USA</edh:Country>
+					<edh:Organization>DNI</edh:Organization>
+				</edh:ResponsibleEntity>
+				<arh:Security ism:compliesWith="USGov USIC" ism:resourceElement="true" ism:createDate="2012-05-29" ism:classification="U" ism:ownerProducer="USA"/>
+			</edh:Edh>
+		</tdf:HandlingStatement>
+	</tdf:HandlingAssertion>
+	<tdf:Assertion tdf:scope="TDC">
+		<tdf:StringStatement>            I am an example assertion about this TDC        </tdf:StringStatement>
+	</tdf:Assertion>
+	<TrustedDataObject xmlns="urn:us:gov:ic:tdf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tdf="urn:us:gov:ic:tdf" tdf:version="201412" tdf:id="ID0000">
+		<tdf:HandlingAssertion tdf:scope="TDO">
+			<tdf:HandlingStatement>
+				<edh:Edh xmlns:edh="urn:us:gov:ic:edh" xmlns:arh="urn:us:gov:ic:arh" xmlns:ism="urn:us:gov:ic:ism" xmlns:ntk="urn:us:gov:ic:ntk" edh:DESVersion="201508" arh:DESVersion="3" ism:DESVersion="10" ntk:DESVersion="201508" xmlns:usagency="urn:us:gov:ic:usagency" usagency:CESVersion="201502">
+					<icid:Identifier xmlns:icid="urn:us:gov:ic:id">guide://999001/Describe-Sample-TDO-SP</icid:Identifier>
+					<edh:DataItemCreateDateTime>2012-05-29T09:00:00Z</edh:DataItemCreateDateTime>
+					<edh:ResponsibleEntity>
+						<edh:Country>USA</edh:Country>
+						<edh:Organization>DNI</edh:Organization>
+					</edh:ResponsibleEntity>
+					<arh:Security ism:compliesWith="USGov USIC" ism:resourceElement="true" ism:createDate="2012-05-29" ism:classification="U" ism:ownerProducer="USA"/>
+				</edh:Edh>
+			</tdf:HandlingStatement>
+		</tdf:HandlingAssertion>
+		<tdf:Assertion tdf:scope="PAYL" tdf:type="cdrdx-search" tdf:id="ID000">
+			<tdf:StructuredStatement>
+				<searchProvider xmlns:ism="urn:us:gov:ic:ism" xmlns="urn:cdr-ex:describe:sp:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ddms="urn:us:mil:ces:metadata:ddms:5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:cdr-ex:describe:sp:1.0 ../schemas/describe/di2e-describe-search-provider.xsd" updated="2016-02-17T09:30:47Z" ism:classification="U" ism:ownerProducer="USA">
+					<generalInfo>
+						<!-- The unique id for the search provider.  Should use a GUID if possible -->
+						<ddms:identifier ddms:qualifier="urn:us:gov:ic:id" ddms:value="guide://54321/ajp98d98w2uf-adf2-23fa-ds13-242rfs"/>
+						<!-- Human readable name for the search provider and system.  If the system is a DIB, this might be the DIB site name -->
+						<name ism:classification="U" ism:ownerProducer="USA">Demo DI2E REST Search Provider</name>
+						<ddms:description ism:classification="U" ism:ownerProducer="USA">A demonstration DI2E REST Search Provider instance used to showcase the value of the CDR Describe specification</ddms:description>
+						<!-- different POCs for the search provider.  Included in this example is an organization and a specific person -->
+						<ddms:pointOfContact ism:classification="U" ism:ownerProducer="USA">
+							<ddms:organization ddms:acronym="DI2E Framework">
+								<ddms:name>DI2E REST Search Demo Org</ddms:name>
+								<ddms:phone>555-555-1234</ddms:phone>
+								<ddms:email>di2e.rest@example.com</ddms:email>
+								<ddms:subOrganization ism:classification="U" ism:ownerProducer="USA">Demo Team</ddms:subOrganization>
+							</ddms:organization>
+						</ddms:pointOfContact>
+						<ddms:pointOfContact ism:classification="U" ism:ownerProducer="USA">
+							<ddms:person>
+								<ddms:name>John</ddms:name>
+								<ddms:surname>Smith</ddms:surname>
+								<ddms:phone>555-123-2345</ddms:phone>
+								<ddms:email>john.smith@example.com</ddms:email>
+								<ddms:affiliation>FSR</ddms:affiliation>
+							</ddms:person>
+						</ddms:pointOfContact>
+						<!-- optional link to the system or search provider -->
+						<!-- the network that this is deployed to -->
+						<network>Internet</network>
+					</generalInfo>
+					<!-- list of different related resources which could include documentation, search user interfaces, other services, etc. -->
+					<ddms:relatedResource ddms:qualifier="urn:cdr-ex:relatedResource" ddms:value="Search Documentation" ddms:relationship="documentation">
+						<ddms:link xlink:type="locator" xlink:href="http://di2erestdemo/documentation"/>
+					</ddms:relatedResource>
+					<ddms:relatedResource ddms:qualifier="urn:cdr-ex:relatedResource" ddms:value="Search User Interface" ddms:relationship="web-ui">
+						<ddms:link xlink:type="locator" xlink:href="http://di2erestdemo/searchui"/>
+					</ddms:relatedResource>
+					<searchInterface>
+						<service>
+							<!-- the specific service instance name -->
+							<name>Enterprise CDR Search Service</name>
+							<!-- the human readable name for the type of service -->
+							<!-- style of service, SOAP, REST, etc. -->			
+							<!-- simple boolean to denote if the service is secure or not.  If secure, there should be a reference to a idam spec in the 'conformance' elements -->
+							<type style="REST" version="1.1" secure="true">DI2E REST Search</type>
+							<address network="Internet" protocol="HTTP">http://server:port/search?</address>
+							<address network="Internet" protocol="HTTPS">https://server:port/search?</address>
+							<!-- include the different specifications that this is conformant with, which this example includes Search, Broker and IdAM -->
+							<conformance id="urn:cdr-ex:search:rest:1.1">
+								<name>DI2E REST Search 1.1</name>
+								<ddms:relatedResource ddms:qualifier="urn:cdr-ex:relatedResource" ddms:value="specification" ddms:relationship="reference">
+									<ddms:link xlink:type="locator" xlink:href="http://some.url.to.find.the.document"/>
+								</ddms:relatedResource>
+							</conformance>
+							<conformance id="urn:di2e:conformance:idam">
+								<name>Access Control 1.x</name>
+							</conformance>
+						</service>
+						<!-- links to related resources to the search interface, things like WSDL, WADL, OSDD, interface specific documentation, etc -->
+						<ddms:relatedResource ddms:qualifier="urn:cdr-ex:relatedResource" ddms:value="OSDD" ddms:relationship="osdd">
+							<ddms:link xlink:type="locator" xlink:href="http://di2erestdemo/search/osdd"/>
+						</ddms:relatedResource>
+					
+					</searchInterface>
+				</searchProvider>
+			</tdf:StructuredStatement>
+		</tdf:Assertion>
+		<tdf:ReferenceValuePayload tdf:uri="http://someLinkHereToThePayload.html"/>
+	</TrustedDataObject>
+	<tdf:TrustedDataObject tdf:version="201412">
+		<tdf:HandlingAssertion tdf:scope="TDO">
+			<tdf:HandlingStatement>
+				<edh:Edh xmlns:edh="urn:us:gov:ic:edh" xmlns:arh="urn:us:gov:ic:arh" xmlns:ism="urn:us:gov:ic:ism" arh:DESVersion="3" ism:DESVersion="9" edh:DESVersion="201508" xmlns:usagency="urn:us:gov:ic:usagency" usagency:CESVersion="201502">
+					<icid:Identifier xmlns:icid="urn:us:gov:ic:id">guide://999001/Describe-Sample-TDO-Content</icid:Identifier>
+					<edh:DataItemCreateDateTime>2013-01-02T03:56:00Z</edh:DataItemCreateDateTime>
+					<edh:ResponsibleEntity>
+						<edh:Country>USA</edh:Country>
+						<edh:Organization>DDMS_Team_Novetta</edh:Organization>
+					</edh:ResponsibleEntity>
+					<arh:Security ism:compliesWith="USGov USIC" ism:classification="U" ism:ownerProducer="USA" ism:resourceElement="true" ism:createDate="2013-01-02"/>
+				</edh:Edh>
+			</tdf:HandlingStatement>
+		</tdf:HandlingAssertion>
+		<tdf:Assertion tdf:scope="PAYL" tdf:type="cdrdx-discovery" tdf:id="ID001">
+			<tdf:StructuredStatement>
+				<ddms:resource xmlns:ism="urn:us:gov:ic:ism" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ddms="urn:us:mil:ces:metadata:ddms:5" xmlns:tspi="http://metadata.ces.mil/mdr/ns/GSIP/tspi/2.0" xmlns:virt="urn:us:gov:ic:virt" xmlns:tspi-core="http://metadata.ces.mil/mdr/ns/GSIP/tspi/2.0/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:us:mil:ces:metadata:ddms:5 ../DDMS/DDMS-v5.xsd">
+					<ddms:metacardInfo ism:classification="U" ism:ownerProducer="USA">
+						<ddms:identifier ddms:qualifier="urn:us:mil:ces:metadata:ddms:5:examples:ID" ddms:value="DDMS5_TSPI_Geodetic_2D_Plus_Vertical_Point_Sexagesimal_Example_1"/>
+						<ddms:dates ddms:created="2012-12-28"/>
+						<ddms:publisher>
+							<ddms:unknown>
+								<ddms:name>DDMS Team</ddms:name>
+							</ddms:unknown>
+						</ddms:publisher>
+					</ddms:metacardInfo>
+					<ddms:identifier ddms:qualifier="urn:us:gov:ic:id" ddms:value="guide://54321/cc1"/>
+					<ddms:title ism:classification="U" ism:ownerProducer="USA">An example of Time Space Position Information Standard using a Compound Geodetic 2D + Vertical CRS and Sexagesimal Point: Example 1</ddms:title>
+					<ddms:dates ddms:created="2012-12-28T06:29:33Z"/>
+					<ddms:type ddms:qualifier="urn:us:mil:ces:metadata:ddms:5:Examples:documentType" ddms:value="example"/>
+					<!--This urn in ddms:qualifier in ddms:type was invented to indicate that this document is an example. Not a real urn.-->
+					<ddms:creator>
+						<ddms:unknown>
+							<ddms:name>DDMS Team</ddms:name>
+						</ddms:unknown>
+					</ddms:creator>
+					<ddms:contributor>
+						<ddms:organization ddms:acronym="NGA">
+							<ddms:name>National Geospatial-Intelligence Agency</ddms:name>
+						</ddms:organization>
+					</ddms:contributor>
+					<ddms:subjectCoverage>
+						<ddms:keyword ddms:value="Point Example"/>
+					</ddms:subjectCoverage>
+					<ddms:geospatialCoverage>
+						<ddms:boundingGeometry>
+							<tspi:Point gml:id="PointCompoundGeodetic2DVertSexagesimalExample" srsDimension="3" srsName="http://metadata.ces.mil/mdr/ns/GSIP/crs/WGS84E_MSL_H">
+								<!--srsName identifies that we are using the GSIP-registered WGS84E crs for the lat/lon and MSL with a height value (as opposed to depth) 
+                    This comprises the Compound Geodetic 2D + Vertical CRS portion of the example (see section 5.3.2.7 of the TSPI Standard for further information.)
+                    [Note: according to the TSPI standard the use of MSL has been deemed a deprecated practice in favor of EGM.  The use of EGM 96 is a reccommended 
+                    practice and the use of EGM 08 is an emerging practice. (See sections 5.3.2.7.2, 5.3.2.7.3, and 5.3.2.7.4 of the TSPI Standard for further information.)]-->
+								<!--the position is lat:53.8093938 and lon:-2.12955 with height:4572m MSL-->
+								<gml:pos>53.8093938 -2.12955 4572</gml:pos>
+							</tspi:Point>
+						</ddms:boundingGeometry>
+					</ddms:geospatialCoverage>
+				</ddms:resource>
+			</tdf:StructuredStatement>
+		</tdf:Assertion>
+		<tdf:Assertion tdf:scope="TDO" tdf:id="ID002">
+			<tdf:StructuredStatement>
+				<dxcc:contentCollection xmlns:dxcc="urn:cdr-ex:describe:cc:1.0" xmlns:ddms="urn:us:mil:ces:metadata:ddms:5" xmlns:ism="urn:us:gov:ic:ism" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:cdr-ex:describe:cc:1.0 ../schemas/describe/di2e-describe-content-collection.xsd" updated="2016-02-17T09:30:47Z" ism:classification="U" ism:ownerProducer="USA">
+					<!-- the updated attribute contains last time the content collection values were updated (if produced in real time then it would be the request time)-->
+					<dxcc:metrics>
+						<!-- the total number of records in the Content Collection/  If possible put the exact number, otherwise and estimate should be used -->
+						<dxcc:count>1000</dxcc:count>
+						<!-- the rate at which record are getting ingested into the Content Collection -->
+						<dxcc:recordRate frequency="Minute">10</dxcc:recordRate>
+					</dxcc:metrics>
+					<dxcc:originator>Self</dxcc:originator>
+					<!-- list the different mimeTypes that are contained in the content collection.  DDMS only allows for a single mimeType per DDMS record, thus 
+          the reason it needs to be extended to allow for multiple definitions here.  -->
+					<dxcc:mimeTypes>
+						<ddms:mimeType>video/mpeg4-generic</ddms:mimeType>
+						<ddms:mimeType>application/pdf</ddms:mimeType>
+						<ddms:mimeType>application/msword</ddms:mimeType>
+						<ddms:mimeType>application/vnd.ms-powerpoint</ddms:mimeType>
+						<ddms:mimeType>application/vnd.ms-excel</ddms:mimeType>
+					</dxcc:mimeTypes>
+				</dxcc:contentCollection>
+			</tdf:StructuredStatement>
+		</tdf:Assertion>
+		<tdf:ReferenceValuePayload tdf:uri="http://someLinkHereToThePayload.html"/>
+	</tdf:TrustedDataObject>
+</tdf:TrustedDataCollection>
