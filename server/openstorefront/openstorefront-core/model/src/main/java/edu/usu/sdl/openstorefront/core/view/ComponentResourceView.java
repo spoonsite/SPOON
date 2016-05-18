@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ResourceType;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -45,7 +46,13 @@ public class ComponentResourceView
 	private String activeStatus;
 	private String originalLink;
 	private String componentId;
-
+		
+	@DataType(AttributeView.class)
+	private List<AttributeView> attributes = new ArrayList<>();
+	
+	@DataType(ContentCollectionView.class)
+	private List<ContentCollectionView> contentCollections = new ArrayList<>();
+	
 	private static final String LOCAL_RESOURCE_URL = "Resource.action?LoadResource&resourceId=";
 	private static final String ACTUAL_RESOURCE_URL = "Resource.action?Redirect&resourceId=";
 
@@ -84,8 +91,19 @@ public class ComponentResourceView
 		}
 		componentResourceView.setLink(link);
 		componentResourceView.setActualLink(ACTUAL_RESOURCE_URL + componentResource.getResourceId());
+	
+		if (componentResource.getAttributes() != null) {
+			componentResourceView.setAttributes(AttributeView.toViewList(componentResource.getAttributes()));			
+		}
+		
+		if (componentResource.getContentCollections() != null) {
+			componentResourceView.setContentCollections(ContentCollectionView.toViewList(componentResource.getContentCollections()));			
+		}		
+		
 		componentResourceView.toStandardView(componentResource);
-
+		componentResourceView.toStandardView(componentResourceView.getAttributes());
+		componentResourceView.toStandardView(componentResourceView.getContentCollections());
+		
 		return componentResourceView;
 	}
 
@@ -227,6 +245,26 @@ public class ComponentResourceView
 	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
+	}
+
+	public List<AttributeView> getAttributes()
+	{
+		return attributes;
+	}
+
+	public void setAttributes(List<AttributeView> attributes)
+	{
+		this.attributes = attributes;
+	}
+
+	public List<ContentCollectionView> getContentCollections()
+	{
+		return contentCollections;
+	}
+
+	public void setContentCollections(List<ContentCollectionView> contentCollections)
+	{
+		this.contentCollections = contentCollections;
 	}
 
 }

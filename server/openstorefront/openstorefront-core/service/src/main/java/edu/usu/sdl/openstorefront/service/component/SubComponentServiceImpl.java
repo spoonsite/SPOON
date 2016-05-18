@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
+import edu.usu.sdl.openstorefront.core.entity.CollectionAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
@@ -40,6 +41,8 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
+import edu.usu.sdl.openstorefront.core.entity.ContentCollection;
+import edu.usu.sdl.openstorefront.core.entity.ResourceAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
@@ -524,7 +527,24 @@ public class SubComponentServiceImpl
 			if (StringUtils.isNotBlank(resource.getLink())) {
 				removeLocalResource(oldResource);
 			}
+			
+			ResourceAttribute resourceAttributeExample = new ResourceAttribute();
+			resourceAttributeExample.setResourceId(oldResource.getResourceId());
+			persistenceService.deleteByExample(resourceAttributeExample);
+			
+			if (oldResource.getContentCollections() != null) {
+				for (ContentCollection contentCollection : oldResource.getContentCollections()) {
+					CollectionAttribute collectionAttributeExample = new CollectionAttribute();
+					collectionAttributeExample.setCollectionId(contentCollection.getCollectionId());
+					persistenceService.deleteByExample(collectionAttributeExample);					
+				}
+				ContentCollection collectionExample = new ContentCollection();
+				collectionExample.setResourceId(oldResource.getResourceId());
+				persistenceService.deleteByExample(collectionExample);								
+			}
+			
 			oldResource.updateFields(resource);
+			
 			persistenceService.persist(oldResource);
 			resource = oldResource;
 		} else {
@@ -544,11 +564,12 @@ public class SubComponentServiceImpl
 					}
 				}
 			}
-
+			
+			resource.updateEmbeddedEntities();
 			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
 		}
-
+		
 		if (updateLastActivity) {
 			updateComponentLastActivity(resource.getComponentId());
 		}

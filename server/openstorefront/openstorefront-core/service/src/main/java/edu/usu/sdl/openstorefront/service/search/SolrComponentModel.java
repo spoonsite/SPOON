@@ -60,6 +60,24 @@ public class SolrComponentModel
 
 	private String guid;
 
+	@Field("resourceName_s_is")
+	private String resourceName;	
+	
+	@Field("resourceDescription_s_is")
+	private String resourceDescription;	
+	
+	@Field("resourceAttributes_s_is")
+	private String resourceAttributes;		
+
+	@Field("contentCollectionName_s_is")
+	private String contentCollectionName;	
+	
+	@Field("contentCollectionDescription_s_is")
+	private String contentCollectionDescription;	
+
+	@Field("collectionAttributes_s_is")
+	private String CollectionAttributes;	
+	
 	@Field("organization_s_is")
 	private String organization;
 
@@ -261,6 +279,66 @@ public class SolrComponentModel
 	public void setQueryScore(float queryScore)
 	{
 		this.queryScore = queryScore;
+	}
+
+	public String getResourceName()
+	{
+		return resourceName;
+	}
+
+	public void setResourceName(String resourceName)
+	{
+		this.resourceName = resourceName;
+	}
+
+	public String getResourceDescription()
+	{
+		return resourceDescription;
+	}
+
+	public void setResourceDescription(String resourceDescription)
+	{
+		this.resourceDescription = resourceDescription;
+	}
+
+	public String getResourceAttributes()
+	{
+		return resourceAttributes;
+	}
+
+	public void setResourceAttributes(String resourceAttributes)
+	{
+		this.resourceAttributes = resourceAttributes;
+	}
+
+	public String getContentCollectionName()
+	{
+		return contentCollectionName;
+	}
+
+	public void setContentCollectionName(String contentCollectionName)
+	{
+		this.contentCollectionName = contentCollectionName;
+	}
+
+	public String getContentCollectionDescription()
+	{
+		return contentCollectionDescription;
+	}
+
+	public void setContentCollectionDescription(String contentCollectionDescription)
+	{
+		this.contentCollectionDescription = contentCollectionDescription;
+	}
+
+	public String getCollectionAttributes()
+	{
+		return CollectionAttributes;
+	}
+
+	public void setCollectionAttributes(String CollectionAttributes)
+	{
+		this.CollectionAttributes = CollectionAttributes;
 	}
 
 }

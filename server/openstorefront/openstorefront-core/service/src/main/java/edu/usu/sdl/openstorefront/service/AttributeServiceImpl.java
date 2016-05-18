@@ -27,12 +27,14 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
+import edu.usu.sdl.openstorefront.core.entity.CollectionAttribute;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.ReportOption;
+import edu.usu.sdl.openstorefront.core.entity.ResourceAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
@@ -316,6 +318,14 @@ public class AttributeServiceImpl
 			reportOption.setCategory(type);
 			scheduledReport.setReportOption(reportOption);
 			persistenceService.deleteByExample(scheduledReport);
+			
+			ResourceAttribute resourceAttribute = new ResourceAttribute();
+			resourceAttribute.setAttributeType(type);
+			persistenceService.deleteByExample(resourceAttribute);
+
+			CollectionAttribute collectionAttribute = new CollectionAttribute();
+			collectionAttribute.setAttributeType(type);
+			persistenceService.deleteByExample(collectionAttribute);
 
 			persistenceService.delete(attributeType);
 
@@ -340,6 +350,16 @@ public class AttributeServiceImpl
 			example.setAttributeType(attributeCodePk.getAttributeType());
 			example.setLocalCode(attributeCodePk.getAttributeCode());
 			persistenceService.deleteByExample(example);
+			
+			ResourceAttribute resourceAttribute = new ResourceAttribute();
+			resourceAttribute.setAttributeType(attributeCodePk.getAttributeType());
+			resourceAttribute.setAttributeCode(attributeCodePk.getAttributeCode());			
+			persistenceService.deleteByExample(resourceAttribute);
+
+			CollectionAttribute collectionAttribute = new CollectionAttribute();
+			collectionAttribute.setAttributeType(attributeCodePk.getAttributeType());
+			collectionAttribute.setAttributeCode(attributeCodePk.getAttributeCode());	
+			persistenceService.deleteByExample(collectionAttribute);
 
 			persistenceService.delete(attributeCode);
 
