@@ -65,3 +65,4 @@ project*.properties
 /server/openstorefront/openstorefront-web/src/main/webapp/indexOld.html
 /server/openstorefront/openstorefront-web/src/main/webapp/submissionOld.html
 /server/openstorefront/describe/describe/target/
+/server/openstorefront/describe/target/
