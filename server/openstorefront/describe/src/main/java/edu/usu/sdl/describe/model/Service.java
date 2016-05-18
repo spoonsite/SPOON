@@ -15,11 +15,19 @@
  */
 package edu.usu.sdl.describe.model;
 
+import edu.usu.sdl.describe.parser.ServiceConverter;
+import org.simpleframework.xml.Root;
+import org.simpleframework.xml.convert.Convert;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(strict = false)
+@Convert(ServiceConverter.class)
 public class Service
 {
+	String name;
+
 	
 }

@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.describe.model;
 
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 /**
@@ -24,5 +26,27 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class Assertion
 {
+	@Attribute(required = false)
+	String type;
 	
+	@Element(name="StringStatement", required = false)			
+	private String statement;
+	
+	@Element(name="StructuredStatement", required = false)			
+	StructuredStatement structuredStatement;
+
+	public Assertion()
+	{
+	}
+
+	public String getStatement()
+	{
+		return statement;
+	}
+
+	public void setStatement(String statement)
+	{
+		this.statement = statement;
+	}
+
 }

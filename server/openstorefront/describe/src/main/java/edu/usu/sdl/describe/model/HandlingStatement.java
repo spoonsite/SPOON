@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.describe.model;
 
+import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 /**
@@ -24,5 +25,21 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class HandlingStatement
 {
-	
+	@Element(name="Edh")
+	private Edh edh;
+
+	public HandlingStatement()
+	{
+	}
+
+	public Edh getEdh()
+	{
+		return edh;
+	}
+
+	public void setEdh(Edh edh)
+	{
+		this.edh = edh;
+	}
+
 }

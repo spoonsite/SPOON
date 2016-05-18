@@ -15,11 +15,83 @@
  */
 package edu.usu.sdl.describe.model;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(strict = false)
 public class Person
 {
+	@Element	
+	private String name;
 	
+	@Element
+	private String surname;
+	
+	@Element
+	private String phone;
+	
+	@Element
+	private String email;
+	
+	@Element
+	private String affiliation;
+
+	public Person()
+	{
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public String getSurname()
+	{
+		return surname;
+	}
+
+	public void setSurname(String surname)
+	{
+		this.surname = surname;
+	}
+
+	public String getPhone()
+	{
+		return phone;
+	}
+
+	public void setPhone(String phone)
+	{
+		this.phone = phone;
+	}
+
+	public String getEmail()
+	{
+		return email;
+	}
+
+	public void setEmail(String email)
+	{
+		this.email = email;
+	}
+
+	public String getAffiliation()
+	{
+		return affiliation;
+	}
+
+	public void setAffiliation(String affiliation)
+	{
+		this.affiliation = affiliation;
+	}
+
 }
