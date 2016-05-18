@@ -15,10 +15,13 @@
  */
 package edu.usu.sdl.describe.model;
 
+import org.simpleframework.xml.Root;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(strict = false)
 public class Resource
 {
 	

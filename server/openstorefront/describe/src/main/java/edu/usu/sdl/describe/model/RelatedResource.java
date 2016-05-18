@@ -15,11 +15,47 @@
  */
 package edu.usu.sdl.describe.model;
 
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Path;
+import org.simpleframework.xml.Root;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(strict = false)
 public class RelatedResource
 {
+	@Attribute(name="href")
+ 	@Path("link")		
+	private String link;
 	
+	@Attribute(name="type")
+ 	@Path("link")		
+	private String type;
+
+	public RelatedResource()
+	{
+	}
+
+	public String getLink()
+	{
+		return link;
+	}
+
+	public void setLink(String link)
+	{
+		this.link = link;
+	}
+
+	public String getType()
+	{
+		return type;
+	}
+
+	public void setType(String type)
+	{
+		this.type = type;
+	}
+
 }
