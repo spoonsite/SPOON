@@ -15,11 +15,33 @@
  */
 package edu.usu.sdl.describe.model;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(strict = false)
 public class StructuredStatement
 {
+	@Element(name = "searchProvider", required = false)
+	private SearchProvider searchProvider;
+
+	public StructuredStatement()
+	{
+	}
+
+	public SearchProvider getSearchProvider()
+	{
+		return searchProvider;
+	}
+
+	public void setSearchProvider(SearchProvider searchProvider)
+	{
+		this.searchProvider = searchProvider;
+	}
+	
+	
 	
 }

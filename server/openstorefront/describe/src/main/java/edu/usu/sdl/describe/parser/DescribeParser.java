@@ -8,7 +8,9 @@ package edu.usu.sdl.describe.parser;
 import edu.usu.sdl.describe.model.TrustedDataCollection;
 import java.io.File;
 import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.convert.AnnotationStrategy;
 import org.simpleframework.xml.core.Persister;
+import org.simpleframework.xml.strategy.Strategy;
 
 /**
  *
@@ -19,7 +21,8 @@ public class DescribeParser
 	
 	public static TrustedDataCollection  parse(File xmlfile) throws Exception
 	{
-                Serializer serializer = new Persister();
+		Strategy strategy = new AnnotationStrategy();
+                Serializer serializer = new Persister(strategy);
                 TrustedDataCollection data = serializer.read(TrustedDataCollection.class, xmlfile);
 		return data;
 	}

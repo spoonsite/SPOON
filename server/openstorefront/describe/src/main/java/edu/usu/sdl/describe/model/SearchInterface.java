@@ -15,11 +15,50 @@
  */
 package edu.usu.sdl.describe.model;
 
+import edu.usu.sdl.describe.parser.SearchInterfaceConverter;
+import java.util.ArrayList;
+import java.util.List;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+import org.simpleframework.xml.convert.Convert;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(strict = false)
+@Convert(SearchInterfaceConverter.class)
 public class SearchInterface
 {
+	@Element
+	private Service service;
+	
+	private List<RelatedResource> relatedResources = new ArrayList<>();
+
+	public SearchInterface()
+	{
+	}
+
+	public Service getService()
+	{
+		return service;
+	}
+
+	public void setService(Service service)
+	{
+		this.service = service;
+	}
+
+	public List<RelatedResource> getRelatedResources()
+	{
+		return relatedResources;
+	}
+
+	public void setRelatedResources(List<RelatedResource> relatedResources)
+	{
+		this.relatedResources = relatedResources;
+	}
+	
+	
 	
 }

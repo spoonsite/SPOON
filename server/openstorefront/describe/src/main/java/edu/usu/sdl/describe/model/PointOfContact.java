@@ -15,11 +15,44 @@
  */
 package edu.usu.sdl.describe.model;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(strict = false)
 public class PointOfContact
 {
+	@Element(name="organization", required = false)
+	private Organization organization;
+	
+	@Element(name="person", required = false)
+	private Person person;
+
+	public PointOfContact()
+	{
+	}
+
+	public Organization getOrganization()
+	{
+		return organization;
+	}
+
+	public void setOrganization(Organization organization)
+	{
+		this.organization = organization;
+	}
+
+	public Person getPerson()
+	{
+		return person;
+	}
+
+	public void setPerson(Person person)
+	{
+		this.person = person;
+	}
 	
 }

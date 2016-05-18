@@ -15,8 +15,14 @@
  */
 package edu.usu.sdl.describe.model;
 
+import edu.usu.sdl.describe.parser.TrustedDataObjectConverter;
+import java.util.ArrayList;
+import java.util.List;
 import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Path;
 import org.simpleframework.xml.Root;
+import org.simpleframework.xml.convert.Convert;
 
 /**
  *
@@ -24,10 +30,20 @@ import org.simpleframework.xml.Root;
  */
 
 @Root(strict = false)
+@Convert(TrustedDataObjectConverter.class)
 public class TrustedDataObject
 {
 	@Attribute
 	private String version;
+	
+	@Element(name="HandlingAssertion")			
+	private HandlingAssertion handlingAssertion;
+
+	private List<Assertion> assertions = new ArrayList<>();
+	
+	@Attribute(name="uri") 
+	@Path("ReferenceValuePayload")		
+	private String payloadURI;
 
 	public TrustedDataObject()
 	{
@@ -41,6 +57,36 @@ public class TrustedDataObject
 	public void setVersion(String version)
 	{
 		this.version = version;
+	}
+
+	public HandlingAssertion getHandlingAssertion()
+	{
+		return handlingAssertion;
+	}
+
+	public void setHandlingAssertion(HandlingAssertion handlingAssertion)
+	{
+		this.handlingAssertion = handlingAssertion;
+	}
+
+	public String getPayloadURI()
+	{
+		return payloadURI;
+	}
+
+	public void setPayloadURI(String payloadURI)
+	{
+		this.payloadURI = payloadURI;
+	}
+
+	public List<Assertion> getAssertions()
+	{
+		return assertions;
+	}
+
+	public void setAssertions(List<Assertion> assertions)
+	{
+		this.assertions = assertions;
 	}
 
 }

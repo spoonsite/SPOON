@@ -17,8 +17,8 @@ import org.junit.Test;
 public class ParseUseCase
 {
 	@Test
-	public void testParser() throws Exception
-	{
+	public void testParser() throws Exception			
+	{		
 		TrustedDataCollection tdc  = DescribeParser.parse(new File("/temp/describe-example-simple.xml"));
 		System.out.println("version = " + tdc.getVersion());
 	}
