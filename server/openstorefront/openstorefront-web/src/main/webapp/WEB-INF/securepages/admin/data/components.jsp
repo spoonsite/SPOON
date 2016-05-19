@@ -3772,7 +3772,7 @@
 						{ text: 'Create Date', dataIndex: 'createDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Create User (Owner)', dataIndex: 'createUser', width: 175, hidden: true },
 						{ text: 'Component Id', dataIndex: 'componentId', width: 175, hidden: true },
-						{ text: 'Security Marking', dataIndex: 'securityMarkingDescription', width: 175, hidden: true }
+						{ text: 'Security Marking', dataIndex: 'securityMarkingDescription', width: 175, hidden: true, sortable: false }
 					],
 					dockedItems: [
 						{
