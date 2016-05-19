@@ -51,25 +51,27 @@ Clearinghouse Search provides a way to find entry lists and articles
 matching search criteria. Several types of searches are supported. The
 types of searches that can be performed are:
 
-0-    Searching the Help file
-1.  Searching across multiple fields (entry name and description,
+ 1.  Searching the Help file
+ 2.  Searching across multiple fields (entry name and description,
     tags, attribute types, codes, and descriptions)
-2.  Wildcard searching (\* and ?)
-3.  Exact phrase searching
-4.  Case insensitivity
-5.  Tags
-6.  Comparing
+ 3.  Wildcard searching (\* and ?)
+ 4.  Exact phrase searching
+ 5.  Case insensitivity
+ 6.  Filtered Searches
+ 7.  Tags
+ 8.  Comparing
+ 9.  Customizing the display
 
 **Note:** The type ahead on the search field only looks at the title to see if it contains the text.  
 The user can then select the suggestion by clicking on it or continue with a full text search.
 
-### 2.1.0 Searching the Help file
+### 2.1.1 Searching the Help file
 -------
 
 A simple (exact text) search is provided in the help file by typing in the Search box in the 
 upper-left of the help file, above the tree structure.  
 
-### 2.1.1 Search Field Differentiation or Specificity
+### 2.1.2 Search Field Differentiation or Specificity
 -------
 
 Currently, there is no differentiation among entry Name, entry
@@ -78,7 +80,7 @@ coverage of the search. A search term or phrase is searched via a single
 search box, and applied across all fields equally. For a more specific search
 please see the Advanced Search under Search Tools in the help file.
 
-### 2.1.2 Fuzzy Matching and Wildcards
+### 2.1.3 Fuzzy Matching and Wildcards
 ------
 
 Fuzzy matching is defined as the ability to perform inexact matches on
@@ -98,7 +100,7 @@ Query: ```off*r``` Matches offer, officer, officiator, and so on
 
 Query: ```off?r``` Matches offer, but not officer
 
-### 2.1.3 Phrase Searches and Exact Searches
+### 2.1.4 Phrase Searches and Exact Searches
 ------
 
 Exact searches or searches for more than one word must be enclosed
@@ -114,10 +116,10 @@ Works: ```eng?neering``` _(wildcard properly used)_
 Does not work: ```"eng?neering"``` _(quotes are treated as a literal string not a wildcard)_
 
 In the second example, the search would only return results that had the
-\* and ? characters exactly in their respective places instead of
+? character exactly in their respective places instead of
 accepting any character in those locations as the user intended.
 
-### 2.1.4 Case Insensitivity
+### 2.1.5 Case Insensitivity
 ------
 
 Searching is case **insensitive** and allows mixing of case. In the
@@ -127,7 +129,29 @@ the capitalization.
 Search examples: 
 ```"create a common framework"```, ```"Create a Common Framework"```, ```"cReatE A CoMmoN FraMewoRk"```
 
-### 2.1.5 Tags  
+### 2.1.6 Filtered Searches
+------
+
+From the search results screen the left-most panel is the Filters panel.  
+Here results can be narrowed by filtering on various aspects such as:
+ 
+ * **Name:**  The name of the entry
+ 
+ * **Tag:**  Type the name of a tag or select from the drop-down.  Tags can be combined and 
+          added to the filter or removed.
+ 
+ * **Topic:**  DI2E Component, Article, etc.
+ 
+ * **User Rating:**  This will show all entries with the average star rating selected 
+                 (or better, i.e. or a **higher** average star rating)
+ 
+ * **Vitals:**  This gives a fine-tuned and very detailed approach to filtering by many different 
+            vitals such as DI2E Intent, State, and Alignment, for example.
+ 
+ 
+
+
+### 2.1.7 Tags  
 ------
 
 Users can "Tag" listings so that they can be used to later find and
@@ -142,7 +166,7 @@ on the home page.
  2.  Click on the View/ Edit Tag icon to open the tag panel.
  3.  Enter a new tag in the text field OR a single space to view existing tags.
 
-### 2.1.6 Comparing
+### 2.1.8 Comparing
 ---------
 
 The comparison feature allows for side-by-side viewing of multiple
@@ -160,7 +184,7 @@ search results.
 If more than two entries were selected, you can do a side-by-side comparison
 by using the drop-down list at the top to select the various entries.
 
-### 2.1.7 Customizing the Search Display
+### 2.1.9 Customizing the Search Display
 ---------
 
 On the search results page filtering can be done by Article, Component, or other
