@@ -1874,7 +1874,11 @@
 									forceSelection: false,
 									valueField: 'description',
 									storeConfig: {
-										url: '../api/v1/resource/organizations/lookup'
+										url: '../api/v1/resource/organizations/lookup',
+										sorters: [{
+											property: 'description',
+											direction: 'ASC'
+										}]
 									}
 								}),								
 								Ext.create('OSF.component.StandardComboBox', {
@@ -2913,7 +2917,11 @@
 									valueField: 'description',
 									editable: true,
 									storeConfig: {
-										url: '../api/v1/resource/organizations/lookup'
+										url: '../api/v1/resource/organizations/lookup',
+										sorters: [{
+											property: 'description',
+											direction: 'ASC'
+										}]
 									}
 								}),
 								Ext.create('OSF.component.StandardComboBox', {														
