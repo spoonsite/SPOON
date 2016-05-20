@@ -875,12 +875,14 @@
 								xtype: 'textfield',
 								id: 'editAttributeForm-label',
 								fieldLabel: 'Label<span class="field-required" />',
+								allowBlank: false,
 								name: 'description'
 							},
 							{
 								xtype: 'textfield',
 								id: 'editAttributeForm-code',
 								fieldLabel: 'Type Code<span class="field-required" />',
+								allowBlank: false,
 								name: 'attributeType'
 							},
 							{
@@ -930,9 +932,6 @@
 								xtype: 'multiselector',
 								id: 'editAttributeForm-associatedComponentTypes',
 								hidden: true,
-								style: {
-									padding: '30px'
-								},
 								title: 'Allow this attribute for these entry types: (click plus icon to add)',
 								name: 'associatedComponentTypes',
 								fieldName: 'description',
@@ -944,7 +943,7 @@
 								search: {
 									id: 'allowForTypesSearch',
 									field: 'description',
-									flex: 1,
+									bodyStyle: 'background: white;',
 									store: Ext.create('Ext.data.Store', {
 										id: 'allowForTypesSearchStore',
 										proxy: {
@@ -1030,9 +1029,6 @@
 								xtype: 'multiselector',
 								id: 'editAttributeForm-typesRequiredFor',
 								hidden: true,
-								style: {
-									padding: '30px'
-								},
 								title: 'Require this attribute for these entry types: (click plus icon to add)',
 								name: 'typesRequiredFor',
 								fieldName: 'description',
@@ -1043,7 +1039,7 @@
 								},
 								search: {
 									field: 'description',
-									flex: 1,
+									bodyStyle: 'background: white;',
 									store: Ext.create('Ext.data.Store', {
 										id: 'requiredTypesSearchStore',
 										proxy: {

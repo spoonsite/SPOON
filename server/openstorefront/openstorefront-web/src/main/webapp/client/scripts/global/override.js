@@ -105,7 +105,7 @@ Ext.define('OSF.defaults.fieldbase', {
     override: 'Ext.form.field.Base',
 
 	msgTarget: 'side',
-   labelClsExtra: 'field-label-basic'
+	labelClsExtra: 'field-label-basic'
 
 });
 
@@ -113,7 +113,7 @@ Ext.define('OSF.defaults.fieldcontainer', {
     override: 'Ext.form.FieldContainer',
 
 	msgTarget: 'side',
-   labelClsExtra: 'field-label-basic'
+	labelClsExtra: 'field-label-basic'
 
 });
 

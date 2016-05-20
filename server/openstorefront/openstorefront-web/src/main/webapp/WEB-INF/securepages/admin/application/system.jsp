@@ -1602,17 +1602,7 @@
 				var actionDownloadPlugin = function actionDownloadPlugin(record) {
 					var url = '/openstorefront/api/v1/resource/plugins/';
 					url += record.data.pluginId + '/download';
-					var filename = record.data.actualFilename;
-					var link = document.createElement("a");
-					if (link.download !== undefined) { // feature detection
-						// Browsers that support HTML5 download attribute
-						link.setAttribute("href", url);
-						link.setAttribute("download", filename);
-						link.style.visibility = 'hidden';
-						document.body.appendChild(link);
-						link.click();
-						document.body.removeChild(link);
-					}
+					window.location.href = url;					
 				};
 
 				var actionUninstallPlugin = function actionUninstallPlugin(record) {
