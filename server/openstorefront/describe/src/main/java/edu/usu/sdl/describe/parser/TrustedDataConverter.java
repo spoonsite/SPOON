@@ -53,16 +53,8 @@ public class TrustedDataConverter
 					trustedDataCollection.setAssertion(assertion);						
 					break;
 				case "TrustedDataObject":					
-					if( child.getPrefix().equals("tdf") == true )
-					{
-						TrustedDataObject tdo = serializer.read(TrustedDataObject.class, child);
-						trustedDataCollection.setTdfTrustedDataObject(tdo);
-					}
-					else
-					{
-						TrustedDataObject tdo = serializer.read(TrustedDataObject.class, child);
-						trustedDataCollection.setTrustedDataObject(tdo);						
-					}
+					TrustedDataObject tdo = serializer.read(TrustedDataObject.class, child);
+					trustedDataCollection.getTrustedDataObjects().add(tdo);
 					break;
 				default:
 					log.log(Level.WARNING, MessageFormat.format("Unknown Element found: {0}", child));
