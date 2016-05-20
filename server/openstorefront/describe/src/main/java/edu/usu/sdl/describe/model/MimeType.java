@@ -15,11 +15,29 @@
  */
 package edu.usu.sdl.describe.model;
 
+import org.simpleframework.xml.Root;
+
 /**
  *
  * @author dshurtleff
  */
-public class MimeTypes
+@Root(strict = false)
+public class MimeType
 {
-	
+	private String text; 
+
+	public MimeType()
+	{
+	}
+
+	public String getText()
+	{
+		return text;
+	}
+
+	public void setText(String text)
+	{
+		this.text = text;
+	}
+
 }

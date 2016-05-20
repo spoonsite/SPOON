@@ -26,9 +26,13 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -38,6 +42,7 @@ import org.apache.commons.lang.StringUtils;
 public abstract class BaseComponentParser
 		extends AbstractParser
 {
+	private static final Logger log = Logger.getLogger(BaseComponentParser.class.getName());
 
 	protected static final int MAX_BUCKET_SIZE = 100;
 	protected List<ComponentAll> componentsAll = new ArrayList<>();
@@ -114,4 +119,27 @@ public abstract class BaseComponentParser
 			service.getComponentService().importComponents(componentsAll, fileHistoryAll.getFileHistory().getFileHistoryOption());
 		}
 	}
+	
+	protected String getSecurityMarking(String inputMarking)
+	{
+		//try to match if not add marking
+		inputMarking = inputMarking.trim().toUpperCase();
+		SecurityMarkingType securityMarking = service.getLookupService().getLookupEnity(SecurityMarkingType.class, inputMarking);
+		if (securityMarking == null)
+		{
+			//check description
+			securityMarking = service.getLookupService().getLookupEnityByDesc(SecurityMarkingType.class, inputMarking);
+			if (securityMarking == null)
+			{
+				securityMarking = new SecurityMarkingType();
+				securityMarking.setCode(StringUtils.left(inputMarking, OpenStorefrontConstant.FIELD_SIZE_CODE));				
+				securityMarking.setDescription(inputMarking);
+				service.getLookupService().saveLookupValue(securityMarking);
+				log.log(Level.INFO, MessageFormat.format("Added missing security marking: {0}", inputMarking));
+			}
+		}
+		return securityMarking.getCode();
+	}
+	
+	
 }

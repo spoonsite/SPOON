@@ -5,10 +5,8 @@
  */
 package edu.usu.sdl.describe.parser;
 
-import edu.usu.sdl.describe.model.Address;
-import edu.usu.sdl.describe.model.Conformance;
-import edu.usu.sdl.describe.model.Service;
-import edu.usu.sdl.describe.model.ServiceType;
+import edu.usu.sdl.describe.model.BoundingGeometry;
+import edu.usu.sdl.describe.model.GeospatialCoverage;
 import static edu.usu.sdl.describe.parser.TrustedDataConverter.log;
 import java.text.MessageFormat;
 import java.util.logging.Level;
@@ -24,47 +22,38 @@ import org.simpleframework.xml.stream.OutputNode;
  *
  * @author dshurtleff
  */
-public class ServiceConverter
-	implements Converter<Service>			
+public class GeospatialCoverageConverter
+	implements Converter<GeospatialCoverage>			
 {
 
 	@Override
-	public Service read(InputNode node) throws Exception
+	public GeospatialCoverage read(InputNode node) throws Exception
 	{
-		Service service = new Service();
-				
+		GeospatialCoverage geospatialCoverage = new GeospatialCoverage();
+		
 		Strategy strategy = new AnnotationStrategy();
 		Serializer serializer = new Persister(strategy);		
 		
 		InputNode child;
 		while( ( child = node.getNext() ) != null )
-		{
+		{		
+
 			switch(child.getName())
 			{
-				case "name":			
-					service.setName(child.getValue());					
+				case "boundingGeometry":
+					BoundingGeometry boundingGeometry = serializer.read(BoundingGeometry.class, child);
+					geospatialCoverage.getBoundingGeometries().add(boundingGeometry);						
 					break;
-				case "type":
-					ServiceType type = serializer.read(ServiceType.class, child);
-					service.setServiceType(type);					
-					break;
-				case "address":							
-					Address address = serializer.read(Address.class, child);
-					service.getAddresses().add(address);															
-					break;
-				case "conformance":							
-					Conformance conformance = serializer.read(Conformance.class, child);
-					service.getConformances().add(conformance);															
-					break;					
 				default:
 					log.log(Level.WARNING, MessageFormat.format("Unknown Element found: {0}", child));
 			}			
-		}
-		return service;		
+		}		
+		
+		return geospatialCoverage;
 	}
 
 	@Override
-	public void write(OutputNode node, Service value) throws Exception
+	public void write(OutputNode node, GeospatialCoverage value) throws Exception
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
