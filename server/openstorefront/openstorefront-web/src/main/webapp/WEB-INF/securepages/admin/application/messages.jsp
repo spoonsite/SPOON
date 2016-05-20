@@ -62,7 +62,7 @@
 					plugins: 'gridfilters',
 					enableLocking: true,
 					columns: [
-						{text: 'Username / Email', dataIndex: 'username', width: 200, flex: 1, lockable: true,
+						{text: 'Username / Email', dataIndex: 'username', width: 200, flex: 1, lockable: true, sortable: false,
 							renderer: function (val, meta, record, rowIndex) {
 								if (typeof val === "undefined") {
 									if (record.get('emailAddress')) {
@@ -405,7 +405,14 @@
 						},
 						{text: 'Message', dataIndex: 'message', width: 200, flex: 1},
 						{text: 'Event Type', dataIndex: 'eventTypeDescription', width: 150, sortable: false},
-						{text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
+						{
+							text: 'Update Date', 
+							dataIndex: 'updateDts',
+							width: 150,
+							xtype: 'datecolumn', 
+							format: 'm/d/y H:i:s',
+							sortable: false
+						}
 					],
 					dockedItems: [
 						{

@@ -797,12 +797,18 @@ limitations under the License.
 							Ext.getCmp('toolsPanel').getComponent('updatedInfo').update(entry);
 							
 							if (entry.approvalState !== "A") {
+								var html = 'This entry has not yet been approved for the site and is still under review.';
+								if (entry.approvalState == 'N') {
+									html = 'This entry has not yet been submitted for review. It must be submitted to appear on the Storefront.';
+								}
+
+
 								headerPanel.addDocked({
 									xtype: 'panel',
 									dock: 'top',
 									bodyCls: 'alert-warning',
 									bodyStyle: 'padding: 20px; font-size: 20px; text-align: center;',
-									html: 'This entry has not yet been approved for the site and is still under review.'
+									html: html
 								});
 								Ext.getCmp('watchBtn').setHidden(true);
 								Ext.getCmp('watchRemoveBtn').setHidden(true);
