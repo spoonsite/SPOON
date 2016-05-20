@@ -62,7 +62,7 @@
 					plugins: 'gridfilters',
 					enableLocking: true,
 					columns: [
-						{text: 'Username / Email', dataIndex: 'username', width: 200, flex: 1, lockable: true,
+						{text: 'Username / Email', dataIndex: 'username', width: 200, flex: 1, lockable: true, sortable: false,
 							renderer: function (val, meta, record, rowIndex) {
 								if (typeof val === "undefined") {
 									if (record.get('emailAddress')) {
