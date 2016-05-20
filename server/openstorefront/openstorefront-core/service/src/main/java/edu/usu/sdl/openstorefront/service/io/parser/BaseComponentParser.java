@@ -25,9 +25,11 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,27 +121,71 @@ public abstract class BaseComponentParser
 			service.getComponentService().importComponents(componentsAll, fileHistoryAll.getFileHistory().getFileHistoryOption());
 		}
 	}
-	
-	protected String getSecurityMarking(String inputMarking)
+
+	/**
+	 * Try to match if not will add a new code
+	 * @param lookupClass
+	 * @param input
+	 * @return 
+	 */
+	protected String getLookup(Class lookupClass, String input)
 	{
-		//try to match if not add marking
-		inputMarking = inputMarking.trim().toUpperCase();
-		SecurityMarkingType securityMarking = service.getLookupService().getLookupEnity(SecurityMarkingType.class, inputMarking);
-		if (securityMarking == null)
-		{
-			//check description
-			securityMarking = service.getLookupService().getLookupEnityByDesc(SecurityMarkingType.class, inputMarking);
-			if (securityMarking == null)
-			{
-				securityMarking = new SecurityMarkingType();
-				securityMarking.setCode(StringUtils.left(inputMarking, OpenStorefrontConstant.FIELD_SIZE_CODE));				
-				securityMarking.setDescription(inputMarking);
-				service.getLookupService().saveLookupValue(securityMarking);
-				log.log(Level.INFO, MessageFormat.format("Added missing security marking: {0}", inputMarking));
+		if (StringUtils.isNotBlank(input)) {
+
+			input = input.trim();
+			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+			String key = sanitizer.santize(input).toString();
+
+			LookupEntity lookup = service.getLookupService().getLookupEnity(lookupClass, key);
+			if (lookup == null) {
+				//check description
+				lookup = service.getLookupService().getLookupEnityByDesc(lookupClass, input);
+				if (lookup == null) {
+					lookup = new SecurityMarkingType();
+					lookup.setCode(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_CODE));
+					lookup.setDescription(StringUtils.left(input, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
+					service.getLookupService().saveLookupValue(lookup);
+					log.log(Level.INFO, MessageFormat.format("Added missing lookup: {0} to lookup {1}", input, lookupClass.getSimpleName()));
+				}
 			}
+			return lookup.getCode();
 		}
-		return securityMarking.getCode();
-	}
+		return input;
+	}	
 	
+	/**
+	 * This will attempt to find the attribute but if not found it will add type and code
+	 * @param attributeTypeCode
+	 * @param attributeCode
+	 * @param attributeDescribtion
+	 * @return 
+	 */
+	protected AttributeCode getAttributeCode(String attributeTypeCode, String attributeTypeDescription, String attributeCode, String attributeCodeDescribtion)
+	{	
+		AttributeType attributeType = service.getAttributeService().findType(attributeTypeCode);
+		if (attributeType == null) {
+			attributeType = new AttributeType();
+			attributeType.setAttributeType(attributeTypeCode);
+			attributeType.setAllowMultipleFlg(Boolean.TRUE);
+			attributeType.setDescription(attributeTypeDescription);
+			service.getAttributeService().saveAttributeType(attributeType, false);			
+		}
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeType(attributeType.getAttributeType());
+		
+		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+		String key = sanitizer.santize(attributeCode).toString();
+		attributeCodePk.setAttributeCode(key);		
+		
+		AttributeCode attributeCodeFound = service.getAttributeService().findCodeForType(attributeCodePk);
+		if (attributeCodeFound == null) {
+			attributeCodeFound = new AttributeCode();
+			attributeCodeFound.setAttributeCodePk(attributeCodePk);
+			attributeCodeFound.setLabel(attributeCodeDescribtion);			
+			service.getAttributeService().saveAttributeCode(attributeCodeFound, false);
+		}
+		
+		return attributeCodeFound;
+	}
 	
 }

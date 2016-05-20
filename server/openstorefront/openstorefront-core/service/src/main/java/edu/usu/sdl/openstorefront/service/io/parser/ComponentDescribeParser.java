@@ -15,23 +15,41 @@
  */
 package edu.usu.sdl.openstorefront.service.io.parser;
 
+import edu.usu.sdl.describe.model.Address;
 import edu.usu.sdl.describe.model.Assertion;
+import edu.usu.sdl.describe.model.Conformance;
 import edu.usu.sdl.describe.model.PointOfContact;
+import edu.usu.sdl.describe.model.RelatedResource;
+import edu.usu.sdl.describe.model.SearchInterface;
 import edu.usu.sdl.describe.model.SearchProvider;
+import edu.usu.sdl.describe.model.Service;
 import edu.usu.sdl.describe.model.StructuredStatement;
 import edu.usu.sdl.describe.model.TrustedDataCollection;
 import edu.usu.sdl.describe.model.TrustedDataObject;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
+import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
+import edu.usu.sdl.openstorefront.core.entity.ResourceType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.service.io.reader.GenericReader;
 import java.io.InputStream;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
@@ -43,6 +61,12 @@ public class ComponentDescribeParser
 	extends BaseComponentParser	
 {
 	private static final Logger log = Logger.getLogger(ComponentDescribeParser.class.getName());
+	
+	private static final String ATTRIBUTE_TYPE_NETWORK = "DESCNETW";
+	private static final String ATTRIBUTE_TYPE_NETWORK_DESC = "Describe Network";
+		
+	private static final String ATTRIBUTE_TYPE_CONFORMANCE = "DESCCOMF";
+	private static final String ATTRIBUTE_TYPE_CONFORMANCE_DESC = "Describe Conformance";	
 	
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
@@ -129,29 +153,90 @@ public class ComponentDescribeParser
 				component.setName(searchProvider.getGeneralInfo().getName());
 				component.setDescription(searchProvider.getGeneralInfo().getDescription());
 				component.setGuid(searchProvider.getGeneralInfo().getGuid());
-				component.setSecurityMarkingType(getSecurityMarking(searchProvider.getGeneralInfo().getDescriptionClassification()));
+				component.setSecurityMarkingType(getLookup(SecurityMarkingType.class, searchProvider.getGeneralInfo().getDescriptionClassification()));
 				
 				for (PointOfContact contact : searchProvider.getGeneralInfo().getContacts()) {					
 					ComponentContact componentContact = new ComponentContact();
 					if (contact.getOrganization() != null) {
 						component.setOrganization(contact.getOrganization().getName());
 						
-						componentContact.setContactType(ContactType.GOVERNMENT);
+						componentContact.setContactType(getLookup(ContactType.class, ContactType.GOVERNMENT));
+												
+						if (StringUtils.isNotBlank(contact.getOrganization().getSubOrganization())){
+							componentContact.setOrganization(contact.getOrganization().getSubOrganization());
+						} else {
+							componentContact.setOrganization(OpenStorefrontConstant.NOT_AVAILABLE);
+						}
+						componentContact.setEmail(contact.getOrganization().getEmail());
+						componentContact.setPhone(contact.getOrganization().getPhone());						
+						componentContact.setFirstName(contact.getOrganization().getName());
+						componentContact.setLastName(OpenStorefrontConstant.NOT_AVAILABLE);						
 						
+					} else {
+						componentContact.setContactType(getLookup(ContactType.class, ContactType.TECHINCAL));
+						componentContact.setEmail(contact.getPerson().getEmail());
+						componentContact.setPhone(contact.getPerson().getPhone());						
+						componentContact.setFirstName(contact.getPerson().getName());
+						componentContact.setLastName(contact.getPerson().getSurname());								
+						componentContact.setOrganization(contact.getPerson().getAffiliation());						
+					}
+					componentAll.getContacts().add(componentContact);
+				}
+				
+				handleRelatedResources(searchProvider.getRelatedResources(), componentAll);
+				
+				for (SearchInterface searchInterface : searchProvider.getSearchInterfaces()) {
+					handleRelatedResources(searchInterface.getRelatedResources(), componentAll);
+					
+					Service serviceResource = searchInterface.getService();
+					
+					for (Address address : serviceResource.getAddresses()) {
+						ComponentResource componentResource = new ComponentResource();
+						String description = serviceResource.getName();
+						if (StringUtils.isNotBlank(address.getNetwork())) {
+							description += " - Network: " +  address.getNetwork();
+						}
 						
+						componentResource.setDescription(description);
+						componentResource.setRestricted(Convert.toBoolean(serviceResource.getServiceType().getSecure()));
+						componentResource.setResourceType(getLookup(ResourceType.class, ResourceType.SERVICE));
+						componentResource.setLink(address.getText());
+						componentAll.getResources().add(componentResource);													
 					}
 					
-					
-					
+					for (Conformance conformance : serviceResource.getConformances())
+					{
+						handleRelatedResources(conformance.getRelatedResources(), componentAll);
+						
+						//add attributes
+						AttributeCode attributeCode = getAttributeCode(ATTRIBUTE_TYPE_CONFORMANCE, 
+								ATTRIBUTE_TYPE_CONFORMANCE_DESC, conformance.getId(), conformance.getName());
+						
+						ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+						componentAttributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+						componentAttributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+						
+						ComponentAttribute componentAttribute = new ComponentAttribute();
+						componentAttribute.setComponentAttributePk(componentAttributePk);
+						
+						componentAll.getAttributes().add(componentAttribute);
+					}
+										
 				}
 				
 				//add attributes
-				
-				//add resources
-				
-				
-				
-				
+				AttributeCode attributeCode = getAttributeCode(ATTRIBUTE_TYPE_NETWORK, 
+						ATTRIBUTE_TYPE_NETWORK_DESC, searchProvider.getGeneralInfo().getNetwork(), searchProvider.getGeneralInfo().getNetwork());
+
+				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+				componentAttributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+				componentAttributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+
+				ComponentAttribute componentAttribute = new ComponentAttribute();
+				componentAttribute.setComponentAttributePk(componentAttributePk);
+
+				componentAll.getAttributes().add(componentAttribute);
+								
 				componentAlls.add(componentAll);
 				
 			} else if (assertion.getStructuredStatement().getResource() != null) {
@@ -168,6 +253,26 @@ public class ComponentDescribeParser
 			Component component = componentAll.getComponent();	
 		
 			//combine Resource and contentCollection into one record
+			String name = resourceCollection.getResource().getMetacardInfo().getIdentifierValue().replace("_", " ");
+			String description = resourceCollection.getResource().getTitle().getText();
+			
+			component.setName(name);
+			component.setDescription(description);
+			component.setSecurityMarkingType(getLookup(SecurityMarkingType.class, resourceCollection.getResource().getTitle().getText()));
+			component.setOrganization(resourceCollection.getResource().getCreatorName());
+						
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+			Date releaseDate = sdf.parse(resourceCollection.getResource().getCreateDate(), new ParsePosition(0));
+			component.setReleaseDate(releaseDate);
+			component.setGuid(resourceCollection.getResource().getGuid());
+			
+			ComponentMetadata metadata = new ComponentMetadata();
+			metadata.setLabel("Document Type");
+			metadata.setValue(resourceCollection.getResource().getType());			
+			componentAll.getMetadata().add(metadata);
+			
+			
 			
 			
 			componentAlls.add(componentAll);
@@ -175,8 +280,17 @@ public class ComponentDescribeParser
 				
 		return componentAlls;		
 	} 
-	
 
+	private void handleRelatedResources(List<RelatedResource> relatedResources, ComponentAll componentAll)
+	{
+		for (RelatedResource relatedResource : relatedResources) {
+			ComponentResource componentResource = new ComponentResource();
+			componentResource.setDescription(relatedResource.getDescription());
+			componentResource.setResourceType(getLookup(ResourceType.class, relatedResource.getRelationship()));
+			componentResource.setLink(relatedResource.getLink());
+			componentAll.getResources().add(componentResource);
+		}
+	}
 	
 
 }
