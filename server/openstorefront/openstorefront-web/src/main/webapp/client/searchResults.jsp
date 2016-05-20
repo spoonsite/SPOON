@@ -382,7 +382,11 @@ limitations under the License.
 							proxy: {
 								type: 'ajax',
 								url: '../api/v1/resource/components/tags'
-							}
+							},
+							sorters: [{
+								property: 'text',
+								direction: 'ASC'
+							}]
 						}),
 						listeners: {
 							change: function(field, newValue, oldValue, opts) {

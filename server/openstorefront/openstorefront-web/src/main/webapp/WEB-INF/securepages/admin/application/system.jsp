@@ -967,15 +967,20 @@
 					var url = '/openstorefront/api/v1/service/application/configproperties/';
 					url += encodeURIComponent(record.data.code);
 
-					Ext.Ajax.request({
-						url: url,
-						method: 'DELETE',
-						success: function(response, opt){
-							Ext.toast('Successfully deleted property', '', 'tr');
-							sysConfigPropStore.load();
-						},
-						failure: function(response, opt){
-							Ext.toast('Failed to delete property', '', 'tr');
+					var msg = 'Are you sure you want to delete "' + record.getData().code + '"?';
+					Ext.MessageBox.confirm('Confirm Deletion', msg, function(btn) {
+						if (btn === 'yes') {
+							Ext.Ajax.request({
+								url: url,
+								method: 'DELETE',
+								success: function(response, opt){
+									Ext.toast('Successfully deleted property', '', 'tr');
+									sysConfigPropStore.load();
+								},
+								failure: function(response, opt){
+									Ext.toast('Failed to delete property', '', 'tr');
+								}
+							});
 						}
 					});
 				};

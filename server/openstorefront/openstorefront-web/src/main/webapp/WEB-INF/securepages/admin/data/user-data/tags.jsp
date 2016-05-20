@@ -67,7 +67,8 @@
 								text: 'Security Type', 
 								dataIndex: 'securityMarkingDescription',
 								width: 175,
-								hidden: true
+								hidden: true,
+								sortable: false
 							}
 						]
 					},

@@ -1874,7 +1874,11 @@
 									forceSelection: false,
 									valueField: 'description',
 									storeConfig: {
-										url: '../api/v1/resource/organizations/lookup'
+										url: '../api/v1/resource/organizations/lookup',
+										sorters: [{
+											property: 'description',
+											direction: 'ASC'
+										}]
 									}
 								}),								
 								Ext.create('OSF.component.StandardComboBox', {
@@ -2913,7 +2917,11 @@
 									valueField: 'description',
 									editable: true,
 									storeConfig: {
-										url: '../api/v1/resource/organizations/lookup'
+										url: '../api/v1/resource/organizations/lookup',
+										sorters: [{
+											property: 'description',
+											direction: 'ASC'
+										}]
 									}
 								}),
 								Ext.create('OSF.component.StandardComboBox', {														
@@ -3764,7 +3772,7 @@
 						{ text: 'Create Date', dataIndex: 'createDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Create User (Owner)', dataIndex: 'createUser', width: 175, hidden: true },
 						{ text: 'Component Id', dataIndex: 'componentId', width: 175, hidden: true },
-						{ text: 'Security Marking', dataIndex: 'securityMarkingDescription', width: 175, hidden: true }
+						{ text: 'Security Marking', dataIndex: 'securityMarkingDescription', width: 175, hidden: true, sortable: false }
 					],
 					dockedItems: [
 						{
