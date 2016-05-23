@@ -795,6 +795,12 @@ div.x-border-layout-ct {
 	position: fixed !important;
 }
 
+/* Fix for issue described in https://www.sencha.com/forum/showthread.php?307051-Positioning-of-datepicker-in-extjs  */
+/*  Fix for multiselector widget  */
+.x-panel.x-layer {
+	position: fixed !important;
+}
+
 /* IE 9 */
 .x-window-header-default-top-mc{
    background-color: ${actionBean.branding.primaryColor};
