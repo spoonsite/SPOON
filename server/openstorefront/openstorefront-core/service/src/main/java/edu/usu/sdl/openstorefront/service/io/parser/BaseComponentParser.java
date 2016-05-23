@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.io.parser;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
@@ -24,15 +25,17 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
-import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
@@ -53,10 +56,15 @@ public abstract class BaseComponentParser
 
 	protected ComponentAll defaultComponentAll()
 	{
+		return defaultComponentAll(ComponentType.COMPONENT);
+	}	
+	
+	protected ComponentAll defaultComponentAll(String componentType)
+	{
 		ComponentAll componentAll = new ComponentAll();
 		Component component = new Component();
 		component.setApprovalState(ApprovalStatus.PENDING);
-		component.setComponentType(ComponentType.COMPONENT);
+		component.setComponentType(componentType);		
 		component.setDescription(OpenStorefrontConstant.NOT_AVAILABLE);
 		component.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
 		component.setUpdateUser(fileHistoryAll.getFileHistory().getUpdateUser());
@@ -74,19 +82,36 @@ public abstract class BaseComponentParser
 		}
 
 		for (AttributeType attributeType : requiredAttributes) {
-			if (StringUtils.isNotBlank(attributeType.getDefaultAttributeCode())) {
-				AttributeCodePk attributeCodePk = new AttributeCodePk();
-				attributeCodePk.setAttributeType(attributeType.getAttributeType());
-				attributeCodePk.setAttributeCode(attributeType.getDefaultAttributeCode());
-				AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
-				if (attributeCode != null) {
-					ComponentAttribute componentAttribute = new ComponentAttribute();
-					ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-					componentAttributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
-					componentAttributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
-					componentAttribute.setComponentAttributePk(componentAttributePk);
+			
+			
+			boolean attributeRequiredForType = false;
+			if (attributeType.getRequiredRestrictions() != null) {
+				Set<String> componentTypesInRestriction = new HashSet<>();				
+				for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
+					componentTypesInRestriction.add(restriction.getComponentType());
+				}
+				if (componentTypesInRestriction.contains(componentType)) {
+					attributeRequiredForType = true;
+				}
+			} else {
+				attributeRequiredForType = true;
+			}
+			
+			if (attributeRequiredForType) {
+				if (StringUtils.isNotBlank(attributeType.getDefaultAttributeCode())) {
+					AttributeCodePk attributeCodePk = new AttributeCodePk();
+					attributeCodePk.setAttributeType(attributeType.getAttributeType());
+					attributeCodePk.setAttributeCode(attributeType.getDefaultAttributeCode());
+					AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
+					if (attributeCode != null) {
+						ComponentAttribute componentAttribute = new ComponentAttribute();
+						ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+						componentAttributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+						componentAttributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+						componentAttribute.setComponentAttributePk(componentAttributePk);
 
-					componentAll.getAttributes().add(componentAttribute);
+						componentAll.getAttributes().add(componentAttribute);
+					}
 				}
 			}
 		}
@@ -141,11 +166,18 @@ public abstract class BaseComponentParser
 				//check description
 				lookup = service.getLookupService().getLookupEnityByDesc(lookupClass, input);
 				if (lookup == null) {
-					lookup = new SecurityMarkingType();
-					lookup.setCode(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_CODE));
-					lookup.setDescription(StringUtils.left(input, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
-					service.getLookupService().saveLookupValue(lookup);
-					log.log(Level.INFO, MessageFormat.format("Added missing lookup: {0} to lookup {1}", input, lookupClass.getSimpleName()));
+					try {
+						lookup = (LookupEntity) lookupClass.newInstance();
+						lookup.setCode(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_CODE));
+						lookup.setDescription(StringUtils.left(input, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
+						lookup.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
+						lookup.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
+						
+						service.getLookupService().saveLookupValue(lookup);
+						log.log(Level.INFO, MessageFormat.format("Added missing lookup: {0} to lookup {1}", input, lookupClass.getSimpleName()));
+					} catch (InstantiationException | IllegalAccessException ex) {
+						throw new OpenStorefrontRuntimeException("Unable to create a new instance of look up class.", ex);
+					}
 				}
 			}
 			return lookup.getCode();
@@ -160,14 +192,23 @@ public abstract class BaseComponentParser
 	 * @param attributeDescribtion
 	 * @return 
 	 */
-	protected AttributeCode getAttributeCode(String attributeTypeCode, String attributeTypeDescription, String attributeCode, String attributeCodeDescribtion)
+	protected AttributeCode getAttributeCode(String attributeTypeCode, String attributeTypeDescription, String attributeCode, String attributeCodeDescription)
 	{	
 		AttributeType attributeType = service.getAttributeService().findType(attributeTypeCode);
 		if (attributeType == null) {
 			attributeType = new AttributeType();
 			attributeType.setAttributeType(attributeTypeCode);
 			attributeType.setAllowMultipleFlg(Boolean.TRUE);
+			attributeType.setArchitectureFlg(Boolean.FALSE);
+			attributeType.setImportantFlg(Boolean.FALSE);
+			attributeType.setHideOnSubmission(Boolean.FALSE);
+			attributeType.setRequiredFlg(Boolean.FALSE);
+			attributeType.setVisibleFlg(Boolean.FALSE);
+						
 			attributeType.setDescription(attributeTypeDescription);
+			attributeType.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
+			attributeType.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
+					
 			service.getAttributeService().saveAttributeType(attributeType, false);			
 		}
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
@@ -175,13 +216,16 @@ public abstract class BaseComponentParser
 		
 		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 		String key = sanitizer.santize(attributeCode).toString();
-		attributeCodePk.setAttributeCode(key);		
+		attributeCodePk.setAttributeCode(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_CODE));		
 		
 		AttributeCode attributeCodeFound = service.getAttributeService().findCodeForType(attributeCodePk);
 		if (attributeCodeFound == null) {
 			attributeCodeFound = new AttributeCode();
 			attributeCodeFound.setAttributeCodePk(attributeCodePk);
-			attributeCodeFound.setLabel(attributeCodeDescribtion);			
+			attributeCodeFound.setLabel(StringUtils.left(attributeCodeDescription, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));	
+			attributeCodeFound.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
+			attributeCodeFound.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());			
+			
 			service.getAttributeService().saveAttributeCode(attributeCodeFound, false);
 		}
 		
