@@ -16,6 +16,7 @@
 package edu.usu.sdl.describe.model;
 
 import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Text;
 
 /**
  *
@@ -24,6 +25,7 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class MimeType
 {
+	@Text
 	private String text; 
 
 	public MimeType()

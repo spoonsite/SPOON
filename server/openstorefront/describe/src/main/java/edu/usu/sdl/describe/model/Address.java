@@ -17,6 +17,7 @@ package edu.usu.sdl.describe.model;
 
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Text;
 
 /**
  *
@@ -31,6 +32,7 @@ public class Address
 	@Attribute
 	private String protocol;
 	
+	@Text
 	private String text;
 
 	public Address()

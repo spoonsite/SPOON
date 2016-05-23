@@ -7,6 +7,7 @@ package edu.usu.sdl.describe.model;
 
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Text;
 
 /**
  *
@@ -18,6 +19,7 @@ public class RecordRate
 	@Attribute
 	private String frequency;
 	
+	@Text
 	private String text;
 
 	public RecordRate()
