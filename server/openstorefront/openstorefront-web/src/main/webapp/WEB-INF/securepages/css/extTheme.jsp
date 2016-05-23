@@ -789,6 +789,12 @@ div.x-border-layout-ct {
     background-color: #E8E8E8;
 }
 
+/* Fix for issue described in https://www.sencha.com/forum/showthread.php?307051-Positioning-of-datepicker-in-extjs  */
+/* Date-picker empty screen issue */
+.x-datepicker.x-layer {
+	position: fixed !important;
+}
+
 /* IE 9 */
 .x-window-header-default-top-mc{
    background-color: ${actionBean.branding.primaryColor};
