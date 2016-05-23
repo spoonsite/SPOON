@@ -236,7 +236,7 @@
 									xtype: 'combobox',
 									id: 'answer-activeStatus',
 									emptyText: 'Active',
-									value: 'ALL',
+									value: 'A',
 									editable: false,
 									fieldLabel: 'Active Status',
 									name: 'answer-activeStatus',
@@ -244,14 +244,8 @@
 									valueField: 'code',
 									listeners: {
 										change: function (filter, newValue, oldValue, opts) {
-											if (newValue === 'ALL') {
-												answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers.</div>';
-												answerPanel.getStore().clearFilter();
-											}
-											else {
-												answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers with the selected status.</div>';
-												answerPanel.getStore().filter('activeStatus', newValue);
-											}
+											answerPanel.getView().emptyText = '<div class="x-grid-empty">This question has no answers with the selected status.</div>';
+											answerPanel.getStore().filter('activeStatus', newValue);
 											var actButton = Ext.getCmp('answer-activateButton');
 											if (newValue === 'A') {
 												actButton.setText('Deactivate');
@@ -268,10 +262,6 @@
 											'description'
 										],
 										data: [
-											{
-												code: 'ALL',
-												description: 'All'
-											},
 											{
 												code: 'A',
 												description: 'Active'
