@@ -664,9 +664,15 @@
 				var fieldDropTarget = new Ext.dd.DropTarget(targetField.id, {
 					ddGroup: 'mapping',
 					notifyDrop: function(ddSource, e, data) {
-						var selectedRecord = ddSource.dragData.records[0];
-						targetField.setValue(selectedRecord.getData().label);
-						ddSource.view.store.remove(selectedRecord);
+						if (targetField.getValue() == '') {
+							var selectedRecord = ddSource.dragData.records[0];
+							targetField.setValue(selectedRecord.getData().label);
+							ddSource.view.store.remove(selectedRecord);
+						}
+						else { 
+							Ext.Msg.alert('Mapping Already Set','The Storefront code mapping is already set for "' + targetField.getFieldLabel() + '". To re-assign this mapping, you must click "Reset" to clear the mapping fields.');
+						}
+
 						return true;
 					}
 				});
