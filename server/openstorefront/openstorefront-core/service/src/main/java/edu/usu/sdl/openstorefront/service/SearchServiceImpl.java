@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -737,7 +737,10 @@ public class SearchServiceImpl
 			suggestion.setComponentId(model.getId());
 			suggestion.setQuery("\"" + model.getName() + "\"");
 			
-			suggestions.add(suggestion);
+			// Only include approved components.
+			if (getComponentService().checkComponentApproval(suggestion.getComponentId())) {
+				suggestions.add(suggestion);
+			}
 		}
 				
 		return suggestions;
