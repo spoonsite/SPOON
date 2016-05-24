@@ -53,25 +53,27 @@ Clearinghouse Search provides a way to find entry lists and articles
 matching search criteria. Several types of searches are supported. The
 types of searches that can be performed are:
 
-0-    Searching the Help file
-1.  Searching across multiple fields (entry name and description,
+ 1.  Searching the Help file
+ 2.  Searching across multiple fields (entry name and description,
     tags, attribute types, codes, and descriptions)
-2.  Wildcard searching (\* and ?)
-3.  Exact phrase searching
-4.  Case insensitivity
-5.  Tags
-6.  Comparing
+ 3.  Wildcard searching (\* and ?)
+ 4.  Exact phrase searching
+ 5.  Case insensitivity
+ 6.  Filtered Searches
+ 7.  Tags
+ 8.  Comparing
+ 9.  Customizing the display
 
-**Note:** The type ahead on the search field only looks at the title to see if  it contains the text.  
+**Note:** The type ahead on the search field only looks at the title to see if it contains the text.  
 The user can then select the suggestion by clicking on it or continue with a full text search.
 
-### 2.1.0 Searching the Help file
+### 2.1.1 Searching the Help file
 -------
 
 A simple (exact text) search is provided in the help file by typing in the Search box in the 
 upper-left of the help file, above the tree structure.  
 
-### 2.1.1 Search Field Differentiation or Specificity
+### 2.1.2 Search Field Differentiation or Specificity
 -------
 
 Currently, there is no differentiation among entry Name, entry
@@ -80,7 +82,7 @@ coverage of the search. A search term or phrase is searched via a single
 search box, and applied across all fields equally. For a more specific search
 please see the Advanced Search under Search Tools in the help file.
 
-### 2.1.2 Fuzzy Matching and Wildcards
+### 2.1.3 Fuzzy Matching and Wildcards
 ------
 
 Fuzzy matching is defined as the ability to perform inexact matches on
@@ -100,7 +102,7 @@ Query: ```off*r``` Matches offer, officer, officiator, and so on
 
 Query: ```off?r``` Matches offer, but not officer
 
-### 2.1.3 Phrase Searches and Exact Searches
+### 2.1.4 Phrase Searches and Exact Searches
 ------
 
 Exact searches or searches for more than one word must be enclosed
@@ -116,10 +118,10 @@ Works: ```eng?neering``` _(wildcard properly used)_
 Does not work: ```"eng?neering"``` _(quotes are treated as a literal string not a wildcard)_
 
 In the second example, the search would only return results that had the
-\* and ? characters exactly in their respective places instead of
+? character exactly in their respective places instead of
 accepting any character in those locations as the user intended.
 
-### 2.1.4 Case Insensitivity
+### 2.1.5 Case Insensitivity
 ------
 
 Searching is case **insensitive** and allows mixing of case. In the
@@ -129,7 +131,29 @@ the capitalization.
 Search examples: 
 ```"create a common framework"```, ```"Create a Common Framework"```, ```"cReatE A CoMmoN FraMewoRk"```
 
-### 2.1.5 Tags  
+### 2.1.6 Filtered Searches
+------
+
+From the search results screen the left-most panel is the Filters panel.  
+Here results can be narrowed by filtering on various aspects such as:
+ 
+ * **Name:**  The name of the entry
+ 
+ * **Tag:**  Type the name of a tag or select from the drop-down.  Tags can be combined and 
+          added to the filter or removed.
+ 
+ * **Topic:**  DI2E Component, Article, etc.
+ 
+ * **User Rating:**  This will show all entries with the average star rating selected 
+                 (or better, i.e. or a **higher** average star rating)
+ 
+ * **Vitals:**  This gives a fine-tuned and very detailed approach to filtering by many different 
+            vitals such as DI2E Intent, State, and Alignment, for example.
+ 
+ 
+
+
+### 2.1.7 Tags  
 ------
 
 Users can "Tag" listings so that they can be used to later find and
@@ -144,7 +168,7 @@ on the home page.
  2.  Click on the View/ Edit Tag icon to open the tag panel.
  3.  Enter a new tag in the text field OR a single space to view existing tags.
 
-### 2.1.6 Comparing
+### 2.1.8 Comparing
 ---------
 
 The comparison feature allows for side-by-side viewing of multiple
@@ -159,10 +183,10 @@ From the Search Results Screen check "Add to compare" on 2 or more
 entries and then click on the **Compare** button at the top of the
 search results.
 
-If more than two entries were selected you can do a side-by-side comparison
+If more than two entries were selected, you can do a side-by-side comparison
 by using the drop-down list at the top to select the various entries.
 
-### 2.1.7 Customizing the Search Display
+### 2.1.9 Customizing the Search Display
 ---------
 
 On the search results page filtering can be done by Article, Component, or other
@@ -254,7 +278,7 @@ This allows the user to refine a search based on:
 
 **String/ Number Operation:** Contains, Equals, <, >, and so forth depending on the value
 
-**Merge Condition:** OR, AND, NOT to get a search results in conjunction  with the other advanced search parameters.
+**Merge Condition:** OR, AND, NOT to get a search results in conjunction with the other advanced search parameters.
 
 **Preview Results:**  Allows you to see the results of this advanced search, queries for results
 
@@ -280,7 +304,34 @@ The user tools contain a variety of useful features including:
  1.  User Profile
  2.  Submissions
  3.  User Tools (Questions, Reports, Reviews, Searches, Watches)
-     
+
+----
+
+The User Tools landing or home page is the **Dashboard**. This is accessed by
+clicking on the username in the upper-right corner and then the User Tools 
+drop-down menu.
+
+The first time the dashboard is accessed widgets will need to be added to view.
+This is done by clicking the **+Add Widget** button towards the top of the dashboard
+section.
+
+The following widgets can be added to the dashboard by clicking on them from the 
+Add Widget window and then clicking Add Selected Widgets:
+
+ * Notifications
+ * Questions
+ * Reports
+ * Saved Search
+ * Submission Status
+ * Watches
+
+Once the desired widgets are added they can be refreshed, moved to next and previous 
+display order, maximized, or closed.  In addition, certain settings such as the title
+and title bar color can be set.  This is done by clicking on the buttons in the 
+right of the title bar of each individual widget once added to the dashboard.
+
+NOTE:  If you are an administrator, additional widgets may be available to you.  
+ 
 
 ## 2.3.1 User Profile
 --------------------
@@ -311,10 +362,10 @@ listings on the application.
 -----------
 
 This page displays all of the submissions you, the current logged in user, have
-made.  In the User Submissions table the columns can be sorted by clicking on 
+made.  In the User Submissions table, the columns can be sorted by clicking on 
 the column header.  
 
-In addition icons for Edit, Preview, Copy, Toggle Notify, Unsubmit, and 
+In addition, icons for Edit, Preview, Copy, Toggle Notify, Unsubmit, and 
 Request Removal can be found along the top of the table.  Finally,
 a **+ New submission** button allows for a new entry to be made.
 
@@ -399,7 +450,7 @@ or an answer.
 This section displays reports that have run as well as scheduled reports that will run in the future.
 
 Reports can be viewed, downloaded, or added.  Scheduled reports can be edited.  
-Selections  can be made to run a report one time only or at regular intervals.  
+Selections can be made to run a report one time only or at regular intervals.  
 Some reports have the option of HTML or Comma-Separated Values as the report format.  
 If selecting Previous days, the selected number of prior days will be included in the report output.  
 
@@ -422,7 +473,7 @@ scheduled report, edit, or delete it.
 This section displays reports that have run as well as scheduled reports that will run in the future.
 
 Reports can be viewed, downloaded, or added.  Scheduled reports can be edited.  
-Selections  can be made to run a report one time only or at regular intervals.  
+Selections can be made to run a report one time only or at regular intervals.  
 Some reports have the option of HTML or Comma-Separated Values as the report format.  
 If selecting Previous days, the selected number of prior days will be included in the report output.  
 
@@ -485,7 +536,7 @@ by clicking on the delete icon next to the title of the review. You can only rem
 This tab displays the list of saved searches from the Advanced Search area.
 It also allows the user to Add, Edit, and Delete advanced searches.
 
-For more information see the Advanced Search Section under Search Tools.
+For more information, see the Advanced Search Section under Search Tools.
 
 
 #### 2.3.3.5 Manage Watches
@@ -580,15 +631,43 @@ labels or display areas.
 
 Admin tools allow for the management of all data in the system.
  
-(Sections marked with a * requires admin account access)
+(Sections marked with * require admin account access)
 
 
 ## 3.1 Dashboard *
 --------
 
-The dashboard is the homepage of the Admin Tools, where various statistics are shown 
-about the Clearinghouse.  There are four main sections in the dashboard: 
-Entry Statistics, Notifications, User Statistics, and System Statistics.
+The dashboard is the homepage of the Admin Tools.  This is accessed by
+clicking on the username in the upper-right corner and then the Admin Tools 
+drop-down menu.
+
+The first time the dashboard is accessed widgets will need to be added to view.
+This is done by clicking the **+Add Widget** button towards the top of the dashboard
+section.
+
+The following administrative widgets can be added to the dashboard by clicking on them from the 
+Add Widget window and then clicking Add Selected Widgets:
+
+ * Entry Stats
+ * Outstanding Feedback
+ * Pending Approval Requests
+ * Recent User Data
+ * System Status
+ * User Status
+
+Once the desired widgets are added they can be refreshed, moved to next and previous 
+display order, maximized, or closed.  In addition, certain settings such as the title
+and title bar color can be set.  This is done by clicking on the buttons in the 
+right of the title bar of each individual widget once added to the dashboard.
+
+Note that the following user-specific (nonadmin) widgets may also be added, if desired:
+
+ * Notifications
+ * Questions
+ * Reports
+ * Saved Search
+ * Submission Status
+ * Watches
 
 
 ## 3.2 Data Management *
@@ -699,9 +778,10 @@ files for either Attributes or SvcV-4.
 
 ### 3.2.2 Contacts *
 -----
+
 The Contacts Management area allows for the management of contacts in one place across all entries.  
 Contacts can be added, edited, viewed, merged, made active or inactive, or deleted. 
-In addition the references or components that reference each contact can be viewed.
+In addition, the references or components that reference each contact can be viewed.
 
 
 ### 3.2.3 Entries *

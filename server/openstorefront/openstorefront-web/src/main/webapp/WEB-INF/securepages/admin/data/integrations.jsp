@@ -163,7 +163,7 @@
 								handler: function () {
 									var record = componentConfigGrid.getSelection()[0];
 									var title = 'Delete Configuration';
-									var msg = 'Are you sure you want to delete this configuration?'
+									var msg = 'Are you sure you want to delete this configuration?';
 									Ext.MessageBox.confirm(title, msg, function (btn) {
 										if (btn === 'yes') {
 											actionDeleteIntegration(record);
@@ -183,7 +183,7 @@
 								handler: function () {
 									actionRunAllJobs();
 								}
-							},
+							}
 
 
 						]
@@ -240,7 +240,7 @@
 						]
 					}
 				]
-			})
+			});
 
 			var actionAddNewConfiguration = function actionAddNewConfiguration() {
 				entryPickWindow.show();
@@ -287,7 +287,7 @@
 				});
 
 
-			}
+			};
 
 			var actionEditIntegration = function actionEditIntegration(record) {
 				integrationWindow.show();
@@ -552,7 +552,7 @@
 										flex: 1,
 										hideHeaders: true,
 										columns: [
-											{ text: 'Jira Codes', dataIndex: 'label', flex: 1},
+											{ text: 'Jira Codes', dataIndex: 'label', flex: 1}
 										]
 									},
 									{
@@ -583,11 +583,11 @@
 											paddingLeft: '20px'
 										},
 										flex: 1,
-										id: 'fieldAssignmentForm',
+										id: 'fieldAssignmentForm'
 									}
 								]
 							}
-						],
+						]
 					}
 				],
 				dockedItems: [
@@ -608,9 +608,9 @@
 										if (fields.hasOwnProperty(key)) {
 											var thisMapping = {};
 											thisMapping.attributeType = form.attributeType;
-											thisMapping.localCode = key
+											thisMapping.localCode = key;
 											thisMapping.externalCode = fields[key];
-											if (thisMapping.externalCode != '') map.push(thisMapping);	
+											if (thisMapping.externalCode !== '') map.push(thisMapping);	
 										}
 									};
 
@@ -631,6 +631,7 @@
 											var message = 'Successfully submitted mapping';
 											Ext.toast(message, '', 'tr');
 											addEditMappingWin.close();
+											jiraConfigStore.load();
 										},
 										failure: function (response, opts) {
 											Ext.MessageBox.alert('Failed', 'Could not submit mapping');
@@ -664,7 +665,7 @@
 					ddGroup: 'mapping',
 					notifyDrop: function(ddSource, e, data) {
 						var selectedRecord = ddSource.dragData.records[0];
-						targetField.setValue(selectedRecord.getData().value);
+						targetField.setValue(selectedRecord.getData().label);
 						ddSource.view.store.remove(selectedRecord);
 						return true;
 					}
@@ -679,7 +680,7 @@
 					{ text: 'Project Id', dataIndex: 'projectType', flex: 1},
 					{ text: 'Issue Type', dataIndex: 'issueType', flex: 1},
 					{ text: 'Attribute', dataIndex: 'attributeName', flex: 2},
-					{ text: 'Custom Field', dataIndex: 'fieldName', flex: 2},
+					{ text: 'Custom Field', dataIndex: 'fieldName', flex: 2}
 				],
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
@@ -739,7 +740,7 @@
 								handler: function () {
 									var record = jiraConfigGrid.getSelection()[0];
 									var title = 'Delete Mapping';
-									var msg = 'Are you sure you want to delete this mapping?'
+									var msg = 'Are you sure you want to delete this mapping?';
 									Ext.MessageBox.confirm(title, msg, function (btn) {
 										if (btn === 'yes') {
 											actionDeleteMapping(record);
