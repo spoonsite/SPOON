@@ -80,8 +80,18 @@
 				store: fileHistoryStore,
 				bodyCls: 'border_accent',
 				columns: [
-					{ text: 'File Type', dataIndex: 'fileTypeDescription', width: 150 },
-					{ text: 'File Format', dataIndex: 'fileFormatDescription', width: 200 },
+					{ 
+						text: 'File Type',
+						dataIndex: 'fileTypeDescription', 
+						width: 150,
+						sortable: false
+					},
+					{ 
+						text: 'File Format',
+						dataIndex: 'fileFormatDescription',
+						width: 200,
+						sortable: false
+					},
 					{
 						text: 'Dates',
 						columns: [
