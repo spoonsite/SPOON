@@ -20,7 +20,7 @@
 					remoteSort: true,
 					sorters: [
 						new Ext.util.Sorter({
-							property: 'username',
+							property: 'updateDts',
 							direction: 'DESC'
 						})
 					],	
@@ -360,8 +360,8 @@
 					remoteSort: true,
 					sorters: [
 						new Ext.util.Sorter({
-							property: 'updateDts',
-							direction: 'DESC'
+							property: 'username',
+							direction: 'ASC'
 						})
 					],
 					fields: [
