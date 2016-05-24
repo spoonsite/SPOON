@@ -31,10 +31,10 @@ import org.simpleframework.xml.convert.Convert;
 @Convert(ConformanceConverter.class)
 public class Conformance
 {
-	@Attribute
+	@Attribute(required = false)
 	private String id;
 	
-	@Element
+	@Element(required = false)
 	private String name;
 	
 	private List<RelatedResource> relatedResources = new ArrayList<>();

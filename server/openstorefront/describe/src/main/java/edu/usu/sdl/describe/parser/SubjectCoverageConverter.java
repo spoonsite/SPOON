@@ -46,7 +46,11 @@ public class SubjectCoverageConverter
 	@Override
 	public void write(OutputNode node, SubjectCoverage value) throws Exception
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		node.setName("subjectCoverage");
+				
+		for (String keyword : value.getKeywords()) {
+			node.getChild("keyword").setAttribute("value", Util.blankIfNull(keyword));
+		}
 	}
 	
 }

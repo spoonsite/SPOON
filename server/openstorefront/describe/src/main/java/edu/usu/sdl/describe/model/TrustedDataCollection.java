@@ -19,10 +19,10 @@ public class TrustedDataCollection
 	@Attribute
 	private String version;
 	
-	@Element(name="HandlingAssertion")
+	@Element(name="HandlingAssertion", required = false)
 	private HandlingAssertion handlingAssertion;
 	
-	@Element(name="Assertion")
+	@Element(name="Assertion", required = false)
 	private Assertion assertion;
 	
 	@Element(name="TrustedDataObject")

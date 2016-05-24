@@ -55,7 +55,15 @@ public class GeospatialCoverageConverter
 	@Override
 	public void write(OutputNode node, GeospatialCoverage value) throws Exception
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		node.setName("geospatialCoverage");
+		
+		Strategy strategy = new AnnotationStrategy();
+		Serializer serializer = new Persister(strategy);	
+		
+		for (BoundingGeometry boundingGeometry : value.getBoundingGeometries()) {
+			serializer.write(boundingGeometry, node);
+		}
+		
 	}
 	
 }

@@ -68,7 +68,33 @@ public class GeneralInfoConverter
 	@Override
 	public void write(OutputNode node, GeneralInfo value) throws Exception
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Strategy strategy = new AnnotationStrategy();
+		Serializer serializer = new Persister(strategy);	
+		
+		node.setName("generalInfo");
+		
+		node.getChild("identifier").setAttribute("value", Util.blankIfNull(value.getGuid()));		
+		
+		if (value.getName() != null) {
+			OutputNode nameNode = node.getChild("name");		
+			nameNode.setAttribute("classification", Util.blankIfNull(value.getNameClassification()));
+			nameNode.setValue(value.getName());
+		}
+		
+		if (value.getDescription() != null) {
+			OutputNode descNode = node.getChild("description");		
+			descNode.setAttribute("classification", Util.blankIfNull(value.getDescriptionClassification()));
+			descNode.setValue(value.getDescription());
+		}
+		
+		if (value.getNetwork() != null) {
+			node.getChild("network").setValue(value.getNetwork());
+		}
+		
+		for (PointOfContact contact : value.getContacts()) {
+			serializer.write(contact, node);
+		}		
+		
 	}
 	
 }

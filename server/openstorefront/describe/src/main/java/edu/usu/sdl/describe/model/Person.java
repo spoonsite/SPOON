@@ -25,19 +25,19 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class Person
 {
-	@Element	
+	@Element(required = false)
 	private String name;
 	
-	@Element
+	@Element(required = false)
 	private String surname;
 	
-	@Element
+	@Element(required = false)
 	private String phone;
 	
-	@Element
+	@Element(required = false)
 	private String email;
 	
-	@Element
+	@Element(required = false)
 	private String affiliation;
 
 	public Person()

@@ -9,11 +9,7 @@ import edu.usu.sdl.describe.model.BoundingGeometry;
 import static edu.usu.sdl.describe.parser.TrustedDataConverter.log;
 import java.text.MessageFormat;
 import java.util.logging.Level;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.convert.AnnotationStrategy;
 import org.simpleframework.xml.convert.Converter;
-import org.simpleframework.xml.core.Persister;
-import org.simpleframework.xml.strategy.Strategy;
 import org.simpleframework.xml.stream.InputNode;
 import org.simpleframework.xml.stream.OutputNode;
 
@@ -29,9 +25,6 @@ public class BoundingGeometryConverter
 	public BoundingGeometry read(InputNode node) throws Exception
 	{
 		BoundingGeometry boundingGeometry = new BoundingGeometry();
-		
-		Strategy strategy = new AnnotationStrategy();
-		Serializer serializer = new Persister(strategy);		
 		
 		InputNode child;
 		while( ( child = node.getNext() ) != null )
@@ -56,7 +49,12 @@ public class BoundingGeometryConverter
 	@Override
 	public void write(OutputNode node, BoundingGeometry value) throws Exception
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		node.setName("boundingGeometry");
+				
+		for (String point : value.getPoints()) {
+			node.getChild("Point").getChild("pos").setValue(point);
+		}
+		
 	}
 	
 }

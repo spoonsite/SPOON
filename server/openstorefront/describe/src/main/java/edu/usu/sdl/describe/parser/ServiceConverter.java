@@ -66,7 +66,22 @@ public class ServiceConverter
 	@Override
 	public void write(OutputNode node, Service value) throws Exception
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		node.setName("service");
+				
+		Strategy strategy = new AnnotationStrategy();
+		Serializer serializer = new Persister(strategy);	
+		
+		node.getChild("name").setValue(Util.blankIfNull(value.getName()));
+				
+		serializer.write(value.getServiceType(), node);
+		
+		for (Address address : value.getAddresses()) {
+			serializer.write(address, node);
+		}		
+		
+		for (Conformance conformance : value.getConformances()) {
+			serializer.write(conformance, node);
+		}
 	}
 	
 }

@@ -58,7 +58,16 @@ public class ConformanceConverter
 	@Override
 	public void write(OutputNode node, Conformance value) throws Exception
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Strategy strategy = new AnnotationStrategy();
+		Serializer serializer = new Persister(strategy);	
+		
+		node.setName("conformance");
+				
+		node.setAttribute("id", Util.blankIfNull(value.getId()));		
+		node.getChild("name").setValue(Util.blankIfNull(value.getName()));
+		for (RelatedResource relatedResource : value.getRelatedResources()) {
+			serializer.write(relatedResource, node);
+		}
 	}
 	
 }

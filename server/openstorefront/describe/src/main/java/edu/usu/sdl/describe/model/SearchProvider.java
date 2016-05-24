@@ -34,7 +34,7 @@ public class SearchProvider
 	@Attribute(required = false)
 	private String classification;
 	
-	@Element(name="generalInfo")
+	@Element(name="generalInfo", required = false)
 	private GeneralInfo generalInfo;
 	
 	private List<RelatedResource> relatedResources = new ArrayList<>();

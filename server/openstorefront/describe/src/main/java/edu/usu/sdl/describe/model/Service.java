@@ -30,10 +30,10 @@ import org.simpleframework.xml.convert.Convert;
 @Convert(ServiceConverter.class)
 public class Service
 {
-	@Element
+	@Element(required = false)
 	private String name;
 	
-	@Element(name="type")
+	@Element(name="type", required = false)
 	private ServiceType serviceType;
 	
 	private List<Address> addresses = new ArrayList<>();	
