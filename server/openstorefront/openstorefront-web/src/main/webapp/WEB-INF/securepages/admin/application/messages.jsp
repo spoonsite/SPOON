@@ -360,8 +360,8 @@
 					remoteSort: true,
 					sorters: [
 						new Ext.util.Sorter({
-							property: 'updateDts',
-							direction: 'DESC'
+							property: 'username',
+							direction: 'ASC'
 						})
 					],
 					fields: [
