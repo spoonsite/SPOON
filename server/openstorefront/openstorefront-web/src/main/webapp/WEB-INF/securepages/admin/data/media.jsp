@@ -188,10 +188,23 @@
 							viewMediaWin.update('<audio autoplay="autoplay" width="100%" controls="controls" src="../'+ selectedObj.mediaLink+'"/>');
 				
 						}
-						else if(type.match('image.*')){
-							
-							viewMediaWin.setTitle('Image Preview');
-					        viewMediaWin.update('<img src="../'+ selectedObj.mediaLink+'" width="100%"/>');
+						else if(type.match('image.*')) {
+							// Limit to image mimes all browsers should be happy with.
+							if (type.match('.*jpeg.*') || 
+								type.match('.*png.*') || 
+								type.match('.*gif.*') || 
+								type.match('.*svg.*') ) {
+								viewMediaWin.setTitle('Image Preview');
+								viewMediaWin.update('<img src="../'+ selectedObj.mediaLink+'" width="100%"/>');
+							}
+							else {
+								Ext.Msg.show({
+									title: 'No Preview Available',
+									msg: 'No preview is available for this file format.',
+									buttons: Ext.Msg.OK
+								});
+								return;
+							}
 						}
 						else {
 							Ext.Msg.show({

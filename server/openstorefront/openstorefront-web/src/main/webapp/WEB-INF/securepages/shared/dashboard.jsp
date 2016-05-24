@@ -515,7 +515,7 @@
 							},							
 							{
 								type: 'prev',
-								tooltip: 'Move widget order to the left',
+								tooltip: 'Move previous',
 								itemId: 'prevTool',
 								callback: function(panel, tool, event) {
 									var oldIndex = panel.dashBoardIndex;									
@@ -533,7 +533,7 @@
 							},
 							{
 								type: 'next',
-								tooltip: 'Move widget order to the right',
+								tooltip: 'Move next',
 								itemId: 'nextTool',
 								callback: function(panel, tool, event) {
 									var oldIndex = panel.dashBoardIndex;									
@@ -563,6 +563,7 @@
 										title: panel.title,
 										iconCls: panel.iconCls,
 										widgetConfig: panel.widgetConfig,
+										closable: false,
 										tools: [
 											{
 												type: 'refresh',
@@ -570,7 +571,14 @@
 												callback: function(panel, tool, event) {
 													panel.widgetConfig.refresh(panel.getComponent('actualWidget'));
 												}												
-											}
+											},
+											{
+												type: 'restore',
+												tooltip: 'Restore Widget',							
+												callback: function(panel, tool, event) {
+													tool.up('window').close();
+												}												
+											}											
 										],
 										items: [
 											panel.getComponent('actualWidget')

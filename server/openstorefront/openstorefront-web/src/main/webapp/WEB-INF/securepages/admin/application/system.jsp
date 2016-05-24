@@ -967,15 +967,20 @@
 					var url = '/openstorefront/api/v1/service/application/configproperties/';
 					url += encodeURIComponent(record.data.code);
 
-					Ext.Ajax.request({
-						url: url,
-						method: 'DELETE',
-						success: function(response, opt){
-							Ext.toast('Successfully deleted property', '', 'tr');
-							sysConfigPropStore.load();
-						},
-						failure: function(response, opt){
-							Ext.toast('Failed to delete property', '', 'tr');
+					var msg = 'Are you sure you want to delete "' + record.getData().code + '"?';
+					Ext.MessageBox.confirm('Confirm Deletion', msg, function(btn) {
+						if (btn === 'yes') {
+							Ext.Ajax.request({
+								url: url,
+								method: 'DELETE',
+								success: function(response, opt){
+									Ext.toast('Successfully deleted property', '', 'tr');
+									sysConfigPropStore.load();
+								},
+								failure: function(response, opt){
+									Ext.toast('Failed to delete property', '', 'tr');
+								}
+							});
 						}
 					});
 				};
@@ -1597,17 +1602,7 @@
 				var actionDownloadPlugin = function actionDownloadPlugin(record) {
 					var url = '/openstorefront/api/v1/resource/plugins/';
 					url += record.data.pluginId + '/download';
-					var filename = record.data.actualFilename;
-					var link = document.createElement("a");
-					if (link.download !== undefined) { // feature detection
-						// Browsers that support HTML5 download attribute
-						link.setAttribute("href", url);
-						link.setAttribute("download", filename);
-						link.style.visibility = 'hidden';
-						document.body.appendChild(link);
-						link.click();
-						document.body.removeChild(link);
-					}
+					window.location.href = url;					
 				};
 
 				var actionUninstallPlugin = function actionUninstallPlugin(record) {

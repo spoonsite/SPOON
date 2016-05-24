@@ -382,7 +382,11 @@ limitations under the License.
 							proxy: {
 								type: 'ajax',
 								url: '../api/v1/resource/components/tags'
-							}
+							},
+							sorters: [{
+								property: 'text',
+								direction: 'ASC'
+							}]
 						}),
 						listeners: {
 							change: function(field, newValue, oldValue, opts) {
@@ -1311,7 +1315,7 @@ limitations under the License.
 				title: 'Details',
 				width: '60%',
 				collapsible: true,
-				collapseDirection: 'right',
+				collapseDirection: 'left',
 				titleCollapse: true,
 				flex: 2,
 				collapseMode: 'mini',
