@@ -66,7 +66,20 @@ public class TrustedDataConverter
 	@Override
 	public void write(OutputNode node, TrustedDataCollection value) throws Exception
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		node.setName("TrustedDataCollection");
+		node.setAttribute("version", value.getVersion());
+				
+				
+		Strategy strategy = new AnnotationStrategy();
+		Serializer serializer = new Persister(strategy);	
+		
+		serializer.write(value.getHandlingAssertion(), node);
+		serializer.write(value.getAssertion(), node);
+	
+		for (TrustedDataObject trustedDataObject : value.getTrustedDataObjects()) {
+			serializer.write(trustedDataObject, node);
+		}
+		
 	}
 	
 }

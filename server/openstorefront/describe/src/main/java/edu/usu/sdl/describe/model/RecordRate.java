@@ -16,10 +16,10 @@ import org.simpleframework.xml.Text;
 @Root(strict = false)
 public class RecordRate
 {
-	@Attribute
+	@Attribute(required = false)
 	private String frequency;
 	
-	@Text
+	@Text(required = false)
 	private String text;
 
 	public RecordRate()

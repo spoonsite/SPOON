@@ -34,18 +34,18 @@ public class GeneralInfo
 {
 	@Attribute(name="value", required = false)
 	@Path("identifier")		
-	private String guid;
+	private String guid = "";
 	
 	@Element(name = "name")
-	private String name;	
-	private String nameClassification;
+	private String name = "";	
+	private String nameClassification = "";
 
 	@Element(name = "description")
-	private String description;	
-	private String descriptionClassification;
+	private String description = "";	
+	private String descriptionClassification = "";
 	
 	@Element(name = "network")
-	private String network;	
+	private String network = "";	
 	
 	private List<PointOfContact> contacts = new ArrayList<>();	
 	

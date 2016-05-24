@@ -26,13 +26,13 @@ import org.simpleframework.xml.Text;
 @Root(strict = false)
 public class Address
 {
-	@Attribute
+	@Attribute(required = false)
 	private String network;
 	
-	@Attribute
+	@Attribute(required = false)
 	private String protocol;
 	
-	@Text
+	@Text(required = false)
 	private String text;
 
 	public Address()

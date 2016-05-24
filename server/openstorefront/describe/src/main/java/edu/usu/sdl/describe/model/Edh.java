@@ -15,16 +15,16 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class Edh
 {
-	@Element(name="Identifier")
+	@Element(name="Identifier", required = false)
 	private String identifier;
 	
-	@Element(name="DataItemCreateDateTime")	
+	@Element(name="DataItemCreateDateTime", required = false)	
 	private String createDts;
 	
-	@Element(name = "ResponsibleEntity")			
+	@Element(name = "ResponsibleEntity", required = false)			
 	private ResponsibleEntity responsibleEntity;
 	
-	@Element(name = "Security")
+	@Element(name = "Security", required = false)
 	private Security security;
 
 	public Edh()

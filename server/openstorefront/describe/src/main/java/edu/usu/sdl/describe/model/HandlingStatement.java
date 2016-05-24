@@ -25,7 +25,7 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class HandlingStatement
 {
-	@Element(name="Edh")
+	@Element(name="Edh", required = false)
 	private Edh edh;
 
 	public HandlingStatement()

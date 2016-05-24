@@ -25,10 +25,10 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class Metrics
 {
-	@Element
+	@Element(required = false)
 	private String count;
 	
-	@Element(name = "recordRate")
+	@Element(name = "recordRate", required = false)
 	private RecordRate recordRate;
 
 	public Metrics()

@@ -16,16 +16,16 @@ import org.simpleframework.xml.Root;
 public class Security
 {
 	
-	@Attribute
+	@Attribute(required = false)
 	private String compliesWith;
 	
-	@Attribute
+	@Attribute(required = false)
 	private String createDate;
 	
-	@Attribute
+	@Attribute(required = false)
 	private String classification;
 	
-	@Attribute
+	@Attribute(required = false)
 	private String ownerProducer;
 
 	public Security()

@@ -15,10 +15,10 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class ResponsibleEntity
 {
-	@Element(name="Country")
+	@Element(name="Country", required = false)
 	private String country;
 	
-	@Element(name="Organization")
+	@Element(name="Organization", required = false)
 	private String organization;
 
 	public ResponsibleEntity()

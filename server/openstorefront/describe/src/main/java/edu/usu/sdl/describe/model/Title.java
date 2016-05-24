@@ -16,10 +16,10 @@ import org.simpleframework.xml.Text;
 @Root(strict = false)
 public class Title
 {
-	@Attribute
+	@Attribute(required = false)
 	private String classification;
 	
-	@Text
+	@Text(required = false)
 	private String text;
 
 	public Title()

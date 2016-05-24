@@ -17,15 +17,15 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class MetacardInfo
 {
-	@Attribute(name="value")
+	@Attribute(name="value", required = false)
 	@Path("identifier")		
 	private String identifierValue;
 	
-	@Element(name="name")
+	@Element(name="name", required = false)
 	@Path("publisher/unknown")		
 	private String publisher;
 
-	@Attribute(name="created")
+	@Attribute(name="created", required = false)
 	@Path("dates")			
 	private String createDate;
 

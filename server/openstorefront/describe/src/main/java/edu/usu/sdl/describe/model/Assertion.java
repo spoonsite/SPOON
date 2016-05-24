@@ -23,7 +23,7 @@ import org.simpleframework.xml.Root;
  *
  * @author dshurtleff
  */
-@Root(strict = false)
+@Root(name="Assertion", strict = false)
 public class Assertion
 {
 	@Attribute(required = false)

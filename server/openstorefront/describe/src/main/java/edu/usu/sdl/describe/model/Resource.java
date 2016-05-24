@@ -27,35 +27,35 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class Resource
 {
-	@Element
+	@Element(required = false)
 	private MetacardInfo metacardInfo;
 	
-	@Attribute(name = "value")
+	@Attribute(name = "value", required = false)
 	@Path("identifier")		
 	private String guid;
 	
-	@Element(name = "title")
+	@Element(name = "title", required = false)
 	private Title title;
 	
-	@Attribute(name = "created")
+	@Attribute(name = "created", required = false)
 	@Path("dates")			
 	private String createDate;
 	
-	@Attribute(name = "value")
+	@Attribute(name = "value", required = false)
 	@Path("type")				
 	private String type;
 	
-	@Element(name="name")
+	@Element(name="name", required = false)
 	@Path("creator/unknown")				
 	private String creatorName;
 	
-	@Element(name="contributor")
+	@Element(name="contributor", required = false)
 	private Contributor contributor;
 	
-	@Element(name="subjectCoverage")
+	@Element(name="subjectCoverage", required = false)
 	private SubjectCoverage subjectCoverage;
 	
-	@Element(name="geospatialCoverage")
+	@Element(name="geospatialCoverage", required = false)
 	private GeospatialCoverage geospatialCoverage;
 
 	public Resource()

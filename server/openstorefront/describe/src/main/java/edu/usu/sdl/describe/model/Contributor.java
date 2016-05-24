@@ -17,11 +17,11 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class Contributor
 {
-	@Attribute(name="acronym")
+	@Attribute(name="acronym", required = false)
 	@Path("organization")		
 	private String organizationAcronym;
 	
-	@Element(name="name")
+	@Element(name="name", required = false)
 	@Path("organization")
 	private String organizationName;
 

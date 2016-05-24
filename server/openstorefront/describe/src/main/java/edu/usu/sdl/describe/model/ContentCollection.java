@@ -29,19 +29,19 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class ContentCollection
 {
-	@Attribute
+	@Attribute(required = false)
 	private String classification;
 	
-	@Attribute
+	@Attribute(required = false)
 	private String updated;
 	
-	@Element(name = "metrics")
+	@Element(name = "metrics", required = false)
 	private Metrics metrics;
 	
-	@Element(name="originator")
+	@Element(name="originator", required = false)
 	private String originator;
 	
-	@ElementList(name = "mimeTypes")
+	@ElementList(name = "mimeTypes", required = false)
 	private List<MimeType> mimeTypes = new ArrayList<>();
 
 	public ContentCollection()

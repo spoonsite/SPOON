@@ -16,16 +16,16 @@ import org.simpleframework.xml.Text;
 @Root(strict = false, name = "type")
 public class ServiceType
 {
-	@Attribute
+	@Attribute(required = false)
 	private String style;
 	
-	@Attribute
+	@Attribute(required = false)
 	private String version;
 	
-	@Attribute
+	@Attribute(required = false)
 	private String secure;
 	
-	@Text
+	@Text(required = false)
 	private String text;
 
 	public ServiceType()

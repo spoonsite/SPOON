@@ -70,7 +70,26 @@ public class SearchProviderConverter
 	@Override
 	public void write(OutputNode node, SearchProvider value) throws Exception
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		node.setName("searchProvider");
+		node.setAttribute("classification", Util.blankIfNull(value.getClassification()));
+				
+		Strategy strategy = new AnnotationStrategy();
+		Serializer serializer = new Persister(strategy);	
+		
+		serializer.write(value.getGeneralInfo(), node);
+		
+		for (RelatedResource relatedResource : value.getRelatedResources()) {
+			serializer.write(relatedResource, node);
+		}		
+		
+		for (SearchInterface searchInterface : value.getSearchInterfaces()) {
+			serializer.write(searchInterface, node);
+		}
+
+		for (SearchableField searchableField : value.getSearchableFields()) {
+			serializer.write(searchableField, node);
+		}
+		
 	}
 	
 }

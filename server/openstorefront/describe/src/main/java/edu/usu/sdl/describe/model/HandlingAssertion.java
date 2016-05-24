@@ -23,13 +23,13 @@ import org.simpleframework.xml.Root;
  *
  * @author dshurtleff
  */
-@Root(strict = false)
+@Root(name = "HandlingAssertion",  strict = false)
 public class HandlingAssertion
 {
-	@Attribute
-	String scope;
+	@Attribute(required = false)
+	private String scope;
 	
-	@Element(name = "HandlingStatement")
+	@Element(name = "HandlingStatement", required = false)
 	private HandlingStatement handlingStatement;
 
 	public HandlingAssertion()
@@ -44,6 +44,16 @@ public class HandlingAssertion
 	public void setHandlingStatement(HandlingStatement handlingStatement)
 	{
 		this.handlingStatement = handlingStatement;
+	}
+
+	public String getScope()
+	{
+		return scope;
+	}
+
+	public void setScope(String scope)
+	{
+		this.scope = scope;
 	}
 	
 	
