@@ -19,7 +19,7 @@ and give details on the following:
 -   Where/How to access the software
 -   Software vitals
 -   Conformance
--   Links to documentation, source code and other artifacts
+-   Links to documentation, source code, and other artifacts
 -   Evaluation information
 
 **DI2E Clearinghouse is developed by Space Dynamics Laboratory for DI2E and is
@@ -31,13 +31,40 @@ licensed under Apache V2.**
 ## 1.1 Release Notes
 ------
 
-To see what is new in <a href="https://github.com/di2e/openstorefront/releases/tag/v2.0" target="_blank">v2.0</a>, or all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
+## **What's new in v2.0:**
+
+* **Advanced and Saved Searches:**
+The Search Tools are now accessed from a button to the right of the search (text) box.  Two new tabs have been added to the search tools window:  _Advanced (Search)_ and _Saved Searches_.  Advanced Search allows for many differen custom combinations of fields, selectable via drop-down menus and text entry.  Multiple search criteria can be added with OR, AND, or NOT conditions.  Once the correct combination is found, results can be previewed and the search can be saved for later use.  The Saved Searches tab contains a list of the users saved searches that can be executed to find results.  Saved Searches are managed from a new area in the User Tools section.
+
+* **Improved Submission Process:**
+The entry submission process has been improved including new _Save and Edit Later_ and _Submit for Review_ button options.  In addition _Pending_ entries that are edited are automatically moved to _Not Submitted_ unless they are submitted again for review.  Approved entries can have a _Change Request_ added or can have a _Removal Request_ for approval to remove it from the website.
+
+* **User Submitted Corrections, Request Ownership:**
+Any user can submit a correction for an entry on the website.  From the search results details area, if you do not already own the entry a new horizontal line icon appears with two sub-menus:  _Submit Correction_ and _Request Ownership_.  These bring up a form to enter your suggested correction or reasoning for requesting ownership of the entry.
+
+* **Custom Dashboards:**
+The User Tools and Admin Tools homepage is now a customizeable dashboard allowing the user to add widgets such as:  Notifications, Questions, Reports, Saved Searches, Submission Status, and Watches.  Additional widgets are available on the Admin Tools dashboard.  
+
+* **Searchable Help File:**
+This help file is now searchable.
+
+* **Describe Import/Export (BETA):**
+Added the ability for an administrator to Import or Export a Describe file from the Entry or Imports sections of the Admin Tools.  
+
+* **Branding Support:**
+An administrator has the ability to change the color scheme, titles, logos, and so forth of the website.  This is accomplished via Admin Tools > Application Mangement > Branding.
+
+* **Security Marking Banner:**
+As part of the branding support a security banner title and color can be established by an administrator to note the highest security level of the branded website.
+
+
+For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.0" target="_blank">v2.0</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
 
 ## 1.2 Known Issues, v2.0 * 
  
-1. Full Screen view button not availible in search results when not in full page. (Affects: IE 9, 10) 
-Workaround: Open entry details in full page mode.
+1. Full Screen video view button not available in search results when not in full page. (Affects: IE 9, 10) 
+Workaround: Open entry details in full page mode then view the video.
 
 
 # 2.  User Features
@@ -92,7 +119,7 @@ word.
 
 Fuzzy matching is done with the * and the ? characters acting as
 wildcards. It is also known as wildcard searching. The * character
-represents a string of letters; whereas the ? acts as a placeholder for
+represents a string of letters, whereas the ? acts as a placeholder for
 only a single character. The process works as shown in the queries
 below:
 
@@ -112,7 +139,7 @@ Search example: ```"create a common framework"```
 Search example: ```"Air Force"``` or ```"Company Name Inc."```
 
 Wildcards are only meant to work on individual search terms, not on
-phrase searches / exact searches, as demonstrated by this example:
+phrase searches/exact searches, as demonstrated by this example:
 
 Works: ```eng?neering``` _(wildcard properly used)_
 Does not work: ```"eng?neering"``` _(quotes are treated as a literal string not a wildcard)_
@@ -135,7 +162,7 @@ Search examples:
 ------
 
 From the search results screen the left-most panel is the Filters panel.  
-Here results can be narrowed by filtering on various aspects such as:
+Here, results can be narrowed by filtering on various aspects such as:
  
  * **Name:**  The name of the entry
  
@@ -164,8 +191,8 @@ on the home page.
 
 **To create a tag:**
 
- 1.  From the search results screen, view the details by clicking on the title.
- 2.  Click on the View/ Edit Tag icon to open the tag panel.
+ 1.  From the search results screen view the details by clicking on the title.
+ 2.  Click on the View/Edit Tag icon to open the tag panel.
  3.  Enter a new tag in the text field OR a single space to view existing tags.
 
 ### 2.1.8 Comparing
@@ -180,7 +207,7 @@ better suited your project's needs.
 **To compare components:**
 
 From the Search Results Screen check "Add to compare" on 2 or more 
-entries and then click on the **Compare** button at the top of the
+entries, then click on the **Compare** button at the top of the
 search results.
 
 If more than two entries were selected, you can do a side-by-side comparison
@@ -189,7 +216,7 @@ by using the drop-down list at the top to select the various entries.
 ### 2.1.9 Customizing the Search Display
 ---------
 
-On the search results page filtering can be done by Article, Component, or other
+On the search results page, filtering can be done by Article, Component, or other
 specialized type by clicking on the hyperlink with the number of results, for example:
 **[131]()** DI2E Components, **[21]()** Articles where the numbers are hyperlinks
 that filter the results.
@@ -240,7 +267,7 @@ on the icon to display the Search Tools window.  Five tabs are displayed:
 The topic tab in the Search Tools window allows searching by Articles, 
 DI2E Components, or other topic search types.  
 
-After clicking on the topic on the left the results are shown on the right.  
+After clicking on the topic on the left, the results are shown on the right.  
 Click on the column name to sort or click the link button to link to the 
 individual Clearinghouse entry.  Results of all of the topics can also be 
 shown in a new window.
@@ -274,15 +301,15 @@ This allows the user to refine a search based on:
 
 **Field:** The search field associated with the search type chosen above
 
-**Value:**  alpha and/ or numerical value to search for
+**Value:**  alpha and/or numerical value to search for
 
 **String/ Number Operation:** Contains, Equals, <, >, and so forth depending on the value
 
-**Merge Condition:** OR, AND, NOT to get a search results in conjunction with the other advanced search parameters.
+**Merge Condition:** OR, AND, NOT to get a search results in conjunction with the other advanced search parameters
 
 **Preview Results:**  Allows you to see the results of this advanced search, queries for results
 
-**Save:(Search)**  The advanced search can be saved, see the next section for details.
+**Save:(Search)**  The advanced search can be saved.  See the next section for details.
 
 
 ### 2.2.5 Saved Searches
@@ -365,7 +392,7 @@ This page displays all of the submissions you, the current logged in user, have
 made.  In the User Submissions table, the columns can be sorted by clicking on 
 the column header.  
 
-In addition, icons for Edit, Preview, Copy, Toggle Notify, Unsubmit, and 
+In addition, icons for Edit, Preview, Copy, Toggle Notify, and 
 Request Removal can be found along the top of the table.  Finally,
 a **+ New submission** button allows for a new entry to be made.
 
@@ -378,13 +405,13 @@ Make any necessary corrections and click on the Next button at the bottom.
 Please be aware:
 This form will submit a component to the DI2E Framework PMO for review and consideration.
 A DI2E Storefront Manager will contact you regarding your submission. 
-For help, contact helpdesk@di2e.net
+For help, contact helpdesk@di2e.net.
 
 
 #### 2.3.2.2 Submission Form- Required Information
 -----------
 
-The following fields are on the Required Information section:
+The following fields are in the Required Information section:
 
 
  -  **Entry Type:**  DI2E Component, Article, etc.  -  What you enter here will determine what other fields show up on this entry form below 
@@ -398,7 +425,7 @@ The following fields are on the Required Information section:
 -----------
 
 This allows for many different items to be added.  Each section can have one or multiple 
-items added with the use of the Add, Edit, and Remove buttons.  When finished click the
+items added with the use of the Add, Edit, and Remove buttons.  When finished, click the
 Next button to go to the final section.
 
 Items that can be added here depend on the Entry Type selected in Required Information,
@@ -410,7 +437,7 @@ Relationships, Tags, Evaluation Information, Reviews, Questions, and so forth.
 #### 2.3.2.4 Submission Form- Review
 -----------
 
-On the final submission screen all of the previously entered information is available
+On the final submission screen, all of the previously entered information is available
 for review.  The entry can then be submitted for review.
 
 
@@ -432,10 +459,10 @@ Questions or "Q&A" allow users to post questions about components and
 allow other users to answer those questions based on their experience
 with the component.
 
-Under User Tools, Tools, Questions there are two tabs, one for questions
+Under User Tools, Tools, Questions there are two tabs: one for questions
 submitted under the current login, and another tab for Answers submitted.
 
-Select a question or answer then click on **View Entry** to see how it is displayed
+Select a question or answer, then click on **View Entry** to see how it is displayed
 in the search results (go to the Questions & Answers tab).
 
 Clicking **Edit** will allow direct modification of the question or answer with a
@@ -463,7 +490,7 @@ Types of reports available include:
 
 **Scheduled Reports**
 Clicking this button opens a window that shows recurring reports, their details and frequency that 
-the report will run, as well as the last run date and time. You can add, activate or inactivate a 
+the report will run, as well as the last run date and time. You can add, activate, or inactivate a 
 scheduled report, edit, or delete it.
 
 
@@ -495,7 +522,7 @@ Additional reports available to administrators only include:
 
 **Scheduled Reports**
 Clicking this button opens a window that shows recurring reports, their details and frequency that 
-the report will run, as well as the last run date and time. You can add, activate or inactivate a 
+the report will run, as well as the last run date and time. You can add, activate, or inactivate a 
 scheduled report, edit, or delete it.
 
 
@@ -555,7 +582,7 @@ the automatic process will take handling the message queue.
 
 A watch is set on a component to allow for a user to be notified of
 changes to a component. There are two ways notifications occur in the
-application and there is no limit to the amount of watches a user may
+application, and there is no limit to the amount of watches a user may
 place.
 
 1.  The watched component's changes are visually shown to the user
@@ -597,17 +624,17 @@ the component detail view (in search results) of the component being watched.
 ## 2.4  Submit Correction and Request Ownership
 --------
 
-On a particular entry you can submit a correction for administrative review and/ or
+On a particular entry you can submit a correction for administrative review and/or
 request ownership of an entry.  To do this:
 
  1.  From the search results note the icons at the top (Tag, Watches, Print, etc.)
- 2.  If a menu button (horizontal bars) icon appears it means you have authorization
+ 2.  If a menu button (horizontal bars) icon appears, it means you have authorization
      to request a correction or ownership change.  Click the icon and the appropriate
 	 sub-menu.
 	 
 **Submit Correction/ Request Ownership forms:**
 
-* Fill out the form including the section needing correction and the changes requested Or
+* Fill out the form including the section needing correction and the changes requested or
  the reason you are requesting the change of ownership
  
 * Ensure your contact information is current in the section below or update your profile.
@@ -631,7 +658,7 @@ labels or display areas.
 
 Admin tools allow for the management of all data in the system.
  
-(Sections marked with * require admin account access)
+(Sections marked with * require admin account access.)
 
 
 ## 3.1 Dashboard *
@@ -641,7 +668,7 @@ The dashboard is the homepage of the Admin Tools.  This is accessed by
 clicking on the username in the upper-right corner and then the Admin Tools 
 drop-down menu.
 
-The first time the dashboard is accessed widgets will need to be added to view.
+The first time the dashboard is accessed, widgets will need to be added to view.
 This is done by clicking the **+Add Widget** button towards the top of the dashboard
 section.
 
@@ -655,7 +682,7 @@ Add Widget window and then clicking Add Selected Widgets:
  * System Status
  * User Status
 
-Once the desired widgets are added they can be refreshed, moved to next and previous 
+Once the desired widgets are added, they can be refreshed, moved to next and previous 
 display order, maximized, or closed.  In addition, certain settings such as the title
 and title bar color can be set.  This is done by clicking on the buttons in the 
 right of the title bar of each individual widget once added to the dashboard.
@@ -693,7 +720,7 @@ Some of the major functionality of Managing Attributes includes:
 #### 3.2.1.1 Types *
 ------
 
-When adding or editing an attribute the first tab is the Type tab.
+When adding or editing an attribute, the first tab is the Type tab.
 
 Attribute Types represent a related group of specific categories or
 represent a single attribute of a listing (Eg. "Funded" would be a type
@@ -722,7 +749,7 @@ contain spaces or "/".
 
  The processing behavior is: for every code not in the import, the
  existing code will be inactivated. If the code already exists and
- doesn't match, then it will be updated. For code that matches, the
+ doesn't match, it will be updated. For code that matches, the
  code in the file will not be processed. If a type doesn't exist, a new
  one will be created. If the type matches, it will be updated. Other
  existing types not found in the file will not be affected.
@@ -737,7 +764,7 @@ component. For example: Component listing may contain and attribute for
 
 **To add and edit a code:**
 
-1.  In the Edit or add window under the tab **Manage Codes**
+1.  In the Edit or add window under the tab **Manage Codes**.
 2.  Click **Add New Code** or the edit icon next to an existing code.
 3.  Fill out the form.
 4.  Click **Save**.
@@ -746,12 +773,12 @@ Field Descriptions:
 
 -  **Label**               - Human readable value of the code
 -  **Code**                - System reference key
--  **Description**         - This is a detail description of the meaning of the value. It's used in popup to help users interpolate the data.
+-  **Description**         - This is a detail description of the meaning of the value. It is used in popup to help users interpolate the data.
 -  **Group Code**          - Using to create sub groups in the code. Typically used only in special cases.
 -  **Sort Order**          - Use to force a specific sort order. (Default is sort by Label)
--  **Architecture Code**   - Used for special hieratical sorting. Only applies to Architecture attribute types.
+-  **Architecture Code**   - Used for special hieratical sorting. Only applies to Architecture attribute types
 -  **Badge URL**           - Set to add a graphical badge for a code
--  **Highlight Class**     - Used to add color emphasis to a code.
+-  **Highlight Class**     - Used to add color emphasis to a code
 
 
 #### 3.2.1.3 Exporting Attributes *
@@ -820,13 +847,13 @@ the component to **Pending** until all data is entered.
 
 **To preview component:**
 
-1.  Click on the preview ![view](../webapp/client/images/help/viewsm.png) icon in the action
+1.  Click on the preview icon ![view](../webapp/client/images/help/viewsm.png) in the action
     column on the component you wish to view. A new tab in browser will
     open and display the component detail page.
 
 **To toggle active status:**
 
-1.  Click on the activate/inactivate ![toggle](../webapp/client/images/help/toggle.png) icon in the
+1.  Click on the activate/inactivate icon ![toggle](../webapp/client/images/help/toggle.png) in the
     action column on the component you wish to edit.
 
 **NOTE:** Use Filter Options to show active/inactive components.
@@ -866,9 +893,9 @@ Inactive components are not visible to or searchable by users.
 **Note: In-line Description images issue**
 
 
-For articles in maybe desirable to add images to the description.  
-Note: the path to the image if locally store is relative because of this the correct path
-will not show in the editor but, it will be correct in the entry preview.  
+For articles it maybe desirable to add images to the description.  
+Note: the path to the image, if locally stored is relative. Because of this, the correct path
+will not show in the editor, but it will be correct in the entry preview.  
 
 Example:
 
@@ -926,7 +953,7 @@ c. Security Type:   *select the security level of the component or article*
 Currently, the main entry types are DI2E Component and Article.  However, other custom 
 types can be added, edited, activated, and made inactive here.  
 
-On the Add form data entry can be selected such as whether or not to allow on the 
+On the Add form, data entry can be selected, such as whether or not to allow on the 
 submission form, and to allow or not allow the following to be displayed:
 
 *Attributes, Relationships, Contacts, Resources, Media, Dependencies, Metadata,
@@ -935,7 +962,7 @@ Evaluation Information, Reviews, and Questions.*
 Entry Types can be made active or inactive by using the Toggle Status button on the right. 
 
 **Note:** Making an entry type Inactive does **not** remove that entry type from existing
-          entries, it simply prevents that entry type from being added in future entry 
+          entries; it simply prevents that entry type from being added in future entry 
           submissions.
 		  
 		  
@@ -967,14 +994,14 @@ To create and implement a template:
 
 	a.  Add or Edit an Entry Type. 
 	
-	b.  In the entry creation/ editing at the bottom of the window, select the Override Template (it
+	b.  In the entry creation/editing at the bottom of the window, select the Override Template (it
 		must be active to appear) from the dropdown list- that you created in the prior step.
 	
 	c.  Ensure that under Data Entry the checkboxes are checked for the areas you want displayed.  If
-		a box is **not** checked then data will not appear in the entry according to the order outlined
-		in the Entry Template in the prior step, that area will be skipped and not displayed.
+		a box is **not** checked, then data will not appear in the entry according to the order outlined
+		in the Entry Template in the prior step.  That area will be skipped and not displayed.
 	
-	d.  Click Save.  In the table in the Template Override column the name of the template selected in 
+	d.  Click Save.  In the Template Override column of the table, the name of the template selected in 
     the dropdown should appear.  Ensure that the Entry Type is Active.
 	
 3. In the **Entry** section:
@@ -989,7 +1016,7 @@ To create and implement a template:
 
 	a.  Search for the name of the entry from the prior step.
 	
-	b.  View the search results details.  Note that the entry is displayed according to the Entry Template created
+	b.  View the search results details.  Note that the entry is displayed according to the Entry Template created.
 	
 	c.  Note that some data fields in the template may not be displayed if they are not active in the Entry Type 
 	    (checkboxes under Data Entry).
@@ -1002,7 +1029,7 @@ A highlight to the home page can be added, edited, or deleted here.
 A highlight can be an Article, a Component, or an external link.
  
 **How do I change the order of the highlights on the home page?**
-To change the order in which they appear select the highlight from 
+To change the order in which they appear, select the highlight from 
 the table, then press the up or down buttons to reposition the order 
 in the table.  The highlights on the home page appear in the order that
 they do in the table in the Manage Highlights section.
@@ -1015,7 +1042,7 @@ they do in the table in the Manage Highlights section.
 
 Component Integration allows for pulling information from an external
 system and mapping that back to a component in the application. This
-allows for automatic sync of the data source. Currently the application
+allows for automatic sync of the data source. Currently, the application
 only supports integration with Jira.
 
 **To setup a Jira Integration:**
@@ -1041,26 +1068,26 @@ only supports integration with Jira.
 1.  Create a new Configuration by clicking **Add** on the Component
     Configuration tab.
 2.  Select a Component.
-3.  Click **Add**
+3.  Click **Add**.
 4.  Select JIRA Project (only projects with mappings will be available).
-5.  Enter the Jira Issue Number (Eg. ASSET-14)
+5.  Enter the Jira Issue Number (Eg. ASSET-14).
 6.  Click **Save**.
 
-The Component Job will be scheduled when it's saved. The job will run on
+The Component Job will be scheduled when it is saved. The job will run on
 an interval based on the global refresh rate. The default is once a day
 at 10:00 am server time. The component configuration table will show
 when the integration last ran. Also, the scheduled integration job can
 be viewed using the Jobs Tool by clicking **Show Integration Jobs**.
 
-The Integration Tool allows for manual control. However, it's not
+The Integration Tool allows for manual control. However, it is not
 necessary to run the integration manually as the automated job will
 handle that.
 
 If the integration fails for any reason, the configuration table will so
 indicate and an error ticket will be created for further analysis. The
-integration may fail if the server it's connecting to is unavailable.
+integration may fail if the server it is connecting to is unavailable.
 This may be a temporary condition. The system will try again on the next
-interval. If the configuration job continues to have issues it may
+interval. If the configuration job continues to have issues, it may be
 deactivated manually using the tools and then reactivated when the issue
 is resolved.
 
@@ -1068,8 +1095,8 @@ is resolved.
 -------
 
 This allows for data imports and mappings.  This is done by importing a ZIP
-or JSON file.  Once imported warnings and/ or errors can be viewed, the data 
-can be reprocessed, or rolled back.
+or JSON file.  Once imported warnings and/or errors can be viewed, the data 
+can be reprocessed or rolled back.
 
 **NOTE:**  The history is only kept for **180 days** in this section.
 
@@ -1088,7 +1115,7 @@ Media Types, Data Source, Contact Types, Relationship Types, and Organization Ty
 ### 3.2.10 Media *
 --------
 
-The Manage Media area is used to add, download, view and otherwise manage media that 
+The Manage Media area is used to add, download, view, and otherwise manage media that 
 can be used for articles and badges.  
 
 
@@ -1096,7 +1123,8 @@ can be used for articles and badges.
 ### 3.2.11 Organizations *
 --------
 
- Organizations provide information on specific organizations that are linked with the components listed on the site. The information these objects contain include:
+ Organizations provide information on specific organizations that are linked with
+ the components listed on the site. The information these objects contain includes:
 
  - **Description** -            What the organization does
  - **Type** -                   The type of organization (i.e. Commercial Business, Contractor, US Organization, etc.)
@@ -1113,7 +1141,7 @@ can be used for articles and badges.
 
 2.  Enter the information and click **Save Changes**.
 
-**Note:** When a new component is added if an unrecognized organization is added, it will automatically be saved to the 
+**Note:** When a new component is added, if an unrecognized organization is added, it will automatically be saved to the 
   organization list.  However, details such as the Description and Main Contact Information will need to be added here.
 
 **To edit an organization**
@@ -1156,7 +1184,7 @@ ONLY merges references and NOT the organization information.
 ---------
 
 This area displays a list of publicly available searches that can be edited, added, activated, or 
-made inactive.  Once the searches are set up they can be used for inclusion in articles and 
+made inactive.  Once the searches are set up, they can be used for inclusion in articles and 
 entries.
 
  
@@ -1185,7 +1213,7 @@ The table displays active questions, but the drop-down at the top of the page al
 
  * Select a component on the left to see the list of corresponding questions. 
  
- * Select a question to see the associated answers
+ * Select a question to see the associated answers.
  
  * With a question or answer highlighted, click the associated Deactivate button to remove it from view on the website.
 
@@ -1211,7 +1239,7 @@ The Watches section of User Data in Data Management of the Admin Tools displays 
 
  * Watches highlighted in green text indicate that the entry has changed since the user viewed it, i.e. it is an "active" watch that has changed.
  
- * When an entry (or multiple entries of the same status) are selected the Activate or Inactivate button can be used to toggle the status of the watches.
+ * When an entry (or multiple entries of the same status) is selected, the Activate or Inactivate button can be used to toggle the status of the watches.
  
  
 #### 3.2.13.4 Tags *
@@ -1219,11 +1247,11 @@ The Watches section of User Data in Data Management of the Admin Tools displays 
 
 The Tags section of User Data in Data Management of the Admin Tools displays a list of all tags.
 
- * If a tag is selected the Delete button is enabled, allowing for deletion of the tag.
+ * If a tag is selected, the Delete button is enabled, allowing for deletion of the tag.
  
  * A new tag can be added by clicking on the + Add button and filling out the form.  
  
- * In the event of a duplicate tag being added to the same component the added tag will override the exiting tag.
+ * In the event of a duplicate tag being added to the same component the added tag will override the existing tag.
 
 
 #### 3.2.13.5 User Profiles *
@@ -1233,11 +1261,11 @@ Every user in the system has a user profile.  A user profile contains informatio
 about the user and their user specific settings.   The initial creation of the profile
 at first login will contain the information gathered from the external security application.
 
-The application doesn't directly manage users, only profiles. When a user
-first securely logs in, a profile is created. It's up to the applicable
+The application does not directly manage users, only profiles. When a user
+first securely logs in, a profile is created. It is up to the applicable
 security utility (Open AM, LDAP, Database…etc.) to define the users.
 
-An admin may edit, activate or inactivate a profile. Deactivating a
+An admin may edit, activate, or inactivate a profile. Deactivating a
 profile does not prevent login. Upon login, the user's profile will be
 reactivated. Once a profile has been deactivated, that user's watches
 and messages are also deactivated. Reactivating the profile will
@@ -1248,7 +1276,7 @@ messages – just messages going forward.
 
 1.  Navigate to User Profiles Tool.
 
-2.  Click on the activate/ deactivate icon and use
+2.  Click on the activate/deactivate icon and use
     the filter option to view active/inactive users.
 
 Users can message other users using User Profiles. The message will be
@@ -1262,7 +1290,7 @@ emailed to the email address listed in their profile.
 
 3.  Click **Send** to send the message immediately.
 
-**NOTE:** Messages are sent to email addresses one at a time so no email
+**NOTE:** Messages are sent to email addresses one at a time so that no email
 addresses are leaked to other users.
 
 
@@ -1275,8 +1303,8 @@ System, Tracking, Messages, and API Documentation sections.
 ### 3.3.1 Alerts *
 ------
 
-Alerts are triggers set up to watch the data that an administrator can
-subscribe to. This allows for "reactive" administration of the
+Alerts are triggers set up to watch the data to which an administrator can
+subscribe. This allows for "reactive" administration of the
 application by setting up alerts when events occur in the system. The
 application will monitor the data as it flows in and trigger alerts that
 have been setup.
@@ -1314,7 +1342,7 @@ This area allows for different graphic design and theme characteristics to be
  applied to the website in general.   
  
  Start by duplicating the current branding then editing, and finally, activating
- a brand.  In the Add/ Edit Branding the following can be specified:
+ a brand.  In the Add/Edit Branding the following can be specified:
  
   * Application Name
   * Login Warning message
@@ -1329,7 +1357,7 @@ This area allows for different graphic design and theme characteristics to be
   * Submission form warning message
   * Change request form warning message
   * Customize Colors and Logos
-  * Customize Colors of :  Primary, Accent, Quote, Links, Links Visited, Link Hover, Panel, etc.
+  * Customize Colors of:  Primary, Accent, Quote, Links, Links Visited, Link Hover, Panel, etc.
   
 
 ### 3.3.3 Feedback *
@@ -1352,8 +1380,8 @@ and run scheduled jobs. This tool helps in troubleshooting and view of
 the status of the application. If an operation is known to potentially
 run for an extended period of time, then it will process in the
 background allowing for faster feedback to the user while the operation
-completes. Scheduled jobs that run periodically such as the notification
-job also run in the background to provide automatic handling of
+completes. Scheduled jobs that run periodically, such as the notification
+job, also run in the background to provide automatic handling of
 services.
 
 ### 3.3.5 Messages *
@@ -1369,9 +1397,9 @@ the cleanup of old messages and the ability to process all queued messages now.
 Descriptions of the Reports:
 
 -  **Component**        - Reports on a component's statistics
--  **Link Validation** - Checks all component links and verifies the status of the links to determine potentially bad links.
--  **Organization**   -  Reports on organization's statistics based on information in user profiles. The report attempts to group users by an organization.
--  **Usage**            -  Reports on the application's usage statistics for a specified time period.
+-  **Link Validation**  - Checks all component links and verifies the status of the links to determine potentially bad links
+-  **Organization**     - Reports on organization's statistics based on information in user profiles. The report attempts to group users by an organization
+-  **Usage**            - Reports on the application's usage statistics for a specified time period
 -  **User**             - Reports on user statistics (views, logins, etc.)
 
 A report can be either manually generated on demand or set to
@@ -1436,7 +1464,7 @@ System Tools are provided to aid in troubleshooting.
 
 System Tools and their Purpose:
 
--  **Search Control** -           Allows for re-indexing listings
+-  **Search Control** -           Allows for re-indexing listings.
 -  **Recent Changes Email** -     Allows for sending/previewing a recent change email.
 -  **Error Tickets** -            View error tickets generated by the system and view their details.
 -  **Application Properties** -   Can be used to adjust application run state.
@@ -1454,8 +1482,8 @@ application server can be configured for access logging and the
 application logs audit message for all admin API access.
 
 The primary tracking events can be viewed using the Tracking Admin Tool.
-As well as the events are aggregated into various system generated
-report accessible via the Reports Admin Tool.
+The events are also aggregated into various system generated reports which
+are accessible via the Reports Admin Tool.
 
 
 ### 3.3.9 API Documentation *
@@ -1469,22 +1497,22 @@ is viewable in a web page or is printable by clicking on Print View.
 # 4.  Glossary
 ----------
 
-Contains definitions of term using in the application and in the help.  (See the sub-sections.) 
+Contains definitions of term using in the application and in the help (see the sub-sections). 
 
 ##  4.1  User Terminology
 ----------------
 
 -  **Article (Topic Landing Page)** -   An article is a central information page that contains information on a specific topic relating to an attribute.
--  **Attribute (Vital)** -             An attribute is a specific category that has been applied to a listing. A listing (component) may have many attributes associated with it.
--  **Entry (Listing)** -            A listing in the catalog. A component has the attributes that classify the information being represented by the listing
--  **Highlight** -                      A news item shown on the home page.
--  **Watch** -                          A way to track changes on a listing.
+-  **Attribute (Vital)**            -   An attribute is a specific category that has been applied to a listing. A listing (component) may have many attributes associated with it.
+-  **Entry (Listing)**              -   A listing in the catalog. A component has the attributes that classify the information being represented by the listing.
+-  **Highlight**                    -   A news item shown on the home page.
+-  **Watch**                        -   A way to track changes on a listing.
 
 ## 4.2 Admin Terminology *
 -----------------
 
--  **Attribute Type** -       A related group of specific categories representing a single attribute of a listing (Eg. "Funded would be a type with the corresponding value "Yes or "No").
--  **Attribute Code** -       A specific value for a type.
--  **Job** -                  A scheduled unit of work.
--  **Task** -                 Background process; used for long-running operations.
--  **Entry Metadata** -   Non-filterable Component Vitals. It allows for an admin to put in non-restricted key/value pairs which get added to the vitals.
+-  **Attribute Type**   -  A related group of specific categories representing a single attribute of a listing (eg. "Funded" would be a type with the corresponding value "Yes" or "No").
+-  **Attribute Code**   -  A specific value for a type.
+-  **Job**              -  A scheduled unit of work.
+-  **Task**             -  Background process; used for long-running operations.
+-  **Entry Metadata**   -  Non-Filterable Component Vitals. It allows for an admin to put in non-restricted key/value pairs which get added to the vitals.
