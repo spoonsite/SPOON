@@ -68,12 +68,12 @@ public class Component
 	@FK(value = ComponentType.class, enforce = true)
 	private String componentType;
 
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	@APIDescription("External system guid")
 	private String guid;
 
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	@APIDescription("External system id")
 	private String externalId;

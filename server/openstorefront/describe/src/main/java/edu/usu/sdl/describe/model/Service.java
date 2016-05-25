@@ -16,6 +16,9 @@
 package edu.usu.sdl.describe.model;
 
 import edu.usu.sdl.describe.parser.ServiceConverter;
+import java.util.ArrayList;
+import java.util.List;
+import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.convert.Convert;
 
@@ -27,7 +30,57 @@ import org.simpleframework.xml.convert.Convert;
 @Convert(ServiceConverter.class)
 public class Service
 {
-	String name;
-
+	@Element(required = false)
+	private String name;
 	
+	@Element(name="type", required = false)
+	private ServiceType serviceType;
+	
+	private List<Address> addresses = new ArrayList<>();	
+	private List<Conformance> conformances = new ArrayList<>();
+
+	public Service()
+	{
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public ServiceType getServiceType()
+	{
+		return serviceType;
+	}
+
+	public void setServiceType(ServiceType serviceType)
+	{
+		this.serviceType = serviceType;
+	}
+
+	public List<Address> getAddresses()
+	{
+		return addresses;
+	}
+
+	public void setAddresses(List<Address> addresses)
+	{
+		this.addresses = addresses;
+	}
+
+	public List<Conformance> getConformances()
+	{
+		return conformances;
+	}
+
+	public void setConformances(List<Conformance> conformances)
+	{
+		this.conformances = conformances;
+	}
+
 }

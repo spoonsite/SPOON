@@ -15,11 +15,89 @@
  */
 package edu.usu.sdl.describe.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.Root;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(strict = false)
 public class ContentCollection
 {
+	@Attribute(required = false)
+	private String classification;
+	
+	@Attribute(required = false)
+	private String updated;
+	
+	@Element(name = "metrics", required = false)
+	private Metrics metrics;
+	
+	@Element(name="originator", required = false)
+	private String originator;
+	
+	@ElementList(name = "mimeTypes", required = false)
+	private List<MimeType> mimeTypes = new ArrayList<>();
+
+	public ContentCollection()
+	{
+	}
+
+	public String getClassification()
+	{
+		return classification;
+	}
+
+	public void setClassification(String classification)
+	{
+		this.classification = classification;
+	}
+
+	public String getUpdated()
+	{
+		return updated;
+	}
+
+	public void setUpdated(String updated)
+	{
+		this.updated = updated;
+	}
+
+	public Metrics getMetrics()
+	{
+		return metrics;
+	}
+
+	public void setMetrics(Metrics metrics)
+	{
+		this.metrics = metrics;
+	}
+
+	public String getOriginator()
+	{
+		return originator;
+	}
+
+	public void setOriginator(String originator)
+	{
+		this.originator = originator;
+	}
+
+	public List<MimeType> getMimeTypes()
+	{
+		return mimeTypes;
+	}
+
+	public void setMimeTypes(List<MimeType> mimeTypes)
+	{
+		this.mimeTypes = mimeTypes;
+	}
+	
+	
 	
 }

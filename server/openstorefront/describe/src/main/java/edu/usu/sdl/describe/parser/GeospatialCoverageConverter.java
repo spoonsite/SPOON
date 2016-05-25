@@ -5,9 +5,8 @@
  */
 package edu.usu.sdl.describe.parser;
 
-import edu.usu.sdl.describe.model.RelatedResource;
-import edu.usu.sdl.describe.model.SearchInterface;
-import edu.usu.sdl.describe.model.Service;
+import edu.usu.sdl.describe.model.BoundingGeometry;
+import edu.usu.sdl.describe.model.GeospatialCoverage;
 import static edu.usu.sdl.describe.parser.TrustedDataConverter.log;
 import java.text.MessageFormat;
 import java.util.logging.Level;
@@ -23,15 +22,15 @@ import org.simpleframework.xml.stream.OutputNode;
  *
  * @author dshurtleff
  */
-public class SearchInterfaceConverter
-	implements Converter<SearchInterface>	
+public class GeospatialCoverageConverter
+	implements Converter<GeospatialCoverage>			
 {
 
 	@Override
-	public SearchInterface read(InputNode node) throws Exception
+	public GeospatialCoverage read(InputNode node) throws Exception
 	{
-		SearchInterface searchInterface = new SearchInterface();		
-				
+		GeospatialCoverage geospatialCoverage = new GeospatialCoverage();
+		
 		Strategy strategy = new AnnotationStrategy();
 		Serializer serializer = new Persister(strategy);		
 		
@@ -41,35 +40,30 @@ public class SearchInterfaceConverter
 
 			switch(child.getName())
 			{
-				case "service":			
-					Service service = serializer.read(Service.class, child);
-					searchInterface.setService(service);					
+				case "boundingGeometry":
+					BoundingGeometry boundingGeometry = serializer.read(BoundingGeometry.class, child);
+					geospatialCoverage.getBoundingGeometries().add(boundingGeometry);						
 					break;
-				case "relatedResource":
-					RelatedResource relatedResource = serializer.read(RelatedResource.class, child);
-					searchInterface.getRelatedResources().add(relatedResource);						
-					break;							
 				default:
 					log.log(Level.WARNING, MessageFormat.format("Unknown Element found: {0}", child));
 			}			
-		}
-		return searchInterface;		
+		}		
+		
+		return geospatialCoverage;
 	}
 
 	@Override
-	public void write(OutputNode node, SearchInterface value) throws Exception
+	public void write(OutputNode node, GeospatialCoverage value) throws Exception
 	{
-		node.setName("searchInterface");
-				
+		node.setName("geospatialCoverage");
+		
 		Strategy strategy = new AnnotationStrategy();
 		Serializer serializer = new Persister(strategy);	
 		
-		serializer.write(value.getService(), node);
-		
-		for (RelatedResource relatedResource : value.getRelatedResources()) {
-			serializer.write(relatedResource, node);
+		for (BoundingGeometry boundingGeometry : value.getBoundingGeometries()) {
+			serializer.write(boundingGeometry, node);
 		}
 		
 	}
-
+	
 }

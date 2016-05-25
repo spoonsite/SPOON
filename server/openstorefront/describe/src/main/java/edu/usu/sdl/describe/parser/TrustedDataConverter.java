@@ -53,16 +53,8 @@ public class TrustedDataConverter
 					trustedDataCollection.setAssertion(assertion);						
 					break;
 				case "TrustedDataObject":					
-					if( child.getPrefix().equals("tdf") == true )
-					{
-						TrustedDataObject tdo = serializer.read(TrustedDataObject.class, child);
-						trustedDataCollection.setTdfTrustedDataObject(tdo);
-					}
-					else
-					{
-						TrustedDataObject tdo = serializer.read(TrustedDataObject.class, child);
-						trustedDataCollection.setTrustedDataObject(tdo);						
-					}
+					TrustedDataObject tdo = serializer.read(TrustedDataObject.class, child);
+					trustedDataCollection.getTrustedDataObjects().add(tdo);
 					break;
 				default:
 					log.log(Level.WARNING, MessageFormat.format("Unknown Element found: {0}", child));
@@ -74,7 +66,20 @@ public class TrustedDataConverter
 	@Override
 	public void write(OutputNode node, TrustedDataCollection value) throws Exception
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		node.setName("TrustedDataCollection");
+		node.setAttribute("version", value.getVersion());
+				
+				
+		Strategy strategy = new AnnotationStrategy();
+		Serializer serializer = new Persister(strategy);	
+		
+		serializer.write(value.getHandlingAssertion(), node);
+		serializer.write(value.getAssertion(), node);
+	
+		for (TrustedDataObject trustedDataObject : value.getTrustedDataObjects()) {
+			serializer.write(trustedDataObject, node);
+		}
+		
 	}
 	
 }

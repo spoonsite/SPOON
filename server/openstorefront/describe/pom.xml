@@ -4,7 +4,7 @@
 
     <groupId>edu.usu.sdl</groupId>
     <artifactId>describe</artifactId>
-    <version>1</version>
+    <version>1.0</version>
     <packaging>bundle</packaging>
 
     <name>describe</name>

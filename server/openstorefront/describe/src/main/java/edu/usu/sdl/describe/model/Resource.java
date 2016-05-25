@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.describe.model;
 
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Path;
 import org.simpleframework.xml.Root;
 
 /**
@@ -24,5 +27,129 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class Resource
 {
+	@Element(required = false)
+	private MetacardInfo metacardInfo;
 	
+	@Attribute(name = "value", required = false)
+	@Path("identifier")		
+	private String guid;
+	
+	@Element(name = "title", required = false)
+	private Title title;
+	
+	@Attribute(name = "created", required = false)
+	@Path("dates")			
+	private String createDate;
+	
+	@Attribute(name = "value", required = false)
+	@Path("type")				
+	private String type;
+	
+	@Element(name="name", required = false)
+	@Path("creator/unknown")				
+	private String creatorName;
+	
+	@Element(name="contributor", required = false)
+	private Contributor contributor;
+	
+	@Element(name="subjectCoverage", required = false)
+	private SubjectCoverage subjectCoverage;
+	
+	@Element(name="geospatialCoverage", required = false)
+	private GeospatialCoverage geospatialCoverage;
+
+	public Resource()
+	{
+	}
+
+	public String getGuid()
+	{
+		return guid;
+	}
+
+	public void setGuid(String guid)
+	{
+		this.guid = guid;
+	}
+
+	public MetacardInfo getMetacardInfo()
+	{
+		return metacardInfo;
+	}
+
+	public void setMetacardInfo(MetacardInfo metacardInfo)
+	{
+		this.metacardInfo = metacardInfo;
+	}
+
+	public String getCreateDate()
+	{
+		return createDate;
+	}
+
+	public void setCreateDate(String createDate)
+	{
+		this.createDate = createDate;
+	}
+
+	public String getType()
+	{
+		return type;
+	}
+
+	public void setType(String type)
+	{
+		this.type = type;
+	}
+
+	public String getCreatorName()
+	{
+		return creatorName;
+	}
+
+	public void setCreatorName(String creatorName)
+	{
+		this.creatorName = creatorName;
+	}
+
+	public Contributor getContributor()
+	{
+		return contributor;
+	}
+
+	public void setContributor(Contributor contributor)
+	{
+		this.contributor = contributor;
+	}
+
+	public SubjectCoverage getSubjectCoverage()
+	{
+		return subjectCoverage;
+	}
+
+	public void setSubjectCoverage(SubjectCoverage subjectCoverage)
+	{
+		this.subjectCoverage = subjectCoverage;
+	}
+
+	public GeospatialCoverage getGeospatialCoverage()
+	{
+		return geospatialCoverage;
+	}
+
+	public void setGeospatialCoverage(GeospatialCoverage geospatialCoverage)
+	{
+		this.geospatialCoverage = geospatialCoverage;
+	}
+
+	public void setTitle(Title title)
+	{
+		this.title = title;
+	}
+
+	public Title getTitle()
+	{
+		return title;
+	}
+
 }

@@ -30,7 +30,7 @@ import org.simpleframework.xml.convert.Convert;
 @Convert(SearchInterfaceConverter.class)
 public class SearchInterface
 {
-	@Element
+	@Element(required = false)
 	private Service service;
 	
 	private List<RelatedResource> relatedResources = new ArrayList<>();

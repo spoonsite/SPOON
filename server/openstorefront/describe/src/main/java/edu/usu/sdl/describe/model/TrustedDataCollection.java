@@ -1,9 +1,10 @@
 package edu.usu.sdl.describe.model;
 
 import edu.usu.sdl.describe.parser.TrustedDataConverter;
+import java.util.ArrayList;
+import java.util.List;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.convert.Convert;
 
@@ -18,19 +19,15 @@ public class TrustedDataCollection
 	@Attribute
 	private String version;
 	
-	@Element(name="HandlingAssertion")
+	@Element(name="HandlingAssertion", required = false)
 	private HandlingAssertion handlingAssertion;
 	
-	@Element(name="Assertion")
+	@Element(name="Assertion", required = false)
 	private Assertion assertion;
 	
 	@Element(name="TrustedDataObject")
-	private TrustedDataObject trustedDataObject;
-		
-	@Namespace(reference = "http://www.w3.org/2001/XMLSchema-instance", prefix = "tdf")
-	@Element()
-	private TrustedDataObject tdfTrustedDataObject;
-	
+	private List<TrustedDataObject> trustedDataObjects =  new ArrayList<>();
+
 	public TrustedDataCollection()
 	{
 	}
@@ -65,24 +62,14 @@ public class TrustedDataCollection
 		this.assertion = assertion;
 	}
 
-	public TrustedDataObject getTrustedDataObject()
+	public List<TrustedDataObject> getTrustedDataObjects()
 	{
-		return trustedDataObject;
+		return trustedDataObjects;
 	}
 
-	public void setTrustedDataObject(TrustedDataObject trustedDataObject)
+	public void setTrustedDataObjects(List<TrustedDataObject> trustedDataObjects)
 	{
-		this.trustedDataObject = trustedDataObject;
-	}
-
-	public TrustedDataObject getTdfTrustedDataObject()
-	{
-		return tdfTrustedDataObject;
-	}
-
-	public void setTdfTrustedDataObject(TrustedDataObject tdfTrustedDataObject)
-	{
-		this.tdfTrustedDataObject = tdfTrustedDataObject;
+		this.trustedDataObjects = trustedDataObjects;
 	}
 
 }

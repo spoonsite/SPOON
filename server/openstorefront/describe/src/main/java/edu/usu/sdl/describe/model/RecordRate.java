@@ -13,53 +13,27 @@ import org.simpleframework.xml.Text;
  *
  * @author dshurtleff
  */
-@Root(strict = false, name = "type")
-public class ServiceType
+@Root(strict = false)
+public class RecordRate
 {
 	@Attribute(required = false)
-	private String style;
-	
-	@Attribute(required = false)
-	private String version;
-	
-	@Attribute(required = false)
-	private String secure;
+	private String frequency;
 	
 	@Text(required = false)
 	private String text;
 
-	public ServiceType()
+	public RecordRate()
 	{
 	}
 
-	public String getStyle()
+	public String getFrequency()
 	{
-		return style;
+		return frequency;
 	}
 
-	public void setStyle(String style)
+	public void setFrequency(String frequency)
 	{
-		this.style = style;
-	}
-
-	public String getVersion()
-	{
-		return version;
-	}
-
-	public void setVersion(String version)
-	{
-		this.version = version;
-	}
-
-	public String getSecure()
-	{
-		return secure;
-	}
-
-	public void setSecure(String secure)
-	{
-		this.secure = secure;
+		this.frequency = frequency;
 	}
 
 	public String getText()
@@ -71,5 +45,7 @@ public class ServiceType
 	{
 		this.text = text;
 	}
-
+	
+	 
+	
 }

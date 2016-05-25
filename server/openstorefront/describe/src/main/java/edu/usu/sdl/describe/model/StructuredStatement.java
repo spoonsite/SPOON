@@ -28,6 +28,12 @@ public class StructuredStatement
 	@Element(name = "searchProvider", required = false)
 	private SearchProvider searchProvider;
 
+	@Element(name = "resource", required = false)
+	private Resource resource;
+	
+	@Element(name="contentCollection", required = false)
+	private ContentCollection contentCollection;
+	
 	public StructuredStatement()
 	{
 	}
@@ -41,7 +47,25 @@ public class StructuredStatement
 	{
 		this.searchProvider = searchProvider;
 	}
-	
-	
+
+	public Resource getResource()
+	{
+		return resource;
+	}
+
+	public void setResource(Resource resource)
+	{
+		this.resource = resource;
+	}
+
+	public ContentCollection getContentCollection()
+	{
+		return contentCollection;
+	}
+
+	public void setContentCollection(ContentCollection contentCollection)
+	{
+		this.contentCollection = contentCollection;
+	}
 	
 }

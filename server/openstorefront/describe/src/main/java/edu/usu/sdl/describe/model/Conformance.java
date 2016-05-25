@@ -15,11 +15,62 @@
  */
 package edu.usu.sdl.describe.model;
 
+import edu.usu.sdl.describe.parser.ConformanceConverter;
+import java.util.ArrayList;
+import java.util.List;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+import org.simpleframework.xml.convert.Convert;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(strict = false)
+@Convert(ConformanceConverter.class)
 public class Conformance
 {
+	@Attribute(required = false)
+	private String id;
 	
+	@Element(required = false)
+	private String name;
+	
+	private List<RelatedResource> relatedResources = new ArrayList<>();
+
+	public Conformance()
+	{
+	}
+
+	public String getId()
+	{
+		return id;
+	}
+
+	public void setId(String id)
+	{
+		this.id = id;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public List<RelatedResource> getRelatedResources()
+	{
+		return relatedResources;
+	}
+
+	public void setRelatedResources(List<RelatedResource> relatedResources)
+	{
+		this.relatedResources = relatedResources;
+	}
+
 }

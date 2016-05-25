@@ -13,53 +13,27 @@ import org.simpleframework.xml.Text;
  *
  * @author dshurtleff
  */
-@Root(strict = false, name = "type")
-public class ServiceType
+@Root(strict = false)
+public class Title
 {
 	@Attribute(required = false)
-	private String style;
-	
-	@Attribute(required = false)
-	private String version;
-	
-	@Attribute(required = false)
-	private String secure;
+	private String classification;
 	
 	@Text(required = false)
 	private String text;
 
-	public ServiceType()
+	public Title()
 	{
 	}
 
-	public String getStyle()
+	public String getClassification()
 	{
-		return style;
+		return classification;
 	}
 
-	public void setStyle(String style)
+	public void setClassification(String classification)
 	{
-		this.style = style;
-	}
-
-	public String getVersion()
-	{
-		return version;
-	}
-
-	public void setVersion(String version)
-	{
-		this.version = version;
-	}
-
-	public String getSecure()
-	{
-		return secure;
-	}
-
-	public void setSecure(String secure)
-	{
-		this.secure = secure;
+		this.classification = classification;
 	}
 
 	public String getText()

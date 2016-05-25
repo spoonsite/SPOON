@@ -14,6 +14,11 @@
 			<p style="display: none;" id="exportFormIds">
 			</p>      
 		</form>
+		
+		<form name="exportFormDescribe" action="../api/v1/resource/components/export/describe" method="POST" >
+			<p style="display: none;" id="exportFormDescribeIds">
+			</p>      
+		</form>		
 			  
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
@@ -4013,8 +4018,21 @@
 									iconCls: 'fa fa-2x fa-download',
 									scale: 'medium',
 									disabled: true,
-									handler: function () {
-										actionExportComponents();
+									menu: {
+										items: [
+											{
+												text: 'Standard',
+												handler: function() {													
+													actionExportComponents('exportForm');
+												}
+											},
+											{
+												text: 'Describe',
+												handler: function() {
+													actionExportComponents('exportFormDescribe');
+												}
+											}
+										]
 									}
 								}
 							]
@@ -4355,7 +4373,7 @@
 					});					
 				};
 				
-				var actionExportComponents = function() {
+				var actionExportComponents = function(exportForm) {
 					
 					var ids = "";
 					Ext.Array.each(componentGrid.getSelection(), function(record){
@@ -4363,8 +4381,8 @@
 						ids = ids + '<input type="hidden" name="id" value="' + record.get('componentId') +'" />';
 						
 					});
-					document.getElementById('exportFormIds').innerHTML = ids;					
-					document.exportForm.submit();
+					document.getElementById(exportForm + 'Ids').innerHTML = ids;					
+					document[exportForm].submit();
 				};
 				
 				var actionPreviewComponent = function(id){	

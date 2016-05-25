@@ -26,11 +26,17 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class RelatedResource
 {
-	@Attribute(name="href")
+	@Attribute(name="value", required = false)
+	private String description;
+	
+	@Attribute(name="relationship", required = false)
+	private String relationship;	
+	
+	@Attribute(name="href", required = false)
  	@Path("link")		
 	private String link;
 	
-	@Attribute(name="type")
+	@Attribute(name="type", required = false)
  	@Path("link")		
 	private String type;
 
@@ -56,6 +62,26 @@ public class RelatedResource
 	public void setType(String type)
 	{
 		this.type = type;
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
+	public String getRelationship()
+	{
+		return relationship;
+	}
+
+	public void setRelationship(String relationship)
+	{
+		this.relationship = relationship;
 	}
 
 }

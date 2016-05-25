@@ -15,11 +15,58 @@
  */
 package edu.usu.sdl.describe.model;
 
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Text;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(strict = false)
 public class Address
 {
+	@Attribute(required = false)
+	private String network;
+	
+	@Attribute(required = false)
+	private String protocol;
+	
+	@Text(required = false)
+	private String text;
+
+	public Address()
+	{
+	}
+
+	public String getNetwork()
+	{
+		return network;
+	}
+
+	public void setNetwork(String network)
+	{
+		this.network = network;
+	}
+
+	public String getProtocol()
+	{
+		return protocol;
+	}
+
+	public void setProtocol(String protocol)
+	{
+		this.protocol = protocol;
+	}
+
+	public String getText()
+	{
+		return text;
+	}
+
+	public void setText(String text)
+	{
+		this.text = text;
+	}
 	
 }

@@ -33,15 +33,15 @@ import org.simpleframework.xml.convert.Convert;
 @Convert(TrustedDataObjectConverter.class)
 public class TrustedDataObject
 {
-	@Attribute
+	@Attribute(required = false)
 	private String version;
 	
-	@Element(name="HandlingAssertion")			
+	@Element(name="HandlingAssertion", required = false)			
 	private HandlingAssertion handlingAssertion;
 
 	private List<Assertion> assertions = new ArrayList<>();
 	
-	@Attribute(name="uri") 
+	@Attribute(name="uri", required = false) 
 	@Path("ReferenceValuePayload")		
 	private String payloadURI;
 

@@ -23,7 +23,7 @@ import org.simpleframework.xml.Root;
  *
  * @author dshurtleff
  */
-@Root(strict = false)
+@Root(name="Assertion", strict = false)
 public class Assertion
 {
 	@Attribute(required = false)
@@ -33,7 +33,7 @@ public class Assertion
 	private String statement;
 	
 	@Element(name="StructuredStatement", required = false)			
-	StructuredStatement structuredStatement;
+	private StructuredStatement structuredStatement;
 
 	public Assertion()
 	{
@@ -47,6 +47,16 @@ public class Assertion
 	public void setStatement(String statement)
 	{
 		this.statement = statement;
+	}
+
+	public StructuredStatement getStructuredStatement()
+	{
+		return structuredStatement;
+	}
+
+	public void setStructuredStatement(StructuredStatement structuredStatement)
+	{
+		this.structuredStatement = structuredStatement;
 	}
 
 }

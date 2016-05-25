@@ -13,42 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.entity;
+package edu.usu.sdl.describe.model;
 
-import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
-import edu.usu.sdl.openstorefront.core.annotation.FK;
-import javax.validation.constraints.NotNull;
+import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Text;
 
 /**
  *
  * @author dshurtleff
  */
-@APIDescription("This is embedded in the Content Collection")
-public class CollectionAttribute
-	extends Attribute	
+@Root(strict = false)
+public class MimeType
 {
-	@FK(ContentCollection.class)
-	@NotNull
-	private String collectionId;
-	
-	public CollectionAttribute()
+	@Text
+	private String text; 
+
+	public MimeType()
 	{
 	}
 
-	@Override
-	public String ownerId()
+	public String getText()
 	{
-		return getCollectionId();
-	}	
-	
-	public String getCollectionId()
-	{
-		return collectionId;
+		return text;
 	}
 
-	public void setCollectionId(String collectionId)
+	public void setText(String text)
 	{
-		this.collectionId = collectionId;
+		this.text = text;
 	}
 
 }

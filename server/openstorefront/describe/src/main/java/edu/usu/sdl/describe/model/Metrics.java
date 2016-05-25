@@ -15,11 +15,46 @@
  */
 package edu.usu.sdl.describe.model;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(strict = false)
 public class Metrics
 {
+	@Element(required = false)
+	private String count;
+	
+	@Element(name = "recordRate", required = false)
+	private RecordRate recordRate;
+
+	public Metrics()
+	{
+	}
+
+	public String getCount()
+	{
+		return count;
+	}
+
+	public void setCount(String count)
+	{
+		this.count = count;
+	}
+
+	public RecordRate getRecordRate()
+	{
+		return recordRate;
+	}
+
+	public void setRecordRate(RecordRate recordRate)
+	{
+		this.recordRate = recordRate;
+	}
+	
+	
 	
 }
