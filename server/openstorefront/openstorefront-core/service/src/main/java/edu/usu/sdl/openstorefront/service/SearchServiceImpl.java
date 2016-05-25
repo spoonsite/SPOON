@@ -23,17 +23,14 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
-import edu.usu.sdl.openstorefront.core.entity.Attribute;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
-import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
-import edu.usu.sdl.openstorefront.core.entity.ContentCollection;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.ResultTypeStat;
@@ -172,7 +169,7 @@ public class SearchServiceImpl
 
 		Map<String, List<ComponentAttribute>> attributeMap = new HashMap<>();
 		Map<String, List<ComponentTag>> tagMap = new HashMap<>();
-		Map<String, List<ComponentResource>> resourceMap = new HashMap<>();
+
 		if (components.size() > 1) {
 			ComponentAttribute componentAttributeExample = new ComponentAttribute();
 			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
@@ -184,10 +181,6 @@ public class SearchServiceImpl
 			List<ComponentTag> allTags = persistenceService.queryByExample(ComponentTag.class, componentTagExample);
 			tagMap = allTags.stream().collect(Collectors.groupingBy(ComponentTag::getComponentId));
 			
-			ComponentResource componentResource = new ComponentResource();
-			componentResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
-			List<ComponentResource> resources = componentResource.findByExample();
-			resourceMap = resources.stream().collect(Collectors.groupingBy(ComponentResource::getComponentId));			
 		}
 
 		List<SolrComponentModel> solrDocs = new ArrayList<>();
@@ -205,44 +198,6 @@ public class SearchServiceImpl
 			solrDocModel.setUpdateDts(component.getUpdateDts());
 			solrDocModel.setOrganization(component.getOrganization());
 
-			List<ComponentResource> resources;
-			if (components.size() > 1) {
-				resources = resourceMap.get(component.getComponentId());
-				if (resources == null) {
-					resources = new ArrayList<>();
-				}
-			} else {
-				resources = getComponentService().getBaseComponent(ComponentResource.class, component.getComponentId());
-			}
-			for (ComponentResource resource : resources) {
-				solrDocModel.setResourceName(resource.getName());
-				solrDocModel.setResourceDescription(resource.getDescription());
-				if (resource.getAttributes() != null) {
-					StringBuilder sb = new StringBuilder();
-					for (Attribute attribute : resource.getAttributes()) {
-						sb.append(attributesToString(attribute.getAttributeType(), attribute.getAttributeCode()));					
-					}
-					solrDocModel.setResourceAttributes(sb.toString());					
-				} 
-				StringBuilder collectionNames = new StringBuilder();
-				StringBuilder collectionDescs = new StringBuilder();
-				if (resource.getContentCollections() != null) {
-					for (ContentCollection contentCollection : resource.getContentCollections()) {
-						collectionNames.append(contentCollection.getName()).append(" ");
-						collectionDescs.append(contentCollection.getDescription()).append(" ");
-						if (contentCollection.getAttributes() != null) {
-							StringBuilder sb = new StringBuilder();							
-							for (Attribute attribute : resource.getAttributes()) {
-								sb.append(attributesToString(attribute.getAttributeType(), attribute.getAttributeCode()));					
-							}
-							solrDocModel.setCollectionAttributes(sb.toString());								
-						}
-					}
-				}
-				solrDocModel.setContentCollectionName(collectionNames.toString());
-				solrDocModel.setContentCollectionDescription(collectionDescs.toString());				
-			}
-			
 			
 			List<ComponentTag> tags;
 			List<ComponentAttribute> attributes;
