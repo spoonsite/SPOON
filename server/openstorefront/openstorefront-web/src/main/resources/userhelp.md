@@ -31,7 +31,7 @@ licensed under Apache V2.**
 ## 1.1 Release Notes
 ------
 
-## **What's new in v2.0:**
+### **What's new in v2.0:**
 
 * **Advanced and Saved Searches:**
 The Search Tools are now accessed from a button to the right of the search (text) box.  Two new tabs have been added to the search tools window:  _Advanced (Search)_ and _Saved Searches_.  Advanced Search allows for many differen custom combinations of fields, selectable via drop-down menus and text entry.  Multiple search criteria can be added with OR, AND, or NOT conditions.  Once the correct combination is found, results can be previewed and the search can be saved for later use.  The Saved Searches tab contains a list of the users saved searches that can be executed to find results.  Saved Searches are managed from a new area in the User Tools section.
