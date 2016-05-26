@@ -31,41 +31,48 @@ licensed under Apache V2.**
 ## 1.1 Release Notes
 ------
 
-## **What's new in v2.0:**
+**What's new in v2.0:**
 
 * **Advanced and Saved Searches:**
-The Search Tools are now accessed from a button to the right of the search (text) box.  Two new tabs have been added to the search tools window:  _Advanced (Search)_ and _Saved Searches_.  Advanced Search allows for many differen custom combinations of fields, selectable via drop-down menus and text entry.  Multiple search criteria can be added with OR, AND, or NOT conditions.  Once the correct combination is found, results can be previewed and the search can be saved for later use.  The Saved Searches tab contains a list of the users saved searches that can be executed to find results.  Saved Searches are managed from a new area in the User Tools section.
+
+	The Search Tools are now accessed from a button to the right of the search (text) box.  Two new tabs have been added to the search tools window:  _Advanced (Search)_ and _Saved Searches_.  Advanced Search allows for many different custom combinations of fields, selectable via drop-down menus and text entry.  Multiple search criteria can be added with OR, AND, or NOT conditions.  Once the correct combination is found, results can be previewed and the search can be saved for later use.  The Saved Searches tab contains a list of the users saved searches that can be executed to find results.  Saved Searches are managed from a new area in the User Tools section.
 
 * **Improved Submission Process:**
-The entry submission process has been improved including new _Save and Edit Later_ and _Submit for Review_ button options.  In addition _Pending_ entries that are edited are automatically moved to _Not Submitted_ unless they are submitted again for review.  Approved entries can have a _Change Request_ added or can have a _Removal Request_ for approval to remove it from the website.
+
+	The entry submission process has been improved including new _Save and Edit Later_ and _Submit for Review_ button options.  In addition _Pending_ entries that are edited are automatically moved to _Not Submitted_ unless they are submitted again for review.  Approved entries can have a _Change Request_ added or can have a _Removal Request_ for approval to remove it from the website.
 
 * **User Submitted Corrections, Request Ownership:**
-Any user can submit a correction for an entry on the website.  From the search results details area, if you do not already own the entry a new horizontal line icon appears with two sub-menus:  _Submit Correction_ and _Request Ownership_.  These bring up a form to enter your suggested correction or reasoning for requesting ownership of the entry.
+
+	Any user can submit a correction for an entry on the website.  From the search results details area, if you do not already own the entry a new horizontal line icon appears with two sub-menus:  _Submit Correction_ and _Request Ownership_.  These bring up a form to enter your suggested correction or reasoning for requesting ownership of the entry.
 
 * **Custom Dashboards:**
-The User Tools and Admin Tools homepage is now a customizeable dashboard allowing the user to add widgets such as:  Notifications, Questions, Reports, Saved Searches, Submission Status, and Watches.  Additional widgets are available on the Admin Tools dashboard.  
 
-* **Searchable Help File:**
-This help file is now searchable.
+	The User Tools and Admin Tools homepage is now a customizable dashboard allowing the user to add widgets such as:  Notifications, Questions, Reports, Saved Searches, Submission Status, and Watches.  Additional widgets are available on the Admin Tools dashboard.  
 
-* **Describe Import/Export (BETA):**
-Added the ability for an administrator to Import or Export a Describe file from the Entry or Imports sections of the Admin Tools.  
+* **Search Results Improvements:**
 
-* **Branding Support:**
-An administrator has the ability to change the color scheme, titles, logos, and so forth of the website.  This is accomplished via Admin Tools > Application Mangement > Branding.
+	-- Search results can now display addition data about the results such as vitals and average review score.   
+	-- The side-by-side compare feature is now integrated in the result page to avoid disruptions.  
+	-- Entries can now be quickly filtered by topic (type of entry).   
+	-- The export of the search results is now more direct instead of running a report.  
 
-* **Security Marking Banner:**
-As part of the branding support a security banner title and color can be established by an administrator to note the highest security level of the branded website.
+* **Entry Details Improvements:**
 
+	-- Related entry for an organization can now be viewed by clicking on the organization link.  
+	-- Entry Vitals can show related entries by clicking on the vital value.  
+	-- Relationships are more easier to navigate by click on the related item.  Also the "+" symbol allows for a quick view with losing the currently viewed entry. 
+
+* **User Tool Improvements:**
+
+	-- Question and Answers that you have posted can be managed in one place.    
+	-- Reviews, Reports and Watches have all been updated to make them more consistent and easier to use.  
 
 For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.0" target="_blank">v2.0</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
-
 
 ## 1.2 Known Issues, v2.0 * 
  
 1. Full Screen video view button not available in search results when not in full page. (Affects: IE 9, 10) 
 Workaround: Open entry details in full page mode then view the video.
-
 
 # 2.  User Features
 ------
