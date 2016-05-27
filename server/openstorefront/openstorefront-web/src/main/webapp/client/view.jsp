@@ -913,33 +913,104 @@ limitations under the License.
 				Ext.Array.each(tagList,  function(tag){
 					var tagButton;
 					
+					var showRelatedByTag = function() {
+						
+						DetailPage.relatedWindow.show();
+						DetailPage.relatedWindow.setTitle('Related Entries By Tag');
+
+						var descriptionPanel = DetailPage.relatedWindow.getComponent('grid').getComponent('description');
+						descriptionPanel.update({
+							description: tag.text,
+							tip: ''
+						});
+
+
+						var searchObj = {
+							"sortField": "name",
+							"sortDirection": "ASC",				
+							"searchElements": [{
+									"searchType": 'TAG',
+									"field": 'text',
+									"value": tag.text,
+									"caseInsensitive": true,
+									"numberOperation": "EQUALS",
+									"stringOperation": "EQUALS",
+									"mergeCondition": "OR" 
+							}]
+						 };
+
+						var store = DetailPage.relatedWindow.getComponent('grid').getStore();
+						store.getProxy().buildRequest = function (operation) {
+							var initialParams = Ext.apply({
+								paging: true,
+								sortField: operation.getSorters()[0].getProperty(),
+								sortOrder: operation.getSorters()[0].getDirection(),
+								offset: operation.getStart(),
+								max: operation.getLimit()
+							}, operation.getParams());
+							params = Ext.applyIf(initialParams, store.getProxy().getExtraParams() || {});
+
+							var request = new Ext.data.Request({
+								url: '/openstorefront/api/v1/service/search/advance',
+								params: params,
+								operation: operation,
+								action: operation.getAction(),
+								jsonData: Ext.util.JSON.encode(searchObj)
+							});
+							operation.setRequest(request);
+
+							return request;
+						};
+						store.loadPage(1);							
+						
+					};
+					
 					if (tag.createUser === '${user}') {
-						tagButton = Ext.create('Ext.button.Button', {
-							text: tag.text,
+						tagButton = Ext.create('Ext.button.Split', {
+							text: tag.text,							
 							entryTag: tag,
-							iconCls: 'fa fa-close',
-							iconAlign: 'right',
+							menu: {
+								items: [
+									{
+										text: 'Show Related Entries',
+										iconCls: 'fa fa-retweet',
+										handler: function(){
+											showRelatedByTag();
+										}
+									},
+									{
+										text: 'Remove',
+										iconCls: 'fa fa-close',
+										handler: function(){
+											var tagButton = this.up('button');
+											var tag = tagButton.entryTag;
+											Ext.getCmp('tagPanel').setLoading('Removing Tag...');
+											Ext.Ajax.request({
+												url: '../api/v1/resource/components/' + componentId + '/tags/' + tag.tagId,
+												method: 'DELETE',
+												callback: function(){
+													Ext.getCmp('tagPanel').setLoading(false);
+												},
+												success: function(response, opt){
+													Ext.getCmp('tagPanel').remove(tagButton, true);
+												}
+											});											
+										}
+									}
+								]
+							},
 							margin: '0 10 0 0',
 							handler: function(){
-								var tagButton = this;
-								var tag = this.entryTag;
-								Ext.getCmp('tagPanel').setLoading('Removing Tag...');
-								Ext.Ajax.request({
-									url: '../api/v1/resource/components/' + componentId + '/tags/' + tag.tagId,
-									method: 'DELETE',
-									callback: function(){
-										Ext.getCmp('tagPanel').setLoading(false);
-									},
-									success: function(response, opt){
-										Ext.getCmp('tagPanel').remove(tagButton, true);
-									}
-								});								
+								showRelatedByTag();		
 							}
 						});
 					} else {
 						tagButton = Ext.create('Ext.button.Button', {
 							text: tag.text,							
-							margin: '0 10 0 0'							
+							margin: '0 10 0 0',
+							handler: function(){
+								showRelatedByTag();
+							}
 						});						
 					}
 					
