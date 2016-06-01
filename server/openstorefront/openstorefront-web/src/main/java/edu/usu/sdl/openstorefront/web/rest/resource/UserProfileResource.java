@@ -533,6 +533,12 @@ public class UserProfileResource
 			userProfiles.add(thisView);
 		}
 
+		String data;
+		try {
+			data = StringProcessor.defaultObjectMapper().writeValueAsString(userProfiles);
+		} catch (JsonProcessingException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to export user profiles: Unable to generate JSON", ex);
+		}
 
 		Response.ResponseBuilder response = Response.ok(data);
 		response.header("Content-Type", MediaType.APPLICATION_JSON);
