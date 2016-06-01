@@ -523,6 +523,12 @@ public class UserProfileResource
 			@FormParam("userId")
 			@RequiredParam List<String> userIds)
 	{
+		List<UserProfile> userProfiles = new ArrayList<>();
+
+		for (String userId : userIds) {
+			UserProfile userProfile = service.getUserService().getUserProfile(userId);
+			userProfiles.add(userProfile);
+		}
 
 		String data = "test";
 
