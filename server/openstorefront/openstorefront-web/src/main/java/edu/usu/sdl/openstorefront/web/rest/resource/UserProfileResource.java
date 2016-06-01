@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,6 @@ import net.sourceforge.stripes.util.bean.BeanUtil;
 /**
  * User Profile Resource
  *
- * @author dshurtleff
  */
 @Path("v1/resource/userprofiles")
 @APIDescription("A user profile contain information about the user and user specific data. A user profile is created at the time the user logins in.<br>"
@@ -517,7 +516,7 @@ public class UserProfileResource
 	}
 
 	@POST
-	@APIDescription("Exports user profiles in JSON format.")
+	@APIDescription("Exports user profiles in JSON format. Consumes a list of 'userId' form parameters.")
 	@RequireAdmin
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
