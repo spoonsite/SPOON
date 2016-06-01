@@ -222,6 +222,15 @@
 										var record = Ext.getCmp('userProfileGrid').getSelection()[0];
 										actionMessageUser(record);
 									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Export',
+									scale: 'medium',
+									id: 'userProfileGrid-tools-export',
+									iconCls: 'fa fa-2x fa-download'
 								}
 							]
 						},
