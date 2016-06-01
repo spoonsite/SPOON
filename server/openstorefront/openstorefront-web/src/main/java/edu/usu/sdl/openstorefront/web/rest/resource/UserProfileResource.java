@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -523,14 +525,14 @@ public class UserProfileResource
 			@FormParam("userId")
 			@RequiredParam List<String> userIds)
 	{
-		List<UserProfile> userProfiles = new ArrayList<>();
+		List<UserProfileView> userProfiles = new ArrayList<>();
 
 		for (String userId : userIds) {
 			UserProfile userProfile = service.getUserService().getUserProfile(userId);
-			userProfiles.add(userProfile);
+			UserProfileView thisView = UserProfileView.toView(userProfile);
+			userProfiles.add(thisView);
 		}
 
-		String data = "test";
 
 		Response.ResponseBuilder response = Response.ok(data);
 		response.header("Content-Type", MediaType.APPLICATION_JSON);
