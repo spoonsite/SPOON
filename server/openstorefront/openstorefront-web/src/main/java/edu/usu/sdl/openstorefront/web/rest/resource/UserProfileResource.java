@@ -50,6 +50,7 @@ import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -510,6 +511,25 @@ public class UserProfileResource
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
+
+	}
+
+	@POST
+	@APIDescription("Exports user profiles in JSON format.")
+	@RequireAdmin
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/export")
+	public Response exportUserProfiles(
+			@FormParam("userId")
+			@RequiredParam List<String> userIds)
+	{
+
+		String data = "test";
+
+		Response.ResponseBuilder response = Response.ok(data);
+		response.header("Content-Type", MediaType.APPLICATION_JSON);
+		response.header("Content-Disposition", "attachment; filename=\"userprofiles.json\"");
+		return response.build();
 
 	}
 
