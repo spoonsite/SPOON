@@ -232,7 +232,11 @@
 									text: 'Export',
 									scale: 'medium',
 									id: 'userProfileGrid-tools-export',
-									iconCls: 'fa fa-2x fa-download'
+									iconCls: 'fa fa-2x fa-download',
+									handler: function() {
+										var records = attributeGrid.getSelection();
+										actionExportUser(records);
+									}
 								}
 							]
 						},
@@ -245,7 +249,8 @@
 					],
 					listeners: {
 						selectionchange: function (grid, record, index, opts) {
-							if (Ext.getCmp('userProfileGrid').getSelectionModel().hasSelection()) {
+							if (Ext.getCmp('userProfileGrid').getSelectionModel().hasSelection()
+							   && Ext.getCmp('userProfileGrid').getSelectionModel().getCount() === 1) {
 								Ext.getCmp('userProfileGrid-tools-toggleActivation').enable();
 								// Only allow editing or messaging when the grid is showing active users.
 								if (Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() === 'A') {
@@ -256,6 +261,11 @@
 								Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
 								Ext.getCmp('userProfileGrid-tools-edit').disable();
 								Ext.getCmp('userProfileGrid-tools-message').disable();
+								if (Ext.getCmp('userProfileGrid').getSelectionModel().getCount() > 1) {
+									Ext.getCmp('userProfileGrid-tools-export').enable();
+								} else {
+									Ext.getCmp('userProfileGrid-tools-export').disable();
+								}
 							}
 						}
 					}
