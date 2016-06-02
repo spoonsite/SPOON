@@ -51,9 +51,11 @@
 				var userProfileGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Manage User Profiles <i class="fa fa-question-circle"  data-qtip="A user profile represents a user in the system and contains the user\'s information."></i>',
 					id: 'userProfileGrid',
+					selModel: {
+						selType: 'checkboxmodel'
+					},
 					store: userProfileStore,
 					columnLines: true,
-					selModel: 'rowmodel',
 					columns: {
 						defaults: {
 							cellWrap: true
