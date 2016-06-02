@@ -352,6 +352,17 @@
 						Ext.MessageBox.alert("No User Selected", "Error: You have not selected a user.");
 					}
 				};
+
+				var actionExportUser = function actionExportUser(records) {
+					var userIdInputs = "";
+					Ext.Array.each(records, function(record) {
+						userIdInputs += '<input type="hidden" name="userId" ';
+						userIdInputs += 'value="' + record.get('username') +'" />';
+					});
+					document.getElementById('exportFormUserIds').innerHTML = userIdInputs;
+					document.exportForm.submit();
+				};
+
 			});
 
 		</script>
