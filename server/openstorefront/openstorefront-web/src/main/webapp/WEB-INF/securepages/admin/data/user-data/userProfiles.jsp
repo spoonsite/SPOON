@@ -7,6 +7,10 @@
 		<script src="scripts/component/userProfileWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
 
+		<form name="exportForm" action="/openstorefront/api/v1/resource/userprofiles/export" method="POST">
+			<p style="display: none;" id="exportFormUserIds"></p>
+		</form>
+
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
