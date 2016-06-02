@@ -237,8 +237,9 @@
 									scale: 'medium',
 									id: 'userProfileGrid-tools-export',
 									iconCls: 'fa fa-2x fa-download',
+									disabled: true,
 									handler: function() {
-										var records = attributeGrid.getSelection();
+										var records = userProfileGrid.getSelection();
 										actionExportUser(records);
 									}
 								}
@@ -253,9 +254,9 @@
 					],
 					listeners: {
 						selectionchange: function (grid, record, index, opts) {
-							if (Ext.getCmp('userProfileGrid').getSelectionModel().hasSelection()
-							   && Ext.getCmp('userProfileGrid').getSelectionModel().getCount() === 1) {
+							if (Ext.getCmp('userProfileGrid').getSelectionModel().getCount() === 1) {
 								Ext.getCmp('userProfileGrid-tools-toggleActivation').enable();
+								Ext.getCmp('userProfileGrid-tools-export').enable();
 								// Only allow editing or messaging when the grid is showing active users.
 								if (Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() === 'A') {
 									Ext.getCmp('userProfileGrid-tools-edit').enable();
