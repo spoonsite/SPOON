@@ -285,6 +285,23 @@ Ext.define('OSF.component.SearchToolWindow', {
 			]
 		});
 
+		//
+		//  tagSearchPanel Tab
+		//  This is the panel tab for the tag search tool
+		//
+		var tagSearchPanel = Ext.create('Ext.panel.Panel', {
+			title: 'Tag',
+			iconCls: 'fa fa-tag',
+			layout: 'fit',
+			items: [
+				Ext.create('OSF.component.SearchToolContentPanel', {
+					searchToolType: "tag",
+					architectureType: searchToolWin.branding ?  searchToolWin.branding.tagSearchType : null,
+					itemId: 'tagPanel'
+				})
+			]
+		});
+
 		var advanceSearch = Ext.create('OSF.component.AdvanceSearchPanel', {
 			title: 'Advanced',
 			iconCls: 'fa fa-search-plus',
@@ -434,6 +451,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 		var searchToolPanels = [];
 		searchToolPanels.push(topicSearchPanel);
 		searchToolPanels.push(categorySearchPanel);
+		searchToolPanels.push(tagSearchPanel);
 
 		if (searchToolWin.branding) {
 			if (!searchToolWin.branding.hideArchitectureSearchFlg) {
