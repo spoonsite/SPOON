@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -50,6 +52,7 @@ import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -63,7 +66,6 @@ import net.sourceforge.stripes.util.bean.BeanUtil;
 /**
  * User Profile Resource
  *
- * @author dshurtleff
  */
 @Path("v1/resource/userprofiles")
 @APIDescription("A user profile contain information about the user and user specific data. A user profile is created at the time the user logins in.<br>"
@@ -510,6 +512,37 @@ public class UserProfileResource
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
+
+	}
+
+	@POST
+	@APIDescription("Exports user profiles in JSON format. Consumes a list of 'userId' form parameters.")
+	@RequireAdmin
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/export")
+	public Response exportUserProfiles(
+			@FormParam("userId")
+			@RequiredParam List<String> userIds)
+	{
+		List<UserProfileView> userProfiles = new ArrayList<>();
+
+		for (String userId : userIds) {
+			UserProfile userProfile = service.getUserService().getUserProfile(userId);
+			UserProfileView thisView = UserProfileView.toView(userProfile);
+			userProfiles.add(thisView);
+		}
+
+		String data;
+		try {
+			data = StringProcessor.defaultObjectMapper().writeValueAsString(userProfiles);
+		} catch (JsonProcessingException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to export user profiles: Unable to generate JSON", ex);
+		}
+
+		Response.ResponseBuilder response = Response.ok(data);
+		response.header("Content-Type", MediaType.APPLICATION_JSON);
+		response.header("Content-Disposition", "attachment; filename=\"userprofiles.json\"");
+		return response.build();
 
 	}
 

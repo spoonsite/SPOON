@@ -7,6 +7,10 @@
 		<script src="scripts/component/userProfileWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
 
+		<form name="exportForm" action="/openstorefront/api/v1/resource/userprofiles/export" method="POST">
+			<p style="display: none;" id="exportFormUserIds"></p>
+		</form>
+
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
@@ -51,9 +55,11 @@
 				var userProfileGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Manage User Profiles <i class="fa fa-question-circle"  data-qtip="A user profile represents a user in the system and contains the user\'s information."></i>',
 					id: 'userProfileGrid',
+					selModel: {
+						selType: 'checkboxmodel'
+					},
 					store: userProfileStore,
 					columnLines: true,
-					selModel: 'rowmodel',
 					columns: {
 						defaults: {
 							cellWrap: true
@@ -222,6 +228,20 @@
 										var record = Ext.getCmp('userProfileGrid').getSelection()[0];
 										actionMessageUser(record);
 									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Export',
+									scale: 'medium',
+									id: 'userProfileGrid-tools-export',
+									iconCls: 'fa fa-2x fa-download',
+									disabled: true,
+									handler: function() {
+										var records = userProfileGrid.getSelection();
+										actionExportUser(records);
+									}
 								}
 							]
 						},
@@ -234,8 +254,9 @@
 					],
 					listeners: {
 						selectionchange: function (grid, record, index, opts) {
-							if (Ext.getCmp('userProfileGrid').getSelectionModel().hasSelection()) {
+							if (Ext.getCmp('userProfileGrid').getSelectionModel().getCount() === 1) {
 								Ext.getCmp('userProfileGrid-tools-toggleActivation').enable();
+								Ext.getCmp('userProfileGrid-tools-export').enable();
 								// Only allow editing or messaging when the grid is showing active users.
 								if (Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() === 'A') {
 									Ext.getCmp('userProfileGrid-tools-edit').enable();
@@ -245,6 +266,11 @@
 								Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
 								Ext.getCmp('userProfileGrid-tools-edit').disable();
 								Ext.getCmp('userProfileGrid-tools-message').disable();
+								if (Ext.getCmp('userProfileGrid').getSelectionModel().getCount() > 1) {
+									Ext.getCmp('userProfileGrid-tools-export').enable();
+								} else {
+									Ext.getCmp('userProfileGrid-tools-export').disable();
+								}
 							}
 						}
 					}
@@ -326,6 +352,17 @@
 						Ext.MessageBox.alert("No User Selected", "Error: You have not selected a user.");
 					}
 				};
+
+				var actionExportUser = function actionExportUser(records) {
+					var userIdInputs = "";
+					Ext.Array.each(records, function(record) {
+						userIdInputs += '<input type="hidden" name="userId" ';
+						userIdInputs += 'value="' + record.get('username') +'" />';
+					});
+					document.getElementById('exportFormUserIds').innerHTML = userIdInputs;
+					document.exportForm.submit();
+				};
+
 			});
 
 		</script>
