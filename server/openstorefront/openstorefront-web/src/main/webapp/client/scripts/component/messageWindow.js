@@ -27,11 +27,25 @@ Ext.define('OSF.component.MessageWindow', {
 	height: 610,
 	resizable: false,
 	initialToUsers: '',
+	initialBccUsers: '',
 	
 	initComponent: function () {
 		this.callParent();
 
 		var messageWindow = this;
+
+		if (messageWindow.initialToUsers) {
+			var toUsersString = messageWindow.initialToUsers.join('; ');
+		} else {
+			var toUsersString = '';
+		}
+
+		if (messageWindow.initialBccUsers) {
+			var bccUsersString = messageWindow.initialBccUsers.join('; ');
+		} else {
+			var bccUsersString = '';
+		}
+
 		
 		var selectUsers = function(emailField) {
 			var selectUserWindow = Ext.create('Ext.window.Window', {
@@ -176,7 +190,7 @@ Ext.define('OSF.component.MessageWindow', {
 							emptyText: 'email@mail.com; ..',
 							allowBlank: false,
 							name: 'emailAddresses',
-							value: messageWindow.initialToUsers,
+							value: toUsersString,
 							maxLength: 2048
 						},					
 						{
@@ -243,6 +257,7 @@ Ext.define('OSF.component.MessageWindow', {
 							width: '90%',
 							emptyText: 'email@mail.com; ..',						
 							name: 'bccEmails',						
+							value: bccUsersString,
 							maxLength: 2048
 						},					
 						{

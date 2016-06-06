@@ -225,8 +225,8 @@
 									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',
 									iconAlign: 'left',
 									handler: function () {
-										var record = Ext.getCmp('userProfileGrid').getSelection()[0];
-										actionMessageUser(record);
+										var records = Ext.getCmp('userProfileGrid').getSelection();
+										actionMessageUser(records);
 									}
 								},
 								{
@@ -268,8 +268,12 @@
 								Ext.getCmp('userProfileGrid-tools-message').disable();
 								if (Ext.getCmp('userProfileGrid').getSelectionModel().getCount() > 1) {
 									Ext.getCmp('userProfileGrid-tools-export').enable();
+									if (Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() === 'A') {
+										Ext.getCmp('userProfileGrid-tools-message').enable();
+									}
 								} else {
 									Ext.getCmp('userProfileGrid-tools-export').disable();
+									Ext.getCmp('userProfileGrid-tools-message').disable();
 								}
 							}
 						}
@@ -341,13 +345,40 @@
 				});
 
 
-				var actionMessageUser = function actionMessageUser(record) {
-					if (record) {
-						var messageWindow = Ext.create('OSF.component.MessageWindow', {					
-							closeAction: 'destroy',
-							initialToUsers: [record.data.email]
-						}).show();
-
+				var actionMessageUser = function actionMessageUser(records) {
+					if (records) {
+						var emails = [];
+						Ext.Array.each(records, function(record) {
+							emails.push(record.getData().email);
+						});
+						if (emails.length > 1) {
+							var msg = 'All recipients inside the "To" box are able to see the e-mail addresses of all other recipients ';
+							msg += 'in the "To" box. If you wish to keep the e-mail addresses hidden from the group, use the "BCC" box.';
+							msg += '<br /><br /> Please select which box the selected users should appear in.';
+							Ext.MessageBox.show({
+								title: 'Choose E-mail Method for Selected Users',
+								msg: msg,
+								buttonText: {yes: "Use  'To'  Box", no: "Use  'BCC'  Box"},
+								fn: function(btn) {
+									if (btn === 'yes') {
+										var messageWindow = Ext.create('OSF.component.MessageWindow', {					
+											closeAction: 'destroy',
+											initialToUsers: emails
+										}).show();
+									} else if (btn === 'no') {
+										var messageWindow = Ext.create('OSF.component.MessageWindow', {					
+											closeAction: 'destroy',
+											initialBccUsers: emails
+										}).show();
+									}
+								}
+							});
+						} else if (emails.length === 1) {
+							var messageWindow = Ext.create('OSF.component.MessageWindow', {					
+								closeAction: 'destroy',
+								initialToUsers: emails
+							}).show();
+						}
 					} else {
 						Ext.MessageBox.alert("No User Selected", "Error: You have not selected a user.");
 					}
