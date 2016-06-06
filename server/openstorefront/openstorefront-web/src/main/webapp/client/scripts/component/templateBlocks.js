@@ -499,7 +499,7 @@ Ext.define('OSF.component.template.Media', {
 		'				<tpl case="AUD">',
 		'					<i class="fa fa-file-sound-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
 		'				<tpl case="VID">',
-		'					<i class="fa fa-file-video-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',		
+		'					<video onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');" height="130" src="{link}#t=10" onloadedmetadata="this.currentTime=10;" ></video><br><br>',		
 		'				<tpl case="ARC">',
 		'					<i class="fa fa-file-archive-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
 		'				<tpl case="TEX">',
