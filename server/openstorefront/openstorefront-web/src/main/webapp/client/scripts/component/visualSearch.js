@@ -66,6 +66,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		//group and sort data
 				
 		
+		var nodeGroup = [];
+
+		Ext.Array.each(viewData, function(node){
+			nodeGroup[node.key].push(node);							
+		});				
+		
 		
 		var nodeGen = 0;
 		
