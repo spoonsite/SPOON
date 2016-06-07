@@ -599,7 +599,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 		var tagButtonHandler = function (newTab, tag, count) {
 
 			var descriptionText = '<h3>Tag: "' + tag + '"</h3>';
-			descriptionText += '<p>' + count + ' occurrence' + (count > 1 ? 's' : '') + '</p>';
+			descriptionText += '<hr /><p>' + count + ' occurrence' + (count > 1 ? 's' : '') + '</p>';
 			newTab.getComponent('tagPanel').infoPanel.update(descriptionText);
 
 
