@@ -592,6 +592,64 @@ Ext.define('OSF.component.SearchToolWindow', {
 			}
 		};
 
+		//***************************
+		//*** Tag Methods ***
+		//***************************
+
+
+		var loadTagNav = function (newTab) {
+			newTab.setLoading(true);
+			Ext.Ajax.request({
+				url: '/openstorefront/api/v1/resource/components/tagviews',
+				success: function (response, opts) {
+					newTab.setLoading(false);
+					var data = Ext.decode(response.responseText);
+					var tData = sortList(data, 'text', 'ASC');
+
+					// Count the number of occurences for each tag
+					var tags = {};
+					Ext.Array.each(tData, function (item) {
+						if (tags.hasOwnProperty(item.text)) {
+							tags[item.text]++;
+						} else {
+							tags[item.text] = 1;
+						}
+					});
+
+					// Loop through tags and create buttons with tag name and count
+					for (var key in tags) { 
+						if (!tags.hasOwnProperty(key)) continue;
+
+						newTab.getComponent('tagPanel').navPanel.add({
+							xtype: 'button',
+							cls: 'list-button',
+							height: 30,
+							text: key + ' (' + tags[key] +')',
+							desc: key + ' (' + tags[key] +')',
+							width: '100%',
+							handler: function () {
+								tagButtonHandler(newTab, item);
+							}
+						});
+					}
+
+				},
+				failure: function (response, opts) {
+					newTab.setLoading(false);
+				}
+			});
+			newTab.doneLoad = true;
+		};
+
+
+		//
+		//  Tag Tab Processing
+		//
+		var tagTabProcessing = function (tabpanel, newTab, oldtab, opts) {
+			if (!newTab.doneLoad) {
+				loadTagNav(newTab);
+			}
+		};
 
 
 		//***************************
@@ -885,8 +943,9 @@ Ext.define('OSF.component.SearchToolWindow', {
 
 			if (newTab.getTitle() === 'Topic') {
 				topicTabProcessing(tabpanel, newTab, oldtab, opts);
+			} else if (newTab.getTitle() === 'Tag') {
+				tagTabProcessing(tabpanel, newTab, oldtab, opts);
 			} else if (newTab.getTitle() === 'Category') {
-
 				categoryTabProcessing(tabpanel, newTab, oldtab, opts);
 			} else if (newTab.getTitle() === 'Architecture') {
 				archTabProcessing(tabpanel, newTab, oldtab, opts);
