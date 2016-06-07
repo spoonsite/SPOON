@@ -596,6 +596,36 @@ Ext.define('OSF.component.SearchToolWindow', {
 		//*** Tag Methods ***
 		//***************************
 
+		var tagButtonHandler = function (newTab, tag, count) {
+
+			var descriptionText = '<h3>Tag: "' + tag + '"</h3>';
+			descriptionText += '<p>' + count + ' occurrence' + (count > 1 ? 's' : '') + '</p>';
+			newTab.getComponent('tagPanel').infoPanel.update(descriptionText);
+
+
+			//Do the search on the category attribute
+			searchToolWin.searchObj = {
+				"sortField": null,
+				"sortDirection": "ASC",
+				"startOffset": 0,
+				"max": 2147483647,
+				"searchElements": [{
+						"searchType": "TAG",
+						"value": tag,
+						"field": null,
+						"keyField": null,
+						"keyValue": null,
+						"startDate": null,
+						"endDate": null,
+						"caseInsensitive": false,
+						"numberOperation": "EQUALS",
+						"stringOperation": "EQUALS",
+						"mergeCondition": "OR"  //OR.. NOT.. AND..
+					}]
+			};
+			newTab.getComponent('tagPanel').loadGrid(searchToolWin.searchObj);
+		};
+
 
 		var loadTagNav = function (newTab) {
 			newTab.setLoading(true);
@@ -620,17 +650,21 @@ Ext.define('OSF.component.SearchToolWindow', {
 					for (var key in tags) { 
 						if (!tags.hasOwnProperty(key)) continue;
 
-						newTab.getComponent('tagPanel').navPanel.add({
+						var buttonCfg = {
 							xtype: 'button',
 							cls: 'list-button',
 							height: 30,
 							text: key + ' (' + tags[key] +')',
 							desc: key + ' (' + tags[key] +')',
 							width: '100%',
-							handler: function () {
-								tagButtonHandler(newTab, item);
+							tag: key,
+							count: tags[key],
+							handler: function() {
+								tagButtonHandler(newTab, this.tag, this.count);
 							}
-						});
+						};
+
+						newTab.getComponent('tagPanel').navPanel.add(buttonCfg);
 					}
 
 				},
