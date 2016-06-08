@@ -194,6 +194,12 @@ public abstract class BaseComponentParser
 	 */
 	protected AttributeCode getAttributeCode(String attributeTypeCode, String attributeTypeDescription, String attributeCode, String attributeCodeDescription)
 	{	
+		if (StringUtils.isBlank(attributeCode) ||
+			StringUtils.isBlank(attributeCodeDescription)) 
+		{
+			return null;
+		}
+		
 		AttributeType attributeType = service.getAttributeService().findType(attributeTypeCode);
 		if (attributeType == null) {
 			attributeType = new AttributeType();
