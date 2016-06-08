@@ -51,7 +51,7 @@ licensed under Apache V2.**
 
 * **Search Results Improvements:**
 
-	-- Search results can now display addition data about the results such as vitals and average review score.   
+	-- Search results can now display additional data about the results such as vitals and average review score.   
 	-- The side-by-side compare feature is now integrated in the result page to avoid disruptions.  
 	-- Entries can now be quickly filtered by topic (type of entry).   
 	-- The export of the search results is now more direct instead of running a report.  
