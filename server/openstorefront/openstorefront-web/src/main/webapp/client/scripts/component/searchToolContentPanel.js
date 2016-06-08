@@ -285,6 +285,23 @@ Ext.define('OSF.component.SearchToolWindow', {
 			]
 		});
 
+		//
+		//  tagSearchPanel Tab
+		//  This is the panel tab for the tag search tool
+		//
+		var tagSearchPanel = Ext.create('Ext.panel.Panel', {
+			title: 'Tag',
+			iconCls: 'fa fa-tag',
+			layout: 'fit',
+			items: [
+				Ext.create('OSF.component.SearchToolContentPanel', {
+					searchToolType: "tag",
+					architectureType: searchToolWin.branding ?  searchToolWin.branding.tagSearchType : null,
+					itemId: 'tagPanel'
+				})
+			]
+		});
+
 		var advanceSearch = Ext.create('OSF.component.AdvanceSearchPanel', {
 			title: 'Advanced',
 			iconCls: 'fa fa-search-plus',
@@ -434,6 +451,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 		var searchToolPanels = [];
 		searchToolPanels.push(topicSearchPanel);
 		searchToolPanels.push(categorySearchPanel);
+		searchToolPanels.push(tagSearchPanel);
 
 		if (searchToolWin.branding) {
 			if (!searchToolWin.branding.hideArchitectureSearchFlg) {
@@ -574,6 +592,98 @@ Ext.define('OSF.component.SearchToolWindow', {
 			}
 		};
 
+		//***************************
+		//*** Tag Methods ***
+		//***************************
+
+		var tagButtonHandler = function (newTab, tag, count) {
+
+			var descriptionText = '<h3>Tag: "' + tag + '"</h3>';
+			descriptionText += '<hr /><p>' + count + ' occurrence' + (count > 1 ? 's' : '') + '</p>';
+			newTab.getComponent('tagPanel').infoPanel.update(descriptionText);
+
+
+			//Do the search on the category attribute
+			searchToolWin.searchObj = {
+				"sortField": null,
+				"sortDirection": "ASC",
+				"startOffset": 0,
+				"max": 2147483647,
+				"searchElements": [{
+						"searchType": "TAG",
+						"value": tag,
+						"field": null,
+						"keyField": null,
+						"keyValue": null,
+						"startDate": null,
+						"endDate": null,
+						"caseInsensitive": false,
+						"numberOperation": "EQUALS",
+						"stringOperation": "EQUALS",
+						"mergeCondition": "OR"  //OR.. NOT.. AND..
+					}]
+			};
+			newTab.getComponent('tagPanel').loadGrid(searchToolWin.searchObj);
+		};
+
+
+		var loadTagNav = function (newTab) {
+			newTab.setLoading(true);
+			Ext.Ajax.request({
+				url: '/openstorefront/api/v1/resource/components/tagviews',
+				success: function (response, opts) {
+					newTab.setLoading(false);
+					var data = Ext.decode(response.responseText);
+					var tData = sortList(data, 'text', 'ASC');
+
+					// Count the number of occurences for each tag
+					var tags = {};
+					Ext.Array.each(tData, function (item) {
+						if (tags.hasOwnProperty(item.text)) {
+							tags[item.text]++;
+						} else {
+							tags[item.text] = 1;
+						}
+					});
+
+					// Loop through tags and create buttons with tag name and count
+					for (var key in tags) { 
+						if (!tags.hasOwnProperty(key)) continue;
+
+						var buttonCfg = {
+							xtype: 'button',
+							cls: 'list-button',
+							height: 30,
+							text: key + ' (' + tags[key] +')',
+							desc: key + ' (' + tags[key] +')',
+							width: '100%',
+							tag: key,
+							count: tags[key],
+							handler: function() {
+								tagButtonHandler(newTab, this.tag, this.count);
+							}
+						};
+
+						newTab.getComponent('tagPanel').navPanel.add(buttonCfg);
+					}
+
+				},
+				failure: function (response, opts) {
+					newTab.setLoading(false);
+				}
+			});
+			newTab.doneLoad = true;
+		};
+
+
+		//
+		//  Tag Tab Processing
+		//
+		var tagTabProcessing = function (tabpanel, newTab, oldtab, opts) {
+			if (!newTab.doneLoad) {
+				loadTagNav(newTab);
+			}
+		};
 
 
 		//***************************
@@ -867,8 +977,9 @@ Ext.define('OSF.component.SearchToolWindow', {
 
 			if (newTab.getTitle() === 'Topic') {
 				topicTabProcessing(tabpanel, newTab, oldtab, opts);
+			} else if (newTab.getTitle() === 'Tag') {
+				tagTabProcessing(tabpanel, newTab, oldtab, opts);
 			} else if (newTab.getTitle() === 'Category') {
-
 				categoryTabProcessing(tabpanel, newTab, oldtab, opts);
 			} else if (newTab.getTitle() === 'Architecture') {
 				archTabProcessing(tabpanel, newTab, oldtab, opts);
