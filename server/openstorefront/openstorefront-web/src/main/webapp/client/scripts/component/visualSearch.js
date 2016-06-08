@@ -46,7 +46,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			zoom: 1.0,
 			zoomCenterX: 0,
 			zoomCenterY: 1
-		}
+		};
 	
 		visPanel.on('spritemousedown', function(sprite, event, opts){
 			visPanel.camera.pan = true;		
@@ -165,7 +165,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					key: node.key,
 					name: node.label,
 					type: node.type,
-					egdes: []
+					edges: []
 				});				
 				nodeKeys[node.key] = true;
 			}
@@ -174,7 +174,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					key: node.targetKey,
 					name: node.targetName,
 					type: node.type,
-					egdes: []	
+					edges: []	
 				});				
 				nodeKeys[node.targetKey] = true;
 			}
@@ -195,11 +195,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					return false;
 				}
 			});
-			targetNode.egdes.push({
+			ownerNode.edges.push({
 				targetKey: relationship.targetKey,
 				ownerKey: relationship.key,
-				relationshipLabel: relationship.relationshipLabel,
-				ownerNode: ownerNode
+				relationshipLabel: relationship.relationshipLabel
 			});
 		});
 		
@@ -231,58 +230,141 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			scaleCenterY: visPanel.camera.zoomCenterY
 		});
 		
+//		visPanel.graphComposite.add({
+//			type: 'line', 
+//			fromX: -10000,
+//			fromY: -200,
+//			toX: 10000,
+//			toY: 20000,
+//			lineWidth: 3,
+//			strokeStyle: 'rgba(200, 200, 200, 1)'	
+//		});
+		
 
 		var startX = 20;
 		var nodeRadius = 20;
 		var renderNodes = {};
+		
+		var textNode = {
+			type: 'text',
+			textAlign: 'center',
+			fontSize: 12,
+			shadowColor: 'rgba(0, 0, 0, 1)',
+			shadowOffsetX: 2, 
+			shadowOffsetY: 2,
+			//strokeStyle: 'black',
+			fillStyle: 'rgba(255, 255, 255, 1)'
+		};
+		
+		var componentNode = {
+			type: 'circle',
+			r: nodeRadius, 
+			fillStyle: 'orange',
+			lineWidth: 3,
+			strokeStyle: 'rgba(255, 255, 255, 1)'			
+		};
+		
+		var relationshipEdge = {
+			type: 'line',
+			lineWidth: 3,
+			strokeStyle: 'rgba(200, 200, 200, 1)'			
+		};		
+		
 		Ext.Array.each(nodes, function(node) {
 			
 			if (!renderNodes[node.key]) {
 			
-				var componentNode = {
-					type: 'circle',
-					r: nodeRadius, 
-					fillStyle: 'orange',
-					lineWidth: 3,
-					strokeStyle: '#FFFFFF',
-					zIndex: 99
-				};
 
-				node.positionX = startX + componentNode.r *6 + 40;
-				node.positionY = containerHeight /2;
+				var setNodePosition = true;
+				if (node.edges.length > 0) {
+					var edgeNode =  Ext.Array.findBy(nodes, function(item) {
+						if (item.key === node.edges[0].targetKey) {
+							return true;
+						} else {
+							return false;
+						}
+					});
+					
+					if (edgeNode.positionX && edgeNode.positionY) {
+						node.positionX = edgeNode.positionX - (componentNode.r  * 10 - nodeRadius);
+						node.positionY = edgeNode.positionY;
+						setNodePosition = false;
+					}
+					
+				}
+
+				if (setNodePosition) {
+					node.positionX = startX + (componentNode.r *6) + 40;
+					node.positionY = containerHeight /2;
+				}
 				
 				visPanel.graphComposite.add(Ext.apply({}, {
 					x:  node.positionX,
 					y:  node.positionY
 				}, componentNode));
+				
+				visPanel.graphComposite.add(Ext.apply({}, {
+					x:  node.positionX,
+					y:  node.positionY + nodeRadius + 15,
+					text: Ext.util.Format.ellipsis(node.name, 20)
+				}, textNode));
 
 			
 				var rotation = 0;
-				Ext.Array.each(node.egdes, function(edgeNode) {
+				Ext.Array.each(node.edges, function(edgeNode) {
 					
-					edgeNode.ownerNode.positionX = node.positionX;
-					edgeNode.ownerNode.positionY = node.positionY - componentNode.r * 5;
-					edgeNode.ownerNode.rotationRads = rotation;
-					
-					visPanel.graphComposite.add(Ext.apply({}, {
-						x:  edgeNode.ownerNode.positionX,
-						y:  edgeNode.ownerNode.positionY,
-						rotationCenterX: node.positionX,
-						rotationCenterY: node.positionY,
-						rotationRads: edgeNode.ownerNode.rotationRads
-					}, componentNode));	
-					
-					rotation += 0.785398; 
-					renderNodes[edgeNode.ownerKey] = true;
+					if (!renderNodes[edgeNode.targetKey]) {	
+						
+						var targetNode = Ext.Array.findBy(nodes, function(item) {
+							if (item.key === edgeNode.targetKey) {
+								return true;
+							} else {
+								return false;
+							}
+						});
+						
+						
+						targetNode.positionX = node.positionX;
+						targetNode.positionY = node.positionY - componentNode.r * 10;
+						targetNode.rotationRads = rotation;
+
+						var nodeCompositeSprite = Ext.create('Ext.draw.sprite.Composite', {	
+							rotationCenterX: node.positionX,
+							rotationCenterY: node.positionY,
+							rotationRads: targetNode.rotationRads
+						});
+
+
+						nodeCompositeSprite.add(Ext.apply({}, {
+							x:  targetNode.positionX,
+							y:  targetNode.positionY
+						}, componentNode));
+
+						nodeCompositeSprite.add(Ext.apply({}, {
+							x:  targetNode.positionX,
+							y:  targetNode.positionY + nodeRadius + 15,
+							rotationCenterX: targetNode.positionX,
+							rotationCenterY: targetNode.positionY,
+							rotationRads: targetNode.rotationRads * -1,							
+							text: Ext.util.Format.ellipsis(targetNode.name, 20)							
+						}, textNode));					
+						
+						
+						visPanel.graphComposite.add(nodeCompositeSprite);
+
+						rotation += 0.785398; 
+						renderNodes[edgeNode.targetKey] = true;
+					}
 				});
 			
-				startX += componentNode.r  * 10 + nodeRadius;
+				startX += (componentNode.r  * 15) + nodeRadius;
 				
 				renderNodes[node.key] = true;
 			}
 		});
 		
 		//add edges
+	
 		Ext.Array.each(viewData, function(relationship){
 			
 			var targetNode = Ext.Array.findBy(nodes, function(node) {
@@ -300,29 +382,39 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				}
 			});			
 			
-			var relationshipEdge = {
-				type: 'line',
-				lineWidth: 3,
-				strokeStyle: 'lightgrey',
-				zIndex: 0
-			};
+			var dx = targetNode.positionX - ownerNode.positionX;
+			var dy = targetNode.positionY - ownerNode.positionY;
+			var length = Math.sqrt(dx * dx + dy * dy);
+			if (length > 0)
+			{
+				dx /= length;				
+				dy /= length;
+			}
+			dx *= length - nodeRadius;
+			dy *= length - nodeRadius;
+			var x3 = (ownerNode.positionX + dx);
+			var y3 = (ownerNode.positionY + dy);			
+
+			
 		
 			visPanel.graphComposite.add(Ext.apply({}, {
 				fromX: ownerNode.positionX,
 				fromY: ownerNode.positionY,
-				toX: targetNode.positionX,					
-				toY: targetNode.positionY
+				toX: x3,					
+				toY: y3,
+				rotationCenterX: ownerNode.positionX,
+				rotationCenterY: ownerNode.positionY,
+				rotationRads: targetNode.rotationRads
 			}, relationshipEdge));				
 
-			
 		});
-		
-		
+	
+		visPanel.graphComposite.sprites.reverse();
 		
 		sprites.push(visPanel.graphComposite);
 		
-		visPanel.setSprites(sprites);
-		visPanel.renderFrame();
+		visPanel.setSprites(sprites);		
+		visPanel.renderFrame();		
 	}
 		
 });
