@@ -228,6 +228,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			scaleY:  visPanel.camera.zoom,
 			scaleCenterX: visPanel.camera.zoomCenterX,
 			scaleCenterY: visPanel.camera.zoomCenterY
+
 		});
 		
 //		visPanel.graphComposite.add({
@@ -241,8 +242,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 //		});
 		
 
-		var startX = 20;
+		var startX = 150;
+		var startY = 250;
+		var rowCount  = 0;
 		var nodeRadius = 20;
+	
+		
 		var renderNodes = {};
 		
 		var textNode = {
@@ -266,14 +271,27 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		
 		var relationshipEdge = {
 			type: 'line',
+			lineWidth: 3,			
+			strokeStyle: 'rgba(255, 255, 255, .6)'			
+		};	
+		
+		var relationshipText = {
+			type: 'text',
+			textAlign: 'center',
+			fillStyle: 'rgba(255, 255, 255, 1)'
+		};
+		
+		var arrowLength = 10;
+		var arrowLine =  {
+			type: 'line',
 			lineWidth: 3,
-			strokeStyle: 'rgba(200, 200, 200, 1)'			
-		};		
+			strokeStyle: 'rgba(200, 200, 200, 1)'		
+		};
+		
 		
 		Ext.Array.each(nodes, function(node) {
 			
 			if (!renderNodes[node.key]) {
-			
 
 				var setNodePosition = true;
 				if (node.edges.length > 0) {
@@ -295,7 +313,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 				if (setNodePosition) {
 					node.positionX = startX + (componentNode.r *6) + 40;
-					node.positionY = containerHeight /2;
+					node.positionY = startY;
 				}
 				
 				visPanel.graphComposite.add(Ext.apply({}, {
@@ -326,38 +344,37 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						
 						targetNode.positionX = node.positionX;
 						targetNode.positionY = node.positionY - componentNode.r * 10;
-						targetNode.rotationRads = rotation;
-
-						var nodeCompositeSprite = Ext.create('Ext.draw.sprite.Composite', {	
-							rotationCenterX: node.positionX,
-							rotationCenterY: node.positionY,
-							rotationRads: targetNode.rotationRads
-						});
-
-
-						nodeCompositeSprite.add(Ext.apply({}, {
+						targetNode.rotationDegrees = rotation;
+						
+						var point = new Ext.draw.Point(targetNode.positionX, targetNode.positionY);
+						point = point.rotate(rotation, new Ext.draw.Point(node.positionX, node.positionY) );
+						targetNode.positionX = point.x;
+						targetNode.positionY = point.y;
+						
+						visPanel.graphComposite.add(Ext.apply({}, {
 							x:  targetNode.positionX,
 							y:  targetNode.positionY
 						}, componentNode));
 
-						nodeCompositeSprite.add(Ext.apply({}, {
+						visPanel.graphComposite.add(Ext.apply({}, {
 							x:  targetNode.positionX,
 							y:  targetNode.positionY + nodeRadius + 15,
-							rotationCenterX: targetNode.positionX,
-							rotationCenterY: targetNode.positionY,
-							rotationRads: targetNode.rotationRads * -1,							
 							text: Ext.util.Format.ellipsis(targetNode.name, 20)							
 						}, textNode));					
 						
-						
-						visPanel.graphComposite.add(nodeCompositeSprite);
-
-						rotation += 0.785398; 
+						rotation += 45; 
 						renderNodes[edgeNode.targetKey] = true;
 					}
 				});
 			
-				startX += (componentNode.r  * 15) + nodeRadius;
+				startX += (componentNode.r  * 20) + nodeRadius;
+				
+				rowCount++;
+				if (rowCount >= 3) {
+					startX = 150;
+					startY += 450;
+					rowCount = 0;
+				}				
 				
 				renderNodes[node.key] = true;
 			}
@@ -380,7 +397,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				} else {
 					return false;
 				}
-			});			
+			});	
 			
 			var dx = targetNode.positionX - ownerNode.positionX;
 			var dy = targetNode.positionY - ownerNode.positionY;
@@ -392,26 +409,81 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}
 			dx *= length - nodeRadius;
 			dy *= length - nodeRadius;
-			var x3 = (ownerNode.positionX + dx);
-			var y3 = (ownerNode.positionY + dy);			
-
-			
-		
+			var endX = (ownerNode.positionX + dx);
+			var endY = (ownerNode.positionY + dy);				
+						
 			visPanel.graphComposite.add(Ext.apply({}, {
 				fromX: ownerNode.positionX,
 				fromY: ownerNode.positionY,
-				toX: x3,					
-				toY: y3,
-				rotationCenterX: ownerNode.positionX,
-				rotationCenterY: ownerNode.positionY,
-				rotationRads: targetNode.rotationRads
-			}, relationshipEdge));				
+				toX: endX,					
+				toY: endY				
+			}, relationshipEdge));	
+			
+			
+			
+			dx = endX - ownerNode.positionX;
+			dy = endY - ownerNode.positionY;
 
+			var theta = Math.atan2(dy, dx);
+			var rad = 35 * (Math.PI/180); //35 angle
+			var x = endX - arrowLength * Math.cos(theta + rad);
+			var y = endY - arrowLength * Math.sin(theta + rad);
+
+			var phi2 = -35 * (Math.PI/180);//-35 angle
+			var x2 = endX - arrowLength * Math.cos(theta + phi2);
+			var y2 = endY - arrowLength * Math.sin(theta + phi2);					
+						
+			visPanel.graphComposite.add(Ext.apply({}, {
+				fromX: endX,
+				fromY: endY,
+				toX: x,					
+				toY: y
+			}, arrowLine));
+			
+			visPanel.graphComposite.add(Ext.apply({}, {
+				fromX: endX,
+				fromY: endY,
+				toX: x2 ,					
+				toY: y2
+			}, arrowLine));	
+			
+			if (relationship.relationshipLabel === 'responsible for') {
+				console.log(theta);
+			}
+			
+			var xAdjust = 0;
+			if (theta === (90 * (Math.PI/180))) {
+				xAdjust = 10;
+			} 
+			if (theta === (-90 * (Math.PI/180))) {
+				xAdjust = -10;
+			}
+			
+			visPanel.graphComposite.add(Ext.apply({}, {
+				x:  (endX + ownerNode.positionX) /2 + xAdjust,
+				y:  ownerNode.positionY + (endY - ownerNode.positionY)/ 2 - 10,
+				text: Ext.util.Format.ellipsis(relationship.relationshipLabel, 20),
+				rotationRads: theta
+			}, relationshipText));				
+			
+			
 		});
 	
 		visPanel.graphComposite.sprites.reverse();
 		
+//		visPanel.graphComposite.add({
+//			type: 'circle',
+//			r: 20000, 
+//			fillStyle: 'blue',
+//			lineWidth: 3,
+//			strokeStyle: 'rgba(255, 255, 255, 1)'	
+//		});
+		
 		sprites.push(visPanel.graphComposite);
+		
+
+		
+		//visPanel.getSurface().setRect([0, 0, 10000, 10000]);
 		
 		visPanel.setSprites(sprites);		
 		visPanel.renderFrame();		
