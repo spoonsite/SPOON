@@ -135,4 +135,18 @@ public interface Service
 	 * @return
 	 */
 	public NotificationService getNotificationService();
+	
+	/**
+	 * Handles Feedback
+	 *
+	 * @return
+	 */
+	public FeedbackService getFeedbackService();
+	
+	/**
+	 * Handles all Contacts
+	 * @return 
+	 */
+	public ContactService getContactService();
+
 }

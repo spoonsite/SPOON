@@ -29,7 +29,7 @@ Ext.define('OSF.ux.IFrame', {
     src: 'about:blank',
 
     renderTpl: [
-        '<iframe src="{src}" id="{id}-iframeEl" data-ref="iframeEl" name="{frameName}" width="100%" height="100%" frameborder="0"></iframe>'
+        '<iframe src="{src}" id="{id}-iframeEl" data-ref="iframeEl" name="{frameName}" allowfullscreen="true" msallowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" width="100%" height="100%" frameborder="0"></iframe>'
     ],
     childEls: ['iframeEl'],
 

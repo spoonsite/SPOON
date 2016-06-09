@@ -11,6 +11,7 @@
 					id: 'mediaGrid',
 					title: 'Manage Media <i class="fa fa-question-circle"  data-qtip="Media that can be used for articles and badges." ></i>',
 					store: Ext.create('Ext.data.Store', {
+						storeId: 'mediaStore',
 						autoLoad: true,						
 						sorters: [
 							new Ext.util.Sorter({
@@ -179,7 +180,7 @@
 						var type = selectedObj.mimeType;
 					    if (type.match('video.*')) {
 							viewMediaWin.setTitle('Video Preview');
-					        viewMediaWin.update('<video autoplay="autoplay" controls="controls" src="../'+ selectedObj.mediaLink+'" width="100%" ></video>');
+					        viewMediaWin.update('<video autoplay="autoplay" controls="controls" src="../'+ selectedObj.mediaLink+'" style="width: 100%;max-width:100%;" ></video>');
 						}
 						else if(type.match('audio.*')){
 							viewMediaWin.setTitle('Audio Preview');
@@ -187,10 +188,31 @@
 							viewMediaWin.update('<audio autoplay="autoplay" width="100%" controls="controls" src="../'+ selectedObj.mediaLink+'"/>');
 				
 						}
-						else if(type.match('image.*')){
-							
-							viewMediaWin.setTitle('Image Preview');
-					        viewMediaWin.update('<img src="../'+ selectedObj.mediaLink+'" width="100%"/>');
+						else if(type.match('image.*')) {
+							// Limit to image mimes all browsers should be happy with.
+							if (type.match('.*jpeg.*') || 
+								type.match('.*png.*') || 
+								type.match('.*gif.*') || 
+								type.match('.*svg.*') ) {
+								viewMediaWin.setTitle('Image Preview');
+								viewMediaWin.update('<img src="../'+ selectedObj.mediaLink+'" width="100%"/>');
+							}
+							else {
+								Ext.Msg.show({
+									title: 'No Preview Available',
+									msg: 'No preview is available for this file format.',
+									buttons: Ext.Msg.OK
+								});
+								return;
+							}
+						}
+						else {
+							Ext.Msg.show({
+								title: 'No Preview Available',
+								msg: 'No preview is available for this file format.',
+								buttons: Ext.Msg.OK
+							});
+							return;
 						}
 						
 						viewMediaWin.updateLayout();
@@ -216,19 +238,53 @@
 					textArea.style.background = 'transparent';
 
 
-					textArea.value = location.protocol+'//'+location.host+location.pathname+'/../'+selectedObj.mediaLink;
+					textArea.value = encodeURI(selectedObj.mediaLink);
 
 					document.body.appendChild(textArea);
-
+					
 					textArea.select();
 					try {
 						var successful = document.execCommand('copy');
 						var msg = successful ? 'successful' : 'unsuccessful';
 						console.log('Copying text command was ' + msg);
 					  } catch (err) {
-						console.log('Oops, unable to copy');
+						successful = false;
 					  }
 
+					  if (!successful) {
+						var copyWindow = Ext.create('Ext.window.Window', {
+							title: 'Copy Window - Select and Copy',
+							modal: true,
+							width: 500,
+							height: 150,
+							closeMode: 'destroy',
+							bodyStyle: 'padding: 10px;',
+							html: textArea.value,
+							scrollable: true,
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Close',
+											handler: function(){
+												this.up('window').close();
+											}
+										},
+										{
+											xtype: 'tbfill'
+										}
+									]
+								}
+							]
+						});
+						copyWindow.show();						  
+					  }
+					  
 					  document.body.removeChild(textArea);
 					  Ext.toast('Link copied to clipboard.', '', 'tr');
 				};
@@ -327,9 +383,12 @@
 											xtype: 'filefield',
 											name: 'file',
 											id: 'file',
-											fieldLabel: 'Upload Media<span class="field-required" />',
+											fieldLabel: 'Upload Media  (Limit of 1GB)<span class="field-required" />',
 											width: '100%',
-											allowBlank: false
+											allowBlank: false,
+											listeners: {
+												change: CoreUtil.handleMaxFileLimit
+											}											
 										}
 									]
 								}
@@ -346,6 +405,19 @@
 										handler: function(){     
 											Ext.getCmp('addMediaForm').setLoading(true);
                                             var data = Ext.getCmp('addMediaForm').getValues();
+
+											// Check if name is unique
+											var records = Ext.getStore('mediaStore').getData();
+											if (records.find('name', data.name) !== null) {
+												Ext.Msg.show({
+													title: 'Name Not Valid',
+													msg: 'Please choose a unique name for the file.',
+													buttons: Ext.Msg.OK
+												});
+												Ext.getCmp('addMediaForm').setLoading(false);
+												return;
+											}
+
 											Ext.getCmp('addMediaForm').submit({
 												url: '../Media.action?UploadGeneralMedia&generalMedia.name='+data.name,
 												method: 'POST',
@@ -356,7 +428,11 @@
 													refreshGrid();												
 												},
 												failure: function(response,opts){
-													Ext.toast('Upload Failed', '', 'tr');
+													Ext.Msg.show({
+														title: 'Upload Failed',
+														msg: 'The file upload was not successful. Check that the file meets the requirements and try again.',
+														buttons: Ext.Msg.OK
+													});
 													Ext.getCmp('addMediaForm').setLoading(false);									
 													refreshGrid();	
 												}

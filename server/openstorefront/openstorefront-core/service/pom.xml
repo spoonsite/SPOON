@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>openstorefront-core</artifactId>
 		<groupId>edu.usu.sdl</groupId>
-		<version>1.6</version>
+		<version>2.0</version>
 	</parent>
 
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront-core-service</artifactId>
-	<version>1.6</version>
+	<version>2.0</version>
 	<packaging>bundle</packaging>
 
 	<name>openstorefront-core-service</name>
@@ -126,7 +126,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>			
-		
+
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orient-commons</artifactId>
@@ -188,24 +188,48 @@
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-server</artifactId>
 			<version>${orientdb.verison}</version>
+		 <exclusions>
+		  <exclusion>
+		   <groupId>javax.mail</groupId>
+		   <artifactId>mail</artifactId>
+		  </exclusion>
+		 </exclusions>
 		</dependency>	
 		  
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 			<version>2.8.3</version>
+		 <exclusions>
+		  <exclusion>
+		   <groupId>org.slf4j</groupId>
+		   <artifactId>slf4j-api</artifactId>
+		  </exclusion>
+		 </exclusions>
 		</dependency>
 		  
 		<dependency>
 			<groupId>net.sf.uadetector</groupId>
 			<artifactId>uadetector-resources</artifactId>
 			<version>2014.10</version>
+		 <exclusions>
+		  <exclusion>
+		   <groupId>org.slf4j</groupId>
+		   <artifactId>slf4j-api</artifactId>
+		  </exclusion>
+		 </exclusions>
 		</dependency>			  
 		  
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
 			<version>2.2.1</version>
+		 <exclusions>
+		  <exclusion>
+		   <groupId>org.slf4j</groupId>
+		   <artifactId>slf4j-api</artifactId>
+		  </exclusion>
+		 </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
@@ -215,7 +239,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-jdk14</artifactId>
-			<version>1.7.7</version>
+			<version>1.7.13</version>
 		</dependency>		
 		<dependency>
 			<groupId>org.apache.solr</groupId>
@@ -226,7 +250,7 @@
 		<dependency>
 			<groupId>org.codemonkey.simplejavamail</groupId>
 			<artifactId>simple-java-mail</artifactId>
-			<version>2.1</version>
+			<version>3.0.1</version>
 		</dependency>
 		<dependency>
   			<groupId>org.pegdown</groupId>
@@ -271,6 +295,12 @@
 			<artifactId>er2-xmlparser</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>describe</artifactId>
+			<version>1.0</version>
+			<type>jar</type>
+		</dependency>		
 	</dependencies>
 
 	<build>

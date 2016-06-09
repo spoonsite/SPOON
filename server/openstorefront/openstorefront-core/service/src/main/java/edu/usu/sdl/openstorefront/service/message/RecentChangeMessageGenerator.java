@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.service.message;
 
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import java.text.SimpleDateFormat;
-import org.codemonkey.simplejavamail.Email;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  *
@@ -65,22 +65,6 @@ public class RecentChangeMessageGenerator
 			changes = true;
 		}
 
-		if (messageContext.getRecentChangeMessage().getArticlesAdded().isEmpty() == false) {
-			message.append(messageContext.getRecentChangeMessage().getArticlesAdded().size())
-					.append(" ")
-					.append(StringProcessor.puralize(messageContext.getRecentChangeMessage().getArticlesAdded().size(), "article", null))
-					.append(" added.<br>");
-			changes = true;
-		}
-
-		if (messageContext.getRecentChangeMessage().getArticlesUpdated().isEmpty() == false) {
-			message.append(messageContext.getRecentChangeMessage().getArticlesUpdated().size())
-					.append(" ")
-					.append(StringProcessor.puralize(messageContext.getRecentChangeMessage().getArticlesAdded().size(), "article", null))
-					.append(" updated.<br>");
-			changes = true;
-		}
-
 		if (messageContext.getRecentChangeMessage().getHighlightsAdded().isEmpty() == false) {
 			message.append(messageContext.getRecentChangeMessage().getHighlightsAdded().size())
 					.append(" ")
@@ -98,7 +82,7 @@ public class RecentChangeMessageGenerator
 		}
 
 		if (changes == false) {
-			message.append("There has been no recent changes.");
+			message.append("No recent changes have occured.");
 		}
 
 		return message.toString();

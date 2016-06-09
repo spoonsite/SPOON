@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
-import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -129,6 +128,20 @@ public class OrganizationResource
 		organizationExample.setOrganizationId(organizationId);
 		return sendSingleEntityResponse(organizationExample.find());
 	}
+	
+	@GET
+	@APIDescription("Gets an organization record by name. ")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Organization.class)
+	@Path("/name/{name}")
+	public Response getOrganizationByName(
+			@PathParam("name") String name
+	)
+	{
+		Organization organizationExample = new Organization();
+		organizationExample.setName(name);
+		return sendSingleEntityResponse(organizationExample.find());
+	}	
 
 	@GET
 	@APIDescription("Gets an organization references. ")
@@ -201,6 +214,7 @@ public class OrganizationResource
 	@APIDescription("Creates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Organization.class)
 	public Response createOrganization(Organization organization)
 	{
 		return handleSaveOrganization(organization, true);
@@ -211,8 +225,9 @@ public class OrganizationResource
 	@APIDescription("Updates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Organization.class)
 	@Path("/{id}")
-	public Response createOrganization(
+	public Response updateOrganization(
 			@PathParam("id") String organizationId,
 			Organization organization)
 	{

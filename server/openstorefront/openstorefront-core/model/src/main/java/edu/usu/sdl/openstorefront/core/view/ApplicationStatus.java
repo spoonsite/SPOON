@@ -40,6 +40,10 @@ public class ApplicationStatus
 	private MemoryPoolStatus nonHeapMemoryStatus = new MemoryPoolStatus();
 	private List<MemoryPoolStatus> memoryPools = new ArrayList<>();
 	private List<String> garbageCollectionInfos = new ArrayList<>();
+	private long freeDiskSpace;
+	private long usedDiskSpace;
+	private long totalDiskSpace;
+	private String rootStoragePath;
 
 	public ApplicationStatus()
 	{
@@ -163,6 +167,46 @@ public class ApplicationStatus
 	public void setMemoryPools(List<MemoryPoolStatus> memoryPools)
 	{
 		this.memoryPools = memoryPools;
+	}
+
+	public long getTotalDiskSpace()
+	{
+		return totalDiskSpace;
+	}
+
+	public void setTotalDiskSpace(long totalDiskSpace)
+	{
+		this.totalDiskSpace = totalDiskSpace;
+	}
+
+	public long getFreeDiskSpace()
+	{
+		return freeDiskSpace;
+	}
+
+	public void setFreeDiskSpace(long freeDiskSpace)
+	{
+		this.freeDiskSpace = freeDiskSpace;
+	}
+
+	public long getUsedDiskSpace()
+	{
+		return usedDiskSpace;
+	}
+
+	public void setUsedDiskSpace(long usedDiskSpace)
+	{
+		this.usedDiskSpace = usedDiskSpace;
+	}
+
+	public String getRootStoragePath()
+	{
+		return rootStoragePath;
+	}
+
+	public void setRootStoragePath(String rootStoragePath)
+	{
+		this.rootStoragePath = rootStoragePath;
 	}
 
 }

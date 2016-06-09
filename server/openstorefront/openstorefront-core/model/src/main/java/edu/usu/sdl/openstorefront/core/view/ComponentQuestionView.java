@@ -74,6 +74,7 @@ public class ComponentQuestionView
 		view.setOrganization(question.getOrganization());
 		view.setQuestionId(question.getQuestionId());
 		view.setQuestionUpdateDts(question.getUpdateDts());
+		view.setCreateDts(question.getCreateDts());
 		view.toStandardView(question);
 
 		Date max;

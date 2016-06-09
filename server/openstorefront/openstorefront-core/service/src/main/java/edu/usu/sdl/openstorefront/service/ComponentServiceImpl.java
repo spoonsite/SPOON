@@ -41,6 +41,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
@@ -563,11 +564,18 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void removeComponentTypeTemplate(String templateCode)
+	public void removeComponentTypeTemplate(String templateId)
 	{
-		core.removeComponentTypeTemplate(templateCode);
+		core.removeComponentTypeTemplate(templateId);
 	}
 
+
+	@Override
+	public void deleteComponentTypeTemplate(String templateId)
+	{
+		core.deleteComponentTypeTemplate(templateId);		
+	}	
+	
 	@Override
 	public Component approveComponent(String componentId)
 	{
@@ -614,6 +622,18 @@ public class ComponentServiceImpl
 	public void checkChangeRequestCancelStatus(String componentId, String newApprovalStatus)
 	{
 		core.checkChangeRequestCancelStatus(componentId, newApprovalStatus);
+	}
+
+	@Override
+	public void saveTemplateBlock(TemplateBlock templateBlock)
+	{
+		core.saveTemplateBlock(templateBlock);		
+	}
+
+	@Override
+	public void deleteTemplateBlock(String templateBlockId)
+	{
+		core.deleteTemplateBlock(templateBlockId);		
 	}
 
 }

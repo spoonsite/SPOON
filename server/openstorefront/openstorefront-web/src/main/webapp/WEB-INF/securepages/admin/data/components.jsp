@@ -8,11 +8,17 @@
 		<script src="scripts/component/integrationConfigWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/savedSearchLinkInsertWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
 		<form name="exportForm" action="../api/v1/resource/components/export" method="POST" >
 			<p style="display: none;" id="exportFormIds">
 			</p>      
 		</form>
+		
+		<form name="exportFormDescribe" action="../api/v1/resource/components/export/describe" method="POST" >
+			<p style="display: none;" id="exportFormDescribeIds">
+			</p>      
+		</form>		
 			  
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
@@ -21,6 +27,12 @@
 			//Add/Edit forms ------>	
 				
 				//External Windows
+
+				var ssInsertWindow = Ext.create('OSF.component.SavedSearchLinkInsertWindow', {					
+					id: 'ssInsertWindow',
+					alwaysOnTop: true
+				});	
+
 				var importWindow = Ext.create('OSF.component.ImportWindow', {					
 				});
 				
@@ -137,7 +149,8 @@
 					columns: [
 						{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 },
 						{ text: 'Create User', align: 'center', dataIndex: 'createUser', width: 150 },
-						{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						selectionchange: function(grid, record, index, opts){
@@ -152,25 +165,32 @@
 					dockedItems: [
 						{
 							xtype: 'form',
-							layout: 'hbox',
+							layout: 'anchor',
 							padding: 10,
+							defaults: {
+								labelAlign: 'top',
+								labelSeparator: ''
+							},
 							items: [
 								{
 									xtype: 'textfield',
 									fieldLabel: 'Tag<span class="field-required" />',
 									allowBlank: false,
 									margin: '0 20 0 0',
-									width: '40%',
+									width: '100%',
 									maxLength: 120,
 									name: 'text',
 									listeners: {
 										specialkey: function(field, e){
-											if (e.getKey() == e.ENTER) {
+											if (e.getKey() === e.ENTER) {
 											   actionAddTag(this.up('form'), Ext.getCmp('tagGrid'));
 											}
 										}
 									}
-								}, 
+								},
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								}),								
 								{
 									xtype: 'button',
 									text: 'Add',
@@ -245,7 +265,8 @@
 						{ text: 'Question', dataIndex: 'question',  flex: 1, minWidth: 200 },
 						{ text: 'Organization', dataIndex: 'organization', width: 150 },
 						{ text: 'User', dataIndex: 'createUser', flex: 1, minWidth: 150 },					
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						selectionchange: function(selectionModel, selectedRecords, opts){
@@ -358,7 +379,8 @@
 								{ text: 'Organization', dataIndex: 'organization', width: 150 },
 								{ text: 'User', dataIndex: 'createUser', wdth: 150 },	
 								{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },					
-								{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }								
+								{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+								{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 							],
 							listeners: {
 								selectionchange: function(selectionModel, selectedRecords, opts){
@@ -446,7 +468,8 @@
 						{ text: 'Pros', dataIndex: 'pros', width: 200 },
 						{ text: 'Cons', dataIndex: 'cons', width: 200 },
 						{ text: 'User', dataIndex: 'username', width: 150 },
-						{ text: 'Update Date', dataIndex: 'updateDate', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDate', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						selectionchange: function(grid, record, index, opts){
@@ -749,7 +772,8 @@
 					columns: [
 						{ text: 'Label', dataIndex: 'label',  width: 200 },
 						{ text: 'Value',  dataIndex: 'value', flex: 1, minWidth: 200 },
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
@@ -840,7 +864,10 @@
 									allowBlank: false,									
 									maxLength: '255',									
 									name: 'value'
-								}
+								},
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})								
 							]
 						},						
 						{
@@ -930,7 +957,8 @@
 						{ text: 'Version',  dataIndex: 'version', width: 150 },
 						{ text: 'Link',  dataIndex: 'dependancyReferenceLink', width: 200 },
 						{ text: 'Comment',  dataIndex: 'comment', flex: 1, minWidth: 200 },
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
@@ -1035,7 +1063,10 @@
 									fieldLabel: 'Comment',																											
 									maxLength: '255',
 									name: 'comment'
-								}								
+								},
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})								
 							]
 						},						
 						{
@@ -1124,15 +1155,15 @@
 						proxy: {
 							type: 'ajax'							
 						}
-					}),
-					forceFit: true,
+					}),					
 					columns: [
 						{ text: 'Media Type', dataIndex: 'contentType',  width: 200 },
-						{ text: 'Caption',  dataIndex: 'caption', width: 200 },
+						{ text: 'Caption',  dataIndex: 'caption', flex: 1, minWidth: 200 },
 						{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 						{ text: 'Local Media Name',  dataIndex: 'originalFileName', width: 200 },
 						{ text: 'Link',  dataIndex: 'originalLink', width: 200 },						
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
@@ -1313,7 +1344,10 @@
 									maxLength: '255',									
 									emptyText: 'http://www.example.com/image.png',
 									name: 'originalLink'
-								}							
+								},
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})								
 							]
 						},						
 						{
@@ -1431,7 +1465,8 @@
 						{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 						{ text: 'Local Resource Name',  dataIndex: 'originalFileName', width: 200 },
 						{ text: 'Restricted',  dataIndex: 'restricted', width: 150 },						
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
@@ -1616,7 +1651,10 @@
 									listeners: {
 										change: CoreUtil.handleMaxFileLimit
 									}
-								}															
+								},
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})								
 							]
 						},						
 						{
@@ -1723,16 +1761,18 @@
 						proxy: {
 							type: 'ajax'							
 						}
-					}),
-					forceFit: true,
+					}),					
 					columns: [
 						{ text: 'Contact Type', dataIndex: 'positionDescription',  width: 200 },
 						{ text: 'First Name',  dataIndex: 'firstName', width: 200 },
 						{ text: 'Last Name',  dataIndex: 'lastName', width: 200 },
-						{ text: 'Email',  dataIndex: 'email', width: 200 },
+						{ text: 'Email',  dataIndex: 'email', flex: 1, minWidth: 200 },
 						{ text: 'Phone',  dataIndex: 'phone', width: 150 },
 						{ text: 'Organization',  dataIndex: 'organization', width: 200 },
-						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+						{ text: 'Entry Contact Id',  dataIndex: 'componentContactId', width: 200, hidden: true },
+						{ text: 'Contact Id',  dataIndex: 'contactId', width: 200, hidden: true },
+						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
@@ -1743,9 +1783,11 @@
 							var fullgrid = Ext.getCmp('contactGrid');
 							if (fullgrid.getSelectionModel().getCount() === 1) {
 								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
+								fullgrid.down('toolbar').getComponent('delete').setDisabled(false);
 								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
 							} else {
 								fullgrid.down('toolbar').getComponent('editBtn').setDisabled(true);
+								fullgrid.down('toolbar').getComponent('delete').setDisabled(true);
 								fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
 							}
 						}						
@@ -1780,8 +1822,8 @@
 
 										var method = 'POST';
 										var update = '';
-										if (data.contactId) {
-											update = '/' + data.contactId;
+										if (data.componentContactId) {
+											update = '/' + data.componentContactId;
 											method = 'PUT';
 										}
 
@@ -1809,10 +1851,15 @@
 							items: [
 								{
 									xtype: 'hidden',
+									name: 'componentContactId'
+								},								
+								{
+									xtype: 'hidden',
 									name: 'contactId'
 								},
 								Ext.create('OSF.component.StandardComboBox', {
-									name: 'contactType',									
+									name: 'contactType',	
+									itemId: 'contactType',
 									allowBlank: false,								
 									margin: '0 0 0 0',
 									editable: false,
@@ -1832,7 +1879,11 @@
 									forceSelection: false,
 									valueField: 'description',
 									storeConfig: {
-										url: '../api/v1/resource/organizations/lookup'
+										url: '../api/v1/resource/organizations/lookup',
+										sorters: [{
+											property: 'description',
+											direction: 'ASC'
+										}]
 									}
 								}),								
 								Ext.create('OSF.component.StandardComboBox', {
@@ -1855,9 +1906,12 @@
 									},
 									listeners: {
 										select: function(combo, record, opts) {
+											record.set('componentContactId', null);
 											record.set('contactId', null);
+											var contactType =  combo.up('form').getComponent('contactType').getValue();
 											combo.up('form').reset();
 											combo.up('form').loadRecord(record);
+											combo.up('form').getComponent('contactType').setValue(contactType);
 										}
 									}
 								}),
@@ -1881,7 +1935,10 @@
 									fieldLabel: 'Phone',																											
 									maxLength: '120',
 									name: 'phone'
-								}								
+								},
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})								
 							]
 						},						
 						{
@@ -1935,9 +1992,32 @@
 									iconCls: 'fa fa-power-off',									
 									disabled: true,
 									handler: function(){
-										actionSubComponentToggleStatus(Ext.getCmp('contactGrid'), 'contactId', 'contacts');
+										actionSubComponentToggleStatus(Ext.getCmp('contactGrid'), 'componentContactId', 'contacts');
 									}
-								}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Remove',
+									itemId: 'delete',
+									iconCls: 'fa fa-trash-o',									
+									disabled: true,
+									handler: function(){
+										
+										Ext.Msg.show({
+											title:'Remove Contact?',
+											message: 'Are you sure you want to delete the contact from this entry?',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+													actionSubComponentToggleStatus(Ext.getCmp('contactGrid'), 'componentContactId', 'contacts', undefined, undefined, true);
+												}  
+											}
+										});
+									}
+								}								
 							]
 						}
 					]											
@@ -1969,13 +2049,12 @@
 						proxy: {
 							type: 'ajax'							
 						}
-					}),
-					forceFit: true,
+					}),					
 					columns: [
 						{ text: 'Relationship Owner', dataIndex: 'ownerComponentName',  width: 200 },
 						{ text: 'Owner Approved', dataIndex: 'ownerApproved',  width: 150 },
 						{ text: 'Type',  dataIndex: 'relationshipTypeDescription', width: 200 },
-						{ text: 'Target',  dataIndex: 'targetComponentName', width: 200 },						
+						{ text: 'Target',  dataIndex: 'targetComponentName', flex: 1, minWidth: 200 },						
 						{ text: 'Target Approved',  dataIndex: 'targetApproved', width: 150 },		
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
 					],
@@ -2049,7 +2128,7 @@
 									typeAhead: false,
 									margin: '0 0 0 0',
 									width: '100%',
-									fieldLabel: 'Type <span class="field-required" />',
+									fieldLabel: 'Relationship Type <span class="field-required" />',
 									storeConfig: {
 										url: '../api/v1/resource/lookuptypes/RelationshipType'
 									}
@@ -2091,7 +2170,7 @@
 									allowBlank: false,									
 									margin: '0 0 0 0',
 									width: '100%',
-									fieldLabel: 'Target <span class="field-required" />',
+									fieldLabel: 'Target Entry <span class="field-required" />',
 									forceSelection: false,
 									storeConfig: {
 										url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL',
@@ -2150,11 +2229,10 @@
 						proxy: {
 							type: 'ajax'							
 						}
-					}),
-					forceFit: true,
+					}),				
 					columns: [
 						{ text: 'Attribute Type', dataIndex: 'typeDescription',  width: 200 },
-						{ text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, width: 200 },
+						{ text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, minWidth: 200 },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 175, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
 					],
 					listeners: {
@@ -2383,6 +2461,11 @@
 					
 					var requiredAttributes = [];
 					var optionalAttributes = [];
+					// This is slightly difficult to follow,
+					// but the basic gist is that we must check two lists to decide which attributes to show -
+					// requiredRestrictions is a list of types for which the attribute is required
+					// associatedComponentTypes is a list of types for which the attribute is optional
+					// but if associatedComponentTypes is empty, it is optional for all.
 					Ext.Array.each(allAttributes, function(attribute){
 						if (attribute.requiredFlg) {
 							if (attribute.requiredRestrictions) {
@@ -2394,13 +2477,59 @@
 									}
 								});
 								if (found) {
+									// The required flag is set and this entry type is one which requires this attribute.
 									requiredAttributes.push(attribute);
 								}
+								else {
+									// --- Checking for Optional
+									//
+									// In this case, the 'Required' Flag is set but the entry we are dealing with is not an entry
+									// type listed in the requiredRestrictions, i.e. not required for this entry type.
+									// As a result, we need to check if it's allowed as an optional and then add it.
+									// This is the same logic as seen below when the 'Required' flag is off.
+									if (attribute.associatedComponentTypes) {
+										var reqOptFound = Ext.Array.findBy(attribute.associatedComponentTypes, function(item) {
+											if (item.componentType === componentType) {
+												return true;
+											} else {
+												return false;
+											}
+										});
+										if (reqOptFound) {
+											optionalAttributes.push(attribute);
+										}
+									}
+									else {
+										// We have an empty list of associatedComponentTypes, therefore this attribute is
+										// allowed for all entry types.
+										optionalAttributes.push(attribute);
+									}
+									// 
+									// --- End Checking for Optional
+								}
 							} else {
+								// No list of types required for, so it's required for all. Add it.
 								requiredAttributes.push(attribute);
 							}
 						} else {
-							optionalAttributes.push(attribute);
+							if (attribute.associatedComponentTypes) {
+								var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function(item) {
+									if (item.componentType === componentType) {
+										return true;
+									} else {
+										return false;
+									}
+								});
+								if (optFound) {
+									// This entry type allows this attribute.
+									optionalAttributes.push(attribute);
+								}
+							}
+							else {
+								// We have an empty list of associatedComponentTypes, therefore this attribute is
+								// allowed for all entry types.
+								optionalAttributes.push(attribute);
+							}
 						}
 					});
 					
@@ -2522,6 +2651,7 @@
 							items: [
 								{
 									text: 'Save',
+									tooltip: 'Save General information and continue.',
 									iconCls: 'fa fa-save',
 									formBind: true,
 									handler: function() {
@@ -2621,7 +2751,7 @@
 									tooltip: 'Close Add/Edit window',
 									iconCls: 'fa fa-close',
 									handler: function() {
-										this.up('window').hide();
+										this.up('window').close();
 									}													
 								}
 							]
@@ -2779,8 +2909,8 @@
 									name: 'description',
 									width: '100%',
 									height: 300,
-									maxLength: 32000,
-									tinyMCEConfig: CoreUtil.tinymceConfig()
+									maxLength: 65536,
+									tinyMCEConfig: CoreUtil.tinymceSearchEntryConfig()
 								},								
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'organization',									
@@ -2792,7 +2922,11 @@
 									valueField: 'description',
 									editable: true,
 									storeConfig: {
-										url: '../api/v1/resource/organizations/lookup'
+										url: '../api/v1/resource/organizations/lookup',
+										sorters: [{
+											property: 'description',
+											direction: 'ASC'
+										}]
 									}
 								}),
 								Ext.create('OSF.component.StandardComboBox', {														
@@ -2832,7 +2966,10 @@
 									storeConfig: {
 										url: '../api/v1/resource/lookuptypes/DataSource'										
 									}
-								})								
+								}),
+								Ext.create('OSF.component.SecurityComboBox', {	
+									hidden: !${branding.allowSecurityMarkingsFlg}
+								})
 							]							
 						},
 						{
@@ -2857,7 +2994,7 @@
 				};
 				loadAllAttributes();
 						
-				var mainAddEditWin = Ext.create('Ext.window.Window', {
+				var mainAddEditWin = Ext.create('Ext.window.Window', {					
 					title: 'Entry Form',
 					modal: true,
 					maximizable: true,
@@ -3210,7 +3347,7 @@
 							type: 'up',
 							tooltip: 'popout preview',
 							handler: function(){
-								window.open('../single?id=' + Ext.getCmp('componentGrid').getSelection()[0].get('componentId'), "Preview");
+								window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('componentGrid').getSelection()[0].get('componentId'), "Preview");
 							}
 						}
 					], 
@@ -3345,7 +3482,7 @@
 														ownerWindow.close();
 														actionRefreshComponentGrid();														
 													}
-												})
+												});
 											}
 										},
 										{
@@ -3373,7 +3510,7 @@
 					sorters: [
 						new Ext.util.Sorter({
 							property : 'name',
-							direction: 'DESC'
+							direction: 'ASC'
 						})
 					],
 					fields:[ 
@@ -3442,7 +3579,13 @@
 						}},	
 						{name: 'dataSource', mapping: function(data){
 							return data.component.dataSource;
-						}},						
+						}},
+						{name: 'securityMarkingType', mapping: function(data){
+							return data.component.securityMarkingType;
+						}},	
+						{name: 'securityMarkingDescription', mapping: function(data){
+							return data.component.securityMarkingDescription;
+						}},					
 						{name: 'lastModificationType', mapping: function(data){
 							return data.component.lastModificationType;
 						}},						
@@ -3633,7 +3776,8 @@
 						{ text: 'Update User', dataIndex: 'updateUser', width: 175, hidden: true },
 						{ text: 'Create Date', dataIndex: 'createDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Create User (Owner)', dataIndex: 'createUser', width: 175, hidden: true },
-						{ text: 'Component Id', dataIndex: 'componentId', width: 175, hidden: true }
+						{ text: 'Component Id', dataIndex: 'componentId', width: 175, hidden: true },
+						{ text: 'Security Marking', dataIndex: 'securityMarkingDescription', width: 175, hidden: true, sortable: false }
 					],
 					dockedItems: [
 						{
@@ -3874,8 +4018,21 @@
 									iconCls: 'fa fa-2x fa-download',
 									scale: 'medium',
 									disabled: true,
-									handler: function () {
-										actionExportComponents();
+									menu: {
+										items: [
+											{
+												text: 'Standard',
+												handler: function() {													
+													actionExportComponents('exportForm');
+												}
+											},
+											{
+												text: 'Describe',
+												handler: function() {
+													actionExportComponents('exportFormDescribe');
+												}
+											}
+										]
 									}
 								}
 							]
@@ -3937,7 +4094,7 @@
 					var componentId = record.get('componentId');
 					var name = record.get('name');
 					changeRequestWindow.show();
-					changeRequestWindow.loadComponent(componentId, name);
+					changeRequestWindow.loadComponent(componentId, name);					
 				};
 				
 				var actionChangeOwner = function(record) {
@@ -4085,7 +4242,7 @@
 								}	
 
 								//tags should be on all entries
-								showSubTab(tagGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/tags');
+								showSubTab(tagGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/tagsview');
 							}						
 						});	
 					}
@@ -4216,7 +4373,7 @@
 					});					
 				};
 				
-				var actionExportComponents = function() {
+				var actionExportComponents = function(exportForm) {
 					
 					var ids = "";
 					Ext.Array.each(componentGrid.getSelection(), function(record){
@@ -4224,13 +4381,13 @@
 						ids = ids + '<input type="hidden" name="id" value="' + record.get('componentId') +'" />';
 						
 					});
-					document.getElementById('exportFormIds').innerHTML = ids;					
-					document.exportForm.submit();
+					document.getElementById(exportForm + 'Ids').innerHTML = ids;					
+					document[exportForm].submit();
 				};
 				
 				var actionPreviewComponent = function(id){	
 					previewComponentWin.show();	
-					previewContents.load('../single?id=' + id +'&hideNav=true');
+					previewContents.load('view.jsp?fullPage=true&hideSecurityBanner=true&id=' + id);
 					previewCheckButtons();
 				};
 

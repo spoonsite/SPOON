@@ -19,11 +19,13 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
+import static edu.usu.sdl.openstorefront.core.model.search.SearchOperation.StringOperation.EQUALS;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -53,13 +55,10 @@ public class ReviewSearchHandler
 			if (StringUtils.isBlank(searchElement.getField())) {
 				validationResult.getRuleResults().add(getRuleResult("field", "Required"));
 			}
-			if (StringUtils.isBlank(searchElement.getValue())) {
-				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
-			}
-
+			boolean checkValue = true; 			
 			Field field = ReflectionUtil.getField(new ComponentReview(), searchElement.getField());
 			if (field == null) {
-				validationResult.getRuleResults().add(getRuleResult("field", "Doesn't exist on component review"));
+				validationResult.getRuleResults().add(getRuleResult("field", "Doesn't exist on review"));
 			} else {
 				Class type = field.getType();
 				if (type.getSimpleName().equals(String.class.getSimpleName())) {
@@ -69,15 +68,20 @@ public class ReviewSearchHandler
 						validationResult.getRuleResults().add(getRuleResult("value", "Value should be an integer for this field"));
 					}
 				} else if (type.getSimpleName().equals(Date.class.getSimpleName())) {
+					checkValue = false;
 					if (searchElement.getStartDate() == null && searchElement.getEndDate() == null) {
 						validationResult.getRuleResults().add(getRuleResult("startDate", "Start or End date should be entered for this field"));
 						validationResult.getRuleResults().add(getRuleResult("endDate", "Start or End date should be entered for this field"));
-					}
+					}					
 				} else if (type.getSimpleName().equals(Boolean.class.getSimpleName())) {
 					//Nothing to check
 				} else {
 					validationResult.getRuleResults().add(getRuleResult("field", "Field type handling not supported"));
 				}
+			}
+			
+			if (checkValue && StringUtils.isBlank(searchElement.getValue())) {
+				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
 			}
 		}
 
@@ -93,6 +97,8 @@ public class ReviewSearchHandler
 
 			try {
 				ComponentReview componentReview = new ComponentReview();
+				componentReview.setActiveStatus(ComponentReview.ACTIVE_STATUS);
+				
 				Field field = ReflectionUtil.getField(new ComponentReview(), searchElement.getField());
 				field.setAccessible(true);
 				QueryByExample queryByExample = new QueryByExample(componentReview);
@@ -104,7 +110,9 @@ public class ReviewSearchHandler
 						case EQUALS:
 							String value = searchElement.getValue();
 							if (searchElement.getCaseInsensitive()) {
-								queryByExample.getExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+								queryByExample.getFieldOptions().put(field.getName(),
+									new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
+
 								value = value.toLowerCase();
 							}
 							field.set(componentReview, value);
@@ -125,7 +133,8 @@ public class ReviewSearchHandler
 					}
 				} else if (type.getSimpleName().equals(Integer.class.getSimpleName())) {
 					field.set(componentReview, Convert.toInteger(searchElement.getValue()));
-					queryByExample.getExampleOption().setOperation(searchElement.getNumberOperation().toQueryOperation());
+					queryByExample.getFieldOptions().put(field.getName(),										
+							new GenerateStatementOptionBuilder().setOperation(searchElement.getNumberOperation().toQueryOperation()).build());		
 				} else if (type.getSimpleName().equals(Date.class.getSimpleName())) {
 
 					ComponentReview componentReviewStartExample = new ComponentReview();
@@ -153,8 +162,8 @@ public class ReviewSearchHandler
 
 				List<ComponentReview> componentReviews = serviceProxy.getPersistenceService().queryByExample(ComponentReview.class, queryByExample);
 				List<String> results = new ArrayList<>();
-				for (ComponentReview contact : componentReviews) {
-					results.add(contact.getComponentId());
+				for (ComponentReview review : componentReviews) {
+					results.add(review.getComponentId());
 				}
 				foundIds = mergeCondition.apply(foundIds, results);
 				mergeCondition = searchElement.getMergeCondition();

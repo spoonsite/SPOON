@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import org.codemonkey.simplejavamail.Email;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  *
@@ -53,7 +53,7 @@ public class ComponentSubmissionMessageGenerator
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z");
 
 		Instant instant = Instant.ofEpochMilli(messageContext.getUserMessage().getCreateDts().getTime());
-		instant = instant.minusSeconds(10);
+		instant = instant.minusSeconds(20);
 		Date checkDate = new Date(instant.toEpochMilli());
 
 		Component componentExample = new Component();
@@ -93,13 +93,17 @@ public class ComponentSubmissionMessageGenerator
 			message.append(components.size())
 					.append(" ")
 					.append(StringProcessor.puralize(components.size(), "entry", "entries"))
-					.append(" submission <b>Canceled</b> for approval since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
+					.append(" ")
+					.append(StringProcessor.puralize(components.size(), "submission", "submissions"))
+					.append(" have been <b>Canceled</b> for approval or have not yet submitted since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
 			message.append("<ul>");
 			for (Component component : components) {
 				message.append(" <li>").append(component.getName())
-						.append("  originally submitted by:  ").append(component.getCreateUser())
-						.append(" at ").append(sdf.format(component.getSubmittedDts()))
-						.append("</li>");
+						.append("  originally submitted by:  ").append(component.getCreateUser());					
+				if (component.getSubmittedDts() != null){
+						message.append(" at ").append(sdf.format(component.getSubmittedDts()));
+				}
+				message.append("</li>");
 			}
 			message.append("</ul><br>");
 		}

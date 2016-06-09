@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
-import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.view.HighlightFilter;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -28,8 +27,8 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -40,14 +39,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-/**
- * Handles the highlight data
- *
- * @author dshurtleff
- */
 @Path("v1/resource/highlights")
 @APIDescription("Highlights are component articles and other items the admin want to display on the UI")
 public class HighlightResource
@@ -58,19 +53,28 @@ public class HighlightResource
 	@APIDescription("Gets all active highlights")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Highlight.class)
-	public List<Highlight> getHighlights(
+	public Response getHighlights(
+			@BeanParam HighlightFilter filterQueryParams,
 			@QueryParam("all")
 			@APIDescription("Setting force to true pulls inactivated highlights as well.")
 			@DefaultValue("false") boolean all
 	)
 	{
+		ValidationResult validationResult = filterQueryParams.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
 		Highlight highlightExample = new Highlight();
 		if (!all) {
 			highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
 		}
-		List<Highlight> highlights = service.getPersistenceService().queryByExample(Highlight.class, new QueryByExample(highlightExample));
-		Collections.sort(highlights, new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, Highlight.FIELD_TITLE));
-		return highlights;
+		List<Highlight> highlights = service.getPersistenceService().queryByExample(Highlight.class, new QueryByExample(highlightExample));					
+		highlights = filterQueryParams.filter(highlights);
+		GenericEntity<List<Highlight>> entity = new GenericEntity<List<Highlight>>(highlights)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET

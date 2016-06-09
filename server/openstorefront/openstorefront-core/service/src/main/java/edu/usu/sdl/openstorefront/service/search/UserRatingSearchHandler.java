@@ -46,10 +46,10 @@ public class UserRatingSearchHandler
 
 		for (SearchElement searchElement : searchElements) {
 			if (StringUtils.isBlank(searchElement.getValue())) {
-				validationResult.getRuleResults().add(getRuleResult("Value", "Required"));
+				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
 			}
 			if (StringUtils.isNumeric(searchElement.getValue()) == false) {
-				validationResult.getRuleResults().add(getRuleResult("Value", "Must be a integer number"));
+				validationResult.getRuleResults().add(getRuleResult("value", "Must be a integer number"));
 			}
 		}
 
@@ -63,7 +63,7 @@ public class UserRatingSearchHandler
 		SearchOperation.MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
 		for (SearchElement searchElement : searchElements) {
 
-			String query = "select componentId, avg(rating) as rating from " + ComponentReview.class.getSimpleName() + " group by componentId ";
+			String query = "select componentId, avg(rating) as rating from " + ComponentReview.class.getSimpleName() + " where activeStatus='" + ComponentReview.ACTIVE_STATUS + "' group by componentId ";
 
 			Integer checkValue = Convert.toInteger(searchElement.getValue());
 			if (checkValue == null) {

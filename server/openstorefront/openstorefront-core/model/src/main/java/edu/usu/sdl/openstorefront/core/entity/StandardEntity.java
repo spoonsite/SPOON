@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.validation.BlankSantizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.Date;
@@ -47,7 +48,7 @@ public abstract class StandardEntity<T>
 	public static final String FIELD_CREATE_DTS = "createDts";
 	public static final String FIELD_UPDATE_DTS = "updateDts";
 
-	@Sanitize(TextSanitizer.class)
+	@Sanitize({TextSanitizer.class, BlankSantizer.class})	
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = SecurityMarkingType.class)
 	@APIDescription("Security Classification")

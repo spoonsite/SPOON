@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import net.sf.ehcache.Element;
 import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
-import net.sf.uadetector.service.UADetectorServiceFactory;
 
 /**
  * Handles parsing of the user agent string
@@ -34,7 +33,7 @@ public class UserAgentManager
 
 	public static void init()
 	{
-		parser = UADetectorServiceFactory.getResourceModuleParser();
+		parser = StorefrontUADetectorServiceFactory.getResourceModuleParser();
 	}
 
 	public static void cleanup()

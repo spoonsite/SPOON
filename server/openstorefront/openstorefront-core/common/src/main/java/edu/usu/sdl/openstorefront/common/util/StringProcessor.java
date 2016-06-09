@@ -71,7 +71,7 @@ public class StringProcessor
 		}
 		return resource;
 	}
-
+	
 	/**
 	 * This get the last path name (handles both / \)
 	 * @param originalFilename
@@ -94,7 +94,7 @@ public class StringProcessor
 			return originalFilename;
 		}
 		return filename.toString();
-	}	
+	}
 	
 	/**
 	 * Looks for http link in a block of text
@@ -270,6 +270,14 @@ public class StringProcessor
 			return "";
 		} else {
 			return text.toString();
+		}
+	}
+	
+	public static String nullIfBlank(String text) {
+		if (StringUtils.isBlank(text)) {
+			return null;
+		} else {
+			return text;
 		}
 	}
 

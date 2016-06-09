@@ -21,7 +21,7 @@ import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import javax.mail.Message.RecipientType;
 import org.apache.commons.lang.StringUtils;
-import org.codemonkey.simplejavamail.Email;
+import org.codemonkey.simplejavamail.email.Email;
 import org.jsoup.Jsoup;
 import org.jsoup.examples.HtmlToPlainText;
 

@@ -265,4 +265,13 @@ public class StringProcessorTest
 
 	}
 
+	@Test
+	public void testExtactFileName() 
+	{
+		System.out.println(StringProcessor.getJustFileName(".../akfjaklf/askjdkl/Test.png"));	
+		System.out.println(StringProcessor.getJustFileName("Test.png"));
+		System.out.println(StringProcessor.getJustFileName("\\hera\\aaa\\akfjaklf\\Test.png"));
+		System.out.println(StringProcessor.getJustFileName("\\hera/aaa\\akfjaklf/Test.png"));
+	}	
+	
 }

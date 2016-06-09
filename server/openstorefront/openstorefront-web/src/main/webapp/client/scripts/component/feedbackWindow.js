@@ -29,6 +29,8 @@ Ext.define('OSF.component.FeedbackWindow', {
 		this.callParent();
 
 		var feedbackWin = this;
+				
+		
 		//
 		// Selection Combobox feedbackTypes items
 		//
@@ -66,7 +68,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 							handler: function () {
 								var feedbackForm = this.up('form');
 								var method = 'POST';
-								var url = '/openstorefront/api/v1/service/jira/submitticket';
+								var url = '/openstorefront/api/v1/resource/feedbacktickets';
 								var data = feedbackForm.getValues();
 								data.webInformation = {
 									location: window.location.href,
@@ -122,8 +124,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 					xtype: 'combobox',
 					name: 'ticketType',
 					fieldLabel: 'Choose Type<span class="field-required" />',
-					width: '100%',
-					maxLength: 50,
+					width: '100%',					
 					hidden: feedbackWin.hideType ? true : false,
 					store: feedbackTypes,
 					value: 'Help',
@@ -137,7 +138,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 					hidden: feedbackWin.hideSummary ? true : false,
 					fieldLabel: 'Summary<span class="field-required" />',
 					width: '100%',
-					maxLength: 50,
+					maxLength: 200,
 					allowBlank: feedbackWin.hideSummary ? true : false
 				},
 				{
@@ -146,7 +147,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 					fieldLabel: (feedbackWin.labelForDescription ? feedbackWin.labelForDescription : 'Description') + '<span class="field-required" />',
 					width: '100%',
 					height: 200,
-					maxLength: 255,
+					maxLength: 4096,
 					allowBlank: false
 				},
 				{
@@ -221,6 +222,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 		};
 		
 		feedbackWin.on('show', feedbackWin.resetForm);
-	}
+	}	
+	
 });
 

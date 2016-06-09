@@ -41,7 +41,7 @@ public class ComponentEvaluationView
 	public static ComponentEvaluationView toViewFromStorage(List<ComponentEvaluationSection> sections)
 	{
 		List<ComponentEvaluationSectionView> newSections = ComponentEvaluationSectionView.toViewList(sections);
-		newSections.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentEvaluationSectionView.NAME_FIELD));
+		newSections.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentEvaluationSectionView.NAME_FIELD));
 		return ComponentEvaluationView.toView(newSections);
 	}
 

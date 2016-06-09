@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class ComponentContactView
 		extends StandardEntityView
 {
 
+	private String componentContactId;
 	private String contactId;
 	private String positionDescription;
 	private String contactType;
@@ -49,22 +51,25 @@ public class ComponentContactView
 	public static ComponentContactView toView(ComponentContact contact)
 	{
 		ComponentContactView view = new ComponentContactView();
-		view.setEmail(contact.getEmail());
+		Contact contactFull = contact.fullContact();
+		
+		view.setComponentContactId(contact.getComponentContactId());				
+		view.setEmail(contactFull.getEmail());
 		view.setPositionDescription(TranslateUtil.translate(ContactType.class, contact.getContactType()));
 		view.setContactType(contact.getContactType());
-		view.setOrganization(contact.getOrganization());
-		view.setPhone(contact.getPhone());
-		view.setUpdateDts(contact.getUpdateDts());
-		view.setFirstName(contact.getFirstName());
-		view.setLastName(contact.getLastName());
+		view.setOrganization(contactFull.getOrganization());
+		view.setPhone(contactFull.getPhone());
+		view.setUpdateDts(contactFull.getUpdateDts());
+		view.setFirstName(contactFull.getFirstName());
+		view.setLastName(contactFull.getLastName());
 		view.setActiveStatus(contact.getActiveStatus());
-		view.setContactId(contact.getContactId());
+		view.setContactId(contactFull.getContactId());
 		view.toStandardView(contact);
 
-		if (contact.getLastName() == null || "".equals(contact.getLastName())) {
-			view.setName(contact.getFirstName());
+		if (contactFull.getLastName() == null || "".equals(contactFull.getLastName())) {
+			view.setName(contactFull.getFirstName());
 		} else {
-			view.setName(contact.getFirstName() + " " + contact.getLastName());
+			view.setName(contactFull.getFirstName() + " " + contactFull.getLastName());
 		}
 		return view;
 	}
@@ -129,17 +134,11 @@ public class ComponentContactView
 		this.organization = organization;
 	}
 
-	/**
-	 * @return the updateDts
-	 */
 	public Date getUpdateDts()
 	{
 		return updateDts;
 	}
 
-	/**
-	 * @param updateDts the updateDts to set
-	 */
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
@@ -193,6 +192,16 @@ public class ComponentContactView
 	public void setContactId(String contactId)
 	{
 		this.contactId = contactId;
+	}
+
+	public String getComponentContactId()
+	{
+		return componentContactId;
+	}
+
+	public void setComponentContactId(String componentContactId)
+	{
+		this.componentContactId = componentContactId;
 	}
 
 }

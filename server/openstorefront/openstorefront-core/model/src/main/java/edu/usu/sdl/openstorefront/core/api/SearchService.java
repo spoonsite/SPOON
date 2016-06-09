@@ -17,9 +17,10 @@ package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
-import edu.usu.sdl.openstorefront.core.view.ArticleView;
+import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -77,21 +78,6 @@ public interface SearchService
 	public void indexComponents(List<Component> components);
 
 	/**
-	 * Indexes an article
-	 *
-	 * @param articles
-	 */
-	public void indexArticles(List<ArticleView> articles);
-
-	/**
-	 * Indexes articles and Components
-	 *
-	 * @param components
-	 * @param articles
-	 */
-	public void indexArticlesAndComponents(List<ArticleView> articles, List<Component> components);
-
-	/**
 	 * Removes a search index
 	 *
 	 * @param id
@@ -113,4 +99,41 @@ public interface SearchService
 	 */
 	public void resetIndexer();
 
+	/**
+	 * This will try to find suggestions based on the query and then 
+	 * weight the results.
+	 * 
+	 * @param query
+	 * @param maxResult
+	 * @return 
+	 */
+	public List<SearchSuggestion> searchSuggestions(String query, int maxResult);
+		
+	/**
+	 * Saves a public/global Search
+	 * 
+	 * @param systemSearch
+	 * @return the saved search record
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public SystemSearch saveSearch(SystemSearch systemSearch);
+	
+	/**
+	 * Inactivate public/global search
+	 * To avoid issues with existing links we just want to inactivate.
+	 * Note: Existing links would be still valid and would need to be manually updated if desired.
+	 * 
+	 * @param searchId 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void inactivateSearch(String searchId);	
+	
+	/**
+	 * Activates public/global search
+	 * 
+	 * @param searchId 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void activateSearch(String searchId);	
+	
 }

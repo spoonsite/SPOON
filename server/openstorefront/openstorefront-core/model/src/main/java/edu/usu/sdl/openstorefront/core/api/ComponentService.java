@@ -38,6 +38,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
@@ -177,7 +178,7 @@ public interface ComponentService
 	 * full view)
 	 *
 	 * @param componentId
-	 * @return
+	 * @return details or null if not found
 	 */
 	public ComponentDetailView getComponentDetails(String componentId);
 
@@ -653,6 +654,7 @@ public interface ComponentService
 	 * @param componentType
 	 * @return
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public ComponentType saveComponentType(ComponentType componentType);
 
 	/**
@@ -661,6 +663,7 @@ public interface ComponentService
 	 *
 	 * @param componentType
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeComponentType(String componentType);
 
 	/**
@@ -669,15 +672,38 @@ public interface ComponentService
 	 * @param componentTypeTemplate
 	 * @return
 	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
 	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate);
 
 	/**
 	 * This just inActivates. Deleting would be dangerous as there likely
 	 * existing data that would still need it
 	 *
-	 * @param templateCode
+	 * @param templateId
 	 */
-	public void removeComponentTypeTemplate(String templateCode);
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void removeComponentTypeTemplate(String templateId);
+	
+	/**
+	 * This is a Hard delete but it will fail if entry type are pointing to it.
+	 * @param templateId 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteComponentTypeTemplate(String templateId);
+	
+	/**
+	 * Save a template block for use in a template
+	 * @param templateBlock 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveTemplateBlock(TemplateBlock templateBlock);
+	
+	/**
+	 * Hard delete of a template block
+	 * @param templateBlockId 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteTemplateBlock(String templateBlockId);
 
 	/**
 	 * Approves a component and triggers notification if requested component is

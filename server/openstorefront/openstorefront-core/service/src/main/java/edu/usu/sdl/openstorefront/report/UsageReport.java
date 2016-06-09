@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
-import edu.usu.sdl.openstorefront.core.entity.ArticleTracking;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
@@ -88,10 +87,10 @@ public class UsageReport
 	private void updateReportTimeRange()
 	{
 		if (report.getReportOption().getPreviousDays() != null) {
-			Instant instant = Instant.now();
-			instant = instant.minus(1, ChronoUnit.DAYS);
-			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date(instant.toEpochMilli())));
-			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date(instant.toEpochMilli())));
+			Instant instantEnd = Instant.now();
+			Instant instantStart = instantEnd.minus(report.getReportOption().getPreviousDays(), ChronoUnit.DAYS);
+			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date(instantStart.toEpochMilli())));
+			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date(instantEnd.toEpochMilli())));
 		}
 
 		if (report.getReportOption().getStartDts() == null) {
@@ -117,8 +116,7 @@ public class UsageReport
 				"# Logins",
 				"Current Active Watches",
 				"Component Views",
-				"Component Resources Clicked",
-				"Article Views"
+				"Component Resources Clicked"
 		);
 
 		UserWatch userWatchExample = new UserWatch();
@@ -152,36 +150,12 @@ public class UsageReport
 		componentTrackingExample.setTrackEventTypeCode(TrackEventCode.EXTERNAL_LINK_CLICK);
 		long componentLinkClicks = service.getPersistenceService().countByExample(queryByExample);
 
-		ArticleTracking articleTrackingExample = new ArticleTracking();
-		articleTrackingExample.setActiveStatus(ArticleTracking.ACTIVE_STATUS);
-		articleTrackingExample.setTrackEventTypeCode(TrackEventCode.VIEW);
-
-		ArticleTracking articletTrackingStartExample = new ArticleTracking();
-		articletTrackingStartExample.setEventDts(report.getReportOption().getStartDts());
-
-		ArticleTracking articleTrackingEndExample = new ArticleTracking();
-		articleTrackingEndExample.setEventDts(report.getReportOption().getEndDts());
-
-		queryByExample = new QueryByExample(articleTrackingExample);
-		specialOperatorModel = new SpecialOperatorModel();
-		specialOperatorModel.setExample(articletTrackingStartExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
-		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-		specialOperatorModel = new SpecialOperatorModel();
-		specialOperatorModel.setExample(articleTrackingEndExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
-		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-		long articleViews = service.getPersistenceService().countByExample(queryByExample);
 
 		cvsGenerator.addLine(
 				userTrackingUsers.size(),
 				activeWatches,
 				componentViews,
-				componentLinkClicks,
-				articleViews
+				componentLinkClicks
 		);
 
 		cvsGenerator.addLine("Details");
@@ -193,8 +167,7 @@ public class UsageReport
 				"User Email",
 				"# Logins",
 				"Component Viewed",
-				"Component Resources Click",
-				"Article Views"
+				"Component Resources Clicked"
 		);
 
 		UserProfile userProfileExample = new UserProfile();
@@ -243,31 +216,6 @@ public class UsageReport
 			componentTrackingExample.setTrackEventTypeCode(TrackEventCode.EXTERNAL_LINK_CLICK);
 			long userComponentLinkClicks = service.getPersistenceService().countByExample(queryByExample);
 
-			articleTrackingExample = new ArticleTracking();
-			articleTrackingExample.setActiveStatus(ArticleTracking.ACTIVE_STATUS);
-			articleTrackingExample.setTrackEventTypeCode(TrackEventCode.VIEW);
-			articleTrackingExample.setCreateUser(username);
-
-			articletTrackingStartExample = new ArticleTracking();
-			articletTrackingStartExample.setEventDts(report.getReportOption().getStartDts());
-
-			articleTrackingEndExample = new ArticleTracking();
-			articleTrackingEndExample.setEventDts(report.getReportOption().getEndDts());
-
-			queryByExample = new QueryByExample(articleTrackingExample);
-			specialOperatorModel = new SpecialOperatorModel();
-			specialOperatorModel.setExample(articletTrackingStartExample);
-			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
-			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-			specialOperatorModel = new SpecialOperatorModel();
-			specialOperatorModel.setExample(articleTrackingEndExample);
-			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-			specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
-			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-			long userArticleViews = service.getPersistenceService().countByExample(queryByExample);
-
 			cvsGenerator.addLine(
 					userProfile.getUsername(),
 					userProfile.getExternalGuid() != null ? userProfile.getExternalGuid() : userProfile.getInternalGuid(),
@@ -276,8 +224,7 @@ public class UsageReport
 					userProfile.getEmail(),
 					trackMap.get(username),
 					userComponentViews,
-					userComponentLinkClicks,
-					userArticleViews
+					userComponentLinkClicks
 			);
 		}
 

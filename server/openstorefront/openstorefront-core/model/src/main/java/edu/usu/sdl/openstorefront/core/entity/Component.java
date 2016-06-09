@@ -56,7 +56,7 @@ public class Component
 	private String name;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_COMPONENT_DESCRIPTION)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_64K)
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String description;
@@ -68,12 +68,12 @@ public class Component
 	@FK(value = ComponentType.class, enforce = true)
 	private String componentType;
 
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	@APIDescription("External system guid")
 	private String guid;
 
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GUID)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	@APIDescription("External system id")
 	private String externalId;

@@ -45,7 +45,7 @@ public class ComponentResourceView
 	private String activeStatus;
 	private String originalLink;
 	private String componentId;
-
+		
 	private static final String LOCAL_RESOURCE_URL = "Resource.action?LoadResource&resourceId=";
 	private static final String ACTUAL_RESOURCE_URL = "Resource.action?Redirect&resourceId=";
 
@@ -84,8 +84,9 @@ public class ComponentResourceView
 		}
 		componentResourceView.setLink(link);
 		componentResourceView.setActualLink(ACTUAL_RESOURCE_URL + componentResource.getResourceId());
+		
 		componentResourceView.toStandardView(componentResource);
-
+		
 		return componentResourceView;
 	}
 

@@ -44,7 +44,7 @@ a:hover {
 	color: white;
 	width: 100%;
 	z-index: 99;
-	background-color: rgb(68, 30, 90);
+	background-color: #2C3342;
 	-webkit-box-shadow: 0px 0px 9px 0px rgba (68, 68, 68, 0.6);
 	-moz-box-shadow: 0px 0px 9px 0px rgba(68, 68, 68, 0.6);
 	 box-shadow: 0px 0px 9px 0px rgba(68,68,68,0.6);	
@@ -83,7 +83,7 @@ a:hover {
 	border-right: 1px solid #dadfe5;
 	overflow: hidden;
 	overflow-y: auto;
-	width: 220px;	
+	width: 275px;	
 	z-index: 25;	
 	background-color: white;
 }
@@ -91,7 +91,7 @@ a:hover {
 .api-doc{
 	background: white;
 	margin-top: 25px;
-	margin-left: 220px;
+	margin-left: 275px;
 	min-width: 750px;		
 }
 
@@ -123,7 +123,7 @@ table td,th {
 th {
 	color: white;
 	/* text-shadow: 2px 2px 2px black; */
-	background-color: rgb(68, 30, 90);
+	background-color: #2C3342;
 	border: 1px lightgray solid;
 }
 td {
@@ -207,7 +207,7 @@ tr:nth-child(even) {
 	color: white;
 	text-shadow: 2px 2px 2px black;
 	text-align: center;
-	background-color: rgb(68, 30, 90);
+	background-color: #2C3342;
 }
 
 .returnInfo-contents{
@@ -229,7 +229,7 @@ tr:nth-child(even) {
 	color: white;
 	font-size: 16px;
 	text-align: center;
-	width: 100px;
+	width: 175px;
 	margin-left: auto;
 	opacity: 0.8;
 	margin-right: auto;

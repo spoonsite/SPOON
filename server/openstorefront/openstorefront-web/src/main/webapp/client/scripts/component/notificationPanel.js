@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global Ext */
+/* global Ext, CoreService */
 
 Ext.define('OSF.component.NotificationPanel', {
 	extend: 'Ext.panel.Panel',
@@ -28,6 +28,12 @@ Ext.define('OSF.component.NotificationPanel', {
 
 		var dataStore = Ext.create('Ext.data.Store', {
 			autoLoad: true,
+			sorters: [
+				new Ext.util.Sorter({
+					property: 'createDts',
+					direction: 'DESC'
+				})
+			],			
 			fields: [
 				'eventId',
 				'eventType',
@@ -120,10 +126,10 @@ Ext.define('OSF.component.NotificationPanel', {
 					renderer: function (value, metadata, record) {
 						switch (record.get('eventType')) {
 							case 'WATCH':
-								return value + '<i>View the changes <a href="../single?id=' + record.get('entityId') + '"><strong>here</strong></a>.</i>';
+								return value + '<i>View the changes <a href="view.jsp?fullPage=true&id=' + record.get('entityId') + '" target="_top"><strong>here</strong></a>.</i>';
 								break;
 							case 'REPORT':
-								return value + '<i>View/Download the report <a href="usertools.jsp?dc=' + Math.random() + '#Reports"><strong>here</strong></a></i>.';
+								return value + '<i>View/Download the report <a href="usertools.jsp?dc=' + Math.random() + '#Reports" target="_top"><strong>here</strong></a></i>.';
 								break;
 							case 'ADMIN':
 								return '<i class="fa fa-warning"></i>&nbsp;' + value;
@@ -276,4 +282,40 @@ Ext.define('OSF.component.NotificationPanel', {
 
 });
 
+Ext.define('OSF.component.NotificationWindow', {
+  extend: 'Ext.window.Window',
+  alias: 'osf.widget.NotificationWindow',
+  
+  title: 'Notifications',
+  iconCls: 'fa fa-envelope',
+  y: 40,
+  width: '80%',
+  modal: true,
+  closeAction: 'hide',
+  layout: 'fit',  
+  height: '50%',
+  maximizable: true,
+  
+  initComponent: function() {
+     this.callParent();
+     
+    var notWin = this;
+    notWin.notPanel = Ext.create('OSF.component.NotificationPanel', {      
+    });
+    notWin.notificationGrid = notWin.notPanel.notificationGrid;
+      
+    notWin.add(notWin.notPanel);
+   
+  },
+  
+  refreshData: function(){
+    this.notificationGrid.getStore().load({
+        params: {
+          all: this.loadAll
+        }
+    });
+  }
+  
+
+});
 

@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
@@ -30,10 +29,9 @@ import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
-import edu.usu.sdl.openstorefront.core.view.ArticleView;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.io.parser.BaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
+import edu.usu.sdl.openstorefront.service.io.parser.OldBaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import java.io.File;
@@ -168,7 +166,7 @@ public class UploadAction
 		return handleAttributeUpload(new MainAttributeParser());
 	}
 
-	private Resolution handleAttributeUpload(BaseAttributeParser parser)
+	private Resolution handleAttributeUpload(OldBaseAttributeParser parser)
 	{
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
@@ -194,13 +192,11 @@ public class UploadAction
 						errors.put("uploadFile", "Format not supported.  Requires a CSV text file.");
 					}
 				}
-			} else {
-				if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
+			} else if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
 
-					bestGuessContentType = getContext().getServletContext().getMimeType(uploadFile.getFileName());
-					if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
-						errors.put("uploadFile", "Format not supported.  Requires a JSON text file.");
-					}
+				bestGuessContentType = getContext().getServletContext().getMimeType(uploadFile.getFileName());
+				if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
+					errors.put("uploadFile", "Format not supported.  Requires a JSON text file.");
 				}
 			}
 
@@ -324,51 +320,6 @@ public class UploadAction
 
 				try {
 					uploadFile.delete();
-				} catch (IOException ex) {
-					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
-				}
-			}
-			return streamUploadResponse(errors);
-		}
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
-	}
-
-	@HandlesEvent("UploadArticles")
-	public Resolution uploadArticles()
-	{
-		Map<String, String> errors = new HashMap<>();
-		if (SecurityUtil.isAdminUser()) {
-			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
-			try (InputStream in = uploadFile.getInputStream()) {
-				List<ArticleView> articles = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ArticleView>>()
-				{
-				});
-				Boolean flag = false;
-				for (ArticleView article : articles) {
-					AttributeCodePk pk = new AttributeCodePk();
-					pk.setAttributeCode(article.getAttributeCode());
-					pk.setAttributeType(article.getAttributeType());
-					AttributeCode temp = service.getPersistenceService().findById(AttributeCode.class, pk);
-					if (temp == null) {
-						flag = true;
-						errors.put("attributeCode", "Unable to find attribute code: " + article.getAttributeCode() + " of type: " + article.getAttributeType() + ". Make sure to use valid attribute code and types.");
-					}
-				}
-				if (!flag) {
-					TaskRequest taskRequest = new TaskRequest();
-					taskRequest.setAllowMultiple(false);
-					taskRequest.setName("Uploading Article");
-					taskRequest.setDetails("File name: " + uploadFile.getFileName());
-					service.getAsyncProxy(service.getAttributeService(), taskRequest).importArticles(articles);
-				}
-			} catch (IOException ex) {
-				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
-				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
-			} finally {
-				try {
-					if (uploadFile != null) {
-						uploadFile.delete();
-					}
 				} catch (IOException ex) {
 					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 				}

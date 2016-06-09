@@ -18,7 +18,17 @@
 						'alertId',
 						'emailAddresses',
 						'userDataAlertOption',
-						'systemErrorAlertOption'
+						'systemErrorAlertOption',
+						{
+							name: 'createDts',
+							type: 'date',
+							dateFormat: 'c'
+						},
+						{
+							name: 'updateDts',
+							type: 'date',
+							dateFormat: 'c'
+						}						
 					],
 					proxy: {
 						id: 'alertStoreProxy',
@@ -36,10 +46,11 @@
 					selModel: 'rowmodel',
 					columns: [
 						{text: 'Name', dataIndex: 'name', width: 225},
-						{text: 'Type', dataIndex: 'alertTypeDescription', width: 225},
+						{text: 'Type', dataIndex: 'alertTypeDescription', width: 225 },
 						{
 							text: 'Email Addresses',
 							dataIndex: 'emailAddresses',
+							sortable: false,
 							width: 300,
 							renderer: function (value) {
 								// Render a <UL> of Emails.
@@ -51,7 +62,11 @@
 								return emailList;
 							}
 						},
-						{text: 'Options', dataIndex: 'userDataAlertOption', flex: 1,
+						{
+							text: 'Options',
+							dataIndex: 'userDataAlertOption',
+							sortable: false,
+							flex: 1,
 							renderer: function (value, metaData, record) {
 								var option = record.get('userDataAlertOption');
 								if (option) {
@@ -65,6 +80,9 @@
 									if (option.alertOnQuestions) {
 										listOfOptions += '<li>Questions/Responses</li>';
 									}
+									if (option.alertOnContactUpdate) {
+										listOfOptions += '<li>Contact Update</li>';
+									}																		
 									listOfOptions += '</ul>';
 									return listOfOptions;
 								} else if (record.get('systemErrorAlertOption')) {
@@ -86,8 +104,19 @@
 									return listOfOptions;
 								}
 							}
-						}
-
+						},
+						{
+							text: 'Create User', dataIndex: 'createUser', width: 150, hidden: true
+						},				
+						{
+							text: 'Create Date', dataIndex: 'createDts', xtype: 'datecolumn', format: 'm/d/y H:i:s', width: 150, hidden: true
+						},						
+						{
+							text: 'Update User', dataIndex: 'updateUser', width: 150, hidden: true
+						},
+						{
+							text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format: 'm/d/y H:i:s', width: 150, hidden: true
+						}						
 					],
 					dockedItems: [
 						{
@@ -232,7 +261,8 @@
 					id: 'alertAddEditWin',
 					title: 'Add/Edit Alert',
 					modal: true,
-					width: '35%',
+					width: '45%',
+					minWidth: 800,
 					height: 325,
 					y: '10em',
 					iconCls: 'fa fa-lg fa-edit',
@@ -375,7 +405,12 @@
 											boxLabel: 'Questions/Responses',
 											name: 'alertOnQuestions',
 											id: 'userData-questions'
-										}
+										},
+										{
+											boxLabel: 'Contact Update',
+											name: 'alertOnContactUpdate',
+											id: 'userData-contactUpdate'
+										}							
 									]
 								}
 							],
@@ -417,6 +452,7 @@
 													ud.alertOnTags = (flatData.alertOnTags === "true");
 													ud.alertOnReviews = (flatData.alertOnReviews === "true");
 													ud.alertOnQuestions = (flatData.alertOnQuestions === "true");
+													ud.alertOnContactUpdate = (flatData.alertOnContactUpdate === "true");
 													data.userDataAlertOption = ud;
 												}
 

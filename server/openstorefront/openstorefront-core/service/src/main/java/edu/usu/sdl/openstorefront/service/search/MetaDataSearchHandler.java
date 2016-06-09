@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.search;
 
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
@@ -45,7 +46,7 @@ public class MetaDataSearchHandler
 
 		for (SearchElement searchElement : searchElements) {
 			if (StringUtils.isBlank(searchElement.getKeyField())) {
-				validationResult.getRuleResults().add(getRuleResult("keyfield", "Required"));
+				validationResult.getRuleResults().add(getRuleResult("keyField", "Required"));
 			}
 		}
 
@@ -60,12 +61,16 @@ public class MetaDataSearchHandler
 		for (SearchElement searchElement : searchElements) {
 
 			ComponentMetadata componentMetadata = new ComponentMetadata();
+			componentMetadata.setActiveStatus(ComponentMetadata.ACTIVE_STATUS);
+			
 			QueryByExample queryByExample = new QueryByExample(componentMetadata);
 
 			String label = searchElement.getKeyField();
 			if (searchElement.getCaseInsensitive()) {
 				label = label.toLowerCase();
-				queryByExample.getExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+				queryByExample.getFieldOptions().put(ComponentMetadata.FIELD_LABEL, 
+						new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
+
 			}
 			componentMetadata.setLabel(label);
 

@@ -136,7 +136,7 @@ public class FileSystemManager
 	 * @return inputstream to resource (It's up to the caller to close the
 	 * stream)
 	 */
-	public static InputStream getApplicatioResourceFile(String resource)
+	public static InputStream getApplicationResourceFile(String resource)
 	{
 		InputStream in = null;
 		URL resourceUrl = new FileSystemManager().getClass().getResource(resource);

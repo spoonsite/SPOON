@@ -31,60 +31,66 @@ limitations under the License.
 
 			Ext.onReady(function () {
 				
-				var submissionPanel = Ext.create('OSF.component.SubmissionPanel', {							
-					id: 'submissionPanel',
-					cancelSubmissionHandlerYes: function(){
-						Ext.getCmp('submissionWindow').completeClose=true;
-						Ext.getCmp('submissionWindow').close();
-						Ext.getCmp('submissionWindow').completeClose=false;
-						actionRefreshSubmission();
-					},
-					cancelSubmissionHandlerNo: function(){
-						Ext.getCmp('submissionWindow').completeClose=true;
-						Ext.getCmp('submissionWindow').close();
-						Ext.getCmp('submissionWindow').completeClose=false;
-						actionRefreshSubmission();
-					},
-					handleSubmissionSuccess: function(response, opts) {
-						Ext.getCmp('submissionWindow').completeClose=true;
-						Ext.getCmp('submissionWindow').close();
-						Ext.getCmp('submissionWindow').completeClose=false;
-						actionRefreshSubmission();
-					}					
-				});
+				CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
+					var branding = Ext.decode(response.responseText);
+					
+					var submissionPanel = Ext.create('OSF.component.SubmissionPanel', {							
+						id: 'submissionPanel',
+						userInputWarning: branding.userInputWarning,
+						formWarningMessage: branding.submissionFormWarning,
+						cancelSubmissionHandlerYes: function(){
+							Ext.getCmp('submissionWindow').completeClose=true;
+							Ext.getCmp('submissionWindow').close();
+							Ext.getCmp('submissionWindow').completeClose=false;
+							actionRefreshSubmission();
+						},
+						cancelSubmissionHandlerNo: function(){
+							Ext.getCmp('submissionWindow').completeClose=true;
+							Ext.getCmp('submissionWindow').close();
+							Ext.getCmp('submissionWindow').completeClose=false;
+							actionRefreshSubmission();
+						},
+						handleSubmissionSuccess: function(response, opts) {
+							Ext.getCmp('submissionWindow').completeClose=true;
+							Ext.getCmp('submissionWindow').close();
+							Ext.getCmp('submissionWindow').completeClose=false;
+							actionRefreshSubmission();
+						}					
+					});
 
-				var submissionWindow = Ext.create('Ext.window.Window', {
-					id: 'submissionWindow',
-					title: 'Submission Form',
-					iconCls: 'fa fa-file-text-o',
-					layout: 'fit',
-					modal: true,
-					width: '90%',
-					height: '90%',					
-					maximizable: true,
-					completeClose: false,
-					items: [
-						submissionPanel
-					],
-					listeners: {
-						beforeclose: function(panel, opts) {
-							if (!(Ext.getCmp('submissionWindow').completeClose)){
-								submissionPanel.cancelSubmissionHandler(true);
+					var submissionWindow = Ext.create('Ext.window.Window', {
+						id: 'submissionWindow',
+						title: 'Submission Form',
+						iconCls: 'fa fa-file-text-o',
+						layout: 'fit',
+						modal: true,
+						width: '90%',
+						height: '90%',					
+						maximizable: true,
+						completeClose: false,
+						items: [
+							submissionPanel
+						],
+						listeners: {
+							beforeclose: function(panel, opts) {
+								if (!(Ext.getCmp('submissionWindow').completeClose)){
+									submissionPanel.cancelSubmissionHandler(true);
+								}
+								return panel.completeClose;
 							}
-							return panel.completeClose;
 						}
-					}
+					});		
+					
+					var changeRequestWindow = Ext.create('OSF.component.EntryChangeRequestWindow', {
+						id: 'changeRequestWindow',
+						changeRequestWarning: branding.changeRequestWarning,
+						successHandler: function() {
+							Ext.getCmp('submissionGrid').setLoading(false);
+							Ext.getCmp('submissionGrid').getStore().reload();
+						}
+					});										
 				});		
 
-				var changeRequestWindow = Ext.create('OSF.component.EntryChangeRequestWindow', {
-					id: 'changeRequestWindow',					
-					successHandler: function() {
-						Ext.getCmp('submissionGrid').setLoading(false);
-						Ext.getCmp('submissionGrid').getStore().reload();
-					}
-				});
-			
-			
 				var previewContents = Ext.create('OSF.ux.IFrame', {
 					src: ''
 				});								
@@ -103,7 +109,7 @@ limitations under the License.
 							type: 'up',
 							tooltip: 'popout preview',
 							handler: function(){
-								window.open('../single?id=' + Ext.getCmp('submissionGrid').getSelection()[0].get('componentId'), "Preview");
+								window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('submissionGrid').getSelection()[0].get('componentId'), "Preview");
 							}
 						}
 					], 
@@ -183,7 +189,19 @@ limitations under the License.
 								name: 'submittedDts',
 								type:	'date',
 								dateFormat: 'c'
-							}
+							},
+							{
+								name: 'submitApproveDts',
+								type:	'date',
+								dateFormat: 'c',
+								mapping: function(data) {
+									if (data.approvalState === 'A') {
+										return data.approvedDts;
+									} else {
+										return data.submittedDts;
+									}
+								}
+							}							
 						],
 						proxy: {
 							type: 'ajax',
@@ -191,7 +209,7 @@ limitations under the License.
 						}
 					},
 					columns: [
-						{ text: 'name', dataIndex: 'name', flex: 1, minWidth: 200 },
+						{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200 },
 						{ text: 'Description', dataIndex: 'description', flex: 2, minWidth: 250,
 						 renderer: function(value){
 							return Ext.util.Format.stripTags(value);
@@ -211,7 +229,7 @@ limitations under the License.
 								return text;
 							}
 						},
-						{ text: 'Submission Date', dataIndex: 'submittedDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Submit/Approve Date', align: 'center', dataIndex: 'submitApproveDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Approval Email', dataIndex: 'notifyOfApprovalEmail', width: 200 },
 						{ text: 'Pending Change', align: 'center', dataIndex: 'statusOfPendingChange', width: 150 }	
 					],
@@ -504,7 +522,8 @@ limitations under the License.
 									}
 								}
 								if (record.get('approvalState') === 'P'){
-									tools.getComponent('tbUnsubmit').setHidden(false);
+									//tools.getComponent('tbUnsubmit').setHidden(false);
+									tools.getComponent('tbEdit').setDisabled(false);
 								}
 								if (record.get('approvalState') === 'N'){
 									tools.getComponent('tbDelete').setHidden(false);
@@ -544,7 +563,7 @@ limitations under the License.
 				var actionPreviewComponent = function(){
 					previewComponentWin.show();
 					var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-					previewContents.load('../single?id=' + componentId +'&hideNav=true');
+					previewContents.load('view.jsp?id=' + componentId +'&fullPage=true');
 					previewCheckButtons();					
 				};
 				

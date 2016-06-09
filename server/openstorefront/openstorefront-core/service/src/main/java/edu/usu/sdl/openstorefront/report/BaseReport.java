@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportOption;
@@ -38,6 +39,8 @@ public abstract class BaseReport
 
 	//Note: not thread-safe
 	protected SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z");
+	
+	private Branding branding;
 
 	public BaseReport(Report report)
 	{
@@ -91,6 +94,13 @@ public abstract class BaseReport
 		return baseReport;
 	}
 
+	public Branding getBranding() {
+		if (branding == null) {
+			branding = service.getBrandingService().getCurrentBrandingView();
+		}
+		return branding;
+	}
+	
 	/**
 	 * Generates the report; Controls the flow
 	 *

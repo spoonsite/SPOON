@@ -34,13 +34,13 @@ public class HTMLSanitizer
 		if (fieldData == null) {
 			return fieldData;
 		} else {
-			String safe = Jsoup.clean(fieldData.toString(), new Whitelist().preserveRelativeLinks(true)
+			String safe = Jsoup.clean(fieldData.toString(), new Whitelist().preserveRelativeLinks(true)					
 					.addTags(
-							"a", "b", "blockquote", "br", "caption", "cite", "code", "col",
+							"a", "base",  "b", "blockquote", "br", "caption", "cite", "code", "col",
 							"colgroup", "dd", "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6",
 							"i", "img", "li", "ol", "p", "pre", "q", "small", "strike", "strong",
 							"sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "u",
-							"ul", "label")
+							"ul", "label", "video", "audio", "source", "track")
 					.addAttributes("a", "href", "title")
 					.addAttributes("div", "ng-show", "class")
 					.addAttributes("p", "data-attributelabel", "class")
@@ -50,13 +50,18 @@ public class HTMLSanitizer
 					.addAttributes("img", "align", "alt", "height", "src", "title", "width")
 					.addAttributes("ol", "start", "type")
 					.addAttributes("q", "cite")
+					.addAttributes("video", "id", "width", "height", "controls", "preload", "autoplay", "loop", "muted", "src", "poster")
+					.addAttributes("audio", "id", "width", "height", "controls", "preload", "autoplay", "loop", "muted", "src")
+					.addAttributes("source", "src", "type", "media")
+					.addAttributes("track", "src", "label", "kind", "srclang", "default")
+					.addAttributes("q", "cite")
 					.addAttributes("table", "summary", "width")
 					.addAttributes("td", "abbr", "axis", "colspan", "rowspan", "width")
 					.addAttributes(
 							"th", "abbr", "axis", "colspan", "rowspan", "scope",
 							"width")
 					.addAttributes("ul", "type")
-					.addProtocols("a", "href", "ftp", "http", "https", "mailto")
+					//.addProtocols("a", "href", "ftp", "http", "https", "mailto")
 					.addProtocols("blockquote", "cite", "http", "https")
 					.addProtocols("cite", "cite", "http", "https")
 					.addProtocols("q", "cite", "http", "https")

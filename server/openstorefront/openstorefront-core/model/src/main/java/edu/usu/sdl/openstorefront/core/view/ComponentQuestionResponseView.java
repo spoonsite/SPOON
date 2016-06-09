@@ -33,6 +33,9 @@ public class ComponentQuestionResponseView
 
 	private String response;
 	private String responseId;
+	private String questionId;
+	private String componentId;
+	private String componentName;
 	private String organization;
 	private String username;
 	private String userType;
@@ -53,12 +56,12 @@ public class ComponentQuestionResponseView
 		tempView.setAnsweredDate(response.getUpdateDts());
 		tempView.setOrganization(response.getOrganization());
 		tempView.setResponse(response.getResponse());
+		tempView.setQuestionId(response.getQuestionId());
+		tempView.setComponentId(response.getComponentId());
+		tempView.setComponentName(service.getComponentService().getComponentName(response.getComponentId()));		
 		tempView.setActiveStatus(response.getActiveStatus());
 		UserTypeCode typeCode = service.getLookupService().getLookupEnity(UserTypeCode.class, response.getUserTypeCode());
-		if (typeCode == null) {
-			tempView.setUserType(null);
-			tempView.setUserTypeCode(null);
-		} else {
+		if (typeCode != null) {
 			tempView.setUserTypeCode(typeCode.getCode());
 			tempView.setUserType(typeCode.getDescription());
 		}
@@ -119,65 +122,41 @@ public class ComponentQuestionResponseView
 		this.userTypeCode = userTypeCode;
 	}
 
-	/**
-	 * @return the updateDts
-	 */
 	public Date getUpdateDts()
 	{
 		return updateDts;
 	}
 
-	/**
-	 * @param updateDts the updateDts to set
-	 */
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
 	}
 
-	/**
-	 * @return the responseId
-	 */
 	public String getResponseId()
 	{
 		return responseId;
 	}
 
-	/**
-	 * @param responseId the responseId to set
-	 */
 	public void setResponseId(String responseId)
 	{
 		this.responseId = responseId;
 	}
 
-	/**
-	 * @return the organization
-	 */
 	public String getOrganization()
 	{
 		return organization;
 	}
 
-	/**
-	 * @param organization the organization to set
-	 */
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;
 	}
 
-	/**
-	 * @return the userType
-	 */
 	public String getUserType()
 	{
 		return userType;
 	}
 
-	/**
-	 * @param userType the userType to set
-	 */
 	public void setUserType(String userType)
 	{
 		this.userType = userType;
@@ -191,6 +170,36 @@ public class ComponentQuestionResponseView
 	public void setActiveStatus(String activeStatus)
 	{
 		this.activeStatus = activeStatus;
+	}
+
+	public String getQuestionId()
+	{
+		return questionId;
+	}
+
+	public void setQuestionId(String questionId)
+	{
+		this.questionId = questionId;
+	}
+
+	public String getComponentId()
+	{
+		return componentId;
+	}
+
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
+	}
+
+	public String getComponentName()
+	{
+		return componentName;
+	}
+
+	public void setComponentName(String componentName)
+	{
+		this.componentName = componentName;
 	}
 
 }

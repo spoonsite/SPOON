@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Message;
-import org.codemonkey.simplejavamail.Email;
+import org.codemonkey.simplejavamail.email.Email;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 

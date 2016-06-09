@@ -91,6 +91,8 @@ import edu.usu.sdl.openstorefront.core.view.TagView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.service.io.export.DescribeExport;
+import edu.usu.sdl.openstorefront.service.io.export.Exporter;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
@@ -481,6 +483,35 @@ public class ComponentRESTResource
 			return response.build();
 		}
 	}
+	
+	@POST
+	@APIDescription("Exports a set of components.  In describe record format.")
+	@RequireAdmin
+	@Produces({MediaType.WILDCARD})
+	@DataType(ComponentAll.class)
+	@Path("/export/describe")
+	public Response getComponentExportDescribe(
+			@FormParam("id")
+			@RequiredParam List<String> ids
+	)
+	{
+		List<ComponentAll> fullComponents = new ArrayList<>();
+		for (String componentId : ids) {
+			ComponentAll componentAll = service.getComponentService().getFullComponent(componentId);
+			fullComponents.add(componentAll);
+		}
+		
+		Exporter exporter =  new DescribeExport();
+		File exportFile = exporter.export(fullComponents);
+		
+		Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
+			Files.copy(exportFile.toPath(), output);
+		});		
+		response.header("Content-Type", "application/zip");
+		response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.zip\"");
+		return response.build();
+	}	
+	
 
 	@GET
 	@APIDescription("Get a list of components tags")
@@ -811,11 +842,11 @@ public class ComponentRESTResource
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		Response response = checkComponentOwner(componentId, true);
+		Response response = checkComponentOwner(componentId, false);
 		if (response != null) {
 			return response;
 		}
-
+		
 		service.getComponentService().cascadeDeleteOfComponent(componentId);
 		return Response.ok().build();
 	}
@@ -884,6 +915,7 @@ public class ComponentRESTResource
 	// </editor-fold>
 	
 	// <editor-fold defaultstate="collapsed" desc="Version history">
+
 	@GET
 	@APIDescription("Gets all version history for a component")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1467,42 +1499,61 @@ public class ComponentRESTResource
 	@DELETE
 	@APIDescription("Remove a contact from the component")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/contacts/{contactId}")
+	@Path("/{id}/contacts/{componentContactId}")
 	public Response deleteComponentContact(
 			@PathParam("id")
 			@RequiredParam String componentId,
-			@PathParam("contactId")
-			@RequiredParam String contactId)
+			@PathParam("componentContactId")
+			@RequiredParam String componentContactId)
 	{
 		Response response = checkComponentOwner(componentId);
 		if (response != null) {
 			return response;
 		}
 
-		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, contactId);
+		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, componentContactId);
 		if (componentContact != null) {
 			checkBaseComponentBelongsToComponent(componentContact, componentId);
-			service.getComponentService().deactivateBaseComponent(ComponentContact.class, contactId);
+			service.getComponentService().deactivateBaseComponent(ComponentContact.class, componentContactId);
 		}
 		return Response.ok().build();
 	}
+	
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete a contact from the component")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/contacts/{componentContactId}/force")
+	public Response hardDeleteComponentContact(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("componentContactId")
+			@RequiredParam String componentContactId)
+	{	
+		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, componentContactId);
+		if (componentContact != null) {
+			checkBaseComponentBelongsToComponent(componentContact, componentId);
+			service.getComponentService().deleteBaseComponent(ComponentContact.class, componentContactId);
+		}
+		return Response.ok().build();
+	}	
 
 	@PUT
 	@RequireAdmin
 	@APIDescription("Activate a contact on the component")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}/contacts/{contactId}/activate")
+	@Path("/{id}/contacts/{componentContactId}/activate")
 	public Response activateComponentContact(
 			@PathParam("id")
 			@RequiredParam String componentId,
-			@PathParam("contactId")
-			@RequiredParam String contactId)
+			@PathParam("componentContactId")
+			@RequiredParam String componentContactId)
 	{
-		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, contactId);
+		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, componentContactId);
 		if (componentContact != null) {
 			checkBaseComponentBelongsToComponent(componentContact, componentId);
-			service.getComponentService().activateBaseComponent(ComponentContact.class, contactId);
-			componentContact = service.getPersistenceService().findById(ComponentContact.class, contactId);
+			service.getComponentService().activateBaseComponent(ComponentContact.class, componentContactId);
+			componentContact = service.getPersistenceService().findById(ComponentContact.class, componentContactId);
 		}
 		return sendSingleEntityResponse(componentContact);
 	}
@@ -1529,12 +1580,12 @@ public class ComponentRESTResource
 	@PUT
 	@APIDescription("Update a contact associated to the component")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{id}/contacts/{contactId}")
+	@Path("/{id}/contacts/{componentContactId}")
 	public Response updateComponentContact(
 			@PathParam("id")
 			@RequiredParam String componentId,
-			@PathParam("contactId")
-			@RequiredParam String contactId,
+			@PathParam("componentContactId")
+			@RequiredParam String componentContactId,
 			ComponentContact contact)
 	{
 		Response response = checkComponentOwner(componentId);
@@ -1543,11 +1594,11 @@ public class ComponentRESTResource
 		}
 
 		response = Response.status(Response.Status.NOT_FOUND).build();
-		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, contactId);
+		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, componentContactId);
 		if (componentContact != null) {
 			checkBaseComponentBelongsToComponent(componentContact, componentId);
 			contact.setComponentId(componentId);
-			contact.setContactId(contactId);
+			contact.setComponentContactId(componentContactId);
 			response = saveContact(contact, false);
 		}
 		return response;

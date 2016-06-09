@@ -24,6 +24,7 @@ limitations under the License.
 			
 			
 			var contents = Ext.create('OSF.ux.IFrame', {
+				frameName: 'toolFrame',
 				src: ''
 			});
 			
@@ -37,44 +38,48 @@ limitations under the License.
 			
 			var pageMap = [];
 			pageMap['Articles'] = '/openstorefront/admin?tool=Articles';
-			pageMap['Attributes'] = '/openstorefront/admin?tool=Attributes';
-			pageMap['Dashboard'] = 'Router.action?page=admin/adminDashboard.jsp';
-			pageMap['Entries'] = 'Router.action?page=admin/data/components.jsp';
-			pageMap['EntriesOld'] = '/openstorefront/admin?tool=Entries';
-			pageMap['EntryType'] = 'Router.action?page=admin/data/entryType.jsp';
-			pageMap['Highlights'] = '/openstorefront/admin?tool=Highlights';
-			pageMap['Integrations'] = '/openstorefront/admin?tool=Integrations';
+			pageMap['Attributes'] = 'Router.action?page=admin/data/attributes.jsp';
+			pageMap['Dashboard'] = 'Router.action?page=shared/dashboard.jsp';
+			pageMap['Contacts'] = 'Router.action?page=admin/data/contacts.jsp';
+			pageMap['Entries'] = 'Router.action?page=admin/data/components.jsp';			
+			pageMap['Entry-Types'] = 'Router.action?page=admin/data/entryType.jsp';
+			pageMap['Highlights'] = 'Router.action?page=admin/data/highlights.jsp';
+			pageMap['Integrations'] = 'Router.action?page=admin/data/integrations.jsp';
 			pageMap['Imports'] = 'Router.action?page=admin/data/imports.jsp';
 			pageMap['Lookups'] = 'Router.action?page=admin/data/lookup.jsp';
 			pageMap['Media'] = 'Router.action?page=admin/data/media.jsp';
-			pageMap['Organizations'] = 'Router.action?page=admin/data/organizations.jsp';
-			pageMap['Questions'] = '/openstorefront/admin?tool=Questions';
-			pageMap['Reviews'] = '/openstorefront/admin?tool=Reviews';
-			pageMap['Tags'] = '/openstorefront/admin?tool=Tags';
-			pageMap['UserProfiles'] = '/openstorefront/admin?tool=User%20Profiles';
+			pageMap['Organizations'] = 'Router.action?page=admin/data/organizations.jsp';	
+			pageMap['Questions'] = 'Router.action?page=admin/data/user-data/questions.jsp';
+			pageMap['Reviews'] = 'Router.action?page=admin/data/user-data/reviews.jsp';
+			pageMap['Watches'] = 'Router.action?page=admin/data/user-data/watches.jsp';
+			pageMap['Tags'] = 'Router.action?page=admin/data/user-data/tags.jsp';
+			pageMap['User-Profiles'] = 'Router.action?page=admin/data/user-data/userProfiles.jsp';		
 			pageMap['Alerts'] = 'Router.action?page=admin/application/alerts.jsp';
 			pageMap['Branding'] = 'Router.action?page=admin/application/branding.jsp';
-			pageMap['Jobs'] = '/openstorefront/admin?tool=Jobs';
+			pageMap['Jobs'] = 'Router.action?page=admin/application/jobs.jsp';
 			pageMap['Reports'] = 'Router.action?page=shared/reports.jsp';
-			pageMap['System'] = '/openstorefront/admin?tool=System';
+			pageMap['System'] = 'Router.action?page=admin/application/system.jsp';
 			pageMap['Tracking'] = 'Router.action?page=admin/application/tracking.jsp';
 			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
+			pageMap['Entry-Template'] = 'Router.action?page=admin/data/entryTemplate.jsp';
+			pageMap['Searches'] = 'Router.action?page=admin/data/searches.jsp';
+			pageMap['Feedback'] = 'Router.action?page=admin/application/feedback.jsp';
 			
 
-			//Data Menu
+		//Data Menu
 			var dataMenu = [];
-			dataMenu.push({
-				text: 'Articles (Deprecated)',
-				handler: function(){
-					actionLoadContent('Articles');
-				}
-			});			
 			dataMenu.push({
 				text: 'Attributes',
 				handler: function(){
 					actionLoadContent('Attributes');
 				}
 			});
+			dataMenu.push({
+				text: 'Contacts',
+				handler: function(){
+					actionLoadContent('Contacts');
+				}
+			});			
 			dataMenu.push({
 				text: 'Entries',
 				handler: function(){
@@ -84,9 +89,15 @@ limitations under the License.
 			dataMenu.push({
 				text: 'Entry Types',
 				handler: function(){
-					actionLoadContent('EntryType');
+					actionLoadContent('Entry-Types');
 				}
 			});
+			dataMenu.push({
+				text: 'Entry Templates',
+				handler: function(){
+					actionLoadContent('Entry-Template');
+				}
+			});			
 			dataMenu.push({
 				text: 'Highlights',
 				handler: function(){
@@ -122,7 +133,13 @@ limitations under the License.
 				handler: function(){
 					actionLoadContent('Organizations');
 				}				
-			});			
+			});	
+			dataMenu.push({
+				text: 'Searches',
+				handler: function(){
+					actionLoadContent('Searches');
+				}				
+			});	
 			dataMenu.push({
 				text: 'User Data',
 				menu: {
@@ -140,6 +157,12 @@ limitations under the License.
 							}							
 						},
 						{
+							text: 'Watches',
+							handler: function(){
+								actionLoadContent('Watches');
+							}							
+						},						
+						{
 							text: 'Tags',
 							handler: function(){
 								actionLoadContent('Tags');
@@ -148,7 +171,7 @@ limitations under the License.
 						{
 							text: 'User Profiles',
 							handler: function(){
-								actionLoadContent('UserProfiles');
+								actionLoadContent('User-Profiles');
 							}							
 						}
 					]
@@ -161,21 +184,31 @@ limitations under the License.
 				handler: function(){
 					actionLoadContent('Alerts');
 				}
-			});
-			/**
+			});			
 			alertMenu.push({
 				text: 'Branding',
 				handler: function(){
 					actionLoadContent('Branding');
 				}				
-			});
-			**/
+			});	
+			alertMenu.push({
+				text: 'Feedback',
+				handler: function(){
+					actionLoadContent('Feedback');
+				}				
+			});			
 			alertMenu.push({
 				text: 'Jobs',
 				handler: function(){
 					actionLoadContent('Jobs');
 				}				
 			});
+			alertMenu.push({
+				text: 'Messages',
+				handler: function(){
+					actionLoadContent('Messages');
+				}				
+			});			
 			alertMenu.push({
 				text: 'Reports',
 				handler: function(){
@@ -195,12 +228,6 @@ limitations under the License.
 				}				
 			});			
 			alertMenu.push({
-				text: 'Messages',
-				handler: function(){
-					actionLoadContent('Messages');
-				}				
-			});
-			alertMenu.push({
 				xtype: 'menuseparator'				
 			});
 			alertMenu.push({
@@ -215,11 +242,15 @@ limitations under the License.
 			var feedbackWin = Ext.create('OSF.component.FeedbackWindow',{				
 			});
 
+			var helpWin = Ext.create('OSF.component.HelpWindow', {				
+			});	
+
 			Ext.create('Ext.container.Viewport', {
 				layout: 'border',
 				items: [{
 					xtype: 'panel',
-					region: 'north',					
+					region: 'north',
+					id: 'topNavPanel',
 					border: false,
 					//margin: '0 0 5 0',
 					cls: 'border_accent',
@@ -230,14 +261,15 @@ limitations under the License.
 							cls: 'nav-back-color',
 							items: [
 								{
-									xtype: 'image',								
+									xtype: 'image',																	
 									height: 53,
+									cls: 'linkItem',
 									title: 'Go back to Home Page',
-									src: 'images/di2elogo-sm.png',
+									src: '${branding.secondaryLogoUrl}',
 									listeners: {
 										el: {
 											click: function() {
-												window.location.replace('../');
+												window.location.replace('index.jsp');
 											}
 										}
 									}
@@ -248,7 +280,8 @@ limitations under the License.
 								{
 									xtype: 'tbtext',
 									text: 'Admin Tools',
-									style: 'text-align: center; font-size: 35px; color: white;'
+									id: 'titleTextId',
+									cls: 'page-title'
 								},
 								{
 									xtype: 'tbfill'
@@ -291,8 +324,9 @@ limitations under the License.
 											{
 												text: '<b>Help</b>',
 												iconCls: 'fa fa-question-circle',
-												href: '../help',
-												hrefTarget: '_blank'
+												handler: function() {
+													helpWin.show();
+												}
 											},
 											{
 												text: '<b>Feedback / issues</b>',
@@ -374,7 +408,16 @@ limitations under the License.
 						contentPanel
 					]
 				}]
-			});			
+			});		
+			
+			CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
+				var branding = Ext.decode(response.responseText);
+				if (branding.securityBannerText && branding.securityBannerText !== '') {
+					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
+						securityBannerText: branding.securityBannerText
+					}), 0);
+				}
+			});				
 
 			CoreService.usersevice.getCurrentUser().then(function(response, opts){
 				var usercontext = Ext.decode(response.responseText);
@@ -390,12 +433,13 @@ limitations under the License.
 
 			var actionLoadContent = function(key) {
 				var url = pageMap[key];
-				if (url){					
+				if (url){				
+					Ext.getCmp('titleTextId').setText('Admin Tools - ' + key.replace('-', ' '));
 					contents.load(url);				
 					Ext.util.History.add(key);				
 				} else {
 					Ext.toast("Page key Not Found");
-					contents.load('Router.action?page=admin/adminDashboard.jsp');	
+					contents.load(pageMap['Dashboard']);	
 				}
 			};
 			

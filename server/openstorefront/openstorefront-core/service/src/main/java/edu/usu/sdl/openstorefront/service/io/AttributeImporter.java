@@ -20,8 +20,8 @@ import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
-import edu.usu.sdl.openstorefront.service.io.parser.BaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
+import edu.usu.sdl.openstorefront.service.io.parser.OldBaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
 import java.io.File;
 import java.io.FileInputStream;
@@ -96,9 +96,9 @@ public class AttributeImporter
 		SVCV4("svcv-4_export.csv", new SvcAttributeParser());
 
 		private final String filename;
-		private final BaseAttributeParser parser;
+		private final OldBaseAttributeParser parser;
 
-		private FileMap(String filename, BaseAttributeParser parser)
+		private FileMap(String filename, OldBaseAttributeParser parser)
 		{
 			this.filename = filename;
 			this.parser = parser;
@@ -109,7 +109,7 @@ public class AttributeImporter
 			return filename;
 		}
 
-		public BaseAttributeParser getParser()
+		public OldBaseAttributeParser getParser()
 		{
 			return parser;
 		}

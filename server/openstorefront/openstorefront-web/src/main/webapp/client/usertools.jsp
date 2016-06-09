@@ -37,45 +37,65 @@ limitations under the License.
 			});
 			
 			var pageMap = [];
-			pageMap['UserProfile'] = 'Router.action?page=user/userProfile.jsp';
-			pageMap['Watches'] = '/openstorefront/tools?tool=Watches';
-			pageMap['Reviews'] = '/openstorefront/tools?tool=Component%20Reviews';
+			pageMap['Dashboard'] = 'Router.action?page=shared/dashboard.jsp';
+			pageMap['User-Profile'] = 'Router.action?page=user/userProfile.jsp';
+			pageMap['Watches'] = 'Router.action?page=user/watches.jsp';
+			pageMap['Reviews'] = 'Router.action?page=user/reviews.jsp';
+			pageMap['Questions'] = 'Router.action?page=user/questions.jsp';
 			pageMap['Submissions'] = 'Router.action?page=user/submissionManagement.jsp';
 			pageMap['Reports'] = 'Router.action?page=shared/reports.jsp';
+			pageMap['Searches'] = 'Router.action?page=user/searches.jsp';
 
 
 			//Data Menu
 			var toolsMenu = [];
 			toolsMenu.push({
-				text: 'Watches',
+				text: 'Questions',
 				handler: function(){
-					actionLoadContent('Watches');
+					actionLoadContent('Questions');
 				}
+			});				
+			toolsMenu.push({
+				text: 'Reports',
+				handler: function(){
+					actionLoadContent('Reports');
+				}			
 			});
 			toolsMenu.push({
 				text: 'Reviews',
 				handler: function(){
 					actionLoadContent('Reviews');
-				}
+				}				
+			});
+			toolsMenu.push({
+				text: 'Searches',
+				handler: function(){
+					actionLoadContent('Searches');
+				}				
 			});			
 			toolsMenu.push({
-				text: 'Reports',
+				text: 'Watches',
 				handler: function(){
-					actionLoadContent('Reports');
-				}
+					actionLoadContent('Watches');
+				}			
 			});
+			
 			
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	
 
 			var feedbackWin = Ext.create('OSF.component.FeedbackWindow',{				
 			});
+			
+			var helpWin = Ext.create('OSF.component.HelpWindow', {				
+			});			
 
 			Ext.create('Ext.container.Viewport', {
 				layout: 'border',
 				items: [{
 					xtype: 'panel',
-					region: 'north',					
+					region: 'north',
+					id: 'topNavPanel',
 					border: false,
 					//margin: '0 0 5 0',
 					cls: 'border_accent',
@@ -88,8 +108,9 @@ limitations under the License.
 								{
 									xtype: 'image',
 									height: 53,
+									cls: 'linkItem',
 									title: 'Go back to Home Page',
-									src: 'images/di2elogo-sm.png',
+									src: '${branding.secondaryLogoUrl}',
 									listeners: {
 										el: {
 											click: function() {
@@ -103,8 +124,9 @@ limitations under the License.
 								},
 								{
 									xtype: 'tbtext',
-									text: 'User Tools',
-									style: 'text-align: center; font-size: 35px; color: white;'
+									id: 'titleTextId',
+									text: 'User Tools',									
+									cls: 'page-title'
 								},
 								{
 									xtype: 'tbfill'
@@ -149,8 +171,9 @@ limitations under the License.
 											{
 												text: '<b>Help</b>',
 												iconCls: 'fa fa-question-circle',
-												href: '../help',
-												hrefTarget: '_blank'
+												handler: function() {
+													helpWin.show();
+												}
 											},
 											{
 												text: '<b>Feedback / issues</b>',
@@ -189,15 +212,23 @@ limitations under the License.
 							xtype: 'toolbar',														
 							items:[
 								{
+									text: 'Dashboard',
+									scale   : 'large',
+									iconCls: 'fa fa-2x fa-home',
+									handler: function(){
+										actionLoadContent('Dashboard');
+									}									
+								},	
+								{
+									xtype: 'tbseparator'
+								},										
+								{
 									text: 'Profile',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-user',
 									handler: function(){
-										actionLoadContent('UserProfile');
+										actionLoadContent('User-Profile');
 									}									
-								},
-								{
-									xtype: 'tbseparator'
 								},
 								{
 									text: 'Submissions',
@@ -206,7 +237,10 @@ limitations under the License.
 									handler: function(){
 										actionLoadContent('Submissions');
 									}									
-								},								
+								},
+								{							
+									xtype: 'tbseparator'
+								},										
 								{
 									text: 'Tools',
 									scale   : 'large',
@@ -229,6 +263,15 @@ limitations under the License.
 				}]
 			});
 			
+			CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
+				var branding = Ext.decode(response.responseText);
+				if (branding.securityBannerText && branding.securityBannerText !== '') {
+					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
+						securityBannerText: branding.securityBannerText
+					}), 0);
+				}
+			});		
+			
 			CoreService.usersevice.getCurrentUser().then(function(response, opts){
 				var usercontext = Ext.decode(response.responseText);
 				
@@ -247,12 +290,13 @@ limitations under the License.
 			
 			var actionLoadContent = function(key) {
 				var url = pageMap[key];
-				if (url){					
+				if (url){
+					Ext.getCmp('titleTextId').setText('User Tools - ' + key.replace('-', ' '));
 					contents.load(url);				
 					Ext.util.History.add(key);				
 				} else {
 					Ext.toast("Page key Not Found");
-					contents.load('Router.action?page=user/userProfile.jsp');	
+					contents.load(pageMap['Dashboard']);	
 				}
 			};
 			
@@ -260,7 +304,7 @@ limitations under the License.
 			if (historyToken) {
 				actionLoadContent(historyToken);
 			} else {	
-				actionLoadContent('UserProfile');
+				actionLoadContent('Dashboard');
 			}	
 			
 		});	

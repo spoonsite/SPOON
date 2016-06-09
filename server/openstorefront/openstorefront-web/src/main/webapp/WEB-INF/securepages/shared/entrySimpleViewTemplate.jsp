@@ -1,3 +1,18 @@
+<%--
+Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+--%>
 
 <style>
 	.quickView {
@@ -104,11 +119,13 @@
 			<h3 class="quickView">Relationships</h3>
 			<table class="quickView-table" border="1">	
 				<tr>
+					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Owner Entry</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Type</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Related Entry</th>
 				</tr>		
 				<tpl for="relationships">
 					<tr>
+						<td class="quickView-tableall">{ownerComponentName}</td>
 						<td class="quickView-tableall">{relationshipType}</td>
 						<td class="quickView-tableall">{targetComponentName}</td>
 					</tr>			
@@ -191,7 +208,7 @@
 				<tpl for="evaluation.evaluationSections">			
 					<tr>
 						<td class="quickView-tableall">{name}</td>
-						<td class="quickView-tableall">{actualScore}</td>
+						<td class="quickView-tableall" style="text-align: center;">{actualScore}</td>
 					</tr>
 				</tpl>
 			</table>		

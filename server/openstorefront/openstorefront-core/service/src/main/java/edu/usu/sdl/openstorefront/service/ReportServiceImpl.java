@@ -51,6 +51,8 @@ public class ReportServiceImpl
 
 	private static final Logger log = Logger.getLogger(OrientPersistenceService.class.getName());
 
+	private static final int MAX_RETRIES = 3;
+	
 	@Override
 	public Report queueReport(Report report)
 	{
@@ -89,11 +91,22 @@ public class ReportServiceImpl
 			BaseReport reportGenerator = BaseReport.getReport(report);
 			reportGenerator.generateReport();
 
-			managedReport = persistenceService.findById(Report.class, report.getReportId());
-			managedReport.setRunStatus(RunStatus.COMPLETE);
-			managedReport.setUpdateDts(TimeUtil.currentDate());
-			managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-			persistenceService.persist(managedReport);
+			//retry if out of date (for some reason DB may not be in sync at this point...find pulls an old record; cache delay?)
+			for (int i=0; i<MAX_RETRIES; i++) {
+				try 
+				{
+					managedReport = persistenceService.findById(Report.class, report.getReportId());
+					managedReport.setRunStatus(RunStatus.COMPLETE);
+					managedReport.setUpdateDts(TimeUtil.currentDate());
+					managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
+					persistenceService.persist(managedReport);
+					break;
+				} catch (Exception e) {
+					if (i == (MAX_RETRIES-1)) {
+						throw e;
+					}
+				}
+			}
 
 			if (OpenStorefrontConstant.ANONYMOUS_USER.equals(managedReport.getCreateUser()) == false) {
 				NotificationEvent notificationEvent = new NotificationEvent();

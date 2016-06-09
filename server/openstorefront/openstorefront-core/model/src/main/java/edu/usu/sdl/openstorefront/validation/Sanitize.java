@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.validation;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,8 +29,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@APIDescription("Cleans up input")
 public @interface Sanitize
 {
 
-	Class<? extends Sanitizer> value();
+	Class<? extends Sanitizer>[] value();
 }

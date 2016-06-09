@@ -16,7 +16,7 @@
 package org.atmosphere.socketio;
 
 /**
- * @author Sebastien Dionne  : sebastien.dionne@gmail.com
+ * @author Sebastien Dionne : sebastien.dionne@gmail.com
  */
 public interface SocketIOSessionManager extends SocketIOSessionFactory {
 
@@ -49,10 +49,10 @@ public interface SocketIOSessionManager extends SocketIOSessionFactory {
      * @return
      */
     long getRequestSuspendTime();
-    
+
     /**
      * This will destroy the session manager and release resources.
      */
-    void destory();    
-    
+    void destroy();
+
 }

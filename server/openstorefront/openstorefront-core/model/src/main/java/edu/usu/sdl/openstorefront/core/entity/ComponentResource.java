@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
-import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.io.File;
@@ -37,7 +37,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author jlaw
  */
-@APIDescription("Resource for a componet")
+@APIDescription("Resource for a component")
 public class ComponentResource
 		extends BaseComponent
 {
@@ -72,14 +72,14 @@ public class ComponentResource
 	private String link;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_DESCRIPTION)
-	@Sanitize(BasicHTMLSanitizer.class)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
+	@Sanitize(HTMLSanitizer.class)
 	private String description;
 
 	@ConsumeField
-	@APIDescription("This is used to indentify if a resource require login or CAC")
+	@APIDescription("This is used to indentify if a resource requires a login or CAC")
 	private Boolean restricted;
-
+	
 	public ComponentResource()
 	{
 	}
@@ -117,14 +117,17 @@ public class ComponentResource
 		this.setResourceType(resource.getResourceType());
 		this.setRestricted(resource.getRestricted());
 
+		
 	}
+	
 
 	@Override
 	public int customCompareTo(BaseComponent o)
 	{
-		int value = ReflectionUtil.compareObjects(getFileName(), ((ComponentResource) o).getFileName());
+		ComponentResource componentResource = ((ComponentResource) o);
+		int value = ReflectionUtil.compareObjects(getFileName(), componentResource.getFileName());
 		if (value == 0) {
-			value = ReflectionUtil.compareObjects(getMimeType(), ((ComponentResource) o).getMimeType());
+			value = ReflectionUtil.compareObjects(getMimeType(), componentResource.getMimeType());
 		}
 		return value;
 	}

@@ -25,12 +25,13 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.codemonkey.simplejavamail.Email;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  *
@@ -99,6 +100,38 @@ public class UserDataAlertMessageGenerator
 			}
 		}
 
+		if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnContactUpdate())) {
+			Contact contactExample = new Contact();
+			contactExample.setActiveStatus(Contact.ACTIVE_STATUS);
+			
+			Contact contactSartExample = new Contact();
+			contactSartExample.setUpdateDts(checkDate);
+
+			QueryByExample queryByExample = new QueryByExample(contactExample);
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
+			specialOperatorModel.setExample(contactSartExample);
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+			List<Contact> contacts = serviceProxy.getPersistenceService().queryByExample(Contact.class, queryByExample);
+			contacts = contacts.stream()
+					.filter(review -> Convert.toBoolean(review.getAdminModified()) == false)
+					.collect(Collectors.toList());
+
+			if (!contacts.isEmpty()) {
+				message.append("<b>Contact</b> modified: ").append(contacts.size()).append("<hr>");
+				message.append("<ul>");
+			}
+			for (Contact contact : contacts) {
+				message.append(" <li>'").append(contact.getFirstName()).append(", ").append(contact.getLastName())
+						.append("' modified by ").append(contact.getUpdateUser())
+						.append("</li>");
+			}
+			if (!contacts.isEmpty()) {
+				message.append("</ul><br>");
+			}
+		}
+		
 		if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnReviews())) {
 			ComponentReview componentReviewExample = new ComponentReview();
 			componentReviewExample.setActiveStatus(ComponentReview.ACTIVE_STATUS);
@@ -130,7 +163,7 @@ public class UserDataAlertMessageGenerator
 			if (!reviews.isEmpty()) {
 				message.append("</ul><br>");
 			}
-		}
+		}			
 
 		if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnQuestions())) {
 			ComponentQuestion componentQuestionExample = new ComponentQuestion();

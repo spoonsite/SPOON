@@ -19,18 +19,17 @@ Ext.define('OSF.component.SubmissionPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.SubmissionPanel',
 	layout: 'border',
-	formWarningMessage: 'This form will submit a component to the DI2E Framework PMO for review and consideration.' +
-						'A DI2E Storefront Manager will contact you regarding your submission.' +
-						'For help, contact <a href="mailto:helpdesk@di2e.net">helpdesk@di2e.net</a>',
-
+	formWarningMessage: '',
+	
 	submitForReviewUrl: function (componentId){
 		return '../api/v1/resource/componentsubmissions/' + componentId+ '/submit';
 	},
 	
 	initComponent: function () {
 		this.callParent();
-		
+	
 		var submissionPanel = this;
+		submissionPanel.hideSecurityMarkings = true;		
 				
 		submissionPanel.cancelSubmissionHandler = function(promptForSave) {
 			
@@ -213,11 +212,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 						{
 							xtype: 'panel',
 							flex: 1,
-							html: '<div style="padding: 10px 0px 10px 10px;">' + submissionPanel.formWarningMessage  + '</div>'
+							html: submissionPanel.formWarningMessage ? '<div style="padding: 10px 0px 10px 10px;">' + submissionPanel.formWarningMessage  + '</div>' : ''
 						}
-					]
-					
-				}							
+					]					
+				}
 			]
 		});
 		
@@ -282,6 +280,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 			var optionalAttributes = [];
 			Ext.Array.each(allAttributes, function(attribute){
 				if (!attribute.hideOnSubmission) {
+					// This is slightly difficult to follow,
+					// but the basic gist is that we must check two lists to decide which attributes to show -
+					// requiredRestrictions is a list of types for which the attribute is required
+					// associatedComponentTypes is a list of types for which the attribute is optional
+					// but if associatedComponentTypes is empty, it is optional for all.
 					if (attribute.requiredFlg) {
 						if (attribute.requiredRestrictions) {
 							var found = Ext.Array.findBy(attribute.requiredRestrictions, function(item){
@@ -294,11 +297,56 @@ Ext.define('OSF.component.SubmissionPanel', {
 							if (found) {
 								requiredAttributes.push(attribute);
 							}
+							else {
+								// --- Checking for Optional
+								//
+								// In this case, the 'Required' Flag is set but the entry we are dealing with is not an entry
+								// type listed in the requiredRestrictions, i.e. not required for this entry type.
+								// As a result, we need to check if it's allowed as an optional and then add it.
+								// This is the same logic as seen below when the 'Required' flag is off.
+								if (attribute.associatedComponentTypes) {
+									var reqOptFound = Ext.Array.findBy(attribute.associatedComponentTypes, function(item) {
+										if (item.componentType === componentType) {
+											return true;
+										} else {
+											return false;
+										}
+									});
+									if (reqOptFound) {
+										optionalAttributes.push(attribute);
+									}
+								}
+								else {
+									// We have an empty list of associatedComponentTypes, therefore this attribute is
+									// allowed for all entry types.
+									optionalAttributes.push(attribute);
+								}
+								// 
+								// --- End Checking for Optional
+							}
 						} else {
+							// No list of types required for, so it's required for all. Add it.
 							requiredAttributes.push(attribute);
 						}
 					} else {
-						optionalAttributes.push(attribute);
+						if (attribute.associatedComponentTypes) {
+							var optFound = Ext.Array.findBy(attribute.associatedComponentTypes, function(item){
+								if (item.componentType === componentType) {
+									return true;
+								} else {
+									return false;
+								}
+							});
+							if (optFound) {
+								// This entry type allows this attribute.
+								optionalAttributes.push(attribute);
+							}
+						}
+						else {
+							// We have an empty list of associatedComponentTypes, therefore this attribute is
+							// allowed for all entry types.
+							optionalAttributes.push(attribute);
+						}
 					}
 				}
 			});
@@ -467,7 +515,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 					valueField: 'description',
 					editable: true,
 					storeConfig: {
-						url: '../api/v1/resource/organizations/lookup'
+						url: '../api/v1/resource/organizations/lookup',
+						sorters: [{
+							property: 'description',
+							direction: 'ASC'
+						}]
+
 					}
 				}),				
 				{
@@ -482,10 +535,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 					name: 'description',
 					width: '100%',
 					height: 300,
-					maxLength: 32000,
-					emptyText: 'Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.' + '<br><br>Include an easy to read description of the product, focusing on what it is and what it does.',
+					maxLength: 65536,
+					emptyText: (submissionPanel.userInputWarning ? submissionPanel.userInputWarning : '' ) + '<br><br>Include an easy to read description of the product, focusing on what it is and what it does.',
 					tinyMCEConfig: CoreUtil.tinymceConfig()
 				},
+				Ext.create('OSF.component.SecurityComboBox', {	
+					itemId: 'securityMarkings',
+					hidden: true
+				}),				
 				{
 					xtype: 'panel',
 					itemId: 'requiredAttributePanel',
@@ -696,10 +753,15 @@ Ext.define('OSF.component.SubmissionPanel', {
 						items: [
 							{
 								xtype: 'hidden',
+								name: 'componentContactId'
+							},							
+							{
+								xtype: 'hidden',
 								name: 'contactId'
 							},
 							Ext.create('OSF.component.StandardComboBox', {
-								name: 'contactType',									
+								name: 'contactType',	
+								itemId: 'contactType',
 								allowBlank: false,								
 								margin: '0 0 5 0',
 								editable: false,
@@ -747,9 +809,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 								},
 								listeners: {
 									select: function(combo, record, opts) {
+										record.set('componentContactId', null);
 										record.set('contactId', null);
+										var contactType =  combo.up('form').getComponent('contactType').getValue();
 										combo.up('form').reset();
 										combo.up('form').loadRecord(record);
+										combo.up('form').getComponent('contactType').setValue(contactType);
 									}
 								}
 							}),							
@@ -775,7 +840,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								allowBlank: false,	
 								maxLength: '120',
 								name: 'phone'
-							}																
+							},
+							Ext.create('OSF.component.SecurityComboBox', {	
+								itemId: 'securityMarkings',
+								hidden: submissionPanel.hideSecurityMarkings
+							})							
 						],
 						dockedItems: [
 							{
@@ -794,8 +863,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 											var method = 'POST';
 											var update = '';
-											if (data.contactId) {
-												update = '/' + data.contactId;
+											if (data.componentContactId) {
+												update = '/' + data.componentContactId;
 												method = 'PUT';
 											}
 
@@ -842,7 +911,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add External Link',
 				width: '50%',
-				height: 310,
+				height: 360,
 				layout: 'fit',
 				items: [
 					{
@@ -935,8 +1004,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 								name: 'file',
 								listeners: {
 									change: CoreUtil.handleMaxFileLimit
-								}								
-							}																
+								}	
+							},
+							Ext.create('OSF.component.SecurityComboBox', {	
+								itemId: 'securityMarkings',
+								hidden: submissionPanel.hideSecurityMarkings
+							})							
 						],
 						dockedItems: [
 							{
@@ -1051,7 +1124,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Media',
 				width: '50%',
-				height: 300,
+				height: 325,
 				layout: 'fit',
 				items: [
 					{
@@ -1141,7 +1214,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								maxLength: '255',									
 								emptyText: 'http://www.example.com/image.png',
 								name: 'originalLink'
-							}																
+							},
+							Ext.create('OSF.component.SecurityComboBox', {	
+								itemId: 'securityMarkings',
+								hidden: submissionPanel.hideSecurityMarkings
+							})							
 						],
 						dockedItems: [
 							{
@@ -1255,7 +1332,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Dependency',
 				width: '50%',
-				height: 320,
+				height: 370,
 				layout: 'fit',				
 				items: [
 					{
@@ -1298,7 +1375,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								fieldLabel: 'Comment',																											
 								maxLength: '255',
 								name: 'comment'
-							}																
+							},							
+							Ext.create('OSF.component.SecurityComboBox', {	
+								itemId: 'securityMarkings',
+								hidden: submissionPanel.hideSecurityMarkings
+							})
 						],
 						dockedItems: [
 							{
@@ -1365,7 +1446,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Metadata',
 				width: '50%',
-				height: 200,
+				height: 250,
 				layout: 'fit',
 				items: [
 					{
@@ -1395,7 +1476,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 								allowBlank: false,									
 								maxLength: '255',									
 								name: 'value'
-							}																
+							},
+							Ext.create('OSF.component.SecurityComboBox', {	
+								itemId: 'securityMarkings',
+								hidden: submissionPanel.hideSecurityMarkings
+							})							
 						],
 						dockedItems: [
 							{
@@ -1604,13 +1689,17 @@ Ext.define('OSF.component.SubmissionPanel', {
 			items: [
 				{
 					xtype: 'panel',
+					html: '<h1>3. Additional Details:</h1><h3>Fill in as many details as possible. The more details the easier it is for others to discover this entry.<br>Include additional points of contact, related screenshots and attributes</h3>'
+				},
+				{
+					xtype: 'panel',
 					itemId: 'detailSections', 
 					bodyStyle: 'padding: 0px 20px 0px 20px;',
 					items: [
 						{
 							xtype: 'panel',
 							itemId: 'optionalAttributes-help',
-							html: '<h1>3. Additional Details:</h1><h3>Fill in as many details as possible. The more details the easier it is for others to discover this entry.<br>Include additional points of contact, related screenshots and attributes</h3>'			
+							html: '<h3>Add all attributes that are appropriate.</h3>'
 						},
 						{
 							xtype: 'grid',
@@ -1625,12 +1714,13 @@ Ext.define('OSF.component.SubmissionPanel', {
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,
 								proxy: {
-									type: 'ajax'							
+									type: 'ajax',
+									url: ''
 								}
 							}),
 							forceFit: true,
 							columns: [
-								{ text: 'Attribute Type', dataIndex: 'typeDescription',  width: 200 },
+								{ text: 'Attribute Type', dataIndex: 'typeDescription',  width: 250 },
 								{ text: 'Attribute', dataIndex: 'codeDescription', flex: 1, width: 200 }
 							],
 							listeners: {
@@ -1722,7 +1812,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 								{ text: 'Last Name',  dataIndex: 'lastName', width: 200 },
 								{ text: 'Email',  dataIndex: 'email', width: 200 },
 								{ text: 'Phone',  dataIndex: 'phone', width: 150 },
-								{ text: 'Organization',  dataIndex: 'organization', width: 200 }
+								{ text: 'Organization',  dataIndex: 'organization', width: 200 },
+								{ text: 'Security Marking', itemId: 'securityMarking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true }								
 							],
 							listeners: {						
 								afterrender: function(grid, opts){
@@ -1774,7 +1865,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											handler: function(){
 												actionSubComponentRemove({
 													grid: this.up('grid'),
-													idField: 'contactId',
+													idField: 'componentContactId',
 													entity: 'contacts'
 												});
 											}
@@ -1811,7 +1902,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 								{ text: 'Link',  dataIndex: 'originalLink', flex: 1, minWidth: 200 },
 								{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 								{ text: 'Local Resource Name',  dataIndex: 'originalFileName', width: 200 },
-								{ text: 'Restricted',  dataIndex: 'restricted', width: 150 }
+								{ text: 'Restricted',  dataIndex: 'restricted', width: 150 },
+								{ text: 'Security Marking', itemId: 'securityMarking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true }								
 							],
 							listeners: {						
 								afterrender: function(grid, opts){
@@ -1899,7 +1991,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 								{ text: 'Caption',  dataIndex: 'caption', width: 200 },
 								{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 								{ text: 'Local Media Name',  dataIndex: 'originalFileName', width: 200 },
-								{ text: 'Link',  dataIndex: 'originalLink', width: 200 }
+								{ text: 'Link',  dataIndex: 'originalLink', width: 200 },
+								{ text: 'Security Marking', itemId: 'securityMarking', dataIndex: 'securityMarkingDescription', width: 150, hidden: true }								
 							],
 							listeners: {						
 								afterrender: function(grid, opts){
@@ -1986,7 +2079,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 								{ text: 'Name', dataIndex: 'dependencyName',  width: 200 },
 								{ text: 'Version',  dataIndex: 'version', width: 150 },
 								{ text: 'Link',  dataIndex: 'dependancyReferenceLink', width: 200 },
-								{ text: 'Comment',  dataIndex: 'comment', flex: 1, minWidth: 200 }						
+								{ text: 'Comment',  dataIndex: 'comment', flex: 1, minWidth: 200 },
+								{ text: 'Security Marking', itemId: 'securityMarking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true }								
 							],
 							listeners: {						
 								afterrender: function(grid, opts){
@@ -2055,7 +2149,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						{
 							xtype: 'grid',
 							itemId: 'metadataGrid',
-							title: 'Metadata  <i class="fa fa-question-circle"  data-qtip="Add non-filterable items of information. (Eg. Label: CMAP Compatible   Value: 1.3+)"></i>',
+							title: 'Metadata  <i class="fa fa-question-circle"  data-qtip="Add non-filterable items of information. (Eg. Label: CMAPI Compatible   Value: 1.3+)"></i>',
 							collapsible: true,
 							titleCollapse: true,
 							margin: '0 0 20 0',
@@ -2071,7 +2165,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							forceFit: true,
 							columns: [
 								{ text: 'Label', dataIndex: 'label',  width: 200 },
-								{ text: 'Value',  dataIndex: 'value', flex: 1, minWidth: 200 }						
+								{ text: 'Value',  dataIndex: 'value', flex: 1, minWidth: 200 },
+								{ text: 'Security Marking',  itemId: 'securityMarking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true }
 							],
 							listeners: {						
 								afterrender: function(grid, opts){
@@ -2150,7 +2245,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							store: Ext.create('Ext.data.Store', {
 								autoLoad: false,
 								proxy: {
-									type: 'ajax'							
+									type: 'ajax',
+									url: ''
 								}
 							}),
 							forceFit: true,
@@ -2244,7 +2340,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							}),
 							forceFit: true,
 							columns: [
-								{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 }					
+								{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 },
+								{ text: 'Security Marking',  itemId: 'securityMarking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true }
 							],
 							listeners: {		
 								afterrender: function(grid, opts){
@@ -2295,7 +2392,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 													alwaysOnTop: true,
 													title: 'Add Tag',
 													width: '40%',
-													height: 150,
+													height: 200,
 													layout: 'fit',
 													items: [
 														{
@@ -2318,7 +2415,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 																	storeConfig: {
 																		url: '../api/v1/resource/components/tags'
 																	}
-																})
+																}),
+																Ext.create('OSF.component.SecurityComboBox', {	
+																	itemId: 'securityMarkings',
+																	hidden: submissionPanel.hideSecurityMarkings
+																})																
 															],
 															dockedItems: [
 																{
@@ -2435,8 +2536,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 			dockedItems: [
 				{
 					xtype: 'panel',
+					itemId: 'userInputWarning',
 					dock: 'top',
-					html: '<div class="alert-warning" style="text-align: center"><i class="fa fa-warning"></i> Do not enter any ITAR restricted, FOUO, or otherwise sensitive information.</div>'
+					html: ''
 				},
 				{
 					xtype: 'toolbar',
@@ -2461,7 +2563,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 							text: 'Save and Exit',
 							itemId: 'SaveAndExit',
 							hidden: true,
-							iconCls: 'fa fa-save',
+							scale: 'large',
+							iconCls: 'fa fa-2x fa-save icon-top-padding-2',
 							handler: function () {
 																
 																
@@ -2542,6 +2645,33 @@ Ext.define('OSF.component.SubmissionPanel', {
 			]
 		});
 		
+		//Query Branding
+		CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
+			var branding = Ext.decode(response.responseText);
+			if (branding.userInputWarning) {
+				submissionPanel.mainPanel.getComponent('userInputWarning').update('<div class="alert-warning" style="text-align: center">' + 
+				'<i class="fa fa-warning"></i> ' + branding.userInputWarning + 
+				'</div>');						
+			}
+			if (branding.allowSecurityMarkingsFlg) {
+				submissionPanel.requiredForm.getComponent('securityMarkings').setHidden(false);
+				submissionPanel.hideSecurityMarkings = false;
+								
+				
+				var sections = submissionPanel.detailsPanel.getComponent('detailSections');					
+				
+				submissionPanel.detailsPanel.on('activate', function(panel, opts){
+					sections.getComponent('contactGrid').down('#securityMarking').setHidden(false);
+					sections.getComponent('resourceGrid').down('#securityMarking').setHidden(false);
+					sections.getComponent('mediaGrid').down('#securityMarking').setHidden(false);
+					sections.getComponent('dependenciesGrid').down('#securityMarking').setHidden(false);
+					sections.getComponent('metadataGrid').down('#securityMarking').setHidden(false);
+					sections.getComponent('tagGrid').down('#securityMarking').setHidden(false);						
+				});
+			}
+		});
+		
+		
 		submissionPanel.currentStep = 1;
 		submissionPanel.changeSteps = function(forceProceed) {						
 			var tools = submissionPanel.mainPanel.getComponent('tools');
@@ -2597,7 +2727,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					proceed = true;
 				}
 			}
-			
+				
 			if (proceed) {
 				tools.getComponent('Submit').setHidden(true);
 
@@ -2697,7 +2827,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					submissionPanel.navigation.getComponent('step4Btn').setDisabled(false);
 
 					submissionPanel.mainPanel.getLayout().setActiveItem(submissionPanel.reviewPanel);
-				}
+				}				
 			}
 		};	
 		
@@ -2813,7 +2943,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 									var contactMethod = 'POST';
 									var update = '';
 									if (submitterData) {
-										update = '/' + submitterData.contactId;
+										update = '/' + submitterData.componentContactId;
 										contactMethod = 'PUT';
 									}
 
@@ -2862,7 +2992,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 		submissionPanel.resetSubmission(true);
 		
 		//load record
-		submissionPanel.componentId = componentId;
+		submissionPanel.componentId = componentId;		
+		
 		submissionPanel.setLoading('Loading...');
 		Ext.Ajax.request({
 			url: '../api/v1/resource/components/' + submissionPanel.componentId,
@@ -2890,7 +3021,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		//load details
 		var detailSection = submissionPanel.detailsPanel.getComponent('detailSections');
 		detailSection.getComponent('tagGrid').getStore().load({
-			url: '../api/v1/resource/components/' + submissionPanel.componentId + '/tags'
+			url: '../api/v1/resource/components/' + submissionPanel.componentId + '/tagsview'
 		});
 		detailSection.getComponent('relationshipsGrid').getStore().load({
 			url: '../api/v1/resource/components/' + submissionPanel.componentId + '/relationships'

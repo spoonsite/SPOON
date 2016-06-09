@@ -54,7 +54,7 @@ public class IndexSearchHandler
 
 			List<String> results = new ArrayList<>();
 			for (SolrComponentModel componentModel : searchResult.getResultsList()) {
-				results.add(componentModel.getComponentId());
+				results.add(componentModel.getId());
 			}
 
 			foundIds = mergeCondition.apply(foundIds, results);

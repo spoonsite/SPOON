@@ -1,3 +1,18 @@
+<%-- 
+	Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+		 http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
@@ -50,7 +65,7 @@
 									allowBlank: false,
 									width: '100%',
 									fieldBodyCls: 'form-comp-htmleditor-border',
-									maxLength: 255,
+									maxLength: 65536,
 									margin: '0 0 30 0'
 								},																
 								{
@@ -119,7 +134,13 @@
 									fieldLabel: 'Override Template',
 									emptyText: 'Default',
 									storeConfig: {
-										url: '../api/v1/resource/componenttypetemplates/lookup'
+										url: '../api/v1/resource/componenttypetemplates/lookup',
+										addRecords: [
+											{
+												code: null,
+												description: 'Default'
+											} 
+										]
 									}
 								})
 							],
@@ -200,7 +221,7 @@
 						{ text: 'Type Code', dataIndex: 'componentType', width: 125 },
 						{ text: 'Label', dataIndex: 'label', width: 200 },
 						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200 },
-						{ text: 'Template Override', dataIndex: 'componentTypeTemplate', width: 150 },
+						{ text: 'Template Override', dataIndex: 'templateName', width: 150 },
 						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },
 						{ text: 'Update User', dataIndex: 'updateUser', width: 150 },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }
@@ -310,7 +331,7 @@
 				};
 				
 				var actionToggleStatus = function() {
-					Ext.getCmp('entryGrid').setLoading("Updating Status");
+					Ext.getCmp('entryGrid').setLoading("Updating Status...");
 					var type = Ext.getCmp('entryGrid').getSelection()[0].get('componentType');
 					var currentStatus = Ext.getCmp('entryGrid').getSelection()[0].get('activeStatus');
 					
@@ -323,12 +344,11 @@
 					Ext.Ajax.request({
 						url: '../api/v1/resource/componenttypes/' + type + urlEnd,
 						method: method,
-						success: function(response, opts){
+						callback: function(){
 							Ext.getCmp('entryGrid').setLoading(false);
-							actionRefreshEntryGrid();
 						},
-						failure: function(response, opts){
-							Ext.getCmp('entryGrid').setLoading(false);
+						success: function(response, opts){						
+							actionRefreshEntryGrid();
 						}
 					});
 				};

@@ -326,7 +326,7 @@ public class UserProfileResource
 	}
 
 	@PUT
-	@APIDescription("Update existing new watch. On update: it will update the last view date.")
+	@APIDescription("Update existing watch.")
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches/{watchId}")
@@ -369,7 +369,7 @@ public class UserProfileResource
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches/{watchId}")
-	public Response updateWatch(
+	public Response deleteWatch(
 			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM)
 			@RequiredParam String userId,
 			@PathParam("watchId")

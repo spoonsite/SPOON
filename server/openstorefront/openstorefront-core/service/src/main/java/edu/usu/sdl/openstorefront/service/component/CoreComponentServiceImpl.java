@@ -59,6 +59,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
@@ -510,7 +511,9 @@ public class CoreComponentServiceImpl
 				}
 				component.getComponent().populateBaseCreateFields();
 				component.getComponent().setLastActivityDts(TimeUtil.currentDate());
-				component.getComponent().setRecordVersion(1);
+				if (component.getComponent().getRecordVersion() == null) {
+					component.getComponent().setRecordVersion(1);
+				}
 
 				if (ApprovalStatus.APPROVED.equals(component.getComponent().getApprovalState())) {
 					if (StringUtils.isBlank(component.getComponent().getApprovedUser())) {
@@ -531,7 +534,7 @@ public class CoreComponentServiceImpl
 					attribute.getComponentAttributePk().setComponentId(component.getComponent().getComponentId());
 					attribute.setCreateUser(component.getComponent().getCreateUser());
 					attribute.setUpdateUser(component.getComponent().getUpdateUser());
-					componentService.getSub().saveComponentAttribute(attribute, false);
+					componentService.getSub().saveComponentAttribute(attribute, false, true);
 				});
 				component.setAttributeChanged(true);
 			}
@@ -763,7 +766,7 @@ public class CoreComponentServiceImpl
 				if (baseComponent instanceof ComponentContact) {
 					sub.saveComponentContact((ComponentContact) baseComponent, false);
 				} else if (baseComponent instanceof ComponentAttribute) {
-					sub.saveComponentAttribute((ComponentAttribute) baseComponent, false);
+					sub.saveComponentAttribute((ComponentAttribute) baseComponent, false, true);
 				} else if (baseComponent instanceof ComponentEvaluationSection) {
 					sub.saveComponentEvaluationSection((ComponentEvaluationSection) baseComponent, false);
 				} else if (baseComponent instanceof ComponentExternalDependency) {
@@ -1228,6 +1231,13 @@ public class CoreComponentServiceImpl
 			List<Component> pendingChangesList = pendingChangesMap.get(componentAdminView.getComponent().getComponentId());
 			if (pendingChangesList != null) {
 				componentAdminView.getComponent().setNumberOfPendingChanges(pendingChangesList.size());
+				if (pendingChangesList.size() > 0) {
+					Component changeComponent = pendingChangesList.get(0);
+					componentAdminView.getComponent().setPendingChangeComponentId(changeComponent.getComponentId());	
+					componentAdminView.getComponent().setPendingChangeSubmitDts(changeComponent.getSubmittedDts());
+					componentAdminView.getComponent().setPendingChangeSubmitUser(changeComponent.getCreateUser());
+					componentAdminView.getComponent().setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, changeComponent.getApprovalState()));				
+				}				
 			}
 		}
 
@@ -1398,7 +1408,7 @@ public class CoreComponentServiceImpl
 			alertContext.setAlertType(alertType);
 			alertContext.setDataTrigger(existingComponent);
 			componentService.getAlertService().checkAlert(alertContext);
-
+			
 		}
 	}
 
@@ -1643,7 +1653,7 @@ public class CoreComponentServiceImpl
 		ComponentVersionHistory versionHistory = persistenceService.findById(ComponentVersionHistory.class, versionHistoryId);
 		if (versionHistory != null) {
 
-			ComponentAll archivedVersion = null;
+			ComponentAll archivedVersion = null;			
 			TFile archive = new TFile(versionHistory.pathToFile().toFile());
 			TFile files[] = archive.listFiles();
 			if (files != null) {
@@ -1765,7 +1775,7 @@ public class CoreComponentServiceImpl
 					String componentName = getComponentName(versionHistory.getComponentId());
 					log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
 				}
-
+				
 				//save old version (keep in mind the update date will reflect now.)
 				FileHistoryOption fileHistoryOptions = new FileHistoryOption();
 				fileHistoryOptions.setSkipRequiredAttributes(Boolean.TRUE);
@@ -1774,12 +1784,6 @@ public class CoreComponentServiceImpl
 				fileHistoryOptions.setUploadTags(options.getRestoreTags());
 				fileHistoryOptions.setUploadIntegration(options.getRestoreIntegration());
 
-				//Decrement so it will match on update
-				if (archivedVersion.getComponent().getRecordVersion() == null) {
-					archivedVersion.getComponent().setRecordVersion(0);
-				} else {
-					archivedVersion.getComponent().setRecordVersion(archivedVersion.getComponent().getRecordVersion() - 1);
-				}
 				saveFullComponent(archivedVersion, fileHistoryOptions);
 
 				cleanupCache(archivedVersion.getComponent().getComponentId());
@@ -2000,26 +2004,43 @@ public class CoreComponentServiceImpl
 
 	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
 	{
-		ComponentTypeTemplate existing = persistenceService.findById(ComponentTypeTemplate.class, componentTypeTemplate.getTemplateCode());
+		ComponentTypeTemplate existing = persistenceService.findById(ComponentTypeTemplate.class, componentTypeTemplate.getTemplateId());
 		if (existing != null) {
 			existing.updateFields(componentTypeTemplate);
 			componentTypeTemplate = persistenceService.persist(existing);
 		} else {
+			componentTypeTemplate.setTemplateId(persistenceService.generateId());			
 			componentTypeTemplate.populateBaseCreateFields();
 			componentTypeTemplate = persistenceService.persist(componentTypeTemplate);
 		}
 		return componentTypeTemplate;
 	}
 
-	public void removeComponentTypeTemplate(String templateCode)
+	public void removeComponentTypeTemplate(String templateId)
 	{
-		ComponentTypeTemplate template = persistenceService.findById(ComponentTypeTemplate.class, templateCode);
+		ComponentTypeTemplate template = persistenceService.findById(ComponentTypeTemplate.class, templateId);
 		if (template != null) {
 			template.setActiveStatus(ComponentType.INACTIVE_STATUS);
 			template.populateBaseUpdateFields();
 			persistenceService.persist(template);
 		}
 	}
+	
+	public void deleteComponentTypeTemplate(String templateId)
+	{
+		ComponentTypeTemplate template = persistenceService.findById(ComponentTypeTemplate.class, templateId);
+		if (template != null) {
+			ComponentType componentType = new ComponentType();
+			componentType.setComponentTypeTemplate(templateId);
+			
+			List<ComponentType> types = componentType.findByExample();
+			if (types.isEmpty()) {
+				persistenceService.delete(template);
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to delete; Entry types are point to the template.", "Remove the template from entry types (both active and inactive) and try again.");
+			}
+		}		
+	}	
 
 	public Component approveComponent(String componentId)
 	{
@@ -2118,4 +2139,25 @@ public class CoreComponentServiceImpl
 		return mergedComponent;
 	}
 
+	public void saveTemplateBlock(TemplateBlock templateBlock)
+	{
+		TemplateBlock existing = persistenceService.findById(TemplateBlock.class, templateBlock.getTemplateBlockId());
+		if (existing != null) {
+			existing.updateFields(templateBlock);
+			persistenceService.persist(existing);
+		} else {
+			templateBlock.setTemplateBlockId(persistenceService.generateId());			
+			templateBlock.populateBaseCreateFields();
+			persistenceService.persist(templateBlock);
+		}
+	}
+
+	public void deleteTemplateBlock(String templateBlockId)
+	{
+		TemplateBlock existing = persistenceService.findById(TemplateBlock.class, templateBlockId);
+		if (existing != null) {
+			persistenceService.delete(existing);
+		}		
+	}
+	
 }

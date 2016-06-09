@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationSection;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -40,6 +41,7 @@ public class ComponentEvaluationSectionView
 	private String activeStatus;
 	private String evaluationSection;
 	private Boolean notAvailable;
+	private String sectionDescription;
 
 	public ComponentEvaluationSectionView()
 	{
@@ -59,6 +61,10 @@ public class ComponentEvaluationSectionView
 		view.setActiveStatus(section.getActiveStatus());
 		view.setNotAvailable(section.getNotAvailable());
 		view.setEvaluationSection(section.getComponentEvaluationSectionPk().getEvaluationSection());
+		EvaluationSection evaluationSection = ServiceProxyFactory.getServiceProxy().getLookupService().getLookupEnity(EvaluationSection.class, section.getComponentEvaluationSectionPk().getEvaluationSection());
+		if (evaluationSection != null) {
+			view.setSectionDescription(evaluationSection.getDetailedDescription());
+		}
 		view.toStandardView(section);
 
 		return view;
@@ -131,6 +137,16 @@ public class ComponentEvaluationSectionView
 	public void setNotAvailable(Boolean notAvailable)
 	{
 		this.notAvailable = notAvailable;
+	}
+
+	public String getSectionDescription()
+	{
+		return sectionDescription;
+	}
+
+	public void setSectionDescription(String sectionDescription)
+	{
+		this.sectionDescription = sectionDescription;
 	}
 
 }

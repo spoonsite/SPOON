@@ -20,11 +20,16 @@
 					remoteSort: true,
 					sorters: [
 						new Ext.util.Sorter({
-							property: 'username',
+							property: 'updateDts',
 							direction: 'DESC'
 						})
 					],	
 					fields: [
+						{
+							name: 'createDts',
+							type:	'date',
+							dateFormat: 'c'
+						},						
 						{
 							name: 'updateDts',
 							type:	'date',
@@ -57,7 +62,7 @@
 					plugins: 'gridfilters',
 					enableLocking: true,
 					columns: [
-						{text: 'Username / Email', dataIndex: 'username', width: 200, flex: 1, lockable: true,
+						{text: 'Username / Email', dataIndex: 'username', width: 200, flex: 1, lockable: true, sortable: false,
 							renderer: function (val, meta, record, rowIndex) {
 								if (typeof val === "undefined") {
 									if (record.get('emailAddress')) {
@@ -86,7 +91,8 @@
 							}
 						},
 						{text: 'Status', dataIndex: 'activeStatus', width: 75},
-						{text: 'Update Date', dataIndex: 'updateDts', width: 125, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
+						{text: 'Create Date', dataIndex: 'createDts', width: 125, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
+						{text: 'Update Date', dataIndex: 'updateDts', width: 125, xtype: 'datecolumn', format: 'm/d/y H:i:s'},						
 						{text: 'Subject', dataIndex: 'subject', width: 150},
 						{text: 'Sent Email Address', dataIndex: 'sentEmailAddress', width: 200, flex: 1}
 					],
@@ -354,8 +360,8 @@
 					remoteSort: true,
 					sorters: [
 						new Ext.util.Sorter({
-							property: 'updateDts',
-							direction: 'DESC'
+							property: 'username',
+							direction: 'ASC'
 						})
 					],
 					fields: [
@@ -398,9 +404,15 @@
 							}
 						},
 						{text: 'Message', dataIndex: 'message', width: 200, flex: 1},
-						{text: 'Status', dataIndex: 'activeStatus', width: 75},
-						{text: 'Event Type', dataIndex: 'eventTypeDescription', width: 150},
-						{text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
+						{text: 'Event Type', dataIndex: 'eventTypeDescription', width: 150, sortable: false},
+						{
+							text: 'Update Date', 
+							dataIndex: 'updateDts',
+							width: 150,
+							xtype: 'datecolumn', 
+							format: 'm/d/y H:i:s',
+							sortable: false
+						}
 					],
 					dockedItems: [
 						{

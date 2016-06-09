@@ -33,18 +33,24 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.Alert;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.DashboardWidget;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.entity.UserDashboard;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.entity.UserSavedSearch;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.model.AdminMessage;
+import edu.usu.sdl.openstorefront.core.model.Dashboard;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserTrackingResult;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -91,8 +97,8 @@ import net.sf.uadetector.ReadableUserAgent;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.codemonkey.simplejavamail.Email;
 import org.codemonkey.simplejavamail.MailException;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  * Handles all user business logic
@@ -535,12 +541,12 @@ public class UserServiceImpl
 	@Override
 	public void sendAdminMessage(AdminMessage adminMessage)
 	{
-		String appTitle = PropertiesManager.getValue(PropertiesManager.KEY_APPLICATION_TITLE, "Storefront");
+		Branding branding = getBrandingService().getCurrentBrandingView();
+		String appTitle = branding.getApplicationName();
 
 		UserProfile userProfileExample = new UserProfile();
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
-
-		//Sending messages one at a time as BCC may leak adresses to other users.
+		
 		List<UserProfile> usersToSend = new ArrayList<>();
 
 		if (StringUtils.isNotBlank(adminMessage.getUserTypeCode())) {
@@ -598,17 +604,25 @@ public class UserServiceImpl
 		}
 
 		int emailCount = 0;
+		Email email = MailManager.newEmail();
+		email.setSubject(appTitle + " - " + adminMessage.getSubject());
+		email.setTextHTML(adminMessage.getMessage());		
+		
 		for (UserProfile userProfile : usersToSend) {
-			Email email = MailManager.newEmail();
-			email.setSubject(appTitle + " - " + adminMessage.getSubject());
-			email.setTextHTML(adminMessage.getMessage());
-
 			String name = userProfile.getFirstName() + " " + userProfile.getLastName();
 			email.addRecipient(name, userProfile.getEmail(), Message.RecipientType.TO);
-			MailManager.send(email);
+			emailCount++;
+		}		
+		for (String emailAddress : adminMessage.getCcEmails()) {
+			email.addRecipient("", emailAddress, Message.RecipientType.CC);			
 			emailCount++;
 		}
-		log.log(Level.INFO, MessageFormat.format("(Admin Message) {0} email(s) sent", emailCount));
+		for (String emailAddress : adminMessage.getBccEmails()) {
+			email.addRecipient("", emailAddress, Message.RecipientType.BCC);			
+			emailCount++;
+		}
+		MailManager.send(email);		
+		log.log(Level.INFO, MessageFormat.format("(Admin Message) {0} email(s) sent (in one message)", emailCount));
 	}
 
 	@Override
@@ -784,19 +798,6 @@ public class UserServiceImpl
 			}
 		}
 
-		String articleQuery = "select from " + AttributeCode.class.getSimpleName() + " where article is not null and article.createDts > :createDtsParam and activeStatus = :activeStatusParam";
-		queryParams = new HashMap<>();
-		queryParams.put("createDtsParam", lastRunDts);
-		queryParams.put("activeStatusParam", AttributeCode.ACTIVE_STATUS);
-		List<AttributeCode> attributeCodes = persistenceService.query(articleQuery, queryParams);
-		for (AttributeCode attributeCode : attributeCodes) {
-			if (attributeCode.getArticle().getCreateDts().after(lastRunDts)) {
-				recentChangeMessage.getArticlesAdded().add(attributeCode);
-			} else {
-				recentChangeMessage.getArticlesUpdated().add(attributeCode);
-			}
-		}
-
 		String highlightQuery = "select from " + Highlight.class.getSimpleName() + " where updateDts > :updateDtsParam and activeStatus = :activeStatusParam";
 		queryParams = new HashMap<>();
 		queryParams.put("updateDtsParam", lastRunDts);
@@ -960,6 +961,90 @@ public class UserServiceImpl
 				}
 			}
 		}
+	}
+
+	@Override
+	public UserSavedSearch saveUserSearch(UserSavedSearch userSavedSearch)
+	{
+		UserSavedSearch existing = persistenceService.findById(UserSavedSearch.class, userSavedSearch.getUserSearchId());
+		if (existing != null) {
+			existing.updateFields(userSavedSearch);
+			existing = persistenceService.persist(existing);
+		} else {
+			userSavedSearch.setUserSearchId(persistenceService.generateId());			
+			userSavedSearch.populateBaseCreateFields();
+			existing = persistenceService.persist(userSavedSearch);
+		}
+		
+		return existing;
+	}
+
+	@Override
+	public void deleteUserSearch(String userSearchId)
+	{
+		UserSavedSearch existing = persistenceService.findById(UserSavedSearch.class, userSearchId);
+		if (existing != null) {
+			persistenceService.delete(existing);
+		}
+	}
+
+	@Override
+	public Dashboard getDashboard(String username)
+	{
+		Dashboard dashboard = new Dashboard();
+		
+		UserDashboard userDashboard = new UserDashboard();
+		userDashboard.setUsername(username);
+		userDashboard = userDashboard.find();
+		
+		if (userDashboard == null) {			
+			userDashboard = new UserDashboard();
+			userDashboard.setDashboardId(persistenceService.generateId());			
+			userDashboard.setUsername(username);
+			userDashboard.setName(UserDashboard.DEFAULT_NAME);
+			userDashboard.populateBaseCreateFields();
+			userDashboard = persistenceService.persist(userDashboard);
+		} else {
+			DashboardWidget widget = new DashboardWidget();
+			widget.setDashboardId(userDashboard.getDashboardId());
+			dashboard.setWidgets(widget.findByExample());
+			dashboard.getWidgets().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, DashboardWidget.FIELD_WIDGET_ORDER));			
+		}
+		dashboard.setDashboard(userDashboard);
+				
+		return dashboard;
+	}
+
+	@Override
+	public Dashboard saveDashboard(Dashboard dashboard)
+	{
+		Objects.requireNonNull(dashboard);
+		Objects.requireNonNull(dashboard.getDashboard());
+		
+		UserDashboard userDashboard =  persistenceService.findById(UserDashboard.class, dashboard.getDashboard().getDashboardId());
+		if (userDashboard != null) {
+			userDashboard.updateFields(dashboard.getDashboard());
+			userDashboard = persistenceService.persist(userDashboard);
+		} else {
+			dashboard.getDashboard().setDashboardId(persistenceService.generateId());
+			dashboard.getDashboard().populateBaseCreateFields();
+			userDashboard = persistenceService.persist(dashboard.getDashboard());
+		}
+		
+		//clear old widgets and replace
+		DashboardWidget widgetExample = new DashboardWidget();
+		widgetExample.setDashboardId(userDashboard.getDashboardId());
+		persistenceService.deleteByExample(widgetExample);
+		
+		for (DashboardWidget widget : dashboard.getWidgets()) {
+			widget.setWidgetId(persistenceService.generateId());
+			widget.populateBaseCreateFields();
+			widget.setDashboardId(userDashboard.getDashboardId());
+			persistenceService.persist(widget);
+		}	
+		
+		dashboard.setDashboard(userDashboard);
+		return dashboard;
 	}
 
 }

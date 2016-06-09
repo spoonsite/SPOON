@@ -104,14 +104,16 @@ public class TaskThreadExecutor
 					}
 
 					if (OpenStorefrontConstant.ANONYMOUS_USER.equals(taskFuture.getCreateUser()) == false) {
-						NotificationEvent notificationEvent = new NotificationEvent();
-						notificationEvent.setEventType(NotificationEventType.TASK);
-						notificationEvent.setUsername(taskFuture.getCreateUser());
-						notificationEvent.setMessage("Task: " + taskFuture.getTaskName() + " has finished processing with status: " + taskFuture.getStatus());
-						notificationEvent.setEntityMetaDataStatus(taskFuture.getStatus().name());
-						notificationEvent.setEntityName(AsyncTask.class.getSimpleName());
-						notificationEvent.setEntityId(taskFuture.getTaskId());
-						ServiceProxy.getProxy().getNotificationService().postEvent(notificationEvent);
+						if (TaskRequest.TASKNAME_REPORT.equals(taskFuture.getTaskName()) == false) {
+							NotificationEvent notificationEvent = new NotificationEvent();
+							notificationEvent.setEventType(NotificationEventType.TASK);
+							notificationEvent.setUsername(taskFuture.getCreateUser());
+							notificationEvent.setMessage("Task: " + taskFuture.getTaskName() + " has finished processing with status: " + taskFuture.getStatus());
+							notificationEvent.setEntityMetaDataStatus(taskFuture.getStatus().name());
+							notificationEvent.setEntityName(AsyncTask.class.getSimpleName());
+							notificationEvent.setEntityId(taskFuture.getTaskId());
+							ServiceProxy.getProxy().getNotificationService().postEvent(notificationEvent);
+						}
 					}
 
 				}
@@ -125,6 +127,7 @@ public class TaskThreadExecutor
 	@Override
 	protected void beforeExecute(Thread t, Runnable r)
 	{
+		t.setName("Async-Pool-Task-" + t.getId());		
 		if (r instanceof Future<?>) {
 			Future future = ((Future<?>) r);
 
@@ -233,14 +236,16 @@ public class TaskThreadExecutor
 			tasks.add(taskFuture);
 
 			if (OpenStorefrontConstant.ANONYMOUS_USER.equals(taskFuture.getCreateUser()) == false) {
-				NotificationEvent notificationEvent = new NotificationEvent();
-				notificationEvent.setEventType(NotificationEventType.TASK);
-				notificationEvent.setUsername(taskFuture.getCreateUser());
-				notificationEvent.setMessage("Task: " + taskFuture.getTaskName() + " has been queued for processing. ");
-				notificationEvent.setEntityName(AsyncTask.class.getSimpleName());
-				notificationEvent.setEntityId(taskFuture.getTaskId());
-				notificationEvent.setEntityMetaDataStatus(OpenStorefrontConstant.TaskStatus.QUEUED.name());
-				ServiceProxy.getProxy().getNotificationService().postEvent(notificationEvent);
+				if (TaskRequest.TASKNAME_REPORT.equals(taskRequest.getName()) == false) {
+					NotificationEvent notificationEvent = new NotificationEvent();
+					notificationEvent.setEventType(NotificationEventType.TASK);
+					notificationEvent.setUsername(taskFuture.getCreateUser());
+					notificationEvent.setMessage("Task: " + taskFuture.getTaskName() + " has been queued for processing. ");
+					notificationEvent.setEntityName(AsyncTask.class.getSimpleName());
+					notificationEvent.setEntityId(taskFuture.getTaskId());
+					notificationEvent.setEntityMetaDataStatus(OpenStorefrontConstant.TaskStatus.QUEUED.name());
+					ServiceProxy.getProxy().getNotificationService().postEvent(notificationEvent);
+				}
 			}
 
 		}

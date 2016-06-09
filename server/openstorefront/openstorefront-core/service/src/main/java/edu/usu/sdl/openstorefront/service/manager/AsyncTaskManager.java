@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Handles running async tasks.
@@ -34,21 +36,28 @@ import java.util.concurrent.TimeUnit;
  */
 public class AsyncTaskManager
 		implements Initializable
-{
-
+{	
+	private static final Logger log = Logger.getLogger(AsyncTaskManager.class.getName());
+	
 	private static TaskThreadExecutor taskPool;
 
 	public static void init()
 	{
 		String maxPoolSize = PropertiesManager.getValue(PropertiesManager.KEY_MAX_TASK_POOL_SIZE, "20");
 		int poolSize = Convert.toInteger(maxPoolSize);
-		taskPool = new TaskThreadExecutor(0, poolSize, 30L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(200));
+		taskPool = new TaskThreadExecutor(5, poolSize, 30L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(200));
+		taskPool.allowCoreThreadTimeOut(true);		
 	}
 
 	public static void cleanup()
 	{
 		if (taskPool != null) {
 			taskPool.shutdownNow();
+			try {
+				taskPool.awaitTermination(5L, TimeUnit.SECONDS);
+			} catch (InterruptedException ex) {
+				log.log(Level.WARNING, "Task pool was interrupted durning shutdown. It may not have finsihed shutting down.");
+			}
 		}
 	}
 

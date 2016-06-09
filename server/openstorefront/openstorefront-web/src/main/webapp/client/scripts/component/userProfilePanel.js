@@ -164,10 +164,14 @@ Ext.define('OSF.component.UserProfilePanel', {
 					data.externalGuid = data.guid;
 
 					//update user profile  
+					profileForm.setLoading("Saving...");
 					Ext.Ajax.request({
 						url: '/openstorefront/api/v1/resource/userprofiles/' + data.username,
 						method: 'PUT',
 						jsonData: data,
+						callback: function() {
+							profileForm.setLoading(false);
+						},
 						success: function (response, opts) {
 							Ext.toast('Updated User Profile', '', 'tr');
 							if (profileForm.saveCallback) {
@@ -196,6 +200,12 @@ Ext.define('OSF.component.UserProfilePanel', {
 		profileForm.addDocked(dockedItems);
 
 		profileForm.getComponent('userTypeCodeCB').getStore().on('load', function () {
+
+			// Check to see if the user was set on a profileWindow.
+			if (profileForm.profileWindow && profileForm.profileWindow.loadUser) {
+				profileForm.loadUser = profileForm.profileWindow.loadUser;
+			}
+
 			if (profileForm.loadUser){
 				Ext.Ajax.request({
 					url: '/openstorefront/api/v1/resource/userprofiles/' + profileForm.loadUser,
@@ -212,6 +222,44 @@ Ext.define('OSF.component.UserProfilePanel', {
 			}
 		});
 
+	}
+
+});
+
+Ext.define('OSF.component.UserProfileWindow', {
+	extend: 'Ext.window.Window',
+	alias: 'osf.widget.UserProfileWindow',
+	title: 'User Profile',
+	iconCls: 'fa fa-lg fa-user',
+	layout: 'hbox',
+	modal: true,
+	width: '50%',
+	alwaysOnTop: true,
+	height: 385,
+	initComponent: function () {
+		this.callParent();
+
+		var profileWindow = this;
+
+		var profilePanel = Ext.create('OSF.component.UserProfilePanel', {
+			width: '100%',
+			saveCallback: profileWindow.saveCallback,
+			profileWindow: profileWindow,
+			extraTools: [
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Cancel',
+					iconCls: 'fa fa-close',
+					handler: function () {
+						profileWindow.close();
+					}
+				}
+			]
+		});
+
+		profileWindow.add(profilePanel);
 	}
 
 });

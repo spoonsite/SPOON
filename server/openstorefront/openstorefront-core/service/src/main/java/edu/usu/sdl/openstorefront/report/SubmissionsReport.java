@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
@@ -88,10 +89,10 @@ public class SubmissionsReport
 	private void updateReportTimeRange()
 	{
 		if (report.getReportOption().getPreviousDays() != null) {
-			Instant instant = Instant.now();
-			instant = instant.minus(1, ChronoUnit.DAYS);
-			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date(instant.toEpochMilli())));
-			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date(instant.toEpochMilli())));
+			Instant instantEnd = Instant.now();
+			Instant instantStart = instantEnd.minus(report.getReportOption().getPreviousDays(), ChronoUnit.DAYS);
+			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date(instantStart.toEpochMilli())));
+			report.getReportOption().setEndDts(TimeUtil.endOfDay(new Date(instantEnd.toEpochMilli())));
 		}
 		if (report.getReportOption().getStartDts() == null) {
 			report.getReportOption().setStartDts(TimeUtil.beginningOfDay(new Date()));
@@ -108,10 +109,11 @@ public class SubmissionsReport
 
 		//write header
 		cvsGenerator.addLine("Component Submission Report", sdf.format(TimeUtil.currentDate()));
-		cvsGenerator.addLine("Data Time Range:  ", sdf.format(report.getReportOption().getStartDts()) + " - " + sdf.format(report.getReportOption().getEndDts()));
+		cvsGenerator.addLine("Data Time Range (Update Date):  ", sdf.format(report.getReportOption().getStartDts()) + " - " + sdf.format(report.getReportOption().getEndDts()));
 		cvsGenerator.addLine(
 				"Name",
 				"Create Date",
+				"Update Date",
 				"Submitted Date",
 				"Submitter Name",
 				"Submitter Email",
@@ -125,13 +127,14 @@ public class SubmissionsReport
 		//write data
 		for (Component component : componentsSubmited) {
 			ComponentAll componentAll = service.getComponentService().getFullComponent(component.getComponentId());
-
-			ComponentContact submitter = new ComponentContact();
+	
+			Contact submitter = new Contact();
 			submitter.setFirstName(OpenStorefrontConstant.NOT_AVAILABLE);
 
 			for (ComponentContact componentContact : componentAll.getContacts()) {
+				Contact contact = componentContact.fullContact();
 				if (ContactType.SUBMITTER.equals(componentContact.getContactType())) {
-					submitter = componentContact;
+					submitter = contact;
 				}
 			}
 
@@ -148,6 +151,7 @@ public class SubmissionsReport
 			cvsGenerator.addLine(
 					component.getName() + componentSecurityMarking,
 					sdf.format(component.getCreateDts()),
+					sdf.format(component.getUpdateDts()),
 					component.getSubmittedDts() != null ? sdf.format(component.getSubmittedDts()) : "",
 					submitter.getFirstName() + " " + submitter.getLastName() + submitterSecurityMarking,
 					submitter.getEmail(),

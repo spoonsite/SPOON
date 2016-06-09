@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
@@ -51,7 +52,7 @@ public class ComponentTypeTemplateResource
 {
 
 	@GET
-	@APIDescription("Gets  component type templates")
+	@APIDescription("Gets component type templates")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTypeTemplate.class)
 	public Response getComponentTypeTemplate(
@@ -74,7 +75,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@GET
-	@APIDescription("Gets  component type templates")
+	@APIDescription("Gets component type templates")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTypeTemplate.class)
 	@Path("/lookup")
@@ -96,8 +97,8 @@ public class ComponentTypeTemplateResource
 
 		componentTypeTemplates.forEach(template -> {
 			LookupModel lookupModel = new LookupModel();
-			lookupModel.setCode(template.getTemplateCode());
-			lookupModel.setDescription(template.getLabel());
+			lookupModel.setCode(template.getTemplateId());
+			lookupModel.setDescription(template.getName());
 			lookups.add(lookupModel);
 		});
 
@@ -108,18 +109,44 @@ public class ComponentTypeTemplateResource
 	}
 
 	@GET
-	@APIDescription("Gets  a component type template")
+	@APIDescription("Gets a component type template")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTypeTemplate.class)
-	@Path("/{templateCode}")
+	@Path("/{templateId}")
 	public Response getComponentTypeTemplateById(
-			@PathParam("templateCode") String templateCode
+			@PathParam("templateId") String templateCode
 	)
 	{
 		ComponentTypeTemplate componentType = new ComponentTypeTemplate();
-		componentType.setTemplateCode(templateCode);
+		componentType.setTemplateId(templateCode);
 		return sendSingleEntityResponse(componentType.find());
 	}
+	
+	@GET
+	@APIDescription("Gets any attached component types")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentType.class)
+	@Path("/{templateId}/attached")
+	public Response getAttachedComponeTypes(
+			@PathParam("templateId") String templateId
+	)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		
+		ComponentTypeTemplate componentTypeTemplate = new ComponentTypeTemplate();
+		componentTypeTemplate.setTemplateId(templateId);
+		componentTypeTemplate = componentTypeTemplate.find();
+		if (componentTypeTemplate != null) {
+			ComponentType componentType = new ComponentType();
+			componentType.setComponentTypeTemplate(templateId);
+			List<ComponentType> types = componentType.findByExample();
+			GenericEntity<List<ComponentType>> entity = new GenericEntity<List<ComponentType>>(types)
+			{
+			};
+			response = sendSingleEntityResponse(entity);
+		}
+		return response;
+	}	
 
 	@POST
 	@RequireAdmin
@@ -138,19 +165,19 @@ public class ComponentTypeTemplateResource
 	@APIDescription("Update a component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{templateCode}")
+	@Path("/{templateId}")
 	public Response updateComponentTypeTemplate(
-			@PathParam("templateCode") String templateCode,
+			@PathParam("templateId") String templateId,
 			ComponentTypeTemplate template
 	)
 	{
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 
 		ComponentTypeTemplate found = new ComponentTypeTemplate();
-		found.setTemplateCode(templateCode);
+		found.setTemplateId(templateId);
 		found = found.find();
 		if (found != null) {
-			template.setTemplateCode(templateCode);
+			template.setTemplateId(templateId);
 			response = handleSaveComponentTypeTemplate(template, false);
 		}
 		return response;
@@ -164,7 +191,7 @@ public class ComponentTypeTemplateResource
 		if (validationResult.valid()) {
 			componentTypeTemplate = service.getComponentService().saveComponentTemplate(componentTypeTemplate);
 			if (post) {
-				return Response.created(URI.create("v1/resource/componenttypetemplates/" + componentTypeTemplate.getTemplate())).entity(componentTypeTemplate).build();
+				return Response.created(URI.create("v1/resource/componenttypetemplates/" + componentTypeTemplate.getTemplateId())).entity(componentTypeTemplate).build();
 			} else {
 				return sendSingleEntityResponse(componentTypeTemplate);
 			}
@@ -176,18 +203,18 @@ public class ComponentTypeTemplateResource
 	@RequireAdmin
 	@APIDescription("Activate a component type template")
 	@Produces({MediaType.APPLICATION_JSON})
-	@Path("/{templateCode}/activate")
+	@Path("/{templateId}/activate")
 	public Response activateComponentTypeTemplate(
-			@PathParam("templateCode") String templateCode
+			@PathParam("templateId") String templateId
 	)
 	{
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 
 		ComponentTypeTemplate found = new ComponentTypeTemplate();
-		found.setTemplateCode(templateCode);
+		found.setTemplateId(templateId);
 		found = found.find();
 		if (found != null) {
-			service.getPersistenceService().setStatusOnEntity(ComponentTypeTemplate.class, templateCode, StandardEntity.ACTIVE_STATUS);
+			service.getPersistenceService().setStatusOnEntity(ComponentTypeTemplate.class, templateId, StandardEntity.ACTIVE_STATUS);
 			found.setActiveStatus(StandardEntity.ACTIVE_STATUS);
 			response = sendSingleEntityResponse(found);
 		}
@@ -197,12 +224,24 @@ public class ComponentTypeTemplateResource
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Inactives component type template")
-	@Path("/{templateCode}")
-	public void deleteNewEvent(
-			@PathParam("templateCode") String templateCode
+	@Path("/{templateId}")
+	public void inactiveTemplate(
+			@PathParam("templateId") String templateId
 	)
 	{
-		service.getComponentService().removeComponentTypeTemplate(templateCode);
+		service.getComponentService().removeComponentTypeTemplate(templateId);
 	}
 
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete component type template; if not attached")
+	@Path("/{templateId}/force")
+	public void deleteTemplate(
+			@PathParam("templateId") String templateId
+	)
+	{
+		service.getComponentService().deleteComponentTypeTemplate(templateId);
+	}
+	
+	
 }

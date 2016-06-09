@@ -36,6 +36,8 @@ public class NotificationEventType
 	public static final String TASK = "TASK";
 	public static final String REPORT = "REPORT";
 	public static final String ADMIN = "ADMIN";
+	public static final String SUBMISSION = "SUBMISSION";
+	public static final String CHANGE_REQUEST = "CHANGERQT";
 
 	public NotificationEventType()
 	{
@@ -51,6 +53,8 @@ public class NotificationEventType
 		codeMap.put(TASK, newLookup(NotificationEventType.class, TASK, "Task"));
 		codeMap.put(REPORT, newLookup(NotificationEventType.class, REPORT, "Report"));
 		codeMap.put(ADMIN, newLookup(NotificationEventType.class, ADMIN, "Admin"));
+		codeMap.put(SUBMISSION, newLookup(NotificationEventType.class, SUBMISSION, "Submission"));
+		codeMap.put(CHANGE_REQUEST, newLookup(NotificationEventType.class, CHANGE_REQUEST, "Change Request"));
 
 		return codeMap;
 	}

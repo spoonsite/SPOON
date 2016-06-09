@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,18 +21,15 @@ import static edu.usu.sdl.openstorefront.core.entity.LookupEntity.newLookup;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author dshurtleff
- */
 @SystemTable
-@APIDescription("Defines Support upload formats")
+@APIDescription("Defines the supported upload formats")
 public class FileFormat
 		extends LookupEntity
 {
 
 	public static final String COMPONENT_STANDARD = "CMP_STANDARD";
 	public static final String COMPONENT_ER2 = "CMP_ER2";
+	public static final String COMPONENT_DESCRIBE = "CMP_DESCRIBE";
 	public static final String ATTRIBUTE_STANDARD = "ATTR_STANDARD";
 	public static final String ATTRIBUTE_SVCV4 = "ATTR_SVCV4";
 
@@ -50,19 +47,22 @@ public class FileFormat
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(COMPONENT_STANDARD, newLookup(FileFormat.class, COMPONENT_STANDARD, "Standard Format (ZIP, JSON)"));
 		codeMap.put(COMPONENT_ER2, newLookup(FileFormat.class, COMPONENT_ER2, "ER2 Format (XML)"));
-//		codeMap.put(ATTRIBUTE_STANDARD, newLookup(FileFormat.class, ATTRIBUTE_STANDARD, "Standard Format (JSON)"));
-//		codeMap.put(ATTRIBUTE_SVCV4, newLookup(FileFormat.class, ATTRIBUTE_SVCV4, "Svcv4 Sparx export (CSV)"));
+		codeMap.put(COMPONENT_DESCRIBE, newLookup(FileFormat.class, COMPONENT_DESCRIBE, "Describe (XML)"));
+		codeMap.put(ATTRIBUTE_STANDARD, newLookup(FileFormat.class, ATTRIBUTE_STANDARD, "Standard Format (JSON)"));
+		codeMap.put(ATTRIBUTE_SVCV4, newLookup(FileFormat.class, ATTRIBUTE_SVCV4, "Svcv4 Sparx export (CSV)"));
 
 		//Add extra metadata
 		((FileFormat) codeMap.get(COMPONENT_STANDARD)).setFileType(FileType.COMPONENT);
 		((FileFormat) codeMap.get(COMPONENT_ER2)).setFileType(FileType.COMPONENT);
-//		((FileFormat) codeMap.get(ATTRIBUTE_STANDARD)).setFileType(FileType.ATTRIBUTE);
-//		((FileFormat) codeMap.get(ATTRIBUTE_SVCV4)).setFileType(FileType.ATTRIBUTE);
+		((FileFormat) codeMap.get(COMPONENT_DESCRIBE)).setFileType(FileType.COMPONENT);
+		((FileFormat) codeMap.get(ATTRIBUTE_STANDARD)).setFileType(FileType.ATTRIBUTE);
+		((FileFormat) codeMap.get(ATTRIBUTE_SVCV4)).setFileType(FileType.ATTRIBUTE);
 
 		((FileFormat) codeMap.get(COMPONENT_STANDARD)).setParserClass("ComponentStandardParser");
 		((FileFormat) codeMap.get(COMPONENT_ER2)).setParserClass("ComponentER2Parser");
-//		((FileFormat) codeMap.get(ATTRIBUTE_STANDARD)).setParserClass("AttributeStandardParser");
-//		((FileFormat) codeMap.get(ATTRIBUTE_SVCV4)).setParserClass("AttributeSvcv4Parser");
+		((FileFormat) codeMap.get(COMPONENT_DESCRIBE)).setParserClass("ComponentDescribeParser");
+		((FileFormat) codeMap.get(ATTRIBUTE_STANDARD)).setParserClass("AttributeStandardParser");
+		((FileFormat) codeMap.get(ATTRIBUTE_SVCV4)).setParserClass("AttributeSvcv4Parser");
 
 		StringBuilder requirements = new StringBuilder();
 		requirements.append("ZIP with media and JSON data containing component records or just the JSON file.  See Export.");
@@ -71,14 +71,19 @@ public class FileFormat
 		requirements = new StringBuilder();
 		requirements.append("XML of ER2 Asset data");
 		((FileFormat) codeMap.get(COMPONENT_ER2)).setFileRequirements(requirements.toString());
+		
+		requirements = new StringBuilder();
+		requirements.append("XML of Describe Record");
+		((FileFormat) codeMap.get(COMPONENT_DESCRIBE)).setFileRequirements(requirements.toString());
+		
 
-//		requirements = new StringBuilder();
-//		requirements.append("JSON data containing the Attribute Types and Codes.  See Export.");
-//		((FileFormat) codeMap.get(ATTRIBUTE_STANDARD)).setFileRequirements(requirements.toString());
-//
-//		requirements = new StringBuilder();
-//		requirements.append("CSV ");
-//		((FileFormat) codeMap.get(ATTRIBUTE_SVCV4)).setFileRequirements(requirements.toString());
+		requirements = new StringBuilder();
+		requirements.append("JSON data containing the Attribute Types and Codes.  See Export.");
+		((FileFormat) codeMap.get(ATTRIBUTE_STANDARD)).setFileRequirements(requirements.toString());
+
+		requirements = new StringBuilder();
+		requirements.append("CSV in SvcV-4 Functionality Description Format");
+		((FileFormat) codeMap.get(ATTRIBUTE_SVCV4)).setFileRequirements(requirements.toString());
 		return codeMap;
 	}
 

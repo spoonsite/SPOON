@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.search;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
@@ -71,6 +72,8 @@ public class ContactSearchHandler
 		for (SearchElement searchElement : searchElements) {
 
 			ComponentContact componentContact = new ComponentContact();
+			componentContact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
+			
 			Field field = ReflectionUtil.getField(new ComponentContact(), searchElement.getField());
 			field.setAccessible(true);
 			QueryByExample queryByExample = new QueryByExample(componentContact);
@@ -81,7 +84,9 @@ public class ContactSearchHandler
 					case EQUALS:
 						String value = searchElement.getValue();
 						if (searchElement.getCaseInsensitive()) {
-							queryByExample.getExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+							queryByExample.getFieldOptions().put(field.getName(), 
+								new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
+
 							value = value.toLowerCase();
 						}
 						field.set(componentContact, value);

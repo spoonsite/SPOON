@@ -15,6 +15,7 @@
  */
 package org.atmosphere.socketio.transport;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -23,11 +24,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.concurrent.TimeUnit;
 import org.atmosphere.cpr.AtmosphereHandler;
 import org.atmosphere.cpr.AtmosphereRequest;
 import org.atmosphere.cpr.AtmosphereResourceEventImpl;
@@ -44,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Sebastien Dionne  : sebastien.dionne@gmail.com
+ * @author Sebastien Dionne : sebastien.dionne@gmail.com
  */
 public class SocketIOSessionManagerImpl implements SocketIOSessionManager, SocketIOSessionFactory {
 
@@ -56,18 +55,23 @@ public class SocketIOSessionManagerImpl implements SocketIOSessionManager, Socke
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
     /**
-     * See <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
-     * The timeout for the server when it should send a new heartbeat to the client. <br>
+     * See
+     * <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
+     * The timeout for the server when it should send a new heartbeat to the
+     * client. <br>
      * In milliseconds.
      */
     private long heartbeatInterval = 25000;
     /**
-     * See <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
-     * The timeout for the client – when it closes the connection it still has X amounts of seconds to re-open the connection. This value is sent to the client after a successful handshake.<br>
+     * See
+     * <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
+     * The timeout for the client – when it closes the connection it still has X
+     * amounts of seconds to re-open the connection. This value is sent to the
+     * client after a successful handshake.<br>
      * In milliseconds.
      */
     private long timeout = 60000;
-    
+
     private long requestSuspendTime = 20000; // 20 sec.
     public static final ObjectMapper mapper = new ObjectMapper();
 
@@ -83,26 +87,25 @@ public class SocketIOSessionManagerImpl implements SocketIOSessionManager, Socke
         while (resultLenBytes < length) {
             random.nextBytes(bytes);
             for (int j = 0;
-                 j < bytes.length && resultLenBytes < length;
-                 j++) {
+                j < bytes.length && resultLenBytes < length;
+                j++) {
                 byte b1 = (byte) ((bytes[j] & 0xf0) >> 4);
                 byte b2 = (byte) (bytes[j] & 0x0f);
                 if (b1 < 10) {
-					buffer.append((char) ('0' + b1));
-				} else {
-					buffer.append((char) ('A' + (b1 - 10)));
-				}
+                    buffer.append((char) ('0' + b1));
+                } else {
+                    buffer.append((char) ('A' + (b1 - 10)));
+                }
                 if (b2 < 10) {
-					buffer.append((char) ('0' + b2));
-				} else {
-					buffer.append((char) ('A' + (b2 - 10)));
-				}
+                    buffer.append((char) ('0' + b2));
+                } else {
+                    buffer.append((char) ('A' + (b2 - 10)));
+                }
                 resultLenBytes++;
             }
         }
 
         return buffer.toString();
-
 
     }
 
@@ -153,7 +156,7 @@ public class SocketIOSessionManagerImpl implements SocketIOSessionManager, Socke
     }
 
     @Override
-    public void destory() {
+    public void destroy() {
         executor.shutdownNow();
         try {
             executor.awaitTermination(1, TimeUnit.SECONDS);
@@ -163,6 +166,7 @@ public class SocketIOSessionManagerImpl implements SocketIOSessionManager, Socke
     }
 
     private class SessionImpl implements SocketIOSession {
+
         private final String sessionId;
 
         private AtmosphereResourceImpl resource = null;
@@ -321,12 +325,12 @@ public class SocketIOSessionManagerImpl implements SocketIOSessionManager, Socke
                     try {
                         handler.sendMessage(data);
                     } catch (SocketIOException e) {
-                    	if(state != ConnectionState.CLOSED){
-                    		logger.error("handler.sendMessage failed: ", e);
-                    		state = ConnectionState.CLOSED;
-                    		onDisconnect(DisconnectReason.UNKNOWN);
-                    		handler.abort();
-                    	}
+                        if (state != ConnectionState.CLOSED) {
+                            logger.error("handler.sendMessage failed: ", e);
+                            state = ConnectionState.CLOSED;
+                            onDisconnect(DisconnectReason.UNKNOWN);
+                            handler.abort();
+                        }
                     }
                 }
             } else {
@@ -464,7 +468,7 @@ public class SocketIOSessionManagerImpl implements SocketIOSessionManager, Socke
     /**
      * Connection state based on Jetty for the connection's state
      *
-     * @author Sebastien Dionne  : sebastien.dionne@gmail.com
+     * @author Sebastien Dionne : sebastien.dionne@gmail.com
      */
     public enum ConnectionState {
         UNKNOWN(-1),
@@ -500,6 +504,7 @@ public class SocketIOSessionManagerImpl implements SocketIOSessionManager, Socke
     }
 
     public static final class SocketIOProtocol {
+
         public String name;
         public Collection<String> args;
 
@@ -527,7 +532,7 @@ public class SocketIOSessionManagerImpl implements SocketIOSessionManager, Socke
             return this;
         }
 
-        public SocketIOProtocol clearArgs(){
+        public SocketIOProtocol clearArgs() {
             args.clear();
             return this;
         }

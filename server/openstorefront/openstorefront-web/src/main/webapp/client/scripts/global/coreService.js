@@ -44,9 +44,27 @@ var CoreService = {
       
       return promise;
     }    
-    
+    	
+  },
+  brandingservice: {
+	  
+	  getCurrentBranding: function(){
+		  var me = this;
+		  
+		  var promise = Ext.Ajax.request({
+			url: '../api/v1/resource/branding/current' 
+		  });
+		  return promise;
+	  },
+	  
+	  getBranding: function(brandingId){
+	
+		  var promise = Ext.Ajax.request({
+			url: '../api/v1/resource/branding/' + brandingId 
+		  });
+		  return promise;		  
+	  }
   }
-  
   
   
 };

@@ -20,6 +20,8 @@ import edu.usu.sdl.openstorefront.core.api.AsyncService;
 import edu.usu.sdl.openstorefront.core.api.AttributeService;
 import edu.usu.sdl.openstorefront.core.api.BrandingService;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
+import edu.usu.sdl.openstorefront.core.api.ContactService;
+import edu.usu.sdl.openstorefront.core.api.FeedbackService;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
 import edu.usu.sdl.openstorefront.core.api.NotificationService;
@@ -73,6 +75,8 @@ public class ServiceProxy
 	private ImportServicePrivate importServicePrivate;
 	private BrandingService brandingService;
 	private NotificationService notificationService;
+	private FeedbackService feedbackService;
+	private ContactService contactService;
 
 	public ServiceProxy()
 	{
@@ -273,6 +277,24 @@ public class ServiceProxy
 			notificationService = DynamicProxy.newInstance(new NotificationServiceImpl());
 		}
 		return notificationService;
+	}
+	
+	@Override
+	public FeedbackService getFeedbackService()
+	{
+		if (feedbackService == null) {
+			feedbackService = DynamicProxy.newInstance(new FeedbackServiceImpl());
+		}
+		return feedbackService;
+	}
+
+	@Override
+	public ContactService getContactService()
+	{
+		if (contactService == null) {
+			contactService = DynamicProxy.newInstance(new ContactServiceImpl());
+		}
+		return contactService;		
 	}
 
 	@Override

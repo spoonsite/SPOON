@@ -105,7 +105,7 @@ Ext.define('OSF.defaults.fieldbase', {
     override: 'Ext.form.field.Base',
 
 	msgTarget: 'side',
-   labelClsExtra: 'field-label-basic'
+	labelClsExtra: 'field-label-basic'
 
 });
 
@@ -113,7 +113,7 @@ Ext.define('OSF.defaults.fieldcontainer', {
     override: 'Ext.form.FieldContainer',
 
 	msgTarget: 'side',
-   labelClsExtra: 'field-label-basic'
+	labelClsExtra: 'field-label-basic'
 
 });
 
@@ -129,6 +129,7 @@ Ext.define('OSF.defaults.Window', {
 	
   ghost: false,
   closeAction: 'hide',
+  monitorResize: true,
   onRender: function (ct, position) {
 	  this.callParent();
 	  var win = this;
@@ -220,6 +221,12 @@ Ext.onReady(function() {
 
 
 	Ext.Ajax.timeout = 300000;
+	Ext.Ajax.on('requestcomplete', function (conn, response, options, eOpts) {
+		if (response.responseText && response.responseText.indexOf('login.jsp') !== -1) {
+			window.parent.location.href = "/openstorefront/login.jsp?gotoPage="+window.parent.location.pathname;
+		}		
+	});
+	
 	Ext.Ajax.on('requestexception', function (conn, response, options, eOpts) {
 		
 		var feedbackButtonConfig = {

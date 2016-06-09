@@ -45,6 +45,7 @@ public class OSFCacheManager
 	private static Cache componentApprovalCache;
 	private static Cache componentTypeCache;
 	private static Cache applicationCache;
+	private static Cache contactCache;
 
 	public static void init()
 	{
@@ -96,6 +97,10 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			applicationCache = singletonManager.getCache("applicationCache");
 
+			memoryOnlyCache = new Cache("contactCache", 5000, false, false, 1800, 1800);
+			singletonManager.addCache(memoryOnlyCache);
+			contactCache = singletonManager.getCache("contactCache");
+			
 		} finally {
 			lock.unlock();
 		}
@@ -160,6 +165,11 @@ public class OSFCacheManager
 	public static Cache getComponentTypeCache()
 	{
 		return componentTypeCache;
+	}
+
+	public static Cache getContactCache()
+	{
+		return contactCache;
 	}
 
 	@Override

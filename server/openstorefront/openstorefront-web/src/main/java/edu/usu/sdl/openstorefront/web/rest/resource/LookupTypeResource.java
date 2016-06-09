@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.core.sort.LookupComparator;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.GenericLookupEntity;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
@@ -135,6 +136,7 @@ public class LookupTypeResource
 			throw new OpenStorefrontRuntimeException(" (System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
 		}
 		lookups = filterQueryParams.filter(lookups);
+		lookups.sort(new LookupComparator<>());
 
 		GenericEntity<List<LookupEntity>> entity = new GenericEntity<List<LookupEntity>>(lookups)
 		{
@@ -200,6 +202,7 @@ public class LookupTypeResource
 		try {
 			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
 			List<LookupEntity> lookups = service.getLookupService().findLookup(lookupClass, filterQueryParams.getStatus());
+			lookups.sort(new LookupComparator<>());
 			for (LookupEntity lookupEntity : lookups) {
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(lookupEntity.getCode());
@@ -209,7 +212,7 @@ public class LookupTypeResource
 		} catch (ClassNotFoundException e) {
 			throw new OpenStorefrontRuntimeException(" (System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
 		}
-		lookupViews = filterQueryParams.filter(lookupViews);
+		lookupViews = filterQueryParams.windowData(lookupViews);
 		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupViews)
 		{
 		};
@@ -255,13 +258,13 @@ public class LookupTypeResource
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
-		if (post) {
-			LookupEntity lookupEntityCreated = service.getLookupService().getLookupEnity(entityName, lookupEntity.getCode());
+		LookupEntity lookupEntityCreated = service.getLookupService().getLookupEnity(entityName, lookupEntity.getCode());
+		if (post) {			
 			return Response.created(URI.create("v1/resource/lookuptypes/"
 					+ entityName + "/"
 					+ StringProcessor.urlEncode(lookupEntity.getCode()))).entity(lookupEntityCreated).build();
 		} else {
-			return Response.ok().build();
+			return Response.ok(lookupEntityCreated).build();
 		}
 	}
 

@@ -39,6 +39,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewConPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
@@ -53,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -222,6 +224,11 @@ public class SubComponentServiceImpl
 
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity)
 	{
+		saveComponentAttribute(attribute, updateLastActivity, false);		
+	}	
+	
+	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity, boolean skipMissingAttribute)
+	{
 		Objects.requireNonNull(attribute, "Requires Component Attrubute");
 		Objects.requireNonNull(attribute.getComponentAttributePk(), "Requires Component Attrubute PK");
 		Objects.requireNonNull(attribute.getComponentAttributePk().getAttributeType(), "Requires Component Attrubute PK Attribute Type");
@@ -266,8 +273,11 @@ public class SubComponentServiceImpl
 			if (code == null) {
 				error.append("Attribute Code not found. Code: ").append(attribute.getComponentAttributePk());
 			}
-
-			throw new OpenStorefrontRuntimeException(error.toString(), "Check data passed in.");
+			if (skipMissingAttribute) {
+				log.log(Level.WARNING, MessageFormat.format("Unable to save attribute. {0}", error.toString()));
+			} else {		
+				throw new OpenStorefrontRuntimeException(error.toString(), "Check data passed in.");
+			}
 		}
 	}
 
@@ -278,12 +288,16 @@ public class SubComponentServiceImpl
 
 	public void saveComponentContact(ComponentContact contact, boolean updateLastActivity)
 	{
-		ComponentContact oldContact = persistenceService.findById(ComponentContact.class, contact.getContactId());
+		Contact contactFull = componentService.getContactService().saveContact(contact.toContact());
+		contact.setContactId(contactFull.getContactId());
+		
+		ComponentContact oldContact = persistenceService.findById(ComponentContact.class, contact.getComponentContactId());
+		
 		if (oldContact != null) {
 			oldContact.updateFields(contact);
 			persistenceService.persist(oldContact);
 		} else {
-			contact.setContactId(persistenceService.generateId());
+			contact.setComponentContactId(persistenceService.generateId());			
 			contact.populateBaseCreateFields();
 			persistenceService.persist(contact);
 		}
@@ -511,6 +525,7 @@ public class SubComponentServiceImpl
 				removeLocalResource(oldResource);
 			}
 			oldResource.updateFields(resource);
+			
 			persistenceService.persist(oldResource);
 			resource = oldResource;
 		} else {
@@ -534,7 +549,7 @@ public class SubComponentServiceImpl
 			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
 		}
-
+		
 		if (updateLastActivity) {
 			updateComponentLastActivity(resource.getComponentId());
 		}
@@ -662,7 +677,7 @@ public class SubComponentServiceImpl
 		example.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 		example.setCreateUser(username);
 		List<ComponentReview> tempReviews = persistenceService.queryByExample(ComponentReview.class, new QueryByExample(example));
-		List<ComponentReviewView> reviews = new ArrayList();
+		List<ComponentReviewView> reviews = new ArrayList();		
 		tempReviews.forEach(review -> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
 			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
@@ -682,6 +697,15 @@ public class SubComponentServiceImpl
 
 			reviews.add(tempView);
 		});
+		
+		//filter out unapproved
+		for (int i = reviews.size() - 1; i >= 0; i--) {
+			ComponentReviewView reviewView = reviews.get(i);
+			if (core.checkComponentApproval(reviewView.getComponentId()) == false) {
+				reviews.remove(i);
+			}
+		}
+		
 		return reviews;
 	}
 
@@ -776,6 +800,8 @@ public class SubComponentServiceImpl
 			//delete existing pros
 			ComponentReviewPro componentReviewProExample = new ComponentReviewPro();
 			componentReviewProExample.setComponentId(review.getComponentId());
+			componentReviewProExample.setComponentReviewProPk(new ComponentReviewProPk());			
+			componentReviewProExample.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());			
 			persistenceService.deleteByExample(componentReviewProExample);
 
 			for (ComponentReviewPro reviewPro : pros) {
@@ -789,7 +815,9 @@ public class SubComponentServiceImpl
 
 			//delete existing cons
 			ComponentReviewCon componentReviewConExample = new ComponentReviewCon();
-			componentReviewConExample.setComponentId(review.getComponentReviewId());
+			componentReviewConExample.setComponentId(review.getComponentId());
+			componentReviewConExample.setComponentReviewConPk(new ComponentReviewConPk());			
+			componentReviewConExample.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());						
 			persistenceService.deleteByExample(componentReviewConExample);
 
 			for (ComponentReviewCon reviewCon : cons) {

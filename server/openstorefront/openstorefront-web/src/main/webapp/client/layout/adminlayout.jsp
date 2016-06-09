@@ -14,12 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --%>
 
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%-- 
     Document   : adminlayout
     Created on : Oct 28, 2015, 4:55:30 PM
     Author     : dshurtleff
 --%>
 
+<%@page import="edu.usu.sdl.openstorefront.core.entity.Branding"%>
+<%@page import="edu.usu.sdl.openstorefront.service.ServiceProxy"%>
+<%@page import="edu.usu.sdl.openstorefront.security.SecurityUtil"%>
 <%@page import="edu.usu.sdl.openstorefront.common.manager.PropertiesManager"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
@@ -27,23 +31,32 @@ limitations under the License.
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
+	
 	
 	<%
+		Branding branding = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
+		request.setAttribute("branding", branding);
+	
 		String appVersion = PropertiesManager.getApplicationVersion();
 		request.setAttribute("appVersion", appVersion);
+		request.setAttribute("user", SecurityUtil.getCurrentUserName());
+		request.setAttribute("usercontext", SecurityUtil.getUserContext());
+		request.setAttribute("admin", SecurityUtil.isAdminUser());			
 	%>	
 
 	<link href="../webjars/extjs/6.0.0/build/classic/theme-neptune/resources/theme-neptune-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="../webjars/extjs/6.0.0/build/packages/ux/classic/neptune/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="../webjars/extjs/6.0.0/build/packages/charts/classic/neptune/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="../webjars/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-	<link href="css/defaultExtTheme.css?v=${appVersion}" rel="stylesheet" type="text/css"/>
-	<link href="css/app.css?v=${appVersion}" rel="stylesheet" type="text/css"/>
+	<link href="Branding.action?CSS&template=extTheme.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
+	<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
+	<link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css"/>	
+	
+	<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
 	
 	<script src="../webjars/extjs/6.0.0/ext-bootstrap.js" type="text/javascript"></script>
 	<script src="../webjars/extjs/6.0.0/build/classic/theme-neptune/theme-neptune.js" type="text/javascript"></script>
@@ -61,11 +74,9 @@ limitations under the License.
 	
 	<%-- Custom Components --%>		
 	<script src="scripts/component/standardComboBox.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/notificationPanel.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/notificationWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/notificationPanel.js?v=${appVersion}" type="text/javascript"></script>	
 	<script src="scripts/component/framePanel.js?v=${appVersion}" type="text/javascript"></script>	
-	<script src="scripts/component/userProfilePanel.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/userProfileWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/userProfilePanel.js?v=${appVersion}" type="text/javascript"></script>	
 	<script src="scripts/component/feedbackWindow.js?v=${appVersion}" type="text/javascript"></script>
 	
 	<title>Admin Tools</title>
@@ -79,6 +90,13 @@ limitations under the License.
 		  
 	
 	<stripes:layout-component name="body_footer" />	
+	
+	<%
+		if (StringUtils.isNotBlank(branding.getAnalyticsTrackingCode())) {
+			out.print(branding.getAnalyticsTrackingCode());			
+		}
+	%>	
+	
     </body>
 </html>
 </stripes:layout-definition>

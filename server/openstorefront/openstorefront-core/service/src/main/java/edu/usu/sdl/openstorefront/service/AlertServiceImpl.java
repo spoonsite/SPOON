@@ -19,15 +19,21 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.api.AlertService;
 import edu.usu.sdl.openstorefront.core.entity.Alert;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.EmailAddress;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
+import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import java.text.MessageFormat;
@@ -106,6 +112,10 @@ public class AlertServiceImpl
 									|| alertContext.getDataTrigger() instanceof ComponentQuestionResponse) {
 								if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnQuestions())) {
 									createUserMessage = true;
+								}							
+							} else if (alertContext.getDataTrigger() instanceof Contact) {
+								if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnContactUpdate())) {
+									createUserMessage = true;
 								}
 							}
 						}
@@ -161,6 +171,56 @@ public class AlertServiceImpl
 					userMessage.setAlertId(alert.getAlertId());
 					userMessage.setUserMessageType(userMessageType);
 					getUserService().queueUserMessage(userMessage);
+					
+					UserProfile userProfile = new UserProfile();
+					userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);					
+					userProfile.setEmail(email.getEmail());					
+					userProfile = (UserProfile) userProfile.find();
+					if (userProfile != null) {
+						if (AlertType.CHANGE_REQUEST.equals(alert.getAlertType())) {
+
+							String message = "";	
+							String componentId = null;
+							if (alertContext.getDataTrigger() instanceof Component) {
+								Component component = (Component) alertContext.getDataTrigger();
+								componentId = component.getComponentId();
+								if (ApprovalStatus.NOT_SUBMITTED.equals(component.getApprovalState())) {
+									message = "Change request for entry: " + component.getName() + " has been un-submitted for approval.";
+								} else {
+									message = "Change request for entry: " + component.getName() + " has been submitted for approval.";
+								}
+							}
+							NotificationEvent notificationEvent = new NotificationEvent();
+							notificationEvent.setEventType(NotificationEventType.CHANGE_REQUEST);
+							notificationEvent.setUsername(userProfile.getUsername());
+							notificationEvent.setMessage(message);
+							notificationEvent.setEntityName(Component.class.getSimpleName());
+							notificationEvent.setEntityId(componentId);
+							getNotificationService().postEvent(notificationEvent);
+						}
+
+						if (AlertType.COMPONENT_SUBMISSION.equals(alert.getAlertType())) {
+
+							String message = "";	
+							String componentId = null;
+							if (alertContext.getDataTrigger() instanceof Component) {
+								Component component = (Component) alertContext.getDataTrigger();
+								componentId = component.getComponentId();
+								if (ApprovalStatus.NOT_SUBMITTED.equals(component.getApprovalState())) {
+									message = "Entry: " + component.getName() + " has been un-submitted for approval.";
+								} else {
+									message = "Entry: " + component.getName() + " has been submitted for approval.";
+								}
+							}							
+							NotificationEvent notificationEvent = new NotificationEvent();
+							notificationEvent.setEventType(NotificationEventType.SUBMISSION);
+							notificationEvent.setUsername(userProfile.getUsername());
+							notificationEvent.setMessage(message);
+							notificationEvent.setEntityName(Component.class.getSimpleName());
+							notificationEvent.setEntityId(componentId);
+							getNotificationService().postEvent(notificationEvent);
+						}
+					}
 				}
 
 			}

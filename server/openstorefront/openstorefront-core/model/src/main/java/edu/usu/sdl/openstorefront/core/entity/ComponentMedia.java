@@ -83,7 +83,8 @@ public class ComponentMedia
 	@Override
 	public String uniqueKey()
 	{
-		return StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName();
+		String key = StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName();		
+		return key;
 	}
 
 	@Override

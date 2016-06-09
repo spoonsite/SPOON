@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class UserProfileWrapper
 {
 
 	private long totalNumber;
+	
+	@DataType(UserProfileView.class)
 	private List<UserProfileView> data = new ArrayList<>();
 
 	public UserProfileWrapper()

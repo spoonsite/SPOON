@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -69,6 +70,11 @@ public class Branding
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String landingPageTitle;
+	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(HTMLSanitizer.class)
+	@ConsumeField
+	private String landingStatsText;	
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@Sanitize(HTMLSanitizer.class)
@@ -80,128 +86,99 @@ public class Branding
 	@ConsumeField
 	private String landingPageFooter;
 
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
+	@ConsumeField
+	private String analyticsTrackingCode;
+	
+	@ConsumeField
+	private Boolean hideArchitectureSearchFlg;
+	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
-	private String archtectureSearchType;
+	private String architectureSearchType;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
-	private String archtectureSearchLabel;
+	private String architectureSearchLabel;
 
 	@ConsumeField
 	private Boolean allowSecurityMarkingsFlg;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Sanitize(HTMLSanitizer.class)	
+	private String securityBannerText;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_60)
+	@Sanitize(TextSanitizer.class)	
+	private String securityBannerBackgroundColor;	
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_60)
+	@Sanitize(TextSanitizer.class)	
+	private String securityBannerTextColor;	
 
 	@ConsumeField
-	private Boolean allowJiraFeedbackFlg;
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Sanitize(HTMLSanitizer.class)	
+	private String userInputWarning;	
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Sanitize(HTMLSanitizer.class)	
+	private String submissionFormWarning;
 
 	@ConsumeField
-	private Boolean showComponentTypeSearchFlg;
-
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Sanitize(HTMLSanitizer.class)	
+	private String changeRequestWarning;	
+	
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookTextColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookSiteBackgroundColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookLandingInfoSectionColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookHomeFooterColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookButtonDefaultColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookButtonPrimaryColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookButtonInfoColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookButtonSucessColor;
+	@ValidValueType(value = {}, lookupClass = FeedbackHandleType.class)
+	private String feedbackHandler;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookButtonWarningColor;
+	private String primaryColor;	
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookButtonDangerColor;
-
+	private String primaryTextColor;	
+	
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookNavbarColor;
-
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	private String accentColor;
+	
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookNavbarTextColor;
-
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	private String quoteColor;
+	
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookLogoTextColor;
-
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	private String linkColor;
+	
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookAccentColor;
-
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	private String linkVisitedColor;	
+	
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookBannerColor;
-
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	private String linkhoverColor;
+	
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookFocusColor;
-
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	private String panelHeaderColor;
+	
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookTabColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookTabTextColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookTabInactiveColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookTabInactiveTextColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookEntryNameColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookEntryToolColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookEntrySectionColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookEntryEvalutionColor;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String lookRatingColor;
-
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	private String panelHeaderTextColor;	
+			
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
-	private String lookCustomOverrides;
+	private String overrideCSS;
 
 	public Branding()
 	{
@@ -214,46 +191,39 @@ public class Branding
 
 		Branding branding = (Branding) entity;
 
-		setAllowJiraFeedbackFlg(branding.getAllowJiraFeedbackFlg());
 		setAllowSecurityMarkingsFlg(branding.getAllowSecurityMarkingsFlg());
 		setApplicationName(branding.getApplicationName());
-		setArchtectureSearchLabel(branding.getArchtectureSearchLabel());
-		setArchtectureSearchType(branding.getArchtectureSearchType());
+		setHideArchitectureSearchFlg(branding.getHideArchitectureSearchFlg());		
+		setArchitectureSearchLabel(branding.getArchitectureSearchLabel());
+		setArchitectureSearchType(branding.getArchitectureSearchType());
 		setLandingPageBanner(branding.getLandingPageBanner());
 		setLandingPageFooter(branding.getLandingPageFooter());
 		setLandingPageTitle(branding.getLandingPageTitle());
+		setLandingStatsText(branding.getLandingStatsText());		
 		setLoginWarning(branding.getLoginWarning());
 		setName(branding.getName());
 		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
 		setSecondaryLogoUrl(branding.getSecondaryLogoUrl());
-		setShowComponentTypeSearchFlg(branding.getShowComponentTypeSearchFlg());
-
-		setLookAccentColor(branding.getLookAccentColor());
-		setLookBannerColor(branding.getLookBannerColor());
-		setLookButtonDangerColor(branding.getLookButtonDangerColor());
-		setLookButtonDefaultColor(branding.getLookButtonDefaultColor());
-		setLookButtonInfoColor(branding.getLookButtonInfoColor());
-		setLookButtonPrimaryColor(branding.getLookButtonPrimaryColor());
-		setLookButtonWarningColor(branding.getLookButtonWarningColor());
-		setLookButtonSucessColor(branding.getLookButtonSucessColor());
-		setLookCustomOverrides(branding.getLookCustomOverrides());
-		setLookEntryEvalutionColor(branding.getLookEntryEvalutionColor());
-		setLookEntryNameColor(branding.getLookEntryNameColor());
-		setLookEntrySectionColor(branding.getLookEntrySectionColor());
-		setLookEntryToolColor(branding.getLookEntryToolColor());
-		setLookHomeFooterColor(branding.getLookHomeFooterColor());
-		setLookLandingInfoSectionColor(branding.getLookLandingInfoSectionColor());
-		setLookLogoTextColor(branding.getLookLogoTextColor());
-		setLookNavbarColor(branding.getLookNavbarColor());
-		setLookNavbarTextColor(branding.getLookNavbarTextColor());
-		setLookRatingColor(branding.getLookRatingColor());
-		setLookSiteBackgroundColor(branding.getLookSiteBackgroundColor());
-		setLookTabColor(branding.getLookTabColor());
-		setLookTabInactiveColor(branding.getLookTabInactiveColor());
-		setLookTabInactiveTextColor(branding.getLookTabInactiveTextColor());
-		setLookTabTextColor(branding.getLookTabTextColor());
-		setLookTextColor(branding.getLookTextColor());
-
+		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());		
+		
+		setSecurityBannerBackgroundColor(branding.getSecurityBannerBackgroundColor());
+		setSecurityBannerText(branding.getSecurityBannerText());
+		setSecurityBannerTextColor(branding.getSecurityBannerTextColor());
+		setUserInputWarning(branding.getUserInputWarning());
+		setSubmissionFormWarning(branding.getSubmissionFormWarning());
+		setChangeRequestWarning(branding.getChangeRequestWarning());		
+		setFeedbackHandler(branding.getFeedbackHandler());
+				
+		setPrimaryColor(branding.getPrimaryColor());
+		setPrimaryTextColor(branding.getPrimaryTextColor());		
+		setAccentColor(branding.getAccentColor());
+		setQuoteColor(branding.getQuoteColor());
+		setLinkColor(branding.getLinkColor());
+		setLinkVisitedColor(branding.getLinkVisitedColor());		
+		setLinkhoverColor(branding.getLinkhoverColor());
+		setPanelHeaderColor(branding.getPanelHeaderColor());
+		setPanelHeaderTextColor(branding.getPanelHeaderTextColor());
+		setOverrideCSS(branding.getOverrideCSS());
 	}
 
 	public String getBrandingId()
@@ -346,34 +316,24 @@ public class Branding
 		this.landingPageFooter = landingPageFooter;
 	}
 
-	public String getArchtectureSearchType()
+	public String getArchitectureSearchType()
 	{
-		return archtectureSearchType;
+		return architectureSearchType;
 	}
 
-	public void setArchtectureSearchType(String archtectureSearchType)
+	public void setArchitectureSearchType(String architectureSearchType)
 	{
-		this.archtectureSearchType = archtectureSearchType;
+		this.architectureSearchType = architectureSearchType;
 	}
 
-	public String getArchtectureSearchLabel()
+	public String getArchitectureSearchLabel()
 	{
-		return archtectureSearchLabel;
+		return architectureSearchLabel;
 	}
 
-	public void setArchtectureSearchLabel(String archtectureSearchLabel)
+	public void setArchitectureSearchLabel(String architectureSearchLabel)
 	{
-		this.archtectureSearchLabel = archtectureSearchLabel;
-	}
-
-	public Boolean getShowComponentTypeSearchFlg()
-	{
-		return showComponentTypeSearchFlg;
-	}
-
-	public void setShowComponentTypeSearchFlg(Boolean showComponentTypeSearchFlg)
-	{
-		this.showComponentTypeSearchFlg = showComponentTypeSearchFlg;
+		this.architectureSearchLabel = architectureSearchLabel;
 	}
 
 	public Boolean getAllowSecurityMarkingsFlg()
@@ -386,274 +346,204 @@ public class Branding
 		this.allowSecurityMarkingsFlg = allowSecurityMarkingsFlg;
 	}
 
-	public Boolean getAllowJiraFeedbackFlg()
+	public String getLandingStatsText()
 	{
-		return allowJiraFeedbackFlg;
+		return landingStatsText;
 	}
 
-	public void setAllowJiraFeedbackFlg(Boolean allowJiraFeedbackFlg)
+	public void setLandingStatsText(String landingStatsText)
 	{
-		this.allowJiraFeedbackFlg = allowJiraFeedbackFlg;
+		this.landingStatsText = landingStatsText;
 	}
 
-	public String getLookTextColor()
+	public String getFeedbackHandler()
 	{
-		return lookTextColor;
+		return feedbackHandler;
 	}
 
-	public void setLookTextColor(String lookTextColor)
+	public void setFeedbackHandler(String feedbackHandler)
 	{
-		this.lookTextColor = lookTextColor;
+		this.feedbackHandler = feedbackHandler;
 	}
 
-	public String getLookSiteBackgroundColor()
+	public String getSecurityBannerText()
 	{
-		return lookSiteBackgroundColor;
+		return securityBannerText;
 	}
 
-	public void setLookSiteBackgroundColor(String lookSiteBackgroundColor)
+	public void setSecurityBannerText(String securityBannerText)
 	{
-		this.lookSiteBackgroundColor = lookSiteBackgroundColor;
+		this.securityBannerText = securityBannerText;
 	}
 
-	public String getLookLandingInfoSectionColor()
+	public String getSecurityBannerBackgroundColor()
 	{
-		return lookLandingInfoSectionColor;
+		return securityBannerBackgroundColor;
 	}
 
-	public void setLookLandingInfoSectionColor(String lookLandingInfoSectionColor)
+	public void setSecurityBannerBackgroundColor(String securityBannerBackgroundColor)
 	{
-		this.lookLandingInfoSectionColor = lookLandingInfoSectionColor;
+		this.securityBannerBackgroundColor = securityBannerBackgroundColor;
 	}
 
-	public String getLookHomeFooterColor()
+	public String getSecurityBannerTextColor()
 	{
-		return lookHomeFooterColor;
+		return securityBannerTextColor;
 	}
 
-	public void setLookHomeFooterColor(String lookHomeFooterColor)
+	public void setSecurityBannerTextColor(String securityBannerTextColor)
 	{
-		this.lookHomeFooterColor = lookHomeFooterColor;
+		this.securityBannerTextColor = securityBannerTextColor;
 	}
 
-	public String getLookButtonDefaultColor()
+	public String getUserInputWarning()
 	{
-		return lookButtonDefaultColor;
+		return userInputWarning;
 	}
 
-	public void setLookButtonDefaultColor(String lookButtonDefaultColor)
+	public void setUserInputWarning(String userInputWarning)
 	{
-		this.lookButtonDefaultColor = lookButtonDefaultColor;
+		this.userInputWarning = userInputWarning;
 	}
 
-	public String getLookButtonPrimaryColor()
+	public String getPrimaryColor()
 	{
-		return lookButtonPrimaryColor;
+		return primaryColor;
 	}
 
-	public void setLookButtonPrimaryColor(String lookButtonPrimaryColor)
+	public void setPrimaryColor(String primaryColor)
 	{
-		this.lookButtonPrimaryColor = lookButtonPrimaryColor;
+		this.primaryColor = primaryColor;
 	}
 
-	public String getLookButtonInfoColor()
+	public String getAccentColor()
 	{
-		return lookButtonInfoColor;
+		return accentColor;
 	}
 
-	public void setLookButtonInfoColor(String lookButtonInfoColor)
+	public void setAccentColor(String accentColor)
 	{
-		this.lookButtonInfoColor = lookButtonInfoColor;
+		this.accentColor = accentColor;
 	}
 
-	public String getLookButtonWarningColor()
+	public String getQuoteColor()
 	{
-		return lookButtonWarningColor;
+		return quoteColor;
 	}
 
-	public void setLookButtonWarningColor(String lookButtonWarningColor)
+	public void setQuoteColor(String quoteColor)
 	{
-		this.lookButtonWarningColor = lookButtonWarningColor;
+		this.quoteColor = quoteColor;
 	}
 
-	public String getLookButtonDangerColor()
+	public String getLinkColor()
 	{
-		return lookButtonDangerColor;
+		return linkColor;
 	}
 
-	public void setLookButtonDangerColor(String lookButtonDangerColor)
+	public void setLinkColor(String linkColor)
 	{
-		this.lookButtonDangerColor = lookButtonDangerColor;
+		this.linkColor = linkColor;
 	}
 
-	public String getLookNavbarColor()
+	public String getLinkhoverColor()
 	{
-		return lookNavbarColor;
+		return linkhoverColor;
 	}
 
-	public void setLookNavbarColor(String lookNavbarColor)
+	public void setLinkhoverColor(String linkhoverColor)
 	{
-		this.lookNavbarColor = lookNavbarColor;
+		this.linkhoverColor = linkhoverColor;
 	}
 
-	public String getLookNavbarTextColor()
+	public String getPanelHeaderColor()
 	{
-		return lookNavbarTextColor;
+		return panelHeaderColor;
 	}
 
-	public void setLookNavbarTextColor(String lookNavbarTextColor)
+	public void setPanelHeaderColor(String panelHeaderColor)
 	{
-		this.lookNavbarTextColor = lookNavbarTextColor;
+		this.panelHeaderColor = panelHeaderColor;
 	}
 
-	public String getLookLogoTextColor()
+	public String getOverrideCSS()
 	{
-		return lookLogoTextColor;
+		return overrideCSS;
 	}
 
-	public void setLookLogoTextColor(String lookLogoTextColor)
+	public void setOverrideCSS(String overrideCSS)
 	{
-		this.lookLogoTextColor = lookLogoTextColor;
+		this.overrideCSS = overrideCSS;
 	}
 
-	public String getLookAccentColor()
+	public Boolean getHideArchitectureSearchFlg()
 	{
-		return lookAccentColor;
+		return hideArchitectureSearchFlg;
 	}
 
-	public void setLookAccentColor(String lookAccentColor)
+	public void setHideArchitectureSearchFlg(Boolean hideArchitectureSearchFlg)
 	{
-		this.lookAccentColor = lookAccentColor;
+		this.hideArchitectureSearchFlg = hideArchitectureSearchFlg;
 	}
 
-	public String getLookBannerColor()
+	public String getPrimaryTextColor()
 	{
-		return lookBannerColor;
+		return primaryTextColor;
 	}
 
-	public void setLookBannerColor(String lookBannerColor)
+	public void setPrimaryTextColor(String primaryTextColor)
 	{
-		this.lookBannerColor = lookBannerColor;
+		this.primaryTextColor = primaryTextColor;
 	}
 
-	public String getLookFocusColor()
+	public String getLinkVisitedColor()
 	{
-		return lookFocusColor;
+		return linkVisitedColor;
 	}
 
-	public void setLookFocusColor(String lookFocusColor)
+	public void setLinkVisitedColor(String linkVisitedColor)
 	{
-		this.lookFocusColor = lookFocusColor;
+		this.linkVisitedColor = linkVisitedColor;
 	}
 
-	public String getLookTabColor()
+	public String getPanelHeaderTextColor()
 	{
-		return lookTabColor;
+		return panelHeaderTextColor;
 	}
 
-	public void setLookTabColor(String lookTabColor)
+	public void setPanelHeaderTextColor(String panelHeaderTextColor)
 	{
-		this.lookTabColor = lookTabColor;
+		this.panelHeaderTextColor = panelHeaderTextColor;
 	}
 
-	public String getLookTabTextColor()
+	public String getSubmissionFormWarning()
 	{
-		return lookTabTextColor;
+		return submissionFormWarning;
 	}
 
-	public void setLookTabTextColor(String lookTabTextColor)
+	public void setSubmissionFormWarning(String submissionFormWarning)
 	{
-		this.lookTabTextColor = lookTabTextColor;
+		this.submissionFormWarning = submissionFormWarning;
 	}
 
-	public String getLookTabInactiveColor()
+	public String getAnalyticsTrackingCode()
 	{
-		return lookTabInactiveColor;
+		return analyticsTrackingCode;
 	}
 
-	public void setLookTabInactiveColor(String lookTabInactiveColor)
+	public void setAnalyticsTrackingCode(String analyticsTrackingCode)
 	{
-		this.lookTabInactiveColor = lookTabInactiveColor;
+		this.analyticsTrackingCode = analyticsTrackingCode;
 	}
 
-	public String getLookTabInactiveTextColor()
+	public String getChangeRequestWarning()
 	{
-		return lookTabInactiveTextColor;
+		return changeRequestWarning;
 	}
 
-	public void setLookTabInactiveTextColor(String lookTabInactiveTextColor)
+	public void setChangeRequestWarning(String changeRequestWarning)
 	{
-		this.lookTabInactiveTextColor = lookTabInactiveTextColor;
-	}
-
-	public String getLookEntryNameColor()
-	{
-		return lookEntryNameColor;
-	}
-
-	public void setLookEntryNameColor(String lookEntryNameColor)
-	{
-		this.lookEntryNameColor = lookEntryNameColor;
-	}
-
-	public String getLookEntryToolColor()
-	{
-		return lookEntryToolColor;
-	}
-
-	public void setLookEntryToolColor(String lookEntryToolColor)
-	{
-		this.lookEntryToolColor = lookEntryToolColor;
-	}
-
-	public String getLookEntrySectionColor()
-	{
-		return lookEntrySectionColor;
-	}
-
-	public void setLookEntrySectionColor(String lookEntrySectionColor)
-	{
-		this.lookEntrySectionColor = lookEntrySectionColor;
-	}
-
-	public String getLookEntryEvalutionColor()
-	{
-		return lookEntryEvalutionColor;
-	}
-
-	public void setLookEntryEvalutionColor(String lookEntryEvalutionColor)
-	{
-		this.lookEntryEvalutionColor = lookEntryEvalutionColor;
-	}
-
-	public String getLookRatingColor()
-	{
-		return lookRatingColor;
-	}
-
-	public void setLookRatingColor(String lookRatingColor)
-	{
-		this.lookRatingColor = lookRatingColor;
-	}
-
-	public String getLookCustomOverrides()
-	{
-		return lookCustomOverrides;
-	}
-
-	public void setLookCustomOverrides(String lookCustomOverrides)
-	{
-		this.lookCustomOverrides = lookCustomOverrides;
-	}
-
-	public String getLookButtonSucessColor()
-	{
-		return lookButtonSucessColor;
-	}
-
-	public void setLookButtonSucessColor(String lookButtonSucessColor)
-	{
-		this.lookButtonSucessColor = lookButtonSucessColor;
+		this.changeRequestWarning = changeRequestWarning;
 	}
 
 }

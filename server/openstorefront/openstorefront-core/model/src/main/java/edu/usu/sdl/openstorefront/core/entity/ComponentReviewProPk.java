@@ -31,6 +31,7 @@ import javax.validation.constraints.NotNull;
 public class ComponentReviewProPk
 		extends BasePK
 {
+	public static final String FIELD_REVIEW_PRO = "reviewPro"; 
 
 	@NotNull
 	@FK(ComponentReview.class)

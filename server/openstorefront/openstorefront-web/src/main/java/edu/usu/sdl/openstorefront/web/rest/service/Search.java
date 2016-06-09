@@ -15,17 +15,19 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
+import au.com.bytecode.opencsv.CSVWriter;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
+import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.sort.ComponentSearchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.RecentlyAddedViewComparator;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
@@ -39,6 +41,8 @@ import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +50,7 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -126,6 +131,7 @@ public class Search
 				searchWrapper.setData(result.getResults());
 				searchWrapper.setResults(result.getResults().size());
 				searchWrapper.setTotalNumber(result.getTotalNumber());
+				searchWrapper.setResultTypeStats(result.getResultTypeStats());				
 				return sendSingleEntityResponse(searchWrapper);
 			} else {
 				GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result.getResults())
@@ -234,6 +240,7 @@ public class Search
 	@GET
 	@APIDescription("Get Listing Stats")
 	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ListingStats.class)
 	@Path("/stats")
 	public Response getListingStats()
 	{
@@ -245,10 +252,63 @@ public class Search
 		long numberOfActiveComponents = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, componentExample));
 		listingStats.setNumberOfComponents(numberOfActiveComponents);
 
-		List<AttributeCode> articles = service.getAttributeService().findRecentlyAddedArticles(Integer.MAX_VALUE);
-		listingStats.setNumberOfArticles(articles.size());
-
 		return Response.ok(listingStats).build();
 	}
 
+	@POST
+	@APIDescription("Export a set entries")
+	@Produces({"application/csv"})	
+	@Path("/export")
+	public Response export(
+			@FormParam("multipleIds")					
+			@RequiredParam List<String> ids			
+	)
+	{
+		StringWriter writer = new StringWriter();
+		CSVWriter cvsWriter = new CSVWriter(writer);
+		
+		String header[] = {
+			"Name", 
+			"Organization",
+			"Description",
+			"Last Updated Dts",
+			"Entry Type"
+		};
+		cvsWriter.writeNext(header);
+		
+		SimpleDateFormat sdf = TimeUtil.standardDateFormater();
+		List<ComponentSearchView> views = service.getComponentService().getSearchComponentList(ids);
+		for (ComponentSearchView view : views) {
+			String data[] = {
+				view.getName(),
+				view.getOrganization(),
+				view.getDescription(),
+				sdf.format(view.getLastActivityDts()),
+				view.getComponentTypeDescription()
+			};
+			cvsWriter.writeNext(data);		
+		}
+		
+		Response.ResponseBuilder response = Response.ok(writer.toString());
+		response.header("Content-Type", "application/csv");
+		response.header("Content-Disposition", "attachment; filename=\"searchResults.csv\"");
+		return response.build();		
+	}
+	
+	@GET
+	@APIDescription("Get Search Suggestions")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(SearchSuggestion.class)
+	@Path("/suggestions")
+	public List<SearchSuggestion> getSearchSuggestions(
+		@QueryParam("query")
+		@DefaultValue("*") String query,
+		@QueryParam("max") 
+		@DefaultValue("6") int maxResults	
+	)			
+	{	
+		List<SearchSuggestion> suggestions = service.getSearchService().searchSuggestions(query, maxResults);		
+		return suggestions;
+	}
+	
 }

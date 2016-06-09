@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.model.search;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.validation.EnumLookup;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -137,6 +138,33 @@ public class SearchOperation
 			return pass;
 		}
 
+		public boolean pass(BigDecimal value, BigDecimal checkValue)
+		{
+			boolean pass = false;
+
+			if (value != null && checkValue != null) {			
+				switch (this) {
+					case EQUALS:
+						pass = value.compareTo(checkValue) == 0;
+						break;
+					case GREATERTHAN:
+						pass = value.compareTo(checkValue) > 0;
+						break;
+					case GREATERTHANEQUALS:
+						pass = value.compareTo(checkValue) >= 0;
+						break;
+					case LESSTHAN:
+						pass = value.compareTo(checkValue) < 0;
+						break;
+					case LESSTHANEQUALS:
+						pass = value.compareTo(checkValue) <= 0;
+						break;
+				}
+			}
+
+			return pass;
+		}		
+		
 		@Override
 		public boolean vaildValue(String value)
 		{
@@ -205,6 +233,11 @@ public class SearchOperation
 		METADATA,
 		USER_RATING,
 		CONTACT,
+		REVIEWPRO,
+		REVIEWCON,
+		QUESTION,
+		QUESTION_RESPONSE,
+		EVALUTATION_SCORE,
 		REVIEW;
 
 		@Override

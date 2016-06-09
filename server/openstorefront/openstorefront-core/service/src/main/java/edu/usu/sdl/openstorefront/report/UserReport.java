@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.report;
 
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
-import edu.usu.sdl.openstorefront.core.entity.ArticleTracking;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
@@ -122,12 +121,6 @@ public class UserReport
 			componentTrackingExample.setTrackEventTypeCode(TrackEventCode.VIEW);
 			long componentView = service.getPersistenceService().countByExample(componentTrackingExample);
 
-			ArticleTracking articleTrackingExample = new ArticleTracking();
-			articleTrackingExample.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
-			articleTrackingExample.setCreateUser(userProfile.getUsername());
-			articleTrackingExample.setTrackEventTypeCode(TrackEventCode.VIEW);
-			long articleViews = service.getPersistenceService().countByExample(articleTrackingExample);
-
 			cvsGenerator.addLine(
 					userProfile.getUsername(),
 					userProfile.getOrganization(),
@@ -143,8 +136,7 @@ public class UserReport
 					questions,
 					questionResponse,
 					tags,
-					componentView,
-					articleViews
+					componentView
 			);
 		}
 

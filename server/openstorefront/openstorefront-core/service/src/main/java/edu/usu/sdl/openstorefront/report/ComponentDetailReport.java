@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ContactType;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -135,21 +137,30 @@ public class ComponentDetailReport
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		//write header
-		cvsGenerator.addLine("Component Details Report", sdf.format(TimeUtil.currentDate()));
+		cvsGenerator.addLine("Entry Details Report", sdf.format(TimeUtil.currentDate()));
 		cvsGenerator.addLine("");
-		cvsGenerator.addLine(
-				"Component Name",
-				"Component Organization",
-				"Component Description"
-		);
+		
+		List<String> header = new ArrayList<>();
+		header.add("Entry Name");
+		header.add("Entry Organization");
+		header.add("Entry Description");
+		
+		if (getBranding().getAllowSecurityMarkingsFlg()) {
+			header.add("Security Marking");
+		}		
+		cvsGenerator.addLine(header.toArray());		
 
 		for (Component component : components) {
 
-			cvsGenerator.addLine(
-					component.getName(),
-					component.getOrganization(),
-					component.getDescription()
-			);
+			List<String> data = new ArrayList<>();
+			data.add(component.getName());
+			data.add(component.getOrganization());
+			data.add(component.getDescription());
+
+			if (getBranding().getAllowSecurityMarkingsFlg()) {
+				data.add("Security Marking");
+			}		
+			cvsGenerator.addLine(data.toArray());				
 
 			Map<String, List<ComponentAttribute>> attributeMap = codeToComponent.get(component.getComponentId());
 
@@ -179,7 +190,13 @@ public class ComponentDetailReport
 							AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
 							String attributeLabel;
 							if (attributeCode != null) {
-								attributeLabel = attributeCode.getLabel();
+								String securityMarking = "";
+								if (getBranding().getAllowSecurityMarkingsFlg() && 
+									StringUtils.isNotBlank(attributeCode.getSecurityMarkingType()))
+								{
+									securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
+								}
+								attributeLabel = securityMarking + attributeCode.getLabel();
 							} else {
 								attributeLabel = "Missing Code: " + attributeCodePk.getAttributeCode() + " on Type: " + attributeCodePk.getAttributeType();
 							}
@@ -201,7 +218,13 @@ public class ComponentDetailReport
 								AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
 								String attributeLabel;
 								if (attributeCode != null) {
-									attributeLabel = attributeCode.getLabel();
+									String securityMarking = "";
+									if (getBranding().getAllowSecurityMarkingsFlg() && 
+										StringUtils.isNotBlank(attributeCode.getSecurityMarkingType()))
+									{
+										securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
+									}
+									attributeLabel = securityMarking + attributeCode.getLabel();
 								} else {
 									attributeLabel = "Missing Code: " + attributeCodePk.getAttributeCode() + " on Type: " + attributeCodePk.getAttributeType();
 								}
@@ -221,14 +244,21 @@ public class ComponentDetailReport
 			List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());
 			if (metaData != null) {
 				cvsGenerator.addLine("MetaData");
-				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentMetadata.FIELD_LABEL));
+				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentMetadata.FIELD_LABEL));
 
 				for (ComponentMetadata metadataItem : metaData) {
 
+					String securityMarking = "";
+					if (getBranding().getAllowSecurityMarkingsFlg() && 
+						StringUtils.isNotBlank(metadataItem.getSecurityMarkingType()))
+					{
+						securityMarking = "(" + metadataItem.getSecurityMarkingType() + ") ";
+					}					
+					
 					cvsGenerator.addLine(
 							"",
 							metadataItem.getLabel(),
-							metadataItem.getValue()
+							securityMarking + metadataItem.getValue()
 					);
 				}
 			}
@@ -238,14 +268,23 @@ public class ComponentDetailReport
 			if (contacts != null) {
 				cvsGenerator.addLine("Contacts");
 				for (ComponentContact contact : contacts) {
+					
+					String securityMarking = "";
+					if (getBranding().getAllowSecurityMarkingsFlg() && 
+						StringUtils.isNotBlank(contact.getSecurityMarkingType()))
+					{
+						securityMarking = "(" + contact.getSecurityMarkingType() + ") ";
+					}					
+					
+					Contact contactFull = contact.fullContact();					
 					cvsGenerator.addLine(
 							"",
 							TranslateUtil.translate(ContactType.class, contact.getContactType()),
-							contact.getFirstName(),
-							contact.getLastName(),
-							contact.getOrganization(),
-							contact.getEmail(),
-							contact.getPhone()
+							securityMarking + contactFull.getFirstName(),
+							contactFull.getLastName(),
+							contactFull.getOrganization(),
+							contactFull.getEmail(),
+							contactFull.getPhone()
 					);
 				}
 			}
@@ -256,13 +295,20 @@ public class ComponentDetailReport
 				cvsGenerator.addLine("Resources");
 				for (ComponentResource resource : resources) {
 
+					String securityMarking = "";
+					if (getBranding().getAllowSecurityMarkingsFlg() && 
+						StringUtils.isNotBlank(resource.getSecurityMarkingType()))
+					{
+						securityMarking = "(" + resource.getSecurityMarkingType() + ") ";
+					}						
+					
 					ComponentResourceView view = ComponentResourceView.toView(resource);
 
 					cvsGenerator.addLine(
 							"",
 							TranslateUtil.translate(ResourceType.class, view.getResourceType()),
 							view.getDescription(),
-							view.getLink()
+							securityMarking + view.getLink()
 					);
 				}
 			}
@@ -311,16 +357,21 @@ public class ComponentDetailReport
 				+ " }}"
 		);
 
-		htmlGenerator.addLine("Components (" + components.size() + ")");
+		htmlGenerator.addLine("Entries (" + components.size() + ")");
 		htmlGenerator.addRuleLine();
 
 		for (Component component : components) {
 
+			String securityMarking = "";
+			if (getBranding().getAllowSecurityMarkingsFlg()) {
+				securityMarking = "(" + component.getSecurityMarkingType() + ") ";
+			}				
+			
 			htmlGenerator.addMainHeader(component.getName());
 			htmlGenerator.addLine("<b>" + component.getOrganization() + "</b>");
 			htmlGenerator.addSpace();
 			htmlGenerator.addSpace();
-			htmlGenerator.addLine(component.getDescription());
+			htmlGenerator.addLine(securityMarking + component.getDescription());
 			htmlGenerator.addSpace();
 
 			Map<String, List<ComponentAttribute>> attributeMap = codeToComponent.get(component.getComponentId());
@@ -356,7 +407,13 @@ public class ComponentDetailReport
 							AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
 							String attributeLabel;
 							if (attributeCode != null) {
-								attributeLabel = attributeCode.getLabel();
+								securityMarking = "";
+								if (getBranding().getAllowSecurityMarkingsFlg() && 
+									StringUtils.isNotBlank(attributeCode.getSecurityMarkingType()))
+								{
+									securityMarking = "(" + attributeCode.getSecurityMarkingType() + ") ";
+								}
+								attributeLabel = securityMarking + attributeCode.getLabel();
 							} else {
 								attributeLabel = "Missing Code: " + attributeCodePk.getAttributeCode() + " on Type: " + attributeCodePk.getAttributeType();
 							}
@@ -375,7 +432,7 @@ public class ComponentDetailReport
 			List<ComponentMetadata> metaData = metaDataMap.get(component.getComponentId());
 			if (metaData != null) {
 				htmlGenerator.addLine("<h2>MetaData</h2>");
-				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentMetadata.FIELD_LABEL));
+				metaData.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentMetadata.FIELD_LABEL));
 
 				htmlGenerator.addLine("<table>");
 				htmlGenerator.addLine("<tr>");
@@ -383,9 +440,17 @@ public class ComponentDetailReport
 				htmlGenerator.addLine("<th>Value</th>");
 				htmlGenerator.addLine("</tr>");
 				for (ComponentMetadata metadataItem : metaData) {
+
+					securityMarking = "";
+					if (getBranding().getAllowSecurityMarkingsFlg() && 
+						StringUtils.isNotBlank(metadataItem.getSecurityMarkingType()))
+					{
+						securityMarking = "(" + metadataItem.getSecurityMarkingType() + ") ";
+					}						
+					
 					htmlGenerator.addLine("<tr>");
 					htmlGenerator.addLine("<td><b>" + metadataItem.getLabel() + "</b></td>");
-					htmlGenerator.addLine("<td>" + metadataItem.getValue() + "</td>");
+					htmlGenerator.addLine("<td>"   + securityMarking + metadataItem.getValue() + "</td>");
 					htmlGenerator.addLine("</tr>");
 				}
 				htmlGenerator.addLine("</table>");
@@ -394,7 +459,7 @@ public class ComponentDetailReport
 			//contacts
 			List<ComponentContact> contacts = contactMap.get(component.getComponentId());
 			if (contacts != null) {
-				htmlGenerator.addLine("<h2>Contacts<h2>");
+				htmlGenerator.addLine("<h2>Contacts</h2>");
 				htmlGenerator.addLine("<table>");
 				htmlGenerator.addLine("<tr>");
 				htmlGenerator.addLine("<th>Type</th>");
@@ -406,13 +471,22 @@ public class ComponentDetailReport
 				htmlGenerator.addLine("</tr>");
 				for (ComponentContact contact : contacts) {
 
+					securityMarking = "";
+					if (getBranding().getAllowSecurityMarkingsFlg() && 
+						StringUtils.isNotBlank(contact.getSecurityMarkingType()))
+					{
+						securityMarking = "(" + contact.getSecurityMarkingType() + ") ";
+					}				
+					
+					Contact contactFull = contact.fullContact();
+					
 					htmlGenerator.addLine("<tr>");
 					htmlGenerator.addLine("<td><b>" + TranslateUtil.translate(ContactType.class, contact.getContactType()) + "</b></td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contact.getFirstName()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contact.getLastName()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contact.getOrganization()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contact.getEmail()) + "</td>");
-					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contact.getPhone()) + "</td>");
+					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(securityMarking + contactFull.getFirstName()) + "</td>");
+					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getLastName()) + "</td>");
+					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getOrganization()) + "</td>");
+					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getEmail()) + "</td>");
+					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(contactFull.getPhone()) + "</td>");
 					htmlGenerator.addLine("</tr>");
 
 				}
@@ -432,12 +506,19 @@ public class ComponentDetailReport
 				htmlGenerator.addLine("</tr>");
 				for (ComponentResource resource : resources) {
 
+					securityMarking = "";
+					if (getBranding().getAllowSecurityMarkingsFlg() && 
+						StringUtils.isNotBlank(resource.getSecurityMarkingType()))
+					{
+						securityMarking = "(" + resource.getSecurityMarkingType() + ") ";
+					}					
+					
 					ComponentResourceView view = ComponentResourceView.toView(resource);
 
 					htmlGenerator.addLine("<tr>");
 					htmlGenerator.addLine("<td><b>" + TranslateUtil.translate(ResourceType.class, view.getResourceType()) + "</b></td>");
 					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(view.getDescription()) + "</td>");
-					htmlGenerator.addLine("<td>" + view.getLink() + "</td>");
+					htmlGenerator.addLine("<td>" + securityMarking + view.getLink() + "</td>");
 					htmlGenerator.addLine("<td>" + StringProcessor.blankIfNull(view.getRestricted()) + "</td>");
 					htmlGenerator.addLine("</tr>");
 				}

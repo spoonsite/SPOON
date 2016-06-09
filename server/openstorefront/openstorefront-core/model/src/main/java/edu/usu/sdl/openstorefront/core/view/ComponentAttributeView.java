@@ -63,40 +63,6 @@ public class ComponentAttributeView
 	{
 	}
 
-	public static ComponentAttributeView toView(ArticleView article)
-	{
-		ComponentAttributeView view = new ComponentAttributeView();
-		Service service = ServiceProxyFactory.getServiceProxy();
-		AttributeType type = service.getPersistenceService().findById(AttributeType.class, article.getAttributeType());
-		AttributeCodePk pk = new AttributeCodePk();
-		pk.setAttributeCode(article.getAttributeCode());
-		pk.setAttributeType(article.getAttributeType());
-		AttributeCode code = service.getPersistenceService().findById(AttributeCode.class, pk);
-		view.setExternalLink(code.getDetailUrl());
-		view.setCodeDescription(code.getLabel());
-		view.setCodeLongDescription(code.getDescription());
-		view.setBadgeUrl(code.getBadgeUrl());
-		view.setTypeDescription(type.getDescription());
-		view.setTypeLongDescription(type.getDetailedDescription());
-		view.setType(type.getAttributeType());
-		view.setCode(code.getAttributeCodePk().getAttributeCode());
-		view.setImportantFlg(type.getImportantFlg());
-		view.setRequiredFlg(type.getRequiredFlg());
-		view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
-		view.setHideOnSubmission(Convert.toBoolean(type.getHideOnSubmission()));
-		view.setDefaultAttributeCode(type.getDefaultAttributeCode());
-		view.setAllowMultipleFlg(type.getAllowMultipleFlg());
-		view.setArchitectureFlg(type.getArchitectureFlg());
-		view.setVisibleFlg(type.getVisibleFlg());
-		view.setUpdateDts(article.getUpdateDts());
-
-		view.setSortOrder(0);
-		view.setGroupCode("Article");
-		view.toStandardView(code, type);
-
-		return view;
-	}
-
 	public static ComponentAttributeView toView(ComponentAttribute attribute)
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();
@@ -115,28 +81,37 @@ public class ComponentAttributeView
 			type = service.getPersistenceService().findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
 		}
 		
-		view.setRequiredRestrictions(type.getRequiredRestrictions());
-		view.setExternalLink(code.getDetailUrl());
-		view.setCodeDescription(code.getLabel());
-		view.setCodeLongDescription(code.getDescription());
-		view.setTypeDescription(type.getDescription());
-		view.setTypeLongDescription(type.getDetailedDescription());
-		view.setType(type.getAttributeType());
-		view.setCode(code.getAttributeCodePk().getAttributeCode());
-		view.setBadgeUrl(code.getBadgeUrl());
-		view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
-		view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
-		view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
-		view.setHideOnSubmission(Convert.toBoolean(type.getHideOnSubmission()));
-		view.setDefaultAttributeCode(type.getDefaultAttributeCode());
-		view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
-		view.setVisibleFlg(Convert.toBoolean(type.getVisibleFlg()));
-		view.setUpdateDts(attribute.getUpdateDts());
-		view.setSortOrder(code.getSortOrder());
-		view.setGroupCode(code.getGroupCode());
-		view.setHighlightStyle(code.getHighlightStyle());
-		view.setActiveStatus(attribute.getActiveStatus());
-		view.toStandardView(code, type);
+		if (code != null && type != null) {
+			view.setRequiredRestrictions(type.getRequiredRestrictions());
+			view.setExternalLink(code.getDetailUrl());
+			view.setCodeDescription(code.getLabel());
+			view.setCodeLongDescription(code.getDescription());
+			view.setTypeDescription(type.getDescription());
+			view.setTypeLongDescription(type.getDetailedDescription());
+			view.setType(type.getAttributeType());
+			view.setCode(code.getAttributeCodePk().getAttributeCode());
+			view.setBadgeUrl(code.getBadgeUrl());
+			view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
+			view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
+			view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
+			view.setHideOnSubmission(Convert.toBoolean(type.getHideOnSubmission()));
+			view.setDefaultAttributeCode(type.getDefaultAttributeCode());
+			view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
+			view.setVisibleFlg(Convert.toBoolean(type.getVisibleFlg()));
+			view.setUpdateDts(attribute.getUpdateDts());
+			view.setSortOrder(code.getSortOrder());
+			view.setGroupCode(code.getGroupCode());
+			view.setHighlightStyle(code.getHighlightStyle());
+			view.setActiveStatus(attribute.getActiveStatus());
+			view.toStandardView(code, type);
+		} else {
+			//For snapshots which are frozen in time; attributes may not exist any more			
+			//create stub
+			view.setCodeDescription("Missing Code: " + attribute.getComponentAttributePk().getAttributeCode());
+			view.setTypeDescription("Missing Type: " + attribute.getComponentAttributePk().getAttributeType());
+			view.setType(attribute.getComponentAttributePk().getAttributeType());
+			view.setCode(attribute.getComponentAttributePk().getAttributeCode());			
+		}
 
 		return view;
 	}

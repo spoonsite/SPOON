@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.message;
 
-import org.codemonkey.simplejavamail.Email;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  *
@@ -47,7 +47,7 @@ public class TestMessageGenerator
 	@Override
 	protected String getUnsubscribe()
 	{
-		return "If you are not the intended user of this message.  Please delete this message. ";
+		return "If you are not the intended user of this message, please delete this message. ";
 	}
 
 }
