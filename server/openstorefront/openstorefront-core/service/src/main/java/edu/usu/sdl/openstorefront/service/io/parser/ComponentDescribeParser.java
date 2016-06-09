@@ -279,14 +279,16 @@ public class ComponentDescribeParser
 						AttributeCode attributeCode = getAttributeCode(ATTRIBUTE_TYPE_CONFORMANCE, 
 								ATTRIBUTE_TYPE_CONFORMANCE_DESC, conformance.getId(), conformance.getName());
 						
-						ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-						componentAttributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
-						componentAttributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+						if (attributeCode != null) {
+							ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+							componentAttributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+							componentAttributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
 						
-						ComponentAttribute componentAttribute = new ComponentAttribute();
-						componentAttribute.setComponentAttributePk(componentAttributePk);
+							ComponentAttribute componentAttribute = new ComponentAttribute();
+							componentAttribute.setComponentAttributePk(componentAttributePk);
 						
-						componentAll.getAttributes().add(componentAttribute);
+							componentAll.getAttributes().add(componentAttribute);
+						}
 					}
 										
 				}
@@ -295,16 +297,18 @@ public class ComponentDescribeParser
 				AttributeCode attributeCode = getAttributeCode(ATTRIBUTE_TYPE_NETWORK, 
 						ATTRIBUTE_TYPE_NETWORK_DESC, searchProvider.getGeneralInfo().getNetwork(), searchProvider.getGeneralInfo().getNetwork());
 
-				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-				componentAttributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
-				componentAttributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+				if (attributeCode != null) {
+					ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+					componentAttributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+					componentAttributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
 
-				ComponentAttribute componentAttribute = new ComponentAttribute();
-				componentAttribute.setComponentAttributePk(componentAttributePk);
+					ComponentAttribute componentAttribute = new ComponentAttribute();
+					componentAttribute.setComponentAttributePk(componentAttributePk);
 
-				componentAll.getAttributes().add(componentAttribute);
-								
-				componentAlls.add(componentAll);
+					componentAll.getAttributes().add(componentAttribute);								
+				}
+				
+				componentAlls.add(componentAll);				
 				
 			} else if (assertion.getStructuredStatement().getResource() != null) {
 				resourceCollection.setResource(assertion.getStructuredStatement().getResource());				
@@ -396,14 +400,15 @@ public class ComponentDescribeParser
 			for (MimeType mimeType : resourceCollection.getContentCollection().getMimeTypes()) {
 				AttributeCode attributeCode = getAttributeCode(ATTRIBUTE_TYPE_MIMETYPE, ATTRIBUTE_TYPE_MIMETYPE_DESC, mimeType.getText(), mimeType.getText());
 				
-				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-				componentAttributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
-				componentAttributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+				if  (attributeCode != null) {
+					ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+					componentAttributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+					componentAttributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
 
-				ComponentAttribute componentAttribute = new ComponentAttribute();
-				componentAttribute.setComponentAttributePk(componentAttributePk);
-
-				componentAll.getAttributes().add(componentAttribute);				
+					ComponentAttribute componentAttribute = new ComponentAttribute();
+					componentAttribute.setComponentAttributePk(componentAttributePk);
+					componentAll.getAttributes().add(componentAttribute);			
+				}
 			}
 			
 			componentAlls.add(componentAll);
