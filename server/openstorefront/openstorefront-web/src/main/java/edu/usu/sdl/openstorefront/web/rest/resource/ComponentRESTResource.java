@@ -518,7 +518,9 @@ public class ComponentRESTResource
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(TagView.class)
 	@Path("/tagviews")
-	public Response getAllComponentTags()
+	public Response getAllComponentTags(
+		@QueryParam("approvedOnly") boolean approvedOnly	
+	)
 	{
 		List<TagView> views = new ArrayList<>();
 
@@ -526,6 +528,13 @@ public class ComponentRESTResource
 		componentTagExample.setActiveStatus(Component.ACTIVE_STATUS);
 
 		List<ComponentTag> tags = service.getPersistenceService().queryByExample(ComponentTag.class, componentTagExample);
+		
+		if (approvedOnly) {
+			tags = tags.stream()
+					.filter(tag->service.getComponentService().checkComponentApproval(tag.getComponentId()))
+					.collect(Collectors.toList());
+		}
+			
 		views.addAll(TagView.toView(tags));
 
 		GenericEntity<List<TagView>> entity = new GenericEntity<List<TagView>>(views)

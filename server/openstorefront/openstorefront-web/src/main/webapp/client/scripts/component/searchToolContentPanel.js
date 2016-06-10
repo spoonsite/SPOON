@@ -630,7 +630,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 		var loadTagNav = function (newTab) {
 			newTab.setLoading(true);
 			Ext.Ajax.request({
-				url: '/openstorefront/api/v1/resource/components/tagviews',
+				url: '/openstorefront/api/v1/resource/components/tagviews?approvedOnly=true',
 				success: function (response, opts) {
 					newTab.setLoading(false);
 					var data = Ext.decode(response.responseText);
