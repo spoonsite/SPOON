@@ -22,10 +22,14 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.OrganizationRelationView;
 import edu.usu.sdl.openstorefront.core.view.OrganizationView;
 import edu.usu.sdl.openstorefront.core.view.OrganizationWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
@@ -115,6 +119,38 @@ public class OrganizationResource
 		return sendSingleEntityResponse(organizationWrapper);
 	}
 
+	@GET
+	@APIDescription("Gets component relationships via organization.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(OrganizationRelationView.class)
+	@Path("/componentrelationships")
+	public Response getEntryOrganizationRelations()
+	{
+		Component componentExample = new Component();
+		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		componentExample.setApprovalState(ApprovalStatus.APPROVED);
+		
+		List<Component> components = componentExample.findByExample();
+
+		List<OrganizationRelationView> views = new ArrayList<>();
+		for (Component component : components) {
+			OrganizationRelationView view = new OrganizationRelationView();
+			view.setComponentId(component.getComponentId());
+			view.setComponentName(component.getName());
+			view.setComponentType(component.getComponentType());
+			view.setComponentTypeDescription(TranslateUtil.translateComponentType(component.getComponentType()));
+			view.setOrganizationName(component.getOrganization());
+			view.setOrganizationId(Organization.toKey(component.getOrganization()));
+			
+			views.add(view);
+		}
+				
+		GenericEntity<List<OrganizationRelationView>> entity = new GenericEntity<List<OrganizationRelationView>>(views)
+		{
+		};
+		return sendSingleEntityResponse(entity);				
+	}
+	
 	@GET
 	@APIDescription("Gets an organization record. ")
 	@Produces({MediaType.APPLICATION_JSON})

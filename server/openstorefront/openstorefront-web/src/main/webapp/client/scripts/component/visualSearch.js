@@ -25,8 +25,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 	plugins: ['spriteevents'],
 	//style: 'cursor: pointer',
 	bodyStyle: 'background: #2d2c2c;',
-	viewData: [],	
-
+	viewData: [],		
+	
+	/**
+	 * RELATION, TAGS, ORG, ATT
+	 */
+	viewType: 'RELATION', 
 		
 	initComponent: function () {
 		this.callParent();
@@ -43,9 +47,23 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			panOriginY: 0,
 			zoom: 1.0,
 			zoomCenterX: 0,
-			zoomCenterY: 1
+			zoomCenterY: 0,
+			update: function(sprites){
+				Ext.Array.each(visPanel.sprites, function(item){
+					if (!item.backgroundSprite) {
+						item.setAttributes({
+							translationX: visPanel.camera.panX,
+							translationY: visPanel.camera.panY,
+							scaleX:  visPanel.camera.zoom,
+							scaleY:  visPanel.camera.zoom,
+							scaleCenterX: visPanel.camera.zoomCenterX,
+							scaleCenterY: visPanel.camera.zoomCenterY									
+						});
+					}
+				});
+				visPanel.getSurface().renderFrame();
+			}
 		};
-	
 		
 		visPanel.on('spritemouseout', function(item, event, eOpts){
 			var sprite = item && item.sprite;	
@@ -88,16 +106,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				visPanel.camera.panX = visPanel.camera.startX + (event.pageX - visPanel.camera.panOriginX);						
 				visPanel.camera.panY = visPanel.camera.startY + (event.pageY - visPanel.camera.panOriginY);	
 				
-				Ext.Array.each(visPanel.sprites, function(item){
-					if (!item.backgroundSprite) {
-						item.setAttributes({
-							translationX: visPanel.camera.panX,
-							translationY: visPanel.camera.panY					
-						});
-					}
-				});
-				
-				visPanel.getSurface().renderFrame();
+				visPanel.camera.update();
 			} 
 		});
 		
@@ -122,18 +131,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					visPanel.camera.zoomCenterX = e.pageX;
 					visPanel.camera.zoomCenterY = e.pageY;
 					
-					Ext.Array.each(visPanel.sprites, function(item){
-						if (!item.backgroundSprite) {
-							item.setAttributes({
-								scaleX:  visPanel.camera.zoom,
-								scaleY:  visPanel.camera.zoom,
-								scaleCenterX: visPanel.camera.zoomCenterX,
-								scaleCenterY: visPanel.camera.zoomCenterY					
-							});
-						}
-					});					
-
-					visPanel.getSurface().renderFrame();	
+					visPanel.camera.update();	
 				}
 				//console.log(e);
 				
@@ -153,7 +151,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 	reset: function() {
 		var visPanel = this;
 				
-		visPanel.camera = {
+		visPanel.camera = Ext.apply(visPanel.camera, {
 			pan: false,
 			panX: 0,
 			panY: 0,
@@ -163,9 +161,20 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			panOriginY: 0,
 			zoom: 1.0,
 			zoomCenterX: 0,
-			zoomCenterY: 1
-		};
-		visPanel.loadRelationships();
+			zoomCenterY: 0
+		}, visPanel.camera);
+		visPanel.update();
+		
+		visPanel.viewData = [];
+		if (visPanel.viewType === "RELATION") {
+			visPanel.loadRelationships();
+		} else if (visPanel.viewType === "TAGS") {
+			visPanel.loadTags();
+		} else if (visPanel.viewType === "ORG") {
+			visPanel.loadOrganizations();
+		} else if (visPanel.viewType === "ATT") {
+			visPanel.loadAttributes();
+		}		
 	},
 	
 	afterRender: function() {
@@ -196,14 +205,88 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						label: relationship.ownerComponentName,
 						relationshipLabel: relationship.relationshipTypeDescription,
 						targetKey: relationship.targetComponentId,
-						targetName: relationship.targetComponentName
+						targetName: relationship.targetComponentName,
+						targetType: 'component'
 					});
 				});
 				
 				visPanel.viewData = visPanel.viewData.concat(viewData);
-				visPanel.initVisual(visPanel.viewData);
+				visPanel.initVisual(visPanel.viewData);				
 			}
 		});			
+	},
+		
+	loadTags: function() {
+		var visPanel = this;
+		
+		visPanel.setLoading("Loading Initial Tags...");
+		Ext.Ajax.request({
+			url: '../api/v1/resource/components/tagviews?approvedOnly=true',
+			callback: function(){
+				visPanel.setLoading(false);
+			},
+			success: function(response, opts) {
+				var data = Ext.decode(response.responseText);
+				
+				var viewData = [];
+				Ext.Array.each(data, function(tagview){
+					viewData.push({
+						type: 'component',
+						nodeId: tagview.tagId,
+						key: tagview.componentId,
+						label: tagview.componentName,
+						relationshipLabel: '',
+						targetKey: tagview.text,
+						targetName: tagview.text,
+						targetType: 'tag'
+					});
+				});
+				
+				visPanel.viewData = visPanel.viewData.concat(viewData);
+				visPanel.initVisual(visPanel.viewData);				
+			}
+		});		
+		
+	},
+	
+	loadOrganizations: function() {
+		var visPanel = this;
+		
+		visPanel.setLoading("Loading Organizations...");
+		Ext.Ajax.request({
+			url: '../api/v1/resource/organizations/componentrelationships',
+			callback: function(){
+				visPanel.setLoading(false);
+			},
+			success: function(response, opts) {
+				var data = Ext.decode(response.responseText);
+				
+				var viewData = [];
+				Ext.Array.each(data, function(tagview){
+					viewData.push({
+						type: 'organization',
+						nodeId: tagview.tagId,
+						key: tagview.organizationId,
+						label: tagview.organizationName,
+						relationshipLabel: '',
+						targetKey: tagview.componentId,
+						targetName: tagview.componentName,
+						targetType: 'component'
+					});
+				});
+				
+				visPanel.viewData = visPanel.viewData.concat(viewData);
+				visPanel.initVisual(visPanel.viewData);				
+			}
+		});		
+		
+	},
+	
+	loadAttributes: function() {
+		var visPanel = this;
+		
+		//prompt for type to display
+		
 	},
 	
 	initVisual: function(viewData) {
@@ -252,7 +335,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			ownerNode.edges.push({
 				targetKey: relationship.targetKey,
 				ownerKey: relationship.key,
-				relationshipLabel: relationship.relationshipLabel
+				relationshipLabel: relationship.relationshipLabel,
+				type: relationship.targetType
 			});
 		});
 		
@@ -286,7 +370,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				toX: i,
 				toY: containerHeight,
 				lineWidth: 1,
-				strokeStyle: 'rgba(255, 255, 255, .2)'
+				strokeStyle: 'rgba(255, 255, 255, .1)'
 			});
 		}
 		
@@ -299,7 +383,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				toX: containerWidth,
 				toY: i,
 				lineWidth: 1,
-				strokeStyle: 'rgba(255, 255, 255, .2)'
+				strokeStyle: 'rgba(255, 255, 255, .1)'
 			});
 		}		
 		mainSprites.push(cameraSprite);		
@@ -330,6 +414,22 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			lineWidth: 3,
 			strokeStyle: 'rgba(255, 255, 255, 1)'			
 		};
+		var tagNode = {
+			type: 'diamond',
+			size: nodeRadius, 
+			fillStyle: 'rgba(87, 160, 204, 1)',
+			lineWidth: 3,
+			strokeStyle: 'rgba(255, 255, 255, 1)'			
+		};		
+		
+		var organizationNode={
+			type: 'square',
+			size: nodeRadius, 
+			fillStyle: 'rgba(160, 160, 160, 1)',
+			lineWidth: 3,
+			strokeStyle: 'rgba(255, 255, 255, 1)'					
+		};
+		
 		var hubFillStyle = 'rgba(87, 160, 204, 1)';
 		
 		var relationshipEdge = {
@@ -367,7 +467,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					});
 					
 					if (edgeNode.positionX && edgeNode.positionY) {
-						node.positionX = edgeNode.positionX - (componentNode.r  * 20 - nodeRadius);
+						node.positionX = edgeNode.positionX - (componentNode.r  * 25 - nodeRadius);
 						node.positionY = edgeNode.positionY;
 						setNodePosition = false;
 					}
@@ -381,13 +481,22 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				
 				var hubNodeRadius = nodeRadius + (node.edges.length*3);
 				
+				var baseNode =componentNode; 
+				if (node.type === 'tag') {
+					baseNode = tagNode; 
+				}
+				if (node.type === 'organization') {
+					baseNode = organizationNode; 
+				}				
+				node.nodeSize = hubNodeRadius;
+				
 				sprites.push(Ext.apply({}, {
 					x:  node.positionX,
 					y:  node.positionY,
 					node: node,
-					r: hubNodeRadius,
-					fillStyle: hubFillStyle
-				}, componentNode));
+					r: node.nodeSize
+					//fillStyle: hubFillStyle
+				}, baseNode));
 				
 				sprites.push(Ext.apply({}, {
 					x:  node.positionX,
@@ -416,16 +525,26 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						targetNode.positionY = node.positionY - componentNode.r * 10;
 						targetNode.rotationDegrees = rotation;
 						
+						
 						var point = new Ext.draw.Point(targetNode.positionX, targetNode.positionY);
 						point = point.rotate(rotation, new Ext.draw.Point(node.positionX, node.positionY) );
 						targetNode.positionX = point.x;
 						targetNode.positionY = point.y;
 						
+						var baseNode = componentNode; 
+						if (edgeNode.type === 'tag') {
+							baseNode = tagNode; 
+							targetNode.nodeSize = baseNode.size;
+						} else { 
+							targetNode.nodeSize = baseNode.r;
+						}
+						
+						
 						sprites.push(Ext.apply({}, {
 							x:  targetNode.positionX,
 							y:  targetNode.positionY,
 							node: edgeNode
-						}, componentNode));
+						}, baseNode));
 
 						sprites.push(Ext.apply({}, {
 							x:  targetNode.positionX,
@@ -440,12 +559,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					}
 				});
 			
-				startX += (componentNode.r  * 20) + nodeRadius;
+				startX += (componentNode.r  * 25) + nodeRadius;
 				
 				rowCount++;
 				if (rowCount >= 5) {
 					startX = 150;
-					startY += 450;
+					startY += 500;
 					rowCount = 0;
 				}				
 				
@@ -480,8 +599,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				dx /= length;				
 				dy /= length;
 			}
-			dx *= length - nodeRadius;
-			dy *= length - nodeRadius;
+			dx *= length - targetNode.nodeSize;
+			dy *= length - targetNode.nodeSize;
 			var endX = (ownerNode.positionX + dx);
 			var endY = (ownerNode.positionY + dy);				
 						
@@ -543,9 +662,45 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		
 		visPanel.getSurface().removeAll(true);
 		
+		if (!visPanel.initSurface) {
+			visPanel.getSurface().setBackground({
+				type: 'rect',
+				x: 0,
+				y: 0,
+				width: containerWidth,
+				height: containerHeight,
+				fillStyle: 'rgba(29, 39, 38, 1)'
+			});
+			visPanel.initSurface = true;
+		}
+
 		visPanel.setSprites(mainSprites);		
 		visPanel.renderFrame();		
 		
+		if (visPanel.completedInit){
+			visPanel.completedInit(nodes);
+		}
+		
+	},
+	
+	zoomTo:function(x, y, zoom) {
+		var visPanel = this;
+		
+		var containerHeight = visPanel.getHeight();
+		var containerWidth = visPanel.getWidth();
+		
+		//put sprite  back to 0,0 then move to center (Keep in mind the sprites doesn't position doesn't move it just has matrixes applied to it)
+		visPanel.camera.panX = x * -1 + (containerWidth/2);
+		visPanel.camera.panY = y * -1 + (containerHeight/2);
+		visPanel.camera.zoom = zoom;
+		visPanel.camera.zoomCenterX = x ;
+		visPanel.camera.zoomCenterY = y;
+
+		//Reset start so it doesn't jump
+		visPanel.camera.startX = visPanel.camera.panX;
+		visPanel.camera.startY = visPanel.camera.panY;
+		visPanel.camera.update();
+				
 	}
 		
 });
@@ -554,10 +709,11 @@ Ext.define('OSF.component.VisualContainerPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.VisualContainerPanel',
 	
-	scrollable: true,
+	scrollable: false,
 	dockedItems: [
 		{
 			xtype: 'toolbar',
+			itemId: 'tools',
 			dock: 'top',
 			style: 'background: darkgrey;',
 			items: [
@@ -576,10 +732,61 @@ Ext.define('OSF.component.VisualContainerPanel', {
 							{ code: 'ATT', description: 'Attributes' },
 							{ code: 'TAGS', description: 'Tags' }
 						]
+					},
+					listeners: {
+						change: function (cb, newValue, oldValue, opts) {
+							var containerPanel = this.up('panel');							
+							
+							var findCB = containerPanel.getComponent('tools').getComponent('find');
+							findCB.reset();
+							
+							containerPanel.visualPanel.viewType=newValue;
+							containerPanel.visualPanel.reset();
+							
+						}
 					}
 				}, 
 				{
+					xtype: 'combo',
+					itemId: 'find',
+					fieldLabel: 'Find',
+					valueField: 'key',
+					displayField: 'name',
+					typeAhead: true,
+					editable: true,
+					width: 400,
+					store: {
+						sorters: [
+							new Ext.util.Sorter({
+								property: 'name',
+								direction: 'ASC'
+							})
+						]
+					},
+					listeners: {
+						change: function (cb, newValue, oldValue, opts) {
+							var containerPanel = this.up('panel');
+							
+							if (newValue) {
+								var node = cb.getSelection().data;							
+								containerPanel.visualPanel.zoomTo(node.positionX, node.positionY, 2);
+							}
+						}
+					}
+				},
+				{
 					xtype: 'tbfill'					
+				},
+				{
+					text: 'Download',
+					iconCls: 'fa fa-download',
+					handler: function(){
+						var containerPanel = this.up('panel');
+						containerPanel.visualPanel.download();
+					}
+				},
+				{
+					xtype: 'tbseparator'
 				},
 				{
 					text: 'Reset',
@@ -599,7 +806,10 @@ Ext.define('OSF.component.VisualContainerPanel', {
 		var containerPanel = this;
 		
 		containerPanel.visualPanel = Ext.create('OSF.component.VisualSearchPanel', {
-			
+			completedInit: function(nodes) {
+				var findCB = containerPanel.getComponent('tools').getComponent('find');
+				findCB.getStore().setData(nodes);			
+			}
 		});
 		
 		containerPanel.add(containerPanel.visualPanel);
@@ -608,6 +818,11 @@ Ext.define('OSF.component.VisualContainerPanel', {
 			containerPanel.updateLayout(true, true);
 		}, 100);
 		
+		
+		containerPanel.on('resize', function(container, width, height, oldWidth, oldHeight, opts){
+			containerPanel.visualPanel.setWidth(containerPanel.getWidth());
+			containerPanel.visualPanel.setHeight(containerPanel.getHeight()-40);
+		});
 	}, 
 	afterRender: function() {
 		this.callParent();
@@ -618,5 +833,6 @@ Ext.define('OSF.component.VisualContainerPanel', {
 			containerPanel.visualPanel.setHeight(containerPanel.getHeight()-40);
 		}, 100);
 	}
+	
 	
 });
