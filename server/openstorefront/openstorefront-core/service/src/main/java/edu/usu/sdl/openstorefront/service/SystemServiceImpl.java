@@ -33,6 +33,7 @@ import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.HelpSection;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
+import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.core.model.HelpSectionAll;
@@ -295,17 +296,17 @@ public class SystemServiceImpl
 		}
 		return ticketData;
 	}
-	
+
 	@Override
 	public void deleteErrorTickets(List<String> ticketIds)
 	{
 		List<ErrorTicket> errorTickets = new ArrayList<>();
 		for (String id : ticketIds) {
-			ErrorTicket errorTicket = persistenceService.findById(ErrorTicket.class, id);			
+			ErrorTicket errorTicket = persistenceService.findById(ErrorTicket.class, id);
 			errorTickets.add(errorTicket);
 		}
 		performDelete(errorTickets);
-	}	
+	}
 
 	@Override
 	public void cleanupOldErrors()
@@ -322,8 +323,9 @@ public class SystemServiceImpl
 			performDelete(errorTickets);
 		}
 	}
-	
-	private void performDelete(List<ErrorTicket> errorTickets) {
+
+	private void performDelete(List<ErrorTicket> errorTickets)
+	{
 		errorTickets.stream().forEach((errorTicket) -> {
 			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			if (path.toFile().exists()) {
@@ -389,6 +391,21 @@ public class SystemServiceImpl
 				}
 			}
 			persistenceService.delete(generalMedia);
+		}
+	}
+
+	@Override
+	public void removeTemporaryMedia(String mediaName)
+	{
+		TemporaryMedia temporaryMedia = persistenceService.findById(TemporaryMedia.class, mediaName);
+		if (temporaryMedia != null) {
+			Path path = temporaryMedia.pathToMedia();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					path.toFile().delete();
+				}
+			}
+			persistenceService.delete(temporaryMedia);
 		}
 	}
 

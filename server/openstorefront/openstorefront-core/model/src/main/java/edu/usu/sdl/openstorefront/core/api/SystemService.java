@@ -173,6 +173,14 @@ public interface SystemService
 	public void removeGeneralMedia(String mediaName);
 
 	/**
+	 * Delete a piece of temporary media
+	 *
+	 * @param mediaName
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void removeTemporaryMedia(String mediaName);
+
+	/**
 	 * Saves a task so it can be persisted across bounces This is meant for use
 	 * with completed tasks. Note: this will override existing task of the same
 	 * id
