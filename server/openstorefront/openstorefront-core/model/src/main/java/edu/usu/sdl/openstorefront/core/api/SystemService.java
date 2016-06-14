@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.entity.DBLogRecord;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.HelpSection;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
+import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.core.model.HelpSectionAll;
 import edu.usu.sdl.openstorefront.core.view.GlobalIntegrationModel;
@@ -129,13 +130,13 @@ public interface SystemService
 	public String errorTicketInfo(String errorTicketId);
 
 	/**
-	 * Deletes a set of tickets 
-	 * This is a hard delete
-	 * @param ticketIds 
+	 * Deletes a set of tickets This is a hard delete
+	 *
+	 * @param ticketIds
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteErrorTickets(List<String> ticketIds);
-	
+
 	/**
 	 * Removes excess errors beyond max....deleting oldest first
 	 */
@@ -171,6 +172,15 @@ public interface SystemService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeGeneralMedia(String mediaName);
+
+	/**
+	 * Saves a temporary media file
+	 *
+	 * @param temporaryMedia
+	 * @param fileInput (optional on update)
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveTemporaryMedia(TemporaryMedia temporaryMedia, InputStream fileInput);
 
 	/**
 	 * Delete a piece of temporary media

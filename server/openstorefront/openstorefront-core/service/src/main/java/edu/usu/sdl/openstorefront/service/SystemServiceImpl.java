@@ -395,6 +395,23 @@ public class SystemServiceImpl
 	}
 
 	@Override
+	public void saveTemporaryMedia(TemporaryMedia temporaryMedia, InputStream fileInput)
+	{
+		Objects.requireNonNull(temporaryMedia);
+		Objects.requireNonNull(fileInput);
+		Objects.requireNonNull(temporaryMedia.getName(), "Name must be set.");
+
+		temporaryMedia.setFileName(temporaryMedia.getName());
+		try (InputStream in = fileInput) {
+			Files.copy(in, temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
+			temporaryMedia.populateBaseCreateFields();
+			persistenceService.persist(temporaryMedia);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		}
+	}
+
+	@Override
 	public void removeTemporaryMedia(String mediaName)
 	{
 		TemporaryMedia temporaryMedia = persistenceService.findById(TemporaryMedia.class, mediaName);
