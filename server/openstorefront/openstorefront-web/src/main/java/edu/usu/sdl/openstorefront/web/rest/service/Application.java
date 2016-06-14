@@ -275,7 +275,10 @@ public class Application
 		URLConnection urlConnection = url.openConnection();
 
 		TemporaryMedia temporaryMedia = new TemporaryMedia();
-		temporaryMedia.setOriginalFileName(retrieveRequest.getURL());
+		String urlStr = retrieveRequest.getURL();
+		String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
+		String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
+		temporaryMedia.setOriginalFileName(originalFileName);
 		temporaryMedia.setFileName(DigestUtils.shaHex(retrieveRequest.getURL()));
 		temporaryMedia.setName(DigestUtils.shaHex(retrieveRequest.getURL()));
 		temporaryMedia.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
@@ -286,7 +289,7 @@ public class Application
 		InputStream input = urlConnection.getInputStream();
 		service.getSystemService().saveTemporaryMedia(temporaryMedia, input);
 
-		return Response.ok(retrieveRequest).build();
+		return Response.ok(temporaryMedia).build();
 
 	}
 
