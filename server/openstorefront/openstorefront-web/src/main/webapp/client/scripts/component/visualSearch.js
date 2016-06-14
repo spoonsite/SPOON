@@ -68,6 +68,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.on('spritemouseout', function(item, event, eOpts){
 			var sprite = item && item.sprite;	
 			if (sprite.node) {
+				visPanel.setStyle({
+					cursor: 'default'
+				});
+				
 				sprite.setAttributes({ 
 					fillStyle: sprite.originalFill
 				});
@@ -78,6 +82,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.on('spritemouseover', function(item, event, opts){
 			var sprite = item && item.sprite;
 			if (sprite.node) {
+				visPanel.setStyle({
+					cursor: 'pointer'
+				});
+				
 				sprite.originalFill = sprite.fillStyle;
 				var fill = 'rgb(255,255, 0)';
 
@@ -86,7 +94,78 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				});
 				sprite.getSurface().renderFrame();						
 			}
-		});	
+		});
+		
+		visPanel.on('spriteclick', function(item, event, opts){
+			var sprite = item && item.sprite;
+			if (sprite.node && sprite.nodeText) {
+				var winWidth = 500;
+				var winHeight = 400;
+				var descriptionWindow = Ext.create('Ext.window.Window', {
+					title: 'Details',
+					closeAction: 'destroy',
+					scrollable: true,
+					width: winWidth,
+					height: winHeight,
+					modal: true,
+					closeToolText: '',
+					bodyStyle: 'padding: 5px;',
+					maximizable: true,
+					tpl: new Ext.XTemplate(
+						'<h1>{name}</h1><i>{componentTypeLabel}</i><hr>',
+						'{description}'
+					)
+				});
+				
+				var winX = event.pageX;
+				var winY = event.pageY;
+				if ((event.pageX + winWidth) > visPanel.getWidth()) {
+					winX = visPanel.getWidth() - (winWidth+ 10);
+				}
+				
+				if ((event.pageY + winHeight) > visPanel.getHeight()) {
+					winY = visPanel.getHeight() - (winHeight - 10);
+				}				
+				descriptionWindow.showAt(winX, winY, true);
+				
+				if (sprite.node.type === 'component') {					
+					descriptionWindow.setLoading(true);
+					Ext.Ajax.request({
+						url: '../api/v1/resource/components/' + (sprite.node.key ? sprite.node.key : sprite.node.targetKey) + '/detail',
+						callback: function(){
+							descriptionWindow.setLoading(false);
+						},
+						success: function(response, opts) {
+							var data = Ext.decode(response.responseText);
+							descriptionWindow.update(data);
+						}
+					});
+				} else if (sprite.node.type === 'tag') {
+					descriptionWindow.update({
+						name: sprite.node.name,
+						description: '',
+						componentTypeLabel: 'Tag'
+					});					
+				} else if (sprite.node.type === 'organization') {
+					descriptionWindow.setLoading(true);
+					Ext.Ajax.request({
+						url: '../api/v1/resource/organizations/' + (sprite.node.key ? sprite.node.key : sprite.node.targetKey),
+						callback: function(){
+							descriptionWindow.setLoading(false);
+						},
+						success: function(response, opts) {
+							var data = Ext.decode(response.responseText);
+							data.componentTypeLabel = 'Organization';
+							descriptionWindow.update(data);
+						}
+					});
+				} else  if (sprite.node.type === 'attribute') {
+					
+				} else {
+					descriptionWindow.close();
+				}
+			}
+		});
 
 		visPanel.on('spritemousedown', function(sprite, event, opts){
 			visPanel.camera.pan = true;		
@@ -114,7 +193,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			// cross-browser wheel delta
 			e = window.event || e;
 			
-			if (e.target.id.indexOf('ext') !== -1) {
+			if (e.target.nodeName.toLowerCase() === 'canvas' || e.target.nodeName.toLowerCase() === 'svg') {
 				var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
 				
 				visPanel.camera.zoom += (delta / 2);
@@ -336,6 +415,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				targetKey: relationship.targetKey,
 				ownerKey: relationship.key,
 				relationshipLabel: relationship.relationshipLabel,
+				name: targetNode.name,
 				type: relationship.targetType
 			});
 		});
@@ -451,10 +531,93 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			strokeStyle: 'rgba(200, 200, 200, 1)'		
 		};
 		
-		
+		//hubs and edges
+		var hubs = [];		
 		Ext.Array.each(nodes, function(node) {
 			
 			if (!renderNodes[node.key]) {
+
+				var hub = {
+					spriteConfigs: [],
+					addNode: function(spriteConfig) {
+						var me = this;
+						me.spriteConfigs.push(spriteConfig);						
+						
+						var buffer = nodeRadius*3;
+						Ext.Array.each(me.spriteConfigs, function(n) {
+							if (!me.bbox) {
+								me.bbox = {
+									minX: n.positionX,
+									minY: n.positionY,
+									maxX: n.positionX,
+									maxY: n.positionY,
+									contains: function(x, y) {
+										var thisBBox = this;
+										
+										if (x >= thisBBox.minX && 
+											x <= thisBBox.maxX &&
+										  y >= thisBBox.minY &&
+										  y <= thisBBox.maxY) {
+											return true;
+										} else {
+											return false;
+										}
+									},
+									overlaps: function(bbox) {
+										var thisBBox = this;
+										if (thisBBox.contains(bbox.minX, bbox.minY) ||
+											thisBBox.contains(bbox.maxX, bbox.maxY))
+										{
+											return true;
+										} else {
+											return false;
+										}
+									},
+									compare: function(bbox) {
+										var thisBBox = this;
+										if (thisBBox.minX === bbox.minX &&
+											thisBBox.minY === bbox.minY &&
+											thisBBox.maxX === bbox.maxX &&
+											thisBBox.maxY === bbox.maxY) {										
+											return 0;
+										} else if (thisBBox.minX < bbox.minX ||
+											thisBBox.minY < bbox.minY && 
+											(thisBBox.maxX < bbox.maxX ||
+											thisBBox.maxY < bbox.maxY)) {	
+											return 1;											
+										} else if (thisBBox.minX > bbox.minX ||
+											thisBBox.minY > bbox.minY &&
+											(thisBBox.maxX > bbox.maxX &&
+											thisBBox.maxY > bbox.maxY)) {	
+											return -1;
+										} else {
+											return 2;
+										}										
+									}
+								};
+							} else {						
+								if (n.positionX < me.bbox.minX) {
+									me.bbox.minX = n.positionX;
+								}
+								if (n.positionX > me.bbox.maxX) {
+									me.bbox.maxX = n.positionX;
+								}
+								if (n.positionY < me.bbox.minY) {
+									me.bbox.minT = n.positionY;
+								}
+								if (n.positionY > me.bbox.maxY) {
+									me.bbox.maxY = n.positionY;
+								}							
+							}
+						});
+						me.bbox.minX -= buffer;
+						me.bbox.minY -= buffer;
+						me.bbox.maxX += buffer;
+						me.bbox.maxY += buffer;						
+					}
+					
+				};
+				hubs.push(hub);
 
 				var setNodePosition = true;
 				if (node.edges.length > 0) {
@@ -505,9 +668,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					node: node,
 					nodeText: true
 				}, textNode));
-
+				
+				hub.addNode(node);				
 			
 				var rotation = 0;
+				var distanceFromHub = componentNode.r * 10;
+				var generation = 1;				
 				Ext.Array.each(node.edges, function(edgeNode) {
 					
 					if (!renderNodes[edgeNode.targetKey]) {	
@@ -522,7 +688,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						
 						
 						targetNode.positionX = node.positionX;
-						targetNode.positionY = node.positionY - componentNode.r * 10;
+						targetNode.positionY = node.positionY - (distanceFromHub * generation);
 						targetNode.rotationDegrees = rotation;
 						
 						
@@ -554,23 +720,51 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							nodeText: true
 						}, textNode));					
 						
-						rotation += 45; 
+						if ((rotation + 45) >= 360) {
+							generation++;
+							rotation = 0;
+						} 
+						rotation +=  (45 / generation); 
+						hub.addNode(targetNode);
+						
 						renderNodes[edgeNode.targetKey] = true;
 					}
 				});
 			
-				startX += (componentNode.r  * 25) + nodeRadius;
+			
+				//calc bbox for hub 
+				var bbox = hub.bbox();
+			
+			
+				//
+				startX = bbox.maxX;
 				
-				rowCount++;
-				if (rowCount >= 5) {
-					startX = 150;
-					startY += 500;
-					rowCount = 0;
-				}				
+				
+//				rowCount++;
+//				if (rowCount >= 5) {
+//					startX = 150;
+//					startY += 500;
+//					rowCount = 0;
+//				}				
 				
 				renderNodes[node.key] = true;
 			}
 		});
+		
+		//spread out nodes so they don't over lap
+//		Ext.Array.each(hubs, function(h) {
+//			if (h.bbox().contains(startX)) {
+//				var maxBBox;
+//				Ext.Array.each(hubs, function(h) {
+//					if (!maxBBox) {
+//						menubar
+//					}
+//				}
+//				start = maxBBox.getM
+//			}
+//		});
+				
+		
 		
 		//add edges
 	
@@ -674,7 +868,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			visPanel.initSurface = true;
 		}
 
-		visPanel.setSprites(mainSprites);		
+		//legend
+		
+
+		visPanel.setSprites(mainSprites);			
 		visPanel.renderFrame();		
 		
 		if (visPanel.completedInit){
