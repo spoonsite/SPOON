@@ -401,7 +401,7 @@ public class SystemServiceImpl
 		Objects.requireNonNull(fileInput);
 		Objects.requireNonNull(temporaryMedia.getName(), "Name must be set.");
 
-		temporaryMedia.setFileName(temporaryMedia.getName());
+		temporaryMedia.setFileName(temporaryMedia.getFileName());
 		try (InputStream in = fileInput) {
 			Files.copy(in, temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
 			temporaryMedia.populateBaseCreateFields();
