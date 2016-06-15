@@ -207,8 +207,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				if (visPanel.camera.zoom >= .1 &&
 						visPanel.camera.zoom <= 4)
 				{
-					visPanel.camera.zoomCenterX = e.pageX;
-					visPanel.camera.zoomCenterY = e.pageY;
+					visPanel.camera.zoomCenterX = e.pageX - visPanel.camera.panX;
+					visPanel.camera.zoomCenterY = e.pageY - visPanel.camera.panY;
 					
 					visPanel.camera.update();	
 				}
@@ -539,21 +539,45 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 				var hub = {
 					spriteConfigs: [],
+					edgeHubs: [],
+					containsNode: function(key) {
+						var me = this;
+						var contains = false;
+						Ext.Array.each(me.spriteConfigs, function(n) {
+							if (n.node && !n.nodeText) {
+								var nodeKey = n.node.key ? n.node.key : n.node.targetKey;
+								if (nodeKey === key) {
+									contains = true;
+								}
+							}
+						});
+						return contains;
+					},
 					addNode: function(spriteConfig) {
 						var me = this;
 						me.spriteConfigs.push(spriteConfig);						
+						me.updateBBox();
+					},
+					updateBBox:  function (){
+						var me = this;
+						me.bbox = null;
 						
-						var buffer = nodeRadius*3;
-						Ext.Array.each(me.spriteConfigs, function(n) {
+						Ext.Array.each(me.spriteConfigs, function(n) {								
+							var buffer = n.r;
+							var nxLeft = n.x - buffer;
+							var nxRight = n.x + buffer;
+							var nyTop = n.y - buffer;
+							var nyBottom = n.y + buffer;
+
 							if (!me.bbox) {
 								me.bbox = {
-									minX: n.positionX,
-									minY: n.positionY,
-									maxX: n.positionX,
-									maxY: n.positionY,
+									minX: nxLeft,
+									minY: nyTop,
+									maxX: nxRight,
+									maxY: nyBottom,
 									contains: function(x, y) {
 										var thisBBox = this;
-										
+
 										if (x >= thisBBox.minX && 
 											x <= thisBBox.maxX &&
 										  y >= thisBBox.minY &&
@@ -576,48 +600,59 @@ Ext.define('OSF.component.VisualSearchPanel', {
 									compare: function(bbox) {
 										var thisBBox = this;
 										if (thisBBox.minX === bbox.minX &&
-											thisBBox.minY === bbox.minY &&
-											thisBBox.maxX === bbox.maxX &&
-											thisBBox.maxY === bbox.maxY) {										
+											thisBBox.minY === bbox.minY) {										
 											return 0;
 										} else if (thisBBox.minX < bbox.minX ||
-											thisBBox.minY < bbox.minY && 
-											(thisBBox.maxX < bbox.maxX ||
-											thisBBox.maxY < bbox.maxY)) {	
+											thisBBox.minY < bbox.minY) {	
 											return 1;											
 										} else if (thisBBox.minX > bbox.minX ||
-											thisBBox.minY > bbox.minY &&
-											(thisBBox.maxX > bbox.maxX &&
-											thisBBox.maxY > bbox.maxY)) {	
+											thisBBox.minY > bbox.minY ) {	
 											return -1;
-										} else {
-											return 2;
-										}										
+										} 										
 									}
 								};
 							} else {						
-								if (n.positionX < me.bbox.minX) {
-									me.bbox.minX = n.positionX;
+								if (nxLeft< me.bbox.minX) {
+									me.bbox.minX = nxLeft;
+								} else  if (nxRight > me.bbox.maxX) {
+									me.bbox.maxX = nxRight;
 								}
-								if (n.positionX > me.bbox.maxX) {
-									me.bbox.maxX = n.positionX;
-								}
-								if (n.positionY < me.bbox.minY) {
-									me.bbox.minT = n.positionY;
-								}
-								if (n.positionY > me.bbox.maxY) {
-									me.bbox.maxY = n.positionY;
+
+								if (nyTop < me.bbox.minY) {
+									me.bbox.minY = nyTop;
+								} else if (nyBottom > me.bbox.maxY) {
+									me.bbox.maxY = nyBottom;
 								}							
 							}
 						});
-						me.bbox.minX -= buffer;
-						me.bbox.minY -= buffer;
-						me.bbox.maxX += buffer;
-						me.bbox.maxY += buffer;						
+						me.bbox.minX -= 10;
+						me.bbox.minY -= 2;
+						me.bbox.maxX += 10;
+						me.bbox.maxY += 10;						
+					},
+					translateHub: function(newHubTopX, newHubTopY) {
+						var me = this;
+						
+						var translateX = newHubTopX - me.bbox.minX;
+						var translateY = newHubTopY - me.bbox.minY;
+						
+						Ext.Array.each(me.spriteConfigs, function(n) {
+							n.x += translateX;
+							n.y += translateY;
+							if (n.node && !n.nodeText) {
+								n.node.positionX = n.x ;
+								n.node.positionY = n.y ;
+							}
+							if (n.targetNode && !n.nodeText) {
+								n.targetNode.positionX = n.x ;
+								n.targetNode.positionY = n.y ;
+							}							
+						});
+						
+						me.updateBBox();
 					}
-					
 				};
-				hubs.push(hub);
+				
 
 				var setNodePosition = true;
 				if (node.edges.length > 0) {
@@ -633,13 +668,29 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						node.positionX = edgeNode.positionX - (componentNode.r  * 25 - nodeRadius);
 						node.positionY = edgeNode.positionY;
 						setNodePosition = false;
+						
+						//find hub that contains edgeNode
+						var hubWithNode;
+						 Ext.Array.each(hubs, function(h) {
+							if (h.containsNode(edgeNode.key)) {
+								hubWithNode = h;
+							} else {
+								var hubFound = Ext.Array.findBy(h.edgeHubs, function(edgeHub) {
+									return edgeHub.containsNode(edgeNode.key);
+								});
+								if (hubFound) {
+									hubWithNode = hubFound;
+								}
+							}
+						});
+						hubWithNode.edgeHubs.push(hub);
 					}
-					
-				}
-
+				} 
+				
 				if (setNodePosition) {
 					node.positionX = startX + (componentNode.r *6) + 40;
 					node.positionY = startY;
+					hubs.push(hub);
 				}
 				
 				var hubNodeRadius = nodeRadius + (node.edges.length*3);
@@ -653,23 +704,26 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				}				
 				node.nodeSize = hubNodeRadius;
 				
-				sprites.push(Ext.apply({}, {
+				
+				var nodeSprite = Ext.apply({}, {
 					x:  node.positionX,
 					y:  node.positionY,
 					node: node,
 					r: node.nodeSize
 					//fillStyle: hubFillStyle
-				}, baseNode));
+				}, baseNode);
+				sprites.push(nodeSprite);
+				hub.addNode(nodeSprite);
 				
-				sprites.push(Ext.apply({}, {
+				var nodeTextSprite = Ext.apply({}, {
 					x:  node.positionX,
 					y:  node.positionY + hubNodeRadius + 15,
 					text: Ext.util.Format.ellipsis(node.name, 20),
 					node: node,
 					nodeText: true
-				}, textNode));
-				
-				hub.addNode(node);				
+				}, textNode);				
+				sprites.push(nodeTextSprite);				
+				hub.addNode(nodeTextSprite);				
 			
 				var rotation = 0;
 				var distanceFromHub = componentNode.r * 10;
@@ -689,8 +743,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						
 						targetNode.positionX = node.positionX;
 						targetNode.positionY = node.positionY - (distanceFromHub * generation);
-						targetNode.rotationDegrees = rotation;
-						
+						targetNode.rotationDegrees = rotation;						
 						
 						var point = new Ext.draw.Point(targetNode.positionX, targetNode.positionY);
 						point = point.rotate(rotation, new Ext.draw.Point(node.positionX, node.positionY) );
@@ -705,39 +758,53 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							targetNode.nodeSize = baseNode.r;
 						}
 						
-						
-						sprites.push(Ext.apply({}, {
+						var targetNodeSprite = Ext.apply({}, {
 							x:  targetNode.positionX,
 							y:  targetNode.positionY,
-							node: edgeNode
-						}, baseNode));
+							node: edgeNode,
+							targetNode: targetNode
+						}, baseNode);						
+						sprites.push(targetNodeSprite);
+						hub.addNode(targetNodeSprite);
 
-						sprites.push(Ext.apply({}, {
+						var targetNodeTextSprite = Ext.apply({}, {
 							x:  targetNode.positionX,
 							y:  targetNode.positionY + nodeRadius + 15,
 							text: Ext.util.Format.ellipsis(targetNode.name, 20),
 							node: edgeNode,
+							targetNode: targetNode,
 							nodeText: true
-						}, textNode));					
+						}, textNode);						
+						sprites.push(targetNodeTextSprite);	
+						hub.addNode(targetNodeTextSprite);
 						
 						if ((rotation + 45) >= 360) {
 							generation++;
 							rotation = 0;
 						} 
 						rotation +=  (45 / generation); 
-						hub.addNode(targetNode);
+						
 						
 						renderNodes[edgeNode.targetKey] = true;
 					}
 				});
 			
-			
-				//calc bbox for hub 
-				var bbox = hub.bbox();
-			
-			
-				//
-				startX = bbox.maxX;
+				var maxX;
+				Ext.Array.each(hubs, function(h) {
+					if (!maxX) {
+						maxX = h.bbox.maxX;
+					} else if (h.bbox.maxX > maxX) {
+						maxX = h.bbox.maxX;
+					}					
+					Ext.Array.each(h.edgehubs, function(edgeHub) {
+						if (!maxX) {
+							maxX = edgeHub.bbox.maxX;
+						} else if (edgeHub.bbox.maxX > maxX) {
+							maxX = edgeHub.bbox.maxX;
+						}
+					});
+				});
+				startX = maxX;
 				
 				
 //				rowCount++;
@@ -751,19 +818,120 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}
 		});
 		
-		//spread out nodes so they don't over lap
-//		Ext.Array.each(hubs, function(h) {
-//			if (h.bbox().contains(startX)) {
-//				var maxBBox;
-//				Ext.Array.each(hubs, function(h) {
-//					if (!maxBBox) {
-//						menubar
-//					}
-//				}
-//				start = maxBBox.getM
-//			}
-//		});
+		//Layout hubs so they don't over lap 
+		var layoutGeneration = 1;
+		var firstHub = true;
+		var hubPositionRotation = 0;		
+		var generationMinX;
+		var generationMinY;
+		var minXOfGeneration;
+		var perviousHub;
+		var containerCenterX = containerWidth / 2;
+		var containerCenterY = containerHeight / 2;
+		var spread = 100;
+		Ext.Array.each(hubs, function(h) {
+			
+			if (firstHub) {
+				//center hub on container				
+				var transX = containerCenterX - (h.bbox.maxX - h.bbox.minX) / 2;
+				var transY = containerCenterY - (h.bbox.maxY - h.bbox.minY) / 2;
 				
+
+				h.translateHub(transX, transY);
+
+				sprites.push({
+					type: 'rect',
+					x: h.bbox.minX,
+					y: h.bbox.minY,
+					width: h.bbox.maxX - h.bbox.minX,
+					height: h.bbox.maxY - h.bbox.minY,
+					strokeStyle: 'yellow',
+					lineWidth: 1, 
+					fillOpacity: 0
+				});				
+				
+				generationMinX = h.bbox.minX;
+				generationMinY = h.bbox.minY;
+				minXOfGeneration = h.bbox.minX;
+				
+				firstHub = false;
+			} else {
+				var transX = generationMinX - ((h.bbox.maxX - h.bbox.minX) + spread);
+				var transY = generationMinY;
+				
+				var point = new Ext.draw.Point(transX, transY);
+				point = point.rotate(hubPositionRotation, new Ext.draw.Point(containerCenterX, containerCenterY));
+				
+				//adjust to previous
+				
+	
+				h.translateHub(point.x, point.y);
+				
+				sprites.push({
+					type: 'rect',
+					x: h.bbox.minX,
+					y: h.bbox.minY,
+					width: h.bbox.maxX - h.bbox.minX,
+					height: h.bbox.maxY - h.bbox.minY,
+					strokeStyle: 'yellow',
+					lineWidth: 1, 
+					fillOpacity: 0
+				});					
+				
+				
+			}
+			perviousHub = h;
+						
+			Ext.Array.each(h.edgeHubs, function(edgeHub) {
+				
+				var transX = generationMinX - ((edgeHub.bbox.maxX - edgeHub.bbox.minX) + spread);
+				var transY = generationMinY;
+				
+				var point = new Ext.draw.Point(transX, transY);
+				point = point.rotate(hubPositionRotation, new Ext.draw.Point(containerCenterX, containerCenterY));
+				
+				//adjust to previous
+				
+				
+				
+				edgeHub.translateHub(point.x, point.y);
+						
+				sprites.push({
+					type: 'rect',
+					x: edgeHub.bbox.minX,
+					y: edgeHub.bbox.minY,
+					width: edgeHub.bbox.maxX - edgeHub.bbox.minX,
+					height: edgeHub.bbox.maxY - edgeHub.bbox.minY,
+					strokeStyle: 'red',
+					lineWidth: 1, 
+					fillOpacity: 0
+				});
+				
+				
+								
+				perviousHub = h;	
+				if (edgeHub.bbox.minX  < minXOfGeneration) {
+					minXOfGeneration = edgeHub.bbox.minX;
+				}
+				
+				hubPositionRotation += 45; 			
+				if (hubPositionRotation % 360 === 0) {
+					layoutGeneration++;				
+					generationMinX = minXOfGeneration;
+				}	
+			});		
+					
+			
+			if (h.bbox.minX  < minXOfGeneration) {
+				minXOfGeneration = h.bbox.minX;
+			}			
+			
+			hubPositionRotation += 45; 			
+			if (hubPositionRotation % 360 === 0) {
+				layoutGeneration++;	
+				generationMinX = minXOfGeneration;
+			}
+		});		
 		
 		
 		//add edges
