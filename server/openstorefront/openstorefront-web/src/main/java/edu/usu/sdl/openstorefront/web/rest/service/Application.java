@@ -38,14 +38,12 @@ import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.ThreadStatus;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
-import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -56,8 +54,6 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -80,7 +76,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -271,23 +266,7 @@ public class Application
 	public Response retrieveMedia(MediaRetrieveRequestModel retrieveRequest) throws MalformedURLException, IOException
 	{
 
-		URL url = new URL(retrieveRequest.getURL());
-		URLConnection urlConnection = url.openConnection();
-
-		TemporaryMedia temporaryMedia = new TemporaryMedia();
-		String urlStr = retrieveRequest.getURL();
-		String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
-		String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
-		temporaryMedia.setOriginalFileName(originalFileName);
-		temporaryMedia.setFileName(DigestUtils.shaHex(retrieveRequest.getURL()));
-		temporaryMedia.setName(DigestUtils.shaHex(retrieveRequest.getURL()));
-		temporaryMedia.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
-		temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
-		temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-		temporaryMedia.setMimeType(urlConnection.getContentType());
-
-		InputStream input = urlConnection.getInputStream();
-		service.getSystemService().saveTemporaryMedia(temporaryMedia, input);
+		TemporaryMedia temporaryMedia = service.getSystemService().retrieveTemporaryMedia(retrieveRequest.getURL());
 
 		return Response.ok(temporaryMedia).build();
 

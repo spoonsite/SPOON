@@ -191,6 +191,15 @@ public interface SystemService
 	public void removeTemporaryMedia(String mediaName);
 
 	/**
+	 * Retrieve media from a URL and save it.
+	 *
+	 * @param urlStr
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public TemporaryMedia retrieveTemporaryMedia(String urlStr);
+
+	/**
 	 * Saves a task so it can be persisted across bounces This is meant for use
 	 * with completed tasks. Note: this will override existing task of the same
 	 * id

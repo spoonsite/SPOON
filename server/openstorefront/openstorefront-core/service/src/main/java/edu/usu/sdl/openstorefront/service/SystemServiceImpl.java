@@ -49,6 +49,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,6 +64,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -424,6 +427,33 @@ public class SystemServiceImpl
 			}
 			persistenceService.delete(temporaryMedia);
 		}
+	}
+
+	@Override
+	public TemporaryMedia retrieveTemporaryMedia(String urlStr)
+	{
+		try {
+			URL url = new URL(urlStr);
+			URLConnection urlConnection = url.openConnection();
+			TemporaryMedia temporaryMedia = new TemporaryMedia();
+			String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
+			String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
+			temporaryMedia.setOriginalFileName(originalFileName);
+			temporaryMedia.setFileName(DigestUtils.shaHex(urlStr));
+			temporaryMedia.setName(DigestUtils.shaHex(urlStr));
+			temporaryMedia.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
+			temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+			temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+			temporaryMedia.setMimeType(urlConnection.getContentType());
+
+			InputStream input = urlConnection.getInputStream();
+			saveTemporaryMedia(temporaryMedia, input);
+			return temporaryMedia;
+
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to download temporary media", "Connection failed to download temporary media.", ex);
+		}
+
 	}
 
 	@Override
