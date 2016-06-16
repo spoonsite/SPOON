@@ -268,6 +268,10 @@ public class Application
 
 		TemporaryMedia temporaryMedia = service.getSystemService().retrieveTemporaryMedia(retrieveRequest.getURL());
 
+		if (temporaryMedia == null) {
+			return Response.status(404).build();
+		}
+
 		return Response.ok(temporaryMedia).build();
 
 	}

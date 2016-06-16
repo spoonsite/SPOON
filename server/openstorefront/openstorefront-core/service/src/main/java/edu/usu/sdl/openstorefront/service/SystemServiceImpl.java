@@ -49,8 +49,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -434,7 +435,16 @@ public class SystemServiceImpl
 	{
 		try {
 			URL url = new URL(urlStr);
-			URLConnection urlConnection = url.openConnection();
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+			if (urlConnection.getResponseCode() == 404) {
+				return null;
+			}
+			if (!urlConnection.getContentType().contains("image")) {
+				log.log(Level.INFO, MessageFormat.format("Not an image:  {0}", (urlConnection.getContentType())));
+				return null;
+			}
+
 			TemporaryMedia temporaryMedia = new TemporaryMedia();
 			String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
 			String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
@@ -450,6 +460,8 @@ public class SystemServiceImpl
 			saveTemporaryMedia(temporaryMedia, input);
 			return temporaryMedia;
 
+		} catch (MalformedURLException ex) {
+			return null;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to download temporary media", "Connection failed to download temporary media.", ex);
 		}
