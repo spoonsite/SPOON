@@ -72,9 +72,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					cursor: 'default'
 				});
 				
-				sprite.setAttributes({ 
-					fillStyle: sprite.originalFill
-				});
+				try{
+					sprite.setAttributes({ 
+						fillStyle: sprite.originalFill
+					});
+				} catch (e) {					
+				}
 				sprite.getSurface().renderFrame();		
 			}
 		});		
@@ -98,7 +101,13 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		
 		visPanel.on('spriteclick', function(item, event, opts){
 			var sprite = item && item.sprite;
-			if (sprite.node && sprite.nodeText) {
+			if (sprite.node && !sprite.nodeText) {
+				var key  = sprite.node.key ? sprite.node.key : sprite.node.targetKey;
+				var type = sprite.node.type ? sprite.node.type : sprite.node.targetType;
+				var name = sprite.node.name ? sprite.node.name : sprite.node.targetName;
+				visPanel.loadNextLevel(key, type, name);
+				
+			} else if (sprite.node && sprite.nodeText) {
 				var winWidth = 500;
 				var winHeight = 400;
 				var descriptionWindow = Ext.create('Ext.window.Window', {
@@ -160,6 +169,40 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						}
 					});
 				} else  if (sprite.node.type === 'attribute') {
+					
+					var key = (sprite.node.key ? sprite.node.key : sprite.node.targetKey);
+					
+					var url;
+					descriptionWindow.setLoading(true);
+					var attributeType = false;
+					if (key.indexOf('#') !== -1) {
+						var keySplit = key.split('#');
+						url = '../api/v1/resource/attributes/attributetypes/' + keySplit[0] + '/attributecodes/' + keySplit[1];						
+					} else {
+						url = '../api/v1/resource/attributes/attributetypes/' + key;
+						attributeType = true;
+					}
+					
+					
+					Ext.Ajax.request({
+						url: url,
+						callback: function(){
+							descriptionWindow.setLoading(false);
+						},
+						success: function(response, opts) {
+							var data = Ext.decode(response.responseText);
+							
+							if (attributeType) {
+								data.componentTypeLabel = 'Attribute Type';
+								data.name = data.description;
+								data.description = data.detailedDescription;
+							} else {
+								data.componentTypeLabel = 'Attribute Code';
+								data.name = data.label;
+							}
+							descriptionWindow.update(data);
+						}
+					});					
 					
 				} else {
 					descriptionWindow.close();
@@ -263,6 +306,57 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.loadRelationships();
 	},
 	
+	loadNextLevel: function(key, entityType, nodeName) {
+		var visPanel = this;
+		
+		visPanel.setLoading("Loading Relationships for " + nodeName + "...");
+		Ext.Ajax.request({
+			url: '../api/v1/service/relationship?key=' + key + '&entityType=' + entityType,
+			callback: function(){
+				visPanel.setLoading(false);
+			},
+			success: function(response, opts) {
+				var data = Ext.decode(response.responseText);
+				
+				var viewData = [];
+				Ext.Array.each(data, function(relationship){
+					viewData.push({
+						type: relationship.entityType,					
+						key: relationship.key,
+						label: relationship.name,
+						relationshipLabel: relationship.relationshipLabel,
+						targetKey: relationship.targetKey,
+						targetName: relationship.targetName,
+						targetType: relationship.targetEntityType
+					});
+				});
+				
+				visPanel.addViewData(viewData);
+			}
+		});		
+	},
+	
+	addViewData: function(newViewData) {
+		var visPanel = this;
+		
+		//de-dup relationships
+		Ext.Array.each(newViewData, function(newRelationship){
+			var containRelation = false;
+			Ext.Array.each(visPanel.viewData, function(existing){
+				if (newRelationship.key === existing.key && 
+				    newRelationship.targetKey === existing.targetKey &&
+				    newRelationship.relationshipLabel === existing.relationshipLabel) {
+					containRelation = true;
+				}
+			});
+			if (containRelation === false) {
+				visPanel.viewData.push(newRelationship);
+			}	
+		});
+		
+		visPanel.initVisual(visPanel.viewData);
+	},
+	
 	loadRelationships: function() {
 		var visPanel = this;
 		
@@ -361,11 +455,116 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		
 	},
 	
-	loadAttributes: function() {
+	loadAttributes: function(attributeType) {
 		var visPanel = this;
 		
-		//prompt for type to display
+		var attributeLoad = function(attributeType) {
+			visPanel.setLoading("Loading Attributes...");
+			Ext.Ajax.request({
+				url: '../api/v1/resource/attributes/relationships?attributeType=' + attributeType,
+				callback: function(){
+					visPanel.setLoading(false);
+				},
+				success: function(response, opts) {
+					var data = Ext.decode(response.responseText);
+
+					var viewData = [];
+					Ext.Array.each(data, function(attributeRelationship){
+						viewData.push({
+							type: 'attribute',
+							nodeId: attributeRelationship.key,
+							key: attributeRelationship.key,
+							label: attributeRelationship.name,
+							relationshipLabel: '',
+							targetKey: attributeRelationship.targetKey,
+							targetName: attributeRelationship.targetName,
+							targetType: 'attribute'
+						});
+					});
+
+					visPanel.viewData = visPanel.viewData.concat(viewData);
+					visPanel.initVisual(visPanel.viewData);
+				}
+			});			
+		};
 		
+		
+		if (attributeType) {
+			attributeLoad(attributeType);
+		} else {
+			//prompt for type to display
+			var prompt = Ext.create('Ext.window.Window', {
+				title: 'Select Attribute/Vital to View',
+				modal: true,
+				closeMode: 'destory',
+				width: 400,			
+				height: 150,
+				bodyStyle: 'padding: 10px;',
+				layout: 'anchor',
+				items: [
+					{
+						xtype: 'combo',
+						fieldLabel: 'Attribute',
+						itemId: 'attributeType',
+						labelAlign: 'top',
+						valueField: 'attributeType',
+						width: '100%', 
+						displayField: 'description',
+						typeAhead: true,
+						editable: true,
+						allowBlank: false,
+						queryMode: 'remote',
+						store: {
+							proxy: {
+								type: 'ajax',
+								url: '../api/v1/resource/attributes/attributetypes',
+								reader: {
+									type: 'json',
+									rootProperty: 'data'
+								}
+							}
+						}
+					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Show',
+								iconCls: 'fa fa-check',
+								handler: function(){
+									var promptWindow = this.up('window');
+									var attributeTypeCb = promptWindow.getComponent('attributeType');
+									if (attributeTypeCb.getValue()) {
+										attributeLoad(attributeTypeCb.getValue());
+										visPanel.updateAttribute(attributeTypeCb.getValue());
+										promptWindow.close();										
+									} else {
+										Ext.Msg.show({
+											title:'Validation Failed',
+											message: 'Select an attribute to show.',
+											buttons: Ext.Msg.OK,
+											icon: Ext.Msg.ERROR,
+											fn: function(btn) {
+											}
+										});
+									}
+								}
+							},
+							{
+								xtype: 'tbfill'
+							}						
+						]
+					}
+				]
+			});
+			prompt.show();				
+		}		
 	},
 	
 	initVisual: function(viewData) {
@@ -442,6 +641,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		
 //		
 		for(var i=30; i<=containerWidth; i=i+30) {
+			
+			var opacity = .1;
+			if ((i/30) % 5 === 0) {
+				opacity = .3;
+			}
+			
 			mainSprites.push({
 				backgroundSprite: true,
 				type: 'line',
@@ -450,11 +655,17 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				toX: i,
 				toY: containerHeight,
 				lineWidth: 1,
-				strokeStyle: 'rgba(255, 255, 255, .1)'
+				strokeStyle: 'rgba(255, 255, 255, ' +opacity + ')'
 			});
 		}
 		
 		for(var i=30; i<=containerHeight; i=i+30) {
+			
+			var opacity = .1;
+			if ((i/30) % 5 === 0) {
+				opacity = .3;
+			}
+			
 			mainSprites.push({
 				backgroundSprite: true,
 				type: 'line',
@@ -463,7 +674,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				toX: containerWidth,
 				toY: i,
 				lineWidth: 1,
-				strokeStyle: 'rgba(255, 255, 255, .1)'
+				strokeStyle: 'rgba(255, 255, 255, ' +opacity + ')'
 			});
 		}		
 		mainSprites.push(cameraSprite);		
@@ -509,6 +720,14 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			lineWidth: 3,
 			strokeStyle: 'rgba(255, 255, 255, 1)'					
 		};
+		
+		var attributeNode={
+			type: 'square',
+			size: nodeRadius, 
+			fillStyle: 'tan',
+			lineWidth: 3,
+			strokeStyle: 'rgba(255, 255, 255, 1)'					
+		};		
 		
 		var hubFillStyle = 'rgba(87, 160, 204, 1)';
 		
@@ -683,7 +902,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								}
 							}
 						});
-						hubWithNode.edgeHubs.push(hub);
+						if (hubWithNode) {
+							hubWithNode.edgeHubs.push(hub);
+						}
 					}
 				} 
 				
@@ -701,7 +922,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				}
 				if (node.type === 'organization') {
 					baseNode = organizationNode; 
-				}				
+				}	
+				if (node.type === 'attribute') {
+					baseNode = attributeNode; 
+				}
 				node.nodeSize = hubNodeRadius;
 				
 				
@@ -753,6 +977,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						var baseNode = componentNode; 
 						if (edgeNode.type === 'tag') {
 							baseNode = tagNode; 
+							targetNode.nodeSize = baseNode.size;
+						} else if (edgeNode.type === 'attribute') {
+							baseNode = attributeNode; 
+							targetNode.nodeSize = baseNode.size;
+						} else if (edgeNode.type === 'organization') {
+							baseNode = organizationNode; 
 							targetNode.nodeSize = baseNode.size;
 						} else { 
 							targetNode.nodeSize = baseNode.r;
@@ -1031,7 +1261,26 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				y: 0,
 				width: containerWidth,
 				height: containerHeight,
-				fillStyle: 'rgba(29, 39, 38, 1)'
+				fillStyle: {
+				   type: 'radial',
+				   start: {
+					   x: 0,
+					   y: 0,
+					   r: 0
+				   },
+				   end: {
+					   x: 0,
+					   y: 0,
+					   r: 1
+				   },
+				   stops: [{
+					   offset: 0,
+					   color: '#5586dc'
+				   }, {
+					   offset: 1,
+					   color: '#1f3163'
+				   }]
+			   }
 			});
 			visPanel.initSurface = true;
 		}
@@ -1102,6 +1351,12 @@ Ext.define('OSF.component.VisualContainerPanel', {
 						change: function (cb, newValue, oldValue, opts) {
 							var containerPanel = this.up('panel');							
 							
+							if (newValue === 'ATT') {
+								containerPanel.getComponent('tools').getComponent('attributeType').setHidden(false);
+							} else {
+								containerPanel.getComponent('tools').getComponent('attributeType').setHidden(true);
+							}
+							
 							var findCB = containerPanel.getComponent('tools').getComponent('find');
 							findCB.reset();
 							
@@ -1140,6 +1395,38 @@ Ext.define('OSF.component.VisualContainerPanel', {
 					}
 				},
 				{
+					xtype: 'combo',
+					fieldLabel: 'Attribute',
+					itemId: 'attributeType',
+					hidden: true,				
+					valueField: 'attributeType',
+					width: 300, 
+					displayField: 'description',
+					typeAhead: true,
+					editable: true,
+					allowBlank: false,				
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: '../api/v1/resource/attributes/attributetypes',
+							reader: {
+								type: 'json',
+								rootProperty: 'data'
+							}
+						}
+					},
+					listeners: {
+						change: function (cb, newValue, oldValue, opts) {
+							var containerPanel = this.up('panel');
+							
+							if (newValue) {
+								containerPanel.visualPanel.loadAttributes(newValue);
+							}
+						}
+					}					
+				},
+				{
 					xtype: 'tbfill'					
 				},
 				{
@@ -1174,6 +1461,9 @@ Ext.define('OSF.component.VisualContainerPanel', {
 			completedInit: function(nodes) {
 				var findCB = containerPanel.getComponent('tools').getComponent('find');
 				findCB.getStore().setData(nodes);			
+			},
+			updateAttribute: function(attributeType) {
+				containerPanel.getComponent('tools').getComponent('attributeType').setValue(attributeType);
 			}
 		});
 		
