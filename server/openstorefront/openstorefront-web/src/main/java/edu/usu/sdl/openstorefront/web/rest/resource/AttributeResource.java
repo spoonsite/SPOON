@@ -48,6 +48,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.RelationshipView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -149,6 +150,73 @@ public class AttributeResource
 		return attributeTypeViews;
 	}
 
+	@GET
+	@APIDescription("Get attribute relationships")
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(RelationshipView.class)
+	@Path("/relationships")
+	public Response getAttributeRelationships(
+		@QueryParam("attributeType") String filterAttributeType 
+	) 
+	{
+		List<RelationshipView> relationships = new ArrayList<>();
+				
+		AttributeType attributeTypeExample = new AttributeType();
+		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		attributeTypeExample.setAttributeType(filterAttributeType);
+						
+		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
+		for (AttributeType attributeType : attributeTypes) {
+			if (attributeType.getArchitectureFlg()) {
+				Architecture architecture = service.getAttributeService().generateArchitecture(attributeType.getAttributeType());
+				buildRelations(relationships, architecture, null);
+			} else {
+				List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
+				for (AttributeCode attributeCode : attributeCodes) {
+					RelationshipView relationship = new RelationshipView();
+					relationship.setKey(attributeCode.getAttributeCodePk().toKey());
+					relationship.setName(attributeCode.getLabel());
+					relationship.setEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+					relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
+					relationship.setTargetKey(attributeType.getAttributeType());
+					relationship.setTargetName(attributeType.getDescription());
+					relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+										
+					relationships.add(relationship);
+				}				
+			}
+		}		
+		
+		GenericEntity<List<RelationshipView>> entity = new GenericEntity<List<RelationshipView>>(relationships)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	public void buildRelations(List<RelationshipView> relationships, Architecture architecture,  Architecture parent) 
+	{
+		if (parent != null) {
+			RelationshipView relationship = new RelationshipView();
+			String key = architecture.getAttributeType() + "-" + architecture.getAttributeCode();
+			String keyParent = parent.getAttributeType() + "-" + parent.getAttributeCode();
+			
+			relationship.setKey(key);
+			relationship.setName(architecture.getName());
+			relationship.setEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+			relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
+			relationship.setTargetKey(keyParent);
+			relationship.setTargetName(parent.getName());
+			relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+
+			relationships.add(relationship);			
+		}
+		
+		for (Architecture child : architecture.getChildren()) {
+			buildRelations(relationships, child, architecture);
+		}		
+		
+	}	
+	
 	@POST
 	@APIDescription("Exports attributes in JSON format. To import attributes, POST to /Upload.action?UploadAttributes with the file (Requires Admin)")
 	@RequireAdmin

@@ -68,16 +68,28 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.on('spritemouseout', function(item, event, eOpts){
 			var sprite = item && item.sprite;	
 			if (sprite.node) {
-				sprite.setAttributes({ 
-					fillStyle: sprite.originalFill
+				visPanel.setStyle({
+					cursor: 'default'
 				});
-				sprite.getSurface().renderFrame();		
+				
+				try{
+					sprite.setAttributes({ 
+						fillStyle: sprite.originalFill
+					});
+					sprite.getSurface().renderFrame();	
+				} catch (e) {					
+				}
+					
 			}
 		});		
 		
 		visPanel.on('spritemouseover', function(item, event, opts){
 			var sprite = item && item.sprite;
 			if (sprite.node) {
+				visPanel.setStyle({
+					cursor: 'pointer'
+				});
+				
 				sprite.originalFill = sprite.fillStyle;
 				var fill = 'rgb(255,255, 0)';
 
@@ -86,7 +98,118 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				});
 				sprite.getSurface().renderFrame();						
 			}
-		});	
+		});
+		
+		visPanel.on('spriteclick', function(item, event, opts){
+			var sprite = item && item.sprite;
+			if (sprite.node && !sprite.nodeText) {
+				var key  = sprite.node.key ? sprite.node.key : sprite.node.targetKey;
+				var type = sprite.node.type ? sprite.node.type : sprite.node.targetType;
+				var name = sprite.node.name ? sprite.node.name : sprite.node.targetName;
+				visPanel.loadNextLevel(key, type, name);
+				
+			} else if (sprite.node && sprite.nodeText) {
+				var winWidth = 500;
+				var winHeight = 400;
+				var descriptionWindow = Ext.create('Ext.window.Window', {
+					title: 'Details',
+					closeAction: 'destroy',
+					scrollable: true,
+					width: winWidth,
+					height: winHeight,
+					modal: true,
+					closeToolText: '',
+					bodyStyle: 'padding: 5px;',
+					maximizable: true,
+					tpl: new Ext.XTemplate(
+						'<h1>{name}</h1><i>{componentTypeLabel}</i><hr>',
+						'{description}'
+					)
+				});
+				
+				var winX = event.pageX;
+				var winY = event.pageY;
+				if ((event.pageX + winWidth) > visPanel.getWidth()) {
+					winX = visPanel.getWidth() - (winWidth+ 10);
+				}
+				
+				if ((event.pageY + winHeight) > visPanel.getHeight()) {
+					winY = visPanel.getHeight() - (winHeight - 10);
+				}				
+				descriptionWindow.showAt(winX, winY, true);
+				
+				if (sprite.node.type === 'component') {					
+					descriptionWindow.setLoading(true);
+					Ext.Ajax.request({
+						url: '../api/v1/resource/components/' + (sprite.node.key ? sprite.node.key : sprite.node.targetKey) + '/detail',
+						callback: function(){
+							descriptionWindow.setLoading(false);
+						},
+						success: function(response, opts) {
+							var data = Ext.decode(response.responseText);
+							descriptionWindow.update(data);
+						}
+					});
+				} else if (sprite.node.type === 'tag') {
+					descriptionWindow.update({
+						name: sprite.node.name,
+						description: '',
+						componentTypeLabel: 'Tag'
+					});					
+				} else if (sprite.node.type === 'organization') {
+					descriptionWindow.setLoading(true);
+					Ext.Ajax.request({
+						url: '../api/v1/resource/organizations/' + (sprite.node.key ? sprite.node.key : sprite.node.targetKey),
+						callback: function(){
+							descriptionWindow.setLoading(false);
+						},
+						success: function(response, opts) {
+							var data = Ext.decode(response.responseText);
+							data.componentTypeLabel = 'Organization';
+							descriptionWindow.update(data);
+						}
+					});
+				} else  if (sprite.node.type === 'attribute') {
+					
+					var key = (sprite.node.key ? sprite.node.key : sprite.node.targetKey);
+					
+					var url;
+					descriptionWindow.setLoading(true);
+					var attributeType = false;
+					if (key.indexOf('#') !== -1) {
+						var keySplit = key.split('#');
+						url = '../api/v1/resource/attributes/attributetypes/' + keySplit[0] + '/attributecodes/' + keySplit[1];						
+					} else {
+						url = '../api/v1/resource/attributes/attributetypes/' + key;
+						attributeType = true;
+					}
+					
+					
+					Ext.Ajax.request({
+						url: url,
+						callback: function(){
+							descriptionWindow.setLoading(false);
+						},
+						success: function(response, opts) {
+							var data = Ext.decode(response.responseText);
+							
+							if (attributeType) {
+								data.componentTypeLabel = 'Attribute Type';
+								data.name = data.description;
+								data.description = data.detailedDescription;
+							} else {
+								data.componentTypeLabel = 'Attribute Code';
+								data.name = data.label;
+							}
+							descriptionWindow.update(data);
+						}
+					});					
+					
+				} else {
+					descriptionWindow.close();
+				}
+			}
+		});
 
 		visPanel.on('spritemousedown', function(sprite, event, opts){
 			visPanel.camera.pan = true;		
@@ -114,7 +237,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			// cross-browser wheel delta
 			e = window.event || e;
 			
-			if (e.target.id.indexOf('ext') !== -1) {
+			if (e.target.nodeName.toLowerCase() === 'canvas' || e.target.nodeName.toLowerCase() === 'svg') {
 				var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
 				
 				visPanel.camera.zoom += (delta / 2);
@@ -128,8 +251,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				if (visPanel.camera.zoom >= .1 &&
 						visPanel.camera.zoom <= 4)
 				{
-					visPanel.camera.zoomCenterX = e.pageX;
-					visPanel.camera.zoomCenterY = e.pageY;
+					visPanel.camera.zoomCenterX = e.pageX - visPanel.camera.panX;
+					visPanel.camera.zoomCenterY = e.pageY - visPanel.camera.panY;
 					
 					visPanel.camera.update();	
 				}
@@ -182,6 +305,57 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		
 		var visPanel = this;
 		visPanel.loadRelationships();
+	},
+	
+	loadNextLevel: function(key, entityType, nodeName) {
+		var visPanel = this;
+		
+		visPanel.setLoading("Loading Relationships for " + nodeName + "...");
+		Ext.Ajax.request({
+			url: '../api/v1/service/relationship?key=' + key + '&entityType=' + entityType,
+			callback: function(){
+				visPanel.setLoading(false);
+			},
+			success: function(response, opts) {
+				var data = Ext.decode(response.responseText);
+				
+				var viewData = [];
+				Ext.Array.each(data, function(relationship){
+					viewData.push({
+						type: relationship.entityType,					
+						key: relationship.key,
+						label: relationship.name,
+						relationshipLabel: relationship.relationshipLabel,
+						targetKey: relationship.targetKey,
+						targetName: relationship.targetName,
+						targetType: relationship.targetEntityType
+					});
+				});
+				
+				visPanel.addViewData(viewData);
+			}
+		});		
+	},
+	
+	addViewData: function(newViewData) {
+		var visPanel = this;
+		
+		//de-dup relationships
+		Ext.Array.each(newViewData, function(newRelationship){
+			var containRelation = false;
+			Ext.Array.each(visPanel.viewData, function(existing){
+				if (newRelationship.key === existing.key && 
+				    newRelationship.targetKey === existing.targetKey &&
+				    newRelationship.relationshipLabel === existing.relationshipLabel) {
+					containRelation = true;
+				}
+			});
+			if (containRelation === false) {
+				visPanel.viewData.push(newRelationship);
+			}	
+		});
+		
+		visPanel.initVisual(visPanel.viewData);
 	},
 	
 	loadRelationships: function() {
@@ -282,11 +456,116 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		
 	},
 	
-	loadAttributes: function() {
+	loadAttributes: function(attributeType) {
 		var visPanel = this;
 		
-		//prompt for type to display
+		var attributeLoad = function(attributeType) {
+			visPanel.setLoading("Loading Attributes...");
+			Ext.Ajax.request({
+				url: '../api/v1/resource/attributes/relationships?attributeType=' + attributeType,
+				callback: function(){
+					visPanel.setLoading(false);
+				},
+				success: function(response, opts) {
+					var data = Ext.decode(response.responseText);
+
+					var viewData = [];
+					Ext.Array.each(data, function(attributeRelationship){
+						viewData.push({
+							type: 'attribute',
+							nodeId: attributeRelationship.key,
+							key: attributeRelationship.key,
+							label: attributeRelationship.name,
+							relationshipLabel: '',
+							targetKey: attributeRelationship.targetKey,
+							targetName: attributeRelationship.targetName,
+							targetType: 'attribute'
+						});
+					});
+
+					visPanel.viewData = visPanel.viewData.concat(viewData);
+					visPanel.initVisual(visPanel.viewData);
+				}
+			});			
+		};
 		
+		
+		if (attributeType) {
+			attributeLoad(attributeType);
+		} else {
+			//prompt for type to display
+			var prompt = Ext.create('Ext.window.Window', {
+				title: 'Select Attribute/Vital to View',
+				modal: true,
+				closeMode: 'destory',
+				width: 400,			
+				height: 150,
+				bodyStyle: 'padding: 10px;',
+				layout: 'anchor',
+				items: [
+					{
+						xtype: 'combo',
+						fieldLabel: 'Attribute',
+						itemId: 'attributeType',
+						labelAlign: 'top',
+						valueField: 'attributeType',
+						width: '100%', 
+						displayField: 'description',
+						typeAhead: true,
+						editable: true,
+						allowBlank: false,
+						queryMode: 'remote',
+						store: {
+							proxy: {
+								type: 'ajax',
+								url: '../api/v1/resource/attributes/attributetypes',
+								reader: {
+									type: 'json',
+									rootProperty: 'data'
+								}
+							}
+						}
+					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Show',
+								iconCls: 'fa fa-check',
+								handler: function(){
+									var promptWindow = this.up('window');
+									var attributeTypeCb = promptWindow.getComponent('attributeType');
+									if (attributeTypeCb.getValue()) {
+										attributeLoad(attributeTypeCb.getValue());
+										visPanel.updateAttribute(attributeTypeCb.getValue());
+										promptWindow.close();										
+									} else {
+										Ext.Msg.show({
+											title:'Validation Failed',
+											message: 'Select an attribute to show.',
+											buttons: Ext.Msg.OK,
+											icon: Ext.Msg.ERROR,
+											fn: function(btn) {
+											}
+										});
+									}
+								}
+							},
+							{
+								xtype: 'tbfill'
+							}						
+						]
+					}
+				]
+			});
+			prompt.show();				
+		}		
 	},
 	
 	initVisual: function(viewData) {
@@ -336,6 +615,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				targetKey: relationship.targetKey,
 				ownerKey: relationship.key,
 				relationshipLabel: relationship.relationshipLabel,
+				name: targetNode.name,
 				type: relationship.targetType
 			});
 		});
@@ -362,6 +642,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		
 //		
 		for(var i=30; i<=containerWidth; i=i+30) {
+			
+			var opacity = .1;
+			if ((i/30) % 5 === 0) {
+				opacity = .3;
+			}
+			
 			mainSprites.push({
 				backgroundSprite: true,
 				type: 'line',
@@ -370,11 +656,17 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				toX: i,
 				toY: containerHeight,
 				lineWidth: 1,
-				strokeStyle: 'rgba(255, 255, 255, .1)'
+				strokeStyle: 'rgba(255, 255, 255, ' +opacity + ')'
 			});
 		}
 		
 		for(var i=30; i<=containerHeight; i=i+30) {
+			
+			var opacity = .1;
+			if ((i/30) % 5 === 0) {
+				opacity = .3;
+			}
+			
 			mainSprites.push({
 				backgroundSprite: true,
 				type: 'line',
@@ -383,7 +675,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				toX: containerWidth,
 				toY: i,
 				lineWidth: 1,
-				strokeStyle: 'rgba(255, 255, 255, .1)'
+				strokeStyle: 'rgba(255, 255, 255, ' +opacity + ')'
 			});
 		}		
 		mainSprites.push(cameraSprite);		
@@ -430,6 +722,14 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			strokeStyle: 'rgba(255, 255, 255, 1)'					
 		};
 		
+		var attributeNode={
+			type: 'square',
+			size: nodeRadius, 
+			fillStyle: 'tan',
+			lineWidth: 3,
+			strokeStyle: 'rgba(255, 255, 255, 1)'					
+		};		
+		
 		var hubFillStyle = 'rgba(87, 160, 204, 1)';
 		
 		var relationshipEdge = {
@@ -451,10 +751,128 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			strokeStyle: 'rgba(200, 200, 200, 1)'		
 		};
 		
-		
+		//hubs and edges
+		var hubs = [];		
 		Ext.Array.each(nodes, function(node) {
 			
 			if (!renderNodes[node.key]) {
+
+				var hub = {
+					spriteConfigs: [],
+					edgeHubs: [],
+					containsNode: function(key) {
+						var me = this;
+						var contains = false;
+						Ext.Array.each(me.spriteConfigs, function(n) {
+							if (n.node && !n.nodeText) {
+								var nodeKey = n.node.key ? n.node.key : n.node.targetKey;
+								if (nodeKey === key) {
+									contains = true;
+								}
+							}
+						});
+						return contains;
+					},
+					addNode: function(spriteConfig) {
+						var me = this;
+						me.spriteConfigs.push(spriteConfig);						
+						me.updateBBox();
+					},
+					updateBBox:  function (){
+						var me = this;
+						me.bbox = null;
+						
+						Ext.Array.each(me.spriteConfigs, function(n) {								
+							var buffer = n.r;
+							var nxLeft = n.x - buffer;
+							var nxRight = n.x + buffer;
+							var nyTop = n.y - buffer;
+							var nyBottom = n.y + buffer;
+
+							if (!me.bbox) {
+								me.bbox = {
+									minX: nxLeft,
+									minY: nyTop,
+									maxX: nxRight,
+									maxY: nyBottom,
+									contains: function(x, y) {
+										var thisBBox = this;
+
+										if (x >= thisBBox.minX && 
+											x <= thisBBox.maxX &&
+										  y >= thisBBox.minY &&
+										  y <= thisBBox.maxY) {
+											return true;
+										} else {
+											return false;
+										}
+									},
+									overlaps: function(bbox) {
+										var thisBBox = this;
+										if (thisBBox.contains(bbox.minX, bbox.minY) ||
+											thisBBox.contains(bbox.maxX, bbox.maxY))
+										{
+											return true;
+										} else {
+											return false;
+										}
+									},
+									compare: function(bbox) {
+										var thisBBox = this;
+										if (thisBBox.minX === bbox.minX &&
+											thisBBox.minY === bbox.minY) {										
+											return 0;
+										} else if (thisBBox.minX < bbox.minX ||
+											thisBBox.minY < bbox.minY) {	
+											return 1;											
+										} else if (thisBBox.minX > bbox.minX ||
+											thisBBox.minY > bbox.minY ) {	
+											return -1;
+										} 										
+									}
+								};
+							} else {						
+								if (nxLeft< me.bbox.minX) {
+									me.bbox.minX = nxLeft;
+								} else  if (nxRight > me.bbox.maxX) {
+									me.bbox.maxX = nxRight;
+								}
+
+								if (nyTop < me.bbox.minY) {
+									me.bbox.minY = nyTop;
+								} else if (nyBottom > me.bbox.maxY) {
+									me.bbox.maxY = nyBottom;
+								}							
+							}
+						});
+						me.bbox.minX -= 10;
+						me.bbox.minY -= 2;
+						me.bbox.maxX += 10;
+						me.bbox.maxY += 10;						
+					},
+					translateHub: function(newHubTopX, newHubTopY) {
+						var me = this;
+						
+						var translateX = newHubTopX - me.bbox.minX;
+						var translateY = newHubTopY - me.bbox.minY;
+						
+						Ext.Array.each(me.spriteConfigs, function(n) {
+							n.x += translateX;
+							n.y += translateY;
+							if (n.node && !n.nodeText) {
+								n.node.positionX = n.x ;
+								n.node.positionY = n.y ;
+							}
+							if (n.targetNode && !n.nodeText) {
+								n.targetNode.positionX = n.x ;
+								n.targetNode.positionY = n.y ;
+							}							
+						});
+						
+						me.updateBBox();
+					}
+				};
+				
 
 				var setNodePosition = true;
 				if (node.edges.length > 0) {
@@ -470,13 +888,31 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						node.positionX = edgeNode.positionX - (componentNode.r  * 25 - nodeRadius);
 						node.positionY = edgeNode.positionY;
 						setNodePosition = false;
+						
+						//find hub that contains edgeNode
+						var hubWithNode;
+						 Ext.Array.each(hubs, function(h) {
+							if (h.containsNode(edgeNode.key)) {
+								hubWithNode = h;
+							} else {
+								var hubFound = Ext.Array.findBy(h.edgeHubs, function(edgeHub) {
+									return edgeHub.containsNode(edgeNode.key);
+								});
+								if (hubFound) {
+									hubWithNode = hubFound;
+								}
+							}
+						});
+						if (hubWithNode) {
+							hubWithNode.edgeHubs.push(hub);
+						}
 					}
-					
-				}
-
+				} 
+				
 				if (setNodePosition) {
 					node.positionX = startX + (componentNode.r *6) + 40;
 					node.positionY = startY;
+					hubs.push(hub);
 				}
 				
 				var hubNodeRadius = nodeRadius + (node.edges.length*3);
@@ -487,27 +923,36 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				}
 				if (node.type === 'organization') {
 					baseNode = organizationNode; 
-				}				
+				}	
+				if (node.type === 'attribute') {
+					baseNode = attributeNode; 
+				}
 				node.nodeSize = hubNodeRadius;
 				
-				sprites.push(Ext.apply({}, {
+				
+				var nodeSprite = Ext.apply({}, {
 					x:  node.positionX,
 					y:  node.positionY,
 					node: node,
 					r: node.nodeSize
 					//fillStyle: hubFillStyle
-				}, baseNode));
+				}, baseNode);
+				sprites.push(nodeSprite);
+				hub.addNode(nodeSprite);
 				
-				sprites.push(Ext.apply({}, {
+				var nodeTextSprite = Ext.apply({}, {
 					x:  node.positionX,
 					y:  node.positionY + hubNodeRadius + 15,
 					text: Ext.util.Format.ellipsis(node.name, 20),
 					node: node,
 					nodeText: true
-				}, textNode));
-
+				}, textNode);				
+				sprites.push(nodeTextSprite);				
+				hub.addNode(nodeTextSprite);				
 			
 				var rotation = 0;
+				var distanceFromHub = componentNode.r * 10;
+				var generation = 1;				
 				Ext.Array.each(node.edges, function(edgeNode) {
 					
 					if (!renderNodes[edgeNode.targetKey]) {	
@@ -522,9 +967,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						
 						
 						targetNode.positionX = node.positionX;
-						targetNode.positionY = node.positionY - componentNode.r * 10;
-						targetNode.rotationDegrees = rotation;
-						
+						targetNode.positionY = node.positionY - (distanceFromHub * generation);
+						targetNode.rotationDegrees = rotation;						
 						
 						var point = new Ext.draw.Point(targetNode.positionX, targetNode.positionY);
 						point = point.rotate(rotation, new Ext.draw.Point(node.positionX, node.positionY) );
@@ -535,42 +979,191 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						if (edgeNode.type === 'tag') {
 							baseNode = tagNode; 
 							targetNode.nodeSize = baseNode.size;
+						} else if (edgeNode.type === 'attribute') {
+							baseNode = attributeNode; 
+							targetNode.nodeSize = baseNode.size;
+						} else if (edgeNode.type === 'organization') {
+							baseNode = organizationNode; 
+							targetNode.nodeSize = baseNode.size;
 						} else { 
 							targetNode.nodeSize = baseNode.r;
 						}
 						
-						
-						sprites.push(Ext.apply({}, {
+						var targetNodeSprite = Ext.apply({}, {
 							x:  targetNode.positionX,
 							y:  targetNode.positionY,
-							node: edgeNode
-						}, baseNode));
+							node: edgeNode,
+							targetNode: targetNode
+						}, baseNode);						
+						sprites.push(targetNodeSprite);
+						hub.addNode(targetNodeSprite);
 
-						sprites.push(Ext.apply({}, {
+						var targetNodeTextSprite = Ext.apply({}, {
 							x:  targetNode.positionX,
 							y:  targetNode.positionY + nodeRadius + 15,
 							text: Ext.util.Format.ellipsis(targetNode.name, 20),
 							node: edgeNode,
+							targetNode: targetNode,
 							nodeText: true
-						}, textNode));					
+						}, textNode);						
+						sprites.push(targetNodeTextSprite);	
+						hub.addNode(targetNodeTextSprite);
 						
-						rotation += 45; 
+						if ((rotation + 45) >= 360) {
+							generation++;
+							rotation = 0;
+						} 
+						rotation +=  (45 / generation); 
+						
+						
 						renderNodes[edgeNode.targetKey] = true;
 					}
 				});
 			
-				startX += (componentNode.r  * 25) + nodeRadius;
+				var maxX;
+				Ext.Array.each(hubs, function(h) {
+					if (!maxX) {
+						maxX = h.bbox.maxX;
+					} else if (h.bbox.maxX > maxX) {
+						maxX = h.bbox.maxX;
+					}					
+					Ext.Array.each(h.edgehubs, function(edgeHub) {
+						if (!maxX) {
+							maxX = edgeHub.bbox.maxX;
+						} else if (edgeHub.bbox.maxX > maxX) {
+							maxX = edgeHub.bbox.maxX;
+						}
+					});
+				});
+				startX = maxX;
 				
-				rowCount++;
-				if (rowCount >= 5) {
-					startX = 150;
-					startY += 500;
-					rowCount = 0;
-				}				
+				
+//				rowCount++;
+//				if (rowCount >= 5) {
+//					startX = 150;
+//					startY += 500;
+//					rowCount = 0;
+//				}				
 				
 				renderNodes[node.key] = true;
 			}
 		});
+		
+		//Layout hubs so they don't over lap 
+		var layoutGeneration = 1;
+		var firstHub = true;
+		var hubPositionRotation = 0;		
+		var generationMinX;
+		var generationMinY;
+		var minXOfGeneration;
+		var perviousHub;
+		var containerCenterX = containerWidth / 2;
+		var containerCenterY = containerHeight / 2;
+		var spread = 100;
+		Ext.Array.each(hubs, function(h) {
+			
+			if (firstHub) {
+				//center hub on container				
+				var transX = containerCenterX - (h.bbox.maxX - h.bbox.minX) / 2;
+				var transY = containerCenterY - (h.bbox.maxY - h.bbox.minY) / 2;
+				
+
+				h.translateHub(transX, transY);
+
+				sprites.push({
+					type: 'rect',
+					x: h.bbox.minX,
+					y: h.bbox.minY,
+					width: h.bbox.maxX - h.bbox.minX,
+					height: h.bbox.maxY - h.bbox.minY,
+					strokeStyle: 'yellow',
+					lineWidth: 1, 
+					fillOpacity: 0
+				});				
+				
+				generationMinX = h.bbox.minX;
+				generationMinY = h.bbox.minY;
+				minXOfGeneration = h.bbox.minX;
+				
+				firstHub = false;
+			} else {
+				var transX = generationMinX - ((h.bbox.maxX - h.bbox.minX) + spread);
+				var transY = generationMinY;
+				
+				var point = new Ext.draw.Point(transX, transY);
+				point = point.rotate(hubPositionRotation, new Ext.draw.Point(containerCenterX, containerCenterY));
+				
+				//adjust to previous
+				
+	
+				h.translateHub(point.x, point.y);
+				
+				sprites.push({
+					type: 'rect',
+					x: h.bbox.minX,
+					y: h.bbox.minY,
+					width: h.bbox.maxX - h.bbox.minX,
+					height: h.bbox.maxY - h.bbox.minY,
+					strokeStyle: 'yellow',
+					lineWidth: 1, 
+					fillOpacity: 0
+				});					
+				
+				
+			}
+			perviousHub = h;
+						
+			Ext.Array.each(h.edgeHubs, function(edgeHub) {
+				
+				var transX = generationMinX - ((edgeHub.bbox.maxX - edgeHub.bbox.minX) + spread);
+				var transY = generationMinY;
+				
+				var point = new Ext.draw.Point(transX, transY);
+				point = point.rotate(hubPositionRotation, new Ext.draw.Point(containerCenterX, containerCenterY));
+				
+				//adjust to previous
+				
+				
+				
+				edgeHub.translateHub(point.x, point.y);
+						
+				sprites.push({
+					type: 'rect',
+					x: edgeHub.bbox.minX,
+					y: edgeHub.bbox.minY,
+					width: edgeHub.bbox.maxX - edgeHub.bbox.minX,
+					height: edgeHub.bbox.maxY - edgeHub.bbox.minY,
+					strokeStyle: 'red',
+					lineWidth: 1, 
+					fillOpacity: 0
+				});
+				
+				
+								
+				perviousHub = h;	
+				if (edgeHub.bbox.minX  < minXOfGeneration) {
+					minXOfGeneration = edgeHub.bbox.minX;
+				}
+				
+				hubPositionRotation += 45; 			
+				if (hubPositionRotation % 360 === 0) {
+					layoutGeneration++;				
+					generationMinX = minXOfGeneration;
+				}	
+			});		
+					
+			
+			if (h.bbox.minX  < minXOfGeneration) {
+				minXOfGeneration = h.bbox.minX;
+			}			
+			
+			hubPositionRotation += 45; 			
+			if (hubPositionRotation % 360 === 0) {
+				layoutGeneration++;	
+				generationMinX = minXOfGeneration;
+			}
+		});		
+		
 		
 		//add edges
 	
@@ -669,12 +1262,34 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				y: 0,
 				width: containerWidth,
 				height: containerHeight,
-				fillStyle: 'rgba(29, 39, 38, 1)'
+				fillStyle: {
+				   type: 'radial',
+				   start: {
+					   x: 0,
+					   y: 0,
+					   r: 0
+				   },
+				   end: {
+					   x: 0,
+					   y: 0,
+					   r: 1
+				   },
+				   stops: [{
+					   offset: 0,
+					   color: '#5586dc'
+				   }, {
+					   offset: 1,
+					   color: '#1f3163'
+				   }]
+			   }
 			});
 			visPanel.initSurface = true;
 		}
 
-		visPanel.setSprites(mainSprites);		
+		//legend
+		
+
+		visPanel.setSprites(mainSprites);			
 		visPanel.renderFrame();		
 		
 		if (visPanel.completedInit){
@@ -737,6 +1352,12 @@ Ext.define('OSF.component.VisualContainerPanel', {
 						change: function (cb, newValue, oldValue, opts) {
 							var containerPanel = this.up('panel');							
 							
+							if (newValue === 'ATT') {
+								containerPanel.getComponent('tools').getComponent('attributeType').setHidden(false);
+							} else {
+								containerPanel.getComponent('tools').getComponent('attributeType').setHidden(true);
+							}
+							
 							var findCB = containerPanel.getComponent('tools').getComponent('find');
 							findCB.reset();
 							
@@ -775,6 +1396,38 @@ Ext.define('OSF.component.VisualContainerPanel', {
 					}
 				},
 				{
+					xtype: 'combo',
+					fieldLabel: 'Attribute',
+					itemId: 'attributeType',
+					hidden: true,				
+					valueField: 'attributeType',
+					width: 300, 
+					displayField: 'description',
+					typeAhead: true,
+					editable: true,
+					allowBlank: false,				
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: '../api/v1/resource/attributes/attributetypes',
+							reader: {
+								type: 'json',
+								rootProperty: 'data'
+							}
+						}
+					},
+					listeners: {
+						change: function (cb, newValue, oldValue, opts) {
+							var containerPanel = this.up('panel');
+							
+							if (newValue) {
+								containerPanel.visualPanel.loadAttributes(newValue);
+							}
+						}
+					}					
+				},
+				{
 					xtype: 'tbfill'					
 				},
 				{
@@ -809,6 +1462,9 @@ Ext.define('OSF.component.VisualContainerPanel', {
 			completedInit: function(nodes) {
 				var findCB = containerPanel.getComponent('tools').getComponent('find');
 				findCB.getStore().setData(nodes);			
+			},
+			updateAttribute: function(attributeType) {
+				containerPanel.getComponent('tools').getComponent('attributeType').setValue(attributeType);
 			}
 		});
 		
