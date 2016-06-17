@@ -76,9 +76,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					sprite.setAttributes({ 
 						fillStyle: sprite.originalFill
 					});
+					sprite.getSurface().renderFrame();	
 				} catch (e) {					
 				}
-				sprite.getSurface().renderFrame();		
+					
 			}
 		});		
 		
