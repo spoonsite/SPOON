@@ -15,7 +15,7 @@
  */
 /*global tinymce:true */
 
-tinymce.PluginManager.add('osfmediauploader', function(editor) {
+tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 
 	var parseEditorContents = function parseEditorContents(editor) {
 		var el = document.createElement('html');
@@ -25,7 +25,21 @@ tinymce.PluginManager.add('osfmediauploader', function(editor) {
 	};
 
 	var task = new Ext.util.DelayedTask(function() {
-		console.log(parseEditorContents(editor));
+		var images = parseEditorContents(editor);
+
+		if (images.length) {
+			for (var i=0;i<images.length;i++) {	
+				Ext.getStore('mediaStore').add({
+					url: images[i].src,
+					result: 'Retrieving...',
+					status: 'RETR',
+					temporaryId: ''
+				});
+			}
+			
+			Ext.getCmp('inlineMediaWindow').processMedia(editor);
+		}
+
 	});
 
 
