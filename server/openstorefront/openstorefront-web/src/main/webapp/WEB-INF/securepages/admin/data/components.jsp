@@ -9,6 +9,7 @@
 		<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/savedSearchLinkInsertWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/inlineMediaRetrieverWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
 		<form name="exportForm" action="../api/v1/resource/components/export" method="POST" >
 			<p style="display: none;" id="exportFormIds">
@@ -30,6 +31,11 @@
 
 				var ssInsertWindow = Ext.create('OSF.component.SavedSearchLinkInsertWindow', {					
 					id: 'ssInsertWindow',
+					alwaysOnTop: true
+				});	
+
+				var inlineMediaWindow = Ext.create('OSF.component.InlineMediaRetrieverWindow', {					
+					id: 'inlineMediaWindow',
 					alwaysOnTop: true
 				});	
 
