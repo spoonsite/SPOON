@@ -30,11 +30,18 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			xtype: 'grid',
 			id: 'mediaGrid',
 			columns: [
-				{text: 'URL', dataIndex: 'url', flex: 2},
+				{text: 'URL', dataIndex: 'url', flex: 4},
 				{
 					text: 'Status', 
 					dataIndex: 'result',
-					flex: 1
+					flex: 1,
+					renderer: function (value, metadata, record) {
+						if (value === 'SUCCESS') 
+							metadata.tdCls = 'alert-success';
+						else if (value === 'FAILED')
+							metadata.tdCls = 'alert-danger';
+						return value;
+					}
 				}
 			],
 			store: Ext.create('Ext.data.Store', {id: 'mediaStore'}),
