@@ -122,7 +122,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					bodyStyle: 'padding: 5px;',
 					maximizable: true,
 					tpl: new Ext.XTemplate(
-						'<h1>{name}</h1><i>{componentTypeLabel}</i><hr>',
+						'<h1>{name}</h1><i>{componentTypeLabel}</i>',
+						'<tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeLabel}" width="40" /></tpl>',
+						'<hr>',
 						'{description}'
 					)
 				});
@@ -178,7 +180,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					var attributeType = false;
 					if (key.indexOf('#') !== -1) {
 						var keySplit = key.split('#');
-						url = '../api/v1/resource/attributes/attributetypes/' + keySplit[0] + '/attributecodes/' + keySplit[1];						
+						url = '../api/v1/resource/attributes/attributetypes/' + keySplit[0] + '/' + keySplit[1] +'/detail';						
 					} else {
 						url = '../api/v1/resource/attributes/attributetypes/' + key;
 						attributeType = true;
@@ -199,7 +201,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 								data.description = data.detailedDescription;
 							} else {
 								data.componentTypeLabel = 'Attribute Code';
-								data.name = data.label;
+								data.name = data.typeLabel + " - " + data.codeLabel;
+								data.description = data.codeDetailDescription;
 							}
 							descriptionWindow.update(data);
 						}
@@ -312,7 +315,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		
 		visPanel.setLoading("Loading Relationships for " + nodeName + "...");
 		Ext.Ajax.request({
-			url: '../api/v1/service/relationship?key=' + key + '&entityType=' + entityType,
+			url: '../api/v1/service/relationship?key=' + key.replace('#', '~') + '&entityType=' + entityType,
 			callback: function(){
 				visPanel.setLoading(false);
 			},
@@ -322,13 +325,13 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				var viewData = [];
 				Ext.Array.each(data, function(relationship){
 					viewData.push({
-						type: relationship.entityType,					
-						key: relationship.key,
-						label: relationship.name,
+						type: relationship.targetEntityType,					
+						key: relationship.targetKey,
+						label: relationship.targetName,
 						relationshipLabel: relationship.relationshipLabel,
-						targetKey: relationship.targetKey,
-						targetName: relationship.targetName,
-						targetType: relationship.targetEntityType
+						targetKey: relationship.key,
+						targetName: relationship.name,
+						targetType: relationship.entityType
 					});
 				});
 				
@@ -474,11 +477,11 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						viewData.push({
 							type: 'attribute',
 							nodeId: attributeRelationship.key,
-							key: attributeRelationship.key,
-							label: attributeRelationship.name,
-							relationshipLabel: '',
-							targetKey: attributeRelationship.targetKey,
-							targetName: attributeRelationship.targetName,
+							key: attributeRelationship.targetKey,
+							label: attributeRelationship.targetName,
+							relationshipLabel: attributeRelationship.relationshipLabel,
+							targetKey: attributeRelationship.key,
+							targetName: attributeRelationship.name,
 							targetType: 'attribute'
 						});
 					});
@@ -589,7 +592,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				nodes.push({
 					key: node.targetKey,
 					name: node.targetName,
-					type: node.type,
+					type: node.targetType,
 					edges: []	
 				});				
 				nodeKeys[node.targetKey] = true;
@@ -725,7 +728,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		var attributeNode={
 			type: 'square',
 			size: nodeRadius, 
-			fillStyle: 'tan',
+			fillStyle: 'brown',
 			lineWidth: 3,
 			strokeStyle: 'rgba(255, 255, 255, 1)'					
 		};		
@@ -751,13 +754,14 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			strokeStyle: 'rgba(200, 200, 200, 1)'		
 		};
 		
-		//hubs and edges
+		//hubs, nodes 
 		var hubs = [];		
 		Ext.Array.each(nodes, function(node) {
 			
 			if (!renderNodes[node.key]) {
 
 				var hub = {
+					id: Ext.id({}, 'hub-gen'),
 					spriteConfigs: [],
 					edgeHubs: [],
 					containsNode: function(key) {
@@ -783,7 +787,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						me.bbox = null;
 						
 						Ext.Array.each(me.spriteConfigs, function(n) {								
-							var buffer = n.r;
+							var buffer = n.r ? n.r : n.size ? n.size : 0;
 							var nxLeft = n.x - buffer;
 							var nxRight = n.x + buffer;
 							var nyTop = n.y - buffer;
@@ -915,7 +919,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					hubs.push(hub);
 				}
 				
-				var hubNodeRadius = nodeRadius + (node.edges.length*3);
+				var hubNodeRadius = nodeRadius + (node.edges.length);
 				
 				var baseNode =componentNode; 
 				if (node.type === 'tag') {
@@ -934,7 +938,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					x:  node.positionX,
 					y:  node.positionY,
 					node: node,
-					r: node.nodeSize
+					r: node.nodeSize,
+					size: node.nodeSize
 					//fillStyle: hubFillStyle
 				}, baseNode);
 				sprites.push(nodeSprite);
@@ -1009,7 +1014,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						sprites.push(targetNodeTextSprite);	
 						hub.addNode(targetNodeTextSprite);
 						
-						if ((rotation + 45) >= 360) {
+						if ((rotation + 45) >= 405) {
 							generation++;
 							rotation = 0;
 						} 
@@ -1058,8 +1063,20 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		var minXOfGeneration;
 		var perviousHub;
 		var containerCenterX = containerWidth / 2;
-		var containerCenterY = containerHeight / 2;
+		var containerCenterY = containerHeight / 2;		
 		var spread = 100;
+		
+		var allHubsWithEgdes= [];
+		Ext.Array.each(hubs, function(h) {
+			
+			allHubsWithEgdes.push(h);
+			Ext.Array.each(h.edgeHubs, function(edgeHub) {
+				allHubsWithEgdes.push(edgeHub);
+			});
+			
+		});
+		
+		//move into position
 		Ext.Array.each(hubs, function(h) {
 			
 			if (firstHub) {
@@ -1070,16 +1087,26 @@ Ext.define('OSF.component.VisualSearchPanel', {
 
 				h.translateHub(transX, transY);
 
+//				sprites.push({
+//					type: 'rect',
+//					x: h.bbox.minX,
+//					y: h.bbox.minY,
+//					width: h.bbox.maxX - h.bbox.minX,
+//					height: h.bbox.maxY - h.bbox.minY,
+//					strokeStyle: 'yellow',
+//					lineWidth: 1, 
+//					fillOpacity: 0
+//				});
+
 				sprites.push({
-					type: 'rect',
+					type: 'text',
 					x: h.bbox.minX,
-					y: h.bbox.minY,
-					width: h.bbox.maxX - h.bbox.minX,
-					height: h.bbox.maxY - h.bbox.minY,
+					y: h.bbox.minY,					
 					strokeStyle: 'yellow',
+					text: h.id,
 					lineWidth: 1, 
-					fillOpacity: 0
-				});				
+					fillOpacity: 1
+				});
 				
 				generationMinX = h.bbox.minX;
 				generationMinY = h.bbox.minY;
@@ -1093,21 +1120,30 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				var point = new Ext.draw.Point(transX, transY);
 				point = point.rotate(hubPositionRotation, new Ext.draw.Point(containerCenterX, containerCenterY));
 				
-				//adjust to previous
-				
-	
+
 				h.translateHub(point.x, point.y);
 				
+				
 				sprites.push({
-					type: 'rect',
+					type: 'text',
 					x: h.bbox.minX,
-					y: h.bbox.minY,
-					width: h.bbox.maxX - h.bbox.minX,
-					height: h.bbox.maxY - h.bbox.minY,
+					y: h.bbox.minY,					
 					strokeStyle: 'yellow',
+					text: h.id,
 					lineWidth: 1, 
-					fillOpacity: 0
-				});					
+					fillOpacity: 1
+				});				
+				
+//				sprites.push({
+//					type: 'rect',
+//					x: h.bbox.minX,
+//					y: h.bbox.minY,
+//					width: h.bbox.maxX - h.bbox.minX,
+//					height: h.bbox.maxY - h.bbox.minY,
+//					strokeStyle: 'yellow',
+//					lineWidth: 1, 
+//					fillOpacity: 0
+//				});					
 				
 				
 			}
@@ -1121,24 +1157,28 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				var point = new Ext.draw.Point(transX, transY);
 				point = point.rotate(hubPositionRotation, new Ext.draw.Point(containerCenterX, containerCenterY));
 				
-				//adjust to previous
-				
-				
-				
 				edgeHub.translateHub(point.x, point.y);
 						
 				sprites.push({
-					type: 'rect',
+					type: 'text',
 					x: edgeHub.bbox.minX,
-					y: edgeHub.bbox.minY,
-					width: edgeHub.bbox.maxX - edgeHub.bbox.minX,
-					height: edgeHub.bbox.maxY - edgeHub.bbox.minY,
-					strokeStyle: 'red',
+					y: edgeHub.bbox.minY,					
+					strokeStyle: 'yellow',
+					text: edgeHub.id,
 					lineWidth: 1, 
-					fillOpacity: 0
-				});
-				
-				
+					fillOpacity: 1
+				});						
+						
+//				sprites.push({
+//					type: 'rect',
+//					x: edgeHub.bbox.minX,
+//					y: edgeHub.bbox.minY,
+//					width: edgeHub.bbox.maxX - edgeHub.bbox.minX,
+//					height: edgeHub.bbox.maxY - edgeHub.bbox.minY,
+//					strokeStyle: 'red',
+//					lineWidth: 1, 
+//					fillOpacity: 0
+//				});							
 								
 				perviousHub = h;	
 				if (edgeHub.bbox.minX  < minXOfGeneration) {
@@ -1164,9 +1204,40 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}
 		});		
 		
+		//fix overlapse
+		for (var i = 0; i < 2; i++) {
+			Ext.Array.each(allHubsWithEgdes, function (h) {
+
+				Ext.Array.each(allHubsWithEgdes, function (otherHub) {
+					if (otherHub.id !== h.id) {
+						if (h.bbox.overlaps(otherHub.bbox)) {
+
+							var newX = h.bbox.minX;
+							var newY = h.bbox.minY;
+							
+							if (h.bbox.maxX > otherHub.bbox.minX) {
+								newX = h.bbox.maxX;
+							} else if (h.bbox.minX > otherHub.bbox.minX) {
+								newX = otherHub.bbox.maxX;
+							} 
+
+							if (h.bbox.maxY > otherHub.bbox.minY) {
+								newY = h.bbox.maxY;
+							} else if (h.bbox.minY > otherHub.bbox.minY) {
+								newY = otherHub.bbox.maxY;
+							}							
+							
+							h.translateHub(newX, newY);
+							console.log("Moved - " + (h.id ) + ' to X: ' + newX + ' to Y: ' +newY);
+						}
+					}
+				});
+
+			});
+		}
+		
 		
 		//add edges
-	
 		Ext.Array.each(viewData, function(relationship){
 			
 			var targetNode = Ext.Array.findBy(nodes, function(node) {
@@ -1237,8 +1308,17 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				xAdjust = 10;
 			} 
 			if (theta === (-90 * (Math.PI/180))) {
-				xAdjust = -10;
+				xAdjust = -10;				
 			}
+			
+			//console.log(relationship.relationshipLabel + ' - ' + theta);
+			if (theta > (Math.PI/2) && theta <= Math.PI ) {
+				theta +=  Math.PI;
+			}
+			
+			if (theta < (Math.PI/2 * -1) && theta >= Math.PI * -1 ) {
+				theta +=  Math.PI;
+			}			
 			
 			sprites.push(Ext.apply({}, {
 				x:  (endX + ownerNode.positionX) /2 + xAdjust,
@@ -1388,7 +1468,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 						change: function (cb, newValue, oldValue, opts) {
 							var containerPanel = this.up('panel');
 							
-							if (newValue) {
+							if (newValue && cb.getSelection()) {
 								var node = cb.getSelection().data;							
 								containerPanel.visualPanel.zoomTo(node.positionX, node.positionY, 2);
 							}

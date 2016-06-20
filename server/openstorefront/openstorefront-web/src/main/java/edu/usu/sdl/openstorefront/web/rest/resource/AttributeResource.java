@@ -42,6 +42,7 @@ import edu.usu.sdl.openstorefront.core.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeTypeViewComparator;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
+import edu.usu.sdl.openstorefront.core.view.AttributeDetail;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
@@ -178,6 +179,7 @@ public class AttributeResource
 					relationship.setName(attributeCode.getLabel());
 					relationship.setEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
 					relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
+					relationship.setRelationshipLabel(attributeType.getDescription());
 					relationship.setTargetKey(attributeType.getAttributeType());
 					relationship.setTargetName(attributeType.getDescription());
 					relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
@@ -351,6 +353,28 @@ public class AttributeResource
 			return Response.ok(attributeCode).build();
 		}
 	}
+	
+	@GET
+	@APIDescription("Gets attribute code details")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeDetail.class)
+	@Path("/attributetypes/{type}/{code}/detail")
+	public Response getAttributeCodeViewById(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+		AttributeCodePk pk = new AttributeCodePk();
+		pk.setAttributeCode(code);
+		pk.setAttributeType(type);
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, pk);
+		if (attributeCode == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} else {
+			return Response.ok(AttributeDetail.toView(attributeCode)).build();
+		}
+	}	
 
 	@GET
 	@APIDescription("Gets attribute code base on filter. Always sorted by sort Order or label")

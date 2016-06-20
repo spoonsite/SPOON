@@ -63,6 +63,8 @@ public class RelationshipService
 	{
 		List<RelationshipView> views = new ArrayList<>();
 		
+		entityKey = entityKey.replace("~", "#");
+		
 		//check to see if key exists		
 		boolean entityExists = false;		
 		switch (entityType) {
@@ -112,6 +114,7 @@ public class RelationshipService
 						attributeCodePk.setAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
 						
 						AttributeCode attributeCode = service.getAttributeService().findCodeForType(attributeCodePk);
+						AttributeType attributeType = service.getAttributeService().findType(attributeCodePk.getAttributeType());
 						
 						RelationshipView relationship = new RelationshipView();							
 						relationship.setKey(componentAttribute.getComponentId());
@@ -119,6 +122,7 @@ public class RelationshipService
 						relationship.setEntityType(RelationshipView.ENTITY_TYPE_COMPONENT);
 						relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
 						relationship.setTargetKey(attributeCode.getAttributeCodePk().toKey());
+						relationship.setRelationshipLabel(attributeType.getDescription());
 						relationship.setTargetName(attributeCode.getLabel());
 						relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
 
@@ -178,6 +182,7 @@ public class RelationshipService
 					attributeCode = (AttributeCode) attributeCode.find();
 					if (attributeCode != null) {
 						entityExists = true;
+						AttributeType attributeType = service.getAttributeService().findType(attributeCodePk.getAttributeType());
 						
 						ComponentAttribute componentAttributeExample = new ComponentAttribute();
 						componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
@@ -195,6 +200,7 @@ public class RelationshipService
 								relationship.setName(service.getComponentService().getComponentName(componentAttribute.getComponentId()));								
 								relationship.setEntityType(RelationshipView.ENTITY_TYPE_COMPONENT);
 								relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
+								relationship.setRelationshipLabel(attributeType.getDescription());
 								relationship.setTargetKey(entityKey);
 								relationship.setTargetName(attributeCode.getLabel());
 								relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
@@ -205,7 +211,7 @@ public class RelationshipService
 					}
 				} else {
 					AttributeType attributeType = new AttributeType();
-					attributeType.setAttributeType(entityType);
+					attributeType.setAttributeType(entityKey);
 					
 					attributeType = (AttributeType) attributeType.find();
 					if (attributeType != null) {
@@ -224,6 +230,7 @@ public class RelationshipService
 								relationship.setName(attributeCode.getLabel());
 								relationship.setEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
 								relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
+								relationship.setRelationshipLabel(attributeType.getDescription());
 								relationship.setTargetKey(attributeType.getAttributeType());
 								relationship.setTargetName(attributeType.getDescription());
 								relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
