@@ -27,7 +27,7 @@ public class RelationshipView
 	public static final String ENTITY_TYPE_COMPONENT = "component";
 	public static final String ENTITY_TYPE_ATTRIBUTE = "attribute";
 	public static final String ENTITY_TYPE_TAG = "tag";
-	public static final String ENTITY_TYPE_ORGANIZATION = "orgnatization";
+	public static final String ENTITY_TYPE_ORGANIZATION = "organization";
 	
 	private String key;
 	private String name;

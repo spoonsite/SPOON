@@ -99,7 +99,7 @@ public class AttributeCodePk
 		AttributeCodePk attributeCodePk = null;
 		if (StringUtils.isNotBlank(key)) {
 			String keySplit[] = key.split(ReflectionUtil.COMPOSITE_KEY_SEPERATOR);
-			if (keySplit.length > 0) {
+			if (keySplit.length > 1) {
 				attributeCodePk = new AttributeCodePk();
 				attributeCodePk.setAttributeType(keySplit[0]);
 				attributeCodePk.setAttributeCode(keySplit[1]);
