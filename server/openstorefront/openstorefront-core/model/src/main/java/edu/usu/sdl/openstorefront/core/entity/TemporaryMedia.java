@@ -52,8 +52,14 @@ public class TemporaryMedia
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Name of the file uploaded")
+	@APIDescription("Name of the file from the URL where the media was retrieved")
 	private String originalFileName;
+
+	@NotNull
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("The original URL from which the media was retrieved")
+	private String originalSourceURL;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String mimeType;
@@ -118,4 +124,13 @@ public class TemporaryMedia
 		this.mimeType = mimeType;
 	}
 
+	public String getOriginalSourceURL()
+	{
+		return originalSourceURL;
+	}
+
+	public void setOriginalSourceURL(String originalSourceURL)
+	{
+		this.originalSourceURL = originalSourceURL;
+	}
 }

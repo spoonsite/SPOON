@@ -27,6 +27,8 @@ public class TemporaryMediaView
 	private String name;
 	private String mimeType;
 	private String orignalFileName;
+	private String originalSourceURL;
+
 	private String mediaLink;
 	private Date updateDts;
 	private String updateUser;
@@ -40,6 +42,7 @@ public class TemporaryMediaView
 		TemporaryMediaView temporaryMediaView = new TemporaryMediaView();
 		temporaryMediaView.setName(temporaryMedia.getName());
 		temporaryMediaView.setOrignalFileName(temporaryMedia.getOriginalFileName());
+		temporaryMediaView.setOriginalSourceURL(temporaryMedia.getOriginalSourceURL());
 		temporaryMediaView.setMimeType(temporaryMedia.getMimeType());
 		temporaryMediaView.setUpdateDts(temporaryMedia.getUpdateDts());
 		temporaryMediaView.setUpdateUser(temporaryMedia.getUpdateUser());
@@ -115,6 +118,16 @@ public class TemporaryMediaView
 	public void setUpdateUser(String updateUser)
 	{
 		this.updateUser = updateUser;
+	}
+
+	public String getOriginalSourceURL()
+	{
+		return originalSourceURL;
+	}
+
+	public void setOriginalSourceURL(String originalSourceURL)
+	{
+		this.originalSourceURL = originalSourceURL;
 	}
 
 }

@@ -459,6 +459,7 @@ public class SystemServiceImpl
 			temporaryMedia.setOriginalFileName(originalFileName);
 			temporaryMedia.setFileName(hash);
 			temporaryMedia.setName(hash);
+			temporaryMedia.setOriginalSourceURL(urlStr);
 			temporaryMedia.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
 			temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 			temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
