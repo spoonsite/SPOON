@@ -75,10 +75,37 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			}
 		});
 
-		// Show the Retrival Window
+		// Show the Retrieval Window
 		this.show();
 
 		
+		// Send API requests, get back temporaryIDs.
+		store.each(function(record, id){
+
+			if (record) {
+				var data = { URL: record.get('url') };
+				var url = '/openstorefront/api/v1/service/application/retrievemedia';
+				var method = 'POST';
+				Ext.Ajax.request({
+					url: url,
+					method: method,
+					jsonData: data,
+					success: function (response, opts) {
+						var result = Ext.decode(response.responseText);
+						record.set('status', 'OK');
+						record.set('result', 'SUCCESS');
+						store.commitChanges();
+					},
+					failure: function (response, opts) {
+						record.set('status', 'FAIL');
+						record.set('result', 'FAILED');
+						store.commitChanges();
+					}
+				});
+			}
+
+		});
+
 		
 	}
 		
