@@ -75,6 +75,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 					text: 'Close',
 					disabled: true,
 					handler: function() {
+						Ext.getStore('mediaStore').removeAll();
 						this.up('window').close();
 					}
 				}
@@ -94,6 +95,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 		var store = Ext.getStore('mediaStore');
 		var data = Ext.getStore('mediaStore').getData();
 
+		// Set up some helper functions
 		var checkIfDone = function checkIfDone() {
 			var store = Ext.getStore('mediaStore');
 			var total_count = store.getCount();
@@ -108,6 +110,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 
 			if (success_count === total_count) {
 				setTimeout(function() { 
+					store.removeAll();
 					Ext.getCmp('mediaGrid').up().hide();
 					Ext.toast("Successfully retrieved external media");
 				}, 1000);
@@ -127,6 +130,16 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			}
 		};
 
+		var replaceLinks = function replaceLinks(originalUrl, temporaryId) {
+			var replacement = "/openstorefront/Media.action?TemporaryMedia&name=" + temporaryId;
+			var content = editor.getContent();
+			content = content.replace(originalUrl, replacement);
+			// Rather than use TinyMCE's editor.setContent() we use this approach to avoid mangling of our link (& to &amp;, etc.)
+			var body = editor.getBody();
+			editor.dom.setHTML(body, content);
+		};
+
+		// Now begin processing media
 
 		// Remove items that are already stored (src contains 'Media.action?')
 		store.each(function(record, id){
@@ -135,6 +148,11 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 				if (url.indexOf('Media.action?') > -1) { store.remove(record); }
 			}
 		});
+
+		// If there's nothing left, we're done here.
+		if (store.getCount() === 0) {
+			return;
+		}
 
 		// Show the Retrieval Window
 		this.show();
@@ -152,7 +170,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 					jsonData: data,
 					success: function (response, opts) {
 						var result = Ext.decode(response.responseText);
-						console.log(result);
+						replaceLinks(data.URL, result.fileName); 
 						record.set('status', 'OK');
 						record.set('result', 'SUCCESS');
 						store.commitChanges();
