@@ -433,6 +433,14 @@ public class SystemServiceImpl
 	@Override
 	public TemporaryMedia retrieveTemporaryMedia(String urlStr)
 	{
+
+		String hash = DigestUtils.shaHex(urlStr);
+		TemporaryMedia existingMedia = persistenceService.findById(TemporaryMedia.class, hash);
+		if (existingMedia != null) {
+			existingMedia.setUpdateDts(TimeUtil.currentDate());
+			return existingMedia;
+		}
+
 		try {
 			URL url = new URL(urlStr);
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -449,8 +457,8 @@ public class SystemServiceImpl
 			String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
 			String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
 			temporaryMedia.setOriginalFileName(originalFileName);
-			temporaryMedia.setFileName(DigestUtils.shaHex(urlStr));
-			temporaryMedia.setName(DigestUtils.shaHex(urlStr));
+			temporaryMedia.setFileName(hash);
+			temporaryMedia.setName(hash);
 			temporaryMedia.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
 			temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 			temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
