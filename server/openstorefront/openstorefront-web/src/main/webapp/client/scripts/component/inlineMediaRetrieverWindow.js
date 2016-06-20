@@ -24,6 +24,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 	modal: true,
 	width: '40%',
 	height: '50%',
+	closable: false,
 
 	items: [
 		{
@@ -55,17 +56,77 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 		}
 	],
 
+	dockedItems: [
+		{
+			xtype: 'panel',
+			padding: '10px',
+			html: 'Please wait while external media is retrieved to be stored in the Storefront. The status of the operation can be seen below.'
+		},
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			items: [
+				{
+					xtype: 'tbfill'
+				},
+				{
+					xtype: 'button',
+					id: 'mediaRetrievalCloseButton',
+					text: 'Close',
+					disabled: true,
+					handler: function() {
+						this.up('window').close();
+					}
+				}
+			]
+		}
+	],
+
 	initComponent: function () {
 		this.callParent();
-		var savedSearchLinkInsertWindow = this;
+		var inlineMediaRetrieverWindow = this;
 
 	},
+
+
 
 	processMedia: function processMedia(editor) {
 		var store = Ext.getStore('mediaStore');
 		var data = Ext.getStore('mediaStore').getData();
-		var total_count = Ext.getStore('mediaStore').getCount();
-		var retrieve_count = 0;
+
+		var checkIfDone = function checkIfDone() {
+			var store = Ext.getStore('mediaStore');
+			var total_count = store.getCount();
+			var success_count = 0;
+			var failure_count = 0;
+			store.each(function(record, id) {
+				if (record) {
+					if (record.get('status') === 'OK') success_count++;
+					else if (record.get('status') === 'FAIL') failure_count++;
+				}
+			});
+
+			if (success_count === total_count) {
+				setTimeout(function() { 
+					Ext.getCmp('mediaGrid').up().hide();
+					Ext.toast("Successfully retrieved external media");
+				}, 1000);
+			}
+			else if (success_count + failure_count === total_count) {
+				setTimeout(function() { 
+					var msg = "Some of the external media you inserted was not able to be saved ";
+					msg += "to the Storefront. This could be because whatever media link was inserted ";
+					msg += "is not available publicly or the media was not in an expected format. <br /><br />";
+					msg += "To ensure that this media displays properly in the Storefront, you should ";
+					msg += "take note of which media failed and upload the media using the 'Media' tab on your entry.";
+
+					Ext.Msg.alert('External media failure', msg, function() {
+						Ext.getCmp('mediaRetrievalCloseButton').enable();
+					});
+				}, 1000);
+			}
+		};
+
 
 		// Remove items that are already stored (src contains 'Media.action?')
 		store.each(function(record, id){
@@ -81,7 +142,6 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 		
 		// Send API requests, get back temporaryIDs.
 		store.each(function(record, id){
-
 			if (record) {
 				var data = { URL: record.get('url') };
 				var url = '/openstorefront/api/v1/service/application/retrievemedia';
@@ -92,14 +152,17 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 					jsonData: data,
 					success: function (response, opts) {
 						var result = Ext.decode(response.responseText);
+						console.log(result);
 						record.set('status', 'OK');
 						record.set('result', 'SUCCESS');
 						store.commitChanges();
+						checkIfDone();
 					},
 					failure: function (response, opts) {
 						record.set('status', 'FAIL');
 						record.set('result', 'FAILED');
 						store.commitChanges();
+						checkIfDone();
 					}
 				});
 			}
@@ -108,7 +171,6 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 
 		
 	}
-		
 
 	
 });
