@@ -196,14 +196,14 @@ public class RelationshipService
 						for (ComponentAttribute componentAttribute : componentAttributes) {
 							if (service.getComponentService().checkComponentApproval(componentAttribute.getComponentId())) {
 								RelationshipView relationship = new RelationshipView();							
-								relationship.setKey(componentAttribute.getComponentId());
-								relationship.setName(service.getComponentService().getComponentName(componentAttribute.getComponentId()));								
-								relationship.setEntityType(RelationshipView.ENTITY_TYPE_COMPONENT);
-								relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
+								relationship.setKey(entityKey);
+								relationship.setName(attributeCode.getLabel());								
+								relationship.setEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+								relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);								
 								relationship.setRelationshipLabel(attributeType.getDescription());
-								relationship.setTargetKey(entityKey);
-								relationship.setTargetName(attributeCode.getLabel());
-								relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+								relationship.setTargetKey(componentAttribute.getComponentId());
+								relationship.setTargetName(service.getComponentService().getComponentName(componentAttribute.getComponentId()));
+								relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_COMPONENT);
 
 								views.add(relationship);							
 							}
@@ -247,7 +247,7 @@ public class RelationshipService
 				ComponentTag tagExample = new ComponentTag();
 				tagExample.setText(entityKey);
 				List<ComponentTag> tags = tagExample.findByExample();
-				if (tags.isEmpty()) {
+				if (!tags.isEmpty()) {
 					entityExists = true;
 					
 					for (ComponentTag tag : tags) {
