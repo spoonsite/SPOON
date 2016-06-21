@@ -29,7 +29,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 	items: [
 		{
 			xtype: 'grid',
-			id: 'mediaGrid',
+			id: 'inlineMediaGrid',
 			columns: [
 				{text: 'URL', dataIndex: 'url', flex: 4},
 				{
@@ -45,7 +45,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 					}
 				}
 			],
-			store: Ext.create('Ext.data.Store', {id: 'mediaStore'}),
+			store: Ext.create('Ext.data.Store', {id: 'inlineMediaStore'}),
 			listeners: {
 				selectionchange: function (grid, record, eOpts) {
 					if (Ext.getCmp('savedSearchGrid').getSelectionModel().hasSelection()) {
@@ -71,11 +71,11 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 				},
 				{
 					xtype: 'button',
-					id: 'mediaRetrievalCloseButton',
+					id: 'inlineMediaRetrievalCloseButton',
 					text: 'Close',
 					disabled: true,
 					handler: function() {
-						Ext.getStore('mediaStore').removeAll();
+						Ext.getStore('inlineMediaStore').removeAll();
 						this.up('window').close();
 					}
 				}
@@ -92,12 +92,12 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 
 
 	processMedia: function processMedia(editor) {
-		var store = Ext.getStore('mediaStore');
-		var data = Ext.getStore('mediaStore').getData();
+		var store = Ext.getStore('inlineMediaStore');
+		var data = Ext.getStore('inlineMediaStore').getData();
 
 		// Set up some helper functions
 		var checkIfDone = function checkIfDone() {
-			var store = Ext.getStore('mediaStore');
+			var store = Ext.getStore('inlineMediaStore');
 			var total_count = store.getCount();
 			var success_count = 0;
 			var failure_count = 0;
@@ -111,7 +111,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			if (success_count === total_count) {
 				setTimeout(function() { 
 					store.removeAll();
-					Ext.getCmp('mediaGrid').up().hide();
+					Ext.getCmp('inlineMediaGrid').up().hide();
 					Ext.toast("Successfully retrieved external media");
 				}, 1000);
 			}
@@ -124,7 +124,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 					msg += "take note of which media failed and upload the media using the 'Media' tab on your entry.";
 
 					Ext.Msg.alert('External media failure', msg, function() {
-						Ext.getCmp('mediaRetrievalCloseButton').enable();
+						Ext.getCmp('inlineMediaRetrievalCloseButton').enable();
 					});
 				}, 1000);
 			}
@@ -137,6 +137,11 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			// Rather than use TinyMCE's editor.setContent() we use this approach to avoid mangling of our link (& to &amp;, etc.)
 			var body = editor.getBody();
 			editor.dom.setHTML(body, content);
+		};
+
+		var setIgnoreLinks = function setIgnoreLinks(originalURL) {
+			var content = editor.getContent();
+			//TODO: find images with this url, and add a data-storefront-retrieval-ignore attribute to instruct the plugin to ignore.
 		};
 
 		// Now begin processing media

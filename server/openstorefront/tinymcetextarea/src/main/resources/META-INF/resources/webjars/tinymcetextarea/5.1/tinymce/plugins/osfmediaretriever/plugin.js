@@ -29,17 +29,19 @@ tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 
 		if (images.length) {
 			for (var i=0;i<images.length;i++) {	
-				Ext.getStore('mediaStore').add({
-					url: images[i].src,
-					result: 'Retrieving...',
-					status: 'RETR',
-					temporaryId: ''
-				});
+				var url = images[i].src;
+				if (url.indexOf('Media.action?') === -1) { 
+					Ext.getStore('inlineMediaStore').add({
+						url: images[i].src,
+						result: 'Retrieving...',
+						status: 'RETR',
+						temporaryId: ''
+					});
+				}
 			}
-			
-			Ext.getCmp('inlineMediaWindow').processMedia(editor);
 		}
-
+			
+		Ext.getCmp('inlineMediaWindow').processMedia(editor);
 	});
 
 
