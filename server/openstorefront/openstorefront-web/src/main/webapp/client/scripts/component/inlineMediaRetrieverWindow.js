@@ -96,6 +96,20 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 		var data = Ext.getStore('inlineMediaStore').getData();
 
 		// Set up some helper functions
+
+		var setIgnoreLinks = function setIgnoreLinks(originalURL) {
+			// Add an html attribute to ignore these links.
+			var elem = document.createElement('html');
+			elem.innerHTML = editor.getContent();
+			var images = elem.getElementsByTagName('img');
+			Ext.Array.each(images, function(image) {
+				if (image.src === originalURL) {
+					image.className += " storefront-media-ignore";
+				}
+			});
+			editor.dom.setHTML(editor.getBody(), elem.innerHTML);
+		};
+
 		var checkIfDone = function checkIfDone() {
 			var store = Ext.getStore('inlineMediaStore');
 			var total_count = store.getCount();
@@ -116,6 +130,14 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 				}, 1000);
 			}
 			else if (success_count + failure_count === total_count) {
+				// Some failures. We must notify the user and ignore the links from now on.
+				store.each(function(record, id) {
+					if (record) {
+						if (record.get('status') === 'FAIL') {
+							setIgnoreLinks(record.get('url'));
+						}
+					}
+				});
 				setTimeout(function() { 
 					var msg = "Some of the external media you inserted was not able to be saved ";
 					msg += "to the Storefront. This could be because whatever media link was inserted ";
@@ -139,10 +161,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			editor.dom.setHTML(body, content);
 		};
 
-		var setIgnoreLinks = function setIgnoreLinks(originalURL) {
-			var content = editor.getContent();
-			//TODO: find images with this url, and add a data-storefront-retrieval-ignore attribute to instruct the plugin to ignore.
-		};
+		
 
 		// Now begin processing media
 

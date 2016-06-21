@@ -31,12 +31,14 @@ tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 			for (var i=0;i<images.length;i++) {	
 				var url = images[i].src;
 				if (url.indexOf('Media.action?') === -1) { 
-					Ext.getStore('inlineMediaStore').add({
-						url: images[i].src,
-						result: 'Retrieving...',
-						status: 'RETR',
-						temporaryId: ''
-					});
+					if (images[i].className.indexOf('storefront-media-ignore') ===  -1) {
+						Ext.getStore('inlineMediaStore').add({
+							url: images[i].src,
+							result: 'Retrieving...',
+							status: 'RETR',
+							temporaryId: ''
+						});
+					}
 				}
 			}
 		}
