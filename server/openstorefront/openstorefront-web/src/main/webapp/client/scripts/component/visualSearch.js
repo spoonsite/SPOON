@@ -86,6 +86,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.on('spritemouseover', function(item, event, opts){
 			var sprite = item && item.sprite;
 			if (sprite.node) {
+				//console.log("Name: " + (sprite.node.name ? sprite.node.name : sprite.node.targetName) + " xy: " + sprite.x + ', ' + sprite.y);
+				
 				visPanel.setStyle({
 					cursor: 'pointer'
 				});
@@ -325,13 +327,13 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				var viewData = [];
 				Ext.Array.each(data, function(relationship){
 					viewData.push({
-						type: relationship.targetEntityType,					
-						key: relationship.targetKey,
-						label: relationship.targetName,
+						type: relationship.entityType,					
+						key: relationship.key,
+						label: relationship.name,
 						relationshipLabel: relationship.relationshipLabel,
-						targetKey: relationship.key,
-						targetName: relationship.name,
-						targetType: relationship.entityType
+						targetKey: relationship.targetKey,
+						targetName: relationship.targetName,
+						targetType: relationship.targetEntityType
 					});
 				});
 				
@@ -607,6 +609,19 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					return false;
 				}
 			});
+			
+			//check for edge
+			Ext.Array.each(nodes, function(node) {
+				var newEdges = [];
+				Ext.Array.each(node.edges, function(edge) {
+					if (edge.targetKey !== relationship.key) {
+						newEdges.push(edge);
+					}	
+				});
+				node.edges = newEdges; 
+			});
+			
+			
 			var ownerNode = Ext.Array.findBy(nodes, function(node) {
 				if (node.key === relationship.key) {
 					return true;
@@ -632,7 +647,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		var containerHeight = visPanel.getHeight();
 		var containerWidth = visPanel.getWidth();		
 		
-		
+		//grid and camera
 		var cameraSprite = {
 			backgroundSprite: true,
 			type: 'rect',
@@ -643,7 +658,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			fillStyle: 'rgba(0, 0, 0, 0)'
 		};
 		
-//		
 		for(var i=30; i<=containerWidth; i=i+30) {
 			
 			var opacity = .1;
@@ -813,13 +827,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 									},
 									overlaps: function(bbox) {
 										var thisBBox = this;
-										if (thisBBox.contains(bbox.minX, bbox.minY) ||
-											thisBBox.contains(bbox.maxX, bbox.maxY))
-										{
-											return true;
-										} else {
-											return false;
-										}
+										return Math.abs(thisBBox.minX -  bbox.minX) * 2 < ((thisBBox.maxX - thisBBox.minX) + (bbox.maxX - bbox.minX)) &&
+											  Math.abs(thisBBox.minY -  bbox.minY) * 2 < ((thisBBox.maxY - thisBBox.minY) + (bbox.maxY - bbox.minY));										
 									},
 									compare: function(bbox) {
 										var thisBBox = this;
@@ -879,39 +888,39 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				
 
 				var setNodePosition = true;
-				if (node.edges.length > 0) {
-					var edgeNode =  Ext.Array.findBy(nodes, function(item) {
-						if (item.key === node.edges[0].targetKey) {
-							return true;
-						} else {
-							return false;
-						}
-					});
-					
-					if (edgeNode.positionX && edgeNode.positionY) {
-						node.positionX = edgeNode.positionX - (componentNode.r  * 25 - nodeRadius);
-						node.positionY = edgeNode.positionY;
-						setNodePosition = false;
-						
-						//find hub that contains edgeNode
-						var hubWithNode;
-						 Ext.Array.each(hubs, function(h) {
-							if (h.containsNode(edgeNode.key)) {
-								hubWithNode = h;
-							} else {
-								var hubFound = Ext.Array.findBy(h.edgeHubs, function(edgeHub) {
-									return edgeHub.containsNode(edgeNode.key);
-								});
-								if (hubFound) {
-									hubWithNode = hubFound;
-								}
-							}
-						});
-						if (hubWithNode) {
-							hubWithNode.edgeHubs.push(hub);
-						}
-					}
-				} 
+//				if (node.edges.length > 0) {
+//					var edgeNode =  Ext.Array.findBy(nodes, function(item) {
+//						if (item.key === node.edges[0].targetKey) {
+//							return true;
+//						} else {
+//							return false;
+//						}
+//					});
+//					
+//					if (edgeNode.positionX && edgeNode.positionY) {
+//						node.positionX = edgeNode.positionX - (componentNode.r  * 25 - nodeRadius);
+//						node.positionY = edgeNode.positionY;
+//						setNodePosition = false;
+//						
+//						//find hub that contains edgeNode
+//						var hubWithNode;
+//						 Ext.Array.each(hubs, function(h) {
+//							if (h.containsNode(edgeNode.key)) {
+//								hubWithNode = h;
+//							} else {
+//								var hubFound = Ext.Array.findBy(h.edgeHubs, function(edgeHub) {
+//									return edgeHub.containsNode(edgeNode.key);
+//								});
+//								if (hubFound) {
+//									hubWithNode = hubFound;
+//								}
+//							}
+//						});
+//						if (hubWithNode) {
+//							hubWithNode.edgeHubs.push(hub);
+//						}
+//					}
+//				} 
 				
 				if (setNodePosition) {
 					node.positionX = startX + (componentNode.r *6) + 40;
@@ -1014,7 +1023,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						sprites.push(targetNodeTextSprite);	
 						hub.addNode(targetNodeTextSprite);
 						
-						if ((rotation + 45) >= 405) {
+						if ((rotation + 45) >= 360) {
 							generation++;
 							rotation = 0;
 						} 
@@ -1041,15 +1050,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					});
 				});
 				startX = maxX;
-				
-				
-//				rowCount++;
-//				if (rowCount >= 5) {
-//					startX = 150;
-//					startY += 500;
-//					rowCount = 0;
-//				}				
-				
+
 				renderNodes[node.key] = true;
 			}
 		});
@@ -1064,7 +1065,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		var perviousHub;
 		var containerCenterX = containerWidth / 2;
 		var containerCenterY = containerHeight / 2;		
-		var spread = 100;
+		var spreadX = 100;
+		var spreadY = 50;
 		
 		var allHubsWithEgdes= [];
 		Ext.Array.each(hubs, function(h) {
@@ -1098,23 +1100,23 @@ Ext.define('OSF.component.VisualSearchPanel', {
 //					fillOpacity: 0
 //				});
 
-				sprites.push({
-					type: 'text',
-					x: h.bbox.minX,
-					y: h.bbox.minY,					
-					strokeStyle: 'yellow',
-					text: h.id,
-					lineWidth: 1, 
-					fillOpacity: 1
-				});
-				
+//				sprites.push({
+//					type: 'text',
+//					x: h.bbox.minX,
+//					y: h.bbox.minY,					
+//					strokeStyle: 'yellow',
+//					text: h.id,
+//					lineWidth: 1, 
+//					fillOpacity: 1
+//				});
+//				
 				generationMinX = h.bbox.minX;
 				generationMinY = h.bbox.minY;
 				minXOfGeneration = h.bbox.minX;
 				
 				firstHub = false;
 			} else {
-				var transX = generationMinX - ((h.bbox.maxX - h.bbox.minX) + spread);
+				var transX = generationMinX - ((h.bbox.maxX - h.bbox.minX) + spreadX);
 				var transY = generationMinY;
 				
 				var point = new Ext.draw.Point(transX, transY);
@@ -1124,15 +1126,15 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				h.translateHub(point.x, point.y);
 				
 				
-				sprites.push({
-					type: 'text',
-					x: h.bbox.minX,
-					y: h.bbox.minY,					
-					strokeStyle: 'yellow',
-					text: h.id,
-					lineWidth: 1, 
-					fillOpacity: 1
-				});				
+//				sprites.push({
+//					type: 'text',
+//					x: h.bbox.minX,
+//					y: h.bbox.minY,					
+//					strokeStyle: 'yellow',
+//					text: h.id,
+//					lineWidth: 1, 
+//					fillOpacity: 1
+//				});				
 				
 //				sprites.push({
 //					type: 'rect',
@@ -1151,7 +1153,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						
 			Ext.Array.each(h.edgeHubs, function(edgeHub) {
 				
-				var transX = generationMinX - ((edgeHub.bbox.maxX - edgeHub.bbox.minX) + spread);
+				var transX = generationMinX - ((edgeHub.bbox.maxX - edgeHub.bbox.minX) + spreadX);
 				var transY = generationMinY;
 				
 				var point = new Ext.draw.Point(transX, transY);
@@ -1159,15 +1161,15 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				
 				edgeHub.translateHub(point.x, point.y);
 						
-				sprites.push({
-					type: 'text',
-					x: edgeHub.bbox.minX,
-					y: edgeHub.bbox.minY,					
-					strokeStyle: 'yellow',
-					text: edgeHub.id,
-					lineWidth: 1, 
-					fillOpacity: 1
-				});						
+//				sprites.push({
+//					type: 'text',
+//					x: edgeHub.bbox.minX,
+//					y: edgeHub.bbox.minY,					
+//					strokeStyle: 'yellow',
+//					text: edgeHub.id,
+//					lineWidth: 1, 
+//					fillOpacity: 1
+//				});						
 						
 //				sprites.push({
 //					type: 'rect',
@@ -1179,7 +1181,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 //					lineWidth: 1, 
 //					fillOpacity: 0
 //				});							
-								
+//								
 				perviousHub = h;	
 				if (edgeHub.bbox.minX  < minXOfGeneration) {
 					minXOfGeneration = edgeHub.bbox.minX;
@@ -1204,36 +1206,47 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}
 		});		
 		
-		//fix overlapse
-		for (var i = 0; i < 2; i++) {
+		//fix overlaps
+		var movedhub = true;
+		var max = 2000;
+		var moveCount = 0;
+		while (movedhub && moveCount <= max) {
+			movedhub = false;
 			Ext.Array.each(allHubsWithEgdes, function (h) {
 
 				Ext.Array.each(allHubsWithEgdes, function (otherHub) {
 					if (otherHub.id !== h.id) {
 						if (h.bbox.overlaps(otherHub.bbox)) {
 
-							var newX = h.bbox.minX;
-							var newY = h.bbox.minY;
+							var newX = otherHub.bbox.minX;
+							var newY = otherHub.bbox.minY;
 							
 							if (h.bbox.maxX > otherHub.bbox.minX) {
-								newX = h.bbox.maxX;
+								newX = h.bbox.maxX + 1;
 							} else if (h.bbox.minX > otherHub.bbox.minX) {
-								newX = otherHub.bbox.maxX;
+								newX = otherHub.bbox.maxX + 1;
 							} 
 
 							if (h.bbox.maxY > otherHub.bbox.minY) {
-								newY = h.bbox.maxY;
+								newY = h.bbox.maxY + 1;
 							} else if (h.bbox.minY > otherHub.bbox.minY) {
-								newY = otherHub.bbox.maxY;
+								newY = otherHub.bbox.maxY +1;
 							}							
 							
-							h.translateHub(newX, newY);
-							console.log("Moved - " + (h.id ) + ' to X: ' + newX + ' to Y: ' +newY);
+							if ( newX !== otherHub.bbox.minX && 
+								newY !== otherHub.bbox.minY)
+							{
+								otherHub.translateHub(newX, newY);
+							}
+							movedhub = true;
+							
+							//console.log("It: " + moveCount + " Moved - " + (otherHub.id ) + ' to X: ' + newX + ' to Y: ' +newY + " In relation to: " + h.id);
 						}
 					}
 				});
 
 			});
+			moveCount++;
 		}
 		
 		
@@ -1314,10 +1327,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			//console.log(relationship.relationshipLabel + ' - ' + theta);
 			if (theta > (Math.PI/2) && theta <= Math.PI ) {
 				theta +=  Math.PI;
+				xAdjust  = 20;
 			}
 			
 			if (theta < (Math.PI/2 * -1) && theta >= Math.PI * -1 ) {
-				theta +=  Math.PI;
+				theta +=  Math.PI;				
+				xAdjust = -15;
 			}			
 			
 			sprites.push(Ext.apply({}, {
@@ -1333,7 +1348,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		sprites.reverse();
 		mainSprites = Ext.Array.merge(mainSprites, sprites);
 		
-		visPanel.getSurface().removeAll(true);
+		visPanel.getSurface('main').removeAll(true);
 		
 		if (!visPanel.initSurface) {
 			visPanel.getSurface().setBackground({
@@ -1511,11 +1526,12 @@ Ext.define('OSF.component.VisualContainerPanel', {
 					xtype: 'tbfill'					
 				},
 				{
-					text: 'Download',
+					text: 'Preview',
 					iconCls: 'fa fa-download',
+					tooltip: 'On preview right-click to save or copy image',
 					handler: function(){
 						var containerPanel = this.up('panel');
-						containerPanel.visualPanel.download();
+						containerPanel.visualPanel.preview();
 					}
 				},
 				{
@@ -1526,6 +1542,10 @@ Ext.define('OSF.component.VisualContainerPanel', {
 					iconCls: 'fa fa-reply',
 					handler: function(){
 						var containerPanel = this.up('panel');
+						
+						var findCB = containerPanel.getComponent('tools').getComponent('find');
+						findCB.reset();
+						
 						containerPanel.visualPanel.reset();
 					}
 				}
