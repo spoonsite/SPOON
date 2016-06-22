@@ -45,6 +45,7 @@ limitations under the License.
 			pageMap['Submissions'] = 'Router.action?page=user/submissionManagement.jsp';
 			pageMap['Reports'] = 'Router.action?page=shared/reports.jsp';
 			pageMap['Searches'] = 'Router.action?page=user/searches.jsp';
+			pageMap['Relationships'] = 'Router.action?page=user/visualSearch.jsp';
 
 
 			//Data Menu
@@ -54,7 +55,13 @@ limitations under the License.
 				handler: function(){
 					actionLoadContent('Questions');
 				}
-			});				
+			});
+			toolsMenu.push({
+				text: 'Relationships',
+				handler: function(){
+					actionLoadContent('Relationships');
+				}			
+			});			
 			toolsMenu.push({
 				text: 'Reports',
 				handler: function(){
