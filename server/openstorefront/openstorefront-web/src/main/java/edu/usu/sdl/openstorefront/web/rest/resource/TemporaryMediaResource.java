@@ -109,11 +109,11 @@ public class TemporaryMediaResource
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Deletes a temporary media record.")
-	@Path("/{name}")
+	@Path("/{id}")
 	public void deleteTemporaryMedia(
-			@PathParam("name") String name)
+			@PathParam("id") String id)
 	{
-		service.getSystemService().removeTemporaryMedia(name);
+		service.getSystemService().removeTemporaryMedia(id);
 	}
 
 }
