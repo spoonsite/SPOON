@@ -291,7 +291,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			zoomCenterX: 0,
 			zoomCenterY: 0
 		}, visPanel.camera);
-		visPanel.update();
+		if (!Ext.isIE) {
+			visPanel.update();
+		}
 		
 		visPanel.viewData = [];
 		if (visPanel.viewType === "RELATION") {
@@ -1348,7 +1350,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		sprites.reverse();
 		mainSprites = Ext.Array.merge(mainSprites, sprites);
 		
-		visPanel.getSurface('main').removeAll(true);
+		
+		visPanel.getSurface().removeAll(true);
 		
 		if (!visPanel.initSurface) {
 			visPanel.getSurface().setBackground({
