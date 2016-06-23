@@ -416,9 +416,9 @@ public class SystemServiceImpl
 	}
 
 	@Override
-	public void removeTemporaryMedia(String mediaName)
+	public void removeTemporaryMedia(String temporaryMediaId)
 	{
-		TemporaryMedia temporaryMedia = persistenceService.findById(TemporaryMedia.class, mediaName);
+		TemporaryMedia temporaryMedia = persistenceService.findById(TemporaryMedia.class, temporaryMediaId);
 		if (temporaryMedia != null) {
 			Path path = temporaryMedia.pathToMedia();
 			if (path != null) {
