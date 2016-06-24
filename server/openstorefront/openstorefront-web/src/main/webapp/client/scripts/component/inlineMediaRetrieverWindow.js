@@ -156,9 +156,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			var replacement = "/openstorefront/Media.action?TemporaryMedia&name=" + temporaryId;
 			var content = editor.getContent();
 			content = content.replace(originalUrl, replacement);
-			// Rather than use TinyMCE's editor.setContent() we use this approach to avoid mangling of our link (& to &amp;, etc.)
-			var body = editor.getBody();
-			editor.dom.setHTML(body, content);
+			editor.setContent(content);
 		};
 
 		
