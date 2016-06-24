@@ -373,8 +373,7 @@ public class SubComponentServiceImpl
 				removeLocalMedia(oldMedia);
 			}
 			oldMedia.updateFields(media);
-			persistenceService.persist(oldMedia);
-			media = oldMedia;
+			media = persistenceService.persist(oldMedia);
 		} else {
 			media.setComponentMediaId(persistenceService.generateId());
 
@@ -393,7 +392,7 @@ public class SubComponentServiceImpl
 				}
 			}
 			media.populateBaseCreateFields();
-			persistenceService.persist(media);
+			media = persistenceService.persist(media);
 		}
 
 		if (updateLastActivity) {
@@ -710,21 +709,23 @@ public class SubComponentServiceImpl
 	}
 
 	public void saveMediaFile(ComponentMedia media, InputStream fileInput)
+	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, boolean updateLastActivity)
 	{
 		Objects.requireNonNull(media);
 		Objects.requireNonNull(fileInput);
 
 		if (StringUtils.isBlank(media.getComponentMediaId())) {
-			media = saveComponentMedia(media);
+			media = saveComponentMedia(media, updateLastActivity);
 		}
 		media.setFileName(media.getComponentMediaId());
 		try (InputStream in = fileInput) {
 			Files.copy(in, media.pathToMedia());
 			media.setUpdateUser(SecurityUtil.getCurrentUserName());
-			saveComponentMedia(media);
+			media = saveComponentMedia(media, updateLastActivity);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
+		return media;
 	}
 
 	public void saveResourceFile(ComponentResource resource, InputStream fileInput)
