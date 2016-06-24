@@ -48,6 +48,6 @@ tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 
 
 	editor.on('change', function(e) {
-		task.delay(2000);	
+		task.delay(800);	
 	});
 });
