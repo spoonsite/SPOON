@@ -704,11 +704,15 @@ public class SubComponentServiceImpl
 				reviews.remove(i);
 			}
 		}
-		
+
 		return reviews;
 	}
 
-	public void saveMediaFile(ComponentMedia media, InputStream fileInput)
+	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput)
+	{
+		return saveMediaFile(media, fileInput, true);
+	}
+
 	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, boolean updateLastActivity)
 	{
 		Objects.requireNonNull(media);
