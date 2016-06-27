@@ -4,7 +4,6 @@
     <stripes:layout-component name="contents">
 
 		<script src="scripts/component/savedSearchLinkInsertWindow.js?v=${appVersion}" type="text/javascript"></script>
-		<script src="scripts/component/inlineMediaRetrieverWindow.js?v=${appVersion}" type="text/javascript"></script>
 
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
@@ -12,11 +11,6 @@
 
 				var ssInsertWindow = Ext.create('OSF.component.SavedSearchLinkInsertWindow', {					
 					id: 'ssInsertWindow',
-					alwaysOnTop: true
-				});	
-
-				var inlineMediaWindow = Ext.create('OSF.component.InlineMediaRetrieverWindow', {					
-					id: 'inlineMediaWindow',
 					alwaysOnTop: true
 				});	
 
