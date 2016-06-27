@@ -537,7 +537,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					height: 300,
 					maxLength: 65536,
 					emptyText: (submissionPanel.userInputWarning ? submissionPanel.userInputWarning : '' ) + '<br><br>Include an easy to read description of the product, focusing on what it is and what it does.',
-					tinyMCEConfig: CoreUtil.tinymceConfig()
+					tinyMCEConfig: CoreUtil.tinymceConfig("osfmediaretriever")
 				},
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
