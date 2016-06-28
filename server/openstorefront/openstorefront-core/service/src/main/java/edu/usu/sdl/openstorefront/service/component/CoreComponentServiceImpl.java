@@ -60,6 +60,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
+import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
@@ -108,6 +109,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -138,6 +140,9 @@ import net.java.truevfs.kernel.spec.FsSyncException;
 import net.sf.ehcache.Element;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 /**
  * Handles the basic
@@ -462,6 +467,7 @@ public class CoreComponentServiceImpl
 		EntityUtil.setDefaultsOnFields(component.getComponent());
 
 		ValidationResult validationResult = new ValidationResult();
+		Component attachedComponent = null;
 		if (Convert.toBoolean(options.getSkipRequiredAttributes()) == false) {
 			validationResult = component.checkForComplete();
 		}
@@ -495,7 +501,7 @@ public class CoreComponentServiceImpl
 						component.getComponent().setRecordVersion(version);
 					}
 
-					persistenceService.persist(oldComponent);
+					attachedComponent = persistenceService.persist(oldComponent);
 					component.setComponentChanged(true);
 				}
 
@@ -525,7 +531,7 @@ public class CoreComponentServiceImpl
 					approved = true;
 				}
 
-				persistenceService.persist(component.getComponent());
+				attachedComponent = persistenceService.persist(component.getComponent());
 				component.setComponentChanged(true);
 
 				component.getAttributes().forEach(attribute
@@ -539,6 +545,80 @@ public class CoreComponentServiceImpl
 				component.setAttributeChanged(true);
 			}
 			componentService.getOrganizationService().addOrganization(component.getComponent().getOrganization());
+
+			// Convert inline-referenced temporary media to entry-specific media
+			String description = component.getComponent().getDescription();
+			Document descriptionDoc = Jsoup.parse(description);
+
+			Elements media = descriptionDoc.select("[src]");
+
+			// Map <temporaryId, componentMediaId>
+			Map<String, String> processedConversions = new HashMap<>();
+			for (org.jsoup.nodes.Element mediaItem : media) {
+				String url = mediaItem.attr("src");
+				if (url.contains("Media.action?TemporaryMedia")) {
+					// This src url contains temporary media -- we should convert it.
+					String tempMediaId = url.substring(url.indexOf("&name=") + "&name=".length());
+					TemporaryMedia existingMedia = persistenceService.findById(TemporaryMedia.class, tempMediaId);
+					if (existingMedia != null) {
+						// Check map if we've already processed this temporary media, otherwise, do conversion
+						ComponentMedia componentMedia;
+						if (processedConversions.containsKey(tempMediaId)) {
+							componentMedia = persistenceService.findById(ComponentMedia.class, processedConversions.get(tempMediaId));
+						} else {
+							componentMedia = new ComponentMedia();
+							componentMedia.setActiveStatus(Component.ACTIVE_STATUS);
+							componentMedia.setComponentId(component.getComponent().getComponentId());
+							componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+							componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+							componentMedia.setOriginalName(existingMedia.getOriginalFileName());
+							componentMedia.setMimeType(existingMedia.getMimeType());
+
+							// Set Media Type Code based on the mimetype stored in temporary (as retrieved from server)
+							String mediaTypeCode;
+							String mimeType = existingMedia.getMimeType();
+							if (mimeType.contains("image")) {
+								mediaTypeCode = "IMG";
+							} else if (mimeType.contains("video")) {
+								mediaTypeCode = "VID";
+							} else if (mimeType.contains("audio")) {
+								mediaTypeCode = "AUD";
+							} else {
+								mediaTypeCode = "OTH";
+							}
+
+							componentMedia.setMediaTypeCode(mediaTypeCode);
+
+							try {
+								Path path = existingMedia.pathToMedia();
+								InputStream in = new FileInputStream(path.toFile());
+								componentMedia = sub.saveMediaFile(componentMedia, in, false);
+								processedConversions.put(tempMediaId, componentMedia.getComponentMediaId());
+							} catch (Exception ex) {
+								throw new OpenStorefrontRuntimeException("Failed to convert temporary media to component media", ex);
+							}
+						}
+						// Replace converted url
+						String replaceUrl = "LoadMedia&mediaId=".concat(componentMedia.getComponentMediaId());
+						String newUrl = url.substring(0, url.indexOf("TemporaryMedia")).concat(replaceUrl);
+						log.log(Level.FINE, MessageFormat.format("TemporaryMedia Conversion: Replacing {0} with {1}", url, newUrl));
+						mediaItem.attr("src", newUrl);
+					} else {
+						log.log(Level.WARNING, MessageFormat.format("Unable to find existing temporary media for temporaryID: {0}", tempMediaId));
+					}
+				}
+			}
+			// Save new html to description
+			String newDescription = descriptionDoc.toString();
+			attachedComponent.setDescription(newDescription);
+			component.getComponent().setDescription(newDescription);
+
+			// Delete temporary media that was converted.
+			for (String temporaryId : processedConversions.keySet()) {
+				componentService.getSystemService().removeTemporaryMedia(temporaryId);
+			}
+
+			persistenceService.persist(attachedComponent);
 
 			if (approved) {
 				sendApprovalNotification(component.getComponent());

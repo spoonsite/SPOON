@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
+import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -260,6 +261,49 @@ public class MediaAction
 			return streamUploadResponse(errors);
 		}
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
+	@HandlesEvent("TemporaryMedia")
+	public Resolution temporaryMedia() throws FileNotFoundException
+	{
+		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
+		temporaryMediaExample.setName(name);
+		TemporaryMedia temporaryMedia = service.getPersistenceService().queryOneByExample(TemporaryMedia.class, temporaryMediaExample);
+		if (temporaryMedia == null) {
+			log.log(Level.FINE, MessageFormat.format("Temporary Media with name: {0} is not found.", name));
+			return new StreamingResolution("image/png")
+			{
+
+				@Override
+				protected void stream(HttpServletResponse response) throws Exception
+				{
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE)) {
+						FileSystemManager.copy(in, response.getOutputStream());
+					}
+				}
+
+			}.setFilename("MediaNotFound.png");
+		}
+
+		InputStream in;
+		long length;
+		Path path = temporaryMedia.pathToMedia();
+		if (path != null && path.toFile().exists()) {
+			in = new FileInputStream(path.toFile());
+			length = path.toFile().length();
+		} else {
+			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check temporary media record: {1} ", new Object[]{temporaryMedia.pathToMedia(), temporaryMedia.getName()}));
+			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
+			length = MISSING_MEDIA_IMAGE_SIZE;
+		}
+
+		return new RangeResolutionBuilder()
+				.setContentType(temporaryMedia.getMimeType())
+				.setInputStream(in)
+				.setTotalLength(length)
+				.setRequest(getContext().getRequest())
+				.setFilename(temporaryMedia.getOriginalFileName())
+				.createRangeResolution();
 	}
 
 	public String getMediaId()

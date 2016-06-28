@@ -61,6 +61,7 @@ public class PropertiesManager
 	public static final String KEY_ALLOW_JIRA_FEEDBACK = "jirafeedback.show";
 	public static final String KEY_FILE_HISTORY_KEEP_DAYS = "filehistory.max.days";
 	public static final String KEY_NOTIFICATION_MAX_DAYS = "notification.max.days";
+	public static final String TEMPORARY_MEDIA_KEEP_DAYS = "temporary.media.keep.days";
 
 	public static final String KEY_OPENAM_URL = "openam.url";
 	public static final String KEY_LOGOUT_URL = "logout.url";
@@ -215,6 +216,7 @@ public class PropertiesManager
 			defaults.put(KEY_ALLOW_JIRA_FEEDBACK, "true");
 			defaults.put(KEY_JIRA_FEEDBACK_PROJECT, "STORE");
 			defaults.put(KEY_JIRA_FEEDBACK_ISSUETYPE, "Help Desk Ticket");
+			defaults.put(TEMPORARY_MEDIA_KEEP_DAYS, "2");
 
 			if (Paths.get(PROPERTIES_FILENAME).toFile().createNewFile()) {
 				log.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);

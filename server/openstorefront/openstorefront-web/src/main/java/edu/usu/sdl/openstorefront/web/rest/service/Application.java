@@ -26,11 +26,13 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.DBLogRecord;
+import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.view.ApplicationStatus;
 import edu.usu.sdl.openstorefront.core.view.DBLogRecordWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LoggerView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.MediaRetrieveRequestModel;
 import edu.usu.sdl.openstorefront.core.view.MemoryPoolStatus;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.ThreadStatus;
@@ -41,6 +43,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.io.File;
+import java.io.IOException;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -50,6 +53,7 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -105,13 +109,13 @@ public class Application
 		applicationStatus.setProcessorCount(operatingSystemMXBean.getAvailableProcessors());
 		applicationStatus.setSystemLoad(operatingSystemMXBean.getSystemLoadAverage());
 		applicationStatus.setSystemProperties(runtimeMXBean.getSystemProperties());
-		
+
 		applicationStatus.setRootStoragePath(FileSystemManager.MAIN_DIR);
 		File file = new File(FileSystemManager.MAIN_DIR);
-		applicationStatus.setFreeDiskSpace(file.getUsableSpace()  / (1024*1024) );
-		applicationStatus.setTotalDiskSpace(file.getTotalSpace()  / (1024*1024) );
+		applicationStatus.setFreeDiskSpace(file.getUsableSpace() / (1024 * 1024));
+		applicationStatus.setTotalDiskSpace(file.getTotalSpace() / (1024 * 1024));
 		applicationStatus.setUsedDiskSpace(applicationStatus.getTotalDiskSpace() - applicationStatus.getFreeDiskSpace());
-		
+
 		applicationStatus.getHeapMemoryStatus().setName("Heap");
 		applicationStatus.getHeapMemoryStatus().setDetails(memoryMXBean.getHeapMemoryUsage().toString());
 		applicationStatus.getHeapMemoryStatus().setInitKb(memoryMXBean.getHeapMemoryUsage().getInit() != 0 ? memoryMXBean.getHeapMemoryUsage().getInit() / 1024 : 0);
@@ -170,16 +174,16 @@ public class Application
 			threadStatus.setName(info.getThreadName());
 			threadStatus.setStatus(info.getThreadState().name());
 			threadStatus.setDetails(info.toString().replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;").replace("\n", "<br>"));
-			threadStatuses.add(threadStatus);			
-		}		
-		
+			threadStatuses.add(threadStatus);
+		}
+
 		return threadStatuses;
 	}
-	
+
 	@GET
 	@RequireAdmin
 	@APIDescription("Attempts to get the full stack of a thread")
-	@Produces({MediaType.TEXT_HTML})	
+	@Produces({MediaType.TEXT_HTML})
 	@Path("/threads/{threadId}/stack")
 	public Response getThreadStack(
 			@PathParam("threadId") long threadId
@@ -194,7 +198,7 @@ public class Application
 				String style = "color: grey; font-size: 10px;";
 				if (stackTraceElement.getClassName().contains("edu.usu.sdl")) {
 					style = "color: black; font-size: 12px; font-wieght: bold;";
-				}				
+				}
 				stack.append("<span style='")
 						.append(style).append("'>")
 						.append(stackTraceElement.getClassName()).append(" (")
@@ -202,12 +206,12 @@ public class Application
 						.append(stackTraceElement.getLineNumber()).append(" ")
 						.append("</span><br>");
 			}
-			
+
 			return Response.ok(stack.toString()).build();
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-	}	
+	}
 
 	@GET
 	@RequireAdmin
@@ -252,6 +256,24 @@ public class Application
 		}
 
 		return sendSingleEntityResponse(lookupModel);
+	}
+
+	@POST
+	@APIDescription("Instruct the server to download a media file from a URL, and save the file to temporary media")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/retrievemedia")
+	public Response retrieveMedia(MediaRetrieveRequestModel retrieveRequest) throws MalformedURLException, IOException
+	{
+
+		TemporaryMedia temporaryMedia = service.getSystemService().retrieveTemporaryMedia(retrieveRequest.getURL());
+
+		if (temporaryMedia == null) {
+			return Response.status(404).build();
+		}
+
+		return Response.ok(temporaryMedia).build();
+
 	}
 
 	@POST

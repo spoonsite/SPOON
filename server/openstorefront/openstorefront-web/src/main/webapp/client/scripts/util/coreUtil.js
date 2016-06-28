@@ -374,10 +374,11 @@ var CoreUtil = {
 	},
 	/**
 	 *  Return predfined configs
-	 * @param {type} type (optional)
+	 * @param {additionalPlugins} additionalPlugins - a space-separated list (in a string) 
+	 * of additional plugins to add to the config (optional)
 	 * @returns {CoreUtil.tinymceConfig.defaultConfig}
 	 */
-	tinymceConfig: function(type) {
+	tinymceConfig: function(additionalPlugins) {
 		var defaultConfig = {
 			plugins: [
 			"advlist autolink lists link image charmap print preview hr anchor pagebreak",
@@ -395,15 +396,19 @@ var CoreUtil = {
 			menubar: true,
 			toolbar_items_size: 'small'				
 		};
+
+		if (additionalPlugins) {
+			defaultConfig.plugins.push(additionalPlugins);
+		}
 		
 		return defaultConfig;
 	},
 	/**
 	 *  Return a config which includes the tinymce plugin/tools for the insertion of saved search links
-	 * @param {type} type (optional)
+	 * @param {additionalPlugins} additionalPlugins - a space-separated list (in a string) 
 	 * @returns {CoreUtil.tinymceConfig.searchEntryConfig}
 	 */
-	tinymceSearchEntryConfig: function(type) {
+	tinymceSearchEntryConfig: function(additionalPlugins) {
 		var searchEntryConfig = {
 			plugins: [
 			"advlist autolink lists link image charmap print preview hr anchor pagebreak",
@@ -422,6 +427,10 @@ var CoreUtil = {
 			toolbar_items_size: 'small'				
 
 		};
+
+		if (additionalPlugins) {
+			searchEntryConfig.plugins.push(additionalPlugins);
+		}
 
 		return searchEntryConfig;
 

@@ -33,6 +33,7 @@ import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.HelpSection;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
+import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.core.model.HelpSectionAll;
@@ -48,12 +49,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +68,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -295,17 +303,17 @@ public class SystemServiceImpl
 		}
 		return ticketData;
 	}
-	
+
 	@Override
 	public void deleteErrorTickets(List<String> ticketIds)
 	{
 		List<ErrorTicket> errorTickets = new ArrayList<>();
 		for (String id : ticketIds) {
-			ErrorTicket errorTicket = persistenceService.findById(ErrorTicket.class, id);			
+			ErrorTicket errorTicket = persistenceService.findById(ErrorTicket.class, id);
 			errorTickets.add(errorTicket);
 		}
 		performDelete(errorTickets);
-	}	
+	}
 
 	@Override
 	public void cleanupOldErrors()
@@ -322,8 +330,9 @@ public class SystemServiceImpl
 			performDelete(errorTickets);
 		}
 	}
-	
-	private void performDelete(List<ErrorTicket> errorTickets) {
+
+	private void performDelete(List<ErrorTicket> errorTickets)
+	{
 		errorTickets.stream().forEach((errorTicket) -> {
 			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			if (path.toFile().exists()) {
@@ -390,6 +399,107 @@ public class SystemServiceImpl
 			}
 			persistenceService.delete(generalMedia);
 		}
+	}
+
+	@Override
+	public void saveTemporaryMedia(TemporaryMedia temporaryMedia, InputStream fileInput)
+	{
+		Objects.requireNonNull(temporaryMedia);
+		Objects.requireNonNull(fileInput);
+		Objects.requireNonNull(temporaryMedia.getName(), "Name must be set.");
+
+		temporaryMedia.setFileName(temporaryMedia.getFileName());
+		try (InputStream in = fileInput) {
+			Files.copy(in, temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
+			temporaryMedia.populateBaseCreateFields();
+			persistenceService.persist(temporaryMedia);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		}
+	}
+
+	@Override
+	public void removeTemporaryMedia(String temporaryMediaId)
+	{
+		TemporaryMedia temporaryMedia = persistenceService.findById(TemporaryMedia.class, temporaryMediaId);
+		if (temporaryMedia != null) {
+			Path path = temporaryMedia.pathToMedia();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					path.toFile().delete();
+				}
+			}
+			persistenceService.delete(temporaryMedia);
+		}
+	}
+
+	@Override
+	public TemporaryMedia retrieveTemporaryMedia(String urlStr)
+	{
+
+		String hash = DigestUtils.shaHex(urlStr);
+		TemporaryMedia existingMedia = persistenceService.findById(TemporaryMedia.class, hash);
+		if (existingMedia != null) {
+			existingMedia.setUpdateDts(TimeUtil.currentDate());
+			return existingMedia;
+		}
+
+		try {
+			URL url = new URL(urlStr);
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+			if (urlConnection.getResponseCode() == 404) {
+				return null;
+			}
+			if (!urlConnection.getContentType().contains("image")) {
+				log.log(Level.INFO, MessageFormat.format("Not an image:  {0}", (urlConnection.getContentType())));
+				return null;
+			}
+
+			TemporaryMedia temporaryMedia = new TemporaryMedia();
+			String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
+			String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
+			temporaryMedia.setOriginalFileName(originalFileName);
+			temporaryMedia.setFileName(hash);
+			temporaryMedia.setName(hash);
+			temporaryMedia.setOriginalSourceURL(urlStr);
+			temporaryMedia.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
+			temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+			temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+			temporaryMedia.setMimeType(urlConnection.getContentType());
+
+			InputStream input = urlConnection.getInputStream();
+			saveTemporaryMedia(temporaryMedia, input);
+			return temporaryMedia;
+
+		} catch (MalformedURLException ex) {
+			return null;
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to download temporary media", "Connection failed to download temporary media.", ex);
+		}
+
+	}
+
+	public void cleanUpOldTemporaryMedia()
+	{
+
+		String query = "SELECT FROM TemporaryMedia";
+		List<TemporaryMedia> allTemporaryMedia = persistenceService.query(query, null);
+		int maxDays = Convert.toInteger(PropertiesManager.getValueDefinedDefault(PropertiesManager.TEMPORARY_MEDIA_KEEP_DAYS));
+
+		for (TemporaryMedia media : allTemporaryMedia) {
+			LocalDate today = LocalDate.now();
+			LocalDate update = media.getUpdateDts().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			long distance = Math.abs(ChronoUnit.DAYS.between(today, update));
+			log.log(Level.INFO, MessageFormat.format("{0} is {1} days old", media.getOriginalFileName(), distance));
+
+			if (distance > maxDays) {
+				removeTemporaryMedia(media.getName());
+				log.log(Level.INFO, MessageFormat.format("Removing {0}", media.getOriginalFileName()));
+			}
+
+		}
+
 	}
 
 	@Override

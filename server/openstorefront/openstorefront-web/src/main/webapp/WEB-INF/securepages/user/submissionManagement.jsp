@@ -25,11 +25,17 @@ limitations under the License.
 
 	<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/inlineMediaRetrieverWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
         <script type="text/javascript">
 			/* global Ext, CoreUtil, CoreService */
 
 			Ext.onReady(function () {
+
+				var inlineMediaWindow = Ext.create('OSF.component.InlineMediaRetrieverWindow', {					
+					id: 'inlineMediaWindow',
+					alwaysOnTop: true
+				});	
 				
 				CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
 					var branding = Ext.decode(response.responseText);

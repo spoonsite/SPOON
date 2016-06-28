@@ -280,7 +280,11 @@ Ext.onReady(function() {
 				}
 			});			
 		} else if (response.status === 404) {
-			Ext.toast('Refresh and try again.  Also, check request.' + requestUrl, 'Resource Not Found (404)');
+			// If the request is a 'retrievemedia' request for backend inline media handling,
+			// don't show this toast.
+			if (requestUrl.indexOf('retrievemedia') === -1) {
+				Ext.toast('Refresh and try again.  Also, check request.' + requestUrl, 'Resource Not Found (404)');
+			}
 		} else if (response.status === 405) {
 			Ext.Msg.show({
 				title: 'Bad Client Request (405)',
