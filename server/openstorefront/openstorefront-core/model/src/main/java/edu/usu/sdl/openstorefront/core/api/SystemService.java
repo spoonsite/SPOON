@@ -200,6 +200,14 @@ public interface SystemService
 	public TemporaryMedia retrieveTemporaryMedia(String urlStr);
 
 	/**
+	 * Remove old temporary media that is older than TEMPORARY_MEDIA_KEEP_DAYS
+	 * days old.
+	 *
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void cleanUpOldTemporaryMedia();
+
+	/**
 	 * Saves a task so it can be persisted across bounces This is meant for use
 	 * with completed tasks. Note: this will override existing task of the same
 	 * id

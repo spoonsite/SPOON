@@ -58,6 +58,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -473,6 +476,28 @@ public class SystemServiceImpl
 			return null;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to download temporary media", "Connection failed to download temporary media.", ex);
+		}
+
+	}
+
+	public void cleanUpOldTemporaryMedia()
+	{
+
+		String query = "SELECT FROM TemporaryMedia";
+		List<TemporaryMedia> allTemporaryMedia = persistenceService.query(query, null);
+		int maxDays = Convert.toInteger(PropertiesManager.getValueDefinedDefault(PropertiesManager.TEMPORARY_MEDIA_KEEP_DAYS));
+
+		for (TemporaryMedia media : allTemporaryMedia) {
+			LocalDate today = LocalDate.now();
+			LocalDate update = media.getUpdateDts().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			long distance = Math.abs(ChronoUnit.DAYS.between(today, update));
+			log.log(Level.INFO, MessageFormat.format("{0} is {1} days old", media.getOriginalFileName(), distance));
+
+			if (distance > maxDays) {
+				removeTemporaryMedia(media.getName());
+				log.log(Level.INFO, MessageFormat.format("Removing {0}", media.getOriginalFileName()));
+			}
+
 		}
 
 	}

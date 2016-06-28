@@ -101,6 +101,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			// Add an html attribute to ignore these links.
 			var elem = document.createElement('html');
 			elem.innerHTML = editor.getContent();
+			// For now, we are only grabbing media from img tags.
 			var images = elem.getElementsByTagName('img');
 			Ext.Array.each(images, function(image) {
 				if (image.src === originalURL) {
