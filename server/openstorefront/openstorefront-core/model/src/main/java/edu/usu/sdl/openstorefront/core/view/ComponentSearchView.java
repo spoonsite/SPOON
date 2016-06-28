@@ -62,6 +62,7 @@ public class ComponentSearchView
 	private String listingSecurityMarkingDescription;
 	private Integer listingSecurityMarkingRank;
 	private String listingSecurityMarkingStyle;
+	private float searchScore;
 	
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
@@ -517,6 +518,16 @@ public class ComponentSearchView
 	public void setComponentTypeDescription(String componentTypeDescription)
 	{
 		this.componentTypeDescription = componentTypeDescription;
+	}
+
+	public float getSearchScore()
+	{
+		return searchScore;
+	}
+
+	public void setSearchScore(float searchScore)
+	{
+		this.searchScore = searchScore;
 	}
 
 }
