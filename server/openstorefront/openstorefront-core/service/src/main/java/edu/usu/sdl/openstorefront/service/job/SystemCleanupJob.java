@@ -31,6 +31,7 @@ public class SystemCleanupJob
 	{
 		service.getSystemService().cleanupOldErrors();
 		service.getSystemService().cleanUpOldLogRecords();
+		service.getSystemService().cleanUpOldTemporaryMedia();
 		service.getImportService().cleanupOldFileHistory();
 		service.getNotificationService().cleanupOldEvents();
 	}
