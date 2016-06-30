@@ -33,7 +33,7 @@ import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.OsgiManager;
 import edu.usu.sdl.openstorefront.service.manager.PluginManager;
 import edu.usu.sdl.openstorefront.service.manager.ReportManager;
-import edu.usu.sdl.openstorefront.service.manager.SolrManager;
+import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -66,7 +66,7 @@ public class CoreSystem
 			new OsgiManager(),
 			new FileSystemManager(),
 			new DBManager(),
-			new SolrManager(),
+			new SearchServerManager(),
 			new OSFCacheManager(),
 			new JiraManager(),
 			new LookupImporter(),

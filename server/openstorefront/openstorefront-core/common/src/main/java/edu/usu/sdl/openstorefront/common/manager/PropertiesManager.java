@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.common.manager;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.SortedProperties;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
@@ -51,7 +52,10 @@ public class PropertiesManager
 	public static final String KEY_DB_USER = "db.user";
 	public static final String KEY_DB_AT = "db.pw";
 	public static final String KEY_MAX_ERROR_TICKETS = "errorticket.max";
+	public static final String KEY_SEARCH_SERVER = "search.server";
 	public static final String KEY_SOLR_URL = "solr.server.url";
+	public static final String KEY_ELASTIC_HOST = "elastic.server.host";
+	public static final String KEY_ELASTIC_PORT = "elastic.server.port";
 	public static final String KEY_MAX_AGE_TRACKING_RECORDS = "trackingrecords.max.age.days";
 	public static final String KEY_EXTERNAL_USER_MANAGER = "external.usermanager";
 	public static final String KEY_EXTERNAL_SYNC_ACTIVATE = "external.sync.activate";
@@ -125,7 +129,7 @@ public class PropertiesManager
 	private static Properties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 
-	private static Properties defaults = new Properties();
+	private static SortedProperties defaults = new SortedProperties();
 
 	public static String getDefault(String key)
 	{
