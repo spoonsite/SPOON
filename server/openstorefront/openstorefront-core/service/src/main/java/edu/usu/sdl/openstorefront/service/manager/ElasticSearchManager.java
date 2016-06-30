@@ -53,7 +53,6 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.suggest.SuggestResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -142,13 +141,17 @@ public class ElasticSearchManager
 	{
 		IndexSearchResult indexSearchResult = new IndexSearchResult();
 		
-		SearchResponse response = ElasticSearchManager.getClient()
-				.prepareSearch(INDEX)
-				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-				.setQuery(QueryBuilders.simpleQueryStringQuery(query))
+		int maxSearchResults = 10000;
+		if (filter.getMax() < maxSearchResults) {
+			maxSearchResults = filter.getMax();
+		}
+		
+		SearchResponse response = ElasticSearchManager.getClient()				
+				.prepareSearch(INDEX)							
+				.setQuery(QueryBuilders.queryStringQuery(query))
 				.setFrom(filter.getOffset())
-				.setSize(filter.getMax())
-				.addSort(filter.getSortField(), OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ?  SortOrder.ASC : SortOrder.DESC)
+				.setSize(maxSearchResults)
+				.addSort(filter.getSortField(), OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ?  SortOrder.ASC : SortOrder.DESC)		
 				.execute()
 				.actionGet();		
 		
@@ -156,7 +159,7 @@ public class ElasticSearchManager
 		indexSearchResult.setMaxScore(response.getHits().getMaxScore());
 		
 		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
-		for (SearchHit hit : response.getHits().getHits()) {
+ 		for (SearchHit hit : response.getHits().getHits()) {
 			try {
 				ComponentSearchView view  = objectMapper.readValue(hit.getSourceAsString(), new TypeReference<ComponentSearchView>(){});
 				view.setSearchScore(hit.getScore());
