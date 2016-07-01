@@ -12,6 +12,16 @@
 					storeId: 'relationshipsStore',
 				});
 
+				var relationshipTypeStore = Ext.create('Ext.data.Store', {
+					storeId: 'relationshipTypeStore',
+					proxy: {
+						type: 'ajax',
+						url: '../api/v1/resource/lookuptypes/RelationshipType/view'
+					},
+					autoLoad: true
+				});
+													   
+
 				var actualComponentsStore = Ext.create('Ext.data.Store', {
 					storeId: 'actualComponentsStore',
 					sorters: new Ext.util.Sorter({
@@ -59,7 +69,7 @@
 							var id = record.get('ownerComponentId');
 							relationshipsStore.setProxy({
 								type: 'ajax',
-								url: '../api/v1/resource/components/' + id + '/relationships/all'
+								url: '../api/v1/resource/components/' + id + '/relationships'
 							});
 							relationshipsStore.load();
 						}
@@ -83,7 +93,20 @@
 						deferEmptyText: false
 					},
 					columns: [
-						{ text: 'Origin Entry', dataIndex: 'ownerComponentName', flex: 1 }
+						{ text: 'Origin Entry', dataIndex: 'ownerComponentName', flex: 5 },
+						{
+							text: 'Relationship Type',
+							flex: 2,
+							xtype: 'widgetcolumn',
+							dataIndex: 'relationshipType',
+							widget: {
+								xtype: 'combo',
+								store: relationshipTypeStore,
+								displayField: 'description',
+								valueField: 'code',
+							}
+						},
+						{ text: 'Target Entry', dataIndex: 'targetComponentName', flex: 5 },
 					]
 				});
 
@@ -115,7 +138,10 @@
 								Ext.create('OSF.component.StandardComboBox', {
 									id: 'relationshipTypeComboBox',
 									fieldLabel: 'Type of Relationship to Create',
-									width: '60%'
+									width: '60%',
+									store: 'relationshipTypeStore',
+									displayField: 'description',
+									valueField: 'code'
 								})
 							]
 						}
@@ -143,7 +169,7 @@
 							]
 						},
 						{
-							title: 'Relationships',
+							title: 'Existing Relationships',
 							margin: '5 5 5 5',
 							borderWidth: '5px',
 							region: 'center',
