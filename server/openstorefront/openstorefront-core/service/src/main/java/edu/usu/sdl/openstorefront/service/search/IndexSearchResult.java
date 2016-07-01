@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.search;
 
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class IndexSearchResult
 {
 
 	private List<SolrComponentModel> resultsList = new ArrayList<>();
+	private List<ComponentSearchView> searchViews = new ArrayList<>();
 	private long totalResults = 0;
 	private float maxScore;
 
@@ -61,6 +63,16 @@ public class IndexSearchResult
 	public void setMaxScore(float maxScore)
 	{
 		this.maxScore = maxScore;
+	}
+
+	public List<ComponentSearchView> getSearchViews()
+	{
+		return searchViews;
+	}
+
+	public void setSearchViews(List<ComponentSearchView> searchViews)
+	{
+		this.searchViews = searchViews;
 	}
 
 }

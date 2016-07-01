@@ -1692,6 +1692,33 @@
 						}
 					]
 				});
+				
+				var managersGrid = Ext.create('Ext.grid.Panel', {
+					title: 'Managers',
+					columnLines: true,
+					store: {						
+					},
+					columns: [
+						{ text: 'Name', dataindex: '', width: 250 },
+						{ text: 'Class', dataindex: '', width: 250 },
+						{ text: 'State', dataindex: '', width: 250 },
+						{ text: 'Order', dataindex: '', width: 250 },
+						{ text: 'Safe To Reinit', dataindex: '', width: 250 }
+					]
+				});
+				
+				var cacheGrid = Ext.create('Ext.grid.Panel', {
+					title: 'Cache',
+					columnLines: true,
+					store: {						
+					},
+					columns: [
+						{ text: 'Name', dataindex: '', width: 250 }						
+					]
+				});
+				
+								
+				
 
 				var searchControlPanel = Ext.create('Ext.panel.Panel', {
 					title: 'Search Control',
@@ -1835,6 +1862,8 @@
 						sysConfigPropGrid,
 						logPanel,
 						pluginGrid,
+						managersGrid,
+						cacheGrid,
 						searchControlPanel,
 						recentChangesPanel
 					]
