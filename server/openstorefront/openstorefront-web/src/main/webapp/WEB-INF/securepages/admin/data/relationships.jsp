@@ -59,7 +59,6 @@
 				});
 
 				var relationshipsGrid = Ext.create('Ext.grid.Panel', {
-					width: '100%',
 					region: 'center',
 					viewConfig: {
 						emptyText: 'Please select a component to view its relationships',
@@ -68,10 +67,12 @@
 				});
 
 				var visualizationPanel = Ext.create('Ext.panel.Panel', {
-					width: '100%',
+					height: '60%',
 					region: 'south',
 					title: 'Visualization',
-					html: 'Please select a component to view its relationships',
+					collapsible: true,
+					resizable: true,
+					html: 'Please select a component to view its relationships'
 				});
 
 				var relationshipCreationGridsPanel = Ext.create('Ext.panel.Panel', {
@@ -109,10 +110,7 @@
 							xtype: 'panel',
 							flex: 3,
 							id: 'center-container',
-							autoScroll: true,
-							layout: {
-								type: 'border',
-							},
+							layout: 'border',
 							items: [
 								relationshipsGrid, visualizationPanel
 							]
