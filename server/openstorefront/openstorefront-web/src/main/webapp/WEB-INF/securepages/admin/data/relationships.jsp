@@ -8,6 +8,10 @@
 			Ext.onReady(function(){	
 
 
+				var relationshipsStore = Ext.create('Ext.data.Store', {
+					storeId: 'relationshipsStore',
+				});
+
 				var actualComponentsStore = Ext.create('Ext.data.Store', {
 					storeId: 'actualComponentsStore',
 					sorters: new Ext.util.Sorter({
@@ -26,7 +30,7 @@
 					listeners: {
 						load: function(store, records, successful, eOpts) {
 							// populate the actualComponentStore
-							// with the a list of unique components
+							// with the a list of distinct components
 							var ac = Ext.getStore('actualComponentsStore');
 							var acData = Ext.getStore('actualComponentsStore').getData();
 							Ext.Array.each(records, function(record) {
@@ -45,14 +49,27 @@
 				var originGrid = Ext.create('Ext.grid.Panel', {
 					store: actualComponentsStore,
 					width: '50%',
+					border: true,
 					columns: [
 						{ text: 'Origin Entry', dataIndex: 'ownerComponentName', flex: 1 }
-					]
+					],
+					listeners: {
+						select: function(grid, record, index, eOpts) {
+							console.log("you dun selected");
+							var id = record.get('ownerComponentId');
+							relationshipsStore.setProxy({
+								type: 'ajax',
+								url: '../api/v1/resource/components/' + id + '/relationships/all'
+							});
+							relationshipsStore.load();
+						}
+					}
 				});
 
 				var targetGrid = Ext.create('Ext.grid.Panel', {
 					store: actualComponentsStore,
 					width: '50%',
+					border: true,
 					columns: [
 						{ text: 'Target Entry', dataIndex: 'ownerComponentName', flex: 1 }
 					]
@@ -60,10 +77,14 @@
 
 				var relationshipsGrid = Ext.create('Ext.grid.Panel', {
 					region: 'center',
+					store: relationshipsStore,
 					viewConfig: {
 						emptyText: 'Please select a component to view its relationships',
 						deferEmptyText: false
 					},
+					columns: [
+						{ text: 'Origin Entry', dataIndex: 'ownerComponentName', flex: 1 }
+					]
 				});
 
 				var visualizationPanel = Ext.create('Ext.panel.Panel', {
@@ -110,6 +131,7 @@
 							title: 'Relationship Creation',
 							region: 'west',
 							xtype: 'panel',
+							margin: '5 5 5 5',
 							flex: 2,
 							id: 'west-container',
 							autoScroll: true,
@@ -122,6 +144,8 @@
 						},
 						{
 							title: 'Relationships',
+							margin: '5 5 5 5',
+							borderWidth: '5px',
 							region: 'center',
 							xtype: 'panel',
 							flex: 3,
