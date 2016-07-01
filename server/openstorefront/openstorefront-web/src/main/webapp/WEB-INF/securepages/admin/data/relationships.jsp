@@ -82,6 +82,22 @@
 					},
 					items: [
 						originGrid, targetGrid
+					],
+					dockedItems: [
+						{
+							dock: 'top',
+							xtype: 'toolbar',
+							layout: {
+								pack: 'center'
+							},
+							items: [
+								Ext.create('OSF.component.StandardComboBox', {
+									id: 'relationshipTypeComboBox',
+									fieldLabel: 'Type of Relationship to Create',
+									width: '60%'
+								})
+							]
+						}
 					]
 				});
 
