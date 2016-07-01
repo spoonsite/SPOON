@@ -10,6 +10,10 @@
 
 				var actualComponentsStore = Ext.create('Ext.data.Store', {
 					storeId: 'actualComponentsStore',
+					sorters: new Ext.util.Sorter({
+						property: 'ownerComponentName',
+						direction: 'ASC'
+					})
 				}); 
 
 				var componentRelationshipStore = Ext.create('Ext.data.Store', {
@@ -27,10 +31,9 @@
 							var acData = Ext.getStore('actualComponentsStore').getData();
 							Ext.Array.each(records, function(record) {
 								if (acData.find('ownerComponentId', record.get('ownerComponentId'))) {
-									console.log('WE GOT IT!');
+									// do nothing
 								} else {
 									ac.add(record);
-									console.log('ADDING A RECORD!');
 								}
 
 							});
