@@ -56,7 +56,7 @@ public class OSFCacheManager
 			config.setUpdateCheck(false);
 			config.setName("Main");
 			CacheManager singletonManager = CacheManager.create(config);
-
+			
 			Cache memoryOnlyCache = new Cache("lookupCache", 500, false, false, 600, 600);
 			singletonManager.addCache(memoryOnlyCache);
 			lookupCache = singletonManager.getCache("lookupCache");
@@ -100,11 +100,16 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("contactCache", 5000, false, false, 1800, 1800);
 			singletonManager.addCache(memoryOnlyCache);
 			contactCache = singletonManager.getCache("contactCache");
-			
+						
 		} finally {
 			lock.unlock();
 		}
 
+	}
+	
+	public static CacheManager getCacheManager()
+	{
+		return CacheManager.getInstance();
 	}
 
 	public static void cleanUp()
