@@ -553,7 +553,7 @@ public class SystemServiceImpl
 		if (count > max) {
 			log.log(Level.INFO, MessageFormat.format("Cleaning old log records:  {0}", (count - max)));
 
-			long limit = count - max - MIN_DB_CLEAN_AMOUNT;
+			long limit = count - max + MIN_DB_CLEAN_AMOUNT;
 			if (limit > MAX_DB_CLEAN_AMOUNT) {
 				limit = MAX_DB_CLEAN_AMOUNT;
 			}

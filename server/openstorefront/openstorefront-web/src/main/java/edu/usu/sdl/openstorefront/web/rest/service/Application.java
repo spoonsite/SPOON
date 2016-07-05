@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.DBLogRecord;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.view.ApplicationStatus;
+import edu.usu.sdl.openstorefront.core.view.CacheView;
 import edu.usu.sdl.openstorefront.core.view.DBLogRecordWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LoggerView;
@@ -38,6 +39,7 @@ import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.ThreadStatus;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -73,8 +75,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import net.sf.ehcache.Cache;
 import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang.StringUtils;
 
@@ -512,4 +516,46 @@ public class Application
 		return lookupModel;
 	}
 
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets information about system caches.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(CacheView.class)
+	@Path("/caches")	
+	public Response getCaches()
+	{
+		List<CacheView> cacheViews = new ArrayList<>();
+		for (String cacheName :OSFCacheManager.getCacheManager().getCacheNames()) {
+			CacheView cacheView = new CacheView();
+			cacheView.setName(cacheName);
+			
+			Cache cache = OSFCacheManager.getCacheManager().getCache(cacheName);
+			cacheView.setHitCount(cache.getStatistics().cacheHitCount());
+			cacheView.setHitRatio(cache.getStatistics().cacheHitRatio());
+			cacheView.setMissCount(cache.getStatistics().cacheMissCount());						
+			cacheViews.add(cacheView);
+		}
+		
+		GenericEntity<List<CacheView>> entity = new GenericEntity<List<CacheView>>(cacheViews)
+		{
+		};		
+		return sendSingleEntityResponse(entity);
+	}
+	
+	@PUT
+	@RequireAdmin
+	@APIDescription("Clears cache of records")
+	@Path("/caches/{name}/flush")	
+	public Response flushCaches(
+		@PathParam("name") String cacheName
+	)
+	{
+		Cache cache = OSFCacheManager.getCacheManager().getCache(cacheName);
+		if (cache != null) {
+			cache.removeAll();
+			return Response.ok().build();
+		}
+		
+		return sendSingleEntityResponse(null);
+	}
 }
