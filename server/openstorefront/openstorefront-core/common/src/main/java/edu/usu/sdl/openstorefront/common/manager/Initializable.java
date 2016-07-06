@@ -21,7 +21,7 @@ package edu.usu.sdl.openstorefront.common.manager;
  */
 public interface Initializable
 {
-
+	
 	/**
 	 * Perform setup work/configuration
 	 */
@@ -31,5 +31,11 @@ public interface Initializable
 	 * Performs any resource clean up
 	 */
 	public void shutdown();
+	
+	/**
+	 * Gets the state
+	 * @return true if started
+	 */
+	public boolean isStarted();
 
 }

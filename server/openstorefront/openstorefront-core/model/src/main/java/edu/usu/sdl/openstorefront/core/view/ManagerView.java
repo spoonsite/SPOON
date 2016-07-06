@@ -19,15 +19,14 @@ package edu.usu.sdl.openstorefront.core.view;
  *
  * @author dshurtleff
  */
-public class CacheView
+public class ManagerView		
 {
 	private String name;
-	private long hitCount;
-	private double hitRatio;
-	private long missCount;
-	private long roughCount;
+	private String managerClass;
+	private int order;
+	private boolean started;
 
-	public CacheView()
+	public ManagerView()
 	{
 	}
 
@@ -41,44 +40,34 @@ public class CacheView
 		this.name = name;
 	}
 
-	public long getHitCount()
+	public String getManagerClass()
 	{
-		return hitCount;
+		return managerClass;
 	}
 
-	public void setHitCount(long hitCount)
+	public void setManagerClass(String managerClass)
 	{
-		this.hitCount = hitCount;
+		this.managerClass = managerClass;
 	}
 
-	public double getHitRatio()
+	public int getOrder()
 	{
-		return hitRatio;
+		return order;
 	}
 
-	public void setHitRatio(double hitRatio)
+	public void setOrder(int order)
 	{
-		this.hitRatio = hitRatio;
+		this.order = order;
 	}
 
-	public long getMissCount()
+	public boolean getStarted()
 	{
-		return missCount;
+		return started;
 	}
 
-	public void setMissCount(long missCount)
+	public void setStarted(boolean started)
 	{
-		this.missCount = missCount;
+		this.started = started;
 	}
 
-	public long getRoughCount()
-	{
-		return roughCount;
-	}
-
-	public void setRoughCount(long roughCount)
-	{
-		this.roughCount = roughCount;
-	}
-	
 }

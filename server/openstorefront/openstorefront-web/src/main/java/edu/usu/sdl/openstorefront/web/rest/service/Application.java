@@ -15,7 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
+import edu.usu.sdl.core.CoreSystem;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
@@ -33,6 +35,7 @@ import edu.usu.sdl.openstorefront.core.view.DBLogRecordWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LoggerView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.ManagerView;
 import edu.usu.sdl.openstorefront.core.view.MediaRetrieveRequestModel;
 import edu.usu.sdl.openstorefront.core.view.MemoryPoolStatus;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
@@ -531,7 +534,14 @@ public class Application
 			
 			Cache cache = OSFCacheManager.getCacheManager().getCache(cacheName);
 			cacheView.setHitCount(cache.getStatistics().cacheHitCount());
-			cacheView.setHitRatio(cache.getStatistics().cacheHitRatio());
+			cacheView.setRoughCount(cache.getKeysNoDuplicateCheck().size());
+			
+			long total = cache.getStatistics().cacheHitCount() + cache.getStatistics().cacheMissCount();
+			if (total > 0) {
+				cacheView.setHitRatio((double)cache.getStatistics().cacheHitCount() / (double)total);
+			} else {
+				cacheView.setHitRatio(0);
+			}
 			cacheView.setMissCount(cache.getStatistics().cacheMissCount());						
 			cacheViews.add(cacheView);
 		}
@@ -558,4 +568,88 @@ public class Application
 		
 		return sendSingleEntityResponse(null);
 	}
+	
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets information resource managers")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ManagerView.class)
+	@Path("/managers")	
+	public Response getManagers()
+	{	
+		List<ManagerView> views = CoreSystem.getManagersView();		
+		GenericEntity<List<ManagerView>> entity = new GenericEntity<List<ManagerView>>(views)
+		{
+		};		
+		return sendSingleEntityResponse(entity);		
+	}
+	
+	@PUT
+	@RequireAdmin
+	@APIDescription("Starts a manager (It's preferable to use restart rather than stop and starting)")
+	@Path("/managers/{managerClass}/start")	
+	public Response startManager(
+		@PathParam("managerClass") String managerClass
+	)
+	{
+		Initializable manager = CoreSystem.findManager(managerClass, true);
+		
+		if (manager != null) {
+			CoreSystem.startManager(managerClass);
+			return Response.ok().build();
+		}
+		
+		return sendSingleEntityResponse(null);
+	}	
+	
+	@PUT
+	@RequireAdmin
+	@APIDescription("Stops a manager (It's preferable to use restart rather than stop and starting)")
+	@Path("/managers/{managerClass}/stop")	
+	public Response stopManager(
+		@PathParam("managerClass") String managerClass
+	)
+	{
+		Initializable manager = CoreSystem.findManager(managerClass, true);
+		
+		if (manager != null) {
+			CoreSystem.stopManager(managerClass);
+			return Response.ok().build();
+		}
+		
+		return sendSingleEntityResponse(null);
+	}	
+	
+	@PUT
+	@RequireAdmin
+	@APIDescription("Restart a manager.")
+	@Path("/managers/{managerClass}/restart")	
+	public Response restartManager(
+		@PathParam("managerClass") String managerClass
+	)
+	{
+		Initializable manager = CoreSystem.findManager(managerClass, true);
+		
+		if (manager != null) {
+			CoreSystem.restartManager(managerClass);
+			return Response.ok().build();
+		}
+		
+		return sendSingleEntityResponse(null);
+	}	
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Restart the application. Note the system will be unavailable until the restart is complete.")
+	@Path("/restart")	
+	public Response restartApplication(
+		@PathParam("managerClass") String managerClass
+	)
+	{
+		CoreSystem.restart();
+		return Response.ok().build();
+	}	
+	
+	
+	
 }

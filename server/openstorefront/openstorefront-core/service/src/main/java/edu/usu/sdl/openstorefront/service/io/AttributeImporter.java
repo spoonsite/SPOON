@@ -89,6 +89,12 @@ public class AttributeImporter
 		log.log(Level.INFO, MessageFormat.format("Finish Syncing Attributes: {0}", file));
 	}
 
+	@Override
+	public boolean isStarted()
+	{
+		return true;
+	}
+
 	private enum FileMap
 	{
 

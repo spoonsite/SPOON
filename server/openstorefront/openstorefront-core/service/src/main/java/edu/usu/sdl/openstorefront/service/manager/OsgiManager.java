@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.felix.framework.Felix;
@@ -46,6 +47,7 @@ public class OsgiManager
 
 	private static final long MAX_SHUTDOWN_WAIT_TIME = 60000;
 	private static Felix felix = null;
+	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static void init()
 	{
@@ -92,12 +94,20 @@ public class OsgiManager
 	public void initialize()
 	{
 		OsgiManager.init();
+		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
 		OsgiManager.cleanup();
+		started.set(false);
 	}
+	
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
+	}	
 
 }

@@ -105,6 +105,12 @@ public class LookupImporter
 	}
 
 	@Override
+	public boolean isStarted()
+	{
+		return true;
+	}	
+	
+	@Override
 	protected String getSyncProperty()
 	{
 		return ApplicationProperty.LOOKUP_IMPORTER_LAST_SYNC_DTS;

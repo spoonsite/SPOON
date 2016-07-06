@@ -1696,28 +1696,265 @@
 				var managersGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Managers',
 					columnLines: true,
-					store: {						
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: '../api/v1/service/application/managers'
+						}						
+					},
+					listeners: {
+						selectionchange: function (selectionModel, records, index, opts) {
+							var tools  = managersGrid.getComponent('tools');
+							if (selectionModel.getCount() > 0 ) {								
+								if (records[0].get('started')) {
+									tools.getComponent('start').setDisabled(true);
+								} else {
+									tools.getComponent('start').setDisabled(false);
+								}
+								if (records[0].get('started')) {
+									tools.getComponent('stop').setDisabled(false);
+								} else {
+									tools.getComponent('stop').setDisabled(true);
+								}
+								tools.getComponent('restart').setDisabled(false);
+							} else {
+								tools.getComponent('start').setDisabled(true);
+								tools.getComponent('stop').setDisabled(true);
+								tools.getComponent('restart').setDisabled(true);
+							}							
+						}							
 					},
 					columns: [
-						{ text: 'Name', dataindex: '', width: 250 },
-						{ text: 'Class', dataindex: '', width: 250 },
-						{ text: 'State', dataindex: '', width: 250 },
-						{ text: 'Order', dataindex: '', width: 250 },
-						{ text: 'Safe To Reinit', dataindex: '', width: 250 }
+						{ text: 'Name', dataIndex: 'name', width: 250 },
+						{ text: 'Class', dataIndex: 'managerClass', minWidth: 250, flex: 1 },
+						{ text: 'Started', dataIndex: 'started', align: 'center', width: 150, 
+							renderer: function(value) {
+								if (value) {
+									return '<i class="fa fa-lg fa-check" style="color: green"></i>';
+								} else {
+									return '<i class="fa fa-lg fa-close" style="color: red"></i>';
+								}
+							}
+						},
+						{ text: 'Order', dataIndex: 'order', align: 'center', width: 150 }
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							itemId: 'tools',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Start',
+									itemId: 'start',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function(){
+										var grid = this.up('grid');
+										var record = this.up('grid').getSelectionModel().getSelection()[0];										
+										
+										grid.setLoading('Starting Manager...');
+										Ext.Ajax.request({
+											url: '../api/v1/service/application/managers/' + record.get('managerClass') + '/start',
+											method: 'PUT',
+											callback: function(){
+												grid.setLoading(false);
+											},
+											success: function(){
+												
+												grid.getStore().reload();
+											}
+										});
+										
+									}									
+								},
+								{
+									text: 'Stop',
+									itemId: 'stop',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function(){
+										var grid = this.up('grid');
+										var record = this.up('grid').getSelectionModel().getSelection()[0];
+										
+										Ext.Msg.show({
+											title:'Stop Manager?',
+											message: 'Are you sure you want to stop this manager? <br> The application may be unstable or some feature will not available.',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+													grid.setLoading('Stopping Manager...');
+													Ext.Ajax.request({
+														url: '../api/v1/service/application/managers/' + record.get('managerClass') + '/stop',
+														method: 'PUT',
+														callback: function(){
+															grid.setLoading(false);
+														},
+														success: function(){
+															grid.getStore().reload();
+														}											
+													});													
+												} 
+											}
+										});											
+										
+
+									}									
+								},
+								{
+									text: 'Restart',
+									itemId: 'restart',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function(){
+										var grid = this.up('grid');
+										var record = this.up('grid').getSelectionModel().getSelection()[0];										
+										
+										grid.setLoading('Restarting Manager...');
+										Ext.Ajax.request({
+											url: '../api/v1/service/application/managers/' + record.get('managerClass') + '/restart',
+											method: 'PUT',
+											callback: function(){
+												grid.setLoading(false);
+											},
+											success: function(){												
+												grid.getStore().reload();
+											}											
+										});										
+									}									
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Restart Application',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function(){
+										var grid = this.up('grid');																		
+										
+										Ext.Msg.show({
+											title:'Restart Application?',
+											message: 'Are you sure you want to restart? <br> The application will be unavailable while restarting.',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+													grid.setLoading('Restarting Application...');
+													Ext.Ajax.request({
+														url: '../api/v1/service/application/restart',
+														method: 'POST',
+														callback: function(){
+															grid.setLoading(false);
+														},
+														success: function(){
+															grid.getStore().reload();
+														}											
+													});														
+												} 
+											}
+										});	
+										
+									}																										
+								}
+							]
+						}
 					]
 				});
 				
 				var cacheGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Cache',
 					columnLines: true,
-					store: {						
+					store: {	
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: '../api/v1/service/application/caches'
+						}
 					},
 					columns: [
-						{ text: 'Name', dataindex: '', width: 250 }						
+						{ text: 'Name', dataIndex: 'name', minWidth: 200, flex: 1 },
+						{ text: 'Hits', dataIndex: 'hitCount', width: 200 },
+						{ text: 'Misses', dataIndex: 'missCount', width: 200 },
+						{ text: 'Hit Ratio', dataIndex: 'hitRatio', width: 200,
+						   xtype: 'widgetcolumn',
+						   widget: {
+							xtype: 'progressbarwidget',
+							textTpl: '{value:percent}'
+						   }							
+						},						
+						{ text: 'Rough Count', dataIndex: 'roughCount', minWidth: 200 }
+					],
+					listeners: {
+						selectionchange: function (selectionModel, records, index, opts) {
+							var tools  = cacheGrid.getComponent('tools');
+							if (selectionModel.getCount() > 0 ) {
+								tools.getComponent('flushBtn').setDisabled(false);
+							} else {
+								tools.getComponent('flushBtn').setDisabled(true);
+							}
+						}
+					},
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							itemId: 'tools',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Flush Cache',
+									itemId: 'flushBtn',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-close',
+									disabled: true,
+									handler: function(){
+										var grid = this.up('grid');
+										var record = this.up('grid').getSelectionModel().getSelection()[0];
+										
+										grid.setLoading('Flushing Cache...');
+										Ext.Ajax.request({
+											url: '../api/v1/service/application/caches/' + record.get('name') + '/flush',
+											method: 'PUT',
+											callback: function(){
+												grid.setLoading(false);
+											},
+											success: function(response){
+												grid.getStore().reload();
+											}
+										});										
+									}									
+								}
+							]
+						}
 					]
-				});
-				
-								
+				});	
 				
 
 				var searchControlPanel = Ext.create('Ext.panel.Panel', {

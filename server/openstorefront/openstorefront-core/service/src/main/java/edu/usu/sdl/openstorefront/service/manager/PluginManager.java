@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +50,7 @@ public class PluginManager
 	private static final Logger log = Logger.getLogger(PluginManager.class.getName());
 
 	private static Map<String, Bundle> externalBundles = new ConcurrentHashMap<>();
+	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static void init()
 	{
@@ -294,12 +296,20 @@ public class PluginManager
 	public void initialize()
 	{
 		PluginManager.init();
+		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
 		PluginManager.cleanup();
+		started.set(false);
 	}
+	
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
+	}	
 
 }
