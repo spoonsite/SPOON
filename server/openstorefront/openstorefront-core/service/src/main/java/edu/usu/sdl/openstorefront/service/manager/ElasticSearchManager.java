@@ -45,6 +45,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -73,6 +74,7 @@ public class ElasticSearchManager
 	private static final String INDEX = "openstorefront";
 	private static final String INDEX_TYPE = "component";
 	
+	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static Client client;
 	
 	public static void init() 
@@ -81,8 +83,10 @@ public class ElasticSearchManager
 		Integer port = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_ELASTIC_PORT, "9300"));
 				
 		try {
+			log.log(Level.INFO, MessageFormat.format("Connecting to ElasticSearch at {0}", host + ":" + port));
+			
 			client = TransportClient.builder().build()
-					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
+					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));			
 		} catch (UnknownHostException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to find elastic search server host", "Check configuration;  Check Host and Port;   property: " + PropertiesManager.KEY_ELASTIC_HOST + " current value: " + host);
 		}
@@ -105,13 +109,16 @@ public class ElasticSearchManager
 	public void initialize()
 	{
 		ElasticSearchManager.init();
+		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
 		ElasticSearchManager.cleanup();
+		started.set(false);
 	}
+	
 
 	private ServiceProxy service = ServiceProxy.getProxy();
 	
@@ -344,6 +351,12 @@ public class ElasticSearchManager
 	{
 		deleteAll();
 		saveAll();		
+	}
+
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
 	}
 	
 }

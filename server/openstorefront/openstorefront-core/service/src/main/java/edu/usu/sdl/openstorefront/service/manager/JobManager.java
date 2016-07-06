@@ -40,6 +40,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
@@ -73,6 +74,7 @@ public class JobManager
 
 	private static final String JOB_GROUP_SYSTEM = AddJobModel.JOB_GROUP_SYSTEM;
 	private static Scheduler scheduler;
+	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static void init()
 	{
@@ -568,12 +570,20 @@ public class JobManager
 	public void initialize()
 	{
 		JobManager.init();
+		started.set(true);		
 	}
 
 	@Override
 	public void shutdown()
 	{
 		JobManager.cleanup();
+		started.set(false);
 	}
 
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
+	}	
+	
 }

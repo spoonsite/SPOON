@@ -47,6 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -74,6 +75,7 @@ public class SolrManager
 
 	public static final String SOLR_ALL_QUERY = "*:*";
 	public static final String SOLR_QUERY_SEPERATOR = ":";
+	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static enum SolrAndOr
 	{
@@ -151,13 +153,21 @@ public class SolrManager
 	public void initialize()
 	{
 		SolrManager.init();
+		started.set(true);		
 	}
 
 	@Override
 	public void shutdown()
 	{
 		SolrManager.cleanup();
+		started.set(false);		
 	}
+	
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
+	}	
 
 	@Override
 	public ComponentSearchWrapper search(SearchQuery searchQuery, FilterQueryParams filter)

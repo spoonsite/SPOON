@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,7 +37,7 @@ import java.util.logging.Logger;
 public class FileSystemManager
 		implements Initializable
 {
-
+	
 	private static final Logger log = Logger.getLogger(FileSystemManager.class.getName());
 
 	public static final String MAIN_DIR = System.getProperty("application.datadir", "/var/openstorefront");
@@ -63,6 +64,8 @@ public class FileSystemManager
 	public static final String PLUGIN_UNINSTALLED_DIR = MAIN_PERM_DIR + "/plugins/uninstalled";
 	public static final String DB_DIR = MAIN_DIR + "/db";
 
+	private static AtomicBoolean started = new AtomicBoolean(false);
+	
 	private static final int BUFFER_SIZE = 8192;
 
 	public static File getDir(String directory)
@@ -177,11 +180,14 @@ public class FileSystemManager
 		FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
 		FileSystemManager.getDir(FileSystemManager.REPORT_DIR);
 		FileSystemManager.getDir(FileSystemManager.IMPORT_HISTORY_DIR);
+		
+		started.set(true);		
 	}
 
 	public static void cleanup()
 	{
 		//Nothing to do for now
+		started.set(false);
 	}
 
 	@Override
@@ -194,6 +200,12 @@ public class FileSystemManager
 	public void shutdown()
 	{
 		FileSystemManager.cleanup();
+	}
+
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
 	}
 
 }

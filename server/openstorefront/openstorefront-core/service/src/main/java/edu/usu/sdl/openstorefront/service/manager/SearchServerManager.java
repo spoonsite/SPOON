@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.manager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.search.SearchServer;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
@@ -32,6 +33,7 @@ public class SearchServerManager
 	private static final String SOLR = "solr";
 	private static final String ELASTICSEARCH = "elasticsearch";
 	
+	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static SearchServer searchServer;
 
 	public static SearchServer getSearchServer()
@@ -41,7 +43,7 @@ public class SearchServerManager
 	
 	public static void init()
 	{	
-		String searchImplementation = PropertiesManager.getValue(PropertiesManager.KEY_SEARCH_SERVER,  ELASTICSEARCH).toLowerCase();
+		String searchImplementation = PropertiesManager.getValue(PropertiesManager.KEY_SEARCH_SERVER,  SOLR).toLowerCase();
 		switch(searchImplementation) 
 		{
 			case SOLR:
@@ -74,12 +76,20 @@ public class SearchServerManager
 	public void initialize()
 	{
 		SearchServerManager.init();
+		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
 		SearchServerManager.cleanup();
+		started.set(false);
 	}
 
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
+	}	
+	
 }

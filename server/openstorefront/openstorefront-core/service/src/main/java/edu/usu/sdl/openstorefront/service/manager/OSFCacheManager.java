@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import net.sf.ehcache.Cache;
@@ -46,6 +47,8 @@ public class OSFCacheManager
 	private static Cache componentTypeCache;
 	private static Cache applicationCache;
 	private static Cache contactCache;
+	
+	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static void init()
 	{
@@ -181,12 +184,20 @@ public class OSFCacheManager
 	public void initialize()
 	{
 		OSFCacheManager.init();
+		started.set(true);		
 	}
 
 	@Override
 	public void shutdown()
 	{
 		OSFCacheManager.cleanUp();
+		started.set(false);
 	}
 
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
+	}	
+	
 }

@@ -30,6 +30,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,6 +41,7 @@ import java.util.logging.Logger;
  * @author dshurtleff
  */
 public class PropertiesManager
+	implements Initializable
 {
 
 	private static final Logger log = Logger.getLogger(PropertiesManager.class.getName());
@@ -126,7 +128,8 @@ public class PropertiesManager
 
 	public static final String KEY_NODE_NAME = "node.name";
 
-	private static Properties properties;
+	private static AtomicBoolean started = new AtomicBoolean(false);
+	private static SortedProperties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 
 	private static SortedProperties defaults = new SortedProperties();
@@ -226,7 +229,7 @@ public class PropertiesManager
 				log.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
 			}
 			try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(PROPERTIES_FILENAME))) {
-				properties = new Properties();
+				properties = new SortedProperties();
 				properties.load(bin);
 			} catch (IOException e) {
 				throw new OpenStorefrontRuntimeException(e);
@@ -276,6 +279,25 @@ public class PropertiesManager
 			log.log(Level.WARNING, "Unable to get information on localhost.  Node name may not be unique. This may not be an issue if there is only one node.");
 		}
 		return nodeName;
+	}
+
+	@Override
+	public void initialize()
+	{
+		PropertiesManager.init();
+		started.set(true);		
+	}
+
+	@Override
+	public void shutdown()
+	{
+		started.set(false);
+	}
+
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
 	}
 
 }

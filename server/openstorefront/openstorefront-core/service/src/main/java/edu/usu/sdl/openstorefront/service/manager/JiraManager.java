@@ -27,6 +27,7 @@ import java.text.MessageFormat;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,7 +50,7 @@ public class JiraManager
 	
 	private static long lastCheckTime;
 	private static boolean ableToConnect;
-	
+	private static AtomicBoolean started = new AtomicBoolean(false);
 	
 
 	public static void init()
@@ -144,12 +145,20 @@ public class JiraManager
 	public void initialize()
 	{
 		JiraManager.init();
+		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
 		JiraManager.cleanup();
+		started.set(false);
 	}
 
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
+	}	
+	
 }

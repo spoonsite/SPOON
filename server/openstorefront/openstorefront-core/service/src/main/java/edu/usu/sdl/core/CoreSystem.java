@@ -19,6 +19,8 @@ import edu.usu.sdl.core.init.ApplyOnceInit;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.core.view.ManagerView;
 import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.HelpImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
@@ -36,6 +38,7 @@ import edu.usu.sdl.openstorefront.service.manager.ReportManager;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -63,6 +66,7 @@ public class CoreSystem
 
 	//Order is important
 	private static List<Initializable> managers = Arrays.asList(
+			new PropertiesManager(),
 			new OsgiManager(),
 			new FileSystemManager(),
 			new DBManager(),
@@ -120,6 +124,78 @@ public class CoreSystem
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Unable to Shutdown: " + initializable.getClass().getSimpleName(), e);
 		}
+	}
+	
+	public static List<ManagerView> getManagersView() 
+	{
+		List<ManagerView> views = new ArrayList<>();
+		
+		int order = 1;
+		for (Initializable manager : managers) {
+			ManagerView view = new ManagerView();
+			view.setName(manager.getClass().getSimpleName());
+			view.setManagerClass(manager.getClass().getName());
+			view.setOrder(order++);
+			view.setStarted(manager.isStarted());
+			views.add(view);
+		}
+		
+		return views;
+	}
+	
+	public static void startManager(String managerClassName)
+	{
+		Initializable manager = findManager(managerClassName, false);
+		if (manager.isStarted() == false) {
+			manager.initialize();
+		} 
+	}
+	
+	public static Initializable findManager(String managerClassName, boolean skipFoundCheck) 
+	{
+		Initializable foundManger = null;
+		for (Initializable manager : managers) {
+			if (manager.getClass().getName().equals(managerClassName)) {
+				foundManger = manager;
+				break;
+			}
+		}		
+		
+		if (foundManger == null && !skipFoundCheck) {
+			throw new OpenStorefrontRuntimeException("Unable to find manger: " + managerClassName, "Check input");
+		}
+		
+		return foundManger;
+	}
+	
+	public static void stopManager(String managerClassName)
+	{		
+		Initializable manager = findManager(managerClassName, false);		
+		if (manager.isStarted()) {
+			manager.shutdown();
+		} 		
+	}
+
+	public static void restartManager(String managerClassName)
+	{		
+		//pause scheduler reduce auto process interference
+		Initializable jobManager = findManager(JobManager.class.getName(), false);
+		started.set(false);
+		
+		if (jobManager.isStarted()) {
+			JobManager.pauseScheduler();
+		}		
+		try {
+			stopManager(managerClassName);
+			startManager(managerClassName);		
+		} catch (Exception e) {			
+			throw new OpenStorefrontRuntimeException("Unable to restart manager: " + managerClassName, "Confirm application state and try or if system is in a bad state. Restart application.");
+		}
+				
+		if (jobManager.isStarted()) {
+			JobManager.resumeScheduler();
+		}
+		started.set(true);
 	}
 
 	public static void shutdown()

@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
@@ -40,6 +41,7 @@ public class ReportManager
 {
 
 	private static final Logger log = Logger.getLogger(ReportManager.class.getName());
+	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static void init()
 	{
@@ -111,12 +113,20 @@ public class ReportManager
 	public void initialize()
 	{
 		ReportManager.init();
+		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
 		ReportManager.cleanup();
+		started.set(false);
 	}
+	
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
+	}	
 
 }

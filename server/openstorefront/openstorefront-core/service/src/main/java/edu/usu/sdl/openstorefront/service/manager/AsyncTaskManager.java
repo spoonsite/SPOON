@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,6 +40,7 @@ public class AsyncTaskManager
 {	
 	private static final Logger log = Logger.getLogger(AsyncTaskManager.class.getName());
 	
+	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static TaskThreadExecutor taskPool;
 
 	public static void init()
@@ -153,12 +155,20 @@ public class AsyncTaskManager
 	public void initialize()
 	{
 		AsyncTaskManager.init();
+		started.set(true);		
 	}
 
 	@Override
 	public void shutdown()
 	{
 		AsyncTaskManager.cleanup();
+		started.set(false);
+	}
+
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
 	}
 
 }
