@@ -2,12 +2,20 @@
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
+
+		<script src="scripts/component/visualSearch.js?v=${appVersion}" type="text/javascript"></script>	
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function(){	
+				
+				var visualPanel = Ext.create('OSF.component.VisualSearchPanel', {
+					id: 'visualPanel',
+					height: '100%',
+					viewType: null
+				});
 
-
+			
 				var relationshipsStore = Ext.create('Ext.data.Store', {
 					storeId: 'relationshipsStore',
 				});
@@ -65,13 +73,35 @@
 					],
 					listeners: {
 						select: function(grid, record, index, eOpts) {
-							console.log("you dun selected");
 							var id = record.get('ownerComponentId');
 							relationshipsStore.setProxy({
 								type: 'ajax',
 								url: '../api/v1/resource/components/' + id + '/relationships'
 							});
-							relationshipsStore.load();
+							relationshipsStore.load(function() {
+								var viewData = [];
+								console.log(relationshipsStore.getData());
+								relationshipsStore.each(function(relationship){
+									console.log(relationship);
+									viewData.push({
+										type: 'component',
+										nodeId: relationship.get('relationshipId'),
+										key: relationship.get('ownerComponentId'),
+										label: relationship.get('ownerComponentName'),
+										relationshipLabel: relationship.get('relationshipTypeDescription'),
+										targetKey: relationship.get('targetComponentId'),
+										targetName: relationship.get('targetComponentName'),
+										targetType: 'component'
+									});
+								});
+								var visPanel = Ext.getCmp('visualPanel');
+								visPanel.viewType = null;
+								visPanel.reset();
+								visPanel.viewData = viewData;
+								console.log(visPanel.viewData);
+								visPanel.initVisual(visPanel.viewData);
+								console.log("initted visual");
+							});
 						}
 					}
 				});
@@ -80,9 +110,20 @@
 					store: actualComponentsStore,
 					width: '50%',
 					border: true,
+					selectable: false,
 					columns: [
 						{ text: 'Target Entry', dataIndex: 'ownerComponentName', flex: 1 }
-					]
+					],
+					listeners: {
+						beforeselect: function(grid, record, index, eOpts) {
+							originGrid.getView().select(record);
+							grid.getSelectionModel().deselectAll();
+						},
+						select: function(grid, record, index, eOpts) {
+							grid.getSelectionModel().deselectAll();
+							originGrid.focus();
+						}
+					}
 				});
 
 				var relationshipsGrid = Ext.create('Ext.grid.Panel', {
@@ -116,7 +157,9 @@
 					title: 'Visualization',
 					collapsible: true,
 					resizable: true,
-					html: 'Please select a component to view its relationships'
+					items: [
+						visualPanel
+					]
 				});
 
 				var relationshipCreationGridsPanel = Ext.create('Ext.panel.Panel', {
@@ -190,6 +233,12 @@
 						relationshipsMainLayout
 					]
 				});
+
+				Ext.defer(function(){
+					visualPanel.setWidth(visualizationPanel.getWidth());
+					visualPanel.setHeight(visualizationPanel.getHeight()-40);
+				}, 400);	
+
 
 
 
