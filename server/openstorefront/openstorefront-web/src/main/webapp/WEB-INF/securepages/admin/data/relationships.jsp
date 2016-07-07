@@ -76,9 +76,7 @@
 							});
 							relationshipsStore.load(function() {
 								var viewData = [];
-								console.log(relationshipsStore.getData());
 								relationshipsStore.each(function(relationship){
-									console.log(relationship);
 									viewData.push({
 										type: 'component',
 										nodeId: relationship.get('relationshipId'),
@@ -94,9 +92,7 @@
 								visPanel.viewType = null;
 								visPanel.reset();
 								visPanel.viewData = viewData;
-								console.log(visPanel.viewData);
 								visPanel.initVisual(visPanel.viewData);
-								console.log("initted visual");
 							});
 						}
 					}
