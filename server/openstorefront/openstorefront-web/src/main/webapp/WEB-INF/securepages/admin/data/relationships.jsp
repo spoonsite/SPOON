@@ -18,7 +18,7 @@
 
 			
 				var relationshipsStore = Ext.create('Ext.data.Store', {
-					storeId: 'relationshipsStore',
+					storeId: 'relationshipsStore'
 				});
 
 				var relationshipTypeStore = Ext.create('Ext.data.Store', {
@@ -31,46 +31,41 @@
 				});
 													   
 
-				var actualComponentsStore = Ext.create('Ext.data.Store', {
-					storeId: 'actualComponentsStore',
-					sorters: new Ext.util.Sorter({
-						property: 'ownerComponentName',
-						direction: 'ASC'
-					})
-				}); 
-
-				var componentRelationshipStore = Ext.create('Ext.data.Store', {
-					storeId: 'componentRelationshipStore',
-					proxy: {
-						id: 'componentRelationshipStoreProxy',
-						type: 'ajax',
-						url: '../api/v1/resource/componentrelationship'
-					},
-					listeners: {
-						load: function(store, records, successful, eOpts) {
-							// populate the actualComponentStore
-							// with the a list of distinct components
-							var ac = Ext.getStore('actualComponentsStore');
-							var acData = Ext.getStore('actualComponentsStore').getData();
-							Ext.Array.each(records, function(record) {
-								if (acData.find('ownerComponentId', record.get('ownerComponentId'))) {
-									// do nothing
-								} else {
-									ac.add(record);
-								}
-
-							});
+				var componentsStore = Ext.create('Ext.data.Store', {
+					storeId: 'componentsStore',
+					fields: [
+						// The griddragdrop plugin needs a type in order to operate!
+						{
+							name: 'description',
+							type: 'string'
 						}
+					],
+					sorters: new Ext.util.Sorter({
+						property: 'description',
+						direction: 'ASC'
+					}),
+					proxy: {
+						id: 'componentsStoreProxy',
+						type: 'ajax',
+						url: '../api/v1/resource/components/lookup'
 					},
 					autoLoad: true
-				});
+				}); 
 
 				var originGrid = Ext.create('Ext.grid.Panel', {
-					store: actualComponentsStore,
-					width: '50%',
+					store: componentsStore,
+					flex: 1,
 					border: true,
+					autoScroll: true,
+					viewConfig: {
+						plugins: {
+							ddGroup: 'relationship',
+							ptype: 'celltocelldragdrop',
+							enableDrop: false
+						}
+					},
 					columns: [
-						{ text: 'Origin Entry', dataIndex: 'ownerComponentName', flex: 1 }
+						{ text: 'Origin Entry', dataIndex: 'description', flex: 1 }
 					],
 					listeners: {
 						select: function(grid, record, index, eOpts) {
@@ -108,8 +103,8 @@
 				});
 
 				var targetGrid = Ext.create('Ext.grid.Panel', {
-					store: actualComponentsStore,
-					width: '50%',
+					store: componentsStore,
+					flex: 1,
 					border: true,
 					selectable: false,
 					viewConfig: {
@@ -125,7 +120,7 @@
 						]
 					},
 					columns: [
-						{ text: 'Target Entry', dataIndex: 'ownerComponentName', flex: 1 }
+						{ text: 'Target Entry', dataIndex: 'description', flex: 1 }
 					],
 					listeners: {
 						beforeselect: function(grid, record, index, eOpts) {
@@ -157,10 +152,10 @@
 								xtype: 'combo',
 								store: relationshipTypeStore,
 								displayField: 'description',
-								valueField: 'code',
+								valueField: 'code'
 							}
 						},
-						{ text: 'Target Entry', dataIndex: 'targetComponentName', flex: 5 },
+						{ text: 'Target Entry', dataIndex: 'targetComponentName', flex: 5 }
 					]
 				});
 
@@ -176,9 +171,11 @@
 				});
 
 				var relationshipCreationGridsPanel = Ext.create('Ext.panel.Panel', {
+					height: '100%',
 					width: '100%',
 					layout: {
 						type: 'hbox',
+						align: 'stretch'	
 					},
 					items: [
 						originGrid, targetGrid
@@ -218,7 +215,7 @@
 							id: 'west-container',
 							autoScroll: true,
 							layout: {
-								type: 'hbox',
+								type: 'hbox'
 							},
 							items: [
 								relationshipCreationGridsPanel
