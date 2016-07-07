@@ -69,7 +69,7 @@
 					],
 					listeners: {
 						select: function(grid, record, index, eOpts) {
-							var id = record.get('ownerComponentId');
+							var id = record.get('code');
 							relationshipsStore.setProxy({
 								type: 'ajax',
 								url: '../api/v1/resource/components/' + id + '/relationships'
