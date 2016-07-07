@@ -4,6 +4,7 @@
 	<stripes:layout-component name="contents">
 
 		<script src="scripts/component/visualSearch.js?v=${appVersion}" type="text/javascript"></script>	
+		<script src="scripts/plugin/cellToCellDragDrop.js?v=${appVersion}" type="text/javascript"></script>	
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
@@ -111,6 +112,18 @@
 					width: '50%',
 					border: true,
 					selectable: false,
+					viewConfig: {
+						plugins: [
+							Ext.create('OSF.plugin.CellToCellDragDrop', {
+								ddGroup: 'relationship',
+								enableDrop: true,
+								onDrop: function onDrop(target, dd, e, dragData) {
+									console.log(target);
+									console.log(dragData);
+								}
+							})
+						]
+					},
 					columns: [
 						{ text: 'Target Entry', dataIndex: 'ownerComponentName', flex: 1 }
 					],
