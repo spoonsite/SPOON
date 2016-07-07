@@ -16,6 +16,38 @@
 					viewType: null
 				});
 
+
+				var actionCreateRelationship = function actionCreateRelationship(originId, originName, targetId, targetName, relationshipTypeCode) {
+
+					if (relationshipTypeCode !== null) {
+						// Create the relationship as specified
+					} else {
+						// Prompt for type of relationship to create
+						relationshipTypeCode="CON";
+					}
+
+					var url = '../api/v1/resource/components/' + originId + '/relationships';
+					var method = 'POST';
+					var jsonData = {
+						relationshipType: relationshipTypeCode,
+						relatedComponentId: targetId
+					};
+
+					Ext.Ajax.request({
+						url: url,
+						method: method,
+						jsonData: jsonData,
+						success: function (response, opts) {
+							var message = 'Sucessfully created relationship for "' + originName + '"';
+							Ext.toast(message, '', 'tr');
+							Ext.getCmp('relationshipsGrid').getStore().load();
+						},
+						failure: function (response, opts) {
+							Ext.MessageBox.alert('Failed to create relationship for "' + originName + '"');
+						}
+					});
+				};
+
 			
 				var relationshipsStore = Ext.create('Ext.data.Store', {
 					storeId: 'relationshipsStore',
@@ -75,6 +107,7 @@
 				}); 
 
 				var originGrid = Ext.create('Ext.grid.Panel', {
+					id: 'originGrid',
 					store: componentsStore,
 					flex: 1,
 					border: true,
@@ -83,7 +116,7 @@
 						plugins: {
 							ddGroup: 'relationship',
 							ptype: 'celltocelldragdrop',
-							enableDrop: false
+							enableDrop: false,
 						}
 					},
 					columns: [
@@ -102,6 +135,7 @@
 				});
 
 				var targetGrid = Ext.create('Ext.grid.Panel', {
+					id: 'targetGrid',
 					store: componentsStore,
 					flex: 1,
 					border: true,
@@ -109,11 +143,16 @@
 					viewConfig: {
 						plugins: [
 							Ext.create('OSF.plugin.CellToCellDragDrop', {
+								id: 'celltocell',
 								ddGroup: 'relationship',
 								enableDrop: true,
 								onDrop: function onDrop(target, dd, e, dragData) {
-									console.log(target);
-									console.log(dragData);
+									var originId = dragData.record.data.code;
+									var originName = dragData.record.data.description; 
+									var targetId = target.record.data.code;
+									var targetName = target.record.data.description;
+									var relationshipTypeCode = Ext.getCmp('relationshipTypeComboBox').getValue();
+									actionCreateRelationship(originId, originName, targetId, targetName, relationshipTypeCode);
 								}
 							})
 						]
@@ -134,6 +173,7 @@
 				});
 
 				var relationshipsGrid = Ext.create('Ext.grid.Panel', {
+					id: 'relationshipsGrid',
 					region: 'center',
 					store: relationshipsStore,
 					viewConfig: {
