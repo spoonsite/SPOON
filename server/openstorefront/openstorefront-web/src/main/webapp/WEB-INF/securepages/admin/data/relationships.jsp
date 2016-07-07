@@ -18,7 +18,29 @@
 
 			
 				var relationshipsStore = Ext.create('Ext.data.Store', {
-					storeId: 'relationshipsStore'
+					storeId: 'relationshipsStore',
+					listeners: {
+						load: function() {
+							var viewData = [];
+								relationshipsStore.each(function(relationship){
+									viewData.push({
+										type: 'component',
+										nodeId: relationship.get('relationshipId'),
+										key: relationship.get('ownerComponentId'),
+										label: relationship.get('ownerComponentName'),
+										relationshipLabel: relationship.get('relationshipTypeDescription'),
+										targetKey: relationship.get('targetComponentId'),
+										targetName: relationship.get('targetComponentName'),
+										targetType: 'component'
+									});
+								});
+								var visPanel = Ext.getCmp('visualPanel');
+								visPanel.viewType = null;
+								visPanel.reset();
+								visPanel.viewData = viewData;
+								visPanel.initVisual(visPanel.viewData);
+						}
+					}
 				});
 
 				var relationshipTypeStore = Ext.create('Ext.data.Store', {
@@ -74,26 +96,7 @@
 								type: 'ajax',
 								url: '../api/v1/resource/components/' + id + '/relationships'
 							});
-							relationshipsStore.load(function() {
-								var viewData = [];
-								relationshipsStore.each(function(relationship){
-									viewData.push({
-										type: 'component',
-										nodeId: relationship.get('relationshipId'),
-										key: relationship.get('ownerComponentId'),
-										label: relationship.get('ownerComponentName'),
-										relationshipLabel: relationship.get('relationshipTypeDescription'),
-										targetKey: relationship.get('targetComponentId'),
-										targetName: relationship.get('targetComponentName'),
-										targetType: 'component'
-									});
-								});
-								var visPanel = Ext.getCmp('visualPanel');
-								visPanel.viewType = null;
-								visPanel.reset();
-								visPanel.viewData = viewData;
-								visPanel.initVisual(visPanel.viewData);
-							});
+							relationshipsStore.load();
 						}
 					}
 				});
