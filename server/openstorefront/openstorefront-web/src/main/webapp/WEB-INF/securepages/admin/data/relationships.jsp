@@ -285,8 +285,43 @@
 							widget: {
 								xtype: 'combo',
 								store: relationshipTypeStore,
+								editable: false,
 								displayField: 'description',
-								valueField: 'code'
+								valueField: 'code',
+								listeners: {
+									select: function(combo, newValue, oldValue, eOpts) {
+										var record = combo.record;
+										var originId = record.get('ownerComponentId');
+										var relationId = record.get('relationshipId');
+										var targetId = record.get('targetComponentId');
+										var relationshipType = newValue.get('code');
+										var url = '../api/v1/resource/components/' + originId + '/relationships/';
+										url += relationId;
+										var method = 'PUT';
+										var jsonData = {
+											relationshipType: relationshipType,
+											relatedComponentId: targetId
+										};
+
+										Ext.Ajax.request({
+											url: url,
+											method: method,
+											jsonData: jsonData,
+											success: function (response, opts) {
+												var message = 'Sucessfully updated relationship';
+												Ext.toast(message, '', 'tr');
+												Ext.getCmp('relationshipsGrid').getStore().load();
+											},
+											failure: function (response, opts) {
+												Ext.MessageBox.alert('Failed to update relationship');
+											}
+										});
+
+									}
+								}
+							},
+							onWidgetAttach: function(col, widget, rec) {
+								widget.record = rec;
 							}
 						},
 						{ text: 'Target Entry', dataIndex: 'targetComponentName', flex: 5 }
