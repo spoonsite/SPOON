@@ -44,10 +44,17 @@
 
 					} else {
 						// Prompt for type of relationship to create
+						var html = '<strong>Origin Entry:</strong> ';
+						html += originName;
+						html += '<br />';
+						html += '<strong>Target Entry:</strong> ';
+						html += targetName;
+						Ext.getCmp('relationshipWindowSelectorDesc').update(html);
 						typePromptWindow.originId = originId;
 						typePromptWindow.originName = originName;
 						typePromptWindow.targetId = targetId;
 						typePromptWindow.targetName = targetName;
+						typePromptWindow.openSource = 'dragdrop';
 						typePromptWindow.show();
 					}
 
@@ -117,8 +124,13 @@
 					modal: true,
 					width: '35%',
 					y: '10em',
-					layout: 'fit',
+					layout: 'vbox',
 					items: [
+						{ 
+							xtype: 'panel',
+							id: 'relationshipWindowSelectorDesc',
+							style: 'padding: 20px 20px 0px'
+						},
 						{
 							xtype: 'combobox',
 							id: 'relationshipWindowSelector',
@@ -169,6 +181,12 @@
 												Ext.toast(message, '', 'tr');
 												Ext.getCmp('relationshipsGrid').getStore().load();
 												typePromptWindow.hide();
+
+												// If this is from the 'Create Inverse' button, we need to disable the toolbar items.
+												if (typePromptWindow.openSource === 'inverse') {
+													Ext.getCmp('relationshipGridAction-CreateInverse').disable();
+													Ext.getCmp('relationshipGridAction-Delete').disable();
+												}
 											},
 											failure: function (response, opts) {
 												Ext.MessageBox.alert('Failed to create relationship for "' + originName + '"');
@@ -307,7 +325,6 @@
 										var record = Ext.getCmp('relationshipsGrid').getSelection()[0];
 										var title = 'Delete Relationship';
 										var msg = 'Are you sure you want to delete this relationship?';
-										console.log(record);
 										Ext.MessageBox.confirm(title, msg, function (btn) {
 											if (btn === 'yes') {
 												var url = '/openstorefront/api/v1/resource/components/'
@@ -339,6 +356,25 @@
 									id: 'relationshipGridAction-CreateInverse',
 									disabled: true,
 									handler: function() {
+										var record = Ext.getCmp('relationshipsGrid').getSelection()[0];
+										// Set up reverse direction for prompt window.
+										typePromptWindow.targetId = record.get('ownerComponentId');
+										typePromptWindow.targetName = record.get('ownerComponentName');
+										typePromptWindow.originId = record.get('targetComponentId');
+										typePromptWindow.originName = record.get('targetComponentName');
+										typePromptWindow.openSource = 'inverse';
+
+										// Set up html for prompt
+										var html = '<strong>Origin Entry:</strong> ';
+										html += typePromptWindow.originName;
+										html += '<br />';
+										html += '<strong>Target Entry:</strong> ';
+										html += typePromptWindow.targetName;
+										Ext.getCmp('relationshipWindowSelectorDesc').update(html);
+
+										// Show prompt
+										typePromptWindow.show();
+
 									}
 								}
 							]
