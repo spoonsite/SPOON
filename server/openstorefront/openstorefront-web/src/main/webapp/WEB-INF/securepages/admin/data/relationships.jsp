@@ -223,6 +223,7 @@
 								id: 'celltocell',
 								ddGroup: 'relationship',
 								enableDrop: true,
+								enableDrag: false,
 								onDrop: function onDrop(target, dd, e, dragData) {
 									var originId = dragData.record.data.code;
 									var originName = dragData.record.data.description; 
