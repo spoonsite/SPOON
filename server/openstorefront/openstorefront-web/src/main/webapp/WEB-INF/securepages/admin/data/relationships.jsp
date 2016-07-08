@@ -254,7 +254,7 @@
 					region: 'center',
 					store: relationshipsStore,
 					viewConfig: {
-						emptyText: 'Please select a component to view its relationships',
+						emptyText: 'Please select an entry to view its relationships',
 						deferEmptyText: false
 					},
 					columns: [
