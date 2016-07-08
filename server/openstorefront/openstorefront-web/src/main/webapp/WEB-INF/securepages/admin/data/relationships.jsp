@@ -304,6 +304,32 @@
 									iconCls: 'fa fa-trash',
 									disabled: true,
 									handler: function() {
+										var record = Ext.getCmp('relationshipsGrid').getSelection()[0];
+										var title = 'Delete Relationship';
+										var msg = 'Are you sure you want to delete this relationship?';
+										console.log(record);
+										Ext.MessageBox.confirm(title, msg, function (btn) {
+											if (btn === 'yes') {
+												var url = '/openstorefront/api/v1/resource/components/'
+												url += record.get('ownerComponentId') + "/relationships/";
+												url += record.get('relationshipId');
+												var method = "DELETE";
+												Ext.Ajax.request({
+													url: url,
+													method: method,
+													success: function (response, opts) {
+														Ext.toast('Successfully deleted relationship', '', 'tr');
+														relationshipsStore.load();
+														Ext.getCmp('relationshipGridAction-CreateInverse').disable();
+														Ext.getCmp('relationshipGridAction-Delete').disable();
+													},
+													failure: function (response, opts) {
+														Ext.MessageBox.alert('Failed to delete',
+																			 'Could not delete relationship.');
+													}
+												});
+											}
+										});
 
 									}
 								},
