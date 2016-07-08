@@ -269,8 +269,12 @@
 
 				var relationshipsGrid = Ext.create('Ext.grid.Panel', {
 					id: 'relationshipsGrid',
+					title: 'Existing Relationships',
 					region: 'center',
+					flex: 2,
+					width: '100%',
 					store: relationshipsStore,
+					autoScroll: true,
 					viewConfig: {
 						emptyText: 'You have not selected an entry or the entry you selected has no existing relationships.',
 						deferEmptyText: false
@@ -418,11 +422,11 @@
 				});
 
 				var visualizationPanel = Ext.create('Ext.panel.Panel', {
-					height: '60%',
-					region: 'south',
+					flex: 3,
+					width: '100%',
 					title: 'Visualization',
 					collapsible: true,
-					resizable: true,
+					region: 'south',
 					items: [
 						visualPanel
 					]
@@ -482,14 +486,16 @@
 							]
 						},
 						{
-							title: 'Existing Relationships',
 							margin: '5 5 5 5',
 							borderWidth: '5px',
 							region: 'center',
 							xtype: 'panel',
 							flex: 3,
 							id: 'center-container',
-							layout: 'border',
+							layout: {
+								type: 'border',
+								align: 'stretch',
+							},
 							items: [
 								relationshipsGrid, visualizationPanel
 							]
