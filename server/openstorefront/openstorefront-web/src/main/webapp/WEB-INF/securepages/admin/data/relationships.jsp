@@ -310,7 +310,9 @@
 									width: '60%',
 									store: 'relationshipTypeStore',
 									displayField: 'description',
-									valueField: 'code'
+									valueField: 'code',
+									emptyText: 'Ask for type each time',
+									allowBlank: true
 								})
 							]
 						}
