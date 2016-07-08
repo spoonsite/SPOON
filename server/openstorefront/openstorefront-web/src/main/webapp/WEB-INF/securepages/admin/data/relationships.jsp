@@ -21,33 +21,38 @@
 
 					if (relationshipTypeCode !== null) {
 						// Create the relationship as specified
+						var url = '../api/v1/resource/components/' + originId + '/relationships';
+						var method = 'POST';
+						var jsonData = {
+							relationshipType: relationshipTypeCode,
+							relatedComponentId: targetId
+						};
+
+						Ext.Ajax.request({
+							url: url,
+							method: method,
+							jsonData: jsonData,
+							success: function (response, opts) {
+								var message = 'Sucessfully created relationship for "' + originName + '"';
+								Ext.toast(message, '', 'tr');
+								Ext.getCmp('relationshipsGrid').getStore().load();
+							},
+							failure: function (response, opts) {
+								Ext.MessageBox.alert('Failed to create relationship for "' + originName + '"');
+							}
+						});
+
 					} else {
 						// Prompt for type of relationship to create
-						relationshipTypeCode="CON";
+						typePromptWindow.originId = originId;
+						typePromptWindow.originName = originName;
+						typePromptWindow.targetId = targetId;
+						typePromptWindow.targetName = targetName;
+						typePromptWindow.show();
 					}
 
-					var url = '../api/v1/resource/components/' + originId + '/relationships';
-					var method = 'POST';
-					var jsonData = {
-						relationshipType: relationshipTypeCode,
-						relatedComponentId: targetId
-					};
-
-					Ext.Ajax.request({
-						url: url,
-						method: method,
-						jsonData: jsonData,
-						success: function (response, opts) {
-							var message = 'Sucessfully created relationship for "' + originName + '"';
-							Ext.toast(message, '', 'tr');
-							Ext.getCmp('relationshipsGrid').getStore().load();
-						},
-						failure: function (response, opts) {
-							Ext.MessageBox.alert('Failed to create relationship for "' + originName + '"');
-						}
-					});
 				};
-
+				
 			
 				var relationshipsStore = Ext.create('Ext.data.Store', {
 					storeId: 'relationshipsStore',
@@ -105,6 +110,78 @@
 					},
 					autoLoad: true
 				}); 
+				
+				var typePromptWindow = Ext.create('Ext.window.Window', {
+					id: 'typePromptWindow',
+					title: 'Choose Relationship Type',
+					modal: true,
+					width: '35%',
+					y: '10em',
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'combobox',
+							id: 'relationshipWindowSelector',
+							style: 'padding: 20px;',
+							displayField: 'description',
+							valueField: 'code',
+							width: '100%',
+							emptyText: 'Select a relationship type',
+							store: relationshipTypeStore,
+						}
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Cancel',
+									handler: function() {
+										this.up('window').hide();
+									}
+								},
+								{
+									xtype: 'tbfill',
+								},
+								{
+									text: 'Create Relationship',
+									handler: function() {
+										var originId = typePromptWindow.originId;
+										var originName = typePromptWindow.originName;
+										var targetName = typePromptWindow.targetName;
+										var targetId = typePromptWindow.targetId;
+										var record = Ext.getCmp('relationshipWindowSelector').getSelection();
+										var relationshipTypeCode = record.get('code');
+										var url = '../api/v1/resource/components/' + originId + '/relationships';
+										var method = 'POST';
+										var jsonData = {
+											relationshipType: relationshipTypeCode,
+											relatedComponentId: targetId
+										};
+
+										Ext.Ajax.request({
+											url: url,
+											method: method,
+											jsonData: jsonData,
+											success: function (response, opts) {
+												var message = 'Sucessfully created relationship for "' + originName + '"';
+												Ext.toast(message, '', 'tr');
+												Ext.getCmp('relationshipsGrid').getStore().load();
+												typePromptWindow.hide();
+											},
+											failure: function (response, opts) {
+												Ext.MessageBox.alert('Failed to create relationship for "' + originName + '"');
+												typePromptWindow.hide();
+											}
+										});
+									}
+								}
+							]
+						}
+					]
+				});
+
 
 				var originGrid = Ext.create('Ext.grid.Panel', {
 					id: 'originGrid',
