@@ -241,7 +241,6 @@
 					listeners: {
 						beforeselect: function(grid, record, index, eOpts) {
 							originGrid.getView().select(record);
-							grid.getSelectionModel().deselectAll();
 						},
 						select: function(grid, record, index, eOpts) {
 							grid.getSelectionModel().deselectAll();
@@ -255,7 +254,7 @@
 					region: 'center',
 					store: relationshipsStore,
 					viewConfig: {
-						emptyText: 'Please select an entry to view its relationships',
+						emptyText: 'You have not selected an entry or the entry you selected has no existing relationships.',
 						deferEmptyText: false
 					},
 					columns: [
@@ -273,6 +272,51 @@
 							}
 						},
 						{ text: 'Target Entry', dataIndex: 'targetComponentName', flex: 5 }
+					],
+					listeners: {
+						select: function(grid, record, index, eOpts) {
+							if (relationshipsGrid.getSelectionModel().hasSelection()) {
+								Ext.getCmp('relationshipGridAction-CreateInverse').enable();
+								Ext.getCmp('relationshipGridAction-Delete').enable();
+							} else {
+								Ext.getCmp('relationshipGridAction-CreateInverse').disable();
+								Ext.getCmp('relationshipGridAction-Delete').disable();
+							}
+
+						}
+					},
+					dockedItems: [
+						{
+							dock: 'top',
+							xtype: 'toolbar',
+							id: 'relationshipGridToolbar',
+							items: [
+								{
+									text: 'Refresh',
+									iconCls: 'fa fa-refresh',
+									handler: function () {
+										relationshipsStore.load()
+									}
+								},
+								{
+									text: 'Delete',
+									id: 'relationshipGridAction-Delete',
+									iconCls: 'fa fa-trash',
+									disabled: true,
+									handler: function() {
+
+									}
+								},
+								{
+									text: 'Create Inverse',
+									iconCls: 'fa fa-arrows-h',
+									id: 'relationshipGridAction-CreateInverse',
+									disabled: true,
+									handler: function() {
+									}
+								}
+							]
+						}
 					]
 				});
 
