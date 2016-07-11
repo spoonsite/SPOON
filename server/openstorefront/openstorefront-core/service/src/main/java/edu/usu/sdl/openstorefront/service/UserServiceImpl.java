@@ -956,7 +956,7 @@ public class UserServiceImpl
 			}
 			for (UserProfile userProfile : userProfiles) {
 				if (activeUserSet.contains(userProfile.getUsername()) == false) {
-					log.log(Level.INFO, "User not found in external user management, Inacvtivating user. (Sync Service)");
+					log.log(Level.INFO, "User not found in external user management, Inactvativating user. (Sync Service)");
 					deleteProfile(userProfile.getUsername());
 				}
 			}

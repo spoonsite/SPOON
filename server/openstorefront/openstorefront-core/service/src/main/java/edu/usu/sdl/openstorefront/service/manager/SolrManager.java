@@ -52,12 +52,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.util.NamedList;
@@ -104,33 +105,49 @@ public class SolrManager
 	}
 
 	//Should reuse server to avoid leaks according to docs.
-	private static SolrServer solrServer;
+	private static SolrClient  solrServer;
 
 	public static void init()
 	{
 		String url = PropertiesManager.getValue(PropertiesManager.KEY_SOLR_URL);
 		if (StringUtils.isNotBlank(url)) {
 			log.log(Level.INFO, MessageFormat.format("Connecting to Solr at {0}", url));
-			solrServer = new HttpSolrServer(url);
+
+			
+			//use the xml instead of binary
+			String xml = PropertiesManager.getValue(PropertiesManager.KEY_SOLR_USE_XML);
+			if (StringUtils.isNotBlank(xml)) {
+				solrServer =  new HttpSolrClient.					
+						Builder(url)
+						.allowCompression(true)					
+						.withResponseParser(new XMLResponseParser())
+						.build();				
+			} else {
+				solrServer =  new HttpSolrClient.					
+						Builder(url)
+						.allowCompression(true)					
+						.build();				
+			}
 
 		} else {
 			log.log(Level.WARNING, "Solr property (" + PropertiesManager.KEY_SOLR_URL + ") is not set in openstorefront.properties. Search service unavailible. Using Mock");
-			solrServer = new SolrServer()
+			solrServer = new SolrClient()
 			{
 
 				@Override
-				public NamedList<Object> request(SolrRequest request) throws SolrServerException, IOException
+				public NamedList<Object> request(SolrRequest request, String string) throws SolrServerException, IOException
 				{
 					NamedList<Object> results = new NamedList<>();
-					log.log(Level.INFO, "Mock Solr recieved request: " + request);
+					log.log(Level.INFO, MessageFormat.format("Mock Solr recieved request: {0}", request));
 					return results;
 				}
 
 				@Override
-				public void shutdown()
+				public void close() throws IOException
 				{
-					//do nothing
+					//nothing to do
 				}
+
 			};
 		}
 	}
@@ -138,11 +155,15 @@ public class SolrManager
 	public static void cleanup()
 	{
 		if (solrServer != null) {
-			solrServer.shutdown();
+			try {
+				solrServer.close();
+			} catch (IOException ex) {
+				log.log(Level.WARNING, "Unable to close connection to Solr. Connection may be unstable.", ex);
+			}
 		}
 	}
 
-	public static SolrServer getServer()
+	public static SolrClient getServer()
 	{
 		return solrServer;
 	}
@@ -202,9 +223,10 @@ public class SolrManager
 				totalFound--;
 			}
 		}
+		SearchServerManager.updateSearchScore(searchQuery.getQuery(), componentSearchViews);
+		
 		views.addAll(componentSearchViews);
-
-		//TODO: Get the score and sort by score
+		
 		componentSearchWrapper.setData(views);
 		componentSearchWrapper.setResults(views.size());
 
@@ -220,7 +242,7 @@ public class SolrManager
 	public void index(List<Component> components)
 	{
 		// initialize solr server
-		SolrServer solrService = SolrManager.getServer();
+		SolrClient solrService = SolrManager.getServer();
 
 		Map<String, List<ComponentAttribute>> attributeMap = new HashMap<>();
 		Map<String, List<ComponentTag>> tagMap = new HashMap<>();
@@ -340,30 +362,31 @@ public class SolrManager
 
 		// If incoming query string is blank, default to solar *:* for the full query
 		if (StringUtils.isNotBlank(query)) {
-			StringBuilder queryData = new StringBuilder();
-
-			Field fields[] = SolrComponentModel.class.getDeclaredFields();
-			for (Field field : fields) {
-				org.apache.solr.client.solrj.beans.Field fieldAnnotation = field.getAnnotation(org.apache.solr.client.solrj.beans.Field.class);
-				if (fieldAnnotation != null && field.getType() == String.class) {
-					String name = field.getName();
-					if (StringUtils.isNotBlank(fieldAnnotation.value())
-							&& org.apache.solr.client.solrj.beans.Field.DEFAULT.equals(fieldAnnotation.value()) == false) {
-						name = fieldAnnotation.value();
-					}
-
-					queryData.append(SolrEquals.EQUAL.getSolrOperator())
-							.append(name)
-							.append(SolrManager.SOLR_QUERY_SEPERATOR)
-							.append(query)
-							.append(queryOperator);
-				}
-			}
-			myQueryString = queryData.toString();
-			if (myQueryString.endsWith(queryOperator)) {
-				queryData.delete((myQueryString.length() - (queryOperator.length())), myQueryString.length());
-				myQueryString = queryData.toString();
-			}
+//			StringBuilder queryData = new StringBuilder();
+//
+//			Field fields[] = SolrComponentModel.class.getDeclaredFields();
+//			for (Field field : fields) {
+//				org.apache.solr.client.solrj.beans.Field fieldAnnotation = field.getAnnotation(org.apache.solr.client.solrj.beans.Field.class);
+//				if (fieldAnnotation != null && field.getType() == String.class) {
+//					String name = field.getName();
+//					if (StringUtils.isNotBlank(fieldAnnotation.value())
+//							&& "#default".equals(fieldAnnotation.value()) == false) {
+//						name = fieldAnnotation.value();
+//					}
+//
+//					queryData.append(SolrEquals.EQUAL.getSolrOperator())
+//							.append(name)
+//							.append(SolrManager.SOLR_QUERY_SEPERATOR)
+//							.append(query)
+//							.append(queryOperator);
+//				}
+//			}
+//			myQueryString = queryData.toString();
+//			if (myQueryString.endsWith(queryOperator)) {
+//				queryData.delete((myQueryString.length() - (queryOperator.length())), myQueryString.length());
+//				myQueryString = queryData.toString();
+//			}
+			myQueryString = query;
 		} else {
 			myQueryString = SolrManager.SOLR_ALL_QUERY;
 		}
@@ -407,7 +430,7 @@ public class SolrManager
 			totalFound = results.getNumFound();				
 						
 			DocumentObjectBinder binder = new DocumentObjectBinder();
-			resultsList = binder.getBeans(SolrComponentModel.class, results);		
+			resultsList = binder.getBeans(SolrComponentModel.class, results);					
 			
 		} catch (SolrServerException ex) {
 			throw new OpenStorefrontRuntimeException("Search Failed", "Contact System Admin.  Seach server maybe Unavailable", ex);
@@ -416,7 +439,7 @@ public class SolrManager
 		}
 		indexSearchResult.getResultsList().addAll(resultsList);
 		indexSearchResult.setTotalResults(totalFound);
-
+		
 		return indexSearchResult;		
 	}
 
@@ -433,6 +456,7 @@ public class SolrManager
 			SolrComponentModel.FIELD_ORGANIZATION, 
 			SolrComponentModel.FIELD_DESCRIPTION, 
 		};
+		query = "*" + query + "*";		
 		IndexSearchResult indexSearchResult = doIndexSearch(query, filter, extraFields);
 		
 		//apply weight to items
@@ -485,7 +509,7 @@ public class SolrManager
 	@Override
 	public void deleteById(String id)
 	{
-		SolrServer solrService = SolrManager.getServer();
+		SolrClient solrService = SolrManager.getServer();
 
 		try {
 			solrService.deleteById(id);
@@ -498,7 +522,7 @@ public class SolrManager
 	@Override
 	public void deleteAll()
 	{
-		SolrServer solrService = SolrManager.getServer();
+		SolrClient solrService = SolrManager.getServer();
 		try {
 			// CAUTION: deletes everything!
 			solrService.deleteByQuery(SolrManager.SOLR_ALL_QUERY);

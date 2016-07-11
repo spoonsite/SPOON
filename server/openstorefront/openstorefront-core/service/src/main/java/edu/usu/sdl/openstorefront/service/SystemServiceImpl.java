@@ -57,18 +57,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -436,8 +438,12 @@ public class SystemServiceImpl
 	@Override
 	public TemporaryMedia retrieveTemporaryMedia(String urlStr)
 	{
-
-		String hash = DigestUtils.shaHex(urlStr);
+		String hash;
+		try {	
+			hash = Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(urlStr.getBytes()));
+		} catch (NoSuchAlgorithmException ex) {
+			throw new OpenStorefrontRuntimeException("Hash Format not available", "Coding issue");
+		}
 		TemporaryMedia existingMedia = persistenceService.findById(TemporaryMedia.class, hash);
 		if (existingMedia != null) {
 			existingMedia.setUpdateDts(TimeUtil.currentDate());
@@ -480,6 +486,7 @@ public class SystemServiceImpl
 
 	}
 
+	@Override
 	public void cleanUpOldTemporaryMedia()
 	{
 
