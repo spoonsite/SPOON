@@ -60,6 +60,18 @@
 
 				};
 				
+				var componentRelationshipsListingStore = Ext.create('Ext.data.Store', {
+					storeId: 'componentRelationshipsListingStore',
+					proxy: {
+						type: 'ajax',
+						url: '../api/v1/resource/componentrelationship'
+					},
+					listeners: {
+						load: function () {
+							
+						}
+					}
+				});
 			
 				var relationshipsStore = Ext.create('Ext.data.Store', {
 					storeId: 'relationshipsStore',
@@ -102,20 +114,25 @@
 					fields: [
 						// The griddragdrop plugin needs a type in order to operate!
 						{
-							name: 'description',
+							name: 'name',
 							type: 'string'
 						}
 					],
 					sorters: new Ext.util.Sorter({
-						property: 'description',
+						property: 'name',
 						direction: 'ASC'
 					}),
 					proxy: {
 						id: 'componentsStoreProxy',
 						type: 'ajax',
-						url: '../api/v1/resource/components/lookup'
+						url: '../api/v1/resource/components/'
 					},
-					autoLoad: true
+					autoLoad: true,
+					listeners: {
+						load: function () {
+							componentRelationshipsListingStore.load();
+						}
+					}
 				}); 
 				
 				var typePromptWindow = Ext.create('Ext.window.Window', {
@@ -215,11 +232,11 @@
 						}
 					},
 					columns: [
-						{ text: 'Origin Entry', dataIndex: 'description', flex: 1 }
+						{ text: 'Origin Entry', dataIndex: 'name', flex: 1 }
 					],
 					listeners: {
 						select: function(grid, record, index, eOpts) {
-							var id = record.get('code');
+							var id = record.get('componentId');
 							relationshipsStore.setProxy({
 								type: 'ajax',
 								url: '../api/v1/resource/components/' + id + '/relationships'
@@ -243,10 +260,10 @@
 								enableDrop: true,
 								enableDrag: false,
 								onDrop: function onDrop(target, dd, e, dragData) {
-									var originId = dragData.record.data.code;
-									var originName = dragData.record.data.description; 
-									var targetId = target.record.data.code;
-									var targetName = target.record.data.description;
+									var originId = dragData.record.data.componentId;
+									var originName = dragData.record.data.name; 
+									var targetId = target.record.data.componentId;
+									var targetName = target.record.data.name;
 									var relationshipTypeCode = Ext.getCmp('relationshipTypeComboBox').getValue();
 									actionCreateRelationship(originId, originName, targetId, targetName, relationshipTypeCode);
 								}
@@ -254,15 +271,14 @@
 						]
 					},
 					columns: [
-						{ text: 'Target Entry', dataIndex: 'description', flex: 1 }
+						{ text: 'Target Entry', dataIndex: 'name', flex: 1 }
 					],
 					listeners: {
 						beforeselect: function(grid, record, index, eOpts) {
 							originGrid.getView().select(record);
 						},
 						select: function(grid, record, index, eOpts) {
-							grid.getSelectionModel().deselectAll();
-							originGrid.focus();
+							return false;
 						}
 					}
 				});
