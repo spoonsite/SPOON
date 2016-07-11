@@ -129,6 +129,8 @@ public class ElasticSearchManager
 		
 		IndexSearchResult indexSearchResult = doIndexSearch(INDEX, filter);
 		
+		SearchServerManager.updateSearchScore(searchQuery.getQuery(), indexSearchResult.getSearchViews());		
+		
 		componentSearchWrapper.setData(indexSearchResult.getSearchViews());
 		componentSearchWrapper.setResults(indexSearchResult.getSearchViews().size());
 		componentSearchWrapper.setTotalNumber(indexSearchResult.getTotalResults());
@@ -154,7 +156,11 @@ public class ElasticSearchManager
 		
 		SearchResponse response = ElasticSearchManager.getClient()				
 				.prepareSearch(INDEX)							
-				.setQuery(QueryBuilders.wildcardQuery("_all", query))						
+				.setQuery(QueryBuilders
+						.boolQuery()
+						.should(QueryBuilders.wildcardQuery("_all", query))
+						.should(QueryBuilders.fuzzyQuery("_all", query))
+						)						
 				.setFrom(filter.getOffset())
 				.setSize(maxSearchResults)
 				.addSort(filter.getSortField(), OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ?  SortOrder.ASC : SortOrder.DESC)		
@@ -171,7 +177,7 @@ public class ElasticSearchManager
 				if (service.getComponentService().checkComponentApproval(view.getComponentId())) {
 					view.setSearchScore(hit.getScore());
 					indexSearchResult.getSearchViews().add(view);
-					indexSearchResult.getResultsList().add(SolrComponentModel.fromComponentSearchView(view));					
+					indexSearchResult.getResultsList().add(SolrComponentModel.fromComponentSearchView(view));
 				} else {
 					log.log(Level.FINER, MessageFormat.format("Component is no long approved and active.  Removing index.  {0}", view.getComponentId()));										
 					deleteById(view.getComponentId());

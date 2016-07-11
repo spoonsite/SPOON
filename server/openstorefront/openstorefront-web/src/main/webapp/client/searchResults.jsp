@@ -767,7 +767,8 @@ limitations under the License.
 				{ text: 'Vitals', section: 'attributes', display: false },
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
-				{ text: 'Approved Date', section: 'approve', display: false }										
+				{ text: 'Approved Date', section: 'approve', display: false },
+				{ text: 'Index Relevance', section: 'searchscore', display: false }
 			];			
 			var allResultsSet;
 			searchResultsStore.on('load', function(store, records, success, opts){
@@ -1014,7 +1015,7 @@ limitations under the License.
 				'  <br><div class="searchresults-item-update">',
 				'  <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
 				'  <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
-				'   ({componentTypeDescription})<span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
+				'   ({componentTypeDescription}) <tpl if="show.searchscore"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
 				' </div>',
 				'</tpl>',
 				{
@@ -1157,7 +1158,22 @@ limitations under the License.
 													return 0;
 												}
 											}											
-										}											
+										},
+										{
+											label: 'Index Relevance',
+											field: 'searchScore',
+											fieldCode: 'searchScore',
+											dir: 'DESC',
+											compare: function(a, b){
+												if (a.searchScore > b.searchScore) {
+													return -1;
+												} else if (a.searchScore < b.searchScore) {
+													return 1;
+												} else {
+													return 0;
+												}
+											}
+										}
 									]
 								}
 							},

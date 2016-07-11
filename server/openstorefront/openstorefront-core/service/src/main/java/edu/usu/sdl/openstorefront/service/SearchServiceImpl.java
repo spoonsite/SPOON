@@ -211,6 +211,7 @@ public class SearchServiceImpl
 			}
 		}
 
+		List<SearchElement> indexSearches = new ArrayList<>();
 		List<BaseSearchHandler> handlers = new ArrayList<>();
 		for (SearchType searchType : searchGroup.keySet()) {
 			List<SearchElement> searchElements = searchGroup.get(searchType);
@@ -228,6 +229,7 @@ public class SearchServiceImpl
 					handlers.add(new ContactSearchHandler(searchElements));
 					break;
 				case INDEX:
+					indexSearches.addAll(searchElements);
 					handlers.add(new IndexSearchHandler(searchElements));
 					break;					
 				case METADATA:
@@ -350,7 +352,15 @@ public class SearchServiceImpl
 				}
 				
 				//resolve results
+				
 				List<ComponentSearchView> views = getComponentService().getSearchComponentList(idsToResolve);
+				
+				if (indexSearches.isEmpty() == false) {
+					//only the first one counts
+					String indexQuery = indexSearches.get(0).getValue();
+					SearchServerManager.updateSearchScore(indexQuery, views);					
+				}
+								
 				if (StringUtils.isNotBlank(searchModel.getSortField())) {
 					Collections.sort(views, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
 				}				
