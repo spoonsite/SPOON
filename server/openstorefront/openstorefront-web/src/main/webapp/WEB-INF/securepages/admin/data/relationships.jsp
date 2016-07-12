@@ -305,6 +305,24 @@
 									} else {
 										actionCreateRelationship(originId, originName, targetId, targetName, relationshipTypeCode);
 									}
+								},
+								onEnter: function(target, dd, e, dragData) {
+									var originName = dragData.record.data.name; 
+									var targetName = target.record.data.name;
+									var relationshipTypeCode = Ext.getCmp('relationshipTypeComboBox').getSelection();
+									if (relationshipTypeCode) {
+										var relationship = relationshipTypeCode.get('description');
+									}
+									else var relationship = ' -> ';
+
+									var text = originName + ' ';
+								    text += relationship + ' ';
+									text += targetName;
+									dd.ddel.innerText = text;
+								},
+								onOut: function(target, dd, e, dragData) {
+									var originName = dragData.record.data.name; 
+									dd.ddel.innerText = originName;
 								}
 							})
 						]
