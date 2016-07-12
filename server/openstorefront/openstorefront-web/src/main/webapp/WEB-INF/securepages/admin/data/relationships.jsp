@@ -407,7 +407,7 @@
 								},
 								{
 									text: 'Create Inverse',
-									iconCls: 'fa fa-arrows-h',
+									iconCls: 'fa fa-exchange',
 									id: 'relationshipGridAction-CreateInverse',
 									disabled: true,
 									handler: function() {
