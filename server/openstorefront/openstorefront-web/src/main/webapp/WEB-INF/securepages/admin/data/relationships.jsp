@@ -252,7 +252,22 @@
 						}
 					},
 					columns: [
-						{ text: 'Origin Entry', dataIndex: 'name', flex: 1 }
+						{ 
+							text: 'Origin Entry', 
+							dataIndex: 'name', 
+							flex: 1,
+							renderer: function (value, metaData, record) {
+								var num = record.get('numRelationships');
+								if (!num) num = 0;
+								var html = "<strong>" + value + "</strong>";
+								html += '<p style="color: #999; margin-bottom: 0.5em;">';
+								html += '<i class="fa fa-book fa-fw"></i> '
+								html += '<span style="padding-right: 20px">' + record.get('componentTypeDescription') + '</span>';
+								html += '<span style="float: right"><i class="fa fa-share-alt"></i> ' + num + '</span>';
+								html += "</p>";
+								return html;
+							},
+						}
 					],
 					listeners: {
 						select: function(grid, record, index, eOpts) {
@@ -291,7 +306,22 @@
 						]
 					},
 					columns: [
-						{ text: 'Target Entry', dataIndex: 'name', flex: 1 }
+						{ 
+							text: 'Target Entry',
+							dataIndex: 'name',
+							flex: 1,
+							renderer: function (value, metaData, record) {
+								var num = record.get('numRelationships');
+								if (!num) num = 0;
+								var html = "<strong>" + value + "</strong>";
+								html += '<p style="color: #999; margin-bottom: 0.5em;">';
+								html += '<i class="fa fa-book fa-fw"></i> '
+								html += '<span style="padding-right: 20px">' + record.get('componentTypeDescription') + '</span>';
+								html += "</p>";
+								return html;
+							},
+
+						}
 					],
 					listeners: {
 						beforeselect: function(grid, record, index, eOpts) {
