@@ -300,7 +300,11 @@
 									var targetId = target.record.data.componentId;
 									var targetName = target.record.data.name;
 									var relationshipTypeCode = Ext.getCmp('relationshipTypeComboBox').getValue();
-									actionCreateRelationship(originId, originName, targetId, targetName, relationshipTypeCode);
+									if (originId === targetId) {
+										Ext.Msg.alert('Relationship Not Allowed', 'Relationships from an entry to itself are not allowed.');
+									} else {
+										actionCreateRelationship(originId, originName, targetId, targetName, relationshipTypeCode);
+									}
 								}
 							})
 						]
