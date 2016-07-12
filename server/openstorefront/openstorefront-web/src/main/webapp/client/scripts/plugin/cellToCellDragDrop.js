@@ -108,6 +108,8 @@ Ext.define('OSF.plugin.CellToCellDragDrop', {
      * A {@link Ext.dd.ScrollManager} configuration may also be passed.
      */
     onDrop: undefined,
+	onEnter: undefined,
+	onOut: undefined,
  
     init: function (view) {
         var me = this;
@@ -210,8 +212,10 @@ Ext.define('OSF.plugin.CellToCellDragDrop', {
         }
  
         if (me.enableDrop) {
-			// Grab onDrop function.
+			// Grab onDrop/onEnter function.
 			var onDrop = me.onDrop;
+			var onEnter = me.onEnter;
+			var onOut = me.onOut;
             me.dropZone = new Ext.dd.DropZone(view.el, {
                 view: view,
                 ddGroup: me.dropGroup || me.ddGroup,
@@ -240,6 +244,10 @@ Ext.define('OSF.plugin.CellToCellDragDrop', {
  
                 // On Node enter, see if it is valid for us to drop the field on that type of column. 
                 onNodeEnter: function (target, dd, e, dragData) {
+					if (typeof onEnter !== 'undefined') {
+						onEnter(target, dd, e, dragData);
+					}
+
                     var self = this,
                         destType = target.record.getField(target.columnName).type.toUpperCase(),
                         sourceType = dragData.record.getField(dragData.columnName).type.toUpperCase();
@@ -287,6 +295,11 @@ Ext.define('OSF.plugin.CellToCellDragDrop', {
  
                 // Highlight the target node. 
                 onNodeOut: function (target, dd, e, dragData) {
+
+					if (typeof onEnter !== 'undefined') {
+						onOut(target, dd, e, dragData);
+					}
+
                     var cls = this.dropOK ? me.dropCls : me.noDropCls;
  
                     if (cls) {
