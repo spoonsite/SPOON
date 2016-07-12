@@ -201,6 +201,10 @@
 										var targetName = typePromptWindow.targetName;
 										var targetId = typePromptWindow.targetId;
 										var record = Ext.getCmp('relationshipWindowSelector').getSelection();
+										if (!record) {
+											Ext.MessageBox.alert('Relationship Type Missing', 'Please choose a relationship type.');
+											return;
+										}
 										var relationshipTypeCode = record.get('code');
 										var url = '../api/v1/resource/components/' + originId + '/relationships';
 										var method = 'POST';
