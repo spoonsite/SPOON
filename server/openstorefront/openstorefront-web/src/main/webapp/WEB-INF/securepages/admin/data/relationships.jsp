@@ -69,6 +69,24 @@
 					listeners: {
 						load: function () {
 							
+							componentsStore.each(function(component) {
+								component.set('numRelationships', parseInt(0));
+							});
+
+							componentRelationshipsListingStore.each(function (componentRelationship) {
+								var id = componentRelationship.get('ownerComponentId');
+
+								// Count up instances of item and assign a number to the component
+								var record = Ext.getStore('componentsStore').findRecord('componentId', id);
+								if (record) {
+									if (record.get('numRelationships')) {
+										record.set('numRelationships', 1 + parseInt(record.get('numRelationships')));
+									} else {
+										record.set('numRelationships', parseInt(1));
+									}
+								}
+
+							});
 						}
 					}
 				});
@@ -95,6 +113,8 @@
 								visPanel.reset();
 								visPanel.viewData = viewData;
 								visPanel.initVisual(visPanel.viewData);
+
+								componentRelationshipsListingStore.load();
 						}
 					}
 				});
