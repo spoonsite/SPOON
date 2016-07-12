@@ -1,7 +1,7 @@
 
 #Clearinghouse Administrator Guide
 
-Version 2.0
+Version 2.1
 
 
 Space Dynamics Laboratory
@@ -52,9 +52,9 @@ Figure 1. Client Architecture Diagram
 ##1.2 Client Details
 -----
 
-The client core structure is based on Ext.js which provides UI components and utilities. This reduces third-part dependencies signficantly which in turn reduce mantainance, learning curve and improves quaility and consistency.
+The client core structure is based on Ext.js which provides UI components and utilities. This reduces third-part dependencies significantly which in turn reduce mantainance, learning curve and improves quaility and consistency.
 
-Added to that is application specific overrides and high-level components created to facilate re-use.
+Added to that is application specific overrides and high-level components created to facilitate re-use.
 The application is simply composed by stripes layouts with top-level page and fragment tool pages.
 
 ## 2.  Server Architecture
@@ -79,7 +79,7 @@ Component definitions are as shown below:
 >-  **Managers**   - The role of the manager class is to handle the interaction with a resource. This allow for clean initialization and shutdown of resources and provides centralized access.
   -   **Services**    - Each service is in charge of handling a specific group of Entity models. Services provide transaction support and business logic handling. All service are accessed through a service proxy class.  The service proxy class provides auto transaction and service interception support.
   -   **Models**  - The entity models represent the data in the system and provide the bridge from the application to the underlying storage.  
-  -   **Import/ Export** -The entity models represent the data in the system and provide the bridge from the application to the underlying storage. 
+  -   **Import / Export** -The entity models represent the data in the system and provide the bridge from the application to the underlying storage. 
 
 
 The server build environment relies on the following platforms/tools:
@@ -134,7 +134,7 @@ The component integration vectors (CIV) are show below.
 
  **Source Component**:  openstorefront           
  **Class**:  B  
- **Target Component**:      Solr/ESA                 
+ **Target Component**:      Solr/ESA/Elasticsearch                 
 **Notes**: JEE Application Server   Currently configured to deploy on Tomcat
 
  **Source Component**:    Orient DB           
@@ -204,7 +204,7 @@ The applicable ports are shown below:
 
 ----
 
-  All ports are configurable via configuration for the respected applications. Addition ports maybe be using depending on configuration.
+  All ports are configurable via configuration for the respected applications. Additional ports maybe be used depending on configuration.
 
 #4.  Installation
  -----
@@ -268,15 +268,49 @@ The Storefront relies upon the following external dependencies:
 
 -   OpenAM (Optional)
 
--   ESA
+-   Index Search Server (Any of the following can work)
 
--   Solr (Optional if using ESA)
+	-   ESA
+
+	-   Solr 4.3.1+ *Recommended for greater control*
+
+	-   Elasticsearch 2.3.x *Recommended for simple install*
 
 **NOTE:** The base Solr package will require some changes to the schema.xml to make
 sure all field are available.
 
 ###4.4.1 To Use Solr
 
+Download Version 6.x 
+from [solr home](http://lucene.apache.org/solr/), and then perform the
+following steps:
+
+1. Unpackage  (setup according to solr instructions if setting up OS integration)
+
+2. Add core
+-copy server /doc/solr/openstorefront (From source code) to .../solr-6.1.0/server/solr
+
+3.  Start server
+bin/solr start -p 8983 
+
+4.  Configure OpenStorefront to point to Solr by going to:
+    /var/openstorefront/config/openstorefront.properties
+
+5.  Edit solr.server.url to
+	
+	search.server=solr
+
+	solr.server.url=http://localhost:8983/solr/collection1
+
+	solr.server.usexml=true
+
+6. Resync data 
+
+	a) Nav->Admin->System->Search Control
+
+        b) Click Re-Index Listings
+
+(Use if matching ESA)
 Download Version 4.3.1
 from [solr home](http://archive.apache.org/dist/lucene/solr/), and then perform the
 following steps:
@@ -290,9 +324,77 @@ following steps:
     /var/openstorefront/config/openstorefront.properties
 
 4.  Edit solr.server.url to
-    solr.server.url=http://localhost:8983/solr/collection1
+	
+	search.server=solr
+
+	solr.server.url=http://localhost:8983/solr/collection1
+
+	solr.server.usexml=true
 
 5.  Start Solr from (solr install dir)/example - java -jar start.jar
+
+6. Resync data 
+
+	a) Nav->Admin->System->Search Control
+
+        b) Click Re-Index Listings
+
+###4.4.3 To Use Elasticsearch 
+
+1. Download
+	[elasticsearch home]https://www.elastic.co/ (Apache v2 licensed)
+
+2. Start
+	<elasticsearch>/bin/elasticsearch
+
+3. Configure OpenStorefront to point to Solr by going to: /var/openstorefront/config/openstorefront.properties or System admin screen
+
+		Add/Set: (adjust as needed to match url and ports)
+	
+		search.server=elasticsearch
+
+		elastic.server.host=localhost
+
+		elastic.server.port=9300
+
+4. Resync data 
+
+	a) Nav->Admin->System->Search Control
+
+        b) Click Re-Index Listings
+
+
+###4.4.3 To Use ESA
+
+1. Obtain VM from Raython
+
+2. Start VM port-forward/open port to solr
+
+3.  Configure OpenStorefront to point to Solr by going to:
+    /var/openstorefront/config/openstorefront.properties or System admin screen
+
+		Add/Set: (adjust as needed to match url and ports)
+
+		search.server=solr
+
+		solr.server.url=http://localhost:8983/solr/esa
+
+		solr.server.usexml=true
+
+4. Resync data 
+
+	a) Nav->Admin->System->Search Control
+
+        b) Click Re-Index Listings
+
+
+###4.4.4 Updated Search at Runtime
+
+1. Use Admin->System to set the system config properties 
+
+2. On Managers tab -> Restart Search Server Managers
+
+
 
 ##4.5  System Setup
 ------------
