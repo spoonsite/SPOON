@@ -311,7 +311,9 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		this.callParent();
 		
 		var visPanel = this;
-		visPanel.loadRelationships();
+		if (visPanel.viewType) {
+			visPanel.loadRelationships();
+		}
 	},
 	
 	loadNextLevel: function(key, entityType, nodeName) {
