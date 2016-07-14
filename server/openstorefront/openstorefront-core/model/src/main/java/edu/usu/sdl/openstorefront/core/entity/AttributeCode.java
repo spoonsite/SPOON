@@ -110,8 +110,8 @@ public class AttributeCode
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getAttachmentFileName())) {
-			File mediaDir = FileSystemManager.getDir(FileSystemManager.ATTACHMENT_DIR);
-			path = Paths.get(mediaDir.getPath() + "/" + getAttachmentFileName());
+			File attachmentDir = FileSystemManager.getDir(FileSystemManager.ATTACHMENT_DIR);
+			path = Paths.get(attachmentDir.getPath() + "/" + getAttachmentFileName());
 		}
 		return path;
 	}

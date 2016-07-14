@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -253,4 +254,13 @@ public interface AttributeService
 	 * @param options
 	 */
 	public void importAttributes(List<AttributeAll> attributes, FileHistoryOption options);
+
+	/**
+	 * Saves an attachment to an attribute code
+	 *
+	 * @param attributeCode
+	 * @param fileInput
+	 */
+	public void saveAttributeCodeAttachment(AttributeCode attributeCode, InputStream fileInput);
+
 }

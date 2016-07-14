@@ -51,10 +51,17 @@ import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -238,6 +245,27 @@ public class AttributeServiceImpl
 			persistenceService.persist(attributeCode);
 		}
 		cleanCaches(attributeCode.getAttributeCodePk().getAttributeType());
+	}
+
+	@Override
+	public void saveAttributeCodeAttachment(AttributeCode attributeCode, InputStream fileInput)
+	{
+		Objects.requireNonNull(attributeCode);
+		Objects.requireNonNull(fileInput);
+		String hash;
+		try {
+			hash = Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(attributeCode.getAttachmentOriginalFileName().getBytes()));
+		} catch (NoSuchAlgorithmException ex) {
+			throw new OpenStorefrontRuntimeException("Hash Format not available", "Coding issue");
+		}
+		attributeCode.setAttachmentFileName(hash);
+
+		try (InputStream in = fileInput) {
+			Files.copy(in, attributeCode.pathToAttachment(), StandardCopyOption.REPLACE_EXISTING);
+			persistenceService.persist(attributeCode);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to store attachment.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		}
 	}
 
 	@Override
