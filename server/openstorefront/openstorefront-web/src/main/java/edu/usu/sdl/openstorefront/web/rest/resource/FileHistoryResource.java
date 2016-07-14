@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
@@ -164,7 +165,7 @@ public class FileHistoryResource
 					Files.copy(path, output);
 				});
 				responseBuilder.header("Content-Type", fileHistory.getMimeType());
-				responseBuilder.header("Content-Disposition", "attachment; filename=\"" + fileHistory.getFilename() + "\"");
+				responseBuilder.header("Content-Disposition", "attachment; filename=\"" + StringProcessor.getJustFileName(fileHistory.getOriginalFilename()) + "\"");
 				return responseBuilder.build();
 			}
 		}
