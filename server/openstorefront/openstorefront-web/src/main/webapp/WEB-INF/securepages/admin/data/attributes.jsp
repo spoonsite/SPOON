@@ -599,6 +599,7 @@
 					{text: 'Sort Order', dataIndex: 'sortOrder', flex: 1},
 					{text: 'Architecture Code', dataIndex: 'architectureCode', flex: 1.5},
 					{text: 'Badge URL', dataIndex: 'badgeUrl', flex: 1},
+					{text: 'Attachment', dataIndex: 'attachmentFileName', flex: 1},
 					{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 				]
 			});
