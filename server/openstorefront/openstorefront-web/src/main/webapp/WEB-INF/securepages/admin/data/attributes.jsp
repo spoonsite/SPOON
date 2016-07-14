@@ -429,6 +429,87 @@
 			};
 
 
+			var attachmentUploadWindow = Ext.create('Ext.window.Window', {
+				id: 'attachmentUploadWindow',
+				title: 'Upload Attachment',
+				iconCls: 'fa fa-info-circle',
+				width: '40%',
+				height: 175,
+				y: 60,
+				modal: true,
+				maximizable: false,
+				bodyStyle : 'padding: 10px;',
+				layout: 'fit',
+				items: [
+					{
+						xtype: 'form',
+						id: 'attachmentUploadForm',
+						layout: 'vbox',
+						defaults: {
+							labelAlign: 'top',
+							width: '100%'
+						},
+						items: [
+							{
+								xtype: 'filefield',
+								name: 'uploadFile',
+								width: '100%',
+								allowBlank: false,
+								fieldLabel: 'Choose a file to upload<span class="field-required" />',
+								buttonText: 'Select File...',
+								listeners: {
+									change: CoreUtil.handleMaxFileLimit
+								}
+							}
+						]
+					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								text: 'Upload Plugin',
+								iconCls: 'fa fa-save',
+								formBind: true,	
+								handler: function() {
+									var record = Ext.getCmp('codesGrid').getSelection()[0];
+									var parentAttributeRecord = attributeGrid.getSelection()[0];
+									var attributeTypeName = parentAttributeRecord.get('attributeType');
+									var attributeCodeName = record.get('code');
+									var form = Ext.getCmp('attachmentUploadForm');
+									var url = '/openstorefront/Upload.action?AttributeCodeAttachment';
+									url += '&attributeTypeName=' + attributeTypeName;
+									url += '&attributeCodeName=' + attributeCodeName;
+									if (form.isValid()) {
+										form.submit({
+											url: '/openstorefront/Upload.action?AttributeCodeAttachment',
+											waitMsg: 'Uploading file...',
+											success: function () {
+												Ext.toast('Successfully uploaded attachment.', '', 'tr');
+												attachmentUploadWindow.hide();
+											}
+										});
+									}
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Cancel',
+								iconCls: 'fa fa-close',
+								handler: function () {
+									Ext.getCmp('addPluginWindow').hide();
+								}
+							}
+						]
+					}
+				]
+
+			});
+
 			var codesStore = Ext.create('Ext.data.Store', {
 				id: 'codesStore'
 			});
