@@ -106,7 +106,7 @@ public class AttributeCode
 	 *
 	 * @return Path or null if this doesn't represent a disk resource
 	 */
-	public Path pathToMedia()
+	public Path pathToAttachment()
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getAttachmentFileName())) {
