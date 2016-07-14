@@ -567,6 +567,31 @@
 										}
 									});
 								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Add Attachment',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-paperclip',
+								handler: function() {
+									Ext.getCmp('attachmentUploadWindow').show();
+								}
+							},
+							{
+								text: 'Download Attachment',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-download',
+								handler: function() {
+								}
+							},
+							{
+								text: 'Delete Attachment',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-trash',
+								handler: function() {
+								}
 							}
 						]
 					}
