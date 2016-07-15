@@ -58,11 +58,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -253,13 +250,12 @@ public class AttributeServiceImpl
 	{
 		Objects.requireNonNull(attributeCode);
 		Objects.requireNonNull(fileInput);
-		String hash;
-		try {
-			hash = Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(attributeCode.getAttachmentOriginalFileName().getBytes()));
-		} catch (NoSuchAlgorithmException ex) {
-			throw new OpenStorefrontRuntimeException("Hash Format not available", "Coding issue");
-		}
-		attributeCode.setAttachmentFileName(hash);
+		StringBuilder filename = new StringBuilder();
+		AttributeCodePk attributeCodePk = attributeCode.getAttributeCodePk();
+		filename.append(attributeCodePk.getAttributeType());
+		filename.append("-");
+		filename.append(attributeCodePk.getAttributeCode());
+		attributeCode.setAttachmentFileName(filename.toString());
 
 		try (InputStream in = fileInput) {
 			Files.copy(in, attributeCode.pathToAttachment(), StandardCopyOption.REPLACE_EXISTING);
@@ -364,7 +360,7 @@ public class AttributeServiceImpl
 			reportOption.setCategory(type);
 			scheduledReport.setReportOption(reportOption);
 			persistenceService.deleteByExample(scheduledReport);
-			
+
 			persistenceService.delete(attributeType);
 
 			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
@@ -388,7 +384,7 @@ public class AttributeServiceImpl
 			example.setAttributeType(attributeCodePk.getAttributeType());
 			example.setLocalCode(attributeCodePk.getAttributeCode());
 			persistenceService.deleteByExample(example);
-			
+
 			persistenceService.delete(attributeCode);
 
 			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
