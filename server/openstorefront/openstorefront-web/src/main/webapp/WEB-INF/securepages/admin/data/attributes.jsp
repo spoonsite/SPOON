@@ -429,6 +429,91 @@
 			};
 
 
+			var attachmentUploadWindow = Ext.create('Ext.window.Window', {
+				id: 'attachmentUploadWindow',
+				title: 'Upload Attachment',
+				iconCls: 'fa fa-info-circle',
+				width: '40%',
+				height: 175,
+				y: 60,
+				modal: true,
+				maximizable: false,
+				bodyStyle : 'padding: 10px;',
+				layout: 'fit',
+				items: [
+					{
+						xtype: 'form',
+						id: 'attachmentUploadForm',
+						layout: 'vbox',
+						defaults: {
+							labelAlign: 'top',
+							width: '100%'
+						},
+						items: [
+							{
+								xtype: 'filefield',
+								name: 'uploadFile',
+								width: '100%',
+								allowBlank: false,
+								fieldLabel: 'Choose a file to upload<span class="field-required" />',
+								buttonText: 'Select File...',
+								listeners: {
+									change: CoreUtil.handleMaxFileLimit
+								}
+							}
+						]
+					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								text: 'Upload Attachment',
+								iconCls: 'fa fa-save',
+								formBind: true,	
+								handler: function() {
+									var record = Ext.getCmp('codesGrid').getSelection()[0];
+									var parentAttributeRecord = attributeGrid.getSelection()[0];
+									var attributeTypeName = parentAttributeRecord.get('attributeType');
+									var attributeCodeName = record.get('code');
+									var form = Ext.getCmp('attachmentUploadForm');
+									var url = '/openstorefront/Upload.action?AttributeCodeAttachment';
+									url += '&attributeTypeName=' + attributeTypeName;
+									url += '&attributeCodeName=' + attributeCodeName;
+									if (form.isValid()) {
+										form.submit({
+											url: url,
+											waitMsg: 'Uploading file...',
+											success: function () {
+												Ext.toast('Successfully uploaded attachment.', '', 'tr');
+												attachmentUploadWindow.hide();
+												codesStore.load();
+											},
+											failure: function () {
+												Ext.toast('Failed to upload attachment.');
+											}
+										});
+									}
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Cancel',
+								iconCls: 'fa fa-close',
+								handler: function () {
+									Ext.getCmp('attachmentUploadWindow').hide();
+								}
+							}
+						]
+					}
+				]
+
+			});
+
 			var codesStore = Ext.create('Ext.data.Store', {
 				id: 'codesStore'
 			});
@@ -445,16 +530,32 @@
 							Ext.getCmp('codesGrid-tools-edit').enable();
 							Ext.getCmp('codesGrid-tools-toggle').enable();
 							Ext.getCmp('codesGrid-tools-delete').enable();
+							Ext.getCmp('codesToolbarAddAttachment').enable();
 							if (record[0].data.activeStatus === 'A') {
 								Ext.getCmp('codesGrid-tools-toggle').setText('Deactivate');
 							}
 							else {
 								Ext.getCmp('codesGrid-tools-toggle').setText('Activate');
 							}
+							var attachment = record[0].get('attachmentFileName');
+							if (!attachment) {
+								Ext.getCmp('codesToolbarDownloadAttachment').disable();
+								Ext.getCmp('codesToolbarDeleteAttachment').disable();
+								Ext.getCmp('codesToolbarAddAttachment').setText('Add Attachment');
+							}
+							else {
+								Ext.getCmp('codesToolbarDownloadAttachment').enable();
+								Ext.getCmp('codesToolbarDeleteAttachment').enable();
+								Ext.getCmp('codesToolbarAddAttachment').setText('Replace Attachment');
+							}
 						} else {
 							Ext.getCmp('codesGrid-tools-edit').disable();
 							Ext.getCmp('codesGrid-tools-toggle').disable();
 							Ext.getCmp('codesGrid-tools-delete').disable();
+							Ext.getCmp('codesToolbarDownloadAttachment').disable();
+							Ext.getCmp('codesToolbarDeleteAttachment').disable();
+							Ext.getCmp('codesToolbarAddAttachment').disable();
+							Ext.getCmp('codesToolbarAddAttachment').setText('Add Attachment');
 						}
 					}
 				},
@@ -567,6 +668,54 @@
 										}
 									});
 								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Add Attachment',
+								disabled: true,
+								id: 'codesToolbarAddAttachment',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-paperclip',
+								handler: function() {
+									Ext.getCmp('attachmentUploadWindow').show();
+								}
+							},
+							{
+								text: 'Download Attachment',
+								disabled: true,
+								id: 'codesToolbarDownloadAttachment',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-download',
+								handler: function() {
+									var codeRecord = codesGrid.getSelection()[0];
+									var typeRecord = attributeGrid.getSelection()[0];
+									var type = typeRecord.get('attributeType');
+									var code = codeRecord.get('code');
+									var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+									url += type;
+									url += '/attributecodes/' + code;
+									url += '/attachment';
+									window.location.href = url;		
+								}
+							},
+							{
+								text: 'Delete Attachment',
+								disabled: true,
+								id: 'codesToolbarDeleteAttachment',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-trash',
+								handler: function() {
+									var record = codesGrid.getSelection()[0];
+									var title = 'Delete Attachment';
+									var msg = 'Are you sure you want to delete the attachment for this code?';
+									Ext.MessageBox.confirm(title, msg, function (btn) {
+										if (btn === 'yes') {
+											actionDeleteCodeAttachment(record);
+										}
+									});
+								}
 							}
 						]
 					}
@@ -594,6 +743,7 @@
 							return value;
 						}
 					},
+					{text: 'Attachment', dataIndex: 'attachmentFileName', flex: 2},
 					{text: 'Link', dataIndex: 'detailUrl', flex: 1},
 					{text: 'Group Code', dataIndex: 'groupCode', flex: 1},
 					{text: 'Sort Order', dataIndex: 'sortOrder', flex: 1},
@@ -835,6 +985,27 @@
 				});
 
 			};
+
+			var actionDeleteCodeAttachment = function acitionDeleteCode(record) {
+				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				url += manageCodesWin.attributeType;
+				url += '/attributecodes/' + record.data.code;
+				url += '/attachment';
+				var method = 'DELETE';
+				Ext.Ajax.request({
+					url: url,
+					method: method,
+					success: function(response, opt){
+						Ext.toast('Successfully deleted attachment', '', 'tr');
+						codesStore.load();
+					},
+					failure: function(response, opt){
+						Ext.toast('Failed to delete attachment', '', 'tr');
+					}
+				});
+
+			};
+
 
 			var manageCodesWin = Ext.create('Ext.window.Window', {
 				id: 'manageCodesWin',

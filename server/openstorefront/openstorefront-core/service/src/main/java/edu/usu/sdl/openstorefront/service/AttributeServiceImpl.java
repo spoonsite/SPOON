@@ -51,8 +51,13 @@ import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -241,6 +246,45 @@ public class AttributeServiceImpl
 	}
 
 	@Override
+	public void saveAttributeCodeAttachment(AttributeCode attributeCode, InputStream fileInput)
+	{
+		Objects.requireNonNull(attributeCode);
+		Objects.requireNonNull(fileInput);
+		StringBuilder filename = new StringBuilder();
+		AttributeCodePk attributeCodePk = attributeCode.getAttributeCodePk();
+		filename.append(attributeCodePk.getAttributeType());
+		filename.append("-");
+		filename.append(attributeCodePk.getAttributeCode());
+		attributeCode.setAttachmentFileName(filename.toString());
+
+		try (InputStream in = fileInput) {
+			Files.copy(in, attributeCode.pathToAttachment(), StandardCopyOption.REPLACE_EXISTING);
+			persistenceService.persist(attributeCode);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to store attachment.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		}
+	}
+
+	@Override
+	public void removeAttributeCodeAttachment(AttributeCode attributeCode)
+	{
+		Objects.requireNonNull(attributeCode);
+		if (attributeCode != null) {
+			Path path = attributeCode.pathToAttachment();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					path.toFile().delete();
+				}
+			}
+			attributeCode.setAttachmentFileName("");
+			attributeCode.setAttachmentMimeType("");
+			attributeCode.setAttachmentOriginalFileName("");
+			persistenceService.persist(attributeCode);
+
+		}
+	}
+
+	@Override
 	public void removeAttributeType(String type)
 	{
 		Objects.requireNonNull(type, "Type is required.");
@@ -303,9 +347,17 @@ public class AttributeServiceImpl
 
 		AttributeType attributeType = persistenceService.findById(AttributeType.class, type);
 		if (attributeType != null) {
+
 			AttributeCode attributeCodeExample = new AttributeCode();
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
 			attributeCodePk.setAttributeType(type);
+
+			// Remove attachments
+			List<AttributeCode> codes = findCodesForType(type);
+			for (AttributeCode code : codes) {
+				removeAttributeCodeAttachment(code);
+			}
+
 			attributeCodeExample.setAttributeCodePk(attributeCodePk);
 			persistenceService.deleteByExample(attributeCodeExample);
 
@@ -316,7 +368,7 @@ public class AttributeServiceImpl
 			reportOption.setCategory(type);
 			scheduledReport.setReportOption(reportOption);
 			persistenceService.deleteByExample(scheduledReport);
-			
+
 			persistenceService.delete(attributeType);
 
 			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();
@@ -336,11 +388,13 @@ public class AttributeServiceImpl
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
 
+			removeAttributeCodeAttachment(attributeCode);
+
 			AttributeXRefMap example = new AttributeXRefMap();
 			example.setAttributeType(attributeCodePk.getAttributeType());
 			example.setLocalCode(attributeCodePk.getAttributeCode());
 			persistenceService.deleteByExample(example);
-			
+
 			persistenceService.delete(attributeCode);
 
 			BulkComponentAttributeChange bulkComponentAttributeChange = new BulkComponentAttributeChange();

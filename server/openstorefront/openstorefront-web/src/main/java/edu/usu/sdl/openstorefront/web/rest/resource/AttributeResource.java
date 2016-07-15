@@ -54,7 +54,9 @@ import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,6 +80,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 /**
  *
@@ -755,6 +758,62 @@ public class AttributeResource
 			});
 			service.getAsyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeCode(attributeCodePk);
 		}
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Download the file attachment for an attribute code")
+	@Path("/attributetypes/{type}/attributecodes/{code}/attachment")
+	public Response downloadAttributeCodeAttachment(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeType(type);
+		attributeCodePk.setAttributeCode(code);
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+
+		if (attributeCode != null && !attributeCode.getAttachmentOriginalFileName().equals("")) {
+
+			java.nio.file.Path path = attributeCode.pathToAttachment();
+
+			if (path.toFile().exists()) {
+				Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
+					Files.copy(path, output);
+				});
+				response.header("Content-Type", attributeCode.getAttachmentMimeType());
+				response.header("Content-Disposition", "attachment; filename=\"" + attributeCode.getAttachmentOriginalFileName() + "\"");
+				return response.build();
+			}
+
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete the file attachment for an attribute code")
+	@Path("/attributetypes/{type}/attributecodes/{code}/attachment")
+	public void deleteAttributeCodeAttachment(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeType(type);
+		attributeCodePk.setAttributeCode(code);
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+
+		if (attributeCode != null) {
+			service.getAttributeService().removeAttributeCodeAttachment(attributeCode);
+		}
+
 	}
 
 	@POST
