@@ -470,7 +470,7 @@
 						dock: 'bottom',
 						items: [
 							{
-								text: 'Upload Plugin',
+								text: 'Upload Attachment',
 								iconCls: 'fa fa-save',
 								formBind: true,	
 								handler: function() {
@@ -484,11 +484,14 @@
 									url += '&attributeCodeName=' + attributeCodeName;
 									if (form.isValid()) {
 										form.submit({
-											url: '/openstorefront/Upload.action?AttributeCodeAttachment',
+											url: url,
 											waitMsg: 'Uploading file...',
 											success: function () {
 												Ext.toast('Successfully uploaded attachment.', '', 'tr');
 												attachmentUploadWindow.hide();
+											},
+											failure: function () {
+												Ext.toast('Failed to upload attachment.');
 											}
 										});
 									}
@@ -501,7 +504,7 @@
 								text: 'Cancel',
 								iconCls: 'fa fa-close',
 								handler: function () {
-									Ext.getCmp('addPluginWindow').hide();
+									Ext.getCmp('attachmentUploadWindow').hide();
 								}
 							}
 						]
@@ -708,12 +711,12 @@
 							return value;
 						}
 					},
+					{text: 'Attachment', dataIndex: 'attachmentFileName', flex: 2},
 					{text: 'Link', dataIndex: 'detailUrl', flex: 1},
 					{text: 'Group Code', dataIndex: 'groupCode', flex: 1},
 					{text: 'Sort Order', dataIndex: 'sortOrder', flex: 1},
 					{text: 'Architecture Code', dataIndex: 'architectureCode', flex: 1.5},
 					{text: 'Badge URL', dataIndex: 'badgeUrl', flex: 1},
-					{text: 'Attachment', dataIndex: 'attachmentFileName', flex: 1},
 					{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 				]
 			});
@@ -950,27 +953,6 @@
 				});
 
 			};
-
-			var actionDeleteCodeAttachment = function acitionDeleteCode(record) {
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
-				url += manageCodesWin.attributeType;
-				url += '/attributecodes/' + record.data.code;
-				url += '/attachment';
-				var method = 'DELETE';
-				Ext.Ajax.request({
-					url: url,
-					method: method,
-					success: function(response, opt){
-						Ext.toast('Successfully deleted attachment', '', 'tr');
-						codesStore.load();
-					},
-					failure: function(response, opt){
-						Ext.toast('Failed to delete attachment', '', 'tr');
-					}
-				});
-
-			};
-
 
 			var actionDeleteCodeAttachment = function acitionDeleteCode(record) {
 				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
