@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
@@ -34,6 +35,9 @@ import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.OldBaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -95,6 +99,11 @@ public class UploadAction
 	private String fileFormat;
 	private String dataMappingId;
 	private String dataSource;
+
+	@Validate(required = true, on = "AttributeCodeAttachment")
+	private String attributeTypeName;
+	private String attributeCodeName;
+	private AttributeCode attributeCode;
 
 	@HandlesEvent("UploadLookup")
 	public Resolution uploadLookup()
@@ -356,6 +365,44 @@ public class UploadAction
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
 
+	@HandlesEvent("AttributeCodeAttachment")
+	public Resolution uploadAttributeCodeAttachment()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+
+			AttributeCodePk attributeCodePk = new AttributeCodePk();
+			attributeCodePk.setAttributeType(attributeTypeName);
+			attributeCodePk.setAttributeCode(attributeCodeName);
+			attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+
+			if (attributeCode != null) {
+				attributeCode.setAttachmentOriginalFileName(StringProcessor.getJustFileName(uploadFile.getFileName()));
+				attributeCode.setAttachmentMimeType(uploadFile.getContentType());
+
+				ValidationModel validationModel = new ValidationModel(attributeCode);
+				validationModel.setConsumeFieldsOnly(true);
+				ValidationResult validationResult = ValidationUtil.validate(validationModel);
+				if (validationResult.valid()) {
+					try {
+						service.getAttributeService().saveAttributeCodeAttachment(attributeCode, uploadFile.getInputStream());
+					} catch (IOException ex) {
+						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+					} finally {
+						deleteTempFile(uploadFile);
+					}
+				} else {
+					errors.put("file", validationResult.toHtmlString());
+				}
+			} else {
+				errors.put("attributeCode", "AttributeCode doesn't seem to exist.");
+			}
+			return streamUploadResponse(errors);
+		}
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
 	@HandlesEvent("ImportData")
 	public Resolution importData()
 	{
@@ -488,6 +535,26 @@ public class UploadAction
 	public void setDataSource(String dataSource)
 	{
 		this.dataSource = dataSource;
+	}
+
+	public String getAttributeTypeName()
+	{
+		return attributeTypeName;
+	}
+
+	public void setAttributeTypeName(String attributeTypeName)
+	{
+		this.attributeTypeName = attributeTypeName;
+	}
+
+	public String getAttributeCodeName()
+	{
+		return attributeCodeName;
+	}
+
+	public void setAttributeCodeName(String attributeCodeName)
+	{
+		this.attributeCodeName = attributeCodeName;
 	}
 
 }
