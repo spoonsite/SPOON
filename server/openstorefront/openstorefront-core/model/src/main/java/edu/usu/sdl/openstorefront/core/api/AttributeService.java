@@ -263,4 +263,10 @@ public interface AttributeService
 	 */
 	public void saveAttributeCodeAttachment(AttributeCode attributeCode, InputStream fileInput);
 
+	/**
+	 * Removes an attachment to an attribute code
+	 *
+	 * @param attributeCode
+	 */
+	public void removeAttributeCodeAttachment(AttributeCode attributeCode);
 }

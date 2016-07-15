@@ -56,6 +56,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -265,6 +266,25 @@ public class AttributeServiceImpl
 			persistenceService.persist(attributeCode);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store attachment.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		}
+	}
+
+	@Override
+	public void removeAttributeCodeAttachment(AttributeCode attributeCode)
+	{
+		Objects.requireNonNull(attributeCode);
+		if (attributeCode != null) {
+			Path path = attributeCode.pathToAttachment();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					path.toFile().delete();
+				}
+			}
+			attributeCode.setAttachmentFileName("");
+			attributeCode.setAttachmentMimeType("");
+			attributeCode.setAttachmentOriginalFileName("");
+			persistenceService.persist(attributeCode);
+
 		}
 	}
 
