@@ -665,9 +665,19 @@
 							},
 							{
 								text: 'Download Attachment',
+								id: 'codesToolbarDownloadAttachment',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-download',
 								handler: function() {
+									var codeRecord = codesGrid.getSelection()[0];
+									var typeRecord = attributeGrid.getSelection()[0];
+									var type = typeRecord.get('attributeType');
+									var code = codeRecord.get('code');
+									var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+									url += type;
+									url += '/attributecodes/' + code;
+									url += '/attachment';
+									window.location.href = url;		
 								}
 							},
 							{
