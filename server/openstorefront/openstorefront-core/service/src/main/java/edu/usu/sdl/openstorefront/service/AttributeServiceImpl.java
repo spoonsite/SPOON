@@ -347,9 +347,17 @@ public class AttributeServiceImpl
 
 		AttributeType attributeType = persistenceService.findById(AttributeType.class, type);
 		if (attributeType != null) {
+
 			AttributeCode attributeCodeExample = new AttributeCode();
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
 			attributeCodePk.setAttributeType(type);
+
+			// Remove attachments
+			List<AttributeCode> codes = findCodesForType(type);
+			for (AttributeCode code : codes) {
+				removeAttributeCodeAttachment(code);
+			}
+
 			attributeCodeExample.setAttributeCodePk(attributeCodePk);
 			persistenceService.deleteByExample(attributeCodeExample);
 
@@ -379,6 +387,8 @@ public class AttributeServiceImpl
 
 		AttributeCode attributeCode = persistenceService.findById(AttributeCode.class, attributeCodePk);
 		if (attributeCode != null) {
+
+			removeAttributeCodeAttachment(attributeCode);
 
 			AttributeXRefMap example = new AttributeXRefMap();
 			example.setAttributeType(attributeCodePk.getAttributeType());
