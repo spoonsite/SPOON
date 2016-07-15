@@ -757,6 +757,28 @@ public class AttributeResource
 		}
 	}
 
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete the file attachment for an attribute code")
+	@Path("/attributetypes/{type}/attributecodes/{code}/attachment")
+	public void deleteAttributeCodeAttachment(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeType(type);
+		attributeCodePk.setAttributeCode(code);
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+
+		if (attributeCode != null) {
+			service.getAttributeService().removeAttributeCodeAttachment(attributeCode);
+		}
+
+	}
+
 	@POST
 	@RequireAdmin
 	@APIDescription("Activate a Code (activates) and all assicated data.  Runs in background.")
