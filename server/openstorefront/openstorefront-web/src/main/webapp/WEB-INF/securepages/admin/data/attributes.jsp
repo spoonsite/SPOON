@@ -672,6 +672,14 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-trash',
 								handler: function() {
+									var record = codesGrid.getSelection()[0];
+									var title = 'Delete Attachment';
+									var msg = 'Are you sure you want to delete the attachment for this code?';
+									Ext.MessageBox.confirm(title, msg, function (btn) {
+										if (btn === 'yes') {
+											actionDeleteCodeAttachment(record);
+										}
+									});
 								}
 							}
 						]
@@ -942,6 +950,48 @@
 				});
 
 			};
+
+			var actionDeleteCodeAttachment = function acitionDeleteCode(record) {
+				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				url += manageCodesWin.attributeType;
+				url += '/attributecodes/' + record.data.code;
+				url += '/attachment';
+				var method = 'DELETE';
+				Ext.Ajax.request({
+					url: url,
+					method: method,
+					success: function(response, opt){
+						Ext.toast('Successfully deleted attachment', '', 'tr');
+						codesStore.load();
+					},
+					failure: function(response, opt){
+						Ext.toast('Failed to delete attachment', '', 'tr');
+					}
+				});
+
+			};
+
+
+			var actionDeleteCodeAttachment = function acitionDeleteCode(record) {
+				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				url += manageCodesWin.attributeType;
+				url += '/attributecodes/' + record.data.code;
+				url += '/attachment';
+				var method = 'DELETE';
+				Ext.Ajax.request({
+					url: url,
+					method: method,
+					success: function(response, opt){
+						Ext.toast('Successfully deleted attachment', '', 'tr');
+						codesStore.load();
+					},
+					failure: function(response, opt){
+						Ext.toast('Failed to delete attachment', '', 'tr');
+					}
+				});
+
+			};
+
 
 			var manageCodesWin = Ext.create('Ext.window.Window', {
 				id: 'manageCodesWin',
