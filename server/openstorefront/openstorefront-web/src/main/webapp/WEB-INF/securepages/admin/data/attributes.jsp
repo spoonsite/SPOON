@@ -489,6 +489,7 @@
 											success: function () {
 												Ext.toast('Successfully uploaded attachment.', '', 'tr');
 												attachmentUploadWindow.hide();
+												codesStore.load();
 											},
 											failure: function () {
 												Ext.toast('Failed to upload attachment.');
@@ -529,16 +530,32 @@
 							Ext.getCmp('codesGrid-tools-edit').enable();
 							Ext.getCmp('codesGrid-tools-toggle').enable();
 							Ext.getCmp('codesGrid-tools-delete').enable();
+							Ext.getCmp('codesToolbarAddAttachment').enable();
 							if (record[0].data.activeStatus === 'A') {
 								Ext.getCmp('codesGrid-tools-toggle').setText('Deactivate');
 							}
 							else {
 								Ext.getCmp('codesGrid-tools-toggle').setText('Activate');
 							}
+							var attachment = record[0].get('attachmentFileName');
+							if (!attachment) {
+								Ext.getCmp('codesToolbarDownloadAttachment').disable();
+								Ext.getCmp('codesToolbarDeleteAttachment').disable();
+								Ext.getCmp('codesToolbarAddAttachment').setText('Add Attachment');
+							}
+							else {
+								Ext.getCmp('codesToolbarDownloadAttachment').enable();
+								Ext.getCmp('codesToolbarDeleteAttachment').enable();
+								Ext.getCmp('codesToolbarAddAttachment').setText('Replace Attachment');
+							}
 						} else {
 							Ext.getCmp('codesGrid-tools-edit').disable();
 							Ext.getCmp('codesGrid-tools-toggle').disable();
 							Ext.getCmp('codesGrid-tools-delete').disable();
+							Ext.getCmp('codesToolbarDownloadAttachment').disable();
+							Ext.getCmp('codesToolbarDeleteAttachment').disable();
+							Ext.getCmp('codesToolbarAddAttachment').disable();
+							Ext.getCmp('codesToolbarAddAttachment').setText('Add Attachment');
 						}
 					}
 				},
@@ -657,6 +674,8 @@
 							},
 							{
 								text: 'Add Attachment',
+								disabled: true,
+								id: 'codesToolbarAddAttachment',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-paperclip',
 								handler: function() {
@@ -665,6 +684,7 @@
 							},
 							{
 								text: 'Download Attachment',
+								disabled: true,
 								id: 'codesToolbarDownloadAttachment',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-download',
@@ -682,6 +702,8 @@
 							},
 							{
 								text: 'Delete Attachment',
+								disabled: true,
+								id: 'codesToolbarDeleteAttachment',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-trash',
 								handler: function() {
