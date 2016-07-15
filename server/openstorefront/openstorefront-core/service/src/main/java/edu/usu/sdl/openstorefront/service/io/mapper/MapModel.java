@@ -16,7 +16,10 @@
 package edu.usu.sdl.openstorefront.service.io.mapper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -32,6 +35,31 @@ public class MapModel
 	{		
 	}
 
+	public Set<String> getUniqueFields() 
+	{
+		Set<String> fields = new HashSet<>();
+		buildPaths(fields, this, "");
+		return fields;
+	}
+	
+	private void buildPaths(Set<String> fields,  MapModel root, String parent) 
+	{
+		if (StringUtils.isNotBlank(parent)) {
+			parent = parent + ".";
+		}
+		
+		for (MapField field : root.mapFields) {			
+			fields.add(parent + root.getName() + "." +  field.getName());
+		}
+		for (MapModel child : root.getArrayFields()) {
+			String newParent = root.getName();
+			if (StringUtils.isNotBlank(parent)) {				
+				newParent = parent  + root.getName();
+			}
+			buildPaths(fields, child, newParent);
+		}	
+	}
+	
 	public List<MapField> getMapFields()
 	{
 		return mapFields;

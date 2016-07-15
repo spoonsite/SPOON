@@ -11,6 +11,7 @@
 	<name>openstorefront-plugin</name>
 	<modules>
     <module>example</module>
+    <module>spoon-importer</module>
   </modules>
  
 	<dependencies>

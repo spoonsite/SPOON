@@ -32,7 +32,11 @@ public class ReaderUseCase
 		
 		try (XMLMapReader mapReader = new XMLMapReader(new FileInputStream("T:\\DI2E\\spoon\\ADACS_Equipment_Actuators_CMGs.xml"))) {
 			MapModel mapModel = mapReader.findFields(new FileInputStream("T:\\DI2E\\spoon\\ADACS_Equipment_Actuators_CMGs.xml"));
-			System.out.println("done");			
+		//	String fileData = mapModel.getArrayFields().get(1).getArrayFields().get(0).getMapFields().get(0).getValue();
+		//	Base64.decodeToFile(fileData, "/temp/check.pdf");
+		
+			mapModel.getUniqueFields().forEach(f->System.out.println(f));
+			
 		}
 		
 	}
