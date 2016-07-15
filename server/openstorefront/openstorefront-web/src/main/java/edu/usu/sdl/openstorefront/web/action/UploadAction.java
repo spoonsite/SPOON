@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
-import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -373,12 +372,10 @@ public class UploadAction
 		if (SecurityUtil.isAdminUser()) {
 			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 
-			AttributeCode attributeCodeExample = new AttributeCode();
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
 			attributeCodePk.setAttributeType(attributeTypeName);
 			attributeCodePk.setAttributeCode(attributeCodeName);
-			attributeCodeExample.setAttributeCodePk(attributeCodePk);
-			attributeCode = service.getPersistenceService().queryOneByExample(AttributeCode.class, new QueryByExample(attributeCodeExample));
+			attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
 
 			if (attributeCode != null) {
 				attributeCode.setAttachmentOriginalFileName(StringProcessor.getJustFileName(uploadFile.getFileName()));
@@ -538,6 +535,26 @@ public class UploadAction
 	public void setDataSource(String dataSource)
 	{
 		this.dataSource = dataSource;
+	}
+
+	public String getAttributeTypeName()
+	{
+		return attributeTypeName;
+	}
+
+	public void setAttributeTypeName(String attributeTypeName)
+	{
+		this.attributeTypeName = attributeTypeName;
+	}
+
+	public String getAttributeCodeName()
+	{
+		return attributeCodeName;
+	}
+
+	public void setAttributeCodeName(String attributeCodeName)
+	{
+		this.attributeCodeName = attributeCodeName;
 	}
 
 }
