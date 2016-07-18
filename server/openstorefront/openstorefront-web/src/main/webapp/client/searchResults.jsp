@@ -874,6 +874,15 @@ limitations under the License.
 				allResultsSet = data;
 				//filterResults();
 				processResults(allResultsSet);
+				
+				//Show details if requested
+				var showComponentId = '${param.showcomponent}';		
+				if (showComponentId) {
+					Ext.defer(function(){
+						SearchPage.viewDetails(showComponentId, 'result-' + showComponentId);
+					}, 1000);
+				}	
+					
 			});
 			
 			var originalSearchRequest;
@@ -981,8 +990,8 @@ limitations under the License.
 			
 			var resultsTemplate = new Ext.XTemplate(
 				'<tpl for=".">',
-				' <div id="result{#}" class="searchresults-item">',
-				'	<h2 id="result{#}name" title="View Details" class="searchresults-item-click" onclick="SearchPage.viewDetails(\'{componentId}\', \'result{#}\')"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{name}</h2>',
+				' <div id="result-{componentId}" class="searchresults-item">',
+				'	<h2 id="result-{componentId}name" title="View Details" class="searchresults-item-click" onclick="SearchPage.viewDetails(\'{componentId}\', \'result-{componentId}\')"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{name}</h2>',
 				'	<tpl if="show.organization">',
 				'		<p class="searchresults-item-org">{organization}</p>',
 				'	</tpl>',
