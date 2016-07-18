@@ -72,6 +72,36 @@ limitations under the License.
 						}).show();
 					}
 				});
+			},
+			viewRecentlyAdded: function(componentId) {
+				
+				var searchObj = {
+					"sortField": null,
+					"sortDirection": "ASC",
+					"startOffset": 0,
+					"max": 2147483647,
+					"searchElements": [{
+							"searchType": "COMPONENT",
+							"field": "componentId",
+							"value": componentId,
+							"keyField": null,
+							"keyValue": null,
+							"startDate": null,
+							"endDate": null,
+							"caseInsensitive": false,
+							"numberOperation": "EQUALS",
+							"stringOperation": "EQUALS",
+							"mergeCondition": "OR"  //OR.. NOT.. AND..
+						}]
+				};
+				
+				var searchRequest = {
+					type: 'Advance',
+					query: searchObj
+				};
+				
+				CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+				window.location.href = 'searchResults.jsp?showcomponent=' + componentId;				
 			}
 		};
 				
@@ -315,7 +345,7 @@ limitations under the License.
 					
 					var template = new Ext.XTemplate(
 						'<div class="home-highlight-item">',
-						'	<h2><a href="view.jsp?id={componentId}&fullPage=true" class="link" target="_blank"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{name}</a></h2>',
+						'	<h2><a href="#" class="link" onclick="homepage.viewRecentlyAdded(\'{componentId}\');"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{name}</a></h2>',
 						'	<div class="home-highlight-item-desc">{displayDesc}</div>',
 						'	<div class="home-highlight-approved">Approved: {[Ext.util.Format.date(values.addedDts, "m/d/y")]}</div>',						
 						'</div>'
