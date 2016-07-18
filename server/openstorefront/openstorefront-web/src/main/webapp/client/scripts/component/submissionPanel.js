@@ -817,14 +817,36 @@ Ext.define('OSF.component.SubmissionPanel', {
 										combo.up('form').getComponent('contactType').setValue(contactType);
 									}
 								}
-							}),							
-							{
-								xtype: 'textfield',
-								fieldLabel: 'Last Name <span class="field-required" />',									
-								allowBlank: false,								
-								maxLength: '80',
-								name: 'lastName'
-							},
+							}),
+							Ext.create('OSF.component.StandardComboBox', {
+								name: 'lastName',									
+								allowBlank: false,									
+								margin: '0 0 5 0',
+								width: '100%',
+								fieldLabel: 'Last Name <span class="field-required" />',
+								forceSelection: false,
+								valueField: 'lastName',
+								displayField: 'lastName',
+								maxLength: '80',							
+								listConfig: {
+									itemTpl: [
+										 '{lastName} <span style="color: grey">({email})</span>'
+									]
+								},								
+								storeConfig: {
+									url: '../api/v1/resource/contacts/filtered'
+								},
+								listeners: {
+									select: function(combo, record, opts) {
+										record.set('componentContactId', null);
+										record.set('contactId', null);
+										var contactType =  combo.up('form').getComponent('contactType').getValue();
+										combo.up('form').reset();
+										combo.up('form').loadRecord(record);
+										combo.up('form').getComponent('contactType').setValue(contactType);
+									}
+								}
+							}),									
 							{
 								xtype: 'textfield',
 								fieldLabel: 'Email <span class="field-required" />',																																	
