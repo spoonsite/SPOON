@@ -10,14 +10,14 @@
 	<packaging>pom</packaging>
 	<name>openstorefront-plugin</name>
 	<modules>
-    <module>example</module>
-  </modules>
+		<module>example</module>
+	</modules>
  
 	<dependencies>
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
-			<version>5.0.0</version>			
+			<version>6.0.0</version>			
 		</dependency>
 	</dependencies>	
 </project>

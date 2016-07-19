@@ -45,6 +45,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -53,7 +54,6 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.suggest.SuggestResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -74,6 +74,7 @@ public class ElasticSearchManager
 	private static final String INDEX = "openstorefront";
 	private static final String INDEX_TYPE = "component";
 	
+	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static Client client;
 	
 	public static void init() 
@@ -82,8 +83,10 @@ public class ElasticSearchManager
 		Integer port = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_ELASTIC_PORT, "9300"));
 				
 		try {
+			log.log(Level.INFO, MessageFormat.format("Connecting to ElasticSearch at {0}", host + ":" + port));
+			
 			client = TransportClient.builder().build()
-					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
+					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));			
 		} catch (UnknownHostException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to find elastic search server host", "Check configuration;  Check Host and Port;   property: " + PropertiesManager.KEY_ELASTIC_HOST + " current value: " + host);
 		}
@@ -106,13 +109,16 @@ public class ElasticSearchManager
 	public void initialize()
 	{
 		ElasticSearchManager.init();
+		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
 		ElasticSearchManager.cleanup();
+		started.set(false);
 	}
+	
 
 	private ServiceProxy service = ServiceProxy.getProxy();
 	
@@ -122,6 +128,8 @@ public class ElasticSearchManager
 		ComponentSearchWrapper componentSearchWrapper = new ComponentSearchWrapper();
 		
 		IndexSearchResult indexSearchResult = doIndexSearch(INDEX, filter);
+		
+		SearchServerManager.updateSearchScore(searchQuery.getQuery(), indexSearchResult.getSearchViews());		
 		
 		componentSearchWrapper.setData(indexSearchResult.getSearchViews());
 		componentSearchWrapper.setResults(indexSearchResult.getSearchViews().size());
@@ -148,7 +156,11 @@ public class ElasticSearchManager
 		
 		SearchResponse response = ElasticSearchManager.getClient()				
 				.prepareSearch(INDEX)							
-				.setQuery(QueryBuilders.queryStringQuery(query))
+				.setQuery(QueryBuilders
+						.boolQuery()
+						.should(QueryBuilders.wildcardQuery("_all", query))
+						.should(QueryBuilders.fuzzyQuery("_all", query))
+						)						
 				.setFrom(filter.getOffset())
 				.setSize(maxSearchResults)
 				.addSort(filter.getSortField(), OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ?  SortOrder.ASC : SortOrder.DESC)		
@@ -162,9 +174,14 @@ public class ElasticSearchManager
  		for (SearchHit hit : response.getHits().getHits()) {
 			try {
 				ComponentSearchView view  = objectMapper.readValue(hit.getSourceAsString(), new TypeReference<ComponentSearchView>(){});
-				view.setSearchScore(hit.getScore());
-				indexSearchResult.getSearchViews().add(view);
-				indexSearchResult.getResultsList().add(SolrComponentModel.fromComponentSearchView(view));
+				if (service.getComponentService().checkComponentApproval(view.getComponentId())) {
+					view.setSearchScore(hit.getScore());
+					indexSearchResult.getSearchViews().add(view);
+					indexSearchResult.getResultsList().add(SolrComponentModel.fromComponentSearchView(view));
+				} else {
+					log.log(Level.FINER, MessageFormat.format("Component is no long approved and active.  Removing index.  {0}", view.getComponentId()));										
+					deleteById(view.getComponentId());
+				}
 			} catch (IOException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to handle search result", "check index database", ex);
 			}
@@ -177,16 +194,62 @@ public class ElasticSearchManager
 	{
 		List<SearchSuggestion> searchSuggestions = new ArrayList<>();
 		
-		SuggestResponse response = ElasticSearchManager.getClient()
-				.prepareSuggest(INDEX)				
-				.setSuggestText(query)
-				.execute()
-				.actionGet();
+		FilterQueryParams filter = FilterQueryParams.defaultFilter();
+				
+		query = "*" + query + "*";
 		
-		response.getSuggest().forEach(suggestion -> {
-			//suggestion.getEntries().stream().forEach(client);
-		});
+		//query everything we can
+		String extraFields[] = {
+			SolrComponentModel.FIELD_NAME, 
+			SolrComponentModel.FIELD_ORGANIZATION, 
+			SolrComponentModel.FIELD_DESCRIPTION, 
+		};
+		IndexSearchResult indexSearchResult = doIndexSearch(query, filter, extraFields);
 		
+		//apply weight to items
+		if (org.apache.commons.lang3.StringUtils.isBlank(query)) {
+			query = "";
+		}
+		
+		String queryNoWild = query.replace("*", "").toLowerCase();
+		for (SolrComponentModel model : indexSearchResult.getResultsList()) {
+			int score = 0;
+						
+			if (org.apache.commons.lang3.StringUtils.isNotBlank(model.getName()) &&
+					model.getName().toLowerCase().contains(queryNoWild)) {
+				score += 100;
+			}
+			
+			if (org.apache.commons.lang3.StringUtils.isNotBlank(model.getOrganization()) &&
+					model.getOrganization().toLowerCase().contains(queryNoWild)) {
+				score += 50;
+			}
+			
+			int count = org.apache.commons.lang3.StringUtils.countMatches(model.getDescription().toLowerCase(), queryNoWild);
+			score += count * 5;	
+			
+			model.setSearchWeight(score);			
+		}
+		
+		//sort
+		indexSearchResult.getResultsList().sort((SolrComponentModel o1, SolrComponentModel o2) -> Integer.compare(o2.getSearchWeight(), o1.getSearchWeight()));
+		
+		//window
+		List<SolrComponentModel> topItems = indexSearchResult.getResultsList().stream().limit(maxResult).collect(Collectors.toList());
+		
+		for (SolrComponentModel model : topItems) {
+			
+			SearchSuggestion suggestion = new SearchSuggestion();
+			suggestion.setName(model.getName());
+			suggestion.setComponentId(model.getId());
+			suggestion.setQuery("\"" + model.getName() + "\"");
+			
+			// Only include approved components.
+			if (service.getComponentService().checkComponentApproval(suggestion.getComponentId())) {
+				searchSuggestions.add(suggestion);
+			}
+		}		
+				
 		return searchSuggestions;
 	}
 
@@ -256,6 +319,7 @@ public class ElasticSearchManager
 		//query all
 		SearchResponse response = ElasticSearchManager.getClient()
 				.prepareSearch()
+				.setQuery(QueryBuilders.matchAllQuery())
 				.execute()
 				.actionGet();
 		
@@ -293,6 +357,12 @@ public class ElasticSearchManager
 	{
 		deleteAll();
 		saveAll();		
+	}
+
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
 	}
 	
 }

@@ -113,6 +113,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 					disabled: true,
 					iconCls: 'fa fa-2x fa-binoculars',
 					handler: function () {
+						var grid = this.up('grid');
 						var componentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
 						var frame = Ext.create('OSF.ux.IFrame', {							
 						});
@@ -130,7 +131,13 @@ Ext.define('OSF.component.UserWatchPanel', {
 							]
 						});					
 						entryViewWindow.show();
-						frame.load('view.jsp?fullPage=true&id=' + componentId);																
+						frame.load('view.jsp?fullPage=true&id=' + componentId);	
+						
+						frame.on('load', function(){
+							Ext.defer(function(){
+								grid.actionRefresh();
+							}, 2000);
+						});
 					}									
 				},
 				{

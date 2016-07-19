@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import java.text.MessageFormat;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
@@ -40,6 +41,7 @@ public class MailManager
 
 	private static final Logger log = Logger.getLogger(MailManager.class.getName());
 
+	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static Mailer mailer;
 
 	public static void init()
@@ -108,12 +110,20 @@ public class MailManager
 	public void initialize()
 	{
 		MailManager.init();
+		started.set(true);		
 	}
 
 	@Override
 	public void shutdown()
 	{
 		MailManager.cleanup();
+		started.set(false);
 	}
 
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
+	}	
+	
 }

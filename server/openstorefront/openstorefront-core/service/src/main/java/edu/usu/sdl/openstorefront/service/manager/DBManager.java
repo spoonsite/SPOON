@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,6 +41,7 @@ public class DBManager
 
 	public static final String ENTITY_MODEL_PACKAGE = "edu.usu.sdl.openstorefront.core.entity";
 
+	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static OServer server;
 	private static OObjectDatabasePool globalInstance;
 
@@ -87,6 +89,7 @@ public class DBManager
 				db.getEntityManager().registerEntityClasses(ENTITY_MODEL_PACKAGE);
 			}
 
+			started.set(true);
 			log.info("Finished.");
 		} catch (Exception ex) {
 			log.log(Level.SEVERE, "Error occuring starting orient", ex);
@@ -107,12 +110,19 @@ public class DBManager
 		if (server != null) {
 			server.shutdown();
 		}
+		started.set(false);
 		log.info("Finished.");
 	}
 
 	public static OObjectDatabaseTx getConnection()
 	{
 		return globalInstance.acquire("remote:localhost/openstorefront", PropertiesManager.getValue(PropertiesManager.KEY_DB_USER), PropertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+	}
+
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
 	}
 
 }

@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.service.manager.resource.DBLogHandler;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -34,6 +35,7 @@ public class DBLogManager
 
 	private static final Logger log = Logger.getLogger(DBLogManager.class.getName());
 	private static DBLogHandler logHandler;
+	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static long getMaxLogEntries()
 	{
@@ -84,12 +86,20 @@ public class DBLogManager
 	public void initialize()
 	{
 		DBLogManager.init();
+		started.set(true);		
 	}
 
 	@Override
 	public void shutdown()
 	{
 		DBLogManager.cleanup();
+		started.set(false);
+	}
+
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
 	}
 
 }

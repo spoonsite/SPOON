@@ -31,48 +31,29 @@ licensed under Apache V2.**
 ## 1.1 Release Notes
 ------
 
-**What's new in v2.0:**
+**What's new in v2.1:**
+*+Current NEW FEATURES Include:+*
+* STORE-656 Add Data Mapping Support for Imports
+* STORE-659 Add ability to add new parses as plugins
+* STORE-811 Visualization Interactive Report
+* STORE-849 Relationship Management Tool
+* -STORE-903 Tag Search-
+* STORE-930 Argo Integration
+* -STORE-941 Allow section of message recipients from main user profile grid-
 
-* **Advanced and Saved Searches:**
+*+Current IMPROVEMENTS Include:+*
+* STORE-427 System Export/Import
+* -STORE-793 User Profile Export-
+* STORE-822 Improve Simple Search
+* *STORE-871 Handling of Inline Media*
+* STORE-933 Improve Describe Record Support
+* STORE-956 Media Handling Improvements
+* STORE-945 v2.1 Mainenance
+For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.1" target="_blank">v2.1</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
-	The Search Tools are now accessed from a button to the right of the search (text) box.  Two new tabs have been added to the search tools window:  _Advanced (Search)_ and _Saved Searches_.  Advanced Search allows for many different custom combinations of fields, selectable via drop-down menus and text entry.  Multiple search criteria can be added with OR, AND, or NOT conditions.  Once the correct combination is found, results can be previewed and the search can be saved for later use.  The Saved Searches tab contains a list of the users saved searches that can be executed to find results.  Saved Searches are managed from a new area in the User Tools section.
-
-* **Improved Submission Process:**
-
-	The entry submission process has been improved including new _Save and Edit Later_ and _Submit for Review_ button options.  In addition _Pending_ entries that are edited are automatically moved to _Not Submitted_ unless they are submitted again for review.  Approved entries can have a _Change Request_ added or can have a _Removal Request_ for approval to remove it from the website.
-
-* **User Submitted Corrections, Request Ownership:**
-
-	Any user can submit a correction for an entry on the website.  From the search results details area, if you do not already own the entry a new horizontal line icon appears with two sub-menus:  _Submit Correction_ and _Request Ownership_.  These bring up a form to enter your suggested correction or reasoning for requesting ownership of the entry.
-
-* **Custom Dashboards:**
-
-	The User Tools and Admin Tools homepage is now a customizable dashboard allowing the user to add widgets such as:  Notifications, Questions, Reports, Saved Searches, Submission Status, and Watches.  Additional widgets are available on the Admin Tools dashboard.  
-
-* **Search Results Improvements:**
-
-	-- Search results can now display additional data about the results such as vitals and average review score.   
-	-- The side-by-side compare feature is now integrated in the result page to avoid disruptions.  
-	-- Entries can now be quickly filtered by topic (type of entry).   
-	-- The export of the search results is now more direct instead of running a report.  
-
-* **Entry Details Improvements:**
-
-	-- Related entry for an organization can now be viewed by clicking on the organization link.  
-	-- Entry Vitals can show related entries by clicking on the vital value.  
-	-- Relationships are more easier to navigate by click on the related item.  Also the "+" symbol allows for a quick view with losing the currently viewed entry. 
-
-* **User Tool Improvements:**
-
-	-- Question and Answers that you have posted can be managed in one place.    
-	-- Reviews, Reports and Watches have all been updated to make them more consistent and easier to use.  
-
-For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.0" target="_blank">v2.0</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
-
-## 1.2 Known Issues, v2.0 * 
+## 1.2 Known Issues, v2.1 * 
  
-1. Full Screen video view button not available in search results when not in full page. (Affects: IE 9, 10) 
-Workaround: Open entry details in full page mode then view the video.
+1. 
 
 # 2.  User Features
 ------
@@ -262,11 +243,13 @@ on the icon to display the Search Tools window.  Five tabs are displayed:
 
 2.  Category
 
-3.  Architecture
+3.  Tag
 
-4.  Advanced
+4. Architecture
 
-5.  Saved Searches
+5.  Advanced
+
+6.  Saved Searches
 
 ### 2.2.1 Topic Search Tool
 ------
@@ -289,7 +272,17 @@ subcategory to display search results.  Clicking on the column name sorts
 the table by that column.  Clicking on the link button opens the 
 individual entry, or all results can be displayed in a new window.
 
-### 2.2.3 Architecture Search Tool
+
+### 2.2.3 Tag Search Tool 
+------
+
+This window displays a list of all tags on the left.  Clicking on a tag 
+shows the related entries that have that tag.  For details of an entry
+click on the link to the right of the description or the Show Results
+diagonal arrow to Show (all) Results with that tag.
+
+
+### 2.2.4 Architecture Search Tool
 ------
 
 The Architecture tab window displays a hierarchy of results per SvcV-4 
@@ -298,7 +291,7 @@ on the **+** button expands an individual folder and **-** collapses the folder.
 Search results are displayed with sortable columns and links to individual 
 results or the entire search results can be opened in a new page.
 
-### 2.2.4 Advanced Search
+### 2.2.5 Advanced Search Tool 
 ------
 
 The Advanced Search tab provides a powerful tool to query the data in the Clearinghouse.
@@ -319,7 +312,7 @@ This allows the user to refine a search based on:
 **Save:(Search)**  The advanced search can be saved.  See the next section for details.
 
 
-### 2.2.5 Saved Searches
+### 2.2.6 Saved Searches
 ------
 
 You can save complex advanced searches for later retrieval and querying.  From the Advanced tab, 
@@ -1299,6 +1292,14 @@ emailed to the email address listed in their profile.
 
 **NOTE:** Messages are sent to email addresses one at a time so that no email
 addresses are leaked to other users.
+
+**To Export user data:**
+
+1.  Select the users desired for the export.
+
+2.  Click on Export above and to the right of the table.
+
+3.  Save the .json file locally.  The file contains the user information.
 
 
 ## 3.3 Application Management *
