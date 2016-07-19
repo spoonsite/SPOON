@@ -25,7 +25,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 	plugins: ['spriteevents'],
 	//style: 'cursor: pointer',
 	bodyStyle: 'background: #2d2c2c;',
-	viewData: [],		
+	viewData: [],	
+	customActions: [],
 	
 	/**
 	 * RELATION, TAGS, ORG, ATT
@@ -65,6 +66,46 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}
 		};
 		
+		var menuItems = [
+			{
+				text: 'Expand',
+				iconCls: 'fa fa-expand',
+				handler: function(){
+					visPanel.loadNextLevel(visPanel.actionMenu.eventContext.key, 
+									visPanel.actionMenu.eventContext.type, 
+									visPanel.actionMenu.eventContext.name
+					);
+				}
+			},
+			{
+				text: 'Collapse',
+				iconCls: 'fa fa-compress',
+				handler: function(){
+					var sprite = visPanel.actionMenu.eventContext.sprite;
+					var nodesKeysToRemove = [];
+					Ext.Array.each(sprite.node.edges, function(edge){
+						if (edge.targetKey !== visPanel.actionMenu.eventContext.key) {
+							nodesKeysToRemove.push(edge.targetKey);
+						}
+					});
+					visPanel.removeNodes(nodesKeysToRemove);
+				}
+			},
+			{
+				xtype: 'menuseparator'
+			}
+		];
+		
+				
+		visPanel.actionMenu = Ext.create('Ext.menu.Menu', {
+			items: Ext.Array.merge(menuItems,  visPanel.customActions)
+		});
+		
+		var tip = Ext.create('Ext.tip.ToolTip', {
+			dismissDelay: 2000,
+			html: ''
+		});
+		
 		visPanel.on('spritemouseout', function(item, event, eOpts){
 			var sprite = item && item.sprite;	
 			if (sprite.node) {
@@ -88,6 +129,20 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			if (sprite.node) {
 				//console.log("Name: " + (sprite.node.name ? sprite.node.name : sprite.node.targetName) + " xy: " + sprite.x + ', ' + sprite.y);
 				
+				var type = sprite.node.type ? sprite.node.type : sprite.node.targetType;
+				if (type === 'component') {
+					type = 'Entry';
+				}
+				if (type === 'attribute') {
+					type = 'Attribute/Vital';
+				}
+				var tipXY = event.xy;
+				tipXY[0] += 20;
+				tipXY[1] += 20;
+				
+				tip.update(type);
+				tip.showAt(tipXY);
+				
 				visPanel.setStyle({
 					cursor: 'pointer'
 				});
@@ -104,11 +159,22 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		
 		visPanel.on('spriteclick', function(item, event, opts){
 			var sprite = item && item.sprite;
+			
 			if (sprite.node && !sprite.nodeText) {
+				
+				
+				
 				var key  = sprite.node.key ? sprite.node.key : sprite.node.targetKey;
 				var type = sprite.node.type ? sprite.node.type : sprite.node.targetType;
 				var name = sprite.node.name ? sprite.node.name : sprite.node.targetName;
-				visPanel.loadNextLevel(key, type, name);
+				visPanel.actionMenu.eventContext= {
+					sprite: sprite,
+					key: key,
+					type: type,
+					name: name
+				};
+				visPanel.actionMenu.showAt(event.xy);
+				
 				
 			} else if (sprite.node && sprite.nodeText) {
 				var winWidth = 500;
@@ -225,7 +291,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.on('spritemouseup', function(sprite, event, opts){
 			visPanel.camera.pan = false;	
 			visPanel.camera.startX = visPanel.camera.panX;
-			visPanel.camera.startY = visPanel.camera.panY;
+			visPanel.camera.startY = visPanel.camera.panY;						
 		});
 
 		visPanel.on('spritemousemove', function(item, event, opts){
@@ -272,7 +338,11 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			window.addEventListener("DOMMouseScroll", zoom, false);
 		} else {
 			window.attachEvent("onmousewheel", zoom);
-		}	
+		}
+		
+//		window.oncontextmenu = function (e){
+//			return false;
+//		};
 		
 	},
 	
@@ -364,6 +434,38 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}	
 		});
 		
+		visPanel.initVisual(visPanel.viewData);
+	},
+	
+	removeNodes: function(nodeKeysToRemove) {
+		var visPanel = this;
+	
+		var keepArray = [];
+		var addParent = true;
+		Ext.Array.each(visPanel.viewData, function(existingNode){
+			var found = Ext.Array.findBy(nodeKeysToRemove, function(nodeToRemove) {
+				if (existingNode.targetKey === nodeToRemove) {
+					return true;
+				} else {
+					return false;
+				}
+			});
+			if (!found) {
+				keepArray.push(existingNode);
+			} else {
+				//keep parent 
+				if (addParent) {
+					addParent = false;
+					keepArray.push({
+						key: existingNode.key,
+						label: existingNode.label,
+						type: existingNode.type
+					});
+				}
+
+			}
+		});
+		visPanel.viewData = keepArray;
 		visPanel.initVisual(visPanel.viewData);
 	},
 	
@@ -577,6 +679,14 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		}		
 	},
 	
+	updateVisual: function(relationShipData) {
+		var visPanel = this;
+		visPanel.viewType = null;
+		visPanel.reset();
+		visPanel.viewData = relationShipData;
+		visPanel.initVisual(visPanel.viewData);		
+	},
+	
 	initVisual: function(viewData) {
 		var visPanel = this;
 		
@@ -593,8 +703,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					edges: []
 				});				
 				nodeKeys[node.key] = true;
-			}
-			if (!nodeKeys[node.targetKey]) {
+			}			
+			if (node.targetKey &&  !nodeKeys[node.targetKey]) {
 				nodes.push({
 					key: node.targetKey,
 					name: node.targetName,
@@ -633,13 +743,15 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					return false;
 				}
 			});
-			ownerNode.edges.push({
-				targetKey: relationship.targetKey,
-				ownerKey: relationship.key,
-				relationshipLabel: relationship.relationshipLabel,
-				name: targetNode.name,
-				type: relationship.targetType
-			});
+			if (targetNode) {
+				ownerNode.edges.push({
+					targetKey: relationship.targetKey,
+					ownerKey: relationship.key,
+					relationshipLabel: relationship.relationshipLabel,
+					name: targetNode.name,
+					type: relationship.targetType
+				});
+			}
 		});
 		
 		
@@ -1272,80 +1384,82 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				}
 			});	
 			
-			var dx = targetNode.positionX - ownerNode.positionX;
-			var dy = targetNode.positionY - ownerNode.positionY;
-			var length = Math.sqrt(dx * dx + dy * dy);
-			if (length > 0)
-			{
-				dx /= length;				
-				dy /= length;
-			}
-			dx *= length - targetNode.nodeSize;
-			dy *= length - targetNode.nodeSize;
-			var endX = (ownerNode.positionX + dx);
-			var endY = (ownerNode.positionY + dy);				
-						
-			sprites.push(Ext.apply({}, {
-				fromX: ownerNode.positionX,
-				fromY: ownerNode.positionY,
-				toX: endX,					
-				toY: endY				
-			}, relationshipEdge));	
+			if (targetNode) {
 			
-			
-			
-			dx = endX - ownerNode.positionX;
-			dy = endY - ownerNode.positionY;
+				var dx = targetNode.positionX - ownerNode.positionX;
+				var dy = targetNode.positionY - ownerNode.positionY;
+				var length = Math.sqrt(dx * dx + dy * dy);
+				if (length > 0)
+				{
+					dx /= length;				
+					dy /= length;
+				}
+				dx *= length - targetNode.nodeSize;
+				dy *= length - targetNode.nodeSize;
+				var endX = (ownerNode.positionX + dx);
+				var endY = (ownerNode.positionY + dy);				
 
-			var theta = Math.atan2(dy, dx);
-			var rad = 35 * (Math.PI/180); //35 angle
-			var x = endX - arrowLength * Math.cos(theta + rad);
-			var y = endY - arrowLength * Math.sin(theta + rad);
+				sprites.push(Ext.apply({}, {
+					fromX: ownerNode.positionX,
+					fromY: ownerNode.positionY,
+					toX: endX,					
+					toY: endY				
+				}, relationshipEdge));	
 
-			var phi2 = -35 * (Math.PI/180);//-35 angle
-			var x2 = endX - arrowLength * Math.cos(theta + phi2);
-			var y2 = endY - arrowLength * Math.sin(theta + phi2);					
-						
-			sprites.push(Ext.apply({}, {
-				fromX: endX,
-				fromY: endY,
-				toX: x,					
-				toY: y
-			}, arrowLine));
-			
-			sprites.push(Ext.apply({}, {
-				fromX: endX,
-				fromY: endY,
-				toX: x2 ,					
-				toY: y2
-			}, arrowLine));	
-			
-			var xAdjust = 0;
-			if (theta === (90 * (Math.PI/180))) {
-				xAdjust = 10;
-			} 
-			if (theta === (-90 * (Math.PI/180))) {
-				xAdjust = -10;				
+
+
+				dx = endX - ownerNode.positionX;
+				dy = endY - ownerNode.positionY;
+
+				var theta = Math.atan2(dy, dx);
+				var rad = 35 * (Math.PI/180); //35 angle
+				var x = endX - arrowLength * Math.cos(theta + rad);
+				var y = endY - arrowLength * Math.sin(theta + rad);
+
+				var phi2 = -35 * (Math.PI/180);//-35 angle
+				var x2 = endX - arrowLength * Math.cos(theta + phi2);
+				var y2 = endY - arrowLength * Math.sin(theta + phi2);					
+
+				sprites.push(Ext.apply({}, {
+					fromX: endX,
+					fromY: endY,
+					toX: x,					
+					toY: y
+				}, arrowLine));
+
+				sprites.push(Ext.apply({}, {
+					fromX: endX,
+					fromY: endY,
+					toX: x2 ,					
+					toY: y2
+				}, arrowLine));	
+
+				var xAdjust = 0;
+				if (theta === (90 * (Math.PI/180))) {
+					xAdjust = 10;
+				} 
+				if (theta === (-90 * (Math.PI/180))) {
+					xAdjust = -10;				
+				}
+
+				//console.log(relationship.relationshipLabel + ' - ' + theta);
+				if (theta > (Math.PI/2) && theta <= Math.PI ) {
+					theta +=  Math.PI;
+					xAdjust  = 20;
+				}
+
+				if (theta < (Math.PI/2 * -1) && theta >= Math.PI * -1 ) {
+					theta +=  Math.PI;				
+					xAdjust = -15;
+				}			
+
+				sprites.push(Ext.apply({}, {
+					x:  (endX + ownerNode.positionX) /2 + xAdjust,
+					y:  ownerNode.positionY + (endY - ownerNode.positionY)/ 2 - 10,
+					text: Ext.util.Format.ellipsis(relationship.relationshipLabel, 20),
+					rotationRads: theta
+				}, relationshipText));				
 			}
-			
-			//console.log(relationship.relationshipLabel + ' - ' + theta);
-			if (theta > (Math.PI/2) && theta <= Math.PI ) {
-				theta +=  Math.PI;
-				xAdjust  = 20;
-			}
-			
-			if (theta < (Math.PI/2 * -1) && theta >= Math.PI * -1 ) {
-				theta +=  Math.PI;				
-				xAdjust = -15;
-			}			
-			
-			sprites.push(Ext.apply({}, {
-				x:  (endX + ownerNode.positionX) /2 + xAdjust,
-				y:  ownerNode.positionY + (endY - ownerNode.positionY)/ 2 - 10,
-				text: Ext.util.Format.ellipsis(relationship.relationshipLabel, 20),
-				rotationRads: theta
-			}, relationshipText));				
-			
 			
 		});
 	
@@ -1442,7 +1556,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 					value: 'RELATION',
 					store: {
 						data: [
-							{ code: 'RELATION', description: 'Relationships' },
+							{ code: 'RELATION', description: 'Entries' },
 							{ code: 'ORG', description: 'Organization' },
 							{ code: 'ATT', description: 'Attributes' },
 							{ code: 'TAGS', description: 'Tags' }
@@ -1531,12 +1645,19 @@ Ext.define('OSF.component.VisualContainerPanel', {
 					xtype: 'tbfill'					
 				},
 				{
-					text: 'Preview',
-					iconCls: 'fa fa-download',
-					tooltip: 'On preview right-click to save or copy image',
+					text: 'Download Image',
+					iconCls: 'fa fa-download',					
 					handler: function(){
 						var containerPanel = this.up('panel');
-						containerPanel.visualPanel.preview();
+						var data = containerPanel.visualPanel.getImage('png');
+						Ext.DomHelper.append(Ext.getBody(),
+										"<form id='visual-download' method='POST' action='Media.action?DataImage'>" + 
+										"<input type='hidden' name='imageData' value='" + data.data + "' /> " + 
+										"<input type='hidden' name='imageType' value='" + data.type + "' /> ");
+						var form = Ext.get("visual-download");	
+						form.dom.submit();
+						form.destroy();
+						
 					}
 				},
 				{
