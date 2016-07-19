@@ -28,12 +28,14 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.action.resolution.RangeResolutionBuilder;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -70,6 +72,12 @@ public class MediaAction
 		@Validate(required = true, field = "componentId", on = "UploadMedia")
 	})
 	private ComponentMedia componentMedia;
+	
+	@Validate(required = true, on = "DataImage")	
+	private String imageData;
+	
+	@Validate(required = true, on = "DataImage")
+	private String imageType;
 
 	@Validate(required = true, on = "UploadMedia")
 	private FileBean file;
@@ -273,7 +281,7 @@ public class MediaAction
 			log.log(Level.FINE, MessageFormat.format("Temporary Media with name: {0} is not found.", name));
 			return new StreamingResolution("image/png")
 			{
-
+				
 				@Override
 				protected void stream(HttpServletResponse response) throws Exception
 				{
@@ -304,6 +312,18 @@ public class MediaAction
 				.setRequest(getContext().getRequest())
 				.setFilename(temporaryMedia.getOriginalFileName())
 				.createRangeResolution();
+	}
+	
+	@HandlesEvent("DataImage")
+	public Resolution tranformDataImage()
+	{
+		String data[] = imageData.split(",");
+		
+		String mimeType = data[0].substring(data[0].indexOf(":") + 1, data[0].indexOf(";"));
+		
+		ByteArrayInputStream in = new ByteArrayInputStream(Base64.getDecoder().decode(data[1]));		
+		return new StreamingResolution(mimeType, in){					
+		}.setFilename("visual." + imageType);		
 	}
 
 	public String getMediaId()
@@ -354,6 +374,26 @@ public class MediaAction
 	public void setGeneralMedia(GeneralMedia generalMedia)
 	{
 		this.generalMedia = generalMedia;
+	}
+
+	public String getImageData()
+	{
+		return imageData;
+	}
+
+	public void setImageData(String imageData)
+	{
+		this.imageData = imageData;
+	}
+
+	public String getImageType()
+	{
+		return imageType;
+	}
+
+	public void setImageType(String imageType)
+	{
+		this.imageType = imageType;
 	}
 
 }
