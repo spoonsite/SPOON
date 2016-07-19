@@ -31,7 +31,7 @@ limitations under the License.
 		Ext.onReady(function(){	
 			
 			var visualPanel = Ext.create('OSF.component.VisualContainerPanel', {
-			
+				title: 'View Relationships <i class="fa fa-question-circle"  data-qtip="Show relationships amoung entries based on organization, attributes, tags and direct relationships."></i>'
 			});
 			
 			Ext.create('Ext.container.Viewport', {
