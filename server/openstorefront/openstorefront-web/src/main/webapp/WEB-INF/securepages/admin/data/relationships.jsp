@@ -59,6 +59,15 @@
 					}
 
 				};
+
+				var entryTypeStore = Ext.create('Ext.data.Store', {
+					storeId: 'entryTypeStore',
+					proxy: {
+						type: 'ajax',
+						url: '../api/v1/resource/componenttypes/lookup'
+					},
+					autoLoad: true
+				});
 				
 				var componentRelationshipsListingStore = Ext.create('Ext.data.Store', {
 					storeId: 'componentRelationshipsListingStore',
@@ -149,11 +158,27 @@
 					},
 					autoLoad: true,
 					listeners: {
-						load: function () {
+						load: function (store, records, successful, eOpts) {
 							componentRelationshipsListingStore.load();
+							Ext.getStore('targetStore').add(records);
 						}
 					}
 				}); 
+
+				var targetStore = Ext.create('Ext.data.Store', {
+					storeId: 'targetStore',
+					fields: [
+						{ 
+							name: 'name',
+							type: 'string'
+						}
+					],
+					sorters: new Ext.util.Sorter({
+						property: 'name',
+						direction: 'ASC'
+					})
+				});
+
 				
 				var typePromptWindow = Ext.create('Ext.window.Window', {
 					id: 'typePromptWindow',
@@ -176,7 +201,7 @@
 							valueField: 'code',
 							width: '100%',
 							emptyText: 'Select a relationship type',
-							store: relationshipTypeStore,
+							store: relationshipTypeStore
 						}
 					],
 					dockedItems: [
@@ -191,7 +216,7 @@
 									}
 								},
 								{
-									xtype: 'tbfill',
+									xtype: 'tbfill'
 								},
 								{
 									text: 'Create Relationship',
@@ -222,12 +247,6 @@
 												Ext.toast(message, '', 'tr');
 												Ext.getCmp('relationshipsGrid').getStore().load();
 												typePromptWindow.hide();
-
-												// If this is from the 'Create Inverse' button, we need to disable the toolbar items.
-												if (typePromptWindow.openSource === 'inverse') {
-													Ext.getCmp('relationshipGridAction-CreateInverse').disable();
-													Ext.getCmp('relationshipGridAction-Delete').disable();
-												}
 											},
 											failure: function (response, opts) {
 												Ext.MessageBox.alert('Failed to create relationship for "' + originName + '"');
@@ -252,7 +271,7 @@
 						plugins: {
 							ddGroup: 'relationship',
 							ptype: 'celltocelldragdrop',
-							enableDrop: false,
+							enableDrop: false
 						}
 					},
 					columns: [
@@ -265,12 +284,40 @@
 								if (!num) num = 0;
 								var html = "<strong>" + value + "</strong>";
 								html += '<p style="color: #999; margin-bottom: 0.5em;">';
-								html += '<i class="fa fa-book fa-fw"></i> '
+								html += '<i class="fa fa-book fa-fw"></i> ';
 								html += '<span style="padding-right: 20px">' + record.get('componentTypeDescription') + '</span>';
 								html += '<span style="float: right"><i class="fa fa-share-alt"></i> ' + num + '</span>';
 								html += "</p>";
 								return html;
-							},
+							}
+						}
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									xtype: 'tagfield',
+									fieldLabel: 'Entry Types',
+									flex: 1,
+									store: entryTypeStore,
+									valueField: 'code',
+									displayField: 'description',
+									emptyText: 'All',
+									listeners: {
+										change: function (tagfield, newValue, oldValue, eOpts) {
+											componentsStore.clearFilter();
+											componentsStore.selectedValues = newValue;
+											if (newValue.length > 0) {
+												componentsStore.filterBy(filter = function multiFilter(record) {
+													return Ext.Array.contains(componentsStore.selectedValues, record.get('componentType'));
+												});
+											}
+										}
+									}
+								}
+							]
 						}
 					],
 					listeners: {
@@ -287,7 +334,7 @@
 
 				var targetGrid = Ext.create('Ext.grid.Panel', {
 					id: 'targetGrid',
-					store: componentsStore,
+					store: targetStore,
 					flex: 1,
 					border: true,
 					selectable: false,
@@ -341,17 +388,46 @@
 								if (!num) num = 0;
 								var html = "<strong>" + value + "</strong>";
 								html += '<p style="color: #999; margin-bottom: 0.5em;">';
-								html += '<i class="fa fa-book fa-fw"></i> '
+								html += '<i class="fa fa-book fa-fw"></i> ';
 								html += '<span style="padding-right: 20px">' + record.get('componentTypeDescription') + '</span>';
 								html += "</p>";
 								return html;
-							},
+							}
 
+						}
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									xtype: 'tagfield',
+									fieldLabel: 'Entry Types',
+									flex: 1,
+									store: entryTypeStore,
+									valueField: 'code',
+									displayField: 'description',
+									emptyText: 'All',
+									listeners: {
+										change: function (tagfield, newValue, oldValue, eOpts) {
+											targetStore.clearFilter();
+											targetStore.selectedValues = newValue;
+											if (newValue.length > 0) {
+												targetStore.filterBy(filter = function multiFilter(record) {
+													return Ext.Array.contains(targetStore.selectedValues, record.get('componentType'));
+												});
+											}
+										}
+									}
+								}
+							]
 						}
 					],
 					listeners: {
 						beforeselect: function(grid, record, index, eOpts) {
 							originGrid.getView().select(record);
+							originGrid.getView().scrollRowIntoView(index);
 						},
 						select: function(grid, record, index, eOpts) {
 							return false;
@@ -425,10 +501,8 @@
 					listeners: {
 						select: function(grid, record, index, eOpts) {
 							if (relationshipsGrid.getSelectionModel().hasSelection()) {
-								Ext.getCmp('relationshipGridAction-CreateInverse').enable();
 								Ext.getCmp('relationshipGridAction-Delete').enable();
 							} else {
-								Ext.getCmp('relationshipGridAction-CreateInverse').disable();
 								Ext.getCmp('relationshipGridAction-Delete').disable();
 							}
 
@@ -444,7 +518,7 @@
 									text: 'Refresh',
 									iconCls: 'fa fa-refresh',
 									handler: function () {
-										relationshipsStore.load()
+										relationshipsStore.load();
 									}
 								},
 								{
@@ -458,7 +532,7 @@
 										var msg = 'Are you sure you want to delete this relationship?';
 										Ext.MessageBox.confirm(title, msg, function (btn) {
 											if (btn === 'yes') {
-												var url = '/openstorefront/api/v1/resource/components/'
+												var url = '/openstorefront/api/v1/resource/components/';
 												url += record.get('ownerComponentId') + "/relationships/";
 												url += record.get('relationshipId');
 												var method = "DELETE";
@@ -468,7 +542,6 @@
 													success: function (response, opts) {
 														Ext.toast('Successfully deleted relationship', '', 'tr');
 														relationshipsStore.load();
-														Ext.getCmp('relationshipGridAction-CreateInverse').disable();
 														Ext.getCmp('relationshipGridAction-Delete').disable();
 													},
 													failure: function (response, opts) {
@@ -481,33 +554,6 @@
 
 									}
 								},
-								{
-									text: 'Create Inverse',
-									iconCls: 'fa fa-exchange',
-									id: 'relationshipGridAction-CreateInverse',
-									disabled: true,
-									handler: function() {
-										var record = Ext.getCmp('relationshipsGrid').getSelection()[0];
-										// Set up reverse direction for prompt window.
-										typePromptWindow.targetId = record.get('ownerComponentId');
-										typePromptWindow.targetName = record.get('ownerComponentName');
-										typePromptWindow.originId = record.get('targetComponentId');
-										typePromptWindow.originName = record.get('targetComponentName');
-										typePromptWindow.openSource = 'inverse';
-
-										// Set up html for prompt
-										var html = '<strong>Origin Entry:</strong> ';
-										html += typePromptWindow.originName;
-										html += '<br />';
-										html += '<strong>Target Entry:</strong> ';
-										html += typePromptWindow.targetName;
-										Ext.getCmp('relationshipWindowSelectorDesc').update(html);
-
-										// Show prompt
-										typePromptWindow.show();
-
-									}
-								}
 							]
 						}
 					]
@@ -558,7 +604,7 @@
 				});
 
 				var relationshipsMainLayout = Ext.create('Ext.panel.Panel', {
-					title: 'Relationship Management Tool',
+					title: 'Relationship Management Tool <i class="fa fa-question-circle"  data-qtip="Quickly create relationships between entries by dragging from the origin grid to the target grid."></i>',
 					layout: 'border',
 					height: '100%',
 					items: [
@@ -586,7 +632,7 @@
 							id: 'center-container',
 							layout: {
 								type: 'border',
-								align: 'stretch',
+								align: 'stretch'
 							},
 							items: [
 								relationshipsGrid, visualizationPanel
