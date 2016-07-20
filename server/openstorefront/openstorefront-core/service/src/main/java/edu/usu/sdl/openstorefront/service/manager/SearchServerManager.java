@@ -79,46 +79,47 @@ public class SearchServerManager
 	
 	public static void updateSearchScore(String query, List<ComponentSearchView> views)
 	{
-		String queryNoWild = query.replace("*", "").toLowerCase();
-		for (ComponentSearchView view : views) {
-			float score = 0;
-						
-			if (StringUtils.isNotBlank(view.getName()) &&
-					view.getName().toLowerCase().contains(queryNoWild)) {
-				score += 100;
-			}
-			
-			if (StringUtils.isNotBlank(view.getOrganization()) &&
-					view.getOrganization().toLowerCase().contains(queryNoWild)) {
-				score += 50;
-			}
-			
-	
-			if (StringUtils.isNotBlank(view.getDescription())) {
-				int count = StringUtils.countMatches(view.getDescription().toLowerCase(), queryNoWild);
-				score += count * 5;	
-			}
-			
-			for (ComponentTag tag : view.getTags()) {
-				int count = StringUtils.countMatches(tag.getText().toLowerCase(), queryNoWild);
-				score += count * 5;				
-			}
+		if (StringUtils.isNotBlank(query)) {
+			String queryNoWild = query.replace("*", "").toLowerCase();
+			for (ComponentSearchView view : views) {
+				float score = 0;
 
-			for (SearchResultAttribute attribute : view.getAttributes()) {
-				int count = StringUtils.countMatches(attribute.getLabel().toLowerCase(), queryNoWild);
-				score += count * 5;				
-				
-				count = StringUtils.countMatches(attribute.getTypeLabel().toLowerCase(), queryNoWild);
-				score += count * 5;				
+				if (StringUtils.isNotBlank(view.getName())
+						&& view.getName().toLowerCase().contains(queryNoWild)) {
+					score += 100;
+				}
+
+				if (StringUtils.isNotBlank(view.getOrganization())
+						&& view.getOrganization().toLowerCase().contains(queryNoWild)) {
+					score += 50;
+				}
+
+				if (StringUtils.isNotBlank(view.getDescription())) {
+					int count = StringUtils.countMatches(view.getDescription().toLowerCase(), queryNoWild);
+					score += count * 5;
+				}
+
+				for (ComponentTag tag : view.getTags()) {
+					int count = StringUtils.countMatches(tag.getText().toLowerCase(), queryNoWild);
+					score += count * 5;
+				}
+
+				for (SearchResultAttribute attribute : view.getAttributes()) {
+					int count = StringUtils.countMatches(attribute.getLabel().toLowerCase(), queryNoWild);
+					score += count * 5;
+
+					count = StringUtils.countMatches(attribute.getTypeLabel().toLowerCase(), queryNoWild);
+					score += count * 5;
+				}
+
+				score = (float) score / 150f;
+				if (score > 1) {
+					score = 1;
+				}
+
+				view.setSearchScore(score);
 			}
-			
-			score = (float) score /150f;
-			if (score > 1) {
-				score = 1;
-			}
-			
-			view.setSearchScore(score);			
-		}		
+		}
 	}
 	
 	@Override
