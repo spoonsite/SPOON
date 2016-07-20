@@ -108,7 +108,9 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 					image.setAttribute('data-storefront-ignore', true);
 				}
 			});
-			editor.dom.setHTML(editor.getBody(), elem.innerHTML);
+			Ext.getCmp('inlineMediaWindow').programmaticUpdate = true;
+			editor.setContent(elem.innerHTML);
+			Ext.getCmp('inlineMediaWindow').programmaticUpdate = false;
 		};
 
 		var checkIfDone = function checkIfDone() {
@@ -121,6 +123,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 					if (record.get('status') === 'OK') success_count++;
 					else if (record.get('status') === 'FAIL') failure_count++;
 				}
+				else failure_count++;
 			});
 
 			if (success_count === total_count) {
@@ -157,7 +160,9 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			var replacement = "/openstorefront/Media.action?TemporaryMedia&name=" + temporaryId;
 			var content = editor.getContent();
 			content = content.replace(originalUrl, replacement);
+			Ext.getCmp('inlineMediaWindow').programmaticUpdate = true;
 			editor.setContent(content);
+			Ext.getCmp('inlineMediaWindow').programmaticUpdate = false;
 		};
 
 		
