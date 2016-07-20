@@ -394,7 +394,8 @@ var CoreUtil = {
 			content_css : "contents.css",
 
 			menubar: true,
-			toolbar_items_size: 'small'				
+			toolbar_items_size: 'small',
+			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
 		};
 
 		if (additionalPlugins) {
@@ -424,7 +425,8 @@ var CoreUtil = {
 			content_css : "contents.css",
 
 			menubar: true,
-			toolbar_items_size: 'small'				
+			toolbar_items_size: 'small',
+			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
 
 		};
 
