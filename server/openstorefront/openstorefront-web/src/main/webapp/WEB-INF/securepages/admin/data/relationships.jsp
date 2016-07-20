@@ -59,6 +59,15 @@
 					}
 
 				};
+
+				var entryTypeStore = Ext.create('Ext.data.Store', {
+					storeId: 'entryTypeStore',
+					proxy: {
+						type: 'ajax',
+						url: '../api/v1/resource/componenttypes/lookup'
+					},
+					autoLoad: true
+				});
 				
 				var componentRelationshipsListingStore = Ext.create('Ext.data.Store', {
 					storeId: 'componentRelationshipsListingStore',
@@ -149,11 +158,27 @@
 					},
 					autoLoad: true,
 					listeners: {
-						load: function () {
+						load: function (store, records, successful, eOpts) {
 							componentRelationshipsListingStore.load();
+							Ext.getStore('targetStore').add(records);
 						}
 					}
 				}); 
+
+				var targetStore = Ext.create('Ext.data.Store', {
+					storeId: 'targetStore',
+					fields: [
+						{ 
+							name: 'name',
+							type: 'string'
+						}
+					],
+					sorters: new Ext.util.Sorter({
+						property: 'name',
+						direction: 'ASC'
+					})
+				});
+
 				
 				var typePromptWindow = Ext.create('Ext.window.Window', {
 					id: 'typePromptWindow',
@@ -267,6 +292,34 @@
 							},
 						}
 					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									xtype: 'tagfield',
+									fieldLabel: 'Entry Types',
+									flex: 1,
+									store: entryTypeStore,
+									valueField: 'code',
+									displayField: 'description',
+									emptyText: 'All',
+									listeners: {
+										change: function (tagfield, newValue, oldValue, eOpts) {
+											componentsStore.clearFilter();
+											componentsStore.selectedValues = newValue;
+											if (newValue.length > 0) {
+												componentsStore.filterBy(filter = function multiFilter(record) {
+													return Ext.Array.contains(componentsStore.selectedValues, record.get('componentType'));
+												});
+											}
+										}
+									}
+								}
+							]
+						}
+					],
 					listeners: {
 						select: function(grid, record, index, eOpts) {
 							var id = record.get('componentId');
@@ -281,7 +334,7 @@
 
 				var targetGrid = Ext.create('Ext.grid.Panel', {
 					id: 'targetGrid',
-					store: componentsStore,
+					store: targetStore,
 					flex: 1,
 					border: true,
 					selectable: false,
@@ -343,9 +396,38 @@
 
 						}
 					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									xtype: 'tagfield',
+									fieldLabel: 'Entry Types',
+									flex: 1,
+									store: entryTypeStore,
+									valueField: 'code',
+									displayField: 'description',
+									emptyText: 'All',
+									listeners: {
+										change: function (tagfield, newValue, oldValue, eOpts) {
+											targetStore.clearFilter();
+											targetStore.selectedValues = newValue;
+											if (newValue.length > 0) {
+												targetStore.filterBy(filter = function multiFilter(record) {
+													return Ext.Array.contains(targetStore.selectedValues, record.get('componentType'));
+												});
+											}
+										}
+									}
+								}
+							]
+						}
+					],
 					listeners: {
 						beforeselect: function(grid, record, index, eOpts) {
 							originGrid.getView().select(record);
+							originGrid.getView().scrollRowIntoView(index);
 						},
 						select: function(grid, record, index, eOpts) {
 							return false;
@@ -522,7 +604,7 @@
 				});
 
 				var relationshipsMainLayout = Ext.create('Ext.panel.Panel', {
-					title: 'Relationship Management Tool',
+					title: 'Relationship Management Tool <i class="fa fa-question-circle"  data-qtip="Quickly create relationships between entries by dragging from the origin grid to the target grid."></i>',
 					layout: 'border',
 					height: '100%',
 					items: [
