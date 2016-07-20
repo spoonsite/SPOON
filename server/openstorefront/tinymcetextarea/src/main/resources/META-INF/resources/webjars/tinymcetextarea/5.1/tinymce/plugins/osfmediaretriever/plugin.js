@@ -32,12 +32,15 @@ tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 				var url = images[i].src.trim();
 				if (url && url.indexOf('Media.action?') === -1) { 
 					if (!images[i].hasAttribute('data-storefront-ignore')) {
-						Ext.getStore('inlineMediaStore').add({
-							url: url,
-							result: 'Retrieving...',
-							status: 'RETR',
-							temporaryId: ''
-						});
+						var store = Ext.getStore('inlineMediaStore');
+						if (store.find('url', url) === -1) {
+							Ext.getStore('inlineMediaStore').add({
+								url: url,
+								result: 'Retrieving...',
+								status: 'RETR',
+								temporaryId: ''
+							});
+						}
 					}
 				}
 			}
