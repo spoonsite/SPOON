@@ -127,7 +127,7 @@ public class ElasticSearchManager
 	{
 		ComponentSearchWrapper componentSearchWrapper = new ComponentSearchWrapper();
 		
-		IndexSearchResult indexSearchResult = doIndexSearch(INDEX, filter);
+		IndexSearchResult indexSearchResult = doIndexSearch(searchQuery.getQuery(), filter);
 		
 		SearchServerManager.updateSearchScore(searchQuery.getQuery(), indexSearchResult.getSearchViews());		
 		
@@ -158,6 +158,8 @@ public class ElasticSearchManager
 				.prepareSearch(INDEX)							
 				.setQuery(QueryBuilders
 						.boolQuery()
+						.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_NAME, query))
+						.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_ORGANIZATION, query))
 						.should(QueryBuilders.wildcardQuery("_all", query))
 						.should(QueryBuilders.fuzzyQuery("_all", query))
 						)						
@@ -195,8 +197,9 @@ public class ElasticSearchManager
 		List<SearchSuggestion> searchSuggestions = new ArrayList<>();
 		
 		FilterQueryParams filter = FilterQueryParams.defaultFilter();
-				
-		query = "*" + query + "*";
+			
+		//ignore case
+		query = "*" + query.toLowerCase() + "*";
 		
 		//query everything we can
 		String extraFields[] = {

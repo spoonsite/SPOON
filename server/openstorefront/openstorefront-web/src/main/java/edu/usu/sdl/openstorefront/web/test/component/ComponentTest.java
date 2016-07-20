@@ -59,7 +59,7 @@ public class ComponentTest
 		component.setName("Test Component");
 		component.setDescription("Test Description");
 		component.setOrganization("Test");
-		component.setApprovalState(ApprovalStatus.PENDING);
+		component.setApprovalState(ApprovalStatus.APPROVED);
 		component.setGuid("5555555");
 		component.setLastActivityDts(TimeUtil.currentDate());
 		component.setActiveStatus(Component.ACTIVE_STATUS);

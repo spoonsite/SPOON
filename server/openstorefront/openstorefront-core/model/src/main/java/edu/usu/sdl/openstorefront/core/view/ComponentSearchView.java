@@ -39,7 +39,9 @@ import org.apache.commons.lang3.StringUtils;
 public class ComponentSearchView
 		extends StandardEntityView
 {
-
+	public static final String FIELD_NAME = "name";
+	public static final String FIELD_ORGANIZATION = "organization";
+	
 	private String listingType;
 	private String componentId;
 	private String name;
