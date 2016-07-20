@@ -31,7 +31,7 @@ tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 			for (var i=0;i<images.length;i++) {	
 				var url = images[i].src.trim();
 				if (url && url.indexOf('Media.action?') === -1) { 
-					if (images[i].className.indexOf('storefront-media-ignore') ===  -1) {
+					if (!images[i].hasAttribute('data-storefront-ignore')) {
 						Ext.getStore('inlineMediaStore').add({
 							url: url,
 							result: 'Retrieving...',
@@ -48,6 +48,8 @@ tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 
 
 	editor.on('change', function(e) {
-		task.delay(800);	
+		if (!Ext.getCmp('inlineMediaWindow').programmaticUpdate) {
+			task.delay(800);	
+		}
 	});
 });
