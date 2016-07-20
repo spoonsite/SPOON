@@ -222,12 +222,6 @@
 												Ext.toast(message, '', 'tr');
 												Ext.getCmp('relationshipsGrid').getStore().load();
 												typePromptWindow.hide();
-
-												// If this is from the 'Create Inverse' button, we need to disable the toolbar items.
-												if (typePromptWindow.openSource === 'inverse') {
-													Ext.getCmp('relationshipGridAction-CreateInverse').disable();
-													Ext.getCmp('relationshipGridAction-Delete').disable();
-												}
 											},
 											failure: function (response, opts) {
 												Ext.MessageBox.alert('Failed to create relationship for "' + originName + '"');
@@ -425,10 +419,8 @@
 					listeners: {
 						select: function(grid, record, index, eOpts) {
 							if (relationshipsGrid.getSelectionModel().hasSelection()) {
-								Ext.getCmp('relationshipGridAction-CreateInverse').enable();
 								Ext.getCmp('relationshipGridAction-Delete').enable();
 							} else {
-								Ext.getCmp('relationshipGridAction-CreateInverse').disable();
 								Ext.getCmp('relationshipGridAction-Delete').disable();
 							}
 
@@ -468,7 +460,6 @@
 													success: function (response, opts) {
 														Ext.toast('Successfully deleted relationship', '', 'tr');
 														relationshipsStore.load();
-														Ext.getCmp('relationshipGridAction-CreateInverse').disable();
 														Ext.getCmp('relationshipGridAction-Delete').disable();
 													},
 													failure: function (response, opts) {
@@ -481,33 +472,6 @@
 
 									}
 								},
-								{
-									text: 'Create Inverse',
-									iconCls: 'fa fa-exchange',
-									id: 'relationshipGridAction-CreateInverse',
-									disabled: true,
-									handler: function() {
-										var record = Ext.getCmp('relationshipsGrid').getSelection()[0];
-										// Set up reverse direction for prompt window.
-										typePromptWindow.targetId = record.get('ownerComponentId');
-										typePromptWindow.targetName = record.get('ownerComponentName');
-										typePromptWindow.originId = record.get('targetComponentId');
-										typePromptWindow.originName = record.get('targetComponentName');
-										typePromptWindow.openSource = 'inverse';
-
-										// Set up html for prompt
-										var html = '<strong>Origin Entry:</strong> ';
-										html += typePromptWindow.originName;
-										html += '<br />';
-										html += '<strong>Target Entry:</strong> ';
-										html += typePromptWindow.targetName;
-										Ext.getCmp('relationshipWindowSelectorDesc').update(html);
-
-										// Show prompt
-										typePromptWindow.show();
-
-									}
-								}
 							]
 						}
 					]
