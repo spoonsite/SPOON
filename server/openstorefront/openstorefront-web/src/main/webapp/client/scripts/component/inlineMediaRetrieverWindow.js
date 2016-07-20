@@ -105,7 +105,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			var images = elem.getElementsByTagName('img');
 			Ext.Array.each(images, function(image) {
 				if (image.src === originalURL) {
-					image.className += " storefront-media-ignore";
+					image.setAttribute('data-storefront-ignore', true);
 				}
 			});
 			editor.dom.setHTML(editor.getBody(), elem.innerHTML);
