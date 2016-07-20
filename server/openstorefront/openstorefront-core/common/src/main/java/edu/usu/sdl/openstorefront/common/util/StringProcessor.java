@@ -71,9 +71,10 @@ public class StringProcessor
 		}
 		return resource;
 	}
-	
+
 	/**
 	 * This get the last path name (handles both / \)
+	 *
 	 * @param originalFilename
 	 * @return just file name
 	 */
@@ -82,7 +83,7 @@ public class StringProcessor
 		StringBuilder filename = new StringBuilder();
 		if (StringUtils.isNotBlank(originalFilename)) {
 			for (int i = originalFilename.length() - 1; i >= 0; i--) {
-				char c = originalFilename.charAt(i);				
+				char c = originalFilename.charAt(i);
 				if (c == '/' || c == '\\') {
 					break;
 				} else {
@@ -95,7 +96,7 @@ public class StringProcessor
 		}
 		return filename.toString();
 	}
-	
+
 	/**
 	 * Looks for http link in a block of text
 	 *
@@ -272,8 +273,9 @@ public class StringProcessor
 			return text.toString();
 		}
 	}
-	
-	public static String nullIfBlank(String text) {
+
+	public static String nullIfBlank(String text)
+	{
 		if (StringUtils.isBlank(text)) {
 			return null;
 		} else {
@@ -479,6 +481,21 @@ public class StringProcessor
 			}
 			return nonPuralForm + "s";
 		}
+	}
+
+	public static String getHexFromBytes(byte[] bytes)
+	{
+		StringBuilder hexString = new StringBuilder();
+
+		for (int i = 0; i < bytes.length; i++) {
+			if ((0xff & bytes[i]) < 0x10) {
+				hexString.append("0").append(Integer.toHexString((0xFF & bytes[i])));
+			} else {
+				hexString.append(Integer.toHexString(0xFF & bytes[i]));
+			}
+		}
+
+		return hexString.toString();
 	}
 
 }
