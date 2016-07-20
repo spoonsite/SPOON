@@ -64,7 +64,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -439,8 +438,8 @@ public class SystemServiceImpl
 	public TemporaryMedia retrieveTemporaryMedia(String urlStr)
 	{
 		String hash;
-		try {	
-			hash = Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(urlStr.getBytes()));
+		try {
+			hash = StringProcessor.getHexFromBytes(MessageDigest.getInstance("SHA-1").digest(urlStr.getBytes()));
 		} catch (NoSuchAlgorithmException ex) {
 			throw new OpenStorefrontRuntimeException("Hash Format not available", "Coding issue");
 		}

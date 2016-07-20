@@ -105,10 +105,12 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			var images = elem.getElementsByTagName('img');
 			Ext.Array.each(images, function(image) {
 				if (image.src === originalURL) {
-					image.className += " storefront-media-ignore";
+					image.setAttribute('data-storefront-ignore', true);
 				}
 			});
-			editor.dom.setHTML(editor.getBody(), elem.innerHTML);
+			Ext.getCmp('inlineMediaWindow').programmaticUpdate = true;
+			editor.setContent(elem.innerHTML);
+			Ext.getCmp('inlineMediaWindow').programmaticUpdate = false;
 		};
 
 		var checkIfDone = function checkIfDone() {
@@ -121,6 +123,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 					if (record.get('status') === 'OK') success_count++;
 					else if (record.get('status') === 'FAIL') failure_count++;
 				}
+				else failure_count++;
 			});
 
 			if (success_count === total_count) {
@@ -157,7 +160,9 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			var replacement = "/openstorefront/Media.action?TemporaryMedia&name=" + temporaryId;
 			var content = editor.getContent();
 			content = content.replace(originalUrl, replacement);
+			Ext.getCmp('inlineMediaWindow').programmaticUpdate = true;
 			editor.setContent(content);
+			Ext.getCmp('inlineMediaWindow').programmaticUpdate = false;
 		};
 
 		
@@ -165,11 +170,19 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 		// Now begin processing media
 
 		// Remove items that are already stored (src contains 'Media.action?')
+		// Also don't send back src urls that are blank.
+
+
 		store.each(function(record, id){
 			if (record) {
 				var url = record.get('url');
 				if (url.indexOf('Media.action?') > -1) { store.remove(record); }
+				if (!url) { store.remove(record); }
 			}
+			else {
+				store.remove(record);
+			}
+
 		});
 
 		// If there's nothing left, we're done here.
@@ -179,6 +192,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 
 		// Show the Retrieval Window
 		this.show();
+
 
 		
 		// Send API requests, get back temporaryIDs.

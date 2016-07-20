@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*global tinymce:true */
+/*global tinymce:true, Ext */
 
 tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 
@@ -29,15 +29,18 @@ tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 
 		if (images.length) {
 			for (var i=0;i<images.length;i++) {	
-				var url = images[i].src;
-				if (url.indexOf('Media.action?') === -1) { 
-					if (images[i].className.indexOf('storefront-media-ignore') ===  -1) {
-						Ext.getStore('inlineMediaStore').add({
-							url: images[i].src,
-							result: 'Retrieving...',
-							status: 'RETR',
-							temporaryId: ''
-						});
+				var url = images[i].src.trim();
+				if (url && url.indexOf('Media.action?') === -1) { 
+					if (!images[i].hasAttribute('data-storefront-ignore')) {
+						var store = Ext.getStore('inlineMediaStore');
+						if (store.find('url', url) === -1) {
+							Ext.getStore('inlineMediaStore').add({
+								url: url,
+								result: 'Retrieving...',
+								status: 'RETR',
+								temporaryId: ''
+							});
+						}
 					}
 				}
 			}
@@ -48,6 +51,8 @@ tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 
 
 	editor.on('change', function(e) {
-		task.delay(800);	
+		if (!Ext.getCmp('inlineMediaWindow').programmaticUpdate) {
+			task.delay(800);	
+		}
 	});
 });
