@@ -201,7 +201,7 @@
 							valueField: 'code',
 							width: '100%',
 							emptyText: 'Select a relationship type',
-							store: relationshipTypeStore,
+							store: relationshipTypeStore
 						}
 					],
 					dockedItems: [
@@ -216,7 +216,7 @@
 									}
 								},
 								{
-									xtype: 'tbfill',
+									xtype: 'tbfill'
 								},
 								{
 									text: 'Create Relationship',
@@ -271,7 +271,7 @@
 						plugins: {
 							ddGroup: 'relationship',
 							ptype: 'celltocelldragdrop',
-							enableDrop: false,
+							enableDrop: false
 						}
 					},
 					columns: [
@@ -284,12 +284,12 @@
 								if (!num) num = 0;
 								var html = "<strong>" + value + "</strong>";
 								html += '<p style="color: #999; margin-bottom: 0.5em;">';
-								html += '<i class="fa fa-book fa-fw"></i> '
+								html += '<i class="fa fa-book fa-fw"></i> ';
 								html += '<span style="padding-right: 20px">' + record.get('componentTypeDescription') + '</span>';
 								html += '<span style="float: right"><i class="fa fa-share-alt"></i> ' + num + '</span>';
 								html += "</p>";
 								return html;
-							},
+							}
 						}
 					],
 					dockedItems: [
@@ -388,11 +388,11 @@
 								if (!num) num = 0;
 								var html = "<strong>" + value + "</strong>";
 								html += '<p style="color: #999; margin-bottom: 0.5em;">';
-								html += '<i class="fa fa-book fa-fw"></i> '
+								html += '<i class="fa fa-book fa-fw"></i> ';
 								html += '<span style="padding-right: 20px">' + record.get('componentTypeDescription') + '</span>';
 								html += "</p>";
 								return html;
-							},
+							}
 
 						}
 					],
@@ -518,7 +518,7 @@
 									text: 'Refresh',
 									iconCls: 'fa fa-refresh',
 									handler: function () {
-										relationshipsStore.load()
+										relationshipsStore.load();
 									}
 								},
 								{
@@ -532,7 +532,7 @@
 										var msg = 'Are you sure you want to delete this relationship?';
 										Ext.MessageBox.confirm(title, msg, function (btn) {
 											if (btn === 'yes') {
-												var url = '/openstorefront/api/v1/resource/components/'
+												var url = '/openstorefront/api/v1/resource/components/';
 												url += record.get('ownerComponentId') + "/relationships/";
 												url += record.get('relationshipId');
 												var method = "DELETE";
@@ -632,7 +632,7 @@
 							id: 'center-container',
 							layout: {
 								type: 'border',
-								align: 'stretch',
+								align: 'stretch'
 							},
 							items: [
 								relationshipsGrid, visualizationPanel
