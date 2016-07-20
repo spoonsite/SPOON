@@ -324,21 +324,22 @@ public class ElasticSearchManager
 				.actionGet();
 		
 		SearchHits searchHits = response.getHits();
-		
-		//bulk delete results
-		BulkRequestBuilder bulkRequest = ElasticSearchManager.getClient().prepareBulk();
-		searchHits.forEach(hit ->{
-			bulkRequest.add(ElasticSearchManager.getClient().prepareDelete(INDEX, INDEX_TYPE, hit.getId()));		
-		});
-				
-		BulkResponse bulkResponse = bulkRequest.get();
-		if (bulkResponse.hasFailures()) {
-			bulkResponse.forEach(br ->{
-				if (StringUtils.isNotBlank(br.getFailureMessage())) {			
-					log.log(Level.WARNING, MessageFormat.format("A component failed to delete: {0}", br.getFailureMessage()));
-				}
-			});			
-		}		
+		if( searchHits.getTotalHits() > 0) {
+			//bulk delete results
+			BulkRequestBuilder bulkRequest = ElasticSearchManager.getClient().prepareBulk();
+			searchHits.forEach(hit ->{
+				bulkRequest.add(ElasticSearchManager.getClient().prepareDelete(INDEX, INDEX_TYPE, hit.getId()));		
+			});
+
+			BulkResponse bulkResponse = bulkRequest.get();
+			if (bulkResponse.hasFailures()) {
+				bulkResponse.forEach(br ->{
+					if (StringUtils.isNotBlank(br.getFailureMessage())) {			
+						log.log(Level.WARNING, MessageFormat.format("A component failed to delete: {0}", br.getFailureMessage()));
+					}
+				});			
+			}	
+		}
 	}
 
 	@Override
