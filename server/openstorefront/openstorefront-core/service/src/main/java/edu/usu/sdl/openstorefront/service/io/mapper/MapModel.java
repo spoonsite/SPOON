@@ -35,11 +35,35 @@ public class MapModel
 	{		
 	}
 
-	public Set<String> getUniqueFields() 
+	public List<FieldDefinition> getUniqueFields() 
 	{
+		List<FieldDefinition> fieldDefinitions = new ArrayList<>();
+		
 		Set<String> fields = new HashSet<>();
 		buildPaths(fields, this, "");
-		return fields;
+		
+		for (String field : fields) {
+			fieldDefinitions.add(new FieldDefinition(field));
+		}
+		
+		Set<String> rootFields = new HashSet<>();
+		
+		//add roots
+		for (String field : fields) {
+			String parts[] = field.split("\\.");
+			if (parts.length > 1) {
+				for (int i=0; i<  parts.length - 1; i++) {
+					rootFields.add(parts[i]);
+				}
+			} else {
+				rootFields.add(field);
+			}
+		}
+		for (String field : rootFields) {
+			fieldDefinitions.add(new FieldDefinition(field, true));
+		}				
+		
+		return fieldDefinitions;
 	}
 	
 	private void buildPaths(Set<String> fields,  MapModel root, String parent) 
@@ -48,7 +72,7 @@ public class MapModel
 			parent = parent + ".";
 		}
 		
-		for (MapField field : root.mapFields) {			
+		for (MapField field : root.getMapFields()) {			
 			fields.add(parent + root.getName() + "." +  field.getName());
 		}
 		for (MapModel child : root.getArrayFields()) {

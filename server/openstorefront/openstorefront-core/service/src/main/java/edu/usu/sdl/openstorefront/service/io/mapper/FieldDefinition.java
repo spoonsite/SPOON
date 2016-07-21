@@ -15,33 +15,69 @@
  */
 package edu.usu.sdl.openstorefront.service.io.mapper;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 /**
  *
  * @author dshurtleff
  */
-public class DataMapper
+public class FieldDefinition
 {
 	private String field;
 	private boolean rootField;
-	private List<DataTransform> transforms = new ArrayList<>();
-	private Class entityClass;
-	private String entityField;
 
-	public DataMapper()
+	public FieldDefinition()
 	{
 	}
+
+	public FieldDefinition(String field)
+	{
+		this.field = field;
+	}
 	
-	public Object applyTransforms(String value) {
-		Object transformedData = value;
-		for (DataTransform dataTransform : transforms) {
-			transformedData = dataTransform.transform(transformedData);
-		}
-		return transformedData;
+	public FieldDefinition(String field, boolean rootField)
+	{
+		this.field = field;
+		this.rootField = rootField;
 	}
 
+	@Override
+	public int hashCode()
+	{
+		int hash = 3;
+		hash = 89 * hash + Objects.hashCode(this.field);
+		hash = 89 * hash + (this.rootField ? 1 : 0);
+		return hash;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "FieldDefinition{" + "field=" + field + ", rootField=" + rootField + '}';
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final FieldDefinition other = (FieldDefinition) obj;
+		if (this.rootField != other.rootField) {
+			return false;
+		}
+		if (!Objects.equals(this.field, other.field)) {
+			return false;
+		}
+		return true;
+	}
+	
 	public String getField()
 	{
 		return field;
@@ -50,36 +86,6 @@ public class DataMapper
 	public void setField(String field)
 	{
 		this.field = field;
-	}
-
-	public List<DataTransform> getTransforms()
-	{
-		return transforms;
-	}
-
-	public void setTransforms(List<DataTransform> transforms)
-	{
-		this.transforms = transforms;
-	}
-
-	public String getEntityField()
-	{
-		return entityField;
-	}
-
-	public void setEntityField(String entityField)
-	{
-		this.entityField = entityField;
-	}
-
-	public Class getEntityClass()
-	{
-		return entityClass;
-	}
-
-	public void setEntityClass(Class entityClass)
-	{
-		this.entityClass = entityClass;
 	}
 
 	public boolean getRootField()

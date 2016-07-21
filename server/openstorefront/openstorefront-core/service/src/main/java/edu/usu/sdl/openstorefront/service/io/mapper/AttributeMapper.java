@@ -15,11 +15,54 @@
  */
 package edu.usu.sdl.openstorefront.service.io.mapper;
 
+import edu.usu.sdl.openstorefront.core.model.AttributeAll;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  * @author dshurtleff
  */
 public class AttributeMapper
+	extends BaseMapper<AttributeAll>
 {
+
+	public AttributeMapper(DataTemplateEntity<AttributeAll> templateFactory)
+	{
+		super(templateFactory);
+	}
+	
+	@Override
+	public List<AttributeAll> mapData(MapModel input, Map<String, DataMapper> dataMappers)
+	{
+		List<AttributeAll> mappedAttributes = new ArrayList<>();
+		
+		
+		return mappedAttributes;
+	}
+	
+	private void doMapping(List<AttributeAll> mappedAttributes, MapModel root, Map<String, DataMapper> dataMappers, String fieldPath)
+	{
+		if (StringUtils.isNotBlank(fieldPath)) {
+			fieldPath = fieldPath + ".";
+		}
+		
+		for (MapField field : root.getMapFields()) {			
+			String pathToField = fieldPath + root.getName() + "." +  field.getName();
+			
+			
+			
+		}
+		
+		for (MapModel child : root.getArrayFields()) {
+			String newParent = root.getName();
+			if (StringUtils.isNotBlank(fieldPath)) {				
+				newParent = fieldPath  + root.getName();
+			}
+			doMapping(mappedAttributes, child, dataMappers, newParent);
+		}
+	}
 	
 }

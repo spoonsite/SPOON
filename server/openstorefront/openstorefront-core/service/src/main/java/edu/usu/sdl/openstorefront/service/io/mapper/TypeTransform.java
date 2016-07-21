@@ -15,22 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.service.io.mapper;
 
-import java.util.List;
-import java.util.Map;
-
 /**
- *
+ * Converts String to various data types
+ * 
  * @author dshurtleff
  */
-public abstract class BaseMapper<T>
+public enum TypeTransform
 {
-	protected DataTemplateEntity<T> templateFactory;
-
-	public BaseMapper(DataTemplateEntity<T> templateFactory)
-	{
-		this.templateFactory = templateFactory;
-	}
-			
-	public abstract  List<T> mapData(MapModel input, Map<String, DataMapper> dataMappers);
 	
 }
