@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.io.mapper;
 
+import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import java.util.List;
 import java.util.Map;
 
@@ -25,10 +26,12 @@ import java.util.Map;
 public abstract class BaseMapper<T>
 {
 	protected DataTemplateEntity<T> templateFactory;
+	protected FileHistoryAll fileHistoryAll;
 
-	public BaseMapper(DataTemplateEntity<T> templateFactory)
+	public BaseMapper(DataTemplateEntity<T> templateFactory, FileHistoryAll fileHistoryAll)
 	{
 		this.templateFactory = templateFactory;
+		this.fileHistoryAll = fileHistoryAll;
 	}
 			
 	public abstract  List<T> mapData(MapModel input, Map<String, DataMapper> dataMappers);

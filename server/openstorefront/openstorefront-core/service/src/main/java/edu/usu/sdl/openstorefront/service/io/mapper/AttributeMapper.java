@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.io.mapper;
 
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
+import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +30,9 @@ public class AttributeMapper
 	extends BaseMapper<AttributeAll>
 {
 
-	public AttributeMapper(DataTemplateEntity<AttributeAll> templateFactory)
+	public AttributeMapper(DataTemplateEntity<AttributeAll> templateFactory, FileHistoryAll fileHistoryAll)
 	{
-		super(templateFactory);
+		super(templateFactory, fileHistoryAll);
 	}
 	
 	@Override

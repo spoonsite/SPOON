@@ -20,7 +20,7 @@ package edu.usu.sdl.openstorefront.service.io.mapper;
  * 
  * @author dshurtleff
  */
-public enum TypeTransform
+public enum TypeTransforms
 {
 	
 }

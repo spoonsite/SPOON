@@ -36,6 +36,7 @@ public class FileHistoryErrorType
 	public static final String VALIDATION = "VALIDATION";
 	public static final String FORMAT = "FORMAT";
 	public static final String WARNING = "WARNING";
+	public static final String MAPPING = "MAPPING";
 
 	public FileHistoryErrorType()
 	{
@@ -50,6 +51,7 @@ public class FileHistoryErrorType
 		codeMap.put(VALIDATION, newLookup(FileHistoryErrorType.class, VALIDATION, "Validation"));
 		codeMap.put(FORMAT, newLookup(FileHistoryErrorType.class, FORMAT, "Format"));
 		codeMap.put(WARNING, newLookup(FileHistoryErrorType.class, WARNING, "System"));
+		codeMap.put(MAPPING, newLookup(FileHistoryErrorType.class, MAPPING, "System"));
 
 		return codeMap;
 	}

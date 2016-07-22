@@ -37,6 +37,11 @@ public class ReaderUseCase
 		
 			mapModel.getUniqueFields().forEach(f->System.out.println(f));
 			
+//			ComponentMapper componentMapper = new ComponentMapper(DataTemplateEntity<ComponentAll>{
+//				
+//			}, new FileHistoryAll());
+			
+			
 		}
 		
 	}

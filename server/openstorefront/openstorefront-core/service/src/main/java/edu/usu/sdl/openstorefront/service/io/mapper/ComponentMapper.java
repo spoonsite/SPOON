@@ -17,12 +17,21 @@ package edu.usu.sdl.openstorefront.service.io.mapper;
 
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
+import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -32,10 +41,11 @@ import org.apache.commons.lang3.StringUtils;
 public class ComponentMapper
 	extends BaseMapper<ComponentAll>
 {	
-
-	public ComponentMapper(DataTemplateEntity<ComponentAll> templateFactory)
+	private static final Logger LOG = Logger.getLogger(ComponentMapper.class.getName());
+	
+	public ComponentMapper(DataTemplateEntity<ComponentAll> templateFactory, FileHistoryAll fileHistoryAll)
 	{
-		super(templateFactory);
+		super(templateFactory, fileHistoryAll);
 	}
 	
 	@Override
@@ -84,13 +94,56 @@ public class ComponentMapper
 							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
 						}
 						
-						
-						
-						
 					} else if (ComponentContact.class.getName().equals(fieldMapper.getEntityClass().getName())) {
-						
-					}
+						if (entity == null) {
+							entity = new ComponentContact();
+							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
+							componentAll.getContacts().add((ComponentContact) entity);
+						}
+					} else if (ComponentResource.class.getName().equals(fieldMapper.getEntityClass().getName())) {
+						if (entity == null) {
+							entity = new ComponentResource();
+							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
+							componentAll.getResources().add((ComponentResource) entity);
+						}						
+					} else if (ComponentMedia.class.getName().equals(fieldMapper.getEntityClass().getName())) {
+						if (entity == null) {
+							entity = new ComponentMedia();
+							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
+							componentAll.getMedia().add((ComponentMedia) entity);
+						}						
+					} else if (ComponentTag.class.getName().equals(fieldMapper.getEntityClass().getName())) {
+						if (entity == null) {
+							entity = new ComponentTag();
+							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
+							componentAll.getTags().add((ComponentTag) entity);
+						}						
+					} else if (ComponentMetadata.class.getName().equals(fieldMapper.getEntityClass().getName())) {
+						if (entity == null) {
+							entity = new ComponentMetadata();
+							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
+							componentAll.getMetadata().add((ComponentMetadata) entity);
+						}						
+					} else if (ComponentMetadata.class.getName().equals(fieldMapper.getEntityClass().getName())) {
+						if (entity == null) {
+							entity = new ComponentMetadata();
+							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
+							componentAll.getMetadata().add((ComponentMetadata) entity);
+						}						
+					} 
 					
+					if (entity != null) {					
+						Object processedValue = fieldMapper.applyTransforms(field.getValue());					
+					
+						try {
+							BeanUtils.setProperty(entity, fieldMapper.getEntityField(), processedValue);
+						} catch (IllegalAccessException | InvocationTargetException ex) {
+							fileHistoryAll.addError(FileHistoryErrorType.MAPPING, pathToField);						
+						}
+					} else {
+						fileHistoryAll.addError(FileHistoryErrorType.MAPPING, "Entity: " + fieldMapper.getEntityClass().getName() + " is not supported.");	
+					}
+						
 				}	
 			}
 
