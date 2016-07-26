@@ -1245,7 +1245,6 @@
 													update = '/' + data.componentMediaId;
 													method = 'PUT';
 												}
-												console.log(data);
 
 												CoreUtil.submitForm({
 													url: '../api/v1/resource/components/' + componentId + '/media' + update,
@@ -1442,7 +1441,20 @@
 									iconCls: 'fa fa-trash',
 									disabled: true,
 									handler: function(){
-										actionSubComponentToggleStatus(Ext.getCmp('mediaGrid'), 'componentMediaId', 'media', undefined, undefined, true);
+										var record = Ext.getCmp('mediaGrid').getSelection()[0];
+										if (record.get('usedInline')) {
+											var msg = 'This media has been marked as being used inline. This means that the media is being used in a description, etc. ';
+											msg += 'If you delete this media, that reference will no longer be valid and the media will not be available where it is referenced elsewhere.';
+											msg += '<br><br>Do you still wish to delete this media?';
+											Ext.Msg.confirm('Media Used Inline', msg, function (btn) { 
+												if (btn ==='yes') {
+													actionSubComponentToggleStatus(Ext.getCmp('mediaGrid'), 'componentMediaId', 'media', undefined, undefined, true);
+												}
+											});
+										} else {
+											actionSubComponentToggleStatus(Ext.getCmp('mediaGrid'), 'componentMediaId', 'media', undefined, undefined, true);
+										}
+
 									}									
 								}
 							]
