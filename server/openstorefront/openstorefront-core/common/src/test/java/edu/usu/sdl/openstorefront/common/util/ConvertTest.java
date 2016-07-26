@@ -15,7 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.common.util;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -97,7 +99,7 @@ public class ConvertTest
 		assertEquals(expResult, result);
 
 		List<String> trueStrings = Arrays.asList("1", "5000");
-		List<String> falseStrings = Arrays.asList("F", "1.1.2", "1.", "test");
+		List<String> falseStrings = Arrays.asList("F", "1.1.2", "1.", "test", "", "null");
 
 		for (String test : trueStrings) {
 			result = Convert.toInteger(test);
@@ -112,5 +114,127 @@ public class ConvertTest
 		}
 
 	}
+
+    /**
+     * Test of toLong method, of class Convert.
+     */
+    @Test
+    public void testToLong() {
+        System.out.println("toLong");
+        Object data = null;
+        Long expResult = null;
+        Long result = Convert.toLong(data);
+        
+        List<String> trueStrings = Arrays.asList("10023", "4788294", "3");
+        List<String> falseStrings = Arrays.asList("123.456", "fName", "C", "1.23.3", "9223372036854775909",
+                "", "null");
+        
+        for (String testLong : trueStrings) {
+            result = Convert.toLong(testLong);
+            if (result == null) {
+                fail("Failed on: " + testLong);
+            }
+        }
+        
+        for (String testLong : falseStrings) {
+            result = Convert.toLong(testLong);
+            assertEquals(expResult, result);
+        }
+        
+    }
+
+    /**
+     * Test of toBigDecimal method, of class Convert.
+     */
+    @Test
+    public void testToBigDecimal_Object() {
+        System.out.println("toBigDecimal");
+        Object data = null;
+        BigDecimal expResult = null;
+        BigDecimal result = Convert.toBigDecimal(data);
+
+        List<String> trueStrings = Arrays.asList("28983", "3", "0.33", "123.48");
+        List<String> falseStrings = Arrays.asList("Fred", "84.233.4", "A", "1,333", "", "null");
+        
+        for (String testBigDecimal : trueStrings) {
+            result = Convert.toBigDecimal(testBigDecimal);
+            if (result == null) {
+                fail("Failed on: " + testBigDecimal);
+            }
+        }
+        
+        for (String testBigDecimal : falseStrings) {
+            result = Convert.toBigDecimal(testBigDecimal);
+            assertEquals(expResult, result);
+        }
+        
+    }
+
+    /**
+     * Test of toBigDecimal method, of class Convert.
+     */
+    @Test
+    public void testToBigDecimalWithDefault() {
+        System.out.println("toBigDecimal");
+        Object data = null;
+        BigDecimal defaultDecimal = null;
+        BigDecimal expResult = null;
+        BigDecimal result = Convert.toBigDecimal(data, defaultDecimal);
+        
+        List<String> trueStrings = Arrays.asList("47833", "2", "0.00050", "45.67");
+        List<String> falseStrings = Arrays.asList("Test", "123O", "F", "a", "", "null");
+        
+        for (String testBigDecimal : trueStrings) {
+            result = Convert.toBigDecimal(testBigDecimal, defaultDecimal);
+            if (result == null) {
+                fail("Failed on: " + testBigDecimal);
+            }
+        }
+        
+        for (String testBigDecimal : falseStrings) {
+            result = Convert.toBigDecimal(testBigDecimal, defaultDecimal);
+            assertEquals(expResult, result);
+        }
+    }
+
+    /**
+     * Test of toDate method, of class Convert.
+     */
+    @Test
+    public void testToDate() {
+        System.out.println("toDate");
+        String dateString = "";
+        Date expResult = null;
+        Date result = Convert.toDate(dateString);
+        
+        List<String> validDates = Arrays.asList("07/04/2016 12:00:01 PST ", 
+                "1999-05-10 08:30:44 MST ", "1997-04-30T12:08:56.235-0700",
+                "01 Jul 2016 11:33:54 PM PST","12/25/2003","2001-08-12", "1997-04-30T12:08:56.235'-0700");
+        List<String> partiallyValidDates = Arrays.asList("13/12/202 25:00: AFFAT", "1997-04-3012:08:56235-0700", 
+                "01 January 01 11:33:54 PM PST", "122519803543");
+        List<String> invalidDates = Arrays.asList("", "null", "thisis1test", "D", "12.344.555");
+        
+        for (String testDate : validDates) {
+            result = Convert.toDate(testDate);
+            if(result == null) {
+                fail("Incorrect date format: " + testDate);
+            }
+        }
+        
+        for (String testDate : partiallyValidDates) {
+            result = Convert.toDate(testDate);
+            if(result == null) {
+                fail("Incorrect date format: " + testDate);
+            }
+            else {
+                System.out.println("Given date: " + testDate + " vs parsed date " + result);
+            }
+        }
+        
+        for (String testDate : invalidDates) {
+            result = Convert.toDate(testDate);
+            assertEquals(expResult, result);
+        }
+    }
 
 }

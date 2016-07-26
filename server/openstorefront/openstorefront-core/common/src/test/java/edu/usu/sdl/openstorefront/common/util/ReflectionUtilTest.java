@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.common.util;
 
 import java.awt.Component;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -67,6 +69,10 @@ public class ReflectionUtilTest
 		boolean expResult = true;
 		boolean result = ReflectionUtil.isComplexClass(TestModel.class);
 		assertEquals(expResult, result);
+                
+                expResult = true;
+                result = ReflectionUtil.isComplexClass(HashMap.class);
+                assertEquals(expResult, result);
 
 		expResult = false;
 		result = ReflectionUtil.isComplexClass(String.class);
@@ -84,6 +90,10 @@ public class ReflectionUtilTest
 		boolean expResult = true;
 		boolean result = ReflectionUtil.isCollectionClass(List.class);
 		assertEquals(expResult, result);
+                
+                expResult = false;
+                result = ReflectionUtil.isCollectionClass(ArrayList.class);
+                assertEquals(expResult, result);
 
 		expResult = false;
 		result = ReflectionUtil.isCollectionClass(TestModel.class);
@@ -156,6 +166,10 @@ public class ReflectionUtilTest
 		expResult = false;
 		result = ReflectionUtil.isFieldsDifferent("Test", "Test");
 		assertEquals(expResult, result);
+                
+                expResult = true;
+                result = ReflectionUtil.isFieldsDifferent("Field", "Test");
+                assertEquals(expResult, result);
 
 	}
 
@@ -168,9 +182,17 @@ public class ReflectionUtilTest
 		System.out.println("isFieldsDifferent");
 		Object original = "Test";
 		Object newField = "Test2";
+                
 		boolean expResult = true;
 		boolean result = ReflectionUtil.isFieldsDifferent(original, newField);
 		assertEquals(expResult, result);
+                
+                original = "SameTest";
+                newField = "SameTest";
+                
+                expResult = false;
+                result = ReflectionUtil.isFieldsDifferent(original, newField);
+                assertEquals(expResult, result);
 
 	}
 
