@@ -42,6 +42,8 @@ public class ComponentMediaView
 	private String fileName;
 	private String originalFileName;
 	private String originalLink;
+	private Boolean hideInDisplay;
+	private Boolean usedInline;
 
 	public ComponentMediaView()
 	{
@@ -66,6 +68,8 @@ public class ComponentMediaView
 		mediaView.setMimeType(media.getMimeType());
 		mediaView.setCaption(media.getCaption());
 		mediaView.setUpdateDts(media.getUpdateDts());
+		mediaView.setHideInDisplay(media.getHideInDisplay());
+		mediaView.setUsedInline(media.getUsedInline());
 		mediaView.toStandardView(media);
 
 		return mediaView;
@@ -188,6 +192,26 @@ public class ComponentMediaView
 	public void setMediaTypeCode(String mediaTypeCode)
 	{
 		this.mediaTypeCode = mediaTypeCode;
+	}
+
+	public Boolean getHideInDisplay()
+	{
+		return hideInDisplay;
+	}
+
+	public void setHideInDisplay(Boolean hideInDisplay)
+	{
+		this.hideInDisplay = hideInDisplay;
+	}
+
+	public Boolean getUsedInline()
+	{
+		return usedInline;
+	}
+
+	public void setUsedInline(Boolean usedInline)
+	{
+		this.usedInline = usedInline;
 	}
 
 }

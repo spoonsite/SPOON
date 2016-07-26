@@ -573,6 +573,8 @@ public class CoreComponentServiceImpl
 							componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
 							componentMedia.setOriginalName(existingMedia.getOriginalFileName());
 							componentMedia.setMimeType(existingMedia.getMimeType());
+							componentMedia.setUsedInline(true);
+							componentMedia.setHideInDisplay(false);
 
 							// Set Media Type Code based on the mimetype stored in temporary (as retrieved from server)
 							String mediaTypeCode;
