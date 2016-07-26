@@ -1155,7 +1155,9 @@
 								type:	'date',
 								dateFormat: 'c'
 							},							
-							"activeStatus"
+							"activeStatus",
+							"usedInline",
+							"hideInDisplay"
 						],
 						autoLoad: false,
 						proxy: {
@@ -1169,6 +1171,8 @@
 						{ text: 'Local Media Name',  dataIndex: 'originalFileName', width: 200 },
 						{ text: 'Link',  dataIndex: 'originalLink', width: 200 },						
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+						{ text: 'Hide In Carousel', dataIndex: 'hideInDisplay', width: 150},
+						{ text: 'Used Inline', dataIndex: 'usedInline', width: 150 },
 						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
 					listeners: {
@@ -1241,6 +1245,7 @@
 													update = '/' + data.componentMediaId;
 													method = 'PUT';
 												}
+												console.log(data);
 
 												CoreUtil.submitForm({
 													url: '../api/v1/resource/components/' + componentId + '/media' + update,
@@ -1263,6 +1268,8 @@
 														'componentMedia.mediaTypeCode' : data.mediaTypeCode,
 														'componentMedia.caption': data.caption,
 														'componentMedia.link': data.link,
+														'componentMedia.hideInDisplay': data.hideInDisplay,
+														'componentMedia.usedInline': data.usedInline,
 														'componentMedia.componentMediaId': data.componentMediaId,
 														'componentMedia.componentId': componentId
 													},
@@ -1350,6 +1357,16 @@
 									maxLength: '255',									
 									emptyText: 'http://www.example.com/image.png',
 									name: 'originalLink'
+								},
+								{
+									xtype: 'checkbox',
+									fieldLabel: 'Hide In Carousel',
+									name: 'hideInDisplay'
+								},
+								{
+									xtype: 'checkbox',
+									fieldLabel: 'Used Inline <i class="fa fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline refereence in the description." ></i>',
+									name: 'usedInline'
 								},
 								Ext.create('OSF.component.SecurityComboBox', {	
 									hidden: !${branding.allowSecurityMarkingsFlg}
