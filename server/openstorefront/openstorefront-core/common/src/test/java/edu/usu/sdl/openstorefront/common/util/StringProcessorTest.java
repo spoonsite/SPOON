@@ -85,6 +85,11 @@ public class StringProcessorTest
 		String result = StringProcessor.getResourceNameFromUrl(url);
 		assertEquals(expResult, result);
 
+                url = "null";
+                expResult = "null";
+                result = StringProcessor.getResourceNameFromUrl(url);
+                assertEquals(expResult, result);
+                
 		url = "http:/google.com/test";
 		expResult = "test";
 		result = StringProcessor.getResourceNameFromUrl(url);
@@ -113,6 +118,10 @@ public class StringProcessorTest
 		if (result.size() > 0) {
 			Assert.fail("Unexpected size from results. " + result.size());
 		}
+                
+                text = "null";
+                result = StringProcessor.extractUrls(text);
+                System.out.println(Arrays.toString(result.toArray(new String[0])));
 
 		text = "a http://google.com";
 		result = StringProcessor.extractUrls(text);
@@ -121,6 +130,10 @@ public class StringProcessorTest
 		text = "a http://google.com stuff  http://yahoo.com";
 		result = StringProcessor.extractUrls(text);
 		System.out.println(Arrays.toString(result.toArray(new String[0])));
+                
+                text = "first http://google.com second url http://espn.com third . url http://finance.yahoo.com";
+                result = StringProcessor.extractUrls(text);
+                System.out.println(Arrays.toString(result.toArray(new String[0])));
 
 	}
 

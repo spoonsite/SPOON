@@ -66,3 +66,4 @@ project*.properties
 /server/openstorefront/openstorefront-web/src/main/webapp/submissionOld.html
 /server/openstorefront/describe/describe/target/
 /server/openstorefront/describe/target/
+/server/openstorefront/openstorefront-core/common/nbproject/
