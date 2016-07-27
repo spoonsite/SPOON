@@ -45,8 +45,9 @@ public class ReflectionUtil
 	public static final String COMPOSITE_KEY_REPLACER = "~";
 
 	/**
-	 * This check for Value Model Objects
-	 *
+	 * This check for Value Model Objects <br>
+         * <b> WARNING: </b>
+         * Does not support Collection subtypes
 	 * @param fieldClass
 	 * @return
 	 */
@@ -59,6 +60,9 @@ public class ReflectionUtil
 				&& !fieldClass.isArray()
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(String.class.getSimpleName())
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(Long.class.getSimpleName())
+                        	&& !fieldClass.getSimpleName().equalsIgnoreCase(Short.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(Character.class.getSimpleName())
+				&& !fieldClass.getSimpleName().equalsIgnoreCase(Byte.class.getSimpleName())
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(Integer.class.getSimpleName())
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(Boolean.class.getSimpleName())
 				&& !fieldClass.getSimpleName().equalsIgnoreCase(Double.class.getSimpleName())
@@ -77,8 +81,9 @@ public class ReflectionUtil
 	}
 
 	/**
-	 * Check for class to see if it's a collection class
-	 *
+	 * Check for class to see if it's a collection class <br>
+	 * <b> Warning: </b> 
+         * Does not support Collection subtypes
 	 * @param checkClass
 	 * @return
 	 */

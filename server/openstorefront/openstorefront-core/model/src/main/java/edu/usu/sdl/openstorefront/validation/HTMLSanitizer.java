@@ -55,7 +55,7 @@ public class HTMLSanitizer
 					.addAttributes("source", "src", "type", "media")
 					.addAttributes("track", "src", "label", "kind", "srclang", "default")
 					.addAttributes("q", "cite")
-					.addAttributes("table", "summary", "width")
+					.addAttributes("table", "summary", "width", "height", "border", "align", "cellspacing", "cellpadding", "bgcolor", "bordercolor")
 					.addAttributes("td", "abbr", "axis", "colspan", "rowspan", "width")
 					.addAttributes(
 							"th", "abbr", "axis", "colspan", "rowspan", "scope",

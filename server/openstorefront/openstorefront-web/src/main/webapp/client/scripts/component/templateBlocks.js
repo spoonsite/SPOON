@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* global Ext */
+/* global Ext, MediaViewer */
 
 Ext.define('OSF.component.template.BaseBlock', {
 	extend: 'Ext.panel.Panel',
@@ -78,7 +78,7 @@ Ext.define('OSF.component.template.Description', {
 		if (links && links.length > 0) {
 			Ext.Array.each(links, function(item){
 				//look for special links and transform
-				if (item.getAttribute('href').indexOf('searchResults.jsp') !== -1) {
+				if (item.getAttribute('href') && item.getAttribute('href').indexOf('searchResults.jsp') !== -1) {
 					//special link
 					var searchId = item.getAttribute('href').substr(item.getAttribute('href').indexOf('savedSearchId='), item.getAttribute('href').length);
 					searchId = searchId.replace('savedSearchId=', '');
@@ -492,6 +492,7 @@ Ext.define('OSF.component.template.Media', {
 	tpl: new Ext.XTemplate(
 		' <h2>Screenshots / Media</h2>',	
 		'	<tpl for="componentMedia">',	
+		'       <tpl if="typeof(hideInDisplay) == \'undefined\'">',
 		'		<div class="detail-media-block">',
 		'		<tpl switch="mediaTypeCode">',
 		'				<tpl case="IMG">',
@@ -509,6 +510,7 @@ Ext.define('OSF.component.template.Media', {
 		'			</tpl>',
 		'			<tpl if="caption || securityMarkingType"><p class="detail-media-caption"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{caption}</p></tpl>',
 		'		</div>',
+		'       </tpl>',
 		'	</tpl>'
 	),
 		
@@ -520,7 +522,13 @@ Ext.define('OSF.component.template.Media', {
 		if (!entry.componentMedia || entry.componentMedia.length === 0) {
 			this.setHidden(true);
 		} else {
-			MediaViewer.mediaList = entry.componentMedia;
+
+			// Compile a list of media that are not hidden.
+			var mediaToShow = [];
+			Ext.Array.each(entry.componentMedia, function(media) {
+				if (!media.hideInDisplay) mediaToShow.push(media);
+			});
+			MediaViewer.mediaList = mediaToShow;
 			
 			var updated = false;
 			Ext.Array.each(entry.componentMedia, function(item){

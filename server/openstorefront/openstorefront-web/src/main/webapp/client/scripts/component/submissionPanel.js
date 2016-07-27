@@ -1221,6 +1221,16 @@ Ext.define('OSF.component.SubmissionPanel', {
 								]
 							},
 							{
+								xtype: 'checkbox',
+								fieldLabel: 'Hide In Carousel',
+								name: 'hideInDisplay'
+							},
+							{
+								xtype: 'checkbox',
+								fieldLabel: 'Used Inline <i class="fa fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline refereence in the description." ></i>',
+								name: 'usedInline'
+							},
+							{
 								xtype: 'filefield',
 								itemId: 'upload',
 								fieldLabel: 'Upload Media (Limit of 1GB)',																											
@@ -1298,6 +1308,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 															'componentMedia.mediaTypeCode' : data.mediaTypeCode,
 															'componentMedia.caption': data.caption,
 															'componentMedia.link': data.link,
+															'componentMedia.hideInDisplay': data.hideInDisplay,
+															'componentMedia.usedInline': data.usedInline,
 															'componentMedia.componentMediaId': data.componentMediaId,
 															'componentMedia.componentId': componentId
 														},
@@ -2064,11 +2076,28 @@ Ext.define('OSF.component.SubmissionPanel', {
 											disabled: true,
 											iconCls: 'fa fa-trash',
 											handler: function(){
-												actionSubComponentRemove({
-													grid: this.up('grid'),
-													idField: 'componentMediaId',
-													entity: 'media'
-												});
+												var record = this.up('grid').getSelection()[0];
+												if (record.get('usedInline')) {
+													var msg = 'This media has been marked as being used inline. This means that the media is being used in a description, etc. ';
+													msg += 'If you delete this media, that reference will no longer be valid and the media will not be available where it is referenced elsewhere.';
+													msg += '<br><br>Do you still wish to delete this media?';
+													Ext.Msg.confirm('Media Used Inline', msg, function (btn) { 
+														if (btn ==='yes') {
+															actionSubComponentRemove({
+																grid: this.up('grid'),
+																idField: 'componentMediaId',
+																entity: 'media'
+															});
+														}
+													});
+												} else {
+													actionSubComponentRemove({
+														grid: this.up('grid'),
+														idField: 'componentMediaId',
+														entity: 'media'
+													});
+												}
+
 											}
 										}								
 									]
