@@ -1761,7 +1761,7 @@
 									itemId: 'start',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-play',
 									handler: function(){
 										var grid = this.up('grid');
 										var record = this.up('grid').getSelectionModel().getSelection()[0];										
@@ -1786,7 +1786,7 @@
 									itemId: 'stop',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-stop',
 									handler: function(){
 										var grid = this.up('grid');
 										var record = this.up('grid').getSelectionModel().getSelection()[0];
