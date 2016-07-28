@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.reader;
+package edu.usu.sdl.openstorefront.core.spi.parser.reader;
 
-import edu.usu.sdl.openstorefront.service.io.mapper.MapModel;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
 import java.io.InputStream;
 
 /**

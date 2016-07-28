@@ -13,15 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.mapper;
+package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
 /**
  *
  * @author dshurtleff
  */
-@FunctionalInterface
-public interface DataTransform<T>
+public class MapField
 {
-	public T transform(T input);
-	
+	private String name;
+	private String value;
+
+	public MapField()
+	{
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public String getValue()
+	{
+		return value;
+	}
+
+	public void setValue(String value)
+	{
+		this.value = value;
+	}
+
 }

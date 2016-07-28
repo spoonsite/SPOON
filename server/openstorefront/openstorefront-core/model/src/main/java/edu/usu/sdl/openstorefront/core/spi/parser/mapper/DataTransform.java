@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.mapper;
+package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
 /**
  *
  * @author dshurtleff
  */
-public interface DataTemplateEntity<T>
+@FunctionalInterface
+public interface DataTransform<T>
 {
-	T createNewEntity();
 	
+	public T transform(T input);
+
 }

@@ -20,6 +20,7 @@ import edu.usu.sdl.core.CoreActivator;
 import edu.usu.sdl.openstorefront.common.OpenstorefrontCommonActivator;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.model.internal.CoreAPIActivator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import java.util.logging.Logger;
 import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.util.FelixConstants;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkEvent;
 
 /**
@@ -57,9 +59,35 @@ public class OsgiManager
 		list.add(new CoreAPIActivator());
 		list.add(new APIDocActivator());
 		configMap.put(FelixConstants.SYSTEMBUNDLE_ACTIVATORS_PROP, list);
+		
+		//org.osgi.framework.system.packages.extra
+		//org.osgi.framework.bootdelegation
+		String moduleVersion = PropertiesManager.getModuleVersion();
+		configMap.put(Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA, 								
+				"edu.usu.sdl.openstorefront.core.annotation; version=" + moduleVersion + ", " +
+				"edu.usu.sdl.openstorefront.core.api; version=" + moduleVersion + ", " +
+				"edu.usu.sdl.openstorefront.core.api.query; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.core.api.model; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.core.entity; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.core.model; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.core.model.search; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.core.sort; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.core.spi; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.core.spi.parser; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.core.spi.parser.mapper; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.core.spi.parser.mapper.reader; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.core.util; version=" + moduleVersion + ", " + 
+				"edu.usu.sdl.openstorefront.core.view; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.core.view.statistic; version=" + moduleVersion + ", "  + 
+				"edu.usu.sdl.openstorefront.validation; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.secuirty; version=" + moduleVersion				
+		);
+		//configMap.put(FelixConstants, list);
 		try {
 			felix = new Felix(configMap);
 			felix.start();
+			
+		
 
 			log.log(Level.INFO, MessageFormat.format("Started Felix Version: {0}", felix.getVersion().toString()));
 

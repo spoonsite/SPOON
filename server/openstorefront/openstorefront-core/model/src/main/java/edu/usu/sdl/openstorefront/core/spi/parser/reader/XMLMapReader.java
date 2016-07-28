@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.reader;
+package edu.usu.sdl.openstorefront.core.spi.parser.reader;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.service.io.mapper.MapField;
-import edu.usu.sdl.openstorefront.service.io.mapper.MapModel;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapField;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -48,8 +48,8 @@ public class XMLMapReader
 	@Override
 	public MapModel nextRecord()
 	{
-		if (parsed == false) {
-			findFields(in);
+		if (rootModel == null) {
+			rootModel = findFields(in);
 		}
 		return rootModel;
 	}

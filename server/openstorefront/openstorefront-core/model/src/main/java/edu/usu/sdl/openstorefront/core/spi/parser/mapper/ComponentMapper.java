@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.mapper;
+package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
-import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import java.lang.reflect.InvocationTargetException;
@@ -42,17 +43,41 @@ public class ComponentMapper
 	extends BaseMapper<ComponentAll>
 {	
 	private static final Logger LOG = Logger.getLogger(ComponentMapper.class.getName());
-	
-	public ComponentMapper(DataTemplateEntity<ComponentAll> templateFactory, FileHistoryAll fileHistoryAll)
+
+	public ComponentMapper(DataTemplateEntity<ComponentAll> templateFactory, FileHistoryAll fileHistoryAll, Map<String, DataMapper> dataMappers, AttributeDataMapper attributeDataMapper)
 	{
-		super(templateFactory, fileHistoryAll);
+		super(templateFactory, fileHistoryAll, dataMappers, attributeDataMapper);
 	}
 	
 	@Override
-	public List<ComponentAll> mapData(MapModel input, Map<String, DataMapper> dataMappers)
+	public List<ComponentAll> multiMapData(MapModel input)
 	{
 		List<ComponentAll> mappedComponents = new ArrayList<>();		
 		doMapping(mappedComponents, input, dataMappers, "", null);		
+		
+		//apply attribute mappings
+		if (attributeDataMapper != null) {
+			for (ComponentAll componentAll : mappedComponents) {
+				for (ComponentAttribute componentAttribute : componentAll.getAttributes()) {
+					AttributeTypeMapper attributeTypeMapper = attributeDataMapper.getAttributeMap().get(componentAttribute.getComponentAttributePk().getAttributeType());
+					if (attributeTypeMapper != null) {
+						componentAttribute.getComponentAttributePk().setAttributeType(attributeTypeMapper.getAttributeType());						
+						String ourAttributeCode = attributeTypeMapper.getCodeMap().get(componentAttribute.getComponentAttributePk().getAttributeCode());
+						if (StringUtils.isNotBlank(ourAttributeCode)) {
+							componentAttribute.getComponentAttributePk().setAttributeCode(ourAttributeCode);
+						} else if (attributeTypeMapper.getAddMissingCode()) {
+							createAttributecCode(componentAttribute.getComponentAttributePk().getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());
+						} else if (StringUtils.isNotBlank(attributeTypeMapper.getDefaultMappedCode())) {
+							componentAttribute.getComponentAttributePk().setAttributeCode(attributeTypeMapper.getDefaultMappedCode());							
+						}
+						
+					} else if (attributeDataMapper.getAddMissingAttributeTypeFlg()) {						
+						createAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
+					}
+				}
+			}
+		}
+		
 		return mappedComponents;
 	}
 	
@@ -73,20 +98,16 @@ public class ComponentMapper
 			
 			if (ComponentAll.class.getName().equals(rootMapper.getEntityClass().getName())) {
 				componentAll = templateFactory.createNewEntity();
-			}			
-
-			if (StringUtils.isNotBlank(fieldPath)) {
-				fieldPath = fieldPath + ".";
-			}
-			
+			}	
+		
 			boolean add = false;
-			Map<String, StandardEntity> entityMap = new HashMap<>();
+			Map<String, Object> entityMap = new HashMap<>();
 			for (MapField field : root.getMapFields()) {
 				String pathToField = fieldPath + root.getName() + "." + field.getName();
 				DataMapper fieldMapper = dataMappers.get(pathToField);
 				if (fieldMapper != null) {
 					
-					StandardEntity entity = entityMap.get(fieldMapper.getEntityClass().getName());					
+					Object entity = entityMap.get(fieldMapper.getEntityClass().getName());					
 					
 					if (Component.class.getName().equals(fieldMapper.getEntityClass().getName())) {
 						if (entity == null) {
@@ -124,19 +145,29 @@ public class ComponentMapper
 							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
 							componentAll.getMetadata().add((ComponentMetadata) entity);
 						}						
-					} else if (ComponentMetadata.class.getName().equals(fieldMapper.getEntityClass().getName())) {
-						if (entity == null) {
-							entity = new ComponentMetadata();
-							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
-							componentAll.getMetadata().add((ComponentMetadata) entity);
-						}						
+					} else if (ComponentAttribute.class.getName().equals(fieldMapper.getEntityClass().getName()) 
+							|| ComponentAttributePk.class.getName().equals(fieldMapper.getEntityClass().getName())) {	
+							//create everytime
+						
+							entity = new ComponentAttribute();
+							ComponentAttributePk componentAttributePk = new ComponentAttributePk();	
+							((ComponentAttribute)entity).setComponentAttributePk(componentAttributePk);
+								 
+							componentAll.getAttributes().add((ComponentAttribute) entity);					
 					} 
 					
-					if (entity != null) {					
-						Object processedValue = fieldMapper.applyTransforms(field.getValue());					
-					
+					if (entity != null) {
 						try {
+							if (StringUtils.isNotBlank(fieldMapper.getSetPathToEnityField())) {
+								Object processedPath = fieldMapper.applyPathTransforms(pathToField);
+								BeanUtils.setProperty(entity, fieldMapper.getSetPathToEnityField(), processedPath);
+								add = true;
+							}
+
+							Object processedValue = fieldMapper.applyTransforms(field.getValue());
+
 							BeanUtils.setProperty(entity, fieldMapper.getEntityField(), processedValue);
+							add = true;
 						} catch (IllegalAccessException | InvocationTargetException ex) {
 							fileHistoryAll.addError(FileHistoryErrorType.MAPPING, pathToField);						
 						}
@@ -153,7 +184,7 @@ public class ComponentMapper
 		}
 
 		for (MapModel child : root.getArrayFields()) {
-			String newParent = root.getName();
+			String newParent = root.getName() + ".";
 			if (StringUtils.isNotBlank(fieldPath)) {
 				newParent = fieldPath + root.getName();
 			}

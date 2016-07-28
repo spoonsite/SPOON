@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.mapper;
+package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +29,11 @@ public class DataMapper
 	private List<DataTransform> transforms = new ArrayList<>();
 	private Class entityClass;
 	private String entityField;
+	private boolean useAsAttributeLabel;
+	private boolean concatenate;
+	private boolean addEndPathToValue;
+	private String setPathToEnityField;
+	private List<DataTransform> pathTransforms = new ArrayList<>();
 
 	public DataMapper()
 	{
@@ -41,6 +46,14 @@ public class DataMapper
 		}
 		return transformedData;
 	}
+	
+	public Object applyPathTransforms(String value) {
+		Object transformedData = value;
+		for (DataTransform dataTransform : pathTransforms) {
+			transformedData = dataTransform.transform(transformedData);
+		}
+		return transformedData;
+	}	
 
 	public String getField()
 	{
@@ -91,5 +104,55 @@ public class DataMapper
 	{
 		this.rootField = rootField;
 	}
-	
+
+	public boolean getUseAsAttributeLabel()
+	{
+		return useAsAttributeLabel;
+	}
+
+	public void setUseAsAttributeLabel(boolean useAsAttributeLabel)
+	{
+		this.useAsAttributeLabel = useAsAttributeLabel;
+	}
+
+	public boolean getConcatenate()
+	{
+		return concatenate;
+	}
+
+	public void setConcatenate(boolean concatenate)
+	{
+		this.concatenate = concatenate;
+	}
+
+	public List<DataTransform> getPathTransforms()
+	{
+		return pathTransforms;
+	}
+
+	public void setPathTransforms(List<DataTransform> pathTransforms)
+	{
+		this.pathTransforms = pathTransforms;
+	}
+
+	public String getSetPathToEnityField()
+	{
+		return setPathToEnityField;
+	}
+
+	public void setSetPathToEnityField(String setPathToEnityField)
+	{
+		this.setPathToEnityField = setPathToEnityField;
+	}
+
+	public boolean getAddEndPathToValue()
+	{
+		return addEndPathToValue;
+	}
+
+	public void setAddEndPathToValue(boolean addEndPathToValue)
+	{
+		this.addEndPathToValue = addEndPathToValue;
+	}
+
 }

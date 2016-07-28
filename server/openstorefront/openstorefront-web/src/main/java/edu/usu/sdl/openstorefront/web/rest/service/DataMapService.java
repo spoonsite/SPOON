@@ -13,34 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.reader;
+package edu.usu.sdl.openstorefront.web.rest.service;
 
-import edu.usu.sdl.openstorefront.service.io.mapper.MapModel;
-import java.io.InputStream;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import javax.ws.rs.Path;
 
 /**
- *
+ * Data mapping support
+ * 
  * @author dshurtleff
  */
-public class CSVMapReader
-	extends MappableReader
+@Path("v1/service/datamapping")
+@APIDescription("Data mapping support services")
+public class DataMapService
+	extends BaseResource
 {
-
-	public CSVMapReader(InputStream in)
-	{
-		super(in);
-	}
-
-	@Override
-	public MapModel nextRecord()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public MapModel findFields(InputStream in)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+	
+	
 	
 }

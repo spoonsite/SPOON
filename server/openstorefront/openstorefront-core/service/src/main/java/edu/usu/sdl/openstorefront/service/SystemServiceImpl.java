@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.core.CoreSystem;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
@@ -74,8 +75,8 @@ public class SystemServiceImpl
 		implements SystemService
 {
 
-	private static final Logger log = Logger.getLogger(SystemServiceImpl.class.getName());
-	private static final Logger errorLog = Logger.getLogger(OpenStorefrontConstant.ERROR_LOGGER);
+	private static final Logger LOG = Logger.getLogger(SystemServiceImpl.class.getName());
+	private static final Logger ERRORLOG = Logger.getLogger(OpenStorefrontConstant.ERROR_LOGGER);
 
 	private static final int MAX_DB_CLEAN_AMOUNT = 1000;
 	private static final int MIN_DB_CLEAN_AMOUNT = 1000;
@@ -189,7 +190,7 @@ public class SystemServiceImpl
 	public void syncHighlights(List<Highlight> highlights)
 	{
 		int removeCount = persistenceService.deleteByExample(new Highlight());
-		log.log(Level.FINE, MessageFormat.format("Old Highlights removed: {0}", removeCount));
+		LOG.log(Level.FINE, MessageFormat.format("Old Highlights removed: {0}", removeCount));
 
 		for (Highlight highlight : highlights) {
 			try {
@@ -203,7 +204,7 @@ public class SystemServiceImpl
 				}
 
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Unable to save highlight.  Title: " + highlight.getTitle(), e);
+				LOG.log(Level.SEVERE, "Unable to save highlight.  Title: " + highlight.getTitle(), e);
 			}
 		}
 	}
@@ -213,7 +214,7 @@ public class SystemServiceImpl
 	{
 		Objects.requireNonNull(errorInfo);
 
-		errorLog.log(Level.SEVERE, "System Error Occured", errorInfo.getError());
+		ERRORLOG.log(Level.SEVERE, "System Error Occured", errorInfo.getError());
 
 		SystemErrorModel systemErrorModel = new SystemErrorModel();
 		systemErrorModel.setMessage(errorInfo.getError().getMessage());
@@ -272,7 +273,7 @@ public class SystemServiceImpl
 		} catch (Throwable t) {
 			//NOTE: this is a critial path.  if an error is thrown and not catch it would result in a info link or potential loop.
 			//So that's why there is a catch all here.
-			log.log(Level.SEVERE, "Error was thrown while processing the error", t);
+			LOG.log(Level.SEVERE, "Error was thrown while processing the error", t);
 		}
 		return systemErrorModel;
 	}
@@ -290,7 +291,7 @@ public class SystemServiceImpl
 			} catch (IOException io) {
 				//We don't want to throw an error here if there something going on with the system.
 				ticketData = "Unable to retrieve ticket information.  (Check log for more details) Message: " + io.getMessage();
-				log.log(Level.WARNING, ticketData, io);
+				LOG.log(Level.WARNING, ticketData, io);
 			}
 		}
 		return ticketData;
@@ -441,7 +442,7 @@ public class SystemServiceImpl
 		long max = DBLogManager.getMaxLogEntries();
 
 		if (count > max) {
-			log.log(Level.INFO, MessageFormat.format("Cleaning old log records:  {0}", (count - max)));
+			LOG.log(Level.INFO, MessageFormat.format("Cleaning old log records:  {0}", (count - max)));
 
 			long limit = count - max - MIN_DB_CLEAN_AMOUNT;
 			if (limit > MAX_DB_CLEAN_AMOUNT) {
@@ -462,7 +463,7 @@ public class SystemServiceImpl
 	public void clearAllLogRecord()
 	{
 		int recordsRemoved = persistenceService.deleteByQuery(DBLogRecord.class, "", new HashMap<>());
-		log.log(Level.WARNING, MessageFormat.format("DB log records were cleared.  Records cleared: {0}", recordsRemoved));
+		LOG.log(Level.WARNING, MessageFormat.format("DB log records were cleared.  Records cleared: {0}", recordsRemoved));
 	}
 
 	@Override
@@ -471,9 +472,9 @@ public class SystemServiceImpl
 		Objects.requireNonNull(helpSections, "Help sections required");
 
 		int recordsRemoved = persistenceService.deleteByQuery(HelpSection.class, "", new HashMap<>());
-		log.log(Level.FINE, MessageFormat.format("Help records were cleared.  Records cleared: {0}", recordsRemoved));
+		LOG.log(Level.FINE, MessageFormat.format("Help records were cleared.  Records cleared: {0}", recordsRemoved));
 
-		log.log(Level.FINE, MessageFormat.format("Saving new Help records: {0}", helpSections.size()));
+		LOG.log(Level.FINE, MessageFormat.format("Saving new Help records: {0}", helpSections.size()));
 		for (HelpSection helpSection : helpSections) {
 			helpSection.setId(persistenceService.generateId());
 			persistenceService.persist(helpSection);
@@ -545,7 +546,7 @@ public class SystemServiceImpl
 		for (HelpSectionAll helpSection : helpSectionAll.getChildSections()) {
 			if (helpSection.getHelpSection().getTitle() == null) {
 				helpSection.getHelpSection().setTitle("");
-				log.log(Level.FINE, "This is a stub help section.  Check help data to make sure that is desired.  *=admin sections; make sure child sections are appropriately starred.");
+				LOG.log(Level.FINE, "This is a stub help section.  Check help data to make sure that is desired.  *=admin sections; make sure child sections are appropriately starred.");
 			}
 
 			String titleSplit[] = helpSection.getHelpSection().getTitle().split(" ");
@@ -592,6 +593,12 @@ public class SystemServiceImpl
 		//restart
 		DBLogManager.cleanup();
 		DBLogManager.init();
+	}
+
+	@Override
+	public boolean isSystemReady()
+	{
+		return CoreSystem.isStarted();
 	}
 
 }

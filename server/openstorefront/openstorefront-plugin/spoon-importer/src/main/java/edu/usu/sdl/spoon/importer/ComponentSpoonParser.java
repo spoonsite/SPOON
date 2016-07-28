@@ -15,11 +15,28 @@
  */
 package edu.usu.sdl.spoon.importer;
 
+import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
+import java.io.InputStream;
+
 /**
  *
  * @author dshurtleff
  */
 public class ComponentSpoonParser
+	extends BaseComponentParser
 {
+	public static final String FORMAT_CODE = "SPOONCMP";
+
+	@Override
+	public String checkFormat(String mimeType, InputStream input)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	protected <T> Object parseRecord(T record)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 	
 }

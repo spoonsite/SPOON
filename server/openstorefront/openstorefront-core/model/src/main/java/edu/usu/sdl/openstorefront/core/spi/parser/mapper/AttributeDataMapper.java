@@ -13,39 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.mapper;
+package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author dshurtleff
  */
-public class MapField
+public class AttributeDataMapper
 {
-	private String name;
-	private String value;
+	private boolean addMissingAttributeTypeFlg;
+	private Map<String, AttributeTypeMapper> attributeMap = new HashMap<>();
 
-	public MapField()
+	public AttributeDataMapper()
 	{
 	}
 
-	public String getName()
+	public Map<String, AttributeTypeMapper> getAttributeMap()
 	{
-		return name;
+		return attributeMap;
 	}
 
-	public void setName(String name)
+	public void setAttributeMap(Map<String, AttributeTypeMapper> attributeMap)
 	{
-		this.name = name;
+		this.attributeMap = attributeMap;
 	}
 
-	public String getValue()
+	public boolean getAddMissingAttributeTypeFlg()
 	{
-		return value;
+		return addMissingAttributeTypeFlg;
 	}
 
-	public void setValue(String value)
+	public void setAddMissingAttributeTypeFlg(boolean addMissingAttributeTypeFlg)
 	{
-		this.value = value;
+		this.addMissingAttributeTypeFlg = addMissingAttributeTypeFlg;
 	}
 
 }

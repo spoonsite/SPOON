@@ -13,27 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.mapper;
-
-import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
-import java.util.List;
-import java.util.Map;
+package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
 /**
  *
  * @author dshurtleff
  */
-public abstract class BaseMapper<T>
+@FunctionalInterface
+public interface DataTemplateEntity<T>
 {
-	protected DataTemplateEntity<T> templateFactory;
-	protected FileHistoryAll fileHistoryAll;
-
-	public BaseMapper(DataTemplateEntity<T> templateFactory, FileHistoryAll fileHistoryAll)
-	{
-		this.templateFactory = templateFactory;
-		this.fileHistoryAll = fileHistoryAll;
-	}
-			
-	public abstract  List<T> mapData(MapModel input, Map<String, DataMapper> dataMappers);
+	
+	public T createNewEntity();
 	
 }

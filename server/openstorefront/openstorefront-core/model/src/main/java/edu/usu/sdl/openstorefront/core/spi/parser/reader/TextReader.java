@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,31 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.reader;
+package edu.usu.sdl.openstorefront.core.spi.parser.reader;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class CSVReader
-		extends GenericReader<String[]>
+/**
+ *
+ * @author dshurtleff
+ */
+public class TextReader
+		extends GenericReader<String>
 {
 
-	private au.com.bytecode.opencsv.CSVReader reader;
+	private BufferedReader bin;
 
-	public CSVReader(InputStream in)
+	public TextReader(InputStream in)
 	{
 		super(in);
-		reader = new au.com.bytecode.opencsv.CSVReader(new InputStreamReader(in));
+		bin = new BufferedReader(new InputStreamReader(in));
 	}
 
 	@Override
-	public String[] nextRecord()
+	public String nextRecord()
 	{
 		try {
-			currentRecordNumber++;
-			return reader.readNext();
+			String line = bin.readLine();
+			if (line != null) {
+				currentRecordNumber++;
+			}
+			return line;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}

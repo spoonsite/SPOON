@@ -26,6 +26,8 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
+import edu.usu.sdl.openstorefront.core.entity.FileAttributeMap;
+import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
@@ -35,13 +37,15 @@ import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
+import edu.usu.sdl.openstorefront.core.model.DataMapModel;
 import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.spi.parser.AbstractParser;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
-import edu.usu.sdl.openstorefront.service.io.parser.AbstractParser;
+import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,6 +65,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -72,7 +77,9 @@ public class ImportServiceImpl
 		implements ImportService, ImportServicePrivate
 {
 
-	private static final Logger log = Logger.getLogger(ImportServiceImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(ImportServiceImpl.class.getName());
+	
+	private static final String FORMATS_KEY = "ADDITIONAL-FILEFORMATS";
 
 	@Override
 	public String importData(ImportContext importContext)
@@ -108,16 +115,33 @@ public class ImportServiceImpl
 		Objects.requireNonNull(formatCheck);
 
 		FileFormat fileFormat = getLookupService().getLookupEnity(FileFormat.class, formatCheck.getFileFormat());
+		
+		if (fileFormat == null) {
+			Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+			if (element != null) {
+				List<FileFormat> extraFileFormats = ((List<FileFormat>) element.getObjectValue());
+				for (FileFormat pluginFormat : extraFileFormats) {
+					if (formatCheck.getFileFormat().equals(pluginFormat.getCode())) {
+						fileFormat = pluginFormat;
+					}
+				}
+			}
+		}	
+		
+		if (fileFormat == null) {
+			throw new OpenStorefrontRuntimeException("Unable to find format.  File Format: " + formatCheck.getFileFormat(), "Make sure format is loaded (Maybe a loaded from a plugin)");
+		}		
+		
 		StringBuilder errors = new StringBuilder();
 		try (InputStream in = formatCheck.getInput()) {
-			Class parserClass = this.getClass().getClassLoader().loadClass("edu.usu.sdl.openstorefront.service.io.parser." + fileFormat.getParserClass());
+			Class parserClass = this.getClass().getClassLoader().loadClass(fileFormat.getParserClass());
 			AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
 			String message = abstractParser.checkFormat(formatCheck.getMimeType(), in);
 			if (StringUtils.isNotBlank(message)) {
 				errors.append(message);
 			}
 		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			log.log(Level.SEVERE, "Unable to load parser class: " + fileFormat.getParserClass(), e);
+			LOG.log(Level.SEVERE, "Unable to load parser class: " + fileFormat.getParserClass(), e);
 			errors.append("(System Error)File Format not supported.");
 		}
 		return StringUtils.isNotBlank(errors.toString()) ? errors.toString() : null;
@@ -137,7 +161,7 @@ public class ImportServiceImpl
 		fileHistory.setRecordsStored(0);
 		fileHistory.populateBaseUpdateFields();
 		persistenceService.persist(fileHistory);
-		log.log(Level.FINE, "Queued:  {0} to be reprocessed.", fileHistory.getOriginalFilename());
+		LOG.log(Level.FINE, "Queued:  {0} to be reprocessed.", fileHistory.getOriginalFilename());
 	}
 
 	@Override
@@ -156,9 +180,25 @@ public class ImportServiceImpl
 
 		//Get Parser for format
 		FileFormat fileFormat = getLookupService().getLookupEnity(FileFormat.class, fileHistory.getFileFormat());
+		
+		if (fileFormat == null) {
+			Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+			if (element != null) {
+				List<FileFormat> extraFileFormats = ((List<FileFormat>) element.getObjectValue());
+				for (FileFormat pluginFormat : extraFileFormats) {
+					if (fileHistory.getFileFormat().equals(pluginFormat.getCode())) {
+						fileFormat = pluginFormat;
+					}
+				}
+			}
+		}
+		
+		if (fileFormat == null) {
+			throw new OpenStorefrontRuntimeException("Unable to find format.  File Format: " + fileHistory.getFileFormat(), "Make sure format is loaded (Maybe a loaded from a plugin)");
+		}
 
 		try {
-			Class parserClass = this.getClass().getClassLoader().loadClass("edu.usu.sdl.openstorefront.service.io.parser." + fileFormat.getParserClass());
+			Class parserClass = this.getClass().getClassLoader().loadClass(fileFormat.getParserClass());			
 			AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
 			abstractParser.processData(fileHistoryAll);
 
@@ -173,7 +213,7 @@ public class ImportServiceImpl
 			}
 
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			log.log(Level.SEVERE, "Unable to load parser class: " + fileFormat.getParserClass(), e);
+			LOG.log(Level.SEVERE, "Unable to load parser class: " + fileFormat.getParserClass(), e);
 			fileHistoryAll.addError(FileHistoryErrorType.SYSTEM, "Unable to load parser class: " + fileFormat.getParserClass());
 		}
 
@@ -242,7 +282,7 @@ public class ImportServiceImpl
 			if (SecurityUtil.isLoggedIn()) {
 				removalUser = SecurityUtil.getCurrentUserName();
 			}
-			log.log(Level.FINE, MessageFormat.format("File History removed by user: {0} filename: {1} Orginal name: {2}", new Object[]{removalUser, filename, originalFilename}));
+			LOG.log(Level.FINE, MessageFormat.format("File History removed by user: {0} filename: {1} Orginal name: {2}", new Object[]{removalUser, filename, originalFilename}));
 		}
 	}
 
@@ -253,8 +293,53 @@ public class ImportServiceImpl
 		if (StringUtils.isNotBlank(fileType)) {
 			fileFormats = fileFormats.stream().filter(f -> f.getFileType().equals(fileType)).collect(Collectors.toList());
 		}
+		//also pull in fileformat and translate Class to path
+		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+		if (element != null) {
+			List<FileFormat> extraFileFormats = ((List<FileFormat>) element.getObjectValue());
+			for (FileFormat fileFormat : extraFileFormats) {
+				if (fileFormat.getFileType().equals(fileType)) {
+					FileFormat translatedFileFormat = new FileFormat();
+					translatedFileFormat.setCode(fileFormat.getCode());
+					translatedFileFormat.setDescription(fileFormat.getDescription());
+					translatedFileFormat.setSupportsDataMap(fileFormat.getSupportsDataMap());
+					translatedFileFormat.setFileType(fileFormat.getFileType());
+					translatedFileFormat.setFileRequirements(fileFormat.getFileRequirements());
+										
+					fileFormats.add(translatedFileFormat);
+				}
+			}
+		}
+		
 		return fileFormats;
 	}
+	
+	@Override
+	public List<FileFormat> getFileFormatsMapping()
+	{
+		List<FileFormat> fileFormats = getLookupService().findLookup(FileFormat.class);
+
+		//also pull in fileformat and translate Class to path
+		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+		if (element != null) {
+			List<FileFormat> extraFileFormats = ((List<FileFormat>) element.getObjectValue());
+			for (FileFormat fileFormat : extraFileFormats) {
+					FileFormat translatedFileFormat = new FileFormat();
+					translatedFileFormat.setCode(fileFormat.getCode());
+					translatedFileFormat.setDescription(fileFormat.getDescription());
+					translatedFileFormat.setSupportsDataMap(fileFormat.getSupportsDataMap());
+					translatedFileFormat.setFileType(fileFormat.getFileType());
+					translatedFileFormat.setFileRequirements(fileFormat.getFileRequirements());
+										
+					fileFormats.add(translatedFileFormat);
+			}
+		}
+		fileFormats = fileFormats.stream()
+				.filter(FileFormat::getSupportsDataMap)
+				.collect(Collectors.toList());
+		
+		return fileFormats;		
+	}	
 
 	@Override
 	public void cleanupOldFileHistory()
@@ -283,7 +368,7 @@ public class ImportServiceImpl
 		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryId);
 		if (fileHistory != null) {
 
-			log.log(Level.INFO, MessageFormat.format("(Undo) Rolling back of import: {0}", TimeUtil.dateToString(fileHistory.getUpdateDts())));
+			LOG.log(Level.INFO, MessageFormat.format("(Undo) Rolling back of import: {0}", TimeUtil.dateToString(fileHistory.getUpdateDts())));
 
 			//find records with batch id  (For now only components )
 			Component componentExample = new Component();
@@ -324,14 +409,14 @@ public class ImportServiceImpl
 						getComponentService().cascadeDeleteOfComponent(component.getComponentId());
 					}
 				} else {
-					log.log(Level.WARNING, MessageFormat.format("(Undo) Unable to undo import for component. No snapshot exists for component:   {0} FileHistory DTS: {1}", new Object[]{component.getName(), fileHistory.getCreateDts()}));
+					LOG.log(Level.WARNING, MessageFormat.format("(Undo) Unable to undo import for component. No snapshot exists for component:   {0} FileHistory DTS: {1}", new Object[]{component.getName(), fileHistory.getCreateDts()}));
 				}
 
 			}
 
 			removeFileHistory(fileHistoryId);
 		} else {
-			log.log(Level.WARNING, "File history doesn't exist unable to rollback.");
+			LOG.log(Level.WARNING, "File history doesn't exist unable to rollback.");
 		}
 
 	}
@@ -361,6 +446,109 @@ public class ImportServiceImpl
 		}
 
 		return errorMap;
+	}
+
+	@Override
+	public FileDataMap saveFileDataMap(DataMapModel dataMapModel)
+	{
+		Objects.requireNonNull(dataMapModel.getFileDataMap());
+		
+		FileDataMap existingFileDataMap = persistenceService.findById(FileDataMap.class, dataMapModel.getFileDataMap().getFileDataMapId());
+		if (existingFileDataMap != null) {
+			existingFileDataMap.updateFields(dataMapModel.getFileDataMap());
+			existingFileDataMap = persistenceService.persist(existingFileDataMap);			
+		} else {
+			dataMapModel.getFileDataMap().setFileDataMapId(persistenceService.generateId());			
+			dataMapModel.getFileDataMap().populateBaseCreateFields();
+			existingFileDataMap = persistenceService.persist(dataMapModel.getFileDataMap());	
+		}
+		
+		if (dataMapModel.getFileAttributeMap() != null) {
+						
+			FileAttributeMap existingFileAttributeMap = persistenceService.findById(FileAttributeMap.class, dataMapModel.getFileAttributeMap().getFileAttributeMapId());
+			if (existingFileAttributeMap != null) {
+				existingFileAttributeMap.updateFields(dataMapModel.getFileAttributeMap());
+				persistenceService.persist(existingFileAttributeMap);
+			} else {
+				dataMapModel.getFileAttributeMap().setFileAttributeMapId(persistenceService.generateId());
+				dataMapModel.getFileAttributeMap().setFileDataMapId(existingFileDataMap.getFileDataMapId());
+				dataMapModel.getFileAttributeMap().populateBaseCreateFields();
+				persistenceService.persist(dataMapModel.getFileAttributeMap());
+			}			
+		}
+		
+		return existingFileDataMap;
+	}
+	
+	
+	@Override
+	public void removeFileDataMap(String fileDataMapId)
+	{
+		FileDataMap fileDataMap = persistenceService.findById(FileDataMap.class, fileDataMapId);
+		if (fileDataMap != null) {
+			
+			//delete Attribute Maps if the exist
+			FileAttributeMap fileAttributeMap = new FileAttributeMap();
+			fileAttributeMap.setFileDataMapId(fileDataMapId);
+			List<FileAttributeMap> attributeMaps = fileAttributeMap.findByExampleProxy();
+			for (FileAttributeMap attributeMap : attributeMaps) {
+				persistenceService.delete(attributeMap);					
+			}
+			
+			persistenceService.delete(fileDataMap);			
+		}		
+	}
+
+	@Override
+	public DataMapModel getDataMap(String fileDataMapId)
+	{
+		DataMapModel dataMapModel = null;
+		FileDataMap fileDataMap = persistenceService.findById(FileDataMap.class, fileDataMapId);
+		if (fileDataMap != null) {
+			dataMapModel = new DataMapModel();
+			dataMapModel.setFileDataMap(fileDataMap);
+						
+			FileAttributeMap fileAttributeMap = new FileAttributeMap();
+			fileAttributeMap.setFileDataMapId(fileDataMapId);
+			FileAttributeMap attributeMap = fileAttributeMap.find();
+			dataMapModel.setFileAttributeMap(attributeMap);
+			
+		}
+		return dataMapModel;
+	}
+
+	@Override
+	public void registerFormat(FileFormat newFormat)
+	{
+		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+		if (element == null) {
+			List<FileFormat> fileFormats = new ArrayList<>();			
+			element = new Element(FORMATS_KEY, fileFormats);
+			OSFCacheManager.getApplicationCache().put(element);
+		}		
+		((List<FileFormat>) element.getObjectValue()).add(newFormat);		
+		LOG.log(Level.FINE, MessageFormat.format("Registered new file format: {0}", newFormat.getDescription()));		
+	}
+
+	@Override
+	public void unregisterFormat(String fullClassPath)
+	{
+		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+		if (element != null) {
+			List<FileFormat> fileFormats = ((List<FileFormat>) element.getObjectValue());
+			for (int i=fileFormats.size()-1; i >= 0; i--) {
+				FileFormat fileFormat = fileFormats.get(i);
+				if (fileFormat.getParserClass().equals(fullClassPath)) {
+					 fileFormats.remove(i);
+					 LOG.log(Level.FINE, MessageFormat.format("Deregistered new file format: {0}", fileFormat.getDescription()));
+				}
+			}
+				
+			element = new Element(FORMATS_KEY, fileFormats);
+			OSFCacheManager.getApplicationCache().put(element);
+		} else {
+			LOG.log(Level.WARNING, "Unable to find and internal format list. No format to unregister.");
+		}
 	}
 
 }

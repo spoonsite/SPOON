@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.mapper;
+package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
 /**
- * Converts String to various data types
- * 
+ *
  * @author dshurtleff
  */
-public enum TypeTransforms
+public enum DateTransforms
 {
 	
 }

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
@@ -22,27 +23,35 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
+import edu.usu.sdl.openstorefront.core.model.DataMapModel;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.FileHistoryView;
 import edu.usu.sdl.openstorefront.core.view.FileHistoryViewWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -227,22 +236,141 @@ public class FileHistoryResource
 		List<FileFormat> formats = service.getImportService().findFileFormats(type);
 		return formats;
 	}
+	
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets all file format that support mapping")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(FileFormat.class)
+	@Path("formats/mappingformats")
+	public List<FileFormat> getMappingFormats()
+	{
+		List<FileFormat> formats = service.getImportService().getFileFormatsMapping();
+		return formats;
+	}	
 
 	@GET
 	@RequireAdmin
 	@APIDescription("Gets data mappings for a format.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
-	@Path("filetypes/{type}/formats/{format}/mappings")
-	public List<LookupModel> getFileTypesForFormat(
-			@PathParam("type") String type,
+	@Path("formats/{format}/mappings")
+	public List<LookupModel> getMappingsForFormat(			
 			@PathParam("format") String format
 	)
 	{
 		List<LookupModel> mappings = new ArrayList<>();
 
-		//implement mappings
+		FileDataMap fileDataMapExample = new FileDataMap();
+		fileDataMapExample.setActiveStatus(FileDataMap.ACTIVE_STATUS);		
+		fileDataMapExample.setFileFormat(format);
+		
+		List<FileDataMap> fileDataMaps = fileDataMapExample.findByExample();
+		for (FileDataMap fileDataMap : fileDataMaps) {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(fileDataMap.getFileDataMapId());
+			lookupModel.setDescription(fileDataMap.getName());
+						
+			mappings.add(lookupModel);
+		}
+		mappings.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));			
+		
 		return mappings;
+	}
+	
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Deletes a data mappings")	
+	@Path("formats/{format}/mappings/{fileDataMapId}")
+	public Response removeDataMapping(			
+			@PathParam("format") String format,
+			@PathParam("fileDataMapId") String fileDateMapId
+	)
+	{
+		FileDataMap fileDataMapExample = new FileDataMap();
+		fileDataMapExample.setFileFormat(format);
+		fileDataMapExample.setFileDataMapId(fileDateMapId);
+		
+		fileDataMapExample = fileDataMapExample.find();
+		if (fileDataMapExample != null) {
+			service.getImportService().removeFileDataMap(fileDateMapId);			
+		}
+		return Response.noContent().build();
+	}
+
+	@POST
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("formats/{format}/mappings")
+	public Response createNewMapping(
+			@PathParam("format") String format,
+			DataMapModel dataMapModel		
+	)
+	{
+		return handleMappingSave(dataMapModel, true);
+	}
+	
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("formats/{format}/mappings/{fileDataMapId}")
+	public Response getFileMapping(
+			@PathParam("format") String format,
+			@PathParam("fileDataMapId") String fileDateMapId
+	)
+	{
+		DataMapModel dataMapModel = service.getImportService().getDataMap(fileDateMapId);		
+		return sendSingleEntityResponse(dataMapModel);
+	}
+	
+	@PUT
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("formats/{format}/mappings/{fileDataMapId}")
+	public Response updateMapping(
+			@PathParam("format") String format,
+			@PathParam("fileDataMapId") String fileDateMapId,
+			DataMapModel dataMapModel		
+	)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+
+		FileDataMap fileDataMapExample = new FileDataMap();
+		fileDataMapExample.setFileFormat(format);
+		fileDataMapExample.setFileDataMapId(fileDateMapId);
+		
+		fileDataMapExample = fileDataMapExample.find();
+		if (fileDataMapExample != null) {
+			dataMapModel.getFileDataMap().setFileDataMapId(fileDateMapId);
+			dataMapModel.getFileDataMap().setFileFormat(format);			
+			response = handleMappingSave(dataMapModel, false);
+		}		
+		return response;
+	}
+
+	private Response handleMappingSave(DataMapModel dataMapModel, boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(dataMapModel);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
+		if (validationResult.valid()) {
+			FileDataMap fileDataMap = service.getImportService().saveFileDataMap(dataMapModel);
+			
+			if (post) {
+				return Response.created(URI.create(
+						"v1/resource/filehistory/formats/" +
+						fileDataMap.getFileFormat() + 
+						"/mappings/" + fileDataMap.getFileDataMapId()))
+					.entity(fileDataMap).build();
+			} else {
+				return sendSingleEntityResponse(fileDataMap);
+			}
+		}
+		return sendSingleEntityResponse(validationResult.toRestError());			
 	}
 
 }

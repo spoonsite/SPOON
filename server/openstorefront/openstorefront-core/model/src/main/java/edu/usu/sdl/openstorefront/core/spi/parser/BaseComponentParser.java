@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.parser;
+package edu.usu.sdl.openstorefront.core.spi.parser;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
@@ -38,7 +38,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+
 
 /**
  *
@@ -47,7 +48,7 @@ import org.apache.commons.lang.StringUtils;
 public abstract class BaseComponentParser
 		extends AbstractParser
 {
-	private static final Logger log = Logger.getLogger(BaseComponentParser.class.getName());
+	private static final Logger LOG = Logger.getLogger(BaseComponentParser.class.getName());
 
 	protected static final int MAX_BUCKET_SIZE = 100;
 	protected List<ComponentAll> componentsAll = new ArrayList<>();
@@ -174,7 +175,7 @@ public abstract class BaseComponentParser
 						lookup.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
 						
 						service.getLookupService().saveLookupValue(lookup);
-						log.log(Level.INFO, MessageFormat.format("Added missing lookup: {0} to lookup {1}", input, lookupClass.getSimpleName()));
+						LOG.log(Level.INFO, MessageFormat.format("Added missing lookup: {0} to lookup {1}", input, lookupClass.getSimpleName()));
 					} catch (InstantiationException | IllegalAccessException ex) {
 						throw new OpenStorefrontRuntimeException("Unable to create a new instance of look up class.", ex);
 					}
@@ -188,8 +189,9 @@ public abstract class BaseComponentParser
 	/**
 	 * This will attempt to find the attribute but if not found it will add type and code
 	 * @param attributeTypeCode
+	 * @param attributeTypeDescription
 	 * @param attributeCode
-	 * @param attributeDescribtion
+	 * @param attributeCodeDescription
 	 * @return 
 	 */
 	protected AttributeCode getAttributeCode(String attributeTypeCode, String attributeTypeDescription, String attributeCode, String attributeCodeDescription)

@@ -15,9 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
+import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
+import edu.usu.sdl.openstorefront.core.model.DataMapModel;
 import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
@@ -84,11 +86,21 @@ public interface ImportService
 	public List<FileFormat> findFileFormats(String fileType);
 
 	/**
+	 * Gets all formats that support mapping
+	 * @return 
+	 */
+	public List<FileFormat> getFileFormatsMapping();
+	
+	/**
 	 * Removes records older than the clean up property is set to
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void cleanupOldFileHistory();
 
+	/**
+	 * Rollback data (if possible) and remove file uploaded.
+	 * @param fileHistoryId 
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void rollback(String fileHistoryId);
 
@@ -98,5 +110,42 @@ public interface ImportService
 	 * @return
 	 */
 	public Map<String, List<FileHistoryError>> fileHistoryErrorMap();
+	
+	/**
+	 *  Add or updates a data mapper for a file format 
+	 * @param dataMapModel (Contains both the data mapping and attribute mapping)
+	 * @return  saved data map
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public FileDataMap saveFileDataMap(DataMapModel dataMapModel);
+	
+	/**
+	 * Removes File Data map
+	 * @param fileDataMapId 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void removeFileDataMap(String fileDataMapId);
+	
+	/**
+	 * Get the Complete DataMapModel
+	 * 
+	 * @param fileDataMapId
+	 * @return 
+	 */
+	public DataMapModel getDataMap(String fileDataMapId);
+	
+	/**
+	 * Adds a File Format to the import system
+	 * 
+	 * @param newFormat 
+	 */
+	public void registerFormat(FileFormat newFormat);
+	
+	/**
+	 * Removes a File Format from the import system
+	 * 
+	 * @param fullClassPath 
+	 */
+	public void unregisterFormat(String fullClassPath);
 
 }

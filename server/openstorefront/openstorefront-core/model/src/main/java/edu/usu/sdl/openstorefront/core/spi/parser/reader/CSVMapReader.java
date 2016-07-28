@@ -13,13 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.mapper;
+package edu.usu.sdl.openstorefront.core.spi.parser.reader;
+
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
+import java.io.InputStream;
 
 /**
  *
  * @author dshurtleff
  */
-public enum DateTransforms
+public class CSVMapReader
+	extends MappableReader
 {
+
+	public CSVMapReader(InputStream in)
+	{
+		super(in);
+	}
+
+	@Override
+	public MapModel nextRecord()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public MapModel findFields(InputStream in)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 	
 }

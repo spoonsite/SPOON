@@ -41,11 +41,15 @@ public class FileHistory
 	@PK(generated = true)
 	@NotNull
 	private String fileHistoryId;
-
-	@ValidValueType(value = "", lookupClass = FileFormat.class)
+	
 	@FK(FileFormat.class)
 	@NotNull
+	@APIDescription("May be a built in format or a format from a plugin which may not be load.")
 	private String fileFormat;
+	
+	@ConsumeField
+	@FK(FileDataMap.class)
+	private String fileDataMapId;	
 
 	private Integer numberRecords;
 	private Integer recordsProcessed;
@@ -220,6 +224,16 @@ public class FileHistory
 	public void setRecordsProcessed(Integer recordsProcessed)
 	{
 		this.recordsProcessed = recordsProcessed;
+	}
+
+	public String getFileDataMapId()
+	{
+		return fileDataMapId;
+	}
+
+	public void setFileDataMapId(String fileDataMapId)
+	{
+		this.fileDataMapId = fileDataMapId;
 	}
 
 }

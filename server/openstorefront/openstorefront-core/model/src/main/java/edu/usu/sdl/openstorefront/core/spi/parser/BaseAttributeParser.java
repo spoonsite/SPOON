@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.parser;
+package edu.usu.sdl.openstorefront.core.spi.parser;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
@@ -44,9 +43,6 @@ public abstract class BaseAttributeParser
 		attributeType.setHideOnSubmission(Boolean.FALSE);
 
 		attributeAll.setAttributeType(attributeType);
-		List<AttributeCode> attributeCodes = new ArrayList<>();
-		attributeAll.setAttributeCodes(attributeCodes);
-
 		return attributeAll;
 	}
 

@@ -234,4 +234,11 @@ public interface SystemService
 	 */
 	public HelpSectionAll getAllHelp(Boolean includeAdmin);
 
+	/**
+	 * Check system state. Modules that load before the system is ready should check this
+	 * otherwise they may fail.
+	 * @return true is the system(application) is started.
+	 */
+	public boolean isSystemReady();
+	
 }

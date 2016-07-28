@@ -1,0 +1,92 @@
+/*
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
+
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ *
+ * @author dshurtleff
+ */
+public abstract class BaseMapper<T>
+{
+	protected DataTemplateEntity<T> templateFactory;
+	protected FileHistoryAll fileHistoryAll;
+	protected Map<String, DataMapper> dataMappers;
+	protected AttributeDataMapper attributeDataMapper;
+	
+	protected Service serviceProxy = ServiceProxyFactory.getServiceProxy();
+
+	public BaseMapper(DataTemplateEntity<T> templateFactory, FileHistoryAll fileHistoryAll, Map<String, DataMapper> dataMappers, AttributeDataMapper attributeDataMapper)
+	{
+		this.templateFactory = templateFactory;
+		this.fileHistoryAll = fileHistoryAll;
+		this.dataMappers = dataMappers;
+		this.attributeDataMapper = attributeDataMapper;
+	}
+			
+	public abstract  List<T> multiMapData(MapModel input);
+	
+	//public abstract T singleMapData(MapModel input);
+	
+	protected void createAttributeType(String attributeTypeCode)
+	{
+		AttributeType attributeType = new AttributeType();
+
+		attributeType.setAttributeType(StringUtils.left(attributeTypeCode, OpenStorefrontConstant.FIELD_SIZE_CODE));
+		attributeType.setDescription(StringUtils.left(attributeTypeCode, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
+		attributeType.setVisibleFlg(Boolean.FALSE);
+		attributeType.setRequiredFlg(Boolean.FALSE);
+		attributeType.setArchitectureFlg(Boolean.FALSE);
+		attributeType.setImportantFlg(Boolean.FALSE);
+		attributeType.setAllowMultipleFlg(Boolean.TRUE);
+		attributeType.setHideOnSubmission(Boolean.FALSE);	
+		attributeType.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
+		attributeType.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());		
+		
+		serviceProxy.getAttributeService().saveAttributeType(attributeType);		
+	}
+			
+	protected void createAttributecCode(String attributeTypeCode, String attributeCode)
+	{
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeType(attributeTypeCode);
+		attributeCodePk.setAttributeCode(attributeCode);
+		
+		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+		String key = sanitizer.santize(attributeCode).toString();
+		attributeCodePk.setAttributeCode(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_CODE));		
+
+		AttributeCode attributeCodeFound = new AttributeCode();
+		attributeCodeFound.setAttributeCodePk(attributeCodePk);
+		attributeCodeFound.setLabel(StringUtils.left(attributeCode, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));	
+		attributeCodeFound.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
+		attributeCodeFound.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());			
+
+		serviceProxy.getAttributeService().saveAttributeCode(attributeCodeFound, false);
+	}			
+	
+}

@@ -43,7 +43,8 @@ import org.apache.commons.lang3.StringUtils;
 public class AttributeCode
 		extends StandardEntity
 {
-
+	public static final String FIELD_LABEL = "label";
+	
 	@PK
 	@NotNull
 	@ConsumeField
