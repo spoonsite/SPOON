@@ -857,10 +857,10 @@
 				title: 'Add/Edit Attribute',
 				modal: true,
 				width: '60%',
-				height: 750,
+				height: '80%',
+				maximizable: true,
 				y: '2em',
 				layout: 'fit',
-				autoScroll: true,
 				items: [
 					{
 						xtype: 'form',
