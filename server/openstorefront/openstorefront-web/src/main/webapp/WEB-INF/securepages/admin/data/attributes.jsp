@@ -978,6 +978,16 @@
 													{
 														Ext.getCmp('editAttributeForm-typesRequiredFor').show();
 
+														var select = Ext.getCmp('editAttributeForm-defaultCode');
+														if (Ext.getCmp('editAttributeForm-hideOnSubmission').getValue()) {
+															select.setFieldLabel('Default Code<span class="field-required" />');
+															select.allowBlank = false;
+														} else {
+															select.setFieldLabel('Default Code');
+															select.allowBlank = true;
+															select.clearInvalid();
+														}
+
 														var mult = Ext.getCmp('multipleFlagCheckBox');
 														if (mult.getValue() == true) {
 															var msg = 'Attributes that allow multiple codes cannot be required. You may remove the';
@@ -998,6 +1008,10 @@
 													}
 													else {
 														Ext.getCmp('editAttributeForm-typesRequiredFor').hide();
+														var select = Ext.getCmp('editAttributeForm-defaultCode');
+														select.setFieldLabel('Default Code');
+														select.allowBlank = true;
+														select.clearInvalid();
 													}
 											}
 										}
@@ -1046,16 +1060,15 @@
 										name: 'hideOnSubmission',
 										boxLabel: 'Hide on Submission',
 										id: 'editAttributeForm-hideOnSubmission',
-										toolTip: 'Hiding requires a default code. Codes must be created before this flag can be set.',
+										toolTip: 'Hiding a required attribute requires a default code. Codes must be created before this flag can be set.',
 										listeners: {
 											change: function(box, newValue) {
 												var select = Ext.getCmp('editAttributeForm-defaultCode');
-												if (newValue === true) {
+												if (newValue === true && Ext.getCmp('requiredFlagCheckBox').getValue()) {
 													select.setFieldLabel('Default Code<span class="field-required" />');
 													select.allowBlank = false;
 												}
 												else {
-
 													select.setFieldLabel('Default Code');
 													select.allowBlank = true;
 													select.clearInvalid();
