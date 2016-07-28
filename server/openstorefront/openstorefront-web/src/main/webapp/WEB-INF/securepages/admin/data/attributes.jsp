@@ -300,6 +300,7 @@
 				Ext.getCmp('requiredFlagCheckBox').setValue(false);
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
 				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
+				Ext.getCmp('editAttributeForm').reset();
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 
 				var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore();
@@ -856,10 +857,10 @@
 				title: 'Add/Edit Attribute',
 				modal: true,
 				width: '60%',
-				height: 750,
+				height: '80%',
+				maximizable: true,
 				y: '2em',
 				layout: 'fit',
-				autoScroll: true,
 				items: [
 					{
 						xtype: 'form',
@@ -972,14 +973,45 @@
 										id: 'requiredFlagCheckBox',
 										boxLabel: 'Required',
 										listeners: {
-											change: function(box, newValue) {
+											change: function(reqBox, newValue) {
 												if (newValue)
 													{
 														Ext.getCmp('editAttributeForm-typesRequiredFor').show();
+
+														var select = Ext.getCmp('editAttributeForm-defaultCode');
+														if (Ext.getCmp('editAttributeForm-hideOnSubmission').getValue()) {
+															select.setFieldLabel('Default Code<span class="field-required" />');
+															select.allowBlank = false;
+														} else {
+															select.setFieldLabel('Default Code');
+															select.allowBlank = true;
+															select.clearInvalid();
+														}
+
+														var mult = Ext.getCmp('multipleFlagCheckBox');
+														if (mult.getValue() == true) {
+															var msg = 'Attributes that allow multiple codes cannot be required. You may remove the';
+															msg += " 'allow multiple' flag, or keep the multiple codes flag and not set the required flag.";
+															Ext.MessageBox.show({
+																title: 'Attributes Allowing Multiple Codes Cannot Be Required',
+																msg: msg,
+																buttonText: {yes: "Remove 'Allow Multiple' Flag", no: "Keep 'Allow Multiple' Flag"},
+																fn: function(btn) {
+																	if (btn === 'yes') {
+																		mult.setValue('false');
+																	} else if (btn === 'no') {
+																		reqBox.setValue('false');
+																	}
+																}
+															});	
+														}
 													}
 													else {
 														Ext.getCmp('editAttributeForm-typesRequiredFor').hide();
-
+														var select = Ext.getCmp('editAttributeForm-defaultCode');
+														select.setFieldLabel('Default Code');
+														select.allowBlank = true;
+														select.clearInvalid();
 													}
 											}
 										}
@@ -998,22 +1030,45 @@
 									},
 									{
 										name: 'allowMultipleFlg',
-										boxLabel: 'Allow Multiple'
+										id: 'multipleFlagCheckBox',
+										boxLabel: 'Allow Multiple',
+										listeners: {
+											change: function(multiple, newValue) {
+												if (newValue === true) {
+													var rf = Ext.getCmp('requiredFlagCheckBox')
+													if (rf.getValue() == true) {
+														var msg = 'Attributes that are required are not allowed to have multiple codes. You may either';
+														msg += ' remove the required flag, or keep the required flag and not allow multiple codes.'
+														Ext.MessageBox.show({
+															title: 'Required Attributes Cannot Have Multiple Codes',
+															msg: msg,
+															buttonText: {yes: "Remove Required Flag", no: "Keep Required Flag"},
+															fn: function(btn) {
+																if (btn === 'yes') {
+																	rf.setValue('false');
+																} else if (btn === 'no') {
+																	multiple.setValue('false');
+																}
+															}
+														});	
+													}
+												}
+											}
+										}
 									},
 									{
 										name: 'hideOnSubmission',
 										boxLabel: 'Hide on Submission',
 										id: 'editAttributeForm-hideOnSubmission',
-										toolTip: 'Hiding requires a default code. Codes must be created before this flag can be set.',
+										toolTip: 'Hiding a required attribute requires a default code. Codes must be created before this flag can be set.',
 										listeners: {
 											change: function(box, newValue) {
 												var select = Ext.getCmp('editAttributeForm-defaultCode');
-												if (newValue === true) {
+												if (newValue === true && Ext.getCmp('requiredFlagCheckBox').getValue()) {
 													select.setFieldLabel('Default Code<span class="field-required" />');
 													select.allowBlank = false;
 												}
 												else {
-
 													select.setFieldLabel('Default Code');
 													select.allowBlank = true;
 													select.clearInvalid();
