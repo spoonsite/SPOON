@@ -16,8 +16,193 @@
 				}
 			});
 			
-			var mappingPanel = Ext.create('Ext.panel.Panel', {
-				title: 'Mapping'
+			var addEditMapping = Ext.create('Ext.window.Window', {
+				title: 'Add/Edit Mapping',
+				modal: true,
+				width: '80%',
+				height: '80%',
+				maximizable: true,
+				layout: 'fit',
+				items: [
+					{
+						xtype: 'form',
+						bodyStyle: 'padding: 20px;',
+						layout: 'anchor',
+						items: [
+							
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Save',
+										formBind: true,
+										scale: 'medium',
+										iconCls: 'fa fa-2x fa-save',
+										handler: function() {
+											
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										scale: 'medium',
+										iconCls: 'fa fa-2x fa-close',
+										handler: function() {
+											addEditMapping.close();
+										}										
+									}
+								]
+							}
+						]
+					}
+				]
+			});
+			
+			
+			var mappingPanel = Ext.create('Ext.grid.Panel', {
+				title: 'Mapping',
+				columnLines: true,
+				store: {
+					autoLoad: false,
+					proxy: {
+						type: 'ajax',
+						url: '../api/v1/resource/filehistory/formats/{format}/mappings'
+					}
+				},
+				columns: [
+					{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200 } 
+				],
+				listeners: {
+					selectionchange: function(selmodel, selection, opt) {
+						var tools = mappingPanel.getComponent('tools');
+						if (selmodel.getCount() > 0) {
+							tools.getComponent('edit').setDisabled(false);
+							tools.getComponent('remove').setDisabled(false);
+						} else {
+							tools.getComponent('edit').setDisabled(true);
+							tools.getComponent('remove').setDisabled(true);							
+						}
+					}
+				},
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						itemId: 'filterbar',
+						dock: 'top',
+						items: [
+							{
+								xtype: 'combo',
+								itemId: 'fileFormatFilter',
+								name: 'fileFormat',
+								fieldLabel: 'Mappable File Formats',
+								width: 500,
+								valueField: 'code',
+								displayField: 'description',
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: '../api/v1/resource/filehistory/formats/mappingformats'
+									}
+								},
+								editable: false,
+								typeAhead: false,
+								listeners: {
+									change: function(cb, newValue, oldValue) {
+										mappingPanel.getStore().load({
+											url: '../api/v1/resource/filehistory/formats/' + newValue + '/mappings'
+										});
+										if (newValue) {
+											mappingPanel.getComponent('tools').setDisabled(false);
+										} else {
+											mappingPanel.getComponent('tools').setDisabled(true);
+										}
+									}
+								}
+							}
+						]
+					},
+					{
+						xtype: 'toolbar',
+						itemId: 'tools',
+						disabled: 'true',
+						dock: 'top',
+						items: [
+							{
+								text: 'Refresh',
+								scale: 'medium',
+								iconCls: 'fa  fa-2x fa-refresh',
+								handler: function() {
+									var value = mappingPanel.getComponent('filterbar').getComponent('fileFormatFilter').getValue();
+									if (value) {
+										mappingPanel.getStore().refresh();
+									}
+								}
+							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Add',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-plus',
+								handler: function() {
+									addEditMapping.show();
+								}
+							},
+							{
+								text: 'Edit',
+								itemId: 'edit',
+								disabled: true,
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-edit',
+								handler: function() {
+									var grid = mappingPanel;
+									var record = mappingPanel.getSelectionModel().getSelection()[0];
+									
+									addEditMapping.show();
+									
+									//TODO: load Mapping
+									
+																	
+									
+								}
+							},							
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Remove',
+								itemId: 'remove',
+								disabled: true,								
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-close',
+								handler: function() {
+									var grid = mappingPanel;
+									var record = mappingPanel.getSelectionModel().getSelection()[0];									
+									
+									Ext.Msg.show({
+										title:'Remove Mapping',
+										message: 'Are you sure you want to remove this mapping?',
+										buttons: Ext.Msg.YESNO,
+										icon: Ext.Msg.QUESTION,
+										fn: function(btn) {
+											if (btn === 'yes') {
+												
+											} 
+										}
+									});									
+								}
+							}							
+						]
+					}					
+				]
+				
 			});
 			
 			var fileHistoryStore = Ext.create('Ext.data.Store', {
@@ -247,8 +432,8 @@
 			var mainPanel = Ext.create('Ext.tab.Panel', {
 				title: 'Manage Imports <i class="fa fa-question-circle"  data-qtip="Allows for management of the data imports and their mappings."></i>',
 				items: [
-					fileHistoryGrid
-					//mappingPanel					
+					fileHistoryGrid,
+					mappingPanel					
 				]
 			});
 			

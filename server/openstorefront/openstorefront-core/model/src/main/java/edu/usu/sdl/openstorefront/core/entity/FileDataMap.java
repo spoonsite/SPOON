@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
@@ -30,6 +31,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@APIDescription("Holds a list of field mappings")
 public class FileDataMap 
 	extends StandardEntity<FileDataMap>
 {
@@ -47,43 +49,11 @@ public class FileDataMap
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String name;
-	
+		
 	@ConsumeField
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_4K)
-	private String field;
-
-	@ConsumeField
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String entityClass;
-	
-	@ConsumeField
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
-	private String entityField;
-	
-	@ConsumeField
-	private Boolean useAsAttributeLabel;
-	
-	@ConsumeField
-	private Boolean concatenate;
-	
-	@ConsumeField
-	private Boolean addEndPathToValue;
-	
-	@ConsumeField
-	private String setPathToEnityField;
-
-	@ConsumeField
-	@DataType(DataMapTransform.class)
-	@OneToMany(orphanRemoval = true)	
-	private List<DataMapTransform> transforms;
-	
-	@ConsumeField
-	@DataType(DataMapTransform.class)
 	@OneToMany(orphanRemoval = true)
-	private List<DataMapTransform> pathTransforms;
+	@DataType(FileDataMapField.class)
+	private List<FileDataMapField> dataMapFields;
 
 	public FileDataMap()
 	{
@@ -96,15 +66,8 @@ public class FileDataMap
 		
 		FileDataMap fileDataMap = (FileDataMap) entity;
 		
-		this.setAddEndPathToValue(fileDataMap.getAddEndPathToValue());
-		this.setConcatenate(fileDataMap.getConcatenate());
-		this.setEntityClass(fileDataMap.getEntityClass());
-		this.setEntityField(fileDataMap.getEntityField());
-		this.setField(fileDataMap.getField());
-		this.setFileFormat(fileDataMap.getFileFormat());
-		this.setPathTransforms(fileDataMap.getPathTransforms());
-		this.setSetPathToEnityField(fileDataMap.getSetPathToEnityField());
-		this.setTransforms(fileDataMap.getTransforms());
+		this.setName(fileDataMap.getName());
+		this.setDataMapFields(fileDataMap.getDataMapFields());
 				
 	}
 	
@@ -128,96 +91,6 @@ public class FileDataMap
 		this.fileFormat = fileFormat;
 	}
 
-	public String getField()
-	{
-		return field;
-	}
-
-	public void setField(String field)
-	{
-		this.field = field;
-	}
-
-	public List<DataMapTransform> getTransforms()
-	{
-		return transforms;
-	}
-
-	public void setTransforms(List<DataMapTransform> transforms)
-	{
-		this.transforms = transforms;
-	}
-
-	public String getEntityClass()
-	{
-		return entityClass;
-	}
-
-	public void setEntityClass(String entityClass)
-	{
-		this.entityClass = entityClass;
-	}
-
-	public String getEntityField()
-	{
-		return entityField;
-	}
-
-	public void setEntityField(String entityField)
-	{
-		this.entityField = entityField;
-	}
-
-	public Boolean getUseAsAttributeLabel()
-	{
-		return useAsAttributeLabel;
-	}
-
-	public void setUseAsAttributeLabel(Boolean useAsAttributeLabel)
-	{
-		this.useAsAttributeLabel = useAsAttributeLabel;
-	}
-
-	public Boolean getConcatenate()
-	{
-		return concatenate;
-	}
-
-	public void setConcatenate(Boolean concatenate)
-	{
-		this.concatenate = concatenate;
-	}
-
-	public Boolean getAddEndPathToValue()
-	{
-		return addEndPathToValue;
-	}
-
-	public void setAddEndPathToValue(Boolean addEndPathToValue)
-	{
-		this.addEndPathToValue = addEndPathToValue;
-	}
-
-	public String getSetPathToEnityField()
-	{
-		return setPathToEnityField;
-	}
-
-	public void setSetPathToEnityField(String setPathToEnityField)
-	{
-		this.setPathToEnityField = setPathToEnityField;
-	}
-
-	public List<DataMapTransform> getPathTransforms()
-	{
-		return pathTransforms;
-	}
-
-	public void setPathTransforms(List<DataMapTransform> pathTransforms)
-	{
-		this.pathTransforms = pathTransforms;
-	}
-
 	public String getName()
 	{
 		return name;
@@ -226,6 +99,16 @@ public class FileDataMap
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	public List<FileDataMapField> getDataMapFields()
+	{
+		return dataMapFields;
+	}
+
+	public void setDataMapFields(List<FileDataMapField> dataMapFields)
+	{
+		this.dataMapFields = dataMapFields;
 	}
 
 }

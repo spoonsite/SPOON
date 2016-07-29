@@ -42,6 +42,7 @@ import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
+import edu.usu.sdl.openstorefront.service.manager.PluginManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -600,5 +601,11 @@ public class SystemServiceImpl
 	{
 		return CoreSystem.isStarted();
 	}
+	
+	@Override
+	public boolean isLoadingPluginsReady()
+	{
+		return PluginManager.isLoadingPlugins();
+	}	
 
 }

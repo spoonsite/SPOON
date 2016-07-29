@@ -23,6 +23,8 @@ import edu.usu.sdl.openstorefront.core.model.DataMapModel;
 import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.FieldDefinition;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -148,4 +150,13 @@ public interface ImportService
 	 */
 	public void unregisterFormat(String fullClassPath);
 
+	/**
+	 * Finds the field path to use for data mapping
+	 * 
+	 * @param fileFormatCode
+	 * @param in
+	 * @return fieldDefinition found in the file
+	 */
+	public List<FieldDefinition> getMapField(String fileFormatCode, InputStream in);
+	
 }

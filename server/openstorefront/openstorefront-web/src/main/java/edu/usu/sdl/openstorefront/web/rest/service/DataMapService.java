@@ -15,9 +15,33 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSectionPk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReviewConPk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.StringTransforms;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.TypeTransforms;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import net.sourceforge.stripes.util.ResolverUtil;
 
 /**
  * Data mapping support
@@ -29,7 +53,119 @@ import javax.ws.rs.Path;
 public class DataMapService
 	extends BaseResource
 {
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets the application system status")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/transforms")
+	public List<LookupModel> getDataTransforms() 
+	{
+		List<LookupModel> transforms = new ArrayList<>();
+		
+		for (StringTransforms stringTransform : StringTransforms.values())
+		{
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(stringTransform.name());
+			lookupModel.setDescription(stringTransform.getDescription());
+			transforms.add(lookupModel);
+		}
+		
+		for (TypeTransforms typeTransforms : TypeTransforms.values())
+		{
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(typeTransforms.name());
+			lookupModel.setDescription(typeTransforms.getDescription());
+			transforms.add(lookupModel);
+		}	
+		transforms.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
+		
+		return transforms;
+	}
 	
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets component entities for data mapping")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/componententities")
+	public List<LookupModel> getComponentEntities() 
+	{
+		List<LookupModel> entities = new ArrayList<>();
+		
+		LookupModel lookupModel = new LookupModel();
+		lookupModel.setCode(Component.class.getName());
+		lookupModel.setDescription(Component.class.getSimpleName());
+		entities.add(lookupModel);
+		
+		ResolverUtil resolverUtil = new ResolverUtil();
+		resolverUtil.find(new ResolverUtil.IsA(BaseComponent.class), Component.class.getPackage().getName());
+		for (Object baseComponent : resolverUtil.getClasses()) {
+			Class baseComponentClass = (Class) baseComponent;
+			lookupModel = new LookupModel();
+			lookupModel.setCode(baseComponentClass.getName());
+			lookupModel.setDescription(baseComponentClass.getSimpleName());
+			entities.add(lookupModel);			
+		}
+		
+		//Add missing Pks
+		lookupModel = new LookupModel();
+		lookupModel.setCode(ComponentAttributePk.class.getName());
+		lookupModel.setDescription(ComponentAttributePk.class.getSimpleName());
+		entities.add(lookupModel);
+		
+		lookupModel = new LookupModel();
+		lookupModel.setCode(ComponentEvaluationSectionPk.class.getName());
+		lookupModel.setDescription(ComponentEvaluationSectionPk.class.getSimpleName());
+		entities.add(lookupModel);
+
+		lookupModel = new LookupModel();
+		lookupModel.setCode(ComponentReviewConPk.class.getName());
+		lookupModel.setDescription(ComponentReviewConPk.class.getSimpleName());
+		entities.add(lookupModel);
+		
+		lookupModel = new LookupModel();
+		lookupModel.setCode(ComponentReviewProPk.class.getName());
+		lookupModel.setDescription(ComponentReviewProPk.class.getSimpleName());
+		entities.add(lookupModel);	
+		
+		entities.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
+		
+		return entities;
+	}	
 	
-	
+	//get entity fields
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets component entities for data mapping")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/entityfields/{entity}")
+	public Response getEntityFields(
+			@PathParam("entity") String entity
+	) 
+	{
+		List<LookupModel> entities = new ArrayList<>();
+
+		try {
+			Class entityClass = getClass().getClassLoader().loadClass(entity);
+			List<Field> fields = ReflectionUtil.getAllFields(entityClass);
+			for (Field field : fields) {
+				LookupModel lookupModel = new LookupModel();
+				lookupModel.setCode(field.getName());
+				lookupModel.setDescription(field.getName());
+				entities.add(lookupModel);				
+			}
+			
+		} catch (ClassNotFoundException ex) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		
+		GenericEntity<List<LookupModel>> gEntity = new GenericEntity<List<LookupModel>>(entities)
+		{
+		};
+		return sendSingleEntityResponse(gEntity);
+	}	
+
 }

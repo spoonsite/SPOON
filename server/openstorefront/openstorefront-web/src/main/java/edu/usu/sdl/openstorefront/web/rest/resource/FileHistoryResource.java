@@ -300,6 +300,7 @@ public class FileHistoryResource
 
 	@POST
 	@RequireAdmin
+	@APIDescription("Creates a new data mapping")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("formats/{format}/mappings")
@@ -313,8 +314,10 @@ public class FileHistoryResource
 	
 	@GET
 	@RequireAdmin
+	@APIDescription("Get a full data mapping record")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(DataMapModel.class)	
 	@Path("formats/{format}/mappings/{fileDataMapId}")
 	public Response getFileMapping(
 			@PathParam("format") String format,
@@ -327,6 +330,7 @@ public class FileHistoryResource
 	
 	@PUT
 	@RequireAdmin
+	@APIDescription("Updates a data mapping")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("formats/{format}/mappings/{fileDataMapId}")

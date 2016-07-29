@@ -30,6 +30,7 @@ import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.FieldDefinition;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.OldBaseAttributeParser;
@@ -83,7 +84,8 @@ public class UploadAction
 		"UploadAttributes",
 		"UploadSvcv4",
 		"UploadPlugin",
-		"ImportData"
+		"ImportData",
+		"DataMapFields"
 	})
 	private FileBean uploadFile;
 
@@ -95,7 +97,7 @@ public class UploadAction
 	@Validate(required = true, on = "ImportData")
 	private String fileType;
 
-	@Validate(required = true, on = "ImportData")
+	@Validate(required = true, on = {"ImportData", "DataMapFields"})
 	private String fileFormat;
 	private String dataMappingId;
 	private String dataSource;
@@ -441,6 +443,7 @@ public class UploadAction
 					fileHistory.setOriginalFilename(uploadFile.getFileName());
 					fileHistory.setFileFormat(fileFormat);
 					fileHistory.setFileHistoryOption(componentUploadOptions);
+					fileHistory.setFileDataMapId(dataMappingId);					
 					importContext.getFileHistoryAll().setFileHistory(fileHistory);
 
 					service.getImportService().importData(importContext);
@@ -467,6 +470,35 @@ public class UploadAction
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
 
+	@HandlesEvent("DataMapFields")
+	public Resolution mapFields()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			
+			List<FieldDefinition> fieldDefinitions = new ArrayList<>();
+			
+			try (InputStream in = uploadFile.getInputStream()) {								
+				fieldDefinitions = service.getImportService().getMapField(fileFormat, in);
+			} catch (IOException ex) {
+				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");			
+			} finally {
+				try {
+					if (uploadFile != null) {
+						uploadFile.delete();
+					}
+				} catch (IOException ex) {
+					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+				}
+			}
+			
+			return streamResults(fieldDefinitions);
+		}
+		
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+		
 	public FileBean getUploadFile()
 	{
 		return uploadFile;

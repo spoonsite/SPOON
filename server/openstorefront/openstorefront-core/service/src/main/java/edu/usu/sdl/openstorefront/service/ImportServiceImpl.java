@@ -42,7 +42,11 @@ import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.sort.LookupComparator;
 import edu.usu.sdl.openstorefront.core.spi.parser.AbstractParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.FieldDefinition;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.MappableReader;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
@@ -114,23 +118,7 @@ public class ImportServiceImpl
 	{
 		Objects.requireNonNull(formatCheck);
 
-		FileFormat fileFormat = getLookupService().getLookupEnity(FileFormat.class, formatCheck.getFileFormat());
-		
-		if (fileFormat == null) {
-			Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
-			if (element != null) {
-				List<FileFormat> extraFileFormats = ((List<FileFormat>) element.getObjectValue());
-				for (FileFormat pluginFormat : extraFileFormats) {
-					if (formatCheck.getFileFormat().equals(pluginFormat.getCode())) {
-						fileFormat = pluginFormat;
-					}
-				}
-			}
-		}	
-		
-		if (fileFormat == null) {
-			throw new OpenStorefrontRuntimeException("Unable to find format.  File Format: " + formatCheck.getFileFormat(), "Make sure format is loaded (Maybe a loaded from a plugin)");
-		}		
+		FileFormat fileFormat = findFileFormat(formatCheck.getFileFormat());		
 		
 		StringBuilder errors = new StringBuilder();
 		try (InputStream in = formatCheck.getInput()) {
@@ -164,6 +152,27 @@ public class ImportServiceImpl
 		LOG.log(Level.FINE, "Queued:  {0} to be reprocessed.", fileHistory.getOriginalFilename());
 	}
 
+	private FileFormat findFileFormat(String fileFormatCode) 
+	{
+		FileFormat fileFormat = getLookupService().getLookupEnity(FileFormat.class, fileFormatCode);
+		
+		if (fileFormat == null) {
+			Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+			if (element != null) {
+				List<FileFormat> extraFileFormats = ((List<FileFormat>) element.getObjectValue());
+				for (FileFormat pluginFormat : extraFileFormats) {
+					if (fileFormatCode.equals(pluginFormat.getCode())) {
+						fileFormat = pluginFormat;
+					}
+				}
+			}
+		}		
+		if (fileFormat == null) {
+			throw new OpenStorefrontRuntimeException("Unable to find format.  File Format: " + fileFormatCode, "Make sure format is loaded (Maybe a loaded from a plugin)");
+		}		
+		return fileFormat;
+	}
+	
 	@Override
 	public void processImport(String fileHistoryId)
 	{
@@ -179,23 +188,7 @@ public class ImportServiceImpl
 		fileHistory = persistenceService.persist(fileHistory);
 
 		//Get Parser for format
-		FileFormat fileFormat = getLookupService().getLookupEnity(FileFormat.class, fileHistory.getFileFormat());
-		
-		if (fileFormat == null) {
-			Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
-			if (element != null) {
-				List<FileFormat> extraFileFormats = ((List<FileFormat>) element.getObjectValue());
-				for (FileFormat pluginFormat : extraFileFormats) {
-					if (fileHistory.getFileFormat().equals(pluginFormat.getCode())) {
-						fileFormat = pluginFormat;
-					}
-				}
-			}
-		}
-		
-		if (fileFormat == null) {
-			throw new OpenStorefrontRuntimeException("Unable to find format.  File Format: " + fileHistory.getFileFormat(), "Make sure format is loaded (Maybe a loaded from a plugin)");
-		}
+		FileFormat fileFormat = findFileFormat(fileHistory.getFileFormat());
 
 		try {
 			Class parserClass = this.getClass().getClassLoader().loadClass(fileFormat.getParserClass());			
@@ -310,6 +303,7 @@ public class ImportServiceImpl
 				}
 			}
 		}
+		fileFormats.sort(new LookupComparator<>());
 		
 		return fileFormats;
 	}
@@ -337,6 +331,8 @@ public class ImportServiceImpl
 		fileFormats = fileFormats.stream()
 				.filter(FileFormat::getSupportsDataMap)
 				.collect(Collectors.toList());
+		
+		fileFormats.sort(new LookupComparator<>());
 		
 		return fileFormats;		
 	}	
@@ -549,6 +545,31 @@ public class ImportServiceImpl
 		} else {
 			LOG.log(Level.WARNING, "Unable to find and internal format list. No format to unregister.");
 		}
+	}
+
+	@Override
+	public List<FieldDefinition> getMapField(String fileFormatCode, InputStream in)
+	{
+		List<FieldDefinition> fieldDefinitions = new ArrayList<>();
+		
+		FileFormat fileFormat = findFileFormat(fileFormatCode);		
+		if (fileFormat.getSupportsDataMap()) {
+			try (InputStream processIn = in) {
+				Class parserClass = this.getClass().getClassLoader().loadClass(fileFormat.getParserClass());
+				AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
+				MappableReader reader = abstractParser.getMappableReader(processIn);
+				MapModel mapModel = reader.findFields(in);
+				fieldDefinitions = mapModel.getUniqueFields();
+			} catch (IOException ioe) {
+				throw new OpenStorefrontRuntimeException("Unable to process file.  Data format not supported.", ioe);
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				LOG.log(Level.SEVERE, "Unable to load parser: " + fileFormat.getParserClass(), e);
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Format doesn't support data mapping.", "Check Format: " + fileFormatCode);
+		}
+		
+		return fieldDefinitions;
 	}
 
 }

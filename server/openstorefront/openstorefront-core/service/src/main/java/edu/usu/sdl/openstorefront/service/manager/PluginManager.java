@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
@@ -48,12 +49,15 @@ public class PluginManager
 
 	private static final Logger log = Logger.getLogger(PluginManager.class.getName());
 
+	private static AtomicBoolean loadingPlugins = new AtomicBoolean(false);	
 	private static Map<String, Bundle> externalBundles = new ConcurrentHashMap<>();
 
 	public static void init()
 	{
 		ServiceProxy service = ServiceProxy.getProxy();
-
+		
+		loadingPlugins.set(true);
+		
 		//start any stopped bundles
 		Bundle bundles[] = OsgiManager.getFelix().getBundleContext().getBundles();
 		for (Bundle bundle : bundles) {
@@ -75,6 +79,8 @@ public class PluginManager
 		job.setSeconds(10);
 		job.setRepeatForever(true);
 		JobManager.addJob(job);
+		
+		loadingPlugins.set(false);
 	}
 
 	/**
@@ -288,6 +294,11 @@ public class PluginManager
 				log.log(Level.WARNING, MessageFormat.format("Failed to unstalled: {0} (Continuing).", bundle.getLocation()));
 			}
 		}
+	}
+	
+	public static boolean isLoadingPlugins() 
+	{
+		return loadingPlugins.get();
 	}
 
 	@Override

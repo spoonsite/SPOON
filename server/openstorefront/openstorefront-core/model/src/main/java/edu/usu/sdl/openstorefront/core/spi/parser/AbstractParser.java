@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.MappableReader;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.TextReader;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -139,6 +140,19 @@ public abstract class AbstractParser
 	protected GenericReader getReader(InputStream in)
 	{
 		return new TextReader(in);
+	}
+	
+	/**
+	 * Get the mappable reader for field extraction
+	 * @param in
+	 * @return reader or null if not mappable
+	 */
+	public MappableReader getMappableReader(InputStream in) {
+		GenericReader reader = getReader(in);
+		if (reader instanceof MappableReader) {
+			return (MappableReader) reader;
+		} 
+		return null;
 	}
 
 	protected abstract <T> Object parseRecord(T record);

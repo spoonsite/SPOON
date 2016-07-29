@@ -18,7 +18,8 @@ public class Activator
 		//Register new parser format
 		Service service = ServiceProxyFactory.getServiceProxy();
 
-		if (service.getSystemService().isSystemReady())
+		if (service.getSystemService().isSystemReady() ||
+			service.getSystemService().isLoadingPluginsReady())
 		{
 			FileFormat spoonComponentFormat = new FileFormat();
 			spoonComponentFormat.setCode(ComponentSpoonParser.FORMAT_CODE);
@@ -46,7 +47,8 @@ public class Activator
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();
 
-		if (service.getSystemService().isSystemReady())
+		if (service.getSystemService().isSystemReady() ||
+			service.getSystemService().isLoadingPluginsReady())
 		{
 			//unregister parsers
 			service.getImportService().unregisterFormat(ComponentSpoonParser.class.getName());
