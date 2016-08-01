@@ -454,7 +454,7 @@ public class StringProcessor
 	{
 		if (StringUtils.isNotBlank(badFileName)) {
 			List<Integer> bads = Arrays.asList(
-					34, 60, 62, 124, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 58, 42, 63, 92, 47
+					0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 34, 42, 47, 58, 60, 62, 63, 92, 124
 			);
 			Set<Integer> badChars = new HashSet<>();
 			badChars.addAll(bads);
@@ -473,13 +473,17 @@ public class StringProcessor
 
 	public static String puralize(int size, String nonPuralForm, String puralForm)
 	{
-		if (size == 1) {
-			return nonPuralForm;
-		} else {
-			if (StringUtils.isNotBlank(puralForm)) {
-				return puralForm;
+		if (StringUtils.isNotBlank(nonPuralForm)) {
+			if (size == 1) {
+				return nonPuralForm;
+			} else {
+				if (StringUtils.isNotBlank(puralForm)) {
+					return puralForm;
+				}
+				return nonPuralForm + "s";
 			}
-			return nonPuralForm + "s";
+		} else {
+			return nonPuralForm;
 		}
 	}
 
