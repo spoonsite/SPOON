@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.common.util;
 import java.util.Date;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -64,6 +65,15 @@ public class TimeUtilTest
 		String value = "2012-01-01T00:25:25.999Z";
 		Date result = TimeUtil.fromString(value);
 		assertNotNull(result);
+
+		value = null;
+		result = TimeUtil.fromString(value);
+		Date expResult = null;
+		assertEquals(result, expResult);
+
+		value = "";
+		result = TimeUtil.fromString(value);
+		assertEquals(result, expResult);
 	}
 
 	/**
@@ -85,13 +95,14 @@ public class TimeUtilTest
 	public void testCurrentDate()
 	{
 		System.out.println("currentDate");
-
 		Date result = TimeUtil.currentDate();
 		assertNotNull(result);
 	}
 	
 	@Test 
-	public void testMinMaxDate(){
+	public void testMinMaxDate()
+	{
+		System.out.println("testMinMaxDate: ");
 		System.out.println("Start: " + TimeUtil.beginningOfDay(new Date()));
 		System.out.println("End: " + TimeUtil.endOfDay(new Date()));		
 	}

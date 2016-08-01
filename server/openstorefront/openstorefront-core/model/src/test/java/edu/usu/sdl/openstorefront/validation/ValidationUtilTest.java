@@ -15,11 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.validation;
 
+import edu.usu.sdl.openstorefront.core.entity.EmailAddress;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
-import junit.framework.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -65,7 +66,7 @@ public class ValidationUtilTest
 
 		UserTypeCode userTypeCode = new UserTypeCode();
 		userTypeCode.setCode("Test");
-		userTypeCode.setDescription("Test");
+		userTypeCode.setDescription("Test Description");
 
 		ValidationModel validateModel = new ValidationModel(userTypeCode);
 		validateModel.setConsumeFieldsOnly(true);
@@ -79,6 +80,16 @@ public class ValidationUtilTest
 		expResult = false;
 		result = ValidationUtil.isValid(validateModel);
 		assertEquals(expResult, result);
+
+		EmailAddress ea = new EmailAddress();
+		ea.setEmail("test_testEmail@company.com");
+		ea.setStorageVersion("3.1.2");
+
+		validateModel = new ValidationModel(ea);
+		expResult = true;
+		result = ValidationUtil.isValid(validateModel);
+		assertEquals(expResult, result);
+
 	}
 
 	/**
@@ -90,21 +101,45 @@ public class ValidationUtilTest
 		System.out.println("validate");
 		UserTypeCode userTypeCode = new UserTypeCode();
 		userTypeCode.setCode("Test");
-		userTypeCode.setDescription("Test");
+		userTypeCode.setDescription("Test Description");
 
 		ValidationModel validateModel = new ValidationModel(userTypeCode);
 		validateModel.setConsumeFieldsOnly(true);
 
 		ValidationResult result = ValidationUtil.validate(validateModel);
-		System.out.println("Any Valid consume: " + result.toString());
+		System.out.println("Any Valid Consume: " + result.toString());
 		if (result.valid() == false) {
-			Assert.fail("Failed validation when it was expected to pass.");
+			fail("Failed validation when it was expected to pass.");
 		}
-		System.out.println("---------------------------");
+		System.out.println("-------------------------------");
 
 		validateModel = new ValidationModel(userTypeCode);
 		result = ValidationUtil.validate(validateModel);
-		System.out.println("Faild: " + result.toString());
-	}
+		System.out.println("Failed: " + result.toString());
 
+		validateModel = new ValidationModel(userTypeCode);
+		validateModel.setSantize(true);
+
+		result = ValidationUtil.validate(validateModel);
+		if (result.valid() == true) {
+			fail("Failed validation when it was expected to pass");
+		} else {
+			System.out.println("Test Passed");
+		}
+
+		System.out.println("-------------------------------");
+
+		validateModel = new ValidationModel(userTypeCode);
+		validateModel.setDataObject(null);
+		validateModel.setAcceptNull(true);
+		result = ValidationUtil.validate(validateModel);
+
+		if (result.valid() == false) {
+			fail("Failed validation when it was expected to pass");
+		} else {
+			System.out.println("Test Passed");
+		}
+		System.out.println("-------------------------------");
+
+	}
 }

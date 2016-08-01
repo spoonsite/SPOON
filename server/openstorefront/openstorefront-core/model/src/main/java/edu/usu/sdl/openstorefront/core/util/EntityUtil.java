@@ -5,10 +5,6 @@
  */
 package edu.usu.sdl.openstorefront.core.util;
 
-import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
-import edu.usu.sdl.openstorefront.core.annotation.DefaultFieldValue;
-import edu.usu.sdl.openstorefront.core.annotation.PK;
-import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
@@ -17,6 +13,10 @@ import static edu.usu.sdl.openstorefront.common.util.ReflectionUtil.getAllFields
 import static edu.usu.sdl.openstorefront.common.util.ReflectionUtil.isFieldsDifferent;
 import static edu.usu.sdl.openstorefront.common.util.ReflectionUtil.isSubClass;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DefaultFieldValue;
+import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -177,10 +177,10 @@ public class EntityUtil
 		List<Field> fields = ReflectionUtil.getAllFields(entity.getClass());
 		for (Field field : fields) {
 			PK idAnnotation = field.getAnnotation(PK.class);
-			if (idAnnotation != null) {
-				pkField = field;
+				if (idAnnotation != null) {
+					pkField = field;
+				}
 			}
-		}
 		return pkField;
 	}
 
