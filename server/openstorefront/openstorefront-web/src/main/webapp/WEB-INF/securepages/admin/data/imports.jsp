@@ -28,8 +28,375 @@
 						xtype: 'form',
 						bodyStyle: 'padding: 20px;',
 						layout: 'anchor',
+						autoScroll: true,
 						items: [
-							
+							{
+								xtype: 'panel',
+								title: 'Fields',
+								collapsible: true,
+								titleCollapse: true,
+								layout: 'anchor',
+								items: [
+									{
+										xtype: 'container',
+										layout: 'hbox',
+										items: [
+											{
+												xtype: 'filefield',
+												name: 'upload',
+												fieldLabel: 'Sample File with Fields',
+												labelAlign: 'top',
+												flex: 1,
+												margin: '0 10 0 0'
+											},
+											{
+												xtype: 'button',
+												text: 'Upload',
+												iconCls: 'fa fa-upload',
+												handler: function() {
+													
+												},
+												margin: '25 0 0 0'
+											}
+										]
+									},									
+									{
+										xtype: 'fieldset',
+										title: 'Add/Edit Field Mapping',
+										layout: 'anchor',
+										defaults: {
+											labelAlign: 'top',
+											width: '100%'
+										},
+										items: [
+											{
+												xtype: 'combo',
+												name: 'field',
+												fieldLabel: 'File Field<span class="field-required" />',
+												valueField: 'code',
+												displayField: 'description',
+												store: {
+													autoLoad: false													
+												},
+												editable: false,
+												typeAhead: false												
+											},
+											{
+												xtype: 'tagfield',
+												name: 'transforms',
+												fieldLabel: 'Data Transforms',
+												valueField: 'code',
+												displayField: 'description',
+												store: {
+													autoLoad: true,
+													proxy: {
+														type: 'ajax',
+														url: '../api/v1/service/datamapping/transforms'
+													}
+												},
+												editable: true,
+												typeAhead: false												
+											},
+											{
+												xtype: 'combo',
+												name: 'entity',
+												fieldLabel: 'Entities<span class="field-required" />',
+												valueField: 'code',
+												displayField: 'description',
+												store: {
+													autoLoad: true,
+													proxy: {
+														type: 'ajax',
+														url: '../api/v1/service/datamapping/mappingentities'
+													}
+												},
+												editable: false,
+												typeAhead: false,
+												listeners: {
+													change: function(cb, newValue, oldValue) {
+														var entityField = cb.up().getComponent('entityfieldId');
+														entityField.getStore().load({
+															url: '../api/v1/service/datamapping/entityfields/' + newValue
+														});
+														var pathEntityfield = cb.up().getComponent('pathEntityfieldId');
+														pathEntityfield.getStore().load({
+															url: '../api/v1/service/datamapping/entityfields/' + newValue
+														});																												
+													}
+												}
+											},											
+											{
+												xtype: 'combo',
+												itemId: 'entityfieldId',
+												name: 'entityfield',
+												fieldLabel: 'Entity Field<span class="field-required" />',
+												valueField: 'code',
+												displayField: 'description',
+												store: {
+													autoLoad: false,
+													proxy: {
+														type: 'ajax',
+														url: '../api/v1/service/datamapping/entityfields/{entity}'
+													}
+												},
+												editable: false,
+												typeAhead: false												
+											},
+											{
+												xtype: 'checkbox',
+												name: 'useAsAttributeLabel',
+												boxLabel: 'Use As Attribute Label'												
+											},
+											{
+												xtype: 'checkbox',
+												name: 'concatenate',
+												boxLabel: 'Concatenate'																								
+											},
+											{
+												xtype: 'checkbox',
+												name: 'addEndPathToValue',
+												boxLabel: 'Add Path to Value'																								
+											},
+											{
+												xtype: 'combo',
+												itemId: 'pathEntityfieldId',
+												name: 'setPathToEnityField',
+												fieldLabel: 'Path to Entity Field',
+												valueField: 'code',
+												displayField: 'description',
+												store: {
+													autoLoad: false,
+													proxy: {
+														type: 'ajax',
+														url: '../api/v1/service/datamapping/entityfields/{entity}'
+													}
+												},
+												editable: false,
+												typeAhead: false												
+											},											
+											{
+												xtype: 'combo',
+												name: 'pathTransforms',
+												fieldLabel: 'Entities',
+												valueField: 'code',
+												displayField: 'description',
+												store: {
+													autoLoad: true,
+													proxy: {
+														type: 'ajax',
+														url: '../api/v1/service/datamapping/mappingentities'
+													}
+												},
+												editable: false,
+												typeAhead: false,
+												listeners: {
+													change: function(cb, newValue, oldValue) {
+														var entityField = cb.up().getComponent('entityfieldId');
+														entityField.getStore().load({
+															url: '../api/v1/service/datamapping/entityfields/' + newValue
+														});
+													}
+												}
+											},											
+											{
+												xtype: 'button',
+												text: 'Add',
+												margin: '0 0 10 0',
+												width: '150',
+												iconCls: 'fa fa-plus',
+												handler: function() {
+													
+												}
+											},
+											{
+												xtype: 'grid',
+												columnLines: true,											
+												height: 350,
+												margin: '0 0 10 0',
+												border: true,
+												store: {
+													
+												},
+												columns: [
+													{ text: 'File Field', dataIndex: 'field', flex: 1, minWidth: 150},
+													{ text: 'Tranforms', dataIndex: 'fieldTransforms', width: 200},
+													{ text: 'Entity Class', dataIndex: 'entityClass', width: 150},
+													{ text: 'Entity Field', dataIndex: 'entityField', width: 150},													
+													{ text: 'Use As Attribute Label', dataIndex: 'useAsAttributeLabel', width: 125},
+													{ text: 'Concatenate', dataIndex: 'concatenate', width: 125},
+													{ text: 'Add Path to Value', dataIndex: 'addEndPathToValue', width: 125},
+													{ text: 'Add Path to Entity Field', dataIndex: 'setPathToEnityField', width: 125},
+													{ text: 'Path Tranforms', dataIndex: 'pathTransforms', width: 200}
+												],
+												dockedItems: [
+													{
+														xtype: 'toolbar',
+														dock: 'top',
+														items: [
+															{
+																text: 'Edit',
+																disabled: true,
+																iconCls: 'fa fa-edit',
+																handler: function() {
+																	
+																}
+															},
+															{
+																xtype: 'tbfill'
+															},
+															{
+																text: 'Remove',
+																disabled: true,
+																iconCls: 'fa fa-close',
+																handler: function() {
+																	
+																}																
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							{
+								xtype: 'panel',
+								title: 'Attributes',
+								collapsible: true,
+								titleCollapse: true,
+								items: [
+									{
+										xtype: 'checkbox',
+										name: 'addMissingAttributeTypeFlg',
+										boxLabel: 'Add Missing Attribute Types'	
+									},
+									{
+										xtype: 'fieldset',
+										title: 'Add/Edit Attribute Type Mapping',
+										layout: 'anchor',
+										defaults: {
+											labelAlign: 'top',
+											width: '100%'
+										},
+										items: [
+											{
+												xtype: 'combo',
+												name: 'attributeType',
+												fieldLabel: 'Attribute Type<span class="field-required" />',
+												valueField: 'attributeType',
+												displayField: 'description',
+												store: {
+													autoLoad: true,
+													proxy: {
+														type: 'ajax',
+														url: '../api/v1/resource/attributes/attributetypes'
+													}
+												},
+												editable: false,
+												typeAhead: false,
+												listeners: {
+													change: function(cb, newValue, oldValue) {
+														var defaultMappedCode = cb.up().getComponent('defaultMappedCode');
+														defaultMappedCode.getStore().load({
+															url: '../api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes'
+														});																										
+													}
+												}												
+											},
+											{
+												xtype: 'textfield',
+												name: 'externalType',
+												fieldLabel: 'External Type<span class="field-required" />',
+												maxValue: 255
+											},
+											{
+												xtype: 'checkbox',
+												name: 'addMissingCode',
+												boxLabel: 'Add Missing Codes'													
+											},
+											{
+												xtype: 'combo',
+												itemId: 'defaultMappedCode',
+												name: 'defaultMappedCode',
+												fieldLabel: 'Default Mapped Code',
+												valueField: 'attributeType',
+												displayField: 'description',
+												store: {
+													autoLoad: false,
+													proxy: {
+														type: 'ajax',
+														url: '../api/v1/resource/attributes/attributetypes'
+													}
+												},
+												editable: false,
+												typeAhead: false												
+											},
+											{
+												xtype: 'button',
+												text: 'Add',
+												margin: '0 0 10 0',
+												width: '150',
+												iconCls: 'fa fa-plus',
+												handler: function() {
+													
+												}
+											},
+											{
+												xtype: 'grid',
+												columnLines: true,											
+												height: 350,
+												margin: '0 0 10 0',
+												border: true,
+												store: {
+													
+												},
+												columns: [
+													{ text: 'Attribute Type', dataIndex: 'attributeType', flex: 1, minWidth: 150},													
+													{ text: 'External Type', dataIndex: 'externalType', width: 225},
+													{ text: 'Add Missing Code', dataIndex: 'addMissingCode', width: 150},													
+													{ text: 'Use As Attribute Label', dataIndex: 'defaultMappedCode', width: 200}
+												],
+												dockedItems: [
+													{
+														xtype: 'toolbar',
+														dock: 'top',
+														items: [
+															{
+																text: 'Add Codes',
+																disabled: true,
+																iconCls: 'fa fa-plus',
+																handler: function() {
+																	
+																}																
+															},
+															{
+																text: 'Edit',
+																disabled: true,
+																iconCls: 'fa fa-edit',
+																handler: function() {
+																	
+																}
+															},
+															{
+																xtype: 'tbfill'
+															},
+															{
+																text: 'Remove',
+																disabled: true,
+																iconCls: 'fa fa-close',
+																handler: function() {
+																	
+																}																
+															}
+														]
+													}
+												]
+											}											
+										]
+									}
+								]
+							}							
 						],
 						dockedItems: [
 							{

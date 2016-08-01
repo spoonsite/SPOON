@@ -54,7 +54,7 @@ public enum TypeTransforms
 		
 	},
 
-	CONVERTINTERGER("Convert to BigDecimal") {
+	CONVERTINTERGER("Convert to Integer") {
 		@Override
 		public Integer transform(Object input)
 		{
@@ -63,7 +63,7 @@ public enum TypeTransforms
 		
 	},
 
-	CONVERTLONG("Convert to BigDecimal") {
+	CONVERTLONG("Convert to Long") {
 		@Override
 		public Long transform(Object input)
 		{

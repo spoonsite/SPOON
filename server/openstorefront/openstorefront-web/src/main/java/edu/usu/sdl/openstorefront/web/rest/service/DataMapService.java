@@ -19,6 +19,9 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
@@ -86,10 +89,10 @@ public class DataMapService
 	
 	@GET
 	@RequireAdmin
-	@APIDescription("Gets component entities for data mapping")
+	@APIDescription("Gets entities for data mapping")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
-	@Path("/componententities")
+	@Path("/mappingentities")
 	public List<LookupModel> getComponentEntities() 
 	{
 		List<LookupModel> entities = new ArrayList<>();
@@ -129,6 +132,24 @@ public class DataMapService
 		lookupModel.setCode(ComponentReviewProPk.class.getName());
 		lookupModel.setDescription(ComponentReviewProPk.class.getSimpleName());
 		entities.add(lookupModel);	
+		
+		//Attributes
+		lookupModel = new LookupModel();
+		lookupModel.setCode(AttributeType.class.getName());
+		lookupModel.setDescription(AttributeType.class.getSimpleName());
+		entities.add(lookupModel);
+		
+		lookupModel = new LookupModel();
+		lookupModel.setCode(AttributeCode.class.getName());
+		lookupModel.setDescription(AttributeCode.class.getSimpleName());
+		entities.add(lookupModel);
+		
+		//Add missing Pks
+		lookupModel = new LookupModel();
+		lookupModel.setCode(AttributeCodePk.class.getName());
+		lookupModel.setDescription(AttributeCodePk.class.getSimpleName());
+		entities.add(lookupModel);
+				
 		
 		entities.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
 		
