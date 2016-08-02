@@ -81,7 +81,7 @@ public class FileAttributeTypeXrefMap
 		this.defaultMappedCode = defaultMappedCode;
 	}
 
-	public boolean getAddMissingCode()
+	public Boolean getAddMissingCode()
 	{
 		return addMissingCode;
 	}

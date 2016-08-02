@@ -38,6 +38,7 @@ import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.model.DataMapModel;
+import edu.usu.sdl.openstorefront.core.model.ExternalFormat;
 import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
@@ -118,18 +119,21 @@ public class ImportServiceImpl
 	{
 		Objects.requireNonNull(formatCheck);
 
-		FileFormat fileFormat = findFileFormat(formatCheck.getFileFormat());		
+		ExternalFormat externalFormat = findFileFormat(formatCheck.getFileFormat());		
 		
 		StringBuilder errors = new StringBuilder();
 		try (InputStream in = formatCheck.getInput()) {
-			Class parserClass = this.getClass().getClassLoader().loadClass(fileFormat.getParserClass());
+			Class parserClass = externalFormat.getParsingClass();
+			if (parserClass == null) {
+				parserClass = this.getClass().getClassLoader().loadClass(externalFormat.getFileFormat().getParserClass());
+			}
 			AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
 			String message = abstractParser.checkFormat(formatCheck.getMimeType(), in);
 			if (StringUtils.isNotBlank(message)) {
 				errors.append(message);
 			}
 		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			LOG.log(Level.SEVERE, "Unable to load parser class: " + fileFormat.getParserClass(), e);
+			LOG.log(Level.SEVERE, "Unable to load parser class: " + externalFormat.getFileFormat().getParserClass(), e);
 			errors.append("(System Error)File Format not supported.");
 		}
 		return StringUtils.isNotBlank(errors.toString()) ? errors.toString() : null;
@@ -152,25 +156,29 @@ public class ImportServiceImpl
 		LOG.log(Level.FINE, "Queued:  {0} to be reprocessed.", fileHistory.getOriginalFilename());
 	}
 
-	private FileFormat findFileFormat(String fileFormatCode) 
+	private ExternalFormat findFileFormat(String fileFormatCode) 
 	{
+		ExternalFormat externalFormat = new ExternalFormat();
+		
 		FileFormat fileFormat = getLookupService().getLookupEnity(FileFormat.class, fileFormatCode);
 		
 		if (fileFormat == null) {
 			Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 			if (element != null) {
-				List<FileFormat> extraFileFormats = ((List<FileFormat>) element.getObjectValue());
-				for (FileFormat pluginFormat : extraFileFormats) {
-					if (fileFormatCode.equals(pluginFormat.getCode())) {
-						fileFormat = pluginFormat;
+				List<ExternalFormat> extraFileFormats = ((List<ExternalFormat>) element.getObjectValue());
+				for (ExternalFormat pluginFormat : extraFileFormats) {
+					if (fileFormatCode.equals(pluginFormat.getFileFormat().getCode())) {
+						externalFormat = pluginFormat;
 					}
 				}
 			}
+		} else {
+			externalFormat.setFileFormat(fileFormat);			
 		}		
-		if (fileFormat == null) {
+		if (externalFormat.getFileFormat() == null) {
 			throw new OpenStorefrontRuntimeException("Unable to find format.  File Format: " + fileFormatCode, "Make sure format is loaded (Maybe a loaded from a plugin)");
 		}		
-		return fileFormat;
+		return externalFormat;
 	}
 	
 	@Override
@@ -188,10 +196,13 @@ public class ImportServiceImpl
 		fileHistory = persistenceService.persist(fileHistory);
 
 		//Get Parser for format
-		FileFormat fileFormat = findFileFormat(fileHistory.getFileFormat());
+		ExternalFormat externalFormat = findFileFormat(fileHistory.getFileFormat());
 
 		try {
-			Class parserClass = this.getClass().getClassLoader().loadClass(fileFormat.getParserClass());			
+			Class parserClass = externalFormat.getParsingClass();
+			if (parserClass == null) {
+				parserClass = this.getClass().getClassLoader().loadClass(externalFormat.getFileFormat().getParserClass());
+			}		
 			AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
 			abstractParser.processData(fileHistoryAll);
 
@@ -206,8 +217,8 @@ public class ImportServiceImpl
 			}
 
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			LOG.log(Level.SEVERE, "Unable to load parser class: " + fileFormat.getParserClass(), e);
-			fileHistoryAll.addError(FileHistoryErrorType.SYSTEM, "Unable to load parser class: " + fileFormat.getParserClass());
+			LOG.log(Level.SEVERE, "Unable to load parser class: " + externalFormat.getFileFormat().getParserClass(), e);
+			fileHistoryAll.addError(FileHistoryErrorType.SYSTEM, "Unable to load parser class: " + externalFormat.getFileFormat().getParserClass());
 		}
 
 		//processData
@@ -289,15 +300,15 @@ public class ImportServiceImpl
 		//also pull in fileformat and translate Class to path
 		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element != null) {
-			List<FileFormat> extraFileFormats = ((List<FileFormat>) element.getObjectValue());
-			for (FileFormat fileFormat : extraFileFormats) {
-				if (fileFormat.getFileType().equals(fileType)) {
+			List<ExternalFormat> extraFileFormats = ((List<ExternalFormat>) element.getObjectValue());
+			for (ExternalFormat externalFormat : extraFileFormats) {
+				if (externalFormat.getFileFormat().getFileType().equals(fileType)) {
 					FileFormat translatedFileFormat = new FileFormat();
-					translatedFileFormat.setCode(fileFormat.getCode());
-					translatedFileFormat.setDescription(fileFormat.getDescription());
-					translatedFileFormat.setSupportsDataMap(fileFormat.getSupportsDataMap());
-					translatedFileFormat.setFileType(fileFormat.getFileType());
-					translatedFileFormat.setFileRequirements(fileFormat.getFileRequirements());
+					translatedFileFormat.setCode(externalFormat.getFileFormat().getCode());
+					translatedFileFormat.setDescription(externalFormat.getFileFormat().getDescription());
+					translatedFileFormat.setSupportsDataMap(externalFormat.getFileFormat().getSupportsDataMap());
+					translatedFileFormat.setFileType(externalFormat.getFileFormat().getFileType());
+					translatedFileFormat.setFileRequirements(externalFormat.getFileFormat().getFileRequirements());
 										
 					fileFormats.add(translatedFileFormat);
 				}
@@ -316,14 +327,14 @@ public class ImportServiceImpl
 		//also pull in fileformat and translate Class to path
 		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element != null) {
-			List<FileFormat> extraFileFormats = ((List<FileFormat>) element.getObjectValue());
-			for (FileFormat fileFormat : extraFileFormats) {
+			List<ExternalFormat> extraFileFormats = ((List<ExternalFormat>) element.getObjectValue());
+			for (ExternalFormat externalFormat : extraFileFormats) {
 					FileFormat translatedFileFormat = new FileFormat();
-					translatedFileFormat.setCode(fileFormat.getCode());
-					translatedFileFormat.setDescription(fileFormat.getDescription());
-					translatedFileFormat.setSupportsDataMap(fileFormat.getSupportsDataMap());
-					translatedFileFormat.setFileType(fileFormat.getFileType());
-					translatedFileFormat.setFileRequirements(fileFormat.getFileRequirements());
+					translatedFileFormat.setCode(externalFormat.getFileFormat().getCode());
+					translatedFileFormat.setDescription(externalFormat.getFileFormat().getDescription());
+					translatedFileFormat.setSupportsDataMap(externalFormat.getFileFormat().getSupportsDataMap());
+					translatedFileFormat.setFileType(externalFormat.getFileFormat().getFileType());
+					translatedFileFormat.setFileRequirements(externalFormat.getFileFormat().getFileRequirements());
 										
 					fileFormats.add(translatedFileFormat);
 			}
@@ -514,15 +525,19 @@ public class ImportServiceImpl
 	}
 
 	@Override
-	public void registerFormat(FileFormat newFormat)
+	public void registerFormat(FileFormat newFormat, Class parserClass)
 	{
 		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element == null) {
-			List<FileFormat> fileFormats = new ArrayList<>();			
+			List<ExternalFormat> fileFormats = new ArrayList<>();			
 			element = new Element(FORMATS_KEY, fileFormats);
 			OSFCacheManager.getApplicationCache().put(element);
 		}		
-		((List<FileFormat>) element.getObjectValue()).add(newFormat);		
+		ExternalFormat externalFormat = new ExternalFormat();
+		externalFormat.setFileFormat(newFormat);
+		externalFormat.setParsingClass(parserClass);		
+		((List<ExternalFormat>) element.getObjectValue()).add(externalFormat);		
+		
 		LOG.log(Level.FINE, MessageFormat.format("Registered new file format: {0}", newFormat.getDescription()));		
 	}
 
@@ -531,9 +546,9 @@ public class ImportServiceImpl
 	{
 		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element != null) {
-			List<FileFormat> fileFormats = ((List<FileFormat>) element.getObjectValue());
+			List<ExternalFormat> fileFormats = ((List<ExternalFormat>) element.getObjectValue());
 			for (int i=fileFormats.size()-1; i >= 0; i--) {
-				FileFormat fileFormat = fileFormats.get(i);
+				FileFormat fileFormat = fileFormats.get(i).getFileFormat();
 				if (fileFormat.getParserClass().equals(fullClassPath)) {
 					 fileFormats.remove(i);
 					 LOG.log(Level.FINE, MessageFormat.format("Deregistered new file format: {0}", fileFormat.getDescription()));
@@ -552,10 +567,13 @@ public class ImportServiceImpl
 	{
 		List<FieldDefinition> fieldDefinitions = new ArrayList<>();
 		
-		FileFormat fileFormat = findFileFormat(fileFormatCode);		
-		if (fileFormat.getSupportsDataMap()) {
+		ExternalFormat externalFormat = findFileFormat(fileFormatCode);		
+		if (externalFormat.getFileFormat().getSupportsDataMap()) {
 			try (InputStream processIn = in) {
-				Class parserClass = this.getClass().getClassLoader().loadClass(fileFormat.getParserClass());
+				Class parserClass = externalFormat.getParsingClass();
+				if (parserClass == null) {
+					parserClass = this.getClass().getClassLoader().loadClass(externalFormat.getFileFormat().getParserClass());
+				}
 				AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
 				MappableReader reader = abstractParser.getMappableReader(processIn);
 				MapModel mapModel = reader.findFields(in);
@@ -563,7 +581,7 @@ public class ImportServiceImpl
 			} catch (IOException ioe) {
 				throw new OpenStorefrontRuntimeException("Unable to process file.  Data format not supported.", ioe);
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-				LOG.log(Level.SEVERE, "Unable to load parser: " + fileFormat.getParserClass(), e);
+				LOG.log(Level.SEVERE, "Unable to load parser: " + externalFormat.getFileFormat().getParserClass(), e);
 			}
 		} else {
 			throw new OpenStorefrontRuntimeException("Format doesn't support data mapping.", "Check Format: " + fileFormatCode);

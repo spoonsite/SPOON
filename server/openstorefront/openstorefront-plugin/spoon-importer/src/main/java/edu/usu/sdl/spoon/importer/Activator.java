@@ -28,7 +28,7 @@ public class Activator
 			spoonComponentFormat.setSupportsDataMap(true);
 			spoonComponentFormat.setParserClass(ComponentSpoonParser.class.getName());
 
-			service.getImportService().registerFormat(spoonComponentFormat);
+			service.getImportService().registerFormat(spoonComponentFormat, ComponentSpoonParser.class);
 
 			FileFormat spoonAttributFormat = new FileFormat();
 			spoonAttributFormat.setCode(AttributeSpoonParser.FORMAT_CODE);
@@ -37,7 +37,7 @@ public class Activator
 			spoonAttributFormat.setSupportsDataMap(true);
 			spoonAttributFormat.setParserClass(AttributeSpoonParser.class.getName());
 
-			service.getImportService().registerFormat(spoonAttributFormat);
+			service.getImportService().registerFormat(spoonAttributFormat, AttributeSpoonParser.class);
 		}
 
 	}

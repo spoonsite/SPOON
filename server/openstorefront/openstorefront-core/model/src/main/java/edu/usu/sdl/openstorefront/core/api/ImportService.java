@@ -140,8 +140,9 @@ public interface ImportService
 	 * Adds a File Format to the import system
 	 * 
 	 * @param newFormat 
+	 * @param parseClass 
 	 */
-	public void registerFormat(FileFormat newFormat);
+	public void registerFormat(FileFormat newFormat, Class parseClass);
 	
 	/**
 	 * Removes a File Format from the import system

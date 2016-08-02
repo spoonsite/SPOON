@@ -60,6 +60,9 @@ public class OsgiManager
 		list.add(new APIDocActivator());
 		configMap.put(FelixConstants.SYSTEMBUNDLE_ACTIVATORS_PROP, list);
 		
+		//We are managing the plugins in the application
+		configMap.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
+		
 		//org.osgi.framework.system.packages.extra
 		//org.osgi.framework.bootdelegation
 		String moduleVersion = PropertiesManager.getModuleVersion();
@@ -75,7 +78,7 @@ public class OsgiManager
 				"edu.usu.sdl.openstorefront.core.spi; version=" + moduleVersion + ", "  +
 				"edu.usu.sdl.openstorefront.core.spi.parser; version=" + moduleVersion + ", "  +
 				"edu.usu.sdl.openstorefront.core.spi.parser.mapper; version=" + moduleVersion + ", "  +
-				"edu.usu.sdl.openstorefront.core.spi.parser.mapper.reader; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.core.spi.parser.reader; version=" + moduleVersion + ", "  +
 				"edu.usu.sdl.openstorefront.core.util; version=" + moduleVersion + ", " + 
 				"edu.usu.sdl.openstorefront.core.view; version=" + moduleVersion + ", "  +
 				"edu.usu.sdl.openstorefront.core.view.statistic; version=" + moduleVersion + ", "  + 

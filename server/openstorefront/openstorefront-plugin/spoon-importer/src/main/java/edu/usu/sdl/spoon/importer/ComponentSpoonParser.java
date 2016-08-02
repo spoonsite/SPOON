@@ -16,6 +16,8 @@
 package edu.usu.sdl.spoon.importer;
 
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.XMLMapReader;
 import java.io.InputStream;
 
 /**
@@ -33,6 +35,12 @@ public class ComponentSpoonParser
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
+	@Override
+	protected GenericReader getReader(InputStream in)
+	{
+		return new XMLMapReader(in);
+	}	
+	
 	@Override
 	protected <T> Object parseRecord(T record)
 	{

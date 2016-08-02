@@ -16,6 +16,8 @@
 				}
 			});
 			
+			var selectedMapFormat;
+			
 			var addEditMapping = Ext.create('Ext.window.Window', {
 				title: 'Add/Edit Mapping',
 				modal: true,
@@ -26,26 +28,29 @@
 				items: [
 					{
 						xtype: 'form',
+						itemId: 'form',
 						bodyStyle: 'padding: 20px;',
 						layout: 'anchor',
 						autoScroll: true,
 						items: [
 							{
 								xtype: 'panel',
+								itemId: 'fieldMapping',
 								title: 'Fields',
 								collapsible: true,
 								titleCollapse: true,
 								layout: 'anchor',
 								items: [
 									{
-										xtype: 'container',
+										xtype: 'form',
 										layout: 'hbox',
 										items: [
 											{
 												xtype: 'filefield',
-												name: 'upload',
+												name: 'uploadFile',
 												fieldLabel: 'Sample File with Fields',
 												labelAlign: 'top',
+												allowBlank: false,
 												flex: 1,
 												margin: '0 10 0 0'
 											},
@@ -54,6 +59,24 @@
 												text: 'Upload',
 												iconCls: 'fa fa-upload',
 												handler: function() {
+													var uploadForm = this.up('form');
+													var fileFieldCB = uploadForm.up().getComponent('fieldForm').getComponent('fileFieldCB');
+													
+													uploadForm.submit({
+														url: '../Upload.action?DataMapFields&fileFormat='+selectedMapFormat.get('code'),
+														method: 'POST',
+														success: function(action, opts) {
+															var fieldData = Ext.decode(opts.response.responseText);															
+															fileFieldCB.getStore().loadData(fieldData.data);
+														},
+														failure: function(response,opts){
+															Ext.Msg.show({
+																title: 'Upload Failed',
+																msg: 'The file upload was not successful. Check that the file meets the format requirements.',
+																buttons: Ext.Msg.OK
+															});															
+														}
+													});														
 													
 												},
 												margin: '25 0 0 0'
@@ -62,6 +85,7 @@
 									},									
 									{
 										xtype: 'fieldset',
+										itemId: 'fieldForm',
 										title: 'Add/Edit Field Mapping',
 										layout: 'anchor',
 										defaults: {
@@ -71,15 +95,17 @@
 										items: [
 											{
 												xtype: 'combo',
+												itemId: 'fileFieldCB',
 												name: 'field',
 												fieldLabel: 'File Field<span class="field-required" />',
-												valueField: 'code',
-												displayField: 'description',
+												allowBlank: false,
+												valueField: 'field',
+												displayField: 'field',
 												store: {
 													autoLoad: false													
 												},
-												editable: false,
-												typeAhead: false												
+												editable: true,
+												typeAhead: true												
 											},
 											{
 												xtype: 'tagfield',
@@ -101,6 +127,7 @@
 												xtype: 'combo',
 												name: 'entity',
 												fieldLabel: 'Entities<span class="field-required" />',
+												allowBlank: false,
 												valueField: 'code',
 												displayField: 'description',
 												store: {
@@ -130,6 +157,7 @@
 												itemId: 'entityfieldId',
 												name: 'entityfield',
 												fieldLabel: 'Entity Field<span class="field-required" />',
+												allowBlank: false,
 												valueField: 'code',
 												displayField: 'description',
 												store: {
@@ -262,6 +290,7 @@
 							},
 							{
 								xtype: 'panel',
+								itemId: 'attributeMapping',
 								title: 'Attributes',
 								collapsible: true,
 								titleCollapse: true,
@@ -284,6 +313,7 @@
 												xtype: 'combo',
 												name: 'attributeType',
 												fieldLabel: 'Attribute Type<span class="field-required" />',
+												allowBlank: false,
 												valueField: 'attributeType',
 												displayField: 'description',
 												store: {
@@ -308,6 +338,7 @@
 												xtype: 'textfield',
 												name: 'externalType',
 												fieldLabel: 'External Type<span class="field-required" />',
+												allowBlank: false,
 												maxValue: 255
 											},
 											{
@@ -519,7 +550,17 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus',
 								handler: function() {
+									var record = mappingPanel.getComponent('filterbar').getComponent('fileFormatFilter').getSelection();
+									selectedMapFormat = record;
+									
 									addEditMapping.show();
+																		
+									if (record.get('fileType') === 'ATTRIBUTE') {
+										addEditMapping.getComponent('form').getComponent('attributeMapping').setHidden(true);
+									} else {
+										addEditMapping.getComponent('form').getComponent('attributeMapping').setHidden(false);
+									}
+									
 								}
 							},
 							{
@@ -530,7 +571,10 @@
 								iconCls: 'fa fa-2x fa-edit',
 								handler: function() {
 									var grid = mappingPanel;
-									var record = mappingPanel.getSelectionModel().getSelection()[0];
+									var mapRecord = mappingPanel.getSelectionModel().getSelection()[0];
+									
+									var formatRecord = mappingPanel.getComponent('filterbar').getComponent('fileFormatFilter').getSelection();
+									selectedMapFormat = formatRecord;
 									
 									addEditMapping.show();
 									
@@ -571,6 +615,8 @@
 				]
 				
 			});
+			
+			//////////////End of Mapping//////////////////
 			
 			var fileHistoryStore = Ext.create('Ext.data.Store', {
 				pageSize: 100,

@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.manager;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.Plugin;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.job.PluginScanJob;
@@ -72,6 +73,9 @@ public class PluginManager
 			}
 		}
 
+		//Reload any external bundles
+		service.getSystemService().saveProperty(ApplicationProperty.PLUGIN_LAST_LOAD_MAP, null);
+		
 		AddJobModel job = new AddJobModel();
 		job.setJobClass(PluginScanJob.class);
 		job.setJobName(PluginScanJob.class.getSimpleName());

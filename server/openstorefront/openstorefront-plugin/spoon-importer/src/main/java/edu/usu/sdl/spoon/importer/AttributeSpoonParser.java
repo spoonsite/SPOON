@@ -16,6 +16,8 @@
 package edu.usu.sdl.spoon.importer;
 
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseAttributeParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.XMLMapReader;
 import java.io.InputStream;
 
 /**
@@ -31,6 +33,12 @@ public class AttributeSpoonParser
 	public String checkFormat(String mimeType, InputStream input)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	protected GenericReader getReader(InputStream in)
+	{
+		return new XMLMapReader(in);
 	}
 
 	@Override
