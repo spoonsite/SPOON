@@ -56,7 +56,7 @@ public class FileDataMapField
 	private Boolean addEndPathToValue;
 	
 	@ConsumeField
-	private String setPathToEnityField;
+	private String pathToEnityField;
 
 	@ConsumeField
 	@DataType(DataMapTransform.class)
@@ -142,14 +142,14 @@ public class FileDataMapField
 		this.addEndPathToValue = addEndPathToValue;
 	}
 
-	public String getSetPathToEnityField()
+	public String getPathToEnityField()
 	{
-		return setPathToEnityField;
+		return pathToEnityField;
 	}
 
-	public void setSetPathToEnityField(String setPathToEnityField)
+	public void setPathToEnityField(String pathToEnityField)
 	{
-		this.setPathToEnityField = setPathToEnityField;
+		this.pathToEnityField = pathToEnityField;
 	}
 
 	public List<DataMapTransform> getPathTransforms()
