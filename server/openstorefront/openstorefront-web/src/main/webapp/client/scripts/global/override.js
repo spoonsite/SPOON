@@ -328,6 +328,10 @@ Ext.onReady(function() {
 			Ext.toast('This likely a temporary condition.  Please try again later.<br>(Attention Admin): Application server is not responding to proxy. <br> Check connection and status of the Application Server. ', 'Server Communication Failure (502)');			
 		} else if (response.status === 503) {
 			Ext.toast('This likely a temporary condition.  Please try again later.<br>Application is unavaliable. ', 'Service Unavailable (503)');			
+		} else if (response.status === 504) {
+			Ext.toast('This likely a temporary condition.  Please try again later.<br>Application is unavaliable. ', 'Gateway Timeout (504)');			
+		} else if (String(response.status).charAt(0) === 5) {
+			Ext.toast('This likely a temporary condition.  Please try again later.<br>Application is unavaliable. ', '5xx Server Error: ' + response.status);			
 		} else {
 			var errorTicket = null;
 			try {
