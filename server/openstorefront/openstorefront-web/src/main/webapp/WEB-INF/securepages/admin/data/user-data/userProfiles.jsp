@@ -116,10 +116,24 @@
 								dataIndex: 'phone'
 							},
 							{
-								flex: 5,
+								flex: 3,
 								text: 'GUID', 
 								dataIndex: 'guid',
 								sortable: false
+							},
+							{
+								flex: 2,
+								text: 'Send Change Emails',
+								dataIndex: 'notifyOfNew',
+								renderer: function(value, meta, record) {
+									if (value) {
+										meta.tdCls = 'alert-success';
+										return '<i class="fa fa-lg fa-check"></i>';
+									} else {
+										meta.tdCls = 'alert-danger';
+										return '<i class="fa fa-lg fa-close"></i>';
+									}
+								}
 							}
 						]
 					},
