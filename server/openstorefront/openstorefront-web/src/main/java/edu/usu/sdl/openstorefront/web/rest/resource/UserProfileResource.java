@@ -226,6 +226,38 @@ public class UserProfileResource
 		service.getUserService().deleteProfile(username);
 	}
 
+	@DELETE
+	@APIDescription("Inactivates a list of user profiles. Consumes a list of username strings.")
+	@RequireAdmin
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/multiple")
+	public void deleteUserProfiles(
+			@RequiredParam List<String> usernames)
+	{
+
+		for (String username : usernames) {
+			service.getUserService().deleteProfile(username);
+		}
+
+	}
+
+	@PUT
+	@APIDescription("Reactivates a list of user profiles. Consumes a list of username strings.")
+	@RequireAdmin
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/multiple")
+	public void reactivateUserProfiles(
+			@RequiredParam List<String> usernames)
+	{
+
+		for (String username : usernames) {
+			service.getUserService().reactiveProfile(username);
+		}
+
+	}
+
 	@PUT
 	@APIDescription("Reactives a user profile.")
 	@RequireAdmin

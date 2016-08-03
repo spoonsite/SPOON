@@ -67,6 +67,7 @@ limitations under the License.
 						   selType: 'checkboxmodel'        
 					},					
 					store: watchStore,
+					bufferedRenderer: false,
 					columns: [
 						{ text: 'Entry', dataIndex: 'componentName', flex: 1, minWidth: 200, 
 							renderer: function(value, meta, record) {

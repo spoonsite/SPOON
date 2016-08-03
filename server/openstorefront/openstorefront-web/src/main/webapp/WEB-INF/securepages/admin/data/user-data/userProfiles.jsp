@@ -11,6 +11,10 @@
 			<p style="display: none;" id="exportFormUserIds"></p>
 		</form>
 
+		<form name="toggleForm" id="toggleForm" action="/openstorefront/api/v1/resource/userprofiles/multiple" method="DELETE">
+			<p style="display: none;" id="toggleFormUserIds"></p>
+		</form>
+
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
@@ -112,10 +116,24 @@
 								dataIndex: 'phone'
 							},
 							{
-								flex: 5,
+								flex: 3,
 								text: 'GUID', 
 								dataIndex: 'guid',
 								sortable: false
+							},
+							{
+								flex: 2,
+								text: 'Send Change Emails',
+								dataIndex: 'notifyOfNew',
+								renderer: function(value, meta, record) {
+									if (value) {
+										meta.tdCls = 'alert-success';
+										return '<i class="fa fa-lg fa-check"></i>';
+									} else {
+										meta.tdCls = 'alert-danger';
+										return '<i class="fa fa-lg fa-close"></i>';
+									}
+								}
 							}
 						]
 					},
@@ -211,8 +229,12 @@
 									disabled: true,
 									scale: 'medium',
 									handler: function () {
-										var record = Ext.getCmp('userProfileGrid').getSelection()[0];
-										actionToggleUser(record);
+										var records = Ext.getCmp('userProfileGrid').getSelection();
+										if (records.length > 1) {
+											actionToggleUsers(records);
+										} else {
+											actionToggleUser(records[0]);
+										}
 									}
 								},
 								{
@@ -268,6 +290,7 @@
 								Ext.getCmp('userProfileGrid-tools-message').disable();
 								if (Ext.getCmp('userProfileGrid').getSelectionModel().getCount() > 1) {
 									Ext.getCmp('userProfileGrid-tools-export').enable();
+									Ext.getCmp('userProfileGrid-tools-toggleActivation').enable();
 									if (Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() === 'A') {
 										Ext.getCmp('userProfileGrid-tools-message').enable();
 									}
@@ -393,9 +416,46 @@
 					document.getElementById('exportFormUserIds').innerHTML = userIdInputs;
 					document.exportForm.submit();
 				};
+				
+				var actionToggleUsers = function actionToggleUsers(records) {
+					var active = Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue();
+					var url = '/openstorefront/api/v1/resource/userprofiles/multiple';
+					if (active === 'A') {
+						var method = "DELETE";
+						var what = "deactivate";
+					} else if (active === 'I') {
+						var method = "PUT";
+						var what = "activate";
+					} else {
+						Ext.MessageBox.alert("Failed", "Failed to toggle status.");
+						return false;
+					}
 
+					var users = [];
+					Ext.Array.each(records, function(record) {
+						users.push(record.get('username'));
+					});
+
+					Ext.Ajax.request({
+						url: url,
+						method: method,
+						jsonData: users,
+						success: function (response, opts) {
+							var message = 'Successfully ' + what + 'd users';
+							Ext.toast(message, '', 'tr');
+							Ext.getCmp('userProfileGrid').getStore().load();
+							Ext.getCmp('userProfileGrid').getSelectionModel().deselectAll();
+							Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
+							Ext.getCmp('userProfileGrid-tools-edit').disable();
+						},
+						failure: function (response, opts) {
+							Ext.MessageBox.alert('Failed to ' + what,
+												 "Error: Could not " + what + ' users');
+						}
+					});
+				}
 			});
 
-		</script>
-	</stripes:layout-component>
-</stripes:layout-render>
+			</script>
+			</stripes:layout-component>
+			</stripes:layout-render>
