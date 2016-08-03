@@ -1549,6 +1549,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 				{
 					xtype: 'combo',
 					fieldLabel: 'Initial View',
+					labelAlign: 'right',
 					valueField: 'code',
 					displayField: 'description',
 					typeAhead: false,
@@ -1585,6 +1586,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 					xtype: 'combo',
 					itemId: 'find',
 					fieldLabel: 'Find',
+					labelAlign: 'right',
 					valueField: 'key',
 					displayField: 'name',
 					typeAhead: true,
@@ -1612,6 +1614,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 				{
 					xtype: 'combo',
 					fieldLabel: 'Attribute',
+					labelAlign: 'right',
 					itemId: 'attributeType',
 					hidden: true,				
 					valueField: 'attributeType',
