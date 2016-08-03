@@ -31,12 +31,12 @@ licensed under Apache V2.**
 ## 1.1 Release Notes
 ------
 
-**What's new in v2.1:**
+*What's new in v2.1*
 *+Current NEW FEATURES Include:+*
 * STORE-656 Add Data Mapping Support for Imports
 * STORE-659 Add ability to add new parses as plugins
-* STORE-811 Visualization Interactive Report
-* STORE-849 Relationship Management Tool
+* *STORE-811 Visualization Interactive Report*
+* *STORE-849 Relationship Management Tool*
 * -STORE-903 Tag Search-
 * STORE-930 Argo Integration
 * -STORE-941 Allow section of message recipients from main user profile grid-
@@ -48,7 +48,16 @@ licensed under Apache V2.**
 * *STORE-871 Handling of Inline Media*
 * STORE-933 Improve Describe Record Support
 * STORE-956 Media Handling Improvements
-* STORE-945 v2.1 Mainenance
+* STORE-966 Allow file attachments for attribute codes 
+* STORE-945 v2.1 Maintenance
+* *STORE-975 Contact Lookup by Last Name*
+* *STORE-976 Recently Added Improvement*
+* *STORE-978 Category Report Improvement*
+
+*+Current BUG FIXES Include:+*
+* -STORE-977 Manage Watches, View-
+* STORE-945 v2.1 Maintenance
+
 For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.1" target="_blank">v2.1</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
 ## 1.2 Known Issues, v2.1 * 
@@ -471,7 +480,18 @@ Post or Cancel button when the edit is finished.
 Finally, a **Delete** button is provided with confirmation before deleting a question
 or an answer.
 
-#### 2.3.3.2 Reports
+
+#### 2.3.3.2 Relationships
+--------
+
+This screen shows a graphical representation among entries based on
+ organization, attributes, tags, and direct relationships.
+ 
+A particular view can be saved by pressing the Download Image button.  A find option is also available to find a 
+ component in the current view on the page.
+
+
+#### 2.3.3.3 Reports
 --------
 
 This section displays reports that have run as well as scheduled reports that will run in the future.
@@ -494,7 +514,7 @@ the report will run, as well as the last run date and time. You can add, activat
 scheduled report, edit, or delete it.
 
 
-#### 2.3.3.2 Admin Reports * 
+#### 2.3.3.3 Admin Reports * 
 --------
 
 This section displays reports that have run as well as scheduled reports that will run in the future.
@@ -528,7 +548,7 @@ scheduled report, edit, or delete it.
 
 
   
-#### 2.3.3.3 Reviews
+#### 2.3.3.4 Reviews
 ------------
 -
 From this screen in the User Tools you can edit and delete your component reviews.
@@ -557,7 +577,7 @@ by clicking on the delete icon next to the title of the review. You can only rem
     other users to read.
 
 
-#### 2.3.3.4 Searches
+#### 2.3.3.5 Searches
 ------------
 
 This tab displays the list of saved searches from the Advanced Search area.
@@ -566,7 +586,7 @@ It also allows the user to Add, Edit, and Delete advanced searches.
 For more information, see the Advanced Search Section under Search Tools.
 
 
-#### 2.3.3.5 Manage Watches
+#### 2.3.3.6 Manage Watches
 ------------
 
 The user can create watches that can send notifications to the user. The
@@ -1180,7 +1200,17 @@ Allows merging of references from one organization to another.  **NOTE** that th
 ONLY merges references and NOT the organization information.
 
 
-### 3.2.12 Searches (Public Saved Searches) *
+### 3.2.12 Relationships *
+---------
+
+Quickly create relationships between entries by dragging from the origin grid to the target grid.
+
+By clicking on the Orign Entry Column the Existing Relationships are shown to the right in the table and can be edited
+if desired.  In addition the Visualization section shows a graphical view of the relationships.
+
+
+
+### 3.2.13 Searches (Public Saved Searches) *
 ---------
 
 This area displays a list of publicly available searches that can be edited, added, activated, or 
@@ -1188,7 +1218,7 @@ made inactive.  Once the searches are set up, they can be used for inclusion in 
 entries.
 
  
-### 3.2.13 User Data *
+### 3.2.14 User Data *
 ---------
 
 This section in the Admin Tools -> Data Management allows for the management of user-submitted data such as:
@@ -1204,7 +1234,7 @@ This section in the Admin Tools -> Data Management allows for the management of 
  * User Profiles
  
 
-#### 3.2.13.1 Questions (and Answers) *
+#### 3.2.14.1 Questions (and Answers) *
 ------
 
 The Questions section of User Data in Data Management of the Admin Tools displays Questions and Answers given on the website.
@@ -1218,7 +1248,7 @@ The table displays active questions, but the drop-down at the top of the page al
  * With a question or answer highlighted, click the associated Deactivate button to remove it from view on the website.
 
 
-#### 3.2.13.2 Reviews *
+#### 3.2.14.2 Reviews *
 ------
 
 The Reviews section of User Data in Data Management of the Admin Tools displays entry reviews from the website.
@@ -1232,7 +1262,7 @@ The table displays the list of *active* reviews by default.
  * Selecting an inactive review allows for the Activate button to be pressed, adding the review back to view on the website.
 
 
-#### 3.2.13.3 Watches *
+#### 3.2.14.3 Watches *
 ------
 
 The Watches section of User Data in Data Management of the Admin Tools displays all of the watches from all users.
@@ -1242,7 +1272,7 @@ The Watches section of User Data in Data Management of the Admin Tools displays 
  * When an entry (or multiple entries of the same status) is selected, the Activate or Inactivate button can be used to toggle the status of the watches.
  
  
-#### 3.2.13.4 Tags *
+#### 3.2.14.4 Tags *
 ------
 
 The Tags section of User Data in Data Management of the Admin Tools displays a list of all tags.
@@ -1254,7 +1284,7 @@ The Tags section of User Data in Data Management of the Admin Tools displays a l
  * In the event of a duplicate tag being added to the same component the added tag will override the existing tag.
 
 
-#### 3.2.13.5 User Profiles *
+#### 3.2.14.5 User Profiles *
 ------
 
 Every user in the system has a user profile.  A user profile contains information
