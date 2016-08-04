@@ -40,10 +40,14 @@ public class DBFindByPKTest
 		componentEvaluationSectionPk.setEvaluationSection("TEST");
 		componentEvaluationSectionPk.setComponentId("883045");
 
+		results.append("883045#TEST").append("<br>");
+
 		ComponentEvaluationSection section = service.getPersistenceService().findById(ComponentEvaluationSection.class, componentEvaluationSectionPk);
 
 		ComponentEvaluationSection sectionExample = new ComponentEvaluationSection();
 		sectionExample.setComponentEvaluationSectionPk(componentEvaluationSectionPk);
+		results.append(sectionExample.getComponentEvaluationSectionPk()).append("<br>");
+
 		service.getPersistenceService().queryByExample(ComponentEvaluationSection.class, new QueryByExample(sectionExample));
 
 		results.append("Pass").append("<br>");
