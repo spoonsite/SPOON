@@ -15,8 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.core.entity.DataMapTransform;
+import edu.usu.sdl.openstorefront.core.entity.FileDataMapField;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -24,6 +32,8 @@ import java.util.List;
  */
 public class DataMapper
 {
+	private static final Logger LOG = Logger.getLogger(DataMapper.class.getName());
+	
 	private String field;
 	private boolean rootField;
 	private List<DataTransform> transforms = new ArrayList<>();
@@ -32,14 +42,71 @@ public class DataMapper
 	private boolean useAsAttributeLabel;
 	private boolean concatenate;
 	private boolean addEndPathToValue;
-	private String setPathToEnityField;
+	private String pathToEnityField;
 	private List<DataTransform> pathTransforms = new ArrayList<>();
 
 	public DataMapper()
 	{
 	}
 	
-	public Object applyTransforms(String value) {
+	public static DataMapper toDataMapper(FileDataMapField fileDataMapField) 
+	{
+		DataMapper dataMapper = null;
+		try {
+			dataMapper = new DataMapper();
+			dataMapper.setPathToEnityField(fileDataMapField.getPathToEnityField());
+			dataMapper.setAddEndPathToValue(Convert.toBoolean(fileDataMapField.getAddEndPathToValue()));
+			dataMapper.setConcatenate(Convert.toBoolean(fileDataMapField.getConcatenate()));			
+			dataMapper.setEntityClass(DataMapper.class.getClassLoader().loadClass(fileDataMapField.getEntityClass()));
+			dataMapper.setEntityField(fileDataMapField.getEntityField());
+			dataMapper.setField(fileDataMapField.getField());
+			dataMapper.setUseAsAttributeLabel(Convert.toBoolean(fileDataMapField.getUseAsAttributeLabel()));
+			
+			if (fileDataMapField.getTransforms() != null) {				
+				for (DataMapTransform dataMapTransform : fileDataMapField.getTransforms()) {
+					DataTransform dataTransform = getDataTransform(dataMapTransform.getTransform());
+					if (dataTransform != null) {
+						dataMapper.getTransforms().add(dataTransform);
+					}
+				}
+			}
+
+			if (fileDataMapField.getPathTransforms() != null) {
+				for (DataMapTransform dataMapTransform : fileDataMapField.getPathTransforms()) {
+					DataTransform dataTransform = getDataTransform(dataMapTransform.getTransform());
+					if (dataTransform != null) {
+						dataMapper.getTransforms().add(dataTransform);
+					}
+				}
+			}
+			
+		} catch (ClassNotFoundException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to find class", "Check class: " + fileDataMapField.getEntityClass());
+		}
+		return dataMapper;
+	}
+	
+	private static DataTransform getDataTransform(String transform) 
+	{
+		DataTransform dataTransform = null;
+		
+		if (StringUtils.isNotBlank(transform)) {
+			try {
+				dataTransform = StringTransforms.valueOf(transform);
+			} catch (IllegalArgumentException ioe) {
+				try {
+					dataTransform = TypeTransforms.valueOf(transform);
+				} catch (IllegalArgumentException ioex) {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to find transform:  {0}", transform));
+				}
+			}
+		}
+		
+		return dataTransform;
+	}
+	
+	public Object applyTransforms(String value) 
+	{
 		Object transformedData = value;
 		for (DataTransform dataTransform : transforms) {
 			transformedData = dataTransform.transform(transformedData);
@@ -47,7 +114,8 @@ public class DataMapper
 		return transformedData;
 	}
 	
-	public Object applyPathTransforms(String value) {
+	public Object applyPathTransforms(String value)
+	{
 		Object transformedData = value;
 		for (DataTransform dataTransform : pathTransforms) {
 			transformedData = dataTransform.transform(transformedData);
@@ -135,14 +203,14 @@ public class DataMapper
 		this.pathTransforms = pathTransforms;
 	}
 
-	public String getSetPathToEnityField()
+	public String getPathToEnityField()
 	{
-		return setPathToEnityField;
+		return pathToEnityField;
 	}
 
-	public void setSetPathToEnityField(String setPathToEnityField)
+	public void setPathToEnityField(String pathToEnityField)
 	{
-		this.setPathToEnityField = setPathToEnityField;
+		this.pathToEnityField = pathToEnityField;
 	}
 
 	public boolean getAddEndPathToValue()

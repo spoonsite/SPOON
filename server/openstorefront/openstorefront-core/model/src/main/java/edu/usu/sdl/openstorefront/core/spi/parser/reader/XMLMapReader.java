@@ -48,10 +48,12 @@ public class XMLMapReader
 	@Override
 	public MapModel nextRecord()
 	{
+		//Pull in all data which makes it one record.
 		if (rootModel == null) {
 			rootModel = findFields(in);
+			return rootModel;
 		}
-		return rootModel;
+		return null;
 	}
 
 	@Override

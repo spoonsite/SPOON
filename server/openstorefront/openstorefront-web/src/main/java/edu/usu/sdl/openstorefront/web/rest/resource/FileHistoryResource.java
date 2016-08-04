@@ -143,7 +143,7 @@ public class FileHistoryResource
 	@APIDescription("Gets errors for a file")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileHistoryError.class)
-	@Path("{fileHistoryId}/errors")
+	@Path("/{fileHistoryId}/errors")
 	public List<FileHistoryError> getErrors(
 			@PathParam("fileHistoryId") String fileHistoryId
 	)
@@ -157,7 +157,7 @@ public class FileHistoryResource
 	@RequireAdmin
 	@APIDescription("Download the original file")
 	@Produces({MediaType.WILDCARD})
-	@Path("{fileHistoryId}/download")
+	@Path("/{fileHistoryId}/download")
 	public Response downloadFileHistory(
 			@PathParam("fileHistoryId") String fileHistoryId
 	)
@@ -228,7 +228,7 @@ public class FileHistoryResource
 	@APIDescription("Gets file format for a type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileFormat.class)
-	@Path("filetypes/{type}/formats")
+	@Path("/filetypes/{type}/formats")
 	public List<FileFormat> getFileTypesForFormat(
 			@PathParam("type") String type
 	)
@@ -242,7 +242,7 @@ public class FileHistoryResource
 	@APIDescription("Gets all file format that support mapping")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileFormat.class)
-	@Path("formats/mappingformats")
+	@Path("/formats/mappingformats")
 	public List<FileFormat> getMappingFormats()
 	{
 		List<FileFormat> formats = service.getImportService().getFileFormatsMapping();
@@ -254,7 +254,7 @@ public class FileHistoryResource
 	@APIDescription("Gets data mappings for a format.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
-	@Path("formats/{format}/mappings")
+	@Path("/formats/{format}/mappings")
 	public List<LookupModel> getMappingsForFormat(			
 			@PathParam("format") String format
 	)
@@ -281,7 +281,7 @@ public class FileHistoryResource
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Deletes a data mappings")	
-	@Path("formats/{format}/mappings/{fileDataMapId}")
+	@Path("/formats/{format}/mappings/{fileDataMapId}")
 	public Response removeDataMapping(			
 			@PathParam("format") String format,
 			@PathParam("fileDataMapId") String fileDateMapId
@@ -303,7 +303,7 @@ public class FileHistoryResource
 	@APIDescription("Creates a new data mapping")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("formats/{format}/mappings")
+	@Path("/formats/{format}/mappings")
 	public Response createNewMapping(
 			@PathParam("format") String format,
 			DataMapModel dataMapModel		
@@ -318,7 +318,7 @@ public class FileHistoryResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(DataMapModel.class)	
-	@Path("formats/{format}/mappings/{fileDataMapId}")
+	@Path("/formats/{format}/mappings/{fileDataMapId}")
 	public Response getFileMapping(
 			@PathParam("format") String format,
 			@PathParam("fileDataMapId") String fileDateMapId
@@ -333,7 +333,7 @@ public class FileHistoryResource
 	@APIDescription("Updates a data mapping")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("formats/{format}/mappings/{fileDataMapId}")
+	@Path("/formats/{format}/mappings/{fileDataMapId}")
 	public Response updateMapping(
 			@PathParam("format") String format,
 			@PathParam("fileDataMapId") String fileDateMapId,

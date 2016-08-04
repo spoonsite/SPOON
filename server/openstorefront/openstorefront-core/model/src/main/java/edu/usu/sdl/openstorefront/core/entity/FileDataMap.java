@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
-import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.util.List;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
@@ -39,10 +38,11 @@ public class FileDataMap
 	@NotNull
 	private String fileDataMapId;
 	
-	@FK(value = FileFormat.class, referencedField="code")
-	@ValidValueType(value={}, lookupClass = FileFormat.class)
-	@ConsumeField
+	
 	@NotNull
+	@ConsumeField	
+	@FK(value = FileFormat.class, referencedField="code")	
+	@APIDescription("May be a built in format or a format from a plugin which may not be loaded.")
 	private String fileFormat;
 	
 	@NotNull

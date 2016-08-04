@@ -21,10 +21,15 @@ import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.FileDataMapField;
+import edu.usu.sdl.openstorefront.core.model.DataMapModel;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -47,7 +52,33 @@ public abstract class BaseMapper<T>
 		this.dataMappers = dataMappers;
 		this.attributeDataMapper = attributeDataMapper;
 	}
-			
+	
+	public BaseMapper(DataTemplateEntity<T> templateFactory, FileHistoryAll fileHistoryAll) {
+		Objects.requireNonNull(fileHistoryAll.getDataMapModel(), "A data map is required to for this format.");
+		
+		this.templateFactory = templateFactory;
+		this.fileHistoryAll = fileHistoryAll;
+		
+		DataMapModel dataMapModel = fileHistoryAll.getDataMapModel();
+		
+		if (dataMapModel.getFileDataMap().getDataMapFields() == null) {
+			dataMapModel.getFileDataMap().setDataMapFields(new ArrayList<>());			
+		}
+		
+		this.dataMappers = new HashMap<>();
+		for (FileDataMapField fileDataMapField : dataMapModel.getFileDataMap().getDataMapFields())
+		{
+			DataMapper dataMapper = DataMapper.toDataMapper(fileDataMapField);			
+			dataMappers.put(fileDataMapField.getField(), dataMapper);
+		}
+		
+		if (dataMapModel.getFileAttributeMap() != null)
+		{
+			attributeDataMapper =  AttributeDataMapper.toDataMapper(dataMapModel.getFileAttributeMap());
+		}
+		
+	}	
+	
 	public abstract  List<T> multiMapData(MapModel input);
 	
 	//public abstract T singleMapData(MapModel input);

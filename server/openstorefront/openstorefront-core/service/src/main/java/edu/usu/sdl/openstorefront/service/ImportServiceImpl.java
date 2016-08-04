@@ -197,6 +197,10 @@ public class ImportServiceImpl
 
 		//Get Parser for format
 		ExternalFormat externalFormat = findFileFormat(fileHistory.getFileFormat());
+		
+		if (fileHistory.getFileDataMapId() != null) {
+			fileHistoryAll.setDataMapModel(getDataMap(fileHistory.getFileDataMapId()));
+		}
 
 		try {
 			Class parserClass = externalFormat.getParsingClass();

@@ -15,10 +15,14 @@
  */
 package edu.usu.sdl.spoon.importer;
 
+import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseAttributeParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.AttributeMapper;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.XMLMapReader;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  *
@@ -32,7 +36,11 @@ public class AttributeSpoonParser
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (mimeType.contains("xml")) {
+			return "";
+		} else {
+			return "Invalid format. Please upload a XML file.";
+		}		
 	}
 
 	@Override
@@ -44,7 +52,21 @@ public class AttributeSpoonParser
 	@Override
 	protected <T> Object parseRecord(T record)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MapModel mapModel = (MapModel) record;
+		
+		AttributeMapper attributeMapper = new AttributeMapper(() -> {
+				AttributeAll attributeAll = defaultAttributeAll();
+				return attributeAll;
+		}, fileHistoryAll);
+			
+		List<AttributeAll> attributeAlls  = attributeMapper.multiMapData(mapModel);	
+		for (AttributeAll attributeAll : attributeAlls) {
+			if (validateRecord(attributeAll)) {
+				addRecordToStorage(attributeAll);
+			}
+		}
+				
+		return null;
 	}
 	
 }

@@ -15,6 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.core.entity.FileAttributeCodeXrefMap;
+import edu.usu.sdl.openstorefront.core.entity.FileAttributeMap;
+import edu.usu.sdl.openstorefront.core.entity.FileAttributeTypeXrefMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +34,34 @@ public class AttributeDataMapper
 	public AttributeDataMapper()
 	{
 	}
-
+	
+	public static AttributeDataMapper toDataMapper(FileAttributeMap fileAttributeMap)
+	{
+		AttributeDataMapper attributeDataMapper = new AttributeDataMapper();
+		
+		attributeDataMapper.setAddMissingAttributeTypeFlg(Convert.toBoolean(fileAttributeMap.getAddMissingAttributeTypeFlg()));
+		
+		if (fileAttributeMap.getAttributeTypeXrefMap() != null) {
+			for (FileAttributeTypeXrefMap fileAttributeTypeXrefMap :  fileAttributeMap.getAttributeTypeXrefMap()) 
+			{
+				AttributeTypeMapper  attributeTypeMapper = new AttributeTypeMapper();
+				attributeTypeMapper.setAddMissingCode(Convert.toBoolean(fileAttributeTypeXrefMap.getAddMissingCode()));
+				attributeTypeMapper.setAttributeType(fileAttributeTypeXrefMap.getAttributeType());
+				attributeTypeMapper.setDefaultMappedCode(fileAttributeTypeXrefMap.getDefaultMappedCode());
+				
+				if (fileAttributeTypeXrefMap.getAttributeCodeXrefMap() != null) {
+					
+					for (FileAttributeCodeXrefMap codeXrefMap : fileAttributeTypeXrefMap.getAttributeCodeXrefMap()) {
+						attributeTypeMapper.getCodeMap().put(codeXrefMap.getExternalCode(), codeXrefMap.getAttributeCode());
+					}					
+				}
+								
+				attributeDataMapper.getAttributeMap().put(fileAttributeTypeXrefMap.getExternalType(), attributeTypeMapper);
+			}	
+		}
+		return attributeDataMapper;
+	}
+	
 	public Map<String, AttributeTypeMapper> getAttributeMap()
 	{
 		return attributeMap;

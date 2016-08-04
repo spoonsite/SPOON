@@ -44,7 +44,7 @@ public class FileHistory
 	
 	@FK(FileFormat.class)
 	@NotNull
-	@APIDescription("May be a built in format or a format from a plugin which may not be load.")
+	@APIDescription("May be a built in format or a format from a plugin which may not be loaded.")
 	private String fileFormat;
 	
 	@ConsumeField

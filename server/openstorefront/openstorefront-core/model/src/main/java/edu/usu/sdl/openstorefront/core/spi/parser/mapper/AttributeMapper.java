@@ -41,6 +41,11 @@ public class AttributeMapper
 	{
 		super(templateFactory, fileHistoryAll, dataMappers, attributeDataMapper);
 	}
+	
+	public AttributeMapper(DataTemplateEntity<AttributeAll> templateFactory, FileHistoryAll fileHistoryAll) 
+	{
+		super(templateFactory, fileHistoryAll);
+	}
 
 	@Override
 	public List<AttributeAll> multiMapData(MapModel input)

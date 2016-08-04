@@ -49,6 +49,11 @@ public class ComponentMapper
 		super(templateFactory, fileHistoryAll, dataMappers, attributeDataMapper);
 	}
 	
+	public ComponentMapper(DataTemplateEntity<ComponentAll> templateFactory, FileHistoryAll fileHistoryAll) 
+	{
+		super(templateFactory, fileHistoryAll);
+	}	
+	
 	@Override
 	public List<ComponentAll> multiMapData(MapModel input)
 	{
@@ -73,6 +78,7 @@ public class ComponentMapper
 						
 					} else if (attributeDataMapper.getAddMissingAttributeTypeFlg()) {						
 						createAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
+						createAttributecCode(componentAttribute.getComponentAttributePk().getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());						
 					}
 				}
 			}
@@ -158,9 +164,9 @@ public class ComponentMapper
 					
 					if (entity != null) {
 						try {
-							if (StringUtils.isNotBlank(fieldMapper.getSetPathToEnityField())) {
+							if (StringUtils.isNotBlank(fieldMapper.getPathToEnityField())) {
 								Object processedPath = fieldMapper.applyPathTransforms(pathToField);
-								BeanUtils.setProperty(entity, fieldMapper.getSetPathToEnityField(), processedPath);
+								BeanUtils.setProperty(entity, fieldMapper.getPathToEnityField(), processedPath);
 								add = true;
 							}
 
