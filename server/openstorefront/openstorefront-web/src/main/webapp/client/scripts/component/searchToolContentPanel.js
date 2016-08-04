@@ -539,7 +539,10 @@ Ext.define('OSF.component.SearchToolWindow', {
 						"mergeCondition": "OR"  //OR.. NOT.. AND..
 					}]
 			};
-			newTab.getComponent('topicPanel').loadGrid(searchToolWin.searchObj);
+			if (searchToolWin.loadedItem !== item) {
+				newTab.getComponent('topicPanel').loadGrid(searchToolWin.searchObj);
+			}
+			searchToolWin.loadedItem = item;
 		};
 
 
@@ -623,7 +626,10 @@ Ext.define('OSF.component.SearchToolWindow', {
 						"mergeCondition": "OR"  //OR.. NOT.. AND..
 					}]
 			};
-			newTab.getComponent('tagPanel').loadGrid(searchToolWin.searchObj);
+			if (searchToolWin.loadedItem !== tag) {
+				newTab.getComponent('tagPanel').loadGrid(searchToolWin.searchObj);
+			}
+			searchToolWin.loadedItem = tag;
 		};
 
 
@@ -725,7 +731,10 @@ Ext.define('OSF.component.SearchToolWindow', {
 					}]
 			};
 			// newTab.setLoading(true);
-			newTab.getComponent('contentPanel').loadGrid(searchToolWin.searchObj);
+			if (searchToolWin.loadedItem !== item2) {
+				newTab.getComponent('contentPanel').loadGrid(searchToolWin.searchObj);
+			}
+			searchToolWin.loadedItem = item2;
 		};
 
 		//

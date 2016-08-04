@@ -53,13 +53,16 @@
 							sortable: false,
 							width: 300,
 							renderer: function (value) {
-								// Render a <UL> of Emails.
-								var emailList = '<ul>';
-								Ext.Array.each(value, function (item) {
-									emailList += '<li>' + item.email + '</li>';
-								});
-								emailList += '</ul>';
-								return emailList;
+								if (value.length > 1) {
+									var emailList = '';
+									Ext.Array.each(value, function (item, index) {
+										emailList += item.email;
+										emailList += index === value.length-1 ? '<br />' : ', <br />';
+									});
+									return emailList;
+								} else { 
+									return value[0].email;
+								}
 							}
 						},
 						{

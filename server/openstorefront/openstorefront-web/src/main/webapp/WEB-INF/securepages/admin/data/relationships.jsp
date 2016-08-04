@@ -337,7 +337,6 @@
 					store: targetStore,
 					flex: 1,
 					border: true,
-					selectable: false,
 					viewConfig: {
 						plugins: [
 							Ext.create('OSF.plugin.CellToCellDragDrop', {
@@ -423,16 +422,7 @@
 								}
 							]
 						}
-					],
-					listeners: {
-						beforeselect: function(grid, record, index, eOpts) {
-							originGrid.getView().select(record);
-							originGrid.getView().scrollRowIntoView(index);
-						},
-						select: function(grid, record, index, eOpts) {
-							return false;
-						}
-					}
+					]
 				});
 
 				var relationshipsGrid = Ext.create('Ext.grid.Panel', {
@@ -444,7 +434,7 @@
 					store: relationshipsStore,
 					autoScroll: true,
 					viewConfig: {
-						emptyText: 'You have not selected an entry or the entry you selected has no existing relationships.',
+						emptyText: 'You have not selected an origin entry or the entry you selected has no existing relationships.',
 						deferEmptyText: false
 					},
 					columns: [
