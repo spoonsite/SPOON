@@ -39,8 +39,8 @@ public class UserProfileTest
 		UserProfile userProfile = new UserProfile();
 		userProfile.setUsername(TEST_USER);
 		userProfile.setUserTypeCode(UserTypeCode.END_USER);
-		userProfile.setFirstName("Test");
-		userProfile.setLastName("Last");
+		userProfile.setFirstName("FirstName");
+		userProfile.setLastName("LastName");
 		userProfile.setEmail("Email@test.com");
 		userProfile.setOrganization("Test");
 		userProfile.setExternalGuid("5555-5555");
@@ -50,10 +50,10 @@ public class UserProfileTest
 
 		results.append("Get profile").append("<br>");
 		UserProfile userProfileFound = service.getUserService().getUserProfile(TEST_USER);
-		if (userProfileFound == null || "Test".equals(userProfile.getFirstName()) == false) {
+		if (userProfileFound == null || "FirstName".equals(userProfile.getFirstName()) == false) {
 			failureReason.append("Unable to find user just saved");
 		} else {
-			results.append("User profile: ").append(userProfile.getFirstName()).append(userProfile.getLastName()).append("<br>");;
+			results.append("User profile: ").append(userProfile.getFirstName()).append(" " + userProfile.getLastName()).append("<br>");
 		}
 
 		results.append("Removing profile").append("<br>");

@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.web.action.test;
 
 import edu.usu.sdl.openstorefront.web.test.TestSuiteModel;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -107,6 +109,39 @@ public class ServiceTest
 		testSuiteModel = new TestSuiteModel("edu.usu.sdl.openstorefront.web.test.dataimport");
 		testSuiteModel.setName("Import Tests");
 		testSuiteModels.add(testSuiteModel);
+
+		testSuiteModel = new TestSuiteModel("edu.usu.sdl.openstorefront.web.test.alert");
+		testSuiteModel.setName("Alert Tests");
+		testSuiteModels.add(testSuiteModel);
+
+		testSuiteModel = new TestSuiteModel("edu.usu.sdl.openstorefront.web.test.branding");
+		testSuiteModel.setName("Branding Tests");
+		testSuiteModels.add(testSuiteModel);
+
+		testSuiteModel = new TestSuiteModel("edu.usu.sdl.openstorefront.web.test.contact");
+		testSuiteModel.setName("Contact Tests");
+		testSuiteModels.add(testSuiteModel);
+
+		testSuiteModel = new TestSuiteModel("edu.usu.sdl.openstorefront.web.test.feedback");
+		testSuiteModel.setName("Feedback Tests");
+		testSuiteModels.add(testSuiteModel);
+
+		testSuiteModel = new TestSuiteModel("edu.usu.sdl.openstorefront.web.test.organization");
+		testSuiteModel.setName("Organization Tests");
+		testSuiteModels.add(testSuiteModel);
+
+		testSuiteModel = new TestSuiteModel("edu.usu.sdl.openstorefront.web.test.report");
+		testSuiteModel.setName("Report Tests");
+		testSuiteModels.add(testSuiteModel);
+
+		Collections.sort(testSuiteModels, new Comparator<TestSuiteModel>()
+		{
+			@Override
+			public int compare(TestSuiteModel o1, TestSuiteModel o2)
+			{
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
 
 		return testSuiteModels;
 	}

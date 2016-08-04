@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,20 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 
 /**
  *
- * @author dshurtleff
+ * @author ccummings
  */
-public class EmailTest
-		extends BaseTestCase
+public class UserServiceTest extends BaseTestCase
 {
 
-	public EmailTest()
+	public UserServiceTest()
 	{
-		this.description = "Email_Test";
+		this.description = "User Service_Test";
 	}
 
 	@Override
 	protected void runInternalTest()
 	{
-		service.getUserService().sendTestEmail("admin", null);
+
 	}
+
 }

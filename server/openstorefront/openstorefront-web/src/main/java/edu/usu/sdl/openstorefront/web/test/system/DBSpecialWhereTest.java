@@ -34,7 +34,7 @@ public class DBSpecialWhereTest
 
 	public DBSpecialWhereTest()
 	{
-		this.description = "Sepcial Where Test";
+		this.description = "Special Where Test";
 	}
 
 	@Override
@@ -83,7 +83,6 @@ public class DBSpecialWhereTest
 
 		results.append("Clean up records").append("<br>");
 		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
-
 	}
 
 }
