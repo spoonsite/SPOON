@@ -387,13 +387,13 @@ var CoreUtil = {
 			"emoticons template paste textcolor placeholder"
 			],
 
-			toolbar1: "newdocument fullpage | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
-			toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code | inserttime preview | forecolor backcolor",
-			toolbar3: "table | hr removeformat | subscript superscript | charmap emoticons | print fullscreen | ltr rtl | spellchecker | visualchars visualblocks nonbreaking template pagebreak restoredraft",
+			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | image media charmap | link savedsearchlink table | fullscreen",
 
 			content_css : "contents.css",
 
-			menubar: true,
+			menubar: "edit format tools",
+			statusbar: false,
+			skin: 'openstorefront',
 			toolbar_items_size: 'small',
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
 		};
@@ -418,13 +418,13 @@ var CoreUtil = {
 			"emoticons template paste textcolor placeholder savedsearchlink"
 			],
 
-			toolbar1: "newdocument fullpage | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
-			toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code | inserttime preview | forecolor backcolor",
-			toolbar3: "table | hr removeformat | subscript superscript | charmap emoticons | print fullscreen | ltr rtl | spellchecker | visualchars visualblocks nonbreaking template pagebreak restoredraft | savedsearchlink",
+			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | image media charmap | link savedsearchlink table | fullscreen",
 
 			content_css : "contents.css",
 
-			menubar: true,
+			menubar: "edit format tools",
+			statusbar: false,
+			skin: 'openstorefront',
 			toolbar_items_size: 'small',
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
 
