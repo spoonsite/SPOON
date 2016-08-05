@@ -249,19 +249,21 @@ public class AttributeServiceImpl
 	public void saveAttributeCodeAttachment(AttributeCode attributeCode, InputStream fileInput)
 	{
 		Objects.requireNonNull(attributeCode);
-		Objects.requireNonNull(fileInput);
-		StringBuilder filename = new StringBuilder();
-		AttributeCodePk attributeCodePk = attributeCode.getAttributeCodePk();
-		filename.append(attributeCodePk.getAttributeType());
-		filename.append("-");
-		filename.append(attributeCodePk.getAttributeCode());
-		attributeCode.setAttachmentFileName(filename.toString());
+		Objects.requireNonNull(attributeCode.getAttributeCodePk());
+		Objects.requireNonNull(fileInput);		
+	
+		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
+		if (existing != null) {
+			existing.setAttachmentFileName(existing.getAttributeCodePk().toKey().replace("#", "-"));
 
-		try (InputStream in = fileInput) {
-			Files.copy(in, attributeCode.pathToAttachment(), StandardCopyOption.REPLACE_EXISTING);
-			persistenceService.persist(attributeCode);
-		} catch (IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to store attachment.", "Contact System Admin.  Check file permissions and disk space ", ex);
+			try (InputStream in = fileInput) {
+				Files.copy(in, attributeCode.pathToAttachment(), StandardCopyOption.REPLACE_EXISTING);
+				persistenceService.persist(attributeCode);
+			} catch (IOException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to store attachment.", "Contact System Admin.  Check file permissions and disk space ", ex);
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find attribute code.", "Check code: " + attributeCode.getAttributeCodePk());
 		}
 	}
 

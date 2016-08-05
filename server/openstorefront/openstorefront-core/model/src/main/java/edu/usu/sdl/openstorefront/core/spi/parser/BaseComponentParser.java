@@ -46,7 +46,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author dshurtleff
  */
 public abstract class BaseComponentParser
-		extends AbstractParser
+		extends AbstractParser<ComponentAll>
 {
 	private static final Logger LOG = Logger.getLogger(BaseComponentParser.class.getName());
 
@@ -127,9 +127,9 @@ public abstract class BaseComponentParser
 	}
 
 	@Override
-	protected <T> List<T> getStorageBucket()
+	protected List<ComponentAll> getStorageBucket()
 	{
-		return (List<T>) componentsAll;
+		return componentsAll;
 	}
 
 	@Override

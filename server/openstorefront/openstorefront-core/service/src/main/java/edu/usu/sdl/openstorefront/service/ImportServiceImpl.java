@@ -224,8 +224,7 @@ public class ImportServiceImpl
 			LOG.log(Level.SEVERE, "Unable to load parser class: " + externalFormat.getFileFormat().getParserClass(), e);
 			fileHistoryAll.addError(FileHistoryErrorType.SYSTEM, "Unable to load parser class: " + externalFormat.getFileFormat().getParserClass());
 		}
-
-		//processData
+		
 		fileHistory.setCompleteDts(TimeUtil.currentDate());
 		saveFileHistory(fileHistoryAll);
 	}
@@ -592,6 +591,54 @@ public class ImportServiceImpl
 		}
 		
 		return fieldDefinitions;
+	}
+
+	@Override
+	public void updateImportProgress(FileHistoryAll fileHistoryAll)
+	{
+		Objects.requireNonNull(fileHistoryAll);
+		Objects.requireNonNull(fileHistoryAll.getFileHistory());
+		
+		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryAll.getFileHistory().getFileHistoryId());
+		if (fileHistory != null) {
+			fileHistory.updateFields(fileHistoryAll.getFileHistory());
+			persistenceService.persist(fileHistory);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find file history record to update.", "System error");
+		}		
+	}
+
+	@Override
+	public String previewMapData(String fileFormatCode, String fileDataMapId, InputStream in)
+	{
+		String output;
+		
+		ExternalFormat externalFormat = findFileFormat(fileFormatCode);		
+		if (externalFormat.getFileFormat().getSupportsDataMap()) {
+			try (InputStream processIn = in) {
+				Class parserClass = externalFormat.getParsingClass();
+				if (parserClass == null) {
+					parserClass = this.getClass().getClassLoader().loadClass(externalFormat.getFileFormat().getParserClass());
+				}
+				
+				FileHistoryAll fileHistoryAll = new FileHistoryAll();
+				fileHistoryAll.setDataMapModel(getDataMap(fileDataMapId));
+				
+				AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
+				output = abstractParser.perviewProcessedData(fileHistoryAll, processIn);
+				
+			} catch (IOException ioe) {
+				output = "Unable to process file.  Data format not supported. <br> <b>Trace: </b><br> " + StringProcessor.parseStackTraceHtml(ioe);				
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				output = "Unable to load parser: " 
+						+ externalFormat.getFileFormat().getParserClass() 
+						+ "<br> <b>Trace: </b><br>"+ StringProcessor.parseStackTraceHtml(e);
+			}
+		} else {
+			output = "Format doesn't support data mapping  Check Format: " + fileFormatCode;
+		}
+		
+		return output;
 	}
 
 }

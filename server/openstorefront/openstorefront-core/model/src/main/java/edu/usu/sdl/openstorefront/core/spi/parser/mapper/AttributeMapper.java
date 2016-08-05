@@ -90,6 +90,7 @@ public class AttributeMapper
 							attributeCodePk.setAttributeType(attributeAll.getAttributeType().getAttributeType());
 							((AttributeCode)entity).setAttributeCodePk(attributeCodePk);
 														
+							attributeAll.getAttributeCodes().add(((AttributeCode)entity));
 							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
 						}						
 					} else if  (AttributeCodePk.class.getName().equals(fieldMapper.getEntityClass().getName())) {
@@ -102,6 +103,7 @@ public class AttributeMapper
 								attributeCode.setAttributeCodePk(attributeCodePk);
 								entity = attributeCodePk;
 								
+								attributeAll.getAttributeCodes().add(attributeCode);
 								entityMap.put(AttributeCode.class.getName(), attributeCode);	
 							} else {
 								AttributeCodePk attributeCodePk = attributeCode.getAttributeCodePk();

@@ -113,6 +113,7 @@
 													} else {																		
 														grid.getStore().add(data);
 													}
+													addEditMapping.hasChanges=true;
 													form.reset();
 												}
 											},
@@ -179,10 +180,33 @@
 				height: '80%',
 				maximizable: true,
 				layout: 'fit',
+				listeners: {
+					beforeclose: function(panel, opts) {
+						if (panel.hasChanges) {
+							Ext.Msg.show({
+								title:'Save Changes?',
+								message: 'You have unsaved changes. Would you like to save your changes?',
+								buttons: Ext.Msg.YESNOCANCEL,
+								icon: Ext.Msg.QUESTION,
+								fn: function(btn) {
+									if (btn === 'yes') {
+										mappingActionSave();
+										panel.hasChanges = false;
+										addEditMapping.close();
+									} else if (btn === 'no') {
+										panel.hasChanges = false;
+										addEditMapping.close();
+									}
+								}
+							});
+							return false;
+						}
+					}
+				},
 				items: [
 					{
 						xtype: 'form',
-						itemId: 'mainForm',
+						id: 'mainForm',
 						bodyStyle: 'padding: 20px;',
 						layout: 'anchor',
 						autoScroll: true,
@@ -419,10 +443,27 @@
 																		grid.editRecord.set(data, {
 																			dirty: false
 																		});
+																		if (!data.useAsAttributeLabel) {
+																			grid.editRecord.set({
+																				useAsAttributeLabel: null
+																			}, {dirty: false});
+																		}
+																		if (!data.concatenate) {
+																			grid.editRecord.set({
+																				concatenate: null
+																			}, {dirty: false});
+																		}
+																		if (!data.addEndPathToValue) {
+																			grid.editRecord.set({
+																				addEndPathToValue: null
+																			}, {dirty: false});
+																		}																		
+																		
 																		grid.editRecord = null;
 																	} else {																		
 																		grid.getStore().add(data);
 																	}
+																	addEditMapping.hasChanges=true;
 																	form.reset();
 																}
 															},
@@ -640,10 +681,17 @@
 																grid.editRecord.set(data, {
 																	dirty: false
 																});
+																if (!data.addMissingCode) {
+																	grid.editRecord.set({
+																		addMissingCode: null
+																	});
+																}
+																
 																grid.editRecord = null;
 															} else {																		
 																grid.getStore().add(data);
 															}
+															addEditMapping.hasChanges=true;
 															form.reset();
 														}
 													},
@@ -758,90 +806,7 @@
 										scale: 'medium',
 										iconCls: 'fa fa-2x fa-save',
 										handler: function() {
-											var mainForm = this.up('form');
-											var mainFormData = mainForm.getValues();
-											//name is only thing required
-											
-											if (!mainFormData.name) {
-												Ext.Msg.show({
-													title:'Validation',
-													message: 'Data Mapping Name is Required',
-													buttons: Ext.Msg.OK,
-													icon: Ext.Msg.ERROR,
-													fn: function(btn) {
-													}
-												});												
-											} else {
-											
-												var dataMapModel = {
-													fileDataMap: {
-														fileFormat: selectedMapFormat.get('code'),
-														name: mainFormData.name,
-														dataMapFields: []
-													},
-													fileAttributeMap: {
-														attributeTypeXrefMap: []
-													}
-												}
-
-												//field maps
-												var fieldGrid = Ext.getCmp('fieldGrid');
-												fieldGrid.getStore().each(function(record){
-													var data = record.getData();
-
-													data.transforms = [];
-													var transforms = data.fieldTransforms;
-													Ext.Array.each(transforms, function(item){
-														data.transforms.push({
-															transform: item
-														});
-													});
-
-													data.pathTransforms = [];
-													transforms = data.rawPathTransforms;
-													Ext.Array.each(transforms, function(item){
-														data.pathTransforms.push({
-															transform: item
-														});
-													});											
-
-													dataMapModel.fileDataMap.dataMapFields.push(data);										
-												});
-
-												//attribute maps
-												dataMapModel.fileAttributeMap.addMissingAttributeTypeFlg = Ext.getCmp('chkMissingAttributeType').getValue();
-
-												var attributeTypeGrid = Ext.getCmp('attributeTypeGrid');
-												attributeTypeGrid.getStore().each(function(record){
-													var data = record.getData();			
-
-													dataMapModel.fileAttributeMap.attributeTypeXrefMap.push(data);										
-												});		
-
-
-												var method = 'POST';
-												var endURL = '';
-												if (mainFormData.fileDataMapId) {
-													method = 'PUT';
-													endURL = '/' + mainFormData.fileDataMapId;
-												}
-
-												mainForm.setLoading("Saving Mapping...");
-												Ext.Ajax.request({
-													url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') + '/mappings' + endURL,
-													method: method,
-													jsonData: dataMapModel,
-													callback: function(){		
-														mainForm.setLoading(false);
-													},
-													success: function(response, opts) {
-														Ext.toast('Saved mapping', 'Saved');
-														actionRefreshMappings();
-														addEditMapping.close();
-													}
-												});
-											}
-											
+											mappingActionSave();
 										}
 									},
 									{
@@ -861,6 +826,92 @@
 					}
 				]
 			});
+			
+			var mappingActionSave = function() {
+				var mainForm = Ext.getCmp('mainForm');
+				var mainFormData = mainForm.getValues();
+				//name is only thing required
+
+				if (!mainFormData.name) {
+					Ext.Msg.show({
+						title:'Validation',
+						message: 'Data Mapping Name is Required',
+						buttons: Ext.Msg.OK,
+						icon: Ext.Msg.ERROR,
+						fn: function(btn) {
+						}
+					});												
+				} else {
+
+					var dataMapModel = {
+						fileDataMap: {
+							fileFormat: selectedMapFormat.get('code'),
+							name: mainFormData.name,
+							dataMapFields: []
+						},
+						fileAttributeMap: {
+							attributeTypeXrefMap: []
+						}
+					}
+
+					//field maps
+					var fieldGrid = Ext.getCmp('fieldGrid');
+					fieldGrid.getStore().each(function(record){
+						var data = record.getData();
+
+						data.transforms = [];
+						var transforms = data.fieldTransforms;
+						Ext.Array.each(transforms, function(item){
+							data.transforms.push({
+								transform: item
+							});
+						});
+
+						data.pathTransforms = [];
+						transforms = data.rawPathTransforms;
+						Ext.Array.each(transforms, function(item){
+							data.pathTransforms.push({
+								transform: item
+							});
+						});											
+
+						dataMapModel.fileDataMap.dataMapFields.push(data);										
+					});
+
+					//attribute maps
+					dataMapModel.fileAttributeMap.addMissingAttributeTypeFlg = Ext.getCmp('chkMissingAttributeType').getValue();
+
+					var attributeTypeGrid = Ext.getCmp('attributeTypeGrid');
+					attributeTypeGrid.getStore().each(function(record){
+						var data = record.getData();			
+
+						dataMapModel.fileAttributeMap.attributeTypeXrefMap.push(data);										
+					});		
+
+
+					var method = 'POST';
+					var endURL = '';
+					if (mainFormData.fileDataMapId) {
+						method = 'PUT';
+						endURL = '/' + mainFormData.fileDataMapId;
+					}
+
+					mainForm.setLoading("Saving Mapping...");
+					Ext.Ajax.request({
+						url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') + '/mappings' + endURL,
+						method: method,
+						jsonData: dataMapModel,
+						callback: function(){		
+							mainForm.setLoading(false);
+						},
+						success: function(response, opts) {
+							Ext.toast('Saved mapping', 'Saved');
+							actionRefreshMappings();
+							addEditMapping.close();
+						}
+					});
+				}				
+			};
 			
 			
 			var mappingPanel = Ext.create('Ext.grid.Panel', {
@@ -1077,6 +1128,7 @@
 			
 			var actionShowMappingForm = function() {
 				addEditMapping.show();
+				addEditMapping.getComponent('mainForm').setScrollY(0);
 
 				if (selectedMapFormat.get('fileType') === 'ATTRIBUTE') {
 					addEditMapping.getComponent('mainForm').getComponent('attributeMapping').setHidden(true);
@@ -1086,7 +1138,8 @@
 				addEditMapping.getComponent('mainForm').reset();	
 				
 				//reset grids
-				
+				Ext.getCmp('fieldGrid').getStore().removeAll();
+				Ext.getCmp('attributeTypeGrid').getStore().removeAll();
 		
 			};
 			

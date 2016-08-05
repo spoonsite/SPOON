@@ -75,7 +75,7 @@ public class DataMapper
 				for (DataMapTransform dataMapTransform : fileDataMapField.getPathTransforms()) {
 					DataTransform dataTransform = getDataTransform(dataMapTransform.getTransform());
 					if (dataTransform != null) {
-						dataMapper.getTransforms().add(dataTransform);
+						dataMapper.getPathTransforms().add(dataTransform);
 					}
 				}
 			}

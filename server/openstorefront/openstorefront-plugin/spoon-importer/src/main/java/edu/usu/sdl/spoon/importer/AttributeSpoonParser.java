@@ -15,24 +15,32 @@
  */
 package edu.usu.sdl.spoon.importer;
 
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseAttributeParser;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.AttributeMapper;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.XMLMapReader;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
-public class AttributeSpoonParser
+public class AttributeSpoonParser 
 	extends BaseAttributeParser
 {
 	public static final String FORMAT_CODE = "SPOONATTR";
 
+	private List<AttributeAttachment> attachments = new ArrayList<>();
+	
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
 	{
@@ -61,12 +69,50 @@ public class AttributeSpoonParser
 			
 		List<AttributeAll> attributeAlls  = attributeMapper.multiMapData(mapModel);	
 		for (AttributeAll attributeAll : attributeAlls) {
+		
 			if (validateRecord(attributeAll)) {
+				//handle saving of attachments	
+				for (AttributeCode attributeCode : attributeAll.getAttributeCodes()) {
+					if (attributeCode.getAttachmentFileName() != null &&
+						!"".equals(attributeCode.getAttachmentFileName())) {
+						
+						AttributeAttachment attributeAttachment = new AttributeAttachment();
+						attributeAttachment.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+						attributeAttachment.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+						attributeAttachment.setFileData(attributeCode.getAttachmentFileName());
+						attributeAttachment.setFilename(attributeCode.getAttachmentOriginalFileName());
+						attachments.add(attributeAttachment);
+					}
+				}				
 				addRecordToStorage(attributeAll);
 			}
 		}
 				
 		return null;
 	}
+
+	@Override
+	protected void finishProcessing()
+	{
+		for (AttributeAttachment attachment : attachments) {		
+			try {
+				AttributeCode attributeCode = new AttributeCode();
+				AttributeCodePk attributeCodePk = new AttributeCodePk();
+				attributeCodePk.setAttributeCode(attachment.getAttributeCode());
+				attributeCodePk.setAttributeType(attachment.getAttributeType());
+				attributeCode.setAttributeCodePk(attributeCodePk);
+				
+				byte[] fileData = Base64.getDecoder().decode(attachment.getFileData());
+				service.getAttributeService().saveAttributeCodeAttachment(attributeCode, new ByteArrayInputStream(fileData));				
+			} catch (Exception e) {
+				fileHistoryAll.addError(FileHistoryErrorType.SYSTEM, "Unable to add attachment to:  "
+						+ attachment.getAttributeType() 
+						+ "#" 
+						+ attachment.getAttributeCode() + " Attribute Code may have failed to save");				
+			}
+		}
+	}
+	
+	
 	
 }

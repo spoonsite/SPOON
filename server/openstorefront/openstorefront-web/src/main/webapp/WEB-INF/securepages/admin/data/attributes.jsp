@@ -744,10 +744,10 @@
 						}
 					},
 					{text: 'Attachment', dataIndex: 'attachmentFileName', flex: 2},
-					{text: 'Link', dataIndex: 'detailUrl', flex: 1},
-					{text: 'Group Code', dataIndex: 'groupCode', flex: 1},
-					{text: 'Sort Order', dataIndex: 'sortOrder', flex: 1},
-					{text: 'Architecture Code', dataIndex: 'architectureCode', flex: 1.5},
+					{text: 'Link', dataIndex: 'detailUrl', flex: 1, hidden: true},
+					{text: 'Group Code', dataIndex: 'groupCode', flex: 1, hidden: true},
+					{text: 'Sort Order', dataIndex: 'sortOrder', flex: 1, hidden: true},
+					{text: 'Architecture Code', dataIndex: 'architectureCode', flex: 1.5, hidden: true},
 					{text: 'Badge URL', dataIndex: 'badgeUrl', flex: 1},
 					{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 				]

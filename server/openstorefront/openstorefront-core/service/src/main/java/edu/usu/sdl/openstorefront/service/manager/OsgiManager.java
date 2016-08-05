@@ -82,6 +82,9 @@ public class OsgiManager
 				"edu.usu.sdl.openstorefront.core.util; version=" + moduleVersion + ", " + 
 				"edu.usu.sdl.openstorefront.core.view; version=" + moduleVersion + ", "  +
 				"edu.usu.sdl.openstorefront.core.view.statistic; version=" + moduleVersion + ", "  + 
+				"edu.usu.sdl.openstorefront.common.util; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.common.exception; version=" + moduleVersion + ", "  +
+				"edu.usu.sdl.openstorefront.common.manager; version=" + moduleVersion + ", "  +
 				"edu.usu.sdl.openstorefront.validation; version=" + moduleVersion + ", "  +
 				"edu.usu.sdl.openstorefront.secuirty; version=" + moduleVersion				
 		);

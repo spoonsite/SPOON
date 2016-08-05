@@ -480,5 +480,23 @@ public class StringProcessor
 			return nonPuralForm + "s";
 		}
 	}
+	
+	/**
+	 * This decode x00xx escape codes (UTF-8) codes
+	 * @param input
+	 * @return 
+	 */
+	public static String decodeHexCharEscapes(String input) 
+	{
+		if (StringUtils.isNotBlank(input)) {
+			String newInput = input.replace("x", "");
+			Integer charCode =  Integer.valueOf(newInput, 16);
+			if (charCode != null) {				
+				newInput = "" + (char)(charCode.intValue());			
+				return newInput;
+			}
+		} 
+		return input;
+	}
 
 }

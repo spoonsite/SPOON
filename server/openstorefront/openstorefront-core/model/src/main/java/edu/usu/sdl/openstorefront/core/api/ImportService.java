@@ -71,6 +71,9 @@ public interface ImportService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public FileHistory saveFileHistory(FileHistoryAll fileHistoryAll);
 
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void updateImportProgress(FileHistoryAll fileHistoryAll);
+	
 	/**
 	 * Deletes a file history record and any associated data
 	 *
@@ -159,5 +162,15 @@ public interface ImportService
 	 * @return fieldDefinition found in the file
 	 */
 	public List<FieldDefinition> getMapField(String fileFormatCode, InputStream in);
+	
+	/**
+	 * Processes a sample file and returns a preview to help with mapping
+	 * 
+	 * @param fileFormatCode
+	 * @param fileDataMapId
+	 * @param in
+	 * @return preview output
+	 */
+	public String previewMapData(String fileFormatCode, String fileDataMapId, InputStream in);	
 	
 }

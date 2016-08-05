@@ -20,6 +20,9 @@ import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapField;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
@@ -38,22 +41,27 @@ public class XMLMapReader
 	private static final Logger log = Logger.getLogger(XMLMapReader.class.getName());
 
 	private MapModel rootModel;
-	private boolean parsed = false;
+	private List<MapModel> records = new ArrayList<>();
+	private Iterator<MapModel> recordIterator;
 	
 	public XMLMapReader(InputStream in)
 	{
 		super(in);		
 	}
+
+	@Override
+	public void preProcess()
+	{
+		rootModel = findFields(in);
+		totalRecords = rootModel.getArrayFields().size();
+		records.add(rootModel);
+		recordIterator = records.iterator();
+	}
 	
 	@Override
 	public MapModel nextRecord()
-	{
-		//Pull in all data which makes it one record.
-		if (rootModel == null) {
-			rootModel = findFields(in);
-			return rootModel;
-		}
-		return null;
+	{		
+		return recordIterator.next();
 	}
 
 	@Override

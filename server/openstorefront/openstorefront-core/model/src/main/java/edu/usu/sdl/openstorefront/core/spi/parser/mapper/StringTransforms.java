@@ -66,7 +66,33 @@ public enum StringTransforms
 		
 	},
 	
-	TRANSLATEESCAPES("Translate escaped charactors"){
+	BOLD("Bold"){
+		
+		@Override
+		public String transform(String input)
+		{
+			if (StringUtils.isNotBlank(input)) {
+				return "<b>" + input + "</b>";
+			} else {
+				return input;
+			}
+		}
+		
+	},	
+	
+	REMOVEUNDERSCORE("Remove Underscore") {
+		@Override
+		public String transform(String input)
+		{
+			if (StringUtils.isNotBlank(input)) {
+				return input.replace("_", "");
+			} else {
+				return input;
+			}			
+		}
+	},
+	
+	TRANSLATEESCAPES("Translate escaped characters"){
 		
 		@Override
 		public String transform(String input)

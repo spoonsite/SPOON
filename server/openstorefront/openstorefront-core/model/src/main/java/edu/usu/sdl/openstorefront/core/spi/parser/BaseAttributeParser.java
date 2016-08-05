@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseAttributeParser
-		extends AbstractParser
+		extends AbstractParser<AttributeAll>
 {
 
 	protected static final int MAX_BUCKET_SIZE = 100;
@@ -47,9 +47,9 @@ public abstract class BaseAttributeParser
 	}
 
 	@Override
-	protected <T> List<T> getStorageBucket()
+	protected  List<AttributeAll> getStorageBucket()
 	{
-		return (List<T>) attributesAll;
+		return attributesAll;
 	}
 
 	@Override

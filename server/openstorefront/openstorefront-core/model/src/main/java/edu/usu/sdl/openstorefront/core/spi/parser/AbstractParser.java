@@ -15,7 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.core.spi.parser;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
@@ -41,7 +44,7 @@ import java.util.logging.Logger;
  *
  * @author dshurtleff
  */
-public abstract class AbstractParser
+public abstract class AbstractParser <T>
 {
 
 	private static final Logger LOG = Logger.getLogger(AbstractParser.class.getName());
@@ -131,10 +134,47 @@ public abstract class AbstractParser
 			throw new OpenStorefrontRuntimeException("Unable to get path to file.", "The filename is likely missing from file history record.  The record may be corrupt. ID: " + fileHistoryAll.getFileHistory().getFileHistoryId());
 		}
 	}
+	
+	public String perviewProcessedData(FileHistoryAll fileHistoryAll, InputStream input) 
+	{
+		StringBuilder output = new StringBuilder();
+		try (GenericReader reader = getReader(input)) {
+			reader.preProcess();
+			
+			Object record = reader.nextRecord();
+			if (record != null) {
+				Object parsed = parseRecord(record);
+				if (parsed != null) {
+					output.append(handlePreviewOfRecord(parsed));
+				}
+			}
+		} catch (Exception e) {
+				StringWriter stringWriter = new StringWriter();
+				PrintWriter printWriter = new PrintWriter(stringWriter);
+				e.printStackTrace(printWriter);
 
+				output.append("Unable to process all of the records;  Failed reading the data. <br> Error Trace: <br>")
+					.append(stringWriter.toString());
+		}
+		return output.toString();
+	}
+	
+	protected String handlePreviewOfRecord(Object data) 
+	{
+		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
+		String dataInJSON;
+		try {
+			dataInJSON = objectMapper.writeValueAsString(data);
+		} catch (JsonProcessingException ex) {
+			LOG.log(Level.WARNING, "Unable to create preview of data.", ex);
+			dataInJSON = "Unable to create preview of data.  See logs for details.";
+		}
+		return dataInJSON;
+	}
+	
 	protected void updateFileHistoryStats()
 	{
-
+		service.getImportService().updateImportProgress(fileHistoryAll);
 	}
 
 	protected GenericReader getReader(InputStream in)

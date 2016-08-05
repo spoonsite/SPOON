@@ -64,6 +64,7 @@ import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.validation.Validate;
 import org.apache.commons.lang.StringUtils;
 
@@ -85,7 +86,8 @@ public class UploadAction
 		"UploadSvcv4",
 		"UploadPlugin",
 		"ImportData",
-		"DataMapFields"
+		"DataMapFields",
+		"PreviewMapping"
 	})
 	private FileBean uploadFile;
 
@@ -97,8 +99,10 @@ public class UploadAction
 	@Validate(required = true, on = "ImportData")
 	private String fileType;
 
-	@Validate(required = true, on = {"ImportData", "DataMapFields"})
+	@Validate(required = true, on = {"ImportData", "DataMapFields", "PreviewMapping"})
 	private String fileFormat;
+	
+	@Validate(required = true, on = {"PreviewMapping"})
 	private String dataMappingId;
 	private String dataSource;
 
@@ -498,6 +502,34 @@ public class UploadAction
 		
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
+	
+	@HandlesEvent("PreviewMapping")
+	public Resolution previewMapping()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			
+			String output = "";
+			try (InputStream in = uploadFile.getInputStream()) {								
+				output = service.getImportService().previewMapData(fileFormat, dataMappingId, in);
+			} catch (IOException ex) {
+				output = "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.";			
+			} finally {
+				try {
+					if (uploadFile != null) {
+						uploadFile.delete();
+					}
+				} catch (IOException ex) {
+					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+				}
+			}
+			
+			return new StreamingResolution("text/html", output);
+		}
+		
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}	
 		
 	public FileBean getUploadFile()
 	{
