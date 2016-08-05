@@ -25,21 +25,22 @@
 				title: 'Component Configuration',
 				id: 'componentConfigGrid',
 				store: componentConfigStore,
+				selModel: 'checkboxmodel',
 				columnLines: true,
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
-						if (Ext.getCmp('componentConfigGrid').getSelectionModel().hasSelection()) {
+						if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() === 1) {
 							Ext.getCmp('componentConfigGrid-tools-run').enable();
 							Ext.getCmp('componentConfigGrid-tools-edit').enable();
 							Ext.getCmp('componentConfigGrid-tools-toggleActivation').enable();
 							Ext.getCmp('componentConfigGrid-tools-delete').enable();
-							if (record[0].data.activeStatus === 'A') {
-								Ext.getCmp('componentConfigGrid-tools-toggleActivation').setText('Deactivate');
-							}
-							else {
-								Ext.getCmp('componentConfigGrid-tools-toggleActivation').setText('Activate');
-							}
 						} 
+						else if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() > 1) { 
+							Ext.getCmp('componentConfigGrid-tools-toggleActivation').enable();
+							Ext.getCmp('componentConfigGrid-tools-run').disable();
+							Ext.getCmp('componentConfigGrid-tools-edit').disable();
+							Ext.getCmp('componentConfigGrid-tools-delete').disable();
+						}
 						else {
 							Ext.getCmp('componentConfigGrid-tools-run').disable();
 							Ext.getCmp('componentConfigGrid-tools-edit').disable();
@@ -144,14 +145,20 @@
 								}
 							},
 							{
-								text: 'Deactivate',
+								text: 'Toggle Status',
 								id: 'componentConfigGrid-tools-toggleActivation',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-power-off',
 								disabled: true,
 								handler: function () {
-									var record = componentConfigGrid.getSelection()[0];
-									actionToggleIntegration(record);
+									if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() === 1) {
+										var record = componentConfigGrid.getSelection()[0];
+										actionToggleIntegration(record);
+									} else {
+										var records = componentConfigGrid.getSelection();
+										actionToggleIntegrations(records);
+									}
+									
 								}
 							},
 							{
@@ -326,6 +333,34 @@
 					}
 				});
 			};
+
+			var actionToggleIntegrations = function actionToggleIntegrations(records) {
+				var url = '/openstorefront/api/v1/resource/components/integration/togglemultiple';
+				var method = 'PUT';
+				
+				var data = [];
+
+				Ext.Array.each(records, function(record) {
+					data.push(record.get('componentId'));
+				});
+
+
+				Ext.Ajax.request({
+					url: url,
+					method: method,
+					jsonData: data,
+					success: function (response, opts) {
+						var message = 'Successfully toggled statuses';
+						Ext.toast(message, '', 'tr');
+						Ext.getCmp('componentConfigGrid').getStore().load();
+						Ext.getCmp('componentConfigGrid').getSelectionModel().deselectAll();
+					},
+					failure: function (response, opts) {
+						Ext.MessageBox.alert('Failed to toggle', "Failed to toggle statuses.");
+					}
+				});
+			};
+
 
 			var actionDeleteIntegration = function actionDeleteIntegration(record) {
 				var componentId = record.getData().componentId;
