@@ -625,7 +625,7 @@ public class ImportServiceImpl
 				fileHistoryAll.setDataMapModel(getDataMap(fileDataMapId));
 				
 				AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
-				output = abstractParser.perviewProcessedData(fileHistoryAll, processIn);
+				output = abstractParser.previewProcessedData(fileHistoryAll, processIn);
 				
 			} catch (IOException ioe) {
 				output = "Unable to process file.  Data format not supported. <br> <b>Trace: </b><br> " + StringProcessor.parseStackTraceHtml(ioe);				

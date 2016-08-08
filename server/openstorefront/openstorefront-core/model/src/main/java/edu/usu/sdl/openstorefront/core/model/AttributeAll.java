@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.core.model;
 
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import java.util.ArrayList;
@@ -27,7 +29,11 @@ import java.util.List;
 public class AttributeAll
 {
 
+	@ConsumeField
 	private AttributeType attributeType;
+	
+	@ConsumeField
+	@DataType(AttributeCode.class)
 	private List<AttributeCode> attributeCodes = new ArrayList<>();
 
 	public AttributeAll()

@@ -250,6 +250,7 @@
 												xtype: 'button',
 												text: 'Upload',
 												iconCls: 'fa fa-upload',
+												formBind: true,
 												handler: function() {
 													var uploadForm = this.up('form');
 													var fileFieldCB = Ext.getCmp('fieldForm').getComponent('fileFieldCB');
@@ -399,6 +400,14 @@
 															proxy: {
 																type: 'ajax',
 																url: '../api/v1/service/datamapping/entityfields/{entity}'
+															},
+															listeners: {
+																load: function (myStore, records, sucessful, opts) {
+																	myStore.add([{
+																		code: null,
+																		description: 'SELECT'
+																	}]);
+																}
 															}
 														},
 														editable: false,
@@ -895,16 +904,17 @@
 						method = 'PUT';
 						endURL = '/' + mainFormData.fileDataMapId;
 					}
-
+					
 					mainForm.setLoading("Saving Mapping...");
 					Ext.Ajax.request({
 						url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') + '/mappings' + endURL,
 						method: method,
 						jsonData: dataMapModel,
 						callback: function(){		
-							mainForm.setLoading(false);
+							mainForm.setLoading(false);							
 						},
 						success: function(response, opts) {
+							addEditMapping.hasChanges = false;
 							Ext.toast('Saved mapping', 'Saved');
 							actionRefreshMappings();
 							addEditMapping.close();
@@ -932,9 +942,11 @@
 						var tools = mappingPanel.getComponent('tools');
 						if (selmodel.getCount() > 0) {
 							tools.getComponent('edit').setDisabled(false);
+							tools.getComponent('preview').setDisabled(false);
 							tools.getComponent('remove').setDisabled(false);
 						} else {
 							tools.getComponent('edit').setDisabled(true);
+							tools.getComponent('preview').setDisabled(true);
 							tools.getComponent('remove').setDisabled(true);							
 						}
 					}
@@ -1073,7 +1085,122 @@
 									});							
 									
 								}
-							},							
+							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Preview',
+								itemId: 'preview',
+								disabled: true,	
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-binoculars',
+								handler: function(){									
+									var record = mappingPanel.getSelectionModel().getSelection()[0];	
+									
+									var previewWin = Ext.create('Ext.window.Window', {
+										title: 'Preview Mapping',
+										modal: true,
+										width: '80%',
+										height: '80%',
+										maximizble: true,
+										closeAction: 'destroy',
+										layout: 'fit',
+										items: [
+											{
+												xtype: 'panel',
+												scrollable: true,
+												bodyStyle: 'padding: 10px;',
+												dockedItems: [
+													{
+														xtype: 'toolbar',
+														dock: 'top',
+														items: [
+															{
+																xtype: 'form',
+																width: '100%',
+																layout: 'hbox',
+																items: [
+																	{
+																		xtype: 'filefield',
+																		name: 'uploadFile',
+																		fieldLabel: 'Sample File to Map',
+																		labelAlign: 'top',
+																		labelSeparator: '',
+																		allowBlank: false,
+																		flex: 1,
+																		margin: '0 10 0 0'																		
+																	},
+																	{
+																		xtype: 'button',
+																		text: 'Upload',
+																		formBind: true,
+																		iconCls: 'fa fa-upload',
+																		handler: function() {
+																			var uploadForm = this.up('form');
+																			var previewPanel = uploadForm.up('panel');
+																			
+																			
+																			
+																			uploadForm.submit({
+																				url: '../Upload.action?PreviewMapping&fileFormat='
+																						+ selectedMapFormat.get('code') 
+																						+ '&dataMappingId=' + record.get('code'),
+																				method: 'POST',
+																				success: function(action, opts) {																					
+																					var uploadResponse = Ext.decode(opts.response.responseText);	
+																					var message = Ext.util.Format.nl2br(uploadResponse.message);
+																					message = message.replace(new RegExp(' ', 'g'), '&nbsp;');
+																					var data = {
+																						data: message
+																					}
+																					previewPanel.update(data);																					
+																				},
+																				failure: function(response,opts){
+																					Ext.Msg.show({
+																						title: 'Upload Failed',
+																						msg: 'The file upload was not successful. Check that the file meets the format requirements.',
+																						buttons: Ext.Msg.OK
+																					});															
+																				}
+																			});														
+
+																		},
+																		margin: '25 0 0 0'																		
+																	}
+																]
+															}
+														]
+													},
+													{
+														xtype: 'toolbar',
+														dock: 'bottom',
+														items: [
+															{
+																xtype: 'tbfill'
+															},
+															{
+																text: 'Close',
+																iconCls: 'fa fa-close',
+																handler: function() {
+																	previewWin.close();
+																}
+															},
+															{
+																xtype: 'tbfill'
+															}
+														]
+													}
+												],
+												tpl: '{data}'
+											}
+										]
+										
+									});
+									previewWin.show();
+									
+								}
+							},
 							{
 								xtype: 'tbfill'
 							},

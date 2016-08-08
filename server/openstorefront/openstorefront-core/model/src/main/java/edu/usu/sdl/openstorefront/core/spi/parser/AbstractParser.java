@@ -135,18 +135,18 @@ public abstract class AbstractParser <T>
 		}
 	}
 	
-	public String perviewProcessedData(FileHistoryAll fileHistoryAll, InputStream input) 
+	public String previewProcessedData(FileHistoryAll fileHistoryAll, InputStream input) 
 	{
+		this.fileHistoryAll = fileHistoryAll;
+		
 		StringBuilder output = new StringBuilder();
 		try (GenericReader reader = getReader(input)) {
 			reader.preProcess();
 			
 			Object record = reader.nextRecord();
 			if (record != null) {
-				Object parsed = parseRecord(record);
-				if (parsed != null) {
-					output.append(handlePreviewOfRecord(parsed));
-				}
+				Object parsed = parseRecord(record);				
+				output.append(handlePreviewOfRecord(parsed));				
 			}
 		} catch (Exception e) {
 				StringWriter stringWriter = new StringWriter();
@@ -162,12 +162,15 @@ public abstract class AbstractParser <T>
 	protected String handlePreviewOfRecord(Object data) 
 	{
 		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
-		String dataInJSON;
-		try {
-			dataInJSON = objectMapper.writeValueAsString(data);
-		} catch (JsonProcessingException ex) {
-			LOG.log(Level.WARNING, "Unable to create preview of data.", ex);
-			dataInJSON = "Unable to create preview of data.  See logs for details.";
+		
+		String dataInJSON = "No record parsed";
+		if (data != null) {
+			try {
+				dataInJSON = objectMapper.writeValueAsString(data);
+			} catch (JsonProcessingException ex) {
+				LOG.log(Level.WARNING, "Unable to create preview of data.", ex);
+				dataInJSON = "Unable to create preview of data.  See logs for details.";
+			}
 		}
 		return dataInJSON;
 	}

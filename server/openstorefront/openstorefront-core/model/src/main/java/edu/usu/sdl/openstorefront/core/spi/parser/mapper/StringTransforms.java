@@ -101,6 +101,17 @@ public enum StringTransforms
 				input = input.replace("x0020", " ");
 				input = input.replace("x0028", "(");
 				input = input.replace("x0029", ")");
+				input = input.replace("x002F", "/");
+				input = input.replace("x005E", "^");
+				input = input.replace("x007C", "|");
+				input = input.replace("x007B", "{");
+				input = input.replace("x007D", "}");
+				input = input.replace("x007E", "~");
+				input = input.replace("x0060", "`");
+				input = input.replace("x0025", "%");
+				input = input.replace("x0026", "&");
+				input = input.replace("x0023", "#");
+				input = input.replace("x0040", "@");
 				return input;
 			} else {
 				return input;

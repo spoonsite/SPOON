@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.spoon.importer;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
@@ -40,6 +41,7 @@ public class AttributeSpoonParser
 	public static final String FORMAT_CODE = "SPOONATTR";
 
 	private List<AttributeAttachment> attachments = new ArrayList<>();
+	private List<AttributeAll> attributeAlls;
 	
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
@@ -58,6 +60,21 @@ public class AttributeSpoonParser
 	}
 
 	@Override
+	protected String handlePreviewOfRecord(Object data)
+	{
+		String output = "";
+		if (attributeAlls != null && 
+			!attributeAlls.isEmpty()) {
+			try {			
+				output = service.getSystemService().toJson(attributeAlls.get(0));
+			} catch (Exception ex) {
+				output = "Unable preview attributes.  <br>Trace:<br>" + StringProcessor.parseStackTraceHtml(ex);
+			}
+		}
+		return output;
+	}
+	
+	@Override
 	protected <T> Object parseRecord(T record)
 	{
 		MapModel mapModel = (MapModel) record;
@@ -67,7 +84,7 @@ public class AttributeSpoonParser
 				return attributeAll;
 		}, fileHistoryAll);
 			
-		List<AttributeAll> attributeAlls  = attributeMapper.multiMapData(mapModel);	
+		attributeAlls  = attributeMapper.multiMapData(mapModel);	
 		for (AttributeAll attributeAll : attributeAlls) {
 		
 			if (validateRecord(attributeAll)) {
@@ -82,6 +99,9 @@ public class AttributeSpoonParser
 						attributeAttachment.setFileData(attributeCode.getAttachmentFileName());
 						attributeAttachment.setFilename(attributeCode.getAttachmentOriginalFileName());
 						attachments.add(attributeAttachment);
+						
+						//Clear the data out
+						attributeCode.setAttachmentFileName(null);
 					}
 				}				
 				addRecordToStorage(attributeAll);

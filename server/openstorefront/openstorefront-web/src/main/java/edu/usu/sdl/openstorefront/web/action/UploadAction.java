@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.FieldDefinition;
+import edu.usu.sdl.openstorefront.core.view.JsonResponse;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.OldBaseAttributeParser;
@@ -64,7 +65,6 @@ import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
-import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.validation.Validate;
 import org.apache.commons.lang.StringUtils;
 
@@ -525,7 +525,12 @@ public class UploadAction
 				}
 			}
 			
-			return new StreamingResolution("text/html", output);
+			JsonResponse jsonResponse = new JsonResponse();
+			jsonResponse.setErrors(errors);
+			jsonResponse.setSuccess(true);
+			jsonResponse.setMessage(output);
+						
+			return streamResults(jsonResponse);
 		}
 		
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");

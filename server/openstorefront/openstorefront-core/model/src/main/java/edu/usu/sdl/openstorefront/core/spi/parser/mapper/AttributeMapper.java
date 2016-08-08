@@ -151,7 +151,7 @@ public class AttributeMapper
 		for (MapModel child : root.getArrayFields()) {
 			String newParent = root.getName() + ".";
 			if (StringUtils.isNotBlank(fieldPath)) {				
-				newParent = fieldPath  + root.getName();
+				newParent = fieldPath + root.getName() + ".";
 			}
 			doMapping(mappedAttributes, child, dataMappers, newParent, attributeAll);
 		}		

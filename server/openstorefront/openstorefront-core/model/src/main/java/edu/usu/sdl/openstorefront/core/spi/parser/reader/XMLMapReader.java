@@ -61,7 +61,13 @@ public class XMLMapReader
 	@Override
 	public MapModel nextRecord()
 	{		
-		return recordIterator.next();
+		if (recordIterator.hasNext()) {
+			MapModel mapModel = recordIterator.next();
+			currentRecordNumber += mapModel.getArrayFields().size();
+			return mapModel;
+		} else {
+			return null;
+		}
 	}
 
 	@Override

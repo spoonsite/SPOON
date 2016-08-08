@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.core.CoreSystem;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
@@ -607,5 +608,19 @@ public class SystemServiceImpl
 	{
 		return PluginManager.isLoadingPlugins();
 	}	
+
+	@Override
+	public String toJson(Object obj)
+	{
+		String output = null;
+		if (obj != null) {
+			try {
+				output = StringProcessor.defaultObjectMapper().writeValueAsString(obj);
+			} catch (JsonProcessingException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to serialize obj to JSON.", ex);
+			}			
+		}
+		return output;
+	}
 
 }

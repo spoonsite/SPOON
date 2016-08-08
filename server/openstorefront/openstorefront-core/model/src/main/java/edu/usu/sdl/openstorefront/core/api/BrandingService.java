@@ -51,7 +51,7 @@ public interface BrandingService
 	 * @return newly saved branding
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public BrandingModel saveFullBanding(BrandingModel brandingModel);
+	public BrandingModel saveFullBranding(BrandingModel brandingModel);
 
 	/**
 	 * Save a branding entity
@@ -60,7 +60,7 @@ public interface BrandingService
 	 * @return newly saved branding
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public Branding saveBanding(Branding branding);
+	public Branding saveBranding(Branding branding);
 
 	/**
 	 * Delete branding entity and all related data
