@@ -128,6 +128,26 @@ public class OpenStorefrontConstant
 		}
 		return ext;
 	}
+	
+	public static String getMimeForFileExtension(String fileExtension)
+	{
+		String mime = "application/octet-stream";
+		String extensionToCheck = fileExtension;
+		if (extensionToCheck.startsWith(".") == false) {
+			extensionToCheck = "." + fileExtension;
+		}
+		if (mimeXref.containsValue(extensionToCheck.toLowerCase())) {
+			//get first match
+			for (String extCheckKey : mimeXref.keySet()) {
+				String value = mimeXref.get(extCheckKey);
+				if (value.equalsIgnoreCase(fileExtension)) {
+					mime = value;
+					break;
+				}
+			}
+		}
+		return mime;				
+	}	
 
 	public static enum ListingType
 	{

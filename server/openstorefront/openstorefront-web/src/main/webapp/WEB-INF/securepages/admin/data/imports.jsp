@@ -389,6 +389,11 @@
 														boxLabel: 'Add Path to Value'																								
 													},
 													{
+														xtype: 'checkbox',
+														name: 'fileAttachment',
+														boxLabel: 'File Attachment'																								
+													},													
+													{
 														xtype: 'combo',
 														itemId: 'pathEntityfieldId',
 														name: 'pathToEnityField',
@@ -525,10 +530,13 @@
 															return showValue;
 														}
 													},
-													{ text: 'Entity Field', dataIndex: 'entityField', width: 150},													
-													{ text: 'Use As Attribute Label', dataIndex: 'useAsAttributeLabel', width: 125},
-													{ text: 'Concatenate', dataIndex: 'concatenate', width: 125},
-													{ text: 'Add Path to Value', dataIndex: 'addEndPathToValue', width: 125},
+													{ text: 'Entity Field', dataIndex: 'entityField', width: 150},		
+													{ text: 'Flags', columns: [														
+														{ text: 'Use As Attribute Label', dataIndex: 'useAsAttributeLabel', width: 125},
+														{ text: 'Concatenate', dataIndex: 'concatenate', width: 125},
+														{ text: 'Add Path to Value', dataIndex: 'addEndPathToValue', width: 125},														
+														{ text: 'File Attachment', dataIndex: 'fileAttachment', width: 125}
+													]},
 													{ text: 'Path to Entity Field', dataIndex: 'pathToEnityField', width: 125},
 													{ text: 'Path Tranforms', dataIndex: 'rawPathTransforms', width: 200}
 												],

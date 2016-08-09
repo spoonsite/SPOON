@@ -119,7 +119,7 @@ public class ImportServiceImpl
 	{
 		Objects.requireNonNull(formatCheck);
 
-		ExternalFormat externalFormat = findFileFormat(formatCheck.getFileFormat());		
+		ExternalFormat externalFormat = handleFindFileFormat(formatCheck.getFileFormat());		
 		
 		StringBuilder errors = new StringBuilder();
 		try (InputStream in = formatCheck.getInput()) {
@@ -156,7 +156,12 @@ public class ImportServiceImpl
 		LOG.log(Level.FINE, "Queued:  {0} to be reprocessed.", fileHistory.getOriginalFilename());
 	}
 
-	private ExternalFormat findFileFormat(String fileFormatCode) 
+	private ExternalFormat handleFindFileFormat(String fileFormatCode) 
+	{
+		return handleFindFileFormat(fileFormatCode, true);
+	}	
+	
+	private ExternalFormat handleFindFileFormat(String fileFormatCode, boolean errorOnNotFound) 
 	{
 		ExternalFormat externalFormat = new ExternalFormat();
 		
@@ -175,7 +180,7 @@ public class ImportServiceImpl
 		} else {
 			externalFormat.setFileFormat(fileFormat);			
 		}		
-		if (externalFormat.getFileFormat() == null) {
+		if (errorOnNotFound && externalFormat.getFileFormat() == null) {
 			throw new OpenStorefrontRuntimeException("Unable to find format.  File Format: " + fileFormatCode, "Make sure format is loaded (Maybe a loaded from a plugin)");
 		}		
 		return externalFormat;
@@ -196,7 +201,7 @@ public class ImportServiceImpl
 		fileHistory = persistenceService.persist(fileHistory);
 
 		//Get Parser for format
-		ExternalFormat externalFormat = findFileFormat(fileHistory.getFileFormat());
+		ExternalFormat externalFormat = handleFindFileFormat(fileHistory.getFileFormat());
 		
 		if (fileHistory.getFileDataMapId() != null) {
 			fileHistoryAll.setDataMapModel(getDataMap(fileHistory.getFileDataMapId()));
@@ -292,6 +297,17 @@ public class ImportServiceImpl
 			LOG.log(Level.FINE, MessageFormat.format("File History removed by user: {0} filename: {1} Orginal name: {2}", new Object[]{removalUser, filename, originalFilename}));
 		}
 	}
+	
+	@Override
+	public FileFormat findFileFormat(String fileFormatCode)
+	{
+		ExternalFormat externalFormat = handleFindFileFormat(fileFormatCode, false);
+		if (externalFormat != null) {
+			return externalFormat.getFileFormat();
+		} else {
+			return null;
+		}
+	}	
 
 	@Override
 	public List<FileFormat> findFileFormats(String fileType)
@@ -570,7 +586,7 @@ public class ImportServiceImpl
 	{
 		List<FieldDefinition> fieldDefinitions = new ArrayList<>();
 		
-		ExternalFormat externalFormat = findFileFormat(fileFormatCode);		
+		ExternalFormat externalFormat = handleFindFileFormat(fileFormatCode);		
 		if (externalFormat.getFileFormat().getSupportsDataMap()) {
 			try (InputStream processIn = in) {
 				Class parserClass = externalFormat.getParsingClass();
@@ -613,7 +629,7 @@ public class ImportServiceImpl
 	{
 		String output;
 		
-		ExternalFormat externalFormat = findFileFormat(fileFormatCode);		
+		ExternalFormat externalFormat = handleFindFileFormat(fileFormatCode);		
 		if (externalFormat.getFileFormat().getSupportsDataMap()) {
 			try (InputStream processIn = in) {
 				Class parserClass = externalFormat.getParsingClass();

@@ -53,7 +53,7 @@ public class FileHistoryView
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 
-		FileFormat fileFormat = ServiceProxyFactory.getServiceProxy().getLookupService().getLookupEnity(FileFormat.class, fileHistory.getFileFormat());
+		FileFormat fileFormat = ServiceProxyFactory.getServiceProxy().getImportService().findFileFormat(fileHistory.getFileFormat());
 		if (fileFormat != null) {
 			view.setFileFormatDescription(fileFormat.getDescription());
 			view.setFileTypeDescription(TranslateUtil.translate(FileType.class, fileFormat.getFileType()));

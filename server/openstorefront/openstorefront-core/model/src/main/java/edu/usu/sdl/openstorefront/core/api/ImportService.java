@@ -91,6 +91,13 @@ public interface ImportService
 	public List<FileFormat> findFileFormats(String fileType);
 
 	/**
+	 * Find format record. Note: some format could be transient due to plugins
+	 * @param fileFormatCode
+	 * @return Format or null if it doesn't exist
+	 */
+	public FileFormat findFileFormat(String fileFormatCode);
+	
+	/**
 	 * Gets all formats that support mapping
 	 * @return 
 	 */

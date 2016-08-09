@@ -19,6 +19,9 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +31,8 @@ import java.util.List;
  */
 public class AttributeAll
 {
-
+	public static final String ATTACHMENT_CODE = "ATTACHMENT";
+	
 	@ConsumeField
 	private AttributeType attributeType;
 	
@@ -38,6 +42,18 @@ public class AttributeAll
 
 	public AttributeAll()
 	{
+	}
+	
+	public ValidationResult validate() 
+	{
+		ValidationModel validationModel = new ValidationModel(attributeType);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);		
+		
+		for (AttributeCode attributeCode : attributeCodes) {
+			validationResult.merge(attributeCode.validate(true));
+		}
+		return validationResult;
 	}
 
 	public AttributeType getAttributeType()

@@ -42,6 +42,7 @@ public class DataMapper
 	private boolean useAsAttributeLabel;
 	private boolean concatenate;
 	private boolean addEndPathToValue;
+	private boolean fileAttachment;
 	private String pathToEnityField;
 	private List<DataTransform> pathTransforms = new ArrayList<>();
 
@@ -61,6 +62,7 @@ public class DataMapper
 			dataMapper.setEntityField(fileDataMapField.getEntityField());
 			dataMapper.setField(fileDataMapField.getField());
 			dataMapper.setUseAsAttributeLabel(Convert.toBoolean(fileDataMapField.getUseAsAttributeLabel()));
+			dataMapper.setFileAttachment(Convert.toBoolean(fileDataMapField.getFileAttachment()));
 			
 			if (fileDataMapField.getTransforms() != null) {				
 				for (DataMapTransform dataMapTransform : fileDataMapField.getTransforms()) {
@@ -221,6 +223,16 @@ public class DataMapper
 	public void setAddEndPathToValue(boolean addEndPathToValue)
 	{
 		this.addEndPathToValue = addEndPathToValue;
+	}
+
+	public boolean getAttachment()
+	{
+		return fileAttachment;
+	}
+
+	public void setFileAttachment(boolean fileAttachment)
+	{
+		this.fileAttachment = fileAttachment;
 	}
 
 }

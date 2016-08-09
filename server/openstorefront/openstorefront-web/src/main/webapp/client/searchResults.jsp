@@ -93,8 +93,7 @@ limitations under the License.
 			var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {				
 			});
 			
-			var searchtoolsWin = Ext.create('OSF.component.SearchToolWindow', {	
-			});	
+			var searchtoolsWin;
 			
 			var helpWin = Ext.create('OSF.component.HelpWindow', {				
 			});												
@@ -1580,6 +1579,9 @@ limitations under the License.
 						securityBannerText: branding.securityBannerText
 					}), 0);
 				}
+				searchtoolsWin = Ext.create('OSF.component.SearchToolWindow', {
+					branding: branding
+				});	
 			});	
 		
 			//Load 

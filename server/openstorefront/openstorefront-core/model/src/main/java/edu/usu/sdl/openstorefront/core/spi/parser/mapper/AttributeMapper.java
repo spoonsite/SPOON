@@ -74,6 +74,11 @@ public class AttributeMapper
 				attributeAll.getAttributeType().setDescription(typeCode);				
 			}	
 			
+			boolean attachment = false;
+			if (rootMapper.getAttachment()) {
+				attachment = true;
+			}
+			
 			boolean add = false;
 			Map<String, Object> entityMap = new HashMap<>();
 			for (MapField field : root.getMapFields()) {
@@ -88,6 +93,12 @@ public class AttributeMapper
 							entity = new AttributeCode();
 							AttributeCodePk attributeCodePk = new AttributeCodePk();
 							attributeCodePk.setAttributeType(attributeAll.getAttributeType().getAttributeType());
+							
+							if (attachment) {
+								attributeCodePk.setAttributeCode(AttributeAll.ATTACHMENT_CODE);
+								((AttributeCode)entity).setLabel(AttributeAll.ATTACHMENT_CODE);								
+							}
+							
 							((AttributeCode)entity).setAttributeCodePk(attributeCodePk);
 														
 							attributeAll.getAttributeCodes().add(((AttributeCode)entity));

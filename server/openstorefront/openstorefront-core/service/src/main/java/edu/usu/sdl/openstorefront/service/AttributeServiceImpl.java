@@ -254,11 +254,17 @@ public class AttributeServiceImpl
 	
 		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 		if (existing != null) {
+			if (StringUtils.isNotBlank(attributeCode.getAttachmentOriginalFileName())) {
+				existing.setAttachmentOriginalFileName(attributeCode.getAttachmentOriginalFileName());
+			}
+			if (StringUtils.isNotBlank(attributeCode.getAttachmentMimeType())) {
+				existing.setAttachmentMimeType(attributeCode.getAttachmentMimeType());
+			}			
 			existing.setAttachmentFileName(existing.getAttributeCodePk().toKey().replace("#", "-"));
 
 			try (InputStream in = fileInput) {
-				Files.copy(in, attributeCode.pathToAttachment(), StandardCopyOption.REPLACE_EXISTING);
-				persistenceService.persist(attributeCode);
+				Files.copy(in, existing.pathToAttachment(), StandardCopyOption.REPLACE_EXISTING);
+				persistenceService.persist(existing);
 			} catch (IOException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to store attachment.", "Contact System Admin.  Check file permissions and disk space ", ex);
 			}
@@ -913,6 +919,7 @@ public class AttributeServiceImpl
 		cleanCaches(attributeCodePk.getAttributeType());
 	}
 
+	@Override
 	public void importAttributes(List<AttributeAll> attributes, FileHistoryOption options)
 	{
 		attributes.forEach(attribute

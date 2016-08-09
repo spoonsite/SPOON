@@ -56,6 +56,9 @@ public class FileDataMapField
 	private Boolean addEndPathToValue;
 	
 	@ConsumeField
+	private Boolean fileAttachment;
+	
+	@ConsumeField
 	private String pathToEnityField;
 
 	@ConsumeField
@@ -160,6 +163,16 @@ public class FileDataMapField
 	public void setPathTransforms(List<DataMapTransform> pathTransforms)
 	{
 		this.pathTransforms = pathTransforms;
+	}
+
+	public Boolean getFileAttachment()
+	{
+		return fileAttachment;
+	}
+
+	public void setFileAttachment(Boolean fileAttachment)
+	{
+		this.fileAttachment = fileAttachment;
 	}
 	
 }
