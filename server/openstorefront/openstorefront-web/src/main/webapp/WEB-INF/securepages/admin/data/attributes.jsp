@@ -807,7 +807,7 @@
 								name: 'description',
 								width: '100%',
 								height: 300,
-								maxLength: 255,
+								maxLength: 4096,
 								tinyMCEConfig: CoreUtil.tinymceConfig()
 							},
 							{
