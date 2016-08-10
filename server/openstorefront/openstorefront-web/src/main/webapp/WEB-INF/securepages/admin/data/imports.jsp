@@ -6,7 +6,7 @@
 	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>	
 		
 	<script type="text/javascript">
-		/* global Ext, CoreUtil */
+		/* global Ext, CoreUtil, CoreService */
 		Ext.onReady(function(){	
 			
 			var importWindow = Ext.create('OSF.component.ImportWindow', {					
@@ -15,6 +15,8 @@
 					Ext.getCmp('fileHistoryGrid').getStore().reload();
 				}
 			});
+			
+			CoreService.attributeservice.warmCache();
 			
 			var selectedMapFormat;
 			
@@ -31,10 +33,16 @@
 						xtype: 'grid',
 						id: 'codeGrid',
 						columnLines: true,
-						store: {							
+						store: {
+							fields: [
+								{name: 'attributeLabel', mapping: function(data) {
+									return CoreService.attributeservice.translateCode(addEditAttributeCodeWin.attributeType, data.attributeCode);
+								}}
+							]
 						},
 						columns: [
 							{ text: 'Attribute Code', dataIndex: 'attributeCode', width: 250 },
+							{ text: 'Attribute Label', dataIndex: 'attributeLabel', width: 250 },
 							{ text: 'External Code', dataIndex: 'externalCode', flex: 1, minWidth: 200 }
 						],
 						listeners: {
@@ -52,6 +60,7 @@
 						dockedItems: [
 							{
 								xtype: 'form',
+								id:  'attributeCodeForm',
 								dock: 'top',
 								bodyStyle: 'padding: 10px;',
 								layout: 'anchor',
@@ -67,10 +76,15 @@
 										name: 'attributeCode',
 										fieldLabel: 'Attribute Code<span class="field-required" />',
 										allowBlank: false,
-										valueField: 'attributeType',
-										displayField: 'description',
+										valueField: 'code',
+										displayField: 'label',										
 										store: {
 											autoLoad: false,
+											fields: [
+												{name: 'code', mapping: function(data) {
+													return data.attributeCodePk.attributeCode;
+												}}
+											],											
 											proxy: {
 												type: 'ajax',
 												url: '../api/v1/resource/attributes/attributetypes/{type}/attributecodes'
@@ -104,6 +118,9 @@
 													var form = this.up('form');
 													var data = form.getValues();
 													var grid = form.up('grid');
+													
+													var attributeTypeRecord = Ext.getCmp('attributeCodeCB').getSelection();													
+													data.attributeLabel = CoreService.attributeservice.translateCode(attributeTypeRecord.data.attributeCodePk.attributeType, attributeTypeRecord.data.attributeCodePk.attributeCode);
 
 													if (grid.editRecord) {
 														grid.editRecord.set(data, {
@@ -144,12 +161,12 @@
 										iconCls: 'fa fa-edit',
 										handler: function(){
 											var grid = this.up('grid');																	
-											var form = Ext.getCmp('attributeTypeForm');
+											var form = Ext.getCmp('attributeCodeForm');
 											var record = grid.getSelectionModel().getSelection()[0];
 											grid.editRecord = record;
 
 											form.loadRecord(record);
-											Ext.getCmp('attributeTypeAddBtn').setText('Update');											
+											Ext.getCmp('attributeCodeAddBtn').setText('Update');											
 										}
 									},
 									{
@@ -518,7 +535,7 @@
 													}
 												},
 												columns: [
-													{ text: 'File Field', dataIndex: 'field', flex: 1, minWidth: 150},
+													{ text: 'File Field', dataIndex: 'field', flex: 1, minWidth: 350},
 													{ text: 'Tranforms', dataIndex: 'fieldTransforms', width: 200},
 													{ text: 'Entity Class', dataIndex: 'entityClass', width: 150, 
 														renderer: function(value) {
@@ -630,7 +647,11 @@
 															autoLoad: true,
 															proxy: {
 																type: 'ajax',
-																url: '../api/v1/resource/attributes/attributetypes'
+																url: '../api/v1/resource/attributes/attributetypes',
+																reader: {
+																	type: 'json',
+																	rootProperty: 'data'
+																}
 															}
 														},
 														editable: false,
@@ -661,10 +682,15 @@
 														itemId: 'defaultMappedCode',
 														name: 'defaultMappedCode',
 														fieldLabel: 'Default Mapped Code',
-														valueField: 'attributeType',
-														displayField: 'description',
+														valueField: 'code',
+														displayField: 'label',
 														store: {
 															autoLoad: false,
+															fields: [
+																{name: 'code', mapping: function(data) {
+																	return data.attributeCodePk.attributeCode;
+																}}
+															],
 															proxy: {
 																type: 'ajax',
 																url: '../api/v1/resource/attributes/attributetypes'
@@ -672,57 +698,60 @@
 														},
 														editable: false,
 														typeAhead: false												
-													}
-												]
-											},
-											{
-												xtype: 'container',
-												layout: 'hbox',
-												items: [
-													{
-														xtype: 'button',
-														id: 'attributeTypeAddBtn',
-														text: 'Add',
-														formBind: true,
-														margin: '0 20 10 0',
-														width: '200',
-														scale: 'medium',
-														iconCls: 'fa fa-2x fa-plus',
-														handler: function() {
-															this.setText('Add');
-															var form = this.up('form');
-															var data = form.getValues();
-															var grid = form.up().getComponent('attributeTypeGrid');
-
-															if (grid.editRecord) {
-																grid.editRecord.set(data, {
-																	dirty: false
-																});
-																if (!data.addMissingCode) {
-																	grid.editRecord.set({
-																		addMissingCode: null
-																	});
-																}
-																
-																grid.editRecord = null;
-															} else {																		
-																grid.getStore().add(data);
-															}
-															addEditMapping.hasChanges=true;
-															form.reset();
-														}
 													},
 													{
-														xtype: 'button',
-														text: 'Cancel',
-														margin: '8 0 00 0',
-														iconCls: 'fa  fa-close',
-														handler: function() {
-															Ext.getCmp('attributeTypeAddBtn').setText('Add');
-															var form = this.up('form');
-															form.reset();
-														}
-													}															
+														xtype: 'container',
+														layout: 'hbox',
+														items: [
+															{
+																xtype: 'button',
+																id: 'attributeTypeAddBtn',
+																text: 'Add',
+																formBind: true,
+																margin: '0 20 10 0',
+																width: '200',
+																scale: 'medium',
+																iconCls: 'fa fa-2x fa-plus',
+																handler: function() {
+																	this.setText('Add');
+																	var form = this.up('form');
+																	var data = form.getValues();
+																	var grid = form.up().getComponent('attributeTypeGrid');
+
+																	data.attributeTypeLabel = CoreService.attributeservice.translateType(data.attributeType);
+																	data.attributeCodeLabel = CoreService.attributeservice.translateCode(data.attributeType, data.defaultMappedCode);
+																	
+																	if (grid.editRecord) {
+																		grid.editRecord.set(data, {
+																			dirty: false
+																		});
+																		if (!data.addMissingCode) {
+																			grid.editRecord.set({
+																				addMissingCode: null
+																			});
+																		}
+
+																		grid.editRecord = null;
+																	} else {																		
+																		grid.getStore().add(data);
+																	}
+																	addEditMapping.hasChanges=true;
+																	form.reset();
+																}
+															},
+															{
+																xtype: 'button',
+																text: 'Cancel',
+																margin: '8 0 00 0',
+																iconCls: 'fa  fa-close',
+																handler: function() {
+																	Ext.getCmp('attributeTypeAddBtn').setText('Add');
+																	var form = this.up('form');
+																	form.reset();
+																}
+															}															
+														]
+													}													
 												]
 											},
 											{
@@ -732,13 +761,23 @@
 												height: 350,
 												margin: '0 0 10 0',
 												border: true,
-												store: {													
+												store: {	
+													fields: [
+														{name: 'attributeTypeLabel', mapping: function(data) {
+															return CoreService.attributeservice.translateType(data.attributeType);
+														}},
+														{name: 'attributeCodeLabel', mapping: function(data) {
+															return CoreService.attributeservice.translateCode(data.attributeType, data.defaultMappedCode);
+														}}													
+													]													
 												},
 												columns: [
-													{ text: 'Attribute Type', dataIndex: 'attributeType', flex: 1, minWidth: 150},													
+													{ text: 'Attribute Type', dataIndex: 'attributeType', width: 175},
+													{ text: 'Attribute Type Label', dataIndex: 'attributeTypeLabel', flex: 1, width: 200},
 													{ text: 'External Type', dataIndex: 'externalType', width: 225},
 													{ text: 'Add Missing Code', dataIndex: 'addMissingCode', width: 150},													
-													{ text: 'Use As Attribute Label', dataIndex: 'defaultMappedCode', width: 200}
+													{ text: 'Default Mapped Code', dataIndex: 'defaultMappedCode', width: 200},
+													{ text: 'Default Mapped Label', dataIndex: 'attributeCodeLabel', width: 200},
 												],
 												listeners: {
 													selectionchange: function(selmodel, selected, opts) {
@@ -770,9 +809,15 @@
 																	var record = grid.getSelectionModel().getSelection()[0];
 																	
 																	addEditAttributeCodeWin.show();
-																	//load code for type for CB
-																	//load code mappings on the record
-																	
+																	addEditAttributeCodeWin.attributeType =record.get('attributeType');
+																
+																	Ext.getCmp('attributeCodeCB').getStore().load({
+																		url: '../api/v1/resource/attributes/attributetypes/' + record.get('attributeType') + '/attributecodes'
+																	});
+																		
+																	if (record.get('attributeCodeXrefMap')) {
+																		Ext.getCmp('codeGrid').getStore().loadData(record.get('attributeCodeXrefMap'));
+																	}																	
 																}																
 															},
 															{

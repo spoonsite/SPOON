@@ -43,7 +43,6 @@ public class FileAttributeTypeXrefMap
 	@ConsumeField
 	private String defaultMappedCode;
 	
-	@NotNull
 	@ConsumeField	
 	private Boolean addMissingCode;
 	

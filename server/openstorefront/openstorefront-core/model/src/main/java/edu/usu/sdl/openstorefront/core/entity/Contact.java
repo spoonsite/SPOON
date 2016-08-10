@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
@@ -30,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
  * Holds all contact information
  * @author dshurtleff
  */
+@APIDescription("Holds all contact information")
 public class Contact
 	extends StandardEntity<Contact>	
 	implements OrganizationModel

@@ -15,10 +15,18 @@
  */
 package edu.usu.sdl.spoon.importer;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.ComponentMapper;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.XMLMapReader;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -29,10 +37,17 @@ public class ComponentSpoonParser
 {
 	public static final String FORMAT_CODE = "SPOONCMP";
 
+	private List<ResourceAttachment> attachments = new ArrayList<>();
+	private List<ComponentAll> componentAlls;
+	
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (mimeType.contains("xml")) {
+			return "";
+		} else {
+			return "Invalid format. Please upload a XML file.";
+		}
 	}
 
 	@Override
@@ -42,9 +57,55 @@ public class ComponentSpoonParser
 	}	
 	
 	@Override
+	protected String handlePreviewOfRecord(Object data)
+	{
+		String output = "";
+		if (componentAlls != null && 
+			!componentAlls.isEmpty()) {
+			try {			
+				output = service.getSystemService().toJson(componentAlls.get(0));
+			} catch (Exception ex) {
+				output = "Unable preview attributes.  <br>Trace:<br>" + StringProcessor.parseStackTraceHtml(ex);
+			}
+		}
+		return output;
+	}
+	
+	@Override
 	protected <T> Object parseRecord(T record)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MapModel mapModel = (MapModel) record;
+		
+		ComponentMapper componentMapper = new ComponentMapper(() -> {
+			ComponentAll componentAll = defaultComponentAll();
+			return componentAll;
+		}, fileHistoryAll);
+		
+		componentAlls = componentMapper.multiMapData(mapModel);
+		
+		int realRecordNumber = 0;
+		for (ComponentAll componentAll : componentAlls) {
+			realRecordNumber++;
+		
+			ValidationResult validationResult = componentAll.validate();
+			if (validationResult.valid()) {
+								
+				addRecordToStorage(componentAll);
+			} else {
+				fileHistoryAll.addError(FileHistoryErrorType.VALIDATION, validationResult.toHtmlString(), realRecordNumber);
+			}
+		}
+				
+		return null;
 	}
+	
+	@Override
+	protected void finishProcessing()
+	{
+		for (ResourceAttachment attachment : attachments) {
+			
+			
+		}		
+	}	
 	
 }

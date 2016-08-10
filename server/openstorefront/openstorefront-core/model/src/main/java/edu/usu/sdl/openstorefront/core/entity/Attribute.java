@@ -23,7 +23,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * This base
+ * This base abstraction for attributes
  * @author dshurtleff
  */
 public abstract class Attribute
