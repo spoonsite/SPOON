@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.core.usecase;
+package edu.usu.sdl.openstorefront.usecase;
 
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.AttributeMapper;
-import edu.usu.sdl.openstorefront.core.spi.parser.mapper.ComponentMapper;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.DataMapper;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.StringTransforms;
@@ -68,16 +67,16 @@ public class ReaderUseCase
 			dataMapper.getTransforms().add(StringTransforms.UPPERCASE);
 			dataMappers.put("dataroot.Module_ADACS_Equipment_Actuators_CMGs.Model", dataMapper);			
 			
-			ComponentMapper componentMapper = new ComponentMapper(() -> {
-				ComponentAll componentAll = new ComponentAll();
-				componentAll.setComponent(new Component());
-				return componentAll;
-			}, new FileHistoryAll(), dataMappers, null);
-			
-
-			
-			List<ComponentAll> componentAlls  = componentMapper.multiMapData(mapModel);			
-			System.out.println("componentAlls = " + componentAlls.get(0).getComponent().getName());
+//			ComponentMapper componentMapper = new ComponentMapper(() -> {
+//				ComponentAll componentAll = new ComponentAll();
+//				componentAll.setComponent(new Component());
+//				return componentAll;
+//			}, new FileHistoryAll(), dataMappers, null);
+//			
+//
+//			
+//			List<ComponentAll> componentAlls  = componentMapper.multiMapData(mapModel);			
+//			System.out.println("componentAlls = " + componentAlls.get(0).getComponent().getName());
 			
 		}
 		

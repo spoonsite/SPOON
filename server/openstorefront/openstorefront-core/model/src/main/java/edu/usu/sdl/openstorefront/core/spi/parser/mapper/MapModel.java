@@ -15,8 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
@@ -52,8 +55,22 @@ public class MapModel
 		for (String field : fields) {
 			String parts[] = field.split("\\.");
 			if (parts.length > 1) {
-				for (int i=0; i<  parts.length - 1; i++) {
-					rootFields.add(parts[i]);
+				Deque<String> deque = new ArrayDeque<>();				
+				for (int i=0; i <  parts.length; i++) {
+					deque.push(parts[i]);										
+				}
+				while (!deque.isEmpty()) {
+					deque.pop();
+					
+					Iterator<String> reversed = deque.descendingIterator();
+					StringBuilder sb = new StringBuilder();
+					while(reversed.hasNext()) {
+						sb.append(reversed.next()).append(".");
+					}		
+					if (sb.length() > 0) {
+						sb = sb.deleteCharAt(sb.length()-1);
+						rootFields.add(sb.toString());
+					}
 				}
 			} else {
 				rootFields.add(field);

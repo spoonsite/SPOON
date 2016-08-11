@@ -489,18 +489,18 @@ public class ImportServiceImpl
 			existingFileDataMap = persistenceService.persist(dataMapModel.getFileDataMap());	
 		}
 		
-		if (dataMapModel.getFileAttributeMap() != null) {
-						
-			FileAttributeMap existingFileAttributeMap = persistenceService.findById(FileAttributeMap.class, dataMapModel.getFileAttributeMap().getFileAttributeMapId());
-			if (existingFileAttributeMap != null) {
-				existingFileAttributeMap.updateFields(dataMapModel.getFileAttributeMap());
-				persistenceService.persist(existingFileAttributeMap);
-			} else {
-				dataMapModel.getFileAttributeMap().setFileAttributeMapId(persistenceService.generateId());
-				dataMapModel.getFileAttributeMap().setFileDataMapId(existingFileDataMap.getFileDataMapId());
-				dataMapModel.getFileAttributeMap().populateBaseCreateFields();
-				persistenceService.persist(dataMapModel.getFileAttributeMap());
-			}			
+		if (dataMapModel.getFileAttributeMap() != null) {						
+			//only allow one 
+			String fieldMapId = dataMapModel.getFileDataMap().getFileDataMapId();
+			FileAttributeMap deleteFileAttributeMap = new FileAttributeMap();
+			deleteFileAttributeMap.setFileDataMapId(fieldMapId);
+			persistenceService.deleteByExample(deleteFileAttributeMap);
+			
+			
+			dataMapModel.getFileAttributeMap().setFileAttributeMapId(persistenceService.generateId());
+			dataMapModel.getFileAttributeMap().setFileDataMapId(fieldMapId);
+			dataMapModel.getFileAttributeMap().populateBaseCreateFields();
+			persistenceService.persist(dataMapModel.getFileAttributeMap());
 		}
 		
 		return existingFileDataMap;
@@ -655,6 +655,30 @@ public class ImportServiceImpl
 		}
 		
 		return output;
+	}
+
+	@Override
+	public FileDataMap copyDataMap(String fileDataMapId)
+	{
+		FileDataMap fileDataMap = null;
+		
+		DataMapModel dataMapModel = getDataMap(fileDataMapId);
+		if (dataMapModel != null) {
+			
+			//Deattached copy
+			FileDataMap copy = new FileDataMap();
+			copy.setFileDataMapId(fileDataMapId);
+			
+			dataMapModel.setFileDataMap(copy.find());			
+			dataMapModel.getFileDataMap().setFileDataMapId(null);
+			dataMapModel.getFileDataMap().setName(dataMapModel.getFileDataMap().getName() + " - Copy");
+			if (dataMapModel.getFileAttributeMap() != null) {
+				dataMapModel.getFileAttributeMap().setFileAttributeMapId(null);
+				dataMapModel.getFileAttributeMap().setFileDataMapId(null);				
+			}
+			fileDataMap = saveFileDataMap(dataMapModel);
+		} 		
+		return fileDataMap;
 	}
 
 }

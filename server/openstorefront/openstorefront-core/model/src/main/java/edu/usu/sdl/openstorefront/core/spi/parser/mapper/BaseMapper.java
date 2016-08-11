@@ -101,7 +101,7 @@ public abstract class BaseMapper<T>
 		serviceProxy.getAttributeService().saveAttributeType(attributeType);		
 	}
 			
-	protected void createAttributecCode(String attributeTypeCode, String attributeCode)
+	protected void createAttributeCode(String attributeTypeCode, String attributeCode)
 	{
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeType(attributeTypeCode);

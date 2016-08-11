@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.view;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileType;
@@ -25,6 +26,8 @@ import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
@@ -37,6 +40,7 @@ public class FileHistoryView
 
 	private String fileFormatDescription;
 	private String fileTypeDescription;
+	private String fileMappingApplied;
 	private long warningsCount;
 	private long errorsCount;
 
@@ -44,7 +48,7 @@ public class FileHistoryView
 	{
 	}
 
-	public static FileHistoryView toView(FileHistory fileHistory)
+	public static FileHistoryView toView(FileHistory fileHistory, Map<String, List<FileDataMap>> dataMaps)
 	{
 		FileHistoryView view = new FileHistoryView();
 		try {
@@ -62,14 +66,26 @@ public class FileHistoryView
 			view.setFileTypeDescription(OpenStorefrontConstant.NOT_AVAILABLE);
 		}
 		
+		if (fileHistory.getFileDataMapId() != null) {
+			if (dataMaps.containsKey(fileHistory.getFileDataMapId())) {
+				FileDataMap fileDataMap = dataMaps.get(fileHistory.getFileDataMapId()).get(0);
+				view.setFileMappingApplied(fileDataMap.getName());
+			}
+		}
+		
 		return view;
 	}
 
 	public static List<FileHistoryView> toView(List<FileHistory> fileHistories)
 	{
 		List<FileHistoryView> views = new ArrayList<>();
+		
+		FileDataMap fileDataMap = new FileDataMap();
+		List<FileDataMap> fileDataMaps = fileDataMap.findByExample();
+		Map<String, List<FileDataMap>> dataMaps = fileDataMaps.stream().collect(Collectors.groupingBy(FileDataMap::getFileDataMapId));
+		
 		fileHistories.forEach(fileHistory -> {
-			views.add(toView(fileHistory));
+			views.add(toView(fileHistory, dataMaps));
 		});
 		return views;
 	}
@@ -112,6 +128,16 @@ public class FileHistoryView
 	public void setWarningsCount(long warningsCount)
 	{
 		this.warningsCount = warningsCount;
+	}
+
+	public String getFileMappingApplied()
+	{
+		return fileMappingApplied;
+	}
+
+	public void setFileMappingApplied(String fileMappingApplied)
+	{
+		this.fileMappingApplied = fileMappingApplied;
 	}
 
 }

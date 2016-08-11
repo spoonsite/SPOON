@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import javax.validation.constraints.NotNull;
@@ -26,6 +27,7 @@ import javax.validation.constraints.Size;
  * This base abstraction for attributes
  * @author dshurtleff
  */
+@APIDescription("This base abstraction for attributes")
 public abstract class Attribute
 	extends BaseEntity<Attribute>	
 {

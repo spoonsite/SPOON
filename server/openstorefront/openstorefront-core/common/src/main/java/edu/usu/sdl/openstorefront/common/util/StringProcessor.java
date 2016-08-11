@@ -498,5 +498,15 @@ public class StringProcessor
 		} 
 		return input;
 	}
+	
+	/**
+	 * This is wrapper method for plugins
+	 * @param input
+	 * @return 
+	 */
+	public static boolean stringIsNotBlank(String input) 
+	{
+		return StringUtils.isNotBlank(input);
+	}
 
 }

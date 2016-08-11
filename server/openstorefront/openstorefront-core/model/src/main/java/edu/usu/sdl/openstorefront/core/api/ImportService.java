@@ -179,5 +179,13 @@ public interface ImportService
 	 * @return preview output
 	 */
 	public String previewMapData(String fileFormatCode, String fileDataMapId, InputStream in);	
+
+	/**
+	 * Creates a copy of existing data map
+	 * 
+	 * @param fileDataMapId
+	 * @return copy data map
+	 */
+	public FileDataMap copyDataMap(String fileDataMapId);
 	
 }

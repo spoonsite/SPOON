@@ -316,7 +316,6 @@ public class FileHistoryResource
 	@RequireAdmin
 	@APIDescription("Get a full data mapping record")	
 	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(DataMapModel.class)	
 	@Path("/formats/{format}/mappings/{fileDataMapId}")
 	public Response getFileMapping(
@@ -327,6 +326,30 @@ public class FileHistoryResource
 		DataMapModel dataMapModel = service.getImportService().getDataMap(fileDateMapId);		
 		return sendSingleEntityResponse(dataMapModel);
 	}
+	
+	@POST
+	@RequireAdmin
+	@APIDescription("Copies data mapping record")	
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(FileDataMap.class)
+	@Path("/formats/{format}/mappings/{fileDataMapId}/copy")
+	public Response copyMapping(
+		@PathParam("format") String format,
+		@PathParam("fileDataMapId") String fileDateMapId
+	)
+	{
+		FileDataMap fileDataMapCreated = null;
+		
+		FileDataMap fileDataMapExample = new FileDataMap();
+		fileDataMapExample.setFileFormat(format);
+		fileDataMapExample.setFileDataMapId(fileDateMapId);
+		
+		fileDataMapExample = fileDataMapExample.find();
+		if (fileDataMapExample != null) {
+			fileDataMapCreated = service.getImportService().copyDataMap(fileDateMapId);
+		}
+		return sendSingleEntityResponse(fileDataMapCreated);
+	}	
 	
 	@PUT
 	@RequireAdmin

@@ -27,18 +27,44 @@
 				width: '60%',
 				height: '50%',
 				maximizable: true,
-				layout: 'fit',				
+				layout: 'fit',
+				listeners: {
+					close: function() {
+						var codeRecords = [];
+						
+						Ext.getCmp('codeGrid').getStore().each(function(record) {
+							codeRecords.push(record.data);
+						});						
+						addEditAttributeCodeWin.attributeTypeRecord.set('attributeCodeXrefMap', codeRecords);
+					}
+				},
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								xtype: 'tbfill'								
+							}, 
+							{
+								text: 'Done',
+								iconCls: 'fa fa-close',
+								handler: function() {
+									addEditAttributeCodeWin.close();
+								}
+							},
+							{
+								xtype: 'tbfill'
+							}
+						]
+					}
+				],
 				items: [
 					{
 						xtype: 'grid',
 						id: 'codeGrid',
 						columnLines: true,
 						store: {
-							fields: [
-								{name: 'attributeLabel', mapping: function(data) {
-									return CoreService.attributeservice.translateCode(addEditAttributeCodeWin.attributeType, data.attributeCode);
-								}}
-							]
 						},
 						columns: [
 							{ text: 'Attribute Code', dataIndex: 'attributeCode', width: 250 },
@@ -761,15 +787,7 @@
 												height: 350,
 												margin: '0 0 10 0',
 												border: true,
-												store: {	
-													fields: [
-														{name: 'attributeTypeLabel', mapping: function(data) {
-															return CoreService.attributeservice.translateType(data.attributeType);
-														}},
-														{name: 'attributeCodeLabel', mapping: function(data) {
-															return CoreService.attributeservice.translateCode(data.attributeType, data.defaultMappedCode);
-														}}													
-													]													
+												store: {																				
 												},
 												columns: [
 													{ text: 'Attribute Type', dataIndex: 'attributeType', width: 175},
@@ -777,7 +795,7 @@
 													{ text: 'External Type', dataIndex: 'externalType', width: 225},
 													{ text: 'Add Missing Code', dataIndex: 'addMissingCode', width: 150},													
 													{ text: 'Default Mapped Code', dataIndex: 'defaultMappedCode', width: 200},
-													{ text: 'Default Mapped Label', dataIndex: 'attributeCodeLabel', width: 200},
+													{ text: 'Default Mapped Label', dataIndex: 'attributeCodeLabel', width: 200}
 												],
 												listeners: {
 													selectionchange: function(selmodel, selected, opts) {
@@ -809,15 +827,22 @@
 																	var record = grid.getSelectionModel().getSelection()[0];
 																	
 																	addEditAttributeCodeWin.show();
-																	addEditAttributeCodeWin.attributeType =record.get('attributeType');
+																	addEditAttributeCodeWin.attributeType = record.get('attributeType');
+																	addEditAttributeCodeWin.attributeTypeRecord = record;
 																
 																	Ext.getCmp('attributeCodeCB').getStore().load({
 																		url: '../api/v1/resource/attributes/attributetypes/' + record.get('attributeType') + '/attributecodes'
 																	});
 																		
+																	Ext.getCmp('codeGrid').getStore().removeAll();	
 																	if (record.get('attributeCodeXrefMap')) {
+																		
+																		Ext.Array.each(record.get('attributeCodeXrefMap'), function(code) {
+																			code.attributeLabel = CoreService.attributeservice.translateCode(record.get('attributeType') , code.attributeCode);
+																		});
+																		
 																		Ext.getCmp('codeGrid').getStore().loadData(record.get('attributeCodeXrefMap'));
-																	}																	
+																	} 																
 																}																
 															},
 															{
@@ -872,6 +897,12 @@
 										}
 									},
 									{
+										xtype: 'checkbox',
+										id: 'mappingSaveAndContinue',
+										name: 'continue',
+										boxLabel: 'Save and Continue'
+									},
+									{
 										xtype: 'tbfill'
 									},
 									{
@@ -892,9 +923,13 @@
 			var mappingActionSave = function() {
 				var mainForm = Ext.getCmp('mainForm');
 				var mainFormData = mainForm.getValues();
-				//name is only thing required
-
+				
+				//custom Vaildation
+				var valid = true;
+				
 				if (!mainFormData.name) {
+					valid = false;
+					
 					Ext.Msg.show({
 						title:'Validation',
 						message: 'Data Mapping Name is Required',
@@ -903,7 +938,40 @@
 						fn: function(btn) {
 						}
 					});												
-				} else {
+				}
+				
+				//can't have multiple fields pointed to the same path
+				var multipleSamePath = false;
+				var fieldGrid = Ext.getCmp('fieldGrid');				
+				var existingFieldPath = [];
+				fieldGrid.getStore().each(function(record) {
+					var found = Ext.Array.findBy(existingFieldPath, function(existing) {
+						if (existing  === record.get('field')) {
+							return true;
+						}
+					});
+					if (found) {
+						multipleSamePath = true;
+					} else {
+						existingFieldPath.push(record.get('field'));
+					}
+				});
+				
+				if (multipleSamePath) {
+					valid = false;
+					
+					Ext.Msg.show({
+						title:'Validation',
+						message: 'Duplicate Field Paths;  field paths can only be set once.',
+						buttons: Ext.Msg.OK,
+						icon: Ext.Msg.ERROR,
+						fn: function(btn) {
+						}
+					});	
+				}
+
+
+				if (valid) {
 
 					var dataMapModel = {
 						fileDataMap: {
@@ -914,7 +982,7 @@
 						fileAttributeMap: {
 							attributeTypeXrefMap: []
 						}
-					}
+					};
 
 					//field maps
 					var fieldGrid = Ext.getCmp('fieldGrid');
@@ -945,8 +1013,7 @@
 
 					var attributeTypeGrid = Ext.getCmp('attributeTypeGrid');
 					attributeTypeGrid.getStore().each(function(record){
-						var data = record.getData();			
-
+						var data = record.getData();
 						dataMapModel.fileAttributeMap.attributeTypeXrefMap.push(data);										
 					});		
 
@@ -970,7 +1037,11 @@
 							addEditMapping.hasChanges = false;
 							Ext.toast('Saved mapping', 'Saved');
 							actionRefreshMappings();
-							addEditMapping.close();
+							
+							var continueMapping = Ext.getCmp('mappingSaveAndContinue').getValue();
+							if (!continueMapping) {
+								addEditMapping.close();
+							}
 						}
 					});
 				}				
@@ -995,10 +1066,12 @@
 						var tools = mappingPanel.getComponent('tools');
 						if (selmodel.getCount() > 0) {
 							tools.getComponent('edit').setDisabled(false);
+							tools.getComponent('copy').setDisabled(false);
 							tools.getComponent('preview').setDisabled(false);
 							tools.getComponent('remove').setDisabled(false);
 						} else {
 							tools.getComponent('edit').setDisabled(true);
+							tools.getComponent('copy').setDisabled(true);
 							tools.getComponent('preview').setDisabled(true);
 							tools.getComponent('remove').setDisabled(true);							
 						}
@@ -1129,10 +1202,15 @@
 											Ext.getCmp('chkMissingAttributeType').setValue(dataMap.fileAttributeMap.addMissingAttributeTypeFlg);											
 											
 											var attributeTypeGrid = Ext.getCmp('attributeTypeGrid');
-											if (!dataMap.fileAttributeMap.attributeCodeXrefMap) {
-												dataMap.fileAttributeMap.attributeCodeXrefMap = [];
-											}											
-											attributeTypeGrid.getStore().loadData(dataMap.fileAttributeMap.attributeCodeXrefMap);
+											if (!dataMap.fileAttributeMap.attributeTypeXrefMap) {
+												dataMap.fileAttributeMap.attributeTypeXrefMap = [];
+											}						
+											Ext.Array.each(dataMap.fileAttributeMap.attributeTypeXrefMap, function(type) {
+												type.attributeTypeLabel = CoreService.attributeservice.translateType(type.attributeType);
+												type.attributeCodeLabel = CoreService.attributeservice.translateCode(type.attributeType, type.defaultMappedCode);
+											});
+											
+											attributeTypeGrid.getStore().loadData(dataMap.fileAttributeMap.attributeTypeXrefMap);
 											
 										}
 									});							
@@ -1141,6 +1219,29 @@
 							},
 							{
 								xtype: 'tbseparator'
+							},
+							{
+								text: 'Copy',
+								itemId: 'copy',
+								disabled: true,	
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-copy',
+								handler: function(){									
+									var record = mappingPanel.getSelectionModel().getSelection()[0];	
+									
+									Ext.Ajax.request({
+										url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
+											+ '/mappings/' + record.get('code') + '/copy',
+										method: 'POST',
+										callback: function() {
+											grid.setLoading(false);
+										},
+										success: function(response, opts) {
+											actionRefreshMappings();
+										}
+									});									
+									
+								}
 							},
 							{
 								text: 'Preview',
@@ -1206,7 +1307,7 @@
 																					message = message.replace(new RegExp(' ', 'g'), '&nbsp;');
 																					var data = {
 																						data: message
-																					}
+																					};
 																					previewPanel.update(data);																					
 																				},
 																				failure: function(response,opts){
@@ -1262,7 +1363,7 @@
 								itemId: 'remove',
 								disabled: true,								
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-close',
+								iconCls: 'fa fa-2x fa-close text-danger',
 								handler: function() {
 									var grid = mappingPanel;
 									var record = mappingPanel.getSelectionModel().getSelection()[0];									
@@ -1286,7 +1387,7 @@
 													success: function(response, opts) {
 														actionRefreshMappings();
 													}
-												})
+												});
 												
 											} 
 										}
@@ -1418,6 +1519,7 @@
 						}
 					},
 					{ text: 'Data Source', dataIndex: 'dataSource', width: 200, hidden: true },
+					{ text: 'Data Mapping Applied', dataIndex: 'fileMappingApplied', width: 200, hidden: true },
 					{ text: 'Mime Type', dataIndex: 'mimeType', width: 175, hidden: true },
 					{
 						text: 'Record Stats',

@@ -71,14 +71,14 @@ public class ComponentMapper
 						if (StringUtils.isNotBlank(ourAttributeCode)) {
 							componentAttribute.getComponentAttributePk().setAttributeCode(ourAttributeCode);
 						} else if (attributeTypeMapper.getAddMissingCode()) {
-							createAttributecCode(componentAttribute.getComponentAttributePk().getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());
+							createAttributeCode(componentAttribute.getComponentAttributePk().getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());
 						} else if (StringUtils.isNotBlank(attributeTypeMapper.getDefaultMappedCode())) {
 							componentAttribute.getComponentAttributePk().setAttributeCode(attributeTypeMapper.getDefaultMappedCode());							
 						}
 						
 					} else if (attributeDataMapper.getAddMissingAttributeTypeFlg()) {						
 						createAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
-						createAttributecCode(componentAttribute.getComponentAttributePk().getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());						
+						createAttributeCode(componentAttribute.getComponentAttributePk().getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());						
 					}
 				}
 			}
