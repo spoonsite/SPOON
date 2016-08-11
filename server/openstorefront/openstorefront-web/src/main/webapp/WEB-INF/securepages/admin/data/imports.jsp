@@ -1226,9 +1226,11 @@
 								disabled: true,	
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-copy',
-								handler: function(){									
+								handler: function(){	
+									var grid = mappingPanel;
 									var record = mappingPanel.getSelectionModel().getSelection()[0];	
 									
+									grid.setLoading("Copying...");
 									Ext.Ajax.request({
 										url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
 											+ '/mappings/' + record.get('code') + '/copy',
