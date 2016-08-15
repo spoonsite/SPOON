@@ -761,7 +761,6 @@ public class AttributeResource
 	}
 
 	@GET
-	@RequireAdmin
 	@APIDescription("Download the file attachment for an attribute code")
 	@Path("/attributetypes/{type}/attributecodes/{code}/attachment")
 	public Response downloadAttributeCodeAttachment(

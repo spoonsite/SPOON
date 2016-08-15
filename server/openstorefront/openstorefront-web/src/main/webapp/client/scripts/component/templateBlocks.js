@@ -211,7 +211,7 @@ Ext.define('OSF.component.template.Vitals', {
 		'	<tpl for="vitals">',	
 		'		<tr class="details-table">',
 		'			<td class="details-table"><b>{label}</b></td>',
-		'			<td class="details-table highlight-{highlightStyle}"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="#" class="details-table" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\');">{value}</a></td>',
+		'			<td class="details-table highlight-{highlightStyle}"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="#" class="details-table" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\', \'{codeHasAttachment}\');">{value}</a><tpl if="codeHasAttachment"> <a href="/openstorefront/api/v1/resource/attributes/attributetypes/{type}/attributecodes/{code}/attachment"><i class="fa fa-paperclip"></i> </a></tpl></td>',
 		'		</tr>',
 		'	</tpl>',
 		'</table>'		
@@ -240,6 +240,7 @@ Ext.define('OSF.component.template.Vitals', {
 					code: item.code,
 					updateDts: item.updateDts,
 					securityMarkingType: item.securityMarkingType,
+					codeHasAttachment: item.codeHasAttachment,
 					vitalType: 'ATTRIBUTE',
 					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription
 				});				

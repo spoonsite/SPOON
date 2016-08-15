@@ -447,9 +447,10 @@ var CoreUtil = {
 	 * @param {type} vitalType
 	 * @param {type} tip
 	 * @param {type} componentId
+	 * @param {type} codeHasAttachment
 	 * @returns {undefined}
 	 */
-	showRelatedVitalWindow: function(attributeType, attributeCode, description, vitalType, tip, componentId) {
+	showRelatedVitalWindow: function(attributeType, attributeCode, description, vitalType, tip, componentId, codeHasAttachment) {
 		
 		var relatedStore = Ext.create('Ext.data.Store', {
 			pageSize: 50,
@@ -477,6 +478,20 @@ var CoreUtil = {
 				}
 			}
 		});
+
+
+		var attachmentLinkHTML = '';
+		if (codeHasAttachment === 'true') {
+			attachmentLinkHTML += '<p style="text-align: center;">' +
+				'<i class="fa fa-paperclip"></i> ' +
+				'<a href="/openstorefront/api/v1/resource/attributes/attributetypes/{attributeType}' +
+				'/attributecodes/{attributeCode}/attachment">' +
+				'Download Attachment' +
+				'</a></p>';
+		}
+
+		console.log(codeHasAttachment);
+		console.log(attachmentLinkHTML);
 
 		var relatedWindow = Ext.create('Ext.window.Window', {
 			title: 'Related Entries',
@@ -520,7 +535,9 @@ var CoreUtil = {
 							bodyStyle: 'padding-left: 5px; padding-right: 5px;',
 							scrollable: true,
 							tpl: new Ext.XTemplate(
-								'<h2 style="text-align: center;">{description}</h2><hr>',
+								'<h2 style="text-align: center;">{description}</h2>',
+								attachmentLinkHTML,
+								'<hr>',
 								'{tip}'
 							)
 						}
@@ -529,12 +546,16 @@ var CoreUtil = {
 			]			
 		});		
 		
-		relatedWindow.show();
-		
+
+
 		relatedWindow.getComponent('grid').getComponent('description').update({
 			description: description,
+			attributeCode: attributeCode,
+			attributeType: attributeType,
 			tip: tip
 		});
+
+		relatedWindow.show();
 
 		var searchObj = {
 			"sortField": "name",

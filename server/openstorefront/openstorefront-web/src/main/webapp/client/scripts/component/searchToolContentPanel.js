@@ -587,7 +587,13 @@ Ext.define('OSF.component.SearchToolWindow', {
 		var categoryButtonHandler = function (newTab, item, item2) {
 
 			var desc = item2.description;
-			var descriptionText = '<h3>' + item2.label + '</h3>';
+			var descriptionText = '<h3>' + item2.label;
+			if (item2.attachmentFileName) {
+				descriptionText += ' <a href="/openstorefront/api/v1/resource/attributes/attributetypes/';
+				descriptionText += item.attributeType + '/attributecodes/';
+				descriptionText += item2.code + '/attachment' + '"><i class="fa fa-paperclip"></i></a>';
+			}
+			descriptionText += '</h3>';
 			if (desc)
 			{
 				descriptionText += '<hr>' + desc;
