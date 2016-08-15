@@ -512,7 +512,7 @@ public class UploadAction
 			
 			String output = "";
 			try (InputStream in = uploadFile.getInputStream()) {								
-				output = service.getImportService().previewMapData(fileFormat, dataMappingId, in);
+				output = service.getImportService().previewMapData(fileFormat, dataMappingId, in, uploadFile.getFileName());
 			} catch (IOException ex) {
 				output = "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.";			
 			} finally {

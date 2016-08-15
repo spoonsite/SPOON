@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSectionPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewConPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.StringTransforms;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.TypeTransforms;
@@ -111,6 +112,11 @@ public class DataMapService
 			lookupModel.setDescription(baseComponentClass.getSimpleName());
 			entities.add(lookupModel);			
 		}
+		
+		lookupModel = new LookupModel();
+		lookupModel.setCode(ComponentAll.class.getName());
+		lookupModel.setDescription(ComponentAll.class.getSimpleName());
+		entities.add(lookupModel);		
 		
 		//Add missing Pks
 		lookupModel = new LookupModel();

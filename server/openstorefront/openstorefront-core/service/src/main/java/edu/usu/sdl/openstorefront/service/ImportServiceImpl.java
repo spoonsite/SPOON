@@ -625,7 +625,7 @@ public class ImportServiceImpl
 	}
 
 	@Override
-	public String previewMapData(String fileFormatCode, String fileDataMapId, InputStream in)
+	public String previewMapData(String fileFormatCode, String fileDataMapId, InputStream in, String filename)
 	{
 		String output;
 		
@@ -639,6 +639,10 @@ public class ImportServiceImpl
 				
 				FileHistoryAll fileHistoryAll = new FileHistoryAll();
 				fileHistoryAll.setDataMapModel(getDataMap(fileDataMapId));
+				FileHistory history = new FileHistory();
+				history.populateBaseCreateFields();
+				history.setFilename(filename);
+				fileHistoryAll.setFileHistory(history);
 				
 				AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
 				output = abstractParser.previewProcessedData(fileHistoryAll, processIn);

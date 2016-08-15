@@ -50,6 +50,8 @@ public abstract class BaseComponentParser
 {
 	private static final Logger LOG = Logger.getLogger(BaseComponentParser.class.getName());
 
+	private static final int ENTRY_TYPE_SHORT_CODE = 6;
+	
 	protected static final int MAX_BUCKET_SIZE = 100;
 	protected List<ComponentAll> componentsAll = new ArrayList<>();
 
@@ -239,5 +241,83 @@ public abstract class BaseComponentParser
 		
 		return attributeCodeFound;
 	}
+	
+	/**
+	 * This will look up the attribute code by label and it will add code
+	 * 
+	 * @param attributeTypeCode (Existing)
+	 * @param attributeCodeLabel
+	 * @return 
+	 */
+	protected AttributeCode getAttributeCode(String attributeTypeCode, String attributeCodeLabel)
+	{
+		AttributeCode attributeCode = null;
+		if (StringUtils.isNotBlank(attributeCodeLabel)) {
+			attributeCodeLabel = attributeCodeLabel.trim();
+			
+			attributeCode = new AttributeCode();
+			attributeCode.setLabel(attributeCodeLabel);
+			
+			AttributeCodePk attributeCodePk = new AttributeCodePk();
+			attributeCodePk.setAttributeType(attributeTypeCode);
+			attributeCode.setAttributeCodePk(attributeCodePk);
+			
+			attributeCode = (AttributeCode) attributeCode.find();
+			if (attributeCode == null) {
+				attributeCode = new AttributeCode();
+				attributeCode.setLabel(StringUtils.left(attributeCodeLabel, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
+				
+				attributeCodePk = new AttributeCodePk();
+				attributeCodePk.setAttributeType(attributeTypeCode);
+				
+				CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+				String key = sanitizer.santize(StringUtils.left(attributeCodeLabel.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
+				attributeCodePk.setAttributeCode(key);
+				attributeCode.setAttributeCodePk(attributeCodePk);				
+				
+				attributeCode.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
+				attributeCode.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());								
+				
+				service.getAttributeService().saveAttributeCode(attributeCode, false);
+			}
+		}
+		return attributeCode;
+	}	
+	
+	public String getEntryType(String entryTypeLabel) 
+	{
+		String entryCode = null;
+		
+		if (StringUtils.isNotBlank(entryTypeLabel)) {
+			entryCode = entryTypeLabel.toUpperCase().substring(0, ENTRY_TYPE_SHORT_CODE);
+			
+			ComponentType componentType = new ComponentType();
+			componentType.setComponentType(entryCode);
+			componentType = componentType.find();
+			
+			if (componentType == null) {
+				componentType = new ComponentType();
+				componentType.setComponentType(entryCode);
+				componentType.setLabel(entryTypeLabel);
+				componentType.setDescription(entryTypeLabel);
+				componentType.setDataEntryAttributes(Boolean.TRUE);
+				componentType.setDataEntryContacts(Boolean.TRUE);
+				componentType.setDataEntryDependancies(Boolean.TRUE);
+				componentType.setDataEntryEvaluationInformation(Boolean.FALSE);
+				componentType.setDataEntryMedia(Boolean.TRUE);
+				componentType.setDataEntryMetadata(Boolean.TRUE);
+				componentType.setDataEntryQuestions(Boolean.TRUE);
+				componentType.setDataEntryRelationships(Boolean.TRUE);
+				componentType.setDataEntryResources(Boolean.TRUE);
+				componentType.setDataEntryReviews(Boolean.TRUE);
+				
+				service.getComponentService().saveComponentType(componentType);
+			} 
+		}
+		
+		return entryCode;
+	}
+	
+	
 	
 }

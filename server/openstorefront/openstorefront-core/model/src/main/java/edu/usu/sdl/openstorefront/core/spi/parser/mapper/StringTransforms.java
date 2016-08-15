@@ -119,6 +119,23 @@ public enum StringTransforms
 		}
 		
 	},
+	
+	TRANSLATEHTMLESCAPES("Translate HTML escaped characters"){
+		
+		@Override
+		public String transform(String input)
+		{
+			if (StringUtils.isNotBlank(input)) {
+				input = input.replace("&gt;", ">");
+				input = input.replace("&amp;#58;", "://");
+				input = input.replace("&amp;", "&");
+				return input;
+			} else {
+				return input;
+			}
+		}
+		
+	},	
 
 	SPLITLASTUNDERSCORE("Split Last Underscore"){
 		

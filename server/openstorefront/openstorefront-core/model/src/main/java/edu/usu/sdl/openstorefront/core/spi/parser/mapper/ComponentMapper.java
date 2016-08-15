@@ -129,7 +129,7 @@ public class ComponentMapper
 						}
 					} else if (ComponentResource.class.getName().equals(fieldMapper.getEntityClass().getName())) {
 						if (entity == null) {
-							entity = new ComponentResource();
+							entity = new ComponentResource();							
 							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
 							componentAll.getResources().add((ComponentResource) entity);
 						}						
@@ -139,27 +139,24 @@ public class ComponentMapper
 							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
 							componentAll.getMedia().add((ComponentMedia) entity);
 						}						
-					} else if (ComponentTag.class.getName().equals(fieldMapper.getEntityClass().getName())) {
-						if (entity == null) {
+					} else if (ComponentTag.class.getName().equals(fieldMapper.getEntityClass().getName())) {						
 							entity = new ComponentTag();
 							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
-							componentAll.getTags().add((ComponentTag) entity);
-						}						
-					} else if (ComponentMetadata.class.getName().equals(fieldMapper.getEntityClass().getName())) {
-						if (entity == null) {
+							componentAll.getTags().add((ComponentTag) entity);												
+					} else if (ComponentMetadata.class.getName().equals(fieldMapper.getEntityClass().getName())) {					
 							entity = new ComponentMetadata();
 							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
 							componentAll.getMetadata().add((ComponentMetadata) entity);
-						}						
+												
 					} else if (ComponentAttribute.class.getName().equals(fieldMapper.getEntityClass().getName()) 
 							|| ComponentAttributePk.class.getName().equals(fieldMapper.getEntityClass().getName())) {	
 							//create everytime
 						
-							entity = new ComponentAttribute();
-							ComponentAttributePk componentAttributePk = new ComponentAttributePk();	
-							((ComponentAttribute)entity).setComponentAttributePk(componentAttributePk);
+							ComponentAttribute componentAttribute = new ComponentAttribute();
+							entity = new ComponentAttributePk();	
+							componentAttribute.setComponentAttributePk((ComponentAttributePk) entity);
 								 
-							componentAll.getAttributes().add((ComponentAttribute) entity);					
+							componentAll.getAttributes().add(componentAttribute);					
 					} 
 					
 					if (entity != null) {
@@ -169,12 +166,18 @@ public class ComponentMapper
 								BeanUtils.setProperty(entity, fieldMapper.getPathToEnityField(), processedPath);
 								add = true;
 							}
-
 							Object processedValue = fieldMapper.applyTransforms(field.getValue());
-
+							
+							if (fieldMapper.getConcatenate()) {
+								String existing = BeanUtils.getProperty(entity, fieldMapper.getEntityField());
+								if (existing != null) {
+									processedValue = existing + " <br>" + processedValue;
+								}
+							}
+							
 							BeanUtils.setProperty(entity, fieldMapper.getEntityField(), processedValue);
 							add = true;
-						} catch (IllegalAccessException | InvocationTargetException ex) {
+						} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 							fileHistoryAll.addError(FileHistoryErrorType.MAPPING, pathToField);						
 						}
 					} else {
@@ -192,7 +195,7 @@ public class ComponentMapper
 		for (MapModel child : root.getArrayFields()) {
 			String newParent = root.getName() + ".";
 			if (StringUtils.isNotBlank(fieldPath)) {
-				newParent = fieldPath + root.getName();
+				newParent = fieldPath + root.getName() + ".";
 			}
 			doMapping(mappedComponents, child, dataMappers, newParent, componentAll);
 		}

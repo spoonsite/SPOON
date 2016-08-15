@@ -720,7 +720,15 @@
 															proxy: {
 																type: 'ajax',
 																url: '../api/v1/resource/attributes/attributetypes'
-															}
+															},
+															listeners: {
+																load: function (myStore, records, sucessful, opts) {
+																	myStore.add([{
+																		code: null,
+																		description: 'SELECT'
+																	}]);
+																}
+															}															
 														},
 														editable: false,
 														typeAhead: false												

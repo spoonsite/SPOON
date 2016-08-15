@@ -22,7 +22,8 @@ package edu.usu.sdl.spoon.importer;
 public class ResourceAttachment
 {
 	private String fileData;
-	private String resourceKey;
+	private String componentName;
+	private String resourceOriginalName;
 
 	public ResourceAttachment()
 	{
@@ -38,14 +39,24 @@ public class ResourceAttachment
 		this.fileData = fileData;
 	}
 
-	public String getResourceKey()
+	public String getResourceOriginalName()
 	{
-		return resourceKey;
+		return resourceOriginalName;
 	}
 
-	public void setResourceKey(String resourceKey)
+	public void setResourceOriginalName(String resourceOriginalName)
 	{
-		this.resourceKey = resourceKey;
+		this.resourceOriginalName = resourceOriginalName;
+	}
+
+	public String getComponentName()
+	{
+		return componentName;
+	}
+
+	public void setComponentName(String componentName)
+	{
+		this.componentName = componentName;
 	}
 	
 }

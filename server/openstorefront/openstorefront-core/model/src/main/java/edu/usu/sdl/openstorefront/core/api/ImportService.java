@@ -176,9 +176,10 @@ public interface ImportService
 	 * @param fileFormatCode
 	 * @param fileDataMapId
 	 * @param in
+	 * @param filename
 	 * @return preview output
 	 */
-	public String previewMapData(String fileFormatCode, String fileDataMapId, InputStream in);	
+	public String previewMapData(String fileFormatCode, String fileDataMapId, InputStream in, String filename);	
 
 	/**
 	 * Creates a copy of existing data map

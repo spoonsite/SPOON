@@ -15,8 +15,15 @@
  */
 package edu.usu.sdl.spoon.importer;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
+import edu.usu.sdl.openstorefront.core.entity.ResourceType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.ComponentMapper;
@@ -24,8 +31,10 @@ import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.XMLMapReader;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -36,7 +45,8 @@ public class ComponentSpoonParser
 	extends BaseComponentParser
 {
 	public static final String FORMAT_CODE = "SPOONCMP";
-
+	private static final String EQUIPMENT_TYPE = "EQUIPTYPE";
+	
 	private List<ResourceAttachment> attachments = new ArrayList<>();
 	private List<ComponentAll> componentAlls;
 	
@@ -87,8 +97,59 @@ public class ComponentSpoonParser
 		for (ComponentAll componentAll : componentAlls) {
 			realRecordNumber++;
 		
+			//add missing information
+			Component component = componentAll.getComponent();
+			if (StringProcessor.stringIsNotBlank(component.getName()) &&					
+				StringProcessor.stringIsNotBlank(component.getOrganization()) == false)	{
+				String nameSplit[] = component.getName().split(" ");
+				
+				component.setOrganization(nameSplit[0]);				
+			}		
+			
+			if (StringProcessor.stringIsNotBlank(component.getDescription()) == false)	{
+				component.setDescription(component.getName());				
+			}
+			
+			String fileNameSplit[] = fileHistoryAll.getFileHistory().getFilename().split("_");
+						
+			String entryTypeLabel = fileNameSplit[0] + " " + fileNameSplit[1];
+			component.setComponentType(getEntryType(entryTypeLabel));
+			
+			StringBuilder equipmentLabel = new StringBuilder();
+			for (int i = 2; i<fileNameSplit.length; i++) {
+				equipmentLabel.append(fileNameSplit[i]).append(" ");
+			}
+			String equipLabel = equipmentLabel.toString().replace(".xml", "");
+			
+			AttributeCode equipmentTypeCode = getAttributeCode(EQUIPMENT_TYPE, equipLabel.trim());
+			
+			if (equipmentTypeCode != null) {
+				ComponentAttribute componentAttribute = new ComponentAttribute();
+				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+				componentAttributePk.setAttributeCode(equipmentTypeCode.getAttributeCodePk().getAttributeCode());				
+				componentAttributePk.setAttributeType(equipmentTypeCode.getAttributeCodePk().getAttributeType());							
+				componentAttribute.setComponentAttributePk(componentAttributePk);
+				
+				componentAll.getAttributes().add(componentAttribute);
+			}
+						
 			ValidationResult validationResult = componentAll.validate();
 			if (validationResult.valid()) {
+				
+				for (ComponentResource componentResource : componentAll.getResources()) {
+					if (StringProcessor.stringIsNotBlank(componentResource.getFileName())) {
+						ResourceAttachment attachment = new ResourceAttachment();
+						attachment.setComponentName(component.getName());
+						attachment.setFileData(componentResource.getFileName());
+						attachment.setResourceOriginalName(componentResource.getOriginalName());
+						
+						componentResource.setFileName(null);
+						componentResource.setResourceType(getLookup(ResourceType.class, ResourceType.DOCUMENT));
+												
+						attachments.add(attachment);
+					}
+				}
+				
 								
 				addRecordToStorage(componentAll);
 			} else {
@@ -104,6 +165,23 @@ public class ComponentSpoonParser
 	{
 		for (ResourceAttachment attachment : attachments) {
 			
+			Component component = new Component();
+			component.setName(attachment.getComponentName());			
+			component = component.find();
+			
+			ComponentResource componentResource = new ComponentResource();
+			componentResource.setComponentId(component.getComponentId());
+			componentResource.setOriginalName(attachment.getResourceOriginalName());
+			
+			componentResource = (ComponentResource) componentResource.find();
+			componentResource.setMimeType(
+				OpenStorefrontConstant.getMimeForFileExtension(
+						StringProcessor.getFileExtension(attachment.getResourceOriginalName())
+				)					
+			);
+						
+			byte[] fileData = Base64.getMimeDecoder().decode(attachment.getFileData());			
+			service.getComponentService().saveResourceFile(componentResource, new ByteArrayInputStream(fileData));
 			
 		}		
 	}	
