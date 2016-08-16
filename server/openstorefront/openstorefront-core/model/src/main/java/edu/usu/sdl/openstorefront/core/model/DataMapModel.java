@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.model;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.entity.FileAttributeMap;
 import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 
 /**
  *
@@ -33,6 +34,19 @@ public class DataMapModel
 
 	public DataMapModel()
 	{
+	}
+	
+	public ValidationResult validate() 
+	{
+		ValidationResult result = new ValidationResult();
+		if (fileDataMap != null) {
+			result.merge(fileDataMap.validate(true));
+		}
+		
+		if (fileAttributeMap != null) {
+			result.merge(fileAttributeMap.validate(true));
+		}		
+		return result;
 	}
 	
 	public FileDataMap getFileDataMap()

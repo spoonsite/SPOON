@@ -1076,11 +1076,13 @@
 							tools.getComponent('edit').setDisabled(false);
 							tools.getComponent('copy').setDisabled(false);
 							tools.getComponent('preview').setDisabled(false);
+							tools.getComponent('export').setDisabled(false);
 							tools.getComponent('remove').setDisabled(false);
 						} else {
 							tools.getComponent('edit').setDisabled(true);
 							tools.getComponent('copy').setDisabled(true);
 							tools.getComponent('preview').setDisabled(true);
+							tools.getComponent('export').setDisabled(true);
 							tools.getComponent('remove').setDisabled(true);							
 						}
 					}
@@ -1367,6 +1369,107 @@
 							},
 							{
 								xtype: 'tbfill'
+							},
+							{
+								text: 'Import',
+								itemId: 'import',								
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-upload',
+								handler: function(){											
+									var record = mappingPanel.getSelectionModel().getSelection()[0];
+									
+									var importWin = Ext.create('Ext.window.Window', {
+										title: 'Import Mapping',
+										modal: true,
+										width: 450,
+										height: 160,
+										y: 100,
+										maximizble: true,
+										closeAction: 'destroy',
+										layout: 'fit',
+										items: [
+											{
+												xtype: 'form',
+												bodyStyle: 'padding: 10px;',
+												dockedItems: [
+													{
+														xtype: 'toolbar',
+														dock: 'bottom',
+														items: [
+															{
+																text: 'Upload',
+																iconCls: 'fa fa-upload',
+																formBind: true,
+																handler: function() {
+																	var uploadForm = this.up('form');
+																	var fileFieldCB = Ext.getCmp('fieldForm').getComponent('fileFieldCB');
+
+																	uploadForm.submit({
+																		url: '../Upload.action?ImportMapping',
+																		method: 'POST',
+																		success: function(action, opts) {
+																			Ext.toast('Imported Mapping File', 'Upload Success');
+																			importWin.close();
+																		},
+																		failure: function(response,opts){
+																			Ext.Msg.show({
+																				title: 'Upload Failed',
+																				msg: 'The file upload was not successful. Check that the file meets the format requirements.',
+																				buttons: Ext.Msg.OK
+																			});															
+																		}
+																	});
+																}																
+															},
+															{
+																xtype: 'tbfill'
+															},
+															{
+																text: 'Cancel',
+																iconCls: 'fa fa-close',
+																handler: function(){
+																	var uploadForm = this.up('form');
+																	uploadForm.reset();
+																	importWin.close();
+																}
+															}
+														]
+													}
+												],
+												layout: 'anchor',
+												items: [
+													{
+														xtype: 'filefield',
+														name: 'uploadFile',
+														fieldLabel: 'Import Mapping File<span class="field-required" /',
+														labelAlign: 'top',
+														labelSeparator: '',
+														allowBlank: false,
+														width: '100%',
+														margin: '0 10 0 0'
+													}
+												]
+											}											
+										]
+									});
+									importWin.show();
+								}								
+							},
+							{
+								text: 'Export',
+								itemId: 'export',
+								disabled: true,	
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-download',
+								handler: function(){		
+									var record = mappingPanel.getSelectionModel().getSelection()[0];	
+									
+									window.location.href = '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
+									+ '/mappings/' + record.get('code') + '/export';
+								}								
+							},
+							{
+								xtype: 'tbseparator'
 							},
 							{
 								text: 'Remove',

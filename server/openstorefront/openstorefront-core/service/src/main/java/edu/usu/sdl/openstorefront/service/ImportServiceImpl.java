@@ -529,7 +529,9 @@ public class ImportServiceImpl
 	public DataMapModel getDataMap(String fileDataMapId)
 	{
 		DataMapModel dataMapModel = null;
-		FileDataMap fileDataMap = persistenceService.findById(FileDataMap.class, fileDataMapId);
+		FileDataMap fileDataMap = new FileDataMap();
+		fileDataMap.setFileDataMapId(fileDataMapId);
+		fileDataMap = fileDataMap.find();				
 		if (fileDataMap != null) {
 			dataMapModel = new DataMapModel();
 			dataMapModel.setFileDataMap(fileDataMap);

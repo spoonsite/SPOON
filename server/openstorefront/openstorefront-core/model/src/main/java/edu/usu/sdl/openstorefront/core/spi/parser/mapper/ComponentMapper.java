@@ -58,8 +58,10 @@ public class ComponentMapper
 	public List<ComponentAll> multiMapData(MapModel input)
 	{
 		List<ComponentAll> mappedComponents = new ArrayList<>();		
-		doMapping(mappedComponents, input, dataMappers, "", null);		
-		
+		Map<String, ComponentAll> componentMap = new HashMap<>();
+		doMapping(componentMap, input, dataMappers, "", null);	
+		mappedComponents.addAll(componentMap.values());
+						
 		//apply attribute mappings
 		if (attributeDataMapper != null) {
 			for (ComponentAll componentAll : mappedComponents) {
@@ -88,7 +90,7 @@ public class ComponentMapper
 	}
 	
 	private void doMapping(
-			List<ComponentAll> mappedComponents, 
+			Map<String, ComponentAll> componentMap, 
 			MapModel root, 
 			Map<String, DataMapper> dataMappers, 
 			String fieldPath,
@@ -188,7 +190,7 @@ public class ComponentMapper
 			}
 
 			if (add) {
-				mappedComponents.add(componentAll);
+				componentMap.put(componentAll.toString(), componentAll);
 			}
 		}
 
@@ -197,7 +199,7 @@ public class ComponentMapper
 			if (StringUtils.isNotBlank(fieldPath)) {
 				newParent = fieldPath + root.getName() + ".";
 			}
-			doMapping(mappedComponents, child, dataMappers, newParent, componentAll);
+			doMapping(componentMap, child, dataMappers, newParent, componentAll);
 		}
 		
 	}

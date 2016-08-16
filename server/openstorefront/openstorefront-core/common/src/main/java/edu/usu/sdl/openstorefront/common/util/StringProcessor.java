@@ -508,5 +508,19 @@ public class StringProcessor
 	{
 		return StringUtils.isNotBlank(input);
 	}
+	
+	/**
+	 * Converts the input to make it easier to format for a URL
+	 * @param input
+	 * @return 
+	 */
+	public static String formatForFilename(String input)
+	{
+		if (StringUtils.isNotBlank(input)) {
+			input = input.replace(" ", "_");
+			input = cleanFileName(input);
+		}
+		return input;
+	}
 
 }

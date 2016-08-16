@@ -88,6 +88,7 @@ public class ComponentSpoonParser
 		
 		ComponentMapper componentMapper = new ComponentMapper(() -> {
 			ComponentAll componentAll = defaultComponentAll();
+			componentAll.getComponent().setDescription(null);			
 			return componentAll;
 		}, fileHistoryAll);
 		
@@ -110,7 +111,7 @@ public class ComponentSpoonParser
 				component.setDescription(component.getName());				
 			}
 			
-			String fileNameSplit[] = fileHistoryAll.getFileHistory().getFilename().split("_");
+			String fileNameSplit[] = fileHistoryAll.getFileHistory().getOriginalFilename().split("_");
 						
 			String entryTypeLabel = fileNameSplit[0] + " " + fileNameSplit[1];
 			component.setComponentType(getEntryType(entryTypeLabel));
@@ -132,6 +133,10 @@ public class ComponentSpoonParser
 				
 				componentAll.getAttributes().add(componentAttribute);
 			}
+			
+			for (ComponentResource componentResource : componentAll.getResources()) {
+				componentResource.setResourceType(getLookup(ResourceType.class, ResourceType.DOCUMENT));
+			}			
 						
 			ValidationResult validationResult = componentAll.validate();
 			if (validationResult.valid()) {
@@ -144,7 +149,6 @@ public class ComponentSpoonParser
 						attachment.setResourceOriginalName(componentResource.getOriginalName());
 						
 						componentResource.setFileName(null);
-						componentResource.setResourceType(getLookup(ResourceType.class, ResourceType.DOCUMENT));
 												
 						attachments.add(attachment);
 					}
@@ -172,7 +176,7 @@ public class ComponentSpoonParser
 			ComponentResource componentResource = new ComponentResource();
 			componentResource.setComponentId(component.getComponentId());
 			componentResource.setOriginalName(attachment.getResourceOriginalName());
-			
+						
 			componentResource = (ComponentResource) componentResource.find();
 			componentResource.setMimeType(
 				OpenStorefrontConstant.getMimeForFileExtension(

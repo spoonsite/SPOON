@@ -107,7 +107,9 @@ Ext.define('OSF.component.template.Resources', {
 		'	<tr><th class="details-table">Name</th><th class="details-table">Link</th></tr>',
 		'	<tpl for="resources">',	
 		'		<tr class="details-table">',
-		'			<td class="details-table"><b>{resourceTypeDesc}</b></td>',
+		'			<td class="details-table"><b>{resourceTypeDesc}</b>',
+		'                       <tpl if="description"><br>{description}</tpl>',
+		'                       </td>',
 		'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="{actualLink}" class="details-table" target="_blank">{link}</a></td>',
 		'		</tr>',
 		'	</tpl>',
@@ -123,11 +125,14 @@ Ext.define('OSF.component.template.Resources', {
 			this.setHidden(true);
 		} else {
 			Ext.Array.sort(entry.resources, function(a, b){
-				return a.resourceTypeDesc.localeCompare(b.resourceTypeDesc);	
+				return a.resourceTypeDesc.localeCompare(b.resourceTypeDesc);				
 			});	
 		
 			var updated = false;
-			Ext.Array.each(entry.resources, function(resource){
+			Ext.Array.each(entry.resources, function(resource){				
+				if (resource.originalFileName) {
+					resource.link = resource.originalFileName;
+				}
 				if (resource.updateDts > entry.lastViewedDts) {
 					updated = true;
 				}	

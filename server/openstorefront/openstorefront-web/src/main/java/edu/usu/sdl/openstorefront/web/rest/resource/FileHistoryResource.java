@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -349,6 +351,43 @@ public class FileHistoryResource
 			fileDataMapCreated = service.getImportService().copyDataMap(fileDateMapId);
 		}
 		return sendSingleEntityResponse(fileDataMapCreated);
+	}	
+	
+	@GET
+	@RequireAdmin
+	@APIDescription("Exports data mapping record")	
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(FileDataMap.class)
+	@Path("/formats/{format}/mappings/{fileDataMapId}/export")
+	public Response exportMapping(
+		@PathParam("format") String format,
+		@PathParam("fileDataMapId") String fileDateMapId
+	)
+	{		
+		FileDataMap fileDataMap = new FileDataMap();
+		fileDataMap.setFileFormat(format);
+		fileDataMap.setFileDataMapId(fileDateMapId);
+		
+		fileDataMap = fileDataMap.find();
+		if (fileDataMap != null) {			
+			
+			DataMapModel dataMapModel = service.getImportService().getDataMap(fileDateMapId);
+			String data;
+			try {
+				data = StringProcessor.defaultObjectMapper().writeValueAsString(dataMapModel);
+			} catch (JsonProcessingException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to export file map. Unable able to generate JSON.", ex);
+			}
+
+			Response.ResponseBuilder response = Response.ok(data);
+			response.header("Content-Type", MediaType.APPLICATION_JSON);
+			response.header("Content-Disposition", "attachment; filename=\"fileImportMap-" +
+					StringProcessor.formatForFilename(fileDataMap.getName()) 
+					+ ".json\"");
+			return response.build();
+			
+		}
+		return sendSingleEntityResponse(null);
 	}	
 	
 	@PUT
