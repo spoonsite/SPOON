@@ -289,7 +289,9 @@ public abstract class BaseComponentParser
 		String entryCode = null;
 		
 		if (StringUtils.isNotBlank(entryTypeLabel)) {
+			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 			entryCode = entryTypeLabel.toUpperCase().substring(0, ENTRY_TYPE_SHORT_CODE);
+			entryCode = sanitizer.santize(entryCode).toString();
 			
 			ComponentType componentType = new ComponentType();
 			componentType.setComponentType(entryCode);

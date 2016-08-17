@@ -1409,6 +1409,7 @@
 																		method: 'POST',
 																		success: function(action, opts) {
 																			Ext.toast('Imported Mapping File', 'Upload Success');
+																			actionRefreshMappings();
 																			importWin.close();
 																		},
 																		failure: function(response,opts){
