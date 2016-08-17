@@ -69,17 +69,25 @@ Ext.define('OSF.component.template.Description', {
 	updateHandler: function(entry){
 		entry.description = Ext.util.Format.escape(entry.description).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '');		
 				
-		//get all links (replace embedded Search links with a popup window of the results)
-		// Saved Search Links within the description will be modified to pull up a popup window of the search results
+		// Perform client-side processing of the description, consisting of two things:
+		// Add the onclick handler for saved search links.
+		// Set target=_blank for all links.
 		var dom = Ext.dom.Helper.createDom("<div><div>");	
 		dom.innerHTML = entry.description;		
 		var element = Ext.dom.Element.get(dom);
 		var links = element.query('a',false);
 		if (links && links.length > 0) {
+
+			// Set targets
+			Ext.Array.each(links, function(item){ 
+				if (item.getAttribute('href')) {
+					item.set({target: '_blank'});
+				}
+			});
+
+			// Set up onclick handlers for saved search links
 			Ext.Array.each(links, function(item){
-				//look for special links and transform
 				if (item.getAttribute('href') && item.getAttribute('href').indexOf('searchResults.jsp') !== -1) {
-					//special link
 					var searchId = item.getAttribute('href').substr(item.getAttribute('href').indexOf('savedSearchId='), item.getAttribute('href').length);
 					searchId = searchId.replace('savedSearchId=', '');
 					item.set({'onclick': "Ext.getCmp('ssPopupResultsWindow').showResults('" + searchId + "'); return false;"});
