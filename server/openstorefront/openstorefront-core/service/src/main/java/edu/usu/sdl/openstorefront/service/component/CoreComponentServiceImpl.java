@@ -559,8 +559,8 @@ public class CoreComponentServiceImpl
 				if (url.contains("Media.action?TemporaryMedia")) {
 					// This src url contains temporary media -- we should convert it.
 					String tempMediaId = url.substring(url.indexOf("&name=") + "&name=".length());
-					TemporaryMedia existingMedia = persistenceService.findById(TemporaryMedia.class, tempMediaId);
-					if (existingMedia != null) {
+					TemporaryMedia existingTemporaryMedia = persistenceService.findById(TemporaryMedia.class, tempMediaId);
+					if (existingTemporaryMedia != null) {
 						// Check map if we've already processed this temporary media, otherwise, do conversion
 						ComponentMedia componentMedia;
 						if (processedConversions.containsKey(tempMediaId)) {
@@ -571,14 +571,14 @@ public class CoreComponentServiceImpl
 							componentMedia.setComponentId(component.getComponent().getComponentId());
 							componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 							componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-							componentMedia.setOriginalName(existingMedia.getOriginalFileName());
-							componentMedia.setMimeType(existingMedia.getMimeType());
+							componentMedia.setOriginalName(existingTemporaryMedia.getOriginalFileName());
+							componentMedia.setMimeType(existingTemporaryMedia.getMimeType());
 							componentMedia.setUsedInline(true);
 							componentMedia.setHideInDisplay(false);
 
 							// Set Media Type Code based on the mimetype stored in temporary (as retrieved from server)
 							String mediaTypeCode;
-							String mimeType = existingMedia.getMimeType();
+							String mimeType = existingTemporaryMedia.getMimeType();
 							if (mimeType.contains("image")) {
 								mediaTypeCode = "IMG";
 							} else if (mimeType.contains("video")) {
@@ -592,9 +592,14 @@ public class CoreComponentServiceImpl
 							componentMedia.setMediaTypeCode(mediaTypeCode);
 
 							try {
-								Path path = existingMedia.pathToMedia();
+								Path path = existingTemporaryMedia.pathToMedia();
 								InputStream in = new FileInputStream(path.toFile());
-								componentMedia = sub.saveMediaFile(componentMedia, in, false);
+								componentMedia.setComponentMediaId(persistenceService.generateId());
+								componentMedia.populateBaseCreateFields();
+								componentMedia.setFileName(componentMedia.getComponentMediaId());
+								Files.copy(in, componentMedia.pathToMedia());
+								persistenceService.persist(componentMedia);
+								persistenceService.commit();
 								processedConversions.put(tempMediaId, componentMedia.getComponentMediaId());
 							} catch (Exception ex) {
 								throw new OpenStorefrontRuntimeException("Failed to convert temporary media to component media", ex);
@@ -1315,11 +1320,11 @@ public class CoreComponentServiceImpl
 				componentAdminView.getComponent().setNumberOfPendingChanges(pendingChangesList.size());
 				if (pendingChangesList.size() > 0) {
 					Component changeComponent = pendingChangesList.get(0);
-					componentAdminView.getComponent().setPendingChangeComponentId(changeComponent.getComponentId());	
+					componentAdminView.getComponent().setPendingChangeComponentId(changeComponent.getComponentId());
 					componentAdminView.getComponent().setPendingChangeSubmitDts(changeComponent.getSubmittedDts());
 					componentAdminView.getComponent().setPendingChangeSubmitUser(changeComponent.getCreateUser());
-					componentAdminView.getComponent().setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, changeComponent.getApprovalState()));				
-				}				
+					componentAdminView.getComponent().setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, changeComponent.getApprovalState()));
+				}
 			}
 		}
 

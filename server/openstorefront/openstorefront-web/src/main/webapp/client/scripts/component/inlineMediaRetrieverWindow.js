@@ -159,7 +159,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 		var replaceLinks = function replaceLinks(originalUrl, temporaryId) {
 			var replacement = "/openstorefront/Media.action?TemporaryMedia&name=" + temporaryId;
 			var content = editor.getContent();
-			content = content.replace(originalUrl, replacement);
+			content = content.replace(new RegExp(originalUrl,'g'), replacement);
 			Ext.getCmp('inlineMediaWindow').programmaticUpdate = true;
 			editor.setContent(content);
 			Ext.getCmp('inlineMediaWindow').programmaticUpdate = false;
