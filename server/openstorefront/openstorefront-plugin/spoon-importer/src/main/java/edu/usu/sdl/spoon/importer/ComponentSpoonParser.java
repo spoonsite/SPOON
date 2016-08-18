@@ -177,15 +177,26 @@ public class ComponentSpoonParser
 			componentResource.setComponentId(component.getComponentId());
 			componentResource.setOriginalName(attachment.getResourceOriginalName());
 						
-			componentResource = (ComponentResource) componentResource.find();
-			componentResource.setMimeType(
+			//There may be more than one; pick one and remove others.
+			List<ComponentResource> componentResources = componentResource.findByExample();
+			ComponentResource pickedResource = null;
+			for (ComponentResource componentResourceFound : componentResources) {
+				if (pickedResource == null) {
+					pickedResource = componentResourceFound;
+					pickedResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);					
+				} else {
+					service.getComponentService().deleteBaseComponent(ComponentResource.class, componentResourceFound.getResourceId());					
+				}
+			}			
+			pickedResource.setOriginalName(attachment.getResourceOriginalName());			
+			pickedResource.setMimeType(
 				OpenStorefrontConstant.getMimeForFileExtension(
 						StringProcessor.getFileExtension(attachment.getResourceOriginalName())
 				)					
 			);
 						
 			byte[] fileData = Base64.getMimeDecoder().decode(attachment.getFileData());			
-			service.getComponentService().saveResourceFile(componentResource, new ByteArrayInputStream(fileData));
+			service.getComponentService().saveResourceFile(pickedResource, new ByteArrayInputStream(fileData));
 			
 		}		
 	}	

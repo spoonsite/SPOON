@@ -643,7 +643,7 @@ public class ImportServiceImpl
 				fileHistoryAll.setDataMapModel(getDataMap(fileDataMapId));
 				FileHistory history = new FileHistory();
 				history.populateBaseCreateFields();
-				history.setFilename(filename);
+				history.setOriginalFilename(filename);
 				fileHistoryAll.setFileHistory(history);
 				
 				AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();

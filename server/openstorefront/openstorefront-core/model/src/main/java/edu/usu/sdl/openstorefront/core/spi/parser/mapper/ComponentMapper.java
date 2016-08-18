@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
@@ -73,14 +74,19 @@ public class ComponentMapper
 						if (StringUtils.isNotBlank(ourAttributeCode)) {
 							componentAttribute.getComponentAttributePk().setAttributeCode(ourAttributeCode);
 						} else if (attributeTypeMapper.getAddMissingCode()) {
-							createAttributeCode(componentAttribute.getComponentAttributePk().getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());
+							AttributeCode attributeCode = createAttributeCode(componentAttribute.getComponentAttributePk().getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());
+							componentAttribute.getComponentAttributePk().setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+							componentAttribute.getComponentAttributePk().setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());														
 						} else if (StringUtils.isNotBlank(attributeTypeMapper.getDefaultMappedCode())) {
 							componentAttribute.getComponentAttributePk().setAttributeCode(attributeTypeMapper.getDefaultMappedCode());							
 						}
 						
 					} else if (attributeDataMapper.getAddMissingAttributeTypeFlg()) {						
 						createAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
-						createAttributeCode(componentAttribute.getComponentAttributePk().getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());						
+						AttributeCode attributeCode = createAttributeCode(componentAttribute.getComponentAttributePk().getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());						
+						
+						componentAttribute.getComponentAttributePk().setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+						componentAttribute.getComponentAttributePk().setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());						
 					}
 				}
 			}
@@ -111,18 +117,18 @@ public class ComponentMapper
 			boolean add = false;
 			Map<String, Object> entityMap = new HashMap<>();
 			for (MapField field : root.getMapFields()) {
-				String pathToField = fieldPath + root.getName() + "." + field.getName();
+				String pathToField = fieldPath + root.getName() + "." + field.getName();				
 				DataMapper fieldMapper = dataMappers.get(pathToField);
 				if (fieldMapper != null) {
-					
+
 					Object entity = entityMap.get(fieldMapper.getEntityClass().getName());					
-					
+
 					if (Component.class.getName().equals(fieldMapper.getEntityClass().getName())) {
 						if (entity == null) {
 							entity = componentAll.getComponent();
 							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
 						}
-						
+
 					} else if (ComponentContact.class.getName().equals(fieldMapper.getEntityClass().getName())) {
 						if (entity == null) {
 							entity = new ComponentContact();
@@ -149,18 +155,18 @@ public class ComponentMapper
 							entity = new ComponentMetadata();
 							entityMap.put(fieldMapper.getEntityClass().getName(), entity);							 
 							componentAll.getMetadata().add((ComponentMetadata) entity);
-												
+
 					} else if (ComponentAttribute.class.getName().equals(fieldMapper.getEntityClass().getName()) 
 							|| ComponentAttributePk.class.getName().equals(fieldMapper.getEntityClass().getName())) {	
 							//create everytime
-						
+
 							ComponentAttribute componentAttribute = new ComponentAttribute();
 							entity = new ComponentAttributePk();	
 							componentAttribute.setComponentAttributePk((ComponentAttributePk) entity);
-								 
+
 							componentAll.getAttributes().add(componentAttribute);					
 					} 
-					
+
 					if (entity != null) {
 						try {
 							if (StringUtils.isNotBlank(fieldMapper.getPathToEnityField())) {
@@ -169,14 +175,14 @@ public class ComponentMapper
 								add = true;
 							}
 							Object processedValue = fieldMapper.applyTransforms(field.getValue());
-							
+
 							if (fieldMapper.getConcatenate()) {
 								String existing = BeanUtils.getProperty(entity, fieldMapper.getEntityField());
 								if (existing != null) {
 									processedValue = existing + " <br>" + processedValue;
 								}
 							}
-							
+
 							BeanUtils.setProperty(entity, fieldMapper.getEntityField(), processedValue);
 							add = true;
 						} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
@@ -185,7 +191,7 @@ public class ComponentMapper
 					} else {
 						fileHistoryAll.addError(FileHistoryErrorType.MAPPING, "Entity: " + fieldMapper.getEntityClass().getName() + " is not supported.");	
 					}
-						
+
 				}	
 			}
 
@@ -193,6 +199,7 @@ public class ComponentMapper
 				componentMap.put(componentAll.toString(), componentAll);
 			}
 		}
+		
 
 		for (MapModel child : root.getArrayFields()) {
 			String newParent = root.getName() + ".";

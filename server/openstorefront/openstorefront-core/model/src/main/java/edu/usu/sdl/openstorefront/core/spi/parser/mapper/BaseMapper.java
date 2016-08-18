@@ -35,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  *
  * @author dshurtleff
+ * @param <T>
  */
 public abstract class BaseMapper<T>
 {
@@ -83,7 +84,7 @@ public abstract class BaseMapper<T>
 	
 	//public abstract T singleMapData(MapModel input);
 	
-	protected void createAttributeType(String attributeTypeCode)
+	protected AttributeType createAttributeType(String attributeTypeCode)
 	{
 		AttributeType attributeType = new AttributeType();
 
@@ -98,10 +99,11 @@ public abstract class BaseMapper<T>
 		attributeType.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
 		attributeType.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());		
 		
-		serviceProxy.getAttributeService().saveAttributeType(attributeType);		
+		serviceProxy.getAttributeService().saveAttributeType(attributeType);	
+		return attributeType;
 	}
 			
-	protected void createAttributeCode(String attributeTypeCode, String attributeCode)
+	protected AttributeCode createAttributeCode(String attributeTypeCode, String attributeCode)
 	{
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeType(attributeTypeCode);
@@ -118,6 +120,7 @@ public abstract class BaseMapper<T>
 		attributeCodeFound.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());			
 
 		serviceProxy.getAttributeService().saveAttributeCode(attributeCodeFound, false);
+		return attributeCodeFound;
 	}			
 	
 }
