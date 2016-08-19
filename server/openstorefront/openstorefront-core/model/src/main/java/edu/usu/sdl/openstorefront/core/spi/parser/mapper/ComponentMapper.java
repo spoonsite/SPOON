@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
@@ -82,8 +83,8 @@ public class ComponentMapper
 						}
 						
 					} else if (attributeDataMapper.getAddMissingAttributeTypeFlg()) {						
-						createAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
-						AttributeCode attributeCode = createAttributeCode(componentAttribute.getComponentAttributePk().getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());						
+						AttributeType attributeType = createAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
+						AttributeCode attributeCode = createAttributeCode(attributeType.getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());						
 						
 						componentAttribute.getComponentAttributePk().setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
 						componentAttribute.getComponentAttributePk().setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());						

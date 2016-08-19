@@ -88,7 +88,10 @@ public abstract class BaseMapper<T>
 	{
 		AttributeType attributeType = new AttributeType();
 
-		attributeType.setAttributeType(StringUtils.left(attributeTypeCode, OpenStorefrontConstant.FIELD_SIZE_CODE));
+		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+		String key = sanitizer.santize(attributeTypeCode.toUpperCase()).toString();
+		
+		attributeType.setAttributeType(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_CODE));
 		attributeType.setDescription(StringUtils.left(attributeTypeCode, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
 		attributeType.setVisibleFlg(Boolean.FALSE);
 		attributeType.setRequiredFlg(Boolean.FALSE);

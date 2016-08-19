@@ -97,7 +97,7 @@ public class StringProcessor
 	}
 	
 	/**
-	 * Looks for http link in a block of text
+	 * Looks for http or ftp links in a block of text
 	 *
 	 * @param text
 	 * @return found urls
@@ -109,7 +109,9 @@ public class StringProcessor
 		String tokens[] = text.split(" ");
 		for (String token : tokens) {
 			if (token.trim().toLowerCase().startsWith("http://")
-					|| token.trim().toLowerCase().startsWith("https://")) {
+					|| token.trim().toLowerCase().startsWith("https://")
+					|| token.trim().toLowerCase().startsWith("ftps://")
+					|| token.trim().toLowerCase().startsWith("ftp://")) {
 				urls.add(token.trim());
 			}
 		}

@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.common.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Global Constants used in the Application
@@ -132,17 +133,19 @@ public class OpenStorefrontConstant
 	public static String getMimeForFileExtension(String fileExtension)
 	{
 		String mime = "application/octet-stream";
-		String extensionToCheck = fileExtension;
-		if (extensionToCheck.startsWith(".") == false) {
-			extensionToCheck = "." + fileExtension;
-		}
-		if (mimeXref.containsValue(extensionToCheck.toLowerCase())) {
-			//get first match
-			for (String extCheckKey : mimeXref.keySet()) {
-				String value = mimeXref.get(extCheckKey);
-				if (value.equalsIgnoreCase(fileExtension)) {
-					mime = value;
-					break;
+		if (StringUtils.isNotBlank(fileExtension)) {
+			String extensionToCheck = fileExtension;
+			if (extensionToCheck.startsWith(".") == false) {
+				extensionToCheck = "." + fileExtension;
+			}
+			if (mimeXref.containsValue(extensionToCheck.toLowerCase())) {
+				//get first match
+				for (String extCheckKey : mimeXref.keySet()) {
+					String value = mimeXref.get(extCheckKey);
+					if (value.equalsIgnoreCase(fileExtension)) {
+						mime = value;
+						break;
+					}
 				}
 			}
 		}
