@@ -26,6 +26,7 @@ tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 
 	var task = new Ext.util.DelayedTask(function() {
 		var images = parseEditorContents(editor);
+		Ext.getStore('inlineMediaStore').removeAll();
 
 		if (images.length) {
 			for (var i=0;i<images.length;i++) {	

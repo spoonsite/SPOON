@@ -42,7 +42,7 @@ public class UserProfileTest
 		if (userProfileFound == null || TEST_USER.equals(userProfile.getUsername()) == false) {
 			failureReason.append("Unable to find user just saved");
 		} else {
-			results.append("User profile: ").append(userProfile.getFirstName()).append(userProfile.getLastName()).append("<br>");;
+			results.append("User profile: ").append(userProfile.getFirstName()).append(" " + userProfile.getLastName()).append("<br>");
 		}
 	}
 

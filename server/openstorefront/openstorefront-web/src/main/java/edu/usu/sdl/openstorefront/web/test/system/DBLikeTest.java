@@ -37,7 +37,7 @@ public class DBLikeTest
 	@Override
 	protected void runInternalTest()
 	{
-		Arrays.asList("A", "B", "Apple", "andy", "Test", "BaseTest", "Orange").forEach(item -> {
+		Arrays.asList("A", "B", "Apple", "andy", "arrAnge", "Test", "Arch", "BaseTest", "Orange").forEach(item -> {
 			TestEntity testEntity = new TestEntity();
 			testEntity.setCode(item);
 			testEntity.setDescription(item + " - Description");
@@ -59,7 +59,7 @@ public class DBLikeTest
 		testEntities.forEach(entity -> {
 			results.append(entity.getCode()).append("<br>");
 		});
-		if (testEntities.size() > 2 || testEntities.size() < 2) {
+		if (testEntities.size() > 3 || testEntities.size() < 3) {
 			failureReason.append("Failed to find expected results");
 		}
 
