@@ -34,7 +34,7 @@ public class DBSpecialWhereTest
 
 	public DBSpecialWhereTest()
 	{
-		this.description = "Sepcial Where Test";
+		this.description = "Special Where Test";
 	}
 
 	@Override

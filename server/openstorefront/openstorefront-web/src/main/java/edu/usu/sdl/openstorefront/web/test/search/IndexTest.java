@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
-import edu.usu.sdl.openstorefront.web.test.component.ComponentTest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,27 +40,23 @@ public class IndexTest
 	@Override
 	protected void runInternalTest()
 	{
-		ComponentAll componentAll = ComponentTest.createTestComponent();
-		try {
-			results.append("Adding Component Index...<br>");
-			List<Component> componentsToIndex = new ArrayList<>();
-			componentsToIndex.add(componentAll.getComponent());
-			service.getSearchService().indexComponents(componentsToIndex);
+		ComponentAll componentAll = getTestComponent();
+	
+		results.append("Adding Component Index...<br>");
+		List<Component> componentsToIndex = new ArrayList<>();
+		componentsToIndex.add(componentAll.getComponent());
+		service.getSearchService().indexComponents(componentsToIndex);
 
-			results.append("Searching Component Index...<br>");
-			SearchQuery query = new SearchQuery();
-			query.setQuery(componentAll.getComponent().getName());
-			ComponentSearchWrapper searchViews = service.getSearchService().getSearchItems(query, FilterQueryParams.defaultFilter());
-			results.append("Results...").append("<br><br>");
-			searchViews.getData().forEach(view -> {
-				results.append(view.getName()).append("   Type:").append(view.getListingType()).append("<br>");
-			});
-			if (searchViews.getData().size() < 1) {
-				failureReason.append("Unable able to find added component<br>");
-			}
-
-		} finally {
-			ComponentTest.deleteComponent(componentAll.getComponent().getComponentId());
+		results.append("Searching Component Index...<br>");
+		SearchQuery query = new SearchQuery();
+		query.setQuery(componentAll.getComponent().getName());
+		ComponentSearchWrapper searchViews = service.getSearchService().getSearchItems(query, FilterQueryParams.defaultFilter());
+		results.append("Results...").append("<br><br>");
+		searchViews.getData().forEach(view -> {
+			results.append(view.getName()).append("   Type:").append(view.getListingType()).append("<br>");
+		});
+		if (searchViews.getData().size() < 1) {
+			failureReason.append("Unable able to find added component<br>");
 		}
 
 	}

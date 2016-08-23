@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.web.test.user;
 
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
-import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 
 /**
@@ -35,29 +34,16 @@ public class UserProfileTest
 	@Override
 	protected void runInternalTest()
 	{
-		results.append("Saving profile").append("<br>");
-		UserProfile userProfile = new UserProfile();
-		userProfile.setUsername(TEST_USER);
-		userProfile.setUserTypeCode(UserTypeCode.END_USER);
-		userProfile.setFirstName("Test");
-		userProfile.setLastName("Last");
-		userProfile.setEmail("Email@test.com");
-		userProfile.setOrganization("Test");
-		userProfile.setExternalGuid("5555-5555");
-		userProfile.setCreateUser(TEST_USER);
-		userProfile.setUpdateUser(TEST_USER);
-		service.getUserService().saveUserProfile(userProfile, false);
+		results.append("Getting profile").append("<br>");
+		UserProfile userProfile = getTestUserProfile();
 
-		results.append("Get profile").append("<br>");
+		results.append("Re-lookup profile").append("<br>");
 		UserProfile userProfileFound = service.getUserService().getUserProfile(TEST_USER);
-		if (userProfileFound == null || "Test".equals(userProfile.getFirstName()) == false) {
+		if (userProfileFound == null || TEST_USER.equals(userProfile.getUsername()) == false) {
 			failureReason.append("Unable to find user just saved");
 		} else {
 			results.append("User profile: ").append(userProfile.getFirstName()).append(userProfile.getLastName()).append("<br>");;
 		}
-
-		results.append("Removing profile").append("<br>");
-		service.getUserService().deleteProfile(TEST_USER);
 	}
 
 }

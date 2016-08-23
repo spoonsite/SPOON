@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
-import edu.usu.sdl.openstorefront.web.test.component.ComponentTest;
 
 /**
  *
@@ -38,7 +37,7 @@ public class UserWatchTest
 	protected void runInternalTest()
 	{
 		results.append("Create component").append("<br>");
-		ComponentAll componentAll = ComponentTest.createTestComponent();
+		ComponentAll componentAll = getTestComponent();
 
 		results.append("Create watch").append("<br>");
 		UserWatch userWatch = new UserWatch();
@@ -59,8 +58,6 @@ public class UserWatchTest
 		results.append("Remove watch").append("<br>");
 		service.getUserService().deleteWatch(userWatch.getUserWatchId());
 
-		results.append("Remove component").append("<br>");
-		ComponentTest.deleteComponent(componentAll.getComponent().getComponentId());
 	}
 
 }

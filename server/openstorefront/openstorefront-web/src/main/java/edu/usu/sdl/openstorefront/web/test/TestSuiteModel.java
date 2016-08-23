@@ -35,7 +35,7 @@ public class TestSuiteModel
 				throw new OpenStorefrontRuntimeException(ex);
 			}
 		}
-		tests.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, "description"));
+		tests.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, "description"));
 	}
 
 	public String statString()

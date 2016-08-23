@@ -44,7 +44,7 @@ public class PropertiesManager
 	implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(PropertiesManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(PropertiesManager.class.getName());
 
 	public static final String PW_PROPERTY = ".pw";
 
@@ -69,6 +69,7 @@ public class PropertiesManager
 	public static final String KEY_FILE_HISTORY_KEEP_DAYS = "filehistory.max.days";
 	public static final String KEY_NOTIFICATION_MAX_DAYS = "notification.max.days";
 	public static final String TEMPORARY_MEDIA_KEEP_DAYS = "temporary.media.keep.days";
+	public static final String KEY_TEST_EMAIL = "test.email";
 
 	public static final String KEY_OPENAM_URL = "openam.url";
 	public static final String KEY_LOGOUT_URL = "logout.url";
@@ -165,7 +166,7 @@ public class PropertiesManager
 	{
 		Object valueRemoved = getProperties().remove(key);
 		if (valueRemoved != null) {
-			log.log(Level.INFO, MessageFormat.format("Property removed: {0}", key));
+			LOG.log(Level.INFO, MessageFormat.format("Property removed: {0}", key));
 		}
 		saveProperties();
 	}
@@ -227,7 +228,7 @@ public class PropertiesManager
 			defaults.put(TEMPORARY_MEDIA_KEEP_DAYS, "2");
 
 			if (Paths.get(PROPERTIES_FILENAME).toFile().createNewFile()) {
-				log.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
+				LOG.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
 			}
 			try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(PROPERTIES_FILENAME))) {
 				properties = new SortedProperties();
@@ -277,7 +278,7 @@ public class PropertiesManager
 			InetAddress inetAddress = InetAddress.getLocalHost();
 			nodeName = nodeName + "-" + inetAddress.toString();
 		} catch (UnknownHostException ex) {
-			log.log(Level.WARNING, "Unable to get information on localhost.  Node name may not be unique. This may not be an issue if there is only one node.");
+			LOG.log(Level.WARNING, "Unable to get information on localhost.  Node name may not be unique. This may not be an issue if there is only one node.");
 		}
 		return nodeName;
 	}
