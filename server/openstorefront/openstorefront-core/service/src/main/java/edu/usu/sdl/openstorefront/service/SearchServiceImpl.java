@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -52,6 +53,7 @@ import edu.usu.sdl.openstorefront.service.manager.SolrManager.SolrAndOr;
 import edu.usu.sdl.openstorefront.service.manager.SolrManager.SolrEquals;
 import edu.usu.sdl.openstorefront.service.search.ArchitectureSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.AttributeSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.AttributeSetSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.BaseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ComponentSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ContactSearchHandler;
@@ -85,8 +87,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 /**
@@ -400,6 +402,9 @@ public class SearchServiceImpl
 				case ATTRIBUTE:
 					handlers.add(new AttributeSearchHandler(searchElements));
 					break;
+				case ATTRIBUTESET:
+					handlers.add(new AttributeSetSearchHandler(searchElements));
+					break;					
 				case COMPONENT:
 					handlers.add(new ComponentSearchHandler(searchElements));
 					break;
@@ -625,8 +630,27 @@ public class SearchServiceImpl
 			SolrDocumentList results = response.getResults();
 			totalFound = results.getNumFound();				
 						
-			DocumentObjectBinder binder = new DocumentObjectBinder();
-			resultsList = binder.getBeans(SolrComponentModel.class, results);		
+			//DocumentObjectBinder binder = new DocumentObjectBinder();
+			for (SolrDocument document : results) {
+				SolrComponentModel solrComponentModel = new SolrComponentModel();
+				solrComponentModel.setComponentId((String) document.get(SolrComponentModel.ID_FIELD));
+				solrComponentModel.setId((String) document.get(SolrComponentModel.ID_FIELD));
+				solrComponentModel.setIsComponent(Convert.toBoolean(document.get(SolrComponentModel.ISCOMPONENT_FIELD)));
+				
+				if (document.get(SolrComponentModel.FIELD_NAME) instanceof ArrayList) {
+					List<String> names = (ArrayList<String>) document.get(SolrComponentModel.FIELD_NAME);		
+					solrComponentModel.setName((names!=null ? names.get(0) : null ));
+				} else if (document.get(SolrComponentModel.FIELD_NAME) instanceof String) {
+					solrComponentModel.setName((String) document.get(SolrComponentModel.FIELD_NAME));
+				}
+				
+				solrComponentModel.setOrganization((String) document.get(SolrComponentModel.FIELD_ORGANIZATION));
+				solrComponentModel.setDescription((String) document.get(SolrComponentModel.FIELD_DESCRIPTION));
+				solrComponentModel.setQueryScore((float) document.get("score"));
+				resultsList.add(solrComponentModel);
+			}
+			
+			//resultsList = binder.getBeans(SolrComponentModel.class, results);		
 			
 		} catch (SolrServerException ex) {
 			throw new OpenStorefrontRuntimeException("Search Failed", "Contact System Admin.  Seach server maybe Unavailable", ex);
@@ -645,6 +669,9 @@ public class SearchServiceImpl
 		List<SearchSuggestion> suggestions = new ArrayList<>();
 		
 		FilterQueryParams filter = FilterQueryParams.defaultFilter();
+		
+		//Always do wildcards
+		query = "*" + query + "*";
 		
 		//query everything we can
 		String extraFields[] = {

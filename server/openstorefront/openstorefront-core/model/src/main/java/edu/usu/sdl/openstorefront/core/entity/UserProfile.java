@@ -33,7 +33,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Holds user information and preferences")
 public class UserProfile
-		extends StandardEntity
+		extends StandardEntity<UserProfile>
 		implements OrganizationModel
 {
 

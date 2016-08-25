@@ -593,18 +593,40 @@ limitations under the License.
 						}
 						
 						if (filter.attributes && filter.attributes.length > 0) {
-							var containsAttribute = false;	
-							Ext.Array.each(filter.attributes, function (attribute) {														
-								Ext.Array.each(result.attributes, function (resultsAttribute) {
-									if (resultsAttribute.type === attribute.type &&
-										resultsAttribute.code === attribute.code) {
-										containsAttribute = true;
-									}
-								});								
+							var requiredTypes = {};	
+						
+							Ext.Array.each(filter.attributes, function (attribute) {	
+								
+								if (!requiredTypes[attribute.type]) {									
+									requiredTypes[attribute.type] = [];									
+								}
+								requiredTypes[attribute.type].push(attribute);
 							});	
-							if (!containsAttribute) {
-									keep = false;
-							}
+							
+							//check required
+							var foundRequiredCount = 0;
+							var requiredCount = 0;
+							Ext.Object.each(requiredTypes, function(key, value, myself) {
+								
+								var hasCode = false;
+								Ext.Array.each(value, function (attribute) {
+									Ext.Array.each(result.attributes, function (resultsAttribute) {
+
+										if (resultsAttribute.type === attribute.type &&
+											resultsAttribute.code === attribute.code) {
+											hasCode = true;
+										}									
+									});
+								});								
+								if (hasCode) {
+									foundRequiredCount++;
+								}
+								requiredCount++;
+							});
+														
+							if (foundRequiredCount !== requiredCount) {
+								keep = false;
+							}							
 						}
 						
 						if (keep) {
@@ -622,6 +644,10 @@ limitations under the License.
 				} else { 
 					//server side										
 					var searchRequest = Ext.clone(originalSearchRequest);
+					
+					//the last element should be an AND
+					searchRequest.query.searchElements[searchRequest.query.searchElements.length-1].mergeCondition = 'AND';
+					
 					var sort;
 					if (filter.sortBy) {
 						sort = {
@@ -681,16 +707,32 @@ limitations under the License.
 					}
 					
 					if (filter.attributes && filter.attributes.length > 0) {
+						
+						var requiredTypes = {};							
 						Ext.Array.each(filter.attributes, function (attribute) {
+							if (!requiredTypes[attribute.type]) {									
+								requiredTypes[attribute.type] = [];									
+							}
+							requiredTypes[attribute.type].push(attribute);
+						});							
+						
+						Ext.Object.each(requiredTypes, function(key, value, myself) {
+
+							var codes = [];
+							Ext.Array.each(value, function (attribute) {
+								codes.push(attribute.code);								
+							});								
+							
 							searchRequest.query.searchElements.push({
-								searchType: 'ATTRIBUTE',							
-								keyField: attribute.type,
-								keyValue: attribute.code,
+								searchType: 'ATTRIBUTESET',							
+								keyField: key,
+								keyValue: codes.join(','),
 								caseInsensitive: false,
 								numberOperation: 'EQUALS',
-								mergeCondition: 'OR'
+								mergeCondition: 'AND'
 							});	
-						});
+						});						
+					
 					}
 					
 					doSearch(searchRequest, sort);
