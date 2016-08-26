@@ -1130,6 +1130,11 @@ limitations under the License.
 					reviewPanelSummary.update(summaryData);
 					reviewPanelReviews.setHidden(false);
 					reviewPanelReviews.update(entryLocal.reviews);					
+				} else {					
+					reviewPanelSummary.update(summaryData);					
+					reviewPanelReviews.update(entryLocal.reviews);	
+					reviewPanelSummary.setHidden(true);
+					reviewPanelReviews.setHidden(true);
 				}
 				
 				
