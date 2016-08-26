@@ -209,6 +209,10 @@ public class BrandingServiceImpl
 			
 			element = new Element(CURRENT_BRANDING, branding);
 			OSFCacheManager.getApplicationCache().put(element);
+		} else {
+			if (branding.getAllowSecurityMarkingsFlg() == null) {
+				branding.setAllowSecurityMarkingsFlg(Boolean.FALSE);
+			}
 		}
 
 		return branding;
