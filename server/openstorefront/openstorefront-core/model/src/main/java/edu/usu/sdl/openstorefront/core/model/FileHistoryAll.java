@@ -28,6 +28,7 @@ public class FileHistoryAll
 {
 
 	private FileHistory fileHistory;
+	private DataMapModel dataMapModel;
 	private List<FileHistoryError> errors = new ArrayList<>();
 
 	public FileHistoryAll()
@@ -66,6 +67,16 @@ public class FileHistoryAll
 	public void setErrors(List<FileHistoryError> errors)
 	{
 		this.errors = errors;
+	}
+
+	public DataMapModel getDataMapModel()
+	{
+		return dataMapModel;
+	}
+
+	public void setDataMapModel(DataMapModel dataMapModel)
+	{
+		this.dataMapModel = dataMapModel;
 	}
 
 }

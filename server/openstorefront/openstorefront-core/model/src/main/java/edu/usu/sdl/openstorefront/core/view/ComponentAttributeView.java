@@ -49,6 +49,8 @@ public class ComponentAttributeView
 	private boolean architectureFlg;
 	private boolean importantFlg;
 	private boolean hideOnSubmission;
+	private boolean codeHasAttachment;
+
 	private String defaultAttributeCode;
 	private Date updateDts;
 	private Integer sortOrder;
@@ -80,7 +82,7 @@ public class ComponentAttributeView
 			view.setOrphan(true);
 			type = service.getPersistenceService().findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
 		}
-		
+
 		if (code != null && type != null) {
 			view.setRequiredRestrictions(type.getRequiredRestrictions());
 			view.setExternalLink(code.getDetailUrl());
@@ -104,13 +106,20 @@ public class ComponentAttributeView
 			view.setHighlightStyle(code.getHighlightStyle());
 			view.setActiveStatus(attribute.getActiveStatus());
 			view.toStandardView(code, type);
+
+			if (code.getAttachmentFileName() != null && !code.getAttachmentFileName().isEmpty()) {
+				view.setCodeHasAttachment(true);
+			} else {
+				view.setCodeHasAttachment(false);
+			}
+
 		} else {
-			//For snapshots which are frozen in time; attributes may not exist any more			
+			//For snapshots which are frozen in time; attributes may not exist any more
 			//create stub
 			view.setCodeDescription("Missing Code: " + attribute.getComponentAttributePk().getAttributeCode());
 			view.setTypeDescription("Missing Type: " + attribute.getComponentAttributePk().getAttributeType());
 			view.setType(attribute.getComponentAttributePk().getAttributeType());
-			view.setCode(attribute.getComponentAttributePk().getAttributeCode());			
+			view.setCode(attribute.getComponentAttributePk().getAttributeCode());
 		}
 
 		return view;
@@ -399,6 +408,16 @@ public class ComponentAttributeView
 	public void setRequiredRestrictions(List<ComponentTypeRestriction> requiredRestrictions)
 	{
 		this.requiredRestrictions = requiredRestrictions;
+	}
+
+	public boolean isCodeHasAttachment()
+	{
+		return codeHasAttachment;
+	}
+
+	public void setCodeHasAttachment(boolean codeHasAttachment)
+	{
+		this.codeHasAttachment = codeHasAttachment;
 	}
 
 }

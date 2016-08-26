@@ -20,6 +20,9 @@ import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.OrganizationService;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.Component;
@@ -300,8 +303,12 @@ public class OrganizationServiceImpl
 		List<OrgReference> references = new ArrayList<>();
 		List<T> entities;
 		if (StringUtils.isNotBlank(organization)) {
-			entity.setOrganization(organization);
-			entities = ((BaseEntity) entity).findByExample();
+			//Case in-senstive
+			entity.setOrganization(organization.toLowerCase());
+			QueryByExample<BaseEntity> queryByExample = new QueryByExample<>((BaseEntity)entity);
+			queryByExample.getFieldOptions().put(OrganizationModel.FIELD_ORGANIZATION, new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());			
+						
+			entities = persistenceService.queryByExample((Class<T>) entity.getClass(),queryByExample);
 
 		} else {
 			//Search for records with no org

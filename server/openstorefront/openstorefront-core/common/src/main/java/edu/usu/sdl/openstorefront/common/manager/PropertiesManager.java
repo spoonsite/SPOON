@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Provide single access to system properties
@@ -152,6 +153,22 @@ public class PropertiesManager
 		return getValue(key);
 	}
 
+	public static String getModuleVersion()
+	{
+		String key = "app.module.version";		
+		String moduleVersion = getValue(key);
+		
+		//Make sure it's a valid osgi module version (only likes 2.0.2 )
+		StringBuilder version = new StringBuilder();
+		for (int c=0; c<moduleVersion.length(); c++){
+			if (StringUtils.isNumeric("" + moduleVersion.charAt(c)) ||
+				moduleVersion.charAt(c) == '.'	) {
+				version.append(moduleVersion.charAt(c));
+			}
+		}		
+		return version.toString();
+	}	
+	
 	public static String getValueDefinedDefault(String key)
 	{
 		return getProperties().getProperty(key, getDefault(key));

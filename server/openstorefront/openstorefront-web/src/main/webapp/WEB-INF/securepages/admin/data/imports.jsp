@@ -6,7 +6,7 @@
 	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>	
 		
 	<script type="text/javascript">
-		/* global Ext, CoreUtil */
+		/* global Ext, CoreUtil, CoreService */
 		Ext.onReady(function(){	
 			
 			var importWindow = Ext.create('OSF.component.ImportWindow', {					
@@ -16,9 +16,1530 @@
 				}
 			});
 			
-			var mappingPanel = Ext.create('Ext.panel.Panel', {
-				title: 'Mapping'
+			CoreService.attributeservice.warmCache();
+			
+			var selectedMapFormat;
+			
+			var addEditAttributeCodeWin = Ext.create('Ext.window.Window', {
+				title: 'Manage Codes',
+				modal: true,
+				alwaysOnTop: true,
+				width: '60%',
+				height: '50%',
+				maximizable: true,
+				layout: 'fit',
+				listeners: {
+					close: function() {
+						var codeRecords = [];
+						
+						Ext.getCmp('codeGrid').getStore().each(function(record) {
+							codeRecords.push(record.data);
+						});						
+						addEditAttributeCodeWin.attributeTypeRecord.set('attributeCodeXrefMap', codeRecords);
+					}
+				},
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								xtype: 'tbfill'								
+							}, 
+							{
+								text: 'Done',
+								iconCls: 'fa fa-close',
+								handler: function() {
+									addEditAttributeCodeWin.close();
+								}
+							},
+							{
+								xtype: 'tbfill'
+							}
+						]
+					}
+				],
+				items: [
+					{
+						xtype: 'grid',
+						id: 'codeGrid',
+						columnLines: true,
+						store: {
+						},
+						columns: [
+							{ text: 'Attribute Code', dataIndex: 'attributeCode', width: 250 },
+							{ text: 'Attribute Label', dataIndex: 'attributeLabel', width: 250 },
+							{ text: 'External Code', dataIndex: 'externalCode', flex: 1, minWidth: 200 }
+						],
+						listeners: {
+							selectionchange: function(selmodel, selected, opts) {
+								var tools = Ext.getCmp('codeGrid').getComponent('tools');
+								if (selmodel.getCount() > 0) {									
+									tools.getComponent('edit').setDisabled(false);
+									tools.getComponent('remove').setDisabled(false);
+								}  else {									
+									tools.getComponent('edit').setDisabled(true);
+									tools.getComponent('remove').setDisabled(true);															
+								}
+							}
+						},							
+						dockedItems: [
+							{
+								xtype: 'form',
+								id:  'attributeCodeForm',
+								dock: 'top',
+								bodyStyle: 'padding: 10px;',
+								layout: 'anchor',
+								defaults: {
+									width: '100%',
+									labelAlign: 'top',
+									labelSeparator: ''
+								},
+								items: [
+									{
+										xtype: 'combo',
+										id: 'attributeCodeCB',
+										name: 'attributeCode',
+										fieldLabel: 'Attribute Code<span class="field-required" />',
+										allowBlank: false,
+										valueField: 'code',
+										displayField: 'label',										
+										store: {
+											autoLoad: false,
+											fields: [
+												{name: 'code', mapping: function(data) {
+													return data.attributeCodePk.attributeCode;
+												}}
+											],											
+											proxy: {
+												type: 'ajax',
+												url: '../api/v1/resource/attributes/attributetypes/{type}/attributecodes'
+											}
+										},
+										editable: false,
+										typeAhead: false										
+									},
+									{
+										xtype: 'textfield',
+										name: 'externalCode',
+										fieldLabel: 'External Code<span class="field-required" />',
+										allowBlank: false,
+										maxLength: 255
+									},
+									{
+										xtype: 'container',
+										layout: 'hbox',
+										items: [
+											{
+												xtype: 'button',
+												id: 'attributeCodeAddBtn',
+												text: 'Add',
+												formBind: true,
+												margin: '0 20 10 0',
+												width: '200',
+												scale: 'medium',
+												iconCls: 'fa fa-2x fa-plus',
+												handler: function() {
+													this.setText('Add');
+													var form = this.up('form');
+													var data = form.getValues();
+													var grid = form.up('grid');
+													
+													var attributeTypeRecord = Ext.getCmp('attributeCodeCB').getSelection();													
+													data.attributeLabel = CoreService.attributeservice.translateCode(attributeTypeRecord.data.attributeCodePk.attributeType, attributeTypeRecord.data.attributeCodePk.attributeCode);
+
+													if (grid.editRecord) {
+														grid.editRecord.set(data, {
+															dirty: false
+														});
+														grid.editRecord = null;
+													} else {																		
+														grid.getStore().add(data);
+													}
+													addEditMapping.hasChanges=true;
+													form.reset();
+												}
+											},
+											{
+												xtype: 'button',
+												text: 'Cancel',
+												margin: '8 0 00 0',
+												iconCls: 'fa  fa-close',
+												handler: function() {
+													Ext.getCmp('attributeCodeAddBtn').setText('Add');
+													var form = this.up('form');
+													form.reset();
+												}
+											}															
+										]
+									}									
+								]
+							},
+							{
+								xtype: 'toolbar',
+								itemId: 'tools',
+								dock: 'top',
+								items: [
+									{
+										text: 'Edit',
+										itemId: 'edit',
+										disabled: true,
+										iconCls: 'fa fa-edit',
+										handler: function(){
+											var grid = this.up('grid');																	
+											var form = Ext.getCmp('attributeCodeForm');
+											var record = grid.getSelectionModel().getSelection()[0];
+											grid.editRecord = record;
+
+											form.loadRecord(record);
+											Ext.getCmp('attributeCodeAddBtn').setText('Update');											
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Remove',
+										itemId: 'remove',
+										disabled: true,
+										iconCls: 'fa fa-remove',
+										handler: function(){
+											var grid = this.up('grid');	
+											var record = grid.getSelectionModel().getSelection()[0];
+											grid.getStore().remove(record);											
+										}
+									}									
+								]
+							}
+						]
+					}
+				]
 			});
+			
+			var addEditMapping = Ext.create('Ext.window.Window', {
+				title: 'Add/Edit Mapping',
+				modal: true,
+				width: '80%',
+				height: '80%',
+				maximizable: true,
+				layout: 'fit',
+				listeners: {
+					beforeclose: function(panel, opts) {
+						if (panel.hasChanges) {
+							Ext.Msg.show({
+								title:'Save Changes?',
+								message: 'You have unsaved changes. Would you like to save your changes?',
+								buttons: Ext.Msg.YESNOCANCEL,
+								icon: Ext.Msg.QUESTION,
+								fn: function(btn) {
+									if (btn === 'yes') {
+										mappingActionSave();
+										panel.hasChanges = false;
+										addEditMapping.close();
+									} else if (btn === 'no') {
+										panel.hasChanges = false;
+										addEditMapping.close();
+									}
+								}
+							});
+							return false;
+						}
+					}
+				},
+				items: [
+					{
+						xtype: 'form',
+						id: 'mainForm',
+						bodyStyle: 'padding: 20px;',
+						layout: 'anchor',
+						autoScroll: true,
+						items: [
+							{	
+								xtype: 'hidden',
+								name: 'fileDataMapId'
+							},
+							{
+								xtype: 'textfield',
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: '100%',
+								name: 'name',
+								fieldLabel: 'Data Mapping Name<span class="field-required" />',
+								allowBlank: false
+							},
+							{
+								xtype: 'panel',
+								itemId: 'fieldMapping',
+								title: 'Fields',
+								collapsible: true,
+								titleCollapse: true,
+								layout: 'anchor',
+								items: [
+									{
+										xtype: 'form',
+										layout: 'hbox',
+										items: [
+											{
+												xtype: 'filefield',
+												name: 'uploadFile',
+												fieldLabel: 'Sample File with Fields',
+												labelAlign: 'top',
+												labelSeparator: '',
+												allowBlank: false,
+												flex: 1,
+												margin: '0 10 0 0'
+											},
+											{
+												xtype: 'button',
+												text: 'Upload',
+												iconCls: 'fa fa-upload',
+												formBind: true,
+												handler: function() {
+													var uploadForm = this.up('form');
+													var fileFieldCB = Ext.getCmp('fieldForm').getComponent('fileFieldCB');
+													
+													uploadForm.submit({
+														url: '../Upload.action?DataMapFields&fileFormat='+selectedMapFormat.get('code'),
+														method: 'POST',
+														success: function(action, opts) {
+															var fieldData = Ext.decode(opts.response.responseText);															
+															fileFieldCB.getStore().loadData(fieldData.data);
+															Ext.toast('Loaded field from file', 'Upload Success');
+														},
+														failure: function(response,opts){
+															Ext.Msg.show({
+																title: 'Upload Failed',
+																msg: 'The file upload was not successful. Check that the file meets the format requirements.',
+																buttons: Ext.Msg.OK
+															});															
+														}
+													});														
+													
+												},
+												margin: '25 0 0 0'
+											}
+										]
+									},									
+									{
+										xtype: 'fieldset',									
+										title: 'Add/Edit Field Mapping',
+										layout: 'anchor',										
+										items: [
+											{
+												xtype: 'form',
+												id: 'fieldForm',
+												layout: 'anchor',
+												defaults: {
+													labelAlign: 'top',
+													width: '100%',
+													labelSeparator: ''
+												},
+												items: [
+													{
+														xtype: 'combo',
+														itemId: 'fileFieldCB',
+														name: 'field',
+														fieldLabel: 'File Field<span class="field-required" />',
+														allowBlank: false,
+														valueField: 'field',
+														displayField: 'field',
+														store: {
+															autoLoad: false													
+														},
+														editable: true,
+														typeAhead: true												
+													},
+													{
+														xtype: 'tagfield',
+														name: 'fieldTransforms',
+														fieldLabel: 'Data Transforms',
+														valueField: 'code',
+														displayField: 'description',
+														store: {
+															autoLoad: true,
+															proxy: {
+																type: 'ajax',
+																url: '../api/v1/service/datamapping/transforms'
+															}
+														},
+														editable: true,
+														typeAhead: false												
+													},
+													{
+														xtype: 'combo',
+														name: 'entityClass',
+														fieldLabel: 'Entities<span class="field-required" />',
+														allowBlank: false,
+														valueField: 'code',
+														displayField: 'description',
+														store: {
+															autoLoad: true,
+															proxy: {
+																type: 'ajax',
+																url: '../api/v1/service/datamapping/mappingentities'
+															}
+														},
+														editable: false,
+														typeAhead: false,
+														listeners: {
+															change: function(cb, newValue, oldValue) {
+																if  (newValue) {
+																	var entityField = cb.up().getComponent('entityfieldId');
+																	entityField.reset();																	
+																	entityField.getStore().load({
+																		url: '../api/v1/service/datamapping/entityfields/' + newValue
+																	});
+																	var pathEntityfield = cb.up().getComponent('pathEntityfieldId');
+																	pathEntityfield.reset();
+																	pathEntityfield.getStore().load({
+																		url: '../api/v1/service/datamapping/entityfields/' + newValue
+																	});	
+																}
+															}
+														}
+													},											
+													{
+														xtype: 'combo',
+														itemId: 'entityfieldId',
+														name: 'entityField',
+														fieldLabel: 'Entity Field<span class="field-required" />',
+														allowBlank: false,
+														valueField: 'code',
+														displayField: 'description',
+														store: {
+															autoLoad: false,
+															proxy: {
+																type: 'ajax',
+																url: '../api/v1/service/datamapping/entityfields/{entity}'
+															}
+														},
+														editable: false,
+														typeAhead: false												
+													},
+													{
+														xtype: 'checkbox',
+														name: 'useAsAttributeLabel',
+														boxLabel: 'Use As Attribute Label'												
+													},
+													{
+														xtype: 'checkbox',
+														name: 'concatenate',
+														boxLabel: 'Concatenate'																								
+													},
+													{
+														xtype: 'checkbox',
+														name: 'addEndPathToValue',
+														boxLabel: 'Add Path to Value'																								
+													},
+													{
+														xtype: 'checkbox',
+														name: 'fileAttachment',
+														boxLabel: 'File Attachment'																								
+													},													
+													{
+														xtype: 'combo',
+														itemId: 'pathEntityfieldId',
+														name: 'pathToEnityField',
+														fieldLabel: 'Path to Entity Field',
+														valueField: 'code',
+														displayField: 'description',
+														store: {
+															autoLoad: false,
+															proxy: {
+																type: 'ajax',
+																url: '../api/v1/service/datamapping/entityfields/{entity}'
+															},
+															listeners: {
+																load: function (myStore, records, sucessful, opts) {
+																	myStore.add([{
+																		code: null,
+																		description: 'SELECT'
+																	}]);
+																}
+															}
+														},
+														editable: false,
+														typeAhead: false												
+													},											
+													{
+														xtype: 'tagfield',
+														name: 'rawPathTransforms',
+														fieldLabel: 'Path Transforms',
+														valueField: 'code',
+														displayField: 'description',
+														store: {
+															autoLoad: true,
+															proxy: {
+																type: 'ajax',
+																url: '../api/v1/service/datamapping/transforms'
+															}
+														},
+														editable: true,
+														typeAhead: false
+													},
+													{
+														xtype: 'container',
+														layout: 'hbox',
+														items: [
+															{
+																xtype: 'button',
+																id: 'fieldAddBtn',
+																text: 'Add',
+																formBind: true,
+																margin: '0 20 10 0',
+																width: '200',
+																scale: 'medium',
+																iconCls: 'fa fa-2x fa-plus',
+																handler: function() {
+																	this.setText('Add');
+																	var form = this.up('form');
+																	var data = form.getValues();
+																	var grid = form.up().getComponent('fieldGrid');
+																	
+																	if (grid.editRecord) {
+																		grid.editRecord.set(data, {
+																			dirty: false
+																		});
+																		if (!data.useAsAttributeLabel) {
+																			grid.editRecord.set({
+																				useAsAttributeLabel: null
+																			}, {dirty: false});
+																		}
+																		if (!data.concatenate) {
+																			grid.editRecord.set({
+																				concatenate: null
+																			}, {dirty: false});
+																		}
+																		if (!data.addEndPathToValue) {
+																			grid.editRecord.set({
+																				addEndPathToValue: null
+																			}, {dirty: false});
+																		}																		
+																		
+																		grid.editRecord = null;
+																	} else {																		
+																		grid.getStore().add(data);
+																	}
+																	addEditMapping.hasChanges=true;
+																	form.reset();
+																}
+															},
+															{
+																xtype: 'button',
+																text: 'Cancel',
+																margin: '8 0 00 0',
+																iconCls: 'fa  fa-close',
+																handler: function() {
+																	Ext.getCmp('fieldAddBtn').setText('Add');
+																	var form = this.up('form');
+																	form.reset();
+																}
+															}															
+														]
+													}
+												]
+											},											
+											{
+												xtype: 'grid',
+												id: 'fieldGrid',
+												columnLines: true,											
+												height: 350,
+												margin: '0 0 10 0',
+												border: true,
+												store: {
+												},
+												listeners: {
+													selectionchange: function(selmodel, selected, opts) {
+														var tools = Ext.getCmp('fieldGrid').getComponent('tools');
+														if (selmodel.getCount() > 0) {
+															tools.getComponent('edit').setDisabled(false);
+															tools.getComponent('remove').setDisabled(false);
+														}  else {
+															tools.getComponent('edit').setDisabled(true);
+															tools.getComponent('remove').setDisabled(true);															
+														}
+													}
+												},
+												columns: [
+													{ text: 'File Field', dataIndex: 'field', flex: 1, minWidth: 350},
+													{ text: 'Tranforms', dataIndex: 'fieldTransforms', width: 200},
+													{ text: 'Entity Class', dataIndex: 'entityClass', width: 150, 
+														renderer: function(value) {
+															var showValue = '';
+															if (value) {
+																var classparts = value.split('.');
+																showValue = classparts[classparts.length - 1];
+															}
+															return showValue;
+														}
+													},
+													{ text: 'Entity Field', dataIndex: 'entityField', width: 150},		
+													{ text: 'Flags', columns: [														
+														{ text: 'Use As Attribute Label', dataIndex: 'useAsAttributeLabel', width: 125},
+														{ text: 'Concatenate', dataIndex: 'concatenate', width: 125},
+														{ text: 'Add Path to Value', dataIndex: 'addEndPathToValue', width: 125},														
+														{ text: 'File Attachment', dataIndex: 'fileAttachment', width: 125}
+													]},
+													{ text: 'Path to Entity Field', dataIndex: 'pathToEnityField', width: 125},
+													{ text: 'Path Tranforms', dataIndex: 'rawPathTransforms', width: 200}
+												],
+												dockedItems: [
+													{
+														xtype: 'toolbar',
+														itemId: 'tools',
+														dock: 'top',
+														items: [
+															{
+																text: 'Edit',
+																itemId: 'edit',
+																disabled: true,
+																iconCls: 'fa fa-edit',
+																handler: function() {
+																	var grid = this.up('grid');																	
+																	var form = Ext.getCmp('fieldForm');
+																	var record = grid.getSelectionModel().getSelection()[0];
+																	grid.editRecord = record;
+																	
+																	form.loadRecord(record);
+																	Ext.getCmp('fieldAddBtn').setText('Update');
+																}
+															},
+															{
+																xtype: 'tbfill'
+															},
+															{
+																text: 'Remove',
+																itemId: 'remove',
+																disabled: true,
+																iconCls: 'fa fa-close',
+																handler: function() {
+																	var grid = this.up('grid');	
+																	var record = grid.getSelectionModel().getSelection()[0];
+																	grid.getStore().remove(record);
+																}																
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							{
+								xtype: 'panel',
+								padding: '0 0 10 0'
+							},
+							{
+								xtype: 'panel',
+								itemId: 'attributeMapping',
+								title: 'Attributes',
+								collapsible: true,
+								titleCollapse: true,
+								items: [
+									{
+										xtype: 'checkbox',
+										id: 'chkMissingAttributeType',
+										name: 'addMissingAttributeTypeFlg',
+										boxLabel: 'Add Missing Attribute Types'	
+									},
+									{
+										xtype: 'fieldset',
+										title: 'Add/Edit Attribute Type Mapping',
+										layout: 'anchor',
+										defaults: {
+											labelAlign: 'top',
+											width: '100%'
+										},
+										items: [
+											{
+												xtype: 'form',
+												id: 'attributeTypeForm',
+												layout: 'anchor',
+												defaults: {
+													labelAlign: 'top',
+													width: '100%',
+													labelSeparator: ''
+												},
+												items: [
+													{
+														xtype: 'combo',
+														name: 'attributeType',
+														fieldLabel: 'Attribute Type<span class="field-required" />',
+														allowBlank: false,
+														valueField: 'attributeType',
+														displayField: 'description',
+														store: {
+															autoLoad: true,
+															proxy: {
+																type: 'ajax',
+																url: '../api/v1/resource/attributes/attributetypes',
+																reader: {
+																	type: 'json',
+																	rootProperty: 'data'
+																}
+															}
+														},
+														editable: false,
+														typeAhead: false,
+														listeners: {
+															change: function(cb, newValue, oldValue) {
+																var defaultMappedCode = cb.up().getComponent('defaultMappedCode');
+																defaultMappedCode.getStore().load({
+																	url: '../api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes'
+																});																										
+															}
+														}												
+													},
+													{
+														xtype: 'textfield',
+														name: 'externalType',
+														fieldLabel: 'External Type<span class="field-required" />',
+														allowBlank: false,
+														maxValue: 255
+													},
+													{
+														xtype: 'checkbox',
+														name: 'addMissingCode',
+														boxLabel: 'Add Missing Codes'													
+													},
+													{
+														xtype: 'combo',
+														itemId: 'defaultMappedCode',
+														name: 'defaultMappedCode',
+														fieldLabel: 'Default Mapped Code',
+														valueField: 'code',
+														displayField: 'label',
+														store: {
+															autoLoad: false,
+															fields: [
+																{name: 'code', mapping: function(data) {
+																	return data.attributeCodePk.attributeCode;
+																}}
+															],
+															proxy: {
+																type: 'ajax',
+																url: '../api/v1/resource/attributes/attributetypes'
+															},
+															listeners: {
+																load: function (myStore, records, sucessful, opts) {
+																	myStore.add([{
+																		code: null,
+																		description: 'SELECT'
+																	}]);
+																}
+															}															
+														},
+														editable: false,
+														typeAhead: false												
+													},
+													{
+														xtype: 'container',
+														layout: 'hbox',
+														items: [
+															{
+																xtype: 'button',
+																id: 'attributeTypeAddBtn',
+																text: 'Add',
+																formBind: true,
+																margin: '0 20 10 0',
+																width: '200',
+																scale: 'medium',
+																iconCls: 'fa fa-2x fa-plus',
+																handler: function() {
+																	this.setText('Add');
+																	var form = this.up('form');
+																	var data = form.getValues();
+																	var grid = form.up().getComponent('attributeTypeGrid');
+
+																	data.attributeTypeLabel = CoreService.attributeservice.translateType(data.attributeType);
+																	data.attributeCodeLabel = CoreService.attributeservice.translateCode(data.attributeType, data.defaultMappedCode);
+																	
+																	if (grid.editRecord) {
+																		grid.editRecord.set(data, {
+																			dirty: false
+																		});
+																		if (!data.addMissingCode) {
+																			grid.editRecord.set({
+																				addMissingCode: null
+																			});
+																		}
+
+																		grid.editRecord = null;
+																	} else {																		
+																		grid.getStore().add(data);
+																	}
+																	addEditMapping.hasChanges=true;
+																	form.reset();
+																}
+															},
+															{
+																xtype: 'button',
+																text: 'Cancel',
+																margin: '8 0 00 0',
+																iconCls: 'fa  fa-close',
+																handler: function() {
+																	Ext.getCmp('attributeTypeAddBtn').setText('Add');
+																	var form = this.up('form');
+																	form.reset();
+																}
+															}															
+														]
+													}													
+												]
+											},
+											{
+												xtype: 'grid',
+												id: 'attributeTypeGrid',
+												columnLines: true,											
+												height: 350,
+												margin: '0 0 10 0',
+												border: true,
+												store: {																				
+												},
+												columns: [
+													{ text: 'Attribute Type', dataIndex: 'attributeType', width: 175},
+													{ text: 'Attribute Type Label', dataIndex: 'attributeTypeLabel', flex: 1, width: 200},
+													{ text: 'External Type', dataIndex: 'externalType', width: 225},
+													{ text: 'Add Missing Code', dataIndex: 'addMissingCode', width: 150},													
+													{ text: 'Default Mapped Code', dataIndex: 'defaultMappedCode', width: 200},
+													{ text: 'Default Mapped Label', dataIndex: 'attributeCodeLabel', width: 200}
+												],
+												listeners: {
+													selectionchange: function(selmodel, selected, opts) {
+														var tools = Ext.getCmp('attributeTypeGrid').getComponent('tools');
+														if (selmodel.getCount() > 0) {
+															tools.getComponent('addCodes').setDisabled(false);
+															tools.getComponent('edit').setDisabled(false);
+															tools.getComponent('remove').setDisabled(false);
+														}  else {
+															tools.getComponent('addCodes').setDisabled(true);
+															tools.getComponent('edit').setDisabled(true);
+															tools.getComponent('remove').setDisabled(true);															
+														}
+													}
+												},												
+												dockedItems: [
+													{
+														xtype: 'toolbar',
+														itemId: 'tools',
+														dock: 'top',														
+														items: [
+															{
+																text: 'Manages Codes',
+																itemId: 'addCodes',
+																disabled: true,
+																iconCls: 'fa fa-plus',
+																handler: function() {
+																	var grid = this.up('grid');	
+																	var record = grid.getSelectionModel().getSelection()[0];
+																	
+																	addEditAttributeCodeWin.show();
+																	addEditAttributeCodeWin.attributeType = record.get('attributeType');
+																	addEditAttributeCodeWin.attributeTypeRecord = record;
+																
+																	Ext.getCmp('attributeCodeCB').getStore().load({
+																		url: '../api/v1/resource/attributes/attributetypes/' + record.get('attributeType') + '/attributecodes'
+																	});
+																		
+																	Ext.getCmp('codeGrid').getStore().removeAll();	
+																	if (record.get('attributeCodeXrefMap')) {
+																		
+																		Ext.Array.each(record.get('attributeCodeXrefMap'), function(code) {
+																			code.attributeLabel = CoreService.attributeservice.translateCode(record.get('attributeType') , code.attributeCode);
+																		});
+																		
+																		Ext.getCmp('codeGrid').getStore().loadData(record.get('attributeCodeXrefMap'));
+																	} 																
+																}																
+															},
+															{
+																text: 'Edit',
+																itemId: 'edit',
+																disabled: true,
+																iconCls: 'fa fa-edit',
+																handler: function() {
+																	var grid = this.up('grid');																	
+																	var form = Ext.getCmp('attributeTypeForm');
+																	var record = grid.getSelectionModel().getSelection()[0];
+																	grid.editRecord = record;
+																	
+																	form.loadRecord(record);
+																	Ext.getCmp('attributeTypeAddBtn').setText('Update');																	
+																}
+															},
+															{
+																xtype: 'tbfill'
+															},
+															{
+																text: 'Remove',
+																itemId: 'remove',
+																disabled: true,
+																iconCls: 'fa fa-close',
+																handler: function() {
+																	var grid = this.up('grid');	
+																	var record = grid.getSelectionModel().getSelection()[0];
+																	grid.getStore().remove(record);																	
+																}																
+															}
+														]
+													}
+												]
+											}											
+										]
+									}
+								]
+							}							
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Save',										
+										scale: 'medium',
+										iconCls: 'fa fa-2x fa-save',
+										handler: function() {
+											mappingActionSave();
+										}
+									},
+									{
+										xtype: 'checkbox',
+										id: 'mappingSaveAndContinue',
+										name: 'continue',
+										boxLabel: 'Save and Continue'
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										scale: 'medium',
+										iconCls: 'fa fa-2x fa-close',
+										handler: function() {
+											addEditMapping.close();
+										}										
+									}
+								]
+							}
+						]
+					}
+				]
+			});
+			
+			var mappingActionSave = function() {
+				var mainForm = Ext.getCmp('mainForm');
+				var mainFormData = mainForm.getValues();
+				
+				//custom Vaildation
+				var valid = true;
+				
+				if (!mainFormData.name) {
+					valid = false;
+					
+					Ext.Msg.show({
+						title:'Validation',
+						message: 'Data Mapping Name is Required',
+						buttons: Ext.Msg.OK,
+						icon: Ext.Msg.ERROR,
+						fn: function(btn) {
+						}
+					});												
+				}
+				
+				//can't have multiple fields pointed to the same path
+				var multipleSamePath = false;
+				var fieldGrid = Ext.getCmp('fieldGrid');				
+				var existingFieldPath = [];
+				fieldGrid.getStore().each(function(record) {
+					var found = Ext.Array.findBy(existingFieldPath, function(existing) {
+						if (existing  === record.get('field')) {
+							return true;
+						}
+					});
+					if (found) {
+						multipleSamePath = true;
+					} else {
+						existingFieldPath.push(record.get('field'));
+					}
+				});
+				
+				if (multipleSamePath) {
+					valid = false;
+					
+					Ext.Msg.show({
+						title:'Validation',
+						message: 'Duplicate Field Paths;  field paths can only be set once.',
+						buttons: Ext.Msg.OK,
+						icon: Ext.Msg.ERROR,
+						fn: function(btn) {
+						}
+					});	
+				}
+
+
+				if (valid) {
+
+					var dataMapModel = {
+						fileDataMap: {
+							fileFormat: selectedMapFormat.get('code'),
+							name: mainFormData.name,
+							dataMapFields: []
+						},
+						fileAttributeMap: {
+							attributeTypeXrefMap: []
+						}
+					};
+
+					//field maps
+					var fieldGrid = Ext.getCmp('fieldGrid');
+					fieldGrid.getStore().each(function(record){
+						var data = record.getData();
+
+						data.transforms = [];
+						var transforms = data.fieldTransforms;
+						Ext.Array.each(transforms, function(item){
+							data.transforms.push({
+								transform: item
+							});
+						});
+
+						data.pathTransforms = [];
+						transforms = data.rawPathTransforms;
+						Ext.Array.each(transforms, function(item){
+							data.pathTransforms.push({
+								transform: item
+							});
+						});											
+
+						dataMapModel.fileDataMap.dataMapFields.push(data);										
+					});
+
+					//attribute maps
+					dataMapModel.fileAttributeMap.addMissingAttributeTypeFlg = Ext.getCmp('chkMissingAttributeType').getValue();
+
+					var attributeTypeGrid = Ext.getCmp('attributeTypeGrid');
+					attributeTypeGrid.getStore().each(function(record){
+						var data = record.getData();
+						dataMapModel.fileAttributeMap.attributeTypeXrefMap.push(data);										
+					});		
+
+
+					var method = 'POST';
+					var endURL = '';
+					if (mainFormData.fileDataMapId) {
+						method = 'PUT';
+						endURL = '/' + mainFormData.fileDataMapId;
+					}
+					
+					mainForm.setLoading("Saving Mapping...");
+					Ext.Ajax.request({
+						url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') + '/mappings' + endURL,
+						method: method,
+						jsonData: dataMapModel,
+						callback: function(){		
+							mainForm.setLoading(false);							
+						},
+						success: function(response, opts) {
+							addEditMapping.hasChanges = false;
+							Ext.toast('Saved mapping', 'Saved');
+							actionRefreshMappings();
+							
+							var continueMapping = Ext.getCmp('mappingSaveAndContinue').getValue();
+							if (!continueMapping) {
+								addEditMapping.close();
+							}
+						}
+					});
+				}				
+			};
+			
+			
+			var mappingPanel = Ext.create('Ext.grid.Panel', {
+				title: 'Mapping',
+				columnLines: true,
+				store: {
+					autoLoad: false,
+					proxy: {
+						type: 'ajax',
+						url: '../api/v1/resource/filehistory/formats/{format}/mappings'
+					}
+				},
+				columns: [
+					{ text: 'Name', dataIndex: 'description', flex: 1, minWidth: 200 } 
+				],
+				listeners: {
+					selectionchange: function(selmodel, selection, opt) {
+						var tools = mappingPanel.getComponent('tools');
+						if (selmodel.getCount() > 0) {
+							tools.getComponent('edit').setDisabled(false);
+							tools.getComponent('copy').setDisabled(false);
+							tools.getComponent('preview').setDisabled(false);
+							tools.getComponent('export').setDisabled(false);
+							tools.getComponent('remove').setDisabled(false);
+						} else {
+							tools.getComponent('edit').setDisabled(true);
+							tools.getComponent('copy').setDisabled(true);
+							tools.getComponent('preview').setDisabled(true);
+							tools.getComponent('export').setDisabled(true);
+							tools.getComponent('remove').setDisabled(true);							
+						}
+					}
+				},
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						itemId: 'filterbar',
+						dock: 'top',
+						items: [
+							{
+								xtype: 'combo',
+								itemId: 'fileFormatFilter',
+								name: 'fileFormat',
+								fieldLabel: 'Mappable File Formats',
+								width: 500,
+								valueField: 'code',
+								displayField: 'description',
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: '../api/v1/resource/filehistory/formats/mappingformats'
+									}
+								},
+								editable: false,
+								typeAhead: false,
+								listeners: {
+									change: function(cb, newValue, oldValue) {
+										mappingPanel.getStore().load({
+											url: '../api/v1/resource/filehistory/formats/' + newValue + '/mappings'
+										});
+										if (newValue) {
+											mappingPanel.getComponent('tools').setDisabled(false);
+										} else {
+											mappingPanel.getComponent('tools').setDisabled(true);
+										}
+										selectedMapFormat = cb.getSelection();										
+									}
+								}
+							}
+						]
+					},
+					{
+						xtype: 'toolbar',
+						itemId: 'tools',
+						disabled: 'true',
+						dock: 'top',
+						items: [
+							{
+								text: 'Refresh',
+								scale: 'medium',
+								iconCls: 'fa  fa-2x fa-refresh',
+								handler: function() {
+									actionRefreshMappings();
+								}
+							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Add',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-plus',
+								handler: function() {
+									actionShowMappingForm();
+								}
+							},
+							{
+								text: 'Edit',
+								itemId: 'edit',
+								disabled: true,
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-edit',
+								handler: function() {
+									var grid = mappingPanel;
+									var mapRecord = mappingPanel.getSelectionModel().getSelection()[0];
+									
+									actionShowMappingForm();
+									
+									addEditMapping.getComponent('mainForm').setLoading(true);
+									Ext.Ajax.request({
+										url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
+											+ '/mappings/' + mapRecord.get('code'),
+										method: 'GET',
+										callback: function() {
+											addEditMapping.getComponent('mainForm').setLoading(false);
+										},
+										success: function(response, opt) {
+											var dataMap = Ext.decode(response.responseText);
+											
+											var mainRecord = Ext.create('Ext.data.Model', {												
+											});
+											mainRecord.set({
+												fileDataMapId: mapRecord.get('code'),
+												name: dataMap.fileDataMap.name
+											});
+											addEditMapping.getComponent('mainForm').loadRecord(mainRecord);
+											
+											
+											var fieldRecords = [];
+											Ext.Array.each(dataMap.fileDataMap.dataMapFields, function(fieldMap){
+												
+												if (fieldMap.transforms) {
+													var transforms = [];
+													Ext.Array.each(fieldMap.transforms, function(item){
+														transforms.push(item.transform);
+													});
+													fieldMap.fieldTransforms = transforms;
+												}
+												
+												if (fieldMap.pathTransforms) {
+													transforms = [];
+													Ext.Array.each(fieldMap.pathTransforms, function(item){
+														transforms.push(item.transform);
+													});
+													fieldMap.rawPathTransforms = transforms;												
+												}
+												
+												fieldRecords.push(fieldMap);
+											});
+											
+											var fieldGrid = Ext.getCmp('fieldGrid');
+											fieldGrid.getStore().loadData(fieldRecords);
+											
+											
+											Ext.getCmp('chkMissingAttributeType').setValue(dataMap.fileAttributeMap.addMissingAttributeTypeFlg);											
+											
+											var attributeTypeGrid = Ext.getCmp('attributeTypeGrid');
+											if (!dataMap.fileAttributeMap.attributeTypeXrefMap) {
+												dataMap.fileAttributeMap.attributeTypeXrefMap = [];
+											}						
+											Ext.Array.each(dataMap.fileAttributeMap.attributeTypeXrefMap, function(type) {
+												type.attributeTypeLabel = CoreService.attributeservice.translateType(type.attributeType);
+												type.attributeCodeLabel = CoreService.attributeservice.translateCode(type.attributeType, type.defaultMappedCode);
+											});
+											
+											attributeTypeGrid.getStore().loadData(dataMap.fileAttributeMap.attributeTypeXrefMap);
+											
+										}
+									});							
+									
+								}
+							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Copy',
+								itemId: 'copy',
+								disabled: true,	
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-copy',
+								handler: function(){	
+									var grid = mappingPanel;
+									var record = mappingPanel.getSelectionModel().getSelection()[0];	
+									
+									grid.setLoading("Copying...");
+									Ext.Ajax.request({
+										url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
+											+ '/mappings/' + record.get('code') + '/copy',
+										method: 'POST',
+										callback: function() {
+											grid.setLoading(false);
+										},
+										success: function(response, opts) {
+											actionRefreshMappings();
+										}
+									});									
+									
+								}
+							},
+							{
+								text: 'Preview',
+								itemId: 'preview',
+								disabled: true,	
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-binoculars',
+								handler: function(){									
+									var record = mappingPanel.getSelectionModel().getSelection()[0];	
+									
+									var previewWin = Ext.create('Ext.window.Window', {
+										title: 'Preview Mapping',
+										modal: true,
+										width: '80%',
+										height: '80%',
+										maximizble: true,
+										closeAction: 'destroy',
+										layout: 'fit',
+										items: [
+											{
+												xtype: 'panel',
+												scrollable: true,
+												bodyStyle: 'padding: 10px;',
+												dockedItems: [
+													{
+														xtype: 'toolbar',
+														dock: 'top',
+														items: [
+															{
+																xtype: 'form',
+																width: '100%',
+																layout: 'hbox',
+																items: [
+																	{
+																		xtype: 'filefield',
+																		name: 'uploadFile',
+																		fieldLabel: 'Sample File to Map',
+																		labelAlign: 'top',
+																		labelSeparator: '',
+																		allowBlank: false,
+																		flex: 1,
+																		margin: '0 10 0 0'																		
+																	},
+																	{
+																		xtype: 'button',
+																		text: 'Upload',
+																		formBind: true,
+																		iconCls: 'fa fa-upload',
+																		handler: function() {
+																			var uploadForm = this.up('form');
+																			var previewPanel = uploadForm.up('panel');
+																			
+																			
+																			
+																			uploadForm.submit({
+																				url: '../Upload.action?PreviewMapping&fileFormat='
+																						+ selectedMapFormat.get('code') 
+																						+ '&dataMappingId=' + record.get('code'),
+																				method: 'POST',
+																				success: function(action, opts) {																					
+																					var uploadResponse = Ext.decode(opts.response.responseText);	
+																					var message = Ext.util.Format.nl2br(uploadResponse.message);
+																					message = message.replace(new RegExp(' ', 'g'), '&nbsp;');
+																					var data = {
+																						data: message
+																					};
+																					previewPanel.update(data);																					
+																				},
+																				failure: function(response,opts){
+																					Ext.Msg.show({
+																						title: 'Upload Failed',
+																						msg: 'The file upload was not successful. Check that the file meets the format requirements.',
+																						buttons: Ext.Msg.OK
+																					});															
+																				}
+																			});														
+
+																		},
+																		margin: '25 0 0 0'																		
+																	}
+																]
+															}
+														]
+													},
+													{
+														xtype: 'toolbar',
+														dock: 'bottom',
+														items: [
+															{
+																xtype: 'tbfill'
+															},
+															{
+																text: 'Close',
+																iconCls: 'fa fa-close',
+																handler: function() {
+																	previewWin.close();
+																}
+															},
+															{
+																xtype: 'tbfill'
+															}
+														]
+													}
+												],
+												tpl: '{data}'
+											}
+										]
+										
+									});
+									previewWin.show();
+									
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Import',
+								itemId: 'import',								
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-upload',
+								handler: function(){											
+									var record = mappingPanel.getSelectionModel().getSelection()[0];
+									
+									var importWin = Ext.create('Ext.window.Window', {
+										title: 'Import Mapping',
+										modal: true,
+										width: 450,
+										height: 160,
+										y: 100,
+										maximizble: true,
+										closeAction: 'destroy',
+										layout: 'fit',
+										items: [
+											{
+												xtype: 'form',
+												bodyStyle: 'padding: 10px;',
+												dockedItems: [
+													{
+														xtype: 'toolbar',
+														dock: 'bottom',
+														items: [
+															{
+																text: 'Upload',
+																iconCls: 'fa fa-upload',
+																formBind: true,
+																handler: function() {
+																	var uploadForm = this.up('form');
+																	var fileFieldCB = Ext.getCmp('fieldForm').getComponent('fileFieldCB');
+
+																	uploadForm.submit({
+																		url: '../Upload.action?ImportMapping',
+																		method: 'POST',
+																		success: function(action, opts) {
+																			Ext.toast('Imported Mapping File', 'Upload Success');
+																			actionRefreshMappings();
+																			importWin.close();
+																		},
+																		failure: function(response,opts){
+																			Ext.Msg.show({
+																				title: 'Upload Failed',
+																				msg: 'The file upload was not successful. Check that the file meets the format requirements.',
+																				buttons: Ext.Msg.OK
+																			});															
+																		}
+																	});
+																}																
+															},
+															{
+																xtype: 'tbfill'
+															},
+															{
+																text: 'Cancel',
+																iconCls: 'fa fa-close',
+																handler: function(){
+																	var uploadForm = this.up('form');
+																	uploadForm.reset();
+																	importWin.close();
+																}
+															}
+														]
+													}
+												],
+												layout: 'anchor',
+												items: [
+													{
+														xtype: 'filefield',
+														name: 'uploadFile',
+														fieldLabel: 'Import Mapping File<span class="field-required" /',
+														labelAlign: 'top',
+														labelSeparator: '',
+														allowBlank: false,
+														width: '100%',
+														margin: '0 10 0 0'
+													}
+												]
+											}											
+										]
+									});
+									importWin.show();
+								}								
+							},
+							{
+								text: 'Export',
+								itemId: 'export',
+								disabled: true,	
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-download',
+								handler: function(){		
+									var record = mappingPanel.getSelectionModel().getSelection()[0];	
+									
+									window.location.href = '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
+									+ '/mappings/' + record.get('code') + '/export';
+								}								
+							},
+							{
+								xtype: 'tbseparator'
+							},
+							{
+								text: 'Remove',
+								itemId: 'remove',
+								disabled: true,								
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-close text-danger',
+								handler: function() {
+									var grid = mappingPanel;
+									var record = mappingPanel.getSelectionModel().getSelection()[0];									
+									
+									Ext.Msg.show({
+										title:'Remove Mapping',
+										message: 'Are you sure you want to remove this mapping?',
+										buttons: Ext.Msg.YESNO,
+										icon: Ext.Msg.QUESTION,
+										fn: function(btn) {
+											if (btn === 'yes') {
+												
+												grid.setLoading("Removing...");
+												Ext.Ajax.request({
+													url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
+														+ '/mappings/' + record.get('code'),
+													method: 'DELETE',
+													callback: function() {
+														grid.setLoading(false);
+													},
+													success: function(response, opts) {
+														actionRefreshMappings();
+													}
+												});
+												
+											} 
+										}
+									});									
+								}
+							}							
+						]
+					}					
+				]
+				
+			});
+			
+			var actionRefreshMappings = function() {
+				var value = mappingPanel.getComponent('filterbar').getComponent('fileFormatFilter').getValue();
+				if (value) {
+					mappingPanel.getStore().reload();
+				}
+			};
+			
+			var actionShowMappingForm = function() {
+				addEditMapping.show();
+				addEditMapping.getComponent('mainForm').setScrollY(0);
+
+				if (selectedMapFormat.get('fileType') === 'ATTRIBUTE') {
+					addEditMapping.getComponent('mainForm').getComponent('attributeMapping').setHidden(true);
+				} else {
+					addEditMapping.getComponent('mainForm').getComponent('attributeMapping').setHidden(false);
+				}
+				addEditMapping.getComponent('mainForm').reset();	
+				
+				//reset grids
+				Ext.getCmp('fieldGrid').getStore().removeAll();
+				Ext.getCmp('attributeTypeGrid').getStore().removeAll();
+		
+			};
+			
+			
+			//////////////End of Mapping//////////////////
 			
 			var fileHistoryStore = Ext.create('Ext.data.Store', {
 				pageSize: 100,
@@ -112,6 +1633,7 @@
 						}
 					},
 					{ text: 'Data Source', dataIndex: 'dataSource', width: 200, hidden: true },
+					{ text: 'Data Mapping Applied', dataIndex: 'fileMappingApplied', width: 200, hidden: true },
 					{ text: 'Mime Type', dataIndex: 'mimeType', width: 175, hidden: true },
 					{
 						text: 'Record Stats',
@@ -247,8 +1769,8 @@
 			var mainPanel = Ext.create('Ext.tab.Panel', {
 				title: 'Manage Imports <i class="fa fa-question-circle"  data-qtip="Allows for management of the data imports and their mappings."></i>',
 				items: [
-					fileHistoryGrid
-					//mappingPanel					
+					fileHistoryGrid,
+					mappingPanel					
 				]
 			});
 			

@@ -10,9 +10,11 @@
 	<packaging>pom</packaging>
 	<name>openstorefront-plugin</name>
 	<modules>
-		<module>example</module>
-	</modules>
- 
+    <module>example</module>
+	<!--
+		<module>spoon-importer</module>
+	-->
+  </modules>
 	<dependencies>
 		<dependency>
 			<groupId>org.osgi</groupId>

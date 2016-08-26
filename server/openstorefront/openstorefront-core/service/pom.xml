@@ -311,7 +311,7 @@
 			<artifactId>describe</artifactId>
 			<version>1.0</version>
 			<type>jar</type>
-		</dependency>		
+		</dependency>
 	</dependencies>
 
 	<build>

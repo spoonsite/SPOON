@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.parser;
+package edu.usu.sdl.openstorefront.core.spi.parser;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.service.io.reader.GenericReader;
-import edu.usu.sdl.openstorefront.service.io.reader.TextReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.MappableReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.TextReader;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -39,14 +44,14 @@ import java.util.logging.Logger;
  *
  * @author dshurtleff
  */
-public abstract class AbstractParser
+public abstract class AbstractParser <T>
 {
 
-	private static final Logger log = Logger.getLogger(AbstractParser.class.getName());
+	private static final Logger LOG = Logger.getLogger(AbstractParser.class.getName());
 
 	protected FileHistoryAll fileHistoryAll;
 	protected int currentRecordNumber;
-	protected ServiceProxy service = ServiceProxy.getProxy();
+	protected Service service = ServiceProxyFactory.getServiceProxy();
 
 	public AbstractParser()
 	{
@@ -65,16 +70,16 @@ public abstract class AbstractParser
 	{
 		this.fileHistoryAll = fileHistoryAll;
 
-		log.log(Level.INFO, MessageFormat.format("Processing: {0}", fileHistoryAll.getFileHistory().getOriginalFilename()));
+		LOG.log(Level.INFO, MessageFormat.format("Processing: {0}", fileHistoryAll.getFileHistory().getOriginalFilename()));
 
 		//getReader
-		log.log(Level.FINEST, "Get Reader");
+		LOG.log(Level.FINEST, "Get Reader");
 		Path path = fileHistoryAll.getFileHistory().pathToFileName();
 		if (path != null) {
 			try (GenericReader reader = getReader(new FileInputStream(path.toFile()))) {
 				reader.preProcess();
 
-				log.log(Level.FINEST, "Read Records");
+				LOG.log(Level.FINEST, "Read Records");
 				if (reader.getTotalRecords() != null) {
 					fileHistoryAll.getFileHistory().setNumberRecords(reader.getTotalRecords());
 				}
@@ -105,7 +110,7 @@ public abstract class AbstractParser
 				//flush any remaining records
 				flushRecordsToStorage();
 
-				log.log(Level.FINEST, "Finish Up");
+				LOG.log(Level.FINEST, "Finish Up");
 				finishProcessing();
 			} catch (Exception e) {
 				StringWriter stringWriter = new StringWriter();
@@ -115,29 +120,82 @@ public abstract class AbstractParser
 				fileHistoryAll.addError(FileHistoryErrorType.SYSTEM, "Unable to process all of the records;  Failed reading the data. <br> Error Trace: <br>" + stringWriter.toString());
 			}
 
-			log.log(Level.INFO, MessageFormat.format("Results for processing: {0}", fileHistoryAll.getFileHistory().getOriginalFilename()));
-			log.log(Level.INFO, MessageFormat.format("Records Total processed: {0}", currentRecordNumber));
-			log.log(Level.INFO, MessageFormat.format("Records Total Failed: {0}", fileHistoryAll.getErrors().size()));
-			log.log(Level.FINE, "Error Message(s):");
+			LOG.log(Level.INFO, MessageFormat.format("Results for processing: {0}", fileHistoryAll.getFileHistory().getOriginalFilename()));
+			LOG.log(Level.INFO, MessageFormat.format("Records Total processed: {0}", currentRecordNumber));
+			LOG.log(Level.INFO, MessageFormat.format("Records Total Failed: {0}", fileHistoryAll.getErrors().size()));
+			LOG.log(Level.FINE, "Error Message(s):");
 			for (FileHistoryError error : fileHistoryAll.getErrors()) {
-				log.log(Level.FINE, MessageFormat.format("{0} -  Message: {1}", new Object[]{error.getFileHistoryErrorType(), error.getErrorMessage().replace("<br>", "\n")}));
+				LOG.log(Level.FINE, MessageFormat.format("{0} -  Message: {1}", new Object[]{error.getFileHistoryErrorType(), error.getErrorMessage().replace("<br>", "\n")}));
 			}
-			log.log(Level.FINE, "----------------->");
+			LOG.log(Level.FINE, "----------------->");
 			fileHistoryAll.getFileHistory().setNumberRecords(currentRecordNumber);
 
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to get path to file.", "The filename is likely missing from file history record.  The record may be corrupt. ID: " + fileHistoryAll.getFileHistory().getFileHistoryId());
 		}
 	}
+	
+	public String previewProcessedData(FileHistoryAll fileHistoryAll, InputStream input) 
+	{
+		this.fileHistoryAll = fileHistoryAll;
+		
+		StringBuilder output = new StringBuilder();
+		try (GenericReader reader = getReader(input)) {
+			reader.preProcess();
+			
+			Object record = reader.nextRecord();
+			if (record != null) {
+				Object parsed = parseRecord(record);				
+				output.append(handlePreviewOfRecord(parsed));				
+			}
+		} catch (Exception e) {
+				StringWriter stringWriter = new StringWriter();
+				PrintWriter printWriter = new PrintWriter(stringWriter);
+				e.printStackTrace(printWriter);
 
+				output.append("Unable to process all of the records;  Failed reading the data. <br> Error Trace: <br>")
+					.append(stringWriter.toString());
+		}
+		return output.toString();
+	}
+	
+	protected String handlePreviewOfRecord(Object data) 
+	{
+		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
+		
+		String dataInJSON = "No record parsed";
+		if (data != null) {
+			try {
+				dataInJSON = objectMapper.writeValueAsString(data);
+			} catch (JsonProcessingException ex) {
+				LOG.log(Level.WARNING, "Unable to create preview of data.", ex);
+				dataInJSON = "Unable to create preview of data.  See logs for details.";
+			}
+		}
+		return dataInJSON;
+	}
+	
 	protected void updateFileHistoryStats()
 	{
-
+		service.getImportService().updateImportProgress(fileHistoryAll);
 	}
 
 	protected GenericReader getReader(InputStream in)
 	{
 		return new TextReader(in);
+	}
+	
+	/**
+	 * Get the mappable reader for field extraction
+	 * @param in
+	 * @return reader or null if not mappable
+	 */
+	public MappableReader getMappableReader(InputStream in) {
+		GenericReader reader = getReader(in);
+		if (reader instanceof MappableReader) {
+			return (MappableReader) reader;
+		} 
+		return null;
 	}
 
 	protected abstract <T> Object parseRecord(T record);

@@ -1436,11 +1436,12 @@
 					store: pluginStore,
 					columnLines: true,
 					columns: [
-						{text: 'ID', dataIndex: 'pluginId', flex: 1, cellWrap: true},
+						{text: 'ID', dataIndex: 'pluginId', flex: 1, cellWrap: true, hidden: true},
+						{text: 'Runtime ID', dataIndex: 'runtimeId', flex: 1},
 						{text: 'Name', dataIndex: 'name', flex: 2, cellWrap: true},
 						{text: 'Description', dataIndex: 'description', flex: 4, cellWrap: true},
 						{text: 'Version', dataIndex: 'version', flex: 1},
-						{text: 'Update Date', dataIndex: 'updateDts', flex: 1.5,
+						{text: 'Update Date', dataIndex: 'lastModifed', flex: 1.5,
 							xtype: 'datecolumn',
 							format: 'm/d/y H:i:s:u'
 						},
@@ -1453,9 +1454,9 @@
 								return value;
 							}
 						},
-						{text: 'Runtime ID', dataIndex: 'runtimeId', flex: 1},
 						{text: 'Core Module', dataIndex: 'coreModule', flex: 1},
-						{text: 'Actual Filename', dataIndex: 'actualFilename', flex: 2},
+						{text: 'Actual Filename', dataIndex: 'actualFilename', flex: 2, hidden: true},
+						{text: 'System Location', dataIndex: 'location', flex: 2, hidden: true},
 						{text: 'Type', dataIndex: 'pluginType', flex: 1}
 					],
 					listeners: {
