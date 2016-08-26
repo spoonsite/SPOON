@@ -404,7 +404,7 @@
 										formBind: true,
 										handler: function(){     
 											Ext.getCmp('addMediaForm').setLoading(true);
-                                            var data = Ext.getCmp('addMediaForm').getValues();
+											var data = Ext.getCmp('addMediaForm').getValues();
 
 											// Check if name is unique
 											var records = Ext.getStore('mediaStore').getData();

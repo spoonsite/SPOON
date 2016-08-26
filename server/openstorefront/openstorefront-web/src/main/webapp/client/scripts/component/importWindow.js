@@ -117,7 +117,7 @@ Ext.define('OSF.component.ImportWindow', {
 							var selectedType = field.up('form').getComponent('fileTypeCB').getValue();
 
 							field.up('form').getComponent('fileFormatMappingCB').getStore().load({
-								url: '../api/v1/resource/filehistory/filetypes/' + selectedType + '/formats/' + newValue + '/mappings'
+								url: '../api/v1/resource/filehistory/formats/' + newValue + '/mappings'
 							});
 						}
 					}

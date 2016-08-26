@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.validation;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Hold the validation results
@@ -72,6 +73,13 @@ public class ValidationResult
 		}
 
 		return restErrorModel;
+	}
+	
+	public void addToErrors(Map<String, String> errors) 
+	{
+		for (RuleResult ruleResult : ruleResults) {
+			errors.put(ruleResult.getEntityClassName() + "." + ruleResult.getFieldName(), ruleResult.getMessage());
+		}
 	}
 
 	public List<RuleResult> getRuleResults()

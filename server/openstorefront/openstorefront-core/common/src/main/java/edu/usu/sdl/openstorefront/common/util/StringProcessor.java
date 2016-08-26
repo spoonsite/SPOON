@@ -98,7 +98,7 @@ public class StringProcessor
 	}
 
 	/**
-	 * Looks for http link in a block of text
+	 * Looks for http or ftp links in a block of text
 	 *
 	 * @param text
 	 * @return found urls
@@ -110,7 +110,9 @@ public class StringProcessor
 		String tokens[] = text.split(" ");
 		for (String token : tokens) {
 			if (token.trim().toLowerCase().startsWith("http://")
-					|| token.trim().toLowerCase().startsWith("https://")) {
+					|| token.trim().toLowerCase().startsWith("https://")
+					|| token.trim().toLowerCase().startsWith("ftps://")
+					|| token.trim().toLowerCase().startsWith("ftp://")) {
 				urls.add(token.trim());
 			}
 		}
@@ -500,6 +502,48 @@ public class StringProcessor
 		}
 
 		return hexString.toString();
+	}
+	
+	/**
+	 * This decode x00xx escape codes (UTF-8) codes
+	 * @param input
+	 * @return 
+	 */
+	public static String decodeHexCharEscapes(String input) 
+	{
+		if (StringUtils.isNotBlank(input)) {
+			String newInput = input.replace("x", "");
+			Integer charCode =  Integer.valueOf(newInput, 16);
+			if (charCode != null) {				
+				newInput = "" + (char)(charCode.intValue());			
+				return newInput;
+			}
+		} 
+		return input;
+	}
+	
+	/**
+	 * This is wrapper method for plugins
+	 * @param input
+	 * @return 
+	 */
+	public static boolean stringIsNotBlank(String input) 
+	{
+		return StringUtils.isNotBlank(input);
+	}
+	
+	/**
+	 * Converts the input to make it easier to format for a URL
+	 * @param input
+	 * @return 
+	 */
+	public static String formatForFilename(String input)
+	{
+		if (StringUtils.isNotBlank(input)) {
+			input = input.replace(" ", "_");
+			input = cleanFileName(input);
+		}
+		return input;
 	}
 
 }

@@ -49,7 +49,8 @@ import edu.usu.sdl.openstorefront.core.entity.RelationshipType;
 import edu.usu.sdl.openstorefront.core.entity.ResourceType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.service.io.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
 import java.text.ParsePosition;
@@ -70,7 +71,7 @@ import org.simpleframework.xml.core.Persister;
 public class ComponentDescribeParser
 	extends BaseComponentParser	
 {
-	private static final Logger log = Logger.getLogger(ComponentDescribeParser.class.getName());
+	private static final Logger LOG = Logger.getLogger(ComponentDescribeParser.class.getName());
 	
 	private static final String ATTRIBUTE_TYPE_NETWORK = "DESCNETW";
 	private static final String ATTRIBUTE_TYPE_NETWORK_DESC = "Describe Network";
@@ -91,7 +92,7 @@ public class ComponentDescribeParser
 		try {
 			TrustedDataCollection trustedDataCollection = DescribeParser.parse(input);
 		} catch (Exception ex) {
-			log.log(Level.FINE, "Unable to read file", ex);
+			LOG.log(Level.FINE, "Unable to read file", ex);
 			errorMessage = "Unable to read format.  The file must be an XML Describe Record.";
 		}
 		return errorMessage;

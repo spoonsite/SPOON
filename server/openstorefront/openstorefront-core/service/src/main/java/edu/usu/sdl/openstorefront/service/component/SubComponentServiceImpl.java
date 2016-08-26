@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -723,7 +724,7 @@ public class SubComponentServiceImpl
 		}
 		media.setFileName(media.getComponentMediaId());
 		try (InputStream in = fileInput) {
-			Files.copy(in, media.pathToMedia());
+			Files.copy(in, media.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
 			media.setUpdateUser(SecurityUtil.getCurrentUserName());
 			media = saveComponentMedia(media, updateLastActivity);
 		} catch (IOException ex) {
@@ -742,7 +743,7 @@ public class SubComponentServiceImpl
 		}
 		resource.setFileName(resource.getResourceId());
 		try (InputStream in = fileInput) {
-			Files.copy(in, resource.pathToResource());
+			Files.copy(in, resource.pathToResource(), StandardCopyOption.REPLACE_EXISTING);
 			resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 			saveComponentResource(resource);
 		} catch (IOException ex) {

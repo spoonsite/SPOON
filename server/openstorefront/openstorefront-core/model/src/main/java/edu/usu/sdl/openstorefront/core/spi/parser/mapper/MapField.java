@@ -13,34 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.reader;
+package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
-import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-public class CSVReader
-		extends GenericReader<String[]>
+/**
+ *
+ * @author dshurtleff
+ */
+public class MapField
 {
+	private String name;
+	private String value;
 
-	private au.com.bytecode.opencsv.CSVReader reader;
-
-	public CSVReader(InputStream in)
+	public MapField()
 	{
-		super(in);
-		reader = new au.com.bytecode.opencsv.CSVReader(new InputStreamReader(in));
 	}
 
-	@Override
-	public String[] nextRecord()
+	public String getName()
 	{
-		try {
-			currentRecordNumber++;
-			return reader.readNext();
-		} catch (IOException ex) {
-			throw new OpenStorefrontRuntimeException(ex);
-		}
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public String getValue()
+	{
+		return value;
+	}
+
+	public void setValue(String value)
+	{
+		this.value = value;
 	}
 
 }

@@ -212,7 +212,9 @@
 				    Ext.getCmp('targetId').setValue(selectedObj.organizationId);
 					Ext.getCmp('targetOrganization').setValue(selectedObj.name);
 				 
-					Ext.getCmp('mergeId').setStore(Ext.getCmp('orgGrid').getStore());
+					Ext.getCmp('mergeId').getStore().load({
+						url: '../api/v1/resource/organizations'						
+					});
 					
 		            mergeWin.show();
 					
@@ -497,8 +499,28 @@
 											maxLength: 50,
 											displayField: 'name',
 											valueField: 'organizationId',
-											editable: false,
-											allowBlank: false
+											editable: true,
+											typeAhead: true,
+											forceSelection: true,
+											allowBlank: false,
+											store: {
+												autoLoad: false,
+												sorters: [
+													new Ext.util.Sorter({
+														property: 'name',
+														direction: 'ASC'
+													})
+												],												
+												proxy: {
+													type: 'ajax',
+													url: '../api/v1/resource/organizations',
+													reader: {
+														type: 'json',
+														rootProperty: 'data',
+														totalProperty: 'totalNumber'
+													}													
+												}
+											}
 										},
 										{
 											xtype: 'textfield',
@@ -518,8 +540,8 @@
 								dock: 'bottom',
 								items: [
 									{
-										text: 'Save',
-										iconCls: 'fa fa-save',
+										text: 'Apply',
+										iconCls: 'fa fa-check',
 										formBind: true,
 										handler: function(){
 											var data = Ext.getCmp('mergeForm').getValues();

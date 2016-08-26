@@ -44,6 +44,7 @@ import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
 import edu.usu.sdl.openstorefront.service.search.ArchitectureSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.AttributeSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.AttributeSetSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.BaseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ComponentSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ContactSearchHandler;
@@ -80,7 +81,7 @@ public class SearchServiceImpl
 		implements SearchService, SearchServicePrivate
 {
 
-	private static final Logger log = Logger.getLogger(SearchServiceImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(SearchServiceImpl.class.getName());
 
 	private static final String SPECIAL_ARCH_SEARCH_CODE = "0";
 
@@ -222,6 +223,9 @@ public class SearchServiceImpl
 				case ATTRIBUTE:
 					handlers.add(new AttributeSearchHandler(searchElements));
 					break;
+				case ATTRIBUTESET:
+					handlers.add(new AttributeSetSearchHandler(searchElements));
+					break;					
 				case COMPONENT:
 					handlers.add(new ComponentSearchHandler(searchElements));
 					break;

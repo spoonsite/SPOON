@@ -20,8 +20,9 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
-import edu.usu.sdl.openstorefront.service.io.reader.CSVReader;
-import edu.usu.sdl.openstorefront.service.io.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.BaseAttributeParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.CSVReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.logging.Level;
@@ -32,7 +33,7 @@ public class AttributeSvcv4Parser
 		extends BaseAttributeParser
 {
 
-	private static final Logger log = Logger.getLogger(SvcAttributeParser.class.getName());
+	private static final Logger LOG = Logger.getLogger(SvcAttributeParser.class.getName());
 
 	private static final int UID = 0;
 	private static final int CODE = 1;
@@ -106,12 +107,12 @@ public class AttributeSvcv4Parser
 				attributeAll.getAttributeCodes().add(attributeCode);
 				return attributeAll;
 			} else {
-				log.log(Level.WARNING, MessageFormat.format("Skipping record: {0} + record is missing UID or UID doesn't resolve. (0 padding is removed)", currentRecordNumber));
+				LOG.log(Level.WARNING, MessageFormat.format("Skipping record: {0} + record is missing UID or UID doesn't resolve. (0 padding is removed)", currentRecordNumber));
 			}
 
 		} else {
 
-			log.log(Level.WARNING, MessageFormat.format("Skipping record: {0} + record is missing required fields.", currentRecordNumber));
+			LOG.log(Level.WARNING, MessageFormat.format("Skipping record: {0} + record is missing required fields.", currentRecordNumber));
 		}
 
 		return null;

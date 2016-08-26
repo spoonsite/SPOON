@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.manager;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.Plugin;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.job.PluginScanJob;
@@ -49,13 +50,16 @@ public class PluginManager
 
 	private static final Logger log = Logger.getLogger(PluginManager.class.getName());
 
+	private static AtomicBoolean loadingPlugins = new AtomicBoolean(false);	
 	private static Map<String, Bundle> externalBundles = new ConcurrentHashMap<>();
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static void init()
 	{
 		ServiceProxy service = ServiceProxy.getProxy();
-
+		
+		loadingPlugins.set(true);
+		
 		//start any stopped bundles
 		Bundle bundles[] = OsgiManager.getFelix().getBundleContext().getBundles();
 		for (Bundle bundle : bundles) {
@@ -70,6 +74,9 @@ public class PluginManager
 			}
 		}
 
+		//Reload any external bundles
+		service.getSystemService().saveProperty(ApplicationProperty.PLUGIN_LAST_LOAD_MAP, null);
+		
 		AddJobModel job = new AddJobModel();
 		job.setJobClass(PluginScanJob.class);
 		job.setJobName(PluginScanJob.class.getSimpleName());
@@ -77,6 +84,8 @@ public class PluginManager
 		job.setSeconds(10);
 		job.setRepeatForever(true);
 		JobManager.addJob(job);
+		
+		loadingPlugins.set(false);
 	}
 
 	/**
@@ -290,6 +299,11 @@ public class PluginManager
 				log.log(Level.WARNING, MessageFormat.format("Failed to unstalled: {0} (Continuing).", bundle.getLocation()));
 			}
 		}
+	}
+	
+	public static boolean isLoadingPlugins() 
+	{
+		return loadingPlugins.get();
 	}
 
 	@Override
