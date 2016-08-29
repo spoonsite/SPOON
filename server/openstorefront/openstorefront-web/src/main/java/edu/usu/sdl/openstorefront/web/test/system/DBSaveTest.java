@@ -26,12 +26,6 @@ import java.util.Arrays;
 public class DBSaveTest
 		extends BaseTestCase
 {
-
-	public DBSaveTest()
-	{
-		this.description = "Save_Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -61,5 +55,11 @@ public class DBSaveTest
 
 		results.append("Clean up records").append("<br>");
 		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "DB Save Test";
 	}
 }

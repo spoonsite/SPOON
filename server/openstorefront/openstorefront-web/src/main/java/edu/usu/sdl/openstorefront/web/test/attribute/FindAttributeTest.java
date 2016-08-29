@@ -29,12 +29,6 @@ import java.util.List;
 public class FindAttributeTest
 		extends BaseTestCase
 {
-
-	public FindAttributeTest()
-	{
-		this.description = "Find Attributes";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -83,4 +77,9 @@ public class FindAttributeTest
 		service.getAttributeService().cascadeDeleteAttributeType(attributeType.getAttributeType());
 	}
 
+	@Override
+	public String getDescription()
+	{
+		return "Find Attributes";
+	}
 }

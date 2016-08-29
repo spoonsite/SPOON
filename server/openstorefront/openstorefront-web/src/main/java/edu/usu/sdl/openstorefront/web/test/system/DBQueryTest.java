@@ -27,12 +27,6 @@ import java.util.List;
 public class DBQueryTest
 		extends BaseTestCase
 {
-
-	public DBQueryTest()
-	{
-		this.description = "Querying_Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -77,6 +71,12 @@ public class DBQueryTest
 		}
 		results.append("Clean up records").append("<br>");
 		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "DB Querying Test";
 	}
 
 }

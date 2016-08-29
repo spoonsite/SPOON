@@ -26,11 +26,6 @@ public class UserProfileTest
 		extends BaseTestCase
 {
 
-	public UserProfileTest()
-	{
-		this.description = "User Profile";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -44,6 +39,12 @@ public class UserProfileTest
 		} else {
 			results.append("User profile: ").append(userProfile.getFirstName()).append(" " + userProfile.getLastName()).append("<br>");
 		}
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "User Profile";
 	}
 
 }

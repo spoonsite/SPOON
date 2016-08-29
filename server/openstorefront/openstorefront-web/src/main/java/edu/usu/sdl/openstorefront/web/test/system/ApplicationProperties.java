@@ -21,12 +21,13 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
  *
  * @author ccummings
  */
-public class UserServiceTest extends BaseTestCase
+public class ApplicationProperties extends BaseTestCase
 {
 
-	public UserServiceTest()
+	@Override
+	public String getDescription()
 	{
-		this.description = "User Service_Test";
+		return "AppProperties Test";
 	}
 
 	@Override
@@ -34,5 +35,4 @@ public class UserServiceTest extends BaseTestCase
 	{
 
 	}
-
 }

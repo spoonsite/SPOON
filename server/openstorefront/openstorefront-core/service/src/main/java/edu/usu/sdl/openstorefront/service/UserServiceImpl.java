@@ -467,6 +467,13 @@ public class UserServiceImpl
 	}
 
 	@Override
+	public String getEmailFromUserProfile(String username)
+	{
+		UserProfile userProfile = getUserProfile(username);
+		return userProfile.getEmail();
+	}
+
+	@Override
 	public void checkComponentWatches(Component component)
 	{
 		UserWatch userWatchExample = new UserWatch();
@@ -668,7 +675,7 @@ public class UserServiceImpl
 					} catch (Exception e) {
 						log.log(Level.SEVERE, "Unexpected error.  Failed sending message. (Halt sending of " + userMessage.getUserMessageId() + " message.)", e);
 						userMessageExisting.setActiveStatus(UserMessage.INACTIVE_STATUS);
-						userMessageExisting.setBodyOfMessage("System expection occured while sending message. See logs for details");
+						userMessageExisting.setBodyOfMessage("System exception occured while sending message. See logs for details");
 						updateUserMessage = true;
 					}
 				} else {

@@ -27,12 +27,6 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 public class UserWatchTest
 		extends BaseTestCase
 {
-
-	public UserWatchTest()
-	{
-		this.description = "User Watch";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -58,6 +52,12 @@ public class UserWatchTest
 		results.append("Remove watch").append("<br>");
 		service.getUserService().deleteWatch(userWatch.getUserWatchId());
 
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "User Watch";
 	}
 
 }

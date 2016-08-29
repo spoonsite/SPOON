@@ -37,11 +37,6 @@ public class AsyncProxyTest
 
 	private List<ErrorTypeCode> errorTypeCodes = new ArrayList<>();
 
-	public AsyncProxyTest()
-	{
-		this.description = "Async Proxy Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -88,6 +83,12 @@ public class AsyncProxyTest
 			throw new RuntimeException(ex);
 		}
 
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Async Proxy Test";
 	}
 
 }

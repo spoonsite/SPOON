@@ -88,7 +88,7 @@ public class OrganizationServiceImpl
 		if (organizationExisting != null) {
 
 			if (organizationExisting.getName().equals(organization.getName()) == false) {
-				//update assiociated data
+				//update associated data
 				updateOrganizationOnEntity(new Component(), organizationExisting.getName(), organization);
 				updateOrganizationOnEntity(new ComponentContact(), organizationExisting.getName(), organization);
 				updateOrganizationOnEntity(new UserProfile(), organizationExisting.getName(), organization);

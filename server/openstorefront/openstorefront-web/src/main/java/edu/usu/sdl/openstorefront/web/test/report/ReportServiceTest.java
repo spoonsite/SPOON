@@ -15,7 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.web.test.report;
 
+import edu.usu.sdl.openstorefront.core.entity.Report;
+import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportType;
+import static edu.usu.sdl.openstorefront.core.entity.RunStatus.PENDING;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -23,16 +30,42 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
  */
 public class ReportServiceTest extends BaseTestCase
 {
-
-	public ReportServiceTest()
-	{
-		this.description = "Report_Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
+		List<ReportType> types = service.getLookupService().findLookup(ReportType.class);
+		List<String> reportTypes = new ArrayList();
+		for (ReportType reportType : types) {
+			reportTypes.add(reportType.getCode());
+		}
 
+		List<ReportFormat> formatList = service.getLookupService().findLookup(ReportFormat.class);
+		List<String> reportFormats = new ArrayList();
+		for (ReportFormat format : formatList) {
+			reportFormats.add(format.getCode());
+		}
+
+		Map<String, List<String>> formats = service.getReportService().getSupportedFormats();
+
+		for (int i = 0; i < reportTypes.size(); i++) {
+			Report report = new Report();
+			report.setReportType(reportTypes.get(i));
+			report.setReportFormat(reportFormats.get(0));
+			report.setRunStatus(PENDING);
+			report = service.getReportService().generateReport(report);
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
+
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Report Test";
 	}
 
 }

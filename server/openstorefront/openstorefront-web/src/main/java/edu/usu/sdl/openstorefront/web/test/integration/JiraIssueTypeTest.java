@@ -27,11 +27,6 @@ public class JiraIssueTypeTest
 		extends BaseTestCase
 {
 
-	public JiraIssueTypeTest()
-	{
-		this.description = "Issue Type Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -40,6 +35,12 @@ public class JiraIssueTypeTest
 				results.append("Type: ").append(item.getName()).append("<br>");
 			});
 		}
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Issue Type Test";
 	}
 
 }

@@ -217,7 +217,7 @@ public class BrandingServiceImpl
 
 		return branding;
 	}
-	
+
 	@Override
 	public void setBrandingAsCurrent(String brandingId)
 	{

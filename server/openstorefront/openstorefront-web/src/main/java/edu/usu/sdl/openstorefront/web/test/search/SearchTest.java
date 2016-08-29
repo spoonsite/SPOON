@@ -27,12 +27,6 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 public class SearchTest
 		extends BaseTestCase
 {
-
-	public SearchTest()
-	{
-		this.description = "Search Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -47,4 +41,9 @@ public class SearchTest
 		});
 	}
 
+	@Override
+	public String getDescription()
+	{
+		return "Search Test";
+	}
 }

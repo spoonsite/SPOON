@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.test.system;
+package edu.usu.sdl.openstorefront.web.test.highlight;
 
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 
@@ -21,11 +21,13 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
  *
  * @author ccummings
  */
-public class SystemServiceImplTest extends BaseTestCase
+public class Highlights extends BaseTestCase
 {
-	public SystemServiceImplTest()
+
+	@Override
+	public String getDescription()
 	{
-		this.description = "SystemImpl_Test";
+		return "Highlights Test";
 	}
 
 	@Override

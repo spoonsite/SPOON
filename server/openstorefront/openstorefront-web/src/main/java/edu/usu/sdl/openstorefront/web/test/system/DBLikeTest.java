@@ -28,12 +28,6 @@ import java.util.List;
 public class DBLikeTest
 		extends BaseTestCase
 {
-
-	public DBLikeTest()
-	{
-		this.description = "Like Query";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -95,6 +89,12 @@ public class DBLikeTest
 
 		results.append("Clean up records").append("<br>");
 		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "DB Like Query";
 	}
 
 }

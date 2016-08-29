@@ -31,11 +31,6 @@ public class ER2XMLTest
 		extends BaseTestCase
 {
 
-	public ER2XMLTest()
-	{
-		this.description = "ER2XML Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -52,6 +47,12 @@ public class ER2XMLTest
 
 		service.getImportService().importData(importContext);
 		results.append(fileHistory);
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "ER2XML Test";
 	}
 
 }

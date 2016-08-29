@@ -183,6 +183,13 @@ public interface UserService
 	public void sendTestEmail(String username, String overrideEmail);
 
 	/**
+	 * This will return email address on user profile.
+	 *
+	 * @param username
+	 */
+	public String getEmailFromUserProfile(String username);
+
+	/**
 	 * Pulls active watches for the component and create messages for 'notfiy'
 	 * watches.
 	 *

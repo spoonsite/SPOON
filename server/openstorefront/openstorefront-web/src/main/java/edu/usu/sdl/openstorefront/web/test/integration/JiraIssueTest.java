@@ -28,11 +28,6 @@ public class JiraIssueTest
 		extends BaseTestCase
 {
 
-	public JiraIssueTest()
-	{
-		this.description = "Jira Issue Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -47,6 +42,12 @@ public class JiraIssueTest
 				failureReason.append("Unable to get jira ticket");
 			}
 		}
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Jira Issue Test";
 	}
 
 }

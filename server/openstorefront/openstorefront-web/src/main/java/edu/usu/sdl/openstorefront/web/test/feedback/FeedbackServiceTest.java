@@ -15,6 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.web.test.feedback;
 
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import static edu.usu.sdl.openstorefront.common.manager.PropertiesManager.KEY_FEEDBACK_EMAIL;
+import edu.usu.sdl.openstorefront.core.entity.Branding;
+import static edu.usu.sdl.openstorefront.core.entity.FeedbackHandleType.EMAIL;
+import static edu.usu.sdl.openstorefront.core.entity.FeedbackHandleType.INTERNAL;
+import edu.usu.sdl.openstorefront.core.entity.FeedbackTicket;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 
 /**
@@ -23,16 +29,102 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
  */
 public class FeedbackServiceTest extends BaseTestCase
 {
+	private Branding branding_feedback = null;
+	private PropertiesManager propManager = null;
+	private String defaultPropertyValue = null;
+	private FeedbackTicket ticket_InternalTest = null;
+	private FeedbackTicket ticket_EmailTest = null;
 
-	public FeedbackServiceTest()
+	@Override
+	public String getDescription()
 	{
-		this.description = "Feedback_Test";
+
+		return "Feedback Test";
 	}
 
 	@Override
 	protected void runInternalTest()
 	{
+		branding_feedback = new Branding();
+		branding_feedback.setName("Branding for Feedback Internal test");
+		branding_feedback.setFeedbackHandler(INTERNAL);
+		branding_feedback = service.getBrandingService().saveBranding(branding_feedback);
+		branding_feedback.setActiveStatus(Branding.ACTIVE_STATUS);
+		branding_feedback = service.getBrandingService().saveBranding(branding_feedback);
 
+		ticket_InternalTest = new FeedbackTicket();
+		ticket_InternalTest.setSummary("Internal feedback test");
+		ticket_InternalTest.setDescription("Test uses INTERNAL for feedback handle type");
+
+		// Submit feedback marked for internal message
+		results.append("Submitting feedback (internal)...").append("<br>");
+		service.getFeedbackService().submitFeedback(ticket_InternalTest);
+		results.append("Feedback submitted successfully").append("<br><br>");
+
+		// Change the branding to send feedback via email
+		branding_feedback = new Branding();
+		branding_feedback.setName("Branding for Feedback Email test");
+		branding_feedback.setFeedbackHandler(EMAIL);
+		branding_feedback = service.getBrandingService().saveBranding(branding_feedback);
+		branding_feedback.setActiveStatus(Branding.ACTIVE_STATUS);
+		branding_feedback = service.getBrandingService().saveBranding(branding_feedback);
+
+
+		ticket_EmailTest = new FeedbackTicket();
+		ticket_EmailTest.setTicketType("Feedback Test");
+		ticket_EmailTest.setSummary("Email feedback test");
+		ticket_EmailTest.setDescription("Test uses EMAIL for feedback handle type");
+		String email = getSystemEmail();
+		ticket_EmailTest.setEmail(email);
+
+		propManager = new PropertiesManager();
+		defaultPropertyValue = propManager.getValue(KEY_FEEDBACK_EMAIL);
+		propManager.setProperty(KEY_FEEDBACK_EMAIL, email);
+
+		// Submit feedback marked for email message
+		results.append("Submitting feedback (email)...<br>");
+		service.getFeedbackService().submitFeedback(ticket_EmailTest);
+		results.append("Feedback submitted successfully<br><br>");
+
+		propManager.setProperty(KEY_FEEDBACK_EMAIL, defaultPropertyValue);
+
+		// Mark ticket as complete
+		ticket_EmailTest = service.getFeedbackService().markAsComplete(ticket_EmailTest.getFeedbackId());
+		if (FeedbackTicket.INACTIVE_STATUS.equals(ticket_EmailTest.getActiveStatus())) {
+			results.append("Mark Feedback As Complete:  Passed<br><br>");
+		} else {
+			failureReason.append("Mark Feedback As Complete:  Failed - Feedback does not exist or remains outstanding<br><br>");
+		}
+
+		// Mark ticket as outstanding
+		ticket_EmailTest = service.getFeedbackService().markAsOutstanding(ticket_EmailTest.getFeedbackId());
+		if (FeedbackTicket.ACTIVE_STATUS.equals(ticket_EmailTest.getActiveStatus())) {
+			results.append("Mark Feedback As Outstanding:  Passed<br><br>");
+		} else {
+			failureReason.append("Mark Feedback As Outstanding:  Failed - Feedback does not exist or is inactive<br><br>");
+		}
 	}
 
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
+
+		if (branding_feedback != null) {
+			service.getBrandingService().deleteBranding(branding_feedback.getBrandingId());
+		}
+		if (ticket_InternalTest != null) {
+			service.getFeedbackService().deleteFeedback(ticket_InternalTest.getFeedbackId());
+		}
+		if (ticket_EmailTest != null) {
+			service.getFeedbackService().deleteFeedback(ticket_EmailTest.getFeedbackId());
+		}
+		if (propManager != null) {
+			if (defaultPropertyValue != null) {
+				propManager.setProperty(KEY_FEEDBACK_EMAIL, defaultPropertyValue);
+			} else {
+				propManager.removeProperty(KEY_FEEDBACK_EMAIL);
+			}
+		}
+	}
 }

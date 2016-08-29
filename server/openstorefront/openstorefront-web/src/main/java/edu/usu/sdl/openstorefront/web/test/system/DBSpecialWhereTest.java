@@ -32,11 +32,6 @@ public class DBSpecialWhereTest
 		extends BaseTestCase
 {
 
-	public DBSpecialWhereTest()
-	{
-		this.description = "Special Where Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -83,6 +78,12 @@ public class DBSpecialWhereTest
 
 		results.append("Clean up records").append("<br>");
 		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "DB Special Where Test";
 	}
 
 }

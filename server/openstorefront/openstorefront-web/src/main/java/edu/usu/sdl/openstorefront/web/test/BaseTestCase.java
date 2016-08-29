@@ -36,23 +36,14 @@ public abstract class BaseTestCase
 	protected StringBuffer failureReason = new StringBuffer();
 	protected StringBuffer results = new StringBuffer();
 	protected ServiceProxy service = new ServiceProxy();
-	protected String description;
 	protected List<CleanupTestData> cleanTestDataList = new ArrayList<>();
 
 	public BaseTestCase()
 	{
 	}
 
-	public String getDescription()
-	{
-		return description;
-	}
+	public abstract String getDescription();
 
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
-	
 	protected void initializeTest()
 	{		
 	}
@@ -120,12 +111,10 @@ public abstract class BaseTestCase
 			componentAll.getAttributes().add(componentAttribute);
 		}
 
-		results.append("Create component").append("<br>");
 		componentAll = service.getComponentService().saveFullComponent(componentAll);
 		
 		final String componentIdToDelete = componentAll.getComponent().getComponentId();
 		CleanupTestData cleanupTestData = () -> {
-			results.append("Delete component").append("<br>");
 			service.getComponentService().cascadeDeleteOfComponent(componentIdToDelete);
 		};
 		cleanTestDataList.add(cleanupTestData);

@@ -27,12 +27,6 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 public class JiraConnectTest
 		extends BaseTestCase
 {
-
-	public JiraConnectTest()
-	{
-		this.description = "Jira Connect Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -47,6 +41,12 @@ public class JiraConnectTest
 				failureReason.append("Unable to get server details");
 			}
 		}
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Jira Connect Test";
 	}
 
 }

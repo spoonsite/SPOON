@@ -25,12 +25,6 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 public class HelpTest
 		extends BaseTestCase
 {
-
-	public HelpTest()
-	{
-		this.description = "Help Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -41,4 +35,9 @@ public class HelpTest
 		results.append("Got Admin Help Records: ").append(adminHelp.getChildSections().size() + 1).append("<br>");
 	}
 
+	@Override
+	public String getDescription()
+	{
+		return "Help Test";
+	}
 }
