@@ -19,8 +19,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.service.io.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -43,7 +45,7 @@ public class ComponentStandardParser
 		extends BaseComponentParser
 {
 
-	private static final Logger log = Logger.getLogger(ComponentStandardParser.class.getName());
+	private static final Logger LOG = Logger.getLogger(ComponentStandardParser.class.getName());
 
 	private Set<String> allowTextTypes = new HashSet<>();
 	private Set<String> allowZipTypes = new HashSet<>();
@@ -97,32 +99,43 @@ public class ComponentStandardParser
 						throw new OpenStorefrontRuntimeException("Unsupported format.", "Check file; this format only accpets JSON or ZIP with vaild JSON record.");
 					}
 
-					for (TFile file : archive.listFiles()) {
-						if (file.isFile()) {
-							try (InputStream inTemp = new TFileInputStream(file)) {
-								componentAll = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<List<ComponentAll>>()
-								{
-								});
-							} catch (IOException ex) {
-								throw new OpenStorefrontRuntimeException(ex);
-							}
-						} else if (file.isDirectory() && "media".equalsIgnoreCase(file.getName())) {
-							for (TFile mediaFile : file.listFiles()) {
-								try {
-									Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+					TFile archiveFiles[] = archive.listFiles();
+					if (archiveFiles != null) {
+						for (TFile file : archiveFiles) {
+							if (file.isFile()) {
+								try (InputStream inTemp = new TFileInputStream(file)) {
+									componentAll = StringProcessor.defaultObjectMapper().readValue(inTemp, new TypeReference<List<ComponentAll>>()
+									{
+									});
 								} catch (IOException ex) {
-									log.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+									throw new OpenStorefrontRuntimeException(ex);
 								}
-							}
-						} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
-							for (TFile resourceFile : file.listFiles()) {
-								try {
-									Files.copy(resourceFile.toPath(), FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()), StandardCopyOption.REPLACE_EXISTING);
-								} catch (IOException ex) {
-									log.log(Level.WARNING, MessageFormat.format("Failed to copy resource to path file: {0}", resourceFile.getName()), ex);
+							} else if (file.isDirectory() && "media".equalsIgnoreCase(file.getName())) {
+								TFile media[] = file.listFiles();
+								if (media != null) {
+									for (TFile mediaFile : media) {
+										try {
+											Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+										} catch (IOException ex) {
+											LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+										}
+									}
+								}
+							} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
+								TFile resources[] = file.listFiles();
+								if (resources != null) {
+									for (TFile resourceFile : resources) {
+										try {
+											Files.copy(resourceFile.toPath(), FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+										} catch (IOException ex) {
+											LOG.log(Level.WARNING, MessageFormat.format("Failed to copy resource to path file: {0}", resourceFile.getName()), ex);
+										}
+									}
 								}
 							}
 						}
+					} else {
+						fileHistoryAll.addError(FileHistoryErrorType.PARSE, "No files in archive.");
 					}
 				}
 				totalRecords = componentAll.size();

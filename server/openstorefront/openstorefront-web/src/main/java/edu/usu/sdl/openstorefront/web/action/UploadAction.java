@@ -22,18 +22,25 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.DataMapModel;
 import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.FieldDefinition;
+import edu.usu.sdl.openstorefront.core.view.JsonResponse;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.OldBaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -70,7 +77,7 @@ public class UploadAction
 		extends BaseAction
 {
 
-	private static final Logger log = Logger.getLogger(UploadAction.class.getName());
+	private static final Logger LOG = Logger.getLogger(UploadAction.class.getName());
 
 	@Validate(required = true, on = {
 		"UploadLookup",
@@ -79,7 +86,10 @@ public class UploadAction
 		"UploadAttributes",
 		"UploadSvcv4",
 		"UploadPlugin",
-		"ImportData"
+		"ImportData",
+		"DataMapFields",
+		"PreviewMapping",
+		"ImportMapping"
 	})
 	private FileBean uploadFile;
 
@@ -91,18 +101,26 @@ public class UploadAction
 	@Validate(required = true, on = "ImportData")
 	private String fileType;
 
-	@Validate(required = true, on = "ImportData")
+	@Validate(required = true, on = {"ImportData", "DataMapFields", "PreviewMapping"})
 	private String fileFormat;
+	
+	@Validate(required = true, on = {"PreviewMapping"})
 	private String dataMappingId;
 	private String dataSource;
 
+	@Validate(required = true, on = "AttributeCodeAttachment")
+	private String attributeTypeName;
+	private String attributeCodeName;
+	private AttributeCode attributeCode;
+
 	@HandlesEvent("UploadLookup")
+	@SuppressWarnings("UseSpecificCatch")
 	public Resolution uploadLookup()
 	{
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
 			//log
-			log.log(Level.INFO, MessageFormat.format("(Admin) Uploading lookup: {0}", uploadFile));
+			LOG.log(Level.INFO, MessageFormat.format("(Admin) Uploading lookup: {0}", uploadFile));
 
 			//check content type
 			Set<String> allowTypes = new HashSet<>();
@@ -171,7 +189,7 @@ public class UploadAction
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
 			//log
-			log.log(Level.INFO, MessageFormat.format("(Admin) Uploading attributes: {0}", uploadFile));
+			LOG.log(Level.INFO, MessageFormat.format("(Admin) Uploading attributes: {0}", uploadFile));
 
 			//check content type
 			Set<String> allowSvcTypes = new HashSet<>();
@@ -237,7 +255,7 @@ public class UploadAction
 	{
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
-			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 
 			try {
 				Set<String> allowTextTypes = new HashSet<>();
@@ -276,29 +294,38 @@ public class UploadAction
 						File tempFile = new File(FileSystemManager.getDir(FileSystemManager.SYSTEM_TEMP_DIR) + "/" + System.currentTimeMillis() + "-Temp.zip");
 						uploadFile.save(tempFile);
 						TFile archive = new TFile(tempFile.getPath());
-						for (TFile file : archive.listFiles()) {
-							if (file.isFile()) {
-								try (InputStream in = new TFileInputStream(file)) {
-									components = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ComponentAll>>()
-									{
-									});
-								} catch (IOException ex) {
-									throw ex;
-								}
-							} else if (file.isDirectory() && "media".equalsIgnoreCase(file.getName())) {
-								for (TFile mediaFile : file.listFiles()) {
-									Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
-								}
-							} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
-								for (TFile resourceFile : file.listFiles()) {
-									Files.copy(resourceFile.toPath(), FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+						TFile archiveFiles[] = archive.listFiles();
+						if (archiveFiles != null) {
+							for (TFile file : archiveFiles) {
+								if (file.isFile()) {
+									try (InputStream in = new TFileInputStream(file)) {
+										components = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<ComponentAll>>()
+										{
+										});
+									} catch (IOException ex) {
+										throw ex;
+									}
+								} else if (file.isDirectory() && "media".equalsIgnoreCase(file.getName())) {
+									TFile mediaFiles[] = file.listFiles();
+									if (mediaFiles != null) {
+										for (TFile mediaFile : mediaFiles) {
+											Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+										}
+									}
+								} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
+									TFile resourcesFiles[] = file.listFiles();
+									if (resourcesFiles != null) {									
+										for (TFile resourceFile : resourcesFiles) {
+											Files.copy(resourceFile.toPath(), FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+										}
+									}
 								}
 							}
 						}
 
 						//cleanup temp zip
 						if (tempFile.delete() == false) {
-							log.log(Level.WARNING, MessageFormat.format("Unable to remove temp upload file.  It can be safely removed from: {0}", tempFile.getPath()));
+							LOG.log(Level.WARNING, MessageFormat.format("Unable to remove temp upload file.  It can be safely removed from: {0}", tempFile.getPath()));
 						}
 					}
 
@@ -309,19 +336,19 @@ public class UploadAction
 					service.getAsyncProxy(service.getComponentService(), taskRequest).importComponents(components, componentUploadOptions);
 				}
 			} catch (IOException ex) {
-				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
+				LOG.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
 			} finally {
 				try {
 					TVFS.umount();
 				} catch (IOException ex) {
-					log.log(Level.WARNING, "Unable to unmount tvfs");
+					LOG.log(Level.WARNING, "Unable to unmount tvfs");
 				}
 
 				try {
 					uploadFile.delete();
 				} catch (IOException ex) {
-					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+					LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 				}
 			}
 			return streamUploadResponse(errors);
@@ -334,13 +361,13 @@ public class UploadAction
 	{
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
-			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			try {
 				//just copy plugin to  plugin directory...to avoid double pickup
 				File pluginDir = FileSystemManager.getDir(FileSystemManager.PLUGIN_DIR);
 				uploadFile.save(new File(pluginDir + "/" + StringProcessor.cleanFileName(uploadFile.getFileName())));
 			} catch (IOException ex) {
-				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
+				LOG.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
 			} finally {
 				try {
@@ -348,8 +375,46 @@ public class UploadAction
 						uploadFile.delete();
 					}
 				} catch (IOException ex) {
-					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+					LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 				}
+			}
+			return streamUploadResponse(errors);
+		}
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
+	@HandlesEvent("AttributeCodeAttachment")
+	public Resolution uploadAttributeCodeAttachment()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+
+			AttributeCodePk attributeCodePk = new AttributeCodePk();
+			attributeCodePk.setAttributeType(attributeTypeName);
+			attributeCodePk.setAttributeCode(attributeCodeName);
+			attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+
+			if (attributeCode != null) {
+				attributeCode.setAttachmentOriginalFileName(StringProcessor.getJustFileName(uploadFile.getFileName()));
+				attributeCode.setAttachmentMimeType(uploadFile.getContentType());
+
+				ValidationModel validationModel = new ValidationModel(attributeCode);
+				validationModel.setConsumeFieldsOnly(true);
+				ValidationResult validationResult = ValidationUtil.validate(validationModel);
+				if (validationResult.valid()) {
+					try {
+						service.getAttributeService().saveAttributeCodeAttachment(attributeCode, uploadFile.getInputStream());
+					} catch (IOException ex) {
+						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+					} finally {
+						deleteTempFile(uploadFile);
+					}
+				} else {
+					errors.put("file", validationResult.toHtmlString());
+				}
+			} else {
+				errors.put("attributeCode", "AttributeCode doesn't seem to exist.");
 			}
 			return streamUploadResponse(errors);
 		}
@@ -361,7 +426,7 @@ public class UploadAction
 	{
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
-			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 
 			File tempFile = null;
 			try {
@@ -394,13 +459,14 @@ public class UploadAction
 					fileHistory.setOriginalFilename(uploadFile.getFileName());
 					fileHistory.setFileFormat(fileFormat);
 					fileHistory.setFileHistoryOption(componentUploadOptions);
+					fileHistory.setFileDataMapId(dataMappingId);					
 					importContext.getFileHistoryAll().setFileHistory(fileHistory);
 
 					service.getImportService().importData(importContext);
 				}
 
 			} catch (IOException ex) {
-				log.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
+				LOG.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
 			} finally {
 				try {
@@ -411,7 +477,7 @@ public class UploadAction
 						tempFile.delete();
 					}
 				} catch (IOException ex) {
-					log.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+					LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 				}
 			}
 
@@ -420,6 +486,104 @@ public class UploadAction
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
 
+	@HandlesEvent("DataMapFields")
+	public Resolution mapFields()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			
+			List<FieldDefinition> fieldDefinitions = new ArrayList<>();
+			
+			try (InputStream in = uploadFile.getInputStream()) {								
+				fieldDefinitions = service.getImportService().getMapField(fileFormat, in);
+			} catch (IOException ex) {
+				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");			
+			} finally {
+				try {
+					if (uploadFile != null) {
+						uploadFile.delete();
+					}
+				} catch (IOException ex) {
+					LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+				}
+			}
+			
+			return streamResults(fieldDefinitions);
+		}
+		
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+	
+	@HandlesEvent("PreviewMapping")
+	public Resolution previewMapping()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			
+			String output = "";
+			try (InputStream in = uploadFile.getInputStream()) {								
+				output = service.getImportService().previewMapData(fileFormat, dataMappingId, in, uploadFile.getFileName());
+			} catch (IOException ex) {
+				output = "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.";			
+			} finally {
+				try {
+					if (uploadFile != null) {
+						uploadFile.delete();
+					}
+				} catch (IOException ex) {
+					LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+				}
+			}
+			
+			JsonResponse jsonResponse = new JsonResponse();
+			jsonResponse.setErrors(errors);
+			jsonResponse.setSuccess(true);
+			jsonResponse.setMessage(output);
+						
+			return streamResults(jsonResponse);
+		}
+		
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}	
+	
+	@HandlesEvent("ImportMapping")
+	public Resolution importMapping()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (SecurityUtil.isAdminUser()) {
+			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			
+			
+			try (InputStream in = uploadFile.getInputStream()) {								
+				
+				DataMapModel dataMapModel = objectMapper.readValue(in, DataMapModel.class);				
+				ValidationResult validationResult = dataMapModel.validate();
+				if (validationResult.valid()) {
+					service.getImportService().saveFileDataMap(dataMapModel);
+				} else {
+					validationResult.addToErrors(errors);					
+				}
+				
+			} catch (IOException ex) {
+				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");			
+			} finally {
+				try {
+					if (uploadFile != null) {
+						uploadFile.delete();
+					}
+				} catch (IOException ex) {
+					LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+				}
+			}
+			
+			return streamErrorResponse(errors, true);
+		}
+		
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");		
+	}	
+		
 	public FileBean getUploadFile()
 	{
 		return uploadFile;
@@ -488,6 +652,26 @@ public class UploadAction
 	public void setDataSource(String dataSource)
 	{
 		this.dataSource = dataSource;
+	}
+
+	public String getAttributeTypeName()
+	{
+		return attributeTypeName;
+	}
+
+	public void setAttributeTypeName(String attributeTypeName)
+	{
+		this.attributeTypeName = attributeTypeName;
+	}
+
+	public String getAttributeCodeName()
+	{
+		return attributeCodeName;
+	}
+
+	public void setAttributeCodeName(String attributeCodeName)
+	{
+		this.attributeCodeName = attributeCodeName;
 	}
 
 }

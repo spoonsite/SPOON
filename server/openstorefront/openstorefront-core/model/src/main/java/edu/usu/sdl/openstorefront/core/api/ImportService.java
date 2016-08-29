@@ -15,12 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
+import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
+import edu.usu.sdl.openstorefront.core.model.DataMapModel;
 import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.FieldDefinition;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +71,9 @@ public interface ImportService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public FileHistory saveFileHistory(FileHistoryAll fileHistoryAll);
 
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void updateImportProgress(FileHistoryAll fileHistoryAll);
+	
 	/**
 	 * Deletes a file history record and any associated data
 	 *
@@ -84,11 +91,28 @@ public interface ImportService
 	public List<FileFormat> findFileFormats(String fileType);
 
 	/**
+	 * Find format record. Note: some format could be transient due to plugins
+	 * @param fileFormatCode
+	 * @return Format or null if it doesn't exist
+	 */
+	public FileFormat findFileFormat(String fileFormatCode);
+	
+	/**
+	 * Gets all formats that support mapping
+	 * @return 
+	 */
+	public List<FileFormat> getFileFormatsMapping();
+	
+	/**
 	 * Removes records older than the clean up property is set to
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void cleanupOldFileHistory();
 
+	/**
+	 * Rollback data (if possible) and remove file uploaded.
+	 * @param fileHistoryId 
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void rollback(String fileHistoryId);
 
@@ -98,5 +122,71 @@ public interface ImportService
 	 * @return
 	 */
 	public Map<String, List<FileHistoryError>> fileHistoryErrorMap();
+	
+	/**
+	 *  Add or updates a data mapper for a file format 
+	 * @param dataMapModel (Contains both the data mapping and attribute mapping)
+	 * @return  saved data map
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public FileDataMap saveFileDataMap(DataMapModel dataMapModel);
+	
+	/**
+	 * Removes File Data map
+	 * @param fileDataMapId 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void removeFileDataMap(String fileDataMapId);
+	
+	/**
+	 * Get the Complete DataMapModel
+	 * 
+	 * @param fileDataMapId
+	 * @return 
+	 */
+	public DataMapModel getDataMap(String fileDataMapId);
+	
+	/**
+	 * Adds a File Format to the import system
+	 * 
+	 * @param newFormat 
+	 * @param parseClass 
+	 */
+	public void registerFormat(FileFormat newFormat, Class parseClass);
+	
+	/**
+	 * Removes a File Format from the import system
+	 * 
+	 * @param fullClassPath 
+	 */
+	public void unregisterFormat(String fullClassPath);
 
+	/**
+	 * Finds the field path to use for data mapping
+	 * 
+	 * @param fileFormatCode
+	 * @param in
+	 * @return fieldDefinition found in the file
+	 */
+	public List<FieldDefinition> getMapField(String fileFormatCode, InputStream in);
+	
+	/**
+	 * Processes a sample file and returns a preview to help with mapping
+	 * 
+	 * @param fileFormatCode
+	 * @param fileDataMapId
+	 * @param in
+	 * @param filename
+	 * @return preview output
+	 */
+	public String previewMapData(String fileFormatCode, String fileDataMapId, InputStream in, String filename);	
+
+	/**
+	 * Creates a copy of existing data map
+	 * 
+	 * @param fileDataMapId
+	 * @return copy data map
+	 */
+	public FileDataMap copyDataMap(String fileDataMapId);
+	
 }

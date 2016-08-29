@@ -26,7 +26,8 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ResourceType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.service.io.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class ComponentER2Parser
 		extends BaseComponentParser
 {
 
-	private static final Logger log = Logger.getLogger(ComponentER2Parser.class.getName());
+	private static final Logger LOG = Logger.getLogger(ComponentER2Parser.class.getName());
 
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
@@ -54,7 +55,7 @@ public class ComponentER2Parser
 		try {
 			serializer.read(Asset.class, input);
 		} catch (Exception ex) {
-			log.log(Level.FINEST, "Unable to read file", ex);
+			LOG.log(Level.FINEST, "Unable to read file", ex);
 			errorMessage = "Unable to read format.  The file must be an XML Asset file.";
 		}
 		return errorMessage;

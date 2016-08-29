@@ -269,4 +269,25 @@ public interface SystemService
 	 */
 	public HelpSectionAll getAllHelp(Boolean includeAdmin);
 
+	/**
+	 * Check system state. 
+	 * @return true is the system(application) is started.
+	 */
+	public boolean isSystemReady();
+	
+	/**
+	 * Modules that load before the system is ready should check this
+	 * otherwise they may fail.
+	 * @return true if plugins are loading
+	 */
+	public boolean isLoadingPluginsReady();
+
+	/**
+	 * Provide serialization as a service for plugins
+	 * 
+	 * @param obj
+	 * @return JSON of the obj or null if the obj is null
+	 */
+	public String toJson(Object obj);
+	
 }

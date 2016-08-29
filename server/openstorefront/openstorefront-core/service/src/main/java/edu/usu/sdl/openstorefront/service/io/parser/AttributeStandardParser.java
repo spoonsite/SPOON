@@ -19,7 +19,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
-import edu.usu.sdl.openstorefront.service.io.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.BaseAttributeParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class AttributeStandardParser
 		extends BaseAttributeParser
 {
 
-	private static final Logger log = Logger.getLogger(ComponentStandardParser.class.getName());
+	private static final Logger LOG = Logger.getLogger(ComponentStandardParser.class.getName());
 
 	@Override
 	public String checkFormat(String mimeType, InputStream input)

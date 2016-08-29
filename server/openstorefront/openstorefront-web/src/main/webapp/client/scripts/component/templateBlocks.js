@@ -115,7 +115,9 @@ Ext.define('OSF.component.template.Resources', {
 		'	<tr><th class="details-table">Name</th><th class="details-table">Link</th></tr>',
 		'	<tpl for="resources">',	
 		'		<tr class="details-table">',
-		'			<td class="details-table"><b>{resourceTypeDesc}</b></td>',
+		'			<td class="details-table"><b>{resourceTypeDesc}</b>',
+		'                       <tpl if="description"><br>{description}</tpl>',
+		'                       </td>',
 		'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="{actualLink}" class="details-table" target="_blank">{link}</a></td>',
 		'		</tr>',
 		'	</tpl>',
@@ -131,11 +133,14 @@ Ext.define('OSF.component.template.Resources', {
 			this.setHidden(true);
 		} else {
 			Ext.Array.sort(entry.resources, function(a, b){
-				return a.resourceTypeDesc.localeCompare(b.resourceTypeDesc);	
+				return a.resourceTypeDesc.localeCompare(b.resourceTypeDesc);				
 			});	
 		
 			var updated = false;
-			Ext.Array.each(entry.resources, function(resource){
+			Ext.Array.each(entry.resources, function(resource){				
+				if (resource.originalFileName) {
+					resource.link = resource.originalFileName;
+				}
 				if (resource.updateDts > entry.lastViewedDts) {
 					updated = true;
 				}	
@@ -219,7 +224,7 @@ Ext.define('OSF.component.template.Vitals', {
 		'	<tpl for="vitals">',	
 		'		<tr class="details-table">',
 		'			<td class="details-table"><b>{label}</b></td>',
-		'			<td class="details-table highlight-{highlightStyle}"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="#" class="details-table" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\');">{value}</a></td>',
+		'			<td class="details-table highlight-{highlightStyle}"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="#" class="details-table" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\', \'{codeHasAttachment}\');">{value}</a><tpl if="codeHasAttachment"> <a href="/openstorefront/api/v1/resource/attributes/attributetypes/{type}/attributecodes/{code}/attachment"><i class="fa fa-paperclip"></i> </a></tpl></td>',
 		'		</tr>',
 		'	</tpl>',
 		'</table>'		
@@ -248,6 +253,7 @@ Ext.define('OSF.component.template.Vitals', {
 					code: item.code,
 					updateDts: item.updateDts,
 					securityMarkingType: item.securityMarkingType,
+					codeHasAttachment: item.codeHasAttachment,
 					vitalType: 'ATTRIBUTE',
 					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription
 				});				

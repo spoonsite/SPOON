@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.io.parser;
+package edu.usu.sdl.openstorefront.core.spi.parser;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
@@ -38,17 +38,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+
 
 /**
  *
  * @author dshurtleff
  */
 public abstract class BaseComponentParser
-		extends AbstractParser
+		extends AbstractParser<ComponentAll>
 {
-	private static final Logger log = Logger.getLogger(BaseComponentParser.class.getName());
+	private static final Logger LOG = Logger.getLogger(BaseComponentParser.class.getName());
 
+	private static final int ENTRY_TYPE_SHORT_CODE = 6;
+	
 	protected static final int MAX_BUCKET_SIZE = 100;
 	protected List<ComponentAll> componentsAll = new ArrayList<>();
 
@@ -126,9 +129,9 @@ public abstract class BaseComponentParser
 	}
 
 	@Override
-	protected <T> List<T> getStorageBucket()
+	protected List<ComponentAll> getStorageBucket()
 	{
-		return (List<T>) componentsAll;
+		return componentsAll;
 	}
 
 	@Override
@@ -174,7 +177,7 @@ public abstract class BaseComponentParser
 						lookup.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
 						
 						service.getLookupService().saveLookupValue(lookup);
-						log.log(Level.INFO, MessageFormat.format("Added missing lookup: {0} to lookup {1}", input, lookupClass.getSimpleName()));
+						LOG.log(Level.INFO, MessageFormat.format("Added missing lookup: {0} to lookup {1}", input, lookupClass.getSimpleName()));
 					} catch (InstantiationException | IllegalAccessException ex) {
 						throw new OpenStorefrontRuntimeException("Unable to create a new instance of look up class.", ex);
 					}
@@ -188,8 +191,9 @@ public abstract class BaseComponentParser
 	/**
 	 * This will attempt to find the attribute but if not found it will add type and code
 	 * @param attributeTypeCode
+	 * @param attributeTypeDescription
 	 * @param attributeCode
-	 * @param attributeDescribtion
+	 * @param attributeCodeDescription
 	 * @return 
 	 */
 	protected AttributeCode getAttributeCode(String attributeTypeCode, String attributeTypeDescription, String attributeCode, String attributeCodeDescription)
@@ -237,5 +241,85 @@ public abstract class BaseComponentParser
 		
 		return attributeCodeFound;
 	}
+	
+	/**
+	 * This will look up the attribute code by label and it will add code
+	 * 
+	 * @param attributeTypeCode (Existing)
+	 * @param attributeCodeLabel
+	 * @return 
+	 */
+	protected AttributeCode getAttributeCode(String attributeTypeCode, String attributeCodeLabel)
+	{
+		AttributeCode attributeCode = null;
+		if (StringUtils.isNotBlank(attributeCodeLabel)) {
+			attributeCodeLabel = attributeCodeLabel.trim();
+			
+			attributeCode = new AttributeCode();
+			attributeCode.setLabel(attributeCodeLabel);
+			
+			AttributeCodePk attributeCodePk = new AttributeCodePk();
+			attributeCodePk.setAttributeType(attributeTypeCode);
+			attributeCode.setAttributeCodePk(attributeCodePk);
+			
+			attributeCode = (AttributeCode) attributeCode.find();
+			if (attributeCode == null) {
+				attributeCode = new AttributeCode();
+				attributeCode.setLabel(StringUtils.left(attributeCodeLabel, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
+				
+				attributeCodePk = new AttributeCodePk();
+				attributeCodePk.setAttributeType(attributeTypeCode);
+				
+				CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+				String key = sanitizer.santize(StringUtils.left(attributeCodeLabel.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
+				attributeCodePk.setAttributeCode(key);
+				attributeCode.setAttributeCodePk(attributeCodePk);				
+				
+				attributeCode.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
+				attributeCode.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());								
+				
+				service.getAttributeService().saveAttributeCode(attributeCode, false);
+			}
+		}
+		return attributeCode;
+	}	
+	
+	public String getEntryType(String entryTypeLabel) 
+	{
+		String entryCode = null;
+		
+		if (StringUtils.isNotBlank(entryTypeLabel)) {
+			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+			entryCode = entryTypeLabel.toUpperCase().substring(0, ENTRY_TYPE_SHORT_CODE);
+			entryCode = sanitizer.santize(entryCode).toString();
+			
+			ComponentType componentType = new ComponentType();
+			componentType.setComponentType(entryCode);
+			componentType = componentType.find();
+			
+			if (componentType == null) {
+				componentType = new ComponentType();
+				componentType.setComponentType(entryCode);
+				componentType.setLabel(entryTypeLabel);
+				componentType.setDescription(entryTypeLabel);
+				componentType.setDataEntryAttributes(Boolean.TRUE);
+				componentType.setDataEntryContacts(Boolean.TRUE);
+				componentType.setDataEntryDependancies(Boolean.TRUE);
+				componentType.setDataEntryEvaluationInformation(Boolean.FALSE);
+				componentType.setDataEntryMedia(Boolean.TRUE);
+				componentType.setDataEntryMetadata(Boolean.TRUE);
+				componentType.setDataEntryQuestions(Boolean.TRUE);
+				componentType.setDataEntryRelationships(Boolean.TRUE);
+				componentType.setDataEntryResources(Boolean.TRUE);
+				componentType.setDataEntryReviews(Boolean.TRUE);
+				
+				service.getComponentService().saveComponentType(componentType);
+			} 
+		}
+		
+		return entryCode;
+	}
+	
+	
 	
 }

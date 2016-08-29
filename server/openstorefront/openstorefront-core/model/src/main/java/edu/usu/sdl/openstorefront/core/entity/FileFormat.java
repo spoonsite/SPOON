@@ -36,6 +36,7 @@ public class FileFormat
 	private String fileType;
 	private String parserClass;
 	private String fileRequirements;
+	private boolean supportsDataMap;
 
 	public FileFormat()
 	{
@@ -58,11 +59,11 @@ public class FileFormat
 		((FileFormat) codeMap.get(ATTRIBUTE_STANDARD)).setFileType(FileType.ATTRIBUTE);
 		((FileFormat) codeMap.get(ATTRIBUTE_SVCV4)).setFileType(FileType.ATTRIBUTE);
 
-		((FileFormat) codeMap.get(COMPONENT_STANDARD)).setParserClass("ComponentStandardParser");
-		((FileFormat) codeMap.get(COMPONENT_ER2)).setParserClass("ComponentER2Parser");
-		((FileFormat) codeMap.get(COMPONENT_DESCRIBE)).setParserClass("ComponentDescribeParser");
-		((FileFormat) codeMap.get(ATTRIBUTE_STANDARD)).setParserClass("AttributeStandardParser");
-		((FileFormat) codeMap.get(ATTRIBUTE_SVCV4)).setParserClass("AttributeSvcv4Parser");
+		((FileFormat) codeMap.get(COMPONENT_STANDARD)).setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentStandardParser");
+		((FileFormat) codeMap.get(COMPONENT_ER2)).setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentER2Parser");
+		((FileFormat) codeMap.get(COMPONENT_DESCRIBE)).setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentDescribeParser");
+		((FileFormat) codeMap.get(ATTRIBUTE_STANDARD)).setParserClass("edu.usu.sdl.openstorefront.service.io.parser.AttributeStandardParser");
+		((FileFormat) codeMap.get(ATTRIBUTE_SVCV4)).setParserClass("edu.usu.sdl.openstorefront.service.io.parser.AttributeSvcv4Parser");
 
 		StringBuilder requirements = new StringBuilder();
 		requirements.append("ZIP with media and JSON data containing component records or just the JSON file.  See Export.");
@@ -115,6 +116,16 @@ public class FileFormat
 	public void setFileRequirements(String fileRequirements)
 	{
 		this.fileRequirements = fileRequirements;
+	}
+
+	public boolean getSupportsDataMap()
+	{
+		return supportsDataMap;
+	}
+
+	public void setSupportsDataMap(boolean supportsDataMap)
+	{
+		this.supportsDataMap = supportsDataMap;
 	}
 
 }

@@ -67,4 +67,6 @@ project*.properties
 /server/openstorefront/describe/describe/target/
 /server/openstorefront/describe/target/
 /server/openstorefront/openstorefront-core/common/nbproject/
+/server/openstorefront/openstorefront-core/model/nbproject/
+/server/openstorefront/openstorefront-plugin/spoon-importer/target/
 /server/openstorefront/openstorefront-web/nbproject/
