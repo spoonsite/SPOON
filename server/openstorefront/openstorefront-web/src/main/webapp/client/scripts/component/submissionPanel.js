@@ -1146,13 +1146,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Media',
 				width: '50%',
-				height: 325,
+				minHeight: 400,
 				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
 						itemId: 'mediaForm',
 						bodyStyle: 'padding: 10px;',
+						autoScroll: true,
 						defaults: {
 							labelAlign: 'top',
 							labelSeparator: '',
@@ -1233,7 +1234,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							{
 								xtype: 'filefield',
 								itemId: 'upload',
-								fieldLabel: 'Upload Media (Limit of 1GB)',																											
+								fieldLabel: 'Upload Media (Limit of 1GB)',
 								name: 'file',
 								listeners: {
 									change: CoreUtil.handleMaxFileLimit
