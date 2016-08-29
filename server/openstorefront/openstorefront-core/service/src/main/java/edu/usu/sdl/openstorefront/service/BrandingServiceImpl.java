@@ -210,7 +210,7 @@ public class BrandingServiceImpl
 
 		return branding;
 	}
-	
+
 	@Override
 	public void setBrandingAsCurrent(String brandingId)
 	{
@@ -229,15 +229,15 @@ public class BrandingServiceImpl
 	}
 
 	@Override
-	public BrandingModel saveFullBanding(BrandingModel brandingModel)
+	public BrandingModel saveFullBranding(BrandingModel brandingModel)
 	{
-		Branding branding = saveBanding(brandingModel.getBranding());
+		Branding branding = saveBranding(brandingModel.getBranding());
 		brandingModel.setBranding(branding);
 		return brandingModel;
 	}
 
 	@Override
-	public Branding saveBanding(Branding branding)
+	public Branding saveBranding(Branding branding)
 	{
 		Objects.requireNonNull(branding);
 

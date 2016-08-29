@@ -38,11 +38,6 @@ public class AsyncCallbackTest
 		extends BaseTestCase
 {
 
-	public AsyncCallbackTest()
-	{
-		this.description = "Async Callback Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -107,6 +102,12 @@ public class AsyncCallbackTest
 
 		//Delete the task
 		AsyncTaskManager.deleteTask(taskFuture.getTaskId());
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Async Callback Test";
 	}
 
 }

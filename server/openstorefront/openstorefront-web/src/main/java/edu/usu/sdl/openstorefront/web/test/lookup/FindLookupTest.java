@@ -29,12 +29,6 @@ import java.util.List;
 public class FindLookupTest
 		extends BaseTestCase
 {
-
-	public FindLookupTest()
-	{
-		this.description = "Find Lookup Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -51,6 +45,12 @@ public class FindLookupTest
 			}
 		}
 
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Find Lookup Test";
 	}
 
 }

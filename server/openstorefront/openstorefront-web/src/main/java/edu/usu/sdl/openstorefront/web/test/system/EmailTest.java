@@ -24,15 +24,15 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 public class EmailTest
 		extends BaseTestCase
 {
-
-	public EmailTest()
-	{
-		this.description = "Email_Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
 		service.getUserService().sendTestEmail("admin", null);
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Email Test";
 	}
 }

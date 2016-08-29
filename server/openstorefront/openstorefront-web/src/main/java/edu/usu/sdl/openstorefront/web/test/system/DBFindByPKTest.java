@@ -28,11 +28,6 @@ public class DBFindByPKTest
 		extends BaseTestCase
 {
 
-	public DBFindByPKTest()
-	{
-		this.description = "Checking_PK";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -54,4 +49,9 @@ public class DBFindByPKTest
 		success = true;
 	}
 
+	@Override
+	public String getDescription()
+	{
+		return "DB Check PK";
+	}
 }

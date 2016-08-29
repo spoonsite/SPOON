@@ -26,12 +26,6 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 public class JiraProjectTest
 		extends BaseTestCase
 {
-
-	public JiraProjectTest()
-	{
-		this.description = "Project Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -41,6 +35,12 @@ public class JiraProjectTest
 				results.append("Project Key: ").append(project.getKey()).append("<br>");
 			});
 		}
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Project Test";
 	}
 
 }

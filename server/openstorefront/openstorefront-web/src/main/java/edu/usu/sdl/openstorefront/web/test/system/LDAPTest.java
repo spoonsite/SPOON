@@ -29,11 +29,6 @@ public class LDAPTest
 		extends BaseTestCase
 {
 
-	public LDAPTest()
-	{
-		this.description = "LDAP_Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -44,6 +39,12 @@ public class LDAPTest
 		if (ldapRecord != null) {
 			results.append(StringProcessor.printObject(ldapRecord)).append("<br>");
 		}
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "LDAP_Test";
 	}
 
 }

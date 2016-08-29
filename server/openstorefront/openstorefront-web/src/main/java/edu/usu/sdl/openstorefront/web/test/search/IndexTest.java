@@ -31,12 +31,6 @@ import java.util.List;
 public class IndexTest
 		extends BaseTestCase
 {
-
-	public IndexTest()
-	{
-		this.description = "Index Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -59,6 +53,12 @@ public class IndexTest
 			failureReason.append("Unable able to find added component<br>");
 		}
 
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Index Test";
 	}
 
 }

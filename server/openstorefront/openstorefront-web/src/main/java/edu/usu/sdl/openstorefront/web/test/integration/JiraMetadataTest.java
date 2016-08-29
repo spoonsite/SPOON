@@ -29,11 +29,6 @@ public class JiraMetadataTest
 		extends BaseTestCase
 {
 
-	public JiraMetadataTest()
-	{
-		this.description = "Jira Metadata test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -68,4 +63,9 @@ public class JiraMetadataTest
 		}
 	}
 
+	@Override
+	public String getDescription()
+	{
+		return "Jira Metadata test";
+	}
 }

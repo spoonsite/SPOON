@@ -72,21 +72,25 @@ public class FeedbackTicket
 		if (getWebInformation() == null) {
 			setWebInformation(new WebInformation());			
 		}
-		
+
+		/**
+		 * Tab characters were added before each newline character to prevent
+		 * Windows Outlook from removing extra line breaks in email message
+		 */
 		StringBuilder sb = new StringBuilder();
-		sb.append("*Reported Issue Type*: ").append(this.getTicketType()).append("\n");
-		sb.append("*Reporter Username*: ").append(this.getUsername()).append("\n");
-		sb.append("*Reporter Firstname*: ").append(StringProcessor.blankIfNull(this.getFirstname())).append("\n");
-		sb.append("*Reporter Lastname*: ").append(StringProcessor.blankIfNull(this.getLastname())).append("\n");
-		sb.append("*Reporter Organization*: ").append(StringProcessor.blankIfNull(this.getOrganization())).append("\n");
-		sb.append("*Reporter Email*: ").append(StringProcessor.blankIfNull(this.getEmail())).append("\n");
-		sb.append("*Reporter Phone*: ").append(StringProcessor.blankIfNull(this.getPhone())).append("\n\n");
-		sb.append("*Web Location*: ").append(StringProcessor.blankIfNull(this.getWebInformation().getLocation())).append("\n");
-		sb.append("*Web User-agent*: ").append(StringProcessor.blankIfNull(this.getWebInformation().getUserAgent())).append("\n");
-		sb.append("*Web Referrer*: ").append(StringProcessor.blankIfNull(this.getWebInformation().getReferrer())).append("\n");
-		sb.append("*Web Screen Resolution*: ").append(StringProcessor.blankIfNull(this.getWebInformation().getScreenResolution())).append("\n");
-		sb.append("*Application Version*: ").append(PropertiesManager.getApplicationVersion()).append("\n");
-		sb.append("\n");
+		sb.append("*Reported Issue Type*:  ").append(this.getTicketType()).append("\t\n");
+		sb.append("*Reporter Username*:  ").append(this.getUsername()).append("\t\n");
+		sb.append("*Reporter Firstname*:  ").append(StringProcessor.blankIfNull(this.getFirstname())).append("\t\n");
+		sb.append("*Reporter Lastname*:  ").append(StringProcessor.blankIfNull(this.getLastname())).append("\t\n");
+		sb.append("*Reporter Organization*:  ").append(StringProcessor.blankIfNull(this.getOrganization())).append("\t\n");
+		sb.append("*Reporter Email*:  ").append(StringProcessor.blankIfNull(this.getEmail())).append("\t\n");
+		sb.append("*Reporter Phone*:  ").append(StringProcessor.blankIfNull(this.getPhone())).append("\t\n\n");
+		sb.append("*Web Location*:  ").append(StringProcessor.blankIfNull(this.getWebInformation().getLocation())).append("\t\n");
+		sb.append("*Web User-agent*:  ").append(StringProcessor.blankIfNull(this.getWebInformation().getUserAgent())).append("\t\n");
+		sb.append("*Web Referrer*:  ").append(StringProcessor.blankIfNull(this.getWebInformation().getReferrer())).append("\t\n");
+		sb.append("*Web Screen Resolution*:  ").append(StringProcessor.blankIfNull(this.getWebInformation().getScreenResolution())).append("\n");
+		sb.append("*Application Version*:  ").append(PropertiesManager.getApplicationVersion()).append("\t\n");
+		sb.append("\t\n");
 		sb.append(this.getDescription());		
 		return sb.toString();
 	}

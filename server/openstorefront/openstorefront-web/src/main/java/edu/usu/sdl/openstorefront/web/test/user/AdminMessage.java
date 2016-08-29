@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.web.test.alert;
+package edu.usu.sdl.openstorefront.web.test.user;
 
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 
@@ -21,11 +21,13 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
  *
  * @author ccummings
  */
-public class AlertServiceTest extends BaseTestCase
+public class AdminMessage extends BaseTestCase
 {
-	public AlertServiceTest()
+
+	@Override
+	public String getDescription()
 	{
-		this.description = "AlertService_Test";
+		return "Admin Message Test";
 	}
 
 	@Override
@@ -33,4 +35,5 @@ public class AlertServiceTest extends BaseTestCase
 	{
 
 	}
+
 }
