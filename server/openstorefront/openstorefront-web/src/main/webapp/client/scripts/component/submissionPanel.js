@@ -2078,6 +2078,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											iconCls: 'fa fa-trash',
 											handler: function(){
 												var record = this.up('grid').getSelection()[0];
+												var neededGrid = this.up('grid');
 												if (record.get('usedInline')) {
 													var msg = 'This media has been marked as being used inline. This means that the media is being used in a description, etc. ';
 													msg += 'If you delete this media, that reference will no longer be valid and the media will not be available where it is referenced elsewhere.';
@@ -2085,7 +2086,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 													Ext.Msg.confirm('Media Used Inline', msg, function (btn) { 
 														if (btn ==='yes') {
 															actionSubComponentRemove({
-																grid: this.up('grid'),
+																grid: neededGrid,
 																idField: 'componentMediaId',
 																entity: 'media'
 															});
