@@ -35,3 +35,25 @@
 1. All cache handling should be done in the services rather than leaking it up a layer of abstraction
 2. Beware to not modify cached version of the data.  There is a weak reference to the object so it can end up applying unwanted changes.
 3. All caches should be setup in the cache manager. 
+
+##Loggin
+
+Each levels has a different audience. (See java Docs)  Add logging message appropriate for each level.   Focus on logging thing that would aid in debbuging (When, What, the State was at the time of the error, and Data owner Eg. what component does it belong to)
+
+*SEVERE* - System Admin and End-User; the operation failed; something prevent normal execution;  If throwing an Openstorefront error please state the error and note any thing that can be done to correct it.
+
+*WARNING* - Potential Problems, System Admin or End-users, The system should be able to continue but desired effect may not have been achieved.
+
+*INFO* - Message to System Admin usually for information about operation completed.  
+
+*CONFIG* - messages are intended to provide a variety of static configuration information (Mainly initialization of a system stuff)
+
+*FINE* - Debugging information for developers.
+
+*FINER* - Detailed debugging information
+
+*FINEST* - Trace message; highly detail.  If gather the information is time consuming (cpu wise) then check loggin state first.  If (log.isLoggable(Level.FINIEST)).
+
+
+
+
