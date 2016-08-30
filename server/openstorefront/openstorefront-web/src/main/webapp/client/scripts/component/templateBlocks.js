@@ -67,7 +67,7 @@ Ext.define('OSF.component.template.Description', {
 	},
 	
 	updateHandler: function(entry){
-		entry.description = Ext.util.Format.escape(entry.description).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '');		
+		entry.description = Ext.util.Format.escape(entry.description).replace(/\n/g, '').replace(/\r/g, '');		
 				
 		// Perform client-side processing of the description, consisting of two things:
 		// Add the onclick handler for saved search links.
@@ -506,11 +506,11 @@ Ext.define('OSF.component.template.Media', {
 	tpl: new Ext.XTemplate(
 		' <h2>Screenshots / Media</h2>',	
 		'	<tpl for="componentMedia">',	
-		'       <tpl if="typeof(hideInDisplay) == \'undefined\'">',
+		'       <tpl if="typeof(hideInDisplay) == \'undefined\' || hideInDisplay !== true">',
 		'		<div class="detail-media-block">',
 		'		<tpl switch="mediaTypeCode">',
 		'				<tpl case="IMG">',
-		'					<img src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');" />',		
+		'					<img src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'<tpl if="caption">{caption}</tpl>\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');" />',		
 		'				<tpl case="AUD">',
 		'					<i class="fa fa-file-sound-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
 		'				<tpl case="VID">',
