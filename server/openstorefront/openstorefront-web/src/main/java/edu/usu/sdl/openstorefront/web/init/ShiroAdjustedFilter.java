@@ -15,14 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.web.init;
 
+import edu.usu.sdl.openstorefront.security.RedirectUtil;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.web.servlet.ShiroFilter;
 
 /**
@@ -48,15 +50,38 @@ public class ShiroAdjustedFilter
 				response.sendRedirect(httpServletRequest.getContextPath());
 				return;
 			}
+			//Fix bad url? 
+			if (url.contains("login.action")) {
+				HttpServletResponse response = (HttpServletResponse) servletResponse;
+				response.sendRedirect("Login.action");
+				return;
+			}
 
-			if (url.endsWith("Login.action") == false && url.contains("/api/") == false && url.contains("/apidoc/") == false
-				&& url.contains("appicon.png") == false) {
-				String queryString = httpServletRequest.getQueryString();
-
-				if (StringUtils.isNotBlank(queryString)) {
-					url = url + "?" + queryString;
+			Set<String> whiteListRedirectPages = new HashSet();
+			whiteListRedirectPages.add("index.jsp");
+			whiteListRedirectPages.add("admin.jsp");
+			whiteListRedirectPages.add("usertools.jsp");
+			whiteListRedirectPages.add("view.jsp");
+			whiteListRedirectPages.add("ServiceTest.action");
+			whiteListRedirectPages.add("API.action");
+						
+			boolean saveLocation = false;
+			for (String saveUrl : whiteListRedirectPages) {
+				if (url.contains(saveUrl)) {
+					if (saveUrl.equals("view.jsp")) {
+						if (url.contains("fullPage")) {
+							saveLocation = true;
+							break;
+						}
+					} else {
+						saveLocation = true;
+						break;
+					}
 				}
-				httpServletRequest.getSession().setAttribute(REFERENCED_FILTER_URL_ATTRIBUTE, url);
+			}
+			
+			if (saveLocation){
+				RedirectUtil.saveLocation(httpServletRequest);
 			}
 		}
 		//servletRequest.setAttribute("org.apache.catalina.ASYNC_SUPPORTED", true);

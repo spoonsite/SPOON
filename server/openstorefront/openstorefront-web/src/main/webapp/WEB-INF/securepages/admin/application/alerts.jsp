@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 
 		<script type="text/javascript">
@@ -33,7 +33,7 @@
 					proxy: {
 						id: 'alertStoreProxy',
 						type: 'ajax',
-						url: '../api/v1/resource/alerts'
+						url: 'api/v1/resource/alerts'
 					}
 				});
 
@@ -139,14 +139,14 @@
 													store.setProxy({
 														id: 'alertStoreProxy',
 														type: 'ajax',
-														url: '../api/v1/resource/alerts?status=A'
+														url: 'api/v1/resource/alerts?status=A'
 													});
 													Ext.getCmp('alertGrid-tools-toggleActivation').setText("Deactivate");
 												} else {
 													store.setProxy({
 														id: 'alertStoreProxy',
 														type: 'ajax',
-														url: '../api/v1/resource/alerts?status=I'
+														url: 'api/v1/resource/alerts?status=I'
 													});
 													Ext.getCmp('alertGrid-tools-toggleActivation').setText("Activate");
 												}
@@ -471,7 +471,7 @@
 
 
 												// Submit Data
-												var url = Ext.getCmp('editAlertForm').edit ? '/openstorefront/api/v1/resource/alerts/' + Ext.getCmp('editAlertForm').alertId : '/openstorefront/api/v1/resource/alerts';
+												var url = Ext.getCmp('editAlertForm').edit ? 'api/v1/resource/alerts/' + Ext.getCmp('editAlertForm').alertId : 'api/v1/resource/alerts';
 												CoreUtil.submitForm({
 													url: url,
 													method: method,
@@ -591,11 +591,11 @@
 						var active = record.data.activeStatus;
 						if (active === 'A') {
 							var method = "DELETE";
-							var url = '/openstorefront/api/v1/resource/alerts/' + alertId;
+							var url = 'api/v1/resource/alerts/' + alertId;
 							var what = "deactivate";
 						} else if (active === 'I') {
 							var method = "POST";
-							var url = '/openstorefront/api/v1/resource/alerts/' + alertId + "/activate";
+							var url = 'api/v1/resource/alerts/' + alertId + "/activate";
 							var what = "activate";
 						} else {
 							Ext.MessageBox.alert("Record Not Recognized", "Error: Record is not active or inactive.");
@@ -635,7 +635,7 @@
 						var msg = 'Are you sure you want to delete "' + record.data.name + '"?';
 						Ext.MessageBox.confirm(title, msg, function (btn) {
 							if (btn === 'yes') {
-								var url = '/openstorefront/api/v1/resource/alerts/' + alertId + "/force";
+								var url = 'api/v1/resource/alerts/' + alertId + "/force";
 								var method = "DELETE";
 								Ext.Ajax.request({
 									url: url,

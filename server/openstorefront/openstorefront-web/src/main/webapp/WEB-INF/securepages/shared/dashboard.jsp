@@ -20,7 +20,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 
 	<script src="scripts/component/userwatchPanel.js?v=${appVersion}" type="text/javascript"></script>	
@@ -452,7 +452,7 @@
 				var loadUserWidgets = function() {
 					dashPanel.setLoading(true);
 					Ext.Ajax.request({
-						url: '../api/v1/resource/userdashboard',
+						url: 'api/v1/resource/userdashboard',
 						callback: function() {
 							dashPanel.setLoading(false);
 						},
@@ -776,7 +776,7 @@
 								});
 								
 								Ext.Ajax.request({
-									url: '../api/v1/resource/userdashboard/' + dashboard.dashboard.dashboardId,
+									url: 'api/v1/resource/userdashboard/' + dashboard.dashboard.dashboardId,
 									method: 'PUT',
 									jsonData: dashboard,
 									success: function(response, opts){

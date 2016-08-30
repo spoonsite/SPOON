@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 
         <script type="text/javascript">
@@ -57,7 +57,7 @@
 						}
 					],
 					proxy: CoreUtil.pagingProxy({
-						url: '../api/v1/resource/usertracking',
+						url: 'api/v1/resource/usertracking',
 						method: 'GET',
 						reader: {
 							type: 'json',
@@ -421,7 +421,7 @@
 					
 					Ext.toast('Exporting User Tracking Data ...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/usertracking/export',
+						url: 'api/v1/resource/usertracking/export',
 						method: 'GET',
 						params: params,
 						success: function (response, opts) {
@@ -538,7 +538,7 @@
 							}}
 					],
 					proxy: CoreUtil.pagingProxy({
-						url: '../api/v1/resource/componenttracking',
+						url: 'api/v1/resource/componenttracking',
 						reader: {
 							type: 'json',
 							rootProperty: 'result',
@@ -763,7 +763,7 @@
 					
 					Ext.toast('Exporting Entry Tracking Data ...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/componenttracking/export',
+						url: 'api/v1/resource/componenttracking/export',
 						method: 'GET',
 						params: params,
 						success: function (response, opts) {

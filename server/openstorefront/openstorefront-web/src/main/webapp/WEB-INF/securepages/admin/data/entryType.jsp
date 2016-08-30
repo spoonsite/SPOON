@@ -15,7 +15,7 @@
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 		
 		<script type="text/javascript">
@@ -134,7 +134,7 @@
 									fieldLabel: 'Override Template',
 									emptyText: 'Default',
 									storeConfig: {
-										url: '../api/v1/resource/componenttypetemplates/lookup',
+										url: 'api/v1/resource/componenttypetemplates/lookup',
 										addRecords: [
 											{
 												code: null,
@@ -156,7 +156,7 @@
 											handler: function(){
 												var method = Ext.getCmp('entryForm').edit ? 'PUT' : 'POST'; 												
 												var data = Ext.getCmp('entryForm').getValues();
-												var url = Ext.getCmp('entryForm').edit ? '../api/v1/resource/componenttypes/' + data.componentType : '../api/v1/resource/componenttypes';       
+												var url = Ext.getCmp('entryForm').edit ? 'api/v1/resource/componenttypes/' + data.componentType : 'api/v1/resource/componenttypes';       
 
 												CoreUtil.submitForm({
 													url: url,
@@ -210,7 +210,7 @@
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/componenttypes',
+							url: 'api/v1/resource/componenttypes',
 							extraParams: {
 								all: true
 							}
@@ -342,7 +342,7 @@
 						urlEnd = '';
 					}					
 					Ext.Ajax.request({
-						url: '../api/v1/resource/componenttypes/' + type + urlEnd,
+						url: 'api/v1/resource/componenttypes/' + type + urlEnd,
 						method: method,
 						callback: function(){
 							Ext.getCmp('entryGrid').setLoading(false);

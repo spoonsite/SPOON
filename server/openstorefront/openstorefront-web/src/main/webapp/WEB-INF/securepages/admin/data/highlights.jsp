@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 
 		<script src="scripts/component/savedSearchLinkInsertWindow.js?v=${appVersion}" type="text/javascript"></script>
@@ -20,7 +20,7 @@
 					fields: ['code', 'description'],
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/resource/lookuptypes/HighlightType/view'
+						url: 'api/v1/resource/lookuptypes/HighlightType/view'
 					}
 				});
 
@@ -38,7 +38,7 @@
 					autoLoad: true,
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/resource/highlights?sortField=orderingPosition'
+						url: 'api/v1/resource/highlights?sortField=orderingPosition'
 					}
 				});
 
@@ -234,7 +234,7 @@
 						var thisRecord = storeData.getAt(i);
 						thisRecord.data.orderingPosition = highlightStore.indexOf(thisRecord);
 						delete thisRecord.data.storageVersion;
-						var url = '/openstorefront/api/v1/resource/highlights';
+						var url = 'api/v1/resource/highlights';
 						url += '/' + thisRecord.data.highlightId;
 						var method = 'PUT';
 						var successes = 0;
@@ -275,7 +275,7 @@
 					Ext.MessageBox.confirm(title, msg, function (btn) {
 						if (btn === 'yes') {
 							var highlightId = record.data.highlightId;
-							var url = '/openstorefront/api/v1/resource/highlights';
+							var url = 'api/v1/resource/highlights';
 							url += '/' + highlightId + '/delete';
 							var method = 'DELETE';
 							Ext.Ajax.request({
@@ -378,7 +378,7 @@
 												if (form.isValid()) {
 													var formData = form.getValues();
 													var highlightId = form.highlightId;
-													var url = '/openstorefront/api/v1/resource/highlights';
+													var url = 'api/v1/resource/highlights';
 													var method = 'POST';
 													// Set the ordering position to the last spot.
 													formData.orderingPosition = highlightStore.getCount();

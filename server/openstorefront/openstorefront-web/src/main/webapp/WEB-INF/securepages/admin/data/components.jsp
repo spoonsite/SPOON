@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
           <stripes:layout-component name="contents">
 			  
 		<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>
@@ -11,12 +11,12 @@
 		<script src="scripts/component/savedSearchLinkInsertWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/inlineMediaRetrieverWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
-		<form name="exportForm" action="../api/v1/resource/components/export" method="POST" >
+		<form name="exportForm" action="api/v1/resource/components/export" method="POST" >
 			<p style="display: none;" id="exportFormIds">
 			</p>      
 		</form>
 		
-		<form name="exportFormDescribe" action="../api/v1/resource/components/export/describe" method="POST" >
+		<form name="exportFormDescribe" action="api/v1/resource/components/export/describe" method="POST" >
 			<p style="display: none;" id="exportFormDescribeIds">
 			</p>      
 		</form>		
@@ -97,7 +97,7 @@
 					
 					grid.setLoading('Updating status...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/components/' + componentId + '/' + entity + '/' + recordId + subEntity + subEntityId + urlEnding,
+						url: 'api/v1/resource/components/' + componentId + '/' + entity + '/' + recordId + subEntity + subEntityId + urlEnding,
 						method: method,
 						callback: function(opt, success, response){
 							grid.setLoading(false);
@@ -119,7 +119,7 @@
 					var componentId = grid.componentRecord.get('componentId');
 
 					CoreUtil.submitForm({
-						url: '../api/v1/resource/components/' + componentId + '/tags',
+						url: 'api/v1/resource/components/' + componentId + '/tags',
 						method: 'POST',
 						data: data,
 						form: form,
@@ -283,7 +283,7 @@
 								var questionId = selectedRecords[0].get('questionId');
 							
 								Ext.getCmp('questionResponseGrid').getStore().load({
-									url: '../api/v1/resource/components/'+componentId+'/questions/'+questionId+'/responses'
+									url: 'api/v1/resource/components/'+componentId+'/questions/'+questionId+'/responses'
 								});								
 							} else {
 								fullgrid.down('toolbar').getComponent('statusToggleBtn').setDisabled(true);
@@ -307,7 +307,7 @@
 									listeners: {
 										change: function(combo, newValue, oldValue, opts){
 											this.up('grid').getStore().load({
-												url: '../api/v1/resource/components/' + Ext.getCmp('questionGrid').componentRecord.get('componentId') + '/questions/view',
+												url: 'api/v1/resource/components/' + Ext.getCmp('questionGrid').componentRecord.get('componentId') + '/questions/view',
 												params: {
 													status: newValue
 												}
@@ -503,7 +503,7 @@
 									listeners: {
 										change: function(combo, newValue, oldValue, opts){
 											this.up('grid').getStore().load({
-												url: '../api/v1/resource/components/' + Ext.getCmp('reviewGrid').componentRecord.get('componentId') + '/reviews/view',
+												url: 'api/v1/resource/components/' + Ext.getCmp('reviewGrid').componentRecord.get('componentId') + '/reviews/view',
 												params: {
 													status: newValue
 												}
@@ -558,7 +558,7 @@
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/lookuptypes/EvaluationSection'
+							url: 'api/v1/resource/lookuptypes/EvaluationSection'
 						}
 					}),
 					columns: [
@@ -624,7 +624,7 @@
 							 var componentId = Ext.getCmp('evaluationGrid').componentRecord.get('componentId');
 								Ext.getCmp('evaluationGrid').setLoading('Clearing Section...');
 								Ext.Ajax.request({
-									url: '../api/v1/resource/components/' + componentId + '/sections/'+ record.get('code'),
+									url: 'api/v1/resource/components/' + componentId + '/sections/'+ record.get('code'),
 									method: 'DELETE',
 									callback: function(){
 										Ext.getCmp('evaluationGrid').setLoading(false);
@@ -666,7 +666,7 @@
 										});
 										Ext.getCmp('evaluationGrid').setLoading('Saving...');
 										Ext.Ajax.request({
-											url: '../api/v1/resource/components/' + componentId + '/sections/all',
+											url: 'api/v1/resource/components/' + componentId + '/sections/all',
 											method: 'POST',
 											jsonData: sectionsToPost,
 											callback: function(){
@@ -698,7 +698,7 @@
 													var componentId = Ext.getCmp('evaluationGrid').componentRecord.get('componentId');
 													Ext.getCmp('evaluationGrid').setLoading('Clearing All Sections...');
 													Ext.Ajax.request({
-														url: '../api/v1/resource/components/' + componentId + '/sections',
+														url: 'api/v1/resource/components/' + componentId + '/sections',
 														method: 'DELETE',
 														callback: function(){
 															Ext.getCmp('evaluationGrid').setLoading(false);
@@ -733,7 +733,7 @@
 					});
 					
 					Ext.Ajax.request({
-						url: '../api/v1/resource/components/' + componentId + '/sections',
+						url: 'api/v1/resource/components/' + componentId + '/sections',
 						callback: function(){
 							Ext.getCmp('evaluationGrid').setLoading(false);
 						},
@@ -832,7 +832,7 @@
 										}
 
 										CoreUtil.submitForm({
-											url: '../api/v1/resource/components/' + componentId + '/metadata' + update,
+											url: 'api/v1/resource/components/' + componentId + '/metadata' + update,
 											method: method,
 											data: data,
 											form: form,
@@ -891,7 +891,7 @@
 									listeners: {
 										change: function(combo, newValue, oldValue, opts){
 											this.up('grid').getStore().load({
-												url: '../api/v1/resource/components/' + Ext.getCmp('metadataGrid').componentRecord.get('componentId') + '/metadata/view',
+												url: 'api/v1/resource/components/' + Ext.getCmp('metadataGrid').componentRecord.get('componentId') + '/metadata/view',
 												params: {
 													status: newValue
 												}
@@ -1018,7 +1018,7 @@
 										}
 
 										CoreUtil.submitForm({
-											url: '../api/v1/resource/components/' + componentId + '/dependencies' + update,
+											url: 'api/v1/resource/components/' + componentId + '/dependencies' + update,
 											method: method,
 											data: data,
 											form: form,
@@ -1090,7 +1090,7 @@
 									listeners: {
 										change: function(combo, newValue, oldValue, opts){
 											this.up('grid').getStore().load({
-												url: '../api/v1/resource/components/' + Ext.getCmp('dependenciesGrid').componentRecord.get('componentId') + '/dependencies/view',
+												url: 'api/v1/resource/components/' + Ext.getCmp('dependenciesGrid').componentRecord.get('componentId') + '/dependencies/view',
 												params: {
 													status: newValue
 												}
@@ -1247,7 +1247,7 @@
 												}
 
 												CoreUtil.submitForm({
-													url: '../api/v1/resource/components/' + componentId + '/media' + update,
+													url: 'api/v1/resource/components/' + componentId + '/media' + update,
 													method: method,
 													removeBlankDataItems: true,
 													data: data,
@@ -1331,7 +1331,7 @@
 									width: '100%',
 									fieldLabel: 'Media Type <span class="field-required" />',
 									storeConfig: {
-										url: '../api/v1/resource/lookuptypes/MediaType'
+										url: 'api/v1/resource/lookuptypes/MediaType'
 									}
 								}),
 								{
@@ -1387,7 +1387,7 @@
 									listeners: {
 										change: function(combo, newValue, oldValue, opts){
 											this.up('grid').getStore().load({
-												url: '../api/v1/resource/components/' + Ext.getCmp('mediaGrid').componentRecord.get('componentId') + '/media/view',
+												url: 'api/v1/resource/components/' + Ext.getCmp('mediaGrid').componentRecord.get('componentId') + '/media/view',
 												params: {
 													status: newValue
 												}
@@ -1575,7 +1575,7 @@
 												}
 
 												CoreUtil.submitForm({
-													url: '../api/v1/resource/components/' + componentId + '/resources' + update,
+													url: 'api/v1/resource/components/' + componentId + '/resources' + update,
 													method: method,
 													removeBlankDataItems: true,
 													data: data,
@@ -1657,7 +1657,7 @@
 									width: '100%',
 									fieldLabel: 'Resource Type <span class="field-required" />',
 									storeConfig: {
-										url: '../api/v1/resource/lookuptypes/ResourceType'
+										url: 'api/v1/resource/lookuptypes/ResourceType'
 									}
 								}),
 								{
@@ -1707,7 +1707,7 @@
 									listeners: {
 										change: function(combo, newValue, oldValue, opts){
 											this.up('grid').getStore().load({
-												url: '../api/v1/resource/components/' + Ext.getCmp('resourcesGrid').componentRecord.get('componentId') + '/resources/view',
+												url: 'api/v1/resource/components/' + Ext.getCmp('resourcesGrid').componentRecord.get('componentId') + '/resources/view',
 												params: {
 													status: newValue
 												}
@@ -1863,7 +1863,7 @@
 										}
 
 										CoreUtil.submitForm({
-											url: '../api/v1/resource/components/' + componentId + '/contacts' + update,
+											url: 'api/v1/resource/components/' + componentId + '/contacts' + update,
 											method: method,
 											data: data,
 											form: form,
@@ -1902,7 +1902,7 @@
 									width: '100%',
 									fieldLabel: 'Contact Type <span class="field-required" />',
 									storeConfig: {
-										url: '../api/v1/resource/lookuptypes/ContactType'
+										url: 'api/v1/resource/lookuptypes/ContactType'
 									}
 								}),
 								Ext.create('OSF.component.StandardComboBox', {
@@ -1914,7 +1914,7 @@
 									forceSelection: false,
 									valueField: 'description',
 									storeConfig: {
-										url: '../api/v1/resource/organizations/lookup',
+										url: 'api/v1/resource/organizations/lookup',
 										sorters: [{
 											property: 'description',
 											direction: 'ASC'
@@ -1937,7 +1937,7 @@
 										]
 									},								
 									storeConfig: {
-										url: '../api/v1/resource/contacts/filtered'
+										url: 'api/v1/resource/contacts/filtered'
 									},
 									listeners: {
 										select: function(combo, record, opts) {
@@ -1966,7 +1966,7 @@
 										]
 									},								
 									storeConfig: {
-										url: '../api/v1/resource/contacts/filtered'
+										url: 'api/v1/resource/contacts/filtered'
 									},
 									listeners: {
 										select: function(combo, record, opts) {
@@ -2013,7 +2013,7 @@
 									listeners: {
 										change: function(combo, newValue, oldValue, opts){
 											this.up('grid').getStore().load({
-												url: '../api/v1/resource/components/' + Ext.getCmp('contactGrid').componentRecord.get('componentId') + '/contacts/view',
+												url: 'api/v1/resource/components/' + Ext.getCmp('contactGrid').componentRecord.get('componentId') + '/contacts/view',
 												params: {
 													status: newValue
 												}
@@ -2157,7 +2157,7 @@
 										var update = '';
 										
 										CoreUtil.submitForm({
-											url: '../api/v1/resource/components/' + componentId + '/relationships' + update,
+											url: 'api/v1/resource/components/' + componentId + '/relationships' + update,
 											method: method,
 											data: data,
 											form: form,
@@ -2187,7 +2187,7 @@
 									width: '100%',
 									fieldLabel: 'Relationship Type <span class="field-required" />',
 									storeConfig: {
-										url: '../api/v1/resource/lookuptypes/RelationshipType'
+										url: 'api/v1/resource/lookuptypes/RelationshipType'
 									}
 								}),
 								Ext.create('OSF.component.StandardComboBox', {
@@ -2200,7 +2200,7 @@
 									width: '100%',
 									fieldLabel: 'Entry Type',
 									storeConfig: {
-										url: '../api/v1/resource/componenttypes/lookup',
+										url: 'api/v1/resource/componenttypes/lookup',
 										addRecords: [
 											{
 												code: null,
@@ -2216,7 +2216,7 @@
 											}
 											Ext.getCmp('relationshipTargetCB').reset();
 											Ext.getCmp('relationshipTargetCB').getStore().load({
-												url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType	
+												url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType	
 											});
 										}
 									}
@@ -2230,7 +2230,7 @@
 									fieldLabel: 'Target Entry <span class="field-required" />',
 									forceSelection: false,
 									storeConfig: {
-										url: '../api/v1/resource/components/lookup?status=A&approvalState=ALL',
+										url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL',
 										autoLoad: false
 									}
 								})				
@@ -2341,7 +2341,7 @@
 										var update = '';										
 
 										CoreUtil.submitForm({
-											url: '../api/v1/resource/components/' + componentId + '/attributes' + update,
+											url: 'api/v1/resource/components/' + componentId + '/attributes' + update,
 											method: method,
 											data: data,
 											form: form,
@@ -2474,7 +2474,7 @@
 					if (Ext.getCmp('generalForm').componentRecord) {
 						var componentId = Ext.getCmp('generalForm').componentRecord.get('componentId');
 						Ext.Ajax.request({
-							url: '../api/v1/resource/components/' + componentId + '/attributes/view',
+							url: 'api/v1/resource/components/' + componentId + '/attributes/view',
 							method: 'GET',
 							params: {
 								status: status
@@ -2765,7 +2765,7 @@
 											} else {	
 												CoreUtil.removeBlankDataItem(requireComponent.component);												
 												CoreUtil.submitForm({
-													url: '../api/v1/resource/components' + update,
+													url: 'api/v1/resource/components' + update,
 													method: method,
 													data: requireComponent,
 													removeBlankDataItems: true,
@@ -2925,7 +2925,7 @@
 									editable: false,
 									typeAhead: false,										
 									storeConfig: {
-										url: '../api/v1/resource/componenttypes/lookup'																				
+										url: 'api/v1/resource/componenttypes/lookup'																				
 									},
 									listeners: {
 										change: function(field, newValue, oldValue, opts) {
@@ -2979,7 +2979,7 @@
 									valueField: 'description',
 									editable: true,
 									storeConfig: {
-										url: '../api/v1/resource/organizations/lookup',
+										url: 'api/v1/resource/organizations/lookup',
 										sorters: [{
 											property: 'description',
 											direction: 'ASC'
@@ -2995,7 +2995,7 @@
 									editable: false,
 									typeAhead: false,										
 									storeConfig: {
-										url: '../api/v1/resource/lookuptypes/ApprovalStatus'																				
+										url: 'api/v1/resource/lookuptypes/ApprovalStatus'																				
 									}
 								}),								
 								{
@@ -3021,7 +3021,7 @@
 									editable: false,
 									typeAhead: false,
 									storeConfig: {
-										url: '../api/v1/resource/lookuptypes/DataSource'										
+										url: 'api/v1/resource/lookuptypes/DataSource'										
 									}
 								}),
 								Ext.create('OSF.component.SecurityComboBox', {	
@@ -3043,7 +3043,7 @@
 				var allAttributes = [];
 				var loadAllAttributes = function(){
 					Ext.Ajax.request({
-						url: '../api/v1/resource/attributes',
+						url: 'api/v1/resource/attributes',
 						success: function(response, opts){
 							allAttributes = Ext.decode(response.responseText);
 						}
@@ -3114,7 +3114,7 @@
 										//load
 										Ext.getCmp('versionWin').setLoading("Restoring version...");
 										Ext.Ajax.request({
-											url: '../api/v1/resource/components/' + componentId + '/versionhistory/' + versionHistoryId + '/restore',
+											url: 'api/v1/resource/components/' + componentId + '/versionhistory/' + versionHistoryId + '/restore',
 											method: 'PUT',
 											jsonData: options,
 											success: function(response, opts){
@@ -3271,7 +3271,7 @@
 									if (record && record[0]){
 										var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
 										Ext.Ajax.request({
-											url: '../api/v1/resource/components/' + componentId + '/versionhistory/' + record[0].get('versionHistoryId') + '/view',
+											url: 'api/v1/resource/components/' + componentId + '/versionhistory/' + record[0].get('versionHistoryId') + '/view',
 											success: function(response, opts) {
 												var data = Ext.decode(response.responseText);
 												Ext.getCmp('versionWin-snapshotVersionPanel').update(data);
@@ -3298,7 +3298,7 @@
 												versionWin.setLoading("Snapshoting current version...");
 												var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
 												Ext.Ajax.request({
-													url: '../api/v1/resource/components/' + componentId + '/versionhistory',
+													url: 'api/v1/resource/components/' + componentId + '/versionhistory',
 													method: 'POST',
 													success: function(response, opts) {
 														versionWin.setLoading(false);
@@ -3333,7 +3333,7 @@
 														if (btn === 'yes') {
 															versionWin.setLoading('Removing version...');
 															Ext.Ajax.request({
-																url: '../api/v1/resource/components/' + componentId + '/versionhistory/' + versionHistoryId,
+																url: 'api/v1/resource/components/' + componentId + '/versionhistory/' + versionHistoryId,
 																method: 'DELETE',
 																success: function(response, opts) {
 																	versionWin.setLoading(false);
@@ -3504,7 +3504,7 @@
 										autoLoad: true,
 										proxy: {
 											type: 'ajax',
-											url: '../api/v1/resource/userprofiles',
+											url: 'api/v1/resource/userprofiles',
 											reader: {
 												type: 'json',
 												rootProperty: 'data',
@@ -3529,7 +3529,7 @@
 												var username = form.getForm().findField('createUser').getValue();
 												form.setLoading('Updating Owner...');
 												Ext.Ajax.request({
-													url: '../api/v1/resource/components/' + ownerWindow.componentId + '/changeowner',
+													url: 'api/v1/resource/components/' + ownerWindow.componentId + '/changeowner',
 													method: 'PUT',
 													rawData: username,
 													callback: function(opts, success, response){
@@ -3673,7 +3673,7 @@
 						'integrationManagement'						
 					],
 					proxy: CoreUtil.pagingProxy({
-						url: '../api/v1/resource/components/filterable',
+						url: 'api/v1/resource/components/filterable',
 						extraParams: {
 							status: 'ALL',
 							approvalState: 'ALL',
@@ -3732,7 +3732,7 @@
 												} else {	
 													mergeForm.setLoading("Merging...");
 													Ext.Ajax.request({
-														url: '../api/v1/resource/components/' + data.mergeComponentId + '/' + data.targetComponentId + '/merge',
+														url: 'api/v1/resource/components/' + data.mergeComponentId + '/' + data.targetComponentId + '/merge',
 														method: 'POST',
 														success: function(response, opts){
 															mergeForm.setLoading(false);
@@ -3780,7 +3780,7 @@
 									margin: '0 0 0 0',
 									fieldLabel: 'Target Component',
 									storeConfig: {
-										url: '../api/v1/resource/components/lookup?all=true',
+										url: 'api/v1/resource/components/lookup?all=true',
 										autoLoad: false
 									}
 								})
@@ -3889,7 +3889,7 @@
 										}
 									},									
 									storeConfig: {
-										url: '../api/v1/resource/lookuptypes/ApprovalStatus',
+										url: 'api/v1/resource/lookuptypes/ApprovalStatus',
 										addRecords: [
 											{
 												code: null,
@@ -3913,7 +3913,7 @@
 										}
 									},									
 									storeConfig: {
-										url: '../api/v1/resource/componenttypes',
+										url: 'api/v1/resource/componenttypes',
 										model: undefined,										
 										fields: [
 											'componentType',
@@ -4255,51 +4255,51 @@
 						}
 
 						Ext.Ajax.request({
-							url: '../api/v1/resource/componenttypes/' + componentType,
+							url: 'api/v1/resource/componenttypes/' + componentType,
 							success: function(response, opts) {
 								var data = Ext.decode(response.responseText);
 
 								if (data.dataEntryAttributes) {	
-									showSubTab(attributeGrid);  //, '../api/v1/resource/components/' + record.get('componentId')+ '/attributes/view');
+									showSubTab(attributeGrid);  //, 'api/v1/resource/components/' + record.get('componentId')+ '/attributes/view');
 								}
 								if (data.dataEntryRelationships) {	
-									showSubTab(relationshipsGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/relationships');
+									showSubTab(relationshipsGrid, 'api/v1/resource/components/' + record.get('componentId')+ '/relationships');
 									Ext.getCmp('relationshipTargetCB').getStore().load();
 								}
 								if (data.dataEntryContacts) {	
-									showSubTab(contactGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/contacts/view');
+									showSubTab(contactGrid, 'api/v1/resource/components/' + record.get('componentId')+ '/contacts/view');
 								}
 								if (data.dataEntryResources) {	
-									showSubTab(resourcesGrid, '../api/v1/resource/components/' + record.get('componentId') + '/resources/view');
+									showSubTab(resourcesGrid, 'api/v1/resource/components/' + record.get('componentId') + '/resources/view');
 									resourcesGrid.down('form').getComponent('upload').disabled = true;
 									resourcesGrid.down('form').getComponent('upload').enable();
 								}
 								if (data.dataEntryMedia) {	
-									showSubTab(mediaGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/media/view');
+									showSubTab(mediaGrid, 'api/v1/resource/components/' + record.get('componentId')+ '/media/view');
 									
 									//Fix: bug with disabled file fields
 									mediaGrid.down('form').getComponent('upload').disabled = true;
 									mediaGrid.down('form').getComponent('upload').enable();
 								}							
 								if (data.dataEntryDependancies) {	
-									showSubTab(dependenciesGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/dependencies/view');
+									showSubTab(dependenciesGrid, 'api/v1/resource/components/' + record.get('componentId')+ '/dependencies/view');
 								}
 								if (data.dataEntryMetadata) {	
-									showSubTab(metadataGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/metadata/view');
+									showSubTab(metadataGrid, 'api/v1/resource/components/' + record.get('componentId')+ '/metadata/view');
 								}
 								if (data.dataEntryEvaluationInformation) {	
 									showSubTab(evaluationGrid); 
 									loadEvalationData(record.get('componentId'));
 								}							
 								if (data.dataEntryReviews) {	
-									showSubTab(reviewGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/reviews/view');
+									showSubTab(reviewGrid, 'api/v1/resource/components/' + record.get('componentId')+ '/reviews/view');
 								}
 								if (data.dataEntryQuestions) {	
-									showSubTab(questionGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/questions/view', questionContainer);
+									showSubTab(questionGrid, 'api/v1/resource/components/' + record.get('componentId')+ '/questions/view', questionContainer);
 								}	
 
 								//tags should be on all entries
-								showSubTab(tagGrid, '../api/v1/resource/components/' + record.get('componentId')+ '/tagsview');
+								showSubTab(tagGrid, 'api/v1/resource/components/' + record.get('componentId')+ '/tagsview');
 							}						
 						});	
 					}
@@ -4309,7 +4309,7 @@
 					Ext.getCmp('componentGrid').setLoading(true);
 					var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/components/' + componentId + '/approve',
+						url: 'api/v1/resource/components/' + componentId + '/approve',
 						method: 'PUT',
 						success: function(response, opts){
 							Ext.getCmp('componentGrid').setLoading(false);
@@ -4333,7 +4333,7 @@
 						urlEnd = '';
 					}					
 					Ext.Ajax.request({
-						url: '../api/v1/resource/components/' + componentId + urlEnd,
+						url: 'api/v1/resource/components/' + componentId + urlEnd,
 						method: method,
 						success: function(response, opts){
 							Ext.getCmp('componentGrid').setLoading(false);
@@ -4357,7 +4357,7 @@
 							if (btn === 'yes') {
 								Ext.getCmp('componentGrid').setLoading(true);
 								Ext.Ajax.request({
-									url: '../api/v1/resource/components/' + componentId + '/cascade',
+									url: 'api/v1/resource/components/' + componentId + '/cascade',
 									method: 'DELETE',
 									success: function(response, opts) {
 										Ext.getCmp('componentGrid').setLoading(false);
@@ -4376,7 +4376,7 @@
 					Ext.getCmp('componentGrid').setLoading('Copying please wait...');
 					var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/components/' + componentId + '/copy',
+						url: 'api/v1/resource/components/' + componentId + '/copy',
 						method: 'POST',
 						success: function(response, opts){
 							Ext.getCmp('componentGrid').setLoading(false);
@@ -4409,7 +4409,7 @@
 					
 					var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
 					Ext.getCmp('versionGrid').getStore().load({
-						url: '../api/v1/resource/components/' + componentId + '/versionhistory'
+						url: 'api/v1/resource/components/' + componentId + '/versionhistory'
 					});
 					
 					//load current verison
@@ -4419,7 +4419,7 @@
 				var versionLoadCurrent = function() {
 					var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/components/' + componentId + '/detail',
+						url: 'api/v1/resource/components/' + componentId + '/detail',
 						success: function(response, opts) {
 							var data = Ext.decode(response.responseText);
 							Ext.getCmp('versionWin-currentVersionPanel').update(data);								

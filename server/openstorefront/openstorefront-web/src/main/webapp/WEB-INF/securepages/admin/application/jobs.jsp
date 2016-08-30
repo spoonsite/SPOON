@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 
 		<script type="text/javascript">
@@ -13,7 +13,7 @@
 					autoLoad: true,
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/jobs'
+						url: 'api/v1/service/jobs'
 					}
 				});
 
@@ -249,7 +249,7 @@
 					proxy: {
 						id: 'taskStoreProxy',
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/jobs/tasks/status',
+						url: 'api/v1/service/jobs/tasks/status',
 						reader: {
 							type: 'json',
 							rootProperty: 'tasks'
@@ -271,7 +271,7 @@
 					proxy: {
 						id: 'taskStatsStoreProxy',
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/jobs/tasks/status'
+						url: 'api/v1/service/jobs/tasks/status'
 					}
 				});
 
@@ -424,7 +424,7 @@
 					Ext.MessageBox.confirm(title, msg, function (btn) {
 						if (btn === 'yes') {
 							var taskId = record.data.taskId;
-							var url = '/openstorefront/api/v1/service/jobs/tasks';
+							var url = 'api/v1/service/jobs/tasks';
 							url += '/' + taskId;
 							var method = 'DELETE';
 							Ext.Ajax.request({
@@ -452,7 +452,7 @@
 					Ext.MessageBox.confirm(title, msg, function (btn) {
 						if (btn === 'yes') {
 							var taskId = record.data.taskId;
-							var url = '/openstorefront/api/v1/service/jobs/tasks';
+							var url = 'api/v1/service/jobs/tasks';
 							url += '/' + taskId + '/cancel';
 							var method = 'POST';
 							Ext.Ajax.request({
@@ -491,12 +491,12 @@
 				var toggleScheduler = function toggleScheduler() {
 					if (Ext.getCmp('schedulerStatusLabel').text === 'Running'){
 						var what = 'pause';
-						var url = '/openstorefront/api/v1/service/jobs/pause';
+						var url = 'api/v1/service/jobs/pause';
 						var method = 'POST';
 					}
 					else {
 						var what = 'resume';
-						var url = '/openstorefront/api/v1/service/jobs/resume';
+						var url = 'api/v1/service/jobs/resume';
 						var method = 'POST';
 					}
 					Ext.Ajax.request({
@@ -514,7 +514,7 @@
 				};
 
 				var pauseJob = function pauseJob(record) {
-					var url = '/openstorefront/api/v1/service/jobs/';
+					var url = 'api/v1/service/jobs/';
 					url += record.data.jobName + '/pause';
 					var method = 'POST';
 					Ext.Ajax.request({
@@ -533,7 +533,7 @@
 				};
 
 				var resumeJob = function resumeJob(record) {
-					var url = '/openstorefront/api/v1/service/jobs/';
+					var url = 'api/v1/service/jobs/';
 					url += record.data.jobName + '/resume';
 					var method = 'POST';
 					Ext.Ajax.request({
@@ -551,7 +551,7 @@
 				};
 
 				var executeJob = function executeJob(record) {
-					var url = '/openstorefront/api/v1/service/jobs/';
+					var url = 'api/v1/service/jobs/';
 					url += record.data.jobName + '/' + record.data.groupName + '/runnow';
 					var method = 'POST';
 					Ext.Ajax.request({
@@ -570,7 +570,7 @@
 
 				var updateSchedulerStatus = function updateSchedulerStatus() {
 					Ext.Ajax.request({
-						url: '/openstorefront/api/v1/service/jobs/status',
+						url: 'api/v1/service/jobs/status',
 						success: function (response, opts) {
 							var rsp = Ext.decode(response.responseText);
 							var label = Ext.getCmp('schedulerStatusLabel');

@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 		
 		<script type="text/javascript">
@@ -28,7 +28,7 @@
 						],
 						proxy: CoreUtil.pagingProxy({
 							type: 'ajax',
-							url: '../api/v1/resource/generalmedia',
+							url: 'api/v1/resource/generalmedia',
 							reader: {
 								type: 'json',
 								rootProperty: 'data',
@@ -301,7 +301,7 @@
 							if (btn === 'yes') {
 								Ext.getCmp('mediaGrid').setLoading(true);
 								Ext.Ajax.request({
-									url: '../api/v1/resource/generalmedia/'+encodeURIComponent(selectedObj.name),
+									url: 'api/v1/resource/generalmedia/'+encodeURIComponent(selectedObj.name),
 									method: 'DELETE',
 									success: function (response, opts) {
 										Ext.getCmp('mediaGrid').setLoading(false);

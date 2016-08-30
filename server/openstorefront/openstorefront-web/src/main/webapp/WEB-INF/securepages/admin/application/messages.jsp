@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 
         <script type="text/javascript">
@@ -37,7 +37,7 @@
 						}
 					],
 					proxy: CoreUtil.pagingProxy({
-						url: '../api/v1/resource/usermessages',											
+						url: 'api/v1/resource/usermessages',											
 						reader: {
 							type: 'json',
 							rootProperty: 'data',
@@ -271,7 +271,7 @@
 								var messageId = selectedObj.data.userMessageId;
 
 								Ext.Ajax.request({
-									url: '../api/v1/resource/usermessages/' + messageId,
+									url: 'api/v1/resource/usermessages/' + messageId,
 									method: 'DELETE',
 									success: function (response, opts) {
 										Ext.getCmp('userMessageGrid').setLoading(false);
@@ -323,7 +323,7 @@
 				var mProcessMessagesNow = function () {
 					Ext.toast('Processing Messages...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/usermessages/processnow',
+						url: 'api/v1/resource/usermessages/processnow',
 						method: 'POST',
 						success: function (response, opts) {
 							mRefreshGrid();
@@ -338,7 +338,7 @@
 				var mCleanupOldMessagesNow = function () {
 					Ext.toast('Cleaning Up Old Messages...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/usermessages/cleanold',
+						url: 'api/v1/resource/usermessages/cleanold',
 						method: 'POST',
 						success: function (response, opts) {
 							Ext.toast('Successful Cleaning Up Old Messages');
@@ -372,7 +372,7 @@
 						}
 					],					
 					proxy: CoreUtil.pagingProxy({
-						url: '../api/v1/resource/notificationevent/all',
+						url: 'api/v1/resource/notificationevent/all',
 						method: 'GET',
 						reader: {
 							type: 'json',
@@ -521,7 +521,7 @@
 							}}
 					],
 					proxy: CoreUtil.pagingProxy({
-						url: '../api/v1/resource/userprofiles/',
+						url: 'api/v1/resource/userprofiles/',
 						method: 'GET',
 						jsonData: '"all":true',
 						reader: {
@@ -597,7 +597,7 @@
 											msgtosend.message = Ext.getCmp('message_adm').value;
 											Ext.toast('Sending Admin Message..');
 											Ext.Ajax.request({
-												url: '../api/v1/resource/notificationevent',
+												url: 'api/v1/resource/notificationevent',
 												method: 'POST',
 												jsonData: msgtosend,
 												success: function (response, opts) {
@@ -640,7 +640,7 @@
 								Ext.getCmp('notificationsGrid').setLoading(true);
 								var eventId = selectedObj.data.eventId;
 								Ext.Ajax.request({
-									url: '../api/v1/resource/notificationevent/' + eventId,
+									url: 'api/v1/resource/notificationevent/' + eventId,
 									method: 'DELETE',
 									success: function (response, opts) {
 										Ext.getCmp('notificationsGrid').setLoading(false);
