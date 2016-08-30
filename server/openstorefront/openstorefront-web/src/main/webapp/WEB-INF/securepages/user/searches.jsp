@@ -20,7 +20,7 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/usertoolslayout.jsp">
+<stripes:layout-render name="../../../layout/usertoolslayout.jsp">
     <stripes:layout-component name="contents">
 		
 		<script src="scripts/component/advanceSearch.js?v=${appVersion}" type="text/javascript"></script>
@@ -168,7 +168,7 @@ limitations under the License.
 
 					searchPanel.setLoading('Saving...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/usersavedsearches' + endUrl,
+						url: 'api/v1/resource/usersavedsearches' + endUrl,
 						method: method,
 						jsonData: userSearch,
 						callback: function() {
@@ -191,7 +191,7 @@ limitations under the License.
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/usersavedsearches/user/current'
+							url: 'api/v1/resource/usersavedsearches/user/current'
 						}
 					},
 					columns: [
@@ -302,7 +302,7 @@ limitations under the License.
 							if (btn === 'yes') {
 								Ext.getCmp('searchgrid').setLoading("Removing...");
 								Ext.Ajax.request({
-									url: '../api/v1/resource/usersavedsearches/' + record.get('userSearchId'),
+									url: 'api/v1/resource/usersavedsearches/' + record.get('userSearchId'),
 									method: 'DELETE',
 									callback: function(){
 										Ext.getCmp('searchgrid').setLoading(false);

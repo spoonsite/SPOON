@@ -18,7 +18,7 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/usertoolslayout.jsp">
+<stripes:layout-render name="../../../layout/usertoolslayout.jsp">
     <stripes:layout-component name="contents">
 		
 	   <script src="scripts/component/reviewWindow.js?v=${appVersion}" type="text/javascript"></script>	
@@ -58,7 +58,7 @@ limitations under the License.
 						],
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/components/reviews/' + '${user}'
+							url: 'api/v1/resource/components/reviews/' + '${user}'
 						}		
 					},
 					columns: [
@@ -162,7 +162,7 @@ limitations under the License.
 							if (btn === 'yes') {
 								Ext.getCmp('reviewGrid').setLoading("Removing...");
 								Ext.Ajax.request({
-									url: '../api/v1/resource/components/'+record.get('componentId')+'/reviews/'+record.get('reviewId'),
+									url: 'api/v1/resource/components/'+record.get('componentId')+'/reviews/'+record.get('reviewId'),
 									method: 'DELETE',
 									callback: function(){
 										Ext.getCmp('reviewGrid').setLoading(false);

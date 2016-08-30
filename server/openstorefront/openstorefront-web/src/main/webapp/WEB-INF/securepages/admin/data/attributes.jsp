@@ -1,11 +1,11 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 
 	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>	
 
-	<form name="exportForm" action="/openstorefront/api/v1/resource/attributes/export" method="POST">
+	<form name="exportForm" action="api/v1/resource/attributes/export" method="POST">
 			<p style="display: none;" id="exportFormAttributeTypes"></p>      
 	</form>
 
@@ -25,7 +25,7 @@
 				],	
 				proxy: {
 					type: 'ajax',
-					url: '/openstorefront/api/v1/resource/attributes/attributetypes?all=true',
+					url: 'api/v1/resource/attributes/attributetypes?all=true',
 					reader: {
 						type: 'json',
 						rootProperty: 'data'
@@ -333,7 +333,7 @@
 				Ext.getCmp('editAttributeForm-hideOnSubmission').enable();
 				Ext.getCmp('editAttributeForm-code').setEditable(false);
 				// Retreive codes to populate form options
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += record.data.attributeType;
 				url += '/attributecodeviews';
 				Ext.getCmp('editAttributeForm-defaultCode').setStore({
@@ -350,7 +350,7 @@
 			};
 
 			var actionToggleAttributeStatus = function actionToggleAttributeStatus(record) {
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += record.data.attributeType;
 				if (record.data.activeStatus === 'A') {
 					var what = 'deactivate';
@@ -375,7 +375,7 @@
 			};
 
 			var actionDeleteAttribute = function actionDeleteAttribute(record) {
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += record.data.attributeType + '/force';
 				Ext.Ajax.request({
 					url: url,
@@ -413,7 +413,7 @@
 			});
 
 			var actionManageCodes = function actionManageCodes(record) {
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes';
+				var url = 'api/v1/resource/attributes/attributetypes';
 				url += '/' + record.data.attributeType + '/attributecodeviews?all=true';
 				codesStore.setProxy({
 					type: 'ajax',
@@ -694,7 +694,7 @@
 									var typeRecord = attributeGrid.getSelection()[0];
 									var type = typeRecord.get('attributeType');
 									var code = codeRecord.get('code');
-									var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+									var url = 'api/v1/resource/attributes/attributetypes/';
 									url += type;
 									url += '/attributecodes/' + code;
 									url += '/attachment';
@@ -868,7 +868,7 @@
 												var formData = form.getValues();
 												var edit = editCodeWin.edit;
 												var attributeType = editCodeWin.attributeType;
-												var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+												var url = 'api/v1/resource/attributes/attributetypes/';
 												url += attributeType + '/attributecodes';
 
 												var method = 'POST';
@@ -943,7 +943,7 @@
 			};
 
 			var actionToggleCode = function acitionToggleCode(record) {
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += manageCodesWin.attributeType;
 				url += '/attributecodes/' + record.data.code;
 				if (record.data.activeStatus === 'A') {
@@ -968,7 +968,7 @@
 			};
 
 			var actionDeleteCode = function acitionDeleteCode(record) {
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += manageCodesWin.attributeType;
 				url += '/attributecodes/' + record.data.code;
 				url += '/force';
@@ -988,7 +988,7 @@
 			};
 
 			var actionDeleteCodeAttachment = function acitionDeleteCode(record) {
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += manageCodesWin.attributeType;
 				url += '/attributecodes/' + record.data.code;
 				url += '/attachment';
@@ -1120,7 +1120,7 @@
 										id: 'allowForTypesSearchStore',
 										proxy: {
 											type: 'ajax',
-											url: '../api/v1/resource/componenttypes/lookup'												
+											url: 'api/v1/resource/componenttypes/lookup'												
 										},
 										autoLoad: true
 									})
@@ -1270,7 +1270,7 @@
 										id: 'requiredTypesSearchStore',
 										proxy: {
 											type: 'ajax',
-											url: '../api/v1/resource/componenttypes/lookup'												
+											url: 'api/v1/resource/componenttypes/lookup'												
 										},
 										autoLoad: true
 									})
@@ -1293,7 +1293,7 @@
 												// [asString], [dirtyOnly], [includeEmptyText], [useDataValues]
 												var formData = form.getValues(false,false,false,true);
 												var edit = editAttributeWin.edit;
-												var url = '/openstorefront/api/v1/resource/attributes/attributetypes';
+												var url = 'api/v1/resource/attributes/attributetypes';
 												var method = 'POST';
 												if (edit) {
 													url += '/' + formData.attributeType;

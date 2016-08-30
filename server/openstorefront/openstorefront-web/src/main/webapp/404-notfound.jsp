@@ -2,155 +2,143 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-	<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
+	<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">
 	
-    <title>Page Not Found :(</title>
-    <style>
-      ::-moz-selection {
-        background: #b3d4fc;
-        text-shadow: none;
-      }
+        <title>404 Resource Not Found</title>
+		<style>
+			.disclaimer{
 
-      ::selection {
-        background: #b3d4fc;
-        text-shadow: none;
-      }
-
-      html {
-        padding: 30px 10px;
-        font-size: 20px;
-        line-height: 1.4;
-        color: #737373;
-        background: #f0f0f0;
-        -webkit-text-size-adjust: 100%;
-        -ms-text-size-adjust: 100%;
-      }
-
-      html,
-      input {
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      }
-
-      body {
-        max-width: 500px;
-        _width: 500px;
-        padding: 30px 20px 50px;
-        border: 1px solid #b3b3b3;
-        border-radius: 4px;
-        margin: 0 auto;
-        box-shadow: 0 1px 10px #a7a7a7, inset 0 1px 0 #fff;
-        background: #fcfcfc;
-      }
-
-      h1 {
-        margin: 0 10px;
-        font-size: 50px;
-        text-align: center;
-      }
-
-      h1 span {
-        color: #bbb;
-      }
-
-      h3 {
-        margin: 1.5em 0 0.5em;
-      }
-
-      p {
-        margin: 1em 0;
-      }
-
-      ul {
-        padding: 0 0 0 40px;
-        margin: 1em 0;
-      }
-
-      .container {
-        max-width: 380px;
-        _width: 380px;
-        margin: 0 auto;
-      }
-
-      /* google search */
-
-      #goog-fixurl ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      #goog-fixurl form {
-        margin: 0;
-      }
-
-      #goog-wm-qt,
-      #goog-wm-sb {
-        border: 1px solid #bbb;
-        font-size: 16px;
-        line-height: normal;
-        vertical-align: top;
-        color: #444;
-        border-radius: 2px;
-      }
-
-      #goog-wm-qt {
-        width: 220px;
-        height: 20px;
-        padding: 5px;
-        margin: 5px 10px 0 0;
-        box-shadow: inset 0 1px 1px #ccc;
-      }
-
-      #goog-wm-sb {
-        display: inline-block;
-        height: 32px;
-        padding: 0 10px;
-        margin: 5px 0 0;
-        white-space: nowrap;
-        cursor: pointer;
-        background-color: #f5f5f5;
-        background-image: -webkit-linear-gradient(rgba(255,255,255,0), #f1f1f1);
-        background-image: -moz-linear-gradient(rgba(255,255,255,0), #f1f1f1);
-        background-image: -ms-linear-gradient(rgba(255,255,255,0), #f1f1f1);
-        background-image: -o-linear-gradient(rgba(255,255,255,0), #f1f1f1);
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        *overflow: visible;
-        *display: inline;
-        *zoom: 1;
-      }
-
-      #goog-wm-sb:hover,
-      #goog-wm-sb:focus {
-        border-color: #aaa;
-        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-        background-color: #f8f8f8;
-      }
-
-      #goog-wm-qt:hover,
-      #goog-wm-qt:focus {
-        border-color: #105cb6;
-        outline: 0;
-        color: #222;
-      }
-
-      input::-moz-focus-inner {
-        padding: 0;
-        border: 0;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Not found <span>:(</span></h1>
-      <p>Sorry, but the page you were trying to view does not exist.</p>
-      <p>It looks like this was the result of either:</p>
-      <ul>
-        <li>a mistyped address</li>
-        <li>an out-of-date link</li>
-      </ul>
-	  <a href="/openstorefront/client/">Return to Home Page</a>      
-    </div>
+			}
+			.auth-content .disclaimer {
+				margin: 20px;
+				text-align: left;
+				border: 1px solid rgb(169, 169, 169);
+				border-image-source: initial;
+				border-image-slice: initial;
+				border-image-width: initial;
+				border-image-outset: initial;
+				border-image-repeat: initial;
+				border-radius: 10px;
+				padding: 10px;
+				background: rgb(42, 58, 92);
+				color: white;
+			}			
+			.auth-forms {
+				background: white;
+				width: 80%;
+				border: 1px solid rgb(169, 169, 169);
+				border-image-source: initial;
+				border-image-slice: initial;
+				border-image-width: initial;
+				border-image-outset: initial;
+				border-image-repeat: initial;
+				border-radius: 10px;
+				padding: 20px;
+				margin: 20px auto 0px;
+				text-align: center;
+			}
+			h1, .h1 {
+				font-size: 36px;
+			}
+			h1, h2, h3 {
+				margin-top: 20px;
+				margin-bottom: 10px;
+			}
+			h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+				font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				font-weight: 500;
+				line-height: 1.1;
+				color: inherit;
+			}			
+			.auth-content {
+				display: inline-block;
+			}
+			.auth-content h1 {
+				color: black;
+				border-bottom: lightgray 1px solid;
+			}			
+			.row {
+				margin-left: -15px;
+				margin-right: -15px;
+			}
+			.auth-content input {
+				width: 360px;
+				display: inline-block;
+			}	
+			.btn-primary {
+				color: white;
+				background-color: rgb(85, 85, 85);
+				border-color: rgb(72, 72, 72);
+			}
+			.btn {
+				display: inline-block;
+				margin-bottom: 0px;
+				font-weight: normal;
+				text-align: center;
+				vertical-align: middle;
+				cursor: pointer;
+				background-image: none;
+				border: 1px solid transparent;
+				border-image-source: initial;
+				border-image-slice: initial;
+				border-image-width: initial;
+				border-image-outset: initial;
+				border-image-repeat: initial;
+				white-space: nowrap;
+				padding: 6px 12px;
+				font-size: 14px;
+				line-height: 1.428571429;
+				border-radius: 4px;
+				-webkit-user-select: none;
+			}
+			.form-control {
+				display: block;
+				width: 100%;
+				height: 34px;
+				padding: 6px 12px;
+				font-size: 14px;
+				line-height: 1.428571429;
+				color: rgb(85, 85, 85);
+				vertical-align: middle;
+				background-color: white;
+				background-image: none;
+				border: 1px solid rgb(204, 204, 204);
+				border-image-source: initial;
+				border-image-slice: initial;
+				border-image-width: initial;
+				border-image-outset: initial;
+				border-image-repeat: initial;
+				border-radius: 4px;
+				-webkit-box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px inset;
+				box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px inset;
+				transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+				-webkit-transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+			}
+			.loginError {
+				display: block;
+				color: red;
+				padding: 5px;
+				width: 100%;
+				text-align: center; 
+				border: red 2px solid;
+				font-size: 14px;
+			}	
+			body{
+				background-color: beige;
+			}
+		</style>		
+    </head>
+    <body>
+		<div class="auth-forms">
+			<div class="auth-content">
+				<h1>404 - Resource Not Found</h1>
+				<p>Sorry, but the page you were trying to view does not exist.</p>
+				<p>It looks like this was the result of either:</p>
+				- a mistyped address<br>
+				- an out-of-date link<br>
+				<br>				
+				<a href="${pageContext.request.contextPath}">Return to Home Page</a> 		
+			</div>
+		</div>
   </body>
 </html>

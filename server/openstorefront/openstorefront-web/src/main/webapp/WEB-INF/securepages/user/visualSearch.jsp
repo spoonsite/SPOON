@@ -21,7 +21,7 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/usertoolslayout.jsp">
+<stripes:layout-render name="../../../layout/usertoolslayout.jsp">
     <stripes:layout-component name="contents">
 			
 	<script src="scripts/component/visualSearch.js?v=${appVersion}" type="text/javascript"></script>	

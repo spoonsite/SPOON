@@ -1,7 +1,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../../layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 
 		<script type="text/javascript">
@@ -23,7 +23,7 @@
 					proxy: {
 						id: 'tagStoreProxy',
 						type: 'ajax',
-						url: '../api/v1/resource/components/tagviews'
+						url: 'api/v1/resource/components/tagviews'
 					}
 				});
 
@@ -38,7 +38,7 @@
 					proxy: {
 						id: 'securityTypeStoreProxy',
 						type: 'ajax',
-						url: '../api/v1/resource/lookuptypes/SecurityMarkingType/view'
+						url: 'api/v1/resource/lookuptypes/SecurityMarkingType/view'
 					}
 				});
 			
@@ -168,7 +168,7 @@
 										proxy: {
 											id: 'componentStoreProxy',
 											type: 'ajax',
-											url: '../api/v1/resource/components/lookup'
+											url: 'api/v1/resource/components/lookup'
 										}
 									})
 								},
@@ -205,7 +205,7 @@
 												// Submit Data
 												if (form.isValid()) {
 													var formData = form.getValues();
-													var url = '/openstorefront/api/v1/resource/components/';
+													var url = 'api/v1/resource/components/';
 													url += formData.component + "/tags";
 													var method = 'POST';
 
@@ -295,7 +295,7 @@
 						var tagId = record.data.tagId;
 						var componentId = record.data.componentId;
 						var method = 'DELETE';
-						var url = '/openstorefront/api/v1/resource/components/';
+						var url = 'api/v1/resource/components/';
 						url += componentId + '/tags/' + tagId;
 
 						Ext.Ajax.request({

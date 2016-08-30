@@ -20,7 +20,7 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
     <stripes:layout-component name="contents">		
 	
 		
@@ -45,7 +45,7 @@ limitations under the License.
 								autoLoad: false,
 								proxy: {
 									type: 'ajax',
-									url: '../api/v1/resource/contacts/{contactId}/references'
+									url: 'api/v1/resource/contacts/{contactId}/references'
 								}
 							},
 							columns: [
@@ -160,7 +160,7 @@ limitations under the License.
 												}
 
 												CoreUtil.submitForm({
-													url: '../api/v1/resource/contacts' + update,
+													url: 'api/v1/resource/contacts' + update,
 													method: method,
 													data: data,
 													form: form,
@@ -201,7 +201,7 @@ limitations under the License.
 									forceSelection: false,
 									valueField: 'description',
 									storeConfig: {
-										url: '../api/v1/resource/organizations/lookup'
+										url: 'api/v1/resource/organizations/lookup'
 									}
 								}),								
 								{
@@ -269,7 +269,7 @@ limitations under the License.
 						],
 						proxy: CoreUtil.pagingProxy({
 							type: 'ajax',
-							url: '../api/v1/resource/contacts',
+							url: 'api/v1/resource/contacts',
 							reader: {
 								type: 'json',
 								rootProperty: 'data',
@@ -459,7 +459,7 @@ limitations under the License.
 				
 				var actionRefresh = function() {
 					Ext.getCmp('contactGrid').getStore().load({
-						url: '../api/v1/resource/contacts'
+						url: 'api/v1/resource/contacts'
 					});					
 				};
 				
@@ -467,7 +467,7 @@ limitations under the License.
 					viewReferenceWindow.show();
 					viewReferenceWindow.setTitle('References - ' + record.get('firstName') + ', ' + record.get('lastName'));
 					viewReferenceWindow.getComponent('referenceGrid').getStore().load({
-						url: '../api/v1/resource/contacts/' + record.get('contactId') + '/references'
+						url: 'api/v1/resource/contacts/' + record.get('contactId') + '/references'
 					});
 					previewCheckButtons();
 				};				
@@ -536,7 +536,7 @@ limitations under the License.
 											],
 											proxy: {
 												type: 'ajax',
-												url: '../api/v1/resource/contacts/filtered'
+												url: 'api/v1/resource/contacts/filtered'
 											},
 											listeners: {
 												load: function(store, records, opts) {
@@ -567,7 +567,7 @@ limitations under the License.
 													var mergeContactId = form.getComponent('mergeContactId').getValue();
 													
 													CoreUtil.submitForm({
-														url: '../api/v1/resource/contacts/' + record.get('contactId') + '/merge/' + mergeContactId,
+														url: 'api/v1/resource/contacts/' + record.get('contactId') + '/merge/' + mergeContactId,
 														method: 'PUT',
 														form: form,
 														success: function(){
@@ -624,7 +624,7 @@ limitations under the License.
 							if (proceed) {
 								contactGrid.setLoading('Updating Status...');
 								Ext.Ajax.request({
-									url: '../api/v1/resource/contacts/' + record.get('contactId') + '/' + urlEnding +  '?includeReferences=' + includeReferences,
+									url: 'api/v1/resource/contacts/' + record.get('contactId') + '/' + urlEnding +  '?includeReferences=' + includeReferences,
 									method: 'PUT',																		
 									callback: function(){
 										contactGrid.setLoading(false);
@@ -642,7 +642,7 @@ limitations under the License.
 					//check references
 					contactGrid.setLoading('Checking for references...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/contacts/' + record.get('contactId') + '/references',
+						url: 'api/v1/resource/contacts/' + record.get('contactId') + '/references',
 						callback: function(){
 							contactGrid.setLoading(false);
 						},
@@ -662,7 +662,7 @@ limitations under the License.
 										if (btn === 'yes') {										
 											contactGrid.setLoading('Deleting Contact...');
 											Ext.Ajax.request({
-												url: '../api/v1/resource/contacts/' + record.get('contactId'),
+												url: 'api/v1/resource/contacts/' + record.get('contactId'),
 												method: 'DELETE',
 												callback: function(){
 													contactGrid.setLoading(false);

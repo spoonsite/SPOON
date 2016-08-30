@@ -20,7 +20,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 		
 		<script src="scripts/component/templateBlocks.js?v=${appVersion}" type="text/javascript"></script>
@@ -291,7 +291,7 @@
 													}
 
 													CoreUtil.submitForm({
-														url: '../api/v1/resource/templateblocks' + endUrl,
+														url: 'api/v1/resource/templateblocks' + endUrl,
 														method: method,
 														form: form,
 														data: data,
@@ -363,7 +363,7 @@
 											store: {
 												proxy: {
 													type: 'ajax',
-													url: '../api/v1/resource/components/lookup'
+													url: 'api/v1/resource/components/lookup'
 												}
 											},
 											listeners: {
@@ -372,7 +372,7 @@
 													if (newValue) {
 														Ext.getCmp('dataFieldPanel').setLoading(true);
 														Ext.Ajax.request({
-															url: '../api/v1/resource/components/' + newValue + '/detail',
+															url: 'api/v1/resource/components/' + newValue + '/detail',
 															callback: function(){
 																Ext.getCmp('dataFieldPanel').setLoading(false);
 															},
@@ -568,7 +568,7 @@
 											
 											Ext.getCmp('addEditWindow').setLoading("Saving...");
 											Ext.Ajax.request({
-												url: '../api/v1/resource/componenttypetemplates' + endUrl,
+												url: 'api/v1/resource/componenttypetemplates' + endUrl,
 												method: method,
 												jsonData: {
 													name: templateName,
@@ -618,7 +618,7 @@
 					
 					toolBox.setLoading(true);
 					Ext.Ajax.request({
-						url: '../api/v1/resource/templateblocks',
+						url: 'api/v1/resource/templateblocks',
 						callback: function(){
 							toolBox.setLoading(false);
 						},
@@ -675,7 +675,7 @@
 														if (btn === 'yes') {
 															Ext.getCmp('blocksPanel').setLoading("Removing...");
 															Ext.Ajax.request({
-																url: '../api/v1/resource/templateblocks/' + templateBlockId,
+																url: 'api/v1/resource/templateblocks/' + templateBlockId,
 																method: 'DELETE',
 																callback: function(){
 																	Ext.getCmp('blocksPanel').setLoading(false);
@@ -898,7 +898,7 @@
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/componenttypetemplates',
+							url: 'api/v1/resource/componenttypetemplates',
 							extraParams: {
 								all: true
 							}							
@@ -1062,7 +1062,7 @@
 						urlEnd = '';
 					}					
 					Ext.Ajax.request({
-						url: '../api/v1/resource/componenttypetemplates/' + type + urlEnd,
+						url: 'api/v1/resource/componenttypetemplates/' + type + urlEnd,
 						method: method,
 						callback: function(){
 							Ext.getCmp('templateGrid').setLoading(false);
@@ -1078,7 +1078,7 @@
 					//check if delete is possible
 					Ext.getCmp('templateGrid').setLoading("Checking delete...");
 					Ext.Ajax.request({
-						url: '../api/v1/resource/componenttypetemplates/' + record.get('templateId') + '/attached',
+						url: 'api/v1/resource/componenttypetemplates/' + record.get('templateId') + '/attached',
 						method: 'GET',
 						callback: function(){
 							Ext.getCmp('templateGrid').setLoading(false);
@@ -1102,7 +1102,7 @@
 										if (btn === 'yes') {
 											Ext.getCmp('templateGrid').setLoading("Deleting...");
 											Ext.Ajax.request({
-												url: '../api/v1/resource/componenttypetemplates/' + record.get('templateId') + '/force',
+												url: 'api/v1/resource/componenttypetemplates/' + record.get('templateId') + '/force',
 												method: 'DELETE',
 												callback: function(){
 													Ext.getCmp('templateGrid').setLoading(false);

@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 	
 	<script src="scripts/component/integrationConfigWindow.js?v=${appVersion}" type="text/javascript"></script>
@@ -17,7 +17,7 @@
 				autoLoad: true,
 				proxy: {
 					type: 'ajax',
-					url: '/openstorefront/api/v1/resource/components/integration?status=ALL'
+					url: 'api/v1/resource/components/integration?status=ALL'
 				}
 			});
 
@@ -227,7 +227,7 @@
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
-										url: '/openstorefront/api/v1/resource/components/lookup?'
+										url: 'api/v1/resource/components/lookup?'
 									},
 									sorters: [{
 										property: 'description',
@@ -257,7 +257,7 @@
 			var actionRunJob = function actionRunJob(record) {
 				var componentId = record.getData().componentId;
 				var componentName = record.getData().componentName;
-				var url = '/openstorefront/api/v1/resource/components/';
+				var url = 'api/v1/resource/components/';
 				url += componentId + '/integration/run';
 				var method = 'POST';
 
@@ -281,7 +281,7 @@
 			var actionRunAllJobs = function actionRunAlljobs() {
 
 				Ext.Ajax.request({
-					url: '/openstorefront/api/v1/resource/components/integrations/run',
+					url: 'api/v1/resource/components/integrations/run',
 					method: 'POST',
 					success: function (response, opts) {
 						Ext.toast('Sent request to run all jobs', '', 'tr');
@@ -306,7 +306,7 @@
 				var componentId = record.getData().componentId;
 				var componentName = record.getData().componentName;
 				var activeStatus = record.getData().activeStatus;
-				var url = '/openstorefront/api/v1/resource/components/';
+				var url = 'api/v1/resource/components/';
 				url += componentId + '/integration/';
 				var method = 'PUT';
 				if (activeStatus === 'A') {
@@ -335,7 +335,7 @@
 			};
 
 			var actionToggleIntegrations = function actionToggleIntegrations(records) {
-				var url = '/openstorefront/api/v1/resource/components/integration/togglemultiple';
+				var url = 'api/v1/resource/components/integration/togglemultiple';
 				var method = 'PUT';
 				
 				var data = [];
@@ -365,7 +365,7 @@
 			var actionDeleteIntegration = function actionDeleteIntegration(record) {
 				var componentId = record.getData().componentId;
 				var componentName = record.getData().componentName;
-				var url = '/openstorefront/api/v1/resource/components/';
+				var url = 'api/v1/resource/components/';
 				url += componentId + '/integration';
 				var method = 'DELETE';
 
@@ -391,7 +391,7 @@
 				autoLoad: true,
 				proxy: {
 					type: 'ajax',
-					url: '/openstorefront/api/v1/resource/attributes/attributexreftypes/detail'
+					url: 'api/v1/resource/attributes/attributexreftypes/detail'
 				}
 			});
 
@@ -426,7 +426,7 @@
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
-										url: '/openstorefront/api/v1/service/jira/projects'
+										url: 'api/v1/service/jira/projects'
 									}
 								}),
 								listeners: {
@@ -436,7 +436,7 @@
 										Ext.getCmp('jiraAssignmentInstructions').hide();
 										Ext.getCmp('jiraAssignmentPanel').hide();
 										var code = record.getData().code;
-										var url = '/openstorefront/api/v1/service/jira/projects/';
+										var url = 'api/v1/service/jira/projects/';
 										url += code;
 
 										Ext.getCmp('jiraProjectIssueSelection').setStore({
@@ -465,7 +465,7 @@
 										var projectSelection = Ext.getCmp('jiraProjectSelection').getSelection();
 										var projectCode = projectSelection.getData().code;
 										var issueType = combo.getValue();
-										var url = '/openstorefront/api/v1/service/jira/projects/';
+										var url = 'api/v1/service/jira/projects/';
 										url += projectCode + '/' + issueType + '/fields';
 
 										Ext.getCmp('jiraFieldSelection').setStore({
@@ -490,7 +490,7 @@
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
-										url: '/openstorefront/api/v1/resource/attributes'
+										url: 'api/v1/resource/attributes'
 									}
 								}),
 								listeners: {
@@ -654,7 +654,7 @@
 									data.type.integrationType = 'JIRA';
 									data.type.fieldId = jiraFieldRecord.key;
 									data.map = map;
-									var url = '/openstorefront/api/v1/resource/attributes/attributexreftypes/';
+									var url = 'api/v1/resource/attributes/attributexreftypes/';
 									url += 'detail';
 									var method = 'POST';
 
@@ -840,7 +840,7 @@
 			var actionDeleteMapping = function actionDeleteMapping(record) {
 				var attributeType = record.getData().attributeType;
 				var attributeName = record.getData().attributeName;
-				var url = '/openstorefront/api/v1/resource/attributes/attributexreftypes/';
+				var url = 'api/v1/resource/attributes/attributexreftypes/';
 				url += attributeType;
 				var method = 'DELETE';
 
