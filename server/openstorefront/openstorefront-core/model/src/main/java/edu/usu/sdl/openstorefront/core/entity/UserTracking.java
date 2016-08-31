@@ -39,7 +39,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("User tracking record.  Snapshot of the user.")
 public class UserTracking
-		extends StandardEntity
+		extends StandardEntity<UserTracking>
 		implements ExportImport
 {
 

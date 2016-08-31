@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
  */
 @APIDescription("Contact Types")
 public class ContactType
-		extends LookupEntity
+		extends LookupEntity<ContactType>
 {
 
 	public static final String TECHINCAL = "TEC";

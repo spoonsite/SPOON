@@ -27,7 +27,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Classifies a new Alert")
 public class AlertType
-		extends LookupEntity
+		extends LookupEntity<AlertType>
 {
 
 	public static final String USER_DATA = "USERD";

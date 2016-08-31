@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Saves an advance search for application")
 public class SystemSearch
-		extends StandardEntity
+		extends StandardEntity<SystemSearch>
 {
 	
 	@PK(generated = true)

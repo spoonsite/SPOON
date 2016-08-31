@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Defines Relationship between components")
 public class ComponentRelationship
-		extends BaseComponent
+		extends BaseComponent<ComponentRelationship>
 {
 
 	@PK(generated = true)

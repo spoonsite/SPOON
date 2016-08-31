@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
  */
 @APIDescription("Security Classification Type")
 public class SecurityMarkingType
-		extends LookupEntity
+		extends LookupEntity<SecurityMarkingType>
 {
 
 	public SecurityMarkingType()

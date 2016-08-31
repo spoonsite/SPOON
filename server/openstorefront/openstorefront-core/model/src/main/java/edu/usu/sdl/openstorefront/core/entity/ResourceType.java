@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
  */
 @APIDescription("Resource Type: Document, Homepage, Releases...etc")
 public class ResourceType
-		extends LookupEntity
+		extends LookupEntity<ResourceType>
 {
 
 	public static final String DOCUMENT = "DOC";

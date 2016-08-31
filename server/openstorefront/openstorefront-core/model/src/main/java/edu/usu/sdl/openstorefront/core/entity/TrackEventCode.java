@@ -28,7 +28,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Tracking Event Types")
 public class TrackEventCode
-		extends LookupEntity
+		extends LookupEntity<TrackEventCode>
 {
 
 	public static final String LOGIN = "L";

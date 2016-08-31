@@ -41,7 +41,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 @APIDescription("Holds the media information for a component")
 public class ComponentMedia
-		extends BaseComponent
+		extends BaseComponent<ComponentMedia>
 {
 
 	@PK(generated = true)
@@ -128,9 +128,9 @@ public class ComponentMedia
 	}
 
 	@Override
-	public int customCompareTo(BaseComponent o)
+	public int customCompareTo(ComponentMedia o)
 	{
-		int value = ReflectionUtil.compareObjects(getFileName(), ((ComponentMedia) o).getFileName());
+		int value = ReflectionUtil.compareObjects(getFileName(), o.getFileName());
 		return value;
 	}
 

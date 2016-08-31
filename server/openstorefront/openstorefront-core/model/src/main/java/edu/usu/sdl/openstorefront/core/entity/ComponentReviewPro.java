@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
  */
 @APIDescription("Review Pro")
 public class ComponentReviewPro
-		extends BaseComponent
+		extends BaseComponent<ComponentReviewPro>
 {
 
 	@PK

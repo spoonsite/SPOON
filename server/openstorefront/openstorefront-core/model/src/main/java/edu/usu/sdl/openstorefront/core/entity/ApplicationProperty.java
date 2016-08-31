@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("This is used for system managed properties")
 public class ApplicationProperty
-		extends StandardEntity
+		extends StandardEntity<ApplicationProperty>
 {
 
 	@PK

@@ -31,7 +31,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Dependancy need external to package component")
 public class ComponentExternalDependency
-		extends BaseComponent
+		extends BaseComponent<ComponentExternalDependency>
 {
 
 	@PK(generated = true)
