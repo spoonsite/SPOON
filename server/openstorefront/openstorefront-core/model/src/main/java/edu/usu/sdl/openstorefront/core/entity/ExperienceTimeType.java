@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
  */
 @APIDescription("Usage time range: < 6month etc")
 public class ExperienceTimeType
-		extends LookupEntity
+		extends LookupEntity<ExperienceTimeType>
 {
 
 	public ExperienceTimeType()

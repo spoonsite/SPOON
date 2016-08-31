@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
  */
 @APIDescription("Holds error ticket information")
 public class ErrorTicket
-		extends StandardEntity
+		extends StandardEntity<ErrorTicket>
 {
 
 	@PK

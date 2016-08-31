@@ -29,7 +29,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("External Systems Integration Types")
 public class IntegrationType
-		extends LookupEntity
+		extends LookupEntity<IntegrationType>
 {
 
 	public static final String JIRA = "JIRA";

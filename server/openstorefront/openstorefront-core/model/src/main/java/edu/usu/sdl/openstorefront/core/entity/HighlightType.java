@@ -28,7 +28,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Highlight  new item type: link, component...")
 public class HighlightType
-		extends LookupEntity
+		extends LookupEntity<HighlightType>
 {
 
 	public static final String COMPONENT = "C";

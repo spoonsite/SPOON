@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
  */
 @APIDescription("Common shared point for all component related entities")
 public abstract class BaseComponent<T>
-		extends StandardEntity<BaseComponent>
+		extends StandardEntity<T>
 {
 
 	@NotNull
@@ -48,7 +48,7 @@ public abstract class BaseComponent<T>
 	public abstract String uniqueKey();
 
 	@Override
-	public int compareTo(BaseComponent o)
+	public int compareTo(T o)
 	{
 		int value = super.compareTo(o);
 		if (value == 0) {
@@ -63,7 +63,7 @@ public abstract class BaseComponent<T>
 		return value;
 	}
 
-	public int customCompareTo(BaseComponent o)
+	public int customCompareTo(T o)
 	{
 		return 0;
 	}

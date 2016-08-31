@@ -36,7 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 
 @APIDescription("Allows for grouping the metadata into categories")
 public class AttributeType
-		extends StandardEntity
+		extends StandardEntity<AttributeType>
 {
 
 	@PK

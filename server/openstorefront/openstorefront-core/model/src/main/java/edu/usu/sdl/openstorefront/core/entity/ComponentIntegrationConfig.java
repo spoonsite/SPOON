@@ -33,7 +33,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("External Integration config record")
 public class ComponentIntegrationConfig
-		extends StandardEntity
+		extends StandardEntity<ComponentIntegrationConfig>
 {
 
 	@PK(generated = true)

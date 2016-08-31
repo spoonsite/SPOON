@@ -280,6 +280,7 @@
 								{
 									text: 'View',
 									id: 'threadStatus-view',
+									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-eye',
 									handler: function () {

@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
  */
 @APIDescription("Evaluation section Primary Key")
 public class ComponentEvaluationSectionPk
-		extends BasePK
+		extends BasePK<ComponentEvaluationSectionPk>
 {
 
 	@NotNull

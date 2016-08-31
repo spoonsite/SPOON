@@ -27,7 +27,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Component Approval Status")
 public class ApprovalStatus
-		extends LookupEntity
+		extends LookupEntity<ApprovalStatus>
 {
 
 	public static final String APPROVED = "A";

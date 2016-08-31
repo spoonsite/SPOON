@@ -28,7 +28,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Defines report output formats")
 public class ReportFormat
-		extends LookupEntity
+		extends LookupEntity<ReportFormat>
 {
 
 	public static final String CSV = "text-csv";

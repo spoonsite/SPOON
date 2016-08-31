@@ -39,7 +39,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 @APIDescription("Resource for a component")
 public class ComponentResource
-		extends BaseComponent
+		extends BaseComponent<ComponentResource>
 {
 
 	@PK(generated = true)
@@ -122,9 +122,9 @@ public class ComponentResource
 	
 
 	@Override
-	public int customCompareTo(BaseComponent o)
+	public int customCompareTo(ComponentResource o)
 	{
-		ComponentResource componentResource = ((ComponentResource) o);
+		ComponentResource componentResource = o;
 		int value = ReflectionUtil.compareObjects(getFileName(), componentResource.getFileName());
 		if (value == 0) {
 			value = ReflectionUtil.compareObjects(getMimeType(), componentResource.getMimeType());

@@ -27,7 +27,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Type of Error")
 public class ErrorTypeCode
-		extends LookupEntity
+		extends LookupEntity<ErrorTypeCode>
 {
 
 	public static final String SYSTEM = "SYS";

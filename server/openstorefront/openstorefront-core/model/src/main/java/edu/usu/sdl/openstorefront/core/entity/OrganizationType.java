@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
  */
 @APIDescription("Organization Type")
 public class OrganizationType
-		extends LookupEntity
+		extends LookupEntity<OrganizationType>
 {
 
 	public OrganizationType()

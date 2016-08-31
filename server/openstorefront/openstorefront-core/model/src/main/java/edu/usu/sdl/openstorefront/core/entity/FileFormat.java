@@ -24,7 +24,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Defines the supported upload formats")
 public class FileFormat
-		extends LookupEntity
+		extends LookupEntity<FileFormat>
 {
 
 	public static final String COMPONENT_STANDARD = "CMP_STANDARD";

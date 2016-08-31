@@ -25,7 +25,7 @@ import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
 @SystemTable
 @APIDescription("Testing")
 public class TestEntity
-		extends LookupEntity
+		extends LookupEntity<TestEntity>
 {
 
 	public TestEntity()
