@@ -1047,6 +1047,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **mail.from.address** -    From Email Address                                             ( **donotreply@storefront.net** )
 -  **mail.reply.name** -      Reply name (usually display at the bottom the message)         ( **Support** )
 -  **mail.reply.address** -   Reply email (usually display at the bottom the message)        ( **helpdesk@di2e.net** )
+-  **test.email** -           Set for automated testing only; the email to use for testing 
 
 ##5.5 Other Application Properties
 ----------------------------
