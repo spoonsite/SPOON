@@ -275,7 +275,7 @@ public class SubComponentServiceImpl
 				error.append("Attribute Code not found. Code: ").append(attribute.getComponentAttributePk());
 			}
 			if (skipMissingAttribute) {
-				log.log(Level.WARNING, MessageFormat.format("Unable to save attribute. {0}", error.toString()));
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to save attribute. {0}", error.toString()));
 			} else {		
 				throw new OpenStorefrontRuntimeException(error.toString(), "Check data passed in.");
 			}

@@ -254,13 +254,14 @@ public class ComponentTypeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Inactives component type")
+	@APIDescription("Inactives component type unless new type is specified then it moves the data and deletes the type")
 	@Path("/{type}")
-	public void deleteNewEvent(
-			@PathParam("type") String type
+	public void deleteComponentType(
+			@PathParam("type") String type,
+			@QueryParam("newtype") String newType
 	)
 	{
-		service.getComponentService().removeComponentType(type);
+		service.getComponentService().removeComponentType(type, newType);
 	}
 
 }
