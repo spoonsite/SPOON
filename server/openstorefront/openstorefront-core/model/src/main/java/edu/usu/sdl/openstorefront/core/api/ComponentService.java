@@ -291,15 +291,16 @@ public interface ComponentService
 	public void saveComponentQuestion(ComponentQuestion question);
 
 	/**
-	 *
+	 * Saves a question response
 	 * @param response
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentQuestionResponse(ComponentQuestionResponse response);
 
 	/**
-	 *
+	 * Saves a component Resource
 	 * @param resource
+	 * @return 
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public ComponentResource saveComponentResource(ComponentResource resource);
@@ -658,13 +659,14 @@ public interface ComponentService
 	public ComponentType saveComponentType(ComponentType componentType);
 
 	/**
-	 * This just inActivates. Deleting would be dangerous as there is data
-	 * attached to it. (Components, Attribute Restrictions...etc)
+	 * This just inActivates unless newComponent is supplied in which case it
+	 * moves the data and deletes component type.
 	 *
 	 * @param componentType
+	 * @param newComponentType (optional unless forcing delete)
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void removeComponentType(String componentType);
+	public void removeComponentType(String componentType, String newComponentType);
 
 	/**
 	 * Saves a new template

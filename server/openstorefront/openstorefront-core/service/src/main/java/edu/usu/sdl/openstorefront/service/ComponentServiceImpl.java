@@ -552,9 +552,9 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void removeComponentType(String componentType)
+	public void removeComponentType(String componentType, String newComponentType)
 	{
-		core.removeComponentType(componentType);
+		core.removeComponentType(componentType, newComponentType);
 	}
 
 	@Override
