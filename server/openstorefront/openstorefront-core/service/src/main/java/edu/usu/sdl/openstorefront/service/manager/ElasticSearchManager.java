@@ -50,6 +50,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -69,13 +73,14 @@ import org.elasticsearch.search.sort.SortOrder;
 public class ElasticSearchManager
 	implements Initializable, SearchServer
 {
-	private static final Logger log = Logger.getLogger(ElasticSearchManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(ElasticSearchManager.class.getName());
 
 	private static final String INDEX = "openstorefront";
 	private static final String INDEX_TYPE = "component";
 	
 	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static Client client;
+	private static AtomicBoolean checkIndex = new AtomicBoolean(true);
 	
 	public static void init() 
 	{
@@ -83,10 +88,11 @@ public class ElasticSearchManager
 		Integer port = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_ELASTIC_PORT, "9300"));
 				
 		try {
-			log.log(Level.INFO, MessageFormat.format("Connecting to ElasticSearch at {0}", host + ":" + port));
+			LOG.log(Level.INFO, MessageFormat.format("Connecting to ElasticSearch at {0}", host + ":" + port));
 			
 			client = TransportClient.builder().build()
-					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));			
+					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
+						
 		} catch (UnknownHostException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to find elastic search server host", "Check configuration;  Check Host and Port;   property: " + PropertiesManager.KEY_ELASTIC_HOST + " current value: " + host);
 		}
@@ -95,6 +101,27 @@ public class ElasticSearchManager
 	
 	public static Client getClient() 
 	{
+		if (checkIndex.get() && client != null)
+		{
+			IndicesExistsResponse response = client.admin().indices()
+				.exists(new IndicesExistsRequest(INDEX))
+				.actionGet();
+			
+			if (response.isExists() == false) 
+			{
+				CreateIndexResponse createIndexResponse = client.admin().indices()
+						.create(new CreateIndexRequest(INDEX))						
+						.actionGet();
+				if (createIndexResponse.isAcknowledged()) {
+					LOG.log(Level.INFO, "Search index: " + INDEX + " was created.");					
+				} else {
+					LOG.log(Level.WARNING, "Search index: " + INDEX + " FAILED to create. Add a record to create");
+				}
+			}
+			
+			checkIndex.set(true);			
+		}
+		
 		return client;		
 	}
 	
@@ -154,26 +181,30 @@ public class ElasticSearchManager
 			maxSearchResults = filter.getMax();
 		}
 		
+		if (StringUtils.isBlank(query)) {
+			query = "*";
+		}
+		
 		SearchResponse response = ElasticSearchManager.getClient()				
-				.prepareSearch(INDEX)							
-				.setQuery(QueryBuilders
-						.boolQuery()
-						.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_NAME, query))
-						.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_ORGANIZATION, query))
-						.should(QueryBuilders.wildcardQuery("_all", query))
-						.should(QueryBuilders.fuzzyQuery("_all", query))
-						)						
-				.setFrom(filter.getOffset())
-				.setSize(maxSearchResults)
-				.addSort(filter.getSortField(), OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ?  SortOrder.ASC : SortOrder.DESC)		
-				.execute()
-				.actionGet();		
+					.prepareSearch(INDEX)							
+					.setQuery(QueryBuilders
+							.boolQuery()
+							.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_NAME, query))
+							.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_ORGANIZATION, query))
+							.should(QueryBuilders.wildcardQuery("_all", query))
+							.should(QueryBuilders.fuzzyQuery("_all", query))
+							)						
+					.setFrom(filter.getOffset())
+					.setSize(maxSearchResults)
+					.addSort(filter.getSortField(), OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ?  SortOrder.ASC : SortOrder.DESC)		
+					.execute()
+					.actionGet();		
 		
 		indexSearchResult.setTotalResults(response.getHits().getTotalHits());
 		indexSearchResult.setMaxScore(response.getHits().getMaxScore());
-		
+
 		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
- 		for (SearchHit hit : response.getHits().getHits()) {
+		for (SearchHit hit : response.getHits().getHits()) {
 			try {
 				ComponentSearchView view  = objectMapper.readValue(hit.getSourceAsString(), new TypeReference<ComponentSearchView>(){});
 				if (service.getComponentService().checkComponentApproval(view.getComponentId())) {
@@ -181,7 +212,7 @@ public class ElasticSearchManager
 					indexSearchResult.getSearchViews().add(view);
 					indexSearchResult.getResultsList().add(SolrComponentModel.fromComponentSearchView(view));
 				} else {
-					log.log(Level.FINER, MessageFormat.format("Component is no long approved and active.  Removing index.  {0}", view.getComponentId()));										
+					LOG.log(Level.FINER, MessageFormat.format("Component is no long approved and active.  Removing index.  {0}", view.getComponentId()));										
 					deleteById(view.getComponentId());
 				}
 			} catch (IOException ex) {
@@ -293,7 +324,7 @@ public class ElasticSearchManager
 				bulkRequest.add(ElasticSearchManager.getClient().prepareIndex(INDEX, INDEX_TYPE , componentSearchView.getComponentId())
 						.setSource(objectMapper.writeValueAsBytes(componentSearchView)));
 			} catch (JsonProcessingException ex) {
-				log.log(Level.SEVERE, MessageFormat.format("Unable to index component: {0}  Component will be missing from search.", componentSearchView.getName()));
+				LOG.log(Level.SEVERE, MessageFormat.format("Unable to index component: {0}  Component will be missing from search.", componentSearchView.getName()));
 			}
 		}
 		
@@ -301,11 +332,11 @@ public class ElasticSearchManager
 		if (bulkResponse.hasFailures()) {
 			bulkResponse.forEach(response->{
 				if (StringUtils.isNotBlank(response.getFailureMessage())) {			
-					log.log(Level.WARNING, MessageFormat.format("A component failed to index: {0}", response.getFailureMessage()));
+					LOG.log(Level.WARNING, MessageFormat.format("A component failed to index: {0}", response.getFailureMessage()));
 				}
 			});
 		} else {
-			log.log(Level.FINE, "Index components successfully");
+			LOG.log(Level.FINE, "Index components successfully");
 		}
 	}
 
@@ -313,35 +344,45 @@ public class ElasticSearchManager
 	public void deleteById(String id)
 	{
 		DeleteResponse response = client.prepareDelete(INDEX, INDEX_TYPE, id).get();
-		log.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.isFound()));
+		LOG.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.isFound()));
 	}
 
 	@Override
 	public void deleteAll()
 	{
-		//query all
-		SearchResponse response = ElasticSearchManager.getClient()
-				.prepareSearch()
-				.setQuery(QueryBuilders.matchAllQuery())
-				.execute()
-				.actionGet();
+		//query all (delete in groups)
+		int start = 0;
+		int max = 1000;		
+		long total = max;
 		
-		SearchHits searchHits = response.getHits();
-		if( searchHits.getTotalHits() > 0) {
-			//bulk delete results
-			BulkRequestBuilder bulkRequest = ElasticSearchManager.getClient().prepareBulk();
-			searchHits.forEach(hit ->{
-				bulkRequest.add(ElasticSearchManager.getClient().prepareDelete(INDEX, INDEX_TYPE, hit.getId()));		
-			});
+		while (start < total) {
+			SearchResponse response = ElasticSearchManager.getClient()
+					.prepareSearch()
+					.setQuery(QueryBuilders.matchAllQuery())
+					.setFrom(start)
+					.setSize(max)					
+					.execute()
+					.actionGet();
 
-			BulkResponse bulkResponse = bulkRequest.get();
-			if (bulkResponse.hasFailures()) {
-				bulkResponse.forEach(br ->{
-					if (StringUtils.isNotBlank(br.getFailureMessage())) {			
-						log.log(Level.WARNING, MessageFormat.format("A component failed to delete: {0}", br.getFailureMessage()));
-					}
-				});			
-			}	
+			SearchHits searchHits = response.getHits();
+			if( searchHits.getTotalHits() > 0) {
+				//bulk delete results
+				BulkRequestBuilder bulkRequest = ElasticSearchManager.getClient().prepareBulk();
+				searchHits.forEach(hit ->{
+					bulkRequest.add(ElasticSearchManager.getClient().prepareDelete(INDEX, INDEX_TYPE, hit.getId()));		
+				});
+
+				BulkResponse bulkResponse = bulkRequest.get();
+				if (bulkResponse.hasFailures()) {
+					bulkResponse.forEach(br ->{
+						if (StringUtils.isNotBlank(br.getFailureMessage())) {			
+							LOG.log(Level.WARNING, MessageFormat.format("A component failed to delete: {0}", br.getFailureMessage()));
+						}
+					});			
+				}	
+			}			
+			start += searchHits.getHits().length;
+			total = searchHits.getTotalHits();
 		}
 	}
 

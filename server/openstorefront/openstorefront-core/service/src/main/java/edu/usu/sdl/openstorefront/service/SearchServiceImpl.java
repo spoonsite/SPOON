@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
@@ -41,6 +42,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
+import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
 import edu.usu.sdl.openstorefront.service.search.ArchitectureSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.AttributeSearchHandler;
@@ -68,6 +70,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
+import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -84,6 +87,7 @@ public class SearchServiceImpl
 	private static final Logger LOG = Logger.getLogger(SearchServiceImpl.class.getName());
 
 	private static final String SPECIAL_ARCH_SEARCH_CODE = "0";
+	private static final int MAX_SEARCH_DESCRIPTION = 500;
 
 	@Override
 	public List<ComponentSearchView> getAll()
@@ -199,179 +203,192 @@ public class SearchServiceImpl
 		Objects.requireNonNull(searchModel, "Search Model Required");
 
 		AdvanceSearchResult searchResult = new AdvanceSearchResult();
+		
+		Element element = OSFCacheManager.getSearchCache().get(searchModel.searchKey());
+		if (element != null) {
+			searchResult = (AdvanceSearchResult) element.getObjectValue();
+		} else {
 
-		//group
-		Map<SearchType, List<SearchElement>> searchGroup = new HashMap<>();
-		for (SearchElement searchElement : searchModel.getSearchElements()) {
-			if (searchGroup.containsKey(searchElement.getSearchType())) {
-				searchGroup.get(searchElement.getSearchType()).add(searchElement);
-			} else {
-				List<SearchElement> searchElements = new ArrayList<>();
-				searchElements.add(searchElement);
-				searchGroup.put(searchElement.getSearchType(), searchElements);
+			//group
+			Map<SearchType, List<SearchElement>> searchGroup = new HashMap<>();
+			for (SearchElement searchElement : searchModel.getSearchElements()) {
+				if (searchGroup.containsKey(searchElement.getSearchType())) {
+					searchGroup.get(searchElement.getSearchType()).add(searchElement);
+				} else {
+					List<SearchElement> searchElements = new ArrayList<>();
+					searchElements.add(searchElement);
+					searchGroup.put(searchElement.getSearchType(), searchElements);
+				}
 			}
-		}
 
-		List<SearchElement> indexSearches = new ArrayList<>();
-		List<BaseSearchHandler> handlers = new ArrayList<>();
-		for (SearchType searchType : searchGroup.keySet()) {
-			List<SearchElement> searchElements = searchGroup.get(searchType);
-			switch (searchType) {
-				case ARCHITECTURE:
-					handlers.add(new ArchitectureSearchHandler(searchElements));
-					break;
-				case ATTRIBUTE:
-					handlers.add(new AttributeSearchHandler(searchElements));
-					break;
-				case ATTRIBUTESET:
-					handlers.add(new AttributeSetSearchHandler(searchElements));
-					break;					
-				case COMPONENT:
-					handlers.add(new ComponentSearchHandler(searchElements));
-					break;
-				case CONTACT:
-					handlers.add(new ContactSearchHandler(searchElements));
-					break;
-				case INDEX:
-					indexSearches.addAll(searchElements);
-					handlers.add(new IndexSearchHandler(searchElements));
-					break;					
-				case METADATA:
-					handlers.add(new MetaDataSearchHandler(searchElements));
-					break;
-				case REVIEW:
-					handlers.add(new ReviewSearchHandler(searchElements));
-					break;
-				case TAG:
-					handlers.add(new TagSearchHandler(searchElements));
-					break;
-				case USER_RATING:
-					handlers.add(new UserRatingSearchHandler(searchElements));
-					break;
-				case EVALUTATION_SCORE: 
-					handlers.add(new EvaluationScoreSearchHandler(searchElements));
-					break;
-				case QUESTION: 
-					handlers.add(new QuestionSearchHandler(searchElements));
-					break;					
-				case QUESTION_RESPONSE: 
-					handlers.add(new QuestionResponseSearchHandler(searchElements));
-					break;
-				case REVIEWCON: 
-				case REVIEWPRO: 
-					handlers.add(new ReviewProConSeatchHandler(searchElements));
-					break;					
-				default:
-					throw new OpenStorefrontRuntimeException("No handler defined for Search Type: " + searchType, "Add support; programming error");
+			List<SearchElement> indexSearches = new ArrayList<>();
+			List<BaseSearchHandler> handlers = new ArrayList<>();
+			for (SearchType searchType : searchGroup.keySet()) {
+				List<SearchElement> searchElements = searchGroup.get(searchType);
+				switch (searchType) {
+					case ARCHITECTURE:
+						handlers.add(new ArchitectureSearchHandler(searchElements));
+						break;
+					case ATTRIBUTE:
+						handlers.add(new AttributeSearchHandler(searchElements));
+						break;
+					case ATTRIBUTESET:
+						handlers.add(new AttributeSetSearchHandler(searchElements));
+						break;
+					case COMPONENT:
+						handlers.add(new ComponentSearchHandler(searchElements));
+						break;
+					case CONTACT:
+						handlers.add(new ContactSearchHandler(searchElements));
+						break;
+					case INDEX:
+						indexSearches.addAll(searchElements);
+						handlers.add(new IndexSearchHandler(searchElements));
+						break;
+					case METADATA:
+						handlers.add(new MetaDataSearchHandler(searchElements));
+						break;
+					case REVIEW:
+						handlers.add(new ReviewSearchHandler(searchElements));
+						break;
+					case TAG:
+						handlers.add(new TagSearchHandler(searchElements));
+						break;
+					case USER_RATING:
+						handlers.add(new UserRatingSearchHandler(searchElements));
+						break;
+					case EVALUTATION_SCORE:
+						handlers.add(new EvaluationScoreSearchHandler(searchElements));
+						break;
+					case QUESTION:
+						handlers.add(new QuestionSearchHandler(searchElements));
+						break;
+					case QUESTION_RESPONSE:
+						handlers.add(new QuestionResponseSearchHandler(searchElements));
+						break;
+					case REVIEWCON:
+					case REVIEWPRO:
+						handlers.add(new ReviewProConSeatchHandler(searchElements));
+						break;
+					default:
+						throw new OpenStorefrontRuntimeException("No handler defined for Search Type: " + searchType, "Add support; programming error");
+				}
 			}
-		}
 
-		//validate
-		ValidationResult validationResultMain = new ValidationResult();
-		for (BaseSearchHandler handler : handlers) {
-			ValidationResult validationResult = handler.validate();
-			validationResultMain.merge(validationResult);
-		}
-
-		if (validationResultMain.valid()) {
-			//process groups and aggergate
-			List<String> componentIds = new ArrayList<>();
-			MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
+			//validate
+			ValidationResult validationResultMain = new ValidationResult();
 			for (BaseSearchHandler handler : handlers) {
-				List<String> foundIds = handler.processSearch();
-
-				componentIds = mergeCondition.apply(componentIds, foundIds);
-
-				//merge
-				mergeCondition = handler.getNextMergeCondition();
+				ValidationResult validationResult = handler.validate();
+				validationResultMain.merge(validationResult);
 			}
-			Set<String> masterResults = new HashSet<>();
-			masterResults.addAll(componentIds);
 
-						
-			//get intermediate Results 
-			if (!masterResults.isEmpty()) {
-				String query = "select componentId, componentType, name, lastUpdateDts, activeStatus, approvalState from " + Component.class.getSimpleName() + " where componentId in :idList";
-				Map<String, Object> parameterMap = new HashMap<>();
-				parameterMap.put("idList", masterResults);	
-				List<ODocument> results = persistenceService.query(query, parameterMap);
-				
-				Map<String, ComponentSearchView> resultMap = new HashMap<>();
-				for (ODocument doc : results) {
-					if(Component.ACTIVE_STATUS.equals(doc.field("activeStatus")) &&
-						ApprovalStatus.APPROVED.equals(doc.field("approvalState")))
-					{
-						ComponentSearchView view = new ComponentSearchView();
-						view.setComponentId(doc.field("componentId"));
-						view.setName(doc.field("name"));
-						view.setComponentType(doc.field("componentType"));
-						view.setLastActivityDts(doc.field("lastUpdateDts"));
-						resultMap.put(view.getComponentId(), view);
-					}
+			if (validationResultMain.valid()) {
+				//process groups and aggergate
+				List<String> componentIds = new ArrayList<>();
+				MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
+				for (BaseSearchHandler handler : handlers) {
+					List<String> foundIds = handler.processSearch();
+
+					componentIds = mergeCondition.apply(componentIds, foundIds);
+
+					//merge
+					mergeCondition = handler.getNextMergeCondition();
 				}
-				searchResult.setTotalNumber(resultMap.size());
-				
-				//get review average
-				query = "select componentId, avg(rating) as rating from " + ComponentReview.class.getSimpleName() + " group by componentId ";
-				List<ODocument> resultsRatings = persistenceService.query(query, new HashMap<>());
-				for (ODocument doc : resultsRatings) {
-					ComponentSearchView view = resultMap.get(doc.field("componentId").toString());
-					if (view != null) {
-						view.setAverageRating(doc.field("rating"));
-					}
-				}
-				
-				//gather stats
-				Map<String, ResultTypeStat> stats = new HashMap<>();
-				for (ComponentSearchView view : resultMap.values()) {
-					if(stats.containsKey(view.getComponentType())) {
-						ResultTypeStat stat = stats.get(view.getComponentType());
-						stat.setCount(stat.getCount() + 1);						
-					} else {
-						ResultTypeStat stat = new ResultTypeStat();
-						stat.setComponentType(view.getComponentType());
-						stat.setComponentTypeDescription(TranslateUtil.translateComponentType(view.getComponentType()));
-						stat.setCount(1);						
-						stats.put(view.getComponentType(), stat);
-					}
-				}
-				searchResult.getResultTypeStats().addAll(stats.values());				
-				List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
-								
-				//then sort/window
-				if (StringUtils.isNotBlank(searchModel.getSortField())) {
-					Collections.sort(intermediateViews, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
-				}				
-				
-				List<String> idsToResolve = new ArrayList<>();
-				if (searchModel.getStartOffset() < intermediateViews.size() && searchModel.getMax() > 0) {
-					int count = 0;
-					for (int i = searchModel.getStartOffset(); i < intermediateViews.size(); i++) {
-						idsToResolve.add(intermediateViews.get(i).getComponentId());
-						count++;
-						if (count >= searchModel.getMax()) {
-							break;
+				Set<String> masterResults = new HashSet<>();
+				masterResults.addAll(componentIds);
+
+				//get intermediate Results 
+				if (!masterResults.isEmpty()) {
+					String query = "select componentId, componentType, name, lastUpdateDts, activeStatus, approvalState from " + Component.class.getSimpleName() + " where componentId in :idList";
+					Map<String, Object> parameterMap = new HashMap<>();
+					parameterMap.put("idList", masterResults);
+					List<ODocument> results = persistenceService.query(query, parameterMap);
+
+					Map<String, ComponentSearchView> resultMap = new HashMap<>();
+					for (ODocument doc : results) {
+						if (Component.ACTIVE_STATUS.equals(doc.field("activeStatus"))
+								&& ApprovalStatus.APPROVED.equals(doc.field("approvalState"))) {
+							ComponentSearchView view = new ComponentSearchView();
+							view.setComponentId(doc.field("componentId"));
+							view.setName(doc.field("name"));
+							view.setComponentType(doc.field("componentType"));
+							view.setLastActivityDts(doc.field("lastUpdateDts"));
+							resultMap.put(view.getComponentId(), view);
 						}
 					}
+					searchResult.setTotalNumber(resultMap.size());
+
+					//get review average
+					query = "select componentId, avg(rating) as rating from " + ComponentReview.class.getSimpleName() + " group by componentId ";
+					List<ODocument> resultsRatings = persistenceService.query(query, new HashMap<>());
+					for (ODocument doc : resultsRatings) {
+						ComponentSearchView view = resultMap.get(doc.field("componentId").toString());
+						if (view != null) {
+							view.setAverageRating(doc.field("rating"));
+						}
+					}
+
+					//gather stats
+					Map<String, ResultTypeStat> stats = new HashMap<>();
+					for (ComponentSearchView view : resultMap.values()) {
+						if (stats.containsKey(view.getComponentType())) {
+							ResultTypeStat stat = stats.get(view.getComponentType());
+							stat.setCount(stat.getCount() + 1);
+						} else {
+							ResultTypeStat stat = new ResultTypeStat();
+							stat.setComponentType(view.getComponentType());
+							stat.setComponentTypeDescription(TranslateUtil.translateComponentType(view.getComponentType()));
+							stat.setCount(1);
+							stats.put(view.getComponentType(), stat);
+						}
+					}
+					searchResult.getResultTypeStats().addAll(stats.values());
+					List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
+
+					//then sort/window
+					if (StringUtils.isNotBlank(searchModel.getSortField())) {
+						Collections.sort(intermediateViews, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
+					}
+
+					List<String> idsToResolve = new ArrayList<>();
+					if (searchModel.getStartOffset() < intermediateViews.size() && searchModel.getMax() > 0) {
+						int count = 0;
+						for (int i = searchModel.getStartOffset(); i < intermediateViews.size(); i++) {
+							idsToResolve.add(intermediateViews.get(i).getComponentId());
+							count++;
+							if (count >= searchModel.getMax()) {
+								break;
+							}
+						}
+					}
+
+					//resolve results
+					List<ComponentSearchView> views = getComponentService().getSearchComponentList(idsToResolve);
+
+					if (indexSearches.isEmpty() == false) {
+						//only the first one counts
+						String indexQuery = indexSearches.get(0).getValue();
+						SearchServerManager.updateSearchScore(indexQuery, views);
+					}
+
+					if (StringUtils.isNotBlank(searchModel.getSortField())) {
+						Collections.sort(views, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
+					}
+
+					//trim descriptions to max length
+					for (ComponentSearchView view : views) {
+						String description = StringProcessor.stripHtml(view.getDescription());
+						view.setDescription(StringProcessor.ellipseString(description, MAX_SEARCH_DESCRIPTION));
+					}
+
+					searchResult.getResults().addAll(views);
 				}
-				
-				//resolve results
-				
-				List<ComponentSearchView> views = getComponentService().getSearchComponentList(idsToResolve);
-				
-				if (indexSearches.isEmpty() == false) {
-					//only the first one counts
-					String indexQuery = indexSearches.get(0).getValue();
-					SearchServerManager.updateSearchScore(indexQuery, views);					
-				}
-								
-				if (StringUtils.isNotBlank(searchModel.getSortField())) {
-					Collections.sort(views, new BeanComparator<>(searchModel.getSortDirection(), searchModel.getSortField()));
-				}				
-				searchResult.getResults().addAll(views);				
 			}
+			searchResult.setValidationResult(validationResultMain);
+			
+			element = new Element(searchModel.searchKey(), searchResult);
+			OSFCacheManager.getSearchCache().put(element);			
 		}
-		searchResult.setValidationResult(validationResultMain);
 
 		return searchResult;
 	}

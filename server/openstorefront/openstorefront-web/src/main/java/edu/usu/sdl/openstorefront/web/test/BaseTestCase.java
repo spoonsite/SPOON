@@ -83,12 +83,26 @@ public abstract class BaseTestCase
 	{
 		return success;
 	}
+	
+	protected void addResultsLines(String... lines)
+	{
+		for (String line : lines) {
+			results.append(line).append("<br>");
+		}
+	}
+	
+	protected void addFailLines(String... lines)
+	{
+		for (String line : lines) {
+			failureReason.append(line).append("<br>");
+		}
+	}	
 
 	protected ComponentAll getTestComponent()
 	{
 		ComponentAll componentAll = new ComponentAll();
 		Component component = new Component();		
-		component.setName("Test Component");
+		component.setName("c Component");
 		component.setDescription("Test Description");
 		component.setOrganization("Test");
 		component.setApprovalState(ApprovalStatus.APPROVED);
