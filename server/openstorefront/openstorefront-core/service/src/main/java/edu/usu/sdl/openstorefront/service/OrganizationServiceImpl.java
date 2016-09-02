@@ -113,6 +113,7 @@ public class OrganizationServiceImpl
 	private void clearOrganizationCaches() {
 		OSFCacheManager.getContactCache().removeAll();
 		OSFCacheManager.getComponentCache().removeAll();
+		OSFCacheManager.getSearchCache().removeAll();
 	}	
 
 	@Override

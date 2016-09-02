@@ -47,6 +47,7 @@ public class OSFCacheManager
 	private static Cache componentTypeCache;
 	private static Cache applicationCache;
 	private static Cache contactCache;
+	private static Cache searchCache;
 	
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
@@ -103,6 +104,10 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("contactCache", 5000, false, false, 1800, 1800);
 			singletonManager.addCache(memoryOnlyCache);
 			contactCache = singletonManager.getCache("contactCache");
+			
+			memoryOnlyCache = new Cache("searchCache", 50, false, false, 1800, 1800);
+			singletonManager.addCache(memoryOnlyCache);
+			searchCache = singletonManager.getCache("searchCache");			
 						
 		} finally {
 			lock.unlock();
@@ -179,6 +184,11 @@ public class OSFCacheManager
 	{
 		return contactCache;
 	}
+	
+	public static Cache getSearchCache()
+	{
+		return searchCache;
+	}	
 
 	@Override
 	public void initialize()
