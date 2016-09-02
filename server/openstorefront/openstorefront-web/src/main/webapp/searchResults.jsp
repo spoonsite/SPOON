@@ -1082,6 +1082,7 @@ limitations under the License.
 				collapsible: true,
 				collapseFirst: false,
 				titleCollapse: true,
+				animCollapse: false,
 				collapseDirection: 'left',
 				split: true,
 				layout: 'fit',
@@ -1150,6 +1151,24 @@ limitations under the License.
 											}											
 										},
 										{
+											label: 'Organization (A-Z)',
+											field: 'organization',
+											fieldCode: 'organization',
+											dir: 'ASC',
+											compare: function(a, b){
+												return a.organization.localeCompare(b.organization);
+											}
+										},
+										{
+											label: 'Organization (Z-A)',
+											field: 'organization',
+											fieldCode: 'organization-desc',
+											dir: 'DESC',
+											compare: function(a, b){
+												return b.organization.localeCompare(a.organization);
+											}											
+										},										
+										{
 											label: 'User Rating (High-Low)',
 											field: 'averageRating',
 											fieldCode: 'averageRating',
@@ -1209,6 +1228,36 @@ limitations under the License.
 												}
 											}											
 										},
+										{
+											label: 'Approval Date (Newest)',
+											field: 'approvedDts',
+											fieldCode: 'approvedDts',
+											dir: 'DESC',
+											compare: function(b, a){
+												if (a.approvedDts > b.approvedDts) {
+													return 1;
+												} else if (a.approvedDts < b.approvedDts) {
+													return -1;
+												} else {
+													return 0;
+												}
+											}											
+										},
+										{
+											label: 'Approval Date (Oldest)',
+											field: 'approvedDts',
+											fieldCode: 'approvedDts-desc',
+											dir: 'ASC',
+											compare: function(a, b){
+												if (a.approvedDts > b.approvedDts) {
+													return 1;
+												} else if (a.approvedDts < b.approvedDts) {
+													return -1;
+												} else {
+													return 0;
+												}
+											}											
+										},										
 										{
 											label: 'Index Relevance',
 											field: 'searchScore',
@@ -1380,6 +1429,7 @@ limitations under the License.
 				region: 'east',
 				title: 'Details',
 				width: '60%',
+				animCollapse: false,
 				collapsible: true,
 				collapseDirection: 'left',
 				titleCollapse: true,
