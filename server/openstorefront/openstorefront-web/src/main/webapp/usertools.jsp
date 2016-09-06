@@ -162,7 +162,7 @@ limitations under the License.
 											{
 												text: 'Home',
 												iconCls: 'fa fa-home',
-												href: '../'
+												href: 'index.jsp'
 											},
 											{
 												text: 'Admin Tools',
