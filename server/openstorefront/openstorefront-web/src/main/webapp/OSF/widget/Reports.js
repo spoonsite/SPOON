@@ -102,7 +102,9 @@ Ext.define('OSF.widget.Reports', {
 							iconCls: 'fa fa-2x fa-eye',
 							disabled: true,
 							handler: function () {
-								viewHistory();
+								var grid = this.up('grid');
+								var record = grid.getSelection()[0];								
+								viewHistory(grid, record);
 							},
 							tooltip: 'Preview Report'
 						},
