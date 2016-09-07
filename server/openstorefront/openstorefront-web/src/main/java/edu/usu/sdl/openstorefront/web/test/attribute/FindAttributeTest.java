@@ -29,6 +29,9 @@ import java.util.List;
 public class FindAttributeTest
 		extends BaseTestCase
 {
+
+	AttributeType attributeType = null;
+
 	@Override
 	protected void runInternalTest()
 	{
@@ -42,7 +45,7 @@ public class FindAttributeTest
 		});
 
 		results.append("<br>Save attribute type").append("<br>");
-		AttributeType attributeType = new AttributeType();
+		attributeType = new AttributeType();
 		attributeType.setAttributeType("TEST-CASE-TMP");
 		attributeType.setDescription("This is a temp test attribute");
 		attributeType.setAllowMultipleFlg(true);
@@ -74,12 +77,20 @@ public class FindAttributeTest
 		});
 
 		results.append("<br>Remove attribute").append("<br>");
-		service.getAttributeService().cascadeDeleteAttributeType(attributeType.getAttributeType());
 	}
 
 	@Override
 	public String getDescription()
 	{
 		return "Find Attributes";
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
+		if (attributeType != null) {
+			service.getAttributeService().cascadeDeleteAttributeType(attributeType.getAttributeType());
+		}
 	}
 }

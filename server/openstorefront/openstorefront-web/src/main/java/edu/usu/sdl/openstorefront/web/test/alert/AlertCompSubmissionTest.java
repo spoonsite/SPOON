@@ -26,6 +26,9 @@ import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import static edu.usu.sdl.openstorefront.web.test.alert.AlertTestUtil.activateAlerts;
+import static edu.usu.sdl.openstorefront.web.test.alert.AlertTestUtil.getActiveAlerts;
+import static edu.usu.sdl.openstorefront.web.test.alert.AlertTestUtil.inactivateAlerts;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,10 +40,18 @@ public class AlertCompSubmissionTest extends BaseTestCase
 {
 
 	private Alert alertCompSubmission = null;
+	String messageId = null;
+	private List<Alert> alerts = null;
 
 	@Override
 	protected void runInternalTest()
 	{
+		// Get all alerts and set to inactive
+		alerts = getActiveAlerts();
+		if (!alerts.isEmpty()) {
+			inactivateAlerts(alerts);
+		}
+
 		alertCompSubmission = new Alert();
 		alertCompSubmission.setName("New Component Submission Alert");
 		alertCompSubmission.setActiveStatus(ACTIVE_STATUS);
@@ -75,7 +86,6 @@ public class AlertCompSubmissionTest extends BaseTestCase
 		userMessage.setActiveStatus(ACTIVE_STATUS);
 		List<UserMessage> userMessages = userMessage.findByExample();
 		boolean alertIdsEqual = false;
-		String messageId = "";
 		for (UserMessage message : userMessages) {
 			if (message.getAlertId().equals(alertCompSubmission.getAlertId())) {
 				alertIdsEqual = true;
@@ -85,7 +95,6 @@ public class AlertCompSubmissionTest extends BaseTestCase
 
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
-			service.getUserService().removeUserMessage(messageId);
 			results.append("Test Passed:  Component submission message found<br><br>");
 		} else {
 			failureReason.append("Test Failed:  Unable to find component submission message<br><br>");
@@ -98,6 +107,10 @@ public class AlertCompSubmissionTest extends BaseTestCase
 		super.cleanupTest();
 		if (alertCompSubmission != null) {
 			service.getAlertService().deleteAlert(alertCompSubmission.getAlertId());
+		}
+		service.getUserService().removeUserMessage(messageId);
+		if (!alerts.isEmpty()) {
+			activateAlerts(alerts);
 		}
 	}
 

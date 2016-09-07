@@ -44,8 +44,8 @@ public class BrandingServiceTest extends BaseTestCase
 
 		service.getBrandingService().setBrandingAsCurrent(brandingTest2.getBrandingId());
 
-		brandingTest2 = getCurrentBranding(brandingTest2.getBrandingId());
-		brandingTest1 = getCurrentBranding(brandingTest1.getBrandingId());
+		brandingTest2 = lookupBranding(brandingTest2.getBrandingId());
+		brandingTest1 = lookupBranding(brandingTest1.getBrandingId());
 
 
 		if (Branding.INACTIVE_STATUS.equals(brandingTest1.getActiveStatus())
@@ -69,11 +69,11 @@ public class BrandingServiceTest extends BaseTestCase
 		}
 	}
 
-	public Branding getCurrentBranding(String brandingId)
+	public Branding lookupBranding(String brandingId)
 	{
-		Branding currentBranding = service.getPersistenceService().findById(Branding.class, brandingId);
+		Branding branding = service.getPersistenceService().findById(Branding.class, brandingId);
 
-		return currentBranding;
+		return branding;
 	}
 
 	@Override

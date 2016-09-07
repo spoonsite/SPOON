@@ -53,6 +53,7 @@ public class AlertUserDataTest extends BaseTestCase
 	private Alert alertUserDataContact = null;
 	private List<Alert> alerts = null;
 	private ExperienceTimeType experience = null;
+	String messageId = null;
 
 	@Override
 	protected void runInternalTest()
@@ -94,7 +95,6 @@ public class AlertUserDataTest extends BaseTestCase
 		UserMessage userMessage = new UserMessage();
 		List<UserMessage> userMessages = userMessage.findByExample();
 		boolean alertIdsEqual = false;
-		String messageId = "";
 		for (UserMessage message : userMessages) {
 			if (message.getAlertId().equals(alertUserDataTag.getAlertId())) {
 				alertIdsEqual = true;
@@ -271,12 +271,14 @@ public class AlertUserDataTest extends BaseTestCase
 		if (alertUserDataContact != null) {
 			service.getAlertService().deleteAlert(alertUserDataContact.getAlertId());
 		}
-		if (!alerts.isEmpty()) {
-			activateAlerts(alerts);
-		}
 		if (experience != null) {
 			service.getLookupService().removeValue(ExperienceTimeType.class, experience.getCode());
 		}
+		service.getUserService().removeUserMessage(messageId);
+		if (!alerts.isEmpty()) {
+			activateAlerts(alerts);
+		}
+
 	}
 
 	@Override
