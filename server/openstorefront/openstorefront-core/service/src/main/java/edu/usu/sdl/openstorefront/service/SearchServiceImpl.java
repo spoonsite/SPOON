@@ -108,7 +108,9 @@ public class SearchServiceImpl
 	@Override
 	public void indexComponents(List<Component> components)
 	{
-		SearchServerManager.getSearchServer().index(components);		
+		if (!components.isEmpty()) {
+			SearchServerManager.getSearchServer().index(components);		
+		}
 	}
 
 	@Override

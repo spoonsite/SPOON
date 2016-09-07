@@ -61,7 +61,7 @@ public class AlertSysErrorTest extends BaseTestCase
 		results.append("Checking alert...<br><br>");
 		ErrorInfo errorInfo = new ErrorInfo(new OpenStorefrontRuntimeException("System Error"), null);
 		service.getSystemService().generateErrorTicket(errorInfo);
-
+				
 		UserMessage userMessage = new UserMessage();
 		userMessage.setActiveStatus(ACTIVE_STATUS);
 		List<UserMessage> userMessages = userMessage.findByExample();
