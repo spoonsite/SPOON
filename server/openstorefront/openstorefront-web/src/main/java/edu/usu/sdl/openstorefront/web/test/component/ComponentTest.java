@@ -36,9 +36,9 @@ public class ComponentTest
 	protected void runInternalTest()
 	{
 		ComponentAll testComponentAll = getTestComponent();
-		results.append("Created: <br>")				
+		results.append("Created:  ")
 				.append(testComponentAll.getComponent().getName())
-				.append("<br>");
+				.append("<br><br>");
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class ComponentTest
 	{
 		super.cleanupTest(); 
 		
-		results.append("Cleanedup");
+		results.append("Cleanup successful");
 	}
 
 	@Override

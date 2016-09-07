@@ -32,7 +32,7 @@ public class HelpTest
 		results.append("Got User Help Records: ").append(userHelp.getChildSections().size() + 1).append("<br>");
 
 		HelpSectionAll adminHelp = service.getSystemService().getAllHelp(true);
-		results.append("Got Admin Help Records: ").append(adminHelp.getChildSections().size() + 1).append("<br>");
+		results.append("Got Admin Help Records: ").append(adminHelp.getChildSections().size() + 1).append("<br><br>");
 	}
 
 	@Override

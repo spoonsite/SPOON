@@ -79,7 +79,7 @@ public class SyncLookupTest
 		}
 
 		results.append("Clean up records").append("<br>");
-		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
+		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br><br>");
 	}
 
 	@Override

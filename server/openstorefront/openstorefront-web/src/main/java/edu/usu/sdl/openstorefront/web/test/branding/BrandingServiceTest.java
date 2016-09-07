@@ -50,9 +50,9 @@ public class BrandingServiceTest extends BaseTestCase
 
 		if (Branding.INACTIVE_STATUS.equals(brandingTest1.getActiveStatus())
 				&& Branding.ACTIVE_STATUS.equals(brandingTest2.getActiveStatus())) {
-			results.append("Set current branding test:  Passed<br><br>");
+			results.append("Change current branding:  Test Passed<br><br>");
 		} else {
-			failureReason.append("Set current branding test:  Failed - unable to change branding<br><br>");
+			failureReason.append("Change current branding:  Test Failed - unable to change branding<br><br>");
 		}
 	}
 

@@ -77,9 +77,9 @@ public class AlertSysErrorTest extends BaseTestCase
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			results.append("Message Test:  Passed - message found<br><br>");
+			results.append("Test Passed:  System error message found<br><br>");
 		} else {
-			failureReason.append("Message Test:  Failed - unable to find message<br><br>");
+			failureReason.append("Test Failed:  Unable to find system error message<br><br>");
 		}
 	}
 
