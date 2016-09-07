@@ -55,6 +55,14 @@ public class AlertUserDataTest extends BaseTestCase
 	private ExperienceTimeType experience = null;
 
 	@Override
+	protected void initializeTest()
+	{
+		super.initializeTest(); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	
+	
+	@Override
 	protected void runInternalTest()
 	{
 		// Get all alerts and set to inactive
@@ -105,9 +113,9 @@ public class AlertUserDataTest extends BaseTestCase
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			results.append("Test Passed - User data message found<br><br>");
+			results.append("Test Passed (Checking Tag) - User data message found<br><br>");
 		} else {
-			failureReason.append("Test Failed - User data message not found<br><br>");
+			failureReason.append("Test Failed (Checking Tag) - User data message not found<br><br>");
 		}
 
 		results.append("Check complete<br><br>");
@@ -135,7 +143,7 @@ public class AlertUserDataTest extends BaseTestCase
 		componentQuestion.setUserTypeCode(END_USER);
 		componentQuestion.setQuestion("Did man really land on the moon?");
 		componentQuestion.setOrganization("User Data Organization");
-		compAlertQuestion.setAdminModified(false);
+		componentQuestion.setAdminModified(false);
 		question.setQuestion(componentQuestion);
 		componentAllRQ.getQuestions().add(question);
 		service.getComponentService().saveComponentQuestion(componentQuestion);
@@ -154,9 +162,9 @@ public class AlertUserDataTest extends BaseTestCase
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			results.append("Test Passed - User data message found<br><br>");
+			results.append("Test Passed (Component Question) - User data message found<br><br>");
 		} else {
-			failureReason.append("Test Failed - User data message not found<br><br>");
+			failureReason.append("Test Failed (Component Question) - User data message not found<br><br>");
 		}
 		results.append("Check complete<br><br>");
 
@@ -195,9 +203,9 @@ public class AlertUserDataTest extends BaseTestCase
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			results.append("Test Passed - User data message found<br><br>");
+			results.append("Test Passed (Component Review) - User data message found<br><br>");
 		} else {
-			failureReason.append("Test Failed - User data message not found<br><br>");
+			failureReason.append("Test Failed (Component Review) - User data message not found<br><br>");
 		}
 		results.append("Check complete<br><br>");
 
@@ -247,11 +255,11 @@ public class AlertUserDataTest extends BaseTestCase
 		}
 
 		if (!alertIdsEqual) {
-			results.append("Test Passed - User data message not found<br><br>");
+			results.append("Test Passed (ComponentContact) - User data message found<br><br>");
 		} else {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			failureReason.append("Test Failed - User data message found<br><br>");
+			failureReason.append("Test Failed (ComponentContact) - User data message found<br><br>");
 		}
 
 		results.append("Check complete<br><br>");

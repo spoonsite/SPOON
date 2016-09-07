@@ -31,11 +31,11 @@ import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
-import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,23 +99,30 @@ public class AlertServiceImpl
 					userMessageType = UserMessageType.USER_DATA_ALERT;
 					if (alert.getUserDataAlertOption() != null) {
 						//Don't trigger on admin changes
-						if (SecurityUtil.isAdminUser() == false) {
-							if (alertContext.getDataTrigger() instanceof ComponentTag) {
-								if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnTags())) {
-									createUserMessage = true;
-								}
-							} else if (alertContext.getDataTrigger() instanceof ComponentReview) {
-								if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnReviews())) {
-									createUserMessage = true;
-								}
-							} else if (alertContext.getDataTrigger() instanceof ComponentQuestion
-									|| alertContext.getDataTrigger() instanceof ComponentQuestionResponse) {
-								if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnQuestions())) {
-									createUserMessage = true;
-								}							
-							} else if (alertContext.getDataTrigger() instanceof Contact) {
-								if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnContactUpdate())) {
-									createUserMessage = true;
+						if (alertContext.getDataTrigger() != null) {
+							boolean adminModified = false;
+							if (alertContext.getDataTrigger() instanceof StandardEntity) {
+								adminModified = Convert.toBoolean(((StandardEntity)alertContext.getDataTrigger()).getAdminModified());
+							}
+								
+							if (adminModified == false) {	
+								if (alertContext.getDataTrigger() instanceof ComponentTag) {
+									if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnTags())) {
+										createUserMessage = true;
+									}
+								} else if (alertContext.getDataTrigger() instanceof ComponentReview) {
+									if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnReviews())) {
+										createUserMessage = true;
+									}
+								} else if (alertContext.getDataTrigger() instanceof ComponentQuestion
+										|| alertContext.getDataTrigger() instanceof ComponentQuestionResponse) {
+									if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnQuestions())) {
+										createUserMessage = true;
+									}							
+								} else if (alertContext.getDataTrigger() instanceof Contact) {
+									if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnContactUpdate())) {
+										createUserMessage = true;
+									}
 								}
 							}
 						}
