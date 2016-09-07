@@ -27,7 +27,9 @@ public class EmailTest
 	@Override
 	protected void runInternalTest()
 	{
-		service.getUserService().sendTestEmail("admin", null);
+		results.append("Generating email...<br>");
+		service.getUserService().sendTestEmail(TEST_USER, null);
+		results.append("Email sent<br>");
 	}
 
 	@Override

@@ -90,9 +90,9 @@ public class AlertChangeReqTest extends BaseTestCase
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			results.append("Test Passed - message found<br>");
+			results.append("Test Passed - Change request message found<br><br>");
 		} else {
-			failureReason.append("Test Failed - Unable to find message<br>");
+			failureReason.append("Test Failed - Unable to find change request message<br><br>");
 		}
 	}
 

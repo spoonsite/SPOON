@@ -105,9 +105,9 @@ public class AlertUserDataTest extends BaseTestCase
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			results.append("Test Passed - message found<br><br>");
+			results.append("Test Passed - User data message found<br><br>");
 		} else {
-			failureReason.append("Test Failed - message not found<br><br>");
+			failureReason.append("Test Failed - User data message not found<br><br>");
 		}
 
 		results.append("Check complete<br><br>");
@@ -154,9 +154,9 @@ public class AlertUserDataTest extends BaseTestCase
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			results.append("Test Passed - message found<br><br>");
+			results.append("Test Passed - User data message found<br><br>");
 		} else {
-			failureReason.append("Test Failed - message not found<br><br>");
+			failureReason.append("Test Failed - User data message not found<br><br>");
 		}
 		results.append("Check complete<br><br>");
 
@@ -195,9 +195,9 @@ public class AlertUserDataTest extends BaseTestCase
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			results.append("Test Passed - message found<br><br>");
+			results.append("Test Passed - User data message found<br><br>");
 		} else {
-			failureReason.append("Test Failed - message not found<br><br>");
+			failureReason.append("Test Failed - User data message not found<br><br>");
 		}
 		results.append("Check complete<br><br>");
 
@@ -247,11 +247,11 @@ public class AlertUserDataTest extends BaseTestCase
 		}
 
 		if (!alertIdsEqual) {
-			results.append("Test Passed - message not found<br><br>");
+			results.append("Test Passed - User data message not found<br><br>");
 		} else {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			failureReason.append("Test Failed - message found<br><br>");
+			failureReason.append("Test Failed - User data message found<br><br>");
 		}
 
 		results.append("Check complete<br><br>");

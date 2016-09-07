@@ -33,9 +33,9 @@ public class AlertNullTest extends BaseTestCase
 		try {
 			results.append("Saving alert...<br>");
 			alertNull = service.getAlertService().saveAlert(null);
-			failureReason.append("Required fields were null and alert was saved<br>");
+			failureReason.append("Required fields were null and alert was saved<br><br>");
 		} catch (NullPointerException e) {
-			results.append("Unable to save alert.  Required fields cannot be null<br>");
+			results.append("Unable to save alert.  Required fields cannot be null<br><br>");
 		}
 	}
 

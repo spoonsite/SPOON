@@ -46,7 +46,7 @@ public class ER2XMLTest
 		importContext.getFileHistoryAll().setFileHistory(fileHistory);
 
 		service.getImportService().importData(importContext);
-		results.append(fileHistory);
+		results.append(fileHistory).append("<br>");
 	}
 
 	@Override

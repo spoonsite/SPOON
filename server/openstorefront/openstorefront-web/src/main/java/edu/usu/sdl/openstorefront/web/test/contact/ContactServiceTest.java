@@ -60,7 +60,7 @@ public class ContactServiceTest extends BaseTestCase
 		List<ComponentContact> existingContactsList = componentAll.getContacts();
 
 		if (existingContactsList.isEmpty()) {
-			results.append("Inactivate contact test:  Passed<br><br>");
+			results.append("Inactivate contact:  Test Passed<br><br>");
 		} else {
 			failureReason.append("Contact failed to inactivate<br><br>");
 		}
@@ -71,7 +71,7 @@ public class ContactServiceTest extends BaseTestCase
 		existingContactsList = componentAll.getContacts();
 
 		if (!existingContactsList.isEmpty()) {
-			results.append("Activate contact test:  Passed").append("<br><br>");
+			results.append("Activate contact:  Test Passed").append("<br><br>");
 		} else {
 			failureReason.append("Failed to activate contact<br><br>");
 		}
@@ -101,18 +101,18 @@ public class ContactServiceTest extends BaseTestCase
 
 		if (mergedContacts.size() > 1) {
 			if (mergedContacts.get(0).getContactId().equals(mergedContacts.get(1).getContactId())) {
-				results.append("Merge Contacts Test:  Passed").append("<br><br>");
+				results.append("Merge Contacts:  Test Passed").append("<br><br>");
 			}
 		} else {
-			failureReason.append("Merge Contacts Test:  Failed - Unable to merge contacts").append("<br>");
+			failureReason.append("Merge Contacts:  Test Failed - Unable to merge contacts").append("<br>");
 		}
 
 		// find all contact references using newContact's ID
 		List<ContactReference> foundContacts = service.getContactService().findReferences(newContact.getContactId());
 		if (foundContacts.size() == 2) {
-			results.append("Found references test:  Passed<br><br>");
+			results.append("Found references:  Test Passed<br><br>");
 		} else {
-			failureReason.append("Found references test:  Failed - No references found with that contactId<br>");
+			failureReason.append("Found references:  Test Failed - No references found with that contactId<br>");
 		}
 	}
 

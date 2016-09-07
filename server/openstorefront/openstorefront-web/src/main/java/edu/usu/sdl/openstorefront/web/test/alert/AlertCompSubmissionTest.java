@@ -86,9 +86,9 @@ public class AlertCompSubmissionTest extends BaseTestCase
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			results.append("Message Test:  Passed<br><br>");
+			results.append("Test Passed:  Component submission message found<br><br>");
 		} else {
-			failureReason.append("Message Test: Failed - Unable to find message<br><br>");
+			failureReason.append("Test Failed:  Unable to find component submission message<br><br>");
 		}
 	}
 
