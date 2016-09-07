@@ -269,17 +269,19 @@ The Storefront relies upon the following external dependencies:
 -   OpenAM (Optional)
 
 -   Index Search Server (Any of the following can work)
-
-	-   ESA
-
-	-   Solr 4.3.1+ *Recommended for greater control*
+	
+	-   Solr 6.x + *Recommended for greater control*
 
 	-   Elasticsearch 2.3.x *Recommended for simple install*
+	
+*Support for ESA 1.0 and Solr 4.3.1 has been dropped*
 
 **NOTE:** The base Solr package will require some changes to the schema.xml to make
 sure all field are available.
 
 ###4.4.1 To Use Solr
+
+(The following assumes the application is stop prior to the change. To change on a running application you need to restart the SearchServerManager after making changes.)
 
 Download Version 6.x 
 from [solr home](http://lucene.apache.org/solr/), and then perform the
@@ -296,11 +298,11 @@ bin/solr start -p 8983
 4.  Configure OpenStorefront to point to Solr by going to:
     /var/openstorefront/config/openstorefront.properties
 
-5.  Edit solr.server.url to
+5.  Edit 
 	
 	search.server=solr
 
-	solr.server.url=http://localhost:8983/solr/collection1
+	solr.server.url=http://localhost:8983/solr/openstorefront
 
 	solr.server.usexml=true
 
@@ -310,34 +312,6 @@ bin/solr start -p 8983
 
         b) Click Re-Index Listings
 
-(Use if matching ESA)
-Download Version 4.3.1
-from [solr home](http://archive.apache.org/dist/lucene/solr/), and then perform the
-following steps:
-
-1.  Unpackage
-
-2.  Replace (Solr install dir)/example/solr/collection1/conf/schema.xml
-    with the scheme.xml include in this project document folder.
-
-3.  Configure OpenStorefront to point to Solr by going to:
-    /var/openstorefront/config/openstorefront.properties
-
-4.  Edit solr.server.url to
-	
-	search.server=solr
-
-	solr.server.url=http://localhost:8983/solr/collection1
-
-	solr.server.usexml=true
-
-5.  Start Solr from (solr install dir)/example - java -jar start.jar
-
-6. Resync data 
-
-	a) Nav->Admin->System->Search Control
-
-        b) Click Re-Index Listings
 
 ###4.4.3 To Use Elasticsearch 
 
@@ -364,33 +338,9 @@ following steps:
         b) Click Re-Index Listings
 
 
-###4.4.3 To Use ESA
+###4.4.4 Updated Search Server at Runtime
 
-1. Obtain VM from Raython
-
-2. Start VM port-forward/open port to solr
-
-3.  Configure OpenStorefront to point to Solr by going to:
-    /var/openstorefront/config/openstorefront.properties or System admin screen
-
-		Add/Set: (adjust as needed to match url and ports)
-
-		search.server=solr
-
-		solr.server.url=http://localhost:8983/solr/esa
-
-		solr.server.usexml=true
-
-4. Resync data 
-
-	a) Nav->Admin->System->Search Control
-
-        b) Click Re-Index Listings
-
-
-###4.4.4 Updated Search at Runtime
-
-1. Use Admin->System to set the system config properties 
+1. Use Admin->Application Management->System to set the system config properties 
 
 2. On Managers tab -> Restart Search Server Managers
 
