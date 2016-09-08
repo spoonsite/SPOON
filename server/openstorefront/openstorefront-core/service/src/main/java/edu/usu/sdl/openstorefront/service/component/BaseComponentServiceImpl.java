@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 public abstract class BaseComponentServiceImpl
 {
 
-	protected static final Logger log = Logger.getLogger(ComponentServiceImpl.class.getName());
+	protected static final Logger LOG = Logger.getLogger(BaseComponentServiceImpl.class.getName());
 
 	protected ComponentServiceImpl componentService;
 	protected PersistenceService persistenceService;
@@ -78,6 +78,7 @@ public abstract class BaseComponentServiceImpl
 		OSFCacheManager.getComponentCache().remove(componentId);
 		OSFCacheManager.getComponentLookupCache().remove(componentId);
 		OSFCacheManager.getComponentApprovalCache().remove(componentId);
+		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	protected void handleUserDataAlert(Object data)

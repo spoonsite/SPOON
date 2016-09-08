@@ -20,7 +20,7 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/usertoolslayout.jsp">
+<stripes:layout-render name="../../../layout/usertoolslayout.jsp">
     <stripes:layout-component name="contents">
 
 	<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
@@ -211,7 +211,7 @@ limitations under the License.
 						],
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/componentsubmissions'
+							url: 'api/v1/resource/componentsubmissions'
 						}
 					},
 					columns: [
@@ -332,7 +332,7 @@ limitations under the License.
 
 													Ext.getCmp('submissionGrid').setLoading('Copying submission...');
 													Ext.Ajax.request({
-														url: '../api/v1/resource/componentsubmissions/' + componentId + '/copy',
+														url: 'api/v1/resource/componentsubmissions/' + componentId + '/copy',
 														method: 'POST',
 														callback: function(){
 															Ext.getCmp('submissionGrid').setLoading(false);
@@ -361,7 +361,7 @@ limitations under the License.
 														}
 														Ext.getCmp('submissionGrid').setLoading('Updating Notification...');
 														Ext.Ajax.request({
-															url: '../api/v1/resource/componentsubmissions/' + componentId + '/setNotifyMe',
+															url: 'api/v1/resource/componentsubmissions/' + componentId + '/setNotifyMe',
 															method: 'PUT',
 															rawData: newEmail,
 															callback: function(){
@@ -433,7 +433,7 @@ limitations under the License.
 												if (btn === 'yes') {
 													Ext.getCmp('submissionGrid').setLoading('Unsubmitting...');
 													Ext.Ajax.request({
-														url: '../api/v1/resource/componentsubmissions/' + componentId + '/unsubmit',
+														url: 'api/v1/resource/componentsubmissions/' + componentId + '/unsubmit',
 														method: 'PUT',
 														callback: function(){
 															Ext.getCmp('submissionGrid').setLoading(false);
@@ -465,7 +465,7 @@ limitations under the License.
 												if (btn === 'yes') {
 													Ext.getCmp('submissionGrid').setLoading('Removing...');
 													Ext.Ajax.request({
-														url: '../api/v1/resource/componentsubmissions/' + componentId + '/inactivate',
+														url: 'api/v1/resource/componentsubmissions/' + componentId + '/inactivate',
 														method: 'PUT',
 														callback: function(){
 															Ext.getCmp('submissionGrid').setLoading(false);

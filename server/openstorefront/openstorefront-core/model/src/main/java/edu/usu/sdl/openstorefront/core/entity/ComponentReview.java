@@ -36,7 +36,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Hold a review for a component")
 public class ComponentReview
-		extends BaseComponent
+		extends BaseComponent<ComponentReview>
 		implements OrganizationModel
 {
 

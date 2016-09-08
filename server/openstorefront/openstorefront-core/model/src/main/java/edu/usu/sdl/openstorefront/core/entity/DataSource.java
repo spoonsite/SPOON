@@ -26,7 +26,7 @@ import java.util.Map;
  */
 @APIDescription("Defines the source of the data set")
 public class DataSource
-		extends LookupEntity
+		extends LookupEntity<DataSource>
 {
 
 	public static final String DI2E = "DI2E";

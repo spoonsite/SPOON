@@ -42,7 +42,23 @@ public class SearchModel
 	public SearchModel()
 	{
 	}
+	
+	public String searchKey() 
+	{
+		StringBuilder key = new StringBuilder();
+		key.append(toString());
+		for (SearchElement searchElement : searchElements) {
+			key.append(searchElement.toString());
+		}		
+		return key.toString();
+	}
 
+	@Override
+	public String toString()
+	{
+		return "SearchModel{" + "sortField=" + sortField + ", sortDirection=" + sortDirection + ", startOffset=" + startOffset + ", max=" + max + '}';
+	}
+	
 	public String getSortField()
 	{
 		return sortField;

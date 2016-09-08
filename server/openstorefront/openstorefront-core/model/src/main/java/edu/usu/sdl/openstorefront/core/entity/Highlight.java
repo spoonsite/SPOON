@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
 
 @APIDescription("Hold a highlight for the homepage")
 public class Highlight
-		extends StandardEntity
+		extends StandardEntity<Highlight>
 {
 
 	@PK(generated = true)

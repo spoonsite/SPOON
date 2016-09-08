@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 	
 	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>	
@@ -113,7 +113,7 @@
 											],											
 											proxy: {
 												type: 'ajax',
-												url: '../api/v1/resource/attributes/attributetypes/{type}/attributecodes'
+												url: 'api/v1/resource/attributes/attributetypes/{type}/attributecodes'
 											}
 										},
 										editable: false,
@@ -359,7 +359,7 @@
 															autoLoad: true,
 															proxy: {
 																type: 'ajax',
-																url: '../api/v1/service/datamapping/transforms'
+																url: 'api/v1/service/datamapping/transforms'
 															}
 														},
 														editable: true,
@@ -376,7 +376,7 @@
 															autoLoad: true,
 															proxy: {
 																type: 'ajax',
-																url: '../api/v1/service/datamapping/mappingentities'
+																url: 'api/v1/service/datamapping/mappingentities'
 															}
 														},
 														editable: false,
@@ -387,12 +387,12 @@
 																	var entityField = cb.up().getComponent('entityfieldId');
 																	entityField.reset();																	
 																	entityField.getStore().load({
-																		url: '../api/v1/service/datamapping/entityfields/' + newValue
+																		url: 'api/v1/service/datamapping/entityfields/' + newValue
 																	});
 																	var pathEntityfield = cb.up().getComponent('pathEntityfieldId');
 																	pathEntityfield.reset();
 																	pathEntityfield.getStore().load({
-																		url: '../api/v1/service/datamapping/entityfields/' + newValue
+																		url: 'api/v1/service/datamapping/entityfields/' + newValue
 																	});	
 																}
 															}
@@ -410,7 +410,7 @@
 															autoLoad: false,
 															proxy: {
 																type: 'ajax',
-																url: '../api/v1/service/datamapping/entityfields/{entity}'
+																url: 'api/v1/service/datamapping/entityfields/{entity}'
 															}
 														},
 														editable: false,
@@ -447,7 +447,7 @@
 															autoLoad: false,
 															proxy: {
 																type: 'ajax',
-																url: '../api/v1/service/datamapping/entityfields/{entity}'
+																url: 'api/v1/service/datamapping/entityfields/{entity}'
 															},
 															listeners: {
 																load: function (myStore, records, sucessful, opts) {
@@ -471,7 +471,7 @@
 															autoLoad: true,
 															proxy: {
 																type: 'ajax',
-																url: '../api/v1/service/datamapping/transforms'
+																url: 'api/v1/service/datamapping/transforms'
 															}
 														},
 														editable: true,
@@ -673,7 +673,7 @@
 															autoLoad: true,
 															proxy: {
 																type: 'ajax',
-																url: '../api/v1/resource/attributes/attributetypes',
+																url: 'api/v1/resource/attributes/attributetypes',
 																reader: {
 																	type: 'json',
 																	rootProperty: 'data'
@@ -686,7 +686,7 @@
 															change: function(cb, newValue, oldValue) {
 																var defaultMappedCode = cb.up().getComponent('defaultMappedCode');
 																defaultMappedCode.getStore().load({
-																	url: '../api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes'
+																	url: 'api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes'
 																});																										
 															}
 														}												
@@ -719,7 +719,7 @@
 															],
 															proxy: {
 																type: 'ajax',
-																url: '../api/v1/resource/attributes/attributetypes'
+																url: 'api/v1/resource/attributes/attributetypes'
 															},
 															listeners: {
 																load: function (myStore, records, sucessful, opts) {
@@ -839,7 +839,7 @@
 																	addEditAttributeCodeWin.attributeTypeRecord = record;
 																
 																	Ext.getCmp('attributeCodeCB').getStore().load({
-																		url: '../api/v1/resource/attributes/attributetypes/' + record.get('attributeType') + '/attributecodes'
+																		url: 'api/v1/resource/attributes/attributetypes/' + record.get('attributeType') + '/attributecodes'
 																	});
 																		
 																	Ext.getCmp('codeGrid').getStore().removeAll();	
@@ -1035,7 +1035,7 @@
 					
 					mainForm.setLoading("Saving Mapping...");
 					Ext.Ajax.request({
-						url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') + '/mappings' + endURL,
+						url: 'api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') + '/mappings' + endURL,
 						method: method,
 						jsonData: dataMapModel,
 						callback: function(){		
@@ -1063,7 +1063,7 @@
 					autoLoad: false,
 					proxy: {
 						type: 'ajax',
-						url: '../api/v1/resource/filehistory/formats/{format}/mappings'
+						url: 'api/v1/resource/filehistory/formats/{format}/mappings'
 					}
 				},
 				columns: [
@@ -1105,7 +1105,7 @@
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
-										url: '../api/v1/resource/filehistory/formats/mappingformats'
+										url: 'api/v1/resource/filehistory/formats/mappingformats'
 									}
 								},
 								editable: false,
@@ -1113,7 +1113,7 @@
 								listeners: {
 									change: function(cb, newValue, oldValue) {
 										mappingPanel.getStore().load({
-											url: '../api/v1/resource/filehistory/formats/' + newValue + '/mappings'
+											url: 'api/v1/resource/filehistory/formats/' + newValue + '/mappings'
 										});
 										if (newValue) {
 											mappingPanel.getComponent('tools').setDisabled(false);
@@ -1165,7 +1165,7 @@
 									
 									addEditMapping.getComponent('mainForm').setLoading(true);
 									Ext.Ajax.request({
-										url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
+										url: 'api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
 											+ '/mappings/' + mapRecord.get('code'),
 										method: 'GET',
 										callback: function() {
@@ -1242,7 +1242,7 @@
 									
 									grid.setLoading("Copying...");
 									Ext.Ajax.request({
-										url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
+										url: 'api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
 											+ '/mappings/' + record.get('code') + '/copy',
 										method: 'POST',
 										callback: function() {
@@ -1465,7 +1465,7 @@
 								handler: function(){		
 									var record = mappingPanel.getSelectionModel().getSelection()[0];	
 									
-									window.location.href = '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
+									window.location.href = 'api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
 									+ '/mappings/' + record.get('code') + '/export';
 								}								
 							},
@@ -1492,7 +1492,7 @@
 												
 												grid.setLoading("Removing...");
 												Ext.Ajax.request({
-													url: '../api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
+													url: 'api/v1/resource/filehistory/formats/' + selectedMapFormat.get('code') 
 														+ '/mappings/' + record.get('code'),
 													method: 'DELETE',
 													callback: function() {
@@ -1585,7 +1585,7 @@
 				],
 				autoLoad: true,
 				proxy: CoreUtil.pagingProxy({
-					url: '../api/v1/resource/filehistory',					
+					url: 'api/v1/resource/filehistory',					
 					reader: {
 					   type: 'json',
 					   rootProperty: 'data',
@@ -1783,7 +1783,7 @@
 			
 			var actionUpdateHistoryKeepTime = function() {				
 				Ext.Ajax.request({
-					url: '../api/v1/service/application/configproperties/filehistory.max.days',
+					url: 'api/v1/service/application/configproperties/filehistory.max.days',
 					success: function (response) {
 						var keyData = Ext.decode(response.responseText);
 						Ext.getCmp('historyKeepTimePanel').update('*History is only kept for <b>' + keyData.description + '</b> day(s)');
@@ -1793,7 +1793,7 @@
 			actionUpdateHistoryKeepTime();
 			
 			var actionDownload = function(record) {
-				window.location.href = '../api/v1/resource/filehistory/' + record.get('fileHistoryId') + '/download';
+				window.location.href = 'api/v1/resource/filehistory/' + record.get('fileHistoryId') + '/download';
 			};
 			
 			var detailWindow = Ext.create('Ext.window.Window', {
@@ -1819,7 +1819,7 @@
 							autoLoad: false,
 							proxy: {
 								type: 'ajax',
-								url: '../api/v1/resource/filehistory/'
+								url: 'api/v1/resource/filehistory/'
 							}
 						}, 
 						plugins: [
@@ -1906,14 +1906,14 @@
 				detailWindow.show();
 				detailWindow.setTitle('Details - ' + Ext.util.Format.date(record.get('createDts'), 'm/d/y H:i:s') + ' - ' + record.get('originalFilename'));
 				detailWindow.getComponent('detailGrid').getStore().load({
-					url: '../api/v1/resource/filehistory/' + record.get('fileHistoryId') + '/errors'
+					url: 'api/v1/resource/filehistory/' + record.get('fileHistoryId') + '/errors'
 				});
 				previewCheckButtons();
 			};
 			
 			var actionReprocess = function(record){
 				Ext.Ajax.request({
-					url: '../api/v1/resource/filehistory/'+ record.get('fileHistoryId') + '/reprocess',
+					url: 'api/v1/resource/filehistory/'+ record.get('fileHistoryId') + '/reprocess',
 					method: 'POST',
 					success: function(response, opts){
 						Ext.toast('Queued file for reprocessing', 'Success', 'br');
@@ -1931,7 +1931,7 @@
 					fn: function(btn) {
 						if (btn === 'yes') {
 							Ext.Ajax.request({
-								url: '../api/v1/resource/filehistory/'+ record.get('fileHistoryId') + '/rollback',
+								url: 'api/v1/resource/filehistory/'+ record.get('fileHistoryId') + '/rollback',
 								method: 'POST',
 								success: function(response, opts){
 									Ext.toast('Rolledback file', 'Success', 'br');

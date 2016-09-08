@@ -35,7 +35,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 @APIDescription("Holds a link to a contact")
 public class ComponentContact
-		extends BaseComponent
+		extends BaseComponent<ComponentContact>
 		implements OrganizationModel
 {
 

@@ -34,6 +34,35 @@ limitations under the License.
 		overflow: visible;
 }
 
+.browser-warning{
+	display: none;
+    opacity: 0.8;
+    z-index: 10000;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    padding-left: 20px;
+    padding-right: 20px;
+    width: 100%;
+    height: 50px;
+    background-color: #cc0000;
+    color: white;
+    text-shadow: 1px 1px 2px black;
+}
+
+.browser-warning-link {
+	color: lime;
+}
+
+.browser-warning-link:visited {
+	color: lime;
+}
+
+.browser-warning-link:hover, .browser-warning-link:focus {	
+	text-decoration: underline;
+}
+
+
 .action-icon {
 	font-size: 16px;
 }

@@ -15,7 +15,7 @@
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 		
 		<script type="text/javascript">
@@ -134,7 +134,7 @@
 									fieldLabel: 'Override Template',
 									emptyText: 'Default',
 									storeConfig: {
-										url: '../api/v1/resource/componenttypetemplates/lookup',
+										url: 'api/v1/resource/componenttypetemplates/lookup',
 										addRecords: [
 											{
 												code: null,
@@ -156,7 +156,7 @@
 											handler: function(){
 												var method = Ext.getCmp('entryForm').edit ? 'PUT' : 'POST'; 												
 												var data = Ext.getCmp('entryForm').getValues();
-												var url = Ext.getCmp('entryForm').edit ? '../api/v1/resource/componenttypes/' + data.componentType : '../api/v1/resource/componenttypes';       
+												var url = Ext.getCmp('entryForm').edit ? 'api/v1/resource/componenttypes/' + data.componentType : 'api/v1/resource/componenttypes';       
 
 												CoreUtil.submitForm({
 													url: url,
@@ -210,7 +210,7 @@
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/componenttypes',
+							url: 'api/v1/resource/componenttypes',
 							extraParams: {
 								all: true
 							}
@@ -275,7 +275,20 @@
 									handler: function () {
 										actionToggleStatus();
 									}								
-								}								
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Remove',
+									id: 'lookupGrid-tools-remove',
+									scale: 'medium',								
+									iconCls: 'fa fa-2x fa-close text-danger',
+									disabled: true,
+									handler: function () {
+										actionRemoveType();
+									}									
+								}
 							]
 						}
 					],
@@ -300,9 +313,11 @@
 					if (Ext.getCmp('entryGrid').getSelectionModel().getCount() === 1) {
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-status').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-remove').setDisabled(false);						
 					} else {
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);
-						Ext.getCmp('lookupGrid-tools-status').setDisabled(true);						
+						Ext.getCmp('lookupGrid-tools-status').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-remove').setDisabled(true);
 					}
 				};
 				
@@ -342,7 +357,7 @@
 						urlEnd = '';
 					}					
 					Ext.Ajax.request({
-						url: '../api/v1/resource/componenttypes/' + type + urlEnd,
+						url: 'api/v1/resource/componenttypes/' + type + urlEnd,
 						method: method,
 						callback: function(){
 							Ext.getCmp('entryGrid').setLoading(false);
@@ -351,6 +366,105 @@
 							actionRefreshEntryGrid();
 						}
 					});
+				};
+				
+				var actionRemoveType = function() {
+					var typeToRemove = Ext.getCmp('entryGrid').getSelection()[0].get('componentType');
+					
+					var promptWindow = Ext.create('Ext.window.Window', {
+						title: 'Move Existing Data',
+						y: 200,
+						width: 400,
+						height: 125,
+						modal: true,
+						layout: 'fit',
+						items: [
+							{
+								xtype: 'form',
+								bodyStyle: 'padding: 10px',
+								dockedItems: [
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												text: 'Apply',
+												formBind: true,
+												iconCls: 'fa fa-check',
+												handler: function(){
+													var form = this.up('form');
+													var data = form.getValues();
+													
+													Ext.getCmp('entryGrid').setLoading("Removing entry type...");
+													Ext.Ajax.request({
+														url: 'api/v1/resource/componenttypes/' + typeToRemove + '?newtype=' + data.componentType,
+														method: 'DELETE',
+														callback: function(){
+															Ext.getCmp('entryGrid').setLoading(false);
+														},
+														success: function(response, opts){	
+															promptWindow.close();
+															actionRefreshEntryGrid();
+														}
+													});													
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Cancel',
+												formbind: true,
+												iconCls: 'fa fa-close',
+												handler: function(){
+													promptWindow.close();
+												}												
+											}
+										]
+									}
+								],
+								layout: 'anchor',
+								items: [
+									{
+										xtype: 'combobox',
+										width: '100%',
+										name: 'componentType',
+										fieldLabel: 'Entry Type<span class="field-required" />',
+										valueField: 'code',
+										displayField: 'description',
+										allowBlank: false,
+										editable: false,
+										typeahead: false,
+										store: {
+											autoLoad: true,
+											sorters: [{
+												property: 'description',
+												direction: 'ASC'													
+											}],
+											proxy: {
+												type: 'ajax',
+												url: 'api/v1/resource/componenttypes/lookup'
+											},
+											listeners: {
+												load: function(store, records, successful, opts) {
+													
+													store.filterBy(function(record){
+														if (record.get('code') === typeToRemove) {
+															return false;
+														} else {
+															return true;
+														}
+													});
+												}
+											}
+										}
+									}
+								]
+							}
+						]
+					});
+					promptWindow.show();
+					
 				};
 				
 			});

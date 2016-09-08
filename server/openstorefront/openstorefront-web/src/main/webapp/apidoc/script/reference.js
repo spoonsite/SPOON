@@ -19,7 +19,7 @@ var doAttributes = function(contentId, callback) {
     if (contentId === undefined || contentId === null){
       contentId = '#content';
     }
-    $.get("/openstorefront/api/v1/resource/attributes", function(data) {
+    $.get("api/v1/resource/attributes", function(data) {
         if (data && data.length > 0){
 			data.sort();
             if (data[0].codes !== undefined) {
@@ -64,7 +64,7 @@ var doLookups = function(contentId) {
     if (contentId === undefined || contentId === null){
       contentId = '#content';
     }
-    $.get("/openstorefront/api/v1/resource/lookuptypes", function(data) {
+    $.get("api/v1/resource/lookuptypes", function(data) {
         if (data && data.length > 0) {
             //console.log('data', data);
           if (data[0].code !== undefined) {
@@ -84,7 +84,7 @@ var doLookups = function(contentId) {
 
 
 var setupLookups = function(type, contentId) {
-    $.get("/openstorefront/api/v1/resource/lookuptypes/" + type.code, function(codes) {
+    $.get("api/v1/resource/lookuptypes/" + type.code, function(codes) {
         if (codes && codes.length > 0) {
             $('#tableOfContents').append('<tr><td><span goTo="' + type.code + '" class="imitateLink">' + type.code + '</span></td></tr>');
             $(contentId).append('<div id="' + type.code + '" style="margin-top: 50px;"><h3>' + type.code + '</h3><div style="margin-left: 20px;"><table><tr><th>Code</th><th>Description</th></tr></table></div></div>');

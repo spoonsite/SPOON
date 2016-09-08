@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 <style>
 			.list-group-item:first-child {
@@ -118,7 +118,7 @@
 					proxy: {
 						id: 'memoryPoolStoreProxy',
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/application/status',
+						url: 'api/v1/service/application/status',
 						reader: {
 							type: 'json',
 							rootProperty: 'memoryPools'
@@ -252,7 +252,7 @@
 					proxy: {
 						id: 'threadStatusStoreProxy',
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/application/threads'
+						url: 'api/v1/service/application/threads'
 					}
 				});
 
@@ -280,6 +280,7 @@
 								{
 									text: 'View',
 									id: 'threadStatus-view',
+									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-eye',
 									handler: function () {
@@ -299,7 +300,7 @@
 										
 										detailWin.setLoading(true);
 										Ext.Ajax.request({
-											url: '../api/v1/service/application/threads/' + record.get("id") + '/stack',
+											url: 'api/v1/service/application/threads/' + record.get("id") + '/stack',
 											callback: function(){
 												detailWin.setLoading(false);
 											},
@@ -336,7 +337,7 @@
 					proxy: {
 						id: 'systemPropertiesStoreProxy',
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/application/status',
+						url: 'api/v1/service/application/status',
 						reader: {
 							type: 'json',
 							rootProperty: 'systemProperties.entry'
@@ -395,7 +396,7 @@
 					],
 					proxy: CoreUtil.pagingProxy({
 							type: 'ajax',
-							url: '/openstorefront/api/v1/resource/errortickets',
+							url: 'api/v1/resource/errortickets',
 							reader: {
 								type: 'json',
 								rootProperty: 'errorTickets',
@@ -517,7 +518,7 @@
 								
 								errorTicketsGrid.setLoading("Removing Tickets...");
 								Ext.Ajax.request({
-									url: '../api/v1/resource/errortickets',
+									url: 'api/v1/resource/errortickets',
 									method: 'DELETE',
 									jsonData: {
 										ids: ids
@@ -581,7 +582,7 @@
 
 				var actionViewErrorTicket = function actionViewErrorTicket(record) {
 					Ext.Ajax.request({
-						url: '/openstorefront/api/v1/resource/errortickets/' + record.data.errorTicketId + '/ticket',
+						url: 'api/v1/resource/errortickets/' + record.data.errorTicketId + '/ticket',
 						success: function(response, opt){
 							var data = {};
 							data.info = response.responseText;
@@ -604,7 +605,7 @@
 					],
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/resource/applicationproperties'
+						url: 'api/v1/resource/applicationproperties'
 						}
 				});
 				
@@ -720,7 +721,7 @@
 											formBind: true,	
 											handler: function() {
 												var key = Ext.getCmp('appStatePropForm').key;
-												var url = '/openstorefront/api/v1/resource/applicationproperties/';
+												var url = 'api/v1/resource/applicationproperties/';
 												url+= key;
 												var method = 'PUT';
 												var value = Ext.getCmp('appStatePropForm').getValues()['value'];
@@ -780,7 +781,7 @@
 					],
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/application/configproperties'
+						url: 'api/v1/service/application/configproperties'
 					},
 					listeners: {
 						load: function () {
@@ -905,7 +906,7 @@
 											iconCls: 'fa fa-save',
 											formBind: true,	
 											handler: function() {
-												var url = '/openstorefront/api/v1/service/application/configproperties';
+												var url = 'api/v1/service/application/configproperties';
 												var method = 'POST';
 												var form = Ext.getCmp('configPropForm');
 												if (form.isValid()) {
@@ -964,7 +965,7 @@
 
 
 				var deleteSysConfigProp = function deleteSysConfigProp(record) {
-					var url = '/openstorefront/api/v1/service/application/configproperties/';
+					var url = 'api/v1/service/application/configproperties/';
 					url += encodeURIComponent(record.data.code);
 
 					var msg = 'Are you sure you want to delete "' + record.getData().code + '"?';
@@ -1006,7 +1007,7 @@
 					],
 					proxy: CoreUtil.pagingProxy({
 							type: 'ajax',
-							url: '/openstorefront/api/v1/service/application/logrecords',
+							url: 'api/v1/service/application/logrecords',
 							reader: {
 								type: 'json',
 								rootProperty: 'logRecords',
@@ -1086,7 +1087,7 @@
 									tooltip: "Doesn't affect server logs. Note: The application will automatically clear old records exceeding max allowed.",
 									handler: function () {
 										Ext.Ajax.request({
-											url: '/openstorefront/api/v1/service/application/logrecords',
+											url: 'api/v1/service/application/logrecords',
 											method: 'DELETE',
 											success: function(response, opt){
 												Ext.toast('Cleared log records', '', 'tr');
@@ -1133,11 +1134,11 @@
 				var toggleDbLogger = function toggleDbLogger() {
 					if (Ext.getCmp('dbLogStatusLabel').text === 'On'){
 						var what = 'off';
-						var url = '/openstorefront/api/v1/service/application/dblogger/false';
+						var url = 'api/v1/service/application/dblogger/false';
 					}
 					else {
 						var what = 'on';
-						var url = '/openstorefront/api/v1/service/application/dblogger/true';
+						var url = 'api/v1/service/application/dblogger/true';
 					}
 					
 					Ext.Ajax.request({
@@ -1190,7 +1191,7 @@
 					autoLoad: true,
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/application/loggers'
+						url: 'api/v1/service/application/loggers'
 					}
 				});
 
@@ -1367,7 +1368,7 @@
 											formBind: true,	
 											handler: function() {
 												var key = Ext.getCmp('loggerForm').getValues().name;
-												var url = '/openstorefront/api/v1/service/application/logger/';
+												var url = 'api/v1/service/application/logger/';
 												url+= key;
 												url+= '/level';
 												var method = 'PUT';
@@ -1426,7 +1427,7 @@
 					autoLoad: true,
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/resource/plugins'
+						url: 'api/v1/resource/plugins'
 					}
 				});
 
@@ -1569,7 +1570,7 @@
 				};
 
 				var actionStartPlugin = function actionStartPlugin(record) {
-					var url = '/openstorefront/api/v1/resource/plugins/';
+					var url = 'api/v1/resource/plugins/';
 					url += record.data.pluginId + '/start';
 					Ext.Ajax.request({
 						url: url,
@@ -1585,7 +1586,7 @@
 				};
 
 				var actionStopPlugin = function actionStopPlugin(record) {
-					var url = '/openstorefront/api/v1/resource/plugins/';
+					var url = 'api/v1/resource/plugins/';
 					url += record.data.pluginId + '/stop';
 					Ext.Ajax.request({
 						url: url,
@@ -1601,13 +1602,13 @@
 				};
 
 				var actionDownloadPlugin = function actionDownloadPlugin(record) {
-					var url = '/openstorefront/api/v1/resource/plugins/';
+					var url = 'api/v1/resource/plugins/';
 					url += record.data.pluginId + '/download';
 					window.location.href = url;					
 				};
 
 				var actionUninstallPlugin = function actionUninstallPlugin(record) {
-					var url = '/openstorefront/api/v1/resource/plugins/';
+					var url = 'api/v1/resource/plugins/';
 					url += record.data.pluginId;
 					Ext.Ajax.request({
 						url: url,
@@ -1701,7 +1702,7 @@
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/service/application/managers'
+							url: 'api/v1/service/application/managers'
 						}						
 					},
 					listeners: {
@@ -1769,7 +1770,7 @@
 										
 										grid.setLoading('Starting Manager...');
 										Ext.Ajax.request({
-											url: '../api/v1/service/application/managers/' + record.get('managerClass') + '/start',
+											url: 'api/v1/service/application/managers/' + record.get('managerClass') + '/start',
 											method: 'PUT',
 											callback: function(){
 												grid.setLoading(false);
@@ -1801,7 +1802,7 @@
 												if (btn === 'yes') {
 													grid.setLoading('Stopping Manager...');
 													Ext.Ajax.request({
-														url: '../api/v1/service/application/managers/' + record.get('managerClass') + '/stop',
+														url: 'api/v1/service/application/managers/' + record.get('managerClass') + '/stop',
 														method: 'PUT',
 														callback: function(){
 															grid.setLoading(false);
@@ -1829,7 +1830,7 @@
 										
 										grid.setLoading('Restarting Manager...');
 										Ext.Ajax.request({
-											url: '../api/v1/service/application/managers/' + record.get('managerClass') + '/restart',
+											url: 'api/v1/service/application/managers/' + record.get('managerClass') + '/restart',
 											method: 'PUT',
 											callback: function(){
 												grid.setLoading(false);
@@ -1859,7 +1860,7 @@
 												if (btn === 'yes') {
 													grid.setLoading('Restarting Application...');
 													Ext.Ajax.request({
-														url: '../api/v1/service/application/restart',
+														url: 'api/v1/service/application/restart',
 														method: 'POST',
 														callback: function(){
 															grid.setLoading(false);
@@ -1886,7 +1887,7 @@
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/service/application/caches'
+							url: 'api/v1/service/application/caches'
 						}
 					},
 					columns: [
@@ -1941,7 +1942,7 @@
 										
 										grid.setLoading('Flushing Cache...');
 										Ext.Ajax.request({
-											url: '../api/v1/service/application/caches/' + record.get('name') + '/flush',
+											url: 'api/v1/service/application/caches/' + record.get('name') + '/flush',
 											method: 'PUT',
 											callback: function(){
 												grid.setLoading(false);
@@ -1971,7 +1972,7 @@
 							tooltip: 'This will re-index the listings. The search results will be affected while running.',
 							handler: function () {
 								Ext.Ajax.request({
-									url: '/openstorefront/api/v1/service/search/resetSolr',
+									url: 'api/v1/service/search/resetSolr',
 									method: 'POST',
 									success: function(response, opt) {
 										Ext.toast('Successfully sent re-index request', '', 'tr');
@@ -2042,7 +2043,7 @@
 													data.emailAddress = Ext.getCmp('toEmail').value;
 													data.lastRunDts = Ext.Date.format(Ext.getCmp('sinceDate').value,'m/d/Y');
 													// For some reason this uses URL parameters
-													var url = '/openstorefront/api/v1/service/notification/recent-changes';
+													var url = 'api/v1/service/notification/recent-changes';
 													url += '?emailAddress=' + data.emailAddress;
 													url += '&lastRunDts=' + data.lastRunDts;
 													Ext.Ajax.request({
@@ -2072,7 +2073,7 @@
 
 				var actionLoadRecentChangesInfo = function actionLoadRecentChangesInfo() {
 					Ext.Ajax.request({
-						url: '/openstorefront/api/v1/service/notification/recent-changes/status',
+						url: 'api/v1/service/notification/recent-changes/status',
 						success: function(response, opt){
 							var data = Ext.decode(response.responseText);
 							var nextAutoText = '<ul class="list-group">';
@@ -2120,7 +2121,7 @@
 					}
 
 					Ext.Ajax.request({
-						url: '/openstorefront/api/v1/service/application/status',
+						url: 'api/v1/service/application/status',
 						success: function(response, opt){
 							var data = Ext.decode(response.responseText);
 							Ext.getCmp('systemDetailStats').update(data);

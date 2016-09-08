@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
  */
 @APIDescription("Evaluation section score")
 public class ComponentEvaluationSection
-		extends BaseComponent
+		extends BaseComponent<ComponentEvaluationSection>
 {
 
 	@PK

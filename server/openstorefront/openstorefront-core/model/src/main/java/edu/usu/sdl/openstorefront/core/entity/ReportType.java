@@ -30,7 +30,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Defines the reports")
 public class ReportType
-		extends LookupEntity
+		extends LookupEntity<ReportType>
 {
 
 	public static final String USAGE = "USAGE";

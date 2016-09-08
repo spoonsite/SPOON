@@ -78,12 +78,7 @@
 			<groupId>com.pointconstructor</groupId>
 			<artifactId>tinymcetextarea</artifactId>
 			<version>5.1</version>
-		</dependency>				
-		<dependency>
-			<groupId>org.tuckey</groupId>
-			<artifactId>urlrewritefilter</artifactId>
-			<version>4.0.4</version>
-		</dependency>				
+		</dependency>
 		<dependency>
 			<groupId>com.samaxes.filter</groupId>
 			<artifactId>cachefilter</artifactId>
@@ -121,6 +116,20 @@
 			<groupId>org.atmosphere</groupId>
 			<artifactId>atmosphere-socketio</artifactId>
 			<version>2.3.3-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-databind</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 

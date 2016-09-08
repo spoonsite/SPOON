@@ -33,7 +33,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Holds question responses")
 public class ComponentQuestionResponse
-		extends BaseComponent
+		extends BaseComponent<ComponentQuestionResponse>
 		implements OrganizationModel
 {
 

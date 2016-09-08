@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 
 		<script src="scripts/component/visualSearch.js?v=${appVersion}" type="text/javascript"></script>	
@@ -21,7 +21,7 @@
 
 					if (relationshipTypeCode !== null) {
 						// Create the relationship as specified
-						var url = '../api/v1/resource/components/' + originId + '/relationships';
+						var url = 'api/v1/resource/components/' + originId + '/relationships';
 						var method = 'POST';
 						var jsonData = {
 							relationshipType: relationshipTypeCode,
@@ -64,7 +64,7 @@
 					storeId: 'entryTypeStore',
 					proxy: {
 						type: 'ajax',
-						url: '../api/v1/resource/componenttypes/lookup'
+						url: 'api/v1/resource/componenttypes/lookup'
 					},
 					autoLoad: true
 				});
@@ -73,7 +73,7 @@
 					storeId: 'componentRelationshipsListingStore',
 					proxy: {
 						type: 'ajax',
-						url: '../api/v1/resource/componentrelationship'
+						url: 'api/v1/resource/componentrelationship'
 					},
 					listeners: {
 						load: function () {
@@ -132,7 +132,7 @@
 					storeId: 'relationshipTypeStore',
 					proxy: {
 						type: 'ajax',
-						url: '../api/v1/resource/lookuptypes/RelationshipType/view'
+						url: 'api/v1/resource/lookuptypes/RelationshipType/view'
 					},
 					autoLoad: true
 				});
@@ -154,7 +154,7 @@
 					proxy: {
 						id: 'componentsStoreProxy',
 						type: 'ajax',
-						url: '../api/v1/resource/components/'
+						url: 'api/v1/resource/components/'
 					},
 					autoLoad: true,
 					listeners: {
@@ -231,7 +231,7 @@
 											return;
 										}
 										var relationshipTypeCode = record.get('code');
-										var url = '../api/v1/resource/components/' + originId + '/relationships';
+										var url = 'api/v1/resource/components/' + originId + '/relationships';
 										var method = 'POST';
 										var jsonData = {
 											relationshipType: relationshipTypeCode,
@@ -325,7 +325,7 @@
 							var id = record.get('componentId');
 							relationshipsStore.setProxy({
 								type: 'ajax',
-								url: '../api/v1/resource/components/' + id + '/relationships'
+								url: 'api/v1/resource/components/' + id + '/relationships'
 							});
 							relationshipsStore.load();
 						}
@@ -457,7 +457,7 @@
 										var relationId = record.get('relationshipId');
 										var targetId = record.get('targetComponentId');
 										var relationshipType = newValue.get('code');
-										var url = '../api/v1/resource/components/' + originId + '/relationships/';
+										var url = 'api/v1/resource/components/' + originId + '/relationships/';
 										url += relationId;
 										var method = 'PUT';
 										var jsonData = {
@@ -522,7 +522,7 @@
 										var msg = 'Are you sure you want to delete this relationship?';
 										Ext.MessageBox.confirm(title, msg, function (btn) {
 											if (btn === 'yes') {
-												var url = '/openstorefront/api/v1/resource/components/';
+												var url = 'api/v1/resource/components/';
 												url += record.get('ownerComponentId') + "/relationships/";
 												url += record.get('relationshipId');
 												var method = "DELETE";

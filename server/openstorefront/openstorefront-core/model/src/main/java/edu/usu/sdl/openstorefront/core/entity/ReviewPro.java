@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
  */
 @APIDescription("Reviews Pros List")
 public class ReviewPro
-		extends LookupEntity
+		extends LookupEntity<ReviewPro>
 {
 
 	public ReviewPro()

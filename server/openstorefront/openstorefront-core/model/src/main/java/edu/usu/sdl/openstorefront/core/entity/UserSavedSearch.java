@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Saves an advance search for a user")
 public class UserSavedSearch
-		extends StandardEntity
+		extends StandardEntity<UserSavedSearch>
 {
 	
 	@PK(generated = true)

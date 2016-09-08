@@ -19,7 +19,7 @@ limitations under the License.
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="../apidoc/css/apidoc.css" rel="stylesheet" type="text/css"/>
+		<link href="../apidoc/css/apidoc.css" rel="stylesheet" type="text/css"/>
 	<script src="../apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>		
         <title>Container Test Page</title>
 		<style>

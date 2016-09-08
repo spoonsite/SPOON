@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Define type of crossreference")
 public class AttributeXRefType
-		extends StandardEntity
+		extends StandardEntity<AttributeXRefType>
 {
 
 	@PK

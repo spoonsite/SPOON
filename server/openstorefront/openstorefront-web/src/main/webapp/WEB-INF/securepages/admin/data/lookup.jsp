@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/adminlayout.jsp">
     <stripes:layout-component name="contents">
 	
 	<script type="text/javascript">
@@ -24,7 +24,7 @@
 				fields:[ 'code', 'description'],
 				proxy: {
 					type: 'ajax',
-					url: '/openstorefront/api/v1/resource/lookuptypes?systemTables=false'
+					url: 'api/v1/resource/lookuptypes?systemTables=false'
 				}
 			});
 			
@@ -194,7 +194,7 @@
 								text: 'Export',																
 								iconCls: 'fa  fa-download',								
 								handler: function () {
-									window.location.href = "/openstorefront/api/v1/resource/lookuptypes/" + selectedTable.get('code') + "/export";
+									window.location.href = "api/v1/resource/lookuptypes/" + selectedTable.get('code') + "/export";
 								}
 							}							
 						]
@@ -256,7 +256,7 @@
 										iconCls: 'fa fa-save',
 										handler: function() {
 											var method = edit ? 'PUT' : 'POST'; 
-											var url = edit ? '../api/v1/resource/lookuptypes/' + selectedTable.get('code') + '/' + Ext.getCmp('editCodeForm-codeField').getValue() : '../api/v1/resource/lookuptypes/' + selectedTable.get('code');       
+											var url = edit ? 'api/v1/resource/lookuptypes/' + selectedTable.get('code') + '/' + Ext.getCmp('editCodeForm-codeField').getValue() : 'api/v1/resource/lookuptypes/' + selectedTable.get('code');       
 											var data = Ext.getCmp('editCodeForm').getValues();
 										
 											CoreUtil.submitForm({
@@ -446,7 +446,7 @@
 			
 			var actionLoadCodes = function(status) {
 				codeGrid.getStore().load({
-					url: '/openstorefront/api/v1/resource/lookuptypes/' + selectedTable.get('code') + '?status=' + status
+					url: 'api/v1/resource/lookuptypes/' + selectedTable.get('code') + '?status=' + status
 				});
 				checkCodeTools();
 			};
@@ -467,7 +467,7 @@
 			var actionToggleStatus = function(record) {
 				if (record.get('activeStatus') === 'A'){
 					Ext.Ajax.request({
-						url: '/openstorefront/api/v1/resource/lookuptypes/' + selectedTable.get('code') + '/' + record.get('code'),
+						url: 'api/v1/resource/lookuptypes/' + selectedTable.get('code') + '/' + record.get('code'),
 						method: 'DELETE',
 						success: function(response, opts) {
 							Ext.toast('Updated status', 'Success', 'tr');
@@ -476,7 +476,7 @@
 					});
 				} else {					
 					Ext.Ajax.request({
-						url: '/openstorefront/api/v1/resource/lookuptypes/' + selectedTable.get('code') + '/' + record.get('code') + '/activate', 
+						url: 'api/v1/resource/lookuptypes/' + selectedTable.get('code') + '/' + record.get('code') + '/activate', 
 						method: 'POST',
 						success: function(response, opts) {
 							Ext.toast('Updated status', 'Success', 'tr');

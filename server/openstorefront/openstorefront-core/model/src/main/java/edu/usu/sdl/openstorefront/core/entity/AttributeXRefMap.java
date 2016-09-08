@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Mapping of external categories to attributes")
 public class AttributeXRefMap
-		extends StandardEntity
+		extends StandardEntity<AttributeXRefMap>
 {
 
 	@PK(generated = true)

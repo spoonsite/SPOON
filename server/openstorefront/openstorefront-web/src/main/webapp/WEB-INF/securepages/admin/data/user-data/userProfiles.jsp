@@ -1,17 +1,17 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../../layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 
 		<script src="scripts/component/userProfileWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
 
-		<form name="exportForm" action="/openstorefront/api/v1/resource/userprofiles/export" method="POST">
+		<form name="exportForm" action="api/v1/resource/userprofiles/export" method="POST">
 			<p style="display: none;" id="exportFormUserIds"></p>
 		</form>
 
-		<form name="toggleForm" id="toggleForm" action="/openstorefront/api/v1/resource/userprofiles/multiple" method="DELETE">
+		<form name="toggleForm" id="toggleForm" action="api/v1/resource/userprofiles/multiple" method="DELETE">
 			<p style="display: none;" id="toggleFormUserIds"></p>
 		</form>
 
@@ -38,7 +38,7 @@
 							rootProperty: 'data',
 							totalProperty: 'totalNumber'
 						},
-						url: '/openstorefront/api/v1/resource/userprofiles?status=A'
+						url: 'api/v1/resource/userprofiles?status=A'
 					})
 				});
 
@@ -46,7 +46,7 @@
 					storeId: 'userTypeStore',
 					autoLoad: true,
 					fields: ['code', 'description'],
-					proxy: {type: 'ajax', url: '../api/v1/resource/lookuptypes/UserTypeCode/view'}
+					proxy: {type: 'ajax', url: 'api/v1/resource/lookuptypes/UserTypeCode/view'}
 				});
 
 				var getUserType = function getUserType(code) {
@@ -152,7 +152,7 @@
 										change: function (filter, newValue, oldValue, opts) {
 											if (newValue) {
 												var store = userProfileStore;
-												var url = '/openstorefront/api/v1/resource/userprofiles?';
+												var url = 'api/v1/resource/userprofiles?';
 												if (newValue === 'A') {
 													url += 'status=A';
 													Ext.getCmp('userProfileGrid-tools-toggleActivation').setText("Deactivate");
@@ -310,12 +310,12 @@
 						var username = record.data.username;
 						if (active === 'A') {
 							var method = "DELETE";
-							var url = '/openstorefront/api/v1/resource/userprofiles/';
+							var url = 'api/v1/resource/userprofiles/';
 							url += username;
 							var what = "deactivate";
 						} else if (active === 'I') {
 							var method = "PUT";
-							var url = '/openstorefront/api/v1/resource/userprofiles/';
+							var url = 'api/v1/resource/userprofiles/';
 							url += username + '/reactivate';
 							var what = "activate";
 						} else {
@@ -419,7 +419,7 @@
 				
 				var actionToggleUsers = function actionToggleUsers(records) {
 					var active = Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue();
-					var url = '/openstorefront/api/v1/resource/userprofiles/multiple';
+					var url = 'api/v1/resource/userprofiles/multiple';
 					if (active === 'A') {
 						var method = "DELETE";
 						var what = "deactivate";

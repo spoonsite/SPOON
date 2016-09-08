@@ -154,7 +154,7 @@ public class SystemAction
 			List<ComponentContact> componentContacts = componentContact.findByExampleProxy();
 			Set<String> internalDup = new HashSet<>();
 			for (ComponentContact componentContactFound : componentContacts) {
-				String internalKey = componentContactFound.getContactId() + "-" + componentContactFound.compareTo(componentContact.getComponentId());
+				String internalKey = componentContactFound.getContactId() + "-" + componentContactFound.getComponentId();
 				if (internalDup.contains(internalKey)) {
 					service.getPersistenceService().delete(componentContactFound);
 					internalDups++;

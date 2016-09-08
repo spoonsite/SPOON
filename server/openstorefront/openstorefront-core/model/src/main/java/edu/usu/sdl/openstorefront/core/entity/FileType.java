@@ -28,7 +28,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Defines file types (Data type)")
 public class FileType
-		extends LookupEntity
+		extends LookupEntity<FileType>
 {
 
 	public static final String COMPONENT = "COMPONENT";

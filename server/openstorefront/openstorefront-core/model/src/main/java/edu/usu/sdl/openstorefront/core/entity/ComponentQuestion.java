@@ -35,7 +35,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("User question about a component")
 public class ComponentQuestion
-		extends BaseComponent
+		extends BaseComponent<ComponentQuestion>
 		implements OrganizationModel
 {
 

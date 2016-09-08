@@ -20,7 +20,7 @@ limitations under the License.
 	</head>
 	<body>
 		<script type="text/javascript">
-			window.location.href = "../API.action";			
+			window.location.href = ".action";			
 		</script>
 	</body>
 </html>

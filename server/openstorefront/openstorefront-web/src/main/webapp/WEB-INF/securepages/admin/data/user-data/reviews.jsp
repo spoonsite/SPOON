@@ -1,7 +1,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../../layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 
 		<script type="text/javascript">
@@ -25,7 +25,7 @@
 					proxy: {
 						id: 'reviewStoreProxy',
 						type: 'ajax',
-						url: '../api/v1/resource/components/reviewviews'
+						url: 'api/v1/resource/components/reviewviews'
 					}
 				});
 
@@ -102,14 +102,14 @@
 													store.setProxy({
 														id: 'reviewStoreProxy',
 														type: 'ajax',
-														url: '../api/v1/resource/components/reviewviews?status=A'
+														url: 'api/v1/resource/components/reviewviews?status=A'
 													});
 													Ext.getCmp('reviewGrid-tools-toggleActivation').setText("Deactivate");
 												} else {
 													store.setProxy({
 														id: 'reviewStoreProxy',
 														type: 'ajax',
-														url: '../api/v1/resource/components/reviewviews?status=I'
+														url: 'api/v1/resource/components/reviewviews?status=I'
 													});
 													Ext.getCmp('reviewGrid-tools-toggleActivation').setText("Activate");
 												}
@@ -187,13 +187,13 @@
 						var active = record.data.activeStatus;
 						if (active === 'A') {
 							var method = "DELETE";
-							var url = '/openstorefront/api/v1/resource/components/';
+							var url = 'api/v1/resource/components/';
 							url += componentId + '/reviews/';
 							url += reviewId;
 							var what = "deactivate";
 						} else if (active === 'I') {
 							var method = "PUT";
-							var url = '/openstorefront/api/v1/resource/components/';
+							var url = 'api/v1/resource/components/';
 							url += componentId + '/reviews/';
 							url += reviewId + '/activate';
 							var what = "activate";

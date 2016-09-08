@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
  */
 @APIDescription("Media Types: Video, Image, Text....etc")
 public class MediaType
-		extends LookupEntity
+		extends LookupEntity<MediaType>
 {
 
 	public static final String IMAGE = "IMG";

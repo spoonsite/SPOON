@@ -16,7 +16,7 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../../layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 		
 		<script type="text/javascript">
@@ -50,7 +50,7 @@ limitations under the License.
 					],
 					proxy: CoreUtil.pagingProxy({
 						type: 'ajax',
-						url: '../api/v1/resource/userwatches?all=true',
+						url: 'api/v1/resource/userwatches?all=true',
 						reader: {
 							type: 'json',
 							rootProperty: 'data',
@@ -205,7 +205,7 @@ limitations under the License.
 										
 					grid.setLoading("Updating...");
 					Ext.Ajax.request({
-						url:'../api/v1/resource/userwatches' + newStatusAction,
+						url:'api/v1/resource/userwatches' + newStatusAction,
 						method: 'PUT',
 						jsonData: dataIds,
 						callback: function(){

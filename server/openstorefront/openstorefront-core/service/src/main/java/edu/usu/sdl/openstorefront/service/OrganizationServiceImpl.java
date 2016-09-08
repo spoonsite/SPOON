@@ -38,6 +38,7 @@ import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,10 +92,12 @@ public class OrganizationServiceImpl
 				//update associated data
 				updateOrganizationOnEntity(new Component(), organizationExisting.getName(), organization);
 				updateOrganizationOnEntity(new ComponentContact(), organizationExisting.getName(), organization);
+				updateOrganizationOnEntity(new Contact(), organizationExisting.getName(), organization);
 				updateOrganizationOnEntity(new UserProfile(), organizationExisting.getName(), organization);
 				updateOrganizationOnEntity(new ComponentReview(), organizationExisting.getName(), organization);
 				updateOrganizationOnEntity(new ComponentQuestion(), organizationExisting.getName(), organization);
 				updateOrganizationOnEntity(new ComponentQuestionResponse(), organizationExisting.getName(), organization);
+				clearOrganizationCaches();
 			}
 
 			organizationExisting.updateFields(organization);
@@ -106,6 +109,12 @@ public class OrganizationServiceImpl
 		}
 
 	}
+	
+	private void clearOrganizationCaches() {
+		OSFCacheManager.getContactCache().removeAll();
+		OSFCacheManager.getComponentCache().removeAll();
+		OSFCacheManager.getSearchCache().removeAll();
+	}	
 
 	@Override
 	public void extractOrganizations()
@@ -113,6 +122,7 @@ public class OrganizationServiceImpl
 		extractOrg(UserProfile.class);
 		extractOrg(Component.class);
 		extractOrg(ComponentContact.class);
+		extractOrg(Contact.class);
 		extractOrg(ComponentReview.class);
 		extractOrg(ComponentQuestion.class);
 		extractOrg(ComponentQuestionResponse.class);
@@ -141,14 +151,16 @@ public class OrganizationServiceImpl
 		if (organizationTarget != null) {
 			if (organizationMerge != null) {
 
-				//Note: this is internal transformaion so no need to update indexes or alert users
+				//Note: this is internal transformation so no need to update indexes or alert users
 				updateOrganizationOnEntity(new Component(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new ComponentContact(), organizationMerge.getName(), organizationTarget);
+				updateOrganizationOnEntity(new Contact(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new UserProfile(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new ComponentReview(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new ComponentQuestion(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new ComponentQuestionResponse(), organizationMerge.getName(), organizationTarget);
-
+				clearOrganizationCaches();
+				
 				persistenceService.delete(organizationMerge);
 
 			} else {
