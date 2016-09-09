@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.core.spi.parser.mapper.AttributeMapper;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.DataMapper;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.StringTransforms;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.CSVMapReader;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.XMLMapReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -120,6 +121,18 @@ public class ReaderUseCase
 			System.out.println("attributeAlls = " + attributeAlls.get(0).getAttributeType().getAttributeType());
 			
 			
+		}
+		
+	}
+	
+	@Test
+	public void testCSVMapReader() throws FileNotFoundException, Exception
+	{
+		try (CSVMapReader mapReader = new CSVMapReader(new FileInputStream("C:\\temp\\questions.csv"))) {		
+			MapModel mapModel = mapReader.findFields(new FileInputStream("C:\\temp\\questions.csv"));
+			
+			mapModel.getUniqueFields().forEach(f->System.out.println(f));
+			mapModel.getMapFields().forEach(field->System.out.println(field));
 		}
 		
 	}

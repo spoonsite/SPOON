@@ -13,45 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
+package edu.usu.sdl.openstorefront.service.io.parser;
+
+import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
+import java.io.InputStream;
 
 /**
  *
  * @author dshurtleff
  */
-public class MapField
+public class ComponentMappedXMLParser
+		extends BaseComponentParser
 {
-	private String name;
-	private String value;
 
-	public MapField()
+	@Override
+	public String checkFormat(String mimeType, InputStream input)
 	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
-	public String toString()
+	protected <T> Object parseRecord(T record)
 	{
-		return "MapField{" + "name=" + name + ", value=" + value + '}';
-	}
-
-	public String getName()
-	{
-		return name;
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-	public String getValue()
-	{
-		return value;
-	}
-
-	public void setValue(String value)
-	{
-		this.value = value;
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 }

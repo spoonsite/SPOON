@@ -15,32 +15,91 @@
  */
 package edu.usu.sdl.openstorefront.core.spi.parser.reader;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapField;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  *
  * @author dshurtleff
  */
 public class CSVMapReader
-	extends MappableReader
+		extends MappableReader
 {
+
+	private au.com.bytecode.opencsv.CSVReader reader;
+
+	private char separator = ',';
 
 	public CSVMapReader(InputStream in)
 	{
 		super(in);
 	}
 
+	public void setSeparator(char separator)
+	{
+		this.separator = separator;
+	}
+
+	@Override
+	public void preProcess()
+	{
+		reader = new au.com.bytecode.opencsv.CSVReader(new InputStreamReader(in), separator);
+	}
+
 	@Override
 	public MapModel nextRecord()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MapModel mapModel = null;
+		try {
+			currentRecordNumber++;
+			String[] data = reader.readNext();
+
+			if (data != null) {
+				mapModel = readRecord(data);
+			}
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		}
+		return mapModel;
+	}
+
+	private MapModel readRecord(String[] data)
+	{
+		MapModel mapModel = new MapModel();
+		int columnNumber = 0;
+		for (String column : data) {
+			columnNumber++;
+			MapField mapField = new MapField();
+			mapField.setName("COLUMN-" + columnNumber);
+			mapField.setValue(column);
+			mapModel.getMapFields().add(mapField);
+		}
+		return mapModel;
 	}
 
 	@Override
 	public MapModel findFields(InputStream in)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MapModel mapModel = new MapModel();
+
+		//Read header line assume first line
+		try (Reader csvStream = new InputStreamReader(in)) {
+			reader = new au.com.bytecode.opencsv.CSVReader(csvStream, separator);
+
+			String[] data = reader.readNext();
+			if (data != null) {
+				mapModel = readRecord(data);
+			}
+		} catch (IOException io) {
+			throw new OpenStorefrontRuntimeException(io);
+		}
+
+		return mapModel;
 	}
-	
+
 }

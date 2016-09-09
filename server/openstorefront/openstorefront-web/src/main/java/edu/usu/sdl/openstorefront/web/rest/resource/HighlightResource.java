@@ -131,7 +131,7 @@ public class HighlightResource
 
 			highlight.setCreateUser(SecurityUtil.getCurrentUserName());
 			highlight.setUpdateUser(SecurityUtil.getCurrentUserName());
-			service.getSystemService().saveHightlight(highlight);
+			service.getSystemService().saveHighlight(highlight);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
