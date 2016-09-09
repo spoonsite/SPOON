@@ -140,15 +140,15 @@ public class SystemServiceImpl
 	}
 
 	@Override
-	public void saveHightlight(List<Highlight> highlights)
+	public void saveHighlight(List<Highlight> highlights)
 	{
 		for (Highlight hightlight : highlights) {
-			saveHightlight(hightlight);
+			saveHighlight(hightlight);
 		}
 	}
 
 	@Override
-	public void saveHightlight(Highlight highlight)
+	public void saveHighlight(Highlight highlight)
 	{
 		Highlight existing = null;
 		if (StringUtils.isNotBlank(highlight.getHighlightId())) {
@@ -211,7 +211,7 @@ public class SystemServiceImpl
 				if (validationResult.valid()) {
 					highlight.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 					highlight.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-					getSystemService().saveHightlight(highlight);
+					getSystemService().saveHighlight(highlight);
 				}
 
 			} catch (Exception e) {

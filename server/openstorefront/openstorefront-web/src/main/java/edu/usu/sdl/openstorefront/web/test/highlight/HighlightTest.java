@@ -36,14 +36,13 @@ public class HighlightTest extends BaseTestCase
 		highlight.setDescription("A test highlight for main page");
 		highlight.setHighlightType(Highlight.TYPE_COMPONENT);
 		highlight.setOrderingPosition(1);
-		service.getSystemService().saveHightlight(highlight);
-		highlight = (Highlight) highlight.find();
+		service.getSystemService().saveHighlight(highlight);
 
 		results.append("Saving highlight...<br>");
-		Highlight testHighlight = new Highlight();
-		testHighlight.setTitle("Highlight Test");
-		testHighlight = (Highlight) testHighlight.find();
-		if (highlight.getHighlightId().equals(testHighlight.getHighlightId())) {
+		highlight = new Highlight();
+		highlight.setTitle("Highlight Test");
+		highlight = highlight.find();
+		if (highlight != null) {
 			results.append("Highlight saved successfully<br><br>");
 		} else {
 			failureReason.append("Unable to save highlight<br><br>");
