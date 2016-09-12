@@ -773,13 +773,32 @@ public class CoreComponentServiceImpl
 		}
 
 		if (Convert.toBoolean(options.getUploadReviews())) {
+			List<ComponentReview> reviews = new ArrayList<>();
+			List<ComponentReviewCon> componentCons = new ArrayList<>();
+			List<ComponentReviewPro> componentPros = new ArrayList<>();
+			Map<String, ReviewAll> reviewAllMap = new HashMap<>();
 			for (ReviewAll reviewAll : componentAll.getReviews()) {
-				List<ComponentReview> reviews = new ArrayList<>(1);
 				reviews.add(reviewAll.getComponentReview());
-				lockSwitch.setSwitched(handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId()));
-				lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewPro.class, reviewAll.getPros(), component.getComponentId()));
-				lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewCon.class, reviewAll.getCons(), component.getComponentId()));
+				reviewAllMap.put(reviewAll.getComponentReview().uniqueKey(), reviewAll);
+				componentCons.addAll(reviewAll.getCons());
+				componentPros.addAll(reviewAll.getPros());
 			}
+			lockSwitch.setSwitched(handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId()));
+			for (ComponentReview review : reviews) {
+				ReviewAll reviewAll = reviewAllMap.get(review.uniqueKey());
+				List<ComponentReviewPro> pros = reviewAll.getPros();
+				List<ComponentReviewCon> cons = reviewAll.getCons();
+				for (ComponentReviewPro pro : pros) {
+					pro.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());
+					pro.setComponentId(component.getComponentId());
+				}
+				for (ComponentReviewCon con : cons) {
+					con.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());
+					con.setComponentId(component.getComponentId());
+				}
+			}
+			lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewPro.class, componentPros, component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewCon.class, componentCons, component.getComponentId()));
 		}
 
 		if (Convert.toBoolean(options.getUploadIntegration())) {
