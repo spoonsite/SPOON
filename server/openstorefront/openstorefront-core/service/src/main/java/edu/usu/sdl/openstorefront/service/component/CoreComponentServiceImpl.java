@@ -740,13 +740,36 @@ public class CoreComponentServiceImpl
 		if (Convert.toBoolean(options.getUploadTags())) {
 			lockSwitch.setSwitched(handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId()));
 		}
+
 		if (Convert.toBoolean(options.getUploadQuestions())) {
+			List<ComponentQuestion> questions = new ArrayList<>();
+
+			// We will use a HashMap and the uniqueKey() method to keep track of which responses belong to which
+			// question for setting each responses questionIds below. The uniqueKey() method has limitations in
+			// uniqueness, see the implementation for more info.
+			Map<String, QuestionAll> questionAllMap = new HashMap<>();
 			for (QuestionAll question : componentAll.getQuestions()) {
-				List<ComponentQuestion> questions = new ArrayList<>(1);
 				questions.add(question.getQuestion());
-				lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId()));
-				lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestionResponse.class, question.getResponds(), component.getComponentId()));
+				questionAllMap.put(question.getQuestion().uniqueKey(), question);
 			}
+			// We now send the questions to be saved.
+			lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId()));
+
+			// After this point, we are assuming that the 'questions' list that we sent in to be saved
+			// still refers to the same questions.  However, after saving, they should all have proper questionIds.
+			// Since we know the questionIds, we can now go through the responses to set the questionId on them.
+			// We loop through and use the previously-created map to grab the respective responses.
+			for (ComponentQuestion question : questions) {
+				QuestionAll questionAll = questionAllMap.get(question.uniqueKey());
+				List<ComponentQuestionResponse> theseResponses = questionAll.getResponds();
+				for (ComponentQuestionResponse response : theseResponses) {
+					response.setQuestionId(question.getQuestionId());
+					response.setComponentId(component.getComponentId());
+				}
+				// And send them to be saved.
+				lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestionResponse.class, theseResponses, component.getComponentId()));
+			}
+
 		}
 
 		if (Convert.toBoolean(options.getUploadReviews())) {
