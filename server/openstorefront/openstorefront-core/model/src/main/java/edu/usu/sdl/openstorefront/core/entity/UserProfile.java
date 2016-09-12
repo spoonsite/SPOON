@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -94,6 +95,8 @@ public class UserProfile
 	@ConsumeField
 	@APIDescription("Send user a message about recent changes")
 	private Boolean notifyOfNew;
+
+	private Date lastLoginDts;
 
 	public UserProfile()
 	{
@@ -209,6 +212,16 @@ public class UserProfile
 	public void setPhone(String phone)
 	{
 		this.phone = phone;
+	}
+
+	public Date getLastLoginDts()
+	{
+		return lastLoginDts;
+	}
+
+	public void setLastLoginDts(Date lastLoginDts)
+	{
+		this.lastLoginDts = lastLoginDts;
 	}
 
 }
