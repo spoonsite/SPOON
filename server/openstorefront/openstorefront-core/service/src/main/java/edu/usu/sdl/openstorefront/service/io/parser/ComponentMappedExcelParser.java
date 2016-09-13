@@ -15,7 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.service.io.parser;
 
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.ComponentMapper;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.ExcelMapReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import java.io.InputStream;
 
 /**
@@ -29,13 +34,34 @@ public class ComponentMappedExcelParser
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (mimeType.contains("excel")
+				|| mimeType.contains("openxmlformats-officedocument.spreadsheetml.sheet")) {
+			return "";
+		} else {
+			return "Invalid format. Please upload a XLSX (Excel) file.";
+		}
+	}
+
+	@Override
+	protected GenericReader getReader(InputStream in)
+	{
+		ExcelMapReader reader = new ExcelMapReader(in);
+		return reader;
 	}
 
 	@Override
 	protected <T> Object parseRecord(T record)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MapModel mapModel = (MapModel) record;
+
+		ComponentMapper componentMapper = new ComponentMapper(() -> {
+			ComponentAll componentAll = defaultComponentAll();
+			return componentAll;
+		}, fileHistoryAll);
+
+		ComponentAll componentAll = componentMapper.singleMapData(mapModel);
+		postProcessFields(componentAll);
+		return componentAll;
 	}
 
 }

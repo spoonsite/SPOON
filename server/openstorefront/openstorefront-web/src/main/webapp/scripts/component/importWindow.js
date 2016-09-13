@@ -47,7 +47,7 @@ Ext.define('OSF.component.ImportWindow', {
 								var uploadForm = this.up('form');
 								uploadForm.submit({
 									submitEmptyText: false,
-									url: '/openstorefront/Upload.action?ImportData',
+									url: 'Upload.action?ImportData',
 									success: function(form, action) {
 										Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');	
 										if (importWindow.uploadSuccess) {

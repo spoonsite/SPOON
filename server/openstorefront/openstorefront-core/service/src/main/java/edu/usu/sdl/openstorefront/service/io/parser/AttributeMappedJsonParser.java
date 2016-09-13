@@ -15,8 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.service.io.parser;
 
+import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseAttributeParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.AttributeMapper;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.JSONMapReader;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  *
@@ -26,16 +32,44 @@ public class AttributeMappedJsonParser
 		extends BaseAttributeParser
 {
 
+	private List<AttributeAll> attributeAlls;
+
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (mimeType.contains("json")) {
+			return "";
+		} else {
+			return "Invalid format. Please upload a json file.";
+		}
+	}
+
+	@Override
+	protected GenericReader getReader(InputStream in)
+	{
+		return new JSONMapReader(in);
+	}
+
+	@Override
+	protected String handlePreviewOfRecord(Object data)
+	{
+		return super.handlePreviewOfRecord(attributeAlls);
 	}
 
 	@Override
 	protected <T> Object parseRecord(T record)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MapModel mapModel = (MapModel) record;
+
+		AttributeMapper attributeMapper = new AttributeMapper(() -> {
+			AttributeAll attributeAll = defaultAttributeAll();
+			return attributeAll;
+		}, fileHistoryAll);
+
+		attributeAlls = attributeMapper.multiMapData(mapModel);
+		addMultipleRecords(attributeAlls);
+
+		return null;
 	}
 
 }

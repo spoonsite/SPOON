@@ -1114,11 +1114,57 @@ is resolved.
 ### 3.2.8 Imports * 
 -------
 
-This allows for data imports and mappings.  This is done by importing a ZIP
-or JSON file.  Once imported warnings and/or errors can be viewed, the data 
-can be reprocessed or rolled back.
+This allows for data imports and mappings.  This is done by importing a support 
+file format. Once imported warnings and/or errors can be viewed, the data can be 
+reprocessed or rolled back.
 
-**NOTE:**  The history is only kept for **180 days** in this section.
+**NOTE:**  The history is only kept for **180 days (Default)** in this section.
+
+#### 3.2.8.1 Data Mapping *
+
+Some data importing can be handled by creating data maps.  Typically file with
+simple structure work best.  In some cases, a custom file parse will need to be 
+created.  Custom parsers require coding and then they can be add to the application
+via the plugin feature.
+
+Built-in Supported Mappable Format:
+
+Parser - Record Structure handled
+
+**Attribute CSV, Attribute EXCEL (XLSX), Attribute TSV**  
+
+>- Record (Attribute Code) per line
+- Header line not support (Remove before upload)
+- Does not support attachments
+- Map Name is used for Attribute Type
+
+**Attribute JSON, Attribute XML**
+
+>- Support Nested structure, still assumes file contain Attribute Codes to map;
+	
+**Component CSV, Component EXCEL (XLSX), Component TSV**	
+
+>- Record (Component) per line;  It can map SubComponent Entities as well.
+- Header line not support (Remove before upload)
+- Does not support attachments (Local resources or media)
+
+**Component  JSON, Component  XML**	
+
+>- Nested record (Component/Contact/etc)
+- Does not support attachments (Local resources or media)
+
+
+**Creating a data map**
+
+>**Attribute**
+
+> Map Fields for (Attribute Type and Attribute Codes)
+
+>**Component/Entry**
+
+> Map Fields for Component, Contacts, Resource, etc
+
+> Provide attribute mapping for each attribute type expected.
 
 
 ### 3.2.9 Lookups *
