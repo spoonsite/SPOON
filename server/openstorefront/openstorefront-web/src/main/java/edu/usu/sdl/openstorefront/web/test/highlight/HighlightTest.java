@@ -37,13 +37,12 @@ public class HighlightTest extends BaseTestCase
 		highlight.setHighlightType(Highlight.TYPE_COMPONENT);
 		highlight.setOrderingPosition(1);
 		service.getSystemService().saveHightlight(highlight);
-		highlight = (Highlight) highlight.find();
 
 		results.append("Saving highlight...<br>");
-		Highlight testHighlight = new Highlight();
-		testHighlight.setTitle("Highlight Test");
-		testHighlight = (Highlight) testHighlight.find();
-		if (highlight.getHighlightId().equals(testHighlight.getHighlightId())) {
+		highlight = new Highlight();
+		highlight.setTitle("Highlight Test");
+		highlight = highlight.find();
+		if (highlight != null) {
 			results.append("Highlight saved successfully<br><br>");
 		} else {
 			failureReason.append("Unable to save highlight<br><br>");
@@ -51,10 +50,10 @@ public class HighlightTest extends BaseTestCase
 
 		results.append("Deactivating highlight...<br>");
 		service.getSystemService().removeHighlight(highlight.getHighlightId());
-		Highlight highlightRemoved = new Highlight();
-		highlightRemoved.setTitle("Highlight Test");
-		highlightRemoved.setActiveStatus(Highlight.INACTIVE_STATUS);
-		highlight = (Highlight) highlightRemoved.find();
+		highlight = new Highlight();
+		highlight.setTitle("Highlight Test");
+		highlight.setActiveStatus(Highlight.INACTIVE_STATUS);
+		highlight = highlight.find();
 
 		if (highlight.getActiveStatus().equals(Highlight.INACTIVE_STATUS)) {
 			results.append("Highlight successfully deactivated<br><br>");
@@ -64,10 +63,10 @@ public class HighlightTest extends BaseTestCase
 
 		results.append("Activating highlight...");
 		service.getSystemService().activateHighlight(highlight.getHighlightId());
-		Highlight highlightActive = new Highlight();
-		highlightActive.setTitle("Highlight Test");
-		highlightActive.setActiveStatus(Highlight.ACTIVE_STATUS);
-		highlight = (Highlight) highlightActive.find();
+		highlight = new Highlight();
+		highlight.setTitle("Highlight Test");
+		highlight.setActiveStatus(Highlight.ACTIVE_STATUS);
+		highlight = highlight.find();
 
 		if (highlight.getActiveStatus().equals(Highlight.ACTIVE_STATUS)) {
 			results.append("Highlight successfully activated<br><br>");
@@ -78,10 +77,10 @@ public class HighlightTest extends BaseTestCase
 		String highlightIdCheck = highlight.getHighlightId();
 		results.append("Deleting highlight...<br>");
 		service.getSystemService().deleteHighlight(highlightIdCheck);
-		Highlight highlightDelete = new Highlight();
-		highlightDelete.setHighlightId(highlightIdCheck);
-		highlightDelete.setTitle("Highlight Test");
-		highlight = (Highlight) highlightDelete.find();
+		highlight = new Highlight();
+		highlight.setHighlightId(highlightIdCheck);
+		highlight.setTitle("Highlight Test");
+		highlight = highlight.find();
 
 		if (highlight == null) {
 			results.append("Highlight deleted successfully<br><br>");
@@ -93,7 +92,7 @@ public class HighlightTest extends BaseTestCase
 	@Override
 	public String getDescription()
 	{
-		return "Highlights Test";
+		return "Highlight Test";
 	}
 
 	@Override
