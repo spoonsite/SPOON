@@ -36,7 +36,7 @@ public class HighlightTest extends BaseTestCase
 		highlight.setDescription("A test highlight for main page");
 		highlight.setHighlightType(Highlight.TYPE_COMPONENT);
 		highlight.setOrderingPosition(1);
-		service.getSystemService().saveHightlight(highlight);
+		service.getSystemService().saveHighlight(highlight);
 
 		results.append("Saving highlight...<br>");
 		highlight = new Highlight();

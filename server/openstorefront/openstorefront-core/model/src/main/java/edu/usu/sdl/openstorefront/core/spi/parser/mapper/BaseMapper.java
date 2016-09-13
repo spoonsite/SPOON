@@ -82,7 +82,7 @@ public abstract class BaseMapper<T>
 	
 	public abstract  List<T> multiMapData(MapModel input);
 	
-	//public abstract T singleMapData(MapModel input);
+	public abstract T singleMapData(MapModel input);
 	
 	protected AttributeType createAttributeType(String attributeTypeCode)
 	{

@@ -110,8 +110,8 @@ public class OpenStorefrontConstant
 		mimeXrefLocal.put("application/doc", ".doc");
 		mimeXrefLocal.put("application/docx", ".docx");
 		mimeXrefLocal.put("application/xls", ".xls");
-		mimeXrefLocal.put("application/xlsx", ".xlsx");
-		mimeXrefLocal.put("application/vnd.ms-excel", ".csv");
+		mimeXrefLocal.put("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xlsx");
+		mimeXrefLocal.put("application/vnd.ms-excel", ".xls");
 		mimeXrefLocal.put("application/pdf", ".pdf");
 		mimeXrefLocal.put("application/zip", ".zip");
 		mimeXrefLocal.put("application/gzip", ".gzip");
@@ -129,7 +129,7 @@ public class OpenStorefrontConstant
 		}
 		return ext;
 	}
-	
+
 	public static String getMimeForFileExtension(String fileExtension)
 	{
 		String mime = "application/octet-stream";
@@ -149,8 +149,8 @@ public class OpenStorefrontConstant
 				}
 			}
 		}
-		return mime;				
-	}	
+		return mime;
+	}
 
 	public static enum ListingType
 	{

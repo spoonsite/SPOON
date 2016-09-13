@@ -70,7 +70,7 @@ public interface SystemService
 	 * @param highlights
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveHightlight(List<Highlight> highlights);
+	public void saveHighlight(List<Highlight> highlights);
 
 	/**
 	 * Saves Highlights (generates Id on create)
@@ -78,7 +78,7 @@ public interface SystemService
 	 * @param highlight
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveHightlight(Highlight highlight);
+	public void saveHighlight(Highlight highlight);
 
 	/**
 	 * Inactive Highlight
