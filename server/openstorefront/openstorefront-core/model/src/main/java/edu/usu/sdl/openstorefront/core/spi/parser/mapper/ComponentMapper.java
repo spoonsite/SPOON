@@ -156,8 +156,9 @@ public class ComponentMapper
 
 			Map<String, Object> entityMap = new HashMap<>();
 			for (MapField mapField : input.getMapFields()) {
-				if (dataMapper.containsKey(mapField.getName())) {
-					mapField(componentAll, dataMappers, entityMap, mapField, mapField.getName());
+				String pathToField = input.getName() + "." + mapField.getName();
+				if (dataMapper.containsKey(pathToField)) {
+					mapField(componentAll, dataMappers, entityMap, mapField, pathToField);
 				}
 			}
 

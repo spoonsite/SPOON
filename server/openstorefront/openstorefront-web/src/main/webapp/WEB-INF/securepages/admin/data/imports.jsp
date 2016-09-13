@@ -298,15 +298,18 @@
 													var uploadForm = this.up('form');
 													var fileFieldCB = Ext.getCmp('fieldForm').getComponent('fileFieldCB');
 													
+													Ext.getCmp('mainForm').setLoading("Loading Fields...");
 													uploadForm.submit({
-														url: '../Upload.action?DataMapFields&fileFormat='+selectedMapFormat.get('code'),
-														method: 'POST',
+														url: 'Upload.action?DataMapFields&fileFormat='+selectedMapFormat.get('code'),
+														method: 'POST',														
 														success: function(action, opts) {
+															Ext.getCmp('mainForm').setLoading(false);
 															var fieldData = Ext.decode(opts.response.responseText);															
 															fileFieldCB.getStore().loadData(fieldData.data);
 															Ext.toast('Loaded field from file', 'Upload Success');
 														},
 														failure: function(response,opts){
+															Ext.getCmp('mainForm').setLoading(false);
 															Ext.Msg.show({
 																title: 'Upload Failed',
 																msg: 'The file upload was not successful. Check that the file meets the format requirements.',
@@ -1309,7 +1312,7 @@
 																			
 																			
 																			uploadForm.submit({
-																				url: '../Upload.action?PreviewMapping&fileFormat='
+																				url: 'Upload.action?PreviewMapping&fileFormat='
 																						+ selectedMapFormat.get('code') 
 																						+ '&dataMappingId=' + record.get('code'),
 																				method: 'POST',
@@ -1405,7 +1408,7 @@
 																	var fileFieldCB = Ext.getCmp('fieldForm').getComponent('fileFieldCB');
 
 																	uploadForm.submit({
-																		url: '../Upload.action?ImportMapping',
+																		url: 'Upload.action?ImportMapping',
 																		method: 'POST',
 																		success: function(action, opts) {
 																			Ext.toast('Imported Mapping File', 'Upload Success');

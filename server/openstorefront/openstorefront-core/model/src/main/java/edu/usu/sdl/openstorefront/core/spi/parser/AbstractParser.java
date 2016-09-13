@@ -44,7 +44,7 @@ import java.util.logging.Logger;
  *
  * @author dshurtleff
  */
-public abstract class AbstractParser <T>
+public abstract class AbstractParser<T>
 {
 
 	private static final Logger LOG = Logger.getLogger(AbstractParser.class.getName());
@@ -134,35 +134,44 @@ public abstract class AbstractParser <T>
 			throw new OpenStorefrontRuntimeException("Unable to get path to file.", "The filename is likely missing from file history record.  The record may be corrupt. ID: " + fileHistoryAll.getFileHistory().getFileHistoryId());
 		}
 	}
-	
-	public String previewProcessedData(FileHistoryAll fileHistoryAll, InputStream input) 
+
+	protected <T> void addMultipleRecords(List<T> records)
+	{
+		for (T record : records) {
+			if (validateRecord(record)) {
+				addRecordToStorage(record);
+			}
+		}
+	}
+
+	public String previewProcessedData(FileHistoryAll fileHistoryAll, InputStream input)
 	{
 		this.fileHistoryAll = fileHistoryAll;
-		
+
 		StringBuilder output = new StringBuilder();
 		try (GenericReader reader = getReader(input)) {
 			reader.preProcess();
-			
+
 			Object record = reader.nextRecord();
 			if (record != null) {
-				Object parsed = parseRecord(record);				
-				output.append(handlePreviewOfRecord(parsed));				
+				Object parsed = parseRecord(record);
+				output.append(handlePreviewOfRecord(parsed));
 			}
 		} catch (Exception e) {
-				StringWriter stringWriter = new StringWriter();
-				PrintWriter printWriter = new PrintWriter(stringWriter);
-				e.printStackTrace(printWriter);
+			StringWriter stringWriter = new StringWriter();
+			PrintWriter printWriter = new PrintWriter(stringWriter);
+			e.printStackTrace(printWriter);
 
-				output.append("Unable to process all of the records;  Failed reading the data. <br> Error Trace: <br>")
+			output.append("Unable to process all of the records;  Failed reading the data. <br> Error Trace: <br>")
 					.append(stringWriter.toString());
 		}
 		return output.toString();
 	}
-	
-	protected String handlePreviewOfRecord(Object data) 
+
+	protected String handlePreviewOfRecord(Object data)
 	{
 		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
-		
+
 		String dataInJSON = "No record parsed";
 		if (data != null) {
 			try {
@@ -174,7 +183,7 @@ public abstract class AbstractParser <T>
 		}
 		return dataInJSON;
 	}
-	
+
 	protected void updateFileHistoryStats()
 	{
 		service.getImportService().updateImportProgress(fileHistoryAll);
@@ -184,20 +193,28 @@ public abstract class AbstractParser <T>
 	{
 		return new TextReader(in);
 	}
-	
+
 	/**
 	 * Get the mappable reader for field extraction
+	 *
 	 * @param in
 	 * @return reader or null if not mappable
 	 */
-	public MappableReader getMappableReader(InputStream in) {
+	public MappableReader getMappableReader(InputStream in)
+	{
 		GenericReader reader = getReader(in);
 		if (reader instanceof MappableReader) {
 			return (MappableReader) reader;
-		} 
+		}
 		return null;
 	}
 
+	/**
+	 *
+	 * @param <T>
+	 * @param record
+	 * @return new Entity record to be stored or Null to skip
+	 */
 	protected abstract <T> Object parseRecord(T record);
 
 	protected <T> boolean validateRecord(T record)

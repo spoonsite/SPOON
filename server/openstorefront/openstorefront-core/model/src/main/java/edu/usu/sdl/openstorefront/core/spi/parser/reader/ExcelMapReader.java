@@ -73,13 +73,13 @@ public class ExcelMapReader
 	private MapModel readRecord(Row row)
 	{
 		MapModel mapModel = new MapModel();
-
+		mapModel.setName("root");
 		int columnNumber = 0;
 
 		while (row.getCell(columnNumber) != null) {
 			Cell cell = row.getCell(columnNumber);
 			MapField mapField = new MapField();
-			mapField.setName("COLUMN-" + columnNumber);
+			mapField.setName("COLUMN-" + (columnNumber + 1));
 			if (cell.getCellType() == Cell.CELL_TYPE_STRING
 					|| cell.getCellType() == Cell.CELL_TYPE_BLANK) {
 				mapField.setValue(cell.getStringCellValue());

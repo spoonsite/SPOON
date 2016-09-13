@@ -15,12 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.core.spi.parser.mapper;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,6 +83,7 @@ public class AttributeMapper
 
 			boolean add = false;
 			Map<String, Object> entityMap = new HashMap<>();
+			entityMap.put(AttributeType.class.getName(), attributeAll.getAttributeType());
 			for (MapField field : root.getMapFields()) {
 				String pathToField = fieldPath + root.getName() + "." + field.getName();
 				DataMapper fieldMapper = dataMappers.get(pathToField);
@@ -110,11 +113,29 @@ public class AttributeMapper
 		AttributeAll attributeAll = null;
 		if (input != null) {
 			attributeAll = templateFactory.createNewEntity();
+
+			String attributeTypeKey = fileHistoryAll.getDataMapModel().getFileDataMap().getName();
+			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+			attributeTypeKey = sanitizer.santize(attributeTypeKey).toString();
+			attributeTypeKey = StringUtils.left(attributeTypeKey.toUpperCase().trim(), OpenStorefrontConstant.FIELD_SIZE_CODE);
+
+			attributeAll.getAttributeType().setAttributeType(attributeTypeKey);
+			attributeAll.getAttributeType().setDescription(fileHistoryAll.getDataMapModel().getFileDataMap().getName());
+
 			Map<String, Object> entityMap = new HashMap<>();
+			entityMap.put(AttributeType.class.getName(), attributeAll.getAttributeType());
 			for (MapField mapField : input.getMapFields()) {
-				if (dataMapper.containsKey(mapField.getName())) {
-					DataMapper fieldMapper = dataMappers.get(mapField.getName());
-					mapField(attributeAll, dataMappers, entityMap, mapField, mapField.getName(), fieldMapper.getAttachment());
+				String fieldKey = input.getName() + "." + mapField.getName();
+				if (dataMapper.containsKey(fieldKey)) {
+					DataMapper fieldMapper = dataMappers.get(fieldKey);
+					mapField(
+							attributeAll,
+							dataMappers,
+							entityMap,
+							mapField,
+							fieldKey,
+							fieldMapper.getAttachment()
+					);
 				}
 			}
 		}

@@ -24,11 +24,18 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
+import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
+import edu.usu.sdl.openstorefront.core.entity.ContactType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.core.entity.MediaType;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
+import edu.usu.sdl.openstorefront.core.entity.ResourceType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import java.text.MessageFormat;
@@ -40,7 +47,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 
-
 /**
  *
  * @author dshurtleff
@@ -48,10 +54,11 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class BaseComponentParser
 		extends AbstractParser<ComponentAll>
 {
+
 	private static final Logger LOG = Logger.getLogger(BaseComponentParser.class.getName());
 
 	private static final int ENTRY_TYPE_SHORT_CODE = 6;
-	
+
 	protected static final int MAX_BUCKET_SIZE = 100;
 	protected List<ComponentAll> componentsAll = new ArrayList<>();
 
@@ -60,14 +67,14 @@ public abstract class BaseComponentParser
 	protected ComponentAll defaultComponentAll()
 	{
 		return defaultComponentAll(ComponentType.COMPONENT);
-	}	
-	
+	}
+
 	protected ComponentAll defaultComponentAll(String componentType)
 	{
 		ComponentAll componentAll = new ComponentAll();
 		Component component = new Component();
 		component.setApprovalState(ApprovalStatus.PENDING);
-		component.setComponentType(componentType);		
+		component.setComponentType(componentType);
 		component.setDescription(OpenStorefrontConstant.NOT_AVAILABLE);
 		component.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
 		component.setUpdateUser(fileHistoryAll.getFileHistory().getUpdateUser());
@@ -85,11 +92,10 @@ public abstract class BaseComponentParser
 		}
 
 		for (AttributeType attributeType : requiredAttributes) {
-			
-			
+
 			boolean attributeRequiredForType = false;
 			if (attributeType.getRequiredRestrictions() != null) {
-				Set<String> componentTypesInRestriction = new HashSet<>();				
+				Set<String> componentTypesInRestriction = new HashSet<>();
 				for (ComponentTypeRestriction restriction : attributeType.getRequiredRestrictions()) {
 					componentTypesInRestriction.add(restriction.getComponentType());
 				}
@@ -99,7 +105,7 @@ public abstract class BaseComponentParser
 			} else {
 				attributeRequiredForType = true;
 			}
-			
+
 			if (attributeRequiredForType) {
 				if (StringUtils.isNotBlank(attributeType.getDefaultAttributeCode())) {
 					AttributeCodePk attributeCodePk = new AttributeCodePk();
@@ -128,6 +134,37 @@ public abstract class BaseComponentParser
 		component.setLastModificationType(ModificationType.IMPORT);
 	}
 
+	protected void postProcessFields(ComponentAll componentAll)
+	{
+		if (componentAll != null) {
+			if (StringUtils.isNotBlank(componentAll.getComponent().getComponentType())) {
+				componentAll.getComponent().setComponentType(getEntryType(componentAll.getComponent().getComponentType()));
+			}
+
+			if (StringUtils.isNotBlank(componentAll.getComponent().getSecurityMarkingType())) {
+				componentAll.getComponent().setSecurityMarkingType(getLookup(SecurityMarkingType.class, componentAll.getComponent().getSecurityMarkingType()));
+			}
+
+			for (ComponentResource resource : componentAll.getResources()) {
+				if (StringUtils.isNotBlank(resource.getResourceType())) {
+					resource.setResourceType(getLookup(ResourceType.class, resource.getResourceType()));
+				}
+			}
+
+			for (ComponentMedia media : componentAll.getMedia()) {
+				if (StringUtils.isNotBlank(media.getMediaTypeCode())) {
+					media.setMediaTypeCode(getLookup(MediaType.class, media.getMediaTypeCode()));
+				}
+			}
+
+			for (ComponentContact contact : componentAll.getContacts()) {
+				if (StringUtils.isNotBlank(contact.getContactType())) {
+					contact.setContactType(getLookup(ContactType.class, contact.getContactType()));
+				}
+			}
+		}
+	}
+
 	@Override
 	protected List<ComponentAll> getStorageBucket()
 	{
@@ -152,9 +189,10 @@ public abstract class BaseComponentParser
 
 	/**
 	 * Try to match if not will add a new code
+	 *
 	 * @param lookupClass
 	 * @param input
-	 * @return 
+	 * @return
 	 */
 	protected String getLookup(Class lookupClass, String input)
 	{
@@ -175,7 +213,7 @@ public abstract class BaseComponentParser
 						lookup.setDescription(StringUtils.left(input, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
 						lookup.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
 						lookup.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
-						
+
 						service.getLookupService().saveLookupValue(lookup);
 						LOG.log(Level.INFO, MessageFormat.format("Added missing lookup: {0} to lookup {1}", input, lookupClass.getSimpleName()));
 					} catch (InstantiationException | IllegalAccessException ex) {
@@ -186,24 +224,25 @@ public abstract class BaseComponentParser
 			return lookup.getCode();
 		}
 		return input;
-	}	
-	
+	}
+
 	/**
-	 * This will attempt to find the attribute but if not found it will add type and code
+	 * This will attempt to find the attribute but if not found it will add type
+	 * and code
+	 *
 	 * @param attributeTypeCode
 	 * @param attributeTypeDescription
 	 * @param attributeCode
 	 * @param attributeCodeDescription
-	 * @return 
+	 * @return
 	 */
 	protected AttributeCode getAttributeCode(String attributeTypeCode, String attributeTypeDescription, String attributeCode, String attributeCodeDescription)
-	{	
-		if (StringUtils.isBlank(attributeCode) ||
-			StringUtils.isBlank(attributeCodeDescription)) 
-		{
+	{
+		if (StringUtils.isBlank(attributeCode)
+				|| StringUtils.isBlank(attributeCodeDescription)) {
 			return null;
 		}
-		
+
 		AttributeType attributeType = service.getAttributeService().findType(attributeTypeCode);
 		if (attributeType == null) {
 			attributeType = new AttributeType();
@@ -214,89 +253,89 @@ public abstract class BaseComponentParser
 			attributeType.setHideOnSubmission(Boolean.FALSE);
 			attributeType.setRequiredFlg(Boolean.FALSE);
 			attributeType.setVisibleFlg(Boolean.FALSE);
-						
+
 			attributeType.setDescription(attributeTypeDescription);
 			attributeType.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
 			attributeType.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
-					
-			service.getAttributeService().saveAttributeType(attributeType, false);			
+
+			service.getAttributeService().saveAttributeType(attributeType, false);
 		}
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeType(attributeType.getAttributeType());
-		
+
 		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 		String key = sanitizer.santize(attributeCode).toString();
-		attributeCodePk.setAttributeCode(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_CODE));		
-		
+		attributeCodePk.setAttributeCode(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_CODE));
+
 		AttributeCode attributeCodeFound = service.getAttributeService().findCodeForType(attributeCodePk);
 		if (attributeCodeFound == null) {
 			attributeCodeFound = new AttributeCode();
 			attributeCodeFound.setAttributeCodePk(attributeCodePk);
-			attributeCodeFound.setLabel(StringUtils.left(attributeCodeDescription, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));	
+			attributeCodeFound.setLabel(StringUtils.left(attributeCodeDescription, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
 			attributeCodeFound.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
-			attributeCodeFound.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());			
-			
+			attributeCodeFound.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
+
 			service.getAttributeService().saveAttributeCode(attributeCodeFound, false);
 		}
-		
+
 		return attributeCodeFound;
 	}
-	
+
 	/**
 	 * This will look up the attribute code by label and it will add code
-	 * 
+	 *
 	 * @param attributeTypeCode (Existing)
 	 * @param attributeCodeLabel
-	 * @return 
+	 * @return
 	 */
 	protected AttributeCode getAttributeCode(String attributeTypeCode, String attributeCodeLabel)
 	{
 		AttributeCode attributeCode = null;
 		if (StringUtils.isNotBlank(attributeCodeLabel)) {
 			attributeCodeLabel = attributeCodeLabel.trim();
-			
+
 			attributeCode = new AttributeCode();
 			attributeCode.setLabel(attributeCodeLabel);
-			
+
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
 			attributeCodePk.setAttributeType(attributeTypeCode);
 			attributeCode.setAttributeCodePk(attributeCodePk);
-			
+
 			attributeCode = (AttributeCode) attributeCode.find();
 			if (attributeCode == null) {
 				attributeCode = new AttributeCode();
 				attributeCode.setLabel(StringUtils.left(attributeCodeLabel, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
-				
+
 				attributeCodePk = new AttributeCodePk();
 				attributeCodePk.setAttributeType(attributeTypeCode);
-				
+
 				CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 				String key = sanitizer.santize(StringUtils.left(attributeCodeLabel.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
 				attributeCodePk.setAttributeCode(key);
-				attributeCode.setAttributeCodePk(attributeCodePk);				
-				
+				attributeCode.setAttributeCodePk(attributeCodePk);
+
 				attributeCode.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
-				attributeCode.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());								
-				
+				attributeCode.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
+
 				service.getAttributeService().saveAttributeCode(attributeCode, false);
 			}
 		}
 		return attributeCode;
-	}	
-	
-	public String getEntryType(String entryTypeLabel) 
+	}
+
+	public String getEntryType(String entryTypeLabel)
 	{
 		String entryCode = null;
-		
+
 		if (StringUtils.isNotBlank(entryTypeLabel)) {
 			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-			entryCode = entryTypeLabel.toUpperCase().substring(0, ENTRY_TYPE_SHORT_CODE);
+			entryCode = StringUtils.left(entryTypeLabel.toUpperCase(), ENTRY_TYPE_SHORT_CODE);
 			entryCode = sanitizer.santize(entryCode).toString();
-			
+
 			ComponentType componentType = new ComponentType();
 			componentType.setComponentType(entryCode);
 			componentType = componentType.find();
-			
+
 			if (componentType == null) {
 				componentType = new ComponentType();
 				componentType.setComponentType(entryCode);
@@ -312,14 +351,12 @@ public abstract class BaseComponentParser
 				componentType.setDataEntryRelationships(Boolean.TRUE);
 				componentType.setDataEntryResources(Boolean.TRUE);
 				componentType.setDataEntryReviews(Boolean.TRUE);
-				
+
 				service.getComponentService().saveComponentType(componentType);
-			} 
+			}
 		}
-		
+
 		return entryCode;
 	}
-	
-	
-	
+
 }

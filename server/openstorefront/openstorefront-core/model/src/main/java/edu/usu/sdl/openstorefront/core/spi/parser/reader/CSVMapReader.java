@@ -71,6 +71,7 @@ public class CSVMapReader
 	private MapModel readRecord(String[] data)
 	{
 		MapModel mapModel = new MapModel();
+		mapModel.setName("root");
 		int columnNumber = 0;
 		for (String column : data) {
 			columnNumber++;
