@@ -36,10 +36,10 @@ public class ContactServiceTest extends BaseTestCase
 	protected void runInternalTest()
 	{
 		existContact = new Contact();
-		existContact.setFirstName("ExistingFirstName");
-		existContact.setLastName("ExistingLastName");
-		existContact.setOrganization("ExistingOrganization");
-		String existContactEmail = getSystemEmail();
+		existContact.setFirstName("ExistingFirstName001");
+		existContact.setLastName("ExistingLastName001");
+		existContact.setOrganization("Existing_Contact_Organization");
+		String existContactEmail = "existingFirstName001@existingcontactorg.com";
 		existContact.setEmail(existContactEmail);
 		existContact = service.getContactService().saveContact(existContact);
 
@@ -78,10 +78,10 @@ public class ContactServiceTest extends BaseTestCase
 
 		// Create 2nd ComponentContact and Contact
 		newContact = new Contact();
-		newContact.setFirstName("newFirstName");
-		newContact.setLastName("newLastName");
-		newContact.setOrganization("newOrganization");
-		newContact.setEmail("test.contact@test.com");
+		newContact.setFirstName("NewContactFirstName002");
+		newContact.setLastName("NewContactLastName002");
+		newContact.setOrganization("New_Contact_Organization");
+		newContact.setEmail("test1.contact@contactTest.com");
 		newContact = service.getContactService().saveContact(newContact);
 
 		ComponentContact newContactComp = new ComponentContact();

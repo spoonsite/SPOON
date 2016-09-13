@@ -26,6 +26,9 @@ import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import static edu.usu.sdl.openstorefront.web.test.alert.AlertTestUtil.activateAlerts;
+import static edu.usu.sdl.openstorefront.web.test.alert.AlertTestUtil.getActiveAlerts;
+import static edu.usu.sdl.openstorefront.web.test.alert.AlertTestUtil.inactivateAlerts;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +40,9 @@ public class AlertChangeReqTest extends BaseTestCase
 {
 
 	private Alert alertChangeReq = null;
+	String messageId = null;
+	private List<Alert> alerts = null;
+
 
 	public AlertChangeReqTest()
 	{
@@ -45,6 +51,13 @@ public class AlertChangeReqTest extends BaseTestCase
 	@Override
 	protected void runInternalTest()
 	{
+
+		// Get all alerts and set to inactive
+		alerts = getActiveAlerts();
+		if (!alerts.isEmpty()) {
+			inactivateAlerts(alerts);
+		}
+
 		alertChangeReq = new Alert();
 		alertChangeReq.setName("New Change Request Alert");
 		alertChangeReq.setActiveStatus(ACTIVE_STATUS);
@@ -79,7 +92,6 @@ public class AlertChangeReqTest extends BaseTestCase
 		userMessage.setActiveStatus(ACTIVE_STATUS);
 		List<UserMessage> userMessages = userMessage.findByExample();
 		boolean alertIdsEqual = false;
-		String messageId = "";
 		for (UserMessage message : userMessages) {
 			if (message.getAlertId().equals(alertChangeReq.getAlertId())) {
 				alertIdsEqual = true;
@@ -89,7 +101,6 @@ public class AlertChangeReqTest extends BaseTestCase
 
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
-			service.getUserService().removeUserMessage(messageId);
 			results.append("Test Passed - Change request message found<br><br>");
 		} else {
 			failureReason.append("Test Failed - Unable to find change request message<br><br>");
@@ -102,6 +113,10 @@ public class AlertChangeReqTest extends BaseTestCase
 		super.cleanupTest();
 		if (alertChangeReq != null) {
 			service.getAlertService().deleteAlert(alertChangeReq.getAlertId());
+		}
+		service.getUserService().removeUserMessage(messageId);
+		if (!alerts.isEmpty()) {
+			activateAlerts(alerts);
 		}
 	}
 

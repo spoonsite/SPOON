@@ -31,6 +31,7 @@ public class FeedbackServiceTest extends BaseTestCase
 {
 	private Branding branding_internal = null;
 	private Branding branding_email = null;
+	private Branding defaultBranding = null;
 	private PropertiesManager propManager = null;
 	private String defaultPropertyValue = null;
 	private FeedbackTicket ticket_InternalTest = null;
@@ -41,6 +42,14 @@ public class FeedbackServiceTest extends BaseTestCase
 	{
 
 		return "Feedback Test";
+	}
+
+	@Override
+	protected void initializeTest()
+	{
+		super.initializeTest();
+		defaultBranding = service.getBrandingService().getCurrentBrandingView();
+
 	}
 
 	@Override
@@ -132,6 +141,9 @@ public class FeedbackServiceTest extends BaseTestCase
 			} else {
 				propManager.removeProperty(KEY_FEEDBACK_EMAIL);
 			}
+		}
+		if (defaultBranding != null) {
+			service.getBrandingService().setBrandingAsCurrent(defaultBranding.getBrandingId());
 		}
 	}
 }

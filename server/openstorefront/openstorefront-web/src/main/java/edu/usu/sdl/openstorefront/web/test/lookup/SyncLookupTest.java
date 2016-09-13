@@ -77,15 +77,20 @@ public class SyncLookupTest
 		if (lookupEntity != null) {
 			failureReason.append("Found look up - B");
 		}
-
-		results.append("Clean up records").append("<br>");
-		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br><br>");
 	}
 
 	@Override
 	public String getDescription()
 	{
 		return "Sync Lookup Test";
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
+		results.append("Clean up records").append("<br>");
+		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br><br>");
 	}
 
 }

@@ -29,7 +29,6 @@ public class ComponentTest
 	protected void initializeTest()
 	{
 		super.initializeTest();
-		results.append("Initialized<br>");
 	}
 
 	@Override
@@ -46,7 +45,6 @@ public class ComponentTest
 	{
 		super.cleanupTest(); 
 		
-		results.append("Cleanup successful");
 	}
 
 	@Override

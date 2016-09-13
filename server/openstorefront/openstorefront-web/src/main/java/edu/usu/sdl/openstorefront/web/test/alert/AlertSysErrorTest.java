@@ -23,7 +23,11 @@ import static edu.usu.sdl.openstorefront.core.entity.StandardEntity.ACTIVE_STATU
 import edu.usu.sdl.openstorefront.core.entity.SystemErrorAlertOption;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
+import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import static edu.usu.sdl.openstorefront.web.test.alert.AlertTestUtil.activateAlerts;
+import static edu.usu.sdl.openstorefront.web.test.alert.AlertTestUtil.getActiveAlerts;
+import static edu.usu.sdl.openstorefront.web.test.alert.AlertTestUtil.inactivateAlerts;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +39,19 @@ public class AlertSysErrorTest extends BaseTestCase
 {
 
 	private Alert alertSysError = null;
+	String messageId = null;
+	List<String> ticketNumbers = null;
+	private List<Alert> alerts = null;
 
 	@Override
 	protected void runInternalTest()
 	{
+		// Get all alerts and set to inactive
+		alerts = getActiveAlerts();
+		if (!alerts.isEmpty()) {
+			inactivateAlerts(alerts);
+		}
+
 		alertSysError = new Alert();
 		alertSysError.setName("New System Alert");
 		alertSysError.setActiveStatus(ACTIVE_STATUS);
@@ -60,13 +73,14 @@ public class AlertSysErrorTest extends BaseTestCase
 		// Check alert method is called in generateErrorTicket
 		results.append("Checking alert...<br><br>");
 		ErrorInfo errorInfo = new ErrorInfo(new OpenStorefrontRuntimeException("System Error"), null);
-		service.getSystemService().generateErrorTicket(errorInfo);
-				
+		SystemErrorModel errorTicket = service.getSystemService().generateErrorTicket(errorInfo);
+		ticketNumbers = new ArrayList();
+		ticketNumbers.add(errorTicket.getErrorTicketNumber());
+
 		UserMessage userMessage = new UserMessage();
 		userMessage.setActiveStatus(ACTIVE_STATUS);
 		List<UserMessage> userMessages = userMessage.findByExample();
 		boolean alertIdsEqual = false;
-		String messageId = "";
 		for (UserMessage message : userMessages) {
 			if (message.getAlertId().equals(alertSysError.getAlertId())) {
 				alertIdsEqual = true;
@@ -76,7 +90,6 @@ public class AlertSysErrorTest extends BaseTestCase
 
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
-			service.getUserService().removeUserMessage(messageId);
 			results.append("Test Passed:  System error message found<br><br>");
 		} else {
 			failureReason.append("Test Failed:  Unable to find system error message<br><br>");
@@ -89,6 +102,13 @@ public class AlertSysErrorTest extends BaseTestCase
 		super.cleanupTest();
 		if (alertSysError != null) {
 			service.getAlertService().deleteAlert(alertSysError.getAlertId());
+		}
+		service.getUserService().removeUserMessage(messageId);
+		if (!ticketNumbers.isEmpty()) {
+			service.getSystemService().deleteErrorTickets(ticketNumbers);
+		}
+		if (!alerts.isEmpty()) {
+			activateAlerts(alerts);
 		}
 	}
 

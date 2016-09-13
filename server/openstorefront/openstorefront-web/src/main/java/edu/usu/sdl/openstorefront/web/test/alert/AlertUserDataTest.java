@@ -53,15 +53,9 @@ public class AlertUserDataTest extends BaseTestCase
 	private Alert alertUserDataContact = null;
 	private List<Alert> alerts = null;
 	private ExperienceTimeType experience = null;
+	String messageId = null;
+	String contactId = null;
 
-	@Override
-	protected void initializeTest()
-	{
-		super.initializeTest(); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	
-	
 	@Override
 	protected void runInternalTest()
 	{
@@ -102,7 +96,6 @@ public class AlertUserDataTest extends BaseTestCase
 		UserMessage userMessage = new UserMessage();
 		List<UserMessage> userMessages = userMessage.findByExample();
 		boolean alertIdsEqual = false;
-		String messageId = "";
 		for (UserMessage message : userMessages) {
 			if (message.getAlertId().equals(alertUserDataTag.getAlertId())) {
 				alertIdsEqual = true;
@@ -113,9 +106,9 @@ public class AlertUserDataTest extends BaseTestCase
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			results.append("Test Passed (Checking Tag) - User data message found<br><br>");
+			results.append("Test Passed - Tag user data message found<br><br>");
 		} else {
-			failureReason.append("Test Failed (Checking Tag) - User data message not found<br><br>");
+			failureReason.append("Test Failed - Tag user data message not found<br><br>");
 		}
 
 		results.append("Check complete<br><br>");
@@ -143,7 +136,7 @@ public class AlertUserDataTest extends BaseTestCase
 		componentQuestion.setUserTypeCode(END_USER);
 		componentQuestion.setQuestion("Did man really land on the moon?");
 		componentQuestion.setOrganization("User Data Organization");
-		componentQuestion.setAdminModified(false);
+		compAlertQuestion.setAdminModified(false);
 		question.setQuestion(componentQuestion);
 		componentAllRQ.getQuestions().add(question);
 		service.getComponentService().saveComponentQuestion(componentQuestion);
@@ -162,9 +155,9 @@ public class AlertUserDataTest extends BaseTestCase
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			results.append("Test Passed (Component Question) - User data message found<br><br>");
+			results.append("Test Passed - Question user data message found<br><br>");
 		} else {
-			failureReason.append("Test Failed (Component Question) - User data message not found<br><br>");
+			failureReason.append("Test Failed - Question user data message not found<br><br>");
 		}
 		results.append("Check complete<br><br>");
 
@@ -203,16 +196,16 @@ public class AlertUserDataTest extends BaseTestCase
 		if (alertIdsEqual) {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			results.append("Test Passed (Component Review) - User data message found<br><br>");
+			results.append("Test Passed - Review user data message found<br><br>");
 		} else {
-			failureReason.append("Test Failed (Component Review) - User data message not found<br><br>");
+			failureReason.append("Test Failed - Review user data message not found<br><br>");
 		}
 		results.append("Check complete<br><br>");
 
 		results.append("Test 3 - User Data Option Not Selected<br><br>");
 
 		alertUserDataContact = new Alert();
-		alertUserDataContact.setName("New User Data Alert Test2");
+		alertUserDataContact.setName("New User Data Alert Test3");
 		alertUserDataContact.setActiveStatus(ACTIVE_STATUS);
 		alertUserDataContact.setAlertType(AlertType.USER_DATA);
 		emails.add(emailAddress);
@@ -230,18 +223,22 @@ public class AlertUserDataTest extends BaseTestCase
 		compAlertContact.setContactId(contact.getContactId());
 		compAlertContact.setComponentId(compContact.getComponentId());
 		compAlertContact.setContactType(SUBMITTER);
-		compAlertContact.setFirstName(TEST_USER);
-		compAlertContact.setOrganization("User Data Contact Organization");
+		compAlertContact.setFirstName("UserDataFirstName1");
+		compAlertContact.setLastName("UserDataLastName1");
+		compAlertContact.setEmail("myUserDataTest@alertuserdata.com");
+		compAlertContact.setOrganization("Alert User Data Contact Test");
 		compAlertContact.setAdminModified(false);
 		componentAllContact.getContacts().add(compAlertContact);
 		service.getComponentService().saveComponentContact(compAlertContact);
 
-		ComponentContact updateCompContact = new ComponentContact();
-		updateCompContact.setFirstName(TEST_USER);
-		updateCompContact.setComponentId(compContact.getComponentId());
-		updateCompContact = (ComponentContact) updateCompContact.find();
-		updateCompContact.setFirstName("Updated Test_User");
-		service.getComponentService().saveComponentContact(updateCompContact);
+		ComponentContact updatedCompContact = new ComponentContact();
+		updatedCompContact.setFirstName("UserDataFirstName1");
+		updatedCompContact.setEmail("myUserDataTest@alertuserdata.com");
+		updatedCompContact.setComponentId(compContact.getComponentId());
+		updatedCompContact = (ComponentContact) updatedCompContact.find();
+		contactId = updatedCompContact.getContactId();
+		updatedCompContact.setFirstName("Updated UserData Contact FirstName");
+		service.getComponentService().saveComponentContact(updatedCompContact);
 
 		userMessage = new UserMessage();
 		userMessages = userMessage.findByExample();
@@ -255,11 +252,11 @@ public class AlertUserDataTest extends BaseTestCase
 		}
 
 		if (!alertIdsEqual) {
-			results.append("Test Passed (ComponentContact) - User data message found<br><br>");
+			results.append("Test Passed - User data message not found<br><br>");
 		} else {
 			service.getUserService().processAllUserMessages(true);
 			service.getUserService().removeUserMessage(messageId);
-			failureReason.append("Test Failed (ComponentContact) - User data message found<br><br>");
+			failureReason.append("Test Failed - User data message found<br><br>");
 		}
 
 		results.append("Check complete<br><br>");
@@ -279,12 +276,17 @@ public class AlertUserDataTest extends BaseTestCase
 		if (alertUserDataContact != null) {
 			service.getAlertService().deleteAlert(alertUserDataContact.getAlertId());
 		}
-		if (!alerts.isEmpty()) {
-			activateAlerts(alerts);
-		}
 		if (experience != null) {
 			service.getLookupService().removeValue(ExperienceTimeType.class, experience.getCode());
 		}
+		if (contactId != null) {
+			service.getContactService().deleteContact(contactId);
+		}
+		service.getUserService().removeUserMessage(messageId);
+		if (!alerts.isEmpty()) {
+			activateAlerts(alerts);
+		}
+
 	}
 
 	@Override
