@@ -38,7 +38,7 @@ public class ComponentTypeInit
 		componentType.setAllowOnSubmission(true);
 		componentType.setDataEntryAttributes(Boolean.TRUE);
 		componentType.setDataEntryContacts(Boolean.TRUE);
-		componentType.setDataEntryDependancies(Boolean.TRUE);
+		componentType.setDataEntryDependencies(Boolean.TRUE);
 		componentType.setDataEntryEvaluationInformation(Boolean.TRUE);
 		componentType.setDataEntryMedia(Boolean.TRUE);
 		componentType.setDataEntryMetadata(Boolean.TRUE);
