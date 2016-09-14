@@ -355,7 +355,7 @@ public abstract class BaseComponentParser
 				componentType.setDescription(entryTypeLabel);
 				componentType.setDataEntryAttributes(Boolean.TRUE);
 				componentType.setDataEntryContacts(Boolean.TRUE);
-				componentType.setDataEntryDependancies(Boolean.TRUE);
+				componentType.setDataEntryDependencies(Boolean.TRUE);
 				componentType.setDataEntryEvaluationInformation(Boolean.FALSE);
 				componentType.setDataEntryMedia(Boolean.TRUE);
 				componentType.setDataEntryMetadata(Boolean.TRUE);

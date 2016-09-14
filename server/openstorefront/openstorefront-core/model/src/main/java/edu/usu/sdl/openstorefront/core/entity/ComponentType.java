@@ -74,7 +74,7 @@ public class ComponentType
 	private Boolean dataEntryMedia;
 
 	@ConsumeField
-	private Boolean dataEntryDependancies;
+	private Boolean dataEntryDependencies;
 
 	@ConsumeField
 	private Boolean dataEntryMetadata;
@@ -114,7 +114,7 @@ public class ComponentType
 		this.setComponentTypeTemplate(componentTypeLocal.getComponentTypeTemplate());
 		this.setDataEntryAttributes(componentTypeLocal.getDataEntryAttributes());
 		this.setDataEntryContacts(componentTypeLocal.getDataEntryContacts());
-		this.setDataEntryDependancies(componentTypeLocal.getDataEntryDependancies());
+		this.setDataEntryDependencies(componentTypeLocal.getDataEntryDependencies());
 		this.setDataEntryEvaluationInformation(componentTypeLocal.getDataEntryEvaluationInformation());
 		this.setDataEntryMedia(componentTypeLocal.getDataEntryMedia());
 		this.setDataEntryMetadata(componentTypeLocal.getDataEntryMetadata());
@@ -206,14 +206,14 @@ public class ComponentType
 		this.dataEntryMedia = dataEntryMedia;
 	}
 
-	public Boolean getDataEntryDependancies()
+	public Boolean getDataEntryDependencies()
 	{
-		return dataEntryDependancies;
+		return dataEntryDependencies;
 	}
 
-	public void setDataEntryDependancies(Boolean dataEntryDependancies)
+	public void setDataEntryDependencies(Boolean dataEntryDependencies)
 	{
-		this.dataEntryDependancies = dataEntryDependancies;
+		this.dataEntryDependencies = dataEntryDependencies;
 	}
 
 	public Boolean getDataEntryMetadata()
