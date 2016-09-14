@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -59,6 +60,8 @@ import org.codehaus.jettison.json.JSONObject;
 public class IntegrationComponentServiceImpl
 		extends BaseComponentServiceImpl
 {
+
+	private static final Logger LOG = Logger.getLogger(IntegrationComponentServiceImpl.class.getName());
 
 	public IntegrationComponentServiceImpl(ComponentServiceImpl componentService)
 	{
@@ -95,10 +98,8 @@ public class IntegrationComponentServiceImpl
 						} catch (JSONException ex) {
 							throw new OpenStorefrontRuntimeException("Unable to get field value from: " + jiraField.getValue(), ErrorTypeCode.INTEGRATION);
 						}
-					} else {
-						if (jiraField.getValue() != null) {
-							jiraValue = jiraField.getValue().toString();
-						}
+					} else if (jiraField.getValue() != null) {
+						jiraValue = jiraField.getValue().toString();
 					}
 				} else {
 					throw new OpenStorefrontRuntimeException("Unable to find Jira Field: " + xrefAttributeType.getFieldName(), "Update mapping to match jira.", ErrorTypeCode.INTEGRATION);

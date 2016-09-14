@@ -268,6 +268,35 @@
 								allowBlank: false
 							},
 							{
+								xtype: 'combo',
+								itemId: 'defaultComponentType',
+								labelAlign: 'top',
+								labelSeparator: '',
+								width: '100%',
+								name: 'defaultComponentType',
+								fieldLabel: 'Default Entry Type',
+								valueField: 'code',
+								displayField: 'description',
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/componenttypes/lookup'
+									},
+									listeners: {
+										load: function (myStore, records, sucessful, opts) {
+											myStore.add([{
+												code: null,
+												description: 'SELECT'
+											}]);
+										}
+									}									
+								},
+								editable: false,
+								typeAhead: false								
+							
+							},							
+							{
 								xtype: 'panel',
 								itemId: 'fieldMapping',
 								title: 'Fields',
@@ -988,6 +1017,7 @@
 						fileDataMap: {
 							fileFormat: selectedMapFormat.get('code'),
 							name: mainFormData.name,
+							defaultComponentType: mainFormData.defaultComponentType,
 							dataMapFields: []
 						},
 						fileAttributeMap: {
@@ -1181,7 +1211,8 @@
 											});
 											mainRecord.set({
 												fileDataMapId: mapRecord.get('code'),
-												name: dataMap.fileDataMap.name
+												name: dataMap.fileDataMap.name,
+												defaultComponentType: dataMap.fileDataMap.defaultComponentType
 											});
 											addEditMapping.getComponent('mainForm').loadRecord(mainRecord);
 											
@@ -1530,8 +1561,10 @@
 
 				if (selectedMapFormat.get('fileType') === 'ATTRIBUTE') {
 					addEditMapping.getComponent('mainForm').getComponent('attributeMapping').setHidden(true);
+					addEditMapping.getComponent('mainForm').getComponent('defaultComponentType').setHidden(true);
 				} else {
 					addEditMapping.getComponent('mainForm').getComponent('attributeMapping').setHidden(false);
+					addEditMapping.getComponent('mainForm').getComponent('defaultComponentType').setHidden(false);
 				}
 				addEditMapping.getComponent('mainForm').reset();	
 				

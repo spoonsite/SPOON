@@ -42,6 +42,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,6 +64,17 @@ public abstract class BaseComponentParser
 	protected List<ComponentAll> componentsAll = new ArrayList<>();
 
 	protected List<AttributeType> requiredAttributes;
+
+	protected ComponentAll getMappingDefaultComponent()
+	{
+		Objects.requireNonNull(fileHistoryAll.getDataMapModel(), "Format must have a Mapping Model defined");
+
+		if (StringUtils.isNotBlank(fileHistoryAll.getDataMapModel().getFileDataMap().getDefaultComponentType())) {
+			return defaultComponentAll(fileHistoryAll.getDataMapModel().getFileDataMap().getDefaultComponentType());
+		} else {
+			return defaultComponentAll();
+		}
+	}
 
 	protected ComponentAll defaultComponentAll()
 	{

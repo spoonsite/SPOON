@@ -74,6 +74,8 @@ public class SubComponentServiceImpl
 		extends BaseComponentServiceImpl
 {
 
+	private static final Logger LOG = Logger.getLogger(SubComponentServiceImpl.class.getName());
+
 	public SubComponentServiceImpl(ComponentServiceImpl componentService)
 	{
 		super(componentService);
@@ -225,9 +227,9 @@ public class SubComponentServiceImpl
 
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity)
 	{
-		saveComponentAttribute(attribute, updateLastActivity, false);		
-	}	
-	
+		saveComponentAttribute(attribute, updateLastActivity, false);
+	}
+
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity, boolean skipMissingAttribute)
 	{
 		Objects.requireNonNull(attribute, "Requires Component Attrubute");
@@ -276,7 +278,7 @@ public class SubComponentServiceImpl
 			}
 			if (skipMissingAttribute) {
 				LOG.log(Level.WARNING, MessageFormat.format("Unable to save attribute. {0}", error.toString()));
-			} else {		
+			} else {
 				throw new OpenStorefrontRuntimeException(error.toString(), "Check data passed in.");
 			}
 		}
@@ -291,14 +293,14 @@ public class SubComponentServiceImpl
 	{
 		Contact contactFull = componentService.getContactService().saveContact(contact.toContact());
 		contact.setContactId(contactFull.getContactId());
-		
+
 		ComponentContact oldContact = persistenceService.findById(ComponentContact.class, contact.getComponentContactId());
-		
+
 		if (oldContact != null) {
 			oldContact.updateFields(contact);
 			persistenceService.persist(oldContact);
 		} else {
-			contact.setComponentContactId(persistenceService.generateId());			
+			contact.setComponentContactId(persistenceService.generateId());
 			contact.populateBaseCreateFields();
 			persistenceService.persist(contact);
 		}
@@ -525,7 +527,7 @@ public class SubComponentServiceImpl
 				removeLocalResource(oldResource);
 			}
 			oldResource.updateFields(resource);
-			
+
 			persistenceService.persist(oldResource);
 			resource = oldResource;
 		} else {
@@ -549,7 +551,7 @@ public class SubComponentServiceImpl
 			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
 		}
-		
+
 		if (updateLastActivity) {
 			updateComponentLastActivity(resource.getComponentId());
 		}
@@ -677,7 +679,7 @@ public class SubComponentServiceImpl
 		example.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 		example.setCreateUser(username);
 		List<ComponentReview> tempReviews = persistenceService.queryByExample(ComponentReview.class, new QueryByExample(example));
-		List<ComponentReviewView> reviews = new ArrayList();		
+		List<ComponentReviewView> reviews = new ArrayList();
 		tempReviews.forEach(review -> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
 			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
@@ -697,7 +699,7 @@ public class SubComponentServiceImpl
 
 			reviews.add(tempView);
 		});
-		
+
 		//filter out unapproved
 		for (int i = reviews.size() - 1; i >= 0; i--) {
 			ComponentReviewView reviewView = reviews.get(i);
@@ -806,8 +808,8 @@ public class SubComponentServiceImpl
 			//delete existing pros
 			ComponentReviewPro componentReviewProExample = new ComponentReviewPro();
 			componentReviewProExample.setComponentId(review.getComponentId());
-			componentReviewProExample.setComponentReviewProPk(new ComponentReviewProPk());			
-			componentReviewProExample.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());			
+			componentReviewProExample.setComponentReviewProPk(new ComponentReviewProPk());
+			componentReviewProExample.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());
 			persistenceService.deleteByExample(componentReviewProExample);
 
 			for (ComponentReviewPro reviewPro : pros) {
@@ -822,8 +824,8 @@ public class SubComponentServiceImpl
 			//delete existing cons
 			ComponentReviewCon componentReviewConExample = new ComponentReviewCon();
 			componentReviewConExample.setComponentId(review.getComponentId());
-			componentReviewConExample.setComponentReviewConPk(new ComponentReviewConPk());			
-			componentReviewConExample.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());						
+			componentReviewConExample.setComponentReviewConPk(new ComponentReviewConPk());
+			componentReviewConExample.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());
 			persistenceService.deleteByExample(componentReviewConExample);
 
 			for (ComponentReviewCon reviewCon : cons) {
