@@ -178,7 +178,7 @@ limitations under the License.
 					handleAlert(alert, args);
 				  });
 				  socket.on('REPORT', function (args) {					
-					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};					
+					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="usertools.jsp?load=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};					
 					handleAlert(alert, args);
 				  });
 				  socket.on('ADMIN', function (args) {					
