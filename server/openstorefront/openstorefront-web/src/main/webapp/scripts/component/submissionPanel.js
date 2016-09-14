@@ -1141,7 +1141,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		
 		var addEditMedia = function(record, grid){
 			var addWindow = Ext.create('Ext.window.Window', {
-				closeAction: 'destory',
+				closeAction: 'destroy',
 				modal: true,
 				alwaysOnTop: true,
 				title: 'Add Media',
@@ -1304,7 +1304,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 												} else {
 													//upload
 													form.submit({
-														url: '../Media.action?UploadMedia',
+														url: 'Media.action?UploadMedia',
 														params: {
 															'componentMedia.mediaTypeCode' : data.mediaTypeCode,
 															'componentMedia.caption': data.caption,
