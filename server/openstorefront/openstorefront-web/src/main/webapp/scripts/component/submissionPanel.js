@@ -1228,7 +1228,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							},
 							{
 								xtype: 'checkbox',
-								fieldLabel: 'Used Inline <i class="fa fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline refereence in the description." ></i>',
+								fieldLabel: 'Used Inline',
 								name: 'usedInline'
 							},
 							{
@@ -1354,7 +1354,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					}
 				]
 			}).show();
-			
+
 			if (record) {
 				addWindow.getComponent('mediaForm').loadRecord(record);
 			}			
