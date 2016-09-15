@@ -327,6 +327,7 @@ Edit:
 
 SOLR_INSTALL_DIR="/usr/local/solr/latest"
 SOLR_ENV="/usr/local/solr/latest/bin/solr.in.sh"
+SOLR_INCLUDE="$SOLR_ENV" "$SOLR_INSTALL_DIR/bin/solr" "$SOLR_CMD" "$2"
 
 Save and exit
 
@@ -346,7 +347,14 @@ Create user
 groupadd solr
 useradd -g solr solr
 
-service solr start|stop
+chown -R solr:solr /usr/local/solr/solr-6.1.0
+chown solr:solr latest
+
+(If lsof is not installed)
+yum install lsof
+
+(This will start at port 8983)
+service solr start|stop  
 
 
 ###4.4.3 To Use Elasticsearch 
