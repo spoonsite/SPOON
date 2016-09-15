@@ -1213,7 +1213,10 @@
 								else{
 									contentData = reportData;
 								}
-								 Ext.getCmp('viewHistoryData').update(contentData);
+								var frame = Ext.getDom('contentFrame');
+								frame.contentWindow.document.open();
+								frame.contentWindow.document.write(contentData);
+								frame.contentWindow.document.close();
 							}
 						});
 					};
@@ -1270,7 +1273,7 @@
 						scrollable:true,
 						layout: 'fit',
 						bodyStyle: 'padding: 10px;',
-						html: contentData,
+						html: '<iframe id="contentFrame" style="width: 100%; height: 98%"></iframe>',
 						dockedItems: [
 						{
 							dock: 'bottom',
