@@ -20,7 +20,7 @@ limitations under the License.
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link href="../apidoc/css/apidoc.css" rel="stylesheet" type="text/css"/>
-	<script src="../apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>		
+		<script src="../apidoc/script/jquery/jquery-3.1.0.min.js" type="text/javascript"></script>		
         <title>Container Test Page</title>
 		<style>
 			.test-guide{
@@ -120,7 +120,10 @@ limitations under the License.
 					function(responseText,status, xhr){
 						$('#nav-loader').remove();
 					}
-				);				
+				);
+				$(document).ajaxError(function(event, request, settings) {
+				    $('#nav-loader').remove();
+				});
 			}
 		</script>
 		
