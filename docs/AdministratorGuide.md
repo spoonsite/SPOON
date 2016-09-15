@@ -312,6 +312,39 @@ bin/solr start -p 8983
 
         b) Click Re-Index Listings
 
+###4.4.1.1 Installing as service linux
+run as sudo 
+
+ln -s /usr/local/solr/solr-6.1.0 latest
+
+install as service
+
+cp /usr/local/solr/solr-6.1.0/bin/init.d/solr /etc/init.d
+
+nano /etc/init.d/solr
+
+Edit SOLR_INSTALL_DIR="/usr/local/solr/latest"
+
+Save and exit
+
+chmod 755 /etc/init.d/solr
+chown root:root /etc/init.d/solr
+
+//debian/ubuntu
+update-rc.d solr defaults
+update-rc.d solr enable
+
+//centos/redhat 
+chkconfig solr on
+
+Create user
+------------
+
+groupadd solr
+useradd -g solr solr
+
+service solr start|stop
+
 
 ###4.4.3 To Use Elasticsearch 
 
