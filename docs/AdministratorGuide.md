@@ -315,13 +315,11 @@ bin/solr start -p 8983
 ###4.4.1.1 Installing as service linux
 run as sudo 
 
-ln -s /usr/local/solr/solr-6.1.0 latest
+1. ln -s /usr/local/solr/solr-6.1.0 latest
 
-install as service
+2. cp /usr/local/solr/solr-6.1.0/bin/init.d/solr /etc/init.d
 
-cp /usr/local/solr/solr-6.1.0/bin/init.d/solr /etc/init.d
-
-nano /etc/init.d/solr
+3. nano /etc/init.d/solr
 
 Edit:
 
@@ -331,6 +329,7 @@ SOLR_INCLUDE="$SOLR_ENV" "$SOLR_INSTALL_DIR/bin/solr" "$SOLR_CMD" "$2"
 
 Save and exit
 
+4.  Add User
 chmod 755 /etc/init.d/solr
 chown root:root /etc/init.d/solr
 
@@ -341,20 +340,17 @@ update-rc.d solr enable
 //centos/redhat 
 chkconfig solr on
 
-Create user
-------------
-
 groupadd solr
 useradd -g solr solr
 
 chown -R solr:solr /usr/local/solr/solr-6.1.0
 chown solr:solr latest
 
-(If lsof is not installed)
-yum install lsof
+5. (If lsof is not installed)
+   yum install lsof
 
 (This will start at port 8983)
-service solr start|stop  
+6.service solr start|stop  
 
 
 ###4.4.3 To Use Elasticsearch 
