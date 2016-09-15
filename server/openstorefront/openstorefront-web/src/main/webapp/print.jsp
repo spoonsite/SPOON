@@ -170,20 +170,20 @@ limitations under the License.
 						var menuItems = [];
 						
 						var sections = [
-							{ text: 'General', section: 'general' },							
-							{ text: 'Views', section: 'views' },
 							{ text: 'Badges', section: 'badges' },
-							{ text: 'Description', section: 'description' },
-							{ text: 'Tags', section: 'tags' },
-							{ text: 'Evaluation', section: 'evaluation' },
-							{ text: 'Resources', section: 'resources' },
-							{ text: 'Vitals', section: 'vitals' },
 							{ text: 'Contacts', section: 'contacts' },
 							{ text: 'Dependencies', section: 'dependencies' },
-							{ text: 'Relationships', section: 'relationships' },
-							{ text: 'Reviews', section: 'reviews' },
+							{ text: 'Description', section: 'description' },
+							{ text: 'Evaluation', section: 'evaluation' },
+							{ text: 'General', section: 'general' },							
+							{ text: 'Media', section: 'media' },
 							{ text: 'Questions', section: 'questions' },
-							{ text: 'Media', section: 'media' }							
+							{ text: 'Relationships', section: 'relationships' },
+							{ text: 'Resources', section: 'resources' },
+							{ text: 'Reviews', section: 'reviews' },
+							{ text: 'Tags', section: 'tags' },
+							{ text: 'Views', section: 'views' },
+							{ text: 'Vitals', section: 'vitals' }
 						];
 						
 						Ext.Array.each(sections, function(item){
