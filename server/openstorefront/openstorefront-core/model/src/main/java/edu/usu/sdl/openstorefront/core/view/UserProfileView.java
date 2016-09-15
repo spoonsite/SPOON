@@ -71,6 +71,7 @@ public class UserProfileView
 	@NotNull
 	@APIDescription("The application doesn't store this information it's passed in from the idam system hence this is only correct for the current logged in user.")
 	private boolean admin;
+
 	private Date lastLoginDts;
 
 	public UserProfileView()
@@ -114,10 +115,15 @@ public class UserProfileView
 		} else {
 			view.setGuid(profile.getInternalGuid());
 		}
-		if (loginMap != null && !loginMap.isEmpty()) {
-			Date loginDate = loginMap.get(view.getUsername());
-			view.setLastLoginDts(loginDate);
+		if (profile.getLastLoginDts() == null) {
+			if (loginMap != null && !loginMap.isEmpty()) {
+				Date loginDate = loginMap.get(view.getUsername());
+				view.setLastLoginDts(loginDate);
+			}
+		} else {
+			view.setLastLoginDts(profile.getLastLoginDts());
 		}
+
 		return view;
 	}
 

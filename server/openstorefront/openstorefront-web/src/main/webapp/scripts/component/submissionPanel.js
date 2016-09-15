@@ -1141,7 +1141,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		
 		var addEditMedia = function(record, grid){
 			var addWindow = Ext.create('Ext.window.Window', {
-				closeAction: 'destory',
+				closeAction: 'destroy',
 				modal: true,
 				alwaysOnTop: true,
 				title: 'Add Media',
@@ -1228,7 +1228,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							},
 							{
 								xtype: 'checkbox',
-								fieldLabel: 'Used Inline <i class="fa fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline refereence in the description." ></i>',
+								fieldLabel: 'Used Inline',
 								name: 'usedInline'
 							},
 							{
@@ -1304,7 +1304,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 												} else {
 													//upload
 													form.submit({
-														url: '../Media.action?UploadMedia',
+														url: 'Media.action?UploadMedia',
 														params: {
 															'componentMedia.mediaTypeCode' : data.mediaTypeCode,
 															'componentMedia.caption': data.caption,
@@ -1354,7 +1354,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 					}
 				]
 			}).show();
-			
+
 			if (record) {
 				addWindow.getComponent('mediaForm').loadRecord(record);
 			}			

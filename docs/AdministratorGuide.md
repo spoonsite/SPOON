@@ -312,6 +312,54 @@ bin/solr start -p 8983
 
         b) Click Re-Index Listings
 
+###4.4.1.1 Installing as service linux
+run as sudo 
+
+1) ln -s /usr/local/solr/solr-6.1.0 latest
+
+2) cp /usr/local/solr/solr-6.1.0/bin/init.d/solr /etc/init.d
+
+3) nano /etc/init.d/solr
+
+Edit:
+
+> SOLR_INSTALL_DIR="/usr/local/solr/latest"
+
+> SOLR_ENV="/usr/local/solr/latest/bin/solr.in.sh"
+ 
+> SOLR_INCLUDE="$SOLR_ENV" "$SOLR_INSTALL_DIR/bin/solr" "$SOLR_CMD" "$2"
+
+Save and exit
+
+4)  Add User
+> chmod 755 /etc/init.d/solr
+
+> chown root:root /etc/init.d/solr
+
+(debian/ubuntu)
+
+> update-rc.d solr defaults
+
+> update-rc.d solr enable
+
+(centos/redhat) 
+
+> chkconfig solr on
+
+> groupadd solr
+
+> useradd -g solr solr
+
+> chown -R solr:solr /usr/local/solr/solr-6.1.0
+
+> chown solr:solr latest
+
+5) (If lsof is not installed)
+> yum install lsof
+
+6) (This will start at port 8983)
+> service solr start|stop  
+
 
 ###4.4.3 To Use Elasticsearch 
 
@@ -336,6 +384,27 @@ bin/solr start -p 8983
 	a) Nav->Admin->System->Search Control
 
         b) Click Re-Index Listings
+  
+###4.4.3.1 Yum install of Elasticsearch 
+
+1. Download and install with YUM 
+https://www.elastic.co/downloads/elasticsearch (2.3.x) 
+(see https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-repositories.html for yum install instructions) 
+
+2. service elasticsearch start 
+
+3. Configure OpenStorefront to point to elastisearch by going to: /var/openstorefront/config/openstorefront.properties or System admin screen->system properties 
+
+4. Add/Set: (adjust as needed to match url and ports) 
+
+search.server=elasticsearch 
+elastic.server.host=localhost 
+elastic.server.port=9300 
+
+5. Resync data 
+
+    a) Nav->Admin->Application Data->System->Search Control 
+    b) Click Re-Index Listings        
 
 
 ###4.4.4 Updated Search Server at Runtime
@@ -1028,6 +1097,8 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **filehistory.max.days** - Sets the max days to keep file history ( **180** )
 -  **notification.max.days** - Set the max days to keep nofitication messages ( **7** )
 -  **feedback.email** - Email address to send feedback to
+-  **ui.idletimeout.minutes** - Set to a value > 1 to have the UI popup a idle warning about there session (Default is the application tries to keep the session alive.)
+-  **ui.idlegraceperiod.minutes** -Set this to configure the grace period for the tdle timeout. After the message appears.
 
 #6. Database Management
 -----

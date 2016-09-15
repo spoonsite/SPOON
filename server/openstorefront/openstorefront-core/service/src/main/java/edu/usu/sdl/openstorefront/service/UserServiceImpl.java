@@ -389,6 +389,11 @@ public class UserServiceImpl
 				getUserService().reactiveProfile(userprofile.getUsername());
 			}
 
+			// Modify the 'last login date' if it's a client request
+			if (request != null) {
+				profile.setLastLoginDts(TimeUtil.currentDate());
+			}
+
 			profile = persistenceService.deattachAll(profile);
 			userContext.setUserProfile(profile);
 			if (admin != null) {
