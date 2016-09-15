@@ -5,6 +5,8 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sourceforge.stripes.util.ResolverUtil;
 
 /**
@@ -14,6 +16,8 @@ import net.sourceforge.stripes.util.ResolverUtil;
  */
 public class TestSuiteModel
 {
+
+	private static final Logger LOG = Logger.getLogger(TestSuiteModel.class.getName());
 
 	private String name;
 	private List<BaseTestCase> tests = new ArrayList<>();
@@ -26,7 +30,11 @@ public class TestSuiteModel
 	public TestSuiteModel(String testPackage)
 	{
 		ResolverUtil resolverUtil = new ResolverUtil();
-		resolverUtil.find(new ResolverUtil.IsA(BaseTestCase.class), testPackage);
+		try {
+			resolverUtil.find(new ResolverUtil.IsA(BaseTestCase.class), testPackage);
+		} catch (Exception e) {
+			LOG.log(Level.WARNING, "Unable resolve all test cases; may have partial results.");
+		}
 		for (Object testObject : resolverUtil.getClasses()) {
 			Class testClass = (Class) testObject;
 			try {

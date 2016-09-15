@@ -20,7 +20,7 @@ limitations under the License.
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link href="../apidoc/css/apidoc.css" rel="stylesheet" type="text/css"/>
-	<script src="../apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>		
+		<script src="../apidoc/script/jquery/jquery-3.1.0.min.js" type="text/javascript"></script>		
         <title>Container Test Page</title>
 		<style>
 			.test-guide{
@@ -44,14 +44,51 @@ limitations under the License.
 				margin-left: 300px;
 				min-width: 750px;		
 			}
+			
+			.loading{
+				text-align: center;
+				font-size: 24px;
+				padding: 25% 0px 0px 0px;
+				background-color: #666666;
+				color: whitesmoke;
+				top: 0px;
+				left: 0px;
+				bottom: 0px;
+				right: 0px;				
+			}
+			
+			.loading-top{
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				bottom: 0px;
+				right: 0px;
+				opacity: .7;
+				text-align: center;
+				font-size: 24px;
+				padding: 25% 0px 0px 0px;
+				z-index: 9999;
+				background-color: black;
+				color: white;
+				animation-name: example;
+				animation-duration: 1s;
+				animation-iteration-count: infinite;
+				animation-direction: alternate;
+			}
+			
+			@keyframes example {
+				from {color: white;}
+				to {color: yellow;}
+			}			
+			
 		</style>
     </head>
-    <body>
+    <body id="fullbody">
 				<header class="header">
 			<span class="api-title">Open Storefront Container Tests</span>
 		</header>
 		
-		<div class="test-guide" >
+		<div id="nav" class="test-guide" >
 			<ul>
 				<li>
 					<a href="javascript:i=0;" onclick="runTest('');" >Run All Tests</a>
@@ -77,7 +114,16 @@ limitations under the License.
 		<script type="text/javascript">
 			function runTest(query)
 			{	 
-				$('#outputId').load('ServiceTest.action?RunTest' + query.replace(/ /g, '%20'));
+				//$('#outputId').html("<div class='loading'>Running Test(s)...</div>");				
+				$('#fullbody').append("<div id='nav-loader' class='loading-top'>Running Test(s)...</div>");
+				$('#outputId').load('ServiceTest.action?RunTest' + query.replace(/ /g, '%20'), 
+					function(responseText,status, xhr){
+						$('#nav-loader').remove();
+					}
+				);
+				$(document).ajaxError(function(event, request, settings) {
+				    $('#nav-loader').remove();
+				});
 			}
 		</script>
 		
