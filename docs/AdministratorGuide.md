@@ -1097,6 +1097,8 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **filehistory.max.days** - Sets the max days to keep file history ( **180** )
 -  **notification.max.days** - Set the max days to keep nofitication messages ( **7** )
 -  **feedback.email** - Email address to send feedback to
+-  **ui.idletimeout.minutes** - Set to a value > 1 to have the UI popup a idle warning about there session (Default is the application tries to keep the session alive.)
+-  **ui.idlegraceperiod.minutes** -Set this to configure the grace period for the tdle timeout. After the message appears.
 
 #6. Database Management
 -----
