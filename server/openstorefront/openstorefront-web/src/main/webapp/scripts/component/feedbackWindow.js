@@ -194,6 +194,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 							handler: function () {
 								var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
 									closeMethod: 'destroy',
+									width: 650,
 									saveCallback: function (response, opts) {
 										CoreService.usersevice.getCurrentUser().then(function (response) {
 											var usercontext = Ext.decode(response.responseText);

@@ -801,6 +801,14 @@ div.x-border-layout-ct {
 	position: fixed !important;
 }
 
+/* Add some space around icon and make darker for actioncolumn items */
+.x-action-col-icon {
+    height: 16px;
+    width: 16px;
+    margin-right: 6px;
+	color: #666;
+}
+
 /* IE 9 */
 .x-window-header-default-top-mc{
    background-color: ${actionBean.branding.primaryColor};
