@@ -323,7 +323,10 @@ cp /usr/local/solr/solr-6.1.0/bin/init.d/solr /etc/init.d
 
 nano /etc/init.d/solr
 
-Edit SOLR_INSTALL_DIR="/usr/local/solr/latest"
+Edit:
+
+SOLR_INSTALL_DIR="/usr/local/solr/latest"
+SOLR_ENV="/usr/local/solr/latest/bin/solr.in.sh"
 
 Save and exit
 
