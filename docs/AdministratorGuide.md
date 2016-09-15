@@ -336,6 +336,27 @@ bin/solr start -p 8983
 	a) Nav->Admin->System->Search Control
 
         b) Click Re-Index Listings
+  
+###4.4.3.1 Yum install of Elasticsearch 
+
+1. Download and install with YUM 
+https://www.elastic.co/downloads/elasticsearch (2.3.x) 
+(see https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-repositories.html for yum install instructions) 
+
+2. service elasticsearch start 
+
+3. Configure OpenStorefront to point to elastisearch by going to: /var/openstorefront/config/openstorefront.properties or System admin screen->system properties 
+
+4. Add/Set: (adjust as needed to match url and ports) 
+
+search.server=elasticsearch 
+elastic.server.host=localhost 
+elastic.server.port=9300 
+
+5. Resync data 
+
+    a) Nav->Admin->Application Data->System->Search Control 
+    b) Click Re-Index Listings        
 
 
 ###4.4.4 Updated Search Server at Runtime
