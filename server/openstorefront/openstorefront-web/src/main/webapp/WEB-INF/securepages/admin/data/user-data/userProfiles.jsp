@@ -4,7 +4,6 @@
 <stripes:layout-render name="../../../../../layout/adminlayout.jsp">
 	<stripes:layout-component name="contents">
 
-		<script src="scripts/component/userProfileWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
 
 		<form name="exportForm" action="api/v1/resource/userprofiles/export" method="POST">
@@ -32,14 +31,23 @@
 					],
 					proxy: CoreUtil.pagingProxy({
 						id: 'userProfileStoreProxy',
-						type: 'ajax',
+						extraParams: {
+							status: 'A'
+						},
 						reader: {
 							type: 'json',
 							rootProperty: 'data',
 							totalProperty: 'totalNumber'
 						},
-						url: 'api/v1/resource/userprofiles?status=A'
-					})
+						url: 'api/v1/resource/userprofiles'											
+					}),
+					listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							store.getProxy().extraParams = {
+								status: Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() ? Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() : 'A'
+							};
+						}
+					}						
 				});
 
 				var userTypeStore = Ext.create('Ext.data.Store', {
@@ -76,22 +84,22 @@
 							},
 							{
 								flex: 1.5,
-								text: 'First Name', 
+								text: 'First Name',
 								dataIndex: 'firstName'
 							},
 							{
 								flex: 1.5,
-								text: 'Last Name', 
+								text: 'Last Name',
 								dataIndex: 'lastName'
 							},
 							{
 								flex: 1.5,
-								text: 'Organization', 
+								text: 'Organization',
 								dataIndex: 'organization'
 							},
 							{
 								flex: 1.5,
-								text: 'User Type', 
+								text: 'User Type',
 								dataIndex: 'userTypeCode',
 								renderer: function (value, metaData, record) {
 									return getUserType(value);
@@ -99,14 +107,15 @@
 							},
 							{
 								flex: 2,
-								text: 'Last Login', 
+								text: 'Last Login',
 								dataIndex: 'lastLoginDts',
 								xtype: 'datecolumn',
-								format: 'm/d/y H:i:s'
+								format: 'm/d/y H:i:s',
+								sortable: false
 							},
 							{
 								flex: 3,
-								text: 'Email', 
+								text: 'Email',
 								dataIndex: 'email'
 							},
 							{
@@ -117,7 +126,7 @@
 							},
 							{
 								flex: 3,
-								text: 'GUID', 
+								text: 'GUID',
 								dataIndex: 'guid',
 								sortable: false
 							},
@@ -125,7 +134,8 @@
 								flex: 2,
 								text: 'Send Change Emails',
 								dataIndex: 'notifyOfNew',
-								renderer: function(value, meta, record) {
+								align: 'center',
+								renderer: function (value, meta, record) {
 									if (value) {
 										meta.tdCls = 'alert-success';
 										return '<i class="fa fa-lg fa-check"></i>';
@@ -150,25 +160,9 @@
 									value: 'A',
 									listeners: {
 										change: function (filter, newValue, oldValue, opts) {
-											if (newValue) {
-												var store = userProfileStore;
-												var url = 'api/v1/resource/userprofiles?';
-												if (newValue === 'A') {
-													url += 'status=A';
-													Ext.getCmp('userProfileGrid-tools-toggleActivation').setText("Deactivate");
-												} else {
-													url += 'status=I';
-													Ext.getCmp('userProfileGrid-tools-toggleActivation').setText("Activate");
-												}
-												store.setProxy({
-													type: 'ajax',
-													url: url,
-													reader: {
-														type: 'json',
-														rootProperty: 'data'
-													}
-												});
-												store.load();
+											if (newValue) {												
+												userProfileStore.loadPage(1);
+												
 												Ext.getCmp('userProfileGrid').getSelectionModel().deselectAll();
 												Ext.getCmp('userProfileGrid-tools-edit').disable();
 												Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
@@ -223,21 +217,6 @@
 									}
 								},
 								{
-									text: 'Deactivate',
-									id: 'userProfileGrid-tools-toggleActivation',
-									iconCls: 'fa fa-2x fa-power-off',
-									disabled: true,
-									scale: 'medium',
-									handler: function () {
-										var records = Ext.getCmp('userProfileGrid').getSelection();
-										if (records.length > 1) {
-											actionToggleUsers(records);
-										} else {
-											actionToggleUser(records[0]);
-										}
-									}
-								},
-								{
 									// For cryptic reasons, we must add a space before message
 									// to get proper spacing for this button
 									text: '&nbsp;Message',
@@ -252,6 +231,25 @@
 									}
 								},
 								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Toggle Status',
+									id: 'userProfileGrid-tools-toggleActivation',
+									iconCls: 'fa fa-2x fa-power-off',
+									disabled: true,
+									scale: 'medium',
+									tooltip: 'Activates/Deactivates',
+									handler: function () {
+										var records = Ext.getCmp('userProfileGrid').getSelection();
+										if (records.length > 1) {
+											actionToggleUsers(records);
+										} else {
+											actionToggleUser(records[0]);
+										}
+									}
+								},								
+								{
 									xtype: 'tbfill'
 								},
 								{
@@ -260,7 +258,7 @@
 									id: 'userProfileGrid-tools-export',
 									iconCls: 'fa fa-2x fa-download',
 									disabled: true,
-									handler: function() {
+									handler: function () {
 										var records = userProfileGrid.getSelection();
 										actionExportUser(records);
 									}
@@ -342,7 +340,7 @@
 
 					} else {
 						Ext.MessageBox.alert("No User Selected", "Error: You have not selected a user.");
-					}	
+					}
 				};
 
 
@@ -351,7 +349,7 @@
 						var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
 							closeMethod: 'destroy',
 							loadUser: record.data.username,
-							saveCallback: function() {
+							saveCallback: function () {
 								Ext.getCmp('userProfileGrid').getStore().load();
 							}
 						}).show();
@@ -371,7 +369,7 @@
 				var actionMessageUser = function actionMessageUser(records) {
 					if (records) {
 						var emails = [];
-						Ext.Array.each(records, function(record) {
+						Ext.Array.each(records, function (record) {
 							emails.push(record.getData().email);
 						});
 						if (emails.length > 1) {
@@ -382,14 +380,14 @@
 								title: 'Choose E-mail Method for Selected Users',
 								msg: msg,
 								buttonText: {yes: "Use  'To'  Box", no: "Use  'BCC'  Box"},
-								fn: function(btn) {
+								fn: function (btn) {
 									if (btn === 'yes') {
-										var messageWindow = Ext.create('OSF.component.MessageWindow', {					
+										var messageWindow = Ext.create('OSF.component.MessageWindow', {
 											closeAction: 'destroy',
 											initialToUsers: emails
 										}).show();
 									} else if (btn === 'no') {
-										var messageWindow = Ext.create('OSF.component.MessageWindow', {					
+										var messageWindow = Ext.create('OSF.component.MessageWindow', {
 											closeAction: 'destroy',
 											initialBccUsers: emails
 										}).show();
@@ -397,7 +395,7 @@
 								}
 							});
 						} else if (emails.length === 1) {
-							var messageWindow = Ext.create('OSF.component.MessageWindow', {					
+							var messageWindow = Ext.create('OSF.component.MessageWindow', {
 								closeAction: 'destroy',
 								initialToUsers: emails
 							}).show();
@@ -409,14 +407,14 @@
 
 				var actionExportUser = function actionExportUser(records) {
 					var userIdInputs = "";
-					Ext.Array.each(records, function(record) {
+					Ext.Array.each(records, function (record) {
 						userIdInputs += '<input type="hidden" name="userId" ';
-						userIdInputs += 'value="' + record.get('username') +'" />';
+						userIdInputs += 'value="' + record.get('username') + '" />';
 					});
 					document.getElementById('exportFormUserIds').innerHTML = userIdInputs;
 					document.exportForm.submit();
 				};
-				
+
 				var actionToggleUsers = function actionToggleUsers(records) {
 					var active = Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue();
 					var url = 'api/v1/resource/userprofiles/multiple';
@@ -432,7 +430,7 @@
 					}
 
 					var users = [];
-					Ext.Array.each(records, function(record) {
+					Ext.Array.each(records, function (record) {
 						users.push(record.get('username'));
 					});
 
@@ -450,12 +448,12 @@
 						},
 						failure: function (response, opts) {
 							Ext.MessageBox.alert('Failed to ' + what,
-												 "Error: Could not " + what + ' users');
+									"Error: Could not " + what + ' users');
 						}
 					});
 				}
 			});
 
-			</script>
-			</stripes:layout-component>
-			</stripes:layout-render>
+		</script>
+	</stripes:layout-component>
+</stripes:layout-render>
