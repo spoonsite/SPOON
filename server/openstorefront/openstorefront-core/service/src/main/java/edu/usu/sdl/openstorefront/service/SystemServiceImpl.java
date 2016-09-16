@@ -500,11 +500,10 @@ public class SystemServiceImpl
 			LocalDate today = LocalDate.now();
 			LocalDate update = media.getUpdateDts().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			long distance = Math.abs(ChronoUnit.DAYS.between(today, update));
-			LOG.log(Level.INFO, MessageFormat.format("{0} is {1} days old", media.getOriginalFileName(), distance));
 
 			if (distance > maxDays) {
 				removeTemporaryMedia(media.getName());
-				LOG.log(Level.INFO, MessageFormat.format("Removing {0}", media.getOriginalFileName()));
+				LOG.log(Level.FINE, MessageFormat.format("Removing old temporary media: {0}", media.getOriginalFileName()));
 			}
 
 		}
