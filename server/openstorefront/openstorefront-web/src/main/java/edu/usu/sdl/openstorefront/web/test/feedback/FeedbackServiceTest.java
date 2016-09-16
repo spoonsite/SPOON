@@ -29,10 +29,10 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
  */
 public class FeedbackServiceTest extends BaseTestCase
 {
+
 	private Branding branding_internal = null;
 	private Branding branding_email = null;
 	private Branding defaultBranding = null;
-	private PropertiesManager propManager = null;
 	private String defaultPropertyValue = null;
 	private FeedbackTicket ticket_InternalTest = null;
 	private FeedbackTicket ticket_EmailTest = null;
@@ -77,7 +77,6 @@ public class FeedbackServiceTest extends BaseTestCase
 		branding_email = service.getBrandingService().saveBranding(branding_email);
 		service.getBrandingService().setBrandingAsCurrent(branding_email.getBrandingId());
 
-
 		ticket_EmailTest = new FeedbackTicket();
 		ticket_EmailTest.setTicketType("Feedback Test");
 		ticket_EmailTest.setUsername(TEST_USER);
@@ -90,19 +89,19 @@ public class FeedbackServiceTest extends BaseTestCase
 		String email = getSystemEmail();
 		ticket_EmailTest.setEmail(email);
 
-		propManager = new PropertiesManager();
-		defaultPropertyValue = propManager.getValue(KEY_FEEDBACK_EMAIL);
-		propManager.setProperty(KEY_FEEDBACK_EMAIL, email);
+		defaultPropertyValue = PropertiesManager.getValue(KEY_FEEDBACK_EMAIL);
+		PropertiesManager.setProperty(KEY_FEEDBACK_EMAIL, email);
 
 		// Submit feedback marked for email message
 		results.append("Submitting feedback (email)...<br>");
-		service.getFeedbackService().submitFeedback(ticket_EmailTest);
+		ticket_EmailTest = service.getFeedbackService().submitFeedback(ticket_EmailTest);
 		results.append("Feedback submitted successfully<br><br>");
 
-		propManager.setProperty(KEY_FEEDBACK_EMAIL, defaultPropertyValue);
+		PropertiesManager.setProperty(KEY_FEEDBACK_EMAIL, defaultPropertyValue);
 
 		// Mark ticket as complete
 		ticket_EmailTest = service.getFeedbackService().markAsComplete(ticket_EmailTest.getFeedbackId());
+
 		if (FeedbackTicket.INACTIVE_STATUS.equals(ticket_EmailTest.getActiveStatus())) {
 			results.append("Mark Feedback As Complete:  Passed<br><br>");
 		} else {
@@ -135,12 +134,11 @@ public class FeedbackServiceTest extends BaseTestCase
 		if (ticket_EmailTest != null) {
 			service.getFeedbackService().deleteFeedback(ticket_EmailTest.getFeedbackId());
 		}
-		if (propManager != null) {
-			if (defaultPropertyValue != null) {
-				propManager.setProperty(KEY_FEEDBACK_EMAIL, defaultPropertyValue);
-			} else {
-				propManager.removeProperty(KEY_FEEDBACK_EMAIL);
-			}
+
+		if (defaultPropertyValue != null) {
+			PropertiesManager.setProperty(KEY_FEEDBACK_EMAIL, defaultPropertyValue);
+		} else {
+			PropertiesManager.removeProperty(KEY_FEEDBACK_EMAIL);
 		}
 		if (defaultBranding != null) {
 			service.getBrandingService().setBrandingAsCurrent(defaultBranding.getBrandingId());
