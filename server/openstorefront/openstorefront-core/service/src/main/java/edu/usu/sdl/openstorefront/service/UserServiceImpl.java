@@ -232,6 +232,31 @@ public class UserServiceImpl
 	{
 		UserProfile profile = persistenceService.findById(UserProfile.class, username);
 		if (profile != null) {
+
+			//Check for duplicate (Should be rare)
+			//if their is dups; delete all but the last updated
+			UserProfile dupCheck = new UserProfile();
+			dupCheck.setUsername(username);
+			List<UserProfile> dupUsers = dupCheck.findByExampleProxy();
+			if (dupUsers.size() > 1) {
+				Date maxUpdateDate = null;
+				for (UserProfile userProfile : dupUsers) {
+					if (maxUpdateDate == null) {
+						maxUpdateDate = userProfile.getUpdateDts();
+					} else if (maxUpdateDate.before(userProfile.getUpdateDts())) {
+						maxUpdateDate = userProfile.getUpdateDts();
+					}
+				}
+				for (UserProfile userProfile : dupUsers) {
+					if (userProfile.getUpdateDts().before(maxUpdateDate)) {
+						//Because of the duplicate username we can only delete the user safely
+						persistenceService.delete(userProfile);
+					} else {
+						profile = userProfile;
+					}
+				}
+			}
+
 			profile.setActiveStatus(UserProfile.INACTIVE_STATUS);
 			profile.setUpdateDts(TimeUtil.currentDate());
 			profile.setUpdateUser(SecurityUtil.getCurrentUserName());
@@ -558,7 +583,7 @@ public class UserServiceImpl
 
 		UserProfile userProfileExample = new UserProfile();
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
-		
+
 		List<UserProfile> usersToSend = new ArrayList<>();
 
 		if (StringUtils.isNotBlank(adminMessage.getUserTypeCode())) {
@@ -618,22 +643,22 @@ public class UserServiceImpl
 		int emailCount = 0;
 		Email email = MailManager.newEmail();
 		email.setSubject(appTitle + " - " + adminMessage.getSubject());
-		email.setTextHTML(adminMessage.getMessage());		
-		
+		email.setTextHTML(adminMessage.getMessage());
+
 		for (UserProfile userProfile : usersToSend) {
 			String name = userProfile.getFirstName() + " " + userProfile.getLastName();
 			email.addRecipient(name, userProfile.getEmail(), Message.RecipientType.TO);
 			emailCount++;
-		}		
+		}
 		for (String emailAddress : adminMessage.getCcEmails()) {
-			email.addRecipient("", emailAddress, Message.RecipientType.CC);			
+			email.addRecipient("", emailAddress, Message.RecipientType.CC);
 			emailCount++;
 		}
 		for (String emailAddress : adminMessage.getBccEmails()) {
-			email.addRecipient("", emailAddress, Message.RecipientType.BCC);			
+			email.addRecipient("", emailAddress, Message.RecipientType.BCC);
 			emailCount++;
 		}
-		MailManager.send(email);		
+		MailManager.send(email);
 		log.log(Level.INFO, MessageFormat.format("(Admin Message) {0} email(s) sent (in one message)", emailCount));
 	}
 
@@ -983,11 +1008,11 @@ public class UserServiceImpl
 			existing.updateFields(userSavedSearch);
 			existing = persistenceService.persist(existing);
 		} else {
-			userSavedSearch.setUserSearchId(persistenceService.generateId());			
+			userSavedSearch.setUserSearchId(persistenceService.generateId());
 			userSavedSearch.populateBaseCreateFields();
 			existing = persistenceService.persist(userSavedSearch);
 		}
-		
+
 		return existing;
 	}
 
@@ -1004,14 +1029,14 @@ public class UserServiceImpl
 	public Dashboard getDashboard(String username)
 	{
 		Dashboard dashboard = new Dashboard();
-		
+
 		UserDashboard userDashboard = new UserDashboard();
 		userDashboard.setUsername(username);
 		userDashboard = userDashboard.find();
-		
-		if (userDashboard == null) {			
+
+		if (userDashboard == null) {
 			userDashboard = new UserDashboard();
-			userDashboard.setDashboardId(persistenceService.generateId());			
+			userDashboard.setDashboardId(persistenceService.generateId());
 			userDashboard.setUsername(username);
 			userDashboard.setName(UserDashboard.DEFAULT_NAME);
 			userDashboard.populateBaseCreateFields();
@@ -1020,10 +1045,10 @@ public class UserServiceImpl
 			DashboardWidget widget = new DashboardWidget();
 			widget.setDashboardId(userDashboard.getDashboardId());
 			dashboard.setWidgets(widget.findByExample());
-			dashboard.getWidgets().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, DashboardWidget.FIELD_WIDGET_ORDER));			
+			dashboard.getWidgets().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, DashboardWidget.FIELD_WIDGET_ORDER));
 		}
 		dashboard.setDashboard(userDashboard);
-				
+
 		return dashboard;
 	}
 
@@ -1032,8 +1057,8 @@ public class UserServiceImpl
 	{
 		Objects.requireNonNull(dashboard);
 		Objects.requireNonNull(dashboard.getDashboard());
-		
-		UserDashboard userDashboard =  persistenceService.findById(UserDashboard.class, dashboard.getDashboard().getDashboardId());
+
+		UserDashboard userDashboard = persistenceService.findById(UserDashboard.class, dashboard.getDashboard().getDashboardId());
 		if (userDashboard != null) {
 			userDashboard.updateFields(dashboard.getDashboard());
 			userDashboard = persistenceService.persist(userDashboard);
@@ -1042,19 +1067,19 @@ public class UserServiceImpl
 			dashboard.getDashboard().populateBaseCreateFields();
 			userDashboard = persistenceService.persist(dashboard.getDashboard());
 		}
-		
+
 		//clear old widgets and replace
 		DashboardWidget widgetExample = new DashboardWidget();
 		widgetExample.setDashboardId(userDashboard.getDashboardId());
 		persistenceService.deleteByExample(widgetExample);
-		
+
 		for (DashboardWidget widget : dashboard.getWidgets()) {
 			widget.setWidgetId(persistenceService.generateId());
 			widget.populateBaseCreateFields();
 			widget.setDashboardId(userDashboard.getDashboardId());
 			persistenceService.persist(widget);
-		}	
-		
+		}
+
 		dashboard.setDashboard(userDashboard);
 		return dashboard;
 	}

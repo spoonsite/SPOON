@@ -37,7 +37,9 @@ public class AttributeMappedXMLParser
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
 	{
-		if (mimeType.contains("xml")) {
+		if (mimeType.contains("xml")
+				|| mimeType.contains("application/octet-stream")
+				|| mimeType.contains("text")) {
 			return "";
 		} else {
 			return "Invalid format. Please upload a XML file.";
