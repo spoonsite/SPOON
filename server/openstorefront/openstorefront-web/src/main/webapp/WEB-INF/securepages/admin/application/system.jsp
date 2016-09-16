@@ -287,8 +287,9 @@
 										var record = Ext.getCmp('threadStatus').getSelectionModel().getSelection()[0];
 										
 										var detailWin = Ext.create('Ext.window.Window', {
-											title: 'Full Stack',
+											title: 'Full Stack - ' + record.get("name"),
 											modal: true,
+											closeAction: 'destroy',
 											width: '80%',
 											height: '80%',
 											maximizable: true,
@@ -306,6 +307,9 @@
 											},
 											success: function(response, opts) {
 												detailWin.setHtml(response.responseText);
+											},
+											failure: function(response, opts) {
+												detailWin.setHtml("Selected thread is no longer available.");
 											}
 										});
 									}									
