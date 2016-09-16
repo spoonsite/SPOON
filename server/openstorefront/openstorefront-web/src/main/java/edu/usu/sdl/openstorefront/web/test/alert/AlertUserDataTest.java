@@ -67,7 +67,7 @@ public class AlertUserDataTest extends BaseTestCase
 
 		results.append("Test 1 - One User Data Option Selected<br><br>");
 		alertUserDataTag = new Alert();
-		alertUserDataTag.setName("New User Data Alert Test1");
+		alertUserDataTag.setName("New User Data Alert Test Tag");
 		alertUserDataTag.setActiveStatus(ACTIVE_STATUS);
 		alertUserDataTag.setAlertType(AlertType.USER_DATA);
 		EmailAddress emailAddress = new EmailAddress();
@@ -116,10 +116,9 @@ public class AlertUserDataTest extends BaseTestCase
 		results.append("Test 2 - Multiple User Data Option Selected<br><br>");
 
 		alertUserDataRQ = new Alert();
-		alertUserDataRQ.setName("New User Data Alert Test2");
+		alertUserDataRQ.setName("New User Data Alert Test RQ");
 		alertUserDataRQ.setActiveStatus(ACTIVE_STATUS);
 		alertUserDataRQ.setAlertType(AlertType.USER_DATA);
-		emails.add(emailAddress);
 		alertUserDataRQ.setEmailAddresses(emails);
 		userDataOption = new UserDataAlertOption();
 		userDataOption.setAlertOnQuestions(true);
@@ -134,8 +133,8 @@ public class AlertUserDataTest extends BaseTestCase
 		ComponentQuestion componentQuestion = new ComponentQuestion();
 		componentQuestion.setComponentId(compAlertQuestion.getComponentId());
 		componentQuestion.setUserTypeCode(END_USER);
-		componentQuestion.setQuestion("Did man really land on the moon?");
-		componentQuestion.setOrganization("User Data Organization");
+		componentQuestion.setQuestion("What is the largest basin on the moon?");
+		componentQuestion.setOrganization(TEST_ORGANIZATION);
 		compAlertQuestion.setAdminModified(false);
 		question.setQuestion(componentQuestion);
 		componentAllRQ.getQuestions().add(question);
@@ -166,11 +165,11 @@ public class AlertUserDataTest extends BaseTestCase
 		ComponentReview componentReview = new ComponentReview();
 		componentReview.setUserTypeCode(END_USER);
 		componentReview.setComponentId(compAlertQuestion.getComponentId());
-		componentReview.setComment("User Data Test Comment");
+		componentReview.setComment("User Data Review Test Comment");
 		componentReview.setRating(4);
-		componentReview.setTitle("User Data Review Test");
+		componentReview.setTitle("User Data Review Test Title");
 		componentReview.setRecommend(true);
-		componentReview.setOrganization("User data test organization");
+		componentReview.setOrganization(TEST_ORGANIZATION);
 		componentReview.setAdminModified(false);
 		componentReview.setUserTimeCode("TIME_TEST");
 		componentReview.setLastUsed(TimeUtil.currentDate());
@@ -205,10 +204,9 @@ public class AlertUserDataTest extends BaseTestCase
 		results.append("Test 3 - User Data Option Not Selected<br><br>");
 
 		alertUserDataContact = new Alert();
-		alertUserDataContact.setName("New User Data Alert Test3");
+		alertUserDataContact.setName("New User Data Alert Test Contact");
 		alertUserDataContact.setActiveStatus(ACTIVE_STATUS);
 		alertUserDataContact.setAlertType(AlertType.USER_DATA);
-		emails.add(emailAddress);
 		alertUserDataContact.setEmailAddresses(emails);
 		userDataOption = new UserDataAlertOption();
 		userDataOption.setAlertOnContactUpdate(false);
@@ -226,7 +224,7 @@ public class AlertUserDataTest extends BaseTestCase
 		compAlertContact.setFirstName("UserDataFirstName1");
 		compAlertContact.setLastName("UserDataLastName1");
 		compAlertContact.setEmail("myUserDataTest@alertuserdata.com");
-		compAlertContact.setOrganization("Alert User Data Contact Test");
+		compAlertContact.setOrganization(TEST_ORGANIZATION);
 		compAlertContact.setAdminModified(false);
 		componentAllContact.getContacts().add(compAlertContact);
 		service.getComponentService().saveComponentContact(compAlertContact);
@@ -235,7 +233,7 @@ public class AlertUserDataTest extends BaseTestCase
 		updatedCompContact.setFirstName("UserDataFirstName1");
 		updatedCompContact.setEmail("myUserDataTest@alertuserdata.com");
 		updatedCompContact.setComponentId(compContact.getComponentId());
-		updatedCompContact = (ComponentContact) updatedCompContact.find();
+		updatedCompContact = updatedCompContact.find();
 		contactId = updatedCompContact.getContactId();
 		updatedCompContact.setFirstName("Updated UserData Contact FirstName");
 		service.getComponentService().saveComponentContact(updatedCompContact);
@@ -286,7 +284,6 @@ public class AlertUserDataTest extends BaseTestCase
 		if (!alerts.isEmpty()) {
 			activateAlerts(alerts);
 		}
-
 	}
 
 	@Override

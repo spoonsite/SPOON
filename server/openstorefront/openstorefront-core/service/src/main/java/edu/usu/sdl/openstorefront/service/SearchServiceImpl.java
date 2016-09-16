@@ -102,14 +102,15 @@ public class SearchServiceImpl
 	@Override
 	public ComponentSearchWrapper getSearchItems(SearchQuery query, FilterQueryParams filter)
 	{
-		return SearchServerManager.getSearchServer().search(query, filter);		
+		return SearchServerManager.getSearchServer().search(query, filter);
 	}
 
 	@Override
 	public void indexComponents(List<Component> components)
 	{
 		if (!components.isEmpty()) {
-			SearchServerManager.getSearchServer().index(components);		
+			SearchServerManager.getSearchServer().index(components);
+			OSFCacheManager.getSearchCache().removeAll();
 		}
 	}
 
@@ -178,25 +179,29 @@ public class SearchServiceImpl
 	@Override
 	public void deleteById(String id)
 	{
-		SearchServerManager.getSearchServer().deleteById(id);		
+		SearchServerManager.getSearchServer().deleteById(id);
+		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	@Override
 	public void deleteAll()
 	{
 		SearchServerManager.getSearchServer().deleteAll();
+		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	@Override
 	public void saveAll()
 	{
 		SearchServerManager.getSearchServer().saveAll();
+		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	@Override
 	public void resetIndexer()
 	{
 		SearchServerManager.getSearchServer().resetIndexer();
+		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	@Override
@@ -205,7 +210,7 @@ public class SearchServiceImpl
 		Objects.requireNonNull(searchModel, "Search Model Required");
 
 		AdvanceSearchResult searchResult = new AdvanceSearchResult();
-		
+
 		Element element = OSFCacheManager.getSearchCache().get(searchModel.searchKey());
 		if (element != null) {
 			searchResult = (AdvanceSearchResult) element.getObjectValue();
@@ -299,7 +304,7 @@ public class SearchServiceImpl
 				Set<String> masterResults = new HashSet<>();
 				masterResults.addAll(componentIds);
 
-				//get intermediate Results 
+				//get intermediate Results
 				if (!masterResults.isEmpty()) {
 					String query = "select componentId, componentType, name, lastUpdateDts, activeStatus, approvalState from " + Component.class.getSimpleName() + " where componentId in :idList";
 					Map<String, Object> parameterMap = new HashMap<>();
@@ -387,20 +392,20 @@ public class SearchServiceImpl
 				}
 			}
 			searchResult.setValidationResult(validationResultMain);
-			
+
 			element = new Element(searchModel.searchKey(), searchResult);
-			OSFCacheManager.getSearchCache().put(element);			
+			OSFCacheManager.getSearchCache().put(element);
 		}
 
 		return searchResult;
 	}
-	
+
 	@Override
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
 	{
 		return SearchServerManager.getSearchServer().doIndexSearch(query, filter);
-	}	
-	
+	}
+
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
 	{
 		return SearchServerManager.getSearchServer().doIndexSearch(query, filter, addtionalFieldsToReturn);
@@ -429,22 +434,22 @@ public class SearchServiceImpl
 
 	@Override
 	public void inactivateSearch(String searchId)
-	{		
-		toggleStatusOnSearch(searchId, SystemSearch.INACTIVE_STATUS);		
+	{
+		toggleStatusOnSearch(searchId, SystemSearch.INACTIVE_STATUS);
 	}
-	
-	private void toggleStatusOnSearch(String searchId, String newStatus) 
+
+	private void toggleStatusOnSearch(String searchId, String newStatus)
 	{
 		Objects.requireNonNull(searchId);
-		
+
 		SystemSearch existing = persistenceService.findById(SystemSearch.class, searchId);
 		if (existing != null) {
 			existing.setActiveStatus(newStatus);
 			existing.populateBaseUpdateFields();
 			persistenceService.persist(existing);
 		} else {
-			throw new OpenStorefrontRuntimeException("Search not found", "Check Id: "  + searchId);
-		}		
+			throw new OpenStorefrontRuntimeException("Search not found", "Check Id: " + searchId);
+		}
 	}
 
 	@Override

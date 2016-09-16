@@ -89,7 +89,7 @@ public class ContactServiceTest extends BaseTestCase
 		newContactComp.setFirstName(newContact.getFirstName());
 		newContactComp.setLastName(newContact.getLastName());
 		newContactComp.setEmail(newContact.getEmail());
-		newContactComp.setOrganization(newContact.getEmail());
+		newContactComp.setOrganization(newContact.getOrganization());
 		newContactComp.setContactType(ContactType.SUBMITTER);
 		componentAll.getContacts().add(newContactComp);
 		service.getComponentService().saveFullComponent(componentAll);

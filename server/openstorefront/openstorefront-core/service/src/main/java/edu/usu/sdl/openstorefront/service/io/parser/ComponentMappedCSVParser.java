@@ -35,7 +35,9 @@ public class ComponentMappedCSVParser
 	public String checkFormat(String mimeType, InputStream input)
 	{
 		if (mimeType.contains("csv")
-				|| mimeType.contains("text")) {
+				|| mimeType.contains("application/octet-stream")
+				|| mimeType.contains("text")
+				|| mimeType.contains("excel")) {
 			return "";
 		} else {
 			return "Invalid format. Please upload a CSV file.";

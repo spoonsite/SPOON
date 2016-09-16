@@ -33,8 +33,9 @@ public class DBSpecialWhereTest
 {
 
 	@Override
-	protected void runInternalTest()
+	protected void initializeTest()
 	{
+		super.initializeTest();
 		Arrays.asList("A", "B").forEach(item -> {
 			TestEntity testEntity = new TestEntity();
 			testEntity.setCode(item);
@@ -57,6 +58,11 @@ public class DBSpecialWhereTest
 			service.getLookupService().saveLookupValue(testEntity);
 		});
 		results.append("Saved C, D").append("<br>");
+	}
+
+	@Override
+	protected void runInternalTest()
+	{
 
 		TestEntity testEntityExample = new TestEntity();
 		testEntityExample.setActiveStatus(TestEntity.ACTIVE_STATUS);
@@ -76,14 +82,20 @@ public class DBSpecialWhereTest
 			results.append(String.join("-", record.getCode(), record.getDescription())).append("<br>");
 		});
 
-		results.append("Clean up records").append("<br>");
-		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
 	}
 
 	@Override
 	public String getDescription()
 	{
 		return "DB Special Where Test";
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
+		results.append("Clean up records").append("<br>");
+		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
 	}
 
 }

@@ -53,13 +53,19 @@ public class DBSaveTest
 		});
 		results.append("Saved C, D, E").append("<br>");
 
-		results.append("Clean up records").append("<br>");
-		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
 	}
 
 	@Override
 	public String getDescription()
 	{
 		return "DB Save Test";
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
+		results.append("Clean up records").append("<br>");
+		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
 	}
 }
