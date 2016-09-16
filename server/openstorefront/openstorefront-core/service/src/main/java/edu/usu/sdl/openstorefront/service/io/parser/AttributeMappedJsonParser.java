@@ -37,7 +37,9 @@ public class AttributeMappedJsonParser
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
 	{
-		if (mimeType.contains("json")) {
+		if (mimeType.contains("json")
+				|| mimeType.contains("application/octet-stream")
+				|| mimeType.contains("text")) {
 			return "";
 		} else {
 			return "Invalid format. Please upload a json file.";

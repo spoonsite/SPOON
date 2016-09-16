@@ -35,6 +35,8 @@ public class AttributeMappedTSVParser
 	public String checkFormat(String mimeType, InputStream input)
 	{
 		if (mimeType.contains("tsv")
+				|| mimeType.contains("application/octet-stream")
+				|| mimeType.contains("excel")
 				|| mimeType.contains("text")) {
 			return "";
 		} else {
