@@ -42,8 +42,10 @@ import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -109,12 +111,13 @@ public class OrganizationServiceImpl
 		}
 
 	}
-	
-	private void clearOrganizationCaches() {
+
+	private void clearOrganizationCaches()
+	{
 		OSFCacheManager.getContactCache().removeAll();
 		OSFCacheManager.getComponentCache().removeAll();
 		OSFCacheManager.getSearchCache().removeAll();
-	}	
+	}
 
 	@Override
 	public void extractOrganizations()
@@ -160,7 +163,7 @@ public class OrganizationServiceImpl
 				updateOrganizationOnEntity(new ComponentQuestion(), organizationMerge.getName(), organizationTarget);
 				updateOrganizationOnEntity(new ComponentQuestionResponse(), organizationMerge.getName(), organizationTarget);
 				clearOrganizationCaches();
-				
+
 				persistenceService.delete(organizationMerge);
 
 			} else {
@@ -221,26 +224,46 @@ public class OrganizationServiceImpl
 			));
 			return reference;
 		}));
-		references.addAll(findOrgReferences(new Contact(), organization, (Contact entity) -> {
+		references.addAll(findOrgReferences(new ComponentContact(), organization, (ComponentContact entity) -> {
 			OrgReference reference = new OrgReference();
-			ComponentContact componentContact = new ComponentContact();
-			componentContact.setContactId(entity.getContactId());
-			componentContact = (ComponentContact) componentContact.find();
-			
 			reference.setActiveStatus(entity.getActiveStatus());
-			reference.setComponentId(componentContact.getComponentId());
-			reference.setComponentName(getComponentService().getComponentName(componentContact.getComponentId()));
-			reference.setComponentApproveStatus(getComponentService().getComponentApprovalStatus(componentContact.getComponentId()));
+			reference.setComponentId(entity.getComponentId());
+			reference.setComponentName(getComponentService().getComponentName(entity.getComponentId()));
+			reference.setComponentApproveStatus(getComponentService().getComponentApprovalStatus(entity.getComponentId()));
 			reference.setReferenceId(entity.getContactId());
 			reference.setReferenceName(String.join(" ",
 					StringUtils.defaultString(StringProcessor.enclose(entity.getSecurityMarkingType())),
-					StringUtils.defaultString(TranslateUtil.translate(ContactType.class, componentContact.getContactType())),
+					StringUtils.defaultString(TranslateUtil.translate(ContactType.class, entity.getContactType())),
 					StringUtils.defaultString(entity.getFirstName()),
 					StringUtils.defaultString(entity.getLastName()),
 					StringUtils.defaultString(entity.getEmail())
 			));
 			return reference;
 		}));
+
+		List<OrgReference> globalContacts = findOrgReferences(new Contact(), organization, (Contact entity) -> {
+			OrgReference reference = new OrgReference();
+			reference.setActiveStatus(entity.getActiveStatus());
+			reference.setReferenceId(entity.getContactId());
+			reference.setReferenceName(String.join(" ",
+					StringUtils.defaultString(StringProcessor.enclose(entity.getSecurityMarkingType())),
+					StringUtils.defaultString(entity.getFirstName()),
+					StringUtils.defaultString(entity.getLastName()),
+					StringUtils.defaultString(entity.getEmail())
+			));
+			return reference;
+		});
+
+		//filter out duplications (Contacts vs Component Contacts ...keep CompoenentContact)
+		Set<String> existingReferenceId = new HashSet<>();
+		for (OrgReference orgReference : references) {
+			existingReferenceId.add(orgReference.getReferenceId());
+		}
+		for (OrgReference orgReference : globalContacts) {
+			if (existingReferenceId.contains(orgReference.getReferenceId()) == false) {
+				references.add(orgReference);
+			}
+		}
 
 		references.addAll(findOrgReferences(new ComponentReview(), organization, (ComponentReview entity) -> {
 			OrgReference reference = new OrgReference();
@@ -317,10 +340,10 @@ public class OrganizationServiceImpl
 		if (StringUtils.isNotBlank(organization)) {
 			//Case in-senstive
 			entity.setOrganization(organization.toLowerCase());
-			QueryByExample<BaseEntity> queryByExample = new QueryByExample<>((BaseEntity)entity);
-			queryByExample.getFieldOptions().put(OrganizationModel.FIELD_ORGANIZATION, new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());			
-						
-			entities = persistenceService.queryByExample((Class<T>) entity.getClass(),queryByExample);
+			QueryByExample<BaseEntity> queryByExample = new QueryByExample<>((BaseEntity) entity);
+			queryByExample.getFieldOptions().put(OrganizationModel.FIELD_ORGANIZATION, new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
+
+			entities = persistenceService.queryByExample((Class<T>) entity.getClass(), queryByExample);
 
 		} else {
 			//Search for records with no org
