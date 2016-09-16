@@ -107,6 +107,7 @@ public abstract class BaseTestCase
 		component.setOrganization("Test");
 		component.setApprovalState(ApprovalStatus.APPROVED);
 		component.setGuid("5555555");
+		component.setAdminModified(false);
 		component.setLastActivityDts(TimeUtil.currentDate());
 		component.setActiveStatus(Component.ACTIVE_STATUS);
 		componentAll.setComponent(component);

@@ -27,10 +27,10 @@ import static edu.usu.sdl.openstorefront.core.entity.ContactType.SUBMITTER;
 import edu.usu.sdl.openstorefront.core.entity.ExperienceTimeType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
+import static edu.usu.sdl.openstorefront.core.entity.StandardEntity.ACTIVE_STATUS;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import static edu.usu.sdl.openstorefront.core.entity.UserTypeCode.END_USER;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.core.model.OrgReference;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
 import edu.usu.sdl.openstorefront.core.model.ReviewAll;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
@@ -53,11 +53,6 @@ public class OrganizationServiceTest extends BaseTestCase
 	@Override
 	protected void runInternalTest()
 	{
-
-		/**
-		 * Waiting on merge cache fix and update service so it updates global
-		 * contact
-		 */
 		ComponentAll componentAll = getTestComponent();
 		Component orgComponent = componentAll.getComponent();
 		orgComponent.setOrganization("First-Test-001 Organization");
@@ -146,7 +141,8 @@ public class OrganizationServiceTest extends BaseTestCase
 		userProfile.setFirstName("OrgTestFirstName2");
 		userProfile.setLastName("OrgTestLastName3");
 		userProfile.setExternalGuid("8888-8888");
-		service.getUserService().saveUserProfile(userProfile);
+		userProfile = service.getUserService().saveUserProfile(userProfile);
+		userProfile.setActiveStatus(ACTIVE_STATUS);
 
 		componentAll = service.getComponentService().saveFullComponent(componentAll, options);
 
@@ -236,13 +232,6 @@ public class OrganizationServiceTest extends BaseTestCase
 		} else {
 			failureReason.append("Organization Merge:  Failed<br><br>");
 		}
-
-		boolean activeComp = true;
-		boolean approvedComp = true;
-		List<OrgReference> references = service.getOrganizationService().findReferences("Target Organization 005", activeComp, approvedComp);
-
-		// Check to see if expected references are returned with said organization
-		results.append(references.isEmpty());
 	}
 
 	@Override
@@ -256,13 +245,8 @@ public class OrganizationServiceTest extends BaseTestCase
 			userProfile.setOrganization(TEST_ORGANIZATION);
 			service.getUserService().saveUserProfile(userProfile);
 		}
-		if (organization != null) {
-			try {
-				service.getOrganizationService().removeOrganization(organization.getOrganizationId());
-			} catch (AttachedReferencesException ex) {
-				failureReason.append(ex).append("- Unable to delete ").append(organization.getName()).append("<br><br>");
-
-			}
+		if (contactFromCompContact != null) {
+			service.getContactService().deleteContact(contactFromCompContact.getContactId());
 		}
 		if (organizationTarget != null) {
 			try {
@@ -271,10 +255,14 @@ public class OrganizationServiceTest extends BaseTestCase
 				failureReason.append(ex).append("- Unable to delete ").append(organizationTarget.getName()).append("<br><br>");
 			}
 		}
-		if (contactFromCompContact != null) {
-			service.getContactService().deleteContact(contactFromCompContact.getContactId());
-		}
+		if (organization != null) {
+			try {
+				service.getOrganizationService().removeOrganization(organization.getOrganizationId());
+			} catch (AttachedReferencesException ex) {
+				failureReason.append(ex).append("- Unable to delete ").append(organization.getName()).append("<br><br>");
 
+			}
+		}
 	}
 
 	@Override
