@@ -27,7 +27,7 @@ import javax.persistence.OneToOne;
  */
 @APIDescription("Referenced Metadata Attribute")
 public class ComponentAttribute
-		extends BaseComponent
+		extends BaseComponent<ComponentAttribute>
 {
 
 	@PK

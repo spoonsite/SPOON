@@ -28,7 +28,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Defines error types")
 public class FileHistoryErrorType
-		extends LookupEntity
+		extends LookupEntity<FileHistoryErrorType>
 {
 
 	public static final String SYSTEM = "SYSTEM";

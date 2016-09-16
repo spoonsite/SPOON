@@ -22,11 +22,15 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import static edu.usu.sdl.openstorefront.core.entity.ContactType.SUBMITTER;
+import edu.usu.sdl.openstorefront.core.entity.ExperienceTimeType;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import static edu.usu.sdl.openstorefront.core.entity.UserTypeCode.END_USER;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.OrgReference;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
 import edu.usu.sdl.openstorefront.core.model.ReviewAll;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
@@ -38,27 +42,48 @@ import java.util.List;
  */
 public class OrganizationServiceTest extends BaseTestCase
 {
+
+	private ExperienceTimeType experience = null;
+	private Organization organization = null;
+	private Organization organizationTarget = null;
+	private UserProfile userProfile = null;
+	private ComponentContact componentContact = null;
+	private Contact contactFromCompContact = null;
+
 	@Override
 	protected void runInternalTest()
 	{
+
 		/**
-		 * To be continued...waiting on results from JIRA bug ticket
+		 * Waiting on merge cache fix and update service so it updates global
+		 * contact
 		 */
 		ComponentAll componentAll = getTestComponent();
 		Component orgComponent = componentAll.getComponent();
-		orgComponent.setOrganization("Existing Test Organization");
-		orgComponent.setName("Test Organization Component");
+		orgComponent.setOrganization("First-Test-001 Organization");
+		orgComponent.setName("Test-Organization-Service Component");
 
 		ReviewAll review = new ReviewAll();
 		ComponentReview componentReview = new ComponentReview();
-		componentReview.setComment("Test Review Comment");
+		componentReview.setComment("Test Review Comment for Organization Test");
 		componentReview.setUserTypeCode(END_USER);
 		componentReview.setRating(4);
 		componentReview.setTitle("Test Review Title");
-		componentReview.setUserTimeCode("3 months");
+		componentReview.setUserTimeCode("ORGANIZATION_TEST");
 		componentReview.setLastUsed(TimeUtil.currentDate());
 		componentReview.setRecommend(true);
-		componentReview.setOrganization("Existing Test Organization");
+		componentReview.setOrganization("First-Test-001 Organization");
+		componentReview.setComponentId(orgComponent.getComponentId());
+		experience = new ExperienceTimeType();
+		experience.setCode("ORGANIZATION_TEST");
+		experience.setDescription("Experience - Organization Service Test");
+		service.getLookupService().saveLookupValue(experience);
+		service.getComponentService().saveComponentReview(componentReview);
+		componentReview = new ComponentReview();
+		componentReview.setComment("Test Review Comment for Organization Test");
+		componentReview.setComponentId(orgComponent.getComponentId());
+		componentReview.setUserTypeCode(END_USER);
+		componentReview = componentReview.find();
 		review.setComponentReview(componentReview);
 		componentAll.getReviews().add(review);
 
@@ -66,149 +91,191 @@ public class OrganizationServiceTest extends BaseTestCase
 		ComponentQuestion componentQuestion = new ComponentQuestion();
 		componentQuestion.setUserTypeCode(END_USER);
 		componentQuestion.setQuestion("Did man really land on the moon?");
-		componentQuestion.setOrganization("Existing Test Organization");
+		componentQuestion.setOrganization("First-Test-001 Organization");
+		componentQuestion.setComponentId(orgComponent.getComponentId());
+		service.getComponentService().saveComponentQuestion(componentQuestion);
+		componentQuestion = new ComponentQuestion();
+		componentQuestion.setComponentId(orgComponent.getComponentId());
+		componentQuestion.setQuestion("Did man really land on the moon?");
+		componentQuestion.setOrganization("First-Test-001 Organization");
+		componentQuestion = componentQuestion.find();
 		question.setQuestion(componentQuestion);
 
 		ComponentQuestionResponse compQuestionResp = new ComponentQuestionResponse();
 		compQuestionResp.setQuestionId(componentQuestion.getQuestionId());
+		compQuestionResp.setComponentId(orgComponent.getComponentId());
 		compQuestionResp.setResponse("Why yes they did on July 20, 1969.  Thank you Mr. Armstrong.");
 		compQuestionResp.setUserTypeCode(END_USER);
-		compQuestionResp.setOrganization("Existing Test Organization");
+		compQuestionResp.setOrganization("First-Test-001 Organization");
+		service.getComponentService().saveComponentQuestionResponse(compQuestionResp);
+		compQuestionResp = new ComponentQuestionResponse();
+		compQuestionResp.setComponentId(orgComponent.getComponentId());
+		compQuestionResp.setResponse("Why yes they did on July 20, 1969.  Thank you Mr. Armstrong.");
+		compQuestionResp.setOrganization("First-Test-001 Organization");
+		compQuestionResp = (ComponentQuestionResponse) compQuestionResp.find();
 		question.getResponds().add(compQuestionResp);
 		componentAll.getQuestions().add(question);
 
-		ComponentContact componentContact = new ComponentContact();
+		componentContact = new ComponentContact();
 		componentContact.setContactType(SUBMITTER);
-		componentContact.setFirstName("firstNameTest");
-		componentContact.setLastName("lastNameTest");
-		componentContact.setOrganization("Existing Test Organization");
+		componentContact.setComponentId(orgComponent.getComponentId());
+		componentContact.setFirstName("ComponentContactFirstName1");
+		componentContact.setLastName("ComponentContactLastName1");
+		componentContact.setOrganization("First-Test-001 Organization");
+		componentContact.setEmail("componentcontact01@compcontact.com");
+		service.getComponentService().saveComponentContact(componentContact);
+		componentContact = new ComponentContact();
+		componentContact.setComponentId(orgComponent.getComponentId());
+		componentContact.setEmail("componentcontact01@compcontact.com");
+		componentContact.setOrganization("First-Test-001 Organization");
+		componentContact = componentContact.find();
 		componentAll.getContacts().add(componentContact);
 
-//		FileHistoryOption options = new FileHistoryOption();
-//		options.setUploadIntegration(true);
-//		options.setUploadQuestions(true);
-//		options.setUploadReviews(true);
-//		options.setUploadTags(true);
+		contactFromCompContact = componentContact.fullContact();
 
-		componentAll = service.getComponentService().saveFullComponent(componentAll);
-//		componentAll = service.getComponentService().saveFullComponent(componentAll, options);
+		FileHistoryOption options = new FileHistoryOption();
+		options.setUploadIntegration(true);
+		options.setUploadQuestions(true);
+		options.setUploadReviews(true);
+		options.setUploadTags(true);
 
-		UserProfile userProfile = getTestUserProfile();
-		String previousOrganization = userProfile.getOrganization();
-		userProfile.setOrganization("First Test Organization");
+		userProfile = getTestUserProfile();
+		userProfile.setOrganization("First-Test-001 Organization");
+		userProfile.setUsername("OrgTestUsername1");
+		userProfile.setFirstName("OrgTestFirstName2");
+		userProfile.setLastName("OrgTestLastName3");
+		userProfile.setExternalGuid("8888-8888");
 		service.getUserService().saveUserProfile(userProfile);
+
+		componentAll = service.getComponentService().saveFullComponent(componentAll, options);
 
 		// Query organization and then change it to something else and save organization
 		// then query the componentAll to see reflection of change in organization
-		Organization organization = new Organization();
-		organization.setName("First Test Organization");
+		organization = new Organization();
+		organization.setName("First-Test-001 Organization");
 		organization = organization.find();
-		organization.setName("Second Test Organization");
+		organization.setName("Second-Test-002 Organization");
 		service.getOrganizationService().saveOrganization(organization);
 
 		ComponentAll componentAllCheck = service.getComponentService().getFullComponent(componentAll.getComponent().getComponentId());
 		Component orgComponentCheck = componentAllCheck.getComponent();
 		Organization organizationCheck = new Organization();
-		organizationCheck.setName("First Test Organization");
+		organizationCheck.setName("First-Test-001 Organization");
 		organizationCheck = organization.find();
 
-		if (orgComponentCheck.getOrganization().equals("Second Test Organization") && organizationCheck == null) {
+		if (orgComponentCheck.getOrganization().equals("Second-Test-002 Organization") && organizationCheck == null) {
 			List<ReviewAll> reviewAllList = componentAllCheck.getReviews();
 			for (ReviewAll reviews : reviewAllList) {
-				if ("Second Test Organization".equals(reviews.getComponentReview().getOrganization())) {
-					results.append("Component review's organization updated successfully");
+				if ("Second-Test-002 Organization".equals(reviews.getComponentReview().getOrganization())) {
+					results.append("Component review's organization updated successfully<br>");
 				} else {
-					results.append("Failed - Component review's organization did not update successfully");
+					results.append("Failed - Component review's organization did not update successfully<br>");
 				}
 			}
 			List<QuestionAll> questionAllList = componentAllCheck.getQuestions();
 			for (QuestionAll questions : questionAllList) {
-				if ("New Test Organization".equals(questions.getQuestion().getOrganization())) {
-					results.append("Component question's organization updated successfully");
+				if ("Second-Test-002 Organization".equals(questions.getQuestion().getOrganization())) {
+					results.append("Component question's organization updated successfully<br>");
 				} else {
-					failureReason.append("Failed - Component question's organization did not update successfully");
+					failureReason.append("Failed - Component question's organization did not update successfully<br>");
 				}
 			}
 			for (QuestionAll questions : questionAllList) {
 				List<ComponentQuestionResponse> questionResponses = questions.getResponds();
 				for (ComponentQuestionResponse responses : questionResponses) {
-					if ("New Test Organization".equals(responses.getOrganization())) {
-						results.append("Component questions response's organization updated successfully");
+					if ("Second-Test-002 Organization".equals(responses.getOrganization())) {
+						results.append("Component questions response's organization updated successfully<br>");
 					} else {
-						failureReason.append("Failed - Component question response's organization did not update successfully");
+						failureReason.append("Failed - Component question response's organization did not update successfully<br>");
 					}
 				}
 			}
 			List<ComponentContact> contacts = componentAllCheck.getContacts();
 			for (ComponentContact contact : contacts) {
-				if ("New Test Organization".equals(contact.getOrganization())) {
-					results.append("Component contact's organization updated successfully");
+				if ("Second-Test-002 Organization".equals(contact.getOrganization())) {
+					results.append("Component contact's organization updated successfully<br>");
 				} else {
-					failureReason.append("Failed - Component contact's organization did not update successfully");
+					failureReason.append("Failed - Component contact's organization did not update successfully<br>");
 				}
 			}
 
 			UserProfile profileCheck = new UserProfile();
-			profileCheck.setUsername(TEST_USER);
-			profileCheck = (UserProfile) profileCheck.find();
+			profileCheck.setUsername("OrgTestUsername1");
+			profileCheck = profileCheck.find();
 
-			if ("New Test Organization".equals(profileCheck.getOrganization())) {
-				results.append("UserProfile's organization updated successfully");
+			if ("Second-Test-002 Organization".equals(profileCheck.getOrganization())) {
+				results.append("UserProfile's organization updated successfully<br><br>");
 			} else {
-				failureReason.append("Failed - UserProfile's organization did not update successfully");
+				failureReason.append("Failed - UserProfile's organization did not update successfully<br><br>");
 			}
 		} else {
-			failureReason.append("SubComponents and UserProfile failed to update");
+			failureReason.append("SubComponents and UserProfile failed to update<br>");
 		}
 
 		Organization organizationMerge = new Organization();
-		organizationMerge.setName("New Test Organization");
+		organizationMerge.setName("Second-Test-002 Organization");
 		organizationMerge = organizationMerge.find();
 
-		Organization organizationTarget = new Organization();
-		organizationTarget.setName("Merge Organization");
+		organizationTarget = new Organization();
+		organizationTarget.setName("Target Organization 005");
 		service.getOrganizationService().saveOrganization(organizationTarget);
 		organizationTarget = organizationTarget.find();
 
 		// After the merge takes place the component still reflects the name of organization from new test organization
 		// Storefront shows the component having the correct organization name for the component
 		service.getOrganizationService().mergeOrganizations(organizationTarget.getOrganizationId(), organizationMerge.getOrganizationId());
-		componentAll = service.getComponentService().getFullComponent(componentAll.getComponent().getComponentId());
-		orgComponent = componentAll.getComponent();
+		ComponentAll postMergeCompAll = service.getComponentService().getFullComponent(componentAllCheck.getComponent().getComponentId());
+		Component postMergeComp = postMergeCompAll.getComponent();
 		organizationCheck = new Organization();
-		organizationCheck.setName("New Test Organization");
+		organizationCheck.setName("Second-Test-002 Organization");
 		organizationCheck = organizationCheck.find();
 
-		if (orgComponent.getOrganization().equals("Merge Organization") && organizationCheck == null) {
-			results.append("Organization Merge:  Successful").append("<br><br>");
+		if (postMergeComp.getOrganization().equals("Target Organization 005") && organizationCheck == null) {
+			results.append("Organization Merge:  Passed<br><br>");
+		} else {
+			failureReason.append("Organization Merge:  Failed<br><br>");
 		}
-//else {
-//			try {
-//				resetUserProfile(userProfile, previousOrganization);
-//				cleanupOrganization(componentAll, organizationMerge, organizationTarget);
-//			} catch (AttachedReferencesException ex) {
-//				Logger.getLogger(OrganizationServiceTest.class.getName()).log(Level.SEVERE, null, ex);
-//			}
-//		}
-//
-//		try {
-//			resetUserProfile(userProfile, previousOrganization);
-//			cleanupOrganization(componentAll, organization1, organizationTarget);
-//		} catch (AttachedReferencesException ex) {
-//			Logger.getLogger(OrganizationServiceTest.class.getName()).log(Level.SEVERE, null, ex);
-//		}
 
-	}
+		boolean activeComp = true;
+		boolean approvedComp = true;
+		List<OrgReference> references = service.getOrganizationService().findReferences("Target Organization 005", activeComp, approvedComp);
 
-	public void cleanupOrganization(Organization org) throws AttachedReferencesException
-	{
-		service.getOrganizationService().removeOrganization(org.getOrganizationId());
+		// Check to see if expected references are returned with said organization
+		results.append(references.isEmpty());
 	}
 
 	@Override
 	protected void cleanupTest()
 	{
 		super.cleanupTest();
+		if (experience != null) {
+			service.getLookupService().removeValue(ExperienceTimeType.class, experience.getCode());
+		}
+		if (userProfile != null) {
+			userProfile.setOrganization(TEST_ORGANIZATION);
+			service.getUserService().saveUserProfile(userProfile);
+		}
+
+		if (contactFromCompContact != null) {
+			service.getContactService().deleteContact(contactFromCompContact.getContactId());
+		}
+
+		if (organization != null) {
+			try {
+				service.getOrganizationService().removeOrganization(organization.getOrganizationId());
+			} catch (AttachedReferencesException ex) {
+				failureReason.append(ex).append("- Unable to delete ").append(organization.getName()).append("<br><br>");
+
+			}
+		}
+		if (organizationTarget != null) {
+			try {
+				service.getOrganizationService().removeOrganization(organizationTarget.getOrganizationId());
+			} catch (AttachedReferencesException ex) {
+				failureReason.append(ex).append("- Unable to delete ").append(organizationTarget.getName()).append("<br><br>");
+			}
+		}
+
 	}
 
 	@Override

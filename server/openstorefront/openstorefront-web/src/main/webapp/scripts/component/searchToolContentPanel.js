@@ -402,7 +402,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 						{
 							text: 'Manage Searches',
 							iconCls: 'fa fa-gear',
-							href: 'usertools.jsp#Searches',
+							href: 'usertools.jsp?load=Searches',
 							hrefTarget: ''
 						}
 					]

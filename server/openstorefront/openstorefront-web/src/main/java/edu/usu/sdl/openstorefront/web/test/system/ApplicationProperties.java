@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.test.system;
 
+import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 
 /**
@@ -24,15 +25,41 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 public class ApplicationProperties extends BaseTestCase
 {
 
+	private String propertyKey = "Test Property Key";
+
+	@Override
+	protected void runInternalTest()
+	{
+		String propertyValue = "Application Properties Test Value";
+
+		service.getSystemService().saveProperty(propertyKey, propertyValue);
+		ApplicationProperty appProperty = service.getSystemService().getProperty(propertyKey);
+
+		if (propertyKey.equals(appProperty.getKey()) && propertyValue.equals(appProperty.getValue())) {
+			results.append("Application property saved successfully<br><br>");
+		} else {
+			failureReason.append("Error saving application property<br><br>");
+		}
+
+		if (propertyValue.equals(service.getSystemService().getPropertyValue(propertyKey))) {
+			results.append("Application property value test:  Passed<br><br>");
+		} else {
+			failureReason.append("Application propert value test:  Failed - unable to find app property with given value<br><br>");
+		}
+
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
+		service.getSystemService().saveProperty(propertyKey, null);
+	}
+
 	@Override
 	public String getDescription()
 	{
 		return "AppProperties Test";
 	}
 
-	@Override
-	protected void runInternalTest()
-	{
-
-	}
 }

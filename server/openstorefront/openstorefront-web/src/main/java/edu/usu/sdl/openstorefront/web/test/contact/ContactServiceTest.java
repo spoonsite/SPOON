@@ -36,10 +36,10 @@ public class ContactServiceTest extends BaseTestCase
 	protected void runInternalTest()
 	{
 		existContact = new Contact();
-		existContact.setFirstName("ExistingFirstName");
-		existContact.setLastName("ExistingLastName");
-		existContact.setOrganization("ExistingOrganization");
-		String existContactEmail = getSystemEmail();
+		existContact.setFirstName("ExistingFirstName001");
+		existContact.setLastName("ExistingLastName001");
+		existContact.setOrganization("Existing_Contact_Organization");
+		String existContactEmail = "existingFirstName001@existingcontactorg.com";
 		existContact.setEmail(existContactEmail);
 		existContact = service.getContactService().saveContact(existContact);
 
@@ -60,7 +60,7 @@ public class ContactServiceTest extends BaseTestCase
 		List<ComponentContact> existingContactsList = componentAll.getContacts();
 
 		if (existingContactsList.isEmpty()) {
-			results.append("Inactivate contact test:  Passed<br><br>");
+			results.append("Inactivate contact:  Test Passed<br><br>");
 		} else {
 			failureReason.append("Contact failed to inactivate<br><br>");
 		}
@@ -71,17 +71,17 @@ public class ContactServiceTest extends BaseTestCase
 		existingContactsList = componentAll.getContacts();
 
 		if (!existingContactsList.isEmpty()) {
-			results.append("Activate contact test:  Passed").append("<br><br>");
+			results.append("Activate contact:  Test Passed").append("<br><br>");
 		} else {
 			failureReason.append("Failed to activate contact<br><br>");
 		}
 
 		// Create 2nd ComponentContact and Contact
 		newContact = new Contact();
-		newContact.setFirstName("newFirstName");
-		newContact.setLastName("newLastName");
-		newContact.setOrganization("newOrganization");
-		newContact.setEmail("test.contact@test.com");
+		newContact.setFirstName("NewContactFirstName002");
+		newContact.setLastName("NewContactLastName002");
+		newContact.setOrganization("New_Contact_Organization");
+		newContact.setEmail("test1.contact@contactTest.com");
 		newContact = service.getContactService().saveContact(newContact);
 
 		ComponentContact newContactComp = new ComponentContact();
@@ -101,18 +101,18 @@ public class ContactServiceTest extends BaseTestCase
 
 		if (mergedContacts.size() > 1) {
 			if (mergedContacts.get(0).getContactId().equals(mergedContacts.get(1).getContactId())) {
-				results.append("Merge Contacts Test:  Passed").append("<br><br>");
+				results.append("Merge Contacts:  Test Passed").append("<br><br>");
 			}
 		} else {
-			failureReason.append("Merge Contacts Test:  Failed - Unable to merge contacts").append("<br>");
+			failureReason.append("Merge Contacts:  Test Failed - Unable to merge contacts").append("<br>");
 		}
 
 		// find all contact references using newContact's ID
 		List<ContactReference> foundContacts = service.getContactService().findReferences(newContact.getContactId());
 		if (foundContacts.size() == 2) {
-			results.append("Found references test:  Passed<br><br>");
+			results.append("Found references:  Test Passed<br><br>");
 		} else {
-			failureReason.append("Found references test:  Failed - No references found with that contactId<br>");
+			failureReason.append("Found references:  Test Failed - No references found with that contactId<br>");
 		}
 	}
 

@@ -29,7 +29,9 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
  */
 public class FeedbackServiceTest extends BaseTestCase
 {
-	private Branding branding_feedback = null;
+	private Branding branding_internal = null;
+	private Branding branding_email = null;
+	private Branding defaultBranding = null;
 	private PropertiesManager propManager = null;
 	private String defaultPropertyValue = null;
 	private FeedbackTicket ticket_InternalTest = null;
@@ -43,14 +45,21 @@ public class FeedbackServiceTest extends BaseTestCase
 	}
 
 	@Override
+	protected void initializeTest()
+	{
+		super.initializeTest();
+		defaultBranding = service.getBrandingService().getCurrentBrandingView();
+
+	}
+
+	@Override
 	protected void runInternalTest()
 	{
-		branding_feedback = new Branding();
-		branding_feedback.setName("Branding for Feedback Internal test");
-		branding_feedback.setFeedbackHandler(INTERNAL);
-		branding_feedback = service.getBrandingService().saveBranding(branding_feedback);
-		branding_feedback.setActiveStatus(Branding.ACTIVE_STATUS);
-		branding_feedback = service.getBrandingService().saveBranding(branding_feedback);
+		branding_internal = new Branding();
+		branding_internal.setName("Branding for Feedback Internal test");
+		branding_internal.setFeedbackHandler(INTERNAL);
+		branding_internal = service.getBrandingService().saveBranding(branding_internal);
+		service.getBrandingService().setBrandingAsCurrent(branding_internal.getBrandingId());
 
 		ticket_InternalTest = new FeedbackTicket();
 		ticket_InternalTest.setSummary("Internal feedback test");
@@ -62,16 +71,20 @@ public class FeedbackServiceTest extends BaseTestCase
 		results.append("Feedback submitted successfully").append("<br><br>");
 
 		// Change the branding to send feedback via email
-		branding_feedback = new Branding();
-		branding_feedback.setName("Branding for Feedback Email test");
-		branding_feedback.setFeedbackHandler(EMAIL);
-		branding_feedback = service.getBrandingService().saveBranding(branding_feedback);
-		branding_feedback.setActiveStatus(Branding.ACTIVE_STATUS);
-		branding_feedback = service.getBrandingService().saveBranding(branding_feedback);
+		branding_email = new Branding();
+		branding_email.setName("Branding for Feedback Email test");
+		branding_email.setFeedbackHandler(EMAIL);
+		branding_email = service.getBrandingService().saveBranding(branding_email);
+		service.getBrandingService().setBrandingAsCurrent(branding_email.getBrandingId());
 
 
 		ticket_EmailTest = new FeedbackTicket();
 		ticket_EmailTest.setTicketType("Feedback Test");
+		ticket_EmailTest.setUsername(TEST_USER);
+		ticket_EmailTest.setFirstname("Test FirstName");
+		ticket_EmailTest.setLastname("Test LastName");
+		ticket_EmailTest.setOrganization(TEST_ORGANIZATION);
+		ticket_EmailTest.setPhone("(XXX) XXX-XXXX");
 		ticket_EmailTest.setSummary("Email feedback test");
 		ticket_EmailTest.setDescription("Test uses EMAIL for feedback handle type");
 		String email = getSystemEmail();
@@ -110,8 +123,11 @@ public class FeedbackServiceTest extends BaseTestCase
 	{
 		super.cleanupTest();
 
-		if (branding_feedback != null) {
-			service.getBrandingService().deleteBranding(branding_feedback.getBrandingId());
+		if (branding_internal != null) {
+			service.getBrandingService().deleteBranding(branding_internal.getBrandingId());
+		}
+		if (branding_email != null) {
+			service.getBrandingService().deleteBranding(branding_email.getBrandingId());
 		}
 		if (ticket_InternalTest != null) {
 			service.getFeedbackService().deleteFeedback(ticket_InternalTest.getFeedbackId());
@@ -125,6 +141,9 @@ public class FeedbackServiceTest extends BaseTestCase
 			} else {
 				propManager.removeProperty(KEY_FEEDBACK_EMAIL);
 			}
+		}
+		if (defaultBranding != null) {
+			service.getBrandingService().setBrandingAsCurrent(defaultBranding.getBrandingId());
 		}
 	}
 }

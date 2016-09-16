@@ -51,7 +51,7 @@ public class LookupServiceImpl
 		implements LookupService
 {
 
-	private static final Logger log = Logger.getLogger(LookupServiceImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(LookupServiceImpl.class.getName());
 
 	@Override
 	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass)
@@ -162,11 +162,11 @@ public class LookupServiceImpl
 
 					newCodeSet.add(lookupEntity.getCode());
 				} else {
-					log.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add Code:  {0} Validation Issues:\n{1}", new Object[]{lookupEntity.getCode(), validationResult.toString()}));
+					LOG.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add Code:  {0} Validation Issues:\n{1}", new Object[]{lookupEntity.getCode(), validationResult.toString()}));
 				}
 
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Unable to save value for lookup:" + lookupEntity.toString(), e);
+				LOG.log(Level.SEVERE, "Unable to save value for lookup:" + lookupEntity.toString(), e);
 			}
 		}
 
@@ -217,7 +217,7 @@ public class LookupServiceImpl
 					SystemTable systemTable = (SystemTable) lookupClass.getAnnotation(SystemTable.class);
 					T example = lookupClass.newInstance();
 					if (systemTable != null) {
-						lookupEntity = example.systemValue(code);
+						lookupEntity = (T) example.systemValue(code);
 					} else {
 						example.setCode(code);
 						example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
@@ -254,10 +254,10 @@ public class LookupServiceImpl
 		if (StringUtils.isNotBlank(description)) {
 			try {
 				SystemTable systemTable = (SystemTable) lookupClass.getAnnotation(SystemTable.class);
-				T example = lookupClass.newInstance();
+				T example = lookupClass.newInstance();					
 				if (systemTable != null) {
-					for (LookupEntity lookup : example.systemValues()) {
-						if (lookup.getDescription().equals(description)) {
+					for (Object lookup : example.systemValues()) {						
+						if (((LookupEntity)lookup).getDescription().equals(description)) {
 							lookupEntity = (T) lookup;
 						}
 					}

@@ -15,25 +15,39 @@
  */
 package edu.usu.sdl.openstorefront.web.test.user;
 
+import edu.usu.sdl.openstorefront.core.model.AdminMessage;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author ccummings
  */
-public class AdminMessage extends BaseTestCase
+public class AdminMessageTest extends BaseTestCase
 {
+
+	@Override
+	protected void runInternalTest()
+	{
+		List<String> emails = new ArrayList();
+		emails.add(getSystemEmail());
+
+		results.append("Creating admin message...<br>");
+		AdminMessage adminMessage = new AdminMessage();
+		adminMessage.setUsersToEmail(emails);
+		adminMessage.setCcEmails(emails);
+		adminMessage.setBccEmails(emails);
+		adminMessage.setSubject("Admin Message Test");
+		adminMessage.setMessage("**You have received this message due to automated admin message testing.**");
+
+		service.getUserService().sendAdminMessage(adminMessage);
+		results.append("Admin message successfully created and sent<br><br>");
+	}
 
 	@Override
 	public String getDescription()
 	{
 		return "Admin Message Test";
 	}
-
-	@Override
-	protected void runInternalTest()
-	{
-
-	}
-
 }

@@ -43,6 +43,9 @@ limitations under the License.
 		request.setAttribute("usercontext", SecurityUtil.getUserContext());
 		request.setAttribute("admin", SecurityUtil.isAdminUser());
 		
+		request.setAttribute("idleTimeoutMinutes", PropertiesManager.getValue(PropertiesManager.KEY_UI_IDLETIMEOUT_MINUTES, "-1"));
+		request.setAttribute("idlegraceperiod", PropertiesManager.getValue(PropertiesManager.KEY_UI_IDLETIMEGRACE_MINUTES, "1"));
+		
 	%>	
 
 	<link href="webjars/extjs/6.0.0/build/classic/theme-neptune/resources/theme-neptune-all-debug.css" rel="stylesheet" type="text/css"/>
@@ -178,7 +181,7 @@ limitations under the License.
 					handleAlert(alert, args);
 				  });
 				  socket.on('REPORT', function (args) {					
-					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="tools?tool=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};					
+					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="usertools.jsp?load=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};					
 					handleAlert(alert, args);
 				  });
 				  socket.on('ADMIN', function (args) {					
@@ -246,10 +249,17 @@ limitations under the License.
 			CoreApp.BTN_OK = 'ok';
 			CoreApp.BTN_YES = 'yes';
 
-			// before notifying the user session will expire. Change this to a reasonable interval.    
-			CoreApp.SESSION_ABOUT_TO_TIMEOUT_PROMT_INTERVAL_IN_MIN = 25;
+			// before notifying the user session will expire. Change this to a reasonable interval.
+			if (${idleTimeoutMinutes} === -1) {
+				CoreApp.USE_IDLE_WARNING = false;
+				CoreApp.SESSION_ABOUT_TO_TIMEOUT_PROMT_INTERVAL_IN_MIN = 25;
+			} else {
+				CoreApp.USE_IDLE_WARNING = true;
+				CoreApp.SESSION_ABOUT_TO_TIMEOUT_PROMT_INTERVAL_IN_MIN = ${idleTimeoutMinutes};
+			}			
+			
 			// 1 min. to kill the session after the user is notified.
-			CoreApp.GRACE_PERIOD_BEFORE_EXPIRING_SESSION_IN_MIN = 1;
+			CoreApp.GRACE_PERIOD_BEFORE_EXPIRING_SESSION_IN_MIN = ${idlegraceperiod};
 			// The page that kills the server-side session variables.
 			CoreApp.SESSION_KILL_URL = '${pageContext.request.contextPath}/Login.action?Logout';
 			CoreApp.toMilliseconds = function (minutes) {
@@ -262,51 +272,62 @@ limitations under the License.
 				});
 			};
 
-			//FIXME: Handle this better
 			CoreApp.sessionAboutToTimeoutPromptTask = new Ext.util.DelayedTask(function () {
-				CoreApp.simulateAjaxRequest();
-/**				
-				Ext.Msg.confirm(
-					'Your Session is About to Expire',
-					Ext.String.format('Your session will expire in {0} minute(s). Would you like to continue your session?',
-						CoreApp.GRACE_PERIOD_BEFORE_EXPIRING_SESSION_IN_MIN),
-					function (btn, text) {
-						if (btn == CoreApp.BTN_YES) {
-							// Simulate resetting the server-side session timeout timer
-							// by sending an AJAX request.
-							CoreApp.simulateAjaxRequest();
-						} else {
-							// Send request to kill server-side session.
-							window.location.replace(CoreApp.SESSION_KILL_URL);
+				if (CoreApp.USE_IDLE_WARNING === false) {
+					CoreApp.simulateAjaxRequest();
+				} else {
+					Ext.Msg.confirm(
+						'Your Session is About to Expire',
+						Ext.String.format('Your session will expire in {0} minute(s). Would you like to continue your session?',
+							CoreApp.GRACE_PERIOD_BEFORE_EXPIRING_SESSION_IN_MIN),
+						function (btn, text) {
+							if (btn == CoreApp.BTN_YES) {
+								// Simulate resetting the server-side session timeout timer
+								// by sending an AJAX request.
+								CoreApp.simulateAjaxRequest();
+								CoreApp.sessionAboutToTimeoutPromptTask.delay(CoreApp.toMilliseconds(CoreApp.SESSION_ABOUT_TO_TIMEOUT_PROMT_INTERVAL_IN_MIN));
+								CoreApp.killSessionTask.cancel();
+							} else {
+								// Send request to kill server-side session.
+								window.location.replace(CoreApp.SESSION_KILL_URL);
+							}
 						}
-					}
-				);
-**/				
-				CoreApp.killSessionTask.delay(CoreApp.toMilliseconds(
-				CoreApp.GRACE_PERIOD_BEFORE_EXPIRING_SESSION_IN_MIN));
+					);
+
+					CoreApp.killSessionTask.delay(CoreApp.toMilliseconds(
+					CoreApp.GRACE_PERIOD_BEFORE_EXPIRING_SESSION_IN_MIN));	
+				}	
 			});
 			CoreApp.killSessionTask = new Ext.util.DelayedTask(function () {        
 				window.location.replace(CoreApp.SESSION_KILL_URL);
 			});			
 			
 			Ext.Ajax.on('requestcomplete', function(conn, response, options){
-			   if (options.url !== CoreApp.SESSION_KILL_URL) {
+			   if (options.url !== CoreApp.SESSION_KILL_URL) {				  		   
 					// Reset the client-side session timeout timers.
 					// Note that you must not reset if the request was to kill the server-side session.
 					CoreApp.sessionAboutToTimeoutPromptTask.delay(CoreApp.toMilliseconds(CoreApp.SESSION_ABOUT_TO_TIMEOUT_PROMT_INTERVAL_IN_MIN));
-					CoreApp.killSessionTask.cancel();
-				} else {
-					// Notify user her session timed out.
+					CoreApp.killSessionTask.cancel();				
+				}
+/*	
+
+//this doesn't run because already jumps back to the logout. If this changes in the future this could be useful
+ 				else {
+					var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
+					currentlocation = currentlocation + window.parent.location.search;						
+					
+					// Notify user their session timed out.
 					Ext.Msg.alert(
 						'Session Expired',
 						'Your session expired. Please login to start a new session.',
 						function (btn, text) {
-							if (btn == CoreApp.BTN_OK) {
-								window.location.replace('${pageContext.request.contextPath}/Login.action');
+							if (btn === CoreApp.BTN_OK) {
+								window.location.replace('${pageContext.request.contextPath}/Login.action?gotoPage=' + encodeURIComponent(currentlocation));
 							}
 						}
 					);
 				}
+*/				
 			});
 	
 		});

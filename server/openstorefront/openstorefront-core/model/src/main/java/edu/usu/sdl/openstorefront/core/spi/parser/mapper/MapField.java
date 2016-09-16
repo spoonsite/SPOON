@@ -28,6 +28,12 @@ public class MapField
 	{
 	}
 
+	@Override
+	public String toString()
+	{
+		return "MapField{" + "name=" + name + ", value=" + value + '}';
+	}
+
 	public String getName()
 	{
 		return name;

@@ -28,47 +28,48 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author dshurtleff
  */
-public class MapModel	
-{	
+public class MapModel
+{
+
 	private String name;
 	private List<MapField> mapFields = new ArrayList<>();
 	private List<MapModel> arrayFields = new ArrayList<>();
 
 	public MapModel()
-	{		
+	{
 	}
 
-	public List<FieldDefinition> getUniqueFields() 
+	public List<FieldDefinition> getUniqueFields()
 	{
 		List<FieldDefinition> fieldDefinitions = new ArrayList<>();
-		
+
 		Set<String> fields = new HashSet<>();
 		buildPaths(fields, this, "");
-		
+
 		for (String field : fields) {
 			fieldDefinitions.add(new FieldDefinition(field));
 		}
-		
+
 		Set<String> rootFields = new HashSet<>();
-		
+
 		//add roots
 		for (String field : fields) {
 			String parts[] = field.split("\\.");
 			if (parts.length > 1) {
-				Deque<String> deque = new ArrayDeque<>();				
-				for (int i=0; i <  parts.length; i++) {
-					deque.push(parts[i]);										
+				Deque<String> deque = new ArrayDeque<>();
+				for (int i = 0; i < parts.length; i++) {
+					deque.push(parts[i]);
 				}
 				while (!deque.isEmpty()) {
 					deque.pop();
-					
+
 					Iterator<String> reversed = deque.descendingIterator();
 					StringBuilder sb = new StringBuilder();
-					while(reversed.hasNext()) {
+					while (reversed.hasNext()) {
 						sb.append(reversed.next()).append(".");
-					}		
+					}
 					if (sb.length() > 0) {
-						sb = sb.deleteCharAt(sb.length()-1);
+						sb = sb.deleteCharAt(sb.length() - 1);
 						rootFields.add(sb.toString());
 					}
 				}
@@ -78,29 +79,32 @@ public class MapModel
 		}
 		for (String field : rootFields) {
 			fieldDefinitions.add(new FieldDefinition(field, true));
-		}				
-		
+		}
+		fieldDefinitions.sort((FieldDefinition o1, FieldDefinition o2) -> {
+			return o1.getField().compareTo(o2.getField());
+		});
+
 		return fieldDefinitions;
 	}
-	
-	private void buildPaths(Set<String> fields,  MapModel root, String parent) 
+
+	private void buildPaths(Set<String> fields, MapModel root, String parent)
 	{
 		if (StringUtils.isNotBlank(parent)) {
 			parent = parent + ".";
 		}
-		
-		for (MapField field : root.getMapFields()) {			
-			fields.add(parent + root.getName() + "." +  field.getName());
+
+		for (MapField field : root.getMapFields()) {
+			fields.add(parent + root.getName() + "." + field.getName());
 		}
 		for (MapModel child : root.getArrayFields()) {
 			String newParent = root.getName();
-			if (StringUtils.isNotBlank(parent)) {				
-				newParent = parent  + root.getName();
+			if (StringUtils.isNotBlank(parent)) {
+				newParent = parent + root.getName();
 			}
 			buildPaths(fields, child, newParent);
-		}	
+		}
 	}
-	
+
 	public List<MapField> getMapFields()
 	{
 		return mapFields;
@@ -130,5 +134,5 @@ public class MapModel
 	{
 		this.arrayFields = arrayFields;
 	}
-	
+
 }

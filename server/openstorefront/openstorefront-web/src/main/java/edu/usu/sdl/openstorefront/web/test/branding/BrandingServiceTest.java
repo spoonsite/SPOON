@@ -34,25 +34,31 @@ public class BrandingServiceTest extends BaseTestCase
 		brandingTest1 = new Branding();
 		brandingTest1.setName("test_branding_1");
 		brandingTest1 = service.getBrandingService().saveBranding(brandingTest1);
-		brandingTest1.setActiveStatus(Branding.ACTIVE_STATUS);
-		service.getPersistenceService().persist(brandingTest1);
+		service.getBrandingService().setBrandingAsCurrent(brandingTest1.getBrandingId());
 
 		brandingTest2 = new Branding();
 		brandingTest2.setName("test_branding_2");
-		brandingTest2.setActiveStatus(Branding.INACTIVE_STATUS);
 		brandingTest2 = service.getBrandingService().saveBranding(brandingTest2);
+
+		// Check to make sure brandingTest1 is still current branding
+		Branding brandingCheck = service.getBrandingService().getCurrentBrandingView();
+		if (brandingCheck.getBrandingId().equals(brandingTest1.getBrandingId())) {
+			results.append("Current branding:  brandingTest1<br>");
+		} else {
+			failureReason.append("Current branding has unexpectedly changed<br>");
+		}
 
 		service.getBrandingService().setBrandingAsCurrent(brandingTest2.getBrandingId());
 
-		brandingTest2 = getCurrentBranding(brandingTest2.getBrandingId());
-		brandingTest1 = getCurrentBranding(brandingTest1.getBrandingId());
+		brandingTest2 = lookupBranding(brandingTest2.getBrandingId());
+		brandingTest1 = lookupBranding(brandingTest1.getBrandingId());
 
-
-		if (Branding.INACTIVE_STATUS.equals(brandingTest1.getActiveStatus())
-				&& Branding.ACTIVE_STATUS.equals(brandingTest2.getActiveStatus())) {
-			results.append("Set current branding test:  Passed<br><br>");
+		brandingCheck = service.getBrandingService().getCurrentBrandingView();
+		results.append("Changing current branding...<br>");
+		if (brandingCheck.getBrandingId().equals(brandingTest2.getBrandingId())) {
+			results.append("Current branding:  brandingTest2<br><br>");
 		} else {
-			failureReason.append("Set current branding test:  Failed - unable to change branding<br><br>");
+			failureReason.append("Change current branding:  Test Failed - unable to change branding<br><br>");
 		}
 	}
 
@@ -69,11 +75,11 @@ public class BrandingServiceTest extends BaseTestCase
 		}
 	}
 
-	public Branding getCurrentBranding(String brandingId)
+	public Branding lookupBranding(String brandingId)
 	{
-		Branding currentBranding = service.getPersistenceService().findById(Branding.class, brandingId);
+		Branding branding = service.getPersistenceService().findById(Branding.class, brandingId);
 
-		return currentBranding;
+		return branding;
 	}
 
 	@Override

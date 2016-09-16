@@ -31,25 +31,30 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("Holds a list of field mappings")
-public class FileDataMap 
-	extends StandardEntity<FileDataMap>
+public class FileDataMap
+		extends StandardEntity<FileDataMap>
 {
+
 	@PK(generated = true)
 	@NotNull
 	private String fileDataMapId;
-	
-	
+
 	@NotNull
-	@ConsumeField	
-	@FK(value = FileFormat.class, referencedField="code")	
+	@ConsumeField
+	@FK(value = FileFormat.class, referencedField = "code")
 	@APIDescription("May be a built in format or a format from a plugin which may not be loaded.")
 	private String fileFormat;
-	
+
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String name;
-		
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@FK(value = ComponentType.class, referencedField = "componentType")
+	private String defaultComponentType;
+
 	@ConsumeField
 	@OneToMany(orphanRemoval = true)
 	@DataType(FileDataMapField.class)
@@ -62,15 +67,16 @@ public class FileDataMap
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
-		super.updateFields(entity); 
-		
+		super.updateFields(entity);
+
 		FileDataMap fileDataMap = (FileDataMap) entity;
-		
+
 		this.setName(fileDataMap.getName());
+		this.setDefaultComponentType(fileDataMap.getDefaultComponentType());
 		this.setDataMapFields(fileDataMap.getDataMapFields());
-				
+
 	}
-	
+
 	public String getFileDataMapId()
 	{
 		return fileDataMapId;
@@ -109,6 +115,16 @@ public class FileDataMap
 	public void setDataMapFields(List<FileDataMapField> dataMapFields)
 	{
 		this.dataMapFields = dataMapFields;
+	}
+
+	public String getDefaultComponentType()
+	{
+		return defaultComponentType;
+	}
+
+	public void setDefaultComponentType(String defaultComponentType)
+	{
+		this.defaultComponentType = defaultComponentType;
 	}
 
 }

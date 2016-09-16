@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -60,6 +61,8 @@ public class IntegrationComponentServiceImpl
 		extends BaseComponentServiceImpl
 {
 
+	private static final Logger LOG = Logger.getLogger(IntegrationComponentServiceImpl.class.getName());
+
 	public IntegrationComponentServiceImpl(ComponentServiceImpl componentService)
 	{
 		super(componentService);
@@ -70,7 +73,7 @@ public class IntegrationComponentServiceImpl
 		Objects.requireNonNull(issue, "Jira Issue Required");
 		Objects.requireNonNull(integrationConfig, "Integration Config Required");
 
-		log.finer("Pull Xref Mapping");
+		LOG.finer("Pull Xref Mapping");
 		AttributeXrefModel attributeXrefModel = new AttributeXrefModel();
 		attributeXrefModel.setIntegrationType(integrationConfig.getIntegrationType());
 		attributeXrefModel.setProjectKey(integrationConfig.getProjectType());
@@ -95,10 +98,8 @@ public class IntegrationComponentServiceImpl
 						} catch (JSONException ex) {
 							throw new OpenStorefrontRuntimeException("Unable to get field value from: " + jiraField.getValue(), ErrorTypeCode.INTEGRATION);
 						}
-					} else {
-						if (jiraField.getValue() != null) {
-							jiraValue = jiraField.getValue().toString();
-						}
+					} else if (jiraField.getValue() != null) {
+						jiraValue = jiraField.getValue().toString();
 					}
 				} else {
 					throw new OpenStorefrontRuntimeException("Unable to find Jira Field: " + xrefAttributeType.getFieldName(), "Update mapping to match jira.", ErrorTypeCode.INTEGRATION);
@@ -109,7 +110,7 @@ public class IntegrationComponentServiceImpl
 				AttributeType attributeType = persistenceService.findById(AttributeType.class, xrefAttributeType.getAttributeType());
 				if (attributeType != null) {
 					if (Convert.toBoolean(attributeType.getRequiredFlg()) == false) {
-						log.log(Level.FINEST, "Jira Value is Blank....remove any existing component attribute since Attribute type is not require.");
+						LOG.log(Level.FINEST, "Jira Value is Blank....remove any existing component attribute since Attribute type is not require.");
 						ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 						componentAttributePk.setComponentId(integrationConfig.getComponentId());
 						componentAttributePk.setAttributeType(xrefAttributeType.getAttributeType());
@@ -119,7 +120,7 @@ public class IntegrationComponentServiceImpl
 
 						componentChanged = true;
 					} else {
-						log.log(Level.WARNING, MessageFormat.format("Attribute Type is required and Integration is returned a empty value.  Keeping exisiting value on component: {0}  Attribute Type: {1}",
+						LOG.log(Level.WARNING, MessageFormat.format("Attribute Type is required and Integration is returned a empty value.  Keeping exisiting value on component: {0}  Attribute Type: {1}",
 								new Object[]{core.getComponentName(integrationConfig.getComponentId()), attributeType.getDescription()}));
 					}
 				} else {
@@ -175,7 +176,7 @@ public class IntegrationComponentServiceImpl
 							sub.saveComponentAttribute(componentAttribute, false);
 							componentChanged = true;
 						} else {
-							log.log(Level.FINEST, "Attibute already exists in that state...skipping");
+							LOG.log(Level.FINEST, "Attibute already exists in that state...skipping");
 						}
 					} else {
 						throw new OpenStorefrontRuntimeException("Unable to find attribute code.  Attribute Type: " + componentAttributePk.getAttributeType() + " Code: " + componentAttributePk.getAttributeCode(),
@@ -256,7 +257,7 @@ public class IntegrationComponentServiceImpl
 					LocalDateTime maxLocalDateTime = LocalDateTime.ofInstant(componentIntegration.getLastStartTime().toInstant(), ZoneId.systemDefault());
 					maxLocalDateTime.plusMinutes(Convert.toLong(overrideTime));
 					if (maxLocalDateTime.compareTo(LocalDateTime.now()) <= 0) {
-						log.log(Level.FINE, "Overriding the working state...assume it was stuck.");
+						LOG.log(Level.FINE, "Overriding the working state...assume it was stuck.");
 						run = true;
 					} else {
 						run = false;
@@ -270,7 +271,7 @@ public class IntegrationComponentServiceImpl
 				Component component = persistenceService.findById(Component.class, componentIntegration.getComponentId());
 				ComponentIntegration liveIntegration = persistenceService.findById(ComponentIntegration.class, componentIntegration.getComponentId());
 
-				log.log(Level.FINE, MessageFormat.format("Processing Integration for: {0}", component.getName()));
+				LOG.log(Level.FINE, MessageFormat.format("Processing Integration for: {0}", component.getName()));
 
 				liveIntegration.setStatus(RunStatus.WORKING);
 				liveIntegration.setLastStartTime(TimeUtil.currentDate());
@@ -289,7 +290,7 @@ public class IntegrationComponentServiceImpl
 					for (ComponentIntegrationConfig integrationConfig : integrationConfigs) {
 						ComponentIntegrationConfig liveConfig = persistenceService.findById(ComponentIntegrationConfig.class, integrationConfig.getIntegrationConfigId());
 						try {
-							log.log(Level.FINE, MessageFormat.format("Working on {1} Configuration for Integration for: {0}", component.getName(), integrationConfig.getIntegrationType()));
+							LOG.log(Level.FINE, MessageFormat.format("Working on {1} Configuration for Integration for: {0}", component.getName(), integrationConfig.getIntegrationType()));
 
 							liveConfig.setStatus(RunStatus.WORKING);
 							liveConfig.setErrorMessage(null);
@@ -313,7 +314,7 @@ public class IntegrationComponentServiceImpl
 							liveConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 							persistenceService.persist(liveConfig);
 
-							log.log(Level.FINE, MessageFormat.format("Completed {1} Configuration for Integration for: {0}", component.getName(), integrationConfig.getIntegrationType()));
+							LOG.log(Level.FINE, MessageFormat.format("Completed {1} Configuration for Integration for: {0}", component.getName(), integrationConfig.getIntegrationType()));
 						} catch (Exception e) {
 							errorConfig = true;
 							//This is a critical loop
@@ -329,11 +330,11 @@ public class IntegrationComponentServiceImpl
 							liveConfig.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 							persistenceService.persist(liveConfig);
 
-							log.log(Level.FINE, MessageFormat.format("Failed on {1} Configuration for Integration for: {0}", component.getName(), integrationConfig.getIntegrationType()), e);
+							LOG.log(Level.FINE, MessageFormat.format("Failed on {1} Configuration for Integration for: {0}", component.getName(), integrationConfig.getIntegrationType()), e);
 						}
 					}
 				} else {
-					log.log(Level.WARNING, MessageFormat.format("No Active Integration configs for: {0} (Integration is doing nothing)", component.getName()));
+					LOG.log(Level.WARNING, MessageFormat.format("No Active Integration configs for: {0} (Integration is doing nothing)", component.getName()));
 				}
 
 				if (errorConfig) {
@@ -346,12 +347,12 @@ public class IntegrationComponentServiceImpl
 				liveIntegration.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 				persistenceService.persist(liveIntegration);
 
-				log.log(Level.FINE, MessageFormat.format("Completed Integration for: {0}", component.getName()));
+				LOG.log(Level.FINE, MessageFormat.format("Completed Integration for: {0}", component.getName()));
 			} else {
-				log.log(Level.FINE, MessageFormat.format("Not time to run integration or the system is currently working on the integration. Component Id: {0}", componentId));
+				LOG.log(Level.FINE, MessageFormat.format("Not time to run integration or the system is currently working on the integration. Component Id: {0}", componentId));
 			}
 		} else {
-			log.log(Level.WARNING, MessageFormat.format("There is no active integration for this component. Id: {0}", componentId));
+			LOG.log(Level.WARNING, MessageFormat.format("There is no active integration for this component. Id: {0}", componentId));
 		}
 	}
 

@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
  */
 @APIDescription("Evaluation Section Names")
 public class EvaluationSection
-		extends LookupEntity
+		extends LookupEntity<EvaluationSection>
 {
 
 	public EvaluationSection()

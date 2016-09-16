@@ -426,6 +426,8 @@ The following fields are in the Required Information section:
  -  **Entry Type:**  DI2E Component, Article, etc.  -  What you enter here will determine what other fields show up on this entry form below 
  -  **Entry Name:**  The name of the article or component 
  -  **Description:** Detailed description body - You can use highlights, colored text, links, etc.
+                      NOTE:  You can paste inline media (from another website) into the description field and it will
+                              automatically attach the media if it is possible.
  -  **Organization:** Name of Company or responsible party for the entry  -  These can be set by an administrator
  -  **Attributes:**  Required attributes are shown here and must be selected 
 
@@ -456,10 +458,11 @@ for review.  The entry can then be submitted for review.
 The Tools drop-down contains five options:
 
 1.  Questions
-2.  Reports
-3.  Reviews
-4.  Searches
-5.  Watches
+2.  Relationships
+3.  Reports
+4.  Reviews
+5.  Searches
+6.  Watches
 
 #### 2.3.3.1 Questions & Answers
 --------
@@ -970,8 +973,8 @@ c. Security Type:   *select the security level of the component or article*
 ### 3.2.4 Entry Types *
 ------
 
-Currently, the main entry types are DI2E Component and Article.  However, other custom 
-types can be added, edited, activated, and made inactive here.  
+Currently, the main entry types are: Article, DI2E Component, and DI2E Document.  However, other custom 
+types can be added, edited, activated, made inactive, and removed here.  
 
 On the Add form, data entry can be selected, such as whether or not to allow on the 
 submission form, and to allow or not allow the following to be displayed:
@@ -979,11 +982,22 @@ submission form, and to allow or not allow the following to be displayed:
 *Attributes, Relationships, Contacts, Resources, Media, Dependencies, Metadata,
 Evaluation Information, Reviews, and Questions.*
 
-Entry Types can be made active or inactive by using the Toggle Status button on the right. 
+Entry Types can be made active or inactive by using the Toggle Status button.
 
 **Note:** Making an entry type Inactive does **not** remove that entry type from existing
           entries; it simply prevents that entry type from being added in future entry 
           submissions.
+
+New with v2.1 Entry Types can now be **removed**.  When you remove a type the system will ask 
+ what remaining active entry type you would like to move the existing data to.   This ensures that 
+ data (entries) are not lost, but moved to a remaining, active entry type.
+
+**Note:** It is recommended to toggle the status of a type to **inactive**, rather than remove it.  
+          Removing entry type that has attribute restriction can change the behavior of the require
+          attributes. It may only be required for entries of type A but when type A is removed then
+          the attribute will be required for all entries. 
+          (It will require an admin to manually update the attributed if that is not the correct behavior).
+  
 		  
 		  
 ### 3.2.5 Entry Templates *
@@ -1114,11 +1128,57 @@ is resolved.
 ### 3.2.8 Imports * 
 -------
 
-This allows for data imports and mappings.  This is done by importing a ZIP
-or JSON file.  Once imported warnings and/or errors can be viewed, the data 
-can be reprocessed or rolled back.
+This allows for data imports and mappings.  This is done by importing a support 
+file format. Once imported warnings and/or errors can be viewed, the data can be 
+reprocessed or rolled back.
 
-**NOTE:**  The history is only kept for **180 days** in this section.
+**NOTE:**  The history is only kept for **180 days (Default)** in this section.
+
+#### 3.2.8.1 Data Mapping *
+
+Some data importing can be handled by creating data maps.  Typically file with
+simple structure work best.  In some cases, a custom file parse will need to be 
+created.  Custom parsers require coding and then they can be add to the application
+via the plugin feature.
+
+Built-in Supported Mappable Format:
+
+Parser - Record Structure handled
+
+**Attribute CSV, Attribute EXCEL (XLSX), Attribute TSV**  
+
+>- Record (Attribute Code) per line
+- Header line not support (Remove before upload)
+- Does not support attachments
+- Map Name is used for Attribute Type
+
+**Attribute JSON, Attribute XML**
+
+>- Support Nested structure, still assumes file contain Attribute Codes to map;
+	
+**Component CSV, Component EXCEL (XLSX), Component TSV**	
+
+>- Record (Component) per line;  It can map SubComponent Entities as well.
+- Header line not support (Remove before upload)
+- Does not support attachments (Local resources or media)
+
+**Component  JSON, Component  XML**	
+
+>- Nested record (Component/Contact/etc)
+- Does not support attachments (Local resources or media)
+
+
+**Creating a data map**
+
+>**Attribute**
+
+> Map Fields for (Attribute Type and Attribute Codes)
+
+>**Component/Entry**
+
+> Map Fields for Component, Contacts, Resource, etc
+
+> Provide attribute mapping for each attribute type expected.
 
 
 ### 3.2.9 Lookups *

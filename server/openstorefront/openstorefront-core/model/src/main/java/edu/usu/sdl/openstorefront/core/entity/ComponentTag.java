@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Represents a tag")
 public class ComponentTag
-		extends BaseComponent
+		extends BaseComponent<ComponentTag>
 {
 	public static final String FIELD_TEXT = "text";
 

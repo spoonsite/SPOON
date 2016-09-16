@@ -29,16 +29,15 @@ public class ComponentTest
 	protected void initializeTest()
 	{
 		super.initializeTest();
-		results.append("Initialized<br>");
 	}
 
 	@Override
 	protected void runInternalTest()
 	{
 		ComponentAll testComponentAll = getTestComponent();
-		results.append("Created: <br>")				
+		results.append("Created:  ")
 				.append(testComponentAll.getComponent().getName())
-				.append("<br>");
+				.append("<br><br>");
 	}
 
 	@Override
@@ -46,7 +45,6 @@ public class ComponentTest
 	{
 		super.cleanupTest(); 
 		
-		results.append("Cleanedup");
 	}
 
 	@Override

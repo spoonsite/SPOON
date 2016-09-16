@@ -40,10 +40,11 @@ import javax.validation.constraints.Size;
 /**
  *
  * @author dshurtleff
+ * @param <T>
  */
 @APIDescription("Base entity of all lookups")
-public abstract class LookupEntity
-		extends StandardEntity
+public abstract class LookupEntity<T extends LookupEntity>
+		extends StandardEntity<T>
 		implements ExportImport
 {
 
@@ -95,18 +96,18 @@ public abstract class LookupEntity
 		return new HashMap<>();
 	}
 
-	public <T extends LookupEntity> List<T> systemValues()
+	public <J extends LookupEntity> List<J> systemValues()
 	{
-		List<T> lookups = new ArrayList<>();
+		List<J> lookups = new ArrayList<>();
 		for (String key : systemCodeMap().keySet()) {
-			T lookup = (T) systemCodeMap().get(key);
+			J lookup = (J) systemCodeMap().get(key);
 			lookups.add(lookup);
 		}
 
 		return lookups;
 	}
 
-	public <T extends LookupEntity> T systemValue(String code)
+	public T systemValue(String code)
 	{
 		return (T) systemCodeMap().get(code);
 	}

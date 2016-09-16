@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
  */
 @APIDescription("Primary Key")
 public class ComponentReviewProPk
-		extends BasePK
+		extends BasePK<ComponentReviewProPk>
 {
 	public static final String FIELD_REVIEW_PRO = "reviewPro"; 
 

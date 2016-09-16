@@ -28,7 +28,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Run Status")
 public class RunStatus
-		extends LookupEntity
+		extends LookupEntity<RunStatus>
 {
 
 	public static final String PENDING = "P";

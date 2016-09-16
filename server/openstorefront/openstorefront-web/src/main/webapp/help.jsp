@@ -83,7 +83,7 @@ limitations under the License.
 											{
 												text: 'Home',
 												iconCls: 'fa fa-home',
-												href: '../'
+												href: 'index.jsp'
 											},											
 											{
 												xtype: 'menuseparator'
@@ -101,7 +101,7 @@ limitations under the License.
 											{
 												text: 'Logout',
 												iconCls: 'fa fa-sign-out',
-												href: '../Login.action?Logout'												
+												href: 'Login.action?Logout'												
 											}
 										],
 										listeners: {

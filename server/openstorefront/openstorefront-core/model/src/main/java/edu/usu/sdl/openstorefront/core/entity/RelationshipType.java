@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
  */
 @APIDescription("Relationship Types")
 public class RelationshipType
-		extends LookupEntity
+		extends LookupEntity<RelationshipType>
 {
 
 	public RelationshipType()

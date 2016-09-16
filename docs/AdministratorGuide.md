@@ -269,17 +269,19 @@ The Storefront relies upon the following external dependencies:
 -   OpenAM (Optional)
 
 -   Index Search Server (Any of the following can work)
-
-	-   ESA
-
-	-   Solr 4.3.1+ *Recommended for greater control*
+	
+	-   Solr 6.x + *Recommended for greater control*
 
 	-   Elasticsearch 2.3.x *Recommended for simple install*
+	
+*Support for ESA 1.0 and Solr 4.3.1 has been dropped*
 
 **NOTE:** The base Solr package will require some changes to the schema.xml to make
 sure all field are available.
 
 ###4.4.1 To Use Solr
+
+(The following assumes the application is stop prior to the change. To change on a running application you need to restart the SearchServerManager after making changes.)
 
 Download Version 6.x 
 from [solr home](http://lucene.apache.org/solr/), and then perform the
@@ -296,11 +298,11 @@ bin/solr start -p 8983
 4.  Configure OpenStorefront to point to Solr by going to:
     /var/openstorefront/config/openstorefront.properties
 
-5.  Edit solr.server.url to
+5.  Edit 
 	
 	search.server=solr
 
-	solr.server.url=http://localhost:8983/solr/collection1
+	solr.server.url=http://localhost:8983/solr/openstorefront
 
 	solr.server.usexml=true
 
@@ -310,34 +312,54 @@ bin/solr start -p 8983
 
         b) Click Re-Index Listings
 
-(Use if matching ESA)
-Download Version 4.3.1
-from [solr home](http://archive.apache.org/dist/lucene/solr/), and then perform the
-following steps:
+###4.4.1.1 Installing as service linux
+run as sudo 
 
-1.  Unpackage
+1) ln -s /usr/local/solr/solr-6.1.0 latest
 
-2.  Replace (Solr install dir)/example/solr/collection1/conf/schema.xml
-    with the scheme.xml include in this project document folder.
+2) cp /usr/local/solr/solr-6.1.0/bin/init.d/solr /etc/init.d
 
-3.  Configure OpenStorefront to point to Solr by going to:
-    /var/openstorefront/config/openstorefront.properties
+3) nano /etc/init.d/solr
 
-4.  Edit solr.server.url to
-	
-	search.server=solr
+Edit:
 
-	solr.server.url=http://localhost:8983/solr/collection1
+> SOLR_INSTALL_DIR="/usr/local/solr/latest"
 
-	solr.server.usexml=true
+> SOLR_ENV="/usr/local/solr/latest/bin/solr.in.sh"
+ 
+> SOLR_INCLUDE="$SOLR_ENV" "$SOLR_INSTALL_DIR/bin/solr" "$SOLR_CMD" "$2"
 
-5.  Start Solr from (solr install dir)/example - java -jar start.jar
+Save and exit
 
-6. Resync data 
+4)  Add User
+> chmod 755 /etc/init.d/solr
 
-	a) Nav->Admin->System->Search Control
+> chown root:root /etc/init.d/solr
 
-        b) Click Re-Index Listings
+(debian/ubuntu)
+
+> update-rc.d solr defaults
+
+> update-rc.d solr enable
+
+(centos/redhat) 
+
+> chkconfig solr on
+
+> groupadd solr
+
+> useradd -g solr solr
+
+> chown -R solr:solr /usr/local/solr/solr-6.1.0
+
+> chown solr:solr latest
+
+5) (If lsof is not installed)
+> yum install lsof
+
+6) (This will start at port 8983)
+> service solr start|stop  
+
 
 ###4.4.3 To Use Elasticsearch 
 
@@ -362,35 +384,32 @@ following steps:
 	a) Nav->Admin->System->Search Control
 
         b) Click Re-Index Listings
+  
+###4.4.3.1 Yum install of Elasticsearch 
+
+1. Download and install with YUM 
+https://www.elastic.co/downloads/elasticsearch (2.3.x) 
+(see https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-repositories.html for yum install instructions) 
+
+2. service elasticsearch start 
+
+3. Configure OpenStorefront to point to elastisearch by going to: /var/openstorefront/config/openstorefront.properties or System admin screen->system properties 
+
+4. Add/Set: (adjust as needed to match url and ports) 
+
+search.server=elasticsearch 
+elastic.server.host=localhost 
+elastic.server.port=9300 
+
+5. Resync data 
+
+    a) Nav->Admin->Application Data->System->Search Control 
+    b) Click Re-Index Listings        
 
 
-###4.4.3 To Use ESA
+###4.4.4 Updated Search Server at Runtime
 
-1. Obtain VM from Raython
-
-2. Start VM port-forward/open port to solr
-
-3.  Configure OpenStorefront to point to Solr by going to:
-    /var/openstorefront/config/openstorefront.properties or System admin screen
-
-		Add/Set: (adjust as needed to match url and ports)
-
-		search.server=solr
-
-		solr.server.url=http://localhost:8983/solr/esa
-
-		solr.server.usexml=true
-
-4. Resync data 
-
-	a) Nav->Admin->System->Search Control
-
-        b) Click Re-Index Listings
-
-
-###4.4.4 Updated Search at Runtime
-
-1. Use Admin->System to set the system config properties 
+1. Use Admin->Application Management->System to set the system config properties 
 
 2. On Managers tab -> Restart Search Server Managers
 
@@ -1047,6 +1066,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **mail.from.address** -    From Email Address                                             ( **donotreply@storefront.net** )
 -  **mail.reply.name** -      Reply name (usually display at the bottom the message)         ( **Support** )
 -  **mail.reply.address** -   Reply email (usually display at the bottom the message)        ( **helpdesk@di2e.net** )
+-  **test.email** -           Set for automated testing only; the email to use for testing 
 
 ##5.5 Other Application Properties
 ----------------------------
@@ -1077,6 +1097,8 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **filehistory.max.days** - Sets the max days to keep file history ( **180** )
 -  **notification.max.days** - Set the max days to keep nofitication messages ( **7** )
 -  **feedback.email** - Email address to send feedback to
+-  **ui.idletimeout.minutes** - Set to a value > 1 to have the UI popup a idle warning about there session (Default is the application tries to keep the session alive.)
+-  **ui.idlegraceperiod.minutes** -Set this to configure the grace period for the tdle timeout. After the message appears.
 
 #6. Database Management
 -----

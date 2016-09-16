@@ -223,7 +223,10 @@ Ext.onReady(function() {
 	Ext.Ajax.timeout = 590000;
 	Ext.Ajax.on('requestcomplete', function (conn, response, options, eOpts) {
 		if (response.responseText && response.responseText.indexOf('login.jsp') !== -1) {
-			//window.parent.location.href = "/openstorefront/login.jsp?gotoPage="+window.parent.location.pathname;
+			var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
+			currentlocation = currentlocation + window.parent.location.search;
+			
+			window.parent.location.href = "/openstorefront/Login.action?gotoPage="+encodeURIComponent(currentlocation);
 		}		
 	});
 	
@@ -367,7 +370,9 @@ Ext.onReady(function() {
 				});
 			} else {				
 				if (response.responseText && response.responseText.indexOf('login.jsp') !== -1) {
-					//window.parent.location.href = "/openstorefront/login.jsp?gotoPage="+window.parent.location.pathname;
+					var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
+					currentlocation = currentlocation + window.parent.location.search;					
+					window.parent.location.href = "/openstorefront/Login.action?gotoPage=" + encodeURIComponent(currentlocation);
 				} else {				
 					Ext.toast('Unable to connect to server or there was internal server error.' + requestUrl, 'Connection Error');
 				}

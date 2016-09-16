@@ -28,7 +28,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Defines feedback handling")
 public class FeedbackHandleType
-	extends LookupEntity
+	extends LookupEntity<FeedbackHandleType>
 {
 	public static final String JIRA = "JIRA";
 	public static final String EMAIL = "EMAIL";
