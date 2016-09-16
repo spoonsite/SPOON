@@ -777,8 +777,9 @@
 					{
 						xtype: 'form',
 						id: 'editCodeForm',
-						layout: 'vbox',
 						scrollable: true,
+						layout: 'anchor',
+						autoScroll: true,
 						bodyStyle: 'padding: 10px;',
 						defaults: {
 							labelAlign: 'top',

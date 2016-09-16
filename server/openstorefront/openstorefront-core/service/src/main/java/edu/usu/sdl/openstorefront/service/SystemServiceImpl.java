@@ -504,7 +504,7 @@ public class SystemServiceImpl
 
 			if (distance > maxDays) {
 				removeTemporaryMedia(media.getName());
-				LOG.log(Level.INFO, MessageFormat.format("Removing Temporary Media {0}", media.getOriginalFileName()));
+				LOG.log(Level.FINE, MessageFormat.format("Removing old temporary media: {0}", media.getOriginalFileName()));
 			}
 		}
 

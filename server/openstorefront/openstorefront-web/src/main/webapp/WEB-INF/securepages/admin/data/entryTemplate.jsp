@@ -357,6 +357,7 @@
 											name: 'entry',		
 											width: '100%',
 											queryMode: 'remote',
+											editable: false,
 											emptyText: 'Select Entry',
 											displayField: 'description',											
 											valueField: 'code',
