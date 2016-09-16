@@ -42,7 +42,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author dshurtleff
  */
 public class PropertiesManager
-	implements Initializable
+		implements Initializable
 {
 
 	private static final Logger LOG = Logger.getLogger(PropertiesManager.class.getName());
@@ -71,6 +71,9 @@ public class PropertiesManager
 	public static final String KEY_NOTIFICATION_MAX_DAYS = "notification.max.days";
 	public static final String TEMPORARY_MEDIA_KEEP_DAYS = "temporary.media.keep.days";
 	public static final String KEY_TEST_EMAIL = "test.email";
+
+	public static final String KEY_UI_IDLETIMEOUT_MINUTES = "ui.idletimeout.minutes";
+	public static final String KEY_UI_IDLETIMEGRACE_MINUTES = "ui.idlegraceperiod.minutes";
 
 	public static final String KEY_OPENAM_URL = "openam.url";
 	public static final String KEY_LOGOUT_URL = "logout.url";
@@ -155,20 +158,20 @@ public class PropertiesManager
 
 	public static String getModuleVersion()
 	{
-		String key = "app.module.version";		
+		String key = "app.module.version";
 		String moduleVersion = getValue(key);
-		
+
 		//Make sure it's a valid osgi module version (only likes 2.0.2 )
 		StringBuilder version = new StringBuilder();
-		for (int c=0; c<moduleVersion.length(); c++){
-			if (StringUtils.isNumeric("" + moduleVersion.charAt(c)) ||
-				moduleVersion.charAt(c) == '.'	) {
+		for (int c = 0; c < moduleVersion.length(); c++) {
+			if (StringUtils.isNumeric("" + moduleVersion.charAt(c))
+					|| moduleVersion.charAt(c) == '.') {
 				version.append(moduleVersion.charAt(c));
 			}
-		}		
+		}
 		return version.toString();
-	}	
-	
+	}
+
 	public static String getValueDefinedDefault(String key)
 	{
 		return getProperties().getProperty(key, getDefault(key));
@@ -304,7 +307,7 @@ public class PropertiesManager
 	public void initialize()
 	{
 		PropertiesManager.init();
-		started.set(true);		
+		started.set(true);
 	}
 
 	@Override

@@ -98,9 +98,10 @@ public class ComponentSubmissionResource
 				List<Component> pendingChangesList = pendingChangesMap.get(componentView.getComponentId());
 				if (pendingChangesList != null) {
 					componentView.setNumberOfPendingChanges(pendingChangesList.size());
-					//Only one change is supported at the moment. 
-					componentView.setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, pendingChangesList.get(0).getApprovalState()));					
-					componentView.setPendingChangeComponentId(pendingChangesList.get(0).getComponentId());					
+					//Only one change is supported at the moment.
+					componentView.setPendingChangeSubmitDts(pendingChangesList.get(0).getSubmittedDts());
+					componentView.setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, pendingChangesList.get(0).getApprovalState()));
+					componentView.setPendingChangeComponentId(pendingChangesList.get(0).getComponentId());
 				}
 			}
 

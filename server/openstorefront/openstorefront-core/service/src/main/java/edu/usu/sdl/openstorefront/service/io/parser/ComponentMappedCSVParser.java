@@ -54,7 +54,7 @@ public class ComponentMappedCSVParser
 		MapModel mapModel = (MapModel) record;
 
 		ComponentMapper componentMapper = new ComponentMapper(() -> {
-			ComponentAll componentAll = defaultComponentAll();
+			ComponentAll componentAll = getMappingDefaultComponent();
 			return componentAll;
 		}, fileHistoryAll);
 

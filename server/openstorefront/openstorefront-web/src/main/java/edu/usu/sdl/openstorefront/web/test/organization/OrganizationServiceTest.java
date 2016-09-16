@@ -48,7 +48,7 @@ public class OrganizationServiceTest extends BaseTestCase
 	private Organization organizationTarget = null;
 	private UserProfile userProfile = null;
 	private ComponentContact componentContact = null;
-	Contact contactFromCompContact = null;
+	private Contact contactFromCompContact = null;
 
 	@Override
 	protected void runInternalTest()
@@ -82,7 +82,6 @@ public class OrganizationServiceTest extends BaseTestCase
 		review.setComponentReview(componentReview);
 		componentAll.getReviews().add(review);
 
-
 		QuestionAll question = new QuestionAll();
 		ComponentQuestion componentQuestion = new ComponentQuestion();
 		componentQuestion.setUserTypeCode(END_USER);
@@ -96,7 +95,7 @@ public class OrganizationServiceTest extends BaseTestCase
 		componentQuestion.setOrganization("First-Test-001 Organization");
 		componentQuestion = componentQuestion.find();
 		question.setQuestion(componentQuestion);
-		
+
 		ComponentQuestionResponse compQuestionResp = new ComponentQuestionResponse();
 		compQuestionResp.setQuestionId(componentQuestion.getQuestionId());
 		compQuestionResp.setComponentId(orgComponent.getComponentId());
@@ -248,6 +247,15 @@ public class OrganizationServiceTest extends BaseTestCase
 		if (contactFromCompContact != null) {
 			service.getContactService().deleteContact(contactFromCompContact.getContactId());
 		}
+
+		if (organization != null) {
+			try {
+				service.getOrganizationService().removeOrganization(organization.getOrganizationId());
+			} catch (AttachedReferencesException ex) {
+				failureReason.append(ex).append("- Unable to delete ").append(organization.getName()).append("<br><br>");
+
+			}
+		}
 		if (organizationTarget != null) {
 			try {
 				service.getOrganizationService().removeOrganization(organizationTarget.getOrganizationId());
@@ -260,7 +268,6 @@ public class OrganizationServiceTest extends BaseTestCase
 				service.getOrganizationService().removeOrganization(organization.getOrganizationId());
 			} catch (AttachedReferencesException ex) {
 				failureReason.append(ex).append("- Unable to delete ").append(organization.getName()).append("<br><br>");
-
 			}
 		}
 	}

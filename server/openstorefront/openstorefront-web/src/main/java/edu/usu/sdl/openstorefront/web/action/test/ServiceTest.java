@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.web.action.test;
 import edu.usu.sdl.openstorefront.web.test.TestSuiteModel;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -138,14 +137,7 @@ public class ServiceTest
 		testSuiteModel.setName("Highlight Tests");
 		testSuiteModels.add(testSuiteModel);
 
-		Collections.sort(testSuiteModels, new Comparator<TestSuiteModel>()
-		{
-			@Override
-			public int compare(TestSuiteModel o1, TestSuiteModel o2)
-			{
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
+		Collections.sort(testSuiteModels, (TestSuiteModel o1, TestSuiteModel o2) -> o1.getName().compareTo(o2.getName()));
 
 		return testSuiteModels;
 	}

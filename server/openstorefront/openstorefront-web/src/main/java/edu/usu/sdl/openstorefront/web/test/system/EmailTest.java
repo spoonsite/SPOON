@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.test.system;
 
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 
 /**
@@ -24,11 +25,13 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 public class EmailTest
 		extends BaseTestCase
 {
+
 	@Override
 	protected void runInternalTest()
 	{
 		results.append("Generating email...<br>");
-		service.getUserService().sendTestEmail(TEST_USER, null);
+		UserProfile userProfile = getTestUserProfile();
+		service.getUserService().sendTestEmail(userProfile.getUsername(), null);
 		results.append("Email sent<br>");
 	}
 

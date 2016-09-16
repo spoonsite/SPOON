@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class BaseTestCase
 {
 
-	private static final Logger log = Logger.getLogger(BaseTestCase.class.getName());
+	private static final Logger LOG = Logger.getLogger(BaseTestCase.class.getName());
 
 	protected static final String TEST_USER = "TEST-USER";
 	protected static final String TEST_ORGANIZATION = "TEST-ORGANIZATION";
@@ -45,36 +45,36 @@ public abstract class BaseTestCase
 	public abstract String getDescription();
 
 	protected void initializeTest()
-	{		
+	{
 	}
 
 	public void runTest()
 	{
 		try {
-			initializeTest();			
+			initializeTest();
 			runInternalTest();
 			if (failureReason.length() == 0) {
 				success = true;
 			}
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Test " + getDescription() + " Fail Trace: ", e);
+			LOG.log(Level.SEVERE, "Test " + getDescription() + " Fail Trace: ", e);
 			failureReason.append(e);
 		} finally {
 			cleanupTest();
 		}
 	}
-	
+
 	protected void cleanupTest()
 	{
 		for (CleanupTestData cleanupTestData : cleanTestDataList) {
 			try {
 				cleanupTestData.cleanup();
-			} catch (Exception e) {				
+			} catch (Exception e) {
 				failureReason.append("Unable to cleanup data. <br> Message: ").append(e.getMessage());
-				log.log(Level.SEVERE, "Test " + getDescription() + " Failed during clean Trace: <br>", e);
+				LOG.log(Level.SEVERE, "Test " + getDescription() + " Failed during clean Trace: <br>", e);
 			}
 		}
-		
+
 	}
 
 	protected abstract void runInternalTest();
@@ -83,28 +83,28 @@ public abstract class BaseTestCase
 	{
 		return success;
 	}
-	
+
 	protected void addResultsLines(String... lines)
 	{
 		for (String line : lines) {
 			results.append(line).append("<br>");
 		}
 	}
-	
+
 	protected void addFailLines(String... lines)
 	{
 		for (String line : lines) {
 			failureReason.append(line).append("<br>");
 		}
-	}	
+	}
 
 	protected ComponentAll getTestComponent()
 	{
 		ComponentAll componentAll = new ComponentAll();
-		Component component = new Component();		
+		Component component = new Component();
 		component.setName("c Component");
 		component.setDescription("Test Description");
-		component.setOrganization("Test");
+		component.setOrganization(TEST_ORGANIZATION);
 		component.setApprovalState(ApprovalStatus.APPROVED);
 		component.setGuid("5555555");
 		component.setAdminModified(false);
@@ -127,23 +127,23 @@ public abstract class BaseTestCase
 		}
 
 		componentAll = service.getComponentService().saveFullComponent(componentAll);
-		
+
 		final String componentIdToDelete = componentAll.getComponent().getComponentId();
 		CleanupTestData cleanupTestData = () -> {
 			service.getComponentService().cascadeDeleteOfComponent(componentIdToDelete);
 		};
 		cleanTestDataList.add(cleanupTestData);
-		
+
 		return componentAll;
-	}	
-	
+	}
+
 	public UserProfile getTestUserProfile()
 	{
 		UserProfile userProfile = service.getUserService().getUserProfile(TEST_USER);
 		if (userProfile == null) {
 			results.append("Creating a new user profile").append("<br>");
-			userProfile = new UserProfile();			
-			userProfile.setUsername(TEST_USER);			
+			userProfile = new UserProfile();
+			userProfile.setUsername(TEST_USER);
 			userProfile.setFirstName("TEST FIRSTNAME");
 			userProfile.setLastName("LASTNAME");
 			userProfile.setOrganization(TEST_ORGANIZATION);
@@ -151,29 +151,29 @@ public abstract class BaseTestCase
 			userProfile.setUserTypeCode(UserTypeCode.END_USER);
 			userProfile.setExternalGuid("5555-5555");
 			userProfile.setCreateUser(TEST_USER);
-			userProfile.setUpdateUser(TEST_USER);			
+			userProfile.setUpdateUser(TEST_USER);
 			service.getUserService().saveUserProfile(userProfile, false);
 		}
-		
+
 		CleanupTestData cleanupTestData = () -> {
 			results.append("Removing profile").append("<br>");
-			service.getUserService().deleteProfile(TEST_USER);			
+			service.getUserService().deleteProfile(TEST_USER);
 		};
 		cleanTestDataList.add(cleanupTestData);
-		
+
 		return userProfile;
 	}
-	
-	protected String getSystemEmail() 
+
+	protected String getSystemEmail()
 	{
 		String systemEmail = PropertiesManager.getValue(PropertiesManager.KEY_TEST_EMAIL);
-		if (StringUtils.isBlank(systemEmail)) {			
+		if (StringUtils.isBlank(systemEmail)) {
 			throw new OpenStorefrontRuntimeException("Unable to find test email.", "Add/Update system property: " + PropertiesManager.KEY_TEST_EMAIL + " set a email for test.");
 		}
-		
+
 		return systemEmail;
 	}
-	
+
 	public void setSuccess(boolean success)
 	{
 		this.success = success;

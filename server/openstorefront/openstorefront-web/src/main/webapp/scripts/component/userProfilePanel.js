@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global Ext */
+/* global Ext, CoreService */
 
 Ext.define('OSF.component.UserProfilePanel', {
 	extend: 'Ext.form.Panel',

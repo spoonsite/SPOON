@@ -232,7 +232,8 @@
 					 url: 'Login.action?Login',
 					 data: {
 						username: $('#username').val(),
-						password: $('#password').val()
+						password: $('#password').val(),
+						gotoPage: $('#gotoPageId').val()
 					 },
 					 success: function(data) {	
 						 if (data.success === false) {
@@ -250,8 +251,12 @@
 						 } else {
 							if (window.location.href.indexOf("login.jsp") > -1) {
 								window.location.href = data.message; 
-							} else {							
-								window.location.reload();
+							} else {					
+								if (data.message && data.message !== '') {
+									window.location.href = data.message;
+								} else {
+									window.location.reload();
+								}
 							}
 						 }						 
 					 },

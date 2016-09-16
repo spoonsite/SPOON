@@ -1549,11 +1549,11 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 						},
 						{ text: 'Operation', align: 'center', dataIndex: 'mergeCondition', width: 200, sortable: false,
 							renderer: function(value, meta, record, rowIndex) {							
-								if (rowIndex >= 1) {
+								//if (rowIndex >= 1) {
 									return value;								
-								} else {
-									return 'N/A';
-								}
+								//} else {
+								//	return 'N/A';
+								//}
 							}
 						},
 						{ 
