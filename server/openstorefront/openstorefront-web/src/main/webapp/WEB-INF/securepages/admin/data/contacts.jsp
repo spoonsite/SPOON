@@ -119,7 +119,7 @@ limitations under the License.
 				
 				var addEditWindow = Ext.create('Ext.window.Window', {
 					id: 'addEditWindow',
-					title: 'Add/Edit',
+					title: 'Add/Edit Contact',
 					iconCls: 'fa fa-edit',
 					modal: true,
 					width: '65%',
@@ -201,7 +201,13 @@ limitations under the License.
 									forceSelection: false,
 									valueField: 'description',
 									storeConfig: {
-										url: 'api/v1/resource/organizations/lookup'
+										url: 'api/v1/resource/organizations/lookup',
+										sorters: [
+											new Ext.util.Sorter({
+												property: 'description',
+												direction: 'ASC'
+											})
+										]
 									}
 								}),								
 								{
