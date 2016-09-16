@@ -27,14 +27,23 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 public class UserWatchTest
 		extends BaseTestCase
 {
+
+	private UserWatch userWatch = null;
+	ComponentAll componentAll = null;
+
+	@Override
+	protected void initializeTest()
+	{
+		super.initializeTest();
+		results.append("Create component").append("<br>");
+		componentAll = getTestComponent();
+	}
+
 	@Override
 	protected void runInternalTest()
 	{
-		results.append("Create component").append("<br>");
-		ComponentAll componentAll = getTestComponent();
-
 		results.append("Create watch").append("<br>");
-		UserWatch userWatch = new UserWatch();
+		userWatch = new UserWatch();
 		userWatch.setUsername(TEST_USER);
 		userWatch.setComponentId(componentAll.getComponent().getComponentId());
 		userWatch.setNotifyFlg(true);
@@ -48,16 +57,22 @@ public class UserWatchTest
 		results.append("Read watch").append("<br>");
 		userWatch = service.getUserService().getWatch(userWatch.getUserWatchId());
 
-		//remove
-		results.append("Remove watch").append("<br>");
-		service.getUserService().deleteWatch(userWatch.getUserWatchId());
-
 	}
 
 	@Override
 	public String getDescription()
 	{
 		return "User Watch";
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
+		if (userWatch != null) {
+			results.append("Remove watch").append("<br>");
+			service.getUserService().deleteWatch(userWatch.getUserWatchId());
+		}
 	}
 
 }

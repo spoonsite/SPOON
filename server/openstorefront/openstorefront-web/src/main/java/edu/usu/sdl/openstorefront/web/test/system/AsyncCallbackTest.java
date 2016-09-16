@@ -24,6 +24,8 @@ import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -37,6 +39,15 @@ import java.util.logging.Logger;
 public class AsyncCallbackTest
 		extends BaseTestCase
 {
+
+	private List<String> taskIds = null;
+
+	@Override
+	protected void initializeTest()
+	{
+		super.initializeTest();
+		taskIds = new ArrayList();
+	}
 
 	@Override
 	protected void runInternalTest()
@@ -82,8 +93,8 @@ public class AsyncCallbackTest
 		}
 		results.append("After Setting: ").append(lookupModel.getCode()).append("<br>");
 
-		//Delete the task
-		AsyncTaskManager.deleteTask(taskFuture.getTaskId());
+		// Used to delete the task in cleanup
+		taskIds.add(taskFuture.getTaskId());
 
 		taskRequest.setTask((Callable) () -> {
 			throw new OpenStorefrontRuntimeException("Auto Test Failure (This is an Intentional Failure).");
@@ -100,8 +111,8 @@ public class AsyncCallbackTest
 		}
 		results.append("After Fail: ").append(lookupModel.getCode()).append("<br>");
 
-		//Delete the task
-		AsyncTaskManager.deleteTask(taskFuture.getTaskId());
+		// Used to delete the task in cleanup
+		taskIds.add(taskFuture.getTaskId());
 	}
 
 	@Override
@@ -110,4 +121,16 @@ public class AsyncCallbackTest
 		return "Async Callback Test";
 	}
 
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
+
+		if (!taskIds.isEmpty()) {
+			for (String taskId : taskIds) {
+				AsyncTaskManager.deleteTask(taskId);
+			}
+		}
+
+	}
 }

@@ -67,4 +67,12 @@ public class DBUpdateTest
 		return "DB Update Test";
 	}
 
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
+		results.append("Clean up records").append("<br>");
+		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
+	}
+
 }

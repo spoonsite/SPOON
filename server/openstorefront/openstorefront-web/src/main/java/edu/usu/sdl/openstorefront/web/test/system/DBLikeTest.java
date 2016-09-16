@@ -28,9 +28,11 @@ import java.util.List;
 public class DBLikeTest
 		extends BaseTestCase
 {
+
 	@Override
-	protected void runInternalTest()
+	protected void initializeTest()
 	{
+		super.initializeTest();
 		Arrays.asList("A", "B", "Apple", "andy", "arrAnge", "Test", "Arch", "BaseTest", "Orange").forEach(item -> {
 			TestEntity testEntity = new TestEntity();
 			testEntity.setCode(item);
@@ -42,6 +44,11 @@ public class DBLikeTest
 		});
 		results.append("Saved Test Data").append("<br>");
 
+	}
+
+	@Override
+	protected void runInternalTest()
+	{
 		TestEntity testEntityLikeExample = new TestEntity();
 		testEntityLikeExample.setCode("A%");
 
@@ -86,15 +93,21 @@ public class DBLikeTest
 		if (testEntities.size() > 2 || testEntities.size() < 2) {
 			failureReason.append("Failed to find expected results");
 		}
-
-		results.append("Clean up records").append("<br>");
-		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
 	}
 
 	@Override
 	public String getDescription()
 	{
 		return "DB Like Query";
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
+
+		results.append("Clean up records").append("<br>");
+		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
 	}
 
 }
