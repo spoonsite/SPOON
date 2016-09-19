@@ -1634,6 +1634,7 @@
 				id: 'fileHistoryGrid',
 				title: 'Import History',
 				columnLines: true,
+				enableColumnMove: false,
 				store: fileHistoryStore,
 				bodyCls: 'border_accent',
 				columns: [
