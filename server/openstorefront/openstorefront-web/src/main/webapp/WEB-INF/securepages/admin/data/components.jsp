@@ -4201,6 +4201,8 @@
 						
 					}
 					Ext.getCmp('componentTypeMainCB').resumeEvent('change');
+
+					generalForm.body.scrollTo('Top', 0, true);
 				};
 				
 				var hideSubComponentTabs = function(attempt){
