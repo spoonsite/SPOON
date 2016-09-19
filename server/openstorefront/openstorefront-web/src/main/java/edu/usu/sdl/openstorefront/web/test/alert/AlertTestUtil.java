@@ -44,8 +44,7 @@ public class AlertTestUtil
 	{
 		ServiceProxy service = ServiceProxy.getProxy();
 		for (Alert activeAlert : activeAlerts) {
-			activeAlert = service.getPersistenceService().setStatusOnEntity(Alert.class, activeAlert.getAlertId(), Alert.INACTIVE_STATUS);
-			service.getAlertService().saveAlert(activeAlert);
+			service.getPersistenceService().setStatusOnEntity(Alert.class, activeAlert.getAlertId(), Alert.INACTIVE_STATUS);
 		}
 	}
 
@@ -53,8 +52,7 @@ public class AlertTestUtil
 	{
 		ServiceProxy service = ServiceProxy.getProxy();
 		for (Alert inactiveAlert : inactiveAlerts) {
-			inactiveAlert = service.getPersistenceService().setStatusOnEntity(Alert.class, inactiveAlert.getAlertId(), Alert.ACTIVE_STATUS);
-			service.getAlertService().saveAlert(inactiveAlert);
+			service.getPersistenceService().setStatusOnEntity(Alert.class, inactiveAlert.getAlertId(), Alert.ACTIVE_STATUS);
 		}
 	}
 }

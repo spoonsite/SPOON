@@ -492,7 +492,7 @@ public class SystemServiceImpl
 	public void cleanUpOldTemporaryMedia()
 	{
 
-		String query = "SELECT FROM TemporaryMedia";
+		String query = "SELECT FROM " + TemporaryMedia.class.getSimpleName();
 		List<TemporaryMedia> allTemporaryMedia = persistenceService.query(query, null);
 		int maxDays = Convert.toInteger(PropertiesManager.getValueDefinedDefault(PropertiesManager.TEMPORARY_MEDIA_KEEP_DAYS));
 
@@ -500,13 +500,12 @@ public class SystemServiceImpl
 			LocalDate today = LocalDate.now();
 			LocalDate update = media.getUpdateDts().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			long distance = Math.abs(ChronoUnit.DAYS.between(today, update));
-			LOG.log(Level.INFO, MessageFormat.format("{0} is {1} days old", media.getOriginalFileName(), distance));
+			LOG.log(Level.FINEST, MessageFormat.format("{0} is {1} days old", media.getOriginalFileName(), distance));
 
 			if (distance > maxDays) {
 				removeTemporaryMedia(media.getName());
-				LOG.log(Level.INFO, MessageFormat.format("Removing {0}", media.getOriginalFileName()));
+				LOG.log(Level.FINE, MessageFormat.format("Removing old temporary media: {0}", media.getOriginalFileName()));
 			}
-
 		}
 
 	}
@@ -718,12 +717,12 @@ public class SystemServiceImpl
 	{
 		return CoreSystem.isStarted();
 	}
-	
+
 	@Override
 	public boolean isLoadingPluginsReady()
 	{
 		return PluginManager.isLoadingPlugins();
-	}	
+	}
 
 	@Override
 	public String toJson(Object obj)
@@ -734,7 +733,7 @@ public class SystemServiceImpl
 				output = StringProcessor.defaultObjectMapper().writeValueAsString(obj);
 			} catch (JsonProcessingException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to serialize obj to JSON.", ex);
-			}			
+			}
 		}
 		return output;
 	}

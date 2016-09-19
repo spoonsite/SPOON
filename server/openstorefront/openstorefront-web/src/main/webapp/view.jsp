@@ -470,8 +470,7 @@ limitations under the License.
 								items: [
 									Ext.create('OSF.component.StandardComboBox', {
 										name: 'text',	
-										id: 'tagField',
-										allowBlank: false,									
+										id: 'tagField',										
 										margin: '0 0 0 0',
 										flex: 1,
 										fieldLabel: 'Add Tag',
@@ -525,26 +524,30 @@ limitations under the License.
 			
 			var actionAddTag = function(tag) {
 				
-				//add tag
-				Ext.getCmp('tagPanel').setLoading('Tagging Entry...');
-				Ext.Ajax.request({
-					url: 'api/v1/resource/components/' + componentId + '/tags',
-					method: 'POST',
-					jsonData: {
-						text: tag
-					},
-					callback: function(){
-						Ext.getCmp('tagPanel').setLoading(false);
-					},
-					success: function(response, opt){
-						var tag = Ext.decode(response.responseText);
-						processTags(tag);
-						
-						var tagField = Ext.getCmp('tagField');
-						tagField.reset();
-						tagField.getStore().load();
-					}
-				});				
+				if (!tag || tag === '') {
+					Ext.getCmp('tagField').markInvalid('Tag name required');
+				} else {				
+					//add tag
+					Ext.getCmp('tagPanel').setLoading('Tagging Entry...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/components/' + componentId + '/tags',
+						method: 'POST',
+						jsonData: {
+							text: tag
+						},
+						callback: function(){
+							Ext.getCmp('tagPanel').setLoading(false);
+						},
+						success: function(response, opt){
+							var tag = Ext.decode(response.responseText);
+							processTags(tag);
+
+							var tagField = Ext.getCmp('tagField');
+							tagField.reset();
+							tagField.getStore().load();
+						}
+					});	
+				}
 			};
 			
 			var detailPanel = Ext.create('Ext.panel.Panel', {

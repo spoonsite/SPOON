@@ -287,8 +287,9 @@
 										var record = Ext.getCmp('threadStatus').getSelectionModel().getSelection()[0];
 										
 										var detailWin = Ext.create('Ext.window.Window', {
-											title: 'Full Stack',
+											title: 'Full Stack - ' + record.get("name"),
 											modal: true,
+											closeAction: 'destroy',
 											width: '80%',
 											height: '80%',
 											maximizable: true,
@@ -306,6 +307,9 @@
 											},
 											success: function(response, opts) {
 												detailWin.setHtml(response.responseText);
+											},
+											failure: function(response, opts) {
+												detailWin.setHtml("Selected thread is no longer available.");
 											}
 										});
 									}									
@@ -1608,20 +1612,31 @@
 				};
 
 				var actionUninstallPlugin = function actionUninstallPlugin(record) {
-					var url = 'api/v1/resource/plugins/';
-					url += record.data.pluginId;
-					Ext.Ajax.request({
-						url: url,
-						method: 'DELETE',
-						success: function(response, opt){
-							Ext.toast('Successfully uninstalled plugin', '', 'tr');
-							pluginStore.load();
-						},
-						failure: function(response, opt){
-							Ext.toast('Failed to uninstall plugin', '', 'tr');
+					
+					Ext.Msg.show({
+						title:'Uninstall Plugin?',
+						message: 'Are you sure you want to uninstall ' + record.get('name') + '?',
+						buttons: Ext.Msg.YESNO,
+						icon: Ext.Msg.QUESTION,
+						fn: function(btn) {
+							if (btn === 'yes') {
+								var url = 'api/v1/resource/plugins/';
+								url += record.data.pluginId;
+								Ext.Ajax.request({
+									url: url,
+									method: 'DELETE',
+									success: function(response, opt){
+										Ext.toast('Successfully uninstalled plugin', '', 'tr');
+										pluginStore.load();
+									},
+									failure: function(response, opt){
+										Ext.toast('Failed to uninstall plugin', '', 'tr');
+									}
+								});
+							} 
 						}
-					});
-
+					});					
+					
 				};
 
 				var addPluginWindow = Ext.create('Ext.window.Window', {
@@ -1948,7 +1963,8 @@
 												grid.setLoading(false);
 											},
 											success: function(response){
-												grid.getStore().reload();
+												Ext.toast("Cleared " + record.get('name') + " cache.");
+												grid.getStore().reload();												
 											}
 										});										
 									}									

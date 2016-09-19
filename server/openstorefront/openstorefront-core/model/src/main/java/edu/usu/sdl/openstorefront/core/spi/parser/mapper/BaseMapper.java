@@ -39,11 +39,12 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class BaseMapper<T>
 {
+
 	protected DataTemplateEntity<T> templateFactory;
 	protected FileHistoryAll fileHistoryAll;
 	protected Map<String, DataMapper> dataMappers;
 	protected AttributeDataMapper attributeDataMapper;
-	
+
 	protected Service serviceProxy = ServiceProxyFactory.getServiceProxy();
 
 	public BaseMapper(DataTemplateEntity<T> templateFactory, FileHistoryAll fileHistoryAll, Map<String, DataMapper> dataMappers, AttributeDataMapper attributeDataMapper)
@@ -53,44 +54,43 @@ public abstract class BaseMapper<T>
 		this.dataMappers = dataMappers;
 		this.attributeDataMapper = attributeDataMapper;
 	}
-	
-	public BaseMapper(DataTemplateEntity<T> templateFactory, FileHistoryAll fileHistoryAll) {
-		Objects.requireNonNull(fileHistoryAll.getDataMapModel(), "A data map is required to for this format.");
-		
+
+	public BaseMapper(DataTemplateEntity<T> templateFactory, FileHistoryAll fileHistoryAll)
+	{
+		Objects.requireNonNull(fileHistoryAll.getDataMapModel(), "A data map is required for this format.");
+
 		this.templateFactory = templateFactory;
 		this.fileHistoryAll = fileHistoryAll;
-		
+
 		DataMapModel dataMapModel = fileHistoryAll.getDataMapModel();
-		
+
 		if (dataMapModel.getFileDataMap().getDataMapFields() == null) {
-			dataMapModel.getFileDataMap().setDataMapFields(new ArrayList<>());			
+			dataMapModel.getFileDataMap().setDataMapFields(new ArrayList<>());
 		}
-		
+
 		this.dataMappers = new HashMap<>();
-		for (FileDataMapField fileDataMapField : dataMapModel.getFileDataMap().getDataMapFields())
-		{
-			DataMapper dataMapper = DataMapper.toDataMapper(fileDataMapField);			
+		for (FileDataMapField fileDataMapField : dataMapModel.getFileDataMap().getDataMapFields()) {
+			DataMapper dataMapper = DataMapper.toDataMapper(fileDataMapField);
 			dataMappers.put(fileDataMapField.getField(), dataMapper);
 		}
-		
-		if (dataMapModel.getFileAttributeMap() != null)
-		{
-			attributeDataMapper =  AttributeDataMapper.toDataMapper(dataMapModel.getFileAttributeMap());
+
+		if (dataMapModel.getFileAttributeMap() != null) {
+			attributeDataMapper = AttributeDataMapper.toDataMapper(dataMapModel.getFileAttributeMap());
 		}
-		
-	}	
-	
-	public abstract  List<T> multiMapData(MapModel input);
-	
+
+	}
+
+	public abstract List<T> multiMapData(MapModel input);
+
 	public abstract T singleMapData(MapModel input);
-	
+
 	protected AttributeType createAttributeType(String attributeTypeCode)
 	{
 		AttributeType attributeType = new AttributeType();
 
 		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 		String key = sanitizer.santize(attributeTypeCode.toUpperCase()).toString();
-		
+
 		attributeType.setAttributeType(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_CODE));
 		attributeType.setDescription(StringUtils.left(attributeTypeCode, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
 		attributeType.setVisibleFlg(Boolean.FALSE);
@@ -98,32 +98,32 @@ public abstract class BaseMapper<T>
 		attributeType.setArchitectureFlg(Boolean.FALSE);
 		attributeType.setImportantFlg(Boolean.FALSE);
 		attributeType.setAllowMultipleFlg(Boolean.TRUE);
-		attributeType.setHideOnSubmission(Boolean.FALSE);	
+		attributeType.setHideOnSubmission(Boolean.FALSE);
 		attributeType.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
-		attributeType.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());		
-		
-		serviceProxy.getAttributeService().saveAttributeType(attributeType);	
+		attributeType.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
+
+		serviceProxy.getAttributeService().saveAttributeType(attributeType);
 		return attributeType;
 	}
-			
+
 	protected AttributeCode createAttributeCode(String attributeTypeCode, String attributeCode)
 	{
 		AttributeCodePk attributeCodePk = new AttributeCodePk();
 		attributeCodePk.setAttributeType(attributeTypeCode);
 		attributeCodePk.setAttributeCode(attributeCode);
-		
+
 		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 		String key = sanitizer.santize(attributeCode).toString();
-		attributeCodePk.setAttributeCode(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_CODE));		
+		attributeCodePk.setAttributeCode(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_CODE));
 
 		AttributeCode attributeCodeFound = new AttributeCode();
 		attributeCodeFound.setAttributeCodePk(attributeCodePk);
-		attributeCodeFound.setLabel(StringUtils.left(attributeCode, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));	
+		attributeCodeFound.setLabel(StringUtils.left(attributeCode, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
 		attributeCodeFound.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
-		attributeCodeFound.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());			
+		attributeCodeFound.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
 
 		serviceProxy.getAttributeService().saveAttributeCode(attributeCodeFound, false);
 		return attributeCodeFound;
-	}			
-	
+	}
+
 }
