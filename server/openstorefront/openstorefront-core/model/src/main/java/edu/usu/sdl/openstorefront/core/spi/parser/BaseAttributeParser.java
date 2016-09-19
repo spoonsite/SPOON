@@ -26,7 +26,7 @@ public abstract class BaseAttributeParser
 		extends AbstractParser<AttributeAll>
 {
 
-	protected static final int MAX_BUCKET_SIZE = 100;
+	protected static final int MAX_BUCKET_SIZE = 1000;
 	protected List<AttributeAll> attributesAll = new ArrayList<>();
 
 	protected AttributeAll defaultAttributeAll()
@@ -47,7 +47,7 @@ public abstract class BaseAttributeParser
 	}
 
 	@Override
-	protected  List<AttributeAll> getStorageBucket()
+	protected List<AttributeAll> getStorageBucket()
 	{
 		return attributesAll;
 	}

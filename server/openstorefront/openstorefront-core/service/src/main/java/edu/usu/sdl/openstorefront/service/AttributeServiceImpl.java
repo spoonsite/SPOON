@@ -250,8 +250,8 @@ public class AttributeServiceImpl
 	{
 		Objects.requireNonNull(attributeCode);
 		Objects.requireNonNull(attributeCode.getAttributeCodePk());
-		Objects.requireNonNull(fileInput);		
-	
+		Objects.requireNonNull(fileInput);
+
 		AttributeCode existing = persistenceService.findById(AttributeCode.class, attributeCode.getAttributeCodePk());
 		if (existing != null) {
 			if (StringUtils.isNotBlank(attributeCode.getAttachmentOriginalFileName())) {
@@ -259,7 +259,7 @@ public class AttributeServiceImpl
 			}
 			if (StringUtils.isNotBlank(attributeCode.getAttachmentMimeType())) {
 				existing.setAttachmentMimeType(attributeCode.getAttachmentMimeType());
-			}			
+			}
 			existing.setAttachmentFileName(existing.getAttributeCodePk().toKey().replace("#", "-"));
 
 			try (InputStream in = fileInput) {
@@ -922,17 +922,12 @@ public class AttributeServiceImpl
 	@Override
 	public void importAttributes(List<AttributeAll> attributes, FileHistoryOption options)
 	{
-		attributes.forEach(attribute
-				-> {
-			AttributeType existing = findType(attribute.getAttributeType().toString());
-			if (existing != null) {
-				attribute.getAttributeType().setAttributeType(existing.getAttributeType());
-			}
-			saveAttributeType(attribute.getAttributeType());
-			attribute.getAttributeCodes().forEach(code -> {
-				saveAttributeCode(code);
-			});
-		});
+		Map<AttributeType, List<AttributeCode>> attributeMap = new HashMap<>();
+
+		for (AttributeAll attributeAll : attributes) {
+			attributeMap.put(attributeAll.getAttributeType(), attributeAll.getAttributeCodes());
+		}
+		syncAttribute(attributeMap);
 	}
 
 }
