@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class AttributeSvcv4Parser
 		extends BaseAttributeParser
@@ -67,18 +67,10 @@ public class AttributeSvcv4Parser
 
 		String[] data = (String[]) record;
 		AttributeAll attributeAll = defaultAttributeAll();
-		AttributeType attributeType = new AttributeType();
-		attributeType.setAttributeType(AttributeType.DI2E_SVCV4);
-		attributeType.setDescription("DI2E SvcV-4 Alignment");
+		attributeAll.getAttributeType().setAttributeType(AttributeType.DI2E_SVCV4);
+		attributeAll.getAttributeType().setDescription("DI2E SvcV-4 Alignment");
 
-		//Default to true....Later an admin would need to determine which ones should only allow one.
-		attributeType.setAllowMultipleFlg(Boolean.TRUE);
-		attributeType.setArchitectureFlg(Boolean.TRUE);
-		attributeType.setVisibleFlg(Boolean.TRUE);
-		attributeType.setImportantFlg(Boolean.TRUE);
-		attributeType.setRequiredFlg(Boolean.FALSE);
-
-		attributeAll.setAttributeType(attributeType);
+		AttributeType attributeType = attributeAll.getAttributeType();
 
 		if (data.length > DESCRIPTION) {
 

@@ -60,7 +60,7 @@ public abstract class BaseComponentParser
 
 	private static final int ENTRY_TYPE_SHORT_CODE = 6;
 
-	protected static final int MAX_BUCKET_SIZE = 100;
+	protected static final int MAX_BUCKET_SIZE = 300;
 	protected List<ComponentAll> componentsAll = new ArrayList<>();
 
 	protected List<AttributeType> requiredAttributes;
