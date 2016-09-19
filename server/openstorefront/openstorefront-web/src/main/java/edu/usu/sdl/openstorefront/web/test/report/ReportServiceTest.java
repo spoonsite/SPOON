@@ -43,10 +43,6 @@ public class ReportServiceTest extends BaseTestCase
 
 		results.append("Generating reports...<br>");
 		List<ReportType> types = service.getLookupService().findLookup(ReportType.class);
-		List<String> reportTypes = new ArrayList();
-		for (ReportType reportType : types) {
-			reportTypes.add(reportType.getCode());
-		}
 
 		reports = new ArrayList();
 		Map<String, List<String>> formats = service.getReportService().getSupportedFormats();

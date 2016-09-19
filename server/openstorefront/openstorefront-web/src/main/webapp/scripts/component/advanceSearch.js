@@ -1558,7 +1558,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 						},
 						{ 
 							xtype:'actioncolumn',
-							width: 50,
+							width: 70,
 							items: [
 								{
 									iconCls: 'fa fa-edit action-icon',
