@@ -1262,7 +1262,7 @@
 												//upload
 											
 												mainForm.submit({
-													url: '/Media.action?UploadMedia',
+													url: 'Media.action?UploadMedia',
 													params: {
 														'componentMedia.mediaTypeCode' : data.mediaTypeCode,
 														'componentMedia.caption': data.caption,
