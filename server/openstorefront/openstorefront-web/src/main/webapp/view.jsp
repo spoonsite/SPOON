@@ -236,6 +236,7 @@ limitations under the License.
 				width: '95%',
 				height: '60%',
 				modal: true,
+				draggable: false,
 				maximizable: true,
 				layout: 'fit',
 				items: [
@@ -420,6 +421,7 @@ limitations under the License.
 												var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {
 													closeAction: 'destroy',
 													title: 'Submit Correction',
+													draggable: false,
 													extraDescription: 'Entry Name: ' + entry.name,
 													hideType: 'Correction Requested',
 													hideSummary: Ext.String.ellipsis(entry.name, 50),
@@ -440,6 +442,7 @@ limitations under the License.
 												var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {
 													closeAction: 'destroy',
 													title: 'Request Ownership',
+													draggable: false,
 													extraDescription: 'Entry Name: ' + entry.name,												
 													hideType: 'Request Ownership',
 													hideSummary: Ext.String.ellipsis(entry.name, 50),

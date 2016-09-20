@@ -509,6 +509,7 @@ var CoreUtil = {
 			width: '95%',
 			height: '60%',
 			modal: true,
+			draggable: false,
 			maximizable: true,
 			layout: 'fit',
 			items: [

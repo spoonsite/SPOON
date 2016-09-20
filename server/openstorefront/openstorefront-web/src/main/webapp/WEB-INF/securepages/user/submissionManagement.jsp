@@ -20,12 +20,15 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../layout/usertoolslayout.jsp">
+<stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
+		
+		<stripes:layout-render name="../../../layout/userheader.jsp">		
+		</stripes:layout-render>			
 
-	<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/inlineMediaRetrieverWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/inlineMediaRetrieverWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
         <script type="text/javascript">
 			/* global Ext, CoreUtil, CoreService */
@@ -556,12 +559,7 @@ limitations under the License.
 					}
 				});				
 				
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						submissionGrid
-					]
-				});
+				addComponentToMainViewPort(submissionGrid);
 				
 				var actionRefreshSubmission = function(){
 					Ext.getCmp('submissionGrid').getStore().load();

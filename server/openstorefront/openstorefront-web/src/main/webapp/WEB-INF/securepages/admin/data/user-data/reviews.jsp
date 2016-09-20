@@ -1,9 +1,12 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../../layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../../layout/toplevelLayout.jsp">
 	<stripes:layout-component name="contents">
 
+		<stripes:layout-render name="../../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>		
+		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
@@ -226,13 +229,8 @@
 
 				};
 
-
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						reviewGrid
-					]
-				});
+				addComponentToMainViewPort(reviewGrid);
+				
 			});
 
 		</script>

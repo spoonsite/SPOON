@@ -129,6 +129,7 @@ Ext.define('OSF.defaults.Window', {
 	
   ghost: false,
   closeAction: 'hide',
+  constrain: true,
   monitorResize: true,
   onRender: function (ct, position) {
 	  this.callParent();

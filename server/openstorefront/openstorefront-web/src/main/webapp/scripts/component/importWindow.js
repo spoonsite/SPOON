@@ -45,19 +45,34 @@ Ext.define('OSF.component.ImportWindow', {
 							iconCls: 'fa fa-upload',
 							handler: function () {
 								var uploadForm = this.up('form');
-								uploadForm.submit({
-									submitEmptyText: false,
-									url: 'Upload.action?ImportData',
-									success: function(form, action) {
-										Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');	
-										if (importWindow.uploadSuccess) {
-											importWindow.uploadSuccess(form, action);
+								var data = uploadForm.getValues();
+								var selectedFormat = uploadForm.getComponent('fileFormatCB').getSelection();
+								//check 
+								if (selectedFormat.get('supportsDataMap') && !data.dataMappingId) {
+									uploadForm.getComponent('fileFormatCB').markInvalid('A Data Mapping is required for this format.');									
+									Ext.Msg.show({
+										title:'Validation',
+										message: 'A Data Mapping is required for this format.',
+										buttons: Ext.Msg.OK,
+										icon: Ext.Msg.ERROR,
+										fn: function(btn) {        
 										}
-										uploadForm.reset();
-										uploadForm.getComponent('fileTypeCB').setValue(importWindow.fileTypeValue);
-										importWindow.close();
-									}
-								});
+									});	
+								} else {
+									uploadForm.submit({
+										submitEmptyText: false,
+										url: 'Upload.action?ImportData',
+										success: function(form, action) {
+											Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');	
+											if (importWindow.uploadSuccess) {
+												importWindow.uploadSuccess(form, action);
+											}
+											uploadForm.reset();
+											uploadForm.getComponent('fileTypeCB').setValue(importWindow.fileTypeValue);
+											importWindow.close();
+										}
+									});
+								}
 							}
 						},
 						{

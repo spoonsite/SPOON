@@ -25,9 +25,6 @@ limitations under the License.
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	
 
-			var feedbackWin = Ext.create('OSF.component.FeedbackWindow',{				
-			});
-
 			Ext.create('Ext.container.Viewport', {
 				layout: 'border',
 				items: [{
@@ -70,47 +67,15 @@ limitations under the License.
 										notificationWin.refreshData();
 									}
 								},								
-								{
-									xtype: 'button',
-									id: 'userMenuBtn',
-									scale   : 'large',
+								Ext.create('OSF.component.UserMenu', {									
+									showAdminTools: false,
+									showUserTools: false,
+									showHelp: false,
 									ui: 'default',
-									text: 'User Menu',
-									minWidth: 150,
-									maxWidth: 250,
-									menu: {						
-										items: [
-											{
-												text: 'Home',
-												iconCls: 'fa fa-home',
-												href: 'index.jsp'
-											},											
-											{
-												xtype: 'menuseparator'
-											},
-											{
-												text: '<b>Feedback / issues</b>',
-												iconCls: 'fa fa-commenting',
-												handler: function() {
-													feedbackWin.show();
-												}
-											},
-											{
-												xtype: 'menuseparator'
-											},
-											{
-												text: 'Logout',
-												iconCls: 'fa fa-sign-out',
-												href: 'Login.action?Logout'												
-											}
-										],
-										listeners: {
-											beforerender: function () {
-											 this.setWidth(this.up('button').getWidth());
-											}
-										}
+									initCallBack: function(usercontext) {
+										setupServerNotifications(usercontext);	
 									}
-								}
+								})
 							]
 						}						
 					]
@@ -135,20 +100,6 @@ limitations under the License.
 					}), 0);
 				}
 			});
-			
-			CoreService.usersevice.getCurrentUser().then(function(response, opts){
-				var usercontext = Ext.decode(response.responseText);
-				
-				var userMenuText = usercontext.username;
-				if (usercontext.firstName && usercontext.lastName)
-				{
-					userMenuText = usercontext.firstName + ' ' + usercontext.lastName;
-				}
-				Ext.getCmp('userMenuBtn').setText(userMenuText);	
-				setupServerNotifications(usercontext);					
-			});			
-			
-			
 			
 		});	
 	</script>		

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
@@ -32,7 +33,7 @@ public class SearchResultAttribute
 {
 
 	private String type;
-	private String typeLabel;	
+	private String typeLabel;
 	private String code;
 	private String badgeUrl;
 	private String label;
@@ -54,12 +55,17 @@ public class SearchResultAttribute
 		if (code != null) {
 			view.setBadgeUrl(code.getBadgeUrl());
 			view.setLabel(code.getLabel());
+		} else {
+			view.setLabel(OpenStorefrontConstant.NOT_AVAILABLE);
 		}
+
 		AttributeType type = service.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
 		if (type != null) {
-			view.setTypeLabel(type.getDescription());			
+			view.setTypeLabel(type.getDescription());
+		} else {
+			view.setLabel(OpenStorefrontConstant.NOT_AVAILABLE);
 		}
-		
+
 		return view;
 	}
 

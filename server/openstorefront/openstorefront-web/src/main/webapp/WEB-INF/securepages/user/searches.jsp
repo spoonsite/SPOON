@@ -20,8 +20,11 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../layout/usertoolslayout.jsp">
+<stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
+		
+		<stripes:layout-render name="../../../layout/userheader.jsp">		
+		</stripes:layout-render>			
 		
 		<script src="scripts/component/advanceSearch.js?v=${appVersion}" type="text/javascript"></script>
 		
@@ -316,12 +319,7 @@ limitations under the License.
 					});						
 				};
 						
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						searchGrid
-					]
-				});				
+				addComponentToMainViewPort(searchGrid);
 				
 			});
 			

@@ -133,9 +133,11 @@
 			<div class="auth-content">
 				<h1>404 - Resource Not Found</h1>
 				<p>Sorry, but the page you were trying to view does not exist.</p>
-				<p>It looks like this was the result of either:</p>
+				<p>Please update your Bookmarks</p>				
+				<p>This was the result of either:</p>
 				- a mistyped address<br>
 				- an out-of-date link<br>
+				- a resource that no longer exists<br>
 				<br>				
 				<a href="${pageContext.request.contextPath}">Return to Home Page</a> 		
 			</div>

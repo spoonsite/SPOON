@@ -21,29 +21,26 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../layout/usertoolslayout.jsp">
+<stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 			
-	<script src="scripts/component/visualSearch.js?v=${appVersion}" type="text/javascript"></script>	
+		<stripes:layout-render name="../../../layout/userheader.jsp">		
+		</stripes:layout-render>			
+		<script src="scripts/component/visualSearch.js?v=${appVersion}" type="text/javascript"></script>	
 	
-	<script type="text/javascript">
-		/* global Ext, CoreService, CoreApp */	
-		Ext.onReady(function(){	
-			
-			var visualPanel = Ext.create('OSF.component.VisualContainerPanel', {
-				title: 'View Relationships <i class="fa fa-question-circle"  data-qtip="Show relationships amoung entries based on organization, attributes, tags and direct relationships."></i>'
+		<script type="text/javascript">
+			/* global Ext, CoreService, CoreApp */	
+			Ext.onReady(function(){	
+
+				var visualPanel = Ext.create('OSF.component.VisualContainerPanel', {
+					title: 'View Relationships <i class="fa fa-question-circle"  data-qtip="Show relationships amoung entries based on organization, attributes, tags and direct relationships."></i>'
+				});
+
+				addComponentToMainViewPort(visualPanel);
+
 			});
-			
-			Ext.create('Ext.container.Viewport', {
-				layout: 'fit',
-				items: [
-					visualPanel
-				]
-			});
-			
-		});
-		
-	</script>
+
+		</script>
 		
     </stripes:layout-component>
 </stripes:layout-render>	

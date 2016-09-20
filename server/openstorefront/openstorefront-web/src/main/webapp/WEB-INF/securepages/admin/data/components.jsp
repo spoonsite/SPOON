@@ -1,7 +1,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../layout/adminlayout.jsp">
-          <stripes:layout-component name="contents">
+<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
+    <stripes:layout-component name="contents">
+			  
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>			  
 			  
 		<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
@@ -3799,9 +3802,9 @@
 						   selType: 'checkboxmodel'        
 					},
 					plugins: 'gridfilters',
-					enableLocking: true,
+					//enableLocking: true,
 					columns: [
-						{ text: 'Name', dataIndex: 'name', width: 275, lockable: true,
+						{ text: 'Name', dataIndex: 'name', width: 275, flex: 1,
 							filter: {
 								type: 'string'
 							}	
@@ -3814,7 +3817,7 @@
 								return record.get('componentTypeLabel');
 							}							
 						},
-						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 150,
+						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 150, hidden:true,
 						 renderer: function(value){
 							return Ext.util.Format.stripTags(value);
 						}},
@@ -4110,13 +4113,8 @@
 						emptyMsg: "No entries to display"
 					})
 				});
-				
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						componentGrid
-					]
-				});
+								
+				addComponentToMainViewPort(componentGrid);
 				
 				var checkComponetGridTools = function() {
 					if (componentGrid.getSelectionModel().getCount() === 1) {
