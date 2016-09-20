@@ -171,7 +171,7 @@ limitations under the License.
 				
 				Ext.Msg.show({
 					title:'Remove Answer?',
-					message: 'Are you sure you want to review this answer?',
+					message: 'Are you sure you want to remove this answer?',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
