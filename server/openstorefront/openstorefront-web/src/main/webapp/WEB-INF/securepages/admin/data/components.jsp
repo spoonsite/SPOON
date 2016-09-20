@@ -1204,6 +1204,7 @@
 					dockedItems: [
 						{
 							xtype: 'form',
+							id: 'mediaAddEditForm',
 							title: 'Add/Edit Media',
 							collapsible: true,
 							titleCollapse: true,
@@ -1265,7 +1266,7 @@
 												//upload
 											
 												mainForm.submit({
-													url: '../Media.action?UploadMedia',
+													url: 'Media.action?UploadMedia',
 													params: {
 														'componentMedia.mediaTypeCode' : data.mediaTypeCode,
 														'componentMedia.caption': data.caption,
@@ -4176,6 +4177,7 @@
 					Ext.getCmp('componentTypeMainCB').suspendEvent('change');
 						
 					generalForm.reset();
+					Ext.getCmp('mediaAddEditForm').reset();
 					generalForm.componentRecord = record;
 					Ext.getCmp('mainFormTabPanel').setActiveTab(generalForm);
 					
@@ -4199,6 +4201,8 @@
 						
 					}
 					Ext.getCmp('componentTypeMainCB').resumeEvent('change');
+
+					generalForm.body.scrollTo('Top', 0, true);
 				};
 				
 				var hideSubComponentTabs = function(attempt){

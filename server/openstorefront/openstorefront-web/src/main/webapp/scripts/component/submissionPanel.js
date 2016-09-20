@@ -3094,7 +3094,13 @@ Ext.define('OSF.component.SubmissionPanel', {
 		detailSection.getComponent('contactGrid').getStore().load({
 			url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view'
 		});		
+
 		submissionPanel.loadComponentAttributes();	
+
+		// Since we're loading a new entry, scroll to top of each panel.
+		submissionPanel.reviewPanel.body.scrollTo('Top', 0, true);
+		submissionPanel.detailsPanel.body.scrollTo('Top', 0, true);
+		submissionPanel.requiredForm.body.scrollTo('Top', 0, true);
 		
 	},	
 	
