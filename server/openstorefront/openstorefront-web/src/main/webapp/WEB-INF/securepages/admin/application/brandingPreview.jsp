@@ -40,18 +40,18 @@ limitations under the License.
 		request.setAttribute("admin", SecurityUtil.isAdminUser());			
 	%>	
 
-	<link href="../webjars/extjs/6.0.0/build/classic/theme-neptune/resources/theme-neptune-all-debug.css" rel="stylesheet" type="text/css"/>
-	<link href="../webjars/extjs/6.0.0/build/packages/ux/classic/neptune/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
-	<link href="../webjars/extjs/6.0.0/build/packages/charts/classic/neptune/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
-	<link href="../webjars/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+	<link href="webjars/extjs/6.0.0/build/classic/theme-neptune/resources/theme-neptune-all-debug.css" rel="stylesheet" type="text/css"/>
+	<link href="webjars/extjs/6.0.0/build/packages/ux/classic/neptune/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
+	<link href="webjars/extjs/6.0.0/build/packages/charts/classic/neptune/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
+	<link href="webjars/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 	<link href="Branding.action?CSS&template=extTheme.jsp&brandingId=${param.brandingId}&v=${appVersion}" rel="stylesheet" type="text/css"/>
 	<link href="Branding.action?CSS&template=apptemplate.jsp&brandingId=${param.brandingId}&v=${appVersion}" rel="stylesheet" type="text/css"/>
 	<link href="Branding.action?Override&brandingId=${param.brandingId}&v=${appVersion}" rel="stylesheet" type="text/css"/>		
 	
-	<script src="../webjars/extjs/6.0.0/ext-bootstrap.js" type="text/javascript"></script>
-	<script src="../webjars/extjs/6.0.0/build/classic/theme-neptune/theme-neptune.js" type="text/javascript"></script>
-	<script src="../webjars/extjs/6.0.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
-	<script src="../webjars/extjs/6.0.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
+	<script src="webjars/extjs/6.0.0/ext-bootstrap.js" type="text/javascript"></script>
+	<script src="webjars/extjs/6.0.0/build/classic/theme-neptune/theme-neptune.js" type="text/javascript"></script>
+	<script src="webjars/extjs/6.0.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
+	<script src="webjars/extjs/6.0.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
 	
 	<%-- Core Utils --%>	
 	<script src="scripts/global/override.js?v=${appVersion}" type="text/javascript"></script>	
@@ -59,73 +59,74 @@ limitations under the License.
 	<script src="scripts/util/dateUtil.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/global/coreService.js?v=${appVersion}" type="text/javascript"></script>		
 	
-        <script type="text/javascript">
-			/* global Ext, CoreUtil */
-			Ext.onReady(function () {
-				
-				var testWindow = Ext.create('Ext.window.Window', {
-					title: 'Primary Color',
-					width: '80%',
-					height: '80%',
-					maximizable: true,
-					scrollable: true,
-					items: [
-						{
-							xtype: 'panel',
-							id: 'loginWarningPanel',
-							title: 'Panel header - Login Warning',
-							tpl: '{loginWarning}'
-						}, 
-						{
-							xtype: 'panel',
-							id: 'footerPanel',
-							title: 'Panel header - Footer',
-							tpl: '{landingPageFooter}'
-						}
-					]
-				});
-				testWindow.show();
-				
-				Ext.create('Ext.container.Viewport', {
-					layout: 'border',
-					items: [
-						{
-							xtype: 'panel',
-							region: 'north',
-							id: 'topNavPanel'							
-						},
-						{
-							region: 'center',
-							xtype: 'panel',
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'top',
-									items: [
-										{
-											text: 'Show Window',
-											handler: function(){
-												testWindow.show();
-											}
-										}
-									]
-								}
-							]
-						}
-					]
-				});
+	<script type="text/javascript">
+		/* global Ext, CoreUtil */
+		Ext.onReady(function () {
 
-				CoreService.brandingservice.getBranding('${param.brandingId}').then(function(response, opts){
-					var branding = Ext.decode(response.responseText);
-					if (branding.securityBannerText && branding.securityBannerText !== '') {
-						Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
-							securityBannerText: branding.securityBannerText
-						}), 0);
+			var testWindow = Ext.create('Ext.window.Window', {
+				title: 'Primary Color',
+				width: '80%',
+				height: '80%',
+				draggable: false,
+				maximizable: true,
+				scrollable: true,
+				items: [
+					{
+						xtype: 'panel',
+						id: 'loginWarningPanel',
+						title: 'Panel header - Login Warning',
+						tpl: '{loginWarning}'
+					}, 
+					{
+						xtype: 'panel',
+						id: 'footerPanel',
+						title: 'Panel header - Footer',
+						tpl: '{landingPageFooter}'
 					}
-					Ext.getCmp('loginWarningPanel').update(branding);
-					Ext.getCmp('footerPanel').update(branding);
-				});				
-				
-				
+				]
 			});
-        </script>
+			testWindow.show();
+
+			Ext.create('Ext.container.Viewport', {
+				layout: 'border',
+				items: [
+					{
+						xtype: 'panel',
+						region: 'north',
+						id: 'topNavPanel'							
+					},
+					{
+						region: 'center',
+						xtype: 'panel',
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'top',
+								items: [
+									{
+										text: 'Show Window',
+										handler: function(){
+											testWindow.show();
+										}
+									}
+								]
+							}
+						]
+					}
+				]
+			});
+
+			CoreService.brandingservice.getBranding('${param.brandingId}').then(function(response, opts){
+				var branding = Ext.decode(response.responseText);
+				if (branding.securityBannerText && branding.securityBannerText !== '') {
+					Ext.getCmp('topNavPanel').addDocked(CoreUtil.securityBannerPanel({
+						securityBannerText: branding.securityBannerText
+					}), 0);
+				}
+				Ext.getCmp('loginWarningPanel').update(branding);
+				Ext.getCmp('footerPanel').update(branding);
+			});				
+
+
+		});
+	</script>

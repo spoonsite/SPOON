@@ -1,9 +1,12 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../../layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../../layout/toplevelLayout.jsp">
 	<stripes:layout-component name="contents">
 
+		<stripes:layout-render name="../../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>		
+		
 		<script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
 
 		<form name="exportForm" action="api/v1/resource/userprofiles/export" method="POST">
@@ -358,13 +361,7 @@
 					}
 				};
 
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						userProfileGrid
-					]
-				});
-
+				addComponentToMainViewPort(userProfileGrid);
 
 				var actionMessageUser = function actionMessageUser(records) {
 					if (records) {

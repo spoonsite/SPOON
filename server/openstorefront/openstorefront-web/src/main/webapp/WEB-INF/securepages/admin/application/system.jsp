@@ -1,70 +1,30 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
-<style>
-			.list-group-item:first-child {
-				border-top-right-radius: 4px;
-				border-top-left-radius: 4px;
-			}
-			.list-group-item {
-				position: relative;
-				display: block;
-				padding: 10px 15px;
-				margin-bottom: -1px;
-				background-color: #8A8A8A;
-				border: 1px solid #464545;
-				font-size: 14px;
-				overflow: auto;
-			}
-			.list-group {
-				/* margin-bottom: 20px; */
-				padding-left: 0;
-				color: white;
-			}
-			ul, ol {
-				margin-top: 0;
-				margin-bottom: 10.5px;
-			}
-			.badge {
-				display: inline-block;
-				min-width: 10px;
-				padding: 3px 7px;
-				font-size: 13px;
-				font-weight: bold;
-				color: #ffffff;
-				line-height: 1;
-				vertical-align: middle;
-				white-space: nowrap;
-				text-align: center;
-				float: right;
-				background-color: rgba(68,30,90,1);
-				border-radius: 10px;
-			}
-			.green-highlight{
-				color: lightgreen
-			}
-		</style>
-
+		
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>
+	
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
 
 				var tplSystemDetailStats = new Ext.XTemplate(
 					'<div style="padding:10px;"><ul class="list-group">',
-					'<li class="list-group-item">Application Version: <span class="badge">{applicationVersion}</span></li>',
-					'<li class="list-group-item">Uptime: <span class="badge">{upTime}</span></li>',
-					'<li class="list-group-item">Start Time: <span class="badge">{startTime}</span></li>',
-					'<li class="list-group-item">Disk Space: <span class="badge">{freeDiskSpace} MB / {totalDiskSpace} MB</span></li>',
+					'<li class="stat-list-group-item">Application Version: <span class="stat-badge">{applicationVersion}</span></li>',
+					'<li class="stat-list-group-item">Uptime: <span class="stat-badge">{upTime}</span></li>',
+					'<li class="stat-list-group-item">Start Time: <span class="stat-badge">{startTime}</span></li>',
+					'<li class="stat-list-group-item">Disk Space: <span class="stat-badge">{freeDiskSpace} MB / {totalDiskSpace} MB</span></li>',
 					'</ul><div>'
 				);
 
 				var tplSystemDetailStats2 = new Ext.XTemplate(
 					'<div style="padding:10px;"><ul class="list-group">',
-					'<li class="list-group-item">Processor Count: <span class="badge">{processorCount}</span></li>',
-					'<li class="list-group-item">Live Threads / Total Threads: <span class="badge">{liveThreadCount}/{totalThreadCount}</span></li>',
-					'<li class="list-group-item">System Load: <span class="badge">{systemLoad}</span></li>',
-					'<li class="list-group-item">Root Storage Path: <span class="badge">{rootStoragePath}</span></li>',
+					'<li class="stat-list-group-item">Processor Count: <span class="stat-badge">{processorCount}</span></li>',
+					'<li class="stat-list-group-item">Live Threads / Total Threads: <span class="stat-badge">{liveThreadCount}/{totalThreadCount}</span></li>',
+					'<li class="stat-list-group-item">System Load: <span class="stat-badge">{systemLoad}</span></li>',
+					'<li class="stat-list-group-item">Root Storage Path: <span class="stat-badge">{rootStoragePath}</span></li>',
 					'</ul><div>'
 
 				);
@@ -2093,10 +2053,10 @@
 						success: function(response, opt){
 							var data = Ext.decode(response.responseText);
 							var nextAutoText = '<ul class="list-group">';
-							nextAutoText += '<li class="list-group-item">Last Automated Email Sent: <span class="badge">',
+							nextAutoText += '<li class="stat-list-group-item">Last Automated Email Sent: <span class="stat-badge">',
 							nextAutoText += Ext.Date.format(Ext.Date.parse(data.lastSentDts,'c'), 'm/d/y H:i:s A ');
 							nextAutoText += '</span></li>';
-							nextAutoText += '<li class="list-group-item">Next Automated Email: <span class="badge">',
+							nextAutoText += '<li class="stat-list-group-item">Next Automated Email: <span class="stat-badge">',
 							nextAutoText += Ext.Date.format(Ext.Date.parse(data.nextSendDts,'c'), 'm/d/y H:i:s A ');
 							nextAutoText += '</span></li>';
 							Ext.getCmp('emailSendDates').setText(nextAutoText, false);
@@ -2124,10 +2084,7 @@
 					]
 				});
 
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [systemMainPanel]
-				});
+				addComponentToMainViewPort(systemMainPanel);
 
 				var actionLoadSystemData = function (update) {
 

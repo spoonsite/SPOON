@@ -50,7 +50,7 @@ public class ShiroAdjustedFilter
 				response.sendRedirect(httpServletRequest.getContextPath());
 				return;
 			}
-			//Fix bad url? 
+			//Fix bad url?
 			if (url.contains("login.action")) {
 				HttpServletResponse response = (HttpServletResponse) servletResponse;
 				response.sendRedirect("Login.action");
@@ -59,12 +59,12 @@ public class ShiroAdjustedFilter
 
 			Set<String> whiteListRedirectPages = new HashSet();
 			whiteListRedirectPages.add("index.jsp");
-			whiteListRedirectPages.add("admin.jsp");
-			whiteListRedirectPages.add("usertools.jsp");
+			whiteListRedirectPages.add("AdminTool.action");
+			whiteListRedirectPages.add("UserTool.action");
 			whiteListRedirectPages.add("view.jsp");
 			whiteListRedirectPages.add("ServiceTest.action");
 			whiteListRedirectPages.add("API.action");
-						
+
 			boolean saveLocation = false;
 			for (String saveUrl : whiteListRedirectPages) {
 				if (url.contains(saveUrl)) {
@@ -79,8 +79,8 @@ public class ShiroAdjustedFilter
 					}
 				}
 			}
-			
-			if (saveLocation){
+
+			if (saveLocation) {
 				RedirectUtil.saveLocation(httpServletRequest);
 			}
 		}

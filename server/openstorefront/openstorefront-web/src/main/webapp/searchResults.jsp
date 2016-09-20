@@ -342,6 +342,7 @@ limitations under the License.
 				minWidth: 300,
 				collapsible: true,
 				titleCollapse: true,
+				animCollapse: false,
 				split: true,				
 				autoScroll: true,
 				bodyStyle: 'padding: 10px; background: whitesmoke;',
@@ -1618,69 +1619,12 @@ limitations under the License.
 										notificationWin.refreshData();
 									}
 								},								
-								{
-									xtype: 'button',
-									id: 'userMenuBtn',
-									scale   : 'large',
+								Ext.create('OSF.component.UserMenu', {																		
 									ui: 'default',
-									text: 'User Menu',
-									minWidth: 150,
-									maxWidth: 250,
-									menu: {						
-										items: [
-											{
-												text: 'Home',
-												iconCls: 'fa fa-home',
-												href: 'index.jsp'
-											},
-											{
-												text: 'Admin Tools',
-												id: 'menuAdminTools',
-												iconCls: 'fa fa-gear',
-												hidden: true,
-												href: 'admin.jsp'
-											},											
-											{
-												xtype: 'menuseparator'
-											},											
-											{
-												text: 'User Tools',
-												iconCls: 'fa fa-user',
-												href: 'usertools.jsp'
-											},											
-											{
-												xtype: 'menuseparator'
-											},
-											{
-												text: '<b>Help</b>',
-												iconCls: 'fa fa-question-circle',
-												handler: function() {
-													helpWin.show();
-												}
-											},
-											{
-												text: '<b>Feedback / issues</b>',
-												iconCls: 'fa fa-commenting',
-												handler: function() {
-													feedbackWin.show();
-												}
-											},
-											{
-												xtype: 'menuseparator'
-											},
-											{
-												text: 'Logout',
-												iconCls: 'fa fa-sign-out',
-												href: 'Login.action?Logout'												
-											}
-										],
-										listeners: {
-											beforerender: function () {
-											 this.setWidth(this.up('button').getWidth());
-											}
-										}
+									initCallBack: function(usercontext) {
+										setupServerNotifications(usercontext);	
 									}
-								}
+								})
 							]
 						}						
 					]
@@ -1704,23 +1648,6 @@ limitations under the License.
 			//Load 
 			performSearch();
 		
-		
-			CoreService.usersevice.getCurrentUser().then(function(response, opts){
-				var usercontext = Ext.decode(response.responseText);
-				
-				var userMenuText = usercontext.username;
-				if (usercontext.firstName && usercontext.lastName)
-				{
-					userMenuText = usercontext.firstName + ' ' + usercontext.lastName;
-				}
-				Ext.getCmp('userMenuBtn').setText(userMenuText);	
-				if (usercontext.admin) {
-					Ext.getCmp('menuAdminTools').setHidden(false);
-				}				
-				
-				setupServerNotifications(usercontext);	
-			});	
-			
 		});
 		
 	</script>	

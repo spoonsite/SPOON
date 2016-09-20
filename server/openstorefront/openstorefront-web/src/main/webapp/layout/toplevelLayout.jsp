@@ -71,12 +71,12 @@ limitations under the License.
 	<script src="scripts/global/coreService.js?v=${appVersion}" type="text/javascript"></script>	
 	
 	<%-- Custom Components --%>		
-	<script src="scripts/component/standardComboBox.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/notificationPanel.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/framePanel.js?v=${appVersion}" type="text/javascript"></script>	
 	<script src="scripts/component/userProfilePanel.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/feedbackWindow.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/help.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/standardComponents.js?v=${appVersion}" type="text/javascript"></script>
 	
 	<title>${appTitle}</title>
         <stripes:layout-component name="html_head"/>
@@ -181,7 +181,7 @@ limitations under the License.
 					handleAlert(alert, args);
 				  });
 				  socket.on('REPORT', function (args) {					
-					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="usertools.jsp?load=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};					
+					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="UserTool.action?load=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};					
 					handleAlert(alert, args);
 				  });
 				  socket.on('ADMIN', function (args) {					

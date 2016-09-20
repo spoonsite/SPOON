@@ -1,28 +1,23 @@
-<%--
-Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+<%-- 
+    Document   : adminheader
+    Created on : Sep 19, 2016, 12:44:55 PM
+    Author     : dshurtleff
 --%>
+
+<%@page import="edu.usu.sdl.openstorefront.web.action.BaseToolAction"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="layout/toplevelLayout.jsp">
-    <stripes:layout-component name="contents">
-		
+<!DOCTYPE html>
+<stripes:layout-definition>
+	
+	<script src="webjars/tinymcetextarea/5.1/tinymce/tinymce.min.js" type="text/javascript"></script>
+	<script src="webjars/tinymcetextarea/5.1/TinyMCETextArea.js" type="text/javascript"></script>
+	
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */	
 		Ext.onReady(function(){
 			
-			
+			/**
 			var contents = Ext.create('OSF.ux.IFrame', {
 				frameName: 'toolFrame',
 				src: ''
@@ -35,37 +30,16 @@ limitations under the License.
 					contents
 				]
 			});
+		**/
 			
 			var pageMap = [];
-			pageMap['Articles'] = '/openstorefront/admin?tool=Articles';
-			pageMap['Attributes'] = 'Router.action?page=admin/data/attributes.jsp';
-			pageMap['Dashboard'] = 'Router.action?page=shared/dashboard.jsp';
-			pageMap['Contacts'] = 'Router.action?page=admin/data/contacts.jsp';
-			pageMap['Entries'] = 'Router.action?page=admin/data/components.jsp';			
-			pageMap['Entry-Types'] = 'Router.action?page=admin/data/entryType.jsp';
-			pageMap['Highlights'] = 'Router.action?page=admin/data/highlights.jsp';
-			pageMap['Integrations'] = 'Router.action?page=admin/data/integrations.jsp';
-			pageMap['Imports'] = 'Router.action?page=admin/data/imports.jsp';
-			pageMap['Lookups'] = 'Router.action?page=admin/data/lookup.jsp';
-			pageMap['Media'] = 'Router.action?page=admin/data/media.jsp';
-			pageMap['Organizations'] = 'Router.action?page=admin/data/organizations.jsp';	
-			pageMap['Questions'] = 'Router.action?page=admin/data/user-data/questions.jsp';
-			pageMap['Reviews'] = 'Router.action?page=admin/data/user-data/reviews.jsp';
-			pageMap['Watches'] = 'Router.action?page=admin/data/user-data/watches.jsp';
-			pageMap['Tags'] = 'Router.action?page=admin/data/user-data/tags.jsp';
-			pageMap['User-Profiles'] = 'Router.action?page=admin/data/user-data/userProfiles.jsp';		
-			pageMap['Alerts'] = 'Router.action?page=admin/application/alerts.jsp';
-			pageMap['Branding'] = 'Router.action?page=admin/application/branding.jsp';
-			pageMap['Jobs'] = 'Router.action?page=admin/application/jobs.jsp';
-			pageMap['Reports'] = 'Router.action?page=shared/reports.jsp';
-			pageMap['System'] = 'Router.action?page=admin/application/system.jsp';
-			pageMap['Tracking'] = 'Router.action?page=admin/application/tracking.jsp';
-			pageMap['Messages'] = 'Router.action?page=admin/application/messages.jsp';
-			pageMap['Entry-Template'] = 'Router.action?page=admin/data/entryTemplate.jsp';
-			pageMap['Searches'] = 'Router.action?page=admin/data/searches.jsp';
-			pageMap['Feedback'] = 'Router.action?page=admin/application/feedback.jsp';
-			pageMap['Relationships'] = 'Router.action?page=admin/data/relationships.jsp';
-			
+			<%
+				BaseToolAction baseToolAction = (BaseToolAction)request.getAttribute("actionBean");
+				for (String key : baseToolAction.getPageMap().keySet()) {
+					out.println("			pageMap['" + key + "'] = '" + baseToolAction.getPageMap().get(key) + "';");
+				}
+			%>
+
 
 		//Data Menu
 			var dataMenu = [];
@@ -246,12 +220,6 @@ limitations under the License.
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	
 
-			var feedbackWin = Ext.create('OSF.component.FeedbackWindow',{				
-			});
-
-			var helpWin = Ext.create('OSF.component.HelpWindow', {				
-			});	
-
 			Ext.create('Ext.container.Viewport', {
 				layout: 'border',
 				items: [{
@@ -304,68 +272,23 @@ limitations under the License.
 										notificationWin.show();
 										notificationWin.refreshData();
 									}
-								},								
-								{
-									xtype: 'button',
-									id: 'userMenuBtn',
-									scale   : 'large',
+								},	
+								Ext.create('OSF.component.UserMenu', {
+									showAdminTools: false,
 									ui: 'default',
-									text: 'User Menu',
-									minWidth: 150,
-									maxWidth: 250,
-									menu: {						
-										items: [
-											{
-												text: 'Home',
-												iconCls: 'fa fa-home',
-												href: 'index.jsp'
-											},
-											{
-												text: 'User Tools',
-												iconCls: 'fa fa-user',
-												href: 'usertools.jsp'
-											},											
-											{
-												xtype: 'menuseparator'
-											},
-											{
-												text: '<b>Help</b>',
-												iconCls: 'fa fa-question-circle',
-												handler: function() {
-													helpWin.show();
-												}
-											},
-											{
-												text: '<b>Feedback / issues</b>',
-												iconCls: 'fa fa-commenting',
-												handler: function() {
-													feedbackWin.show();
-												}
-											},
-											{
-												xtype: 'menuseparator'
-											},
-											{
-												text: 'Logout',
-												iconCls: 'fa fa-sign-out',
-												href: 'Login.action?Logout'												
-											}
-										],
-										listeners: {
-											beforerender: function () {
-											 this.setWidth(this.up('button').getWidth());
-											}
-										}
+									initCallBack: function(usercontext) {
+										setupServerNotifications(usercontext);	
 									}
-								}
+								})
 							]
 						}						
 					]
 				},
 				{
 					region: 'center',
+					id: 'mainViewPortPanel',
 					xtype: 'panel',
-					layout: 'fit',					
+					layout: 'fit',
 					dockedItems: [
 						{
 							dock: 'top',
@@ -410,10 +333,7 @@ limitations under the License.
 								}
 							]
 						}
-					],					
-					items: [
-						contentPanel
-					]
+					]										
 				}]
 			});		
 			
@@ -426,20 +346,9 @@ limitations under the License.
 				}
 			});				
 
-			CoreService.usersevice.getCurrentUser().then(function(response, opts){
-				var usercontext = Ext.decode(response.responseText);
-				
-				var userMenuText = usercontext.username;
-				if (usercontext.firstName && usercontext.lastName)
-				{
-					userMenuText = usercontext.firstName + ' ' + usercontext.lastName;
-				}
-				Ext.getCmp('userMenuBtn').setText(userMenuText);				
-				setupServerNotifications(usercontext);	
-			});
 
 			var actionLoadContent = function(key) {
-				window.location.href = 'admin.jsp?load=' + key;
+				window.location.href = 'AdminTool.action?load=' + key;
 			};
 			/*
 			var historyToken = Ext.util.History.getToken();			
@@ -455,20 +364,23 @@ limitations under the License.
 				var url = pageMap[paramRoute];
 				if (url){
 					Ext.getCmp('titleTextId').setText('Admin Tools - ' + paramRoute.replace('-', ' '));
-					contents.load(url);				
+					//contents.load(url);				
 					//Ext.util.History.add(key);				
 				} else {
 					Ext.toast("Page key Not Found");
-					contents.load(pageMap['Dashboard']);	
+					//contents.load(pageMap['Dashboard']);	
 				}
 			}  else {
 				Ext.getCmp('titleTextId').setText('Admin Tools - Dashboard');
-				contents.load(pageMap['Dashboard']);
+				//contents.load(pageMap['Dashboard']);
 			}			
 			
 		});
+		
+		var addComponentToMainViewPort = function(component) {			
+			Ext.getCmp('mainViewPortPanel').add(component);
+			Ext.getCmp('mainViewPortPanel').updateLayout(true, true);
+		};
 			
 	</script>
-    </stripes:layout-component>
-</stripes:layout-render>
-        
+</stripes:layout-definition>
