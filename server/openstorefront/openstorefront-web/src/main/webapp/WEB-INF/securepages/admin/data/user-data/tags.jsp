@@ -142,6 +142,7 @@
 							bodyStyle: 'padding: 10px;',
 							defaults: {
 								labelAlign: 'top',
+								labelSeparator: '',
 								width: '100%'
 							},
 							items: [
@@ -171,14 +172,23 @@
 											url: 'api/v1/resource/components/lookup'
 										}
 									})
-								},
-								{
-									xtype: 'textfield',
+								},								
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'text',	
+									id: 'adddTagForm-tag',										
+									margin: '0 0 0 0',
+									width: '100%',
 									fieldLabel: 'Tag<span class="field-required"></span>',
-									id: 'adddTagForm-tag',
-									name: 'text',
-									allowBlank: false
-								},
+									forceSelection: false,
+									allowBlank: false,
+									valueField: 'text',
+									displayField: 'text',
+									margin: '0 0 10 0',
+									maxLength: 120,
+									storeConfig: {
+										url: 'api/v1/resource/components/tags'
+									}
+								}),
 								{
 									xtype: 'combobox',
 									fieldLabel: 'Security Type',
