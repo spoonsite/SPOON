@@ -1201,6 +1201,7 @@
 					dockedItems: [
 						{
 							xtype: 'form',
+							id: 'mediaAddEditForm',
 							title: 'Add/Edit Media',
 							collapsible: true,
 							titleCollapse: true,
@@ -4178,6 +4179,7 @@
 					Ext.getCmp('componentTypeMainCB').suspendEvent('change');
 						
 					generalForm.reset();
+					Ext.getCmp('mediaAddEditForm').reset();
 					generalForm.componentRecord = record;
 					Ext.getCmp('mainFormTabPanel').setActiveTab(generalForm);
 					
