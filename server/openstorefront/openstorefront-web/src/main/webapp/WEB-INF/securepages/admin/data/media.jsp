@@ -195,7 +195,7 @@
 								type.match('.*gif.*') || 
 								type.match('.*svg.*') ) {
 								viewMediaWin.setTitle('Image Preview');
-								viewMediaWin.update('<img src="../'+ selectedObj.mediaLink+'" width="100%"/>');
+								viewMediaWin.update('<img src="'+ selectedObj.mediaLink+'" width="100%"/>');
 							}
 							else {
 								Ext.Msg.show({
