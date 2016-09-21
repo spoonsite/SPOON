@@ -165,7 +165,7 @@
 				var downloadRecord = function() {
 					selectedObj = Ext.getCmp('mediaGrid').getSelection()[0].data;
 					//download media 
-					window.location.href = '../' + selectedObj.mediaLink;
+					window.location.href = '' + selectedObj.mediaLink;
 				};
 				
 				var viewRecord = function() {
@@ -178,12 +178,12 @@
 						var type = selectedObj.mimeType;
 					    if (type.match('video.*')) {
 							viewMediaWin.setTitle('Video Preview');
-					        viewMediaWin.update('<video autoplay="autoplay" controls="controls" src="../'+ selectedObj.mediaLink+'" style="width: 100%;max-width:100%;" ></video>');
+					        viewMediaWin.update('<video autoplay="autoplay" controls="controls" src="'+ selectedObj.mediaLink+'" style="width: 100%;max-width:100%;" ></video>');
 						}
 						else if(type.match('audio.*')){
 							viewMediaWin.setTitle('Audio Preview');
 							viewMediaWin.setScrollable(false);
-							viewMediaWin.update('<audio autoplay="autoplay" width="100%" controls="controls" src="../'+ selectedObj.mediaLink+'"/>');
+							viewMediaWin.update('<audio autoplay="autoplay" width="100%" controls="controls" src="'+ selectedObj.mediaLink+'"/>');
 				
 						}
 						else if(type.match('image.*')) {
@@ -193,7 +193,7 @@
 								type.match('.*gif.*') || 
 								type.match('.*svg.*') ) {
 								viewMediaWin.setTitle('Image Preview');
-								viewMediaWin.update('<img src="../'+ selectedObj.mediaLink+'" width="100%"/>');
+								viewMediaWin.update('<img src="'+ selectedObj.mediaLink+'" width="100%"/>');
 							}
 							else {
 								Ext.Msg.show({
@@ -417,7 +417,7 @@
 											}
 
 											Ext.getCmp('addMediaForm').submit({
-												url: '../Media.action?UploadGeneralMedia&generalMedia.name='+data.name,
+												url: 'Media.action?UploadGeneralMedia&generalMedia.name='+data.name,
 												method: 'POST',
 												success: function(response, opts) {
 													Ext.toast('Uploaded Successfully', '', 'tr');
