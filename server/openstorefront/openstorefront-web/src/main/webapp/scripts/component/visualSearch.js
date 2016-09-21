@@ -32,6 +32,20 @@ Ext.define('OSF.component.VisualSearchPanel', {
 	 * RELATION, TAGS, ORG, ATT
 	 */
 	viewType: 'RELATION', 
+	listeners: {
+		element: 'element',
+		scope: 'this',
+		mousedown: 'spritemousedown',
+		mousemove: 'spritemousemove',
+		mouseup: 'spritemouseup',
+		mouseleave: 'spritemouseup',
+		mousewheel: 'zoom',
+		DOMMouseScroll: 'zoom'
+	},
+	
+	onMouseDown: function (e) {
+		console.log(e);
+	},	
 		
 	initComponent: function () {
 		this.callParent();
@@ -58,8 +72,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							scaleX:  visPanel.camera.zoom,
 							scaleY:  visPanel.camera.zoom,
 							scaleCenterX: visPanel.camera.zoomCenterX,
-							scaleCenterY: visPanel.camera.zoomCenterY									
-						});
+							scaleCenterY: visPanel.camera.zoomCenterY
+						});						
 					}
 				});
 				visPanel.getSurface().renderFrame();
@@ -119,8 +133,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					});
 					sprite.getSurface().renderFrame();	
 				} catch (e) {					
-				}
-					
+				}	
 			}
 		});		
 		
@@ -282,34 +295,43 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}
 		});
 
-		visPanel.on('spritemousedown', function(sprite, event, opts){
+		visPanel.spritemousedown = function(event, sprite, opts){
 			visPanel.camera.pan = true;		
 			visPanel.camera.panOriginX = event.pageX;						
 			visPanel.camera.panOriginY = event.pageY;
-		});
+		};	
+		
+		visPanel.on('spritemousedown', visPanel.spritemousedown);
 
-		visPanel.on('spritemouseup', function(sprite, event, opts){
+		visPanel.spritemouseup = function(event, sprite, opts){
 			visPanel.camera.pan = false;	
 			visPanel.camera.startX = visPanel.camera.panX;
 			visPanel.camera.startY = visPanel.camera.panY;						
-		});
+		};		
+		visPanel.on('spritemouseup', visPanel.spritemouseup);
 
-		visPanel.on('spritemousemove', function(item, event, opts){
-			var sprite = item && item.sprite;
+
+		visPanel.spritemousemove = function(event, item, opts){
+			var sprite = item && item.sprite;			
 			if (visPanel.camera.pan) {
 				visPanel.camera.panX = visPanel.camera.startX + (event.pageX - visPanel.camera.panOriginX);						
 				visPanel.camera.panY = visPanel.camera.startY + (event.pageY - visPanel.camera.panOriginY);	
 				
 				visPanel.camera.update();
 			} 
-		});
+		};
 		
-		var zoom = function (e) {
+		visPanel.on('spritemousemove', visPanel.spritemousemove);
+		
+		
+		visPanel.zoom = function (orgEvent) {
 			// cross-browser wheel delta
-			e = window.event || e;
+			
+			//e = window.event || e;
+			var e = orgEvent.event;
 			
 			if (e.target.nodeName.toLowerCase() === 'canvas' || e.target.nodeName.toLowerCase() === 'svg') {
-				var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+				var delta = Math.max(-.25, Math.min(.25, (e.wheelDelta || -e.detail)));
 				
 				visPanel.camera.zoom += (delta / 2);
 				if (visPanel.camera.zoom < .1) {
@@ -322,8 +344,10 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				if (visPanel.camera.zoom >= .1 &&
 						visPanel.camera.zoom <= 4)
 				{
-					visPanel.camera.zoomCenterX = e.pageX - visPanel.camera.panX;
-					visPanel.camera.zoomCenterY = e.pageY - visPanel.camera.panY;
+					//visPanel.camera.zoomCenterX = e.pageX - visPanel.camera.panX + (visPanel.getWidth()/2);
+					visPanel.camera.zoomCenterX = (visPanel.getWidth()/2) 
+					//visPanel.camera.zoomCenterY = e.pageY - visPanel.camera.panY + (visPanel.getHeight()/2);
+					visPanel.camera.zoomCenterY = (visPanel.getHeight()/2);
 					
 					visPanel.camera.update();	
 				}
@@ -333,12 +357,31 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}			
 		};
 
-		if (window.addEventListener) {
-			window.addEventListener("mousewheel", zoom, false);
-			window.addEventListener("DOMMouseScroll", zoom, false);
-		} else {
-			window.attachEvent("onmousewheel", zoom);
+		var mouseMove = function(e) {
+			e = window.event || e;
+			
+			if (e.target.nodeName.toLowerCase() !== 'canvas' && e.target.nodeName.toLowerCase() !== 'svg') {
+				if (visPanel.camera.pan) {
+					visPanel.camera.pan = false;
+					visPanel.camera.startX = visPanel.camera.panX;
+					visPanel.camera.startY = visPanel.camera.panY;						
+				}
+			}
+			
 		}
+
+//		if (window.addEventListener) {
+//			window.addEventListener("mousewheel", zoom, false);
+//			window.addEventListener("DOMMouseScroll", zoom, false);
+//			//window.addEventListener("mousemove", mouseMove, false);
+//		} else {
+//			window.attachEvent("onmousewheel", zoom);
+//			//window.attachEvent("onmousemove", mouseMove);
+//			//window.attachEvent("onmouseleave", mouseMove);
+//		}
+		
+		
+		
 		
 //		window.oncontextmenu = function (e){
 //			return false;
