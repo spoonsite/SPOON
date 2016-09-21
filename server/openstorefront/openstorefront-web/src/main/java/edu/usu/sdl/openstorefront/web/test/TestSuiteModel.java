@@ -62,9 +62,9 @@ public class TestSuiteModel
 	public void runAllTests()
 	{
 		long startTime = System.currentTimeMillis();
-		tests.stream().forEach((test) -> {
+		for (BaseTestCase test : tests) {
 			test.runTest();
-		});
+		}
 		runTimeInMills = System.currentTimeMillis() - startTime;
 	}
 
