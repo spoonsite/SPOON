@@ -766,16 +766,17 @@ public class CoreComponentServiceImpl
 			// still refers to the same questions.  However, after saving, they should all have proper questionIds.
 			// Since we know the questionIds, we can now go through the responses to set the questionId on them.
 			// We loop through and use the previously-created map to grab the respective responses.
+			List<ComponentQuestionResponse> responses = new ArrayList<>();
 			for (ComponentQuestion question : questions) {
 				QuestionAll questionAll = questionAllMap.get(question.uniqueKey());
 				List<ComponentQuestionResponse> theseResponses = questionAll.getResponds();
 				for (ComponentQuestionResponse response : theseResponses) {
 					response.setQuestionId(question.getQuestionId());
 					response.setComponentId(component.getComponentId());
+					responses.add(response);
 				}
-				// And send them to be saved.
-				lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestionResponse.class, theseResponses, component.getComponentId()));
 			}
+			lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestionResponse.class, responses, component.getComponentId()));
 
 		}
 
