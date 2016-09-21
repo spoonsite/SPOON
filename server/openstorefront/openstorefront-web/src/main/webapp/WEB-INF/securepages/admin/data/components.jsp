@@ -2156,6 +2156,10 @@
 
 										var method = 'POST';
 										var update = '';
+										if (componentId === data.relatedComponentId) {
+											Ext.Msg.alert('Relationship Not Allowed', 'Relationships from an entry to itself are not allowed.');
+											return;
+										}
 										
 										CoreUtil.submitForm({
 											url: 'api/v1/resource/components/' + componentId + '/relationships' + update,
