@@ -101,8 +101,6 @@ public class FeedbackServiceTest extends BaseTestCase
 		ticket_EmailTest = service.getFeedbackService().submitFeedback(ticket_EmailTest);
 		results.append("Feedback submitted successfully<br><br>");
 
-		PropertiesManager.setProperty(KEY_FEEDBACK_EMAIL, defaultPropertyValue);
-
 		// Mark ticket as complete
 		submittedTicket = submittedTicket.find();
 		ticket_EmailTest = service.getFeedbackService().markAsComplete(submittedTicket.getFeedbackId());

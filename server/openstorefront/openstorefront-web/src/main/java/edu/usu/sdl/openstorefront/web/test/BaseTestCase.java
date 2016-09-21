@@ -57,10 +57,15 @@ public abstract class BaseTestCase
 				success = true;
 			}
 		} catch (Exception e) {
-			LOG.log(Level.SEVERE, "Test " + getDescription() + " Fail Trace: ", e);
+			LOG.log(Level.SEVERE, "Test: " + getDescription() + " Fail Trace: ", e);
 			failureReason.append(e);
 		} finally {
-			cleanupTest();
+			try {
+				cleanupTest();
+			} catch (Exception e) {
+				LOG.log(Level.SEVERE, "Failed Cleanup Test: " + getDescription() + " Fail Trace: ", e);
+				failureReason.append(e);
+			}
 		}
 	}
 
