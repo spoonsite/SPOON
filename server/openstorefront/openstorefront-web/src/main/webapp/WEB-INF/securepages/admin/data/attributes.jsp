@@ -429,6 +429,8 @@
 				codesStore.filter('activeStatus', 'A');
 				codesStore.load();
 				manageCodesWin.attributeType = record.data.attributeType;
+				Ext.getCmp('codesFilter-activeStatus').setValue('A');
+				
 				manageCodesWin.show();
 			};
 

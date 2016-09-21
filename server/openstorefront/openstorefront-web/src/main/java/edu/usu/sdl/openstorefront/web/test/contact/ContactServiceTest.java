@@ -29,6 +29,7 @@ import java.util.List;
  */
 public class ContactServiceTest extends BaseTestCase
 {
+
 	private Contact existContact = null;
 	private Contact newContact = null;
 
@@ -51,8 +52,9 @@ public class ContactServiceTest extends BaseTestCase
 		existContactComp.setEmail(existContact.getEmail());
 		existContactComp.setOrganization(existContact.getEmail());
 		existContactComp.setContactType(ContactType.SUBMITTER);
+		existContactComp.setComponentId(componentAll.getComponent().getComponentId());
 		componentAll.getContacts().add(existContactComp);
-		service.getComponentService().saveFullComponent(componentAll);
+		service.getComponentService().saveComponentContact(existContactComp);
 
 		// Inactivate Contact
 		service.getContactService().inactiveContact(existContact.getContactId(), true);
@@ -91,8 +93,9 @@ public class ContactServiceTest extends BaseTestCase
 		newContactComp.setEmail(newContact.getEmail());
 		newContactComp.setOrganization(newContact.getOrganization());
 		newContactComp.setContactType(ContactType.SUBMITTER);
+		newContactComp.setComponentId(componentAll.getComponent().getComponentId());
 		componentAll.getContacts().add(newContactComp);
-		service.getComponentService().saveFullComponent(componentAll);
+		service.getComponentService().saveComponentContact(newContactComp);
 
 		// Merge Contacts
 		service.getContactService().mergeContacts(newContact.getContactId(), existContact.getContactId());

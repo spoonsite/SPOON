@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
@@ -26,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
@@ -39,7 +41,10 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -55,6 +60,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import net.sourceforge.stripes.util.bean.BeanUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -124,12 +130,24 @@ public class OrganizationResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(OrganizationRelationView.class)
 	@Path("/componentrelationships")
-	public Response getEntryOrganizationRelations()
+	public Response getEntryOrganizationRelations(
+			@QueryParam("organizationId") String organizationId
+	)
 	{
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		
+
+		if (StringUtils.isNotBlank(organizationId)) {
+			Organization organization = new Organization();
+			organization.setOrganizationId(organizationId);
+			organization = organization.find();
+
+			if (organization != null) {
+				componentExample.setOrganization(organization.getName());
+			}
+		}
+
 		List<Component> components = componentExample.findByExample();
 
 		List<OrganizationRelationView> views = new ArrayList<>();
@@ -141,16 +159,16 @@ public class OrganizationResource
 			view.setComponentTypeDescription(TranslateUtil.translateComponentType(component.getComponentType()));
 			view.setOrganizationName(component.getOrganization());
 			view.setOrganizationId(Organization.toKey(component.getOrganization()));
-			
+
 			views.add(view);
 		}
-				
+
 		GenericEntity<List<OrganizationRelationView>> entity = new GenericEntity<List<OrganizationRelationView>>(views)
 		{
 		};
-		return sendSingleEntityResponse(entity);				
+		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@GET
 	@APIDescription("Gets an organization record. ")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -164,7 +182,7 @@ public class OrganizationResource
 		organizationExample.setOrganizationId(organizationId);
 		return sendSingleEntityResponse(organizationExample.find());
 	}
-	
+
 	@GET
 	@APIDescription("Gets an organization record by name. ")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -177,7 +195,7 @@ public class OrganizationResource
 		Organization organizationExample = new Organization();
 		organizationExample.setName(name);
 		return sendSingleEntityResponse(organizationExample.find());
-	}	
+	}
 
 	@GET
 	@APIDescription("Gets an organization references. ")
@@ -205,25 +223,43 @@ public class OrganizationResource
 	{
 		return service.getOrganizationService().findReferences(null, activeOnly, approvedOnly);
 	}
-	
-	
+
 	@GET
 	@APIDescription("Get a list of active organizations for selection list.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
 	@Path("/lookup")
-	public Response getLookupList()
+	public Response getLookupList(
+			@QueryParam("approvedComponentsOnly") boolean approvedComponentsOnly
+	)
 	{
 		List<LookupModel> lookupModels = new ArrayList<>();
+
 		Organization organizationExample = new Organization();
 		organizationExample.setActiveStatus(Organization.ACTIVE_STATUS);
 		List<Organization> organizations = organizationExample.findByExample();
-		organizations.forEach(organization -> {
+		for (Organization organization : organizations) {
 			LookupModel lookupModel = new LookupModel();
 			lookupModel.setCode(organization.getOrganizationId());
 			lookupModel.setDescription(organization.getName());
 			lookupModels.add(lookupModel);
-		});
+		}
+
+		if (approvedComponentsOnly) {
+			Component componentExample = new Component();
+			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+			componentExample.setApprovalState(ApprovalStatus.APPROVED);
+
+			List<Component> components = componentExample.findByExample();
+			Set<String> uniqueOrganization = new HashSet<>();
+			for (Component component : components) {
+				uniqueOrganization.add(component.getOrganization());
+			}
+			lookupModels = lookupModels.stream()
+					.filter(lookup -> uniqueOrganization.contains(lookup.getDescription()))
+					.collect(Collectors.toList());
+		}
+		lookupModels.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
 
 		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
 		{
