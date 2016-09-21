@@ -167,7 +167,7 @@
 				var downloadRecord = function() {
 					selectedObj = Ext.getCmp('mediaGrid').getSelection()[0].data;
 					//download media 
-					window.location.href = '../' + selectedObj.mediaLink;
+					window.location.href = '' + selectedObj.mediaLink;
 				};
 				
 				var viewRecord = function() {
@@ -419,7 +419,7 @@
 											}
 
 											Ext.getCmp('addMediaForm').submit({
-												url: '../Media.action?UploadGeneralMedia&generalMedia.name='+data.name,
+												url: 'Media.action?UploadGeneralMedia&generalMedia.name='+data.name,
 												method: 'POST',
 												success: function(response, opts) {
 													Ext.toast('Uploaded Successfully', '', 'tr');
