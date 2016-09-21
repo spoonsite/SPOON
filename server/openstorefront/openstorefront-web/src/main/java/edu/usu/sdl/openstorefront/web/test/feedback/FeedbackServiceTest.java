@@ -92,6 +92,10 @@ public class FeedbackServiceTest extends BaseTestCase
 		defaultPropertyValue = PropertiesManager.getValue(KEY_FEEDBACK_EMAIL);
 		PropertiesManager.setProperty(KEY_FEEDBACK_EMAIL, email);
 
+		FeedbackTicket submittedTicket = new FeedbackTicket();
+		submittedTicket.setTicketType(ticket_EmailTest.getTicketType());
+		submittedTicket.setSummary(ticket_EmailTest.getSummary());
+
 		// Submit feedback marked for email message
 		results.append("Submitting feedback (email)...<br>");
 		ticket_EmailTest = service.getFeedbackService().submitFeedback(ticket_EmailTest);
@@ -100,17 +104,28 @@ public class FeedbackServiceTest extends BaseTestCase
 		PropertiesManager.setProperty(KEY_FEEDBACK_EMAIL, defaultPropertyValue);
 
 		// Mark ticket as complete
-		ticket_EmailTest = service.getFeedbackService().markAsComplete(ticket_EmailTest.getFeedbackId());
+		submittedTicket = submittedTicket.find();
+		ticket_EmailTest = service.getFeedbackService().markAsComplete(submittedTicket.getFeedbackId());
 
-		if (FeedbackTicket.INACTIVE_STATUS.equals(ticket_EmailTest.getActiveStatus())) {
+		submittedTicket = new FeedbackTicket();
+		submittedTicket.setTicketType(ticket_EmailTest.getTicketType());
+		submittedTicket.setSummary(ticket_EmailTest.getSummary());
+		submittedTicket = submittedTicket.find();
+
+		if (FeedbackTicket.INACTIVE_STATUS.equals(submittedTicket.getActiveStatus())) {
 			results.append("Mark Feedback As Complete:  Passed<br><br>");
 		} else {
 			failureReason.append("Mark Feedback As Complete:  Failed - Feedback does not exist or remains outstanding<br><br>");
 		}
 
 		// Mark ticket as outstanding
-		ticket_EmailTest = service.getFeedbackService().markAsOutstanding(ticket_EmailTest.getFeedbackId());
-		if (FeedbackTicket.ACTIVE_STATUS.equals(ticket_EmailTest.getActiveStatus())) {
+		ticket_EmailTest = service.getFeedbackService().markAsOutstanding(submittedTicket.getFeedbackId());
+		submittedTicket = new FeedbackTicket();
+		submittedTicket.setTicketType(ticket_EmailTest.getTicketType());
+		submittedTicket.setSummary(ticket_EmailTest.getSummary());
+		submittedTicket = submittedTicket.find();
+
+		if (FeedbackTicket.ACTIVE_STATUS.equals(submittedTicket.getActiveStatus())) {
 			results.append("Mark Feedback As Outstanding:  Passed<br><br>");
 		} else {
 			failureReason.append("Mark Feedback As Outstanding:  Failed - Feedback does not exist or is inactive<br><br>");

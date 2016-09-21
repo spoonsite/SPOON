@@ -77,6 +77,11 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					}
 				});
 				visPanel.getSurface().renderFrame();
+			},
+			log: function() {
+				console.log('--------->');
+				console.log(this);
+				console.log('<---------');
 			}
 		};
 		
@@ -331,6 +336,8 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			var e = orgEvent.event;
 			
 			if (e.target.nodeName.toLowerCase() === 'canvas' || e.target.nodeName.toLowerCase() === 'svg') {
+				var oldZoom = visPanel.camera.zoom;
+				
 				var delta = Math.max(-.25, Math.min(.25, (e.wheelDelta || -e.detail)));
 				
 				visPanel.camera.zoom += (delta / 2);
@@ -344,31 +351,29 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				if (visPanel.camera.zoom >= .1 &&
 						visPanel.camera.zoom <= 4)
 				{
-					//visPanel.camera.zoomCenterX = e.pageX - visPanel.camera.panX + (visPanel.getWidth()/2);
-					visPanel.camera.zoomCenterX = (visPanel.getWidth()/2) 
-					//visPanel.camera.zoomCenterY = e.pageY - visPanel.camera.panY + (visPanel.getHeight()/2);
-					visPanel.camera.zoomCenterY = (visPanel.getHeight()/2);
+					var offsets = visPanel.getOffsetsTo(Ext.getBody());
+					
+					var lastX = e.offsetX || (e.pageX - offsets[0]);
+					var lastY = e.offsetY || (e.pageY - offsets[1]);
+							
+					//http://stackoverflow.com/questions/2916081/zoom-in-on-a-point-using-scale-and-translate
+					var scaleChange = visPanel.camera.zoom - oldZoom;
+					lastX = -(lastX * scaleChange);
+					lastY = -(lastY * scaleChange);
+
+					visPanel.camera.panX = visPanel.camera.panX + lastX;
+					visPanel.camera.panY = visPanel.camera.panY + lastY;
+					
+					//Reset start so it doesn't jump
+					visPanel.camera.startX = visPanel.camera.panX;
+					visPanel.camera.startY = visPanel.camera.panY;					
 					
 					visPanel.camera.update();	
-				}
-				//console.log(e);
+				}			
 				
 				e.preventDefault();
 			}			
 		};
-
-		var mouseMove = function(e) {
-			e = window.event || e;
-			
-			if (e.target.nodeName.toLowerCase() !== 'canvas' && e.target.nodeName.toLowerCase() !== 'svg') {
-				if (visPanel.camera.pan) {
-					visPanel.camera.pan = false;
-					visPanel.camera.startX = visPanel.camera.panX;
-					visPanel.camera.startY = visPanel.camera.panY;						
-				}
-			}
-			
-		}
 
 //		if (window.addEventListener) {
 //			window.addEventListener("mousewheel", zoom, false);
@@ -577,37 +582,115 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		
 	},
 	
-	loadOrganizations: function() {
+	loadOrganizations: function(organizationId) {
 		var visPanel = this;
 		
-		visPanel.setLoading("Loading Organizations...");
-		Ext.Ajax.request({
-			url: 'api/v1/resource/organizations/componentrelationships',
-			callback: function(){
-				visPanel.setLoading(false);
-			},
-			success: function(response, opts) {
-				var data = Ext.decode(response.responseText);
-				
-				var viewData = [];
-				Ext.Array.each(data, function(tagview){
-					viewData.push({
-						type: 'organization',
-						nodeId: tagview.tagId,
-						key: tagview.organizationId,
-						label: tagview.organizationName,
-						relationshipLabel: '',
-						targetKey: tagview.componentId,
-						targetName: tagview.componentName,
-						targetType: 'component'
-					});
-				});
-				
-				visPanel.viewData = visPanel.viewData.concat(viewData);
-				visPanel.initVisual(visPanel.viewData);				
-			}
-		});		
+		var organizationLoad = function(organizationId) {
+			visPanel.setLoading("Loading Organizations...");
+			Ext.Ajax.request({
+				url: 'api/v1/resource/organizations/componentrelationships?organizationId=' + organizationId,
+				callback: function(){
+					visPanel.setLoading(false);
+				},
+				success: function(response, opts) {
+					var data = Ext.decode(response.responseText);
+					
+					if (data.length === 0) {
+						Ext.toast('No entries found for organization.');
+					} else {
+						var viewData = [];
+						Ext.Array.each(data, function(tagview){
+							viewData.push({
+								type: 'organization',
+								nodeId: tagview.tagId,
+								key: tagview.organizationId,
+								label: tagview.organizationName,
+								relationshipLabel: '',
+								targetKey: tagview.componentId,
+								targetName: tagview.componentName,
+								targetType: 'component'
+							});
+						});
+
+						visPanel.viewData = visPanel.viewData.concat(viewData);
+						visPanel.initVisual(visPanel.viewData);				
+					}
+				}
+			});	
+		};
 		
+		if (organizationId) {
+			organizationLoad(organizationId);
+		} else {
+			//prompt for type to display
+			var prompt = Ext.create('Ext.window.Window', {
+				title: 'Select Organization to View',
+				modal: true,
+				closeMode: 'destory',
+				width: 500,			
+				height: 150,
+				bodyStyle: 'padding: 10px;',
+				layout: 'anchor',
+				items: [
+					{
+						xtype: 'combo',
+						fieldLabel: 'Organization',
+						itemId: 'organization',
+						labelAlign: 'top',
+						valueField: 'code',
+						width: '100%', 
+						displayField: 'description',
+						typeAhead: true,
+						editable: true,
+						allowBlank: false,
+						queryMode: 'remote',
+						store: {
+							proxy: {
+								type: 'ajax',
+								url: 'api/v1/resource/organizations/lookup?approvedComponentsOnly=true'								
+							}
+						}
+					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Show',
+								iconCls: 'fa fa-check',
+								handler: function(){
+									var promptWindow = this.up('window');
+									var orgCb = promptWindow.getComponent('organization');
+									if (orgCb.getValue()) {
+										organizationLoad(orgCb.getValue());
+										visPanel.updateAttribute(orgCb.getValue());
+										promptWindow.close();										
+									} else {
+										Ext.Msg.show({
+											title:'Validation Failed',
+											message: 'Select an Organization to show.',
+											buttons: Ext.Msg.OK,
+											icon: Ext.Msg.ERROR,
+											fn: function(btn) {
+											}
+										});
+									}
+								}
+							},
+							{
+								xtype: 'tbfill'
+							}						
+						]
+					}
+				]
+			});
+			prompt.show();					
+		}
 	},
 	
 	loadAttributes: function(attributeType) {
@@ -1561,11 +1644,11 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		var containerHeight = visPanel.getHeight();
 		var containerWidth = visPanel.getWidth();
 		
-		//put sprite  back to 0,0 then move to center (Keep in mind the sprites doesn't position doesn't move it just has matrixes applied to it)
+		//put sprite  back to 0,0 then move to center (Keep in mind the sprites position doesn't move it just has matrixes applied to it)
 		visPanel.camera.panX = x * -1 + (containerWidth/2);
 		visPanel.camera.panY = y * -1 + (containerHeight/2);
 		visPanel.camera.zoom = zoom;
-		visPanel.camera.zoomCenterX = x ;
+		visPanel.camera.zoomCenterX = x;
 		visPanel.camera.zoomCenterY = y;
 
 		//Reset start so it doesn't jump
@@ -1610,11 +1693,19 @@ Ext.define('OSF.component.VisualContainerPanel', {
 						change: function (cb, newValue, oldValue, opts) {
 							var containerPanel = this.up('panel');							
 							
+							containerPanel.getComponent('tools').getComponent('attributeType').reset();
 							if (newValue === 'ATT') {
 								containerPanel.getComponent('tools').getComponent('attributeType').setHidden(false);
 							} else {
 								containerPanel.getComponent('tools').getComponent('attributeType').setHidden(true);
 							}
+							
+							containerPanel.getComponent('tools').getComponent('organization').reset();
+							if (newValue === 'ORG') {
+								containerPanel.getComponent('tools').getComponent('organization').setHidden(false);
+							} else {
+								containerPanel.getComponent('tools').getComponent('organization').setHidden(true);
+							}		
 							
 							var findCB = containerPanel.getComponent('tools').getComponent('find');
 							findCB.reset();
@@ -1656,16 +1747,15 @@ Ext.define('OSF.component.VisualContainerPanel', {
 				},
 				{
 					xtype: 'combo',
-					fieldLabel: 'Attribute',
+					fieldLabel: 'Add Attribute',
 					labelAlign: 'right',
 					itemId: 'attributeType',
 					hidden: true,				
 					valueField: 'attributeType',
-					width: 300, 
+					width: 400, 
 					displayField: 'description',
 					typeAhead: true,
-					editable: true,
-					allowBlank: false,				
+					editable: true,									
 					store: {
 						autoLoad: true,
 						proxy: {
@@ -1687,6 +1777,35 @@ Ext.define('OSF.component.VisualContainerPanel', {
 						}
 					}					
 				},
+				{
+					xtype: 'combo',
+					fieldLabel: 'Add Organization',
+					labelAlign: 'right',
+					itemId: 'organization',
+					hidden: true,				
+					valueField: 'code',
+					width: 425, 
+					labelWidth: 150,
+					displayField: 'description',
+					typeAhead: true,
+					editable: true,									
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/organizations/lookup?approvedComponentsOnly=true'							
+						}
+					},
+					listeners: {
+						change: function (cb, newValue, oldValue, opts) {
+							var containerPanel = this.up('panel');
+							
+							if (newValue) {
+								containerPanel.visualPanel.loadOrganizations(newValue);
+							}
+						}
+					}					
+				},				
 				{
 					xtype: 'tbfill'					
 				},
