@@ -31,38 +31,42 @@ licensed under Apache V2.**
 ## 1.1 Release Notes
 ------
 
+
 *What's new in v2.1*
-*+Current NEW FEATURES Include:+*
-* STORE-656 Add Data Mapping Support for Imports
-* STORE-659 Add ability to add new parses as plugins
-* *STORE-811 Visualization Interactive Report*
-* *STORE-849 Relationship Management Tool*
-* -STORE-903 Tag Search-
-* STORE-930 Argo Integration
-* -STORE-941 Allow section of message recipients from main user profile grid-
 
-*+Current IMPROVEMENTS Include:+*
-* STORE-427 System Export/Import
-* -STORE-793 User Profile Export-
-* STORE-822 Improve Simple Search
-* *STORE-871 Handling of Inline Media*
-* STORE-933 Improve Describe Record Support
-* STORE-956 Media Handling Improvements
-* STORE-966 Allow file attachments for attribute codes 
-* STORE-945 v2.1 Maintenance
-* *STORE-975 Contact Lookup by Last Name*
-* *STORE-976 Recently Added Improvement*
-* *STORE-978 Category Report Improvement*
-
-*+Current BUG FIXES Include:+*
-* -STORE-977 Manage Watches, View-
-* STORE-945 v2.1 Maintenance
-
+ * **Relationship Visualization:**
+ In User Tools under the Tools drop-down is a new Relationships section.  This allows the user to view relationships
+ between Entries, Organizations, Attributes, or Tags.  The Find feature helps locate an item on the image.  The image
+ can be resized, panned, zoomed, and so forth.  The current view can also be downloaded as a .png image.  
+ 
+ * **Search by Tags**
+ From the global search screen a field has been added to allow a filtered search by Tags, with a drop-down of all
+  current tags. One or more tags can be added to the filters.
+  
+ * **Inline Media in Entries**
+ Improved the ability to place media inline in an entry.  Images and links can now be pasted directly into the 
+  description field of a submission. The external links will be automatically fetched and linked providing an 
+  inline media experience in the description field of the submission entry.  There is also a new option to hide
+  the media from the carousel if desired.
+ 
+ * **Contact Lookup by Last Name**
+ When adding a contact to an entry (details section) if you start typing in the Last Name field the list of possible
+  matches is shown.  Pressing enter or selecting the entry will fill the first name, organization, email, and phone
+  for the contact.  This was previously only available for first name searches, but has been extended to last name
+  with this release.  
+ 
+ * **Allow file attachments for attributes** *
+ From Admin Tools, Data Management, Attributes click on Manage Codes once an attribute is selected.  There is now
+  a button to Add, Download, or Delete an attachment.  If an attachment is added it will show up for the user on the
+  vitals display in the search results screen as a paper clip icon indicating they can download the attachment.
+  
 For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.1" target="_blank">v2.1</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
 ## 1.2 Known Issues, v2.1 * 
  
-1. 
+ * ***Beta***: From Admin Tools, Data Management, Imports a Mapping tab has been added.  This allows for mappable
+  file formats to be uploaded and mapped to fields for importing data.  This feature is still being worked on and
+  further improvements will be launched in future releases.
 
 # 2.  User Features
 ------
@@ -1128,9 +1132,14 @@ is resolved.
 ### 3.2.8 Imports * 
 -------
 
-This allows for data imports and mappings.  This is done by importing a support 
-file format. Once imported warnings and/or errors can be viewed, the data can be 
-reprocessed or rolled back.
+This allows for data imports and mappings.  This is done by importing a file.
+Various file formats can be imported such as .csv, .xlsx, JSON, .tsv, .xml, and .zip.  
+Once imported warnings and/or errors can be viewed, the data can be reprocessed 
+or rolled back.
+
+Data mapping allows for a custom data file format to be established for importing data.
+Once a file is uploaded individual fields can be mapped.  Then a data file can be
+imported using that mapping.
 
 **NOTE:**  The history is only kept for **180 days (Default)** in this section.
 
