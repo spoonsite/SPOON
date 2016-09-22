@@ -332,8 +332,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		visPanel.zoom = function (orgEvent) {
 			// cross-browser wheel delta
 			
-			//e = window.event || e;
-			var e = orgEvent.event;
+			var e;
+			if (orgEvent.event) {
+				e = orgEvent.event;
+			} else {
+				e = window.event || orgEvent;
+			}
 			
 			if (e.target.nodeName.toLowerCase() === 'canvas' || e.target.nodeName.toLowerCase() === 'svg') {
 				var oldZoom = visPanel.camera.zoom;
@@ -375,15 +379,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			}			
 		};
 
-//		if (window.addEventListener) {
-//			window.addEventListener("mousewheel", zoom, false);
-//			window.addEventListener("DOMMouseScroll", zoom, false);
-//			//window.addEventListener("mousemove", mouseMove, false);
-//		} else {
-//			window.attachEvent("onmousewheel", zoom);
-//			//window.attachEvent("onmousemove", mouseMove);
-//			//window.attachEvent("onmouseleave", mouseMove);
-//		}
+		if (window.addEventListener) {
+			window.addEventListener("mousewheel", visPanel.zoom, false);
+			window.addEventListener("DOMMouseScroll", visPanel.zoom, false);
+		} else {
+			window.attachEvent("onmousewheel", visPanel.zoom);
+		}
 		
 		
 		
