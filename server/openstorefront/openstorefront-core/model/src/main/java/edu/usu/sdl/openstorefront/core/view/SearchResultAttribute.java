@@ -63,7 +63,7 @@ public class SearchResultAttribute
 		if (type != null) {
 			view.setTypeLabel(type.getDescription());
 		} else {
-			view.setLabel(OpenStorefrontConstant.NOT_AVAILABLE);
+			view.setTypeLabel(OpenStorefrontConstant.NOT_AVAILABLE);
 		}
 
 		return view;
