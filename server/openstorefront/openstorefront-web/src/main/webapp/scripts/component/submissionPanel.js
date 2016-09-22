@@ -3137,6 +3137,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 				
 		//set notification to checked
 		submissionPanel.reviewPanel.getComponent('approvalNotification').setValue(true);
+
+		// Scroll forms to top
+		submissionPanel.reviewPanel.body.scrollTo('Top', 0, true);
+		submissionPanel.detailsPanel.body.scrollTo('Top', 0, true);
+		submissionPanel.requiredForm.body.scrollTo('Top', 0, true);
 				
 	}	
 	
