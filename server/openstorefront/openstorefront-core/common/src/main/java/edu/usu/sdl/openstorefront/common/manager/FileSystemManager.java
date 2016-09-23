@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,7 +37,7 @@ import java.util.logging.Logger;
 public class FileSystemManager
 		implements Initializable
 {
-
+	
 	private static final Logger log = Logger.getLogger(FileSystemManager.class.getName());
 
 	public static final String MAIN_DIR = System.getProperty("application.datadir", "/var/openstorefront");
@@ -53,7 +54,9 @@ public class FileSystemManager
 	public static final String IMPORT_COMPONENT_DIR = MAIN_DIR + "/import/component";
 	public static final String ARTICLE_DIR = MAIN_PERM_DIR + "/article";
 	public static final String MEDIA_DIR = MAIN_PERM_DIR + "/media";
+	public static final String ATTACHMENT_DIR = MAIN_PERM_DIR + "/attachment";
 	public static final String GENERAL_MEDIA_DIR = MAIN_PERM_DIR + "/generalmedia";
+	public static final String TEMPORARY_MEDIA_DIR = MAIN_PERM_DIR + "/temporarymedia";
 	public static final String ERROR_TICKET_DIR = MAIN_TEMP_DIR + "/errorticket";
 	public static final String RESOURCE_DIR = MAIN_PERM_DIR + "/resource";
 	public static final String REPORT_DIR = MAIN_PERM_DIR + "/report";
@@ -62,6 +65,8 @@ public class FileSystemManager
 	public static final String PLUGIN_UNINSTALLED_DIR = MAIN_PERM_DIR + "/plugins/uninstalled";
 	public static final String DB_DIR = MAIN_DIR + "/db";
 
+	private static AtomicBoolean started = new AtomicBoolean(false);
+	
 	private static final int BUFFER_SIZE = 8192;
 
 	public static File getDir(String directory)
@@ -176,11 +181,14 @@ public class FileSystemManager
 		FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
 		FileSystemManager.getDir(FileSystemManager.REPORT_DIR);
 		FileSystemManager.getDir(FileSystemManager.IMPORT_HISTORY_DIR);
+		
+		started.set(true);		
 	}
 
 	public static void cleanup()
 	{
 		//Nothing to do for now
+		started.set(false);
 	}
 
 	@Override
@@ -193,6 +201,12 @@ public class FileSystemManager
 	public void shutdown()
 	{
 		FileSystemManager.cleanup();
+	}
+
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
 	}
 
 }

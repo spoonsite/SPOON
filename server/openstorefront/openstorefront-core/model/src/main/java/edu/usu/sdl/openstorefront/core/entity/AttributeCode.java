@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
@@ -25,6 +26,9 @@ import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.LinkSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -39,7 +43,8 @@ import org.apache.commons.lang3.StringUtils;
 public class AttributeCode
 		extends StandardEntity
 {
-
+	public static final String FIELD_LABEL = "label";
+	
 	@PK
 	@NotNull
 	@ConsumeField
@@ -83,6 +88,34 @@ public class AttributeCode
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String highlightStyle;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("Stored filename for attachment")
+	private String attachmentFileName;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("Original filename for attachment")
+	private String attachmentOriginalFileName;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String attachmentMimeType;
+
+	/**
+	 * Get the path to the media on disk. Note: this may be ran from a proxy so
+	 * don't use variable directly
+	 *
+	 * @return Path or null if this doesn't represent a disk resource
+	 */
+	public Path pathToAttachment()
+	{
+		Path path = null;
+		if (StringUtils.isNotBlank(getAttachmentFileName())) {
+			File attachmentDir = FileSystemManager.getDir(FileSystemManager.ATTACHMENT_DIR);
+			path = Paths.get(attachmentDir.getPath() + "/" + getAttachmentFileName());
+		}
+		return path;
+	}
 
 	public static final String DI2ELEVEL_NA = "NA";
 	public static final String DI2ELEVEL_LEVEL0 = "LEVEL0";
@@ -276,6 +309,36 @@ public class AttributeCode
 	public void setHighlightStyle(String highlightStyle)
 	{
 		this.highlightStyle = highlightStyle;
+	}
+
+	public String getAttachmentFileName()
+	{
+		return attachmentFileName;
+	}
+
+	public void setAttachmentFileName(String attachmentFileName)
+	{
+		this.attachmentFileName = attachmentFileName;
+	}
+
+	public String getAttachmentOriginalFileName()
+	{
+		return attachmentOriginalFileName;
+	}
+
+	public void setAttachmentOriginalFileName(String attachmentOriginalFileName)
+	{
+		this.attachmentOriginalFileName = attachmentOriginalFileName;
+	}
+
+	public String getAttachmentMimeType()
+	{
+		return attachmentMimeType;
+	}
+
+	public void setAttachmentMimeType(String attachmentMimeType)
+	{
+		this.attachmentMimeType = attachmentMimeType;
 	}
 
 }

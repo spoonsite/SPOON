@@ -24,18 +24,30 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Defines the supported upload formats")
 public class FileFormat
-		extends LookupEntity
+		extends LookupEntity<FileFormat>
 {
 
 	public static final String COMPONENT_STANDARD = "CMP_STANDARD";
 	public static final String COMPONENT_ER2 = "CMP_ER2";
 	public static final String COMPONENT_DESCRIBE = "CMP_DESCRIBE";
+	public static final String COMPONENT_MAPPED_CSV = "CMP_MAP_CSV";
+	public static final String COMPONENT_MAPPED_TSV = "CMP_MAP_TSV";
+	public static final String COMPONENT_MAPPED_EXCEL = "CMP_MAP_EXCEL";
+	public static final String COMPONENT_MAPPED_JSON = "CMP_MAP_JSON";
+	public static final String COMPONENT_MAPPED_XML = "CMP_MAP_XML";
+
 	public static final String ATTRIBUTE_STANDARD = "ATTR_STANDARD";
 	public static final String ATTRIBUTE_SVCV4 = "ATTR_SVCV4";
+	public static final String ATTRIBUTE_MAPPED_CSV = "ATTR_MAP_CSV";
+	public static final String ATTRIBUTE_MAPPED_TSV = "ATTR_MAP_TSV";
+	public static final String ATTRIBUTE_MAPPED_EXCEL = "ATTR_MAP_EXCEL";
+	public static final String ATTRIBUTE_MAPPED_JSON = "ATTR_MAP_JSON";
+	public static final String ATTRIBUTE_MAPPED_XML = "ATTR_MAP_XML";
 
 	private String fileType;
 	private String parserClass;
 	private String fileRequirements;
+	private boolean supportsDataMap;
 
 	public FileFormat()
 	{
@@ -45,46 +57,119 @@ public class FileFormat
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
-		codeMap.put(COMPONENT_STANDARD, newLookup(FileFormat.class, COMPONENT_STANDARD, "Standard Format (ZIP, JSON)"));
-		codeMap.put(COMPONENT_ER2, newLookup(FileFormat.class, COMPONENT_ER2, "ER2 Format (XML)"));
-		codeMap.put(COMPONENT_DESCRIBE, newLookup(FileFormat.class, COMPONENT_DESCRIBE, "Describe (XML)"));
-		codeMap.put(ATTRIBUTE_STANDARD, newLookup(FileFormat.class, ATTRIBUTE_STANDARD, "Standard Format (JSON)"));
-		codeMap.put(ATTRIBUTE_SVCV4, newLookup(FileFormat.class, ATTRIBUTE_SVCV4, "Svcv4 Sparx export (CSV)"));
 
-		//Add extra metadata
-		((FileFormat) codeMap.get(COMPONENT_STANDARD)).setFileType(FileType.COMPONENT);
-		((FileFormat) codeMap.get(COMPONENT_ER2)).setFileType(FileType.COMPONENT);
-		((FileFormat) codeMap.get(COMPONENT_DESCRIBE)).setFileType(FileType.COMPONENT);
-		((FileFormat) codeMap.get(ATTRIBUTE_STANDARD)).setFileType(FileType.ATTRIBUTE);
-		((FileFormat) codeMap.get(ATTRIBUTE_SVCV4)).setFileType(FileType.ATTRIBUTE);
+		FileFormat fileFormat = newLookup(FileFormat.class, COMPONENT_STANDARD, "Standard Format (ZIP, JSON)");
+		fileFormat.setFileType(FileType.COMPONENT);
+		fileFormat.setFileRequirements("ZIP with media and JSON data containing component records or just the JSON file.  See Export.");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentStandardParser");
+		fileFormat.setSupportsDataMap(false);
+		addFormat(codeMap, fileFormat);
 
-		((FileFormat) codeMap.get(COMPONENT_STANDARD)).setParserClass("ComponentStandardParser");
-		((FileFormat) codeMap.get(COMPONENT_ER2)).setParserClass("ComponentER2Parser");
-		((FileFormat) codeMap.get(COMPONENT_DESCRIBE)).setParserClass("ComponentDescribeParser");
-		((FileFormat) codeMap.get(ATTRIBUTE_STANDARD)).setParserClass("AttributeStandardParser");
-		((FileFormat) codeMap.get(ATTRIBUTE_SVCV4)).setParserClass("AttributeSvcv4Parser");
+		fileFormat = newLookup(FileFormat.class, COMPONENT_ER2, "ER2 Format (XML)");
+		fileFormat.setFileType(FileType.COMPONENT);
+		fileFormat.setFileRequirements("XML of ER2 Asset data");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentER2Parser");
+		fileFormat.setSupportsDataMap(false);
+		addFormat(codeMap, fileFormat);
 
-		StringBuilder requirements = new StringBuilder();
-		requirements.append("ZIP with media and JSON data containing component records or just the JSON file.  See Export.");
-		((FileFormat) codeMap.get(COMPONENT_STANDARD)).setFileRequirements(requirements.toString());
+		fileFormat = newLookup(FileFormat.class, COMPONENT_DESCRIBE, "Describe (XML)");
+		fileFormat.setFileType(FileType.COMPONENT);
+		fileFormat.setFileRequirements("XML of Describe Record");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentDescribeParser");
+		fileFormat.setSupportsDataMap(false);
+		addFormat(codeMap, fileFormat);
 
-		requirements = new StringBuilder();
-		requirements.append("XML of ER2 Asset data");
-		((FileFormat) codeMap.get(COMPONENT_ER2)).setFileRequirements(requirements.toString());
-		
-		requirements = new StringBuilder();
-		requirements.append("XML of Describe Record");
-		((FileFormat) codeMap.get(COMPONENT_DESCRIBE)).setFileRequirements(requirements.toString());
-		
+		fileFormat = newLookup(FileFormat.class, COMPONENT_MAPPED_CSV, "Component Mapped CSV");
+		fileFormat.setFileType(FileType.COMPONENT);
+		fileFormat.setFileRequirements("Mapped Comma-Separated-Value File");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentMappedCSVParser");
+		fileFormat.setSupportsDataMap(true);
+		addFormat(codeMap, fileFormat);
 
-		requirements = new StringBuilder();
-		requirements.append("JSON data containing the Attribute Types and Codes.  See Export.");
-		((FileFormat) codeMap.get(ATTRIBUTE_STANDARD)).setFileRequirements(requirements.toString());
+		fileFormat = newLookup(FileFormat.class, COMPONENT_MAPPED_TSV, "Component Mapped TSV");
+		fileFormat.setFileType(FileType.COMPONENT);
+		fileFormat.setFileRequirements("Mapped Tab-Separated-Value file");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentMappedTSVParser");
+		fileFormat.setSupportsDataMap(true);
+		addFormat(codeMap, fileFormat);
 
-		requirements = new StringBuilder();
-		requirements.append("CSV in SvcV-4 Functionality Description Format");
-		((FileFormat) codeMap.get(ATTRIBUTE_SVCV4)).setFileRequirements(requirements.toString());
+		fileFormat = newLookup(FileFormat.class, COMPONENT_MAPPED_EXCEL, "Component Mapped Excel (XLSX)");
+		fileFormat.setFileType(FileType.COMPONENT);
+		fileFormat.setFileRequirements("Mapped Excel file (XLSX)");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentMappedExcelParser");
+		fileFormat.setSupportsDataMap(true);
+		addFormat(codeMap, fileFormat);
+
+		fileFormat = newLookup(FileFormat.class, COMPONENT_MAPPED_JSON, "Component Mapped JSON");
+		fileFormat.setFileType(FileType.COMPONENT);
+		fileFormat.setFileRequirements("Mapped JSON file");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentMappedJsonParser");
+		fileFormat.setSupportsDataMap(true);
+		addFormat(codeMap, fileFormat);
+
+		fileFormat = newLookup(FileFormat.class, COMPONENT_MAPPED_XML, "Component Mapped XML");
+		fileFormat.setFileType(FileType.COMPONENT);
+		fileFormat.setFileRequirements("Mapped XML file");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentMappedXMLParser");
+		fileFormat.setSupportsDataMap(true);
+		addFormat(codeMap, fileFormat);
+
+		//Attributes
+		fileFormat = newLookup(FileFormat.class, ATTRIBUTE_STANDARD, "Standard Format (JSON)");
+		fileFormat.setFileType(FileType.ATTRIBUTE);
+		fileFormat.setFileRequirements("JSON data containing the Attribute Types and Codes.  See Export.");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.AttributeStandardParser");
+		fileFormat.setSupportsDataMap(false);
+		addFormat(codeMap, fileFormat);
+
+		fileFormat = newLookup(FileFormat.class, ATTRIBUTE_SVCV4, "Svcv4 Sparx export (CSV)");
+		fileFormat.setFileType(FileType.ATTRIBUTE);
+		fileFormat.setFileRequirements("CSV in SvcV-4 Functionality Description Format");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.AttributeSvcv4Parser");
+		fileFormat.setSupportsDataMap(false);
+		addFormat(codeMap, fileFormat);
+
+		fileFormat = newLookup(FileFormat.class, ATTRIBUTE_MAPPED_CSV, "Attribute Mapped CSV");
+		fileFormat.setFileType(FileType.ATTRIBUTE);
+		fileFormat.setFileRequirements("Mapped Comma-Separated-Value File (Remove header line before upload)");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.AttributeMappedCSVParser");
+		fileFormat.setSupportsDataMap(true);
+		addFormat(codeMap, fileFormat);
+
+		fileFormat = newLookup(FileFormat.class, ATTRIBUTE_MAPPED_TSV, "Attribute Mapped TSV");
+		fileFormat.setFileType(FileType.ATTRIBUTE);
+		fileFormat.setFileRequirements("Mapped Tab-Separated-Value File (Remove header line before upload");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.AttributeMappedTSVParser");
+		fileFormat.setSupportsDataMap(true);
+		addFormat(codeMap, fileFormat);
+
+		fileFormat = newLookup(FileFormat.class, ATTRIBUTE_MAPPED_EXCEL, "Attribute Mapped Excel (XLSX)");
+		fileFormat.setFileType(FileType.ATTRIBUTE);
+		fileFormat.setFileRequirements("Mapped Excel file (XLSX) (Remove header line before upload)");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.AttributeMappedExcelParser");
+		fileFormat.setSupportsDataMap(true);
+		addFormat(codeMap, fileFormat);
+
+		fileFormat = newLookup(FileFormat.class, ATTRIBUTE_MAPPED_JSON, "Attribute Mapped JSON");
+		fileFormat.setFileType(FileType.ATTRIBUTE);
+		fileFormat.setFileRequirements("Mapped JSON file");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.AttributeMappedJsonParser");
+		fileFormat.setSupportsDataMap(true);
+		addFormat(codeMap, fileFormat);
+
+		fileFormat = newLookup(FileFormat.class, ATTRIBUTE_MAPPED_XML, "Attribute Mapped XML");
+		fileFormat.setFileType(FileType.ATTRIBUTE);
+		fileFormat.setFileRequirements("Mapped XML file");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.AttributeMappedXMLParser");
+		fileFormat.setSupportsDataMap(true);
+		addFormat(codeMap, fileFormat);
+
 		return codeMap;
+	}
+
+	private void addFormat(Map<String, LookupEntity> codeMap, FileFormat fileFormat)
+	{
+		codeMap.put(fileFormat.getCode(), fileFormat);
 	}
 
 	public String getFileType()
@@ -115,6 +200,16 @@ public class FileFormat
 	public void setFileRequirements(String fileRequirements)
 	{
 		this.fileRequirements = fileRequirements;
+	}
+
+	public boolean getSupportsDataMap()
+	{
+		return supportsDataMap;
+	}
+
+	public void setSupportsDataMap(boolean supportsDataMap)
+	{
+		this.supportsDataMap = supportsDataMap;
 	}
 
 }

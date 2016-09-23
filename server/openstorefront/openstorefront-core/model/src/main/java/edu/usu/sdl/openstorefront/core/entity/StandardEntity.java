@@ -116,7 +116,9 @@ public abstract class StandardEntity<T>
 		if (StringUtils.isBlank(getUpdateUser())) {
 			setUpdateUser(SecurityUtil.getCurrentUserName());
 		}
-		setAdminModified(SecurityUtil.isAdminUser());
+		if (getAdminModified() == null) {
+			setAdminModified(SecurityUtil.isAdminUser());
+		}
 	}
 
 	public void populateBaseCreateFields()
@@ -133,7 +135,9 @@ public abstract class StandardEntity<T>
 		if (StringUtils.isBlank(getUpdateUser())) {
 			setUpdateUser(SecurityUtil.getCurrentUserName());
 		}
-		setAdminModified(SecurityUtil.isAdminUser());
+		if (getAdminModified() == null) {
+			setAdminModified(SecurityUtil.isAdminUser());
+		}
 	}
 
 	public String getActiveStatus()

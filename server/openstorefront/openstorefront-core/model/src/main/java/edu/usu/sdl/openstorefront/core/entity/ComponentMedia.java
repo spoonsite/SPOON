@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.ws.rs.DefaultValue;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -40,7 +41,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 @APIDescription("Holds the media information for a component")
 public class ComponentMedia
-		extends BaseComponent
+		extends BaseComponent<ComponentMedia>
 {
 
 	@PK(generated = true)
@@ -76,6 +77,16 @@ public class ComponentMedia
 	@Sanitize(BasicHTMLSanitizer.class)
 	private String caption;
 
+	@ConsumeField
+	@APIDescription("Should this media be hidden in a display in the user interface?")
+	@DefaultValue("false")
+	private Boolean hideInDisplay;
+
+	@ConsumeField
+	@APIDescription("Is this media referred to inline in a description/etc?")
+	@DefaultValue("false")
+	private Boolean usedInline;
+
 	public ComponentMedia()
 	{
 	}
@@ -83,7 +94,7 @@ public class ComponentMedia
 	@Override
 	public String uniqueKey()
 	{
-		String key = StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName();		
+		String key = StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName();
 		return key;
 	}
 
@@ -112,12 +123,14 @@ public class ComponentMedia
 		this.setCaption(media.getCaption());
 		this.setLink(media.getLink());
 		this.setMediaTypeCode(media.getMediaTypeCode());
+		this.setHideInDisplay(media.getHideInDisplay());
+		this.setUsedInline(media.getUsedInline());
 	}
 
 	@Override
-	public int customCompareTo(BaseComponent o)
+	public int customCompareTo(ComponentMedia o)
 	{
-		int value = ReflectionUtil.compareObjects(getFileName(), ((ComponentMedia) o).getFileName());
+		int value = ReflectionUtil.compareObjects(getFileName(), o.getFileName());
 		return value;
 	}
 
@@ -205,6 +218,26 @@ public class ComponentMedia
 	public void setFileName(String fileName)
 	{
 		this.fileName = fileName;
+	}
+
+	public Boolean getHideInDisplay()
+	{
+		return hideInDisplay;
+	}
+
+	public void setHideInDisplay(Boolean hideInDisplay)
+	{
+		this.hideInDisplay = hideInDisplay;
+	}
+
+	public Boolean getUsedInline()
+	{
+		return usedInline;
+	}
+
+	public void setUsedInline(Boolean usedInline)
+	{
+		this.usedInline = usedInline;
 	}
 
 }

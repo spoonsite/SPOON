@@ -15,11 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.web.test.system;
 
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.service.manager.LDAPManager;
 import edu.usu.sdl.openstorefront.service.manager.model.LdapRecord;
 import edu.usu.sdl.openstorefront.service.manager.resource.LdapClient;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -29,21 +31,27 @@ public class LDAPTest
 		extends BaseTestCase
 {
 
-	public LDAPTest()
-	{
-		this.description = "LDAP_Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
 		LdapClient ldapClient = LDAPManager.getLdapClient();
 
 		//We mainly checking connection
-		LdapRecord ldapRecord = ldapClient.findUser("zStorefront");
-		if (ldapRecord != null) {
-			results.append(StringProcessor.printObject(ldapRecord)).append("<br>");
+		String ldapUser = PropertiesManager.getValue(PropertiesManager.KEY_TOOLS_USER);
+		if (StringUtils.isNotBlank(ldapUser)) {
+			LdapRecord ldapRecord = ldapClient.findUser(ldapUser);
+			if (ldapRecord != null) {
+				results.append(StringProcessor.printObject(ldapRecord)).append("<br>");
+			}
+		} else {
+			addResultsLines("LDAP user is not setup in this enviroment. See System properties.");
 		}
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "LDAP_Test";
 	}
 
 }

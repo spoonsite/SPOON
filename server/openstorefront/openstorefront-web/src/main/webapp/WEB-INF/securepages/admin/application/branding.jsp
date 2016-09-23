@@ -21,9 +21,12 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>		
+		
         <script type="text/javascript">
 			/* global Ext, CoreUtil */
 
@@ -195,7 +198,7 @@ limitations under the License.
 												autoLoad: true,
 												proxy: {
 													type: 'ajax',
-													url: '../api/v1/resource/attributes/attributetypes',
+													url: 'api/v1/resource/attributes/attributetypes',
 													reader: {
 														type: 'json',
 														rootProperty: 'data'
@@ -241,7 +244,7 @@ limitations under the License.
 												autoLoad: true,
 												proxy: {
 													type: 'ajax',
-													url: '../api/v1/resource/lookuptypes/FeedbackHandleType/view'													
+													url: 'api/v1/resource/lookuptypes/FeedbackHandleType/view'													
 												}
 											}
 										},
@@ -511,7 +514,7 @@ limitations under the License.
 					});
 					
 					CoreUtil.submitForm({						
-						url: '../api/v1/resource/branding' + endUrl,
+						url: 'api/v1/resource/branding' + endUrl,
 						method: method,
 						form: form,
 						data: {
@@ -560,7 +563,7 @@ limitations under the License.
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/branding/'
+							url: 'api/v1/resource/branding/'
 						}
 					},
 					columns: [
@@ -740,7 +743,7 @@ limitations under the License.
 
 					Ext.getCmp('brandingGrid').setLoading('Activating...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/branding/' + brandingId + urlEnd,
+						url: 'api/v1/resource/branding/' + brandingId + urlEnd,
 						method: method,
 						callback: function () {
 							Ext.getCmp('brandingGrid').setLoading(false);
@@ -762,7 +765,7 @@ limitations under the License.
 
 					Ext.getCmp('brandingGrid').setLoading('Copying...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/branding/' + endUrl,
+						url: 'api/v1/resource/branding/' + endUrl,
 						method: 'GET',
 						success: function (response, opts) {
 
@@ -771,7 +774,7 @@ limitations under the License.
 							cloneObj.brandingId = null;
 
 							Ext.Ajax.request({
-								url: '../api/v1/resource/branding/',
+								url: 'api/v1/resource/branding/',
 								method: 'POST',
 								jsonData: {
 									branding: cloneObj
@@ -798,7 +801,7 @@ limitations under the License.
 
 								Ext.getCmp('brandingGrid').setLoading('Resetting to default...');
 								Ext.Ajax.request({
-									url: '../api/v1/resource/branding/current/default',
+									url: 'api/v1/resource/branding/current/default',
 									method: 'PUT',
 									callback: function() {
 										Ext.getCmp('brandingGrid').setLoading(false);
@@ -827,7 +830,7 @@ limitations under the License.
 
 								Ext.getCmp('brandingGrid').setLoading('Deleting branding...');
 								Ext.Ajax.request({
-									url: '../api/v1/resource/branding/' + brandingId,
+									url: 'api/v1/resource/branding/' + brandingId,
 									method: 'DELETE',
 									callback: function() {
 										Ext.getCmp('brandingGrid').setLoading(false);
@@ -841,13 +844,8 @@ limitations under the License.
 					});
 				};
 
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						brandingGrid
-					]
-				});
-
+				addComponentToMainViewPort(brandingGrid);
+				
 			});
 
         </script>

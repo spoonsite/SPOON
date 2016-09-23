@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 @APIDescription("Used to normalize entities that have an organization")
 public interface OrganizationModel
 {
+	public static final String FIELD_ORGANIZATION = "organization";
 
 	public abstract String getOrganization();
 

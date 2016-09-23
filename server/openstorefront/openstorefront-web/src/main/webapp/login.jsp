@@ -15,13 +15,13 @@
 <html>
 	<head>
 		
-		<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
+		<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">
 		<script src="apidoc/script/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
 		
 		<script type="text/javascript">
 		   try {
 			if (window.self !== window.top) {
-				window.parent.location.href = "/openstorefront/login.jsp?gotoPage="+window.parent.location.pathname;
+				window.parent.location.href = "/${pageContext.request.contextPath}/login.jsp?gotoPage="+window.parent.location.pathname;
 			}
 		   } catch (e) {
 			//top
@@ -232,7 +232,8 @@
 					 url: 'Login.action?Login',
 					 data: {
 						username: $('#username').val(),
-						password: $('#password').val()
+						password: $('#password').val(),
+						gotoPage: $('#gotoPageId').val()
 					 },
 					 success: function(data) {	
 						 if (data.success === false) {
@@ -250,8 +251,12 @@
 						 } else {
 							if (window.location.href.indexOf("login.jsp") > -1) {
 								window.location.href = data.message; 
-							} else {							
-								window.location.reload();
+							} else {					
+								if (data.message && data.message !== '') {
+									window.location.href = data.message;
+								} else {
+									window.location.reload();
+								}
 							}
 						 }						 
 					 },

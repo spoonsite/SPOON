@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.search;
 
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import java.util.Date;
 import org.apache.solr.client.solrj.beans.Field;
 
@@ -83,6 +84,23 @@ public class SolrComponentModel
 	{
 	}
 
+	public static SolrComponentModel fromComponentSearchView(ComponentSearchView view)
+	{
+		SolrComponentModel solrComponentModel = new SolrComponentModel();
+		
+		solrComponentModel.setId(view.getComponentId());
+		solrComponentModel.setComponentId(view.getComponentId());
+		solrComponentModel.setDescription(view.getDescription());
+		solrComponentModel.setName(view.getName());
+		solrComponentModel.setOrganization(view.getOrganization());
+		solrComponentModel.setVersion(view.getVersion());
+		solrComponentModel.setReleaseDate(view.getReleaseDate());
+		solrComponentModel.setUpdateDts(view.getUpdateDts());
+		solrComponentModel.setGuid(view.getGuid());
+		
+		return solrComponentModel;		
+	}
+	
 	public String getId()
 	{
 		return id;

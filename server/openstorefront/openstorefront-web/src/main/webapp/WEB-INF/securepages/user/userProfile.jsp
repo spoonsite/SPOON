@@ -6,9 +6,12 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/usertoolslayout.jsp">
+<stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
+		<stripes:layout-render name="../../../layout/userheader.jsp">		
+		</stripes:layout-render>			
+		
         <script type="text/javascript">
 			/* global Ext, CoreUtil */
 
@@ -29,12 +32,7 @@
 					]
 				});
 				
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						mainPanel
-					]
-				});				
+				addComponentToMainViewPort(mainPanel);
 				
 			});
 

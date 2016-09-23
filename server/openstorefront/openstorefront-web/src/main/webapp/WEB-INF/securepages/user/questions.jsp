@@ -20,8 +20,11 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/usertoolslayout.jsp">
+<stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
+		
+		<stripes:layout-render name="../../../layout/userheader.jsp">		
+		</stripes:layout-render>		
 		
 	   <script src="scripts/component/questionWindow.js?v=${appVersion}" type="text/javascript"></script>	
 		
@@ -54,7 +57,7 @@ limitations under the License.
 						],
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/componentquestions/responses/' + '${user}'
+							url: 'api/v1/resource/componentquestions/responses/' + '${user}'
 						}		
 					},
 					columns: [
@@ -162,7 +165,7 @@ limitations under the License.
 							if (btn === 'yes') {
 								Ext.getCmp('questionGrid').setLoading("Removing...");
 								Ext.Ajax.request({
-									url: '../api/v1/resource/components/'+record.get('componentId')+'/questions/'+record.get('questionId') + '/responses/' + record.get('responseId'),
+									url: 'api/v1/resource/components/'+record.get('componentId')+'/questions/'+record.get('questionId') + '/responses/' + record.get('responseId'),
 									method: 'DELETE',
 									callback: function(){
 										Ext.getCmp('responseGrid').setLoading(false);
@@ -200,7 +203,7 @@ limitations under the License.
 						],
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/componentquestions/' + '${user}'
+							url: 'api/v1/resource/componentquestions/' + '${user}'
 						}		
 					},
 					columns: [
@@ -330,7 +333,7 @@ limitations under the License.
 							if (btn === 'yes') {
 								Ext.getCmp('questionGrid').setLoading("Removing...");
 								Ext.Ajax.request({
-									url: '../api/v1/resource/components/'+record.get('componentId')+'/questions/'+record.get('questionId'),
+									url: 'api/v1/resource/components/'+record.get('componentId')+'/questions/'+record.get('questionId'),
 									method: 'DELETE',
 									callback: function(){
 										Ext.getCmp('questionGrid').setLoading(false);
@@ -353,12 +356,7 @@ limitations under the License.
 					]
 				})
 				
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						mainPanel
-					]
-				});
+				addComponentToMainViewPort(mainPanel);
 				
 			});
 			

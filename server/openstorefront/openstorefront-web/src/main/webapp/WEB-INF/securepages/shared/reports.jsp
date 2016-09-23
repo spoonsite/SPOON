@@ -1,8 +1,11 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
+		<stripes:layout-render name="../../../layout/${param.user ? 'userheader.jsp' : 'adminheader.jsp'}">		
+		</stripes:layout-render>			
+		
         <script type="text/javascript">
 			/* global Ext, CoreUtil */
 
@@ -56,7 +59,7 @@
 						}						
 					],
 					proxy: CoreUtil.pagingProxy({
-						url: '../api/v1/resource/scheduledreports',
+						url: 'api/v1/resource/scheduledreports',
 						method: 'GET',
 						reader: {
 							type: 'json',
@@ -283,11 +286,11 @@
 					var newUrl = '';
 					var newMethod = '';
 					if (selectedObj.data.activeStatus === 'A') {
-						newUrl = '../api/v1/resource/scheduledreports/' + reportId;
+						newUrl = 'api/v1/resource/scheduledreports/' + reportId;
 						newMethod = 'DELETE';
 					}
 					else {
-						newUrl = '../api/v1/resource/scheduledreports/' + reportId + '/activate';
+						newUrl = 'api/v1/resource/scheduledreports/' + reportId + '/activate';
 						newMethod = 'POST';
 					}
 					Ext.getCmp('scheduleReportsGrid').setLoading(true);
@@ -319,7 +322,7 @@
 								var reportId = selectedObj.data.scheduleReportId;
 
 								Ext.Ajax.request({
-									url: '../api/v1/resource/scheduledreports/' + reportId + '/force',
+									url: 'api/v1/resource/scheduledreports/' + reportId + '/force',
 									method: 'DELETE',
 									success: function (response, opts) {
 										Ext.getCmp('scheduleReportsGrid').setLoading(false);
@@ -381,7 +384,7 @@
 						Ext.getCmp('scheduleReportForm').setLoading(true);
 
 						CoreUtil.submitForm({
-							url: '../api/v1/resource/reports',
+							url: 'api/v1/resource/reports',
 							method: 'POST',
 							data: data,
 							removeBlankDataItems: true,
@@ -407,11 +410,11 @@
 						var url = '';
 						var method = '';
 						if (scheduleReportId) {
-							url = '../api/v1/resource/scheduledreports/' + scheduleReportId;
+							url = 'api/v1/resource/scheduledreports/' + scheduleReportId;
 							method = 'PUT';
 						}
 						else {
-							url = '../api/v1/resource/scheduledreports';
+							url = 'api/v1/resource/scheduledreports';
 							method = 'POST';
 						}
 
@@ -479,7 +482,7 @@
 							})
 						],
 						proxy: CoreUtil.pagingProxy({
-							url: '../api/v1/resource/reports/reporttypes',
+							url: 'api/v1/resource/reports/reporttypes',
 							method: 'GET',
 							reader: {
 								type: 'json',
@@ -526,7 +529,7 @@
 						],
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/components/lookup'							
+							url: 'api/v1/resource/components/lookup'							
 						}
 					});
 
@@ -545,7 +548,7 @@
 							})
 						],
 						proxy: CoreUtil.pagingProxy({
-							url: '../api/v1/resource/attributes/attributetypes',
+							url: 'api/v1/resource/attributes/attributetypes',
 							method: 'GET',
 							reader: {
 								type: 'json',
@@ -581,7 +584,7 @@
 						days.push({
 							code: '' + i,
 							days: '' + i
-						})
+						});
 					}
 					var previousDaysStore = Ext.create('Ext.data.Store', {
 						id: 'previousDaysStore',
@@ -762,7 +765,7 @@
 											change: function (cb, newVal, oldVal, opts) {
 												Ext.getCmp('reportFormat').getStore().removeAll();
 												Ext.getCmp('reportFormat').clearValue();
-												Ext.getCmp('reportFormat').getStore().getProxy().setUrl('../api/v1/resource/reports/' + encodeURIComponent(newVal) + '/formats');
+												Ext.getCmp('reportFormat').getStore().getProxy().setUrl('api/v1/resource/reports/' + encodeURIComponent(newVal) + '/formats');
 												Ext.getCmp('reportFormat').getStore().load({
 													callback: function (records, operation, success) {
 														if (records.length === 1) {
@@ -1002,7 +1005,7 @@
 						})
 					],
 					proxy: CoreUtil.pagingProxy({
-						url: '../api/v1/resource/reports',
+						url: 'api/v1/resource/reports',
 						method: 'GET',
 						reader: {
 							type: 'json',
@@ -1144,13 +1147,7 @@
 					}
 				});
 
-				
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						historyGrid
-					]
-				});			
+				addComponentToMainViewPort(historyGrid);
 				
 				// Actions
 				
@@ -1199,7 +1196,7 @@
 						var formattedDate = Ext.util.Format.date(selectedObj.data.createDts,'m/d/y H:i:s');
 						historyTitle="View Report Data - "+selectedObj.data.reportTypeDescription +' '+formattedDate;
 						Ext.Ajax.request({
-							url: '../api/v1/resource/reports/' + selectedObj.data.reportId + '/report',
+							url: 'api/v1/resource/reports/' + selectedObj.data.reportId + '/report',
 							method: 'GET',
 							success: function (response, opts) {
 								var reportData = response.responseText;
@@ -1213,7 +1210,10 @@
 								else{
 									contentData = reportData;
 								}
-								 Ext.getCmp('viewHistoryData').update(contentData);
+								var frame = Ext.getDom('contentFrame');
+								frame.contentWindow.document.open();
+								frame.contentWindow.document.write(contentData);
+								frame.contentWindow.document.close();
 							}
 						});
 					};
@@ -1270,7 +1270,7 @@
 						scrollable:true,
 						layout: 'fit',
 						bodyStyle: 'padding: 10px;',
-						html: contentData,
+						html: '<iframe id="contentFrame" style="width: 100%; height: 98%"></iframe>',
 						dockedItems: [
 						{
 							dock: 'bottom',
@@ -1348,7 +1348,7 @@
 									Ext.getCmp('historyGrid').setLoading(true);
 
 									Ext.Ajax.request({
-										url: '../api/v1/resource/reports/delete',
+										url: 'api/v1/resource/reports/delete',
 										method: 'DELETE',
 										jsonData: {entity: ids},
 										headers: {'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8'},
@@ -1376,7 +1376,7 @@
 									var reportId = selectedObj[0].data.reportId;
 
 									Ext.Ajax.request({
-										url: '../api/v1/resource/reports/' + reportId,
+										url: 'api/v1/resource/reports/' + reportId,
 										method: 'DELETE',
 										success: function (response, opts) {
 											Ext.getCmp('historyGrid').setLoading(false);
@@ -1395,7 +1395,7 @@
 				var historyExport = function () {
 					Ext.toast('Exporting Report Data ...');
 					var selectedObj = Ext.getCmp('historyGrid').getSelection()[0].data;
-					window.location.href = '../api/v1/resource/reports/' + selectedObj.reportId + '/report';
+					window.location.href = 'api/v1/resource/reports/' + selectedObj.reportId + '/report';
 				};				
 				
 			});

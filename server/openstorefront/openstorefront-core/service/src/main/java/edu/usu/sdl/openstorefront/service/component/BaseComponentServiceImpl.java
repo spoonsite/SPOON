@@ -24,7 +24,6 @@ import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 /**
  *
@@ -33,8 +32,7 @@ import java.util.logging.Logger;
 public abstract class BaseComponentServiceImpl
 {
 
-	protected static final Logger log = Logger.getLogger(ComponentServiceImpl.class.getName());
-
+//	private static final Logger LOG = Logger.getLogger(BaseComponentServiceImpl.class.getName());
 	protected ComponentServiceImpl componentService;
 	protected PersistenceService persistenceService;
 	protected CoreComponentServiceImpl core;
@@ -78,6 +76,7 @@ public abstract class BaseComponentServiceImpl
 		OSFCacheManager.getComponentCache().remove(componentId);
 		OSFCacheManager.getComponentLookupCache().remove(componentId);
 		OSFCacheManager.getComponentApprovalCache().remove(componentId);
+		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	protected void handleUserDataAlert(Object data)

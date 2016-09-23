@@ -28,7 +28,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Define the event types")
 public class NotificationEventType
-		extends LookupEntity
+		extends LookupEntity<NotificationEventType>
 {
 
 	public static final String WATCH = "WATCH";

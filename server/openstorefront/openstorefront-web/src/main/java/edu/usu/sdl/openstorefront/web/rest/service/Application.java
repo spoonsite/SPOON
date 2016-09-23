@@ -15,7 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
+import edu.usu.sdl.core.CoreSystem;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
@@ -26,21 +28,27 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.DBLogRecord;
+import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.view.ApplicationStatus;
+import edu.usu.sdl.openstorefront.core.view.CacheView;
 import edu.usu.sdl.openstorefront.core.view.DBLogRecordWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LoggerView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.ManagerView;
+import edu.usu.sdl.openstorefront.core.view.MediaRetrieveRequestModel;
 import edu.usu.sdl.openstorefront.core.view.MemoryPoolStatus;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.ThreadStatus;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.io.File;
+import java.io.IOException;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -50,6 +58,7 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -69,8 +78,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import net.sf.ehcache.Cache;
 import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang.StringUtils;
 
@@ -105,13 +116,13 @@ public class Application
 		applicationStatus.setProcessorCount(operatingSystemMXBean.getAvailableProcessors());
 		applicationStatus.setSystemLoad(operatingSystemMXBean.getSystemLoadAverage());
 		applicationStatus.setSystemProperties(runtimeMXBean.getSystemProperties());
-		
+
 		applicationStatus.setRootStoragePath(FileSystemManager.MAIN_DIR);
 		File file = new File(FileSystemManager.MAIN_DIR);
-		applicationStatus.setFreeDiskSpace(file.getUsableSpace()  / (1024*1024) );
-		applicationStatus.setTotalDiskSpace(file.getTotalSpace()  / (1024*1024) );
+		applicationStatus.setFreeDiskSpace(file.getUsableSpace() / (1024 * 1024));
+		applicationStatus.setTotalDiskSpace(file.getTotalSpace() / (1024 * 1024));
 		applicationStatus.setUsedDiskSpace(applicationStatus.getTotalDiskSpace() - applicationStatus.getFreeDiskSpace());
-		
+
 		applicationStatus.getHeapMemoryStatus().setName("Heap");
 		applicationStatus.getHeapMemoryStatus().setDetails(memoryMXBean.getHeapMemoryUsage().toString());
 		applicationStatus.getHeapMemoryStatus().setInitKb(memoryMXBean.getHeapMemoryUsage().getInit() != 0 ? memoryMXBean.getHeapMemoryUsage().getInit() / 1024 : 0);
@@ -170,16 +181,16 @@ public class Application
 			threadStatus.setName(info.getThreadName());
 			threadStatus.setStatus(info.getThreadState().name());
 			threadStatus.setDetails(info.toString().replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;").replace("\n", "<br>"));
-			threadStatuses.add(threadStatus);			
-		}		
-		
+			threadStatuses.add(threadStatus);
+		}
+
 		return threadStatuses;
 	}
-	
+
 	@GET
 	@RequireAdmin
 	@APIDescription("Attempts to get the full stack of a thread")
-	@Produces({MediaType.TEXT_HTML})	
+	@Produces({MediaType.TEXT_HTML})
 	@Path("/threads/{threadId}/stack")
 	public Response getThreadStack(
 			@PathParam("threadId") long threadId
@@ -194,7 +205,7 @@ public class Application
 				String style = "color: grey; font-size: 10px;";
 				if (stackTraceElement.getClassName().contains("edu.usu.sdl")) {
 					style = "color: black; font-size: 12px; font-wieght: bold;";
-				}				
+				}
 				stack.append("<span style='")
 						.append(style).append("'>")
 						.append(stackTraceElement.getClassName()).append(" (")
@@ -202,12 +213,12 @@ public class Application
 						.append(stackTraceElement.getLineNumber()).append(" ")
 						.append("</span><br>");
 			}
-			
+
 			return Response.ok(stack.toString()).build();
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-	}	
+	}
 
 	@GET
 	@RequireAdmin
@@ -252,6 +263,24 @@ public class Application
 		}
 
 		return sendSingleEntityResponse(lookupModel);
+	}
+
+	@POST
+	@APIDescription("Instruct the server to download a media file from a URL, and save the file to temporary media")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/retrievemedia")
+	public Response retrieveMedia(MediaRetrieveRequestModel retrieveRequest) throws MalformedURLException, IOException
+	{
+
+		TemporaryMedia temporaryMedia = service.getSystemService().retrieveTemporaryMedia(retrieveRequest.getURL());
+
+		if (temporaryMedia == null) {
+			return Response.status(404).build();
+		}
+
+		return Response.ok(temporaryMedia).build();
+
 	}
 
 	@POST
@@ -490,4 +519,137 @@ public class Application
 		return lookupModel;
 	}
 
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets information about system caches.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(CacheView.class)
+	@Path("/caches")	
+	public Response getCaches()
+	{
+		List<CacheView> cacheViews = new ArrayList<>();
+		for (String cacheName :OSFCacheManager.getCacheManager().getCacheNames()) {
+			CacheView cacheView = new CacheView();
+			cacheView.setName(cacheName);
+			
+			Cache cache = OSFCacheManager.getCacheManager().getCache(cacheName);
+			cacheView.setHitCount(cache.getStatistics().cacheHitCount());
+			cacheView.setRoughCount(cache.getKeysNoDuplicateCheck().size());
+			
+			long total = cache.getStatistics().cacheHitCount() + cache.getStatistics().cacheMissCount();
+			if (total > 0) {
+				cacheView.setHitRatio((double)cache.getStatistics().cacheHitCount() / (double)total);
+			} else {
+				cacheView.setHitRatio(0);
+			}
+			cacheView.setMissCount(cache.getStatistics().cacheMissCount());						
+			cacheViews.add(cacheView);
+		}
+		
+		GenericEntity<List<CacheView>> entity = new GenericEntity<List<CacheView>>(cacheViews)
+		{
+		};		
+		return sendSingleEntityResponse(entity);
+	}
+	
+	@PUT
+	@RequireAdmin
+	@APIDescription("Clears cache of records")
+	@Path("/caches/{name}/flush")	
+	public Response flushCaches(
+		@PathParam("name") String cacheName
+	)
+	{
+		Cache cache = OSFCacheManager.getCacheManager().getCache(cacheName);
+		if (cache != null) {
+			cache.removeAll();
+			return Response.ok().build();
+		}
+		
+		return sendSingleEntityResponse(null);
+	}
+	
+	@GET
+	@RequireAdmin
+	@APIDescription("Gets information resource managers")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ManagerView.class)
+	@Path("/managers")	
+	public Response getManagers()
+	{	
+		List<ManagerView> views = CoreSystem.getManagersView();		
+		GenericEntity<List<ManagerView>> entity = new GenericEntity<List<ManagerView>>(views)
+		{
+		};		
+		return sendSingleEntityResponse(entity);		
+	}
+	
+	@PUT
+	@RequireAdmin
+	@APIDescription("Starts a manager (It's preferable to use restart rather than stop and starting)")
+	@Path("/managers/{managerClass}/start")	
+	public Response startManager(
+		@PathParam("managerClass") String managerClass
+	)
+	{
+		Initializable manager = CoreSystem.findManager(managerClass, true);
+		
+		if (manager != null) {
+			CoreSystem.startManager(managerClass);
+			return Response.ok().build();
+		}
+		
+		return sendSingleEntityResponse(null);
+	}	
+	
+	@PUT
+	@RequireAdmin
+	@APIDescription("Stops a manager (It's preferable to use restart rather than stop and starting)")
+	@Path("/managers/{managerClass}/stop")	
+	public Response stopManager(
+		@PathParam("managerClass") String managerClass
+	)
+	{
+		Initializable manager = CoreSystem.findManager(managerClass, true);
+		
+		if (manager != null) {
+			CoreSystem.stopManager(managerClass);
+			return Response.ok().build();
+		}
+		
+		return sendSingleEntityResponse(null);
+	}	
+	
+	@PUT
+	@RequireAdmin
+	@APIDescription("Restart a manager.")
+	@Path("/managers/{managerClass}/restart")	
+	public Response restartManager(
+		@PathParam("managerClass") String managerClass
+	)
+	{
+		Initializable manager = CoreSystem.findManager(managerClass, true);
+		
+		if (manager != null) {
+			CoreSystem.restartManager(managerClass);
+			return Response.ok().build();
+		}
+		
+		return sendSingleEntityResponse(null);
+	}	
+
+	@POST
+	@RequireAdmin
+	@APIDescription("Restart the application. Note the system will be unavailable until the restart is complete.")
+	@Path("/restart")	
+	public Response restartApplication(
+		@PathParam("managerClass") String managerClass
+	)
+	{
+		CoreSystem.restart();
+		return Response.ok().build();
+	}	
+	
+	
+	
 }

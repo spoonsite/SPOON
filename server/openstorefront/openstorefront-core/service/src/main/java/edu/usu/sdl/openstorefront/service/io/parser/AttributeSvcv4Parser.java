@@ -19,20 +19,21 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
-import edu.usu.sdl.openstorefront.service.io.reader.CSVReader;
-import edu.usu.sdl.openstorefront.service.io.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.BaseAttributeParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.CSVReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class AttributeSvcv4Parser
 		extends BaseAttributeParser
 {
 
-	private static final Logger log = Logger.getLogger(SvcAttributeParser.class.getName());
+	private static final Logger LOG = Logger.getLogger(SvcAttributeParser.class.getName());
 
 	private static final int UID = 0;
 	private static final int CODE = 1;
@@ -43,6 +44,12 @@ public class AttributeSvcv4Parser
 	private static final int JCSFL_ALIGNMENT = 6;
 	private static final int JARM_ALIGNMENT = 7;
 	private static final int INTERNAL_COMMENTS = 8;
+
+	private static final String HEADER_LINE = "TagValue_UID";
+
+	//There is only one type; this format just loads codes
+	//Initialize on the first record (Parser run in a single thread)
+	private AttributeAll attributeAll = null;
 
 	@Override
 	protected GenericReader getReader(InputStream in)
@@ -65,19 +72,18 @@ public class AttributeSvcv4Parser
 	{
 
 		String[] data = (String[]) record;
-		AttributeAll attributeAll = defaultAttributeAll();
-		AttributeType attributeType = new AttributeType();
-		attributeType.setAttributeType(AttributeType.DI2E_SVCV4);
-		attributeType.setDescription("DI2E SvcV-4 Alignment");
+		if (attributeAll == null) {
+			attributeAll = defaultAttributeAll();
+			attributeAll.getAttributeType().setAttributeType(AttributeType.DI2E_SVCV4);
+			attributeAll.getAttributeType().setDescription("DI2E SvcV-4 Alignment");
+			attributeAll.getAttributeType().setArchitectureFlg(Boolean.TRUE);
+			attributeAll.getAttributeType().setAllowMultipleFlg(Boolean.TRUE);
+			attributeAll.getAttributeType().setVisibleFlg(Boolean.TRUE);
+			attributeAll.getAttributeType().setImportantFlg(Boolean.TRUE);
+			attributeAll.getAttributeType().setRequiredFlg(Boolean.FALSE);
+		}
 
-		//Default to true....Later an admin would need to determine which ones should only allow one.
-		attributeType.setAllowMultipleFlg(Boolean.TRUE);
-		attributeType.setArchitectureFlg(Boolean.TRUE);
-		attributeType.setVisibleFlg(Boolean.TRUE);
-		attributeType.setImportantFlg(Boolean.TRUE);
-		attributeType.setRequiredFlg(Boolean.FALSE);
-
-		attributeAll.setAttributeType(attributeType);
+		AttributeType attributeType = attributeAll.getAttributeType();
 
 		if (data.length > DESCRIPTION) {
 
@@ -85,12 +91,18 @@ public class AttributeSvcv4Parser
 			if ("0".equals(code) == false) {
 				code = StringUtils.stripStart(code, "0");
 			}
-			if (org.apache.commons.lang3.StringUtils.isNotBlank(code)) {
-				AttributeCode attributeCode = new AttributeCode();
-				AttributeCodePk attributeCodePk = new AttributeCodePk();
+			if (StringUtils.isNotBlank(code)) {
+				if (HEADER_LINE.equalsIgnoreCase(code)) {
+					//Skip header
+					return null;
+				}
 
+				AttributeCode attributeCode = new AttributeCode();
+
+				AttributeCodePk attributeCodePk = new AttributeCodePk();
 				attributeCodePk.setAttributeCode(code);
 				attributeCodePk.setAttributeType(attributeType.getAttributeType());
+
 				attributeCode.setAttributeCodePk(attributeCodePk);
 
 				StringBuilder desc = new StringBuilder();
@@ -106,12 +118,11 @@ public class AttributeSvcv4Parser
 				attributeAll.getAttributeCodes().add(attributeCode);
 				return attributeAll;
 			} else {
-				log.log(Level.WARNING, MessageFormat.format("Skipping record: {0} + record is missing UID or UID doesn't resolve. (0 padding is removed)", currentRecordNumber));
+				fileHistoryAll.addError(FileHistoryErrorType.WARNING, MessageFormat.format("Skipping record: {0} + record is missing UID or UID doesn't resolve. (0 padding is removed)", currentRecordNumber));
 			}
 
 		} else {
-
-			log.log(Level.WARNING, MessageFormat.format("Skipping record: {0} + record is missing required fields.", currentRecordNumber));
+			fileHistoryAll.addError(FileHistoryErrorType.WARNING, MessageFormat.format("Skipping record: {0} + record is missing required fields.", currentRecordNumber));
 		}
 
 		return null;

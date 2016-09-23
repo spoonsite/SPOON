@@ -28,7 +28,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Valid types of User Messages")
 public class UserMessageType
-		extends LookupEntity
+		extends LookupEntity<UserMessageType>
 {
 
 	public static final String COMPONENT_WATCH = "CWATCH";

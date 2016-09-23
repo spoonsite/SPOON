@@ -34,9 +34,9 @@ public class HTMLSanitizer
 		if (fieldData == null) {
 			return fieldData;
 		} else {
-			String safe = Jsoup.clean(fieldData.toString(), new Whitelist().preserveRelativeLinks(true)					
+			String safe = Jsoup.clean(fieldData.toString(), new Whitelist().preserveRelativeLinks(true)
 					.addTags(
-							"a", "base",  "b", "blockquote", "br", "caption", "cite", "code", "col",
+							"a", "base", "b", "blockquote", "br", "caption", "cite", "code", "col",
 							"colgroup", "dd", "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6",
 							"i", "img", "li", "ol", "p", "pre", "q", "small", "strike", "strong",
 							"sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "u",
@@ -47,7 +47,7 @@ public class HTMLSanitizer
 					.addAttributes("blockquote", "cite")
 					.addAttributes("col", "span", "width")
 					.addAttributes("colgroup", "span", "width")
-					.addAttributes("img", "align", "alt", "height", "src", "title", "width")
+					.addAttributes("img", "align", "alt", "height", "src", "title", "width", "data-storefront-ignore")
 					.addAttributes("ol", "start", "type")
 					.addAttributes("q", "cite")
 					.addAttributes("video", "id", "width", "height", "controls", "preload", "autoplay", "loop", "muted", "src", "poster")
@@ -55,7 +55,7 @@ public class HTMLSanitizer
 					.addAttributes("source", "src", "type", "media")
 					.addAttributes("track", "src", "label", "kind", "srclang", "default")
 					.addAttributes("q", "cite")
-					.addAttributes("table", "summary", "width")
+					.addAttributes("table", "summary", "width", "height", "border", "align", "cellspacing", "cellpadding", "bgcolor", "bordercolor")
 					.addAttributes("td", "abbr", "axis", "colspan", "rowspan", "width")
 					.addAttributes(
 							"th", "abbr", "axis", "colspan", "rowspan", "scope",

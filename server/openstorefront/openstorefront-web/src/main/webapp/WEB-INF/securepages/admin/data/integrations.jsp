@@ -1,8 +1,11 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 	
+	<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+	</stripes:layout-render>
+		
 	<script src="scripts/component/integrationConfigWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
 	<script type="text/javascript">
@@ -17,7 +20,7 @@
 				autoLoad: true,
 				proxy: {
 					type: 'ajax',
-					url: '/openstorefront/api/v1/resource/components/integration?status=ALL'
+					url: 'api/v1/resource/components/integration?status=ALL'
 				}
 			});
 
@@ -25,21 +28,22 @@
 				title: 'Component Configuration',
 				id: 'componentConfigGrid',
 				store: componentConfigStore,
+				selModel: 'checkboxmodel',
 				columnLines: true,
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
-						if (Ext.getCmp('componentConfigGrid').getSelectionModel().hasSelection()) {
+						if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() === 1) {
 							Ext.getCmp('componentConfigGrid-tools-run').enable();
 							Ext.getCmp('componentConfigGrid-tools-edit').enable();
 							Ext.getCmp('componentConfigGrid-tools-toggleActivation').enable();
 							Ext.getCmp('componentConfigGrid-tools-delete').enable();
-							if (record[0].data.activeStatus === 'A') {
-								Ext.getCmp('componentConfigGrid-tools-toggleActivation').setText('Deactivate');
-							}
-							else {
-								Ext.getCmp('componentConfigGrid-tools-toggleActivation').setText('Activate');
-							}
 						} 
+						else if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() > 1) { 
+							Ext.getCmp('componentConfigGrid-tools-toggleActivation').enable();
+							Ext.getCmp('componentConfigGrid-tools-run').disable();
+							Ext.getCmp('componentConfigGrid-tools-edit').disable();
+							Ext.getCmp('componentConfigGrid-tools-delete').disable();
+						}
 						else {
 							Ext.getCmp('componentConfigGrid-tools-run').disable();
 							Ext.getCmp('componentConfigGrid-tools-edit').disable();
@@ -144,14 +148,20 @@
 								}
 							},
 							{
-								text: 'Deactivate',
+								text: 'Toggle Status',
 								id: 'componentConfigGrid-tools-toggleActivation',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-power-off',
 								disabled: true,
 								handler: function () {
-									var record = componentConfigGrid.getSelection()[0];
-									actionToggleIntegration(record);
+									if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() === 1) {
+										var record = componentConfigGrid.getSelection()[0];
+										actionToggleIntegration(record);
+									} else {
+										var records = componentConfigGrid.getSelection();
+										actionToggleIntegrations(records);
+									}
+									
 								}
 							},
 							{
@@ -220,7 +230,7 @@
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
-										url: '/openstorefront/api/v1/resource/components/lookup?'
+										url: 'api/v1/resource/components/lookup?'
 									},
 									sorters: [{
 										property: 'description',
@@ -250,7 +260,7 @@
 			var actionRunJob = function actionRunJob(record) {
 				var componentId = record.getData().componentId;
 				var componentName = record.getData().componentName;
-				var url = '/openstorefront/api/v1/resource/components/';
+				var url = 'api/v1/resource/components/';
 				url += componentId + '/integration/run';
 				var method = 'POST';
 
@@ -274,7 +284,7 @@
 			var actionRunAllJobs = function actionRunAlljobs() {
 
 				Ext.Ajax.request({
-					url: '/openstorefront/api/v1/resource/components/integrations/run',
+					url: 'api/v1/resource/components/integrations/run',
 					method: 'POST',
 					success: function (response, opts) {
 						Ext.toast('Sent request to run all jobs', '', 'tr');
@@ -299,7 +309,7 @@
 				var componentId = record.getData().componentId;
 				var componentName = record.getData().componentName;
 				var activeStatus = record.getData().activeStatus;
-				var url = '/openstorefront/api/v1/resource/components/';
+				var url = 'api/v1/resource/components/';
 				url += componentId + '/integration/';
 				var method = 'PUT';
 				if (activeStatus === 'A') {
@@ -327,10 +337,38 @@
 				});
 			};
 
+			var actionToggleIntegrations = function actionToggleIntegrations(records) {
+				var url = 'api/v1/resource/components/integration/togglemultiple';
+				var method = 'PUT';
+				
+				var data = [];
+
+				Ext.Array.each(records, function(record) {
+					data.push(record.get('componentId'));
+				});
+
+
+				Ext.Ajax.request({
+					url: url,
+					method: method,
+					jsonData: data,
+					success: function (response, opts) {
+						var message = 'Successfully toggled statuses';
+						Ext.toast(message, '', 'tr');
+						Ext.getCmp('componentConfigGrid').getStore().load();
+						Ext.getCmp('componentConfigGrid').getSelectionModel().deselectAll();
+					},
+					failure: function (response, opts) {
+						Ext.MessageBox.alert('Failed to toggle', "Failed to toggle statuses.");
+					}
+				});
+			};
+
+
 			var actionDeleteIntegration = function actionDeleteIntegration(record) {
 				var componentId = record.getData().componentId;
 				var componentName = record.getData().componentName;
-				var url = '/openstorefront/api/v1/resource/components/';
+				var url = 'api/v1/resource/components/';
 				url += componentId + '/integration';
 				var method = 'DELETE';
 
@@ -356,7 +394,7 @@
 				autoLoad: true,
 				proxy: {
 					type: 'ajax',
-					url: '/openstorefront/api/v1/resource/attributes/attributexreftypes/detail'
+					url: 'api/v1/resource/attributes/attributexreftypes/detail'
 				}
 			});
 
@@ -391,7 +429,7 @@
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
-										url: '/openstorefront/api/v1/service/jira/projects'
+										url: 'api/v1/service/jira/projects'
 									}
 								}),
 								listeners: {
@@ -401,7 +439,7 @@
 										Ext.getCmp('jiraAssignmentInstructions').hide();
 										Ext.getCmp('jiraAssignmentPanel').hide();
 										var code = record.getData().code;
-										var url = '/openstorefront/api/v1/service/jira/projects/';
+										var url = 'api/v1/service/jira/projects/';
 										url += code;
 
 										Ext.getCmp('jiraProjectIssueSelection').setStore({
@@ -430,7 +468,7 @@
 										var projectSelection = Ext.getCmp('jiraProjectSelection').getSelection();
 										var projectCode = projectSelection.getData().code;
 										var issueType = combo.getValue();
-										var url = '/openstorefront/api/v1/service/jira/projects/';
+										var url = 'api/v1/service/jira/projects/';
 										url += projectCode + '/' + issueType + '/fields';
 
 										Ext.getCmp('jiraFieldSelection').setStore({
@@ -455,7 +493,7 @@
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
-										url: '/openstorefront/api/v1/resource/attributes'
+										url: 'api/v1/resource/attributes'
 									}
 								}),
 								listeners: {
@@ -619,7 +657,7 @@
 									data.type.integrationType = 'JIRA';
 									data.type.fieldId = jiraFieldRecord.key;
 									data.map = map;
-									var url = '/openstorefront/api/v1/resource/attributes/attributexreftypes/';
+									var url = 'api/v1/resource/attributes/attributexreftypes/';
 									url += 'detail';
 									var method = 'POST';
 
@@ -805,7 +843,7 @@
 			var actionDeleteMapping = function actionDeleteMapping(record) {
 				var attributeType = record.getData().attributeType;
 				var attributeName = record.getData().attributeName;
-				var url = '/openstorefront/api/v1/resource/attributes/attributexreftypes/';
+				var url = 'api/v1/resource/attributes/attributexreftypes/';
 				url += attributeType;
 				var method = 'DELETE';
 
@@ -835,13 +873,7 @@
 			});
 
 
-			Ext.create('Ext.container.Viewport', {
-				layout: 'fit',
-				items: [
-					mainPanel
-				]
-			});
-
+			addComponentToMainViewPort(mainPanel);
 
 
 		});		

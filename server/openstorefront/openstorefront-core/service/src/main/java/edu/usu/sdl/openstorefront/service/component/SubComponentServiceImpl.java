@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -72,6 +73,8 @@ import org.apache.commons.lang3.StringUtils;
 public class SubComponentServiceImpl
 		extends BaseComponentServiceImpl
 {
+
+	private static final Logger LOG = Logger.getLogger(SubComponentServiceImpl.class.getName());
 
 	public SubComponentServiceImpl(ComponentServiceImpl componentService)
 	{
@@ -224,9 +227,9 @@ public class SubComponentServiceImpl
 
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity)
 	{
-		saveComponentAttribute(attribute, updateLastActivity, false);		
-	}	
-	
+		saveComponentAttribute(attribute, updateLastActivity, false);
+	}
+
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity, boolean skipMissingAttribute)
 	{
 		Objects.requireNonNull(attribute, "Requires Component Attrubute");
@@ -274,8 +277,8 @@ public class SubComponentServiceImpl
 				error.append("Attribute Code not found. Code: ").append(attribute.getComponentAttributePk());
 			}
 			if (skipMissingAttribute) {
-				log.log(Level.WARNING, MessageFormat.format("Unable to save attribute. {0}", error.toString()));
-			} else {		
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to save attribute. {0}", error.toString()));
+			} else {
 				throw new OpenStorefrontRuntimeException(error.toString(), "Check data passed in.");
 			}
 		}
@@ -290,14 +293,14 @@ public class SubComponentServiceImpl
 	{
 		Contact contactFull = componentService.getContactService().saveContact(contact.toContact());
 		contact.setContactId(contactFull.getContactId());
-		
+
 		ComponentContact oldContact = persistenceService.findById(ComponentContact.class, contact.getComponentContactId());
-		
+
 		if (oldContact != null) {
 			oldContact.updateFields(contact);
 			persistenceService.persist(oldContact);
 		} else {
-			contact.setComponentContactId(persistenceService.generateId());			
+			contact.setComponentContactId(persistenceService.generateId());
 			contact.populateBaseCreateFields();
 			persistenceService.persist(contact);
 		}
@@ -373,8 +376,7 @@ public class SubComponentServiceImpl
 				removeLocalMedia(oldMedia);
 			}
 			oldMedia.updateFields(media);
-			persistenceService.persist(oldMedia);
-			media = oldMedia;
+			media = persistenceService.persist(oldMedia);
 		} else {
 			media.setComponentMediaId(persistenceService.generateId());
 
@@ -393,7 +395,7 @@ public class SubComponentServiceImpl
 				}
 			}
 			media.populateBaseCreateFields();
-			persistenceService.persist(media);
+			media = persistenceService.persist(media);
 		}
 
 		if (updateLastActivity) {
@@ -525,7 +527,7 @@ public class SubComponentServiceImpl
 				removeLocalResource(oldResource);
 			}
 			oldResource.updateFields(resource);
-			
+
 			persistenceService.persist(oldResource);
 			resource = oldResource;
 		} else {
@@ -549,7 +551,7 @@ public class SubComponentServiceImpl
 			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
 		}
-		
+
 		if (updateLastActivity) {
 			updateComponentLastActivity(resource.getComponentId());
 		}
@@ -677,7 +679,7 @@ public class SubComponentServiceImpl
 		example.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 		example.setCreateUser(username);
 		List<ComponentReview> tempReviews = persistenceService.queryByExample(ComponentReview.class, new QueryByExample(example));
-		List<ComponentReviewView> reviews = new ArrayList();		
+		List<ComponentReviewView> reviews = new ArrayList();
 		tempReviews.forEach(review -> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
 			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
@@ -697,7 +699,7 @@ public class SubComponentServiceImpl
 
 			reviews.add(tempView);
 		});
-		
+
 		//filter out unapproved
 		for (int i = reviews.size() - 1; i >= 0; i--) {
 			ComponentReviewView reviewView = reviews.get(i);
@@ -705,26 +707,32 @@ public class SubComponentServiceImpl
 				reviews.remove(i);
 			}
 		}
-		
+
 		return reviews;
 	}
 
-	public void saveMediaFile(ComponentMedia media, InputStream fileInput)
+	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput)
+	{
+		return saveMediaFile(media, fileInput, true);
+	}
+
+	public ComponentMedia saveMediaFile(ComponentMedia media, InputStream fileInput, boolean updateLastActivity)
 	{
 		Objects.requireNonNull(media);
 		Objects.requireNonNull(fileInput);
 
 		if (StringUtils.isBlank(media.getComponentMediaId())) {
-			media = saveComponentMedia(media);
+			media = saveComponentMedia(media, updateLastActivity);
 		}
 		media.setFileName(media.getComponentMediaId());
 		try (InputStream in = fileInput) {
-			Files.copy(in, media.pathToMedia());
+			Files.copy(in, media.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
 			media.setUpdateUser(SecurityUtil.getCurrentUserName());
-			saveComponentMedia(media);
+			media = saveComponentMedia(media, updateLastActivity);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
+		return media;
 	}
 
 	public void saveResourceFile(ComponentResource resource, InputStream fileInput)
@@ -737,7 +745,7 @@ public class SubComponentServiceImpl
 		}
 		resource.setFileName(resource.getResourceId());
 		try (InputStream in = fileInput) {
-			Files.copy(in, resource.pathToResource());
+			Files.copy(in, resource.pathToResource(), StandardCopyOption.REPLACE_EXISTING);
 			resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 			saveComponentResource(resource);
 		} catch (IOException ex) {
@@ -800,8 +808,8 @@ public class SubComponentServiceImpl
 			//delete existing pros
 			ComponentReviewPro componentReviewProExample = new ComponentReviewPro();
 			componentReviewProExample.setComponentId(review.getComponentId());
-			componentReviewProExample.setComponentReviewProPk(new ComponentReviewProPk());			
-			componentReviewProExample.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());			
+			componentReviewProExample.setComponentReviewProPk(new ComponentReviewProPk());
+			componentReviewProExample.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());
 			persistenceService.deleteByExample(componentReviewProExample);
 
 			for (ComponentReviewPro reviewPro : pros) {
@@ -816,8 +824,8 @@ public class SubComponentServiceImpl
 			//delete existing cons
 			ComponentReviewCon componentReviewConExample = new ComponentReviewCon();
 			componentReviewConExample.setComponentId(review.getComponentId());
-			componentReviewConExample.setComponentReviewConPk(new ComponentReviewConPk());			
-			componentReviewConExample.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());						
+			componentReviewConExample.setComponentReviewConPk(new ComponentReviewConPk());
+			componentReviewConExample.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());
 			persistenceService.deleteByExample(componentReviewConExample);
 
 			for (ComponentReviewCon reviewCon : cons) {

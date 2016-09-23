@@ -1,7 +1,7 @@
 
 #Clearinghouse Administrator Guide
 
-Version 2.0
+Version 2.1
 
 
 Space Dynamics Laboratory
@@ -52,9 +52,9 @@ Figure 1. Client Architecture Diagram
 ##1.2 Client Details
 -----
 
-The client core structure is based on Ext.js which provides UI components and utilities. This reduces third-part dependencies signficantly which in turn reduce mantainance, learning curve and improves quaility and consistency.
+The client core structure is based on Ext.js which provides UI components and utilities. This reduces third-part dependencies significantly which in turn reduce mantainance, learning curve and improves quaility and consistency.
 
-Added to that is application specific overrides and high-level components created to facilate re-use.
+Added to that is application specific overrides and high-level components created to facilitate re-use.
 The application is simply composed by stripes layouts with top-level page and fragment tool pages.
 
 ## 2.  Server Architecture
@@ -79,7 +79,7 @@ Component definitions are as shown below:
 >-  **Managers**   - The role of the manager class is to handle the interaction with a resource. This allow for clean initialization and shutdown of resources and provides centralized access.
   -   **Services**    - Each service is in charge of handling a specific group of Entity models. Services provide transaction support and business logic handling. All service are accessed through a service proxy class.  The service proxy class provides auto transaction and service interception support.
   -   **Models**  - The entity models represent the data in the system and provide the bridge from the application to the underlying storage.  
-  -   **Import/ Export** -The entity models represent the data in the system and provide the bridge from the application to the underlying storage. 
+  -   **Import / Export** -The entity models represent the data in the system and provide the bridge from the application to the underlying storage. 
 
 
 The server build environment relies on the following platforms/tools:
@@ -134,7 +134,7 @@ The component integration vectors (CIV) are show below.
 
  **Source Component**:  openstorefront           
  **Class**:  B  
- **Target Component**:      Solr/ESA                 
+ **Target Component**:      Solr/ESA/Elasticsearch                 
 **Notes**: JEE Application Server   Currently configured to deploy on Tomcat
 
  **Source Component**:    Orient DB           
@@ -204,7 +204,7 @@ The applicable ports are shown below:
 
 ----
 
-  All ports are configurable via configuration for the respected applications. Addition ports maybe be using depending on configuration.
+  All ports are configurable via configuration for the respected applications. Additional ports maybe be used depending on configuration.
 
 #4.  Installation
  -----
@@ -268,31 +268,152 @@ The Storefront relies upon the following external dependencies:
 
 -   OpenAM (Optional)
 
--   ESA
+-   Index Search Server (Any of the following can work)
+	
+	-   Solr 6.x + *Recommended for greater control*
 
--   Solr (Optional if using ESA)
+	-   Elasticsearch 2.3.x *Recommended for simple install*
+	
+*Support for ESA 1.0 and Solr 4.3.1 has been dropped*
 
 **NOTE:** The base Solr package will require some changes to the schema.xml to make
 sure all field are available.
 
 ###4.4.1 To Use Solr
 
-Download Version 4.3.1
-from [solr home](http://archive.apache.org/dist/lucene/solr/), and then perform the
+(The following assumes the application is stop prior to the change. To change on a running application you need to restart the SearchServerManager after making changes.)
+
+Download Version 6.x 
+from [solr home](http://lucene.apache.org/solr/), and then perform the
 following steps:
 
-1.  Unpackage
+1. Unpackage  (setup according to solr instructions if setting up OS integration)
 
-2.  Replace (Solr install dir)/example/solr/collection1/conf/schema.xml
-    with the scheme.xml include in this project document folder.
+2. Add core
+-copy server /doc/solr/openstorefront (From source code) to .../solr-6.1.0/server/solr
 
-3.  Configure OpenStorefront to point to Solr by going to:
+3.  Start server
+bin/solr start -p 8983 
+
+4.  Configure OpenStorefront to point to Solr by going to:
     /var/openstorefront/config/openstorefront.properties
 
-4.  Edit solr.server.url to
-    solr.server.url=http://localhost:8983/solr/collection1
+5.  Edit 
+	
+	search.server=solr
 
-5.  Start Solr from (solr install dir)/example - java -jar start.jar
+	solr.server.url=http://localhost:8983/solr/openstorefront
+
+	solr.server.usexml=true
+
+6. Resync data 
+
+	a) Nav->Admin->System->Search Control
+
+        b) Click Re-Index Listings
+
+###4.4.1.1 Installing as service linux
+run as sudo 
+
+1) ln -s /usr/local/solr/solr-6.1.0 latest
+
+2) cp /usr/local/solr/solr-6.1.0/bin/init.d/solr /etc/init.d
+
+3) nano /etc/init.d/solr
+
+Edit:
+
+> SOLR_INSTALL_DIR="/usr/local/solr/latest"
+
+> SOLR_ENV="/usr/local/solr/latest/bin/solr.in.sh"
+ 
+> SOLR_INCLUDE="$SOLR_ENV" "$SOLR_INSTALL_DIR/bin/solr" "$SOLR_CMD" "$2"
+
+Save and exit
+
+4)  Add User
+> chmod 755 /etc/init.d/solr
+
+> chown root:root /etc/init.d/solr
+
+(debian/ubuntu)
+
+> update-rc.d solr defaults
+
+> update-rc.d solr enable
+
+(centos/redhat) 
+
+> chkconfig solr on
+
+> groupadd solr
+
+> useradd -g solr solr
+
+> chown -R solr:solr /usr/local/solr/solr-6.1.0
+
+> chown solr:solr latest
+
+5) (If lsof is not installed)
+> yum install lsof
+
+6) (This will start at port 8983)
+> service solr start|stop  
+
+
+###4.4.3 To Use Elasticsearch 
+
+1. Download
+	[elasticsearch home]https://www.elastic.co/ (Apache v2 licensed)
+
+2. Start
+	<elasticsearch>/bin/elasticsearch
+
+3. Configure OpenStorefront to point to Solr by going to: /var/openstorefront/config/openstorefront.properties or System admin screen
+
+		Add/Set: (adjust as needed to match url and ports)
+	
+		search.server=elasticsearch
+
+		elastic.server.host=localhost
+
+		elastic.server.port=9300
+
+4. Resync data 
+
+	a) Nav->Admin->System->Search Control
+
+        b) Click Re-Index Listings
+  
+###4.4.3.1 Yum install of Elasticsearch 
+
+1. Download and install with YUM 
+https://www.elastic.co/downloads/elasticsearch (2.3.x) 
+(see https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-repositories.html for yum install instructions) 
+
+2. service elasticsearch start 
+
+3. Configure OpenStorefront to point to elastisearch by going to: /var/openstorefront/config/openstorefront.properties or System admin screen->system properties 
+
+4. Add/Set: (adjust as needed to match url and ports) 
+
+search.server=elasticsearch 
+elastic.server.host=localhost 
+elastic.server.port=9300 
+
+5. Resync data 
+
+    a) Nav->Admin->Application Data->System->Search Control 
+    b) Click Re-Index Listings        
+
+
+###4.4.4 Updated Search Server at Runtime
+
+1. Use Admin->Application Management->System to set the system config properties 
+
+2. On Managers tab -> Restart Search Server Managers
+
+
 
 ##4.5  System Setup
 ------------
@@ -945,6 +1066,7 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **mail.from.address** -    From Email Address                                             ( **donotreply@storefront.net** )
 -  **mail.reply.name** -      Reply name (usually display at the bottom the message)         ( **Support** )
 -  **mail.reply.address** -   Reply email (usually display at the bottom the message)        ( **helpdesk@di2e.net** )
+-  **test.email** -           Set for automated testing only; the email to use for testing 
 
 ##5.5 Other Application Properties
 ----------------------------
@@ -975,6 +1097,8 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **filehistory.max.days** - Sets the max days to keep file history ( **180** )
 -  **notification.max.days** - Set the max days to keep nofitication messages ( **7** )
 -  **feedback.email** - Email address to send feedback to
+-  **ui.idletimeout.minutes** - Set to a value > 1 to have the UI popup a idle warning about there session (Default is the application tries to keep the session alive.)
+-  **ui.idlegraceperiod.minutes** -Set this to configure the grace period for the tdle timeout. After the message appears.
 
 #6. Database Management
 -----

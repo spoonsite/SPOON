@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.common.manager;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.SortedProperties;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
@@ -29,9 +30,11 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Provide single access to system properties
@@ -39,9 +42,10 @@ import java.util.logging.Logger;
  * @author dshurtleff
  */
 public class PropertiesManager
+		implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(PropertiesManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(PropertiesManager.class.getName());
 
 	public static final String PW_PROPERTY = ".pw";
 
@@ -51,7 +55,11 @@ public class PropertiesManager
 	public static final String KEY_DB_USER = "db.user";
 	public static final String KEY_DB_AT = "db.pw";
 	public static final String KEY_MAX_ERROR_TICKETS = "errorticket.max";
+	public static final String KEY_SEARCH_SERVER = "search.server";
 	public static final String KEY_SOLR_URL = "solr.server.url";
+	public static final String KEY_SOLR_USE_XML = "solr.server.usexml";
+	public static final String KEY_ELASTIC_HOST = "elastic.server.host";
+	public static final String KEY_ELASTIC_PORT = "elastic.server.port";
 	public static final String KEY_MAX_AGE_TRACKING_RECORDS = "trackingrecords.max.age.days";
 	public static final String KEY_EXTERNAL_USER_MANAGER = "external.usermanager";
 	public static final String KEY_EXTERNAL_SYNC_ACTIVATE = "external.sync.activate";
@@ -61,6 +69,11 @@ public class PropertiesManager
 	public static final String KEY_ALLOW_JIRA_FEEDBACK = "jirafeedback.show";
 	public static final String KEY_FILE_HISTORY_KEEP_DAYS = "filehistory.max.days";
 	public static final String KEY_NOTIFICATION_MAX_DAYS = "notification.max.days";
+	public static final String TEMPORARY_MEDIA_KEEP_DAYS = "temporary.media.keep.days";
+	public static final String KEY_TEST_EMAIL = "test.email";
+
+	public static final String KEY_UI_IDLETIMEOUT_MINUTES = "ui.idletimeout.minutes";
+	public static final String KEY_UI_IDLETIMEGRACE_MINUTES = "ui.idlegraceperiod.minutes";
 
 	public static final String KEY_OPENAM_URL = "openam.url";
 	public static final String KEY_LOGOUT_URL = "logout.url";
@@ -121,10 +134,11 @@ public class PropertiesManager
 
 	public static final String KEY_NODE_NAME = "node.name";
 
-	private static Properties properties;
+	private static AtomicBoolean started = new AtomicBoolean(false);
+	private static SortedProperties properties;
 	private static final String PROPERTIES_FILENAME = FileSystemManager.getConfig("openstorefront.properties").getPath();
 
-	private static Properties defaults = new Properties();
+	private static SortedProperties defaults = new SortedProperties();
 
 	public static String getDefault(String key)
 	{
@@ -142,6 +156,22 @@ public class PropertiesManager
 		return getValue(key);
 	}
 
+	public static String getModuleVersion()
+	{
+		String key = "app.module.version";
+		String moduleVersion = getValue(key);
+
+		//Make sure it's a valid osgi module version (only likes 2.0.2 )
+		StringBuilder version = new StringBuilder();
+		for (int c = 0; c < moduleVersion.length(); c++) {
+			if (StringUtils.isNumeric("" + moduleVersion.charAt(c))
+					|| moduleVersion.charAt(c) == '.') {
+				version.append(moduleVersion.charAt(c));
+			}
+		}
+		return version.toString();
+	}
+
 	public static String getValueDefinedDefault(String key)
 	{
 		return getProperties().getProperty(key, getDefault(key));
@@ -156,7 +186,7 @@ public class PropertiesManager
 	{
 		Object valueRemoved = getProperties().remove(key);
 		if (valueRemoved != null) {
-			log.log(Level.INFO, MessageFormat.format("Property removed: {0}", key));
+			LOG.log(Level.INFO, MessageFormat.format("Property removed: {0}", key));
 		}
 		saveProperties();
 	}
@@ -215,12 +245,13 @@ public class PropertiesManager
 			defaults.put(KEY_ALLOW_JIRA_FEEDBACK, "true");
 			defaults.put(KEY_JIRA_FEEDBACK_PROJECT, "STORE");
 			defaults.put(KEY_JIRA_FEEDBACK_ISSUETYPE, "Help Desk Ticket");
+			defaults.put(TEMPORARY_MEDIA_KEEP_DAYS, "1");
 
 			if (Paths.get(PROPERTIES_FILENAME).toFile().createNewFile()) {
-				log.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
+				LOG.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", PROPERTIES_FILENAME);
 			}
 			try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(PROPERTIES_FILENAME))) {
-				properties = new Properties();
+				properties = new SortedProperties();
 				properties.load(bin);
 			} catch (IOException e) {
 				throw new OpenStorefrontRuntimeException(e);
@@ -267,9 +298,28 @@ public class PropertiesManager
 			InetAddress inetAddress = InetAddress.getLocalHost();
 			nodeName = nodeName + "-" + inetAddress.toString();
 		} catch (UnknownHostException ex) {
-			log.log(Level.WARNING, "Unable to get information on localhost.  Node name may not be unique. This may not be an issue if there is only one node.");
+			LOG.log(Level.WARNING, "Unable to get information on localhost.  Node name may not be unique. This may not be an issue if there is only one node.");
 		}
 		return nodeName;
+	}
+
+	@Override
+	public void initialize()
+	{
+		PropertiesManager.init();
+		started.set(true);
+	}
+
+	@Override
+	public void shutdown()
+	{
+		started.set(false);
+	}
+
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
 	}
 
 }

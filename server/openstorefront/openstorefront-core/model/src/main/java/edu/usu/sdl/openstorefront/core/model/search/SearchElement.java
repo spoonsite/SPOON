@@ -86,6 +86,12 @@ public class SearchElement
 	{
 	}
 
+	@Override
+	public String toString()
+	{
+		return "SearchElement{" + "searchType=" + searchType + ", field=" + field + ", value=" + value + ", keyField=" + keyField + ", keyValue=" + keyValue + ", startDate=" + startDate + ", endDate=" + endDate + ", caseInsensitive=" + caseInsensitive + ", numberOperation=" + numberOperation + ", stringOperation=" + stringOperation + ", mergeCondition=" + mergeCondition + '}';
+	}
+	
 	public String getField()
 	{
 		return field;

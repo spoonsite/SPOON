@@ -29,12 +29,6 @@ import java.util.List;
 public class ArchitectureSearchTest
 		extends BaseTestCase
 {
-
-	public ArchitectureSearchTest()
-	{
-		this.description = "Architecture Search";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -48,6 +42,12 @@ public class ArchitectureSearchTest
 		componentSearchViews.forEach(view -> {
 			results.append(view.getName()).append("   Type:").append(view.getListingType()).append("<br>");
 		});
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Architecture Search";
 	}
 
 }

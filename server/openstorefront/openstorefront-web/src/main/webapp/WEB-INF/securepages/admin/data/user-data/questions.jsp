@@ -1,9 +1,12 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../../layout/toplevelLayout.jsp">
 	<stripes:layout-component name="contents">
 
+		<stripes:layout-render name="../../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>
+		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
@@ -19,7 +22,7 @@
 					proxy: {
 						id: 'componentStoreProxy',
 						type: 'ajax',
-						url: '../api/v1/resource/components/questionviews'
+						url: 'api/v1/resource/components/questionviews'
 					},
 					listeners: {
 						load: function (theStore) {
@@ -53,7 +56,7 @@
 					storeId: 'userTypeStore',
 					autoLoad: true,
 					fields: ['code', 'description'],
-					proxy: {type: 'ajax', url: '../api/v1/resource/lookuptypes/UserTypeCode/view'}
+					proxy: {type: 'ajax', url: 'api/v1/resource/lookuptypes/UserTypeCode/view'}
 				});
 
 				var getUserType = function getUserType(code) {
@@ -67,7 +70,7 @@
 					storeId: 'securityTypeStore',
 					autoLoad: true,
 					fields: ['code', 'description'],
-					proxy: {type: 'ajax', url: '../api/v1/resource/lookuptypes/SecurityMarkingType/view'}
+					proxy: {type: 'ajax', url: 'api/v1/resource/lookuptypes/SecurityMarkingType/view'}
 				});
 
 				var getSecurityType = function getSecurityType(code) {
@@ -384,7 +387,7 @@
 										change: function (filter, newValue, oldValue, opts) {
 											var qButton = Ext.getCmp('question-activateButton');
 											var aButton = Ext.getCmp('answer-activateButton');
-											var newUrl = '../api/v1/resource/components/questionviews';
+											var newUrl = 'api/v1/resource/components/questionviews';
 											if (newValue === 'A') {
 												qButton.setText('Deactivate');
 												newUrl += '?status=A';
@@ -439,12 +442,8 @@
 						answerPanel
 					]
 				});
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						mainPanel
-					]
-				});
+
+				addComponentToMainViewPort(mainPanel);
 
 				var actionSelectedComponent = function actionSelectedComponent(componentId) {
 					// Set Proxy and Load Questions
@@ -453,7 +452,7 @@
 					var activeStatus = Ext.getCmp('question-activeStatus').getValue();
 					questionStore.setProxy({
 						id: 'questionStoreProxy',
-						url: '/openstorefront/api/v1/resource/components/' + componentId + '/questions/view?status=' + activeStatus,
+						url: 'api/v1/resource/components/' + componentId + '/questions/view?status=' + activeStatus,
 						type: 'ajax'
 					});
 					questionStore.load();
@@ -465,7 +464,7 @@
 
 				var actionSelectedQuestion = function actionSelectedQuestion(componentId, questionId) {
 					// Set Proxy and Load Answers
-					var apiUrl = '/openstorefront/api/v1/resource/components/';
+					var apiUrl = 'api/v1/resource/components/';
 					apiUrl += componentId + '/questions/' + questionId + '/responses';
 					answerStore.setProxy({
 						id: 'answerStoreProxy',
@@ -499,13 +498,13 @@
 					var activeStatus = Ext.getCmp('question-activeStatus').getValue();
 					if (activeStatus === 'A') {
 						var method = 'DELETE';
-						var url = '/openstorefront/api/v1/resource/components/';
+						var url = 'api/v1/resource/components/';
 						url += componentId + '/questions/' + questionId;
 						var what = 'deactivate';
 					}
 					else {
 						var method = 'PUT';
-						var url = '/openstorefront/api/v1/resource/components/';
+						var url = 'api/v1/resource/components/';
 						url += componentId + '/questions/' + questionId + '/activate';
 						var what = 'activate';
 					}
@@ -539,14 +538,14 @@
 					var activeStatus = Ext.getCmp('answer-activeStatus').getValue();
 					if (activeStatus === 'A') {
 						var method = 'DELETE';
-						var url = '/openstorefront/api/v1/resource/components/';
+						var url = 'api/v1/resource/components/';
 						url += componentId + '/questions/' + questionId;
 						url += '/responses/' + answerId;
 						var what = 'deactivate';
 					}
 					else {
 						var method = 'PUT';
-						var url = '/openstorefront/api/v1/resource/components/';
+						var url = 'api/v1/resource/components/';
 						url += componentId + '/questions/' + questionId;
 						url += '/responses/' + answerId + '/activate';
 						var what = 'activate';

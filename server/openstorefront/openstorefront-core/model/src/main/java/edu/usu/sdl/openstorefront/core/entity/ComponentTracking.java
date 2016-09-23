@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Tracking information on a component")
 public class ComponentTracking
-		extends BaseComponent
+		extends BaseComponent<ComponentTracking>
 {
 
 	@PK(generated = true)

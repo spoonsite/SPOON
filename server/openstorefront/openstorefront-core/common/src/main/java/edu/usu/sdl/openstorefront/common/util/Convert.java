@@ -168,10 +168,11 @@ public class Convert
 					String formats[] = {
 						"MM/dd/yyyy HH:mm:ss z ",
 						"yyyy-mm-dd HH:mm:ss z ",
-						"yyyy-MM-dd'T'HH:mm:ss.SSS'Z",
+						"yyyy-MM-dd'T'HH:mm:ss.SSSZ",
 						"dd MMM yyyy hh:mm:ss a z",
 						"MM/dd/yyyy",
-						"yyyy-mm-dd ",};
+						"yyyy-mm-dd", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z", 
+                                                "EEE, d MMM yyyy HH:mm:ss Z" };
 
 					for (String format : formats) {
 						SimpleDateFormat sdf = new SimpleDateFormat(format);

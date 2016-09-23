@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import java.util.List;
 
 /**
@@ -24,6 +25,7 @@ import java.util.List;
 public class AttributeCodeWrapper
 {
 
+	@DataType(AttributeCodeView.class)
 	private List<AttributeCodeView> data;
 	private long totalNumber;
 

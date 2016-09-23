@@ -12,7 +12,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<link rel="shortcut icon" href="/openstorefront/appicon.png" type="image/x-icon">
+		<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">
 		
         <title>403 Forbidden</title>
 		<style>
@@ -175,7 +175,7 @@
 					} 
 				%>
 				<br>
-				<a href="index.html">Home</a>
+				<a href="login.jsp">Login</a>
 			</div>
 		</div>	
     </body>

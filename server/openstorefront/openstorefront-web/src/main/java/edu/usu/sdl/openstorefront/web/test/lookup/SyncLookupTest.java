@@ -29,12 +29,6 @@ import java.util.List;
 public class SyncLookupTest
 		extends BaseTestCase
 {
-
-	public SyncLookupTest()
-	{
-		this.description = "Sync Lookup Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -83,9 +77,20 @@ public class SyncLookupTest
 		if (lookupEntity != null) {
 			failureReason.append("Found look up - B");
 		}
+	}
 
+	@Override
+	public String getDescription()
+	{
+		return "Sync Lookup Test";
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
 		results.append("Clean up records").append("<br>");
-		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
+		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br><br>");
 	}
 
 }

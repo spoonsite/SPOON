@@ -1,9 +1,12 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../../layout/toplevelLayout.jsp">
 	<stripes:layout-component name="contents">
 
+		<stripes:layout-render name="../../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>		
+		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
@@ -23,7 +26,7 @@
 					proxy: {
 						id: 'tagStoreProxy',
 						type: 'ajax',
-						url: '../api/v1/resource/components/tagviews'
+						url: 'api/v1/resource/components/tagviews'
 					}
 				});
 
@@ -38,7 +41,7 @@
 					proxy: {
 						id: 'securityTypeStoreProxy',
 						type: 'ajax',
-						url: '../api/v1/resource/lookuptypes/SecurityMarkingType/view'
+						url: 'api/v1/resource/lookuptypes/SecurityMarkingType/view'
 					}
 				});
 			
@@ -142,6 +145,7 @@
 							bodyStyle: 'padding: 10px;',
 							defaults: {
 								labelAlign: 'top',
+								labelSeparator: '',
 								width: '100%'
 							},
 							items: [
@@ -168,17 +172,26 @@
 										proxy: {
 											id: 'componentStoreProxy',
 											type: 'ajax',
-											url: '../api/v1/resource/components/lookup'
+											url: 'api/v1/resource/components/lookup'
 										}
 									})
-								},
-								{
-									xtype: 'textfield',
+								},								
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'text',	
+									id: 'adddTagForm-tag',										
+									margin: '0 0 0 0',
+									width: '100%',
 									fieldLabel: 'Tag<span class="field-required"></span>',
-									id: 'adddTagForm-tag',
-									name: 'text',
-									allowBlank: false
-								},
+									forceSelection: false,
+									allowBlank: false,
+									valueField: 'text',
+									displayField: 'text',
+									margin: '0 0 10 0',
+									maxLength: 120,
+									storeConfig: {
+										url: 'api/v1/resource/components/tags'
+									}
+								}),
 								{
 									xtype: 'combobox',
 									fieldLabel: 'Security Type',
@@ -205,7 +218,7 @@
 												// Submit Data
 												if (form.isValid()) {
 													var formData = form.getValues();
-													var url = '/openstorefront/api/v1/resource/components/';
+													var url = 'api/v1/resource/components/';
 													url += formData.component + "/tags";
 													var method = 'POST';
 
@@ -295,7 +308,7 @@
 						var tagId = record.data.tagId;
 						var componentId = record.data.componentId;
 						var method = 'DELETE';
-						var url = '/openstorefront/api/v1/resource/components/';
+						var url = 'api/v1/resource/components/';
 						url += componentId + '/tags/' + tagId;
 
 						Ext.Ajax.request({
@@ -320,13 +333,8 @@
 					}
 				};
 
-
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						tagGrid
-					]
-				});
+				addComponentToMainViewPort(tagGrid);
+				
 			});
 
 		</script>

@@ -28,13 +28,7 @@ import java.util.logging.Logger;
 public class DBLogTest
 		extends BaseTestCase
 {
-
 	private static final Logger log = Logger.getLogger(DBLogTest.class.getName());
-
-	public DBLogTest()
-	{
-		this.description = "DB_Log_Test";
-	}
 
 	@Override
 	protected void runInternalTest()
@@ -54,4 +48,9 @@ public class DBLogTest
 		results.append("DB record Time: ").append(System.currentTimeMillis() - startTime).append("<br>");
 	}
 
+	@Override
+	public String getDescription()
+	{
+		return "DB Log Test";
+	}
 }

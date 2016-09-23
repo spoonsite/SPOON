@@ -8,9 +8,7 @@ client/openstorefront/npm-debug.log
 /client/openstorefront/screenshots
 /nbproject/private/
 /server/openstorefront/openstorefront-api/target/
-/server/openstorefront/openstorefront-web/src/main/webapp/scripts/
 /server/openstorefront/openstorefront-web/src/main/webapp/views/
-/server/openstorefront/openstorefront-web/src/main/webapp/images/
 /server/openstorefront/openstorefront-web/src/main/webapp/bower_components/
 /server/openstorefront/openstorefront-web/src/main/webapp/fonts/
 /server/openstorefront/openstorefront-web/src/main/webapp/styles/
@@ -66,3 +64,7 @@ project*.properties
 /server/openstorefront/openstorefront-web/src/main/webapp/submissionOld.html
 /server/openstorefront/describe/describe/target/
 /server/openstorefront/describe/target/
+/server/openstorefront/openstorefront-core/common/nbproject/
+/server/openstorefront/openstorefront-core/model/nbproject/
+/server/openstorefront/openstorefront-plugin/spoon-importer/target/
+/server/openstorefront/openstorefront-web/nbproject/

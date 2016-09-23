@@ -20,27 +20,26 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/usertoolslayout.jsp">
+<stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 		
-	   <script src="scripts/component/userwatchPanel.js?v=${appVersion}" type="text/javascript"></script>	
+		<stripes:layout-render name="../../../layout/userheader.jsp">		
+		</stripes:layout-render>			
 		
-	   <script type="text/javascript">
-			/* global Ext, CoreUtil */
+		<script src="scripts/component/userwatchPanel.js?v=${appVersion}" type="text/javascript"></script>	
 
-			Ext.onReady(function() {
+		<script type="text/javascript">
+			 /* global Ext, CoreUtil */
+
+			 Ext.onReady(function() {
 				
-				var watchPanel = Ext.create('OSF.component.UserWatchPanel', {
-					title: 'Manage Watches <i class="fa fa-question-circle"  data-qtip="Watches are your way of recieving notification of changes to components in this site."></i>'					
-				});
+				 var watchPanel = Ext.create('OSF.component.UserWatchPanel', {
+					 title: 'Manage Watches <i class="fa fa-question-circle"  data-qtip="Watches are your way of recieving notification of changes to components in this site."></i>'					
+				 });
 				
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						watchPanel
-					]
-				});
-			});
+				 addComponentToMainViewPort(watchPanel);
+				 
+			 });
 			
 		</script>
 		

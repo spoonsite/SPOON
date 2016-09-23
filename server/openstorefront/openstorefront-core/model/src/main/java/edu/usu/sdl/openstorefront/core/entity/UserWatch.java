@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Hold watch information")
 public class UserWatch
-		extends StandardEntity
+		extends StandardEntity<UserWatch>
 {
 
 	@PK(generated = true)

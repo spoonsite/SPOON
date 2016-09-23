@@ -29,15 +29,11 @@ public class DBLikeTest
 		extends BaseTestCase
 {
 
-	public DBLikeTest()
-	{
-		this.description = "Like Query";
-	}
-
 	@Override
-	protected void runInternalTest()
+	protected void initializeTest()
 	{
-		Arrays.asList("A", "B", "Apple", "andy", "Test", "BaseTest", "Orange").forEach(item -> {
+		super.initializeTest();
+		Arrays.asList("A", "B", "Apple", "andy", "arrAnge", "Test", "Arch", "BaseTest", "Orange").forEach(item -> {
 			TestEntity testEntity = new TestEntity();
 			testEntity.setCode(item);
 			testEntity.setDescription(item + " - Description");
@@ -48,6 +44,11 @@ public class DBLikeTest
 		});
 		results.append("Saved Test Data").append("<br>");
 
+	}
+
+	@Override
+	protected void runInternalTest()
+	{
 		TestEntity testEntityLikeExample = new TestEntity();
 		testEntityLikeExample.setCode("A%");
 
@@ -59,7 +60,7 @@ public class DBLikeTest
 		testEntities.forEach(entity -> {
 			results.append(entity.getCode()).append("<br>");
 		});
-		if (testEntities.size() > 2 || testEntities.size() < 2) {
+		if (testEntities.size() > 3 || testEntities.size() < 3) {
 			failureReason.append("Failed to find expected results");
 		}
 
@@ -92,6 +93,18 @@ public class DBLikeTest
 		if (testEntities.size() > 2 || testEntities.size() < 2) {
 			failureReason.append("Failed to find expected results");
 		}
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "DB Like Query";
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
 
 		results.append("Clean up records").append("<br>");
 		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");

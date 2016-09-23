@@ -22,17 +22,20 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
+import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.action.resolution.RangeResolutionBuilder;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -69,6 +72,12 @@ public class MediaAction
 		@Validate(required = true, field = "componentId", on = "UploadMedia")
 	})
 	private ComponentMedia componentMedia;
+	
+	@Validate(required = true, on = "DataImage")	
+	private String imageData;
+	
+	@Validate(required = true, on = "DataImage")
+	private String imageType;
 
 	@Validate(required = true, on = "UploadMedia")
 	private FileBean file;
@@ -262,6 +271,61 @@ public class MediaAction
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
 
+	@HandlesEvent("TemporaryMedia")
+	public Resolution temporaryMedia() throws FileNotFoundException
+	{
+		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
+		temporaryMediaExample.setName(name);
+		TemporaryMedia temporaryMedia = service.getPersistenceService().queryOneByExample(TemporaryMedia.class, temporaryMediaExample);
+		if (temporaryMedia == null) {
+			log.log(Level.FINE, MessageFormat.format("Temporary Media with name: {0} is not found.", name));
+			return new StreamingResolution("image/png")
+			{
+				
+				@Override
+				protected void stream(HttpServletResponse response) throws Exception
+				{
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE)) {
+						FileSystemManager.copy(in, response.getOutputStream());
+					}
+				}
+
+			}.setFilename("MediaNotFound.png");
+		}
+
+		InputStream in;
+		long length;
+		Path path = temporaryMedia.pathToMedia();
+		if (path != null && path.toFile().exists()) {
+			in = new FileInputStream(path.toFile());
+			length = path.toFile().length();
+		} else {
+			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check temporary media record: {1} ", new Object[]{temporaryMedia.pathToMedia(), temporaryMedia.getName()}));
+			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
+			length = MISSING_MEDIA_IMAGE_SIZE;
+		}
+
+		return new RangeResolutionBuilder()
+				.setContentType(temporaryMedia.getMimeType())
+				.setInputStream(in)
+				.setTotalLength(length)
+				.setRequest(getContext().getRequest())
+				.setFilename(temporaryMedia.getOriginalFileName())
+				.createRangeResolution();
+	}
+	
+	@HandlesEvent("DataImage")
+	public Resolution tranformDataImage()
+	{
+		String data[] = imageData.split(",");
+		
+		String mimeType = data[0].substring(data[0].indexOf(":") + 1, data[0].indexOf(";"));
+		
+		ByteArrayInputStream in = new ByteArrayInputStream(Base64.getDecoder().decode(data[1]));		
+		return new StreamingResolution(mimeType, in){					
+		}.setFilename("visual." + imageType);		
+	}
+
 	public String getMediaId()
 	{
 		return mediaId;
@@ -310,6 +374,26 @@ public class MediaAction
 	public void setGeneralMedia(GeneralMedia generalMedia)
 	{
 		this.generalMedia = generalMedia;
+	}
+
+	public String getImageData()
+	{
+		return imageData;
+	}
+
+	public void setImageData(String imageData)
+	{
+		this.imageData = imageData;
+	}
+
+	public String getImageType()
+	{
+		return imageType;
+	}
+
+	public void setImageType(String imageType)
+	{
+		this.imageType = imageType;
 	}
 
 }

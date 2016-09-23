@@ -20,8 +20,11 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
+		
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>		
 		
 		<script src="scripts/component/advanceSearch.js?v=${appVersion}" type="text/javascript"></script>
 		
@@ -167,7 +170,7 @@ limitations under the License.
 
 					searchPanel.setLoading('Saving...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/systemsearches' + endUrl,
+						url: 'api/v1/resource/systemsearches' + endUrl,
 						method: method,
 						jsonData: search,
 						callback: function() {
@@ -189,7 +192,7 @@ limitations under the License.
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/systemsearches',							
+							url: 'api/v1/resource/systemsearches',							
 							reader: {
 								type: 'json',
 								rootProperty: 'data'
@@ -316,7 +319,7 @@ limitations under the License.
 				
 				var actionRefresh = function() {
 					Ext.getCmp('searchgrid').getStore().load({
-						url: '../api/v1/resource/systemsearches',
+						url: 'api/v1/resource/systemsearches',
 						params: {
 							status: Ext.getCmp('filterActiveStatus').getValue()
 						}
@@ -349,7 +352,7 @@ limitations under the License.
 					
 					Ext.getCmp('searchgrid').setLoading('Updating status...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/systemsearches/' + record.get('searchId') + endUrl,
+						url: 'api/v1/resource/systemsearches/' + record.get('searchId') + endUrl,
 						method: method,
 						callback: function(){
 							Ext.getCmp('searchgrid').setLoading(false);
@@ -361,12 +364,7 @@ limitations under the License.
 			
 				};
 						
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						searchGrid
-					]
-				});				
+				addComponentToMainViewPort(searchGrid);
 				
 			});
 			

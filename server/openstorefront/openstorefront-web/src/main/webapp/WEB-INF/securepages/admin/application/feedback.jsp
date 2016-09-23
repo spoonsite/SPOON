@@ -6,9 +6,12 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
 	<stripes:layout-component name="contents">
 				
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>		
+		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function(){	
@@ -73,7 +76,7 @@
 						],
 						proxy: CoreUtil.pagingProxy({
 							type: 'ajax',
-							url: '../api/v1/resource/feedbacktickets',
+							url: 'api/v1/resource/feedbacktickets',
 							reader: {
 								type: 'json',
 								rootProperty: 'data',
@@ -235,7 +238,7 @@
 				
 				var actionRefresh = function() {
 					Ext.getCmp('ticketGrid').getStore().load({
-						url: '../api/v1/resource/feedbacktickets',
+						url: 'api/v1/resource/feedbacktickets',
 						params: {
 							status: Ext.getCmp('filterActiveStatus').getValue() ? Ext.getCmp('filterActiveStatus').getValue() : 'A'
 						}
@@ -256,7 +259,7 @@
 					
 					Ext.getCmp('ticketGrid').setLoading('Updating Status...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/feedbacktickets/' + record.get('feedbackId') +operation ,
+						url: 'api/v1/resource/feedbacktickets/' + record.get('feedbackId') +operation ,
 						method: 'PUT',
 						callback: function(){
 							Ext.getCmp('ticketGrid').setLoading(false);
@@ -277,7 +280,7 @@
 							if (btn === 'yes') {
 								Ext.getCmp('ticketGrid').setLoading('Removing Feedback...');
 								Ext.Ajax.request({
-									url: '../api/v1/resource/feedbacktickets/' + record.get('feedbackId'),
+									url: 'api/v1/resource/feedbacktickets/' + record.get('feedbackId'),
 									method: 'DELETE',
 									callback: function(){
 										Ext.getCmp('ticketGrid').setLoading(false);
@@ -292,12 +295,7 @@
 					});					
 				};
 
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						ticketGrid
-					]
-				});
+				addComponentToMainViewPort(ticketGrid);
 				
 			});
 			

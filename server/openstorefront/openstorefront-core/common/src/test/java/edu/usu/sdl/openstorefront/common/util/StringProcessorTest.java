@@ -17,15 +17,24 @@ package edu.usu.sdl.openstorefront.common.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static edu.usu.sdl.openstorefront.common.util.StringProcessor.cleanEntityKey;
+import static edu.usu.sdl.openstorefront.common.util.StringProcessor.cleanFileName;
+import static edu.usu.sdl.openstorefront.common.util.StringProcessor.enclose;
+import static edu.usu.sdl.openstorefront.common.util.StringProcessor.encodeWebKey;
+import static edu.usu.sdl.openstorefront.common.util.StringProcessor.getFileExtension;
+import static edu.usu.sdl.openstorefront.common.util.StringProcessor.puralize;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import junit.framework.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -70,7 +79,7 @@ public class StringProcessorTest
 		System.out.println("defaultObjectMapper");
 
 		ObjectMapper result = StringProcessor.defaultObjectMapper();
-		Assert.assertNotNull(result);
+		assertNotNull(result);
 	}
 
 	/**
@@ -85,6 +94,11 @@ public class StringProcessorTest
 		String result = StringProcessor.getResourceNameFromUrl(url);
 		assertEquals(expResult, result);
 
+		url = "null";
+		expResult = "null";
+		result = StringProcessor.getResourceNameFromUrl(url);
+		assertEquals(expResult, result);
+                
 		url = "http:/google.com/test";
 		expResult = "test";
 		result = StringProcessor.getResourceNameFromUrl(url);
@@ -111,8 +125,12 @@ public class StringProcessorTest
 		String text = "";
 		List<String> result = StringProcessor.extractUrls(text);
 		if (result.size() > 0) {
-			Assert.fail("Unexpected size from results. " + result.size());
+			fail("Unexpected size from results. " + result.size());
 		}
+                
+		text = "null";
+		result = StringProcessor.extractUrls(text);
+		System.out.println(Arrays.toString(result.toArray(new String[0])));
 
 		text = "a http://google.com";
 		result = StringProcessor.extractUrls(text);
@@ -122,6 +140,9 @@ public class StringProcessorTest
 		result = StringProcessor.extractUrls(text);
 		System.out.println(Arrays.toString(result.toArray(new String[0])));
 
+		text = "first http://google.com second url http://espn.com third . url http://finance.yahoo.com";
+		result = StringProcessor.extractUrls(text);
+		System.out.println(Arrays.toString(result.toArray(new String[0])));
 	}
 
 	/**
@@ -156,6 +177,10 @@ public class StringProcessorTest
 		String result = StringProcessor.createHrefUrls(text, showFullURL);
 		assertEquals(expResult, result);
 
+		text = "https://facebook.com/";
+		expResult = "<a href='https://facebook.com/' title='https://facebook.com/' target='_blank'> </a>";
+		result = StringProcessor.createHrefUrls(text, showFullURL);
+		assertEquals(expResult, result);
 	}
 
 	/**
@@ -177,7 +202,7 @@ public class StringProcessorTest
 		String result = StringProcessor.stripeFieldJSON(objectMapper.writeValueAsString(userTypeCode), fieldsToKeep);
 		System.out.println(result);
 		if (result.contains("description")) {
-			Assert.fail("Description shouldn't be in reults");
+			fail("Description shouldn't be in reults");
 		}
 	}
 
@@ -192,7 +217,7 @@ public class StringProcessorTest
 		userTypeCode.setCode("Test");
 		userTypeCode.setDescription("Test2");
 		String result = StringProcessor.printObject(userTypeCode);
-		System.out.println(result);
+		System.out.println("PrintObject result: " + result);
 
 	}
 
@@ -207,7 +232,7 @@ public class StringProcessorTest
 		String result = StringProcessor.ellipseString(data, 20);
 		System.out.println(result);
 		if (result.endsWith("...") == false) {
-			Assert.fail("It didn't eclispe the text");
+			fail("It didn't eclispe the text");
 		}
 	}
 
@@ -222,7 +247,11 @@ public class StringProcessorTest
 		String expResult = "";
 		String result = StringProcessor.blankIfNull(text);
 		assertEquals(expResult, result);
-
+		
+		Object text2 = "not_null";
+		result = StringProcessor.blankIfNull(text2);
+		expResult = "not_null";
+		assertEquals(expResult, result);
 	}
 
 	/**
@@ -236,6 +265,13 @@ public class StringProcessorTest
 		String expResult = "http://clavin.bericotechnologies.com";
 		String result = StringProcessor.stripHtml(text);
 		System.out.println(result);
+		assertEquals(expResult, result);
+
+		text = "<a href =\"http://www.apachecorp.com/About_Apache/index.aspx\" "
+				+ "rel=\"nofollow\"> http://www.apachecorp.com/About_Apache/index.aspx";
+		expResult = "http://www.apachecorp.com/About_Apache/index.aspx";
+		result = StringProcessor.stripHtml(text);
+		System.out.println("StripHtml with long url and missing closing anchor: " + result);
 		assertEquals(expResult, result);
 
 	}
@@ -263,6 +299,14 @@ public class StringProcessorTest
 		result = StringProcessor.archtecureCodeToDecimal(code);
 		System.out.println(result.toPlainString());
 
+		code = "";
+		result = StringProcessor.archtecureCodeToDecimal(code);
+		System.out.println(result.toPlainString());
+
+		code = null;
+		result = StringProcessor.archtecureCodeToDecimal(code);
+		System.out.println(result.toPlainString());
+
 	}
 
 	@Test
@@ -272,6 +316,161 @@ public class StringProcessorTest
 		System.out.println(StringProcessor.getJustFileName("Test.png"));
 		System.out.println(StringProcessor.getJustFileName("\\hera\\aaa\\akfjaklf\\Test.png"));
 		System.out.println(StringProcessor.getJustFileName("\\hera/aaa\\akfjaklf/Test.png"));
-	}	
-	
+		System.out.println(StringProcessor.getJustFileName("\\Projects\\Baker_Project\\Baker_file.pdf"));
+	}
+
+	@Test
+	public void testEnclose()
+	{
+		String test = "";
+		String result = enclose(test, "(", ")");
+		System.out.print("Enclose results: " + result + " , ");
+
+		test = null;
+		result = enclose(test, "(", ")");
+		System.out.print(result + " , ");
+
+		test = "testing...";
+		result = enclose(test, "(", ")");
+		System.out.println(result);
+	}
+
+	@Test
+	public void testEncodeWebKey()
+	{
+		String test1 = null;
+
+		try {
+			String result = encodeWebKey(test1);
+			fail("Returned value unexpected");
+		} catch (NullPointerException e) {
+
+		}
+
+		String test2 = "https://google.com/# q=&computer%science";
+		String result = encodeWebKey(test2);
+		String expResult = "https%3A%2F%2Fgoogle.com%2F%23+q%3D%26computer%25science";
+		System.out.println(result);
+		assertEquals(result, expResult);
+
+		String test3 = "";
+		result = encodeWebKey(test3);
+		System.out.println("The result: " + result);
+		expResult = "";
+		assertEquals(result, expResult);
+
+	}
+
+	@Test
+	public void testCleanEntityKey()
+	{
+		String testKey = "U(n)i=q+u~e K*e@y!";
+		String result = cleanEntityKey(testKey);
+		String expResult = "UniqueKey";
+		System.out.println(result);
+		assertEquals(result, expResult);
+	}
+
+	@Test
+	public void testGetFileExtension()
+	{
+		System.out.println("File Extension Test:");
+		String testFile = "testImg.jpg";
+		String result = getFileExtension(testFile);
+		String expResult = "jpg";
+		assertEquals(result, expResult);
+
+		testFile = null;
+		result = getFileExtension(testFile);
+		expResult = null;
+		assertEquals(result, expResult);
+
+		testFile = "";
+		result = getFileExtension(testFile);
+		expResult = null;
+		assertEquals(result, expResult);
+	}
+
+	@Test
+	public void testCleanFileName()
+	{
+		System.out.println("testCleanFileName: ");
+		String testFileName = null;
+		String result = cleanFileName(testFileName);
+		String expResult = null;
+		assertEquals(result, expResult);
+
+		testFileName = "";
+		result = cleanFileName(testFileName);
+		expResult = "";
+		assertEquals(result, expResult);
+
+		testFileName = "Second*Try\".Rpt";
+		result = cleanFileName(testFileName);
+		expResult = "SecondTry.Rpt";
+		assertEquals(result, expResult);
+
+		testFileName = "My?" + (char) (7) + "Urgent|Memo/.txt";
+		result = cleanFileName(testFileName);
+		expResult = "MyUrgentMemo.txt";
+		assertEquals(result, expResult);
+
+		testFileName = "my|Back" + (char) (28) + "Flip.gif";
+		result = cleanFileName(testFileName);
+		expResult = "myBackFlip.gif";
+		assertEquals(result, expResult);
+	}
+
+	@Test
+//	puralize(int size, String nonPuralForm, String puralForm)
+//	size refers to how many objects
+	public void testPuralize()
+	{
+		System.out.println("testPuralize");
+		int sizeOne = 1;
+		int sizeTwo = 2;
+
+		String test = null;
+		String result = puralize(sizeOne, test, null);
+		String expResult = null;
+		assertEquals(result, expResult);
+
+		result = puralize(sizeTwo, test, null);
+		expResult = null;
+		assertEquals(result, expResult);
+
+		test = "";
+		result = puralize(sizeOne, test, null);
+		expResult = "";
+		assertEquals(result, expResult);
+
+		result = puralize(sizeTwo, test, null);
+		expResult = "";
+		assertEquals(result, expResult);
+
+		test = "robot";
+		result = puralize(sizeOne, test, null);
+		expResult = "robot";
+		assertEquals(result, expResult);
+
+		result = puralize(sizeTwo, test, null);
+		expResult = "robots";
+		assertEquals(result, expResult);
+	}
+
+//		public static String getHexFromBytes(byte[] bytes)
+	@Test
+	public void testGetHexFromBytes() throws NoSuchAlgorithmException
+	{
+		System.out.println("testGetHexFromBytes:");
+		String imgUrl = "http://fm.cnbc.com/applications/cnbc.com/resources/img/editorial/2015/12/23/103263155-GettyImages-450831380.530x298.jpg?v=1450888968";
+		String hashUrl = StringProcessor.getHexFromBytes(MessageDigest.getInstance("SHA-1").digest(imgUrl.getBytes()));
+		String expHashUrl = "bdea7192ed2dfcd01ad525d0ab8ce2b48ab16c95";
+		assertEquals(hashUrl, expHashUrl);
+
+		imgUrl = "https://www.airforce.com/version/1468393507/data/page/satellites/howtojoin01.jpg";
+		hashUrl = StringProcessor.getHexFromBytes(MessageDigest.getInstance("SHA-1").digest(imgUrl.getBytes()));
+		expHashUrl = "1b53f7dd4d03adae30fcad1fc19e7301fafad174";
+		assertEquals(hashUrl, expHashUrl);
+	}
 }

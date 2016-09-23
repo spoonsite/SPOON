@@ -131,7 +131,7 @@ public class BrandingResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 
 		if (validationResult.valid()) {
-			brandingModel = service.getBrandingService().saveFullBanding(brandingModel);
+			brandingModel = service.getBrandingService().saveFullBranding(brandingModel);
 			if (post) {
 				return Response.created(URI.create("v1/resource/branding/" + brandingModel.getBranding().getBrandingId())).entity(brandingModel.getBranding()).build();
 			} else {

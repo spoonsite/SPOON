@@ -1,8 +1,11 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>		
+		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
@@ -13,9 +16,13 @@
 					autoLoad: true,
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/jobs'
-					}
+						url: 'api/v1/service/jobs'
+					}					
 				});
+
+				jobStore.filterBy(function(record) {
+						return record.data.jobName.indexOf('ComponentJob');
+				});				
 
 				var jobGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Jobs',
@@ -94,7 +101,7 @@
 									scale: 'medium',
 									id: 'jobGrid-jobPause',
 									iconCls: 'fa fa-2x fa-pause',
-									text: 'Pause',
+									text: 'Pause Job',
 									tooltip: 'Pause the selected job',
 									name: 'individualJobControl',
 									disabled: true,
@@ -107,7 +114,7 @@
 									scale: 'medium',
 									id: 'jobGrid-jobResume',
 									iconCls: 'fa fa-2x fa-play',
-									text: 'Resume',
+									text: 'Resume Job',
 									tooltip: 'Resume the selected job',
 									name: 'individualJobControl',
 									disabled: true,
@@ -120,7 +127,7 @@
 									scale: 'medium',
 									id: 'jobGrid-jobExecute',
 									iconCls: 'fa fa-2x fa-bolt icon-vertical-correction',
-									text: 'Run',
+									text: 'Run Job',
 									tooltip: 'Execute the selected job',
 									name: 'individualJobControl',
 									disabled: true,
@@ -146,7 +153,6 @@
 											toggleGroup: 'intJobs',
 											id: 'jobGrid-showIntegrationBox',
 											text: 'Yes',
-											pressed: true,
 											name: 'showIntegration',
 											handler: function () {
 												jobStore.clearFilter();
@@ -158,6 +164,7 @@
 											toggleGroup: 'intJobs',
 											id: 'jobGrid-noshowIntegrationBox',
 											text: 'No',
+											pressed: true,
 											name: 'showIntegration',
 											handler: function () {
 												jobStore.filterBy(function(record) {
@@ -191,7 +198,7 @@
 									toggleGroup: 'scheduler',
 									id: 'jobGrid-schedulerToggleButton',
 									iconCls: 'fa fa-2x fa-pause',
-									text: 'Pause',
+									text: 'Pause Scheduler',
 									tooltip: 'Toggle the scheduler status',
 									name: 'schedulerControl',
 									handler: function () {
@@ -249,7 +256,7 @@
 					proxy: {
 						id: 'taskStoreProxy',
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/jobs/tasks/status',
+						url: 'api/v1/service/jobs/tasks/status',
 						reader: {
 							type: 'json',
 							rootProperty: 'tasks'
@@ -271,7 +278,7 @@
 					proxy: {
 						id: 'taskStatsStoreProxy',
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/jobs/tasks/status'
+						url: 'api/v1/service/jobs/tasks/status'
 					}
 				});
 
@@ -424,7 +431,7 @@
 					Ext.MessageBox.confirm(title, msg, function (btn) {
 						if (btn === 'yes') {
 							var taskId = record.data.taskId;
-							var url = '/openstorefront/api/v1/service/jobs/tasks';
+							var url = 'api/v1/service/jobs/tasks';
 							url += '/' + taskId;
 							var method = 'DELETE';
 							Ext.Ajax.request({
@@ -452,7 +459,7 @@
 					Ext.MessageBox.confirm(title, msg, function (btn) {
 						if (btn === 'yes') {
 							var taskId = record.data.taskId;
-							var url = '/openstorefront/api/v1/service/jobs/tasks';
+							var url = 'api/v1/service/jobs/tasks';
 							url += '/' + taskId + '/cancel';
 							var method = 'POST';
 							Ext.Ajax.request({
@@ -480,23 +487,17 @@
 					items: [jobGrid, taskGrid]
 				});
 
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						jobsMainPanel
-					]
-				});
-
+				addComponentToMainViewPort(jobsMainPanel);
 
 				var toggleScheduler = function toggleScheduler() {
 					if (Ext.getCmp('schedulerStatusLabel').text === 'Running'){
 						var what = 'pause';
-						var url = '/openstorefront/api/v1/service/jobs/pause';
+						var url = 'api/v1/service/jobs/pause';
 						var method = 'POST';
 					}
 					else {
 						var what = 'resume';
-						var url = '/openstorefront/api/v1/service/jobs/resume';
+						var url = 'api/v1/service/jobs/resume';
 						var method = 'POST';
 					}
 					Ext.Ajax.request({
@@ -514,7 +515,7 @@
 				};
 
 				var pauseJob = function pauseJob(record) {
-					var url = '/openstorefront/api/v1/service/jobs/';
+					var url = 'api/v1/service/jobs/';
 					url += record.data.jobName + '/pause';
 					var method = 'POST';
 					Ext.Ajax.request({
@@ -533,7 +534,7 @@
 				};
 
 				var resumeJob = function resumeJob(record) {
-					var url = '/openstorefront/api/v1/service/jobs/';
+					var url = 'api/v1/service/jobs/';
 					url += record.data.jobName + '/resume';
 					var method = 'POST';
 					Ext.Ajax.request({
@@ -551,7 +552,7 @@
 				};
 
 				var executeJob = function executeJob(record) {
-					var url = '/openstorefront/api/v1/service/jobs/';
+					var url = 'api/v1/service/jobs/';
 					url += record.data.jobName + '/' + record.data.groupName + '/runnow';
 					var method = 'POST';
 					Ext.Ajax.request({
@@ -570,7 +571,7 @@
 
 				var updateSchedulerStatus = function updateSchedulerStatus() {
 					Ext.Ajax.request({
-						url: '/openstorefront/api/v1/service/jobs/status',
+						url: 'api/v1/service/jobs/status',
 						success: function (response, opts) {
 							var rsp = Ext.decode(response.responseText);
 							var label = Ext.getCmp('schedulerStatusLabel');
@@ -578,13 +579,13 @@
 							if (rsp.status === 'Running') {
 								label.setText('Running');
 								label.setStyle({color: 'green'});
-								button.setText('Pause');
+								button.setText('Pause Scheduler');
 								button.setIconCls('fa fa-pause fa-2x');
 							}
 							else {
 								label.setText('Paused');
 								label.setStyle({color: 'red'});
-								button.setText('Resume');
+								button.setText('Resume Scheduler');
 								button.setIconCls('fa fa-play fa-2x');
 							}
 						},

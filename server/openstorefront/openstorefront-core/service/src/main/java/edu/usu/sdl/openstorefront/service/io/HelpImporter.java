@@ -102,6 +102,12 @@ public class HelpImporter
 	{
 		//do nothing
 	}
+	
+	@Override
+	public boolean isStarted()
+	{
+		return true;
+	}
 
 	/**
 	 * Accept a stream pointed to markdown

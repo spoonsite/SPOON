@@ -31,48 +31,37 @@ licensed under Apache V2.**
 ## 1.1 Release Notes
 ------
 
-**What's new in v2.0:**
 
-* **Advanced and Saved Searches:**
+*What's new in v2.1*
 
-	The Search Tools are now accessed from a button to the right of the search (text) box.  Two new tabs have been added to the search tools window:  _Advanced (Search)_ and _Saved Searches_.  Advanced Search allows for many different custom combinations of fields, selectable via drop-down menus and text entry.  Multiple search criteria can be added with OR, AND, or NOT conditions.  Once the correct combination is found, results can be previewed and the search can be saved for later use.  The Saved Searches tab contains a list of the users saved searches that can be executed to find results.  Saved Searches are managed from a new area in the User Tools section.
-
-* **Improved Submission Process:**
-
-	The entry submission process has been improved including new _Save and Edit Later_ and _Submit for Review_ button options.  In addition _Pending_ entries that are edited are automatically moved to _Not Submitted_ unless they are submitted again for review.  Approved entries can have a _Change Request_ added or can have a _Removal Request_ for approval to remove it from the website.
-
-* **User Submitted Corrections, Request Ownership:**
-
-	Any user can submit a correction for an entry on the website.  From the search results details area, if you do not already own the entry a new horizontal line icon appears with two sub-menus:  _Submit Correction_ and _Request Ownership_.  These bring up a form to enter your suggested correction or reasoning for requesting ownership of the entry.
-
-* **Custom Dashboards:**
-
-	The User Tools and Admin Tools homepage is now a customizable dashboard allowing the user to add widgets such as:  Notifications, Questions, Reports, Saved Searches, Submission Status, and Watches.  Additional widgets are available on the Admin Tools dashboard.  
-
-* **Search Results Improvements:**
-
-	-- Search results can now display additional data about the results such as vitals and average review score.   
-	-- The side-by-side compare feature is now integrated in the result page to avoid disruptions.  
-	-- Entries can now be quickly filtered by topic (type of entry).   
-	-- The export of the search results is now more direct instead of running a report.  
-
-* **Entry Details Improvements:**
-
-	-- Related entry for an organization can now be viewed by clicking on the organization link.  
-	-- Entry Vitals can show related entries by clicking on the vital value.  
-	-- Relationships are more easier to navigate by click on the related item.  Also the "+" symbol allows for a quick view with losing the currently viewed entry. 
-
-* **User Tool Improvements:**
-
-	-- Question and Answers that you have posted can be managed in one place.    
-	-- Reviews, Reports and Watches have all been updated to make them more consistent and easier to use.  
-
-For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.0" target="_blank">v2.0</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
-
-## 1.2 Known Issues, v2.0 * 
+ * **Relationship Visualization:**
+ In User Tools under the Tools drop-down is a new Relationships section.  This allows the user to view relationships
+ between Entries, Organizations, Attributes, or Tags.  The Find feature helps locate an item on the image.  The image
+ can be resized, panned, zoomed, and so forth.  The current view can also be downloaded as a .png image.  
  
-1. Full Screen video view button not available in search results when not in full page. (Affects: IE 9, 10) 
-Workaround: Open entry details in full page mode then view the video.
+ * **Search by Tags**
+ From the global search screen a field has been added to allow a filtered search by Tags, with a drop-down of all
+  current tags. One or more tags can be added to the filters.
+  
+ * **Inline Media in Entries**
+ Improved the ability to place media inline in an entry.  Images and links can now be pasted directly into the 
+  description field of a submission. The external links will be automatically fetched and linked providing an 
+  inline media experience in the description field of the submission entry.  There is also a new option to hide
+  the media from the carousel if desired.
+ 
+ * **Contact Lookup by Last Name**
+ When adding a contact to an entry (details section) if you start typing in the Last Name field the list of possible
+  matches is shown.  Pressing enter or selecting the entry will fill the first name, organization, email, and phone
+  for the contact.  This was previously only available for first name searches, but has been extended to last name
+  with this release.  
+  
+For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.1" target="_blank">v2.1</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
+
+## 1.2 Known Issues, v2.1 * 
+ 
+ * ***Beta***: From Admin Tools, Data Management, Imports a Mapping tab has been added.  This allows for mappable
+  file formats to be uploaded and mapped to fields for importing data.  This feature is still being worked on and
+  further improvements will be launched in future releases.
 
 # 2.  User Features
 ------
@@ -262,11 +251,13 @@ on the icon to display the Search Tools window.  Five tabs are displayed:
 
 2.  Category
 
-3.  Architecture
+3.  Tag
 
-4.  Advanced
+4. Architecture
 
-5.  Saved Searches
+5.  Advanced
+
+6.  Saved Searches
 
 ### 2.2.1 Topic Search Tool
 ------
@@ -289,7 +280,17 @@ subcategory to display search results.  Clicking on the column name sorts
 the table by that column.  Clicking on the link button opens the 
 individual entry, or all results can be displayed in a new window.
 
-### 2.2.3 Architecture Search Tool
+
+### 2.2.3 Tag Search Tool 
+------
+
+This window displays a list of all tags on the left.  Clicking on a tag 
+shows the related entries that have that tag.  For details of an entry
+click on the link to the right of the description or the Show Results
+diagonal arrow to Show (all) Results with that tag.
+
+
+### 2.2.4 Architecture Search Tool
 ------
 
 The Architecture tab window displays a hierarchy of results per SvcV-4 
@@ -298,7 +299,7 @@ on the **+** button expands an individual folder and **-** collapses the folder.
 Search results are displayed with sortable columns and links to individual 
 results or the entire search results can be opened in a new page.
 
-### 2.2.4 Advanced Search
+### 2.2.5 Advanced Search Tool 
 ------
 
 The Advanced Search tab provides a powerful tool to query the data in the Clearinghouse.
@@ -319,7 +320,7 @@ This allows the user to refine a search based on:
 **Save:(Search)**  The advanced search can be saved.  See the next section for details.
 
 
-### 2.2.5 Saved Searches
+### 2.2.6 Saved Searches
 ------
 
 You can save complex advanced searches for later retrieval and querying.  From the Advanced tab, 
@@ -424,6 +425,8 @@ The following fields are in the Required Information section:
  -  **Entry Type:**  DI2E Component, Article, etc.  -  What you enter here will determine what other fields show up on this entry form below 
  -  **Entry Name:**  The name of the article or component 
  -  **Description:** Detailed description body - You can use highlights, colored text, links, etc.
+                      NOTE:  You can paste inline media (from another website) into the description field and it will
+                              automatically attach the media if it is possible.
  -  **Organization:** Name of Company or responsible party for the entry  -  These can be set by an administrator
  -  **Attributes:**  Required attributes are shown here and must be selected 
 
@@ -454,10 +457,11 @@ for review.  The entry can then be submitted for review.
 The Tools drop-down contains five options:
 
 1.  Questions
-2.  Reports
-3.  Reviews
-4.  Searches
-5.  Watches
+2.  Relationships
+3.  Reports
+4.  Reviews
+5.  Searches
+6.  Watches
 
 #### 2.3.3.1 Questions & Answers
 --------
@@ -478,7 +482,18 @@ Post or Cancel button when the edit is finished.
 Finally, a **Delete** button is provided with confirmation before deleting a question
 or an answer.
 
-#### 2.3.3.2 Reports
+
+#### 2.3.3.2 Relationships
+--------
+
+This screen shows a graphical representation among entries based on
+ organization, attributes, tags, and direct relationships.
+ 
+A particular view can be saved by pressing the Download Image button.  A find option is also available to find a 
+ component in the current view on the page.
+
+
+#### 2.3.3.3 Reports
 --------
 
 This section displays reports that have run as well as scheduled reports that will run in the future.
@@ -501,7 +516,7 @@ the report will run, as well as the last run date and time. You can add, activat
 scheduled report, edit, or delete it.
 
 
-#### 2.3.3.2 Admin Reports * 
+#### 2.3.3.3 Admin Reports * 
 --------
 
 This section displays reports that have run as well as scheduled reports that will run in the future.
@@ -535,7 +550,7 @@ scheduled report, edit, or delete it.
 
 
   
-#### 2.3.3.3 Reviews
+#### 2.3.3.4 Reviews
 ------------
 -
 From this screen in the User Tools you can edit and delete your component reviews.
@@ -564,7 +579,7 @@ by clicking on the delete icon next to the title of the review. You can only rem
     other users to read.
 
 
-#### 2.3.3.4 Searches
+#### 2.3.3.5 Searches
 ------------
 
 This tab displays the list of saved searches from the Advanced Search area.
@@ -573,7 +588,7 @@ It also allows the user to Add, Edit, and Delete advanced searches.
 For more information, see the Advanced Search Section under Search Tools.
 
 
-#### 2.3.3.5 Manage Watches
+#### 2.3.3.6 Manage Watches
 ------------
 
 The user can create watches that can send notifications to the user. The
@@ -957,8 +972,8 @@ c. Security Type:   *select the security level of the component or article*
 ### 3.2.4 Entry Types *
 ------
 
-Currently, the main entry types are DI2E Component and Article.  However, other custom 
-types can be added, edited, activated, and made inactive here.  
+Currently, the main entry types are: Article, DI2E Component, and DI2E Document.  However, other custom 
+types can be added, edited, activated, made inactive, and removed here.  
 
 On the Add form, data entry can be selected, such as whether or not to allow on the 
 submission form, and to allow or not allow the following to be displayed:
@@ -966,11 +981,22 @@ submission form, and to allow or not allow the following to be displayed:
 *Attributes, Relationships, Contacts, Resources, Media, Dependencies, Metadata,
 Evaluation Information, Reviews, and Questions.*
 
-Entry Types can be made active or inactive by using the Toggle Status button on the right. 
+Entry Types can be made active or inactive by using the Toggle Status button.
 
 **Note:** Making an entry type Inactive does **not** remove that entry type from existing
           entries; it simply prevents that entry type from being added in future entry 
           submissions.
+
+New with v2.1 Entry Types can now be **removed**.  When you remove a type the system will ask 
+ what remaining active entry type you would like to move the existing data to.   This ensures that 
+ data (entries) are not lost, but moved to a remaining, active entry type.
+
+**Note:** It is recommended to toggle the status of a type to **inactive**, rather than remove it.  
+          Removing entry type that has attribute restriction can change the behavior of the require
+          attributes. It may only be required for entries of type A but when type A is removed then
+          the attribute will be required for all entries. 
+          (It will require an admin to manually update the attributed if that is not the correct behavior).
+  
 		  
 		  
 ### 3.2.5 Entry Templates *
@@ -1101,11 +1127,62 @@ is resolved.
 ### 3.2.8 Imports * 
 -------
 
-This allows for data imports and mappings.  This is done by importing a ZIP
-or JSON file.  Once imported warnings and/or errors can be viewed, the data 
-can be reprocessed or rolled back.
+This allows for data imports and mappings.  This is done by importing a file.
+Various file formats can be imported such as .csv, .xlsx, JSON, .tsv, .xml, and .zip.  
+Once imported warnings and/or errors can be viewed, the data can be reprocessed 
+or rolled back.
 
-**NOTE:**  The history is only kept for **180 days** in this section.
+Data mapping allows for a custom data file format to be established for importing data.
+Once a file is uploaded individual fields can be mapped.  Then a data file can be
+imported using that mapping.
+
+**NOTE:**  The history is only kept for **180 days (Default)** in this section.
+
+#### 3.2.8.1 Data Mapping *
+
+Some data importing can be handled by creating data maps.  Typically file with
+simple structure work best.  In some cases, a custom file parse will need to be 
+created.  Custom parsers require coding and then they can be add to the application
+via the plugin feature.
+
+Built-in Supported Mappable Format:
+
+Parser - Record Structure handled
+
+**Attribute CSV, Attribute EXCEL (XLSX), Attribute TSV**  
+
+>- Record (Attribute Code) per line
+- Header line not support (Remove before upload)
+- Does not support attachments
+- Map Name is used for Attribute Type
+
+**Attribute JSON, Attribute XML**
+
+>- Support Nested structure, still assumes file contain Attribute Codes to map;
+	
+**Component CSV, Component EXCEL (XLSX), Component TSV**	
+
+>- Record (Component) per line;  It can map SubComponent Entities as well.
+- Header line not support (Remove before upload)
+- Does not support attachments (Local resources or media)
+
+**Component  JSON, Component  XML**	
+
+>- Nested record (Component/Contact/etc)
+- Does not support attachments (Local resources or media)
+
+
+**Creating a data map**
+
+>**Attribute**
+
+> Map Fields for (Attribute Type and Attribute Codes)
+
+>**Component/Entry**
+
+> Map Fields for Component, Contacts, Resource, etc
+
+> Provide attribute mapping for each attribute type expected.
 
 
 ### 3.2.9 Lookups *
@@ -1187,7 +1264,17 @@ Allows merging of references from one organization to another.  **NOTE** that th
 ONLY merges references and NOT the organization information.
 
 
-### 3.2.12 Searches (Public Saved Searches) *
+### 3.2.12 Relationships *
+---------
+
+Quickly create relationships between entries by dragging from the origin grid to the target grid.
+
+By clicking on the Orign Entry Column the Existing Relationships are shown to the right in the table and can be edited
+if desired.  In addition the Visualization section shows a graphical view of the relationships.
+
+
+
+### 3.2.13 Searches (Public Saved Searches) *
 ---------
 
 This area displays a list of publicly available searches that can be edited, added, activated, or 
@@ -1195,7 +1282,7 @@ made inactive.  Once the searches are set up, they can be used for inclusion in 
 entries.
 
  
-### 3.2.13 User Data *
+### 3.2.14 User Data *
 ---------
 
 This section in the Admin Tools -> Data Management allows for the management of user-submitted data such as:
@@ -1211,7 +1298,7 @@ This section in the Admin Tools -> Data Management allows for the management of 
  * User Profiles
  
 
-#### 3.2.13.1 Questions (and Answers) *
+#### 3.2.14.1 Questions (and Answers) *
 ------
 
 The Questions section of User Data in Data Management of the Admin Tools displays Questions and Answers given on the website.
@@ -1225,7 +1312,7 @@ The table displays active questions, but the drop-down at the top of the page al
  * With a question or answer highlighted, click the associated Deactivate button to remove it from view on the website.
 
 
-#### 3.2.13.2 Reviews *
+#### 3.2.14.2 Reviews *
 ------
 
 The Reviews section of User Data in Data Management of the Admin Tools displays entry reviews from the website.
@@ -1239,7 +1326,7 @@ The table displays the list of *active* reviews by default.
  * Selecting an inactive review allows for the Activate button to be pressed, adding the review back to view on the website.
 
 
-#### 3.2.13.3 Watches *
+#### 3.2.14.3 Watches *
 ------
 
 The Watches section of User Data in Data Management of the Admin Tools displays all of the watches from all users.
@@ -1249,7 +1336,7 @@ The Watches section of User Data in Data Management of the Admin Tools displays 
  * When an entry (or multiple entries of the same status) is selected, the Activate or Inactivate button can be used to toggle the status of the watches.
  
  
-#### 3.2.13.4 Tags *
+#### 3.2.14.4 Tags *
 ------
 
 The Tags section of User Data in Data Management of the Admin Tools displays a list of all tags.
@@ -1261,7 +1348,7 @@ The Tags section of User Data in Data Management of the Admin Tools displays a l
  * In the event of a duplicate tag being added to the same component the added tag will override the existing tag.
 
 
-#### 3.2.13.5 User Profiles *
+#### 3.2.14.5 User Profiles *
 ------
 
 Every user in the system has a user profile.  A user profile contains information
@@ -1299,6 +1386,14 @@ emailed to the email address listed in their profile.
 
 **NOTE:** Messages are sent to email addresses one at a time so that no email
 addresses are leaked to other users.
+
+**To Export user data:**
+
+1.  Select the users desired for the export.
+
+2.  Click on Export above and to the right of the table.
+
+3.  Save the .json file locally.  The file contains the user information.
 
 
 ## 3.3 Application Management *

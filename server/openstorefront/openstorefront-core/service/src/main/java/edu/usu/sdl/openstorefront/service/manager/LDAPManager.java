@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.manager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.service.manager.resource.LdapClient;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
@@ -31,14 +32,16 @@ public class LDAPManager
 
 	private static final Logger log = Logger.getLogger(LDAPManager.class.getName());
 
+	private static AtomicBoolean started = new AtomicBoolean(false);
+	
 	public static void init()
 	{
-		//Nothing to do at the moment
+		//Nothing to do at the moment			
 	}
 
 	public static void cleanup()
 	{
-		//Nothing to do at the moment
+		//Nothing to do at the moment		
 	}
 
 	public static LdapClient getLdapClient()
@@ -60,12 +63,20 @@ public class LDAPManager
 	public void initialize()
 	{
 		LDAPManager.init();
+		started.set(true);	
 	}
 
 	@Override
 	public void shutdown()
 	{
 		LDAPManager.cleanup();
+		started.set(false);
 	}
+	
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
+	}	
 
 }

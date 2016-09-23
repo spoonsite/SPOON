@@ -19,7 +19,7 @@ import static edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.ERRO
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * This the base class for runtime exception
+ * This is the base class for runtime exception
  *
  * @author dshurtleff
  */

@@ -1,70 +1,30 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
-<style>
-			.list-group-item:first-child {
-				border-top-right-radius: 4px;
-				border-top-left-radius: 4px;
-			}
-			.list-group-item {
-				position: relative;
-				display: block;
-				padding: 10px 15px;
-				margin-bottom: -1px;
-				background-color: #8A8A8A;
-				border: 1px solid #464545;
-				font-size: 14px;
-				overflow: auto;
-			}
-			.list-group {
-				/* margin-bottom: 20px; */
-				padding-left: 0;
-				color: white;
-			}
-			ul, ol {
-				margin-top: 0;
-				margin-bottom: 10.5px;
-			}
-			.badge {
-				display: inline-block;
-				min-width: 10px;
-				padding: 3px 7px;
-				font-size: 13px;
-				font-weight: bold;
-				color: #ffffff;
-				line-height: 1;
-				vertical-align: middle;
-				white-space: nowrap;
-				text-align: center;
-				float: right;
-				background-color: rgba(68,30,90,1);
-				border-radius: 10px;
-			}
-			.green-highlight{
-				color: lightgreen
-			}
-		</style>
-
+		
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>
+	
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
 
 				var tplSystemDetailStats = new Ext.XTemplate(
 					'<div style="padding:10px;"><ul class="list-group">',
-					'<li class="list-group-item">Application Version: <span class="badge">{applicationVersion}</span></li>',
-					'<li class="list-group-item">Uptime: <span class="badge">{upTime}</span></li>',
-					'<li class="list-group-item">Start Time: <span class="badge">{startTime}</span></li>',
-					'<li class="list-group-item">Disk Space: <span class="badge">{freeDiskSpace} MB / {totalDiskSpace} MB</span></li>',
+					'<li class="stat-list-group-item">Application Version: <span class="stat-badge">{applicationVersion}</span></li>',
+					'<li class="stat-list-group-item">Uptime: <span class="stat-badge">{upTime}</span></li>',
+					'<li class="stat-list-group-item">Start Time: <span class="stat-badge">{startTime}</span></li>',
+					'<li class="stat-list-group-item">Disk Space: <span class="stat-badge">{freeDiskSpace} MB / {totalDiskSpace} MB</span></li>',
 					'</ul><div>'
 				);
 
 				var tplSystemDetailStats2 = new Ext.XTemplate(
 					'<div style="padding:10px;"><ul class="list-group">',
-					'<li class="list-group-item">Processor Count: <span class="badge">{processorCount}</span></li>',
-					'<li class="list-group-item">Live Threads / Total Threads: <span class="badge">{liveThreadCount}/{totalThreadCount}</span></li>',
-					'<li class="list-group-item">System Load: <span class="badge">{systemLoad}</span></li>',
-					'<li class="list-group-item">Root Storage Path: <span class="badge">{rootStoragePath}</span></li>',
+					'<li class="stat-list-group-item">Processor Count: <span class="stat-badge">{processorCount}</span></li>',
+					'<li class="stat-list-group-item">Live Threads / Total Threads: <span class="stat-badge">{liveThreadCount}/{totalThreadCount}</span></li>',
+					'<li class="stat-list-group-item">System Load: <span class="stat-badge">{systemLoad}</span></li>',
+					'<li class="stat-list-group-item">Root Storage Path: <span class="stat-badge">{rootStoragePath}</span></li>',
 					'</ul><div>'
 
 				);
@@ -118,7 +78,7 @@
 					proxy: {
 						id: 'memoryPoolStoreProxy',
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/application/status',
+						url: 'api/v1/service/application/status',
 						reader: {
 							type: 'json',
 							rootProperty: 'memoryPools'
@@ -252,7 +212,7 @@
 					proxy: {
 						id: 'threadStatusStoreProxy',
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/application/threads'
+						url: 'api/v1/service/application/threads'
 					}
 				});
 
@@ -280,14 +240,16 @@
 								{
 									text: 'View',
 									id: 'threadStatus-view',
+									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-eye',
 									handler: function () {
 										var record = Ext.getCmp('threadStatus').getSelectionModel().getSelection()[0];
 										
 										var detailWin = Ext.create('Ext.window.Window', {
-											title: 'Full Stack',
+											title: 'Full Stack - ' + record.get("name"),
 											modal: true,
+											closeAction: 'destroy',
 											width: '80%',
 											height: '80%',
 											maximizable: true,
@@ -299,12 +261,15 @@
 										
 										detailWin.setLoading(true);
 										Ext.Ajax.request({
-											url: '../api/v1/service/application/threads/' + record.get("id") + '/stack',
+											url: 'api/v1/service/application/threads/' + record.get("id") + '/stack',
 											callback: function(){
 												detailWin.setLoading(false);
 											},
 											success: function(response, opts) {
 												detailWin.setHtml(response.responseText);
+											},
+											failure: function(response, opts) {
+												detailWin.setHtml("Selected thread is no longer available.");
 											}
 										});
 									}									
@@ -336,7 +301,7 @@
 					proxy: {
 						id: 'systemPropertiesStoreProxy',
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/application/status',
+						url: 'api/v1/service/application/status',
 						reader: {
 							type: 'json',
 							rootProperty: 'systemProperties.entry'
@@ -395,7 +360,7 @@
 					],
 					proxy: CoreUtil.pagingProxy({
 							type: 'ajax',
-							url: '/openstorefront/api/v1/resource/errortickets',
+							url: 'api/v1/resource/errortickets',
 							reader: {
 								type: 'json',
 								rootProperty: 'errorTickets',
@@ -517,7 +482,7 @@
 								
 								errorTicketsGrid.setLoading("Removing Tickets...");
 								Ext.Ajax.request({
-									url: '../api/v1/resource/errortickets',
+									url: 'api/v1/resource/errortickets',
 									method: 'DELETE',
 									jsonData: {
 										ids: ids
@@ -581,7 +546,7 @@
 
 				var actionViewErrorTicket = function actionViewErrorTicket(record) {
 					Ext.Ajax.request({
-						url: '/openstorefront/api/v1/resource/errortickets/' + record.data.errorTicketId + '/ticket',
+						url: 'api/v1/resource/errortickets/' + record.data.errorTicketId + '/ticket',
 						success: function(response, opt){
 							var data = {};
 							data.info = response.responseText;
@@ -604,7 +569,7 @@
 					],
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/resource/applicationproperties'
+						url: 'api/v1/resource/applicationproperties'
 						}
 				});
 				
@@ -720,7 +685,7 @@
 											formBind: true,	
 											handler: function() {
 												var key = Ext.getCmp('appStatePropForm').key;
-												var url = '/openstorefront/api/v1/resource/applicationproperties/';
+												var url = 'api/v1/resource/applicationproperties/';
 												url+= key;
 												var method = 'PUT';
 												var value = Ext.getCmp('appStatePropForm').getValues()['value'];
@@ -780,7 +745,7 @@
 					],
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/application/configproperties'
+						url: 'api/v1/service/application/configproperties'
 					},
 					listeners: {
 						load: function () {
@@ -905,7 +870,7 @@
 											iconCls: 'fa fa-save',
 											formBind: true,	
 											handler: function() {
-												var url = '/openstorefront/api/v1/service/application/configproperties';
+												var url = 'api/v1/service/application/configproperties';
 												var method = 'POST';
 												var form = Ext.getCmp('configPropForm');
 												if (form.isValid()) {
@@ -964,7 +929,7 @@
 
 
 				var deleteSysConfigProp = function deleteSysConfigProp(record) {
-					var url = '/openstorefront/api/v1/service/application/configproperties/';
+					var url = 'api/v1/service/application/configproperties/';
 					url += encodeURIComponent(record.data.code);
 
 					var msg = 'Are you sure you want to delete "' + record.getData().code + '"?';
@@ -1006,7 +971,7 @@
 					],
 					proxy: CoreUtil.pagingProxy({
 							type: 'ajax',
-							url: '/openstorefront/api/v1/service/application/logrecords',
+							url: 'api/v1/service/application/logrecords',
 							reader: {
 								type: 'json',
 								rootProperty: 'logRecords',
@@ -1086,7 +1051,7 @@
 									tooltip: "Doesn't affect server logs. Note: The application will automatically clear old records exceeding max allowed.",
 									handler: function () {
 										Ext.Ajax.request({
-											url: '/openstorefront/api/v1/service/application/logrecords',
+											url: 'api/v1/service/application/logrecords',
 											method: 'DELETE',
 											success: function(response, opt){
 												Ext.toast('Cleared log records', '', 'tr');
@@ -1133,11 +1098,11 @@
 				var toggleDbLogger = function toggleDbLogger() {
 					if (Ext.getCmp('dbLogStatusLabel').text === 'On'){
 						var what = 'off';
-						var url = '/openstorefront/api/v1/service/application/dblogger/false';
+						var url = 'api/v1/service/application/dblogger/false';
 					}
 					else {
 						var what = 'on';
-						var url = '/openstorefront/api/v1/service/application/dblogger/true';
+						var url = 'api/v1/service/application/dblogger/true';
 					}
 					
 					Ext.Ajax.request({
@@ -1190,7 +1155,7 @@
 					autoLoad: true,
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/service/application/loggers'
+						url: 'api/v1/service/application/loggers'
 					}
 				});
 
@@ -1367,7 +1332,7 @@
 											formBind: true,	
 											handler: function() {
 												var key = Ext.getCmp('loggerForm').getValues().name;
-												var url = '/openstorefront/api/v1/service/application/logger/';
+												var url = 'api/v1/service/application/logger/';
 												url+= key;
 												url+= '/level';
 												var method = 'PUT';
@@ -1426,7 +1391,7 @@
 					autoLoad: true,
 					proxy: {
 						type: 'ajax',
-						url: '/openstorefront/api/v1/resource/plugins'
+						url: 'api/v1/resource/plugins'
 					}
 				});
 
@@ -1436,11 +1401,12 @@
 					store: pluginStore,
 					columnLines: true,
 					columns: [
-						{text: 'ID', dataIndex: 'pluginId', flex: 1, cellWrap: true},
+						{text: 'ID', dataIndex: 'pluginId', flex: 1, cellWrap: true, hidden: true},
+						{text: 'Runtime ID', dataIndex: 'runtimeId', flex: 1},
 						{text: 'Name', dataIndex: 'name', flex: 2, cellWrap: true},
 						{text: 'Description', dataIndex: 'description', flex: 4, cellWrap: true},
 						{text: 'Version', dataIndex: 'version', flex: 1},
-						{text: 'Update Date', dataIndex: 'updateDts', flex: 1.5,
+						{text: 'Update Date', dataIndex: 'lastModifed', flex: 1.5,
 							xtype: 'datecolumn',
 							format: 'm/d/y H:i:s:u'
 						},
@@ -1453,9 +1419,9 @@
 								return value;
 							}
 						},
-						{text: 'Runtime ID', dataIndex: 'runtimeId', flex: 1},
 						{text: 'Core Module', dataIndex: 'coreModule', flex: 1},
-						{text: 'Actual Filename', dataIndex: 'actualFilename', flex: 2},
+						{text: 'Actual Filename', dataIndex: 'actualFilename', flex: 2, hidden: true},
+						{text: 'System Location', dataIndex: 'location', flex: 2, hidden: true},
 						{text: 'Type', dataIndex: 'pluginType', flex: 1}
 					],
 					listeners: {
@@ -1568,7 +1534,7 @@
 				};
 
 				var actionStartPlugin = function actionStartPlugin(record) {
-					var url = '/openstorefront/api/v1/resource/plugins/';
+					var url = 'api/v1/resource/plugins/';
 					url += record.data.pluginId + '/start';
 					Ext.Ajax.request({
 						url: url,
@@ -1584,7 +1550,7 @@
 				};
 
 				var actionStopPlugin = function actionStopPlugin(record) {
-					var url = '/openstorefront/api/v1/resource/plugins/';
+					var url = 'api/v1/resource/plugins/';
 					url += record.data.pluginId + '/stop';
 					Ext.Ajax.request({
 						url: url,
@@ -1600,26 +1566,37 @@
 				};
 
 				var actionDownloadPlugin = function actionDownloadPlugin(record) {
-					var url = '/openstorefront/api/v1/resource/plugins/';
+					var url = 'api/v1/resource/plugins/';
 					url += record.data.pluginId + '/download';
 					window.location.href = url;					
 				};
 
 				var actionUninstallPlugin = function actionUninstallPlugin(record) {
-					var url = '/openstorefront/api/v1/resource/plugins/';
-					url += record.data.pluginId;
-					Ext.Ajax.request({
-						url: url,
-						method: 'DELETE',
-						success: function(response, opt){
-							Ext.toast('Successfully uninstalled plugin', '', 'tr');
-							pluginStore.load();
-						},
-						failure: function(response, opt){
-							Ext.toast('Failed to uninstall plugin', '', 'tr');
+					
+					Ext.Msg.show({
+						title:'Uninstall Plugin?',
+						message: 'Are you sure you want to uninstall ' + record.get('name') + '?',
+						buttons: Ext.Msg.YESNO,
+						icon: Ext.Msg.QUESTION,
+						fn: function(btn) {
+							if (btn === 'yes') {
+								var url = 'api/v1/resource/plugins/';
+								url += record.data.pluginId;
+								Ext.Ajax.request({
+									url: url,
+									method: 'DELETE',
+									success: function(response, opt){
+										Ext.toast('Successfully uninstalled plugin', '', 'tr');
+										pluginStore.load();
+									},
+									failure: function(response, opt){
+										Ext.toast('Failed to uninstall plugin', '', 'tr');
+									}
+								});
+							} 
 						}
-					});
-
+					});					
+					
 				};
 
 				var addPluginWindow = Ext.create('Ext.window.Window', {
@@ -1692,6 +1669,271 @@
 						}
 					]
 				});
+				
+				var managersGrid = Ext.create('Ext.grid.Panel', {
+					title: 'Managers',
+					columnLines: true,
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/service/application/managers'
+						}						
+					},
+					listeners: {
+						selectionchange: function (selectionModel, records, index, opts) {
+							var tools  = managersGrid.getComponent('tools');
+							if (selectionModel.getCount() > 0 ) {								
+								if (records[0].get('started')) {
+									tools.getComponent('start').setDisabled(true);
+								} else {
+									tools.getComponent('start').setDisabled(false);
+								}
+								if (records[0].get('started')) {
+									tools.getComponent('stop').setDisabled(false);
+								} else {
+									tools.getComponent('stop').setDisabled(true);
+								}
+								tools.getComponent('restart').setDisabled(false);
+							} else {
+								tools.getComponent('start').setDisabled(true);
+								tools.getComponent('stop').setDisabled(true);
+								tools.getComponent('restart').setDisabled(true);
+							}							
+						}							
+					},
+					columns: [
+						{ text: 'Name', dataIndex: 'name', width: 250 },
+						{ text: 'Class', dataIndex: 'managerClass', minWidth: 250, flex: 1 },
+						{ text: 'Started', dataIndex: 'started', align: 'center', width: 150, 
+							renderer: function(value) {
+								if (value) {
+									return '<i class="fa fa-lg fa-check" style="color: green"></i>';
+								} else {
+									return '<i class="fa fa-lg fa-close" style="color: red"></i>';
+								}
+							}
+						},
+						{ text: 'Order', dataIndex: 'order', align: 'center', width: 150 }
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							itemId: 'tools',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Start',
+									itemId: 'start',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-play',
+									handler: function(){
+										var grid = this.up('grid');
+										var record = this.up('grid').getSelectionModel().getSelection()[0];										
+										
+										grid.setLoading('Starting Manager...');
+										Ext.Ajax.request({
+											url: 'api/v1/service/application/managers/' + record.get('managerClass') + '/start',
+											method: 'PUT',
+											callback: function(){
+												grid.setLoading(false);
+											},
+											success: function(){
+												
+												grid.getStore().reload();
+											}
+										});
+										
+									}									
+								},
+								{
+									text: 'Stop',
+									itemId: 'stop',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-stop',
+									handler: function(){
+										var grid = this.up('grid');
+										var record = this.up('grid').getSelectionModel().getSelection()[0];
+										
+										Ext.Msg.show({
+											title:'Stop Manager?',
+											message: 'Are you sure you want to stop this manager? <br> The application may be unstable or some feature will not available.',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+													grid.setLoading('Stopping Manager...');
+													Ext.Ajax.request({
+														url: 'api/v1/service/application/managers/' + record.get('managerClass') + '/stop',
+														method: 'PUT',
+														callback: function(){
+															grid.setLoading(false);
+														},
+														success: function(){
+															grid.getStore().reload();
+														}											
+													});													
+												} 
+											}
+										});											
+										
+
+									}									
+								},
+								{
+									text: 'Restart',
+									itemId: 'restart',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function(){
+										var grid = this.up('grid');
+										var record = this.up('grid').getSelectionModel().getSelection()[0];										
+										
+										grid.setLoading('Restarting Manager...');
+										Ext.Ajax.request({
+											url: 'api/v1/service/application/managers/' + record.get('managerClass') + '/restart',
+											method: 'PUT',
+											callback: function(){
+												grid.setLoading(false);
+											},
+											success: function(){												
+												grid.getStore().reload();
+											}											
+										});										
+									}									
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Restart Application',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function(){
+										var grid = this.up('grid');																		
+										
+										Ext.Msg.show({
+											title:'Restart Application?',
+											message: 'Are you sure you want to restart? <br> The application will be unavailable while restarting.',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+													grid.setLoading('Restarting Application...');
+													Ext.Ajax.request({
+														url: 'api/v1/service/application/restart',
+														method: 'POST',
+														callback: function(){
+															grid.setLoading(false);
+														},
+														success: function(){
+															grid.getStore().reload();
+														}											
+													});														
+												} 
+											}
+										});	
+										
+									}																										
+								}
+							]
+						}
+					]
+				});
+				
+				var cacheGrid = Ext.create('Ext.grid.Panel', {
+					title: 'Cache',
+					columnLines: true,
+					store: {	
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/service/application/caches'
+						}
+					},
+					columns: [
+						{ text: 'Name', dataIndex: 'name', minWidth: 200, flex: 1 },
+						{ text: 'Hits', dataIndex: 'hitCount', width: 200 },
+						{ text: 'Misses', dataIndex: 'missCount', width: 200 },
+						{ text: 'Hit Ratio', dataIndex: 'hitRatio', width: 200,
+						   xtype: 'widgetcolumn',
+						   widget: {
+							xtype: 'progressbarwidget',
+							textTpl: '{value:percent}'
+						   }							
+						},						
+						{ text: 'Rough Count', dataIndex: 'roughCount', minWidth: 200 }
+					],
+					listeners: {
+						selectionchange: function (selectionModel, records, index, opts) {
+							var tools  = cacheGrid.getComponent('tools');
+							if (selectionModel.getCount() > 0 ) {
+								tools.getComponent('flushBtn').setDisabled(false);
+							} else {
+								tools.getComponent('flushBtn').setDisabled(true);
+							}
+						}
+					},
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							itemId: 'tools',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function(){
+										this.up('grid').getStore().reload();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Flush Cache',
+									itemId: 'flushBtn',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-close',
+									disabled: true,
+									handler: function(){
+										var grid = this.up('grid');
+										var record = this.up('grid').getSelectionModel().getSelection()[0];
+										
+										grid.setLoading('Flushing Cache...');
+										Ext.Ajax.request({
+											url: 'api/v1/service/application/caches/' + record.get('name') + '/flush',
+											method: 'PUT',
+											callback: function(){
+												grid.setLoading(false);
+											},
+											success: function(response){
+												Ext.toast("Cleared " + record.get('name') + " cache.");
+												grid.getStore().reload();												
+											}
+										});										
+									}									
+								}
+							]
+						}
+					]
+				});	
+				
 
 				var searchControlPanel = Ext.create('Ext.panel.Panel', {
 					title: 'Search Control',
@@ -1706,7 +1948,7 @@
 							tooltip: 'This will re-index the listings. The search results will be affected while running.',
 							handler: function () {
 								Ext.Ajax.request({
-									url: '/openstorefront/api/v1/service/search/resetSolr',
+									url: 'api/v1/service/search/resetSolr',
 									method: 'POST',
 									success: function(response, opt) {
 										Ext.toast('Successfully sent re-index request', '', 'tr');
@@ -1777,7 +2019,7 @@
 													data.emailAddress = Ext.getCmp('toEmail').value;
 													data.lastRunDts = Ext.Date.format(Ext.getCmp('sinceDate').value,'m/d/Y');
 													// For some reason this uses URL parameters
-													var url = '/openstorefront/api/v1/service/notification/recent-changes';
+													var url = 'api/v1/service/notification/recent-changes';
 													url += '?emailAddress=' + data.emailAddress;
 													url += '&lastRunDts=' + data.lastRunDts;
 													Ext.Ajax.request({
@@ -1807,14 +2049,14 @@
 
 				var actionLoadRecentChangesInfo = function actionLoadRecentChangesInfo() {
 					Ext.Ajax.request({
-						url: '/openstorefront/api/v1/service/notification/recent-changes/status',
+						url: 'api/v1/service/notification/recent-changes/status',
 						success: function(response, opt){
 							var data = Ext.decode(response.responseText);
 							var nextAutoText = '<ul class="list-group">';
-							nextAutoText += '<li class="list-group-item">Last Automated Email Sent: <span class="badge">',
+							nextAutoText += '<li class="stat-list-group-item">Last Automated Email Sent: <span class="stat-badge">',
 							nextAutoText += Ext.Date.format(Ext.Date.parse(data.lastSentDts,'c'), 'm/d/y H:i:s A ');
 							nextAutoText += '</span></li>';
-							nextAutoText += '<li class="list-group-item">Next Automated Email: <span class="badge">',
+							nextAutoText += '<li class="stat-list-group-item">Next Automated Email: <span class="stat-badge">',
 							nextAutoText += Ext.Date.format(Ext.Date.parse(data.nextSendDts,'c'), 'm/d/y H:i:s A ');
 							nextAutoText += '</span></li>';
 							Ext.getCmp('emailSendDates').setText(nextAutoText, false);
@@ -1835,15 +2077,14 @@
 						sysConfigPropGrid,
 						logPanel,
 						pluginGrid,
+						managersGrid,
+						cacheGrid,
 						searchControlPanel,
 						recentChangesPanel
 					]
 				});
 
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [systemMainPanel]
-				});
+				addComponentToMainViewPort(systemMainPanel);
 
 				var actionLoadSystemData = function (update) {
 
@@ -1853,7 +2094,7 @@
 					}
 
 					Ext.Ajax.request({
-						url: '/openstorefront/api/v1/service/application/status',
+						url: 'api/v1/service/application/status',
 						success: function(response, opt){
 							var data = Ext.decode(response.responseText);
 							Ext.getCmp('systemDetailStats').update(data);

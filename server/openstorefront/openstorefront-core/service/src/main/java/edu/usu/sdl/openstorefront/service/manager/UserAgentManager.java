@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import net.sf.ehcache.Element;
 import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
@@ -30,6 +31,7 @@ public class UserAgentManager
 {
 
 	private static UserAgentStringParser parser;
+	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static void init()
 	{
@@ -67,12 +69,20 @@ public class UserAgentManager
 	public void initialize()
 	{
 		UserAgentManager.init();
+		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
 		UserAgentManager.cleanup();
+		started.set(false);		
 	}
 
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
+	}	
+	
 }

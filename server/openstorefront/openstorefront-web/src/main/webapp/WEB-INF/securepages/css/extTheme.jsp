@@ -20,7 +20,7 @@ limitations under the License.
 body.x-border-layout-ct,
 div.x-border-layout-ct {
     background-color: #f5f5f5;
-    background: url('/openstorefront/client/images/squared_metal.png');	
+    background: url('${pageContext.request.contextPath}/images/squared_metal.png');	
 }
 
 .x-body {
@@ -30,7 +30,7 @@ div.x-border-layout-ct {
     line-height: 20px;
     font-family: helvetica, arial, verdana, sans-serif;
     background-color: #f5f5f5;
-    background: url('/openstorefront/client/images/squared_metal.png');
+    background: url('${pageContext.request.contextPath}/images/squared_metal.png');
 }
 
 .x-tip-default {
@@ -45,7 +45,7 @@ div.x-border-layout-ct {
     border-width: 1px;
     background-image: none;
     background-color: #f5f5f5;
-    background: url('/openstorefront/client/images/squared_metal.png');
+    background: url('${pageContext.request.contextPath}/images/squared_metal.png');
 }
 
 .x-window-header-default-top {
@@ -799,6 +799,14 @@ div.x-border-layout-ct {
 /*  Fix for multiselector widget  */
 .x-panel.x-layer {
 	position: fixed !important;
+}
+
+/* Add some space around icon and make darker for actioncolumn items */
+.x-action-col-icon {
+    height: 16px;
+    width: 16px;
+    margin-right: 6px;
+	color: #666;
 }
 
 /* IE 9 */

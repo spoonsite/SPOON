@@ -25,12 +25,6 @@ import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 public class HelpTest
 		extends BaseTestCase
 {
-
-	public HelpTest()
-	{
-		this.description = "Help Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -38,7 +32,12 @@ public class HelpTest
 		results.append("Got User Help Records: ").append(userHelp.getChildSections().size() + 1).append("<br>");
 
 		HelpSectionAll adminHelp = service.getSystemService().getAllHelp(true);
-		results.append("Got Admin Help Records: ").append(adminHelp.getChildSections().size() + 1).append("<br>");
+		results.append("Got Admin Help Records: ").append(adminHelp.getChildSections().size() + 1).append("<br><br>");
 	}
 
+	@Override
+	public String getDescription()
+	{
+		return "Help Test";
+	}
 }

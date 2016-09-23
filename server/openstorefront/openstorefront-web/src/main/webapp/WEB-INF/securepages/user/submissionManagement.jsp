@@ -20,16 +20,25 @@ limitations under the License.
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/usertoolslayout.jsp">
+<stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
+		
+		<stripes:layout-render name="../../../layout/userheader.jsp">		
+		</stripes:layout-render>			
 
-	<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/inlineMediaRetrieverWindow.js?v=${appVersion}" type="text/javascript"></script>
 		
         <script type="text/javascript">
 			/* global Ext, CoreUtil, CoreService */
 
 			Ext.onReady(function () {
+
+				var inlineMediaWindow = Ext.create('OSF.component.InlineMediaRetrieverWindow', {					
+					id: 'inlineMediaWindow',
+					alwaysOnTop: true
+				});	
 				
 				CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
 					var branding = Ext.decode(response.responseText);
@@ -205,7 +214,7 @@ limitations under the License.
 						],
 						proxy: {
 							type: 'ajax',
-							url: '../api/v1/resource/componentsubmissions'
+							url: 'api/v1/resource/componentsubmissions'
 						}
 					},
 					columns: [
@@ -231,7 +240,8 @@ limitations under the License.
 						},
 						{ text: 'Submit/Approve Date', align: 'center', dataIndex: 'submitApproveDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Approval Email', dataIndex: 'notifyOfApprovalEmail', width: 200 },
-						{ text: 'Pending Change', align: 'center', dataIndex: 'statusOfPendingChange', width: 150 }	
+						{ text: 'Pending Change', align: 'center', dataIndex: 'statusOfPendingChange', width: 150, sortable: false },
+						{ text: 'Pending Change Submit Date', align: 'center', dataIndex: 'pendingChangeSubmitDts', width: 250, xtype: 'datecolumn', format:'m/d/y H:i:s', hidden: true }
 					],
 					dockedItems: [
 						{
@@ -326,7 +336,7 @@ limitations under the License.
 
 													Ext.getCmp('submissionGrid').setLoading('Copying submission...');
 													Ext.Ajax.request({
-														url: '../api/v1/resource/componentsubmissions/' + componentId + '/copy',
+														url: 'api/v1/resource/componentsubmissions/' + componentId + '/copy',
 														method: 'POST',
 														callback: function(){
 															Ext.getCmp('submissionGrid').setLoading(false);
@@ -355,7 +365,7 @@ limitations under the License.
 														}
 														Ext.getCmp('submissionGrid').setLoading('Updating Notification...');
 														Ext.Ajax.request({
-															url: '../api/v1/resource/componentsubmissions/' + componentId + '/setNotifyMe',
+															url: 'api/v1/resource/componentsubmissions/' + componentId + '/setNotifyMe',
 															method: 'PUT',
 															rawData: newEmail,
 															callback: function(){
@@ -427,7 +437,7 @@ limitations under the License.
 												if (btn === 'yes') {
 													Ext.getCmp('submissionGrid').setLoading('Unsubmitting...');
 													Ext.Ajax.request({
-														url: '../api/v1/resource/componentsubmissions/' + componentId + '/unsubmit',
+														url: 'api/v1/resource/componentsubmissions/' + componentId + '/unsubmit',
 														method: 'PUT',
 														callback: function(){
 															Ext.getCmp('submissionGrid').setLoading(false);
@@ -459,7 +469,7 @@ limitations under the License.
 												if (btn === 'yes') {
 													Ext.getCmp('submissionGrid').setLoading('Removing...');
 													Ext.Ajax.request({
-														url: '../api/v1/resource/componentsubmissions/' + componentId + '/inactivate',
+														url: 'api/v1/resource/componentsubmissions/' + componentId + '/inactivate',
 														method: 'PUT',
 														callback: function(){
 															Ext.getCmp('submissionGrid').setLoading(false);
@@ -549,12 +559,7 @@ limitations under the License.
 					}
 				});				
 				
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						submissionGrid
-					]
-				});
+				addComponentToMainViewPort(submissionGrid);
 				
 				var actionRefreshSubmission = function(){
 					Ext.getCmp('submissionGrid').getStore().load();

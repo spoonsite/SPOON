@@ -31,11 +31,6 @@ public class JiraCreateTicket
 		extends BaseTestCase
 {
 
-	public JiraCreateTicket()
-	{
-		this.description = "Jira Create Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -65,6 +60,12 @@ public class JiraCreateTicket
 			}
 		}
 
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Jira Create Test";
 	}
 
 }

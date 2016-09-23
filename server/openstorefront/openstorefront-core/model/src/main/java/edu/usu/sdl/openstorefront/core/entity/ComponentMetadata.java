@@ -31,7 +31,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Metadata that is not linked to filters; Free keyed attributes")
 public class ComponentMetadata
-		extends BaseComponent
+		extends BaseComponent<ComponentMetadata>
 {
 
 	public static final String FIELD_LABEL = "label";

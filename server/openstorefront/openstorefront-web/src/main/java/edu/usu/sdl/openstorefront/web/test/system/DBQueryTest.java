@@ -28,14 +28,10 @@ public class DBQueryTest
 		extends BaseTestCase
 {
 
-	public DBQueryTest()
-	{
-		this.description = "Querying_Test";
-	}
-
 	@Override
-	protected void runInternalTest()
+	protected void initializeTest()
 	{
+		super.initializeTest();
 		Arrays.asList("A", "B").forEach(item -> {
 			TestEntity testEntity = new TestEntity();
 			testEntity.setCode(item);
@@ -58,7 +54,10 @@ public class DBQueryTest
 			service.getLookupService().saveLookupValue(testEntity);
 		});
 		results.append("Saved C, D").append("<br>");
-
+	}
+	@Override
+	protected void runInternalTest()
+	{
 		results.append("Active").append("<br>");
 		TestEntity testEntityExample = new TestEntity();
 		testEntityExample.setActiveStatus(TestEntity.ACTIVE_STATUS);
@@ -75,6 +74,19 @@ public class DBQueryTest
 			results.append("Pass").append("<br>");
 			success = true;
 		}
+
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "DB Querying Test";
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
 		results.append("Clean up records").append("<br>");
 		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
 	}

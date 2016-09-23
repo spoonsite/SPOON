@@ -227,6 +227,7 @@ public class SearchOperation
 
 		COMPONENT,
 		ATTRIBUTE,
+		ATTRIBUTESET,
 		ARCHITECTURE,
 		INDEX,
 		TAG,

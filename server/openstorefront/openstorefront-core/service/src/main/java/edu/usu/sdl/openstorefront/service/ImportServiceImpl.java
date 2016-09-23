@@ -26,6 +26,8 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
+import edu.usu.sdl.openstorefront.core.entity.FileAttributeMap;
+import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
@@ -35,13 +37,20 @@ import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
+import edu.usu.sdl.openstorefront.core.model.DataMapModel;
+import edu.usu.sdl.openstorefront.core.model.ExternalFormat;
 import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.sort.LookupComparator;
+import edu.usu.sdl.openstorefront.core.spi.parser.AbstractParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.FieldDefinition;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
+import edu.usu.sdl.openstorefront.core.spi.parser.reader.MappableReader;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
-import edu.usu.sdl.openstorefront.service.io.parser.AbstractParser;
+import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,6 +70,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -72,7 +82,9 @@ public class ImportServiceImpl
 		implements ImportService, ImportServicePrivate
 {
 
-	private static final Logger log = Logger.getLogger(ImportServiceImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(ImportServiceImpl.class.getName());
+	
+	private static final String FORMATS_KEY = "ADDITIONAL-FILEFORMATS";
 
 	@Override
 	public String importData(ImportContext importContext)
@@ -107,17 +119,21 @@ public class ImportServiceImpl
 	{
 		Objects.requireNonNull(formatCheck);
 
-		FileFormat fileFormat = getLookupService().getLookupEnity(FileFormat.class, formatCheck.getFileFormat());
+		ExternalFormat externalFormat = handleFindFileFormat(formatCheck.getFileFormat());		
+		
 		StringBuilder errors = new StringBuilder();
 		try (InputStream in = formatCheck.getInput()) {
-			Class parserClass = this.getClass().getClassLoader().loadClass("edu.usu.sdl.openstorefront.service.io.parser." + fileFormat.getParserClass());
+			Class parserClass = externalFormat.getParsingClass();
+			if (parserClass == null) {
+				parserClass = this.getClass().getClassLoader().loadClass(externalFormat.getFileFormat().getParserClass());
+			}
 			AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
 			String message = abstractParser.checkFormat(formatCheck.getMimeType(), in);
 			if (StringUtils.isNotBlank(message)) {
 				errors.append(message);
 			}
 		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			log.log(Level.SEVERE, "Unable to load parser class: " + fileFormat.getParserClass(), e);
+			LOG.log(Level.SEVERE, "Unable to load parser class: " + externalFormat.getFileFormat().getParserClass(), e);
 			errors.append("(System Error)File Format not supported.");
 		}
 		return StringUtils.isNotBlank(errors.toString()) ? errors.toString() : null;
@@ -137,9 +153,39 @@ public class ImportServiceImpl
 		fileHistory.setRecordsStored(0);
 		fileHistory.populateBaseUpdateFields();
 		persistenceService.persist(fileHistory);
-		log.log(Level.FINE, "Queued:  {0} to be reprocessed.", fileHistory.getOriginalFilename());
+		LOG.log(Level.FINE, "Queued:  {0} to be reprocessed.", fileHistory.getOriginalFilename());
 	}
 
+	private ExternalFormat handleFindFileFormat(String fileFormatCode) 
+	{
+		return handleFindFileFormat(fileFormatCode, true);
+	}	
+	
+	private ExternalFormat handleFindFileFormat(String fileFormatCode, boolean errorOnNotFound) 
+	{
+		ExternalFormat externalFormat = new ExternalFormat();
+		
+		FileFormat fileFormat = getLookupService().getLookupEnity(FileFormat.class, fileFormatCode);
+		
+		if (fileFormat == null) {
+			Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+			if (element != null) {
+				List<ExternalFormat> extraFileFormats = ((List<ExternalFormat>) element.getObjectValue());
+				for (ExternalFormat pluginFormat : extraFileFormats) {
+					if (fileFormatCode.equals(pluginFormat.getFileFormat().getCode())) {
+						externalFormat = pluginFormat;
+					}
+				}
+			}
+		} else {
+			externalFormat.setFileFormat(fileFormat);			
+		}		
+		if (errorOnNotFound && externalFormat.getFileFormat() == null) {
+			throw new OpenStorefrontRuntimeException("Unable to find format.  File Format: " + fileFormatCode, "Make sure format is loaded (Maybe a loaded from a plugin)");
+		}		
+		return externalFormat;
+	}
+	
 	@Override
 	public void processImport(String fileHistoryId)
 	{
@@ -155,10 +201,17 @@ public class ImportServiceImpl
 		fileHistory = persistenceService.persist(fileHistory);
 
 		//Get Parser for format
-		FileFormat fileFormat = getLookupService().getLookupEnity(FileFormat.class, fileHistory.getFileFormat());
+		ExternalFormat externalFormat = handleFindFileFormat(fileHistory.getFileFormat());
+		
+		if (fileHistory.getFileDataMapId() != null) {
+			fileHistoryAll.setDataMapModel(getDataMap(fileHistory.getFileDataMapId()));
+		}
 
 		try {
-			Class parserClass = this.getClass().getClassLoader().loadClass("edu.usu.sdl.openstorefront.service.io.parser." + fileFormat.getParserClass());
+			Class parserClass = externalFormat.getParsingClass();
+			if (parserClass == null) {
+				parserClass = this.getClass().getClassLoader().loadClass(externalFormat.getFileFormat().getParserClass());
+			}		
 			AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
 			abstractParser.processData(fileHistoryAll);
 
@@ -173,11 +226,10 @@ public class ImportServiceImpl
 			}
 
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			log.log(Level.SEVERE, "Unable to load parser class: " + fileFormat.getParserClass(), e);
-			fileHistoryAll.addError(FileHistoryErrorType.SYSTEM, "Unable to load parser class: " + fileFormat.getParserClass());
+			LOG.log(Level.SEVERE, "Unable to load parser class: " + externalFormat.getFileFormat().getParserClass(), e);
+			fileHistoryAll.addError(FileHistoryErrorType.SYSTEM, "Unable to load parser class: " + externalFormat.getFileFormat().getParserClass());
 		}
-
-		//processData
+		
 		fileHistory.setCompleteDts(TimeUtil.currentDate());
 		saveFileHistory(fileHistoryAll);
 	}
@@ -242,9 +294,20 @@ public class ImportServiceImpl
 			if (SecurityUtil.isLoggedIn()) {
 				removalUser = SecurityUtil.getCurrentUserName();
 			}
-			log.log(Level.FINE, MessageFormat.format("File History removed by user: {0} filename: {1} Orginal name: {2}", new Object[]{removalUser, filename, originalFilename}));
+			LOG.log(Level.FINE, MessageFormat.format("File History removed by user: {0} filename: {1} Orginal name: {2}", new Object[]{removalUser, filename, originalFilename}));
 		}
 	}
+	
+	@Override
+	public FileFormat findFileFormat(String fileFormatCode)
+	{
+		ExternalFormat externalFormat = handleFindFileFormat(fileFormatCode, false);
+		if (externalFormat != null) {
+			return externalFormat.getFileFormat();
+		} else {
+			return null;
+		}
+	}	
 
 	@Override
 	public List<FileFormat> findFileFormats(String fileType)
@@ -253,8 +316,56 @@ public class ImportServiceImpl
 		if (StringUtils.isNotBlank(fileType)) {
 			fileFormats = fileFormats.stream().filter(f -> f.getFileType().equals(fileType)).collect(Collectors.toList());
 		}
+		//also pull in fileformat and translate Class to path
+		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+		if (element != null) {
+			List<ExternalFormat> extraFileFormats = ((List<ExternalFormat>) element.getObjectValue());
+			for (ExternalFormat externalFormat : extraFileFormats) {
+				if (externalFormat.getFileFormat().getFileType().equals(fileType)) {
+					FileFormat translatedFileFormat = new FileFormat();
+					translatedFileFormat.setCode(externalFormat.getFileFormat().getCode());
+					translatedFileFormat.setDescription(externalFormat.getFileFormat().getDescription());
+					translatedFileFormat.setSupportsDataMap(externalFormat.getFileFormat().getSupportsDataMap());
+					translatedFileFormat.setFileType(externalFormat.getFileFormat().getFileType());
+					translatedFileFormat.setFileRequirements(externalFormat.getFileFormat().getFileRequirements());
+										
+					fileFormats.add(translatedFileFormat);
+				}
+			}
+		}
+		fileFormats.sort(new LookupComparator<>());
+		
 		return fileFormats;
 	}
+	
+	@Override
+	public List<FileFormat> getFileFormatsMapping()
+	{
+		List<FileFormat> fileFormats = getLookupService().findLookup(FileFormat.class);
+
+		//also pull in fileformat and translate Class to path
+		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+		if (element != null) {
+			List<ExternalFormat> extraFileFormats = ((List<ExternalFormat>) element.getObjectValue());
+			for (ExternalFormat externalFormat : extraFileFormats) {
+					FileFormat translatedFileFormat = new FileFormat();
+					translatedFileFormat.setCode(externalFormat.getFileFormat().getCode());
+					translatedFileFormat.setDescription(externalFormat.getFileFormat().getDescription());
+					translatedFileFormat.setSupportsDataMap(externalFormat.getFileFormat().getSupportsDataMap());
+					translatedFileFormat.setFileType(externalFormat.getFileFormat().getFileType());
+					translatedFileFormat.setFileRequirements(externalFormat.getFileFormat().getFileRequirements());
+										
+					fileFormats.add(translatedFileFormat);
+			}
+		}
+		fileFormats = fileFormats.stream()
+				.filter(FileFormat::getSupportsDataMap)
+				.collect(Collectors.toList());
+		
+		fileFormats.sort(new LookupComparator<>());
+		
+		return fileFormats;		
+	}	
 
 	@Override
 	public void cleanupOldFileHistory()
@@ -283,7 +394,7 @@ public class ImportServiceImpl
 		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryId);
 		if (fileHistory != null) {
 
-			log.log(Level.INFO, MessageFormat.format("(Undo) Rolling back of import: {0}", TimeUtil.dateToString(fileHistory.getUpdateDts())));
+			LOG.log(Level.INFO, MessageFormat.format("(Undo) Rolling back of import: {0}", TimeUtil.dateToString(fileHistory.getUpdateDts())));
 
 			//find records with batch id  (For now only components )
 			Component componentExample = new Component();
@@ -324,14 +435,14 @@ public class ImportServiceImpl
 						getComponentService().cascadeDeleteOfComponent(component.getComponentId());
 					}
 				} else {
-					log.log(Level.WARNING, MessageFormat.format("(Undo) Unable to undo import for component. No snapshot exists for component:   {0} FileHistory DTS: {1}", new Object[]{component.getName(), fileHistory.getCreateDts()}));
+					LOG.log(Level.WARNING, MessageFormat.format("(Undo) Unable to undo import for component. No snapshot exists for component:   {0} FileHistory DTS: {1}", new Object[]{component.getName(), fileHistory.getCreateDts()}));
 				}
 
 			}
 
 			removeFileHistory(fileHistoryId);
 		} else {
-			log.log(Level.WARNING, "File history doesn't exist unable to rollback.");
+			LOG.log(Level.WARNING, "File history doesn't exist unable to rollback.");
 		}
 
 	}
@@ -361,6 +472,219 @@ public class ImportServiceImpl
 		}
 
 		return errorMap;
+	}
+
+	@Override
+	public FileDataMap saveFileDataMap(DataMapModel dataMapModel)
+	{
+		Objects.requireNonNull(dataMapModel.getFileDataMap());
+		
+		FileDataMap existingFileDataMap = persistenceService.findById(FileDataMap.class, dataMapModel.getFileDataMap().getFileDataMapId());
+		if (existingFileDataMap != null) {
+			existingFileDataMap.updateFields(dataMapModel.getFileDataMap());
+			existingFileDataMap = persistenceService.persist(existingFileDataMap);			
+		} else {
+			dataMapModel.getFileDataMap().setFileDataMapId(persistenceService.generateId());			
+			dataMapModel.getFileDataMap().populateBaseCreateFields();
+			existingFileDataMap = persistenceService.persist(dataMapModel.getFileDataMap());	
+		}
+		
+		if (dataMapModel.getFileAttributeMap() != null) {						
+			//only allow one 
+			String fieldMapId = dataMapModel.getFileDataMap().getFileDataMapId();
+			FileAttributeMap deleteFileAttributeMap = new FileAttributeMap();
+			deleteFileAttributeMap.setFileDataMapId(fieldMapId);
+			persistenceService.deleteByExample(deleteFileAttributeMap);
+			
+			
+			dataMapModel.getFileAttributeMap().setFileAttributeMapId(persistenceService.generateId());
+			dataMapModel.getFileAttributeMap().setFileDataMapId(fieldMapId);
+			dataMapModel.getFileAttributeMap().populateBaseCreateFields();
+			persistenceService.persist(dataMapModel.getFileAttributeMap());
+		}
+		
+		return existingFileDataMap;
+	}
+	
+	
+	@Override
+	public void removeFileDataMap(String fileDataMapId)
+	{
+		FileDataMap fileDataMap = persistenceService.findById(FileDataMap.class, fileDataMapId);
+		if (fileDataMap != null) {
+			
+			//delete Attribute Maps if the exist
+			FileAttributeMap fileAttributeMap = new FileAttributeMap();
+			fileAttributeMap.setFileDataMapId(fileDataMapId);
+			List<FileAttributeMap> attributeMaps = fileAttributeMap.findByExampleProxy();
+			for (FileAttributeMap attributeMap : attributeMaps) {
+				persistenceService.delete(attributeMap);					
+			}
+			
+			persistenceService.delete(fileDataMap);			
+		}		
+	}
+
+	@Override
+	public DataMapModel getDataMap(String fileDataMapId)
+	{
+		DataMapModel dataMapModel = null;
+		FileDataMap fileDataMap = new FileDataMap();
+		fileDataMap.setFileDataMapId(fileDataMapId);
+		fileDataMap = fileDataMap.find();				
+		if (fileDataMap != null) {
+			dataMapModel = new DataMapModel();
+			dataMapModel.setFileDataMap(fileDataMap);
+						
+			FileAttributeMap fileAttributeMap = new FileAttributeMap();
+			fileAttributeMap.setFileDataMapId(fileDataMapId);
+			FileAttributeMap attributeMap = fileAttributeMap.find();
+			dataMapModel.setFileAttributeMap(attributeMap);
+			
+		}
+		return dataMapModel;
+	}
+
+	@Override
+	public void registerFormat(FileFormat newFormat, Class parserClass)
+	{
+		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+		if (element == null) {
+			List<ExternalFormat> fileFormats = new ArrayList<>();			
+			element = new Element(FORMATS_KEY, fileFormats);
+			OSFCacheManager.getApplicationCache().put(element);
+		}		
+		ExternalFormat externalFormat = new ExternalFormat();
+		externalFormat.setFileFormat(newFormat);
+		externalFormat.setParsingClass(parserClass);		
+		((List<ExternalFormat>) element.getObjectValue()).add(externalFormat);		
+		
+		LOG.log(Level.FINE, MessageFormat.format("Registered new file format: {0}", newFormat.getDescription()));		
+	}
+
+	@Override
+	public void unregisterFormat(String fullClassPath)
+	{
+		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+		if (element != null) {
+			List<ExternalFormat> fileFormats = ((List<ExternalFormat>) element.getObjectValue());
+			for (int i=fileFormats.size()-1; i >= 0; i--) {
+				FileFormat fileFormat = fileFormats.get(i).getFileFormat();
+				if (fileFormat.getParserClass().equals(fullClassPath)) {
+					 fileFormats.remove(i);
+					 LOG.log(Level.FINE, MessageFormat.format("Deregistered new file format: {0}", fileFormat.getDescription()));
+				}
+			}
+				
+			element = new Element(FORMATS_KEY, fileFormats);
+			OSFCacheManager.getApplicationCache().put(element);
+		} else {
+			LOG.log(Level.WARNING, "Unable to find and internal format list. No format to unregister.");
+		}
+	}
+
+	@Override
+	public List<FieldDefinition> getMapField(String fileFormatCode, InputStream in)
+	{
+		List<FieldDefinition> fieldDefinitions = new ArrayList<>();
+		
+		ExternalFormat externalFormat = handleFindFileFormat(fileFormatCode);		
+		if (externalFormat.getFileFormat().getSupportsDataMap()) {
+			try (InputStream processIn = in) {
+				Class parserClass = externalFormat.getParsingClass();
+				if (parserClass == null) {
+					parserClass = this.getClass().getClassLoader().loadClass(externalFormat.getFileFormat().getParserClass());
+				}
+				AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
+				MappableReader reader = abstractParser.getMappableReader(processIn);
+				MapModel mapModel = reader.findFields(in);
+				fieldDefinitions = mapModel.getUniqueFields();
+			} catch (IOException ioe) {
+				throw new OpenStorefrontRuntimeException("Unable to process file.  Data format not supported.", ioe);
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				LOG.log(Level.SEVERE, "Unable to load parser: " + externalFormat.getFileFormat().getParserClass(), e);
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Format doesn't support data mapping.", "Check Format: " + fileFormatCode);
+		}
+		
+		return fieldDefinitions;
+	}
+
+	@Override
+	public void updateImportProgress(FileHistoryAll fileHistoryAll)
+	{
+		Objects.requireNonNull(fileHistoryAll);
+		Objects.requireNonNull(fileHistoryAll.getFileHistory());
+		
+		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryAll.getFileHistory().getFileHistoryId());
+		if (fileHistory != null) {
+			fileHistory.updateFields(fileHistoryAll.getFileHistory());
+			persistenceService.persist(fileHistory);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find file history record to update.", "System error");
+		}		
+	}
+
+	@Override
+	public String previewMapData(String fileFormatCode, String fileDataMapId, InputStream in, String filename)
+	{
+		String output;
+		
+		ExternalFormat externalFormat = handleFindFileFormat(fileFormatCode);		
+		if (externalFormat.getFileFormat().getSupportsDataMap()) {
+			try (InputStream processIn = in) {
+				Class parserClass = externalFormat.getParsingClass();
+				if (parserClass == null) {
+					parserClass = this.getClass().getClassLoader().loadClass(externalFormat.getFileFormat().getParserClass());
+				}
+				
+				FileHistoryAll fileHistoryAll = new FileHistoryAll();
+				fileHistoryAll.setDataMapModel(getDataMap(fileDataMapId));
+				FileHistory history = new FileHistory();
+				history.populateBaseCreateFields();
+				history.setOriginalFilename(filename);
+				fileHistoryAll.setFileHistory(history);
+				
+				AbstractParser abstractParser = (AbstractParser) parserClass.newInstance();
+				output = abstractParser.previewProcessedData(fileHistoryAll, processIn);
+				
+			} catch (IOException ioe) {
+				output = "Unable to process file.  Data format not supported. <br> <b>Trace: </b><br> " + StringProcessor.parseStackTraceHtml(ioe);				
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				output = "Unable to load parser: " 
+						+ externalFormat.getFileFormat().getParserClass() 
+						+ "<br> <b>Trace: </b><br>"+ StringProcessor.parseStackTraceHtml(e);
+			}
+		} else {
+			output = "Format doesn't support data mapping  Check Format: " + fileFormatCode;
+		}
+		
+		return output;
+	}
+
+	@Override
+	public FileDataMap copyDataMap(String fileDataMapId)
+	{
+		FileDataMap fileDataMap = null;
+		
+		DataMapModel dataMapModel = getDataMap(fileDataMapId);
+		if (dataMapModel != null) {
+			
+			//Deattached copy
+			FileDataMap copy = new FileDataMap();
+			copy.setFileDataMapId(fileDataMapId);
+			
+			dataMapModel.setFileDataMap(copy.find());			
+			dataMapModel.getFileDataMap().setFileDataMapId(null);
+			dataMapModel.getFileDataMap().setName(dataMapModel.getFileDataMap().getName() + " - Copy");
+			if (dataMapModel.getFileAttributeMap() != null) {
+				dataMapModel.getFileAttributeMap().setFileAttributeMapId(null);
+				dataMapModel.getFileAttributeMap().setFileDataMapId(null);				
+			}
+			fileDataMap = saveFileDataMap(dataMapModel);
+		} 		
+		return fileDataMap;
 	}
 
 }

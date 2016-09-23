@@ -30,11 +30,6 @@ public class DBUpdateTest
 		extends BaseTestCase
 {
 
-	public DBUpdateTest()
-	{
-		this.setDescription("Update_Test");
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -64,6 +59,20 @@ public class DBUpdateTest
 			results.append(StringProcessor.printObject(test)).append("<br><br>");
 		});
 
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "DB Update Test";
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
+		results.append("Clean up records").append("<br>");
+		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
 	}
 
 }

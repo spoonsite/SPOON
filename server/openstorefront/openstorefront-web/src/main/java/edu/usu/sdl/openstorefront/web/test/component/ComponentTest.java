@@ -15,17 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.web.test.component;
 
-import edu.usu.sdl.openstorefront.common.util.TimeUtil;
-import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
-import edu.usu.sdl.openstorefront.core.entity.AttributeType;
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
-import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
-import java.util.List;
 
 /**
  *
@@ -34,58 +25,32 @@ import java.util.List;
 public class ComponentTest
 		extends BaseTestCase
 {
-
-	public ComponentTest()
+	@Override
+	protected void initializeTest()
 	{
-		this.description = "Component Test";
+		super.initializeTest();
 	}
 
 	@Override
 	protected void runInternalTest()
 	{
-		results.append("Create component").append("<br>");
-		ComponentAll testComponentAll = ComponentTest.createTestComponent();
-
-		results.append("Delete component").append("<br>");
-		deleteComponent(testComponentAll.getComponent().getComponentId());
+		ComponentAll testComponentAll = getTestComponent();
+		results.append("Created:  ")
+				.append(testComponentAll.getComponent().getName())
+				.append("<br><br>");
 	}
 
-	public static ComponentAll createTestComponent()
+	@Override
+	protected void cleanupTest()
 	{
-		ComponentAll componentAll = new ComponentAll();
-		ServiceProxy serviceProxy = new ServiceProxy();
-
-		Component component = new Component();
-		component.setName("Test Component");
-		component.setDescription("Test Description");
-		component.setOrganization("Test");
-		component.setApprovalState(ApprovalStatus.PENDING);
-		component.setGuid("5555555");
-		component.setLastActivityDts(TimeUtil.currentDate());
-		component.setActiveStatus(Component.ACTIVE_STATUS);
-		componentAll.setComponent(component);
-
-		List<AttributeType> attributeTypes = serviceProxy.getAttributeService().getRequiredAttributes();
-		for (AttributeType type : attributeTypes) {
-			ComponentAttribute componentAttribute = new ComponentAttribute();
-			componentAttribute.setCreateUser(TEST_USER);
-			componentAttribute.setUpdateUser(TEST_USER);
-			componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-			componentAttributePk.setAttributeType(type.getAttributeType());
-			List<AttributeCode> attributeCodes = serviceProxy.getAttributeService().findCodesForType(type.getAttributeType());
-			componentAttributePk.setAttributeCode(attributeCodes.get(0).getAttributeCodePk().getAttributeCode());
-			componentAttribute.setComponentAttributePk(componentAttributePk);
-			componentAll.getAttributes().add(componentAttribute);
-		}
-
-		componentAll = serviceProxy.getComponentService().saveFullComponent(componentAll);
-		return componentAll;
+		super.cleanupTest(); 
+		
 	}
 
-	public static void deleteComponent(String componentId)
+	@Override
+	public String getDescription()
 	{
-		ServiceProxy serviceProxy = new ServiceProxy();
-		serviceProxy.getComponentService().cascadeDeleteOfComponent(componentId);
+		return "Component Test";
 	}
+
 }

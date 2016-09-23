@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.core.CoreSystem;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
@@ -33,6 +35,7 @@ import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.HelpSection;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
+import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.core.model.HelpSectionAll;
@@ -41,6 +44,7 @@ import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
+import edu.usu.sdl.openstorefront.service.manager.PluginManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -48,12 +52,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,8 +86,8 @@ public class SystemServiceImpl
 		implements SystemService
 {
 
-	private static final Logger log = Logger.getLogger(SystemServiceImpl.class.getName());
-	private static final Logger errorLog = Logger.getLogger(OpenStorefrontConstant.ERROR_LOGGER);
+	private static final Logger LOG = Logger.getLogger(SystemServiceImpl.class.getName());
+	private static final Logger ERRORLOG = Logger.getLogger(OpenStorefrontConstant.ERROR_LOGGER);
 
 	private static final int MAX_DB_CLEAN_AMOUNT = 1000;
 	private static final int MIN_DB_CLEAN_AMOUNT = 1000;
@@ -128,15 +140,15 @@ public class SystemServiceImpl
 	}
 
 	@Override
-	public void saveHightlight(List<Highlight> highlights)
+	public void saveHighlight(List<Highlight> highlights)
 	{
 		for (Highlight hightlight : highlights) {
-			saveHightlight(hightlight);
+			saveHighlight(hightlight);
 		}
 	}
 
 	@Override
-	public void saveHightlight(Highlight highlight)
+	public void saveHighlight(Highlight highlight)
 	{
 		Highlight existing = null;
 		if (StringUtils.isNotBlank(highlight.getHighlightId())) {
@@ -189,7 +201,7 @@ public class SystemServiceImpl
 	public void syncHighlights(List<Highlight> highlights)
 	{
 		int removeCount = persistenceService.deleteByExample(new Highlight());
-		log.log(Level.FINE, MessageFormat.format("Old Highlights removed: {0}", removeCount));
+		LOG.log(Level.FINE, MessageFormat.format("Old Highlights removed: {0}", removeCount));
 
 		for (Highlight highlight : highlights) {
 			try {
@@ -199,11 +211,11 @@ public class SystemServiceImpl
 				if (validationResult.valid()) {
 					highlight.setCreateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
 					highlight.setUpdateUser(OpenStorefrontConstant.SYSTEM_ADMIN_USER);
-					getSystemService().saveHightlight(highlight);
+					getSystemService().saveHighlight(highlight);
 				}
 
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Unable to save highlight.  Title: " + highlight.getTitle(), e);
+				LOG.log(Level.SEVERE, "Unable to save highlight.  Title: " + highlight.getTitle(), e);
 			}
 		}
 	}
@@ -213,7 +225,7 @@ public class SystemServiceImpl
 	{
 		Objects.requireNonNull(errorInfo);
 
-		errorLog.log(Level.SEVERE, "System Error Occured", errorInfo.getError());
+		ERRORLOG.log(Level.SEVERE, "System Error Occured", errorInfo.getError());
 
 		SystemErrorModel systemErrorModel = new SystemErrorModel();
 		systemErrorModel.setMessage(errorInfo.getError().getMessage());
@@ -272,7 +284,7 @@ public class SystemServiceImpl
 		} catch (Throwable t) {
 			//NOTE: this is a critial path.  if an error is thrown and not catch it would result in a info link or potential loop.
 			//So that's why there is a catch all here.
-			log.log(Level.SEVERE, "Error was thrown while processing the error", t);
+			LOG.log(Level.SEVERE, "Error was thrown while processing the error", t);
 		}
 		return systemErrorModel;
 	}
@@ -290,22 +302,22 @@ public class SystemServiceImpl
 			} catch (IOException io) {
 				//We don't want to throw an error here if there something going on with the system.
 				ticketData = "Unable to retrieve ticket information.  (Check log for more details) Message: " + io.getMessage();
-				log.log(Level.WARNING, ticketData, io);
+				LOG.log(Level.WARNING, ticketData, io);
 			}
 		}
 		return ticketData;
 	}
-	
+
 	@Override
 	public void deleteErrorTickets(List<String> ticketIds)
 	{
 		List<ErrorTicket> errorTickets = new ArrayList<>();
 		for (String id : ticketIds) {
-			ErrorTicket errorTicket = persistenceService.findById(ErrorTicket.class, id);			
+			ErrorTicket errorTicket = persistenceService.findById(ErrorTicket.class, id);
 			errorTickets.add(errorTicket);
 		}
 		performDelete(errorTickets);
-	}	
+	}
 
 	@Override
 	public void cleanupOldErrors()
@@ -322,8 +334,9 @@ public class SystemServiceImpl
 			performDelete(errorTickets);
 		}
 	}
-	
-	private void performDelete(List<ErrorTicket> errorTickets) {
+
+	private void performDelete(List<ErrorTicket> errorTickets)
+	{
 		errorTickets.stream().forEach((errorTicket) -> {
 			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			if (path.toFile().exists()) {
@@ -393,6 +406,111 @@ public class SystemServiceImpl
 	}
 
 	@Override
+	public void saveTemporaryMedia(TemporaryMedia temporaryMedia, InputStream fileInput)
+	{
+		Objects.requireNonNull(temporaryMedia);
+		Objects.requireNonNull(fileInput);
+		Objects.requireNonNull(temporaryMedia.getName(), "Name must be set.");
+
+		temporaryMedia.setFileName(temporaryMedia.getFileName());
+		try (InputStream in = fileInput) {
+			Files.copy(in, temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
+			temporaryMedia.populateBaseCreateFields();
+			persistenceService.persist(temporaryMedia);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		}
+	}
+
+	@Override
+	public void removeTemporaryMedia(String temporaryMediaId)
+	{
+		TemporaryMedia temporaryMedia = persistenceService.findById(TemporaryMedia.class, temporaryMediaId);
+		if (temporaryMedia != null) {
+			Path path = temporaryMedia.pathToMedia();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					path.toFile().delete();
+				}
+			}
+			persistenceService.delete(temporaryMedia);
+		}
+	}
+
+	@Override
+	public TemporaryMedia retrieveTemporaryMedia(String urlStr)
+	{
+		String hash;
+		try {
+			hash = StringProcessor.getHexFromBytes(MessageDigest.getInstance("SHA-1").digest(urlStr.getBytes()));
+		} catch (NoSuchAlgorithmException ex) {
+			throw new OpenStorefrontRuntimeException("Hash Format not available", "Coding issue");
+		}
+		TemporaryMedia existingMedia = persistenceService.findById(TemporaryMedia.class, hash);
+		if (existingMedia != null) {
+			existingMedia.setUpdateDts(TimeUtil.currentDate());
+			return existingMedia;
+		}
+
+		try {
+			URL url = new URL(urlStr);
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+			if (urlConnection.getResponseCode() == 404) {
+				return null;
+			}
+			if (!urlConnection.getContentType().contains("image")) {
+				LOG.log(Level.INFO, MessageFormat.format("Not an image:  {0}", (urlConnection.getContentType())));
+				return null;
+			}
+
+			TemporaryMedia temporaryMedia = new TemporaryMedia();
+			String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
+			String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
+			temporaryMedia.setOriginalFileName(originalFileName);
+			temporaryMedia.setFileName(hash);
+			temporaryMedia.setName(hash);
+			temporaryMedia.setOriginalSourceURL(urlStr);
+			temporaryMedia.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
+			temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+			temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+			temporaryMedia.setMimeType(urlConnection.getContentType());
+
+			InputStream input = urlConnection.getInputStream();
+			saveTemporaryMedia(temporaryMedia, input);
+			return temporaryMedia;
+
+		} catch (MalformedURLException ex) {
+			return null;
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to download temporary media", "Connection failed to download temporary media.", ex);
+		}
+
+	}
+
+	@Override
+	public void cleanUpOldTemporaryMedia()
+	{
+
+		String query = "SELECT FROM " + TemporaryMedia.class.getSimpleName();
+		List<TemporaryMedia> allTemporaryMedia = persistenceService.query(query, null);
+		int maxDays = Convert.toInteger(PropertiesManager.getValueDefinedDefault(PropertiesManager.TEMPORARY_MEDIA_KEEP_DAYS));
+
+		for (TemporaryMedia media : allTemporaryMedia) {
+			LocalDate today = LocalDate.now();
+			LocalDate update = media.getUpdateDts().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			long distance = Math.abs(ChronoUnit.DAYS.between(today, update));
+			LOG.log(Level.FINEST, MessageFormat.format("{0} is {1} days old", media.getOriginalFileName(), distance));
+
+			if (distance > maxDays) {
+				removeTemporaryMedia(media.getName());
+				LOG.log(Level.FINE, MessageFormat.format("Removing old temporary media: {0}", media.getOriginalFileName()));
+			}
+		}
+
+	}
+
+	@Override
 	public void saveAsyncTask(TaskFuture taskFuture)
 	{
 		AsyncTask existingTask = persistenceService.findById(AsyncTask.class, taskFuture.getTaskId());
@@ -441,9 +559,9 @@ public class SystemServiceImpl
 		long max = DBLogManager.getMaxLogEntries();
 
 		if (count > max) {
-			log.log(Level.INFO, MessageFormat.format("Cleaning old log records:  {0}", (count - max)));
+			LOG.log(Level.INFO, MessageFormat.format("Cleaning old log records:  {0}", (count - max)));
 
-			long limit = count - max - MIN_DB_CLEAN_AMOUNT;
+			long limit = count - max + MIN_DB_CLEAN_AMOUNT;
 			if (limit > MAX_DB_CLEAN_AMOUNT) {
 				limit = MAX_DB_CLEAN_AMOUNT;
 			}
@@ -462,7 +580,7 @@ public class SystemServiceImpl
 	public void clearAllLogRecord()
 	{
 		int recordsRemoved = persistenceService.deleteByQuery(DBLogRecord.class, "", new HashMap<>());
-		log.log(Level.WARNING, MessageFormat.format("DB log records were cleared.  Records cleared: {0}", recordsRemoved));
+		LOG.log(Level.WARNING, MessageFormat.format("DB log records were cleared.  Records cleared: {0}", recordsRemoved));
 	}
 
 	@Override
@@ -471,9 +589,9 @@ public class SystemServiceImpl
 		Objects.requireNonNull(helpSections, "Help sections required");
 
 		int recordsRemoved = persistenceService.deleteByQuery(HelpSection.class, "", new HashMap<>());
-		log.log(Level.FINE, MessageFormat.format("Help records were cleared.  Records cleared: {0}", recordsRemoved));
+		LOG.log(Level.FINE, MessageFormat.format("Help records were cleared.  Records cleared: {0}", recordsRemoved));
 
-		log.log(Level.FINE, MessageFormat.format("Saving new Help records: {0}", helpSections.size()));
+		LOG.log(Level.FINE, MessageFormat.format("Saving new Help records: {0}", helpSections.size()));
 		for (HelpSection helpSection : helpSections) {
 			helpSection.setId(persistenceService.generateId());
 			persistenceService.persist(helpSection);
@@ -545,7 +663,7 @@ public class SystemServiceImpl
 		for (HelpSectionAll helpSection : helpSectionAll.getChildSections()) {
 			if (helpSection.getHelpSection().getTitle() == null) {
 				helpSection.getHelpSection().setTitle("");
-				log.log(Level.FINE, "This is a stub help section.  Check help data to make sure that is desired.  *=admin sections; make sure child sections are appropriately starred.");
+				LOG.log(Level.FINE, "This is a stub help section.  Check help data to make sure that is desired.  *=admin sections; make sure child sections are appropriately starred.");
 			}
 
 			String titleSplit[] = helpSection.getHelpSection().getTitle().split(" ");
@@ -592,6 +710,32 @@ public class SystemServiceImpl
 		//restart
 		DBLogManager.cleanup();
 		DBLogManager.init();
+	}
+
+	@Override
+	public boolean isSystemReady()
+	{
+		return CoreSystem.isStarted();
+	}
+
+	@Override
+	public boolean isLoadingPluginsReady()
+	{
+		return PluginManager.isLoadingPlugins();
+	}
+
+	@Override
+	public String toJson(Object obj)
+	{
+		String output = null;
+		if (obj != null) {
+			try {
+				output = StringProcessor.defaultObjectMapper().writeValueAsString(obj);
+			} catch (JsonProcessingException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to serialize obj to JSON.", ex);
+			}
+		}
+		return output;
 	}
 
 }

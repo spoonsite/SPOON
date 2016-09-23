@@ -42,19 +42,23 @@ import edu.usu.sdl.openstorefront.core.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeTypeViewComparator;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
+import edu.usu.sdl.openstorefront.core.view.AttributeDetail;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.RelationshipView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,6 +82,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 /**
  *
@@ -149,6 +154,74 @@ public class AttributeResource
 		return attributeTypeViews;
 	}
 
+	@GET
+	@APIDescription("Get attribute relationships")
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(RelationshipView.class)
+	@Path("/relationships")
+	public Response getAttributeRelationships(
+		@QueryParam("attributeType") String filterAttributeType 
+	) 
+	{
+		List<RelationshipView> relationships = new ArrayList<>();
+				
+		AttributeType attributeTypeExample = new AttributeType();
+		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
+		attributeTypeExample.setAttributeType(filterAttributeType);
+						
+		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
+		for (AttributeType attributeType : attributeTypes) {
+			if (attributeType.getArchitectureFlg()) {
+				Architecture architecture = service.getAttributeService().generateArchitecture(attributeType.getAttributeType());
+				buildRelations(relationships, architecture, null);
+			} else {
+				List<AttributeCode> attributeCodes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
+				for (AttributeCode attributeCode : attributeCodes) {
+					RelationshipView relationship = new RelationshipView();
+					relationship.setKey(attributeCode.getAttributeCodePk().toKey());
+					relationship.setName(attributeCode.getLabel());
+					relationship.setEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+					relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
+					relationship.setRelationshipLabel(attributeType.getDescription());
+					relationship.setTargetKey(attributeType.getAttributeType());
+					relationship.setTargetName(attributeType.getDescription());
+					relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+										
+					relationships.add(relationship);
+				}				
+			}
+		}		
+		
+		GenericEntity<List<RelationshipView>> entity = new GenericEntity<List<RelationshipView>>(relationships)
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
+	public void buildRelations(List<RelationshipView> relationships, Architecture architecture,  Architecture parent) 
+	{
+		if (parent != null) {
+			RelationshipView relationship = new RelationshipView();
+			String key = architecture.getAttributeType() + "-" + architecture.getAttributeCode();
+			String keyParent = parent.getAttributeType() + "-" + parent.getAttributeCode();
+			
+			relationship.setKey(key);
+			relationship.setName(architecture.getName());
+			relationship.setEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+			relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
+			relationship.setTargetKey(keyParent);
+			relationship.setTargetName(parent.getName());
+			relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+
+			relationships.add(relationship);			
+		}
+		
+		for (Architecture child : architecture.getChildren()) {
+			buildRelations(relationships, child, architecture);
+		}		
+		
+	}	
+	
 	@POST
 	@APIDescription("Exports attributes in JSON format. To import attributes, POST to /Upload.action?UploadAttributes with the file (Requires Admin)")
 	@RequireAdmin
@@ -283,6 +356,28 @@ public class AttributeResource
 			return Response.ok(attributeCode).build();
 		}
 	}
+	
+	@GET
+	@APIDescription("Gets attribute code details")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeDetail.class)
+	@Path("/attributetypes/{type}/{code}/detail")
+	public Response getAttributeCodeViewById(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+		AttributeCodePk pk = new AttributeCodePk();
+		pk.setAttributeCode(code);
+		pk.setAttributeType(type);
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, pk);
+		if (attributeCode == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} else {
+			return Response.ok(AttributeDetail.toView(attributeCode)).build();
+		}
+	}	
 
 	@GET
 	@APIDescription("Gets attribute code base on filter. Always sorted by sort Order or label")
@@ -755,6 +850,61 @@ public class AttributeResource
 			});
 			service.getAsyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeCode(attributeCodePk);
 		}
+	}
+
+	@GET
+	@APIDescription("Download the file attachment for an attribute code")
+	@Path("/attributetypes/{type}/attributecodes/{code}/attachment")
+	public Response downloadAttributeCodeAttachment(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeType(type);
+		attributeCodePk.setAttributeCode(code);
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+
+		if (attributeCode != null && !attributeCode.getAttachmentOriginalFileName().equals("")) {
+
+			java.nio.file.Path path = attributeCode.pathToAttachment();
+
+			if (path.toFile().exists()) {
+				Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
+					Files.copy(path, output);
+				});
+				response.header("Content-Type", attributeCode.getAttachmentMimeType());
+				response.header("Content-Disposition", "attachment; filename=\"" + attributeCode.getAttachmentOriginalFileName() + "\"");
+				return response.build();
+			}
+
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+
+	}
+
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Delete the file attachment for an attribute code")
+	@Path("/attributetypes/{type}/attributecodes/{code}/attachment")
+	public void deleteAttributeCodeAttachment(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeType(type);
+		attributeCodePk.setAttributeCode(code);
+		AttributeCode attributeCode = service.getPersistenceService().findById(AttributeCode.class, attributeCodePk);
+
+		if (attributeCode != null) {
+			service.getAttributeService().removeAttributeCodeAttachment(attributeCode);
+		}
+
 	}
 
 	@POST

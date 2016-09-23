@@ -77,8 +77,7 @@ public class UserReport
 				"# Active Questions",
 				"# Active Question Responses",
 				"# Tags",
-				"# Component Views",
-				"# Article Views"
+				"# Entry Views"
 		);
 
 		//write Body

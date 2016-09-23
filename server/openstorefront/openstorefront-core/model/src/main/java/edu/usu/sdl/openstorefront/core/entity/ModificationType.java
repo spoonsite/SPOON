@@ -27,7 +27,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Define the type of modification")
 public class ModificationType
-		extends LookupEntity
+		extends LookupEntity<ModificationType>
 {
 
 	public static final String IMPORT = "IMPORT";

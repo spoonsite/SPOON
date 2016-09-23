@@ -33,6 +33,7 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
@@ -58,8 +59,10 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
+import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
+import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
@@ -108,6 +111,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -128,6 +132,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.java.truevfs.access.TFile;
 import net.java.truevfs.access.TFileInputStream;
@@ -138,6 +143,9 @@ import net.java.truevfs.kernel.spec.FsSyncException;
 import net.sf.ehcache.Element;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 /**
  * Handles the basic
@@ -147,6 +155,8 @@ import org.apache.commons.lang3.StringUtils;
 public class CoreComponentServiceImpl
 		extends BaseComponentServiceImpl
 {
+
+	private static final Logger LOG = Logger.getLogger(CoreComponentServiceImpl.class.getName());
 
 	private static final String COPY_MARKER = "- COPY";
 
@@ -462,6 +472,7 @@ public class CoreComponentServiceImpl
 		EntityUtil.setDefaultsOnFields(component.getComponent());
 
 		ValidationResult validationResult = new ValidationResult();
+		Component attachedComponent = null;
 		if (Convert.toBoolean(options.getSkipRequiredAttributes()) == false) {
 			validationResult = component.checkForComplete();
 		}
@@ -495,7 +506,7 @@ public class CoreComponentServiceImpl
 						component.getComponent().setRecordVersion(version);
 					}
 
-					persistenceService.persist(oldComponent);
+					attachedComponent = persistenceService.persist(oldComponent);
 					component.setComponentChanged(true);
 				}
 
@@ -525,7 +536,7 @@ public class CoreComponentServiceImpl
 					approved = true;
 				}
 
-				persistenceService.persist(component.getComponent());
+				attachedComponent = persistenceService.persist(component.getComponent());
 				component.setComponentChanged(true);
 
 				component.getAttributes().forEach(attribute
@@ -539,6 +550,89 @@ public class CoreComponentServiceImpl
 				component.setAttributeChanged(true);
 			}
 			componentService.getOrganizationService().addOrganization(component.getComponent().getOrganization());
+
+			// Convert inline-referenced temporary media to entry-specific media
+			String description = component.getComponent().getDescription();
+			Document descriptionDoc = Jsoup.parse(description);
+
+			Elements media = descriptionDoc.select("[src]");
+
+			// Map <temporaryId, componentMediaId>
+			Map<String, String> processedConversions = new HashMap<>();
+			for (org.jsoup.nodes.Element mediaItem : media) {
+				String url = mediaItem.attr("src");
+				if (url.contains("Media.action?TemporaryMedia")) {
+					// This src url contains temporary media -- we should convert it.
+					String tempMediaId = url.substring(url.indexOf("&name=") + "&name=".length());
+					TemporaryMedia existingTemporaryMedia = persistenceService.findById(TemporaryMedia.class, tempMediaId);
+					if (existingTemporaryMedia != null) {
+						// Check map if we've already processed this temporary media, otherwise, do conversion
+						ComponentMedia componentMedia;
+						if (processedConversions.containsKey(tempMediaId)) {
+							componentMedia = persistenceService.findById(ComponentMedia.class, processedConversions.get(tempMediaId));
+						} else {
+							componentMedia = new ComponentMedia();
+							componentMedia.setActiveStatus(Component.ACTIVE_STATUS);
+							componentMedia.setComponentId(component.getComponent().getComponentId());
+							componentMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+							componentMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+							componentMedia.setOriginalName(existingTemporaryMedia.getOriginalFileName());
+							componentMedia.setMimeType(existingTemporaryMedia.getMimeType());
+							componentMedia.setUsedInline(true);
+							componentMedia.setHideInDisplay(false);
+
+							// Set Media Type Code based on the mimetype stored in temporary (as retrieved from server)
+							String mediaTypeCode;
+							String mimeType = existingTemporaryMedia.getMimeType();
+							if (mimeType.contains("image")) {
+								mediaTypeCode = "IMG";
+							} else if (mimeType.contains("video")) {
+								mediaTypeCode = "VID";
+							} else if (mimeType.contains("audio")) {
+								mediaTypeCode = "AUD";
+							} else {
+								mediaTypeCode = "OTH";
+							}
+
+							componentMedia.setMediaTypeCode(mediaTypeCode);
+
+							try {
+								Path path = existingTemporaryMedia.pathToMedia();
+								InputStream in = new FileInputStream(path.toFile());
+								componentMedia.setComponentMediaId(persistenceService.generateId());
+								componentMedia.populateBaseCreateFields();
+								componentMedia.setFileName(componentMedia.getComponentMediaId());
+								Files.copy(in, componentMedia.pathToMedia());
+								persistenceService.persist(componentMedia);
+								persistenceService.commit();
+								processedConversions.put(tempMediaId, componentMedia.getComponentMediaId());
+							} catch (Exception ex) {
+								throw new OpenStorefrontRuntimeException("Failed to convert temporary media to component media", ex);
+							}
+						}
+						// Replace converted url
+						String replaceUrl = "LoadMedia&mediaId=".concat(componentMedia.getComponentMediaId());
+						String newUrl = url.substring(0, url.indexOf("TemporaryMedia")).concat(replaceUrl);
+						LOG.log(Level.FINE, MessageFormat.format("TemporaryMedia Conversion: Replacing {0} with {1}", url, newUrl));
+						mediaItem.attr("src", newUrl);
+					} else {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to find existing temporary media for temporaryID: {0}", tempMediaId));
+					}
+				}
+			}
+			// Save new html to description
+			if (attachedComponent != null) {
+				String newDescription = descriptionDoc.toString();
+				attachedComponent.setDescription(newDescription);
+				component.getComponent().setDescription(newDescription);
+
+				// Delete temporary media that was converted.
+				for (String temporaryId : processedConversions.keySet()) {
+					componentService.getSystemService().removeTemporaryMedia(temporaryId);
+				}
+
+				persistenceService.persist(attachedComponent);
+			}
 
 			if (approved) {
 				sendApprovalNotification(component.getComponent());
@@ -653,23 +747,66 @@ public class CoreComponentServiceImpl
 		if (Convert.toBoolean(options.getUploadTags())) {
 			lockSwitch.setSwitched(handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId()));
 		}
+
 		if (Convert.toBoolean(options.getUploadQuestions())) {
+			List<ComponentQuestion> questions = new ArrayList<>();
+
+			// We will use a HashMap and the uniqueKey() method to keep track of which responses belong to which
+			// question for setting each responses questionIds below. The uniqueKey() method has limitations in
+			// uniqueness, see the implementation for more info.
+			Map<String, QuestionAll> questionAllMap = new HashMap<>();
 			for (QuestionAll question : componentAll.getQuestions()) {
-				List<ComponentQuestion> questions = new ArrayList<>(1);
 				questions.add(question.getQuestion());
-				lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId()));
-				lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestionResponse.class, question.getResponds(), component.getComponentId()));
+				questionAllMap.put(question.getQuestion().uniqueKey(), question);
 			}
+			// We now send the questions to be saved.
+			lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId()));
+
+			// After this point, we are assuming that the 'questions' list that we sent in to be saved
+			// still refers to the same questions.  However, after saving, they should all have proper questionIds.
+			// Since we know the questionIds, we can now go through the responses to set the questionId on them.
+			// We loop through and use the previously-created map to grab the respective responses.
+			List<ComponentQuestionResponse> responses = new ArrayList<>();
+			for (ComponentQuestion question : questions) {
+				QuestionAll questionAll = questionAllMap.get(question.uniqueKey());
+				List<ComponentQuestionResponse> theseResponses = questionAll.getResponds();
+				for (ComponentQuestionResponse response : theseResponses) {
+					response.setQuestionId(question.getQuestionId());
+					response.setComponentId(component.getComponentId());
+					responses.add(response);
+				}
+			}
+			lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestionResponse.class, responses, component.getComponentId()));
+
 		}
 
 		if (Convert.toBoolean(options.getUploadReviews())) {
+			List<ComponentReview> reviews = new ArrayList<>();
+			List<ComponentReviewCon> componentCons = new ArrayList<>();
+			List<ComponentReviewPro> componentPros = new ArrayList<>();
+			Map<String, ReviewAll> reviewAllMap = new HashMap<>();
 			for (ReviewAll reviewAll : componentAll.getReviews()) {
-				List<ComponentReview> reviews = new ArrayList<>(1);
 				reviews.add(reviewAll.getComponentReview());
-				lockSwitch.setSwitched(handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId()));
-				lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewPro.class, reviewAll.getPros(), component.getComponentId()));
-				lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewCon.class, reviewAll.getCons(), component.getComponentId()));
+				reviewAllMap.put(reviewAll.getComponentReview().uniqueKey(), reviewAll);
+				componentCons.addAll(reviewAll.getCons());
+				componentPros.addAll(reviewAll.getPros());
 			}
+			lockSwitch.setSwitched(handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId()));
+			for (ComponentReview review : reviews) {
+				ReviewAll reviewAll = reviewAllMap.get(review.uniqueKey());
+				List<ComponentReviewPro> pros = reviewAll.getPros();
+				List<ComponentReviewCon> cons = reviewAll.getCons();
+				for (ComponentReviewPro pro : pros) {
+					pro.getComponentReviewProPk().setComponentReviewId(review.getComponentReviewId());
+					pro.setComponentId(component.getComponentId());
+				}
+				for (ComponentReviewCon con : cons) {
+					con.getComponentReviewConPk().setComponentReviewId(review.getComponentReviewId());
+					con.setComponentId(component.getComponentId());
+				}
+			}
+			lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewPro.class, componentPros, component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewCon.class, componentCons, component.getComponentId()));
 		}
 
 		if (Convert.toBoolean(options.getUploadIntegration())) {
@@ -827,7 +964,7 @@ public class CoreComponentServiceImpl
 	public void cascadeDeleteOfComponent(String componentId, ComponentDeleteOptions option)
 	{
 		Objects.requireNonNull(componentId, "Component Id is required.");
-		log.log(Level.INFO, MessageFormat.format("Attempting to Removing component: {0}", componentId));
+		LOG.log(Level.INFO, MessageFormat.format("Attempting to Removing component: {0}", componentId));
 
 		Collection<Class<?>> entityClasses = DBManager.getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
@@ -1120,7 +1257,7 @@ public class CoreComponentServiceImpl
 			try {
 				BeanUtils.setProperty(componentTrackingOrderExample, sortField.getName(), QueryByExample.getFlagForType(sortField.getType()));
 			} catch (IllegalAccessException | InvocationTargetException ex) {
-				log.log(Level.WARNING, "Unable to set sort field.", ex);
+				LOG.log(Level.WARNING, "Unable to set sort field.", ex);
 			}
 			queryByExample.setOrderBy(componentTrackingOrderExample);
 		}
@@ -1233,11 +1370,11 @@ public class CoreComponentServiceImpl
 				componentAdminView.getComponent().setNumberOfPendingChanges(pendingChangesList.size());
 				if (pendingChangesList.size() > 0) {
 					Component changeComponent = pendingChangesList.get(0);
-					componentAdminView.getComponent().setPendingChangeComponentId(changeComponent.getComponentId());	
+					componentAdminView.getComponent().setPendingChangeComponentId(changeComponent.getComponentId());
 					componentAdminView.getComponent().setPendingChangeSubmitDts(changeComponent.getSubmittedDts());
 					componentAdminView.getComponent().setPendingChangeSubmitUser(changeComponent.getCreateUser());
-					componentAdminView.getComponent().setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, changeComponent.getApprovalState()));				
-				}				
+					componentAdminView.getComponent().setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, changeComponent.getApprovalState()));
+				}
 			}
 		}
 
@@ -1358,10 +1495,10 @@ public class CoreComponentServiceImpl
 								componentService.getUserService().checkComponentWatches(component);
 								componentsToIndex.add(component);
 							} else {
-								log.log(Level.FINE, MessageFormat.format("Component not found to update last Activity. Component may have been removed.  Check component id: {0}", componentId));
+								LOG.log(Level.FINE, MessageFormat.format("Component not found to update last Activity. Component may have been removed.  Check component id: {0}", componentId));
 							}
 						} catch (Exception e) {
-							log.log(Level.SEVERE, "Fail to update component.  Check data on component id: " + componentId, e);
+							LOG.log(Level.SEVERE, "Fail to update component.  Check data on component id: " + componentId, e);
 						}
 					}
 					componentService.getSearchService().indexComponents(componentsToIndex);
@@ -1408,7 +1545,7 @@ public class CoreComponentServiceImpl
 			alertContext.setAlertType(alertType);
 			alertContext.setDataTrigger(existingComponent);
 			componentService.getAlertService().checkAlert(alertContext);
-			
+
 		}
 	}
 
@@ -1459,7 +1596,7 @@ public class CoreComponentServiceImpl
 
 	public Component copy(String orignalComponentId)
 	{
-		cleanupCache(orignalComponentId);		
+		cleanupCache(orignalComponentId);
 		ComponentAll componentAll = getFullComponent(orignalComponentId);
 		if (componentAll != null) {
 			componentAll.getComponent().setComponentId(null);
@@ -1467,7 +1604,7 @@ public class CoreComponentServiceImpl
 			componentAll.getComponent().setApprovalState(ApprovalStatus.PENDING);
 			componentAll.getComponent().setApprovedDts(null);
 			componentAll.getComponent().setApprovedUser(null);
-			componentAll.getComponent().setExternalId(null);			
+			componentAll.getComponent().setExternalId(null);
 
 			clearBaseComponentKey(componentAll.getAttributes());
 			clearBaseComponentKey(componentAll.getContacts());
@@ -1503,12 +1640,12 @@ public class CoreComponentServiceImpl
 					resource.clearKeys();
 				}
 			}
-			
+
 			FileHistoryOption fileHistoryOption = new FileHistoryOption();
 			fileHistoryOption.setSkipDuplicationCheck(true);
 			fileHistoryOption.setSkipRequiredAttributes(true);
-						
-			componentAll = saveFullComponent(componentAll, fileHistoryOption);			
+
+			componentAll = saveFullComponent(componentAll, fileHistoryOption);
 
 			//copy over local resources
 			for (ComponentMedia media : localMedia) {
@@ -1653,7 +1790,7 @@ public class CoreComponentServiceImpl
 		ComponentVersionHistory versionHistory = persistenceService.findById(ComponentVersionHistory.class, versionHistoryId);
 		if (versionHistory != null) {
 
-			ComponentAll archivedVersion = null;			
+			ComponentAll archivedVersion = null;
 			TFile archive = new TFile(versionHistory.pathToFile().toFile());
 			TFile files[] = archive.listFiles();
 			if (files != null) {
@@ -1673,7 +1810,7 @@ public class CoreComponentServiceImpl
 				}
 			} else {
 				String componentName = getComponentName(versionHistory.getComponentId());
-				log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
+				LOG.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
 			}
 		}
 
@@ -1703,8 +1840,8 @@ public class CoreComponentServiceImpl
 				}
 			} else {
 				String componentName = getComponentName(versionHistory.getComponentId());
-				log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
-			}		
+				LOG.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
+			}
 
 			if (archivedVersion != null) {
 
@@ -1748,7 +1885,7 @@ public class CoreComponentServiceImpl
 										source.toFile().cp_rp(destination);
 
 									} catch (IOException ex) {
-										log.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+										LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
 									}
 								}
 							}
@@ -1765,7 +1902,7 @@ public class CoreComponentServiceImpl
 										source.toFile().cp_rp(destination);
 
 									} catch (IOException ex) {
-										log.log(Level.WARNING, MessageFormat.format("Failed to copy resource to path file: {0}", resourceFile.getName()), ex);
+										LOG.log(Level.WARNING, MessageFormat.format("Failed to copy resource to path file: {0}", resourceFile.getName()), ex);
 									}
 								}
 							}
@@ -1773,9 +1910,9 @@ public class CoreComponentServiceImpl
 					}
 				} else {
 					String componentName = getComponentName(versionHistory.getComponentId());
-					log.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
+					LOG.log(Level.WARNING, MessageFormat.format("There is no files in the snapshot for component: {0} version: {1} ", componentName, versionHistory.getVersionHistoryId()));
 				}
-				
+
 				//save old version (keep in mind the update date will reflect now.)
 				FileHistoryOption fileHistoryOptions = new FileHistoryOption();
 				fileHistoryOptions.setSkipRequiredAttributes(Boolean.TRUE);
@@ -1804,7 +1941,7 @@ public class CoreComponentServiceImpl
 			if (path != null) {
 				if (path.toFile().exists()) {
 					if (path.toFile().delete() == false) {
-						log.log(Level.WARNING, "Unable to delete component version: {0}", path.toString());
+						LOG.log(Level.WARNING, "Unable to delete component version: {0}", path.toString());
 					}
 				}
 			}
@@ -1915,13 +2052,13 @@ public class CoreComponentServiceImpl
 	private <T extends BaseComponent> void mergeSubEntities(List<T> entities, List<T> targetEntities)
 	{
 		//If there is bad data remove it from initial target
-		for (int i=targetEntities.size()-1; i >=0; i--) {
+		for (int i = targetEntities.size() - 1; i >= 0; i--) {
 			if (StringUtils.isBlank(targetEntities.get(i).uniqueKey())) {
 				T badRecord = targetEntities.remove(i);
-				log.log(Level.WARNING, MessageFormat.format("Bad record (found during merge...it was removed): {0}", StringProcessor.printObject(badRecord)));				
+				LOG.log(Level.WARNING, MessageFormat.format("Bad record (found during merge...it was removed): {0}", StringProcessor.printObject(badRecord)));
 			}
-		}		
-		
+		}
+
 		Map<String, List<T>> keyMap = targetEntities.stream().collect(Collectors.groupingBy(T::uniqueKey));
 		for (T entity : entities) {
 			boolean add = false;
@@ -1990,14 +2127,82 @@ public class CoreComponentServiceImpl
 		return componentType;
 	}
 
-	public void removeComponentType(String componentType)
+	public void removeComponentType(String componentType, String newComponentType)
 	{
 		ComponentType componentTypeFound = persistenceService.findById(ComponentType.class, componentType);
 		if (componentTypeFound != null) {
-			componentTypeFound.setActiveStatus(ComponentType.INACTIVE_STATUS);
-			componentTypeFound.populateBaseUpdateFields();
-			persistenceService.persist(componentTypeFound);
 
+			boolean inactivate = true;
+			if (StringUtils.isNotBlank(newComponentType)) {
+				ComponentType newType = persistenceService.findById(ComponentType.class, newComponentType);
+
+				if (newType != null) {
+					//migrate data
+					Component setComponent = new Component();
+					setComponent.setComponentType(newComponentType);
+
+					Component whereComponent = new Component();
+					whereComponent.setComponentType(componentType);
+
+					persistenceService.updateByExample(Component.class, setComponent, whereComponent);
+
+					FileDataMap setfileDataMap = new FileDataMap();
+					setfileDataMap.setDefaultComponentType(newComponentType);
+
+					FileDataMap wherefileDataMap = new FileDataMap();
+					wherefileDataMap.setDefaultComponentType(componentType);
+					persistenceService.updateByExample(FileDataMap.class, setfileDataMap, wherefileDataMap);
+
+					//remove restrictions
+					AttributeType attributeTypeExample = new AttributeType();
+					List<AttributeType> allAttributes = attributeTypeExample.findByExample();
+					List<AttributeType> updateAttributes = new ArrayList<>();
+					for (AttributeType attributeType : allAttributes) {
+
+						boolean addToUpdate = false;
+						if (attributeType.getRequiredRestrictions() != null) {
+							for (int i = attributeType.getRequiredRestrictions().size() - 1; i >= 0; i--) {
+								String checkType = attributeType.getRequiredRestrictions().get(i).getComponentType();
+								if (checkType.equals(componentType)) {
+									attributeType.getRequiredRestrictions().remove(i);
+									addToUpdate = true;
+								}
+							}
+						}
+
+						if (attributeType.getAssociatedComponentTypes() != null) {
+							for (int i = attributeType.getAssociatedComponentTypes().size() - 1; i >= 0; i--) {
+								String checkType = attributeType.getAssociatedComponentTypes().get(i).getComponentType();
+								if (checkType.equals(componentType)) {
+									attributeType.getAssociatedComponentTypes().remove(i);
+									addToUpdate = true;
+								}
+							}
+						}
+
+						if (addToUpdate) {
+							updateAttributes.add(attributeType);
+						}
+
+						for (AttributeType attributeTypeUpdated : updateAttributes) {
+							componentService.getAttributeService().saveAttributeType(attributeTypeUpdated, false);
+						}
+					}
+
+					//remove
+					inactivate = false;
+					persistenceService.delete(componentTypeFound);
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to find new component type: {0}  to migrate data to.  Inactivating component type: {1}", new Object[]{newComponentType, componentType}));
+				}
+			}
+
+			if (inactivate) {
+				componentTypeFound.setActiveStatus(ComponentType.INACTIVE_STATUS);
+				componentTypeFound.populateBaseUpdateFields();
+				persistenceService.persist(componentTypeFound);
+			}
+			OSFCacheManager.getComponentCache().removeAll();
 			OSFCacheManager.getComponentTypeCache().removeAll();
 		}
 	}
@@ -2009,7 +2214,7 @@ public class CoreComponentServiceImpl
 			existing.updateFields(componentTypeTemplate);
 			componentTypeTemplate = persistenceService.persist(existing);
 		} else {
-			componentTypeTemplate.setTemplateId(persistenceService.generateId());			
+			componentTypeTemplate.setTemplateId(persistenceService.generateId());
 			componentTypeTemplate.populateBaseCreateFields();
 			componentTypeTemplate = persistenceService.persist(componentTypeTemplate);
 		}
@@ -2025,22 +2230,22 @@ public class CoreComponentServiceImpl
 			persistenceService.persist(template);
 		}
 	}
-	
+
 	public void deleteComponentTypeTemplate(String templateId)
 	{
 		ComponentTypeTemplate template = persistenceService.findById(ComponentTypeTemplate.class, templateId);
 		if (template != null) {
 			ComponentType componentType = new ComponentType();
 			componentType.setComponentTypeTemplate(templateId);
-			
+
 			List<ComponentType> types = componentType.findByExample();
 			if (types.isEmpty()) {
 				persistenceService.delete(template);
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to delete; Entry types are point to the template.", "Remove the template from entry types (both active and inactive) and try again.");
 			}
-		}		
-	}	
+		}
+	}
 
 	public Component approveComponent(String componentId)
 	{
@@ -2101,7 +2306,7 @@ public class CoreComponentServiceImpl
 
 			Component mainComponent = persistenceService.findById(Component.class, pendingChangeComponent.getPendingChangeId());
 			if (mainComponent != null) {
-				log.log(Level.FINEST, "Updating Core Information");
+				LOG.log(Level.FINEST, "Updating Core Information");
 				mainComponent.setName(pendingChangeComponent.getName());
 				mainComponent.setDescription(pendingChangeComponent.getDescription());
 				mainComponent.setComponentType(pendingChangeComponent.getComponentType());
@@ -2117,19 +2322,19 @@ public class CoreComponentServiceImpl
 				fileHistoryOption.setSkipRequiredAttributes(Boolean.TRUE);
 				doSaveComponent(requiredForComponent, fileHistoryOption);
 
-				log.log(Level.FINEST, "Merge Component");
+				LOG.log(Level.FINEST, "Merge Component");
 				fileHistoryOption = new FileHistoryOption();
 				fileHistoryOption.setUploadTags(Boolean.TRUE);
 				fileHistoryOption.setSkipRequiredAttributes(Boolean.TRUE);
 				mergedComponent = merge(componentIdOfPendingChange, mainComponent.getComponentId(), fileHistoryOption);
 
-				log.log(Level.FINEST, "Send notification of approval (if requested)");
+				LOG.log(Level.FINEST, "Send notification of approval (if requested)");
 				//Temp change just to carry of the notification request
 				mergedComponent.setNotifyOfApprovalEmail(pendingChangeComponent.getNotifyOfApprovalEmail());
 				sendChangeRequestNotification(mergedComponent);
 
 			} else {
-				log.log(Level.WARNING, "Parent component doesn't exist unable to merge pending change. (Removing pending change)");
+				LOG.log(Level.WARNING, "Parent component doesn't exist unable to merge pending change. (Removing pending change)");
 				cascadeDeleteOfComponent(componentIdOfPendingChange);
 			}
 		} else {
@@ -2146,7 +2351,7 @@ public class CoreComponentServiceImpl
 			existing.updateFields(templateBlock);
 			persistenceService.persist(existing);
 		} else {
-			templateBlock.setTemplateBlockId(persistenceService.generateId());			
+			templateBlock.setTemplateBlockId(persistenceService.generateId());
 			templateBlock.populateBaseCreateFields();
 			persistenceService.persist(templateBlock);
 		}
@@ -2157,7 +2362,7 @@ public class CoreComponentServiceImpl
 		TemplateBlock existing = persistenceService.findById(TemplateBlock.class, templateBlockId);
 		if (existing != null) {
 			persistenceService.delete(existing);
-		}		
+		}
 	}
-	
+
 }

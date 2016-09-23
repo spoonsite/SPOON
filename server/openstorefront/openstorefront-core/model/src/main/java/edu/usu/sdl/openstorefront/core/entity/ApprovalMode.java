@@ -28,7 +28,7 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Component Approval Mode")
 public class ApprovalMode
-		extends LookupEntity
+		extends LookupEntity<ApprovalMode>
 {
 
 	public static final String AUTO = "A";

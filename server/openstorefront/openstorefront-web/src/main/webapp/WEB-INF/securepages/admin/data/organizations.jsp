@@ -1,7 +1,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
 	<stripes:layout-component name="contents">
+		
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>		
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
@@ -23,7 +26,7 @@
 						],
 						proxy: CoreUtil.pagingProxy({
 							type: 'ajax',
-							url: '../api/v1/resource/organizations/',
+							url: 'api/v1/resource/organizations/',
 							reader: {
 								type: 'json',
 								rootProperty: 'data',
@@ -154,12 +157,7 @@
 					}
 				});
 				
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						orgGrid
-					]
-				});
+				addComponentToMainViewPort(orgGrid);
 		
 				var selectedObj=null;
 				
@@ -212,7 +210,9 @@
 				    Ext.getCmp('targetId').setValue(selectedObj.organizationId);
 					Ext.getCmp('targetOrganization').setValue(selectedObj.name);
 				 
-					Ext.getCmp('mergeId').setStore(Ext.getCmp('orgGrid').getStore());
+					Ext.getCmp('mergeId').getStore().load({
+						url: 'api/v1/resource/organizations'						
+					});
 					
 		            mergeWin.show();
 					
@@ -228,7 +228,7 @@
 				var deleteRecord = function(){
 					selectedObj = Ext.getCmp('orgGrid').getSelection()[0].data;
 					Ext.Ajax.request({
-						url: '../api/v1/resource/organizations/'+encodeURIComponent(selectedObj.organizationId)+'/references',
+						url: 'api/v1/resource/organizations/'+encodeURIComponent(selectedObj.organizationId)+'/references',
 						method: 'GET',
 						success: function (response, opts) {
 							
@@ -249,7 +249,7 @@
 										if (btn === 'yes') {
 											Ext.getCmp('orgGrid').setLoading(true);
 											Ext.Ajax.request({
-												url: '../api/v1/resource/organizations/'+encodeURIComponent(selectedObj.organizationId),
+												url: 'api/v1/resource/organizations/'+encodeURIComponent(selectedObj.organizationId),
 												method: 'DELETE',
 												success: function (response, opts) {
 													Ext.getCmp('orgGrid').setLoading(false);
@@ -281,7 +281,7 @@
 				var runExtraction = function(){
 				    Ext.toast('Performing organization meta-data extraction ...');
 					Ext.Ajax.request({
-						url: '../api/v1/resource/organizations/extract',
+						url: 'api/v1/resource/organizations/extract',
 						method: 'POST',
 						success: function (response, opts) {
 							Ext.toast('Organization meta-data extraction complete');
@@ -356,7 +356,7 @@
 								],
 								proxy: CoreUtil.pagingProxy({
 									type: 'ajax',
-									url: '../api/v1/resource/organizations/references',
+									url: 'api/v1/resource/organizations/references',
 									reader: {
 										type: 'json',
 										rootProperty: 'data',
@@ -399,7 +399,7 @@
 					scrollable:true,
 					listeners:{
 						show: function () {
-							var refurl = '../api/v1/resource/organizations/'+encodeURIComponent(selectedObj.organizationId)+ '/references';
+							var refurl = 'api/v1/resource/organizations/'+encodeURIComponent(selectedObj.organizationId)+ '/references';
 							//console.log("url",refurl);
 							var store = Ext.data.StoreManager.lookup('refGridStore');
 							store.setProxy({
@@ -497,8 +497,28 @@
 											maxLength: 50,
 											displayField: 'name',
 											valueField: 'organizationId',
-											editable: false,
-											allowBlank: false
+											editable: true,
+											typeAhead: true,
+											forceSelection: true,
+											allowBlank: false,
+											store: {
+												autoLoad: false,
+												sorters: [
+													new Ext.util.Sorter({
+														property: 'name',
+														direction: 'ASC'
+													})
+												],												
+												proxy: {
+													type: 'ajax',
+													url: 'api/v1/resource/organizations',
+													reader: {
+														type: 'json',
+														rootProperty: 'data',
+														totalProperty: 'totalNumber'
+													}													
+												}
+											}
 										},
 										{
 											xtype: 'textfield',
@@ -518,8 +538,8 @@
 								dock: 'bottom',
 								items: [
 									{
-										text: 'Save',
-										iconCls: 'fa fa-save',
+										text: 'Apply',
+										iconCls: 'fa fa-check',
 										formBind: true,
 										handler: function(){
 											var data = Ext.getCmp('mergeForm').getValues();
@@ -532,7 +552,7 @@
 												return;
 											}
 
-											var url = '../api/v1/resource/organizations/'+data.targetId+'/merge/'+data.mergeId;     
+											var url = 'api/v1/resource/organizations/'+data.targetId+'/merge/'+data.mergeId;     
 											Ext.getCmp('mergeForm').setLoading(true);
 
 											CoreUtil.submitForm({
@@ -581,7 +601,7 @@
 						})
 					],
 					proxy: CoreUtil.pagingProxy({
-						url: '../api/v1/resource/lookuptypes/OrganizationType',
+						url: 'api/v1/resource/lookuptypes/OrganizationType',
 						reader: {
 							type: 'json',							
 						}
@@ -737,7 +757,7 @@
 												
 												var method = Ext.getCmp('entryForm').edit ? 'PUT' : 'POST'; 												
 												var data = Ext.getCmp('entryForm').getValues();
-												var url = Ext.getCmp('entryForm').edit ? '../api/v1/resource/organizations/' + selectedObj.data.organizationId : '../api/v1/resource/organizations';       
+												var url = Ext.getCmp('entryForm').edit ? 'api/v1/resource/organizations/' + selectedObj.data.organizationId : 'api/v1/resource/organizations';       
                                                 //console.log("Made It ",selectedObj);
 												CoreUtil.submitForm({
 													url: url,

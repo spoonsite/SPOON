@@ -68,6 +68,7 @@ public class ComponentSubmissionMessageGenerator
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
 		specialOperatorModel.setExample(componentStartExample);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+		System.out.println("Query component dts: " + componentStartExample.getUpdateDts());
 
 		//submitted
 		List<Component> components = serviceProxy.getPersistenceService().queryByExample(Component.class, queryByExample);

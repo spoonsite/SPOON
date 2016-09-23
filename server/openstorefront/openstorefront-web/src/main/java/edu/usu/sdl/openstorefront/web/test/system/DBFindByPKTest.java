@@ -28,11 +28,6 @@ public class DBFindByPKTest
 		extends BaseTestCase
 {
 
-	public DBFindByPKTest()
-	{
-		this.description = "Checking_PK";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -40,14 +35,30 @@ public class DBFindByPKTest
 		componentEvaluationSectionPk.setEvaluationSection("TEST");
 		componentEvaluationSectionPk.setComponentId("883045");
 
+		results.append("883045#TEST").append("<br><br>");
+
 		ComponentEvaluationSection section = service.getPersistenceService().findById(ComponentEvaluationSection.class, componentEvaluationSectionPk);
 
 		ComponentEvaluationSection sectionExample = new ComponentEvaluationSection();
 		sectionExample.setComponentEvaluationSectionPk(componentEvaluationSectionPk);
+
+		if ("883045#TEST".equals(sectionExample.getComponentEvaluationSectionPk().toString())) {
+			results.append("Keys match<br><br>");
+		} else {
+			failureReason.append("Keys do not match<br><br>");
+		}
+
+		results.append(sectionExample.getComponentEvaluationSectionPk()).append("<br>");
+
 		service.getPersistenceService().queryByExample(ComponentEvaluationSection.class, new QueryByExample(sectionExample));
 
 		results.append("Pass").append("<br>");
 		success = true;
 	}
 
+	@Override
+	public String getDescription()
+	{
+		return "DB Check PK";
+	}
 }

@@ -1,7 +1,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
 	<stripes:layout-component name="contents">
+		
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+		</stripes:layout-render>		
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
@@ -28,7 +31,7 @@
 						],
 						proxy: CoreUtil.pagingProxy({
 							type: 'ajax',
-							url: '../api/v1/resource/generalmedia',
+							url: 'api/v1/resource/generalmedia',
 							reader: {
 								type: 'json',
 								rootProperty: 'data',
@@ -126,12 +129,7 @@
 					}
 				});
 				
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						mediaGrid
-					]
-				});
+				addComponentToMainViewPort(mediaGrid);									
 		
 				var selectedObj=null;
 				
@@ -167,7 +165,7 @@
 				var downloadRecord = function() {
 					selectedObj = Ext.getCmp('mediaGrid').getSelection()[0].data;
 					//download media 
-					window.location.href = '../' + selectedObj.mediaLink;
+					window.location.href = '' + selectedObj.mediaLink;
 				};
 				
 				var viewRecord = function() {
@@ -180,12 +178,12 @@
 						var type = selectedObj.mimeType;
 					    if (type.match('video.*')) {
 							viewMediaWin.setTitle('Video Preview');
-					        viewMediaWin.update('<video autoplay="autoplay" controls="controls" src="../'+ selectedObj.mediaLink+'" style="width: 100%;max-width:100%;" ></video>');
+					        viewMediaWin.update('<video autoplay="autoplay" controls="controls" src="'+ selectedObj.mediaLink+'" style="width: 100%;max-width:100%;" ></video>');
 						}
 						else if(type.match('audio.*')){
 							viewMediaWin.setTitle('Audio Preview');
 							viewMediaWin.setScrollable(false);
-							viewMediaWin.update('<audio autoplay="autoplay" width="100%" controls="controls" src="../'+ selectedObj.mediaLink+'"/>');
+							viewMediaWin.update('<audio autoplay="autoplay" width="100%" controls="controls" src="'+ selectedObj.mediaLink+'"/>');
 				
 						}
 						else if(type.match('image.*')) {
@@ -195,7 +193,7 @@
 								type.match('.*gif.*') || 
 								type.match('.*svg.*') ) {
 								viewMediaWin.setTitle('Image Preview');
-								viewMediaWin.update('<img src="../'+ selectedObj.mediaLink+'" width="100%"/>');
+								viewMediaWin.update('<img src="'+ selectedObj.mediaLink+'" width="100%"/>');
 							}
 							else {
 								Ext.Msg.show({
@@ -301,7 +299,7 @@
 							if (btn === 'yes') {
 								Ext.getCmp('mediaGrid').setLoading(true);
 								Ext.Ajax.request({
-									url: '../api/v1/resource/generalmedia/'+encodeURIComponent(selectedObj.name),
+									url: 'api/v1/resource/generalmedia/'+encodeURIComponent(selectedObj.name),
 									method: 'DELETE',
 									success: function (response, opts) {
 										Ext.getCmp('mediaGrid').setLoading(false);
@@ -404,7 +402,7 @@
 										formBind: true,
 										handler: function(){     
 											Ext.getCmp('addMediaForm').setLoading(true);
-                                            var data = Ext.getCmp('addMediaForm').getValues();
+											var data = Ext.getCmp('addMediaForm').getValues();
 
 											// Check if name is unique
 											var records = Ext.getStore('mediaStore').getData();
@@ -419,7 +417,7 @@
 											}
 
 											Ext.getCmp('addMediaForm').submit({
-												url: '../Media.action?UploadGeneralMedia&generalMedia.name='+data.name,
+												url: 'Media.action?UploadGeneralMedia&generalMedia.name='+data.name,
 												method: 'POST',
 												success: function(response, opts) {
 													Ext.toast('Uploaded Successfully', '', 'tr');

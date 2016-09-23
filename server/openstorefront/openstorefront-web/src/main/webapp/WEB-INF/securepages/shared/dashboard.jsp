@@ -20,9 +20,12 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../layout/toplevelLayout.jsp">	
     <stripes:layout-component name="contents">
-
+		
+	<stripes:layout-render name="../../../layout/${param.user ? 'userheader.jsp' : 'adminheader.jsp'}">		
+	</stripes:layout-render>		
+		
 	<script src="scripts/component/userwatchPanel.js?v=${appVersion}" type="text/javascript"></script>	
 		
         <script type="text/javascript">
@@ -410,7 +413,7 @@
 				
 				var dashPanel = Ext.create('Ext.panel.Panel', {
 					title: 'Dashboard <i class="fa fa-question-circle"  data-qtip="Displays widgets and allows for quick mashup of data."></i>',
-					id: 'dashPanel',
+					id: 'dashPanel',					
 					columnWidths: [
 						0.5, 0.5
 					],					
@@ -441,18 +444,13 @@
 					}
 				});
 				
-				Ext.create('Ext.container.Viewport', {
-					layout: 'fit',
-					items: [
-						dashPanel
-					]
-				});
+				addComponentToMainViewPort(dashPanel);
 				
 				var dashboard;
 				var loadUserWidgets = function() {
 					dashPanel.setLoading(true);
 					Ext.Ajax.request({
-						url: '../api/v1/resource/userdashboard',
+						url: 'api/v1/resource/userdashboard',
 						callback: function() {
 							dashPanel.setLoading(false);
 						},
@@ -776,7 +774,7 @@
 								});
 								
 								Ext.Ajax.request({
-									url: '../api/v1/resource/userdashboard/' + dashboard.dashboard.dashboardId,
+									url: 'api/v1/resource/userdashboard/' + dashboard.dashboard.dashboardId,
 									method: 'PUT',
 									jsonData: dashboard,
 									success: function(response, opts){

@@ -29,11 +29,6 @@ public class JiraIssueStatusTest
 		extends BaseTestCase
 {
 
-	public JiraIssueStatusTest()
-	{
-		this.description = "Issue Status Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -47,6 +42,12 @@ public class JiraIssueStatusTest
 				});
 			});
 		}
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Issue Status Test";
 	}
 
 }

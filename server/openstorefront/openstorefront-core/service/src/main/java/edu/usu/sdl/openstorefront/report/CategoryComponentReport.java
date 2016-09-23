@@ -158,19 +158,14 @@ public class CategoryComponentReport
 			});
 
 			for (AttributeCode code : codes) {
-				cvsGenerator.addLine(
-						code.getLabel(),
-						code.getDescription()
-				);
-
 				List<String> componentIds = codeComponentMap.get(code.getAttributeCodePk().getAttributeCode());
 				if (componentIds != null) {
 					for (String componentId : codeComponentMap.get(code.getAttributeCodePk().getAttributeCode())) {
 						Component component = componentMap.get(componentId);
 						if (component != null) {
 							List<String> data = new ArrayList<>();
-							data.add("");
-							data.add("");
+							data.add(code.getLabel());
+							data.add(code.getDescription());
 							data.add(component.getName());
 							data.add(component.getDescription());
 							data.add(sdf.format(component.getLastActivityDts()));

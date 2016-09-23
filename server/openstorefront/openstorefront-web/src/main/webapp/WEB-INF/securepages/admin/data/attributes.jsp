@@ -1,11 +1,14 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../client/layout/adminlayout.jsp">
+<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
+	<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+	</stripes:layout-render>
+		
 	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>	
 
-	<form name="exportForm" action="/openstorefront/api/v1/resource/attributes/export" method="POST">
+	<form name="exportForm" action="api/v1/resource/attributes/export" method="POST">
 			<p style="display: none;" id="exportFormAttributeTypes"></p>      
 	</form>
 
@@ -25,7 +28,7 @@
 				],	
 				proxy: {
 					type: 'ajax',
-					url: '/openstorefront/api/v1/resource/attributes/attributetypes?all=true',
+					url: 'api/v1/resource/attributes/attributetypes?all=true',
 					reader: {
 						type: 'json',
 						rootProperty: 'data'
@@ -300,6 +303,7 @@
 				Ext.getCmp('requiredFlagCheckBox').setValue(false);
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
 				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
+				Ext.getCmp('editAttributeForm').reset();
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 
 				var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore();
@@ -332,7 +336,7 @@
 				Ext.getCmp('editAttributeForm-hideOnSubmission').enable();
 				Ext.getCmp('editAttributeForm-code').setEditable(false);
 				// Retreive codes to populate form options
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += record.data.attributeType;
 				url += '/attributecodeviews';
 				Ext.getCmp('editAttributeForm-defaultCode').setStore({
@@ -349,7 +353,7 @@
 			};
 
 			var actionToggleAttributeStatus = function actionToggleAttributeStatus(record) {
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += record.data.attributeType;
 				if (record.data.activeStatus === 'A') {
 					var what = 'deactivate';
@@ -374,7 +378,7 @@
 			};
 
 			var actionDeleteAttribute = function actionDeleteAttribute(record) {
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += record.data.attributeType + '/force';
 				Ext.Ajax.request({
 					url: url,
@@ -412,7 +416,7 @@
 			});
 
 			var actionManageCodes = function actionManageCodes(record) {
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes';
+				var url = 'api/v1/resource/attributes/attributetypes';
 				url += '/' + record.data.attributeType + '/attributecodeviews?all=true';
 				codesStore.setProxy({
 					type: 'ajax',
@@ -425,9 +429,96 @@
 				codesStore.filter('activeStatus', 'A');
 				codesStore.load();
 				manageCodesWin.attributeType = record.data.attributeType;
+				Ext.getCmp('codesFilter-activeStatus').setValue('A');
+				
 				manageCodesWin.show();
 			};
 
+
+			var attachmentUploadWindow = Ext.create('Ext.window.Window', {
+				id: 'attachmentUploadWindow',
+				title: 'Upload Attachment',
+				iconCls: 'fa fa-info-circle',
+				width: '40%',
+				height: 175,
+				y: 60,
+				modal: true,
+				maximizable: false,
+				bodyStyle : 'padding: 10px;',
+				layout: 'fit',
+				items: [
+					{
+						xtype: 'form',
+						id: 'attachmentUploadForm',
+						layout: 'vbox',
+						defaults: {
+							labelAlign: 'top',
+							width: '100%'
+						},
+						items: [
+							{
+								xtype: 'filefield',
+								name: 'uploadFile',
+								width: '100%',
+								allowBlank: false,
+								fieldLabel: 'Choose a file to upload<span class="field-required" />',
+								buttonText: 'Select File...',
+								listeners: {
+									change: CoreUtil.handleMaxFileLimit
+								}
+							}
+						]
+					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								text: 'Upload Attachment',
+								iconCls: 'fa fa-save',
+								formBind: true,	
+								handler: function() {
+									var record = Ext.getCmp('codesGrid').getSelection()[0];
+									var parentAttributeRecord = attributeGrid.getSelection()[0];
+									var attributeTypeName = parentAttributeRecord.get('attributeType');
+									var attributeCodeName = record.get('code');
+									var form = Ext.getCmp('attachmentUploadForm');
+									var url = '/openstorefront/Upload.action?AttributeCodeAttachment';
+									url += '&attributeTypeName=' + attributeTypeName;
+									url += '&attributeCodeName=' + attributeCodeName;
+									if (form.isValid()) {
+										form.submit({
+											url: url,
+											waitMsg: 'Uploading file...',
+											success: function () {
+												Ext.toast('Successfully uploaded attachment.', '', 'tr');
+												attachmentUploadWindow.hide();
+												codesStore.load();
+											},
+											failure: function () {
+												Ext.toast('Failed to upload attachment.');
+											}
+										});
+									}
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Cancel',
+								iconCls: 'fa fa-close',
+								handler: function () {
+									Ext.getCmp('attachmentUploadWindow').hide();
+								}
+							}
+						]
+					}
+				]
+
+			});
 
 			var codesStore = Ext.create('Ext.data.Store', {
 				id: 'codesStore'
@@ -445,16 +536,32 @@
 							Ext.getCmp('codesGrid-tools-edit').enable();
 							Ext.getCmp('codesGrid-tools-toggle').enable();
 							Ext.getCmp('codesGrid-tools-delete').enable();
+							Ext.getCmp('codesToolbarAddAttachment').enable();
 							if (record[0].data.activeStatus === 'A') {
 								Ext.getCmp('codesGrid-tools-toggle').setText('Deactivate');
 							}
 							else {
 								Ext.getCmp('codesGrid-tools-toggle').setText('Activate');
 							}
+							var attachment = record[0].get('attachmentFileName');
+							if (!attachment) {
+								Ext.getCmp('codesToolbarDownloadAttachment').disable();
+								Ext.getCmp('codesToolbarDeleteAttachment').disable();
+								Ext.getCmp('codesToolbarAddAttachment').setText('Add Attachment');
+							}
+							else {
+								Ext.getCmp('codesToolbarDownloadAttachment').enable();
+								Ext.getCmp('codesToolbarDeleteAttachment').enable();
+								Ext.getCmp('codesToolbarAddAttachment').setText('Replace Attachment');
+							}
 						} else {
 							Ext.getCmp('codesGrid-tools-edit').disable();
 							Ext.getCmp('codesGrid-tools-toggle').disable();
 							Ext.getCmp('codesGrid-tools-delete').disable();
+							Ext.getCmp('codesToolbarDownloadAttachment').disable();
+							Ext.getCmp('codesToolbarDeleteAttachment').disable();
+							Ext.getCmp('codesToolbarAddAttachment').disable();
+							Ext.getCmp('codesToolbarAddAttachment').setText('Add Attachment');
 						}
 					}
 				},
@@ -567,6 +674,54 @@
 										}
 									});
 								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Add Attachment',
+								disabled: true,
+								id: 'codesToolbarAddAttachment',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-paperclip',
+								handler: function() {
+									Ext.getCmp('attachmentUploadWindow').show();
+								}
+							},
+							{
+								text: 'Download Attachment',
+								disabled: true,
+								id: 'codesToolbarDownloadAttachment',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-download',
+								handler: function() {
+									var codeRecord = codesGrid.getSelection()[0];
+									var typeRecord = attributeGrid.getSelection()[0];
+									var type = typeRecord.get('attributeType');
+									var code = codeRecord.get('code');
+									var url = 'api/v1/resource/attributes/attributetypes/';
+									url += type;
+									url += '/attributecodes/' + code;
+									url += '/attachment';
+									window.location.href = url;		
+								}
+							},
+							{
+								text: 'Delete Attachment',
+								disabled: true,
+								id: 'codesToolbarDeleteAttachment',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-trash',
+								handler: function() {
+									var record = codesGrid.getSelection()[0];
+									var title = 'Delete Attachment';
+									var msg = 'Are you sure you want to delete the attachment for this code?';
+									Ext.MessageBox.confirm(title, msg, function (btn) {
+										if (btn === 'yes') {
+											actionDeleteCodeAttachment(record);
+										}
+									});
+								}
 							}
 						]
 					}
@@ -594,10 +749,11 @@
 							return value;
 						}
 					},
-					{text: 'Link', dataIndex: 'detailUrl', flex: 1},
-					{text: 'Group Code', dataIndex: 'groupCode', flex: 1},
-					{text: 'Sort Order', dataIndex: 'sortOrder', flex: 1},
-					{text: 'Architecture Code', dataIndex: 'architectureCode', flex: 1.5},
+					{text: 'Attachment', dataIndex: 'attachmentFileName', flex: 2},
+					{text: 'Link', dataIndex: 'detailUrl', flex: 1, hidden: true},
+					{text: 'Group Code', dataIndex: 'groupCode', flex: 1, hidden: true},
+					{text: 'Sort Order', dataIndex: 'sortOrder', flex: 1, hidden: true},
+					{text: 'Architecture Code', dataIndex: 'architectureCode', flex: 1.5, hidden: true},
 					{text: 'Badge URL', dataIndex: 'badgeUrl', flex: 1},
 					{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 				]
@@ -626,8 +782,9 @@
 					{
 						xtype: 'form',
 						id: 'editCodeForm',
-						layout: 'vbox',
 						scrollable: true,
+						layout: 'anchor',
+						autoScroll: true,
 						bodyStyle: 'padding: 10px;',
 						defaults: {
 							labelAlign: 'top',
@@ -657,7 +814,7 @@
 								name: 'description',
 								width: '100%',
 								height: 300,
-								maxLength: 255,
+								maxLength: 4096,
 								tinyMCEConfig: CoreUtil.tinymceConfig()
 							},
 							{
@@ -717,7 +874,7 @@
 												var formData = form.getValues();
 												var edit = editCodeWin.edit;
 												var attributeType = editCodeWin.attributeType;
-												var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+												var url = 'api/v1/resource/attributes/attributetypes/';
 												url += attributeType + '/attributecodes';
 
 												var method = 'POST';
@@ -792,7 +949,7 @@
 			};
 
 			var actionToggleCode = function acitionToggleCode(record) {
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += manageCodesWin.attributeType;
 				url += '/attributecodes/' + record.data.code;
 				if (record.data.activeStatus === 'A') {
@@ -817,7 +974,7 @@
 			};
 
 			var actionDeleteCode = function acitionDeleteCode(record) {
-				var url = '/openstorefront/api/v1/resource/attributes/attributetypes/';
+				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += manageCodesWin.attributeType;
 				url += '/attributecodes/' + record.data.code;
 				url += '/force';
@@ -835,6 +992,27 @@
 				});
 
 			};
+
+			var actionDeleteCodeAttachment = function acitionDeleteCode(record) {
+				var url = 'api/v1/resource/attributes/attributetypes/';
+				url += manageCodesWin.attributeType;
+				url += '/attributecodes/' + record.data.code;
+				url += '/attachment';
+				var method = 'DELETE';
+				Ext.Ajax.request({
+					url: url,
+					method: method,
+					success: function(response, opt){
+						Ext.toast('Successfully deleted attachment', '', 'tr');
+						codesStore.load();
+					},
+					failure: function(response, opt){
+						Ext.toast('Failed to delete attachment', '', 'tr');
+					}
+				});
+
+			};
+
 
 			var manageCodesWin = Ext.create('Ext.window.Window', {
 				id: 'manageCodesWin',
@@ -856,10 +1034,10 @@
 				title: 'Add/Edit Attribute',
 				modal: true,
 				width: '60%',
-				height: 750,
+				height: '80%',
+				maximizable: true,
 				y: '2em',
 				layout: 'fit',
-				autoScroll: true,
 				items: [
 					{
 						xtype: 'form',
@@ -948,7 +1126,7 @@
 										id: 'allowForTypesSearchStore',
 										proxy: {
 											type: 'ajax',
-											url: '../api/v1/resource/componenttypes/lookup'												
+											url: 'api/v1/resource/componenttypes/lookup'												
 										},
 										autoLoad: true
 									})
@@ -972,14 +1150,45 @@
 										id: 'requiredFlagCheckBox',
 										boxLabel: 'Required',
 										listeners: {
-											change: function(box, newValue) {
+											change: function(reqBox, newValue) {
 												if (newValue)
 													{
 														Ext.getCmp('editAttributeForm-typesRequiredFor').show();
+
+														var select = Ext.getCmp('editAttributeForm-defaultCode');
+														if (Ext.getCmp('editAttributeForm-hideOnSubmission').getValue()) {
+															select.setFieldLabel('Default Code<span class="field-required" />');
+															select.allowBlank = false;
+														} else {
+															select.setFieldLabel('Default Code');
+															select.allowBlank = true;
+															select.clearInvalid();
+														}
+
+														var mult = Ext.getCmp('multipleFlagCheckBox');
+														if (mult.getValue() == true) {
+															var msg = 'Attributes that allow multiple codes cannot be required. You may remove the';
+															msg += " 'allow multiple' flag, or keep the multiple codes flag and not set the required flag.";
+															Ext.MessageBox.show({
+																title: 'Attributes Allowing Multiple Codes Cannot Be Required',
+																msg: msg,
+																buttonText: {yes: "Remove 'Allow Multiple' Flag", no: "Keep 'Allow Multiple' Flag"},
+																fn: function(btn) {
+																	if (btn === 'yes') {
+																		mult.setValue('false');
+																	} else if (btn === 'no') {
+																		reqBox.setValue('false');
+																	}
+																}
+															});	
+														}
 													}
 													else {
 														Ext.getCmp('editAttributeForm-typesRequiredFor').hide();
-
+														var select = Ext.getCmp('editAttributeForm-defaultCode');
+														select.setFieldLabel('Default Code');
+														select.allowBlank = true;
+														select.clearInvalid();
 													}
 											}
 										}
@@ -998,22 +1207,45 @@
 									},
 									{
 										name: 'allowMultipleFlg',
-										boxLabel: 'Allow Multiple'
+										id: 'multipleFlagCheckBox',
+										boxLabel: 'Allow Multiple',
+										listeners: {
+											change: function(multiple, newValue) {
+												if (newValue === true) {
+													var rf = Ext.getCmp('requiredFlagCheckBox')
+													if (rf.getValue() == true) {
+														var msg = 'Attributes that are required are not allowed to have multiple codes. You may either';
+														msg += ' remove the required flag, or keep the required flag and not allow multiple codes.'
+														Ext.MessageBox.show({
+															title: 'Required Attributes Cannot Have Multiple Codes',
+															msg: msg,
+															buttonText: {yes: "Remove Required Flag", no: "Keep Required Flag"},
+															fn: function(btn) {
+																if (btn === 'yes') {
+																	rf.setValue('false');
+																} else if (btn === 'no') {
+																	multiple.setValue('false');
+																}
+															}
+														});	
+													}
+												}
+											}
+										}
 									},
 									{
 										name: 'hideOnSubmission',
 										boxLabel: 'Hide on Submission',
 										id: 'editAttributeForm-hideOnSubmission',
-										toolTip: 'Hiding requires a default code. Codes must be created before this flag can be set.',
+										toolTip: 'Hiding a required attribute requires a default code. Codes must be created before this flag can be set.',
 										listeners: {
 											change: function(box, newValue) {
 												var select = Ext.getCmp('editAttributeForm-defaultCode');
-												if (newValue === true) {
+												if (newValue === true && Ext.getCmp('requiredFlagCheckBox').getValue()) {
 													select.setFieldLabel('Default Code<span class="field-required" />');
 													select.allowBlank = false;
 												}
 												else {
-
 													select.setFieldLabel('Default Code');
 													select.allowBlank = true;
 													select.clearInvalid();
@@ -1044,7 +1276,7 @@
 										id: 'requiredTypesSearchStore',
 										proxy: {
 											type: 'ajax',
-											url: '../api/v1/resource/componenttypes/lookup'												
+											url: 'api/v1/resource/componenttypes/lookup'												
 										},
 										autoLoad: true
 									})
@@ -1067,7 +1299,7 @@
 												// [asString], [dirtyOnly], [includeEmptyText], [useDataValues]
 												var formData = form.getValues(false,false,false,true);
 												var edit = editAttributeWin.edit;
-												var url = '/openstorefront/api/v1/resource/attributes/attributetypes';
+												var url = 'api/v1/resource/attributes/attributetypes';
 												var method = 'POST';
 												if (edit) {
 													url += '/' + formData.attributeType;
@@ -1145,14 +1377,8 @@
 					}
 				]
 			});
-
-			Ext.create('Ext.container.Viewport', {
-				layout: 'fit',
-				items: [
-					attributeGrid
-				]
-			});
-
+			
+			addComponentToMainViewPort(attributeGrid);
 
 		});		
 		</script>

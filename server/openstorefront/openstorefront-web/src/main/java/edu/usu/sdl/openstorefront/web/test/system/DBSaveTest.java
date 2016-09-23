@@ -26,12 +26,6 @@ import java.util.Arrays;
 public class DBSaveTest
 		extends BaseTestCase
 {
-
-	public DBSaveTest()
-	{
-		this.description = "Save_Test";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -47,7 +41,7 @@ public class DBSaveTest
 		});
 		results.append("Saved A, B").append("<br>");
 
-		Arrays.asList("C", "D").forEach(item -> {
+		Arrays.asList("C", "D", "E").forEach(item -> {
 			TestEntity testEntity = new TestEntity();
 			testEntity.setCode(item);
 			testEntity.setDescription(item + " - Description");
@@ -57,8 +51,20 @@ public class DBSaveTest
 
 			service.getLookupService().saveLookupValue(testEntity);
 		});
-		results.append("Saved C, D").append("<br>");
+		results.append("Saved C, D, E").append("<br>");
 
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "DB Save Test";
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
 		results.append("Clean up records").append("<br>");
 		results.append(service.getPersistenceService().deleteByExample(new TestEntity())).append(" records removed.<br>");
 	}

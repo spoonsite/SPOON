@@ -23,6 +23,8 @@ import edu.usu.sdl.openstorefront.core.view.JsonResponse;
 import edu.usu.sdl.openstorefront.security.HeaderRealm;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.web.init.ShiroAdjustedFilter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -127,7 +129,11 @@ public class LoginAction
 	{
 		String startPage = "/";
 		if (StringUtils.isNotBlank(gotoPage)) {
-			startPage = gotoPage;
+			try {
+				startPage = URLDecoder.decode(gotoPage, "UTF-8");
+			} catch (UnsupportedEncodingException ex) {
+				throw new OpenStorefrontRuntimeException(ex);
+			}
 		}
 		startPage = startPage.replace("Login.action", "");
 		return startPage;
@@ -195,6 +201,14 @@ public class LoginAction
 	public Resolution logout()
 	{
 		Subject currentUser = SecurityUtils.getSubject();
+
+		//If the user is not logged in have them go back to login.
+		//With the idam system it cause them to loop around to re-login
+		//rather than going back to the logout.
+		if (SecurityUtil.isLoggedIn() == false) {
+			return new RedirectResolution(LoginAction.class);
+		}
+
 		String userLoggedIn = SecurityUtil.getCurrentUserName();
 		currentUser.logout();
 		getContext().getRequest().getSession().invalidate();

@@ -37,6 +37,7 @@ public class AttributeCodeView
 	private Integer sortOrder;
 	private String activeStatus;
 	private String highlightStyle;
+	private String attachmentFileName;
 
 	public AttributeCodeView()
 	{
@@ -55,6 +56,7 @@ public class AttributeCodeView
 		attributeCodeView.setArchitectureCode(attributeCode.getArchitectureCode());
 		attributeCodeView.setActiveStatus(attributeCode.getActiveStatus());
 		attributeCodeView.setDetailUrl(attributeCode.getDetailUrl());
+		attributeCodeView.setAttachmentFileName(attributeCode.getAttachmentOriginalFileName());
 		attributeCodeView.toStandardView(attributeCode);
 
 		return attributeCodeView;
@@ -167,6 +169,16 @@ public class AttributeCodeView
 	public void setHighlightStyle(String highlightStyle)
 	{
 		this.highlightStyle = highlightStyle;
+	}
+
+	public String getAttachmentFileName()
+	{
+		return attachmentFileName;
+	}
+
+	public void setAttachmentFileName(String attachmentFileName)
+	{
+		this.attachmentFileName = attachmentFileName;
 	}
 
 }

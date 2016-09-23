@@ -31,11 +31,6 @@ public class AdvanceSearchTest
 		extends BaseTestCase
 {
 
-	public AdvanceSearchTest()
-	{
-		this.description = "Advance Search";
-	}
-
 	@Override
 	protected void runInternalTest()
 	{
@@ -155,6 +150,12 @@ public class AdvanceSearchTest
 			failureReason.append(result.getValidationResult().toString());
 		}
 
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Advance Search";
 	}
 
 }

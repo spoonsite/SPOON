@@ -204,16 +204,15 @@ public class ComponentRESTResource
 			if (componentExample.getComponentType() != null && componentExample.getComponentType().equals(ComponentType.ALL)) {
 				componentExample.setComponentType(null);
 			}
-			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);			
-			for (Component component : components)
-			{	
+			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
+			for (Component component : components) {
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
 				lookupModel.setDescription(component.getName());
 				lookupModels.add(lookupModel);
 			}
 			lookupModels = filterQueryParams.filter(lookupModels);
-			
+
 			GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(lookupModels)
 			{
 			};
@@ -224,8 +223,7 @@ public class ComponentRESTResource
 			Component componentExample = new Component();
 
 			List<Component> components = service.getPersistenceService().queryByExample(Component.class, componentExample);
-			for (Component component : components)
-			{	
+			for (Component component : components) {
 				LookupModel lookupModel = new LookupModel();
 				lookupModel.setCode(component.getComponentId());
 				lookupModel.setDescription(component.getName());
@@ -483,7 +481,7 @@ public class ComponentRESTResource
 			return response.build();
 		}
 	}
-	
+
 	@POST
 	@APIDescription("Exports a set of components.  In describe record format.")
 	@RequireAdmin
@@ -500,25 +498,26 @@ public class ComponentRESTResource
 			ComponentAll componentAll = service.getComponentService().getFullComponent(componentId);
 			fullComponents.add(componentAll);
 		}
-		
-		Exporter exporter =  new DescribeExport();
+
+		Exporter exporter = new DescribeExport();
 		File exportFile = exporter.export(fullComponents);
-		
+
 		Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
 			Files.copy(exportFile.toPath(), output);
-		});		
+		});
 		response.header("Content-Type", "application/zip");
 		response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.zip\"");
 		return response.build();
-	}	
-	
+	}
 
 	@GET
 	@APIDescription("Get a list of components tags")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(TagView.class)
 	@Path("/tagviews")
-	public Response getAllComponentTags()
+	public Response getAllComponentTags(
+			@QueryParam("approvedOnly") boolean approvedOnly
+	)
 	{
 		List<TagView> views = new ArrayList<>();
 
@@ -526,6 +525,13 @@ public class ComponentRESTResource
 		componentTagExample.setActiveStatus(Component.ACTIVE_STATUS);
 
 		List<ComponentTag> tags = service.getPersistenceService().queryByExample(ComponentTag.class, componentTagExample);
+
+		if (approvedOnly) {
+			tags = tags.stream()
+					.filter(tag -> service.getComponentService().checkComponentApproval(tag.getComponentId()))
+					.collect(Collectors.toList());
+		}
+
 		views.addAll(TagView.toView(tags));
 
 		GenericEntity<List<TagView>> entity = new GenericEntity<List<TagView>>(views)
@@ -831,7 +837,7 @@ public class ComponentRESTResource
 		} else if (componentPrint != null) {
 			return sendSingleEntityResponse(componentPrint);
 		} else {
-			return Response.status(Response.Status.NOT_FOUND).build();			
+			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}
 
@@ -846,7 +852,7 @@ public class ComponentRESTResource
 		if (response != null) {
 			return response;
 		}
-		
+
 		service.getComponentService().cascadeDeleteOfComponent(componentId);
 		return Response.ok().build();
 	}
@@ -913,9 +919,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
-	
 	// <editor-fold defaultstate="collapsed" desc="Version history">
-
 	@GET
 	@APIDescription("Gets all version history for a component")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1047,7 +1051,6 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
-	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource ATTRIBUTE Section">
 	@GET
 	@APIDescription("Gets attributes for a component")
@@ -1063,7 +1066,7 @@ public class ComponentRESTResource
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
-		
+
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();
 		componentAttributeExample.setActiveStatus(filterQueryParams.getStatus());
 		componentAttributeExample.setComponentId(componentId);
@@ -1209,7 +1212,7 @@ public class ComponentRESTResource
 		if (response != null) {
 			return response;
 		}
-		
+
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setAttributeCode(attributeCode);
 		pk.setAttributeType(attributeType);
@@ -1518,7 +1521,7 @@ public class ComponentRESTResource
 		}
 		return Response.ok().build();
 	}
-	
+
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Delete a contact from the component")
@@ -1529,14 +1532,14 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@PathParam("componentContactId")
 			@RequiredParam String componentContactId)
-	{	
+	{
 		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, componentContactId);
 		if (componentContact != null) {
 			checkBaseComponentBelongsToComponent(componentContact, componentId);
 			service.getComponentService().deleteBaseComponent(ComponentContact.class, componentContactId);
 		}
 		return Response.ok().build();
-	}	
+	}
 
 	@PUT
 	@RequireAdmin
@@ -3524,7 +3527,7 @@ public class ComponentRESTResource
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource Relationships section">
 	@GET
 	@APIDescription("Get all direct relationship for a specified component")
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentRelationshipView.class)
 	@Path("/{id}/relationships")
 	public Response getComponentRelationships(
@@ -3547,13 +3550,13 @@ public class ComponentRESTResource
 		GenericEntity<List<ComponentRelationshipView>> entity = new GenericEntity<List<ComponentRelationshipView>>(views)
 		{
 		};
-		
+
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@GET
 	@APIDescription("Gets approved relationships (direct and indirect) for a specified component")
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentRelationshipView.class)
 	@Path("/{id}/relationships/all")
 	public Response getComponentAllRelationships(
@@ -3562,7 +3565,7 @@ public class ComponentRESTResource
 	)
 	{
 		List<ComponentRelationshipView> views = new ArrayList<>();
-		
+
 		//Pull relationships direct relationships
 		ComponentRelationship componentRelationshipExample = new ComponentRelationship();
 		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
@@ -3576,13 +3579,13 @@ public class ComponentRESTResource
 		componentRelationshipExample.setRelatedComponentId(componentId);
 		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(componentRelationshipExample.findByExample());
 		relationshipViews = relationshipViews.stream().filter(r -> r.getOwnerApproved()).collect(Collectors.toList());
-		views.addAll(relationshipViews);		
+		views.addAll(relationshipViews);
 
 		GenericEntity<List<ComponentRelationshipView>> entity = new GenericEntity<List<ComponentRelationshipView>>(views)
 		{
 		};
 		return sendSingleEntityResponse(entity);
-	}	
+	}
 
 	@GET
 	@APIDescription("Get a relationship entity for a specified component")
@@ -3618,14 +3621,14 @@ public class ComponentRESTResource
 		Response response = checkComponentOwner(componentId);
 		if (response != null) {
 			return response;
-		}		
+		}
 		relationship.setComponentId(componentId);
-		
+
 		return handleSaveRelationship(relationship, true);
 	}
-	
-	private Response handleSaveRelationship(ComponentRelationship relationship, boolean post) 
-	{			
+
+	private Response handleSaveRelationship(ComponentRelationship relationship, boolean post)
+	{
 		ValidationResult validationResult = relationship.validate(true);
 		if (validationResult.valid()) {
 			relationship = service.getComponentService().saveComponentRelationship(relationship);
@@ -3642,7 +3645,7 @@ public class ComponentRESTResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 	}
-	
+
 	@PUT
 	@APIDescription("Updates a component relationship")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -3653,7 +3656,7 @@ public class ComponentRESTResource
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("relationshipId")
-			@RequiredParam String relationshipId,			
+			@RequiredParam String relationshipId,
 			@RequiredParam ComponentRelationship relationship)
 	{
 		Response response = checkComponentOwner(componentId);
@@ -3663,19 +3666,19 @@ public class ComponentRESTResource
 
 		response = Response.status(Response.Status.NOT_FOUND).build();
 
-		ComponentRelationship existing = new  ComponentRelationship();
+		ComponentRelationship existing = new ComponentRelationship();
 		existing.setComponentId(componentId);
 		existing.setComponentRelationshipId(relationshipId);
 		existing = (ComponentRelationship) existing.find();
-		if (existing != null) {			
+		if (existing != null) {
 			relationship.setComponentId(componentId);
 			relationship.setComponentRelationshipId(relationshipId);
 			response = handleSaveRelationship(relationship, false);
 		}
 
 		return response;
-	}	
-	
+	}
+
 	@DELETE
 	@APIDescription("Deletes a relationship for a specified component")
 	@Path("/{id}/relationships/{relationshipId}")
@@ -3695,7 +3698,6 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
-	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
 	@RequireAdmin
@@ -3941,6 +3943,27 @@ public class ComponentRESTResource
 			service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.INACTIVE_STATUS);
 		}
 		return sendSingleEntityResponse(componentIntegration, Response.Status.NOT_MODIFIED);
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Toggle status for multiple component integration models. Consumes a list of componentId strings")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/integration/togglemultiple")
+	public void toggleMultipleIntegrations(
+			@RequiredParam List<String> componentIds)
+	{
+		for (String componentId : componentIds) {
+			ComponentIntegration componentIntegration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+			if (componentIntegration != null) {
+				if (componentIntegration.getActiveStatus().equals(ComponentIntegration.ACTIVE_STATUS)) {
+					service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.INACTIVE_STATUS);
+				} else {
+					service.getComponentService().setStatusOnComponentIntegration(componentId, ComponentIntegration.ACTIVE_STATUS);
+				}
+			}
+		}
+
 	}
 
 	@DELETE
