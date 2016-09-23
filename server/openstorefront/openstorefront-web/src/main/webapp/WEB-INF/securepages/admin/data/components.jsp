@@ -1137,6 +1137,185 @@
 					]						
 				});
 
+				var mediaGridForm = function() {
+					var newForm = Ext.create('Ext.form.Panel', {
+						xtype: 'form',
+						id: 'mediaAddEditForm',
+						title: 'Add/Edit Media',
+						collapsible: true,
+						titleCollapse: true,
+						border: true,
+						layout: 'vbox',
+						bodyStyle: 'padding: 10px;',
+						margin: '0 0 5 0', 
+						defaults: {
+							labelAlign: 'top',
+							labelSeparator: '',
+							width: '100%'
+						},
+						buttonAlign: 'center',
+						buttons: [
+							{
+								xtype: 'button',
+								text: 'Save',
+								formBind: true,
+								margin: '0 20 0 0',
+								iconCls: 'fa fa-save',
+								handler: function(){	
+									var mainForm = this.up('form');
+									var data = mainForm.getValues();
+									var componentId = Ext.getCmp('mediaGrid').componentRecord.get('componentId');
+
+									data.fileSelected = mainForm.getComponent('upload').getValue();
+									data.link = data.originalLink;
+									data.originalName = data.originalFileName;
+
+									if (!data.originalFileName && ((!data.link && !data.fileSelected) || (data.link && data.fileSelected))) {
+
+										mainForm.getForm().markInvalid({
+											file: 'Either a link or a file must be entered',
+											originalLink: 'Either a link or a file must be entered'
+										});
+
+									} else {
+										if (!data.fileSelected) {
+											var method = 'POST';
+											var update = '';
+											if (data.componentMediaId) {
+												update = '/' + data.componentMediaId;
+												method = 'PUT';
+											}
+
+											CoreUtil.submitForm({
+												url: 'api/v1/resource/components/' + componentId + '/media' + update,
+												method: method,
+												removeBlankDataItems: true,
+												data: data,
+												form: mainForm,
+												success: function(){
+													Ext.getCmp('mediaGrid').getStore().reload();
+													mainForm.reset();
+													mainForm.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
+												}
+											});
+										} else {
+											//upload
+
+											mainForm.submit({
+												url: 'Media.action?UploadMedia',
+												params: {
+													'componentMedia.mediaTypeCode' : data.mediaTypeCode,
+													'componentMedia.caption': data.caption,
+													'componentMedia.link': data.link,
+													'componentMedia.hideInDisplay': data.hideInDisplay,
+													'componentMedia.usedInline': data.usedInline,
+													'componentMedia.componentMediaId': data.componentMediaId,
+													'componentMedia.componentId': componentId
+												},
+												method: 'POST',
+												submitEmptyText: false,
+												waitMsg: 'Uploading media please wait...',
+												waitTitle: 'Uploading',
+												success: function(formBasic, action, opt){
+													Ext.getCmp('mediaGrid').getStore().reload();
+													mainForm.reset();
+													mainForm.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
+												}, 
+												failure: function(formBasic, action, opt) {
+													var errorResponse = Ext.decode(action.response.responseText);
+													var errorObj = {};        
+													Ext.Array.each(errorResponse.errors.entry, function(item, index, entry) {
+														errorObj[item.key.replace('componentMedia', '')] = item.value;
+													});
+													mainForm.markInvalid(errorObj);
+												}
+											});
+
+										}
+									}
+								}
+							},
+							{
+								xtype: 'button',
+								text: 'Cancel',										
+								iconCls: 'fa fa-close',
+								handler: function(){
+									this.up('form').reset();
+									this.up('form').getComponent('upload').setFieldLabel('Upload Media (Limit 1GB)');
+								}									
+							}								
+						],
+						items: [
+							{
+								xtype: 'hidden',
+								name: 'componentMediaId'
+							},
+							{
+								xtype: 'hidden',
+								name: 'originalFileName'
+							},
+							{
+								xtype: 'hidden',
+								name: 'fileName'
+							},
+							{
+								xtype: 'hidden',
+								name: 'mimeType'
+							},
+							Ext.create('OSF.component.StandardComboBox', {
+								name: 'mediaTypeCode',									
+								allowBlank: false,								
+								margin: '0 0 0 0',
+								editable: false,
+								typeAhead: false,
+								width: '100%',
+								fieldLabel: 'Media Type <span class="field-required" />',
+								storeConfig: {
+									url: 'api/v1/resource/lookuptypes/MediaType'
+								}
+							}),
+							{
+								xtype: 'textfield',
+								fieldLabel: 'Caption <span class="field-required" />',									
+								allowBlank: false,									
+								maxLength: '255',
+								name: 'caption'
+							},
+							{
+								xtype: 'filefield',
+								itemId: 'upload',
+								fieldLabel: 'Upload Media (Limit of 1GB)',																											
+								name: 'file',
+								listeners: {
+									change: CoreUtil.handleMaxFileLimit
+								}
+							},
+							{
+								xtype: 'textfield',
+								fieldLabel: 'Link',																																	
+								maxLength: '255',									
+								emptyText: 'http://www.example.com/image.png',
+								name: 'originalLink'
+							},
+							{
+								xtype: 'checkbox',
+								fieldLabel: 'Hide In Carousel',
+								name: 'hideInDisplay'
+							},
+							{
+								xtype: 'checkbox',
+								fieldLabel: 'Used Inline <i class="fa fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline refereence in the description." ></i>',
+								name: 'usedInline'
+							},
+							Ext.create('OSF.component.SecurityComboBox', {	
+								hidden: !${branding.allowSecurityMarkingsFlg}
+							})								
+						]
+					});
+					
+					return newForm;
+				}
+
 				var mediaGrid = Ext.create('Ext.grid.Panel', {
 					id: 'mediaGrid',
 					title: 'Media',
@@ -1201,183 +1380,10 @@
 							}
 						}						
 					},
-					dockedItems: [
-						{
-							xtype: 'form',
-							id: 'mediaAddEditForm',
-							title: 'Add/Edit Media',
-							collapsible: true,
-							titleCollapse: true,
-							border: true,
-							layout: 'vbox',
-							bodyStyle: 'padding: 10px;',
-							margin: '0 0 5 0', 
-							defaults: {
-								labelAlign: 'top',
-								labelSeparator: '',
-								width: '100%'
-							},
-							buttonAlign: 'center',
-							buttons: [
-								{
-									xtype: 'button',
-									text: 'Save',
-									formBind: true,
-									margin: '0 20 0 0',
-									iconCls: 'fa fa-save',
-									handler: function(){	
-										var mainForm = this.up('form');
-										var data = mainForm.getValues();
-										var componentId = Ext.getCmp('mediaGrid').componentRecord.get('componentId');
-										
-										data.fileSelected = mainForm.getComponent('upload').getValue();
-										data.link = data.originalLink;
-										data.originalName = data.originalFileName;
-									
-										if (!data.originalFileName && ((!data.link && !data.fileSelected) || (data.link && data.fileSelected))) {
-											
-											mainForm.getForm().markInvalid({
-												file: 'Either a link or a file must be entered',
-												originalLink: 'Either a link or a file must be entered'
-											});
-											
-										} else {
-											if (!data.fileSelected) {
-												var method = 'POST';
-												var update = '';
-												if (data.componentMediaId) {
-													update = '/' + data.componentMediaId;
-													method = 'PUT';
-												}
-
-												CoreUtil.submitForm({
-													url: 'api/v1/resource/components/' + componentId + '/media' + update,
-													method: method,
-													removeBlankDataItems: true,
-													data: data,
-													form: mainForm,
-													success: function(){
-														Ext.getCmp('mediaGrid').getStore().reload();
-														mainForm.reset();
-														mainForm.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
-													}
-												});
-											} else {
-												//upload
-											
-												mainForm.submit({
-													url: 'Media.action?UploadMedia',
-													params: {
-														'componentMedia.mediaTypeCode' : data.mediaTypeCode,
-														'componentMedia.caption': data.caption,
-														'componentMedia.link': data.link,
-														'componentMedia.hideInDisplay': data.hideInDisplay,
-														'componentMedia.usedInline': data.usedInline,
-														'componentMedia.componentMediaId': data.componentMediaId,
-														'componentMedia.componentId': componentId
-													},
-													method: 'POST',
-													submitEmptyText: false,
-													waitMsg: 'Uploading media please wait...',
-													waitTitle: 'Uploading',
-													success: function(formBasic, action, opt){
-														Ext.getCmp('mediaGrid').getStore().reload();
-														mainForm.reset();
-														mainForm.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
-													}, 
-													failure: function(formBasic, action, opt) {
-														var errorResponse = Ext.decode(action.response.responseText);
-														var errorObj = {};        
-														Ext.Array.each(errorResponse.errors.entry, function(item, index, entry) {
-															errorObj[item.key.replace('componentMedia', '')] = item.value;
-														});
-														mainForm.markInvalid(errorObj);
-													}
-												});
-												
-											}
-										}
-									}
-								},
-								{
-									xtype: 'button',
-									text: 'Cancel',										
-									iconCls: 'fa fa-close',
-									handler: function(){
-										this.up('form').reset();
-										this.up('form').getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
-									}									
-								}								
-							],
-							items: [
-								{
-									xtype: 'hidden',
-									name: 'componentMediaId'
-								},
-								{
-									xtype: 'hidden',
-									name: 'originalFileName'
-								},
-								{
-									xtype: 'hidden',
-									name: 'fileName'
-								},
-								{
-									xtype: 'hidden',
-									name: 'mimeType'
-								},
-								Ext.create('OSF.component.StandardComboBox', {
-									name: 'mediaTypeCode',									
-									allowBlank: false,								
-									margin: '0 0 0 0',
-									editable: false,
-									typeAhead: false,
-									width: '100%',
-									fieldLabel: 'Media Type <span class="field-required" />',
-									storeConfig: {
-										url: 'api/v1/resource/lookuptypes/MediaType'
-									}
-								}),
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Caption <span class="field-required" />',									
-									allowBlank: false,									
-									maxLength: '255',
-									name: 'caption'
-								},
-								{
-									xtype: 'filefield',
-									itemId: 'upload',
-									fieldLabel: 'Upload Media (Limit of 1GB)',																											
-									name: 'file',
-									listeners: {
-										change: CoreUtil.handleMaxFileLimit
-									}
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Link',																																	
-									maxLength: '255',									
-									emptyText: 'http://www.example.com/image.png',
-									name: 'originalLink'
-								},
-								{
-									xtype: 'checkbox',
-									fieldLabel: 'Hide In Carousel',
-									name: 'hideInDisplay'
-								},
-								{
-									xtype: 'checkbox',
-									fieldLabel: 'Used Inline <i class="fa fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline refereence in the description." ></i>',
-									name: 'usedInline'
-								},
-								Ext.create('OSF.component.SecurityComboBox', {	
-									hidden: !${branding.allowSecurityMarkingsFlg}
-								})								
-							]
-						},						
+					dockedItems: [												
 						{
 							xtype: 'toolbar',
+							docked: 'top',
 							items: [
 								{
 									xtype: 'combobox',
@@ -1466,6 +1472,174 @@
 					]																
 				});
 
+				var resourceGridForm = function() {
+					var newForm = Ext.create('Ext.form.Panel', {
+						title: 'Add/Edit Resources',
+						collapsible: true,
+						titleCollapse: true,
+						border: true,
+						layout: 'vbox',
+						bodyStyle: 'padding: 10px;',
+						margin: '0 0 5 0', 
+						defaults: {
+							labelAlign: 'top',
+							labelSeparator: '',
+							width: '100%'
+						},
+						buttonAlign: 'center',
+						buttons: [
+							{
+								xtype: 'button',
+								text: 'Save',
+								formBind: true,
+								margin: '0 20 0 0',
+								iconCls: 'fa fa-save',
+								handler: function(){	
+									var form = this.up('form');
+									var data = form.getValues();
+									var componentId = Ext.getCmp('resourcesGrid').componentRecord.get('componentId');
+
+									data.fileSelected = form.getComponent('upload').getValue();
+									data.link = data.originalLink;
+									data.originalName = data.originalFileName;
+
+									if (!data.originalFileName && ((!data.link && !data.fileSelected) || (data.link && data.fileSelected))) {
+
+										form.getForm().markInvalid({
+											file: 'Either a link or a file must be entered',
+											originalLink: 'Either a link or a file must be entered'
+										});
+
+									} else {
+										if (!data.fileSelected) {
+											var method = 'POST';
+											var update = '';
+											if (data.resourceId) {
+												update = '/' + data.resourceId;
+												method = 'PUT';
+											}
+
+											CoreUtil.submitForm({
+												url: 'api/v1/resource/components/' + componentId + '/resources' + update,
+												method: method,
+												removeBlankDataItems: true,
+												data: data,
+												form: form,
+												success: function(){
+													Ext.getCmp('resourcesGrid').getStore().reload();
+													form.reset();
+													form.getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
+												}
+											});
+										} else {
+											//upload
+											form.submit({
+												url: 'Resource.action?UploadResource',
+												params: {
+													'componentResource.resourceType' : data.resourceType,
+													'componentResource.description': data.description,
+													'componentResource.restricted': data.restricted,
+													'componentResource.link': data.link,
+													'componentResource.resourceId': data.resourceId,
+													'componentResource.componentId': componentId
+												},
+												method: 'POST',
+												submitEmptyText: false,
+												waitMsg: 'Uploading please wait...',
+												waitTitle: 'Uploading',													
+												success: function(formBasic, action, opt){
+													Ext.getCmp('resourcesGrid').getStore().reload();
+													form.reset();
+													form.getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
+												}, 
+												failure: function(formBasic, action, opt) {
+													var errorResponse = Ext.decode(action.response.responseText);
+													var errorObj = {};        
+													Ext.Array.each(errorResponse.errors.entry, function(item, index, entry) {
+														errorObj[item.key.replace('componentResource', '')] = item.value;
+													});
+													form.markInvalid(errorObj);
+												}
+											});
+
+										}
+									}
+								}
+							},
+							{
+								xtype: 'button',
+								text: 'Cancel',										
+								iconCls: 'fa fa-close',
+								handler: function(){
+									this.up('form').reset();
+									this.up('form').getComponent('upload').setFieldLabel('Upload Resource (Limit 1GB)');
+								}									
+							}								
+						],
+						items: [
+							{
+								xtype: 'hidden',
+								name: 'resourceId'
+							},
+							{
+								xtype: 'hidden',
+								name: 'originalFileName'
+							},
+							{
+								xtype: 'hidden',
+								name: 'fileName'
+							},
+							{
+								xtype: 'hidden',
+								name: 'mimeType'
+							},
+							Ext.create('OSF.component.StandardComboBox', {
+								name: 'resourceType',									
+								allowBlank: false,								
+								margin: '0 0 0 0',
+								editable: false,
+								typeAhead: false,
+								width: '100%',
+								fieldLabel: 'Resource Type <span class="field-required" />',
+								storeConfig: {
+									url: 'api/v1/resource/lookuptypes/ResourceType'
+								}
+							}),
+							{
+								xtype: 'textfield',
+								fieldLabel: 'Description',																									
+								maxLength: '255',
+								name: 'description'
+							},
+							{
+								xtype: 'checkbox',
+								name: 'restricted',
+								boxLabel: 'Restricted'
+							},
+							{
+								xtype: 'textfield',
+								fieldLabel: 'Link',																																	
+								maxLength: '255',									
+								emptyText: 'http://www.example.com/resource',
+								name: 'originalLink'
+							},
+							{
+								xtype: 'filefield',
+								itemId: 'upload',
+								fieldLabel: 'Upload Resource (Limit of 1GB)',																											
+								name: 'file',
+								listeners: {
+									change: CoreUtil.handleMaxFileLimit
+								}
+							},
+							Ext.create('OSF.component.SecurityComboBox', {	
+								hidden: !${branding.allowSecurityMarkingsFlg}
+							})								
+						]
+					});
+					return newForm;
+				}
+
 				var resourcesGrid = Ext.create('Ext.grid.Panel', {
 					id: 'resourcesGrid',
 					title: 'Resources',
@@ -1530,174 +1704,10 @@
 							}
 						}						
 					},
-					dockedItems: [
-						{
-							xtype: 'form',
-							title: 'Add/Edit Resources',
-							collapsible: true,
-							titleCollapse: true,
-							border: true,
-							layout: 'vbox',
-							bodyStyle: 'padding: 10px;',
-							margin: '0 0 5 0', 
-							defaults: {
-								labelAlign: 'top',
-								labelSeparator: '',
-								width: '100%'
-							},
-							buttonAlign: 'center',
-							buttons: [
-								{
-									xtype: 'button',
-									text: 'Save',
-									formBind: true,
-									margin: '0 20 0 0',
-									iconCls: 'fa fa-save',
-									handler: function(){	
-										var form = this.up('form');
-										var data = form.getValues();
-										var componentId = Ext.getCmp('resourcesGrid').componentRecord.get('componentId');
-										
-										data.fileSelected = form.getComponent('upload').getValue();
-										data.link = data.originalLink;
-										data.originalName = data.originalFileName;
-									
-										if (!data.originalFileName && ((!data.link && !data.fileSelected) || (data.link && data.fileSelected))) {
-											
-											form.getForm().markInvalid({
-												file: 'Either a link or a file must be entered',
-												originalLink: 'Either a link or a file must be entered'
-											});
-											
-										} else {
-											if (!data.fileSelected) {
-												var method = 'POST';
-												var update = '';
-												if (data.resourceId) {
-													update = '/' + data.resourceId;
-													method = 'PUT';
-												}
-
-												CoreUtil.submitForm({
-													url: 'api/v1/resource/components/' + componentId + '/resources' + update,
-													method: method,
-													removeBlankDataItems: true,
-													data: data,
-													form: form,
-													success: function(){
-														Ext.getCmp('resourcesGrid').getStore().reload();
-														form.reset();
-														form.getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
-													}
-												});
-											} else {
-												//upload
-												form.submit({
-													url: '../Resource.action?UploadResource',
-													params: {
-														'componentResource.resourceType' : data.resourceType,
-														'componentResource.description': data.description,
-														'componentResource.restricted': data.restricted,
-														'componentResource.link': data.link,
-														'componentResource.resourceId': data.resourceId,
-														'componentResource.componentId': componentId
-													},
-													method: 'POST',
-													submitEmptyText: false,
-													waitMsg: 'Uploading please wait...',
-													waitTitle: 'Uploading',													
-													success: function(formBasic, action, opt){
-														Ext.getCmp('resourcesGrid').getStore().reload();
-														form.reset();
-														form.getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
-													}, 
-													failure: function(formBasic, action, opt) {
-														var errorResponse = Ext.decode(action.response.responseText);
-														var errorObj = {};        
-														Ext.Array.each(errorResponse.errors.entry, function(item, index, entry) {
-															errorObj[item.key.replace('componentResource', '')] = item.value;
-														});
-														form.markInvalid(errorObj);
-													}
-												});
-												
-											}
-										}
-									}
-								},
-								{
-									xtype: 'button',
-									text: 'Cancel',										
-									iconCls: 'fa fa-close',
-									handler: function(){
-										this.up('form').reset();
-										this.up('form').getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
-									}									
-								}								
-							],
-							items: [
-								{
-									xtype: 'hidden',
-									name: 'resourceId'
-								},
-								{
-									xtype: 'hidden',
-									name: 'originalFileName'
-								},
-								{
-									xtype: 'hidden',
-									name: 'fileName'
-								},
-								{
-									xtype: 'hidden',
-									name: 'mimeType'
-								},
-								Ext.create('OSF.component.StandardComboBox', {
-									name: 'resourceType',									
-									allowBlank: false,								
-									margin: '0 0 0 0',
-									editable: false,
-									typeAhead: false,
-									width: '100%',
-									fieldLabel: 'Resource Type <span class="field-required" />',
-									storeConfig: {
-										url: 'api/v1/resource/lookuptypes/ResourceType'
-									}
-								}),
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Description',																									
-									maxLength: '255',
-									name: 'description'
-								},
-								{
-									xtype: 'checkbox',
-									name: 'restricted',
-									boxLabel: 'Restricted'
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Link',																																	
-									maxLength: '255',									
-									emptyText: 'http://www.example.com/resource',
-									name: 'originalLink'
-								},
-								{
-									xtype: 'filefield',
-									itemId: 'upload',
-									fieldLabel: 'Upload Resource (Limit of 1GB)',																											
-									name: 'file',
-									listeners: {
-										change: CoreUtil.handleMaxFileLimit
-									}
-								},
-								Ext.create('OSF.component.SecurityComboBox', {	
-									hidden: !${branding.allowSecurityMarkingsFlg}
-								})								
-							]
-						},						
+					dockedItems: [												
 						{
 							xtype: 'toolbar',
+							docked: 'top',
 							items: [
 								{
 									xtype: 'combobox',
@@ -3067,6 +3077,12 @@
 					width: '80%',
 					height: '90%',
 					iconCls: 'fa fa-lg fa-edit',
+					listeners: {
+						beforeclose: function(panel, opts){
+							Ext.getCmp('resourcesGrid').removeDocked(Ext.getCmp('resourcesGrid').down('form'), true);
+							Ext.getCmp('mediaGrid').removeDocked(Ext.getCmp('mediaGrid').down('form'), true);
+						}
+					},
 					items: [
 						{
 							xtype: 'tabpanel',
@@ -4276,15 +4292,13 @@
 								}
 								if (data.dataEntryResources) {	
 									showSubTab(resourcesGrid, 'api/v1/resource/components/' + record.get('componentId') + '/resources/view');
-									resourcesGrid.down('form').getComponent('upload').disabled = true;
-									resourcesGrid.down('form').getComponent('upload').enable();
+									//Fix: File upload hanging
+									Ext.getCmp('resourcesGrid').addDocked(resourceGridForm(), 0);									
 								}
 								if (data.dataEntryMedia) {	
-									showSubTab(mediaGrid, 'api/v1/resource/components/' + record.get('componentId')+ '/media/view');
-									
-									//Fix: bug with disabled file fields
-									mediaGrid.down('form').getComponent('upload').disabled = true;
-									mediaGrid.down('form').getComponent('upload').enable();
+									showSubTab(mediaGrid, 'api/v1/resource/components/' + record.get('componentId')+ '/media/view');									
+									//Fix: File upload hanging
+									Ext.getCmp('mediaGrid').addDocked(mediaGridForm(), 0);
 								}							
 								if (data.dataEntryDependancies) {	
 									showSubTab(dependenciesGrid, 'api/v1/resource/components/' + record.get('componentId')+ '/dependencies/view');

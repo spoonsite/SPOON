@@ -1084,7 +1084,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 												} else {
 													//upload
 													form.submit({
-														url: '../Resource.action?UploadResource',
+														url: 'Resource.action?UploadResource',
 														params: {
 															'componentResource.resourceType' : data.resourceType,
 															'componentResource.description': data.description,
