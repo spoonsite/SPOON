@@ -54,11 +54,6 @@ licensed under Apache V2.**
   matches is shown.  Pressing enter or selecting the entry will fill the first name, organization, email, and phone
   for the contact.  This was previously only available for first name searches, but has been extended to last name
   with this release.  
- 
- * **Allow file attachments for attributes** *
- From Admin Tools, Data Management, Attributes click on Manage Codes once an attribute is selected.  There is now
-  a button to Add, Download, or Delete an attachment.  If an attachment is added it will show up for the user on the
-  vitals display in the search results screen as a paper clip icon indicating they can download the attachment.
   
 For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.1" target="_blank">v2.1</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
