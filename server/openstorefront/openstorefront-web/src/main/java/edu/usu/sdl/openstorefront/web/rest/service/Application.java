@@ -266,7 +266,7 @@ public class Application
 	}
 
 	@POST
-	@APIDescription("Instruct the server to download a media file from a URL, and save the file to temporary media")
+	@APIDescription("Instruct the server to download a media file from a URL and save the file to temporary media")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/retrievemedia")

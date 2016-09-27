@@ -241,7 +241,7 @@ public class FileHistoryResource
 	
 	@GET
 	@RequireAdmin
-	@APIDescription("Gets all file format that support mapping")
+	@APIDescription("Gets all file formats that support mapping")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileFormat.class)
 	@Path("/formats/mappingformats")
@@ -282,7 +282,7 @@ public class FileHistoryResource
 	
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Deletes a data mappings")	
+	@APIDescription("Deletes data mapping(s)")
 	@Path("/formats/{format}/mappings/{fileDataMapId}")
 	public Response removeDataMapping(			
 			@PathParam("format") String format,

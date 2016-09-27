@@ -49,7 +49,7 @@ public class ComponentMedia
 	private String componentMediaId;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Stored name filename")
+	@APIDescription("Stored filename")
 	private String fileName;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)

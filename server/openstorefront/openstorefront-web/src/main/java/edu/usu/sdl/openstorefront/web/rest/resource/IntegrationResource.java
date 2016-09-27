@@ -47,7 +47,7 @@ public class IntegrationResource
 
 	@GET
 	@RequireAdmin
-	@APIDescription("Gets the global model from the database.")
+	@APIDescription("Gets the global integration model from the database.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(GlobalIntegrationModel.class)
 	@Path("/global")

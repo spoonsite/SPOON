@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
  *
  * @author jlaw
  */
-@APIDescription("Hold watch information")
+@APIDescription("Holds user watch information")
 public class UserWatch
 		extends StandardEntity<UserWatch>
 {

@@ -46,7 +46,7 @@ import javax.ws.rs.core.Response;
  * @author dshurtleff
  */
 @Path("v1/resource/componenttypetemplates")
-@APIDescription("Component types Template define the view for component")
+@APIDescription("Component type templates define the view for component")
 public class ComponentTypeTemplateResource
 		extends BaseResource
 {
@@ -162,7 +162,7 @@ public class ComponentTypeTemplateResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Update a component type")
+	@APIDescription("Updates a component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{templateId}")
@@ -201,7 +201,7 @@ public class ComponentTypeTemplateResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Activate a component type template")
+	@APIDescription("Activates a component type template")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{templateId}/activate")
 	public Response activateComponentTypeTemplate(
@@ -223,7 +223,7 @@ public class ComponentTypeTemplateResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Inactives component type template")
+	@APIDescription("Inactivates a component type template")
 	@Path("/{templateId}")
 	public void inactiveTemplate(
 			@PathParam("templateId") String templateId

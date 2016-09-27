@@ -68,8 +68,8 @@ import net.sourceforge.stripes.util.bean.BeanUtil;
  *
  */
 @Path("v1/resource/userprofiles")
-@APIDescription("A user profile contain information about the user and user specific data. A user profile is created at the time the user logins in.<br>"
-		+ "Note: id if set to the current user it will won't require admin rights.")
+@APIDescription("A user profile contains information about the user and user specific data. A user profile is created at the time the user logs in.<br>"
+		+ "Note: id if set to the current user will not require admin rights.")
 public class UserProfileResource
 		extends BaseResource
 {
@@ -168,7 +168,7 @@ public class UserProfileResource
 	}
 
 	@POST
-	@APIDescription("Update user profile returns updated profile.")
+	@APIDescription("Update user profile and returns updated profile.")
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateProile(
@@ -196,7 +196,7 @@ public class UserProfileResource
 	}
 
 	@PUT
-	@APIDescription("Update user profile returns updated profile.")
+	@APIDescription("Updates user profile and returns updated profile.")
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
@@ -216,7 +216,7 @@ public class UserProfileResource
 	}
 
 	@DELETE
-	@APIDescription("Inactivates a user profile.  Note: if the user logs in their profile will be reactivated.")
+	@APIDescription("Inactivates a user profile.  Note: if the user logs in, their profile will be reactivated.")
 	@RequireAdmin
 	@Path("/{username}")
 	public void deleteUserProfile(
@@ -227,7 +227,7 @@ public class UserProfileResource
 	}
 
 	@DELETE
-	@APIDescription("Inactivates a list of user profiles. Consumes a list of username strings.")
+	@APIDescription("Inactivates a list of user profiles. Takes a list of usernames(Strings) as params.")
 	@RequireAdmin
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -243,7 +243,7 @@ public class UserProfileResource
 	}
 
 	@PUT
-	@APIDescription("Reactivates a list of user profiles. Consumes a list of username strings.")
+	@APIDescription("Reactivates a list of user profiles. Takes a list of usernames(Strings) as params.")
 	@RequireAdmin
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -259,7 +259,7 @@ public class UserProfileResource
 	}
 
 	@PUT
-	@APIDescription("Reactives a user profile.")
+	@APIDescription("Reactivates a user profile.")
 	@RequireAdmin
 	@Path("/{username}/reactivate")
 	public Response reactivateUserProfile(
@@ -277,7 +277,7 @@ public class UserProfileResource
 	}
 
 	@POST
-	@APIDescription("Sends test email to user id")
+	@APIDescription("Sends test email to user based on user id")
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Path("/{id}/test-email")
 	public Response sendTestEmail(
@@ -290,7 +290,7 @@ public class UserProfileResource
 	}
 
 	@GET
-	@APIDescription("Retrieves Active User Watches.")
+	@APIDescription("Retrieves active user watches.")
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches")
@@ -309,7 +309,7 @@ public class UserProfileResource
 	}
 
 	@GET
-	@APIDescription("Retrieves an user watch by id.")
+	@APIDescription("Retrieves a user watch by id.")
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchView.class)
@@ -360,7 +360,7 @@ public class UserProfileResource
 	}
 
 	@PUT
-	@APIDescription("Update existing watch.")
+	@APIDescription("Updates an existing watch.")
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches/{watchId}")
@@ -399,7 +399,7 @@ public class UserProfileResource
 	}
 
 	@DELETE
-	@APIDescription("Removes a Users Watch.")
+	@APIDescription("Removes a user watch.")
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches/{watchId}")

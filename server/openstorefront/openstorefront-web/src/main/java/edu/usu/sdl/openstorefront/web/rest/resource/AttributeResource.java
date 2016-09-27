@@ -266,7 +266,7 @@ public class AttributeResource
 		try {
 			data = StringProcessor.defaultObjectMapper().writeValueAsString(attributes);
 		} catch (JsonProcessingException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to export attributes.  Unable able to generate JSON.", ex);
+			throw new OpenStorefrontRuntimeException("Unable to export attributes.  Unable to generate JSON.", ex);
 		}
 
 		Response.ResponseBuilder response = Response.ok(data);
@@ -276,7 +276,7 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets attributes types based on filter")
+	@APIDescription("Gets attribute types based on filter")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeType.class)
 	@Path("/attributetypes")
@@ -497,7 +497,7 @@ public class AttributeResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Updates a attribute type")
+	@APIDescription("Updates an attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}")
 	public Response updateAttributeType(
@@ -552,7 +552,7 @@ public class AttributeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a type (In-activates).  Note: this inactives all attribute type associations. Runs in a background task.")
+	@APIDescription("Remove a type (Inactivates).  Note: this inactivates all attribute type associations. Runs in a background task.")
 	@Path("/attributetypes/{type}")
 	public void deleteAttributeType(
 			@PathParam("type")
@@ -591,7 +591,7 @@ public class AttributeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Delete a type and all attribute type associations. (codes, component attributes).  Runs in a background task.")
+	@APIDescription("Delete a type and all attribute type associations (codes, component attributes).  Runs in a background task.")
 	@Path("/attributetypes/{type}/force")
 	public void hardDeleteAttributeType(
 			@PathParam("type")
@@ -669,7 +669,7 @@ public class AttributeResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Updates a attribute code")
+	@APIDescription("Updates an attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/sortorder")
 	public Response updateAttributeCode(
@@ -704,7 +704,7 @@ public class AttributeResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Updates a attribute code")
+	@APIDescription("Updates an attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public Response updateAttributeCode(
@@ -752,7 +752,7 @@ public class AttributeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a Code (In-activates) and inactivates all attribute type associations. Runs in background.")
+	@APIDescription("Remove a Code (Inactivates) and inactivates all attribute type associations. Runs in background.")
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void deleteAttributeCode(
 			@PathParam("type")
@@ -909,7 +909,7 @@ public class AttributeResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Activate a Code (activates) and all assicated data.  Runs in background.")
+	@APIDescription("Activate a Code and all associated data.  Runs in background.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void activateCode(
@@ -1017,7 +1017,7 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets the list of mapping for attributes to fields base on the type passed in.  It will show inactive types as well.")
+	@APIDescription("Gets the list of mapping for attributes to fields based on the type passed in.  It will show inactive types as well.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeXrefMapView.class)
 	@Path("/attributexreftypes/{attributeType}/detail")
@@ -1050,7 +1050,7 @@ public class AttributeResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Save a attribute cross-ref mapping")
+	@APIDescription("Save an attribute cross-ref mapping")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/attributexreftypes/detail")
 	public Response saveMapping(

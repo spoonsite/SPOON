@@ -39,7 +39,7 @@ import javax.validation.constraints.Size;
  * @author jlaw
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-@APIDescription("This is the main listing item that represents a component, asset, topic landing page...etc")
+@APIDescription("This is the main listing item that represents a component, asset, topic landing page, etc.")
 public class Component
 		extends StandardEntity<Component>
 		implements OrganizationModel
@@ -144,7 +144,7 @@ public class Component
 	@FK(ModificationType.class)
 	private String fileHistoryId;
 
-	@APIDescription("Overall record verison for the component")
+	@APIDescription("Overall record version for the component")
 	private Integer recordVersion;
 
 	@APIDescription("Component Id of the pending change component.")

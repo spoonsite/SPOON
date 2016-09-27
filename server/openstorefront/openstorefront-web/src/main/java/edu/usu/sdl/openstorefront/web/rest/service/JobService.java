@@ -108,7 +108,7 @@ public class JobService
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Pauses a system Job  (Note this is not persisted.  Restarting the application will restart the scheduler.)")
+	@APIDescription("Pauses a system job  (Note this is not persisted.  Restarting the application will restart the scheduler.)")
 	@Path("/{jobname}/pause")
 	public Response pauseSystmJob(
 			@PathParam("jobname")
@@ -219,7 +219,7 @@ public class JobService
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Delete tasks a completed task.")
+	@APIDescription("Deletes a completed task.")
 	@Path("/tasks/{taskId}")
 	public void deteteTask(
 			@PathParam("taskId")

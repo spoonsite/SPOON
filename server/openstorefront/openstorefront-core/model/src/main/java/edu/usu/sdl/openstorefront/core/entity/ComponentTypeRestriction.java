@@ -26,7 +26,7 @@ import javax.persistence.Version;
  *
  * @author dshurtleff
  */
-@APIDescription("Defines a restrict for a component type")
+@APIDescription("Defines a restriction for a component type")
 public class ComponentTypeRestriction
 		implements Serializable
 {

@@ -25,7 +25,7 @@ import javax.persistence.Version;
  * @author dshurtleff
  * @param <T>
  */
-@APIDescription("This base class for PKs Version is needed for transactions")
+@APIDescription("This base class is for PKs. Version is needed for transactions")
 public abstract class BasePK<T>
 		implements Serializable, Comparable<T>
 {

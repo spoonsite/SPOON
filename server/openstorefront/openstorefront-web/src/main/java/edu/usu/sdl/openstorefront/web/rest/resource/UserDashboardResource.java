@@ -42,7 +42,7 @@ public class UserDashboardResource
 {
 
 	@GET
-	@APIDescription("Get an user dashboard for the current user")
+	@APIDescription("Gets user dashboard for the current user")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Dashboard.class)
 	public Response getUserdashboard()

@@ -48,7 +48,7 @@ import net.sourceforge.stripes.util.bean.BeanUtil;
  * @author dshurtleff
  */
 @Path("v1/resource/systemsearches")
-@APIDescription("Public or System wide saved searches")
+@APIDescription("Public or system wide saved searches")
 public class SystemSearchResource
 	extends BaseResource
 {
@@ -138,7 +138,7 @@ public class SystemSearchResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Update a search")	
+	@APIDescription("Updates a search")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(SystemSearch.class)
@@ -181,7 +181,7 @@ public class SystemSearchResource
 	@DELETE
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
-	@APIDescription("Inactivates a Search")	
+	@APIDescription("Inactivates a search")
 	@Path("/{searchId}")
 	public Response deleteSearch(
 		@PathParam("searchId") String searchId
@@ -203,7 +203,7 @@ public class SystemSearchResource
 	@PUT
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
-	@APIDescription("Activates a Search")	
+	@APIDescription("Activates a search")
 	@Path("/{searchId}/activate")
 	public Response activateSearch(
 		@PathParam("searchId") String searchId
