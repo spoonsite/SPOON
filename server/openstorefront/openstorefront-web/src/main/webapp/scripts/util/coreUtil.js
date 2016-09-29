@@ -84,11 +84,9 @@ var CoreUtil = {
 		var blob = new Blob([csvContent], {
 			type: "text/csv;charset=" + charset + ";"
 		});
-		if (window.navigator.msSaveOrOpenBlob) {
-			//console.log("Save Blob");
+		if (window.navigator.msSaveOrOpenBlob) {			
 			window.navigator.msSaveBlob(blob, filename);
-		} else {
-			//console.log("Create Link");
+		} else {			
 			var link = document.createElement("a");
 			if (link.download !== undefined) { // feature detection
 				// Browsers that support HTML5 download attribute
@@ -113,7 +111,7 @@ var CoreUtil = {
 		var lengthCheckFlag = 0;
 
         var csv= Ext.util.CSV.decode(csvData);
-		//console.log("CSV:",csv);
+		
 		for (ctr=0; ctr<csv.length; ctr++){
 			if(csv[ctr][0] === '' && csv[ctr].length === 1)
 			{
@@ -175,8 +173,7 @@ var CoreUtil = {
 			}
 		}
 		htmlData += '</table></body></html>';
-		htmlData = htmlData.replace(/<td class="reportview-td" ><\/td>/g, '<td>&nbsp</td>');
-        //console.log("htmlData",htmlData);
+		htmlData = htmlData.replace(/<td class="reportview-td" ><\/td>/g, '<td>&nbsp</td>');        
 		return htmlData;
 	},
 	popupMessage: function (title, message, delay) {
@@ -500,9 +497,6 @@ var CoreUtil = {
 				'Download Attachment' +
 				'</a></p>';
 		}
-
-		console.log(codeHasAttachment);
-		console.log(attachmentLinkHTML);
 
 		var relatedWindow = Ext.create('Ext.window.Window', {
 			title: 'Related Entries',

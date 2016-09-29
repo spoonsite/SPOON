@@ -281,10 +281,10 @@ public class SystemServiceImpl
 			alertContext.setDataTrigger(errorTicket);
 			getAlertService().checkAlert(alertContext);
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			//NOTE: this is a critial path.  if an error is thrown and not catch it would result in a info link or potential loop.
 			//So that's why there is a catch all here.
-			LOG.log(Level.SEVERE, "Error was thrown while processing the error", t);
+			LOG.log(Level.SEVERE, "Error was thrown while processing the error", e);
 		}
 		return systemErrorModel;
 	}
@@ -340,7 +340,9 @@ public class SystemServiceImpl
 		errorTickets.stream().forEach((errorTicket) -> {
 			Path path = Paths.get(FileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			if (path.toFile().exists()) {
-				path.toFile().delete();
+				if (!path.toFile().delete()) {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to remove error ticket. Path: {0}", path.toString()));
+				}
 			}
 			persistenceService.delete(errorTicket);
 		});
@@ -377,7 +379,6 @@ public class SystemServiceImpl
 	public void saveGeneralMedia(GeneralMedia generalMedia, InputStream fileInput)
 	{
 		Objects.requireNonNull(generalMedia);
-		Objects.requireNonNull(fileInput);
 		Objects.requireNonNull(generalMedia.getName(), "Name must be set.");
 
 		generalMedia.setFileName(generalMedia.getName());
@@ -398,7 +399,9 @@ public class SystemServiceImpl
 			Path path = generalMedia.pathToMedia();
 			if (path != null) {
 				if (path.toFile().exists()) {
-					path.toFile().delete();
+					if (path.toFile().delete()) {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete general media. Path: {0}", path.toString()));
+					}
 				}
 			}
 			persistenceService.delete(generalMedia);
@@ -430,7 +433,9 @@ public class SystemServiceImpl
 			Path path = temporaryMedia.pathToMedia();
 			if (path != null) {
 				if (path.toFile().exists()) {
-					path.toFile().delete();
+					if (path.toFile().delete()) {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete temporary media. Path: {0}", path.toString()));
+					}
 				}
 			}
 			persistenceService.delete(temporaryMedia);
@@ -444,7 +449,7 @@ public class SystemServiceImpl
 		try {
 			hash = StringProcessor.getHexFromBytes(MessageDigest.getInstance("SHA-1").digest(urlStr.getBytes()));
 		} catch (NoSuchAlgorithmException ex) {
-			throw new OpenStorefrontRuntimeException("Hash Format not available", "Coding issue");
+			throw new OpenStorefrontRuntimeException("Hash Format not available", "Coding issue", ex);
 		}
 		TemporaryMedia existingMedia = persistenceService.findById(TemporaryMedia.class, hash);
 		if (existingMedia != null) {
@@ -481,6 +486,7 @@ public class SystemServiceImpl
 			return temporaryMedia;
 
 		} catch (MalformedURLException ex) {
+			//error is handled futher up the stack
 			return null;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to download temporary media", "Connection failed to download temporary media.", ex);
@@ -559,7 +565,7 @@ public class SystemServiceImpl
 		long max = DBLogManager.getMaxLogEntries();
 
 		if (count > max) {
-			LOG.log(Level.INFO, MessageFormat.format("Cleaning old log records:  {0}", (count - max)));
+			LOG.log(Level.INFO, MessageFormat.format("Cleaning old log records:  {0}", count - max));
 
 			long limit = count - max + MIN_DB_CLEAN_AMOUNT;
 			if (limit > MAX_DB_CLEAN_AMOUNT) {
@@ -705,7 +711,7 @@ public class SystemServiceImpl
 	@Override
 	public void toggleDBlogger(boolean activate)
 	{
-		PropertiesManager.setProperty(PropertiesManager.KEY_DBLOG_ON, "" + Convert.toBoolean(activate));
+		PropertiesManager.setProperty(PropertiesManager.KEY_DBLOG_ON, Boolean.toString(Convert.toBoolean(activate)));
 
 		//restart
 		DBLogManager.cleanup();

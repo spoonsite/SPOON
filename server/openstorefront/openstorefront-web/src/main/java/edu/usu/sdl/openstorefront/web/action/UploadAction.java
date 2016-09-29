@@ -103,7 +103,7 @@ public class UploadAction
 
 	@Validate(required = true, on = {"ImportData", "DataMapFields", "PreviewMapping"})
 	private String fileFormat;
-	
+
 	@Validate(required = true, on = {"PreviewMapping"})
 	private String dataMappingId;
 	private String dataSource;
@@ -162,7 +162,7 @@ public class UploadAction
 					try {
 						uploadFile.delete();
 					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException(ex);
+						LOG.log(Level.WARNING, "Unable delete temp file.", ex);
 					}
 				}
 
@@ -234,7 +234,7 @@ public class UploadAction
 					try {
 						uploadFile.delete();
 					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException(ex);
+						LOG.log(Level.WARNING, "Unable delete temp file.", ex);
 					}
 				}
 			}
@@ -314,7 +314,7 @@ public class UploadAction
 									}
 								} else if (file.isDirectory() && "resources".equalsIgnoreCase(file.getName())) {
 									TFile resourcesFiles[] = file.listFiles();
-									if (resourcesFiles != null) {									
+									if (resourcesFiles != null) {
 										for (TFile resourceFile : resourcesFiles) {
 											Files.copy(resourceFile.toPath(), FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()), StandardCopyOption.REPLACE_EXISTING);
 										}
@@ -342,7 +342,7 @@ public class UploadAction
 				try {
 					TVFS.umount();
 				} catch (IOException ex) {
-					LOG.log(Level.WARNING, "Unable to unmount tvfs");
+					LOG.log(Level.WARNING, "Unable to unmount tvfs", ex);
 				}
 
 				try {
@@ -371,9 +371,7 @@ public class UploadAction
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
 			} finally {
 				try {
-					if (uploadFile != null) {
-						uploadFile.delete();
-					}
+					uploadFile.delete();
 				} catch (IOException ex) {
 					LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 				}
@@ -459,7 +457,7 @@ public class UploadAction
 					fileHistory.setOriginalFilename(uploadFile.getFileName());
 					fileHistory.setFileFormat(fileFormat);
 					fileHistory.setFileHistoryOption(componentUploadOptions);
-					fileHistory.setFileDataMapId(dataMappingId);					
+					fileHistory.setFileDataMapId(dataMappingId);
 					importContext.getFileHistoryAll().setFileHistory(fileHistory);
 
 					service.getImportService().importData(importContext);
@@ -474,7 +472,9 @@ public class UploadAction
 						uploadFile.delete();
 					}
 					if (tempFile != null) {
-						tempFile.delete();
+						if (tempFile.delete()) {
+							LOG.log(Level.WARNING, "Unable to remove temp upload file. OS will clean up.");
+						}
 					}
 				} catch (IOException ex) {
 					LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
@@ -492,98 +492,92 @@ public class UploadAction
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
 			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
-			
+
 			List<FieldDefinition> fieldDefinitions = new ArrayList<>();
-			
-			try (InputStream in = uploadFile.getInputStream()) {								
+
+			try (InputStream in = uploadFile.getInputStream()) {
 				fieldDefinitions = service.getImportService().getMapField(fileFormat, in);
 			} catch (IOException ex) {
-				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");			
+				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
 			} finally {
 				try {
-					if (uploadFile != null) {
-						uploadFile.delete();
-					}
+					uploadFile.delete();
 				} catch (IOException ex) {
 					LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 				}
 			}
-			
+
 			return streamResults(fieldDefinitions);
 		}
-		
+
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
-	
+
 	@HandlesEvent("PreviewMapping")
 	public Resolution previewMapping()
 	{
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
 			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
-			
+
 			String output = "";
-			try (InputStream in = uploadFile.getInputStream()) {								
+			try (InputStream in = uploadFile.getInputStream()) {
 				output = service.getImportService().previewMapData(fileFormat, dataMappingId, in, uploadFile.getFileName());
 			} catch (IOException ex) {
-				output = "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.";			
+				output = "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.";
 			} finally {
 				try {
-					if (uploadFile != null) {
-						uploadFile.delete();
-					}
+					uploadFile.delete();
 				} catch (IOException ex) {
 					LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 				}
 			}
-			
+
 			JsonResponse jsonResponse = new JsonResponse();
 			jsonResponse.setErrors(errors);
 			jsonResponse.setSuccess(true);
 			jsonResponse.setMessage(output);
-						
+
 			return streamResults(jsonResponse);
 		}
-		
+
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
-	}	
-	
+	}
+
 	@HandlesEvent("ImportMapping")
 	public Resolution importMapping()
 	{
 		Map<String, String> errors = new HashMap<>();
 		if (SecurityUtil.isAdminUser()) {
 			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
-			
-			
-			try (InputStream in = uploadFile.getInputStream()) {								
-				
-				DataMapModel dataMapModel = objectMapper.readValue(in, DataMapModel.class);				
+
+			try (InputStream in = uploadFile.getInputStream()) {
+
+				DataMapModel dataMapModel = objectMapper.readValue(in, DataMapModel.class);
 				ValidationResult validationResult = dataMapModel.validate();
 				if (validationResult.valid()) {
 					service.getImportService().saveFileDataMap(dataMapModel);
 				} else {
-					validationResult.addToErrors(errors);					
+					validationResult.addToErrors(errors);
 				}
-				
+
 			} catch (IOException ex) {
-				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");			
+				LOG.log(Level.FINEST, "Failed to read file.", ex);
+				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
 			} finally {
 				try {
-					if (uploadFile != null) {
-						uploadFile.delete();
-					}
+					uploadFile.delete();
 				} catch (IOException ex) {
 					LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
 				}
 			}
-			
+
 			return streamErrorResponse(errors, true);
 		}
-		
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");		
-	}	
-		
+
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
+
 	public FileBean getUploadFile()
 	{
 		return uploadFile;

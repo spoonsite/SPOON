@@ -68,13 +68,14 @@ public class OrientPersistenceService
 		implements PersistenceService
 {
 
-	private static final Logger log = Logger.getLogger(OrientPersistenceService.class.getName());
+	private static final Logger LOG = Logger.getLogger(OrientPersistenceService.class.getName());
 	private static final String PARAM_NAME_SEPARATOR = "1";
 
 	private OObjectDatabaseTx transaction;
 
 	public OrientPersistenceService()
 	{
+		//Nothing to set
 	}
 
 	@Override
@@ -214,7 +215,7 @@ public class OrientPersistenceService
 	public <T> T findById(Class<T> entity, Object id)
 	{
 		if (id == null) {
-			log.log(Level.FINEST, "Id is null so return null");
+			LOG.log(Level.FINEST, "Id is null so return null");
 			return null;
 		}
 
@@ -288,7 +289,7 @@ public class OrientPersistenceService
 	{
 		Map<String, Object> fieldValueMap = new HashMap<>();
 
-		//Start at the root (The fist Id found wins ...there should only be one)
+		//Start at the root (The first Id found wins ...there should only be one)
 		if (entityClass.getSuperclass() != null) {
 			fieldValueMap = findIdField(entityClass.getSuperclass(), id);
 		}
@@ -300,14 +301,8 @@ public class OrientPersistenceService
 						//PK class should only be one level deep
 						for (Field pkField : field.getType().getDeclaredFields()) {
 							try {
-//								Method pkMethod = id.getClass().getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
-//								Object pkObj = pkMethod.invoke(id, (Object[]) null);
-//
-//								Method method = pkObj.getClass().getMethod("get" + StringUtils.capitalize(pkField.getName()), (Class<?>[]) null);
-//								Object returnObj = method.invoke(pkObj, (Object[]) null);
 								if (Modifier.isStatic(pkField.getModifiers()) == false
-									&& Modifier.isFinal(pkField.getModifiers()) == false) 
-								{
+										&& Modifier.isFinal(pkField.getModifiers()) == false) {
 									Method method = id.getClass().getMethod("get" + StringUtils.capitalize(pkField.getName()), (Class<?>[]) null);
 									Object returnObj = method.invoke(id, (Object[]) null);
 									fieldValueMap.put(field.getName() + "." + pkField.getName(), returnObj);
@@ -340,13 +335,13 @@ public class OrientPersistenceService
 	}
 
 	@Override
-	public <T> int deleteByExample(BaseEntity example)
+	public int deleteByExample(BaseEntity example)
 	{
 		return deleteByExample(new QueryByExample(example));
 	}
 
 	@Override
-	public <T> int deleteByExample(QueryByExample queryByExample)
+	public int deleteByExample(QueryByExample queryByExample)
 	{
 		int deleteCount = 0;
 		StringBuilder queryString = new StringBuilder();
@@ -621,10 +616,9 @@ public class OrientPersistenceService
 					Object value = fieldMap.get(field);
 					if (value != null) {
 						GenerateStatementOption fieldOperation = generateStatementOption;
-						if (fieldOptions != null && fieldOptions.containsKey(field.toString()))
-						{
+						if (fieldOptions != null && fieldOptions.containsKey(field.toString())) {
 							fieldOperation = fieldOptions.get(field.toString());
-						}	
+						}
 
 						Method method = example.getClass().getMethod("get" + StringUtils.capitalize(field.toString()), (Class<?>[]) null);
 						Object returnObj = method.invoke(example, (Object[]) null);
@@ -640,7 +634,7 @@ public class OrientPersistenceService
 							where.append(generateWhereClause(returnObj, complexFieldStack, generateStatementOption, fieldOptions));
 							complexFieldStack.getFieldStack().pop();
 						} else {
-							
+
 							if (addAnd) {
 								where.append(fieldOperation.getCondition());
 							} else {
@@ -669,7 +663,7 @@ public class OrientPersistenceService
 				}
 			}
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
-			throw new RuntimeException(ex);
+			throw new OpenStorefrontRuntimeException(ex);
 		}
 		return where.toString();
 	}
@@ -720,7 +714,7 @@ public class OrientPersistenceService
 				}
 			}
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
-			throw new RuntimeException(ex);
+			throw new OpenStorefrontRuntimeException(ex);
 		}
 		return where.toString();
 	}
@@ -743,11 +737,10 @@ public class OrientPersistenceService
 					Object value = field.get(example);
 					if (value != null) {
 						GenerateStatementOption fieldOperation = generateStatementOption;
-						if (fieldOptions != null && fieldOptions.containsKey(field.toString()))
-						{
+						if (fieldOptions != null && fieldOptions.containsKey(field.toString())) {
 							fieldOperation = fieldOptions.get(field.toString());
-						}	
-						
+						}
+
 						if (ReflectionUtil.isComplexClass(value.getClass())) {
 							complexFieldStack.getFieldStack().push(field.getName());
 							parameterMap.putAll(mapParameters(value, complexFieldStack, generateStatementOption, fieldOptions));
@@ -784,7 +777,7 @@ public class OrientPersistenceService
 	public <T> T queryOneByExample(Class<T> exampleClass, QueryByExample queryByExample)
 	{
 		List<T> results = queryByExample(exampleClass, queryByExample);
-		if (results.size() > 0) {
+		if (!results.isEmpty()) {
 			return results.get(0);
 		}
 		return null;
@@ -820,8 +813,8 @@ public class OrientPersistenceService
 		OObjectDatabaseTx db = getConnection();
 		List<T> results = new ArrayList<>();
 		try {
-			if (log.isLoggable(Level.FINEST)) {
-				log.log(Level.FINEST, query);
+			if (LOG.isLoggable(Level.FINEST)) {
+				LOG.log(Level.FINEST, query);
 			}
 			//look for empty collection
 			if (parameterMap != null) {

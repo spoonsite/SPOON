@@ -20,7 +20,6 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
-import static edu.usu.sdl.openstorefront.core.api.model.TaskFuture.MAX_ORPHAN_QUEUE_TIME;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.AsyncTask;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
@@ -57,6 +56,7 @@ public class TaskThreadExecutor
 
 	private static final int MAX_DELAY_CHECK = 5;
 	private static final long MAX_DELAY_MILLIS = 10;
+	private static final int MAX_ORPHAN_QUEUE_TIME = 60000;
 
 	private static List<TaskFuture> tasks = Collections.synchronizedList(new ArrayList<>());
 
@@ -127,7 +127,7 @@ public class TaskThreadExecutor
 	@Override
 	protected void beforeExecute(Thread t, Runnable r)
 	{
-		t.setName("Async-Pool-Task-" + t.getId());		
+		t.setName("Async-Pool-Task-" + t.getId());
 		if (r instanceof Future<?>) {
 			Future future = ((Future<?>) r);
 
@@ -194,10 +194,8 @@ public class TaskThreadExecutor
 				TaskFuture taskFuture = asyncTask.toTaskFuture();
 				if (taskFuture.isExpired()) {
 					serviceProxy.getSystemService().removeAsyncTask(taskFuture.getTaskId());
-				} else {
-					if (taskMap.containsKey(taskFuture.getTaskId()) == false) {
-						taskMap.put(taskFuture.getTaskId(), taskFuture);
-					}
+				} else if (taskMap.containsKey(taskFuture.getTaskId()) == false) {
+					taskMap.put(taskFuture.getTaskId(), taskFuture);
 				}
 			}
 		}
