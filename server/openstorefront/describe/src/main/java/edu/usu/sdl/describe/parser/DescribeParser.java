@@ -8,6 +8,7 @@ package edu.usu.sdl.describe.parser;
 import edu.usu.sdl.describe.model.TrustedDataCollection;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,24 +28,30 @@ public class DescribeParser
 
 	private static final Logger LOG = Logger.getLogger(DescribeParser.class.getName());
 
-	public static TrustedDataCollection parse(File xmlfile) throws Exception
+	private DescribeParser()
+	{
+	}
+
+	public static TrustedDataCollection parse(File xmlfile) throws FileNotFoundException
 	{
 		return DescribeParser.parse(new FileInputStream(xmlfile));
 	}
 
-	public static TrustedDataCollection parse(InputStream in) throws Exception
+	public static TrustedDataCollection parse(InputStream in)
 	{
 		Strategy strategy = new AnnotationStrategy();
 		Serializer serializer = new Persister(strategy);
 		TrustedDataCollection data = null;
 		try {
 			data = serializer.read(TrustedDataCollection.class, in);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException ioe) {
-					LOG.log(Level.WARNING, "Unable to close describe file.");
+					LOG.log(Level.WARNING, "Unable to close describe file.", ioe);
 				}
 			}
 		}
@@ -63,7 +70,7 @@ public class DescribeParser
 				try {
 					out.close();
 				} catch (IOException ioe) {
-					LOG.log(Level.WARNING, "Unable to close describe file.");
+					LOG.log(Level.WARNING, "Unable to close describe file.", ioe);
 				}
 			}
 		}

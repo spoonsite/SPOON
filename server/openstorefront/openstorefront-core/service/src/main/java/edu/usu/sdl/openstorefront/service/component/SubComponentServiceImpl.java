@@ -166,7 +166,9 @@ public class SubComponentServiceImpl
 		Path path = componentResource.pathToResource();
 		if (path != null) {
 			if (path.toFile().exists()) {
-				path.toFile().delete();
+				if (path.toFile().delete()) {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component resource. Path: {0}", path.toString()));
+				}
 			}
 		}
 	}
@@ -177,7 +179,9 @@ public class SubComponentServiceImpl
 		Path path = componentMedia.pathToMedia();
 		if (path != null) {
 			if (path.toFile().exists()) {
-				path.toFile().delete();
+				if (path.toFile().delete()) {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component media. Path: {0}", path.toString()));
+				}
 			}
 		}
 	}
@@ -370,13 +374,15 @@ public class SubComponentServiceImpl
 
 	ComponentMedia saveComponentMedia(ComponentMedia media, boolean updateLastActivity)
 	{
+		ComponentMedia newMedia;
+
 		ComponentMedia oldMedia = persistenceService.findById(ComponentMedia.class, media.getComponentMediaId());
 		if (oldMedia != null) {
 			if (StringUtils.isNotBlank(media.getLink())) {
 				removeLocalMedia(oldMedia);
 			}
 			oldMedia.updateFields(media);
-			media = persistenceService.persist(oldMedia);
+			newMedia = persistenceService.persist(oldMedia);
 		} else {
 			media.setComponentMediaId(persistenceService.generateId());
 
@@ -395,13 +401,13 @@ public class SubComponentServiceImpl
 				}
 			}
 			media.populateBaseCreateFields();
-			media = persistenceService.persist(media);
+			newMedia = persistenceService.persist(media);
 		}
 
 		if (updateLastActivity) {
 			updateComponentLastActivity(media.getComponentId());
 		}
-		return media;
+		return newMedia;
 	}
 
 	public void saveComponentMetadata(ComponentMetadata metadata)
@@ -433,6 +439,8 @@ public class SubComponentServiceImpl
 
 	ComponentRelationship saveComponentRelationship(ComponentRelationship componentRelationship, boolean updateLastActivity)
 	{
+		ComponentRelationship newRelationship;
+
 		ComponentRelationship componentRelationshipExisting = persistenceService.findById(ComponentRelationship.class, componentRelationship.getComponentRelationshipId());
 
 		if (componentRelationshipExisting == null) {
@@ -450,17 +458,17 @@ public class SubComponentServiceImpl
 
 		if (componentRelationshipExisting != null) {
 			componentRelationshipExisting.updateFields(componentRelationship);
-			componentRelationship = persistenceService.persist(componentRelationshipExisting);
+			newRelationship = persistenceService.persist(componentRelationshipExisting);
 		} else {
 			componentRelationship.setComponentRelationshipId(persistenceService.generateId());
 			componentRelationship.populateBaseCreateFields();
-			componentRelationship = persistenceService.persist(componentRelationship);
+			newRelationship = persistenceService.persist(componentRelationship);
 		}
 
 		if (updateLastActivity) {
 			updateComponentLastActivity(componentRelationship.getComponentId());
 		}
-		return componentRelationship;
+		return newRelationship;
 	}
 
 	public void saveComponentQuestion(ComponentQuestion question)
@@ -864,6 +872,8 @@ public class SubComponentServiceImpl
 				case DELETE:
 					persistenceService.delete(componentAttribute);
 					break;
+				default:
+					throw new UnsupportedOperationException("Add support for other type of operations");
 			}
 		}
 		componentIdSet.forEach(componentId -> {

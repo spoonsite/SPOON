@@ -32,8 +32,6 @@ import java.util.concurrent.Future;
 public class TaskFuture
 {
 
-	public static int MAX_ORPHAN_QUEUE_TIME = 60000;
-
 	private transient Future future;
 	private Date submitedDts;
 	private Date completedDts;
@@ -50,6 +48,7 @@ public class TaskFuture
 
 	public TaskFuture()
 	{
+		//This generally system created.
 	}
 
 	public TaskFuture(Future future, Date submittedDts, boolean allowMultiple)

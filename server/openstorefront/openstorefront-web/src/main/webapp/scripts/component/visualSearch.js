@@ -42,10 +42,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 		mousewheel: 'zoom',
 		DOMMouseScroll: 'zoom'
 	},
-	
-	onMouseDown: function (e) {
-		console.log(e);
-	},	
 		
 	initComponent: function () {
 		this.callParent();
@@ -77,11 +73,6 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					}
 				});
 				visPanel.getSurface().renderFrame();
-			},
-			log: function() {
-				console.log('--------->');
-				console.log(this);
-				console.log('<---------');
 			}
 		};
 		
