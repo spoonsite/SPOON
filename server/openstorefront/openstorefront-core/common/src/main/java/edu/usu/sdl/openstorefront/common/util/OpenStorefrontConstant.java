@@ -65,6 +65,8 @@ public class OpenStorefrontConstant
 	public static final int FIELD_SIZE_ARTICLE_SIZE = 10485760;
 	public static final int FIELD_SIZE_80 = 80;
 	public static final int FIELD_SIZE_60 = 60;
+	public static final int FIELD_SIZE_255 = 255;
+	public static final int FIELD_SIZE_1K = 1024;
 	public static final int FIELD_SIZE_4K = 4096;
 	public static final int FIELD_SIZE_16K = 16384;
 	public static final int FIELD_SIZE_32K = 32768;
