@@ -68,3 +68,6 @@ project*.properties
 /server/openstorefront/openstorefront-core/model/nbproject/
 /server/openstorefront/openstorefront-plugin/spoon-importer/target/
 /server/openstorefront/openstorefront-web/nbproject/
+/server/openstorefront/target/
+/server/openstorefront/openstorefront-core/target/
+/server/openstorefront/openstorefront-plugin/target/
