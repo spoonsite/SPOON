@@ -82,7 +82,7 @@ public class AttributeServiceImpl
 		implements AttributeService, AttributeServicePrivate
 {
 
-	private static final Logger log = Logger.getLogger(AttributeServiceImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(AttributeServiceImpl.class.getName());
 
 	@Override
 	public List<AttributeType> getRequiredAttributes()
@@ -277,19 +277,19 @@ public class AttributeServiceImpl
 	public void removeAttributeCodeAttachment(AttributeCode attributeCode)
 	{
 		Objects.requireNonNull(attributeCode);
-		if (attributeCode != null) {
-			Path path = attributeCode.pathToAttachment();
-			if (path != null) {
-				if (path.toFile().exists()) {
-					path.toFile().delete();
-				}
-			}
-			attributeCode.setAttachmentFileName("");
-			attributeCode.setAttachmentMimeType("");
-			attributeCode.setAttachmentOriginalFileName("");
-			persistenceService.persist(attributeCode);
 
+		Path path = attributeCode.pathToAttachment();
+		if (path != null && path.toFile().exists()) {
+			boolean deleted = path.toFile().delete();
+			if (!deleted) {
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to delete attribute attatchment. File might be in use. Path: {0}", path.toString()));
+			}
 		}
+		attributeCode.setAttachmentFileName("");
+		attributeCode.setAttachmentMimeType("");
+		attributeCode.setAttachmentOriginalFileName("");
+		persistenceService.persist(attributeCode);
+
 	}
 
 	@Override
@@ -445,7 +445,7 @@ public class AttributeServiceImpl
 			existingAttributeMap.put(attributeType.getAttributeType(), attributeType);
 		});
 
-		attributeMap.keySet().stream().forEach(attributeType -> {
+		for (AttributeType attributeType : attributeMap.keySet()) {
 
 			try {
 
@@ -517,10 +517,10 @@ public class AttributeServiceImpl
 								}
 								newCodeSet.add(attributeCode.getAttributeCodePk().toKey());
 							} else {
-								log.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add  Attribute Code:  {0} Validation Issues:\n{1}", new Object[]{attributeCode.getAttributeCodePk().toKey(), validationResult.toString()}));
+								LOG.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add  Attribute Code:  {0} Validation Issues:\n{1}", new Object[]{attributeCode.getAttributeCodePk().toKey(), validationResult.toString()}));
 							}
 						} catch (Exception e) {
-							log.log(Level.SEVERE, "Unable to save attribute code: " + attributeCode.getAttributeCodePk().toKey(), e);
+							LOG.log(Level.SEVERE, "Unable to save attribute code: " + attributeCode.getAttributeCodePk().toKey(), e);
 						}
 					}
 					//inactive missing codes
@@ -532,12 +532,12 @@ public class AttributeServiceImpl
 						}
 					});
 				} else {
-					log.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add Type:  {0} Validation Issues:\n{1}", new Object[]{attributeType.getAttributeType(), validationResult.toString()}));
+					LOG.log(Level.WARNING, MessageFormat.format("(Data Sync) Unable to Add Type:  {0} Validation Issues:\n{1}", new Object[]{attributeType.getAttributeType(), validationResult.toString()}));
 				}
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Unable to save attribute type:" + attributeType.getAttributeType(), e);
+				LOG.log(Level.SEVERE, "Unable to save attribute type:" + attributeType.getAttributeType(), e);
 			}
-		});
+		}
 		//Clear cache
 		OSFCacheManager.getAttributeTypeCache().removeAll();
 		OSFCacheManager.getAttributeCache().removeAll();
@@ -702,7 +702,7 @@ public class AttributeServiceImpl
 					//should only have one external code if there's a dup we'll only use one.
 					//(however, which  code  is used depends on the order that came in.  which is not  determinate)
 					//First one we hit wins
-					log.log(Level.WARNING, MessageFormat.format("Duplicate external code for attribute type: {0} Code: {1}", new Object[]{xrefAttributeMap.getAttributeType(), xrefAttributeMap.getExternalCode()}));
+					LOG.log(Level.WARNING, MessageFormat.format("Duplicate external code for attribute type: {0} Code: {1}", new Object[]{xrefAttributeMap.getAttributeType(), xrefAttributeMap.getExternalCode()}));
 				} else {
 					codeMap.put(xrefAttributeMap.getExternalCode(), xrefAttributeMap.getLocalCode());
 				}
@@ -835,7 +835,7 @@ public class AttributeServiceImpl
 			try {
 				BeanUtils.setProperty(attributeOrderExample, sortField.getName(), QueryByExample.getFlagForType(sortField.getType()));
 			} catch (IllegalAccessException | InvocationTargetException ex) {
-				log.log(Level.WARNING, "Unable to set sort field", ex);
+				LOG.log(Level.WARNING, "Unable to set sort field", ex);
 			}
 			queryByExample.setOrderBy(attributeOrderExample);
 		}
@@ -868,7 +868,7 @@ public class AttributeServiceImpl
 		queryByExample.setSortDirection(filter.getSortOrder());
 
 		AttributeCode attributeOrderExample = new AttributeCode();
-		if (filter.getSortField().equals("code")) {
+		if ("code".equals(filter.getSortField())) {
 			AttributeCodePk newPk = new AttributeCodePk();
 			newPk.setAttributeCode(QueryByExample.STRING_FLAG);
 			attributeOrderExample.setAttributeCodePk(newPk);
@@ -880,7 +880,7 @@ public class AttributeServiceImpl
 				try {
 					BeanUtils.setProperty(attributeOrderExample, sortField.getName(), QueryByExample.getFlagForType(sortField.getType()));
 				} catch (IllegalAccessException | InvocationTargetException ex) {
-					log.log(Level.WARNING, "Unable to set sort field", ex);
+					LOG.log(Level.WARNING, "Unable to set sort field", ex);
 				}
 				queryByExample.setOrderBy(attributeOrderExample);
 			}
