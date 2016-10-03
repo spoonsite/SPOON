@@ -1521,6 +1521,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								displayField: 'description',
 								typeAhead: 'true',
 								store: Ext.create('Ext.data.Store', {
+									storeId: 'metadataLabelStore',
 									proxy: {
 										type: 'ajax',
 										url: 'api/v1/resource/componentmetadata/lookup'
@@ -1586,6 +1587,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 													grid.getStore().load({
 														url: 'api/v1/resource/components/' + submissionPanel.componentId + '/metadata/view'
 													});
+													Ext.getStore('metadataLabelStore').load();
 													metaWindow.close();
 												}
 											});
