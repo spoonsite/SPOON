@@ -191,7 +191,7 @@
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
-							widget.actionRefresh();
+							widget.refresh();
 						}
 					},
 					{
