@@ -755,6 +755,16 @@
 						}
 					});
 				};
+
+				var metadataValueLoadTask = new Ext.util.DelayedTask(function() {
+					var labelString = Ext.getCmp('metadataLabelComboBox').getValue();
+					if (labelString) {
+						var valueStore = Ext.getStore('metadataValueStore');
+						valueStore.getProxy().setUrl('api/v1/resource/componentmetadata/lookup/values');
+						valueStore.getProxy().setExtraParams({label: labelString});
+						valueStore.load();
+					}
+				});
 	
 				var metadataGrid = Ext.create('Ext.grid.Panel', {
 					id: 'metadataGrid',
@@ -779,8 +789,17 @@
 						}
 					}),
 					columns: [
-						{ text: 'Label', dataIndex: 'label',  width: 200 },
-						{ text: 'Value',  dataIndex: 'value', flex: 1, minWidth: 200 },
+						{ 
+							text: 'Label',
+							dataIndex: 'label',
+							width: 200 
+						},
+						{ 
+							text: 'Value',
+							dataIndex: 'value',
+							flex: 1,
+							minWidth: 200 
+						},
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
 					],
@@ -861,18 +880,44 @@
 									name: 'metadataId'
 								},
 								{
-									xtype: 'textfield',
+									xtype: 'combobox',
+									id: 'metadataLabelComboBox',
 									fieldLabel: 'Label <span class="field-required" />',									
 									allowBlank: false,									
 									maxLength: '255',									
-									name: 'label'
+									name: 'label',
+									valueField: 'code',
+									displayField: 'description',
+									typeAhead: 'true',
+									store: Ext.create('Ext.data.Store', {
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/componentmetadata/lookup'
+										},
+										autoLoad: true
+									}),
+									listeners: {
+										change: function (combo, newValue, oldValue, eOpts) {
+											metadataValueLoadTask.delay(500);
+										}
+									}
 								},
 								{
-									xtype: 'textfield',
+									xtype: 'combobox',
+									id: 'metadataValueComboBox',
 									fieldLabel: 'Value <span class="field-required" />',									
 									allowBlank: false,									
 									maxLength: '255',									
-									name: 'value'
+									name: 'value',
+									valueField: 'code',
+									displayField: 'description',
+									typeAhead: 'true',
+									store: Ext.create('Ext.data.Store', {
+										storeId: 'metadataValueStore',
+										proxy: {
+											type: 'ajax'
+										}
+									})
 								},
 								Ext.create('OSF.component.SecurityComboBox', {	
 									hidden: !${branding.allowSecurityMarkingsFlg}
