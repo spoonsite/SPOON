@@ -26,6 +26,14 @@ public interface EvaluationService
 		extends AsyncService
 {
 
+	/**
+	 * This complete save of the checklist. It assume all responses and
+	 * recommendation are included as it remove the existing and adds the new
+	 * ones.
+	 *
+	 * @param checklistAll
+	 * @return
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public String saveCheckListAll(ChecklistAll checklistAll);
 

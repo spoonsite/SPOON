@@ -171,6 +171,32 @@ public abstract class StandardEntity<T>
 		return existing;
 	}
 
+	private T getDBEntity()
+	{
+		Service service = ServiceProxyFactory.getServiceProxy();
+		T existing = service.getPersistenceService().findById((Class<T>) this.getClass(), EntityUtil.getPKFieldValue(this));
+		return existing;
+	}
+
+	public void inactivate()
+	{
+		Service service = ServiceProxyFactory.getServiceProxy();
+		setActiveStatus(INACTIVE_STATUS);
+		StandardEntity existing = (StandardEntity) getDBEntity();
+		if (existing != null && !INACTIVE_STATUS.equals(existing.getActiveStatus())) {
+			existing.setActiveStatus(INACTIVE_STATUS);
+			existing.populateBaseUpdateFields();
+			service.getPersistenceService().persist(existing);
+		} else {
+
+		}
+	}
+
+	public void delete()
+	{
+
+	}
+
 	public String getActiveStatus()
 	{
 		return activeStatus;

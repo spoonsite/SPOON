@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistRecommendation;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
@@ -32,80 +33,6 @@ public class EvaluationServiceImpl
 		implements EvaluationService
 {
 
-//	@Override
-//	public Evaluation saveEvaluation(Evaluation evaluation)
-//	{
-//		Evaluation evaluationExisting = persistenceService.findById(Evaluation.class, evaluation.getEvaluationId());
-//		if (evaluationExisting != null) {
-//			evaluationExisting.updateFields(evaluation);
-//			evaluationExisting = persistenceService.persist(evaluationExisting);
-//		} else {
-//			evaluation.setEvaluationId(persistenceService.generateId());
-//			evaluation.populateBaseCreateFields();
-//			evaluationExisting = persistenceService.persist(evaluation);
-//		}
-//		return evaluationExisting;
-//	}
-//
-//	@Override
-//	public EvaluationChecklist saveEvaluationChecklist(EvaluationChecklist evaluationChecklist)
-//	{
-//		EvaluationChecklist checklistExisting = persistenceService.findById(EvaluationChecklist.class, evaluationChecklist.getChecklistId());
-//		if (checklistExisting != null) {
-//			checklistExisting.updateFields(evaluationChecklist);
-//			checklistExisting = persistenceService.persist(checklistExisting);
-//		} else {
-//			evaluationChecklist.setChecklistId(persistenceService.generateId());
-//			evaluationChecklist.populateBaseCreateFields();
-//			checklistExisting = persistenceService.persist(evaluationChecklist);
-//		}
-//		return checklistExisting;
-//	}
-//
-//	@Override
-//	public EvaluationChecklistRecommendation saveEvaluationChecklistRecommendation(EvaluationChecklistRecommendation evaluationChecklistRecommendation)
-//	{
-//		EvaluationChecklistRecommendation recommendationExisting = persistenceService.findById(EvaluationChecklistRecommendation.class, evaluationChecklistRecommendation.getRecommendationId());
-//		if (recommendationExisting != null) {
-//			recommendationExisting.updateFields(evaluationChecklistRecommendation);
-//			recommendationExisting = persistenceService.persist(recommendationExisting);
-//		} else {
-//			evaluationChecklistRecommendation.setRecommendationId(persistenceService.generateId());
-//			evaluationChecklistRecommendation.populateBaseCreateFields();
-//			recommendationExisting = persistenceService.persist(recommendationExisting);
-//		}
-//		return recommendationExisting;
-//	}
-//
-//	@Override
-//	public EvaluationChecklistResponse saveEvaluationChecklistResponse(EvaluationChecklistResponse evaluationChecklistResponse)
-//	{
-//		EvaluationChecklistResponse responseExisting = persistenceService.findById(EvaluationChecklistResponse.class, evaluationChecklistResponse.getResponseId());
-//		if (responseExisting != null) {
-//			responseExisting.updateFields(evaluationChecklistResponse);
-//			responseExisting = persistenceService.persist(responseExisting);
-//		} else {
-//			evaluationChecklistResponse.setResponseId(persistenceService.generateId());
-//			evaluationChecklistResponse.populateBaseCreateFields();
-//			responseExisting = persistenceService.persist(evaluationChecklistResponse);
-//		}
-//		return responseExisting;
-//	}
-//
-//	@Override
-//	public EvaluationTemplate saveEvaluationTemplate(EvaluationTemplate evaluationTemplate)
-//	{
-//		EvaluationTemplate templateExisting = persistenceService.findById(EvaluationTemplate.class, evaluationTemplate.getTemplateId());
-//		if (templateExisting != null) {
-//			templateExisting.updateFields(evaluationTemplate);
-//			templateExisting = persistenceService.persist(templateExisting);
-//		} else {
-//			evaluationTemplate.setTemplateId(persistenceService.generateId());
-//			evaluationTemplate.populateBaseCreateFields();
-//			templateExisting = persistenceService.persist(evaluationTemplate);
-//		}
-//		return templateExisting;
-//	}
 	@Override
 	public String saveCheckListAll(ChecklistAll checklistAll)
 	{
@@ -114,8 +41,20 @@ public class EvaluationServiceImpl
 
 		EvaluationChecklist evaluationChecklist = checklistAll.getEvaluationChecklist().save();
 
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		//remove old recommendations replace with the new ones
+		EvaluationChecklistRecommendation recommendationDeleteExample = new EvaluationChecklistRecommendation();
+		recommendationDeleteExample.setChecklistId(evaluationChecklist.getChecklistId());
+		persistenceService.deleteByExample(recommendationDeleteExample);
 
+		for (EvaluationChecklistRecommendation recommendation : checklistAll.getRecommendations()) {
+			recommendation.setChecklistId(evaluationChecklist.getChecklistId());
+			recommendation.setRecommendationId(persistenceService.generateId());
+			recommendation.populateBaseCreateFields();
+			persistenceService.persist(recommendation);
+		}
+
+		//remove old response replace with the new ones
+		return evaluationChecklist.getChecklistId();
 	}
 
 	@Override
