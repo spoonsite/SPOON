@@ -15,13 +15,99 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
+import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  *
  * @author dshurtleff
  */
 public class ContentSubsectionTemplate
+		extends StandardEntity<ContentSubsectionTemplate>
 {
 
-	String instructions;
+	@PK(generated = true)
+	@NotNull
+	private String templateId;
+
+	@NotNull
+	@FK(value = ContentSectionTemplate.class, referencedField = "templateId")
+	private String sectionTemplateId;
+
+	@NotNull
+	@FK(ContentSubSection.class)
+	private String contentSubSectionId;
+
+	@ConsumeField
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(TextSanitizer.class)
+	private String name;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
+	@Sanitize(HTMLSanitizer.class)
+	private String instructions;
+
+	public ContentSubsectionTemplate()
+	{
+	}
+
+	public String getTemplateId()
+	{
+		return templateId;
+	}
+
+	public void setTemplateId(String templateId)
+	{
+		this.templateId = templateId;
+	}
+
+	public String getContentSubSectionId()
+	{
+		return contentSubSectionId;
+	}
+
+	public void setContentSubSectionId(String contentSubSectionId)
+	{
+		this.contentSubSectionId = contentSubSectionId;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public String getInstructions()
+	{
+		return instructions;
+	}
+
+	public void setInstructions(String instructions)
+	{
+		this.instructions = instructions;
+	}
+
+	public String getSectionTemplateId()
+	{
+		return sectionTemplateId;
+	}
+
+	public void setSectionTemplateId(String sectionTemplateId)
+	{
+		this.sectionTemplateId = sectionTemplateId;
+	}
 
 }

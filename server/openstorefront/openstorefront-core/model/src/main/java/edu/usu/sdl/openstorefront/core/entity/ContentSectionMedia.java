@@ -15,13 +15,127 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
+import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Section Media")
 public class ContentSectionMedia
+		extends StandardEntity<ContentSection>
 {
 
-	String contentSectionId;
+	@PK(generated = true)
+	@NotNull
+	private String contentSectionMediaId;
+
+	@NotNull
+	@FK(ContentSection.class)
+	private String contentSectionId;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("Stored name filename")
+	private String fileName;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@APIDescription("Name of the file uploaded")
+	private String originalName;
+
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@ValidValueType(value = {}, lookupClass = MediaType.class)
+	@ConsumeField
+	@FK(MediaType.class)
+	private String mediaTypeCode;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String mimeType;
+
+	public ContentSectionMedia()
+	{
+	}
+
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+
+		ContentSectionMedia contentSectionMedia = (ContentSectionMedia) entity;
+
+		setContentSectionMediaId(contentSectionMedia.contentSectionMediaId);
+		setFileName(contentSectionMedia.getFileName());
+		setMediaTypeCode(contentSectionMedia.getMediaTypeCode());
+		setMimeType(contentSectionMedia.getMimeType());
+		setOriginalName(contentSectionMedia.getOriginalName());
+
+	}
+
+	public String getContentSectionMediaId()
+	{
+		return contentSectionMediaId;
+	}
+
+	public void setContentSectionMediaId(String contentSectionMediaId)
+	{
+		this.contentSectionMediaId = contentSectionMediaId;
+	}
+
+	public String getContentSectionId()
+	{
+		return contentSectionId;
+	}
+
+	public void setContentSectionId(String contentSectionId)
+	{
+		this.contentSectionId = contentSectionId;
+	}
+
+	public String getFileName()
+	{
+		return fileName;
+	}
+
+	public void setFileName(String fileName)
+	{
+		this.fileName = fileName;
+	}
+
+	public String getOriginalName()
+	{
+		return originalName;
+	}
+
+	public void setOriginalName(String originalName)
+	{
+		this.originalName = originalName;
+	}
+
+	public String getMediaTypeCode()
+	{
+		return mediaTypeCode;
+	}
+
+	public void setMediaTypeCode(String mediaTypeCode)
+	{
+		this.mediaTypeCode = mediaTypeCode;
+	}
+
+	public String getMimeType()
+	{
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType)
+	{
+		this.mimeType = mimeType;
+	}
 
 }

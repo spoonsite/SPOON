@@ -15,11 +15,40 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.io.Serializable;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  *
  * @author dshurtleff
  */
-public class EvaluationInspection
+public class CustomFieldValidValue
+		implements Serializable
 {
+
+	@NotNull
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(TextSanitizer.class)
+	private String value;
+
+	public CustomFieldValidValue()
+	{
+	}
+
+	public String getValue()
+	{
+		return value;
+	}
+
+	public void setValue(String value)
+	{
+		this.value = value;
+	}
 
 }

@@ -16,6 +16,8 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -25,5 +27,29 @@ import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
 public class CustomFieldType
 		extends LookupEntity<CustomFieldType>
 {
+
+	public static final String TEXT_FIELD = "TEXT";
+	public static final String RICH_TEXT_FIELD = "RICHTEXT";
+	public static final String COMBO_FIELD = "COMBO";
+	public static final String COMBO_EDIT_FIELD = "COMBOEDIT";
+	public static final String CHECKBOX_FIELD = "CHECKBOX";
+
+	public CustomFieldType()
+	{
+	}
+
+	@Override
+	protected Map<String, LookupEntity> systemCodeMap()
+	{
+		Map<String, LookupEntity> codeMap = new HashMap<>();
+
+		codeMap.put(TEXT_FIELD, newLookup(CustomFieldType.class, TEXT_FIELD, "Text Field"));
+		codeMap.put(RICH_TEXT_FIELD, newLookup(CustomFieldType.class, RICH_TEXT_FIELD, "Rich Text Field"));
+		codeMap.put(COMBO_FIELD, newLookup(CustomFieldType.class, COMBO_FIELD, "Combobox Field"));
+		codeMap.put(COMBO_EDIT_FIELD, newLookup(CustomFieldType.class, COMBO_EDIT_FIELD, "Editible Combobox Field"));
+		codeMap.put(CHECKBOX_FIELD, newLookup(CustomFieldType.class, CHECKBOX_FIELD, "Checkbox Field"));
+
+		return codeMap;
+	}
 
 }

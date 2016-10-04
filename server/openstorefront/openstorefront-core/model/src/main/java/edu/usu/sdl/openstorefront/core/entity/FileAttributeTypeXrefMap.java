@@ -32,30 +32,31 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Used to store type mapping between external attributes and internal")
 public class FileAttributeTypeXrefMap
-	implements Serializable
+		implements Serializable
 {
+
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@FK(AttributeType.class)			
+	@FK(AttributeType.class)
 	private String attributeType;
-		
+
 	@ConsumeField
 	private String defaultMappedCode;
-	
-	@ConsumeField	
+
+	@ConsumeField
 	private Boolean addMissingCode;
-	
+
 	@NotNull
-	@ConsumeField	
+	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String externalType;
-	
+
 	@ConsumeField
 	@OneToMany(orphanRemoval = true)
 	@DataType(FileAttributeCodeXrefMap.class)
 	private List<FileAttributeCodeXrefMap> attributeCodeXrefMap;
-			
+
 	public FileAttributeTypeXrefMap()
 	{
 	}
@@ -109,5 +110,5 @@ public class FileAttributeTypeXrefMap
 	{
 		this.attributeCodeXrefMap = attributeCodeXrefMap;
 	}
-	
+
 }

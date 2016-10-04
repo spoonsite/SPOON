@@ -15,16 +15,88 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
+import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import java.io.Serializable;
+import java.util.List;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  *
  * @author dshurtleff
  */
 public class CustomField
+		implements Serializable
 {
 
-	String customFieldId;
-	String fieldType;
-	String label;
-	String value;
+	@ConsumeField
+	@NotNull
+	@ValidValueType(value = {}, lookupClass = CustomFieldType.class)
+	@FK(CustomFieldType.class)
+	private String fieldType;
+
+	@ConsumeField
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	private String label;
+
+	@ConsumeField
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	private String value;
+
+	@ConsumeField
+	@OneToMany(orphanRemoval = true)
+	@DataType(FileAttributeCodeXrefMap.class)
+	private List<CustomFieldValidValue> validValues;
+
+	public CustomField()
+	{
+	}
+
+	public String getFieldType()
+	{
+		return fieldType;
+	}
+
+	public void setFieldType(String fieldType)
+	{
+		this.fieldType = fieldType;
+	}
+
+	public String getLabel()
+	{
+		return label;
+	}
+
+	public void setLabel(String label)
+	{
+		this.label = label;
+	}
+
+	public String getValue()
+	{
+		return value;
+	}
+
+	public void setValue(String value)
+	{
+		this.value = value;
+	}
+
+	public List<CustomFieldValidValue> getValidValues()
+	{
+		return validValues;
+	}
+
+	public void setValidValues(List<CustomFieldValidValue> validValues)
+	{
+		this.validValues = validValues;
+	}
 
 }

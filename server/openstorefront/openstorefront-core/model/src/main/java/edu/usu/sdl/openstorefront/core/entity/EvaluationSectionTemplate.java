@@ -16,18 +16,49 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
+import java.io.Serializable;
+import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author dshurtleff
  */
-@APIDescription("Defines workflow states")
-public class WorkflowStatus
-		extends LookupEntity<WorkflowStatus>
+@APIDescription("Part of Evaluation Template")
+public class EvaluationSectionTemplate
+		implements Serializable
 {
 
-	public WorkflowStatus()
+	@NotNull
+	@FK(ContentSectionTemplate.class)
+	private String sectionTemplateId;
+
+	@Version
+	private String storageVersion;
+
+	public EvaluationSectionTemplate()
 	{
+	}
+
+	public String getSectionTemplateId()
+	{
+		return sectionTemplateId;
+	}
+
+	public void setSectionTemplateId(String sectionTemplateId)
+	{
+		this.sectionTemplateId = sectionTemplateId;
+	}
+
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
 	}
 
 }

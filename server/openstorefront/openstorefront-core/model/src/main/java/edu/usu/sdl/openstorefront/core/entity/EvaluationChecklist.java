@@ -15,13 +15,109 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
+import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Evalution checklist")
 public class EvaluationChecklist
+		extends StandardEntity<EvaluationChecklist>
 {
 
+	@PK(generated = true)
+	@NotNull
 	private String checklistId;
+
+	@NotNull
+	@FK(ChecklistTemplate.class)
+	private String checklistTemplateId;
+
+	@NotNull
+	@FK(Evaluation.class)
+	private String evaluationId;
+
+	@NotNull
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	private String summary;
+
+	@NotNull
+	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = WorkflowStatus.class)
+	@FK(WorkflowStatus.class)
+	private String workflowStatus;
+
+	public EvaluationChecklist()
+	{
+	}
+
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+
+		EvaluationChecklist evaluationChecklist = (EvaluationChecklist) entity;
+		setSummary(evaluationChecklist.getSummary());
+		setWorkflowStatus(evaluationChecklist.getWorkflowStatus());
+	}
+
+	public String getChecklistId()
+	{
+		return checklistId;
+	}
+
+	public void setChecklistId(String checklistId)
+	{
+		this.checklistId = checklistId;
+	}
+
+	public String getChecklistTemplateId()
+	{
+		return checklistTemplateId;
+	}
+
+	public void setChecklistTemplateId(String checklistTemplateId)
+	{
+		this.checklistTemplateId = checklistTemplateId;
+	}
+
+	public String getSummary()
+	{
+		return summary;
+	}
+
+	public void setSummary(String summary)
+	{
+		this.summary = summary;
+	}
+
+	public String getEvaluationId()
+	{
+		return evaluationId;
+	}
+
+	public void setEvaluationId(String evaluationId)
+	{
+		this.evaluationId = evaluationId;
+	}
+
+	public String getWorkflowStatus()
+	{
+		return workflowStatus;
+	}
+
+	public void setWorkflowStatus(String workflowStatus)
+	{
+		this.workflowStatus = workflowStatus;
+	}
 
 }

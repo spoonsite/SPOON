@@ -15,13 +15,97 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
+import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  *
  * @author dshurtleff
  */
 public class ContentSectionTemplate
+		extends StandardEntity<ContentSectionTemplate>
 {
 
-	String instructions;
+	@PK(generated = true)
+	@NotNull
+	private String templateId;
+
+	@NotNull
+	@FK(ContentSection.class)
+	private String contentSectionId;
+
+	@ConsumeField
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(TextSanitizer.class)
+	private String name;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
+	@Sanitize(HTMLSanitizer.class)
+	private String instructions;
+
+	public ContentSectionTemplate()
+	{
+	}
+
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+
+		ContentSectionTemplate contentSectionTemplate = (ContentSectionTemplate) entity;
+		setContentSectionId(contentSectionTemplate.getContentSectionId());
+		setInstructions(contentSectionTemplate.getInstructions());
+		setName(contentSectionTemplate.getName());
+
+	}
+
+	public String getTemplateId()
+	{
+		return templateId;
+	}
+
+	public void setTemplateId(String templateId)
+	{
+		this.templateId = templateId;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public String getInstructions()
+	{
+		return instructions;
+	}
+
+	public void setInstructions(String instructions)
+	{
+		this.instructions = instructions;
+	}
+
+	public String getContentSectionId()
+	{
+		return contentSectionId;
+	}
+
+	public void setContentSectionId(String contentSectionId)
+	{
+		this.contentSectionId = contentSectionId;
+	}
 
 }

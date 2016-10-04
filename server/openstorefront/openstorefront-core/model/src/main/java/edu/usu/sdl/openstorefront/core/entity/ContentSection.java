@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Represents and section of content")
 public class ContentSection
+		extends StandardEntity<ContentSection>
 {
 
 	@PK(generated = true)
@@ -40,12 +41,10 @@ public class ContentSection
 	private String contentSectionId;
 
 	@NotNull
-	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String entityId;
 
 	@NotNull
-	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String entity;
 
@@ -73,6 +72,21 @@ public class ContentSection
 
 	public ContentSection()
 	{
+	}
+
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+
+		ContentSection contentSection = (ContentSection) entity;
+		setContent(contentSection.getContent());
+		setEntity(contentSection.getEntity());
+		setEntityId(contentSection.getEntityId());
+		setPrivateSection(contentSection.getPrivateSection());
+		setTitle(contentSection.getTitle());
+		setWorkflowStatus(contentSection.getWorkflowStatus());
+
 	}
 
 	public String getContentSectionId()

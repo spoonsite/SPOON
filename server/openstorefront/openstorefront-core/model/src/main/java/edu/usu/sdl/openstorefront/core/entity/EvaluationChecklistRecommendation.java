@@ -15,17 +15,111 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
+import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Evalution recommendation")
 public class EvaluationChecklistRecommendation
+		extends StandardEntity<EvaluationChecklistRecommendation>
 {
 
-	String recommendationId;
-	String checklistId;
-	String recommendation;
-	String reason;
-	String recommendationType;
+	@PK(generated = true)
+	@NotNull
+	private String recommendationId;
+
+	@NotNull
+	@FK(EvaluationChecklist.class)
+	private String checklistId;
+
+	@ConsumeField
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	private String recommendation;
+
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	private String reason;
+
+	@NotNull
+	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = RecommendationType.class)
+	@FK(RecommendationType.class)
+	private String recommendationType;
+
+	public EvaluationChecklistRecommendation()
+	{
+	}
+
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+
+		EvaluationChecklistRecommendation evaluationChecklistRecommendation = (EvaluationChecklistRecommendation) entity;
+		setReason(evaluationChecklistRecommendation.getReason());
+		setRecommendation(evaluationChecklistRecommendation.getRecommendation());
+		setRecommendationType(evaluationChecklistRecommendation.getRecommendationType());
+
+	}
+
+	public String getRecommendationId()
+	{
+		return recommendationId;
+	}
+
+	public void setRecommendationId(String recommendationId)
+	{
+		this.recommendationId = recommendationId;
+	}
+
+	public String getChecklistId()
+	{
+		return checklistId;
+	}
+
+	public void setChecklistId(String checklistId)
+	{
+		this.checklistId = checklistId;
+	}
+
+	public String getRecommendation()
+	{
+		return recommendation;
+	}
+
+	public void setRecommendation(String recommendation)
+	{
+		this.recommendation = recommendation;
+	}
+
+	public String getReason()
+	{
+		return reason;
+	}
+
+	public void setReason(String reason)
+	{
+		this.reason = reason;
+	}
+
+	public String getRecommendationType()
+	{
+		return recommendationType;
+	}
+
+	public void setRecommendationType(String recommendationType)
+	{
+		this.recommendationType = recommendationType;
+	}
 
 }

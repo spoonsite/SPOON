@@ -41,10 +41,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 @APIDescription("Attribute code are used to link metadata and create articles on topics")
 public class AttributeCode
-		extends StandardEntity
+		extends StandardEntity<AttributeCode>
 {
+
 	public static final String FIELD_LABEL = "label";
-	
+
 	@PK
 	@NotNull
 	@ConsumeField

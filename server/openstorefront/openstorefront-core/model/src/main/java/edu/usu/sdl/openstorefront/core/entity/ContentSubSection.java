@@ -15,16 +15,146 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
+import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.List;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  *
  * @author dshurtleff
  */
 public class ContentSubSection
+		extends StandardEntity<ContentSubSection>
 {
 
-	String subSectionId;
-	String contentSectionId;
-	String title;
-	Boolean privateSection;
+	@PK(generated = true)
+	@NotNull
+	private String subSectionId;
+
+	@NotNull
+	@FK(ContentSection.class)
+	private String contentSectionId;
+
+	@NotNull
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(TextSanitizer.class)
+	private String title;
+
+	@NotNull
+	@ConsumeField
+	private Boolean hideTitle;
+
+	@NotNull
+	@ConsumeField
+	private Boolean privateSection;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@Sanitize(HTMLSanitizer.class)
+	private String content;
+
+	@ConsumeField
+	@DataType(CustomField.class)
+	@OneToMany(orphanRemoval = true)
+	private List<CustomField> customField;
+
+	public ContentSubSection()
+	{
+	}
+
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+
+		ContentSubSection contentSubSection = (ContentSubSection) entity;
+		setContent(contentSubSection.getContent());
+		setCustomField(contentSubSection.getCustomField());
+		setHideTitle(contentSubSection.getHideTitle());
+		setPrivateSection(contentSubSection.getPrivateSection());
+		setContentSectionId(contentSubSection.getContentSectionId());
+		setTitle(contentSubSection.getTitle());
+
+	}
+
+	public String getSubSectionId()
+	{
+		return subSectionId;
+	}
+
+	public void setSubSectionId(String subSectionId)
+	{
+		this.subSectionId = subSectionId;
+	}
+
+	public String getContentSectionId()
+	{
+		return contentSectionId;
+	}
+
+	public void setContentSectionId(String contentSectionId)
+	{
+		this.contentSectionId = contentSectionId;
+	}
+
+	public String getTitle()
+	{
+		return title;
+	}
+
+	public void setTitle(String title)
+	{
+		this.title = title;
+	}
+
+	public Boolean getPrivateSection()
+	{
+		return privateSection;
+	}
+
+	public void setPrivateSection(Boolean privateSection)
+	{
+		this.privateSection = privateSection;
+	}
+
+	public List<CustomField> getCustomField()
+	{
+		return customField;
+	}
+
+	public void setCustomField(List<CustomField> customField)
+	{
+		this.customField = customField;
+	}
+
+	public Boolean getHideTitle()
+	{
+		return hideTitle;
+	}
+
+	public void setHideTitle(Boolean hideTitle)
+	{
+		this.hideTitle = hideTitle;
+	}
+
+	public String getContent()
+	{
+		return content;
+	}
+
+	public void setContent(String content)
+	{
+		this.content = content;
+	}
 
 }

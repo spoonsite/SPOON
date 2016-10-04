@@ -15,13 +15,39 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.PK;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Section Attributes")
 public class ContentSectionAttribute
+		extends StandardEntity<AttributeCode>
 {
 
-	String contentSectionId;
+	@PK
+	@NotNull
+	@ConsumeField
+	@OneToOne(orphanRemoval = true)
+	private ContentSectionAttributePk contentSectionAttributePk;
+
+	public ContentSectionAttribute()
+	{
+	}
+
+	public ContentSectionAttributePk getContentSectionAttributePk()
+	{
+		return contentSectionAttributePk;
+	}
+
+	public void setContentSectionAttributePk(ContentSectionAttributePk contentSectionAttributePk)
+	{
+		this.contentSectionAttributePk = contentSectionAttributePk;
+	}
 
 }

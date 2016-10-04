@@ -135,18 +135,40 @@ public interface Service
 	 * @return
 	 */
 	public NotificationService getNotificationService();
-	
+
 	/**
 	 * Handles Feedback
 	 *
 	 * @return
 	 */
 	public FeedbackService getFeedbackService();
-	
+
 	/**
 	 * Handles all Contacts
-	 * @return 
+	 *
+	 * @return
 	 */
 	public ContactService getContactService();
+
+	/**
+	 * Handles evaluation entities
+	 *
+	 * @return
+	 */
+	public EvaluationService getEvaluationService();
+
+	/**
+	 * Handles evaluation entities
+	 *
+	 * @return
+	 */
+	public ContentSectionService getContentSectionService();
+
+	/**
+	 * Handles evaluation entities
+	 *
+	 * @return
+	 */
+	public ChecklistService getChecklistService();
 
 }

@@ -21,11 +21,16 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
+import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.BlankSantizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.lang.reflect.Field;
 import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -48,7 +53,7 @@ public abstract class StandardEntity<T>
 	public static final String FIELD_CREATE_DTS = "createDts";
 	public static final String FIELD_UPDATE_DTS = "updateDts";
 
-	@Sanitize({TextSanitizer.class, BlankSantizer.class})	
+	@Sanitize({TextSanitizer.class, BlankSantizer.class})
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = SecurityMarkingType.class)
 	@APIDescription("Security Classification")
@@ -138,6 +143,32 @@ public abstract class StandardEntity<T>
 		if (getAdminModified() == null) {
 			setAdminModified(SecurityUtil.isAdminUser());
 		}
+	}
+
+	/**
+	 * This only works for simple saves (non-transactional) And non-composite
+	 * keys;
+	 *
+	 * @return Newly Saved or Updated entity
+	 */
+	public T save()
+	{
+		Service service = ServiceProxyFactory.getServiceProxy();
+
+		T existing = service.getPersistenceService().findById((Class<T>) this.getClass(), EntityUtil.getPKFieldValue(this));
+		if (existing != null) {
+			((StandardEntity) existing).updateFields(this);
+			existing = (T) service.getPersistenceService().persist(((StandardEntity) existing));
+		} else {
+			Field pkField = EntityUtil.getPKField(this);
+			PK pk = pkField.getAnnotation(PK.class);
+			if (pk != null && pk.generated()) {
+				EntityUtil.updatePKFieldValue(this, service.getPersistenceService().generateId());
+			}
+			this.populateBaseCreateFields();
+			existing = (T) service.getPersistenceService().persist(this);
+		}
+		return existing;
 	}
 
 	public String getActiveStatus()
