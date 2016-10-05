@@ -191,7 +191,7 @@
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
-							widget.actionRefresh();
+							widget.refresh();
 						}
 					},
 					{
@@ -204,7 +204,7 @@
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
-							widget.actionRefresh();
+							widget.refresh();
 						}
 					},
 					{

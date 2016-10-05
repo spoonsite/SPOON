@@ -110,7 +110,13 @@
 									scale: 'medium',
 									handler: function () {
 										var record = Ext.getCmp('tagGrid').getSelection()[0];
-										actionDeleteTag(record);
+										var title = 'Delete Tag';
+										var msg = 'Are you sure you want to delete this tag?';
+										Ext.MessageBox.confirm(title, msg, function (btn) {
+											if (btn === 'yes') {
+												actionDeleteTag(record);
+											}
+										});
 									}
 								}
 							]

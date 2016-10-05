@@ -367,7 +367,7 @@
 					url: url,
 					method: method,
 					success: function(response, opt){
-						Ext.toast('Successfully' + what + 'd attribute type', '', 'tr');
+						Ext.toast('Successfully ' + what + 'd attribute type', '', 'tr');
 						attributeStore.load();
 					},
 					failure: function(response, opt){
