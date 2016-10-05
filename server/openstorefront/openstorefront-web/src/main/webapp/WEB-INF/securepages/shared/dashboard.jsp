@@ -601,13 +601,13 @@
 									var setupWin = Ext.create('Ext.window.Window', {
 										title: 'Configure',										
 										iconCls: 'fa fa-gear',
-										closeMode: 'destory',
+										closeMode: 'destroy',
 										modal: true,
 										width: 350,
 										scrollable: true,
 										bodyStyle: 'padding: 10px',
 										y: tool.getY(),
-										x: tool.getX() - 350,
+										x: panel.getX() + (panel.getWidth() / 2) - 175,
 										items: [
 											{
 												xtype: 'textfield',
