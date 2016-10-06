@@ -4075,7 +4075,7 @@ public class ComponentRESTResource
 			if (count > 0) {
 				RestErrorModel restErrorModel = new RestErrorModel();
 				restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
-				return Response.status(Response.Status.NOT_MODIFIED).entity(restErrorModel).build();
+				return Response.status(Response.Status.CONFLICT).entity(restErrorModel).build();
 			} else {
 				integrationConfig.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
 				integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
@@ -4124,7 +4124,7 @@ public class ComponentRESTResource
 				if (count > 0) {
 					RestErrorModel restErrorModel = new RestErrorModel();
 					restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
-					return Response.status(Response.Status.NOT_MODIFIED).entity(restErrorModel).build();
+					return Response.status(Response.Status.CONFLICT).entity(restErrorModel).build();
 				} else {
 					integrationConfig.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
 					integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
