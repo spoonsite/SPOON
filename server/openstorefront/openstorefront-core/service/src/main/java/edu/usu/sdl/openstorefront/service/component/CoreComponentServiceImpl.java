@@ -2059,16 +2059,44 @@ public class CoreComponentServiceImpl
 			}
 		}
 
-		Map<String, List<T>> keyMap = targetEntities.stream().collect(Collectors.groupingBy(T::uniqueKey));
+		Map<String, List<T>> targetKeyMap = targetEntities.stream().collect(Collectors.groupingBy(T::uniqueKey));
 		for (T entity : entities) {
-			boolean add = false;
-			if (keyMap.containsKey(entity.uniqueKey()) == false) {
-				add = true;
-			}
-
-			if (add) {
+			
+			if (targetKeyMap.containsKey(entity.uniqueKey()) == false) {
 				entity.clearKeys();
 				targetEntities.add(entity);
+			}
+		}
+                
+                // Create Temporary Target Entities List
+                List<T> tempTargetEntities = new ArrayList<>();
+                
+                // Copy Target Entities
+                targetEntities.forEach(item -> tempTargetEntities.add(item));
+                
+                Map<String, List<T>> mergeKeyMap = entities.stream().collect(Collectors.groupingBy(T::uniqueKey));
+		for (T targetEntity : tempTargetEntities) {
+			
+			if (mergeKeyMap.containsKey(targetEntity.uniqueKey()) == false) {
+				
+				targetEntities.remove(targetEntity);
+                                
+                                // Check If Media
+                                if (targetEntity instanceof ComponentMedia) {
+                                    
+                                        try {
+                                                
+                                                // Delete Media File
+                                                Files.delete(((ComponentMedia) targetEntity).pathToMedia());
+                                                
+                                                LOG.log(Level.INFO, MessageFormat.format("Deleted Media File: {0} ({1})", ((ComponentMedia) targetEntity).getFileName(), ((ComponentMedia) targetEntity).getOriginalName()));
+                                        }
+                                        catch (IOException ex) {
+
+                                                // Write Error To Log
+                                                LOG.log(Level.WARNING, MessageFormat.format("Unable to delete file: {0}", ((ComponentMedia) targetEntity).pathToMedia()));
+                                        }
+                                }
 			}
 		}
 	}
