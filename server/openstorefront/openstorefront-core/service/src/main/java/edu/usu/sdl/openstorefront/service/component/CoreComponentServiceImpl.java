@@ -2068,8 +2068,14 @@ public class CoreComponentServiceImpl
 			}
 		}
                 
+                // Create Temporary Target Entities List
+                List<T> tempTargetEntities = new ArrayList<>();
+                
+                // Copy Target Entities
+                targetEntities.forEach(item -> tempTargetEntities.add(item));
+                
                 Map<String, List<T>> mergeKeyMap = entities.stream().collect(Collectors.groupingBy(T::uniqueKey));
-		for (T targetEntity : targetEntities) {
+		for (T targetEntity : tempTargetEntities) {
 			
 			if (mergeKeyMap.containsKey(targetEntity.uniqueKey()) == false) {
 				
@@ -2079,9 +2085,11 @@ public class CoreComponentServiceImpl
                                 if (targetEntity instanceof ComponentMedia) {
                                     
                                         try {
-
+                                                
                                                 // Delete Media File
                                                 Files.delete(((ComponentMedia) targetEntity).pathToMedia());
+                                                
+                                                LOG.log(Level.INFO, MessageFormat.format("Deleted Media File: {0} ({1})", ((ComponentMedia) targetEntity).getFileName(), ((ComponentMedia) targetEntity).getOriginalName()));
                                         }
                                         catch (IOException ex) {
 
