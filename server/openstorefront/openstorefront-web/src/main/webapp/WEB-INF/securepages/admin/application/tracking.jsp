@@ -69,7 +69,9 @@
 						}
 					}),
 					listeners: {
-						beforeLoad: function(store, operation, eOpts){
+						beforeLoad: function(store, operation, eOpts) {
+							
+							var name = Ext.getCmp('user_name').getValue();
 							var startDate = Ext.getCmp('from_date').getValue();
 							var endDate = Ext.getCmp('to_date').getValue();
 							if (endDate) {
@@ -77,6 +79,7 @@
 								endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
 							}
 							store.getProxy().extraParams = {
+								name: name,
 								start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
 								end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
 							};
@@ -106,6 +109,20 @@
 							dock: 'top',
 							xtype: 'toolbar',
 							items: [{
+									xtype: 'textfield',
+									id: 'user_name',
+									labelAlign: 'top',
+									fieldLabel: 'Name',
+									name: 'user_name',
+									listeners: {
+										change: function () {
+											if (Ext.getCmp('user_name').getValue() !== null) {
+												processUserDataFilter();
+											}
+										}
+									}
+								},
+								{
 									xtype: 'datefield',
 									id: 'from_date',
 									labelAlign: 'top',
@@ -115,7 +132,7 @@
 									listeners: {
 										change: function () {
 											if (Ext.getCmp('to_date').getValue() !== null) {
-												processUserDateFilter();
+												processUserDataFilter();
 											}
 										}
 									}
@@ -130,7 +147,7 @@
 									listeners: {
 										change: function () {
 											if (Ext.getCmp('from_date').getValue() !== null) {
-												processUserDateFilter();
+												processUserDataFilter();
 											}
 										}
 									}
@@ -232,44 +249,108 @@
 				//  Refresh and reload the grid
 				//
 				var userRefreshGrid = function () {
-					processUserDateFilter('refresh');
+					processUserDataFilter('refresh');
 				};
 
 
 				//
 				// Perform Data Range Filter
 				//
-				var processUserDateFilter = function () {
+				var processUserDataFilter = function () {
 
+					var name = null;
 					var startDate = null;
 					var endDate = null;
 
+					name = Ext.getCmp('user_name').getValue();
 					startDate = Ext.getCmp('from_date').getValue();
 					endDate = Ext.getCmp('to_date').getValue();
 
+					// Check For Name
+					if (name === null ||
+							typeof name === 'undefined' ||
+							name === '') {
+						
+						// Indicate Name Is Blank
+						var nameIsBlank = true;
+					}
+					
+					// Check For Dates
 					if (startDate === null ||
 							endDate === null ||
 							typeof startDate === 'undefined' ||
 							typeof endDate === 'undefined' ||
 							startDate === '' ||
-							endDate === '')
-					{
-					    Ext.getCmp('userTrackingGrid').getStore().load();
+							endDate === '') {
+						
+						// Indicate Dates Are Blank
+						var datesAreBlank = true;
 					}
-					else if (startDate > endDate) {
-						Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
+					
+					// Check If Both Name & Dates Are Blank
+					if (nameIsBlank && datesAreBlank) {
+						
+						// Reload Grid Store
+						Ext.getCmp('userTrackingGrid').getStore().load();
+					}
+					else if (!datesAreBlank) {
+						
+						// Check For Reversed Dates
+						if (startDate > endDate) {
+							
+							// Provide Error Feedback
+							Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
+						}
+						else {
+							
+							// Add 1 Day To End Date								
+							endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
+							
+							// Subtract 1 Millisecond From End Date
+							// (Makes End Date Inclusive Of Itself)
+							endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
+							
+							// See If Name Is Blank
+							if (nameIsBlank) {
+								
+								// Build Store Options
+								var storeOptions = {
+									params: {
+										
+										start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
+										end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
+									}
+								};
+							}
+							else {
+								
+								// Build Store Options
+								var storeOptions = {
+									params: {
+										
+										name: name,
+										start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
+										end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
+									}
+								};
+							}
+							
+							// Indicate That Data Is Filtering
+							//Ext.toast('Filtering data...');
+							
+							// Process Filtering
+							Ext.getCmp('userTrackingGrid').getStore().loadPage(1, storeOptions);
+						}
 					}
 					else {
-						if (endDate) {
-							endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
-							endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
-						}						
-						//Ext.toast('Filtering data by date range...');
+						
+						// Indicate That Data Is Filtering
+						//Ext.toast('Filtering data...');
+
 						Ext.getCmp('userTrackingGrid').getStore().loadPage(1, {
 							params: {
-								start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
-								end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
 
+								name: name
 							}
 						});
 					}
@@ -383,46 +464,111 @@
 				// User Export
 				//
 				var userExport = function () {
-					
-					var params='';
+
+					var params = '';
+					var name = null;
 					var startDate = null;
 					var endDate = null;
 
+					name = Ext.getCmp('user_name').getValue().trim();
 					startDate = Ext.getCmp('from_date').getValue();
 					endDate = Ext.getCmp('to_date').getValue();
 
+					// Check For Name
+					if (name === null ||
+							typeof name === 'undefined' ||
+							name === '') {
+						
+						// Indicate Name Is Blank
+						var nameIsBlank = true;
+					}
+					
+					// Check For Dates
 					if (startDate === null ||
 							endDate === null ||
 							typeof startDate === 'undefined' ||
 							typeof endDate === 'undefined' ||
 							startDate === '' ||
-							endDate === '')
-					{
-					    params = {
+							endDate === '') {
+						
+						// Indicate Dates Are Blank
+						var datesAreBlank = true;
+					}
+					
+					// Check If Both Name & Dates Are Blank
+					if (nameIsBlank && datesAreBlank) {
+						
+						// Set Parameters
+						var params = {
+						
 							sortField: sortField,
 							sortOrder: sortDirection
 						};
 					}
-					else if (startDate > endDate) {
-						Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
-						return;
+					else if (!datesAreBlank) {
+						
+						// Check For Reversed Dates
+						if (startDate > endDate) {
+							
+							// Provide Error Feedback
+							Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
+							
+							// Return With Shame
+							return;
+						}
+						else {
+							
+							// Add 1 Day To End Date								
+							endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
+							
+							// Subtract 1 Millisecond From End Date
+							// (Makes End Date Inclusive Of Itself)
+							endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
+							
+							// See If Name Is Blank
+							if (nameIsBlank) {
+								
+								// Set Parameters
+								var params = {
+								
+									start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
+									end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u'),
+									sortField: sortField,
+									sortOrder: sortDirection
+								};
+							}
+							else {
+								
+								// Set Parameters
+								var params = {
+								
+									name: name,
+									start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
+									end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u'),
+									sortField: sortField,
+									sortOrder: sortDirection
+								};
+							}
+						}
 					}
 					else {
-						if (endDate) {
-							endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
-							endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
-						}						
-						params={
-						    start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
-						    end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u'),
+						
+						// Indicate That Data Is Filtering
+						//Ext.toast('Filtering data...');
+
+						// Set Parameters
+						var params = {
+						
+							name: name,
 							sortField: sortField,
 							sortOrder: sortDirection
 						};
 					}
 					
-					console.log("Grid Sorting", Ext.getCmp('userTrackingGrid').sortInfo);
-					
+					// Indicate To User That Export Is Occurring
 					Ext.toast('Exporting User Tracking Data ...');
+					
+					// Process Export
 					Ext.Ajax.request({
 						url: 'api/v1/resource/usertracking/export',
 						method: 'GET',
@@ -550,6 +696,8 @@
 					}),
 					listeners: {
 						beforeLoad: function(store, operation, eOpts){
+							
+							var name = Ext.getCmp('entry_user').getValue();
 							var startDate = Ext.getCmp('from_entry_date').getValue();
 							var endDate = Ext.getCmp('to_entry_date').getValue();
 							if (endDate) {
@@ -557,6 +705,8 @@
 								endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
 							}
 							store.getProxy().extraParams = {
+								
+								name: name,
 								start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
 								end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
 							};
@@ -596,6 +746,20 @@
 							dock: 'top',
 							xtype: 'toolbar',
 							items: [{
+									xtype: 'textfield',
+									id: 'entry_user',
+									labelAlign: 'top',
+									fieldLabel: 'User',
+									name: 'entry_user',
+									listeners: {
+										change: function () {
+											if (Ext.getCmp('entry_user').getValue() !== null) {
+												processEntryDataFilter();
+											}
+										}
+									}
+								},
+								{
 									xtype: 'datefield',
 									id: 'from_entry_date',
 									labelAlign: 'top',
@@ -605,7 +769,7 @@
 									listeners: {
 										change: function () {
 											if (Ext.getCmp('to_entry_date').getValue() !== null) {
-												processEntryDateFilter();
+												processEntryDataFilter();
 											}
 										}
 									}
@@ -620,7 +784,7 @@
 									listeners: {
 										change: function () {
 											if (Ext.getCmp('from_entry_date').getValue() !== null) {
-												processEntryDateFilter();
+												processEntryDataFilter();
 											}
 										}
 									}
@@ -677,41 +841,106 @@
 				//  Refresh and reload the grid
 				//
 				var entryRefreshGrid = function () {
-					processEntryDateFilter();
+					processEntryDataFilter();
 				};
 				//
 				// Do Data Range Filter
 				//
-				var processEntryDateFilter = function () {
+				var processEntryDataFilter = function () {
 
+					var name = null;
 					var startDate = null;
 					var endDate = null;
 
+					name = Ext.getCmp('entry_user').getValue();
 					startDate = Ext.getCmp('from_entry_date').getValue();
 					endDate = Ext.getCmp('to_entry_date').getValue();
 
+					// Check For Name
+					if (name === null ||
+							typeof name === 'undefined' ||
+							name === '') {
+						
+						// Indicate Name Is Blank
+						var nameIsBlank = true;
+					}
+					
+					// Check For Dates
 					if (startDate === null ||
 							endDate === null ||
 							typeof startDate === 'undefined' ||
 							typeof endDate === 'undefined' ||
 							startDate === '' ||
-							endDate === '')
-					{
+							endDate === '') {
+						
+						// Indicate Dates Are Blank
+						var datesAreBlank = true;
+					}
+					
+					// Check If Both Name & Dates Are Blank
+					if (nameIsBlank && datesAreBlank) {
+						
+						// Reload Grid Store
 						Ext.getCmp('entryTrackingGrid').getStore().load();
 					}
-					else if (startDate > endDate) {
-						Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
+					else if (!datesAreBlank) {
+						
+						// Check For Reversed Dates
+						if (startDate > endDate) {
+							
+							// Provide Error Feedback
+							Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
+						}
+						else {
+							
+							// Add 1 Day To End Date								
+							endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
+							
+							// Subtract 1 Millisecond From End Date
+							// (Makes End Date Inclusive Of Itself)
+							endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
+							
+							// See If Name Is Blank
+							if (nameIsBlank) {
+								
+								// Build Store Options
+								var storeOptions = {
+									params: {
+										
+										start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
+										end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
+									}
+								};
+							}
+							else {
+								
+								// Build Store Options
+								var storeOptions = {
+									params: {
+										
+										name: name,
+										start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
+										end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
+									}
+								};
+							}
+							
+							// Indicate That Data Is Filtering
+							//Ext.toast('Filtering data...');
+							
+							// Process Filtering
+							Ext.getCmp('entryTrackingGrid').getStore().loadPage(1, storeOptions);
+						}
 					}
 					else {
-						if (endDate) {
-							endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
-							endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
-						}
+						
+						// Indicate That Data Is Filtering
+						//Ext.toast('Filtering data...');
+
 						Ext.getCmp('entryTrackingGrid').getStore().loadPage(1, {
 							params: {
-								start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
-								end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
 
+								name: name
 							}
 						});
 					}
@@ -725,46 +954,111 @@
 				// User Export
 				//
 				var entryExport = function () {
-					
-					var params='';
+
+					var params = '';
+					var name = null;
 					var startDate = null;
 					var endDate = null;
 
+					name = Ext.getCmp('entry_user').getValue().trim();
 					startDate = Ext.getCmp('from_entry_date').getValue();
 					endDate = Ext.getCmp('to_entry_date').getValue();
 
+					// Check For Name
+					if (name === null ||
+							typeof name === 'undefined' ||
+							name === '') {
+						
+						// Indicate Name Is Blank
+						var nameIsBlank = true;
+					}
+					
+					// Check For Dates
 					if (startDate === null ||
 							endDate === null ||
 							typeof startDate === 'undefined' ||
 							typeof endDate === 'undefined' ||
 							startDate === '' ||
-							endDate === '')
-					{
-					    params = {
+							endDate === '') {
+						
+						// Indicate Dates Are Blank
+						var datesAreBlank = true;
+					}
+					
+					// Check If Both Name & Dates Are Blank
+					if (nameIsBlank && datesAreBlank) {
+						
+						// Set Parameters
+						var params = {
+						
 							sortField: eSortField,
 							sortOrder: eSortDirection
 						};
 					}
-					else if (startDate > endDate) {
-						Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
-						return;
+					else if (!datesAreBlank) {
+						
+						// Check For Reversed Dates
+						if (startDate > endDate) {
+							
+							// Provide Error Feedback
+							Ext.toast(" 'FROM' date must be earlier than the 'TO' date.");
+							
+							// Return With Shame
+							return;
+						}
+						else {
+							
+							// Add 1 Day To End Date								
+							endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
+							
+							// Subtract 1 Millisecond From End Date
+							// (Makes End Date Inclusive Of Itself)
+							endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
+							
+							// See If Name Is Blank
+							if (nameIsBlank) {
+								
+								// Set Parameters
+								var params = {
+								
+									start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
+									end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u'),
+									sortField: eSortField,
+									sortOrder: eSortDirection
+								};
+							}
+							else {
+								
+								// Set Parameters
+								var params = {
+								
+									name: name,
+									start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
+									end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u'),
+									sortField: eSortField,
+									sortOrder: eSortDirection
+								};
+							}
+						}
 					}
 					else {
-						if (endDate) {
-							endDate = Ext.Date.add(endDate, Ext.Date.DAY, 1);
-							endDate = Ext.Date.subtract(endDate, Ext.Date.MILLI, 1);
-						}						
-						params={
-						    start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
-						    end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u'),
+						
+						// Indicate That Data Is Filtering
+						//Ext.toast('Filtering data...');
+
+						// Set Parameters
+						var params = {
+						
+							name: name,
 							sortField: eSortField,
 							sortOrder: eSortDirection
 						};
 					}
 					
-					console.log("Grid Sorting", Ext.getCmp('userTrackingGrid').sortInfo);
-					
+					// Indicate To User That Export Is Occurring
 					Ext.toast('Exporting Entry Tracking Data ...');
+					
+					// Process Export
 					Ext.Ajax.request({
 						url: 'api/v1/resource/componenttracking/export',
 						method: 'GET',

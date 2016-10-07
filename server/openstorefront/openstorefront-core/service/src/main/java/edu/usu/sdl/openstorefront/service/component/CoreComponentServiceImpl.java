@@ -1233,6 +1233,9 @@ public class CoreComponentServiceImpl
 
 		ComponentTracking componentTrackingEndExample = new ComponentTracking();
 		componentTrackingEndExample.setEventDts(filter.getEnd());
+                
+                ComponentTracking componentTrackingNameExample = new ComponentTracking();
+                componentTrackingNameExample.setUpdateUser("%" + filter.getName().trim() + "%");    // Force SQL Wildcards Into Parameter
 
 		QueryByExample queryByExample = new QueryByExample(componentTrackingExample);
 
@@ -1246,6 +1249,11 @@ public class CoreComponentServiceImpl
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+                
+                specialOperatorModel = new SpecialOperatorModel();
+                specialOperatorModel.setExample(componentTrackingNameExample);
+                specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+                queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		queryByExample.setMaxResults(filter.getMax());
 		queryByExample.setFirstResult(filter.getOffset());
@@ -1269,7 +1277,8 @@ public class CoreComponentServiceImpl
 			wrapper.setData(item);
 			wrapper.setName(getComponentName(item.getComponentId()));
 			wrapper.setComponentTypeLabel(TranslateUtil.translateComponentType(item.getComponentType()));
-			result.getResult().add(wrapper);
+                        
+                        result.getResult().add(wrapper);
 		}
 
 		if (filter.getSortField().equals(ComponentTrackingCompleteWrapper.FIELD_NAME)) {
@@ -1278,7 +1287,7 @@ public class CoreComponentServiceImpl
 
 		queryByExample.setQueryType(QueryType.COUNT);
 		result.setCount(persistenceService.countByExample(queryByExample));
-
+                
 		return result;
 	}
 
