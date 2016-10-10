@@ -103,7 +103,18 @@ public class PluginManager
 			Bundle bundle = OsgiManager.getFelix().getBundleContext().getBundle(location);
 			if (bundle == null
 					|| Bundle.UNINSTALLED == bundle.getState()) {
-				bundle = OsgiManager.getFelix().getBundleContext().installBundle(location, in);
+                            
+                                // Attempt To Install Bundle
+                                try {
+                                    
+                                        // Install Bundle
+                                        bundle = OsgiManager.getFelix().getBundleContext().installBundle(location, in);
+                                } catch (BundleException ex) {
+                                    
+                                        // Bundle Failed To Install, Throw Runtime Exception
+                                        throw new OpenStorefrontRuntimeException("Bundle failed to install.");
+                                }
+                                
 				if (bundle != null) {
 					if (Bundle.RESOLVED == bundle.getState() || Bundle.INSTALLED == bundle.getState()) {
 						bundle.start();
