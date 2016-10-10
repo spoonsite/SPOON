@@ -15,9 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.api.ChecklistService;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
+import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -45,24 +50,58 @@ public class ChecklistServiceImpl
 		return questionExisting;
 	}
 
-//	@Override
-//	public ChecklistTemplate saveChecklistTemplate(ChecklistTemplate checklistTemplate)
-//	{
-//		ChecklistTemplate templateExisting = persistenceService.findById(ChecklistTemplate.class, checklistTemplate.getChecklistTemplateId());
-//		if (templateExisting != null) {
-//			templateExisting.updateFields(checklistTemplate);
-//			templateExisting = persistenceService.persist(templateExisting);
-//		} else {
-//			checklistTemplate.setChecklistTemplateId(persistenceService.generateId());
-//			checklistTemplate.populateBaseCreateFields();
-//			templateExisting = persistenceService.persist(checklistTemplate);
-//		}
-//		return templateExisting;
-//	}
 	@Override
 	public ChecklistTemplate copyChecklistTemplate(String checklistTemplateId)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public boolean isQuestionBeingUsed(String questionId)
+	{
+		Objects.requireNonNull(questionId);
+		boolean inUse = false;
+
+		ChecklistTemplate checklistTemplateExample = new ChecklistTemplate();
+
+		//Check all templates
+		List<ChecklistTemplate> checklistTemplates = checklistTemplateExample.findByExample();
+		for (ChecklistTemplate checklistTemplate : checklistTemplates) {
+			for (ChecklistTemplateQuestion question : checklistTemplate.getQuestions()) {
+				if (questionId.equals(question.getQuestionId())) {
+					inUse = true;
+					break;
+				}
+			}
+			if (inUse) {
+				break;
+			}
+		}
+
+		if (!inUse) {
+			EvaluationChecklistResponse response = new EvaluationChecklistResponse();
+			response.setQuestionId(questionId);
+
+			long count = persistenceService.countByExample(response);
+			if (count > 0) {
+				inUse = true;
+			}
+		}
+
+		return inUse;
+	}
+
+	@Override
+	public void deleteQuestion(String questionId)
+	{
+		if (isQuestionBeingUsed(questionId)) {
+			throw new OpenStorefrontRuntimeException("Unable to remove question.", "Remove all ties to the quesiton (templates, evaluation responses)");
+		} else {
+			ChecklistQuestion questionExisting = persistenceService.findById(ChecklistQuestion.class, questionId);
+			if (questionExisting != null) {
+				persistenceService.delete(questionExisting);
+			}
+		}
 	}
 
 }

@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
  */
 @APIDescription("Section Attributes")
 public class ContentSectionAttribute
-		extends StandardEntity<AttributeCode>
+		extends StandardEntity<ContentSectionAttribute>
 {
 
 	@PK

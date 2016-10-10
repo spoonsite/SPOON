@@ -15,11 +15,23 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.api.ContentSectionService;
+import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
+import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,28 +42,97 @@ public class ContentSectionServiceImpl
 		implements ContentSectionService
 {
 
+	private static final Logger LOG = Logger.getLogger(FeedbackServiceImpl.class.getName());
+
 	@Override
-	public ContentSectionAttribute saveContentSectionAttribute(ContentSectionAttribute contentSectionAttribute)
+	public ContentSectionAttribute saveAttribute(ContentSectionAttribute contentSectionAttribute)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ContentSectionAttribute existing = persistenceService.findById(ContentSectionAttribute.class, contentSectionAttribute.getContentSectionAttributePk());
+		if (existing != null) {
+			existing.updateFields(contentSectionAttribute);
+			existing = persistenceService.persist(existing);
+		} else {
+			contentSectionAttribute.populateBaseCreateFields();
+			existing = persistenceService.persist(contentSectionAttribute);
+		}
+		return existing;
 	}
 
 	@Override
-	public String saveContentSectionAll(ContentSectionAll contentSectionAll)
+	public String saveAll(ContentSectionAll contentSectionAll)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Objects.requireNonNull(contentSectionAll);
+		Objects.requireNonNull(contentSectionAll.getSection(), "Content Section is required");
+
+		ContentSection contentSection = contentSectionAll.getSection().save();
+
+		ContentSubSection contentSubSectionExample = new ContentSubSection();
+		contentSubSectionExample.setContentSectionId(contentSection.getContentSectionId());
+		persistenceService.deleteByExample(contentSubSectionExample);
+
+		for (ContentSubSection subSection : contentSectionAll.getSubsections()) {
+			subSection.setContentSectionId(contentSection.getContentSectionId());
+			subSection.populateBaseCreateFields();
+			persistenceService.persist(subSection);
+		}
+
+		return contentSection.getContentSectionId();
 	}
 
 	@Override
 	public ContentSectionAll getContentSectionAll(String contentSectionId)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ContentSectionAll contentSectionAll = null;
+
+		ContentSection contentSection = persistenceService.findById(ContentSection.class, contentSectionId);
+		if (contentSection != null) {
+			contentSectionAll = new ContentSectionAll();
+			contentSectionAll.setSection(contentSection);
+
+			ContentSubSection contentSubSectionExample = new ContentSubSection();
+			contentSubSectionExample.setActiveStatus(ContentSection.ACTIVE_STATUS);
+			contentSubSectionExample.setContentSectionId(contentSection.getContentSectionId());
+
+			List<ContentSubSection> subSections = contentSubSectionExample.findByExample();
+			contentSectionAll.getSubsections().addAll(subSections);
+		}
+
+		return contentSectionAll;
 	}
 
 	@Override
-	public ContentSectionMedia saveContentSectionMedia(ContentSectionMedia contentSectionMedia, InputStream in)
+	public ContentSectionMedia saveMedia(ContentSectionMedia contentSectionMedia, InputStream in)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Objects.requireNonNull(contentSectionMedia);
+		Objects.requireNonNull(in);
+
+		ContentSectionMedia savedMedia = contentSectionMedia.save();
+
+		savedMedia.setFileName(savedMedia.getContentSectionMediaId());
+		try (InputStream fileInput = in) {
+			Files.copy(fileInput, savedMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
+			persistenceService.persist(savedMedia);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		}
+		return savedMedia;
+	}
+
+	@Override
+	public void deleteMedia(String contentSectionMediaId)
+	{
+		ContentSectionMedia existing = persistenceService.findById(ContentSectionMedia.class, contentSectionMediaId);
+		if (existing != null) {
+			Path mediaPath = existing.pathToMedia();
+			if (mediaPath != null) {
+				if (mediaPath.toFile().exists()) {
+					if (mediaPath.toFile().delete()) {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local content section media. Path: {0}", mediaPath.toString()));
+					}
+				}
+			}
+			persistenceService.delete(existing);
+		}
 	}
 
 }

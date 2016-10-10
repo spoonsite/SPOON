@@ -149,7 +149,7 @@ import net.java.truevfs.kernel.spec.FsSyncException;
  * @author jlaw
  */
 @Path("v1/resource/components")
-@APIDescription("Components are the central resource of the system.  The majority of the listing are components.")
+@APIDescription("Components are the central resource of the system.")
 public class ComponentRESTResource
 		extends BaseResource
 {
@@ -3790,6 +3790,20 @@ public class ComponentRESTResource
 	}
 	// </editor-fold>
 
+	// <editor-fold defaultstate="collapsed"  desc="Evaluation section">
+//	@GET
+//	@APIDescription("Get a complete evaluation for a ")
+//	@Produces({MediaType.APPLICATION_JSON})
+//	@DataType(ComponentRelationshipView.class)
+//	@Path("/{id}/evaluation/{evaluationId}")
+//	public Response getEvaluation (
+//			@PathParam("id")
+//			@RequiredParam String componentId,
+//			@BeanParam FilterQueryParams filterQueryParams)
+//	{
+//
+//	}
+	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="Integrations">
 	@GET
 	@RequireAdmin
@@ -3951,7 +3965,8 @@ public class ComponentRESTResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/integration/togglemultiple")
 	public void toggleMultipleIntegrations(
-			@RequiredParam List<String> componentIds)
+			@RequiredParam
+			@DataType(String.class) List<String> componentIds)
 	{
 		for (String componentId : componentIds) {
 			ComponentIntegration componentIntegration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);

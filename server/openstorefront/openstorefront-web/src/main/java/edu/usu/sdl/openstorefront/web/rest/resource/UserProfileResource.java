@@ -233,7 +233,8 @@ public class UserProfileResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/multiple")
 	public void deleteUserProfiles(
-			@RequiredParam List<String> usernames)
+			@RequiredParam
+			@DataType(String.class) List<String> usernames)
 	{
 
 		for (String username : usernames) {
@@ -249,7 +250,8 @@ public class UserProfileResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/multiple")
 	public void reactivateUserProfiles(
-			@RequiredParam List<String> usernames)
+			@RequiredParam
+			@DataType(String.class) List<String> usernames)
 	{
 
 		for (String username : usernames) {

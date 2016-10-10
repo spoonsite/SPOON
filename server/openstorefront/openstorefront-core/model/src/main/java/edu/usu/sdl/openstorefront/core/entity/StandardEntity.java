@@ -31,7 +31,10 @@ import edu.usu.sdl.openstorefront.validation.BlankSantizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.lang.reflect.Field;
+import java.text.MessageFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +48,8 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class StandardEntity<T>
 		extends BaseEntity<T>
 {
+
+	public static final Logger LOG = Logger.getLogger(StandardEntity.class.getName());
 
 	public static final String ACTIVE_STATUS = "A";
 	public static final String INACTIVE_STATUS = "I";
@@ -178,8 +183,16 @@ public abstract class StandardEntity<T>
 		return existing;
 	}
 
-	public void inactivate()
+	/**
+	 * This will inactive the current entity and the backing record in the DB If
+	 * there is no backing record it just changes the entity. This is only works
+	 * for simple cases (non-transactional) and non-composite Keys.
+	 *
+	 * @return true if backing record was updated.
+	 */
+	public boolean inactivate()
 	{
+		boolean updatedRecord = false;
 		Service service = ServiceProxyFactory.getServiceProxy();
 		setActiveStatus(INACTIVE_STATUS);
 		StandardEntity existing = (StandardEntity) getDBEntity();
@@ -187,14 +200,32 @@ public abstract class StandardEntity<T>
 			existing.setActiveStatus(INACTIVE_STATUS);
 			existing.populateBaseUpdateFields();
 			service.getPersistenceService().persist(existing);
-		} else {
-
+			updatedRecord = true;
+		} else if (LOG.isLoggable(Level.FINER)) {
+			String id = EntityUtil.getPKFieldValue(this);
+			LOG.log(Level.FINER, MessageFormat.format("Unable to find a db record for {0} entity.  Id: {1}", new Object[]{this.getClass().getSimpleName(), id}));
 		}
+		return updatedRecord;
 	}
 
-	public void delete()
+	/**
+	 * This is hard delete of the backing record if found. This is only works
+	 * for simple cases (non-transactional) and non-composite Keys.
+	 *
+	 * @return true if backing record was deleted
+	 */
+	public boolean delete()
 	{
+		boolean deletedRecord = false;
 
+		Service service = ServiceProxyFactory.getServiceProxy();
+		StandardEntity existing = (StandardEntity) getDBEntity();
+		if (existing != null) {
+			service.getPersistenceService().delete(existing);
+			deletedRecord = true;
+		}
+
+		return deletedRecord;
 	}
 
 	public String getActiveStatus()

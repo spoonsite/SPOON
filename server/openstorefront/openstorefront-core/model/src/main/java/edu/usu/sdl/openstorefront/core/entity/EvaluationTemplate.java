@@ -59,7 +59,7 @@ public class EvaluationTemplate
 
 	@ConsumeField
 	@OneToMany(orphanRemoval = true)
-	@DataType(FileAttributeCodeXrefMap.class)
+	@DataType(EvaluationSectionTemplate.class)
 	private List<EvaluationSectionTemplate> sectionTemplates;
 
 	public EvaluationTemplate()

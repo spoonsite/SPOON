@@ -37,7 +37,13 @@ public interface EvaluationService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public String saveCheckListAll(ChecklistAll checklistAll);
 
-	public ChecklistAll getChecklistAll();
+	/**
+	 * Find a complete checklist by id
+	 *
+	 * @param checklistId
+	 * @return null if not found
+	 */
+	public ChecklistAll getChecklistAll(String checklistId);
 
 	/**
 	 * Save the full evaluation
@@ -48,11 +54,29 @@ public interface EvaluationService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public String saveEvaluationAll(EvaluationAll evaluationAll);
 
+	/**
+	 * Get a complete evaluation model
+	 *
+	 * @param evaluationId
+	 * @return null if not found
+	 */
 	public EvaluationAll getEvaluation(String evaluationId);
 
+	/**
+	 * Finds the latest evaluation based on create data
+	 *
+	 * @param componentId
+	 * @return null if no evaluation
+	 */
 	public EvaluationAll getLatestEvaluation(String componentId);
 
+	/**
+	 * Create an evaluation base on the template
+	 *
+	 * @param templateId
+	 * @return
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public EvaluationAll createEvaluationFromTemplate(String templateId);
+	public EvaluationAll createEvaluationFromTemplate(String templateId, String componentId);
 
 }

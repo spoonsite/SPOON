@@ -301,7 +301,7 @@ public class JaxrsProcessor
 							}
 
 						} catch (InstantiationException iex) {
-							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", parameter.getType()));
+							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract. Name: {1}", parameter.getType(), parameter.getName()));
 						}
 					} else {
 						try {
@@ -317,7 +317,7 @@ public class JaxrsProcessor
 							}
 
 						} catch (InstantiationException iex) {
-							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract.", parameter.getType()));
+							log.log(Level.WARNING, MessageFormat.format("Unable to instantiated type: {0} make sure the type is not abstract. Name: {1}", parameter.getType(), parameter.getName()));
 						}
 					}
 				} catch (IllegalAccessException | JsonProcessingException ex) {
@@ -373,22 +373,20 @@ public class JaxrsProcessor
 					Set<String> fieldList = mapValueField(typeModel.getFields(), ReflectionUtil.getAllFields(fieldClass).toArray(new Field[0]), onlyConsumeField);
 					if (fieldClass.isEnum()) {
 						typeModel.setObject(Arrays.toString(fieldClass.getEnumConstants()));
-					} else {
-						if (fieldClass.isInterface() == false) {
-							try {
-								if (fieldClass.isMemberClass()) {
-									typeModel.setObject("{ See Parent Object }");
-								} else {
-									typeModel.setObject(objectMapper.writeValueAsString(fieldClass.newInstance()));
-									String cleanUpJson = StringProcessor.stripeFieldJSON(typeModel.getObject(), fieldList);
-									typeModel.setObject(cleanUpJson);
-								}
-							} catch (InstantiationException | IllegalAccessException | JsonProcessingException ex) {
-								log.log(Level.WARNING, "Unable to process/map complex field: " + fieldClass.getSimpleName(), ex);
-								typeModel.setObject("{ Unable to view }");
+					} else if (fieldClass.isInterface() == false) {
+						try {
+							if (fieldClass.isMemberClass()) {
+								typeModel.setObject("{ See Parent Object }");
+							} else {
+								typeModel.setObject(objectMapper.writeValueAsString(fieldClass.newInstance()));
+								String cleanUpJson = StringProcessor.stripeFieldJSON(typeModel.getObject(), fieldList);
+								typeModel.setObject(cleanUpJson);
 							}
-							mapComplexTypes(typeModels, ReflectionUtil.getAllFields(fieldClass).toArray(new Field[0]), onlyConsumeField);
+						} catch (InstantiationException | IllegalAccessException | JsonProcessingException ex) {
+							log.log(Level.WARNING, "Unable to process/map complex field: " + fieldClass.getSimpleName(), ex);
+							typeModel.setObject("{ Unable to view }");
 						}
+						mapComplexTypes(typeModels, ReflectionUtil.getAllFields(fieldClass).toArray(new Field[0]), onlyConsumeField);
 					}
 					typeModels.add(typeModel);
 					typesInList.add(typeModel.getName());

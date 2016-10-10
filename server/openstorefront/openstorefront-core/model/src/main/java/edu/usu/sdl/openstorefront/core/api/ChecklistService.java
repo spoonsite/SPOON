@@ -36,6 +36,22 @@ public interface ChecklistService
 	public ChecklistQuestion saveChecklistQuestion(ChecklistQuestion checklistQuestion);
 
 	/**
+	 * Checks all ties to a question
+	 *
+	 * @param questionId
+	 * @return
+	 */
+	public boolean isQuestionBeingUsed(String questionId);
+
+	/**
+	 * Remove questions ONLY if it's not in use
+	 *
+	 * @param questionId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteQuestion(String questionId);
+
+	/**
 	 * Copies the template
 	 *
 	 * @param checklistTemplateId

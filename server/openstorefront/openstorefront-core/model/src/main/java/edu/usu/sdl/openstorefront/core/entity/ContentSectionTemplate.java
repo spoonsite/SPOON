@@ -50,7 +50,7 @@ public class ContentSectionTemplate
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@Sanitize(HTMLSanitizer.class)
-	private String instructions;
+	private String description;
 
 	public ContentSectionTemplate()
 	{
@@ -63,7 +63,7 @@ public class ContentSectionTemplate
 
 		ContentSectionTemplate contentSectionTemplate = (ContentSectionTemplate) entity;
 		setContentSectionId(contentSectionTemplate.getContentSectionId());
-		setInstructions(contentSectionTemplate.getInstructions());
+		setDescription(contentSectionTemplate.getDescription());
 		setName(contentSectionTemplate.getName());
 
 	}
@@ -88,14 +88,14 @@ public class ContentSectionTemplate
 		this.name = name;
 	}
 
-	public String getInstructions()
+	public String getDescription()
 	{
-		return instructions;
+		return description;
 	}
 
-	public void setInstructions(String instructions)
+	public void setDescription(String description)
 	{
-		this.instructions = instructions;
+		this.description = description;
 	}
 
 	public String getContentSectionId()

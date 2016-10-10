@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import java.io.InputStream;
 
 /**
+ * Handles Content Sections
  *
  * @author dshurtleff
  */
@@ -28,14 +29,49 @@ public interface ContentSectionService
 		extends AsyncService
 {
 
+	/**
+	 * Saves content Section Attribute
+	 *
+	 * @param contentSectionAttribute
+	 * @return
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public ContentSectionAttribute saveContentSectionAttribute(ContentSectionAttribute contentSectionAttribute);
+	public ContentSectionAttribute saveAttribute(ContentSectionAttribute contentSectionAttribute);
 
-	public ContentSectionMedia saveContentSectionMedia(ContentSectionMedia contentSectionMedia, InputStream in);
+	/**
+	 * Save media for a section This doesn't support transactions
+	 *
+	 * @param contentSectionMedia
+	 * @param in
+	 * @return
+	 */
+	public ContentSectionMedia saveMedia(ContentSectionMedia contentSectionMedia, InputStream in);
 
+	/**
+	 * Hard deletes the media and removes existing file.
+	 *
+	 * @param contentSectionMediaId
+	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public String saveContentSectionAll(ContentSectionAll contentSectionAll);
+	public void deleteMedia(String contentSectionMediaId);
 
+	/**
+	 * Save everything except media that has to be handled separately. Deletes
+	 * existing attributes and save whats in the section Deletes existing
+	 * sub-section and save whats in the section
+	 *
+	 * @param contentSectionAll
+	 * @return
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public String saveAll(ContentSectionAll contentSectionAll);
+
+	/**
+	 * Get the complete model for a section
+	 *
+	 * @param contentSectionId
+	 * @return
+	 */
 	public ContentSectionAll getContentSectionAll(String contentSectionId);
 
 }
