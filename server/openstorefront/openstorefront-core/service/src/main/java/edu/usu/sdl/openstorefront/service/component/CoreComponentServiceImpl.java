@@ -2081,21 +2081,16 @@ public class CoreComponentServiceImpl
 				
 				targetEntities.remove(targetEntity);
                                 
-                                // Check If Media
-                                if (targetEntity instanceof ComponentMedia) {
+                                // Check If Media or Resource
+                                if (targetEntity instanceof ComponentMedia) { // Check If Media
                                     
-                                        try {
-                                                
-                                                // Delete Media File
-                                                Files.delete(((ComponentMedia) targetEntity).pathToMedia());
-                                                
-                                                LOG.log(Level.INFO, MessageFormat.format("Deleted Media File: {0} ({1})", ((ComponentMedia) targetEntity).getFileName(), ((ComponentMedia) targetEntity).getOriginalName()));
-                                        }
-                                        catch (IOException ex) {
-
-                                                // Write Error To Log
-                                                LOG.log(Level.WARNING, MessageFormat.format("Unable to delete file: {0}", ((ComponentMedia) targetEntity).pathToMedia()));
-                                        }
+                                        // Remove Local Media File
+                                        removeLocalMedia((ComponentMedia) targetEntity);
+                                }
+                                else if (targetEntity instanceof ComponentResource) { // Check If Resource
+                                    
+                                        // Remove Local Resource File
+                                        removeLocalResource((ComponentResource) targetEntity);
                                 }
 			}
 		}
@@ -2393,4 +2388,29 @@ public class CoreComponentServiceImpl
 		}
 	}
 
+        void removeLocalResource(ComponentResource componentResource)
+	{
+		//Note: this can't be rolled back
+		Path path = componentResource.pathToResource();
+		if (path != null) {
+			if (path.toFile().exists()) {
+				if (path.toFile().delete()) {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component resource. Path: {0}", path.toString()));
+				}
+			}
+		}
+	}
+
+	void removeLocalMedia(ComponentMedia componentMedia)
+	{
+		//Note: this can't be rolled back
+		Path path = componentMedia.pathToMedia();
+		if (path != null) {
+			if (path.toFile().exists()) {
+				if (path.toFile().delete()) {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component media. Path: {0}", path.toString()));
+				}
+			}
+		}
+	}
 }
