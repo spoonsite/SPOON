@@ -115,10 +115,13 @@
 									fieldLabel: 'Name',
 									name: 'user_name',
 									listeners: {
-										change: function () {
-											if (Ext.getCmp('user_name').getValue() !== null) {
-												processUserDataFilter();
-											}
+										change: {
+											buffer: 1000,
+											fn: function () {
+													if (Ext.getCmp('user_name').getValue() !== null) {
+														processUserDataFilter();
+													}
+												}
 										}
 									}
 								},
@@ -752,10 +755,13 @@
 									fieldLabel: 'User',
 									name: 'entry_user',
 									listeners: {
-										change: function () {
-											if (Ext.getCmp('entry_user').getValue() !== null) {
-												processEntryDataFilter();
-											}
+										change: {
+											buffer: 1000,
+											fn: function () {
+													if (Ext.getCmp('entry_user').getValue() !== null) {
+														processEntryDataFilter();
+													}
+												}
 										}
 									}
 								},
