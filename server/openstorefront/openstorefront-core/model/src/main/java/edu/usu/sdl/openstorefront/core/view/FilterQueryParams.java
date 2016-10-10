@@ -82,6 +82,12 @@ public class FilterQueryParams
 	@APIDescription("Accepted format: yyyy-MM-dd'T'HH:mm:ss.sss simple date format")
 	@QueryParam("end")
 	private DateParam endDts;
+	
+	@QueryParam("name")
+	@DefaultValue("")
+	@Size(min = 0, max = 255)
+	@Sanitize(TextSanitizer.class)
+	private String name;
 
 	@QueryParam("all")
 	@DefaultValue("false")
@@ -217,6 +223,16 @@ public class FilterQueryParams
 	public void setStatus(String status)
 	{
 		this.status = status;
+	}
+	
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
 	}
 
 	public Boolean getAll()
