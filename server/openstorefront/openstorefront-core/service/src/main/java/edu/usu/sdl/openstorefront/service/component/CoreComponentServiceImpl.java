@@ -2068,16 +2068,39 @@ public class CoreComponentServiceImpl
 			}
 		}
 
-		Map<String, List<T>> keyMap = targetEntities.stream().collect(Collectors.groupingBy(T::uniqueKey));
+		Map<String, List<T>> targetKeyMap = targetEntities.stream().collect(Collectors.groupingBy(T::uniqueKey));
 		for (T entity : entities) {
-			boolean add = false;
-			if (keyMap.containsKey(entity.uniqueKey()) == false) {
-				add = true;
-			}
-
-			if (add) {
+			
+			if (targetKeyMap.containsKey(entity.uniqueKey()) == false) {
 				entity.clearKeys();
 				targetEntities.add(entity);
+			}
+		}
+                
+                // Create Temporary Target Entities List
+                List<T> tempTargetEntities = new ArrayList<>();
+                
+                // Copy Target Entities
+                targetEntities.forEach(item -> tempTargetEntities.add(item));
+                
+                Map<String, List<T>> mergeKeyMap = entities.stream().collect(Collectors.groupingBy(T::uniqueKey));
+		for (T targetEntity : tempTargetEntities) {
+			
+			if (mergeKeyMap.containsKey(targetEntity.uniqueKey()) == false) {
+				
+				targetEntities.remove(targetEntity);
+                                
+                                // Check If Media or Resource
+                                if (targetEntity instanceof ComponentMedia) { // Check If Media
+                                    
+                                        // Remove Local Media File
+                                        removeLocalMedia((ComponentMedia) targetEntity);
+                                }
+                                else if (targetEntity instanceof ComponentResource) { // Check If Resource
+                                    
+                                        // Remove Local Resource File
+                                        removeLocalResource((ComponentResource) targetEntity);
+                                }
 			}
 		}
 	}
@@ -2374,4 +2397,29 @@ public class CoreComponentServiceImpl
 		}
 	}
 
+        void removeLocalResource(ComponentResource componentResource)
+	{
+		//Note: this can't be rolled back
+		Path path = componentResource.pathToResource();
+		if (path != null) {
+			if (path.toFile().exists()) {
+				if (path.toFile().delete()) {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component resource. Path: {0}", path.toString()));
+				}
+			}
+		}
+	}
+
+	void removeLocalMedia(ComponentMedia componentMedia)
+	{
+		//Note: this can't be rolled back
+		Path path = componentMedia.pathToMedia();
+		if (path != null) {
+			if (path.toFile().exists()) {
+				if (path.toFile().delete()) {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component media. Path: {0}", path.toString()));
+				}
+			}
+		}
+	}
 }
