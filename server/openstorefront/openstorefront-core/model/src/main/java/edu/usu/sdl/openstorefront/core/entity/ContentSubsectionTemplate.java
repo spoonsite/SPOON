@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author dshurtleff
  */
+@APIDescription("Represents subsection template")
 public class ContentSubsectionTemplate
 		extends StandardEntity<ContentSubsectionTemplate>
 {

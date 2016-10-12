@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.Map;
  *
  * @author dshurtleff
  */
+@APIDescription("Defines a field type")
 @SystemTable
 public class CustomFieldType
 		extends LookupEntity<CustomFieldType>

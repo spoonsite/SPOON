@@ -64,6 +64,13 @@ public class AdminToolAction
 		pageMap.put("Feedback", "/WEB-INF/securepages/admin/application/feedback.jsp");
 		pageMap.put("Relationships", "/WEB-INF/securepages/admin/data/relationships.jsp");
 
+		//Evaluation
+		pageMap.put("Evaluations", "/WEB-INF/securepages/admin/evaluation/evaluations.jsp");
+		pageMap.put("Evaluation-Templates", "/WEB-INF/securepages/admin/evaluation/evaluationsTemplates.jsp");
+		pageMap.put("Checklist-Templates", "/WEB-INF/securepages/admin/evaluation/checklistTemplates.jsp");
+		pageMap.put("Checklist-Questions", "/WEB-INF/securepages/admin/evaluation/checklistQuestions.jsp");
+		pageMap.put("Section-Templates", "/WEB-INF/securepages/admin/evaluation/sectionTemplates.jsp");
+
 		return pageMap;
 	}
 

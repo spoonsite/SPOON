@@ -177,7 +177,7 @@ public class ChecklistQuestionResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a Question")
-	@Path("{questionId}")
+	@Path("/{questionId}/activates")
 	public Response activateChecklistQuestion(
 			@PathParam("questionId") String questionId
 	)
@@ -200,9 +200,10 @@ public class ChecklistQuestionResource
 	@GET
 	@RequireAdmin
 	@Produces({MediaType.TEXT_PLAIN})
-	@APIDescription("Check to see if question is in use")
+	@APIDescription("Check to see if question is in use; returns true if in use or no content if not.")
+	@Path("/{questionId}/inuse")
 	public Response questionInUse(
-			@QueryParam("questionId") String questionId
+			@PathParam("questionId") String questionId
 	)
 	{
 		Boolean inUse = Boolean.FALSE;
@@ -222,7 +223,7 @@ public class ChecklistQuestionResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates a question or remove only if not in use")
-	@Path("{questionId}")
+	@Path("/{questionId}")
 	public Response deleteChecklistQuestion(
 			@PathParam("questionId") String questionId,
 			@QueryParam("force") boolean force
