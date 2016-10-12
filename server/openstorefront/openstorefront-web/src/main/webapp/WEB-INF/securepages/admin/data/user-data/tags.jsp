@@ -5,13 +5,15 @@
 	<stripes:layout-component name="contents">
 
 		<stripes:layout-render name="../../../../../layout/adminheader.jsp">		
-		</stripes:layout-render>		
+		</stripes:layout-render>
+		
+		<script src="scripts/plugin/cellToCellDragDrop.js?v=${appVersion}" type="text/javascript"></script>	
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
 
-				Ext.create('Ext.data.Store', {
+				var remoteTagStore = Ext.create('Ext.data.Store', {
 					storeId: 'tagStore',
 					autoLoad: true,
 					fields: [
@@ -22,16 +24,79 @@
 						'createDts',
 						'securityMarkingType'
 					],
-					sorters: 'componentName',
+					sorters: 'text',
 					proxy: {
 						id: 'tagStoreProxy',
 						type: 'ajax',
 						url: 'api/v1/resource/components/tagviews'
+					},
+					listeners: {
+						
+						load: function(store, operation, opts) { // Once Data Store Has Loaded
+							
+							// Initialize Local Tags Data Array
+							var localTags = [];
+							
+							// Loop Through Remote Tags
+							for (var i = 0; i < store.getCount(); i++) {
+								
+								// Store Current Tag Name
+								var currentTagName = store.getAt(i).data.text;
+								
+								// Check If Current Tag Has Been Seen Before
+								if (localTag == null || localTag.name == null) {
+									
+									// Indicate Current Loop Is First Iteration
+									var firstLoop = true;
+								}
+								else {
+									
+									// Indicate Current Loop Is Not First Iteration
+									var firstLoop = false;
+								}
+				
+								// Check If Current Iteration Is First Or If Tag Name Has Changed
+								if (firstLoop || currentTagName != localTag.name) {
+									
+									// Ensure Current Iteration Is Not First
+									if (!firstLoop) {
+										
+										// Store Current Tag
+										localTags.push(localTag);
+									}
+									
+									// Initialize Current Tag
+									var localTag = {};
+									
+									// Store Current Tag ID
+									localTag.id = store.getAt(i).data.tagId;
+									
+									// Store Current Tag Name
+									localTag.name = currentTagName;
+									
+									// Initialize Component Array
+									localTag.components = [];
+								}
+								
+								// Build Component
+								var currentComponent = {
+
+									id: store.getAt(i).data.componentId,
+									name: store.getAt(i).data.componentName
+								};
+
+								// Store Component
+								localTag.components.push(currentComponent);
+							}
+							
+							// Set Local Tag Store Data
+							localTagStore.setData(localTags);
+						}
 					}
 				});
 
 
-				Ext.create('Ext.data.Store', {
+				var securityTypeStore = Ext.create('Ext.data.Store', {
 					storeId: 'securityTypeStore',
 					autoLoad: true,
 					fields: [
@@ -44,48 +109,144 @@
 						url: 'api/v1/resource/lookuptypes/SecurityMarkingType/view'
 					}
 				});
-			
+				
+				var localTagStore = Ext.create('Ext.data.Store', {
+					storeId: 'localTagStore',
+					autoLoad: true,
+					fields: [
+						'id',
+						'name',
+						'count'
+					],
+					sorters: 'name'
+				});
+				
+				var componentTypeStore = Ext.create('Ext.data.Store', {
+					storeId: 'componentTypeStore',
+					proxy: {
+						type: 'ajax',
+						url: 'api/v1/resource/componenttypes/lookup'
+					},
+					autoLoad: true
+				});
+				
+				var componentStore = Ext.create('Ext.data.Store', {
+					storeId: 'componentStore',
+					fields: [
+						// The griddragdrop plugin needs a type in order to operate!
+						{
+							name: 'name',
+							type: 'string'
+						}
+					],
+					sorters: new Ext.util.Sorter({
+						property: 'name',
+						direction: 'ASC'
+					}),
+					proxy: {
+						id: 'componentStoreProxy',
+						type: 'ajax',
+						url: 'api/v1/resource/components/'
+					},
+					autoLoad: true
+				});
+				
+				var localTagComponentStore = Ext.create('Ext.data.Store', {
+					storeId: 'localTagComponentStore',
+					autoLoad: true,
+					fields: [
+						'id',
+						'name',
+						'type'
+					],
+					sorters: 'name'
+				});
+				
 				var tagGrid = Ext.create('Ext.grid.Panel', {
-					title: 'Manage Tags <i class="fa fa-question-circle"  data-qtip="Tags are user-definable labels that are associated with a component."></i>',
 					id: 'tagGrid',
-					store: Ext.data.StoreManager.lookup('tagStore'),
-					columnLines: true,
-					selModel: 'rowmodel',
-					columns: {
-						defaults: {
-							cellWrap: true
-						},
-						items: [
-							{text: 'Component', dataIndex: 'componentName', flex: 1, minWidth: 250},
-							{text: 'Tag', dataIndex: 'text', width: 300},
-							{text: 'Create User', dataIndex: 'createUser', width: 175},
-							{
-								text: 'Create Date',
-								dataIndex: 'createDts',
-								width: 275,
-								xtype: 'datecolumn',
-								format: 'm/d/y H:i:s'
-							},
-							{
-								text: 'Security Type', 
-								dataIndex: 'securityMarkingDescription',
-								width: 175,
-								hidden: true,
-								sortable: false
+					store: localTagStore,
+					flex: 1,
+					border: false,
+					autoScroll: true,
+					columns: [
+						{ 
+							text: 'Tags',
+							dataIndex: 'name',
+							flex: 1,
+							renderer: function (value, metaData, record) {
+								var num = record.get('components').length;
+								if (!num) num = 0;
+								
+								if (value == 'discovery') {
+									console.log(record.data);
+								}
+								
+								var html = '<div style="color: #999; padding: 1em 0 2em 0;">';
+								html += "<strong style=\"color: #111; float: left;\">" + value + "</strong>";
+								html += '<span style="float: right"><i class="fa fa-book fa-fw"></i> ' + num + '</span>';
+								html += "</div>";
+								return html;
 							}
-						]
+						}
+					],
+					listeners: {
+								
+						selectionChange: function(grid, records, eOpts) {
+
+							// Store Selected Record Data
+							var tagData = records[0].getData();
+							
+							// Build Component Array
+							var components = [];
+
+							// Loop Through Components
+							for (i = 0; i < tagData.components.length; i++) {
+							
+								// Lookup Matching Components
+								var matchedComponents = componentStore.query('componentId', tagData.components[i].id, false, true, true);
+								
+								// Loop Through Matched Components
+								for (j = 0; j < matchedComponents.items.length; j++) {
+									
+									// Store Component Data
+									var componentData = matchedComponents.items[j].data;
+									
+									// Build Component
+									var component = {
+										
+										id: componentData.componentId,
+										name: componentData.name,
+										type: componentData.componentTypeDescription
+									};
+									
+									// Add Component To Array
+									components.push(component);
+								}
+							}
+
+							// Add Components To Component-Tag Association Store
+							localTagComponentStore.setData(components);
+							console.log(components);
+						}
 					},
 					dockedItems: [
 						{
-							dock: 'top',
 							xtype: 'toolbar',
+							dock: 'top',
 							items: [
 								{
 									text: 'Refresh',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-refresh',
 									handler: function () {
-										Ext.getCmp('tagGrid').getStore().load();
+										
+										// TODO: Backup Any New Tags
+										
+										// Reload Data
+										remoteTagStore.load();
+										localTagStore.load();
+										
+										// TODO: Reinsert Backed Up Tags
 									}
 								},
 								{
@@ -98,41 +259,295 @@
 									handler: function () {
 										actionAddTagForm();
 									}
-								},
+								}
+							]
+						},
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
 								{
-									xtype: 'tbseparator'
-								},
-								{
-									text: 'Delete',
-									id: 'tagGrid-tools-delete',
-									iconCls: 'fa fa-2x fa-trash',
-									disabled: true,
-									scale: 'medium',
-									handler: function () {
-										var record = Ext.getCmp('tagGrid').getSelection()[0];
-										var title = 'Delete Tag';
-										var msg = 'Are you sure you want to delete this tag?';
-										Ext.MessageBox.confirm(title, msg, function (btn) {
-											if (btn === 'yes') {
-												actionDeleteTag(record);
+									xtype: 'textfield',
+									flex: 1,
+									fieldLabel: 'Filter',
+									labelWidth: new Ext.util.TextMetrics().getWidth("Filter:"),
+									listeners: {
+										change: {
+											
+											buffer: 750,
+											fn: function (field, newValue, oldValue, eOpts) {
+
+												// Get Field's Store
+												var store = Ext.getCmp("tagGrid").getStore();
+
+												// Clear Previous Filter(s)
+												store.clearFilter();
+
+												// Set Filter
+												store.filterBy(function(record) {
+
+													// Return Whether Search String Was Found
+													return record.get('name').search(new RegExp(newValue, 'i')) != -1;
+												});
 											}
-										});
+										}
 									}
 								}
 							]
 						}
+					]
+				});
+				
+				var componentGrid = Ext.create('Ext.grid.Panel', {
+					id: 'componentGrid',
+					store: componentStore,
+					flex: 1,
+					border: false,
+					autoScroll: true,
+					viewConfig: {
+						plugins: [
+							Ext.create('OSF.plugin.CellToCellDragDrop', {
+								id: 'celltocell',
+								ddGroup: 'relationship',
+								enableDrop: true,
+								enableDrag: false,
+								onDrop: function onDrop(target, dd, e, dragData) {
+									var originId = dragData.record.data.componentId;
+									var originName = dragData.record.data.name; 
+									var targetId = target.record.data.componentId;
+									var targetName = target.record.data.name;
+									var relationshipTypeCode = Ext.getCmp('relationshipTypeComboBox').getValue();
+									if (originId === targetId) {
+										Ext.Msg.alert('Relationship Not Allowed', 'Relationships from an entry to itself are not allowed.');
+									} else {
+										actionCreateRelationship(originId, originName, targetId, targetName, relationshipTypeCode);
+									}
+								},
+								onEnter: function(target, dd, e, dragData) {
+									var originName = dragData.record.data.name; 
+									var targetName = target.record.data.name;
+									var relationshipTypeCode = Ext.getCmp('relationshipTypeComboBox').getSelection();
+									if (relationshipTypeCode) {
+										var relationship = relationshipTypeCode.get('description');
+									}
+									else var relationship = ' -> ';
+
+									var text = originName + ' ';
+								    text += relationship + ' ';
+									text += targetName;
+									dd.ddel.innerText = text;
+								},
+								onOut: function(target, dd, e, dragData) {
+									var originName = dragData.record.data.name; 
+									dd.ddel.innerText = originName;
+								}
+							})
+						]
+					},
+					columns: [
+						{ 
+							text: 'Entries',
+							dataIndex: 'name',
+							flex: 1,
+							renderer: function (value, metaData, record) {
+								//console.log(record.data.tags);
+								var num = record.get('numRelationships');
+								if (!num) num = 0;
+								var html = "<strong>" + value + "</strong>";
+								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
+								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+								html += '<span style="float: left;">' + record.get('componentTypeDescription') + '</span>';
+								html += "</div>";
+								return html;
+							}
+
+						}
 					],
-					listeners: {
-						selectionchange: function (grid, record, index, opts) {
-							if (Ext.getCmp('tagGrid').getSelectionModel().hasSelection()) {
-								Ext.getCmp('tagGrid-tools-delete').enable(true);
-							} else {
-								Ext.getCmp('tagGrid-tools-delete').disable();
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Refresh',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-refresh',
+									handler: function () {
+										Ext.getCmp('componentGrid').getStore().load();
+									}
+								}
+							]
+						},
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									xtype: 'tagfield',
+									fieldLabel: 'Entry Types',
+									labelWidth: new Ext.util.TextMetrics().getWidth("Entry Types:"),
+									flex: 1,
+									store: componentTypeStore,
+									valueField: 'code',
+									displayField: 'description',
+									emptyText: 'All',
+									listeners: {
+										change: function (tagfield, newValue, oldValue, eOpts) {
+											componentStore.clearFilter();
+											componentStore.selectedValues = newValue;
+											if (newValue.length > 0) {
+												componentStore.filterBy(filter = function multiFilter(record) {
+													return Ext.Array.contains(componentStore.selectedValues, record.get('componentType'));
+												});
+											}
+										}
+									}
+								}
+							]
+						},
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									xtype: 'textfield',
+									flex: 1,
+									fieldLabel: 'Filter',
+									labelWidth: new Ext.util.TextMetrics().getWidth("Filter:"),
+									listeners: {
+										change: {
+											
+											buffer: 750,
+											fn: function (field, newValue, oldValue, eOpts) {
+
+												// Get Field's Store
+												var store = Ext.getCmp("componentGrid").getStore();
+
+												// Clear Previous Filter(s)
+												store.clearFilter();
+
+												// Set Filter
+												store.filterBy(function(record) {
+
+													// Return Whether Search String Was Found
+													return record.get('name').search(new RegExp(newValue, 'i')) != -1;
+												});
+											}
+										}
+									}
+								}
+							]
+						}
+					]
+				});
+				
+				var tagRelationshipsGrid = Ext.create('Ext.grid.Panel', {
+					title: 'Tag Association',
+					flex: 1,
+					id: 'tagRelationshipsGrid',
+					store: localTagComponentStore,
+					border: false,
+					autoScroll: true,
+					margin: '5 5 5 5',
+					emptyText: 'Select a Tag to see the currently associated Entries',
+					columns: [
+						{ 
+							text: 'Tags',
+							dataIndex: 'name',
+							flex: 1,
+							renderer: function (value, metaData, record) {
+								
+								var html = "<strong>" + value + "</strong>";
+								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
+								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+								html += '<span style="float: left;">' + record.get('type') + '</span>';
+								html += "</div>";
+								return html;
 							}
 						}
-					}
+					]
 				});
-
+				
+				var tagCloudPanel = Ext.create('Ext.grid.Panel', {
+					title: 'Tag Cloud',
+					flex: 1,
+					id: 'tagCloudPanel',
+					store: localTagStore,
+					border: false,
+					autoScroll: true,
+					margin: '5 5 5 5',
+					columns: [
+						{ 
+							text: 'Tags',
+							dataIndex: 'name',
+							flex: 1,
+							renderer: function (value, metaData, record) {
+								var num = record.get('components').length;
+								if (!num) num = 0;
+								
+								var html = '<div style="color: #999; padding: 1em 0 2em 0;">';
+								html += "<strong style=\"color: #111; float: left;\">" + value + "</strong>";
+								html += '<span style="float: right"><i class="fa fa-book fa-fw"></i> ' + num + '</span>';
+								html += "</div>";
+								return html;
+							}
+						}
+					]
+				});
+				
+				var tagsMainLayout = Ext.create('Ext.panel.Panel', {
+					title: 'Tag Management Tool <i class="fa fa-question-circle"  data-qtip="Quickly create and relate tags with entries."></i>',
+					layout: 'border',
+					height: '100%',
+					items: [
+						{
+							title: 'Tags',
+							region: 'west',
+							xtype: 'panel',
+							margin: '5 5 5 5',
+							flex: 2,
+							id: 'west-container',
+							layout: {
+								type: 'vbox',
+								align: 'stretch'
+							},
+							items: [
+								tagGrid
+							]
+						},
+						{
+							title: 'Entries',
+							region: 'center',
+							xtype: 'panel',
+							margin: '5 5 5 5',
+							flex: 3,
+							id: 'center-container',
+							layout: {
+								type: 'vbox',
+								align: 'stretch'
+							},
+							items: [
+								
+								componentGrid
+							]
+						},
+						{
+							region: 'east',
+							xtype: 'panel',
+							flex: 3,
+							id: 'east-container',
+							layout: {
+								type: 'vbox',
+								align: 'stretch'
+							},
+							items: [
+								
+								tagRelationshipsGrid,
+								tagCloudPanel
+							]
+						}
+					]
+				});
 
 				var tagAddWin = Ext.create('Ext.window.Window', {
 					id: 'tagAddWin',
@@ -339,7 +754,7 @@
 					}
 				};
 
-				addComponentToMainViewPort(tagGrid);
+				addComponentToMainViewPort(tagsMainLayout);
 				
 			});
 
