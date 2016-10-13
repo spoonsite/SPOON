@@ -74,6 +74,9 @@
 									// Store Current Tag Name
 									localTag.name = currentTagName;
 									
+									// Store Current Tag Security Level
+									localTag.security = store.getAt(i).data.securityMarkingType
+									
 									// Initialize Component Array
 									localTag.components = [];
 								}
@@ -82,7 +85,7 @@
 								var currentComponent = {
 
 									id: store.getAt(i).data.componentId,
-									name: store.getAt(i).data.componentName
+									name: store.getAt(i).data.componentName,
 								};
 
 								// Store Component
@@ -116,7 +119,8 @@
 					fields: [
 						'id',
 						'name',
-						'count'
+						'security',
+						'components'
 					],
 					sorters: 'name'
 				});
@@ -174,18 +178,36 @@
 							dataIndex: 'name',
 							flex: 1,
 							renderer: function (value, metaData, record) {
-								var num = record.get('components').length;
-								if (!num) num = 0;
 								
-								if (value == 'discovery') {
-									console.log(record.data);
+								// Get Component Count
+								var componentCount = record.get('components').length;
+								
+								// Ensure Count Is Valid
+								if (!componentCount) {
+									
+									// Initialize Count To Zero
+									componentCount = 0;
 								}
 								
-								var html = '<div style="color: #999; padding: 1em 0 2em 0;">';
-								html += "<strong style=\"color: #111; float: left;\">" + value + "</strong>";
-								html += '<span style="float: right"><i class="fa fa-book fa-fw"></i> ' + num + '</span>';
-								html += "</div>";
-								return html;
+								// Check Component Count
+								if (componentCount == 0) {
+									
+									// Build "New" Tag Presentation
+									var html = '<div style="color: #999; padding: 1em 0 2em 0;">';
+									html += '<strong style="color: #111; float: left;">' + value.replace(/\*/, '<span style="color: #22DD22;">[NEW]</span> ') + '</strong>';
+									html += '<span style="float: right"><i class="fa fa-book fa-fw"></i> ' + componentCount + '</span>';
+									html += "</div>";
+									return html;
+								}
+								else {
+								
+									// Build Saved Tag Presentation
+									var html = '<div style="color: #999; padding: 1em 0 2em 0;">';
+									html += '<strong style="color: #111; float: left;">' + value + '</strong>';
+									html += '<span style="float: right"><i class="fa fa-book fa-fw"></i> ' + componentCount + '</span>';
+									html += "</div>";
+									return html;
+								}
 							}
 						}
 					],
@@ -193,40 +215,63 @@
 								
 						selectionChange: function(grid, records, eOpts) {
 
+							// Ensure Record(s) Were Sent
+							if (!records || records.length == 0) {
+								
+								// Exit Function
+								return false;
+							}
+							
 							// Store Selected Record Data
 							var tagData = records[0].getData();
 							
 							// Build Component Array
 							var components = [];
-
-							// Loop Through Components
-							for (i = 0; i < tagData.components.length; i++) {
 							
-								// Lookup Matching Components
-								var matchedComponents = componentStore.query('componentId', tagData.components[i].id, false, true, true);
-								
-								// Loop Through Matched Components
-								for (j = 0; j < matchedComponents.items.length; j++) {
-									
-									// Store Component Data
-									var componentData = matchedComponents.items[j].data;
-									
-									// Build Component
-									var component = {
-										
-										id: componentData.componentId,
-										name: componentData.name,
-										type: componentData.componentTypeDescription
-									};
-									
-									// Add Component To Array
-									components.push(component);
+							// Check For Components Associated With Tag
+							if (tagData.components.length > 0) {
+
+								// Loop Through Components
+								for (i = 0; i < tagData.components.length; i++) {
+
+									// Lookup Matching Components
+									var matchedComponents = componentStore.query('componentId', tagData.components[i].id, false, true, true);
+
+									// Loop Through Matched Components
+									for (j = 0; j < matchedComponents.items.length; j++) {
+
+										// Store Component Data
+										var componentData = matchedComponents.items[j].data;
+
+										// Build Component
+										var component = {
+
+											id: componentData.componentId,
+											name: componentData.name,
+											type: componentData.componentTypeDescription
+										};
+
+										// Add Component To Array
+										components.push(component);
+									}
 								}
 							}
+							else {
 
+								// Build Empty Component
+								var component = {
+
+									id: 0,
+									name: "No Associated Entries",
+									type: ""
+								};
+
+								// Add Component To Array
+								components.push(component);
+							}
+							
 							// Add Components To Component-Tag Association Store
 							localTagComponentStore.setData(components);
-							console.log(components);
 						}
 					},
 					dockedItems: [
@@ -452,17 +497,33 @@
 					emptyText: 'Select a Tag to see the currently associated Entries',
 					columns: [
 						{ 
-							text: 'Tags',
+							text: 'Entries',
 							dataIndex: 'name',
 							flex: 1,
 							renderer: function (value, metaData, record) {
 								
-								var html = "<strong>" + value + "</strong>";
-								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
-								html += '<span style="float: left;">' + record.get('type') + '</span>';
-								html += "</div>";
-								return html;
+								// Store Record Type
+								var recordType = record.get('type');
+								
+								// Check If Record Type Is Empty
+								if (!recordType) {
+									
+									// Build Component Without Record Type
+									var html = '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
+									html += "<strong>" + value + "</strong>";
+									html += "</div>";
+									return html;
+								}
+								else {
+									
+									// Build Component With Record Type
+									var html = "<strong>" + value + "</strong>";
+									html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
+									html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+									html += '<span style="float: left;">' + record.get('type') + '</span>';
+									html += "</div>";
+									return html;
+								}
 							}
 						}
 					]
@@ -571,48 +632,45 @@
 							},
 							items: [
 								{
-									xtype: 'combobox',
-									fieldLabel: 'Component<span class="field-required"></span>',
-									id: 'addTagForm-component',
-									forceSelection: true,
-									displayField: 'description',
-									valueField: 'code',
-									emptyText: 'Select a Component',
-									typeAhead: true,
-									minChars: 3,
-									allowBlank: false,
-									name: 'component',
-									store: Ext.create('Ext.data.Store', {
-										storeId: 'componentStore',
-										autoLoad: true,
-										sorters: "description",
-										fields: [
-											'code',
-											'description'
-										],
-										proxy: {
-											id: 'componentStoreProxy',
-											type: 'ajax',
-											url: 'api/v1/resource/components/lookup'
-										}
-									})
-								},								
-								Ext.create('OSF.component.StandardComboBox', {
-									name: 'text',	
-									id: 'adddTagForm-tag',										
-									margin: '0 0 0 0',
-									width: '100%',
+									xtype: 'textfield',
 									fieldLabel: 'Tag<span class="field-required"></span>',
-									forceSelection: false,
-									allowBlank: false,
-									valueField: 'text',
-									displayField: 'text',
-									margin: '0 0 10 0',
-									maxLength: 120,
-									storeConfig: {
-										url: 'api/v1/resource/components/tags'
+									id: 'adddTagForm-tag',
+									name: 'name',
+									listeners: {
+										
+										change: {
+											
+											buffer: 100,
+											fn: function(field, newValue, oldValue, eOpts) {
+												
+												// Lookup New Value Against Existing Tags
+												var matchingTags = localTagStore.query('name', newValue, false, false, true);
+												
+												// Store Save Button
+												var saveButton = Ext.getCmp('addTagForm-saveButton');
+												
+												// Check For Matches
+												if (matchingTags.getCount() > 0) {
+													
+													// Indicate Tage Already Exists
+													field.markInvalid("Tag already exists");
+													
+													// Disable Save Button
+													saveButton.disable();
+												}
+												else {
+													
+													// Check If Save Button Is Disabled
+													if (saveButton.isDisabled()) {
+													
+														// Enable Save Button
+														saveButton.enable();
+													}
+												}
+											}
+										}
 									}
-								}),
+								},
 								{
 									xtype: 'combobox',
 									fieldLabel: 'Security Type',
@@ -622,7 +680,7 @@
 									emptyText: 'Select a Security Type',
 									name: 'securityType',
 									hidden: !${branding.allowSecurityMarkingsFlg},
-									store: Ext.data.StoreManager.lookup('securityTypeStore')
+									store: securityTypeStore
 								}
 							],
 							dockedItems: [
@@ -632,73 +690,116 @@
 									items: [
 										{
 											text: 'Save',
+											id: 'addTagForm-saveButton',
 											iconCls: 'fa fa-save',
 											formBind: true,
 											handler: function () {
+												
+												// Retrieve Form
 												var form = Ext.getCmp('addTagForm');
-												// Submit Data
+												
+												// Ensure Data Is Valid
+												// (Probably Not Necessary)
 												if (form.isValid()) {
+													
+													// Store Form Data
 													var formData = form.getValues();
-													var url = 'api/v1/resource/components/';
-													url += formData.component + "/tags";
-													var method = 'POST';
-
-													// Compile properly formatted data
-													data = {};
-													data.text = formData.text;
-													data.securityMarkingType = formData.securityType;
-
-													CoreUtil.submitForm({
-														url: url,
-														method: method,
-														data: data,
-														removeBlankDataItems: true,
-														form: Ext.getCmp('addTagForm'),
-														success: function (response, opts) {
-															// Server responded OK
-															var errorResponse = Ext.decode(response.responseText);
-
-															// Confusingly, you will only see the "success"
-															// property in the response if the success
-															// is success = false. Therefore
-															// the appearance of the success property actually
-															// means there was a failure.
-
-															if (!errorResponse.hasOwnProperty('success')) {
-																// Validation succeeded.
-																Ext.toast('Saved Successfully', '', 'tr');
-																Ext.getCmp('addTagForm').setLoading(false);
-																Ext.getCmp('addTagForm').reset();
-																Ext.getCmp('tagAddWin').hide();
-																Ext.getCmp('tagGrid').getStore().load();
-																Ext.getCmp('tagGrid').getSelectionModel().deselectAll();
-																Ext.getCmp('tagGrid-tools-delete').setDisabled(true);
-															} else {
-																// Validation failed
-
-																// Compile an object to pass to ExtJS Form
-																// that allows validation messages
-																// using the markInvalid() method.
-																var errorObj = {};
-																Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
-																	errorObj[item.key] = item.value;
-																});
-																var form = Ext.getCmp('addTagForm').getForm();
-																form.markInvalid(errorObj);
-															}
-														},
-														failure: function (response, opts) {
-															// The same failure procedure as seen above
-															var errorResponse = Ext.decode(response.responseText);
-															var errorObj = {};
-															Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
-																errorObj[item.key] = item.value;
-															});
-															var form = Ext.getCmp('addTagForm').getForm();
-															form.markInvalid(errorObj);
-														}
-													});
+													
+													// Build Tag
+													var tag = {
+														
+														id: "NEW",
+														name: "*" + formData.name,
+														security: formData.securityType,
+														components: []
+													};
+													
+													// Create Tag Model
+													var tagModel = localTagStore.createModel(tag);
+													
+													// Add Tag To Store
+													localTagStore.addSorted(tagModel);
+													
+													// Reset Form
+													Ext.getCmp('addTagForm').reset();
+													
+													// Close Add Window
+													Ext.getCmp('tagAddWin').hide();
+													
+													// Select New Tag
+													tagGrid.getView().select([tagModel]);
+													tagGrid.getView().focusRow(0);
 												}
+												else {
+													
+													form.markInvalid("Error with Tag name");
+												}
+												
+												
+//												var form = Ext.getCmp('addTagForm');
+//												// Submit Data
+//												if (form.isValid()) {
+//													var formData = form.getValues();
+//													var url = 'api/v1/resource/components/';
+//													url += formData.component + "/tags";
+//													var method = 'POST';
+//
+//													// Compile properly formatted data
+//													data = {};
+//													data.text = formData.text;
+//													data.securityMarkingType = formData.securityType;
+//
+//													CoreUtil.submitForm({
+//														url: url,
+//														method: method,
+//														data: data,
+//														removeBlankDataItems: true,
+//														form: Ext.getCmp('addTagForm'),
+//														success: function (response, opts) {
+//															// Server responded OK
+//															var errorResponse = Ext.decode(response.responseText);
+//
+//															// Confusingly, you will only see the "success"
+//															// property in the response if the success
+//															// is success = false. Therefore
+//															// the appearance of the success property actually
+//															// means there was a failure.
+//
+//															if (!errorResponse.hasOwnProperty('success')) {
+//																// Validation succeeded.
+//																Ext.toast('Saved Successfully', '', 'tr');
+//																Ext.getCmp('addTagForm').setLoading(false);
+//																Ext.getCmp('addTagForm').reset();
+//																Ext.getCmp('tagAddWin').hide();
+//																Ext.getCmp('tagGrid').getStore().load();
+//																Ext.getCmp('tagGrid').getSelectionModel().deselectAll();
+//																Ext.getCmp('tagGrid-tools-delete').setDisabled(true);
+//															} else {
+//																// Validation failed
+//
+//																// Compile an object to pass to ExtJS Form
+//																// that allows validation messages
+//																// using the markInvalid() method.
+//																var errorObj = {};
+//																Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+//																	errorObj[item.key] = item.value;
+//																});
+//																var form = Ext.getCmp('addTagForm').getForm();
+//																form.markInvalid(errorObj);
+//															}
+//														},
+//														failure: function (response, opts) {
+//															// The same failure procedure as seen above
+//															var errorResponse = Ext.decode(response.responseText);
+//															var errorObj = {};
+//															Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+//																errorObj[item.key] = item.value;
+//															});
+//															var form = Ext.getCmp('addTagForm').getForm();
+//															form.markInvalid(errorObj);
+//														}
+//													});
+//												}
 											}
 										},
 										{
