@@ -113,10 +113,20 @@ public class AttributeServiceImpl
 	}
 
 	@Override
+	public Boolean checkIfCodeExistsForType(String type, String code) {
+		List<AttributeCode> codes = findCodesForType(type);
+		for (AttributeCode c : codes) {
+			if (c.getAttributeCodePk().getAttributeCode().equals(code)) return true;
+		}
+		return false;
+	}
+
+	@Override
 	public List<AttributeCode> findCodesForType(String type)
 	{
 		return findCodesForType(type, false);
 	}
+
 
 	@Override
 	public List<AttributeCode> findCodesForType(String type, boolean all)

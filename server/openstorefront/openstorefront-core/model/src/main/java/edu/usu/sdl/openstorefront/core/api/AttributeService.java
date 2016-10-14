@@ -69,6 +69,15 @@ public interface AttributeService
 	public AttributeCodeWrapper getFilteredCodes(FilterQueryParams filter, String type);
 
 	/**
+	 * Checks if a code exists for a given type
+	 *
+	 * @param type a string representing the attribute type
+	 * @param code a string representing the attribute code
+	 * @return true if code the code exists for the given type
+	 */
+	public Boolean checkIfCodeExistsForType(String type, String code); 
+
+	/**
 	 * Gets the codes for a type Note active codes are cached.
 	 *
 	 * @param type

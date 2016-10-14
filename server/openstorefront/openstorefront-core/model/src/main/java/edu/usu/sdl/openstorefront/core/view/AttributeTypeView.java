@@ -51,6 +51,9 @@ public class AttributeTypeView
 	@NotNull
 	private boolean hideOnSubmission;
 
+	@NotNull
+	private boolean allowUserGeneratedCodes;
+
 	private String defaultAttributeCode;
 	private String detailedDescription;
 
@@ -82,6 +85,7 @@ public class AttributeTypeView
 		attributeTypeView.setVisibleFlg(Convert.toBoolean(attributeType.getVisibleFlg()));
 		attributeTypeView.setDetailedDescription(attributeType.getDetailedDescription());
 		attributeTypeView.setHideOnSubmission(Convert.toBoolean(attributeType.getHideOnSubmission()));
+		attributeTypeView.setAllowUserGeneratedCodes(Convert.toBoolean(attributeType.getAllowUserGeneratedCodes()));
 		attributeTypeView.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
 		attributeTypeView.setActiveStatus(attributeType.getActiveStatus());
 		attributeTypeView.setRequiredRestrictions(attributeType.getRequiredRestrictions());
@@ -195,6 +199,16 @@ public class AttributeTypeView
 	public void setHideOnSubmission(boolean hideOnSubmission)
 	{
 		this.hideOnSubmission = hideOnSubmission;
+	}
+
+	public Boolean getAllowUserGeneratedCodes()
+	{
+		return allowUserGeneratedCodes;
+	}
+
+	public void setAllowUserGeneratedCodes(Boolean allowUserGeneratedCodes)
+	{
+		this.allowUserGeneratedCodes = allowUserGeneratedCodes;
 	}
 
 	public String getDefaultAttributeCode()

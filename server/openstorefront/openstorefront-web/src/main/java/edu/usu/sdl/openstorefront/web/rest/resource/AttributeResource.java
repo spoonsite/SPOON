@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
@@ -40,6 +42,7 @@ import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeTypeViewComparator;
+import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeDetail;
@@ -62,8 +65,10 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
@@ -700,6 +705,85 @@ public class AttributeResource
 	{
 		attributeCode.getAttributeCodePk().setAttributeType(type);
 		return handleAttributePostPutCode(attributeCode, true);
+	}
+
+	@POST
+	@APIDescription("Creates a new user-generated attribute code")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/attributetypes/{type}/attributecodes/user")
+	public Response postUserAttributeCode(
+			@PathParam("type")
+			@RequiredParam String type,
+			AttributeCodeSave attributeCodeSave)
+	{
+		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
+		if (attributeType != null) {
+			// The attribute type must allow user-generated codes to continue
+			if (Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
+				// Get a list of attribute codes that have this label.
+				AttributeCode codeExample = new AttributeCode();
+				codeExample.setLabel(attributeCodeSave.getCodeLabel());
+				List<AttributeCode> codes = service.getPersistenceService().queryByExample(AttributeCode.class, codeExample);
+
+
+				// If any of the codes we found belong to the attribute type in question,
+				// then the label is not new and we can just return the existing code.
+
+				// If this label appears in another attribute type, we can use the code as a "hint" 
+				// for a reasonable string to use for our new program-generated attribute code.
+				Queue<String> codeStringHints = new LinkedList<>();
+				for (AttributeCode code : codes) {
+					if (code.getAttributeCodePk().getAttributeType().equals(type)) {
+						return Response.ok(code).build();
+					}
+					else {
+						codeStringHints.add(code.getAttributeCodePk().getAttributeCode());
+					}
+				}
+
+
+				// At this point, we have determined that the label is new and therefore
+				// we must generate a code for it.
+				
+				// We add to our candidate list a simple truncated
+				// version of the label in uppercase.
+				String spaceless = attributeCodeSave.getCodeLabel().replaceAll("\\s+","");
+				String truncated = spaceless.substring(0, Math.min(OpenStorefrontConstant.FIELD_SIZE_CODE, spaceless.length())).toUpperCase();
+				codeStringHints.add(truncated);
+
+				String newCode = null;
+				boolean found = false;
+				int num = 1;
+				while (!found) {
+					if (!codeStringHints.isEmpty()) {
+						newCode = codeStringHints.poll();
+						found = !(service.getAttributeService().checkIfCodeExistsForType(type, newCode));
+					}
+					else {
+						newCode = truncated.substring(0, truncated.length()-String.valueOf(num).length()).concat(String.valueOf(num));
+						found = !(service.getAttributeService().checkIfCodeExistsForType(type, newCode));
+						if (!found) num++;
+					}
+				}
+
+
+				AttributeCode newAttributeCode = new AttributeCode();
+				newAttributeCode.setLabel(attributeCodeSave.getCodeLabel());
+				AttributeCodePk newAttributeCodePk = new AttributeCodePk();
+				newAttributeCodePk.setAttributeType(type);
+				newAttributeCodePk.setAttributeCode(newCode);
+				newAttributeCode.setAttributeCodePk(newAttributeCodePk);
+
+				// Save it away and return the new attribute code as response
+				return handleAttributePostPutCode(newAttributeCode, true);
+				
+			}
+			else {
+				return Response.status(Response.Status.FORBIDDEN).build();
+			}
+		}
+
+		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
 	@PUT

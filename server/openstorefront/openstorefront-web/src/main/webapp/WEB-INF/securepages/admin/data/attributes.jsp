@@ -86,7 +86,7 @@
 				columnLines: true,
 				columns: [
 					{text: 'Description', dataIndex: 'description', flex: 2},
-					{text: 'Type Code', dataIndex: 'attributeType', flex: 2},
+					{text: 'Type Code', dataIndex: 'attributeType', flex: 1.5},
 					{
 						text: 'Visible', 
 						dataIndex: 'visibleFlg', 
@@ -120,6 +120,13 @@
 						dataIndex: 'allowMultipleFlg',
 						flex: 1, 
 						tooltip: 'Should a component be allowed to have more than one code for this attribute?',
+						renderer: gridColorRenderer
+					},
+					{
+						text: 'Allow User Codes',
+						dataIndex: 'allowUserGeneratedCodes',
+						flex: 1,
+						tooltip: 'Should users be able to generate codes for this attribute?',
 						renderer: gridColorRenderer
 					},
 					{
@@ -1232,6 +1239,10 @@
 												}
 											}
 										}
+									},
+									{
+										name: 'allowUserGeneratedCodes',
+										boxLabel: 'Allow User-Created Codes'
 									},
 									{
 										name: 'hideOnSubmission',
