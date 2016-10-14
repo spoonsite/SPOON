@@ -85,7 +85,7 @@ public class AttributeTypeView
 		attributeTypeView.setVisibleFlg(Convert.toBoolean(attributeType.getVisibleFlg()));
 		attributeTypeView.setDetailedDescription(attributeType.getDetailedDescription());
 		attributeTypeView.setHideOnSubmission(Convert.toBoolean(attributeType.getHideOnSubmission()));
-		attributeTypeView.setAllowUserGeneratedCodes(attributeType.getAllowUserGeneratedCodes());
+		attributeTypeView.setAllowUserGeneratedCodes(Convert.toBoolean(attributeType.getAllowUserGeneratedCodes()));
 		attributeTypeView.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
 		attributeTypeView.setActiveStatus(attributeType.getActiveStatus());
 		attributeTypeView.setRequiredRestrictions(attributeType.getRequiredRestrictions());
