@@ -13,35 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.view;
+package edu.usu.sdl.openstorefront.core.spi.parser;
 
-import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
  * @author dshurtleff
  */
-public class ChecklistQuestionWrapper
-		extends ListWrapper
+public abstract class BaseChecklistQuestionParser
+		extends AbstractParser<ChecklistQuestion>
 {
 
-	@DataType(ChecklistQuestionView.class)
-	private List<ChecklistQuestionView> data = new ArrayList<>();
+	private static final Logger LOG = Logger.getLogger(BaseChecklistQuestionParser.class.getName());
 
-	public ChecklistQuestionWrapper()
+	protected static final int MAX_BUCKET_SIZE = 100;
+
+	protected List<ChecklistQuestion> questions = new ArrayList<>();
+
+	@Override
+	protected List<ChecklistQuestion> getStorageBucket()
 	{
+		return questions;
 	}
 
-	public List<ChecklistQuestionView> getData()
+	@Override
+	protected int getMaxBucketSize()
 	{
-		return data;
+		return MAX_BUCKET_SIZE;
 	}
 
-	public void setData(List<ChecklistQuestionView> data)
+	@Override
+	protected void performStorage()
 	{
-		this.data = data;
+		service.getChecklistService().saveChecklistQuestion(questions);
 	}
 
 }

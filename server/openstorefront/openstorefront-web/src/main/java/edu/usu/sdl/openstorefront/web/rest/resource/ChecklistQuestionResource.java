@@ -15,7 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
@@ -27,6 +30,7 @@ import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionView;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -44,6 +48,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -103,7 +108,7 @@ public class ChecklistQuestionResource
 		List<ChecklistQuestion> questions = service.getPersistenceService().queryByExample(ChecklistQuestion.class, queryByExample);
 
 		ChecklistQuestionWrapper checklistQuestionWrapper = new ChecklistQuestionWrapper();
-		checklistQuestionWrapper.getData().addAll(questions);
+		checklistQuestionWrapper.getData().addAll(ChecklistQuestionView.toView(questions));
 		checklistQuestionWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(checklistQuestionWrapper);
@@ -125,6 +130,37 @@ public class ChecklistQuestionResource
 		return sendSingleEntityResponse(ChecklistQuestionView.toView(checklistQuestion));
 	}
 
+	@GET
+	@APIDescription("Exports questions in JSON format.")
+	@RequireAdmin
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/export")
+	public Response exportQuestions(
+			@QueryParam("status") String status
+	)
+	{
+		ChecklistQuestion checklistExample = new ChecklistQuestion();
+		if (StringUtils.isNotBlank(status)) {
+			checklistExample.setActiveStatus(status);
+		} else {
+			checklistExample.setActiveStatus(ChecklistQuestion.ACTIVE_STATUS);
+		}
+
+		List<ChecklistQuestion> checklistQuestions = checklistExample.findByExample();
+
+		String data;
+		try {
+			data = StringProcessor.defaultObjectMapper().writeValueAsString(checklistQuestions);
+		} catch (JsonProcessingException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to export checklist.  Unable able to generate JSON.", ex);
+		}
+
+		Response.ResponseBuilder response = Response.ok(data);
+		response.header("Content-Type", MediaType.APPLICATION_JSON);
+		response.header("Content-Disposition", "attachment; filename=\"checklistquestions.json\"");
+		return response.build();
+	}
+
 	@POST
 	@RequireAdmin
 	@APIDescription("Creates a checklist question")
@@ -133,6 +169,7 @@ public class ChecklistQuestionResource
 	@DataType(ChecklistQuestion.class)
 	public Response createChecklistQuestion(ChecklistQuestion checklistQuestion)
 	{
+		checklistQuestion.setQuestionId(null);
 		return saveChecklistQuestion(checklistQuestion, true);
 	}
 
@@ -160,6 +197,34 @@ public class ChecklistQuestionResource
 	private Response saveChecklistQuestion(ChecklistQuestion checklistQuestion, boolean create)
 	{
 		ValidationResult validationResult = checklistQuestion.validate();
+
+		//check uniqueness
+		boolean checkUnique = true;
+		if (checklistQuestion.getQuestionId() != null) {
+			ChecklistQuestion existing = new ChecklistQuestion();
+			existing.setQuestionId(checklistQuestion.getQuestionId());
+			existing = existing.find();
+			if (existing != null
+					&& existing.getQid().equals(checklistQuestion.getQid())) {
+				checkUnique = false;
+			}
+		}
+
+		if (checkUnique) {
+			ChecklistQuestion dupCheck = new ChecklistQuestion();
+			dupCheck.setQid(checklistQuestion.getQid());
+			dupCheck = dupCheck.find();
+			if (dupCheck != null) {
+				RuleResult ruleResult = new RuleResult();
+				ruleResult.setEntityClassName(ChecklistQuestion.class.getSimpleName());
+				ruleResult.setFieldName(ChecklistQuestion.FIELD_QID);
+				ruleResult.setMessage("There is already a question with qid");
+				ruleResult.setInvalidData(checklistQuestion.getQid());
+				ruleResult.setValidationRule("Unqiue qid check");
+				validationResult.getRuleResults().add(ruleResult);
+			}
+		}
+
 		if (validationResult.valid()) {
 			checklistQuestion = checklistQuestion.save();
 
@@ -177,7 +242,7 @@ public class ChecklistQuestionResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a Question")
-	@Path("/{questionId}/activates")
+	@Path("/{questionId}/activate")
 	public Response activateChecklistQuestion(
 			@PathParam("questionId") String questionId
 	)
@@ -206,7 +271,7 @@ public class ChecklistQuestionResource
 			@PathParam("questionId") String questionId
 	)
 	{
-		Boolean inUse = Boolean.FALSE;
+		Boolean inUse;
 		ChecklistQuestion checklistQuestion = new ChecklistQuestion();
 		checklistQuestion.setQuestionId(questionId);
 		checklistQuestion = checklistQuestion.find();

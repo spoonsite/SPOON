@@ -35,6 +35,8 @@ public class ChecklistQuestion
 		extends StandardEntity<ChecklistQuestion>
 {
 
+	public static final String FIELD_QID = "qid";
+
 	@PK(generated = true)
 	@NotNull
 	private String questionId;

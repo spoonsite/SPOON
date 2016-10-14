@@ -54,6 +54,7 @@ public class ComponentStandardParser
 	{
 		allowTextTypes.add("text/json");
 		allowTextTypes.add("text");
+		allowTextTypes.add("application/octet-stream");
 		allowTextTypes.add("application/json");
 		allowZipTypes.add("application/zip");
 		allowZipTypes.add("application/x-zip-compressed");

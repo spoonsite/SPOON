@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import java.util.List;
 
 /**
  *
@@ -27,13 +28,31 @@ public interface ChecklistService
 {
 
 	/**
+	 * This will check a cache first and then load the question
+	 *
+	 * @param questionId
+	 * @return
+	 */
+	public ChecklistQuestion findQuestion(String questionId);
+
+	/**
 	 * Saves a checklist question into the question pool
+	 *
+	 * This will dedup based on QID
 	 *
 	 * @param checklistQuestion
 	 * @return saved question
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public ChecklistQuestion saveChecklistQuestion(ChecklistQuestion checklistQuestion);
+
+	/**
+	 * This will save a set of questions
+	 *
+	 * @param questions
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveChecklistQuestion(List<ChecklistQuestion> questions);
 
 	/**
 	 * Checks all ties to a question

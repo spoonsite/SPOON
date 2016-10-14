@@ -745,10 +745,18 @@ ul.stat-list-group-item, ol.stat-list-group-item {
     border-color: #ebccd1;
 }
 
+.text-warning {
+	color: #8a6d3b;
+}
+
 .alert-warning {
     color: #8a6d3b;
     background-color: #fcf8e3;
     border-color: #faebcc;
+}
+
+.text-info {
+	color: #31708f;
 }
 
 .alert-info {
@@ -757,6 +765,9 @@ ul.stat-list-group-item, ol.stat-list-group-item {
     border-color: #bce8f1;
 }
 
+.text-success {
+	color: #3c763d;
+}
 .alert-success {
     color: #3c763d;
     background-color: #dff0d8;

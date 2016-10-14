@@ -21,8 +21,10 @@ import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
+import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import java.util.List;
 import java.util.Objects;
+import net.sf.ehcache.Element;
 
 /**
  *
@@ -34,9 +36,53 @@ public class ChecklistServiceImpl
 {
 
 	@Override
+	public ChecklistQuestion findQuestion(String questionId)
+	{
+		Objects.requireNonNull(questionId);
+
+		ChecklistQuestion found = null;
+
+		Element element = OSFCacheManager.getChecklistQuestionCache().get(questionId);
+		if (element != null) {
+			found = (ChecklistQuestion) element.getObjectValue();
+		} else {
+
+			ChecklistQuestion checklistQuestion = new ChecklistQuestion();
+			List<ChecklistQuestion> questions = checklistQuestion.findByExample();
+			for (ChecklistQuestion question : questions) {
+				if (question.getQuestionId().equals(questionId)) {
+					found = question;
+				}
+
+				element = new Element(question.getQuestionId(), question);
+				OSFCacheManager.getChecklistQuestionCache().put(element);
+			}
+		}
+
+		return found;
+	}
+
+	@Override
+	public void saveChecklistQuestion(List<ChecklistQuestion> questions)
+	{
+		for (ChecklistQuestion question : questions) {
+			saveChecklistQuestion(question);
+		}
+	}
+
+	@Override
 	public ChecklistQuestion saveChecklistQuestion(ChecklistQuestion checklistQuestion)
 	{
+		Objects.requireNonNull(checklistQuestion);
+		Objects.requireNonNull(checklistQuestion.getQid());
+
 		ChecklistQuestion questionExisting = persistenceService.findById(ChecklistQuestion.class, checklistQuestion.getQuestionId());
+		if (questionExisting == null) {
+			ChecklistQuestion dupCheckQuestion = new ChecklistQuestion();
+			dupCheckQuestion.setQid(checklistQuestion.getQid());
+			questionExisting = dupCheckQuestion.findProxy();
+		}
+
 		if (questionExisting != null) {
 			questionExisting.updateFields(checklistQuestion);
 			questionExisting = persistenceService.persist(questionExisting);
@@ -46,7 +92,8 @@ public class ChecklistServiceImpl
 			questionExisting = persistenceService.persist(checklistQuestion);
 		}
 
-		//TODO: Add Question Cache and Cleanup
+		Element element = new Element(questionExisting.getQuestionId(), persistenceService.detach(questionExisting));
+		OSFCacheManager.getChecklistQuestionCache().put(element);
 		return questionExisting;
 	}
 
@@ -100,6 +147,7 @@ public class ChecklistServiceImpl
 			ChecklistQuestion questionExisting = persistenceService.findById(ChecklistQuestion.class, questionId);
 			if (questionExisting != null) {
 				persistenceService.delete(questionExisting);
+				OSFCacheManager.getChecklistQuestionCache().remove(questionExisting.getQuestionId());
 			}
 		}
 	}
