@@ -201,7 +201,7 @@
 					remoteSort: true,
 					sorters: [
 						new Ext.util.Sorter({
-							property: 'lastName',
+							property: 'qid',
 							direction: 'ASC'
 						})
 					],	
@@ -251,7 +251,7 @@
 				],
 				listeners: {
 					itemdblclick: function(grid, record, item, index, e, opts){
-						actionEdit(record);
+						actionAddEditQuestion(record);
 					},						
 					selectionchange: function(selModel, selected, opts) {
 						var tools = Ext.getCmp('questionGrid').getComponent('tools');
@@ -459,7 +459,7 @@
 					title: 'Question View',
 					iconCls: 'fa fa-eye',
 					modal: true,
-					closeMode: 'destory',
+					closeAction: 'destroy',
 					width: '75%',
 					height: '75%',
 					maxizable: true,
@@ -487,7 +487,7 @@
 									iconCls: 'fa fa-2x fa-close',
 									scale: 'medium',
 									handler: function() {
-										this.up('window').hide();
+										this.up('window').close();
 									}
 								},
 								{

@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.api.ChecklistService;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import java.util.List;
@@ -148,6 +149,34 @@ public class ChecklistServiceImpl
 			if (questionExisting != null) {
 				persistenceService.delete(questionExisting);
 				OSFCacheManager.getChecklistQuestionCache().remove(questionExisting.getQuestionId());
+			}
+		}
+	}
+
+	@Override
+	public boolean isChecklistTemplateBeingUsed(String checklistTemplateId)
+	{
+		Objects.requireNonNull(checklistTemplateId);
+		boolean inUse = false;
+
+		EvaluationChecklist evaluationChecklist = new EvaluationChecklist();
+		evaluationChecklist.setChecklistTemplateId(checklistTemplateId);
+		List<EvaluationChecklist> checkLists = evaluationChecklist.findByExample();
+		if (!checkLists.isEmpty()) {
+			inUse = true;
+		}
+		return inUse;
+	}
+
+	@Override
+	public void deleteChecklistTemplate(String checklistTemplateId)
+	{
+		if (isChecklistTemplateBeingUsed(checklistTemplateId)) {
+			throw new OpenStorefrontRuntimeException("Unable to remove checklist template.", "Remove all ties to the template (evaluation checklists)");
+		} else {
+			ChecklistTemplate existing = persistenceService.findById(ChecklistTemplate.class, checklistTemplateId);
+			if (existing != null) {
+				persistenceService.delete(existing);
 			}
 		}
 	}

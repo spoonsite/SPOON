@@ -79,4 +79,20 @@ public interface ChecklistService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public ChecklistTemplate copyChecklistTemplate(String checklistTemplateId);
 
+	/**
+	 * Checks all ties to a checklist template
+	 *
+	 * @param checklistTemplateId
+	 * @return
+	 */
+	public boolean isChecklistTemplateBeingUsed(String checklistTemplateId);
+
+	/**
+	 * Remove Checklist template ONLY if it's not in use
+	 *
+	 * @param checklistTemplateId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteChecklistTemplate(String checklistTemplateId);
+
 }

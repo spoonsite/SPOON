@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.view.ChecklistTemplateDetailView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -67,7 +68,7 @@ public class ChecklistTemplateResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistTemplate.class)
 	@APIDescription("Gets a template")
-	@Path("{templateId}")
+	@Path("/{templateId}")
 	public Response getchecklistTemplate(
 			@PathParam("templateId") String templateId
 	)
@@ -76,6 +77,26 @@ public class ChecklistTemplateResource
 		checklistTemplate.setChecklistTemplateId(templateId);
 		checklistTemplate = checklistTemplate.find();
 		return sendSingleEntityResponse(checklistTemplate);
+	}
+
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ChecklistTemplateDetailView.class)
+	@APIDescription("Gets a detailed template")
+	@Path("/{templateId}/details")
+	public Response getchecklistTemplateDetails(
+			@PathParam("templateId") String templateId
+	)
+	{
+		ChecklistTemplateDetailView view = null;
+		ChecklistTemplate checklistTemplate = new ChecklistTemplate();
+		checklistTemplate.setChecklistTemplateId(templateId);
+		checklistTemplate = checklistTemplate.find();
+		if (checklistTemplate != null) {
+			view = ChecklistTemplateDetailView.toView(checklistTemplate);
+		}
+		return sendSingleEntityResponse(view);
 	}
 
 	@POST
@@ -130,7 +151,7 @@ public class ChecklistTemplateResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a template")
-	@Path("{templateId}")
+	@Path("/{templateId}/activate")
 	public Response activateChecklistTemplate(
 			@PathParam("templateId") String templateId
 	)
@@ -150,20 +171,40 @@ public class ChecklistTemplateResource
 		return sendSingleEntityResponse(checklistTemplate);
 	}
 
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.TEXT_PLAIN})
+	@APIDescription("Check to see if checklist template is in use; returns true if in use or no content if not.")
+	@Path("/{templateId}/inuse")
+	public Response questionInUse(
+			@PathParam("templateId") String templateId
+	)
+	{
+		Boolean inUse;
+		ChecklistTemplate checklistTemplate = new ChecklistTemplate();
+		checklistTemplate.setChecklistTemplateId(templateId);
+		checklistTemplate = checklistTemplate.find();
+		if (checklistTemplate != null) {
+			inUse = service.getChecklistService().isChecklistTemplateBeingUsed(templateId);
+			return Response.ok(inUse.toString()).build();
+
+		} else {
+			return sendSingleEntityResponse(null);
+		}
+	}
+
 	@DELETE
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
-	@APIDescription("Inactivates or hard removes a template")
-	@Path("{templateId}")
+	@APIDescription("Inactivates or hard removes a template only if it's not in use")
+	@Path("/{templateId}")
 	public Response deleteChecklistTemplate(
 			@PathParam("templateId") String templateId,
 			@QueryParam("force") boolean force
 	)
 	{
 		if (force) {
-			ChecklistTemplate checklistTemplate = new ChecklistTemplate();
-			checklistTemplate.setChecklistTemplateId(templateId);
-			checklistTemplate.delete();
+			service.getChecklistService().deleteChecklistTemplate(templateId);
 			return Response.noContent().build();
 		} else {
 			return updateStatus(templateId, ChecklistTemplate.INACTIVE_STATUS);
