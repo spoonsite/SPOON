@@ -418,7 +418,7 @@
 									handler: function () {
 										
 										// Backup Any "New" Tags
-//										var newTags = store_tags_local.query('isNew', true, false, true, true);
+										var newTags = store_tags_local.query('isNew', true, false, true, true);
 										
 										// Backup Currently Selected Tag
 										var selectedTags = tagGrid.getSelection();
@@ -426,12 +426,12 @@
 										// Reload Data
 										store_tags_remote.load(function(records, operation, success) {
 											
-//											// Loop Through "New" Tags
-//											for (i = 0; i < newTags.items.length; i++) {
-//
-//												// Reinsert "New" Tags
-//												store_tags_local.addSorted(store_tags_local.createModel(newTags.items[i].data));
-//											}
+											// Loop Through "New" Tags
+											for (i = 0; i < newTags.items.length; i++) {
+
+												// Reinsert "New" Tags
+												store_tags_local.addSorted(store_tags_local.createModel(newTags.items[i].data));
+											}
 											
 											// Loop Through Selected Tags
 											for (i = 0; i < selectedTags.length; i++) {
@@ -456,6 +456,9 @@
 
 													// Select Tag
 													selectionModel.select([newTagModel], false, true);
+													
+													// Send Focus Temporarily Elsewhere
+													componentGrid.focus();
 													
 													// Focus On Tag
 													tagGrid.getView().focusRow(newTagModel);
