@@ -104,6 +104,12 @@
 				}
 			});
 			dataMenu.push({
+				text: 'Metadata',
+				handler: function(){
+					actionLoadContent('Metadata');
+				}
+			});
+			dataMenu.push({
 				text: 'Organizations',
 				handler: function(){
 					actionLoadContent('Organizations');
