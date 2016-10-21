@@ -19,9 +19,14 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.core.api.ContentSectionService;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
+import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationSectionTemplate;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
+import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -132,6 +137,97 @@ public class ContentSectionServiceImpl
 				}
 			}
 			persistenceService.delete(existing);
+		}
+	}
+
+	@Override
+	public String saveSectionTemplate(ContentSectionTemplateView templateView)
+	{
+		ContentSectionTemplate template = persistenceService.findById(ContentSectionTemplate.class, templateView.getContentSectionTemplate().getTemplateId());
+		if (template != null) {
+			template.updateFields(templateView.getContentSectionTemplate());
+			template = persistenceService.persist(template);
+		} else {
+			templateView.getContentSectionTemplate().setTemplateId(persistenceService.generateId());
+			templateView.getContentSectionTemplate().populateBaseCreateFields();
+			template = persistenceService.persist(templateView.getContentSectionTemplate());
+		}
+
+		ContentSectionAll contentSectionAll = new ContentSectionAll();
+		templateView.getContentSection().setEntity(ContentSectionTemplate.class.getSimpleName());
+		templateView.getContentSection().setEntityId(template.getTemplateId());
+
+		contentSectionAll.setSection(templateView.getContentSection());
+		contentSectionAll.setSubsections(templateView.getSubSections());
+
+		saveAll(contentSectionAll);
+
+		return template.getTemplateId();
+	}
+
+	@Override
+	public void deleteContentSection(String contentSectionId)
+	{
+		Objects.requireNonNull(contentSectionId);
+
+		ContentSectionAttribute attributeExample = new ContentSectionAttribute();
+		ContentSectionAttributePk attributePk = new ContentSectionAttributePk();
+		attributePk.setContentSectionId(contentSectionId);
+		attributeExample.setContentSectionAttributePk(attributePk);
+		persistenceService.deleteByExample(attributeExample);
+
+		ContentSectionMedia contentSectionMedia = new ContentSectionMedia();
+		contentSectionMedia.setContentSectionId(contentSectionId);
+		persistenceService.deleteByExample(contentSectionMedia);
+
+		ContentSubSection contentSubSection = new ContentSubSection();
+		contentSubSection.setContentSectionId(contentSectionId);
+		persistenceService.deleteByExample(contentSubSection);
+
+		ContentSection contentSection = persistenceService.findById(ContentSection.class, contentSectionId);
+		if (contentSection != null) {
+			persistenceService.delete(contentSection);
+		}
+	}
+
+	@Override
+	public boolean isContentTemplateBeingUsed(String templateId)
+	{
+		boolean inUse = false;
+
+		EvaluationTemplate evaluationTemplateExample = new EvaluationTemplate();
+		List<EvaluationTemplate> evaluationTemplates = evaluationTemplateExample.findByExample();
+		for (EvaluationTemplate evaluationTemplate : evaluationTemplates) {
+			for (EvaluationSectionTemplate sectionTemplate : evaluationTemplate.getSectionTemplates()) {
+				if (sectionTemplate.getSectionTemplateId().equals(templateId)) {
+					inUse = true;
+				}
+			}
+		}
+
+		return inUse;
+	}
+
+	@Override
+	public void deleteContentTemplate(String templateId)
+	{
+		if (isContentTemplateBeingUsed(templateId)) {
+			throw new OpenStorefrontRuntimeException("Unable to remove content template.", "Remove all ties to the template (see evaluation templates)");
+		} else {
+			ContentSectionTemplate template = persistenceService.findById(ContentSectionTemplate.class, templateId);
+			if (template != null) {
+
+				ContentSection contentSectionExample = new ContentSection();
+				contentSectionExample.setEntity(ContentSectionTemplate.class.getSimpleName());
+				contentSectionExample.setEntityId(templateId);
+
+				ContentSection contentSection = contentSectionExample.find();
+				if (contentSection != null) {
+					deleteContentSection(contentSection.getContentSectionId());
+				}
+
+				persistenceService.delete(template);
+			}
 		}
 	}
 

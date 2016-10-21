@@ -176,7 +176,7 @@ public class ChecklistTemplateResource
 	@Produces({MediaType.TEXT_PLAIN})
 	@APIDescription("Check to see if checklist template is in use; returns true if in use or no content if not.")
 	@Path("/{templateId}/inuse")
-	public Response questionInUse(
+	public Response checklistInUse(
 			@PathParam("templateId") String templateId
 	)
 	{

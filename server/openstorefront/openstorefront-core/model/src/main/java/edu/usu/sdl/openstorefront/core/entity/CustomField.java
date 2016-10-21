@@ -48,13 +48,12 @@ public class CustomField
 	private String label;
 
 	@ConsumeField
-	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
 	private String value;
 
 	@ConsumeField
 	@OneToMany(orphanRemoval = true)
-	@DataType(FileAttributeCodeXrefMap.class)
+	@DataType(CustomFieldValidValue.class)
 	private List<CustomFieldValidValue> validValues;
 
 	public CustomField()

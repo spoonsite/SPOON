@@ -54,7 +54,6 @@ public class ContentSection
 	@Sanitize(TextSanitizer.class)
 	private String title;
 
-	@NotNull
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_64K)
 	@Sanitize(HTMLSanitizer.class)
@@ -66,6 +65,8 @@ public class ContentSection
 
 	@NotNull
 	@ConsumeField
+	private Boolean noContent;
+
 	@ValidValueType(value = {}, lookupClass = WorkflowStatus.class)
 	@FK(WorkflowStatus.class)
 	private String workflowStatus;
@@ -84,6 +85,7 @@ public class ContentSection
 		setEntity(contentSection.getEntity());
 		setEntityId(contentSection.getEntityId());
 		setPrivateSection(contentSection.getPrivateSection());
+		setNoContent(contentSection.getNoContent());
 		setTitle(contentSection.getTitle());
 		setWorkflowStatus(contentSection.getWorkflowStatus());
 
@@ -157,6 +159,16 @@ public class ContentSection
 	public void setEntity(String entity)
 	{
 		this.entity = entity;
+	}
+
+	public Boolean getNoContent()
+	{
+		return noContent;
+	}
+
+	public void setNoContent(Boolean noContent)
+	{
+		this.noContent = noContent;
 	}
 
 }

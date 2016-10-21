@@ -144,7 +144,7 @@
 								name: 'question',								
 								height: 300,
 								maxLength: 4096,
-								tinyMCEConfig: CoreUtil.tinymceSearchEntryConfig()
+								tinyMCEConfig: CoreUtil.tinymceConfig()
 							},			
 							{
 								xtype: 'panel',
@@ -157,7 +157,7 @@
 								name: 'narrative',								
 								height: 300,
 								maxLength: 16384,
-								tinyMCEConfig: CoreUtil.tinymceSearchEntryConfig()
+								tinyMCEConfig: CoreUtil.tinymceConfig()
 							},		
 							{
 								xtype: 'panel',
@@ -170,7 +170,7 @@
 								name: 'objective',								
 								height: 300,
 								maxLength: 16384,
-								tinyMCEConfig: CoreUtil.tinymceSearchEntryConfig()
+								tinyMCEConfig: CoreUtil.tinymceConfig()
 							},									
 							{
 								xtype: 'panel',
@@ -183,7 +183,7 @@
 								name: 'scoreCriteria',								
 								height: 300,
 								maxLength: 4096,
-								tinyMCEConfig: CoreUtil.tinymceSearchEntryConfig()
+								tinyMCEConfig: CoreUtil.tinymceConfig()
 							}					
 						]
 					}

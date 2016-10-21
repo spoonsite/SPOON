@@ -45,11 +45,11 @@ public class CustomFieldType
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 
-		codeMap.put(TEXT_FIELD, newLookup(CustomFieldType.class, TEXT_FIELD, "Text Field"));
-		codeMap.put(RICH_TEXT_FIELD, newLookup(CustomFieldType.class, RICH_TEXT_FIELD, "Rich Text Field"));
-		codeMap.put(COMBO_FIELD, newLookup(CustomFieldType.class, COMBO_FIELD, "Combobox Field"));
-		codeMap.put(COMBO_EDIT_FIELD, newLookup(CustomFieldType.class, COMBO_EDIT_FIELD, "Editible Combobox Field"));
-		codeMap.put(CHECKBOX_FIELD, newLookup(CustomFieldType.class, CHECKBOX_FIELD, "Checkbox Field"));
+		codeMap.put(TEXT_FIELD, newLookup(CustomFieldType.class, TEXT_FIELD, "Text"));
+		codeMap.put(RICH_TEXT_FIELD, newLookup(CustomFieldType.class, RICH_TEXT_FIELD, "Rich Text"));
+		codeMap.put(COMBO_FIELD, newLookup(CustomFieldType.class, COMBO_FIELD, "Combobox"));
+		codeMap.put(COMBO_EDIT_FIELD, newLookup(CustomFieldType.class, COMBO_EDIT_FIELD, "Editable Combobox"));
+		codeMap.put(CHECKBOX_FIELD, newLookup(CustomFieldType.class, CHECKBOX_FIELD, "Checkbox"));
 
 		return codeMap;
 	}

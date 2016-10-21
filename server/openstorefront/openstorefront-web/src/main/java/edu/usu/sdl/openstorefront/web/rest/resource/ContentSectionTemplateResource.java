@@ -19,14 +19,17 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
-import edu.usu.sdl.openstorefront.core.entity.ContentSubsectionTemplate;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.net.URI;
 import java.util.List;
 import javax.ws.rs.BeanParam;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -49,7 +52,7 @@ public class ContentSectionTemplateResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ContentSectionTemplate.class)
-	@APIDescription("Gets templates")
+	@APIDescription("Gets sections templates")
 	public List<ContentSectionTemplate> getContentSectionTemplates(@BeanParam FilterQueryParams filterQueryParams)
 	{
 		ContentSectionTemplate contentSectionTemplate = new ContentSectionTemplate();
@@ -66,7 +69,7 @@ public class ContentSectionTemplateResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ContentSectionTemplate.class)
 	@APIDescription("Gets a content template")
-	@Path("{templateId}")
+	@Path("/{templateId}")
 	public Response getContentSectionTemplate(
 			@PathParam("templateId") String templateId
 	)
@@ -82,7 +85,7 @@ public class ContentSectionTemplateResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ContentSectionTemplateView.class)
 	@APIDescription("Gets a the resolved template")
-	@Path("{templateId}/details")
+	@Path("/{templateId}/details")
 	public Response getContentTemplateDetails(
 			@PathParam("templateId") String templateId
 	)
@@ -94,71 +97,71 @@ public class ContentSectionTemplateResource
 		return sendSingleEntityResponse(ContentSectionTemplateView.toView(contentSectionTemplate));
 	}
 
-	//TODO: Handle creating a section before the template.
-//	@POST
-//	@RequireAdmin
-//	@APIDescription("Creates a content section template")
-//	@Consumes({MediaType.APPLICATION_JSON})
-//	@Produces({MediaType.APPLICATION_JSON})
-//	@DataType(ContentSectionTemplate.class)
-//	public Response createSectionTemplate(ContentSectionTemplate contentSectionTemplate)
-//	{
-//		return saveContentTemplate(contentSectionTemplate, true);
-//	}
-//
-//	@PUT
-//	@RequireAdmin
-//	@APIDescription("Updates a content section template")
-//	@Consumes({MediaType.APPLICATION_JSON})
-//	@Produces({MediaType.APPLICATION_JSON})
-//	@DataType(ContentSectionTemplate.class)
-//	@Path("/{templateId}")
-//	public Response updateSectionTemplate(
-//			@PathParam("templateId") String templateId,
-//			ContentSectionTemplate contentSectionTemplate
-//	)
-//	{
-//		ContentSectionTemplate existing = new ContentSectionTemplate();
-//		existing.setTemplateId(templateId);
-//		existing = existing.find();
-//		if (existing == null) {
-//			return Response.status(Response.Status.NOT_FOUND).build();
-//		}
-//		contentSectionTemplate.setTemplateId(templateId);
-//		return saveContentTemplate(contentSectionTemplate, false);
-//	}
-//
-//	private Response saveContentTemplate(ContentSectionTemplate contentSectionTemplate, boolean create)
-//	{
-//		ValidationResult validationResult = contentSectionTemplate.validate();
-//		if (validationResult.valid()) {
-//			contentSectionTemplate = contentSectionTemplate.save();
-//
-//			if (create) {
-//				return Response.created(URI.create("v1/resource/contentsectiontemplates/" + contentSectionTemplate.getTemplateId())).entity(contentSectionTemplate).build();
-//			} else {
-//				return Response.ok(contentSectionTemplate).build();
-//			}
-//		} else {
-//			return Response.ok(validationResult.toRestError()).build();
-//		}
-//	}
+	@POST
+	@RequireAdmin
+	@APIDescription("Creates a content section template")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ContentSectionTemplateView.class)
+	public Response createSectionTemplate(ContentSectionTemplateView view)
+	{
+		return saveContentTemplateView(view, true);
+	}
+
+	@PUT
+	@RequireAdmin
+	@APIDescription("Updates a content section template")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ContentSectionTemplateView.class)
+	@Path("/{templateId}")
+	public Response updateSectionTemplate(
+			@PathParam("templateId") String templateId,
+			ContentSectionTemplateView view
+	)
+	{
+		ContentSectionTemplate existing = new ContentSectionTemplate();
+		existing.setTemplateId(templateId);
+		existing = existing.find();
+		if (existing == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		view.getContentSectionTemplate().setTemplateId(templateId);
+		return saveContentTemplateView(view, false);
+	}
+
+	private Response saveContentTemplateView(ContentSectionTemplateView view, boolean create)
+	{
+		ValidationResult validationResult = view.validate();
+		if (validationResult.valid()) {
+			String templateId = service.getContentSectionService().saveSectionTemplate(view);
+
+			if (create) {
+				return Response.created(URI.create("v1/resource/contentsectiontemplates/" + templateId + "/details")).entity(view).build();
+			} else {
+				return Response.ok(view).build();
+			}
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
 	@PUT
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a section template")
-	@Path("{sectionId}")
+	@Path("/{templateId}/activate")
 	public Response activateSectionTemplate(
-			@PathParam("sectionId") String sectionId
+			@PathParam("templateId") String templateId
 	)
 	{
-		return updateStatus(sectionId, ChecklistTemplate.ACTIVE_STATUS);
+		return updateStatus(templateId, ChecklistTemplate.ACTIVE_STATUS);
 	}
 
-	private Response updateStatus(String sectionId, String status)
+	private Response updateStatus(String templateId, String status)
 	{
 		ContentSectionTemplate checklistSectionTemplate = new ContentSectionTemplate();
-		checklistSectionTemplate.setContentSectionId(sectionId);
+		checklistSectionTemplate.setTemplateId(templateId);
 		checklistSectionTemplate = checklistSectionTemplate.find();
 		if (checklistSectionTemplate != null) {
 			checklistSectionTemplate.setActiveStatus(status);
@@ -167,119 +170,44 @@ public class ContentSectionTemplateResource
 		return sendSingleEntityResponse(checklistSectionTemplate);
 	}
 
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.TEXT_PLAIN})
+	@APIDescription("Check to see if checklist template is in use; returns true if in use or no content if not.")
+	@Path("/{templateId}/inuse")
+	public Response templateInUse(
+			@PathParam("templateId") String templateId
+	)
+	{
+		Boolean inUse;
+		ContentSectionTemplate contentSectionTemplate = new ContentSectionTemplate();
+		contentSectionTemplate.setTemplateId(templateId);
+		contentSectionTemplate = contentSectionTemplate.find();
+		if (contentSectionTemplate != null) {
+			inUse = service.getContentSectionService().isContentTemplateBeingUsed(templateId);
+			return Response.ok(inUse.toString()).build();
+
+		} else {
+			return sendSingleEntityResponse(null);
+		}
+	}
+
 	@DELETE
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates a template section or removes on force")
-	@Path("{sectionId}")
-	public Response deleteChecklistSection(
-			@PathParam("sectionId") String sectionId,
+	@Path("/{templateId}")
+	public Response deleteContentSectionTemplate(
+			@PathParam("templateId") String templateId,
 			@QueryParam("force") boolean force
 	)
 	{
 		if (force) {
-			ContentSectionTemplate checklistSectionTemplate = new ContentSectionTemplate();
-			checklistSectionTemplate.setContentSectionId(sectionId);
-			checklistSectionTemplate = checklistSectionTemplate.find();
-			if (checklistSectionTemplate != null) {
-				checklistSectionTemplate.delete();
-			}
+			service.getContentSectionService().deleteContentTemplate(templateId);
 			return Response.noContent().build();
 		} else {
-			return updateStatus(sectionId, ChecklistTemplate.INACTIVE_STATUS);
+			return updateStatus(templateId, ChecklistTemplate.INACTIVE_STATUS);
 		}
-	}
-
-	@GET
-	@RequireAdmin
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ContentSubsectionTemplate.class)
-	@APIDescription("Gets subsection for a template")
-	@Path("{templateId}/subsections")
-	public List<ContentSubsectionTemplate> getContentSubsectionTemplates(
-			@BeanParam FilterQueryParams filterQueryParams,
-			@PathParam("templateId") String templateId
-	)
-	{
-		ContentSubsectionTemplate contentSubsectionTemplate = new ContentSubsectionTemplate();
-		contentSubsectionTemplate.setTemplateId(templateId);
-		if (!filterQueryParams.getAll()) {
-			contentSubsectionTemplate.setActiveStatus(filterQueryParams.getStatus());
-		}
-		List<ContentSubsectionTemplate> templates = contentSubsectionTemplate.findByExample();
-		templates = filterQueryParams.filter(templates);
-		return templates;
-	}
-
-	//TODO: Handle creating a sub-section before the template.
-//	@POST
-//	@RequireAdmin
-//	@APIDescription("Creates a content section template")
-//	@Consumes({MediaType.APPLICATION_JSON})
-//	@Produces({MediaType.APPLICATION_JSON})
-//	@DataType(ContentSubsectionTemplate.class)
-//	@Path("/{templateId}/subsection")
-//	public Response createSubSsctionTemplate(ContentSubsectionTemplate contentSubsectionTemplate)
-//	{
-//		return saveContentSubTemplate(contentSubsectionTemplate, true);
-//	}
-//
-//	@PUT
-//	@RequireAdmin
-//	@APIDescription("Updates a content sub-section template")
-//	@Consumes({MediaType.APPLICATION_JSON})
-//	@Produces({MediaType.APPLICATION_JSON})
-//	@DataType(ContentSectionTemplate.class)
-//	@Path("/{templateId}/subsection/{subsectionId}")
-//	public Response updateSubsectionTemplate(
-//			@PathParam("templateId") String templateId,
-//			@PathParam("subsectionId") String subsectionId,
-//			ContentSubsectionTemplate contentSubsectionTemplate
-//	)
-//	{
-//		ContentSubsectionTemplate existing = new ContentSubsectionTemplate();
-//		existing.setTemplateId(templateId);
-//		existing = existing.find();
-//		if (existing == null) {
-//			return Response.status(Response.Status.NOT_FOUND).build();
-//		}
-//		contentSubsectionTemplate.setTemplateId(templateId);
-//		return saveContentSubTemplate(contentSubsectionTemplate, false);
-//	}
-//
-//	private Response saveContentSubTemplate(ContentSubsectionTemplate contentSubsectionTemplate, boolean create)
-//	{
-//		ValidationResult validationResult = contentSubsectionTemplate.validate();
-//		if (validationResult.valid()) {
-//			contentSubsectionTemplate = contentSubsectionTemplate.save();
-//
-//			if (create) {
-//				return Response.created(URI.create("v1/resource/contentsectiontemplates/" + contentSubsectionTemplate.getTemplateId())).entity(contentSubsectionTemplate).build();
-//			} else {
-//				return Response.ok(contentSubsectionTemplate).build();
-//			}
-//		} else {
-//			return Response.ok(validationResult.toRestError()).build();
-//		}
-//	}
-	@DELETE
-	@RequireAdmin
-	@Produces({MediaType.APPLICATION_JSON})
-	@APIDescription("removes on sub-section template")
-	@Path("{templateId}/subsections/{sectionId}")
-	public void deleteChecklistSubSectionTemplate(
-			@PathParam("templateId") String templateId,
-			@PathParam("sectionId") String sectionId
-	)
-	{
-		ContentSectionTemplate checklistSubSectionTemplate = new ContentSectionTemplate();
-		checklistSubSectionTemplate.setContentSectionId(sectionId);
-		checklistSubSectionTemplate.setTemplateId(templateId);
-		checklistSubSectionTemplate = checklistSubSectionTemplate.find();
-		if (checklistSubSectionTemplate != null) {
-			checklistSubSectionTemplate.delete();
-		}
-
 	}
 
 }

@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.api;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
+import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
 import java.io.InputStream;
 
 /**
@@ -67,11 +68,45 @@ public interface ContentSectionService
 	public String saveAll(ContentSectionAll contentSectionAll);
 
 	/**
+	 * This will delete a content section and all related data
+	 *
+	 * @param contentSectionId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteContentSection(String contentSectionId);
+
+	/**
 	 * Get the complete model for a section
 	 *
 	 * @param contentSectionId
 	 * @return
 	 */
 	public ContentSectionAll getContentSectionAll(String contentSectionId);
+
+	/**
+	 * Saves a template with it's section and subsection
+	 *
+	 * @param templateView
+	 * @return Template Id of the saved template.
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public String saveSectionTemplate(ContentSectionTemplateView templateView);
+
+	/**
+	 * Checks all ties to a content template
+	 *
+	 * @param checklistTemplateId
+	 * @return
+	 */
+	public boolean isContentTemplateBeingUsed(String templateId);
+
+	/**
+	 * This will attempt to delete a template and it associated content sections
+	 * (if it's not in use)
+	 *
+	 * @param templateId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteContentTemplate(String templateId);
 
 }

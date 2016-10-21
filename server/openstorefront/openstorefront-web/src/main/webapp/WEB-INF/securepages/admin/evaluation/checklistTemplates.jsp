@@ -126,7 +126,7 @@
 										name: 'instructions',								
 										height: 300,
 										maxLength: 16384,
-										tinyMCEConfig: CoreUtil.tinymceSearchEntryConfig()
+										tinyMCEConfig: CoreUtil.tinymceConfig()
 									}									
 								]
 							},
@@ -258,7 +258,7 @@
 				],
 				listeners: {
 					itemdblclick: function(grid, record, item, index, e, opts){
-						actionEdit(record);
+						actionAddEdit(record);
 					},						
 					selectionchange: function(selModel, selected, opts) {
 						var tools = Ext.getCmp('checklistGrid').getComponent('tools');
@@ -394,7 +394,7 @@
 							},							
 							{
 								text: 'Delete',
-								iconCls: 'fa fa-2x fa-close',
+								iconCls: 'fa fa-2x fa-close text-danger',
 								itemId: 'delete',
 								disabled: true,									
 								scale: 'medium',
@@ -617,13 +617,13 @@
 							Ext.Msg.alert('Existing References', 'Unable to delete; Remove evaluation checklists first.');
 						} else {
 							Ext.Msg.show({
-								title:'Delete Question?',
+								title:'Delete Checklist Template?',
 								message: 'Are you sure you want to delete this checklist template?',
 								buttons: Ext.Msg.YESNO,
 								icon: Ext.Msg.QUESTION,
 								fn: function(btn) {
 									if (btn === 'yes') {
-										checklistGrid.setLoading('Deleting question...');
+										checklistGrid.setLoading('Deleting...');
 										Ext.Ajax.request({
 											url: 'api/v1/resource/checklisttemplates/' + record.get('checklistTemplateId') + '?force=true',
 											method: 'DELETE',

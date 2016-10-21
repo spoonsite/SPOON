@@ -60,15 +60,23 @@ public class ContentSubSection
 	@ConsumeField
 	private Boolean privateSection;
 
+	@NotNull
+	@ConsumeField
+	private Boolean noContent;
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
 	@Sanitize(HTMLSanitizer.class)
 	private String content;
 
+	@NotNull
+	@ConsumeField
+	private Integer order;
+
 	@ConsumeField
 	@DataType(CustomField.class)
 	@OneToMany(orphanRemoval = true)
-	private List<CustomField> customField;
+	private List<CustomField> customFields;
 
 	public ContentSubSection()
 	{
@@ -81,11 +89,13 @@ public class ContentSubSection
 
 		ContentSubSection contentSubSection = (ContentSubSection) entity;
 		setContent(contentSubSection.getContent());
-		setCustomField(contentSubSection.getCustomField());
+		setCustomFields(contentSubSection.getCustomFields());
 		setHideTitle(contentSubSection.getHideTitle());
+		setNoContent(contentSubSection.getNoContent());
 		setPrivateSection(contentSubSection.getPrivateSection());
 		setContentSectionId(contentSubSection.getContentSectionId());
 		setTitle(contentSubSection.getTitle());
+		setOrder(contentSubSection.getOrder());
 
 	}
 
@@ -129,14 +139,14 @@ public class ContentSubSection
 		this.privateSection = privateSection;
 	}
 
-	public List<CustomField> getCustomField()
+	public List<CustomField> getCustomFields()
 	{
-		return customField;
+		return customFields;
 	}
 
-	public void setCustomField(List<CustomField> customField)
+	public void setCustomFields(List<CustomField> customFields)
 	{
-		this.customField = customField;
+		this.customFields = customFields;
 	}
 
 	public Boolean getHideTitle()
@@ -157,6 +167,26 @@ public class ContentSubSection
 	public void setContent(String content)
 	{
 		this.content = content;
+	}
+
+	public Boolean getNoContent()
+	{
+		return noContent;
+	}
+
+	public void setNoContent(Boolean noContent)
+	{
+		this.noContent = noContent;
+	}
+
+	public Integer getOrder()
+	{
+		return order;
+	}
+
+	public void setOrder(Integer order)
+	{
+		this.order = order;
 	}
 
 }

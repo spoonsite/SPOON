@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
-import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
@@ -36,10 +35,6 @@ public class ContentSectionTemplate
 	@PK(generated = true)
 	@NotNull
 	private String templateId;
-
-	@NotNull
-	@FK(ContentSection.class)
-	private String contentSectionId;
 
 	@ConsumeField
 	@NotNull
@@ -62,7 +57,6 @@ public class ContentSectionTemplate
 		super.updateFields(entity);
 
 		ContentSectionTemplate contentSectionTemplate = (ContentSectionTemplate) entity;
-		setContentSectionId(contentSectionTemplate.getContentSectionId());
 		setDescription(contentSectionTemplate.getDescription());
 		setName(contentSectionTemplate.getName());
 
@@ -96,16 +90,6 @@ public class ContentSectionTemplate
 	public void setDescription(String description)
 	{
 		this.description = description;
-	}
-
-	public String getContentSectionId()
-	{
-		return contentSectionId;
-	}
-
-	public void setContentSectionId(String contentSectionId)
-	{
-		this.contentSectionId = contentSectionId;
 	}
 
 }

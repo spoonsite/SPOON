@@ -34,7 +34,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("This holds a template for an evaluation")
 public class EvaluationTemplate
-		extends StandardEntity<Evaluation>
+		extends StandardEntity<EvaluationTemplate>
 {
 
 	@PK(generated = true)

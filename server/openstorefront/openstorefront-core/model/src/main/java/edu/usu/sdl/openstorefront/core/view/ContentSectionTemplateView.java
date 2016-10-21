@@ -15,9 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,12 +33,37 @@ import java.util.List;
 public class ContentSectionTemplateView
 {
 
+	@ConsumeField
 	private ContentSectionTemplate contentSectionTemplate;
+
+	@ConsumeField
 	private ContentSection contentSection;
+
+	@ConsumeField
+	@DataType(ContentSubSection.class)
 	private List<ContentSubSection> subSections = new ArrayList<>();
 
 	public ContentSectionTemplateView()
 	{
+	}
+
+	public ValidationResult validate()
+	{
+		ValidationResult validationResult = new ValidationResult();
+		ValidationModel validationModel = new ValidationModel(contentSectionTemplate);
+		validationModel.setConsumeFieldsOnly(true);
+		validationModel.setAcceptNull(false);
+		validationResult.merge(ValidationUtil.validate(validationModel));
+
+		validationModel = new ValidationModel(contentSection);
+		validationModel.setConsumeFieldsOnly(true);
+		validationModel.setAcceptNull(false);
+		validationResult.merge(ValidationUtil.validate(validationModel));
+
+		for (ContentSubSection subSection : subSections) {
+			validationResult.merge(subSection.validate());
+		}
+		return validationResult;
 	}
 
 	public static ContentSectionTemplateView toView(ContentSectionTemplate template)
