@@ -102,7 +102,14 @@ public class PluginScanJob
 						service.getPluginServicePrivate().installPlugin(plugin.getName(), in, true);
 						log.log(Level.INFO, MessageFormat.format("Loaded plugin: {0} successfully.", plugin.getName()));
 					} catch (Exception ioe) {
-						log.log(Level.SEVERE, MessageFormat.format("Plugin: {0} failed to load.", plugin.getName()), ioe);
+						log.log(Level.SEVERE, MessageFormat.format("Failed Plugin: {0} failed to load.", plugin.getName()), ioe);
+                                                try {
+                                                        service.getPluginService().failPlugin(plugin.getPath());
+                                                        log.log(Level.INFO, MessageFormat.format("Failed Plugin: {0} removed. ", plugin.getName()));
+                                                }
+                                                catch (Exception ex) {
+                                                       log.log(Level.SEVERE, MessageFormat.format("Failed Plugin: {0} could not be removed.  See log.", plugin.getName()), ex); 
+                                                }
 					} finally {
 						fileMap.put(plugin.getPath(), plugin.lastModified());
 					}
