@@ -54,6 +54,7 @@ public class EvaluationTemplate
 	private String description;
 
 	@NotNull
+	@ConsumeField
 	@FK(ChecklistTemplate.class)
 	private String checklistTemplateId;
 

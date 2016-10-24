@@ -53,7 +53,7 @@ public class EvalulationResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationViewWrapper.class)
 	@APIDescription("Gets Evaluations")
-	public Response getQuestions(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getEvaluations(@BeanParam FilterQueryParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {

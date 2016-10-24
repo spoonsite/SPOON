@@ -69,7 +69,7 @@ public class ChecklistTemplateResource
 	@DataType(ChecklistTemplate.class)
 	@APIDescription("Gets a template")
 	@Path("/{templateId}")
-	public Response getchecklistTemplate(
+	public Response getChecklistTemplate(
 			@PathParam("templateId") String templateId
 	)
 	{
