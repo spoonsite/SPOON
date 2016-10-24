@@ -458,7 +458,7 @@
 					} else {
 						Ext.getCmp('checklistGrid').getSelectionModel().selectPrevious();						
 					}
-					viewWin(Ext.getCmp('checklistGrid').getSelection()[0]);					
+					viewWin.update(Ext.getCmp('checklistGrid').getSelection()[0]);					
 				};
 				
 				var previewCheckButtons = function() {	

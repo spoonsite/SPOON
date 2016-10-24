@@ -438,20 +438,22 @@
 					} else {
 						Ext.getCmp('questionGrid').getSelectionModel().selectPrevious();						
 					}
-					viewWin(Ext.getCmp('questionGrid').getSelection()[0]);					
+					viewWin.update(Ext.getCmp('questionGrid').getSelection()[0]);					
 				};
 				
 				var previewCheckButtons = function() {	
+					var tools = viewWin.getComponent('tools');
+					
 					if (Ext.getCmp('questionGrid').getSelectionModel().hasPrevious()) {
-						Ext.getCmp('viewWinTools-previousBtn').setDisabled(false);
+						tools.getComponent('viewWinTools-previousBtn').setDisabled(false);
 					} else {
-						Ext.getCmp('viewWinTools-previousBtn').setDisabled(true);
+						tools.getComponent('viewWinTools-previousBtn').setDisabled(true);
 					}
 					
 					if (Ext.getCmp('questionGrid').getSelectionModel().hasNext()) {
-						Ext.getCmp('viewWinTools-nextBtn').setDisabled(false);
+						tools.getComponent('viewWinTools-nextBtn').setDisabled(false);
 					} else {
-						Ext.getCmp('viewWinTools-nextBtn').setDisabled(true);
+						tools.getComponent('viewWinTools-nextBtn').setDisabled(true);
 					}					
 				};				
 				
@@ -468,11 +470,12 @@
 					dockedItems: [
 						{
 							xtype: 'toolbar',
+							itemId: 'tools',
 							dock: 'bottom',
 							items: [
 								{
 									text: 'Previous',
-									id: 'viewWinTools-previousBtn',
+									itemId: 'viewWinTools-previousBtn',
 									iconCls: 'fa fa-2x fa-arrow-left',
 									scale: 'medium',
 									handler: function() {
@@ -487,7 +490,7 @@
 									iconCls: 'fa fa-2x fa-close',
 									scale: 'medium',
 									handler: function() {
-										this.up('window').close();
+										viewWin.close();
 									}
 								},
 								{
@@ -495,7 +498,7 @@
 								},
 								{
 									text: 'Next',
-									id: 'viewWinTools-nextBtn',
+									itemId: 'viewWinTools-nextBtn',
 									iconCls: 'fa fa-2x fa-arrow-right',
 									iconAlign: 'right',
 									scale: 'medium',
