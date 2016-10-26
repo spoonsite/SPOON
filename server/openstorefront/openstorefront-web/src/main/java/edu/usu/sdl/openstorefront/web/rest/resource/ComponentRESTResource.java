@@ -2209,6 +2209,16 @@ public class ComponentRESTResource
 
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource METADATA section">
 	@GET
+	@APIDescription("Get the entire metadata list")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentMetadata.class)
+	@Path("/metadata")
+	public List<ComponentMetadata> getComponentMetadata()
+	{
+		return service.getComponentService().getMetadata();
+	}
+	
+	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces(
 			{
@@ -2295,7 +2305,7 @@ public class ComponentRESTResource
 			checkBaseComponentBelongsToComponent(componentMetadata, componentId);
 			service.getComponentService().deactivateBaseComponent(ComponentMetadata.class, metadataId);
 		}
-		return Response.ok().build();
+		return Response.noContent().build();
 	}
 
 	@PUT
