@@ -286,11 +286,11 @@
 								var num = record.get('numRelationships');
 								if (!num) num = 0;
 								var html = "<strong>" + value + "</strong>";
-								html += '<p style="color: #999; margin-bottom: 0.5em;">';
-								html += '<i class="fa fa-book fa-fw"></i> ';
-								html += '<span style="padding-right: 20px">' + record.get('componentTypeDescription') + '</span>';
+								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
+								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+								html += '<span style="float: left;">' + record.get('componentTypeDescription') + '</span>';
 								html += '<span style="float: right"><i class="fa fa-share-alt"></i> ' + num + '</span>';
-								html += "</p>";
+								html += "</div>";
 								return html;
 							}
 						}
@@ -389,10 +389,10 @@
 								var num = record.get('numRelationships');
 								if (!num) num = 0;
 								var html = "<strong>" + value + "</strong>";
-								html += '<p style="color: #999; margin-bottom: 0.5em;">';
-								html += '<i class="fa fa-book fa-fw"></i> ';
-								html += '<span style="padding-right: 20px">' + record.get('componentTypeDescription') + '</span>';
-								html += "</p>";
+								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
+								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+								html += '<span style="float: left;">' + record.get('componentTypeDescription') + '</span>';
+								html += "</div>";
 								return html;
 							}
 

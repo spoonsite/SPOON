@@ -930,6 +930,9 @@ public class UserServiceImpl
 
 		UserTracking userTrackingEndExample = new UserTracking();
 		userTrackingEndExample.setEventDts(filter.getEnd());
+                
+                UserTracking userTrackingNameExample = new UserTracking();
+                userTrackingNameExample.setUpdateUser("%" + filter.getName().trim() + "%");    // Force SQL Wildcards Into Parameter
 
 		QueryByExample queryByExample = new QueryByExample(userTrackingExample);
 
@@ -943,6 +946,11 @@ public class UserServiceImpl
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+                
+                specialOperatorModel = new SpecialOperatorModel();
+                specialOperatorModel.setExample(userTrackingNameExample);
+                specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+                queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		queryByExample.setMaxResults(filter.getMax());
 		queryByExample.setFirstResult(filter.getOffset());

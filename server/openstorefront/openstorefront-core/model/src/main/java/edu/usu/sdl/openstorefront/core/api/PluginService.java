@@ -43,6 +43,13 @@ public interface PluginService
 	 * @param pluginId
 	 */
 	public void uninstallPlugin(String pluginId);
+	
+	/**
+	 * Disables invalid plugin and prevent it from loading in the future
+	 *
+	 * @param filename
+	 */
+	public void failPlugin(String filename);
 
 	/**
 	 * Inactivates a plugin and stopped it. Does nothing if already inactive

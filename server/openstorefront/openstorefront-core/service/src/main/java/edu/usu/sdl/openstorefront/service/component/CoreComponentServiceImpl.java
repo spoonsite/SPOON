@@ -1233,6 +1233,9 @@ public class CoreComponentServiceImpl
 
 		ComponentTracking componentTrackingEndExample = new ComponentTracking();
 		componentTrackingEndExample.setEventDts(filter.getEnd());
+                
+                ComponentTracking componentTrackingNameExample = new ComponentTracking();
+                componentTrackingNameExample.setUpdateUser("%" + filter.getName().trim() + "%");    // Force SQL Wildcards Into Parameter
 
 		QueryByExample queryByExample = new QueryByExample(componentTrackingExample);
 
@@ -1246,6 +1249,11 @@ public class CoreComponentServiceImpl
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+                
+                specialOperatorModel = new SpecialOperatorModel();
+                specialOperatorModel.setExample(componentTrackingNameExample);
+                specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+                queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		queryByExample.setMaxResults(filter.getMax());
 		queryByExample.setFirstResult(filter.getOffset());
@@ -1269,7 +1277,8 @@ public class CoreComponentServiceImpl
 			wrapper.setData(item);
 			wrapper.setName(getComponentName(item.getComponentId()));
 			wrapper.setComponentTypeLabel(TranslateUtil.translateComponentType(item.getComponentType()));
-			result.getResult().add(wrapper);
+                        
+                        result.getResult().add(wrapper);
 		}
 
 		if (filter.getSortField().equals(ComponentTrackingCompleteWrapper.FIELD_NAME)) {
@@ -1278,7 +1287,7 @@ public class CoreComponentServiceImpl
 
 		queryByExample.setQueryType(QueryType.COUNT);
 		result.setCount(persistenceService.countByExample(queryByExample));
-
+                
 		return result;
 	}
 
@@ -2059,16 +2068,39 @@ public class CoreComponentServiceImpl
 			}
 		}
 
-		Map<String, List<T>> keyMap = targetEntities.stream().collect(Collectors.groupingBy(T::uniqueKey));
+		Map<String, List<T>> targetKeyMap = targetEntities.stream().collect(Collectors.groupingBy(T::uniqueKey));
 		for (T entity : entities) {
-			boolean add = false;
-			if (keyMap.containsKey(entity.uniqueKey()) == false) {
-				add = true;
-			}
-
-			if (add) {
+			
+			if (targetKeyMap.containsKey(entity.uniqueKey()) == false) {
 				entity.clearKeys();
 				targetEntities.add(entity);
+			}
+		}
+                
+                // Create Temporary Target Entities List
+                List<T> tempTargetEntities = new ArrayList<>();
+                
+                // Copy Target Entities
+                targetEntities.forEach(item -> tempTargetEntities.add(item));
+                
+                Map<String, List<T>> mergeKeyMap = entities.stream().collect(Collectors.groupingBy(T::uniqueKey));
+		for (T targetEntity : tempTargetEntities) {
+			
+			if (mergeKeyMap.containsKey(targetEntity.uniqueKey()) == false) {
+				
+				targetEntities.remove(targetEntity);
+                                
+                                // Check If Media or Resource
+                                if (targetEntity instanceof ComponentMedia) { // Check If Media
+                                    
+                                        // Remove Local Media File
+                                        removeLocalMedia((ComponentMedia) targetEntity);
+                                }
+                                else if (targetEntity instanceof ComponentResource) { // Check If Resource
+                                    
+                                        // Remove Local Resource File
+                                        removeLocalResource((ComponentResource) targetEntity);
+                                }
 			}
 		}
 	}
@@ -2365,4 +2397,29 @@ public class CoreComponentServiceImpl
 		}
 	}
 
+        void removeLocalResource(ComponentResource componentResource)
+	{
+		//Note: this can't be rolled back
+		Path path = componentResource.pathToResource();
+		if (path != null) {
+			if (path.toFile().exists()) {
+				if (path.toFile().delete()) {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component resource. Path: {0}", path.toString()));
+				}
+			}
+		}
+	}
+
+	void removeLocalMedia(ComponentMedia componentMedia)
+	{
+		//Note: this can't be rolled back
+		Path path = componentMedia.pathToMedia();
+		if (path != null) {
+			if (path.toFile().exists()) {
+				if (path.toFile().delete()) {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component media. Path: {0}", path.toString()));
+				}
+			}
+		}
+	}
 }

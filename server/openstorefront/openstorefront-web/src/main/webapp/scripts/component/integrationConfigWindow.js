@@ -157,9 +157,12 @@ Ext.define('OSF.component.IntegrationWindow', {
 											method: method,
 											form: configForm,
 											data: data,
-											success: function(form, action){
+											success: function(response, opts) {
 												integrationWindow.integrationGrid.getStore().reload();
 												addEditWin.close();
+											},
+											failure: function(response, opts) {
+												Ext.MessageBox.alert('Error During Configuration Add/Update', "Duplicate Jira Issue Number provided.<br /><br />Please provide a different Issue Number.");
 											}
 										});
 										

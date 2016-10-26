@@ -1650,6 +1650,10 @@
 													Ext.toast('Successfully uploaded plugin.', '', 'tr');
 													Ext.Msg.alert('Success', 'The plugin will install at the run of the deployment job. Click the refresh button to confirm deployment.');
 													addPluginWindow.hide();
+												},
+												failure: function () {
+													Ext.toast('Error uploading plugin.', '', 'tr');
+													Ext.Msg.alert('Failure', 'The plugin failed to install. Please check the file and ensure it is a valid OSGi JAR/WAR file.');
 												}
 											});
 										}

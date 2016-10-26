@@ -368,6 +368,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 			autoLoad: false,
 			listeners: {
 				datachanged: function(store) {
+					if (submissionPanel.requiredAttributeStore.ignore) return;
 					var panel = submissionPanel.requiredForm.getComponent('requiredAttributePanel');					
 					panel.removeAll();
 					
@@ -376,10 +377,9 @@ Ext.define('OSF.component.SubmissionPanel', {
 						var field = Ext.create('Ext.form.field.ComboBox', {
 							record: record,
 							fieldLabel: record.get('description') + ' <span class="field-required" />',
-							forceSelection: true,
 							queryMode: 'local',
-							editable: false,
-							typeAhead: false,
+							editable: record.get('allowUserGeneratedCodes'),
+							typeAhead: record.get('allowUserGeneratedCodes'),
 							allowBlank: false,
 							width: '100%',							
 							labelWidth: 300,
@@ -624,6 +624,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 										var record = field.getSelection();
 										if (record) {
 											field.up('form').getComponent('attributeCodeCB').getStore().loadData(record.data.codes);
+											if (record.get("allowUserGeneratedCodes")) {
+												field.up('form').getComponent('attributeCodeCB').setEditable(true);
+											} else {
+												field.up('form').getComponent('attributeCodeCB').setEditable(false);
+											}
+											
 										} else {
 											field.up('form').getComponent('attributeCodeCB').getStore().removeAll();
 										}
@@ -635,7 +641,6 @@ Ext.define('OSF.component.SubmissionPanel', {
 								itemId: 'attributeCodeCB',
 								fieldLabel: 'Attribute Code <span class="field-required" />',
 								name: 'code',
-								forceSelection: true,
 								queryMode: 'local',
 								editable: false,
 								typeAhead: false,
@@ -657,6 +662,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								items: [
 									{
 										text: 'Save',
+										itemId: 'saveButton',
 										formBind: true,
 										iconCls: 'fa fa-save',
 										handler: function () {
@@ -664,6 +670,62 @@ Ext.define('OSF.component.SubmissionPanel', {
 											var form = this.up('form');
 											var data = form.getValues();
 											var componentId = submissionPanel.componentId;
+
+											var type = form.getComponent('attributeTypeCB').getSelection();
+											
+											// The attribute may allow user generated codes. If so, the code
+											// may not already exist.
+											if (type.get('allowUserGeneratedCodes')) {
+												var code = data.code;
+												var store = form.getComponent('attributeCodeCB').getStore();
+												var found = false;
+												store.each(function(item) {
+													if (item.get('code') === code) {
+														found = true;
+													}
+												});
+
+												if (!found) {
+													// Generate a new code
+													var url = 'api/v1/resource/attributes/attributetypes/';
+													url += data.type + '/attributecodes/user';
+													var data = {
+														codeLabel: code
+													};	
+													Ext.Ajax.request({
+														url: url,
+														method: 'POST',
+														jsonData: data,
+														success: function(response, opts) {
+															Ext.toast('Successfully generated attribute code.', '', 'tr');
+															var newAttributeCode = Ext.decode(response.responseText);
+															// Compile new attribute code into store format
+															var savedCode = newAttributeCode.attributeCodePk.attributeCode;
+															var description = code;
+															// Add to store
+															var newSelection = store.add({
+																code: savedCode,
+																description: description
+															});
+															// Select the new code
+															var type = form.getComponent('attributeCodeCB').select(newSelection);
+															// Recurse!
+															addWindow.down('toolbar').getComponent('saveButton').fireHandler();
+														},
+														failure: function(response, opts) {
+															Ext.MessageBox.show({
+																title:'Failed to Save',
+																message: 'Failed to generate the new attribute code. Try again or use an existing attribute code.',
+																buttons: Ext.Msg.OK,
+																icon: Ext.Msg.ERROR										
+															});
+														}
+													});
+													return;
+												}
+												
+											} 
+
 
 											var newAttribute = {
 												componentAttributePk: {
@@ -1359,6 +1421,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 				addWindow.getComponent('mediaForm').loadRecord(record);
 			}			
 		};
+
+		
 		
 		var addEditDependency = function(record, grid){
 			var addWindow = Ext.create('Ext.window.Window', {
@@ -1474,9 +1538,19 @@ Ext.define('OSF.component.SubmissionPanel', {
 			}			
 		};
 		
+		var metadataValueLoadTask = new Ext.util.DelayedTask(function() {
+			var labelString = Ext.getCmp('metadataLabelComboBox').getValue();
+			if (labelString) {
+				var valueStore = Ext.getStore('metadataValueStore');
+				valueStore.getProxy().setUrl('api/v1/resource/componentmetadata/lookup/values');
+				valueStore.getProxy().setExtraParams({label: labelString});
+				valueStore.load();
+			}
+		});
+
 		var addEditMetadata = function(record, grid){		
 			var addWindow = Ext.create('Ext.window.Window', {
-				closeAction: 'destory',
+				closeAction: 'destroy',
 				modal: true,
 				alwaysOnTop: true,
 				title: 'Add Metadata',
@@ -1499,18 +1573,45 @@ Ext.define('OSF.component.SubmissionPanel', {
 								name: 'metadataId'
 							},
 							{
-								xtype: 'textfield',
-								fieldLabel: 'Label <span class="field-required" />',									
+								xtype: 'combobox',
+								id: 'metadataLabelComboBox',
+								fieldLabel: 'Label <span class="field-required" />',
 								allowBlank: false,									
 								maxLength: '255',									
-								name: 'label'
+								name: 'label',
+								valueField: 'code',
+								displayField: 'description',
+								typeAhead: 'true',
+								store: Ext.create('Ext.data.Store', {
+									storeId: 'metadataLabelStore',
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/componentmetadata/lookup'
+									},
+									autoLoad: true
+								}),
+								listeners: {
+									change: function (combo, newValue, oldValue, eOpts) {
+										metadataValueLoadTask.delay(500);
+									}
+								}
 							},
 							{
-								xtype: 'textfield',
-								fieldLabel: 'Value <span class="field-required" />',									
+								xtype: 'combobox',
+								id: 'metadataValueComboBox',
+								fieldLabel: 'Value <span class="field-required" />',
 								allowBlank: false,									
 								maxLength: '255',									
-								name: 'value'
+								name: 'value',
+								valueField: 'code',
+								displayField: 'description',
+								typeAhead: 'true',
+								store: Ext.create('Ext.data.Store', {
+									storeId: 'metadataValueStore',
+									proxy: {
+										type: 'ajax'
+									}
+								})
 							},
 							Ext.create('OSF.component.SecurityComboBox', {	
 								itemId: 'securityMarkings',
@@ -1548,6 +1649,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 													grid.getStore().load({
 														url: 'api/v1/resource/components/' + submissionPanel.componentId + '/metadata/view'
 													});
+													Ext.getStore('metadataLabelStore').load();
 													metaWindow.close();
 												}
 											});
@@ -2904,7 +3006,72 @@ Ext.define('OSF.component.SubmissionPanel', {
 				attributes: []
 			};
 
+			// Check for user-generated attribute values
+			var wasGenerated = false;
+			submissionPanel.requiredAttributeStore.each(function(record) {
+				if (record.get('allowUserGeneratedCodes'))  {
+					var codes = record.get('codes');
+					var currentCode = record.formField.getSelection();
+					var codeLabel;
+					if (currentCode) {
+						codeLabel = currentCode.get('label');
+					} else {
+						codeLabel = record.formField.getValue();
+					}
+
+					var found = false;
+					Ext.Array.each(codes, function(code) {
+						if (code.label === codeLabel) {
+							found = true;
+						}
+					});
+
+
+					if (!found) {
+						// Generate a new code
+						var url = 'api/v1/resource/attributes/attributetypes/';
+						url += record.get('attributeType') + '/attributecodes/user';
+						var data = {
+							codeLabel: codeLabel
+						};	
+						Ext.Ajax.request({
+							url: url,
+							method: 'POST',
+							jsonData: data,
+							success: function(response, opts) {
+								Ext.toast('Successfully generated attribute code.', '', 'tr');
+								var newAttributeCode = Ext.decode(response.responseText);
+								var savedCode = newAttributeCode.attributeCodePk.attributeCode;
+								var newCode = {
+									code: savedCode,
+									label: codeLabel
+								};
+								var codes = record.get('codes');
+								codes.push(newCode);
+								record.set('codes', codes);
+								record.formField.setValue(savedCode);
+								var sRecord = submissionPanel.requiredAttributeStore.findRecord('attributeType', record.get('attributeType'));
+								sRecord.set('attributeCode', savedCode);
+								submissionPanel.handleRequiredFormSave();
+							},
+							failure: function(response, opts) {
+								Ext.MessageBox.show({
+									title:'Failed to Save',
+									message: 'Failed to generate the new attribute code. Try again or use an existing attribute code.',
+									buttons: Ext.Msg.OK,
+									icon: Ext.Msg.ERROR										
+								});
+							}
+						});
+						// Don't do the rest of saving, we do this instead after the code is generated in the success callback
+						wasGenerated = true;
+					}
+				}
+			});
+			if (wasGenerated) return;
+
 			submissionPanel.requiredAttributeStore.each(function(record){
+
 				requireComponent.attributes.push({
 					componentAttributePk: {
 						attributeType: record.get('attributeType'),

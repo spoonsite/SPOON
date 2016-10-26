@@ -363,12 +363,39 @@ public class UploadAction
 		if (SecurityUtil.isAdminUser()) {
 			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			try {
-				//just copy plugin to  plugin directory...to avoid double pickup
-				File pluginDir = FileSystemManager.getDir(FileSystemManager.PLUGIN_DIR);
-				uploadFile.save(new File(pluginDir + "/" + StringProcessor.cleanFileName(uploadFile.getFileName())));
+				
+				// Store File Type
+				String fileMimeType = uploadFile.getContentType();
+				
+				// Store File Name
+				String fileName = uploadFile.getFileName();
+				
+				// Get Extension
+				String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+				
+				// Check MIME Type
+				if (fileMimeType.matches("application/(x-)?zip.*") &&
+						(fileExtension.equals("war") || fileExtension.equals("jar"))) {
+				
+					//just copy plugin to  plugin directory...to avoid double pickup
+					File pluginDir = FileSystemManager.getDir(FileSystemManager.PLUGIN_DIR);
+					uploadFile.save(new File(pluginDir + "/" + StringProcessor.cleanFileName(uploadFile.getFileName())));
+				}
+				else {
+					
+					// Throw Invalid File Type Exception
+					throw new InvalidFileTypeException("Invalid File Type");
+				}
 			} catch (IOException ex) {
 				LOG.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
+			} catch (InvalidFileTypeException ex) {
+				LOG.log(Level.FINE, "Invalid file type: " + uploadFile.getFileName() + " ('" + uploadFile.getContentType() + "')", ex);
+				errors.put("uploadFile", "Unable to save invalid file: " + uploadFile.getFileName() + ".");
+				errors.put("uploadFileType", " Invalid file type: " + uploadFile.getContentType() + ". Make sure the file is the proper format.");
+			} catch (Exception ex) {
+				LOG.log(Level.FINE, "Unable to upload file: " + uploadFile.getFileName(), ex);
+				errors.put("uploadFile", "Unable to upload file: " + uploadFile.getFileName() + ". An unexpected error occurred.");
 			} finally {
 				try {
 					uploadFile.delete();
@@ -666,6 +693,14 @@ public class UploadAction
 	public void setAttributeCodeName(String attributeCodeName)
 	{
 		this.attributeCodeName = attributeCodeName;
+	}
+	
+	private class InvalidFileTypeException extends Exception {
+		
+		public InvalidFileTypeException(String message) {
+			
+			super(message);
+		}
 	}
 
 }

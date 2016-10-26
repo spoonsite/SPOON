@@ -35,6 +35,137 @@
 					}
 				}
 			});
+			
+			
+			var store_components_remote = Ext.create('Ext.data.Store', {
+				storeId: 'store_components_remote',
+				autoLoad: false,
+				fields: [
+					'name',
+					'componentId',
+					'componentType',
+					'componentTypeDescription'
+				],
+				sorters: new Ext.util.Sorter({
+					property: 'name',
+					direction: 'ASC'
+				}),
+				proxy: {
+					id: 'store_components_remoteProxy',
+					type: 'ajax',
+					url: 'api/v1/resource/components/'
+				},
+				listeners: {
+
+					load: function(store, operation, opts) { // Once Data Store Has Loaded
+
+						// Initialize Local Components Data Array
+						var localComponents = [];
+
+						// Loop Through Remote Components
+						for (var i = 0; i < store.getCount(); i++) {
+
+							// Initialize Current Component
+							var currentComponent = {
+
+								// Store Current Component ID
+								id: store.getAt(i).data.componentId,
+
+								// Store Current Component Name
+								name: store.getAt(i).data.name,
+
+								// Store Current Component Security Level
+								type: {
+
+									name: store.getAt(i).data.componentTypeDescription,
+									code: store.getAt(i).data.componentType
+								}
+							};
+
+							// Store Component
+							localComponents.push(currentComponent);
+						}
+
+						// Set Local Component Store Data
+						store_components_local.setData(localComponents);
+					}
+				}					
+			});
+
+			var store_components_local = Ext.create('Ext.data.Store', {
+				storeId: 'store_components_local',
+				autoLoad: true,
+				fields: [
+					'id',
+					'name',
+					'type'
+				],
+				sorters: 'name'
+			});
+
+			var store_componentTypes_remote = Ext.create('Ext.data.Store', {
+				storeId: 'store_componentTypes_remote',
+				proxy: {
+					type: 'ajax',
+					url: 'api/v1/resource/componenttypes/lookup'
+				},
+				autoLoad: true
+			});
+
+			var store_assignedComponents_local = Ext.create('Ext.data.Store', {
+				storeId: 'store_tagComponents_local',
+				autoLoad: true,
+				fields: [
+					'id',
+					'name',
+					'type'
+				],
+				sorters: 'name'
+			});
+			
+			
+			///////////////
+			// Overrides //
+			///////////////
+
+			Ext.override(Ext.view.DragZone, {
+			    getDragText: function() {
+			        if (this.dragTextField) {
+			            var fieldValue = this.dragData.records[0].get(this.dragTextField);
+			            return Ext.String.format(this.dragText, fieldValue);
+			        } else {
+			            var count = this.dragData.records.length;
+			            return Ext.String.format(this.dragText, count, count == 1 ? '' : 's');
+			        }
+			    }
+			});
+
+
+			Ext.override(Ext.grid.plugin.DragDrop, {
+			    onViewRender : function(view) {
+			        var me = this;
+
+			        if (me.enableDrag) {
+			            me.dragZone = Ext.create('Ext.view.DragZone', {
+			                view: view,
+			                ddGroup: me.dragGroup || me.ddGroup,
+			                dragText: me.dragText,
+			                dragTextField: me.dragTextField
+			            });
+			        }
+
+			        if (me.enableDrop) {
+			            me.dropZone = Ext.create('Ext.grid.ViewDropZone', {
+			                view: view,
+			                ddGroup: me.dropGroup || me.ddGroup
+			            });
+			        }
+			    }
+			});
+
+			///////////////////
+			// End Overrides //
+			///////////////////
 
 
 			var gridColorRenderer = function gridColorRenderer(value, metadata, record) {
@@ -86,7 +217,7 @@
 				columnLines: true,
 				columns: [
 					{text: 'Description', dataIndex: 'description', flex: 2},
-					{text: 'Type Code', dataIndex: 'attributeType', flex: 2},
+					{text: 'Type Code', dataIndex: 'attributeType', flex: 1.5},
 					{
 						text: 'Visible', 
 						dataIndex: 'visibleFlg', 
@@ -120,6 +251,13 @@
 						dataIndex: 'allowMultipleFlg',
 						flex: 1, 
 						tooltip: 'Should a component be allowed to have more than one code for this attribute?',
+						renderer: gridColorRenderer
+					},
+					{
+						text: 'Allow User Codes',
+						dataIndex: 'allowUserGeneratedCodes',
+						flex: 1,
+						tooltip: 'Should users be able to generate codes for this attribute?',
 						renderer: gridColorRenderer
 					},
 					{
@@ -204,6 +342,15 @@
 								iconCls: 'fa fa-2x fa-plus',
 								handler: function() {
 									actionAddAttribute();
+								}
+							},
+							{
+								text: 'Entry Assignment',
+								id: 'attributeGrid-tools-assign',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-list-alt',
+								handler: function() {
+									actionManageAssignments();
 								}
 							},
 							{
@@ -295,6 +442,13 @@
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
 				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 			};
+			
+			
+			var actionManageAssignments = function actionManageAssignments() {
+				
+				// Display Assignment Management Window
+				manageAssignmentsWin.show();
+			};
 
 
 			var actionEditAttribute = function actionEditAttribute(record) {
@@ -367,7 +521,7 @@
 					url: url,
 					method: method,
 					success: function(response, opt){
-						Ext.toast('Successfully' + what + 'd attribute type', '', 'tr');
+						Ext.toast('Successfully ' + what + 'd attribute type', '', 'tr');
 						attributeStore.load();
 					},
 					failure: function(response, opt){
@@ -1234,6 +1388,10 @@
 										}
 									},
 									{
+										name: 'allowUserGeneratedCodes',
+										boxLabel: 'Allow User-Created Codes'
+									},
+									{
 										name: 'hideOnSubmission',
 										boxLabel: 'Hide on Submission',
 										id: 'editAttributeForm-hideOnSubmission',
@@ -1378,7 +1536,635 @@
 				]
 			});
 			
+			
+			var refreshEntryGridPanels = function() {
+				
+				// Mask Component Grids (Loading)
+				Ext.getCmp('unassignedComponentGrid').getView().mask("Loading...");
+				Ext.getCmp('assignedComponentGrid').getView().mask("Loading...");
+
+				// Store Attribute Type
+				var type = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('attributeType');
+
+				// Store Attribute Code
+				var code = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('code');
+
+				// Get Currently Assigned Components
+				var url = 'api/v1/resource/attributes/attributetypes/' + type + '/attributecodes/' + code + '/components';
+
+				Ext.Ajax.request({
+					url: url,
+					method: 'GET',
+					success: function(response, opt) {
+
+						// Parse Response JSON
+						var components = JSON.parse(response.responseText);
+
+						// Initialize Component ID Array
+						var componentIds = [];
+
+						// Initialize Component Data Array
+						var componentData = [];
+
+						// Loop Through Components
+						for (i = 0; i < components.length; i++) {
+
+							// Save Component Data
+							var data = {
+
+								id: components[i].componentId,
+								name: components[i].name,
+								type: {
+
+									name: components[i].componentTypeLabel,
+									code: components[i].componentType
+								}
+							};
+
+							// Add Component ID To Array
+							componentIds.push(data.id);
+
+							// Add Component Data To Array
+							componentData.push(data);
+						}
+
+						// Add Component Data To Assigned Component Store
+						store_assignedComponents_local.setData(componentData);
+						
+						// Load Remote Components Store
+						store_components_remote.load(function(records, operation, success) {
+							
+							// Clear Any Previous Filters
+							store_components_local.clearFilter();
+
+							// Filter Unassigned Components Store
+							store_components_local.filterBy(function(record) {
+
+								return !Ext.Array.contains(componentIds, record.get('id'));
+							});
+
+							// Unmask Component Grids (Loading)
+							Ext.getCmp('unassignedComponentGrid').getView().unmask();
+							Ext.getCmp('assignedComponentGrid').getView().unmask();
+						});
+					},
+					failure: function(response, opt) {
+
+						// Unmask Component Grids (Loading)
+						Ext.getCmp('unassignedComponentGrid').getView().unmask();
+						Ext.getCmp('assignedComponentGrid').getView().unmask();
+
+						// Indicate An Error Occurred
+						Ext.toast('Error Loading Entries', '', 'tr');
+
+						// Log Response
+						console.log('Error Loading Entries. See Response:');
+						console.log(response);
+					}
+				});
+			};
+			
+			
+			var unassignedComponentGrid = Ext.create('Ext.grid.Panel', {
+				id: 'unassignedComponentGrid',
+				store: store_components_local,
+				flex: 1,
+				border: false,
+				autoScroll: true,
+				disabled: true,
+				viewConfig: {
+
+					plugins: {
+
+						ptype: 'gridviewdragdrop',
+						ddGroup: 'componentAssignmentDragDropGroup',
+						enableDrag: true,
+						enableDrop: true,
+						dragText: 'Add: {0}',
+						dragTextField: 'name'
+					},
+					listeners: {
+
+						drop: function (node, data, overModel, dropPosition, eOpts) {
+
+							// Store Component Data
+							var component = data.records[0];
+							var componentData = component.getData();
+							
+							// Store Attribute Type
+							var type = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('attributeType');
+
+							// Store Attribute Code
+							var code = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('code');
+
+							// Make Request
+							Ext.Ajax.request({
+
+								url: 'api/v1/resource/components/' + componentData.id + '/attributes/' + type + '/' + code,
+								method: 'DELETE',
+								success: function (response, opts) {
+
+									// Indicate Successful Removal
+									Ext.toast("Attribute Removed From " + componentData.name, '', 'tr');
+								},
+								failure: function (response, opts) {
+
+									// Provide An Error Message
+									Ext.toast("Error Removing Attribute From " + componentData.name, '', 'tr');
+									
+									// Log Error
+									console.log("Error Removing Attribute. See Response:");
+									console.log(response);
+									
+									// Return Component To Previous Grid
+									store_assignedComponents_local.addSorted(component);
+									
+									// Select Component
+									assignedComponentGrid.getSelectionModel().select(component);
+									
+									// Send Focus Temporarily Elsewhere
+									unassignedComponentGrid.focus();
+									
+									// Focus On Component
+									assignedComponentGrid.getView().focusRow(component);
+									
+									// Remove Component From New Grid
+									store_components_local.remove(component);
+								}
+							});
+						}
+					}
+				},
+				columns: [
+					{ 
+						text: 'Entries',
+						dataIndex: 'name',
+						flex: 1,
+						renderer: function (value, metaData, record) {
+
+							var html = "<strong>" + value + "</strong>";
+							html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
+							html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+							html += '<span style="float: left;">' + record.get('type').name + '</span>';
+							html += "</div>";
+
+							return html;
+						}
+
+					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						items: [
+							{
+								text: 'Refresh',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-refresh',
+								handler: function () {
+
+									// Refresh Entry Grid Panels
+									// (Also Performs A Store Reload)
+									refreshEntryGridPanels();
+								}
+							}
+						]
+					},
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						items: [
+							{
+								xtype: 'tagfield',
+								fieldLabel: 'Entry Types',
+								labelWidth: new Ext.util.TextMetrics().getWidth("Entry Types:"),
+								flex: 1,
+								store: store_componentTypes_remote,
+								valueField: 'code',
+								displayField: 'description',
+								emptyText: 'All',
+								listeners: {
+									change: function (tagfield, newValue, oldValue, eOpts) {
+
+										// Get Current Filters On Store
+										var filters = store_components_local.getFilters();
+
+										// Loop Through Filters
+										for (i = 0; i < filters.length; i++) {
+
+											// Store Filter Function
+											var filterFunction = filters.items[i].getFilterFn().toString();
+
+											// Check If Current Filter Contains A String Which Itentifies This Filter
+											if (filterFunction.search(/FILTER_BY_TYPE_CODE/) != -1) {
+
+												// Remove Previous Filter
+												store_components_local.removeFilter(filters.items[i]);
+											}
+										}
+
+										// Check If We Should Create A Filter
+										if (newValue.length > 0) {
+
+											// Create A Filter
+											store_components_local.filterBy(filter = function multiFilter(record) {
+
+												// Identify Filter
+												var filterName = "FILTER_BY_TYPE_CODE";
+
+												// Locate Matching Records
+												return Ext.Array.contains(newValue, record.get('type').code);
+											});
+										}
+									}
+								}
+							}
+						]
+					},
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						items: [
+							{
+								xtype: 'textfield',
+								flex: 1,
+								fieldLabel: 'Filter',
+								labelWidth: new Ext.util.TextMetrics().getWidth("Filter:"),
+								listeners: {
+									change: {
+
+										buffer: 500,
+										fn: function (field, newValue, oldValue, eOpts) {
+
+											// Get Field's Store
+											var store = Ext.getCmp("unassignedComponentGrid").getStore();
+
+											// Get Current Filters On Store
+											var filters = store.getFilters();
+
+											// Loop Through Filters
+											for (i = 0; i < filters.length; i++) {
+
+												// Check If Current Filter Contains A String Which Itentifies This Filter
+												if (filters.items[i].getFilterFn().toString().search(/FILTER_BY_NAME/) != -1) {
+
+													// Remove Previous Filter
+													store.removeFilter(filters.items[i]);
+												}
+											}
+
+											// Set Filter
+											store.filterBy(function(record) {
+
+												// Identify Filter
+												var filterName = "FILTER_BY_NAME";
+
+												// Return Whether Search String Was Found
+												return record.get('name').search(new RegExp(newValue, 'i')) != -1;
+											});
+										}
+									}
+								}
+							}
+						]
+					}
+				]
+			});
+			
+			
+			var assignedComponentGrid = Ext.create('Ext.grid.Panel', {
+				flex: 1,
+				id: 'assignedComponentGrid',
+				store: store_assignedComponents_local,
+				border: false,
+				autoScroll: true,
+				disabled: true,
+				emptyText: 'No Assigned Entries',
+				viewConfig: {
+
+					plugins: {
+
+						ptype: 'gridviewdragdrop',
+						ddGroup: 'componentAssignmentDragDropGroup',
+						enableDrag: true,
+						enableDrop: true,
+						dragText: 'Remove: {0}',
+						dragTextField: 'name'
+					},
+					listeners: {
+
+						drop: function (node, data, overModel, dropPosition, eOpts) {
+
+							// Store Component Data
+							var component = data.records[0];
+							var componentData = component.getData();
+							
+							// Store Attribute Type
+							var type = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('attributeType');
+
+							// Store Attribute Code
+							var code = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('code');
+
+							// Build New Component Attribute Data
+							var attributeData = {
+
+								componentAttributePk: {
+
+									attributeType: type,
+									attributeCode: code
+								}
+							};
+
+							// Make Request
+							Ext.Ajax.request({
+
+								url: 'api/v1/resource/components/' + componentData.id + '/attributes',
+								method: 'POST',
+								jsonData: attributeData,
+								success: function (response, opts) {
+
+									// Indicate Successful Removal
+									Ext.toast("Attribute Added To " + componentData.name, '', 'tr');
+								},
+								failure: function (response, opts) {
+
+									// Provide An Error Message
+									Ext.toast("Error Adding Attribute To " + componentData.name, '', 'tr');
+
+									// Log Error
+									console.log("Error Adding Attribute. See Response:");
+									console.log(response);
+
+									// Return Component To Previous Grid
+									store_components_local.addSorted(component);
+									
+									// Select Component
+									unassignedComponentGrid.getSelectionModel().select(component);
+									
+									// Send Focus Temporarily Elsewhere
+									assignedComponentGrid.focus();
+									
+									// Focus On Component
+									unassignedComponentGrid.getView().focusRow(component);
+									
+									// Remove Component From New Grid
+									store_assignedComponents_local.remove(component);
+								}
+							});
+						}
+					}
+				},
+				columns: [
+					{ 
+						text: 'Entries',
+						dataIndex: 'name',
+						flex: 1,
+						renderer: function (value, metaData, record) {
+
+							// Store Record Type
+							var recordType = record.get('type');
+
+							// Check If Record Type Is Empty
+							if (!recordType) {
+
+								// Build Component Without Record Type
+								var html = '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
+								html += "<strong>" + value + "</strong>";
+								html += "</div>";
+								return html;
+							}
+							else {
+
+								// Build Component With Record Type
+								var html = "<strong>" + value + "</strong>";
+								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
+								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+								html += '<span style="float: left;">' + recordType.name + '</span>';
+								html += "</div>";
+								return html;
+							}
+						}
+					}
+				]
+			});
+			
+			
+			var manageAssignmentsWin = Ext.create('Ext.window.Window', {
+				id: 'manageAssignmentsWin',
+				title: 'Manage Assignments',
+				modal: true,
+				width: '60%',
+				height: '80%',
+				maximizable: true,
+				y: '2em',
+				layout: {
+					
+					type: 'vbox',
+					align: 'stretch'
+				},
+				items: [
+					{
+						xtype: 'panel',
+						id: 'manageAssignmentsForm-attribute-container',
+						flex: 1,
+						margin: '10 10 10 10 ',
+						layout: 'hbox',
+						items: [
+							{
+								xtype: 'combobox',
+								id: 'manageAssignmentsForm-attribute',
+								flex: 1,
+								fieldLabel: 'Attribute',
+								emptyText: '-- Select An Attribute --',
+								name: 'attribute',
+								store: attributeStore,
+								displayField: 'description',
+								valueField: 'attributeType',
+								listeners: {
+
+									select: function (field, record, opt) {
+
+										// Build URL For Retrieving Attribute Codes
+										var url = 'api/v1/resource/attributes/attributetypes';
+										url += '/' + record.get('attributeType') + '/attributecodeviews?all=true';
+
+										// Configure Code Store With New URL
+										codesStore.setProxy({
+
+											type: 'ajax',
+											url: url,
+											reader: {
+
+												type: 'json',
+												rootProperty: 'data'
+											}
+										});
+
+										// Filter Code Store Based On Active Status
+										// (Only Show Active Records)
+										codesStore.filter('activeStatus', 'A');
+
+										// Load Data In Store
+										codesStore.load();
+
+										// Enable Code Selection Combo Box
+										Ext.getCmp('manageAssignmentsForm-code').enable();
+									},
+
+									change: function (field, newValue, oldValue, opts) {
+
+										// Get Current Selection
+										var selection = field.getSelection();
+
+										// Check If We Previously Had A Selection
+										if (selection != null && selection.get('attributeType') != newValue) {
+
+											// Reset Field (Remove Selection)
+											field.reset();
+
+											// Put New Value Back Into Field
+											field.setValue(newValue);
+
+											// Reset Attribute Code Selection Field
+											Ext.getCmp('manageAssignmentsForm-code').reset();
+
+											// Disable Attribute Code Selection Field
+											// (Will Re-Enable When Another Selection Is Made)
+											Ext.getCmp('manageAssignmentsForm-code').disable();
+										}
+									}
+								}
+							}
+						]
+					},
+					{
+						xtype: 'panel',
+						id: 'manageAssignmentsForm-code-container',
+						flex: 1,
+						margin: '10 10 10 10',
+						layout: 'hbox',
+						items: [
+							{
+								xtype: 'combobox',
+								id: 'manageAssignmentsForm-code',
+								flex: 1,
+								fieldLabel: 'Attribute Code',
+								emptyText: '-- Select An Attribute Code --',
+								name: 'attributeCode',
+								disabled: true,
+								forceSelection: true,
+								editable: false,
+								store: codesStore,
+								displayField: 'label',
+								valueField: 'code',
+								listeners: {
+
+									select: function (field, newValue, oldValue, opt) {
+
+										// Enable Component Grids
+										Ext.getCmp('unassignedComponentGrid').enable();
+										Ext.getCmp('assignedComponentGrid').enable();
+										
+										// Refresh Entry Grid Panels
+										refreshEntryGridPanels();
+									}
+								}
+							}
+						]
+					},
+					{
+						xtype: 'panel',
+						id: 'manageAssignmentsForm-entries-container',
+						flex: 18,
+						layout: {
+							type: 'hbox',
+							align: 'stretch'
+						},
+						items: [
+							{
+								title: 'Unassigned Entries',
+								xtype: 'panel',
+								margin: '5 5 5 5',
+								flex: 2,
+								id: 'manageAssignmentsForm-entries-unassigned-container',
+								layout: {
+									type: 'hbox',
+									align: 'stretch'
+								},
+								items: [
+
+									unassignedComponentGrid
+								]
+							},
+							{
+								title: 'Assigned Entries',
+								xtype: 'panel',
+								margin: '5 5 5 5',
+								flex: 2,
+								id: 'manageAssignmentsForm-entries-assigned-container',
+								layout: {
+									type: 'hbox',
+									align: 'stretch'
+								},
+								items: [
+
+									assignedComponentGrid
+								]
+							}
+						]
+					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								xtype: 'tbfill',
+							},
+							{
+								text: 'Close',
+								iconCls: 'fa fa-close',
+								handler: function () {
+									
+									// Hide Attribute Management Window
+									Ext.getCmp('manageAssignmentsWin').hide();
+								}
+							}
+						]
+					}
+				],
+				listeners: {
+					
+					hide: function() {
+						
+						// Reset Attribute Code Selection Field
+						Ext.getCmp('manageAssignmentsForm-code').reset();
+
+						// Disable Attribute Code Selection Field
+						Ext.getCmp('manageAssignmentsForm-code').disable();
+
+						// Disable Assigned Components Grid
+						Ext.getCmp('assignedComponentGrid').disable();
+
+						// Disable Unassigned Components Grid
+						Ext.getCmp('unassignedComponentGrid').disable();
+
+						// Reset Attribute Selection Field
+						Ext.getCmp('manageAssignmentsForm-attribute').reset();
+
+						// Clear Out Component Stores
+						store_components_remote.removeAll();
+						store_components_local.removeAll();
+						store_assignedComponents_local.removeAll();
+					}
+				}
+			});
+			
+			
 			addComponentToMainViewPort(attributeGrid);
+			
 
 		});		
 		</script>
