@@ -73,7 +73,7 @@ public class Search
 {
 
 	@GET
-	@APIDescription("Searches listing according to parameters.  (Components, Articles)")
+	@APIDescription("Searches for listing based on given parameters.  (Components, Articles)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
 	public Response searchListing(
@@ -99,7 +99,7 @@ public class Search
 	}
 
 	@POST
-	@APIDescription("Advance search of listing ")
+	@APIDescription("Advance search for listing ")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
@@ -116,7 +116,7 @@ public class Search
 
 		if (searchModel == null) {
 			RestErrorModel restErrorModel = new RestErrorModel();
-			restErrorModel.getErrors().put("searchModel", "Search Model must be pass to this call see API documentation");
+			restErrorModel.getErrors().put("searchModel", "Search Model must be passed to this call.**See API documentation");
 			return sendSingleEntityResponse(restErrorModel);
 		}
 		searchModel.setStartOffset(filterQueryParams.getOffset());
@@ -157,7 +157,7 @@ public class Search
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Removes all indexes from Solr and then re-indexes current components and articles")
+	@APIDescription("Removes all indexes from Solr and then reindexes current components and articles")
 	@Path("/resetSolr")
 	public Response resetSolr()
 	{
@@ -170,7 +170,7 @@ public class Search
 	}
 
 	@GET
-	@APIDescription("Searches listing by an archtecture.")
+	@APIDescription("Searches listing by architecture.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
 	@Path("/attribute/{type}/{code}")
@@ -200,7 +200,7 @@ public class Search
 	}
 
 	@GET
-	@APIDescription("Used to retrieve all possible search results.")
+	@APIDescription("Retrieves all possible search results.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentSearchView.class)
 	@Path("/all")
@@ -212,7 +212,7 @@ public class Search
 	}
 
 	@GET
-	@APIDescription("Gets the recently added items")
+	@APIDescription("Gets recently added items")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(RecentlyAddedView.class)
 	@Path("/recent")
@@ -256,7 +256,7 @@ public class Search
 	}
 
 	@POST
-	@APIDescription("Export a set entries")
+	@APIDescription("Export a set of entries")
 	@Produces({"application/csv"})	
 	@Path("/export")
 	public Response export(
@@ -296,7 +296,7 @@ public class Search
 	}
 	
 	@GET
-	@APIDescription("Get Search Suggestions")
+	@APIDescription("Gets search suggestions")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SearchSuggestion.class)
 	@Path("/suggestions")

@@ -26,7 +26,7 @@ import javax.persistence.Version;
  *
  * @author dshurtleff
  */
-@APIDescription("Holder for a Data Transform; see File Data Map")
+@APIDescription("Holder for a Data Transform (see File Data Map)")
 public class DataMapTransform
 	implements Serializable
 {

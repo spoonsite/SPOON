@@ -21,7 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
  *
  * @author jlaw
  */
-@APIDescription("Media Types: Video, Image, Text....etc")
+@APIDescription("Media Types: Video, Image, Text, etc")
 public class MediaType
 		extends LookupEntity<MediaType>
 {

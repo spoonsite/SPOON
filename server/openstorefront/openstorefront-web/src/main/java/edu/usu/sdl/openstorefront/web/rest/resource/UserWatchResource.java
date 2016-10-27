@@ -96,7 +96,7 @@ public class UserWatchResource
 	}
 
 	@PUT
-	@APIDescription("Activates a set watches")
+	@APIDescription("Activates a set of watches")
 	@RequireAdmin
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchResource.class)
@@ -120,7 +120,7 @@ public class UserWatchResource
 	}
 
 	@PUT
-	@APIDescription("Inactivates a set watches")
+	@APIDescription("Inactivates a set of watches")
 	@RequireAdmin
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchResource.class)

@@ -107,7 +107,7 @@ public class FeedbackResource
 
 	@GET
 	@RequireAdmin
-	@APIDescription("Gets an feedback ticket entity")
+	@APIDescription("Gets a feedback ticket entity")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FeedbackTicket.class)
 	@Path("/{feedbackId}")

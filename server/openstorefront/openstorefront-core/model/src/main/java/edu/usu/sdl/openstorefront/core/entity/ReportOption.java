@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Hold report options")
+@APIDescription("Holds report options")
 public class ReportOption
 		implements Serializable
 {

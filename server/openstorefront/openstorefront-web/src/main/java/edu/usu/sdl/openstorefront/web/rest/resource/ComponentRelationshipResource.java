@@ -34,7 +34,7 @@ import javax.ws.rs.core.Response;
  * @author dshurtleff
  */
 @Path("v1/resource/componentrelationship")
-@APIDescription("Provides access to relationships acrossed components")
+@APIDescription("Provides access to relationships across components")
 public class ComponentRelationshipResource
 	extends BaseResource
 {

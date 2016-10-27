@@ -46,13 +46,13 @@ public class TemporaryMedia
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Stored name filename")
+	@APIDescription("Stored filename")
 	private String fileName;
 
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Name of the file from the URL where the media was retrieved")
+	@APIDescription("Filename from the URL where the media was retrieved")
 	private String originalFileName;
 
 	@NotNull

@@ -44,7 +44,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("v1/resource/highlights")
-@APIDescription("Highlights are component articles and other items the admin want to display on the UI")
+@APIDescription("Highlights are component articles and other items the admin wants to display on the UI")
 public class HighlightResource
 		extends BaseResource
 {

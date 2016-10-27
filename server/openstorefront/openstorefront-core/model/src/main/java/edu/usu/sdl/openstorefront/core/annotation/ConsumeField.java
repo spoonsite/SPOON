@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@APIDescription("Defines input comes from user")
+@APIDescription("Defined input comes from user")
 public @interface ConsumeField
 {
 
