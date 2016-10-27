@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,36 +15,41 @@
  */
 package edu.usu.sdl.openstorefront.web.test.dataimport;
 
-import edu.usu.sdl.openstorefront.web.test.BaseDataImportTest;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
-import edu.usu.sdl.openstorefront.core.entity.DataSource;
-import edu.usu.sdl.openstorefront.core.entity.FileFormat;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import static edu.usu.sdl.openstorefront.core.entity.FileFormat.ATTRIBUTE_SVCV4;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
+import edu.usu.sdl.openstorefront.web.test.BaseDataImportTest;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author dshurtleff
+ * @author ccummings
  */
-public class ER2XMLTest
-		extends BaseDataImportTest
+public class SVCV4Test extends BaseDataImportTest
 {
-
 	private String fileHistoryId = null;
+	private String attrId = null;
+
+	@Override
+	public String getDescription()
+	{
+		return "SVCV4 Test";
+	}
 
 	@Override
 	protected void runInternalTest()
 	{
 		ImportContext importContext = new ImportContext();
-		importContext.setInput(FileSystemManager.getApplicationResourceFile("/data/test/assettest.xml"));
+		importContext.setInput(FileSystemManager.getApplicationResourceFile("/data/test/svcv-4_exportsample.csv"));
 
 		FileHistory fileHistory = new FileHistory();
-		fileHistory.setMimeType("application/xml");
-		fileHistory.setDataSource(DataSource.ER2);
-		fileHistory.setOriginalFilename("assettest.xml");
-		fileHistory.setFileFormat(FileFormat.COMPONENT_ER2);
+		fileHistory.setFileFormat(ATTRIBUTE_SVCV4);
+		fileHistory.setFilename("svcv-4_exportsample");
+		fileHistory.setOriginalFilename("svcv-4_exportsample.csv");
+		fileHistory.setMimeType("application/csv");
 		FileHistoryOption options = new FileHistoryOption();
 		options.setSkipRequiredAttributes(true);
 		fileHistory.setFileHistoryOption(options);
@@ -55,6 +60,17 @@ public class ER2XMLTest
 		waitForImport(fileHistoryId);
 		handleResults(fileHistoryId);
 
+		AttributeType type = new AttributeType();
+		type.setDescription("DI2E SvcV-4 Alignment");
+		type = type.find();
+
+		attrId = type.getAttributeType();
+
+		if (type.getAttributeType().equals("DI2E-SVCV4-A")) {
+			addResultsLines("Found SVCV4 Attribute");
+		} else {
+			addFailLines("Unable to find SVCV4 Attribute");
+		}
 	}
 
 	@Override
@@ -65,12 +81,9 @@ public class ER2XMLTest
 		if (StringUtils.isNotBlank(fileHistoryId)) {
 			service.getImportService().rollback(fileHistoryId);
 		}
-	}
-
-	@Override
-	public String getDescription()
-	{
-		return "ER2XML Test";
+		if (StringUtils.isNotBlank(attrId)) {
+			service.getAttributeService().cascadeDeleteAttributeType(attrId);
+		}
 	}
 
 }
