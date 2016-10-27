@@ -511,7 +511,7 @@
 					],
 					tpl: '<h1>Question</h1>'+ 
 						 '(<b>{evaluationSectionDescription}</b>)<br>' + 						 
-						 '{question}' + 
+						 '<h3>{question}</h3>' + 
 						 '<tpl if="objective"><h2>Objective</h2>'+ 
 						 '{objective}' + 
 						 '</tpl>' +

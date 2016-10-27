@@ -50,9 +50,8 @@ public class Evaluation
 	@FK(value = UserProfile.class, referencedField = "username")
 	private String assignedUser;
 
-	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String assignedGroup;
 
 	@NotNull

@@ -808,6 +808,29 @@ ul.stat-list-group-item, ol.stat-list-group-item {
   border-width: 0px;
 }
 
+.evaluation-nav-button
+{
+	background: steelblue;
+}
+
+.evaluation-nav-button-over
+{
+	background: #559edc;
+}
+
+.eval-form-field
+{
+	font-size: 2em;
+	border-radius: 4px 4px 4px 4px;
+	color: rgba(0, 0, 0, .7);
+}
+
+.eval-form-field-label
+{
+	font-size: 2em;
+	padding-top: 10px;
+}
+
 /**
 UI: Button Overrides for specfic buttons
 to use set the ui: danger

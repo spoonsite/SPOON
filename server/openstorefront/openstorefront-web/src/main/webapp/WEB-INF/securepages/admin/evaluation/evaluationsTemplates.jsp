@@ -146,7 +146,8 @@
 										title: 'Section Pool',
 										id: 'sectionPool',
 										width: '50%',
-										margin: '0 5 0 0',	
+										margin: '0 5 0 0',
+										columnLines: true,
 										store: {
 											autoLoad: false,
 											sorters: [
@@ -185,6 +186,7 @@
 										id: 'sectionsInTemplate',
 										title: 'Sections In Template',
 										width: '50%',
+										columnLines: true,
 										store: {											
 										},
 										viewConfig: {

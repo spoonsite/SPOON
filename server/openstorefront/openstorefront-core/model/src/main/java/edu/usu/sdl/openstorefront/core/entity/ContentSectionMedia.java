@@ -64,6 +64,10 @@ public class ContentSectionMedia
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String mimeType;
 
+	@NotNull
+	@ConsumeField
+	private Boolean privateMedia;
+
 	public ContentSectionMedia()
 	{
 	}
@@ -80,7 +84,7 @@ public class ContentSectionMedia
 		setMediaTypeCode(contentSectionMedia.getMediaTypeCode());
 		setMimeType(contentSectionMedia.getMimeType());
 		setOriginalName(contentSectionMedia.getOriginalName());
-
+		setPrivateMedia(contentSectionMedia.getPrivateMedia());
 	}
 
 	/**
@@ -157,6 +161,16 @@ public class ContentSectionMedia
 	public void setMimeType(String mimeType)
 	{
 		this.mimeType = mimeType;
+	}
+
+	public Boolean getPrivateMedia()
+	{
+		return privateMedia;
+	}
+
+	public void setPrivateMedia(Boolean privateMedia)
+	{
+		this.privateMedia = privateMedia;
 	}
 
 }
