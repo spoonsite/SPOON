@@ -818,6 +818,11 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	background: #559edc;
 }
 
+.eval-form-title 
+{
+	background: rgba(0, 0, 0, .5) !important;
+}
+
 .eval-form-field
 {
 	font-size: 2em;

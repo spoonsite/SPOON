@@ -18,6 +18,19 @@
 Ext.define('OSF.component.EvaluationPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.widget.EvaluationPanel',
+	requires: [
+		'OSF.form.EvaluationInfo',
+		'OSF.form.Attributes',
+		'OSF.form.Relationships',
+		'OSF.form.Contacts',
+		'OSF.form.Resources',
+		'OSF.form.Media',
+		'OSF.form.Dependencies',
+		'OSF.form.Metadata',
+		'OSF.form.EntrySummary',
+		'OSF.form.ChecklistSummary'
+	],
+	
 	layout: 'border',
 	initComponent: function () {
 		this.callParent();
@@ -26,6 +39,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 		
 		evalPanel.navigation = Ext.create('Ext.panel.Panel', {
 			title: 'Navigation',
+			iconCls: 'fa fa-navicon',
 			region: 'west',
 			collapsible: true,
 			animCollapse: false,
@@ -121,7 +135,10 @@ Ext.define('OSF.component.EvaluationPanel', {
 						{							
 							text: 'Summary',							
 							handler: function(){
-								
+								evalPanel.loadContentForm({
+									form: 'ChecklistSummary',
+									title: 'Checklist Summary'
+								});
 							}							
 						}
 					]
@@ -149,8 +166,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 				{
 					xtype: 'toolbar',
 					dock: 'top',
-					itemId: 'tools',
-					style: 'background: rgba(0, 0, 0, .5) !important;',
+					itemId: 'tools',					
+					cls: 'eval-form-title',
 					items: [
 						{
 							xtype: 'tbfill'
@@ -162,23 +179,35 @@ Ext.define('OSF.component.EvaluationPanel', {
 						},
 						{
 							xtype: 'tbfill'
-						},
-						{
-							text: 'Comment',
-							iconCls: 'fa fa-2x fa-comment',
-							scale: 'medium',
-							handler: function(){
-								
-							}
 						}
 					]
 				}
 			]			
 		});
 		
+		evalPanel.commentPanel = Ext.create('Ext.panel.Panel', {
+			title: 'Comments',
+			iconCls: 'fa fa-comment',
+			region: 'east',
+			collapsed: true,
+			collapsible: true,
+			animCollapse: false,
+			width: 250,
+			minWidth: 250,
+			split: true,
+			scrollable: true,
+			bodyStyle: 'background: white;'
+			
+		});
+		
 		evalPanel.add(evalPanel.navigation);
 		evalPanel.add(evalPanel.contentPanel);
+		evalPanel.add(evalPanel.commentPanel);
 		evalPanel.loadEval(evalPanel.evalutationId);
+		evalPanel.loadContentForm({
+			form: 'EvaluationInfo',
+			title: 'Evaluation Info'
+		});
 		
 	},
 	loadEval: function(evalutationId){
@@ -202,7 +231,10 @@ Ext.define('OSF.component.EvaluationPanel', {
 					menuItems.push({						
 						text: 'Attributes',							
 						handler: function(){
-
+							evalPanel.loadContentForm({
+								form: 'Attributes',
+								title: 'Entry Attributes'
+							});
 						}
 					});
 				}
@@ -210,7 +242,10 @@ Ext.define('OSF.component.EvaluationPanel', {
 					menuItems.push({						
 						text: 'Relationships',							
 						handler: function(){
-
+							evalPanel.loadContentForm({
+								form: 'Relationships',
+								title: 'Entry Relationships'
+							});
 						}
 					});					
 				}
@@ -240,15 +275,21 @@ Ext.define('OSF.component.EvaluationPanel', {
 					menuItems.push({						
 						text: 'Media',							
 						handler: function(){
-
+							evalPanel.loadContentForm({
+								form: 'Media',
+								title: 'Entry Media'
+							});
 						}
 					});						
 				}
 				if (entryType.dataEntryDependencies){
 					menuItems.push({						
-						text: 'Dependancies',							
+						text: 'Dependencies',							
 						handler: function(){
-
+							evalPanel.loadContentForm({
+								form: 'Dependencies',
+								title: 'Entry Dependencies'
+							});
 						}
 					});					
 				}				
@@ -256,7 +297,10 @@ Ext.define('OSF.component.EvaluationPanel', {
 					menuItems.push({						
 						text: 'Metadata',							
 						handler: function(){
-
+							evalPanel.loadContentForm({
+								form: 'Metadata',
+								title: 'Entry Metadata'
+							});
 						}
 					});						
 				}		
@@ -292,8 +336,8 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 	alias: 'osf.widget.EvaluationFormWindow',
 	title: 'Evaluation Form',
 	iconCls: 'fa fa-clipboard',
-	width: '75%',
-	height: '75%',
+	width: '85%',
+	height: '85%',
 	modal: true,
 	maximizable: true,
 	layout: 'fit',

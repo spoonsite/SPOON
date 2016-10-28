@@ -13,5 +13,206 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global Ext, CoreUtil */
+
+Ext.define('OSF.form.Relationships', {
+	extend: 'Ext.panel.Panel',
+	alias: 'osf.form.Relationships',
+
+	layout: 'fit',
+	initComponent: function () {		
+		this.callParent();
+		
+		var relationshipPanel = this;
+		
+		var relationshipsGrid = Ext.create('Ext.grid.Panel', {
+			columnLines: true,
+			store: Ext.create('Ext.data.Store', {
+				fields: [
+					"relationshipId",
+					"ownerComponentId",
+					"ownerComponentName",
+					"ownerApproved",
+					"targetComponentId",
+					"targetComponentName",
+					"targetApproved",
+					"relationshipType",
+					"relationshipTypeDescription",
+					{
+						name: 'updateDts',
+						type:	'date',
+						dateFormat: 'c'
+					}
+				],
+				autoLoad: false,
+				proxy: {
+					type: 'ajax'							
+				}
+			}),					
+			columns: [
+				{ text: 'Relationship Owner', dataIndex: 'ownerComponentName',  width: 200 },
+				{ text: 'Owner Approved', dataIndex: 'ownerApproved',  width: 150 },
+				{ text: 'Type',  dataIndex: 'relationshipTypeDescription', width: 200 },
+				{ text: 'Target',  dataIndex: 'targetComponentName', flex: 1, minWidth: 200 },						
+				{ text: 'Target Approved',  dataIndex: 'targetApproved', width: 150 },		
+				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+			],
+			listeners: {
+				selectionchange: function(grid, record, index, opts){
+					var fullgrid = Ext.getCmp('relationshipsGrid');
+					if (fullgrid.getSelectionModel().getCount() === 1) {								
+						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
+					} else {								
+						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
+					}
+				}						
+			},
+			dockedItems: [
+				{
+					xtype: 'form',
+					title: 'Add/Edit Relationship',
+					collapsible: true,
+					titleCollapse: true,
+					border: true,
+					layout: 'vbox',
+					bodyStyle: 'padding: 10px;',
+					margin: '0 0 5 0', 
+					defaults: {
+						labelAlign: 'right',
+						labelWidth: 200,
+						width: '100%'
+					},
+					buttonAlign: 'center',
+					buttons: [
+						{
+							xtype: 'button',
+							text: 'Save',
+							formBind: true,
+							margin: '0 20 0 0',
+							iconCls: 'fa fa-save',
+							handler: function(){	
+								var form = this.up('form');
+								var data = form.getValues();
+								var componentId = Ext.getCmp('relationshipsGrid').componentRecord.get('componentId');
+
+								var method = 'POST';
+								var update = '';
+								if (componentId === data.relatedComponentId) {
+									Ext.Msg.alert('Relationship Not Allowed', 'Relationships from an entry to itself are not allowed.');
+									return;
+								}
+
+								CoreUtil.submitForm({
+									url: 'api/v1/resource/components/' + componentId + '/relationships' + update,
+									method: method,
+									data: data,
+									form: form,
+									success: function(){
+										Ext.getCmp('relationshipsGrid').getStore().reload();
+										form.reset();
+									}
+								});
+							}
+						},
+						{
+							xtype: 'button',
+							text: 'Cancel',										
+							iconCls: 'fa fa-close',
+							handler: function(){
+								this.up('form').reset();
+							}									
+						}								
+					],
+					items: [								
+						Ext.create('OSF.component.StandardComboBox', {
+							name: 'relationshipType',									
+							allowBlank: false,
+							editable: false,
+							typeAhead: false,
+							margin: '0 0 5 0',
+							width: '100%',
+							fieldLabel: 'Relationship Type <span class="field-required" />',
+							storeConfig: {
+								url: 'api/v1/resource/lookuptypes/RelationshipType'
+							}
+						}),
+						Ext.create('OSF.component.StandardComboBox', {
+							name: 'componentType',									
+							allowBlank: true,
+							editable: false,
+							typeAhead: false,
+							emptyText: 'All',
+							margin: '0 0 5 0',
+							width: '100%',
+							fieldLabel: 'Entry Type',
+							storeConfig: {
+								url: 'api/v1/resource/componenttypes/lookup',
+								addRecords: [
+									{
+										code: null,
+										description: 'All'
+									} 
+								]
+							},
+							listeners: {
+								change: function(cb, newValue, oldValue) {
+									var componentType = '';
+									if (newValue) {
+										componentType = '&componentType=' + newValue;
+									}
+									Ext.getCmp('relationshipTargetCB').reset();
+									Ext.getCmp('relationshipTargetCB').getStore().load({
+										url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType	
+									});
+								}
+							}
+						}),								
+						Ext.create('OSF.component.StandardComboBox', {
+							id: 'relationshipTargetCB',
+							name: 'relatedComponentId',									
+							allowBlank: false,									
+							margin: '0 0 0 0',
+							width: '100%',
+							fieldLabel: 'Target Entry <span class="field-required" />',
+							forceSelection: false,
+							storeConfig: {
+								url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL',
+								autoLoad: false
+							}
+						})				
+					]
+				},						
+				{
+					xtype: 'toolbar',
+					items: [						
+						{
+							text: 'Refresh',
+							iconCls: 'fa fa-refresh',
+							handler: function(){
+								this.up('grid').getStore().reload();
+							}
+						},								
+						{
+							xtype: 'tbfill'
+						},
+						{
+							text: 'Remove',
+							itemId: 'removeBtn',
+							iconCls: 'fa fa-trash',								
+							disabled: true,
+							handler: function(){
+								actionSubComponentToggleStatus(Ext.getCmp('relationshipsGrid'), 'relationshipId', 'relationships');
+							}
+						}
+					]
+				}
+			]																
+		});
+		
+		
+		relationshipPanel.add(relationshipsGrid);
+	}
+	
+});
 
 
