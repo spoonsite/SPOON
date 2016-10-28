@@ -288,7 +288,6 @@
 						labelWidth: new Ext.util.TextMetrics().getWidth("Value:"),
 						width: '100%',
 						transform: 'select_' + componentData.component.name.replace(/ /g, '_'),
-//										inputId: 'combobox_' + storeData.items[i].get('name').replace(/ /g, '_'),
 						listeners: {
 
 							change: {
@@ -325,9 +324,9 @@
 											value: newValue
 										};
 									}
-
+									
 									// Check For Metadata ID
-									if (componentData.component.metadata.id != null && componentData.component.metadata.id != "") {
+									if (componentData.component.metadata.id !== null && componentData.component.metadata.id !== "") {
 
 										// Add Metadata ID To Request Data
 										requestData.metadataId = componentData.component.metadata.id;
@@ -347,19 +346,52 @@
 											// Update Label Name
 											labelData.name = responseObject.label;
 
-											// Update Label ID
-											componentData.component.metadata = {
+											// Store New Metadata
+											var metadata = {
 
 												id: responseObject.metadataId,
 												value: responseObject.value
 											};
+											
+											// Loop Through Label Components
+											for (i = 0; i < labelData.components.length; i++) {
 
-											// Check For Metadata ID
-											if (componentData.component.metadata.id == null || componentData.component.metadata.id == "") {
+												// Check If Label Already Has Component
+												if (labelData.components[i].id === componentData.component.id) {
 
-												// Add Component To Label
-												labelData.components.push(componentData.component);
+													// Indicate Component Found
+													var componentFound = true;
+
+													// Add Metadata To Component
+													labelData.components[i].metadata.push(metadata);
+												}
 											}
+
+											// Check If Component Is New Component
+											if (!componentFound) {
+												
+												// Initialize New Component Data
+												var newComponentData = {
+													
+													id: componentData.component.id,
+													name: componentData.component.name,
+													type: {
+														
+														code: componentData.component.type.code,
+														name: componentData.component.type.name
+													},
+													metadata: [
+														
+														metadata
+													]
+												};
+
+												// Add New Component To Label
+												labelData.components.push(newComponentData);
+											}
+											
+											// Push Metadata Onto Component
+											componentData.component.metadata = metadata;
 
 											// Update Component Data
 											component.set(componentData);
@@ -485,13 +517,34 @@
 				///////////////
 				
 				Ext.override(Ext.view.DragZone, {
+					
 				    getDragText: function() {
+					
 				        if (this.dragTextField) {
-				            var fieldValue = this.dragData.records[0].get(this.dragTextField);
+					
+							// Check For Dot In Text Field
+							if (this.dragTextField.indexOf('.') !== -1) {
+								
+								// Get Text Field Split
+								var dragTextFieldSplit = this.dragTextField.split('.')
+								
+								// Get Parent (Permits Only A Single Parent)
+								var fieldParent = this.dragData.records[0].get(dragTextFieldSplit[0]);
+								
+								// Set Field Value
+								var fieldValue = fieldParent[dragTextFieldSplit[1]];
+							}
+							else {
+							
+								var fieldValue = this.dragData.records[0].get(this.dragTextField);
+							}
+							
 				            return Ext.String.format(this.dragText, fieldValue);
-				        } else {
+				        }
+						else {
+							
 				            var count = this.dragData.records.length;
-				            return Ext.String.format(this.dragText, count, count == 1 ? '' : 's');
+				            return Ext.String.format(this.dragText, count, count === 1 ? '' : 's');
 				        }
 				    }
 				});
@@ -586,7 +639,7 @@
 							fn: function(grid, records, eOpts) {
 
 								// Ensure Record(s) Were Sent
-								if (!records || records.length == 0) {
+								if (!records || records.length === 0) {
 
 									// Exit Function
 									return false;
@@ -662,9 +715,6 @@
 												// Add Component To Array
 												components.push(component);
 												
-												// Remove Component From Component Grid
-												//store_components_local.remove(store_components_local.createModel(component));
-												
 												// Create Function To Check Existing Values
 												var checkValue = function (value) {
 													
@@ -717,7 +767,7 @@
 									var currentComponent = currentComponents.items[i].data;
 
 									// Ensure Current Component Is Not Empty Placeholder
-									if (currentComponent.component.id != "EMPTY") {
+									if (currentComponent.component.id !== "EMPTY") {
 
 										// Add Component Back To Component Store
 										store_components_local.addSorted(store_components_local.createModel(currentComponent));
@@ -761,13 +811,10 @@
 											
 											// Loop Through Selected Labels
 											for (i = 0; i < selectedLabels.length; i++) {
-												
-												// Refresh Grid
-												labelGrid.getView().refresh();
 
 												// Store Label Model
 												var labelModel = selectedLabels[i];
-
+												
 												// Query New Data Set
 												var newLabelQueryResults = store_labels_local.query('name', labelModel.data.name, false, true, true);
 
@@ -831,7 +878,7 @@
 												store.filterBy(function(record) {
 
 													// Return Whether Search String Was Found
-													return record.get('name').search(new RegExp(newValue, 'i')) != -1;
+													return record.get('name').search(new RegExp(newValue, 'i')) !== -1;
 												});
 											}
 										}
@@ -857,17 +904,19 @@
 							enableDrag: true,
 							enableDrop: true,
 							dragText: 'Add: {0}',
-							dragTextField: 'name'
+							dragTextField: 'component.name'
 						},
+						copy: true,
 						listeners: {
 							
 							beforeDrop: function (node, data, overModel, dropPosition, dropHandlers, eOpts) {
 							
 								// Store Component Data
-								var component = data.records[0].getData();
+								var component = data.records[0];
+								var componentData = component.getData();
 								
 								// Ensure Selected Label Has Components
-								if (component.id == "EMPTY") {
+								if (componentData.component.id === "EMPTY") {
 
 									// Provide An Error Message
 									Ext.toast("That is not a valid Entry. Please select a Label with Entries first.", '', 'tr');
@@ -878,100 +927,160 @@
 							},
 
 							drop: function (node, data, overModel, dropPosition, eOpts) {
+								
+								// Loop Over Dropped Records
+								for (i = 0; i < data.records.length; i++) {
 
-								// Store Component Data
-								var component = data.records[0];
-								var componentData = component.getData();
-								
-								// Ensure Metadata Is Set
-								if (componentData.component.metadata.id !== null) {
-								
+									// Store Component Data
+									var component = data.records[i];
+									var componentData = component.getData();
+
 									// Store Selected Label
 									var label = labelGrid.getSelection()[0];
 									var labelData = label.getData();
 
-									// Make Label API Request
-									Ext.Ajax.request({
+									// Ensure Metadata Is Set
+									if (componentData.component.metadata.id !== null) {
 
-										url: 'api/v1/resource/components/' + componentData.component.id + '/metadata/' + componentData.component.metadata.id,
-										method: 'DELETE',
-										success: function (response, opts) {
+										// Make Label API Request
+										Ext.Ajax.request({
 
-											// Define New Component Array
-											var components = [];
+											url: 'api/v1/resource/components/' + componentData.component.id + '/metadata/' + componentData.component.metadata.id,
+											method: 'DELETE',
+											success: function (response, opts) {
 
-											// Check If There Will Be Remaining Components
-											if ((labelData.components.length - 1) > 0) {
+												// Define New Component Array
+												var components = [];
 
 												// Loop Through Existing Components
-												for (i = 0; i < labelData.components.length; i++) {
+												for (j = 0; j < labelData.components.length; j++) {
 
 													// Ensure Current Component Is Not The Component To Delete
-													if (labelData.components[i].id != componentData.component.id) {
+													if (labelData.components[j].id !== componentData.component.id) {
 
 														// Store Remaining Component
-														components.push(labelData.components[i]);
+														components.push(labelData.components[j]);
 													}
 													else {
-														
-														// Initialize Temporary Component
-														var tempComponent = labelData.components[i];
-														
-														// Initialize Metadata
-														tempComponent.metadata = [];
-														
+
+														// Initialize Temporary Metadata
+														var metadata = [];
+
 														// Loop Through Component Data
-														for (j = 0; j < labelData.components[i].metadata.length; j++) {
-															
+														for (k = 0; k < labelData.components[j].metadata.length; k++) {
+
 															// Ensure Current Metadata Is Not The Metadata To Delete
-															if (labelData.components[i].metadata[k].id != componentData.component.metadata.id) {
+															if (labelData.components[j].metadata[k].id !== componentData.component.metadata.id) {
 
 																// Store Remaining Metadata
-																tempComponent.metadata.push(labelData.components[i].metadata[k]);
+																metadata.push(labelData.components[j].metadata[k]);
 															}
 														}
-														
+
 														// Ensure There Is Metadata Remaining
-														if (tempComponent.metadata.length > 0) {
-															
+														if (metadata.length > 0) {
+
+															// Push Metadata Onto Component
+															labelData.components[j].metadata = metadata;
+
 															// Store Temporary Component
-															components.push(tempComponent);
+															components.push(labelData.components[j]);
 														}
 													}
 												}
 
-												// Reassign Label Components
-												labelData.components = components;
+												// Check If There Are Remaining Components
+												if (components.length > 0) {
 
-												// Update Component
-												component.set(componentData);
-												
-												// 
+													// Reassign Label Components
+													labelData.components = components;
 
-												// Update Label Data
-												label.set(labelData);
+													// Update Component
+													component.set(componentData);
 
-												// Reload Label Store
-												labelGrid.getView().refresh();
+													// Update Label Data
+													label.set(labelData);
+
+													// Reload Label Grid
+													labelGrid.getView().refresh();
+												}
+												else {
+
+													// Remove Entire Label
+													store_labels_local.remove(label);
+												}
+											},
+											failure: function (response, opts) {
+
+												// Add Component Back To Label Associated Components Store
+												store_labelComponents_local.addSorted(store_labelComponents_local.createModel(componentData));
+
+												// Provide An Error Message
+												Ext.toast("An error occurred removing the Metadata Association", '', 'tr');
 											}
-											else {
+										});
+									}
+									else {
 
-												// Remove Label From Store
-												store_labels_local.remove(label);
+										// Check For "New" Label
+										if (labelData.isNew) {
+
+											// Check If Other Unsaved Components Are Still In The Store
+											if (store_labelComponents_local.count() === 0) {
+
+												// Build "Empty" Component
+												var emptyComponent = {
+
+													component: {
+
+														id: "EMPTY",
+														name: "No Associated Entries",
+														type: ""
+													}
+												};
+
+												// Add "Empty" Component To Store
+												store_labelComponents_local.addSorted(store_labelComponents_local.createModel(emptyComponent));
 											}
-										},
-										failure: function (response, opts) {
-
-											// Remove Component From Components Store
-											store_components_local.remove(component);
-
-											// Add Component Back To Label Associated Components Store
-											store_labelComponents_local.addSorted(store_labelComponents_local.createModel(componentData));
-
-											// Provide An Error Message
-											Ext.toast("An error occurred removing the Metadata Association", '', 'tr');
 										}
+									}
+
+									// Remove Component From Component Store
+									// (Results In Duplicates If Left In - Different ExtJS IDs)
+									store_components_local.remove(component);
+
+									// Search For Actual Component
+									var matchedComponents = store_components_local.queryBy(function (record, id) {
+
+										// Store Record Component
+										var recordComponent = record.get('component');
+
+										// See If Record Matches
+										return recordComponent.id === componentData.component.id;
 									});
+
+									// Loop Over Matched Components
+									// (Should Only Be One)
+									for (i = 0; i < matchedComponents.items.length; i++) {
+
+										// Store New Label Model
+										var matchedComponent = matchedComponents.items[i];
+
+										// Store Selection Model
+										var selectionModel = componentGrid.getSelectionModel();
+
+										// Deselect Any Previous Selection
+										selectionModel.deselectAll();
+
+										// Select Label
+										selectionModel.select([matchedComponent], false, true);
+
+										// Send Focus Temporarily Elsewhere
+										labelGrid.focus();
+
+										// Focus On Label
+										componentGrid.getView().focusRow(matchedComponent);
+									}
 								}
 							}
 						}
@@ -1053,7 +1162,7 @@
 												var filterFunction = filters.items[i].getFilterFn().toString();
 												
 												// Check If Current Filter Contains A String Which Itentifies This Filter
-												if (filterFunction.search(/FILTER_BY_TYPE_CODE/) != -1) {
+												if (filterFunction.search(/FILTER_BY_TYPE_CODE/) !== -1) {
 
 													// Remove Previous Filter
 													store_components_local.removeFilter(filters.items[i]);
@@ -1103,7 +1212,7 @@
 												for (i = 0; i < filters.length; i++) {
 
 													// Check If Current Filter Contains A String Which Itentifies This Filter
-													if (filters.items[i].getFilterFn().toString().search(/FILTER_BY_NAME/) != -1) {
+													if (filters.items[i].getFilterFn().toString().search(/FILTER_BY_NAME/) !== -1) {
 
 														// Remove Previous Filter
 														store.removeFilter(filters.items[i]);
@@ -1117,7 +1226,7 @@
 													var filterName = "FILTER_BY_NAME";
 
 													// Return Whether Search String Was Found
-													return record.get('component').name.search(new RegExp(newValue, 'i')) != -1;
+													return record.get('component').name.search(new RegExp(newValue, 'i')) !== -1;
 												});
 											}
 										}
@@ -1152,7 +1261,7 @@
 							beforeDrop: function (node, data, overModel, dropPosition, dropHandlers, eOpts) {
 								
 								// Ensure A Label Is Selected
-								if (labelGrid.getSelection().length == 0) {
+								if (labelGrid.getSelection().length === 0) {
 
 									// Provide An Error Message
 									Ext.toast("Please select a Label first", '', 'tr');
@@ -1160,15 +1269,108 @@
 									// Halt Drop Operation
 									return false;
 								}
-							},
-							
-							drop: function (node, data, overModel, dropPosition, eOpts) {
 								
 								// Loop Over Dropped Records
 								for (i = 0; i < data.records.length; i++) {
 									
-									// Return Record Back To Component Grid
-									store_components_local.addSorted(data.records[i]);
+									// Initialize New Component Data Object
+									var componentData = {
+										
+										component: {
+											
+											id: data.records[i].data.component.id,
+											name: data.records[i].data.component.name,
+											type: {
+												
+												code: data.records[i].data.component.type.code,
+												name: data.records[i].data.component.type.name
+											}
+										}
+									};
+									
+									// Overwrite Dropped Component's Data
+									data.records[i].set(componentData);
+								}
+							},
+							
+							drop: function (node, data, overModel, dropPosition, eOpts) {
+								
+								// Search For "Empty" Component
+								var emptyComponents = store_labelComponents_local.queryBy(function (record, id) {
+
+									// Store Record Component
+									var recordComponent = record.get('component');
+
+									// See If Record Matches
+									return recordComponent.id === "EMPTY";
+								});
+								
+								// Loop Through "Empty" Components
+								for (i = 0; i < emptyComponents.items.length; i++) {
+									
+									// Remove "Empty" Component
+									store_labelComponents_local.remove(emptyComponents.items[i]);
+								}
+								
+								// Loop Over Dropped Records
+								for (i = 0; i < data.records.length; i++) {
+									
+									// Search For Actual Component In Component Grid
+									var matchedComponents = store_components_local.queryBy(function (record, id) {
+
+										// Store Record Component
+										var recordComponent = record.get('component');
+
+										// See If Record Matches
+										return recordComponent.id === data.records[i].getData().component.id;
+									});
+
+									// Loop Over Matched Components
+									// (Should Only Be One)
+									for (j = 0; j < matchedComponents.items.length; j++) {
+
+										// Store New Label Model
+										var componentModel = matchedComponents.items[j];
+
+										// Store Selection Model
+										var selectionModel = componentGrid.getSelectionModel();
+										
+										// Deselect Any Previous Selection
+										selectionModel.deselectAll();
+
+										// Select Label
+										selectionModel.select([componentModel], false, true);
+
+										// Send Focus Temporarily Elsewhere
+										labelAssociationGrid.focus();
+
+										// Focus On Label
+										componentGrid.getView().focusRow(componentModel);
+									}
+									
+									// Remove Newly Dragged-In Component
+									store_labelComponents_local.remove(data.records[i]);
+									
+									// Copy Component
+									var copiedComponent = data.records[i].copy(null);
+									
+									// Add A New Copy Of The Component
+									store_labelComponents_local.addSorted(copiedComponent);
+									
+									// Store Selection Model
+									var selectionModel = labelAssociationGrid.getSelectionModel();
+									
+									// Deselect Any Previous Selection
+									selectionModel.deselectAll();
+
+									// Select Label
+									selectionModel.select([copiedComponent], false, true);
+									
+									// Send Focus Temporarily Elsewhere
+									componentGrid.focus();
+
+									// Focus On Label
+									labelAssociationGrid.getView().focusRow(copiedComponent);
 								}
 							}
 						}
@@ -1197,10 +1399,14 @@
 									html += '<span style="float: left;">' + component.type.name + '</span>';
 								}
 								
-								// Add Spot For ComboBox
-								html += '<div style="float: left; margin: 1em 0;">';
-								html += '<select id=select_' + component.name.replace(/ /g, "_") + '></select>';
-								html += '</div>';
+								// When Is A Component Not A Component
+								if (component.id !== "EMPTY") {
+								
+									// Add Spot For ComboBox
+									html += '<div style="float: left; margin: 1em 0;">';
+									html += '<select id=select_' + component.name.replace(/ /g, "_") + '></select>';
+									html += '</div>';
+								}
 								
 								// Close HTML
 								html += "</div>";
