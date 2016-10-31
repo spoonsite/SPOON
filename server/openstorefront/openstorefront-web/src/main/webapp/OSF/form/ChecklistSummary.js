@@ -68,7 +68,10 @@ Ext.define('OSF.form.ChecklistSummary', {
 					]
 				}
 			],
-			tpl: new Ext.XTemplate(				
+			tpl: new Ext.XTemplate(
+				'<table>',
+				'	<th>Type</th><th>Recommedation</th><th>Reason</th>',					
+				'</table>'
 			)			
 		});
 		summaryForm.add(topPanel);

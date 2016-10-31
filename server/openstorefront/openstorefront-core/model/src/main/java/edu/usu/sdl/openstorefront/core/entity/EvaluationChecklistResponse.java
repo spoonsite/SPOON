@@ -49,7 +49,7 @@ public class EvaluationChecklistResponse
 	private String questionId;
 
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
 	@Sanitize(HTMLSanitizer.class)
 	private String response;
 
@@ -57,7 +57,7 @@ public class EvaluationChecklistResponse
 	private BigDecimal score;
 
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
 	@Sanitize(HTMLSanitizer.class)
 	private String privateNote;
 

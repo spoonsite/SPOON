@@ -28,7 +28,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 		'OSF.form.Dependencies',
 		'OSF.form.Metadata',
 		'OSF.form.EntrySummary',
-		'OSF.form.ChecklistSummary'
+		'OSF.form.ChecklistSummary',
+		'OSF.form.ChecklistQuestion'
 	],
 	
 	layout: 'border',
@@ -140,7 +141,16 @@ Ext.define('OSF.component.EvaluationPanel', {
 									title: 'Checklist Summary'
 								});
 							}							
-						}
+						},
+						{							
+							text: '100',							
+							handler: function(){
+								evalPanel.loadContentForm({
+									form: 'ChecklistQuestion',
+									title: 'Checklist Question'
+								});
+							}							
+						}						
 					]
 				},
 				{

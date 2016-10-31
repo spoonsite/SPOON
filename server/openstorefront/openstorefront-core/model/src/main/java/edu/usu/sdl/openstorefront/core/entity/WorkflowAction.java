@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,24 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package edu.usu.sdl.openstorefront.core.entity;
 
-/* global Ext */
+/**
+ *
+ * @author dshurtleff
+ */
+public class WorkflowAction
+{
 
-Ext.define('OSF.form.Section', {
-	extend: 'Ext.form.Panel',
-	alias: 'osf.form.Section',
-
-	layout: 'fit',	
-	initComponent: function () {		
-		this.callParent();
-		
-		var sectionForm = this;
-		
-		
-		
-	
-		
-		sectionForm.add();
-	}
-	
-});
+}
