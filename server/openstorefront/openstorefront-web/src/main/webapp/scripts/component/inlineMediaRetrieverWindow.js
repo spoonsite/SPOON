@@ -156,14 +156,14 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			}
 		};
 
-		var escapeRegExp = function escapeRegExp(string) {
-			return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-		};
-
 		var replaceLinks = function replaceLinks(originalUrl, temporaryId) {
 			var replacement = "/openstorefront/Media.action?TemporaryMedia&name=" + temporaryId;
 			var content = editor.getContent();
-			content = content.replace(new RegExp(escapeRegExp(originalUrl),'g'), replacement);
+			// Because TinyMCE sends back HTML encoded entities, we need to decode to replace.
+			var temp = document.createElement('textarea');
+			temp.innerHTML = content;
+			content = temp.value;
+			content = content.split(originalUrl).join(replacement); //replacement without regex
 			Ext.getCmp('inlineMediaWindow').programmaticUpdate = true;
 			editor.setContent(content);
 			Ext.getCmp('inlineMediaWindow').programmaticUpdate = false;
