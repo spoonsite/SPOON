@@ -156,10 +156,14 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			}
 		};
 
+		var escapeRegExp = function escapeRegExp(string) {
+			return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		};
+
 		var replaceLinks = function replaceLinks(originalUrl, temporaryId) {
 			var replacement = "/openstorefront/Media.action?TemporaryMedia&name=" + temporaryId;
 			var content = editor.getContent();
-			content = content.replace(new RegExp(originalUrl,'g'), replacement);
+			content = content.replace(new RegExp(escapeRegExp(originalUrl),'g'), replacement);
 			Ext.getCmp('inlineMediaWindow').programmaticUpdate = true;
 			editor.setContent(content);
 			Ext.getCmp('inlineMediaWindow').programmaticUpdate = false;
