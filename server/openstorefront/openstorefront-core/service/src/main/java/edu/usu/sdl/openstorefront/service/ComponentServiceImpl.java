@@ -337,6 +337,12 @@ public class ComponentServiceImpl
 	{
 		return sub.getTagCloud();
 	}
+        
+        @Override
+	public List<ComponentMetadata> getMetadata()
+	{
+		return sub.getMetadata();
+	}
 
 	@Override
 	public List<ComponentReviewView> getReviewByUser(String username)

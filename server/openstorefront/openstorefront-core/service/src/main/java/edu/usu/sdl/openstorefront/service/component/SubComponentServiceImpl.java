@@ -680,6 +680,12 @@ public class SubComponentServiceImpl
 		String query = "select * from ComponentTag where activeStatus='A' GROUP BY text";
 		return persistenceService.query(query, null);
 	}
+        
+        public List<ComponentMetadata> getMetadata()
+	{
+		String query = "SELECT * FROM ComponentMetadata LET $component = (SELECT name, activeStatus, approvalState FROM Component WHERE componentId = $parent.current.componentId LIMIT 1) WHERE activeStatus = 'A' AND $component[0].activeStatus = 'A' AND $component[0].approvalState = 'A' ORDER BY label ASC, componentId ASC";
+		return persistenceService.query(query, null);
+	}
 
 	public List<ComponentReviewView> getReviewByUser(String username)
 	{

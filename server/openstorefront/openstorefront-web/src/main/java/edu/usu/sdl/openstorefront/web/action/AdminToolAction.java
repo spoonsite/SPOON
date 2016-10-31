@@ -46,6 +46,7 @@ public class AdminToolAction
 		pageMap.put("Imports", "/WEB-INF/securepages/admin/data/imports.jsp");
 		pageMap.put("Lookups", "/WEB-INF/securepages/admin/data/lookup.jsp");
 		pageMap.put("Media", "/WEB-INF/securepages/admin/data/media.jsp");
+		pageMap.put("Metadata", "/WEB-INF/securepages/admin/data/metadata.jsp");
 		pageMap.put("Organizations", "/WEB-INF/securepages/admin/data/organizations.jsp");
 		pageMap.put("Questions", "/WEB-INF/securepages/admin/data/user-data/questions.jsp");
 		pageMap.put("Reviews", "/WEB-INF/securepages/admin/data/user-data/reviews.jsp");
