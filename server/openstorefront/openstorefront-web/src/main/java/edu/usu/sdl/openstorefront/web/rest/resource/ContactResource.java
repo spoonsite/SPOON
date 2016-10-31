@@ -127,7 +127,7 @@ public class ContactResource
 	}
 
 	@GET
-	@APIDescription("Gets an contact record")
+	@APIDescription("Gets a contact record")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Contact.class)
 	@Path("/{contactId}")
@@ -164,7 +164,7 @@ public class ContactResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Creates an contact")
+	@APIDescription("Creates a contact")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Contact.class)
@@ -175,7 +175,7 @@ public class ContactResource
 	
 	@PUT
 	@RequireAdmin
-	@APIDescription("Updates an contact")
+	@APIDescription("Updates a contact")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Contact.class)
@@ -225,7 +225,7 @@ public class ContactResource
 	@PUT
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})		
-	@APIDescription("Inactivate a contact")
+	@APIDescription("Inactivates a contact")
 	@DataType(Contact.class)
 	@Path("/{contactId}/inactivate")
 	public Response inactivatesContact(

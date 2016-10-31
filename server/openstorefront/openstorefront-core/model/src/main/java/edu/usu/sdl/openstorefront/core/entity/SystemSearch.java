@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Saves an advance search for application")
+@APIDescription("Saves an advanced search for application")
 public class SystemSearch
 		extends StandardEntity<SystemSearch>
 {

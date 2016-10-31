@@ -99,6 +99,12 @@ public class AttributeType
 	@DefaultFieldValue("false")
 	private Boolean hideOnSubmission;
 
+	@NotNull
+	@ConsumeField
+	@APIDescription("Allow user-generated attribute codes")
+	@DefaultFieldValue("false")
+	private Boolean allowUserGeneratedCodes;
+
 	@ConsumeField
 	@APIDescription("Default attribute code")
 	private String defaultAttributeCode;
@@ -125,6 +131,7 @@ public class AttributeType
 		this.setVisibleFlg(attributeTypeUpdate.getVisibleFlg());
 		this.setDetailedDescription(attributeTypeUpdate.getDetailedDescription());
 		this.setHideOnSubmission(attributeTypeUpdate.getHideOnSubmission());
+		this.setAllowUserGeneratedCodes(attributeTypeUpdate.getAllowUserGeneratedCodes());
 		this.setDefaultAttributeCode(attributeTypeUpdate.getDefaultAttributeCode());
 		this.setRequiredRestrictions(attributeTypeUpdate.getRequiredRestrictions());
 		this.setAssociatedComponentTypes(attributeTypeUpdate.getAssociatedComponentTypes());
@@ -292,6 +299,16 @@ public class AttributeType
 	public void setAssociatedComponentTypes(List<ComponentTypeRestriction> associatedComponentTypes)
 	{
 		this.associatedComponentTypes = associatedComponentTypes;
+	}
+
+	public Boolean getAllowUserGeneratedCodes()
+	{
+		return allowUserGeneratedCodes;
+	}
+
+	public void setAllowUserGeneratedCodes(Boolean allowUserGeneratedCodes)
+	{
+		this.allowUserGeneratedCodes = allowUserGeneratedCodes;
 	}
 
 }

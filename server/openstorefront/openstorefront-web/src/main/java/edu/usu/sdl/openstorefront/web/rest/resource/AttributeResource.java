@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
@@ -31,6 +33,9 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
@@ -40,6 +45,7 @@ import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeTypeViewComparator;
+import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeDetail;
@@ -48,6 +54,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
+import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.RelationshipView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
@@ -62,8 +69,10 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
@@ -266,7 +275,7 @@ public class AttributeResource
 		try {
 			data = StringProcessor.defaultObjectMapper().writeValueAsString(attributes);
 		} catch (JsonProcessingException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to export attributes.  Unable able to generate JSON.", ex);
+			throw new OpenStorefrontRuntimeException("Unable to export attributes.  Unable to generate JSON.", ex);
 		}
 
 		Response.ResponseBuilder response = Response.ok(data);
@@ -276,7 +285,7 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets attributes types based on filter")
+	@APIDescription("Gets attribute types based on filter")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeType.class)
 	@Path("/attributetypes")
@@ -469,6 +478,40 @@ public class AttributeResource
 
 		return sendSingleEntityResponse(attributeCode);
 	}
+	
+	@GET
+	@APIDescription("Get the components which contain a specified attribute type and code")
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(AttributeCode.class)
+	@Path("/attributetypes/{type}/attributecodes/{code}/components")
+	public List<ComponentView> getComponentsWithAttributeCode(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("code")
+			@RequiredParam String code)
+	{
+		List<ComponentView> components = new ArrayList<>();
+
+		ComponentAttribute componentAttributeExample = new ComponentAttribute();
+		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+		componentAttributePk.setAttributeType(type);
+		componentAttributePk.setAttributeCode(code);
+		componentAttributeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+		componentAttributeExample.setComponentAttributePk(componentAttributePk);
+		List<ComponentAttribute> attributeComponents = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(componentAttributeExample));
+		for (ComponentAttribute attributeComponent : attributeComponents) {
+			
+			Component component = service.getPersistenceService().findById(Component.class, attributeComponent.getComponentAttributePk().getComponentId());
+			
+			ComponentView view = ComponentView.toView(component);
+			
+			if (view != null) {
+				
+				components.add(view);
+			}
+		}
+		return components;
+	}
 
 	@POST
 	@RequireAdmin
@@ -497,7 +540,7 @@ public class AttributeResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Updates a attribute type")
+	@APIDescription("Updates an attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}")
 	public Response updateAttributeType(
@@ -552,7 +595,7 @@ public class AttributeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a type (In-activates).  Note: this inactives all attribute type associations. Runs in a background task.")
+	@APIDescription("Remove a type (Inactivates).  Note: this inactivates all attribute type associations. Runs in a background task.")
 	@Path("/attributetypes/{type}")
 	public void deleteAttributeType(
 			@PathParam("type")
@@ -591,7 +634,7 @@ public class AttributeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Delete a type and all attribute type associations. (codes, component attributes).  Runs in a background task.")
+	@APIDescription("Delete a type and all attribute type associations (codes, component attributes).  Runs in a background task.")
 	@Path("/attributetypes/{type}/force")
 	public void hardDeleteAttributeType(
 			@PathParam("type")
@@ -669,7 +712,7 @@ public class AttributeResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Updates a attribute code")
+	@APIDescription("Updates an attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/sortorder")
 	public Response updateAttributeCode(
@@ -702,9 +745,88 @@ public class AttributeResource
 		return handleAttributePostPutCode(attributeCode, true);
 	}
 
+	@POST
+	@APIDescription("Creates a new user-generated attribute code")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/attributetypes/{type}/attributecodes/user")
+	public Response postUserAttributeCode(
+			@PathParam("type")
+			@RequiredParam String type,
+			AttributeCodeSave attributeCodeSave)
+	{
+		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
+		if (attributeType != null) {
+			// The attribute type must allow user-generated codes to continue
+			if (Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
+				// Get a list of attribute codes that have this label.
+				AttributeCode codeExample = new AttributeCode();
+				codeExample.setLabel(attributeCodeSave.getCodeLabel());
+				List<AttributeCode> codes = service.getPersistenceService().queryByExample(AttributeCode.class, codeExample);
+
+
+				// If any of the codes we found belong to the attribute type in question,
+				// then the label is not new and we can just return the existing code.
+
+				// If this label appears in another attribute type, we can use the code as a "hint" 
+				// for a reasonable string to use for our new program-generated attribute code.
+				Queue<String> codeStringHints = new LinkedList<>();
+				for (AttributeCode code : codes) {
+					if (code.getAttributeCodePk().getAttributeType().equals(type)) {
+						return Response.ok(code).build();
+					}
+					else {
+						codeStringHints.add(code.getAttributeCodePk().getAttributeCode());
+					}
+				}
+
+
+				// At this point, we have determined that the label is new and therefore
+				// we must generate a code for it.
+				
+				// We add to our candidate list a simple truncated
+				// version of the label in uppercase.
+				String spaceless = attributeCodeSave.getCodeLabel().replaceAll("\\s+","");
+				String truncated = spaceless.substring(0, Math.min(OpenStorefrontConstant.FIELD_SIZE_CODE, spaceless.length())).toUpperCase();
+				codeStringHints.add(truncated);
+
+				String newCode = null;
+				boolean found = false;
+				int num = 1;
+				while (!found) {
+					if (!codeStringHints.isEmpty()) {
+						newCode = codeStringHints.poll();
+						found = !(service.getAttributeService().checkIfCodeExistsForType(type, newCode));
+					}
+					else {
+						newCode = truncated.substring(0, truncated.length()-String.valueOf(num).length()).concat(String.valueOf(num));
+						found = !(service.getAttributeService().checkIfCodeExistsForType(type, newCode));
+						if (!found) num++;
+					}
+				}
+
+
+				AttributeCode newAttributeCode = new AttributeCode();
+				newAttributeCode.setLabel(attributeCodeSave.getCodeLabel());
+				AttributeCodePk newAttributeCodePk = new AttributeCodePk();
+				newAttributeCodePk.setAttributeType(type);
+				newAttributeCodePk.setAttributeCode(newCode);
+				newAttributeCode.setAttributeCodePk(newAttributeCodePk);
+
+				// Save it away and return the new attribute code as response
+				return handleAttributePostPutCode(newAttributeCode, true);
+				
+			}
+			else {
+				return Response.status(Response.Status.FORBIDDEN).build();
+			}
+		}
+
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
 	@PUT
 	@RequireAdmin
-	@APIDescription("Updates a attribute code")
+	@APIDescription("Updates an attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public Response updateAttributeCode(
@@ -752,7 +874,7 @@ public class AttributeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a Code (In-activates) and inactivates all attribute type associations. Runs in background.")
+	@APIDescription("Remove a Code (Inactivates) and inactivates all attribute type associations. Runs in background.")
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void deleteAttributeCode(
 			@PathParam("type")
@@ -909,7 +1031,7 @@ public class AttributeResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Activate a Code (activates) and all assicated data.  Runs in background.")
+	@APIDescription("Activate a Code and all associated data.  Runs in background.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void activateCode(
@@ -1017,7 +1139,7 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets the list of mapping for attributes to fields base on the type passed in.  It will show inactive types as well.")
+	@APIDescription("Gets the list of mapping for attributes to fields based on the type passed in.  It will show inactive types as well.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeXrefMapView.class)
 	@Path("/attributexreftypes/{attributeType}/detail")
@@ -1050,7 +1172,7 @@ public class AttributeResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Save a attribute cross-ref mapping")
+	@APIDescription("Save an attribute cross-ref mapping")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/attributexreftypes/detail")
 	public Response saveMapping(

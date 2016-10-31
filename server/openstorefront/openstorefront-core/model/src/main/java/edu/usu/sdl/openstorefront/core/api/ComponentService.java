@@ -214,6 +214,13 @@ public interface ComponentService
 	 * @return
 	 */
 	public List<ComponentTag> getTagCloud();
+	
+	/**
+	 * Gets all unique metadata
+	 *
+	 * @return
+	 */
+	public List<ComponentMetadata> getMetadata();
 
 	/**
 	 * Saves a component Attribute

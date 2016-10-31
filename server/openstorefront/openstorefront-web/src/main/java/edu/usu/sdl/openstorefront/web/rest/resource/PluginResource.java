@@ -60,7 +60,7 @@ public class PluginResource
 
 	@GET
 	@RequireAdmin
-	@APIDescription("Get a plugin record no runtime info.")
+	@APIDescription("Get a plugin record with no runtime info.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Plugin.class)
 	@Path("/{id}")

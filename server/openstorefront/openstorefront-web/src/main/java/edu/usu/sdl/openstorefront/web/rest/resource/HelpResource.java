@@ -30,7 +30,7 @@ import javax.ws.rs.core.Response;
  * @author dshurtleff
  */
 @Path("v1/resource/help")
-@APIDescription("This allows accessing help documentation")
+@APIDescription("This allows access to help documentation")
 public class HelpResource
 		extends BaseResource
 {

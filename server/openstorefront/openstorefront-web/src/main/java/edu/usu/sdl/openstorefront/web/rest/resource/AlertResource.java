@@ -45,14 +45,14 @@ import javax.ws.rs.core.Response;
  * @author dshurtleff
  */
 @Path("v1/resource/alerts")
-@APIDescription("Alert are triggers setup to watch the data that user can subscribe to.")
+@APIDescription("Alerts are triggers setup to watch the data that user can subscribe to.")
 public class AlertResource
 		extends BaseResource
 {
 
 	@GET
 	@RequireAdmin
-	@APIDescription("Gets alert subscribion records.")
+	@APIDescription("Gets alert subscription records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AlertView.class)
 	public Response getAlerts(@BeanParam FilterQueryParams filterQueryParams)
@@ -75,7 +75,7 @@ public class AlertResource
 
 	@GET
 	@RequireAdmin
-	@APIDescription("Gets an alert subscribion record.")
+	@APIDescription("Gets an alert subscription record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Alert.class)
 	@Path("/{id}")
@@ -135,7 +135,7 @@ public class AlertResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("activates an Alert")
+	@APIDescription("Activates an Alert")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Alert.class)
 	@Path("/{id}/activate")

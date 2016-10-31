@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.annotation;
+package edu.usu.sdl.openstorefront.core.view;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 
 /**
+ * Class used to handle user-generated attribute codes
  *
- * @author dshurtleff
  */
-@Target({ElementType.FIELD, ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@APIDescription("Defined input comes from user")
-public @interface ConsumeField
+public class AttributeCodeSave
 {
 
+	@ConsumeField
+	private String codeLabel;
+
+	public String getCodeLabel()
+	{
+		return codeLabel;
+	}
+
+	public void setCodeLabel(String codeLabel)
+	{
+		this.codeLabel = codeLabel;
+	}
+	
 }

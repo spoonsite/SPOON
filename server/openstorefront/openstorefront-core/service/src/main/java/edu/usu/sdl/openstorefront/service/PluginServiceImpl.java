@@ -105,14 +105,6 @@ public class PluginServiceImpl
 			PluginManager.installBundle(plugin.getLocation(), new FileInputStream(plugin.fullPath()));
 			persistenceService.persist(plugin);
 		} catch (Exception ex) {
-			//Delete file created if it exists
-			File badFile = new File(plugin.fullPath());
-			if (badFile.exists()) {
-				boolean deleted = badFile.delete();
-				if (!deleted) {
-					log.log(Level.WARNING, MessageFormat.format("Failed to delete bad plugin. Path: {0}", badFile));
-				}
-			}
 			throw new OpenStorefrontRuntimeException("Failed to install plugin.", "Make sure file was actually contained a plugin. (jar, war). See log for more details.", ex);
 		}
 
@@ -152,6 +144,23 @@ public class PluginServiceImpl
 		} else {
 			log.log(Level.WARNING, MessageFormat.format("Unable to find plugin to uninstall: {0}", pluginId));
 		}
+	}
+        
+        @Override
+	public void failPlugin(String filename)
+	{
+                //move plugin to failed area
+                File file = new File(filename);
+                if (file.exists()) {
+                        Path source = file.toPath();
+                        Path newdir = FileSystemManager.getDir(FileSystemManager.PLUGIN_FAILED_DIR).toPath();
+
+                        try {
+                                Files.move(source, newdir.resolve(source.getFileName()), REPLACE_EXISTING);
+                        } catch (IOException ex) {
+                                throw new OpenStorefrontRuntimeException("Failed to move Plugin to failed directory", "Check permissions; Disk Space", ex);
+                        }
+                }
 	}
 
 	@Override

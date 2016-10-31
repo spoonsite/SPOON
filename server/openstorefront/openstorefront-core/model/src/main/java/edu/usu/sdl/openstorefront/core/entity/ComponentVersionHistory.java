@@ -38,10 +38,10 @@ public class ComponentVersionHistory
 	private String versionHistoryId;
 
 	@NotNull
-	@APIDescription("Based on the record verison; so it not necessarily sequential.")
+	@APIDescription("Based on the record version, so it is not necessarily sequential.")
 	private Integer version;
 
-	@APIDescription("If version was based on file history (Taken before batch was applied)")
+	@APIDescription("If this history was based on file history, this field will hold filehistoryId")
 	private String fileHistoryId;
 
 	public ComponentVersionHistory()

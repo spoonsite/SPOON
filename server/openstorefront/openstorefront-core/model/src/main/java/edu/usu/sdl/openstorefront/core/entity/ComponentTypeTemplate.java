@@ -50,17 +50,17 @@ public class ComponentTypeTemplate
 	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
 	@ConsumeField
-	@APIDescription("This is used to presist the template design")	
+	@APIDescription("This is used to persist the template design")
 	private String preTemplateCode;
 	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
 	@ConsumeField
-	@APIDescription("This is used to presist the template design")	
+	@APIDescription("This is used to persist the template design")
 	private String postTemplateCode;
 	
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
-	@APIDescription("This is used to presist the visual designer")
+	@APIDescription("This is used to persist the visual designer")
 	private String templateBlocks;
 
 	public ComponentTypeTemplate()

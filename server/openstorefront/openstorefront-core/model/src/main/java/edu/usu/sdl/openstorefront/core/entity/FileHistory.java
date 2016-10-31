@@ -33,7 +33,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author dshurtleff
  */
-@APIDescription("History of an data import")
+@APIDescription("History of a data import")
 public class FileHistory
 		extends StandardEntity<FileHistory>
 {

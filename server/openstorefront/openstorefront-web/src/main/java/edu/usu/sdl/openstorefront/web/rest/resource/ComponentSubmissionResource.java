@@ -68,7 +68,7 @@ public class ComponentSubmissionResource
 	//  This is so that a user may edit an approved component. If the desire for behavior changes, the code is still
 	//  there, you just need to remove the '|| true'
 	@GET
-	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this only the top level component object)")
+	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this is only the top level component object)")
 	@DataType(ComponentView.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getSubmissionsForUser()
@@ -281,7 +281,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@APIDescription("Inactivates a incomplete Component Submission.")
+	@APIDescription("Inactivates an incomplete Component Submission.")
 	@Path("/{componentId}/inactivate")
 	public Response inactivateComponent(
 			@PathParam("componentId")
@@ -463,7 +463,7 @@ public class ComponentSubmissionResource
 				} else {
 					return Response.status(Response.Status.FORBIDDEN)
 							.type(MediaType.TEXT_PLAIN)
-							.entity("User cannot modify entity. Component is in a Approved state.")
+							.entity("User cannot modify entity. Component is in an Approved state.")
 							.build();
 				}
 			}
@@ -495,7 +495,7 @@ public class ComponentSubmissionResource
 				} else {
 					return Response.status(Response.Status.FORBIDDEN)
 							.type(MediaType.TEXT_PLAIN)
-							.entity("User cannot modify entity. Component is in a Approved state.")
+							.entity("User cannot modify entity. Component is in an Approved state.")
 							.build();
 				}
 
