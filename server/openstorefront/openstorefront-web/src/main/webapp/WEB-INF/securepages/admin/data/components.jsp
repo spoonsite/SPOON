@@ -26,7 +26,7 @@
 			  
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
-			Ext.onReady(function(){	
+			Ext.onReady(function() {
 				
 			//Add/Edit forms ------>	
 				
@@ -3593,22 +3593,211 @@
 											formBind: true,
 											iconCls: 'fa fa-save',
 											handler: function(){
+												
+												// Get Selection
+												var selection = Ext.getCmp('componentGrid').getSelection();
+
+												// Get Number Of Selected
+												var selected = componentGrid.getSelectionModel().getCount();
+												
+												// Get Calling Window
 												var ownerWindow = this.up('window');
+												
+												// Get Form
 												var form = this.up('form');
+												
+												// Get Chosen Username
 												var username = form.getForm().findField('createUser').getValue();
-												form.setLoading('Updating Owner...');
-												Ext.Ajax.request({
-													url: 'api/v1/resource/components/' + ownerWindow.componentId + '/changeowner',
-													method: 'PUT',
-													rawData: username,
-													callback: function(opts, success, response){
-														form.setLoading(false);
-													},
-													success: function(response, opts) {
-														ownerWindow.close();
-														actionRefreshComponentGrid();														
-													}
-												});
+												
+												// Inform User Of Update Process
+												componentGrid.mask('Updating Owner(s)...');
+												
+												// Close Form Window
+												ownerWindow.close();
+												
+												// Initialize Update Counter
+												var componentUpdateCount = 0;
+												
+												// Loop Through Selected Components
+												for (i = 0; i < selected; i++) {
+													
+													// Store Component ID
+													var componentId = selection[i].get('componentId');
+													
+													// Make Request
+													Ext.Ajax.request({
+														
+														url: 'api/v1/resource/components/' + componentId + '/changeowner',
+														method: 'PUT',
+														rawData: username,
+														success: function(response, opts) {
+															
+															// Check For Errors
+															if (response.responseText.indexOf('errors') !== -1) {
+																
+																// Provide Error Notification
+																Ext.toast('An Entry Failed To Update', 'Error');
+
+																// Provide Log Information
+																console.log(response);
+															}
+															
+															// Check If We Are On The Final Request
+															if (++componentUpdateCount === selected) {
+																
+																// Provide Success Notification
+																Ext.toast('All Entries Have Been Processed', 'Success');
+
+																// Refresh Grid
+																actionRefreshComponentGrid();
+																
+																// Unmask Grid
+																componentGrid.unmask();
+															}
+														}
+													});
+												}
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-close',
+											handler: function(){
+												this.up('window').close();
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				});
+				
+				
+				var changeTypeWin = Ext.create('Ext.window.Window', {
+					id: 'changeTypeWin',
+					title: 'Change Type - ',
+					iconCls: 'fa fa-user',
+					width: '35%',
+					height: 150,
+					y: 200,
+					modal: true,
+					layout: 'fit',					
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'changeTypeForm',
+							bodyStyle: 'padding: 10px',
+							items: [
+								{
+									xtype: 'combobox',
+									fieldLabel: 'Type <span class="field-required" />',
+									labelAlign: 'top',
+									labelSeparator: '',
+									typeAhead: true,
+									editable: true,
+									allowBlank: false,
+									name: 'componentType',
+									width: '100%',
+									valueField: 'componentType',
+									queryMode: 'local',									
+									displayField: 'label',
+									store: {
+										autoLoad: true,
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/componenttypes'
+										}
+									}
+								}
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Update',
+											formBind: true,
+											iconCls: 'fa fa-save',
+											handler: function(){
+												
+												// Get Selection
+												var selection = Ext.getCmp('componentGrid').getSelection();
+
+												// Get Number Of Selected
+												var selected = componentGrid.getSelectionModel().getCount();
+												
+												// Get Calling Window
+												var ownerWindow = this.up('window');
+												
+												// Get Form
+												var form = this.up('form');
+												
+												// Get Chosen Username
+												var componentType = form.getForm().findField('componentType').getValue();
+												
+												// Inform User Of Update Process
+												componentGrid.mask('Updating Type(s)...');
+												
+												// Close Form Window
+												ownerWindow.close();
+												
+												// Initialize Update Counter
+												var componentUpdateCount = 0;
+												
+												// Loop Through Selected Components
+												for (i = 0; i < selected; i++) {
+													
+													// Store Component ID
+													var componentId = selection[i].get('componentId');
+													
+													// Build Initial Request Data
+													var requestData = {
+														
+														component: selection[i].data,
+														attributes: [ ]
+													};
+													
+													// Modify Component Type
+													requestData.component.componentType = componentType;
+													
+													// Make Request
+													Ext.Ajax.request({
+														
+														url: 'api/v1/resource/components/' + componentId,
+														method: 'PUT',
+														jsonData: requestData,
+														success: function(response, opts) {
+															
+															// Check For Errors
+															if (response.responseText.indexOf('errors') !== -1) {
+																
+																// Provide Error Notification
+																Ext.toast('An Entry Failed To Update', 'Error');
+
+																// Provide Log Information
+																console.log(response);
+															}
+															
+															// Check If We Are On The Final Request
+															if (++componentUpdateCount === selected) {
+																
+																// Provide Success Notification
+																Ext.toast('All Entries Have Been Processed', 'Success');
+
+																// Refresh Grid
+																actionRefreshComponentGrid();
+																
+																// Unmask Grid
+																componentGrid.unmask();
+															}
+														}
+													});
+												}
 											}
 										},
 										{
@@ -4067,10 +4256,18 @@
 											text: 'Change Owner',											
 											iconCls: 'fa fa-user',
 											handler: function(){
-												actionChangeOwner(Ext.getCmp('componentGrid').getSelection()[0]);
+												actionChangeOwner();
 											}
 										},
 										{
+											text: 'Change Type',											
+											iconCls: 'fa fa-user',
+											handler: function(){
+												actionChangeType();
+											}
+										},
+										{
+											id: 'lookupGrid-tools-action-changeRequests',
 											text: 'Change Requests',																		
 											iconCls: 'fa fa-edit',
 											handler: function () {												
@@ -4081,6 +4278,7 @@
 											xtype: 'menuseparator'
 										},										
 										{
+											id: 'lookupGrid-tools-action-copy',
 											text: 'Copy',											
 											iconCls: 'fa fa-copy',
 											handler: function(){
@@ -4088,6 +4286,7 @@
 											}
 										},
 										{
+											id: 'lookupGrid-tools-action-merge',
 											text: 'Merge',
 											iconCls: 'fa fa-exchange',
 											handler: function(){
@@ -4095,6 +4294,7 @@
 											}
 										},
 										{
+											id: 'lookupGrid-tools-action-versions',
 											text: 'Versions',
 											iconCls: 'fa fa-object-ungroup',
 											handler: function(){
@@ -4118,7 +4318,7 @@
 											text: 'Delete',
 											cls: 'alert-danger',
 											iconCls: 'fa fa-trash',
-											handler: function(){
+											handler: function() {
 												actionDeleteComponent();
 											}											
 										}
@@ -4183,26 +4383,58 @@
 				addComponentToMainViewPort(componentGrid);
 				
 				var checkComponetGridTools = function() {
+					
 					if (componentGrid.getSelectionModel().getCount() === 1) {
+						
+						// Enable Tools & Buttons
 						Ext.getCmp('lookupGrid-tools-export').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-preview').setDisabled(false);
 						
+						// Store Approval State
 						var approvalState = Ext.getCmp('componentGrid').getSelection()[0].get('approvalState');
+						
+						// Check If Entry Is Approved
 						if (approvalState !== 'A') {
+							
+							// Enable Approval Button
 							Ext.getCmp('lookupGrid-tools-approve').setDisabled(false);
-						} else {
+						}
+						else {
+							
+							// Disable Approval Button
 							Ext.getCmp('lookupGrid-tools-approve').setDisabled(true);
 						}
-						Ext.getCmp('lookupGrid-tools-action').setDisabled(false);						
-					} else if (componentGrid.getSelectionModel().getCount() > 1) {
-						Ext.getCmp('lookupGrid-tools-export').setDisabled(false);
 						
+						// Enable Action Button
+						Ext.getCmp('lookupGrid-tools-action').setDisabled(false);
+						
+						// Ensure Pieces Of The Action Button Are Enabled
+						Ext.getCmp('lookupGrid-tools-action-changeRequests').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-action-copy').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-action-merge').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-action-versions').setDisabled(false);
+					}
+					else if (componentGrid.getSelectionModel().getCount() > 1) {
+						
+						// Enable/Disable Tools & Buttons
+						Ext.getCmp('lookupGrid-tools-export').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-approve').setDisabled(true);
-						Ext.getCmp('lookupGrid-tools-action').setDisabled(true);
-					} else {
+						
+						// Ensure Action Button Is Enabled
+						Ext.getCmp('lookupGrid-tools-action').setDisabled(false);
+						
+						// Disable Pieces Of The Action Button
+						Ext.getCmp('lookupGrid-tools-action-changeRequests').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-copy').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-merge').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-versions').setDisabled(true);
+					}
+					else {
+						
+						// Disable Tools & Buttons
 						Ext.getCmp('lookupGrid-tools-export').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
@@ -4218,11 +4450,50 @@
 					changeRequestWindow.loadComponent(componentId, name);					
 				};
 				
-				var actionChangeOwner = function(record) {
+				var actionChangeOwner = function() {
+					
+					// Get Selection
+					var selection = Ext.getCmp('componentGrid').getSelection();
+					
+					// Get Number Of Selected
+					var selected = componentGrid.getSelectionModel().getCount();
+					
+					// Check For Single Selection
+					if (selected === 1) {
+						
+						Ext.getCmp('changeOwnerWin').setTitle('Change Owner - ' + selection[0].get('name'));
+						Ext.getCmp('changeOwnerWin').getComponent('changeOwnerForm').loadRecord(selection[0]);
+					}
+					else {
+						
+						Ext.getCmp('changeOwnerWin').setTitle('Change Owner - ' + selected + ' Records');
+					}
+					
+					// Display Window
 					Ext.getCmp('changeOwnerWin').show();
-					Ext.getCmp('changeOwnerWin').componentId = record.get('componentId');
-					Ext.getCmp('changeOwnerWin').setTitle('Change Owner - ' + record.get('name'));
-					Ext.getCmp('changeOwnerWin').getComponent('changeOwnerForm').loadRecord(record);
+				};
+				
+				var actionChangeType = function() {
+					
+					// Get Selection
+					var selection = Ext.getCmp('componentGrid').getSelection();
+					
+					// Get Number Of Selected
+					var selected = componentGrid.getSelectionModel().getCount();
+					
+					// Check For Single Selection
+					if (selected === 1) {
+						
+						Ext.getCmp('changeTypeWin').setTitle('Change Type - ' + selection[0].get('name'));
+						Ext.getCmp('changeTypeWin').getComponent('changeTypeForm').loadRecord(selection[0]);
+					}
+					else {
+						
+						Ext.getCmp('changeTypeWin').setTitle('Change Type - ' + selected + ' Records');
+					}
+					
+					// Display Window
+					Ext.getCmp('changeTypeWin').show();
 				};
 				
 				var actionRefreshComponentGrid = function() {
@@ -4385,52 +4656,140 @@
 					});
 				};
 				
-				var actionToggleStatus = function(){
-					Ext.getCmp('componentGrid').setLoading(true);
-					var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
-					var currentStatus = Ext.getCmp('componentGrid').getSelection()[0].get('activeStatus');
+				var actionToggleStatus = function() {
 					
-					var method = 'PUT';
-					var urlEnd = '/activate';
-					if (currentStatus === 'A') {
-						method = 'DELETE';
-						urlEnd = '';
-					}					
-					Ext.Ajax.request({
-						url: 'api/v1/resource/components/' + componentId + urlEnd,
-						method: method,
-						success: function(response, opts){
-							Ext.getCmp('componentGrid').setLoading(false);
-							actionRefreshComponentGrid();
-						},
-						failure: function(response, opts){
-							Ext.getCmp('componentGrid').setLoading(false);
+					Ext.getCmp('componentGrid').setLoading(true);
+					
+					// Get Selection
+					var selection = Ext.getCmp('componentGrid').getSelection();
+
+					// Get Number Of Selected
+					var selected = componentGrid.getSelectionModel().getCount();
+					
+					// Initialize Update Counter
+					var componentToggleCount = 0;
+					
+					// Loop Through Selection
+					for (i = 0; i < selected; i++) {
+						
+						var componentId = selection[i].get('componentId');
+						var currentStatus = selection[i].get('activeStatus');
+						
+						if (currentStatus === 'A') {
+							
+							var method = 'DELETE';
+							var urlEnd = '';
 						}
-					});					
+						else {
+							
+							var method = 'PUT';
+							var urlEnd = '/activate';
+						}
+						
+						Ext.Ajax.request({
+							url: 'api/v1/resource/components/' + componentId + urlEnd,
+							method: method,
+							success: function(response, opts) {
+
+								// Check For Errors
+								if (response.responseText.indexOf('errors') !== -1) {
+
+									// Provide Error Notification
+									Ext.toast('An Entry Failed To Toggle', 'Error');
+
+									// Provide Log Information
+									console.log(response);
+								}
+
+								// Check If We Are On The Final Request
+								if (++componentToggleCount === selected) {
+
+									// Provide Success Notification
+									Ext.toast('All Entries Have Been Processed', 'Success');
+
+									// Refresh Grid
+									actionRefreshComponentGrid();
+
+									// Unmask Grid
+									Ext.getCmp('componentGrid').setLoading(false);
+								}
+							}
+						});
+					}					
 				};
 				
 				var actionDeleteComponent = function() {
-					var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
-					var name = Ext.getCmp('componentGrid').getSelection()[0].get('name');
+					
+					// Get Selection
+					var selection = Ext.getCmp('componentGrid').getSelection();
+
+					// Get Number Of Selected
+					var selected = componentGrid.getSelectionModel().getCount();
+					
+					// Check If Only One Record Selected
+					if (selected === 1) {
+						
+						var name = selection[0].get('name');
+					}
+					else {
+						
+						var name = selected + ' Records';
+					}
+					
+					// Confirm Delete Operation
 					Ext.Msg.show({
 						title: 'Delete Component?',
 						message: 'Are you sure you want to delete:  ' + name +' ?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {
+							
 							if (btn === 'yes') {
+								
+								// Indicate To User Deletion Is Occurring
 								Ext.getCmp('componentGrid').setLoading(true);
-								Ext.Ajax.request({
-									url: 'api/v1/resource/components/' + componentId + '/cascade',
-									method: 'DELETE',
-									success: function(response, opts) {
-										Ext.getCmp('componentGrid').setLoading(false);
-										actionRefreshComponentGrid();
-									},
-									failure: function(response, opts) {
-										Ext.getCmp('componentGrid').setLoading(false);
-									}
-								});
+
+								// Initialize Update Counter
+								var componentDeleteCount = 0;
+								
+								// Loop Through Selection
+								for (i = 0; i < selected; i++) {
+
+									// Get Component ID
+									var componentId = selection[i].get('componentId');
+									
+									// Make Request
+									Ext.Ajax.request({
+										
+										url: 'api/v1/resource/components/' + componentId + '/cascade',
+										method: 'DELETE',
+										success: function(response, opts) {
+
+											// Check For Errors
+											if (response.responseText.indexOf('errors') !== -1) {
+
+												// Provide Error Notification
+												Ext.toast('An Entry Failed To Delete', 'Error');
+
+												// Provide Log Information
+												console.log(response);
+											}
+
+											// Check If We Are On The Final Request
+											if (++componentDeleteCount === selected) {
+
+												// Provide Success Notification
+												Ext.toast('All Entries Have Been Processed', 'Success');
+
+												// Refresh Grid
+												actionRefreshComponentGrid();
+
+												// Unmask Grid
+												Ext.getCmp('componentGrid').setLoading(false);
+											}
+										}
+									});
+								}
 							} 
 						}
 					});
