@@ -88,6 +88,27 @@ limitations under the License.
   outline-offset: -2px;
 }
 
+.homelink {
+    color: whitesmoke;
+    text-decoration: none;	
+}
+
+.homelink:visited {
+    color: whitesmoke;
+    text-decoration: none;	
+}
+
+.homelink:hover, .link:focus {
+  color: yellow;
+  text-decoration: underline;
+}
+
+.homelink:focus {
+  outline: thin dotted #333;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
 .linkItem:hover {
 	cursor: pointer;
 }
@@ -182,6 +203,16 @@ limitations under the License.
 	border-bottom: 1px solid lightgray !important;
 }
 
+.new-home-search-panel {
+	background: url('${pageContext.request.contextPath}/images/footer_lodyas.png');
+	padding: 40px 0px 0px 0px;
+	border-top: 1px solid darkgray !important;
+	/* border-bottom: 1px solid lightgray !important; */
+}
+.new-home-highlight-panel {
+	background: url('${pageContext.request.contextPath}/images/footer_lodyas.png');
+}
+
 .home-search-field {
 	font-size: 2.4em;
 	line-height: 1.428571429;
@@ -206,6 +237,10 @@ limitations under the License.
 
 .home-footer {
 	background-color: ${actionBean.branding.primaryColor};	
+}
+
+.new-home-footer {
+	background: url('${pageContext.request.contextPath}/images/footer_lodyas.png');
 }
 
 .home-footer-contents {	
@@ -539,6 +574,18 @@ td.info-table {
 .home-highlight-item-desc {
 	padding: 5px;	
 }
+
+.new-home-highlight-item {
+	text-align: center;
+    padding: 5px;
+	color: whitesmoke;
+}
+
+.new-home-highlight-item-desc {
+	padding: 5px;
+	color: whitesmoke;	
+}
+
 
 .home-highlight-approved {
 	text-align: right;

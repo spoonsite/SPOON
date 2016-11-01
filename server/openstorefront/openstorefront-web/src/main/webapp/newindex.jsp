@@ -143,129 +143,204 @@ limitations under the License.
 
 			var searchPanel = Ext.create('Ext.panel.Panel', {				
 				width: '100%',	
-				bodyCls: 'home-search-panel',								
+				bodyCls: 'new-home-search-panel',								
 				items: [
 					{
-							xtype: 'panel',
-							width: '100%',
-							layout: 'center',
-							items: [
-								{
-									xtype: 'image',
-									id: 'logoImage',
-									height: 200,						
-									src: ''									
-								}
-							]
+						xtype: 'panel',
+						width: '100%',
+						layout: 'center',
+						items: [
+							{
+								xtype: 'image',
+								id: 'logoImage',
+								height: 200,						
+								src: ''									
+							}
+						]
 					},					
 					{
-							xtype: 'panel',
-							width: '100%',
-							layout: 'center',
-							items: [
-								{
-									id: 'componentStats'
+						xtype: 'panel',
+						width: '100%',
+						layout: 'center',
+						items: [
+							{
+								id: 'componentStats'
+							}
+						]
+					}														
+				]				
+			
+			});	
+			
+			var searchBarPanel = Ext.create('Ext.panel.Panel', {
+				width: '100%',
+				layout: 'hbox',
+				bodyStyle: 'background: lightgrey;padding: 20px 0px 20px 0px;',
+				items: [
+					{
+						flex: 1
+					},
+					{	
+						xtype: 'panel',
+						width: '65%',
+						layout: {
+							type: 'hbox',
+							align: 'stretch'
+						},
+						items: [
+							{
+								xtype: 'combobox',										
+								itemId: 'searchText',
+								flex: 1,
+								fieldCls: 'home-search-field',
+								emptyText: 'Search',
+								queryMode: 'remote',
+								hideTrigger: true,
+								valueField: 'query',
+								displayField: 'name',											
+								autoSelect: false,
+								store: {
+									autoLoad: false,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/service/search/suggestions'													
+									}
+								},
+								listeners:{
+									specialkey: function(field, e) {
+										var value = this.getValue();
+										if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {													
+											var query = value;
+											if (query && !Ext.isEmpty(query)) {
+												var searchRequest = {
+													type: 'SIMPLE',
+													query: CoreUtil.searchQueryAdjustment(query)
+												};
+												CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+											}
+											window.location.href = 'searchResults.jsp';														
+										}
+									}
+								} 
+							},
+							{
+								xtype: 'button',
+								tooltip: 'Keyword Search',
+								iconCls: 'fa fa-2x fa-search icon-search-adjustment',
+								style: 'border-radius: 0px 3px 3px 0px;',																					
+								width: 50,											
+								handler: function(){
+
+									var query = this.up('panel').getComponent('searchText').getValue();
+									if (query && !Ext.isEmpty(query)) {																										
+										var searchRequest = {
+											type: 'SIMPLE',
+											query: CoreUtil.searchQueryAdjustment(query)
+										}
+										CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+									} else {
+										delete CoreUtil.sessionStorage().searchRequest;
+									}												
+									window.location.href = 'searchResults.jsp';
+
 								}
-							]
+							},
+							{
+								xtype: 'button',
+								text: '<span style="font-size: 10px;">Search Tools</span>',																		
+								iconCls: 'fa fa-2x fa-search-plus icon-top-padding',
+								iconAlign: 'top',
+								margin: '0 0 0 10',
+								style: 'border-radius: 3px 3px 3px 3px;',											
+								width: 100,
+								handler: function(){
+									searchtoolsWin.show();
+								}
+							}
+						]
 					},
 					{
-							xtype: 'panel',
-							width: '100%',
-							layout: 'hbox',
-							items: [
-								{
-									flex: 1
-								},
-								{	
-									xtype: 'panel',
-									width: '65%',
-									layout: {
-										type: 'hbox',
-										align: 'stretch'
-									},
-									items: [
-										{
-											xtype: 'combobox',										
-											itemId: 'searchText',
-											flex: 1,
-											fieldCls: 'home-search-field',
-											emptyText: 'Search',
-											queryMode: 'remote',
-											hideTrigger: true,
-											valueField: 'query',
-											displayField: 'name',											
-											autoSelect: false,
-											store: {
-												autoLoad: false,
-												proxy: {
-													type: 'ajax',
-													url: 'api/v1/service/search/suggestions'													
-												}
-											},
-											listeners:{
-												specialkey: function(field, e) {
-													var value = this.getValue();
-													if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {													
-														var query = value;
-														if (query && !Ext.isEmpty(query)) {
-															var searchRequest = {
-																type: 'SIMPLE',
-																query: CoreUtil.searchQueryAdjustment(query)
-															};
-															CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-														}
-														window.location.href = 'searchResults.jsp';														
-													}
-												}
-											} 
-										},
-										{
-											xtype: 'button',
-											tooltip: 'Keyword Search',
-											iconCls: 'fa fa-2x fa-search icon-search-adjustment',
-											style: 'border-radius: 0px 3px 3px 0px;',																					
-											width: 50,											
-											handler: function(){
-											
-												var query = this.up('panel').getComponent('searchText').getValue();
-												if (query && !Ext.isEmpty(query)) {																										
-													var searchRequest = {
-														type: 'SIMPLE',
-														query: CoreUtil.searchQueryAdjustment(query)
-													}
-													CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-												} else {
-													delete CoreUtil.sessionStorage().searchRequest;
-												}												
-												window.location.href = 'searchResults.jsp';
-												
-											}
-										},
-										{
-											xtype: 'button',
-											text: '<span style="font-size: 10px;">Search Tools</span>',																		
-											iconCls: 'fa fa-2x fa-search-plus icon-top-padding',
-											iconAlign: 'top',
-											margin: '0 0 0 10',
-											style: 'border-radius: 3px 3px 3px 3px;',											
-											width: 100,
-											handler: function(){
-												searchtoolsWin.show();
-											}
-										}
-									]
-								},
-								{
-									flex: 1
-								}
-							]
-					}										
-				
+						flex: 1
+					}
 				]
 				
-			});		
+			});
+			
+			
+			var highlightScrollerPanel = Ext.create('Ext.panel.Panel', {
+				bodyCls: 'new-home-highlight-panel',
+				width: '100%',
+				height: 175,
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						cls: 'new-home-highlight-panel',
+						dock: 'left',
+						items: [
+							{ xtype: 'tbfill' },
+							{
+								iconCls: 'fa fa-2x fa-chevron-left',
+								scale: 'medium',
+								handler: function(){
+									homepage.highlightTask.restart();
+									homepage.currentHighlighIndex--;
+									updateHighlight();										
+								}
+							},
+							{ xtype: 'tbfill' }
+						]
+					},
+					{
+						xtype: 'toolbar',
+						cls: 'new-home-highlight-panel',
+						dock: 'right',
+						items: [
+							{ xtype: 'tbfill' },
+							{
+								iconCls: 'fa fa-2x fa-chevron-right',
+								scale: 'medium',
+								handler: function(){
+									homepage.highlightTask.restart();
+									homepage.currentHighlighIndex++;
+									updateHighlight('r', 'l');	
+								}
+							},
+							{ xtype: 'tbfill' }
+						]
+					}					
+				],
+				items: [
+					{
+						id: 'highlightInfoPanel',
+						tpl: new Ext.XTemplate(
+							'<div class="new-home-highlight-item">',
+							'<h2><tpl if="link"><a href="{link}" class="homelink" target="_blank">{title}</a></tpl><tpl if="!link">{title}</tpl></h2>',
+							'<div class="new-home-highlight-item-desc"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{displayDesc}<br><span style="font-size: 10px;">Updated: {[Ext.util.Format.date(values.updateDts, "m/d/y")]}</span>',
+							'	<span style="margin-left: 20px;"><a href="#" class="homelink" onclick="homepage.readToggleHighlight(\'{highlightId}\');">{moreText}</a></span>',
+							'</div>'
+						)
+					}
+				]
+								
+			});
+			
 		
 			var loadedHighlightsRecently = false;		
+		
+			var updateHighlight = function(slideDirOut, slideDirIn) {
+				if (homepage.currentHighlighIndex >= homepage.highlights.length) {
+					homepage.currentHighlighIndex = 0;
+				} 
+				
+				if (homepage.currentHighlighIndex < 0) {
+					homepage.currentHighlighIndex = homepage.highlights.length-1;
+				}
+
+				Ext.getCmp('highlightInfoPanel').getEl().slideOut(slideDirOut ? slideDirOut : 'l');				
+				Ext.getCmp('highlightInfoPanel').update(homepage.highlights[homepage.currentHighlighIndex]);
+				Ext.getCmp('highlightInfoPanel').getEl().slideIn(slideDirIn ? slideDirIn : 'r');	
+										
+			};
 		
 			var highlights = [];
 			var recently = [];
@@ -279,9 +354,25 @@ limitations under the License.
 							if (!highlight.link) {
 								highlight.link = false;
 							}
+							highlight.moreText = 'Read More >>';
+							highlight.displayDesc = Ext.util.Format.ellipsis(Ext.util.Format.stripTags(highlight.description), 300);
+							
 						});
 						
 						homepage.highlights = highlights;
+						
+						homepage.currentHighlighIndex = 0;
+						Ext.getCmp('highlightInfoPanel').update(homepage.highlights[homepage.currentHighlighIndex]);
+						
+						homepage.highlightTask = Ext.TaskManager.newTask({
+							run: function() {
+								updateHighlight();								
+								homepage.currentHighlighIndex++;
+							},
+							interval: 10000
+						});
+						Ext.TaskManager.start(homepage.highlightTask);
+						
 						
 						Ext.Ajax.request({
 							url: 'api/v1/service/search/recent',
@@ -290,14 +381,15 @@ limitations under the License.
 								homepage.recently = recently;
 								loadedHighlightsRecently = true;
 								
-								populateInfoPanel(infoPanel);
+								//populateInfoPanel(infoPanel);
 							}
 						});
 					}
 				});
 			};
 			loadHighlightsRecently();
-			
+		
+		/*
 			var populateInfoPanel = function(panel) {
 				
 				panel.suspendEvent('resize');
@@ -419,10 +511,92 @@ limitations under the License.
 					}
 				}
 			});
+			*/
 			
+			var topicPanel = Ext.create('Ext.panel.Panel', {
+				title: 'Topics',
+				scrollable: 'horizontal',
+				layout: {
+					type: 'hbox',
+					pack: 'center'
+				}
+			});
+			
+			Ext.Ajax.request({
+				url: 'api/v1/resource/componenttypes',
+				success: function(response, opts) {
+					var entryTypes = Ext.decode(response.responseText);
+					var typePanels = [];
+					Ext.Array.each(entryTypes, function(entryType) {
+						var panel = Ext.create('Ext.panel.Panel', {
+							border: 1,				
+							width: 250,							
+							height: 300,
+							margin: '20 20 20 20',
+							tpl: new Ext.XTemplate(
+								'<div style="border: 1px grey solid; padding: 10px; width: 100%; background-color: rgba(91, 65, 50, .5);"> <span class="fa fa-5x fa-gear"></span>{label}</div>',
+								'<div style="padding: 10px; ">{description}</div>'
+							)
+						});						
+						panel.update(entryType);
+						typePanels.push(panel);
+						
+					});					
+					topicPanel.add(typePanels);
+				}
+			});
+			
+			
+			var categoriesPanel = Ext.create('Ext.panel.Panel', {
+				title: 'Categories',
+				html: 'category'
+			});
+			
+			var tagPanel = Ext.create('Ext.panel.Panel', {
+				title: 'Tags',
+				html: 'tags'
+			});			
+			
+			var actionPanel = Ext.create('Ext.panel.Panel', {
+				title: 'Entries'
+				//scrollable: 'horizontal',
+				//layout: {
+				//	type: 'hbox',
+				//	pack: 'center'
+				//}
+			});				
+			
+			/*
+				var next = categoriesPanel;
+				var current = actionPanel.getLayout().getActiveItem();
+
+				current.getEl().slideOut('l', {
+					callback: function() {
+						actionPanel.getLayout().setActiveItem(next);										
+						actionPanel.getLayout().getActiveItem().getEl().slideIn('r', { duration: 1000 });
+						//actionPanel.items.remove(current);
+					}
+				});									
+				*/
+			
+			var actionPanel = Ext.create('Ext.tab.Panel', {	
+				tabBar : {
+					layout: {
+						pack: 'center'
+					}
+				},
+				bodyStyle: 'background: white;',				
+				minTabWidth: 150, 
+				items: [
+					topicPanel,					
+					categoriesPanel,					
+					tagPanel,
+					actionPanel
+				]
+			});
 
 			var footer = Ext.create('Ext.panel.Panel', {	
-				bodyCls: 'home-footer',
+				bodyCls: 'new-home-footer',
 				width: '100%',
 				items: [
 					{
@@ -455,7 +629,10 @@ limitations under the License.
 				items: [
 					quoteBanner,
 					searchPanel,
-					infoPanel,
+					highlightScrollerPanel,
+					searchBarPanel,
+					actionPanel,
+					//infoPanel,
 					footer
 				]
 			});
@@ -550,7 +727,7 @@ limitations under the License.
 					success: function(response, opts) {
 						var data = Ext.decode(response.responseText);
 						
-						Ext.getCmp('componentStats').update('<div class="home-search-stats">Browse through ' + data.numberOfComponents + ' ' + branding.landingStatsText + '<div>');						
+					//	Ext.getCmp('componentStats').update('<div class="home-search-stats">Browse through ' + data.numberOfComponents + ' ' + branding.landingStatsText + '<div>');						
 					}
 					
 				});
