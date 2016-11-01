@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.service.io.AttributeImporter;
 import edu.usu.sdl.openstorefront.service.io.HelpImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
+import edu.usu.sdl.openstorefront.service.manager.ConfluenceManager;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
@@ -73,6 +74,7 @@ public class CoreSystem
 			new SearchServerManager(),
 			new OSFCacheManager(),
 			new JiraManager(),
+			new ConfluenceManager(),
 			new LookupImporter(),
 			new AttributeImporter(),
 			new MailManager(),
