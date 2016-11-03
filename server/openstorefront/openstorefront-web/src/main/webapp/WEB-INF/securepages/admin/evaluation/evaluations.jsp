@@ -22,7 +22,7 @@
 				title: 'Create Evaluation',
 				modal: true,
 				width: 500,
-				height: 300,
+				height: 375,
 				layout: 'fit',
 				items: [
 					{
@@ -77,6 +77,21 @@
 								}						
 							},
 							{
+								xtype: 'combobox',
+								fieldLabel: 'Evaluation Template <span class="field-required" />',
+								displayField: 'description',
+								valueField: 'name',								
+								emptyText: 'Select a Template',
+								allowBlank: false,
+								store: {									
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/evaluationtemplates'
+									}
+								}						
+							},							
+							{
 								xtype: 'textfield',
 								fieldLabel: 'Version <span class="field-required" />',
 								name: 'version',								
@@ -91,6 +106,21 @@
 								emptyText: 'Select an group',
 								allowBlank: false
 								//TODO: add Group
+							},
+							{
+								xtype: 'combobox',
+								fieldLabel: 'Assign to User',
+								displayField: 'description',
+								valueField: 'code',								
+								emptyText: 'Select an user',
+								allowBlank: false,
+								store: {									
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/userprofiles/lookup'
+									}
+								}								
 							}
 						]
 					}
@@ -162,7 +192,7 @@
 
 						if (selected.length > 0) {	
 							tools.getComponent('action').setDisabled(false);
-							tools.getComponent('edit').setDisabled(false);														t
+							tools.getComponent('edit').setDisabled(false);	
 							tools.getComponent('inactivate').setDisabled(false);							
 						} else {							
 							tools.getComponent('action').setDisabled(true);
@@ -307,16 +337,18 @@
 			};
 			
 			var addEditEvaluation = function(record){
-				var evalformWin = Ext.create('OSF.component.EvaluationFormWindow', {					
-				});
-				evalformWin.show();
 				
-				//if (record) {
+				if (record) {
+					var evalformWin = Ext.create('OSF.component.EvaluationFormWindow', {					
+					});
+					evalformWin.show();
 					
-				//} else {
-				//	createEvaluationWin.show();
-				//	createEvaluationWin.getComponent('form').reset();
-			   //}
+					//Load form
+					
+				} else {
+					createEvaluationWin.show();
+					createEvaluationWin.getComponent('form').reset();
+			   }
 			};
 			
 			var publish = function(record){

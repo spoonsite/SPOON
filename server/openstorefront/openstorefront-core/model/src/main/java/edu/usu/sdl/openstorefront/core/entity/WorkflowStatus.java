@@ -16,6 +16,10 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.sort.LookupComparator;
+import java.util.List;
 
 /**
  *
@@ -28,6 +32,34 @@ public class WorkflowStatus
 
 	public WorkflowStatus()
 	{
+	}
+
+	public static WorkflowStatus initalStatus()
+	{
+		List<WorkflowStatus> status = allActiveStatuses();
+		if (status.isEmpty()) {
+			return null;
+		} else {
+			return status.get(0);
+		}
+	}
+
+	public static WorkflowStatus finalStatus()
+	{
+		List<WorkflowStatus> status = allActiveStatuses();
+		if (status.isEmpty()) {
+			return null;
+		} else {
+			return status.get(status.size() - 1);
+		}
+	}
+
+	private static List<WorkflowStatus> allActiveStatuses()
+	{
+		Service service = ServiceProxyFactory.getServiceProxy();
+		List<WorkflowStatus> status = service.getLookupService().findLookup(WorkflowStatus.class);
+		status.sort(new LookupComparator<>());
+		return status;
 	}
 
 }

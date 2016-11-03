@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 
@@ -73,10 +74,11 @@ public interface EvaluationService
 	/**
 	 * Create an evaluation base on the template
 	 *
+	 * @param evaluation
 	 * @param templateId
 	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public EvaluationAll createEvaluationFromTemplate(String templateId, String componentId);
+	public Evaluation createEvaluationFromTemplate(Evaluation evaluation, String templateId);
 
 }

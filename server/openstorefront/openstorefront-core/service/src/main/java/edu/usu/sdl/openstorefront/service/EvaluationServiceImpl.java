@@ -15,12 +15,23 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
+import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
+import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
+import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistRecommendation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationSectionTemplate;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
+import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
@@ -119,9 +130,115 @@ public class EvaluationServiceImpl
 	}
 
 	@Override
-	public EvaluationAll createEvaluationFromTemplate(String templateId, String componentId)
+	public Evaluation createEvaluationFromTemplate(Evaluation evaluation, String templateId)
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		Objects.requireNonNull(evaluation);
+		Objects.requireNonNull(templateId);
+
+		evaluation.setEvaluationId(persistenceService.generateId());
+		evaluation.setPublished(Boolean.FALSE);
+		evaluation.populateBaseCreateFields();
+		evaluation = persistenceService.persist(evaluation);
+
+		EvaluationTemplate evaluationTemplate = new EvaluationTemplate();
+		evaluationTemplate.setTemplateId(templateId);
+		evaluationTemplate = evaluationTemplate.find();
+
+		if (evaluationTemplate == null) {
+			throw new OpenStorefrontRuntimeException("Unable to create evaluation", "Evaluation Template was not found.  Template Id: " + templateId);
+		} else {
+
+			WorkflowStatus initialStatus = WorkflowStatus.initalStatus();
+			if (initialStatus == null) {
+				throw new OpenStorefrontRuntimeException("Unable to get initial workflow status", "Add at least one workflow status.");
+			}
+
+			EvaluationChecklist checklist = new EvaluationChecklist();
+			checklist.setChecklistId(persistenceService.generateId());
+			checklist.setChecklistTemplateId(evaluationTemplate.getChecklistTemplateId());
+			checklist.setEvaluationId(evaluation.getEvaluationId());
+			checklist.setWorkflowStatus(initialStatus.getCode());
+			checklist.populateBaseCreateFields();
+			checklist = persistenceService.persist(checklist);
+
+			ChecklistTemplate checklistTemplate = new ChecklistTemplate();
+			checklistTemplate.setChecklistTemplateId(evaluationTemplate.getChecklistTemplateId());
+			checklistTemplate = checklistTemplate.find();
+
+			for (ChecklistTemplateQuestion question : checklistTemplate.getQuestions()) {
+				EvaluationChecklistResponse response = new EvaluationChecklistResponse();
+				response.setChecklistId(checklist.getChecklistId());
+				response.setResponseId(persistenceService.generateId());
+				response.setQuestionId(question.getQuestionId());
+				response.setWorkflowStatus(initialStatus.getCode());
+				response.populateBaseCreateFields();
+				persistenceService.persist(response);
+			}
+
+			for (EvaluationSectionTemplate sectionTemplate : evaluationTemplate.getSectionTemplates()) {
+				ContentSection templateSection = new ContentSection();
+				templateSection.setEntity(ContentSectionTemplate.class.getSimpleName());
+				templateSection.setEntityId(sectionTemplate.getSectionTemplateId());
+				templateSection = templateSection.find();
+
+				ContentSection contentSection = new ContentSection();
+				contentSection.setContentSectionId(persistenceService.generateId());
+				contentSection.setEntity(Evaluation.class.getSimpleName());
+				contentSection.setEntityId(evaluation.getActiveStatus());
+				contentSection.setContent(templateSection.getContent());
+				contentSection.setNoContent(templateSection.getNoContent());
+				contentSection.setPrivateSection(templateSection.getPrivateSection());
+				contentSection.setWorkflowStatus(initialStatus.getCode());
+				contentSection.populateBaseCreateFields();
+				contentSection = persistenceService.persist(contentSection);
+
+				//copy media
+				ContentSectionMedia templateSectionMedia = new ContentSectionMedia();
+				templateSectionMedia.setContentSectionId(templateSection.getContentSectionId());
+
+				List<ContentSectionMedia> templateMedia = templateSectionMedia.findByExample();
+
+				ContentSectionAttribute templateSectionAttribute = new ContentSectionAttribute();
+				ContentSectionAttributePk contentSectionAttributePk = new ContentSectionAttributePk();
+				contentSectionAttributePk.setContentSectionId(templateSection.getContentSectionId());
+				templateSectionAttribute.setContentSectionAttributePk(contentSectionAttributePk);
+
+				List<ContentSectionAttribute> attributes = templateSectionAttribute.findByExample();
+				for (ContentSectionAttribute attribute : attributes) {
+
+					ContentSectionAttribute sectionAttribute = new ContentSectionAttribute();
+					ContentSectionAttributePk sectionAttributePk = new ContentSectionAttributePk();
+					sectionAttributePk.setContentSectionId(contentSection.getContentSectionId());
+					sectionAttributePk.setAttributeCode(attribute.getContentSectionAttributePk().getAttributeCode());
+					sectionAttributePk.setAttributeType(attribute.getContentSectionAttributePk().getAttributeType());
+					sectionAttribute.setContentSectionAttributePk(sectionAttributePk);
+					sectionAttribute.populateBaseCreateFields();
+					persistenceService.persist(sectionAttribute);
+
+				}
+
+				ContentSubSection templateSubSectionExample = new ContentSubSection();
+				templateSubSectionExample.setContentSectionId(templateSection.getContentSectionId());
+
+				List<ContentSubSection> templateSubSections = templateSubSectionExample.findByExample();
+				for (ContentSubSection templateSubSection : templateSubSections) {
+
+					ContentSubSection subSection = new ContentSubSection();
+					subSection.setContentSectionId(contentSection.getContentSectionId());
+					subSection.setSubSectionId(persistenceService.generateId());
+					subSection.setContent(templateSubSection.getContent());
+					subSection.setNoContent(templateSubSection.getNoContent());
+					subSection.setPrivateSection(templateSubSection.getPrivateSection());
+					subSection.setCustomFields(templateSubSection.getCustomFields());
+					subSection.populateBaseCreateFields();
+					persistenceService.persist(subSection);
+
+				}
+
+			}
+
+		}
+		return evaluation;
 	}
 
 	@Override
