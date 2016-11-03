@@ -265,6 +265,7 @@ public abstract class BaseComponentParser
 			attributeType.setHideOnSubmission(Boolean.FALSE);
 			attributeType.setRequiredFlg(Boolean.FALSE);
 			attributeType.setVisibleFlg(Boolean.FALSE);
+			attributeType.setAllowUserGeneratedCodes(Boolean.FALSE);
 
 			attributeType.setDescription(attributeTypeDescription);
 			attributeType.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());

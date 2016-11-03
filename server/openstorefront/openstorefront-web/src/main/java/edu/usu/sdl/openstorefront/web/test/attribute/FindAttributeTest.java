@@ -52,6 +52,7 @@ public class FindAttributeTest
 		attributeType.setArchitectureFlg(false);
 		attributeType.setImportantFlg(true);
 		attributeType.setRequiredFlg(false);
+		attributeType.setAllowUserGeneratedCodes(false);
 		attributeType.setVisibleFlg(true);
 		attributeType.setHideOnSubmission(false);
 		attributeType.setCreateUser(SecurityUtil.getCurrentUserName());

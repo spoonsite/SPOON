@@ -113,10 +113,13 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public Boolean checkIfCodeExistsForType(String type, String code) {
+	public Boolean checkIfCodeExistsForType(String type, String code)
+	{
 		List<AttributeCode> codes = findCodesForType(type);
 		for (AttributeCode c : codes) {
-			if (c.getAttributeCodePk().getAttributeCode().equals(code)) return true;
+			if (c.getAttributeCodePk().getAttributeCode().equals(code)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -126,7 +129,6 @@ public class AttributeServiceImpl
 	{
 		return findCodesForType(type, false);
 	}
-
 
 	@Override
 	public List<AttributeCode> findCodesForType(String type, boolean all)
@@ -472,6 +474,7 @@ public class AttributeServiceImpl
 						existing.setArchitectureFlg(attributeType.getArchitectureFlg());
 						existing.setImportantFlg(attributeType.getImportantFlg());
 						existing.setRequiredFlg(attributeType.getRequiredFlg());
+						existing.setAllowUserGeneratedCodes(attributeType.getAllowUserGeneratedCodes());
 						existing.setVisibleFlg(attributeType.getVisibleFlg());
 						existing.setDetailedDescription(attributeType.getDetailedDescription());
 						existing.setHideOnSubmission(attributeType.getHideOnSubmission());

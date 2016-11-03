@@ -61,6 +61,7 @@ public class SvcAttributeParser
 		attributeType.setVisibleFlg(Boolean.TRUE);
 		attributeType.setImportantFlg(Boolean.TRUE);
 		attributeType.setRequiredFlg(Boolean.FALSE);
+		attributeType.setAllowUserGeneratedCodes(Boolean.FALSE);
 
 		attributeMap.put(attributeType, new ArrayList<>());
 
