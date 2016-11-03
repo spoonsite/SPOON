@@ -1,0 +1,5 @@
+Software Contains:
+
+Patterns from http://subtlepatterns.com/
+Which are licensed under CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/
+
