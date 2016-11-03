@@ -34,8 +34,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -59,6 +61,8 @@ public class TaskThreadExecutor
 	private static final int MAX_ORPHAN_QUEUE_TIME = 60000;
 
 	private static List<TaskFuture> tasks = Collections.synchronizedList(new ArrayList<>());
+        
+        private static Queue<TaskRequest> queue = new ConcurrentLinkedQueue<>();
 
 	public TaskThreadExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue)
 	{
@@ -117,6 +121,13 @@ public class TaskThreadExecutor
 					}
 
 				}
+                                
+                                if (taskFuture.isQueueable() && (taskFuture.getStatus() == TaskStatus.DONE 
+                                                                 || taskFuture.getStatus() == TaskStatus.CANCELLED 
+                                                                 || taskFuture.getStatus() == TaskStatus.FAILED)) {
+                                    
+                                    this.notifyQueue();
+                                }
 			}
 		}
 		if (t != null) {
@@ -202,6 +213,23 @@ public class TaskThreadExecutor
 
 		return new ArrayList<>(taskMap.values());
 	}
+        
+        private synchronized boolean notifyQueue() {
+            
+            TaskRequest task = queue.poll();
+            
+            if (task != null) {
+            
+                TaskFuture future = this.submitTask(queue.poll());
+                
+                if (future != null) {
+                    
+                    return true;
+                }
+            }
+                
+            return false;
+        }
 
 	/**
 	 * Submits a new task
@@ -217,7 +245,15 @@ public class TaskThreadExecutor
 			for (TaskFuture taskFuture : currentTasks) {
 				if (taskFuture.getTaskName().equals(taskRequest.getName())
 						&& OpenStorefrontConstant.TaskStatus.WORKING.equals(taskFuture.getStatus())) {
-					runJob = false;
+                                    
+                                        if (taskRequest.isQueueable()) {
+
+                                            queue.add(taskRequest);
+                                        }
+
+                                        runJob = false;
+
+                                        break;
 				}
 			}
 		}
@@ -226,6 +262,7 @@ public class TaskThreadExecutor
 		if (runJob) {
 			Future future = submit(taskRequest.getTask());
 			taskFuture = new TaskFuture(future, TimeUtil.currentDate(), taskRequest.isAllowMultiple());
+                        taskFuture.setQueueable(taskRequest.isQueueable());
 			taskFuture.setCreateUser(SecurityUtil.getCurrentUserName());
 			taskFuture.setDetails(taskRequest.getDetails());
 			taskFuture.setTaskData(taskRequest.getTaskData());
