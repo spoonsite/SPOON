@@ -99,6 +99,7 @@ public abstract class BaseMapper<T>
 		attributeType.setImportantFlg(Boolean.FALSE);
 		attributeType.setAllowMultipleFlg(Boolean.TRUE);
 		attributeType.setHideOnSubmission(Boolean.FALSE);
+		attributeType.setAllowUserGeneratedCodes(Boolean.FALSE);
 		attributeType.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
 		attributeType.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
 
