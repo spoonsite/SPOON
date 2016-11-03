@@ -938,7 +938,11 @@ public class AttributeServiceImpl
 		Map<AttributeType, List<AttributeCode>> attributeMap = new HashMap<>();
 
 		for (AttributeAll attributeAll : attributes) {
-			attributeMap.put(attributeAll.getAttributeType(), attributeAll.getAttributeCodes());
+			if (attributeMap.containsKey(attributeAll.getAttributeType())) {
+				attributeMap.get(attributeAll.getAttributeType()).addAll(attributeAll.getAttributeCodes());
+			} else {
+				attributeMap.put(attributeAll.getAttributeType(), attributeAll.getAttributeCodes());
+			}
 		}
 		syncAttribute(attributeMap);
 	}
