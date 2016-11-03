@@ -48,6 +48,7 @@ public class ComponentAttributeView
 	private boolean allowMultipleFlg;
 	private boolean architectureFlg;
 	private boolean importantFlg;
+	private boolean allowUserCodes;
 	private boolean hideOnSubmission;
 	private boolean codeHasAttachment;
 
@@ -95,6 +96,7 @@ public class ComponentAttributeView
 			view.setBadgeUrl(code.getBadgeUrl());
 			view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
 			view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
+			view.setAllowUserCodes(Convert.toBoolean(type.getAllowUserGeneratedCodes()));
 			view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
 			view.setHideOnSubmission(Convert.toBoolean(type.getHideOnSubmission()));
 			view.setDefaultAttributeCode(type.getDefaultAttributeCode());
@@ -153,6 +155,7 @@ public class ComponentAttributeView
 			view.setBadgeUrl(code.getBadgeUrl());
 			view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
 			view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
+			view.setAllowUserCodes(Convert.toBoolean(type.getAllowUserGeneratedCodes()));
 			view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
 			view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
 			view.setHideOnSubmission(Convert.toBoolean(type.getHideOnSubmission()));
@@ -394,23 +397,17 @@ public class ComponentAttributeView
 		this.defaultAttributeCode = defaultAttributeCode;
 	}
 
-	/**
-	 * @return the requiredRestrictions
-	 */
 	public List<ComponentTypeRestriction> getRequiredRestrictions()
 	{
 		return requiredRestrictions;
 	}
 
-	/**
-	 * @param requiredRestrictions the requiredRestrictions to set
-	 */
 	public void setRequiredRestrictions(List<ComponentTypeRestriction> requiredRestrictions)
 	{
 		this.requiredRestrictions = requiredRestrictions;
 	}
 
-	public boolean isCodeHasAttachment()
+	public boolean getCodeHasAttachment()
 	{
 		return codeHasAttachment;
 	}
@@ -418,6 +415,16 @@ public class ComponentAttributeView
 	public void setCodeHasAttachment(boolean codeHasAttachment)
 	{
 		this.codeHasAttachment = codeHasAttachment;
+	}
+
+	public boolean getAllowUserCodes()
+	{
+		return allowUserCodes;
+	}
+
+	public void setAllowUserCodes(boolean allowUserCodes)
+	{
+		this.allowUserCodes = allowUserCodes;
 	}
 
 }
