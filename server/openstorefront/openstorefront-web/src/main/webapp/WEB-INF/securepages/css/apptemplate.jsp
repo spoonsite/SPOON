@@ -205,12 +205,18 @@ limitations under the License.
 
 .new-home-search-panel {
 	background: url('${pageContext.request.contextPath}/images/footer_lodyas.png');
-	padding: 40px 0px 0px 0px;
+	padding: 20px 0px 0px 0px;
 	border-top: 1px solid darkgray !important;
 	/* border-bottom: 1px solid lightgray !important; */
 }
 .new-home-highlight-panel {
 	background: url('${pageContext.request.contextPath}/images/footer_lodyas.png');
+}
+
+.home-nav-item-header {
+	padding-left: 5px;
+	font-size: 1.5em;
+	text-shadow: 2px 2px 2px rgba(150, 150, 150, 1);
 }
 
 .home-search-field {

@@ -81,6 +81,7 @@ public class AttributeStandardParser
 	protected <T> Object parseRecord(T record)
 	{
 		AttributeAll attributeAll = (AttributeAll) record;
+		attributeAll.getAttributeType().applyDefaultValues();
 		return attributeAll;
 	}
 

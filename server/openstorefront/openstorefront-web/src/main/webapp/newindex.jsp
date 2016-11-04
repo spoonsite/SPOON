@@ -294,6 +294,7 @@ limitations under the License.
 						xtype: 'toolbar',
 						cls: 'new-home-highlight-panel',
 						dock: 'right',
+						padding: '0 5 0 0',
 						items: [
 							{ xtype: 'tbfill' },
 							{
@@ -336,9 +337,9 @@ limitations under the License.
 					homepage.currentHighlighIndex = homepage.highlights.length-1;
 				}
 
-				Ext.getCmp('highlightInfoPanel').getEl().slideOut(slideDirOut ? slideDirOut : 'l');				
+				//Ext.getCmp('highlightInfoPanel').getEl().slideOut(slideDirOut ? slideDirOut : 'l');				
 				Ext.getCmp('highlightInfoPanel').update(homepage.highlights[homepage.currentHighlighIndex]);
-				Ext.getCmp('highlightInfoPanel').getEl().slideIn(slideDirIn ? slideDirIn : 'r');	
+				Ext.getCmp('highlightInfoPanel').getEl().slideIn();	
 										
 			};
 		
@@ -363,6 +364,7 @@ limitations under the License.
 						
 						homepage.currentHighlighIndex = 0;
 						Ext.getCmp('highlightInfoPanel').update(homepage.highlights[homepage.currentHighlighIndex]);
+						homepage.currentHighlighIndex++;
 						
 						homepage.highlightTask = Ext.TaskManager.newTask({
 							run: function() {
@@ -531,7 +533,7 @@ limitations under the License.
 						var panel = Ext.create('Ext.panel.Panel', {
 							border: 1,				
 							width: 250,							
-							height: 300,
+							height: 250,
 							margin: '20 20 20 20',
 							tpl: new Ext.XTemplate(
 								'<div style="border: 1px grey solid; padding: 10px; width: 100%; background-color: rgba(91, 65, 50, .5);"> <span class="fa fa-5x fa-gear"></span>{label}</div>',
@@ -549,21 +551,137 @@ limitations under the License.
 			
 			var categoriesPanel = Ext.create('Ext.panel.Panel', {
 				title: 'Categories',
-				html: 'category'
+				scrollable: 'horizontal',
+				layout: {
+					type: 'hbox',
+					pack: 'center'
+				}
 			});
+			
+			Ext.Ajax.request({
+				url: 'api/v1/resource/attributes',				
+				success: function(response, opts) {
+					var attributes = Ext.decode(response.responseText);
+					var categoryPanels = [];
+					Ext.Array.each(attributes, function(attribute) {
+						if (attribute.importantFlg) {
+							var panel = Ext.create('Ext.panel.Panel', {
+								border: 1,				
+								width: 250,							
+								height: 250,
+								margin: '20 20 20 20',
+								tpl: new Ext.XTemplate(
+									'<div style="border: 1px grey solid; padding: 10px; width: 100%; background-color: rgba(91, 65, 50, .5);"> <span class="fa fa-5x fa-gear"></span>{description}</div>',
+									'<div style="padding: 10px; overflow: auto; height: 161px;">',
+									'<tpl for="codes">',
+									'	{label}<br>',
+									'</tpl></div>'
+								)
+							});						
+							panel.update(attribute);
+							categoryPanels.push(panel);
+						}
+					});					
+					categoriesPanel.add(categoryPanels);
+				}
+			});			
 			
 			var tagPanel = Ext.create('Ext.panel.Panel', {
 				title: 'Tags',
-				html: 'tags'
+				bodyStyle: 'padding: 20px;',
+				minHeight: 250,
+				tpl: new Ext.XTemplate(
+					'<tpl for=".">',
+					' <span style="font-size: {tagSize}em; padding: 0px 10px 0px; 10px; line-height: 100%;"><a href="" class="link">{text}</a></span>',
+					'</tpl>'
+				)
 			});			
 			
+			Ext.Ajax.request({
+				url: 'api/v1/resource/components/tagviews',				
+				success: function(response, opts) {
+					var tags = Ext.decode(response.responseText);
+					var groupedTags = [];
+					Ext.Array.each(tags, function(tag) {
+						var existingTag = Ext.Array.findBy(groupedTags, function(item){
+							return item.text === tag.text;
+						});
+						if (existingTag) {
+							existingTag.count++;
+						} else {
+							groupedTags.push({
+								text: tag.text,
+								count: 1
+							});
+						}
+					});	
+					groupedTags.sort(function(a, b){
+						return a.text.localeCompare(b.text);
+					});
+					
+					var maxFontSize = 5;
+					var maxCount = 0;
+					var minCount = 0;
+					Ext.Array.each(groupedTags, function(tag) {
+						if (maxCount < tag.count) {
+							maxCount = tag.count;
+						}
+						if (minCount > tag.count) {
+							minCount = tag.count;
+						}
+					});
+					Ext.Array.each(groupedTags, function(tag) {
+						var tagSize = Math.abs((maxFontSize * (tag.count - minCount)) / (maxCount - minCount));
+						tag.tagSize = tagSize;
+					});
+					
+					
+					tagPanel.update(groupedTags);
+				}
+			});	
+			
+			
 			var actionPanel = Ext.create('Ext.panel.Panel', {
-				title: 'Entries'
-				//scrollable: 'horizontal',
-				//layout: {
-				//	type: 'hbox',
-				//	pack: 'center'
-				//}
+				title: 'Entries',
+				scrollable: 'horizontal',
+				layout: {
+					type: 'hbox',
+					pack: 'center'
+				},
+				items: [
+					{
+						border: 1,				
+						width: 250,							
+						height: 250,
+						margin: '20 20 20 20',
+						html: ['<div style="border: 1px grey solid; padding: 10px; width: 100%; background-color: rgba(91, 65, 50, .5);">',
+								' <table style="width: 100%"><tr><td><span class="fa fa-5x fa-file-text-o" style="color: white; text-shadow: 2px 2px 2px rgba(150, 150, 150, 1);"></span></td>',
+								' <td valign="center"><span class="home-nav-item-header">Submit Entry</span></td></tr></table></div>',
+							'<div style="padding: 10px; overflow: auto; height: 161px;">',
+							' Add an entry to the registry.',
+							'</div>']
+					},
+					{
+						border: 1,				
+						width: 250,							
+						height: 250,
+						margin: '20 20 20 20',
+						html: ['<div style="border: 1px grey solid; padding: 10px; width: 100%; background-color: rgba(91, 65, 50, .5);"> <span class="fa fa-5x fa-share-alt" style="color: orange; text-shadow: 2px 2px 2px rgba(150, 150, 150, 1);"></span><span class="home-nav-item-header">Explore Relationships</span></div>',
+							'<div style="padding: 10px; overflow: auto; height: 161px;">',
+							' Vizualize relationships between entries.',
+							'</div>']
+					},
+					{
+						border: 1,				
+						width: 250,							
+						height: 250,
+						margin: '20 20 20 20',
+						html: ['<div style="border: 1px grey solid; padding: 10px; width: 100%; background-color: rgba(91, 65, 50, .5);"> <span class="fa fa-5x fa-star" style="color: yellow; text-shadow: 2px 2px 2px rgba(150, 150, 150, 1);"></span><span class="home-nav-item-header">Recently Added</span></div>',
+							'<div style="padding: 10px; overflow: auto; height: 161px;">',
+							' View recently added entries.',
+							'</div>']						
+					}
+				]
 			});				
 			
 			/*
@@ -752,6 +870,9 @@ limitations under the License.
 						loadStats();
 						
 						searchtoolsWin = Ext.create('OSF.component.SearchToolWindow', {
+							showTopics: false,
+							showCategory: false,
+							showTags: false,
 							branding: branding
 						});							
 					}
