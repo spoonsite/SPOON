@@ -26,7 +26,7 @@ import java.util.Map;
  * @author dshurtleff
  */
 @SystemTable
-@APIDescription("Highlight  new item type: link, component...")
+@APIDescription("Highlight new item type: link, component, article")
 public class HighlightType
 		extends LookupEntity<HighlightType>
 {

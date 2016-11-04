@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Holder for a Email Address (Used in other entities; not standalone)")
+@APIDescription("Holder for an email address (Used in other entities; not standalone)")
 public class EmailAddress
 		implements Serializable
 {

@@ -21,7 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
  *
  * @author jlaw
  */
-@APIDescription("Resource Type: Document, Homepage, Releases...etc")
+@APIDescription("Resource Type: Document, Homepage, Releases, etc.")
 public class ResourceType
 		extends LookupEntity<ResourceType>
 {

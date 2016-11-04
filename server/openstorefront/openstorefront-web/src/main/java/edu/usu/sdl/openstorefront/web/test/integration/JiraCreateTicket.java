@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.test.integration;
 
+import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.entity.FeedbackTicket;
@@ -31,6 +32,8 @@ public class JiraCreateTicket
 		extends BaseTestCase
 {
 
+	private BasicIssue basicIssue;
+
 	@Override
 	protected void runInternalTest()
 	{
@@ -46,15 +49,15 @@ public class JiraCreateTicket
 			feedbackTicket.setPhone("555-555-5555");
 			feedbackTicket.setSummary("TEST - AUTO TEST");
 			feedbackTicket.setDescription("This was generated from an auto test.");
-			feedbackTicket.setWebInformation(new WebInformation());			
+			feedbackTicket.setWebInformation(new WebInformation());
 			feedbackTicket.getWebInformation().setLocation(PropertiesManager.getNodeName());
 			feedbackTicket.getWebInformation().setUserAgent(PropertiesManager.getApplicationVersion());
 			feedbackTicket.getWebInformation().setReferrer("Auto Test");
 			feedbackTicket.getWebInformation().setScreenResolution("0 x 0");
 
-			BasicIssue basicIssue = jiraClient.submitTicket(feedbackTicket);
+			basicIssue = jiraClient.submitTicket(feedbackTicket);
 			if (basicIssue != null) {
-				results.append(basicIssue.toString());
+				addResultsLines(basicIssue.toString());
 			} else {
 				failureReason.append("Unable to submit ticket...see log");
 			}
@@ -66,6 +69,26 @@ public class JiraCreateTicket
 	public String getDescription()
 	{
 		return "Jira Create Test";
+	}
+
+	@Override
+	protected void cleanupTest()
+	{
+		super.cleanupTest();
+
+		//Account needs permissions to delete
+		if (basicIssue != null) {
+			try (JiraClient jiraClient = JiraManager.getClient()) {
+				try {
+					jiraClient.deleteTicket(basicIssue.getKey());
+				} catch (RestClientException clientException) {
+					int status = clientException.getStatusCode().or(-1);
+					if (status == 403) {
+						addResultsLines("WARNING: Unable to delete ticket. Account doesn't have permission.");
+					}
+				}
+			}
+		}
 	}
 
 }

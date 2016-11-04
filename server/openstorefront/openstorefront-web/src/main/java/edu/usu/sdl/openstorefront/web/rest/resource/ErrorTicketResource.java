@@ -118,7 +118,7 @@ public class ErrorTicketResource
 
 	@GET
 	@RequireAdmin
-	@APIDescription("Gets an error ticket info")
+	@APIDescription("Gets error ticket info")
 	@Produces({MediaType.WILDCARD})
 	@Path("/{id}/ticket")
 	public Response getErrorTicketInfo(

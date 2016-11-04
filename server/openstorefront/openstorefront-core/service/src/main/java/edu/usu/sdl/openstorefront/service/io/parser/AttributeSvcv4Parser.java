@@ -81,6 +81,7 @@ public class AttributeSvcv4Parser
 			attributeAll.getAttributeType().setVisibleFlg(Boolean.TRUE);
 			attributeAll.getAttributeType().setImportantFlg(Boolean.TRUE);
 			attributeAll.getAttributeType().setRequiredFlg(Boolean.FALSE);
+			attributeAll.getAttributeType().setAllowUserGeneratedCodes(Boolean.FALSE);
 		}
 
 		AttributeType attributeType = attributeAll.getAttributeType();

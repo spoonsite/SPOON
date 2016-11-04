@@ -77,7 +77,7 @@ public class NotificationService
 	}
 
 	@POST
-	@APIDescription("Sends recent change email to all user that are flag to be notified or an email via the query param")
+	@APIDescription("Sends recent change email to all users that are flagged to be notified or an email via the query param")
 	@RequireAdmin
 	@Path("/recent-changes")
 	public Response recentChanges(

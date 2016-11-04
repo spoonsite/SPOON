@@ -45,6 +45,7 @@
 						'<tr class="info-table"><td class="info-table" style="width: 20%;"><b>Web User-agent</b></td><td class="info-table"> {webInformation.userAgent}</td></tr>',
 						'<tr class="info-table"><td class="info-table" style="width: 20%;"><b>Web Referrer</b></td><td class="info-table"> {webInformation.referrer}</td></tr>',
 						'<tr class="info-table"><td class="info-table" style="width: 20%;"><b>Web Screen Resolution</b></td><td class="info-table"> {webInformation.screenResolution}</td></tr>',
+						'<tpl if="externalId"><tr class="info-table"><td class="info-table" style="width: 20%;"><b>External Id</b></td><td class="info-table"> {externalId}</td></tr></tpl>',
 						'</table>'		
 					)
 				});

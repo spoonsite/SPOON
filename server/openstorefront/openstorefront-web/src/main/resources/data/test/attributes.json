@@ -1,0 +1,51 @@
+[ {
+  "attributeType" : {
+    "storageVersion" : "13",
+    "securityMarkingType" : null,
+    "activeStatus" : "A",
+    "createUser" : "admin",
+    "createDts" : 1475183785207,
+    "updateUser" : "admin",
+    "updateDts" : 1475184985304,
+    "adminModified" : true,
+    "attributeType" : "ATTRSTD",
+    "description" : "AttributeStandard01",
+    "detailedDescription" : "",
+    "visibleFlg" : false,
+    "requiredFlg" : false,
+	"allowUserGeneratedCodes" : false,
+    "requiredRestrictions" : null,
+    "associatedComponentTypes" : null,	
+    "architectureFlg" : false,
+    "importantFlg" : false,
+    "allowMultipleFlg" : false,
+    "hideOnSubmission" : false,
+    "defaultAttributeCode" : null
+  },
+  "attributeCodes" : [ ]
+}, {
+  "attributeType" : {
+    "storageVersion" : "2",
+    "securityMarkingType" : null,
+    "activeStatus" : "A",
+    "createUser" : "admin",
+    "createDts" : 1475183835662,
+    "updateUser" : "admin",
+    "updateDts" : 1475184992127,
+    "adminModified" : true,
+    "attributeType" : "ATTRSTD2",
+    "description" : "AttributeStandard02",
+    "detailedDescription" : "<p>Testing, Testing, 1, 2, 3...</p>",
+    "visibleFlg" : false,
+    "requiredFlg" : false,
+	"allowUserGeneratedCodes" : false,
+    "requiredRestrictions" : null,
+    "associatedComponentTypes" : null,
+    "architectureFlg" : false,
+    "importantFlg" : false,
+    "allowMultipleFlg" : false,
+    "hideOnSubmission" : false,
+    "defaultAttributeCode" : null
+  },
+  "attributeCodes" : [ ]
+} ]

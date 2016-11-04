@@ -128,7 +128,8 @@ public class PluginManager
 				}
 			}
 		} catch (IOException | BundleException ex) {
-			log.log(Level.SEVERE, "Unable to load plugin: " + location, ex);
+			log.log(Level.SEVERE, MessageFormat.format("Unable to load plugin: {0}", location));
+                        throw new OpenStorefrontRuntimeException(MessageFormat.format("Unable to install or load plugin: {0}", location), ex);
 		}
 
 		return success;

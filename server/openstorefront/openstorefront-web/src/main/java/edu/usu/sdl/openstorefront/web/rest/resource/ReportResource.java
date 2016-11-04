@@ -193,7 +193,7 @@ public class ReportResource
 	}
 
 	@GET
-	@APIDescription("Gets report supported formats")
+	@APIDescription("Gets a report type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportType.class)
 	@Path("/reporttypes")

@@ -27,7 +27,7 @@ import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@APIDescription("Hold a highlight for the homepage")
+@APIDescription("Holds a highlight for the homepage")
 public class Highlight
 		extends StandardEntity<Highlight>
 {

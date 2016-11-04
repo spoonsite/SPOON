@@ -40,7 +40,7 @@ import javax.ws.rs.core.Response;
  * @author dshurtleff
  */
 @Path("v1/resource/generalmedia")
-@APIDescription("General media is used for articles, badges...etc.  Dynamic Resources. <br> To create a new record POST to Media.action?UploadGeneralMedia&generalMedia.name={name} *Admin Role required")
+@APIDescription("General media is used for articles, badges, etc.  Dynamic Resources. <br> To create a new record POST to Media.action?UploadGeneralMedia&generalMedia.name={name} *Admin Role required")
 public class GeneralMediaResource
 		extends BaseResource
 {

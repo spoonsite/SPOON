@@ -339,6 +339,12 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public List<ComponentMetadata> getMetadata()
+	{
+		return sub.getMetadata();
+	}
+
+	@Override
 	public List<ComponentReviewView> getReviewByUser(String username)
 	{
 		return sub.getReviewByUser(username);
@@ -569,13 +575,12 @@ public class ComponentServiceImpl
 		core.removeComponentTypeTemplate(templateId);
 	}
 
-
 	@Override
 	public void deleteComponentTypeTemplate(String templateId)
 	{
-		core.deleteComponentTypeTemplate(templateId);		
-	}	
-	
+		core.deleteComponentTypeTemplate(templateId);
+	}
+
 	@Override
 	public Component approveComponent(String componentId)
 	{
@@ -627,13 +632,13 @@ public class ComponentServiceImpl
 	@Override
 	public void saveTemplateBlock(TemplateBlock templateBlock)
 	{
-		core.saveTemplateBlock(templateBlock);		
+		core.saveTemplateBlock(templateBlock);
 	}
 
 	@Override
 	public void deleteTemplateBlock(String templateBlockId)
 	{
-		core.deleteTemplateBlock(templateBlockId);		
+		core.deleteTemplateBlock(templateBlockId);
 	}
 
 }

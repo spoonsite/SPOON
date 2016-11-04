@@ -40,16 +40,17 @@ import org.codemonkey.simplejavamail.email.Email;
  * @author dshurtleff
  */
 public class FeedbackServiceImpl
-	extends ServiceProxy	
-	implements FeedbackService		
+		extends ServiceProxy
+		implements FeedbackService
 {
+
 	private static final Logger log = Logger.getLogger(FeedbackServiceImpl.class.getName());
 
 	@Override
 	public FeedbackTicket submitFeedback(FeedbackTicket ticket)
 	{
 		Objects.requireNonNull(ticket);
-		
+
 		UserContext userContext = SecurityUtil.getUserContext();
 		if (userContext != null) {
 			UserProfile userProfile = userContext.getUserProfile();
@@ -59,36 +60,37 @@ public class FeedbackServiceImpl
 			ticket.setEmail(userProfile.getEmail());
 			ticket.setPhone(userProfile.getPhone());
 			ticket.setUsername(userProfile.getUsername());
-		}		
+		}
 		ticket.setFeedbackId(persistenceService.generateId());
 		ticket.populateBaseCreateFields();
 		ticket = persistenceService.persist(ticket);
-		
+
 		Branding branding = getBrandingService().getCurrentBrandingView();
-		switch (branding.getFeedbackHandler())
-		{
+		switch (branding.getFeedbackHandler()) {
 			case FeedbackHandleType.JIRA:
 				try (JiraClient jiraClient = JiraManager.getClient()) {
 					log.log(Level.INFO, "Posting feedback to jira.");
-					
+
 					BasicIssue issue = jiraClient.submitTicket(ticket);
 					if (issue != null) {
-						log.log(Level.INFO, MessageFormat.format("Jira Ticket: {0}", issue.getKey()));						
+						log.log(Level.INFO, MessageFormat.format("Jira Ticket: {0}", issue.getKey()));
+						ticket.setExternalId(issue.getKey());
+						ticket = persistenceService.persist(ticket);
 					}
 				}
 				break;
 			case FeedbackHandleType.EMAIL:
-				
+
 				String emailAddress = PropertiesManager.getValue(PropertiesManager.KEY_FEEDBACK_EMAIL);
 				if (StringUtils.isNotBlank(emailAddress)) {
 					Email email = MailManager.newEmail();
 					email.setSubject(ticket.fullSubject());
-					email.setText(ticket.fullDescription());				
-					email.addRecipient("Admin", emailAddress, Message.RecipientType.TO);									
+					email.setText(ticket.fullDescription());
+					email.addRecipient("Admin", emailAddress, Message.RecipientType.TO);
 					MailManager.send(email);
 				} else {
 					log.log(Level.WARNING, "Email is setup as the feedback handler however the configure properties doesn't have a email added defined for property: " + PropertiesManager.KEY_FEEDBACK_EMAIL);
-				}				
+				}
 				break;
 		}
 		return ticket;
@@ -103,16 +105,17 @@ public class FeedbackServiceImpl
 	@Override
 	public FeedbackTicket markAsOutstanding(String ticketId)
 	{
-		return updateStatus(ticketId, FeedbackTicket.ACTIVE_STATUS);		
+		return updateStatus(ticketId, FeedbackTicket.ACTIVE_STATUS);
 	}
-	
-	private FeedbackTicket updateStatus(String ticketId, String status) {
+
+	private FeedbackTicket updateStatus(String ticketId, String status)
+	{
 		FeedbackTicket feedbackTicket = persistenceService.findById(FeedbackTicket.class, ticketId);
 		if (feedbackTicket != null) {
 			feedbackTicket.setActiveStatus(status);
 			feedbackTicket.populateBaseUpdateFields();
 			feedbackTicket = persistenceService.persist(feedbackTicket);
-		} 
+		}
 		return feedbackTicket;
 	}
 
@@ -121,8 +124,8 @@ public class FeedbackServiceImpl
 	{
 		FeedbackTicket feedbackTicket = persistenceService.findById(FeedbackTicket.class, ticketId);
 		if (feedbackTicket != null) {
-			persistenceService.delete(feedbackTicket);			
+			persistenceService.delete(feedbackTicket);
 		}
 	}
-	
+
 }

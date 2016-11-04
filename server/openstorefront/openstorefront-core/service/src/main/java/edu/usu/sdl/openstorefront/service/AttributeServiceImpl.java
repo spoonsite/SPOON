@@ -113,6 +113,18 @@ public class AttributeServiceImpl
 	}
 
 	@Override
+	public Boolean checkIfCodeExistsForType(String type, String code)
+	{
+		List<AttributeCode> codes = findCodesForType(type);
+		for (AttributeCode c : codes) {
+			if (c.getAttributeCodePk().getAttributeCode().equals(code)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public List<AttributeCode> findCodesForType(String type)
 	{
 		return findCodesForType(type, false);
@@ -462,6 +474,7 @@ public class AttributeServiceImpl
 						existing.setArchitectureFlg(attributeType.getArchitectureFlg());
 						existing.setImportantFlg(attributeType.getImportantFlg());
 						existing.setRequiredFlg(attributeType.getRequiredFlg());
+						existing.setAllowUserGeneratedCodes(attributeType.getAllowUserGeneratedCodes());
 						existing.setVisibleFlg(attributeType.getVisibleFlg());
 						existing.setDetailedDescription(attributeType.getDetailedDescription());
 						existing.setHideOnSubmission(attributeType.getHideOnSubmission());
@@ -925,7 +938,11 @@ public class AttributeServiceImpl
 		Map<AttributeType, List<AttributeCode>> attributeMap = new HashMap<>();
 
 		for (AttributeAll attributeAll : attributes) {
-			attributeMap.put(attributeAll.getAttributeType(), attributeAll.getAttributeCodes());
+			if (attributeMap.containsKey(attributeAll.getAttributeType())) {
+				attributeMap.get(attributeAll.getAttributeType()).addAll(attributeAll.getAttributeCodes());
+			} else {
+				attributeMap.put(attributeAll.getAttributeType(), attributeAll.getAttributeCodes());
+			}
 		}
 		syncAttribute(attributeMap);
 	}

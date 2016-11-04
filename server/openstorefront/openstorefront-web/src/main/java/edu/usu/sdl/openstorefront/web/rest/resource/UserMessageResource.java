@@ -47,7 +47,7 @@ import net.sourceforge.stripes.util.bean.BeanUtil;
  * @author dshurtleff
  */
 @Path("v1/resource/usermessages")
-@APIDescription("User message are queued message for the user.")
+@APIDescription("User messages are queued messages for the user.")
 public class UserMessageResource
 		extends BaseResource
 {
@@ -107,7 +107,7 @@ public class UserMessageResource
 	}
 
 	@GET
-	@APIDescription("Get an user message")
+	@APIDescription("Gets a user message")
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserMessage.class)

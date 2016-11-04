@@ -41,6 +41,7 @@ public abstract class BaseAttributeParser
 		attributeType.setImportantFlg(Boolean.FALSE);
 		attributeType.setAllowMultipleFlg(Boolean.FALSE);
 		attributeType.setHideOnSubmission(Boolean.FALSE);
+		attributeType.setAllowUserGeneratedCodes(Boolean.FALSE);
 
 		attributeAll.setAttributeType(attributeType);
 		return attributeAll;

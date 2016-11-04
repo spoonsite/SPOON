@@ -25,8 +25,8 @@ import java.util.Date;
  *
  * @author dshurtleff
  */
-@APIDescription("Holds an Error / Completed Task Information so it can be persists over a "
-		+ "longer period across bounces This is a read-only system model")
+@APIDescription("Holds an Error / Completed Task Information so it can be persisted over a "
+		+ "longer period across bounces. This is a read-only system model.")
 public class AsyncTask
 		extends StandardEntity<AsyncTask>
 {

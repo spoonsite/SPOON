@@ -35,7 +35,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author dshurtleff
  */
-@APIDescription("General media used for articles and bagdes...etc")
+@APIDescription("General media used for articles, bagdes, etc.")
 public class GeneralMedia
 		extends StandardEntity<GeneralMedia>
 {
@@ -50,7 +50,7 @@ public class GeneralMedia
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Stored name filename")
+	@APIDescription("Stored filename")
 	private String fileName;
 
 	@NotNull

@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Hold a external field to internal entity field mapping")
+@APIDescription("Hold an external field to internal entity field mapping")
 public class FileDataMapField
 	implements Serializable
 {

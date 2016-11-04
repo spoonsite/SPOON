@@ -45,7 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 public class AttributeImport
 {
 
-	private static final Logger log = Logger.getLogger(AttributeImport.class.getName());
+	private static final Logger LOG = Logger.getLogger(AttributeImport.class.getName());
 
 	public List<AttributeTypeView> loadAttributes()
 	{
@@ -72,7 +72,7 @@ public class AttributeImport
 						try {
 							String data[] = parser.parseLine(line);
 							String type = data[0].toUpperCase().trim();
-							AttributeTypeView attributeTypeView = null;
+							AttributeTypeView attributeTypeView;
 							if (attributeMap.containsKey(type)) {
 								attributeTypeView = attributeMap.get(type);
 							} else {
@@ -84,6 +84,7 @@ public class AttributeImport
 								attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 								attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
 								attributeTypeView.setAllowMultipleFlg(Convert.toBoolean(data[6].trim()));
+								attributeTypeView.setAllowUserGeneratedCodes(Boolean.FALSE);
 
 								attributeMap.put(type, attributeTypeView);
 							}
@@ -97,13 +98,13 @@ public class AttributeImport
 							attributeTypeView.getCodes().add(attributeCodeView);
 
 						} catch (IOException ex) {
-							log.log(Level.SEVERE, null, ex);
+							LOG.log(Level.SEVERE, null, ex);
 						}
 					}
 				}
 			});
 		} catch (IOException ex) {
-			log.log(Level.SEVERE, null, ex);
+			LOG.log(Level.SEVERE, null, ex);
 		}
 
 		//load archtec
@@ -142,6 +143,7 @@ public class AttributeImport
 				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
 				attributeTypeView.setAllowMultipleFlg(Convert.toBoolean(data[6].trim()));
+				attributeTypeView.setAllowUserGeneratedCodes(Boolean.FALSE);
 
 				List<String[]> allLines = reader.readAll();
 				for (int i = 1; i < allLines.size(); i++) {
@@ -165,12 +167,12 @@ public class AttributeImport
 				}
 
 			} catch (IOException ex) {
-				log.log(Level.SEVERE, "Failed on line: " + lineNumber, ex);
+				LOG.log(Level.SEVERE, "Failed on line: " + lineNumber, ex);
 			}
 
 		} catch (IOException ex) {
 
-			log.log(Level.SEVERE, null, ex);
+			LOG.log(Level.SEVERE, null, ex);
 		}
 
 		return attributeTypeView;
@@ -196,6 +198,7 @@ public class AttributeImport
 				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
 				attributeTypeView.setAllowMultipleFlg(Convert.toBoolean(data[6].trim()));
+				attributeTypeView.setAllowUserGeneratedCodes(Boolean.FALSE);
 
 				for (int i = 2; i < lines.size(); i++) {
 					if (StringUtils.isNotBlank(lines.get(i))) {
@@ -218,12 +221,12 @@ public class AttributeImport
 				}
 
 			} catch (IOException ex) {
-				log.log(Level.SEVERE, null, ex);
+				LOG.log(Level.SEVERE, null, ex);
 			}
 
 		} catch (IOException ex) {
 
-			log.log(Level.SEVERE, null, ex);
+			LOG.log(Level.SEVERE, null, ex);
 		}
 
 		return attributeTypeView;
@@ -248,6 +251,7 @@ public class AttributeImport
 				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
 				attributeTypeView.setAllowMultipleFlg(Convert.toBoolean(data[6].trim()));
+				attributeTypeView.setAllowUserGeneratedCodes(Boolean.FALSE);
 
 				for (int i = 2; i < lines.size(); i++) {
 					if (StringUtils.isNotBlank(lines.get(i))) {
@@ -268,12 +272,12 @@ public class AttributeImport
 				}
 
 			} catch (IOException ex) {
-				log.log(Level.SEVERE, null, ex);
+				LOG.log(Level.SEVERE, null, ex);
 			}
 
 		} catch (IOException ex) {
 
-			log.log(Level.SEVERE, null, ex);
+			LOG.log(Level.SEVERE, null, ex);
 		}
 
 		return attributeTypeView;
@@ -298,6 +302,7 @@ public class AttributeImport
 				attributeTypeView.setImportantFlg(Convert.toBoolean(data[4].trim()));
 				attributeTypeView.setRequiredFlg(Convert.toBoolean(data[5].trim()));
 				attributeTypeView.setAllowMultipleFlg(Convert.toBoolean(data[6].trim()));
+				attributeTypeView.setAllowUserGeneratedCodes(Boolean.FALSE);
 
 				for (int i = 2; i < lines.size(); i++) {
 					if (StringUtils.isNotBlank(lines.get(i))) {
@@ -312,12 +317,12 @@ public class AttributeImport
 				}
 
 			} catch (IOException ex) {
-				log.log(Level.SEVERE, null, ex);
+				LOG.log(Level.SEVERE, null, ex);
 			}
 
 		} catch (IOException ex) {
 
-			log.log(Level.SEVERE, null, ex);
+			LOG.log(Level.SEVERE, null, ex);
 		}
 
 		return attributeTypeView;

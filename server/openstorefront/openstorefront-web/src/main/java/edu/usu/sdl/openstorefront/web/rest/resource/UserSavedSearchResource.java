@@ -113,7 +113,7 @@ public class UserSavedSearchResource
 	}	
 		
 	@GET
-	@APIDescription("Get saved searches for current User")	
+	@APIDescription("Get saved searches for current user")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearch.class)
 	@Path("/user/current")
@@ -126,7 +126,7 @@ public class UserSavedSearchResource
 	}	
 	
 	@GET
-	@APIDescription("Get saved searches for a User")	
+	@APIDescription("Get saved searches for a user")
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearch.class)
@@ -225,7 +225,7 @@ public class UserSavedSearchResource
 	}
 	
 	@DELETE
-	@APIDescription("Delete saved search; must be owner or admin")	
+	@APIDescription("Deletes saved search (must be owner or admin).")
 	@Path("/{searchId}")
 	public Response deleteUserSearch(
 		@PathParam("searchId") String userSearchId

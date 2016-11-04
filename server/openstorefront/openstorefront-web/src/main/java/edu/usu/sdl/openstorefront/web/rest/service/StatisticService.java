@@ -62,7 +62,7 @@ public class StatisticService
 {
 
 	@GET
-	@APIDescription("Provide Component Statistics")
+	@APIDescription("Gets component statistics")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentStatisticView.class)
 	@Path("/component")
@@ -120,7 +120,7 @@ public class StatisticService
 	}
 
 	@GET
-	@APIDescription("Provide User Statistics")
+	@APIDescription("Gets user statistics")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserStatisticView.class)
 	@Path("/user")
@@ -178,7 +178,7 @@ public class StatisticService
 	}
 
 	@GET
-	@APIDescription("Provide System Statistics")
+	@APIDescription("Gets system statistics")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SystemStatisticView.class)
 	@Path("/system")
