@@ -79,6 +79,11 @@ public class TaskThreadExecutor
 				if (taskFuture.getFuture().equals(future)) {
 					taskFuture.setCompletedDts(TimeUtil.currentDate());
 					taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.DONE);
+                                        
+                                        if (taskFuture.isQueueable()) {
+
+                                                this.submitTask(queue.poll());
+                                        }
 
 					try {
 						future.get();
@@ -121,13 +126,6 @@ public class TaskThreadExecutor
 					}
 
 				}
-                                
-                                if (taskFuture.isQueueable() && (taskFuture.getStatus() == TaskStatus.DONE 
-                                                                 || taskFuture.getStatus() == TaskStatus.CANCELLED 
-                                                                 || taskFuture.getStatus() == TaskStatus.FAILED)) {
-                                    
-                                    this.notifyQueue();
-                                }
 			}
 		}
 		if (t != null) {
@@ -213,29 +211,12 @@ public class TaskThreadExecutor
 
 		return new ArrayList<>(taskMap.values());
 	}
-        
-        private synchronized boolean notifyQueue() {
-            
-            TaskRequest task = queue.poll();
-            
-            if (task != null) {
-            
-                TaskFuture future = this.submitTask(queue.poll());
-                
-                if (future != null) {
-                    
-                    return true;
-                }
-            }
-                
-            return false;
-        }
 
 	/**
 	 * Submits a new task
 	 *
 	 * @param taskRequest
-	 * @return taskfuture or null if unable to be queued.
+	 * @return TaskFuture or null if unable to be queued.
 	 */
 	public synchronized TaskFuture submitTask(TaskRequest taskRequest)
 	{
