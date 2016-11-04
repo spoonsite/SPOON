@@ -392,8 +392,18 @@
 										iconCls: 'fa fa-gear',
 										handler: function() {
 											
+											// Check If Only One Record Selected
+											if (attributeGrid.getSelectionModel().getCount() === 1) {
+
+												var title = "'" + attributeGrid.getSelection()[0].get('description') + "'";
+											}
+											else {
+
+												var title = attributeGrid.getSelectionModel().getCount() + ' Attributes';
+											}
+											
 											// Configure Window Title
-											setFlagsWin.setTitle('Set Flags - ' + attributeGrid.getSelectionModel().getCount() + ' Attributes');
+											setFlagsWin.setTitle('Set Flags - ' + title);
 											
 											// Display Window
 											setFlagsWin.show();
@@ -748,9 +758,6 @@
 
 											// Get Form
 											var form = this.up('form');
-											
-											console.log(form.getForm().getValues());
-											console.log(selection[0]);
 
 											// Inform User Of Update Process
 											attributeGrid.mask('Updating Flag(s)...');
@@ -770,6 +777,28 @@
 												// Save Record Data
 												var attributeData = selection[i].getData();
 												
+												// Initialize Request Data
+												var requestData = {
+													
+													attributeType: attributeData,
+													componentTypeRestrictions: [],
+													associatedComponentTypes: []
+												};
+												
+												// Check Required For Components
+												if (typeof attributeData.requiredRestrictions !== 'undefined' && attributeData.requiredRestrictions !== null) {
+													
+													// Store Required For Components
+													requestData.componentTypeRestrictions = attributeData.requiredRestrictions;
+												}
+												
+												// Check Associated Components
+												if (typeof attributeData.associatedComponentTypes !== 'undefined' && attributeData.associatedComponentTypes !== null) {
+													
+													// Store Associated Components
+													requestData.associatedComponentTypes = attributeData.associatedComponentTypes;
+												}
+												
 												//////////////////
 												// Update Flags //
 												//////////////////
@@ -778,57 +807,60 @@
 												if (typeof attributeValues.visible !== 'undefined' && attributeValues.visible !== null) {
 
 													// Set New Flag Value
-													attributeData.visibleFlg = attributeValues.visible;
+													requestData.attributeType.visibleFlg = attributeValues.visible;
 												}
 												
 //												// Check For Required
 //												if (typeof attributeValues.required !== 'undefined' && attributeValues.required !== null) {
 //
 //													// Set New Flag Value
-//													attributeData.requiredFlg = attributeValues.required;
+//													requestData.attributeType.requiredFlg = attributeValues.required;
 //												}
 												
 												// Check For Important
 												if (typeof attributeValues.important !== 'undefined' && attributeValues.important !== null) {
 
 													// Set New Flag Value
-													attributeData.importantFlg = attributeValues.important;
+													requestData.attributeType.importantFlg = attributeValues.important;
 												}
 												
 												// Check For Architecture
 												if (typeof attributeValues.architecture !== 'undefined' && attributeValues.architecture !== null) {
 
 													// Set New Flag Value
-													attributeData.architectureFlg = attributeValues.architecture;
+													requestData.attributeType.architectureFlg = attributeValues.architecture;
 												}
 												
 												// Check For Allow Multiples
 												if (typeof attributeValues.multiples !== 'undefined' && attributeValues.multiples !== null) {
 
 													// Set New Flag Value
-													attributeData.multiplesFlg = attributeValues.multiples;
+													requestData.attributeType.multiplesFlg = attributeValues.multiples;
 												}
 												
 												// Check For Allow User Codes
 												if (typeof attributeValues.user !== 'undefined' && attributeValues.user !== null) {
 
 													// Set New Flag Value
-													attributeData.allowUserGeneratedCodes = attributeValues.user;
+													requestData.attributeType.allowUserGeneratedCodes = attributeValues.user;
 												}
 												
 												// Check For Hide On Submission
 												if (typeof attributeValues.hide !== 'undefined' && attributeValues.hide !== null) {
 
 													// Set New Flag Value
-													attributeData.hideOnSubmission = attributeValues.hide;
+													requestData.attributeType.hideOnSubmission = attributeValues.hide;
 												}
-
+												
+												// Reset Flags Form
+												form.reset();
+												console.log(requestData);
 												// Make Request
 												Ext.Ajax.request({
 
 													url: 'api/v1/resource/attributes/attributetypes/' + attributeData.attributeType,
 													method: 'PUT',
-													jsonData: attributeData,
+													jsonData: requestData,
 													success: function(response, opts) {
 
 														// Check If We Are On The Final Request
@@ -978,15 +1010,19 @@
 							console.log(response);
 							// Check If We Are On The Final Request
 							if (++attributeToggleCount === selected) {
+								
+								new Ext.util.DelayedTask(function() {
+									
+									// Provide Success Notification
+									Ext.toast('All Attributes Have Been Processed', 'Success');
 
-								// Provide Success Notification
-								Ext.toast('All Attributes Have Been Processed', 'Success');
+									// Refresh Store
+									attributeStore.load();
 
-								// Refresh Store
-								attributeStore.load();
-
-								// Unmask Grid
-								attributeGrid.unmask();
+									// Unmask Grid
+									attributeGrid.unmask();
+									
+								}).delay(2000);
 							}
 						},
 						failure: function(response, opts) {
@@ -1017,10 +1053,10 @@
 			var actionDeleteAttribute = function actionDeleteAttribute() {
 				
 				// Get Selection
-				var selection = Ext.getCmp('componentGrid').getSelection();
+				var selection = Ext.getCmp('attributeGrid').getSelection();
 
 				// Get Number Of Selected
-				var selected = componentGrid.getSelectionModel().getCount();
+				var selected = attributeGrid.getSelectionModel().getCount();
 
 				// Check If Only One Record Selected
 				if (selected === 1) {
@@ -1035,7 +1071,7 @@
 				// Confirm Delete Operation
 				Ext.Msg.show({
 					title: 'Delete?',
-					message: 'Are you sure you want to delete ' + name + ' ?',
+					message: 'Are you sure you want to delete ' + name + '?',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
@@ -1067,14 +1103,18 @@
 										// Check If We Are On The Final Request
 										if (++attributeDeleteCount === selected) {
 
-											// Provide Success Notification
-											Ext.toast('All Attributes Have Been Processed', 'Success');
+											new Ext.util.DelayedTask(function() {
+									
+												// Provide Success Notification
+												Ext.toast('All Attributes Have Been Processed', 'Success');
 
-											// Refresh Store
-											attributeStore.load();
+												// Refresh Store
+												attributeStore.load();
 
-											// Unmask Grid
-											attributeGrid.unmask();
+												// Unmask Grid
+												attributeGrid.unmask();
+
+											}).delay(2000);
 										}
 									},
 									failure: function(response, opts) {
@@ -2054,7 +2094,7 @@
 														});		
 													});
 												}
-
+												
 												CoreUtil.submitForm({
 													url: url,
 													method: method,
