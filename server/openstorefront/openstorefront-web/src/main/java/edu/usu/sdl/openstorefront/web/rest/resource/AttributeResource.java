@@ -607,6 +607,7 @@ public class AttributeResource
 
 			TaskRequest taskRequest = new TaskRequest();
 			taskRequest.setAllowMultiple(false);
+			taskRequest.setQueueable(true);
 			taskRequest.setName("Inactivating Attribute Type");
 			taskRequest.setDetails("Attribute Type: " + type);
 			taskRequest.getTaskData().put("Type", type);
@@ -646,6 +647,7 @@ public class AttributeResource
 
 			TaskRequest taskRequest = new TaskRequest();
 			taskRequest.setAllowMultiple(false);
+			taskRequest.setQueueable(true);
 			taskRequest.setName("Deleting Attribute Type");
 			taskRequest.setDetails("Attribute Type: " + type);
 			taskRequest.getTaskData().put("Type", type);
@@ -685,6 +687,7 @@ public class AttributeResource
 			service.getPersistenceService().setStatusOnEntity(AttributeType.class, type, AttributeType.PENDING_STATUS);
 			TaskRequest taskRequest = new TaskRequest();
 			taskRequest.setAllowMultiple(false);
+			taskRequest.setQueueable(true);
 			taskRequest.setName("Activating Attribute Type");
 			taskRequest.setDetails("Attribute Type: " + type);
 			taskRequest.getTaskData().put("Type", type);

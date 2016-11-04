@@ -34,6 +34,7 @@ public class TaskRequest
 	private String name;
 	private String details;
 	private boolean allowMultiple;
+	private boolean queueable = false;
 	private Callable task;
 	private AsyncTaskCallback callback;
 	private Map<String, Object> taskData = new HashMap<>();
@@ -66,6 +67,16 @@ public class TaskRequest
 	public void setAllowMultiple(boolean allowMultiple)
 	{
 		this.allowMultiple = allowMultiple;
+	}
+	
+	public boolean isQueueable() {
+		
+		return this.queueable;
+	}
+	
+	public void setQueueable(boolean queueable) {
+		
+		this.queueable = queueable;
 	}
 
 	public Callable getTask()

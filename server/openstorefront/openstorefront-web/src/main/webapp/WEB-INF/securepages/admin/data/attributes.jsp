@@ -186,31 +186,35 @@
 				},
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
-						if (Ext.getCmp('attributeGrid').getSelectionModel().hasSelection()
-						   && Ext.getCmp('attributeGrid').getSelectionModel().getCount() === 1) {
-							Ext.getCmp('attributeGrid-tools-edit').enable();
-							Ext.getCmp('attributeGrid-tools-manageCodes').enable();
-							Ext.getCmp('attributeGrid-tools-toggleActivation').enable();
-							if (record[0].data.activeStatus === 'A') {
-								Ext.getCmp('attributeGrid-tools-toggleActivation').setText('Deactivate');
+						
+						// Ensure Some Record Is Selected
+						if (Ext.getCmp('attributeGrid').getSelectionModel().hasSelection()) {
+							
+							// Check If Only One Record Selected
+							if (Ext.getCmp('attributeGrid').getSelectionModel().getCount() === 1) {
+								
+								// Enable Options (Single Selection)
+								Ext.getCmp('attributeGrid-tools-edit').enable();
+								Ext.getCmp('attributeGrid-tools-manageCodes').enable();
 							}
 							else {
-								Ext.getCmp('attributeGrid-tools-toggleActivation').setText('Activate');
+								
+								// Disable Options (Multiple Selections)
+								Ext.getCmp('attributeGrid-tools-edit').disable();
+								Ext.getCmp('attributeGrid-tools-manageCodes').disable();
 							}
-							Ext.getCmp('attributeGrid-tools-delete').enable();
+							
+							// Enable Options (Any Selection)
+							Ext.getCmp('attributeGrid-tools-action').enable();
 							Ext.getCmp('attributeGrid-tools-export').enable();
-						} else {
+						}
+						else {
+							
+							// Disable Options (No Selection)
+							Ext.getCmp('attributeGrid-tools-action').disable();
+							Ext.getCmp('attributeGrid-tools-export').disable();
 							Ext.getCmp('attributeGrid-tools-edit').disable();
 							Ext.getCmp('attributeGrid-tools-manageCodes').disable();
-							Ext.getCmp('attributeGrid-tools-toggleActivation').disable();
-							Ext.getCmp('attributeGrid-tools-delete').disable();
-							if (Ext.getCmp('attributeGrid').getSelectionModel().getCount() > 1)
-								{
-									Ext.getCmp('attributeGrid-tools-export').enable();
-								}
-								else {
-									Ext.getCmp('attributeGrid-tools-export').disable();
-								}
 						}
 					}
 				},
@@ -376,32 +380,58 @@
 								}
 							},
 							{
-								text: 'Deactivate',
-								id: 'attributeGrid-tools-toggleActivation',
-								scale: 'medium',
+								text: 'Action',
+								id: 'attributeGrid-tools-action',
+								scale: 'medium',																	
 								disabled: true,
-								iconCls: 'fa fa-2x fa-power-off',
-								handler: function() {
-									var record = attributeGrid.getSelection()[0];
-									actionToggleAttributeStatus(record);
-								}
-							},
-							{
-								text: 'Delete',
-								id: 'attributeGrid-tools-delete',
-								scale: 'medium',
-								disabled: true,
-								iconCls: 'fa fa-2x fa-trash',
-								handler: function() {
-									var record = attributeGrid.getSelection()[0];
-									var title = 'Delete Attribute';
-									var msg = 'Are you sure you want to delete this attribtue?'
-									Ext.MessageBox.confirm(title, msg, function (btn) {
-										if (btn === 'yes') {
-											actionDeleteAttribute(record);
+								iconCls: 'fa fa-2x fa-gear',
+								menu: [
+									{
+										text: 'Set Flags',
+										id: 'attributeGrid-tools-action-flags',
+										iconCls: 'fa fa-gear',
+										handler: function() {
+											
+											// Check If Only One Record Selected
+											if (attributeGrid.getSelectionModel().getCount() === 1) {
+
+												var title = "'" + attributeGrid.getSelection()[0].get('description') + "'";
+											}
+											else {
+
+												var title = attributeGrid.getSelectionModel().getCount() + ' Attributes';
+											}
+											
+											// Configure Window Title
+											setFlagsWin.setTitle('Set Flags - ' + title);
+											
+											// Display Window
+											setFlagsWin.show();
 										}
-									});
-								}
+									},
+									{
+										xtype: 'menuseparator'
+									},
+									{
+										text: 'Toggle Status',
+										id: 'attributeGrid-tools-action-toggle',
+										iconCls: 'fa fa-power-off',
+										handler: function() {
+											
+											actionToggleAttributeStatus();
+										}
+									},
+									{
+										text: 'Delete',
+										id: 'attributeGrid-tools-action-delete',
+										cls: 'alert-danger',
+										iconCls: 'fa fa-trash',
+										handler: function() {
+											
+											actionDeleteAttribute();
+										}
+									}
+								]
 							},
 							{
 								xtype: 'tbfill'
@@ -505,44 +535,612 @@
 					}
 				});
 			};
-
-			var actionToggleAttributeStatus = function actionToggleAttributeStatus(record) {
-				var url = 'api/v1/resource/attributes/attributetypes/';
-				url += record.data.attributeType;
-				if (record.data.activeStatus === 'A') {
-					var what = 'deactivate';
-					var method = 'DELETE';
+			
+			var setFlagsWin_DisableUpdate = function() {
+				
+				// Initialize Update Button Enabled Value
+				var enable = false;
+				
+				// Check Radio Groups
+				if (Ext.getCmp('set-flags-visible-group').getValue().visible !== null) {
+					
+					// Enable Update Button
+					enable = true;
+				}
+//				else if (Ext.getCmp('set-flags-required-group').getValue().required !== null) {
+//					
+//					// Enable Update Button
+//					enable = true;
+//				}
+				else if (Ext.getCmp('set-flags-important-group').getValue().important !== null) {
+					
+					// Enable Update Button
+					enable = true;
+				}
+				else if (Ext.getCmp('set-flags-architecture-group').getValue().architecture !== null) {
+					
+					// Enable Update Button
+					enable = true;
+				}
+				else if (Ext.getCmp('set-flags-multiples-group').getValue().multiples !== null) {
+					
+					// Enable Update Button
+					enable = true;
+				}
+				else if (Ext.getCmp('set-flags-user-group').getValue().user !== null) {
+					
+					// Enable Update Button
+					enable = true;
+				}
+				else if (Ext.getCmp('set-flags-hide-group').getValue().hide !== null) {
+					
+					// Enable Update Button
+					enable = true;
+				}
+				
+				// Check If Update Button Should Be Enabled
+				if (enable) {
+					
+					// Enable Update Button
+					Ext.getCmp('set-flags-update-button').enable();
 				}
 				else {
-					var what = 'activate';
-					var method = 'POST';
+					
+					// Disable Update Button
+					Ext.getCmp('set-flags-update-button').disable();
 				}
-				Ext.Ajax.request({
-					url: url,
-					method: method,
-					success: function(response, opt){
-						Ext.toast('Successfully ' + what + 'd attribute type', '', 'tr');
-						attributeStore.load();
-					},
-					failure: function(response, opt){
-						Ext.toast('Failed to ' + what + ' attribute type', '', 'tr');
-					}
-				});
+			};
+			
+			var setFlagsWin = Ext.create('Ext.window.Window', {
+				
+				id: 'setFlagsWin',
+				title: 'Set Flags - ',
+				iconCls: 'fa fa-user',
+				width: '35%',
+				y: 200,
+				modal: true,
+				layout: 'fit',					
+				items: [
+					{
+						xtype: 'form',
+						itemId: 'setFlagsForm',
+						bodyStyle: 'padding: 10px',
+						items: [
+							
+							{
+								xtype: 'radiogroup',
+								id: 'set-flags-visible-group',
+								fieldLabel: 'Visible',
+								labelAlign: 'top',
+								width: '100%',
+								columns: 3,
+								margin: '0 0 10 0',
+								items: [
+									{boxLabel: 'True', name: 'visible', inputValue: true, formItemCls: 'x-form-item alert-success', style: 'display: block; padding-left: 5px;'},
+									{boxLabel: 'False', name: 'visible', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
+									{boxLabel: 'No Change', name: 'visible', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
+								],
+								listeners: {
+									
+									change: setFlagsWin_DisableUpdate
+								}
+							},
+//							{
+//								xtype: 'radiogroup',
+//								id: 'set-flags-required-group',
+//								fieldLabel: 'Required',
+//								labelAlign: 'top',
+//								width: '100%',
+//								columns: 3,
+//								margin: '0 0 10 0',
+//								items: [
+//									{boxLabel: 'True', name: 'required', inputValue: true, formItemCls: 'x-form-item alert-success', style: 'display: block; padding-left: 5px;'},
+//									{boxLabel: 'False', name: 'required', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
+//									{boxLabel: 'No Change', name: 'required', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
+//								],
+//								listeners: {
+//									
+//									change: setFlagsWin_DisableUpdate
+//								}
+//							},
+							{
+								xtype: 'radiogroup',
+								id: 'set-flags-important-group',
+								fieldLabel: 'Important',
+								labelAlign: 'top',
+								width: '100%',
+								columns: 3,
+								margin: '0 0 10 0',
+								items: [
+									{boxLabel: 'True', name: 'important', inputValue: true, formItemCls: 'x-form-item alert-success', style: 'display: block; padding-left: 5px;'},
+									{boxLabel: 'False', name: 'important', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
+									{boxLabel: 'No Change', name: 'important', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
+								],
+								listeners: {
+									
+									change: setFlagsWin_DisableUpdate
+								}
+							},
+							{
+								xtype: 'radiogroup',
+								id: 'set-flags-architecture-group',
+								fieldLabel: 'Architecture',
+								labelAlign: 'top',
+								width: '100%',
+								columns: 3,
+								margin: '0 0 10 0',
+								items: [
+									{boxLabel: 'True', name: 'architecture', inputValue: true, formItemCls: 'x-form-item alert-success', style: 'display: block; padding-left: 5px;'},
+									{boxLabel: 'False', name: 'architecture', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
+									{boxLabel: 'No Change', name: 'architecture', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
+								],
+								listeners: {
+									
+									change: setFlagsWin_DisableUpdate
+								}
+							},
+							{
+								xtype: 'radiogroup',
+								id: 'set-flags-multiples-group',
+								fieldLabel: 'Allow Multiples <i class="fa fa-question-circle" data-qtip="\'Required\' and \'Allow Multiples\' are mutually exclusive. If \'Allow Multiples\' is not available, then your selection contains some attributes that are already flagged as \'Required\'.  Remove the \'Required\' attributes from your selection to bulk edit \'Allow Multiples\'."></i>',
+								labelAlign: 'top',
+								width: '100%',
+								columns: 3,
+								margin: '0 0 10 0',
+								items: [
+									{boxLabel: 'True', id: 'set-flags-multiples-group-true', name: 'multiples', inputValue: true, formItemCls: 'x-form-item alert-success', style: 'display: block; padding-left: 5px;'},
+									{boxLabel: 'False', id: 'set-flags-multiples-group-false', name: 'multiples', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
+									{boxLabel: 'No Change', id: 'set-flags-multiples-group-none', name: 'multiples', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
+								],
+								listeners: {
+									
+									change: setFlagsWin_DisableUpdate
+								}
+							},
+							{
+								xtype: 'radiogroup',
+								id: 'set-flags-user-group',
+								fieldLabel: 'Allow User Codes',
+								labelAlign: 'top',
+								width: '100%',
+								columns: 3,
+								margin: '0 0 10 0',
+								items: [
+									{boxLabel: 'True', name: 'user', inputValue: true, formItemCls: 'x-form-item alert-success', style: 'display: block; padding-left: 5px;'},
+									{boxLabel: 'False', name: 'user', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
+									{boxLabel: 'No Change', name: 'user', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
+								],
+								listeners: {
+									
+									change: setFlagsWin_DisableUpdate
+								}
+							},
+							{
+								xtype: 'radiogroup',
+								id: 'set-flags-hide-group',
+								fieldLabel: 'Hide On Submission',
+								labelAlign: 'top',
+								width: '100%',
+								columns: 3,
+								margin: '0 0 10 0',
+								items: [
+									{boxLabel: 'True', name: 'hide', inputValue: true, formItemCls: 'x-form-item alert-success', style: 'display: block; padding-left: 5px;'},
+									{boxLabel: 'False', name: 'hide', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
+									{boxLabel: 'No Change', name: 'hide', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
+								],
+								listeners: {
+									
+									change: setFlagsWin_DisableUpdate
+								}
+							}
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Update',
+										id: 'set-flags-update-button',
+										formBind: true,
+										iconCls: 'fa fa-save',
+										disabled: true,
+										handler: function() {
 
+											// Get Selection
+											var selection = Ext.getCmp('attributeGrid').getSelection();
+
+											// Get Number Of Selected
+											var selected = attributeGrid.getSelectionModel().getCount();
+
+											// Get Calling Window
+											var ownerWindow = this.up('window');
+
+											// Get Form
+											var form = this.up('form');
+
+											// Inform User Of Update Process
+											attributeGrid.mask('Updating Flag(s)...');
+
+											// Close Form Window
+											ownerWindow.close();
+											
+											// Store New Values
+											var attributeValues = form.getForm().getValues();
+
+											// Initialize Update Counter
+											var attributeUpdateCount = 0;
+
+											// Loop Through Selected Components
+											for (i = 0; i < selected; i++) {
+												
+												// Save Record Data
+												var attributeData = selection[i].getData();
+												
+												// Initialize Request Data
+												var requestData = {
+													
+													attributeType: attributeData,
+													componentTypeRestrictions: [],
+													associatedComponentTypes: []
+												};
+												
+												// Check Required For Components
+												if (typeof attributeData.requiredRestrictions !== 'undefined' && attributeData.requiredRestrictions !== null) {
+													
+													// Store Required For Components
+													requestData.componentTypeRestrictions = attributeData.requiredRestrictions;
+												}
+												
+												// Check Associated Components
+												if (typeof attributeData.associatedComponentTypes !== 'undefined' && attributeData.associatedComponentTypes !== null) {
+													
+													// Store Associated Components
+													requestData.associatedComponentTypes = attributeData.associatedComponentTypes;
+												}
+												
+												//////////////////
+												// Update Flags //
+												//////////////////
+												
+												// Check For Visible
+												if (typeof attributeValues.visible !== 'undefined' && attributeValues.visible !== null) {
+
+													// Set New Flag Value
+													requestData.attributeType.visibleFlg = attributeValues.visible;
+												}
+												
+//												// Check For Required
+//												if (typeof attributeValues.required !== 'undefined' && attributeValues.required !== null) {
+//
+//													// Set New Flag Value
+//													requestData.attributeType.requiredFlg = attributeValues.required;
+//												}
+												
+												// Check For Important
+												if (typeof attributeValues.important !== 'undefined' && attributeValues.important !== null) {
+
+													// Set New Flag Value
+													requestData.attributeType.importantFlg = attributeValues.important;
+												}
+												
+												// Check For Architecture
+												if (typeof attributeValues.architecture !== 'undefined' && attributeValues.architecture !== null) {
+
+													// Set New Flag Value
+													requestData.attributeType.architectureFlg = attributeValues.architecture;
+												}
+												
+												// Check For Allow Multiples
+												if (typeof attributeValues.multiples !== 'undefined' && attributeValues.multiples !== null) {
+
+													// Set New Flag Value
+													requestData.attributeType.multiplesFlg = attributeValues.multiples;
+												}
+												
+												// Check For Allow User Codes
+												if (typeof attributeValues.user !== 'undefined' && attributeValues.user !== null) {
+
+													// Set New Flag Value
+													requestData.attributeType.allowUserGeneratedCodes = attributeValues.user;
+												}
+												
+												// Check For Hide On Submission
+												if (typeof attributeValues.hide !== 'undefined' && attributeValues.hide !== null) {
+
+													// Set New Flag Value
+													requestData.attributeType.hideOnSubmission = attributeValues.hide;
+												}
+												
+												// Reset Flags Form
+												form.reset();
+												console.log(requestData);
+												// Make Request
+												Ext.Ajax.request({
+
+													url: 'api/v1/resource/attributes/attributetypes/' + attributeData.attributeType,
+													method: 'PUT',
+													jsonData: requestData,
+													success: function(response, opts) {
+
+														// Check If We Are On The Final Request
+														if (++attributeUpdateCount === selected) {
+
+															// Provide Success Notification
+															Ext.toast('All Attributes Have Been Processed', 'Success');
+
+															// Refresh Store
+															attributeStore.load();
+
+															// Unmask Grid
+															attributeGrid.unmask();
+														}
+													},
+													failure: function(response, opts) {
+
+														// Provide Error Notification
+														Ext.toast('An Attribute Failed To Update', 'Error');
+
+														// Provide Log Information
+														console.log(response);
+
+														// Check If We Are On The Final Request
+														if (++attributeUpdateCount === selected) {
+
+															// Provide Success Notification
+															Ext.toast('All Attributes Have Been Processed', 'Success');
+
+															// Refresh Store
+															attributeStore.load();
+
+															// Unmask Grid
+															attributeGrid.unmask();
+														}
+													}
+												});
+											}
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										iconCls: 'fa fa-close',
+										handler: function(){
+											this.up('window').close();
+										}
+									}
+								]
+							}
+						]
+					}
+				],
+				listeners: {
+					
+					activate: function() {
+						
+						// Disable Update Button
+						// (For Some Reason, Setting It As Disabled Had No Effect)
+						Ext.getCmp('set-flags-update-button').disable();
+						
+						
+						// Get Selection
+						var selection = attributeGrid.getSelection();
+						
+						// Get Number Selected
+						var selected = attributeGrid.getSelectionModel().getCount();
+						
+						// Loop Through Selected
+						for (i = 0; i < selected; i++) {
+							
+							// Check For Required
+							if (selection[i].getData().requiredFlg) {
+								
+								// Disable Allow Multiples
+								Ext.getCmp('set-flags-multiples-group-true').disable();
+								Ext.getCmp('set-flags-multiples-group-false').disable();
+								Ext.getCmp('set-flags-multiples-group-none').disable();
+								
+								// Mask Fields
+								Ext.getCmp('set-flags-multiples-group-true').mask();
+								Ext.getCmp('set-flags-multiples-group-false').mask();
+								Ext.getCmp('set-flags-multiples-group-none').mask();
+								
+								// Stop Looping
+								return;
+							}
+						}
+						
+						// Enable Allow Multiples
+						// (Loop Didn't Prematurely End)
+						Ext.getCmp('set-flags-multiples-group-true').enable();
+						Ext.getCmp('set-flags-multiples-group-false').enable();
+						Ext.getCmp('set-flags-multiples-group-none').enable();
+						
+						// Unmask Fields
+						Ext.getCmp('set-flags-multiples-group-true').unmask();
+						Ext.getCmp('set-flags-multiples-group-false').unmask();
+						Ext.getCmp('set-flags-multiples-group-none').unmask();
+					}
+				}
+			});
+
+			var actionToggleAttributeStatus = function actionToggleAttributeStatus() {
+				
+				// Store Selection
+				var selection = attributeGrid.getSelection();
+				
+				// Store Selected
+				var selected = attributeGrid.getSelectionModel().getCount();
+				
+				// Inform User Of Update Process
+				attributeGrid.mask('Toggling Status...');
+				
+				// Initialize Update Counter
+				var attributeToggleCount = 0;
+				
+				// Loop Through Selected
+				for (i = 0; i < selected; i++) {
+					
+					// Store Record
+					var record = selection[i];
+					
+					// Define URL
+					var url = 'api/v1/resource/attributes/attributetypes/' + record.data.attributeType;
+					
+					// Check If Record Is Active
+					if (record.data.activeStatus === 'A') {
+						
+						// Set HTTP Method
+						var method = 'DELETE';
+					}
+					else {
+						
+						// Set HTTP Method
+						var method = 'POST';
+					}
+					
+					// Make Request
+					Ext.Ajax.request({
+						
+						url: url,
+						method: method,
+						success: function(response, opts) {
+							console.log(response);
+							// Check If We Are On The Final Request
+							if (++attributeToggleCount === selected) {
+								
+								new Ext.util.DelayedTask(function() {
+									
+									// Provide Success Notification
+									Ext.toast('All Attributes Have Been Processed', 'Success');
+
+									// Refresh Store
+									attributeStore.load();
+
+									// Unmask Grid
+									attributeGrid.unmask();
+									
+								}).delay(2000);
+							}
+						},
+						failure: function(response, opts) {
+
+							// Provide Error Notification
+							Ext.toast('An Attribute Failed To Toggle', 'Error');
+
+							// Provide Log Information
+							console.log(response);
+
+							// Check If We Are On The Final Request
+							if (++attributeToggleCount === selected) {
+
+								// Provide Success Notification
+								Ext.toast('All Attributes Have Been Processed', 'Success');
+
+								// Refresh Store
+								attributeStore.load();
+
+								// Unmask Grid
+								attributeGrid.unmask();
+							}
+						}
+					});
+				}
 			};
 
-			var actionDeleteAttribute = function actionDeleteAttribute(record) {
-				var url = 'api/v1/resource/attributes/attributetypes/';
-				url += record.data.attributeType + '/force';
-				Ext.Ajax.request({
-					url: url,
-					method: 'DELETE',
-					success: function(response, opt){
-						Ext.toast('Successfully started deletion of attribute type. Refresh after task completes.', '', 'tr');
-						attributeStore.load();
-					},
-					failure: function(response, opt){
-						Ext.toast('Failed to start deletion of attribute type', '', 'tr');
+			var actionDeleteAttribute = function actionDeleteAttribute() {
+				
+				// Get Selection
+				var selection = Ext.getCmp('attributeGrid').getSelection();
+
+				// Get Number Of Selected
+				var selected = attributeGrid.getSelectionModel().getCount();
+
+				// Check If Only One Record Selected
+				if (selected === 1) {
+
+					var name = "'" + selection[0].get('description') + "'";
+				}
+				else {
+
+					var name = selected + ' Attributes';
+				}
+				
+				// Confirm Delete Operation
+				Ext.Msg.show({
+					title: 'Delete?',
+					message: 'Are you sure you want to delete ' + name + '?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+
+						if (btn === 'yes') {
+							
+							// Inform User Of Update Process
+							attributeGrid.mask('Deleting...');
+
+							// Initialize Update Counter
+							var attributeDeleteCount = 0;
+
+							// Loop Through Selection
+							for (i = 0; i < selected; i++) {
+
+								// Store Record
+								var record = selection[i];
+								
+								// Define URL
+								var url = 'api/v1/resource/attributes/attributetypes/' + record.data.attributeType + '/force';
+								
+								// Make Request
+								Ext.Ajax.request({
+									
+									url: url,
+									method: 'DELETE',
+									success: function(response, opts) {
+
+										// Check If We Are On The Final Request
+										if (++attributeDeleteCount === selected) {
+
+											new Ext.util.DelayedTask(function() {
+									
+												// Provide Success Notification
+												Ext.toast('All Attributes Have Been Processed', 'Success');
+
+												// Refresh Store
+												attributeStore.load();
+
+												// Unmask Grid
+												attributeGrid.unmask();
+
+											}).delay(2000);
+										}
+									},
+									failure: function(response, opts) {
+
+										// Provide Error Notification
+										Ext.toast('An Attribute Failed To Delete', 'Error');
+
+										// Provide Log Information
+										console.log(response);
+
+										// Check If We Are On The Final Request
+										if (++attributeDeleteCount === selected) {
+
+											// Provide Success Notification
+											Ext.toast('All Attributes Have Been Processed', 'Success');
+
+											// Refresh Store
+											attributeStore.load();
+
+											// Unmask Grid
+											attributeGrid.unmask();
+										}
+									}
+								});
+							}
+						}
 					}
 				});
 			};
@@ -1496,7 +2094,7 @@
 														});		
 													});
 												}
-
+												
 												CoreUtil.submitForm({
 													url: url,
 													method: method,

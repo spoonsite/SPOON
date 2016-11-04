@@ -39,6 +39,7 @@ public class TaskFuture
 	private String details;
 	private String taskId;
 	private boolean allowMultiple;
+	private boolean queueable;
 	private String error;
 	private String createUser;
 	private TaskStatus status = TaskStatus.QUEUED;
@@ -187,6 +188,16 @@ public class TaskFuture
 	public void setAllowMultiple(boolean allowMultiple)
 	{
 		this.allowMultiple = allowMultiple;
+	}
+	
+	public boolean isQueueable() {
+		
+		return this.queueable;
+	}
+	
+	public void setQueueable(boolean queueable) {
+		
+		this.queueable = queueable;
 	}
 
 	public String getError()
