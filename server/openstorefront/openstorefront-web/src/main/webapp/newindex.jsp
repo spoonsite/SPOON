@@ -87,8 +87,37 @@ limitations under the License.
 					}
 				});
 			},
-			viewRecentlyAdded: function(componentId) {
+			viewRecentlyAdded: function() {
 				
+				var searchObj = {
+					"sortField": 'approvedDts',
+					"sortDirection": "ASC",
+					"startOffset": 0,
+					"max": 5,
+					"searchElements": [{
+							"searchType": "COMPONENT",
+							"field": 'approvedDts',
+							"value": null,
+							"keyField": null,
+							"keyValue": null,
+							"startDate": Ext.Date.subtract(new Date(), Ext.Date.MONTH, 2),
+							"endDate": null,
+							"caseInsensitive": false,
+							"numberOperation": "EQUALS",
+							"stringOperation": "EQUALS",
+							"mergeCondition": "OR"  //OR.. NOT.. AND..
+						}]
+				};
+				
+				var searchRequest = {
+					type: 'Advance',
+					query: searchObj
+				};
+				
+				CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+				window.location.href = 'searchResults.jsp';				
+			},
+			viewTopic: function(topicCode) {
 				var searchObj = {
 					"sortField": null,
 					"sortDirection": "ASC",
@@ -96,8 +125,8 @@ limitations under the License.
 					"max": 2147483647,
 					"searchElements": [{
 							"searchType": "COMPONENT",
-							"field": "componentId",
-							"value": componentId,
+							"field": "componentType",
+							"value": topicCode,
 							"keyField": null,
 							"keyValue": null,
 							"startDate": null,
@@ -115,8 +144,66 @@ limitations under the License.
 				};
 				
 				CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-				window.location.href = 'searchResults.jsp?showcomponent=' + componentId;				
-			}
+				window.location.href = 'searchResults.jsp';				
+			},
+			viewCategories: function(attributeType, attributeCode) {
+				var searchObj = {
+					"sortField": null,
+					"sortDirection": "ASC",
+					"startOffset": 0,
+					"max": 2147483647,
+					"searchElements": [{
+							"searchType": "ATTRIBUTE",
+							"field": null,
+							"value": null,
+							"keyField": attributeType,
+							"keyValue": attributeCode,
+							"startDate": null,
+							"endDate": null,
+							"caseInsensitive": false,
+							"numberOperation": "EQUALS",
+							"stringOperation": "EQUALS",
+							"mergeCondition": "OR"  //OR.. NOT.. AND..
+						}]
+				};
+				
+				var searchRequest = {
+					type: 'Advance',
+					query: searchObj
+				};
+				
+				CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+				window.location.href = 'searchResults.jsp';				
+			},
+			viewTag: function(tag) {
+				var searchObj = {
+					"sortField": null,
+					"sortDirection": "ASC",
+					"startOffset": 0,
+					"max": 2147483647,
+					"searchElements": [{
+							"searchType": "TAG",
+							"field": null,
+							"value": tag,
+							"keyField": null,
+							"keyValue": null,
+							"startDate": null,
+							"endDate": null,
+							"caseInsensitive": false,
+							"numberOperation": "EQUALS",
+							"stringOperation": "EQUALS",
+							"mergeCondition": "OR"  //OR.. NOT.. AND..
+						}]
+				};
+				
+				var searchRequest = {
+					type: 'Advance',
+					query: searchObj
+				};
+				
+				CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+				window.location.href = 'searchResults.jsp';				
+			}			
 		};
 				
 		/* global Ext, CoreService, CoreApp */	
@@ -528,18 +615,56 @@ limitations under the License.
 				url: 'api/v1/resource/componenttypes',
 				success: function(response, opts) {
 					var entryTypes = Ext.decode(response.responseText);
+					
+					var typeMap = [
+						{
+							entryType: 'ARTICLE',
+							iconCls: 'fa fa-5x fa-file-text new-home-section-textshadow',
+							iconStyle: 'color: white;'
+						},
+						{
+							entryType: 'DESCRIBE-CC',
+							iconCls: 'fa fa-5x fa-database new-home-section-textshadow',
+							iconStyle: 'color: white;'
+						},
+						{
+							entryType: 'DESCRIBE-S',
+							iconCls: 'fa fa-5x fa-cloud new-home-section-textshadow',
+							iconStyle: 'color: white;'
+						},
+						{
+							entryType: 'COMP',
+							iconCls: 'fa fa-5x fa-cogs new-home-section-textshadow',
+							iconStyle: 'color: #441e60;'
+						},
+						{
+							entryType: 'DOC',
+							iconCls: 'fa fa-5x fa-book new-home-section-textshadow',
+							iconStyle: 'color: #006ac7;'
+						}						
+					];
+					
 					var typePanels = [];
 					Ext.Array.each(entryTypes, function(entryType) {
+						var icon = Ext.Array.findBy(typeMap, function(item){
+							return item.entryType === entryType.componentType;
+						});
+						
 						var panel = Ext.create('Ext.panel.Panel', {
 							border: 1,				
 							width: 250,							
 							height: 250,
 							margin: '20 20 20 20',
 							tpl: new Ext.XTemplate(
-								'<div style="border: 1px grey solid; padding: 10px; width: 100%; background-color: rgba(91, 65, 50, .5);"> <span class="fa fa-5x fa-gear"></span>{label}</div>',
-								'<div style="padding: 10px; ">{description}</div>'
+								'<div class="new-home-section-header" onclick="homepage.viewTopic(\'{componentType}\');">',
+								' <table style="width: 100%"><tr><td><span class="{icon.iconCls}" style="{icon.iconStyle}"></span></td>',
+								' <td valign="center"><span class="home-nav-item-header">{label}</span></td></tr></table></div>',
+								'<div style="padding: 10px; overflow: auto; height: 161px;">',
+								' {description}',
+								'</div>'
 							)
-						});						
+						});
+						entryType.icon = icon; 
 						panel.update(entryType);
 						typePanels.push(panel);
 						
@@ -562,8 +687,44 @@ limitations under the License.
 				url: 'api/v1/resource/attributes',				
 				success: function(response, opts) {
 					var attributes = Ext.decode(response.responseText);
+					attributes.sort(function(a, b){
+						return a.description.localeCompare(b.description);
+					});
+					
+					var attributeMap = [
+						{
+							attributeType: 'DI2E-SVCV4-A',
+							iconCls: 'fa fa-5x fa-list-ul new-home-section-textshadow',
+							iconStyle: 'color: white;'
+						},
+						{
+							attributeType: 'DI2ESTATE',
+							iconCls: 'fa fa-5x fa-university new-home-section-textshadow',
+							iconStyle: 'color: white;'
+						},
+						{
+							attributeType: 'DI2ELEVEL',
+							iconCls: 'fa fa-5x fa-tasks new-home-section-textshadow',
+							iconStyle: 'color: white;'
+						},
+						{
+							attributeType: 'DI2EINTENT',
+							iconCls: 'fa fa-5x fa-legal new-home-section-textshadow',
+							iconStyle: 'color: white;'
+						},
+						{
+							attributeType: 'TYPE',
+							iconCls: 'fa fa-5x fa-laptop new-home-section-textshadow',
+							iconStyle: 'color: #441e60;'
+						}						
+					];					
+					
 					var categoryPanels = [];
 					Ext.Array.each(attributes, function(attribute) {
+						var icon = Ext.Array.findBy(attributeMap, function(item){
+							return item.attributeType === attribute.attributeType;
+						});						
+						
 						if (attribute.importantFlg) {
 							var panel = Ext.create('Ext.panel.Panel', {
 								border: 1,				
@@ -571,13 +732,17 @@ limitations under the License.
 								height: 250,
 								margin: '20 20 20 20',
 								tpl: new Ext.XTemplate(
-									'<div style="border: 1px grey solid; padding: 10px; width: 100%; background-color: rgba(91, 65, 50, .5);"> <span class="fa fa-5x fa-gear"></span>{description}</div>',
+									'<div class="new-home-section-header">',
+									' <table style="width: 100%"><tr><td><span class="{icon.iconCls}" style="{icon.iconStyle}"></span></td>',
+									' <td valign="center"><span class="home-nav-item-header">{description}</span></td></tr></table></div>',
 									'<div style="padding: 10px; overflow: auto; height: 161px;">',
+									'<ul>',
 									'<tpl for="codes">',
-									'	{label}<br>',
-									'</tpl></div>'
+									'	<li><a href="#" class="link" onclick="homepage.viewCategories(\'{parent.attributeType}\', \'{code}\');">{code}</a></li>',
+									'</tpl></ul></div>'
 								)
-							});						
+							});		
+							attribute.icon = icon;
 							panel.update(attribute);
 							categoryPanels.push(panel);
 						}
@@ -592,7 +757,7 @@ limitations under the License.
 				minHeight: 250,
 				tpl: new Ext.XTemplate(
 					'<tpl for=".">',
-					' <span style="font-size: {tagSize}em; padding: 0px 10px 0px; 10px; line-height: 100%;"><a href="" class="link">{text}</a></span>',
+					' <span style="font-size: {tagSize}em; padding: 0px 10px 0px; 10px; line-height: 100%;"><a href="#" class="link" onclick="homepage.viewTag(\'{text}\');">{text}</a></span>',
 					'</tpl>'
 				)
 			});			
@@ -640,6 +805,12 @@ limitations under the License.
 				}
 			});	
 			
+			var actionTemplate = ['<div class="new-home-section-header" onclick="{link}">',
+								' <table style="width: 100%"><tr><td><span class="{iconCls}" style="{iconStyle}"></span></td>',
+								' <td valign="center"><span class="home-nav-item-header">{title}</span></td></tr></table></div>',
+								'<div style="padding: 10px; overflow: auto; height: 161px;">',
+								' {description}',
+								'</div>'];
 			
 			var actionPanel = Ext.create('Ext.panel.Panel', {
 				title: 'Entries',
@@ -654,32 +825,42 @@ limitations under the License.
 						width: 250,							
 						height: 250,
 						margin: '20 20 20 20',
-						html: ['<div style="border: 1px grey solid; padding: 10px; width: 100%; background-color: rgba(91, 65, 50, .5);">',
-								' <table style="width: 100%"><tr><td><span class="fa fa-5x fa-file-text-o" style="color: white; text-shadow: 2px 2px 2px rgba(150, 150, 150, 1);"></span></td>',
-								' <td valign="center"><span class="home-nav-item-header">Submit Entry</span></td></tr></table></div>',
-							'<div style="padding: 10px; overflow: auto; height: 161px;">',
-							' Add an entry to the registry.',
-							'</div>']
+						data: {
+							title: 'Submit Entry',
+							link: 'window.location.href=\'UserTool.action?load=Submissions\';',
+							iconCls: 'fa fa-5x fa-file-text-o  new-home-section-textshadow',
+							iconStyle: 'color: white;',
+							description: 'Add an entry to the registry.'
+						},
+						tpl: actionTemplate
 					},
 					{
 						border: 1,				
 						width: 250,							
 						height: 250,
 						margin: '20 20 20 20',
-						html: ['<div style="border: 1px grey solid; padding: 10px; width: 100%; background-color: rgba(91, 65, 50, .5);"> <span class="fa fa-5x fa-share-alt" style="color: orange; text-shadow: 2px 2px 2px rgba(150, 150, 150, 1);"></span><span class="home-nav-item-header">Explore Relationships</span></div>',
-							'<div style="padding: 10px; overflow: auto; height: 161px;">',
-							' Vizualize relationships between entries.',
-							'</div>']
+						data: {
+							title: 'Explore Relationships',
+							link: 'window.location.href=\'UserTool.action?load=Relationships\';',
+							iconCls: 'fa fa-5x fa-share-alt new-home-section-textshadow',
+							iconStyle: 'color: orange;',							
+							description: 'Vizualize relationships between entries.'
+						},
+						tpl: actionTemplate											
 					},
 					{
 						border: 1,				
 						width: 250,							
 						height: 250,
 						margin: '20 20 20 20',
-						html: ['<div style="border: 1px grey solid; padding: 10px; width: 100%; background-color: rgba(91, 65, 50, .5);"> <span class="fa fa-5x fa-star" style="color: yellow; text-shadow: 2px 2px 2px rgba(150, 150, 150, 1);"></span><span class="home-nav-item-header">Recently Added</span></div>',
-							'<div style="padding: 10px; overflow: auto; height: 161px;">',
-							' View recently added entries.',
-							'</div>']						
+						data: {
+							title: 'Recently Added',
+							link: 'homepage.viewRecentlyAdded();',
+							iconCls: 'fa fa-5x fa-star new-home-section-textshadow',
+							iconStyle: 'color: yellow;',							
+							description: 'View recently added entries.'
+						},
+						tpl: actionTemplate																
 					}
 				]
 			});				
