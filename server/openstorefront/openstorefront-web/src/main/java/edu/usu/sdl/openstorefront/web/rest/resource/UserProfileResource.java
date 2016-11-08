@@ -60,6 +60,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
@@ -154,7 +155,10 @@ public class UserProfileResource
 			profiles.add(lookupModel);
 		}
 
-		return Response.ok(profiles).build();
+		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(profiles)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET

@@ -45,9 +45,8 @@ public class EvaluationChecklist
 	@FK(Evaluation.class)
 	private String evaluationId;
 
-	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
 	private String summary;
 
 	@NotNull

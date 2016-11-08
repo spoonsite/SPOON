@@ -38,6 +38,20 @@
 										text: 'Create',
 										iconCls: 'fa fa-save',
 										handler: function(){
+											var form = this.up('form');
+											var data = form.getValues();
+											
+											CoreUtil.submitForm({
+												url: 'api/v1/resource/evaluations',
+												method: 'POST',
+												data: data,
+												form: form,
+												success: function(){
+													actionRefresh();
+													form.reset();
+													createEvaluationWin.close();
+												}
+											});
 											
 										}
 									},
@@ -64,6 +78,7 @@
 							{
 								xtype: 'combobox',
 								fieldLabel: 'Entry <span class="field-required" />',
+								name: 'componentId',
 								displayField: 'description',
 								valueField: 'code',								
 								emptyText: 'Select an entry',
@@ -79,8 +94,9 @@
 							{
 								xtype: 'combobox',
 								fieldLabel: 'Evaluation Template <span class="field-required" />',
+								name: 'templateId',
 								displayField: 'description',
-								valueField: 'name',								
+								valueField: 'templateId',								
 								emptyText: 'Select a Template',
 								allowBlank: false,
 								store: {									
@@ -100,6 +116,7 @@
 							},
 							{
 								xtype: 'combobox',
+								name: 'assignedGroup',
 								fieldLabel: 'Assign to Group',
 								displayField: 'description',
 								valueField: 'code',								
@@ -109,6 +126,7 @@
 							},
 							{
 								xtype: 'combobox',
+								name: 'assignedUser',
 								fieldLabel: 'Assign to User',
 								displayField: 'description',
 								valueField: 'code',								
@@ -243,6 +261,7 @@
 					},					
 					{
 						dock: 'top',
+						itemId: 'tools',
 						xtype: 'toolbar',
 						items: [
 							{
@@ -286,7 +305,7 @@
 								menu: [
 									{
 										text: 'Publish',
-										iconCls: 'fa fa-2x fa-check text-success',
+										iconCls: 'fa fa-check text-success',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											publish(record);
@@ -297,7 +316,7 @@
 									},
 									{
 										text: 'Unpublish',
-										iconCls: 'fa fa-2x fa-check text-danger',
+										iconCls: 'fa fa-close text-danger',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											unpublish(record);

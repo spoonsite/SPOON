@@ -90,7 +90,7 @@ public class EvaluationTemplateResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Creates a evaluation template")
+	@APIDescription("Creates an evaluation template")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationTemplate.class)
@@ -163,7 +163,7 @@ public class EvaluationTemplateResource
 	@DELETE
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
-	@APIDescription("Inactivates or hard removes a template only if it's not in use")
+	@APIDescription("Inactivates or hard removes a template")
 	@Path("/{templateId}")
 	public Response deleteChecklistTemplate(
 			@PathParam("templateId") String templateId,

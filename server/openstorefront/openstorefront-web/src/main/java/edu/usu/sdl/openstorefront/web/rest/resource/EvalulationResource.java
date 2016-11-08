@@ -28,9 +28,12 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.util.List;
 import javax.ws.rs.BeanParam;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -120,6 +123,24 @@ public class EvalulationResource
 	}
 
 	//getEvaluationDetails
+	@POST
+	@RequireAdmin
+	@APIDescription("Creates an evaluation from template ")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(Evaluation.class)
+	public Response createEvaluation(Evaluation evaluation)
+	{
+		ValidationResult validationResult = evaluation.validate();
+		if (validationResult.valid()) {
+			evaluation = service.getEvaluationService().createEvaluationFromTemplate(evaluation);
+
+			return Response.created(URI.create("v1/resource/evaluation/" + evaluation.getEvaluationId())).entity(evaluation).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
 	//publish (later)
 	//unpublish (later)
 	//activate

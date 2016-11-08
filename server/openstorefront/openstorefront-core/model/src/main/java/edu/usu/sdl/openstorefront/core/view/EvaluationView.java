@@ -45,7 +45,7 @@ public class EvaluationView
 		} catch (IllegalAccessException | InvocationTargetException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
-		evaluationView.setComponentName(ServiceProxyFactory.getServiceProxy().getComponentService().getComponentName(evaluation.getEvaluationId()));
+		evaluationView.setComponentName(ServiceProxyFactory.getServiceProxy().getComponentService().getComponentName(evaluation.getComponentId()));
 
 		return evaluationView;
 	}

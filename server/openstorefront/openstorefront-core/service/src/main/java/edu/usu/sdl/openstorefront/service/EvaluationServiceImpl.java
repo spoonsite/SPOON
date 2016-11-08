@@ -35,8 +35,15 @@ import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -46,6 +53,8 @@ public class EvaluationServiceImpl
 		extends ServiceProxy
 		implements EvaluationService
 {
+
+	private static final Logger LOG = Logger.getLogger(EvaluationServiceImpl.class.getName());
 
 	@Override
 	public String saveCheckListAll(ChecklistAll checklistAll)
@@ -130,10 +139,10 @@ public class EvaluationServiceImpl
 	}
 
 	@Override
-	public Evaluation createEvaluationFromTemplate(Evaluation evaluation, String templateId)
+	public Evaluation createEvaluationFromTemplate(Evaluation evaluation)
 	{
 		Objects.requireNonNull(evaluation);
-		Objects.requireNonNull(templateId);
+		Objects.requireNonNull(evaluation.getTemplateId());
 
 		evaluation.setEvaluationId(persistenceService.generateId());
 		evaluation.setPublished(Boolean.FALSE);
@@ -141,11 +150,11 @@ public class EvaluationServiceImpl
 		evaluation = persistenceService.persist(evaluation);
 
 		EvaluationTemplate evaluationTemplate = new EvaluationTemplate();
-		evaluationTemplate.setTemplateId(templateId);
+		evaluationTemplate.setTemplateId(evaluation.getTemplateId());
 		evaluationTemplate = evaluationTemplate.find();
 
 		if (evaluationTemplate == null) {
-			throw new OpenStorefrontRuntimeException("Unable to create evaluation", "Evaluation Template was not found.  Template Id: " + templateId);
+			throw new OpenStorefrontRuntimeException("Unable to create evaluation", "Evaluation Template was not found.  Template Id: " + evaluation.getTemplateId());
 		} else {
 
 			WorkflowStatus initialStatus = WorkflowStatus.initalStatus();
@@ -195,8 +204,29 @@ public class EvaluationServiceImpl
 				//copy media
 				ContentSectionMedia templateSectionMedia = new ContentSectionMedia();
 				templateSectionMedia.setContentSectionId(templateSection.getContentSectionId());
+				List<ContentSectionMedia> templateMediaRecords = templateSectionMedia.findByExample();
+				for (ContentSectionMedia templateMedia : templateMediaRecords) {
+					ContentSectionMedia sectionMedia = new ContentSectionMedia();
+					sectionMedia.setContentSectionId(contentSection.getContentSectionId());
+					sectionMedia.setMediaTypeCode(templateMedia.getMediaTypeCode());
+					sectionMedia.setMimeType(templateMedia.getMimeType());
+					sectionMedia.setOriginalName(templateMedia.getOriginalName());
 
-				List<ContentSectionMedia> templateMedia = templateSectionMedia.findByExample();
+					Path path = templateMedia.pathToMedia();
+					if (path != null) {
+						if (path.toFile().exists()) {
+							try (InputStream in = new FileInputStream(path.toFile())) {
+								getContentSectionService().saveMedia(sectionMedia, in);
+							} catch (IOException ex) {
+								LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from template.  Media path: {0} Original Name: {1}", new Object[]{path.toString(), templateMedia.getOriginalName()}), ex);
+							}
+						} else {
+							LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from template.  Media path: {0} Original Name: {1}", new Object[]{path.toString(), templateMedia.getOriginalName()}));
+						}
+					} else {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from template.  Media path: Doesn't exist? Original Name: {0}", templateMedia.getOriginalName()));
+					}
+				}
 
 				ContentSectionAttribute templateSectionAttribute = new ContentSectionAttribute();
 				ContentSectionAttributePk contentSectionAttributePk = new ContentSectionAttributePk();

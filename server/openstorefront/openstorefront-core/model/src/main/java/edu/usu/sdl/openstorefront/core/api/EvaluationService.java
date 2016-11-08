@@ -75,10 +75,9 @@ public interface EvaluationService
 	 * Create an evaluation base on the template
 	 *
 	 * @param evaluation
-	 * @param templateId
 	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public Evaluation createEvaluationFromTemplate(Evaluation evaluation, String templateId);
+	public Evaluation createEvaluationFromTemplate(Evaluation evaluation);
 
 }

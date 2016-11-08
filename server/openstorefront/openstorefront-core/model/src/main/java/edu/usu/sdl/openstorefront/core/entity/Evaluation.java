@@ -36,9 +36,16 @@ public class Evaluation
 	@NotNull
 	private String evaluationId;
 
+	@ConsumeField
 	@NotNull
 	@FK(Component.class)
 	private String componentId;
+
+	@ConsumeField
+	@NotNull
+	@APIDescription("Soft reference to the template use to create the evaluation; Template may be removed.")
+	@FK(EvaluationTemplate.class)
+	private String templateId;
 
 	@ConsumeField
 	@NotNull
@@ -46,7 +53,7 @@ public class Evaluation
 	private String version;
 
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
 	@FK(value = UserProfile.class, referencedField = "username")
 	private String assignedUser;
 
@@ -70,6 +77,7 @@ public class Evaluation
 		setAssignedGroup(evaluation.getAssignedGroup());
 		setAssignedUser(evaluation.getAssignedUser());
 		setComponentId(evaluation.getComponentId());
+		setTemplateId(evaluation.getTemplateId());
 		setPublished(evaluation.getPublished());
 		setVersion(evaluation.getVersion());
 
@@ -133,6 +141,16 @@ public class Evaluation
 	public void setPublished(Boolean published)
 	{
 		this.published = published;
+	}
+
+	public String getTemplateId()
+	{
+		return templateId;
+	}
+
+	public void setTemplateId(String templateId)
+	{
+		this.templateId = templateId;
 	}
 
 }
