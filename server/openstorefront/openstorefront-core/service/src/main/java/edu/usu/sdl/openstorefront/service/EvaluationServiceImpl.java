@@ -193,7 +193,8 @@ public class EvaluationServiceImpl
 				ContentSection contentSection = new ContentSection();
 				contentSection.setContentSectionId(persistenceService.generateId());
 				contentSection.setEntity(Evaluation.class.getSimpleName());
-				contentSection.setEntityId(evaluation.getActiveStatus());
+				contentSection.setEntityId(evaluation.getEvaluationId());
+				contentSection.setTitle(templateSection.getTitle());
 				contentSection.setContent(templateSection.getContent());
 				contentSection.setNoContent(templateSection.getNoContent());
 				contentSection.setPrivateSection(templateSection.getPrivateSection());
@@ -256,6 +257,7 @@ public class EvaluationServiceImpl
 					ContentSubSection subSection = new ContentSubSection();
 					subSection.setContentSectionId(contentSection.getContentSectionId());
 					subSection.setSubSectionId(persistenceService.generateId());
+					subSection.setTitle(templateSubSection.getTitle());
 					subSection.setContent(templateSubSection.getContent());
 					subSection.setNoContent(templateSubSection.getNoContent());
 					subSection.setPrivateSection(templateSubSection.getPrivateSection());
