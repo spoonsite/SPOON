@@ -190,6 +190,8 @@ public class AttributeServiceImpl
 	@Override
 	public void performSaveAttributeType(AttributeType attributeType)
 	{
+		attributeType.applyDefaultValues();
+
 		AttributeType existing = persistenceService.findById(AttributeType.class, attributeType.getAttributeType());
 
 		ValidationResult validationResult = attributeType.customValidation();

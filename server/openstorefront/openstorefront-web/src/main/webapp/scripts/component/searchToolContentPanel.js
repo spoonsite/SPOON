@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*global Ext*/
+/*global Ext, CoreUtil*/
 
 Ext.define('OSF.component.SearchToolContentPanel', {
 	extend: 'Ext.panel.Panel',
@@ -128,7 +128,7 @@ Ext.define('OSF.component.SearchToolContentPanel', {
 								var searchRequest = {
 									type: 'Advance',
 									query: win.searchObj
-								}
+								};
 								CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 								window.location.href = 'searchResults.jsp';
 
@@ -225,6 +225,9 @@ Ext.define('OSF.component.SearchToolWindow', {
 	iconCls: 'fa fa-lg fa-search-plus',
 	width: '70%',
 	height: '70%',
+	showTopics: true,
+	showCategory: true,
+	showTags: true,	
 	minHeight: 600,
 	minWidth: 800,
 	y: 40,
@@ -325,7 +328,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 									var searchRequest = {
 										type: 'Advance',
 										query: searchObj
-									}
+									};
 									CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 									window.location.href = 'searchResults.jsp';
 
@@ -429,7 +432,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 									var searchRequest = {
 										type: 'Advance',
 										query: searchObj
-									}
+									};
 									CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 									window.location.href = 'searchResults.jsp';
 
@@ -449,16 +452,25 @@ Ext.define('OSF.component.SearchToolWindow', {
 		//
 
 		var searchToolPanels = [];
-		searchToolPanels.push(topicSearchPanel);
-		searchToolPanels.push(categorySearchPanel);
-		searchToolPanels.push(tagSearchPanel);
+		if (searchToolWin.showTopics) {
+			searchToolPanels.push(topicSearchPanel);
+		}
+		if (searchToolWin.showCategory) {
+			searchToolPanels.push(categorySearchPanel);
+		}
+		if (searchToolWin.showTags) {
+			searchToolPanels.push(tagSearchPanel);
+		}
 
+		var addedArchitechure = false;
 		if (searchToolWin.branding) {
 			if (!searchToolWin.branding.hideArchitectureSearchFlg) {
 				searchToolPanels.push(archSearchPanel);
+				addedArchitechure = true;
 			}
 		} else {
 			searchToolPanels.push(archSearchPanel);
+			addedArchitechure = true;
 		}
 
 		searchToolPanels.push(advanceSearch);
@@ -895,7 +907,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 		//
 		var loadArchNav = function (newTab) {
 			
-			var architectureType = 'DI2E-SVCV4-A'
+			var architectureType = 'DI2E-SVCV4-A';
 			if  (searchToolWin.branding && searchToolWin.branding.architectureSearchType) {
 				architectureType = searchToolWin.branding.architectureSearchType;
 			}
@@ -1006,11 +1018,32 @@ Ext.define('OSF.component.SearchToolWindow', {
 		var setActiveTabByTitle = function (tabTitle) {
 
 			//console.log('Setting Active Tab to:' + tabTitle);
-			var tabs = tabPanel.items.findIndex('title', tabTitle);
-			tabPanel.setActiveTab(tabs);
-		};
-		setActiveTabByTitle("Category");
-		setActiveTabByTitle("Topic");
+			var tab = tabPanel.items.findIndex('title', tabTitle);
+			tabPanel.setActiveTab(tab);
+		};		
+		
+		if (addedArchitechure) {
+			setActiveTabByTitle("Architecture");
+		}		
+		
+		if (searchToolWin.showTags) {
+			setActiveTabByTitle("Tag");
+		}
+		
+		if (searchToolWin.showCategory) {
+			setActiveTabByTitle("Category");
+		}
+		if (searchToolWin.showTopics) {
+			setActiveTabByTitle("Topic");
+		}
+		
+		searchToolWin.on('show', function(){
+			if (addedArchitechure && searchToolWin.showTopics === false) {
+				tabPanel.setActiveTab(advanceSearch);
+				setActiveTabByTitle("Architecture");
+			}
+		});
+		
 
 	} //End Init Component
 

@@ -147,7 +147,12 @@ public class ImportServiceImpl
 			throw new OpenStorefrontRuntimeException("Unable to find file history.", "Check id: " + fileHistoryId + " it may have been deleted.");
 		}
 
+		FileHistoryError fileHistoryError = new FileHistoryError();
+		fileHistoryError.setFileHistoryId(fileHistoryId);
+		persistenceService.deleteByExample(fileHistoryError);
+
 		fileHistory.setStartDts(null);
+		fileHistory.setCompleteDts(null);
 		fileHistory.setNumberRecords(0);
 		fileHistory.setRecordsProcessed(0);
 		fileHistory.setRecordsStored(0);
