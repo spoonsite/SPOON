@@ -1454,8 +1454,38 @@
 										handler: function () {
 											var form = Ext.getCmp('editAttributeForm');
 											if (form.isValid()) {
+												
+												// Get Form Data
 												// [asString], [dirtyOnly], [includeEmptyText], [useDataValues]
 												var formData = form.getValues(false,false,false,true);
+												
+												// Loop Through Form Items
+												form.items.each(function(f) {
+
+													// Check If Form Item Is A Checkbox
+													if (f.xtype == "checkboxfield") {
+
+														// Add Checkbox Value To Form Data
+														formData[f.getId()] = f.getValue();
+													}
+
+													// Check If Form Item Is A Field Container
+													else if (f.xtype == "fieldcontainer") {
+
+														// Loop Through All Items In Field Container
+														f.items.each(function(g) {
+
+															// Check If Field Container Item Is A Checkbox
+															if (g.xtype == "checkboxfield") {
+
+																// Add Checkbox Value To Form Data
+																formData[g.getName()] = g.getValue();
+															}
+													  });
+												   }
+												});
+												
+												// Build Request
 												var edit = editAttributeWin.edit;
 												var url = 'api/v1/resource/attributes/attributetypes';
 												var method = 'POST';
