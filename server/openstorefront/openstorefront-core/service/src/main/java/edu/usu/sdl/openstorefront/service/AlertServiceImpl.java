@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.api.AlertService;
 import edu.usu.sdl.openstorefront.core.entity.Alert;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
@@ -121,6 +122,10 @@ public class AlertServiceImpl
 									}							
 								} else if (alertContext.getDataTrigger() instanceof Contact) {
 									if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnContactUpdate())) {
+										createUserMessage = true;
+									}
+								} else if (alertContext.getDataTrigger() instanceof AttributeCode) {
+									if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnUserAttributeCodes())) {
 										createUserMessage = true;
 									}
 								}

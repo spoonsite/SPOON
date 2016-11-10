@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.api.model.AsyncTaskCallback;
 import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -35,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchComparator;
@@ -775,7 +777,8 @@ public class AttributeResource
 				newAttributeCode.setAttributeCodePk(newAttributeCodePk);
 
 				// Save it away and return the new attribute code as response
-				return handleAttributePostPutCode(newAttributeCode, true);
+				
+				return handleAttributePostPutCode(newAttributeCode, true, true);
 				
 			}
 			else {
@@ -810,7 +813,11 @@ public class AttributeResource
 		}
 	}
 
-	private Response handleAttributePostPutCode(AttributeCode attributeCode, boolean post)
+	private Response handleAttributePostPutCode(AttributeCode attributeCode, boolean post) {
+		return handleAttributePostPutCode(attributeCode, post, false);
+	}
+	
+	private Response handleAttributePostPutCode(AttributeCode attributeCode, boolean post, boolean alert)
 	{
 		ValidationModel validationModel = new ValidationModel(attributeCode);
 		validationModel.setConsumeFieldsOnly(true);
@@ -820,6 +827,12 @@ public class AttributeResource
 			attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
 			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getAttributeService().saveAttributeCode(attributeCode, false);
+			if (alert) {
+				AlertContext alertContext = new AlertContext();
+				alertContext.setAlertType(AlertType.USER_DATA);
+				alertContext.setDataTrigger(attributeCode);
+				service.getAlertService().checkAlert(alertContext);
+			}
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
