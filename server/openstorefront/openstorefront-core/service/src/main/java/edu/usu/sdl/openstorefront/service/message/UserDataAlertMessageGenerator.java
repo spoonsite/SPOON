@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.Alert;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
@@ -228,6 +229,30 @@ public class UserDataAlertMessageGenerator
 				message.append("</ul><br>");
 			}
 		}
+
+
+		if (Convert.toBoolean(alert.getUserDataAlertOption().getAlertOnUserAttributeCodes())) {
+			AttributeCode attributeCodeExample = new AttributeCode();
+
+			AttributeCode attributeCodeStartExample = new AttributeCode();
+			attributeCodeStartExample.setCreateDts(checkDate);
+
+			QueryByExample queryByExample = new QueryByExample(attributeCodeExample);
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
+			specialOperatorModel.setExample(attributeCodeStartExample);
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+			List<AttributeCode> attributeCodes = serviceProxy.getPersistenceService().queryByExample(AttributeCode.class, queryByExample);
+			for (AttributeCode attributeCode : attributeCodes) {
+				message.append(" <li> New user-generated attribute code for type '").append(attributeCode.getAttributeCodePk().getAttributeType())
+						.append("': ").append(attributeCode.getLabel())
+						.append("</li>");
+			}
+			if (!attributeCodes.isEmpty()) {
+				message.append("</ul><br>");
+			}
+		}	
 
 		return message.toString();
 	}
