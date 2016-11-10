@@ -361,9 +361,30 @@
 
 													// Indicate Component Found
 													var componentFound = true;
+													
+													// Initialize Metadata Replaced
+													var metadataReplaced = false;
+													
+													// Loop Through Metadata
+													for (j = 0; j < labelData.components[i].metadata.length; j++) {
+														
+														// Check If Component Already Has Metadata
+														if (labelData.components[i].metadata[j].id === metadata.id) {
+															
+															// Indicate Metadata Replaced
+															metadataReplaced = true;
+															
+															// Replace Metadata
+															labelData.components[i].metadata[j] = metadata;
+														}
+													}
+													
+													// Check If Metadata Was Replaced
+													if (!metadataReplaced) {
 
-													// Add Metadata To Component
-													labelData.components[i].metadata.push(metadata);
+														// Add Metadata To Component
+														labelData.components[i].metadata.push(metadata);
+													}
 												}
 											}
 
@@ -404,6 +425,13 @@
 
 											// Reload Label Store
 											labelGrid.getView().refresh();
+											
+											// Select Next Label
+											// (In Order To "Change Selection")
+											labelGrid.getSelectionModel().deselectAll();
+											
+											// Re-Select Label
+											labelGrid.getSelectionModel().select([label]);
 
 											// Provide An Notification
 											Ext.toast("New Metadata Value Saved Successfully", '', 'tr');
@@ -722,7 +750,7 @@
 												};
 												
 												// See If Value Is Already In Values Array
-												if (values.findIndex(checkValue, labelData.components[i].metadata[k].value) === -1) {
+												if (values.filter(checkValue, labelData.components[i].metadata[k].value).length === 0) {
 													
 													// Assign Metadata Value
 													var value = {
