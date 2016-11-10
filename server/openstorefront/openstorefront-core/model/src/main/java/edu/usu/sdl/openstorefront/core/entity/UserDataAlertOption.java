@@ -40,7 +40,10 @@ public class UserDataAlertOption
 	
 	@ConsumeField
 	private Boolean alertOnContactUpdate;
-	
+
+	@ConsumeField
+	private Boolean alertOnUserAttributeCodes;
+
 	@Version
 	private String storageVersion;
 
@@ -96,6 +99,16 @@ public class UserDataAlertOption
 	public void setAlertOnContactUpdate(Boolean alertOnContactUpdate)
 	{
 		this.alertOnContactUpdate = alertOnContactUpdate;
+	}
+
+	public Boolean getAlertOnUserAttributeCodes()
+	{
+		return alertOnUserAttributeCodes;
+	}
+
+	public void setAlertOnUserAttributeCodes(Boolean alertOnUserAttributeCodes)
+	{
+		this.alertOnUserAttributeCodes = alertOnUserAttributeCodes;
 	}
 
 }
