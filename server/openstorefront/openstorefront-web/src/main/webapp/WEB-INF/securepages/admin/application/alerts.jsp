@@ -89,6 +89,9 @@
 									if (option.alertOnContactUpdate) {
 										listOfOptions += '<li>Contact Update</li>';
 									}																		
+									if (option.alertOnUserAttributeCodes) {
+										listOfOptions += '<li>User-Created Attribute Codes</li>';
+									}
 									listOfOptions += '</ul>';
 									return listOfOptions;
 								} else if (record.get('systemErrorAlertOption')) {
@@ -268,8 +271,7 @@
 					title: 'Add/Edit Alert',
 					modal: true,
 					width: '45%',
-					minWidth: 800,
-					height: 325,
+					minWidth: 950,
 					y: '10em',
 					iconCls: 'fa fa-lg fa-edit',
 					layout: 'fit',
@@ -416,6 +418,11 @@
 											boxLabel: 'Contact Update',
 											name: 'alertOnContactUpdate',
 											id: 'userData-contactUpdate'
+										},
+										{
+											boxLabel: 'User-Created Attribute Codes',
+											name: 'alertOnUserAttributeCodes',
+											id: 'userData-attributeCodes'
 										}							
 									]
 								}
@@ -459,6 +466,7 @@
 													ud.alertOnReviews = (flatData.alertOnReviews === "true");
 													ud.alertOnQuestions = (flatData.alertOnQuestions === "true");
 													ud.alertOnContactUpdate = (flatData.alertOnContactUpdate === "true");
+													ud.alertOnUserAttributeCodes = (flatData.alertOnUserAttributeCodes === "true");
 													data.userDataAlertOption = ud;
 												}
 
