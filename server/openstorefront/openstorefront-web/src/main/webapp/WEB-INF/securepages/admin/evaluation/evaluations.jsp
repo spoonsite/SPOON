@@ -11,12 +11,25 @@
 	<stripes:layout-render name="../../../../layout/adminheader.jsp">		
 	</stripes:layout-render>		
 		
+	<script src="scripts/component/savedSearchLinkInsertWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/component/inlineMediaRetrieverWindow.js?v=${appVersion}" type="text/javascript"></script>		
 	<script src="scripts/component/evaluationForm.js?v=${appVersion}" type="text/javascript"></script>	
 		
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */
 		Ext.onReady(function(){	
 			
+			//External Windows
+			var ssInsertWindow = Ext.create('OSF.component.SavedSearchLinkInsertWindow', {					
+				id: 'ssInsertWindow',
+				alwaysOnTop: true
+			});	
+
+			var inlineMediaWindow = Ext.create('OSF.component.InlineMediaRetrieverWindow', {					
+				id: 'inlineMediaWindow',
+				alwaysOnTop: true
+			});			
+			//////////////////////////////////
 			
 			var createEvaluationWin = Ext.create('Ext.window.Window', {
 				title: 'Create Evaluation',
@@ -83,11 +96,12 @@
 								valueField: 'code',								
 								emptyText: 'Select an entry',
 								allowBlank: false,
+								forceSelection: true,
 								store: {									
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
-										url: 'api/v1/resource/components/lookup'
+										url: 'api/v1/resource/components/lookup?approvalState=ALL'
 									}
 								}						
 							},
@@ -97,8 +111,10 @@
 								name: 'templateId',
 								displayField: 'description',
 								valueField: 'templateId',								
-								emptyText: 'Select a Template',
+								emptyText: 'Select a Template',								
 								allowBlank: false,
+								typeAhead: false,
+								editable: false,
 								store: {									
 									autoLoad: true,
 									proxy: {
@@ -120,8 +136,7 @@
 								fieldLabel: 'Assign to Group',
 								displayField: 'description',
 								valueField: 'code',								
-								emptyText: 'Select an group',
-								allowBlank: false
+								emptyText: 'Unassigned'
 								//TODO: add Group
 							},
 							{
@@ -130,8 +145,7 @@
 								fieldLabel: 'Assign to User',
 								displayField: 'description',
 								valueField: 'code',								
-								emptyText: 'Select an user',
-								allowBlank: false,
+								emptyText: 'Unassigned',								
 								store: {									
 									autoLoad: true,
 									proxy: {
@@ -192,7 +206,15 @@
 				columns: [
 					{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
 					{ text: 'Version', dataIndex: 'version', align: 'center', width: 225 },
-					{ text: 'Published', dataIndex: 'published', align: 'center', width: 175 },
+					{ text: 'Published', dataIndex: 'published', align: 'center', width: 175,
+						renderer: function(value) {
+							if (value) {
+								return '<span class="fa fa-check text-success"></span>';
+							} else {
+								return '<span class="fa fa-close text-danger"></span>';
+							}
+						}
+					},
 					{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
 					{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
 					{ text: 'Status', dataIndex: 'status', align: 'center', width: 175},
@@ -211,12 +233,21 @@
 						if (selected.length > 0) {	
 							tools.getComponent('action').setDisabled(false);
 							tools.getComponent('edit').setDisabled(false);	
-							tools.getComponent('inactivate').setDisabled(false);							
+							tools.getComponent('togglestatus').setDisabled(false);							
 						} else {							
 							tools.getComponent('action').setDisabled(true);
 							tools.getComponent('edit').setDisabled(true);														
-							tools.getComponent('inactivate').setDisabled(true);
+							tools.getComponent('togglestatus').setDisabled(true);
 						}
+						
+						if (selected.length > 0 && selected[0].get('published')) {
+							Ext.getCmp('publish').setDisabled(true);
+							Ext.getCmp('unpublish').setDisabled(false);
+						} else {
+							Ext.getCmp('publish').setDisabled(false);
+							Ext.getCmp('unpublish').setDisabled(true);
+						}
+						
 					}
 				},				
 				dockedItems: [
@@ -305,6 +336,7 @@
 								menu: [
 									{
 										text: 'Publish',
+										id: 'publish',
 										iconCls: 'fa fa-check text-success',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
@@ -312,14 +344,43 @@
 										}										
 									},
 									{
+										text: 'Assign Group',
+										iconCls: 'fa fa-users',
+										handler: function(){
+											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
+											actionAssignGroup(record);
+										}										
+									},	
+									{
+										text: 'Assign User',
+										iconCls: 'fa fa-user',
+										handler: function(){
+											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
+											actionAssignUser(record);
+										}										
+									},									
+									{
 										xtype: 'menuseparator'
 									},
 									{
 										text: 'Unpublish',
+										id: 'unpublish',
 										iconCls: 'fa fa-close text-danger',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											unpublish(record);
+										}										
+									},
+									{
+										xtype: 'menuseparator'
+									},
+									{
+										text: 'Delete',
+										iconCls: 'fa fa-close text-danger',
+										cls: 'alert-danger',
+										handler: function(){
+											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
+											actionDelete(record);
 										}										
 									}									
 								]
@@ -328,14 +389,14 @@
 								xtype: 'tbfill'
 							},																				
 							{
-								text: 'Inactivate',
-								iconCls: 'fa fa-2x fa-close text-danger',
-								itemId: 'inactivate',
+								text: 'Toggle Staus',
+								iconCls: 'fa fa-2x fa-power-off text-warning',
+								itemId: 'togglestatus',
 								disabled: true,									
 								scale: 'medium',
 								handler: function(){
 									var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
-									inactivate(record);
+									actionToggleStatus(record);
 								}
 							}								
 						]
@@ -358,11 +419,12 @@
 			var addEditEvaluation = function(record){
 				
 				if (record) {
-					var evalformWin = Ext.create('OSF.component.EvaluationFormWindow', {					
+					var evalformWin = Ext.create('OSF.component.EvaluationFormWindow', {
+						title: 'Evaluation Form - ' + record.get('componentName')
 					});
 					evalformWin.show();
 					
-					//Load form
+					evalformWin.loadEval(record.get('evaluationId'), record.get('componentId'));
 					
 				} else {
 					createEvaluationWin.show();
@@ -370,17 +432,108 @@
 			   }
 			};
 			
-			var publish = function(record){
+			var actionAssignGroup = function(record) {
 				
+			};
+
+			var actionAssignUser = function(record) {
+				
+			};
+
+			var publish = function(record){
+				Ext.Msg.show({
+					title:'Publish Evaluation?',
+					message: 'Are you sure you want to PUBLISH this evalaution?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							evaluationGrid.setLoading('Publishing...');
+							Ext.Ajax.request({
+								url: 'api/v1/resource/evaluations/' + record.get('evaluationId') + '/publish',
+								method: 'PUT',
+								callback: function(){
+									evaluationGrid.setLoading(false);
+								},
+								success: function(response, opts){
+									actionRefresh();
+								}
+							});	
+						} 
+					}
+				});				
 			};
 
 			var unpublish = function(record){
-				
+				Ext.Msg.show({
+					title:'Unpublish Evaluation?',
+					message: 'Are you sure you want to UNPUBLISH this evalaution?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							evaluationGrid.setLoading('Publishing...');
+							Ext.Ajax.request({
+								url: 'api/v1/resource/evaluations/' + record.get('evaluationId') + '/unpublish',
+								method: 'PUT',
+								callback: function(){
+									evaluationGrid.setLoading(false);
+								},
+								success: function(response, opts){
+									actionRefresh();
+								}
+							});	
+						} 
+					}
+				});				
 			};
 
-			var inactivate = function(record){
-				
-			};
+			var actionToggleStatus = function(record) {
+				Ext.getCmp('evaluationGrid').setLoading("Updating Status...");
+				var evaluationId = Ext.getCmp('evaluationGrid').getSelection()[0].get('evaluationId');
+				var currentStatus = Ext.getCmp('evaluationGrid').getSelection()[0].get('activeStatus');
+
+				var method = 'PUT';
+				var urlEnd = '/activate';
+				if (currentStatus === 'A') {
+					method = 'DELETE';
+					urlEnd = '';
+				}					
+				Ext.Ajax.request({
+					url: 'api/v1/resource/evaluations/' + evaluationId + urlEnd,
+					method: method,
+					callback: function(){
+						Ext.getCmp('evaluationGrid').setLoading(false);
+					},
+					success: function(response, opts){						
+						actionRefresh();
+					}
+				});				
+			};	
+			
+			var actionDelete = function(record) {
+				Ext.Msg.show({
+					title:'Delete Evaluation?',
+					message: 'Are you sure you want to delete this evalaution?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function(btn) {
+						if (btn === 'yes') {
+							evaluationGrid.setLoading('Deleting...');
+							Ext.Ajax.request({
+								url: 'api/v1/resource/evaluations/' + record.get('evaluationId') + '?force=true',
+								method: 'DELETE',
+								callback: function(){
+									evaluationGrid.setLoading(false);
+								},
+								success: function(response, opts){
+									actionRefresh();
+								}
+							});	
+						} 
+					}
+				});					
+			};			
 		
 		});
 		

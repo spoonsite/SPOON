@@ -20,6 +20,8 @@ Ext.define('OSF.form.Dependencies', {
 	alias: 'osf.form.Dependencies',
 
 	layout: 'fit',
+	hideSecurityMarking: false,
+	
 	initComponent: function () {		
 		this.callParent();
 		
@@ -51,8 +53,8 @@ Ext.define('OSF.form.Dependencies', {
 				{ text: 'Version',  dataIndex: 'version', width: 150 },
 				{ text: 'Link',  dataIndex: 'dependancyReferenceLink', width: 200 },
 				{ text: 'Comment',  dataIndex: 'comment', flex: 1, minWidth: 200 },
-				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
-				//{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
+				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: dependanciesPanel.hideSecurityMarking }
 			],
 			listeners: {
 				itemdblclick: function(grid, record, item, index, e, opts){
@@ -156,10 +158,10 @@ Ext.define('OSF.form.Dependencies', {
 							fieldLabel: 'Comment',																											
 							maxLength: '255',
 							name: 'comment'
-						}
-//						Ext.create('OSF.component.SecurityComboBox', {	
-//							hidden: !${branding.allowSecurityMarkingsFlg}
-//						})								
+						},
+						Ext.create('OSF.component.SecurityComboBox', {	
+							hidden: dependanciesPanel.hideSecurityMarking
+						})								
 					]
 				},						
 				{

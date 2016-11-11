@@ -80,4 +80,30 @@ public interface EvaluationService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public Evaluation createEvaluationFromTemplate(Evaluation evaluation);
 
+	/**
+	 * Deletes an evaluation and all child data
+	 *
+	 * @param evaluationId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void deleteEvaluation(String evaluationId);
+
+	/**
+	 * Publishes the evaluation to make is public Note: it still needs be active
+	 * (which is a separate process)
+	 *
+	 * @param evaluationId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void publishEvaluation(String evaluationId);
+
+	/**
+	 * Un-publish a evaluation to make it only visible to evaluators Note:
+	 * active controls an addition layer of visibility
+	 *
+	 * @param evaluationId
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void unpublishEvaluation(String evaluationId);
+
 }

@@ -21,7 +21,9 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.view.EvaluationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationViewWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -32,11 +34,14 @@ import java.net.URI;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
@@ -110,7 +115,7 @@ public class EvalulationResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationView.class)
 	@APIDescription("Gets an evaluation")
-	@Path("{evaluationId}")
+	@Path("/{evaluationId}")
 	public Response getEvaluation(
 			@PathParam("evaluationId") String evaluationId
 	)
@@ -141,10 +146,88 @@ public class EvalulationResource
 		}
 	}
 
-	//publish (later)
-	//unpublish (later)
-	//activate
-	//inactive
+	@PUT
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Publish an evaluation")
+	@Path("/{evaluationId}/publish")
+	public Response publishEvaluation(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+			service.getEvaluationService().publishEvaluation(evaluationId);
+			return Response.ok().build();
+		} else {
+			return sendSingleEntityResponse(evaluation);
+		}
+	}
+
+	@PUT
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Unpublish an evaluation")
+	@Path("/{evaluationId}/unpublish")
+	public Response unpublishEvaluation(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+			service.getEvaluationService().unpublishEvaluation(evaluationId);
+			return Response.ok().build();
+		} else {
+			return sendSingleEntityResponse(evaluation);
+		}
+	}
+
+	@PUT
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Activates an evaluation")
+	@Path("/{evaluationId}/activate")
+	public Response activateEvaluation(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		return updateStatus(evaluationId, ChecklistTemplate.ACTIVE_STATUS);
+	}
+
+	private Response updateStatus(String evaluationId, String status)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+			evaluation.setActiveStatus(status);
+			evaluation.save();
+		}
+		return sendSingleEntityResponse(evaluation);
+	}
+
+	@DELETE
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Inactivates or hard removes a evaluation")
+	@Path("/{evaluationId}")
+	public Response deleteEvaluation(
+			@PathParam("evaluationId") String evaluationId,
+			@QueryParam("force") boolean force
+	)
+	{
+		if (force) {
+			service.getEvaluationService().deleteEvaluation(evaluationId);
+			return Response.noContent().build();
+		} else {
+			return updateStatus(evaluationId, EvaluationTemplate.INACTIVE_STATUS);
+		}
+	}
+
 	//delete (later)
 	//add section
 	//remove section

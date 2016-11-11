@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global Ext */
+/* global Ext, CoreUtil */
 
 Ext.define('OSF.form.Media', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Media',
 
 	layout: 'fit',
+	hideSecurityMarking: false,
+	
 	//bodyStyle: 'padding: 20px',
 	initComponent: function () {		
 		this.callParent();
@@ -194,10 +196,10 @@ Ext.define('OSF.form.Media', {
 					xtype: 'checkbox',
 					fieldLabel: 'Used Inline <i class="fa fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline refereence in the description." ></i>',
 					name: 'usedInline'
-				}
-//				Ext.create('OSF.component.SecurityComboBox', {	
-//					hidden: !${branding.allowSecurityMarkingsFlg}
-//				})								
+				},
+				Ext.create('OSF.component.SecurityComboBox', {	
+					hidden: mediaPanel.hideSecurityMarking
+				})								
 			]
 		});
 			
@@ -237,7 +239,7 @@ Ext.define('OSF.form.Media', {
 				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
 				{ text: 'Hide In Carousel', dataIndex: 'hideInDisplay', width: 150},
 				{ text: 'Used Inline', dataIndex: 'usedInline', width: 150 },
-				//{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
+				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: mediaPanel.hideSecurityMarking }
 			],
 			listeners: {
 				itemdblclick: function(grid, record, item, index, e, opts){

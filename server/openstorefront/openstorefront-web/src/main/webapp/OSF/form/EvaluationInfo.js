@@ -37,6 +37,25 @@ Ext.define('OSF.form.EvaluationInfo', {
 		});
 		
 		evalForm.add(version);
-	}
+	},
+	
+	loadData: function(evalationId, componentId) {
+		var evalForm = this;
+		
+		evalForm.setLoading(true);
+		Ext.Ajax.request({
+			url: 'api/v1/resource/evaluations/' + evalationId,
+			callback: function() {
+				evalForm.setLoading(false);
+			},
+			success: function(response, opt) {
+				var evaluation = Ext.decode(response.responseText);
+				var record = Ext.create('Ext.data.Model',{					
+				});
+				record.set(evaluation);				
+				evalForm.loadRecord(record);
+			}
+		});
+	}	
 	
 });

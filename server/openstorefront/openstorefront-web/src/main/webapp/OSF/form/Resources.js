@@ -19,7 +19,9 @@ Ext.define('OSF.form.Resources', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Resources',
 
-	layout: 'fit',	
+	layout: 'fit',
+	hideSecurityMarking: false,
+	
 	initComponent: function () {		
 		this.callParent();
 		
@@ -184,10 +186,10 @@ Ext.define('OSF.form.Resources', {
 					listeners: {
 						change: CoreUtil.handleMaxFileLimit
 					}
-				}
-//				Ext.create('OSF.component.SecurityComboBox', {	
-//					hidden: !${branding.allowSecurityMarkingsFlg}
-//				})								
+				},
+				Ext.create('OSF.component.SecurityComboBox', {	
+					hidden: resourcePanel.hideSecurityMarking 
+				})								
 			]
 		});
 
@@ -226,8 +228,8 @@ Ext.define('OSF.form.Resources', {
 				{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 				{ text: 'Local Resource Name',  dataIndex: 'originalFileName', width: 200 },
 				{ text: 'Restricted',  dataIndex: 'restricted', width: 150 },						
-				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
-				//{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
+				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: resourcePanel.hideSecurityMarking  }
 			],
 			listeners: {
 				itemdblclick: function(grid, record, item, index, e, opts){

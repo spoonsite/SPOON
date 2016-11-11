@@ -20,6 +20,8 @@ Ext.define('OSF.form.Contacts', {
 	alias: 'osf.form.Contacts',
 
 	layout: 'fit',
+	hideSecurityMarking: false,
+	
 	//bodyStyle: 'padding: 20px',
 	initComponent: function () {		
 		this.callParent();
@@ -60,8 +62,8 @@ Ext.define('OSF.form.Contacts', {
 				{ text: 'Organization',  dataIndex: 'organization', width: 200 },
 				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
 				{ text: 'Entry Contact Id',  dataIndex: 'componentContactId', width: 200, hidden: true },
-				{ text: 'Contact Id',  dataIndex: 'contactId', width: 200, hidden: true }
-				//{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: !${branding.allowSecurityMarkingsFlg} }
+				{ text: 'Contact Id',  dataIndex: 'contactId', width: 200, hidden: true },
+				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: contactPanel.hideSecurityMarking }
 			],
 			listeners: {
 				itemdblclick: function(grid, record, item, index, e, opts){
@@ -246,10 +248,10 @@ Ext.define('OSF.form.Contacts', {
 							fieldLabel: 'Phone',																											
 							maxLength: '120',
 							name: 'phone'
-						}
-//						Ext.create('OSF.component.SecurityComboBox', {	
-//							hidden: !${branding.allowSecurityMarkingsFlg}
-//						})								
+						},
+						Ext.create('OSF.component.SecurityComboBox', {	
+							hidden: contactPanel.hideSecurityMarking
+						})								
 					]
 				},						
 				{

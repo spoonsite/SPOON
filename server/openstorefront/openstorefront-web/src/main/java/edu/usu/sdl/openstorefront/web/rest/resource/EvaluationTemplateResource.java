@@ -141,11 +141,11 @@ public class EvaluationTemplateResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a template")
 	@Path("/{templateId}/activate")
-	public Response activateChecklistTemplate(
+	public Response activateEvaluationTemplate(
 			@PathParam("templateId") String templateId
 	)
 	{
-		return updateStatus(templateId, ChecklistTemplate.ACTIVE_STATUS);
+		return updateStatus(templateId, EvaluationTemplate.ACTIVE_STATUS);
 	}
 
 	private Response updateStatus(String templateId, String status)
@@ -165,7 +165,7 @@ public class EvaluationTemplateResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates or hard removes a template")
 	@Path("/{templateId}")
-	public Response deleteChecklistTemplate(
+	public Response deleteEvaluationTemplate(
 			@PathParam("templateId") String templateId,
 			@QueryParam("force") boolean force
 	)

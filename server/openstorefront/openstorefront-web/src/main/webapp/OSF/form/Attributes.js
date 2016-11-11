@@ -25,7 +25,39 @@ Ext.define('OSF.form.Attributes', {
 		
 		var attributePanel = this;
 
-		var attributeGrid = Ext.create('Ext.grid.Panel', {
+		attributePanel.loadComponentAttributes = function(status) {
+			if (!status) {					
+				var tools = attributePanel.attributeGrid.getComponent('tools');				
+				status = tools.getComponent('attributeFilterActiveStatus').getValue();				
+			}
+
+			attributePanel.attributeGrid.setLoading(true);
+			var componentId = attributePanel.componentId;
+			Ext.Ajax.request({
+				url: 'api/v1/resource/components/' + componentId + '/attributes/view',
+				method: 'GET',
+				params: {
+					status: status
+				},
+				callback: function() {
+					attributePanel.attributeGrid.setLoading(false);
+				},
+				success: function(response, opts) {
+					var data = Ext.decode(response.responseText);
+
+					var optionalAttributes = [];
+					Ext.Array.each(data, function(attribute) {
+						if (!attribute.requiredFlg) {															
+							optionalAttributes.push(attribute);
+						}
+					});
+					optionalAttributes.reverse();
+					attributePanel.attributeGrid.getStore().loadData(optionalAttributes);
+				}
+			});			
+		};
+
+		attributePanel.attributeGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
 			store: Ext.create('Ext.data.Store', {
 				fields: [
@@ -53,7 +85,7 @@ Ext.define('OSF.form.Attributes', {
 			],
 			listeners: {
 				selectionchange: function(grid, record, index, opts){
-					var fullgrid = Ext.getCmp('attributeGrid');
+					var fullgrid = attributePanel.attributeGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {								
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
@@ -85,11 +117,11 @@ Ext.define('OSF.form.Attributes', {
 							text: 'Save',
 							formBind: true,
 							margin: '0 20 0 0',
-							iconCls: 'fa fa-save',
+							iconCls: 'fa fa-save text-success',
 							handler: function(){	
 								var form = this.up('form');
 								var data = form.getValues();
-								var componentId = Ext.getCmp('attributeGrid').componentRecord.get('componentId');
+								var componentId = attributePanel.componentId;
 
 								data.componentAttributePk = {
 									attributeType: data.attributeType,
@@ -104,8 +136,8 @@ Ext.define('OSF.form.Attributes', {
 									method: method,
 									data: data,
 									form: form,
-									success: function(){
-										loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
+									success: function(){										
+										attributePanel.loadComponentAttributes();
 										form.reset();
 									}
 								});
@@ -114,7 +146,7 @@ Ext.define('OSF.form.Attributes', {
 						{
 							xtype: 'button',
 							text: 'Cancel',										
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-close text-danger',
 							handler: function(){
 								this.up('form').reset();
 							}									
@@ -133,12 +165,19 @@ Ext.define('OSF.form.Attributes', {
 							allowBlank: false,
 							valueField: 'attributeType',
 							displayField: 'description',										
-							store: Ext.create('Ext.data.Store', {
-								fields: [
-									"attributeType",
-									"description"
-								]																							
-							}),
+							store: {
+								autoLoad: true,
+								proxy: {
+									type: 'ajax',
+									url: 'api/v1/resource/attributes'									
+								},
+								filters: [
+									{
+										property: 'requiredFlg',
+										value: 'false'
+									}
+								]
+							},
 							listeners: {
 								change: function (field, newValue, oldValue, opts) {
 									field.up('form').getComponent('attributeCodeCB').clearValue();
@@ -175,10 +214,11 @@ Ext.define('OSF.form.Attributes', {
 				},						
 				{
 					xtype: 'toolbar',
+					itemId: 'tools',
 					items: [
 						{
 							xtype: 'combobox',
-							id: 'attributeFilterActiveStatus',
+							itemId: 'attributeFilterActiveStatus',
 							fieldLabel: 'Filter Status',
 							store: {
 								data: [												
@@ -193,7 +233,7 @@ Ext.define('OSF.form.Attributes', {
 							value: 'A',
 							listeners: {
 								change: function(combo, newValue, oldValue, opts){
-									loadComponentAttributes(newValue);
+									attributePanel.loadComponentAttributes(newValue);
 								}
 							}
 						}, 								
@@ -201,7 +241,7 @@ Ext.define('OSF.form.Attributes', {
 							text: 'Refresh',
 							iconCls: 'fa fa-refresh',
 							handler: function(){
-								loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
+								attributePanel.loadComponentAttributes();
 							}
 						},								
 						{
@@ -213,19 +253,19 @@ Ext.define('OSF.form.Attributes', {
 							iconCls: 'fa fa-power-off',									
 							disabled: true,
 							handler: function(){
-								actionSubComponentToggleStatus(Ext.getCmp('attributeGrid'), 'type', 'attributes', 'code', null, null, function(){
-									loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
+								CoreUtil.actionSubComponentToggleStatus(attributePanel.attributeGrid, 'type', 'attributes', 'code', null, null, function(){
+									attributePanel.loadComponentAttributes();
 								});
 							}
 						},								
 						{
 							text: 'Remove',
 							itemId: 'removeBtn',
-							iconCls: 'fa fa-trash',									
+							iconCls: 'fa fa-trash text-danger',									
 							disabled: true,
 							handler: function(){
-								actionSubComponentToggleStatus(Ext.getCmp('attributeGrid'), 'type', 'attributes', 'code', null, true, function(){
-									loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
+								CoreUtil.actionSubComponentToggleStatus(attributePanel.attributeGrid, 'type', 'attributes', 'code', null, true, function(){
+									attributePanel.loadComponentAttributes();
 								});
 							}
 						}
@@ -234,7 +274,16 @@ Ext.define('OSF.form.Attributes', {
 			]																					
 		});
 
-		attributePanel.add(attributeGrid);
+		attributePanel.add(attributePanel.attributeGrid);
+	},	
+	loadData: function(evalationId, componentId) {
+		//just load option (filter out required)
+		var attributePanel = this;
+		
+		attributePanel.componentId = componentId;
+		attributePanel.attributeGrid.componentId = componentId;
+		attributePanel.loadComponentAttributes();
+		
 	}
 	
 });

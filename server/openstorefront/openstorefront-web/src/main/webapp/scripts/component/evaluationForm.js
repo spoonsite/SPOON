@@ -213,14 +213,14 @@ Ext.define('OSF.component.EvaluationPanel', {
 		evalPanel.add(evalPanel.navigation);
 		evalPanel.add(evalPanel.contentPanel);
 		evalPanel.add(evalPanel.commentPanel);
-		evalPanel.loadEval(evalPanel.evalutationId);
-		evalPanel.loadContentForm({
-			form: 'EvaluationInfo',
-			title: 'Evaluation Info'
+		
+		CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
+			var branding = Ext.decode(response.responseText);			
+			evalPanel.branding = branding;
 		});
 		
 	},
-	loadEval: function(evalutationId){
+	loadEval: function(evaluationId, componentId){
 		var evalPanel = this;
 		
 		evalPanel.setLoading(true);
@@ -330,11 +330,21 @@ Ext.define('OSF.component.EvaluationPanel', {
 			title: page.title
 		});
 		
-		evalPanel.contentPanel.add(Ext.create('OSF.form.' + page.form, Ext.apply({			
+		var hideSecurityMarking = true;
+		if (evalPanel.branding) {
+			hideSecurityMarking = !evalPanel.branding.allowSecurityMarkingsFlg;
+		}
+		
+		var contentForm = Ext.create('OSF.form.' + page.form, Ext.apply({	
+			hideSecurityMarking: hideSecurityMarking
 		}, page.options)
-		));
+		);
 
-		//load Form
+		evalPanel.contentPanel.add(contentForm);
+
+		if (contentForm.loadData) {
+			contentForm.loadData(evalPanel.evaluationId, evalPanel.componentId);
+		}
 		
 	}
 	
@@ -361,6 +371,18 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 		
 		evalWin.add(evalWin.evalPanel);
 		
-	}	
-	
+	},
+	loadEval: function(evaluationId, componentId) {
+		var evalWin = this;
+		
+		evalWin.evalPanel.loadEval(evaluationId, componentId);
+		evalWin.evalPanel.evaluationId = evaluationId;
+		evalWin.evalPanel.componentId = componentId;
+		
+		evalWin.evalPanel.loadContentForm({
+			form: 'EvaluationInfo',
+			title: 'Evaluation Info'
+		});		
+	}
+	 
 });

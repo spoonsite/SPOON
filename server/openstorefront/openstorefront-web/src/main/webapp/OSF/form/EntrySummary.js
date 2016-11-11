@@ -47,6 +47,7 @@ Ext.define('OSF.form.EntrySummary', {
 					fieldLabel: 'Organization <span class="field-required" />',
 					forceSelection: false,
 					valueField: 'description',
+					displayField: 'description',
 					editable: true,
 					queryMode: 'remote',
 					store: {				
@@ -55,7 +56,7 @@ Ext.define('OSF.form.EntrySummary', {
 							url: 'api/v1/resource/organizations/lookup'
 						},
 						sorters: [{
-								property: 'description',
+							property: 'description',
 							direction: 'ASC'
 						}]
 					}
@@ -92,8 +93,27 @@ Ext.define('OSF.form.EntrySummary', {
 	initComponent: function () {		
 		this.callParent();
 		
-		var evalForm = this;
+		var entryForm = this;
 		
+	},
+	
+	loadData: function(evalationId, componentId) {
+		var entryForm = this;
+		
+		entryForm.setLoading(true);
+		Ext.Ajax.request({
+			url: 'api/v1/resource/components/' + componentId,
+			callback: function() {
+				entryForm.setLoading(false);
+			},
+			success: function(response, opt) {
+				var evaluation = Ext.decode(response.responseText);
+				var record = Ext.create('Ext.data.Model',{					
+				});
+				record.set(evaluation);				
+				entryForm.loadRecord(record);
+			}
+		});		
 	}
 	
 });

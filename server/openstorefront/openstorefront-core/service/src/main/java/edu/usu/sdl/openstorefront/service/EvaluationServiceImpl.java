@@ -260,6 +260,8 @@ public class EvaluationServiceImpl
 					subSection.setTitle(templateSubSection.getTitle());
 					subSection.setContent(templateSubSection.getContent());
 					subSection.setNoContent(templateSubSection.getNoContent());
+					subSection.setHideTitle(templateSubSection.getHideTitle());
+					subSection.setOrder(templateSubSection.getOrder());
 					subSection.setPrivateSection(templateSubSection.getPrivateSection());
 					subSection.setCustomFields(templateSubSection.getCustomFields());
 					subSection.populateBaseCreateFields();
@@ -330,6 +332,68 @@ public class EvaluationServiceImpl
 			return getEvaluation(latest.getEvaluationId());
 		}
 		return null;
+	}
+
+	@Override
+	public void deleteEvaluation(String evaluationId)
+	{
+		Evaluation evaluation = persistenceService.findById(Evaluation.class, evaluationId);
+		if (evaluation != null) {
+
+			EvaluationChecklist evaluationChecklist = new EvaluationChecklist();
+			evaluationChecklist.setEvaluationId(evaluationId);
+			evaluationChecklist = evaluationChecklist.findProxy();
+			if (evaluationChecklist != null) {
+
+				EvaluationChecklistRecommendation recommendation = new EvaluationChecklistRecommendation();
+				recommendation.setChecklistId(evaluationChecklist.getChecklistId());
+				persistenceService.deleteByExample(recommendation);
+
+				EvaluationChecklistResponse response = new EvaluationChecklistResponse();
+				response.setChecklistId(evaluationChecklist.getChecklistId());
+				persistenceService.deleteByExample(response);
+
+				persistenceService.delete(evaluationChecklist);
+			}
+
+			ContentSection contentSection = new ContentSection();
+			contentSection.setEntity(ContentSection.ENTITY_EVALUATION);
+			contentSection.setEntityId(evaluationId);
+
+			List<ContentSection> sections = contentSection.findByExample();
+			for (ContentSection section : sections) {
+				getContentSectionService().deleteContentSection(section.getContentSectionId());
+			}
+
+			persistenceService.delete(evaluation);
+		}
+	}
+
+	@Override
+	public void publishEvaluation(String evaluationId)
+	{
+		Evaluation evaluation = persistenceService.findById(Evaluation.class, evaluationId);
+		if (evaluation != null) {
+			evaluation.setPublished(Boolean.TRUE);
+			evaluation.populateBaseUpdateFields();
+			persistenceService.persist(evaluation);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find Evaluation.", "Evaluation Id: " + evaluationId);
+		}
+	}
+
+	@Override
+	public void unpublishEvaluation(String evaluationId)
+	{
+		Evaluation evaluation = persistenceService.findById(Evaluation.class, evaluationId);
+		if (evaluation != null) {
+			evaluation.setPublished(Boolean.FALSE);
+			evaluation.populateBaseUpdateFields();
+			persistenceService.persist(evaluation);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find Evaluation.", "Evaluation Id: " + evaluationId);
+		}
+
 	}
 
 }

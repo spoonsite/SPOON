@@ -25,7 +25,7 @@ Ext.define('OSF.form.Relationships', {
 		
 		var relationshipPanel = this;
 		
-		var relationshipsGrid = Ext.create('Ext.grid.Panel', {
+		relationshipPanel.relationshipsGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
 			store: Ext.create('Ext.data.Store', {
 				fields: [
@@ -59,7 +59,7 @@ Ext.define('OSF.form.Relationships', {
 			],
 			listeners: {
 				selectionchange: function(grid, record, index, opts){
-					var fullgrid = Ext.getCmp('relationshipsGrid');
+					var fullgrid = relationshipPanel.relationshipsGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {								
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
 					} else {								
@@ -89,11 +89,11 @@ Ext.define('OSF.form.Relationships', {
 							text: 'Save',
 							formBind: true,
 							margin: '0 20 0 0',
-							iconCls: 'fa fa-save',
+							iconCls: 'fa fa-save text-success',
 							handler: function(){	
 								var form = this.up('form');
 								var data = form.getValues();
-								var componentId = Ext.getCmp('relationshipsGrid').componentRecord.get('componentId');
+								var componentId = relationshipPanel.componentId;
 
 								var method = 'POST';
 								var update = '';
@@ -108,7 +108,7 @@ Ext.define('OSF.form.Relationships', {
 									data: data,
 									form: form,
 									success: function(){
-										Ext.getCmp('relationshipsGrid').getStore().reload();
+										relationshipPanel.relationshipsGrid.getStore().reload();
 										form.reset();
 									}
 								});
@@ -117,7 +117,7 @@ Ext.define('OSF.form.Relationships', {
 						{
 							xtype: 'button',
 							text: 'Cancel',										
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-close text-danger',
 							handler: function(){
 								this.up('form').reset();
 							}									
@@ -168,7 +168,7 @@ Ext.define('OSF.form.Relationships', {
 							}
 						}),								
 						Ext.create('OSF.component.StandardComboBox', {
-							id: 'relationshipTargetCB',
+							itemId: 'relationshipTargetCB',
 							name: 'relatedComponentId',									
 							allowBlank: false,									
 							margin: '0 0 0 0',
@@ -198,10 +198,10 @@ Ext.define('OSF.form.Relationships', {
 						{
 							text: 'Remove',
 							itemId: 'removeBtn',
-							iconCls: 'fa fa-trash',								
+							iconCls: 'fa fa-trash text-danger',								
 							disabled: true,
 							handler: function(){
-								actionSubComponentToggleStatus(Ext.getCmp('relationshipsGrid'), 'relationshipId', 'relationships');
+								actionSubComponentToggleStatus(relationshipPanel.relationshipsGrid, 'relationshipId', 'relationships');
 							}
 						}
 					]
@@ -211,7 +211,18 @@ Ext.define('OSF.form.Relationships', {
 		
 		
 		relationshipPanel.add(relationshipsGrid);
-	}
+	},
+	loadData: function(evalationId, componentId) {
+		//just load option (filter out required)
+		var relationshipPanel = this;
+		
+		relationshipPanel.componentId = componentId;
+		relationshipPanel.relationshipsGrid.componentId = componentId;
+		
+		relationshipPanel.relationshipsGrid.getStore().load({
+			url: 'api/v1/resource/components/' + componentId + '/relationships'
+		});
+	}	
 	
 });
 

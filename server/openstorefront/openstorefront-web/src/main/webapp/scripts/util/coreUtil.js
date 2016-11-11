@@ -808,5 +808,50 @@ var CoreUtil = {
 			return desc;
 		}
 		return '';
+	},
+	actionSubComponentToggleStatus: function(grid, idField, entity, subEntityId, subEntity, forceDelete, successFunc) {
+		var status = grid.getSelection()[0].get('activeStatus');
+		var recordId = grid.getSelection()[0].get(idField);
+		var componentId = grid.getSelection()[0].get('componentId'); 
+		if (!componentId) {
+			if (grid.componentRecord) {
+				componentId = grid.componentRecord.get('componentId');
+			} else {
+				componentId = grid.componentId;
+			}
+		}
+		subEntityId = subEntityId ? '/' + grid.getSelection()[0].get(subEntityId) : '';
+		subEntity = subEntity ? '/' + subEntity : '';
+
+		var urlEnding = '';
+		var method = 'DELETE';
+
+		if (status === 'I') {
+			urlEnding = '/activate';
+			method = 'PUT';
+		} 
+
+		if (forceDelete)
+		{
+			urlEnding = '/force';
+			method = 'DELETE';
+		}
+
+		grid.setLoading('Updating status...');
+		Ext.Ajax.request({
+			url: 'api/v1/resource/components/' + componentId + '/' + entity + '/' + recordId + subEntity + subEntityId + urlEnding,
+			method: method,
+			callback: function(opt, success, response){
+				grid.setLoading(false);
+			},
+			success: function(response, opts){
+				if (successFunc) {
+					successFunc();
+				} else {
+					grid.getStore().reload();
+				}
+			}
+		});
 	}
+	
 };

@@ -36,6 +36,8 @@ public class ContentSection
 		extends StandardEntity<ContentSection>
 {
 
+	public static final String ENTITY_EVALUATION = Evaluation.class.getSimpleName();
+
 	@PK(generated = true)
 	@NotNull
 	private String contentSectionId;
