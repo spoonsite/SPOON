@@ -279,7 +279,20 @@
 					
 					// Build Combo Box
 					Ext.create('Ext.form.ComboBox', {
-						store: store_metadataValues_local,
+						store: Ext.create('Ext.data.Store', {
+							
+							listeners: {
+								
+								load: function(store, operation, opts) {
+									
+									// Store Existing Data
+									var data = store_metadataValues_local.getData();
+									
+									// Load Data Into Store
+									store.loadData(data.items);
+								}
+							}
+						}),
 						queryMode: 'local',
 						displayField: 'value',
 						valueField: 'value',
@@ -289,11 +302,27 @@
 						width: '100%',
 						transform: 'select_' + componentData.component.name.replace(/ /g, '_'),
 						listeners: {
-
+							
+							focus: {
+								
+								fn: function(field, event, opts) {
+								
+									// Reload Store
+									field.getStore().load();
+								}
+								
+							},
+							
 							change: {
 
-								buffer: 2000,
+								buffer: 1000,
 								fn: function (field, newValue, oldValue, opts) {
+									
+									// Check For Empty String
+									if (newValue === null || newValue === '') {
+										
+										return false;
+									}
 
 									// Store Selected Label
 									var label = labelGrid.getSelection()[0];
@@ -352,6 +381,38 @@
 												id: responseObject.metadataId,
 												value: responseObject.value
 											};
+											
+											// Lookup Existing Value In Dropdown Store
+											var matchedValues = store_metadataValues_local.queryBy(function (record, id) {
+
+												// Store Record Component
+												var recordValue = record.get('value');
+
+												// See If Record Matches
+												if (recordValue === metadata.value) {
+
+													// Return TRUE
+													return true;
+												}
+												else {
+
+													// Return FALSE
+													return false;
+												}
+											});
+											
+											// Check For Existing Value In Dropdown Store
+											if (matchedValues.items.length === 0) {
+											
+												// Build Value For Store
+												var value = {
+													
+													value: metadata.value
+												};
+											
+												// Add Metadata Value To Dropdown Store
+												store_metadataValues_local.add(store_metadataValues_local.createModel(value));
+											}
 											
 											// Loop Through Label Components
 											for (i = 0; i < labelData.components.length; i++) {
@@ -426,12 +487,18 @@
 											// Reload Label Store
 											labelGrid.getView().refresh();
 											
+											// Reload Dropdown Data
+											field.getStore().load();
+											
+											// Refresh Label Grid
+//											refreshLabelGrid();
+											
 											// Select Next Label
 											// (In Order To "Change Selection")
-											labelGrid.getSelectionModel().deselectAll();
+//											labelGrid.getSelectionModel().deselectAll();
 											
 											// Re-Select Label
-											labelGrid.getSelectionModel().select([label]);
+//											labelGrid.getSelectionModel().select([label], false, false);
 
 											// Provide An Notification
 											Ext.toast("New Metadata Value Saved Successfully", '', 'tr');
@@ -675,6 +742,9 @@
 
 								// Store Selected Record Data
 								var labelData = records[0].getData();
+								
+								// Change Panel Title
+								Ext.getCmp('east-container').setTitle(Ext.getCmp('east-container').getTitle().replace(/ - .*/, '') + ' - ' + labelData.name);
 
 								// Build Component Array
 								var components = [];
@@ -804,6 +874,13 @@
 
 								// Add Components To Component-Label Association Store
 								store_labelComponents_local.setData(components);
+								
+								// Hide Entry Text
+								Ext.getCmp('east-north-container').hide();
+								
+								// Display Grids
+								Ext.getCmp('east-west-container').show();
+								Ext.getCmp('east-east-container').show();
 							}
 						}
 					},
@@ -818,31 +895,34 @@
 									iconCls: 'fa fa-2x fa-refresh',
 									handler: function () {
 										
+										// Send Focus Temporarily Elsewhere
+										Ext.getCmp('componentGrid_FilterField').focus();
+
 										// Backup Any "New" Labels
 										var newLabels = store_labels_local.query('isNew', true, false, true, true);
-										
+
 										// Backup Currently Selected Label
 										var selectedLabels = labelGrid.getSelection();
-										
+
 										// Clear Local Store
 										store_labels_local.removeAll();
-										
+
 										// Reload Data
 										store_labels_remote.load(function(records, operation, success) {
-											
+
 											// Loop Through "New" Labels
 											for (i = 0; i < newLabels.items.length; i++) {
 
 												// Reinsert "New" Labels
 												store_labels_local.addSorted(store_labels_local.createModel(newLabels.items[i].data));
 											}
-											
+
 											// Loop Through Selected Labels
 											for (i = 0; i < selectedLabels.length; i++) {
 
 												// Store Label Model
 												var labelModel = selectedLabels[i];
-												
+
 												// Query New Data Set
 												var newLabelQueryResults = store_labels_local.query('name', labelModel.data.name, false, true, true);
 
@@ -851,16 +931,16 @@
 
 													// Store New Label Model
 													var newLabelModel = newLabelQueryResults.items[0];
-													
+
 													// Store Selection Model
 													var selectionModel = labelGrid.getSelectionModel();
 
+													// Deselect All
+													selectionModel.deselectAll();
+
 													// Select Label
-													selectionModel.select([newLabelModel], false, true);
-													
-													// Send Focus Temporarily Elsewhere
-													componentGrid.focus();
-													
+													selectionModel.select([newLabelModel], false, false);
+
 													// Focus On Label
 													labelGrid.getView().focusRow(newLabelModel);
 												}
@@ -1102,9 +1182,9 @@
 
 										// Select Label
 										selectionModel.select([matchedComponent], false, true);
-
+										
 										// Send Focus Temporarily Elsewhere
-										labelGrid.focus();
+										Ext.getCmp('componentGrid_FilterField').focus();
 
 										// Focus On Label
 										componentGrid.getView().focusRow(matchedComponent);
@@ -1221,6 +1301,7 @@
 							items: [
 								{
 									xtype: 'textfield',
+									id: 'componentGrid_FilterField',
 									flex: 1,
 									fieldLabel: 'Filter',
 									labelWidth: new Ext.util.TextMetrics().getWidth("Filter:"),
@@ -1368,9 +1449,9 @@
 
 										// Select Label
 										selectionModel.select([componentModel], false, true);
-
+										
 										// Send Focus Temporarily Elsewhere
-										labelAssociationGrid.focus();
+										Ext.getCmp('componentGrid_FilterField').focus();
 
 										// Focus On Label
 										componentGrid.getView().focusRow(componentModel);
@@ -1395,7 +1476,7 @@
 									selectionModel.select([copiedComponent], false, true);
 									
 									// Send Focus Temporarily Elsewhere
-									componentGrid.focus();
+									Ext.getCmp('componentGrid_FilterField').focus();
 
 									// Focus On Label
 									labelAssociationGrid.getView().focusRow(copiedComponent);
@@ -1448,12 +1529,12 @@
 				
 				
 				var labelsMainLayout = Ext.create('Ext.panel.Panel', {
-					title: 'Label Management Tool <i class="fa fa-question-circle"  data-qtip="Quickly create and relate labels with entries."></i>',
+					title: 'Metadata Management Tool <i class="fa fa-question-circle"  data-qtip="Quickly create and relate labels with entries."></i>',
 					layout: 'border',
 					height: '100%',
 					items: [
 						{
-							title: 'Labels',
+							title: 'Select A Label',
 							region: 'west',
 							xtype: 'panel',
 							margin: '5 5 5 5',
@@ -1468,8 +1549,19 @@
 							]
 						},
 						{
-							title: 'Label Association',
 							region: 'center',
+							xtype: 'panel',
+							margin: '0 10 0 0',
+							minWidth: 10,
+							maxWidth: 10,
+							flex: 0,
+							id: 'center-container',
+							cls: 'x-panel-header-default',
+							style: 'border: none;'
+						},
+						{
+							title: 'Label/Entry Association',
+							region: 'east',
 							xtype: 'panel',
 							margin: '5 5 5 5',
 							flex: 6,
@@ -1477,12 +1569,21 @@
 							layout: 'border',
 							items: [
 								{
-									title: 'All Entries',
+									region: 'north',
+									xtype: 'panel',
+									html: '<div style="width: 100%; line-height: 3em; background-color: white; text-align: center; font-weight: bold;">Select A Label</div>',
+									margin: '5 5 5 5',
+									flex: 1,
+									id: 'east-north-container'
+								},
+								{
+									title: 'All Entries <i class="fa fa-question-circle"  data-qtip="Drag Entries from here to the \'Associated Entries\' column to associate the Entry with the selected Label."></i>',
 									region: 'center',
 									xtype: 'panel',
-									margin: '5 5 5 5',
+									margin: '5 5 5 0',
 									flex: 2,
 									id: 'east-west-container',
+									hidden: true,
 									layout: {
 										type: 'hbox',
 										align: 'stretch'
@@ -1493,12 +1594,13 @@
 									]
 								},
 								{
-									title: 'Associated Entries',
+									title: 'Associated Entries <i class="fa fa-question-circle"  data-qtip="Drag Entries from here to the \'All Entries\' column to disassociate the Entry with the selected Label."></i>',
 									region: 'east',
 									xtype: 'panel',
-									margin: '5 5 5 5',
+									margin: '5 0 5 5',
 									flex: 2,
 									id: 'east-east-container',
+									hidden: true,
 									layout: {
 										type: 'hbox',
 										align: 'stretch'
