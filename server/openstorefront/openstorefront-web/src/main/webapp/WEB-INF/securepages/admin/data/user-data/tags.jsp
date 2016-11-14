@@ -403,6 +403,13 @@
 
 								// Add Components To Component-Tag Association Store
 								store_tagComponents_local.setData(components);
+								
+								// Hide Entry Text
+								Ext.getCmp('east-north-container').hide();
+								
+								// Display Grids
+								Ext.getCmp('east-west-container').show();
+								Ext.getCmp('east-east-container').show();
 							}
 						}
 					},
@@ -943,7 +950,7 @@
 					height: '100%',
 					items: [
 						{
-							title: 'Tags',
+							title: 'Select A Tag',
 							region: 'west',
 							xtype: 'panel',
 							margin: '5 5 5 5',
@@ -958,8 +965,19 @@
 							]
 						},
 						{
-							title: 'Tag Association',
 							region: 'center',
+							xtype: 'panel',
+							margin: '0 10 0 0',
+							minWidth: 10,
+							maxWidth: 10,
+							flex: 0,
+							id: 'center-container',
+							cls: 'x-panel-header-default',
+							style: 'border: none;'
+						},
+						{
+							title: 'Tag/Entry Association',
+							region: 'east',
 							xtype: 'panel',
 							margin: '5 5 5 5',
 							flex: 6,
@@ -967,12 +985,21 @@
 							layout: 'border',
 							items: [
 								{
-									title: 'Unassociated Entries',
+									region: 'north',
+									xtype: 'panel',
+									html: '<div style="width: 100%; line-height: 3em; background-color: white; text-align: center; font-weight: bold;">Select A Tag</div>',
+									margin: '5 5 5 5',
+									flex: 1,
+									id: 'east-north-container'
+								},
+								{
+									title: 'Unassociated Entries <i class="fa fa-question-circle"  data-qtip="Drag Entries from here to the \'Associated Entries\' column to associate the Entry with the selected Tag."></i>',
 									region: 'center',
 									xtype: 'panel',
-									margin: '5 5 5 5',
+									margin: '5 5 5 0',
 									flex: 2,
 									id: 'east-west-container',
+									hidden: true,
 									layout: {
 										type: 'hbox',
 										align: 'stretch'
@@ -983,12 +1010,13 @@
 									]
 								},
 								{
-									title: 'Associated Entries',
+									title: 'Associated Entries <i class="fa fa-question-circle"  data-qtip="Drag Entries from here to the \'Unssociated Entries\' column to disassociate the Entry from the selected Tag."></i>',
 									region: 'east',
 									xtype: 'panel',
-									margin: '5 5 5 5',
+									margin: '5 0 5 5',
 									flex: 2,
 									id: 'east-east-container',
+									hidden: true,
 									layout: {
 										type: 'hbox',
 										align: 'stretch'
