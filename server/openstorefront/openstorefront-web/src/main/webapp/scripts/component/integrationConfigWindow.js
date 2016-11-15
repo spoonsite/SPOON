@@ -137,7 +137,11 @@ Ext.define('OSF.component.IntegrationWindow', {
 									text: 'Save',
 									formBind: true,
 									iconCls: 'fa fa-save',
-									handler: function(){
+									handler: function() {
+										
+										// Force A Jira Check
+										loadJiraIssue();
+										
 										var configForm = this.up('form');
 										var data = configForm.getValues();
 										var addEditWin = this.up('window');
