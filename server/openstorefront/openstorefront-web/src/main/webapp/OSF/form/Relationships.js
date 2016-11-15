@@ -89,7 +89,7 @@ Ext.define('OSF.form.Relationships', {
 							text: 'Save',
 							formBind: true,
 							margin: '0 20 0 0',
-							iconCls: 'fa fa-save text-success',
+							iconCls: 'fa fa-save',
 							handler: function(){	
 								var form = this.up('form');
 								var data = form.getValues();
@@ -160,8 +160,9 @@ Ext.define('OSF.form.Relationships', {
 									if (newValue) {
 										componentType = '&componentType=' + newValue;
 									}
-									Ext.getCmp('relationshipTargetCB').reset();
-									Ext.getCmp('relationshipTargetCB').getStore().load({
+									var target = this.up('form').getComponent('relationshipTargetCB');
+									target.reset();
+									target.load({
 										url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL' + componentType	
 									});
 								}
@@ -176,8 +177,7 @@ Ext.define('OSF.form.Relationships', {
 							fieldLabel: 'Target Entry <span class="field-required" />',
 							forceSelection: false,
 							storeConfig: {
-								url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL',
-								autoLoad: false
+								url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL'
 							}
 						})				
 					]
@@ -201,7 +201,7 @@ Ext.define('OSF.form.Relationships', {
 							iconCls: 'fa fa-trash text-danger',								
 							disabled: true,
 							handler: function(){
-								actionSubComponentToggleStatus(relationshipPanel.relationshipsGrid, 'relationshipId', 'relationships');
+								CoreUtil.actionSubComponentToggleStatus(relationshipPanel.relationshipsGrid, 'relationshipId', 'relationships');
 							}
 						}
 					]
@@ -210,7 +210,7 @@ Ext.define('OSF.form.Relationships', {
 		});
 		
 		
-		relationshipPanel.add(relationshipsGrid);
+		relationshipPanel.add(relationshipPanel.relationshipsGrid);
 	},
 	loadData: function(evalationId, componentId) {
 		//just load option (filter out required)

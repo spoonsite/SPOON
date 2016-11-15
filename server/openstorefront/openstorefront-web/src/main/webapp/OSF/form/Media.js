@@ -29,7 +29,7 @@ Ext.define('OSF.form.Media', {
 		var mediaPanel = this;
 		
 
-		var mediaGridForm = Ext.create('Ext.form.Panel', {
+		mediaPanel.mediaGridForm = Ext.create('Ext.form.Panel', {
 			xtype: 'form',			
 			title: 'Add/Edit Media',
 			collapsible: true,
@@ -54,7 +54,7 @@ Ext.define('OSF.form.Media', {
 					handler: function(){	
 						var mainForm = this.up('form');
 						var data = mainForm.getValues();
-						var componentId = Ext.getCmp('mediaGrid').componentRecord.get('componentId');
+						var componentId = mediaPanel.mediaGrid.componentId;
 
 						data.fileSelected = mainForm.getComponent('upload').getValue();
 						data.link = data.originalLink;
@@ -83,7 +83,7 @@ Ext.define('OSF.form.Media', {
 									data: data,
 									form: mainForm,
 									success: function(){
-										Ext.getCmp('mediaGrid').getStore().reload();
+										mediaPanel.mediaGrid.getStore().reload();
 										mainForm.reset();
 										mainForm.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
 									}
@@ -107,7 +107,7 @@ Ext.define('OSF.form.Media', {
 									waitMsg: 'Uploading media please wait...',
 									waitTitle: 'Uploading',
 									success: function(formBasic, action, opt){
-										Ext.getCmp('mediaGrid').getStore().reload();
+										mediaPanel.mediaGrid.getStore().reload();
 										mainForm.reset();
 										mainForm.getComponent('upload').setFieldLabel('Upload Media (limit 1GB)');
 									}, 
@@ -128,7 +128,7 @@ Ext.define('OSF.form.Media', {
 				{
 					xtype: 'button',
 					text: 'Cancel',										
-					iconCls: 'fa fa-close',
+					iconCls: 'fa fa-close text-danger',
 					handler: function(){
 						this.up('form').reset();
 						this.up('form').getComponent('upload').setFieldLabel('Upload Media (Limit 1GB)');
@@ -194,7 +194,7 @@ Ext.define('OSF.form.Media', {
 				},
 				{
 					xtype: 'checkbox',
-					fieldLabel: 'Used Inline <i class="fa fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline refereence in the description." ></i>',
+					fieldLabel: 'Used Inline <i class="fa fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline reference in the description." ></i>',
 					name: 'usedInline'
 				},
 				Ext.create('OSF.component.SecurityComboBox', {	
@@ -203,7 +203,7 @@ Ext.define('OSF.form.Media', {
 			]
 		});
 			
-		var mediaGrid = Ext.create('Ext.grid.Panel', {
+		mediaPanel.mediaGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
 			store: Ext.create('Ext.data.Store', {
 				fields: [
@@ -252,7 +252,7 @@ Ext.define('OSF.form.Media', {
 					}
 				},
 				selectionchange: function(grid, record, index, opts){
-					var fullgrid = Ext.getCmp('mediaGrid');
+					var fullgrid = mediaPanel.mediaGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
 						fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
@@ -286,7 +286,7 @@ Ext.define('OSF.form.Media', {
 							listeners: {
 								change: function(combo, newValue, oldValue, opts){
 									this.up('grid').getStore().load({
-										url: 'api/v1/resource/components/' + Ext.getCmp('mediaGrid').componentRecord.get('componentId') + '/media/view',
+										url: 'api/v1/resource/components/' + mediaPanel.mediaGrid.componentId + '/media/view',
 										params: {
 											status: newValue
 										}
@@ -309,7 +309,7 @@ Ext.define('OSF.form.Media', {
 							itemId: 'editBtn',
 							iconCls: 'fa fa-edit',
 							handler: function(){
-								var record = Ext.getCmp('mediaGrid').getSelection()[0];
+								var record = mediaPanel.mediaGrid.getSelection()[0];
 								this.up('grid').down('form').reset();
 								this.up('grid').down('form').loadRecord(record);
 								if (record.get('originalFileName')) {
@@ -328,7 +328,7 @@ Ext.define('OSF.form.Media', {
 							iconCls: 'fa fa-power-off',									
 							disabled: true,
 							handler: function(){
-								actionSubComponentToggleStatus(Ext.getCmp('mediaGrid'), 'componentMediaId', 'media');
+								CoreUtil.actionSubComponentToggleStatus(mediaPanel.mediaGrid, 'componentMediaId', 'media');
 							}
 						},
 						{
@@ -340,18 +340,18 @@ Ext.define('OSF.form.Media', {
 							iconCls: 'fa fa-trash',
 							disabled: true,
 							handler: function(){
-								var record = Ext.getCmp('mediaGrid').getSelection()[0];
+								var record = mediaPanel.mediaGrid.getSelection()[0];
 								if (record.get('usedInline')) {
 									var msg = 'This media has been marked as being used inline. This means that the media is being used in a description, etc. ';
 									msg += 'If you delete this media, that reference will no longer be valid and the media will not be available where it is referenced elsewhere.';
 									msg += '<br><br>Do you still wish to delete this media?';
 									Ext.Msg.confirm('Media Used Inline', msg, function (btn) { 
 										if (btn ==='yes') {
-											actionSubComponentToggleStatus(Ext.getCmp('mediaGrid'), 'componentMediaId', 'media', undefined, undefined, true);
+											CoreUtil.actionSubComponentToggleStatus(mediaPanel.mediaGrid, 'componentMediaId', 'media', undefined, undefined, true);
 										}
 									});
 								} else {
-									actionSubComponentToggleStatus(Ext.getCmp('mediaGrid'), 'componentMediaId', 'media', undefined, undefined, true);
+									CoreUtil.actionSubComponentToggleStatus(mediaPanel.mediaGrid, 'componentMediaId', 'media', undefined, undefined, true);
 								}
 
 							}									
@@ -360,10 +360,21 @@ Ext.define('OSF.form.Media', {
 				}
 			]																
 		});		
-		mediaGrid.addDocked(mediaGridForm, 0);
+		mediaPanel.mediaGrid.addDocked(mediaPanel.mediaGridForm, 0);
 		
 		
-		mediaPanel.add(mediaGrid);
+		mediaPanel.add(mediaPanel.mediaGrid);
+	},
+	loadData: function(evalationId, componentId) {
+		var mediaPanel = this;
+		
+		mediaPanel.componentId = componentId;
+		mediaPanel.mediaGrid.componentId = componentId;
+		
+		mediaPanel.mediaGrid.getStore().load({
+			url: 'api/v1/resource/components/' + componentId + '/media/view'
+		});		
+		
 	}
 	
 });

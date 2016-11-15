@@ -836,6 +836,38 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	padding-top: 10px;
 }
 
+.checklist-question{
+	line-height: 100%;
+	font-size: 24px;
+}
+
+.checklist-question-table{
+	width: 100%;
+	border: 1px solid grey;
+	border-collapse: collapse;
+}
+
+.checklist-question-table-header{
+    padding: 15px;
+	border: 1px solid grey;
+    text-align: left;	
+    color: white;	
+}
+
+.checklist-question-table-header-row{
+    background-color: #4CAF50;
+}
+
+.checklist-question-table-data{
+    padding: 15px;
+	border: 1px solid grey;
+    text-align: left;
+}
+
+.checklist-question-table-datarow:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
 /**
 UI: Button Overrides for specfic buttons
 to use set the ui: danger

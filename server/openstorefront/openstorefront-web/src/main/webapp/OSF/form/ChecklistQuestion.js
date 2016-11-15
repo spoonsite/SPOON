@@ -25,7 +25,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 		
 		var questionForm = this;
 		
-		var response = Ext.create('Ext.panel.Panel',{
+		questionForm.response = Ext.create('Ext.panel.Panel',{
 			bodyStyle: 'padding: 20px;',
 			layout: 'anchor',
 			
@@ -37,25 +37,21 @@ Ext.define('OSF.form.ChecklistQuestion', {
 				{
 					xtype: 'panel',
 					dock: 'top',
-					title: 'Question',
+					itemId: 'question',
+					title: 'Question',					
 					animCollapse: false,
 					collapsible: true,
 					titleCollapse: true,
-					bodyStyle: 'padding: 20px;',				
-					data: {
-						question: "Can the asset be found?",
-						scoringCriteria: '5 - Easily found using common search engines<br>3 - Find by name and some key words<br>1 - Word of mouth only.',
-						objective: 'If users are able to find the asset the chances of reuse go up.',
-						narrative: 'Check google with common terms'
-					},
+					bodyStyle: 'background: white; padding: 20px;',									
 					tpl: new Ext.XTemplate(						
-						'<h1>{question}</h1>',
-						'<h3>Scoring criteria:</h3>',
-						'{scoringCriteria}',
-						'<h3>Objective:</h3>',
-						'{objective}',
-						'<h3>Narrative:</h3>',
-						'{narrative}'
+						'<div class="checklist-question">{question}</div>',
+						'({evaluationSectionDescription})<br>',
+						'<tpl if="scoringCriteria"><h3>Scoring criteria:</h3>',
+						'{scoringCriteria}</tpl>',
+						'<tpl if="objective"><h3>Objective:</h3>',
+						'{objective}</tpl>',
+						'<tpl if="narrative"><h3>Narrative:</h3>',
+						'{narrative}</tpl>'
 					)
 				}
 			],
@@ -110,14 +106,26 @@ Ext.define('OSF.form.ChecklistQuestion', {
 					style: { border: '0' },
 					height: 250,
 					width: '100%',
-					name: 'privateNotes',			
+					name: 'privateNote',			
 					maxLength: 32000,
 					tinyMCEConfig: CoreUtil.tinymceConfig("osfmediaretriever")			
 				}				
 			]
 		});
 	
-		questionForm.add(response);
+		questionForm.add(questionForm.response);
+	},
+	loadData: function(evalationId, componentId, data) {
+		
+		var questionForm = this;
+		
+		questionForm.response.getComponent('question').update(data.question)
+		
+		var record = Ext.create('Ext.data.Model', {			
+		});
+		record.set(data);		
+		questionForm.loadRecord(record);
+		
 	}
 	
 });

@@ -31,6 +31,9 @@ Ext.define('OSF.form.Section', {
 	
 		
 		sectionForm.add();
+	},
+	loadData: function(evalationId, componentId, data) {
+		
 	}
 	
 });

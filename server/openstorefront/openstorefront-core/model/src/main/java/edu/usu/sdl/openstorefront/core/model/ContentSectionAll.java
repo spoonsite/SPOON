@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.model;
 
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ public class ContentSectionAll
 {
 
 	private ContentSection section;
+
+	@DataType(ContentSubSection.class)
 	private List<ContentSubSection> subsections = new ArrayList<>();
 
 	public ContentSectionAll()

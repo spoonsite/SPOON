@@ -27,7 +27,7 @@ Ext.define('OSF.form.Resources', {
 		
 		var resourcePanel = this;
 		
-		var resourceGridForm = Ext.create('Ext.form.Panel', {
+		resourcePanel.resourceGridForm = Ext.create('Ext.form.Panel', {
 			title: 'Add/Edit Resources',
 			collapsible: true,
 			titleCollapse: true,
@@ -51,7 +51,7 @@ Ext.define('OSF.form.Resources', {
 					handler: function(){	
 						var form = this.up('form');
 						var data = form.getValues();
-						var componentId = Ext.getCmp('resourcesGrid').componentRecord.get('componentId');
+						var componentId = resourcePanel.resourcesGrid.componentId;
 
 						data.fileSelected = form.getComponent('upload').getValue();
 						data.link = data.originalLink;
@@ -102,7 +102,7 @@ Ext.define('OSF.form.Resources', {
 									waitMsg: 'Uploading please wait...',
 									waitTitle: 'Uploading',													
 									success: function(formBasic, action, opt){
-										Ext.getCmp('resourcesGrid').getStore().reload();
+										resourcePanel.resourcesGrid.getStore().reload();
 										form.reset();
 										form.getComponent('upload').setFieldLabel('Upload Resource (limit 1GB)');
 									}, 
@@ -123,7 +123,7 @@ Ext.define('OSF.form.Resources', {
 				{
 					xtype: 'button',
 					text: 'Cancel',										
-					iconCls: 'fa fa-close',
+					iconCls: 'fa fa-close text-danger',
 					handler: function(){
 						this.up('form').reset();
 						this.up('form').getComponent('upload').setFieldLabel('Upload Resource (Limit 1GB)');
@@ -193,7 +193,7 @@ Ext.define('OSF.form.Resources', {
 			]
 		});
 
-		var resourcesGrid = Ext.create('Ext.grid.Panel', {	
+		resourcePanel.resourcesGrid = Ext.create('Ext.grid.Panel', {	
 			columnLines: true,
 			store: Ext.create('Ext.data.Store', {
 				fields: [
@@ -242,7 +242,7 @@ Ext.define('OSF.form.Resources', {
 					}
 				},
 				selectionchange: function(grid, record, index, opts){
-					var fullgrid = Ext.getCmp('resourcesGrid');
+					var fullgrid = resourcePanel.resourcesGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
 						fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
@@ -276,7 +276,7 @@ Ext.define('OSF.form.Resources', {
 							listeners: {
 								change: function(combo, newValue, oldValue, opts){
 									this.up('grid').getStore().load({
-										url: 'api/v1/resource/components/' + Ext.getCmp('resourcesGrid').componentRecord.get('componentId') + '/resources/view',
+										url: 'api/v1/resource/components/' + resourcePanel.resourcesGrid.componentId + '/resources/view',
 										params: {
 											status: newValue
 										}
@@ -299,7 +299,7 @@ Ext.define('OSF.form.Resources', {
 							itemId: 'editBtn',
 							iconCls: 'fa fa-edit',
 							handler: function(){
-								var record = Ext.getCmp('resourcesGrid').getSelection()[0];
+								var record = resourcePanel.resourcesGrid.getSelection()[0];
 								this.up('grid').down('form').reset();
 								this.up('grid').down('form').loadRecord(record);
 								if (record.get('originalFileName')) {
@@ -318,7 +318,7 @@ Ext.define('OSF.form.Resources', {
 							iconCls: 'fa fa-power-off',									
 							disabled: true,
 							handler: function(){
-								actionSubComponentToggleStatus(Ext.getCmp('resourcesGrid'), 'resourceId', 'resources');
+								CoreUtil.actionSubComponentToggleStatus(resourcePanel.resourcesGrid, 'resourceId', 'resources');
 							}
 						},
 						{
@@ -330,16 +330,27 @@ Ext.define('OSF.form.Resources', {
 							iconCls: 'fa fa-trash',																		
 							disabled: true,
 							handler: function(){
-								actionSubComponentToggleStatus(Ext.getCmp('resourcesGrid'), 'resourceId', 'resources', undefined, undefined, true);
+								CoreUtil.actionSubComponentToggleStatus(resourcePanel.resourcesGrid, 'resourceId', 'resources', undefined, undefined, true);
 							}									
 						}
 					]
 				}
 			]					
 		});		
-		resourcesGrid.addDocked(resourceGridForm, 0);
+		resourcePanel.resourcesGrid.addDocked(resourcePanel.resourceGridForm, 0);
 		
-		resourcePanel.add(resourcesGrid);
+		resourcePanel.add(resourcePanel.resourcesGrid);
+	},	
+	loadData: function(evalationId, componentId) {
+		var resourcePanel = this;
+		
+		resourcePanel.componentId = componentId;
+		resourcePanel.resourcesGrid.componentId = componentId;
+		
+		resourcePanel.resourcesGrid.getStore().load({
+			url: 'api/v1/resource/components/' + componentId + '/resources/view'
+		});
+		
 	}
 	
 });

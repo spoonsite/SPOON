@@ -93,8 +93,7 @@ public class ChecklistServiceImpl
 			questionExisting = persistenceService.persist(checklistQuestion);
 		}
 
-		Element element = new Element(questionExisting.getQuestionId(), persistenceService.detach(questionExisting));
-		OSFCacheManager.getChecklistQuestionCache().put(element);
+		OSFCacheManager.getChecklistQuestionCache().removeAll();
 		return questionExisting;
 	}
 

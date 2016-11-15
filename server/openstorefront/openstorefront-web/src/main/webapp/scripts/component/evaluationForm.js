@@ -29,7 +29,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 		'OSF.form.Metadata',
 		'OSF.form.EntrySummary',
 		'OSF.form.ChecklistSummary',
-		'OSF.form.ChecklistQuestion'
+		'OSF.form.ChecklistQuestion',
+		'OSF.form.ChecklistAll'
 	],
 	
 	layout: 'border',
@@ -141,16 +142,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 									title: 'Checklist Summary'
 								});
 							}							
-						},
-						{							
-							text: '100',							
-							handler: function(){
-								evalPanel.loadContentForm({
-									form: 'ChecklistQuestion',
-									title: 'Checklist Question'
-								});
-							}							
-						}						
+						}										
 					]
 				},
 				{
@@ -159,10 +151,16 @@ Ext.define('OSF.component.EvaluationPanel', {
 					title: 'Sections',
 					collapsible: true,
 					bodyStyle: 'padding: 10px;',
-					margin: '00 0 0 0',
+					margin: '0 0 0 0',
 					defaultType: 'button',
+					defaults: {
+						width: '100%',
+						cls: 'evaluation-nav-button',							
+						overCls: 'evaluation-nav-button-over',
+						focusCls: 'evaluation-nav-button',
+						margin: '5 0 0 0'
+					},					
 					items: [
-						
 					]
 				}				
 				
@@ -224,15 +222,12 @@ Ext.define('OSF.component.EvaluationPanel', {
 		var evalPanel = this;
 		
 		evalPanel.setLoading(true);
+
 		
-		//load eval
-		//load component	
-		var entryType = 'COMP';
-		
+		var entryType = 'COMP';		
 		Ext.Ajax.request({
 			url: 'api/v1/resource/componenttypes/'+ entryType,
-			callback: function() {
-				evalPanel.setLoading(false);	
+			callback: function() {				
 			},
 			success: function(response, opts) {
 				var entryType = Ext.decode(response.responseText);
@@ -317,6 +312,59 @@ Ext.define('OSF.component.EvaluationPanel', {
 				
 				evalPanel.navigation.getComponent('entrymenu').add(menuItems);
 				
+				Ext.Ajax.request({
+					url: 'api/v1/resource/evaluations/' + evaluationId +'/details',
+					callback: function() {
+						evalPanel.setLoading(false);	
+					},
+					success: function(response, opt) {
+						var evaluationAll = Ext.decode(response.responseText);
+
+						var questions = [];
+						questions.push({														
+							text: 'All Questions',							
+							handler: function(){
+								evalPanel.loadContentForm({
+									form: 'ChecklistAll',
+									title: 'Checklist Questions',
+									data: evaluationAll.checkListAll
+								});
+							}							
+						});
+						
+						Ext.Array.each(evaluationAll.checkListAll.responses, function(chkresponse) {
+							questions.push({							
+								text: chkresponse.question.qid,
+								tooltip: chkresponse.question.question,
+								handler: function(){
+									evalPanel.loadContentForm({
+										form: 'ChecklistQuestion',
+										title: 'Checklist Question',
+										data: chkresponse
+									});
+								}							
+							});
+						});	
+						evalPanel.navigation.getComponent('checklistmenu').add(questions);
+						
+						var sections = [];
+						Ext.Array.each(evaluationAll.contentSections, function(sectionAll) {
+							sections.push({							
+								text: sectionAll.section.title,
+								handler: function(){
+									evalPanel.loadContentForm({
+										form: 'Section',
+										title: sectionAll.section.title,
+										data: sectionAll
+									});
+								}							
+							});							
+						});
+						
+						evalPanel.navigation.getComponent('sectionmenu').add(sections);
+					}
+				});				
+				
 			}
 			
 		});
@@ -343,7 +391,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 		evalPanel.contentPanel.add(contentForm);
 
 		if (contentForm.loadData) {
-			contentForm.loadData(evalPanel.evaluationId, evalPanel.componentId);
+			contentForm.loadData(evalPanel.evaluationId, evalPanel.componentId, page.data);
 		}
 		
 	}

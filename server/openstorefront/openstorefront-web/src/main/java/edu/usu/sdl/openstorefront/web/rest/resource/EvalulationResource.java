@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
+import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.view.EvaluationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationViewWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -127,7 +128,20 @@ public class EvalulationResource
 		return sendSingleEntityResponse(EvaluationView.toView(evaluation));
 	}
 
-	//getEvaluationDetails
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationAll.class)
+	@APIDescription("Gets an evaluation")
+	@Path("/{evaluationId}/details")
+	public Response getEvaluationDetails(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		EvaluationAll evaluationAll = service.getEvaluationService().getEvaluation(evaluationId);
+		return sendSingleEntityResponse(evaluationAll);
+	}
+
 	@POST
 	@RequireAdmin
 	@APIDescription("Creates an evaluation from template ")

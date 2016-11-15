@@ -27,7 +27,7 @@ Ext.define('OSF.form.Dependencies', {
 		
 		var dependanciesPanel = this;
 		
-		var dependenciesGrid = Ext.create('Ext.grid.Panel', {
+		dependanciesPanel.dependenciesGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
 			store: Ext.create('Ext.data.Store', {
 				fields: [
@@ -62,7 +62,7 @@ Ext.define('OSF.form.Dependencies', {
 					this.down('form').loadRecord(record);
 				},
 				selectionchange: function(grid, record, index, opts){
-					var fullgrid = Ext.getCmp('dependenciesGrid');
+					var fullgrid = dependanciesPanel.dependenciesGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
 						fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
@@ -97,7 +97,7 @@ Ext.define('OSF.form.Dependencies', {
 							handler: function(){	
 								var form = this.up('form');
 								var data = form.getValues();
-								var componentId = Ext.getCmp('dependenciesGrid').componentRecord.get('componentId');
+								var componentId = dependanciesPanel.dependenciesGrid.componentId;
 
 								var method = 'POST';
 								var update = '';
@@ -112,7 +112,7 @@ Ext.define('OSF.form.Dependencies', {
 									data: data,
 									form: form,
 									success: function(){
-										Ext.getCmp('dependenciesGrid').getStore().reload();
+										dependanciesPanel.dependenciesGrid.getStore().reload();
 										form.reset();
 									}
 								});
@@ -121,7 +121,7 @@ Ext.define('OSF.form.Dependencies', {
 						{
 							xtype: 'button',
 							text: 'Cancel',										
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-close text-danger',
 							handler: function(){
 								this.up('form').reset();
 							}									
@@ -184,7 +184,7 @@ Ext.define('OSF.form.Dependencies', {
 							listeners: {
 								change: function(combo, newValue, oldValue, opts){
 									this.up('grid').getStore().load({
-										url: 'api/v1/resource/components/' + Ext.getCmp('dependenciesGrid').componentRecord.get('componentId') + '/dependencies/view',
+										url: 'api/v1/resource/components/' + dependanciesPanel.dependenciesGrid.componentId + '/dependencies/view',
 										params: {
 											status: newValue
 										}
@@ -208,7 +208,7 @@ Ext.define('OSF.form.Dependencies', {
 							iconCls: 'fa fa-edit',
 							handler: function(){
 								this.up('grid').down('form').reset();
-								this.up('grid').down('form').loadRecord(Ext.getCmp('dependenciesGrid').getSelection()[0]);
+								this.up('grid').down('form').loadRecord(dependanciesPanel.dependenciesGrid.getSelection()[0]);
 							}									
 						},
 						{
@@ -220,7 +220,7 @@ Ext.define('OSF.form.Dependencies', {
 							iconCls: 'fa fa-power-off',									
 							disabled: true,
 							handler: function(){
-								actionSubComponentToggleStatus(Ext.getCmp('dependenciesGrid'), 'dependencyId', 'dependencies');
+								CoreUtil.actionSubComponentToggleStatus(dependanciesPanel.dependenciesGrid, 'dependencyId', 'dependencies');
 							}
 						}
 					]
@@ -228,8 +228,18 @@ Ext.define('OSF.form.Dependencies', {
 			]						
 		});
 		
-		dependanciesPanel.add(dependenciesGrid);
+		dependanciesPanel.add(dependanciesPanel.dependenciesGrid);
 		
+	},
+	loadData: function(evalationId, componentId) {
+		var dependanciesPanel = this;
+		
+		dependanciesPanel.componentId = componentId;
+		dependanciesPanel.dependenciesGrid.componentId = componentId;
+		
+		dependanciesPanel.dependenciesGrid.getStore().load({
+			url: 'api/v1/resource/components/' + componentId + '/dependencies/view'
+		});	
 	}
 	
 });

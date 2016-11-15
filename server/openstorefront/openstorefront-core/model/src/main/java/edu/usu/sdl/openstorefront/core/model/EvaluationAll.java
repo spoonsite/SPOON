@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.model;
 
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,8 @@ public class EvaluationAll
 
 	private Evaluation evaluation;
 	private ChecklistAll checkListAll;
+
+	@DataType(ContentSectionAll.class)
 	private List<ContentSectionAll> contentSections = new ArrayList<>();
 
 	public EvaluationAll()

@@ -28,16 +28,16 @@ Ext.define('OSF.form.Metadata', {
 		var metadataPanel = this;
 		
 		var metadataValueLoadTask = new Ext.util.DelayedTask(function() {
-			var labelString = metadataGrid.getComponent('form').getComponent('metadataLabelComboBox').getValue();
+			var labelString = metadataPanel.metadataGrid.getComponent('form').getComponent('metadataLabelComboBox').getValue();
 			if (labelString) {
-				var valueStore = Ext.getStore('metadataValueStore');
+				var valueStore = metadataPanel.metadataGrid.getComponent('form').getComponent('metadataValueComboBox').getStore();
 				valueStore.getProxy().setUrl('api/v1/resource/componentmetadata/lookup/values');
 				valueStore.getProxy().setExtraParams({label: labelString});
 				valueStore.load();
 			}
 		});
 
-		var metadataGrid = Ext.create('Ext.grid.Panel', {
+		metadataPanel.metadataGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
 			store: Ext.create('Ext.data.Store', {
 				fields: [
@@ -76,7 +76,7 @@ Ext.define('OSF.form.Metadata', {
 					this.down('form').loadRecord(record);
 				},
 				selectionchange: function(grid, record, index, opts){
-					var fullgrid = metadataGrid;
+					var fullgrid = metadataPanel.metadataGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
 						fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
@@ -112,7 +112,7 @@ Ext.define('OSF.form.Metadata', {
 							handler: function(){	
 								var form = this.up('form');
 								var data = form.getValues();
-								var componentId = Ext.getCmp('metadataGrid').componentRecord.get('componentId');
+								var componentId = metadataPanel.metadataGrid.componentId;
 
 								var method = 'POST';
 								var update = '';
@@ -127,7 +127,7 @@ Ext.define('OSF.form.Metadata', {
 									data: data,
 									form: form,
 									success: function(){
-										Ext.getCmp('metadataGrid').getStore().reload();
+										metadataPanel.metadataGrid.getStore().reload();
 										form.reset();
 									}
 								});
@@ -180,8 +180,7 @@ Ext.define('OSF.form.Metadata', {
 							valueField: 'code',
 							displayField: 'description',
 							typeAhead: 'true',
-							store: Ext.create('Ext.data.Store', {
-								storeId: 'metadataValueStore',
+							store: Ext.create('Ext.data.Store', {								
 								proxy: {
 									type: 'ajax'
 								}
@@ -212,7 +211,7 @@ Ext.define('OSF.form.Metadata', {
 							listeners: {
 								change: function(combo, newValue, oldValue, opts){
 									this.up('grid').getStore().load({
-										url: 'api/v1/resource/components/' + Ext.getCmp('metadataGrid').componentRecord.get('componentId') + '/metadata/view',
+										url: 'api/v1/resource/components/' + metadataPanel.metadataGrid.componentId + '/metadata/view',
 										params: {
 											status: newValue
 										}
@@ -235,7 +234,7 @@ Ext.define('OSF.form.Metadata', {
 							itemId: 'editBtn',									
 							iconCls: 'fa fa-edit',
 							handler: function(){
-								this.up('grid').down('form').loadRecord(Ext.getCmp('metadataGrid').getSelection()[0]);
+								this.up('grid').down('form').loadRecord(metadataPanel.metadataGrid.getSelection()[0]);
 							}									
 						},
 						{
@@ -247,7 +246,7 @@ Ext.define('OSF.form.Metadata', {
 							iconCls: 'fa fa-power-off',									
 							disabled: true,
 							handler: function(){
-								actionSubComponentToggleStatus(Ext.getCmp('metadataGrid'), 'metadataId', 'metadata');
+								CoreUtil.actionSubComponentToggleStatus(metadataPanel.metadataGrid, 'metadataId', 'metadata');
 							}
 						}
 					]
@@ -255,7 +254,18 @@ Ext.define('OSF.form.Metadata', {
 			]									
 		});		
 		
-		metadataPanel.add(metadataGrid);
+		metadataPanel.add(metadataPanel.metadataGrid);
+	},	
+	loadData: function(evalationId, componentId) {
+		var metadataPanel = this;
+		
+		metadataPanel.componentId = componentId;
+		metadataPanel.metadataGrid.componentId = componentId;
+		
+		metadataPanel.metadataGrid.getStore().load({
+			url: 'api/v1/resource/components/' + componentId + '/metadata/view'
+		});
+		
 	}
 	
 });
