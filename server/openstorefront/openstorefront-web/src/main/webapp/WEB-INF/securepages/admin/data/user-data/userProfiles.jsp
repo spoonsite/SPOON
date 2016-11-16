@@ -50,11 +50,26 @@
 							// Get Active Status
 							var activeStatus = Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue();
 							
-							// Set Extra Filter Parameters
-							store.getProxy().extraParams = {
+							// Check For 'ALL'
+							if (activeStatus === 'ALL') {
+								
+								// Append URL
+								store.getProxy().url = store.getProxy().url + '?all=true';
+								
+								// Empty Extra Parameters
+								store.getProxy().extraParams = { };
+							}
+							else {
+							
+								// Reset URL
+								store.getProxy().url = store.getProxy().url.replace(/\?all=true/, '');
+							
+								// Set Extra Filter Parameters
+								store.getProxy().extraParams = {
 
-								status: activeStatus ? activeStatus : 'A'
-							};
+									status: activeStatus ? activeStatus : 'A'
+								};
+							}
 						}
 					}						
 				});
@@ -86,6 +101,11 @@
 							cellWrap: true
 						},
 						items: [
+							{
+								flex: 1,
+								text: 'Active Status',
+								dataIndex: 'activeStatus'
+							},
 							{
 								flex: 1,
 								text: 'Username',
@@ -172,8 +192,6 @@
 											if (newValue) {												
 												userProfileStore.loadPage(1);
 												
-//												Ext.getCmp('userProfileGrid-tools-export-shown').setText( (newValue === 'A' ? 'Active' : (newValue === 'I' ? 'Inactive' : 'All')) + " Profiles");
-												
 												Ext.getCmp('userProfileGrid').getSelectionModel().deselectAll();
 												Ext.getCmp('userProfileGrid-tools-edit').disable();
 												Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
@@ -187,10 +205,10 @@
 												'description'
 											],
 											data: [
-//												{
-//													code: '\u0025',
-//													description: 'All'
-//												},
+												{
+													code: 'ALL',
+													description: 'All'
+												},
 												{
 													code: 'A',
 													description: 'Active'
@@ -274,7 +292,16 @@
 									iconCls: 'fa fa-2x fa-download',
 									menu: [
 										{
-											text: 'Current Page Profiles',
+											text: 'All Profiles',
+											id: 'userProfileGrid-tools-export-all',
+											iconCls: 'fa fa-user',
+											handler: function() {
+												var records = userProfileGrid.getStore().getData().items;
+												actionExportUser([]);
+											}
+										},
+										{
+											text: 'Profiles on Current Page',
 											id: 'userProfileGrid-tools-export-shown',
 											iconCls: 'fa fa-user',
 											handler: function() {
