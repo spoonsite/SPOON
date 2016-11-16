@@ -15,8 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import au.com.bytecode.opencsv.CSVWriter;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -30,7 +29,9 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
+import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserProfileView;
 import edu.usu.sdl.openstorefront.core.view.UserProfileWrapper;
@@ -45,12 +46,17 @@ import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -59,6 +65,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
@@ -548,7 +555,7 @@ public class UserProfileResource
 	}
 
 	@POST
-	@APIDescription("Exports user profiles in JSON format. Consumes a list of 'userId' form parameters.")
+	@APIDescription("Exports user profiles in CSV format. Can consume a list of 'userId' form parameters. Not providing 'userId' parameters results in all profiles being exported.")
 	@RequireAdmin
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
@@ -556,28 +563,141 @@ public class UserProfileResource
 			@FormParam("userId")
 			@RequiredParam List<String> userIds)
 	{
-		List<UserProfileView> userProfiles = new ArrayList<>();
+		
+		// Declare List Of User Profiles
+		// (Instantiated Later)
+		List<UserProfile> userProfiles;
+		
+		// Initialize CSV Line Storage
+		List<String[]> lines = new ArrayList<>();
+		
+		// Set DateTime Format
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
-		for (String userId : userIds) {
-			UserProfile userProfile = service.getUserService().getUserProfile(userId);
-			UserProfileView thisView = UserProfileView.toView(userProfile);
-			userProfiles.add(thisView);
+		// Initialize String Writer
+		// (Stores CSV Data)
+		StringWriter stringWriter = new StringWriter();
+		
+		// Initialize CSV Writer
+		// (Processes CSV Data)
+		CSVWriter writer = new CSVWriter(stringWriter);
+		
+		// Add CSV Headers To List Of Lines
+		lines.add(new String[] {
+			
+			"Active Status", 
+			"Username", 
+			"First Name", 
+			"Last Name", 
+			"Organization", 
+			"User Type", 
+			"Last Login", 
+			"Email", 
+			"Phone", 
+			"Send Change Emails", 
+			"GUID", 
+			"Created Date", 
+			"Updated Date"
+		});
+
+		// Check For Provided User IDs
+		if (userIds != null && userIds.size() > 0) {
+			
+			// Instantiate User Profile List
+			userProfiles = new ArrayList<>();
+		
+			// Loop Through Provided User IDs
+			for (String userId : userIds) {
+				
+				// Retrieve User Profile
+				UserProfile userProfile = service.getUserService().getUserProfile(userId);
+				
+				// Add User Profile To List
+				userProfiles.add(userProfile);
+			}
 		}
-
-		String data;
-		try {
-			data = StringProcessor.defaultObjectMapper().writeValueAsString(userProfiles);
-		} catch (JsonProcessingException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to export user profiles: Unable to generate JSON", ex);
+		else {
+			
+			// Get All User Profiles
+			userProfiles = service.getUserService().getAllProfiles(Boolean.TRUE);
 		}
+		
+		// Get User Profile Views
+		// (Provides Additional Detail Over Profiles)
+		List<UserProfileView> userProfileViews = UserProfileView.toViewList(userProfiles);
+		
+		// Loop Through User Profile Views
+		for (UserProfileView userProfileView : userProfileViews) {
+			
+			////////////////////////////
+			// Handle Potential NULLs //
+			////////////////////////////
+			
+			// Store Notify Of New Value
+			Boolean notifyOfNew = userProfileView.getNotifyOfNew();
+			
+			// Check For Null (Notify Of New)
+			if (notifyOfNew == null) {
+				
+				// Initialize As False
+				notifyOfNew = false;
+			}
+			
+			
+			// Store Last Login Value
+			Date lastLoginDate = userProfileView.getLastLoginDts();
+			
+			// Initialize Last Login String
+			String lastLoginString;
+			
+			// Check For Null (Last Login)
+			if (lastLoginDate == null) {
+				
+				// Set Last Login As Empty String
+				lastLoginString = "";
+			}
+			else {
+				
+				// Set Last Login As Formatted DateTime
+				lastLoginString = df.format(lastLoginDate);
+			}
+			
+			/////////////////////////
+			// End Potential NULLs //
+			/////////////////////////
+			
+			// Add CSV Row To List Of Lines
+			lines.add(new String[] {
+			
+				userProfileView.getActiveStatus(),
+				userProfileView.getUsername(),
+				userProfileView.getFirstName(),
+				userProfileView.getLastName(),
+				userProfileView.getOrganization(),
+				TranslateUtil.translate(UserTypeCode.class, userProfileView.getUserTypeCode()),
+				lastLoginString,
+				userProfileView.getEmail(),
+				userProfileView.getPhone(),
+				notifyOfNew ? "true" : "false",
+				userProfileView.getGuid(),
+				df.format(userProfileView.getCreateDts()),
+				df.format(userProfileView.getUpdateDts())
+			});
+		}
+		
+		// Write Entire CSV
+		writer.writeAll(lines);
 
-		Response.ResponseBuilder response = Response.ok(data);
-		response.header("Content-Type", MediaType.APPLICATION_JSON);
-		response.header("Content-Disposition", "attachment; filename=\"userprofiles.json\"");
+		// Initialize Response
+		// (Set CSV Data & Proper Headers)
+		Response.ResponseBuilder response = Response.ok(stringWriter.toString());
+		response.header("Content-Type", "application/csv");
+		response.header("Content-Disposition", "attachment; filename=\"userProfileExport.csv\"");
+		
+		// Return Response
 		return response.build();
-
 	}
-
+		
 //  This can be fleshed out in the future when we start keeping better track of what the most recently viewed compnents are
 //	@GET
 //	@APIDescription("Retrieves Recent Views.  The system keep the 5 most recent.  Sorted by most recent.")
