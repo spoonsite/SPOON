@@ -2265,7 +2265,8 @@
 					plugins: {
 
 						ptype: 'gridviewdragdrop',
-						ddGroup: 'componentAssignmentDragDropGroup',
+						dragGroup: 'componentAssignment-add-drag-drop-group',
+						dropGroup: 'componentAssignment-remove-drag-drop-group',
 						enableDrag: true,
 						enableDrop: true,
 						dragText: 'Add: {0}',
@@ -2474,7 +2475,8 @@
 					plugins: {
 
 						ptype: 'gridviewdragdrop',
-						ddGroup: 'componentAssignmentDragDropGroup',
+						dragGroup: 'componentAssignment-remove-drag-drop-group',
+						dropGroup: 'componentAssignment-add-drag-drop-group',
 						enableDrag: true,
 						enableDrop: true,
 						dragText: 'Remove: {0}',
