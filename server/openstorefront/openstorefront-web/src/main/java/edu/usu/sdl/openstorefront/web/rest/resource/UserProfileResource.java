@@ -86,22 +86,28 @@ public class UserProfileResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
-	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams)
+	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams, @QueryParam("all") @DefaultValue("false") Boolean all)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
+		// Initialize USer Profile Example
 		UserProfile userProfileExample = new UserProfile();
-		userProfileExample.setActiveStatus(filterQueryParams.getStatus());
+		
+		// Check For 'All' Parameter
+		if (!all) {
+			
+			userProfileExample.setActiveStatus(filterQueryParams.getStatus());
+		}
 
 		UserProfile userProfileStartExample = new UserProfile();
 		userProfileStartExample.setCreateDts(filterQueryParams.getStart());
 
 		UserProfile userProfileEndExample = new UserProfile();
 		userProfileEndExample.setCreateDts(filterQueryParams.getEnd());
-
+		
 		QueryByExample queryByExample = new QueryByExample(userProfileExample);
 
 		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
