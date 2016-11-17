@@ -45,10 +45,31 @@
 						url: 'api/v1/resource/userprofiles'											
 					}),
 					listeners: {
-						beforeLoad: function(store, operation, eOpts){
-							store.getProxy().extraParams = {
-								status: Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() ? Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() : 'A'
-							};
+						beforeLoad: function(store, operation, eOpts) {
+							
+							// Get Active Status
+							var activeStatus = Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue();
+							
+							// Check For 'ALL'
+							if (activeStatus === 'ALL') {
+								
+								// Append URL
+								store.getProxy().url = store.getProxy().url + '?all=true';
+								
+								// Empty Extra Parameters
+								store.getProxy().extraParams = { };
+							}
+							else {
+							
+								// Reset URL
+								store.getProxy().url = store.getProxy().url.replace(/\?all=true/, '');
+							
+								// Set Extra Filter Parameters
+								store.getProxy().extraParams = {
+
+									status: activeStatus ? activeStatus : 'A'
+								};
+							}
 						}
 					}						
 				});
@@ -80,6 +101,11 @@
 							cellWrap: true
 						},
 						items: [
+							{
+								flex: 1,
+								text: 'Active Status',
+								dataIndex: 'activeStatus'
+							},
 							{
 								flex: 1,
 								text: 'Username',
@@ -180,6 +206,10 @@
 											],
 											data: [
 												{
+													code: 'ALL',
+													description: 'All'
+												},
+												{
 													code: 'A',
 													description: 'Active'
 												},
@@ -260,11 +290,36 @@
 									scale: 'medium',
 									id: 'userProfileGrid-tools-export',
 									iconCls: 'fa fa-2x fa-download',
-									disabled: true,
-									handler: function () {
-										var records = userProfileGrid.getSelection();
-										actionExportUser(records);
-									}
+									menu: [
+										{
+											text: 'All Profiles',
+											id: 'userProfileGrid-tools-export-all',
+											iconCls: 'fa fa-user',
+											handler: function() {
+												var records = userProfileGrid.getStore().getData().items;
+												actionExportUser([]);
+											}
+										},
+										{
+											text: 'Profiles on Current Page',
+											id: 'userProfileGrid-tools-export-shown',
+											iconCls: 'fa fa-user',
+											handler: function() {
+												var records = userProfileGrid.getStore().getData().items;
+												actionExportUser(records);
+											}
+										},
+										{
+											text: 'Selected Profiles',
+											id: 'userProfileGrid-tools-export-selected',
+											iconCls: 'fa fa-user',
+											disabled: true,
+											handler: function() {
+												var records = userProfileGrid.getSelection();
+												actionExportUser(records);
+											}
+										}
+									]
 								}
 							]
 						},
@@ -278,8 +333,8 @@
 					listeners: {
 						selectionchange: function (grid, record, index, opts) {
 							if (Ext.getCmp('userProfileGrid').getSelectionModel().getCount() === 1) {
+								Ext.getCmp('userProfileGrid-tools-export-selected').enable();
 								Ext.getCmp('userProfileGrid-tools-toggleActivation').enable();
-								Ext.getCmp('userProfileGrid-tools-export').enable();
 								// Only allow editing or messaging when the grid is showing active users.
 								if (Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() === 'A') {
 									Ext.getCmp('userProfileGrid-tools-edit').enable();
@@ -290,13 +345,13 @@
 								Ext.getCmp('userProfileGrid-tools-edit').disable();
 								Ext.getCmp('userProfileGrid-tools-message').disable();
 								if (Ext.getCmp('userProfileGrid').getSelectionModel().getCount() > 1) {
-									Ext.getCmp('userProfileGrid-tools-export').enable();
+									Ext.getCmp('userProfileGrid-tools-export-selected').enable();
 									Ext.getCmp('userProfileGrid-tools-toggleActivation').enable();
 									if (Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() === 'A') {
 										Ext.getCmp('userProfileGrid-tools-message').enable();
 									}
 								} else {
-									Ext.getCmp('userProfileGrid-tools-export').disable();
+									Ext.getCmp('userProfileGrid-tools-export-selected').disable();
 									Ext.getCmp('userProfileGrid-tools-message').disable();
 								}
 							}
