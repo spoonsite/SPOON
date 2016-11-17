@@ -1008,7 +1008,8 @@
 						plugins: {
 							
 							ptype: 'gridviewdragdrop',
-							ddGroup: 'labelAssociationDragDropGroup',
+							dragGroup: 'labelAssociation-add-drag-drop-group',
+							dropGroup: 'labelAssociation-remove-drag-drop-group',
 							enableDrag: true,
 							enableDrop: true,
 							dragText: 'Add: {0}',
@@ -1359,7 +1360,8 @@
 						plugins: {
 							
 							ptype: 'gridviewdragdrop',
-							ddGroup: 'labelAssociationDragDropGroup',
+							dragGroup: 'labelAssociation-remove-drag-drop-group',
+							dropGroup: 'labelAssociation-add-drag-drop-group',
 							enableDrag: true,
 							enableDrop: true,
 							dragText: 'Remove: {0}',
