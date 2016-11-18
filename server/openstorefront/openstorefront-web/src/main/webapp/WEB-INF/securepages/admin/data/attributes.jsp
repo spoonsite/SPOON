@@ -1528,7 +1528,9 @@
 				title: 'Add/Edit Code Win',
 				modal: true,
 				width: '60%',
-				y: '0em',
+				height: '90%',
+				autoScroll: true,
+				y: '2em',
 				layout: 'fit',
 				items: [
 					{
