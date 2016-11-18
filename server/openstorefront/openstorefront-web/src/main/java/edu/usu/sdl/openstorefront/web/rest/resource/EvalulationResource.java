@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationComment;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.view.EvaluationView;
@@ -43,6 +44,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
@@ -247,4 +249,157 @@ public class EvalulationResource
 	//remove section
 	//add sub section to section
 	//remove sub section to section
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationComment.class)
+	@APIDescription("Gets all evaluation comments")
+	@Path("/{evaluationId}/comments")
+	public Response getAllEvaluationComments(
+			@PathParam("evaluationId") String evaluationId,
+			@QueryParam("entity") String entity,
+			@QueryParam("entityId") String entityId
+	)
+	{
+		EvaluationComment evaluationComment = new EvaluationComment();
+		evaluationComment.setActiveStatus(EvaluationComment.ACTIVE_STATUS);
+		evaluationComment.setEvaluationId(evaluationId);
+		evaluationComment.setEntity(entity);
+		evaluationComment.setEntityId(entityId);
+
+		List<EvaluationComment> evaluationComments = evaluationComment.findByExample();
+
+		GenericEntity<List<EvaluationComment>> commentEntity = new GenericEntity<List<EvaluationComment>>(evaluationComments)
+		{
+		};
+		return sendSingleEntityResponse(commentEntity);
+	}
+
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationComment.class)
+	@APIDescription("Gets an evaluation comment")
+	@Path("/{evaluationId}/comments/{commentId}")
+	public Response getEvaluationComments(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("commentId") String commentId
+	)
+	{
+		EvaluationComment evaluationComment = new EvaluationComment();
+		evaluationComment.setEvaluationId(evaluationId);
+		evaluationComment.setCommentId(commentId);
+
+		evaluationComment = evaluationComment.find();
+		return sendSingleEntityResponse(evaluationComment);
+	}
+
+	@POST
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationComment.class)
+	@APIDescription("Adds a comment")
+	@Path("/{evaluationId}/comments")
+	public Response postComment(
+			@PathParam("evaluationId") String evaluationId,
+			EvaluationComment comment
+	)
+	{
+		comment.setEvaluationId(evaluationId);
+		return handleCommentSave(comment, true);
+	}
+
+	@PUT
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationComment.class)
+	@APIDescription("Updates a comment")
+	@Path("/{evaluationId}/comments/{commentId}")
+	public Response updateComment(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("commentId") String commentId,
+			EvaluationComment comment
+	)
+	{
+		EvaluationComment evaluationComment = new EvaluationComment();
+		evaluationComment.setEvaluationId(evaluationId);
+		evaluationComment.setCommentId(commentId);
+		evaluationComment = evaluationComment.find();
+		if (evaluationComment != null) {
+			comment.setEvaluationId(evaluationId);
+			comment.setCommentId(commentId);
+			return handleCommentSave(comment, false);
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	private Response handleCommentSave(EvaluationComment comment, boolean post)
+	{
+		ValidationResult validationResult = comment.validate();
+		if (validationResult.valid()) {
+			comment = comment.save();
+
+			if (post) {
+				return Response.created(URI.create("v1/resource/evaluations/" + comment.getCommentId())).entity(comment).build();
+			} else {
+				return Response.ok(comment).build();
+			}
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
+	@PUT
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationComment.class)
+	@APIDescription("Acknowlege an evaluation")
+	@Path("/{evaluationId}/comments/{commentId}/acknowlege")
+	public Response acknowlegeComment(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("commentId") String commentId
+	)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+
+		EvaluationComment evaluationComment = new EvaluationComment();
+		evaluationComment.setEvaluationId(evaluationId);
+		evaluationComment.setCommentId(commentId);
+		evaluationComment = evaluationComment.find();
+		if (evaluationComment != null) {
+			evaluationComment.setAcknowledge(Boolean.FALSE);
+			evaluationComment.save();
+		}
+		return response;
+	}
+
+	@DELETE
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Remove a comment. (must be owner or admin)")
+	@Path("/{evaluationId}/comments/{commentId}")
+	public Response deleteComment(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("commentId") String commentId
+	)
+	{
+		Response response = Response.noContent().build();
+
+		EvaluationComment evaluationComment = new EvaluationComment();
+		evaluationComment.setEvaluationId(evaluationId);
+		evaluationComment.setCommentId(commentId);
+		evaluationComment = evaluationComment.find();
+		if (evaluationComment != null) {
+
+			response = ownerCheck(evaluationComment);
+			if (response == null) {
+				evaluationComment.delete();
+				response = Response.noContent().build();
+			}
+		}
+		return response;
+	}
+
 }

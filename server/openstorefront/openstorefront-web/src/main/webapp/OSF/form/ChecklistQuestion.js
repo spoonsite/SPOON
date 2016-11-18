@@ -79,13 +79,11 @@ Ext.define('OSF.form.ChecklistQuestion', {
 					}
 				},
 				{
-					xtype: 'panel',	
-					dock: 'top',
+					xtype: 'panel',						
 					html: '<b>Response</b>'
 				},
 				{
-					xtype: 'tinymce_textarea',						
-					dock: 'top',
+					xtype: 'tinymce_textarea',											
 					fieldStyle: 'font-family: Courier New; font-size: 12px;',
 					style: { border: '0' },
 					height: 250,
@@ -95,13 +93,11 @@ Ext.define('OSF.form.ChecklistQuestion', {
 					tinyMCEConfig: CoreUtil.tinymceConfig("osfmediaretriever")			
 				},
 				{
-					xtype: 'panel',	
-					dock: 'top',
+					xtype: 'panel',						
 					html: '<b>Private Notes</b>'
 				},
 				{
-					xtype: 'tinymce_textarea',						
-					dock: 'top',
+					xtype: 'tinymce_textarea',											
 					fieldStyle: 'font-family: Courier New; font-size: 12px;',
 					style: { border: '0' },
 					height: 250,

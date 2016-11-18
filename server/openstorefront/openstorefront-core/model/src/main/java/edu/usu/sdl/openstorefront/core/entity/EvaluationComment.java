@@ -30,14 +30,18 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Comment on a piece of information")
-public class ReviewNote
-		extends StandardEntity<ReviewNote>
+@APIDescription("Comment on a part of the evaluation")
+public class EvaluationComment
+		extends StandardEntity<EvaluationComment>
 {
 
 	@PK(generated = true)
 	@NotNull
-	private String reviewId;
+	private String commentId;
+
+	@FK(Evaluation.class)
+	@NotNull
+	private String evaluationId;
 
 	@ConsumeField
 	@NotNull
@@ -47,10 +51,10 @@ public class ReviewNote
 
 	@NotNull
 	@ConsumeField
-	private Boolean acknowlege;
+	private Boolean acknowledge;
 
 	@ConsumeField
-	@FK(ReviewNote.class)
+	@FK(EvaluationComment.class)
 	private String replyReviewId;
 
 	@ConsumeField
@@ -65,7 +69,7 @@ public class ReviewNote
 	@Sanitize(TextSanitizer.class)
 	private String entity;
 
-	public ReviewNote()
+	public EvaluationComment()
 	{
 	}
 
@@ -74,24 +78,25 @@ public class ReviewNote
 	{
 		super.updateFields(entity);
 
-		ReviewNote reviewNote = (ReviewNote) entity;
+		EvaluationComment reviewNote = (EvaluationComment) entity;
 
+		setEvaluationId(reviewNote.getEvaluationId());
 		setComment(reviewNote.getComment());
-		setAcknowlege(reviewNote.getAcknowlege());
+		setAcknowledge(reviewNote.getAcknowledge());
 		setReplyReviewId(reviewNote.getReplyReviewId());
 		setEntityId(reviewNote.getEntityId());
 		setEntity(reviewNote.getEntity());
 
 	}
 
-	public String getReviewId()
+	public String getCommentId()
 	{
-		return reviewId;
+		return commentId;
 	}
 
-	public void setReviewId(String reviewId)
+	public void setCommentId(String commentId)
 	{
-		this.reviewId = reviewId;
+		this.commentId = commentId;
 	}
 
 	public String getComment()
@@ -104,14 +109,14 @@ public class ReviewNote
 		this.comment = comment;
 	}
 
-	public Boolean getAcknowlege()
+	public Boolean getAcknowledge()
 	{
-		return acknowlege;
+		return acknowledge;
 	}
 
-	public void setAcknowlege(Boolean acknowlege)
+	public void setAcknowledge(Boolean acknowledge)
 	{
-		this.acknowlege = acknowlege;
+		this.acknowledge = acknowledge;
 	}
 
 	public String getReplyReviewId()
@@ -142,6 +147,16 @@ public class ReviewNote
 	public void setEntity(String entity)
 	{
 		this.entity = entity;
+	}
+
+	public String getEvaluationId()
+	{
+		return evaluationId;
+	}
+
+	public void setEvaluationId(String evaluationId)
+	{
+		this.evaluationId = evaluationId;
 	}
 
 }

@@ -30,7 +30,9 @@ Ext.define('OSF.component.EvaluationPanel', {
 		'OSF.form.EntrySummary',
 		'OSF.form.ChecklistSummary',
 		'OSF.form.ChecklistQuestion',
-		'OSF.form.ChecklistAll'
+		'OSF.form.ChecklistAll',
+		'OSF.form.Section',
+		'OSF.form.Review'
 	],
 	
 	layout: 'border',
@@ -84,7 +86,10 @@ Ext.define('OSF.component.EvaluationPanel', {
 						{						
 							text: 'Review',														
 							handler: function(){
-								
+								evalPanel.loadContentForm({
+									form: 'Review',
+									title: 'Review'
+								});	
 							}
 						}						
 					]
@@ -200,12 +205,61 @@ Ext.define('OSF.component.EvaluationPanel', {
 			collapsed: true,
 			collapsible: true,
 			animCollapse: false,
-			width: 250,
+			width: 300,
 			minWidth: 250,
-			split: true,
-			scrollable: true,
-			bodyStyle: 'background: white;'
-			
+			split: true,			
+			bodyStyle: 'background: white;',
+			layout: 'fit',
+			items: [
+				{
+					xtype: 'panel',
+					bodyStyle: 'padding: 10px;',
+					items: [
+						
+					],
+					dockedItems: [
+						{
+							xtype: 'form',
+							dock: 'bottom',
+							layout: 'anchor',
+							items: [
+								{
+									xtype: 'htmleditor',
+									name: 'comment',									
+									width: '100%',
+									fieldBodyCls: 'form-comp-htmleditor-border',
+									maxLength: 4000
+								}
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Comment',
+											iconCls: 'fa fa-comment',
+											handler: function(){
+
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											hidden: true,
+											iconCls: 'fa fa-close',
+											handler: function(){										
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				}				
+			]
 		});
 		
 		evalPanel.add(evalPanel.navigation);
