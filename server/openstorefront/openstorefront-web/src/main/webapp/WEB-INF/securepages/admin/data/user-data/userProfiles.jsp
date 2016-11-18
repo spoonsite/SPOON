@@ -50,25 +50,33 @@
 							// Get Active Status
 							var activeStatus = Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue();
 							
+							// Get Search Field
+							var searchField = Ext.getCmp('userProfileGrid-filter-SearchField').getValue();
+							
+							// Get Search Value
+							var searchValue = Ext.getCmp('userProfileGrid-filter-SearchValue').getValue();
+							
+							// Clear Previous Parameters
+							store.getProxy().extraParams = {};
+							
+							// Check For Search
+							if (searchField != null && searchField != "" && searchValue != null && searchValue != "") {
+								
+								// Adjust Query String Parameters
+								store.getProxy().extraParams['searchField'] = searchField;
+								store.getProxy().extraParams['searchValue'] = searchValue;
+							}
+							
 							// Check For 'ALL'
 							if (activeStatus === 'ALL') {
 								
-								// Append URL
-								store.getProxy().url = store.getProxy().url + '?all=true';
-								
-								// Empty Extra Parameters
-								store.getProxy().extraParams = { };
+								// Set Extra Filter Parameters
+								store.getProxy().extraParams['all'] = true;
 							}
 							else {
 							
-								// Reset URL
-								store.getProxy().url = store.getProxy().url.replace(/\?all=true/, '');
-							
 								// Set Extra Filter Parameters
-								store.getProxy().extraParams = {
-
-									status: activeStatus ? activeStatus : 'A'
-								};
+								store.getProxy().extraParams['status'] = activeStatus ? activeStatus : 'A';
 							}
 						}
 					}						
@@ -187,6 +195,8 @@
 									fieldLabel: 'Active Status',
 									name: 'activeStatus',
 									value: 'A',
+									editable: false,
+									typeAhead: false,
 									listeners: {
 										change: function (filter, newValue, oldValue, opts) {
 											if (newValue) {												
@@ -220,7 +230,71 @@
 											]
 										}
 									}
-								})
+								}),
+								Ext.create('OSF.component.StandardComboBox', {
+									id: 'userProfileGrid-filter-SearchField',
+									fieldLabel: 'Search Field',
+									name: 'searchField',
+									emptyText: 'Username',
+									value: 'USER',
+									editable: false,
+									typeAhead: false,
+									storeConfig: {
+										customStore: {
+											fields: [
+												'code',
+												'description'
+											],
+											data: [
+												{
+													code: 'USER',
+													description: 'Username'
+												},
+												{
+													code: 'FIRST',
+													description: 'First Name'
+												},
+												{
+													code: 'LAST',
+													description: 'Last Name'
+												}
+											]
+										}
+									},
+									listeners: {
+										
+										change: function(filter, newValue, oldValue, opts) {
+											
+											// Get Search Value Field Value
+											var searchValue = Ext.getCmp('userProfileGrid-filter-SearchValue').getValue();
+											
+											// Check If Field Is Empty
+											if (searchValue != null && searchValue != "") {
+												
+												userProfileStore.loadPage(1);
+											}
+										}
+									}
+								}),
+								{
+									xtype: 'textfield',
+									id: 'userProfileGrid-filter-SearchValue',
+									fieldLabel: 'Search',
+									labelAlign: 'top',
+									labelSeparator: '',
+									name: 'searchValue',
+									listeners: {
+										
+										change: {
+											
+											buffer: 1000,
+											fn: function() {
+												
+												userProfileStore.loadPage(1);
+											}
+										}
+									}
+								}
 							]
 						},
 						{
