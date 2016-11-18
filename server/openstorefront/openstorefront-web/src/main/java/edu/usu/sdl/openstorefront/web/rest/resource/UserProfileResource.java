@@ -86,7 +86,9 @@ public class UserProfileResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
-	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams, @QueryParam("all") @DefaultValue("false") Boolean all)
+	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams,
+								 @QueryParam("searchField") String searchField,
+								 @QueryParam("searchValue") String searchValue)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
