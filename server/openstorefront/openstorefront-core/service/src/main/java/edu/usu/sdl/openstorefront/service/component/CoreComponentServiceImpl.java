@@ -1610,7 +1610,7 @@ public class CoreComponentServiceImpl
 		if (componentAll != null) {
 			componentAll.getComponent().setComponentId(null);
 			componentAll.getComponent().setName(componentAll.getComponent().getName() + COPY_MARKER);
-			componentAll.getComponent().setApprovalState(ApprovalStatus.PENDING);
+			componentAll.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 			componentAll.getComponent().setApprovedDts(null);
 			componentAll.getComponent().setApprovedUser(null);
 			componentAll.getComponent().setExternalId(null);
