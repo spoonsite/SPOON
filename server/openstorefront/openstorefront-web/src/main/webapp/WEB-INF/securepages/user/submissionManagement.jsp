@@ -454,7 +454,7 @@ limitations under the License.
 								{
 									text: 'Delete',
 									itemId: 'tbDelete',
-									hidden: true,
+									disabled: true,
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-trash',
 									handler: function () {
@@ -484,7 +484,7 @@ limitations under the License.
 									}
 								},
 								{
-									text: 'Remove Change Request',
+									text: 'Remove Change',
 									itemId: 'tbRemoveChangeRequest',
 									hidden: true,
 									scale: 'medium',								
@@ -518,10 +518,12 @@ limitations under the License.
 								tools.getComponent('tbRemoveChangeRequest').setHidden(true);
 								
 								tools.getComponent('tbUnsubmit').setHidden(true);
-								tools.getComponent('tbDelete').setHidden(true);
+								tools.getComponent('tbDelete').setHidden(false);
+								tools.getComponent('tbDelete').setDisabled(true);
 								tools.getComponent('tbUnapprove').setHidden(true);
 								
-								if (record.get('approvalState') === 'A'){									
+								if (record.get('approvalState') === 'A'){	
+									tools.getComponent('tbDelete').setHidden(true);
 									tools.getComponent('tbSubmitChange').setHidden(false);
 									tools.getComponent('tbUnapprove').setHidden(false);
 									
@@ -536,7 +538,7 @@ limitations under the License.
 									tools.getComponent('tbEdit').setDisabled(false);
 								}
 								if (record.get('approvalState') === 'N'){
-									tools.getComponent('tbDelete').setHidden(false);
+									tools.getComponent('tbDelete').setDisabled(false);
 									tools.getComponent('tbEdit').setDisabled(false);
 								}
 								
@@ -552,7 +554,8 @@ limitations under the License.
 								tools.getComponent('tbSubmitChange').setHidden(true);
 								tools.getComponent('tbRemoveChangeRequest').setHidden(true);
 								tools.getComponent('tbUnsubmit').setHidden(true);
-								tools.getComponent('tbDelete').setHidden(true);
+								tools.getComponent('tbDelete').setHidden(false);
+								tools.getComponent('tbDelete').setDisabled(true);
 								tools.getComponent('tbUnapprove').setHidden(true);
 							}							
 						}
