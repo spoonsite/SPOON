@@ -97,7 +97,7 @@ public class UserProfileResource
 		UserProfile userProfileExample = new UserProfile();
 		
 		// Check For 'All' Parameter
-		if (!all) {
+		if (!filterQueryParams.getAll()) {
 			
 			userProfileExample.setActiveStatus(filterQueryParams.getStatus());
 		}
