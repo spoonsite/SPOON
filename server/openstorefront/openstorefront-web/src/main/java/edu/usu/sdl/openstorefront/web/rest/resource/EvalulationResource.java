@@ -48,6 +48,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -264,8 +265,12 @@ public class EvalulationResource
 		EvaluationComment evaluationComment = new EvaluationComment();
 		evaluationComment.setActiveStatus(EvaluationComment.ACTIVE_STATUS);
 		evaluationComment.setEvaluationId(evaluationId);
-		evaluationComment.setEntity(entity);
-		evaluationComment.setEntityId(entityId);
+		if (StringUtils.isNotBlank(entity)) {
+			evaluationComment.setEntity(entity);
+		}
+		if (StringUtils.isNotBlank(entityId)) {
+			evaluationComment.setEntityId(entityId);
+		}
 
 		List<EvaluationComment> evaluationComments = evaluationComment.findByExample();
 

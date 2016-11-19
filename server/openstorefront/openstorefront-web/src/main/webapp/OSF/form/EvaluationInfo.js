@@ -39,12 +39,12 @@ Ext.define('OSF.form.EvaluationInfo', {
 		evalForm.add(version);
 	},
 	
-	loadData: function(evalationId, componentId) {
+	loadData: function(evaluationId, componentId, data, opts) {
 		var evalForm = this;
 		
 		evalForm.setLoading(true);
 		Ext.Ajax.request({
-			url: 'api/v1/resource/evaluations/' + evalationId,
+			url: 'api/v1/resource/evaluations/' + evaluationId,
 			callback: function() {
 				evalForm.setLoading(false);
 			},
@@ -56,6 +56,7 @@ Ext.define('OSF.form.EvaluationInfo', {
 				evalForm.loadRecord(record);
 			}
 		});
+		opts.commentPanel.loadComments(evaluationId, null, null);
 	}	
 	
 });

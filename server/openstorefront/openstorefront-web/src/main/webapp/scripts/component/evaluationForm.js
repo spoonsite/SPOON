@@ -213,9 +213,10 @@ Ext.define('OSF.component.EvaluationPanel', {
 			items: [
 				{
 					xtype: 'panel',
+					itemId: 'comments',
 					bodyStyle: 'padding: 10px;',
-					items: [
-						
+					scrollable: true,
+					items: [						
 					],
 					dockedItems: [
 						{
@@ -223,6 +224,14 @@ Ext.define('OSF.component.EvaluationPanel', {
 							dock: 'bottom',
 							layout: 'anchor',
 							items: [
+								{
+									xtype: 'hidden',
+									name: 'commentId'
+								},
+								{
+									xtype: 'hidden',
+									name: 'replyCommentId'
+								},
 								{
 									xtype: 'htmleditor',
 									name: 'comment',									
@@ -240,7 +249,38 @@ Ext.define('OSF.component.EvaluationPanel', {
 											text: 'Comment',
 											iconCls: 'fa fa-comment',
 											handler: function(){
-
+												var form = this.up('form');
+												var data = form.getValues();
+												data.acknowledge = false;
+												
+												var method = 'POST';
+												var update = '';		
+												if (data.commentId) {
+													method = 'PUT',
+													update = '/' + data.commentId 		
+												}
+												var evaluationId = evalPanel.commentPanel.lastLoadOpt.evaluationId;
+												var entity = evalPanel.commentPanel.lastLoadOpt.entity;
+												var entityId = evalPanel.commentPanel.lastLoadOpt.entityId;
+												if (!entity) {
+													data.entity = 'Evaluation';
+													data.entityId = evaluationId;	
+												} else {
+													data.entity = entity;
+													data.entityId = entityId;
+												}
+												
+												CoreUtil.submitForm({
+													url: 'api/v1/resource/evaluations/' + evaluationId + '/comments' + update,
+													method: method,
+													data: data,
+													form: form,
+													success: function(){
+														evalPanel.commentPanel.loadComments(evaluationId, entity, entityId);														
+														form.reset();
+													}
+												});												
+												
 											}
 										},
 										{
@@ -261,6 +301,113 @@ Ext.define('OSF.component.EvaluationPanel', {
 				}				
 			]
 		});
+		evalPanel.commentPanel.loadComments = function(evaluationId, entity, entityId){
+			
+			evalPanel.commentPanel.lastLoadOpt = {
+				evaluationId: evaluationId,
+				entity: entity,
+				entityId: entityId
+			};
+					
+			evalPanel.commentPanel.setLoading(true);
+			Ext.Ajax.request({
+				url: 'api/v1/resource/evaluations/' + evaluationId + '/comments',
+				method: 'GET',
+				params: {
+					entity: entity,
+					entityId: entityId
+				},
+				callback: function(){
+					evalPanel.commentPanel.setLoading(false);
+				},
+				success: function(response, opts) {
+					var data = Ext.decode(response.responseText);
+					var comments = [];
+					var commentMap = {					
+					};
+					//build hiearchy
+					Ext.Array.each(data, function(comment){
+						if (!comment.replyCommentId) {
+							comment.replies = [];
+							commentMap[comment.commentId] = comment;							
+							comments.push(comment);
+						}
+					});
+					
+					Ext.Array.each(data, function(comment){
+						if (comment.replyCommentId) {
+							var existing = commentMap[comment.replyCommentId];
+							if (existing) {
+								existing.replies.push(comment);
+							} 
+						}
+					});
+					
+					comments.sort(function(a,b){
+						return a.createDts < b.createDts;
+					});
+					
+					var commentPanels = [];
+					Ext.Array.each(comments, function(comment) {
+						
+						var closeable = false;
+						var editHidden = true;
+						if (evalPanel.user.admin || evalPanel.user.username === comment.createUser) {
+							closeable = true;
+							editHidden = false;
+						}
+						var iconCls = '';
+						if (comment.replyCommentId) {
+							iconCls = 'fa fa-reply';
+						}
+						
+						commentPanels.push({	
+							iconCls: iconCls,
+							title: 	comment.createUser + ' - ' + 
+									Ext.Date.format(Ext.Date.parse(comment.createDts, 'c'), 'm-d-Y H:i:s'),									
+							tools: [
+								{
+									type: 'gear',
+									tooltip: 'Edit',
+									hidden: editHidden,
+									callback: function(panel, tool, event) {										
+									}
+								}
+							],
+							collapsible: true,
+							titleCollapse: true,
+							closable: closeable,
+							closeToolText: 'Delete Comment',
+							margin: '0 0 0 0', 
+							data: comment,
+							tpl: [
+								'{comment}'
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									style: 'background: transparent;',
+									items: [
+										{
+											text: 'Reply',
+											iconCls: 'fa fa-reply',
+											ui: 'default',
+											handler: function() {
+												
+											}
+										}
+									]
+								}
+							]
+						});
+						
+					});						
+					
+					evalPanel.commentPanel.getComponent('comments').add(commentPanels);
+				}
+			});		
+		};
 		
 		evalPanel.add(evalPanel.navigation);
 		evalPanel.add(evalPanel.contentPanel);
@@ -269,6 +416,11 @@ Ext.define('OSF.component.EvaluationPanel', {
 		CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
 			var branding = Ext.decode(response.responseText);			
 			evalPanel.branding = branding;
+		});
+		
+		CoreService.usersevice.getCurrentUser().then(function(response, opts){
+			var user = Ext.decode(response.responseText);
+			evalPanel.user = user;	
 		});
 		
 	},
@@ -445,7 +597,9 @@ Ext.define('OSF.component.EvaluationPanel', {
 		evalPanel.contentPanel.add(contentForm);
 
 		if (contentForm.loadData) {
-			contentForm.loadData(evalPanel.evaluationId, evalPanel.componentId, page.data);
+			contentForm.loadData(evalPanel.evaluationId, evalPanel.componentId, page.data, {
+				commentPanel: evalPanel.commentPanel
+			});
 		}
 		
 	}

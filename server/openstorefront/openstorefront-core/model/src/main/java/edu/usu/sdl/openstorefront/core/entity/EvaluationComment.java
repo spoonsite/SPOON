@@ -55,7 +55,7 @@ public class EvaluationComment
 
 	@ConsumeField
 	@FK(EvaluationComment.class)
-	private String replyReviewId;
+	private String replyCommentId;
 
 	@ConsumeField
 	@NotNull
@@ -83,7 +83,7 @@ public class EvaluationComment
 		setEvaluationId(reviewNote.getEvaluationId());
 		setComment(reviewNote.getComment());
 		setAcknowledge(reviewNote.getAcknowledge());
-		setReplyReviewId(reviewNote.getReplyReviewId());
+		setReplyCommentId(reviewNote.getReplyCommentId());
 		setEntityId(reviewNote.getEntityId());
 		setEntity(reviewNote.getEntity());
 
@@ -119,14 +119,14 @@ public class EvaluationComment
 		this.acknowledge = acknowledge;
 	}
 
-	public String getReplyReviewId()
+	public String getReplyCommentId()
 	{
-		return replyReviewId;
+		return replyCommentId;
 	}
 
-	public void setReplyReviewId(String replyReviewId)
+	public void setReplyCommentId(String replyCommentId)
 	{
-		this.replyReviewId = replyReviewId;
+		this.replyCommentId = replyCommentId;
 	}
 
 	public String getEntityId()
