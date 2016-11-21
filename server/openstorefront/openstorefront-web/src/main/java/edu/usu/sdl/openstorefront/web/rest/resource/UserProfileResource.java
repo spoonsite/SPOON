@@ -86,20 +86,61 @@ public class UserProfileResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
-	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams, @QueryParam("all") @DefaultValue("false") Boolean all)
+	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams,
+								 @QueryParam("searchField") String searchField,
+								 @QueryParam("searchValue") String searchValue)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		// Initialize USer Profile Example
+		// Initialize User Profile Status Example
 		UserProfile userProfileExample = new UserProfile();
+		QueryByExample queryByExample = new QueryByExample(userProfileExample);
 		
 		// Check For 'All' Parameter
-		if (!all) {
+		if (!filterQueryParams.getAll()) {
 			
 			userProfileExample.setActiveStatus(filterQueryParams.getStatus());
+		}
+		
+		// Check For Search Parameters
+		if (searchField != null && searchValue != null) {
+			
+			// Initialize User Profile Status Example
+			UserProfile userProfileSearchExample = new UserProfile();
+			
+			// Check Value Of Search Field
+			switch (searchField) {
+				
+				case "FIRST": {
+					
+					userProfileSearchExample.setFirstName(searchValue.toLowerCase() + "%");
+					break;
+				}
+				
+				case "LAST": {
+					
+					userProfileSearchExample.setLastName(searchValue.toLowerCase() + "%");
+					break;
+				}
+				
+				default:
+				case "USER": {
+					
+					userProfileSearchExample.setUsername(searchValue.toLowerCase() + "%");
+					break;
+				}
+			}
+			
+			// Define A Special Lookup Operation (LIKE)
+			// (The Default Is Equals, Which We Still Need For Active Status)
+			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			specialOperatorModel.setExample(userProfileSearchExample);
+			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+			specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 		}
 
 		UserProfile userProfileStartExample = new UserProfile();
@@ -107,8 +148,6 @@ public class UserProfileResource
 
 		UserProfile userProfileEndExample = new UserProfile();
 		userProfileEndExample.setCreateDts(filterQueryParams.getEnd());
-		
-		QueryByExample queryByExample = new QueryByExample(userProfileExample);
 
 		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
 		specialOperatorModel.setExample(userProfileStartExample);
