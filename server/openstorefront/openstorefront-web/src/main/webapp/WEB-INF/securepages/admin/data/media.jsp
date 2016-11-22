@@ -8,37 +8,41 @@
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
-			Ext.onReady(function(){	
+			Ext.onReady(function(){
+				
+				var mediaStore = Ext.create('Ext.data.Store', {
+					storeId: 'mediaStore',
+					autoLoad: true,
+					pageSize: 100,
+					remoteSort: true,
+					sorters: [
+						new Ext.util.Sorter({
+							property: 'name',
+							direction: 'ASC'
+						})
+					],
+					fields: [
+						{
+							name: 'updateDts',
+							type:	'date',
+							dateFormat: 'c'
+						}
+					],
+					proxy: CoreUtil.pagingProxy({
+						type: 'ajax',
+						url: 'api/v1/resource/generalmedia',
+						reader: {
+							type: 'json',
+							rootProperty: 'data',
+							totalProperty: 'totalNumber'
+						}
+					})
+				});
 				
 				var mediaGrid = Ext.create('Ext.grid.Panel', {
 					id: 'mediaGrid',
 					title: 'Manage Media <i class="fa fa-question-circle"  data-qtip="Media that can be used for articles and badges." ></i>',
-					store: Ext.create('Ext.data.Store', {
-						storeId: 'mediaStore',
-						autoLoad: true,						
-						sorters: [
-							new Ext.util.Sorter({
-								property: 'name',
-								direction: 'ASC'
-							})
-						],
-						fields: [
-							{
-								name: 'updateDts',
-								type:	'date',
-								dateFormat: 'c'
-							}
-						],
-						proxy: CoreUtil.pagingProxy({
-							type: 'ajax',
-							url: 'api/v1/resource/generalmedia',
-							reader: {
-								type: 'json',
-								rootProperty: 'data',
-								totalProperty: 'totalNumber'
-							}
-						})
-					}),
+					store: mediaStore,
 					columnLines: true,
 					columns: [						
 						{ text: 'Name', dataIndex: 'name', minWidth: 200},
@@ -115,6 +119,12 @@
 								    }
 								}
 							]
+						},
+						{
+							xtype: 'pagingtoolbar',
+							dock: 'bottom',
+							store: mediaStore,
+							displayInfo: true
 						}
 					],
 					listeners: {
