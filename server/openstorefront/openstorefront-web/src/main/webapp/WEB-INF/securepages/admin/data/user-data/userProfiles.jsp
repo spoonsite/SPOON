@@ -189,111 +189,129 @@
 							dock: 'top',
 							xtype: 'toolbar',
 							items: [
-								Ext.create('OSF.component.StandardComboBox', {
-									id: 'userProfileGrid-filter-ActiveStatus',
-									emptyText: 'Active',
-									fieldLabel: 'Active Status',
-									name: 'activeStatus',
-									value: 'A',
-									editable: false,
-									typeAhead: false,
-									listeners: {
-										change: function (filter, newValue, oldValue, opts) {
-											if (newValue) {												
-												userProfileStore.loadPage(1);
-												
-												Ext.getCmp('userProfileGrid').getSelectionModel().deselectAll();
-												Ext.getCmp('userProfileGrid-tools-edit').disable();
-												Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
-											}
-										}
-									},
-									storeConfig: {
-										customStore: {
-											fields: [
-												'code',
-												'description'
-											],
-											data: [
-												{
-													code: 'ALL',
-													description: 'All'
-												},
-												{
-													code: 'A',
-													description: 'Active'
-												},
-												{
-													code: 'I',
-													description: 'Inactive'
-												}
-											]
-										}
-									}
-								}),
-								Ext.create('OSF.component.StandardComboBox', {
-									id: 'userProfileGrid-filter-SearchField',
-									fieldLabel: 'Search Field',
-									name: 'searchField',
-									emptyText: 'Username',
-									value: 'USER',
-									editable: false,
-									typeAhead: false,
-									storeConfig: {
-										customStore: {
-											fields: [
-												'code',
-												'description'
-											],
-											data: [
-												{
-													code: 'USER',
-													description: 'Username'
-												},
-												{
-													code: 'FIRST',
-													description: 'First Name'
-												},
-												{
-													code: 'LAST',
-													description: 'Last Name'
-												}
-											]
-										}
-									},
-									listeners: {
-										
-										change: function(filter, newValue, oldValue, opts) {
-											
-											// Get Search Value Field Value
-											var searchValue = Ext.getCmp('userProfileGrid-filter-SearchValue').getValue();
-											
-											// Check If Field Is Empty
-											if (searchValue != null && searchValue != "") {
-												
-												userProfileStore.loadPage(1);
-											}
-										}
-									}
-								}),
 								{
-									xtype: 'textfield',
-									id: 'userProfileGrid-filter-SearchValue',
-									fieldLabel: 'Search',
-									labelAlign: 'top',
-									labelSeparator: '',
-									name: 'searchValue',
-									listeners: {
+									xtype: 'fieldset',
+									title: 'Filter',
+									layout: 'hbox',
+									items: [
+										Ext.create('OSF.component.StandardComboBox', {
+											id: 'userProfileGrid-filter-ActiveStatus',
+											emptyText: 'Active',
+											fieldLabel: 'Active Status',
+											name: 'activeStatus',
+											value: 'A',
+											editable: false,
+											typeAhead: false,
+											margin: '0 0 10 0',
+											listeners: {
+												change: function (filter, newValue, oldValue, opts) {
+													if (newValue) {												
+														userProfileStore.loadPage(1);
+
+														Ext.getCmp('userProfileGrid').getSelectionModel().deselectAll();
+														Ext.getCmp('userProfileGrid-tools-edit').disable();
+														Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
+													}
+												}
+											},
+											storeConfig: {
+												customStore: {
+													fields: [
+														'code',
+														'description'
+													],
+													data: [
+														{
+															code: 'ALL',
+															description: 'All'
+														},
+														{
+															code: 'A',
+															description: 'Active'
+														},
+														{
+															code: 'I',
+															description: 'Inactive'
+														}
+													]
+												}
+											}
+										})
+									]
+								},
+								{
+									xtype: 'fieldset',
+									title: 'Search',
+									layout: 'hbox',
+									items: [
 										
-										change: {
-											
-											buffer: 1000,
-											fn: function() {
-												
-												userProfileStore.loadPage(1);
+										Ext.create('OSF.component.StandardComboBox', {
+											id: 'userProfileGrid-filter-SearchField',
+											fieldLabel: 'Select Field',
+											name: 'searchField',
+											emptyText: 'Username',
+											value: 'USER',
+											editable: false,
+											typeAhead: false,
+											margin: '0 5 10 0',
+											storeConfig: {
+												customStore: {
+													fields: [
+														'code',
+														'description'
+													],
+													data: [
+														{
+															code: 'USER',
+															description: 'Username'
+														},
+														{
+															code: 'FIRST',
+															description: 'First Name'
+														},
+														{
+															code: 'LAST',
+															description: 'Last Name'
+														}
+													]
+												}
+											},
+											listeners: {
+
+												change: function(filter, newValue, oldValue, opts) {
+
+													// Get Search Value Field Value
+													var searchValue = Ext.getCmp('userProfileGrid-filter-SearchValue').getValue();
+
+													// Check If Field Is Empty
+													if (searchValue != null && searchValue != "") {
+
+														userProfileStore.loadPage(1);
+													}
+												}
+											}
+										}),
+										{
+											xtype: 'textfield',
+											id: 'userProfileGrid-filter-SearchValue',
+											fieldLabel: 'Enter Value',
+											labelAlign: 'top',
+											labelSeparator: '',
+											name: 'searchValue',
+											margin: '0 0 10 5',
+											listeners: {
+
+												change: {
+
+													buffer: 1000,
+													fn: function() {
+
+														userProfileStore.loadPage(1);
+													}
+												}
 											}
 										}
-									}
+									]
 								}
 							]
 						},
