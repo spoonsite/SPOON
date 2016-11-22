@@ -2775,6 +2775,7 @@
 									iconCls: 'fa fa-save',
 									formBind: true,
 									handler: function() {
+										
 										var form = this.up('form');
 										var data = form.getValues();
 										var componentId = '';
@@ -2834,26 +2835,36 @@
 													removeBlankDataItems: true,
 													form: form,
 													success: function(response, opt){
+														
+														// Loading Mask Was Removed Once 'Success' Was Reached
+														// Re-Add Loading Mask Until Store Is Updated
+														form.setLoading('Saving...');
+														
 														Ext.toast('Successfully Saved Record');
-														var data = Ext.decode(response.responseText);														
+														var data = Ext.decode(response.responseText);	
 														
-														var componentView = {};
-														componentView.component = data.component;
+														// Store Component ID
+														var componentId = data.component.componentId;
 														
-														var record;
-														if (!edit) {
-															var record = Ext.getCmp('componentGrid').getStore().add(componentView.component);
-															record = record[0];
-															Ext.getCmp('componentGrid').getStore().reload();
-														} else {
-															Ext.Object.each(componentView.component, function(key, value, myself) {
-																Ext.getCmp('generalForm').componentRecord.set(key, value, { dirty: false}); 
-															});	
-															record = Ext.getCmp('generalForm').componentRecord;
-															Ext.getCmp('componentGrid').getStore().reload();
-														}
-														actionAddEditComponent(record);																																									
+														// Store Component Store
+														var store = Ext.getCmp('componentGrid').getStore();
 														
+														// Reload Store
+														store.reload({
+															
+															// Create Function To Fire When Reload Is Complete
+															callback: function() {
+																
+																// Store (Updated) Record With Matching Component ID
+																var record = store.query('componentId', componentId, false, true, true).first();
+
+																// Refresh Add/Edit Window
+																actionAddEditComponent(record);
+																
+																// Remove Loading Mask
+																form.setLoading(false);
+															}
+														});	
 													},
 													failure: function(response, opt){
 
@@ -3114,7 +3125,7 @@
 				};
 				loadAllAttributes();
 						
-				var mainAddEditWin = Ext.create('Ext.window.Window', {					
+				var mainAddEditWin = Ext.create('Ext.window.Window', {
 					title: 'Entry Form',
 					modal: true,
 					maximizable: true,
@@ -4508,6 +4519,7 @@
 				
 				
 				var actionAddEditComponent = function(record) {
+					mainAddEditWin.close();
 					mainAddEditWin.show();		
 					
 					Ext.getCmp('componentTypeMainCB').suspendEvent('change');
