@@ -63,7 +63,7 @@ Ext.define('OSF.form.ChecklistAll', {
 				} 
 			},
 			columns: [
-				{ text: 'QID', dataIndex: 'qid', width: 100 },
+				{ text: 'QID', dataIndex: 'qid', align: 'center', width: 100 },
 				{ text: 'Section', dataIndex: 'evaluationSectionDescription', width: 175 },
 				{ text: 'Question', dataIndex: 'questionText', flex: 1, minWidth: 250, cellWrap: true },
 				{ text: 'Scoring Criteria', dataIndex: 'scoringCriteria', width: 250, cellWrap: true },

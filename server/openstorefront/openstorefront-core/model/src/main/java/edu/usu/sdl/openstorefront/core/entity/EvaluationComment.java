@@ -20,7 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
-import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import javax.validation.constraints.NotNull;
@@ -46,7 +46,7 @@ public class EvaluationComment
 	@ConsumeField
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_4K)
-	@Sanitize(BasicHTMLSanitizer.class)
+	@Sanitize(HTMLSanitizer.class)
 	private String comment;
 
 	@NotNull

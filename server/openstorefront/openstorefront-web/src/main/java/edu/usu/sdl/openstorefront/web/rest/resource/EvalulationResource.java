@@ -360,9 +360,9 @@ public class EvalulationResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationComment.class)
-	@APIDescription("Acknowlege an evaluation")
+	@APIDescription("Toggles acknowlege flag on an evaluation")
 	@Path("/{evaluationId}/comments/{commentId}/acknowlege")
-	public Response acknowlegeComment(
+	public Response toggleAcknowlegeComment(
 			@PathParam("evaluationId") String evaluationId,
 			@PathParam("commentId") String commentId
 	)
@@ -374,8 +374,13 @@ public class EvalulationResource
 		evaluationComment.setCommentId(commentId);
 		evaluationComment = evaluationComment.find();
 		if (evaluationComment != null) {
-			evaluationComment.setAcknowledge(Boolean.FALSE);
-			evaluationComment.save();
+			if (evaluationComment.getAcknowledge()) {
+				evaluationComment.setAcknowledge(Boolean.FALSE);
+			} else {
+				evaluationComment.setAcknowledge(Boolean.TRUE);
+			}
+			evaluationComment = evaluationComment.save();
+			response = Response.ok(evaluationComment).build();
 		}
 		return response;
 	}

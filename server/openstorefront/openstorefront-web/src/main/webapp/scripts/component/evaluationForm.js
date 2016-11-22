@@ -89,7 +89,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 								evalPanel.loadContentForm({
 									form: 'Review',
 									title: 'Review'
-								});	
+								});
+								evalPanel.commentPanel.setHidden(true);
 							}
 						}						
 					]
@@ -117,11 +118,29 @@ Ext.define('OSF.component.EvaluationPanel', {
 								evalPanel.loadContentForm({
 									form: 'EntrySummary',
 									title: 'Entry Summary'
-								});						
+								});								
 							}							
 						}
 					]
 				},
+				{
+					xype: 'panel',
+					itemId: 'sectionmenu',
+					title: 'Sections',
+					collapsible: true,
+					bodyStyle: 'padding: 10px;',
+					margin: '0 0 0 0',
+					defaultType: 'button',
+					defaults: {
+						width: '100%',
+						cls: 'evaluation-nav-button',							
+						overCls: 'evaluation-nav-button-over',
+						focusCls: 'evaluation-nav-button',
+						margin: '5 0 0 0'
+					},					
+					items: [
+					]
+				},					
 				{
 					xype: 'panel',
 					itemId: 'checklistmenu',
@@ -149,26 +168,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 							}							
 						}										
 					]
-				},
-				{
-					xype: 'panel',
-					itemId: 'sectionmenu',
-					title: 'Sections',
-					collapsible: true,
-					bodyStyle: 'padding: 10px;',
-					margin: '0 0 0 0',
-					defaultType: 'button',
-					defaults: {
-						width: '100%',
-						cls: 'evaluation-nav-button',							
-						overCls: 'evaluation-nav-button-over',
-						focusCls: 'evaluation-nav-button',
-						margin: '5 0 0 0'
-					},					
-					items: [
-					]
-				}				
-				
+				}
 			]
 		});
 		
@@ -285,7 +285,11 @@ Ext.define('OSF.component.EvaluationPanel', {
 														if (evalPanel.commentPanel.getComponent('comments').replyMessage) {
 															evalPanel.commentPanel.getComponent('comments').removeDocked(evalPanel.commentPanel.getComponent('comments').replyMessage, true);
 															evalPanel.commentPanel.getComponent('comments').replyMessage = null;
-														}	
+														}
+														if (evalPanel.commentPanel.getComponent('comments').editMessage) {
+															evalPanel.commentPanel.getComponent('comments').removeDocked(evalPanel.commentPanel.getComponent('comments').editMessage, true);
+															evalPanel.commentPanel.getComponent('comments').editMessage = null;
+														}														
 													}
 												});												
 												
@@ -304,6 +308,10 @@ Ext.define('OSF.component.EvaluationPanel', {
 												if (evalPanel.commentPanel.getComponent('comments').replyMessage) {
 													evalPanel.commentPanel.getComponent('comments').removeDocked(evalPanel.commentPanel.getComponent('comments').replyMessage, true);
 													evalPanel.commentPanel.getComponent('comments').replyMessage = null;
+												}
+												if (evalPanel.commentPanel.getComponent('comments').editMessage) {
+													evalPanel.commentPanel.getComponent('comments').removeDocked(evalPanel.commentPanel.getComponent('comments').editMessage, true);
+													evalPanel.commentPanel.getComponent('comments').editMessage = null;
 												}												
 											}
 										}
@@ -317,11 +325,17 @@ Ext.define('OSF.component.EvaluationPanel', {
 		});
 		evalPanel.commentPanel.loadComments = function(evaluationId, entity, entityId){
 			
-			evalPanel.commentPanel.lastLoadOpt = {
-				evaluationId: evaluationId,
-				entity: entity,
-				entityId: entityId
-			};
+			if (evaluationId) {			
+				evalPanel.commentPanel.lastLoadOpt = {
+					evaluationId: evaluationId,
+					entity: entity,
+					entityId: entityId
+				};
+			} else {
+				evaluationId = evalPanel.commentPanel.lastLoadOpt.evaluationId;
+				entity = evalPanel.commentPanel.lastLoadOpt.entity;
+				entityId = evalPanel.commentPanel.lastLoadOpt.entityId;				
+			}
 			
 			evalPanel.commentPanel.getComponent('comments').removeAll(true);
 			evalPanel.commentPanel.setLoading(true);
@@ -388,7 +402,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 							iconCls = 'fa fa-reply';
 							headerStyle = 'background: darkolivegreen;';
 						}
-						
+												
 						var panel = Ext.create('Ext.panel.Panel', {	
 							iconCls: iconCls,
 							header: {
@@ -397,8 +411,35 @@ Ext.define('OSF.component.EvaluationPanel', {
 							title: 	comment.createUser + ' - ' + 
 									Ext.Date.format(Ext.Date.parse(comment.createDts, 'c'), 'm-d-Y H:i:s'),
 							listeners: {
-								
-								
+								beforeclose: function(panel, opts) {
+									if (panel.finishClose) {
+										return true;
+									} else {
+										Ext.Msg.show({
+											title:'Delete Comment',
+											message: 'Are you sure you want DELETE this comment?',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+													panel.setLoading('Deleting...');
+													Ext.Ajax.request({
+														url: 'api/v1/resource/evaluations/' + evaluationId + '/comments/' + comment.commentId,
+														method: 'DELETE',
+														callback: function() {
+															panel.setLoading(false);
+														},
+														success: function() {
+															panel.finishClose = true;
+															panel.close();
+														}
+													});
+												} 
+											}
+										});
+									}
+									return false;
+								},
 								afterrender: function(panel) {
 									var header = panel.getHeader();
 									header.getTools().forEach(function(tool) {
@@ -428,8 +469,18 @@ Ext.define('OSF.component.EvaluationPanel', {
 									type: 'save',									
 									tooltip: 'Toggle Acknowledge',
 									hidden: true,
-									callback: function(panel, tool, event) {
-										
+									callback: function(panel, tool, event) {																
+										panel.setLoading('Updating record...');								
+										Ext.Ajax.request({
+											url: 'api/v1/resource/evaluations/' + evaluationId + '/comments/' + panel.data.commentId + '/acknowlege',
+											method: 'PUT',
+											callback: function() {
+												panel.setLoading(false);
+											},
+											success: function(response, opts) {
+												evalPanel.commentPanel.loadComments();
+											}
+										});	
 									}
 								},
 								{
@@ -463,7 +514,26 @@ Ext.define('OSF.component.EvaluationPanel', {
 									type: 'gear',
 									tooltip: 'Edit',
 									hidden: true,									
-									callback: function(panel, tool, event) {										
+									callback: function(panel, tool, event) {
+										var form = evalPanel.commentPanel.getComponent('comments').getComponent('form');
+
+										var record = Ext.create('Ext.data.Model', {												
+										});
+										record.set(comment);
+										form.loadRecord(record);
+																				
+										if (evalPanel.commentPanel.getComponent('comments').editMessage) {
+											evalPanel.commentPanel.getComponent('comments').removeDocked(evalPanel.commentPanel.getComponent('comments').editMessage, true);
+											evalPanel.commentPanel.getComponent('comments').editMessage = null;
+										}
+
+										var editMessage = Ext.create('Ext.panel.Panel', {
+											dock: 'bottom',
+											html: 'Editing ' + panel.getTitle(),
+											bodyStyle: 'background: #00d400; color: white; padding-left: 3px;'
+										});
+										evalPanel.commentPanel.getComponent('comments').addDocked(editMessage);
+										evalPanel.commentPanel.getComponent('comments').editMessage = editMessage;										
 									}
 								}
 							],
@@ -474,9 +544,9 @@ Ext.define('OSF.component.EvaluationPanel', {
 							margin: '0 0 0 0', 
 							bodyStyle: 'padding: 5px;',
 							data: comment,
-							tpl: [
-								'{comment}'
-							]
+							tpl: new Ext.XTemplate(	
+								'<tpl if="acknowledge"><span class="fa fa-lg fa-check text-success" title="acknowledged"></span></tpl>{comment}'
+							)
 						});	
 						
 						if (parent) {
@@ -674,6 +744,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 	loadContentForm: function(page) {
 		var evalPanel = this;
 		
+		evalPanel.commentPanel.setHidden(false);
 		evalPanel.contentPanel.removeAll(true);
 		evalPanel.contentPanel.getComponent('tools').getComponent('title').update({
 			title: page.title
