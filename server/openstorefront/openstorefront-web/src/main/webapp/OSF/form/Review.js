@@ -40,7 +40,11 @@ Ext.define('OSF.form.Review', {
 						type:	'date',
 						dateFormat: 'c'
 					}					
-				]
+				],
+				proxy: {
+					type: 'ajax',
+					url: ''
+				}
 			},
 			listeners: {
 				selectionchange: function(selModel, records, index, opts){
@@ -49,7 +53,13 @@ Ext.define('OSF.form.Review', {
 						tools.getComponent('acknowledge').setDisabled(false);
 						
 						//check ownership or user is admin (later this will be has permission)
+						var record = records[0];						
+						if (reviewForm.user.admin || 
+							record.get('createUser') === reviewForm.user.username) {
 						
+							tools.getComponent('edit').setDisabled(false);
+							tools.getComponent('delete').setDisabled(false);							
+						}
 						
 					} else {
 						tools.getComponent('acknowledge').setDisabled(true);
@@ -59,7 +69,7 @@ Ext.define('OSF.form.Review', {
 				}
 			},
 			columns: [
-				{ text: '', dataIndex: 'acknowledge', align: 'center', width: 75,
+				{ text: 'Acknowledge', dataIndex: 'acknowledge', align: 'center', width: 75,
 					renderer: function(value) {
 						if (value) {
 							return '<span class="fa fa-lg fa-check text-success"></span>';
@@ -68,9 +78,15 @@ Ext.define('OSF.form.Review', {
 						}
 					}
 				},
-				{ text: 'Evaluation Item', align: 'center', dataIndex: 'entity', width: 200, 
-					renderer: function(value) {
-						
+				{ text: 'Evaluation Item', align: 'center', dataIndex: 'entity', width: 200,
+					xtype: 'widgetcolumn',
+					widget: {
+						xtype: 'button'						
+					},
+					onWidgetAttach: function (column, widget, record) {
+						if (record.get('entity') === 'Evaluation') {
+							widget.setText('Evaluation');
+						}
 					}
 				},
 				{ text: 'Comment', dataIndex: 'comment', flex: 1, minWidth: 250, cellWrap: true },
@@ -84,9 +100,9 @@ Ext.define('OSF.form.Review', {
 					itemId: 'tools',
 					items: [
 						{
-							text: 'Acknowledge',
+							text: 'Toggle Acknowledge',
 							itemId: 'acknowledge',
-							iconCls: 'fa fa-2x fa-check',
+							iconCls: 'fa fa-2x fa-check text-success',
 							scale: 'medium',
 							disabled: true,
 							handler: function(){
@@ -96,9 +112,9 @@ Ext.define('OSF.form.Review', {
 						{
 							text: 'Edit',
 							itemId: 'edit',
-							iconCls: 'fa fa-2x fa-check',
+							iconCls: 'fa fa-2x fa-edit',
 							scale: 'medium',
-							disabled: true,
+							disabled: true,							
 							handler: function(){
 								
 							}							
@@ -109,9 +125,9 @@ Ext.define('OSF.form.Review', {
 						{
 							text: 'Delete',
 							itemId: 'delete',
-							iconCls: 'fa fa-2x fa-check',
+							iconCls: 'fa fa-2x fa-close text-danager',
 							scale: 'medium',
-							disabled: true,
+							disabled: true,							
 							handler: function(){
 								
 							}							
@@ -122,13 +138,15 @@ Ext.define('OSF.form.Review', {
 		});
 		reviewForm.add(reviewForm.grid);
 	},
-	loadData: function(evalationId, componentId, data) {
+	loadData: function(evaluationId, componentId, data, opts) {
 		var reviewForm = this;
 		
 		reviewForm.grid.getStore().load({
-			url: 'api/v1/resource/evaluations/' + evalationId + '/comments'
+			url: 'api/v1/resource/evaluations/' + evaluationId + '/comments'
 		});
+		reviewForm.user = opts.user;
 		
+		opts.commentPanel.loadComments(evaluationId, null, null);
 	}
 });
 

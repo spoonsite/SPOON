@@ -201,11 +201,13 @@ Ext.define('OSF.component.EvaluationPanel', {
 		evalPanel.commentPanel = Ext.create('Ext.panel.Panel', {
 			title: 'Comments',
 			iconCls: 'fa fa-comment',
-			region: 'east',
+			region: 'east',			
 			collapsed: true,
 			collapsible: true,
 			animCollapse: false,
-			width: 300,
+			floatable: false,
+			titleCollapse: true,
+			width: 375,
 			minWidth: 250,
 			split: true,			
 			bodyStyle: 'background: white;',
@@ -221,6 +223,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 					dockedItems: [
 						{
 							xtype: 'form',
+							itemId: 'form',
 							dock: 'bottom',
 							layout: 'anchor',
 							items: [
@@ -278,6 +281,11 @@ Ext.define('OSF.component.EvaluationPanel', {
 													success: function(){
 														evalPanel.commentPanel.loadComments(evaluationId, entity, entityId);														
 														form.reset();
+														
+														if (evalPanel.commentPanel.getComponent('comments').replyMessage) {
+															evalPanel.commentPanel.getComponent('comments').removeDocked(evalPanel.commentPanel.getComponent('comments').replyMessage, true);
+															evalPanel.commentPanel.getComponent('comments').replyMessage = null;
+														}	
 													}
 												});												
 												
@@ -288,9 +296,15 @@ Ext.define('OSF.component.EvaluationPanel', {
 										},
 										{
 											text: 'Cancel',
-											hidden: true,
+											itemId: 'cancel',											
 											iconCls: 'fa fa-close',
 											handler: function(){										
+												var form = this.up('form');
+												form.reset();
+												if (evalPanel.commentPanel.getComponent('comments').replyMessage) {
+													evalPanel.commentPanel.getComponent('comments').removeDocked(evalPanel.commentPanel.getComponent('comments').replyMessage, true);
+													evalPanel.commentPanel.getComponent('comments').replyMessage = null;
+												}												
 											}
 										}
 									]
@@ -308,7 +322,8 @@ Ext.define('OSF.component.EvaluationPanel', {
 				entity: entity,
 				entityId: entityId
 			};
-					
+			
+			evalPanel.commentPanel.getComponent('comments').removeAll(true);
 			evalPanel.commentPanel.setLoading(true);
 			Ext.Ajax.request({
 				url: 'api/v1/resource/evaluations/' + evaluationId + '/comments',
@@ -327,29 +342,40 @@ Ext.define('OSF.component.EvaluationPanel', {
 					};
 					//build hiearchy
 					Ext.Array.each(data, function(comment){
-						if (!comment.replyCommentId) {
-							comment.replies = [];
+						comment.replies = [];
+						if (!comment.replyCommentId) {							
 							commentMap[comment.commentId] = comment;							
 							comments.push(comment);
 						}
 					});
 					
-					Ext.Array.each(data, function(comment){
-						if (comment.replyCommentId) {
-							var existing = commentMap[comment.replyCommentId];
-							if (existing) {
-								existing.replies.push(comment);
-							} 
-						}
-					});
+					var mapReplies = function(replies) {
+						var missingBucket = [];
+						Ext.Array.each(replies, function(comment){
+							if (comment.replyCommentId) {
+								var existing = commentMap[comment.replyCommentId];
+								if (existing) {
+									existing.replies.push(comment);
+									commentMap[comment.commentId] = comment;
+								} else {
+									missingBucket.push(comment);
+								}
+							}
+						});		
+						return missingBucket;
+					};
+					var missingBucket = data;
+					do {
+						missingBucket = mapReplies(missingBucket);
+					} while (missingBucket.length > 0);
+										
 					
 					comments.sort(function(a,b){
-						return a.createDts < b.createDts;
+						return a.createDts > b.createDts;
 					});
 					
 					var commentPanels = [];
-					Ext.Array.each(comments, function(comment) {
-						
+					var createComments = function(comment, parent) {
 						var closeable = false;
 						var editHidden = true;
 						if (evalPanel.user.admin || evalPanel.user.username === comment.createUser) {
@@ -357,19 +383,86 @@ Ext.define('OSF.component.EvaluationPanel', {
 							editHidden = false;
 						}
 						var iconCls = '';
+						var headerStyle = 'background: olive;';
 						if (comment.replyCommentId) {
 							iconCls = 'fa fa-reply';
+							headerStyle = 'background: darkolivegreen;';
 						}
 						
-						commentPanels.push({	
+						var panel = Ext.create('Ext.panel.Panel', {	
 							iconCls: iconCls,
+							header: {
+								style: headerStyle
+							},
 							title: 	comment.createUser + ' - ' + 
-									Ext.Date.format(Ext.Date.parse(comment.createDts, 'c'), 'm-d-Y H:i:s'),									
+									Ext.Date.format(Ext.Date.parse(comment.createDts, 'c'), 'm-d-Y H:i:s'),
+							listeners: {
+								
+								
+								afterrender: function(panel) {
+									var header = panel.getHeader();
+									header.getTools().forEach(function(tool) {
+										tool.hide();
+									});
+									
+									header.getEl().on('mouseover', function() {
+										header.getTools().forEach(function(tool) {
+											if (tool.type === 'gear') {
+												if (!editHidden) {
+													tool.show();
+												}
+											} else {
+												tool.show();
+											}
+										})
+									}, this);
+									header.getEl().on('mouseout', function() {
+										header.getTools().forEach(function(tool) {
+											tool.hide();
+										})
+									}, this);
+								}
+							},							
 							tools: [
+								{
+									type: 'save',									
+									tooltip: 'Toggle Acknowledge',
+									hidden: true,
+									callback: function(panel, tool, event) {
+										
+									}
+								},
+								{
+									type: 'prev',									
+									tooltip: 'Reply',
+									hidden: true,
+									callback: function(panel, tool, event) {
+										var comment = this.up('panel');
+
+										if (evalPanel.commentPanel.getComponent('comments').replyMessage) {
+											evalPanel.commentPanel.getComponent('comments').removeDocked(evalPanel.commentPanel.getComponent('comments').replyMessage, true);
+											evalPanel.commentPanel.getComponent('comments').replyMessage = null;
+										}
+
+										var replyMessage = Ext.create('Ext.panel.Panel', {
+											dock: 'bottom',
+											html: 'Replying to ' + comment.getTitle(),
+											bodyStyle: 'background: #00d400; color: white; padding-left: 3px;'
+										});
+										evalPanel.commentPanel.getComponent('comments').addDocked(replyMessage);
+										evalPanel.commentPanel.getComponent('comments').replyMessage = replyMessage;
+										var form = evalPanel.commentPanel.getComponent('comments').getComponent('form');
+
+										var record = Ext.create('Ext.data.Model', {												
+										});
+										record.set('replyCommentId', comment.data.commentId);
+										form.loadRecord(record);										
+									}
+								},
 								{
 									type: 'gear',
 									tooltip: 'Edit',
-									hidden: editHidden,
+									hidden: true,									
 									callback: function(panel, tool, event) {										
 									}
 								}
@@ -377,32 +470,29 @@ Ext.define('OSF.component.EvaluationPanel', {
 							collapsible: true,
 							titleCollapse: true,
 							closable: closeable,
-							closeToolText: 'Delete Comment',
+							closeToolText: 'Delete',
 							margin: '0 0 0 0', 
+							bodyStyle: 'padding: 5px;',
 							data: comment,
 							tpl: [
 								'{comment}'
-							],
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									style: 'background: transparent;',
-									items: [
-										{
-											text: 'Reply',
-											iconCls: 'fa fa-reply',
-											ui: 'default',
-											handler: function() {
-												
-											}
-										}
-									]
-								}
 							]
-						});
+						});	
 						
-					});						
+						if (parent) {
+							parent.add(panel);
+						} else {
+							commentPanels.push(panel);
+						}
+						return panel;
+					};
+					var processCommentPanel = function (comments, parent) {
+						Ext.Array.each(comments, function(comment) {
+							var createdPanel = createComments(comment, parent);
+							processCommentPanel(comment.replies);
+						});
+					};
+					processCommentPanel(comments);						
 					
 					evalPanel.commentPanel.getComponent('comments').add(commentPanels);
 				}
@@ -421,6 +511,11 @@ Ext.define('OSF.component.EvaluationPanel', {
 		CoreService.usersevice.getCurrentUser().then(function(response, opts){
 			var user = Ext.decode(response.responseText);
 			evalPanel.user = user;	
+			
+			evalPanel.loadContentForm({
+				form: 'EvaluationInfo',
+				title: 'Evaluation Info'
+			});			
 		});
 		
 	},
@@ -598,7 +693,9 @@ Ext.define('OSF.component.EvaluationPanel', {
 
 		if (contentForm.loadData) {
 			contentForm.loadData(evalPanel.evaluationId, evalPanel.componentId, page.data, {
-				commentPanel: evalPanel.commentPanel
+				commentPanel: evalPanel.commentPanel,
+				user: evalPanel.user,
+				mainForm: evalPanel
 			});
 		}
 		
@@ -635,10 +732,6 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 		evalWin.evalPanel.evaluationId = evaluationId;
 		evalWin.evalPanel.componentId = componentId;
 		
-		evalWin.evalPanel.loadContentForm({
-			form: 'EvaluationInfo',
-			title: 'Evaluation Info'
-		});		
 	}
 	 
 });
