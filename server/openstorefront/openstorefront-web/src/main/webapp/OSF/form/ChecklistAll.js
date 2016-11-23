@@ -231,13 +231,14 @@ Ext.define('OSF.form.ChecklistAll', {
 		questionForm.add(questionForm.questionGrid);
 		
 	},
-	loadData: function(evalationId, componentId, data) {
+	loadData: function(evaluationId, componentId, data, opts) {
 		
 		var questionForm = this;
 		
 		questionForm.chkListData = data;
 		questionForm.questionGrid.getStore().loadRawData(data.responses);
-	
+		
+		opts.commentPanel.loadComments(evaluationId, "Checklist All", evaluationId);	
 	}
 	
 });

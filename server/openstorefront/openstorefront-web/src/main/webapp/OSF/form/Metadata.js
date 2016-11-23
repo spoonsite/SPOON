@@ -256,7 +256,7 @@ Ext.define('OSF.form.Metadata', {
 		
 		metadataPanel.add(metadataPanel.metadataGrid);
 	},	
-	loadData: function(evalationId, componentId) {
+	loadData: function(evaluationId, componentId, data, opts) {
 		var metadataPanel = this;
 		
 		metadataPanel.componentId = componentId;
@@ -266,6 +266,7 @@ Ext.define('OSF.form.Metadata', {
 			url: 'api/v1/resource/components/' + componentId + '/metadata/view'
 		});
 		
+		opts.commentPanel.loadComments(evaluationId, "Metadata", componentId);
 	}
 	
 });

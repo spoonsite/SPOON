@@ -111,7 +111,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 	
 		questionForm.add(questionForm.response);
 	},
-	loadData: function(evalationId, componentId, data) {
+	loadData: function(evaluationId, componentId, data, opts) {
 		
 		var questionForm = this;
 		
@@ -122,6 +122,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 		record.set(data);		
 		questionForm.loadRecord(record);
 		
+		opts.commentPanel.loadComments(evaluationId, "Checklist Question - " + data.question.qid, data.question.questionId);
 	}
 	
 });

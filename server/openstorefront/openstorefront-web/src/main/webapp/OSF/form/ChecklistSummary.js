@@ -27,7 +27,7 @@ Ext.define('OSF.form.ChecklistSummary', {
 		
 		var summaryForm = this;
 				
-		var topPanel = 	Ext.create('Ext.panel.Panel', {
+		summaryForm.topPanel = Ext.create('Ext.panel.Panel', {
 			region: 'north',
 			items: [
 				{
@@ -49,33 +49,83 @@ Ext.define('OSF.form.ChecklistSummary', {
 			]
 		});	
 				
-		var recommendations = Ext.create('Ext.panel.Panel', {
+		summaryForm.recommendations = Ext.create('Ext.grid.Panel', {
 			title: 'Recommendations',
 			region: 'center',
-			scrollable: true,
+			columnLines: true,
+			store: {				
+			},
+			columns: [
+				{ text: 'Type', dataIndex: 'recommendationTypeDescription', width: 200 },
+				{ text: 'Recommendation', dataIndex: 'recommendation', flex: 1, minWidth: 200 },
+				{ text: 'Reason', dataIndex: 'reason', width: 250 }
+			],
 			dockedItems: [	
 				{
 					xtype: 'toolbar',
 					items: [
 						{
 							text: 'Add',
-							iconCls: 'fa fa-2x fa-plus',
-							scale: 'medium',
+							iconCls: 'fa fa-2x fa-plus text-success',
+							scale: 'medium',							
 							handler: function() {
-
+								actionAddEdit();
+							}
+						},
+						{
+							xtype: 'tbseparator'
+						},
+						{
+							text: 'Edit',
+							itemId: 'edit',
+							disabled: true,
+							iconCls: 'fa fa-2x fa-edit',
+							scale: 'medium',							
+							handler: function() {
+								var record = summaryForm.recommendations.getSelectionModel().getSelection[0];
+								actionAddEdit(record);
+							}
+						},
+						{
+							xtype: 'tbfill'
+						},
+						{
+							text: 'Delete',
+							itemId: 'delete',
+							disabled: true,
+							iconCls: 'fa fa-2x fa-close text-danger',
+							scale: 'medium',							
+							handler: function() {
+								var record = summaryForm.recommendations.getSelectionModel().getSelection[0];								
+								actionDelete(record);
 							}
 						}
 					]
 				}
-			],
-			tpl: new Ext.XTemplate(
-				'<table>',
-				'	<th>Type</th><th>Recommedation</th><th>Reason</th>',					
-				'</table>'
-			)			
+			]			
 		});
-		summaryForm.add(topPanel);
-		summaryForm.add(recommendations);
+		summaryForm.add(summaryForm.topPanel);
+		summaryForm.add(summaryForm.recommendations);
+		
+		var actionAddEdit = function(record) {
+			
+		};
+
+		var actionDelete = function(record) {
+			
+		};
+	},
+	loadData: function(evaluationId, componentId, data, opts) {
+		
+		var summaryForm = this;
+		
+		var record = Ext.create('Ext.data.Model', {			
+		});
+		record.set(data.evaluationChecklist);
+		summaryForm.loadRecord(record);		
+		summaryForm.recommendations.getStore().loadData(data.recommendations);
+		
+		opts.commentPanel.loadComments(evaluationId, "Checklist Summary", data.evaluationChecklist.checklistId);	
 	}
 	
 });

@@ -97,7 +97,7 @@ Ext.define('OSF.form.EntrySummary', {
 		
 	},
 	
-	loadData: function(evalationId, componentId) {
+	loadData: function(evaluationId, componentId, data, opts) {
 		var entryForm = this;
 		
 		entryForm.setLoading(true);
@@ -113,7 +113,9 @@ Ext.define('OSF.form.EntrySummary', {
 				record.set(evaluation);				
 				entryForm.loadRecord(record);
 			}
-		});		
+		});	
+		
+		opts.commentPanel.loadComments(evaluationId, "Entry Summmary", componentId);
 	}
 	
 });

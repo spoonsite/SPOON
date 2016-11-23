@@ -27,16 +27,32 @@ Ext.define('OSF.form.EvaluationInfo', {
 		
 		var evalForm = this;
 		
-		var version = Ext.create('Ext.form.field.Text', {			
+		var formItems = [];
+		formItems.push({	
+			xtype: 'textfield',
 			fieldCls: 'eval-form-field',
 			labelClsExtra: 'eval-form-field-label',
 			labelAlign: 'right',
 			name: 'version',
-			fieldLabel: 'Version',
+			allBlank: false,
+			maxLength: 255,
+			fieldLabel: 'Version ',
 			width: '100%'			
 		});
+		formItems.push(Ext.create('OSF.component.StandardComboBox', {
+					name: 'mediaTypeCode',									
+					allowBlank: false,								
+					margin: '0 0 5 0',
+					editable: false,
+					typeAhead: false,
+					width: '100%',
+					fieldLabel: 'Workflow <span class="field-required" />',
+					storeConfig: {
+						url: 'api/v1/resource/lookuptypes/MediaType'
+					}
+		}));
 		
-		evalForm.add(version);
+		evalForm.add(formItems);
 	},
 	
 	loadData: function(evaluationId, componentId, data, opts) {

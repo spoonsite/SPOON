@@ -23,6 +23,9 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistRecommendation;
+import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationComment;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
@@ -407,6 +410,170 @@ public class EvalulationResource
 			if (response == null) {
 				evaluationComment.delete();
 				response = Response.noContent().build();
+			}
+		}
+		return response;
+	}
+
+	//update evaluation informaion (version)
+	@PUT
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationChecklist.class)
+	@APIDescription("Update a checklist for an evaluation")
+	@Path("/{evaluationId}/checklist/{checklistId}")
+	public Response updateEvaluationChecklist(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("checklistId") String checklistId,
+			EvaluationChecklist evaluationChecklist
+	)
+	{
+		EvaluationChecklist existing = new EvaluationChecklist();
+		existing.setEvaluationId(evaluationId);
+		existing.setChecklistId(checklistId);
+		existing = existing.find();
+		if (existing != null) {
+			ValidationResult result = evaluationChecklist.validate(true);
+			if (result.valid()) {
+				existing.updateFields(evaluationChecklist);
+				existing = existing.save();
+				return Response.ok(existing).build();
+			} else {
+				return Response.ok(result.toRestError()).build();
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	@PUT
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationChecklistResponse.class)
+	@APIDescription("Update a checklist response for an evaluation")
+	@Path("/{evaluationId}/checklist/{checklistId}/responses/{responseId}")
+	public Response updateChecklistResponse(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("checklistId") String checklistId,
+			@PathParam("responseId") String responseId,
+			EvaluationChecklistResponse checklistResponse
+	)
+	{
+		//check owner of checklist
+		EvaluationChecklist checklist = new EvaluationChecklist();
+		checklist.setEvaluationId(evaluationId);
+		checklist.setChecklistId(checklistId);
+		checklist = checklist.find();
+		if (checklist != null) {
+			EvaluationChecklistResponse existing = new EvaluationChecklistResponse();
+			existing.setChecklistId(checklistId);
+			existing.setResponseId(responseId);
+			existing = existing.find();
+			if (existing != null) {
+				ValidationResult result = checklistResponse.validate();
+				if (result.valid()) {
+					checklistResponse.setChecklistId(checklistId);
+					checklistResponse.setResponseId(responseId);
+					checklistResponse = checklistResponse.save();
+					return Response.ok(checklistResponse).build();
+				} else {
+					return Response.ok(result.toRestError()).build();
+				}
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	@POST
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationChecklistRecommendation.class)
+	@APIDescription("Adds a checklist recommendation for an evaluation")
+	@Path("/{evaluationId}/checklist/{checklistId}/recommendations")
+	public Response addChecklistRecommendation(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("checklistId") String checklistId,
+			EvaluationChecklistRecommendation recommendation
+	)
+	{
+		recommendation.setChecklistId(checklistId);
+		return handleSaveRecommendation(recommendation, true);
+	}
+
+	@PUT
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationChecklistRecommendation.class)
+	@APIDescription("Update a checklist for an evaluation")
+	@Path("/{evaluationId}/checklist/{checklistId}/recommendations/{recommendationId}")
+	public Response updateChecklistRecommendation(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("checklistId") String checklistId,
+			@PathParam("recommendationId") String recommendationId,
+			EvaluationChecklistRecommendation recommendation
+	)
+	{
+		EvaluationChecklist checklist = new EvaluationChecklist();
+		checklist.setEvaluationId(evaluationId);
+		checklist.setChecklistId(checklistId);
+		checklist = checklist.find();
+		if (checklist != null) {
+			EvaluationChecklistRecommendation existing = new EvaluationChecklistRecommendation();
+			existing.setChecklistId(checklistId);
+			existing.setRecommendationId(recommendationId);
+			existing = existing.find();
+			if (existing != null) {
+				recommendation.setChecklistId(checklistId);
+				recommendation.setRecommendationId(recommendationId);
+				return handleSaveRecommendation(recommendation, true);
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	private Response handleSaveRecommendation(EvaluationChecklistRecommendation recommendation, boolean post)
+	{
+		ValidationResult validationResult = recommendation.validate();
+
+		if (validationResult.valid()) {
+			recommendation = recommendation.save();
+			if (post) {
+				return Response.created(URI.create("v1/resource/evaluations/" + recommendation.getRecommendationId())).entity(recommendation).build();
+			} else {
+				return Response.ok(recommendation).build();
+			}
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
+	@DELETE
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Remove a recommendation.")
+	@Path("/{evaluationId}/checklist/{checklistId}/recommendations/{recommendationId}")
+	public Response deleteRecommendation(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("checklistId") String checklistId,
+			@PathParam("recommendationId") String recommendationId
+	)
+	{
+		Response response = Response.noContent().build();
+
+		EvaluationChecklist checklist = new EvaluationChecklist();
+		checklist.setEvaluationId(evaluationId);
+		checklist.setChecklistId(checklistId);
+		checklist = checklist.find();
+		if (checklist != null) {
+			EvaluationChecklistRecommendation existing = new EvaluationChecklistRecommendation();
+			existing.setChecklistId(checklistId);
+			existing.setRecommendationId(recommendationId);
+			existing = existing.find();
+			if (existing != null) {
+				existing.delete();
 			}
 		}
 		return response;

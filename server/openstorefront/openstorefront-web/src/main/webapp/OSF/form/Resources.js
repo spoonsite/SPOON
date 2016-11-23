@@ -341,7 +341,7 @@ Ext.define('OSF.form.Resources', {
 		
 		resourcePanel.add(resourcePanel.resourcesGrid);
 	},	
-	loadData: function(evalationId, componentId) {
+	loadData: function(evaluationId, componentId, data, opts) {
 		var resourcePanel = this;
 		
 		resourcePanel.componentId = componentId;
@@ -351,6 +351,7 @@ Ext.define('OSF.form.Resources', {
 			url: 'api/v1/resource/components/' + componentId + '/resources/view'
 		});
 		
+		opts.commentPanel.loadComments(evaluationId, "Resources", componentId);
 	}
 	
 });

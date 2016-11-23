@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global Ext, CoreService */
+/* global Ext, CoreService, CoreUtil */
 
 Ext.define('OSF.component.EvaluationPanel', {
 	extend: 'Ext.panel.Panel',
@@ -157,16 +157,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 						focusCls: 'evaluation-nav-button',
 						margin: '5 0 0 0'
 					},					
-					items: [
-						{							
-							text: 'Summary',							
-							handler: function(){
-								evalPanel.loadContentForm({
-									form: 'ChecklistSummary',
-									title: 'Checklist Summary'
-								});
-							}							
-						}										
+					items: [																
 					]
 				}
 			]
@@ -260,7 +251,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 												var update = '';		
 												if (data.commentId) {
 													method = 'PUT',
-													update = '/' + data.commentId 		
+													update = '/' + data.commentId;		
 												}
 												var evaluationId = evalPanel.commentPanel.lastLoadOpt.evaluationId;
 												var entity = evalPanel.commentPanel.lastLoadOpt.entity;
@@ -455,12 +446,12 @@ Ext.define('OSF.component.EvaluationPanel', {
 											} else {
 												tool.show();
 											}
-										})
+										});
 									}, this);
 									header.getEl().on('mouseout', function() {
 										header.getTools().forEach(function(tool) {
 											tool.hide();
-										})
+										});
 									}, this);
 								}
 							},							
@@ -692,6 +683,18 @@ Ext.define('OSF.component.EvaluationPanel', {
 						var evaluationAll = Ext.decode(response.responseText);
 
 						var questions = [];
+						
+						questions.push({							
+							text: 'Summary',							
+							handler: function(){
+								evalPanel.loadContentForm({
+									form: 'ChecklistSummary',
+									title: 'Checklist Summary',
+									data: evaluationAll.checkListAll
+								});
+							}							
+						});
+						
 						questions.push({														
 							text: 'All Questions',							
 							handler: function(){

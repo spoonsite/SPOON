@@ -344,7 +344,7 @@ Ext.define('OSF.form.Contacts', {
 		contactPanel.add(contactPanel.contactGrid);
 		
 	},
-	loadData: function(evalationId, componentId) {
+	loadData: function(evaluationId, componentId, data, opts) {
 		var contactPanel = this;
 		
 		contactPanel.componentId = componentId;
@@ -354,6 +354,7 @@ Ext.define('OSF.form.Contacts', {
 			url: 'api/v1/resource/components/' + componentId + '/contacts/view'
 		});
 		
+		opts.commentPanel.loadComments(evaluationId, "Contacts", componentId);
 	}
 	
 });

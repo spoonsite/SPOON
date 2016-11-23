@@ -276,7 +276,7 @@ Ext.define('OSF.form.Attributes', {
 
 		attributePanel.add(attributePanel.attributeGrid);
 	},	
-	loadData: function(evalationId, componentId) {
+	loadData: function(evaluationId, componentId, data, opts) {
 		//just load option (filter out required)
 		var attributePanel = this;
 		
@@ -284,6 +284,7 @@ Ext.define('OSF.form.Attributes', {
 		attributePanel.attributeGrid.componentId = componentId;
 		attributePanel.loadComponentAttributes();
 		
+		opts.commentPanel.loadComments(evaluationId, "Attribute", componentId);
 	}
 	
 });

@@ -80,18 +80,9 @@ Ext.define('OSF.form.Review', {
 						}
 					}
 				},
-				{ text: 'Evaluation Item', align: 'center', dataIndex: 'entity', width: 200,
-					xtype: 'widgetcolumn',
-					widget: {
-						xtype: 'button',						
-						handler: function(){
-							
-						}
-					},
-					onWidgetAttach: function (column, widget, record) {
-						if (record.get('entity') === 'Evaluation') {
-							widget.setText('Evaluation');
-						}
+				{ text: 'Evaluation Item', dataIndex: 'entity', width: 200,				
+					renderer: function(value) {
+						return '<b>'+ value + '</b>';
 					}
 				},
 				{ text: 'Comment', dataIndex: 'comment', flex: 1, minWidth: 250, cellWrap: true },
@@ -307,6 +298,7 @@ Ext.define('OSF.form.Review', {
 			
 		};
 		
+		
 		reviewForm.add(reviewForm.grid);
 	},
 	loadData: function(evaluationId, componentId, data, opts) {
@@ -317,8 +309,8 @@ Ext.define('OSF.form.Review', {
 			url: 'api/v1/resource/evaluations/' + evaluationId + '/comments'
 		});
 		reviewForm.user = opts.user;
-		
-		opts.commentPanel.loadComments(evaluationId, null, null);
+		reviewForm.mainForm = opts.mainForm;
+	
 	}
 });
 

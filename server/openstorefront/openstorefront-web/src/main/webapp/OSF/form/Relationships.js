@@ -212,7 +212,7 @@ Ext.define('OSF.form.Relationships', {
 		
 		relationshipPanel.add(relationshipPanel.relationshipsGrid);
 	},
-	loadData: function(evalationId, componentId) {
+	loadData: function(evaluationId, componentId, data, opts) {
 		//just load option (filter out required)
 		var relationshipPanel = this;
 		
@@ -222,6 +222,8 @@ Ext.define('OSF.form.Relationships', {
 		relationshipPanel.relationshipsGrid.getStore().load({
 			url: 'api/v1/resource/components/' + componentId + '/relationships'
 		});
+		
+		opts.commentPanel.loadComments(evaluationId, "Relationships", componentId);
 	}	
 	
 });

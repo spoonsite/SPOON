@@ -36,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
+import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -109,7 +110,7 @@ public class EvaluationServiceImpl
 			EvaluationChecklistRecommendation recommendation = new EvaluationChecklistRecommendation();
 			recommendation.setChecklistId(checklistId);
 			recommendation.setActiveStatus(EvaluationChecklistRecommendation.ACTIVE_STATUS);
-			checklistAll.getRecommendations().addAll(recommendation.findByExample());
+			checklistAll.getRecommendations().addAll(EvaluationChecklistRecommendationView.toView(recommendation.findByExample()));
 
 			EvaluationChecklistResponse response = new EvaluationChecklistResponse();
 			response.setChecklistId(checklistId);

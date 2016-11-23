@@ -231,7 +231,7 @@ Ext.define('OSF.form.Dependencies', {
 		dependanciesPanel.add(dependanciesPanel.dependenciesGrid);
 		
 	},
-	loadData: function(evalationId, componentId) {
+	loadData: function(evaluationId, componentId, data, opts) {
 		var dependanciesPanel = this;
 		
 		dependanciesPanel.componentId = componentId;
@@ -240,6 +240,8 @@ Ext.define('OSF.form.Dependencies', {
 		dependanciesPanel.dependenciesGrid.getStore().load({
 			url: 'api/v1/resource/components/' + componentId + '/dependencies/view'
 		});	
+		
+		opts.commentPanel.loadComments(evaluationId, "Dependencies", componentId);
 	}
 	
 });

@@ -27,7 +27,7 @@ Ext.define('OSF.form.Section', {
 		var sectionForm = this;
 		
 	},
-	loadData: function(evalationId, componentId, data) {
+	loadData: function(evaluationId, componentId, data, opts) {
 	
 		var sectionForm = this;
 		
@@ -186,6 +186,8 @@ Ext.define('OSF.form.Section', {
 		if (data.section.privateSection) {
 			sectionForm.setTitle("PRIVATE");
 		}
+		
+		opts.commentPanel.loadComments(evaluationId, data.section.title, componentId);
 	}
 	
 });

@@ -17,8 +17,8 @@ package edu.usu.sdl.openstorefront.core.model;
 
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
-import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistRecommendation;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
+import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +31,8 @@ public class ChecklistAll
 
 	private EvaluationChecklist evaluationChecklist;
 
-	@DataType(EvaluationChecklistRecommendation.class)
-	private List<EvaluationChecklistRecommendation> recommendations = new ArrayList<>();
+	@DataType(EvaluationChecklistRecommendationView.class)
+	private List<EvaluationChecklistRecommendationView> recommendations = new ArrayList<>();
 
 	@DataType(ChecklistResponseView.class)
 	private List<ChecklistResponseView> responses = new ArrayList<>();
@@ -51,12 +51,12 @@ public class ChecklistAll
 		this.evaluationChecklist = evaluationChecklist;
 	}
 
-	public List<EvaluationChecklistRecommendation> getRecommendations()
+	public List<EvaluationChecklistRecommendationView> getRecommendations()
 	{
 		return recommendations;
 	}
 
-	public void setRecommendations(List<EvaluationChecklistRecommendation> recommendations)
+	public void setRecommendations(List<EvaluationChecklistRecommendationView> recommendations)
 	{
 		this.recommendations = recommendations;
 	}

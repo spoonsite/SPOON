@@ -39,7 +39,14 @@ public class Evaluation
 	@ConsumeField
 	@NotNull
 	@FK(Component.class)
+	@APIDescription("Id of the change request")
 	private String componentId;
+
+	@ConsumeField
+	@NotNull
+	@FK(Component.class)
+	@APIDescription("Id of the entry")
+	private String originComponentId;
 
 	@ConsumeField
 	@NotNull
@@ -151,6 +158,16 @@ public class Evaluation
 	public void setTemplateId(String templateId)
 	{
 		this.templateId = templateId;
+	}
+
+	public String getOriginComponentId()
+	{
+		return originComponentId;
+	}
+
+	public void setOriginComponentId(String originComponentId)
+	{
+		this.originComponentId = originComponentId;
 	}
 
 }

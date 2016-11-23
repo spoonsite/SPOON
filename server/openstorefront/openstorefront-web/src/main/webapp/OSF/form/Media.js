@@ -365,7 +365,7 @@ Ext.define('OSF.form.Media', {
 		
 		mediaPanel.add(mediaPanel.mediaGrid);
 	},
-	loadData: function(evalationId, componentId) {
+	loadData: function(evaluationId, componentId, data, opts) {
 		var mediaPanel = this;
 		
 		mediaPanel.componentId = componentId;
@@ -375,6 +375,7 @@ Ext.define('OSF.form.Media', {
 			url: 'api/v1/resource/components/' + componentId + '/media/view'
 		});		
 		
+		opts.commentPanel.loadComments(evaluationId, "Media", componentId);
 	}
 	
 });
