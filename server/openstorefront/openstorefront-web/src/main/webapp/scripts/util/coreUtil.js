@@ -393,6 +393,8 @@ var CoreUtil = {
 			skin: 'openstorefront',
 			toolbar_items_size: 'small',
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
+			+ ' table[class] td[class] th[class] tr[class]',
+			table_default_styles: { border: 'solid 1px #ddd' }
 		};
 
 		if (additionalPlugins) {
@@ -423,8 +425,10 @@ var CoreUtil = {
 			statusbar: false,
 			skin: 'openstorefront',
 			toolbar_items_size: 'small',
-			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
-
+			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]' 
+			+ ' table[class] td[class] th[class] tr[class]',
+			table_default_styles: { border: 'solid 1px #ddd' }
+			
 		};
 
 		if (additionalPlugins) {
