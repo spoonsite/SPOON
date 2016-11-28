@@ -91,16 +91,16 @@ limitations under the License.
 		<div id="nav" class="test-guide" >
 			<ul>
 				<li>
-					<a href="javascript:i=0;" onclick="runTest('');" >Run All Tests</a>
+					<a onclick="runTest('');" style="cursor: pointer">Run All Tests</a>
 					<hr>
 				</li>				
 			<c:forEach var="testSuite" items="${actionBean.testSuites}">
 				<li>
-					<a href="javascript:i=0;" onclick="runTest('&suite=${testSuite.name}');" >${testSuite.name}</a>
+					<a onclick="runTest('&suite=${testSuite.name}');" style="cursor: pointer">${testSuite.name}</a>
 					<ul>	
 					<c:forEach var="item" items="${testSuite.tests}">						
 						<li>
-							<a href="javascript:i=0;" onclick="runTest('&suite=${testSuite.name}&test=${item.description}');" >${item.description}</a>
+							<a onclick="runTest('&suite=${testSuite.name}&test=${item.description}');" style="cursor: pointer">${item.description}</a>
 						</li>	
 					</c:forEach>					
 					</ul>
