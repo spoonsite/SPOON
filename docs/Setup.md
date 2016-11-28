@@ -1,10 +1,10 @@
 
 # Setup Guide
 
-#4.  Installation
+#1.  Installation
  -----
 
-##4.1  High level instructions for a fresh install
+##1.1  High level instructions for a fresh install
 -------------------------------------------
 
 Prior to the install, setup an Elasticsearch *OR* Solr instance and make sure it's
@@ -26,7 +26,7 @@ running. Then, perform the following steps:
 
 8.  Import data
 
-##4.2  Suggested VM Configuration
+##1.2  Suggested VM Configuration
 --------------------------
 
 The following is the recommended VM configuration:
@@ -47,7 +47,7 @@ The following is the recommended VM configuration:
 
     -   DISK: 20GB
 
-##4.3  Platform Dependencies
+##1.3  Platform Dependencies
 ---------------------
 
 The Storefront is dependent upon:
@@ -56,7 +56,7 @@ The Storefront is dependent upon:
 
 -   Tomcat 7 v50+
 
-##4.4  External Dependencies
+##1.4  External Dependencies
 ---------------------
 
 The Storefront relies upon the following external dependencies:
@@ -72,7 +72,7 @@ The Storefront relies upon the following external dependencies:
 *Support for ESA 1.0 and Solr 4.3.1 has been dropped*
 
 
-###4.4.1 To Use Solr
+###1.4.1 To Use Solr
 
 (The following assumes the application is stop prior to the change. To change on a running application you need to restart the SearchServerManager after making changes.)
 
@@ -105,7 +105,7 @@ bin/solr start -p 8983
 
         b) Click Re-Index Listings
 
-###4.4.1.1 Installing as service linux
+###1.4.1.1 Installing as service linux
 run as sudo 
 
 1) ln -s /usr/local/solr/solr-6.1.0 latest
@@ -154,7 +154,7 @@ Save and exit
 > service solr start|stop  
 
 
-###4.4.3 To Use Elasticsearch 
+###1.4.3 To Use Elasticsearch 
 
 1. Download
 	[elasticsearch home]https://www.elastic.co/ (Apache v2 licensed)
@@ -178,7 +178,7 @@ Save and exit
 
         b) Click Re-Index Listings
   
-###4.4.3.1 Yum install of Elasticsearch 
+###1.4.3.1 Yum install of Elasticsearch 
 
 1. Download and install with YUM 
 https://www.elastic.co/downloads/elasticsearch (2.3.x) 
@@ -200,7 +200,7 @@ elastic.server.port=9300
     b) Click Re-Index Listings        
 
 
-###4.4.4 Updated Search Server at Runtime
+###1.4.4 Updated Search Server at Runtime
 
 1. Use Admin->Application Management->System to set the system config properties 
 
@@ -208,14 +208,14 @@ elastic.server.port=9300
 
 
 
-##4.5  System Setup
+##1.5  System Setup
 ------------
 
 Unless otherwise noted, run as sudo.
 
 **NOTE:** You can use Nano or another text editor.
 
-###4.5.1 Install Java
+###1.5.1 Install Java
 
 Use the following steps to install Java.
 
@@ -271,7 +271,7 @@ Use the following steps to install Java.
 
 8.  Confirm that java -version runs
 
-###4.5.2 Install Tomcat Public Package
+###1.5.2 Install Tomcat Public Package
 ------
 
 Use the following steps to install the Tomcat public package.
@@ -375,7 +375,7 @@ memory affects the amount of concurrent users the server can support.
 
 >7\. Open port iptables -I INPUT -p tcp --dport 8080 -j ACCEPT
 
-###4.5.3 Install Tomcat Using JPackage
+###1.5.3 Install Tomcat Using JPackage
 -----
 
 Use the following steps to install Tomcat using JPackage
@@ -392,7 +392,7 @@ library is old and doesn't work with JDK1.8 ; however, this is easily
 corrected. Download 7.0.54 from apache.org and replace ecj-xxx.jar in
 tomcat/lib directory with ecj-xxx.jar from the 7.0.54 version.
 
-###4.5.4 Server Control
+###1.5.4 Server Control
 ----
 
 Use the following commands to control the server.
@@ -409,13 +409,13 @@ Use the following commands to control the server.
 > **NOTE:** Using this is not recommended as it not always successful
 > due the script not waiting for shutdown.
 
-##4.6 Deploying application
+##1.6 Deploying application
 ---------------------
 
 To deploy the application, copy openstorefront.war to
 /usr/local/tomcat/latest/webapps
 
-##4.7 Application Configuration
+##1.7 Application Configuration
 -------------------------
 
 The application configuration and data are stored in
@@ -501,12 +501,12 @@ b.  Edit shiro.ini under the config directory
 >
 >> \#admin = administrator
 
-###4.7.1 Open AM Notes:
+###1.7.1 Open AM Notes:
 -------------
 If when setting Open AM up with certificates you may need to use a truststore on openstorefront tomcat.  If so, remember to update the certificates in the truststore when the certificate changes.  Open AM, Openstorefront, and proxy if used will all need to have valid matching certificates.
 
 
-##4.8 Importing Data
+##1.8 Importing Data
 --------------
 
 Import data using the following steps.
@@ -519,13 +519,13 @@ Import data using the following steps.
     a new install, no attributes, articles or components are loaded.
     They can be entered or imported using the application admin tools.
 
-##4.9  Logging Notes
+##1.9  Logging Notes
 -------------
 
 You can view the logs messages in the Catalina log file:
 /usr/local/tomcat/latest/logs
 
-###4.9.1 Log Level Definitions
+###1.9.1 Log Level Definitions
 -------
 
 See the following table for the log definitions.
@@ -537,7 +537,7 @@ See the following table for the log definitions.
 -  **FINER**     -  Detailed developer messages
 -  **FINEST**    -  Trace information
 
-###4.10 Setup OpenAM
+###1.10 Setup OpenAM
 ------------
 
 See the example below for OpenAM setup. Your configuration may be
@@ -550,7 +550,7 @@ are unable will not work, if the container was started prior to OpenAM).
 application server will not start unless the OpenAM server is available.
 This is a known issue with the OpenAM Policy agent.
 
-###4.10.1 Versions Used
+###1.10.1 Versions Used
 ------
 
 The following versions were used:
@@ -570,7 +570,7 @@ The following versions were used:
 
 -   64 bit JRE 1.7.0\_67-b01
 
-###4.10.2 Installation of OpenAM Java EE Policy Agent into Tomcat 7.0.55
+###1.10.2 Installation of OpenAM Java EE Policy Agent into Tomcat 7.0.55
 --------
 
 Use the following steps to install OpenAM Java EE Policy Agent on
@@ -591,21 +591,21 @@ Tomcat.
 
 7.  Execute agentadmin --install to install the agent
 
-###4.10.3 References
+###1.10.3 References
 ------
 
 -   <http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/jee-install-guide/index/chap-apache-tomcat.html>
 
 -   <http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/jee-install-guide/#chap-apache-tomcat>
 
-###4.10.4 Configuration of OpenAM
+###1.10.4 Configuration of OpenAM
 ------
 
 See
 [Open AM Getting Started](http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/getting-started/)
 for OpenAM configuration information.
 
-###4.10.5 Configure the Policy in OpenAM
+###1.10.5 Configure the Policy in OpenAM
 -------
 
 Use the following steps to configure the OpenAM policy.
@@ -648,7 +648,7 @@ Use the following steps to configure the OpenAM policy.
 
 >>-   Click on **Finish**
 
-###4.10.6 Creating the Agent Profile
+###1.10.6 Creating the Agent Profile
 -----
 
 Use the following steps to create the agent profile.
