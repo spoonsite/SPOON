@@ -88,6 +88,8 @@ following steps:
 3.  Start server
 bin/solr start -p 8983 
 
+http://localhost:8983 should bring up the admin consol if it's working.
+
 4.  Configure OpenStorefront to point to Solr by going to:
     /var/openstorefront/config/openstorefront.properties
 
@@ -161,6 +163,8 @@ Save and exit
 
 2. Start
 	<elasticsearch>/bin/elasticsearch
+	
+http://localhost:9200 should return some json with stats.
 
 3. Configure OpenStorefront to point to Solr by going to: /var/openstorefront/config/openstorefront.properties or System admin screen
 
@@ -185,6 +189,8 @@ https://www.elastic.co/downloads/elasticsearch (2.3.x)
 (see https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-repositories.html for yum install instructions) 
 
 2. service elasticsearch start 
+
+http://localhost:9200 should return some json with stats.
 
 3. Configure OpenStorefront to point to elastisearch by going to: /var/openstorefront/config/openstorefront.properties or System admin screen->system properties 
 
