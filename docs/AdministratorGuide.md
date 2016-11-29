@@ -317,8 +317,9 @@ the application.
 
 3.  Run the console ./bin/console.sh 
 
-4.  Connect to the DB: connect remote: localhost/openstorefront
-    (user) (password) (see the
+4.  Connect to the DB: 
+
+connect remote: localhost/openstorefront (user) (password) (see the
     /var/openstorefront/config/openstorefront.properties for
     connection information)
 
