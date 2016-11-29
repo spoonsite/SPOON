@@ -48,6 +48,18 @@ The server build environment relies on the following platforms/tools:
   -  **Java**     -            Core language and platform
   -  **Maven**   -            Used for the project structure, building and dependency management
 
+##2.3 Storage Details
+-----
+
+![storage](images/storage.png)
+
+**File System**  - Holds configuration, resources, media, imports, reports and plugins.  By default under: /var/openstorefront it can be changed by setting the system property -Dapplication.datadir=<directory> on the command line. 
+
+**Solr or Elasticsearch** - Use to do fuzzy index searches across the entries.  It's kept in sync by the application.
+
+**Database** - Holds all entry data and application data. 
+
+
 #3. Runtime Environment
 -----
 
