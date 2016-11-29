@@ -531,6 +531,8 @@ Import data using the following steps.
 You can view the logs messages in the Catalina log file:
 /usr/local/tomcat/latest/logs
 
+Also, an admin can turn on DB logging from the System admin screen by default DB logging is off.  It’s on recommended to turn on DB logging for specific troubleshooting and turn off when done.
+
 ###1.9.1 Log Level Definitions
 -------
 
@@ -550,7 +552,7 @@ See the example below for OpenAM setup. Your configuration may be
 different.
 
 (See https://bugster.forgerock.org/jira/browse/OPENAM-211: J2EE agents
-are unable will not work, if the container was started prior to OpenAM).
+are unable and will not work, if the container was started prior to OpenAM).
 
 **NOTE:** When the OpenAM policy agent is installed on Tomcat, the
 application server will not start unless the OpenAM server is available.
@@ -617,7 +619,7 @@ for OpenAM configuration information.
 Use the following steps to configure the OpenAM policy.
 
 1.  Open up OpenAM in a web
-    browser http://c00788.usurf.usu.edu:8080/openam
+    browser http://<host>:8080/openam
 
 2.  Log into OpenAM using amadmin
 
@@ -635,7 +637,7 @@ Use the following steps to configure the OpenAM policy.
 
 >>>-   Name: Allow Storefront Access
 
->>>-   Resource Name: http://c00788.usurf.usu.edu:8081/agentsample/
+>>>-   Resource Name: http://<host>:8081/agentsample/
 
 >>>-   Check the boxes for GET and POST
 
@@ -660,7 +662,7 @@ Use the following steps to configure the OpenAM policy.
 Use the following steps to create the agent profile.
 
 1.  Open up OpenAM in a web
-    browser http://c00788.usurf.usu.edu:8080/openam
+    browser http://<host>:8080/openam
 
 2.  Log into OpenAM using amadmin
 
@@ -678,6 +680,6 @@ Use the following steps to create the agent profile.
 
 >-   Configuration: Centralized
 
->-   Server URL: http://c00788.usurf.usu.edu:8080/openam
+>-   Server URL: http://<host>:8080/openam
 
->-   Agent URL: http://c00788.usurf.usu.edu:8081/agentsample
+>-   Agent URL: http://<host>:8081/agentsample
