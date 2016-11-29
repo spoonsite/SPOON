@@ -264,10 +264,10 @@ Configure in: /var/openstorefront/config/openstorefront.properties
 -  **dblog.logSecurityFilter**  -            Log security API audit records; Note: setting this to true can cause noise when using the application log viewer.                                                          ( **False** )
 -  **jirafeedback.show** - Allows users to provide jira feedback (True/False) ( **True** )
 -  **filehistory.max.days** - Sets the max days to keep file history ( **180** )
--  **notification.max.days** - Set the max days to keep nofitication messages ( **7** )
+-  **notification.max.days** - Set the max days to keep notification messages ( **7** )
 -  **feedback.email** - Email address to send feedback to
--  **ui.idletimeout.minutes** - Set to a value > 1 to have the UI popup a idle warning about there session (Default is the application tries to keep the session alive.)
--  **ui.idlegraceperiod.minutes** -Set this to configure the grace period for the tdle timeout. After the message appears.
+-  **ui.idletimeout.minutes** - Set to a value > 1 to have the UI popup a idle warning about their session (Default is the application tries to keep the session alive.)
+-  **ui.idlegraceperiod.minutes** -Set this to configure the grace period for the idle timeout. After the message appears.
 
 #3. Database Management
 -----
