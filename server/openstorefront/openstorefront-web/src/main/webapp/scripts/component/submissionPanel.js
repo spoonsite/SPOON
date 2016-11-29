@@ -611,6 +611,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 								valueField: 'attributeType',
 								displayField: 'description',
 								store: Ext.create('Ext.data.Store', {
+									sorters: [
+										{
+											property: 'description',
+											direction: 'ASC'
+										}
+									],
 									fields: [
 										"attributeType",
 										"description"
@@ -618,19 +624,40 @@ Ext.define('OSF.component.SubmissionPanel', {
 									data: submissionPanel.optionalAttributes
 								}),
 								listeners: {
+									
 									change: function (field, newValue, oldValue, opts) {
+										
+										// Clear Previously Selected Code
 										field.up('form').getComponent('attributeCodeCB').clearValue();
+										
+										// Reload Store
+										// (Ensure We Are Using The Latest Data)
+										field.getStore().reload();
 
+										// Get Selected Type
 										var record = field.getSelection();
+										
+										// Check For Selected Type
 										if (record) {
+											
+											// Load Codes For Type
 											field.up('form').getComponent('attributeCodeCB').getStore().loadData(record.data.codes);
+											
+											// Check For User-Generated Codes Being Enabled
 											if (record.get("allowUserGeneratedCodes")) {
+												
+												// Allow Editing Of ComboBox
 												field.up('form').getComponent('attributeCodeCB').setEditable(true);
-											} else {
+											}
+											else {
+												
+												// Disallow Editing Of ComboBox
 												field.up('form').getComponent('attributeCodeCB').setEditable(false);
 											}
+										}
+										else {
 											
-										} else {
+											// Nothing Selcted, Remove All Codes
 											field.up('form').getComponent('attributeCodeCB').getStore().removeAll();
 										}
 									}
@@ -648,6 +675,12 @@ Ext.define('OSF.component.SubmissionPanel', {
 								valueField: 'code',
 								displayField: 'label',
 								store: Ext.create('Ext.data.Store', {
+									sorters: [
+										{
+											property: 'label',
+											direction: 'ASC'
+										}
+									],
 									fields: [
 										"code",
 										"label"
@@ -686,33 +719,63 @@ Ext.define('OSF.component.SubmissionPanel', {
 												});
 
 												if (!found) {
-													// Generate a new code
-													var url = 'api/v1/resource/attributes/attributetypes/';
-													url += data.type + '/attributecodes/user';
+													
+													// Configure Attribute Code URL
+													var url = 'api/v1/resource/attributes/attributetypes/' + data.type + '/attributecodes/user';
+													
+													// Build Request Data
 													var data = {
+														
 														codeLabel: code
-													};	
+													};
+													
+													// Make Request
 													Ext.Ajax.request({
 														url: url,
 														method: 'POST',
 														jsonData: data,
 														success: function(response, opts) {
+															
+															// Inform User Of Success
 															Ext.toast('Successfully generated attribute code.', '', 'tr');
-															var newAttributeCode = Ext.decode(response.responseText);
-															// Compile new attribute code into store format
-															var savedCode = newAttributeCode.attributeCodePk.attributeCode;
-															var description = code;
+															
+															// Parse API Response
+															var responseText = Ext.decode(response.responseText);
+
+															// Compile Saved Code Into Object
+															var newCode = {
+																
+																code: responseText.attributeCodePk.attributeCode,
+																label: code
+															};
+															
 															// Add to store
-															var newSelection = store.add({
-																code: savedCode,
-																description: description
-															});
+															var newSelection = store.add(newCode);
+															
+															// Loop Through Types
+															for (i = 0; submissionPanel.optionalAttributes.length; i++) {
+																
+																// Check For Matching Type
+																if (type.data.attributeType === submissionPanel.optionalAttributes[i].attributeType &&
+																	type.data.description === submissionPanel.optionalAttributes[i].description) {
+																	
+																	// Add Code to Type
+																	submissionPanel.optionalAttributes[i].codes.push(newCode);
+																	
+																	// Stop Looping
+																	break;
+																}
+															}
+															
 															// Select the new code
-															var type = form.getComponent('attributeCodeCB').select(newSelection);
+															form.getComponent('attributeCodeCB').select(newSelection);
+															
 															// Recurse!
 															addWindow.down('toolbar').getComponent('saveButton').fireHandler();
 														},
 														failure: function(response, opts) {
+															
+															// Inform User Of Failure
 															Ext.MessageBox.show({
 																title:'Failed to Save',
 																message: 'Failed to generate the new attribute code. Try again or use an existing attribute code.',
@@ -721,6 +784,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 															});
 														}
 													});
+													
 													return;
 												}
 												
