@@ -55,11 +55,12 @@ public class HTMLSanitizer
 					.addAttributes("source", "src", "type", "media")
 					.addAttributes("track", "src", "label", "kind", "srclang", "default")
 					.addAttributes("q", "cite")
-					.addAttributes("table", "summary", "width", "height", "border", "align", "cellspacing", "cellpadding", "bgcolor", "bordercolor")
-					.addAttributes("td", "abbr", "axis", "colspan", "rowspan", "width")
+					.addAttributes("table", "summary", "width", "height", "border", "align", "cellspacing", "cellpadding", "bgcolor", "bordercolor", "class")
+					.addAttributes("td", "abbr", "axis", "colspan", "rowspan", "width", "class")
 					.addAttributes(
 							"th", "abbr", "axis", "colspan", "rowspan", "scope",
-							"width")
+							"width", "class")
+					.addAttributes("tr", "class")
 					.addAttributes("ul", "type")
 					//.addProtocols("a", "href", "ftp", "http", "https", "mailto")
 					.addProtocols("blockquote", "cite", "http", "https")
