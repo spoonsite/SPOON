@@ -619,7 +619,7 @@ for OpenAM configuration information.
 Use the following steps to configure the OpenAM policy.
 
 1.  Open up OpenAM in a web
-    browser http://<host>:8080/openam
+    browser http://(host):8080/openam
 
 2.  Log into OpenAM using amadmin
 
@@ -637,7 +637,7 @@ Use the following steps to configure the OpenAM policy.
 
 >>>-   Name: Allow Storefront Access
 
->>>-   Resource Name: http://<host>:8081/agentsample/
+>>>-   Resource Name: http://(host):8081/agentsample/
 
 >>>-   Check the boxes for GET and POST
 
@@ -662,7 +662,7 @@ Use the following steps to configure the OpenAM policy.
 Use the following steps to create the agent profile.
 
 1.  Open up OpenAM in a web
-    browser http://<host>:8080/openam
+    browser http://(host):8080/openam
 
 2.  Log into OpenAM using amadmin
 
@@ -680,6 +680,6 @@ Use the following steps to create the agent profile.
 
 >-   Configuration: Centralized
 
->-   Server URL: http://<host>:8080/openam
+>-   Server URL: http://(host):8080/openam
 
->-   Agent URL: http://<host>:8081/agentsample
+>-   Agent URL: http://(host):8081/agentsample
