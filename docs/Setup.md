@@ -156,7 +156,7 @@ Save and exit
 > service solr start|stop  
 
 
-###1.4.3 To Use Elasticsearch 
+###1.4.2 To Use Elasticsearch 
 
 1. Download
 	[elasticsearch home]https://www.elastic.co/ (Apache v2 licensed)
@@ -182,7 +182,7 @@ http://localhost:9200 should return some json with stats.
 
         b) Click Re-Index Listings
   
-###1.4.3.1 Yum install of Elasticsearch 
+###1.4.2.1 Yum install of Elasticsearch 
 
 1. Download and install with YUM 
 https://www.elastic.co/downloads/elasticsearch (2.3.x) 
@@ -206,7 +206,7 @@ elastic.server.port=9300
     b) Click Re-Index Listings        
 
 
-###1.4.4 Updated Search Server at Runtime
+###1.4.3 Updated Search Server at Runtime
 
 1. Use Admin->Application Management->System to set the system config properties 
 
