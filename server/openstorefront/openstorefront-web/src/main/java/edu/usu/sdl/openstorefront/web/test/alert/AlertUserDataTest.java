@@ -102,7 +102,9 @@ public class AlertUserDataTest extends BaseTestCase
 		List<UserMessage> userMessages = userMessage.findByExample();
 		boolean alertIdsEqual = false;
 		for (UserMessage message : userMessages) {
-			if (message.getAlertId().equals(alertUserDataTag.getAlertId())) {
+			if (message.getUserMessageType().equals(AlertType.USER_DATA) &&
+					message.getAlertId().equals(alertUserDataTag.getAlertId())) {
+				
 				alertIdsEqual = true;
 				messageId = message.getUserMessageId();
 			}
