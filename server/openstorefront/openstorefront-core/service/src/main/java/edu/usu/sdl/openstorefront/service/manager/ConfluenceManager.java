@@ -28,11 +28,10 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 public class ConfluenceManager
 		implements Initializable
 {
+
 	private static final Logger log = Logger.getLogger(ConfluenceManager.class.getName());
 	private static Client client;
 
-	
-	
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static void init()
@@ -86,5 +85,5 @@ public class ConfluenceManager
 	{
 		ConfluenceManager.started = started;
 	}
-	
+
 }

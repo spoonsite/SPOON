@@ -61,8 +61,7 @@ public class TaskThreadExecutor
 	private static final int MAX_ORPHAN_QUEUE_TIME = 60000;
 
 	private static List<TaskFuture> tasks = Collections.synchronizedList(new ArrayList<>());
-        
-        private static Queue<TaskRequest> queue = new ConcurrentLinkedQueue<>();
+	private static Queue<TaskRequest> queue = new ConcurrentLinkedQueue<>();
 
 	public TaskThreadExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue)
 	{
@@ -79,11 +78,10 @@ public class TaskThreadExecutor
 				if (taskFuture.getFuture().equals(future)) {
 					taskFuture.setCompletedDts(TimeUtil.currentDate());
 					taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.DONE);
-                                        
-                                        if (taskFuture.isQueueable()) {
 
-                                                this.submitTask(queue.poll());
-                                        }
+					if (taskFuture.isQueueable()) {
+						this.submitTask(queue.poll());
+					}
 
 					try {
 						future.get();
@@ -226,15 +224,12 @@ public class TaskThreadExecutor
 			for (TaskFuture taskFuture : currentTasks) {
 				if (taskFuture.getTaskName().equals(taskRequest.getName())
 						&& OpenStorefrontConstant.TaskStatus.WORKING.equals(taskFuture.getStatus())) {
-                                    
-                                        if (taskRequest.isQueueable()) {
 
-                                            queue.add(taskRequest);
-                                        }
-
-                                        runJob = false;
-
-                                        break;
+					if (taskRequest.isQueueable()) {
+						queue.add(taskRequest);
+					}
+					runJob = false;
+					break;
 				}
 			}
 		}
@@ -243,7 +238,7 @@ public class TaskThreadExecutor
 		if (runJob) {
 			Future future = submit(taskRequest.getTask());
 			taskFuture = new TaskFuture(future, TimeUtil.currentDate(), taskRequest.isAllowMultiple());
-                        taskFuture.setQueueable(taskRequest.isQueueable());
+			taskFuture.setQueueable(taskRequest.isQueueable());
 			taskFuture.setCreateUser(SecurityUtil.getCurrentUserName());
 			taskFuture.setDetails(taskRequest.getDetails());
 			taskFuture.setTaskData(taskRequest.getTaskData());

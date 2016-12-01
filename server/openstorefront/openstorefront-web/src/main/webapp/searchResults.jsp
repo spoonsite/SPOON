@@ -397,7 +397,7 @@ limitations under the License.
 					},
 					Ext.create('OSF.component.StandardComboBox', {	
 						id: 'filterByType',
-						fieldLabel: 'By Topic',
+						fieldLabel: 'By Entry Type',
 						name: 'componentType',						
 						margin: '0 0 10 0',					
 						editable: false,

@@ -244,7 +244,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 		//  This is the panel tab for the topic search tool
 		//
 		var topicSearchPanel = Ext.create('Ext.panel.Panel', {
-			title: 'Topic',
+			title: 'Entry Type',
 			iconCls: 'fa fa-book',
 			layout: 'fit',
 			items: [
@@ -1002,7 +1002,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 
 		tabPanel.on('tabchange', function (tabpanel, newTab, oldtab, opts) {
 
-			if (newTab.getTitle() === 'Topic') {
+			if (newTab.getTitle() === 'Entry Type') {
 				topicTabProcessing(tabpanel, newTab, oldtab, opts);
 			} else if (newTab.getTitle() === 'Tag') {
 				tagTabProcessing(tabpanel, newTab, oldtab, opts);
@@ -1034,7 +1034,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 			setActiveTabByTitle("Category");
 		}
 		if (searchToolWin.showTopics) {
-			setActiveTabByTitle("Topic");
+			setActiveTabByTitle("Entry Type");
 		}
 		
 		searchToolWin.on('show', function(){

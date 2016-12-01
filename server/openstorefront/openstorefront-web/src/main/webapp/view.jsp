@@ -17,7 +17,7 @@ limitations under the License.
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
-		
+
 	<script src="scripts/component/templateBlocks.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/mediaViewer.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/relationshipVisualization.js?v=${appVersion}" type="text/javascript"></script>		

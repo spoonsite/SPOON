@@ -77,6 +77,9 @@ limitations under the License.
 	<script src="scripts/component/feedbackWindow.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/help.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/standardComponents.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="scripts/extension/tinymceExtensions.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="webjars/tinymcetextarea/5.1/tinymce/tinymce.min.js" type="text/javascript"></script>
+	<script src="webjars/tinymcetextarea/5.1/TinyMCETextArea.js" type="text/javascript"></script>	
 	
 	<title>${appTitle}</title>
         <stripes:layout-component name="html_head"/>

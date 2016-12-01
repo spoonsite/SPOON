@@ -40,7 +40,7 @@ Ext.define('OSF.component.template.BaseBlock', {
 
 Ext.define('OSF.component.template.Description', {
 	extend: 'OSF.component.template.BaseBlock',
-	alias: 'osf.widget.template.Description',
+	alias: 'osf.widget.template.Description',	
 	
 	showDescriptionHeader: true,
 	tpl: new Ext.XTemplate(
@@ -50,20 +50,7 @@ Ext.define('OSF.component.template.Description', {
 	),
 		
 	initComponent: function () {
-		this.callParent();
-		Ext.Loader.loadScript({
-			url: '/openstorefront/client/scripts/component/searchPopupResultsWindow.js',
-			scope: this,
-			onLoad: function() {
-				var ssPopupResultsWindow = Ext.create('OSF.component.SearchPopupResultsWindow', {
-					id: 'ssPopupResultsWindow',
-					alwaysOnTop: true
-				});
-			},
-			onError: function() {
-				var ssPopupResultsWindow = {};
-			}
-		});
+		this.callParent();				
 	},
 	
 	updateHandler: function(entry){
@@ -90,7 +77,7 @@ Ext.define('OSF.component.template.Description', {
 				if (item.getAttribute('href') && item.getAttribute('href').indexOf('searchResults.jsp') !== -1) {
 					var searchId = item.getAttribute('href').substr(item.getAttribute('href').indexOf('savedSearchId='), item.getAttribute('href').length);
 					searchId = searchId.replace('savedSearchId=', '');
-					item.set({'onclick': "Ext.getCmp('ssPopupResultsWindow').showResults('" + searchId + "'); return false;"});
+					item.set({'onclick': "CoreUtil.showSavedSearchWindow('" + searchId + "'); return false;"});
 				}	
 			});
 		}

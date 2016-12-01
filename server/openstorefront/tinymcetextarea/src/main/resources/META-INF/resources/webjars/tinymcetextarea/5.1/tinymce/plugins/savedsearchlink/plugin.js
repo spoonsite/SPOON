@@ -17,10 +17,11 @@
 
 tinymce.PluginManager.add('savedsearchlink', function(editor) {
 	editor.addCommand('InsertSavedSearchLink', function() {
-		Ext.getCmp('ssInsertWindow').show();
-		Ext.getCmp('ssInsertWindow').toFront();
-		Ext.WindowManager.bringToFront('ssInsertWindow');
-		Ext.getCmp('ssInsertWindow').editor = editor;
+		var insertWin = Ext.create('OSF.component.SavedSearchLinkInsertWindow', {				
+		});
+		insertWin.editor = editor;
+		insertWin.show();
+		insertWin.toFront();
 	});
 
 	editor.addButton('savedsearchlink', {

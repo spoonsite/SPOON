@@ -10,9 +10,6 @@
 <!DOCTYPE html>
 <stripes:layout-definition>
 	
-	<script src="webjars/tinymcetextarea/5.1/tinymce/tinymce.min.js" type="text/javascript"></script>
-	<script src="webjars/tinymcetextarea/5.1/TinyMCETextArea.js" type="text/javascript"></script>
-	
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */	
 		Ext.onReady(function(){

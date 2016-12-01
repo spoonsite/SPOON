@@ -25,7 +25,7 @@
 
 		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
 		</stripes:layout-render>
-		
+				
 		<script src="scripts/component/templateBlocks.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/mediaViewer.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/relationshipVisualization.js?v=${appVersion}" type="text/javascript"></script>		

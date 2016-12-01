@@ -183,19 +183,19 @@ limitations under the License.
 }
 
 .home-search-field {
-	font-size: 2.4em;
+	font-size: 2.6em;
 	line-height: 1.428571429;
 	color: #555555;
 	vertical-align: middle;
 	background-color: white;
 	background-image: none;
-	border: 1px solid #cccccc;
+	/* border: 1px solid #cccccc; */
 	/* border-left: 0px; */
 	border-right: 0px;	
-	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-	-webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;		
+	/* -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); */
+	/* box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); */
+	/* -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; */
+	/* transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; */
 }
 
 .home-search-stats {

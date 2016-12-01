@@ -812,5 +812,12 @@ var CoreUtil = {
 			return desc;
 		}
 		return '';
+	},
+	showSavedSearchWindow: function(searchId) {
+		var searchWin = Ext.create('OSF.component.SearchPopupResultsWindow', {					
+			closeAction: 'destroy',
+			alwaysOnTop: true
+		});
+		searchWin.showResults(searchId);
 	}
 };

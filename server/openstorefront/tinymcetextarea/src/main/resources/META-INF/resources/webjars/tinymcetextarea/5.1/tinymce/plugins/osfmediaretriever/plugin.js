@@ -17,6 +17,8 @@
 
 tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 
+	var mediaWindow;
+
 	var parseEditorContents = function parseEditorContents(editor) {
 		var el = document.createElement('html');
 		el.innerHTML = editor.getContent();
@@ -26,16 +28,16 @@ tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 
 	var task = new Ext.util.DelayedTask(function() {
 		var images = parseEditorContents(editor);
-		Ext.getStore('inlineMediaStore').removeAll();
+		mediaWindow.grid.getStore().removeAll();
 
 		if (images.length) {
 			for (var i=0;i<images.length;i++) {	
 				var url = images[i].src.trim();
 				if (url && url.indexOf('Media.action?') === -1) { 
 					if (!images[i].hasAttribute('data-storefront-ignore')) {
-						var store = Ext.getStore('inlineMediaStore');
+						var store = mediaWindow.grid.getStore();
 						if (store.find('url', url) === -1) {
-							Ext.getStore('inlineMediaStore').add({
+							store.add({
 								url: url,
 								result: 'Retrieving...',
 								status: 'RETR',
@@ -45,14 +47,16 @@ tinymce.PluginManager.add('osfmediaretriever', function(editor) {
 					}
 				}
 			}
-		}
-			
-		Ext.getCmp('inlineMediaWindow').processMedia(editor);
+		}			
+		mediaWindow.processMedia(editor);
 	});
 
-
 	editor.on('change', function(e) {
-		if (!Ext.getCmp('inlineMediaWindow').programmaticUpdate) {
+		if (!mediaWindow) {
+			mediaWindow = Ext.create('OSF.component.InlineMediaRetrieverWindow', {				
+			});
+		}
+		if (!mediaWindow.programmaticUpdate) {
 			task.delay(800);	
 		}
 	});
