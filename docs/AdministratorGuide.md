@@ -50,7 +50,7 @@ The focus of this document is for configuration.  See other guides for other top
 
 [Setup] (Setup.md)
 
-[Developer Guide] (DeveloperGuide.md)
+[Developer Guide] (DevelopersGuide.md)
 
 #2.  Configuration
 ------
