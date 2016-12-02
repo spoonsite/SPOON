@@ -19,7 +19,6 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.api.NotificationService;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
@@ -31,7 +30,6 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventWrapper;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -46,7 +44,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
-import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang3.StringUtils;
 
 /**
