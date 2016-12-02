@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -82,12 +82,17 @@ public class FilterQueryParams
 	@APIDescription("Accepted format: yyyy-MM-dd'T'HH:mm:ss.sss simple date format")
 	@QueryParam("end")
 	private DateParam endDts;
-	
+
 	@QueryParam("name")
 	@DefaultValue("")
 	@Size(min = 0, max = 255)
 	@Sanitize(TextSanitizer.class)
 	private String name;
+
+	@QueryParam("componentName")
+	@Size(min = 0, max = 255)
+	@Sanitize(TextSanitizer.class)
+	private String componentName;
 
 	@QueryParam("all")
 	@DefaultValue("false")
@@ -133,7 +138,7 @@ public class FilterQueryParams
 
 		return results;
 	}
-	
+
 	/**
 	 * This applies sorting with custom sorter and windowing.
 	 *
@@ -142,25 +147,26 @@ public class FilterQueryParams
 	 * @param sorter
 	 * @return
 	 */
-	public <T> List<T> filter(List<T> data, Comparator sorter) 
+	public <T> List<T> filter(List<T> data, Comparator sorter)
 	{
 		//sort
-		Collections.sort(data, sorter);		
+		Collections.sort(data, sorter);
 		List<T> results = windowData(data);
 
 		return results;
-	}	
+	}
 
 	/**
 	 * This applies just the windowing
+	 *
 	 * @param <T>
 	 * @param data
 	 * @return windowed data set
 	 */
-	public <T> List<T> windowData(List<T> data) 
+	public <T> List<T> windowData(List<T> data)
 	{
 		List<T> results = new ArrayList<>();
-		
+
 		//window
 		if (offset < data.size() && max > 0) {
 			int count = 0;
@@ -174,7 +180,7 @@ public class FilterQueryParams
 		}
 		return results;
 	}
-	
+
 	public int getMax()
 	{
 		return max;
@@ -224,7 +230,7 @@ public class FilterQueryParams
 	{
 		this.status = status;
 	}
-	
+
 	public String getName()
 	{
 		return name;
@@ -279,6 +285,16 @@ public class FilterQueryParams
 	public void setEndDts(DateParam endDts)
 	{
 		this.endDts = endDts;
+	}
+
+	public String getComponentName()
+	{
+		return componentName;
+	}
+
+	public void setComponentName(String componentName)
+	{
+		this.componentName = componentName;
 	}
 
 }

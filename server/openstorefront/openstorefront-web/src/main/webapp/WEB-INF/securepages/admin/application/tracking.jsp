@@ -181,7 +181,7 @@
 									handler: function () {
 										userViewMessage();
 									},
-									tooltip: 'View the message data',
+									tooltip: 'View the message data'
 								},
 								{
 									xtype: 'tbfill'
@@ -748,7 +748,8 @@
 						{
 							dock: 'top',
 							xtype: 'toolbar',
-							items: [{
+							items: [
+								{
 									xtype: 'textfield',
 									id: 'entry_user',
 									labelAlign: 'top',
@@ -764,7 +765,24 @@
 												}
 										}
 									}
-								},
+								},						
+								{
+									xtype: 'textfield',
+									id: 'filter_component_name',
+									labelAlign: 'top',
+									fieldLabel: 'Entry Name',
+									name: 'componentName',
+									listeners: {
+										change: {
+											buffer: 1000,
+											fn: function () {
+													if (Ext.getCmp('filter_component_name').getValue() !== null) {
+														processEntryDataFilter();
+													}
+												}
+										}
+									}
+								},								
 								{
 									xtype: 'datefield',
 									id: 'from_entry_date',
@@ -861,6 +879,7 @@
 					name = Ext.getCmp('entry_user').getValue();
 					startDate = Ext.getCmp('from_entry_date').getValue();
 					endDate = Ext.getCmp('to_entry_date').getValue();
+					var componentName = Ext.getCmp('filter_component_name').getValue();
 
 					// Check For Name
 					if (name === null ||
@@ -887,7 +906,11 @@
 					if (nameIsBlank && datesAreBlank) {
 						
 						// Reload Grid Store
-						Ext.getCmp('entryTrackingGrid').getStore().load();
+						Ext.getCmp('entryTrackingGrid').getStore().loadPage(1, {
+							params: {
+								componentName: componentName
+							}
+						});
 					}
 					else if (!datesAreBlank) {
 						
@@ -912,7 +935,7 @@
 								// Build Store Options
 								var storeOptions = {
 									params: {
-										
+										componentName: componentName,
 										start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
 										end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
 									}
@@ -923,7 +946,7 @@
 								// Build Store Options
 								var storeOptions = {
 									params: {
-										
+										componentName: componentName,
 										name: name,
 										start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
 										end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
@@ -945,7 +968,7 @@
 
 						Ext.getCmp('entryTrackingGrid').getStore().loadPage(1, {
 							params: {
-
+								componentName: componentName,
 								name: name
 							}
 						});

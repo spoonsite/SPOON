@@ -29,7 +29,6 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
-import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
@@ -74,7 +73,6 @@ import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.model.IntegrationAll;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
 import edu.usu.sdl.openstorefront.core.model.ReviewAll;
-import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.sort.SortUtil;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -116,7 +114,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -141,7 +138,6 @@ import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
 import net.sf.ehcache.Element;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -1224,70 +1220,62 @@ public class CoreComponentServiceImpl
 	{
 		ComponentTrackingResult result = new ComponentTrackingResult();
 
-		ComponentTracking componentTrackingExample = new ComponentTracking();
-		componentTrackingExample.setActiveStatus(filter.getStatus());
-		componentTrackingExample.setComponentId(componentId);
+		List<String> componentIdInResults = new ArrayList<>();
+		if (StringUtils.isNotBlank(filter.getComponentName())) {
+			String query = "select componentId from " + Component.class.getSimpleName() + " where name.toLowerCase() like :componentName ";
+			Map<String, Object> parameterMap = new HashMap<>();
+			parameterMap.put("componentName", "%" + filter.getComponentName().toLowerCase().trim() + "%");
 
-		ComponentTracking componentTrackingStartExample = new ComponentTracking();
-		componentTrackingStartExample.setEventDts(filter.getStart());
-
-		ComponentTracking componentTrackingEndExample = new ComponentTracking();
-		componentTrackingEndExample.setEventDts(filter.getEnd());
-                
-                ComponentTracking componentTrackingNameExample = new ComponentTracking();
-                componentTrackingNameExample.setUpdateUser("%" + filter.getName().trim() + "%");    // Force SQL Wildcards Into Parameter
-
-		QueryByExample queryByExample = new QueryByExample(componentTrackingExample);
-
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
-		specialOperatorModel.setExample(componentTrackingStartExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
-		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-		specialOperatorModel = new SpecialOperatorModel();
-		specialOperatorModel.setExample(componentTrackingEndExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
-		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-                
-                specialOperatorModel = new SpecialOperatorModel();
-                specialOperatorModel.setExample(componentTrackingNameExample);
-                specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
-                queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-		queryByExample.setMaxResults(filter.getMax());
-		queryByExample.setFirstResult(filter.getOffset());
-		queryByExample.setSortDirection(filter.getSortOrder());
-
-		ComponentTracking componentTrackingOrderExample = new ComponentTracking();
-		Field sortField = ReflectionUtil.getField(componentTrackingOrderExample, filter.getSortField());
-		if (sortField != null) {
-			try {
-				BeanUtils.setProperty(componentTrackingOrderExample, sortField.getName(), QueryByExample.getFlagForType(sortField.getType()));
-			} catch (IllegalAccessException | InvocationTargetException ex) {
-				LOG.log(Level.WARNING, "Unable to set sort field.", ex);
+			List<ODocument> documents = persistenceService.query(query, parameterMap);
+			for (ODocument document : documents) {
+				componentIdInResults.add(document.field("componentId"));
 			}
-			queryByExample.setOrderBy(componentTrackingOrderExample);
 		}
 
-		List<ComponentTracking> componentTrackings = persistenceService.queryByExample(ComponentTracking.class, queryByExample);
+		Map<String, Object> parameterMap = new HashMap<>();
+		StringBuilder primaryQuery = new StringBuilder();
+		primaryQuery.append("select from ").append(ComponentTracking.class.getSimpleName()).append(" where ");
+		primaryQuery.append(" activeStatus = :activeStatus ");
 
+		parameterMap.put("activeStatus", filter.getStatus());
+
+		if (StringUtils.isNotBlank(componentId)) {
+			primaryQuery.append(" and componentId = :componentId ");
+			parameterMap.put("componentId", componentId);
+		}
+
+		if (filter.getStartDts().getDate() != null) {
+			primaryQuery.append(" and eventDts >= :startDts ");
+			parameterMap.put("startDts", filter.getStartDts().getDate());
+		}
+
+		if (filter.getEndDts().getDate() != null) {
+			primaryQuery.append(" and eventDts <= :endDts ");
+			parameterMap.put("endDts", filter.getEndDts().getDate());
+		}
+
+		if (StringUtils.isNotBlank(filter.getName())) {
+			primaryQuery.append(" and updateUser.toLowerCase() like :nameSearch ");
+			parameterMap.put("nameSearch", "%" + filter.getName().toLowerCase().trim() + "%");
+		}
+
+		if (!componentIdInResults.isEmpty()) {
+			primaryQuery.append(" and componentId IN :componentIdList ");
+			parameterMap.put("componentIdList", componentIdInResults);
+		}
+
+		List<ComponentTracking> componentTrackings = persistenceService.query(primaryQuery.toString(), parameterMap);
+
+		result.setCount(componentTrackings.size());
 		for (ComponentTracking item : componentTrackings) {
 			ComponentTrackingCompleteWrapper wrapper = new ComponentTrackingCompleteWrapper();
 			wrapper.setData(item);
 			wrapper.setName(getComponentName(item.getComponentId()));
 			wrapper.setComponentTypeLabel(TranslateUtil.translateComponentType(item.getComponentType()));
-                        
-                        result.getResult().add(wrapper);
+			result.getResult().add(wrapper);
 		}
+		result.setResult(filter.filter(result.getResult()));
 
-		if (filter.getSortField().equals(ComponentTrackingCompleteWrapper.FIELD_NAME)) {
-			result.getResult().sort(new BeanComparator<>(filter.getSortOrder(), filter.getSortField()));
-		}
-
-		queryByExample.setQueryType(QueryType.COUNT);
-		result.setCount(persistenceService.countByExample(queryByExample));
-                
 		return result;
 	}
 
@@ -2070,37 +2058,36 @@ public class CoreComponentServiceImpl
 
 		Map<String, List<T>> targetKeyMap = targetEntities.stream().collect(Collectors.groupingBy(T::uniqueKey));
 		for (T entity : entities) {
-			
+
 			if (targetKeyMap.containsKey(entity.uniqueKey()) == false) {
 				entity.clearKeys();
 				targetEntities.add(entity);
 			}
 		}
-                
-                // Create Temporary Target Entities List
-                List<T> tempTargetEntities = new ArrayList<>();
-                
-                // Copy Target Entities
-                targetEntities.forEach(item -> tempTargetEntities.add(item));
-                
-                Map<String, List<T>> mergeKeyMap = entities.stream().collect(Collectors.groupingBy(T::uniqueKey));
+
+		// Create Temporary Target Entities List
+		List<T> tempTargetEntities = new ArrayList<>();
+
+		// Copy Target Entities
+		targetEntities.forEach(item -> tempTargetEntities.add(item));
+
+		Map<String, List<T>> mergeKeyMap = entities.stream().collect(Collectors.groupingBy(T::uniqueKey));
 		for (T targetEntity : tempTargetEntities) {
-			
+
 			if (mergeKeyMap.containsKey(targetEntity.uniqueKey()) == false) {
-				
+
 				targetEntities.remove(targetEntity);
-                                
-                                // Check If Media or Resource
-                                if (targetEntity instanceof ComponentMedia) { // Check If Media
-                                    
-                                        // Remove Local Media File
-                                        removeLocalMedia((ComponentMedia) targetEntity);
-                                }
-                                else if (targetEntity instanceof ComponentResource) { // Check If Resource
-                                    
-                                        // Remove Local Resource File
-                                        removeLocalResource((ComponentResource) targetEntity);
-                                }
+
+				// Check If Media or Resource
+				if (targetEntity instanceof ComponentMedia) { // Check If Media
+
+					// Remove Local Media File
+					removeLocalMedia((ComponentMedia) targetEntity);
+				} else if (targetEntity instanceof ComponentResource) { // Check If Resource
+
+					// Remove Local Resource File
+					removeLocalResource((ComponentResource) targetEntity);
+				}
 			}
 		}
 	}
@@ -2397,7 +2384,7 @@ public class CoreComponentServiceImpl
 		}
 	}
 
-        void removeLocalResource(ComponentResource componentResource)
+	void removeLocalResource(ComponentResource componentResource)
 	{
 		//Note: this can't be rolled back
 		Path path = componentResource.pathToResource();

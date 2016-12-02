@@ -38,28 +38,32 @@ public class DateParam
 
 	public DateParam(String input)
 	{
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
-		try {
-			date = sdf.parse(input);
-		} catch (ParseException e) {
-			sdf = new SimpleDateFormat("yyyy-MM-dd");
+		if (StringUtils.isBlank(input)) {
+			date = null;
+		} else {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
 			try {
 				date = sdf.parse(input);
-			} catch (ParseException ex) {
-				sdf = new SimpleDateFormat("MM/dd/yyyy");
+			} catch (ParseException e) {
+				sdf = new SimpleDateFormat("yyyy-MM-dd");
 				try {
 					date = sdf.parse(input);
-				} catch (ParseException exc) {
-					if (StringUtils.isNumeric(input)) {
-						try {
-							date = new Date(Long.parseLong(input));
-						} catch (Exception exception) {
-							//Don't throw error here it's to low level. (it will get wrapped several times)
-							//if the date is not expected to be null handle error there.
+				} catch (ParseException ex) {
+					sdf = new SimpleDateFormat("MM/dd/yyyy");
+					try {
+						date = sdf.parse(input);
+					} catch (ParseException exc) {
+						if (StringUtils.isNumeric(input)) {
+							try {
+								date = new Date(Long.parseLong(input));
+							} catch (Exception exception) {
+								//Don't throw error here it's to low level. (it will get wrapped several times)
+								//if the date is not expected to be null handle error there.
+								log.log(Level.FINE, MessageFormat.format("Unsupport date format: {0}", input));
+							}
+						} else {
 							log.log(Level.FINE, MessageFormat.format("Unsupport date format: {0}", input));
 						}
-					} else {
-						log.log(Level.FINE, MessageFormat.format("Unsupport date format: {0}", input));
 					}
 				}
 			}
