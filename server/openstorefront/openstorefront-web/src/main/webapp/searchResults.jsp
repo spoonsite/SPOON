@@ -773,7 +773,7 @@ limitations under the License.
 		
 				//update Stats
 				if (filterMode === 'CLIENT') {
-					var statLine = 'No results Found';
+					var statLine = 'No Results Found';
 					if (data.length > 0) {
 						statLine = '';
 						var stats = {};
@@ -838,7 +838,7 @@ limitations under the License.
 				});
 				
 				if (filterMode === 'REMOTE') {
-					var statLine = 'No results Found';					
+					var statLine = 'No Results Found';					
 					if (data.length > 0) {
 						statLine = '';
 						var response = opts.getResponse();

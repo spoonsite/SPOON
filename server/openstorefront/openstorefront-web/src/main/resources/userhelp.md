@@ -1,7 +1,7 @@
 
 <span style="font-size: 24px;">User Guide</span>
 
-Version 2.0
+Version 2.2
                                                       
 
 
@@ -72,7 +72,7 @@ The features that are available to users to be able to access the information in
 ------
 
 
-Clearinghouse Search provides a way to find entry lists and articles
+Application Search provides a way to find entry lists and articles
 matching search criteria. Several types of searches are supported. The
 types of searches that can be performed are:
 
@@ -185,35 +185,48 @@ However, only the owner of the tag or an admin user may remove a tag.
 Tags are used in the search field shown at the top of the screen and 
 on the home page.
 
-**To create a tag:**
+**How to create a tag:**
 
- 1.  From the search results screen view the details by clicking on the title.
- 2.  Click on the View/Edit Tag icon to open the tag panel.
- 3.  Enter a new tag in the text field OR a single space to view existing tags.
+ 1.  From the search results screen, click on the entry title.  The details of the 
+	 entry will be displayed.
+ 2.  Click on the "Tag" icon to open the tag panel.
+ 3.  Enter a new tag in the text field OR choose an existing tag by clicking on 
+	 the drop down arrow.  Click "Add" to apply the tag to the entry.
+
+**How to remove a tag you created:**
+
+ 1.  From the search results screen, click on the entry title.  The details of the 
+	 entry will be displayed.
+ 2.  Click on the "Tag" icon to open the tag panel.  Tags will be displayed
+	 below the "Add Tag" text field.
+ 3.  Locate the tag and click on the drop down arrow and select "Remove".
 
 ### 2.1.8 Comparing
 ---------
 
 The comparison feature allows for side-by-side viewing of multiple
-listings. For example, there may be several components that provide the
+listings. For example, there may be several entries that provide the
 same kind of features (e.g. Cesium and Google maps). You can use the
-comparison feature to view their details together to find the component
+comparison feature to view their details together to find the entry
 better suited your project's needs.
 
-**To compare components:**
+**How to compare entries:**
 
-From the Search Results Screen check "Add to compare" on 2 or more 
-entries, then click on the **Compare** button at the top of the
-search results.
-
-If more than two entries were selected, you can do a side-by-side comparison
-by using the drop-down list at the top to select the various entries.
+ 1.  From the Search Results screen check the "Add to Compare" box on 2 or more 
+	 entries.
+ 2.  Click on the **Compare** button at the top of the Search Results window.  A
+	 side-by-side comparison will appear in a new window.
+ 3.  If more than two entries were selected, you can select which entries to compare
+	 by using the drop-down list at the top to select the various entries.
+ 4.  To remove all selected entries,  click on the drop-down arrow next to the
+	 **Compare** button and select "Clear All Selected Entries".
 
 ### 2.1.9 Customizing the Search Display
 ---------
 
-On the search results page, filtering can be done by Article, Component, or other
-specialized type by clicking on the hyperlink with the number of results, for example:
+On the search results page, filtering can be done by Name, Tag, Topic, User Rating, or Vitals.
+To search by Topic you can use the drop-down menu or click on the hyperlink at the top
+with the number of results, for example:
 **[131]()** DI2E Components, **[21]()** Articles where the numbers are hyperlinks
 that filter the results.
 
@@ -236,6 +249,11 @@ items to be displayed or hidden such as:
 * Average User Rating
 
 * Approved Date
+
+* Index Relevance
+
+To reset all filters, click on the "Reset Filters" button at the bottom of the
+Filters column.
 
 Finally, the columns can be collapsed or expanded by clicking on the left and right
 arrows in the column headers by Filters, Search Results, and Details. 
@@ -266,9 +284,9 @@ The topic tab in the Search Tools window allows searching by Articles,
 DI2E Components, or other topic search types.  
 
 After clicking on the topic on the left, the results are shown on the right.  
-Click on the column name to sort or click the link button to link to the 
-individual Clearinghouse entry.  Results of all of the topics can also be 
-shown in a new window.
+Click on the column name to sort A-Z or Z-A.  Click the link button to link to 
+the individual application entry.  Results of all of the topics can also be
+ shown in a new window by clicking on the "Show Results" diagonal arrow button.
 
 
 ### 2.2.2 Category Search Tool
@@ -276,18 +294,19 @@ shown in a new window.
 
 The Category tab in the Search Tools window displays many categories that
 are expandable by clicking on the down arrow icon.  Click on the lowest 
-subcategory to display search results.  Clicking on the column name sorts
-the table by that column.  Clicking on the link button opens the 
-individual entry, or all results can be displayed in a new window.
+subcategory to display search results.  Clicking on the column name will sort
+the table A-Z or Z-A.  Clicking on the link button opens the individual entry,
+ or all results can be displayed in a new window by clicking
+the "Show Results" diagonal arrow button.
 
 
 ### 2.2.3 Tag Search Tool 
 ------
 
 This window displays a list of all tags on the left.  Clicking on a tag 
-shows the related entries that have that tag.  For details of an entry
-click on the link to the right of the description or the Show Results
-diagonal arrow to Show (all) Results with that tag.
+shows all entries associated with that tag.  To display details of a single entry,
+click on the link to the right of the description.  To view entry results
+associated with a tag in a new page, click on the "Show Results" diagonal arrow. 
 
 
 ### 2.2.4 Architecture Search Tool
@@ -302,7 +321,7 @@ results or the entire search results can be opened in a new page.
 ### 2.2.5 Advanced Search Tool 
 ------
 
-The Advanced Search tab provides a powerful tool to query the data in the Clearinghouse.
+The Advanced Search tab provides a powerful tool to query the data in the application.
 This allows the user to refine a search based on:
 
 **Search Type:**  Search by Entry, Attribute, Tags, User Reviews, Questions, and more.
@@ -311,13 +330,18 @@ This allows the user to refine a search based on:
 
 **Value:**  alpha and/or numerical value to search for
 
-**String/ Number Operation:** Contains, Equals, <, >, and so forth depending on the value
+**String/Number Operation:** Contains, Equals, <, >, and so forth depending on the value
 
 **Merge Condition:** OR, AND, NOT to get a search results in conjunction with the other advanced search parameters
 
-**Preview Results:**  Allows you to see the results of this advanced search, queries for results
+After you have specified the search conditions, click on the **Add** button to add them
+ to the Search Criteria field.  To preview results based on the provided search criteria, click
+on the **Preview Results** button. The advanced search can be saved by clicking on
+the **Save** button. To execute a search based on search criteria click on the **Search**
+button.
 
-**Save:(Search)**  The advanced search can be saved.  See the next section for details.
+Once a refined search is added to search criteria section it can be edited or
+deleted by clicking on the icons on the far right of a refined search entry.
 
 
 ### 2.2.6 Saved Searches
@@ -327,9 +351,9 @@ You can save complex advanced searches for later retrieval and querying.  From t
 click the Save button and add a name for the saved search.  
 
 Once it is saved the advanced search is available from the Saved Searches tab. Select a saved
-search and click the Search button to see the results.  Or, click the Manage Searches button
-to be taken to User Tools -> Tools -> Searches where editing can be performed on the saved
-search.
+search and click the "Search" button to see the results.  To manage searches, click the "Manage Searches" button
+which will direct you to User Tools -> Tools -> Searches where editing can be performed.
+To edit a saved search, click on the name of the search and then click on the **Edit** button at the top.
 
 
 ## 2.3 User Tools
@@ -338,16 +362,16 @@ search.
 The user tools contain a variety of useful features including:
  1.  User Profile
  2.  Submissions
- 3.  User Tools (Questions, Reports, Reviews, Searches, Watches)
+ 3.  User Tools (Questions, Relationships, Reports, Reviews, Searches, Watches)
 
 ----
 
 The User Tools landing or home page is the **Dashboard**. This is accessed by
-clicking on the username in the upper-right corner and then the User Tools 
+clicking on the username in the upper-right corner followed by User Tools in the
 drop-down menu.
 
 The first time the dashboard is accessed widgets will need to be added to view.
-This is done by clicking the **+Add Widget** button towards the top of the dashboard
+This is done by clicking the **Add Widget** button towards the top-left of the dashboard
 section.
 
 The following widgets can be added to the dashboard by clicking on them from the 
@@ -365,7 +389,7 @@ display order, maximized, or closed.  In addition, certain settings such as the 
 and title bar color can be set.  This is done by clicking on the buttons in the 
 right of the title bar of each individual widget once added to the dashboard.
 
-NOTE:  If you are an administrator, additional widgets may be available to you.  
+NOTE:  Administrators may have additional widgets available to them.  
  
 
 ## 2.3.1 User Profile
@@ -378,8 +402,9 @@ external security account.
 **To edit your profile:**
 
 1.  Select **User Tools** from the user menu.
-2.  Update the form.
-3.  Click **Save**.
+2.  Click on **Profile**
+3.  Update the form.
+4.  Click **Save**.
 
 The application sends out notification emails about any changes that
 have occurred since the last time a recent change notification email was
@@ -389,7 +414,8 @@ listings on the application.
 **To receive the notification:**
 
 1.  Select **User Tools** from the drop-down menu in the upper-right with the username.
-2.  Ensure that a valid email address is present in the **User Profile** section.
+2.  Click on **Profile**.
+3.  Ensure that a valid email address is present in the user profile.
 4.  Check the checkbox, **Receive periodic email about recent changes**.
 5.  Click **Save**.
 
@@ -398,58 +424,53 @@ listings on the application.
 
 This page displays all of the submissions you, the current logged in user, have
 made.  In the User Submissions table, the columns can be sorted by clicking on 
-the column header.  
+the column header.  // Describe process flow
 
-In addition, icons for Edit, Preview, Copy, Toggle Notify, and 
-Request Removal can be found along the top of the table.  Finally,
-a **+ New submission** button allows for a new entry to be made.
 
-#### 2.3.2.1 Submission Form- Getting Started
+
+#### 2.3.2.1 How to Create a Submission/Entry
 -----------
 
 The first tab of a new submission should be pre-filled with your logged in user information.  
 Make any necessary corrections and click on the Next button at the bottom.
 
 Please be aware:
-This form will submit a component to the DI2E Framework PMO for review and consideration.
+This form will submit an entry to the DI2E Framework PMO for review and consideration.
 A DI2E Storefront Manager will contact you regarding your submission. 
 For help, contact helpdesk@di2e.net.
 
 
-#### 2.3.2.2 Submission Form- Required Information
+#### 2.3.2.2 How to Create a Change Request/Edit Entry
 -----------
 
-The following fields are in the Required Information section:
+1. Click on the entry you wish to edit
+2. Click on the "Request Change" button in the submissions toolbar
+3. A change request form will appear that requires 4 steps:
+	Step 1)  Verify or update all user information and click the "Next" button
+	Step 2)  Fill in or edit the required fields and click "Next"
+	Step 3)  Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
+	Step 4)  Review the entry and click "Submit For Review".  This will take you back
+			 to the submissions page
 
+Under the "Pending Change" column you will see the status of the entry's change request.  The status is "Pending" 
+until the admin user approves the changes.  
 
- -  **Entry Type:**  DI2E Component, Article, etc.  -  What you enter here will determine what other fields show up on this entry form below 
- -  **Entry Name:**  The name of the article or component 
- -  **Description:** Detailed description body - You can use highlights, colored text, links, etc.
-                      NOTE:  You can paste inline media (from another website) into the description field and it will
-                              automatically attach the media if it is possible.
- -  **Organization:** Name of Company or responsible party for the entry  -  These can be set by an administrator
- -  **Attributes:**  Required attributes are shown here and must be selected 
-
-
-#### 2.3.2.3 Submission Form- Details
+#### 2.3.2.3 How to Remove an Entry
 -----------
 
-This allows for many different items to be added.  Each section can have one or multiple 
-items added with the use of the Add, Edit, and Remove buttons.  When finished, click the
-Next button to go to the final section.
-
-Items that can be added here depend on the Entry Type selected in Required Information,
-but may include:
-Additional Attributes, Contacts, Resources, External Links, Media, Dependencies, Metadata, 
-Relationships, Tags, Evaluation Information, Reviews, Questions, and so forth.
+1.  Click on the entry you wish to remove
+2.  Click on "Request Removal" in the submission toolbar
+3.	Fill out the Request Removal form by providing a reason for removal then click "Send" 
+	at the bottom of the form
+4.  Once request for removal is approved, the entry will no longer appear in user's list of submissions.
 
 
-#### 2.3.2.4 Submission Form- Review
+#### 2.3.2.4 Other Submission Features
 -----------
 
-On the final submission screen, all of the previously entered information is available
-for review.  The entry can then be submitted for review.
-
+A user can copy or preview an entry by selecting an entry and clicking on the "Options" 
+drop-down arrow in the submissions toolbar.  Users can also toggle notify by selecting an entry
+ and clicking on the "Options" drop-down arrow in the toolbar.
 
 ### 2.3.3 Tools
 -----------
@@ -466,31 +487,33 @@ The Tools drop-down contains five options:
 #### 2.3.3.1 Questions & Answers
 --------
 
-Questions or "Q&A" allow users to post questions about components and
-allow other users to answer those questions based on their experience
-with the component.
+Under User Tools->Tools->Questions there are two tabs: one for questions
+submitted under the current login and another tab for answers submitted.
 
-Under User Tools, Tools, Questions there are two tabs: one for questions
-submitted under the current login, and another tab for Answers submitted.
+By default the **Questions** tab is selected and it is here that a user can select
+his/her entry and edit a user-submitted question. To edit a question follow the steps below:
+	1. Click on the entry you wish to change
+	2. Click the **Edit** button in the toolbar
+	3. Make any changes to the question and click on **Post** at the bottom.
 
-Select a question or answer, then click on **View Entry** to see how it is displayed
-in the search results (go to the Questions & Answers tab).
+To view entries with user-submitted answers, click on the **Answers** tab.  It is here that
+a user can select an entry and edit his/her answer to an entry's question.  To edit a 
+question follow the steps below:
+	1. Click on the entry you wish to change
+	2. Click the **Edit** button in the toolbar
+	3. Make any changes to the question and click on **Post** at the bottom.
 
-Clicking **Edit** will allow direct modification of the question or answer with a
-Post or Cancel button when the edit is finished.
-
-Finally, a **Delete** button is provided with confirmation before deleting a question
-or an answer.
-
+A user can remove an answer or question by clicking on the entry and then clicking
+ on the **Delete** button on the right-hand side of the toolbar.
 
 #### 2.3.3.2 Relationships
 --------
 
-This screen shows a graphical representation among entries based on
- organization, attributes, tags, and direct relationships.
+This screen shows a graphical representation among entries based on organization, attributes,
+ tags, and direct entry relationships.
  
-A particular view can be saved by pressing the Download Image button.  A find option is also available to find a 
- component in the current view on the page.
+A particular view can be saved by pressing the **Download Image** button.  The **Find** drop-down menu
+allows the user to search for a entry in the current view on the page.
 
 
 #### 2.3.3.3 Reports
@@ -504,11 +527,20 @@ Some reports have the option of HTML or Comma-Separated Values as the report for
 If selecting Previous days, the selected number of prior days will be included in the report output.  
 
 Types of reports available include:
-  
   - Entry
   - Entry Detail
   - Entries by Organization
   - Entries by Category
+
+**How to generate a report:**
+1. Click on **New Report** in the reports toolbar
+2. Select the report type from the drop-down menu 
+3. Select the report format and how often to run the report
+4. User is able to restrict report to only selected entries under the **Restrict By Entry** field
+5. Click the **Generate** button
+
+Reports can be removed by selecting the report and clicking on **Delete** in the toolbar.  To view
+a report, click on the report and then click **View** in the toolbar.
 
 **Scheduled Reports**
 Clicking this button opens a window that shows recurring reports, their details and frequency that 
@@ -547,36 +579,22 @@ Clicking this button opens a window that shows recurring reports, their details 
 the report will run, as well as the last run date and time. You can add, activate, or inactivate a 
 scheduled report, edit, or delete it.
 
-
-
   
 #### 2.3.3.4 Reviews
 ------------
 -
-From this screen in the User Tools you can edit and delete your component reviews.
+Entry reviews can be found under the **Tools** drop-down menu. Users can edit and delete their entry reviews.
 
 **To edit a review:**
- * Select a review and click Edit.  Update the fields as desired and click Post Review (or Cancel).
+ - Select a review and click **Edit**.  Update the fields as desired and click **Post Review** (or Cancel).
 
 **To remove a review:**
- * Select a review and click Delete.  Confirm the deletion by clicking OK in the confirmation box.
+ - Select a review and click **Delete** in the toolbar.  Confirm the deletion by clicking OK in the confirmation box.
 
  **NOTE:** A review may also be removed from the search results detail screen
 by clicking on the delete icon next to the title of the review. You can only remove reviews you post.
 
-**To create a review:**
-
-1. From a search results screen, view Entry Details by clicking on the title.
-
-2. Click on the Reviews tab.
-
-3. Click on **Write a Review**.
-
-4. Fill out the form starting with marking the Stars according to
-    your experience.
-
-5. Post the review. The review will now show in the review tab for
-    other users to read.
+**To create a review, see Section 2.4 - Entry Details and Features**
 
 
 #### 2.3.3.5 Searches
@@ -585,10 +603,10 @@ by clicking on the delete icon next to the title of the review. You can only rem
 This tab displays the list of saved searches from the Advanced Search area.
 It also allows the user to Add, Edit, and Delete advanced searches.
 
-For more information, see the Advanced Search Section under Search Tools.
+**For more information, see the Advanced Search Section under Search Tools.**
 
 
-#### 2.3.3.6 Manage Watches
+#### 2.3.3.6 Watches
 ------------
 
 The user can create watches that can send notifications to the user. The
@@ -602,19 +620,19 @@ notification or not. The tools also allow for manually processing the
 queue immediately, but in most cases this is not needed or desired as
 the automatic process will take handling the message queue.
 
-A watch is set on a component to allow for a user to be notified of
-changes to a component. There are two ways notifications occur in the
+A watch is set on a entry to allow for a user to be notified of
+changes to a entry. There are two ways notifications occur in the
 application, and there is no limit to the amount of watches a user may
 place.
 
-1.  The watched component's changes are visually shown to the user
-    anytime changes have been made since they last viewed the component.
+1.  The watched entry's changes are visually shown to the user
+    anytime changes have been made since they last viewed the entry.
     This is seen in the watches tab and when viewing the details of
-    a component.
+    a entry.
 
 2.  The user may opt to have an email sent anytime there is a change. To
     opt in, see the steps listed below. The email will list the section
-    of the component information as to what has changed. A user then can
+    of the entry information as to what has changed. A user then can
     login to view the exact changes.
 
 **To activate email:**
@@ -625,25 +643,62 @@ place.
 2.  Select a watch from User Tools, Tools, Watches.  Click the Toggle 
     Email Notification button to turn on or turn off the email notifications.
 
-**To remove a watch:**
-
-1.  Select a watch and click on the Remove Watch notification.
-
-2.  Click OK to confirm the watch deletion.
-
-**NOTE:** Watches can also be removed by clicking on View Entry which brings up
-the component detail view (in search results) of the component being watched.
+**See the Section 2.4 for information on how to add or remove an entry to watch list.**
 
 
-**To create a watch:**
+## 2.4  Entry Details and Features
+--------
 
-1.  From the search results screen/ View Entry:
+Click on an entry to view its details.  From the **Details** page, a user can write a review, submit
+a question or answer, add a tag, watch an entry, submit a correction, and request ownership.
 
-2.  Click on the Watch icon ![watch](../webapp/client/images/help/view.png) to add the component
-    to your watch list.
+### 2.4.1  Create/Remove a Review
+--------
 
+How to submit a review of an entry:
+1.  From the **Details** page, click on the **Reviews** tab.  
+2.  Click on the **Write a Review** button
+3.  Complete the required fields on the form and click **Post Review** at the bottom.
 
-## 2.4  Submit Correction and Request Ownership
+To edit a review, click on the **Edit** button.  Make any changes to the review and click **Post Review**.
+To remove a review, click on the **Remove** button.  A confirmation box will ask the user to confirm 
+the deletion of the review.
+
+### 2.4.2  Submit/Remove a Question or Answer
+--------
+
+How to submit a question about an entry:
+1.  From the **Details** page, click on the **Questions & Answers** tab.
+2.  Click on the **Ask a Question** button
+3.  Type your question into the text area and click on the **Post** button
+
+To edit a question, click on the **Edit** button.  Make any changes to the question and click **Post**.
+To remove a question, click on the **Delete** button.
+
+How to submit an answer to an entry question:
+1.  From the **Details** page, click on the **Questions & Answers** tab.
+2.  Locate the question and click on the **Answer** button.
+3.  Type your answer into the text area and click on the **Post** button.
+
+To edit an answer, click on the **Edit** button.  Make any changes to the answer and click **Post**.
+To remove an answer, click on the **Remove** button.
+
+### 2.4.3  Add/Remove a Tag to an Entry
+--------
+
+From the **Details** page, click the **Tags** button in the upper-right corner of the entry.
+An **Add Tag** box will appear at the top of the **Details** page where you can either type in your own tag or
+select an existing tag from the drop-down menu.  Click **Add** to attach tag to entry.
+
+To remove a tag, click on the tag's drop-down arrow and select **Remove**.
+
+### 2.4.4  Add/Remove an Entry to Watch List
+--------
+
+Click on an entry to view its **Details** page.  From the **Details** page, click on the **Watch** icon
+in the right upper corner (binoculars icon).  To remove an entry from your watch list, click on the **Watch** icon.
+
+### 2.4.5  Submit Correction and/or Request Ownership
 --------
 
 On a particular entry you can submit a correction for administrative review and/or
@@ -666,13 +721,13 @@ request ownership of an entry.  To do this:
 * Your correction or ownership request will be reviewed by an administrator.
 
 
-## 2.5  Printing
+### 2.4.6  Printing Entry Details
 --------
 
 Many areas of the website have a **Go To Print View** icon to facilitate printing
-of the displayed information.  In the print view, various customizations are
-available such as creating a custom template or including and excluding certain
-labels or display areas.  
+of the displayed information.  From the entry **Details** page, click on the **Print** button
+in the top right corner.  A window will pop-up where you can either customize the template or
+use the default.
 
 
 # 3. Admin Tools *
@@ -687,8 +742,8 @@ Admin tools allow for the management of all data in the system.
 --------
 
 The dashboard is the homepage of the Admin Tools.  This is accessed by
-clicking on the username in the upper-right corner and then the Admin Tools 
-drop-down menu.
+clicking on the username in the right upper corner and then clicking **Admin Tools** 
+in the drop-down menu.
 
 The first time the dashboard is accessed, widgets will need to be added to view.
 This is done by clicking the **+Add Widget** button towards the top of the dashboard
@@ -698,26 +753,22 @@ The following administrative widgets can be added to the dashboard by clicking o
 Add Widget window and then clicking Add Selected Widgets:
 
  * Entry Stats
+ * Notifications
  * Outstanding Feedback
  * Pending Approval Requests
+ * Questions
  * Recent User Data
+ * Reports
+ * Saved Search
+ * Submission Status
  * System Status
- * User Status
+ * User Stats
+ * Watches
 
 Once the desired widgets are added, they can be refreshed, moved to next and previous 
 display order, maximized, or closed.  In addition, certain settings such as the title
 and title bar color can be set.  This is done by clicking on the buttons in the 
-right of the title bar of each individual widget once added to the dashboard.
-
-Note that the following user-specific (nonadmin) widgets may also be added, if desired:
-
- * Notifications
- * Questions
- * Reports
- * Saved Search
- * Submission Status
- * Watches
-
+right upper corner of the title bar of each individual widget.
 
 ## 3.2 Data Management *
 --------
@@ -729,79 +780,82 @@ for Storefront.
 ### 3.2.1 Attributes *
 -------
 
-Attributes are used to group and filter catalog items such as components and articles. 
-To access the attributes page, go to Admin Tools > Data Management > Attributes.
+Attributes are used to group and filter catalog items such as entries and articles. 
+To access the attributes page, go to Admin Tools -> Data Management -> Attributes.
 
 Some of the major functionality of Managing Attributes includes:
 
-  1. Types
-  2. Codes
+  1. Adding New Attribute Type
+  2. Managing Codes
   3. Exporting
   4. Importing
     
-#### 3.2.1.1 Types *
+#### 3.2.1.1 Add New Type *
 ------
 
-When adding or editing an attribute, the first tab is the Type tab.
-
 Attribute Types represent a related group of specific categories or
-represent a single attribute of a listing (Eg. "Funded" would be a type
+represent a single attribute of a listing (E.g. "Funded" would be a type
 with the corresponding value "Yes" or "No"). A type may have many codes.  
 
-Deleting a type will delete the associated codes and component
+Deleting a type will delete the associated codes and entry
 attributes. Inactivating a type will inactivate associated data such as
-component attributes.
+entry attributes.
 
 **NOTE**: Avoid "/" and special characters in type codes. For example,
 use: \[A-Z\]\[0-9\].
 
 **To add or edit a type:**
 
-1.  From the Attribute Tool, click on the **Add** or the
-    **Edit** button.
+1.  From the Attribute Tool, click on the **Add New Type** button or the
+    **Edit Attribute** button.
 2.  Fill in the form.
 3.  Save the form and you can proceed to editing the codes for the type.
 
 **NOTE:** The Attribute Type Code field should be all caps and should not
 contain spaces or "/".
 
- The Import will be processed in the background. The task notification
- area next to the user menu will indicate when the import task has
- completed.
-
- The processing behavior is: for every code not in the import, the
- existing code will be inactivated. If the code already exists and
- doesn't match, it will be updated. For code that matches, the
- code in the file will not be processed. If a type doesn't exist, a new
- one will be created. If the type matches, it will be updated. Other
- existing types not found in the file will not be affected.
-
-
-#### 3.2.1.2 Codes *
+#### 3.2.1.2 Manage Codes *
 ------
 
 An attribute code is a specific category value that can be applied to a
-component. For example: Component listing may contain and attribute for
+entry. For example: Entry listing may contain and attribute for
 "Funded" as "Yes".
 
-**To add and edit a code:**
+**To add a new code:**
 
-1.  In the Edit or add window under the tab **Manage Codes**.
-2.  Click **Add New Code** or the edit icon next to an existing code.
+1.  Click on the **Manage Codes** button.
+2.  Click **Add New Code**.
 3.  Fill out the form.
-4.  Click **Save**.
+4.  Click the **Save** button at the bottom..
+
+**To edit an attribute code:**
+
+1.  Click on the **Manage Codes** button.
+2.  Click on the attribute code you want to edit
+3.  Make changes to the form and click the **Save** button at the bottom.
+
+**To deactivate an attribute code:**
+
+1.  Click on the **Manage Codes** button.
+2.  Click on the code you want to deactivate.
+3.  Click on the **Deactivate** button.
+
+**To activate an attribute code:**
+
+1.  Click on the **Manage Codes** button.
+2.  Click on the drop-down arrow under **Active Status** and select "Inactive".
+3.  Click on the code from the list of inactive and click **Activate**.
 
 Field Descriptions:
 
 -  **Label**               - Human readable value of the code
 -  **Code**                - System reference key
--  **Description**         - This is a detail description of the meaning of the value. It is used in popup to help users interpolate the data.
+-  **Description**         - This is a detail description of the meaning of the value. It is used in pop-up to help users interpolate the data.
 -  **Group Code**          - Using to create sub groups in the code. Typically used only in special cases.
 -  **Sort Order**          - Use to force a specific sort order. (Default is sort by Label)
--  **Architecture Code**   - Used for special hieratical sorting. Only applies to Architecture attribute types
+-  **Architecture Code**   - Used for special hierarchical sorting. Only applies to Architecture attribute types
 -  **Badge URL**           - Set to add a graphical badge for a code
 -  **Highlight Class**     - Used to add color emphasis to a code
-
 
 #### 3.2.1.3 Exporting Attributes *
 ------
@@ -824,14 +878,27 @@ files for either Attributes or SvcV-4.
  **WARNING:** UID in the file should match what is stored in application.
     The application supports both 1 and 0001 matching to 1.
 
-
 ### 3.2.2 Contacts *
 -----
 
 The Contacts Management area allows for the management of contacts in one place across all entries.  
 Contacts can be added, edited, viewed, merged, made active or inactive, or deleted. 
-In addition, the references or components that reference each contact can be viewed.
+In addition, the references or entries that reference each contact can be viewed.
 
+**How to add a contact:**
+
+1.  From the **Contact Management** page, click on **Add**
+2.  Fill out the contact form and click the **Save** button at the bottom.
+
+**How to edit/delete a contact**
+
+1.  From the **Contact Management** page, click on the contact you want to edit.
+2.  Click on the **Edit** button and make any changes to the contact form and click the **Save** button.
+3.  To delete a contact, click on the contact and then click the **Delete** button in the upper right corner of the page.
+
+An administrator can view references associated with an individual contact by clicking on the contact and then the **View References** button.
+To merge the entries from one contact to another, click on the target contact and then click **Merge**.  Select the contact to merge
+into the target contact and click **Save**.
 
 ### 3.2.3 Entries *
 -----
@@ -840,71 +907,71 @@ Entries can consist of DI2E Components, Articles, or other custom-defined data s
 This section allows for the manipulating of all data related to an entry.
 
 
-#### 3.2.3.1 Managing *
+#### 3.2.3.1 Managing Entries *
 ----------
 
 Components can be managed using the Components Tool.  Components are created by an application administrator.
 
-**To create a component:**
+**To create a entry:**
 
 1.  Click on the **Add** button in the toolbar.
 2.  In the Add/Edit dialog, fill in the form.
 3.  Click **Save**.
 
-**NOTE:** Setting a component's Approval State to **Approved** will make
-the component immediately searchable. It's recommended to initially set
-the component to **Pending** until all data is entered.
+**NOTE:** Setting a entry's Approval State to **Approved** will make
+the entry immediately searchable. It's recommended to initially set
+the entry to **Pending** until all data is entered.
 
 1.  After saving, several tabs are available which allows for entering
     Additional information such as Attributes, Contacts, and
     Resources, etc. Each tab has independent forms allowing for
     fine-grain editing which is important for the watches feature.
 
-**To edit component:**
+**To edit entry:**
 
 1.  Click on the edit icon ![edit](../webapp/client/images/help/edit.png) in the action column
-    on the component you wish to edit.
+    on the entry you wish to edit.
 
 2.  Make changes by filling out the appropriate form.
 
-**To preview component:**
+**To preview entry:**
 
 1.  Click on the preview icon ![view](../webapp/client/images/help/viewsm.png) in the action
-    column on the component you wish to view. A new tab in browser will
-    open and display the component detail page.
+    column on the entry you wish to view. A new tab in browser will
+    open and display the entry detail page.
 
 **To toggle active status:**
 
 1.  Click on the activate/inactivate icon ![toggle](../webapp/client/images/help/toggle.png) in the
-    action column on the component you wish to edit.
+    action column on the entry you wish to edit.
 
-**NOTE:** Use Filter Options to show active/inactive components.
-Inactive components are not visible to or searchable by users.
+**NOTE:** Use Filter Options to show active/inactive entry.
+Inactive entries are not visible to or searchable by users.
 
 
-**To remove a component:**
+**To remove an entry:**
 
 **WARNING:** This is a hard delete and it will remove all associated data
 (media, user reviews, questions, etc.)
 
 1.  Click the delete icon ![trash](../webapp/client/images/help/trash.png) to remove.
 
-2.  Confirm that you want to delete the component by clicking **OK** on
+2.  Confirm that you want to delete the entry by clicking **OK** on
     the confirmation dialog.
 
-**To export a component:**
+**To export an entry:**
 
-1.  Select the component(s) you want exported.
+1.  Select one or more entries you want exported.
 
 2.  Click the **Export** button in the toolbar.
 
- Components are exported as zip files containing a json array of the
- component data, media and local resources associated with the selected
- components.
+ Components are exported as zip files containing a JSON array of the
+ entry data, media and local resources associated with the selected
+ entries.
 
-**To import a component:**
+**To import an entry:**
 
-1.  Select a file (zip or json text file).
+1.  Select a file (zip or JSON text file).
 
 2.  Select import options (i.e. the user data you want to import).
 
@@ -928,47 +995,47 @@ Example:
 #### 3.2.3.2 Approval *
 ------
 
-Approved components are searchable by all users. Pending/Not submitted
-components are viewable only by an admin. The approval date is
-considered to be the Recently Added date for the Recently Added list on
-the home page.
+Approved entries are searchable by all users. Pending/Not submitted entries
+are viewable only by an admin. An admin can approve a "Not Submitted" entry but 
+be aware that the entry may have only been partially completed by the user.  
+The approval date is considered to be the "Recently Added" date for the Recently Added list
+on the home page.
 
-**To approve component:**
+**To approve an entry:**
 
-1.  Navigate to the Component Tool.
+1.  Click on an entry with a status of Pending/Not Submitted.
+2.  If you would like to preview the entry, click on the **View** button in the toolbar.  Close the **Preview** window
+	after viewing entry.
+3.  Click on the **Approve** button in the toolbar.  The status should now reflect the approval.
+ 
 
-2.  Click on the Edit icon ![edit](../webapp/client/images/help/edit.png) on the component
-    to approve.
-
-3.  Select **Approved** in the approval status dropdown.
-
-4.  Click **Save**.
-
-**NOTE:** An admin can mark a component as **Pending** by following the
-step above and selecting **Pending**. Marking the component as
-**Pending** makes it unapproved.
+**NOTE:** An admin can mark a entry as **Pending** by following the
+step above and selecting **Pending**. Marking the entry as
+**Pending** makes it not approved.
 
 
 #### 3.2.3.3 General *
 ------
 
-General information about the component is found here such as the Name, 
+General information about the entry is found here such as the Name, 
 Description, Organization, etc.
 
 **To edit General fields:**
 
 1.  Navigate to the Component Tool.
 
-2.  Click on the **Edit** icon ![edit](../webapp/client/images/help/edit.png) on the component.
+2.  Click on the **Edit** icon ![edit](../webapp/client/images/help/edit.png) on the entry.
 
 3.  Click the **General** tab.
 
 **Other Fields**  
 a. Approval State:  Pending | Approved | Not Submitted  
 b. Component Type:  ARTICLE *(allows for watches to be put on the article)* | Component  
-c. Security Type:   *select the security level of the component or article*
-  
+c. Security Type:   *select the security level of the entry or article*
 
+From the **Action** drop-down menu in the toolbar, an administrator can change the ownership or
+type of an entry.  He/she can also view change requests and merge entries together.
+  
 ### 3.2.4 Entry Types *
 ------
 
@@ -1005,61 +1072,33 @@ New with v2.1 Entry Types can now be **removed**.  When you remove a type the sy
 Entry Templates allow for the customization of the display fields of particular types of entries.
 To create and implement a template:
 
- 1. In the Entry **Templates** screen:
+ 1. How to create an **Entry Template**:
 
-	a.  Add or Edit an Entry Template.
+	a.  Click on the **Add** button in the toolbar.
  
     b.  Add Template Blocks to see the visual arrangement and order of fields that will be displayed.
 	
 	c.  Select some Sample Data from an existing entry to see how the data will be represented in
-	the Visual Design tab.
+	    the Visual Design tab.
 	
-	d.  The Code tab allows for pre and post code to be added.
+	d.  The **Code** tab allows for pre and post code to be added.
 	
-	e.  Finally, the Preview tab shows what an entry using this template will look like.
+	e.  The **Preview** tab shows what an entry using this template will look like.
 	
 	f.  Name the template and click Save/Continue when finished.
 	
 	g.  The name should now appear in the Entry Templates table.  Ensure that the template is Active.
-	
-	
-2. In the Entry **Types** section:
 
-	a.  Add or Edit an Entry Type. 
-	
-	b.  In the entry creation/editing at the bottom of the window, select the Override Template (it
-		must be active to appear) from the dropdown list- that you created in the prior step.
-	
-	c.  Ensure that under Data Entry the checkboxes are checked for the areas you want displayed.  If
-		a box is **not** checked, then data will not appear in the entry according to the order outlined
-		in the Entry Template in the prior step.  That area will be skipped and not displayed.
-	
-	d.  Click Save.  In the Template Override column of the table, the name of the template selected in 
-    the dropdown should appear.  Ensure that the Entry Type is Active.
-	
-3. In the **Entry** section:
-
-	a.  Add or Edit an Entry.
-	
-	b.  In the General Tab under Entry Type, select the Type created in the prior step.
-	
-	c.  Save and close the entry form.  If creating a new entry, ensure that the entry is approved and active.
-	
-4.  From the **Home Page** (or other search screen):
-
-	a.  Search for the name of the entry from the prior step.
-	
-	b.  View the search results details.  Note that the entry is displayed according to the Entry Template created.
-	
-	c.  Note that some data fields in the template may not be displayed if they are not active in the Entry Type 
-	    (checkboxes under Data Entry).
+To remove a template click on the template name and click **Delete** on the right-hand side of the toolbar.
+To edit a template click on the template name and click **Edit** in the toolbar.  Make the necessary changes and
+click **Save/Continue** at the bottom.
 	
   
 ### 3.2.6 Highlights *
 -------
 
 A highlight to the home page can be added, edited, or deleted here. 
-A highlight can be an Article, a Component, or an external link.
+A highlight can be an Article, a Component, or an External link.
  
 **How do I change the order of the highlights on the home page?**
 To change the order in which they appear, select the highlight from 
@@ -1067,14 +1106,25 @@ the table, then press the up or down buttons to reposition the order
 in the table.  The highlights on the home page appear in the order that
 they do in the table in the Manage Highlights section.
 
-![updown_graphic](../../webapp/client/images/help/displayposition.png)
+**To add a highlight:**
+ 
+1.  Click on the **Add** button .
+2.  Fill out the highlight form and click **Save**.
 
+**To edit/remove a highlight:**
+
+1.  Click on the highlight you want to edit or remove.
+2.  In the toolbar, click on **Edit** or **Delete** button.
+3.  After clicking on the **Edit** button, make any changes to the form and click **Save**.
+
+**Note:** the display position of a highlight can be adjusted by selecting the highlight and clicking
+on either the **Up** or **Down** button in the toolbar.
 
 ### 3.2.7 Integrations *
 -------
 
 Component Integration allows for pulling information from an external
-system and mapping that back to a component in the application. This
+system and mapping that back to an entry in the application. This
 allows for automatic sync of the data source. Currently, the application
 only supports integration with Jira.
 
@@ -1108,17 +1158,17 @@ only supports integration with Jira.
 
 The Component Job will be scheduled when it is saved. The job will run on
 an interval based on the global refresh rate. The default is once a day
-at 10:00 am server time. The component configuration table will show
+at 10:00 am server time. The entry configuration table will show
 when the integration last ran. Also, the scheduled integration job can
 be viewed using the Jobs Tool by clicking **Show Integration Jobs**.
 
-The Integration Tool allows for manual control. However, it is not
+The Integration Tool allows for manual control; however, it is not
 necessary to run the integration manually as the automated job will
 handle that.
 
-If the integration fails for any reason, the configuration table will so
-indicate and an error ticket will be created for further analysis. The
-integration may fail if the server it is connecting to is unavailable.
+If the integration fails for any reason, the configuration table will
+indicate that a failure occurred and an error ticket will be created for further 
+analysis. The integration may fail if the server it is connecting to is unavailable.
 This may be a temporary condition. The system will try again on the next
 interval. If the configuration job continues to have issues, it may be
 deactivated manually using the tools and then reactivated when the issue
@@ -1136,7 +1186,7 @@ Data mapping allows for a custom data file format to be established for importin
 Once a file is uploaded individual fields can be mapped.  Then a data file can be
 imported using that mapping.
 
-**NOTE:**  The history is only kept for **180 days (Default)** in this section.
+**NOTE:**  The import history is only kept for **180 days (Default)**.
 
 #### 3.2.8.1 Data Mapping *
 
@@ -1166,11 +1216,10 @@ Parser - Record Structure handled
 - Header line not support (Remove before upload)
 - Does not support attachments (Local resources or media)
 
-**Component  JSON, Component  XML**	
+**Component JSON, Component XML**	
 
 >- Nested record (Component/Contact/etc)
 - Does not support attachments (Local resources or media)
-
 
 **Creating a data map**
 
@@ -1189,8 +1238,21 @@ Parser - Record Structure handled
 --------
 
 This is used to organize and classify data in a consistent manner.  The codes can
-be added, deleted, edited, and made active or inactive.  In addition, they can be
+be added, edited, and made active or inactive.  In addition, they can be
 imported or exported as .csv files.
+
+**To add/delete/edit codes:** 
+	- Select a system table from the list and click on the **Edit Codes** button in the toolbar.
+	- To add a code, click on the the **Add** button and fill out the form.  When you are done, click **Save**.
+	- To edit a code, select the code and click on **Edit** in the above toolbar.  After making changes to the form,
+	  click **Save** at the bottom.
+	- To change the status of a code to active or inactive, click on **Toggle Status** in the toolbar.
+
+**To import/export codes:**
+	- Select a system table from the list and click on the **Edit Codes** button in the toolbar.
+	- To import, click on the **Import** button in the right upper corner.  The import file must be a CSV file
+	  with the format code, description, detail description (optional), sort order (optional).
+	- To export the current list of codes, click on the **Export** button in the right upper corner.
 
 Some examples of Lookups are:
 Media Types, Data Source, Contact Types, Relationship Types, and Organization Types
@@ -1200,15 +1262,30 @@ Media Types, Data Source, Contact Types, Relationship Types, and Organization Ty
 --------
 
 The Manage Media area is used to add, download, view, and otherwise manage media that 
-can be used for articles and badges.  
+can be used for articles and badges. 
+
+**Adding Media:** click on **Add** in the toolbar.  Enter a unique name and locate the media
+in your file system.  Note that the size of media cannot exceed 1GB.  Click **Upload** when
+the form is complete.
+
+**Deleting Media:** select the media and click **Delete** in the toolbar.
+
+**Downloading Media:** select the media and click **Download** in the toolbar.
+
+**Viewing Media:** select the media and click **View** in the toolbar.  Some media formats have no preview available.
 
 
+### 3.2.11 Metadata *
+--------
 
-### 3.2.11 Organizations *
+**See the Glossary for definition of Metadata**
+
+
+### 3.2.12 Organizations
 --------
 
  Organizations provide information on specific organizations that are linked with
- the components listed on the site. The information these objects contain includes:
+ the entries listed on the site. The information these objects contain includes:
 
  - **Description** -            What the organization does
  - **Type** -                   The type of organization (i.e. Commercial Business, Contractor, US Organization, etc.)
@@ -1216,21 +1293,21 @@ can be used for articles and badges.
  - **Address** -                The address for the organization
  - **Contact Information** -    A way to contact the organization
 
-#### 3.2.11.1 Managing *
+#### 3.2.12.1 Managing Organizations *
 --------------
 
 **To add a new organization:**
 
-1.  Click **Add New Organization** from the Organizations section of the Admin Tools.
+1.  Click the **Add** button from the Manage Organizations toolbar.
 
-2.  Enter the information and click **Save Changes**.
+2.  Enter the information and click **Save**.
 
-**Note:** When a new component is added, if an unrecognized organization is added, it will automatically be saved to the 
+**Note:** When a new entry is added, if an unrecognized organization is added, it will automatically be saved to the 
   organization list.  However, details such as the Description and Main Contact Information will need to be added here.
 
 **To edit an organization**
 
-1.  From Organizations in the Admin Tools, select an organization.
+1.  Select the organization you want to edit.
 
 2.  Click on the edit icon ![edit](../webapp/client/images/help/edit.png) next to the organization.
 
@@ -1239,11 +1316,11 @@ can be used for articles and badges.
     b.  Update Main Contact information as desired including:  Contact Name, Phone Number, Email, Agency, Department, 
          Address, and Security Type.
     
-3.  When finished, click **Save Changes**.
+3.  When finished, click **Save**.
 
 **To remove an organization:**
 
-1.  From Organizations in the Admin Tools, select an organization.
+1.  Select the organization you want to remove.
 
 2.  Click on the delete icon ![trash](../webapp/client/images/help/trash.png) next to the organization.
 
@@ -1254,35 +1331,45 @@ can be used for articles and badges.
 This displays a list of references where no organization is listed.  
 
 **Run Extract:**
-This runs a query to get current component and organization information to update the table.  
+This runs a query to get current entry and organization information to update the table.  
 
 **References:**
-Clicking this button shows all of the references for the organization.  
+Clicking this button shows all of the references for the selected organization.  
  
 **Merge**
-Allows merging of references from one organization to another.  **NOTE** that the merge feature 
-ONLY merges references and NOT the organization information.
+Allows merging of references from one organization to another.  **NOTE:** the merge feature 
+__ONLY__ merges references and __NOT__ the organization information.
 
 
-### 3.2.12 Relationships *
+### 3.2.13 Relationships *
 ---------
 
 Quickly create relationships between entries by dragging from the origin grid to the target grid.
 
-By clicking on the Orign Entry Column the Existing Relationships are shown to the right in the table and can be edited
+By clicking on the Origin Entry Column the Existing Relationships are shown to the right in the table and can be edited
 if desired.  In addition the Visualization section shows a graphical view of the relationships.
 
+To delete a relationship, click on an existing relationship and then the **Delete** button.
 
 
-### 3.2.13 Searches (Public Saved Searches) *
+### 3.2.14 Searches (Public Saved Searches) *
 ---------
 
 This area displays a list of publicly available searches that can be edited, added, activated, or 
 made inactive.  Once the searches are set up, they can be used for inclusion in articles and 
 entries.
 
+**To add a search**
+
+1. Click on the **Add** button in the toolbar
+2. Complete the form by filling in the search conditions and clicking **Add**.
+3. Save the search by clicking **Save** at the bottom.
+
+To preview results based on the provided search criteria, click on the **Preview Results** button. A user can edit a search by clicking on a saved search and clicking **Edit** in the toolbar.
+Make changes to the form and click on **Save** at them bottom.
+
  
-### 3.2.14 User Data *
+### 3.2.15 User Data *
 ---------
 
 This section in the Admin Tools -> Data Management allows for the management of user-submitted data such as:
@@ -1298,21 +1385,21 @@ This section in the Admin Tools -> Data Management allows for the management of 
  * User Profiles
  
 
-#### 3.2.14.1 Questions (and Answers) *
+#### 3.2.15.1 Questions (and Answers) *
 ------
 
 The Questions section of User Data in Data Management of the Admin Tools displays Questions and Answers given on the website.
 
 The table displays active questions, but the drop-down at the top of the page allows toggling to inactive questions as well.
 
- * Select a component on the left to see the list of corresponding questions. 
+ * Select an entry on the left to see the list of corresponding questions. 
  
  * Select a question to see the associated answers.
  
  * With a question or answer highlighted, click the associated Deactivate button to remove it from view on the website.
 
 
-#### 3.2.14.2 Reviews *
+#### 3.2.15.2 Reviews *
 ------
 
 The Reviews section of User Data in Data Management of the Admin Tools displays entry reviews from the website.
@@ -1326,29 +1413,29 @@ The table displays the list of *active* reviews by default.
  * Selecting an inactive review allows for the Activate button to be pressed, adding the review back to view on the website.
 
 
-#### 3.2.14.3 Watches *
+#### 3.2.15.3 Watches *
 ------
 
 The Watches section of User Data in Data Management of the Admin Tools displays all of the watches from all users.
 
  * Watches highlighted in green text indicate that the entry has changed since the user viewed it, i.e. it is an "active" watch that has changed.
  
- * When an entry (or multiple entries of the same status) is selected, the Activate or Inactivate button can be used to toggle the status of the watches.
+ * When an entry (or multiple entries of the same status) is selected, the Activate or Deactivate button can be used to toggle the status of the watches.
  
  
-#### 3.2.14.4 Tags *
+#### 3.2.15.4 Tags *
 ------
 
 The Tags section of User Data in Data Management of the Admin Tools displays a list of all tags.
 
  * If a tag is selected, the Delete button is enabled, allowing for deletion of the tag.
  
- * A new tag can be added by clicking on the + Add button and filling out the form.  
+ * A new tag can be added by clicking on the **+Add** button and filling out the form.  
  
- * In the event of a duplicate tag being added to the same component the added tag will override the existing tag.
+ * In the event of a duplicate tag being added to the same entry the added tag will override the existing tag.
 
 
-#### 3.2.14.5 User Profiles *
+#### 3.2.15.5 User Profiles *
 ------
 
 Every user in the system has a user profile.  A user profile contains information
@@ -1359,7 +1446,7 @@ The application does not directly manage users, only profiles. When a user
 first securely logs in, a profile is created. It is up to the applicable
 security utility (Open AM, LDAP, Database…etc.) to define the users.
 
-An admin may edit, activate, or inactivate a profile. Deactivating a
+An admin may edit, activate, or deactivate a profile. Deactivating a
 profile does not prevent login. Upon login, the user's profile will be
 reactivated. Once a profile has been deactivated, that user's watches
 and messages are also deactivated. Reactivating the profile will
@@ -1368,13 +1455,11 @@ messages – just messages going forward.
 
 **To toggle active status:**
 
-1.  Navigate to User Profiles Tool.
+1.  Under *Manage User Profiles*, select the profile whose status you would like to change
 
-2.  Click on the activate/deactivate icon and use
-    the filter option to view active/inactive users.
+2.  Click on **Toggle Status**
 
-Users can message other users using User Profiles. The message will be
-emailed to the email address listed in their profile.
+Users can message other users using User Profiles. The message will be sent to the email address listed in their profile.
 
 **To message a user or a group of users:**
 
@@ -1399,8 +1484,8 @@ addresses are leaked to other users.
 ## 3.3 Application Management *
 --------
 
-The Application Management menu is used to navigate to the Alerts, Jobs, Reports, 
-System, Tracking, Messages, and API Documentation sections.
+The Application Management menu is used to navigate to the Alerts, Branding, Feedback, Jobs, Messages, Reports, System, Tracking, 
+or API Documentations sections.
 
 ### 3.3.1 Alerts *
 ------
@@ -1413,29 +1498,46 @@ have been setup.
 
 Descriptions of Alert Triggers:
 
--  **Component Submission** - Alerts on component submissions and cancellations.
+-  **Entry Submission** - Alerts on entry submissions and cancellations.
 -  **System Error**         - Alerts on system error according to trigger options.
 -  **User Data**            - Alerts on user data changes according to trigger options.
 
 **To set up an Alert:**
 
-1.  Navigate to the Alerts Tool.
+1.  Click **+ Add**.
 
-2.  Click **Add**.
+2.  Fill in the form by giving the alert a name and type.  Provide a valid email address where notifications can be sent. 
 
-3.  Fill in the form and select an Alert Type.
+3.  Click **Save**.
 
-4.  Select any appropriate report options.
+**To deactivate an Alert:**
 
-5.  Click **Save**.
+1.  Select the alert you wish to deactivate or temporarily discontinue.
 
-**To cancel an Alert:**
+2.  Click **Deactivate**.
 
-1.  Navigate to the Alerts Tool.
+**To activate an Alert:**
 
-2.  Click **Deactivate** or **Delete** to cancel the scheduled report. Click
-    **Deactivate** to temporarily pause it.
-	
+1.  Click on the drop-down arrow under **Active Status** and select **Inactive**.
+
+2.  From the list of inactive alerts, select the alert you wish to activate.
+
+3.  Click the **Activate** in the toolbar.
+
+**To remove an Alert:**
+
+1.  Click on the alert you wish to remove/delete.
+
+2.  Click the **Delete** in the toolbar.
+
+**To edit an Alert:**
+
+1.  Click on the alert you wish to edit.
+
+2.  Click the **Edit** button in the toolbar.
+
+3.  Make desired changes to form and click **Save**.
+
 
 ### 3.3.2 Branding *
 ------
@@ -1443,24 +1545,26 @@ Descriptions of Alert Triggers:
 This area allows for different graphic design and theme characteristics to be 
  applied to the website in general.   
  
- Start by duplicating the current branding then editing, and finally, activating
- a brand.  In the Add/Edit Branding the following can be specified:
+There are two different ways to customize the branding of the site.  One way is to duplicate the current branding
+and edit the branding form to meet your specifications and the other is to create a new branding using a blank form.
+
+**To customize branding using the duplicate method: (this method is recommended)**
+
+1.  Click on the **Duplicate** button in the toolbar and select **Current Branding**.
+2.  Select the branding copy and click on **Edit** in the toolbar.
+3.  Once you have made desired changes to branding click **Save**
+4.  To activate the branding you just created click on the branding name and then the **Activate** button in the toolbar.
+
+**To customize branding using the blank branding form:**
+
+1.  Click on the **+ Add** button in the toolbar.
+2.  Fill out the branding form and click **Save**.  Note: You can preview the branding before saving by clicking **Preview**.
+3.  To activate the branding you just created click on the branding name and then the **Activate** button in the toolbar.
  
-  * Application Name
-  * Login Warning message
-  * Landing Page Title
-  * Landing Stats Text
-  * Landing Banner text
-  * Landing Page Footer information (links, etc.)
-  * Architecture Search display and type
-  * Support feedback handling and tracking code
-  * Security Markings and Banner Text, colors, etc.
-  * User Input Warning message
-  * Submission form warning message
-  * Change request form warning message
-  * Customize Colors and Logos
-  * Customize Colors of:  Primary, Accent, Quote, Links, Links Visited, Link Hover, Panel, etc.
-  
+At anytime you can reset the branding to the default branding by clicking on the **Reset To Default** button on the right-hand side of the toolbar.
+To make changes to an existing branding, click on the name of the branding and click on **Edit** in the toolbar.  Make your changes and click **Save** at the bottom.
+To remove a branding, first select the branding and then click on the **Delete** button in the toolbar.
+
 
 ### 3.3.3 Feedback *
 ------
@@ -1470,15 +1574,18 @@ Feedback can be Help, Improvement, New Feature, or Report Issue.
 
 From this section the feedback can be viewed, marked outstanding, or marked
 complete.  This provides an administrator task list regarding the user feedback
-items submitted.
+items submitted.  You can view outstanding or completed feedback tickets by clicking on the
+drop-down arrow under **Active Status**.
+
+To delete a completed or outstanding feedback ticket, select the ticket and click on **Delete** in the toolbar.
  
 
 ### 3.3.4 Jobs *
 ------
 
-The Jobs Tool allows for viewing and managing both scheduled background
-jobs and background tasks. An Admin can use the tool to pause, start,
-and run scheduled jobs. This tool helps in troubleshooting and view of
+The Jobs tool allows for viewing and managing of both scheduled background
+jobs and background tasks. An administrator can use the tool to pause, start,
+and/or run scheduled jobs. This tool helps in troubleshooting and viewing
 the status of the application. If an operation is known to potentially
 run for an extended period of time, then it will process in the
 background allowing for faster feedback to the user while the operation
@@ -1486,77 +1593,95 @@ completes. Scheduled jobs that run periodically, such as the notification
 job, also run in the background to provide automatic handling of
 services.
 
+**To run/pause/resume a job:**
+
+1. Click on the **Jobs** tab under _Manage Jobs ?_.
+2. Select the job.
+3. Click on either the **Pause Job**, **Resume Job**, or **Run Job** button in the toolbar.
+
+**To delete a task:**
+
+1. Click on the **Tasks** tab under _Manage Jobs ?_.
+2. Select the task you wish to remove.
+3. Click on the **Delete** button on the right-side of the toolbar.
+
+**Note:** the administrator can pause or resume the system job scheduler by clicking on the button
+ on the **Pause/Resume Scheduler** button on the right-side of the toolbar. 
+
 ### 3.3.5 Messages *
 ------
 
-Shows a log of messages sent to users in the Inactive filtered table.  Allows for
-the cleanup of old messages and the ability to process all queued messages now.
+There are two tabs that allow you to manage messages.  They are the **User Messages** and **Event Notifications** tabs.
+The **User Messages** tab shows a log of messages sent to users in the inactive table or a log of messages to be sent
+to users in the active table.  The **User Messages** tab allows for the cleanup of old messages and the ability to 
+process all queued messages now.  Messages can be viewed/deleted by selecting the message and clicking the **View** or
+**Delete** button.
 
 
 ### 3.3.6 Reports * 
 ------
 
-Descriptions of the Reports:
+Descriptions of the types of reports:
 
--  **Component**        - Reports on a component's statistics
--  **Link Validation**  - Checks all component links and verifies the status of the links to determine potentially bad links
--  **Organization**     - Reports on organization's statistics based on information in user profiles. The report attempts to group users by an organization
--  **Usage**            - Reports on the application's usage statistics for a specified time period
--  **User**             - Reports on user statistics (views, logins, etc.)
+-  **Entry**					- report provides entry's statistics
+-  **Entry Detail**				- report that provides more details (e.g. vitals) of entries
+-  **Entries by Organization**	- report that shows all entries associated with a given organization
+-  **Entries by Category**		- report groups entries by attribute code (category) based on attribute type selected
+-  **Submissions**				- report shows user submissions for a given time period
+-  **Link Validation**			- report checks all entry links and verifies the status of the links to determine potentially bad links
+-  **Organization**				- report shows organization's statistics based on information in user profiles. The report attempts to group users by an organization
+-  **Usage**					- report shows the application's usage statistics for a given time period
+-  **User**						- report shows user statistics (views, logins, etc.)
+-  **User Organization**		- report shows organization usage statistics
 
-A report can be either manually generated on demand or set to
-auto-generate according to a specific schedule.
+A report can be either manually generated on demand or set to auto-generate according to a specific schedule.
 
-#### 3.3.6.1 Manually Generated Reports *
+#### 3.3.6.1 Manually Generating Reports *
 ------
 
-**To manually generate a report:**
+**To generate a report:**
 
-1.  Navigate to the Report Tool.
+1.  Click **New Report**.
 
-2.  Click **New Report**.
+2.  Select Report Type, Format, and how often you would like to run the report.
 
-3.  Select Report Type and Format.
+3.  Set any options.
 
-4.  Set any options.
-
-5.  Click **Generate**.
+4.  Click **Generate**.
 
 The Report is generated in the background and the status of the report
 is shown in the table. Once the report is complete, it can be downloaded
-by clicking the report title link.
+by clicking on the report and then the **Download** button in the toolbar.
 
-#### 3.3.6.2 Scheduled Reports *
+#### 3.3.6.2 Scheduling Reports *
 ------
 
 **To create a scheduled report:**
 
-1.  Navigate to the Report Tool.
+1.  Click on **Scheduled Reports** button.
 
-2.  Click **New Report**.
+2.  Click on **Add**.
 
 3.  Select Report Type and Format.
 
-4.  Set any options.
+4.  Set the interval to run the report and enter an email address.
 
-5.  Check the **Schedule** box.
+5.  Click **Generate** to save the scheduled report.
 
-6.  Set the interval to run the report and enter an email address.
-
-7.  Click **Generate** to save the scheduled report.
-
-**NOTE:** The report will run initially and then it will run on the next
+**NOTE:** The report will run to begin with and then it will run on the next
 scheduled interval.
 
-**To cancel a scheduled report:**
+**To cancel/inactivate a scheduled report:**
 
-1.  Navigate to the Reports Tool.
+1.  Click on the **Scheduled Reports** button.
 
-2.  Select the Scheduled tab.
+2.  Select the report you wish to cancel or inactivate
 
-3.  Click **Inactivate** ![toggle](../webapp/client/images/help/toggle.png) or **Delete**
-    ![trash](../webapp/client/images/help/trash.png) to cancel the scheduled report. Click
-    **Inactivate** to temporarily pause it.
+3.  Click **Toggle Status** to inactivate (or to activate) the scheduled report. This only temporarily
+ pauses the scheduled report.  To remove in permanently, click on the **Delete** button.
+
+**Note:** You can also edit a scheduled report by selecting a report and clicking **Edit** in the toolbar.
+Make any changes to the form and click **Generate**.
 	
 	
 ### 3.3.7 System *
@@ -1566,21 +1691,25 @@ System Tools are provided to aid in troubleshooting.
 
 System Tools and their Purpose:
 
+-  **Status** -                   Shows the run status of the application (i.e. memory, load, thread status and system properties). Refer to Java platform documentation for the interpretation of the information.
+-  **Error Tickets** -            View error tickets generated by the system and view their details.  Delete one or more error tickets by selecting the ticket(s) and clicking on the **Delete** button in the toolbar.
+-  **Application Properties** -   Can be used to adjust application run state.  Add a key and value by clicking on **+Add** in the toolbar.  Specify a value and key then click **Save**.  You can also edit or delete a key/value by selecting a key and clicking either **Edit** or **Delete**.
+-  **System Configuration** -     Provides a read-only view in the current properties.
+-  **Logs and Logging** -         Allows for adjusting log levels at run time to log more/less information from a software entry. **NOTE:** Logs are hierarchically organized so setting a level from a parent will 
+								  affect all children who are set to delegate to the parent logger. Loggers under: edu.usu.sdl.openstorefront are application specific. A logger will only appear when the software entry is loaded.
+-  **Plugins** -				  Allows the administrator to manage plugins.  Add a plugin by clicking on the **+Add Plugin** button in the toolbar.  Select a OSGi jar/war file and click **Upload Plugin**.  Other plugin features are starting, stopping, downloading, or uninstalling a plugin. 
+-  **Managers** -				  Allows for updating configuration settings at runtime by restarting affected managers.
+-  **Cache** -					  Provides cache statistics and allows administrator to flush cache.
 -  **Search Control** -           Allows for re-indexing listings.
 -  **Recent Changes Email** -     Allows for sending/previewing a recent change email.
--  **Error Tickets** -            View error tickets generated by the system and view their details.
--  **Application Properties** -   Can be used to adjust application run state.
--  **System Configuration** -     Provides a read-only view in the current properties.
--  **Logging** -                  Allows for adjusting log levels at run time to log more/less information from a software component. **NOTE:** Logs are hierarchically organized so set a level from a parent will affect all children who are set to delegate to the parent logger. Loggers under: edu.usu.sdl.openstorefront are application specific. A logger will only appear when the software component is loaded.
--  **Status** -                   Shows the run status of the application (i.e. memory, load, thread status and properties). Refer to Java platform documentation for the interpretation of the information.
 
 
 ### 3.3.8 Tracking *
 
-The application tracks internal user logins, Component/Resources views,
+The application tracks internal user logins, Entry/Resources views,
 and Article views. The application also can be integrated with external
-analytics such as google analytics for additional information. Also, the
-application server can be configured for access logging and the
+analytics such as Google analytics for additional information (**See Branding Section 3.3.2).
+Also, the application server can be configured for access logging and the
 application logs audit message for all admin API access.
 
 The primary tracking events can be viewed using the Tracking Admin Tool.
@@ -1595,18 +1724,17 @@ This contains the documentation for the Application Programming Interface, or AP
 is viewable in a web page or is printable by clicking on Print View.
 
 
-
 # 4.  Glossary
 ----------
 
-Contains definitions of term using in the application and in the help (see the sub-sections). 
+Contains definitions of terms used in the application and in the help documentation (see the sub-sections). 
 
 ##  4.1  User Terminology
 ----------------
 
 -  **Article (Topic Landing Page)** -   An article is a central information page that contains information on a specific topic relating to an attribute.
--  **Attribute (Vital)**            -   An attribute is a specific category that has been applied to a listing. A listing (component) may have many attributes associated with it.
--  **Entry (Listing)**              -   A listing in the catalog. A component has the attributes that classify the information being represented by the listing.
+-  **Attribute (Vital)**            -   An attribute is a specific category that has been applied to a listing. A listing (entry) may have many attributes associated with it.
+-  **Entry (Listing)**              -   A listing in the catalog. A entry has the attributes that classify the information being represented by the listing.
 -  **Highlight**                    -   A news item shown on the home page.
 -  **Watch**                        -   A way to track changes on a listing.
 
@@ -1617,4 +1745,4 @@ Contains definitions of term using in the application and in the help (see the s
 -  **Attribute Code**   -  A specific value for a type.
 -  **Job**              -  A scheduled unit of work.
 -  **Task**             -  Background process; used for long-running operations.
--  **Entry Metadata**   -  Non-Filterable Component Vitals. It allows for an admin to put in non-restricted key/value pairs which get added to the vitals.
+-  **Entry Metadata**   -  is used to capture non-structure data with variable values.  Metadata consists of a label and Value.  An example is: "Content Collection size:  200".  The label is "Content Collection" and 200 is the value.  Note: Metadata is not indexed or filterable.   

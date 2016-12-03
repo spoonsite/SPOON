@@ -410,7 +410,7 @@
 						items: [
 							{
 								xtype: 'panel',								
-								html: 'CVS (code, description, detail description(optional), sort order (optional))'
+								html: 'Select a CSV file (code, description, detail description(optional), sort order (optional))'
 							},
 							{
 								xtype: 'filefield',
