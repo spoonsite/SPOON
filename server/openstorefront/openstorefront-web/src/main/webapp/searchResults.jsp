@@ -1569,7 +1569,7 @@ limitations under the License.
 										{
 											xtype: 'button',
 											tooltip: 'Keyword Search',
-											iconCls: 'fa fa-2x fa-search icon-top-padding',
+											iconCls: 'fa fa-2x fa-search',
 											style: 'border-radius: 0px 3px 3px 0px;',
 											scale   : 'large',											
 											width: 50,
@@ -1592,7 +1592,7 @@ limitations under the License.
 										{
 											xtype: 'button',
 											text: '<span style="font-size: 10px;">Search Tools</span>',																		
-											iconCls: 'fa fa-2x fa-search-plus icon-top-padding',
+											iconCls: 'fa fa-2x fa-search-plus',
 											iconAlign: 'top',
 											margin: '0 0 0 10',
 											style: 'border-radius: 3px 0px 0px 3px;',											
@@ -1611,7 +1611,7 @@ limitations under the License.
 									itemId: 'notificationBtn',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope icon-top-padding',
+									iconCls: 'fa fa-2x fa-envelope',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {

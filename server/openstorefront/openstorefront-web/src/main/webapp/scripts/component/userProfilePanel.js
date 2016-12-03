@@ -20,6 +20,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 	alias: 'osf.widget.UserProfilePanel',
 	bodyStyle: 'padding: 20px;',
 	extraTools: [],
+	scrollable: true,
 	defaults: {
 		labelAlign: 'right'
 	},
@@ -154,7 +155,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 			}
 		];
 
-		var toolbarItems = [
+		var toolbarItems = [			
 			{
 				text: 'Save',
 				formBind: true,
@@ -192,8 +193,8 @@ Ext.define('OSF.component.UserProfilePanel', {
 			{
 				xtype: 'toolbar',
 				dock: 'bottom',
+				style: 'background-color: transparent !important;',
 				items: toolbarItems
-
 			}
 		];
 		profileForm.add(formItems);
@@ -231,11 +232,11 @@ Ext.define('OSF.component.UserProfileWindow', {
 	alias: 'osf.widget.UserProfileWindow',
 	title: 'User Profile',
 	iconCls: 'fa fa-lg fa-user',
-	layout: 'hbox',
+	layout: 'fit',
 	modal: true,
 	width: '50%',
 	alwaysOnTop: true,
-	height: 385,
+	height: 425,
 	initComponent: function () {
 		this.callParent();
 
@@ -245,7 +246,7 @@ Ext.define('OSF.component.UserProfileWindow', {
 			width: '100%',
 			saveCallback: profileWindow.saveCallback,
 			profileWindow: profileWindow,
-			extraTools: [
+			extraTools: [	
 				{
 					xtype: 'tbfill'
 				},

@@ -35,16 +35,17 @@ Ext.define('OSF.component.IntegrationWindow', {
 			title: 'Add/Update  Configuration',
 			modal: true,
 			width: '40%',
-			height: 300,
+			height: 325,
 			minWidth: 300,
-			minHeigth: 300,
+			minHeigth: 325,
 			alwaysOnTop: true,
 			layout: 'fit',
-			resizable: false,
+			resizable: true,
 			items: [
 				{
 					xtype: 'form',
 					itemId: 'configForm',
+					scrollable: true,
 					bodyStyle: 'padding: 10px',
 					defaults: {
 						labelAlign: 'top',
@@ -114,7 +115,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 									width: 100,
 									minWidth: 100,
 									text: 'Check',
-									margin: '25 0 0 0',
+									margin: '30 0 0 0',
 									iconCls: 'fa fa-check',
 									handler: function(){
 										loadJiraIssue();
@@ -225,13 +226,13 @@ Ext.define('OSF.component.IntegrationWindow', {
 				}
 			],			
 			columns: [
-				{ text: 'Integration Type', align: 'center', dataIndex: 'integrationType', width: 150 },
+				{ text: 'Integration Type', align: 'center', dataIndex: 'integrationType', minWidth: 150 },
 				{
 					text: 'Integration Config',
 					columns: [
-						{ text: 'Project Type', dataIndex: 'projectType', width: 175 },
-						{ text: 'Issue Type', dataIndex: 'issueType', width: 150 },
-						{ text: 'Issue Number', dataIndex: 'issueNumber', width: 150 }
+						{ text: 'Project Type', align: 'center', dataIndex: 'projectType', minWidth: 175 },
+						{ text: 'Issue Type', align: 'center', dataIndex: 'issueType', minWidth: 150 },
+						{ text: 'Issue Number', align: 'center', dataIndex: 'issueNumber', minWidth: 150 }
 					]
 				},
 				{ text: 'Status',  align: 'center', dataIndex: 'status', width: 150,
@@ -253,11 +254,11 @@ Ext.define('OSF.component.IntegrationWindow', {
 						return label;
 					}
 				},
-				{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },
-				{ text: 'Last Start Date', dataIndex: 'lastStartTime', hidden: true, width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
-				{ text: 'Create User', dataIndex: 'createUser', hidden: true, width: 150 },
-				{ text: 'Create Date', dataIndex: 'createDts', hidden: true, width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
-				{ text: 'Last Complete Date', dataIndex: 'lastEndTime', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+				{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', minWidth: 125 },
+				{ text: 'Last Start Date', dataIndex: 'lastStartTime', hidden: true, minWidth: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+				{ text: 'Create User', dataIndex: 'createUser', hidden: true, minWidth: 150 },
+				{ text: 'Create Date', dataIndex: 'createDts', hidden: true, minWidth: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+				{ text: 'Last Complete Date', dataIndex: 'lastEndTime', flex: 1, minWidth: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
 			],
 			listeners: {	
 				selectionchange: function(selectionModel, selected, opts){

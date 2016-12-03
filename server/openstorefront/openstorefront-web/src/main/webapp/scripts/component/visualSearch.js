@@ -61,7 +61,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			zoomCenterY: 0,
 			update: function(sprites){
 				Ext.Array.each(visPanel.sprites, function(item){
-					if (!item.backgroundSprite) {
+					if (!item.backgroundSprite) {					
 						item.setAttributes({
 							translationX: visPanel.camera.panX,
 							translationY: visPanel.camera.panY,
@@ -69,7 +69,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							scaleY:  visPanel.camera.zoom,
 							scaleCenterX: visPanel.camera.zoomCenterX,
 							scaleCenterY: visPanel.camera.zoomCenterY
-						});						
+						});	
 					}
 				});
 				visPanel.getSurface().renderFrame();
@@ -1569,13 +1569,20 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				if (theta < (Math.PI/2 * -1) && theta >= Math.PI * -1 ) {
 					theta +=  Math.PI;				
 					xAdjust = -15;
-				}			
-
+				}		
+							
+				var textX = (endX + ownerNode.positionX) /2 + xAdjust;
+				var textY = ownerNode.positionY + (endY - ownerNode.positionY)/ 2 - 10;
 				sprites.push(Ext.apply({}, {
-					x:  (endX + ownerNode.positionX) /2 + xAdjust,
-					y:  ownerNode.positionY + (endY - ownerNode.positionY)/ 2 - 10,
+					x:  textX,
+					y:  textY,					
+					shadowColor: 'black',
+					shadowBlur: 4,
+					shadowOffsetX: 4,
+					shadowOffsetY: 4,
 					text: Ext.util.Format.ellipsis(relationship.relationshipLabel, 20),
-					rotationRads: theta
+					relationShipText: true					
+					//rotationRads: theta
 				}, relationshipText));				
 			}
 			

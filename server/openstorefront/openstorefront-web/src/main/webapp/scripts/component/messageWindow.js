@@ -24,7 +24,7 @@ Ext.define('OSF.component.MessageWindow', {
 	modal: true,	
 	layout: 'fit',
 	width: '60%',
-	height: 610,
+	height: 685,
 	resizable: false,
 	initialToUsers: '',
 	initialBccUsers: '',
@@ -34,18 +34,22 @@ Ext.define('OSF.component.MessageWindow', {
 
 		var messageWindow = this;
 
+		var toUsersString = '';
 		if (messageWindow.initialToUsers) {
-			var toUsersString = messageWindow.initialToUsers.join('; ');
-		} else {
-			var toUsersString = '';
+			if (Ext.typeOf(messageWindow.initialToUsers) === 'array') {
+				toUsersString = messageWindow.initialToUsers.join('; ');
+			} else {
+				toUsersString = messageWindow.initialToUsers;
+			}
 		}
-
-		if (messageWindow.initialBccUsers) {
-			var bccUsersString = messageWindow.initialBccUsers.join('; ');
-		} else {
-			var bccUsersString = '';
-		}
-
+		var bccUsersString = '';
+		if (messageWindow.initialBccUsers) {			
+			if (Ext.typeOf(messageWindow.initialBccUsers) === 'array') {
+				bccUsersString = messageWindow.initialBccUsers.join('; ');
+			} else {
+				bccUsersString = messageWindow.initialBccUsers;
+			}			
+		} 
 		
 		var selectUsers = function(emailField) {
 			var selectUserWindow = Ext.create('Ext.window.Window', {
@@ -186,7 +190,7 @@ Ext.define('OSF.component.MessageWindow', {
 							itemId: 'toText',
 							fieldLabel: 'To <span class="field-required" />',
 							tooltip: '<span style="color: grey">(semi-colon list of email addresses)</span>',
-							width: '90%',
+							width: '85%',
 							emptyText: 'email@mail.com; ..',
 							allowBlank: false,
 							name: 'emailAddresses',
@@ -197,8 +201,8 @@ Ext.define('OSF.component.MessageWindow', {
 							xtype: 'button',
 							text: 'Select Users',
 							iconCls: 'fa fa-users',
-							width: '10%',
-							margin: '25 0  0  0',
+							width: '15%',
+							margin: '30 0  0  0',
 							handler: function(){
 								var field = this.up('panel').getComponent('toText');							
 								selectUsers(field);
@@ -221,7 +225,7 @@ Ext.define('OSF.component.MessageWindow', {
 							itemId: 'ccText',
 							fieldLabel: 'CC',
 							tooltip: '<span style="color: grey">(semi-colon list of email addresses)</span>',
-							width: '90%',
+							width: '85%',
 							emptyText: 'email@mail.com; ..',							
 							name: 'ccEmails',							
 							maxLength: 2048
@@ -230,8 +234,8 @@ Ext.define('OSF.component.MessageWindow', {
 							xtype: 'button',
 							text: 'Select Users',
 							iconCls: 'fa fa-users',
-							width: '10%',
-							margin: '25 0  0  0',
+							width: '15%',
+							margin: '30 0  0  0',
 							handler: function(){
 								var field = this.up('panel').getComponent('ccText');								
 								selectUsers(field);
@@ -254,7 +258,7 @@ Ext.define('OSF.component.MessageWindow', {
 							itemId: 'bccText',
 							fieldLabel: 'BCC',
 							tooltip: '<span style="color: grey">(semi-colon list of email addresses)</span>',
-							width: '90%',
+							width: '85%',
 							emptyText: 'email@mail.com; ..',						
 							name: 'bccEmails',						
 							value: bccUsersString,
@@ -264,8 +268,8 @@ Ext.define('OSF.component.MessageWindow', {
 							xtype: 'button',
 							text: 'Select Users',
 							iconCls: 'fa fa-users',
-							width: '10%',
-							margin: '25 0  0  0',
+							width: '15%',
+							margin: '30 0  0  0',
 							handler: function(){
 								var field = this.up('panel').getComponent('bccText');								
 								selectUsers(field);

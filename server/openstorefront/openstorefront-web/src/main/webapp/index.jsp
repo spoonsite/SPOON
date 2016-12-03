@@ -507,7 +507,7 @@ limitations under the License.
 									itemId: 'notificationBtn',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope icon-top-padding',
+									iconCls: 'fa fa-2x fa-envelope',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {

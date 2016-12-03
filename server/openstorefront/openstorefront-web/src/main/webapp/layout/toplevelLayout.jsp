@@ -48,18 +48,18 @@ limitations under the License.
 		
 	%>	
 
-	<link href="webjars/extjs/6.2.0/build/classic/theme-neptune/resources/theme-neptune-all-debug.css" rel="stylesheet" type="text/css"/>
-	<link href="webjars/extjs/6.2.0/build/packages/ux/classic/neptune/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
-	<link href="webjars/extjs/6.2.0/build/packages/charts/classic/neptune/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
+	<link href="webjars/extjs/6.2.0/build/classic/theme-triton/resources/theme-triton-all-debug.css" rel="stylesheet" type="text/css"/>
+	<link href="webjars/extjs/6.2.0/build/packages/ux/classic/triton/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
+	<link href="webjars/extjs/6.2.0/build/packages/charts/classic/triton/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="webjars/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-	<link href="Branding.action?CSS&template=extTheme.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
+	<link href="Branding.action?CSS&template=extTritonTheme.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 	<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
 	<link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 	
 	<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">	
 
 	<script src="webjars/extjs/6.2.0/ext-bootstrap.js" type="text/javascript"></script>
-	<script src="webjars/extjs/6.2.0/build/classic/theme-neptune/theme-neptune.js" type="text/javascript"></script>
+	<script src="webjars/extjs/6.2.0/build/classic/theme-triton/theme-triton.js" type="text/javascript"></script>
 	<script src="webjars/extjs/6.2.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
 	<script src="webjars/extjs/6.2.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
 	<script src="scripts/socket.io.js" type="text/javascript"></script>

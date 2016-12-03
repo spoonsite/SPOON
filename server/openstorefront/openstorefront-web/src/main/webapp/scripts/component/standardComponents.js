@@ -102,7 +102,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: 'Home',
-			iconCls: 'fa fa-home',
+			iconCls: 'fa fa-2x fa-home',
 			href: 'index.jsp'			
 		});
 		
@@ -110,7 +110,7 @@ Ext.define('OSF.component.UserMenu', {
 			menuItems.push({
 				text: 'Admin Tools',
 				itemId: 'menuAdminTools',
-				iconCls: 'fa fa-gear',
+				iconCls: 'fa fa-2x fa-gear',
 				hidden: true,
 				href: 'AdminTool.action'	
 			});
@@ -119,7 +119,7 @@ Ext.define('OSF.component.UserMenu', {
 		if (userMenu.showUserTools) {
 			menuItems.push({
 				text: 'User Tools',
-				iconCls: 'fa fa-user',
+				iconCls: 'fa fa-2x fa-user',
 				href: 'UserTool.action'		
 			});
 		}	
@@ -130,7 +130,7 @@ Ext.define('OSF.component.UserMenu', {
 		if (userMenu.showHelp) {
 			menuItems.push({
 				text: '<b>Help</b>',
-				iconCls: 'fa fa-question-circle',
+				iconCls: 'fa fa-2x fa-question-circle',
 				handler: function() {
 					userMenu.helpWin.show();
 				}			
@@ -139,7 +139,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: '<b>Feedback / issues</b>',
-			iconCls: 'fa fa-commenting',
+			iconCls: 'fa fa-2x fa-commenting',
 			handler: function() {
 				userMenu.feedbackWin.show();
 			}		
@@ -151,7 +151,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: 'Logout',
-			iconCls: 'fa fa-sign-out',
+			iconCls: 'fa fa-2x fa-sign-out',
 			href: 'Login.action?Logout'			
 		});
 		

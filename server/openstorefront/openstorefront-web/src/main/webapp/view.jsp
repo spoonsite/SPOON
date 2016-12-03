@@ -338,7 +338,7 @@ limitations under the License.
 							},
 							{
 								xtype: 'button',
-								iconCls: 'fa fa-2x fa-binoculars icon-top-padding',
+								iconCls: 'fa fa-2x fa-eye',
 								id: 'watchBtn',
 								tooltip: 'Watch',
 								scale: 'large',
@@ -364,7 +364,7 @@ limitations under the License.
 							},
 							{
 								xtype: 'button',								
-								text: '<span class="fa-stack" style="margin-left: -10px;margin-right: -10px;"><i class="fa fa-binoculars fa-stack-1x"></i><i class="fa fa-ban fa-stack-2x text-danger"></i></span>',
+								text: '<span class="fa-stack" style="margin-left: -10px;margin-right: -10px; margin-bottom: -10px;"><i class="fa fa-eye fa-stack-1x" style="top: -5px;"></i><i class="fa fa-2x fa-ban fa-stack-1x text-danger"  style="top: -5px;"></i></span>',
 								id: 'watchRemoveBtn',
 								tooltip: 'Remove Watch',
 								scale: 'large',								
@@ -384,7 +384,7 @@ limitations under the License.
 							},							
 							{
 								xtype: 'button',
-								iconCls: 'fa fa-2x fa-print icon-top-padding',
+								iconCls: 'fa fa-2x fa-print',
 								tooltip: 'Print',
 								scale: 'large',
 								margin: '0 10 0 0',
@@ -397,7 +397,7 @@ limitations under the License.
 							},
 							{
 								xtype: 'button',
-								iconCls: 'fa fa-2x fa-arrows-alt icon-top-padding',
+								iconCls: 'fa fa-2x fa-arrows-alt',
 								tooltip: 'Full Page',
 								hidden: fullPage,
 								scale: 'large',
@@ -408,7 +408,7 @@ limitations under the License.
 							{
 								xtype: 'button',								
 								id: 'nonOwnerMenu',
-								iconCls: 'fa fa-2x fa-navicon icon-top-padding',								
+								iconCls: 'fa fa-2x fa-navicon',								
 								scale: 'large',								
 								arrowVisible: false,
 								margin: '0 10 0 0',
@@ -498,7 +498,7 @@ limitations under the License.
 										xtype: 'button',
 										text: 'Add',
 										iconCls: 'fa fa-plus',
-										margin: '25 0 0 0',
+										margin: '30 0 0 0',
 										minWidth: 75,
 										handler: function(){
 											var tagField = Ext.getCmp('tagField');

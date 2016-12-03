@@ -1975,19 +1975,25 @@
 							id: 'recentChangeForm',
 							padding: 20,
 							layout: 'vbox',
-							width: '30%',
+							width: '40%',
 							defaults: {
 								labelAlign: 'top',
-								width: '100%',
-								padding: '20px',
+								width: '100%',								
 								style: 'font-weight: bold'
 							},
 							items: [
 								{ 
-									xtype: 'label',
-									id: 'emailSendDates',
-									text: 'E-mail Dates:',
-									style: 'font-weight: normal'
+									xtype: 'panel',
+									id: 'emailSendDates',	
+									margin: '0 0 0 -39',
+									tpl: [
+										'<ul class="list-group">',
+										'	<li class="stat-list-group-item">Last Automated Email Sent: <span class="stat-badge">',
+										'	{[Ext.Date.format(Ext.Date.parse(values.lastSentDts, "c"), "m/d/y H:i:s A ")]}',
+										'	<li class="stat-list-group-item">Last Automated Email Sent: <span class="stat-badge">',
+										'	{[Ext.Date.format(Ext.Date.parse(values.nextSendDts, "c"), "m/d/y H:i:s A ")]}',
+										'</span></li></ul'
+									]
 								},
 								{
 									xtype: 'datefield',
@@ -2003,49 +2009,42 @@
 									allowBlank: true,
 									maxLength: 100,
 									vtype: 'email',
-								}
-							],
-							dockedItems: [
+								},
 								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									style: 'padding: 20px;',
-									items: [
-										{
-											xtype: 'button',
-											scale: 'medium',
-											text: 'Send Recent Changes Email',
-											iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',
-											handler: function() {
-												var form = Ext.getCmp('recentChangeForm');
-												if (form.isValid()) {
-													data = {};
-													data.emailAddress = Ext.getCmp('toEmail').value;
-													data.lastRunDts = Ext.Date.format(Ext.getCmp('sinceDate').value,'m/d/Y');
-													// For some reason this uses URL parameters
-													var url = 'api/v1/service/notification/recent-changes';
-													url += '?emailAddress=' + data.emailAddress;
-													url += '&lastRunDts=' + data.lastRunDts;
-													Ext.Ajax.request({
-														url: url,
-														method: 'POST',
-														success: function(response, opt){
-															Ext.toast('Successfully sent request', '', 'tr');
-														},
-														failure: function(response, opt) {
-															Ext.toast('Email request failed', '', 'tr');
-														}
+									xtype: 'button',
+									maxWidth: 300,
+									maxHeight: 75,
+									scale: 'medium',
+									text: 'Send Recent Changes Email',
+									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',
+									handler: function() {
+										var form = Ext.getCmp('recentChangeForm');
+										if (form.isValid()) {
+											data = {};
+											data.emailAddress = Ext.getCmp('toEmail').value;
+											data.lastRunDts = Ext.Date.format(Ext.getCmp('sinceDate').value,'m/d/Y');
+											// For some reason this uses URL parameters
+											var url = 'api/v1/service/notification/recent-changes';
+											url += '?emailAddress=' + data.emailAddress;
+											url += '&lastRunDts=' + data.lastRunDts;
+											Ext.Ajax.request({
+												url: url,
+												method: 'POST',
+												success: function(response, opt){
+													Ext.toast('Successfully sent request', '', 'tr');
+												},
+												failure: function(response, opt) {
+													Ext.toast('Email request failed', '', 'tr');
+												}
 
 
-													});
-												}
-												else {
-													Ext.Msg.alert('Errors', 'There are errors in the form. Please fill the form correctly.');
-												}
-											}
+											});
 										}
-									]
-								}
+										else {
+											Ext.Msg.alert('Errors', 'There are errors in the form. Please fill the form correctly.');
+										}
+									}
+								}								
 							]
 						}
 					]
@@ -2055,15 +2054,8 @@
 					Ext.Ajax.request({
 						url: 'api/v1/service/notification/recent-changes/status',
 						success: function(response, opt){
-							var data = Ext.decode(response.responseText);
-							var nextAutoText = '<ul class="list-group">';
-							nextAutoText += '<li class="stat-list-group-item">Last Automated Email Sent: <span class="stat-badge">',
-							nextAutoText += Ext.Date.format(Ext.Date.parse(data.lastSentDts,'c'), 'm/d/y H:i:s A ');
-							nextAutoText += '</span></li>';
-							nextAutoText += '<li class="stat-list-group-item">Next Automated Email: <span class="stat-badge">',
-							nextAutoText += Ext.Date.format(Ext.Date.parse(data.nextSendDts,'c'), 'm/d/y H:i:s A ');
-							nextAutoText += '</span></li>';
-							Ext.getCmp('emailSendDates').setText(nextAutoText, false);
+							var data = Ext.decode(response.responseText);							
+							Ext.getCmp('emailSendDates').update(data);
 						}
 					});
 				};
