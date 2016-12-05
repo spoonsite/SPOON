@@ -28,9 +28,16 @@
 					remoteSort: true,
 					sorters: [
 						new Ext.util.Sorter({
-							property: 'eventDts',
+							property: 'lastLoginDts',
 							direction: 'DESC'
 						})
+					],
+					fields: [
+						{
+							name: 'lastLoginDts',
+							type: 'date',
+							dateFormat: 'c'						
+						}
 					],
 					proxy: CoreUtil.pagingProxy({
 						id: 'userProfileStoreProxy',
@@ -82,19 +89,6 @@
 					}						
 				});
 
-				var userTypeStore = Ext.create('Ext.data.Store', {
-					storeId: 'userTypeStore',
-					autoLoad: true,
-					fields: ['code', 'description'],
-					proxy: {type: 'ajax', url: 'api/v1/resource/lookuptypes/UserTypeCode/view'}
-				});
-
-				var getUserType = function getUserType(code) {
-					if (code)
-						return userTypeStore.getData().find('code', code).data.description;
-					return '';
-				};
-
 
 				var userProfileGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Manage User Profiles <i class="fa fa-question-circle"  data-qtip="A user profile represents a user in the system and contains the user\'s information."></i>',
@@ -139,7 +133,7 @@
 								text: 'User Type',
 								dataIndex: 'userTypeCode',
 								renderer: function (value, metaData, record) {
-									return getUserType(value);
+									return record.get('userTypeDescription');
 								}
 							},
 							{
@@ -195,9 +189,9 @@
 									layout: 'hbox',
 									items: [
 										Ext.create('OSF.component.StandardComboBox', {
-											id: 'userProfileGrid-filter-ActiveStatus',
-											emptyText: 'Active',
+											id: 'userProfileGrid-filter-ActiveStatus',											
 											fieldLabel: 'Active Status',
+											emptyText: '',
 											name: 'activeStatus',
 											value: 'A',
 											editable: false,
@@ -248,8 +242,8 @@
 										Ext.create('OSF.component.StandardComboBox', {
 											id: 'userProfileGrid-filter-SearchField',
 											fieldLabel: 'Select Field',
-											name: 'searchField',
-											emptyText: 'Username',
+											emptyText: '',
+											name: 'searchField',											
 											value: 'USER',
 											editable: false,
 											typeAhead: false,

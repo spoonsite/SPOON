@@ -1038,6 +1038,7 @@
 					title: 'Add Tag',
 					modal: true,
 					width: '30%',
+					height: 185,
 					y: '10em',
 					iconCls: 'fa fa-lg fa-plus',
 					layout: 'fit',

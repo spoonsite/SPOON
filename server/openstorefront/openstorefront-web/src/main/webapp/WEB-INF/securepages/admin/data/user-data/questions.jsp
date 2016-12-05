@@ -237,8 +237,7 @@
 							items: [
 								{
 									xtype: 'combobox',
-									id: 'answer-activeStatus',
-									emptyText: 'Active',
+									id: 'answer-activeStatus',									
 									value: 'A',
 									editable: false,
 									fieldLabel: 'Active Status',
@@ -376,8 +375,7 @@
 									xtype: 'combobox',
 									id: 'question-activeStatus',
 									value: 'A',
-									editable: false,
-									emptyText: 'Active questions',
+									editable: false,									
 									fieldLabel: 'Show Entries with:',
 									labelWidth: '250px',
 									name: 'question-activeStatus',

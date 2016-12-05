@@ -150,7 +150,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 				fieldLabel: 'Member Since',
 				name: 'createDts',
 				renderer: function (value, field) {
-					return '<b>' + Ext.util.Format.date(value, 'F d, Y') + '</b>';
+					return '<b>' + Ext.util.Format.date(Ext.Date.parse(value, 'c'), 'F d, Y') + '</b>';
 				}
 			}
 		];

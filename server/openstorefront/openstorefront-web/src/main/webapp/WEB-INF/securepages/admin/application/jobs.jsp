@@ -14,6 +14,18 @@
 				var jobStore = Ext.create('Ext.data.Store', {
 					storeId: 'jobStore',
 					autoLoad: true,
+					fields: [
+						{
+							name: 'perviousFiredTime',
+							type: 'date',
+							dateFormat: 'c'
+						},
+						{
+							name: 'nextFiredTime',
+							type: 'date',
+							dateFormat: 'c'
+						}						
+					],
 					proxy: {
 						type: 'ajax',
 						url: 'api/v1/service/jobs'

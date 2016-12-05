@@ -549,6 +549,7 @@
 							},
 							{
 								type: 'maximize',
+								hidden: Ext.isIE9m ? true : false,
 								tooltip: 'Maximize view',
 								callback: function(panel, tool, event) {
 									
@@ -604,6 +605,8 @@
 										closeMode: 'destroy',
 										modal: true,
 										width: 350,
+										height: 200,
+										minHeight: 200,
 										scrollable: true,
 										bodyStyle: 'padding: 10px',
 										y: tool.getY(),

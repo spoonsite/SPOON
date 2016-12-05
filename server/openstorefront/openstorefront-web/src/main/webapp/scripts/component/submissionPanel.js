@@ -585,7 +585,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Attribute',
 				width: '50%',
-				height: 150,
+				height: 200,
 				layout: 'fit',
 				items: [
 					{
@@ -864,7 +864,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				title: 'Add Contact',
 				alwaysOnTop: true,
 				width: '50%',
-				height: 300,
+				height: 350,
 				layout: 'fit',
 				items: [
 					{
@@ -1059,7 +1059,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add External Link',
 				width: '50%',
-				height: 360,
+				height: 410,
 				layout: 'fit',
 				items: [
 					{
@@ -1272,7 +1272,8 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Media',
 				width: '50%',
-				minHeight: 400,
+				height: 500,
+				minHeight: 500,
 				layout: 'fit',
 				items: [
 					{
@@ -1495,7 +1496,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Dependency',
 				width: '50%',
-				height: 370,
+				height: 420,
 				layout: 'fit',				
 				items: [
 					{
@@ -1619,7 +1620,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				alwaysOnTop: true,
 				title: 'Add Metadata',
 				width: '50%',
-				height: 250,
+				height: 300,
 				layout: 'fit',
 				items: [
 					{
@@ -1749,7 +1750,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 				title: 'Add Relationship',
 				alwaysOnTop: true,
 				width: '50%',
-				height: 250,
+				height: 300,
 				layout: 'fit',
 				items: [
 					{

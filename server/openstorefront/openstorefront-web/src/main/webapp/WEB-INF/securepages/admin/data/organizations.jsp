@@ -462,7 +462,7 @@
 					title: 'Merge Organizations',
 					modal: true,
 					width: '50%',
-					height: 215,
+					height: 260,
 					y: 40,
 					layout: 'fit',
 					resizable: false,

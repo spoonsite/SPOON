@@ -35,7 +35,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 			title: 'Add/Update  Configuration',
 			modal: true,
 			width: '40%',
-			height: 325,
+			height: 340,
 			minWidth: 300,
 			minHeigth: 325,
 			alwaysOnTop: true,

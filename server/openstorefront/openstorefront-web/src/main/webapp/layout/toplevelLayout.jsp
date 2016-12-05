@@ -233,9 +233,9 @@ limitations under the License.
 						title: 'Notification - ' + args.eventType,
 						bodyCls: 'alert-' + alert.type,
 						bodyPadding: 'padding: 40px;',
-						closable: true,					
-						minWidth: 200,
-						minHeight: 60,
+						closable: true,						
+						minWidth: 200,						
+						minHeight: 60,						
 						align: 'br'
 					});
 					lastNotificationEventId = alert.id;

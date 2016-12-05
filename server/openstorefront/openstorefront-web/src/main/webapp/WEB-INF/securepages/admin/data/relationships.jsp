@@ -188,6 +188,7 @@
 					title: 'Choose Relationship Type',
 					modal: true,
 					width: '35%',
+					height: 225,
 					y: '10em',
 					layout: 'vbox',
 					items: [
@@ -211,18 +212,10 @@
 						{
 							xtype: 'toolbar',
 							dock: 'bottom',
-							items: [
-								{
-									text: 'Cancel',
-									handler: function() {
-										this.up('window').hide();
-									}
-								},
-								{
-									xtype: 'tbfill'
-								},
+							items: [								
 								{
 									text: 'Create Relationship',
+									iconCls: 'fa fa-check text-success',
 									handler: function() {
 										var originId = typePromptWindow.originId;
 										var originName = typePromptWindow.originName;
@@ -257,7 +250,17 @@
 											}
 										});
 									}
-								}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Cancel',
+									iconCls: 'fa fa-close text-danger',
+									handler: function() {
+										this.up('window').hide();
+									}
+								}								
 							]
 						}
 					]

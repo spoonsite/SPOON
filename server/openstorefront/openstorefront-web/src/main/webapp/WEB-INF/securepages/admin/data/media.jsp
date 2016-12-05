@@ -361,7 +361,7 @@
 					title: 'Add Media',
 					modal: true,
 					width: '40%',
-					height: 215,
+					height: 260,
 					y: 40,
 					resizable: false,
 					layout: 'fit',

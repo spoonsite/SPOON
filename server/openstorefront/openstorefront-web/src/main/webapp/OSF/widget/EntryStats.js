@@ -41,7 +41,7 @@ Ext.define('OSF.widget.EntryStats', {
 		);
 		var tplComponentStatsRecentViews = new Ext.XTemplate(
 			'<ol style="padding-top: 10px;"><tpl for="recentlyViewed">', 
-			'<li> <b>{componentName}</b> <span style="font-size: 9px; color: grey; ">({viewDts:date("m/d/Y H:i:s")})</span>',
+			'<li> <b>{componentName}</b> <span style="font-size: 9px; color: grey; ">({[Ext.util.Format.date(Ext.Date.parse(values.viewDts, "c"), "m/d/Y H:i:s")]})</span>',
 			'',
 			'</li>',				
 			'</tpl></ol>'

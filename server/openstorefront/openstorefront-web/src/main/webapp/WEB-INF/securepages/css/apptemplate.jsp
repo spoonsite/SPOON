@@ -795,16 +795,28 @@ table.confluenceTable td.numberingColumn {
     border-color: #ebccd1;
 }
 
+.text-warning {
+	color: #8a6d3b;
+}
+
 .alert-warning {
     color: #8a6d3b;
     background-color: #fcf8e3;
     border-color: #faebcc;
 }
 
+.text-info {
+	color: #31708f;
+}
+
 .alert-info {
     color: #31708f;
     background-color: #d9edf7;
     border-color: #bce8f1;
+}
+
+.text-success {
+	color: #3c763d;
 }
 
 .alert-success {

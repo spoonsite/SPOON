@@ -45,6 +45,11 @@ limitations under the License.
 						autoLoad: true,
 						fields: [
 							{
+								name: 'answeredDate',
+								type:	'date',
+								dateFormat: 'c'
+							},							
+							{
 								name: 'createDts',
 								type:	'date',
 								dateFormat: 'c'

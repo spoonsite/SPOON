@@ -190,33 +190,37 @@ Ext.define('OSF.component.HelpPanel', {
 											
 											v = new RegExp(this.getValue(), 'i');
 											Ext.suspendLayouts();
-											tree.store.filter({
-												filterFn: function(node) {
-													var children = node.childNodes,
-														len = children && children.length;
-													 	
-
-														// Visibility of leaf nodes is whether they pass the test.
-														// Visibility of branch nodes depends on them having visible children.
-														if (!node.get('helpSection').content) {
-															node.get('helpSection').content = '';
-														}
-														var searchText = node.get('text').toLowerCase() + " " +  node.get('helpSection').content.toLowerCase();
-														var visible = searchText.indexOf(rawValue) !== -1 ? true : false ;
-														var i;
-
-													// We're visible if one of our child nodes is visible.
-													// No loop body here. We are looping only while the visible flag remains false.
-													// Child nodes are filtered before parents, so we can check them here.
-													// As soon as we find a visible child, this branch node must be visible.
-													for (i = 0; i < len && !(visible = children[i].get('visible')); i++);
-
-													if (visible && node.isLeaf()) {
-														matches++;
-													}
-													return visible;
-												},
-												id: 'titleFilter'
+											tree.store.filterBy(function (record){
+												if (!record.get('helpSection')) {
+													return true;
+												}
+												
+												if (!record.get('helpSection').content) {
+													record.get('helpSection').content = '';
+												}
+												var searchText = record.get('text').toLowerCase() + " " +  record.get('helpSection').content.toLowerCase();
+												var visible = searchText.search(v) !== -1 ? true : false ;
+												
+												if (!visible) {
+													//check children
+													var checkChildren = function(childNodes) {
+														Ext.Array.each(childNodes, function(node){
+															if (!node.get('helpSection').content) {
+																node.get('helpSection').content = '';
+															}
+															var searchTextChild = node.get('text').toLowerCase() + " " +  node.get('helpSection').content.toLowerCase();
+															if (searchTextChild.search(v) !== -1) {
+																visible = true;
+															} else {
+																checkChildren(node.childNodes);
+															}
+														});
+													};
+													checkChildren(record.childNodes);
+													
+												}
+												
+												return visible;
 											});
 											Ext.resumeLayouts(true);
 										}

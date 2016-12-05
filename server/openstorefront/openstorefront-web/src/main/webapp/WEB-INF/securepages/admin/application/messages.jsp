@@ -108,6 +108,7 @@
 									id: 'userMessageFilter-ActiveStatus',
 									fieldLabel: 'Active Status',
 									name: 'activeStatus',
+									emptyText: '',
 									value: 'A',
 									listeners: {
 										change: function (filter, newValue, oldValue, opts) {

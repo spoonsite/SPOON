@@ -125,7 +125,7 @@ limitations under the License.
 					iconCls: 'fa fa-edit',
 					modal: true,
 					width: '65%',
-					height: 410,
+					height: 470,
 					maximizable: true,
 					layout: 'fit',
 					items: [

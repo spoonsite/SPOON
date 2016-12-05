@@ -273,3 +273,15 @@ x-window-header-default-top {
 .x-nbr .x-panel-default-framed {
 	background-color: ${actionBean.branding.primaryColor} !important; 
 }
+
+.x-btn-default-small-mc {
+	background-color: #7c7d7d;
+}
+
+.x-btn-default-medium-mc {
+	background-color: #7c7d7d;
+}
+
+.x-btn-default-large-mc {
+	background-color: #7c7d7d;
+}
