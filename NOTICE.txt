@@ -1,4 +1,4 @@
-This software is license as whole under GPL V3.
+This software is licensed as whole under GPL V3.
 
 If desired you can be release from the GPL V3 license by purchasing a commercial license from sencha.com for EXT JS.  This software, as a whole, will then be available under Apache V2 license. Indiviual compoenent have different but compatible licenses.
 
@@ -28,14 +28,56 @@ http://dodcio.defense.gov/Portals/0/Documents/OSSFAQ/dodfoss_pdf.pdf
 
 
 This Software Contains (most when compiled/packaged):  
+This is listed here for convience as the individual packages contain there respective licenses.
 
 Patterns from http://subtlepatterns.com/
 Which are licensed under CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/
 
-UI:
+UI: (Included)
 
 EXT JS GPL V3 or later
 TinyMCE LGPL V3 or later
-Font Awesome 
+Font Awesome licensed under SIL OFL 1.1 · Code licensed under MIT License
+JQuery, Apache V2 see jquery.org/license
+JQuery UI, MIT
+
+Server: (Downloaded packaged on build)
+
+Atomsphere Apache V2
+Apache Commons Apache V2
+JEE 6 API CDDL 1.0/GPL V2 class path exception which is compatible with GPL V3
+stripes	Apache V2
+jackson	Apache V2
+orientdb Apache V2
+ehcache	Apache V2
+quartz	Apache V2
+jstl	CDDL 1.0
+slf4j-jdk14	MIT
+jersey	CDDL 1.1/GPL V2 class path exception which is compatible with GPL V3
+jsoup	MIT
+solr-solrj Apache V2
+opencsv	Apache V2
+shiro	Apache V2
+commons-beanutils	Apache V2
+commons-lang3	Apache V2
+jira-rest-java-client	Apache V2
+cachefilter	Apache V2
+uadetector-resources Apache V2
+cron-parser	MIT
+simple-java-mail Apache V2
+org.eclipse.persistence.moxy
+net.java.truevfs Eclipse Public License, Version 1.0
+org.pegdown	Apache V2
+urlrewriterfilter	BSD
+org.osgi.core	Apache V2
+felix	Apache V2
+Elasticsearch	Apache V2
+
+
+
+
+
+
+
 
 
