@@ -40,6 +40,7 @@ TinyMCE LGPL V3 or later
 Font Awesome licensed under SIL OFL 1.1 · Code licensed under MIT License
 JQuery, Apache V2 see jquery.org/license
 JQuery UI, MIT
+Socket IO, MIT
 
 Server: (Downloaded packaged on build)
 
