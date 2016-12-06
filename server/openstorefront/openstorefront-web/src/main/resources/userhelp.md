@@ -23,7 +23,7 @@ and give details on the following:
 -   Evaluation information
 
 **DI2E Clearinghouse is developed by Space Dynamics Laboratory for DI2E and is
-licensed under Apache V2.**
+licensed under GPL V3.**
 
 ![Logo](../webapp/client/images/help/di2elogo-sm.png)
 ![Logo](../webapp/client/images/help/sdl.png)
