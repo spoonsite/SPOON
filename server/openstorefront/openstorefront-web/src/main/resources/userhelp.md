@@ -910,7 +910,7 @@ This section allows for the manipulating of all data related to an entry.
 
 Components can be managed using the Components Tool.  Components are created by an application administrator.
 
-**To create a entry:**
+**To create an entry:**
 
 1.  Click on the **Add** button in the toolbar.
 2.  In the Add/Edit dialog, fill in the form.
@@ -927,20 +927,20 @@ the entry to **Pending** until all data is entered.
 
 **To edit entry:**
 
-1.  Click on the edit icon ![edit](../webapp/images/help/edit.png) in the action column
+1.  Click on the edit icon in the action column
     on the entry you wish to edit.
 
 2.  Make changes by filling out the appropriate form.
 
 **To preview entry:**
 
-1.  Click on the preview icon ![view](../webapp/images/help/viewsm.png) in the action
+1.  Click on the preview icon in the action
     column on the entry you wish to view. A new tab in browser will
     open and display the entry detail page.
 
 **To toggle active status:**
 
-1.  Click on the activate/inactivate icon ![toggle](../webapp/images/help/toggle.png) in the
+1.  Click on the activate/inactivate icon in the
     action column on the entry you wish to edit.
 
 **NOTE:** Use Filter Options to show active/inactive entry.
@@ -952,7 +952,7 @@ Inactive entries are not visible to or searchable by users.
 **WARNING:** This is a hard delete and it will remove all associated data
 (media, user reviews, questions, etc.)
 
-1.  Click the delete icon ![trash](../webapp/images/help/trash.png) to remove.
+1.  Click the delete icon to remove.
 
 2.  Confirm that you want to delete the entry by clicking **OK** on
     the confirmation dialog.
@@ -977,18 +977,6 @@ Inactive entries are not visible to or searchable by users.
     new task will be created to handle the import. The application will
     notify the admin when the task is complete or if there was an issue.
 
-**Note: In-line Description images issue**
-
-
-For articles it maybe desirable to add images to the description.  
-Note: the path to the image, if locally stored is relative. Because of this, the correct path
-will not show in the editor, but it will be correct in the entry preview.  
-
-Example:
-
-              (local image:) Media.action?GeneralMedia&name=Test 
-              will show as missing in the editor but correct in the preview.
-
 
 #### 3.2.3.2 Approval *
 ------
@@ -1007,8 +995,8 @@ on the home page.
 3.  Click on the **Approve** button in the toolbar.  The status should now reflect the approval.
  
 
-**NOTE:** An admin can mark a entry as **Pending** by following the
-step above and selecting **Pending**. Marking the entry as
+**NOTE:** An admin can mark an entry as **Pending** by following the
+step above and selecting **Pending**. Marking the entry as 
 **Pending** makes it not approved.
 
 
@@ -1106,7 +1094,7 @@ they do in the table in the Manage Highlights section.
 
 **To add a highlight:**
  
-1.  Click on the **Add** button .
+1.  Click on the **Add** button.
 2.  Fill out the highlight form and click **Save**.
 
 **To edit/remove a highlight:**
@@ -1190,7 +1178,7 @@ imported using that mapping.
 
 Some data importing can be handled by creating data maps.  Typically file with
 simple structure work best.  In some cases, a custom file parse will need to be 
-created.  Custom parsers require coding and then they can be add to the application
+created.  Custom parsers require coding and then they can be added to the application
 via the plugin feature.
 
 Built-in Supported Mappable Format:
@@ -1559,7 +1547,7 @@ and edit the branding form to meet your specifications and the other is to creat
 2.  Fill out the branding form and click **Save**.  Note: You can preview the branding before saving by clicking **Preview**.
 3.  To activate the branding you just created click on the branding name and then the **Activate** button in the toolbar.
  
-At anytime you can reset the branding to the default branding by clicking on the **Reset To Default** button on the right-hand side of the toolbar.
+At any time you can reset the branding to the default branding by clicking on the **Reset To Default** button on the right-hand side of the toolbar.
 To make changes to an existing branding, click on the name of the branding and click on **Edit** in the toolbar.  Make your changes and click **Save** at the bottom.
 To remove a branding, first select the branding and then click on the **Delete** button in the toolbar.
 
