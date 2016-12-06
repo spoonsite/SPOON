@@ -1010,7 +1010,7 @@ Description, Organization, etc.
 
 1.  Navigate to the Component Tool.
 
-2.  Click on the **Edit** icon ![edit](../webapp/images/help/edit.png) on the entry.
+2.  Click on the **Edit** icon on the entry.
 
 3.  Click the **General** tab.
 
@@ -1295,7 +1295,7 @@ the form is complete.
 
 1.  Select the organization you want to edit.
 
-2.  Click on the edit icon ![edit](../webapp/images/help/edit.png) next to the organization.
+2.  Click on the edit icon next to the organization.
 
     a.  Update Organization information as desired including:  Name, Description, Organization Link, and Organization Type.
 
@@ -1308,7 +1308,7 @@ the form is complete.
 
 1.  Select the organization you want to remove.
 
-2.  Click on the delete icon ![trash](../webapp/images/help/trash.png) next to the organization.
+2.  Click on the delete icon next to the organization.
 
 3.  Confirm that you wish to delete the organization by clicking **OK**.
 
