@@ -437,11 +437,6 @@ the column header.  // Describe process flow
 The first tab of a new submission should be pre-filled with your logged in user information.  
 Make any necessary corrections and click on the Next button at the bottom.
 
-Please be aware:
-This form will submit an entry to the DI2E Framework PMO for review and consideration.
-A DI2E Storefront Manager will contact you regarding your submission. 
-For help, contact helpdesk@di2e.net.
-
 
 #### 2.3.2.2 How to Create a Change Request/Edit Entry
 -----------
