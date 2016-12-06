@@ -15,5 +15,5 @@ The Open Storefront application is a software cataloging system that is used to 
 
 Evaluation information
 
-**Open Storefront is developed by Space Dynamics Laboratory and is licensed under Apache V2.**
+**Open Storefront is developed by Space Dynamics Laboratory and is licensed under GPL V3 (See NOTICE.txt).**
 

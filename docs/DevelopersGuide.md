@@ -108,7 +108,10 @@ version number which represents the major version. The version in the
 URL doesn't change with minor versions. However, the API follows with
 the version of the application.
 
+##1.10 Licensing
+-----------------
 
+The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also claries how individual pieces can be used.
 
 #2. External Developers
 ------
