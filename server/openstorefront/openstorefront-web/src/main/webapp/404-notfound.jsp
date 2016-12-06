@@ -1,3 +1,7 @@
+<%-- 
+	See LICENCE-APL.txt
+--%>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
