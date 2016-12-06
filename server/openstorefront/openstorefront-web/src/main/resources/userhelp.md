@@ -619,14 +619,14 @@ queue immediately, but in most cases this is not needed or desired as
 the automatic process will take handling the message queue.
 
 A watch is set on a entry to allow for a user to be notified of
-changes to a entry. There are two ways notifications occur in the
+changes to an entry. There are two ways notifications occur in the
 application, and there is no limit to the amount of watches a user may
 place.
 
 1.  The watched entry's changes are visually shown to the user
     anytime changes have been made since they last viewed the entry.
     This is seen in the watches tab and when viewing the details of
-    a entry.
+    an entry.
 
 2.  The user may opt to have an email sent anytime there is a change. To
     opt in, see the steps listed below. The email will list the section
