@@ -8,7 +8,7 @@ Version 2.2
 # 1. Overview
 ------
 
-The DI2E Clearinghouse application is a software cataloging system that
+The Open Storefront application is a software cataloging system that
 is used to catalog entries of interest to the DI2E community. 
 Entries include Government off the shelf (GOTS), commercial off the
 shelf (COTS), and Open Source software (OSS). The evaluations
@@ -21,8 +21,9 @@ and give details on the following:
 -   Conformance
 -   Links to documentation, source code, and other artifacts
 -   Evaluation information
+The application can also be used as a general cataloging system.
 
-**DI2E Clearinghouse is developed by Space Dynamics Laboratory for DI2E and is
+**Open Storefront is developed by Space Dynamics Laboratory for DI2E and is
 licensed under GPL V3.**
 
 ![Logo](../webapp/images/help/di2elogo-sm.png)
