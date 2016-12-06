@@ -1267,7 +1267,7 @@ the form is complete.
 **See the Glossary for definition of Metadata**
 
 
-### 3.2.12 Organizations
+### 3.2.12 Organizations *
 --------
 
  Organizations provide information on specific organizations that are linked with
