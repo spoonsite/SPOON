@@ -25,8 +25,8 @@ and give details on the following:
 **DI2E Clearinghouse is developed by Space Dynamics Laboratory for DI2E and is
 licensed under GPL V3.**
 
-![Logo](../webapp/client/images/help/di2elogo-sm.png)
-![Logo](../webapp/client/images/help/sdl.png)
+![Logo](../webapp/images/help/di2elogo-sm.png)
+![Logo](../webapp/images/help/sdl.png)
 
 ## 1.1 Release Notes
 ------
@@ -929,20 +929,20 @@ the entry to **Pending** until all data is entered.
 
 **To edit entry:**
 
-1.  Click on the edit icon ![edit](../webapp/client/images/help/edit.png) in the action column
+1.  Click on the edit icon ![edit](../webapp/images/help/edit.png) in the action column
     on the entry you wish to edit.
 
 2.  Make changes by filling out the appropriate form.
 
 **To preview entry:**
 
-1.  Click on the preview icon ![view](../webapp/client/images/help/viewsm.png) in the action
+1.  Click on the preview icon ![view](../webapp/images/help/viewsm.png) in the action
     column on the entry you wish to view. A new tab in browser will
     open and display the entry detail page.
 
 **To toggle active status:**
 
-1.  Click on the activate/inactivate icon ![toggle](../webapp/client/images/help/toggle.png) in the
+1.  Click on the activate/inactivate icon ![toggle](../webapp/images/help/toggle.png) in the
     action column on the entry you wish to edit.
 
 **NOTE:** Use Filter Options to show active/inactive entry.
@@ -954,7 +954,7 @@ Inactive entries are not visible to or searchable by users.
 **WARNING:** This is a hard delete and it will remove all associated data
 (media, user reviews, questions, etc.)
 
-1.  Click the delete icon ![trash](../webapp/client/images/help/trash.png) to remove.
+1.  Click the delete icon ![trash](../webapp/images/help/trash.png) to remove.
 
 2.  Confirm that you want to delete the entry by clicking **OK** on
     the confirmation dialog.
@@ -1024,7 +1024,7 @@ Description, Organization, etc.
 
 1.  Navigate to the Component Tool.
 
-2.  Click on the **Edit** icon ![edit](../webapp/client/images/help/edit.png) on the entry.
+2.  Click on the **Edit** icon ![edit](../webapp/images/help/edit.png) on the entry.
 
 3.  Click the **General** tab.
 
@@ -1309,7 +1309,7 @@ the form is complete.
 
 1.  Select the organization you want to edit.
 
-2.  Click on the edit icon ![edit](../webapp/client/images/help/edit.png) next to the organization.
+2.  Click on the edit icon ![edit](../webapp/images/help/edit.png) next to the organization.
 
     a.  Update Organization information as desired including:  Name, Description, Organization Link, and Organization Type.
 
@@ -1322,7 +1322,7 @@ the form is complete.
 
 1.  Select the organization you want to remove.
 
-2.  Click on the delete icon ![trash](../webapp/client/images/help/trash.png) next to the organization.
+2.  Click on the delete icon ![trash](../webapp/images/help/trash.png) next to the organization.
 
 3.  Confirm that you wish to delete the organization by clicking **OK**.
 
