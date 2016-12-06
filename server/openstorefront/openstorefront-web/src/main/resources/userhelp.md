@@ -260,6 +260,8 @@ Finally, the columns can be collapsed or expanded by clicking on the left and ri
 arrows in the column headers by Filters, Search Results, and Details. 
 
 
+
+
 ## 2.2 Search Tools
 ------
 
@@ -697,7 +699,7 @@ To remove a tag, click on the tag's drop-down arrow and select **Remove**.
 --------
 
 Click on an entry to view its **Details** page.  From the **Details** page, click on the **Watch** icon
-in the right upper corner (binoculars icon).  To remove an entry from your watch list, click on the **Watch** icon.
+in the right upper corner (eye icon).  To remove an entry from your watch list, click on the **Watch** icon.
 
 ### 2.4.5  Submit Correction and/or Request Ownership
 --------
