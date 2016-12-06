@@ -511,7 +511,7 @@ This screen shows a graphical representation among entries based on organization
  tags, and direct entry relationships.
  
 A particular view can be saved by pressing the **Download Image** button.  The **Find** drop-down menu
-allows the user to search for a entry in the current view on the page.
+allows the user to search for an entry in the current view on the page.
 
 
 #### 2.3.3.3 Reports
