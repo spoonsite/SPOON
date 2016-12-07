@@ -49,11 +49,11 @@ public class SystemAction
 		extends BaseAction
 {
 
-	private static final Logger log = Logger.getLogger(SystemAction.class.getName());
+	private static final Logger LOG = Logger.getLogger(SystemAction.class.getName());
 
 	@Validate(required = true, on = {"BulkAttributeStatusUpdate", "AttributeCleanup"})
 	private String attributeType;
-	
+
 	@HandlesEvent("UserAgent")
 	public Resolution userAgent()
 	{
@@ -68,7 +68,7 @@ public class SystemAction
 			}
 		};
 	}
-		
+
 	@HandlesEvent("AppVersion")
 	public Resolution appVersion()
 	{
@@ -79,7 +79,7 @@ public class SystemAction
 	public Resolution attributeStatusUpdate()
 	{
 		if (SecurityUtil.isAdminUser()) {
-			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 
 			ComponentAttribute componentAttributeExample = new ComponentAttribute();
 			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
@@ -108,7 +108,7 @@ public class SystemAction
 	public Resolution attributeCleanup()
 	{
 		if (SecurityUtil.isAdminUser()) {
-			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 
 			//Deduplicate
 			ComponentAttribute componentAttributeExample = new ComponentAttribute();
@@ -136,18 +136,18 @@ public class SystemAction
 		}
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}
-	
+
 	@HandlesEvent("ContactCleanup")
 	public Resolution contactCleanup()
 	{
 		//remove component contacts that don't match to a contact
 		if (SecurityUtil.isAdminUser()) {
-			StringBuilder results = new StringBuilder();			
-			
+			StringBuilder results = new StringBuilder();
+
 			Contact contact = new Contact();
 			List<Contact> allContacts = contact.findByExample();
 			Map<String, List<Contact>> contactMap = allContacts.stream().collect(Collectors.groupingBy(Contact::getContactId));
-			
+
 			int count = 0;
 			int internalDups = 0;
 			ComponentContact componentContact = new ComponentContact();
@@ -159,7 +159,7 @@ public class SystemAction
 					service.getPersistenceService().delete(componentContactFound);
 					internalDups++;
 				} else {
-					internalDup.add(internalKey);					
+					internalDup.add(internalKey);
 				}
 				if (contactMap.containsKey(componentContactFound.getContactId()) == false) {
 					service.getPersistenceService().delete(componentContactFound);
@@ -168,12 +168,11 @@ public class SystemAction
 			}
 			results.append("Duplicates removed: ").append(count).append("<br>");
 			results.append("Internal Duplicates removed: ").append(internalDups).append("<br>");
-			
+
 			return new StreamingResolution("text/html", results.toString());
 		}
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");		
-	}	
-	
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+	}
 
 	public String getAttributeType()
 	{

@@ -16,12 +16,12 @@
 package edu.usu.sdl.openstorefront.service.api;
 
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import edu.usu.sdl.openstorefront.core.api.ServiceInterceptor;
+import edu.usu.sdl.openstorefront.core.api.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
-import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
-import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 
 /**
  *

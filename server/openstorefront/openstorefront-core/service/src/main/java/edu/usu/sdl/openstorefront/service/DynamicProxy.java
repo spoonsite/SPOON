@@ -16,6 +16,9 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.api.ProxyContext;
+import edu.usu.sdl.openstorefront.core.api.ProxyInterceptor;
+import edu.usu.sdl.openstorefront.core.api.ServiceInterceptor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,7 +36,7 @@ public class DynamicProxy<T>
 		implements InvocationHandler
 {
 
-	private static final Logger log = Logger.getLogger(DynamicProxy.class.getName());
+	private static final Logger LOG = Logger.getLogger(DynamicProxy.class.getName());
 
 	private final T originalObject;
 
@@ -63,8 +66,8 @@ public class DynamicProxy<T>
 		}
 
 		long startTime = System.currentTimeMillis();
-		if (log.isLoggable(Level.FINEST)) {
-			log.log(Level.FINEST, "Calling Method: {0} on {1}", new Object[]{m.getName(), proxy.getClass().getName()});
+		if (LOG.isLoggable(Level.FINEST)) {
+			LOG.log(Level.FINEST, "Calling Method: {0} on {1}", new Object[]{m.getName(), proxy.getClass().getName()});
 		}
 
 		ProxyContext proxyContext = new ProxyContext();
@@ -76,8 +79,8 @@ public class DynamicProxy<T>
 				boolean skip = proxyInterceptor.before(proxy, m, args, proxyContext);
 				if (skip) {
 					runMethod = false;
-					if (log.isLoggable(Level.FINEST)) {
-						log.log(Level.FINEST, "Interceptor: {0} Aborted method: {1} call.", new Object[]{proxyInterceptor.getClass().getName(), m.getName()});
+					if (LOG.isLoggable(Level.FINEST)) {
+						LOG.log(Level.FINEST, "Interceptor: {0} Aborted method: {1} call.", new Object[]{proxyInterceptor.getClass().getName(), m.getName()});
 					}
 				}
 			}
@@ -90,16 +93,16 @@ public class DynamicProxy<T>
 				proxyInterceptor.after(proxy, m, args, proxyContext);
 			}
 
-			if (log.isLoggable(Level.FINEST)) {
-				log.log(Level.FINEST, "Completed Method: {0} on {1} time: {2}", new Object[]{m.getName(), proxy.getClass().getName(), System.currentTimeMillis() - startTime});
+			if (LOG.isLoggable(Level.FINEST)) {
+				LOG.log(Level.FINEST, "Completed Method: {0} on {1} time: {2}", new Object[]{m.getName(), proxy.getClass().getName(), System.currentTimeMillis() - startTime});
 			}
 
 		} catch (InvocationTargetException e) {
 			for (ProxyInterceptor proxyInterceptor : proxyInterceptors) {
 				proxyInterceptor.handleException(proxy, m, args, proxyContext);
 			}
-			if (log.isLoggable(Level.FINEST)) {
-				log.log(Level.FINEST, "Call Method FAILED: {0} on {1} time: {2}", new Object[]{m.getName(), proxy.getClass().getName(), System.currentTimeMillis() - startTime});
+			if (LOG.isLoggable(Level.FINEST)) {
+				LOG.log(Level.FINEST, "Call Method FAILED: {0} on {1} time: {2}", new Object[]{m.getName(), proxy.getClass().getName(), System.currentTimeMillis() - startTime});
 			}
 			throw e.getTargetException();
 		} catch (IllegalAccessException | IllegalArgumentException e) {
