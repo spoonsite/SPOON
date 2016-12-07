@@ -1311,7 +1311,7 @@ public class CoreComponentServiceImpl
 		components = components.stream().filter(c -> c.getActiveStatus().equals(Component.PENDING_STATUS) == false).collect(Collectors.toList());
 
 		result.setTotalNumber(components.size());
-		components = filter.filter(components);
+//		components = filter.filter(components);
 
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
@@ -1328,13 +1328,59 @@ public class CoreComponentServiceImpl
 				configMap.put(config.getComponentId(), configList);
 			}
 		});
+                
+                
+                
+                
+                Component pendingChangeExample = new Component();
+		pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
 
-		List<ComponentAdminView> componentAdminViews = new ArrayList<>();
+		QueryByExample queryPendingChanges = new QueryByExample(new Component());
+
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(pendingChangeExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
+		queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
+
+		List<Component> pendingChanges = persistenceService.queryByExample(Component.class, queryPendingChanges);
+		Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
+                List<ComponentView> componentViews = new ArrayList<>();
 		for (Component component : components) {
+                        
+                        ComponentView componentView = ComponentView.toView(component);
+                    
+			List<Component> pendingChangesList = pendingChangesMap.get(componentView.getComponentId());
+                        
+			if (pendingChangesList != null) {
+				componentView.setNumberOfPendingChanges(pendingChangesList.size());
+				if (pendingChangesList.size() > 0) {
+					Component changeComponent = pendingChangesList.get(0);
+					componentView.setPendingChangeComponentId(changeComponent.getComponentId());
+					componentView.setPendingChangeSubmitDts(changeComponent.getSubmittedDts());
+					componentView.setPendingChangeSubmitUser(changeComponent.getCreateUser());
+					componentView.setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, changeComponent.getApprovalState()));
+				}
+			}
+                        else {
+                            
+                            componentView.setNumberOfPendingChanges(0);
+                        }
+                        
+                        componentViews.add(componentView);
+		}                
+                
+                
+                
+                componentViews = filter.filterView(componentViews);
+                
+                
+                
+                List<ComponentAdminView> componentAdminViews = new ArrayList<>();
+		for (ComponentView componentView : componentViews) {
 			ComponentAdminView componentAdminView = new ComponentAdminView();
-			componentAdminView.setComponent(ComponentView.toView(component));
+			componentAdminView.setComponent(componentView);
 			StringBuilder configs = new StringBuilder();
-			List<ComponentIntegrationConfig> configList = configMap.get(component.getComponentId());
+			List<ComponentIntegrationConfig> configList = configMap.get(componentView.getComponentId());
 			if (configList != null) {
 				configList.forEach(config
 						-> {
@@ -1348,32 +1394,55 @@ public class CoreComponentServiceImpl
 			componentAdminView.setIntegrationManagement(configs.toString());
 			componentAdminViews.add(componentAdminView);
 		}
+                
+                
+                
 
-		Component pendingChangeExample = new Component();
-		pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
+//		List<ComponentAdminView> componentAdminViews = new ArrayList<>();
+//		for (Component component : components) {
+//			ComponentAdminView componentAdminView = new ComponentAdminView();
+//			componentAdminView.setComponent(ComponentView.toView(component));
+//			StringBuilder configs = new StringBuilder();
+//			List<ComponentIntegrationConfig> configList = configMap.get(component.getComponentId());
+//			if (configList != null) {
+//				configList.forEach(config
+//						-> {
+//					if (StringUtils.isNotBlank(config.getIssueNumber())) {
+//						configs.append("(").append(config.getIntegrationType()).append(" - ").append(config.getIssueNumber()).append(") ");
+//					} else {
+//						configs.append("(").append(config.getIntegrationType()).append(") ");
+//					}
+//				});
+//			}
+//			componentAdminView.setIntegrationManagement(configs.toString());
+//			componentAdminViews.add(componentAdminView);
+//		}
 
-		QueryByExample queryPendingChanges = new QueryByExample(new Component());
-
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
-		specialOperatorModel.setExample(pendingChangeExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
-		queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
-
-		List<Component> pendingChanges = persistenceService.queryByExample(Component.class, queryPendingChanges);
-		Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
-		for (ComponentAdminView componentAdminView : componentAdminViews) {
-			List<Component> pendingChangesList = pendingChangesMap.get(componentAdminView.getComponent().getComponentId());
-			if (pendingChangesList != null) {
-				componentAdminView.getComponent().setNumberOfPendingChanges(pendingChangesList.size());
-				if (pendingChangesList.size() > 0) {
-					Component changeComponent = pendingChangesList.get(0);
-					componentAdminView.getComponent().setPendingChangeComponentId(changeComponent.getComponentId());
-					componentAdminView.getComponent().setPendingChangeSubmitDts(changeComponent.getSubmittedDts());
-					componentAdminView.getComponent().setPendingChangeSubmitUser(changeComponent.getCreateUser());
-					componentAdminView.getComponent().setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, changeComponent.getApprovalState()));
-				}
-			}
-		}
+//		Component pendingChangeExample = new Component();
+//		pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
+//
+//		QueryByExample queryPendingChanges = new QueryByExample(new Component());
+//
+//		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+//		specialOperatorModel.setExample(pendingChangeExample);
+//		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
+//		queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
+//
+//		List<Component> pendingChanges = persistenceService.queryByExample(Component.class, queryPendingChanges);
+//		Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
+//		for (ComponentAdminView componentAdminView : componentAdminViews) {
+//			List<Component> pendingChangesList = pendingChangesMap.get(componentAdminView.getComponent().getComponentId());
+//			if (pendingChangesList != null) {
+//				componentAdminView.getComponent().setNumberOfPendingChanges(pendingChangesList.size());
+//				if (pendingChangesList.size() > 0) {
+//					Component changeComponent = pendingChangesList.get(0);
+//					componentAdminView.getComponent().setPendingChangeComponentId(changeComponent.getComponentId());
+//					componentAdminView.getComponent().setPendingChangeSubmitDts(changeComponent.getSubmittedDts());
+//					componentAdminView.getComponent().setPendingChangeSubmitUser(changeComponent.getCreateUser());
+//					componentAdminView.getComponent().setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, changeComponent.getApprovalState()));
+//				}
+//			}
+//		}
 
 		result.setComponents(componentAdminViews);
 
