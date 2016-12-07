@@ -3998,7 +3998,7 @@ public class ComponentRESTResource
 	{
 		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
 		if (integration != null) {
-			if (integration.getStatus().equals(RunStatus.WORKING)) {
+			if (!integration.getStatus().equals(RunStatus.WORKING)) {
 				JobManager.runComponentIntegrationNow(componentId, null);
 				return Response.ok().build();
 			}
