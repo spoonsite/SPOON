@@ -451,8 +451,9 @@
 				addComponentToMainViewPort(dashPanel);
 				
 				var dashboard;
-				var loadUserWidgets = function() {
+				var loadUserWidgets = function(noUpdateDash) {
 					dashPanel.setLoading(true);
+					
 					Ext.Ajax.request({
 						url: 'api/v1/resource/userdashboard',
 						callback: function() {
@@ -475,10 +476,10 @@
 								if (config.adminOnly) {
 									//if the user is no longer admin don't add widget
 									if (adminUser) {
-										widgetPanel = addWidgetToDashboard(config);										
+										widgetPanel = addWidgetToDashboard(config, noUpdateDash);										
 									} 
 								} else {
-									widgetPanel = addWidgetToDashboard(config);				
+									widgetPanel = addWidgetToDashboard(config, noUpdateDash);				
 								}
 								
 								//set other settings
@@ -487,15 +488,16 @@
 										config.restore(widgetPanel.getComponent('actualWidget'), Ext.decode(widget.widgetState));
 									}
 								}
-							});							
+							});
+							updateDashboard();
 						}
 					});
 					
 				};
-				loadUserWidgets();
+				loadUserWidgets(true);
 				
 				var widgetsOnDashBoard = [];
-				var addWidgetToDashboard = function(widget) {
+				var addWidgetToDashboard = function(widget, noUpdateDash) {
 					
 					var widgetPanel = Ext.create('Ext.panel.Panel', {
 						title: widget.name,
@@ -740,8 +742,10 @@
 							}
 						}
 					});
-					widgetsOnDashBoard.push(widgetPanel);				
-					updateDashboard();
+					widgetsOnDashBoard.push(widgetPanel);			
+					if (!noUpdateDash) {
+						updateDashboard();
+					}
 					
 					if (widget.widgetColor) {
 						widgetPanel.headerColor = widget.widgetColor;
