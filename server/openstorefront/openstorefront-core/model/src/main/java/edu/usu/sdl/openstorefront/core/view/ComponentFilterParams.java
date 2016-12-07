@@ -19,17 +19,11 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
-import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -76,62 +70,14 @@ public class ComponentFilterParams
 		this.approvalState = approvalState;
 	}
 
-	/**
-	 * @return the componentType
-	 */
 	public String getComponentType()
 	{
 		return componentType;
 	}
 
-	/**
-	 * @param componentType the componentType to set
-	 */
 	public void setComponentType(String componentType)
 	{
 		this.componentType = componentType;
-	}
-	
-	
-	/**
-	 * This will apply everything except status it assume that was applied all
-	 * ready
-	 *
-	 * @param data
-	 * @return
-	 */
-	public List<ComponentView> filterView(List<ComponentView> data)
-	{
-		//sort
-		if (StringUtils.isNotBlank(this.getSortField())) {
-			Collections.sort(data, new BeanComparator<>(this.getSortOrder(), this.getSortField()));
-		}
-		List<ComponentView> results = viewWindowData(data);
-
-		return results;
-	}
-
-	/**
-	 * This applies just the windowing
-	 * @param data
-	 * @return windowed data set
-	 */
-	public List<ComponentView> viewWindowData(List<ComponentView> data) 
-	{
-		List<ComponentView> results = new ArrayList<>();
-		
-		//window
-		if (this.getOffset() < data.size() && this.getMax() > 0) {
-			int count = 0;
-			for (int i = this.getOffset(); i < data.size(); i++) {
-				results.add(data.get(i));
-				count++;
-				if (count >= this.getMax()) {
-					break;
-				}
-			}
-		}
-		return results;
 	}
 
 }

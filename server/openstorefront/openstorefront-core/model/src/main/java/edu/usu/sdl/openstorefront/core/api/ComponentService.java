@@ -214,7 +214,7 @@ public interface ComponentService
 	 * @return
 	 */
 	public List<ComponentTag> getTagCloud();
-	
+
 	/**
 	 * Gets all unique metadata
 	 *
@@ -299,6 +299,7 @@ public interface ComponentService
 
 	/**
 	 * Saves a question response
+	 *
 	 * @param response
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
@@ -306,8 +307,9 @@ public interface ComponentService
 
 	/**
 	 * Saves a component Resource
+	 *
 	 * @param resource
-	 * @return 
+	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public ComponentResource saveComponentResource(ComponentResource resource);
@@ -692,24 +694,27 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeComponentTypeTemplate(String templateId);
-	
+
 	/**
 	 * This is a Hard delete but it will fail if entry type are pointing to it.
-	 * @param templateId 
+	 *
+	 * @param templateId
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteComponentTypeTemplate(String templateId);
-	
+
 	/**
 	 * Save a template block for use in a template
-	 * @param templateBlock 
+	 *
+	 * @param templateBlock
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveTemplateBlock(TemplateBlock templateBlock);
-	
+
 	/**
 	 * Hard delete of a template block
-	 * @param templateBlockId 
+	 *
+	 * @param templateBlockId
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteTemplateBlock(String templateBlockId);
@@ -739,7 +744,6 @@ public interface ComponentService
 	 * @param parentComponentId
 	 * @return Pending Change component
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component createPendingChangeComponent(String parentComponentId);
 
 	/**
