@@ -411,6 +411,36 @@
 							},
 							{
 								xtype: 'button',								
+								id: 'ownerMenu',
+								hidden: true,
+								iconCls: 'fa fa-2x fa-navicon',								
+								scale: 'large',								
+								arrowVisible: false,
+								margin: '0 10 0 0',
+								menu: {
+									items: [
+										{
+											text: 'Submit Correction',
+											iconCls: 'fa fa-comment-o',
+											handler: function() {
+												Ext.Msg.show({
+													title:'Submit Correction?',
+													message: 'You are the owner of this entry.<br>Submit a change request for this entry from submissions.<br><br>Go to submissions now?',
+													buttons: Ext.Msg.YESNO,
+													icon: Ext.Msg.QUESTION,
+													fn: function(btn) {
+														if (btn === 'yes') {
+															window.parent.location.href = 'UserTool.action?load=Submissions';
+														}
+													}
+												});												
+											}
+										}
+									]
+								}
+							},
+							{
+								xtype: 'button',								
 								id: 'nonOwnerMenu',
 								iconCls: 'fa fa-2x fa-navicon',								
 								scale: 'large',								
@@ -477,13 +507,12 @@
 								items: [
 									Ext.create('OSF.component.StandardComboBox', {
 										name: 'text',	
-										id: 'tagField',										
-										margin: '0 0 0 0',
+										id: 'tagField',																				
 										flex: 1,
 										fieldLabel: 'Add Tag',
 										forceSelection: false,
 										valueField: 'text',
-										displayField: 'text',
+										displayField: 'text',										
 										margin: '0 10 10 0',
 										maxLength: 120,
 										storeConfig: {
@@ -802,6 +831,7 @@
 														
 							if (entry.createUser === '${user}'){
 								Ext.getCmp('nonOwnerMenu').setHidden(true);
+								Ext.getCmp('ownerMenu').setHidden(false);								
 							}
 							
 							Ext.getCmp('toolsPanel').getComponent('updatedInfo').update(entry);
