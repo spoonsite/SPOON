@@ -116,9 +116,9 @@
 					},
 					selectionchange: function(grid, record, index, opts){
 						if (Ext.getCmp('lookupGrid').getSelectionModel().getCount() > 0) {
-							Ext.getCmp('lookupGrid-tools-edit').enable(true);
+							Ext.getCmp('lookupGrid-tools-edit').setDisabled(false);
 						} else {
-							Ext.getCmp('lookupGrid-tools-edit').enable(false);
+							Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);
 						}
 					}
 				}
@@ -451,8 +451,8 @@
 				} else {
 					Ext.getCmp('codeGrid-tools-edit').setDisabled(true);
 					Ext.getCmp('codeGrid-tools-status').setDisabled(true);
-                    }
-                };
+                }
+             };
 						
 			var actionEditCodes = function(record) {
 				editCodeWin.show();

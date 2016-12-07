@@ -239,12 +239,28 @@ Ext.onReady(function() {
 		if (response.responseText && response.responseText.indexOf('login.jsp') !== -1) {
 			var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
 			currentlocation = currentlocation + window.parent.location.search;
-			
+
 			window.parent.location.href = "/openstorefront/Login.action?gotoPage="+encodeURIComponent(currentlocation);
 		}		
 	});
 	
 	Ext.Ajax.on('requestexception', function (conn, response, options, eOpts) {
+		
+		//When logout with OPEN AM it cause a CORS failure in which redirect to login
+		if (response.status === 0) {
+			Ext.Msg.show({
+				title: 'Logged Out',
+				message: 'You must login to continue.',
+				buttons: Ext.MessageBox.OK,				
+				icon: Ext.Msg.Error,
+				fn: function (btn) {
+					var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
+					currentlocation = currentlocation + window.parent.location.search;
+			
+					window.parent.location.href = "/openstorefront/Login.action?gotoPage="+encodeURIComponent(currentlocation);					
+				}
+			});				
+		}
 		
 		var feedbackButtonConfig = {
 			yes: 'Ok',
