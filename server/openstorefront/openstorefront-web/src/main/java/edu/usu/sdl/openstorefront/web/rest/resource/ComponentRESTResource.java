@@ -57,6 +57,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
+import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
@@ -3997,8 +3998,11 @@ public class ComponentRESTResource
 	{
 		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
 		if (integration != null) {
-			JobManager.runComponentIntegrationNow(componentId, null);
-			return Response.ok().build();
+			if (integration.getStatus().equals(RunStatus.WORKING)) {
+				JobManager.runComponentIntegrationNow(componentId, null);
+				return Response.ok().build();
+			}
+			return Response.status(Response.Status.NOT_MODIFIED).build();
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
