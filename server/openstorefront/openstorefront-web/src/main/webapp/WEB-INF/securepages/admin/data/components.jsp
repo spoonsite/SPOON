@@ -4506,6 +4506,7 @@
 				
 				
 				var actionAddEditComponent = function(record) {
+					Ext.osfComponentId = record.get('componentId');
 					mainAddEditWin.close();
 					mainAddEditWin.show();		
 					
