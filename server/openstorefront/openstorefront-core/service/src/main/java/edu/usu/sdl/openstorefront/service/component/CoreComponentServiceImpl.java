@@ -576,6 +576,9 @@ public class CoreComponentServiceImpl
 							componentMedia.setMimeType(existingTemporaryMedia.getMimeType());
 							componentMedia.setUsedInline(true);
 							componentMedia.setHideInDisplay(false);
+							if (existingTemporaryMedia.getOriginalSourceURL().equals("fileUpload")) {
+								componentMedia.setCaption(existingTemporaryMedia.getName());
+							}
 
 							// Set Media Type Code based on the mimetype stored in temporary (as retrieved from server)
 							String mediaTypeCode;
