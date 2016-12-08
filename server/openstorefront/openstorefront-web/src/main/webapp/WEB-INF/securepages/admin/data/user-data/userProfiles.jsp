@@ -262,7 +262,7 @@
 											fieldLabel: 'Select Field',
 											emptyText: '',
 											name: 'searchField',											
-											value: 'USER',
+											value: 'username',
 											editable: false,
 											typeAhead: false,
 											margin: '0 5 10 0',
@@ -274,15 +274,15 @@
 													],
 													data: [
 														{
-															code: 'USER',
+															code: 'username',
 															description: 'Username'
 														},
 														{
-															code: 'FIRST',
+															code: 'firstName',
 															description: 'First Name'
 														},
 														{
-															code: 'LAST',
+															code: 'lastName',
 															description: 'Last Name'
 														}
 													]

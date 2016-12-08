@@ -48,15 +48,18 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -69,6 +72,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
  * User Profile Resource
@@ -81,14 +85,16 @@ public class UserProfileResource
 		extends BaseResource
 {
 
+	private static final Logger LOG = Logger.getLogger(UserProfileResource.class.getName());
+
 	@GET
 	@APIDescription("Get a list of user profiles")
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
 	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams,
-								 @QueryParam("searchField") String searchField,
-								 @QueryParam("searchValue") String searchValue)
+			@QueryParam("searchField") String searchField,
+			@QueryParam("searchValue") String searchValue)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
@@ -98,49 +104,33 @@ public class UserProfileResource
 		// Initialize User Profile Status Example
 		UserProfile userProfileExample = new UserProfile();
 		QueryByExample queryByExample = new QueryByExample(userProfileExample);
-		
+
 		// Check For 'All' Parameter
 		if (!filterQueryParams.getAll()) {
-			
+
 			userProfileExample.setActiveStatus(filterQueryParams.getStatus());
 		}
-		
+
 		// Check For Search Parameters
 		if (searchField != null && searchValue != null) {
-			
+
 			// Initialize User Profile Status Example
 			UserProfile userProfileSearchExample = new UserProfile();
-			
-			// Check Value Of Search Field
-			switch (searchField) {
-				
-				case "FIRST": {
-					
-					userProfileSearchExample.setFirstName(searchValue.toLowerCase() + "%");
-					break;
-				}
-				
-				case "LAST": {
-					
-					userProfileSearchExample.setLastName(searchValue.toLowerCase() + "%");
-					break;
-				}
-				
-				default:
-				case "USER": {
-					
-					userProfileSearchExample.setUsername(searchValue.toLowerCase() + "%");
-					break;
-				}
+
+			try {
+				BeanUtils.setProperty(userProfileSearchExample, searchField, searchValue.toLowerCase() + "%");
+
+				// Define A Special Lookup Operation (LIKE)
+				// (The Default Is Equals, Which We Still Need For Active Status)
+				SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+				specialOperatorModel.setExample(userProfileSearchExample);
+				specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+				specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+				queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+			} catch (IllegalAccessException | InvocationTargetException ex) {
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to search user profiles by field: {0}", searchField));
 			}
-			
-			// Define A Special Lookup Operation (LIKE)
-			// (The Default Is Equals, Which We Still Need For Active Status)
-			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
-			specialOperatorModel.setExample(userProfileSearchExample);
-			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
-			specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
-			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 		}
 
 		UserProfile userProfileStartExample = new UserProfile();
@@ -608,112 +598,105 @@ public class UserProfileResource
 			@FormParam("userId")
 			@RequiredParam List<String> userIds)
 	{
-		
+
 		// Declare List Of User Profiles
 		// (Instantiated Later)
 		List<UserProfile> userProfiles;
-		
+
 		// Initialize CSV Line Storage
 		List<String[]> lines = new ArrayList<>();
-		
+
 		// Set DateTime Format
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
 		// Initialize String Writer
 		// (Stores CSV Data)
 		StringWriter stringWriter = new StringWriter();
-		
+
 		// Initialize CSV Writer
 		// (Processes CSV Data)
 		CSVWriter writer = new CSVWriter(stringWriter);
-		
+
 		// Add CSV Headers To List Of Lines
-		lines.add(new String[] {
-			
-			"Active Status", 
-			"Username", 
-			"First Name", 
-			"Last Name", 
-			"Organization", 
-			"User Type", 
-			"Last Login", 
-			"Email", 
-			"Phone", 
-			"Send Change Emails", 
-			"GUID", 
-			"Created Date", 
+		lines.add(new String[]{
+			"Active Status",
+			"Username",
+			"First Name",
+			"Last Name",
+			"Organization",
+			"User Type",
+			"Last Login",
+			"Email",
+			"Phone",
+			"Send Change Emails",
+			"GUID",
+			"Created Date",
 			"Updated Date"
 		});
 
 		// Check For Provided User IDs
 		if (userIds != null && userIds.size() > 0) {
-			
+
 			// Instantiate User Profile List
 			userProfiles = new ArrayList<>();
-		
+
 			// Loop Through Provided User IDs
 			for (String userId : userIds) {
-				
+
 				// Retrieve User Profile
 				UserProfile userProfile = service.getUserService().getUserProfile(userId);
-				
+
 				// Add User Profile To List
 				userProfiles.add(userProfile);
 			}
-		}
-		else {
-			
+		} else {
+
 			// Get All User Profiles
 			userProfiles = service.getUserService().getAllProfiles(Boolean.TRUE);
 		}
-		
+
 		// Get User Profile Views
 		// (Provides Additional Detail Over Profiles)
 		List<UserProfileView> userProfileViews = UserProfileView.toViewList(userProfiles);
-		
+
 		// Loop Through User Profile Views
 		for (UserProfileView userProfileView : userProfileViews) {
-			
+
 			////////////////////////////
 			// Handle Potential NULLs //
 			////////////////////////////
-			
 			// Store Notify Of New Value
 			Boolean notifyOfNew = userProfileView.getNotifyOfNew();
-			
+
 			// Check For Null (Notify Of New)
 			if (notifyOfNew == null) {
-				
+
 				// Initialize As False
 				notifyOfNew = false;
 			}
-			
-			
+
 			// Store Last Login Value
 			Date lastLoginDate = userProfileView.getLastLoginDts();
-			
+
 			// Initialize Last Login String
 			String lastLoginString;
-			
+
 			// Check For Null (Last Login)
 			if (lastLoginDate == null) {
-				
+
 				// Set Last Login As Empty String
 				lastLoginString = "";
-			}
-			else {
-				
+			} else {
+
 				// Set Last Login As Formatted DateTime
 				lastLoginString = df.format(lastLoginDate);
 			}
-			
+
 			/////////////////////////
 			// End Potential NULLs //
 			/////////////////////////
-			
 			// Add CSV Row To List Of Lines
-			lines.add(new String[] {
-			
+			lines.add(new String[]{
 				userProfileView.getActiveStatus(),
 				userProfileView.getUsername(),
 				userProfileView.getFirstName(),
@@ -729,7 +712,7 @@ public class UserProfileResource
 				df.format(userProfileView.getUpdateDts())
 			});
 		}
-		
+
 		// Write Entire CSV
 		writer.writeAll(lines);
 
@@ -738,11 +721,11 @@ public class UserProfileResource
 		Response.ResponseBuilder response = Response.ok(stringWriter.toString());
 		response.header("Content-Type", "application/csv");
 		response.header("Content-Disposition", "attachment; filename=\"userProfileExport.csv\"");
-		
+
 		// Return Response
 		return response.build();
 	}
-		
+
 //  This can be fleshed out in the future when we start keeping better track of what the most recently viewed compnents are
 //	@GET
 //	@APIDescription("Retrieves Recent Views.  The system keep the 5 most recent.  Sorted by most recent.")
