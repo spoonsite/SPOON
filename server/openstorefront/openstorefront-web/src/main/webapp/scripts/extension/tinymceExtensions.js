@@ -482,3 +482,171 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 
 	
 });
+
+
+
+Ext.define('OSF.component.MediaInsertWindow', {
+	extend: 'Ext.window.Window',
+	alias: 'osf.widget.MediaInsertWindow',
+	layout: 'vbox',
+
+	title: 'Insert Media',
+	closeAction: 'destroy',
+	alwaysOnTop: true,
+	modal: true,
+	width: '70%',
+	height: 700,
+	
+	initComponent: function () {
+		this.callParent();
+
+		var mediaInsertWindow = this;
+
+		mediaInsertWindow.mediaSelectionStore = Ext.create('Ext.data.Store', {
+			autoLoad: true,
+			proxy: {
+				type: 'ajax',
+				url: 'api/v1/resource/components/' + Ext.osfComponentId + '/media/view',
+				reader: {
+					type: 'json',
+					rootProperty: 'data',
+					totalProperty: 'totalNumber'
+				}
+			},
+			listeners: {
+				load: function(store, records, success, eOpts) {
+					if (!store.getCount()) {
+						mediaInsertWindow.mediaSelection.up('panel').hide();
+						mediaInsertWindow.setHeight(220);
+					}
+				}
+			}
+		});
+
+		Ext.osfInsertInlineMedia = function osfInsertInlineMedia(link, alt) {
+			var content = '<img src="' + link +'" alt="' + alt + '" />';
+			Ext.osfTinyMceEditor.execCommand('mceInsertContent', false, content);
+		};
+
+
+		var htmlPrefix = '<img class="x-item" src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}" onclick="';
+		var htmlSuffix = '" />';
+		mediaInsertWindow.mediaSelection = Ext.create('Ext.DataView', {
+			title: 'Existing Storefront Media',
+			xtype: 'dataview',
+			tpl: new Ext.XTemplate(
+		'	<tpl for=".">',	
+		'		<tpl if="mediaTypeCode==\'IMG\'">',
+		'		<div class="detail-media-block">',
+		htmlPrefix,
+		'Ext.osfInsertInlineMedia(\'{link}\', \'{[values.caption ? values.caption : values.filename]}\');',
+		'Ext.getCmp(\'osfmediainsertwindow\').close();',
+		htmlSuffix,
+		'			<tpl if="caption || securityMarkingType"><p class="detail-media-caption"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{caption}</p></tpl>',
+		'		</div>',
+		'		</tpl>',
+		'	</tpl>'
+				),
+			itemSelector: '.x-item',
+			store: mediaInsertWindow.mediaSelectionStore
+		});
+
+		mediaInsertWindow.uploadImagePanel = Ext.create('Ext.form.Panel', {
+			layout: 'fit',
+			width: '100%',
+			height: 150,
+			bodyStyle: 'padding: 10px;',
+			title: "Upload New Image",
+			items: [
+				{
+					xtype: 'form',
+					layout: {
+						type: 'vbox',
+						align: 'stretch',
+					},
+					items: [
+						{
+							xtype: 'filefield',
+							title: 'Upload New Image',
+							name: 'file',
+							allowBlank: false,
+							flex: 1,
+							fieldLabel: 'Upload an image',
+							buttonText: 'Select Image File...'
+						},
+						{
+							xtype: 'panel',
+							layout: 'hbox',
+							items: [
+								{
+									xtype: 'textfield',
+									title: 'Caption',
+									name: 'temporaryMedia.name',
+									allowBlank: false,
+									flex: 9,
+									fieldLabel: 'Caption',
+									style: 'padding-right: 3px;'
+								},
+								{
+									xtype: 'button',
+									title: 'Upload',
+									flex: 1,
+									iconCls: 'fa fa-upload',
+									formBind: true,
+									text: 'Upload',
+									handler: function() {
+										var uploadForm = this.up('form');
+										uploadForm.setLoading("Uploading Image...");
+										
+										uploadForm.submit({
+											url: 'Media.action?UploadTemporaryMedia',
+											method: 'POST',
+											success: function(form, action) {
+											},
+											failure: function(form, action){
+												// In this case, to not up-end the
+												// server side things, technically a 
+												// failure is a potentially a sucess
+												if (action.result && action.result.fileName) {
+													// True success
+													uploadForm.setLoading(false);
+													var link = "Media.action?TemporaryMedia&name=";
+													link += encodeURIComponent(action.result.name);
+													Ext.osfInsertInlineMedia(link, action.result.name);
+													uploadForm.up('window').close();
+												} else {
+													// True failure
+													uploadForm.setLoading(false);
+													Ext.Msg.show({
+														title: 'Upload Failed',
+														msg: 'The file upload was not successful.',
+														buttons: Ext.Msg.OK
+													});		
+												}
+												
+											}
+										});
+									}
+								}
+							]
+						}
+					]
+				}
+			] 
+		});
+
+		
+		mediaInsertWindow.add(mediaInsertWindow.uploadImagePanel);
+		mediaInsertWindow.add(Ext.create('Ext.panel.Panel', {
+			title: 'Pick an Existing Image',
+			autoScroll: true,
+			bodyStyle: 'padding: 10px;',
+			width: '100%',
+			height: 550,
+			items: mediaInsertWindow.mediaSelection
+		}));
+	}
+		
+
+	
+});
