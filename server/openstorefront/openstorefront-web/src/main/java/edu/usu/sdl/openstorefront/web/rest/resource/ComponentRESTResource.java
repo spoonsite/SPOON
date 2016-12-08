@@ -57,6 +57,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
+import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
@@ -3980,11 +3981,18 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Removes component integration and all child configs.")
 	@Path("/{componentId}/integration")
-	public void deleteComponentConfig(
+	public Response deleteComponentConfig(
 			@PathParam("componentId")
 			@RequiredParam String componentId)
 	{
-		service.getComponentService().deleteComponentIntegration(componentId);
+		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		if (integration.getActiveStatus().equals(ComponentIntegration.ACTIVE_STATUS) && integration.getStatus().equals(RunStatus.WORKING)) {
+			return Response.status(Response.Status.NOT_MODIFIED).build();
+		} 
+		else {
+			service.getComponentService().deleteComponentIntegration(componentId);
+			return Response.ok().build();
+		}
 	}
 
 	@POST
@@ -3997,9 +4005,23 @@ public class ComponentRESTResource
 	{
 		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
 		if (integration != null) {
-			JobManager.runComponentIntegrationNow(componentId, null);
-			return Response.ok().build();
-		} else {
+			if (integration.getActiveStatus().equals(ComponentIntegration.INACTIVE_STATUS)) {
+				if (integration.getStatus().equals(RunStatus.WORKING)) {
+					integration.setStatus(RunStatus.COMPLETE);
+					service.getComponentService().saveComponentIntegration(integration);
+
+				}	
+				return Response.status(Response.Status.NOT_MODIFIED).build();
+			}
+			else {
+				if (!integration.getStatus().equals(RunStatus.WORKING)) {
+					JobManager.runComponentIntegrationNow(componentId, null);
+					return Response.ok().build();
+				}
+				return Response.status(Response.Status.NOT_MODIFIED).build();
+			}			
+		} 
+		else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}

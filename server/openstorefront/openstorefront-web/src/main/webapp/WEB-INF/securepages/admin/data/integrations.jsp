@@ -52,18 +52,21 @@
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
 						if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() === 1) {
+							Ext.getCmp('componentConfigGrid-tools-run').setText('Run Job');
 							Ext.getCmp('componentConfigGrid-tools-run').enable();
 							Ext.getCmp('componentConfigGrid-tools-edit').enable();
 							Ext.getCmp('componentConfigGrid-tools-toggleActivation').enable();
 							Ext.getCmp('componentConfigGrid-tools-delete').enable();
 						} 
-						else if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() > 1) { 
+						else if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() > 1) {
 							Ext.getCmp('componentConfigGrid-tools-toggleActivation').enable();
-							Ext.getCmp('componentConfigGrid-tools-run').disable();
+							Ext.getCmp('componentConfigGrid-tools-run').setText('Run Jobs');
+							Ext.getCmp('componentConfigGrid-tools-run').enable();
 							Ext.getCmp('componentConfigGrid-tools-edit').disable();
-							Ext.getCmp('componentConfigGrid-tools-delete').disable();
+							Ext.getCmp('componentConfigGrid-tools-delete').enable();
 						}
 						else {
+							Ext.getCmp('componentConfigGrid-tools-run').setText('Run Job');
 							Ext.getCmp('componentConfigGrid-tools-run').disable();
 							Ext.getCmp('componentConfigGrid-tools-edit').disable();
 							Ext.getCmp('componentConfigGrid-tools-toggleActivation').disable();
@@ -151,8 +154,8 @@
 								iconCls: 'fa fa-2x fa-bolt',
 								disabled: true,
 								handler: function () {
-									var record = componentConfigGrid.getSelection()[0];
-									actionRunJob(record);
+//									
+									actionRunJob();
 								}
 							},
 							{
@@ -190,12 +193,15 @@
 								iconCls: 'fa fa-2x fa-trash',
 								disabled: true,
 								handler: function () {
-									var record = componentConfigGrid.getSelection()[0];
 									var title = 'Delete Configuration';
-									var msg = 'Are you sure you want to delete this configuration?';
+									
+									var ending = componentConfigGrid.getSelection().length > 1 ? "s" : "";
+									
+									var msg = 'Are you sure you want to delete ' + componentConfigGrid.getSelection().length + ' configuration' + ending + '?';
+									
 									Ext.MessageBox.confirm(title, msg, function (btn) {
 										if (btn === 'yes') {
-											actionDeleteIntegration(record);
+											actionDeleteIntegration();
 										}
 									});
 								}
@@ -276,27 +282,47 @@
 				Ext.getCmp('entryPickForm').reset();
 			};
 
-			var actionRunJob = function actionRunJob(record) {
-				var componentId = record.getData().componentId;
-				var componentName = record.getData().componentName;
-				var url = 'api/v1/resource/components/';
-				url += componentId + '/integration/run';
-				var method = 'POST';
+			var actionRunJob = function actionRunJob() {
+				
+				var selection = componentConfigGrid.getSelection();
+				
+				for (var i = 0; i < selection.length; i++) {
+					
+					var record = selection[i];
+				
+					var componentId = record.getData().componentId;
+					var componentName = record.getData().componentName;
+					var url = 'api/v1/resource/components/';
+					url += componentId + '/integration/run';
+					var method = 'POST';
+					
+					var data = {
+						
+						componentName: componentName
+					};
 
-				Ext.Ajax.request({
-					url: url,
-					method: method,
-					success: function (response, opts) {
-						var message = 'Successfully started job for "' + componentName + '"';
-						Ext.toast(message, '', 'tr');
-						Ext.getCmp('componentConfigGrid').getStore().load();
-						Ext.getCmp('componentConfigGrid').getSelectionModel().deselectAll();
-					},
-					failure: function (response, opts) {
-						Ext.MessageBox.alert('Failed to' + what,
-											 'Error: Could not start job for "' + componentName + '"');
-					}
-				});
+					Ext.Ajax.request({
+						url: url,
+						method: method,
+						requestJson: data,
+						success: function (response, opts) {
+							console.log(response);
+							if (response.status === 304) {
+								var message = 'Unable to run job for "' + response.request.requestJson.componentName + '".  Job is inactive or already running.';
+							}
+							else {
+								var message = 'Successfully started job for "' + response.request.requestJson.componentName + '"';
+							}
+							Ext.toast(message, '', 'tr');
+							Ext.getCmp('componentConfigGrid').getStore().load();
+							Ext.getCmp('componentConfigGrid').getSelectionModel().deselectAll();
+						},
+						failure: function (response, opts) {
+							Ext.MessageBox.alert('Failed to start job',
+												 'Error: Could not start job for "' + response.request.requestJson.componentName + '"');
+						}
+					});
+				}
 
 			};
 
@@ -384,27 +410,46 @@
 			};
 
 
-			var actionDeleteIntegration = function actionDeleteIntegration(record) {
-				var componentId = record.getData().componentId;
-				var componentName = record.getData().componentName;
-				var url = 'api/v1/resource/components/';
-				url += componentId + '/integration';
-				var method = 'DELETE';
+			var actionDeleteIntegration = function actionDeleteIntegration() {
+				
+				var selection = componentConfigGrid.getSelection();
+				
+				for (var i = 0; i < selection.length; i++) {
+					
+					var record = selection[i];
+				
+					var componentId = record.getData().componentId;
+					var componentName = record.getData().componentName;
+					var url = 'api/v1/resource/components/';
+					url += componentId + '/integration';
+					var method = 'DELETE';
+					
+					var data = {
+						
+						componentName: componentName
+					};
 
-				Ext.Ajax.request({
-					url: url,
-					method: method,
-					success: function (response, opts) {
-						var message = 'Successfully deleted integration for "' + componentName + '"';
-						Ext.toast(message, '', 'tr');
-						Ext.getCmp('componentConfigGrid').getStore().load();
-						Ext.getCmp('componentConfigGrid').getSelectionModel().deselectAll();
-					},
-					failure: function (response, opts) {
-						Ext.MessageBox.alert('Failed to delete',
-											 'Error: Could not delete integration for "' + componentName + '"');
-					}
-				});
+					Ext.Ajax.request({
+						url: url,
+						method: method,
+						requestJson: data,
+						success: function (response, opts) {
+							if (response.status === 304) {
+								var message = 'Unable to delete integration for "' + response.request.requestJson.componentName + '". Integration is currently running.';
+							}
+							else {
+								var message = 'Successfully deleted integration for "' + response.request.requestJson.componentName + '"';
+							}
+							Ext.toast(message, '', 'tr');
+							Ext.getCmp('componentConfigGrid').getStore().load();
+							Ext.getCmp('componentConfigGrid').getSelectionModel().deselectAll();
+						},
+						failure: function (response, opts) {
+							Ext.MessageBox.alert('Failed to delete',
+												 'Error: Could not delete integration for "' + response.request.requestJson.componentName + '"');
+						}
+					});
+				}
 			};
 
 
