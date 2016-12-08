@@ -151,7 +151,9 @@ public class AlertUserDataTest extends BaseTestCase
 		alertIdsEqual = false;
 		messageId = "";
 		for (UserMessage message : userMessages) {
-			if (message.getAlertId().equals(alertUserDataRQ.getAlertId())) {
+			if (message.getUserMessageType().equals(AlertType.USER_DATA) &&
+					message.getAlertId().equals(alertUserDataRQ.getAlertId())) {
+				
 				alertIdsEqual = true;
 				messageId = message.getUserMessageId();
 			}
@@ -194,7 +196,9 @@ public class AlertUserDataTest extends BaseTestCase
 		alertIdsEqual = false;
 		messageId = "";
 		for (UserMessage message : userMessages) {
-			if (message.getAlertId().equals(alertUserDataRQ.getAlertId())) {
+			if (message.getUserMessageType().equals(AlertType.USER_DATA) &&
+					message.getAlertId().equals(alertUserDataRQ.getAlertId())) {
+				
 				alertIdsEqual = true;
 				messageId = message.getUserMessageId();
 			}
@@ -250,7 +254,9 @@ public class AlertUserDataTest extends BaseTestCase
 		alertIdsEqual = false;
 		messageId = "";
 		for (UserMessage message : userMessages) {
-			if (message.getAlertId().equals(alertUserDataContact.getAlertId())) {
+			if (message.getUserMessageType().equals(AlertType.USER_DATA) &&
+					message.getAlertId().equals(alertUserDataContact.getAlertId())) {
+				
 				alertIdsEqual = true;
 				messageId = message.getUserMessageId();
 			}
