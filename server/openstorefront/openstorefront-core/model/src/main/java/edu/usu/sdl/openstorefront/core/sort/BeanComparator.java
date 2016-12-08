@@ -71,7 +71,19 @@ public class BeanComparator<T>
 					Object o = obj1;
 					Class<?> c = o.getClass();
 
-					Field f = c.getDeclaredField(sortField);
+					Field f = null;
+
+					while (f == null) {
+						try {
+							f = c.getDeclaredField(sortField);
+						} catch (NoSuchFieldException noSuchFieldException) {
+							c = c.getSuperclass();
+							if (c == null) {
+								break;
+							}
+						}
+					}
+
 					f.setAccessible(true);
 					if (f.get(o) instanceof Date) {
 						int compare = 0;
@@ -119,7 +131,7 @@ public class BeanComparator<T>
 							log.log(Level.FINER, MessageFormat.format("Sort field doesn''t exist: {0}", sortField));
 						}
 					}
-				} catch (ParseException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+				} catch (ParseException | SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 					try {
 						String value1 = BeanUtils.getProperty(obj1, sortField);
 						String value2 = BeanUtils.getProperty(obj2, sortField);
