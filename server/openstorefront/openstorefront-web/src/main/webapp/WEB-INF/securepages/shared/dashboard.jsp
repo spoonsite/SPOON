@@ -504,7 +504,12 @@
 						iconCls: widget.iconCls,					
 						layout: 'fit',
 						frame: true,						
-						style: 'box-shadow: 7px 7px 7px #888888;',
+						header: {
+							style: {
+								'background': widget.widgetColor
+							}
+						},
+						style: 'box-shadow: 7px 7px 7px #888888;',						
 						closable: true,												
 						height: widget.height,
 						widgetConfig: widget,
@@ -745,14 +750,16 @@
 					widgetsOnDashBoard.push(widgetPanel);			
 					if (!noUpdateDash) {
 						updateDashboard();
-					}
+					}	
 					
 					if (widget.widgetColor) {
 						widgetPanel.headerColor = widget.widgetColor;
 						widgetPanel.headerStyle = {
 							'background': widget.widgetColor																
 						};	
-						widgetPanel.getHeader().setStyle(widgetPanel.headerStyle);					
+						if (widgetPanel.getHeader().setStyle) {
+							widgetPanel.getHeader().setStyle(widgetPanel.headerStyle);					
+						}
 					}					
 					
 					return widgetPanel;
