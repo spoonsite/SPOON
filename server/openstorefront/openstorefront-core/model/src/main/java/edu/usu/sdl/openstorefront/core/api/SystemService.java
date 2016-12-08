@@ -178,9 +178,10 @@ public interface SystemService
 	 *
 	 * @param temporaryMedia
 	 * @param fileInput (optional on update)
+	 * @return the temporary media
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveTemporaryMedia(TemporaryMedia temporaryMedia, InputStream fileInput);
+	public TemporaryMedia saveTemporaryMedia(TemporaryMedia temporaryMedia, InputStream fileInput);
 
 	/**
 	 * Delete a piece of temporary media
