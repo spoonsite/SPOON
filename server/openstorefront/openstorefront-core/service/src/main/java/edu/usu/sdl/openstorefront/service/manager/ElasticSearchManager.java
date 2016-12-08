@@ -62,6 +62,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -184,22 +185,98 @@ public class ElasticSearchManager
 		
 		if (StringUtils.isBlank(query)) {
 			query = "*";
-		}
+		}               
+                
+                // Initialize Search Phrases
+                // (Searching Different Phrases [Quoted Words])
+                List<String> searchPhrases = new ArrayList<>();
+                
+                // Convert Query To StringBuilder
+                StringBuilder queryString = new StringBuilder(query);
+                
+                // Search For Quotes
+                while (queryString.indexOf("\"") != -1) {
+                    
+                    // Store Index Of First Quote
+                    int quoteStartIndex = queryString.indexOf("\"");
+                    
+                    // Store Index Of Next Quote
+                    int quoteEndIndex = queryString.indexOf("\"", quoteStartIndex + 1);
+                    
+                    // Check If We Failed To Find Next Quote
+                    if (quoteEndIndex == -1) {
+                        
+                        // Remove First Quote
+                        queryString.deleteCharAt(quoteStartIndex);
+                    }
+                    else {
+                        
+                        // Create Sub-String Of Quoted Phrase
+                        String subQueryString = queryString.substring(quoteStartIndex, quoteEndIndex + 1);
+                        
+                        // Remove Sub-String From Query
+                        queryString.delete(quoteStartIndex, quoteEndIndex + 1);
+                        
+                        // Add Sub-String To Search Phrases
+                        searchPhrases.add(subQueryString);
+                        
+                        //////////
+                        // TRIM //
+                        //////////
+                        
+                        // Replace All Double Spaces
+                        while (queryString.indexOf("  ") != -1) {
+                            
+                            // Get Index Of Double Space
+                            int doubleSpaceIndex = queryString.indexOf("  ");
+                            
+                            queryString.replace(doubleSpaceIndex, doubleSpaceIndex + 2, " ");
+                        }
+                        
+                        // Search For Beginning Whitespace
+                        if (queryString.length() > 0 && queryString.charAt(0) == ' ') {
+                            
+                            // Remove Whitespace
+                            queryString.deleteCharAt(0);
+                        }
+                        
+                        // Search For Ending Whitespace
+                        if (queryString.length() > 0 && queryString.charAt(queryString.length() - 1) == ' ') {
+                            
+                            // Remove Whitespace
+                            queryString.deleteCharAt(queryString.length() - 1);
+                        }
+                    }
+                }
+                
+                // Initialize ElasticSearch Query
+                BoolQueryBuilder esQuery = QueryBuilders.boolQuery();
+                
+                // Check For Remaining Query Items
+                if (queryString.length() > 0) {
+                    
+                    // Create Standard Query
+                    esQuery.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_NAME, queryString.toString()));
+                    esQuery.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_ORGANIZATION, queryString.toString()));
+                    esQuery.should(QueryBuilders.wildcardQuery("_all", queryString.toString()));
+                    esQuery.should(QueryBuilders.fuzzyQuery("_all", queryString.toString()));
+                }
+                
+                // Loop Through Search Phrases
+                for (String phrase : searchPhrases) {
+                    
+                    esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, phrase));
+                    esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
+                }
 		
 		SearchResponse response = ElasticSearchManager.getClient()				
 					.prepareSearch(INDEX)							
-					.setQuery(QueryBuilders
-							.boolQuery()
-							.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_NAME, query))
-							.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_ORGANIZATION, query))
-							.should(QueryBuilders.wildcardQuery("_all", query))
-							.should(QueryBuilders.fuzzyQuery("_all", query))
-							)						
+					.setQuery(esQuery)						
 					.setFrom(filter.getOffset())
 					.setSize(maxSearchResults)
 					.addSort(filter.getSortField(), OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ?  SortOrder.ASC : SortOrder.DESC)		
 					.execute()
-					.actionGet();		
+					.actionGet();
 		
 		indexSearchResult.setTotalResults(response.getHits().getTotalHits());
 		indexSearchResult.setMaxScore(response.getHits().getMaxScore());
