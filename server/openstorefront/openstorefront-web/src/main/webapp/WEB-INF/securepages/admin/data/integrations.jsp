@@ -287,7 +287,13 @@
 						method: method,
 						requestJson: data,
 						success: function (response, opts) {
-							var message = 'Successfully started job for "' + response.request.requestJson.componentName + '"';
+							console.log(response);
+							if (response.status === 304) {
+								var message = 'Unable to run job for "' + response.request.requestJson.componentName + '".  Job is inactive or already running.';
+							}
+							else {
+								var message = 'Successfully started job for "' + response.request.requestJson.componentName + '"';
+							}
 							Ext.toast(message, '', 'tr');
 							Ext.getCmp('componentConfigGrid').getStore().load();
 							Ext.getCmp('componentConfigGrid').getSelectionModel().deselectAll();
@@ -409,7 +415,12 @@
 						method: method,
 						requestJson: data,
 						success: function (response, opts) {
-							var message = 'Successfully deleted integration for "' + response.request.requestJson.componentName + '"';
+							if (response.status === 304) {
+								var message = 'Unable to delete integration for "' + response.request.requestJson.componentName + '". Integration is currently running.';
+							}
+							else {
+								var message = 'Successfully deleted integration for "' + response.request.requestJson.componentName + '"';
+							}
 							Ext.toast(message, '', 'tr');
 							Ext.getCmp('componentConfigGrid').getStore().load();
 							Ext.getCmp('componentConfigGrid').getSelectionModel().deselectAll();
