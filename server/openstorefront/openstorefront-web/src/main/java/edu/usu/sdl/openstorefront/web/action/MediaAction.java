@@ -34,6 +34,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.Base64;
 import java.util.HashMap;
@@ -89,6 +91,13 @@ public class MediaAction
 		@Validate(required = true, field = "name", on = "UploadGeneralMedia")
 	})
 	private GeneralMedia generalMedia;
+
+	@ValidateNestedProperties({
+		@Validate(required = true, field = "name", on = "UploadTemporaryMedia")
+	})
+	private TemporaryMedia temporaryMedia;
+
+	
 
 	@DefaultHandler
 	public Resolution audioTestPage()
@@ -313,6 +322,48 @@ public class MediaAction
 				.setFilename(temporaryMedia.getOriginalFileName())
 				.createRangeResolution();
 	}
+
+	@HandlesEvent("UploadTemporaryMedia")
+	public Resolution uploadTemporaryMedia()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (temporaryMedia != null) {
+			temporaryMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
+			temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+			temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+			temporaryMedia.setOriginalFileName(StringProcessor.getJustFileName(file.getFileName()));
+			temporaryMedia.setOriginalSourceURL("fileUpload");
+			temporaryMedia.setMimeType(file.getContentType());
+			String key =  SecurityUtil.getCurrentUserName() + file.getFileName() + temporaryMedia.getName();
+			String hash = key;
+			try {
+				hash = StringProcessor.getHexFromBytes(MessageDigest.getInstance("SHA-1").digest(key.getBytes()));
+			}
+			catch (NoSuchAlgorithmException ex) {
+				throw new OpenStorefrontRuntimeException("Hash Format not available", "Coding issue", ex);
+			}
+			temporaryMedia.setFileName(hash);
+			
+			ValidationModel validationModel = new ValidationModel(temporaryMedia);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				try {
+					temporaryMedia = service.getSystemService().saveTemporaryMedia(temporaryMedia, file.getInputStream());
+					return streamResults(temporaryMedia);
+				} catch (IOException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+				} finally {
+					deleteTempFile(file);
+				}
+			} else {
+				errors.put("file", validationResult.toHtmlString());
+			}
+		} else {
+			errors.put("temporaryMedia", "Missing temporary media information");
+		}
+		return streamUploadResponse(errors);
+	}
 	
 	@HandlesEvent("DataImage")
 	public Resolution tranformDataImage()
@@ -394,6 +445,16 @@ public class MediaAction
 	public void setImageType(String imageType)
 	{
 		this.imageType = imageType;
+	}
+
+	public TemporaryMedia getTemporaryMedia()
+	{
+		return temporaryMedia;
+	}
+
+	public void setTemporaryMedia(TemporaryMedia temporaryMedia)
+	{
+		this.temporaryMedia = temporaryMedia;
 	}
 
 }
