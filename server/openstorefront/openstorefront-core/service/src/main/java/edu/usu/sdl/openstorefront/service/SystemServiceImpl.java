@@ -413,7 +413,7 @@ public class SystemServiceImpl
 	}
 
 	@Override
-	public void saveTemporaryMedia(TemporaryMedia temporaryMedia, InputStream fileInput)
+	public TemporaryMedia saveTemporaryMedia(TemporaryMedia temporaryMedia, InputStream fileInput)
 	{
 		Objects.requireNonNull(temporaryMedia);
 		Objects.requireNonNull(fileInput);
@@ -424,6 +424,7 @@ public class SystemServiceImpl
 			Files.copy(in, temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
 			temporaryMedia.populateBaseCreateFields();
 			persistenceService.persist(temporaryMedia);
+			return temporaryMedia;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
