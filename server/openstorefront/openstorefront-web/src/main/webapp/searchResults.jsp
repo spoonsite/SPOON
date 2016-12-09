@@ -1553,19 +1553,45 @@
 													url: 'api/v1/service/search/suggestions'													
 												}
 											},
-											listeners:{
+											listeners: {
+												
+												expand: function(field, opts) {
+												
+													field.getPicker().clearHighlight();
+												},
+												
 												specialkey: function(field, e) {
+													
 													var value = this.getValue();
-													if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {													
-														var query = value;
-														if (query && !Ext.isEmpty(query)) {
-															var searchRequest = {
-																type: 'SIMPLE',
-																query: CoreUtil.searchQueryAdjustment(query)
-															};
-															CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+													
+													if (!Ext.isEmpty(value)) {
+														
+														switch (e.getKey()) {
+															
+															case e.ENTER:
+																var query = value;
+																if (query && !Ext.isEmpty(query)) {
+																	var searchRequest = {
+																		type: 'SIMPLE',
+																		query: CoreUtil.searchQueryAdjustment(query)
+																	};
+																	CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+																}
+																window.location.href = 'searchResults.jsp';
+																break;
+															
+															case e.HOME:
+																field.setValue(field.lastQuery);
+																field.selectText(0, 0);
+																field.expand();
+																break;
+															
+															case e.END:
+																field.setValue(field.lastQuery);
+																field.selectText(field.getValue().length, field.getValue().length);
+																field.expand();
+																break;
 														}
-														window.location.href = 'searchResults.jsp';														
 													}
 												}
 											}
