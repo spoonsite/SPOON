@@ -60,6 +60,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
@@ -510,7 +511,7 @@ public class CoreComponentServiceImpl
 				for (ComponentAttribute componentAttribute : component.getAttributes()) {
 					componentAttribute.getComponentAttributePk().setComponentId(oldComponent.getComponentId());
 				}
-				component.setAttributeChanged(handleBaseComponetSave(ComponentAttribute.class, component.getAttributes(), oldComponent.getComponentId()));
+				component.setAttributeChanged(handleBaseComponentSave(ComponentAttribute.class, component.getAttributes(), oldComponent.getComponentId()));
 
 			} else {
 
@@ -736,16 +737,16 @@ public class CoreComponentServiceImpl
 			throw new OpenStorefrontRuntimeException(validationResult.toString());
 		}
 
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentContact.class, componentAll.getContacts(), component.getComponentId()));
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentEvaluationSection.class, componentAll.getEvaluationSections(), component.getComponentId()));
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentExternalDependency.class, componentAll.getExternalDependencies(), component.getComponentId()));
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentMedia.class, componentAll.getMedia(), component.getComponentId()));
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentMetadata.class, componentAll.getMetadata(), component.getComponentId()));
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentResource.class, componentAll.getResources(), component.getComponentId()));
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentRelationship.class, componentAll.getRelationships(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentContact.class, componentAll.getContacts(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentEvaluationSection.class, componentAll.getEvaluationSections(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentExternalDependency.class, componentAll.getExternalDependencies(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentMedia.class, componentAll.getMedia(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentMetadata.class, componentAll.getMetadata(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentResource.class, componentAll.getResources(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentRelationship.class, componentAll.getRelationships(), component.getComponentId()));
 
 		if (Convert.toBoolean(options.getUploadTags())) {
-			lockSwitch.setSwitched(handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponentSave(ComponentTag.class, componentAll.getTags(), component.getComponentId()));
 		}
 
 		if (Convert.toBoolean(options.getUploadQuestions())) {
@@ -760,7 +761,7 @@ public class CoreComponentServiceImpl
 				questionAllMap.put(question.getQuestion().uniqueKey(), question);
 			}
 			// We now send the questions to be saved.
-			lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponentSave(ComponentQuestion.class, questions, component.getComponentId()));
 
 			// After this point, we are assuming that the 'questions' list that we sent in to be saved
 			// still refers to the same questions.  However, after saving, they should all have proper questionIds.
@@ -776,7 +777,7 @@ public class CoreComponentServiceImpl
 					responses.add(response);
 				}
 			}
-			lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestionResponse.class, responses, component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponentSave(ComponentQuestionResponse.class, responses, component.getComponentId()));
 
 		}
 
@@ -791,7 +792,7 @@ public class CoreComponentServiceImpl
 				componentCons.addAll(reviewAll.getCons());
 				componentPros.addAll(reviewAll.getPros());
 			}
-			lockSwitch.setSwitched(handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponentSave(ComponentReview.class, reviews, component.getComponentId()));
 			for (ComponentReview review : reviews) {
 				ReviewAll reviewAll = reviewAllMap.get(review.uniqueKey());
 				List<ComponentReviewPro> pros = reviewAll.getPros();
@@ -805,8 +806,8 @@ public class CoreComponentServiceImpl
 					con.setComponentId(component.getComponentId());
 				}
 			}
-			lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewPro.class, componentPros, component.getComponentId()));
-			lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewCon.class, componentCons, component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponentSave(ComponentReviewPro.class, componentPros, component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponentSave(ComponentReviewCon.class, componentCons, component.getComponentId()));
 		}
 
 		if (Convert.toBoolean(options.getUploadIntegration())) {
@@ -854,7 +855,7 @@ public class CoreComponentServiceImpl
 		return componentAll;
 	}
 
-	private <T extends BaseComponent> boolean handleBaseComponetSave(Class<T> baseComponentClass, List<T> baseComponents, String componentId)
+	private <T extends BaseComponent> boolean handleBaseComponentSave(Class<T> baseComponentClass, List<T> baseComponents, String componentId)
 	{
 		boolean changed = false;
 
@@ -1973,6 +1974,17 @@ public class CoreComponentServiceImpl
 		ComponentAll targetComponent = getFullComponent(targetComponentId);
 		if (mergeComponent != null) {
 			if (targetComponent != null) {
+
+				//Keep these fields
+				mergeComponent.getComponent().setActiveStatus(targetComponent.getComponent().getActiveStatus());
+				mergeComponent.getComponent().setApprovalState(targetComponent.getComponent().getApprovalState());
+				mergeComponent.getComponent().setApprovedUser(targetComponent.getComponent().getApprovedUser());
+				mergeComponent.getComponent().setApprovedDts(targetComponent.getComponent().getApprovedDts());
+				mergeComponent.getComponent().setRecordVersion(targetComponent.getComponent().getRecordVersion());
+				mergeComponent.getComponent().setLastModificationType(ModificationType.MERGE);
+
+				targetComponent.getComponent().updateFields(mergeComponent.getComponent());
+
 				//a merge mashes together sub-enties from Merge to target
 				mergeSubEntities(mergeComponent.getAttributes(), targetComponent.getAttributes());
 				mergeSubEntities(mergeComponent.getContacts(), targetComponent.getContacts());
@@ -2087,19 +2099,7 @@ public class CoreComponentServiceImpl
 		for (T targetEntity : tempTargetEntities) {
 
 			if (mergeKeyMap.containsKey(targetEntity.uniqueKey()) == false) {
-
 				targetEntities.remove(targetEntity);
-
-				// Check If Media or Resource
-				if (targetEntity instanceof ComponentMedia) { // Check If Media
-
-					// Remove Local Media File
-					removeLocalMedia((ComponentMedia) targetEntity);
-				} else if (targetEntity instanceof ComponentResource) { // Check If Resource
-
-					// Remove Local Resource File
-					removeLocalResource((ComponentResource) targetEntity);
-				}
 			}
 		}
 	}
@@ -2311,7 +2311,7 @@ public class CoreComponentServiceImpl
 
 	public Component createPendingChangeComponent(String parentComponentId)
 	{
-		//copy (this is a seperate transaction
+		//copy (this is a seperate transaction)
 		Component component = ServiceProxy.getProxy().getComponentService().copy(parentComponentId);
 
 		//then set component to pending changes
@@ -2337,24 +2337,9 @@ public class CoreComponentServiceImpl
 
 			Component mainComponent = persistenceService.findById(Component.class, pendingChangeComponent.getPendingChangeId());
 			if (mainComponent != null) {
-				LOG.log(Level.FINEST, "Updating Core Information");
-				mainComponent.setName(pendingChangeComponent.getName());
-				mainComponent.setDescription(pendingChangeComponent.getDescription());
-				mainComponent.setComponentType(pendingChangeComponent.getComponentType());
-				mainComponent.setOrganization(pendingChangeComponent.getOrganization());
-				mainComponent.setReleaseDate(pendingChangeComponent.getReleaseDate());
-				mainComponent.setVersion(pendingChangeComponent.getVersion());
-				mainComponent.setSecurityMarkingType(pendingChangeComponent.getSecurityMarkingType());
-
-				RequiredForComponent requiredForComponent = new RequiredForComponent();
-				requiredForComponent.setComponent(mainComponent);
-
-				FileHistoryOption fileHistoryOption = new FileHistoryOption();
-				fileHistoryOption.setSkipRequiredAttributes(Boolean.TRUE);
-				doSaveComponent(requiredForComponent, fileHistoryOption);
 
 				LOG.log(Level.FINEST, "Merge Component");
-				fileHistoryOption = new FileHistoryOption();
+				FileHistoryOption fileHistoryOption = new FileHistoryOption();
 				fileHistoryOption.setUploadTags(Boolean.TRUE);
 				fileHistoryOption.setSkipRequiredAttributes(Boolean.TRUE);
 				mergedComponent = merge(componentIdOfPendingChange, mainComponent.getComponentId(), fileHistoryOption);
@@ -2396,29 +2381,4 @@ public class CoreComponentServiceImpl
 		}
 	}
 
-	void removeLocalResource(ComponentResource componentResource)
-	{
-		//Note: this can't be rolled back
-		Path path = componentResource.pathToResource();
-		if (path != null) {
-			if (path.toFile().exists()) {
-				if (path.toFile().delete()) {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component resource. Path: {0}", path.toString()));
-				}
-			}
-		}
-	}
-
-	void removeLocalMedia(ComponentMedia componentMedia)
-	{
-		//Note: this can't be rolled back
-		Path path = componentMedia.pathToMedia();
-		if (path != null) {
-			if (path.toFile().exists()) {
-				if (path.toFile().delete()) {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component media. Path: {0}", path.toString()));
-				}
-			}
-		}
-	}
 }

@@ -309,11 +309,14 @@ var CoreUtil = {
 			options.form.setLoading(false);
 
 			var errorResponse = Ext.decode(response.responseText);
-			var errorObj = {};
-			Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
-				errorObj[item.key] = item.value;
-			});
-			options.form.getForm().markInvalid(errorObj);
+			//If the request timesout then there won't be a response
+			if (errorResponse) {
+				var errorObj = {};
+				Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+					errorObj[item.key] = item.value;
+				});
+				options.form.getForm().markInvalid(errorObj);
+		    }
 			if (options.failure) {
 				options.failure(response, opts);
 			}

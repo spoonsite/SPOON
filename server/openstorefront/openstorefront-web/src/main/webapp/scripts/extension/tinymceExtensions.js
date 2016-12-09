@@ -564,7 +564,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 					xtype: 'form',
 					layout: {
 						type: 'vbox',
-						align: 'stretch',
+						align: 'stretch'
 					},
 					items: [
 						{

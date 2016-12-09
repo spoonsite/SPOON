@@ -662,7 +662,12 @@ public class ComponentRESTResource
 				}
 			}
 
-			return Response.ok(service.getComponentService().saveComponent(component)).build();
+			service.getComponentService().saveComponent(component);
+			Component updatedComponent = new Component();
+			updatedComponent.setComponentId(componentId);
+			updatedComponent = updatedComponent.find();
+
+			return Response.ok(updatedComponent).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -723,7 +728,7 @@ public class ComponentRESTResource
 		mergeComponent = mergeComponent.find();
 
 		Component targetComponent = new Component();
-		targetComponent.setComponentId(mergeId);
+		targetComponent.setComponentId(targetId);
 		targetComponent = targetComponent.find();
 		if (mergeComponent != null && targetComponent != null) {
 			if (mergeComponent.equals(targetComponent)) {
@@ -2218,7 +2223,7 @@ public class ComponentRESTResource
 	{
 		return service.getComponentService().getMetadata();
 	}
-	
+
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces(
@@ -3988,8 +3993,7 @@ public class ComponentRESTResource
 		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
 		if (integration.getActiveStatus().equals(ComponentIntegration.ACTIVE_STATUS) && integration.getStatus().equals(RunStatus.WORKING)) {
 			return Response.status(Response.Status.NOT_MODIFIED).build();
-		} 
-		else {
+		} else {
 			service.getComponentService().deleteComponentIntegration(componentId);
 			return Response.ok().build();
 		}
@@ -4010,18 +4014,16 @@ public class ComponentRESTResource
 					integration.setStatus(RunStatus.COMPLETE);
 					service.getComponentService().saveComponentIntegration(integration);
 
-				}	
+				}
 				return Response.status(Response.Status.NOT_MODIFIED).build();
-			}
-			else {
+			} else {
 				if (!integration.getStatus().equals(RunStatus.WORKING)) {
 					JobManager.runComponentIntegrationNow(componentId, null);
 					return Response.ok().build();
 				}
 				return Response.status(Response.Status.NOT_MODIFIED).build();
-			}			
-		} 
-		else {
+			}
+		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}

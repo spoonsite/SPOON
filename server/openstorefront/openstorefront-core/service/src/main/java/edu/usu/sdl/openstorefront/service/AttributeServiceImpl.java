@@ -295,7 +295,7 @@ public class AttributeServiceImpl
 		Path path = attributeCode.pathToAttachment();
 		if (path != null && path.toFile().exists()) {
 			boolean deleted = path.toFile().delete();
-			if (!deleted) {
+			if (deleted == false) {
 				LOG.log(Level.WARNING, MessageFormat.format("Unable to delete attribute attatchment. File might be in use. Path: {0}", path.toString()));
 			}
 		}

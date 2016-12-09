@@ -403,7 +403,7 @@ public class SystemServiceImpl
 			Path path = generalMedia.pathToMedia();
 			if (path != null) {
 				if (path.toFile().exists()) {
-					if (path.toFile().delete()) {
+					if (path.toFile().delete() == false) {
 						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete general media. Path: {0}", path.toString()));
 					}
 				}
@@ -438,7 +438,7 @@ public class SystemServiceImpl
 			Path path = temporaryMedia.pathToMedia();
 			if (path != null) {
 				if (path.toFile().exists()) {
-					if (path.toFile().delete()) {
+					if (path.toFile().delete() == false) {
 						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete temporary media. Path: {0}", path.toString()));
 					}
 				}

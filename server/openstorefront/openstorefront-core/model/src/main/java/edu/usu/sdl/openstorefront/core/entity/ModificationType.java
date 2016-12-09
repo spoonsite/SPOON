@@ -33,6 +33,7 @@ public class ModificationType
 	public static final String IMPORT = "IMPORT";
 	public static final String API = "API";
 	public static final String EXTERNAL = "EXTERNAL";
+	public static final String MERGE = "MERGE";
 
 	public ModificationType()
 	{
@@ -46,6 +47,7 @@ public class ModificationType
 		codeMap.put(IMPORT, newLookup(FileHistoryErrorType.class, IMPORT, "Import"));
 		codeMap.put(API, newLookup(FileHistoryErrorType.class, API, "API"));
 		codeMap.put(EXTERNAL, newLookup(FileHistoryErrorType.class, EXTERNAL, "External Pull"));
+		codeMap.put(MERGE, newLookup(FileHistoryErrorType.class, MERGE, "Merge"));
 
 		return codeMap;
 	}

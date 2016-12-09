@@ -620,7 +620,6 @@ public interface ComponentService
 	 * @param options
 	 * @return
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component restoreSnapshot(String versionHistoryId, ComponentRestoreOptions options);
 
 	/**
@@ -749,6 +748,7 @@ public interface ComponentService
 	/**
 	 * Merges pending changes to the old component (effectively Replacing the
 	 * old component)
+	 *
 	 *
 	 * @param componentIdOfPendingChange
 	 * @return

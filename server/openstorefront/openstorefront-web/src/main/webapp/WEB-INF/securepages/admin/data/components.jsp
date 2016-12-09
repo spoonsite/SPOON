@@ -2850,7 +2850,12 @@
 														var data = Ext.decode(response.responseText);	
 														
 														// Store Component ID
-														var componentId = data.component.componentId;
+														var componentId;
+														if (data.component) {
+															componentId = data.component.componentId;
+														} else {
+															componentId = data.componentId;
+														}
 														
 														// Store Component Store
 														var store = Ext.getCmp('componentGrid').getStore();
@@ -2861,9 +2866,21 @@
 															// Create Function To Fire When Reload Is Complete
 															callback: function() {
 																
-																// Store (Updated) Record With Matching Component ID
-																var record = store.query('componentId', componentId, false, true, true).first();
-
+																// Store (Updated) Record With Matching Component ID																
+																var record = null;																															
+																store.each(function(storeRecord) {
+																	if (storeRecord.get('componentId') === componentId) {
+																		record = storeRecord;
+																	}
+																});
+																
+																if (record == null) {
+																	//means this is a change request
+																	record = Ext.create('Ext.data.Model', {																		
+																	});
+																	record.set(data);
+																}
+																
 																// Refresh Add/Edit Window
 																actionAddEditComponent(record);
 																
@@ -3562,7 +3579,7 @@
 					title: 'Change Owner - ',
 					iconCls: 'fa fa-user',
 					width: '35%',
-					height: 150,
+					height: 175,
 					y: 200,
 					modal: true,
 					layout: 'fit',					
@@ -3699,7 +3716,7 @@
 					title: 'Change Type - ',
 					iconCls: 'fa fa-user',
 					width: '35%',
-					height: 150,
+					height: 175,
 					y: 200,
 					modal: true,
 					layout: 'fit',					
@@ -3973,9 +3990,9 @@
 				
 				var mergeComponentWin = Ext.create('Ext.window.Window', {
 					id: 'mergeComponentWin',
-					title: 'Merge',
+					title: 'Merge <i class="fa fa-question-circle"  data-qtip="This merges entry to target. <br> Meaning target will contain merged entry\'s information and merged entry will be deleted." ></i>',
 					width: '40%',
-					height: 210,
+					height: 260,
 					modal: true,
 					layout: 'fit',
 					items: [
@@ -4039,7 +4056,7 @@
 								{
 									xtype: 'combobox',
 									name: 'mergeComponentId',
-									fieldLabel: 'Merge Component',
+									fieldLabel: 'Merge Entry',
 									store: maingridStore,
 									queryLocal: true,
 									valueField: 'componentId',
@@ -4053,7 +4070,7 @@
 									allowBlank: false,
 									width: '100%',
 									margin: '0 0 0 0',
-									fieldLabel: 'Target Component',
+									fieldLabel: 'Target Entry',
 									storeConfig: {
 										url: 'api/v1/resource/components/lookup?all=true',
 										autoLoad: false
@@ -4525,7 +4542,7 @@
 				
 				
 				var actionAddEditComponent = function(record) {
-					Ext.osfComponentId = record.get('componentId');
+					
 					mainAddEditWin.close();
 					mainAddEditWin.show();		
 					
@@ -4535,7 +4552,8 @@
 					generalForm.componentRecord = record;
 					Ext.getCmp('mainFormTabPanel').setActiveTab(generalForm);
 					
-					if (record) {			
+					if (record) {
+						Ext.osfComponentId = record.get('componentId');
 						mainAddEditWin.setTitle('Entry Form: ' + record.get('name'));
 						checkFormTabs(record);
 						generalForm.loadRecord(record);
@@ -4798,7 +4816,7 @@
 											if (++componentDeleteCount === selected) {
 
 												// Provide Success Notification
-												Ext.toast('All Entries Have Been Processed', 'Success');
+												Ext.toast('Selected entries have been deleted', 'Success');
 
 												// Refresh Grid
 												actionRefreshComponentGrid();
