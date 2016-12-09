@@ -40,7 +40,7 @@ Component definitions are as shown below:
 >-  **Managers**   - The role of the manager class is to handle the interaction with a resource. This allow for clean initialization and shutdown of resources and provides centralized access.
   -   **Services**    - Each service is in charge of handling a specific group of Entity models. Services provide transaction support and business logic handling. All services are accessed through a service proxy class.  The service proxy class provides auto transaction and service interception support.
   -   **Models**  - The entity models represent the data in the system and provide the bridge from the application to the underlying storage.  
-  -   **Import / Export** -The entity models represent the data in the system and provide the bridge from the application to the underlying storage. 
+  -   **Import / Export** -Provides a mechanism for loading and transferring data from one system to another.
 
 
 The server build environment relies on the following platforms/tools:
