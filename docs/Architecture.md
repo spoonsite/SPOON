@@ -40,7 +40,7 @@ Component definitions are as shown below:
 >-  **Managers**   - The role of the manager class is to handle the interaction with a resource. This allow for clean initialization and shutdown of resources and provides centralized access.
   -   **Services**    - Each service is in charge of handling a specific group of Entity models. Services provide transaction support and business logic handling. All services are accessed through a service proxy class.  The service proxy class provides auto transaction and service interception support.
   -   **Models**  - The entity models represent the data in the system and provide the bridge from the application to the underlying storage.  
-  -   **Import / Export** -The entity models represent the data in the system and provide the bridge from the application to the underlying storage. 
+  -   **Import / Export** -Provides a mechanism for loading and transferring data from one system to another.
 
 
 The server build environment relies on the following platforms/tools:
@@ -78,7 +78,7 @@ The runtime environment relies upon the following applications:
 -  **Tomcat 7**  -    Tomcat is the web container used to host the storefront application.
 -  **Java 8**  -            It the runtime platform which runs Tomcat
 -  **OS/VM**  -             Is the host machines operating system
--  **Solr**          -    Enterprise search appliance runs externally
+-  **Solr**          -    Enterprise search appliance that runs externally
 -  **OpenAM**    -        OpenAM runs externally and a policy agent in Tomcat make sure the site is secure.
 
 ##3.3 Runtime Component Integration Vectors
@@ -173,11 +173,11 @@ The applicable ports are shown below:
 
 **Port (Defaults):**  9300
 **Description:** Elasticsearch (If used; Binary and the one used by the application)
-**Type:** Outbound (Used internally doesn't need to be exposed outside the system)
+**Type:** Outbound (Used internally does not need to be exposed outside the system)
 
 **Port (Defaults):**  9200
 **Description:** Elasticsearch (If used; JSON)
-**Type:** Outbound (Used internally doesn't need to be exposed outside the system)
+**Type:** Outbound (Used internally does not need to be exposed outside the system)
 
 **Port (Defaults):**  8080
 **Description:** OpenAM running on Tomcat; Setups on this vary so this just represents one case
