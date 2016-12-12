@@ -434,7 +434,9 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 			if (record) {
 				var url = record.get('url');
 				if (url.indexOf('Media.action?') > -1) { store.remove(record); }
-				if (!url) { store.remove(record); }
+				if (!url) { 
+					store.remove(record); 
+				}
 			}
 			else {
 				store.remove(record);
@@ -490,7 +492,7 @@ Ext.define('OSF.component.InlineMediaRetrieverWindow', {
 Ext.define('OSF.component.MediaInsertWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.MediaInsertWindow',
-	layout: 'vbox',
+	layout: 'border',
 
 	title: 'Insert Media',
 	closeAction: 'destroy',
@@ -498,22 +500,21 @@ Ext.define('OSF.component.MediaInsertWindow', {
 	modal: true,
 	width: '70%',
 	height: 700,
+	mediaToShow: 'IMG',
 	
 	initComponent: function () {
 		this.callParent();
 
 		var mediaInsertWindow = this;
 
-		mediaInsertWindow.mediaSelectionStore = Ext.create('Ext.data.Store', {
+		mediaInsertWindow.mediaSelectionStore = Ext.create('Ext.data.Store', {			
+		});
+
+		mediaInsertWindow.mediaSelectionStorePreLoad = Ext.create('Ext.data.Store', {
 			autoLoad: true,
 			proxy: {
 				type: 'ajax',
-				url: 'api/v1/resource/components/' + Ext.osfComponentId + '/media/view',
-				reader: {
-					type: 'json',
-					rootProperty: 'data',
-					totalProperty: 'totalNumber'
-				}
+				url: mediaInsertWindow.editor.settings.mediaSelectionUrl()
 			},
 			listeners: {
 				load: function(store, records, success, eOpts) {
@@ -521,39 +522,71 @@ Ext.define('OSF.component.MediaInsertWindow', {
 						mediaInsertWindow.mediaSelection.up('panel').hide();
 						mediaInsertWindow.setHeight(220);
 					}
+					//normalize records
+					var showRecords = [];
+					Ext.Array.each(records, function(media) {
+						if (!media.get('link')) {
+							media.set('link', media.get('mediaLink'));
+						}
+						if (!media.get('caption')) {
+							media.set('caption', media.get('name'));
+						}
+						if (media.get('mimeType')) {
+							if (media.get('mimeType').indexOf('image') !== -1) {
+								media.set('mediaTypeCode', 'IMG');
+							} else if (media.get('mimeType').indexOf('video') !== -1) {
+								media.set('mediaTypeCode', 'VID');
+							} else if (media.get('mimeType').indexOf('audio') !== -1) {
+								media.set('mediaTypeCode', 'AUD');
+							} else {
+								media.set('mediaTypeCode', 'OTH');
+							} 
+						}
+						
+						//keep based on mediatype
+						if (media.get('mediaTypeCode') === mediaInsertWindow.mediaToShow) {
+							showRecords.push(media);
+						}
+						
+					});
+					mediaInsertWindow.mediaSelectionStore.loadRecords(showRecords);
 				}
 			}
 		});
 
-		Ext.osfInsertInlineMedia = function osfInsertInlineMedia(link, alt) {
+		mediaInsertWindow.insertInlineMedia = function(link, alt) {
 			var content = '<img src="' + link +'" alt="' + alt + '" />';
-			Ext.osfTinyMceEditor.execCommand('mceInsertContent', false, content);
+			mediaInsertWindow.editor.execCommand('mceInsertContent', false, content);
 		};
 
-
-		var htmlPrefix = '<img class="x-item" src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}" onclick="';
-		var htmlSuffix = '" />';
-		mediaInsertWindow.mediaSelection = Ext.create('Ext.DataView', {
-			title: 'Existing Storefront Media',
-			xtype: 'dataview',
+		mediaInsertWindow.mediaSelection = Ext.create('Ext.view.View', {
+			title: 'Existing Storefront Media',			
+			itemSelector: 'div.media-item',
 			tpl: new Ext.XTemplate(
-		'	<tpl for=".">',	
-		'		<tpl if="mediaTypeCode==\'IMG\'">',
-		'		<div class="detail-media-block">',
-		htmlPrefix,
-		'Ext.osfInsertInlineMedia(\'{link}\', \'{[values.caption ? values.caption : values.filename]}\');',
-		'Ext.getCmp(\'osfmediainsertwindow\').close();',
-		htmlSuffix,
-		'			<tpl if="caption || securityMarkingType"><p class="detail-media-caption"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{caption}</p></tpl>',
-		'		</div>',
-		'		</tpl>',
-		'	</tpl>'
-				),
-			itemSelector: '.x-item',
-			store: mediaInsertWindow.mediaSelectionStore
+				'	<tpl for=".">',
+				'		<div class="detail-media-block media-item">',
+				'			<img class="x-item" src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}">',
+				'			<tpl if="caption || securityMarkingType"><p class="detail-media-caption"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{caption}</p></tpl>',
+				'		</div>',				
+				'	</tpl>'
+			),			
+			store: mediaInsertWindow.mediaSelectionStore,
+			listeners: {
+				itemclick: function(dataView, offRecord, item, index, e, eOpts) {	
+					var record = dataView.getStore().getAt(index);
+					if (!record) {
+						record = offRecord;
+					}
+					mediaInsertWindow.insertInlineMedia(record.get('link'), record.get('caption') ? record.get('caption'): record.get('filename'));
+					Ext.defer(function(){
+						mediaInsertWindow.close();
+					}, 250);					
+				}
+			}
 		});
 
 		mediaInsertWindow.uploadImagePanel = Ext.create('Ext.form.Panel', {
+			region: 'north',
 			layout: 'fit',
 			width: '100%',
 			height: 150,
@@ -573,7 +606,8 @@ Ext.define('OSF.component.MediaInsertWindow', {
 							name: 'file',
 							allowBlank: false,
 							flex: 1,
-							fieldLabel: 'Upload an image',
+							fieldLabel: 'Upload an image <span class="field-required" />',
+							labelWidth: 175,
 							buttonText: 'Select Image File...'
 						},
 						{
@@ -582,11 +616,12 @@ Ext.define('OSF.component.MediaInsertWindow', {
 							items: [
 								{
 									xtype: 'textfield',
-									title: 'Caption',
+									title: 'Caption / Name',
 									name: 'temporaryMedia.name',
 									allowBlank: false,
 									flex: 9,
-									fieldLabel: 'Caption',
+									labelWidth: 175,
+									fieldLabel: 'Caption <span class="field-required" />',
 									style: 'padding-right: 3px;'
 								},
 								{
@@ -598,36 +633,40 @@ Ext.define('OSF.component.MediaInsertWindow', {
 									text: 'Upload',
 									handler: function() {
 										var uploadForm = this.up('form');
-										uploadForm.setLoading("Uploading Image...");
+																				
+										if (mediaInsertWindow.editor.settings.mediaUploadHandler) {
+											mediaInsertWindow.editor.settings.mediaUploadHandler(uploadForm, mediaInsertWindow);
+										} else {
+											uploadForm.setLoading("Uploading Image...");
 										
-										uploadForm.submit({
-											url: 'Media.action?UploadTemporaryMedia',
-											method: 'POST',
-											success: function(form, action) {
-											},
-											failure: function(form, action){
-												// In this case, to not up-end the
-												// server side things, technically a 
-												// failure is a potentially a sucess
-												if (action.result && action.result.fileName) {
-													// True success
-													uploadForm.setLoading(false);
-													var link = "Media.action?TemporaryMedia&name=";
-													link += encodeURIComponent(action.result.name);
-													Ext.osfInsertInlineMedia(link, action.result.name);
-													uploadForm.up('window').close();
-												} else {
-													// True failure
-													uploadForm.setLoading(false);
-													Ext.Msg.show({
-														title: 'Upload Failed',
-														msg: 'The file upload was not successful.',
-														buttons: Ext.Msg.OK
-													});		
+											uploadForm.submit({
+												url: 'Media.action?UploadTemporaryMedia',
+												method: 'POST',
+												success: function(form, action) {
+												},
+												failure: function(form, action){
+													// In this case, to not up-end the
+													// server side things, technically a 
+													// failure is a potentially a sucess
+													if (action.result && action.result.fileName) {
+														// True success
+														uploadForm.setLoading(false);
+														var link = "Media.action?TemporaryMedia&name=";
+														link += encodeURIComponent(action.result.name);
+														mediaInsertWindow.insertInlineMedia(link, action.result.name);
+														uploadForm.up('window').close();
+													} else {
+														// True failure
+														uploadForm.setLoading(false);
+														Ext.Msg.show({
+															title: 'Upload Failed',
+															msg: 'The file upload was not successful.',
+															buttons: Ext.Msg.OK
+														});		
+													}
 												}
-												
-											}
-										});
+											});
+										}
 									}
 								}
 							]
@@ -636,15 +675,13 @@ Ext.define('OSF.component.MediaInsertWindow', {
 				}
 			] 
 		});
-
 		
 		mediaInsertWindow.add(mediaInsertWindow.uploadImagePanel);
 		mediaInsertWindow.add(Ext.create('Ext.panel.Panel', {
 			title: 'Pick an Existing Image',
+			region: 'center',
 			autoScroll: true,
-			bodyStyle: 'padding: 10px;',
-			width: '100%',
-			height: 550,
+			bodyStyle: 'padding: 10px;',			
 			items: mediaInsertWindow.mediaSelection
 		}));
 	}

@@ -3062,9 +3062,18 @@
 									style: { border: '0' },
 									name: 'description',
 									width: '100%',
-									height: 300,
+									height: 500,
 									maxLength: 65536,
-									tinyMCEConfig: CoreUtil.tinymceSearchEntryConfig("osfmediaretriever")
+									tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig("osfmediaretriever"), {
+										mediaSelectionUrl: function(){
+											if (Ext.getCmp('generalForm').componentRecord) {
+												var componentId = Ext.getCmp('generalForm').componentRecord.get('componentId');
+												return 'api/v1/resource/components/' + componentId + '/media/view';
+											} else {
+												return 'api/v1/resource/components/NEW/media/view';
+											}
+										}
+									})
 								},								
 								Ext.create('OSF.component.StandardComboBox', {
 									name: 'organization',									
@@ -4552,8 +4561,7 @@
 					generalForm.componentRecord = record;
 					Ext.getCmp('mainFormTabPanel').setActiveTab(generalForm);
 					
-					if (record) {
-						Ext.osfComponentId = record.get('componentId');
+					if (record) {						
 						mainAddEditWin.setTitle('Entry Form: ' + record.get('name'));
 						checkFormTabs(record);
 						generalForm.loadRecord(record);

@@ -539,7 +539,15 @@ Ext.define('OSF.component.SubmissionPanel', {
 					height: 300,
 					maxLength: 65536,
 					emptyText: (submissionPanel.userInputWarning ? submissionPanel.userInputWarning : '' ) + '<br><br>Include an easy to read description of the product, focusing on what it is and what it does.',
-					tinyMCEConfig: CoreUtil.tinymceConfig("osfmediaretriever")
+					tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig("osfmediaretriever"), {
+						mediaSelectionUrl: function(){
+							if (submissionPanel.componentId) {					
+								return 'api/v1/resource/components/' + submissionPanel.componentId + '/media/view';
+							} else {
+								return 'api/v1/resource/components/NEW/media/view';
+							}
+						}						
+					})
 				},
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
