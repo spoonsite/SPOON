@@ -33,36 +33,20 @@ licensed under GPL V3.**
 ------
 
 
-*What's new in v2.1*
+*What's new in v2.2*
 
- * **Relationship Visualization:**
- In User Tools under the Tools drop-down is a new Relationships section.  This allows the user to view relationships
- between Entries, Organizations, Attributes, or Tags.  The Find feature helps locate an item on the image.  The image
- can be resized, panned, zoomed, and so forth.  The current view can also be downloaded as a .png image.  
+ * **Item 1:**
+ Details of 1
  
- * **Search by Tags**
- From the global search screen a field has been added to allow a filtered search by Tags, with a drop-down of all
-  current tags. One or more tags can be added to the filters.
+ * **Item 2**
+ Details of 2
   
- * **Inline Media in Entries**
- Improved the ability to place media inline in an entry.  Images and links can now be pasted directly into the 
-  description field of a submission. The external links will be automatically fetched and linked providing an 
-  inline media experience in the description field of the submission entry.  There is also a new option to hide
-  the media from the carousel if desired.
- 
- * **Contact Lookup by Last Name**
- When adding a contact to an entry (details section) if you start typing in the Last Name field the list of possible
-  matches is shown.  Pressing enter or selecting the entry will fill the first name, organization, email, and phone
-  for the contact.  This was previously only available for first name searches, but has been extended to last name
-  with this release.  
-  
-For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.1" target="_blank">v2.1</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
+For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.2" target="_blank">v2.2</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
-## 1.2 Known Issues, v2.1 * 
+## 1.2 Known Issues, v2.2 * 
  
- * ***Beta***: From Admin Tools, Data Management, Imports a Mapping tab has been added.  This allows for mappable
-  file formats to be uploaded and mapped to fields for importing data.  This feature is still being worked on and
-  further improvements will be launched in future releases.
+ * ***Setting flags for multiple attributes in IE9***: In Admin Tools, Attributes if you multi-select more than one
+  attribute then select Action, Set Flags, change the flags, and click Update it will not update in IE9.
 
 # 2.  User Features
 ------
