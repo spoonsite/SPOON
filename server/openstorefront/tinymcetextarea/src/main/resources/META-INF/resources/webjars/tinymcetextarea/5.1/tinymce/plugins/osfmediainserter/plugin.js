@@ -18,9 +18,8 @@
 tinymce.PluginManager.add('osfmediainserter', function(editor) {
 	editor.addCommand('InsertMedia', function() {
 		var insertWin = Ext.create('OSF.component.MediaInsertWindow', {				
-			id: "osfmediainsertwindow"
-		});
-		Ext.osfTinyMceEditor = editor;
+			editor: editor
+		});		
 		insertWin.show();
 		insertWin.toFront();
 	});
