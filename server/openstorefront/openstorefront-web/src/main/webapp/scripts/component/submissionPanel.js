@@ -3198,7 +3198,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 							Ext.toast('Successfully Saved Record', '', 'tr');
 
 							var data = Ext.decode(response.responseText);
-							submissionPanel.componentId = data.componentId;
+							if (data.componentId) {
+								submissionPanel.componentId = data.componentId;
+							} else {
+								submissionPanel.componentId = data.component.componentId;
+							}
 
 							//save profile updates
 							submissionPanel.setLoading('Updating Profile...');								
