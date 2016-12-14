@@ -386,10 +386,10 @@ var CoreUtil = {
 			"advlist autolink lists link image charmap print preview hr anchor pagebreak",
 			"searchreplace wordcount visualblocks visualchars code fullscreen",
 			"insertdatetime media nonbreaking save table contextmenu directionality",
-			"emoticons template paste textcolor placeholder osfmediainserter"
+			"emoticons template paste textcolor placeholder osfmediainserter osfvideoinserter"
 			],
 
-			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter media charmap | link savedsearchlink table | fullscreen",
+			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter osfvideoinserter charmap | link savedsearchlink table | fullscreen",
 
 			content_css : "contents.css",
 
@@ -419,10 +419,10 @@ var CoreUtil = {
 			"advlist autolink lists link image charmap print preview hr anchor pagebreak",
 			"searchreplace wordcount visualblocks visualchars code fullscreen",
 			"insertdatetime media nonbreaking save table contextmenu directionality",
-			"emoticons template paste textcolor placeholder savedsearchlink osfmediainserter"
+			"emoticons template paste textcolor placeholder savedsearchlink osfmediainserter osfvideoinserter"
 			],
 
-			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter media charmap | link savedsearchlink table | fullscreen",
+			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter osfvideoinserter charmap | link savedsearchlink table | fullscreen",
 
 			content_css : "contents.css",
 

@@ -362,7 +362,7 @@
 												},
 												success: function(response, opts) {
 													if (response.responseText === 'true') {
-														uploadForm.setLoading("Uploading Image...");																					
+														uploadForm.setLoading("Uploading Media...");																					
 														uploadForm.submit({
 															url: 'Media.action?UploadGeneralMedia',
 															method: 'POST',
@@ -375,7 +375,8 @@
 															success: function(form, action) {
 																var link = "Media.action?GeneralMedia&name=";
 																	link += encodeURIComponent(name);
-																mediaInsertWindow.insertInlineMedia(link, name);													
+																																																	
+																mediaInsertWindow.insertInlineMedia(link, name, mediaInsertWindow.mediaToShow, 'video/mp4');													
 																mediaInsertWindow.close();
 															},
 															failure: function(form, action){

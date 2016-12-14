@@ -562,6 +562,8 @@ public class CoreComponentServiceImpl
 				if (url.contains("Media.action?TemporaryMedia")) {
 					// This src url contains temporary media -- we should convert it.
 					String tempMediaId = url.substring(url.indexOf("&name=") + "&name=".length());
+					tempMediaId = StringProcessor.urlDecode(tempMediaId);
+
 					TemporaryMedia existingTemporaryMedia = persistenceService.findById(TemporaryMedia.class, tempMediaId);
 					if (existingTemporaryMedia != null) {
 						// Check map if we've already processed this temporary media, otherwise, do conversion
@@ -579,7 +581,9 @@ public class CoreComponentServiceImpl
 							componentMedia.setUsedInline(true);
 							componentMedia.setHideInDisplay(false);
 							if (existingTemporaryMedia.getOriginalSourceURL().equals("fileUpload")) {
-								componentMedia.setCaption(existingTemporaryMedia.getName());
+								//stripe generated part of name
+								String nameParts[] = existingTemporaryMedia.getName().split(OpenStorefrontConstant.GENERAL_KEY_SEPARATOR);
+								componentMedia.setCaption(nameParts[0]);
 							}
 
 							// Set Media Type Code based on the mimetype stored in temporary (as retrieved from server)

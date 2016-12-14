@@ -501,6 +501,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 	width: '70%',
 	height: 700,
 	mediaToShow: 'IMG',
+	mediaName: 'Image',
 	
 	initComponent: function () {
 		this.callParent();
@@ -554,19 +555,27 @@ Ext.define('OSF.component.MediaInsertWindow', {
 			}
 		});
 
-		mediaInsertWindow.insertInlineMedia = function(link, alt) {
+		mediaInsertWindow.insertInlineMedia = function(link, alt, mediaType, mimeType) {
 			var content = '<img src="' + link +'" alt="' + alt + '" />';
+			
+			if (mediaType && mediaType === 'VID') {
+				content = '<video width="340" height="240" controls><source src="' +link + '" type="' + (mimeType ? mimeType : 'video/mp4') + '" ><i class="fa fa-5x fa-file-video-o"></i></video>';
+			} 			
 			mediaInsertWindow.editor.execCommand('mceInsertContent', false, content);
 		};
 
-		mediaInsertWindow.mediaSelection = Ext.create('Ext.view.View', {
-			title: 'Existing Storefront Media',			
+		mediaInsertWindow.mediaSelection = Ext.create('Ext.view.View', {					
 			itemSelector: 'div.media-item',
 			tpl: new Ext.XTemplate(
 				'	<tpl for=".">',
 				'		<div class="detail-media-block media-item">',
-				'			<img class="x-item" src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}">',
-				'			<tpl if="caption || securityMarkingType"><p class="detail-media-caption"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{caption}</p></tpl>',
+				'			<tpl if="mediaTypeCode == \'IMG\'">',
+				'				<img class="x-item" src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}">',
+				'				<tpl if="caption || securityMarkingType"><p class="detail-media-caption"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{caption}</p></tpl>',
+				'			</tpl>',
+				'			<tpl if="mediaTypeCode == \'VID\'">',
+				'				<video height="150" controls><source src="{link}#t=10" onloadedmetadata="this.currentTime=10;" type="{mimeType}" ><i class="fa fa-5x fa-file-video-o"></i></video>',
+				'			</tpl>',
 				'		</div>',				
 				'	</tpl>'
 			),			
@@ -577,7 +586,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 					if (!record) {
 						record = offRecord;
 					}
-					mediaInsertWindow.insertInlineMedia(record.get('link'), record.get('caption') ? record.get('caption'): record.get('filename'));
+					mediaInsertWindow.insertInlineMedia(record.get('link'), record.get('caption') ? record.get('caption'): record.get('filename'), record.get('mediaTypeCode'), record.get('mimeType'));
 					Ext.defer(function(){
 						mediaInsertWindow.close();
 					}, 250);					
@@ -591,7 +600,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 			width: '100%',
 			height: 150,
 			bodyStyle: 'padding: 10px;',
-			title: "Upload New Image",
+			title: "Upload New " + mediaInsertWindow.mediaName,
 			items: [
 				{
 					xtype: 'form',
@@ -602,26 +611,25 @@ Ext.define('OSF.component.MediaInsertWindow', {
 					items: [
 						{
 							xtype: 'filefield',
-							title: 'Upload New Image',
+							title: 'Upload New ' + mediaInsertWindow.mediaName,
 							name: 'file',
 							allowBlank: false,
 							flex: 1,
-							fieldLabel: 'Upload an image <span class="field-required" />',
+							fieldLabel: 'Upload an ' + mediaInsertWindow.mediaName + ' <span class="field-required" />',
 							labelWidth: 175,
-							buttonText: 'Select Image File...'
+							buttonText: 'Select ' + mediaInsertWindow.mediaName + ' File...'
 						},
 						{
 							xtype: 'panel',
 							layout: 'hbox',
 							items: [
 								{
-									xtype: 'textfield',
-									title: 'Caption / Name',
+									xtype: 'textfield',									
 									name: 'temporaryMedia.name',
 									allowBlank: false,
 									flex: 9,
 									labelWidth: 175,
-									fieldLabel: 'Caption <span class="field-required" />',
+									fieldLabel: 'Caption / Name <span class="field-required" />',
 									style: 'padding-right: 3px;'
 								},
 								{
@@ -637,7 +645,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 										if (mediaInsertWindow.editor.settings.mediaUploadHandler) {
 											mediaInsertWindow.editor.settings.mediaUploadHandler(uploadForm, mediaInsertWindow);
 										} else {
-											uploadForm.setLoading("Uploading Image...");
+											uploadForm.setLoading("Uploading...");
 										
 											uploadForm.submit({
 												url: 'Media.action?UploadTemporaryMedia',
@@ -653,7 +661,19 @@ Ext.define('OSF.component.MediaInsertWindow', {
 														uploadForm.setLoading(false);
 														var link = "Media.action?TemporaryMedia&name=";
 														link += encodeURIComponent(action.result.name);
-														mediaInsertWindow.insertInlineMedia(link, action.result.name);
+														
+														var mediaTypeCode = mediaInsertWindow.mediaToShow;
+														if (action.result.mimeType) {
+															if (action.result.mimeType.indexOf('image') !== -1) {
+																mediaTypeCode = 'IMG';
+															} else if (action.result.mimeType.indexOf('video') !== -1) {
+																mediaTypeCode = 'VID';
+															} else if (action.result.mimeType.indexOf('audio') !== -1) {
+																mediaTypeCode = 'AUD';
+															} 
+														}
+														
+														mediaInsertWindow.insertInlineMedia(link, action.result.name, mediaTypeCode, action.result.mimeType);
 														uploadForm.up('window').close();
 													} else {
 														// True failure
@@ -678,7 +698,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 		
 		mediaInsertWindow.add(mediaInsertWindow.uploadImagePanel);
 		mediaInsertWindow.add(Ext.create('Ext.panel.Panel', {
-			title: 'Pick an Existing Image',
+			title: 'Pick an Existing ' + mediaInsertWindow.mediaName,
 			region: 'center',
 			autoScroll: true,
 			bodyStyle: 'padding: 10px;',			
