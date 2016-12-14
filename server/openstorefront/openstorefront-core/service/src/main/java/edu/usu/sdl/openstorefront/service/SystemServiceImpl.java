@@ -42,7 +42,6 @@ import edu.usu.sdl.openstorefront.core.model.HelpSectionAll;
 import edu.usu.sdl.openstorefront.core.view.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.manager.ConfluenceManager;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.PluginManager;
@@ -74,9 +73,6 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -451,7 +447,6 @@ public class SystemServiceImpl
 	public TemporaryMedia retrieveTemporaryMedia(String urlStr)
 	{
 		String hash;
-		String confluenceUrl = PropertiesManager.getValue(PropertiesManager.KEY_CONFLUENCE_URL);
 
 		try {
 			hash = StringProcessor.getHexFromBytes(MessageDigest.getInstance("SHA-1").digest(urlStr.getBytes()));
@@ -475,31 +470,6 @@ public class SystemServiceImpl
 		temporaryMedia.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
 		temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
 		temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-
-		if (confluenceUrl != null && urlStr.contains(confluenceUrl)) {
-			// This is a confluence url
-			Client client = ConfluenceManager.getClient();
-			WebTarget target = client.target(urlStr);
-
-			Response response = target.request().buildGet().invoke();
-
-			if (response.getStatus() == 404 || response.getStatus() == 401) {
-				return null;
-			}
-
-			if (!response.getMediaType().toString().contains("image")) {
-				LOG.log(Level.INFO, MessageFormat.format("Not an image:  {0}", (response.getMediaType().toString())));
-				return null;
-			}
-
-			InputStream in = response.readEntity(InputStream.class);
-
-			temporaryMedia.setMimeType(response.getMediaType().toString());
-
-			saveTemporaryMedia(temporaryMedia, in);
-			return temporaryMedia;
-
-		}
 
 		try {
 			URL url = new URL(urlStr);
