@@ -90,14 +90,14 @@
 							}
 						},
 						{
-							text: 'Previous Fire Time', 
+							text: 'Previous Scheduled Fire Time', 
 							dataIndex: 'perviousFiredTime',
 							flex: 2,
 							xtype: 'datecolumn',
 							format: 'm/d/y H:i:s'
 						},
 						{
-							text: 'Next Fire Time',
+							text: 'Next Scheduled Fire Time',
 							dataIndex: 'nextFiredTime',
 							flex: 2,
 							xtype: 'datecolumn',
