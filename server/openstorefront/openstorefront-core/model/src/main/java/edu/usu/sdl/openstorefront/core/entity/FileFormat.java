@@ -37,7 +37,6 @@ public class FileFormat
 	public static final String COMPONENT_MAPPED_XML = "CMP_MAP_XML";
 
 	public static final String ATTRIBUTE_STANDARD = "ATTR_STANDARD";
-	public static final String ATTRIBUTE_SVCV4 = "ATTR_SVCV4";
 	public static final String ATTRIBUTE_MAPPED_CSV = "ATTR_MAP_CSV";
 	public static final String ATTRIBUTE_MAPPED_TSV = "ATTR_MAP_TSV";
 	public static final String ATTRIBUTE_MAPPED_EXCEL = "ATTR_MAP_EXCEL";
@@ -119,13 +118,6 @@ public class FileFormat
 		fileFormat.setFileType(FileType.ATTRIBUTE);
 		fileFormat.setFileRequirements("JSON data containing the Attribute Types and Codes.  See Export.");
 		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.AttributeStandardParser");
-		fileFormat.setSupportsDataMap(false);
-		addFormat(codeMap, fileFormat);
-
-		fileFormat = newLookup(FileFormat.class, ATTRIBUTE_SVCV4, "Svcv4 Sparx export (CSV)");
-		fileFormat.setFileType(FileType.ATTRIBUTE);
-		fileFormat.setFileRequirements("CSV in SvcV-4 Functionality Description Format");
-		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.AttributeSvcv4Parser");
 		fileFormat.setSupportsDataMap(false);
 		addFormat(codeMap, fileFormat);
 

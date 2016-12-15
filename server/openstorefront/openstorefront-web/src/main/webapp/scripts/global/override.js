@@ -168,7 +168,8 @@ Ext.define('OSF.defaults.Window', {
 Ext.define('OSF.defaults.Toast', {
     override: 'Ext.window.Toast',
 	
-  alwaysOnTop: true
+  alwaysOnTop: true,
+  closeAction: 'destroy'
 	
 });
 

@@ -109,7 +109,6 @@ public class AttributeType
 	@APIDescription("Default attribute code")
 	private String defaultAttributeCode;
 
-	public static final String DI2E_SVCV4 = "DI2E-SVCV4-A";
 	public static final String TYPE = "TYPE";
 	public static final String DI2ELEVEL = "DI2ELEVEL";
 

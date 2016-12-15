@@ -40,12 +40,13 @@ public class HTMLSanitizer
 							"colgroup", "dd", "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6",
 							"i", "img", "li", "ol", "p", "pre", "q", "small", "strike", "strong",
 							"sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "u",
-							"ul", "label", "video", "audio", "source", "track")
+							"ul", "label", "video", "audio", "source", "track", "font")
 					.addAttributes("a", "href", "title")
 					.addAttributes("div", "ng-show", "class")
 					.addAttributes("p", "data-attributelabel", "class")
 					.addAttributes("blockquote", "cite")
 					.addAttributes("col", "span", "width")
+					.addAttributes("font", "color", "face")
 					.addAttributes("colgroup", "span", "width")
 					.addAttributes("img", "align", "alt", "height", "src", "title", "width", "data-storefront-ignore")
 					.addAttributes("ol", "start", "type")

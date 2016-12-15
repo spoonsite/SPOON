@@ -80,7 +80,10 @@ public class TaskThreadExecutor
 					taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.DONE);
 
 					if (taskFuture.isQueueable()) {
-						this.submitTask(queue.poll());
+                                                TaskRequest nextRequest = queue.poll();
+                                                if (nextRequest != null) {
+                                                    this.submitTask(nextRequest);                                                    
+                                                }
 					}
 
 					try {

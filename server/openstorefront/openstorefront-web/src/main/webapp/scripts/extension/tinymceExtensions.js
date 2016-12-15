@@ -709,3 +709,61 @@ Ext.define('OSF.component.MediaInsertWindow', {
 
 	
 });
+
+MediaUtil = {
+	
+	generalMediaUrl: function(){
+		return 'api/v1/resource/generalmedia';
+	},
+	generalMediaUnloadHandler: function(uploadForm, mediaInsertWindow){
+		//check name 
+		var name = uploadForm.getValues()['temporaryMedia.name'];
+		uploadForm.setLoading("Checking Name...");	
+		Ext.Ajax.request({
+			url: 'api/v1/resource/generalmedia/' + encodeURIComponent(name) + '/available',
+			callback: function(){
+				uploadForm.setLoading(false);
+			},
+			success: function(response, opts) {
+				if (response.responseText === 'true') {
+					uploadForm.setLoading("Uploading Media...");																					
+					uploadForm.submit({
+						url: 'Media.action?UploadGeneralMedia',
+						method: 'POST',
+						params: {
+							'generalMedia.name': name 
+						},
+						callback: function() {
+							uploadForm.setLoading(false);
+						},
+						success: function(form, action) {
+							var link = "Media.action?GeneralMedia&name=";
+								link += encodeURIComponent(name);
+
+							mediaInsertWindow.insertInlineMedia(link, name, mediaInsertWindow.mediaToShow, 'video/mp4');													
+							mediaInsertWindow.close();
+						},
+						failure: function(form, action){
+							Ext.Msg.show({
+								title: 'Upload Failed',
+								msg: 'The file upload was not successful.',
+								icon: Ext.Msg.ERROR,
+								buttons: Ext.Msg.OK
+							});	
+						}
+					});	
+				} else {
+					Ext.Msg.show({
+						title:'Check Name',
+						message: 'Name must be unique to the general Media<br>See Data Management->Media',
+						buttons: Ext.Msg.OK,
+						icon: Ext.Msg.ERROR,
+						fn: function(btn) {															
+						}
+					});
+				}
+			}
+		});
+	}
+	
+};
