@@ -113,8 +113,7 @@ Query: ```off?r``` Matches offer, but not officer
 ### 2.1.4 Phrase Searches and Exact Searches
 ------
 
-Exact searches or searches for more than one word must be enclosed
- by double quotes.
+Exact searches must be enclosed by double quotes.
 
 Search example: ```"create a common framework"```
 Search example: ```"Air Force"``` or ```"Company Name Inc."```
@@ -123,7 +122,7 @@ Wildcards are only meant to work on individual search terms, not on
 phrase searches/exact searches, as demonstrated by this example:
 
 Works: ```eng?neering``` _(wildcard properly used)_
-Does not work: ```"eng?neering"``` _(quotes are treated as a literal string not a wildcard)_
+Does not work: ```"eng?neering b?ckground"``` _(quotes are treated as a literal string not a wildcard)_
 
 In the second example, the search would only return results that had the
 ? character exactly in their respective places instead of
@@ -137,7 +136,7 @@ examples below, the exact same results would be returned regardless of
 the capitalization.
 
 Search examples: 
-```"create a common framework"```, ```"Create a Common Framework"```, ```"cReatE A CoMmoN FraMewoRk"```
+```create a common framework```, ```Create a Common Framework```, ```cReatE A CoMmoN FraMewoRk```
 
 ### 2.1.6 Filtered Searches
 ------
