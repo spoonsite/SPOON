@@ -384,7 +384,7 @@ var CoreUtil = {
 		var defaultConfig = {
 			plugins: [
 			"advlist autolink lists link image charmap print preview hr anchor pagebreak",
-			"searchreplace wordcount visualblocks visualchars code fullscreen",
+			"searchreplace wordcount visualblocks visualchars code",
 			"insertdatetime media nonbreaking save table contextmenu directionality",
 			"emoticons template paste textcolor placeholder osfmediainserter osfvideoinserter"
 			],
@@ -417,7 +417,7 @@ var CoreUtil = {
 		var searchEntryConfig = {
 			plugins: [
 			"advlist autolink lists link image charmap print preview hr anchor pagebreak",
-			"searchreplace wordcount visualblocks visualchars code fullscreen",
+			"searchreplace wordcount visualblocks visualchars code",
 			"insertdatetime media nonbreaking save table contextmenu directionality",
 			"emoticons template paste textcolor placeholder savedsearchlink osfmediainserter osfvideoinserter"
 			],
