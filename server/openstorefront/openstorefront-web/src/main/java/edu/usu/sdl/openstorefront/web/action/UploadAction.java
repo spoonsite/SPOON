@@ -513,7 +513,7 @@ public class UploadAction
 				}
 			}
 
-			return streamResults(fieldDefinitions);
+			return streamResults(fieldDefinitions, "text/html");
 		}
 
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
