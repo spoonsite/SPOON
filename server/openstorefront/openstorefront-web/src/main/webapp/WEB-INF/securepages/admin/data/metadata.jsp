@@ -1663,6 +1663,7 @@
 									xtype: 'textfield',
 									fieldLabel: 'Label<span class="field-required"></span>',
 									id: 'adddLabelForm-label',
+									allowBlank: false,
 									name: 'name',
 									listeners: {
 										
