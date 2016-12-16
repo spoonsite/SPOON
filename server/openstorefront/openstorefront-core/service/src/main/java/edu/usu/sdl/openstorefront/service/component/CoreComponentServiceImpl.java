@@ -1253,12 +1253,12 @@ public class CoreComponentServiceImpl
 			parameterMap.put("componentId", componentId);
 		}
 
-		if (filter.getStartDts().getDate() != null) {
+		if (filter.getStartDts() != null && filter.getStartDts().getDate() != null) {
 			primaryQuery.append(" and eventDts >= :startDts ");
 			parameterMap.put("startDts", filter.getStartDts().getDate());
 		}
 
-		if (filter.getEndDts().getDate() != null) {
+		if (filter.getEndDts() != null && filter.getEndDts().getDate() != null) {
 			primaryQuery.append(" and eventDts <= :endDts ");
 			parameterMap.put("endDts", filter.getEndDts().getDate());
 		}

@@ -342,7 +342,7 @@
 											},
 											{
 												xtype: 'button',
-												text: 'Upload',
+												text: 'Upload',												
 												iconCls: 'fa fa-upload',
 												formBind: true,
 												handler: function() {
@@ -370,7 +370,7 @@
 													});														
 													
 												},
-												margin: '25 0 0 0'
+												margin: '30 0 0 0'
 											}
 										]
 									},									
@@ -581,7 +581,7 @@
 															{
 																xtype: 'button',
 																text: 'Cancel',
-																margin: '8 0 00 0',
+																margin: '5 0 00 0',
 																iconCls: 'fa  fa-close',
 																handler: function() {
 																	Ext.getCmp('fieldAddBtn').setText('Add');

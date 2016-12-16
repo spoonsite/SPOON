@@ -3062,7 +3062,7 @@
 									style: { border: '0' },
 									name: 'description',
 									width: '100%',
-									height: 500,
+									height: 300,
 									maxLength: 65536,
 									tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig("osfmediaretriever"), {
 										mediaSelectionUrl: function(){
