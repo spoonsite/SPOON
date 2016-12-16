@@ -36,6 +36,11 @@
 					proxy: {
 						type: 'ajax',
 						url: 'api/v1/resource/lookuptypes/HighlightType/view'
+					},
+					listeners: {
+						load: function(store, records) {
+							highlightStore.load();
+						}
 					}
 				});
 
@@ -50,7 +55,7 @@
 
 				var highlightStore = Ext.create('Ext.data.Store', {
 					storeId: 'highlightStore',
-					autoLoad: true,
+					autoLoad: false,
 					proxy: {
 						type: 'ajax',
 						url: 'api/v1/resource/highlights?sortField=orderingPosition'

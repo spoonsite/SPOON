@@ -767,3 +767,67 @@ MediaUtil = {
 	}
 	
 };
+
+Ext.define('OSF.component.FullScreenEditor', {
+	extend: 'Ext.window.Window',
+	alias: 'osf.widget.FullScreenEditor',
+	layout: 'fit',
+	closeMode: 'destory',
+	maximizable: true, 
+	maximized: true,
+	alwaysOnTop: true,
+	modal: true,
+	title: 'Editor',
+	iconCls: 'fa fa-edit',
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			items: [
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Close',
+					iconCls: 'fa fa-2x fa-close',
+					scale: 'medium',
+					handler: function() {
+						this.up('window').close();
+					}
+				},
+				{
+					xtype: 'tbfill'
+				}				
+			]
+		}
+	],
+	initComponent: function () {
+		this.callParent();
+		
+		var fswin = this;
+		
+		fswin.fsEditor = Ext.create('Ext.ux.form.TinyMCETextArea', {
+			value: fswin.editor.getContent(),
+			tinyMCEConfig: {
+				plugins: fswin.editor.settings.plugins,
+				toolbar1: fswin.editor.settings.toolbar1,
+				statusbar: fswin.editor.settings.statusbar,
+				menubar: fswin.editor.settings.menubar,
+				skin: fswin.editor.settings.skin,
+				toolbar_items_size: fswin.editor.settings.toolbar_items_size,
+				extended_valid_elements: fswin.editor.settings.extended_valid_elements,
+				table_default_styles: fswin.editor.settings.table_default_styles,
+				mediaSelectionUrl: fswin.editor.settings.mediaSelectionUrl,
+				mediaUploadHandler: fswin.editor.settings.mediaUploadHandler
+			}
+		});
+		
+		fswin.on('beforeclose', function(panel, eOts) {
+			fswin.editor.setContent(fswin.fsEditor.getValue());
+		});
+		
+		
+		fswin.add(fswin.fsEditor);
+	}
+	
+});
