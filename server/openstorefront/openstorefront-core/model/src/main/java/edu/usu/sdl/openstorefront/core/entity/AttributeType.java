@@ -115,6 +115,38 @@ public class AttributeType
 	public AttributeType()
 	{
 	}
+	
+	public void updateNullFlags() 
+	{
+		if (this.getAllowMultipleFlg() == null) 
+		{
+			this.setAllowMultipleFlg(false);
+		}
+		if (this.getArchitectureFlg() == null) 
+		{
+			this.setArchitectureFlg(false);
+		}
+		if (this.getImportantFlg() == null) 
+		{
+			this.setImportantFlg(false);
+		}
+		if (this.getRequiredFlg() == null) 
+		{
+			this.setRequiredFlg(false);
+		}
+		if (this.getVisibleFlg()== null) 
+		{
+			this.setVisibleFlg(false);
+		}		
+		if (this.getAllowUserGeneratedCodes()== null) 
+		{
+			this.setAllowUserGeneratedCodes(false);
+		}
+		if (this.getHideOnSubmission()== null) 
+		{
+			this.setHideOnSubmission(false);
+		}
+	}
 
 	@Override
 	public void updateFields(StandardEntity entity)
