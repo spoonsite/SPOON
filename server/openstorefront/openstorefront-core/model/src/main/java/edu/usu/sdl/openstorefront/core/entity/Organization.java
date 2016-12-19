@@ -95,7 +95,6 @@ public class Organization
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_EMAIL)
-	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
 	@Sanitize(TextSanitizer.class)
 	private String contactEmail;
 

@@ -235,8 +235,7 @@
 									fieldLabel: 'Email <span class="field-required" />',																																	
 									maxLength: '255',
 									allowBlank: false,
-									regex: new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*", "i"),
-									regexText: 'Must be a valid email address. Eg. xxx@xxx.xxx',
+									vtype: 'email',
 									name: 'email'
 								},
 								{

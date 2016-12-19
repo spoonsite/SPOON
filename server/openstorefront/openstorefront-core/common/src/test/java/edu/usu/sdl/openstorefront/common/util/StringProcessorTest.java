@@ -473,4 +473,27 @@ public class StringProcessorTest
 		expHashUrl = "1b53f7dd4d03adae30fcad1fc19e7301fafad174";
 		assertEquals(hashUrl, expHashUrl);
 	}
+        
+	@Test
+	public void testEmail() 
+	{
+            List<String> emails = Arrays.asList(
+                    "test.me@sld.xgh.eud",
+                    "d.t@v-a.com",
+                    "d.t+1@v-a.com",
+                    "d.t?@v-a.com",
+                    "r@localhost",
+                    "d.t@v-a.com",
+                    "a",
+                    "@"
+            );
+            
+            for (String email : emails) {
+                System.out.print(email);
+                System.out.print(" - ");
+                System.out.print(StringProcessor.isEmail(email));
+                System.out.print("\n");
+            }
+        }   
+                
 }

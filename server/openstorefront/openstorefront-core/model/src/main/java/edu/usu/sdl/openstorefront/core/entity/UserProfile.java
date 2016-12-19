@@ -53,7 +53,6 @@ public class UserProfile
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_LASTNAME)
 	private String lastName;
 
-	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField

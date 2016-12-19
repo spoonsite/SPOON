@@ -69,7 +69,8 @@ Ext.define('OSF.component.UserProfilePanel', {
 					{
 						xtype: 'textfield',
 						name: 'email',
-						inputType: 'email',						
+						inputType: 'email',
+						vtype: 'email',
 						fieldLabel: 'Email <span class="field-required" />',
 						labelSeparator: '',
 						flex: 1,

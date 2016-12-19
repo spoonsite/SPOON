@@ -2048,8 +2048,7 @@
 									xtype: 'textfield',
 									fieldLabel: 'Email',																																	
 									maxLength: '255',
-									regex: new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*", "i"),
-									regexText: 'Must be a valid email address. Eg. xxx@xxx.xxx',
+									vtype: 'email',
 									name: 'email'
 								},
 								{
