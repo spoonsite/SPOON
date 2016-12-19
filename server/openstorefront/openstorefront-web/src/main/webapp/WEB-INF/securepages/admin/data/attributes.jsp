@@ -242,19 +242,19 @@
 					{text: 'Description', dataIndex: 'description', flex: 2},
 					{text: 'Type Code', dataIndex: 'attributeType', flex: 1.5},
 					{
-						text: 'Visible', 
-						dataIndex: 'visibleFlg', 
-						flex: 1, 
-						tooltip: 'Show in the list of filters?',
-						renderer: gridColorRenderer
-					},
-					{
 						text: 'Required',
 						dataIndex: 'requiredFlg',
 						flex: 1, 
 						tooltip: 'Is the attribute required upon adding a new component?',
 						renderer: gridColorRenderer
 					},
+					{
+						text: 'Visible', 
+						dataIndex: 'visibleFlg', 
+						flex: 1, 
+						tooltip: 'Show in the list of filters?',
+						renderer: gridColorRenderer
+					},					
 					{
 						text: 'Important',
 						dataIndex: 'importantFlg',
@@ -493,22 +493,28 @@
 			};
 			
 			
-			var actionManageAssignments = function actionManageAssignments() {
+			var actionManageAssignments = function() {
 				
 				// Display Assignment Management Window
 				manageAssignmentsWin.show();
 			};
 
 
-			var actionEditAttribute = function actionEditAttribute(record) {
+			var actionEditAttribute = function(record) {
+				editAttributeWin.edit = true;
+				editAttributeWin.setTitle('Edit Attribute - ' + record.data.attributeType);
+				editAttributeWin.show();
+				
 				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
 				Ext.getCmp('allEntryTypes').setValue(true);
 				Ext.getCmp('requiredFlagCheckBox').setValue(false);
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
 				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 				Ext.getCmp('editAttributeForm').reset();
+				
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 
+		
 				var requiredEntryTypes = Ext.getCmp('editAttributeForm-typesRequiredFor').getStore();
 				// Search the searchStore for the record matching the given code,
 				// that way we can display the name of the entry type rather than
@@ -531,10 +537,6 @@
 					});
 				} 
 
-
-				editAttributeWin.edit = true;
-				editAttributeWin.setTitle('Edit Attribute - ' + record.data.attributeType);
-				editAttributeWin.show();
 				Ext.getCmp('editAttributeForm-defaultCode').show();
 				Ext.getCmp('editAttributeForm-hideOnSubmission').enable();
 				Ext.getCmp('editAttributeForm-code').setEditable(false);
@@ -551,8 +553,17 @@
 							type: 'json',
 							rootProperty: 'data'
 						}
+					},
+					listeners: {
+						load: function(store, records) {
+							store.add({
+								code: null,
+								label: 'Select'
+							});
+						}
 					}
 				});
+				
 			};
 			
 			var setFlagsWin_DisableUpdate = function() {
@@ -1840,7 +1851,7 @@
 								xtype: 'combobox',
 								fieldLabel: 'Default Code',
 								id: 'editAttributeForm-defaultCode',
-								displayField: 'code',
+								displayField: 'label',
 								valueField: 'code',
 								typeAhead: false,
 								editable: false,
