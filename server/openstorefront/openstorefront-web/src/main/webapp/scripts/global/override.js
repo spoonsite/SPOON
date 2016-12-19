@@ -227,7 +227,7 @@ Ext.onReady(function() {
 	
 	//Disable backspace navigation
 	var parent = Ext.isIE ? document : window;
-	 Ext.EventManager.on(parent, 'keydown', function (e, focused) {
+	Ext.get(parent).addListener('keydown', function (e, focused) {
 		 if (e.getKey() == e.BACKSPACE && (!/^input$/i.test(focused.tagName) && !/^textarea$/i.test(focused.tagName)) || focused.disabled || focused.readOnly) {
 			 e.stopEvent();
 		 }

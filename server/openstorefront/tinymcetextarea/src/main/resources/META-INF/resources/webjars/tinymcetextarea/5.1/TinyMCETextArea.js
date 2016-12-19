@@ -134,7 +134,7 @@ Ext.define('Ext.ux.form.TinyMCETextArea', {
         // because the size values of the hidden editor
         // are calculated wrong.
 
-        if (ed.isHidden()) { return; }
+        if (!ed || ed.isHidden()) { return; }
         
         var edIframe = Ext.get(me.getInputId() + "_ifr");
         

@@ -772,7 +772,7 @@ Ext.define('OSF.component.FullScreenEditor', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.FullScreenEditor',
 	layout: 'fit',
-	closeMode: 'destory',
+	closeAction: 'destroy',
 	maximizable: true, 
 	maximized: true,
 	alwaysOnTop: true,
@@ -806,10 +806,23 @@ Ext.define('OSF.component.FullScreenEditor', {
 		
 		var fswin = this;
 		
+		var plugins = '';
+		if (fswin.editor.settings.plugins) {
+			var pluginGroup = fswin.editor.settings.plugins.split(' ');
+			var restOfPlugins = [];
+			Ext.Array.each(pluginGroup, function(plugin){
+				if (plugin !== 'osffullscreen') {
+					restOfPlugins.push(plugin);
+				}
+			});
+			
+			plugins = restOfPlugins.join(' ');
+		}
+		
 		fswin.fsEditor = Ext.create('Ext.ux.form.TinyMCETextArea', {
 			value: fswin.editor.getContent(),
 			tinyMCEConfig: {
-				plugins: fswin.editor.settings.plugins,
+				plugins: plugins,
 				toolbar1: fswin.editor.settings.toolbar1,
 				statusbar: fswin.editor.settings.statusbar,
 				menubar: fswin.editor.settings.menubar,
