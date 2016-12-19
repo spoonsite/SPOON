@@ -225,6 +225,15 @@ Ext.onReady(function() {
 	
 	Ext.MessageBox.alwaysOnTop=99999999;
 	
+	//Disable backspace navigation
+	var parent = Ext.isIE ? document : window;
+	 Ext.EventManager.on(parent, 'keydown', function (e, focused) {
+		 if (e.getKey() == e.BACKSPACE && (!/^input$/i.test(focused.tagName) && !/^textarea$/i.test(focused.tagName)) || focused.disabled || focused.readOnly) {
+			 e.stopEvent();
+		 }
+	 });
+	
+	
 	/**
 	 Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
 	 maxWidth: 200,
