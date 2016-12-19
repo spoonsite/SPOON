@@ -354,7 +354,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 							xtype: 'tbseparator'
 						},
 						{
-							text: 'Save',
+							text: 'Save Search',
 							scale: 'medium',
 							iconCls: 'fa fa-2x fa-save',
 							handler: function () {

@@ -1408,7 +1408,8 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				},
 				{
 					xtype: 'panel',
-					itemId: 'options',				
+					itemId: 'options',
+					layout: 'card',
 					items: [								
 					]
 				},
@@ -1449,7 +1450,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							xtype: 'button',
 							itemId: 'saveButton',
 							formBind: true,
-							text: 'Add',
+							text: 'Add Criteria',
 							minWidth: 175,
 							iconCls: 'fa fa-plus',
 							handler: function() {
@@ -1485,7 +1486,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 										advancePanel.entryForm.reset();
 										advancePanel.entryForm.getComponent('searchType').resumeEvents();
 										
-										saveButton.setText('Add');
+										saveButton.setText('Add Criteria');
 										var grid = advancePanel.entryForm.getComponent('searchGrid');										
 										if (advancePanel.entryForm.editRecord) {
 											
@@ -1528,7 +1529,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							handler: function() {
 								advancePanel.entryForm.reset();
 								advancePanel.entryForm.editRecord = null;
-								advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Add');
+								advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Add Criteria');
 							}
 						}						
 					]
@@ -1687,7 +1688,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 										}
 										
 										//change button to update
-										advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Update');										
+										advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Update Criteria');										
 										
 									}									
 								},
