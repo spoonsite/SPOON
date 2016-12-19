@@ -32,6 +32,7 @@ licensed under GPL V3.**
 ## 1.1 Release Notes for v2.2
 ------
 Version 2.2 is a maintenance release that contains:
+
  * Several small bug fixes
  * Improves the usability of searching.
  * Improves submissions, specifically the administration of submissions.
