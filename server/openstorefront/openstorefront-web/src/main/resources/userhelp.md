@@ -450,11 +450,11 @@ Make any necessary corrections and click on the Next button at the bottom.
 1. Click on the entry you wish to edit
 2. Click on the "Request Change" button in the submissions toolbar
 3. A change request form will appear that requires 4 steps:
-	Step 1)  Verify or update all user information and click the "Next" button
-	Step 2)  Fill in or edit the required fields and click "Next"
-	Step 3)  Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
-	Step 4)  Review the entry and click "Submit For Review".  This will take you back
-			 to the submissions page
+
+	1. Verify or update all user information and click the "Next" button
+	2. Fill in or edit the required fields and click "Next"
+	3. Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
+	4. Review the entry and click "Submit For Review".  This will take you back to the submissions page
 
 Under the "Pending Change" column you will see the status of the entry's change request.  The status is "Pending" 
 until the admin user approves the changes.  
@@ -496,6 +496,7 @@ submitted under the current login and another tab for answers submitted.
 
 By default the **Questions** tab is selected and it is here that a user can select
 his/her entry and edit a user-submitted question. To edit a question follow the steps below:
+
 	1. Click on the entry you wish to change
 	2. Click the **Edit** button in the toolbar
 	3. Make any changes to the question and click on **Post** at the bottom.
@@ -503,6 +504,7 @@ his/her entry and edit a user-submitted question. To edit a question follow the 
 To view entries with user-submitted answers, click on the **Answers** tab.  It is here that
 a user can select an entry and edit his/her answer to an entry's question.  To edit a 
 question follow the steps below:
+
 	1. Click on the entry you wish to change
 	2. Click the **Edit** button in the toolbar
 	3. Make any changes to the question and click on **Post** at the bottom.
@@ -537,6 +539,7 @@ Types of reports available include:
   - Entries by Category
 
 **How to generate a report:**
+
 1. Click on **New Report** in the reports toolbar
 2. Select the report type from the drop-down menu 
 3. Select the report format and how often to run the report
@@ -660,6 +663,7 @@ a question or answer, add a tag, watch an entry, submit a correction, and reques
 --------
 
 How to submit a review of an entry:
+
 1.  From the **Details** page, click on the **Reviews** tab.  
 2.  Click on the **Write a Review** button
 3.  Complete the required fields on the form and click **Post Review** at the bottom.
@@ -672,6 +676,7 @@ the deletion of the review.
 --------
 
 How to submit a question about an entry:
+
 1.  From the **Details** page, click on the **Questions & Answers** tab.
 2.  Click on the **Ask a Question** button
 3.  Type your question into the text area and click on the **Post** button
@@ -680,6 +685,7 @@ To edit a question, click on the **Edit** button.  Make any changes to the quest
 To remove a question, click on the **Delete** button.
 
 How to submit an answer to an entry question:
+
 1.  From the **Details** page, click on the **Questions & Answers** tab.
 2.  Locate the question and click on the **Answer** button.
 3.  Type your answer into the text area and click on the **Post** button.
