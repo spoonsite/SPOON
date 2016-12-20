@@ -33,14 +33,16 @@ licensed under GPL V3.**
 =======
 ## 1.1 Release Notes for v2.2
 ------
-Version 2.2 is a maintenance release that contains:
 
- * Several small bug fixes
- * Improves the usability of searching.
- * Improves submissions, specifically the administration of submissions.
+Version 2.2 is a maintenance release that:
+
+ * Fixes several small bugs
+ * Improves the usability of searching
+ * Improves submissions, specifically the administration of submissions
 
 ### 1.1.1 Administrator Release Notes, v2.2 *
 ------
+
 *What's new in v2.2*
 
  * **Attribute Management**
@@ -52,15 +54,15 @@ Version 2.2 is a maintenance release that contains:
     (Visble, Important, Allow Multiples, etc.) for the group of attributes.
     4. Multiple attributes can be deleted by clicking on Action -> Delete.
  
-  * **Metadata**
+ * **Metadata**
  A new section in Admin Tools has been added under Data Management.  The Metadata Management Tool allows for labels and
  values to easily be added to entries.  Drag and drop to associate the label with an entry.  Filter and sort.
  
-  * **Tag Management Tool**
+ * **Tag Management Tool**
   The Tag tool (Admin Tools -> Data Management -> User Data -> Tags) has been redone, similar to the Metadata section
   so that tags can be easily associated with various entries by dragging and dropping.
   
-  * **User Profiles**
+ * **User Profiles**
   User Profiles can now be exported based on the current page, all, or selected profiles.  In addition searching has been
   added to search by Username, First Name, or Last Name.
   
@@ -590,7 +592,7 @@ scheduled report, edit, or delete it.
   
 #### 2.3.3.4 Reviews
 ------------
--
+
 Entry reviews can be found under the **Tools** drop-down menu. Users can edit and delete their entry reviews.
 
 **To edit a review:**
