@@ -589,7 +589,7 @@ scheduled report, edit, or delete it.
   
 #### 2.3.3.4 Reviews
 ------------
--
+
 Entry reviews can be found under the **Tools** drop-down menu. Users can edit and delete their entry reviews.
 
 **To edit a review:**
