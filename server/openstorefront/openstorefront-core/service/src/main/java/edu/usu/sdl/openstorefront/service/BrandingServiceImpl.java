@@ -156,13 +156,9 @@ public class BrandingServiceImpl
 							+ "For help, contact <a href=\"mailto:helpdesk@di2e.net\">helpdesk@di2e.net</a>");
 				}
 
-				if (branding.getArchitectureSearchLabel() == null) {
-					branding.setArchitectureSearchLabel("SvcV4");
-				}
-
-				if (branding.getArchitectureSearchType() == null) {
-					branding.setArchitectureSearchType(AttributeType.DI2E_SVCV4);
-				}
+				if (branding.getHideArchitectureSearchFlg() == null) {
+                                    branding.setHideArchitectureSearchFlg(true);
+                                }
 
 				if (branding.getFeedbackHandler() == null) {
 					branding.setFeedbackHandler(FeedbackHandleType.JIRA);

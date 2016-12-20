@@ -574,6 +574,8 @@ public class AttributeResource
 
 	private Response handleAttributePostPutType(AttributeType attributeType, boolean post)
 	{
+		attributeType.updateNullFlags();
+		
 		ValidationModel validationModel = new ValidationModel(attributeType);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);

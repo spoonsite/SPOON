@@ -15,25 +15,27 @@
  */
 /*global tinymce, Ext:true */
 
-tinymce.PluginManager.add('osfmediainserter', function(editor) {
-	editor.addCommand('InsertMedia', function() {
+tinymce.PluginManager.add('osfvideoinserter', function(editor) {
+	editor.addCommand('InsertVideo', function() {
 		var insertWin = Ext.create('OSF.component.MediaInsertWindow', {				
-			editor: editor
+			editor: editor,
+			mediaToShow: 'VID',
+			mediaName: 'Video'
 		});		
 		insertWin.show();
 		insertWin.toFront();
 	});
 
-	editor.addButton('osfmediainserter', {
-		icon: 'image',
-		tooltip: 'Insert an Image',
-		cmd: 'InsertMedia'
+	editor.addButton('osfvideoinserter', {
+		icon: 'media',
+		tooltip: 'Insert a video',
+		cmd: 'InsertVideo'
 	});
 
-	editor.addMenuItem('osfmediainserter', {
-		icon: 'image',
-		text: 'Insert an Image',
-		cmd: 'InsertMedia',
+	editor.addMenuItem('osfvideoinserter', {
+		icon: 'media',
+		text: 'Insert a video',
+		cmd: 'InsertVideo',
 		context: 'insert'
 	});
 });

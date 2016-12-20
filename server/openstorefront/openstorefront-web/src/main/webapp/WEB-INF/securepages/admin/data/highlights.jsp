@@ -36,6 +36,11 @@
 					proxy: {
 						type: 'ajax',
 						url: 'api/v1/resource/lookuptypes/HighlightType/view'
+					},
+					listeners: {
+						load: function(store, records) {
+							highlightStore.load();
+						}
 					}
 				});
 
@@ -50,7 +55,7 @@
 
 				var highlightStore = Ext.create('Ext.data.Store', {
 					storeId: 'highlightStore',
-					autoLoad: true,
+					autoLoad: false,
 					proxy: {
 						type: 'ajax',
 						url: 'api/v1/resource/highlights?sortField=orderingPosition'
@@ -312,6 +317,7 @@
 					modal: true,
 					width: '55%',
 					height: '70%',
+					maximizable: true,
 					y: '10em',
 					iconCls: 'fa fa-lg fa-edit',
 					layout: 'fit',
@@ -344,9 +350,12 @@
 									style: {border: '0'},
 									name: 'description',
 									width: '100%',
-									height: 300,
+									height: 400,
 									maxLength: 65536,
-									tinyMCEConfig: CoreUtil.tinymceSearchEntryConfig()
+									tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig(), {
+										mediaSelectionUrl: MediaUtil.generalMediaUrl,
+										mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
+									})
 								},
 								{
 									xtype: 'combobox',

@@ -30,8 +30,47 @@ licensed under GPL V3.**
 
 ## 1.1 Release Notes
 ------  
+=======
+## 1.1 Release Notes for v2.2
+------
+Version 2.2 is a maintenance release that contains:
+
+ * Several small bug fixes
+ * Improves the usability of searching.
+ * Improves submissions, specifically the administration of submissions.
+
+### 1.1.1 Administrator Release Notes, v2.2 *
+------
+*What's new in v2.2*
+
+ * **Attribute Management**
+ There are new ways to manage attributes in the Admin Tools -> Attributes section.
+    1. Select one or more attributes and click on Entry Assignment at the top of the table.  A new Manage Assignments 
+    box is shown where you can select an attribute and code and assign it to differing entries.
+    2. With one or multiple attributes selected click on Action -> Toggle status to activate or inactivate the attribute(s).
+    3. With one or multiple attributes selected click on Action -> Set Flags.  Here you can set the various flags 
+    (Visble, Important, Allow Multiples, etc.) for the group of attributes.
+    4. Multiple attributes can be deleted by clicking on Action -> Delete.
+ 
+  * **Metadata**
+ A new section in Admin Tools has been added under Data Management.  The Metadata Management Tool allows for labels and
+ values to easily be added to entries.  Drag and drop to associate the label with an entry.  Filter and sort.
+ 
+  * **Tag Management Tool**
+  The Tag tool (Admin Tools -> Data Management -> User Data -> Tags) has been redone, similar to the Metadata section
+  so that tags can be easily associated with various entries by dragging and dropping.
   
-For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.1" target="_blank">v2.1</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
+  * **User Profiles**
+  User Profiles can now be exported based on the current page, all, or selected profiles.  In addition searching has been
+  added to search by Username, First Name, or Last Name.
+  
+For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.2" target="_blank">v2.2</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
+
+=======
+## 1.2 Known Issues, v2.2 * 
+ 
+ * ***Setting flags for multiple attributes in IE9***: In Admin Tools, Attributes if you multi-select more than one
+  attribute then select Action, Set Flags, change the flags, and click Update it will not update in IE9.
 
 # 2.  User Features
 ------
@@ -97,8 +136,7 @@ Query: ```off?r``` Matches offer, but not officer
 ### 2.1.4 Phrase Searches and Exact Searches
 ------
 
-Exact searches or searches for more than one word must be enclosed
- by double quotes.
+Exact searches must be enclosed by double quotes.
 
 Search example: ```"create a common framework"```
 Search example: ```"Air Force"``` or ```"Company Name Inc."```
@@ -107,7 +145,7 @@ Wildcards are only meant to work on individual search terms, not on
 phrase searches/exact searches, as demonstrated by this example:
 
 Works: ```eng?neering``` _(wildcard properly used)_
-Does not work: ```"eng?neering"``` _(quotes are treated as a literal string not a wildcard)_
+Does not work: ```"eng?neering b?ckground"``` _(quotes are treated as a literal string not a wildcard)_
 
 In the second example, the search would only return results that had the
 ? character exactly in their respective places instead of
@@ -121,7 +159,7 @@ examples below, the exact same results would be returned regardless of
 the capitalization.
 
 Search examples: 
-```"create a common framework"```, ```"Create a Common Framework"```, ```"cReatE A CoMmoN FraMewoRk"```
+```create a common framework```, ```Create a Common Framework```, ```cReatE A CoMmoN FraMewoRk```
 
 ### 2.1.6 Filtered Searches
 ------

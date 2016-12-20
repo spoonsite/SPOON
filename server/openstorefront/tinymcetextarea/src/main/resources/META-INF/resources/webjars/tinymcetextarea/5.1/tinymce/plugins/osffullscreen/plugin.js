@@ -15,25 +15,27 @@
  */
 /*global tinymce, Ext:true */
 
-tinymce.PluginManager.add('osfmediainserter', function(editor) {
-	editor.addCommand('InsertMedia', function() {
-		var insertWin = Ext.create('OSF.component.MediaInsertWindow', {				
-			editor: editor
+tinymce.PluginManager.add('osffullscreen', function(editor) {
+	editor.addCommand('fullScreenMode', function() {
+		var editorWin = Ext.create('OSF.component.FullScreenEditor', {				
+                    editor: editor
 		});		
-		insertWin.show();
-		insertWin.toFront();
+		editorWin.show();
+		editorWin.toFront();
 	});
 
-	editor.addButton('osfmediainserter', {
-		icon: 'image',
-		tooltip: 'Insert an Image',
-		cmd: 'InsertMedia'
+	editor.addButton('osffullscreen', {
+		icon: 'fullscreen',
+		tooltip: 'Full Screen',
+                shortcut: 'Ctrl+Alt+F',
+		cmd: 'fullScreenMode'
 	});
 
-	editor.addMenuItem('osfmediainserter', {
-		icon: 'image',
-		text: 'Insert an Image',
-		cmd: 'InsertMedia',
-		context: 'insert'
+	editor.addMenuItem('osffullscreen', {
+		icon: 'fullscreen',
+		text: 'Full Screen',
+                shortcut: 'Ctrl+Alt+F',
+		cmd: 'fullScreenMode',
+		context: 'view'
 	});
 });

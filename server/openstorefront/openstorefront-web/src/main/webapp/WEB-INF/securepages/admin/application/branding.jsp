@@ -129,8 +129,10 @@
 											xtype: 'htmleditor',
 											fieldLabel: 'Login Warning <i class="fa fa-question-circle"  data-qtip="Warning on login page (if applicable)" ></i>',
 											name: 'loginWarning',
-											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
+											width: '100%',											
 											allowBlank: true,
 											maxLength: 16000
 										},										
@@ -139,7 +141,9 @@
 											fieldLabel: 'Landing Page Title <i class="fa fa-question-circle"  data-qtip="This is the title at the top of the landing page" ></i>',
 											name: 'landingPageTitle',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 255
 										},
@@ -148,7 +152,9 @@
 											fieldLabel: 'Landing Stats Text <i class="fa fa-question-circle"  data-qtip="This is the Browsing X text" ></i>',
 											name: 'landingStatsText',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 255
 										},
@@ -157,7 +163,9 @@
 											fieldLabel: 'Landing Banner <i class="fa fa-question-circle"  data-qtip="This is the quote on the landing page." ></i>',
 											name: 'landingPageBanner',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 255
 										},
@@ -170,10 +178,13 @@
 											fieldStyle: 'font-family: Courier New; font-size: 12px;',
 											style: {border: '0'},
 											name: 'landingPageFooter',
-											width: '100%',
-											height: 300,
+											width: '100%',										
+											height: 300,											
 											maxLength: 65536,
-											tinyMCEConfig: CoreUtil.tinymceConfig()
+											tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
+												mediaSelectionUrl: MediaUtil.generalMediaUrl,
+												mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
+											})
 										},
 										{
 											xtype: 'checkbox',
@@ -287,7 +298,9 @@
 											fieldLabel: 'Security Banner Text <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
 											name: 'securityBannerText',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 4000										
 										},
@@ -310,7 +323,9 @@
 											fieldLabel: 'User Input Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
 											name: 'userInputWarning',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 4000										
 										},
@@ -319,7 +334,9 @@
 											fieldLabel: 'Submission Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
 											name: 'submissionFormWarning',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 4000										
 										},
@@ -328,7 +345,9 @@
 											fieldLabel: 'Change Request Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
 											name: 'changeRequestWarning',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 4000										
 										}											

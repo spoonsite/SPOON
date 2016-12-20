@@ -36,7 +36,6 @@ import edu.usu.sdl.openstorefront.core.view.JsonResponse;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.OldBaseAttributeParser;
-import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -191,26 +190,12 @@ public class UploadAction
 			//log
 			LOG.log(Level.INFO, MessageFormat.format("(Admin) Uploading attributes: {0}", uploadFile));
 
-			//check content type
-			Set<String> allowSvcTypes = new HashSet<>();
-			allowSvcTypes.add("text/csv");
-			allowSvcTypes.add("application/vnd.ms-excel");
-			allowSvcTypes.add("application/vnd.oasis.opendocument.spreadsheet");
-
 			Set<String> allowAttrbuteTypes = new HashSet<>();
 			allowAttrbuteTypes.add("text/json");
 			allowAttrbuteTypes.add("application/json");
 
 			String bestGuessContentType = uploadFile.getContentType();
-			if (parser instanceof SvcAttributeParser) {
-				if (allowSvcTypes.contains(bestGuessContentType) == false) {
-
-					bestGuessContentType = getContext().getServletContext().getMimeType(uploadFile.getFileName());
-					if (allowSvcTypes.contains(bestGuessContentType) == false) {
-						errors.put("uploadFile", "Format not supported.  Requires a CSV text file.");
-					}
-				}
-			} else if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
+			if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
 
 				bestGuessContentType = getContext().getServletContext().getMimeType(uploadFile.getFileName());
 				if (allowAttrbuteTypes.contains(bestGuessContentType) == false) {
@@ -242,12 +227,6 @@ public class UploadAction
 		} else {
 			return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 		}
-	}
-
-	@HandlesEvent("UploadSvcv4")
-	public Resolution uploadSvcv4()
-	{
-		return handleAttributeUpload(new SvcAttributeParser());
 	}
 
 	@HandlesEvent("UploadComponent")
@@ -534,7 +513,7 @@ public class UploadAction
 				}
 			}
 
-			return streamResults(fieldDefinitions);
+			return streamResults(fieldDefinitions, "text/html");
 		}
 
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");

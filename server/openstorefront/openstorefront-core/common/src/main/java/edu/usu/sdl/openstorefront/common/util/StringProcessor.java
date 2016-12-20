@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.beanutils.BeanUtils;
@@ -335,6 +337,18 @@ public class StringProcessor
 		return value;
 	}
 
+	public static String urlDecode(String value)
+	{
+		if (StringUtils.isNotBlank(value)) {
+			try {
+				value = URLDecoder.decode(value, "UTF-8");
+			} catch (UnsupportedEncodingException ex) {
+				throw new OpenStorefrontRuntimeException("Unsupport encoding", "Check encode character set for the platform");
+			}
+		}
+		return value;
+	}
+
 	/**
 	 * This will produce html highlighted stacktrace
 	 *
@@ -503,39 +517,42 @@ public class StringProcessor
 
 		return hexString.toString();
 	}
-	
+
 	/**
 	 * This decode x00xx escape codes (UTF-8) codes
+	 *
 	 * @param input
-	 * @return 
+	 * @return
 	 */
-	public static String decodeHexCharEscapes(String input) 
+	public static String decodeHexCharEscapes(String input)
 	{
 		if (StringUtils.isNotBlank(input)) {
 			String newInput = input.replace("x", "");
-			Integer charCode =  Integer.valueOf(newInput, 16);
-			if (charCode != null) {				
-				newInput = "" + (char)(charCode.intValue());			
+			Integer charCode = Integer.valueOf(newInput, 16);
+			if (charCode != null) {
+				newInput = "" + (char) (charCode.intValue());
 				return newInput;
 			}
-		} 
+		}
 		return input;
 	}
-	
+
 	/**
 	 * This is wrapper method for plugins
+	 *
 	 * @param input
-	 * @return 
+	 * @return
 	 */
-	public static boolean stringIsNotBlank(String input) 
+	public static boolean stringIsNotBlank(String input)
 	{
 		return StringUtils.isNotBlank(input);
 	}
-	
+
 	/**
 	 * Converts the input to make it easier to format for a URL
+	 *
 	 * @param input
-	 * @return 
+	 * @return
 	 */
 	public static String formatForFilename(String input)
 	{
@@ -544,6 +561,15 @@ public class StringProcessor
 			input = cleanFileName(input);
 		}
 		return input;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public static String uniqueId()
+	{
+		return UUID.randomUUID().toString();
 	}
 
 }

@@ -539,7 +539,15 @@ Ext.define('OSF.component.SubmissionPanel', {
 					height: 300,
 					maxLength: 65536,
 					emptyText: (submissionPanel.userInputWarning ? submissionPanel.userInputWarning : '' ) + '<br><br>Include an easy to read description of the product, focusing on what it is and what it does.',
-					tinyMCEConfig: CoreUtil.tinymceConfig("osfmediaretriever")
+					tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig("osfmediaretriever"), {
+						mediaSelectionUrl: function(){
+							if (submissionPanel.componentId) {					
+								return 'api/v1/resource/components/' + submissionPanel.componentId + '/media/view';
+							} else {
+								return 'api/v1/resource/components/NEW/media/view';
+							}
+						}						
+					})
 				},
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
@@ -3190,7 +3198,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 							Ext.toast('Successfully Saved Record', '', 'tr');
 
 							var data = Ext.decode(response.responseText);
-							submissionPanel.componentId = data.componentId;
+							if (data.componentId) {
+								submissionPanel.componentId = data.componentId;
+							} else {
+								submissionPanel.componentId = data.component.componentId;
+							}
 
 							//save profile updates
 							submissionPanel.setLoading('Updating Profile...');								

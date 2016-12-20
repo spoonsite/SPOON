@@ -43,19 +43,19 @@
 						url: 'api/v1/resource/components/questionviews'
 					},
 					listeners: {
-						load: function (theStore) {
+						load: function (store) {
 							// Since the API returns multiple listings,
 							// we must remove duplicate entries of components
-							theStore.each(function (i) {
-								theStore.each(function (j) {
-									// check first if i and j exist
-									// then if they are different entries
-									// and then if they have the same componentId
-									if (i && j && i.internalId !== j.internalId && i.data.componentId === j.data.componentId) {
-										theStore.remove(j);
-									}
-								});
+							var componentIds = {};
+							var questionsToRemove = [];
+							store.each(function(question){								
+								if (componentIds[question.get('componentId')]) {
+									questionsToRemove.push(question)
+								} else {
+									componentIds[question.get('componentId')] = true;
+								}
 							});
+							store.remove(questionsToRemove);
 						}
 					}
 				});

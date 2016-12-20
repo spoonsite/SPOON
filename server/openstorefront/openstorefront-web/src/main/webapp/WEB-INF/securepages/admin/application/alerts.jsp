@@ -289,9 +289,8 @@
 					id: 'alertAddEditWin',
 					title: 'Add/Edit Alert',
 					modal: true,
-					width: '55%',
-					minWidth: 950,
-					height: 400,
+					width: 600,
+					height: 600,
 					y: '10em',
 					iconCls: 'fa fa-lg fa-edit',
 					layout: 'fit',
@@ -373,13 +372,8 @@
 									id: 'systemErrorOptions',
 									name: 'systemErrorAlertOption',
 									fieldLabel: 'System Error Options',
-									defaultType: 'checkboxfield',
-									defaultLayout: '100%',
-									layout: 'hbox',
-									hidden: true,
-									defaults: {
-										flex: 1
-									},
+									defaultType: 'checkboxfield',																		
+									hidden: true,									
 									items: [
 										// The names in this section
 										// must correspond to the names
@@ -412,12 +406,7 @@
 									name: 'userDataAlertOption',
 									fieldLabel: 'User Data Options',
 									defaultType: 'checkboxfield',
-									defaultLayout: '100%',
-									layout: 'hbox',
 									hidden: true,
-									defaults: {
-										flex: 1
-									},
 									items: [
 										{
 											boxLabel: 'Tags',
@@ -441,6 +430,7 @@
 										},
 										{
 											boxLabel: 'User-Created Attribute Codes',
+											labelWidth: 250,
 											name: 'alertOnUserAttributeCodes',
 											id: 'userData-attributeCodes'
 										}							

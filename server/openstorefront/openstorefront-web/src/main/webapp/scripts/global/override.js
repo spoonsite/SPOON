@@ -168,7 +168,8 @@ Ext.define('OSF.defaults.Window', {
 Ext.define('OSF.defaults.Toast', {
     override: 'Ext.window.Toast',
 	
-  alwaysOnTop: true
+  alwaysOnTop: true,
+  closeAction: 'destroy'
 	
 });
 
@@ -223,6 +224,15 @@ Ext.onReady(function() {
 	Ext.enableAriaPanels=false;
 	
 	Ext.MessageBox.alwaysOnTop=99999999;
+	
+	//Disable backspace navigation
+	var parent = Ext.isIE ? document : window;
+	 Ext.EventManager.on(parent, 'keydown', function (e, focused) {
+		 if (e.getKey() == e.BACKSPACE && (!/^input$/i.test(focused.tagName) && !/^textarea$/i.test(focused.tagName)) || focused.disabled || focused.readOnly) {
+			 e.stopEvent();
+		 }
+	 });
+	
 	
 	/**
 	 Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {

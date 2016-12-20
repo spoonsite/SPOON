@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import java.io.Serializable;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -42,6 +43,9 @@ public class FileAttributeCodeXrefMap
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String externalCode;
 
+	@Version
+	private String storageVersion;	
+	
 	public FileAttributeCodeXrefMap()
 	{
 	}
@@ -65,5 +69,15 @@ public class FileAttributeCodeXrefMap
 	{
 		this.externalCode = externalCode;
 	}	
+
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
+	}
 		
 }
