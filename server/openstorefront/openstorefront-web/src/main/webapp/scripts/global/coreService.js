@@ -76,7 +76,7 @@ var CoreService = {
 	   * @returns promise
 	   */
 	  warmCache: function() {
-		var promise  = Ext.Ajax.request({
+		var promise = Ext.Ajax.request({
 			url: 'api/v1/resource/attributes',
 			success: function(response, opts) {
 				var attributes = Ext.decode(response.responseText);
@@ -123,6 +123,23 @@ var CoreService = {
 			  }
 		  });		 
 		  return attributeCodeTranslated;
+	  },
+	  
+	  /**
+	   * Translates a label into a key in consistent way.
+	   * @param {type} label
+	   * @returns promise
+	   */
+	  labelToCode: function(label) {
+		  
+		var promise = Ext.Ajax.request({
+			url: 'api/v1/service/application/key',
+			method: 'GET',
+			params: {
+				label: label
+			}
+		});
+		return promise;
 	  }
 	  
   }

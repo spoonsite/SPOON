@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
@@ -43,6 +44,7 @@ import edu.usu.sdl.openstorefront.core.view.ThreadStatus;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -78,6 +80,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -650,6 +653,21 @@ public class Application
 		return Response.ok().build();
 	}	
 	
-	
+	@GET
+	@Produces({MediaType.TEXT_PLAIN})
+	@APIDescription("Translate a label to key; Useful for generating code for attribute.")
+	@Path("/key")
+	public Response toKey(
+		@QueryParam("label") @RequiredParam String label	
+	)
+	{
+		String key = "";
+		
+		if (StringUtils.isNotBlank(label)) {
+			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+			key = sanitizer.santize(StringUtils.left(label.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
+		}
+		return Response.ok(key).build();
+	}
 	
 }

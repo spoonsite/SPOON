@@ -58,10 +58,12 @@ import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
 import edu.usu.sdl.openstorefront.core.view.RelationshipView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -71,11 +73,11 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -94,6 +96,8 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import org.apache.commons.lang.StringUtils;
+import sun.util.logging.PlatformLogger;
 
 /**
  *
@@ -104,7 +108,8 @@ import javax.ws.rs.core.StreamingOutput;
 public class AttributeResource
 		extends BaseResource
 {
-
+	private static final Logger LOG = Logger.getLogger(AttributeResource.class.getName());
+	
 	@Context
 	HttpServletRequest request;
 
@@ -753,83 +758,62 @@ public class AttributeResource
 	}
 
 	@POST
-	@APIDescription("Creates a new user-generated attribute code")
+	@APIDescription("Creates a new user-generated attribute codes. Return all codes translated.")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/attributetypes/{type}/attributecodes/user")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(AttributeCode.class)
+	@Path("/attributetypes/usercodes")
 	public Response postUserAttributeCode(
-			@PathParam("type")
-			@RequiredParam String type,
 			AttributeCodeSave attributeCodeSave)
-	{
-		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
-		if (attributeType != null) {
-			// The attribute type must allow user-generated codes to continue
-			if (Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
-				// Get a list of attribute codes that have this label.
-				AttributeCode codeExample = new AttributeCode();
-				codeExample.setLabel(attributeCodeSave.getCodeLabel());
-				List<AttributeCode> codes = service.getPersistenceService().queryByExample(AttributeCode.class, codeExample);
+	{		
+		List<AttributeCode> updatedCodes = new ArrayList<>();		
+		for (NewAttributeCode saveCode : attributeCodeSave.getUserAttributes()) {
+		
+			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
+			String key = sanitizer.santize(StringUtils.left(saveCode.getAttributeCodeLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
 
+			AttributeCode newAttributeCode = new AttributeCode();
+			newAttributeCode.setLabel(saveCode.getAttributeCodeLabel());
+			AttributeCodePk newAttributeCodePk = new AttributeCodePk();
+			newAttributeCodePk.setAttributeType(saveCode.getAttributeType());
+			newAttributeCodePk.setAttributeCode(key);
+			newAttributeCode.setAttributeCodePk(newAttributeCodePk);
+			updatedCodes.add(newAttributeCode);
+			
+			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, saveCode.getAttributeType());
+			if (attributeType != null) {
+				// The attribute type must allow user-generated codes to continue
+				if (Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
 
-				// If any of the codes we found belong to the attribute type in question,
-				// then the label is not new and we can just return the existing code.
-
-				// If this label appears in another attribute type, we can use the code as a "hint" 
-				// for a reasonable string to use for our new program-generated attribute code.
-				Queue<String> codeStringHints = new LinkedList<>();
-				for (AttributeCode code : codes) {
-					if (code.getAttributeCodePk().getAttributeType().equals(type)) {
-						return Response.ok(code).build();
-					}
-					else {
-						codeStringHints.add(code.getAttributeCodePk().getAttributeCode());
-					}
+					//see if it already exist...if so do nothing. So we don't alert.				
+					AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, newAttributeCodePk);				
+					if (existing == null) {
+						ValidationModel validationModel = new ValidationModel(newAttributeCode);
+						validationModel.setConsumeFieldsOnly(true);
+						ValidationResult validationResult = ValidationUtil.validate(validationModel);
+						if (validationResult.valid()) {
+							service.getAttributeService().saveAttributeCode(newAttributeCode, false);
+							
+							
+							AlertContext alertContext = new AlertContext();
+							alertContext.setAlertType(AlertType.USER_DATA);
+							alertContext.setDataTrigger(newAttributeCode);
+							service.getAlertService().checkAlert(alertContext);
+						} else {
+							LOG.log(Level.WARNING, validationResult.toString());
+						}						
+					}		
+				} else {
+					LOG.log(Level.WARNING, "Attribute type doesn't support user codes Type: " + saveCode.getAttributeType());
 				}
-
-
-				// At this point, we have determined that the label is new and therefore
-				// we must generate a code for it.
-				
-				// We add to our candidate list a simple truncated
-				// version of the label in uppercase.
-				String spaceless = attributeCodeSave.getCodeLabel().replaceAll("\\s+","");
-				String truncated = spaceless.substring(0, Math.min(OpenStorefrontConstant.FIELD_SIZE_CODE, spaceless.length())).toUpperCase();
-				codeStringHints.add(truncated);
-
-				String newCode = null;
-				boolean found = false;
-				int num = 1;
-				while (!found) {
-					if (!codeStringHints.isEmpty()) {
-						newCode = codeStringHints.poll();
-						found = !(service.getAttributeService().checkIfCodeExistsForType(type, newCode));
-					}
-					else {
-						newCode = truncated.substring(0, truncated.length()-String.valueOf(num).length()).concat(String.valueOf(num));
-						found = !(service.getAttributeService().checkIfCodeExistsForType(type, newCode));
-						if (!found) num++;
-					}
-				}
-
-
-				AttributeCode newAttributeCode = new AttributeCode();
-				newAttributeCode.setLabel(attributeCodeSave.getCodeLabel());
-				AttributeCodePk newAttributeCodePk = new AttributeCodePk();
-				newAttributeCodePk.setAttributeType(type);
-				newAttributeCodePk.setAttributeCode(newCode);
-				newAttributeCode.setAttributeCodePk(newAttributeCodePk);
-
-				// Save it away and return the new attribute code as response
-				
-				return handleAttributePostPutCode(newAttributeCode, true, true);
-				
-			}
-			else {
-				return Response.status(Response.Status.FORBIDDEN).build();
-			}
+			} else {
+				LOG.log(Level.WARNING, "Unable to find attribute type: " + saveCode.getAttributeType());
+			}		
 		}
-
-		return Response.status(Response.Status.NOT_FOUND).build();
+		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(updatedCodes)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@PUT
@@ -857,25 +841,11 @@ public class AttributeResource
 	}
 
 	private Response handleAttributePostPutCode(AttributeCode attributeCode, boolean post) {
-		return handleAttributePostPutCode(attributeCode, post, false);
-	}
-	
-	private Response handleAttributePostPutCode(AttributeCode attributeCode, boolean post, boolean alert)
-	{
 		ValidationModel validationModel = new ValidationModel(attributeCode);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			attributeCode.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-			attributeCode.setCreateUser(SecurityUtil.getCurrentUserName());
-			attributeCode.setUpdateUser(SecurityUtil.getCurrentUserName());
 			service.getAttributeService().saveAttributeCode(attributeCode, false);
-			if (alert) {
-				AlertContext alertContext = new AlertContext();
-				alertContext.setAlertType(AlertType.USER_DATA);
-				alertContext.setDataTrigger(attributeCode);
-				service.getAlertService().checkAlert(alertContext);
-			}
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}

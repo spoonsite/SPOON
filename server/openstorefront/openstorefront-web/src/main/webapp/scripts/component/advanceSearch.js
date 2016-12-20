@@ -1778,8 +1778,8 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				modal: true,
 				title: 'Save Search',
 				width: 300,
-				height: 150,
-				closeAction: 'destory',
+				height: 170,
+				closeAction: 'destroy',
 				layout: 'fit',
 				items: [
 					{
