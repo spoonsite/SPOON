@@ -52,15 +52,15 @@ Version 2.2 is a maintenance release that:
     (Visble, Important, Allow Multiples, etc.) for the group of attributes.
     4. Multiple attributes can be deleted by clicking on Action -> Delete.
  
-  * **Metadata**
+ * **Metadata**
  A new section in Admin Tools has been added under Data Management.  The Metadata Management Tool allows for labels and
  values to easily be added to entries.  Drag and drop to associate the label with an entry.  Filter and sort.
  
-  * **Tag Management Tool**
+ * **Tag Management Tool**
   The Tag tool (Admin Tools -> Data Management -> User Data -> Tags) has been redone, similar to the Metadata section
   so that tags can be easily associated with various entries by dragging and dropping.
   
-  * **User Profiles**
+ * **User Profiles**
   User Profiles can now be exported based on the current page, all, or selected profiles.  In addition searching has been
   added to search by Username, First Name, or Last Name.
   
