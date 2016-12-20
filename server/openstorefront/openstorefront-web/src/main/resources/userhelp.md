@@ -2,8 +2,7 @@
 <span style="font-size: 24px;">User Guide</span>
 
 Version 2.2
-                                                      
-
+                                                     
 
 # 1. Overview
 ------
@@ -30,19 +29,44 @@ licensed under GPL V3.**
 ![Logo](../webapp/images/help/sdl.png)
 
 ## 1.1 Release Notes
+------  
+=======
+## 1.1 Release Notes for v2.2
 ------
+Version 2.2 is a maintenance release that contains:
 
+ * Several small bug fixes
+ * Improves the usability of searching.
+ * Improves submissions, specifically the administration of submissions.
 
+### 1.1.1 Administrator Release Notes, v2.2 *
+------
 *What's new in v2.2*
 
- * **Item 1:**
- Details of 1
+ * **Attribute Management**
+ There are new ways to manage attributes in the Admin Tools -> Attributes section.
+    1. Select one or more attributes and click on Entry Assignment at the top of the table.  A new Manage Assignments 
+    box is shown where you can select an attribute and code and assign it to differing entries.
+    2. With one or multiple attributes selected click on Action -> Toggle status to activate or inactivate the attribute(s).
+    3. With one or multiple attributes selected click on Action -> Set Flags.  Here you can set the various flags 
+    (Visble, Important, Allow Multiples, etc.) for the group of attributes.
+    4. Multiple attributes can be deleted by clicking on Action -> Delete.
  
- * **Item 2**
- Details of 2
+  * **Metadata**
+ A new section in Admin Tools has been added under Data Management.  The Metadata Management Tool allows for labels and
+ values to easily be added to entries.  Drag and drop to associate the label with an entry.  Filter and sort.
+ 
+  * **Tag Management Tool**
+  The Tag tool (Admin Tools -> Data Management -> User Data -> Tags) has been redone, similar to the Metadata section
+  so that tags can be easily associated with various entries by dragging and dropping.
+  
+  * **User Profiles**
+  User Profiles can now be exported based on the current page, all, or selected profiles.  In addition searching has been
+  added to search by Username, First Name, or Last Name.
   
 For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.2" target="_blank">v2.2</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
+=======
 ## 1.2 Known Issues, v2.2 * 
  
  * ***Setting flags for multiple attributes in IE9***: In Admin Tools, Attributes if you multi-select more than one
@@ -55,7 +79,6 @@ The features that are available to users to be able to access the information in
 
 ##   2.1  Searching
 ------
-
 
 Application Search provides a way to find entry lists and articles
 matching search criteria. Several types of searches are supported. The
@@ -427,11 +450,11 @@ Make any necessary corrections and click on the Next button at the bottom.
 1. Click on the entry you wish to edit
 2. Click on the "Request Change" button in the submissions toolbar
 3. A change request form will appear that requires 4 steps:
-	Step 1)  Verify or update all user information and click the "Next" button
-	Step 2)  Fill in or edit the required fields and click "Next"
-	Step 3)  Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
-	Step 4)  Review the entry and click "Submit For Review".  This will take you back
-			 to the submissions page
+
+	1. Verify or update all user information and click the "Next" button
+	2. Fill in or edit the required fields and click "Next"
+	3. Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
+	4. Review the entry and click "Submit For Review".  This will take you back to the submissions page
 
 Under the "Pending Change" column you will see the status of the entry's change request.  The status is "Pending" 
 until the admin user approves the changes.  
@@ -473,6 +496,7 @@ submitted under the current login and another tab for answers submitted.
 
 By default the **Questions** tab is selected and it is here that a user can select
 his/her entry and edit a user-submitted question. To edit a question follow the steps below:
+
 	1. Click on the entry you wish to change
 	2. Click the **Edit** button in the toolbar
 	3. Make any changes to the question and click on **Post** at the bottom.
@@ -480,6 +504,7 @@ his/her entry and edit a user-submitted question. To edit a question follow the 
 To view entries with user-submitted answers, click on the **Answers** tab.  It is here that
 a user can select an entry and edit his/her answer to an entry's question.  To edit a 
 question follow the steps below:
+
 	1. Click on the entry you wish to change
 	2. Click the **Edit** button in the toolbar
 	3. Make any changes to the question and click on **Post** at the bottom.
@@ -514,6 +539,7 @@ Types of reports available include:
   - Entries by Category
 
 **How to generate a report:**
+
 1. Click on **New Report** in the reports toolbar
 2. Select the report type from the drop-down menu 
 3. Select the report format and how often to run the report
@@ -637,6 +663,7 @@ a question or answer, add a tag, watch an entry, submit a correction, and reques
 --------
 
 How to submit a review of an entry:
+
 1.  From the **Details** page, click on the **Reviews** tab.  
 2.  Click on the **Write a Review** button
 3.  Complete the required fields on the form and click **Post Review** at the bottom.
@@ -649,6 +676,7 @@ the deletion of the review.
 --------
 
 How to submit a question about an entry:
+
 1.  From the **Details** page, click on the **Questions & Answers** tab.
 2.  Click on the **Ask a Question** button
 3.  Type your question into the text area and click on the **Post** button
@@ -657,6 +685,7 @@ To edit a question, click on the **Edit** button.  Make any changes to the quest
 To remove a question, click on the **Delete** button.
 
 How to submit an answer to an entry question:
+
 1.  From the **Details** page, click on the **Questions & Answers** tab.
 2.  Locate the question and click on the **Answer** button.
 3.  Type your answer into the text area and click on the **Post** button.
