@@ -369,6 +369,7 @@ To edit a saved search, click on the name of the search and then click on the **
 ------------
 
 The user tools contain a variety of useful features including:
+
  1.  User Profile
  2.  Submissions
  3.  User Tools (Questions, Relationships, Reports, Reviews, Searches, Watches)
@@ -451,10 +452,10 @@ Make any necessary corrections and click on the Next button at the bottom.
 2. Click on the "Request Change" button in the submissions toolbar
 3. A change request form will appear that requires 4 steps:
 
-	1. Verify or update all user information and click the "Next" button
-	2. Fill in or edit the required fields and click "Next"
-	3. Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
-	4. Review the entry and click "Submit For Review".  This will take you back to the submissions page
+	* Step 1) Verify or update all user information and click the "Next" button
+	* Step 2) Fill in or edit the required fields and click "Next"
+	* Step 3) Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
+	* Step 4) Review the entry and click "Submit For Review".  This will take you back to the submissions page
 
 Under the "Pending Change" column you will see the status of the entry's change request.  The status is "Pending" 
 until the admin user approves the changes.  
@@ -877,7 +878,8 @@ Follow the browser download instructions to download the JSON File.
 ------
 
 Clicking the **Import** button from Manage Attributes will show buttons to brows and upload
-files for either Attributes or SvcV-4.  
+files for either Attributes or SvcV-4.
+  
 1.  Browse to the desired file to be uploaded (imported).
 2.  Make sure the Attributes or SvcV-4 file is in the correct format (CVS) and it
     contains the correct columns. (See warning on upload for the
@@ -1199,37 +1201,37 @@ Parser - Record Structure handled
 
 **Attribute CSV, Attribute EXCEL (XLSX), Attribute TSV**  
 
->- Record (Attribute Code) per line
+- Record (Attribute Code) per line
 - Header line not support (Remove before upload)
 - Does not support attachments
 - Map Name is used for Attribute Type
 
 **Attribute JSON, Attribute XML**
 
->- Support Nested structure, still assumes file contain Attribute Codes to map;
+- Support Nested structure, still assumes file contain Attribute Codes to map;
 	
 **Component CSV, Component EXCEL (XLSX), Component TSV**	
 
->- Record (Component) per line;  It can map SubComponent Entities as well.
+- Record (Component) per line;  It can map SubComponent Entities as well.
 - Header line not support (Remove before upload)
 - Does not support attachments (Local resources or media)
 
 **Component JSON, Component XML**	
 
->- Nested record (Component/Contact/etc)
+- Nested record (Component/Contact/etc)
 - Does not support attachments (Local resources or media)
 
 **Creating a data map**
 
->**Attribute**
+**Attribute**
 
-> Map Fields for (Attribute Type and Attribute Codes)
+* Map Fields for (Attribute Type and Attribute Codes)
 
->**Component/Entry**
+**Component/Entry**
 
-> Map Fields for Component, Contacts, Resource, etc
+* Map Fields for Component, Contacts, Resource, etc
 
-> Provide attribute mapping for each attribute type expected.
+* Provide attribute mapping for each attribute type expected.
 
 
 ### 3.2.9 Lookups *
