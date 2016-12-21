@@ -452,8 +452,10 @@ Make any necessary corrections and click on the Next button at the bottom.
 #### 2.3.2.2 How to Create a Change Request/Edit Entry
 -----------
 
-Step 1) Click on the entry you wish to edit\s\s
-Step 2) Click on the "Request Change" button in the submissions toolbar\s\s
+Step 1) Click on the entry you wish to edit
+
+Step 2) Click on the "Request Change" button in the submissions toolbar
+
 Step 3) A change request form will appear that requires 4 steps:
 
 	1. Verify or update all user information and click the "Next" button
@@ -462,7 +464,12 @@ Step 3) A change request form will appear that requires 4 steps:
 	4. Review the entry and click "Submit For Review".  This will take you back to the submissions page
 
 Under the "Pending Change" column you will see the status of the entry's change request.  The status is "Pending" 
-until the admin user approves the changes.  
+until the admin user approves the changes. 
+
+* Note: If you need to update the submitter contact and you are the submitter then update your profile on step 1 
+rather than updating the contact information on step3.  That way the contact information will not be overridden by your
+user profile.
+
 
 #### 2.3.2.3 How to Remove an Entry
 -----------
@@ -734,10 +741,6 @@ request ownership of an entry.  To do this:
 * Click Send.
 
 * Your correction or ownership request will be reviewed by an administrator.
-
-*Note: If you need to update the submittercontact and you are the submitter then update your profile on step 1 
-rather than updating the contact information on step3.  That way the contact information will not be overriding by your
-user profile.
 
 
 ### 2.4.6  Printing Entry Details
