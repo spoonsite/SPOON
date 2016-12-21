@@ -87,7 +87,16 @@ public class ComponentResource
 	@Override
 	public String uniqueKey()
 	{
-		return StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName();
+		String key = getResourceType() 
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ getDescription()
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ getMimeType()
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ getRestricted()
+				+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+				+ (StringUtils.isNotBlank(getLink()) ? getLink() : getOriginalName());
+		return key;
 	}
 
 	@Override

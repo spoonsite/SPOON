@@ -68,7 +68,14 @@ public class ComponentExternalDependency
 	@Override
 	public String uniqueKey()
 	{
-		return getDependencyName() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getVersion();
+		String key =  getDependencyName() 
+					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
+					+ getVersion()
+					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
+					+ getDependancyReferenceLink()
+					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
+					+ getComment();
+		return key;
 	}
 
 	@Override

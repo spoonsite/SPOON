@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
@@ -61,7 +62,12 @@ public class ComponentEvaluationSection
 	@Override
 	public String uniqueKey()
 	{
-		return getComponentEvaluationSectionPk().getEvaluationSection();
+		String key = getComponentEvaluationSectionPk().getEvaluationSection()
+					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+					+ getActualScore()
+					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR  
+					+ getNotAvailable();
+		return key;
 	}
 
 	@Override
