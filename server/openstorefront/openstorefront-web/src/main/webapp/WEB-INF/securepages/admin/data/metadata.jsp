@@ -317,6 +317,7 @@
 						valueField: 'value',
 						value: componentData.component.metadata.value,
 						fieldLabel: 'Value',
+						emptyText: 'Please add value to save',
 						labelWidth: new Ext.util.TextMetrics().getWidth("Value:"),
 						width: '100%',
 						transform: 'select_' + componentData.component.name.replace(/ /g, '_'),
@@ -728,7 +729,7 @@
 									
 									// Build "New" Label Presentation
 									var html = '<div style="color: #999; padding: 1em 0 2em 0;">';
-									html += '<strong style="color: #111; float: left;">' + value.replace(/\*/, '<span style="color: #22DD22;">[NEW]</span> ') + '</strong>';
+									html += '<strong style="color: #111; float: left;">' + value.replace(/\*/, '<span class="text-danger">[NOT Saved]</span> ') + '</strong>';
 									html += '<span style="float: right"><i class="fa fa-book fa-fw"></i> ' + metadataCount + '</span>';
 									html += "</div>";
 									return html;
@@ -1662,6 +1663,7 @@
 									xtype: 'textfield',
 									fieldLabel: 'Label<span class="field-required"></span>',
 									id: 'adddLabelForm-label',
+									allowBlank: false,
 									name: 'name',
 									listeners: {
 										
@@ -1705,7 +1707,7 @@
 									dock: 'bottom',
 									items: [
 										{
-											text: 'Save',
+											text: 'Create',
 											id: 'addLabelForm-saveButton',
 											iconCls: 'fa fa-save',
 											formBind: true,

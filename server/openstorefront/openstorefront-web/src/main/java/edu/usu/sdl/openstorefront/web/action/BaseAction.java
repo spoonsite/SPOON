@@ -40,6 +40,7 @@ import net.sourceforge.stripes.validation.ValidationError;
 import net.sourceforge.stripes.validation.ValidationErrorHandler;
 import net.sourceforge.stripes.validation.ValidationErrors;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Base Action Handler
@@ -144,17 +145,30 @@ public abstract class BaseAction
 
 	protected <T> Resolution streamResults(List<T> data)
 	{
+		return streamResults(data, null);
+	}	
+	
+	protected <T> Resolution streamResults(List<T> data, String contentType)
+	{
 		JsonResponse jsonResponse = new JsonResponse();
 		jsonResponse.setData(data);
 		jsonResponse.setTotalResults(data.size());
 		jsonResponse.setResults(data.size());
 
-		return streamResults(jsonResponse);
+		return streamResults(jsonResponse, contentType);
+	}
+	
+	protected Resolution streamResults(Object data) 
+	{
+		return streamResults(data, null);
 	}
 
-	protected Resolution streamResults(Object data)
+	protected Resolution streamResults(Object data, String contentType)
 	{
-		return new StreamingResolution(MediaType.APPLICATION_JSON)
+		if (StringUtils.isBlank(contentType)) {
+			contentType = MediaType.APPLICATION_JSON;
+		}		
+		return new StreamingResolution(contentType)
 		{
 
 			@Override
@@ -167,7 +181,15 @@ public abstract class BaseAction
 
 	protected Resolution streamResults(final JsonResponse jsonResponse)
 	{
-		return new StreamingResolution(MediaType.APPLICATION_JSON)
+		return streamResults(jsonResponse, null);
+	}
+	
+	protected Resolution streamResults(final JsonResponse jsonResponse, String contentType)
+	{
+		if (StringUtils.isBlank(contentType)) {
+			contentType = MediaType.APPLICATION_JSON;
+		}
+		return new StreamingResolution(contentType)
 		{
 
 			@Override

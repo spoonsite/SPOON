@@ -35,7 +35,6 @@ public class EmailAddress
 {
 
 	@ConsumeField
-	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_EMAIL)
 	@Sanitize(TextSanitizer.class)
 	private String email;

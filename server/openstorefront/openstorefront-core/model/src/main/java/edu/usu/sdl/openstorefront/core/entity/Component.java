@@ -195,9 +195,6 @@ public class Component
 			this.setApprovedUser(null);
 			this.setApprovedDts(null);
 		}
-		
-		// Set Update User
-		this.setUpdateUser(SecurityUtil.getCurrentUserName());
 
 		this.setDescription(component.getDescription());
 		this.setGuid(component.getGuid());

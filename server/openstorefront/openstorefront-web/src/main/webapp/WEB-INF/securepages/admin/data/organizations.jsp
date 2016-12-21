@@ -729,6 +729,8 @@
 											id: 'contactEmail',
 											fieldLabel: 'Email',
 											name: 'contactEmail',
+											inputType: 'email',
+											vtype: 'email',
 											style: 'padding-top: 5px;',
 											width: '100%',
 											maxLength: 120	

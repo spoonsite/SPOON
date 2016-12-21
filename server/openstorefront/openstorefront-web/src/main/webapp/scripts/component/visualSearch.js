@@ -201,7 +201,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					bodyStyle: 'padding: 5px;',
 					maximizable: true,
 					tpl: new Ext.XTemplate(
-						'<h1>{name}</h1><i>{componentTypeLabel}</i>',
+						'<h1 style="line-height: 1em;">{name}</h1><i>{componentTypeLabel}</i>',
 						'<tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeLabel}" width="40" /></tpl>',
 						'<hr>',
 						'{description}'

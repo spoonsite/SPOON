@@ -107,6 +107,9 @@
 
 				var memoryPoolsGrid = Ext.create('Ext.grid.Panel', {
 					id: 'memoryPoolsGrid',
+					width: '100%',
+					collapsible: true,
+					titleCollapse: true,
 					style: {
 						padding: '10px'
 					},
@@ -135,13 +138,12 @@
 				var statusStats = Ext.create('Ext.panel.Panel', {
 					title: 'Statistics',
 					id: 'statusStats',
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					},
+					scrollable: true,					
+					layout: 'anchor',
 					items: [
 						{
 							xtype: 'panel',
+							width: '100%',
 							layout: {
 								type: 'hbox',
 								align: 'stretch'
@@ -165,7 +167,10 @@
 						memoryPoolsGrid,
 						{
 							xtype: 'panel',
+							width: '100%',
 							title: 'Garbage Collection',
+							collapsible: true,
+							titleCollapse: true,
 							style: {
 								padding: '10px'
 							},
@@ -224,6 +229,7 @@
 						}
 					]
 				});
+				
 
 				var threadStatusStore = Ext.create('Ext.data.Store', {
 					autoLoad: true,
@@ -2119,7 +2125,7 @@
 							Ext.getCmp('heapMemoryBar').setValue(data.heapMemoryStatus.usedKb / data.heapMemoryStatus.maxKb);
 							Ext.getCmp('nonHeapMemoryBar').setValue(data.nonHeapMemoryStatus.usedKb / data.nonHeapMemoryStatus.commitedKb);
 							memoryPoolStore.load();
-
+							
 							statusStats.setLoading(false);
 						},
 						failure: function(response, opt){

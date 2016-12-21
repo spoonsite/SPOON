@@ -110,6 +110,24 @@ public class GeneralMediaResource
 		return sendSingleEntityResponse(generalMedia);
 	}
 
+	@GET
+	@RequireAdmin
+	@APIDescription("Check name to see if it is available. Returns true if avaliable")
+	@Produces({MediaType.TEXT_PLAIN})
+	@Path("/{name}/available")
+	public Response checkAvailable(
+			@PathParam("name") String name)
+	{
+		boolean available = true;
+		GeneralMedia generalMediaExample = new GeneralMedia();
+		generalMediaExample.setName(name);
+		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
+		if (generalMedia != null) {
+			available = false;
+		}
+		return Response.ok(Boolean.toString(available), MediaType.TEXT_PLAIN).build();
+	}
+
 	@DELETE
 	@RequireAdmin
 	@APIDescription("Deletes a general media record.")

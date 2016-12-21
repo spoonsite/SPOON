@@ -131,7 +131,7 @@
 									xtype: 'textfield',
 									id: 'user_name',
 									labelAlign: 'top',
-									fieldLabel: 'Name',
+									fieldLabel: 'Username',
 									name: 'user_name',
 									listeners: {
 										change: {

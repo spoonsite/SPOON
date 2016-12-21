@@ -2,8 +2,7 @@
 <span style="font-size: 24px;">User Guide</span>
 
 Version 2.2
-                                                      
-
+                                                     
 
 # 1. Overview
 ------
@@ -29,6 +28,9 @@ licensed under GPL V3.**
 ![Logo](../webapp/images/help/di2elogo-sm.png)
 ![Logo](../webapp/images/help/sdl.png)
 
+## 1.1 Release Notes
+------  
+=======
 ## 1.1 Release Notes for v2.2
 ------
 
@@ -43,8 +45,10 @@ Version 2.2 is a maintenance release that:
 
 *What's new in v2.2*
 
- * **Attribute Management**
+**Attribute Management**
+
  There are new ways to manage attributes in the Admin Tools -> Attributes section.
+
     1. Select one or more attributes and click on Entry Assignment at the top of the table.  A new Manage Assignments 
     box is shown where you can select an attribute and code and assign it to differing entries.
     2. With one or multiple attributes selected click on Action -> Toggle status to activate or inactivate the attribute(s).
@@ -52,23 +56,21 @@ Version 2.2 is a maintenance release that:
     (Visble, Important, Allow Multiples, etc.) for the group of attributes.
     4. Multiple attributes can be deleted by clicking on Action -> Delete.
  
- * **Metadata**
+**Metadata**
  A new section in Admin Tools has been added under Data Management.  The Metadata Management Tool allows for labels and
  values to easily be added to entries.  Drag and drop to associate the label with an entry.  Filter and sort.
  
- * **Tag Management Tool**
+**Tag Management Tool**
   The Tag tool (Admin Tools -> Data Management -> User Data -> Tags) has been redone, similar to the Metadata section
   so that tags can be easily associated with various entries by dragging and dropping.
   
- * **User Profiles**
+**User Profiles**
   User Profiles can now be exported based on the current page, all, or selected profiles.  In addition searching has been
   added to search by Username, First Name, or Last Name.
   
-  
-  
-  
 For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.2" target="_blank">v2.2</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
+=======
 ## 1.2 Known Issues, v2.2 * 
  
  * ***Setting flags for multiple attributes in IE9***: In Admin Tools, Attributes if you multi-select more than one
@@ -81,7 +83,6 @@ The features that are available to users to be able to access the information in
 
 ##   2.1  Searching
 ------
-
 
 Application Search provides a way to find entry lists and articles
 matching search criteria. Several types of searches are supported. The
@@ -372,6 +373,7 @@ To edit a saved search, click on the name of the search and then click on the **
 ------------
 
 The user tools contain a variety of useful features including:
+
  1.  User Profile
  2.  Submissions
  3.  User Tools (Questions, Relationships, Reports, Reviews, Searches, Watches)
@@ -450,14 +452,14 @@ Make any necessary corrections and click on the Next button at the bottom.
 #### 2.3.2.2 How to Create a Change Request/Edit Entry
 -----------
 
-1. Click on the entry you wish to edit
-2. Click on the "Request Change" button in the submissions toolbar
-3. A change request form will appear that requires 4 steps:
-	Step 1)  Verify or update all user information and click the "Next" button
-	Step 2)  Fill in or edit the required fields and click "Next"
-	Step 3)  Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
-	Step 4)  Review the entry and click "Submit For Review".  This will take you back
-			 to the submissions page
+Step 1) Click on the entry you wish to edit\s\s
+Step 2) Click on the "Request Change" button in the submissions toolbar\s\s
+Step 3) A change request form will appear that requires 4 steps:
+
+	1. Verify or update all user information and click the "Next" button
+	2. Fill in or edit the required fields and click "Next"
+	3. Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
+	4. Review the entry and click "Submit For Review".  This will take you back to the submissions page
 
 Under the "Pending Change" column you will see the status of the entry's change request.  The status is "Pending" 
 until the admin user approves the changes.  
@@ -499,6 +501,7 @@ submitted under the current login and another tab for answers submitted.
 
 By default the **Questions** tab is selected and it is here that a user can select
 his/her entry and edit a user-submitted question. To edit a question follow the steps below:
+
 	1. Click on the entry you wish to change
 	2. Click the **Edit** button in the toolbar
 	3. Make any changes to the question and click on **Post** at the bottom.
@@ -506,6 +509,7 @@ his/her entry and edit a user-submitted question. To edit a question follow the 
 To view entries with user-submitted answers, click on the **Answers** tab.  It is here that
 a user can select an entry and edit his/her answer to an entry's question.  To edit a 
 question follow the steps below:
+
 	1. Click on the entry you wish to change
 	2. Click the **Edit** button in the toolbar
 	3. Make any changes to the question and click on **Post** at the bottom.
@@ -540,6 +544,7 @@ Types of reports available include:
   - Entries by Category
 
 **How to generate a report:**
+
 1. Click on **New Report** in the reports toolbar
 2. Select the report type from the drop-down menu 
 3. Select the report format and how often to run the report
@@ -663,6 +668,7 @@ a question or answer, add a tag, watch an entry, submit a correction, and reques
 --------
 
 How to submit a review of an entry:
+
 1.  From the **Details** page, click on the **Reviews** tab.  
 2.  Click on the **Write a Review** button
 3.  Complete the required fields on the form and click **Post Review** at the bottom.
@@ -675,6 +681,7 @@ the deletion of the review.
 --------
 
 How to submit a question about an entry:
+
 1.  From the **Details** page, click on the **Questions & Answers** tab.
 2.  Click on the **Ask a Question** button
 3.  Type your question into the text area and click on the **Post** button
@@ -683,6 +690,7 @@ To edit a question, click on the **Edit** button.  Make any changes to the quest
 To remove a question, click on the **Delete** button.
 
 How to submit an answer to an entry question:
+
 1.  From the **Details** page, click on the **Questions & Answers** tab.
 2.  Locate the question and click on the **Answer** button.
 3.  Type your answer into the text area and click on the **Post** button.
@@ -884,8 +892,7 @@ entry. For example: Entry listing may contain and attribute for
 1.  An attachment can be added, downloaded or deleted from a code.
 2.  The attachment will show up in the search results entry vitals section, if the attribute appears there.
 
-
-Field Descriptions:
+**Field Descriptions:**
 
 -  **Label**               - Human readable value of the code
 -  **Code**                - System reference key
@@ -925,6 +932,7 @@ From the attributes page the Action button has three sub-menus:
 ------
 
 Clicking the **Import** button from Manage Attributes will show buttons to brows and upload files.
+
 1.  Browse to the desired file to be uploaded (imported).
 2.  Make sure the Attributes file is in the correct format and it contains the correct columns. 
     (See warning on upload for the expected fields)
@@ -982,7 +990,7 @@ Components can be managed using the Components Tool.  Components are created by 
 the entry immediately searchable. It's recommended to initially set
 the entry to **Pending** until all data is entered.
 
-1.  After saving, several tabs are available which allows for entering
+* After saving, several tabs are available which allows for entering
     Additional information such as Attributes, Contacts, and
     Resources, etc. Each tab has independent forms allowing for
     fine-grain editing which is important for the watches feature.
@@ -1076,7 +1084,8 @@ Description, Organization, etc.
 
 3.  Click the **General** tab.
 
-**Other Fields**  
+**Other Fields**
+
 a. Approval State:  Pending | Approved | Not Submitted  
 b. Component Type:  ARTICLE *(allows for watches to be put on the article)* | Component  
 c. Security Type:   *select the security level of the entry or article*
@@ -1249,37 +1258,37 @@ Parser - Record Structure handled
 
 **Attribute CSV, Attribute EXCEL (XLSX), Attribute TSV**  
 
->- Record (Attribute Code) per line
+- Record (Attribute Code) per line
 - Header line not support (Remove before upload)
 - Does not support attachments
 - Map Name is used for Attribute Type
 
 **Attribute JSON, Attribute XML**
 
->- Support Nested structure, still assumes file contain Attribute Codes to map;
+- Support Nested structure, still assumes file contain Attribute Codes to map;
 	
 **Component CSV, Component EXCEL (XLSX), Component TSV**	
 
->- Record (Component) per line;  It can map SubComponent Entities as well.
+- Record (Component) per line;  It can map SubComponent Entities as well.
 - Header line not support (Remove before upload)
 - Does not support attachments (Local resources or media)
 
 **Component JSON, Component XML**	
 
->- Nested record (Component/Contact/etc)
+- Nested record (Component/Contact/etc)
 - Does not support attachments (Local resources or media)
 
 **Creating a data map**
 
->**Attribute**
+**Attribute**
 
-> Map Fields for (Attribute Type and Attribute Codes)
+* Map Fields for (Attribute Type and Attribute Codes)
 
->**Component/Entry**
+**Component/Entry**
 
-> Map Fields for Component, Contacts, Resource, etc
+* Map Fields for Component, Contacts, Resource, etc
 
-> Provide attribute mapping for each attribute type expected.
+* Provide attribute mapping for each attribute type expected.
 
 
 ### 3.2.9 Lookups *
@@ -1290,17 +1299,19 @@ be added, edited, and made active or inactive.  In addition, they can be
 imported or exported as .csv files.
 
 **To add/delete/edit codes:** 
-	- Select a system table from the list and click on the **Edit Codes** button in the toolbar.
-	- To add a code, click on the the **Add** button and fill out the form.  When you are done, click **Save**.
-	- To edit a code, select the code and click on **Edit** in the above toolbar.  After making changes to the form,
+
+	* Select a system table from the list and click on the **Edit Codes** button in the toolbar.
+	* To add a code, click on the the **Add** button and fill out the form.  When you are done, click **Save**.
+	* To edit a code, select the code and click on **Edit** in the above toolbar.  After making changes to the form,
 	  click **Save** at the bottom.
-	- To change the status of a code to active or inactive, click on **Toggle Status** in the toolbar.
+	* To change the status of a code to active or inactive, click on **Toggle Status** in the toolbar.
 
 **To import/export codes:**
-	- Select a system table from the list and click on the **Edit Codes** button in the toolbar.
-	- To import, click on the **Import** button in the right upper corner.  The import file must be a CSV file
+
+	* Select a system table from the list and click on the **Edit Codes** button in the toolbar.
+	* To import, click on the **Import** button in the right upper corner.  The import file must be a CSV file
 	  with the format code, description, detail description (optional), sort order (optional).
-	- To export the current list of codes, click on the **Export** button in the right upper corner.
+	* To export the current list of codes, click on the **Export** button in the right upper corner.
 
 Some examples of Lookups are:
 Media Types, Data Source, Contact Types, Relationship Types, and Organization Types

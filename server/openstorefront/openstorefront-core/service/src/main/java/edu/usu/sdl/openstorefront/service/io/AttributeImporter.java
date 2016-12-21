@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.OldBaseAttributeParser;
-import edu.usu.sdl.openstorefront.service.io.parser.SvcAttributeParser;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class AttributeImporter
 		implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(AttributeImporter.class.getName());
+	private static final Logger LOG = Logger.getLogger(AttributeImporter.class.getName());
 
 	@Override
 	public void initialize()
@@ -75,18 +74,18 @@ public class AttributeImporter
 	protected void processFile(File file)
 	{
 		//log
-		log.log(Level.INFO, MessageFormat.format("Syncing Attributes: {0}", file));
+		LOG.log(Level.INFO, MessageFormat.format("Syncing Attributes: {0}", file));
 		for (FileMap fileMap : FileMap.values()) {
 			if (fileMap.getFilename().equals(file.getName())) {
 				try (InputStream in = new FileInputStream(file)) {
 					Map<AttributeType, List<AttributeCode>> attributeMap = fileMap.getParser().parse(in);
 					serviceProxy.getAttributeService().syncAttribute(attributeMap);
 				} catch (IOException ex) {
-					log.log(Level.SEVERE, "Failed processing file: " + file, ex);
+					LOG.log(Level.SEVERE, "Failed processing file: " + file, ex);
 				}
 			}
 		}
-		log.log(Level.INFO, MessageFormat.format("Finish Syncing Attributes: {0}", file));
+		LOG.log(Level.INFO, MessageFormat.format("Finish Syncing Attributes: {0}", file));
 	}
 
 	@Override
@@ -98,8 +97,7 @@ public class AttributeImporter
 	private enum FileMap
 	{
 
-		ATTIBUTES("allattributes.json", new MainAttributeParser()),
-		SVCV4("svcv-4_export.csv", new SvcAttributeParser());
+		ATTIBUTES("allattributes.json", new MainAttributeParser());
 
 		private final String filename;
 		private final OldBaseAttributeParser parser;
