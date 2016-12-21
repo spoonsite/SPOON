@@ -735,6 +735,10 @@ request ownership of an entry.  To do this:
 
 * Your correction or ownership request will be reviewed by an administrator.
 
+*Note: If you need to update the submittercontact and you are the submitter then update your profile on step 1 
+rather than updating the contact information on step3.  That way the contact information will not be overriding by your
+user profile.
+
 
 ### 2.4.6  Printing Entry Details
 --------
@@ -1503,14 +1507,14 @@ at first login will contain the information gathered from the external security 
 
 The application does not directly manage users, only profiles. When a user
 first securely logs in, a profile is created. It is up to the applicable
-security utility (Open AM, LDAP, Database…etc.) to define the users.
+security utility (Open AM, LDAP, DatabaseÂ…etc.) to define the users.
 
 An admin may edit, activate, or deactivate a profile. Deactivating a
 profile does not prevent login. Upon login, the user's profile will be
 reactivated. Once a profile has been deactivated, that user's watches
 and messages are also deactivated. Reactivating the profile will
 activate the user's existing watches, but it won't send any previous
-messages – just messages going forward.
+messages Â– just messages going forward.
 
 **To toggle active status:**
 
