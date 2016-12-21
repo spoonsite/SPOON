@@ -366,16 +366,7 @@
 								handler: function() {
 									actionAddAttribute();
 								}
-							},
-							{
-								text: 'Entry Assignment',
-								id: 'attributeGrid-tools-assign',
-								scale: 'medium',
-								iconCls: 'fa fa-2x fa-list-alt',
-								handler: function() {
-									actionManageAssignments();
-								}
-							},
+							},							
 							{
 								text: 'Edit Attribute',
 								id: 'attributeGrid-tools-edit',
@@ -396,6 +387,18 @@
 								handler: function() {
 									var record = attributeGrid.getSelection()[0];
 									actionManageCodes(record);
+								}
+							},
+							{
+								xtype: 'tbseparator'
+							}, 
+							{
+								text: 'Entry Assignment',
+								id: 'attributeGrid-tools-assign',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-list-alt',
+								handler: function() {
+									actionManageAssignments();
 								}
 							},
 							{
