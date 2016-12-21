@@ -45,8 +45,10 @@ Version 2.2 is a maintenance release that:
 
 *What's new in v2.2*
 
- * **Attribute Management**
+**Attribute Management**
+
  There are new ways to manage attributes in the Admin Tools -> Attributes section.
+
     1. Select one or more attributes and click on Entry Assignment at the top of the table.  A new Manage Assignments 
     box is shown where you can select an attribute and code and assign it to differing entries.
     2. With one or multiple attributes selected click on Action -> Toggle status to activate or inactivate the attribute(s).
@@ -54,15 +56,15 @@ Version 2.2 is a maintenance release that:
     (Visble, Important, Allow Multiples, etc.) for the group of attributes.
     4. Multiple attributes can be deleted by clicking on Action -> Delete.
  
- * **Metadata**
+**Metadata**
  A new section in Admin Tools has been added under Data Management.  The Metadata Management Tool allows for labels and
  values to easily be added to entries.  Drag and drop to associate the label with an entry.  Filter and sort.
  
- * **Tag Management Tool**
+**Tag Management Tool**
   The Tag tool (Admin Tools -> Data Management -> User Data -> Tags) has been redone, similar to the Metadata section
   so that tags can be easily associated with various entries by dragging and dropping.
   
- * **User Profiles**
+**User Profiles**
   User Profiles can now be exported based on the current page, all, or selected profiles.  In addition searching has been
   added to search by Username, First Name, or Last Name.
   
@@ -450,14 +452,14 @@ Make any necessary corrections and click on the Next button at the bottom.
 #### 2.3.2.2 How to Create a Change Request/Edit Entry
 -----------
 
-1. Click on the entry you wish to edit
-2. Click on the "Request Change" button in the submissions toolbar
-3. A change request form will appear that requires 4 steps:
+Step 1) Click on the entry you wish to edit\s\s
+Step 2) Click on the "Request Change" button in the submissions toolbar\s\s
+Step 3) A change request form will appear that requires 4 steps:
 
-	* Step 1) Verify or update all user information and click the "Next" button
-	* Step 2) Fill in or edit the required fields and click "Next"
-	* Step 3) Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
-	* Step 4) Review the entry and click "Submit For Review".  This will take you back to the submissions page
+	1. Verify or update all user information and click the "Next" button
+	2. Fill in or edit the required fields and click "Next"
+	3. Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
+	4. Review the entry and click "Submit For Review".  This will take you back to the submissions page
 
 Under the "Pending Change" column you will see the status of the entry's change request.  The status is "Pending" 
 until the admin user approves the changes.  
@@ -859,7 +861,7 @@ entry. For example: Entry listing may contain and attribute for
 2.  Click on the drop-down arrow under **Active Status** and select "Inactive".
 3.  Click on the code from the list of inactive and click **Activate**.
 
-Field Descriptions:
+**Field Descriptions:**
 
 -  **Label**               - Human readable value of the code
 -  **Code**                - System reference key
@@ -936,7 +938,7 @@ Components can be managed using the Components Tool.  Components are created by 
 the entry immediately searchable. It's recommended to initially set
 the entry to **Pending** until all data is entered.
 
-1.  After saving, several tabs are available which allows for entering
+* After saving, several tabs are available which allows for entering
     Additional information such as Attributes, Contacts, and
     Resources, etc. Each tab has independent forms allowing for
     fine-grain editing which is important for the watches feature.
@@ -1030,7 +1032,8 @@ Description, Organization, etc.
 
 3.  Click the **General** tab.
 
-**Other Fields**  
+**Other Fields**
+
 a. Approval State:  Pending | Approved | Not Submitted  
 b. Component Type:  ARTICLE *(allows for watches to be put on the article)* | Component  
 c. Security Type:   *select the security level of the entry or article*
@@ -1244,17 +1247,19 @@ be added, edited, and made active or inactive.  In addition, they can be
 imported or exported as .csv files.
 
 **To add/delete/edit codes:** 
-	- Select a system table from the list and click on the **Edit Codes** button in the toolbar.
-	- To add a code, click on the the **Add** button and fill out the form.  When you are done, click **Save**.
-	- To edit a code, select the code and click on **Edit** in the above toolbar.  After making changes to the form,
+
+	* Select a system table from the list and click on the **Edit Codes** button in the toolbar.
+	* To add a code, click on the the **Add** button and fill out the form.  When you are done, click **Save**.
+	* To edit a code, select the code and click on **Edit** in the above toolbar.  After making changes to the form,
 	  click **Save** at the bottom.
-	- To change the status of a code to active or inactive, click on **Toggle Status** in the toolbar.
+	* To change the status of a code to active or inactive, click on **Toggle Status** in the toolbar.
 
 **To import/export codes:**
-	- Select a system table from the list and click on the **Edit Codes** button in the toolbar.
-	- To import, click on the **Import** button in the right upper corner.  The import file must be a CSV file
+
+	* Select a system table from the list and click on the **Edit Codes** button in the toolbar.
+	* To import, click on the **Import** button in the right upper corner.  The import file must be a CSV file
 	  with the format code, description, detail description (optional), sort order (optional).
-	- To export the current list of codes, click on the **Export** button in the right upper corner.
+	* To export the current list of codes, click on the **Export** button in the right upper corner.
 
 Some examples of Lookups are:
 Media Types, Data Source, Contact Types, Relationship Types, and Organization Types
