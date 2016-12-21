@@ -790,14 +790,17 @@ for Storefront.
 Attributes are used to group and filter catalog items such as entries and articles. 
 To access the attributes page, go to Admin Tools -> Data Management -> Attributes.
 
-Some of the major functionality of Managing Attributes includes:
+Functional Areas of Managing Attributes includes:
 
   1. Adding New Attribute Type
-  2. Managing Codes
-  3. Exporting
-  4. Importing
+  2. Entry Assignment
+  3. Editing Attributes
+  4. Managing Codes
+  5. Setting Flags, Toggling Status, and Deleting
+  6. Importing and Exporting
     
-#### 3.2.1.1 Add New Type *
+    
+#### 3.2.1.1 Add New Attribute Type *
 ------
 
 Attribute Types represent a related group of specific categories or
@@ -813,15 +816,38 @@ use: \[A-Z\]\[0-9\].
 
 **To add or edit a type:**
 
-1.  From the Attribute Tool, click on the **Add New Type** button or the
+From the Attribute Tool, click on the **Add New Type** button or the
     **Edit Attribute** button.
-2.  Fill in the form.
-3.  Save the form and you can proceed to editing the codes for the type.
 
-**NOTE:** The Attribute Type Code field should be all caps and should not
-contain spaces or "/".
+**FIELDS include:** 
 
-#### 3.2.1.2 Manage Codes *
+ 1. Label:  The name of the Attribute
+ 2. Type Code:  The unique code, should be ALL-CAPS and should not contain spaces or "/". 
+ 3. Detailed Description:  The description of the attribute.  It can contain formatted (rich) text.
+ 4. Associated Entry Types:  Allow this attribute on all types or only certain types (Articles, Entries, etc.)
+ 5. Flags:  Set the flags shown on the main page for Required, Visible, Important, Architecture, Allow Multiple,
+     Allow User-Created Codes, or Hide on Submission.
+ 
+
+#### 3.2.1.2 Entry Assignment *
+------
+
+This allows for quick drag-and-drop assignment of an entry with an attribute and its associated code.  From the 
+Manage Assignments window (click on Entry Assignment in Attributes) select an Attribute from the drop-down and 
+an associated attribute code from the next drop-down.
+
+Now a list of all Entries that are NOT assigned to that attribute and code are shown on the left. To associate this 
+attribute and code with an entry, simply drag it to the right to the Assigned Entries column.  To remove it, drag it
+back to the left (Unassigned Entries) column.
+
+
+#### 3.2.1.3 Editing Attributes *
+------
+
+Refer to 3.2.1.1 on Adding a New Attribute type for a list of fields available.  When finished editing click Save.
+
+
+#### 3.2.1.4 Managing Codes *
 ------
 
 An attribute code is a specific category value that can be applied to a
@@ -853,6 +879,12 @@ entry. For example: Entry listing may contain and attribute for
 2.  Click on the drop-down arrow under **Active Status** and select "Inactive".
 3.  Click on the code from the list of inactive and click **Activate**.
 
+**Attachments:**
+
+1.  An attachment can be added, downloaded or deleted from a code.
+2.  The attachment will show up in the search results entry vitals section, if the attribute appears there.
+
+
 Field Descriptions:
 
 -  **Label**               - Human readable value of the code
@@ -864,26 +896,47 @@ Field Descriptions:
 -  **Badge URL**           - Set to add a graphical badge for a code
 -  **Highlight Class**     - Used to add color emphasis to a code
 
-#### 3.2.1.3 Exporting Attributes *
+
+#### 3.2.1.1 Setting Flags, Toggling Status, and Deleting *
 ------
 
-From the Manage Attributes page select one or more attributes.  Click the Export button.
-Follow the browser download instructions to download the JSON File.
+From the attributes page the Action button has three sub-menus:
+ 1. Set Flags
+ 2. Toggle Status
+ 3. Delete
+ 
+ To **Set Flags** select one or more attributes then click on Action -> Set Flags.  From here you can 'bulk' change
+ the Visible, Important, Architecture, Allow Multiples, Allow User Codes, and Hide On Submission flags.  Options include
+ to set the flag to True, False, or No Change.  Click Update when finished.
+ 
+ * **NOTE:** The _Required_ flag is not shown in the Set Flags box as it is mutually exclusive with Allow Multiples.  If
+          the Allow Multiples section is not available for changing, it is because one or more previously selected
+          attributes are required.  Remove the required flag(s) on those attribute(s) and then the Allow Multiple flag
+          will be available for changing.
 
-#### 3.2.1.4  Importing Attributes or SvcV-4 *
+ To **Toggle Status** select one or more attributes then Action -> Toggle Status.  The status of each selected 
+    attribute will be reversed, i.e. all of the Active ones become Inactive and all of the selected Inactive attributes
+    now become Active.  The status is shown in the table by the Status column, at the far right with "A" or "I".
+    
+ To **Delete** select one or more attributes and Action --> Delete.  It is possible to delete multiple attributes at once.
+ 
+
+#### 3.2.1.6 Importing and Exporting Attributes *
 ------
 
-Clicking the **Import** button from Manage Attributes will show buttons to brows and upload
-files for either Attributes or SvcV-4.  
+Clicking the **Import** button from Manage Attributes will show buttons to brows and upload files.
 1.  Browse to the desired file to be uploaded (imported).
-2.  Make sure the Attributes or SvcV-4 file is in the correct format (CVS) and it
-    contains the correct columns. (See warning on upload for the
-    expected fields)
+2.  Make sure the Attributes file is in the correct format and it contains the correct columns. 
+    (See warning on upload for the expected fields)
 3.  Select the proper file.
 4.  Click **Upload**.
 
  **WARNING:** UID in the file should match what is stored in application.
     The application supports both 1 and 0001 matching to 1.
+    
+From the Manage Attributes page select one or more attributes.  Click the Export button.
+Follow the browser download instructions to download the JSON File.
+
 
 ### 3.2.2 Contacts *
 -----
