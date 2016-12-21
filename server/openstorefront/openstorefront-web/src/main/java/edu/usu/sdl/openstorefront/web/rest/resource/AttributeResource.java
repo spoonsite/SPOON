@@ -97,7 +97,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import org.apache.commons.lang.StringUtils;
-import sun.util.logging.PlatformLogger;
 
 /**
  *
