@@ -49,12 +49,12 @@ Version 2.2 is a maintenance release that:
 
  There are new ways to manage attributes in the Admin Tools -> Attributes section.
 
-    1. Select one or more attributes and click on Entry Assignment at the top of the table.  A new Manage Assignments 
+ 1. Select one or more attributes and click on Entry Assignment at the top of the table.  A new Manage Assignments 
     box is shown where you can select an attribute and code and assign it to differing entries.
-    2. With one or multiple attributes selected click on Action -> Toggle status to activate or inactivate the attribute(s).
-    3. With one or multiple attributes selected click on Action -> Set Flags.  Here you can set the various flags 
+ 2. With one or multiple attributes selected click on Action -> Toggle status to activate or inactivate the attribute(s).
+ 3. With one or multiple attributes selected click on Action -> Set Flags.  Here you can set the various flags 
     (Visble, Important, Allow Multiples, etc.) for the group of attributes.
-    4. Multiple attributes can be deleted by clicking on Action -> Delete.
+ 4. Multiple attributes can be deleted by clicking on Action -> Delete.
  
 **Metadata**
  A new section in Admin Tools has been added under Data Management.  The Metadata Management Tool allows for labels and
@@ -1503,14 +1503,14 @@ at first login will contain the information gathered from the external security 
 
 The application does not directly manage users, only profiles. When a user
 first securely logs in, a profile is created. It is up to the applicable
-security utility (Open AM, LDAP, Databaseâ€¦etc.) to define the users.
+security utility (Open AM, LDAP, Database…etc.) to define the users.
 
 An admin may edit, activate, or deactivate a profile. Deactivating a
 profile does not prevent login. Upon login, the user's profile will be
 reactivated. Once a profile has been deactivated, that user's watches
 and messages are also deactivated. Reactivating the profile will
 activate the user's existing watches, but it won't send any previous
-messages â€“ just messages going forward.
+messages – just messages going forward.
 
 **To toggle active status:**
 
