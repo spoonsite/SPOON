@@ -1372,7 +1372,13 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 		searchTypes.sort(function(a, b){
 			return a.searchType.localeCompare(b.searchType);
 		});
-				
+			
+		advancePanel.resetEntryForm = function(){
+			advancePanel.entryForm.getComponent('searchType').suspendEvents(true);
+			advancePanel.entryForm.reset();
+			advancePanel.entryForm.getComponent('searchType').resumeEvents();
+		};
+		
 		advancePanel.entryForm = Ext.create('Ext.form.Panel', {
 			layout: 'anchor',
 			bodyStyle: 'padding: 10px;',
@@ -1482,9 +1488,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									form: advancePanel.entryForm,
 									loadingText: 'Adding Search Criteria...',
 									success: function(response, opts) {
-										advancePanel.entryForm.getComponent('searchType').suspendEvents(true);
-										advancePanel.entryForm.reset();
-										advancePanel.entryForm.getComponent('searchType').resumeEvents();
+										advancePanel.resetEntryForm();
 										
 										saveButton.setText('Add Criteria');
 										var grid = advancePanel.entryForm.getComponent('searchGrid');										
@@ -1527,7 +1531,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							iconCls: 'fa fa-close',
 							margin: '0 0 0 20',
 							handler: function() {
-								advancePanel.entryForm.reset();
+								advancePanel.resetEntryForm();
 								advancePanel.entryForm.editRecord = null;
 								advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Add Criteria');
 							}
@@ -1732,7 +1736,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 	
 	reset: function() {
 		var advancePanel = this;		
-		advancePanel.entryForm.reset();
+		advancePanel.resetEntryForm();
 		advancePanel.entryForm.getComponent('searchGrid').getStore().removeAll();
 	},
 
