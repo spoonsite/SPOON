@@ -280,6 +280,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							name: 'keyField',
 							fieldLabel: 'Attribute Category <span class="field-required" />',
 							editable: false,
+							forceSelection: true,
 							allowBlank: false,
 							displayField: 'description',
 							valueField: 'attributeType',
@@ -298,6 +299,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							listeners: {
 								change: function(cb, newValue, oldValue, opts){
 									var codeCb = cb.up('panel').getComponent('keyValue');
+									codeCb.reset();
 									codeCb.getStore().load({
 										url: 'api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes'
 									});
@@ -311,6 +313,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							name: 'keyValue',
 							fieldLabel: 'Specific Category',
 							editable: false,
+							forceSelection: true,
 							displayField: 'label',
 							valueField: 'code',	
 							queryMode: 'local',
@@ -382,6 +385,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							listeners: {
 								change: function(cb, newValue, oldValue, opts){
 									var codeCb = cb.up('panel').getComponent('keyValue');
+									codeCb.reset();
 									codeCb.getStore().load({
 										url: 'api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes'
 									});
@@ -1615,19 +1619,19 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 										advancePanel.entryForm.getComponent('searchType').setValue(rec.get('searchType'));
 										
 										advancePanel.entryForm.loadRecord(rec);
-										
+
 										//The rest is tricky since multiple value fields
 										var optionsPanel = advancePanel.entryForm.getComponent('options').getLayout().getActiveItem();
-										
+
 										var searchType = rec.get('searchType');
 										var value = rec.get('value');										
 										if (searchType === 'COMPONENT') {
 											var fieldValue = optionsPanel.getComponent('field').getValue();
-											
+
 											optionsPanel.getComponent('componentType').setValue(null);
 											optionsPanel.getComponent('dataSource').setValue(null);	
 											optionsPanel.getComponent('value').setValue(null);
-											
+
 											if (fieldValue === 'componentType') {
 												optionsPanel.getComponent('componentType').setValue(value);
 											} else if (fieldValue === 'dataSource') {
@@ -1635,27 +1639,41 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 											} else {
 												optionsPanel.getComponent('value').setValue(value);	
 											}											
-											
+
+										} else if (searchType === 'ATTRIBUTE') {
+											var keyField = optionsPanel.getComponent('keyField');
+											keyField.getStore().load({
+												callback: function() {
+													advancePanel.entryForm.loadRecord(rec);
+												}
+											});
+										} else if (searchType === 'ARCHITECTURE') {
+											var keyField = optionsPanel.getComponent('keyField');
+											keyField.getStore().load({
+												callback: function() {
+													advancePanel.entryForm.loadRecord(rec);
+												}
+											});
 										} else if (searchType === 'CONTACT') {
 											var fieldValue = optionsPanel.getComponent('field').getValue();
-											
+
 											optionsPanel.getComponent('contactType').setValue(null);											
 											optionsPanel.getComponent('value').setValue(null);
-											
+
 											if (fieldValue === 'contactType') {
 												optionsPanel.getComponent('contactType').setValue(value);
 											} else {
 												optionsPanel.getComponent('value').setValue(value);	
 											}
-											
+
 										} else if (searchType === 'REVIEW') {
 											var fieldValue = optionsPanel.getComponent('field').getValue();
-											
+
 											optionsPanel.getComponent('userTypeCode').setValue(null);	
 											optionsPanel.getComponent('userTimeCode').setValue(null);
 											//optionsPanel.getComponent('recommend').setValue(null);
 											optionsPanel.getComponent('value').setValue(null);
-											
+
 											if (fieldValue === 'userTypeCode') {
 												optionsPanel.getComponent('userTypeCode').setValue(value);
 											} else if (fieldValue === 'userTimeCode') {
@@ -1665,31 +1683,33 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 											} else {
 												optionsPanel.getComponent('value').setValue(value);	
 											}
-											
+
 										} else if (searchType === 'QUESTION') {
 											var fieldValue = optionsPanel.getComponent('field').getValue();
 
 											optionsPanel.getComponent('userTypeCode').setValue(null);											
 											optionsPanel.getComponent('value').setValue(null);
-											
+
 											if (fieldValue === 'userTypeCode') {
 												optionsPanel.getComponent('userTypeCode').setValue(value);
 											} else {
 												optionsPanel.getComponent('value').setValue(value);	
 											}											
-											
+
 										} else if (searchType === 'QUESTION_RESPONSE') {
 											var fieldValue = optionsPanel.getComponent('field').getValue();
-											
+
 											optionsPanel.getComponent('userTypeCode').setValue(null);											
 											optionsPanel.getComponent('value').setValue(null);
-											
+
 											if (fieldValue === 'userTypeCode') {
 												optionsPanel.getComponent('userTypeCode').setValue(value);
 											} else {
 												optionsPanel.getComponent('value').setValue(value);	
 											}											
-										}
+										}											
+										
+
 										
 										//change button to update
 										advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Update Criteria');										
