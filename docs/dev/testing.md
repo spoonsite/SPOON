@@ -8,6 +8,8 @@
 they are run on the Integration server as part of the Jenkins build.
 3. API Tests - These tests use a client that communicates to the rest api (work in progress)
 4. Acceptance ticket tests -  We write this as part of the JIRA ticket for QA. 
-5. Regression tests - These are maintain and exercised by the QA team.
+5. Regression tests - These are maintain and exercised by the QA team. 
+Regression tests are captured in a separate document. [Regression Docs](https://confluence.di2e.net/display/STORE/Regression+Test+Plans)
 
-Note: in the future we may consider some Auto UI tests where they make sense.
+
+Note: In the future we may consider some Auto UI tests where they make sense.

@@ -40,7 +40,7 @@ import javax.ws.rs.core.Response;
  * @author dshurtleff
  */
 @Path("v1/resource/generalmedia")
-@APIDescription("General media is used for articles, badges...etc.  Dynamic Resources. <br> To create a new record POST to Media.action?UploadGeneralMedia&generalMedia.name={name} *Admin Role required")
+@APIDescription("General media is used for articles, badges, etc.  Dynamic Resources. <br> To create a new record POST to Media.action?UploadGeneralMedia&generalMedia.name={name} *Admin Role required")
 public class GeneralMediaResource
 		extends BaseResource
 {
@@ -108,6 +108,24 @@ public class GeneralMediaResource
 		generalMediaExample.setName(name);
 		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
 		return sendSingleEntityResponse(generalMedia);
+	}
+
+	@GET
+	@RequireAdmin
+	@APIDescription("Check name to see if it is available. Returns true if avaliable")
+	@Produces({MediaType.TEXT_PLAIN})
+	@Path("/{name}/available")
+	public Response checkAvailable(
+			@PathParam("name") String name)
+	{
+		boolean available = true;
+		GeneralMedia generalMediaExample = new GeneralMedia();
+		generalMediaExample.setName(name);
+		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(GeneralMedia.class, generalMediaExample);
+		if (generalMedia != null) {
+			available = false;
+		}
+		return Response.ok(Boolean.toString(available), MediaType.TEXT_PLAIN).build();
 	}
 
 	@DELETE

@@ -38,6 +38,7 @@ import edu.usu.sdl.openstorefront.service.manager.model.AddJobModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -354,7 +355,7 @@ public class JobManager
 					.withSchedule(scheduleBuilder)
 					.build();
 
-			scheduler.scheduleJob(job, trigger);
+			scheduler.scheduleJob(job, Collections.singleton(trigger), true); // Replace job if it already exists
 			if (addjob.isPause()) {
 				scheduler.pauseTrigger(trigger.getKey());
 			}

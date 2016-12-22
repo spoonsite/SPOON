@@ -1,4 +1,21 @@
 <%-- 
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
     Document   : feedback
     Created on : Apr 8, 2016, 3:51:31 PM
     Author     : dshurtleff
@@ -45,6 +62,7 @@
 						'<tr class="info-table"><td class="info-table" style="width: 20%;"><b>Web User-agent</b></td><td class="info-table"> {webInformation.userAgent}</td></tr>',
 						'<tr class="info-table"><td class="info-table" style="width: 20%;"><b>Web Referrer</b></td><td class="info-table"> {webInformation.referrer}</td></tr>',
 						'<tr class="info-table"><td class="info-table" style="width: 20%;"><b>Web Screen Resolution</b></td><td class="info-table"> {webInformation.screenResolution}</td></tr>',
+						'<tpl if="externalId"><tr class="info-table"><td class="info-table" style="width: 20%;"><b>External Id</b></td><td class="info-table"> {externalId}</td></tr></tpl>',
 						'</table>'		
 					)
 				});

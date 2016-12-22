@@ -1,17 +1,19 @@
 /* 
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
  */
 /* global Ext, CoreUtil */
 
@@ -35,16 +37,17 @@ Ext.define('OSF.component.IntegrationWindow', {
 			title: 'Add/Update  Configuration',
 			modal: true,
 			width: '40%',
-			height: 300,
+			height: 340,
 			minWidth: 300,
-			minHeigth: 300,
+			minHeigth: 325,
 			alwaysOnTop: true,
 			layout: 'fit',
-			resizable: false,
+			resizable: true,
 			items: [
 				{
 					xtype: 'form',
 					itemId: 'configForm',
+					scrollable: true,
 					bodyStyle: 'padding: 10px',
 					defaults: {
 						labelAlign: 'top',
@@ -114,7 +117,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 									width: 100,
 									minWidth: 100,
 									text: 'Check',
-									margin: '25 0 0 0',
+									margin: '30 0 0 0',
 									iconCls: 'fa fa-check',
 									handler: function(){
 										loadJiraIssue();
@@ -137,7 +140,11 @@ Ext.define('OSF.component.IntegrationWindow', {
 									text: 'Save',
 									formBind: true,
 									iconCls: 'fa fa-save',
-									handler: function(){
+									handler: function() {
+										
+										// Force A Jira Check
+										loadJiraIssue();
+										
 										var configForm = this.up('form');
 										var data = configForm.getValues();
 										var addEditWin = this.up('window');
@@ -221,13 +228,13 @@ Ext.define('OSF.component.IntegrationWindow', {
 				}
 			],			
 			columns: [
-				{ text: 'Integration Type', align: 'center', dataIndex: 'integrationType', width: 150 },
+				{ text: 'Integration Type', align: 'center', dataIndex: 'integrationType', minWidth: 150 },
 				{
 					text: 'Integration Config',
 					columns: [
-						{ text: 'Project Type', dataIndex: 'projectType', width: 175 },
-						{ text: 'Issue Type', dataIndex: 'issueType', width: 150 },
-						{ text: 'Issue Number', dataIndex: 'issueNumber', width: 150 }
+						{ text: 'Project Type', align: 'center', dataIndex: 'projectType', minWidth: 175 },
+						{ text: 'Issue Type', align: 'center', dataIndex: 'issueType', minWidth: 150 },
+						{ text: 'Issue Number', align: 'center', dataIndex: 'issueNumber', minWidth: 150 }
 					]
 				},
 				{ text: 'Status',  align: 'center', dataIndex: 'status', width: 150,
@@ -249,11 +256,11 @@ Ext.define('OSF.component.IntegrationWindow', {
 						return label;
 					}
 				},
-				{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },
-				{ text: 'Last Start Date', dataIndex: 'lastStartTime', hidden: true, width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
-				{ text: 'Create User', dataIndex: 'createUser', hidden: true, width: 150 },
-				{ text: 'Create Date', dataIndex: 'createDts', hidden: true, width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
-				{ text: 'Last Complete Date', dataIndex: 'lastEndTime', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
+				{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', minWidth: 125 },
+				{ text: 'Last Start Date', dataIndex: 'lastStartTime', hidden: true, minWidth: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+				{ text: 'Create User', dataIndex: 'createUser', hidden: true, minWidth: 150 },
+				{ text: 'Create Date', dataIndex: 'createDts', hidden: true, minWidth: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
+				{ text: 'Last Complete Date', dataIndex: 'lastEndTime', flex: 1, minWidth: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
 			],
 			listeners: {	
 				selectionchange: function(selectionModel, selected, opts){

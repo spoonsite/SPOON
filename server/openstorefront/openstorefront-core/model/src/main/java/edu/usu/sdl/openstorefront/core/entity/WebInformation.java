@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import java.io.Serializable;
+import javax.persistence.Version;
 import javax.validation.constraints.Size;
 
 /**
@@ -27,7 +28,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Part of the feedback ticket")
 public class WebInformation
-	implements Serializable
+		implements Serializable
 {
 
 	@ConsumeField
@@ -45,6 +46,9 @@ public class WebInformation
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String screenResolution;
+
+	@Version
+	private String storageVersion;
 
 	public WebInformation()
 	{
@@ -88,6 +92,16 @@ public class WebInformation
 	public void setScreenResolution(String screenResolution)
 	{
 		this.screenResolution = screenResolution;
+	}
+
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
 	}
 
 }

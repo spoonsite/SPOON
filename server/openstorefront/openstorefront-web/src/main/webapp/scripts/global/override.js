@@ -1,6 +1,19 @@
 /* 
- * Overrides for defaults/extensions
- * 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
  */
 
 /* global CoreApp */
@@ -155,7 +168,8 @@ Ext.define('OSF.defaults.Window', {
 Ext.define('OSF.defaults.Toast', {
     override: 'Ext.window.Toast',
 	
-  alwaysOnTop: true
+  alwaysOnTop: true,
+  closeAction: 'destroy'
 	
 });
 
@@ -211,6 +225,15 @@ Ext.onReady(function() {
 	
 	Ext.MessageBox.alwaysOnTop=99999999;
 	
+	//Disable backspace navigation
+	var parent = Ext.isIE ? document : window;
+	Ext.get(parent).addListener('keydown', function (e, focused) {
+		 if (e.getKey() == e.BACKSPACE && (!/^input$/i.test(focused.tagName) && !/^textarea$/i.test(focused.tagName)) || focused.disabled || focused.readOnly) {
+			 e.stopEvent();
+		 }
+	 });
+	
+	
 	/**
 	 Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
 	 maxWidth: 200,
@@ -226,12 +249,35 @@ Ext.onReady(function() {
 		if (response.responseText && response.responseText.indexOf('login.jsp') !== -1) {
 			var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
 			currentlocation = currentlocation + window.parent.location.search;
-			
+
 			window.parent.location.href = "/openstorefront/Login.action?gotoPage="+encodeURIComponent(currentlocation);
 		}		
 	});
 	
 	Ext.Ajax.on('requestexception', function (conn, response, options, eOpts) {
+		
+		//When logout with OPEN AM it cause a CORS failure in which redirect to login
+		//this also occurs on timeout or loss connection
+		if (response.status === 0) {
+			Ext.Msg.show({
+				title: 'Logged Out/Timeout?',
+				message: 'You may need to login to continue.',
+				buttons: Ext.MessageBox.YESNO,	
+				buttonText: {
+					yes: 'Login',
+					no: 'Cancel'
+				},
+				icon: Ext.Msg.Error,
+				fn: function (btn) {
+					if (btn === 'yes') {
+						var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
+						currentlocation = currentlocation + window.parent.location.search;
+			
+						window.parent.location.href = "/openstorefront/Login.action?gotoPage="+encodeURIComponent(currentlocation);					
+					}
+				}
+			});				
+		}
 		
 		var feedbackButtonConfig = {
 			yes: 'Ok',

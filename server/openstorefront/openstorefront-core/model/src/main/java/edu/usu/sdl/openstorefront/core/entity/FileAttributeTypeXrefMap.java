@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.FK;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.OneToMany;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -56,7 +57,10 @@ public class FileAttributeTypeXrefMap
 	@OneToMany(orphanRemoval = true)
 	@DataType(FileAttributeCodeXrefMap.class)
 	private List<FileAttributeCodeXrefMap> attributeCodeXrefMap;
-
+	
+	@Version
+	private String storageVersion;	
+	
 	public FileAttributeTypeXrefMap()
 	{
 	}
@@ -111,4 +115,14 @@ public class FileAttributeTypeXrefMap
 		this.attributeCodeXrefMap = attributeCodeXrefMap;
 	}
 
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
+	}
+	
 }

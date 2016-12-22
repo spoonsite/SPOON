@@ -106,6 +106,12 @@ public class JiraClient
 		return getRestClient().getIssueClient().getIssue(ticket).claim();
 	}
 
+	public void deleteTicket(String ticketKey)
+	{
+		Promise<Void> promise = getRestClient().getIssueClient().deleteIssue(ticketKey, true);
+		promise.claim();
+	}
+
 	public BasicIssue submitTicket(FeedbackTicket feedbackTicket)
 	{
 		BasicProject basicProject = null;

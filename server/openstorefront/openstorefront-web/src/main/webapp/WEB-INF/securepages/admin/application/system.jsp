@@ -1,3 +1,22 @@
+<%--
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
@@ -88,6 +107,9 @@
 
 				var memoryPoolsGrid = Ext.create('Ext.grid.Panel', {
 					id: 'memoryPoolsGrid',
+					width: '100%',
+					collapsible: true,
+					titleCollapse: true,
 					style: {
 						padding: '10px'
 					},
@@ -116,13 +138,12 @@
 				var statusStats = Ext.create('Ext.panel.Panel', {
 					title: 'Statistics',
 					id: 'statusStats',
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					},
+					scrollable: true,					
+					layout: 'anchor',
 					items: [
 						{
 							xtype: 'panel',
+							width: '100%',
 							layout: {
 								type: 'hbox',
 								align: 'stretch'
@@ -146,7 +167,10 @@
 						memoryPoolsGrid,
 						{
 							xtype: 'panel',
+							width: '100%',
 							title: 'Garbage Collection',
+							collapsible: true,
+							titleCollapse: true,
 							style: {
 								padding: '10px'
 							},
@@ -205,6 +229,7 @@
 						}
 					]
 				});
+				
 
 				var threadStatusStore = Ext.create('Ext.data.Store', {
 					autoLoad: true,
@@ -1975,19 +2000,25 @@
 							id: 'recentChangeForm',
 							padding: 20,
 							layout: 'vbox',
-							width: '30%',
+							width: '40%',
 							defaults: {
 								labelAlign: 'top',
-								width: '100%',
-								padding: '20px',
+								width: '100%',								
 								style: 'font-weight: bold'
 							},
 							items: [
 								{ 
-									xtype: 'label',
-									id: 'emailSendDates',
-									text: 'E-mail Dates:',
-									style: 'font-weight: normal'
+									xtype: 'panel',
+									id: 'emailSendDates',	
+									margin: '0 0 0 -39',
+									tpl: [
+										'<ul class="list-group">',
+										'	<li class="stat-list-group-item">Last Automated Email Sent: <span class="stat-badge">',
+										'	{[Ext.Date.format(Ext.Date.parse(values.lastSentDts, "c"), "m/d/y H:i:s A ")]}',
+										'	<li class="stat-list-group-item">Last Automated Email Sent: <span class="stat-badge">',
+										'	{[Ext.Date.format(Ext.Date.parse(values.nextSendDts, "c"), "m/d/y H:i:s A ")]}',
+										'</span></li></ul'
+									]
 								},
 								{
 									xtype: 'datefield',
@@ -2003,49 +2034,42 @@
 									allowBlank: true,
 									maxLength: 100,
 									vtype: 'email',
-								}
-							],
-							dockedItems: [
+								},
 								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									style: 'padding: 20px;',
-									items: [
-										{
-											xtype: 'button',
-											scale: 'medium',
-											text: 'Send Recent Changes Email',
-											iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',
-											handler: function() {
-												var form = Ext.getCmp('recentChangeForm');
-												if (form.isValid()) {
-													data = {};
-													data.emailAddress = Ext.getCmp('toEmail').value;
-													data.lastRunDts = Ext.Date.format(Ext.getCmp('sinceDate').value,'m/d/Y');
-													// For some reason this uses URL parameters
-													var url = 'api/v1/service/notification/recent-changes';
-													url += '?emailAddress=' + data.emailAddress;
-													url += '&lastRunDts=' + data.lastRunDts;
-													Ext.Ajax.request({
-														url: url,
-														method: 'POST',
-														success: function(response, opt){
-															Ext.toast('Successfully sent request', '', 'tr');
-														},
-														failure: function(response, opt) {
-															Ext.toast('Email request failed', '', 'tr');
-														}
+									xtype: 'button',
+									maxWidth: 300,
+									maxHeight: 75,
+									scale: 'medium',
+									text: 'Send Recent Changes Email',
+									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',
+									handler: function() {
+										var form = Ext.getCmp('recentChangeForm');
+										if (form.isValid()) {
+											data = {};
+											data.emailAddress = Ext.getCmp('toEmail').value;
+											data.lastRunDts = Ext.Date.format(Ext.getCmp('sinceDate').value,'m/d/Y');
+											// For some reason this uses URL parameters
+											var url = 'api/v1/service/notification/recent-changes';
+											url += '?emailAddress=' + data.emailAddress;
+											url += '&lastRunDts=' + data.lastRunDts;
+											Ext.Ajax.request({
+												url: url,
+												method: 'POST',
+												success: function(response, opt){
+													Ext.toast('Successfully sent request', '', 'tr');
+												},
+												failure: function(response, opt) {
+													Ext.toast('Email request failed', '', 'tr');
+												}
 
 
-													});
-												}
-												else {
-													Ext.Msg.alert('Errors', 'There are errors in the form. Please fill the form correctly.');
-												}
-											}
+											});
 										}
-									]
-								}
+										else {
+											Ext.Msg.alert('Errors', 'There are errors in the form. Please fill the form correctly.');
+										}
+									}
+								}								
 							]
 						}
 					]
@@ -2055,15 +2079,8 @@
 					Ext.Ajax.request({
 						url: 'api/v1/service/notification/recent-changes/status',
 						success: function(response, opt){
-							var data = Ext.decode(response.responseText);
-							var nextAutoText = '<ul class="list-group">';
-							nextAutoText += '<li class="stat-list-group-item">Last Automated Email Sent: <span class="stat-badge">',
-							nextAutoText += Ext.Date.format(Ext.Date.parse(data.lastSentDts,'c'), 'm/d/y H:i:s A ');
-							nextAutoText += '</span></li>';
-							nextAutoText += '<li class="stat-list-group-item">Next Automated Email: <span class="stat-badge">',
-							nextAutoText += Ext.Date.format(Ext.Date.parse(data.nextSendDts,'c'), 'm/d/y H:i:s A ');
-							nextAutoText += '</span></li>';
-							Ext.getCmp('emailSendDates').setText(nextAutoText, false);
+							var data = Ext.decode(response.responseText);							
+							Ext.getCmp('emailSendDates').update(data);
 						}
 					});
 				};
@@ -2108,7 +2125,7 @@
 							Ext.getCmp('heapMemoryBar').setValue(data.heapMemoryStatus.usedKb / data.heapMemoryStatus.maxKb);
 							Ext.getCmp('nonHeapMemoryBar').setValue(data.nonHeapMemoryStatus.usedKb / data.nonHeapMemoryStatus.commitedKb);
 							memoryPoolStore.load();
-
+							
 							statusStats.setLoading(false);
 						},
 						failure: function(response, opt){

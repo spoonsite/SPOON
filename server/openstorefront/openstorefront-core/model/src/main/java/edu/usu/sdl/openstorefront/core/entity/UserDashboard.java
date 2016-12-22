@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Store user a dashboard")
+@APIDescription("Stores user dashboard")
 public class UserDashboard
 	extends StandardEntity<UserDashboard>		
 {

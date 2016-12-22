@@ -69,11 +69,14 @@ public class FeedbackServiceImpl
 		switch (branding.getFeedbackHandler()) {
 			case FeedbackHandleType.JIRA:
 				try (JiraClient jiraClient = JiraManager.getClient()) {
+
 					LOG.log(Level.INFO, "Posting feedback to jira.");
 
 					BasicIssue issue = jiraClient.submitTicket(ticket);
 					if (issue != null) {
 						LOG.log(Level.INFO, MessageFormat.format("Jira Ticket: {0}", issue.getKey()));
+						ticket.setExternalId(issue.getKey());
+						ticket = persistenceService.persist(ticket);
 					}
 				}
 				break;

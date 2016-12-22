@@ -29,13 +29,12 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Holder for a Email Address (Used in other entities; not standalone)")
+@APIDescription("Holder for an email address (Used in other entities; not standalone)")
 public class EmailAddress
 		implements Serializable
 {
 
 	@ConsumeField
-	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_EMAIL)
 	@Sanitize(TextSanitizer.class)
 	private String email;

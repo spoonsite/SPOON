@@ -399,7 +399,7 @@ public class SystemServiceImpl
 			Path path = generalMedia.pathToMedia();
 			if (path != null) {
 				if (path.toFile().exists()) {
-					if (path.toFile().delete()) {
+					if (path.toFile().delete() == false) {
 						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete general media. Path: {0}", path.toString()));
 					}
 				}
@@ -409,7 +409,7 @@ public class SystemServiceImpl
 	}
 
 	@Override
-	public void saveTemporaryMedia(TemporaryMedia temporaryMedia, InputStream fileInput)
+	public TemporaryMedia saveTemporaryMedia(TemporaryMedia temporaryMedia, InputStream fileInput)
 	{
 		Objects.requireNonNull(temporaryMedia);
 		Objects.requireNonNull(fileInput);
@@ -420,6 +420,7 @@ public class SystemServiceImpl
 			Files.copy(in, temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
 			temporaryMedia.populateBaseCreateFields();
 			persistenceService.persist(temporaryMedia);
+			return temporaryMedia;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
@@ -433,7 +434,7 @@ public class SystemServiceImpl
 			Path path = temporaryMedia.pathToMedia();
 			if (path != null) {
 				if (path.toFile().exists()) {
-					if (path.toFile().delete()) {
+					if (path.toFile().delete() == false) {
 						LOG.log(Level.WARNING, MessageFormat.format("Unable to delete temporary media. Path: {0}", path.toString()));
 					}
 				}
@@ -446,16 +447,29 @@ public class SystemServiceImpl
 	public TemporaryMedia retrieveTemporaryMedia(String urlStr)
 	{
 		String hash;
+
 		try {
 			hash = StringProcessor.getHexFromBytes(MessageDigest.getInstance("SHA-1").digest(urlStr.getBytes()));
 		} catch (NoSuchAlgorithmException ex) {
 			throw new OpenStorefrontRuntimeException("Hash Format not available", "Coding issue", ex);
 		}
+
 		TemporaryMedia existingMedia = persistenceService.findById(TemporaryMedia.class, hash);
 		if (existingMedia != null) {
 			existingMedia.setUpdateDts(TimeUtil.currentDate());
 			return existingMedia;
 		}
+
+		TemporaryMedia temporaryMedia = new TemporaryMedia();
+		String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
+		String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
+		temporaryMedia.setOriginalFileName(originalFileName);
+		temporaryMedia.setFileName(hash);
+		temporaryMedia.setName(hash);
+		temporaryMedia.setOriginalSourceURL(urlStr);
+		temporaryMedia.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
+		temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+		temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
 
 		try {
 			URL url = new URL(urlStr);
@@ -469,16 +483,6 @@ public class SystemServiceImpl
 				return null;
 			}
 
-			TemporaryMedia temporaryMedia = new TemporaryMedia();
-			String fName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
-			String originalFileName = fName.substring(0, fName.lastIndexOf('?') == -1 ? fName.length() : fName.lastIndexOf('?'));
-			temporaryMedia.setOriginalFileName(originalFileName);
-			temporaryMedia.setFileName(hash);
-			temporaryMedia.setName(hash);
-			temporaryMedia.setOriginalSourceURL(urlStr);
-			temporaryMedia.setActiveStatus(TemporaryMedia.ACTIVE_STATUS);
-			temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
-			temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
 			temporaryMedia.setMimeType(urlConnection.getContentType());
 
 			InputStream input = urlConnection.getInputStream();

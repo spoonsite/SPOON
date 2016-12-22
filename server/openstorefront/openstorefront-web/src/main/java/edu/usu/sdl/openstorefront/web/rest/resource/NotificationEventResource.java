@@ -140,7 +140,7 @@ public class NotificationEventResource
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Posts a new Notification Event")
+	@APIDescription("Posts a new notification event")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(NotificationEvent.class)

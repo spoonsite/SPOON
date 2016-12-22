@@ -1,17 +1,19 @@
 /* 
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
  */
 /* global Ext, CoreUtil */
 
@@ -61,7 +63,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			zoomCenterY: 0,
 			update: function(sprites){
 				Ext.Array.each(visPanel.sprites, function(item){
-					if (!item.backgroundSprite) {
+					if (!item.backgroundSprite) {					
 						item.setAttributes({
 							translationX: visPanel.camera.panX,
 							translationY: visPanel.camera.panY,
@@ -69,7 +71,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							scaleY:  visPanel.camera.zoom,
 							scaleCenterX: visPanel.camera.zoomCenterX,
 							scaleCenterY: visPanel.camera.zoomCenterY
-						});						
+						});	
 					}
 				});
 				visPanel.getSurface().renderFrame();
@@ -199,7 +201,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					bodyStyle: 'padding: 5px;',
 					maximizable: true,
 					tpl: new Ext.XTemplate(
-						'<h1>{name}</h1><i>{componentTypeLabel}</i>',
+						'<h1 style="line-height: 1em;">{name}</h1><i>{componentTypeLabel}</i>',
 						'<tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeLabel}" width="40" /></tpl>',
 						'<hr>',
 						'{description}'
@@ -1569,13 +1571,20 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				if (theta < (Math.PI/2 * -1) && theta >= Math.PI * -1 ) {
 					theta +=  Math.PI;				
 					xAdjust = -15;
-				}			
-
+				}		
+							
+				var textX = (endX + ownerNode.positionX) /2 + xAdjust;
+				var textY = ownerNode.positionY + (endY - ownerNode.positionY)/ 2 - 10;
 				sprites.push(Ext.apply({}, {
-					x:  (endX + ownerNode.positionX) /2 + xAdjust,
-					y:  ownerNode.positionY + (endY - ownerNode.positionY)/ 2 - 10,
+					x:  textX,
+					y:  textY,					
+					shadowColor: 'black',
+					shadowBlur: 4,
+					shadowOffsetX: 4,
+					shadowOffsetY: 4,
 					text: Ext.util.Format.ellipsis(relationship.relationshipLabel, 20),
-					rotationRads: theta
+					relationShipText: true					
+					//rotationRads: theta
 				}, relationshipText));				
 			}
 			

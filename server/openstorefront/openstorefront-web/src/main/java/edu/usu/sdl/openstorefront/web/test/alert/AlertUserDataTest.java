@@ -30,6 +30,7 @@ import edu.usu.sdl.openstorefront.core.entity.ExperienceTimeType;
 import static edu.usu.sdl.openstorefront.core.entity.StandardEntity.ACTIVE_STATUS;
 import edu.usu.sdl.openstorefront.core.entity.UserDataAlertOption;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
+import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
 import static edu.usu.sdl.openstorefront.core.entity.UserTypeCode.END_USER;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
@@ -102,7 +103,9 @@ public class AlertUserDataTest extends BaseTestCase
 		List<UserMessage> userMessages = userMessage.findByExample();
 		boolean alertIdsEqual = false;
 		for (UserMessage message : userMessages) {
-			if (message.getAlertId().equals(alertUserDataTag.getAlertId())) {
+			if (UserMessageType.USER_DATA_ALERT.equals(message.getUserMessageType())
+					&& message.getAlertId().equals(alertUserDataTag.getAlertId())) {
+
 				alertIdsEqual = true;
 				messageId = message.getUserMessageId();
 			}
@@ -149,7 +152,9 @@ public class AlertUserDataTest extends BaseTestCase
 		alertIdsEqual = false;
 		messageId = "";
 		for (UserMessage message : userMessages) {
-			if (message.getAlertId().equals(alertUserDataRQ.getAlertId())) {
+			if (UserMessageType.USER_DATA_ALERT.equals(message.getUserMessageType())
+					&& message.getAlertId().equals(alertUserDataRQ.getAlertId())) {
+
 				alertIdsEqual = true;
 				messageId = message.getUserMessageId();
 			}
@@ -192,7 +197,9 @@ public class AlertUserDataTest extends BaseTestCase
 		alertIdsEqual = false;
 		messageId = "";
 		for (UserMessage message : userMessages) {
-			if (message.getAlertId().equals(alertUserDataRQ.getAlertId())) {
+			if (UserMessageType.USER_DATA_ALERT.equals(message.getUserMessageType())
+					&& message.getAlertId().equals(alertUserDataRQ.getAlertId())) {
+
 				alertIdsEqual = true;
 				messageId = message.getUserMessageId();
 			}
@@ -248,7 +255,9 @@ public class AlertUserDataTest extends BaseTestCase
 		alertIdsEqual = false;
 		messageId = "";
 		for (UserMessage message : userMessages) {
-			if (message.getAlertId().equals(alertUserDataContact.getAlertId())) {
+			if (UserMessageType.USER_DATA_ALERT.equals(message.getUserMessageType())
+					&& message.getAlertId().equals(alertUserDataContact.getAlertId())) {
+
 				alertIdsEqual = true;
 				messageId = message.getUserMessageId();
 			}

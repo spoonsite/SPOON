@@ -166,7 +166,7 @@ public class SubComponentServiceImpl
 		Path path = componentResource.pathToResource();
 		if (path != null) {
 			if (path.toFile().exists()) {
-				if (path.toFile().delete()) {
+				if (path.toFile().delete() == false) {
 					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component resource. Path: {0}", path.toString()));
 				}
 			}
@@ -179,7 +179,7 @@ public class SubComponentServiceImpl
 		Path path = componentMedia.pathToMedia();
 		if (path != null) {
 			if (path.toFile().exists()) {
-				if (path.toFile().delete()) {
+				if (path.toFile().delete() == false) {
 					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local component media. Path: {0}", path.toString()));
 				}
 			}
@@ -678,6 +678,12 @@ public class SubComponentServiceImpl
 	public List<ComponentTag> getTagCloud()
 	{
 		String query = "select * from ComponentTag where activeStatus='A' GROUP BY text";
+		return persistenceService.query(query, null);
+	}
+
+	public List<ComponentMetadata> getMetadata()
+	{
+		String query = "SELECT * FROM ComponentMetadata LET $component = (SELECT name, activeStatus, approvalState FROM Component WHERE componentId = $parent.current.componentId LIMIT 1) WHERE activeStatus = 'A' AND $component[0].activeStatus = 'A' AND $component[0].approvalState = 'A' ORDER BY label ASC, componentId ASC";
 		return persistenceService.query(query, null);
 	}
 

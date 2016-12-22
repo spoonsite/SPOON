@@ -1,17 +1,21 @@
 <%--
-Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
 --%>
 <%-- 
     Document   : brandingPreview
@@ -40,18 +44,18 @@ limitations under the License.
 		request.setAttribute("admin", SecurityUtil.isAdminUser());			
 	%>	
 
-	<link href="webjars/extjs/6.0.0/build/classic/theme-neptune/resources/theme-neptune-all-debug.css" rel="stylesheet" type="text/css"/>
-	<link href="webjars/extjs/6.0.0/build/packages/ux/classic/neptune/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
-	<link href="webjars/extjs/6.0.0/build/packages/charts/classic/neptune/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
+	<link href="webjars/extjs/6.2.0/build/classic/theme-triton/resources/theme-triton-all-debug.css" rel="stylesheet" type="text/css"/>
+	<link href="webjars/extjs/6.2.0/build/packages/ux/classic/triton/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
+	<link href="webjars/extjs/6.2.0/build/packages/charts/classic/triton/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="webjars/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-	<link href="Branding.action?CSS&template=extTheme.jsp&brandingId=${param.brandingId}&v=${appVersion}" rel="stylesheet" type="text/css"/>
+	<link href="Branding.action?CSS&template=extTritonTheme.jsp&v=${appVersion}&brandingId=${param.brandingId}" rel="stylesheet" type="text/css"/>	
 	<link href="Branding.action?CSS&template=apptemplate.jsp&brandingId=${param.brandingId}&v=${appVersion}" rel="stylesheet" type="text/css"/>
-	<link href="Branding.action?Override&brandingId=${param.brandingId}&v=${appVersion}" rel="stylesheet" type="text/css"/>		
+	<link href="Branding.action?Override&brandingId=${param.brandingId}&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 	
-	<script src="webjars/extjs/6.0.0/ext-bootstrap.js" type="text/javascript"></script>
-	<script src="webjars/extjs/6.0.0/build/classic/theme-neptune/theme-neptune.js" type="text/javascript"></script>
-	<script src="webjars/extjs/6.0.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
-	<script src="webjars/extjs/6.0.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
+	<script src="webjars/extjs/6.2.0/ext-bootstrap.js" type="text/javascript"></script>
+	<script src="webjars/extjs/6.2.0/build/classic/theme-triton/theme-triton.js" type="text/javascript"></script>
+	<script src="webjars/extjs/6.2.0/build/packages/ux/classic/ux-debug.js" type="text/javascript"></script>
+	<script src="webjars/extjs/6.2.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
 	
 	<%-- Core Utils --%>	
 	<script src="scripts/global/override.js?v=${appVersion}" type="text/javascript"></script>	

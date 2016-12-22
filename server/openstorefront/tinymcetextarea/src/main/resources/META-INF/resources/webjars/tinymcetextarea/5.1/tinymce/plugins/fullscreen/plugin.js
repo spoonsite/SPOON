@@ -52,7 +52,7 @@ tinymce.PluginManager.add('fullscreen', function(editor) {
 		iframe = editor.getContentAreaContainer().firstChild;
 		iframeStyle = iframe.style;
 
-		if (fullscreenState) {
+		if (fullscreenState) {                                               
 			iframeWidth = iframeStyle.width;
 			iframeHeight = iframeStyle.height;
 			iframeStyle.width = iframeStyle.height = '100%';
@@ -67,7 +67,7 @@ tinymce.PluginManager.add('fullscreen', function(editor) {
 			DOM.bind(window, 'resize', resize);
 			resize();
 			resizeHandler = resize;
-		} else {
+		} else {                        
 			iframeStyle.width = iframeWidth;
 			iframeStyle.height = iframeHeight;
 

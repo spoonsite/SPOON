@@ -270,6 +270,19 @@ public class OrganizationServiceTest extends BaseTestCase
 				failureReason.append(ex).append("- Unable to delete ").append(organization.getName()).append("<br><br>");
 			}
 		}
+
+		Organization organizationCheck = new Organization();
+		organizationCheck.setName("Second-Test-002 Organization");
+		organizationCheck = organizationCheck.find();
+
+		if (organizationCheck != null) {
+			try {
+				service.getOrganizationService().removeOrganization(organizationCheck.getOrganizationId());
+			} catch (AttachedReferencesException ex) {
+				failureReason.append(ex).append("- Unable to delete ").append(organizationTarget.getName()).append("<br><br>");
+			}
+		}
+
 	}
 
 	@Override

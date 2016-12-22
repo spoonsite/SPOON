@@ -16,6 +16,9 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class used to handle user-generated attribute codes
@@ -25,16 +28,22 @@ public class AttributeCodeSave
 {
 
 	@ConsumeField
-	private String codeLabel;
+	@DataType(NewAttributeCode.class)
+	private List<NewAttributeCode> userAttributes = new ArrayList<>();
+	
 
-	public String getCodeLabel()
+	public AttributeCodeSave()
 	{
-		return codeLabel;
 	}
 
-	public void setCodeLabel(String codeLabel)
+	public List<NewAttributeCode> getUserAttributes()
 	{
-		this.codeLabel = codeLabel;
+		return userAttributes;
+	}
+
+	public void setUserAttributes(List<NewAttributeCode> userAttributes)
+	{
+		this.userAttributes = userAttributes;
 	}
 	
 }

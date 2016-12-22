@@ -71,3 +71,4 @@ project*.properties
 /server/openstorefront/target/
 /server/openstorefront/openstorefront-core/target/
 /server/openstorefront/openstorefront-plugin/target/
+/server/openstorefront/loadgenerator/target/

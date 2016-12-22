@@ -29,7 +29,6 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
-import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
@@ -61,6 +60,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
+import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
@@ -74,7 +74,6 @@ import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.model.IntegrationAll;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
 import edu.usu.sdl.openstorefront.core.model.ReviewAll;
-import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.sort.SortUtil;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -105,6 +104,7 @@ import edu.usu.sdl.openstorefront.core.view.SearchResultAttribute;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -116,7 +116,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -141,7 +140,6 @@ import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
 import net.sf.ehcache.Element;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -513,7 +511,7 @@ public class CoreComponentServiceImpl
 				for (ComponentAttribute componentAttribute : component.getAttributes()) {
 					componentAttribute.getComponentAttributePk().setComponentId(oldComponent.getComponentId());
 				}
-				component.setAttributeChanged(handleBaseComponetSave(ComponentAttribute.class, component.getAttributes(), oldComponent.getComponentId()));
+				component.setAttributeChanged(handleBaseComponentSave(ComponentAttribute.class, component.getAttributes(), oldComponent.getComponentId()));
 
 			} else {
 
@@ -564,6 +562,8 @@ public class CoreComponentServiceImpl
 				if (url.contains("Media.action?TemporaryMedia")) {
 					// This src url contains temporary media -- we should convert it.
 					String tempMediaId = url.substring(url.indexOf("&name=") + "&name=".length());
+					tempMediaId = StringProcessor.urlDecode(tempMediaId);
+
 					TemporaryMedia existingTemporaryMedia = persistenceService.findById(TemporaryMedia.class, tempMediaId);
 					if (existingTemporaryMedia != null) {
 						// Check map if we've already processed this temporary media, otherwise, do conversion
@@ -580,6 +580,11 @@ public class CoreComponentServiceImpl
 							componentMedia.setMimeType(existingTemporaryMedia.getMimeType());
 							componentMedia.setUsedInline(true);
 							componentMedia.setHideInDisplay(false);
+							if (existingTemporaryMedia.getOriginalSourceURL().equals("fileUpload")) {
+								//stripe generated part of name
+								String nameParts[] = existingTemporaryMedia.getName().split(OpenStorefrontConstant.GENERAL_KEY_SEPARATOR);
+								componentMedia.setCaption(nameParts[0]);
+							}
 
 							// Set Media Type Code based on the mimetype stored in temporary (as retrieved from server)
 							String mediaTypeCode;
@@ -736,16 +741,16 @@ public class CoreComponentServiceImpl
 			throw new OpenStorefrontRuntimeException(validationResult.toString());
 		}
 
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentContact.class, componentAll.getContacts(), component.getComponentId()));
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentEvaluationSection.class, componentAll.getEvaluationSections(), component.getComponentId()));
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentExternalDependency.class, componentAll.getExternalDependencies(), component.getComponentId()));
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentMedia.class, componentAll.getMedia(), component.getComponentId()));
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentMetadata.class, componentAll.getMetadata(), component.getComponentId()));
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentResource.class, componentAll.getResources(), component.getComponentId()));
-		lockSwitch.setSwitched(handleBaseComponetSave(ComponentRelationship.class, componentAll.getRelationships(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentContact.class, componentAll.getContacts(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentEvaluationSection.class, componentAll.getEvaluationSections(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentExternalDependency.class, componentAll.getExternalDependencies(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentMedia.class, componentAll.getMedia(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentMetadata.class, componentAll.getMetadata(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentResource.class, componentAll.getResources(), component.getComponentId()));
+		lockSwitch.setSwitched(handleBaseComponentSave(ComponentRelationship.class, componentAll.getRelationships(), component.getComponentId()));
 
 		if (Convert.toBoolean(options.getUploadTags())) {
-			lockSwitch.setSwitched(handleBaseComponetSave(ComponentTag.class, componentAll.getTags(), component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponentSave(ComponentTag.class, componentAll.getTags(), component.getComponentId()));
 		}
 
 		if (Convert.toBoolean(options.getUploadQuestions())) {
@@ -760,7 +765,7 @@ public class CoreComponentServiceImpl
 				questionAllMap.put(question.getQuestion().uniqueKey(), question);
 			}
 			// We now send the questions to be saved.
-			lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestion.class, questions, component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponentSave(ComponentQuestion.class, questions, component.getComponentId()));
 
 			// After this point, we are assuming that the 'questions' list that we sent in to be saved
 			// still refers to the same questions.  However, after saving, they should all have proper questionIds.
@@ -776,7 +781,7 @@ public class CoreComponentServiceImpl
 					responses.add(response);
 				}
 			}
-			lockSwitch.setSwitched(handleBaseComponetSave(ComponentQuestionResponse.class, responses, component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponentSave(ComponentQuestionResponse.class, responses, component.getComponentId()));
 
 		}
 
@@ -791,7 +796,7 @@ public class CoreComponentServiceImpl
 				componentCons.addAll(reviewAll.getCons());
 				componentPros.addAll(reviewAll.getPros());
 			}
-			lockSwitch.setSwitched(handleBaseComponetSave(ComponentReview.class, reviews, component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponentSave(ComponentReview.class, reviews, component.getComponentId()));
 			for (ComponentReview review : reviews) {
 				ReviewAll reviewAll = reviewAllMap.get(review.uniqueKey());
 				List<ComponentReviewPro> pros = reviewAll.getPros();
@@ -805,8 +810,8 @@ public class CoreComponentServiceImpl
 					con.setComponentId(component.getComponentId());
 				}
 			}
-			lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewPro.class, componentPros, component.getComponentId()));
-			lockSwitch.setSwitched(handleBaseComponetSave(ComponentReviewCon.class, componentCons, component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponentSave(ComponentReviewPro.class, componentPros, component.getComponentId()));
+			lockSwitch.setSwitched(handleBaseComponentSave(ComponentReviewCon.class, componentCons, component.getComponentId()));
 		}
 
 		if (Convert.toBoolean(options.getUploadIntegration())) {
@@ -854,7 +859,7 @@ public class CoreComponentServiceImpl
 		return componentAll;
 	}
 
-	private <T extends BaseComponent> boolean handleBaseComponetSave(Class<T> baseComponentClass, List<T> baseComponents, String componentId)
+	private <T extends BaseComponent> boolean handleBaseComponentSave(Class<T> baseComponentClass, List<T> baseComponents, String componentId)
 	{
 		boolean changed = false;
 
@@ -1224,69 +1229,61 @@ public class CoreComponentServiceImpl
 	{
 		ComponentTrackingResult result = new ComponentTrackingResult();
 
-		ComponentTracking componentTrackingExample = new ComponentTracking();
-		componentTrackingExample.setActiveStatus(filter.getStatus());
-		componentTrackingExample.setComponentId(componentId);
+		List<String> componentIdInResults = new ArrayList<>();
+		if (StringUtils.isNotBlank(filter.getComponentName())) {
+			String query = "select componentId from " + Component.class.getSimpleName() + " where name.toLowerCase() like :componentName ";
+			Map<String, Object> parameterMap = new HashMap<>();
+			parameterMap.put("componentName", "%" + filter.getComponentName().toLowerCase().trim() + "%");
 
-		ComponentTracking componentTrackingStartExample = new ComponentTracking();
-		componentTrackingStartExample.setEventDts(filter.getStart());
-
-		ComponentTracking componentTrackingEndExample = new ComponentTracking();
-		componentTrackingEndExample.setEventDts(filter.getEnd());
-
-		ComponentTracking componentTrackingNameExample = new ComponentTracking();
-		componentTrackingNameExample.setUpdateUser("%" + filter.getName().trim() + "%");    // Force SQL Wildcards Into Parameter
-
-		QueryByExample queryByExample = new QueryByExample(componentTrackingExample);
-
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
-		specialOperatorModel.setExample(componentTrackingStartExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
-		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-		specialOperatorModel = new SpecialOperatorModel();
-		specialOperatorModel.setExample(componentTrackingEndExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
-		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-		specialOperatorModel = new SpecialOperatorModel();
-		specialOperatorModel.setExample(componentTrackingNameExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
-		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-		queryByExample.setMaxResults(filter.getMax());
-		queryByExample.setFirstResult(filter.getOffset());
-		queryByExample.setSortDirection(filter.getSortOrder());
-
-		ComponentTracking componentTrackingOrderExample = new ComponentTracking();
-		Field sortField = ReflectionUtil.getField(componentTrackingOrderExample, filter.getSortField());
-		if (sortField != null) {
-			try {
-				BeanUtils.setProperty(componentTrackingOrderExample, sortField.getName(), QueryByExample.getFlagForType(sortField.getType()));
-			} catch (IllegalAccessException | InvocationTargetException ex) {
-				LOG.log(Level.WARNING, "Unable to set sort field.", ex);
+			List<ODocument> documents = persistenceService.query(query, parameterMap);
+			for (ODocument document : documents) {
+				componentIdInResults.add(document.field("componentId"));
 			}
-			queryByExample.setOrderBy(componentTrackingOrderExample);
 		}
 
-		List<ComponentTracking> componentTrackings = persistenceService.queryByExample(ComponentTracking.class, queryByExample);
+		Map<String, Object> parameterMap = new HashMap<>();
+		StringBuilder primaryQuery = new StringBuilder();
+		primaryQuery.append("select from ").append(ComponentTracking.class.getSimpleName()).append(" where ");
+		primaryQuery.append(" activeStatus = :activeStatus ");
 
+		parameterMap.put("activeStatus", filter.getStatus());
+
+		if (StringUtils.isNotBlank(componentId)) {
+			primaryQuery.append(" and componentId = :componentId ");
+			parameterMap.put("componentId", componentId);
+		}
+
+		if (filter.getStartDts() != null && filter.getStartDts().getDate() != null) {
+			primaryQuery.append(" and eventDts >= :startDts ");
+			parameterMap.put("startDts", filter.getStartDts().getDate());
+		}
+
+		if (filter.getEndDts() != null && filter.getEndDts().getDate() != null) {
+			primaryQuery.append(" and eventDts <= :endDts ");
+			parameterMap.put("endDts", filter.getEndDts().getDate());
+		}
+
+		if (StringUtils.isNotBlank(filter.getName())) {
+			primaryQuery.append(" and updateUser.toLowerCase() like :nameSearch ");
+			parameterMap.put("nameSearch", "%" + filter.getName().toLowerCase().trim() + "%");
+		}
+
+		if (!componentIdInResults.isEmpty()) {
+			primaryQuery.append(" and componentId IN :componentIdList ");
+			parameterMap.put("componentIdList", componentIdInResults);
+		}
+
+		List<ComponentTracking> componentTrackings = persistenceService.query(primaryQuery.toString(), parameterMap);
+
+		result.setCount(componentTrackings.size());
 		for (ComponentTracking item : componentTrackings) {
 			ComponentTrackingCompleteWrapper wrapper = new ComponentTrackingCompleteWrapper();
 			wrapper.setData(item);
 			wrapper.setName(getComponentName(item.getComponentId()));
 			wrapper.setComponentTypeLabel(TranslateUtil.translateComponentType(item.getComponentType()));
-
 			result.getResult().add(wrapper);
 		}
-
-		if (filter.getSortField().equals(ComponentTrackingCompleteWrapper.FIELD_NAME)) {
-			result.getResult().sort(new BeanComparator<>(filter.getSortOrder(), filter.getSortField()));
-		}
-
-		queryByExample.setQueryType(QueryType.COUNT);
-		result.setCount(persistenceService.countByExample(queryByExample));
+		result.setResult(filter.filter(result.getResult()));
 
 		return result;
 	}
@@ -1323,7 +1320,6 @@ public class CoreComponentServiceImpl
 		components = components.stream().filter(c -> c.getActiveStatus().equals(Component.PENDING_STATUS) == false).collect(Collectors.toList());
 
 		result.setTotalNumber(components.size());
-		components = filter.filter(components);
 
 		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
 		integrationConfigExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
@@ -1341,12 +1337,48 @@ public class CoreComponentServiceImpl
 			}
 		});
 
-		List<ComponentAdminView> componentAdminViews = new ArrayList<>();
+		Component pendingChangeExample = new Component();
+		pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
+
+		QueryByExample queryPendingChanges = new QueryByExample(new Component());
+
+		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel.setExample(pendingChangeExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
+		queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
+
+		List<Component> pendingChanges = persistenceService.queryByExample(Component.class, queryPendingChanges);
+		Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
+		List<ComponentView> componentViews = new ArrayList<>();
 		for (Component component : components) {
+
+			ComponentView componentView = ComponentView.toView(component);
+
+			List<Component> pendingChangesList = pendingChangesMap.get(componentView.getComponentId());
+
+			if (pendingChangesList != null) {
+				componentView.setNumberOfPendingChanges(pendingChangesList.size());
+				if (pendingChangesList.size() > 0) {
+					Component changeComponent = pendingChangesList.get(0);
+					componentView.setPendingChangeComponentId(changeComponent.getComponentId());
+					componentView.setPendingChangeSubmitDts(changeComponent.getSubmittedDts());
+					componentView.setPendingChangeSubmitUser(changeComponent.getCreateUser());
+					componentView.setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, changeComponent.getApprovalState()));
+				}
+			} else {
+				componentView.setNumberOfPendingChanges(0);
+			}
+
+			componentViews.add(componentView);
+		}
+		componentViews = filter.filter(componentViews);
+
+		List<ComponentAdminView> componentAdminViews = new ArrayList<>();
+		for (ComponentView componentView : componentViews) {
 			ComponentAdminView componentAdminView = new ComponentAdminView();
-			componentAdminView.setComponent(ComponentView.toView(component));
+			componentAdminView.setComponent(componentView);
 			StringBuilder configs = new StringBuilder();
-			List<ComponentIntegrationConfig> configList = configMap.get(component.getComponentId());
+			List<ComponentIntegrationConfig> configList = configMap.get(componentView.getComponentId());
 			if (configList != null) {
 				configList.forEach(config
 						-> {
@@ -1360,33 +1392,6 @@ public class CoreComponentServiceImpl
 			componentAdminView.setIntegrationManagement(configs.toString());
 			componentAdminViews.add(componentAdminView);
 		}
-
-		Component pendingChangeExample = new Component();
-		pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
-
-		QueryByExample queryPendingChanges = new QueryByExample(new Component());
-
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
-		specialOperatorModel.setExample(pendingChangeExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
-		queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
-
-		List<Component> pendingChanges = persistenceService.queryByExample(Component.class, queryPendingChanges);
-		Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
-		for (ComponentAdminView componentAdminView : componentAdminViews) {
-			List<Component> pendingChangesList = pendingChangesMap.get(componentAdminView.getComponent().getComponentId());
-			if (pendingChangesList != null) {
-				componentAdminView.getComponent().setNumberOfPendingChanges(pendingChangesList.size());
-				if (pendingChangesList.size() > 0) {
-					Component changeComponent = pendingChangesList.get(0);
-					componentAdminView.getComponent().setPendingChangeComponentId(changeComponent.getComponentId());
-					componentAdminView.getComponent().setPendingChangeSubmitDts(changeComponent.getSubmittedDts());
-					componentAdminView.getComponent().setPendingChangeSubmitUser(changeComponent.getCreateUser());
-					componentAdminView.getComponent().setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, changeComponent.getApprovalState()));
-				}
-			}
-		}
-
 		result.setComponents(componentAdminViews);
 
 		return result;
@@ -1610,7 +1615,7 @@ public class CoreComponentServiceImpl
 		if (componentAll != null) {
 			componentAll.getComponent().setComponentId(null);
 			componentAll.getComponent().setName(componentAll.getComponent().getName() + COPY_MARKER);
-			componentAll.getComponent().setApprovalState(ApprovalStatus.PENDING);
+			componentAll.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 			componentAll.getComponent().setApprovedDts(null);
 			componentAll.getComponent().setApprovedUser(null);
 			componentAll.getComponent().setExternalId(null);
@@ -1973,6 +1978,17 @@ public class CoreComponentServiceImpl
 		ComponentAll targetComponent = getFullComponent(targetComponentId);
 		if (mergeComponent != null) {
 			if (targetComponent != null) {
+
+				//Keep these fields
+				mergeComponent.getComponent().setActiveStatus(targetComponent.getComponent().getActiveStatus());
+				mergeComponent.getComponent().setApprovalState(targetComponent.getComponent().getApprovalState());
+				mergeComponent.getComponent().setApprovedUser(targetComponent.getComponent().getApprovedUser());
+				mergeComponent.getComponent().setApprovedDts(targetComponent.getComponent().getApprovedDts());
+				mergeComponent.getComponent().setRecordVersion(targetComponent.getComponent().getRecordVersion());
+				mergeComponent.getComponent().setLastModificationType(ModificationType.MERGE);
+
+				targetComponent.getComponent().updateFields(mergeComponent.getComponent());
+
 				//a merge mashes together sub-enties from Merge to target
 				mergeSubEntities(mergeComponent.getAttributes(), targetComponent.getAttributes());
 				mergeSubEntities(mergeComponent.getContacts(), targetComponent.getContacts());
@@ -2087,19 +2103,7 @@ public class CoreComponentServiceImpl
 		for (T targetEntity : tempTargetEntities) {
 
 			if (mergeKeyMap.containsKey(targetEntity.uniqueKey()) == false) {
-
 				targetEntities.remove(targetEntity);
-
-				// Check If Media or Resource
-				if (targetEntity instanceof ComponentMedia) { // Check If Media
-
-					// Remove Local Media File
-					sub.removeLocalMedia((ComponentMedia) targetEntity);
-				} else if (targetEntity instanceof ComponentResource) { // Check If Resource
-
-					// Remove Local Resource File
-					sub.removeLocalResource((ComponentResource) targetEntity);
-				}
 			}
 		}
 	}
@@ -2311,8 +2315,8 @@ public class CoreComponentServiceImpl
 
 	public Component createPendingChangeComponent(String parentComponentId)
 	{
-		//copy
-		Component component = copy(parentComponentId);
+		//copy (this is a seperate transaction)
+		Component component = ServiceProxy.getProxy().getComponentService().copy(parentComponentId);
 
 		//then set component to pending changes
 		component = persistenceService.findById(Component.class, component.getComponentId());
@@ -2337,24 +2341,9 @@ public class CoreComponentServiceImpl
 
 			Component mainComponent = persistenceService.findById(Component.class, pendingChangeComponent.getPendingChangeId());
 			if (mainComponent != null) {
-				LOG.log(Level.FINEST, "Updating Core Information");
-				mainComponent.setName(pendingChangeComponent.getName());
-				mainComponent.setDescription(pendingChangeComponent.getDescription());
-				mainComponent.setComponentType(pendingChangeComponent.getComponentType());
-				mainComponent.setOrganization(pendingChangeComponent.getOrganization());
-				mainComponent.setReleaseDate(pendingChangeComponent.getReleaseDate());
-				mainComponent.setVersion(pendingChangeComponent.getVersion());
-				mainComponent.setSecurityMarkingType(pendingChangeComponent.getSecurityMarkingType());
-
-				RequiredForComponent requiredForComponent = new RequiredForComponent();
-				requiredForComponent.setComponent(mainComponent);
-
-				FileHistoryOption fileHistoryOption = new FileHistoryOption();
-				fileHistoryOption.setSkipRequiredAttributes(Boolean.TRUE);
-				doSaveComponent(requiredForComponent, fileHistoryOption);
 
 				LOG.log(Level.FINEST, "Merge Component");
-				fileHistoryOption = new FileHistoryOption();
+				FileHistoryOption fileHistoryOption = new FileHistoryOption();
 				fileHistoryOption.setUploadTags(Boolean.TRUE);
 				fileHistoryOption.setSkipRequiredAttributes(Boolean.TRUE);
 				mergedComponent = merge(componentIdOfPendingChange, mainComponent.getComponentId(), fileHistoryOption);

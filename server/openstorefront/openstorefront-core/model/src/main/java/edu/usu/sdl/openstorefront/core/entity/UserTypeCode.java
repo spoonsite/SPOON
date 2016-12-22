@@ -21,7 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
  *
  * @author jlaw
  */
-@APIDescription("User Types available")
+@APIDescription("User types available")
 public class UserTypeCode
 		extends LookupEntity<UserTypeCode>
 {

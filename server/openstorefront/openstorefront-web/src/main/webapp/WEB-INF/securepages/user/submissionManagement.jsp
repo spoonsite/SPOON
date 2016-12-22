@@ -1,17 +1,21 @@
 <%-- 
-Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
 
     Document   : submission
     Created on : Dec 21, 2015, 1:00:29 PM
@@ -28,17 +32,11 @@ limitations under the License.
 
 		<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
-		<script src="scripts/component/inlineMediaRetrieverWindow.js?v=${appVersion}" type="text/javascript"></script>
-		
+				
         <script type="text/javascript">
 			/* global Ext, CoreUtil, CoreService */
 
 			Ext.onReady(function () {
-
-				var inlineMediaWindow = Ext.create('OSF.component.InlineMediaRetrieverWindow', {					
-					id: 'inlineMediaWindow',
-					alwaysOnTop: true
-				});	
 				
 				CoreService.brandingservice.getCurrentBranding().then(function(response, opts){
 					var branding = Ext.decode(response.responseText);
@@ -454,7 +452,7 @@ limitations under the License.
 								{
 									text: 'Delete',
 									itemId: 'tbDelete',
-									hidden: true,
+									disabled: true,
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-trash',
 									handler: function () {
@@ -484,7 +482,7 @@ limitations under the License.
 									}
 								},
 								{
-									text: 'Remove Change Request',
+									text: 'Remove Change',
 									itemId: 'tbRemoveChangeRequest',
 									hidden: true,
 									scale: 'medium',								
@@ -518,10 +516,12 @@ limitations under the License.
 								tools.getComponent('tbRemoveChangeRequest').setHidden(true);
 								
 								tools.getComponent('tbUnsubmit').setHidden(true);
-								tools.getComponent('tbDelete').setHidden(true);
+								tools.getComponent('tbDelete').setHidden(false);
+								tools.getComponent('tbDelete').setDisabled(true);
 								tools.getComponent('tbUnapprove').setHidden(true);
 								
-								if (record.get('approvalState') === 'A'){									
+								if (record.get('approvalState') === 'A'){	
+									tools.getComponent('tbDelete').setHidden(true);
 									tools.getComponent('tbSubmitChange').setHidden(false);
 									tools.getComponent('tbUnapprove').setHidden(false);
 									
@@ -536,7 +536,7 @@ limitations under the License.
 									tools.getComponent('tbEdit').setDisabled(false);
 								}
 								if (record.get('approvalState') === 'N'){
-									tools.getComponent('tbDelete').setHidden(false);
+									tools.getComponent('tbDelete').setDisabled(false);
 									tools.getComponent('tbEdit').setDisabled(false);
 								}
 								
@@ -552,7 +552,8 @@ limitations under the License.
 								tools.getComponent('tbSubmitChange').setHidden(true);
 								tools.getComponent('tbRemoveChangeRequest').setHidden(true);
 								tools.getComponent('tbUnsubmit').setHidden(true);
-								tools.getComponent('tbDelete').setHidden(true);
+								tools.getComponent('tbDelete').setHidden(false);
+								tools.getComponent('tbDelete').setDisabled(true);
 								tools.getComponent('tbUnapprove').setHidden(true);
 							}							
 						}

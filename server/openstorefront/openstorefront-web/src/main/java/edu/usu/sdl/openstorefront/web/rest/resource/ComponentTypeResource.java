@@ -182,7 +182,7 @@ public class ComponentTypeResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Update a component type")
+	@APIDescription("Updates a component type")
 	@Produces(
 	{
 		MediaType.APPLICATION_JSON
@@ -232,7 +232,7 @@ public class ComponentTypeResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Activate a component type")
+	@APIDescription("Activates a component type")
 	@Path("/{type}/activate")
 	public Response activateComponentType(
 			@PathParam("type") String type
@@ -254,7 +254,7 @@ public class ComponentTypeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Inactives component type unless new type is specified then it moves the data and deletes the type")
+	@APIDescription("Inactivates a component type unless new type is specified then it moves the data and deletes the type")
 	@Path("/{type}")
 	public void deleteComponentType(
 			@PathParam("type") String type,

@@ -57,6 +57,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
+import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
@@ -661,7 +662,12 @@ public class ComponentRESTResource
 				}
 			}
 
-			return Response.ok(service.getComponentService().saveComponent(component)).build();
+			service.getComponentService().saveComponent(component);
+			Component updatedComponent = new Component();
+			updatedComponent.setComponentId(componentId);
+			updatedComponent = updatedComponent.find();
+
+			return Response.ok(updatedComponent).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -722,7 +728,7 @@ public class ComponentRESTResource
 		mergeComponent = mergeComponent.find();
 
 		Component targetComponent = new Component();
-		targetComponent.setComponentId(mergeId);
+		targetComponent.setComponentId(targetId);
 		targetComponent = targetComponent.find();
 		if (mergeComponent != null && targetComponent != null) {
 			if (mergeComponent.equals(targetComponent)) {
@@ -2209,6 +2215,16 @@ public class ComponentRESTResource
 
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource METADATA section">
 	@GET
+	@APIDescription("Get the entire metadata list")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentMetadata.class)
+	@Path("/metadata")
+	public List<ComponentMetadata> getComponentMetadata()
+	{
+		return service.getComponentService().getMetadata();
+	}
+
+	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces(
 			{
@@ -2295,7 +2311,7 @@ public class ComponentRESTResource
 			checkBaseComponentBelongsToComponent(componentMetadata, componentId);
 			service.getComponentService().deactivateBaseComponent(ComponentMetadata.class, metadataId);
 		}
-		return Response.ok().build();
+		return Response.noContent().build();
 	}
 
 	@PUT
@@ -3985,11 +4001,17 @@ public class ComponentRESTResource
 	@RequireAdmin
 	@APIDescription("Removes component integration and all child configs.")
 	@Path("/{componentId}/integration")
-	public void deleteComponentConfig(
+	public Response deleteComponentConfig(
 			@PathParam("componentId")
 			@RequiredParam String componentId)
 	{
-		service.getComponentService().deleteComponentIntegration(componentId);
+		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
+		if (integration.getActiveStatus().equals(ComponentIntegration.ACTIVE_STATUS) && integration.getStatus().equals(RunStatus.WORKING)) {
+			return Response.status(Response.Status.NOT_MODIFIED).build();
+		} else {
+			service.getComponentService().deleteComponentIntegration(componentId);
+			return Response.ok().build();
+		}
 	}
 
 	@POST
@@ -4002,8 +4024,20 @@ public class ComponentRESTResource
 	{
 		ComponentIntegration integration = service.getPersistenceService().findById(ComponentIntegration.class, componentId);
 		if (integration != null) {
-			JobManager.runComponentIntegrationNow(componentId, null);
-			return Response.ok().build();
+			if (integration.getActiveStatus().equals(ComponentIntegration.INACTIVE_STATUS)) {
+				if (integration.getStatus().equals(RunStatus.WORKING)) {
+					integration.setStatus(RunStatus.COMPLETE);
+					service.getComponentService().saveComponentIntegration(integration);
+
+				}
+				return Response.status(Response.Status.NOT_MODIFIED).build();
+			} else {
+				if (!integration.getStatus().equals(RunStatus.WORKING)) {
+					JobManager.runComponentIntegrationNow(componentId, null);
+					return Response.ok().build();
+				}
+				return Response.status(Response.Status.NOT_MODIFIED).build();
+			}
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}

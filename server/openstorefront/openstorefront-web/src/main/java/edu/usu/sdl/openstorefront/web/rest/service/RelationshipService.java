@@ -48,12 +48,12 @@ import javax.ws.rs.core.Response;
  * @author dshurtleff
  */
 @Path("v1/service/relationship")
-@APIDescription("Relationships Services that cross multiple resources")
+@APIDescription("Relationship Services that cross multiple resources")
 public class RelationshipService
 	extends BaseResource	
 {
 	@GET
-	@APIDescription("Find the next level of give a entity")
+	@APIDescription("Find the next level of a given entity")
 	@DataType(RelationshipView.class)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getNextRelationships(

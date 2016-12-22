@@ -30,11 +30,12 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Captures user feedback")
 public class FeedbackTicket
-		extends  StandardEntity<FeedbackTicket>
+		extends StandardEntity<FeedbackTicket>
 {
+
 	@PK(generated = true)
 	private String feedbackId;
-	
+
 	@ConsumeField
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -56,21 +57,24 @@ public class FeedbackTicket
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_60)
 	private String ticketType;
 
+	private String externalId;
+
 	@ConsumeField
 	private WebInformation webInformation;
 
 	public FeedbackTicket()
 	{
 	}
-	
-	public String fullSubject() {
+
+	public String fullSubject()
+	{
 		return this.getTicketType() + " - " + this.getSummary();
 	}
-	
+
 	public String fullDescription()
 	{
 		if (getWebInformation() == null) {
-			setWebInformation(new WebInformation());			
+			setWebInformation(new WebInformation());
 		}
 
 		/**
@@ -91,7 +95,7 @@ public class FeedbackTicket
 		sb.append("*Web Screen Resolution*:  ").append(StringProcessor.blankIfNull(this.getWebInformation().getScreenResolution())).append("\n");
 		sb.append("*Application Version*:  ").append(PropertiesManager.getApplicationVersion()).append("\t\n");
 		sb.append("\t\n");
-		sb.append(this.getDescription());		
+		sb.append(this.getDescription());
 		return sb.toString();
 	}
 
@@ -203,6 +207,16 @@ public class FeedbackTicket
 	public void setFeedbackId(String feedbackId)
 	{
 		this.feedbackId = feedbackId;
+	}
+
+	public String getExternalId()
+	{
+		return externalId;
+	}
+
+	public void setExternalId(String externalId)
+	{
+		this.externalId = externalId;
 	}
 
 }

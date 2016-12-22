@@ -40,12 +40,13 @@ public class HTMLSanitizer
 							"colgroup", "dd", "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6",
 							"i", "img", "li", "ol", "p", "pre", "q", "small", "strike", "strong",
 							"sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "u",
-							"ul", "label", "video", "audio", "source", "track")
+							"ul", "label", "video", "audio", "source", "track", "font")
 					.addAttributes("a", "href", "title")
 					.addAttributes("div", "ng-show", "class")
 					.addAttributes("p", "data-attributelabel", "class")
 					.addAttributes("blockquote", "cite")
 					.addAttributes("col", "span", "width")
+					.addAttributes("font", "color", "face")
 					.addAttributes("colgroup", "span", "width")
 					.addAttributes("img", "align", "alt", "height", "src", "title", "width", "data-storefront-ignore")
 					.addAttributes("ol", "start", "type")
@@ -55,11 +56,12 @@ public class HTMLSanitizer
 					.addAttributes("source", "src", "type", "media")
 					.addAttributes("track", "src", "label", "kind", "srclang", "default")
 					.addAttributes("q", "cite")
-					.addAttributes("table", "summary", "width", "height", "border", "align", "cellspacing", "cellpadding", "bgcolor", "bordercolor")
-					.addAttributes("td", "abbr", "axis", "colspan", "rowspan", "width")
+					.addAttributes("table", "summary", "width", "height", "border", "align", "cellspacing", "cellpadding", "bgcolor", "bordercolor", "class")
+					.addAttributes("td", "abbr", "axis", "colspan", "rowspan", "width", "class")
 					.addAttributes(
 							"th", "abbr", "axis", "colspan", "rowspan", "scope",
-							"width")
+							"width", "class")
+					.addAttributes("tr", "class")
 					.addAttributes("ul", "type")
 					//.addProtocols("a", "href", "ftp", "http", "https", "mailto")
 					.addProtocols("blockquote", "cite", "http", "https")

@@ -15,16 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.web.test.dataimport;
 
+import edu.usu.sdl.openstorefront.web.test.BaseDataImportTest;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.core.entity.DataSource;
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
-import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
-import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
-import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -32,7 +29,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author dshurtleff
  */
 public class ER2XMLTest
-		extends BaseTestCase
+		extends BaseDataImportTest
 {
 
 	private String fileHistoryId = null;
@@ -55,22 +52,9 @@ public class ER2XMLTest
 
 		fileHistoryId = service.getImportService().importData(importContext);
 
-		FileHistoryError fileHistoryError = new FileHistoryError();
-		fileHistoryError.setFileHistoryId(fileHistoryId);
-		List<FileHistoryError> errors = fileHistoryError.findByExample();
+		waitForImport(fileHistoryId);
+		handleResults(fileHistoryId);
 
-		long warningCount = errors.stream()
-				.filter(error -> error.getFileHistoryErrorType().equals(FileHistoryErrorType.WARNING))
-				.count();
-		addResultsLines("Warnings: " + warningCount);
-
-		long errorCount = errors.size() - warningCount;
-		addResultsLines("Errors: " + errorCount);
-		if (errorCount != 0) {
-			errors.forEach(error -> {
-				addFailLines("Type: " + error.getFileHistoryErrorType() + " - " + error.getErrorMessage());
-			});
-		}
 	}
 
 	@Override

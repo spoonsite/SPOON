@@ -51,7 +51,7 @@ public class BrandingResource
 
 	@GET
 	@RequireAdmin
-	@APIDescription("Get's all brandings")
+	@APIDescription("Gets all brandings")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Branding.class)
 	public Response getBranding()
@@ -66,7 +66,7 @@ public class BrandingResource
 	}
 
 	@GET
-	@APIDescription("Get's the current branding view")
+	@APIDescription("Gets the current branding view")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Branding.class)
 	@Path("/current")

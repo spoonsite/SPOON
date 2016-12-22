@@ -1,17 +1,21 @@
 <%--
-Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -202,19 +206,45 @@ limitations under the License.
 													url: 'api/v1/service/search/suggestions'													
 												}
 											},
-											listeners:{
+											listeners: {
+												
+												expand: function(field, opts) {
+												
+													field.getPicker().clearHighlight();
+												},
+												
 												specialkey: function(field, e) {
+													
 													var value = this.getValue();
-													if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {													
-														var query = value;
-														if (query && !Ext.isEmpty(query)) {
-															var searchRequest = {
-																type: 'SIMPLE',
-																query: CoreUtil.searchQueryAdjustment(query)
-															};
-															CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+													
+													if (!Ext.isEmpty(value)) {
+														
+														switch (e.getKey()) {
+															
+															case e.ENTER:
+																var query = value;
+																if (query && !Ext.isEmpty(query)) {
+																	var searchRequest = {
+																		type: 'SIMPLE',
+																		query: CoreUtil.searchQueryAdjustment(query)
+																	};
+																	CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+																}
+																window.location.href = 'searchResults.jsp';
+																break;
+															
+															case e.HOME:
+																field.setValue(field.lastQuery);
+																field.selectText(0, 0);
+																field.expand();
+																break;
+															
+															case e.END:
+																field.setValue(field.lastQuery);
+																field.selectText(field.getValue().length, field.getValue().length);
+																field.expand();
+																break;
 														}
-														window.location.href = 'searchResults.jsp';														
 													}
 												}
 											} 
@@ -507,7 +537,7 @@ limitations under the License.
 									itemId: 'notificationBtn',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope icon-top-padding',
+									iconCls: 'fa fa-2x fa-envelope',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {

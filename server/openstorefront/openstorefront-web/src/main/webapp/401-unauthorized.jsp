@@ -1,4 +1,5 @@
-<%--     
+<%-- 
+	See LICENCE-APL.txt
     Created on : Apr 30, 2014, 9:23:25 AM
     Author     : dshurtleff
 --%>

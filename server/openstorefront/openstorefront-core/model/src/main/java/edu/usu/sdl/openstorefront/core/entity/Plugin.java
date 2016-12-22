@@ -46,7 +46,7 @@ public class Plugin
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Indentfies the plugin")
+	@APIDescription("Indentifies the plugin")
 	private String pluginType;
 
 	public Plugin()

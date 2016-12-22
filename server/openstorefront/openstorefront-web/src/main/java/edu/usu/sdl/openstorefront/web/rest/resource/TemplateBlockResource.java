@@ -38,7 +38,7 @@ import javax.ws.rs.core.Response;
  * @author dshurtleff
  */
 @Path("v1/resource/templateblocks")
-@APIDescription("Template blocks are use to define custom view for entries")
+@APIDescription("Template blocks are used to define custom view for entries")
 public class TemplateBlockResource
 	extends BaseResource
 {
@@ -85,7 +85,7 @@ public class TemplateBlockResource
 	
 	@PUT
 	@RequireAdmin
-	@APIDescription("Update a component type")
+	@APIDescription("Updates a component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{templateBlockId}")
@@ -123,7 +123,7 @@ public class TemplateBlockResource
 	
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Inactives component type template")
+	@APIDescription("Inactivates a component type template")
 	@Path("/{templateBlockId}")
 	public void deleteNewEvent(
 			@PathParam("templateBlockId") String templateBlockId

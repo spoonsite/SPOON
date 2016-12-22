@@ -1,17 +1,19 @@
 /* 
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
  */
 /* global Ext, CoreService, CoreUtil */
 
@@ -71,7 +73,8 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 			{
 				searchType: 'COMPONENT',
 				label: 'Entry',
-				options: Ext.create('Ext.panel.Panel', {					
+				options: function() {				
+					var optPanel = 	Ext.create('Ext.panel.Panel', {					
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -256,12 +259,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}					
 						}						
 					]					
-				})
+				});
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'ATTRIBUTE',
 				label: 'Attribute',			
-				options: Ext.create('Ext.panel.Panel', {
+				options: function() { 				
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -274,6 +280,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							name: 'keyField',
 							fieldLabel: 'Attribute Category <span class="field-required" />',
 							editable: false,
+							forceSelection: true,
 							allowBlank: false,
 							displayField: 'description',
 							valueField: 'attributeType',
@@ -292,6 +299,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							listeners: {
 								change: function(cb, newValue, oldValue, opts){
 									var codeCb = cb.up('panel').getComponent('keyValue');
+									codeCb.reset();
 									codeCb.getStore().load({
 										url: 'api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes'
 									});
@@ -305,6 +313,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							name: 'keyValue',
 							fieldLabel: 'Specific Category',
 							editable: false,
+							forceSelection: true,
 							displayField: 'label',
 							valueField: 'code',	
 							queryMode: 'local',
@@ -330,12 +339,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}
 						}					
 					]
-				})
+				});
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'ARCHITECTURE',
 				label: 'Architecture',
-				options: Ext.create('Ext.panel.Panel', {
+				options: function() {
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -373,6 +385,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							listeners: {
 								change: function(cb, newValue, oldValue, opts){
 									var codeCb = cb.up('panel').getComponent('keyValue');
+									codeCb.reset();
 									codeCb.getStore().load({
 										url: 'api/v1/resource/attributes/attributetypes/' + newValue + '/attributecodes'
 									});
@@ -418,12 +431,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}					
 						}						
 					]					
-				})
+				});
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'INDEX',
 				label: 'Index',
-				options: Ext.create('Ext.panel.Panel', {
+				options: function(){ 				
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -438,12 +454,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							maxLength: 1024
 						}						
 					]
-				})
+				});
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'TAG',
 				label: 'Tag',
-				options: Ext.create('Ext.panel.Panel', {
+				options: function(){
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -479,12 +498,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}					
 						}						
 					]					
-				})
+				});
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'METADATA',
 				label: 'Meta Data',
-				options: Ext.create('Ext.panel.Panel', {
+				options: function(){
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -528,12 +550,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}					
 						}						
 					]
-				})
+				});
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'USER_RATING',
 				label: 'User Rating',
-				options: Ext.create('Ext.panel.Panel', {
+				options: function(){ 
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -565,12 +590,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}					
 						}						
 					]
-				})
+				});
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'CONTACT',
 				label: 'Contact',
-				options: Ext.create('Ext.panel.Panel', {
+				options: function(){
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -674,12 +702,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}					
 						}						
 					]
-				})
+				});				
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'REVIEW',
 				label: 'User Review',
-				options: Ext.create('Ext.panel.Panel', {
+				options: function(){
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -871,12 +902,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}					
 						}						
 					]
-				})
+				});
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'REVIEWPRO',
 				label: 'User Review Pro',
-				options: Ext.create('Ext.panel.Panel', {
+				options: function(){
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -912,12 +946,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}					
 						}
 					]
-				})
+				});
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'REVIECON',
 				label: 'User Review Con',
-				options: Ext.create('Ext.panel.Panel', {
+				options: function(){
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -953,12 +990,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}					
 						}
 					]
-				})
+				});
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'QUESTION',
 				label: 'Question',
-				options: Ext.create('Ext.panel.Panel', {
+				options: function(){
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -1108,12 +1148,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}					
 						}						
 					]
-				})
+				});
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'QUESTION_RESPONSE',
 				label: 'Question Response',
-				options: Ext.create('Ext.panel.Panel', {
+				options: function(){
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -1263,12 +1306,15 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}					
 						}						
 					]
-				})
+				});
+					return optPanel;
+				}
 			},
 			{
 				searchType: 'EVALUTATION_SCORE',
 				label: 'Evaluation Score',
-				options: Ext.create('Ext.panel.Panel', {
+				options: function() { 									
+					var optPanel = Ext.create('Ext.panel.Panel', {
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
@@ -1320,7 +1366,9 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							}					
 						}						
 					]
-				})
+				});
+					return optPanel;
+				}	
 			}			
 						
 		];
@@ -1328,7 +1376,13 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 		searchTypes.sort(function(a, b){
 			return a.searchType.localeCompare(b.searchType);
 		});
-				
+			
+		advancePanel.resetEntryForm = function(){
+			advancePanel.entryForm.getComponent('searchType').suspendEvents(true);
+			advancePanel.entryForm.reset();
+			advancePanel.entryForm.getComponent('searchType').resumeEvents();
+		};
+		
 		advancePanel.entryForm = Ext.create('Ext.form.Panel', {
 			layout: 'anchor',
 			bodyStyle: 'padding: 10px;',
@@ -1356,22 +1410,9 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 					listeners: {
 						change: function(typeCB, newValue, oldValue, opts) {
 							var optionsPanel = advancePanel.entryForm.getComponent('options');
-							
-							advancePanel.entryForm.getForm().clearInvalid();
-							if (optionsPanel.getLayout().getActiveItem()) {
-								if (optionsPanel.getLayout().getActiveItem().reset) {
-									optionsPanel.getLayout().getActiveItem().reset();
-								}
-								optionsPanel.remove(optionsPanel.getLayout().getActiveItem(), false);
-							}
-							typeCB.getSelection().data.options.reset =  function() {
-								Ext.Array.each(this.items.items, function(item) {
-									if (item.reset) {
-										item.reset();
-									}	
-								});
-							};
-							optionsPanel.add(typeCB.getSelection().data.options);
+							optionsPanel.removeAll();
+							var optPanel = typeCB.getSelection().data.options();
+							optionsPanel.add(optPanel);
 						}
 					}
 				},
@@ -1419,7 +1460,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							xtype: 'button',
 							itemId: 'saveButton',
 							formBind: true,
-							text: 'Add',
+							text: 'Add Criteria',
 							minWidth: 175,
 							iconCls: 'fa fa-plus',
 							handler: function() {
@@ -1451,8 +1492,9 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									form: advancePanel.entryForm,
 									loadingText: 'Adding Search Criteria...',
 									success: function(response, opts) {
-										advancePanel.entryForm.reset();
-										saveButton.setText('Add');
+										advancePanel.resetEntryForm();
+										
+										saveButton.setText('Add Criteria');
 										var grid = advancePanel.entryForm.getComponent('searchGrid');										
 										if (advancePanel.entryForm.editRecord) {
 											
@@ -1493,9 +1535,9 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 							iconCls: 'fa fa-close',
 							margin: '0 0 0 20',
 							handler: function() {
-								advancePanel.entryForm.reset();
+								advancePanel.resetEntryForm();
 								advancePanel.entryForm.editRecord = null;
-								advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Add');
+								advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Add Criteria');
 							}
 						}						
 					]
@@ -1577,19 +1619,19 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 										advancePanel.entryForm.getComponent('searchType').setValue(rec.get('searchType'));
 										
 										advancePanel.entryForm.loadRecord(rec);
-										
+
 										//The rest is tricky since multiple value fields
 										var optionsPanel = advancePanel.entryForm.getComponent('options').getLayout().getActiveItem();
-										
+
 										var searchType = rec.get('searchType');
 										var value = rec.get('value');										
 										if (searchType === 'COMPONENT') {
 											var fieldValue = optionsPanel.getComponent('field').getValue();
-											
+
 											optionsPanel.getComponent('componentType').setValue(null);
 											optionsPanel.getComponent('dataSource').setValue(null);	
 											optionsPanel.getComponent('value').setValue(null);
-											
+
 											if (fieldValue === 'componentType') {
 												optionsPanel.getComponent('componentType').setValue(value);
 											} else if (fieldValue === 'dataSource') {
@@ -1597,27 +1639,41 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 											} else {
 												optionsPanel.getComponent('value').setValue(value);	
 											}											
-											
+
+										} else if (searchType === 'ATTRIBUTE') {
+											var keyField = optionsPanel.getComponent('keyField');
+											keyField.getStore().load({
+												callback: function() {
+													advancePanel.entryForm.loadRecord(rec);
+												}
+											});
+										} else if (searchType === 'ARCHITECTURE') {
+											var keyField = optionsPanel.getComponent('keyField');
+											keyField.getStore().load({
+												callback: function() {
+													advancePanel.entryForm.loadRecord(rec);
+												}
+											});
 										} else if (searchType === 'CONTACT') {
 											var fieldValue = optionsPanel.getComponent('field').getValue();
-											
+
 											optionsPanel.getComponent('contactType').setValue(null);											
 											optionsPanel.getComponent('value').setValue(null);
-											
+
 											if (fieldValue === 'contactType') {
 												optionsPanel.getComponent('contactType').setValue(value);
 											} else {
 												optionsPanel.getComponent('value').setValue(value);	
 											}
-											
+
 										} else if (searchType === 'REVIEW') {
 											var fieldValue = optionsPanel.getComponent('field').getValue();
-											
+
 											optionsPanel.getComponent('userTypeCode').setValue(null);	
 											optionsPanel.getComponent('userTimeCode').setValue(null);
 											//optionsPanel.getComponent('recommend').setValue(null);
 											optionsPanel.getComponent('value').setValue(null);
-											
+
 											if (fieldValue === 'userTypeCode') {
 												optionsPanel.getComponent('userTypeCode').setValue(value);
 											} else if (fieldValue === 'userTimeCode') {
@@ -1627,34 +1683,36 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 											} else {
 												optionsPanel.getComponent('value').setValue(value);	
 											}
-											
+
 										} else if (searchType === 'QUESTION') {
 											var fieldValue = optionsPanel.getComponent('field').getValue();
 
 											optionsPanel.getComponent('userTypeCode').setValue(null);											
 											optionsPanel.getComponent('value').setValue(null);
-											
+
 											if (fieldValue === 'userTypeCode') {
 												optionsPanel.getComponent('userTypeCode').setValue(value);
 											} else {
 												optionsPanel.getComponent('value').setValue(value);	
 											}											
-											
+
 										} else if (searchType === 'QUESTION_RESPONSE') {
 											var fieldValue = optionsPanel.getComponent('field').getValue();
-											
+
 											optionsPanel.getComponent('userTypeCode').setValue(null);											
 											optionsPanel.getComponent('value').setValue(null);
-											
+
 											if (fieldValue === 'userTypeCode') {
 												optionsPanel.getComponent('userTypeCode').setValue(value);
 											} else {
 												optionsPanel.getComponent('value').setValue(value);	
 											}											
-										}
+										}											
+										
+
 										
 										//change button to update
-										advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Update');										
+										advancePanel.entryForm.getComponent('buttonPanel').getComponent('saveButton').setText('Update Criteria');										
 										
 									}									
 								},
@@ -1687,9 +1745,9 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 		
 		Ext.Array.each(searchTypes, function(type) {
 			if (type.searchType === 'COMPONENT') {
-				advancePanel.entryForm.getComponent('options').add(type.options);
+				advancePanel.entryForm.getComponent('options').add(type.options());
 			}			
-		});
+		});		
 		advancePanel.entryForm.getComponent('searchType').setValue('COMPONENT');
 		
 		advancePanel.add(advancePanel.entryForm);		
@@ -1698,7 +1756,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 	
 	reset: function() {
 		var advancePanel = this;		
-		advancePanel.entryForm.reset();
+		advancePanel.resetEntryForm();
 		advancePanel.entryForm.getComponent('searchGrid').getStore().removeAll();
 	},
 
@@ -1744,8 +1802,8 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 				modal: true,
 				title: 'Save Search',
 				width: 300,
-				height: 150,
-				closeAction: 'destory',
+				height: 170,
+				closeAction: 'destroy',
 				layout: 'fit',
 				items: [
 					{

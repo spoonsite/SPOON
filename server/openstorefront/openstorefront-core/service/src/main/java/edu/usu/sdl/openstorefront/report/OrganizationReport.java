@@ -72,7 +72,6 @@ public class OrganizationReport
 				"# Question Responses",
 				"# Component Views",
 				"# Component Resources Clicked",
-				"# Article Views",
 				"# Logins"
 		);
 
@@ -103,7 +102,7 @@ public class OrganizationReport
 			long questions = getRecordCounts(ComponentQuestion.class, orgMap.get(org), null);
 			long response = getRecordCounts(ComponentQuestionResponse.class, orgMap.get(org), null);
 			long componentViews = getRecordCounts(ComponentTracking.class, orgMap.get(org), TrackEventCode.VIEW);
-			long componentResourceClick = getRecordCounts(ComponentTracking.class, orgMap.get(org), TrackEventCode.EXTERNAL_LINK_CLICK);		
+			long componentResourceClick = getRecordCounts(ComponentTracking.class, orgMap.get(org), TrackEventCode.EXTERNAL_LINK_CLICK);
 			long logins = getRecordCounts(UserTracking.class, orgMap.get(org), TrackEventCode.LOGIN);
 
 			cvsGenerator.addLine(
@@ -113,7 +112,7 @@ public class OrganizationReport
 					questions,
 					response,
 					componentViews,
-					componentResourceClick,		
+					componentResourceClick,
 					logins
 			);
 

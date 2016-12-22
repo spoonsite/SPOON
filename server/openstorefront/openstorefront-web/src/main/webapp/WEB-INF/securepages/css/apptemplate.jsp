@@ -183,19 +183,19 @@ limitations under the License.
 }
 
 .home-search-field {
-	font-size: 2.45em;
-	line-height: 1.45;
+	font-size: 2.6em;
+	line-height: 1.428571429;
 	color: #555555;
 	vertical-align: middle;
 	background-color: white;
 	background-image: none;
-	border: 0px solid #cccccc;
+	/* border: 1px solid #cccccc; */
 	/* border-left: 0px; */
 	border-right: 0px;	
 	/* -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); */
 	/* box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); */
 	/* -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; */
-	/* transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; */		
+	/* transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; */
 }
 
 .home-search-stats {
@@ -679,6 +679,56 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	margin-top: -5px;
 }
 
+/* For displaying tables pasted in from Confluence */
+.confluenceTable {
+	border-collapse:collapse;
+}
+
+.confluenceTh,.confluenceTd {
+	border:1px solid #ddd;
+	vertical-align:top;
+	text-align:left;
+	min-width:8px;
+	padding:7px 10px;
+}
+
+.confluenceTable ol,.confluenceTable ul {
+	margin-left:0;
+	padding-left:22px;
+}
+
+.confluenceTable,.table-wrap {
+	overflow-x:auto;
+	margin:10px 0 0;
+}
+
+table.confluenceTable th.confluenceTh,table.confluenceTable th.confluenceTh>p,table.confluenceTable td.confluenceTd.highlight,table.confluenceTable td.confluenceTd.highlight>p,table.confluenceTable th.confluenceTh.highlight-grey,table.confluenceTable th.confluenceTh.highlight-grey>p,table.confluenceTable td.confluenceTd.highlight-grey,table.confluenceTable td.confluenceTd.highlight-grey>p {
+	background-color:#f0f0f0;
+}
+
+table.confluenceTable th.confluenceTh.info,table.confluenceTable th.confluenceTh.info>p,table.confluenceTable td.confluenceTd.highlight.info,table.confluenceTable td.confluenceTd.highlight.info>p,table.confluenceTable th.confluenceTh.highlight-blue,table.confluenceTable th.confluenceTh.highlight-blue>p,table.confluenceTable td.confluenceTd.highlight-blue,table.confluenceTable td.confluenceTd.highlight-blue>p {
+	background-color:#e0f0ff;
+}
+
+table.confluenceTable th.confluenceTh.note,table.confluenceTable th.confluenceTh.note>p,table.confluenceTable td.confluenceTd.highlight.note,table.confluenceTable td.confluenceTd.highlight.note>p,table.confluenceTable th.confluenceTh.highlight-yellow,table.confluenceTable th.confluenceTh.highlight-yellow>p,table.confluenceTable td.confluenceTd.highlight-yellow,table.confluenceTable td.confluenceTd.highlight-yellow>p {
+	background-color:#ffd;
+}
+
+table.confluenceTable th.confluenceTh.nohighlight,table.confluenceTable th.confluenceTh.nohighlight>p {
+	font-weight:400;
+	background-color:transparent;
+}
+
+table.confluenceTable td.numberingColumn {
+	-webkit-touch-callout:none;
+	-webkit-user-select:none;
+	-khtml-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+	cursor:default;
+}
+
 /** Search tool styles **/
 
 .list-button {
@@ -768,6 +818,7 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 .text-success {
 	color: #3c763d;
 }
+
 .alert-success {
     color: #3c763d;
     background-color: #dff0d8;
@@ -1014,34 +1065,4 @@ to use set the ui: danger
     background-image: url(images/btn/btn-danger-small-pressed-fbg.gif);
 }
 
-.x-btn-focus.x-btn-menu-active .x-btn-danger-small-mc,
-.x-btn-focus.x-btn-pressed .x-btn-danger-small-mc {
-    background-color: #Aa0000;
-    background-image: url(images/btn/btn-danger-small-focus-pressed-fbg.gif);
-}
-
-.x-btn.x-btn-disabled .x-btn-danger-small-mc {
-    background-color: #ce0000;
-    background-image: url(images/btn/btn-danger-small-disabled-fbg.gif);
-}
-.x-btn-disabled.x-btn-danger-small {
-    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
-    opacity: 0.5;
-}
-
-.x-nbr .x-segmented-button-item.x-btn-focus.x-btn-danger-small:after {
-    border-width: 1px;
-    border-color: #cc0303;
-}
-
-.x-nbr .x-segmented-button-item.x-btn-focus.x-btn-over.x-btn-danger-small:after {
-    border-width: 1px;
-    border-color: #dd0303;
-}
-
-.x-nbr .x-segmented-button-item.x-btn-focus.x-btn-menu-active.x-btn-danger-small:after,
-.x-nbr .x-segmented-button-item.x-btn-focus.x-btn-pressed.x-btn-danger-small:after {
-    border-width: 1px;
-    border-color: #dd0303;
-}
 

@@ -1,23 +1,27 @@
 <%--
-Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
-		
+
 	<script src="scripts/component/templateBlocks.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/mediaViewer.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/relationshipVisualization.js?v=${appVersion}" type="text/javascript"></script>		
@@ -338,7 +342,7 @@ limitations under the License.
 							},
 							{
 								xtype: 'button',
-								iconCls: 'fa fa-2x fa-binoculars icon-top-padding',
+								iconCls: 'fa fa-2x fa-eye',
 								id: 'watchBtn',
 								tooltip: 'Watch',
 								scale: 'large',
@@ -364,7 +368,7 @@ limitations under the License.
 							},
 							{
 								xtype: 'button',								
-								text: '<span class="fa-stack" style="margin-left: -10px;margin-right: -10px;"><i class="fa fa-binoculars fa-stack-1x"></i><i class="fa fa-ban fa-stack-2x text-danger"></i></span>',
+								text: '<span class="fa-stack" style="margin-left: -10px;margin-right: -10px; margin-bottom: -10px;"><i class="fa fa-eye fa-stack-1x" style="top: -5px;"></i><i class="fa fa-2x fa-ban fa-stack-1x text-danger"  style="top: -5px;"></i></span>',
 								id: 'watchRemoveBtn',
 								tooltip: 'Remove Watch',
 								scale: 'large',								
@@ -384,7 +388,7 @@ limitations under the License.
 							},							
 							{
 								xtype: 'button',
-								iconCls: 'fa fa-2x fa-print icon-top-padding',
+								iconCls: 'fa fa-2x fa-print',
 								tooltip: 'Print',
 								scale: 'large',
 								margin: '0 10 0 0',
@@ -397,7 +401,7 @@ limitations under the License.
 							},
 							{
 								xtype: 'button',
-								iconCls: 'fa fa-2x fa-arrows-alt icon-top-padding',
+								iconCls: 'fa fa-2x fa-arrows-alt',
 								tooltip: 'Full Page',
 								hidden: fullPage,
 								scale: 'large',
@@ -407,8 +411,38 @@ limitations under the License.
 							},
 							{
 								xtype: 'button',								
+								id: 'ownerMenu',
+								hidden: true,
+								iconCls: 'fa fa-2x fa-navicon',								
+								scale: 'large',								
+								arrowVisible: false,
+								margin: '0 10 0 0',
+								menu: {
+									items: [
+										{
+											text: 'Submit Correction',
+											iconCls: 'fa fa-comment-o',
+											handler: function() {
+												Ext.Msg.show({
+													title:'Submit Correction?',
+													message: 'You are the owner of this entry.<br>Submit a change request for this entry from submissions.<br><br>Go to submissions now?',
+													buttons: Ext.Msg.YESNO,
+													icon: Ext.Msg.QUESTION,
+													fn: function(btn) {
+														if (btn === 'yes') {
+															window.parent.location.href = 'UserTool.action?load=Submissions';
+														}
+													}
+												});												
+											}
+										}
+									]
+								}
+							},
+							{
+								xtype: 'button',								
 								id: 'nonOwnerMenu',
-								iconCls: 'fa fa-2x fa-navicon icon-top-padding',								
+								iconCls: 'fa fa-2x fa-navicon',								
 								scale: 'large',								
 								arrowVisible: false,
 								margin: '0 10 0 0',
@@ -473,13 +507,12 @@ limitations under the License.
 								items: [
 									Ext.create('OSF.component.StandardComboBox', {
 										name: 'text',	
-										id: 'tagField',										
-										margin: '0 0 0 0',
+										id: 'tagField',																				
 										flex: 1,
 										fieldLabel: 'Add Tag',
 										forceSelection: false,
 										valueField: 'text',
-										displayField: 'text',
+										displayField: 'text',										
 										margin: '0 10 10 0',
 										maxLength: 120,
 										storeConfig: {
@@ -498,7 +531,7 @@ limitations under the License.
 										xtype: 'button',
 										text: 'Add',
 										iconCls: 'fa fa-plus',
-										margin: '25 0 0 0',
+										margin: '30 0 0 0',
 										minWidth: 75,
 										handler: function(){
 											var tagField = Ext.getCmp('tagField');
@@ -798,6 +831,7 @@ limitations under the License.
 														
 							if (entry.createUser === '${user}'){
 								Ext.getCmp('nonOwnerMenu').setHidden(true);
+								Ext.getCmp('ownerMenu').setHidden(false);								
 							}
 							
 							Ext.getCmp('toolsPanel').getComponent('updatedInfo').update(entry);

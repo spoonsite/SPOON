@@ -19,6 +19,8 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +56,8 @@ public class UserProfileView
 	@NotNull
 	@ConsumeField
 	private String userTypeCode;
+
+	private String userTypeDescription;
 
 	@NotNull
 	private Date createDts;
@@ -109,6 +113,7 @@ public class UserProfileView
 		view.setUpdateUser(profile.getUpdateUser());
 		view.setNotifyOfNew(profile.getNotifyOfNew());
 		view.setActiveStatus(profile.getActiveStatus());
+		view.setUserTypeDescription(TranslateUtil.translate(UserTypeCode.class, profile.getUserTypeCode()));
 
 		if (StringUtils.isNotBlank(profile.getExternalGuid())) {
 			view.setGuid(profile.getExternalGuid());
@@ -292,6 +297,16 @@ public class UserProfileView
 	public void setPhone(String phone)
 	{
 		this.phone = phone;
+	}
+
+	public String getUserTypeDescription()
+	{
+		return userTypeDescription;
+	}
+
+	public void setUserTypeDescription(String userTypeDescription)
+	{
+		this.userTypeDescription = userTypeDescription;
 	}
 
 }

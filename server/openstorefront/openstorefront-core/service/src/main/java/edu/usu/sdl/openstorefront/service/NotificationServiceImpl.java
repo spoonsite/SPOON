@@ -15,10 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.api.NotificationService;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
@@ -30,7 +30,6 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventWrapper;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -45,7 +44,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
-import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -63,81 +61,76 @@ public class NotificationServiceImpl
 	@Override
 	public NotificationEventWrapper getAllEventsForUser(String username, FilterQueryParams queryParams)
 	{
+                // Initialize Response Object
 		NotificationEventWrapper notificationEventWrapper = new NotificationEventWrapper();
+                
+                // Initialize Notification Event Query
+                String eventQuery = "SELECT FROM " + NotificationEvent.class.getSimpleName() + " WHERE activeStatus = '" + NotificationEvent.ACTIVE_STATUS + "'";
+                
+                // Check For Username
+                if (username != null) {
+                    
+                    // Add User-Specific Filtering To Query
+                    eventQuery += " AND (username = '" + username + "' OR (username IS NULL AND roleGroup IS NULL))";
+                }
+                
+                /////////////////////
+                // Get Total Count //
+                /////////////////////
+                
+                // Modify Query To Get Count
+                String eventCountQuery = eventQuery.replace("SELECT FROM", "SELECT COUNT(*) FROM");
+                
+                // Request Count
+                List<ODocument> countDocuments = persistenceService.query(eventCountQuery, null);
+                
+                // Initialize Count Variable
+                Long totalCount;
+                
+                // Check For Count Results
+                if (!countDocuments.isEmpty()) {
+                    
+                    // Set Total Count
+                    totalCount = countDocuments.get(0).field("COUNT");
+                }
+                else {
+                    
+                    // Set Total Count To Zero
+                    // (Something Happened)
+                    totalCount = 0L;
+                }
+                
+                // Set Total Count On Response Object
+                notificationEventWrapper.setTotalNumber(totalCount);
+                
+                /////////////////////
+                // End Total Count //
+                /////////////////////
+                
+                //////////////////////
+                // Sorting & Offset //
+                //////////////////////
+                
+                // Handle Sorting (In Query)
+                eventQuery += " ORDER BY " + queryParams.getSortField() + " " +  queryParams.getSortOrder();
+                
+                // Handle Offset (In Query)
+                eventQuery += " SKIP " + queryParams.getOffset();
+                
+                // Handle Limit (In Query)
+                eventQuery += " LIMIT " + queryParams.getMax();
+                
+                //////////////////////////
+                // End Sorting & Offset //
+                //////////////////////////
 
-		List<NotificationEvent> notificationEvents = new ArrayList<>();
-
-		//for all users
-		NotificationEvent notificationEventExample = new NotificationEvent();
-		notificationEventExample.setActiveStatus(NotificationEvent.ACTIVE_STATUS);
-		QueryByExample queryByExample = new QueryByExample(notificationEventExample);
-
-		NotificationEvent notificationNotExample = new NotificationEvent();
-		notificationNotExample.setUsername(QueryByExample.STRING_FLAG);
-		notificationNotExample.setRoleGroup(QueryByExample.STRING_FLAG);
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel(notificationNotExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NULL);
-		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-		NotificationEvent notificationEventStart = new NotificationEvent();
-		notificationEventStart.setCreateDts(queryParams.getStart());
-
-		NotificationEvent notificationEventEnd = new NotificationEvent();
-		notificationEventEnd.setCreateDts(queryParams.getEnd());
-
-		SpecialOperatorModel specialOperatorStartModel = new SpecialOperatorModel();
-		specialOperatorStartModel.setExample(notificationEventStart);
-		specialOperatorStartModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
-		queryByExample.getExtraWhereCauses().add(specialOperatorStartModel);
-
-		SpecialOperatorModel specialOperatorEndModel = new SpecialOperatorModel();
-		specialOperatorEndModel.setExample(notificationEventEnd);
-		specialOperatorEndModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-		specialOperatorEndModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
-		queryByExample.getExtraWhereCauses().add(specialOperatorEndModel);
-
-		queryByExample.setMaxResults(queryParams.getMax());
-		queryByExample.setFirstResult(queryParams.getOffset());
-		queryByExample.setSortDirection(queryParams.getSortOrder());
-
-		NotificationEvent notificationEventSortExample = new NotificationEvent();
-		Field sortField = ReflectionUtil.getField(notificationEventSortExample, queryParams.getSortField());
-		if (sortField != null) {
-			BeanUtil.setPropertyValue(sortField.getName(), notificationEventSortExample, QueryByExample.getFlagForType(sortField.getType()));
-			queryByExample.setOrderBy(notificationEventSortExample);
-		}
-
-		notificationEvents.addAll(persistenceService.queryByExample(NotificationEvent.class, queryByExample));
-		notificationEventWrapper.setTotalNumber(persistenceService.countByExample(queryByExample));
-
-		//TODO: groups (lookup userprofile and get the users groups and then query for those groups.)
-		//////////////////
-		notificationEventExample = new NotificationEvent();
-		notificationEventExample.setActiveStatus(NotificationEvent.ACTIVE_STATUS);
-		notificationEventExample.setUsername(username);
-		queryByExample = new QueryByExample(notificationEventExample);
-		queryByExample.getExtraWhereCauses().add(specialOperatorStartModel);
-		queryByExample.getExtraWhereCauses().add(specialOperatorEndModel);
-
-		queryByExample.setMaxResults(queryParams.getMax());
-		queryByExample.setFirstResult(queryParams.getOffset());
-		queryByExample.setSortDirection(queryParams.getSortOrder());
-		notificationEventSortExample = new NotificationEvent();
-		sortField = ReflectionUtil.getField(notificationEventSortExample, queryParams.getSortField());
-		if (sortField != null) {
-			BeanUtil.setPropertyValue(sortField.getName(), notificationEventSortExample, QueryByExample.getFlagForType(sortField.getType()));
-			queryByExample.setOrderBy(notificationEventSortExample);
-		}
-		List<NotificationEvent> userEvents = persistenceService.queryByExample(NotificationEvent.class, queryByExample);
-		for (NotificationEvent event : userEvents) {
-			if (StringUtils.isNotBlank(event.getUsername())) {
-				notificationEvents.add(event);
-			}
-		}
-		notificationEventWrapper.setTotalNumber(notificationEventWrapper.getTotalNumber() + persistenceService.countByExample(queryByExample));
-
-		notificationEvents = queryParams.filter(notificationEvents);
+                // Request Notification Events
+                List<NotificationEvent> notificationEvents = persistenceService.query(eventQuery, null);
+                
+                // Set Result Set Size In Response Object
 		notificationEventWrapper.setResults(notificationEvents.size());
+                
+                // Set Returned Notification Events In Response Object
 		notificationEventWrapper.setData(NotificationEventView.toView(notificationEvents));
 
 		//mark read flag
@@ -172,6 +165,7 @@ public class NotificationServiceImpl
 			notificationEventWrapper.setData(notificationEventWrapper.getData().stream().filter(r -> r.getReadMessage() == false).collect(Collectors.toList()));
 		}
 
+                // Return Response
 		return notificationEventWrapper;
 	}
 

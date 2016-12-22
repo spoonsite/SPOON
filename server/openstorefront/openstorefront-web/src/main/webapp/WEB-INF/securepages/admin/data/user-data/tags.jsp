@@ -1,4 +1,22 @@
-
+<%--
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../../layout/toplevelLayout.jsp">
@@ -403,6 +421,13 @@
 
 								// Add Components To Component-Tag Association Store
 								store_tagComponents_local.setData(components);
+								
+								// Hide Entry Text
+								Ext.getCmp('east-north-container').hide();
+								
+								// Display Grids
+								Ext.getCmp('east-west-container').show();
+								Ext.getCmp('east-east-container').show();
 							}
 						}
 					},
@@ -527,7 +552,8 @@
 						plugins: {
 							
 							ptype: 'gridviewdragdrop',
-							ddGroup: 'tagAssociationDragDropGroup',
+							dragGroup: 'tagAssociation-add-drag-drop-group',
+							dropGroup: 'tagAssociation-remove-drag-drop-group',
 							enableDrag: true,
 							enableDrop: true,
 							dragText: 'Add: {0}',
@@ -785,7 +811,8 @@
 						plugins: {
 							
 							ptype: 'gridviewdragdrop',
-							ddGroup: 'tagAssociationDragDropGroup',
+							dragGroup: 'tagAssociation-remove-drag-drop-group',
+							dropGroup: 'tagAssociation-add-drag-drop-group',
 							enableDrag: true,
 							enableDrop: true,
 							dragText: 'Remove: {0}',
@@ -943,7 +970,7 @@
 					height: '100%',
 					items: [
 						{
-							title: 'Tags',
+							title: 'Select A Tag',
 							region: 'west',
 							xtype: 'panel',
 							margin: '5 5 5 5',
@@ -958,8 +985,19 @@
 							]
 						},
 						{
-							title: 'Tag Association',
 							region: 'center',
+							xtype: 'panel',
+							margin: '0 10 0 0',
+							minWidth: 10,
+							maxWidth: 10,
+							flex: 0,
+							id: 'center-container',
+							cls: 'x-panel-header-default',
+							style: 'border: none;'
+						},
+						{
+							title: 'Tag/Entry Association',
+							region: 'east',
 							xtype: 'panel',
 							margin: '5 5 5 5',
 							flex: 6,
@@ -967,12 +1005,21 @@
 							layout: 'border',
 							items: [
 								{
-									title: 'Unassociated Entries',
+									region: 'north',
+									xtype: 'panel',
+									html: '<div style="width: 100%; line-height: 3em; background-color: white; text-align: center; font-weight: bold;">Select A Tag</div>',
+									margin: '5 5 5 5',
+									flex: 1,
+									id: 'east-north-container'
+								},
+								{
+									title: 'Unassociated Entries <i class="fa fa-question-circle"  data-qtip="Drag Entries from here to the \'Associated Entries\' column to associate the Entry with the selected Tag."></i>',
 									region: 'center',
 									xtype: 'panel',
-									margin: '5 5 5 5',
+									margin: '5 5 5 0',
 									flex: 2,
 									id: 'east-west-container',
+									hidden: true,
 									layout: {
 										type: 'hbox',
 										align: 'stretch'
@@ -983,12 +1030,13 @@
 									]
 								},
 								{
-									title: 'Associated Entries',
+									title: 'Associated Entries <i class="fa fa-question-circle"  data-qtip="Drag Entries from here to the \'Unssociated Entries\' column to disassociate the Entry from the selected Tag."></i>',
 									region: 'east',
 									xtype: 'panel',
-									margin: '5 5 5 5',
+									margin: '5 0 5 5',
 									flex: 2,
 									id: 'east-east-container',
+									hidden: true,
 									layout: {
 										type: 'hbox',
 										align: 'stretch'
@@ -1008,6 +1056,7 @@
 					title: 'Add Tag',
 					modal: true,
 					width: '30%',
+					height: 185,
 					y: '10em',
 					iconCls: 'fa fa-lg fa-plus',
 					layout: 'fit',

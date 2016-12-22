@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Dependancy need external to package component")
+@APIDescription("Dependency need external to package component")
 public class ComponentExternalDependency
 		extends BaseComponent<ComponentExternalDependency>
 {
@@ -53,7 +53,7 @@ public class ComponentExternalDependency
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	@Sanitize(TextSanitizer.class)
-	@APIDescription("External URL to the dependancy")
+	@APIDescription("External URL to the dependency")
 	private String dependancyReferenceLink;
 
 	@ConsumeField
@@ -68,7 +68,14 @@ public class ComponentExternalDependency
 	@Override
 	public String uniqueKey()
 	{
-		return getDependencyName() + OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + getVersion();
+		String key =  getDependencyName() 
+					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
+					+ getVersion()
+					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
+					+ getDependancyReferenceLink()
+					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR 
+					+ getComment();
+		return key;
 	}
 
 	@Override

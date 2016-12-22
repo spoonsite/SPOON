@@ -1,3 +1,22 @@
+<%--
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
@@ -8,37 +27,41 @@
 		
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
-			Ext.onReady(function(){	
+			Ext.onReady(function(){
+				
+				var mediaStore = Ext.create('Ext.data.Store', {
+					storeId: 'mediaStore',
+					autoLoad: true,
+					pageSize: 100,
+					remoteSort: true,
+					sorters: [
+						new Ext.util.Sorter({
+							property: 'name',
+							direction: 'ASC'
+						})
+					],
+					fields: [
+						{
+							name: 'updateDts',
+							type:	'date',
+							dateFormat: 'c'
+						}
+					],
+					proxy: CoreUtil.pagingProxy({
+						type: 'ajax',
+						url: 'api/v1/resource/generalmedia',
+						reader: {
+							type: 'json',
+							rootProperty: 'data',
+							totalProperty: 'totalNumber'
+						}
+					})
+				});
 				
 				var mediaGrid = Ext.create('Ext.grid.Panel', {
 					id: 'mediaGrid',
 					title: 'Manage Media <i class="fa fa-question-circle"  data-qtip="Media that can be used for articles and badges." ></i>',
-					store: Ext.create('Ext.data.Store', {
-						storeId: 'mediaStore',
-						autoLoad: true,						
-						sorters: [
-							new Ext.util.Sorter({
-								property: 'name',
-								direction: 'ASC'
-							})
-						],
-						fields: [
-							{
-								name: 'updateDts',
-								type:	'date',
-								dateFormat: 'c'
-							}
-						],
-						proxy: CoreUtil.pagingProxy({
-							type: 'ajax',
-							url: 'api/v1/resource/generalmedia',
-							reader: {
-								type: 'json',
-								rootProperty: 'data',
-								totalProperty: 'totalNumber'
-							}
-						})
-					}),
+					store: mediaStore,
 					columnLines: true,
 					columns: [						
 						{ text: 'Name', dataIndex: 'name', minWidth: 200},
@@ -115,6 +138,12 @@
 								    }
 								}
 							]
+						},
+						{
+							xtype: 'pagingtoolbar',
+							dock: 'bottom',
+							store: mediaStore,
+							displayInfo: true
 						}
 					],
 					listeners: {
@@ -351,7 +380,7 @@
 					title: 'Add Media',
 					modal: true,
 					width: '40%',
-					height: 215,
+					height: 260,
 					y: 40,
 					resizable: false,
 					layout: 'fit',

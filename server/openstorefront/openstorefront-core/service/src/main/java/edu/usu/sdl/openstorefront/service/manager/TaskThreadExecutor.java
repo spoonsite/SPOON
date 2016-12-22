@@ -34,8 +34,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -59,6 +61,7 @@ public class TaskThreadExecutor
 	private static final int MAX_ORPHAN_QUEUE_TIME = 60000;
 
 	private static List<TaskFuture> tasks = Collections.synchronizedList(new ArrayList<>());
+	private static Queue<TaskRequest> queue = new ConcurrentLinkedQueue<>();
 
 	public TaskThreadExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue)
 	{
@@ -75,6 +78,13 @@ public class TaskThreadExecutor
 				if (taskFuture.getFuture().equals(future)) {
 					taskFuture.setCompletedDts(TimeUtil.currentDate());
 					taskFuture.setStatus(OpenStorefrontConstant.TaskStatus.DONE);
+
+					if (taskFuture.isQueueable()) {
+                                                TaskRequest nextRequest = queue.poll();
+                                                if (nextRequest != null) {
+                                                    this.submitTask(nextRequest);                                                    
+                                                }
+					}
 
 					try {
 						future.get();
@@ -207,7 +217,7 @@ public class TaskThreadExecutor
 	 * Submits a new task
 	 *
 	 * @param taskRequest
-	 * @return taskfuture or null if unable to be queued.
+	 * @return TaskFuture or null if unable to be queued.
 	 */
 	public synchronized TaskFuture submitTask(TaskRequest taskRequest)
 	{
@@ -217,7 +227,12 @@ public class TaskThreadExecutor
 			for (TaskFuture taskFuture : currentTasks) {
 				if (taskFuture.getTaskName().equals(taskRequest.getName())
 						&& OpenStorefrontConstant.TaskStatus.WORKING.equals(taskFuture.getStatus())) {
+
+					if (taskRequest.isQueueable()) {
+						queue.add(taskRequest);
+					}
 					runJob = false;
+					break;
 				}
 			}
 		}
@@ -226,6 +241,7 @@ public class TaskThreadExecutor
 		if (runJob) {
 			Future future = submit(taskRequest.getTask());
 			taskFuture = new TaskFuture(future, TimeUtil.currentDate(), taskRequest.isAllowMultiple());
+			taskFuture.setQueueable(taskRequest.isQueueable());
 			taskFuture.setCreateUser(SecurityUtil.getCurrentUserName());
 			taskFuture.setDetails(taskRequest.getDetails());
 			taskFuture.setTaskData(taskRequest.getTaskData());

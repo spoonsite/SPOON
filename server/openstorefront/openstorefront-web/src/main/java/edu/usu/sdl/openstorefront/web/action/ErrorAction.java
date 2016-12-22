@@ -16,10 +16,12 @@
 package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import java.util.Enumeration;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -34,7 +36,44 @@ public class ErrorAction
 	@DefaultHandler
 	public Resolution errorTrap()
 	{
-		throw new OpenStorefrontRuntimeException("This is just a stub", "Expection is already handled.");
+		//gather original request info
+		StringBuilder info = new StringBuilder();
+		String requestUrl = getContext().getRequest().getRequestURI();
+		String requestMethod = getContext().getRequest().getMethod();
+
+		StringBuilder input = new StringBuilder();
+		if (StringUtils.isNotBlank(getContext().getRequest().getQueryString())) {
+			input.append("Query: ").append(getContext().getRequest().getQueryString()).append("\n");
+		}
+
+		String inputData = input.toString();
+
+		info.append("Original Request: ").append(requestUrl).append("<br>");
+		info.append("Original Request Method: ").append(requestMethod).append("<br>");
+		info.append("Original Input: ").append(inputData).append("<br>");
+
+		StringBuilder headerInfo = new StringBuilder();
+		Enumeration<String> names = getContext().getRequest().getHeaderNames();
+		while (names.hasMoreElements()) {
+			String name = names.nextElement();
+			StringBuilder valueInfo = new StringBuilder();
+			Enumeration<String> values = getContext().getRequest().getHeaders(name);
+			while (values.hasMoreElements()) {
+				String value = values.nextElement();
+				valueInfo.append(value).append(" | ");
+
+			}
+			headerInfo.append(name).append(" = ").append(valueInfo).append("<br>");
+		}
+		info.append("Original Headers: ").append(headerInfo).append("<br>");
+
+		//Unhandled exception
+		Throwable exception = (Throwable) getContext().getRequest().getAttribute("exception");
+		if (exception != null) {
+			throw new OpenStorefrontRuntimeException("Unhandled Exception on a page occured", info.toString(), exception);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unhandled Exception on a page occured", info.toString());
+		}
 	}
 
 	@HandlesEvent("Error")

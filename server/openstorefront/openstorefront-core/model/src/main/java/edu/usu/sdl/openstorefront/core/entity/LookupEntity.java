@@ -170,7 +170,7 @@ public abstract class LookupEntity<T extends LookupEntity>
 				setHighlightStyle(data[HIGHLIGHT_STYLE].trim());
 			}
 		} else {
-			throw new OpenStorefrontRuntimeException("Missing Required Fields: (Code, Description) Unable import the data.");
+			throw new OpenStorefrontRuntimeException("Missing Required Fields: (Code, Description) Unable to import the data.");
 		}
 	}
 

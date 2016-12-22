@@ -1,3 +1,22 @@
+<%--
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
@@ -112,7 +131,7 @@
 									xtype: 'textfield',
 									id: 'user_name',
 									labelAlign: 'top',
-									fieldLabel: 'Name',
+									fieldLabel: 'Username',
 									name: 'user_name',
 									listeners: {
 										change: {
@@ -181,7 +200,7 @@
 									handler: function () {
 										userViewMessage();
 									},
-									tooltip: 'View the message data',
+									tooltip: 'View the message data'
 								},
 								{
 									xtype: 'tbfill'
@@ -748,7 +767,8 @@
 						{
 							dock: 'top',
 							xtype: 'toolbar',
-							items: [{
+							items: [
+								{
 									xtype: 'textfield',
 									id: 'entry_user',
 									labelAlign: 'top',
@@ -764,7 +784,24 @@
 												}
 										}
 									}
-								},
+								},						
+								{
+									xtype: 'textfield',
+									id: 'filter_component_name',
+									labelAlign: 'top',
+									fieldLabel: 'Entry Name',
+									name: 'componentName',
+									listeners: {
+										change: {
+											buffer: 1000,
+											fn: function () {
+													if (Ext.getCmp('filter_component_name').getValue() !== null) {
+														processEntryDataFilter();
+													}
+												}
+										}
+									}
+								},								
 								{
 									xtype: 'datefield',
 									id: 'from_entry_date',
@@ -861,6 +898,7 @@
 					name = Ext.getCmp('entry_user').getValue();
 					startDate = Ext.getCmp('from_entry_date').getValue();
 					endDate = Ext.getCmp('to_entry_date').getValue();
+					var componentName = Ext.getCmp('filter_component_name').getValue();
 
 					// Check For Name
 					if (name === null ||
@@ -887,7 +925,11 @@
 					if (nameIsBlank && datesAreBlank) {
 						
 						// Reload Grid Store
-						Ext.getCmp('entryTrackingGrid').getStore().load();
+						Ext.getCmp('entryTrackingGrid').getStore().loadPage(1, {
+							params: {
+								componentName: componentName
+							}
+						});
 					}
 					else if (!datesAreBlank) {
 						
@@ -912,7 +954,7 @@
 								// Build Store Options
 								var storeOptions = {
 									params: {
-										
+										componentName: componentName,
 										start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
 										end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
 									}
@@ -923,7 +965,7 @@
 								// Build Store Options
 								var storeOptions = {
 									params: {
-										
+										componentName: componentName,
 										name: name,
 										start: Ext.Date.format(startDate, 'Y-m-d\\TH:i:s.u'),
 										end: Ext.Date.format(endDate, 'Y-m-d\\TH:i:s.u')
@@ -945,7 +987,7 @@
 
 						Ext.getCmp('entryTrackingGrid').getStore().loadPage(1, {
 							params: {
-
+								componentName: componentName,
 								name: name
 							}
 						});

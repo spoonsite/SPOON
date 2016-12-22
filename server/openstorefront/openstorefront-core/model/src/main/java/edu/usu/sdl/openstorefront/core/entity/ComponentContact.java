@@ -42,7 +42,7 @@ public class ComponentContact
 	@PK(generated = true)
 	@NotNull
 	private String componentContactId;
-	
+
 	@FK(Contact.class)
 	@NotNull
 	private String contactId;
@@ -65,7 +65,6 @@ public class ComponentContact
 	private String lastName;
 
 	@ConsumeField
-	@Pattern(regexp = OpenStorefrontConstant.EMAIL_PATTERN)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_EMAIL)
 	@Sanitize(TextSanitizer.class)
 	private String email;
@@ -95,20 +94,20 @@ public class ComponentContact
 			return toContact();
 		}
 	}
-	
+
 	public Contact toContact()
 	{
 		Contact contact = new Contact();
-		contact.setContactId(this.contactId);		
+		contact.setContactId(this.contactId);
 		contact.setEmail(this.getEmail());
 		contact.setFirstName(this.getFirstName());
 		contact.setLastName(this.getLastName());
 		contact.setOrganization(this.getOrganization());
 		contact.setPhone(this.getPhone());
-		
-		return contact;		
+
+		return contact;
 	}
-	
+
 	@Override
 	public String uniqueKey()
 	{
@@ -141,6 +140,7 @@ public class ComponentContact
 	protected void customKeyClear()
 	{
 		setContactId(null);
+		setComponentContactId(null);
 	}
 
 	public String getContactId()

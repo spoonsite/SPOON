@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
  * This base abstraction for attributes
  * @author dshurtleff
  */
-@APIDescription("This base abstraction for attributes")
+@APIDescription("This is base abstraction for attributes")
 public abstract class Attribute
 	extends BaseEntity<Attribute>	
 {

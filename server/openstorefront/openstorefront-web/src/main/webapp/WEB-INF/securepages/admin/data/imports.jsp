@@ -1,3 +1,22 @@
+<%--
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
@@ -166,7 +185,7 @@
 											{
 												xtype: 'button',
 												text: 'Cancel',
-												margin: '8 0 00 0',
+												margin: '5 0 00 0',
 												iconCls: 'fa  fa-close',
 												handler: function() {
 													Ext.getCmp('attributeCodeAddBtn').setText('Add');
@@ -255,7 +274,7 @@
 						id: 'mainForm',
 						bodyStyle: 'padding: 20px;',
 						layout: 'anchor',
-						autoScroll: true,
+						scrollable: true,
 						items: [
 							{	
 								xtype: 'hidden',
@@ -323,7 +342,7 @@
 											},
 											{
 												xtype: 'button',
-												text: 'Upload',
+												text: 'Upload',												
 												iconCls: 'fa fa-upload',
 												formBind: true,
 												handler: function() {
@@ -338,7 +357,11 @@
 															Ext.getCmp('mainForm').setLoading(false);
 															var fieldData = Ext.decode(opts.response.responseText);															
 															fileFieldCB.getStore().loadData(fieldData.data);
-															Ext.toast('Loaded field from file', 'Upload Success');
+															Ext.toast({
+																html: 'Loaded field from file',
+																title: 'Upload Success',
+																width: 250																
+															 });
 														},
 														failure: function(response,opts){
 															Ext.getCmp('mainForm').setLoading(false);
@@ -351,7 +374,7 @@
 													});														
 													
 												},
-												margin: '25 0 0 0'
+												margin: Ext.isIE ? '32 0 0 0' : '30 0 0 0'
 											}
 										]
 									},									
@@ -562,7 +585,7 @@
 															{
 																xtype: 'button',
 																text: 'Cancel',
-																margin: '8 0 00 0',
+																margin: '5 0 00 0',
 																iconCls: 'fa  fa-close',
 																handler: function() {
 																	Ext.getCmp('fieldAddBtn').setText('Add');
@@ -811,7 +834,7 @@
 															{
 																xtype: 'button',
 																text: 'Cancel',
-																margin: '8 0 00 0',
+																margin: '5 0 00 0',
 																iconCls: 'fa  fa-close',
 																handler: function() {
 																	Ext.getCmp('attributeTypeAddBtn').setText('Add');
@@ -1368,8 +1391,8 @@
 																				}
 																			});														
 
-																		},
-																		margin: '25 0 0 0'																		
+																		},																		
+																		margin: Ext.isIE ? '32 0 0 0' : '30 0 0 0'																		
 																	}
 																]
 															}
@@ -1419,7 +1442,7 @@
 										title: 'Import Mapping',
 										modal: true,
 										width: 450,
-										height: 160,
+										height: 180,
 										y: 100,
 										maximizble: true,
 										closeAction: 'destroy',
@@ -1560,7 +1583,7 @@
 			
 			var actionShowMappingForm = function() {
 				addEditMapping.show();
-				addEditMapping.getComponent('mainForm').setScrollY(0);
+				
 
 				if (selectedMapFormat.get('fileType') === 'ATTRIBUTE') {
 					addEditMapping.getComponent('mainForm').getComponent('attributeMapping').setHidden(true);
@@ -1574,7 +1597,9 @@
 				//reset grids
 				Ext.getCmp('fieldGrid').getStore().removeAll();
 				Ext.getCmp('attributeTypeGrid').getStore().removeAll();
-		
+				
+				//Scroll at the end (the reset is moving the scroller)
+				Ext.getCmp('mainForm').setScrollY(0);		
 			};
 			
 			

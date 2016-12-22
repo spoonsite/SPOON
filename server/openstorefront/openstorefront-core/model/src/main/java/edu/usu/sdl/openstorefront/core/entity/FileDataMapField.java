@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.OneToMany;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -29,7 +30,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Hold a external field to internal entity field mapping")
+@APIDescription("Hold an external field to internal entity field mapping")
 public class FileDataMapField
 	implements Serializable
 {
@@ -72,6 +73,9 @@ public class FileDataMapField
 	@DataType(DataMapTransform.class)
 	@OneToMany(orphanRemoval = true)
 	private List<DataMapTransform> pathTransforms;
+	
+	@Version
+	private String storageVersion;
 
 	public FileDataMapField()
 	{
@@ -175,6 +179,16 @@ public class FileDataMapField
 	public void setFileAttachment(Boolean fileAttachment)
 	{
 		this.fileAttachment = fileAttachment;
+	}
+
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
 	}
 	
 }

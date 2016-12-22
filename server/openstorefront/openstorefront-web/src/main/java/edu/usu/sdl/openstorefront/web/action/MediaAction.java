@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
@@ -34,6 +35,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.Base64;
 import java.util.HashMap;
@@ -72,10 +75,10 @@ public class MediaAction
 		@Validate(required = true, field = "componentId", on = "UploadMedia")
 	})
 	private ComponentMedia componentMedia;
-	
-	@Validate(required = true, on = "DataImage")	
+
+	@Validate(required = true, on = "DataImage")
 	private String imageData;
-	
+
 	@Validate(required = true, on = "DataImage")
 	private String imageType;
 
@@ -89,6 +92,11 @@ public class MediaAction
 		@Validate(required = true, field = "name", on = "UploadGeneralMedia")
 	})
 	private GeneralMedia generalMedia;
+
+	@ValidateNestedProperties({
+		@Validate(required = true, field = "name", on = "UploadTemporaryMedia")
+	})
+	private TemporaryMedia temporaryMedia;
 
 	@DefaultHandler
 	public Resolution audioTestPage()
@@ -276,12 +284,12 @@ public class MediaAction
 	{
 		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
 		temporaryMediaExample.setName(name);
-		TemporaryMedia temporaryMedia = service.getPersistenceService().queryOneByExample(TemporaryMedia.class, temporaryMediaExample);
-		if (temporaryMedia == null) {
+		TemporaryMedia temporaryMediaFound = service.getPersistenceService().queryOneByExample(TemporaryMedia.class, temporaryMediaExample);
+		if (temporaryMediaFound == null) {
 			log.log(Level.FINE, MessageFormat.format("Temporary Media with name: {0} is not found.", name));
 			return new StreamingResolution("image/png")
 			{
-				
+
 				@Override
 				protected void stream(HttpServletResponse response) throws Exception
 				{
@@ -295,35 +303,81 @@ public class MediaAction
 
 		InputStream in;
 		long length;
-		Path path = temporaryMedia.pathToMedia();
+		Path path = temporaryMediaFound.pathToMedia();
 		if (path != null && path.toFile().exists()) {
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();
 		} else {
-			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check temporary media record: {1} ", new Object[]{temporaryMedia.pathToMedia(), temporaryMedia.getName()}));
+			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check temporary media record: {1} ", new Object[]{temporaryMediaFound.pathToMedia(), temporaryMediaFound.getName()}));
 			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}
 
 		return new RangeResolutionBuilder()
-				.setContentType(temporaryMedia.getMimeType())
+				.setContentType(temporaryMediaFound.getMimeType())
 				.setInputStream(in)
 				.setTotalLength(length)
 				.setRequest(getContext().getRequest())
-				.setFilename(temporaryMedia.getOriginalFileName())
+				.setFilename(temporaryMediaFound.getOriginalFileName())
 				.createRangeResolution();
 	}
-	
+
+	@HandlesEvent("UploadTemporaryMedia")
+	public Resolution uploadTemporaryMedia()
+	{
+		Map<String, String> errors = new HashMap<>();
+		if (temporaryMedia != null) {
+			temporaryMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
+			temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+			temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+			temporaryMedia.setOriginalFileName(StringProcessor.getJustFileName(file.getFileName()));
+			temporaryMedia.setOriginalSourceURL("fileUpload");
+			temporaryMedia.setMimeType(file.getContentType());
+			temporaryMedia.setName(temporaryMedia.getName()
+					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
+					+ StringProcessor.uniqueId()
+			);
+			String key = SecurityUtil.getCurrentUserName() + file.getFileName() + temporaryMedia.getName();
+			String hash = key;
+			try {
+				hash = StringProcessor.getHexFromBytes(MessageDigest.getInstance("SHA-1").digest(key.getBytes()));
+			} catch (NoSuchAlgorithmException ex) {
+				throw new OpenStorefrontRuntimeException("Hash Format not available", "Coding issue", ex);
+			}
+			temporaryMedia.setFileName(hash);
+
+			ValidationModel validationModel = new ValidationModel(temporaryMedia);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				try {
+					temporaryMedia = service.getSystemService().saveTemporaryMedia(temporaryMedia, file.getInputStream());
+					return streamResults(temporaryMedia);
+				} catch (IOException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+				} finally {
+					deleteTempFile(file);
+				}
+			} else {
+				errors.put("file", validationResult.toHtmlString());
+			}
+		} else {
+			errors.put("temporaryMedia", "Missing temporary media information");
+		}
+		return streamUploadResponse(errors);
+	}
+
 	@HandlesEvent("DataImage")
 	public Resolution tranformDataImage()
 	{
 		String data[] = imageData.split(",");
-		
+
 		String mimeType = data[0].substring(data[0].indexOf(":") + 1, data[0].indexOf(";"));
-		
-		ByteArrayInputStream in = new ByteArrayInputStream(Base64.getDecoder().decode(data[1]));		
-		return new StreamingResolution(mimeType, in){					
-		}.setFilename("visual." + imageType);		
+
+		ByteArrayInputStream in = new ByteArrayInputStream(Base64.getDecoder().decode(data[1]));
+		return new StreamingResolution(mimeType, in)
+		{
+		}.setFilename("visual." + imageType);
 	}
 
 	public String getMediaId()
@@ -394,6 +448,16 @@ public class MediaAction
 	public void setImageType(String imageType)
 	{
 		this.imageType = imageType;
+	}
+
+	public TemporaryMedia getTemporaryMedia()
+	{
+		return temporaryMedia;
+	}
+
+	public void setTemporaryMedia(TemporaryMedia temporaryMedia)
+	{
+		this.temporaryMedia = temporaryMedia;
 	}
 
 }

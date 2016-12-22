@@ -1,4 +1,22 @@
-
+<%--
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../../layout/toplevelLayout.jsp">
@@ -28,9 +46,16 @@
 					remoteSort: true,
 					sorters: [
 						new Ext.util.Sorter({
-							property: 'eventDts',
+							property: 'lastLoginDts',
 							direction: 'DESC'
 						})
+					],
+					fields: [
+						{
+							name: 'lastLoginDts',
+							type: 'date',
+							dateFormat: 'c'						
+						}
 					],
 					proxy: CoreUtil.pagingProxy({
 						id: 'userProfileStoreProxy',
@@ -45,26 +70,42 @@
 						url: 'api/v1/resource/userprofiles'											
 					}),
 					listeners: {
-						beforeLoad: function(store, operation, eOpts){
-							store.getProxy().extraParams = {
-								status: Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() ? Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() : 'A'
-							};
+						beforeLoad: function(store, operation, eOpts) {
+							
+							// Get Active Status
+							var activeStatus = Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue();
+							
+							// Get Search Field
+							var searchField = Ext.getCmp('userProfileGrid-filter-SearchField').getValue();
+							
+							// Get Search Value
+							var searchValue = Ext.getCmp('userProfileGrid-filter-SearchValue').getValue();
+							
+							// Clear Previous Parameters
+							store.getProxy().extraParams = {};
+							
+							// Check For Search
+							if (searchField != null && searchField != "" && searchValue != null && searchValue != "") {
+								
+								// Adjust Query String Parameters
+								store.getProxy().extraParams['searchField'] = searchField;
+								store.getProxy().extraParams['searchValue'] = searchValue;
+							}
+							
+							// Check For 'ALL'
+							if (activeStatus === 'ALL') {
+								
+								// Set Extra Filter Parameters
+								store.getProxy().extraParams['all'] = true;
+							}
+							else {
+							
+								// Set Extra Filter Parameters
+								store.getProxy().extraParams['status'] = activeStatus ? activeStatus : 'A';
+							}
 						}
 					}						
 				});
-
-				var userTypeStore = Ext.create('Ext.data.Store', {
-					storeId: 'userTypeStore',
-					autoLoad: true,
-					fields: ['code', 'description'],
-					proxy: {type: 'ajax', url: 'api/v1/resource/lookuptypes/UserTypeCode/view'}
-				});
-
-				var getUserType = function getUserType(code) {
-					if (code)
-						return userTypeStore.getData().find('code', code).data.description;
-					return '';
-				};
 
 
 				var userProfileGrid = Ext.create('Ext.grid.Panel', {
@@ -80,6 +121,11 @@
 							cellWrap: true
 						},
 						items: [
+							{
+								flex: 1,
+								text: 'Active Status',
+								dataIndex: 'activeStatus'
+							},
 							{
 								flex: 1,
 								text: 'Username',
@@ -105,7 +151,7 @@
 								text: 'User Type',
 								dataIndex: 'userTypeCode',
 								renderer: function (value, metaData, record) {
-									return getUserType(value);
+									return record.get('userTypeDescription');
 								}
 							},
 							{
@@ -155,42 +201,130 @@
 							dock: 'top',
 							xtype: 'toolbar',
 							items: [
-								Ext.create('OSF.component.StandardComboBox', {
-									id: 'userProfileGrid-filter-ActiveStatus',
-									emptyText: 'Active',
-									fieldLabel: 'Active Status',
-									name: 'activeStatus',
-									value: 'A',
-									listeners: {
-										change: function (filter, newValue, oldValue, opts) {
-											if (newValue) {												
-												userProfileStore.loadPage(1);
-												
-												Ext.getCmp('userProfileGrid').getSelectionModel().deselectAll();
-												Ext.getCmp('userProfileGrid-tools-edit').disable();
-												Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
+								{
+									xtype: 'fieldset',
+									title: 'Filter',
+									layout: 'hbox',
+									items: [
+										Ext.create('OSF.component.StandardComboBox', {
+											id: 'userProfileGrid-filter-ActiveStatus',											
+											fieldLabel: 'Active Status',
+											emptyText: '',
+											name: 'activeStatus',
+											value: 'A',
+											editable: false,
+											typeAhead: false,
+											margin: '0 0 10 0',
+											listeners: {
+												change: function (filter, newValue, oldValue, opts) {
+													if (newValue) {												
+														userProfileStore.loadPage(1);
+
+														Ext.getCmp('userProfileGrid').getSelectionModel().deselectAll();
+														Ext.getCmp('userProfileGrid-tools-edit').disable();
+														Ext.getCmp('userProfileGrid-tools-toggleActivation').disable();
+													}
+												}
+											},
+											storeConfig: {
+												customStore: {
+													fields: [
+														'code',
+														'description'
+													],
+													data: [
+														{
+															code: 'ALL',
+															description: 'All'
+														},
+														{
+															code: 'A',
+															description: 'Active'
+														},
+														{
+															code: 'I',
+															description: 'Inactive'
+														}
+													]
+												}
+											}
+										})
+									]
+								},
+								{
+									xtype: 'fieldset',
+									title: 'Search',
+									layout: 'hbox',
+									items: [
+										
+										Ext.create('OSF.component.StandardComboBox', {
+											id: 'userProfileGrid-filter-SearchField',
+											fieldLabel: 'Select Field',
+											emptyText: '',
+											name: 'searchField',											
+											value: 'username',
+											editable: false,
+											typeAhead: false,
+											margin: '0 5 10 0',
+											storeConfig: {
+												customStore: {
+													fields: [
+														'code',
+														'description'
+													],
+													data: [
+														{
+															code: 'username',
+															description: 'Username'
+														},
+														{
+															code: 'firstName',
+															description: 'First Name'
+														},
+														{
+															code: 'lastName',
+															description: 'Last Name'
+														}
+													]
+												}
+											},
+											listeners: {
+
+												change: function(filter, newValue, oldValue, opts) {
+
+													// Get Search Value Field Value
+													var searchValue = Ext.getCmp('userProfileGrid-filter-SearchValue').getValue();
+
+													// Check If Field Is Empty
+													if (searchValue != null && searchValue != "") {
+
+														userProfileStore.loadPage(1);
+													}
+												}
+											}
+										}),
+										{
+											xtype: 'textfield',
+											id: 'userProfileGrid-filter-SearchValue',
+											fieldLabel: 'Enter Value',
+											labelAlign: 'top',
+											labelSeparator: '',
+											name: 'searchValue',
+											margin: '0 0 10 5',
+											listeners: {
+
+												change: {
+
+													buffer: 1000,
+													fn: function() {
+
+														userProfileStore.loadPage(1);
+													}
+												}
 											}
 										}
-									},
-									storeConfig: {
-										customStore: {
-											fields: [
-												'code',
-												'description'
-											],
-											data: [
-												{
-													code: 'A',
-													description: 'Active'
-												},
-												{
-													code: 'I',
-													description: 'Inactive'
-												}
-											]
-										}
-									}
-								})
+									]
+								}
 							]
 						},
 						{
@@ -260,11 +394,36 @@
 									scale: 'medium',
 									id: 'userProfileGrid-tools-export',
 									iconCls: 'fa fa-2x fa-download',
-									disabled: true,
-									handler: function () {
-										var records = userProfileGrid.getSelection();
-										actionExportUser(records);
-									}
+									menu: [
+										{
+											text: 'All Profiles',
+											id: 'userProfileGrid-tools-export-all',
+											iconCls: 'fa fa-user',
+											handler: function() {
+												var records = userProfileGrid.getStore().getData().items;
+												actionExportUser([]);
+											}
+										},
+										{
+											text: 'Profiles on Current Page',
+											id: 'userProfileGrid-tools-export-shown',
+											iconCls: 'fa fa-user',
+											handler: function() {
+												var records = userProfileGrid.getStore().getData().items;
+												actionExportUser(records);
+											}
+										},
+										{
+											text: 'Selected Profiles',
+											id: 'userProfileGrid-tools-export-selected',
+											iconCls: 'fa fa-user',
+											disabled: true,
+											handler: function() {
+												var records = userProfileGrid.getSelection();
+												actionExportUser(records);
+											}
+										}
+									]
 								}
 							]
 						},
@@ -278,8 +437,8 @@
 					listeners: {
 						selectionchange: function (grid, record, index, opts) {
 							if (Ext.getCmp('userProfileGrid').getSelectionModel().getCount() === 1) {
+								Ext.getCmp('userProfileGrid-tools-export-selected').enable();
 								Ext.getCmp('userProfileGrid-tools-toggleActivation').enable();
-								Ext.getCmp('userProfileGrid-tools-export').enable();
 								// Only allow editing or messaging when the grid is showing active users.
 								if (Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() === 'A') {
 									Ext.getCmp('userProfileGrid-tools-edit').enable();
@@ -290,13 +449,13 @@
 								Ext.getCmp('userProfileGrid-tools-edit').disable();
 								Ext.getCmp('userProfileGrid-tools-message').disable();
 								if (Ext.getCmp('userProfileGrid').getSelectionModel().getCount() > 1) {
-									Ext.getCmp('userProfileGrid-tools-export').enable();
+									Ext.getCmp('userProfileGrid-tools-export-selected').enable();
 									Ext.getCmp('userProfileGrid-tools-toggleActivation').enable();
 									if (Ext.getCmp('userProfileGrid-filter-ActiveStatus').getValue() === 'A') {
 										Ext.getCmp('userProfileGrid-tools-message').enable();
 									}
 								} else {
-									Ext.getCmp('userProfileGrid-tools-export').disable();
+									Ext.getCmp('userProfileGrid-tools-export-selected').disable();
 									Ext.getCmp('userProfileGrid-tools-message').disable();
 								}
 							}

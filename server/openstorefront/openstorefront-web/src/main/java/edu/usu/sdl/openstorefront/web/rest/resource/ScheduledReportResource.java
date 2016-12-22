@@ -79,7 +79,7 @@ public class ScheduledReportResource
 	}
 
 	@GET
-	@APIDescription("Gets a schedule report record.")
+	@APIDescription("Gets a scheduled report record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Report.class)
 	@Path("/{id}")
@@ -98,7 +98,7 @@ public class ScheduledReportResource
 	}
 
 	@POST
-	@APIDescription("Schedules a new Report")
+	@APIDescription("Schedules a new report")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postAlert(ScheduledReport scheduledReport)
 	{
@@ -106,7 +106,7 @@ public class ScheduledReportResource
 	}
 
 	@PUT
-	@APIDescription("Updates a Scheduled Report Record")
+	@APIDescription("Updates a scheduled report record")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
 	public Response updateEntityValue(
@@ -180,7 +180,7 @@ public class ScheduledReportResource
 	}
 
 	@DELETE
-	@APIDescription("Inactivates a Scheduled Report")
+	@APIDescription("Inactivates a scheduled report")
 	@Path("/{id}")
 	public void inactiveAlert(
 			@PathParam("id") String scheduleReportId)
@@ -197,7 +197,7 @@ public class ScheduledReportResource
 	}
 
 	@DELETE
-	@APIDescription("Deletes a schedule report record")
+	@APIDescription("Deletes a scheduled report record")
 	@Path("/{id}/force")
 	public void deleteReport(
 			@PathParam("id") String scheduleReportId)

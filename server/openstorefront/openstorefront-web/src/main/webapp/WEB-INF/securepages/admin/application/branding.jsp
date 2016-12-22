@@ -1,17 +1,21 @@
 <%--
-Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
 --%>
 <%-- 
     Document   : branding
@@ -125,8 +129,10 @@ limitations under the License.
 											xtype: 'htmleditor',
 											fieldLabel: 'Login Warning <i class="fa fa-question-circle"  data-qtip="Warning on login page (if applicable)" ></i>',
 											name: 'loginWarning',
-											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
+											width: '100%',											
 											allowBlank: true,
 											maxLength: 16000
 										},										
@@ -135,7 +141,9 @@ limitations under the License.
 											fieldLabel: 'Landing Page Title <i class="fa fa-question-circle"  data-qtip="This is the title at the top of the landing page" ></i>',
 											name: 'landingPageTitle',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 255
 										},
@@ -144,7 +152,9 @@ limitations under the License.
 											fieldLabel: 'Landing Stats Text <i class="fa fa-question-circle"  data-qtip="This is the Browsing X text" ></i>',
 											name: 'landingStatsText',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 255
 										},
@@ -153,7 +163,9 @@ limitations under the License.
 											fieldLabel: 'Landing Banner <i class="fa fa-question-circle"  data-qtip="This is the quote on the landing page." ></i>',
 											name: 'landingPageBanner',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 255
 										},
@@ -166,10 +178,13 @@ limitations under the License.
 											fieldStyle: 'font-family: Courier New; font-size: 12px;',
 											style: {border: '0'},
 											name: 'landingPageFooter',
-											width: '100%',
-											height: 300,
+											width: '100%',										
+											height: 300,											
 											maxLength: 65536,
-											tinyMCEConfig: CoreUtil.tinymceConfig()
+											tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
+												mediaSelectionUrl: MediaUtil.generalMediaUrl,
+												mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
+											})
 										},
 										{
 											xtype: 'checkbox',
@@ -283,7 +298,9 @@ limitations under the License.
 											fieldLabel: 'Security Banner Text <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
 											name: 'securityBannerText',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 4000										
 										},
@@ -306,7 +323,9 @@ limitations under the License.
 											fieldLabel: 'User Input Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
 											name: 'userInputWarning',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 4000										
 										},
@@ -315,7 +334,9 @@ limitations under the License.
 											fieldLabel: 'Submission Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
 											name: 'submissionFormWarning',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 4000										
 										},
@@ -324,7 +345,9 @@ limitations under the License.
 											fieldLabel: 'Change Request Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
 											name: 'changeRequestWarning',
 											width: '100%',
-											fieldBodyCls: 'form-comp-htmleditor-border',
+											resizable: {
+												handles: 's'
+											},
 											allowBlank: true,
 											maxLength: 4000										
 										}											

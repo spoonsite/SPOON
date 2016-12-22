@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Holds Information about a notification message")
+@APIDescription("Holds information about a notification message")
 public class UserMessage
 		extends StandardEntity<UserMessage>
 {

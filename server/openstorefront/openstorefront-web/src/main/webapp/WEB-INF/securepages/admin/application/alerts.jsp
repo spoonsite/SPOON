@@ -1,3 +1,22 @@
+<%--
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
@@ -89,6 +108,9 @@
 									if (option.alertOnContactUpdate) {
 										listOfOptions += '<li>Contact Update</li>';
 									}																		
+									if (option.alertOnUserAttributeCodes) {
+										listOfOptions += '<li>User-Created Attribute Codes</li>';
+									}
 									listOfOptions += '</ul>';
 									return listOfOptions;
 								} else if (record.get('systemErrorAlertOption')) {
@@ -267,9 +289,8 @@
 					id: 'alertAddEditWin',
 					title: 'Add/Edit Alert',
 					modal: true,
-					width: '45%',
-					minWidth: 800,
-					height: 325,
+					width: 600,
+					height: 600,
 					y: '10em',
 					iconCls: 'fa fa-lg fa-edit',
 					layout: 'fit',
@@ -351,13 +372,8 @@
 									id: 'systemErrorOptions',
 									name: 'systemErrorAlertOption',
 									fieldLabel: 'System Error Options',
-									defaultType: 'checkboxfield',
-									defaultLayout: '100%',
-									layout: 'hbox',
-									hidden: true,
-									defaults: {
-										flex: 1
-									},
+									defaultType: 'checkboxfield',																		
+									hidden: true,									
 									items: [
 										// The names in this section
 										// must correspond to the names
@@ -390,12 +406,7 @@
 									name: 'userDataAlertOption',
 									fieldLabel: 'User Data Options',
 									defaultType: 'checkboxfield',
-									defaultLayout: '100%',
-									layout: 'hbox',
 									hidden: true,
-									defaults: {
-										flex: 1
-									},
 									items: [
 										{
 											boxLabel: 'Tags',
@@ -416,6 +427,12 @@
 											boxLabel: 'Contact Update',
 											name: 'alertOnContactUpdate',
 											id: 'userData-contactUpdate'
+										},
+										{
+											boxLabel: 'User-Created Attribute Codes',
+											labelWidth: 250,
+											name: 'alertOnUserAttributeCodes',
+											id: 'userData-attributeCodes'
 										}							
 									]
 								}
@@ -459,6 +476,7 @@
 													ud.alertOnReviews = (flatData.alertOnReviews === "true");
 													ud.alertOnQuestions = (flatData.alertOnQuestions === "true");
 													ud.alertOnContactUpdate = (flatData.alertOnContactUpdate === "true");
+													ud.alertOnUserAttributeCodes = (flatData.alertOnUserAttributeCodes === "true");
 													data.userDataAlertOption = ud;
 												}
 

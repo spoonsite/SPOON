@@ -70,17 +70,11 @@ public class ComponentFilterParams
 		this.approvalState = approvalState;
 	}
 
-	/**
-	 * @return the componentType
-	 */
 	public String getComponentType()
 	{
 		return componentType;
 	}
 
-	/**
-	 * @param componentType the componentType to set
-	 */
 	public void setComponentType(String componentType)
 	{
 		this.componentType = componentType;

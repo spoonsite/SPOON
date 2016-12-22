@@ -110,11 +110,12 @@ public abstract class StandardEntity<T>
 			this.setActiveStatus(entity.getActiveStatus());
 		}
 
+		this.populateBaseUpdateFields();
+		
 		if (StringUtils.isNotBlank(entity.getUpdateUser())) {
 			setUpdateUser(entity.getUpdateUser());
 		}
 
-		this.populateBaseUpdateFields();
 	}
 
 	public void populateBaseUpdateFields()
@@ -122,10 +123,9 @@ public abstract class StandardEntity<T>
 		if (StringUtils.isBlank(getActiveStatus())) {
 			setActiveStatus(ACTIVE_STATUS);
 		}
-		setUpdateDts(TimeUtil.currentDate());
-		if (StringUtils.isBlank(getUpdateUser())) {
-			setUpdateUser(SecurityUtil.getCurrentUserName());
-		}
+		setUpdateDts(TimeUtil.currentDate());		
+		setUpdateUser(SecurityUtil.getCurrentUserName());
+		
 		if (getAdminModified() == null) {
 			setAdminModified(SecurityUtil.isAdminUser());
 		}

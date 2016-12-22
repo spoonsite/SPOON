@@ -1,4 +1,22 @@
-
+<%--
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../../layout/toplevelLayout.jsp">
@@ -25,19 +43,19 @@
 						url: 'api/v1/resource/components/questionviews'
 					},
 					listeners: {
-						load: function (theStore) {
+						load: function (store) {
 							// Since the API returns multiple listings,
 							// we must remove duplicate entries of components
-							theStore.each(function (i) {
-								theStore.each(function (j) {
-									// check first if i and j exist
-									// then if they are different entries
-									// and then if they have the same componentId
-									if (i && j && i.internalId !== j.internalId && i.data.componentId === j.data.componentId) {
-										theStore.remove(j);
-									}
-								});
+							var componentIds = {};
+							var questionsToRemove = [];
+							store.each(function(question){								
+								if (componentIds[question.get('componentId')]) {
+									questionsToRemove.push(question)
+								} else {
+									componentIds[question.get('componentId')] = true;
+								}
 							});
+							store.remove(questionsToRemove);
 						}
 					}
 				});
@@ -237,8 +255,7 @@
 							items: [
 								{
 									xtype: 'combobox',
-									id: 'answer-activeStatus',
-									emptyText: 'Active',
+									id: 'answer-activeStatus',									
 									value: 'A',
 									editable: false,
 									fieldLabel: 'Active Status',
@@ -376,8 +393,7 @@
 									xtype: 'combobox',
 									id: 'question-activeStatus',
 									value: 'A',
-									editable: false,
-									emptyText: 'Active questions',
+									editable: false,									
 									fieldLabel: 'Show Entries with:',
 									labelWidth: '250px',
 									name: 'question-activeStatus',

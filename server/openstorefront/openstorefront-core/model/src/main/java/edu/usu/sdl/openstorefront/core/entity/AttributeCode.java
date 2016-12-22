@@ -39,7 +39,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author jlaw
  */
-@APIDescription("Attribute code are used to link metadata and create articles on topics")
+@APIDescription("Attribute codes are used to link metadata and create articles on topics")
 public class AttributeCode
 		extends StandardEntity<AttributeCode>
 {

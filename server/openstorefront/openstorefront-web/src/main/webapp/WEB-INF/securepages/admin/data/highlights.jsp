@@ -1,3 +1,22 @@
+<%--
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
@@ -6,16 +25,9 @@
 		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
 		</stripes:layout-render>		
 
-		<script src="scripts/component/savedSearchLinkInsertWindow.js?v=${appVersion}" type="text/javascript"></script>
-
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
-
-				var ssInsertWindow = Ext.create('OSF.component.SavedSearchLinkInsertWindow', {					
-					id: 'ssInsertWindow',
-					alwaysOnTop: true
-				});	
 
 				var highlightTypeStore = Ext.create('Ext.data.Store', {
 					storeId: 'highlightTypeStore',
@@ -24,6 +36,11 @@
 					proxy: {
 						type: 'ajax',
 						url: 'api/v1/resource/lookuptypes/HighlightType/view'
+					},
+					listeners: {
+						load: function(store, records) {
+							highlightStore.load();
+						}
 					}
 				});
 
@@ -38,7 +55,7 @@
 
 				var highlightStore = Ext.create('Ext.data.Store', {
 					storeId: 'highlightStore',
-					autoLoad: true,
+					autoLoad: false,
 					proxy: {
 						type: 'ajax',
 						url: 'api/v1/resource/highlights?sortField=orderingPosition'
@@ -300,6 +317,7 @@
 					modal: true,
 					width: '55%',
 					height: '70%',
+					maximizable: true,
 					y: '10em',
 					iconCls: 'fa fa-lg fa-edit',
 					layout: 'fit',
@@ -332,9 +350,12 @@
 									style: {border: '0'},
 									name: 'description',
 									width: '100%',
-									height: 300,
+									height: 400,
 									maxLength: 65536,
-									tinyMCEConfig: CoreUtil.tinymceSearchEntryConfig()
+									tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig(), {
+										mediaSelectionUrl: MediaUtil.generalMediaUrl,
+										mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
+									})
 								},
 								{
 									xtype: 'combobox',

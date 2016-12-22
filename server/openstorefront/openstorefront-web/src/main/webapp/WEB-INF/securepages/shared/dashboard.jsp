@@ -1,17 +1,21 @@
 <%-- 
-	Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
-
-	Licensed under the Apache License, Version 2.0 (the "License");
-	you may not use this file except in compliance with the License.
-	You may obtain a copy of the License at
-
-		 http://www.apache.org/licenses/LICENSE-2.0
-
-	Unless required by applicable law or agreed to in writing, software
-	distributed under the License is distributed on an "AS IS" BASIS,
-	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	See the License for the specific language governing permissions and
-	limitations under the License.
+/* 
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
+ */
 
     Document   : dashboard
     Created on : May 3, 2016, 9:13:09 AM
@@ -447,8 +451,9 @@
 				addComponentToMainViewPort(dashPanel);
 				
 				var dashboard;
-				var loadUserWidgets = function() {
+				var loadUserWidgets = function(noUpdateDash) {
 					dashPanel.setLoading(true);
+					
 					Ext.Ajax.request({
 						url: 'api/v1/resource/userdashboard',
 						callback: function() {
@@ -471,10 +476,10 @@
 								if (config.adminOnly) {
 									//if the user is no longer admin don't add widget
 									if (adminUser) {
-										widgetPanel = addWidgetToDashboard(config);										
+										widgetPanel = addWidgetToDashboard(config, noUpdateDash);										
 									} 
 								} else {
-									widgetPanel = addWidgetToDashboard(config);				
+									widgetPanel = addWidgetToDashboard(config, noUpdateDash);				
 								}
 								
 								//set other settings
@@ -483,22 +488,28 @@
 										config.restore(widgetPanel.getComponent('actualWidget'), Ext.decode(widget.widgetState));
 									}
 								}
-							});							
+							});
+							updateDashboard();
 						}
 					});
 					
 				};
-				loadUserWidgets();
+				loadUserWidgets(true);
 				
 				var widgetsOnDashBoard = [];
-				var addWidgetToDashboard = function(widget) {
+				var addWidgetToDashboard = function(widget, noUpdateDash) {
 					
 					var widgetPanel = Ext.create('Ext.panel.Panel', {
 						title: widget.name,
 						iconCls: widget.iconCls,					
 						layout: 'fit',
 						frame: true,						
-						style: 'box-shadow: 7px 7px 7px #888888;',
+						header: {
+							style: {
+								'background': widget.widgetColor
+							}
+						},
+						style: 'box-shadow: 7px 7px 7px #888888;',						
 						closable: true,												
 						height: widget.height,
 						widgetConfig: widget,
@@ -549,6 +560,7 @@
 							},
 							{
 								type: 'maximize',
+								hidden: Ext.isIE9m ? true : false,
 								tooltip: 'Maximize view',
 								callback: function(panel, tool, event) {
 									
@@ -604,6 +616,8 @@
 										closeMode: 'destroy',
 										modal: true,
 										width: 350,
+										height: 200,
+										minHeight: 200,
 										scrollable: true,
 										bodyStyle: 'padding: 10px',
 										y: tool.getY(),
@@ -733,15 +747,19 @@
 							}
 						}
 					});
-					widgetsOnDashBoard.push(widgetPanel);				
-					updateDashboard();
+					widgetsOnDashBoard.push(widgetPanel);			
+					if (!noUpdateDash) {
+						updateDashboard();
+					}	
 					
 					if (widget.widgetColor) {
 						widgetPanel.headerColor = widget.widgetColor;
 						widgetPanel.headerStyle = {
 							'background': widget.widgetColor																
 						};	
-						widgetPanel.getHeader().setStyle(widgetPanel.headerStyle);					
+						if (widgetPanel.getHeader().setStyle) {
+							widgetPanel.getHeader().setStyle(widgetPanel.headerStyle);					
+						}
 					}					
 					
 					return widgetPanel;

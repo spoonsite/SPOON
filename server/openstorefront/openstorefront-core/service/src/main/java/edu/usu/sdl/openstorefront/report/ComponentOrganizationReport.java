@@ -54,16 +54,16 @@ public class ComponentOrganizationReport
 
 		//write header
 		cvsGenerator.addLine("Entry Organization Report", sdf.format(TimeUtil.currentDate()));
-		
+
 		List<String> header = new ArrayList<>();
 		header.add("Organization");
 		header.add("Entry Name");
 		header.add("Last Update Date");
 		header.add("Approve Status");
-	
+
 		if (getBranding().getAllowSecurityMarkingsFlg()) {
 			header.add("Security Marking");
-		}		
+		}
 		cvsGenerator.addLine(header.toArray());
 
 		Map<String, Object> params = new HashMap<>();
@@ -73,7 +73,7 @@ public class ComponentOrganizationReport
 			params.put("idlistParam", report.dataIdSet());
 			componentFilter = " and componentId in :idlistParam";
 		}
-		List<ODocument> documents = service.getPersistenceService().query("Select DISTINCT(organization) as organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
+		List<ODocument> documents = service.getPersistenceService().query("Select organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvalState from " + Component.class.getSimpleName()
 				+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
 				+ " activeStatus= '" + Component.ACTIVE_STATUS + "' " + componentFilter + " order by sortname", params);
 
@@ -82,18 +82,18 @@ public class ComponentOrganizationReport
 
 		documents.forEach(document
 				-> {
-					String org = document.field("organization");
-					if (StringUtils.isBlank(org)) {
-						org = "No Organization Specified";
-					}
-					if (orgMap.containsKey(org)) {
-						orgMap.get(org).add(document);
-					} else {
-						List<ODocument> records = new ArrayList<>();
-						records.add(document);
-						orgMap.put(org, records);
-					}
-				}
+			String org = document.field("organization");
+			if (StringUtils.isBlank(org)) {
+				org = "No Organization Specified";
+			}
+			if (orgMap.containsKey(org)) {
+				orgMap.get(org).add(document);
+			} else {
+				List<ODocument> records = new ArrayList<>();
+				records.add(document);
+				orgMap.put(org, records);
+			}
+		}
 		);
 
 		long totalComponents = 0;
@@ -113,10 +113,10 @@ public class ComponentOrganizationReport
 				data.add(document.field("approvalState"));
 
 				if (getBranding().getAllowSecurityMarkingsFlg()) {
-					String securityMarking = document.field("securityMarkingType");					
+					String securityMarking = document.field("securityMarkingType");
 					data.add(securityMarking == null ? "" : "(" + securityMarking + ") - " + TranslateUtil.translate(SecurityMarkingType.class, securityMarking));
-				}		
-				cvsGenerator.addLine(data.toArray());				
+				}
+				cvsGenerator.addLine(data.toArray());
 
 				totalComponents++;
 			}

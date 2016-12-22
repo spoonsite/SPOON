@@ -58,8 +58,8 @@ public class ReportType
 		codeMap.put(USAGE, newLookup(ReportType.class, USAGE, "Usage", "Reports on overall application usage."));
 		codeMap.put(LINK_VALIDATION, newLookup(ReportType.class, LINK_VALIDATION, "Link Validation", "Reports on potentially broken external url links."));
 		codeMap.put(COMPONENT, newLookup(ReportType.class, COMPONENT, "Entry", "Reports on entry statistic and usage."));
-		codeMap.put(USER, newLookup(ReportType.class, USER, "User", "Reports on users and thier usage of the application."));
-		codeMap.put(ORGANIZATION, newLookup(ReportType.class, ORGANIZATION, "User Organization", "Reports on the user organizations in the appliaction and thier usage."));
+		codeMap.put(USER, newLookup(ReportType.class, USER, "User", "Reports on users and their usage of the application."));
+		codeMap.put(ORGANIZATION, newLookup(ReportType.class, ORGANIZATION, "User Organization", "Reports on the user organizations in the application and their usage."));
 		codeMap.put(COMPONENT_ORGANIZATION, newLookup(ReportType.class, COMPONENT_ORGANIZATION, "Entries by Organization", "Reports on entries that belong to an organization"));
 		codeMap.put(SUBMISSION, newLookup(ReportType.class, SUBMISSION, "Submissions", "Reports on entry submissions."));
 		codeMap.put(CATEGORY_COMPONENT, newLookup(ReportType.class, CATEGORY_COMPONENT, "Entries by Category", "Reports on entries in a category."));

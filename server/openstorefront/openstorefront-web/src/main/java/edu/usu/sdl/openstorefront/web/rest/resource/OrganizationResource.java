@@ -198,7 +198,7 @@ public class OrganizationResource
 	}
 
 	@GET
-	@APIDescription("Gets an organization references. ")
+	@APIDescription("Gets references attached to an organization.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(OrgReference.class)
 	@Path("/{id}/references")
@@ -212,7 +212,7 @@ public class OrganizationResource
 	}
 
 	@GET
-	@APIDescription("Gets references that do not have organization . ")
+	@APIDescription("Gets references that do not have an organization.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(OrgReference.class)
 	@Path("/references")
@@ -268,7 +268,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@APIDescription("Gets an organization references by organization name.")
+	@APIDescription("Gets organization references by name of organization.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.TEXT_PLAIN})
 	@DataType(OrgReference.class)

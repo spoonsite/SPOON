@@ -61,7 +61,7 @@ import org.apache.commons.lang.StringUtils;
  * @author dshurtleff
  */
 @Path("v1/resource/lookuptypes")
-@APIDescription("A lookup entity provide a set of valid values for a given entity. For Example: this can be used to fill drop-downs with values.")
+@APIDescription("A lookup entity provides a set of valid values for a given entity. For Example: this can be used to fill drop-downs with values.")
 public class LookupTypeResource
 		extends BaseResource
 {
@@ -112,7 +112,7 @@ public class LookupTypeResource
 	}
 
 	@GET
-	@APIDescription("Get a entity type codes")
+	@APIDescription("Get entity type codes")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(value = GenericLookupEntity.class, actualClassName = "LookupEntity")
 	@Path("/{entity}")
@@ -182,7 +182,7 @@ public class LookupTypeResource
 	}
 
 	@GET
-	@APIDescription("Get a entity type codes.  Lighter Model for dropdown boxes")
+	@APIDescription("Get entity type codes.  Lighter Model for dropdown boxes")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(value = GenericLookupEntity.class, actualClassName = "LookupEntity")
 	@Path("/{entity}/view")
@@ -269,7 +269,7 @@ public class LookupTypeResource
 	}
 
 	@GET
-	@APIDescription("Get an entity type for the given id")
+	@APIDescription("Get an entity type for a given id")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(value = GenericLookupEntity.class, actualClassName = "LookupEntity")
 	@Path("/{entity}/{code}")

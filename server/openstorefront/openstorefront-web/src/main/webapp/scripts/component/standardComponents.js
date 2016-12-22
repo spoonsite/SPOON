@@ -1,17 +1,19 @@
 /* 
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
  */
 
 /* global Ext, CoreUtil */
@@ -102,7 +104,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: 'Home',
-			iconCls: 'fa fa-home',
+			iconCls: 'fa fa-2x fa-home',
 			href: 'index.jsp'			
 		});
 		
@@ -110,7 +112,7 @@ Ext.define('OSF.component.UserMenu', {
 			menuItems.push({
 				text: 'Admin Tools',
 				itemId: 'menuAdminTools',
-				iconCls: 'fa fa-gear',
+				iconCls: 'fa fa-2x fa-gear',
 				hidden: true,
 				href: 'AdminTool.action'	
 			});
@@ -119,7 +121,7 @@ Ext.define('OSF.component.UserMenu', {
 		if (userMenu.showUserTools) {
 			menuItems.push({
 				text: 'User Tools',
-				iconCls: 'fa fa-user',
+				iconCls: 'fa fa-2x fa-user',
 				href: 'UserTool.action'		
 			});
 		}	
@@ -130,7 +132,7 @@ Ext.define('OSF.component.UserMenu', {
 		if (userMenu.showHelp) {
 			menuItems.push({
 				text: '<b>Help</b>',
-				iconCls: 'fa fa-question-circle',
+				iconCls: 'fa fa-2x fa-question-circle',
 				handler: function() {
 					userMenu.helpWin.show();
 				}			
@@ -139,7 +141,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: '<b>Feedback / issues</b>',
-			iconCls: 'fa fa-commenting',
+			iconCls: 'fa fa-2x fa-commenting',
 			handler: function() {
 				userMenu.feedbackWin.show();
 			}		
@@ -151,7 +153,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: 'Logout',
-			iconCls: 'fa fa-sign-out',
+			iconCls: 'fa fa-2x fa-sign-out',
 			href: 'Login.action?Logout'			
 		});
 		

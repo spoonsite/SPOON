@@ -15,10 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
+import edu.usu.sdl.openstorefront.core.api.ServiceInterceptor;
+import edu.usu.sdl.openstorefront.core.api.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
-import edu.usu.sdl.openstorefront.service.ServiceInterceptor;
-import edu.usu.sdl.openstorefront.service.TransactionInterceptor;
 
 /**
  * Used to jump into a transaction when needed.

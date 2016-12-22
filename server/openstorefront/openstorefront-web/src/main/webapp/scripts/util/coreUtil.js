@@ -1,17 +1,19 @@
 /* 
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * See NOTICE.txt for more information.
  */
 
 /* global Ext, URL */
@@ -307,11 +309,14 @@ var CoreUtil = {
 			options.form.setLoading(false);
 
 			var errorResponse = Ext.decode(response.responseText);
-			var errorObj = {};
-			Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
-				errorObj[item.key] = item.value;
-			});
-			options.form.getForm().markInvalid(errorObj);
+			//If the request timesout then there won't be a response
+			if (errorResponse) {
+				var errorObj = {};
+				Ext.Array.each(errorResponse.errors.entry, function (item, index, entry) {
+					errorObj[item.key] = item.value;
+				});
+				options.form.getForm().markInvalid(errorObj);
+		    }
 			if (options.failure) {
 				options.failure(response, opts);
 			}
@@ -379,12 +384,12 @@ var CoreUtil = {
 		var defaultConfig = {
 			plugins: [
 			"advlist autolink lists link image charmap print preview hr anchor pagebreak",
-			"searchreplace wordcount visualblocks visualchars code fullscreen",
+			"searchreplace wordcount visualblocks visualchars code osffullscreen",
 			"insertdatetime media nonbreaking save table contextmenu directionality",
-			"emoticons template paste textcolor placeholder"
+			"emoticons template paste textcolor placeholder osfmediainserter osfvideoinserter"
 			],
 
-			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | image media charmap | link savedsearchlink table | fullscreen",
+			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter osfvideoinserter charmap | link savedsearchlink table | osffullscreen",
 
 			content_css : "contents.css",
 
@@ -393,6 +398,8 @@ var CoreUtil = {
 			skin: 'openstorefront',
 			toolbar_items_size: 'small',
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
+			+ ' table[class] td[class] th[class] tr[class]',
+			table_default_styles: { border: 'solid 1px #ddd' }
 		};
 
 		if (additionalPlugins) {
@@ -410,12 +417,12 @@ var CoreUtil = {
 		var searchEntryConfig = {
 			plugins: [
 			"advlist autolink lists link image charmap print preview hr anchor pagebreak",
-			"searchreplace wordcount visualblocks visualchars code fullscreen",
+			"searchreplace wordcount visualblocks visualchars code osffullscreen",
 			"insertdatetime media nonbreaking save table contextmenu directionality",
-			"emoticons template paste textcolor placeholder savedsearchlink"
+			"emoticons template paste textcolor placeholder savedsearchlink osfmediainserter osfvideoinserter"
 			],
 
-			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | image media charmap | link savedsearchlink table | fullscreen",
+			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | osfmediainserter osfvideoinserter charmap | link savedsearchlink table | osffullscreen",
 
 			content_css : "contents.css",
 
@@ -423,8 +430,10 @@ var CoreUtil = {
 			statusbar: false,
 			skin: 'openstorefront',
 			toolbar_items_size: 'small',
-			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
-
+			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]' 
+			+ ' table[class] td[class] th[class] tr[class]',
+			table_default_styles: { border: 'solid 1px #ddd' }
+			
 		};
 
 		if (additionalPlugins) {
@@ -852,6 +861,14 @@ var CoreUtil = {
 				}
 			}
 		});
+	},	
+	showSavedSearchWindow: function(searchId) {
+		var searchWin = Ext.create('OSF.component.SearchPopupResultsWindow', {					
+			closeAction: 'destroy',
+			alwaysOnTop: true
+		});
+		searchWin.showResults(searchId);
+
 	}
 	
 };
