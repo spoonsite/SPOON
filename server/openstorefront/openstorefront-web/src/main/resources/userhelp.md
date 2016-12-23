@@ -452,9 +452,9 @@ Make any necessary corrections and click on the Next button at the bottom.
 #### 2.3.2.2 How to Create a Change Request/Edit Entry
 -----------
 
-Step 1) Click on the entry you wish to edit\s\s
-Step 2) Click on the "Request Change" button in the submissions toolbar\s\s
-Step 3) A change request form will appear that requires 4 steps:
+Step 1) Click on the entry you wish to edit  
+Step 2) Click on the "Request Change" button in the submissions toolbar  
+Step 3) A change request form will appear that requires 4 steps:  
 
 	1. Verify or update all user information and click the "Next" button
 	2. Fill in or edit the required fields and click "Next"
@@ -1248,18 +1248,18 @@ imported or exported as .csv files.
 
 **To add/delete/edit codes:** 
 
-	* Select a system table from the list and click on the **Edit Codes** button in the toolbar.
-	* To add a code, click on the the **Add** button and fill out the form.  When you are done, click **Save**.
-	* To edit a code, select the code and click on **Edit** in the above toolbar.  After making changes to the form,
-	  click **Save** at the bottom.
-	* To change the status of a code to active or inactive, click on **Toggle Status** in the toolbar.
+* Select a system table from the list and click on the **Edit Codes** button in the toolbar.
+* To add a code, click on the the **Add** button and fill out the form.  When you are done, click **Save**.
+* To edit a code, select the code and click on **Edit** in the above toolbar.  After making changes to the form,
+click **Save** at the bottom.
+* To change the status of a code to active or inactive, click on **Toggle Status** in the toolbar.
 
 **To import/export codes:**
 
-	* Select a system table from the list and click on the **Edit Codes** button in the toolbar.
-	* To import, click on the **Import** button in the right upper corner.  The import file must be a CSV file
-	  with the format code, description, detail description (optional), sort order (optional).
-	* To export the current list of codes, click on the **Export** button in the right upper corner.
+* Select a system table from the list and click on the **Edit Codes** button in the toolbar.
+* To import, click on the **Import** button in the right upper corner.  The import file must be a CSV file 
+with the format code, description, detail description (optional), sort order (optional).
+* To export the current list of codes, click on the **Export** button in the right upper corner.
 
 Some examples of Lookups are:
 Media Types, Data Source, Contact Types, Relationship Types, and Organization Types
