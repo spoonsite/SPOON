@@ -18,6 +18,8 @@ package edu.usu.sdl.openstorefront.core.view;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
+import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,7 @@ public class EvaluationView
 {
 
 	private String componentName;
+	private String workflowStatusDescription;
 
 	public EvaluationView()
 	{
@@ -46,7 +49,8 @@ public class EvaluationView
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 		evaluationView.setComponentName(ServiceProxyFactory.getServiceProxy().getComponentService().getComponentName(evaluation.getComponentId()));
-
+		evaluationView.setWorkflowStatusDescription(TranslateUtil.translate(WorkflowStatus.class, evaluation.getWorkflowStatus()));
+		
 		return evaluationView;
 	}
 
@@ -68,6 +72,16 @@ public class EvaluationView
 	public void setComponentName(String componentName)
 	{
 		this.componentName = componentName;
+	}
+
+	public String getWorkflowStatusDescription()
+	{
+		return workflowStatusDescription;
+	}
+
+	public void setWorkflowStatusDescription(String workflowStatusDescription)
+	{
+		this.workflowStatusDescription = workflowStatusDescription;
 	}
 
 }

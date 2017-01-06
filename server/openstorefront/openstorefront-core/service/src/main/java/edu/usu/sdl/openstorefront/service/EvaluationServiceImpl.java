@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionAttributePk;
@@ -146,6 +147,11 @@ public class EvaluationServiceImpl
 		Objects.requireNonNull(evaluation);
 		Objects.requireNonNull(evaluation.getTemplateId());
 
+		//create change request
+		evaluation.setOriginComponentId(evaluation.getComponentId());
+		Component changeRequest = getComponentService().createPendingChangeComponent(evaluation.getComponentId());
+		evaluation.setComponentId(changeRequest.getComponentId());
+		evaluation.setWorkflowStatus(WorkflowStatus.initalStatus().getCode());		
 		evaluation.setEvaluationId(persistenceService.generateId());
 		evaluation.setPublished(Boolean.FALSE);
 		evaluation.populateBaseCreateFields();
@@ -396,6 +402,25 @@ public class EvaluationServiceImpl
 			throw new OpenStorefrontRuntimeException("Unable to find Evaluation.", "Evaluation Id: " + evaluationId);
 		}
 
+	}
+
+	@Override
+	public void checkEvaluationComponent(String evaluationId)
+	{
+		Evaluation evaluationExisting = persistenceService.findById(Evaluation.class, evaluationId);
+		if (evaluationExisting != null) {		
+			Component component = persistenceService.findById(Component.class, evaluationExisting.getComponentId());
+			if (component == null) {
+				Component changeRequest = getComponentService().createPendingChangeComponent(evaluationExisting.getOriginComponentId());
+						
+				evaluationExisting.setComponentId(changeRequest.getComponentId());
+				
+				//Don't update the evaluation user and date as it didn't actually change				
+				persistenceService.persist(evaluationExisting);
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find Evaluation: " + evaluationId, "Refresh to see if data still exists.");
+		}
 	}
 
 }

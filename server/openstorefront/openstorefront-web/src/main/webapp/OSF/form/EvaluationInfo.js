@@ -36,17 +36,22 @@ Ext.define('OSF.form.EvaluationInfo', {
 			name: 'version',
 			allBlank: false,
 			maxLength: 255,
-			fieldLabel: 'Version ',
+			fieldLabel: 'Version',
+			labelWidth: 150,
 			width: '100%'			
 		});
 		formItems.push(Ext.create('OSF.component.StandardComboBox', {
-					name: 'mediaTypeCode',									
+					name: 'workflowStatus',
+					labelClsExtra: 'eval-form-field-label',
+					fieldCls: 'eval-form-field',
+					labelAlign: 'right',
 					allowBlank: false,								
 					margin: '0 0 5 0',
 					editable: false,
 					typeAhead: false,
 					width: '100%',
-					fieldLabel: 'Workflow <span class="field-required" />',
+					fieldLabel: 'Status <span class="field-required" />',
+					labelWidth: 150,
 					storeConfig: {
 						url: 'api/v1/resource/lookuptypes/MediaType'
 					}

@@ -59,7 +59,7 @@ import org.apache.commons.lang.StringUtils;
  */
 @APIDescription("Provides access to evaluations across components resources")
 @Path("v1/resource/evaluations")
-public class EvalulationResource
+public class EvaluationResource
 		extends BaseResource
 {
 
@@ -130,8 +130,11 @@ public class EvalulationResource
 		Evaluation evaluation = new Evaluation();
 		evaluation.setEvaluationId(evaluationId);
 		evaluation = evaluation.find();
-
-		return sendSingleEntityResponse(EvaluationView.toView(evaluation));
+		if (evaluation != null) {
+			return sendSingleEntityResponse(EvaluationView.toView(evaluation));
+		} else {
+			return sendSingleEntityResponse(evaluation);
+		}
 	}
 
 	@GET
@@ -166,6 +169,30 @@ public class EvalulationResource
 		}
 	}
 
+	@PUT
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Make sure change request exists for the evaluation; It will create new one if needed.")
+	@DataType(Evaluation.class)
+	@Path("/{evaluationId}/checkentry")
+	public Response checkEvaluationEntry(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setEvaluationId(evaluationId);
+		evaluation = evaluation.find();
+		if (evaluation != null) {
+			service.getEvaluationService().checkEvaluationComponent(evaluationId);
+			evaluation = new Evaluation();
+			evaluation.setEvaluationId(evaluationId);
+			evaluation = evaluation.find();
+			return Response.ok(evaluation).build();
+		} else {
+			return sendSingleEntityResponse(evaluation);
+		}
+	}	
+	
 	@PUT
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})

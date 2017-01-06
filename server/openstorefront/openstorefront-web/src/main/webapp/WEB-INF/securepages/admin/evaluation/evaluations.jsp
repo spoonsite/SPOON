@@ -35,7 +35,7 @@
 				title: 'Create Evaluation',
 				modal: true,
 				width: 500,
-				height: 375,
+				height: 465,
 				layout: 'fit',
 				items: [
 					{
@@ -419,17 +419,32 @@
 			var addEditEvaluation = function(record){
 				
 				if (record) {
-					var evalformWin = Ext.create('OSF.component.EvaluationFormWindow', {
-						title: 'Evaluation Form - ' + record.get('componentName')
-					});
-					evalformWin.show();
 					
-					evalformWin.loadEval(record.get('evaluationId'), record.get('componentId'));
-					
+					evaluationGrid.setLoading('Checking evaluation entry...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/evaluations/' + record.get('evaluationId') + '/checkentry',
+						method: 'PUT',
+						callback: function(){
+							evaluationGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							var evalformWin = Ext.create('OSF.component.EvaluationFormWindow', {
+								title: 'Evaluation Form - ' + record.get('componentName')
+							});
+							evalformWin.show();
+							
+							var evaluation = Ext.decode(response.responseText);
+							evalformWin.loadEval(record.get('evaluationId'), evaluation.componentId);
+							
+							if (evaluation.componentId !== record.get('componentId')) {
+								actionRefresh();
+							}														
+						}
+					});					
 				} else {
 					createEvaluationWin.show();
 					createEvaluationWin.getComponent('form').reset();
-			   }
+				}
 			};
 			
 			var actionAssignGroup = function(record) {

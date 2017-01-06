@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -42,7 +43,6 @@ public class Evaluation
 	@APIDescription("Id of the change request")
 	private String componentId;
 
-	@ConsumeField
 	@NotNull
 	@FK(Component.class)
 	@APIDescription("Id of the entry")
@@ -67,6 +67,12 @@ public class Evaluation
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String assignedGroup;
+	
+	@NotNull
+	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = WorkflowStatus.class)
+	@FK(WorkflowStatus.class)
+	private String workflowStatus;
 
 	@NotNull
 	private Boolean published;
@@ -168,6 +174,16 @@ public class Evaluation
 	public void setOriginComponentId(String originComponentId)
 	{
 		this.originComponentId = originComponentId;
+	}
+
+	public String getWorkflowStatus()
+	{
+		return workflowStatus;
+	}
+
+	public void setWorkflowStatus(String workflowStatus)
+	{
+		this.workflowStatus = workflowStatus;
 	}
 
 }

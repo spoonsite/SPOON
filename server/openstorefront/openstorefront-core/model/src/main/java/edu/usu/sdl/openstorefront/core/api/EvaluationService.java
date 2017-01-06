@@ -77,9 +77,16 @@ public interface EvaluationService
 	 * @param evaluation
 	 * @return
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public Evaluation createEvaluationFromTemplate(Evaluation evaluation);
 
+	/**
+	 * Make sure the evaluation component change request existing
+	 * if it doesn't create one.
+	 * 
+	 * @param evaluation 
+	 */
+	public void checkEvaluationComponent(String evaluationId);
+	
 	/**
 	 * Deletes an evaluation and all child data
 	 *
