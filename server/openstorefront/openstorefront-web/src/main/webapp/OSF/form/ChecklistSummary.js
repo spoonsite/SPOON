@@ -22,6 +22,43 @@ Ext.define('OSF.form.ChecklistSummary', {
 
 	layout: 'border',
 
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			items: [		
+				{
+					xtype: 'combo',
+					name: 'workflowStatus',										
+					labelAlign: 'right',												
+					margin: '0 0 5 0',
+					editable: false,
+					typeAhead: false,
+					width: 400,
+					fieldLabel: 'Status <span class="field-required" />',	
+					displayField: 'description',
+					valueField: 'code',
+					labelSeparator: '',
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/lookuptypes/WorkflowStatus'
+						}
+					},
+					listeners: {
+						change: {
+							buffer: 1000,
+							fn: function(field, newValue, oldValue) {
+								var mainForm = field.up('form');
+								
+							}
+						}
+					}			
+				}
+			]
+		}
+	],
 	initComponent: function () {		
 		this.callParent();
 		

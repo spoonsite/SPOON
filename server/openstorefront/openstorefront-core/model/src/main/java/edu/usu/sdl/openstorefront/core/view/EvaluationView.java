@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
@@ -35,7 +36,7 @@ public class EvaluationView
 
 	private String componentName;
 	private String workflowStatusDescription;
-
+	
 	public EvaluationView()
 	{
 	}
@@ -48,7 +49,8 @@ public class EvaluationView
 		} catch (IllegalAccessException | InvocationTargetException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
-		evaluationView.setComponentName(ServiceProxyFactory.getServiceProxy().getComponentService().getComponentName(evaluation.getComponentId()));
+		Service service = ServiceProxyFactory.getServiceProxy();		
+		evaluationView.setComponentName(service.getComponentService().getComponentName(evaluation.getComponentId()));
 		evaluationView.setWorkflowStatusDescription(TranslateUtil.translate(WorkflowStatus.class, evaluation.getWorkflowStatus()));
 		
 		return evaluationView;
@@ -83,5 +85,5 @@ public class EvaluationView
 	{
 		this.workflowStatusDescription = workflowStatusDescription;
 	}
-
+	
 }

@@ -584,7 +584,6 @@ Ext.define('OSF.component.EvaluationPanel', {
 		var evalPanel = this;
 		
 		evalPanel.setLoading(true);
-
 		
 		var entryType = 'COMP';		
 		Ext.Ajax.request({
@@ -707,6 +706,9 @@ Ext.define('OSF.component.EvaluationPanel', {
 						});
 						
 						Ext.Array.each(evaluationAll.checkListAll.responses, function(chkresponse) {
+							
+							//TODO: add status marker
+							
 							questions.push({							
 								text: chkresponse.question.qid,
 								tooltip: chkresponse.question.question,
@@ -799,10 +801,13 @@ Ext.define('OSF.component.EvaluationFormWindow', {
 		evalWin.add(evalWin.evalPanel);
 		
 	},
-	loadEval: function(evaluationId, componentId) {
+	loadEval: function(evaluationId, componentId, refreshCallback) {
 		var evalWin = this;
 		
 		evalWin.evalPanel.loadEval(evaluationId, componentId);
+		if (refreshCallback) {
+			evalWin.evalPanel.refreshCallback = refreshCallback;
+		}		
 		evalWin.evalPanel.evaluationId = evaluationId;
 		evalWin.evalPanel.componentId = componentId;
 		

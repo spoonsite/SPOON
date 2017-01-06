@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* global Ext */
+/* global Ext, CoreUtil */
 
 Ext.define('OSF.form.EvaluationInfo', {
 	extend: 'Ext.form.Panel',
@@ -34,27 +34,44 @@ Ext.define('OSF.form.EvaluationInfo', {
 			labelClsExtra: 'eval-form-field-label',
 			labelAlign: 'right',
 			name: 'version',
-			allBlank: false,
+			allowBlank: false,
 			maxLength: 255,
-			fieldLabel: 'Version',
+			labelSeparator: '',
+			fieldLabel: 'Version <span class="field-required" />',
 			labelWidth: 150,
-			width: '100%'			
+			width: '100%',
+			listeners: {
+				change: {	
+					buffer: 2000,
+					fn: function(field, newValue, oldValue) {
+						evalForm.saveData();
+					}
+				}
+			}
 		});
 		formItems.push(Ext.create('OSF.component.StandardComboBox', {
-					name: 'workflowStatus',
-					labelClsExtra: 'eval-form-field-label',
-					fieldCls: 'eval-form-field',
-					labelAlign: 'right',
-					allowBlank: false,								
-					margin: '0 0 5 0',
-					editable: false,
-					typeAhead: false,
-					width: '100%',
-					fieldLabel: 'Status <span class="field-required" />',
-					labelWidth: 150,
-					storeConfig: {
-						url: 'api/v1/resource/lookuptypes/MediaType'
+			name: 'workflowStatus',
+			labelClsExtra: 'eval-form-field-label',
+			fieldCls: 'eval-form-field',
+			labelAlign: 'right',
+			allowBlank: false,								
+			margin: '0 0 5 0',
+			editable: false,
+			typeAhead: false,
+			width: '100%',
+			fieldLabel: 'Status <span class="field-required" />',
+			labelWidth: 150,
+			storeConfig: {
+				url: 'api/v1/resource/lookuptypes/WorkflowStatus'
+			},
+			listeners: {
+				change: {
+					buffer: 1000,
+					fn: function(field, newValue, oldValue) {
+						evalForm.saveData();
 					}
+				}
+			}			
 		}));
 		
 		evalForm.add(formItems);
@@ -74,10 +91,50 @@ Ext.define('OSF.form.EvaluationInfo', {
 				var record = Ext.create('Ext.data.Model',{					
 				});
 				record.set(evaluation);				
+					
+				
 				evalForm.loadRecord(record);
+				evalForm.evaluation = evaluation;
+				if (opts && opts.mainForm) {
+					evalForm.refreshCallback = opts.mainForm.refreshCallback;
+				}
 			}
 		});
 		opts.commentPanel.loadComments(evaluationId, null, null);
-	}	
+	},
+	
+	saveData: function() {
+		var evalForm = this;
+		
+		var data = evalForm.getValues();
+		if (evalForm.isValid() &&
+				data.version && 
+				data.version !== '' &&				
+				data.workflowStatus &&
+				data.workflowStatus !== ''
+			) {
+			
+			if (evalForm.evaluation.version !== data.version ||
+				evalForm.evaluation.workflowStatus !== data.workflowStatus)
+			{			
+				evalForm.evaluation.version = data.version;
+				evalForm.evaluation.workflowStatus = data.workflowStatus;
+				delete evalForm.evaluation.type;
+
+				CoreUtil.submitForm({
+					url: 'api/v1/resource/evaluations/' + evalForm.evaluation.evaluationId,
+					method: 'PUT',
+					data: evalForm.evaluation,
+					form: evalForm,
+					success: function(action, opts) {
+						Ext.toast('Updated evaluation');
+						if (evalForm.refreshCallback) {
+							evalForm.refreshCallback();
+						}
+					}	
+				});
+			}
+		}
+	}
 	
 });

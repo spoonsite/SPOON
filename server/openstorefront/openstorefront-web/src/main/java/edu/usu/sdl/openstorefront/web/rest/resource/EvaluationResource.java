@@ -29,9 +29,9 @@ import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationComment;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
+import edu.usu.sdl.openstorefront.core.view.EvaluationFilterParams;
 import edu.usu.sdl.openstorefront.core.view.EvaluationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationViewWrapper;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
@@ -68,21 +68,24 @@ public class EvaluationResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationViewWrapper.class)
 	@APIDescription("Gets Evaluations")
-	public Response getEvaluations(@BeanParam FilterQueryParams filterQueryParams)
+	public Response getEvaluations(@BeanParam EvaluationFilterParams evaluationFilterParams)
 	{
-		ValidationResult validationResult = filterQueryParams.validate();
+		ValidationResult validationResult = evaluationFilterParams.validate();
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		Evaluation evaluationExample = new Evaluation();
-		evaluationExample.setActiveStatus(filterQueryParams.getStatus());
+		Evaluation evaluationExample = new Evaluation();		
+		evaluationExample.setActiveStatus(evaluationFilterParams.getStatus());
+		if (StringUtils.isNotBlank(evaluationFilterParams.getWorkflowStatus())) {
+			evaluationExample.setWorkflowStatus(evaluationFilterParams.getWorkflowStatus());
+		}
 
 		Evaluation startExample = new Evaluation();
-		startExample.setUpdateDts(filterQueryParams.getStart());
+		startExample.setUpdateDts(evaluationFilterParams.getStart());
 
 		Evaluation endExample = new Evaluation();
-		endExample.setUpdateDts(filterQueryParams.getEnd());
+		endExample.setUpdateDts(evaluationFilterParams.getEnd());
 
 		QueryByExample queryByExample = new QueryByExample(evaluationExample);
 
@@ -97,12 +100,12 @@ public class EvaluationResource
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		queryByExample.setMaxResults(filterQueryParams.getMax());
-		queryByExample.setFirstResult(filterQueryParams.getOffset());
-		queryByExample.setSortDirection(filterQueryParams.getSortOrder());
+		queryByExample.setMaxResults(evaluationFilterParams.getMax());
+		queryByExample.setFirstResult(evaluationFilterParams.getOffset());
+		queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());
 
 		Evaluation evaluationSortExample = new Evaluation();
-		Field sortField = ReflectionUtil.getField(evaluationSortExample, filterQueryParams.getSortField());
+		Field sortField = ReflectionUtil.getField(evaluationSortExample, evaluationFilterParams.getSortField());
 		if (sortField != null) {
 			BeanUtil.setPropertyValue(sortField.getName(), evaluationSortExample, QueryByExample.getFlagForType(sortField.getType()));
 			queryByExample.setOrderBy(evaluationSortExample);
@@ -169,6 +172,40 @@ public class EvaluationResource
 		}
 	}
 
+	@PUT
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@APIDescription("Updates an evaluation; Only fields that user should update some field have may have additional restrictions.")
+	@DataType(Evaluation.class)
+	@Path("/{evaluationId}")
+	public Response updateEvaluation(
+			@PathParam("evaluationId") String evaluationId,
+			Evaluation evaluation
+	)
+	{
+		Evaluation evaluationExisting = new Evaluation();
+		evaluationExisting.setEvaluationId(evaluationId);
+		evaluationExisting = evaluationExisting.find();
+		if (evaluationExisting != null) {
+			
+			evaluation.setEvaluationId(evaluationId);
+			ValidationResult validationResult = evaluation.validate();
+			if (validationResult.valid()) {
+				
+				evaluationExisting.setVersion(evaluation.getVersion());
+				evaluationExisting.setWorkflowStatus(evaluation.getWorkflowStatus());	
+				evaluationExisting.save();
+				
+				return Response.ok(evaluationExisting).build();
+			} else {
+				return sendSingleEntityResponse(validationResult.toRestError());
+			}			
+		} else {
+			return sendSingleEntityResponse(evaluation);
+		}
+	}	
+	
 	@PUT
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})

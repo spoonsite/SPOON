@@ -93,7 +93,7 @@ public class Evaluation
 		setTemplateId(evaluation.getTemplateId());
 		setPublished(evaluation.getPublished());
 		setVersion(evaluation.getVersion());
-
+		setWorkflowStatus(evaluation.getWorkflowStatus());
 	}
 
 	public String getEvaluationId()

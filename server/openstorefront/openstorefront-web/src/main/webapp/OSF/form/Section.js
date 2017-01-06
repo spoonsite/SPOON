@@ -21,6 +21,43 @@ Ext.define('OSF.form.Section', {
 	alias: 'osf.form.Section',
 
 	layout: 'fit',	
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			items: [		
+				{
+					xtype: 'combo',
+					name: 'workflowStatus',										
+					labelAlign: 'right',												
+					margin: '0 0 5 0',
+					editable: false,
+					typeAhead: false,
+					width: 400,
+					fieldLabel: 'Status <span class="field-required" />',	
+					displayField: 'description',
+					valueField: 'code',
+					labelSeparator: '',
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/lookuptypes/WorkflowStatus'
+						}
+					},
+					listeners: {
+						change: {
+							buffer: 1000,
+							fn: function(field, newValue, oldValue) {
+								var mainForm = field.up('form');
+								
+							}
+						}
+					}			
+				}
+			]
+		}
+	],
 	initComponent: function () {		
 		this.callParent();
 		
@@ -30,6 +67,11 @@ Ext.define('OSF.form.Section', {
 	loadData: function(evaluationId, componentId, data, opts) {
 	
 		var sectionForm = this;
+		
+		var record = Ext.create('Ext.data.Model', {			
+		});
+		record.set(data.section);
+		sectionForm.loadRecord(record);
 		
 		if (data.subsections && data.subsections.length > 0) {
 			var contentPanel = Ext.create('Ext.panel.Panel', {

@@ -11,37 +11,25 @@
 	<stripes:layout-render name="../../../../layout/adminheader.jsp">		
 	</stripes:layout-render>		
 		
-	<script src="scripts/component/savedSearchLinkInsertWindow.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/inlineMediaRetrieverWindow.js?v=${appVersion}" type="text/javascript"></script>		
 	<script src="scripts/component/evaluationForm.js?v=${appVersion}" type="text/javascript"></script>	
 		
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */
 		Ext.onReady(function(){	
 			
-			//External Windows
-			var ssInsertWindow = Ext.create('OSF.component.SavedSearchLinkInsertWindow', {					
-				id: 'ssInsertWindow',
-				alwaysOnTop: true
-			});	
-
-			var inlineMediaWindow = Ext.create('OSF.component.InlineMediaRetrieverWindow', {					
-				id: 'inlineMediaWindow',
-				alwaysOnTop: true
-			});			
-			//////////////////////////////////
-			
+		
 			var createEvaluationWin = Ext.create('Ext.window.Window', {
 				title: 'Create Evaluation',
 				modal: true,
 				width: 500,
-				height: 465,
+				height: 550,
 				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
 						itemId: 'form',
 						bodyStyle: 'padding: 10px;',
+						scrollable: true,
 						dockedItems: [
 							{
 								xtype: 'toolbar',
@@ -131,6 +119,29 @@
 								maxLength: 255
 							},
 							{
+								xtype: 'combo',
+								itemId: 'workflowStatus',
+								name: 'workflowStatus',
+								allowBlank: false,															
+								editable: false,
+								typeAhead: false,								
+								fieldLabel: 'Status <span class="field-required" />',								
+								store: {
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/lookuptypes/WorkflowStatus'
+									},
+									listeners: {
+										load: function(store, records) {											
+											if (records && records.length > 0) {												
+												var field = createEvaluationWin.getComponent('form').getComponent('workflowStatus');
+												field.setValue(records[0].get('code'));
+											}
+										}										
+									}
+								}
+							},							
+							{
 								xtype: 'combobox',
 								name: 'assignedGroup',
 								fieldLabel: 'Assign to Group',
@@ -198,7 +209,8 @@
 					listeners: {
 						beforeLoad: function(store, operation, eOpts){
 							store.getProxy().extraParams = {
-								status: Ext.getCmp('filterActiveStatus').getValue()									
+								'status': Ext.getCmp('filterActiveStatus').getValue(),
+								'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue()
 							};
 						}
 					}
@@ -217,8 +229,21 @@
 					},
 					{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
 					{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
-					{ text: 'Status', dataIndex: 'status', align: 'center', width: 175},
-					{ text: 'Progress', dataIndex: 'progress', align: 'center', width: 175},
+					{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', width: 175,
+						renderer: function(value, meta, record) {
+							if (value === 'INPROGRESS') {
+								meta.tdCls = 'alert-warning';
+							} else if (value === 'WAIT') {
+								meta.tdCls = 'alert-info';
+							} else if (value === 'COMPLETE') {
+								meta.tdCls = 'alert-success';
+							} else if (value === 'HOLD') {
+								meta.tdCls = 'alert-danager';
+							}
+							
+							return record.get('workflowStatusDescription');
+						}
+					},					
 					{ text: 'Create User', dataIndex: 'createUser', width: 175, hidden: true  },
 					{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  width: 175 },
 					{ text: 'Update User', dataIndex: 'updateUser', width: 175 }
@@ -287,7 +312,32 @@
 										]
 									}
 								}
-							}) 															
+							}),
+							Ext.create('OSF.component.StandardComboBox', {
+								id: 'filterWorkflowStatus',
+								name: 'workflowStatus',								
+								allowBlank: false,								
+								margin: '0 0 5 0',
+								editable: false,
+								typeAhead: false,
+								emptyText: 'All',
+								width: 200,	
+								fieldLabel: 'Workflow Status',								
+								storeConfig: {
+									url: 'api/v1/resource/lookuptypes/WorkflowStatus',
+									addRecords: [
+										{
+											code: null,
+											description: 'All'
+										}
+									]
+								},
+								listeners: {
+									change: function(filter, newValue, oldValue, opts){
+										actionRefresh();
+									}
+								}			
+							})
 						]
 					},					
 					{
@@ -434,7 +484,9 @@
 							evalformWin.show();
 							
 							var evaluation = Ext.decode(response.responseText);
-							evalformWin.loadEval(record.get('evaluationId'), evaluation.componentId);
+							evalformWin.loadEval(record.get('evaluationId'), evaluation.componentId, function(){
+								actionRefresh();
+							});
 							
 							if (evaluation.componentId !== record.get('componentId')) {
 								actionRefresh();
@@ -443,6 +495,7 @@
 					});					
 				} else {
 					createEvaluationWin.show();
+					createEvaluationWin.getComponent('form').getComponent('workflowStatus').getStore().load();
 					createEvaluationWin.getComponent('form').reset();
 				}
 			};
