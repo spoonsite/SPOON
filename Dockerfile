@@ -71,16 +71,27 @@ EXPOSE $TOMCAT_PORT
 ## StoreFront ##
 ################
 
-COPY server/openstorefront/openstorefront-web/target/openstorefront.war $CATALINA_HOME/webapps
+ENV STOREFRONT_HOME /usr/local/share/openstorefront
+
+# Switching between development and production must be done manually
+#
+# To switch, uncomment the ENV and ADD lines below
+# Be sure to change the version so that the appropriate WAR file is downloaded
+#
+# Lastly, comment out the COPY line
+
+ENV STOREFRONT_VERSION 2.1
+
+ADD https://github.com/di2e/openstorefront/releases/download/v$STOREFRONT_VERSION/openstorefront.war $CATALINA_HOME/webapps
+
+#COPY server/openstorefront/openstorefront-web/target/openstorefront.war $CATALINA_HOME/webapps
 
 ####################
 ## Startup Script ##
 ####################
 
-ENV STORE_HOME /usr/local/share/openstorefront
-
-RUN mkdir -p "$STORE_HOME" \
-	&& chmod 755 -R "$STORE_HOME"
+RUN mkdir -p "$STOREFRONT_HOME" \
+	&& chmod 755 -R "$STOREFRONT_HOME"
 
 WORKDIR $STORE_HOME
 
