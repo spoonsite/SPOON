@@ -93,7 +93,7 @@ ADD https://github.com/di2e/openstorefront/releases/download/v$STOREFRONT_VERSIO
 RUN mkdir -p "$STOREFRONT_HOME" \
 	&& chmod 755 -R "$STOREFRONT_HOME"
 
-WORKDIR $STORE_HOME
+WORKDIR $STOREFRONT_HOME
 
 RUN echo runuser -l $ES_NAME -c \"$ES_HOME/bin/$ES_NAME -d\" > startup.sh && \
     echo $CATALINA_HOME/bin/catalina.sh run >> startup.sh
