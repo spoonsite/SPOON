@@ -25,10 +25,10 @@ ENV PATH "$PATH":/${JAVA_HOME}/bin:.:
 ## ElasticSearch ##
 ###################
 
-ENV ES_HOME /usr/local/share/elasticsearch
 ENV ES_NAME elasticsearch
-ENV ES_VERSION 5.0.2
-ENV ES_TGZ_URL https://artifacts.elastic.co/downloads/elasticsearch/$ES_NAME-$ES_VERSION.tar.gz
+ENV ES_HOME /usr/local/share/$ES_NAME
+ENV ES_VERSION 2.4.3
+ENV ES_TGZ_URL https://download.elastic.co/$ES_NAME/release/org/$ES_NAME/distribution/tar/$ES_NAME/2.4.3/$ES_NAME-$ES_VERSION.tar.gz
 
 RUN mkdir -p "$ES_HOME" \
 	&& chmod 755 -R "$ES_HOME"
