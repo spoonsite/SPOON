@@ -705,20 +705,72 @@ Ext.define('OSF.component.EvaluationPanel', {
 							}							
 						});
 						
+						var questionStatusIcon = function(workflowStatus) {
+							var statusIcon = '';
+							if (workflowStatus === 'COMPLETE') {
+								statusIcon = '<span class="fa fa-2x fa-check text-success"></span>';
+							} else if (workflowStatus === 'INPROGRESS') {
+								statusIcon = '<span class="fa fa-2x fa-refresh text-info"></span> ';
+							} else if (workflowStatus === 'HOLD') {
+								statusIcon = '<span class="fa fa-2x fa-close text-danger"></span> ';
+							} else if (workflowStatus === 'WAIT') {
+								statusIcon = ' - <span class="fa fa-2x fa-minus text-warning"></span> ';
+							}
+							return statusIcon;
+						};
+						
+						
 						Ext.Array.each(evaluationAll.checkListAll.responses, function(chkresponse) {
+														
+							var statusIcon = questionStatusIcon(chkresponse.workflowStatus);
 							
-							//TODO: add status marker
+							var questionHandler = function(btn) {
+								evalPanel.loadContentForm({
+									form: 'ChecklistQuestion',
+									title: 'Checklist Question',
+									data: chkresponse,
+									refreshCallback: function(updatedResponse) {
+										var newStatusIcon = questionStatusIcon(updatedResponse.workflowStatus);
+																				
+										var checklistMenu = evalPanel.navigation.getComponent('checklistmenu');
+										Ext.Array.each(checklistMenu.items.items, function(item){
+											if (item.questionId && updatedResponse.questionId === item.questionId) {
+												var itemStatus = item.getComponent('status');
+												itemStatus.setText(newStatusIcon);												
+											}
+										});
+									}
+								});
+							};
 							
-							questions.push({							
-								text: chkresponse.question.qid,
-								tooltip: chkresponse.question.question,
-								handler: function(){
-									evalPanel.loadContentForm({
-										form: 'ChecklistQuestion',
-										title: 'Checklist Question',
-										data: chkresponse
-									});
-								}							
+							questions.push({
+								xtype: 'segmentedbutton',
+								allowMultiple: false,
+								allowToggle: false,
+								allowDepress: false,
+								qid: chkresponse.question.qid,
+								questionId: chkresponse.question.questionId,
+								items: [
+									{
+										text: chkresponse.question.qid,
+										width: 50,
+										tooltip: chkresponse.question.question,
+										handler: questionHandler
+									},
+									{
+										text: chkresponse.question.evaluationSectionDescription,
+										tooltip: chkresponse.question.evaluationSectionDescription,
+										handler: questionHandler
+									},
+									{
+										text: statusIcon,
+										itemId: 'status',
+										tooltip: chkresponse.workflowStatusDescription,
+										cls: 'evaluation-nav-question-status',
+										width: 50,
+										handler: questionHandler
+									}
+								]							
 							});
 						});	
 						evalPanel.navigation.getComponent('checklistmenu').add(questions);
@@ -731,7 +783,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 									evalPanel.loadContentForm({
 										form: 'Section',
 										title: sectionAll.section.title,
-										data: sectionAll
+										data: sectionAll										
 									});
 								}							
 							});							
@@ -768,6 +820,10 @@ Ext.define('OSF.component.EvaluationPanel', {
 		evalPanel.contentPanel.add(contentForm);
 
 		if (contentForm.loadData) {
+			if (page.refreshCallback) {
+				evalPanel.refreshCallback = page.refreshCallback;
+			}
+			
 			contentForm.loadData(evalPanel.evaluationId, evalPanel.componentId, page.data, {
 				commentPanel: evalPanel.commentPanel,
 				user: evalPanel.user,

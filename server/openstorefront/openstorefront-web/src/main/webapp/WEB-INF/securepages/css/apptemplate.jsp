@@ -869,6 +869,12 @@ table.confluenceTable td.numberingColumn {
 	background: #559edc;
 }
 
+.evaluation-nav-question-status
+{
+	background-color: #dadada;
+    border-color: #bbbbbb;
+}
+
 .eval-form-title 
 {
 	background: rgba(0, 0, 0, .5) !important;

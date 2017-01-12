@@ -380,6 +380,41 @@ var CoreUtil = {
 	 * of additional plugins to add to the config (optional)
 	 * @returns {CoreUtil.tinymceConfig.defaultConfig}
 	 */
+	tinymceConfigNoMedia: function(additionalPlugins) {
+		var defaultConfig = {
+			plugins: [
+			"advlist autolink lists link charmap print preview hr anchor pagebreak",
+			"searchreplace wordcount visualblocks visualchars code osffullscreen",
+			"insertdatetime media nonbreaking save table contextmenu directionality",
+			"emoticons template paste textcolor placeholder"
+			],
+
+			toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright |  charmap | link table | osffullscreen",
+
+			content_css : "contents.css",
+
+			menubar: "edit format tools",
+			statusbar: false,
+			skin: 'openstorefront',
+			toolbar_items_size: 'small',
+			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
+			+ ' table[class] td[class] th[class] tr[class]',
+			table_default_styles: { border: 'solid 1px #ddd' }
+		};
+
+		if (additionalPlugins) {
+			defaultConfig.plugins.push(additionalPlugins);
+		}
+		
+		return defaultConfig;
+	},	
+	
+	/**
+	 *  Return predfined configs
+	 * @param {additionalPlugins} additionalPlugins - a space-separated list (in a string) 
+	 * of additional plugins to add to the config (optional)
+	 * @returns {CoreUtil.tinymceConfig.defaultConfig}
+	 */
 	tinymceConfig: function(additionalPlugins) {
 		var defaultConfig = {
 			plugins: [

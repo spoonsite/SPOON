@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global Ext */
+/* global Ext, CoreUtil */
 
 Ext.define('OSF.form.ChecklistQuestion', {
 	extend: 'Ext.form.Panel',
@@ -23,10 +23,12 @@ Ext.define('OSF.form.ChecklistQuestion', {
 	dockedItems: [
 		{
 			xtype: 'toolbar',
+			itemId: 'tools',
 			dock: 'bottom',
 			items: [		
 				{
 					xtype: 'combo',
+					itemId: 'workflowStatus',
 					name: 'workflowStatus',										
 					labelAlign: 'right',												
 					margin: '0 0 5 0',
@@ -42,15 +44,6 @@ Ext.define('OSF.form.ChecklistQuestion', {
 						proxy: {
 							type: 'ajax',
 							url: 'api/v1/resource/lookuptypes/WorkflowStatus'
-						}
-					},
-					listeners: {
-						change: {
-							buffer: 1000,
-							fn: function(field, newValue, oldValue) {
-								var mainForm = field.up('form');
-								
-							}
 						}
 					}			
 				}
@@ -95,6 +88,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 			items: [
 				{
 					xtype: 'combobox',
+					itemId: 'score',
 					name: 'score',
 					fieldCls: 'eval-form-field',
 					labelClsExtra: 'eval-form-field-label',					
@@ -113,35 +107,37 @@ Ext.define('OSF.form.ChecklistQuestion', {
 							{ code: '4', description: '4' },
 							{ code: '5', description: '5' }
 						]
-					}
+					}				
 				},
 				{
 					xtype: 'panel',						
 					html: '<b>Response</b>'
 				},
 				{
-					xtype: 'tinymce_textarea',											
+					xtype: 'tinymce_textarea',	
+					itemId: 'response',
 					fieldStyle: 'font-family: Courier New; font-size: 12px;',
 					style: { border: '0' },
 					height: 250,
 					width: '100%',
 					name: 'response',			
 					maxLength: 32000,
-					tinyMCEConfig: CoreUtil.tinymceConfig("osfmediaretriever")			
+					tinyMCEConfig: CoreUtil.tinymceConfig("osfmediaretriever")						
 				},
 				{
 					xtype: 'panel',						
 					html: '<b>Private Notes</b>'
 				},
 				{
-					xtype: 'tinymce_textarea',											
+					xtype: 'tinymce_textarea',
+					itemId: 'privateNote',
 					fieldStyle: 'font-family: Courier New; font-size: 12px;',
 					style: { border: '0' },
 					height: 250,
 					width: '100%',
 					name: 'privateNote',			
 					maxLength: 32000,
-					tinyMCEConfig: CoreUtil.tinymceConfig("osfmediaretriever")			
+					tinyMCEConfig: CoreUtil.tinymceConfig("osfmediaretriever")					
 				}				
 			]
 		});
@@ -152,14 +148,87 @@ Ext.define('OSF.form.ChecklistQuestion', {
 		
 		var questionForm = this;
 		
-		questionForm.response.getComponent('question').update(data.question)
+		questionForm.response.getComponent('question').setTitle("Question - " + data.question.qid);
 		
-		var record = Ext.create('Ext.data.Model', {			
+		questionForm.setLoading(true);
+		Ext.Ajax.request({
+			url: 'api/v1/resource/evaluations/' + evaluationId + '/checklist/' + data.checklistId + '/responses/' + data.responseId,
+			callback: function() {
+				questionForm.setLoading(false);
+			}, 
+			success: function(response, opts) {
+				var responseData = Ext.decode(response.responseText);
+				
+				questionForm.response.getComponent('question').update(responseData.question);
+
+				var record = Ext.create('Ext.data.Model', {			
+				});
+				record.set(responseData);	
+
+				questionForm.loadRecord(record);
+				questionForm.evaluationId = evaluationId;
+				questionForm.checklistResponse = responseData;
+
+				if (opts && opts.mainForm) {
+					questionForm.refreshCallback = opts.mainForm.refreshCallback;
+				}		
+
+				//Add change detection
+				Ext.defer(function(){
+					questionForm.getComponent('tools').getComponent('workflowStatus').on('change', function(field, newValue, oldValue){
+						questionForm.saveData();
+					}, undefined, {
+						buffer: 1000
+					});
+
+					questionForm.response.getComponent('score').on('change', function(field, newValue, oldValue){
+						questionForm.saveData();
+					}, undefined, {
+						buffer: 1000
+					});
+
+					questionForm.response.getComponent('response').on('change', function(field, newValue, oldValue){
+						questionForm.saveData();
+					}, undefined, {
+						buffer: 2000
+					});
+
+					questionForm.response.getComponent('privateNote').on('change', function(field, newValue, oldValue){
+						questionForm.saveData();
+					}, undefined, {
+						buffer: 2000
+					});					
+				}, 1000);
+			}
 		});
-		record.set(data);		
-		questionForm.loadRecord(record);
-		
+				
 		opts.commentPanel.loadComments(evaluationId, "Checklist Question - " + data.question.qid, data.question.questionId);
+	},
+	saveData: function() {
+		var questionForm = this;
+		
+		var data = questionForm.getValues();
+		
+		CoreUtil.submitForm({
+			url: 'api/v1/resource/evaluations/' + 
+				questionForm.evaluationId 
+				 + '/checklist/' + 
+				 questionForm.checklistResponse.checklistId
+				 + '/responses/' + 
+				questionForm.checklistResponse.responseId,
+			method: 'PUT',
+			data: data,
+			form: questionForm,
+			success: function(action, opts) {
+				var chkResponse = Ext.decode(action.responseText);
+				
+				Ext.toast('Saved Response');
+				if (questionForm.refreshCallback) {
+					questionForm.refreshCallback(chkResponse);
+				}
+			}	
+		});
+			
 	}
 	
 });

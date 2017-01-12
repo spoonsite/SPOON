@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* global Ext */
+/* global Ext, CoreUtil */
 
 Ext.define('OSF.form.EntrySummary', {
 	extend: 'Ext.form.Panel',
@@ -25,6 +25,7 @@ Ext.define('OSF.form.EntrySummary', {
 	dockedItems: [
 		{
 			xtype: 'panel',
+			itemId: 'topform',
 			dock: 'top',
 			layout: 'anchor',
 			bodyStyle: 'padding: 10px 20px 0px 20px;',
@@ -35,6 +36,7 @@ Ext.define('OSF.form.EntrySummary', {
 			items: [
 				{
 					xtype: 'textfield',
+					itemId: 'name',
 					name: 'name',
 					fieldLabel: 'Name <span class="field-required" />',
 					allowBlank: false,
@@ -42,6 +44,7 @@ Ext.define('OSF.form.EntrySummary', {
 				},		
 				{
 					xtype: 'combo',
+					itemId: 'organization',
 					name: 'organization',									
 					allowBlank: false,															
 					fieldLabel: 'Organization <span class="field-required" />',
@@ -62,12 +65,14 @@ Ext.define('OSF.form.EntrySummary', {
 					}
 				},	
 				{
-					xtype: 'datefield',			
+					xtype: 'datefield',
+					itemId: 'releaseDate',
 					fieldLabel: 'Release Date',
 					name: 'releaseDate'									
 				},
 				{
 					xtype: 'textfield',
+					itemId: 'version',
 					fieldLabel: 'Version',
 					name: 'version'																		
 				},
@@ -94,7 +99,6 @@ Ext.define('OSF.form.EntrySummary', {
 		this.callParent();
 		
 		var entryForm = this;
-		
 	},
 	
 	loadData: function(evaluationId, componentId, data, opts) {
@@ -107,15 +111,109 @@ Ext.define('OSF.form.EntrySummary', {
 				entryForm.setLoading(false);
 			},
 			success: function(response, opt) {
-				var evaluation = Ext.decode(response.responseText);
+				var component = Ext.decode(response.responseText);
 				var record = Ext.create('Ext.data.Model',{					
 				});
-				record.set(evaluation);				
+				record.set(component);				
 				entryForm.loadRecord(record);
+				entryForm.componentId = componentId;
+				entryForm.componentData = component;
+				
+				if (opts && opts.mainForm) {
+					entryForm.refreshCallback = opts.mainForm.refreshCallback;
+				}
+				
+				//set change event
+				entryForm.getComponent('description').on('change', function(){
+					entryForm.saveData();
+				}, undefined, {
+					buffer: 2000
+				});
+				entryForm.getComponent('topform').getComponent('name').on('change', function(){
+					entryForm.saveData();
+				}, undefined, {
+					buffer: 2000
+				});
+				entryForm.getComponent('topform').getComponent('organization').on('change', function(){
+					entryForm.saveData();
+				}, undefined, {
+					buffer: 2000
+				});				
+				entryForm.getComponent('topform').getComponent('releaseDate').on('change', function(){
+					entryForm.saveData();
+				}, undefined, {
+					buffer: 2000
+				});	
+				entryForm.getComponent('topform').getComponent('version').on('change', function(){
+					entryForm.saveData();
+				}, undefined, {
+					buffer: 2000
+				});					
+				
 			}
 		});	
 		
 		opts.commentPanel.loadComments(evaluationId, "Entry Summmary", componentId);
+	},
+	saveData: function() {		
+		var entryForm = this;
+		
+		//make sure it's valid		
+		var data = entryForm.getValues();
+	
+		
+		if (!entryForm.saving &&
+			entryForm.isValid() &&
+			data.description &&
+			data.description !== '') {
+		
+			entryForm.saving = true;
+			Ext.Ajax.request({
+				url: 'api/v1/resource/components/' + entryForm.componentId + '/attributes',
+				success: function(response, opts) {
+					var attributes = Ext.decode(response.responseText);
+					
+					data.componentType = entryForm.componentData.componentType;
+					data.approvalState = entryForm.componentData.approvalState;
+					
+					var requiredForComponent = {
+						component: data,
+						attributes: []						
+					};
+					Ext.Array.each(attributes, function(attribute){
+						requiredForComponent.attributes.push({
+							componentAttributePk: {
+								attributeType: attribute.componentAttributePk.attributeType,
+								attributeCode: attribute.componentAttributePk.attributeCode
+							}
+						});
+					});
+					
+					CoreUtil.submitForm({
+						url: 'api/v1/resource/components/' + 
+							entryForm.componentId,
+						method: 'PUT',
+						data: requiredForComponent,
+						form: entryForm,
+						callback: function() {
+							entryForm.saving = false;
+						},
+						success: function(action, opts) {							
+
+							Ext.toast('Saved Entry Summary');
+							if (entryForm.refreshCallback) {
+								entryForm.refreshCallback();
+							}
+						}	
+					});	
+				},
+				failure: function(response, opt) {
+					entryForm.saving = false;
+				}
+			});
+			
+		}
+		
 	}
 	
 });

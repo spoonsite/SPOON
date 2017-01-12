@@ -47,7 +47,7 @@ public class EvaluationChecklistRecommendation
 	private String recommendation;
 
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_32K)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_32K)
 	private String reason;
 
 	@NotNull

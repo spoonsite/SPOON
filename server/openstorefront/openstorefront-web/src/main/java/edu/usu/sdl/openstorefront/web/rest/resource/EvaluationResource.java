@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistRecommendation;
@@ -29,6 +30,8 @@ import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationComment;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
+import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
+import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationFilterParams;
 import edu.usu.sdl.openstorefront.core.view.EvaluationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationViewWrapper;
@@ -479,7 +482,67 @@ public class EvaluationResource
 		return response;
 	}
 
-	//update evaluation informaion (version)
+	
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ContentSection.class)
+	@APIDescription("Get active sections for an evaluation")
+	@Path("/{evaluationId}/sections")
+	public Response getEvaluationSections(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		ContentSection section = new ContentSection();
+		section.setEntity(Evaluation.class.getSimpleName());		
+		section.setEntityId(evaluationId);		
+		section.setActiveStatus(ContentSection.ACTIVE_STATUS);
+		
+		List<ContentSection> sections = section.findByExample();
+		GenericEntity<List<ContentSection>> sectionEntity = new GenericEntity<List<ContentSection>>(sections)
+		{
+		};
+		return sendSingleEntityResponse(sectionEntity);
+	}		
+	
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ContentSection.class)
+	@APIDescription("Get section for an evaluation")
+	@Path("/{evaluationId}/sections/{sectionId}")
+	public Response getEvaluationSection(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("sectionId") String sectionId
+	)
+	{
+		ContentSection section = new ContentSection();
+		section.setEntity(Evaluation.class.getSimpleName());		
+		section.setEntityId(evaluationId);		
+		section.setContentSectionId(sectionId);		
+		return sendSingleEntityResponse(section);
+	}	
+	
+	
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(EvaluationChecklist.class)
+	@APIDescription("Get a checklist for an evaluation")
+	@Path("/{evaluationId}/checklist/{checklistId}")
+	public Response getEvaluationChecklist(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("checklistId") String checklistId
+	)
+	{
+		EvaluationChecklist checklist = new EvaluationChecklist();
+		checklist.setEvaluationId(evaluationId);
+		checklist.setChecklistId(checklistId);	
+		checklist = checklist.find();
+		
+		return sendSingleEntityResponse(checklist);
+	}	
+	
 	@PUT
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
@@ -510,11 +573,51 @@ public class EvaluationResource
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ChecklistResponseView.class)
+	@APIDescription("Gets checklist responses for an evaluation")
+	@Path("/{evaluationId}/checklist/{checklistId}/responses")
+	public List<ChecklistResponseView> getChecklistResponse(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("checklistId") String checklistId
+	)
+	{	
+		EvaluationChecklistResponse responseExample = new EvaluationChecklistResponse();
+		responseExample.setChecklistId(checklistId);
+		responseExample.setActiveStatus(EvaluationChecklistResponse.ACTIVE_STATUS);
+		
+		List<ChecklistResponseView> views = ChecklistResponseView.toView(responseExample.findByExample());
+		return views;
+	}	
+	
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ChecklistResponseView.class)
+	@APIDescription("Get's a checklist response for an evaluation")
+	@Path("/{evaluationId}/checklist/{checklistId}/responses/{responseId}")
+	public Response getChecklistResponse(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("checklistId") String checklistId,
+			@PathParam("responseId") String responseId
+	)
+	{	
+		EvaluationChecklistResponse responseExample = new EvaluationChecklistResponse();
+		responseExample.setChecklistId(checklistId);
+		responseExample.setResponseId(responseId);
+		
+		EvaluationChecklistResponse checklistResponse = responseExample.find();
+				
+		return sendSingleEntityResponse(ChecklistResponseView.toView(checklistResponse));
+	}
+	
 	@PUT
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(EvaluationChecklistResponse.class)
+	@DataType(ChecklistResponseView.class)
 	@APIDescription("Update a checklist response for an evaluation")
 	@Path("/{evaluationId}/checklist/{checklistId}/responses/{responseId}")
 	public Response updateChecklistResponse(
@@ -540,7 +643,7 @@ public class EvaluationResource
 					checklistResponse.setChecklistId(checklistId);
 					checklistResponse.setResponseId(responseId);
 					checklistResponse = checklistResponse.save();
-					return Response.ok(checklistResponse).build();
+					return Response.ok(ChecklistResponseView.toView(checklistResponse)).build();
 				} else {
 					return Response.ok(result.toRestError()).build();
 				}
@@ -549,6 +652,25 @@ public class EvaluationResource
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})	
+	@DataType(EvaluationChecklistRecommendationView.class)
+	@APIDescription("Adds a checklist recommendation for an evaluation")
+	@Path("/{evaluationId}/checklist/{checklistId}/recommendations")
+	public List<EvaluationChecklistRecommendationView> addChecklistRecommendation(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("checklistId") String checklistId
+	)
+	{
+		EvaluationChecklistRecommendation recommendationExample = new EvaluationChecklistRecommendation();
+		recommendationExample.setChecklistId(checklistId);
+		recommendationExample.setActiveStatus(EvaluationChecklistRecommendation.ACTIVE_STATUS);
+				
+		List<EvaluationChecklistRecommendation> recommendations = recommendationExample.findByExample();				
+		return EvaluationChecklistRecommendationView.toView(recommendations);		
+	}	
+	
 	@POST
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})

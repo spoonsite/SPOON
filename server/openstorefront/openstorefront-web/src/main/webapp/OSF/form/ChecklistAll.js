@@ -47,7 +47,11 @@ Ext.define('OSF.form.ChecklistAll', {
 					{ name: 'narrative', mapping: function(data) {
 						return data.question.narrative;
 					}}					
-				]
+				],
+				proxy: {
+					type: 'ajax',
+					url: 'api/v1/resource/evaluations/{evaluationId}/checklist/{checklistId}/responses'
+				}
 			},
 			listeners: {
 				selectionchange: function(selModel, records, index, opts){
@@ -64,9 +68,24 @@ Ext.define('OSF.form.ChecklistAll', {
 			},
 			columns: [
 				{ text: 'QID', dataIndex: 'qid', align: 'center', width: 100 },
-				{ text: 'Section', dataIndex: 'evaluationSectionDescription', width: 175 },
+				{ text: 'Status', dataIndex: 'workflowStatus', align: 'center',
+					renderer: function(value, meta, record) {
+						if (value === 'COMPLETE') {
+							meta.tdCls = 'alert-success';							
+						} else if (value === 'INPROGRESS') {
+							meta.tdCls = 'alert-info';							
+						} else if (value === 'HOLD') {
+							meta.tdCls = 'alert-danger';							
+						} else if (value === 'WAIT') {
+							meta.tdCls = 'alert-warning';							
+						}
+						
+						return record.get('workflowStatusDescription');
+					}
+				},
+				{ text: 'Section', dataIndex: 'evaluationSectionDescription', align: 'center', width: 175 },
 				{ text: 'Question', dataIndex: 'questionText', flex: 1, minWidth: 250, cellWrap: true },
-				{ text: 'Scoring Criteria', dataIndex: 'scoringCriteria', width: 250, cellWrap: true },
+				{ text: 'Scoring Criteria', dataIndex: 'scoringCriteria', width: 250, cellWrap: true, hidden: true },
 				{ text: 'Objective', dataIndex: 'objective', width: 250, cellWrap: true, hidden: true },
 				{ text: 'Narrative', dataIndex: 'narrative', width: 250, cellWrap: true, hidden: true },
 				{
@@ -130,9 +149,26 @@ Ext.define('OSF.form.ChecklistAll', {
 									var data = form.getValues();
 									
 									//save then update record
-									
-									record.set(data);
-									editWin.close();
+									CoreUtil.submitForm({
+										url: 'api/v1/resource/evaluations/' + 
+											questionForm.evaluationId 
+											 + '/checklist/' + 
+											record.get('checklistId')
+											 + '/responses/' + 
+											record.get('responseId'),
+										method: 'PUT',
+										data: data,
+										form: form,
+										success: function(action, opts) {
+											var chkResponse = Ext.decode(action.responseText);
+											
+											Ext.toast('Saved Response');
+											record.set(chkResponse, {
+												dirty: false
+											});
+											editWin.close();
+										}	
+									});									
 								}
 							}, 
 							{
@@ -163,6 +199,10 @@ Ext.define('OSF.form.ChecklistAll', {
 						items: [
 							{
 								html: record.get('questionText')
+							},
+							{
+								xtype: 'hidden',
+								name: 'responseId'
 							},
 							{
 								xtype: 'combobox',
@@ -217,7 +257,26 @@ Ext.define('OSF.form.ChecklistAll', {
 								name: 'privateNote',			
 								maxLength: 32000,
 								tinyMCEConfig: CoreUtil.tinymceConfig("osfmediaretriever")			
-							}								
+							},
+							{
+								xtype: 'combo',
+								itemId: 'workflowStatus',
+								name: 'workflowStatus',																		
+								margin: '0 0 5 0',
+								editable: false,
+								typeAhead: false,								
+								fieldLabel: 'Status <span class="field-required" />',	
+								displayField: 'description',
+								valueField: 'code',
+								labelSeparator: '',
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/lookuptypes/WorkflowStatus'
+									}
+								}			
+							}							
 						]
 					}
 				]
@@ -234,9 +293,12 @@ Ext.define('OSF.form.ChecklistAll', {
 	loadData: function(evaluationId, componentId, data, opts) {
 		
 		var questionForm = this;
-		
+				
 		questionForm.chkListData = data;
-		questionForm.questionGrid.getStore().loadRawData(data.responses);
+		questionForm.evaluationId = evaluationId;
+		questionForm.questionGrid.getStore().load({
+			url: 'api/v1/resource/evaluations/' + questionForm.evaluationId + '/checklist/' + data.evaluationChecklist.checklistId + '/responses'
+		});
 		
 		opts.commentPanel.loadComments(evaluationId, "Checklist All", evaluationId);	
 	}
