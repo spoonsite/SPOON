@@ -75,14 +75,18 @@ ENV STOREFRONT_HOME /usr/local/share/openstorefront
 
 # Switching between development and production must be done manually
 #
-# To switch, uncomment the ENV and ADD lines below
+# To switch, uncomment the RUN line and comment out the COPY line below
 # Be sure to change the version so that the appropriate WAR file is downloaded
 #
-# Lastly, comment out the COPY line
+# The copy line pulls in the WAR file from the currently working set of directories
+# (It should only be used locally during development when the WAR file can be built first)
 
 ENV STOREFRONT_VERSION 2.1
+ENV STOREFRONT_WAR_URL https://github.com/di2e/openstorefront/releases/download/v$STOREFRONT_VERSION/openstorefront.war
 
-ADD https://github.com/di2e/openstorefront/releases/download/v$STOREFRONT_VERSION/openstorefront.war $CATALINA_HOME/webapps
+WORKDIR $CATALINA_HOME/webapps
+
+RUN curl -fSL "$STOREFRONT_WAR_URL" -o ROOT.war
 
 #COPY server/openstorefront/openstorefront-web/target/openstorefront.war $CATALINA_HOME/webapps
 
