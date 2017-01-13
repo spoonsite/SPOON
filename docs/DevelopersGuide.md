@@ -44,7 +44,7 @@ The following key libraries were used in the development:
   * Install NetBeans - https://netbeans.org/downloads/
   * Install TomCat 7 - http://tomcat.apache.org/download-70.cgi
   * Install Maven - http://maven.apache.org/install.html
-2. **Clone the openstorefront GitHub repo to the desired directory*
+2. **Clone the openstorefront GitHub repo to the desired directory**
 3. **Intial NetBeans configuration**
   * Select Tools -> Plugins. Once the plugins window opens, select the "Available Plugins" tab
   * Search for "Java EE Base", check it, and select install. Restart NetBeans if prompted
