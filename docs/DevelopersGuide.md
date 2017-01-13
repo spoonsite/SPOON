@@ -41,22 +41,22 @@ The following key libraries were used in the development:
 ##1.3 Dev Environment on Windows with NetBeans
 
 1. Install dependendies
-..* Install NetBeans - https://netbeans.org/downloads/
-..* Install TomCat 7 - http://tomcat.apache.org/download-70.cgi
-..* Install Maven - http://maven.apache.org/install.html
+  * Install NetBeans - https://netbeans.org/downloads/
+  * Install TomCat 7 - http://tomcat.apache.org/download-70.cgi
+  * Install Maven - http://maven.apache.org/install.html
 2. Clone the openstorefront GitHub repo to the desired directory
 3. Intial NetBeans configuration
-..* Select Tools -> Plugins. Once the plugins window opens, select the "Available Plugins" tab
-..* Search for "Java EE Base", check it, and select install. Restart NetBeans if prompted
-..* Select File -> Project Groups then double-click on "(none)"
+  * Select Tools -> Plugins. Once the plugins window opens, select the "Available Plugins" tab
+  * Search for "Java EE Base", check it, and select install. Restart NetBeans if prompted
+  * Select File -> Project Groups then double-click on "(none)"
 4. Open the openstorefront Project
-..* Select the Open Project Icon or press CTRL + SHIFT + O
-..* Open the openstorefront GitHub repo on your local machine
+  * Select the Open Project Icon or press CTRL + SHIFT + O
+  * Open the openstorefront GitHub repo on your local machine
 11. TomCat Server configuration
-..* Select Tools -> Servers. Once the servers window opens, select Add Server
-..* Follow the wizard to select the TomCat server location and add a user
-..* Once created, select the "Startup" tab and ensure the "Socket Port" option is selected.
-..* Select the Platform tab and set the VM options to use at least 2GB of ram by entering -Xmx[memory size]. Ex. -Xmx2g for 2GB of memory
+  * Select Tools -> Servers. Once the servers window opens, select Add Server
+  * Follow the wizard to select the TomCat server location and add a user
+  * Once created, select the "Startup" tab and ensure the "Socket Port" option is selected.
+  * Select the Platform tab and set the VM options to use at least 2GB of ram by entering -Xmx[memory size]. Ex. -Xmx2g for 2GB of memory
 
 
 
