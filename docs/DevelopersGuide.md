@@ -56,7 +56,8 @@ The following key libraries were used in the development:
   * Select Tools -> Servers. Once the servers window opens, select Add Server
   * Follow the wizard to select the TomCat server location and add a user
   * Once created, select the "Startup" tab and ensure the "Socket Port" option is selected.
-  * Select the Platform tab and set the VM memory options to -Xmx[memory size]. We recommend at least 2GB. (-Xmx2g)
+  * Select the Platform tab and set the VM memory options to -Xmx[memory size].
+    * We recommend at least 2GB. (-Xmx2g)
 
 
 
