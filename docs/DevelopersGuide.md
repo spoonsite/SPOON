@@ -39,6 +39,24 @@ The following key libraries were used in the development:
 -   Ext.js and tinymce
 
 ##1.3 Dev Environment on Windows with NetBeans
+
+1. Install NetBeans - https://netbeans.org/downloads/
+2. Install TomCat 7 - http://tomcat.apache.org/download-70.cgi
+3. Install Maven - http://maven.apache.org/install.html
+4. Clone the openstorefront GitHub repo to the desired directory
+5. Open NetBeans
+6. Select Tools -> Plugins. Once the plugins window opens, select the "Available Plugins" tab
+7. Search for "Java EE Base", check it, and select install. Restart NetBeans if prompted
+8. Select File -> Project Groups then double-click on "(none)"
+9. Select the Open Project Icon or press CTRL + SHIFT + O
+10. Open the openstorefront GitHub repo on your local machine
+11. Select Tools -> Servers. Once the servers window opens, select Add Server
+12. Follow the wizard to select the DB location and add a user
+13. Once created, select the "Startup" tab and ensure the "Socket Port" option is selected.
+14. Select the Platform tab and set the VM options to use at least 2GB of ram by entering -Xmx[memory size]. Ex. -Xmx2g for 2GB of memory
+
+
+
 -----
 
 
