@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
@@ -23,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
+import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistRecommendation;
@@ -31,6 +33,7 @@ import edu.usu.sdl.openstorefront.core.entity.EvaluationComment;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
+import edu.usu.sdl.openstorefront.core.view.ContentSectionMediaView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationFilterParams;
 import edu.usu.sdl.openstorefront.core.view.EvaluationView;
@@ -174,6 +177,31 @@ public class EvaluationResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 	}
+	
+	@POST
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@APIDescription("Copies an full evaluation putting the new evaluation in a pending state.")
+	@DataType(Evaluation.class)
+	@Path("/{evaluationId}/copy")
+	public Response copyEvaluation(
+		@PathParam("evaluationId") String evaluationId
+	)
+	{
+		Evaluation evaluationExisting = new Evaluation();
+		evaluationExisting.setEvaluationId(evaluationId);
+		evaluationExisting = evaluationExisting.find();
+		if (evaluationExisting != null) {		
+			String newEvaluationId = service.getEvaluationService().copyEvaluation(evaluationId);
+			
+			Evaluation newEvaluation = new Evaluation();
+			newEvaluation.setEvaluationId(newEvaluationId);
+			newEvaluation = newEvaluation.find();
+			return Response.created(URI.create("v1/resource/evaluation/" + newEvaluation.getEvaluationId())).entity(newEvaluation).build();
+		} else {
+			return sendSingleEntityResponse(evaluationExisting);
+		}
+	}	
 
 	@PUT
 	@RequireAdmin
@@ -315,11 +343,97 @@ public class EvaluationResource
 		}
 	}
 
-	//delete (later)
 	//add section
 	//remove section
 	//add sub section to section
-	//remove sub section to section
+	//remove sub section to section	
+	
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ContentSectionMediaView.class)
+	@APIDescription("Gets media for a section")
+	@Path("/{evaluationId}/sections/{sectionId}/media")
+	public Response getSectionMedia(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("sectionId") String sectionId
+	)
+	{		 
+		ContentSection contentSection = new ContentSection();
+		contentSection.setEntity(Evaluation.class.getSimpleName());
+		contentSection.setEntityId(evaluationId);
+		contentSection.setContentSectionId(sectionId);
+		contentSection = contentSection.find();
+		if (contentSection != null) {
+			
+			ContentSectionMedia contentSectionMedia = new ContentSectionMedia();
+			contentSectionMedia.setContentSectionId(sectionId);			
+			List<ContentSectionMedia> media = contentSectionMedia.findByExample();			
+			GenericEntity<List<ContentSectionMediaView>> mediaEntity = new GenericEntity<List<ContentSectionMediaView>>(ContentSectionMediaView.toView(media))					
+			{
+			};
+			return sendSingleEntityResponse(mediaEntity);
+		} else {
+			return sendSingleEntityResponse(contentSection);
+		}
+	}	
+		
+	@PUT
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(ContentSectionMedia.class)	
+	@RequireAdmin
+	@APIDescription("Update the flags on the section media. To add media post to MediaUpload.action?UploadSectionMedia&contentSectionMedia...&file")
+	@Path("/{evaluationId}/sections/{sectionId}/media/{sectionMediaId}")
+	public void updateSectionMedia(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("sectionId") String sectionId,
+			@PathParam("sectionMediaId") String sectionMediaId,
+			ContentSectionMedia sectionMedia
+	)
+	{	
+		ContentSection contentSection = new ContentSection();
+		contentSection.setEntity(Evaluation.class.getSimpleName());
+		contentSection.setEntityId(evaluationId);
+		contentSection.setContentSectionId(sectionId);
+		contentSection = contentSection.find();
+		if (contentSection != null) {
+			ContentSectionMedia contentSectionMedia = new ContentSectionMedia();
+			contentSectionMedia.setContentSectionId(sectionId);	
+			contentSectionMedia.setContentSectionMediaId(sectionMediaId);
+			contentSectionMedia = contentSectionMedia.find();
+			if (contentSectionMedia != null) {
+				contentSectionMedia.setPrivateMedia(Convert.toBoolean(sectionMedia.getPrivateMedia()));
+			}
+		}
+	}			
+	
+	@DELETE
+	@RequireAdmin
+	@APIDescription("Deletes media for a section")
+	@Path("/{evaluationId}/sections/{sectionId}/media/{sectionMediaId}")
+	public void deleteSectionMedia(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("sectionId") String sectionId,
+			@PathParam("sectionMediaId") String sectionMediaId
+	)
+	{	
+		ContentSection contentSection = new ContentSection();
+		contentSection.setEntity(Evaluation.class.getSimpleName());
+		contentSection.setEntityId(evaluationId);
+		contentSection.setContentSectionId(sectionId);
+		contentSection = contentSection.find();
+		if (contentSection != null) {
+			ContentSectionMedia contentSectionMedia = new ContentSectionMedia();
+			contentSectionMedia.setContentSectionId(sectionId);	
+			contentSectionMedia.setContentSectionMediaId(sectionMediaId);
+			contentSectionMedia = contentSectionMedia.find();
+			if (contentSectionMedia != null) {
+				service.getContentSectionService().deleteMedia(sectionMediaId);				
+			}
+		}
+	}	
+	
 	@GET
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})

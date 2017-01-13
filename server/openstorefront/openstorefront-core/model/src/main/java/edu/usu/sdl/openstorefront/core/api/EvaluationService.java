@@ -112,5 +112,12 @@ public interface EvaluationService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void unpublishEvaluation(String evaluationId);
+	
+	/**
+	 * Creates a full copy of an evaluation with a different change request
+	 * @param evaluationId
+	 * @return copy's evaluation Id
+	 */
+	public String copyEvaluation(String evaluationId);	
 
 }

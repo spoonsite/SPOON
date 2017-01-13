@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
+import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -97,6 +98,9 @@ public class MediaAction
 		@Validate(required = true, field = "name", on = "UploadTemporaryMedia")
 	})
 	private TemporaryMedia temporaryMedia;
+	
+	@Validate(required = true, on = "UploadSectionMedia")
+	private ContentSectionMedia contentSectionMedia;		
 
 	@DefaultHandler
 	public Resolution audioTestPage()
@@ -155,7 +159,7 @@ public class MediaAction
 				if (allow) {
 
 					if (doesFileExceedLimit(file)) {
-						deleteTempFile(file);
+						deleteUploadFile(file);
 						errors.put("file", "File size exceeds max allowed.");
 					} else {
 
@@ -180,7 +184,7 @@ public class MediaAction
 							} catch (IOException ex) {
 								throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 							} finally {
-								deleteTempFile(file);
+								deleteUploadFile(file);
 							}
 						} else {
 							errors.put("file", validationResult.toHtmlString());
@@ -266,7 +270,7 @@ public class MediaAction
 					} catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 					} finally {
-						deleteTempFile(file);
+						deleteUploadFile(file);
 					}
 				} else {
 					errors.put("file", validationResult.toHtmlString());
@@ -356,7 +360,7 @@ public class MediaAction
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 				} finally {
-					deleteTempFile(file);
+					deleteUploadFile(file);
 				}
 			} else {
 				errors.put("file", validationResult.toHtmlString());
@@ -364,6 +368,30 @@ public class MediaAction
 		} else {
 			errors.put("temporaryMedia", "Missing temporary media information");
 		}
+		return streamUploadResponse(errors);
+	}
+	
+	@HandlesEvent("UploadSectionMedia")
+	public Resolution uploadSectionMedia()
+	{
+		Map<String, String> errors = new HashMap<>();
+			
+		contentSectionMedia.setOriginalName(StringProcessor.getJustFileName(file.getFileName()));			
+		contentSectionMedia.setMimeType(file.getContentType());
+
+		ValidationResult validationResult = contentSectionMedia.validate();
+		if (validationResult.valid()) {
+			try {
+				contentSectionMedia = service.getContentSectionService().saveMedia(contentSectionMedia, file.getInputStream());
+				return streamResults(contentSectionMedia);
+			} catch (IOException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+			} finally {
+				deleteUploadFile(file);
+			}
+		} else {
+			errors.put("file", validationResult.toHtmlString());
+		}		
 		return streamUploadResponse(errors);
 	}
 
@@ -458,6 +486,16 @@ public class MediaAction
 	public void setTemporaryMedia(TemporaryMedia temporaryMedia)
 	{
 		this.temporaryMedia = temporaryMedia;
+	}
+
+	public ContentSectionMedia getContentSectionMedia()
+	{
+		return contentSectionMedia;
+	}
+
+	public void setContentSectionMedia(ContentSectionMedia contentSectionMedia)
+	{
+		this.contentSectionMedia = contentSectionMedia;
 	}
 
 }

@@ -124,7 +124,9 @@
 								name: 'workflowStatus',
 								allowBlank: false,															
 								editable: false,
-								typeAhead: false,								
+								typeAhead: false,	
+								valueField: 'code',
+								displayField: 'description',
 								fieldLabel: 'Status <span class="field-required" />',								
 								store: {
 									proxy: {
@@ -164,6 +166,16 @@
 										url: 'api/v1/resource/userprofiles/lookup'
 									}
 								}								
+							},
+							{
+								xtype: 'checkbox',
+								name: 'allowNewSections',
+								boxLabel: 'Allow Adding Sections'
+							},
+							{
+								xtype: 'checkbox',
+								name: 'allowNewSubSections',
+								boxLabel: 'Allow Adding Sub-Sections'
 							}
 						]
 					}
@@ -267,6 +279,7 @@
 						
 						if (selected.length > 0 && selected[0].get('published')) {
 							Ext.getCmp('publish').setDisabled(true);
+							tools.getComponent('edit').setDisabled(false);
 							Ext.getCmp('unpublish').setDisabled(false);
 						} else {
 							Ext.getCmp('publish').setDisabled(false);
@@ -394,6 +407,20 @@
 										}										
 									},
 									{
+										xtype: 'menuseparator'
+									},									
+									{
+										text: 'Copy',										
+										iconCls: 'fa fa-copy',
+										handler: function(){
+											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
+											copy(record);
+										}										
+									},
+									{
+										xtype: 'menuseparator'
+									},
+									{
 										text: 'Assign Group',
 										iconCls: 'fa fa-users',
 										handler: function(){
@@ -506,6 +533,20 @@
 
 			var actionAssignUser = function(record) {
 				
+			};
+
+			var copy = function(record) {
+				evaluationGrid.setLoading('Copying...');
+				Ext.Ajax.request({
+					url: 'api/v1/resource/evaluations/' + record.get('evaluationId') + '/copy',
+					method: 'POST',
+					callback: function(){
+						evaluationGrid.setLoading(false);
+					},
+					success: function(response, opts){
+						actionRefresh();
+					}
+				});	
 			};
 
 			var publish = function(record){

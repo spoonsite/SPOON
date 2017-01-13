@@ -58,6 +58,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
@@ -995,6 +996,25 @@ public class CoreComponentServiceImpl
 			componentRelationship.setRelatedComponentId(componentId);
 			persistenceService.deleteByExample(componentRelationship);
 		}
+		
+		if (option.getIgnoreClasses().contains(Evaluation.class.getSimpleName()) == false) {
+			Evaluation evaluationExample = new Evaluation();
+			evaluationExample.setOriginComponentId(componentId);
+			
+			List<Evaluation> evaluations = evaluationExample.findByExample();
+			for (Evaluation evaluation : evaluations) {
+				componentService.getEvaluationService().deleteEvaluation(evaluation.getEvaluationId());				
+			}
+		}
+		//delete change requests
+		Component changeRequestExample = new Component();
+		changeRequestExample.setPendingChangeId(componentId);
+		List<Component> changeRequests = changeRequestExample.findByExample();
+		for (Component component : changeRequests) {
+			//delete everything as the record will be ophaned.
+			cascadeDeleteOfComponent(component.getComponentId());
+		}
+		
 
 		Component component = persistenceService.findById(Component.class, componentId);
 		persistenceService.delete(component);
@@ -2045,6 +2065,17 @@ public class CoreComponentServiceImpl
 					options = saveOptions;
 				}
 				saveFullComponent(targetComponent, options);
+				
+				//move evaluations over to target
+				//Keep in mind the change requests will need to be discarded (cascade delete should take care of it)
+				//New one need to be created upon editing the evaluation
+				Evaluation existingEvaluations = new Evaluation();
+				existingEvaluations.setOriginComponentId(mergeComponent.getComponent().getComponentId());				
+				List<Evaluation> evaluations = existingEvaluations.findByExample();
+				for (Evaluation evaluation : evaluations) {
+					evaluation.setOriginComponentId(targetComponentId);
+					persistenceService.persist(evaluation);
+				}				
 
 				//move any watches from merge to target
 				UserWatch userWatchExample = new UserWatch();

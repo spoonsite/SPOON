@@ -64,16 +64,17 @@ public class ContentSectionResource
 		};
 		return sendSingleEntityResponse(sectionEntity);
 	}
-
+	
+	//get attributes 
+	
+	//add attributes
+	
+	//delete attributes
+	
+	
 	//get a section
 	//create content section
 	//update content section
 	//delete
-	//add media
-	//update media
-	//delete media
-	//Hold on this: decide if useful
-	//add attributes
-	//update attributes
-	//delete attributes
+
 }

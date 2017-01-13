@@ -76,6 +76,12 @@ public class Evaluation
 
 	@NotNull
 	private Boolean published;
+	
+	@NotNull
+	private Boolean allowNewSections;
+	
+	@NotNull
+	private Boolean allowNewSubSections;
 
 	public Evaluation()
 	{
@@ -94,6 +100,8 @@ public class Evaluation
 		setPublished(evaluation.getPublished());
 		setVersion(evaluation.getVersion());
 		setWorkflowStatus(evaluation.getWorkflowStatus());
+		setAllowNewSections(evaluation.getAllowNewSections());
+		setAllowNewSubSections(evaluation.getAllowNewSubSections());		
 	}
 
 	public String getEvaluationId()
@@ -184,6 +192,26 @@ public class Evaluation
 	public void setWorkflowStatus(String workflowStatus)
 	{
 		this.workflowStatus = workflowStatus;
+	}
+
+	public Boolean getAllowNewSections()
+	{
+		return allowNewSections;
+	}
+
+	public void setAllowNewSections(Boolean allowNewSections)
+	{
+		this.allowNewSections = allowNewSections;
+	}
+
+	public Boolean getAllowNewSubSections()
+	{
+		return allowNewSubSections;
+	}
+
+	public void setAllowNewSubSections(Boolean allowNewSubSections)
+	{
+		this.allowNewSubSections = allowNewSubSections;
 	}
 
 }

@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplateQuestion;
@@ -47,6 +48,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -151,9 +153,13 @@ public class EvaluationServiceImpl
 		evaluation.setOriginComponentId(evaluation.getComponentId());
 		Component changeRequest = getComponentService().createPendingChangeComponent(evaluation.getComponentId());
 		evaluation.setComponentId(changeRequest.getComponentId());
-		evaluation.setWorkflowStatus(WorkflowStatus.initalStatus().getCode());		
+		if (StringUtils.isBlank(evaluation.getWorkflowStatus())) {
+			evaluation.setWorkflowStatus(WorkflowStatus.initalStatus().getCode());		
+		}
 		evaluation.setEvaluationId(persistenceService.generateId());
 		evaluation.setPublished(Boolean.FALSE);
+		evaluation.setAllowNewSections(Boolean.FALSE);
+		evaluation.setAllowNewSubSections(Boolean.FALSE);		
 		evaluation.populateBaseCreateFields();
 		evaluation = persistenceService.persist(evaluation);
 
@@ -174,7 +180,7 @@ public class EvaluationServiceImpl
 			checklist.setChecklistId(persistenceService.generateId());
 			checklist.setChecklistTemplateId(evaluationTemplate.getChecklistTemplateId());
 			checklist.setEvaluationId(evaluation.getEvaluationId());
-			checklist.setWorkflowStatus(initialStatus.getCode());
+			checklist.setWorkflowStatus(initialStatus.getCode());			
 			checklist.populateBaseCreateFields();
 			checklist = persistenceService.persist(checklist);
 
@@ -214,28 +220,7 @@ public class EvaluationServiceImpl
 				ContentSectionMedia templateSectionMedia = new ContentSectionMedia();
 				templateSectionMedia.setContentSectionId(templateSection.getContentSectionId());
 				List<ContentSectionMedia> templateMediaRecords = templateSectionMedia.findByExample();
-				for (ContentSectionMedia templateMedia : templateMediaRecords) {
-					ContentSectionMedia sectionMedia = new ContentSectionMedia();
-					sectionMedia.setContentSectionId(contentSection.getContentSectionId());
-					sectionMedia.setMediaTypeCode(templateMedia.getMediaTypeCode());
-					sectionMedia.setMimeType(templateMedia.getMimeType());
-					sectionMedia.setOriginalName(templateMedia.getOriginalName());
-
-					Path path = templateMedia.pathToMedia();
-					if (path != null) {
-						if (path.toFile().exists()) {
-							try (InputStream in = new FileInputStream(path.toFile())) {
-								getContentSectionService().saveMedia(sectionMedia, in);
-							} catch (IOException ex) {
-								LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from template.  Media path: {0} Original Name: {1}", new Object[]{path.toString(), templateMedia.getOriginalName()}), ex);
-							}
-						} else {
-							LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from template.  Media path: {0} Original Name: {1}", new Object[]{path.toString(), templateMedia.getOriginalName()}));
-						}
-					} else {
-						LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from template.  Media path: Doesn't exist? Original Name: {0}", templateMedia.getOriginalName()));
-					}
-				}
+				copySectionMedia(templateMediaRecords, contentSection);
 
 				ContentSectionAttribute templateSectionAttribute = new ContentSectionAttribute();
 				ContentSectionAttributePk contentSectionAttributePk = new ContentSectionAttributePk();
@@ -348,6 +333,12 @@ public class EvaluationServiceImpl
 		Evaluation evaluation = persistenceService.findById(Evaluation.class, evaluationId);
 		if (evaluation != null) {
 
+			//delete changeRequest if it exists
+			Component changeRequest = persistenceService.findById(Component.class, evaluation.getComponentId());
+			if (changeRequest != null) {
+				getComponentService().cascadeDeleteOfComponent(changeRequest.getComponentId());				
+			}
+			
 			EvaluationChecklist evaluationChecklist = new EvaluationChecklist();
 			evaluationChecklist.setEvaluationId(evaluationId);
 			evaluationChecklist = evaluationChecklist.findProxy();
@@ -382,6 +373,13 @@ public class EvaluationServiceImpl
 	{
 		Evaluation evaluation = persistenceService.findById(Evaluation.class, evaluationId);
 		if (evaluation != null) {
+			
+			//merge change request
+			Component changeRequest = persistenceService.findById(Component.class, evaluation.getComponentId());
+			if (changeRequest != null) {
+				getComponentService().mergePendingChange(changeRequest.getComponentId());
+			}	
+			
 			evaluation.setPublished(Boolean.TRUE);
 			evaluation.populateBaseUpdateFields();
 			persistenceService.persist(evaluation);
@@ -423,4 +421,127 @@ public class EvaluationServiceImpl
 		}
 	}
 
+	@Override
+	public String copyEvaluation(String evaluationId)
+	{	
+		Objects.requireNonNull(evaluationId);
+				
+		EvaluationAll existing = getEvaluation(evaluationId);
+		if (existing == null) {
+			throw new OpenStorefrontRuntimeException("Unable to find evaluation to copy: " + evaluationId);
+		}
+		
+		Evaluation evaluation = existing.getEvaluation();
+		
+		WorkflowStatus initial = WorkflowStatus.initalStatus();
+		
+		Component changeRequest = getComponentService().createPendingChangeComponent(evaluation.getOriginComponentId());
+		evaluation.setComponentId(changeRequest.getComponentId());
+		
+		evaluation.setEvaluationId(persistenceService.generateId());
+		evaluation.setWorkflowStatus(initial.getCode());	
+		evaluation.setVersion(StringUtils.left(evaluation.getVersion() + "-COPY", OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));		
+		evaluation.setPublished(Boolean.FALSE);
+		evaluation.populateBaseCreateFields();
+		evaluation = persistenceService.persist(evaluation);
+		
+		EvaluationChecklist checklist = existing.getCheckListAll().getEvaluationChecklist();
+		checklist.setChecklistId(persistenceService.generateId());
+		checklist.setWorkflowStatus(initial.getCode());
+		checklist.setEvaluationId(evaluationId);
+		checklist.populateBaseCreateFields();
+		checklist = persistenceService.persist(checklist);
+		
+		for (EvaluationChecklistRecommendation recommendation : existing.getCheckListAll().getRecommendations()) {
+			EvaluationChecklistRecommendation newRecommendation = new EvaluationChecklistRecommendation();
+			
+			newRecommendation.updateFields(recommendation);	
+			newRecommendation.setRecommendationId(persistenceService.generateId());
+			newRecommendation.setChecklistId(checklist.getChecklistId());							
+			newRecommendation.populateBaseCreateFields();
+			persistenceService.persist(newRecommendation);			
+		}
+		
+		for (EvaluationChecklistResponse response : existing.getCheckListAll().getResponses()) {
+			EvaluationChecklistResponse newResponse = new EvaluationChecklistResponse();
+			newResponse.updateFields(response);			
+			newResponse.setChecklistId(checklist.getChecklistId());
+			newResponse.setResponseId(persistenceService.generateId());
+			newResponse.setWorkflowStatus(initial.getCode());
+			response.populateBaseCreateFields();
+			persistenceService.persist(newResponse);		
+		}		
+		
+		for (ContentSectionAll sectionAll : existing.getContentSections()) {
+			String existingSectionId = sectionAll.getSection().getContentSectionId();
+			
+			sectionAll.getSection().setContentSectionId(persistenceService.generateId());
+			sectionAll.getSection().setEntity(Evaluation.class.getSimpleName());
+			sectionAll.getSection().setEntityId(evaluationId);			
+			sectionAll.getSection().setWorkflowStatus(initial.getCode());
+			sectionAll.getSection().populateBaseCreateFields();
+			ContentSection contentSection = persistenceService.persist(sectionAll.getSection());	
+			
+			for (ContentSubSection subSection : sectionAll.getSubsections()) {
+				subSection.setSubSectionId(persistenceService.generateId());
+				subSection.setContentSectionId(contentSection.getContentSectionId());
+				subSection.populateBaseCreateFields();
+				persistenceService.persist(subSection);
+			}
+			
+			ContentSectionMedia existingMedia = new ContentSectionMedia();
+			existingMedia.setContentSectionId(existingSectionId);
+			List<ContentSectionMedia> existingMediaRecords = existingMedia.findByExample();		
+			copySectionMedia(existingMediaRecords, contentSection);
+
+			ContentSectionAttribute templateSectionAttribute = new ContentSectionAttribute();
+			ContentSectionAttributePk contentSectionAttributePk = new ContentSectionAttributePk();
+			contentSectionAttributePk.setContentSectionId(existingSectionId);
+			templateSectionAttribute.setContentSectionAttributePk(contentSectionAttributePk);
+
+			List<ContentSectionAttribute> attributes = templateSectionAttribute.findByExample();
+			for (ContentSectionAttribute attribute : attributes) {
+
+				ContentSectionAttribute sectionAttribute = new ContentSectionAttribute();
+				ContentSectionAttributePk sectionAttributePk = new ContentSectionAttributePk();
+				sectionAttributePk.setContentSectionId(contentSection.getContentSectionId());
+				sectionAttributePk.setAttributeCode(attribute.getContentSectionAttributePk().getAttributeCode());
+				sectionAttributePk.setAttributeType(attribute.getContentSectionAttributePk().getAttributeType());
+				sectionAttribute.setContentSectionAttributePk(sectionAttributePk);
+				sectionAttribute.populateBaseCreateFields();
+				persistenceService.persist(sectionAttribute);
+
+			}
+			
+		}			
+
+		return evaluation.getEvaluationId();
+	}
+
+	private void copySectionMedia(List<ContentSectionMedia> originalMedia, ContentSection newSection) 
+	{
+		for (ContentSectionMedia templateMedia : originalMedia) {
+			ContentSectionMedia sectionMedia = new ContentSectionMedia();
+			sectionMedia.setContentSectionId(newSection.getContentSectionId());
+			sectionMedia.setMediaTypeCode(templateMedia.getMediaTypeCode());
+			sectionMedia.setMimeType(templateMedia.getMimeType());
+			sectionMedia.setOriginalName(templateMedia.getOriginalName());
+
+			Path path = templateMedia.pathToMedia();
+			if (path != null) {
+				if (path.toFile().exists()) {
+					try (InputStream in = new FileInputStream(path.toFile())) {
+						getContentSectionService().saveMedia(sectionMedia, in);
+					} catch (IOException ex) {
+						LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{path.toString(), templateMedia.getOriginalName()}), ex);
+					}
+				} else {
+					LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: {0} Original Name: {1}", new Object[]{path.toString(), templateMedia.getOriginalName()}));
+				}
+			} else {
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to copy media from existing.  Media path: Doesn't exist? Original Name: {0}", templateMedia.getOriginalName()));
+			}
+		}		
+	}
+	
 }

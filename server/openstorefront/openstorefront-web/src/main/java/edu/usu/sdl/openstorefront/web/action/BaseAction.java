@@ -100,7 +100,7 @@ public abstract class BaseAction
 		return exceeds;
 	}
 
-	protected void deleteTempFile(FileBean fileBean)
+	protected void deleteUploadFile(FileBean fileBean)
 	{
 		try {
 			fileBean.delete();

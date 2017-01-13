@@ -43,7 +43,9 @@ public class ContentSectionMedia
 	private String contentSectionMediaId;
 
 	@NotNull
-	@FK(ContentSection.class)
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@FK(ContentSection.class)	
 	private String contentSectionId;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
