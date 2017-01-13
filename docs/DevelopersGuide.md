@@ -37,13 +37,10 @@ The following key libraries were used in the development:
 -   Orient DB- No SQL/Multi-Model database
 
 -   Ext.js and tinymce
-  
-##1.3 Notes for Redhat/Centos users:
+
+##1.3 Dev Environment on Windows with NetBeans
 -----
 
-See the following note for Redhat/Centos users.
-
--   yum install maven
 
 ##1.4 Building with Maven
 
@@ -51,6 +48,10 @@ run "mvn install" from \$PROJECT\_HOME/server/openstorefront
 
 (Skip tests)
 Mav -Dmaven.test.skip=true or -DskipTests=true install
+
+Note: To install maven on RedHat/CentOS run the following:
+
+-   yum install maven
 
 ##1.5 Deploying
 
@@ -64,7 +65,7 @@ mechanisms.
 The application is targeted to run in Tomcat 7; however, it may run in
 other compatible containers with little or no changes.
 
-**NOTE:** Searching requires an external Elasticsearch/(Solr) instance setup. 
+**NOTE:** Searching requires an external Elasticsearch/(Solr) instance setup.
 See [Setup](Setup.md)
 
 
@@ -120,21 +121,21 @@ This guide is targeted at external developers who want to extend the application
 
 ##2.1 REST API
 
-The API document is directly reflected from the live code so it is always current for the running version of the application. 
+The API document is directly reflected from the live code so it is always current for the running version of the application.
 The API documentation can be accessed by login in as an admin and following the link from the admin tools see application management.
 A print view of the API can be generated form there as well.
 
 ##2.2 Adding Custom Parser (Plugin)
 ----
 
-A custom parser may be need for handling complex formats that can't be support via data mapping. 
+A custom parser may be need for handling complex formats that can't be support via data mapping.
 In some cases, both a custom parser and data mapping may be required.
 
 1 - Create an OSGi bundle (you use a maven project)
 
 2 - Add a dependency to openstorefront-core-api
 
-3 - In the Activator.java, register your new parser 
+3 - In the Activator.java, register your new parser
    (More than one parser can be added to a plugin)
 >In start bundle:
 >
@@ -155,14 +156,14 @@ In some cases, both a custom parser and data mapping may be required.
 or copy jar to /var/openstorefront/perm/plugins and the application will auto-deploy
 
 **Note:**  Only Libraries and API the application expose are available. (CORE-API, CORE-COMMON)
-All other third-party libraries must be included with your JAR. 
+All other third-party libraries must be included with your JAR.
 
 ###2.2.2 Parser Workflow
 
 (Default flow but it can be overridden)
 1 - Check Format (On Web Upload)
 
-2 - Process Data 
+2 - Process Data
 
 > a) Get the parser Reader (CSV, Text, XML...etc)
 
@@ -193,4 +194,3 @@ If the method return null it will skip the record.
 **Note:** The developer has access to the filehistory record and the service proxy.
 
 **See:** spoon importer plugin as a example.
-
