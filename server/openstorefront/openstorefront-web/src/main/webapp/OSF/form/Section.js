@@ -230,6 +230,9 @@ Ext.define('OSF.form.Section', {
 		}
 		
 		opts.commentPanel.loadComments(evaluationId, data.section.title, componentId);
+	},
+	saveData: function(){
+		
 	}
 	
 });
