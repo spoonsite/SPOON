@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.model;
 
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
@@ -28,8 +29,10 @@ import java.util.List;
 public class ContentSectionAll
 {
 
+	@ConsumeField
 	private ContentSection section;
 
+	@ConsumeField
 	@DataType(ContentSubSection.class)
 	private List<ContentSubSection> subsections = new ArrayList<>();
 

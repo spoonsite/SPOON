@@ -69,6 +69,7 @@ public class ContentSection
 	@ConsumeField
 	private Boolean noContent;
 
+	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = WorkflowStatus.class)
 	@FK(WorkflowStatus.class)
 	private String workflowStatus;

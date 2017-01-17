@@ -652,7 +652,7 @@ public class EvaluationResource
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ContentSection.class)
-	@APIDescription("Get section for an evaluation")
+	@APIDescription("Gets a section for an evaluation")
 	@Path("/{evaluationId}/sections/{sectionId}")
 	public Response getEvaluationSection(
 			@PathParam("evaluationId") String evaluationId,
@@ -663,8 +663,33 @@ public class EvaluationResource
 		section.setEntity(Evaluation.class.getSimpleName());
 		section.setEntityId(evaluationId);
 		section.setContentSectionId(sectionId);
+		section = section.find();
 		return sendSingleEntityResponse(section);
 	}
+	
+	@GET
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ContentSectionAll.class)
+	@APIDescription("Gets a section and subsections for an evaluation")
+	@Path("/{evaluationId}/sections/{sectionId}/details")
+	public Response getEvaluationSectionDeatils(
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("sectionId") String sectionId
+	)
+	{
+		ContentSectionAll contentSectionAll = null;
+		
+		ContentSection section = new ContentSection();
+		section.setEntity(Evaluation.class.getSimpleName());
+		section.setEntityId(evaluationId);
+		section.setContentSectionId(sectionId);
+		section = section.find();
+		if (section != null) {
+			contentSectionAll = service.getContentSectionService().getContentSectionAll(sectionId);
+		}		
+		return sendSingleEntityResponse(contentSectionAll);
+	}	
 
 	@GET
 	@RequireAdmin

@@ -68,7 +68,7 @@ public class MediaAction
 
 	private static final Logger log = Logger.getLogger(MediaAction.class.getName());
 
-	@Validate(required = true, on = "LoadMedia")
+	@Validate(required = true, on = {"LoadMedia", "SectionMedia"})
 	private String mediaId;
 
 	@ValidateNestedProperties({
@@ -99,7 +99,10 @@ public class MediaAction
 	})
 	private TemporaryMedia temporaryMedia;
 	
-	@Validate(required = true, on = "UploadSectionMedia")
+	@ValidateNestedProperties({
+		@Validate(required = true, field = "mediaTypeCode", on = "UploadSectionMedia"),
+		@Validate(required = true, field = "contentSectionId", on = "UploadSectionMedia")
+	})
 	private ContentSectionMedia contentSectionMedia;		
 
 	@DefaultHandler
@@ -394,6 +397,47 @@ public class MediaAction
 		}		
 		return streamUploadResponse(errors);
 	}
+	
+	@HandlesEvent("SectionMedia")
+	public Resolution sectionMedia() throws FileNotFoundException
+	{
+		ContentSectionMedia sectionMedia = new ContentSectionMedia();		
+		sectionMedia.setContentSectionMediaId(mediaId);		
+		sectionMedia = sectionMedia.find();
+		if (sectionMedia == null) {
+			log.log(Level.FINE, MessageFormat.format("Section Media with media id: {0} is not found.", mediaId));
+			return new StreamingResolution("image/png")
+			{
+				@Override
+				protected void stream(HttpServletResponse response) throws Exception
+				{
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE)) {
+						FileSystemManager.copy(in, response.getOutputStream());
+					}
+				}
+			}.setFilename("MediaNotFound.png");
+		}
+
+		InputStream in;
+		long length;
+		Path path = sectionMedia.pathToMedia();
+		if (path != null && path.toFile().exists()) {
+			in = new FileInputStream(path.toFile());
+			length = path.toFile().length();
+		} else {
+			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media record: {1} ", new Object[]{sectionMedia.pathToMedia(), sectionMedia.getContentSectionMediaId()}));
+			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
+			length = MISSING_MEDIA_IMAGE_SIZE;
+		}
+
+		return new RangeResolutionBuilder()
+				.setContentType(sectionMedia.getMimeType())
+				.setInputStream(in)
+				.setTotalLength(length)
+				.setRequest(getContext().getRequest())
+				.setFilename(sectionMedia.getOriginalName())
+				.createRangeResolution();
+	}	
 
 	@HandlesEvent("DataImage")
 	public Resolution tranformDataImage()

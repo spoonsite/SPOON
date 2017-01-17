@@ -84,21 +84,30 @@ Ext.define('OSF.form.EntrySummary', {
 		}
 	],	
 	items: [
-		{
-			xtype: 'tinymce_textarea',
-			itemId: 'description',
-			fieldStyle: 'font-family: Courier New; font-size: 12px;',
-			style: { border: '0' },
-			margin: '-20 0 0 0',
-			name: 'description',			
-			maxLength: 65536,
-			tinyMCEConfig: CoreUtil.tinymceSearchEntryConfig("osfmediaretriever")
-		}		
+		
 	],
 	initComponent: function () {		
 		this.callParent();
 		
 		var entryForm = this;
+		
+		entryForm.add(
+			{
+				xtype: 'tinymce_textarea',
+				itemId: 'description',
+				fieldStyle: 'font-family: Courier New; font-size: 12px;',
+				style: { border: '0' },
+				margin: '-20 0 0 0',
+				name: 'description',			
+				maxLength: 65536,
+				tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig("osfmediaretriever"), {
+					mediaSelectionUrl: function(){					
+						return 'api/v1/resource/components/' + entryForm.componentId + '/media/view';					
+					}
+				})			
+			}				
+		);
+		
 	},
 	
 	loadData: function(evaluationId, componentId, data, opts) {
