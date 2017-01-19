@@ -32,6 +32,7 @@ public class ContentSectionMediaView
 	extends ContentSectionMedia
 {
 	private String mediaTypeDescription;
+	private String link;
 
 	public ContentSectionMediaView()
 	{
@@ -46,7 +47,8 @@ public class ContentSectionMediaView
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 		view.setMediaTypeDescription(TranslateUtil.translate(MediaType.class, contentSectionMedia.getMediaTypeCode()));
-
+		view.setLink("Media.action?SectionMedia&mediaId=" + contentSectionMedia.getContentSectionMediaId());		
+		
 		return view;
 	}
 	
@@ -68,6 +70,16 @@ public class ContentSectionMediaView
 	public void setMediaTypeDescription(String mediaTypeDescription)
 	{
 		this.mediaTypeDescription = mediaTypeDescription;
+	}
+
+	public String getLink()
+	{
+		return link;
+	}
+
+	public void setLink(String link)
+	{
+		this.link = link;
 	}
 
 }

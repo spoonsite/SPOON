@@ -415,27 +415,32 @@ public class EvaluationResource
 	@RequireAdmin
 	@APIDescription("Update the flags on the section media. To add media post to MediaUpload.action?UploadSectionMedia&contentSectionMedia...&file")
 	@Path("/{evaluationId}/sections/{sectionId}/media/{sectionMediaId}")
-	public void updateSectionMedia(
+	public Response updateSectionMedia(
 			@PathParam("evaluationId") String evaluationId,
 			@PathParam("sectionId") String sectionId,
 			@PathParam("sectionMediaId") String sectionMediaId,
 			ContentSectionMedia sectionMedia
 	)
 	{
+		ContentSectionMedia contentSectionMedia = null;
+		
 		ContentSection contentSection = new ContentSection();
 		contentSection.setEntity(Evaluation.class.getSimpleName());
 		contentSection.setEntityId(evaluationId);
 		contentSection.setContentSectionId(sectionId);
 		contentSection = contentSection.find();
 		if (contentSection != null) {
-			ContentSectionMedia contentSectionMedia = new ContentSectionMedia();
+			contentSectionMedia = new ContentSectionMedia();
 			contentSectionMedia.setContentSectionId(sectionId);
 			contentSectionMedia.setContentSectionMediaId(sectionMediaId);
 			contentSectionMedia = contentSectionMedia.find();
 			if (contentSectionMedia != null) {
 				contentSectionMedia.setPrivateMedia(Convert.toBoolean(sectionMedia.getPrivateMedia()));
+				contentSectionMedia.setCaption(sectionMedia.getCaption());
+				contentSectionMedia.save();							
 			}
 		}
+		return sendSingleEntityResponse(contentSectionMedia);
 	}
 
 	@DELETE

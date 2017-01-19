@@ -839,6 +839,9 @@ Ext.define('OSF.component.FullScreenEditor', {
 			fswin.editor.setContent(fswin.fsEditor.getValue());
 		});
 		
+		fswin.fsEditor.on('change', function(panel, newValue, oldValue) {
+			fswin.editor.setContent(fswin.fsEditor.getValue());
+		});		
 		
 		fswin.add(fswin.fsEditor);
 	}

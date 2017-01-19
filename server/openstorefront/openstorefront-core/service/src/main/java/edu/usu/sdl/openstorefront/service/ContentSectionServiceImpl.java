@@ -120,7 +120,13 @@ public class ContentSectionServiceImpl
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
-		return savedMedia;
+		
+		//Note: proxied media caused an overflow on serialization
+		ContentSectionMedia updatedMedia = new ContentSectionMedia();
+		updatedMedia.setContentSectionMediaId(savedMedia.getContentSectionMediaId());
+		updatedMedia = updatedMedia.find();
+		
+		return updatedMedia;
 	}
 
 	@Override

@@ -52,6 +52,10 @@ Ext.define('OSF.form.Section', {
 					xtype: 'tbfill'
 				},
 				{
+					xtype: 'tbtext',
+					itemId: 'status'
+				},				
+				{
 					text: 'Manage Media',					
 					iconCls: 'fa fa-2x fa-image',
 					scale: 'medium',
@@ -60,6 +64,7 @@ Ext.define('OSF.form.Section', {
 						
 						var mediaWindow = Ext.create('Ext.window.Window',{
 							title: 'Section Media',
+							iconCls: 'fa fa-image',
 							modal: true,
 							closeAction: 'destroy',
 							width: 800,
@@ -87,15 +92,15 @@ Ext.define('OSF.form.Section', {
 									columns: [		
 										{ text: 'Media Type', dataIndex: 'mediaTypeDescription', width: 150, hidden: true },
 										{ text: 'Original Name', dataIndex: 'originalName', flex: 1, minWidth: 200 },
-										{ text: 'Mime Type', dataIndex: 'mimeType', width: 150 },
-										{ text: 'Private', dataIndex: 'private', width: 150 },
+										{ text: 'Mime Type', dataIndex: 'mimeType', width: 150, hidden: true },
+										{ text: 'Private', dataIndex: 'privateMedia', width: 150 },
 										{ text: 'Caption', dataIndex: 'caption', flex: 2, minWidth: 200 },		
 										{ text: 'Preview', dataIndex: 'caption', width: 200, 
 											renderer: function(value, meta, record) {
 												if (record.get('mediaType') === 'VID') {
-													return '<img src="Media.action?SectionMedia&mediaId=' + record.get('contentSectionMediaId') + '" alt="' + value + '" width="100%" />';
-												} else {
 													return '<video width="170" height="120" controls><source src="Media.action?SectionMedia&mediaId=' + record.get('contentSectionMediaId') + '#t=10" onloadedmetadata="this.currentTime=10;" type="' + (record.get('mimeType') ? record.get('mimeType') : 'video/mp4') + '" ><i class="fa fa-5x fa-file-video-o"></i></video>';
+												} else {
+													return '<img src="Media.action?SectionMedia&mediaId=' + record.get('contentSectionMediaId') + '" alt="' + value + '" width="100%" />';													
 												}
 											}
 										},		
@@ -103,24 +108,116 @@ Ext.define('OSF.form.Section', {
 										{ text: 'Update Date', dataIndex: 'updateDts', width: 200, xtype: 'datecolumn', format: 'm/d/y H:i:s', hidden: true }
 									],
 									listeners: {
-										selectionChange: function(selModel, records, opts) {
-											
+										selectionChange: function(selModel, selected, opts) {
+											var grid = mediaWindow.down('grid');
+											var tools = grid.getComponent('tools');
+											if (selected.length > 0) {
+												tools.getComponent('edit').setDisabled(false);
+												tools.getComponent('delete').setDisabled(false);
+											} else {
+												tools.getComponent('edit').setDisabled(true);
+												tools.getComponent('delete').setDisabled(true);
+											}
 										}
 									},
 									dockedItems: [
 										{
 											xtype: 'toolbar',
+											itemId: 'tools',
 											dock: 'top',
 											items: [
 												{
 													text: 'Edit Metadata',
+													itemId: 'edit',
 													iconCls: 'fa fa-edit',
 													disabled: true,
 													handler: function() {
-														var record = this.up('grid').getSelectionModel().getSelection()[0];
+														var grid = this.up('grid');
+														var record = grid.getSelectionModel().getSelection()[0];
 														
 														//set private and caption
-														
+														var editWindow = Ext.create('Ext.window.Window', {
+															title: 'Edit Media',
+															iconCls: 'fa fa-edit',
+															width: 400,
+															height: 250,
+															modal: true,
+															closeAction: 'destroy',
+															layout: 'fit',
+															items: [
+																{
+																	xtype: 'form',
+																	scrollable: 'true',
+																	layout: 'anchor',																	
+																	bodyStyle: 'padding: 10px;',
+																	items: [
+																		{
+																			xtype: 'textfield',
+																			fieldLabel: 'Caption',
+																			name: 'caption',
+																			width: '100%',
+																			maxLength: 255,
+																			labelSeparator: ''
+																		}, 
+																		{
+																			xtype: 'checkbox',
+																			boxLabel: 'Private',
+																			name: 'privateMedia'
+																		}
+																	],
+																	dockedItems: [
+																		{
+																			xtype: 'toolbar',
+																			dock: 'bottom',
+																			items: [
+																				{
+																					text: 'Save',
+																					iconCls: 'fa fa-save',
+																					handler: function() {
+																						var form = this.up('form');
+																						var formData = form.getValues();
+																						
+																						record.set('caption', formData.caption);
+																						record.set('privateMedia', formData.privateMedia);
+																						
+																						var recordData = record.data;
+																						delete recordData.type;
+																						
+																						CoreUtil.submitForm({
+																							url: 'api/v1/resource/evaluations/' +
+																								sectionForm.evaluationId +
+																								'/sections/' +
+																								sectionForm.sectionId + 
+																								'/media/' +
+																								record.get('contentSectionMediaId'),
+																							method: 'PUT',
+																							form: form,
+																							data: recordData,
+																							success: function(form, action) {
+																								grid.getStore().load();
+																								editWindow.close();
+																							}
+																						});
+																					}
+																				},
+																				{
+																					xtype: 'tbfill'
+																				}, 
+																				{
+																					text: 'Cancel',
+																					iconCls: 'fa fa-close',
+																					handler: function() {
+																						editWindow.close();
+																					}																					
+																				}
+																			]
+																		}
+																	]
+																}
+															]
+														});
+														editWindow.show();
+														editWindow.down('form').loadRecord(record);
 													}
 												},
 												{
@@ -128,6 +225,7 @@ Ext.define('OSF.form.Section', {
 												},
 												{
 													text: 'Delete',
+													itemId: 'delete',
 													iconCls: 'fa fa-close text-danger',
 													disabled: true,
 													handler: function() {
@@ -143,7 +241,12 @@ Ext.define('OSF.form.Section', {
 																	
 																	mediaWindow.setLoading('Deleting Media...');
 																	Ext.Ajax.request({
-																		url: 'api/v1/resource/evaluations/{evaluationId}/sections/{sectionId}/media/{sectionMediaId}',
+																		url: 'api/v1/resource/evaluations/' +
+																		sectionForm.evaluationId +
+																		'/sections/' +
+																		sectionForm.sectionId + 
+																		'/media/' +
+																		record.get('contentSectionMediaId'),
 																		method: 'DELETE',
 																		callback: function() {
 																			mediaWindow.setLoading(false);
@@ -241,14 +344,17 @@ Ext.define('OSF.form.Section', {
 						callback: function() {
 							uploadForm.setLoading(false);
 						},
-						success: function(form, action) {							
-							var sectionMedia = Ext.decode(action.response.responseText);
+						success: function(form, action) {		
+							uploadForm.setLoading(false);
+							var sectionMediaResponse = Ext.decode(action.response.responseText);
+							var sectionMedia = sectionMediaResponse.data[0];
 							
-							var link = "Media.action?SectionMedia&mediaId=" + sectionMedia.mediaId;							
+							var link = "Media.action?SectionMedia&mediaId=" + sectionMedia.contentSectionMediaId;							
 							mediaInsertWindow.insertInlineMedia(link, name, mediaInsertWindow.mediaToShow, sectionMedia.mimeType);													
 							mediaInsertWindow.close();
 						},
 						failure: function(form, action){
+							uploadForm.setLoading(false);
 							Ext.Msg.show({
 								title: 'Upload Failed',
 								msg: 'The file upload was not successful.',
@@ -569,6 +675,7 @@ Ext.define('OSF.form.Section', {
 				form: sectionForm,
 				success: function(action, opts) {			
 					Ext.toast('Saved Section');
+					sectionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i A'));
 				}	
 			});			
 		

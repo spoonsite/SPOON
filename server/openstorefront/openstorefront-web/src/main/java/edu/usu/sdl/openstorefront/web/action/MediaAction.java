@@ -39,8 +39,10 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -386,7 +388,9 @@ public class MediaAction
 		if (validationResult.valid()) {
 			try {
 				contentSectionMedia = service.getContentSectionService().saveMedia(contentSectionMedia, file.getInputStream());
-				return streamResults(contentSectionMedia);
+				List<ContentSectionMedia> data = new ArrayList<>();
+				data.add(contentSectionMedia);
+				return streamResults(data);
 			} catch (IOException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 			} finally {
