@@ -673,9 +673,10 @@ Ext.define('OSF.form.Section', {
 				method: 'PUT',
 				data: contentSectionAll,
 				form: sectionForm,
+				noLoadmask: true,
 				success: function(action, opts) {			
 					Ext.toast('Saved Section');
-					sectionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i A'));
+					sectionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
 				}	
 			});			
 		

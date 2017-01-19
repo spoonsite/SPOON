@@ -324,7 +324,9 @@ var CoreUtil = {
 
 		var loadingText = options.loadingText ? options.loadingText : 'Saving...';
 
-		options.form.setLoading(loadingText);
+		if (!options.noLoadmask) {
+			options.form.setLoading(loadingText);
+		}
 		Ext.Ajax.request({
 			url: options.url,
 			method: options.method,

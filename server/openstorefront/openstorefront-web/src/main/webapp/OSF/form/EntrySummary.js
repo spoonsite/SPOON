@@ -81,6 +81,20 @@ Ext.define('OSF.form.EntrySummary', {
 					html: '<b>Description</b> <span class="field-required" />'
 				}				
 			]
+		},
+		{
+			xtype: 'toolbar',
+			itemId: 'tools',
+			dock: 'bottom',
+			items: [
+				{
+					xtype: 'tbfill'
+				},
+				{
+					xtype: 'tbtext',
+					itemId: 'status'
+				}				
+			]
 		}
 	],	
 	items: [
@@ -204,12 +218,15 @@ Ext.define('OSF.form.EntrySummary', {
 						method: 'PUT',
 						data: requiredForComponent,
 						form: entryForm,
+						noLoadmask: true,
 						callback: function() {
 							entryForm.saving = false;
 						},
 						success: function(action, opts) {							
 
 							Ext.toast('Saved Entry Summary');
+							entryForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
+							
 							if (entryForm.refreshCallback) {
 								entryForm.refreshCallback();
 							}

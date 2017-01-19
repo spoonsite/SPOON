@@ -48,7 +48,14 @@ Ext.define('OSF.form.ChecklistSummary', {
 							url: 'api/v1/resource/lookuptypes/WorkflowStatus'
 						}
 					}
-				}
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					xtype: 'tbtext',
+					itemId: 'status'
+				}				
 			]
 		}
 	],
@@ -396,8 +403,10 @@ Ext.define('OSF.form.ChecklistSummary', {
 					method: 'PUT',
 					data: data,
 					form: summaryForm,
+					noLoadmask: true,
 					success: function(action, opts) {			
 						Ext.toast('Saved Summary');
+						summaryForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
 					}	
 				});
 		}

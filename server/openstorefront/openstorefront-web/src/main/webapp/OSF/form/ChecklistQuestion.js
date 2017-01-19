@@ -46,7 +46,14 @@ Ext.define('OSF.form.ChecklistQuestion', {
 							url: 'api/v1/resource/lookuptypes/WorkflowStatus'
 						}
 					}			
-				}
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					xtype: 'tbtext',
+					itemId: 'status'
+				}				
 			]
 		}
 	],
@@ -219,10 +226,13 @@ Ext.define('OSF.form.ChecklistQuestion', {
 			method: 'PUT',
 			data: data,
 			form: questionForm,
+			noLoadmask: true,
 			success: function(action, opts) {
 				var chkResponse = Ext.decode(action.responseText);
 				
 				Ext.toast('Saved Response');
+				questionForm.getComponent('tools').getComponent('status').setText('Saved at ' + Ext.Date.format(new Date(), 'g:i:s A'));
+				
 				if (questionForm.refreshCallback) {
 					questionForm.refreshCallback(chkResponse);
 				}
