@@ -141,12 +141,12 @@ public class PropertiesManager
 
 	private static SortedProperties defaults = new SortedProperties();
 
-	public static String getDefault(String key)
+	private static String getDefault(String key)
 	{
 		return defaults.getProperty(key);
 	}
 
-	public static String getDefault(String key, String defaultValue)
+	private static String getDefault(String key, String defaultValue)
 	{
 		return defaults.getProperty(key, defaultValue);
 	}
@@ -176,6 +176,11 @@ public class PropertiesManager
 	public static String getValueDefinedDefault(String key)
 	{
 		return getProperties().getProperty(key, getDefault(key));
+	}
+	
+	public static String getValueDefinedDefault(String key, String defaultValue)
+	{
+		return getProperties().getProperty(key, getDefault(key, defaultValue));
 	}
 
 	public static String getValue(String key)

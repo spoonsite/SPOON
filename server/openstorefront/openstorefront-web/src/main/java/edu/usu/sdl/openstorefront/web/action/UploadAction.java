@@ -412,7 +412,7 @@ public class UploadAction
 					} catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 					} finally {
-						deleteTempFile(uploadFile);
+						deleteUploadFile(uploadFile);
 					}
 				} else {
 					errors.put("file", validationResult.toHtmlString());

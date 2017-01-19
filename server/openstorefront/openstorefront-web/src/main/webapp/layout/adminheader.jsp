@@ -179,59 +179,101 @@
 				}
 			});
 			
-			var alertMenu = [];
-			alertMenu.push({
+			var evaluationMenu = [];
+			evaluationMenu.push({
+				text: 'Evaluations',
+				handler: function(){
+					actionLoadContent('Evaluations');
+				}				
+			});
+			evaluationMenu.push({
+				text: 'Templates',
+				menu: {
+					items: [
+						{
+							text: 'Evaluation Templates',
+							handler: function(){
+								actionLoadContent('Evaluation-Templates');
+							}							
+						},
+						{
+							text: 'Checklist Templates',
+							handler: function(){
+								actionLoadContent('Checklist-Templates');
+							}							
+						},
+						{
+							text: 'Checklist Questions',
+							handler: function(){
+								actionLoadContent('Checklist-Questions');
+							}							
+						},							
+						{
+							text: 'Section Templates',
+							handler: function(){
+								actionLoadContent('Section-Templates');
+							}							
+						}											
+					]
+				}
+			});
+
+			
+			
+			
+			var appMenu = [];
+			appMenu.push({
 				text: 'Alerts',
 				handler: function(){
 					actionLoadContent('Alerts');
 				}
 			});			
-			alertMenu.push({
+			appMenu.push({
 				text: 'Branding',
 				handler: function(){
 					actionLoadContent('Branding');
 				}				
 			});	
-			alertMenu.push({
+			appMenu.push({
 				text: 'Feedback',
 				handler: function(){
 					actionLoadContent('Feedback');
 				}				
 			});			
-			alertMenu.push({
+			appMenu.push({
 				text: 'Jobs',
 				handler: function(){
 					actionLoadContent('Jobs');
 				}				
 			});
-			alertMenu.push({
+			appMenu.push({
 				text: 'Messages',
 				handler: function(){
 					actionLoadContent('Messages');
 				}				
 			});			
-			alertMenu.push({
+			appMenu.push({
 				text: 'Reports',
 				handler: function(){
 					actionLoadContent('Reports');
 				}				
 			});
-			alertMenu.push({
+			appMenu.push({
 				text: 'System',
 				handler: function(){
 					actionLoadContent('System');
 				}				
 			});
-			alertMenu.push({
+			appMenu.push({
 				text: 'Tracking',
 				handler: function(){
 					actionLoadContent('Tracking');
 				}				
 			});			
-			alertMenu.push({
+			appMenu.push({
 				xtype: 'menuseparator'				
 			});
-			alertMenu.push({
+			appMenu.push({
 				text: 'API Documentation',
 				href: 'API.action',
 				hrefTarget: '_blank'
@@ -339,11 +381,24 @@
 									}
 								},
 								{
+									text: 'Evaluation Management',
+									scale   : 'large',
+									iconCls: 'fa fa-2x fa-file-text-o',
+									menu: {										
+										items: evaluationMenu,
+										listeners: {
+											beforerender: function () {
+											 this.setWidth(this.up('button').getWidth());
+											}					
+										}
+									}
+								},										
+								{
 									text: 'Application Management',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-gears',
 									menu: {										
-										items: alertMenu,
+										items: appMenu,
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());

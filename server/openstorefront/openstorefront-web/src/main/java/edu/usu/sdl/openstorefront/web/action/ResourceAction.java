@@ -128,7 +128,7 @@ public class ResourceAction
 				}
 				if (allow) {
 					if (doesFileExceedLimit(file)) {
-						deleteTempFile(file);
+						deleteUploadFile(file);
 						errors.put("file", "File size exceeds max allowed.");
 					} else {
 						componentResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
@@ -152,7 +152,7 @@ public class ResourceAction
 							} catch (IOException ex) {
 								throw new OpenStorefrontRuntimeException("Unable to able to save resource.", "Contact System Admin. Check disk space and permissions.", ex);
 							} finally {
-								deleteTempFile(file);
+								deleteUploadFile(file);
 							}
 						} else {
 							errors.put("file", validationResult.toHtmlString());

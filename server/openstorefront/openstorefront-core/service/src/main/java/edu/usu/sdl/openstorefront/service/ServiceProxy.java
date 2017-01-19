@@ -19,8 +19,11 @@ import edu.usu.sdl.openstorefront.core.api.AlertService;
 import edu.usu.sdl.openstorefront.core.api.AsyncService;
 import edu.usu.sdl.openstorefront.core.api.AttributeService;
 import edu.usu.sdl.openstorefront.core.api.BrandingService;
+import edu.usu.sdl.openstorefront.core.api.ChecklistService;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.ContactService;
+import edu.usu.sdl.openstorefront.core.api.ContentSectionService;
+import edu.usu.sdl.openstorefront.core.api.EvaluationService;
 import edu.usu.sdl.openstorefront.core.api.FeedbackService;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
@@ -77,6 +80,9 @@ public class ServiceProxy
 	private NotificationService notificationService;
 	private FeedbackService feedbackService;
 	private ContactService contactService;
+	private EvaluationService evaluationService;
+	private ChecklistService checklistService;
+	private ContentSectionService contentSectionService;
 
 	public ServiceProxy()
 	{
@@ -278,7 +284,7 @@ public class ServiceProxy
 		}
 		return notificationService;
 	}
-	
+
 	@Override
 	public FeedbackService getFeedbackService()
 	{
@@ -294,7 +300,7 @@ public class ServiceProxy
 		if (contactService == null) {
 			contactService = DynamicProxy.newInstance(new ContactServiceImpl());
 		}
-		return contactService;		
+		return contactService;
 	}
 
 	@Override
@@ -322,6 +328,33 @@ public class ServiceProxy
 	public void setModificationType(String modificationType)
 	{
 		this.modificationType = modificationType;
+	}
+
+	@Override
+	public EvaluationService getEvaluationService()
+	{
+		if (evaluationService == null) {
+			evaluationService = DynamicProxy.newInstance(new EvaluationServiceImpl());
+		}
+		return evaluationService;
+	}
+
+	@Override
+	public ContentSectionService getContentSectionService()
+	{
+		if (contentSectionService == null) {
+			contentSectionService = DynamicProxy.newInstance(new ContentSectionServiceImpl());
+		}
+		return contentSectionService;
+	}
+
+	@Override
+	public ChecklistService getChecklistService()
+	{
+		if (checklistService == null) {
+			checklistService = DynamicProxy.newInstance(new ChecklistServiceImpl());
+		}
+		return checklistService;
 	}
 
 }

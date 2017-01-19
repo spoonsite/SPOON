@@ -43,6 +43,8 @@ public class FileFormat
 	public static final String ATTRIBUTE_MAPPED_JSON = "ATTR_MAP_JSON";
 	public static final String ATTRIBUTE_MAPPED_XML = "ATTR_MAP_XML";
 
+	public static final String CHECKLIST_QUESTIONS_STANDARD = "CHKQ_STANDARD";
+
 	private String fileType;
 	private String parserClass;
 	private String fileRequirements;
@@ -154,6 +156,13 @@ public class FileFormat
 		fileFormat.setFileRequirements("Mapped XML file");
 		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.AttributeMappedXMLParser");
 		fileFormat.setSupportsDataMap(true);
+		addFormat(codeMap, fileFormat);
+
+		fileFormat = newLookup(FileFormat.class, CHECKLIST_QUESTIONS_STANDARD, "Checklist Question Standard");
+		fileFormat.setFileType(FileType.CHECKLISTQUESTIONS);
+		fileFormat.setFileRequirements("JSON file of checklist questions");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ChecklistQuestionStandardParser");
+		fileFormat.setSupportsDataMap(false);
 		addFormat(codeMap, fileFormat);
 
 		return codeMap;

@@ -33,6 +33,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.UserProfileView;
 import edu.usu.sdl.openstorefront.core.view.UserProfileWrapper;
 import edu.usu.sdl.openstorefront.core.view.UserTrackingWrapper;
@@ -69,10 +70,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * User Profile Resource
@@ -168,6 +171,36 @@ public class UserProfileResource
 		userProfileWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
 
 		return sendSingleEntityResponse(userProfileWrapper);
+	}
+
+	@GET
+	@APIDescription("Get a list of active user profiles for lookup")
+	@RequireAdmin
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/lookup")
+	public Response userProfilesLookup()
+	{
+		List<LookupModel> profiles = new ArrayList<>();
+
+		UserProfile userProfileExample = new UserProfile();
+		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
+		List<UserProfile> userProfiles = userProfileExample.findByExample();
+		for (UserProfile userProfile : userProfiles) {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(userProfile.getUsername());
+			String name = userProfile.getUsername();
+			if (StringUtils.isNotBlank(userProfile.getFirstName())) {
+				name = userProfile.getFirstName() + ", " + userProfile.getLastName();
+			}
+			lookupModel.setDescription(name);
+			profiles.add(lookupModel);
+		}
+
+		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(profiles)
+		{
+		};
+		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
@@ -275,7 +308,8 @@ public class UserProfileResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/multiple")
 	public void deleteUserProfiles(
-			@RequiredParam List<String> usernames)
+			@RequiredParam
+			@DataType(String.class) List<String> usernames)
 	{
 
 		for (String username : usernames) {
@@ -291,7 +325,8 @@ public class UserProfileResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/multiple")
 	public void reactivateUserProfiles(
-			@RequiredParam List<String> usernames)
+			@RequiredParam
+			@DataType(String.class) List<String> usernames)
 	{
 
 		for (String username : usernames) {

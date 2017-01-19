@@ -146,7 +146,7 @@ public class ComponentMedia
 
 	/**
 	 * Get the path to the media on disk. Note: this may be ran from a proxy so
-	 * don't use variable directly
+	 * don't use fields directly
 	 *
 	 * @return Path or null if this doesn't represent a disk resource
 	 */

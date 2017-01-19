@@ -33,6 +33,7 @@ public class FileType
 
 	public static final String COMPONENT = "COMPONENT";
 	public static final String ATTRIBUTE = "ATTRIBUTE";
+	public static final String CHECKLISTQUESTIONS = "CHKQUESTIONS";
 	public static final String SYSTEM = "SYSTEM";
 
 	public FileType()
@@ -45,6 +46,7 @@ public class FileType
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(COMPONENT, newLookup(FileType.class, COMPONENT, "Component"));
 		codeMap.put(ATTRIBUTE, newLookup(FileType.class, ATTRIBUTE, "Attribute"));
+		codeMap.put(CHECKLISTQUESTIONS, newLookup(FileType.class, CHECKLISTQUESTIONS, "Checklist Questions"));
 		codeMap.put(SYSTEM, newLookup(FileType.class, SYSTEM, "System"));
 		return codeMap;
 	}

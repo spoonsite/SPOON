@@ -48,7 +48,8 @@ public class OSFCacheManager
 	private static Cache applicationCache;
 	private static Cache contactCache;
 	private static Cache searchCache;
-	
+	private static Cache checklistQuestionCache;
+
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static void init()
@@ -60,7 +61,7 @@ public class OSFCacheManager
 			config.setUpdateCheck(false);
 			config.setName("Main");
 			CacheManager singletonManager = CacheManager.create(config);
-			
+
 			Cache memoryOnlyCache = new Cache("lookupCache", 500, false, false, 600, 600);
 			singletonManager.addCache(memoryOnlyCache);
 			lookupCache = singletonManager.getCache("lookupCache");
@@ -104,17 +105,21 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("contactCache", 5000, false, false, 1800, 1800);
 			singletonManager.addCache(memoryOnlyCache);
 			contactCache = singletonManager.getCache("contactCache");
-			
+
 			memoryOnlyCache = new Cache("searchCache", 50, false, false, 1800, 1800);
 			singletonManager.addCache(memoryOnlyCache);
-			searchCache = singletonManager.getCache("searchCache");			
-						
+			searchCache = singletonManager.getCache("searchCache");
+
+			memoryOnlyCache = new Cache("checklistQuestionCache", 1000, false, false, 300, 300);
+			singletonManager.addCache(memoryOnlyCache);
+			checklistQuestionCache = singletonManager.getCache("checklistQuestionCache");
+
 		} finally {
 			lock.unlock();
 		}
 
 	}
-	
+
 	public static CacheManager getCacheManager()
 	{
 		return CacheManager.getInstance();
@@ -184,17 +189,22 @@ public class OSFCacheManager
 	{
 		return contactCache;
 	}
-	
+
 	public static Cache getSearchCache()
 	{
 		return searchCache;
-	}	
+	}
+
+	public static Cache getChecklistQuestionCache()
+	{
+		return checklistQuestionCache;
+	}
 
 	@Override
 	public void initialize()
 	{
 		OSFCacheManager.init();
-		started.set(true);		
+		started.set(true);
 	}
 
 	@Override
@@ -208,6 +218,6 @@ public class OSFCacheManager
 	public boolean isStarted()
 	{
 		return started.get();
-	}	
-	
+	}
+
 }

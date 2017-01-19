@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
+import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -38,8 +39,10 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,7 +70,7 @@ public class MediaAction
 
 	private static final Logger log = Logger.getLogger(MediaAction.class.getName());
 
-	@Validate(required = true, on = "LoadMedia")
+	@Validate(required = true, on = {"LoadMedia", "SectionMedia"})
 	private String mediaId;
 
 	@ValidateNestedProperties({
@@ -97,6 +100,12 @@ public class MediaAction
 		@Validate(required = true, field = "name", on = "UploadTemporaryMedia")
 	})
 	private TemporaryMedia temporaryMedia;
+	
+	@ValidateNestedProperties({
+		@Validate(required = true, field = "mediaTypeCode", on = "UploadSectionMedia"),
+		@Validate(required = true, field = "contentSectionId", on = "UploadSectionMedia")
+	})
+	private ContentSectionMedia contentSectionMedia;		
 
 	@DefaultHandler
 	public Resolution audioTestPage()
@@ -155,7 +164,7 @@ public class MediaAction
 				if (allow) {
 
 					if (doesFileExceedLimit(file)) {
-						deleteTempFile(file);
+						deleteUploadFile(file);
 						errors.put("file", "File size exceeds max allowed.");
 					} else {
 
@@ -180,7 +189,7 @@ public class MediaAction
 							} catch (IOException ex) {
 								throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 							} finally {
-								deleteTempFile(file);
+								deleteUploadFile(file);
 							}
 						} else {
 							errors.put("file", validationResult.toHtmlString());
@@ -266,7 +275,7 @@ public class MediaAction
 					} catch (IOException ex) {
 						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 					} finally {
-						deleteTempFile(file);
+						deleteUploadFile(file);
 					}
 				} else {
 					errors.put("file", validationResult.toHtmlString());
@@ -356,7 +365,7 @@ public class MediaAction
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 				} finally {
-					deleteTempFile(file);
+					deleteUploadFile(file);
 				}
 			} else {
 				errors.put("file", validationResult.toHtmlString());
@@ -366,6 +375,73 @@ public class MediaAction
 		}
 		return streamUploadResponse(errors);
 	}
+	
+	@HandlesEvent("UploadSectionMedia")
+	public Resolution uploadSectionMedia()
+	{
+		Map<String, String> errors = new HashMap<>();
+			
+		contentSectionMedia.setOriginalName(StringProcessor.getJustFileName(file.getFileName()));			
+		contentSectionMedia.setMimeType(file.getContentType());
+
+		ValidationResult validationResult = contentSectionMedia.validate();
+		if (validationResult.valid()) {
+			try {
+				contentSectionMedia = service.getContentSectionService().saveMedia(contentSectionMedia, file.getInputStream());
+				List<ContentSectionMedia> data = new ArrayList<>();
+				data.add(contentSectionMedia);
+				return streamResults(data);
+			} catch (IOException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+			} finally {
+				deleteUploadFile(file);
+			}
+		} else {
+			errors.put("file", validationResult.toHtmlString());
+		}		
+		return streamUploadResponse(errors);
+	}
+	
+	@HandlesEvent("SectionMedia")
+	public Resolution sectionMedia() throws FileNotFoundException
+	{
+		ContentSectionMedia sectionMedia = new ContentSectionMedia();		
+		sectionMedia.setContentSectionMediaId(mediaId);		
+		sectionMedia = sectionMedia.find();
+		if (sectionMedia == null) {
+			log.log(Level.FINE, MessageFormat.format("Section Media with media id: {0} is not found.", mediaId));
+			return new StreamingResolution("image/png")
+			{
+				@Override
+				protected void stream(HttpServletResponse response) throws Exception
+				{
+					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE)) {
+						FileSystemManager.copy(in, response.getOutputStream());
+					}
+				}
+			}.setFilename("MediaNotFound.png");
+		}
+
+		InputStream in;
+		long length;
+		Path path = sectionMedia.pathToMedia();
+		if (path != null && path.toFile().exists()) {
+			in = new FileInputStream(path.toFile());
+			length = path.toFile().length();
+		} else {
+			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media record: {1} ", new Object[]{sectionMedia.pathToMedia(), sectionMedia.getContentSectionMediaId()}));
+			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
+			length = MISSING_MEDIA_IMAGE_SIZE;
+		}
+
+		return new RangeResolutionBuilder()
+				.setContentType(sectionMedia.getMimeType())
+				.setInputStream(in)
+				.setTotalLength(length)
+				.setRequest(getContext().getRequest())
+				.setFilename(sectionMedia.getOriginalName())
+				.createRangeResolution();
+	}	
 
 	@HandlesEvent("DataImage")
 	public Resolution tranformDataImage()
@@ -458,6 +534,16 @@ public class MediaAction
 	public void setTemporaryMedia(TemporaryMedia temporaryMedia)
 	{
 		this.temporaryMedia = temporaryMedia;
+	}
+
+	public ContentSectionMedia getContentSectionMedia()
+	{
+		return contentSectionMedia;
+	}
+
+	public void setContentSectionMedia(ContentSectionMedia contentSectionMedia)
+	{
+		this.contentSectionMedia = contentSectionMedia;
 	}
 
 }

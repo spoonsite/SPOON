@@ -44,7 +44,7 @@ public class FeedbackServiceImpl
 		implements FeedbackService
 {
 
-	private static final Logger log = Logger.getLogger(FeedbackServiceImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(FeedbackServiceImpl.class.getName());
 
 	@Override
 	public FeedbackTicket submitFeedback(FeedbackTicket ticket)
@@ -69,11 +69,12 @@ public class FeedbackServiceImpl
 		switch (branding.getFeedbackHandler()) {
 			case FeedbackHandleType.JIRA:
 				try (JiraClient jiraClient = JiraManager.getClient()) {
-					log.log(Level.INFO, "Posting feedback to jira.");
+
+					LOG.log(Level.INFO, "Posting feedback to jira.");
 
 					BasicIssue issue = jiraClient.submitTicket(ticket);
 					if (issue != null) {
-						log.log(Level.INFO, MessageFormat.format("Jira Ticket: {0}", issue.getKey()));
+						LOG.log(Level.INFO, MessageFormat.format("Jira Ticket: {0}", issue.getKey()));
 						ticket.setExternalId(issue.getKey());
 						ticket = persistenceService.persist(ticket);
 					}
@@ -89,7 +90,7 @@ public class FeedbackServiceImpl
 					email.addRecipient("Admin", emailAddress, Message.RecipientType.TO);
 					MailManager.send(email);
 				} else {
-					log.log(Level.WARNING, "Email is setup as the feedback handler however the configure properties doesn't have a email added defined for property: " + PropertiesManager.KEY_FEEDBACK_EMAIL);
+					LOG.log(Level.WARNING, "Email is setup as the feedback handler however the configure properties doesn't have a email added defined for property: " + PropertiesManager.KEY_FEEDBACK_EMAIL);
 				}
 				break;
 		}

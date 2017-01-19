@@ -93,14 +93,8 @@
 			
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	
-
-			var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {				
-			});
 			
 			var searchtoolsWin;
-			
-			var helpWin = Ext.create('OSF.component.HelpWindow', {				
-			});												
 			
 			var compareViewTemplate = new Ext.XTemplate(						
 			);

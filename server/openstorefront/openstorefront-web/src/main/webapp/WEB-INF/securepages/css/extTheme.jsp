@@ -22,7 +22,7 @@
 body.x-border-layout-ct,
 div.x-border-layout-ct {
     background-color: #f5f5f5;
-    background: url('${pageContext.request.contextPath}/images/squared_metal.png');	
+    background: url('${pageContext.request.contextPath}/images/grid.png');	
 }
 
 .x-body {
@@ -32,7 +32,7 @@ div.x-border-layout-ct {
     line-height: 20px;
     font-family: helvetica, arial, verdana, sans-serif;
     background-color: #f5f5f5;
-    background: url('${pageContext.request.contextPath}/images/squared_metal.png');
+    background: url('${pageContext.request.contextPath}/images/grid.png');
 }
 
 .x-tip-default {
@@ -47,7 +47,7 @@ div.x-border-layout-ct {
     border-width: 1px;
     background-image: none;
     background-color: #f5f5f5;
-    background: url('${pageContext.request.contextPath}/images/squared_metal.png');
+    background: url('${pageContext.request.contextPath}/images/grid.png');
 }
 
 .x-window-header-default-top {
