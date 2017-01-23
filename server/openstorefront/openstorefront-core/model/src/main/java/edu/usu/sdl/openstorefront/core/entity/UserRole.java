@@ -27,12 +27,12 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @APIDescription("Holds user group information")
-public class UserGroup
-		extends StandardEntity<UserGroup>
+public class UserRole
+		extends StandardEntity<UserRole>
 {
 
 	@PK(generated = true)
-	private String userGroupId;
+	private String userRoleId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
@@ -41,9 +41,10 @@ public class UserGroup
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@FK(SecurityRole.class)
 	private String role;
 
-	public UserGroup()
+	public UserRole()
 	{
 	}
 
@@ -57,14 +58,14 @@ public class UserGroup
 		this.role = role;
 	}
 
-	public String getUserGroupId()
+	public String getUserRoleId()
 	{
-		return userGroupId;
+		return userRoleId;
 	}
 
-	public void setUserGroupId(String userGroupId)
+	public void setUserRoleId(String userRoleId)
 	{
-		this.userGroupId = userGroupId;
+		this.userRoleId = userRoleId;
 	}
 
 	public String getUsername()

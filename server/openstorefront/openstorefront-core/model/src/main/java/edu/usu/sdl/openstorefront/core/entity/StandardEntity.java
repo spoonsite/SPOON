@@ -65,6 +65,13 @@ public abstract class StandardEntity<T>
 	@FK(SecurityMarkingType.class)
 	private String securityMarkingType;
 
+	@Sanitize({TextSanitizer.class, BlankSantizer.class})
+	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = SecurityMarkingType.class)
+	@APIDescription("Data Sensitivity")
+	@FK(DataSensitivity.class)
+	private String data;
+
 	@NotNull
 	@ValidValueType({"A", "I", "P"})
 	private String activeStatus;
@@ -111,7 +118,7 @@ public abstract class StandardEntity<T>
 		}
 
 		this.populateBaseUpdateFields();
-		
+
 		if (StringUtils.isNotBlank(entity.getUpdateUser())) {
 			setUpdateUser(entity.getUpdateUser());
 		}
@@ -123,9 +130,9 @@ public abstract class StandardEntity<T>
 		if (StringUtils.isBlank(getActiveStatus())) {
 			setActiveStatus(ACTIVE_STATUS);
 		}
-		setUpdateDts(TimeUtil.currentDate());		
+		setUpdateDts(TimeUtil.currentDate());
 		setUpdateUser(SecurityUtil.getCurrentUserName());
-		
+
 		if (getAdminModified() == null) {
 			setAdminModified(SecurityUtil.isAdminUser());
 		}
