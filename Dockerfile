@@ -50,8 +50,8 @@ RUN set -x \
 ENV CATALINA_HOME /usr/local/share/tomcat
 ENV TOMCAT_MAJOR 7
 ENV TOMCAT_PORT 8080
-ENV TOMCAT_VERSION 7.0.73
-ENV TOMCAT_TGZ_URL https://www.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
+ENV TOMCAT_VERSION 7.0.75
+ENV TOMCAT_TGZ_URL http://archive.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
 ENV CATALINA_OPTS -Xmx2048m
 
 RUN mkdir -p "$CATALINA_HOME" \
@@ -72,6 +72,10 @@ EXPOSE $TOMCAT_PORT
 ################
 
 ENV STOREFRONT_HOME /usr/local/share/openstorefront
+ENV STOREFRONT_VERSION 2.1
+ENV STOREFRONT_WAR_URL https://github.com/di2e/openstorefront/releases/download/v$STOREFRONT_VERSION/openstorefront.war
+
+WORKDIR $CATALINA_HOME/webapps
 
 # Switching between development and production must be done manually
 #
@@ -80,15 +84,11 @@ ENV STOREFRONT_HOME /usr/local/share/openstorefront
 #
 # The copy line pulls in the WAR file from the currently working set of directories
 # (It should only be used locally during development when the WAR file can be built first)
-
-ENV STOREFRONT_VERSION 2.1
-ENV STOREFRONT_WAR_URL https://github.com/di2e/openstorefront/releases/download/v$STOREFRONT_VERSION/openstorefront.war
-
-WORKDIR $CATALINA_HOME/webapps
+# (Be sure to build the WAR file first before building the docker image)
 
 RUN curl -fSL "$STOREFRONT_WAR_URL" -o ROOT.war
 
-#COPY server/openstorefront/openstorefront-web/target/openstorefront.war $CATALINA_HOME/webapps
+#COPY server/openstorefront/openstorefront-web/target/openstorefront.war $CATALINA_HOME/webapps/ROOT.war
 
 ####################
 ## Startup Script ##
@@ -99,10 +99,38 @@ RUN mkdir -p "$STOREFRONT_HOME" \
 
 WORKDIR $STOREFRONT_HOME
 
-RUN echo runuser -l $ES_NAME -c \"$ES_HOME/bin/$ES_NAME -d\" > startup.sh && \
-    echo $CATALINA_HOME/bin/catalina.sh run >> startup.sh
+RUN echo "#!/bin/bash" > upgrade.sh && \
+    echo "" >> upgrade.sh && \
+	echo "for i in \"\$@\"" >> upgrade.sh && \
+	echo "do" >> upgrade.sh && \
+	echo "case \$i in" >> upgrade.sh && \
+	echo "    --to-version=*)" >> upgrade.sh && \
+	echo "    URL=$STOREFRONT_WAR_URL" >> upgrade.sh && \
+	echo "    curl -fSL \"\${URL/$STOREFRONT_VERSION/\${i#*=}}\" -o $CATALINA_HOME/webapps/\${i#*=}.war" >> upgrade.sh && \
+	echo "    " && \
+	echo "    if [ -f \"$CATALINA_HOME/webapps/\${i#*=}.war\" ]; then" >> upgrade.sh && \
+	echo "        " >> upgrade.sh && \
+	echo "        $CATALINA_HOME/bin/catalina.sh stop" >> upgrade.sh && \
+	echo "        rm -rf $CATALINA_HOME/webapps/ROOT.war $CATALINA_HOME/webapps/ROOT/" >> upgrade.sh >> upgrade.sh && \
+	echo "        mv $CATALINA_HOME/webapps/\${i#*=}.war $CATALINA_HOME/webapps/ROOT.war" >> upgrade.sh && \
+	echo "        $CATALINA_HOME/bin/catalina.sh run" >> upgrade.sh && \
+	echo "    fi" >> upgrade.sh && \
+	echo "    " >> upgrade.sh && \
+	echo "    shift" >> upgrade.sh && \
+	echo "    ;;" >> upgrade.sh && \
+	echo "    *)" >> upgrade.sh && \
+	echo "    ;;" >> upgrade.sh && \
+	echo "esac" >> upgrade.sh && \
+	echo "done" >> upgrade.sh && \
+	echo "" >> upgrade.sh
 
-RUN chmod +x startup.sh
+RUN echo "#!/bin/bash" > startup.sh && \
+    echo "" >> startup.sh && \
+    echo "runuser -l $ES_NAME -c \"$ES_HOME/bin/$ES_NAME -d\"" >> startup.sh && \
+    echo "$CATALINA_HOME/bin/catalina.sh run" >> startup.sh && \
+	echo "" >> startup.sh
+
+RUN chmod +x upgrade.sh startup.sh
 
 ####################
 ## Start Services ##
