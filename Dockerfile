@@ -99,36 +99,48 @@ RUN mkdir -p "$STOREFRONT_HOME" \
 
 WORKDIR $STOREFRONT_HOME
 
-RUN echo "#!/bin/bash" > upgrade.sh && \
-    echo "" >> upgrade.sh && \
-	echo "for i in \"\$@\"" >> upgrade.sh && \
-	echo "do" >> upgrade.sh && \
-	echo "case \$i in" >> upgrade.sh && \
-	echo "    --to-version=*)" >> upgrade.sh && \
-	echo "    URL=$STOREFRONT_WAR_URL" >> upgrade.sh && \
-	echo "    curl -fSL \"\${URL/$STOREFRONT_VERSION/\${i#*=}}\" -o $CATALINA_HOME/webapps/\${i#*=}.war" >> upgrade.sh && \
-	echo "    " && \
-	echo "    if [ -f \"$CATALINA_HOME/webapps/\${i#*=}.war\" ]; then" >> upgrade.sh && \
-	echo "        " >> upgrade.sh && \
-	echo "        $CATALINA_HOME/bin/catalina.sh stop" >> upgrade.sh && \
-	echo "        rm -rf $CATALINA_HOME/webapps/ROOT.war $CATALINA_HOME/webapps/ROOT/" >> upgrade.sh >> upgrade.sh && \
-	echo "        mv $CATALINA_HOME/webapps/\${i#*=}.war $CATALINA_HOME/webapps/ROOT.war" >> upgrade.sh && \
-	echo "        $CATALINA_HOME/bin/catalina.sh run" >> upgrade.sh && \
-	echo "    fi" >> upgrade.sh && \
-	echo "    " >> upgrade.sh && \
-	echo "    shift" >> upgrade.sh && \
-	echo "    ;;" >> upgrade.sh && \
-	echo "    *)" >> upgrade.sh && \
-	echo "    ;;" >> upgrade.sh && \
-	echo "esac" >> upgrade.sh && \
-	echo "done" >> upgrade.sh && \
-	echo "" >> upgrade.sh
+RUN echo -e '#!/bin/bash \n' \
+            "\n" \
+            "for i in \"\$@\" \n" \
+            "do \n" \
+            "case \$i in \n" \
+            "    --to-version=*) \n" \
+            "    \n" \
+            "    $CATALINA_HOME/bin/catalina.sh stop 30 \n" \
+            "    \n" \
+            "    URL=$STOREFRONT_WAR_URL \n" \
+            "    curl -fSL \"\${URL/$STOREFRONT_VERSION/\${i#*=}}\" -o $CATALINA_HOME/webapps/\${i#*=}.war \n" \
+            "    \n" \
+            "    if [ -f \"$CATALINA_HOME/webapps/\${i#*=}.war\" ]; then \n" \
+            "        \n" \
+            "        rm -rf $CATALINA_HOME/webapps/ROOT.war $CATALINA_HOME/webapps/ROOT/ \n" \
+            "        mv $CATALINA_HOME/webapps/\${i#*=}.war $CATALINA_HOME/webapps/ROOT.war \n" \
+            "    fi \n" \
+            "    \n" \
+            "    $CATALINA_HOME/bin/catalina.sh start \n" \
+            "    \n" \
+            "    shift \n" \
+            "    ;; \n" \
+            "    *) \n" \
+            "    ;; \n" \
+            "esac \n" \
+            "done \n" \
+            "\n" \
+            "echo -e ' \n" \
+            "  Program has completed. \n" \
+            "  If you upgraded, please wait a few moments for the new version to initialize. \n" \
+            "  \n" \
+            "  You may exit the terminal by entering \"exit\" (without quotes) and pressing Enter. \n" \
+			"  ' \n" \
+            "" > upgrade.sh
 
-RUN echo "#!/bin/bash" > startup.sh && \
-    echo "" >> startup.sh && \
-    echo "runuser -l $ES_NAME -c \"$ES_HOME/bin/$ES_NAME -d\"" >> startup.sh && \
-    echo "$CATALINA_HOME/bin/catalina.sh run" >> startup.sh && \
-	echo "" >> startup.sh
+RUN echo -e '#!/bin/bash \n' \
+            "\n" \
+            "runuser -l $ES_NAME -c \"$ES_HOME/bin/$ES_NAME -d\" \n" \
+            "$CATALINA_HOME/bin/catalina.sh start \n" \
+	        "\n" \
+	        "tail -f ../tomcat/logs/catalina.out \n" \
+	        "" > startup.sh
 
 RUN chmod +x upgrade.sh startup.sh
 
