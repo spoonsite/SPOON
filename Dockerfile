@@ -53,9 +53,12 @@ ENV TOMCAT_PORT 8080
 ENV TOMCAT_VERSION 7.0.75
 ENV TOMCAT_TGZ_URL http://archive.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
 ENV CATALINA_OPTS -Xmx2048m
+ENV CATALINA_PID $CATALINA_HOME/catalina.pid
 
 RUN mkdir -p "$CATALINA_HOME" \
-	&& chmod 755 -R "$CATALINA_HOME" 
+	&& chmod 755 -R "$CATALINA_HOME" \
+	&& touch $CATALINA_PID \
+	&& chmod 644 $CATALINA_PID
 
 WORKDIR $CATALINA_HOME
 
