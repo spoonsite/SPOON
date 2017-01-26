@@ -40,8 +40,9 @@ implementation plan, time estimate, sub-tasks, and other relevant changes.
 
 ##Task
 
-A task ticket is creating to represent a general task that doesn't need to be flow through the more main workflow.  
-An Example is: updating development documentation.
+A task ticket is created to represent a general task that isn't subject to the workflow above.
+
+Example: Updating development documentation.
 
 ##Build
-A build ticket is created for each release.  It contains all move instruction, environment changes, and configure changes needed for the release.
+A build ticket is created for each release.  It contains all move instructions, environment changes, and configuration changes needed for the release.
