@@ -21,7 +21,7 @@ implementation plan, time estimate, sub-tasks, and other relevant changes.
 
 4. Schedule - Waiting to be scheduled for a release version.
 
-5. Working - Currently in development.
+5. Working - Currently in development. Refer to the Git Workflow guide for more information on branching style.
 
 6. Ready for Development Move - Development is complete but ticket not moved to the Integration environment.
 
