@@ -83,9 +83,9 @@ WORKDIR $CATALINA_HOME/webapps
 # (It should only be used locally during development when the WAR file can be built first)
 # (Be sure to build the WAR file first before building the docker image)
 
-#RUN curl -fSL "$STOREFRONT_WAR_URL" -o ROOT.war
+RUN curl -fSL "$STOREFRONT_WAR_URL" -o ROOT.war
 
-COPY server/openstorefront/openstorefront-web/target/openstorefront.war $CATALINA_HOME/webapps/ROOT.war
+#COPY server/openstorefront/openstorefront-web/target/openstorefront.war $CATALINA_HOME/webapps/ROOT.war
 
 ####################
 ## Startup Script ##
