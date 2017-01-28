@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author jlaw
+ * @author jlaw, dshurtleff
  */
 @APIDescription("Holds user information and preferences")
 public class UserProfile
@@ -41,7 +41,7 @@ public class UserProfile
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
 	private String username;
-
+	
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)

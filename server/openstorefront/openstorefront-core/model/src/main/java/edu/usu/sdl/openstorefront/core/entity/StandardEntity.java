@@ -67,10 +67,10 @@ public abstract class StandardEntity<T>
 
 	@Sanitize({TextSanitizer.class, BlankSantizer.class})
 	@ConsumeField
-	@ValidValueType(value = {}, lookupClass = SecurityMarkingType.class)
+	@ValidValueType(value = {}, lookupClass = DataSensitivity.class)
 	@APIDescription("Data Sensitivity")
 	@FK(DataSensitivity.class)
-	private String data;
+	private String dataSensitivity;
 
 	@NotNull
 	@ValidValueType({"A", "I", "P"})
@@ -113,6 +113,7 @@ public abstract class StandardEntity<T>
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
 		this.setSecurityMarkingType(entity.getSecurityMarkingType());
+		this.setDataSensitivity(entity.getDataSensitivity());		
 		if (entity.getActiveStatus() != null) {
 			this.setActiveStatus(entity.getActiveStatus());
 		}
@@ -303,6 +304,16 @@ public abstract class StandardEntity<T>
 	public void setSecurityMarkingType(String securityMarkingType)
 	{
 		this.securityMarkingType = securityMarkingType;
+	}
+
+	public String getDataSensitivity()
+	{
+		return dataSensitivity;
+	}
+
+	public void setDataSensitivity(String dataSensitivity)
+	{
+		this.dataSensitivity = dataSensitivity;
 	}
 
 }

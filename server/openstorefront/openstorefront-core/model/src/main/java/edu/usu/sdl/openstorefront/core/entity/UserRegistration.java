@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
@@ -36,6 +37,11 @@ public class UserRegistration
 	@PK(generated = true)
 	private String registrationId;
 
+	@ConsumeField
+	@Size(min = 8, max = OpenStorefrontConstant.FIELD_SIZE_80)
+	@APIDescription("Only Applicatble when using internal security; minimal size may be configured large not smaller.")	
+	private transient String password;	
+	
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
