@@ -78,5 +78,5 @@ Setup and Data Import Instructions:
  11.  Return to the Home Page.  Click the **magnifying glass icon** to search all entries. 
       
      
-NOTE:  The site can be customized by going to (In Admin Tools) **Application Mangement** then **Branding**.  Highlights
+NOTE:  The site can be customized by going to (In Admin Tools) **Application Management** then **Branding**.  Highlights
 can also be added to the home page from **Data Management** and **Highlights**.  Enjoy exploring and further customization.
