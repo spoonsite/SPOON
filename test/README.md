@@ -75,7 +75,8 @@ Setup and Data Import Instructions:
       
       After successful upload yo should see a list of 119 Entries.
       
- 11.  Return to the Home Page.  Click the **magnifying glass icon** to search all entries.  Enjoy!
+ 11.  Return to the Home Page.  Click the **magnifying glass icon** to search all entries. 
       
      
-    
+NOTE:  The site can be customized by going to (In Admin Tools) **Application Mangement** then **Branding**.  Highlights
+can also be added to the home page from **Data Management** and **Highlights**.  Enjoy exploring and further customization.
