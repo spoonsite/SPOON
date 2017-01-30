@@ -63,8 +63,8 @@ Setup and Data Import Instructions:
      Data Mapping ***\<leave blank\>***
      Data Source  **DI2E Component**
      Import *\<select the file from your local hard drive downloaded from this section **attributes.json**\>*
-     Click on **Upload**
      
+     Click on **Upload**
      After successful upload you should see Genre, Record Label, and Summary in your attributes list.
      
  10.  Click on **Data Management** then **Entries**.  Click on **Import**
@@ -73,8 +73,9 @@ Setup and Data Import Instructions:
       Data Mapping ***\<leave blank\>***
       Data Source  **DI2E Component**
       Import *\<select the file from your local hard drive downloaded from this section **ExportedComponents.zip**\>*
-      Click on **Upload**
+      Options:  Check **all boxes**
       
+      Click on **Upload**
       After successful upload yo should see a list of 119 Entries.
       
  11.  Return to the Home Page.  Click the **magnifying glass icon** to search all entries. 
