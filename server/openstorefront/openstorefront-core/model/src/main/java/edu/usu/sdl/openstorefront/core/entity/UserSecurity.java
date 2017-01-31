@@ -26,10 +26,12 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Security account; used in the builtin security realm.")
+@APIDescription("Security account; used in the builtin security realm. This shouldn't passed back to the user.")
 public class UserSecurity
 	extends StandardEntity<UserSecurity>		
 {
+	public static final String PASSWORD_FIELD = "password";
+	
 	@PK
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
@@ -38,15 +40,21 @@ public class UserSecurity
 	@NotNull	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_80)
 	@APIDescription("Only Applicatble when using internal security; This is hashed")	
-	private transient String password;	
+	private String password;	
 	
 	@NotNull
-	private transient String userSalt;
+	private String userSalt;
 	
 	@NotNull
 	@Min(0)
 	@APIDescription("This will reset upon successful login")
 	private Integer failLoginAttempts;
+	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_80)
+	private String tempPassword;
+	
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	private String passwordChangeApprovalCode;
 
 	public UserSecurity()
 	{
@@ -90,6 +98,26 @@ public class UserSecurity
 	public void setFailLoginAttempts(Integer failLoginAttempts)
 	{
 		this.failLoginAttempts = failLoginAttempts;
+	}
+
+	public String getTempPassword()
+	{
+		return tempPassword;
+	}
+
+	public void setTempPassword(String tempPassword)
+	{
+		this.tempPassword = tempPassword;
+	}
+
+	public String getPasswordChangeApprovalCode()
+	{
+		return passwordChangeApprovalCode;
+	}
+
+	public void setPasswordChangeApprovalCode(String passwordChangeApprovalCode)
+	{
+		this.passwordChangeApprovalCode = passwordChangeApprovalCode;
 	}
 	
 }

@@ -22,4 +22,8 @@ package edu.usu.sdl.core.init;
 public class SecurityInit
 {
 	
+	//init default user and roles for system
+	
+	//init application crypt key
+	
 }

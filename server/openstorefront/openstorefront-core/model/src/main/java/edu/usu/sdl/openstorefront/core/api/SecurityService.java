@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.security.Key;
 
 /**
  *
@@ -41,6 +42,18 @@ public interface SecurityService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	void updateSecurityPolicy(SecurityPolicy securityPolicy);
 	
+	/**
+	 * Validate password meets security rules
+	 * @param password (un-hashed)
+	 * @return 
+	 */
+	ValidationResult validatePassword(char[] password);
+	
+	/**
+	 * Generates a password the conforms to policy rules
+	 * @return 
+	 */
+	String generatePassword();
 	
 	/**
 	 * Performs validation according to security policy
@@ -48,8 +61,7 @@ public interface SecurityService
 	 * @return validation results
 	 */
 	ValidationResult validateRegistration(UserRegistration userRegistration);
-	
-	
+		
 	/**
 	 * Handle processing the application into user and user profile
 	 * @param userRegistration 
@@ -61,18 +73,18 @@ public interface SecurityService
 	 * Hashes and stores temp password
 	 * @param username
 	 * @param password
-	 * @return Approval token
+	 * @return Approval code (Base64 encoded for web)
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	String resetPasswordUser(String username, byte[] password);
+	String resetPasswordUser(String username, char[] password);
 	
 	/**
 	 * Approves user password reset
 	 * @param username
-	 * @param approvalCode
+	 * @param approvalCode (Assumes it Base64 encoded for web)
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	void approveUserPasswordReset(String username, String approvalCode);
+	void approveUserPasswordReset(String approvalCode);
 	
 	/**
 	 * This will directly reset password
@@ -80,7 +92,7 @@ public interface SecurityService
 	 * @param password 
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	void adminResetPassword(String username, byte[] password);
+	void adminResetPassword(String username, char[] password);
 	
 	/**
 	 * Enable account and reset lock count
@@ -121,5 +133,11 @@ public interface SecurityService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	void removeRoleFromUser(String username, String role);
-		
+	
+	/**
+	 * Pulls or creates a crypt key
+	 * @return 
+	 */
+	Key applicationCryptKey();
+	
 }
