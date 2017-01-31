@@ -15,11 +15,250 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.PK;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Hold security peferences for the application; note most of these only apply to the internal security.")
 public class SecurityPolicy
+	extends StandardEntity<SecurityPolicy>		
 {
+	@PK(generated = true)
+	@NotNull
+	private String policyId;
+	
+	@NotNull
+	@ConsumeField
+	private Boolean autoApproveUsers;
+	
+	@NotNull	
+	@ConsumeField
+	@Min(8)
+	@Max(OpenStorefrontConstant.FIELD_SIZE_80)
+	private Integer minPasswordLength;
+	
+	@NotNull
+	@ConsumeField	
+	@Min(0)
+	@Max(25)
+	private Integer loginLockoutMaxAttempts;
+	
+	@NotNull
+	@ConsumeField
+	@Min(1)	
+	@Max(1440)
+	private Integer resetLockoutTimeMinutes;
+	
+	@NotNull
+	@ConsumeField
+	private Boolean requireAdminUnlock;
+
+	@NotNull
+	@ConsumeField
+	private Boolean requiresProofOfCitizenship;
+	
+	@NotNull
+	@ConsumeField
+	private Boolean allowJSONPSupport;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	private String corsOrigins;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	private String corsMethods;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	private String corsHeaders;
+	
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	private String customHeaders;
+	
+	@NotNull
+	@ConsumeField
+	private Boolean crsfSupport;	
+	
+	@NotNull
+	@ConsumeField
+	private Boolean allowRegistration;
+		
+	public SecurityPolicy()
+	{
+	}
+
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity); 
+		
+		SecurityPolicy securityPolicy = (SecurityPolicy) entity;
+		
+		setAutoApproveUsers(securityPolicy.getAutoApproveUsers());
+		setMinPasswordLength(securityPolicy.getMinPasswordLength());
+		setLoginLockoutMaxAttempts(securityPolicy.getLoginLockoutMaxAttempts());
+		setResetLockoutTimeMinutes(securityPolicy.getResetLockoutTimeMinutes());
+		setRequireAdminUnlock(securityPolicy.getRequireAdminUnlock());
+		setRequiresProofOfCitizenship(securityPolicy.getRequiresProofOfCitizenship());
+		setAllowJSONPSupport(securityPolicy.getAllowJSONPSupport());
+		setCorsOrigins(securityPolicy.getCorsOrigins());
+		setCorsMethods(securityPolicy.getCorsMethods());
+		setCorsHeaders(securityPolicy.getCorsHeaders());
+		setCustomHeaders(securityPolicy.getCustomHeaders());
+		setCrsfSupport(securityPolicy.getCrsfSupport());
+		setAllowRegistration(securityPolicy.getAllowRegistration());
+				
+	}
+	
+	public String getPolicyId()
+	{
+		return policyId;
+	}
+
+	public void setPolicyId(String policyId)
+	{
+		this.policyId = policyId;
+	}
+
+	public Boolean getAutoApproveUsers()
+	{
+		return autoApproveUsers;
+	}
+
+	public void setAutoApproveUsers(Boolean autoApproveUsers)
+	{
+		this.autoApproveUsers = autoApproveUsers;
+	}
+
+	public Integer getMinPasswordLength()
+	{
+		return minPasswordLength;
+	}
+
+	public void setMinPasswordLength(Integer minPasswordLength)
+	{
+		this.minPasswordLength = minPasswordLength;
+	}
+
+	public Integer getLoginLockoutMaxAttempts()
+	{
+		return loginLockoutMaxAttempts;
+	}
+
+	public void setLoginLockoutMaxAttempts(Integer loginLockoutMaxAttempts)
+	{
+		this.loginLockoutMaxAttempts = loginLockoutMaxAttempts;
+	}
+
+	public Integer getResetLockoutTimeMinutes()
+	{
+		return resetLockoutTimeMinutes;
+	}
+
+	public void setResetLockoutTimeMinutes(Integer resetLockoutTimeMinutes)
+	{
+		this.resetLockoutTimeMinutes = resetLockoutTimeMinutes;
+	}
+
+	public Boolean getRequireAdminUnlock()
+	{
+		return requireAdminUnlock;
+	}
+
+	public void setRequireAdminUnlock(Boolean requireAdminUnlock)
+	{
+		this.requireAdminUnlock = requireAdminUnlock;
+	}
+
+	public Boolean getRequiresProofOfCitizenship()
+	{
+		return requiresProofOfCitizenship;
+	}
+
+	public void setRequiresProofOfCitizenship(Boolean requiresProofOfCitizenship)
+	{
+		this.requiresProofOfCitizenship = requiresProofOfCitizenship;
+	}
+
+	public Boolean getAllowJSONPSupport()
+	{
+		return allowJSONPSupport;
+	}
+
+	public void setAllowJSONPSupport(Boolean allowJSONPSupport)
+	{
+		this.allowJSONPSupport = allowJSONPSupport;
+	}
+
+	public String getCorsOrigins()
+	{
+		return corsOrigins;
+	}
+
+	public void setCorsOrigins(String corsOrigins)
+	{
+		this.corsOrigins = corsOrigins;
+	}
+
+	public String getCorsMethods()
+	{
+		return corsMethods;
+	}
+
+	public void setCorsMethods(String corsMethods)
+	{
+		this.corsMethods = corsMethods;
+	}
+
+	public String getCorsHeaders()
+	{
+		return corsHeaders;
+	}
+
+	public void setCorsHeaders(String corsHeaders)
+	{
+		this.corsHeaders = corsHeaders;
+	}
+
+	public String getCustomHeaders()
+	{
+		return customHeaders;
+	}
+
+	public void setCustomHeaders(String customHeaders)
+	{
+		this.customHeaders = customHeaders;
+	}
+
+	public Boolean getCrsfSupport()
+	{
+		return crsfSupport;
+	}
+
+	public void setCrsfSupport(Boolean crsfSupport)
+	{
+		this.crsfSupport = crsfSupport;
+	}
+
+	public Boolean getAllowRegistration()
+	{
+		return allowRegistration;
+	}
+
+	public void setAllowRegistration(Boolean allowRegistration)
+	{
+		this.allowRegistration = allowRegistration;
+	}
 	
 }

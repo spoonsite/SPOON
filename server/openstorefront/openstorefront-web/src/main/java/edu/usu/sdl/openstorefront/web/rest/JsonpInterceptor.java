@@ -26,7 +26,7 @@ import javax.ws.rs.ext.WriterInterceptorContext;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Adds Jsonp Support  to any REST request
+ * Adds Jsonp Support to any GET REST request;
  * @author dshurtleff
  */
 @Provider

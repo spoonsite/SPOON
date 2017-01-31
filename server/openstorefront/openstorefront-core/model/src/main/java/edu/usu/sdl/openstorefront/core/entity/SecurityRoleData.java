@@ -15,25 +15,30 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.io.Serializable;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Part of Security Role")
 public class SecurityRoleData
 		implements Serializable
 {
 
+	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = DataSensitivity.class)
 	@FK(DataSensitivity.class)
 	private String dataSensitivity;
 
+	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = DataSource.class)
 	@FK(DataSource.class)

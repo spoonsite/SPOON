@@ -15,6 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
+import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
+import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+
 /**
  *
  * @author dshurtleff
@@ -23,4 +28,98 @@ public interface SecurityService
 		extends AsyncService
 {
 
+	/**
+	 * Gets the security policy for the application
+	 * @return 
+	 */
+	SecurityPolicy getSecurityPolicy();
+	
+	/**
+	 * Updates the policy
+	 * @param securityPolicy 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void updateSecurityPolicy(SecurityPolicy securityPolicy);
+	
+	
+	/**
+	 * Performs validation according to security policy
+	 * @param userRegistration
+	 * @return validation results
+	 */
+	ValidationResult validateRegistration(UserRegistration userRegistration);
+	
+	
+	/**
+	 * Handle processing the application into user and user profile
+	 * @param userRegistration 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void processNewRegistration(UserRegistration userRegistration);	
+	
+	/**
+	 * Hashes and stores temp password
+	 * @param username
+	 * @param password
+	 * @return Approval token
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	String resetPasswordUser(String username, byte[] password);
+	
+	/**
+	 * Approves user password reset
+	 * @param username
+	 * @param approvalCode
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void approveUserPasswordReset(String username, String approvalCode);
+	
+	/**
+	 * This will directly reset password
+	 * @param username
+	 * @param password 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void adminResetPassword(String username, byte[] password);
+	
+	/**
+	 * Enable account and reset lock count
+	 * @param username 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void unlockUser(String username);
+	
+	/**
+	 * This will disable an account; prevent login (Only using the appropriate 
+	 * security realm)
+	 * @param username 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void lockUser(String username);
+	
+	/**
+	 * Create or updated a security role
+	 * @param securityRole
+	 * @return 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	SecurityRole saveSecurityRole(SecurityRole securityRole);
+
+	/**
+	 * Adds user to a role (Only for built in security realm external realms 
+	 * should be handled by the external system.
+	 * @param username
+	 * @param role 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void addUserToRole(String username, String role);
+	
+	/**
+	 * Removes a role from a user
+	 * @param username
+	 * @param role 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void removeRoleFromUser(String username, String role);
+		
 }

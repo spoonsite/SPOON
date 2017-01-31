@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -27,16 +28,68 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Security account; used in the builtin security realm.")
 public class UserSecurity
+	extends StandardEntity<UserSecurity>		
 {
 	@PK
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
 	private String username;
-		
+	
+	@NotNull	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_80)
-	@APIDescription("Only Applicatble when using internal security")	
+	@APIDescription("Only Applicatble when using internal security; This is hashed")	
 	private transient String password;	
 	
+	@NotNull
 	private transient String userSalt;
+	
+	@NotNull
+	@Min(0)
+	@APIDescription("This will reset upon successful login")
+	private Integer failLoginAttempts;
+
+	public UserSecurity()
+	{
+	}
+
+	public String getUsername()
+	{
+		return username;
+	}
+
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
+
+	public String getPassword()
+	{
+		return password;
+	}
+
+	public void setPassword(String password)
+	{
+		this.password = password;
+	}
+
+	public String getUserSalt()
+	{
+		return userSalt;
+	}
+
+	public void setUserSalt(String userSalt)
+	{
+		this.userSalt = userSalt;
+	}
+
+	public Integer getFailLoginAttempts()
+	{
+		return failLoginAttempts;
+	}
+
+	public void setFailLoginAttempts(Integer failLoginAttempts)
+	{
+		this.failLoginAttempts = failLoginAttempts;
+	}
 	
 }

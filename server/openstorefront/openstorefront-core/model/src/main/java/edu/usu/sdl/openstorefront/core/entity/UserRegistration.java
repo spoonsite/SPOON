@@ -30,6 +30,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@APIDescription("Holds information on user registration")
 public class UserRegistration
 		extends StandardEntity<UserRegistration>
 {
@@ -42,33 +43,36 @@ public class UserRegistration
 	@APIDescription("Only Applicatble when using internal security; minimal size may be configured large not smaller.")	
 	private transient String password;	
 	
+	@NotNull
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_FIRSTNAME)	
 	private String firstName;
 
+	@NotNull
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_LASTNAME)
 	private String lastName;
 
+	@NotNull
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String email;
 
+	@NotNull
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_PHONE)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String phone;
 
-	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = UserTypeCode.class)
 	@ConsumeField
 	@FK(UserTypeCode.class)
 	private String userTypeCode;
-
+	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
@@ -147,6 +151,16 @@ public class UserRegistration
 	public void setOrganization(String organization)
 	{
 		this.organization = organization;
+	}
+
+	public String getPassword()
+	{
+		return password;
+	}
+
+	public void setPassword(String password)
+	{
+		this.password = password;
 	}
 
 }

@@ -15,9 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.annotation.PK;
 import java.util.List;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -28,26 +34,60 @@ public class SecurityRole
 		extends StandardEntity<SecurityRole>
 {
 
+	@PK(generated = false)
+	@NotNull
+	@ConsumeField
+	@APIDescription("Should match LDAP group if use external IDAM")
 	private String roleName;
 
+	@NotNull
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String description;
 
+	@NotNull
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String landingPage;
 
+	@ConsumeField
+	@DataType(SecurityRolePermission.class)
 	@OneToMany(orphanRemoval = true)
 	private List<SecurityRolePermission> permissions;
 
+	@ConsumeField
+	@DataType(SecurityRoleData.class)
 	@OneToMany(orphanRemoval = true)
 	private List<SecurityRoleData> dataSecurity;
 
+	@NotNull
+	@ConsumeField
 	private Boolean allowUnspecifiedDataSource;
 
+	@NotNull
+	@ConsumeField
 	private Boolean allowUnspecifiedDataSensitivity;
 
 	public SecurityRole()
 	{
 	}
 
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity); 
+		
+		SecurityRole securityRole = (SecurityRole) entity;
+		setRoleName(securityRole.getRoleName());
+		setDescription(securityRole.getDescription());
+		setLandingPage(securityRole.getLandingPage());
+		setDataSecurity(securityRole.getDataSecurity());
+		setPermissions(securityRole.getPermissions());
+		setAllowUnspecifiedDataSensitivity(securityRole.getAllowUnspecifiedDataSensitivity());
+		setAllowUnspecifiedDataSource(securityRole.getAllowUnspecifiedDataSource());
+				
+	}
+	
 	public String getRoleName()
 	{
 		return roleName;

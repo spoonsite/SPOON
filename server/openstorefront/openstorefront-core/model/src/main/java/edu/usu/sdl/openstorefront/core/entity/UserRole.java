@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
-@APIDescription("Holds user group information")
+@APIDescription("Holds link from user to role")
 public class UserRole
 		extends StandardEntity<UserRole>
 {

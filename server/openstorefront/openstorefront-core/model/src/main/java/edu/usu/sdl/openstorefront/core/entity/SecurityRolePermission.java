@@ -15,17 +15,29 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
+import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.io.Serializable;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Part of Security Role")
 public class SecurityRolePermission
 		implements Serializable
 {
-
+	
+	@NotNull
+	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = SecurityPermission.class)
+	@FK(SecurityPermission.class)
+	private String permission;
+	
 	@Version
 	private String storageVersion;
 
@@ -41,6 +53,16 @@ public class SecurityRolePermission
 	public void setStorageVersion(String storageVersion)
 	{
 		this.storageVersion = storageVersion;
+	}
+
+	public String getPermission()
+	{
+		return permission;
+	}
+
+	public void setPermission(String permission)
+	{
+		this.permission = permission;
 	}
 
 }
