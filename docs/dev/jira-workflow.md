@@ -29,7 +29,7 @@ implementation plan, time estimate, sub-tasks, and other relevant changes.
 
 8. Ready for Acceptance Move - Passed integration testing and waiting to be moved to the acceptance state.
 
-9. Acceptance Test - Ticked ready for QA to test.
+9. Acceptance Test - Ticket ready for QA to test.
 
 10. Ready for Staging - Ticket has passed QA and is now ready to move to staging.
 
