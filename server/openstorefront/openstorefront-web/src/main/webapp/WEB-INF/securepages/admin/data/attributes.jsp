@@ -30,8 +30,99 @@
 	<form name="exportForm" action="api/v1/resource/attributes/export" method="POST">
 			<p style="display: none;" id="exportFormAttributeTypes"></p>      
 	</form>
+	
+	<style type="text/css">
+		
+		.attribute-button-inactive,
+		.attribute-button-active {
+
+			width: 100%;
+			border: 2px solid #E7E7E7;
+			text-align: left;
+			transition-duration: 0.4s;
+			cursor: pointer;
+			outline: none;
+			color: #000000;
+		}
+		
+		.attribute-button-inactive:hover,
+		.attribute-button-active:hover {
+			
+			border-color: #B2B2B2;
+		}
+
+		.attribute-button-inactive span,
+		.attribute-button-active span {
+
+			display: inline-block;
+			float: right;
+			transition-duration: 0.4s;
+		}
+
+		.attribute-button-inactive span:before {
+
+			content: '\02C3';
+		}
+
+		.attribute-button-active span:before {
+
+			content: '\02C5';
+		}
+
+		.attribute-button-inactive {
+
+			background-color: #FFFFFF;
+		}
+
+		.attribute-button-active {
+
+			background-color: #EEEEEE;
+		}
+
+		.emboldened {
+
+			font-weight: bold;
+		}
+
+		.attributes-visible,
+		.attributes-hidden {
+
+			margin: 0;
+			padding: 2px 2px 2px 20px;
+		}
+
+		.attributes-visible {
+
+			display: block;
+		}
+
+		.attributes-hidden {
+
+			display: none;
+		}
+		
+	</style>
 
 	<script type="text/javascript">
+		
+		var displayAttributeList = function displayAttributeList(button, listId) {
+				
+			var attributes = document.getElementById(listId);
+
+			if (button.className != "attribute-button-active")  {
+
+				button.className = "attribute-button-active";
+
+				attributes.className = "attributes-visible";
+			}
+			else {
+
+				button.className = "attribute-button-inactive";
+
+				attributes.className = "attributes-hidden";
+			}
+		};
+		
 		/* global Ext, CoreUtil */
 		Ext.onReady(function(){	
 	
@@ -98,8 +189,27 @@
 
 									name: store.getAt(i).data.componentTypeDescription,
 									code: store.getAt(i).data.componentType
-								}
+								},
+								
+								// Initialize Attributes Array
+								attributes: []
 							};
+							
+							// Loop Through Component's Existing Attributes
+							for (var j = 0; j < store.getAt(i).data.attributes.length; j++) {
+								
+								// Store Attribute
+								currentComponent.attributes[j] = {
+									
+									// Store Attribute Name
+									name: store.getAt(i).data.attributes[j].typeLabel,
+									
+									// Store Attribute Value
+									value: store.getAt(i).data.attributes[j].label
+								};
+							}
+							
+//							console.log(store.getAt(i).data);
 
 							// Store Component
 							localComponents.push(currentComponent);
@@ -2206,27 +2316,9 @@
 						// Loop Through Components
 						for (i = 0; i < components.length; i++) {
 
-							// Save Component Data
-							var data = {
-
-								id: components[i].componentId,
-								name: components[i].name,
-								type: {
-
-									name: components[i].componentTypeLabel,
-									code: components[i].componentType
-								}
-							};
-
 							// Add Component ID To Array
-							componentIds.push(data.id);
-
-							// Add Component Data To Array
-							componentData.push(data);
+							componentIds.push(components[i].componentId);
 						}
-
-						// Add Component Data To Assigned Component Store
-						store_assignedComponents_local.setData(componentData);
 						
 						// Load Remote Components Store
 						store_components_remote.load(function(records, operation, success) {
@@ -2239,6 +2331,23 @@
 
 								return !Ext.Array.contains(componentIds, record.get('id'));
 							});
+							
+							// Loop Through Assigned Component IDs
+							for (i = 0; i < componentIds.length; i++) {
+								
+								// Locate & Store Component With Matching ID
+								var component = store_components_local.getById(componentIds[i]);
+								
+								// Check For Match
+								if (component != null) {
+								
+									// Add Matching Component's Data To Array
+									componentData.push(component.getData());
+								}
+							}
+
+							// Add Assigned Component Data To Assigned Component Store
+							store_assignedComponents_local.setData(componentData);
 
 							// Unmask Component Grids (Loading)
 							Ext.getCmp('unassignedComponentGrid').getView().unmask();
@@ -2291,9 +2400,11 @@
 							
 							// Store Attribute Type
 							var type = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('attributeType');
+							var name = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('description');
 
 							// Store Attribute Code
 							var code = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('code');
+							var value = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('label');
 
 							// Make Request
 							Ext.Ajax.request({
@@ -2301,7 +2412,47 @@
 								url: 'api/v1/resource/components/' + componentData.id + '/attributes/' + type + '/' + code,
 								method: 'DELETE',
 								success: function (response, opts) {
+									
+									// Loop Through Component Attributes
+									for (i = 0; i < componentData.attributes.length; i++) {
+										
+										// Look For Matching Attribute
+										if (componentData.attributes[i].name === name &&
+												componentData.attributes[i].value === value) {
+											
+											// Delete Attribute
+											componentData.attributes.splice(i, 1);
+											
+											// Stop Looping
+											break;
+										}
+									}
+									
+									// Update Data Display
+									unassignedComponentGrid.getView().refresh();
+									
+									// Clear Filters
+									store_components_local.clearFilter();
+									
+									// Get Assigned Components
+									var assignedComponents = store_assignedComponents_local.getData();
+									
+									// Initialize Assigned Component ID Array
+									var assignedComponentIDs = [];
+									
+									// Loop Through Assigned Components
+									for (i = 0; i < assignedComponents.length; i++) {
+										
+										// Add ID To Array
+										assignedComponentIDs.push(assignedComponents.items[i].id);
+									}
+									
+									// Filter Unassigned Components Store
+									store_components_local.filterBy(function(record) {
 
+										return !Ext.Array.contains(assignedComponentIDs, record.get('id'));
+									});
+									
 									// Indicate Successful Removal
 									Ext.toast("Attribute Removed From " + componentData.name, '', 'tr');
 								},
@@ -2339,13 +2490,28 @@
 						dataIndex: 'name',
 						flex: 1,
 						renderer: function (value, metaData, record) {
-
-							var html = "<strong>" + value + "</strong>";
+							
+							var html = '<span style="font-weight: bold;">' + value + "</span>";
 							html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
 							html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
 							html += '<span style="float: left;">' + record.get('type').name + '</span>';
 							html += "</div>";
-
+							
+							html += '<div>';
+							html += '	<button class="attribute-button-inactive" onclick="javascript:displayAttributeList(this, \'attributes_' + record.get('id') + '\')">Existing Attributes <span></span></button>';
+							html += '	<ul id="attributes_' + record.get('id') + '" class="attributes-hidden">';
+							
+							for (var i = 0; i < record.get('attributes').length; i++) {
+								
+								html += '		<li>';
+								html += '			<span class="emboldened">' + record.get('attributes')[i].name + ': </span>';
+								html += '			' + record.get('attributes')[i].value;
+								html += '		</li>';
+							}
+							
+							html += '	</ul>';
+							html += '</div>';
+							
 							return html;
 						}
 
@@ -2501,9 +2667,11 @@
 							
 							// Store Attribute Type
 							var type = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('attributeType');
+							var name = Ext.getCmp('manageAssignmentsForm-attribute').getSelection().get('description');
 
 							// Store Attribute Code
 							var code = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('code');
+							var value = Ext.getCmp('manageAssignmentsForm-code').getSelection().get('label');
 
 							// Build New Component Attribute Data
 							var attributeData = {
@@ -2522,7 +2690,17 @@
 								method: 'POST',
 								jsonData: attributeData,
 								success: function (response, opts) {
-
+									
+									// Add Attribute & Code To Component
+									componentData.attributes.push({
+										
+										name: name,
+										value: value
+									});
+									
+									// Update Data Display
+									assignedComponentGrid.getView().refresh();
+									
 									// Indicate Successful Removal
 									Ext.toast("Attribute Added To " + componentData.name, '', 'tr');
 								},
@@ -2569,20 +2747,35 @@
 
 								// Build Component Without Record Type
 								var html = '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-								html += "<strong>" + value + "</strong>";
+								html += '<span style="font-weight: bold;">' + value + "</span>";
 								html += "</div>";
-								return html;
 							}
 							else {
 
 								// Build Component With Record Type
-								var html = "<strong>" + value + "</strong>";
+								var html = '<span style="font-weight: bold;">' + value + "</span>";
 								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
 								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
 								html += '<span style="float: left;">' + recordType.name + '</span>';
 								html += "</div>";
-								return html;
 							}
+							
+							html += '<div>';
+							html += '	<button class="attribute-button-inactive" onclick="javascript:displayAttributeList(this, \'attributes_' + record.get('id') + '\')">Existing Attributes <span></span></button>';
+							html += '	<ul id="attributes_' + record.get('id') + '" class="attributes-hidden">';
+							
+							for (var i = 0; i < record.get('attributes').length; i++) {
+								
+								html += '		<li>';
+								html += '			<span class="emboldened">' + record.get('attributes')[i].name + ': </span>';
+								html += '			' + record.get('attributes')[i].value;
+								html += '		</li>';
+							}
+							
+							html += '	</ul>';
+							html += '</div>';
+							
+							return html;
 						}
 					}
 				]
