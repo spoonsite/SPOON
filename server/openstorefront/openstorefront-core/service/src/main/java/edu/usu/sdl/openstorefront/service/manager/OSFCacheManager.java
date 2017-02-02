@@ -52,9 +52,10 @@ public class OSFCacheManager
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
+	private static final ReentrantLock lock = new ReentrantLock();
+	
 	public static void init()
-	{
-		ReentrantLock lock = new ReentrantLock();
+	{		
 		lock.lock();
 		try {
 			Configuration config = new Configuration();

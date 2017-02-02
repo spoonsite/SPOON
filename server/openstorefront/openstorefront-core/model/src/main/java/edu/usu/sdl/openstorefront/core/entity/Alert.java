@@ -68,6 +68,10 @@ public class Alert
 	@ConsumeField
 	@OneToOne(orphanRemoval = true)
 	private SystemErrorAlertOption systemErrorAlertOption;
+	
+	@ConsumeField
+	@OneToOne(orphanRemoval = true)
+	private UserManagementAlertOption userManagementAlertOption;	
 
 	public Alert()
 	{
@@ -144,6 +148,16 @@ public class Alert
 	public void setSystemErrorAlertOption(SystemErrorAlertOption systemErrorAlertOption)
 	{
 		this.systemErrorAlertOption = systemErrorAlertOption;
+	}
+
+	public UserManagementAlertOption getUserManagementAlertOption()
+	{
+		return userManagementAlertOption;
+	}
+
+	public void setUserManagementAlertOption(UserManagementAlertOption userManagementAlertOption)
+	{
+		this.userManagementAlertOption = userManagementAlertOption;
 	}
 
 }

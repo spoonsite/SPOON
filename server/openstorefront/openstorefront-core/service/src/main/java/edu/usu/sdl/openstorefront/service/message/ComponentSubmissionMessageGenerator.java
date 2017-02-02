@@ -21,10 +21,13 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.codemonkey.simplejavamail.email.Email;
 
 /**
@@ -34,6 +37,7 @@ import org.codemonkey.simplejavamail.email.Email;
 public class ComponentSubmissionMessageGenerator
 		extends BaseMessageGenerator
 {
+	private static final Logger LOG = Logger.getLogger(ComponentSubmissionMessageGenerator.class.getName());
 
 	public ComponentSubmissionMessageGenerator(MessageContext messageContext)
 	{
@@ -68,7 +72,7 @@ public class ComponentSubmissionMessageGenerator
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
 		specialOperatorModel.setExample(componentStartExample);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-		System.out.println("Query component dts: " + componentStartExample.getUpdateDts());
+		LOG.log(Level.FINER, MessageFormat.format("Query component dts: {0}", componentStartExample.getUpdateDts()));
 
 		//submitted
 		List<Component> components = serviceProxy.getPersistenceService().queryByExample(Component.class, queryByExample);

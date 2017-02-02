@@ -25,5 +25,10 @@ public class SecurityInit
 	//init default user and roles for system
 	
 	//init application crypt key
+	//getSystemService().getPropertyValue(ApplicationProperty.APPLICATION_CRYPT_KEY);
+	//Key key = cipherService.generateNewKey();		
+	//	byte[] keyBytes = key.getEncoded();		
+	//Base64.getUrlEncoder().encodeToString(keyBytes));
+	
 	
 }

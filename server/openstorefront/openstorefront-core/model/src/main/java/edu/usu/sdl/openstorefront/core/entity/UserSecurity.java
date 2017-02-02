@@ -17,7 +17,10 @@ package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -43,9 +46,6 @@ public class UserSecurity
 	private String password;	
 	
 	@NotNull
-	private String userSalt;
-	
-	@NotNull
 	@Min(0)
 	@APIDescription("This will reset upon successful login")
 	private Integer failLoginAttempts;
@@ -55,6 +55,13 @@ public class UserSecurity
 	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String passwordChangeApprovalCode;
+	
+	@NotNull
+	@ValidValueType(value = {}, lookupClass = ApprovalStatus.class)
+	@ConsumeField
+	@APIDescription("Status of an approval")
+	@FK(ApprovalStatus.class)
+	private String approvalStatus;
 
 	public UserSecurity()
 	{
@@ -78,16 +85,6 @@ public class UserSecurity
 	public void setPassword(String password)
 	{
 		this.password = password;
-	}
-
-	public String getUserSalt()
-	{
-		return userSalt;
-	}
-
-	public void setUserSalt(String userSalt)
-	{
-		this.userSalt = userSalt;
 	}
 
 	public Integer getFailLoginAttempts()
@@ -118,6 +115,16 @@ public class UserSecurity
 	public void setPasswordChangeApprovalCode(String passwordChangeApprovalCode)
 	{
 		this.passwordChangeApprovalCode = passwordChangeApprovalCode;
+	}
+
+	public String getApprovalStatus()
+	{
+		return approvalStatus;
+	}
+
+	public void setApprovalStatus(String approvalStatus)
+	{
+		this.approvalStatus = approvalStatus;
 	}
 	
 }

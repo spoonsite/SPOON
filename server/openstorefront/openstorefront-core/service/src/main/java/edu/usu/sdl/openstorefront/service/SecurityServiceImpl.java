@@ -18,18 +18,23 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.SecurityService;
+import edu.usu.sdl.openstorefront.core.entity.AlertType;
+import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
+import edu.usu.sdl.openstorefront.core.entity.UserApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
 import edu.usu.sdl.openstorefront.core.entity.UserRole;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
+import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import java.security.Key;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -122,6 +127,7 @@ public class SecurityServiceImpl
 				ruleResult.setEntityClassName(UserSecurity.class.getSimpleName());			
 				ruleResult.setFieldName(UserSecurity.PASSWORD_FIELD);
 				ruleResult.setMessage(errorMessage);
+				result.getRuleResults().add(ruleResult);
 			}
 		}
 		return result;
@@ -159,14 +165,99 @@ public class SecurityServiceImpl
 	@Override
 	public ValidationResult validateRegistration(UserRegistration userRegistration)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ValidationResult validationResult = new ValidationResult();
+		validationResult.merge(userRegistration.validate());
+		validationResult.merge(validatePassword(userRegistration.getPassword().toCharArray()));		
+		
+		//check for unique name
+		UserSecurity userSecurity = new UserSecurity();
+		userSecurity.setUsername(userRegistration.getUsername());
+		userSecurity = userSecurity.find();
+		if (userSecurity != null) {
+			RuleResult result = new RuleResult();
+			result.setMessage("Username is already exists");
+			result.setValidationRule("Username must be unique");
+			validationResult.getRuleResults().add(result);
+		}
+				
+		return validationResult;
 	}
 
 	@Override
-	public void processNewRegistration(UserRegistration userRegistration)
+	public ValidationResult processNewRegistration(UserRegistration userRegistration)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Objects.requireNonNull(userRegistration);		
+		ValidationResult validationResult = validateRegistration(userRegistration);
+		if (validationResult.valid()) {
+			
+			SecurityPolicy securityPolicy = getSecurityPolicy();
+			
+			userRegistration.setRegistrationId(persistenceService.generateId());
+			userRegistration.populateBaseCreateFields();
+			persistenceService.persist(userRegistration);
+			
+			UserSecurity userSecurity = new UserSecurity();
+			DefaultPasswordService passwordService = new DefaultPasswordService();
+			String encryptedValue = passwordService.encryptPassword(userRegistration.getPassword());
+			userSecurity.setPassword(encryptedValue);			
+			userSecurity.setUsername(userRegistration.getUsername());
+			userSecurity.setFailLoginAttempts(0);
+			userSecurity.populateBaseCreateFields();
+			if (securityPolicy.getAutoApproveUsers()) {
+				userSecurity.setApprovalStatus(UserApprovalStatus.APPROVED);
+				userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);			
+			} else {
+				userSecurity.setApprovalStatus(UserApprovalStatus.PENDING);
+				userSecurity.setActiveStatus(UserSecurity.INACTIVE_STATUS);			
+			}
+			persistenceService.persist(userSecurity);			
+			
+			UserProfile userProfile = new UserProfile();
+			userProfile.setUsername(userRegistration.getUsername());
+			userProfile.setEmail(userRegistration.getEmail());
+			userProfile.setFirstName(userRegistration.getFirstName());
+			userProfile.setLastName(userRegistration.getLastName());
+			userProfile.setOrganization(userRegistration.getOrganization());
+			userProfile.setPhone(userRegistration.getPhone());
+			userProfile.setUserTypeCode(userRegistration.getUserTypeCode());
+			userProfile.setNotifyOfNew(Boolean.FALSE);
+			getUserService().saveUserProfile(userProfile);
+						
+			AlertContext alertContext = new AlertContext();
+			alertContext.setAlertType(AlertType.USER_MANAGEMENT);
+			alertContext.setDataTrigger(userRegistration);
+			getAlertService().checkAlert(alertContext);
+			LOG.log(Level.INFO, MessageFormat.format("User {0} was created.", userRegistration.getUsername()));
+			
+			
+			if (securityPolicy.getAutoApproveUsers() == false) {
+				alertContext = new AlertContext();
+				alertContext.setAlertType(AlertType.USER_MANAGEMENT);
+				alertContext.setDataTrigger(userSecurity);
+				getAlertService().checkAlert(alertContext);				
+				LOG.log(Level.INFO, MessageFormat.format("User {0} needs admin approval to login.", userRegistration.getUsername()));												
+			}			
+		} 
+		return validationResult;
 	}
+	
+	@Override
+	public void approveRegistration(String username)
+	{
+		UserSecurity userSecurity = new UserSecurity();
+		userSecurity.setUsername(username);
+		userSecurity = userSecurity.findProxy();
+		if (userSecurity != null) {
+			userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);	
+			userSecurity.setApprovalStatus(UserApprovalStatus.APPROVED);			
+			userSecurity.populateBaseUpdateFields();
+			persistenceService.persist(userSecurity);
+			
+			LOG.log(Level.INFO, MessageFormat.format("User {0} password was reset by: {1}", username, SecurityUtil.getCurrentUserName()));			
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find user to reset", "Check input: " + username);
+		}
+	}	
 
 	@Override
 	public String resetPasswordUser(String username, char[] password)
@@ -181,21 +272,15 @@ public class SecurityServiceImpl
 		userSecurity = userSecurity.findProxy();
 		if (userSecurity != null) {
 			
-//			String rawApprovalCode = username + 
-//						OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + 
-//						OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + 
-//						OpenStorefrontConstant.GENERAL_KEY_SEPARATOR + 
-//						persistenceService.generateId();
-//			
-//			
-//			
-//			
-//			DefaultPasswordService passwordService = new DefaultPasswordService();
-//			String encryptedValue = passwordService.encryptPassword(password);
-//			userSecurity.setTempPassword(encryptedValue);
-//			userSecurity.setPasswordChangeApprovalCode();
+			String rawApprovalCode = persistenceService.generateId();			
 			
-		
+			DefaultPasswordService passwordService = new DefaultPasswordService();
+			String encryptedValue = passwordService.encryptPassword(password);
+			userSecurity.setTempPassword(encryptedValue);
+			userSecurity.setPasswordChangeApprovalCode(rawApprovalCode);
+			userSecurity.populateBaseUpdateFields();
+			persistenceService.persist(userSecurity);	
+			LOG.log(Level.INFO, MessageFormat.format("User {0} request a password change. Change is awaiting approval by user", username));
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to reset", "Check input: " + username);
 		}
@@ -203,9 +288,27 @@ public class SecurityServiceImpl
 	}
 
 	@Override
-	public void approveUserPasswordReset(String approvalCode)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public boolean approveUserPasswordReset(String approvalCode)
+	{	
+		boolean success = false;
+		
+		Objects.requireNonNull(approvalCode);
+		
+		byte[] decodeCode = Base64.getUrlDecoder().decode(approvalCode);
+		
+		UserSecurity userSecurity = new UserSecurity();
+		userSecurity.setPasswordChangeApprovalCode(new String(decodeCode));		
+		userSecurity = userSecurity.findProxy();		
+		if (userSecurity != null) {
+			userSecurity.setPassword(userSecurity.getTempPassword());
+			userSecurity.setTempPassword(null);
+			userSecurity.setPasswordChangeApprovalCode(null);
+			userSecurity.populateBaseUpdateFields();
+			persistenceService.persist(userSecurity);
+		} else {
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to find user with approval code: ", new String(decodeCode)));
+		}		
+		return success;
 	}
 
 	@Override
@@ -225,7 +328,7 @@ public class SecurityServiceImpl
 				userSecurity.setPassword(encryptedValue);
 				userSecurity.populateBaseUpdateFields();
 				persistenceService.persist(userSecurity);
-				LOG.log(Level.INFO, MessageFormat.format("user {0} password was reset by: {1}", username, SecurityUtil.getCurrentUserName()));			
+				LOG.log(Level.INFO, MessageFormat.format("User {0} password was reset by: {1}", username, SecurityUtil.getCurrentUserName()));			
 			} else {
 				throw new OpenStorefrontRuntimeException("Password is not valid", validationResult.toString());
 			}
@@ -255,7 +358,7 @@ public class SecurityServiceImpl
 	}
 
 	@Override
-	public void lockUser(String username)
+	public void disableUser(String username)
 	{
 		Objects.requireNonNull(username);
 		
@@ -268,6 +371,9 @@ public class SecurityServiceImpl
 			userSecurity.setFailLoginAttempts(0);
 			userSecurity.populateBaseUpdateFields();
 			persistenceService.persist(userSecurity);
+			
+			getUserService().deleteProfile(username);			
+						
 			LOG.log(Level.INFO, MessageFormat.format("User {0} was locked by: {1}", username, SecurityUtil.getCurrentUserName()));			
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to lock.", "Check input: " + username);
@@ -350,9 +456,13 @@ public class SecurityServiceImpl
 	}
 
 	@Override
-	public Key applicationCryptKey()
+	public byte[] applicationCryptKey()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		String key = getSystemService().getPropertyValue(ApplicationProperty.APPLICATION_CRYPT_KEY);
+		if (key == null) {	
+			throw new OpenStorefrontRuntimeException("Crypt key is not set", "Set the application Property (Base64): " + ApplicationProperty.APPLICATION_CRYPT_KEY);
+		}
+		return Base64.getUrlDecoder().decode(key);
 	}
 
 }

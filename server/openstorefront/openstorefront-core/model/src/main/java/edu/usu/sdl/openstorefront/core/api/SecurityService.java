@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import java.security.Key;
 
 /**
  *
@@ -67,7 +66,14 @@ public interface SecurityService
 	 * @param userRegistration 
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	void processNewRegistration(UserRegistration userRegistration);	
+	ValidationResult processNewRegistration(UserRegistration userRegistration);	
+	
+	/**
+	 * Approve Registration
+	 * @param username 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void approveRegistration(String username);
 	
 	/**
 	 * Hashes and stores temp password
@@ -82,9 +88,10 @@ public interface SecurityService
 	 * Approves user password reset
 	 * @param username
 	 * @param approvalCode (Assumes it Base64 encoded for web)
+	 * @return true if successful (see log for false reasons which shouldn't be pass to the user)
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	void approveUserPasswordReset(String approvalCode);
+	boolean approveUserPasswordReset(String approvalCode);
 	
 	/**
 	 * This will directly reset password
@@ -103,11 +110,12 @@ public interface SecurityService
 	
 	/**
 	 * This will disable an account; prevent login (Only using the appropriate 
-	 * security realm)
+	 * security realm); Remove user profile based user profile rules
+	 * Which should disable watches.
 	 * @param username 
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	void lockUser(String username);
+	void disableUser(String username);
 	
 	/**
 	 * Create or updated a security role
@@ -135,9 +143,9 @@ public interface SecurityService
 	void removeRoleFromUser(String username, String role);
 	
 	/**
-	 * Pulls or creates a crypt key
+	 * Pulls the crypt key
 	 * @return 
 	 */
-	Key applicationCryptKey();
+	byte[] applicationCryptKey();
 	
 }

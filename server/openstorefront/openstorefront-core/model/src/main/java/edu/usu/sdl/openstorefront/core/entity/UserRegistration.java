@@ -39,6 +39,11 @@ public class UserRegistration
 	private String registrationId;
 
 	@ConsumeField
+	@NotNull
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
+	private String username;	
+	
+	@ConsumeField
 	@Size(min = 8, max = OpenStorefrontConstant.FIELD_SIZE_80)
 	@APIDescription("Only Applicatble when using internal security; minimal size may be configured large not smaller.")	
 	private transient String password;	
@@ -161,6 +166,16 @@ public class UserRegistration
 	public void setPassword(String password)
 	{
 		this.password = password;
+	}
+
+	public String getUsername()
+	{
+		return username;
+	}
+
+	public void setUsername(String username)
+	{
+		this.username = username;
 	}
 
 }

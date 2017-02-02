@@ -38,6 +38,8 @@ public class UserMessageType
 	public static final String APPROVAL_NOTIFICATION = "APPNOT";
 	public static final String CHANGE_REQUEST_APPROVAL_NOTIFICATION = "CHGREQAPP";
 	public static final String CHANGE_REQUEST_ALERT = "CHGREQ";
+	public static final String USER_REGISTRATION = "USERREG";
+	public static final String USER_NEED_APPROVAL = "USERAPPR";
 
 	public UserMessageType()
 	{
@@ -54,6 +56,8 @@ public class UserMessageType
 		codeMap.put(APPROVAL_NOTIFICATION, newLookup(UserMessageType.class, APPROVAL_NOTIFICATION, "Entry Approval Notification"));
 		codeMap.put(CHANGE_REQUEST_APPROVAL_NOTIFICATION, newLookup(UserMessageType.class, CHANGE_REQUEST_APPROVAL_NOTIFICATION, "Change Request Approval"));
 		codeMap.put(CHANGE_REQUEST_ALERT, newLookup(UserMessageType.class, CHANGE_REQUEST_ALERT, "Change Request Alert"));
+		codeMap.put(USER_REGISTRATION, newLookup(UserMessageType.class, USER_REGISTRATION, "User Registration"));
+		codeMap.put(USER_NEED_APPROVAL, newLookup(UserMessageType.class, USER_NEED_APPROVAL, "User Needs Approval"));
 		return codeMap;
 	}
 

@@ -773,6 +773,7 @@ public class UserServiceImpl
 					case UserMessageType.CHANGE_REQUEST_ALERT:
 						generator = new ChangeRequestMessageGenerator(messageContext);
 						break;
+						
 				}
 			}
 
