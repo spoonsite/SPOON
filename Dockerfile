@@ -69,7 +69,7 @@ EXPOSE $TOMCAT_PORT
 ################
 
 ENV STOREFRONT_HOME /usr/local/share/openstorefront
-ENV STOREFRONT_VERSION 2.1
+ENV STOREFRONT_VERSION 2.1.1
 ENV STOREFRONT_WAR_URL https://github.com/di2e/openstorefront/releases/download/v$STOREFRONT_VERSION/openstorefront.war
 
 WORKDIR $CATALINA_HOME/webapps
