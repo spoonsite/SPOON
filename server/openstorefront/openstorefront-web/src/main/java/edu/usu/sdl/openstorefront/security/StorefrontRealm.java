@@ -17,11 +17,47 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.subject.PrincipalCollection;
+
 /**
- *
+ * This is used to connect to build security handling
  * @author dshurtleff
  */
 public class StorefrontRealm
+	extends AuthorizingRealm
 {
+
+	@Override
+	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals)
+	{
+		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+		
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException
+	{
+		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)token;
+		
+		
+		
+		//pull user security
+		
+		//pull roles
+		
+		
+		
+		//credentaion
 	
+		return null;
+	}
+		
 }

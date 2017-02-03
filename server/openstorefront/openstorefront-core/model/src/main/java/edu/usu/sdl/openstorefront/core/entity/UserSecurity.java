@@ -41,7 +41,7 @@ public class UserSecurity
 	private String username;
 	
 	@NotNull	
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_80)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@APIDescription("Only Applicatble when using internal security; This is hashed")	
 	private String password;	
 	
@@ -50,7 +50,7 @@ public class UserSecurity
 	@APIDescription("This will reset upon successful login")
 	private Integer failLoginAttempts;
 	
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_80)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String tempPassword;
 	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)

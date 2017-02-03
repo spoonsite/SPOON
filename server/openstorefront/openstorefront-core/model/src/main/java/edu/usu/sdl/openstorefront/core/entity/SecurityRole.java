@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
 public class SecurityRole
 		extends StandardEntity<SecurityRole>
 {
+	public static final String DEFAULT_GROUP = "DEFAULT-GROUP";	
 
 	@PK(generated = false)
 	@NotNull

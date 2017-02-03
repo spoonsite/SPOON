@@ -44,7 +44,7 @@ public class UserRegistration
 	private String username;	
 	
 	@ConsumeField
-	@Size(min = 8, max = OpenStorefrontConstant.FIELD_SIZE_80)
+	@Size(min = 8, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@APIDescription("Only Applicatble when using internal security; minimal size may be configured large not smaller.")	
 	private transient String password;	
 	

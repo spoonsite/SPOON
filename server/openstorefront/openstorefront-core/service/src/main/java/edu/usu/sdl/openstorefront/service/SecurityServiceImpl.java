@@ -40,6 +40,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.ehcache.Element;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -171,7 +172,7 @@ public class SecurityServiceImpl
 		
 		//check for unique name
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(userRegistration.getUsername());
+		userSecurity.setUsername(userRegistration.getUsername().toLowerCase());
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
 			RuleResult result = new RuleResult();
@@ -200,7 +201,7 @@ public class SecurityServiceImpl
 			DefaultPasswordService passwordService = new DefaultPasswordService();
 			String encryptedValue = passwordService.encryptPassword(userRegistration.getPassword());
 			userSecurity.setPassword(encryptedValue);			
-			userSecurity.setUsername(userRegistration.getUsername());
+			userSecurity.setUsername(userRegistration.getUsername().toLowerCase());
 			userSecurity.setFailLoginAttempts(0);
 			userSecurity.populateBaseCreateFields();
 			if (securityPolicy.getAutoApproveUsers()) {
@@ -213,7 +214,7 @@ public class SecurityServiceImpl
 			persistenceService.persist(userSecurity);			
 			
 			UserProfile userProfile = new UserProfile();
-			userProfile.setUsername(userRegistration.getUsername());
+			userProfile.setUsername(userRegistration.getUsername().toLowerCase());
 			userProfile.setEmail(userRegistration.getEmail());
 			userProfile.setFirstName(userRegistration.getFirstName());
 			userProfile.setLastName(userRegistration.getLastName());
@@ -245,7 +246,7 @@ public class SecurityServiceImpl
 	public void approveRegistration(String username)
 	{
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 		if (userSecurity != null) {
 			userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);	
@@ -268,7 +269,7 @@ public class SecurityServiceImpl
 		String approvalCode = null;
 		
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 		if (userSecurity != null) {
 			
@@ -317,7 +318,7 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(username);
 		
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 		
 		if (userSecurity != null) {		
@@ -343,7 +344,7 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(username);
 		
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 		
 		if (userSecurity != null) {
@@ -363,7 +364,7 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(username);
 		
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 		
 		if (userSecurity != null) {
@@ -385,7 +386,7 @@ public class SecurityServiceImpl
 	{
 		Objects.requireNonNull(securityRole);
 		
-		SecurityRole existing = persistenceService.find(SecurityRole.class, securityRole.getRoleName());
+		SecurityRole existing = persistenceService.findById(SecurityRole.class, securityRole.getRoleName());
 		if (existing != null) {
 			existing.updateFields(securityRole);
 			securityRole = persistenceService.persist(existing);					
@@ -394,6 +395,7 @@ public class SecurityServiceImpl
 			securityRole = persistenceService.persist(securityRole);				
 		}
 		securityRole = persistenceService.unwrapProxyObject(SecurityRole.class, securityRole);
+		LOG.log(Level.INFO, MessageFormat.format("Security Role {0} was created/updated by: {1}", securityRole.getRoleName(), SecurityUtil.getCurrentUserName()));		
 		return securityRole;
 	}
 
@@ -404,13 +406,13 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(role);
 		
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 		
 		if (userSecurity != null) {
 			UserRole userRole = new UserRole();
 			userRole.setRole(role);
-			userRole.setUsername(username);
+			userRole.setUsername(username.toLowerCase());
 			
 			userRole = userRole.find();
 			if (userRole != null) {
@@ -418,7 +420,7 @@ public class SecurityServiceImpl
 			} else {
 				userRole = new UserRole();
 				userRole.setRole(role);
-				userRole.setUsername(username);
+				userRole.setUsername(username.toLowerCase());
 				userRole.setUserRoleId(persistenceService.generateId());
 				userRole.populateBaseCreateFields();
 				persistenceService.persist(userRole);
@@ -437,13 +439,13 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(role);
 		
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
+		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.findProxy();
 		
 		if (userSecurity != null) {
 			UserRole userRoleExample = new UserRole();
 			userRoleExample.setRole(role);
-			userRoleExample.setUsername(username);
+			userRoleExample.setUsername(username.toLowerCase());
 			
 			userRoleExample = userRoleExample.find();
 			if (userRoleExample != null) {
@@ -463,6 +465,32 @@ public class SecurityServiceImpl
 			throw new OpenStorefrontRuntimeException("Crypt key is not set", "Set the application Property (Base64): " + ApplicationProperty.APPLICATION_CRYPT_KEY);
 		}
 		return Base64.getUrlDecoder().decode(key);
+	}
+
+	@Override
+	public void deleteSecurityRole(String roleName, String moveUserToRole)
+	{
+		SecurityRole securityRole = persistenceService.findById(SecurityRole.class, roleName);
+		if (securityRole != null)
+		{
+			UserRole userRoleExample = new UserRole();
+			userRoleExample.setRole(roleName);			
+			List<UserRole> users = userRoleExample.findByExampleProxy();
+			for (UserRole userRole : users) {
+				if (StringUtils.isNotBlank(moveUserToRole)) {
+					userRole.setRole(moveUserToRole);
+					userRole.populateBaseUpdateFields();
+					persistenceService.persist(userRole);
+				} else {
+					persistenceService.delete(userRole);					
+				}
+			}
+			persistenceService.delete(securityRole);
+						
+			LOG.log(Level.INFO, MessageFormat.format("Role {0} was deleted by {2}. " + 
+					(StringUtils.isNotBlank(moveUserToRole) ? " users were move to: " + 
+					StringUtils.isNotBlank(moveUserToRole) : ""), roleName, SecurityUtil.getCurrentUserName()));			
+		}
 	}
 
 }

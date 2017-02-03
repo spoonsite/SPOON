@@ -126,6 +126,14 @@ public interface SecurityService
 	SecurityRole saveSecurityRole(SecurityRole securityRole);
 
 	/**
+	 * Delete the role and drop or move the users in that role
+	 * @param roleName
+	 * @param moveUserToRole (Optional)
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void deleteSecurityRole(String roleName, String moveUserToRole);
+	
+	/**
 	 * Adds user to a role (Only for built in security realm external realms 
 	 * should be handled by the external system.
 	 * @param username

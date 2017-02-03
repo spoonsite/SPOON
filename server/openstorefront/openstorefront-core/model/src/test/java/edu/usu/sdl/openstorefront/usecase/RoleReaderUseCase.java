@@ -15,11 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.usecase;
 
-import com.sun.xml.internal.ws.util.StringUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 /**

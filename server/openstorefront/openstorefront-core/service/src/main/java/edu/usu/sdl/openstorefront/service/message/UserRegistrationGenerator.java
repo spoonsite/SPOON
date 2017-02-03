@@ -73,9 +73,19 @@ public class UserRegistrationGenerator
 			StringBuilder message = new StringBuilder();
 			
 			message.append("New User Registrations<br><br>");
-			
-			
-			
+			message.append("<ul>");
+			for (UserRegistration registration : users) {
+				message.append("<li>")
+						.append(registration.getUsername())
+						.append(" - ")
+						.append(userRegistration.getFirstName())
+						.append(", ")
+						.append(userRegistration.getLastName())
+						.append(" registered at ")
+						.append(sdf.format(userRegistration.getCreateDts()))
+						.append("</li>");
+			}
+			message.append("</ul>");
 			return message.toString();
 		} else {
 			LOG.log(Level.WARNING, "Expected new registrations. Unable to find an active registrations.");			

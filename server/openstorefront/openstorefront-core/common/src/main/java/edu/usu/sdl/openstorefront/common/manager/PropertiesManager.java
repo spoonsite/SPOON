@@ -87,6 +87,8 @@ public class PropertiesManager
 	public static final String KEY_OPENAM_HEADER_ORGANIZATION = "openam.header.organization";
 	public static final String KEY_OPENAM_HEADER_ADMIN_GROUP = "openam.header.admingroupname";
 
+	public static final String KEY_SECURITY_DEFAULT_ADMIN_GROUP = "role.admin";
+	
 	public static final String KEY_TOOLS_USER = "tools.login.user";
 	public static final String KEY_TOOLS_CREDENTIALS = "tools.login.pw";
 
