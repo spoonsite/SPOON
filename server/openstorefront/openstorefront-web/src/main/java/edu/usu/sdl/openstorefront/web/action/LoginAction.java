@@ -17,8 +17,10 @@ package edu.usu.sdl.openstorefront.web.action;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.NetworkUtil;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
 import edu.usu.sdl.openstorefront.core.view.JsonResponse;
 import edu.usu.sdl.openstorefront.security.HeaderRealm;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -46,6 +48,7 @@ import net.sourceforge.stripes.validation.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.Subject;
@@ -188,9 +191,19 @@ public class LoginAction
 			}
 			JsonResponse jsonResponse = new JsonResponse();
 			jsonResponse.setMessage(startPage);
-			return streamResults(jsonResponse);
+			return streamResults(jsonResponse);		
 		} catch (AuthenticationException uea) {
-			log.log(Level.WARNING, MessageFormat.format("{0} Failed to login.", username));
+			if (uea instanceof IncorrectCredentialsException) {
+				UserSecurity userSecurity = new UserSecurity();
+				userSecurity.setUsername(username.toLowerCase());
+				userSecurity = userSecurity.find();
+				if (userSecurity != null) {
+					userSecurity.setFailLoginAttempts(userSecurity.getFailLoginAttempts() + 1);
+					userSecurity.save();
+				}
+			}
+			//Keep in mind an attacker can create a DOS hitting accounts...ip logging is here to help trace that scenario.
+			log.log(Level.WARNING, MessageFormat.format("{0} Failed to login. ip: {1}", username, NetworkUtil.getClientIp(getContext().getRequest())));			
 			log.log(Level.FINEST, "Failed to login Details: ", uea);
 			errors.put("username", "Unable to login. Check username and password.");
 		}

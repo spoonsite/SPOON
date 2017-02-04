@@ -17,14 +17,26 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
+import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.DisabledAccountException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.SimplePrincipalCollection;
 
 /**
  * This is used to connect to build security handling
@@ -37,27 +49,60 @@ public class StorefrontRealm
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals)
 	{
+		UserContext userContext = (UserContext) principals.getPrimaryPrincipal();
 		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-		
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		authorizationInfo.addRoles(userContext.roles());
+		authorizationInfo.addStringPermissions(userContext.permissions());
+		return authorizationInfo;
 	}
 
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException
 	{
 		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)token;
-		
-		
-		
+				
 		//pull user security
+		String username = usernamePasswordToken.getUsername().toLowerCase();
+		UserSecurity userSecurity = new UserSecurity();
+		userSecurity.setUsername(username);
+		userSecurity = userSecurity.find();
+		if (userSecurity == null) {
+			throw new UnknownAccountException("Unable to find user.");
+		}
 		
-		//pull roles
+		if (UserSecurity.INACTIVE_STATUS.equals(userSecurity.getActiveStatus())) {
+			throw new DisabledAccountException("Account " + username + " is disabled");
+		}
 		
+		ServiceProxy serviceProxy = ServiceProxy.getProxy();		
+		SecurityPolicy securityPolicy = serviceProxy.getSecurityService().getSecurityPolicy();		
+		if (userSecurity.getFailLoginAttempts() > securityPolicy.getLoginLockoutMaxAttempts()) {
+			Date now = TimeUtil.currentDate();		
+			Instant instantLastAttempt = Instant.ofEpochMilli(userSecurity.getLastLoginAttempt().getTime());
+			instantLastAttempt.plus(securityPolicy.getResetLockoutTimeMinutes(), ChronoUnit.MINUTES);
+			if (now.toInstant().isAfter(instantLastAttempt)) {
+				if (securityPolicy.getRequireAdminUnlock() == false) {
+					userSecurity.setFailLoginAttempts(0);				
+				} else {
+					throw new LockedAccountException("Account is lock due to excessive failed attempts. Requires admin unlock.");
+				}
+			} else {
+				throw new LockedAccountException("Account is lock due to excessive failed attempts.");
+			}
+		}
 		
+		userSecurity.setLastLoginAttempt(TimeUtil.currentDate());
+		userSecurity.save();
 		
-		//credentaion
+		SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo();
+		simpleAuthenticationInfo.setCredentials(userSecurity.getPassword());
+		
+		SimplePrincipalCollection principalCollection = new SimplePrincipalCollection();				
+		UserContext userContext = serviceProxy.getSecurityService().getUserContext(username);
+		principalCollection.add(userContext, StorefrontRealm.class.getSimpleName());				
+		simpleAuthenticationInfo.setPrincipals(principalCollection);		
 	
-		return null;
+		return simpleAuthenticationInfo;
 	}
 		
 }

@@ -420,12 +420,7 @@ public class UserServiceImpl
 			}
 
 			profile = persistenceService.deattachAll(profile);
-			userContext.setUserProfile(profile);
-			if (admin != null) {
-				userContext.setAdmin(admin);
-			} else {
-				userContext.setAdmin(SecurityUtil.isAdminUser());
-			}
+			userContext = getSecurityService().getUserContext(profile.getUsername());
 			SecurityUtils.getSubject().getSession().setAttribute(SecurityUtil.USER_CONTEXT_KEY, userContext);
 
 			//Add tracking if it's a client request

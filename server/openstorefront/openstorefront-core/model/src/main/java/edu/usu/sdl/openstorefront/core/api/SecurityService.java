@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.api;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 
 /**
@@ -155,5 +156,12 @@ public interface SecurityService
 	 * @return 
 	 */
 	byte[] applicationCryptKey();
+	
+	/**
+	 * Get user context 
+	 * @param username
+	 * @return context or null if user is not found.
+	 */
+	UserContext getUserContext(String username);
 	
 }

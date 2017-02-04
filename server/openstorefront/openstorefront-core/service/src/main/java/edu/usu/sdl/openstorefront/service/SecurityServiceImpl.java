@@ -29,10 +29,12 @@ import edu.usu.sdl.openstorefront.core.entity.UserRole;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -491,6 +493,42 @@ public class SecurityServiceImpl
 					(StringUtils.isNotBlank(moveUserToRole) ? " users were move to: " + 
 					StringUtils.isNotBlank(moveUserToRole) : ""), roleName, SecurityUtil.getCurrentUserName()));			
 		}
+	}
+
+	@Override
+	public UserContext getUserContext(String username)
+	{
+		UserContext userContext = null;
+		
+		UserProfile userProfile = new UserProfile();
+		userProfile.setUsername(username);
+		userProfile = userProfile.find();
+		if (userProfile != null) {
+			userContext = new UserContext();
+			userContext.setUserProfile(userProfile);
+			
+			UserRole userRole = new UserRole();
+			userRole.setActiveStatus(UserRole.ACTIVE_STATUS);
+			userRole.setUsername(username);
+			
+			List<UserRole> roles = userRole.findByExample();
+			List<SecurityRole> securityRoles = new ArrayList<>();
+			for (UserRole role : roles) {
+				SecurityRole securityRole = new SecurityRole();
+				securityRole.setRoleName(role.getRole());
+				securityRole = securityRole.find();				
+				securityRoles.add(securityRole);
+			}
+			
+			SecurityRole defaultRole = new SecurityRole();
+			defaultRole.setRoleName(SecurityRole.DEFAULT_GROUP);
+			defaultRole = defaultRole.find();
+			if (defaultRole != null) {
+				securityRoles.add(defaultRole);
+			}
+			userContext.getRoles().addAll(securityRoles);
+		}
+		return userContext;		
 	}
 
 }

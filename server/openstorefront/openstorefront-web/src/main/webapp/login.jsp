@@ -48,7 +48,7 @@
 				color: white;
 			}			
 			.auth-forms {
-				background: white;
+				background: rgba(255,255,255,.7);
 				width: 80%;
 				border: 1px solid rgb(169, 169, 169);
 				border-image-source: initial;
@@ -157,6 +157,8 @@
 			}
 			body{
 				background-color: beige;
+				background-image: url(images/grid.png);
+				background-repeat: repeat;
 			}
 		</style>
 	</head>
@@ -177,9 +179,12 @@
 				
 				
 				<input type="hidden" id="gotoPageId" name="gotoPage"  />	
+				Username <br>
 				<input type="text" name="username" id="username" placeholder="Username" class="form-control" autofocus autocomplete="false" style="width: 200px;">
 				<p id="usernameError" class="clearError"></p> 				
 				<br>
+				<br>
+				Password <br>
 				<input type="password" name="password" id="password" placeholder="Password" class="form-control" autocomplete="false" style="width: 200px;" onkeypress="if (event.keyCode === 13){ submitForm(); } ">
 				<p id="passwordError" class="clearError"></p>					
 				<br>

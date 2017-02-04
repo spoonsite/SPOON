@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import java.util.Date;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -49,6 +50,8 @@ public class UserSecurity
 	@Min(0)
 	@APIDescription("This will reset upon successful login")
 	private Integer failLoginAttempts;
+	
+	private Date lastLoginAttempt;
 	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String tempPassword;
@@ -125,6 +128,16 @@ public class UserSecurity
 	public void setApprovalStatus(String approvalStatus)
 	{
 		this.approvalStatus = approvalStatus;
+	}
+
+	public Date getLastLoginAttempt()
+	{
+		return lastLoginAttempt;
+	}
+
+	public void setLastLoginAttempt(Date lastLoginAttempt)
+	{
+		this.lastLoginAttempt = lastLoginAttempt;
 	}
 	
 }

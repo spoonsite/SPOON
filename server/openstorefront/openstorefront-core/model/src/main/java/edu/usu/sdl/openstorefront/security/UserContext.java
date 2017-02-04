@@ -16,8 +16,15 @@
 package edu.usu.sdl.openstorefront.security;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRoleData;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRolePermission;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Holds user info for a session
@@ -29,6 +36,7 @@ public class UserContext
 {
 
 	private UserProfile userProfile;
+	private List<SecurityRole> roles = new ArrayList<>();	
 	private boolean admin;
 
 	public UserContext()
@@ -43,7 +51,49 @@ public class UserContext
 		}
 		return OpenStorefrontConstant.ANONYMOUS_USER;
 	}
+	
+	public Set<String> roles() 
+	{
+		Set<String> uniqueRoles = new HashSet<>();
+		for (SecurityRole role : roles) {
+			uniqueRoles.add(role.getRoleName());
+		}
+		return uniqueRoles;
+	}	
 
+	public Set<String> permissions() 
+	{
+		Set<String> uniquePermissions = new HashSet<>();
+		for (SecurityRole role : roles) {
+			for (SecurityRolePermission securityPermission : role.getPermissions()) {
+				uniquePermissions.add(securityPermission.getPermission());
+			}					
+		}
+		return uniquePermissions;
+	}
+
+	public Set<String> dataSources() 
+	{
+		Set<String> uniqueSources = new HashSet<>();
+		for (SecurityRole role : roles) {
+			for (SecurityRoleData securityRoleData : role.getDataSecurity()) {
+				uniqueSources.add(securityRoleData.getDataSource());
+			}					
+		}
+		return uniqueSources;		
+	}
+	
+	public Set<String> dataSensitivity() 
+	{
+		Set<String> uniqueSensitivity = new HashSet<>();
+		for (SecurityRole role : roles) {
+			for (SecurityRoleData securityRoleData : role.getDataSecurity()) {
+				uniqueSensitivity.add(securityRoleData.getDataSensitivity());
+			}					
+		}
+		return uniqueSensitivity;			
+	}
+	
 	public UserProfile getUserProfile()
 	{
 		return userProfile;
@@ -62,6 +112,16 @@ public class UserContext
 	public void setAdmin(boolean admin)
 	{
 		this.admin = admin;
+	}
+
+	public List<SecurityRole> getRoles()
+	{
+		return roles;
+	}
+
+	public void setRoles(List<SecurityRole> roles)
+	{
+		this.roles = roles;
 	}
 
 }

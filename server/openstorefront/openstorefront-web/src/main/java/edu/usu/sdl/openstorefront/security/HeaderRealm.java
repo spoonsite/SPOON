@@ -28,6 +28,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -49,9 +50,10 @@ public class HeaderRealm
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals)
 	{
 		UserContext userContext = (UserContext) principals.getPrimaryPrincipal();
-		HeaderAuthToken headerAuthToken = new HeaderAuthToken();
-		headerAuthToken.setUserContext(userContext);
-		return populateAccount(headerAuthToken);
+		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+		authorizationInfo.addRoles(userContext.roles());
+		authorizationInfo.addStringPermissions(userContext.permissions());
+		return authorizationInfo;
 	}
 
 	@Override
@@ -105,7 +107,7 @@ public class HeaderRealm
 			admin = userContext.isAdmin();
 		}
 		headerAccount.setCredentials(userContext);
-		headerAccount.getSimplePrincipals().add(userContext, "Open Am Header User");
+		headerAccount.getSimplePrincipals().add(userContext, HeaderRealm.class.getSimpleName());
 		if (admin) {
 			headerAccount.getRoles().add(SecurityUtil.ADMIN_ROLE);
 		}
