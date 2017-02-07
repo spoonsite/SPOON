@@ -30,11 +30,38 @@
     </head>
     <body>
 		
-       <h1>${actionBean.resourceModel.resourceName}</h1>
-	      ${actionBean.resourceModel.resourceDescription}<br>
-	<c:if test="${actionBean.resourceModel.requireAdmin}">
+    <h1>${actionBean.resourceModel.resourceName}</h1>
+	  ${actionBean.resourceModel.resourceDescription}<br>
+	  
+	<c:if test="${actionBean.resourceModel.securityRestriction != null}">
 		<br>
-		<span class="resource-admin">Requires Admin Privilege</span>	  
+		<span class="resource-admin">Requires:</span><br>
+		<c:if test="${!empty actionBean.resourceModel.securityRestriction.permissions}">
+			<b>Permissions:</b>
+			<ul>							
+				<c:forEach var="permission" items="${actionBean.resourceModel.securityRestriction.permissions}">
+					<li>
+						${permission}
+					</li>
+				</c:forEach>
+			</ul>			
+		</c:if>
+		<c:if test="${!empty actionBean.resourceModel.securityRestriction.roles}">
+			<b>Roles:</b>
+			<ul>							
+				<c:forEach var="role" items="${actionBean.resourceModel.securityRestriction.roles}">
+					<li>
+						${role}
+					</li>
+				</c:forEach>
+			</ul>			
+		</c:if>	
+		<c:if test="${actionBean.resourceModel.securityRestriction.logicOperation != null}">
+			<b>Logic Operation:</b> ${actionBean.resourceModel.securityRestriction.logicOperation}<br>
+		</c:if>
+		<c:if test="${actionBean.resourceModel.securityRestriction.specialCheck != null}">
+			<b>Special Handling:</b> ${actionBean.resourceModel.securityRestriction.specialCheck}<br>
+		</c:if>
 	</c:if>	  
 	
 	<h3>${actionBean.classPathDescription} Path: ${actionBean.resourceModel.resourcePath}</h3>
@@ -77,7 +104,7 @@
 		<table width="100%">
 			<tr>
 				<th style='text-align: center;'>Method</th>
-				<th style='text-align: center;'>Requires Admin</th>
+				<th style='text-align: center;'>Restrictions</th>
 				<th style='text-align: left;'>Description</th>
 				<th style='text-align: left;'>Path</th>
 				<th style='text-align: left;'>Parameters</th>				
@@ -86,7 +113,38 @@
 			<c:forEach var="item" items="${actionBean.resourceModel.methods}">
 			<tr style="background-color: white;">
 				<td align="center"><span class="${item.restMethod}">${item.restMethod}</span></td>
-				<td align="center">${item.requireAdmin}</td>
+				<td align="center">
+					<c:if test="${item.securityRestriction != null}">
+						<br>
+						<span class="resource-admin">Requires:</span><br>
+						<c:if test="${!empty item.securityRestriction.permissions}">
+							<b>Permissions:</b>
+							<ul>							
+								<c:forEach var="permission" items="${item.securityRestriction.permissions}">
+									<li>
+										${permission}
+									</li>
+								</c:forEach>
+							</ul>			
+						</c:if>
+						<c:if test="${!empty item.securityRestriction.roles}">
+							<b>Roles:</b>
+							<ul>							
+								<c:forEach var="role" items="${item.securityRestriction.roles}">
+									<li>
+										${role}
+									</li>
+								</c:forEach>
+							</ul>			
+						</c:if>	
+						<c:if test="${item.securityRestriction.logicOperation != null}">
+							<b>Logic Operation:</b> ${item.securityRestriction.logicOperation}<br>
+						</c:if>
+						<c:if test="${item.securityRestriction.specialCheck != null}">
+							<b>Special Handling:</b> ${item.securityRestriction.specialCheck}<br>
+						</c:if>
+					</c:if>	  		
+				</td>
 				<td>${item.description}</td>
 				<td id="${item.id}TD"><span class="resourcePath"><a id="${item.id}">${actionBean.resourceModel.resourcePath}${item.methodPath}</a></span></td>
 				<td>

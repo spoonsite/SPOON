@@ -26,7 +26,7 @@ import edu.usu.sdl.openstorefront.core.view.ErrorTicketWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.MultipleIds;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -52,7 +52,7 @@ public class ErrorTicketResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
 	@APIDescription("Gets all error tickets.  Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ErrorTicketWrapper.class)
@@ -104,7 +104,7 @@ public class ErrorTicketResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
 	@APIDescription("Gets an error ticket entity")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -117,7 +117,7 @@ public class ErrorTicketResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
 	@APIDescription("Gets error ticket info")
 	@Produces({MediaType.WILDCARD})
 	@Path("/{id}/ticket")
@@ -134,7 +134,7 @@ public class ErrorTicketResource
 	}
 	
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
 	@APIDescription("Deletes error tickets")
 	@Consumes({MediaType.APPLICATION_JSON})	
 	@DataType(MultipleIds.class)

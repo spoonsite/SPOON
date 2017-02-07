@@ -21,7 +21,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -149,7 +149,7 @@ public class ComponentTypeTemplateResource
 	}	
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
 	@APIDescription("Adds a new component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -161,7 +161,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
 	@APIDescription("Updates a component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -200,7 +200,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
 	@APIDescription("Activates a component type template")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{templateId}/activate")
@@ -222,7 +222,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
 	@APIDescription("Inactivates a component type template")
 	@Path("/{templateId}")
 	public void inactiveTemplate(
@@ -233,7 +233,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
 	@APIDescription("Delete component type template; if not attached")
 	@Path("/{templateId}/force")
 	public void deleteTemplate(

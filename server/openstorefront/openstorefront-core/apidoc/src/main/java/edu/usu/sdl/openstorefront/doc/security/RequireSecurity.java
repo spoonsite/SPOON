@@ -15,29 +15,28 @@
  */
 package edu.usu.sdl.openstorefront.doc.security;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ResourceInfo;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import javax.ws.rs.NameBinding;
 
 /**
- * Allows for custom security checking
+ * Used to check for Admin rights
  *
  * @author dshurtleff
  */
-public interface CustomRequireHandler
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@NameBinding
+@Documented
+public @interface RequireSecurity
 {
-	/**
-	 * Get the description of the security check for the API doc
-	 * @return
-	 */
-	String getDescription();
-
-	/**
-	 * Provide a special handling for complex security cases.
-	 * @param resourceInfo
-	 * @param requestContext
-	 * @param requireSecurity
-	 * @return true to proceed checking or false to indicated failed security check
-	 */
-	boolean specialSecurityCheck(ResourceInfo resourceInfo, ContainerRequestContext requestContext, RequireSecurity requireSecurity);
+	//Permissions
+	String[] value() default {};
+	String[] roles() default {};
+	LogicOperation logicCondition() default LogicOperation.AND;	
+	Class<? extends CustomRequireHandler> specialCheck() default NoOpRequireHandler.class;		
 	
 }

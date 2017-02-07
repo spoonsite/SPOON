@@ -21,7 +21,7 @@ import edu.usu.sdl.openstorefront.core.entity.Alert;
 import edu.usu.sdl.openstorefront.core.view.AlertView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -51,7 +51,7 @@ public class AlertResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ALERT-MANAGEMENT")
 	@APIDescription("Gets alert subscription records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AlertView.class)
@@ -74,7 +74,7 @@ public class AlertResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ALERT-MANAGEMENT")
 	@APIDescription("Gets an alert subscription record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Alert.class)
@@ -89,7 +89,7 @@ public class AlertResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ALERT-MANAGEMENT")
 	@APIDescription("Creates a new Alert")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postAlert(Alert alert)
@@ -98,7 +98,7 @@ public class AlertResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ALERT-MANAGEMENT")
 	@APIDescription("Updates a Alert")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -134,7 +134,7 @@ public class AlertResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ALERT-MANAGEMENT")
 	@APIDescription("Activates an Alert")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Alert.class)
@@ -147,7 +147,7 @@ public class AlertResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ALERT-MANAGEMENT")
 	@APIDescription("Inactivates an Alert")
 	@Path("/{id}")
 	public void inactiveAlert(
@@ -157,7 +157,7 @@ public class AlertResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ALERT-MANAGEMENT")
 	@APIDescription("Deletes an alert")
 	@Path("/{id}/force")
 	public void deleteAlert(

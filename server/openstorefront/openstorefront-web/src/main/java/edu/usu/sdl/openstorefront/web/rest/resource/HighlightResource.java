@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.core.view.HighlightFilter;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -42,6 +41,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 @Path("v1/resource/highlights")
 @APIDescription("Highlights are component articles and other items the admin wants to display on the UI")
@@ -95,7 +95,7 @@ public class HighlightResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Creates a new Highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postHighlight(Highlight highlight)
@@ -104,7 +104,7 @@ public class HighlightResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Updates a highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -143,7 +143,7 @@ public class HighlightResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Deactivates a highlight")
 	@Path("/{id}/deactivate")
 	public void deactivateHighlight(
@@ -154,7 +154,7 @@ public class HighlightResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Deletes a highlight")
 	@Path("/{id}/delete")
 	public void deleteHighlight(
@@ -165,7 +165,7 @@ public class HighlightResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Activates a highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/activate")

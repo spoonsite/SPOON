@@ -20,7 +20,6 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.view.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -34,6 +33,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.redhogs.cronparser.CronExpressionDescriptor;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  *
@@ -46,7 +46,7 @@ public class IntegrationResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets the global integration model from the database.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(GlobalIntegrationModel.class)
@@ -63,7 +63,7 @@ public class IntegrationResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Saves a global integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/global")

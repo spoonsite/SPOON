@@ -90,7 +90,6 @@ import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.TagView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.export.DescribeExport;
 import edu.usu.sdl.openstorefront.service.io.export.Exporter;
@@ -142,6 +141,7 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  * ComponentRESTResource Resource
@@ -277,7 +277,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Get a list of all components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAdminWrapper.class)
@@ -347,7 +347,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets a component  admin view")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAdminView.class)
@@ -367,7 +367,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Export a component with full component details.")
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/{id}/export")
@@ -388,7 +388,7 @@ public class ComponentRESTResource
 
 	@POST
 	@APIDescription("Exports a set of components.  POST ZIP or JSON file to Upload.action?UploadComponent (multipart/form-data) uploadFile to import (Requires Admin)")
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/export")
@@ -485,7 +485,7 @@ public class ComponentRESTResource
 
 	@POST
 	@APIDescription("Exports a set of components.  In describe record format.")
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/export/describe")
@@ -674,7 +674,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@Produces(MediaType.APPLICATION_JSON)
 	@APIDescription("Approves a component")
 	@DataType(Component.class)
@@ -689,7 +689,7 @@ public class ComponentRESTResource
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Create a copy of a component")
 	@DataType(Component.class)
 	@Path("/{id}/copy")
@@ -711,7 +711,7 @@ public class ComponentRESTResource
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Merge component A to component B")
 	@DataType(Component.class)
 	@Path("/{mergeId}/{targetId}/merge")
@@ -754,7 +754,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Activates a component")
 	@Path("/{id}/activate")
 	public Response activateComponent(
@@ -769,7 +769,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Changes owner of component")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Path("/{id}/changeowner")
@@ -787,7 +787,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Inactivates Component and removes any assoicated user watches.")
 	@Path("/{id}")
 	public void deleteComponentSingle(
@@ -884,7 +884,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(Component.class)
 	@APIDescription("Merges change request component with it parent component")
@@ -929,7 +929,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Gets all version history for a component")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory")
 	public Response getComponentVersionHistory(
@@ -951,7 +951,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Gets a version history record")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}")
 	public Response getComponentVersionHistoryRecord(
@@ -970,7 +970,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Gets the detail of a component version")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity
 	@DataType(ComponentDetailView.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}/view")
 	public Response viewComponentVerison(
@@ -985,7 +985,7 @@ public class ComponentRESTResource
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Create a version of the current component")
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory")
@@ -1008,7 +1008,7 @@ public class ComponentRESTResource
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Restores a version of the current component")
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}/restore")
@@ -1037,7 +1037,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Delete a version history record")
 	@Path("/{id}/versionhistory/{versionHistoryId}")
 	public void deleteVersionHistory(
@@ -1165,7 +1165,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Remove all attributes from the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes")
@@ -1228,7 +1228,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Activates an attribute on the component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes/{attributeType}/{attributeCode}/activate")
@@ -1368,7 +1368,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Activates a dependency from the component")
 	@Path("/{id}/dependencies/{dependencyId}/activate")
 	public Response activatieComponentDependency(
@@ -1529,7 +1529,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Delete a contact from the component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/contacts/{componentContactId}/force")
@@ -1548,7 +1548,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Activate a contact on the component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/contacts/{componentContactId}/activate")
@@ -1669,7 +1669,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Removes an evaluation section from the component")
 	@Path("/{id}/sections/{evalSection}")
 	public void deleteComponentEvaluationSection(
@@ -1685,7 +1685,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Removes all evaluation section from the component")
 	@Consumes(
 			{
@@ -1700,7 +1700,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Adds a group evaluation section to the component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentEvaluationSection.class)
@@ -1738,7 +1738,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Adds an evaluation section to the component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentEvaluationSection.class)
@@ -1754,7 +1754,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Updates an evaluation section for a component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/sections/{evalSectionId}")
@@ -1913,7 +1913,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Activates a resource")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/resources/{resourceId}/activate")
@@ -2542,7 +2542,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Activates a question from the specified entity")
 	@Consumes(
 			{
@@ -2705,7 +2705,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Activates a response from the given question on the specified component")
 	@Consumes(
 			{
@@ -2891,7 +2891,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Activate a review on  the specified component")
 	@Consumes(
 			{
@@ -3384,7 +3384,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Remove all tags from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTag.class)
@@ -3716,7 +3716,7 @@ public class ComponentRESTResource
 	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Get the list of tracking details on a specified component. Always sorts by create date.")
 	@Produces(
 			{
@@ -3754,7 +3754,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Get the list of tracking details on a specified component")
 	@Produces(
 			{
@@ -3776,7 +3776,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Remove a tracking entry from the specified component")
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteComponentTracking(
@@ -3795,7 +3795,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Remove all tracking entries from the specified component")
 	@Path("/{id}/tracking")
 	public void deleteAllComponentTracking(
@@ -3822,7 +3822,7 @@ public class ComponentRESTResource
 	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="Integrations">
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets all integration models from the database.")
 	@Produces(
 			{
@@ -3847,7 +3847,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets a integration model")
 	@Produces(
 			{
@@ -3869,7 +3869,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Saves a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration")
@@ -3890,7 +3890,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Updates a component integration refresh Time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
@@ -3918,7 +3918,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Removes the integration override time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
@@ -3944,7 +3944,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Activates  a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/activate")
@@ -3960,7 +3960,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Inactivates a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/inactivate")
@@ -3976,7 +3976,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Toggle status for multiple component integration models. Consumes a list of componentId strings")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/integration/togglemultiple")
@@ -3998,7 +3998,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Removes component integration and all child configs.")
 	@Path("/{componentId}/integration")
 	public Response deleteComponentConfig(
@@ -4015,7 +4015,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Runs a full component integration")
 	@Path("/{componentId}/integration/run")
 	public Response runComponentIntegration(
@@ -4044,7 +4044,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Runs all active component integrations")
 	@Path("/integrations/run")
 	public Response runAllComponentIntegration()
@@ -4057,7 +4057,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets all component integration configs")
 	@Produces(
 			{
@@ -4076,7 +4076,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets all component integration configs")
 	@Produces(
 			{
@@ -4096,7 +4096,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Saves a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs")
@@ -4136,7 +4136,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Updates a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{integrationConfigId}")
@@ -4187,7 +4187,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Activates a component integration config")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{configId}/activate")
@@ -4208,7 +4208,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Saves a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{configId}/inactivate")
@@ -4229,7 +4229,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Removes component integration config")
 	@Path("/{componentId}/integration/configs/{configId}")
 	public void deleteComponentIntegrationConfig(
@@ -4248,7 +4248,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Runs a component integration config.")
 	@Path("/{componentId}/integration/configs/{configId}/run")
 	public Response runComponentIntegrationConfig(

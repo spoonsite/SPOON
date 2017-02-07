@@ -36,7 +36,6 @@ import edu.usu.sdl.openstorefront.core.view.FileHistoryView;
 import edu.usu.sdl.openstorefront.core.view.FileHistoryViewWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -61,6 +60,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import net.sourceforge.stripes.util.bean.BeanUtil;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  *
@@ -73,7 +73,7 @@ public class FileHistoryResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets file history records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileHistoryViewWrapper.class)
@@ -141,7 +141,7 @@ public class FileHistoryResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets errors for a file")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileHistoryError.class)
@@ -156,7 +156,7 @@ public class FileHistoryResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Download the original file")
 	@Produces({MediaType.WILDCARD})
 	@Path("/{fileHistoryId}/download")
@@ -184,7 +184,7 @@ public class FileHistoryResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileHistory.class)
 	@Path("/{fileHistoryId}/reprocess")
@@ -204,7 +204,7 @@ public class FileHistoryResource
 
 	//TODO: get rollback effect (Check what the rollback would do)
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{fileHistoryId}/rollback")
@@ -226,7 +226,7 @@ public class FileHistoryResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets file format for a type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileFormat.class)
@@ -240,7 +240,7 @@ public class FileHistoryResource
 	}
 	
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets all file formats that support mapping")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileFormat.class)
@@ -252,7 +252,7 @@ public class FileHistoryResource
 	}	
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets data mappings for a format.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -281,7 +281,7 @@ public class FileHistoryResource
 	}
 	
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Deletes data mapping(s)")
 	@Path("/formats/{format}/mappings/{fileDataMapId}")
 	public Response removeDataMapping(			
@@ -301,7 +301,7 @@ public class FileHistoryResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Creates a new data mapping")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -315,7 +315,7 @@ public class FileHistoryResource
 	}
 	
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Get a full data mapping record")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(DataMapModel.class)	
@@ -330,7 +330,7 @@ public class FileHistoryResource
 	}
 	
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Copies data mapping record")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileDataMap.class)
@@ -354,7 +354,7 @@ public class FileHistoryResource
 	}	
 	
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Exports data mapping record")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileDataMap.class)
@@ -391,7 +391,7 @@ public class FileHistoryResource
 	}	
 	
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Updates a data mapping")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})

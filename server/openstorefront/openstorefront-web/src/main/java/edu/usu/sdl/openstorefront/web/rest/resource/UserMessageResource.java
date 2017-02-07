@@ -26,7 +26,6 @@ import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserMessageWrapper;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -40,6 +39,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  * User messages (Queued) used for email
@@ -54,7 +54,7 @@ public class UserMessageResource
 
 	@GET
 	@APIDescription("Get a list of user messages")
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserMessage.class)
 	public Response userMessages(@BeanParam FilterQueryParams filterQueryParams)
@@ -108,7 +108,7 @@ public class UserMessageResource
 
 	@GET
 	@APIDescription("Gets a user message")
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserMessage.class)
 	@Path("/{id}")
@@ -122,7 +122,7 @@ public class UserMessageResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Removes a user message")
 	@Path("/{id}")
 	public void deleteUseMessage(
@@ -134,7 +134,7 @@ public class UserMessageResource
 
 	@POST
 	@APIDescription("Processes all active user messages now")
-	@RequireAdmin
+	@RequireSecurity
 	@Path("/processnow")
 	public Response processUserMessages()
 	{
@@ -151,7 +151,7 @@ public class UserMessageResource
 
 	@POST
 	@APIDescription("Cleanup old user messages according to archive rules")
-	@RequireAdmin
+	@RequireSecurity
 	@Path("/cleanold")
 	public Response cleanOld()
 	{

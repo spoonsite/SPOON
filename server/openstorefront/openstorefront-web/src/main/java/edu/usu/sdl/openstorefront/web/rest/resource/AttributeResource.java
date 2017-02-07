@@ -61,7 +61,7 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
 import edu.usu.sdl.openstorefront.core.view.RelationshipView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -70,6 +70,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -239,7 +240,7 @@ public class AttributeResource
 	
 	@POST
 	@APIDescription("Exports attributes in JSON format. To import attributes, POST to /Upload.action?UploadAttributes with the file (Requires Admin)")
-	@RequireAdmin
+	@RequireSecurity(value = {"ADMIN-ATTRIBUTE-MANAGEMENT", "ADMIN-DATA-IMPORT-EXPORT"})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
 	public Response exportAttributes(
@@ -520,7 +521,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
 	@APIDescription("Adds a new attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes")
@@ -545,7 +546,7 @@ public class AttributeResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
 	@APIDescription("Updates an attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}")
@@ -602,7 +603,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
 	@APIDescription("Remove a type (Inactivates).  Note: this inactivates all attribute type associations. Runs in a background task.")
 	@Path("/attributetypes/{type}")
 	public void deleteAttributeType(
@@ -642,7 +643,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
 	@APIDescription("Delete a type and all attribute type associations (codes, component attributes).  Runs in a background task.")
 	@Path("/attributetypes/{type}/force")
 	public void hardDeleteAttributeType(
@@ -682,7 +683,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
 	@APIDescription("Activate a type.  Note: this activates all attribute type associations. Runs in a background task.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}")
@@ -722,7 +723,7 @@ public class AttributeResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
 	@APIDescription("Updates an attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/sortorder")
@@ -743,7 +744,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
 	@APIDescription("Adds a new attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes")
@@ -756,7 +757,7 @@ public class AttributeResource
 		return handleAttributePostPutCode(attributeCode, true);
 	}
 
-	@POST
+	@POST	
 	@APIDescription("Creates a new user-generated attribute codes. Return all codes translated.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -803,10 +804,10 @@ public class AttributeResource
 						}						
 					}		
 				} else {
-					LOG.log(Level.WARNING, "Attribute type doesn't support user codes Type: " + saveCode.getAttributeType());
+					LOG.log(Level.WARNING, MessageFormat.format("Attribute type doesn''t support user codes Type: {0}", saveCode.getAttributeType()));
 				}
 			} else {
-				LOG.log(Level.WARNING, "Unable to find attribute type: " + saveCode.getAttributeType());
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to find attribute type: {0}", saveCode.getAttributeType()));
 			}		
 		}
 		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(updatedCodes)
@@ -816,7 +817,7 @@ public class AttributeResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
 	@APIDescription("Updates an attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}")
@@ -860,7 +861,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
 	@APIDescription("Remove a Code (Inactivates) and inactivates all attribute type associations. Runs in background.")
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void deleteAttributeCode(
@@ -911,7 +912,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
 	@APIDescription("Delete a Code and all attribute code associations. Runs in background.")
 	@Path("/attributetypes/{type}/attributecodes/{code}/force")
 	public void hardDeleteAttributeCode(
@@ -995,7 +996,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
 	@APIDescription("Delete the file attachment for an attribute code")
 	@Path("/attributetypes/{type}/attributecodes/{code}/attachment")
 	public void deleteAttributeCodeAttachment(
@@ -1017,7 +1018,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
 	@APIDescription("Activate a Code and all associated data.  Runs in background.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}")
@@ -1158,7 +1159,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity("ADMIN-INTEGRATION")
 	@APIDescription("Save an attribute cross-ref mapping")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/attributexreftypes/detail")
@@ -1198,7 +1199,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-INTEGRATION")
 	@APIDescription("Remove a type and all mapping")
 	@Path("/attributexreftypes/{attributeType}")
 	public void deleteMappingType(

@@ -38,7 +38,6 @@ import edu.usu.sdl.openstorefront.core.view.RecentlyAddedView;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.io.StringWriter;
@@ -60,6 +59,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  * Search Service
@@ -145,7 +145,7 @@ public class Search
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Removes all indexes from Solr")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/clearSolr")
@@ -156,7 +156,7 @@ public class Search
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Removes all indexes from Solr and then reindexes current components and articles")
 	@Path("/resetSolr")
 	public Response resetSolr()

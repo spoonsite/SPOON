@@ -23,7 +23,6 @@ import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventWrapper;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -40,6 +39,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  *
@@ -52,7 +52,7 @@ public class NotificationEventResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets notification event records for all users.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(NotificationEventWrapper.class)
@@ -139,7 +139,7 @@ public class NotificationEventResource
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Posts a new notification event")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})

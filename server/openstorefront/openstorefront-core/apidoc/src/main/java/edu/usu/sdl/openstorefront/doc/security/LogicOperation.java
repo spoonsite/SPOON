@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.doc.security;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import javax.ws.rs.NameBinding;
-
 /**
- * Used to check for Admin rights
  *
  * @author dshurtleff
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@NameBinding
-@Documented
-public @interface RequireAdmin
+public enum LogicOperation
 {
-
-	Class<? extends CustomRequireHandler> value() default NoOpRequireHandler.class;
-
+	AND,
+	OR	
 }

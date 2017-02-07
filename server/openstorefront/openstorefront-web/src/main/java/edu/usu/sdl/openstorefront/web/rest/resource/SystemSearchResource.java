@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SystemSearchWrapper;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -42,6 +41,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  *
@@ -124,7 +124,7 @@ public class SystemSearchResource
 	}	
 	
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Saves a search")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -137,7 +137,7 @@ public class SystemSearchResource
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Updates a search")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -179,7 +179,7 @@ public class SystemSearchResource
 	}
 	
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates a search")
 	@Path("/{searchId}")
@@ -201,7 +201,7 @@ public class SystemSearchResource
 	}
 	
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a search")
 	@Path("/{searchId}/activate")

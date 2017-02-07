@@ -22,7 +22,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentTrackingCompleteWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentTrackingResult;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.StringWriter;
 import javax.ws.rs.BeanParam;
@@ -47,7 +47,7 @@ public class ComponentTrackingResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity("ADMIN-TRACKING")
 	@APIDescription("Get the list of tracking details on a specified component passing in a filter.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTrackingResult.class)
@@ -67,7 +67,7 @@ public class ComponentTrackingResource
 
 	@GET
 	@APIDescription("Exports component tracking information in csv formt (Requires Admin)")
-	@RequireAdmin
+	@RequireSecurity("ADMIN-TRACKING")
 	@Produces("text/csv")
 	@Path("/export")
 	public Response exportEntityValues(

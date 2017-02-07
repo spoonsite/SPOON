@@ -20,7 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.model.BrandingModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -50,7 +50,6 @@ public class BrandingResource
 {
 
 	@GET
-	@RequireAdmin
 	@APIDescription("Gets all brandings")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Branding.class)
@@ -93,7 +92,7 @@ public class BrandingResource
 
 	@POST
 	@APIDescription("Add a branding")
-	@RequireAdmin
+	@RequireSecurity("ADMIN-BRANDING")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addBranding(
@@ -105,7 +104,7 @@ public class BrandingResource
 
 	@PUT
 	@APIDescription("Update a branding")
-	@RequireAdmin
+	@RequireSecurity("ADMIN-BRANDING")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
@@ -143,7 +142,7 @@ public class BrandingResource
 
 	@PUT
 	@APIDescription("Reset to default branding")
-	@RequireAdmin
+	@RequireSecurity("ADMIN-BRANDING")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/current/default")
 	public Response setCurrentBrandingToDefault()
@@ -154,7 +153,7 @@ public class BrandingResource
 
 	@PUT
 	@APIDescription("Set Branding as active")
-	@RequireAdmin
+	@RequireSecurity("ADMIN-BRANDING")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}/active")
 	public Response setCurrentBranding(
@@ -174,7 +173,7 @@ public class BrandingResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-BRANDING")
 	@APIDescription("Deletes branding and related data")
 	@Path("/{id}")
 	public void deleteTopicSearchItems(

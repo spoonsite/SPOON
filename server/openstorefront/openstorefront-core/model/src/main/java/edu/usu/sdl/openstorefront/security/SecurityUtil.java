@@ -154,7 +154,7 @@ public class SecurityUtil
 		message.append("User: ")
 				.append(getCurrentUserName())
 				.append(" (").append(getClientIp(request)).append(") ")
-				.append(" Called Admin API: ");
+				.append(" Called Restricted API: ");
 		if (request != null) {
 			message.append(request.getMethod()).append(" ");
 			if (StringUtils.isNotBlank(request.getQueryString())) {

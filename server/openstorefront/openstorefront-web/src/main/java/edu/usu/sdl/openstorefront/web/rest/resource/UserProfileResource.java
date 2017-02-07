@@ -39,7 +39,6 @@ import edu.usu.sdl.openstorefront.core.view.UserProfileWrapper;
 import edu.usu.sdl.openstorefront.core.view.UserTrackingWrapper;
 import edu.usu.sdl.openstorefront.core.view.UserWatchView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.security.UserProfileRequireHandler;
@@ -76,6 +75,7 @@ import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  * User Profile Resource
@@ -92,7 +92,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Get a list of user profiles")
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
 	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams,
@@ -175,7 +175,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Get a list of active user profiles for lookup")
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
 	@Path("/lookup")
@@ -222,7 +222,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Gets user profile specified by id.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileView.class)
 	@Path("/{id}")
@@ -244,7 +244,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Update user profile and returns updated profile.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateProile(
 			@RequiredParam UserProfile inputProfile)
@@ -272,7 +272,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Updates user profile and returns updated profile.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
 	public Response updateProfile(
@@ -292,7 +292,7 @@ public class UserProfileResource
 
 	@DELETE
 	@APIDescription("Inactivates a user profile.  Note: if the user logs in, their profile will be reactivated.")
-	@RequireAdmin
+	@RequireSecurity
 	@Path("/{username}")
 	public void deleteUserProfile(
 			@PathParam("username")
@@ -303,7 +303,7 @@ public class UserProfileResource
 
 	@DELETE
 	@APIDescription("Inactivates a list of user profiles. Takes a list of usernames(Strings) as params.")
-	@RequireAdmin
+	@RequireSecurity
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/multiple")
@@ -320,7 +320,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Reactivates a list of user profiles. Takes a list of usernames(Strings) as params.")
-	@RequireAdmin
+	@RequireSecurity
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/multiple")
@@ -337,7 +337,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Reactivates a user profile.")
-	@RequireAdmin
+	@RequireSecurity
 	@Path("/{username}/reactivate")
 	public Response reactivateUserProfile(
 			@PathParam("username")
@@ -355,7 +355,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Sends test email to user based on user id")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(UserProfileRequireHandler.class)
 	@Path("/{id}/test-email")
 	public Response sendTestEmail(
 			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM) String username,
@@ -368,7 +368,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Retrieves active user watches.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches")
 	@DataType(UserWatchView.class)
@@ -387,7 +387,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Retrieves a user watch by id.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchView.class)
 	@Path("/{id}/watches/{watchId}")
@@ -404,7 +404,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Add a new watch to an existing user.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches")
 	public Response addWatch(
@@ -438,7 +438,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Updates an existing watch.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
@@ -477,7 +477,7 @@ public class UserProfileResource
 
 	@DELETE
 	@APIDescription("Removes a user watch.")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(UserProfileRequireHandler.class)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches/{watchId}")
 	public Response deleteWatch(
@@ -492,7 +492,7 @@ public class UserProfileResource
 
 	// ComponentRESTResource TRACKING section
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets the list of tracking details on a specified user. Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTrackingWrapper.class)
@@ -526,7 +526,7 @@ public class UserProfileResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets the tracking details on a specified user and tracking id")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTracking.class)
@@ -546,7 +546,7 @@ public class UserProfileResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Remove a tracking entry from the specified user")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tracking/{trackingId}")
@@ -569,7 +569,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Add a tracking entry for the specified user")
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(UserTracking.class)
 	@Path("/{id}/tracking")
@@ -584,7 +584,7 @@ public class UserProfileResource
 	}
 
 	@PUT
-	@RequireAdmin(UserProfileRequireHandler.class)
+	@RequireSecurity(UserProfileRequireHandler.class)
 	@APIDescription("Update a tracking entry for the specified user")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/tracking/{trackingId}")
@@ -626,7 +626,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Exports user profiles in CSV format. Can consume a list of 'userId' form parameters. Not providing 'userId' parameters results in all profiles being exported.")
-	@RequireAdmin
+	@RequireSecurity
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
 	public Response exportUserProfiles(

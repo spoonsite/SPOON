@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.TemporaryMediaView;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +33,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 @Path("v1/resource/temporarymedia")
 @APIDescription("Temporary Media is media that a client wishes to store to later be assigned to an entry")
@@ -42,7 +42,7 @@ public class TemporaryMediaResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets all temporary media records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TemporaryMediaView.class)
@@ -66,7 +66,7 @@ public class TemporaryMediaResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets all temporary media records for a lookup list")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -92,7 +92,7 @@ public class TemporaryMediaResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets a temporary media record. See Media.action?TemporaryMedia&name={name} to get the actual resource")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TemporaryMediaView.class)
@@ -107,7 +107,7 @@ public class TemporaryMediaResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Deletes a temporary media record.")
 	@Path("/{id}")
 	public void deleteTemporaryMedia(

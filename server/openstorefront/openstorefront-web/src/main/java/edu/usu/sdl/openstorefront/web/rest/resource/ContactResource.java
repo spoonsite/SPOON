@@ -27,7 +27,7 @@ import edu.usu.sdl.openstorefront.core.model.ContactReference;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ContactViewWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -57,7 +57,7 @@ public class ContactResource
 		extends BaseResource
 {
 
-	@GET
+	@GET	
 	@APIDescription("Gets distinct contacts")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Contact.class)
@@ -163,7 +163,7 @@ public class ContactResource
 	}	
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity("ADMIN-CONTACT-MANAGEMENT")
 	@APIDescription("Creates a contact")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -174,7 +174,7 @@ public class ContactResource
 	}	
 	
 	@PUT
-	@RequireAdmin
+	@RequireSecurity("ADMIN-CONTACT-MANAGEMENT")
 	@APIDescription("Updates a contact")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -212,7 +212,7 @@ public class ContactResource
 	}	
 	
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity("ADMIN-CONTACT-MANAGEMENT")
 	@APIDescription("Deletes a contact")
 	@Path("/{contactId}")
 		public void deleteContact(
@@ -223,7 +223,7 @@ public class ContactResource
 	}
 	
 	@PUT
-	@RequireAdmin
+	@RequireSecurity("ADMIN-CONTACT-MANAGEMENT")
 	@Produces({MediaType.APPLICATION_JSON})		
 	@APIDescription("Inactivates a contact")
 	@DataType(Contact.class)
@@ -237,7 +237,7 @@ public class ContactResource
 	}		
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity("ADMIN-CONTACT-MANAGEMENT")
 	@Produces({MediaType.APPLICATION_JSON})		
 	@APIDescription("Activates a contact")
 	@DataType(Contact.class)
@@ -267,7 +267,7 @@ public class ContactResource
 	}
 	
 	@PUT
-	@RequireAdmin
+	@RequireSecurity("ADMIN-CONTACT-MANAGEMENT")
 	@Produces({MediaType.APPLICATION_JSON})		
 	@APIDescription("Merge contacts")
 	@DataType(Contact.class)

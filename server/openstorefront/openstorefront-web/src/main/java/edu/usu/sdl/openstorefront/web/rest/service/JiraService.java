@@ -28,7 +28,6 @@ import edu.usu.sdl.openstorefront.core.view.JiraIssueView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
@@ -55,6 +54,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  *
@@ -69,7 +69,7 @@ public class JiraService
 	private static final Logger log = Logger.getLogger(JiraService.class.getName());
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Get status on the jira resource manager")
 	@DataType(JiraStats.class)
 	@Path("/stats")
@@ -89,7 +89,7 @@ public class JiraService
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets the possible projects from Jira.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -120,7 +120,7 @@ public class JiraService
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets the possible issues from a specific project in Jira.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JiraIssueModel.class)
@@ -148,7 +148,7 @@ public class JiraService
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets the issue ticket summary")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(String.class)
@@ -175,7 +175,7 @@ public class JiraService
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets the possible fields from the issue type.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JiraFieldInfoModel.class)

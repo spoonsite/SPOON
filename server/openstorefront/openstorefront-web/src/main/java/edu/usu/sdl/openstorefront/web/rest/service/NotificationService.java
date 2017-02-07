@@ -27,7 +27,6 @@ import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.model.AdminMessage;
 import edu.usu.sdl.openstorefront.core.view.RecentChangesStatus;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -42,6 +41,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  * Notification Services
@@ -56,7 +56,7 @@ public class NotificationService
 
 	@POST
 	@APIDescription("Sends an admin message to all active user with emails.")
-	@RequireAdmin
+	@RequireSecurity
 	@Path("/admin-message")
 	public Response adminMessage(
 			@RequiredParam AdminMessage adminMessage)
@@ -78,7 +78,7 @@ public class NotificationService
 
 	@POST
 	@APIDescription("Sends recent change email to all users that are flagged to be notified or an email via the query param")
-	@RequireAdmin
+	@RequireSecurity
 	@Path("/recent-changes")
 	public Response recentChanges(
 			@QueryParam("lastRunDts")
@@ -118,7 +118,7 @@ public class NotificationService
 
 	@GET
 	@APIDescription("Gets the status of the recent change email.")
-	@RequireAdmin
+	@RequireSecurity
 	@DataType(RecentChangesStatus.class)
 	@Path("/recent-changes/status")
 	public Response recentChangesStatus()

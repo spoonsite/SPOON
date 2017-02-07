@@ -42,7 +42,6 @@ import edu.usu.sdl.openstorefront.core.view.MemoryPoolStatus;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.ThreadStatus;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -87,6 +86,7 @@ import javax.ws.rs.core.Response;
 import net.sf.ehcache.Cache;
 import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang.StringUtils;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  * Application related services
@@ -100,7 +100,7 @@ public class Application
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets the application system status")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ApplicationStatus.class)
@@ -166,7 +166,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets the application system thread and status")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ThreadStatus.class)
@@ -191,7 +191,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Attempts to get the full stack of a thread")
 	@Produces({MediaType.TEXT_HTML})
 	@Path("/threads/{threadId}/stack")
@@ -224,7 +224,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets config properties")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -287,7 +287,7 @@ public class Application
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Save a config property")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -313,7 +313,7 @@ public class Application
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Removes config property (Allow it to fallback to the Default)")
 	@Path("/configproperties/{key}")
 	public void removeConfigProperties(@PathParam("key") String key)
@@ -322,7 +322,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets Loggers in the system")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LoggerView.class)
@@ -356,7 +356,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets log levels")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -375,7 +375,7 @@ public class Application
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Sets logger level")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.WILDCARD})
@@ -430,7 +430,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets log records")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(DBLogRecord.class)
@@ -485,7 +485,7 @@ public class Application
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Clears all DB log records. Doesn't affect server logs. Note: application will automatically clear old records exceeding max allowed.")
 	@Path("/logrecords")
 	public void clearAllDBLogs()
@@ -494,7 +494,7 @@ public class Application
 	}
 
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Toggle Database logging; pass use=true or use=false")
 	@DataType(LookupModel.class)
 	@Path("/dblogger/{use}")
@@ -523,7 +523,7 @@ public class Application
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets information about system caches.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(CacheView.class)
@@ -556,7 +556,7 @@ public class Application
 	}
 	
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Clears cache of records")
 	@Path("/caches/{name}/flush")	
 	public Response flushCaches(
@@ -573,7 +573,7 @@ public class Application
 	}
 	
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets information resource managers")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ManagerView.class)
@@ -588,7 +588,7 @@ public class Application
 	}
 	
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Starts a manager (It's preferable to use restart rather than stop and starting)")
 	@Path("/managers/{managerClass}/start")	
 	public Response startManager(
@@ -606,7 +606,7 @@ public class Application
 	}	
 	
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Stops a manager (It's preferable to use restart rather than stop and starting)")
 	@Path("/managers/{managerClass}/stop")	
 	public Response stopManager(
@@ -624,7 +624,7 @@ public class Application
 	}	
 	
 	@PUT
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Restart a manager.")
 	@Path("/managers/{managerClass}/restart")	
 	public Response restartManager(
@@ -642,7 +642,7 @@ public class Application
 	}	
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Restart the application. Note the system will be unavailable until the restart is complete.")
 	@Path("/restart")	
 	public Response restartApplication(

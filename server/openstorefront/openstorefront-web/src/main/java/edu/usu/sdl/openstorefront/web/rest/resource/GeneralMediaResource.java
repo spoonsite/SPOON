@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.GeneralMediaView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +33,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  *
@@ -46,7 +46,7 @@ public class GeneralMediaResource
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets all general media records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(GeneralMediaView.class)
@@ -70,7 +70,7 @@ public class GeneralMediaResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets all general media records for a lookup list")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -96,7 +96,7 @@ public class GeneralMediaResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets a general media record. See Media.action?GeneralMedia&name={name} to get the actual resource")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(GeneralMediaView.class)
@@ -111,7 +111,7 @@ public class GeneralMediaResource
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Check name to see if it is available. Returns true if avaliable")
 	@Produces({MediaType.TEXT_PLAIN})
 	@Path("/{name}/available")
@@ -129,7 +129,7 @@ public class GeneralMediaResource
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Deletes a general media record.")
 	@Path("/{name}")
 	public void deleteGeneralMedia(

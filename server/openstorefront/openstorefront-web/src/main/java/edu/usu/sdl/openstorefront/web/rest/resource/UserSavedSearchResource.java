@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.UserSavedSearch;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserSavedSearchWrapper;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -45,6 +44,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  *
@@ -58,7 +58,7 @@ public class UserSavedSearchResource
 	
 	@GET
 	@APIDescription("Get a list of saved searches")
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearchWrapper.class)
 	public Response getAllSearches(@BeanParam FilterQueryParams filterQueryParams)
@@ -127,7 +127,7 @@ public class UserSavedSearchResource
 	
 	@GET
 	@APIDescription("Get saved searches for a user")
-	@RequireAdmin
+	@RequireSecurity
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearch.class)
 	@Path("/user/{username}")

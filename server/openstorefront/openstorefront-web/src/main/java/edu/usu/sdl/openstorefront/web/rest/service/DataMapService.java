@@ -33,7 +33,6 @@ import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.StringTransforms;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.TypeTransforms;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -46,6 +45,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.ResolverUtil;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  * Data mapping support
@@ -59,7 +59,7 @@ public class DataMapService
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets the application system status")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -89,7 +89,7 @@ public class DataMapService
 	}
 	
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets entities for data mapping")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -164,7 +164,7 @@ public class DataMapService
 	
 	//get entity fields
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Gets component entities for data mapping")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)

@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.JobSchedulerStatus;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
-import edu.usu.sdl.openstorefront.doc.security.RequireAdmin;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
@@ -41,6 +40,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  * Job Management
@@ -54,7 +54,7 @@ public class JobService
 {
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Retrieves all jobs in scheduler")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JobModel.class)
@@ -74,7 +74,7 @@ public class JobService
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Retrieves current scheduler status")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JobSchedulerStatus.class)
@@ -87,7 +87,7 @@ public class JobService
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Retrieves a system job name")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JobModel.class)
@@ -107,7 +107,7 @@ public class JobService
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Pauses a system job  (Note this is not persisted.  Restarting the application will restart the scheduler.)")
 	@Path("/{jobname}/pause")
 	public Response pauseSystmJob(
@@ -119,7 +119,7 @@ public class JobService
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Resumes a system Job")
 	@Path("/{jobname}/resume")
 	public Response resumeScheduler(
@@ -131,7 +131,7 @@ public class JobService
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Runs a job now")
 	@Path("/{jobname}/{groupname}/runnow")
 	public Response runJobNow(
@@ -145,7 +145,7 @@ public class JobService
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Pauses Scheduler  (Note this is not persisted.  Restarting the application will restart the scheduler.)")
 	@Path("/pause")
 	public Response pauseScheduler()
@@ -155,7 +155,7 @@ public class JobService
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Resumes Scheduler")
 	@Path("/resume")
 	public Response resumeScheduler()
@@ -165,7 +165,7 @@ public class JobService
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Retrieves task manager status")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TaskManagerStatus.class)
@@ -177,7 +177,7 @@ public class JobService
 	}
 
 	@GET
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Retrieves task")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TaskManagerStatus.class)
@@ -199,7 +199,7 @@ public class JobService
 	}
 
 	@POST
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Attempts to cancel task. ")
 	@Path("/tasks/{taskId}/cancel")
 	public Response cancelTask(
@@ -218,7 +218,7 @@ public class JobService
 	}
 
 	@DELETE
-	@RequireAdmin
+	@RequireSecurity
 	@APIDescription("Deletes a completed task.")
 	@Path("/tasks/{taskId}")
 	public void deteteTask(
