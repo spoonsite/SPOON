@@ -30,6 +30,7 @@ import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryError;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.DataMapModel;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.FileHistoryView;
@@ -73,7 +74,7 @@ public class FileHistoryResource
 {
 
 	@GET
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Gets file history records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileHistoryViewWrapper.class)
@@ -141,7 +142,7 @@ public class FileHistoryResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Gets errors for a file")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileHistoryError.class)
@@ -156,7 +157,7 @@ public class FileHistoryResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")	
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)	
 	@APIDescription("Download the original file")
 	@Produces({MediaType.WILDCARD})
 	@Path("/{fileHistoryId}/download")
@@ -184,7 +185,7 @@ public class FileHistoryResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileHistory.class)
 	@Path("/{fileHistoryId}/reprocess")
@@ -204,7 +205,7 @@ public class FileHistoryResource
 
 	//TODO: get rollback effect (Check what the rollback would do)
 	@POST
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{fileHistoryId}/rollback")
@@ -226,7 +227,7 @@ public class FileHistoryResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Gets file format for a type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileFormat.class)
@@ -240,7 +241,7 @@ public class FileHistoryResource
 	}
 	
 	@GET
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Gets all file formats that support mapping")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileFormat.class)
@@ -252,7 +253,7 @@ public class FileHistoryResource
 	}	
 
 	@GET
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Gets data mappings for a format.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -281,7 +282,7 @@ public class FileHistoryResource
 	}
 	
 	@DELETE
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Deletes data mapping(s)")
 	@Path("/formats/{format}/mappings/{fileDataMapId}")
 	public Response removeDataMapping(			
@@ -301,7 +302,7 @@ public class FileHistoryResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Creates a new data mapping")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -315,7 +316,7 @@ public class FileHistoryResource
 	}
 	
 	@GET
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Get a full data mapping record")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(DataMapModel.class)	
@@ -330,7 +331,7 @@ public class FileHistoryResource
 	}
 	
 	@POST
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Copies data mapping record")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileDataMap.class)
@@ -354,7 +355,7 @@ public class FileHistoryResource
 	}	
 	
 	@GET
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Exports data mapping record")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FileDataMap.class)
@@ -391,7 +392,7 @@ public class FileHistoryResource
 	}	
 	
 	@PUT
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Updates a data mapping")	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})

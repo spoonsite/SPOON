@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -149,7 +150,7 @@ public class ComponentTypeTemplateResource
 	}	
 
 	@POST
-	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
 	@APIDescription("Adds a new component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -161,7 +162,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
 	@APIDescription("Updates a component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -200,7 +201,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
 	@APIDescription("Activates a component type template")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{templateId}/activate")
@@ -222,7 +223,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
 	@APIDescription("Inactivates a component type template")
 	@Path("/{templateId}")
 	public void inactiveTemplate(
@@ -233,7 +234,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
 	@APIDescription("Delete component type template; if not attached")
 	@Path("/{templateId}/force")
 	public void deleteTemplate(

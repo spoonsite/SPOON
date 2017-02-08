@@ -99,8 +99,7 @@ public class SecurityInit
 		securityRole.setLandingPage("/");		
 		
 		permissions = new ArrayList<>();
-		permissionsToAdd = Arrays.asList(
-				SecurityPermission.ADMIN_ALERT_MANAGEMENT,
+		permissionsToAdd = Arrays.asList(SecurityPermission.ADMIN_ALERT_MANAGEMENT,
 				SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT,
 				SecurityPermission.ADMIN_BRANDING,
 				SecurityPermission.ADMIN_CONTACT_MANAGEMENT,
@@ -108,10 +107,10 @@ public class SecurityInit
 				SecurityPermission.ADMIN_ENTRY_MANAGEMENT,
 				SecurityPermission.ADMIN_ENTRY_TEMPLATES,
 				SecurityPermission.ADMIN_ENTRY_TYPES,
-				SecurityPermission.ADMIN_EVALUTION_TEMPLATE,
-				SecurityPermission.ADMIN_EVALUTION_TEMPLATE_CHECKLIST,
-				SecurityPermission.ADMIN_EVALUTION_TEMPLATE_CHECKLIST_QUESTION,
-				SecurityPermission.ADMIN_EVALUTION_TEMPLATE_SECTION,
+				SecurityPermission.ADMIN_EVALUATION_TEMPLATE,
+				SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST,
+				SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION,
+				SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION,
 				SecurityPermission.ADMIN_FEEDBACK,
 				SecurityPermission.ADMIN_HIGHLIGHTS,
 				SecurityPermission.ADMIN_INTEGRATION,
@@ -130,6 +129,7 @@ public class SecurityInit
 				SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES,
 				SecurityPermission.ADMIN_WATCHES,
 				SecurityPermission.EVALUATIONS,
+				SecurityPermission.ADMIN_EVALUATION_MANAGEMENT,
 				SecurityPermission.REPORTS_ALL
 		);
 		

@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -46,7 +47,7 @@ public class IntegrationResource
 {
 
 	@GET
-	@RequireSecurity("ADMIN-INTEGRATION")
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Gets the global integration model from the database.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(GlobalIntegrationModel.class)
@@ -63,7 +64,7 @@ public class IntegrationResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-INTEGRATION")
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Saves a global integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/global")

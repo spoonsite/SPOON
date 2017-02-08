@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
@@ -40,6 +41,7 @@ import edu.usu.sdl.openstorefront.core.view.statistic.ComponentStatisticView;
 import edu.usu.sdl.openstorefront.core.view.statistic.SystemStatisticView;
 import edu.usu.sdl.openstorefront.core.view.statistic.UserRecordStatistic;
 import edu.usu.sdl.openstorefront.core.view.statistic.UserStatisticView;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.util.List;
@@ -62,6 +64,7 @@ public class StatisticService
 {
 
 	@GET
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Gets component statistics")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentStatisticView.class)
@@ -120,6 +123,7 @@ public class StatisticService
 	}
 
 	@GET
+	@RequireSecurity("ADMIN-USER-MANAGEMENT")
 	@APIDescription("Gets user statistics")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserStatisticView.class)
@@ -178,6 +182,7 @@ public class StatisticService
 	}
 
 	@GET
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets system statistics")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SystemStatisticView.class)

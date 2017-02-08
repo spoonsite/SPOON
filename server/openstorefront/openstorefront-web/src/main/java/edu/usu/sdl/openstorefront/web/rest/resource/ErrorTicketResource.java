@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.ErrorTicketWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.MultipleIds;
@@ -52,7 +53,7 @@ public class ErrorTicketResource
 {
 
 	@GET
-	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets all error tickets.  Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ErrorTicketWrapper.class)
@@ -104,7 +105,7 @@ public class ErrorTicketResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets an error ticket entity")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -117,7 +118,7 @@ public class ErrorTicketResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets error ticket info")
 	@Produces({MediaType.WILDCARD})
 	@Path("/{id}/ticket")
@@ -134,7 +135,7 @@ public class ErrorTicketResource
 	}
 	
 	@DELETE
-	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Deletes error tickets")
 	@Consumes({MediaType.APPLICATION_JSON})	
 	@DataType(MultipleIds.class)

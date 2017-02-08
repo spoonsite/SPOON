@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
@@ -42,7 +43,7 @@ public class TemporaryMediaResource
 {
 
 	@GET
-	@RequireSecurity("ADMIN-TEMPMEDIA-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT)
 	@APIDescription("Gets all temporary media records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TemporaryMediaView.class)
@@ -66,7 +67,7 @@ public class TemporaryMediaResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-TEMPMEDIA-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT)
 	@APIDescription("Gets all temporary media records for a lookup list")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -92,7 +93,7 @@ public class TemporaryMediaResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-TEMPMEDIA-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT)
 	@APIDescription("Gets a temporary media record. See Media.action?TemporaryMedia&name={name} to get the actual resource")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TemporaryMediaView.class)
@@ -107,7 +108,7 @@ public class TemporaryMediaResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-TEMPMEDIA-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT)
 	@APIDescription("Deletes a temporary media record.")
 	@Path("/{id}")
 	public void deleteTemporaryMedia(

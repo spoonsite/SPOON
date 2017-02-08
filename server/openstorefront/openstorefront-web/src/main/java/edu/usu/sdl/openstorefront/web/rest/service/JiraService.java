@@ -23,6 +23,7 @@ import com.atlassian.jira.rest.client.api.domain.ServerInfo;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.FeedbackTicket;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.view.JiraIssueView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
@@ -69,7 +70,7 @@ public class JiraService
 	private static final Logger log = Logger.getLogger(JiraService.class.getName());
 
 	@GET
-	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Get status on the jira resource manager")
 	@DataType(JiraStats.class)
 	@Path("/stats")
@@ -89,7 +90,7 @@ public class JiraService
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-INTEGRATION")
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Gets the possible projects from Jira.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -120,7 +121,7 @@ public class JiraService
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-INTEGRATION")
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Gets the possible issues from a specific project in Jira.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JiraIssueModel.class)
@@ -148,7 +149,7 @@ public class JiraService
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-INTEGRATION")
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Gets the issue ticket summary")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(String.class)
@@ -175,7 +176,7 @@ public class JiraService
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-INTEGRATION")
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Gets the possible fields from the issue type.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JiraFieldInfoModel.class)

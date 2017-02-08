@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionTemplate;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.ContentSectionTemplateView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -49,7 +50,7 @@ public class ContentSectionTemplateResource
 {
 
 	@GET
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-SECTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ContentSectionTemplate.class)
 	@APIDescription("Gets sections templates")
@@ -65,7 +66,7 @@ public class ContentSectionTemplateResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-SECTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ContentSectionTemplate.class)
 	@APIDescription("Gets a content template")
@@ -81,7 +82,7 @@ public class ContentSectionTemplateResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-SECTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ContentSectionTemplateView.class)
 	@APIDescription("Gets a the resolved template")
@@ -98,7 +99,7 @@ public class ContentSectionTemplateResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-SECTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION)
 	@APIDescription("Creates a content section template")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -109,7 +110,7 @@ public class ContentSectionTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-SECTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION)
 	@APIDescription("Updates a content section template")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -147,7 +148,7 @@ public class ContentSectionTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-SECTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a section template")
 	@Path("/{templateId}/activate")
@@ -171,7 +172,7 @@ public class ContentSectionTemplateResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-SECTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION)
 	@Produces({MediaType.TEXT_PLAIN})
 	@APIDescription("Check to see if checklist template is in use; returns true if in use or no content if not.")
 	@Path("/{templateId}/inuse")
@@ -193,7 +194,7 @@ public class ContentSectionTemplateResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-SECTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates a template section or removes on force")
 	@Path("/{templateId}")

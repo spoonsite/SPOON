@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Organization;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.OrgReference;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -282,7 +283,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-ORGANIZATION")
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
 	@APIDescription("Creates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -293,7 +294,7 @@ public class OrganizationResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-ORGANIZATION")
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
 	@APIDescription("Updates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -331,7 +332,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-ORGANIZATION")
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
 	@APIDescription("Merges one organization with another")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{targetId}/merge/{mergeId}")
@@ -358,7 +359,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-ORGANIZATION")
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
 	@APIDescription("Extract organizations from the data")
 	@Path("/extract")
 	public Response extractFromData()
@@ -369,7 +370,7 @@ public class OrganizationResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-ORGANIZATION")
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
 	@APIDescription("Deletes an organization")
 	@Path("/{id}")
 	public void deleteReport(

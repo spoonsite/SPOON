@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionView;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -61,7 +62,7 @@ public class ChecklistQuestionResource
 {
 
 	@GET
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-CHECKLIST-QUESTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistQuestionWrapper.class)
 	@APIDescription("Gets Checklist questions")
@@ -115,7 +116,7 @@ public class ChecklistQuestionResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-CHECKLIST-QUESTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistQuestionView.class)
 	@APIDescription("Gets a checklist question")
@@ -132,7 +133,7 @@ public class ChecklistQuestionResource
 
 	@GET
 	@APIDescription("Exports questions in JSON format.")
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-CHECKLIST-QUESTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
 	public Response exportQuestions(
@@ -162,7 +163,7 @@ public class ChecklistQuestionResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-CHECKLIST-QUESTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@APIDescription("Creates a checklist question")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -174,7 +175,7 @@ public class ChecklistQuestionResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-CHECKLIST-QUESTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@APIDescription("Updates a checklist question")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -239,7 +240,7 @@ public class ChecklistQuestionResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-CHECKLIST-QUESTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a Question")
 	@Path("/{questionId}/activate")
@@ -263,7 +264,7 @@ public class ChecklistQuestionResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-CHECKLIST-QUESTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@Produces({MediaType.TEXT_PLAIN})
 	@APIDescription("Check to see if question is in use; returns true if in use or no content if not.")
 	@Path("/{questionId}/inuse")
@@ -285,7 +286,7 @@ public class ChecklistQuestionResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE-CHECKLIST-QUESTION")
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates a question or remove only if not in use")
 	@Path("/{questionId}")

@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.FeedbackTicket;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.FeedbackTicketWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
@@ -54,7 +55,7 @@ public class FeedbackResource
 {
 	
 	@GET
-	@RequireSecurity("ADMIN-FEEDBACK")
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Gets all error tickets.  Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FeedbackTicketWrapper.class)
@@ -106,7 +107,7 @@ public class FeedbackResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-FEEDBACK")
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Gets a feedback ticket entity")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FeedbackTicket.class)
@@ -139,7 +140,7 @@ public class FeedbackResource
 	}
 	
 	@PUT
-	@RequireSecurity("ADMIN-FEEDBACK")
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Marks a feedback ticket complete")
 	@Path("/{feedbackId}/markcomplete")
 	public Response markComplete(			
@@ -151,7 +152,7 @@ public class FeedbackResource
 	}		
 	
 	@PUT
-	@RequireSecurity("ADMIN-FEEDBACK")
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Marks a feedback ticket outstanding")
 	@Path("/{feedbackId}/markoutstanding")
 	public Response markOutstanding(			
@@ -178,7 +179,7 @@ public class FeedbackResource
 	}
 	
 	@DELETE
-	@RequireSecurity("ADMIN-FEEDBACK")
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
 	@APIDescription("Deletes a feedback ticket")
 	@Path("/{feedbackId}")
 	public Response deleteFeedbackTicket(			

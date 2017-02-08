@@ -55,7 +55,7 @@ public class ScheduledReportResource
 {
 
 	@GET
-	@RequireSecurity("REPORTS-SCHEDULE")
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
 	@APIDescription("Gets scheduled report records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ScheduledReportView.class)
@@ -82,7 +82,7 @@ public class ScheduledReportResource
 	}
 
 	@GET
-	@RequireSecurity("REPORTS-SCHEDULE")	
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)	
 	@APIDescription("Gets a scheduled report record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Report.class)
@@ -94,7 +94,7 @@ public class ScheduledReportResource
 		ScheduledReport reportExample = new ScheduledReport();
 		reportExample.setScheduleReportId(scheduleReportId);
 		ScheduledReport report = service.getPersistenceService().queryOneByExample(ScheduledReport.class, reportExample);
-		Response response = ownerCheck(report);
+		Response response = ownerCheck(report, SecurityPermission.REPORTS_ALL);
 		if (response == null) {
 			response = sendSingleEntityResponse(report);
 		}
@@ -102,7 +102,7 @@ public class ScheduledReportResource
 	}
 
 	@POST
-	@RequireSecurity("REPORTS-SCHEDULE")
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
 	@APIDescription("Schedules a new report")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postAlert(ScheduledReport scheduledReport)
@@ -111,7 +111,7 @@ public class ScheduledReportResource
 	}
 
 	@PUT
-	@RequireSecurity("REPORTS-SCHEDULE")
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
 	@APIDescription("Updates a scheduled report record")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -125,7 +125,7 @@ public class ScheduledReportResource
 		if (existing == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-		Response response = ownerCheck(existing);
+		Response response = ownerCheck(existing, SecurityPermission.REPORTS_ALL);
 		if (response == null) {
 			scheduledReport.setScheduleReportId(scheduledReportId);
 			return handleSaveScheduledReport(scheduledReport, false);
@@ -161,7 +161,7 @@ public class ScheduledReportResource
 	}
 
 	@POST
-	@RequireSecurity("REPORTS-SCHEDULE")
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
 	@APIDescription("Activates a Scheduled Report")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ScheduledReport.class)
@@ -173,7 +173,7 @@ public class ScheduledReportResource
 		scheduledReport.setScheduleReportId(scheduleReportId);
 		scheduledReport = scheduledReport.find();
 		if (scheduledReport != null) {
-			Response response = ownerCheck(scheduledReport);
+			Response response = ownerCheck(scheduledReport, SecurityPermission.REPORTS_ALL);
 			if (response == null) {
 				scheduledReport = service.getPersistenceService().setStatusOnEntity(ScheduledReport.class, scheduleReportId, ScheduledReport.ACTIVE_STATUS);
 				return sendSingleEntityResponse(scheduledReport);
@@ -185,7 +185,7 @@ public class ScheduledReportResource
 	}
 
 	@DELETE
-	@RequireSecurity("REPORTS-SCHEDULE")
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
 	@APIDescription("Inactivates a scheduled report")
 	@Path("/{id}")
 	public void inactiveAlert(
@@ -195,7 +195,7 @@ public class ScheduledReportResource
 		scheduledReport.setScheduleReportId(scheduleReportId);
 		scheduledReport = scheduledReport.find();
 		if (scheduledReport != null) {
-			Response response = ownerCheck(scheduledReport);
+			Response response = ownerCheck(scheduledReport, SecurityPermission.REPORTS_ALL);
 			if (response == null) {
 				service.getPersistenceService().setStatusOnEntity(ScheduledReport.class, scheduleReportId, ScheduledReport.INACTIVE_STATUS);
 			}
@@ -203,7 +203,7 @@ public class ScheduledReportResource
 	}
 
 	@DELETE
-	@RequireSecurity("REPORTS-SCHEDULE")	
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)	
 	@APIDescription("Deletes a scheduled report record")
 	@Path("/{id}/force")
 	public void deleteReport(
@@ -213,7 +213,7 @@ public class ScheduledReportResource
 		scheduledReport.setScheduleReportId(scheduleReportId);
 		scheduledReport = scheduledReport.find();
 		if (scheduledReport != null) {
-			Response response = ownerCheck(scheduledReport);
+			Response response = ownerCheck(scheduledReport, SecurityPermission.REPORTS_ALL);
 			if (response == null) {
 				service.getReportService().deleteScheduledReport(scheduleReportId);
 			}

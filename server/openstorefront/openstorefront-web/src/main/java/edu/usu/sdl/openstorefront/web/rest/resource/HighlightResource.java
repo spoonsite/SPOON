@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.HighlightFilter;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -95,7 +96,7 @@ public class HighlightResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-HIGHLIGHTS")
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
 	@APIDescription("Creates a new Highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postHighlight(Highlight highlight)
@@ -104,7 +105,7 @@ public class HighlightResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-HIGHLIGHTS")
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
 	@APIDescription("Updates a highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -143,7 +144,7 @@ public class HighlightResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-HIGHLIGHTS")
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
 	@APIDescription("Deactivates a highlight")
 	@Path("/{id}/deactivate")
 	public void deactivateHighlight(
@@ -154,7 +155,7 @@ public class HighlightResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-HIGHLIGHTS")
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
 	@APIDescription("Deletes a highlight")
 	@Path("/{id}/delete")
 	public void deleteHighlight(
@@ -165,7 +166,7 @@ public class HighlightResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-HIGHLIGHTS")
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
 	@APIDescription("Activates a highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/activate")

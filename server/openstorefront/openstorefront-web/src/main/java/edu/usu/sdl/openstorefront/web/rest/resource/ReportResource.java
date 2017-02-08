@@ -79,7 +79,7 @@ public class ReportResource
 {
 
 	@GET
-	@RequireSecurity("REPORTS")	
+	@RequireSecurity(SecurityPermission.REPORTS)	
 	@APIDescription("Gets report records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportView.class)
@@ -136,7 +136,7 @@ public class ReportResource
 	}
 
 	@GET
-	@RequireSecurity("REPORTS")	
+	@RequireSecurity(SecurityPermission.REPORTS)
 	@APIDescription("Gets a report record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Report.class)
@@ -148,7 +148,7 @@ public class ReportResource
 		Report reportExample = new Report();
 		reportExample.setReportId(reportId);
 		Report report = service.getPersistenceService().queryOneByExample(Report.class, reportExample);
-		Response response = ownerCheck(report);
+		Response response = ownerCheck(report, SecurityPermission.REPORTS_ALL);
 		if (response == null) {
 			response = sendSingleEntityResponse(report);
 		}
@@ -156,7 +156,7 @@ public class ReportResource
 	}
 
 	@GET
-	@RequireSecurity("REPORTS")
+	@RequireSecurity(SecurityPermission.REPORTS)
 	@APIDescription("Gets the actual report")
 	@Produces({MediaType.WILDCARD})
 	@DataType(Report.class)
@@ -170,7 +170,7 @@ public class ReportResource
 		Report report = service.getPersistenceService().queryOneByExample(Report.class, reportExample);
 		if (report != null) {
 
-			Response response = ownerCheck(report);
+			Response response = ownerCheck(report, SecurityPermission.REPORTS_ALL);
 			if (response == null) {
 
 				java.nio.file.Path path = report.pathToReport();
@@ -198,7 +198,7 @@ public class ReportResource
 	}
 
 	@GET
-	@RequireSecurity("REPORTS")
+	@RequireSecurity(SecurityPermission.REPORTS)
 	@APIDescription("Gets a report type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportType.class)
@@ -222,7 +222,7 @@ public class ReportResource
 	}
 
 	@GET
-	@RequireSecurity("REPORTS")
+	@RequireSecurity(SecurityPermission.REPORTS)
 	@APIDescription("Gets report supported formats")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -250,7 +250,7 @@ public class ReportResource
 	}
 
 	@POST
-	@RequireSecurity("REPORTS")
+	@RequireSecurity(SecurityPermission.REPORTS)
 	@APIDescription("Generates a new report")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -299,7 +299,7 @@ public class ReportResource
 	}
 
 	@DELETE
-	@RequireSecurity("REPORTS")
+	@RequireSecurity(SecurityPermission.REPORTS)
 	@APIDescription("Deletes a report")
 	@Path("/{id}")
 	public void deleteReport(
@@ -314,14 +314,14 @@ public class ReportResource
 	private void handleDeleteReport(Report report)
 	{
 		if (report != null) {
-			if (ownerCheck(report) == null) {
+			if (ownerCheck(report, SecurityPermission.REPORTS_ALL) == null) {
 				service.getReportService().deleteReport(report.getReportId());
 			}
 		}
 	}
 
 	@DELETE
-	@RequireSecurity("REPORTS")
+	@RequireSecurity(SecurityPermission.REPORTS)
 	@APIDescription("Deletes group of reports")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/delete")

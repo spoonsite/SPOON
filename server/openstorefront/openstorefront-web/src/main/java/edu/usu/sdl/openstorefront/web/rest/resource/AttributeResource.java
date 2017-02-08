@@ -39,6 +39,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
@@ -240,7 +241,7 @@ public class AttributeResource
 	
 	@POST
 	@APIDescription("Exports attributes in JSON format. To import attributes, POST to /Upload.action?UploadAttributes with the file (Requires Admin)")
-	@RequireSecurity(value = {"ADMIN-ATTRIBUTE-MANAGEMENT", "ADMIN-DATA-IMPORT-EXPORT"})
+	@RequireSecurity(value = {SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT, SecurityPermission.ADMIN_DATA_IMPORT_EXPORT})
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
 	public Response exportAttributes(
@@ -521,7 +522,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Adds a new attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes")
@@ -546,7 +547,7 @@ public class AttributeResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Updates an attribute type")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}")
@@ -603,7 +604,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Remove a type (Inactivates).  Note: this inactivates all attribute type associations. Runs in a background task.")
 	@Path("/attributetypes/{type}")
 	public void deleteAttributeType(
@@ -643,7 +644,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Delete a type and all attribute type associations (codes, component attributes).  Runs in a background task.")
 	@Path("/attributetypes/{type}/force")
 	public void hardDeleteAttributeType(
@@ -683,7 +684,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Activate a type.  Note: this activates all attribute type associations. Runs in a background task.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}")
@@ -723,7 +724,7 @@ public class AttributeResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Updates an attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/sortorder")
@@ -744,7 +745,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Adds a new attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes")
@@ -817,7 +818,7 @@ public class AttributeResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Updates an attribute code")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}")
@@ -861,7 +862,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Remove a Code (Inactivates) and inactivates all attribute type associations. Runs in background.")
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void deleteAttributeCode(
@@ -912,7 +913,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Delete a Code and all attribute code associations. Runs in background.")
 	@Path("/attributetypes/{type}/attributecodes/{code}/force")
 	public void hardDeleteAttributeCode(
@@ -996,7 +997,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Delete the file attachment for an attribute code")
 	@Path("/attributetypes/{type}/attributecodes/{code}/attachment")
 	public void deleteAttributeCodeAttachment(
@@ -1018,7 +1019,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-ATTRIBUTE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@APIDescription("Activate a Code and all associated data.  Runs in background.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/attributetypes/{type}/attributecodes/{code}")
@@ -1159,7 +1160,7 @@ public class AttributeResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-INTEGRATION")
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Save an attribute cross-ref mapping")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/attributexreftypes/detail")
@@ -1199,7 +1200,7 @@ public class AttributeResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-INTEGRATION")
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
 	@APIDescription("Remove a type and all mapping")
 	@Path("/attributexreftypes/{attributeType}")
 	public void deleteMappingType(

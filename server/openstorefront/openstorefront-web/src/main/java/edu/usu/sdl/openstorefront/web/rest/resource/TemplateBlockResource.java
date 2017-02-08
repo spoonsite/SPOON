@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -44,7 +45,7 @@ public class TemplateBlockResource
 {
 
 	@GET
-	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
 	@APIDescription("Gets template blocks")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TemplateBlock.class)
@@ -56,7 +57,7 @@ public class TemplateBlockResource
 	}
 		
 	@GET
-	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
 	@APIDescription("Gets template blocks")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TemplateBlock.class)
@@ -72,7 +73,7 @@ public class TemplateBlockResource
 	}	
 	
 	@POST
-	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
 	@APIDescription("Adds a new component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -84,7 +85,7 @@ public class TemplateBlockResource
 	}
 	
 	@PUT
-	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
 	@APIDescription("Updates a component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -122,7 +123,7 @@ public class TemplateBlockResource
 	}	
 	
 	@DELETE
-	@RequireSecurity("ADMIN-ENTRY-TEMPLATES")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
 	@APIDescription("Inactivates a component type template")
 	@Path("/{templateBlockId}")
 	public void deleteNewEvent(

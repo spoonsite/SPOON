@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.BrandingModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -92,7 +93,7 @@ public class BrandingResource
 
 	@POST
 	@APIDescription("Add a branding")
-	@RequireSecurity("ADMIN-BRANDING")
+	@RequireSecurity(SecurityPermission.ADMIN_BRANDING)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addBranding(
@@ -104,7 +105,7 @@ public class BrandingResource
 
 	@PUT
 	@APIDescription("Update a branding")
-	@RequireSecurity("ADMIN-BRANDING")
+	@RequireSecurity(SecurityPermission.ADMIN_BRANDING)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
@@ -142,7 +143,7 @@ public class BrandingResource
 
 	@PUT
 	@APIDescription("Reset to default branding")
-	@RequireSecurity("ADMIN-BRANDING")
+	@RequireSecurity(SecurityPermission.ADMIN_BRANDING)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/current/default")
 	public Response setCurrentBrandingToDefault()
@@ -153,7 +154,7 @@ public class BrandingResource
 
 	@PUT
 	@APIDescription("Set Branding as active")
-	@RequireSecurity("ADMIN-BRANDING")
+	@RequireSecurity(SecurityPermission.ADMIN_BRANDING)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}/active")
 	public Response setCurrentBranding(
@@ -173,7 +174,7 @@ public class BrandingResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-BRANDING")
+	@RequireSecurity(SecurityPermission.ADMIN_BRANDING)
 	@APIDescription("Deletes branding and related data")
 	@Path("/{id}")
 	public void deleteTopicSearchItems(

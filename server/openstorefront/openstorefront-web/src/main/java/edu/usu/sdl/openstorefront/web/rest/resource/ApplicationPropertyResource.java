@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import java.util.List;
@@ -42,7 +43,7 @@ public class ApplicationPropertyResource
 {
 
 	@GET
-	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets all active properties in the system")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ApplicationProperty.class)
@@ -55,7 +56,7 @@ public class ApplicationPropertyResource
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets a property in the system")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ApplicationProperty.class)
@@ -70,7 +71,7 @@ public class ApplicationPropertyResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Updates a property in the system. NOTE: data may need to be formatted specifically according to the property.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.WILDCARD})

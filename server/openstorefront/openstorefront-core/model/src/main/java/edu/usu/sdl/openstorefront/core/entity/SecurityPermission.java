@@ -54,20 +54,21 @@ public class SecurityPermission
 	public static final String ADMIN_HIGHLIGHTS = "ADMIN-HIGHLIGHTS";
 	public static final String ADMIN_MEDIA = "ADMIN-MEDIA";
 	public static final String ADMIN_FEEDBACK = "ADMIN-FEEDBACK";
-	public static final String ADMIN_EVALUTION_TEMPLATE = "ADMIN-EVALUTION-TEMPLATE";
+	public static final String ADMIN_EVALUATION_TEMPLATE = "ADMIN-EVALUATION-TEMPLATE";
 	public static final String API_DOCS = "API-DOCS";
 	public static final String ADMIN_BRANDING = "ADMIN-BRANDING";
-	public static final String ADMIN_EVALUTION_TEMPLATE_SECTION = "ADMIN-EVALUTION-TEMPLATE-SECTION";
+	public static final String ADMIN_EVALUATION_TEMPLATE_SECTION = "ADMIN-EVALUATION-TEMPLATE-SECTION";
 	public static final String ADMIN_CONTACT_MANAGEMENT = "ADMIN-CONTACT-MANAGEMENT";
 	public static final String ADMIN_ENTRY_TEMPLATES = "ADMIN-ENTRY-TEMPLATES";
 	public static final String ADMIN_ENTRY_TYPES = "ADMIN-ENTRY-TYPES";
 	public static final String ADMIN_QUESTIONS = "ADMIN-QUESTIONS";
 	public static final String ADMIN_REVIEW = "ADMIN-REVIEW";
-	public static final String ADMIN_EVALUTION_TEMPLATE_CHECKLIST = "ADMIN-EVALUTION-TEMPLATE-CHECKLIST";
-	public static final String ADMIN_EVALUTION_TEMPLATE_CHECKLIST_QUESTION = "ADMIN-EVALUTION-TEMPLATE-CHECKLIST-QUESTION";
+	public static final String ADMIN_EVALUATION_TEMPLATE_CHECKLIST = "ADMIN-EVALUATION-TEMPLATE-CHECKLIST";
+	public static final String ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION = "ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION";
 	public static final String ADMIN_ATTRIBUTE_MANAGEMENT = "ADMIN-ATTRIBUTE-MANAGEMENT";
 	public static final String ADMIN_ALERT_MANAGEMENT = "ADMIN-ALERT-MANAGEMENT";
-	
+	public static final String ADMIN_EVALUATION_MANAGEMENT = "ADMIN-EVALUATION-MANAGEMENT";
+		
 
 	public SecurityPermission()
 	{
@@ -100,19 +101,20 @@ public class SecurityPermission
 		codeMap.put(ADMIN_HIGHLIGHTS, newLookup(SecurityPermission.class, ADMIN_HIGHLIGHTS, "Admin highlights"));
 		codeMap.put(ADMIN_MEDIA, newLookup(SecurityPermission.class, ADMIN_MEDIA, "Admin media"));
 		codeMap.put(ADMIN_FEEDBACK, newLookup(SecurityPermission.class, ADMIN_FEEDBACK, "Admin feedback"));
-		codeMap.put(ADMIN_EVALUTION_TEMPLATE, newLookup(SecurityPermission.class, ADMIN_EVALUTION_TEMPLATE, "Admin evalution template"));
+		codeMap.put(ADMIN_EVALUATION_TEMPLATE, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE, "Admin evalution template"));
 		codeMap.put(API_DOCS, newLookup(SecurityPermission.class, API_DOCS, "Api docs"));
 		codeMap.put(ADMIN_BRANDING, newLookup(SecurityPermission.class, ADMIN_BRANDING, "Admin branding"));
-		codeMap.put(ADMIN_EVALUTION_TEMPLATE_SECTION, newLookup(SecurityPermission.class, ADMIN_EVALUTION_TEMPLATE_SECTION, "Admin evalution template section"));
+		codeMap.put(ADMIN_EVALUATION_TEMPLATE_SECTION, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_SECTION, "Admin evalution template section"));
 		codeMap.put(ADMIN_CONTACT_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_CONTACT_MANAGEMENT, "Admin contact management"));
 		codeMap.put(ADMIN_ENTRY_TEMPLATES, newLookup(SecurityPermission.class, ADMIN_ENTRY_TEMPLATES, "Admin entry templates"));
 		codeMap.put(ADMIN_ENTRY_TYPES, newLookup(SecurityPermission.class, ADMIN_ENTRY_TYPES, "Admin entry types"));
 		codeMap.put(ADMIN_QUESTIONS, newLookup(SecurityPermission.class, ADMIN_QUESTIONS, "Admin questions"));
 		codeMap.put(ADMIN_REVIEW, newLookup(SecurityPermission.class, ADMIN_REVIEW, "Admin review"));
-		codeMap.put(ADMIN_EVALUTION_TEMPLATE_CHECKLIST, newLookup(SecurityPermission.class, ADMIN_EVALUTION_TEMPLATE_CHECKLIST, "Admin evalution template checklist"));
-		codeMap.put(ADMIN_EVALUTION_TEMPLATE_CHECKLIST_QUESTION, newLookup(SecurityPermission.class, ADMIN_EVALUTION_TEMPLATE_CHECKLIST_QUESTION, "Admin evalution template checklist question"));		
+		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST, "Admin evalution template checklist"));
+		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, "Admin evalution template checklist question"));		
 		codeMap.put(ADMIN_ATTRIBUTE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ATTRIBUTE_MANAGEMENT, "Admin attribute management"));
 		codeMap.put(ADMIN_ALERT_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ALERT_MANAGEMENT, "Admin alert management"));
+		codeMap.put(ADMIN_EVALUATION_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_EVALUATION_MANAGEMENT, "Admin evaluation management"));
 		return codeMap;
 	}
 }

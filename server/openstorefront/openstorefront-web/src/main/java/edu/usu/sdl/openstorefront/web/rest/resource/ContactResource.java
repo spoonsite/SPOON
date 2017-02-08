@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.ContactReference;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ContactViewWrapper;
@@ -163,7 +164,7 @@ public class ContactResource
 	}	
 
 	@POST
-	@RequireSecurity("ADMIN-CONTACT-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
 	@APIDescription("Creates a contact")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -174,7 +175,7 @@ public class ContactResource
 	}	
 	
 	@PUT
-	@RequireSecurity("ADMIN-CONTACT-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
 	@APIDescription("Updates a contact")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -212,7 +213,7 @@ public class ContactResource
 	}	
 	
 	@DELETE
-	@RequireSecurity("ADMIN-CONTACT-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
 	@APIDescription("Deletes a contact")
 	@Path("/{contactId}")
 		public void deleteContact(
@@ -223,7 +224,7 @@ public class ContactResource
 	}
 	
 	@PUT
-	@RequireSecurity("ADMIN-CONTACT-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
 	@Produces({MediaType.APPLICATION_JSON})		
 	@APIDescription("Inactivates a contact")
 	@DataType(Contact.class)
@@ -237,7 +238,7 @@ public class ContactResource
 	}		
 
 	@PUT
-	@RequireSecurity("ADMIN-CONTACT-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
 	@Produces({MediaType.APPLICATION_JSON})		
 	@APIDescription("Activates a contact")
 	@DataType(Contact.class)
@@ -267,7 +268,7 @@ public class ContactResource
 	}
 	
 	@PUT
-	@RequireSecurity("ADMIN-CONTACT-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
 	@Produces({MediaType.APPLICATION_JSON})		
 	@APIDescription("Merge contacts")
 	@DataType(Contact.class)

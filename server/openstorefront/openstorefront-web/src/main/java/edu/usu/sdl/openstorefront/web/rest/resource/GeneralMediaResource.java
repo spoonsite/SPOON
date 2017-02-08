@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.GeneralMediaView;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
@@ -125,7 +126,7 @@ public class GeneralMediaResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-MEDIA")
+	@RequireSecurity(SecurityPermission.ADMIN_MEDIA)
 	@APIDescription("Deletes a general media record.")
 	@Path("/{name}")
 	public void deleteGeneralMedia(

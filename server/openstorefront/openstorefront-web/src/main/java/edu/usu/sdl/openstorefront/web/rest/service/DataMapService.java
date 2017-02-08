@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSectionPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewConPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.StringTransforms;
@@ -59,7 +60,7 @@ public class DataMapService
 {
 
 	@GET
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Gets the application system status")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -89,7 +90,7 @@ public class DataMapService
 	}
 	
 	@GET
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Gets entities for data mapping")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -164,7 +165,7 @@ public class DataMapService
 	
 	//get entity fields
 	@GET
-	@RequireSecurity("ADMIN-DATA-IMPORT-EXPORT")
+	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@APIDescription("Gets component entities for data mapping")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)

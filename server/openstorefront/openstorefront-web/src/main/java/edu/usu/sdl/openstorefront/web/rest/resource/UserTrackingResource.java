@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserTrackingResult;
@@ -47,7 +48,7 @@ public class UserTrackingResource
 {
 
 	@GET
-	@RequireSecurity("ADMIN-TRACKING")
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
 	@APIDescription("Get the list of tracking details on users passing in a filter")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTracking.class)
@@ -67,7 +68,7 @@ public class UserTrackingResource
 
 	@GET
 	@APIDescription("Exports user tracking information in csv formt (Requires Admin)")
-	@RequireSecurity("ADMIN-TRACKING")
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
 	@Produces("text/csv")
 	@Path("/export")
 	public Response exportEntityValues(

@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventWrapper;
@@ -52,7 +53,7 @@ public class NotificationEventResource
 {
 
 	@GET
-	@RequireSecurity("ADMIN-MESSAGE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
 	@APIDescription("Gets notification event records for all users.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(NotificationEventWrapper.class)
@@ -95,7 +96,7 @@ public class NotificationEventResource
 		notificationEvent = notificationEvent.find();
 		if (notificationEvent != null) {
 
-			response = ownerCheck(notificationEvent);
+			response = ownerCheck(notificationEvent, SecurityPermission.ADMIN_MESSAGE_MANAGEMENT);
 			if (response == null) {
 				return sendSingleEntityResponse(notificationEvent);
 			}
@@ -139,7 +140,7 @@ public class NotificationEventResource
 	}
 
 	@POST
-	@RequireSecurity("ADMIN-MESSAGE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
 	@APIDescription("Posts a new notification event")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})

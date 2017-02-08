@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserMessageWrapper;
@@ -54,7 +55,7 @@ public class UserMessageResource
 
 	@GET
 	@APIDescription("Get a list of user messages")
-	@RequireSecurity("ADMIN-MESSAGE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserMessage.class)
 	public Response userMessages(@BeanParam FilterQueryParams filterQueryParams)
@@ -108,7 +109,7 @@ public class UserMessageResource
 
 	@GET
 	@APIDescription("Gets a user message")
-	@RequireSecurity("ADMIN-MESSAGE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserMessage.class)
 	@Path("/{id}")
@@ -122,7 +123,7 @@ public class UserMessageResource
 	}
 
 	@DELETE
-	@RequireSecurity("ADMIN-MESSAGE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
 	@APIDescription("Removes a user message")
 	@Path("/{id}")
 	public void deleteUseMessage(
@@ -134,7 +135,7 @@ public class UserMessageResource
 
 	@POST
 	@APIDescription("Processes all active user messages now")
-	@RequireSecurity("ADMIN-MESSAGE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
 	@Path("/processnow")
 	public Response processUserMessages()
 	{
@@ -151,7 +152,7 @@ public class UserMessageResource
 
 	@POST
 	@APIDescription("Cleanup old user messages according to archive rules")
-	@RequireSecurity("ADMIN-MESSAGE-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
 	@Path("/cleanold")
 	public Response cleanOld()
 	{
