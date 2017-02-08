@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.net.URI;
 import java.util.List;
@@ -36,7 +37,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  *
@@ -49,7 +49,7 @@ public class EvaluationTemplateResource
 {
 
 	@GET
-	@RequireSecurity
+	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationTemplate.class)
 	@APIDescription("Gets Evaluation templates")
@@ -73,7 +73,7 @@ public class EvaluationTemplateResource
 	}
 
 	@GET
-	@RequireSecurity
+	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistTemplate.class)
 	@APIDescription("Gets a template")
@@ -89,7 +89,7 @@ public class EvaluationTemplateResource
 	}
 
 	@POST
-	@RequireSecurity
+	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE")
 	@APIDescription("Creates an evaluation template")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -100,7 +100,7 @@ public class EvaluationTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity
+	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE")
 	@APIDescription("Updates a evaluation template")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -137,7 +137,7 @@ public class EvaluationTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity
+	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE")
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a template")
 	@Path("/{templateId}/activate")
@@ -161,7 +161,7 @@ public class EvaluationTemplateResource
 	}
 
 	@DELETE
-	@RequireSecurity
+	@RequireSecurity("ADMIN-EVALUTION-TEMPLATE")
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates or hard removes a template")
 	@Path("/{templateId}")
@@ -182,4 +182,5 @@ public class EvaluationTemplateResource
 			return updateStatus(templateId, EvaluationTemplate.INACTIVE_STATUS);
 		}
 	}
+
 }

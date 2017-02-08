@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Plugin;
 import edu.usu.sdl.openstorefront.core.view.PluginView;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -33,7 +34,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  *
@@ -48,7 +48,7 @@ public class PluginResource
 {
 
 	@GET
-	@RequireSecurity
+	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
 	@APIDescription("Gets plugin records with runtime info.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(PluginView.class)
@@ -59,7 +59,7 @@ public class PluginResource
 	}
 
 	@GET
-	@RequireSecurity
+	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
 	@APIDescription("Get a plugin record with no runtime info.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Plugin.class)
@@ -75,7 +75,7 @@ public class PluginResource
 	}
 
 	@GET
-	@RequireSecurity
+	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
 	@APIDescription("Downloads a plugin")
 	@Produces({MediaType.WILDCARD})
 	@DataType(Plugin.class)
@@ -106,7 +106,7 @@ public class PluginResource
 	}
 
 	@POST
-	@RequireSecurity
+	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
 	@APIDescription("Starts a plugin")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/start")
@@ -125,7 +125,7 @@ public class PluginResource
 	}
 
 	@POST
-	@RequireSecurity
+	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
 	@APIDescription("Stops a plugin")
 	@Path("/{id}/stop")
 	public Response stopPlugin(
@@ -143,7 +143,7 @@ public class PluginResource
 	}
 
 	@DELETE
-	@RequireSecurity
+	@RequireSecurity("ADMIN-SYSTEM-MANAGEMENT")
 	@APIDescription("Uninstall a plugin")
 	@Path("/{id}")
 	public Response uninstallPlugin(

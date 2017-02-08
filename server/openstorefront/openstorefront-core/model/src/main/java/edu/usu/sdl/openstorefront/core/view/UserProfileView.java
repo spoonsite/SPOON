@@ -18,9 +18,11 @@ package edu.usu.sdl.openstorefront.core.view;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -77,11 +79,20 @@ public class UserProfileView
 	private boolean admin;
 
 	private Date lastLoginDts;
+		
+	private List<SecurityRole> roles = new ArrayList<>();
 
 	public UserProfileView()
 	{
 	}
 
+	public static UserProfileView toView(UserContext userContext)
+	{
+		UserProfileView view = toView(userContext.getUserProfile(), false);
+		view.setRoles(userContext.getRoles());
+		return view;
+	}	
+	
 	public static UserProfileView toView(UserProfile profile)
 	{
 		return toView(profile, false);
@@ -307,6 +318,16 @@ public class UserProfileView
 	public void setUserTypeDescription(String userTypeDescription)
 	{
 		this.userTypeDescription = userTypeDescription;
+	}
+
+	public List<SecurityRole> getRoles()
+	{
+		return roles;
+	}
+
+	public void setRoles(List<SecurityRole> roles)
+	{
+		this.roles = roles;
 	}
 
 }

@@ -34,6 +34,7 @@ import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.OrganizationRelationView;
 import edu.usu.sdl.openstorefront.core.view.OrganizationView;
 import edu.usu.sdl.openstorefront.core.view.OrganizationWrapper;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -60,7 +61,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang3.StringUtils;
-import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  *
@@ -282,7 +282,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@RequireSecurity
+	@RequireSecurity("ADMIN-ORGANIZATION")
 	@APIDescription("Creates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -293,7 +293,7 @@ public class OrganizationResource
 	}
 
 	@PUT
-	@RequireSecurity
+	@RequireSecurity("ADMIN-ORGANIZATION")
 	@APIDescription("Updates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -331,7 +331,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@RequireSecurity
+	@RequireSecurity("ADMIN-ORGANIZATION")
 	@APIDescription("Merges one organization with another")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{targetId}/merge/{mergeId}")
@@ -358,7 +358,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@RequireSecurity
+	@RequireSecurity("ADMIN-ORGANIZATION")
 	@APIDescription("Extract organizations from the data")
 	@Path("/extract")
 	public Response extractFromData()
@@ -369,7 +369,7 @@ public class OrganizationResource
 	}
 
 	@DELETE
-	@RequireSecurity
+	@RequireSecurity("ADMIN-ORGANIZATION")
 	@APIDescription("Deletes an organization")
 	@Path("/{id}")
 	public void deleteReport(

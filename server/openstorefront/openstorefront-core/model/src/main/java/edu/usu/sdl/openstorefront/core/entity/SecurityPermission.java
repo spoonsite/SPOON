@@ -34,6 +34,7 @@ public class SecurityPermission
 	public static final String ENTRY_TAG = "ENTRY-TAG";
 	public static final String REPORTS_SCHEDULE = "REPORTS-SCHEDULE";
 	public static final String REPORTS = "REPORTS";
+	public static final String REPORTS_ALL = "REPORTS-ALL";
 	public static final String USER_SUBMISSIONS = "USER-SUBMISSIONS";
 	public static final String EVALUATIONS = "EVALUATIONS";
 	public static final String ADMIN_USER_MANAGEMENT = "ADMIN-USER-MANAGEMENT";
@@ -79,6 +80,7 @@ public class SecurityPermission
 		codeMap.put(ENTRY_TAG, newLookup(SecurityPermission.class, ENTRY_TAG, "Entry tag"));
 		codeMap.put(REPORTS_SCHEDULE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE, "Reports schedule"));
 		codeMap.put(REPORTS, newLookup(SecurityPermission.class, REPORTS, "Reports"));
+		codeMap.put(REPORTS_ALL, newLookup(SecurityPermission.class, REPORTS_ALL, "Reports All"));
 		codeMap.put(USER_SUBMISSIONS, newLookup(SecurityPermission.class, USER_SUBMISSIONS, "User submissions"));
 		codeMap.put(EVALUATIONS, newLookup(SecurityPermission.class, EVALUATIONS, "Evaluations"));
 		codeMap.put(ADMIN_USER_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT, "Admin user management"));

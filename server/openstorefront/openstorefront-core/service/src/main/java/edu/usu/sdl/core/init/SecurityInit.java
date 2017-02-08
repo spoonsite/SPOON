@@ -129,7 +129,8 @@ public class SecurityInit
 				SecurityPermission.ADMIN_USER_MANAGEMENT,
 				SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES,
 				SecurityPermission.ADMIN_WATCHES,
-				SecurityPermission.EVALUATIONS
+				SecurityPermission.EVALUATIONS,
+				SecurityPermission.REPORTS_ALL
 		);
 		
 		for (String newPermission : permissionsToAdd) {

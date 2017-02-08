@@ -20,9 +20,11 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.ScheduledReportView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -53,6 +55,7 @@ public class ScheduledReportResource
 {
 
 	@GET
+	@RequireSecurity("REPORTS-SCHEDULE")
 	@APIDescription("Gets scheduled report records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ScheduledReportView.class)
@@ -65,7 +68,7 @@ public class ScheduledReportResource
 
 		ScheduledReport reportExample = new ScheduledReport();
 		reportExample.setActiveStatus(filterQueryParams.getStatus());
-		if (SecurityUtil.isAdminUser() == false) {
+		if (SecurityUtil.hasPermission(SecurityPermission.REPORTS_ALL) == false) {	
 			reportExample.setCreateUser(SecurityUtil.getCurrentUserName());
 		}
 
@@ -79,6 +82,7 @@ public class ScheduledReportResource
 	}
 
 	@GET
+	@RequireSecurity("REPORTS-SCHEDULE")	
 	@APIDescription("Gets a scheduled report record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Report.class)
@@ -98,6 +102,7 @@ public class ScheduledReportResource
 	}
 
 	@POST
+	@RequireSecurity("REPORTS-SCHEDULE")
 	@APIDescription("Schedules a new report")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postAlert(ScheduledReport scheduledReport)
@@ -106,6 +111,7 @@ public class ScheduledReportResource
 	}
 
 	@PUT
+	@RequireSecurity("REPORTS-SCHEDULE")
 	@APIDescription("Updates a scheduled report record")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -136,10 +142,8 @@ public class ScheduledReportResource
 			//check that user can run that report
 			ReportType reportType = service.getLookupService().getLookupEnity(ReportType.class, scheduledReport.getReportType());
 			boolean run = true;
-			if (reportType.getAdminOnly()) {
-				if (SecurityUtil.isAdminUser() == false) {
-					run = false;
-				}
+			if (SecurityUtil.hasPermission(reportType.getRequiredPermission())) {						
+				run = false;
 			}
 			if (run) {
 				service.getReportService().saveScheduledReport(scheduledReport);
@@ -157,6 +161,7 @@ public class ScheduledReportResource
 	}
 
 	@POST
+	@RequireSecurity("REPORTS-SCHEDULE")
 	@APIDescription("Activates a Scheduled Report")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ScheduledReport.class)
@@ -180,6 +185,7 @@ public class ScheduledReportResource
 	}
 
 	@DELETE
+	@RequireSecurity("REPORTS-SCHEDULE")
 	@APIDescription("Inactivates a scheduled report")
 	@Path("/{id}")
 	public void inactiveAlert(
@@ -197,6 +203,7 @@ public class ScheduledReportResource
 	}
 
 	@DELETE
+	@RequireSecurity("REPORTS-SCHEDULE")	
 	@APIDescription("Deletes a scheduled report record")
 	@Path("/{id}/force")
 	public void deleteReport(

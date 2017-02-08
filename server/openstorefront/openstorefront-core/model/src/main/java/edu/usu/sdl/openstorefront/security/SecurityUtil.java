@@ -18,11 +18,14 @@ package edu.usu.sdl.openstorefront.security;
 import static edu.usu.sdl.openstorefront.common.util.NetworkUtil.getClientIp;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.subject.Subject;
 
 /**
@@ -139,6 +142,26 @@ public class SecurityUtil
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Checks the current for permission
+	 * @param permission
+	 * @return true if the user has the permission (All of them)
+	 */
+	public static boolean hasPermission(String... permissions)
+	{
+		boolean allow = false;
+		if (permissions == null) {
+			allow = true;
+		} else {
+			try {
+				SecurityUtils.getSubject().checkPermissions(permissions);			
+			} catch (AuthorizationException authorizationException) {
+				log.log(Level.FINEST, MessageFormat.format("User does not have permissions: {0}", Arrays.toString(permissions)), authorizationException);			
+			}
+		}
+		return allow;	
 	}
 
 	/**

@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.UserTrackingResult;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.StringWriter;
 import javax.ws.rs.BeanParam;
@@ -32,7 +33,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  * UserTrackingResource Resource
@@ -47,7 +47,7 @@ public class UserTrackingResource
 {
 
 	@GET
-	@RequireSecurity
+	@RequireSecurity("ADMIN-TRACKING")
 	@APIDescription("Get the list of tracking details on users passing in a filter")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTracking.class)
@@ -67,7 +67,7 @@ public class UserTrackingResource
 
 	@GET
 	@APIDescription("Exports user tracking information in csv formt (Requires Admin)")
-	@RequireSecurity
+	@RequireSecurity("ADMIN-TRACKING")
 	@Produces("text/csv")
 	@Path("/export")
 	public Response exportEntityValues(

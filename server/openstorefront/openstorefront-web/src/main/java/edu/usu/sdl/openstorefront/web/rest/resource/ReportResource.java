@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportDataId;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -37,6 +38,7 @@ import edu.usu.sdl.openstorefront.core.view.ReportView;
 import edu.usu.sdl.openstorefront.core.view.ReportWrapper;
 import edu.usu.sdl.openstorefront.core.view.RequestEntity;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -77,6 +79,7 @@ public class ReportResource
 {
 
 	@GET
+	@RequireSecurity("REPORTS")	
 	@APIDescription("Gets report records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportView.class)
@@ -89,7 +92,7 @@ public class ReportResource
 
 		Report reportExample = new Report();
 		reportExample.setActiveStatus(filterQueryParams.getStatus());
-		if (SecurityUtil.isAdminUser() == false) {
+		if (SecurityUtil.hasPermission(SecurityPermission.REPORTS_ALL) == false) {			
 			reportExample.setCreateUser(SecurityUtil.getCurrentUserName());
 		}
 
@@ -133,6 +136,7 @@ public class ReportResource
 	}
 
 	@GET
+	@RequireSecurity("REPORTS")	
 	@APIDescription("Gets a report record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Report.class)
@@ -152,6 +156,7 @@ public class ReportResource
 	}
 
 	@GET
+	@RequireSecurity("REPORTS")
 	@APIDescription("Gets the actual report")
 	@Produces({MediaType.WILDCARD})
 	@DataType(Report.class)
@@ -193,6 +198,7 @@ public class ReportResource
 	}
 
 	@GET
+	@RequireSecurity("REPORTS")
 	@APIDescription("Gets a report type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportType.class)
@@ -205,9 +211,8 @@ public class ReportResource
 		if (componentType) {
 			reportTypes = reportTypes.stream().filter(r -> r.getComponentReport() == true).collect(Collectors.toList());
 		}
-		if (SecurityUtil.isAdminUser() == false) {
-			reportTypes = reportTypes.stream().filter(r -> r.getAdminOnly() == false).collect(Collectors.toList());
-		}
+
+		reportTypes = reportTypes.stream().filter(r -> SecurityUtil.hasPermission(r.getRequiredPermission())).collect(Collectors.toList());
 		reportTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupEntity.FIELD_DESCRIPTION));
 
 		GenericEntity<List<ReportType>> entity = new GenericEntity<List<ReportType>>(reportTypes)
@@ -217,6 +222,7 @@ public class ReportResource
 	}
 
 	@GET
+	@RequireSecurity("REPORTS")
 	@APIDescription("Gets report supported formats")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -244,6 +250,7 @@ public class ReportResource
 	}
 
 	@POST
+	@RequireSecurity("REPORTS")
 	@APIDescription("Generates a new report")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -269,10 +276,8 @@ public class ReportResource
 			//check that user can run that report
 			ReportType reportType = service.getLookupService().getLookupEnity(ReportType.class, report.getReportType());
 			boolean run = true;
-			if (reportType.getAdminOnly()) {
-				if (SecurityUtil.isAdminUser() == false) {
-					run = false;
-				}
+			if (SecurityUtil.hasPermission(reportType.getRequiredPermission())) {				
+				run = false;
 			}
 
 			if (run) {
@@ -294,6 +299,7 @@ public class ReportResource
 	}
 
 	@DELETE
+	@RequireSecurity("REPORTS")
 	@APIDescription("Deletes a report")
 	@Path("/{id}")
 	public void deleteReport(
@@ -315,6 +321,7 @@ public class ReportResource
 	}
 
 	@DELETE
+	@RequireSecurity("REPORTS")
 	@APIDescription("Deletes group of reports")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/delete")

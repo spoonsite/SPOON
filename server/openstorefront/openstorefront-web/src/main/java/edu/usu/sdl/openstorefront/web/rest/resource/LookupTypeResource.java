@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.GenericLookupEntity;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -53,7 +54,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.commons.lang.StringUtils;
-import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  * Lookup Entities
@@ -146,7 +146,7 @@ public class LookupTypeResource
 
 	@GET
 	@APIDescription("Exports codes in csv formt. POST to Upload.action?UploadLookup&entityName=entity and then the file to import codes (Requires Admin)")
-	@RequireSecurity
+	@RequireSecurity("ADMIN-LOOKUPS")
 	@Produces("text/csv")
 	@Path("/{entity}/export")
 	public Response exportEntityValues(
@@ -221,7 +221,7 @@ public class LookupTypeResource
 	}
 
 	@POST
-	@RequireSecurity
+	@RequireSecurity("ADMIN-LOOKUPS")
 	@APIDescription("Adds a new code to a given entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{entity}")
@@ -305,7 +305,7 @@ public class LookupTypeResource
 	}
 
 	@PUT
-	@RequireSecurity
+	@RequireSecurity("ADMIN-LOOKUPS")
 	@APIDescription("Updates descriptions for a given entity and code.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{entity}/{code}")
@@ -327,7 +327,7 @@ public class LookupTypeResource
 	}
 
 	@POST
-	@RequireSecurity
+	@RequireSecurity("ADMIN-LOOKUPS")
 	@APIDescription("Activates a given entity code.")
 	@Path("/{entity}/{code}/activate")
 	public Response activeEntityCode(
@@ -355,7 +355,7 @@ public class LookupTypeResource
 	}
 
 	@DELETE
-	@RequireSecurity
+	@RequireSecurity("ADMIN-LOOKUPS")
 	@APIDescription("Remove a code from the entity")
 	@Path("/{entity}/{code}")
 	public void deleteEntityValue(

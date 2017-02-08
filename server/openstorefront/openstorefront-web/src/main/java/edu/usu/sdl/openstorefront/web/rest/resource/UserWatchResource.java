@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.MultipleIds;
 import edu.usu.sdl.openstorefront.core.view.UserWatchView;
 import edu.usu.sdl.openstorefront.core.view.UserWatchWrapper;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.List;
 import javax.ws.rs.BeanParam;
@@ -36,7 +37,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 
 /**
  *
@@ -50,7 +50,7 @@ public class UserWatchResource
 
 	@GET
 	@APIDescription("Get a list of user watches")
-	@RequireSecurity
+	@RequireSecurity("ADMIN-WATCHES")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchWrapper.class)
 	public Response getWatches(@BeanParam FilterQueryParams filterQueryParams)
@@ -97,7 +97,7 @@ public class UserWatchResource
 
 	@PUT
 	@APIDescription("Activates a set of watches")
-	@RequireSecurity
+	@RequireSecurity("ADMIN-WATCHES")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchResource.class)
 	@Path("/activate")
@@ -121,7 +121,7 @@ public class UserWatchResource
 
 	@PUT
 	@APIDescription("Inactivates a set of watches")
-	@RequireSecurity
+	@RequireSecurity("ADMIN-WATCHES")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchResource.class)
 	@Path("/inactivate")
