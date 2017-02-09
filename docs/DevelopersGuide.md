@@ -1,8 +1,8 @@
 
 # Developer Guide
+-------
 
 #1. Internal Development
-------
 
 See documents under /dev for Coding and Style guides.
 
@@ -40,39 +40,35 @@ The following key libraries were used in the development:
 
 ##1.3 Dev Environment on Windows with NetBeans
 
-1. **Install dependendies**
-  * Install NetBeans - https://netbeans.org/downloads/
-  * Install TomCat 7 - http://tomcat.apache.org/download-70.cgi
-  * Install Maven - http://maven.apache.org/install.html
+1. **NetBeans Install/configuration**
+  * Install NetBeans with Java EE and Tomcat - https://netbeans.org/downloads/
+    * Select "Customize" on the NetBeans installer to switch the server from GlassFish to Tomcat
+  * If you already have NetBeans installed
+    * In the Tools -> Plugins window check for "Java EE Base" install it if not already installed. Restart NetBeans if prompted
+    * Install Tomcat 7 (if not already installed) - http://tomcat.apache.org/download-70.cgi
 2. **Clone the openstorefront GitHub repo to the desired directory**
-3. **Intial NetBeans configuration**
-  * Select Tools -> Plugins. Once the plugins window opens, select the "Available Plugins" tab
-  * Search for "Java EE Base", check it, and select install. Restart NetBeans if prompted
-  * Select File -> Project Groups then double-click on "(none)"
-4. **Open the openstorefront Project**
+  * https://help.github.com/articles/cloning-a-repository/
+3. **Open the openstorefront Project**
   * Select the Open Project Icon or press CTRL + SHIFT + O
   * Open the openstorefront/server directory
   * Select the "openstorefront" option and make sure "Open Required Projects" is selected
-11. **TomCat Server configuration**
+4. **Tomcat Server configuration**
   * Select Tools -> Servers. Once the servers window opens, select Add Server
-  * Follow the wizard to select the TomCat server location and add a user
+  * Follow the wizard to select the Tomcat server location and add a user
   * Once created, select the "Startup" tab and ensure the "Socket Port" option is selected.
   * Select the Platform tab and set the VM memory options to -Xmx[memory size].
     * We recommend at least 2GB. (-Xmx2g)
+  * if you want to use the Tomcat manager-gui you will need to configuring manager application access -  https://tomcat.apache.org/tomcat-7.0-doc/manager-howto.html#Configuring_Manager_Application_Access
+    * make sure you have RW access to $Tomcat_HOME/bin/felix-cache
 
------
+##1.4 Building with Maven CLI
 
-
-##1.4 Building with Maven
+Install Maven if not installed by your IDE - http://maven.apache.org/install.html
 
 run "mvn install" from \$PROJECT\_HOME/server/openstorefront
 
-(Skip tests)
-Mav -Dmaven.test.skip=true or -DskipTests=true install
+(Skip tests) Mav -Dmaven.test.skip=true or -DskipTests=true install
 
-Note: To install maven on RedHat/CentOS run the following:
-
--   yum install maven
 
 ##1.5 Deploying
 
@@ -81,7 +77,6 @@ handle this for you. See application server documentation for other deployment
 mechanisms.
 
 ##1.6  Running
--------
 
 The application is targeted to run in Tomcat 7; however, it may run in
 other compatible containers with little or no changes.
@@ -91,7 +86,6 @@ See [Setup](Setup.md)
 
 
 ##1.7 Testing
--------
 
 -   Unit tests run as part of the Maven install.
 
@@ -100,7 +94,6 @@ See [Setup](Setup.md)
 
 
 ##1.8  Contributing Patches
---------------------
 
 The code is hosted on the public GitHub
 [https://github.com/di2e/openstorefront](<https://github.com/di2e/openstorefront>). Create a pull request to the
@@ -113,7 +106,6 @@ If you are unable to obtain a login account then submit an issue ticket
 on the GitHub site.
 
 ##1.9 Versioning Strategy
--------------------
 
 The software is versioned based on the following:
 
@@ -131,12 +123,10 @@ URL doesn't change with minor versions. However, the API follows with
 the version of the application.
 
 ##1.10 Licensing
------------------
 
 The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also claries how individual pieces can be used.
 
 #2. External Developers
-------
 
 This guide is targeted at external developers who want to extend the application.
 
@@ -147,7 +137,6 @@ The API documentation can be accessed by login in as an admin and following the 
 A print view of the API can be generated form there as well.
 
 ##2.2 Adding Custom Parser (Plugin)
-----
 
 A custom parser may be need for handling complex formats that can't be support via data mapping.
 In some cases, both a custom parser and data mapping may be required.
