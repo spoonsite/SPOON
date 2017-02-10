@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -118,7 +119,7 @@ public class ResourceAction
 			Component component = service.getPersistenceService().findById(Component.class, componentResource.getComponentId());
 			if (component != null) {
 				boolean allow = false;
-				if (SecurityUtil.isAdminUser()) {
+				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 					allow = true;
 					log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 				} else if (SecurityUtil.isCurrentUserTheOwner(component)) {

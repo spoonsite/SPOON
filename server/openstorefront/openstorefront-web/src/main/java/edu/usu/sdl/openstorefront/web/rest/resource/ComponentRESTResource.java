@@ -156,7 +156,7 @@ public class ComponentRESTResource
 		extends BaseResource
 {
 
-	private static final Logger log = Logger.getLogger(ComponentRESTResource.class.getSimpleName());
+	private static final Logger LOG = Logger.getLogger(ComponentRESTResource.class.getSimpleName());
 
 	@Context
 	HttpServletRequest request;
@@ -434,7 +434,7 @@ public class ComponentRESTResource
 									fileNameMediaSet.add(name);
 								}
 							} else {
-								log.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
+								LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", componentMedia.getFileName()));
 							}
 						}
 					}
@@ -451,7 +451,7 @@ public class ComponentRESTResource
 									fileNameResourceSet.add(name);
 								}
 							} else {
-								log.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
+								LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", componentResource.getFileName()));
 							}
 						}
 					}
@@ -747,10 +747,10 @@ public class ComponentRESTResource
 			}
 		} else {
 			if (mergeComponent == null) {
-				log.log(Level.FINE, MessageFormat.format("Unable to merge Component....merge component not found: {0}", mergeId));
+				LOG.log(Level.FINE, MessageFormat.format("Unable to merge Component....merge component not found: {0}", mergeId));
 			}
 			if (targetComponent == null) {
-				log.log(Level.FINE, MessageFormat.format("Unable to merge Component....target component not found: {0}", targetId));
+				LOG.log(Level.FINE, MessageFormat.format("Unable to merge Component....target component not found: {0}", targetId));
 			}
 		}
 		return response;
@@ -2620,7 +2620,7 @@ public class ComponentRESTResource
 		ComponentQuestion componentQuestion = service.getPersistenceService().findById(ComponentQuestion.class, questionId);
 		if (componentQuestion != null) {
 			checkBaseComponentBelongsToComponent(componentQuestion, componentId);
-			response = ownerCheck(componentQuestion, );
+			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS);
 			if (response == null) {
 				question.setComponentId(componentId);
 				question.setQuestionId(questionId);
@@ -2719,7 +2719,7 @@ public class ComponentRESTResource
 		responseExample.setResponseId(responseId);
 		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
 		if (questionResponse != null) {
-			response = ownerCheck(questionResponse);
+			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentQuestionResponse.class, responseId);
 				response = Response.ok().build();
@@ -2794,7 +2794,7 @@ public class ComponentRESTResource
 		responseExample.setResponseId(responseId);
 		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(ComponentQuestionResponse.class, responseExample);
 		if (questionResponse != null) {
-			response = ownerCheck(questionResponse);
+			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS);
 			if (response == null) {
 				questionResponseInput.setComponentId(componentId);
 				questionResponseInput.setQuestionId(questionId);
@@ -2906,7 +2906,7 @@ public class ComponentRESTResource
 		Response response = Response.ok().build();
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentReview.class, reviewId);
 			}
@@ -2915,7 +2915,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity
+	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
 	@APIDescription("Activate a review on  the specified component")
 	@Consumes(
 			{
@@ -2969,7 +2969,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				review.setComponentId(componentId);
 				review.setComponentReviewId(reviewId);
@@ -3028,7 +3028,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				review.setComponentId(componentId);
 				review.setReviewId(reviewId);
@@ -3151,7 +3151,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				ComponentReviewCon example = new ComponentReviewCon();
 				ComponentReviewConPk pk = new ComponentReviewConPk();
@@ -3179,7 +3179,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				ComponentReviewCon con = new ComponentReviewCon();
 				ComponentReviewConPk pk = new ComponentReviewConPk();
@@ -3285,7 +3285,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				ComponentReviewPro example = new ComponentReviewPro();
 				ComponentReviewProPk pk = new ComponentReviewProPk();
@@ -3314,7 +3314,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				ComponentReviewPro pro = new ComponentReviewPro();
 				ComponentReviewProPk pk = new ComponentReviewProPk();
@@ -3438,7 +3438,7 @@ public class ComponentRESTResource
 		example.setComponentId(componentId);
 		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(ComponentTag.class, new QueryByExample(example));
 		if (componentTag != null) {
-			response = ownerCheck(componentTag);
+			response = ownerCheck(componentTag, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 			if (response == null) {
 				service.getComponentService().deleteBaseComponent(ComponentTag.class, tagId);
 			}
@@ -3463,7 +3463,7 @@ public class ComponentRESTResource
 		ComponentTag tag = service.getPersistenceService().queryOneByExample(ComponentTag.class, new QueryByExample(componentTagExample));
 
 		if (tag != null) {
-			response = ownerCheck(tag);
+			response = ownerCheck(tag, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 			if (response == null) {
 				service.getComponentService().deleteBaseComponent(ComponentTag.class, tag.getTagId());
 				response = Response.ok().build();
@@ -4317,7 +4317,7 @@ public class ComponentRESTResource
 		component.setComponentId(componentId);
 		component = component.find();
 		if (component != null) {
-			response = ownerCheck(component);
+			response = ownerCheck(component, permission);
 			if (response == null) {
 				if (!SecurityUtil.hasPermission(permission)) {					
 					if (skipApproveCheck == false) {

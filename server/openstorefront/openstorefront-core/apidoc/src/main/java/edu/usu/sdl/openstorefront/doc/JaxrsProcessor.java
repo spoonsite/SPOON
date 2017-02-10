@@ -268,7 +268,7 @@ public class JaxrsProcessor
 				securityRestriction.getRoles().add(role);
 			}
 		}
-		securityRestriction.setLogicOperation(requireSecurity.logicCondition().name());
+		securityRestriction.setLogicOperation(requireSecurity.logicOperator().name());
 		if (requireSecurity.specialCheck() != null) {
 			try {
 				CustomRequireHandler requireHandler = requireSecurity.specialCheck().newInstance();

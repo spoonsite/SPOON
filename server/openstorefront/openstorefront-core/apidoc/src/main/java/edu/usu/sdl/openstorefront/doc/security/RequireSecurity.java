@@ -36,7 +36,7 @@ public @interface RequireSecurity
 	//Permissions
 	String[] value() default {};
 	String[] roles() default {};
-	LogicOperation logicCondition() default LogicOperation.AND;	
+	LogicOperation logicOperator() default LogicOperation.AND;	
 	Class<? extends CustomRequireHandler> specialCheck() default NoOpRequireHandler.class;		
 	
 }

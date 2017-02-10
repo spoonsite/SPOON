@@ -36,7 +36,7 @@ public class TraceInterceptor
 		implements WriterInterceptor
 {
 
-	private static final Logger log = Logger.getLogger(TraceInterceptor.class.getName());
+	private static final Logger LOG = Logger.getLogger(TraceInterceptor.class.getName());
 
 	@Context
 	HttpServletRequest request;
@@ -44,7 +44,7 @@ public class TraceInterceptor
 	@Override
 	public void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException
 	{
-		if (log.isLoggable(Level.FINEST)) {
+		if (LOG.isLoggable(Level.FINEST)) {
 			StringBuilder message = new StringBuilder();
 			message.append(request.getMethod()).append(" ");
 			if (StringUtils.isNotBlank(request.getQueryString())) {
@@ -52,7 +52,7 @@ public class TraceInterceptor
 			} else {
 				message.append(request.getRequestURL());
 			}
-			log.finest(message.toString());
+			LOG.finest(message.toString());
 		}
 		context.proceed();
 	}

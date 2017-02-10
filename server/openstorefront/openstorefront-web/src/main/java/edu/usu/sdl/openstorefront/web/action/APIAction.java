@@ -97,7 +97,7 @@ public class APIAction
 		resourceClasses.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
 		serviceClasses.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
 
-		return new ForwardResolution("/WEB-INF/securepages/api/main.jsp");
+		return new ForwardResolution("/WEB-INF/securepages/api/apidocmain.jsp");
 	}
 
 	@HandlesEvent("API")

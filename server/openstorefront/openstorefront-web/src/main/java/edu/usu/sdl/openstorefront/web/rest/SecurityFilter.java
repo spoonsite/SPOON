@@ -42,7 +42,7 @@ public class SecurityFilter
 		implements ContainerRequestFilter
 {
 
-	private static final Logger log = Logger.getLogger(SecurityFilter.class.getName());
+	private static final Logger LOG = Logger.getLogger(SecurityFilter.class.getName());
 
 	@Context
 	ResourceInfo resourceInfo;
@@ -82,9 +82,9 @@ public class SecurityFilter
 				}
 			}			
 			
-			if (null == requireSecurity.logicCondition()) {
+			if (null == requireSecurity.logicOperator()) {
 				throw new OpenStorefrontRuntimeException("Logic operation not supported.");
-			} else switch (requireSecurity.logicCondition()) {
+			} else switch (requireSecurity.logicOperator()) {
 				case OR:
 					if (requireSecurity.value().length > 0 && matchPermissions > 0) {
 						if (requireSecurity.roles().length > 0 && matchRoles > 0) {
@@ -126,7 +126,7 @@ public class SecurityFilter
 						.entity("User cannot access the resource.")
 						.build());
 			} else {
-				log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(httpServletRequest));
+				LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(httpServletRequest));
 			}
 		}
 	}

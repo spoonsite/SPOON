@@ -24,7 +24,10 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
+import edu.usu.sdl.openstorefront.doc.security.LogicOperation;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -153,7 +156,7 @@ public class MediaAction
 			Component component = service.getPersistenceService().findById(Component.class, componentMedia.getComponentId());
 			if (component != null) {
 				boolean allow = false;
-				if (SecurityUtil.isAdminUser()) {
+				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {					
 					allow = true;
 					log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 				} else if (SecurityUtil.isCurrentUserTheOwner(component)) {
@@ -253,39 +256,38 @@ public class MediaAction
 				.createRangeResolution();
 	}
 
+	@RequireSecurity(SecurityPermission.ADMIN_MEDIA)
 	@HandlesEvent("UploadGeneralMedia")
 	public Resolution uploadGeneralMedia()
 	{
 		Map<String, String> errors = new HashMap<>();
-		if (SecurityUtil.isAdminUser()) {
-			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
-			if (generalMedia != null) {
-				generalMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
-				generalMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
-				generalMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-				generalMedia.setOriginalFileName(StringProcessor.getJustFileName(file.getFileName()));
-				generalMedia.setMimeType(file.getContentType());
+		
+		log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+		if (generalMedia != null) {
+			generalMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
+			generalMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
+			generalMedia.setCreateUser(SecurityUtil.getCurrentUserName());
+			generalMedia.setOriginalFileName(StringProcessor.getJustFileName(file.getFileName()));
+			generalMedia.setMimeType(file.getContentType());
 
-				ValidationModel validationModel = new ValidationModel(generalMedia);
-				validationModel.setConsumeFieldsOnly(true);
-				ValidationResult validationResult = ValidationUtil.validate(validationModel);
-				if (validationResult.valid()) {
-					try {
-						service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream());
-					} catch (IOException ex) {
-						throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
-					} finally {
-						deleteUploadFile(file);
-					}
-				} else {
-					errors.put("file", validationResult.toHtmlString());
+			ValidationModel validationModel = new ValidationModel(generalMedia);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				try {
+					service.getSystemService().saveGeneralMedia(generalMedia, file.getInputStream());
+				} catch (IOException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+				} finally {
+					deleteUploadFile(file);
 				}
 			} else {
-				errors.put("generalMedia", "Missing general media information");
+				errors.put("file", validationResult.toHtmlString());
 			}
-			return streamUploadResponse(errors);
+		} else {
+			errors.put("generalMedia", "Missing general media information");
 		}
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+		return streamUploadResponse(errors);
 	}
 
 	@HandlesEvent("TemporaryMedia")
@@ -376,6 +378,11 @@ public class MediaAction
 		return streamUploadResponse(errors);
 	}
 	
+	@RequireSecurity(value={
+		SecurityPermission.ADMIN_ENTRY_MANAGEMENT,
+		SecurityPermission.ADMIN_EVALUATION_MANAGEMENT,
+		SecurityPermission.EVALUATIONS
+	}, logicOperator = LogicOperation.OR)
 	@HandlesEvent("UploadSectionMedia")
 	public Resolution uploadSectionMedia()
 	{
