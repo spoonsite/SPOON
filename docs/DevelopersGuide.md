@@ -38,7 +38,7 @@ The following key libraries were used in the development:
 
 -   Ext.js and tinymce
 
-##1.3 Dev Environment on Windows with NetBeans
+##1.3 Dev Environment with NetBeans
 
 1. **NetBeans Install/configuration**
   * Install NetBeans with Java EE and Tomcat - https://netbeans.org/downloads/
@@ -137,12 +137,12 @@ This guide is targeted at external developers who want to extend the application
 ##2.1 REST API
 
 The API document is directly reflected from the live code so it is always current for the running version of the application.
-The API documentation can be accessed by login in as an admin and following the link from the admin tools see application management.
+The API documentation can be accessed by logging in as an admin and following the link from the admin tools see application management.
 A print view of the API can be generated form there as well.
 
 ##2.2 Adding Custom Parser (Plugin)
 
-A custom parser may be need for handling complex formats that can't be support via data mapping.
+A custom parser may be needed for handling complex formats that can't be support via data mapping.
 In some cases, both a custom parser and data mapping may be required.
 
 1 - Create an OSGi bundle (you use a maven project)
