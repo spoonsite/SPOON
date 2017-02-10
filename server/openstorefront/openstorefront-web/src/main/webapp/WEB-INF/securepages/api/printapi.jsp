@@ -69,6 +69,36 @@
 		<br>
 		<span class="resource-admin">Requires Admin Privilege</span>	  
 	</c:if>	  
+		
+		<c:if test="${actionBean.resourceModel.securityRestriction != null}">
+			<br>		
+			<c:if test="${!empty actionBean.resourceModel.securityRestriction.permissions}">
+				<b>Permissions:</b>
+				<ul>							
+					<c:forEach var="permission" items="${actionBean.resourceModel.securityRestriction.permissions}">
+						<li>
+							${permission}
+						</li>
+					</c:forEach>
+				</ul>			
+			</c:if>
+			<c:if test="${!empty actionBean.resourceModel.securityRestriction.roles}">
+				<b>Roles:</b>
+				<ul>							
+					<c:forEach var="role" items="${actionBean.resourceModel.securityRestriction.roles}">
+						<li>
+							${role}
+						</li>
+					</c:forEach>
+				</ul>			
+			</c:if>	
+			<c:if test="${actionBean.resourceModel.securityRestriction.logicOperation != null && (actionBean.resourceModel.securityRestriction.permissions.size > 1 || actionBean.resourceModel.securityRestriction.roles.size > 1)}">
+				<b>Logic Operation:</b> ${actionBean.resourceModel.securityRestriction.logicOperation}<br>
+			</c:if>
+			<c:if test="${actionBean.resourceModel.securityRestriction.specialCheck != null}">
+				<b>Special Handling:</b> ${actionBean.resourceModel.securityRestriction.specialCheck}<br>
+			</c:if>
+		</c:if>	 		
 	
 	<h3>API Path: ${resourceModel.resourcePath}</h3>
 	<c:if test="${!empty resourceModel.methods}">
@@ -110,7 +140,7 @@
 		<table width="100%">
 			<tr>
 				<th style='text-align: center;'>Method</th>
-				<th style='text-align: center;'>Requires Admin</th>
+				<th style='text-align: center;'>Requires</th>
 				<th style='text-align: left;'>Description</th>
 				<th style='text-align: left;'>Path</th>
 				<th style='text-align: left;'>Parameters</th>				

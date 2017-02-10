@@ -126,7 +126,7 @@ public class APIAction
 		} catch (ClassNotFoundException ex) {
 			return new ErrorResolution(404, "resource not found");
 		}
-		return new ForwardResolution("/WEB-INF/securepages/api/apidetails.jsp");
+		return streamResults(resourceModel);
 	}
 
 	@HandlesEvent("Page")

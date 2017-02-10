@@ -99,10 +99,9 @@ public class UserWatchResource
 	@PUT
 	@APIDescription("Activates a set of watches")
 	@RequireSecurity(SecurityPermission.ADMIN_WATCHES)
-	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(UserWatchResource.class)
+	@Consumes({MediaType.APPLICATION_JSON})	
 	@Path("/activate")
-	public Response activateWatches(
+	public void activateWatches(
 			MultipleIds mulitpleIds
 	)
 	{
@@ -116,17 +115,15 @@ public class UserWatchResource
 					service.getUserService().saveWatch(userWatch);
 				}
 			}
-		}
-		return Response.ok().build();
+		}		
 	}
 
 	@PUT
 	@APIDescription("Inactivates a set of watches")
 	@RequireSecurity(SecurityPermission.ADMIN_WATCHES)
 	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(UserWatchResource.class)
 	@Path("/inactivate")
-	public Response inactivateWatches(
+	public void inactivateWatches(
 			MultipleIds mulitpleIds
 	)
 	{
@@ -140,8 +137,7 @@ public class UserWatchResource
 					service.getUserService().saveWatch(userWatch);
 				}
 			}
-		}
-		return Response.ok().build();
+		}		
 	}
 
 }

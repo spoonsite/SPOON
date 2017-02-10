@@ -108,6 +108,7 @@ public class ErrorTicketResource
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets an error ticket entity")
 	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ErrorTicket.class)
 	@Path("/{id}")
 	public Response getErrorTicket(
 			@PathParam("id")
@@ -139,11 +140,10 @@ public class ErrorTicketResource
 	@APIDescription("Deletes error tickets")
 	@Consumes({MediaType.APPLICATION_JSON})	
 	@DataType(MultipleIds.class)
-	public Response deleteErrorTickets(			
+	public void deleteErrorTickets(			
 			@RequiredParam MultipleIds multipleIds)
 	{
-		service.getSystemService().deleteErrorTickets(multipleIds.getIds());				
-		return Response.ok().build();
+		service.getSystemService().deleteErrorTickets(multipleIds.getIds());						
 	}
 
 }

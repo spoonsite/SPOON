@@ -24,7 +24,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
-		 <h1>Error Handling</h1>
+		 <h1 style="padding-bottom: 10px;">Error Handling</h1>
 		 <hr>
 		<h2>Common Application Success Codes</h2>	
 		Note: Redirection follows the HTTP protocols see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">HTTP codes</a><br>
@@ -97,7 +97,7 @@
 				</td>
 				<td>
 					The method specified in the Request-Line is not allowed for the resource identified by the Request-URI.
-					Also note, some method require the Admin role to accept the request.
+					Also note, some methods require the user to have the correct permissions before accepting the request.
 				</td>
 			</tr>			
 		</table>
