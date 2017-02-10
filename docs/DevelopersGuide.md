@@ -67,7 +67,7 @@ Install Maven if not installed by your IDE - http://maven.apache.org/install.htm
 
 run "mvn install" from \$PROJECT\_HOME/server/openstorefront
 
-(Skip tests) Mav -Dmaven.test.skip=true or -DskipTests=true install
+(Skip tests) mvn -Dmaven.test.skip=true or -DskipTests=true install
 
 
 ##1.5 Deploying
@@ -87,7 +87,11 @@ See [Setup](Setup.md)
 
 ##1.7 Testing
 
--   Unit tests run as part of the Maven install.
+-   Unit tests
+  * run as part of the Maven install.
+  * NetBeans, Eclipse and IntelliJ Idea have native graphical test runners built in.
+  * with the JUnit CLI java org.junit.runner.JUnitCore [class to test] http://junit.org/junit4/faq.html#atests_1
+
 
 -   Container/Integration tests login as admin go to
     <http://localhost:8080/openstorefront/test/ServiceTest.action>
