@@ -674,9 +674,149 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	color: white
 }
 
+.icon-button-color-run {
+	color: #FFA500;
+}
+
+.icon-button-color-refresh {
+	color: #64B647;
+}
+
+.icon-button-color-add {
+	color: #167DEE;
+}
+
+.icon-button-color-edit {
+	color: #2E27D9;
+}
+
+.icon-button-color-toggle-status {
+	color: #4a4e4f;
+}
+
+.icon-button-color-delete {
+	color: #a94442; 
+}
+
+.icon-button-color-view {
+	color: #0d4577;
+}
+
+.icon-button-color-review {
+	color: #FBD90E;
+}
+
+.icon-button-color-pause {
+	color: #4a4e4f;
+
+}
+
+.icon-button-color-stop {
+	color: #4a4e4f;
+
+}
+
+.icon-button-color-eraser {
+	color: #4a4e4f;
+}
+
+.icon-button-color-gray {
+	color: #4a4e4f;
+}
+
 /* For icons that don't vertically center for cryptic reasons **/
 .icon-vertical-correction {
 	margin-top: -5px;
+}
+
+icon-vertical-correction {
+	position: relative;
+	left: -5px;
+	top: -3px;
+}
+
+.icon-vertical-correction-send {
+	position: relative;
+	right: 10px;
+	bottom: 3px;
+}
+
+.icon-vertical-correction-view {
+	position: relative;
+	right: 5px;
+	bottom: 2px;
+}
+
+.icon-vertical-correction-edit {
+	position: relative;
+	right: 4px;
+	bottom: 1px;
+}
+
+.icon-vertical-correction-add {
+	position: relative;
+	bottom: 1px;
+}
+
+.icon-small-vertical-correction {
+	margin-top: 5px;
+}
+
+.icon-small-vertical-correction-media-table{
+	position: relative;
+	top: 2px;
+}
+
+.icon-small-vertical-correction-book {
+	margin-top: 3px;
+}
+
+.icon-horizontal-correction {
+	margin-left: -3px;
+}
+
+.icon-small-horizontal-correction-left {
+	margin-left: 5px;
+}
+
+.icon-vertical-correction-eraser {
+	position: relative;
+	right: 5px;
+	bottom: 2px;
+}
+
+.icon-vertical-correction-search-tools {
+
+	position: relative;
+	right: 4px;
+	bottom: 6px;
+}
+
+.alerts-option-items {
+
+	border: 1px solid #A5A7A7;
+	border-radius: 5px;
+	padding: 3px;
+	margin-left: 6px;
+	line-height: 1.9em;
+	background-color: #949494;
+	color: white;
+}
+
+.menu-items-css {
+
+	padding-right: 1.8em;
+}
+
+.label-text-bold {
+
+	font-weight: bold;
+}
+
+.updated-watch {
+	
+	font-weight: bold;
+	float: right;
 }
 
 /* For displaying tables pasted in from Confluence */

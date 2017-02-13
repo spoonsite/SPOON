@@ -210,7 +210,7 @@
 									xtype: 'button',
 									text: 'Add',
 									formBind: true,
-									iconCls: 'fa fa-plus',
+									iconCls: 'fa fa-lg fa-plus',
 									handler: function(){
 										actionAddTag(this.up('form'), Ext.getCmp('tagGrid'));
 									}
@@ -222,7 +222,7 @@
 							items: [							
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-refresh',
+									iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 									handler: function(){
 										this.up('grid').getStore().reload();
 									}
@@ -231,9 +231,9 @@
 									xtype: 'tbfill'
 								},
 								{
-									text: 'Remove',
+									text: 'Delete',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-trash',									
+									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('tagGrid'), 'tagId', 'tags');
@@ -326,18 +326,18 @@
 								}, 
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-refresh',
+									iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 									handler: function(){
 										this.up('grid').getStore().reload();
 									}
 								},
 								{
-									xtype: 'tbfill'
+									xtype: 'tbseparator'
 								},
 								{
 									text: 'ToggleStatus',
 									itemId: 'statusToggleBtn',
-									iconCls: 'fa fa-power-off',
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('questionGrid'), 'questionId', 'questions');
@@ -414,7 +414,7 @@
 										{
 											text: 'ToggleStatus',
 											itemId: 'statusToggleBtn',
-											iconCls: 'fa fa-power-off',
+											iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',
 											disabled: true,
 											handler: function(){
 												actionSubComponentToggleStatus(this.up('grid'), 'questionId', 'questions', 'responseId', 'responses');
@@ -522,18 +522,18 @@
 								}, 
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-refresh',
+									iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 									handler: function(){
 										this.up('grid').getStore().reload();
 									}
 								},
 								{
-									xtype: 'tbfill'
+									xtype: 'tbseparator'
 								},
 								{
 									text: 'ToggleStatus',
 									itemId: 'statusToggleBtn',
-									iconCls: 'fa fa-power-off',
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('reviewGrid'), 'reviewId', 'reviews');
@@ -585,13 +585,14 @@
 								}
 							}
 						},
-						{ text: 'Score', dataIndex: 'actualScore', width: 200, 
+						{ text: 'Score', dataIndex: 'actualScore', width: 100, align: 'center', 
 							xtype: 'widgetcolumn',
 							widget: {
 								xtype: 'numberfield',
 								minValue: 1,
 								maxValue: 5,
 								step: .5,
+								fieldStyle: 'text-align: left;',
 								decimalPrecision: 1,
 								listeners: {
 									afterrender: function(field){
@@ -611,7 +612,7 @@
 						{ text: 'Existing', align: 'center', dataIndex: 'existing', width: 150,
 							renderer: function(value) {
 								if (value) {
-									return "<i class='fa fa-check'></i>";
+									return "<i class='fa fa-lg fa-check'></i>";
 								} else {
 									return "";
 								}
@@ -626,7 +627,7 @@
 						 width: 75,               
 						 widget: {
 						   xtype: 'button',
-						   iconCls: 'fa fa-trash',
+						   iconCls: 'fa fa-lg fa-trash',
 						   maxWidth: 25,						   
 						   handler: function() {
 							 var record = this.getWidgetRecord();
@@ -656,7 +657,7 @@
 							items: [
 								{
 									text: 'Save All',
-									iconCls: 'fa fa-save',
+									iconCls: 'fa fa-lg fa-save icon-button-color-add',
 									handler: function(){
 										var componentId = Ext.getCmp('evaluationGrid').componentRecord.get('componentId');
 										var records = this.up('grid').getStore().getData();
@@ -695,7 +696,7 @@
 								},
 								{
 									text: 'Clear All Sections',
-									iconCls: 'fa fa-trash',									
+									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',									
 									handler: function(){			
 										Ext.Msg.show({
 											title:'Clear All Sections?',
@@ -846,7 +847,7 @@
 									text: 'Save',
 									formBind: true,
 									margin: '0 20 0 0',
-									iconCls: 'fa fa-save',
+									iconCls: 'fa fa-lg fa-save',
 									handler: function(){	
 										var form = this.up('form');
 										var data = form.getValues();
@@ -874,7 +875,7 @@
 								{
 									xtype: 'button',
 									text: 'Cancel',										
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close',
 									handler: function(){
 										this.up('form').reset();
 									}									
@@ -955,7 +956,7 @@
 								}, 								
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-refresh',
+									iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 									handler: function(){
 										this.up('grid').getStore().reload();
 									}
@@ -966,18 +967,18 @@
 								{
 									text: 'Edit',
 									itemId: 'editBtn',									
-									iconCls: 'fa fa-edit',
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 									handler: function(){
 										this.up('grid').down('form').loadRecord(Ext.getCmp('metadataGrid').getSelection()[0]);
 									}									
 								},
 								{
-									xtype: 'tbfill'
+									xtype: 'tbseparator'
 								},
 								{
 									text: 'Toggle Status',
 									itemId: 'toggleStatusBtn',
-									iconCls: 'fa fa-power-off',									
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('metadataGrid'), 'metadataId', 'metadata');
@@ -1058,7 +1059,7 @@
 									text: 'Save',
 									formBind: true,
 									margin: '0 20 0 0',
-									iconCls: 'fa fa-save',
+									iconCls: 'fa fa-lg fa-save',
 									handler: function(){	
 										var form = this.up('form');
 										var data = form.getValues();
@@ -1086,7 +1087,7 @@
 								{
 									xtype: 'button',
 									text: 'Cancel',										
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close',
 									handler: function(){
 										this.up('form').reset();
 									}									
@@ -1154,7 +1155,7 @@
 								}, 								
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-refresh',
+									iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 									handler: function(){
 										this.up('grid').getStore().reload();
 									}
@@ -1165,19 +1166,19 @@
 								{
 									text: 'Edit',
 									itemId: 'editBtn',
-									iconCls: 'fa fa-edit',
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 									handler: function(){
 										this.up('grid').down('form').reset();
 										this.up('grid').down('form').loadRecord(Ext.getCmp('dependenciesGrid').getSelection()[0]);
 									}									
 								},
 								{
-									xtype: 'tbfill'
+									xtype: 'tbseparator'
 								},
 								{
 									text: 'Toggle Status',
 									itemId: 'toggleStatusBtn',
-									iconCls: 'fa fa-power-off',									
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('dependenciesGrid'), 'dependencyId', 'dependencies');
@@ -1211,7 +1212,7 @@
 								text: 'Save',
 								formBind: true,
 								margin: '0 20 0 0',
-								iconCls: 'fa fa-save',
+								iconCls: 'fa fa-lg fa-save',
 								handler: function(){	
 									var mainForm = this.up('form');
 									var data = mainForm.getValues();
@@ -1289,7 +1290,7 @@
 							{
 								xtype: 'button',
 								text: 'Cancel',										
-								iconCls: 'fa fa-close',
+								iconCls: 'fa fa-lg fa-close',
 								handler: function(){
 									this.up('form').reset();
 									this.up('form').getComponent('upload').setFieldLabel('Upload Media (Limit 1GB)');
@@ -1355,7 +1356,7 @@
 							},
 							{
 								xtype: 'checkbox',
-								fieldLabel: 'Used Inline <i class="fa fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline refereence in the description." ></i>',
+								fieldLabel: 'Used Inline <i class="fa fa-lg fa-question-circle"  data-qtip="Check this box if you intend to use this media inline in a description. If selected, you will be warned later when attempting to delete the media to also delete the inline refereence in the description." ></i>',
 								name: 'usedInline'
 							},
 							Ext.create('OSF.component.SecurityComboBox', {	
@@ -1458,7 +1459,7 @@
 								}, 								
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-refresh',
+									iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 									handler: function(){
 										this.up('grid').getStore().reload();
 									}
@@ -1469,7 +1470,7 @@
 								{
 									text: 'Edit',
 									itemId: 'editBtn',
-									iconCls: 'fa fa-edit',
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 									handler: function(){
 										var record = Ext.getCmp('mediaGrid').getSelection()[0];
 										this.up('grid').down('form').reset();
@@ -1482,30 +1483,30 @@
 									}									
 								},
 								{
-									xtype: 'tbfill'
+									xtype: 'tbseparator'
 								},
 								{
 									text: 'Toggle Status',
 									itemId: 'toggleStatusBtn',
-									iconCls: 'fa fa-power-off',									
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-correction',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('mediaGrid'), 'componentMediaId', 'media');
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbfill'
 								},
 								{
-									text: 'Remove',
+									text: 'Delete',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-trash',
+									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',
 									disabled: true,
 									handler: function(){
 										var record = Ext.getCmp('mediaGrid').getSelection()[0];
 										if (record.get('usedInline')) {
 											var msg = 'This media has been marked as being used inline. This means that the media is being used in a description, etc. ';
-											msg += 'If you delete this media, that reference will no longer be valid and the media will not be available where it is referenced elsewhere.';
+											msg += 'If you delete this media, that reference will no longer be valid and the media will not be available where it is referenced.';
 											msg += '<br><br>Do you still wish to delete this media?';
 											Ext.Msg.confirm('Media Used Inline', msg, function (btn) { 
 												if (btn ==='yes') {
@@ -1544,7 +1545,7 @@
 								text: 'Save',
 								formBind: true,
 								margin: '0 20 0 0',
-								iconCls: 'fa fa-save',
+								iconCls: 'fa fa-lg fa-save',
 								handler: function(){	
 									var form = this.up('form');
 									var data = form.getValues();
@@ -1620,7 +1621,7 @@
 							{
 								xtype: 'button',
 								text: 'Cancel',										
-								iconCls: 'fa fa-close',
+								iconCls: 'fa fa-lg fa-close',
 								handler: function(){
 									this.up('form').reset();
 									this.up('form').getComponent('upload').setFieldLabel('Upload Resource (Limit 1GB)');
@@ -1782,7 +1783,7 @@
 								}, 								
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-refresh',
+									iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 									handler: function(){
 										this.up('grid').getStore().reload();
 									}
@@ -1793,7 +1794,7 @@
 								{
 									text: 'Edit',
 									itemId: 'editBtn',
-									iconCls: 'fa fa-edit',
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 									handler: function(){
 										var record = Ext.getCmp('resourcesGrid').getSelection()[0];
 										this.up('grid').down('form').reset();
@@ -1806,24 +1807,24 @@
 									}									
 								},
 								{
-									xtype: 'tbfill'
+									xtype: 'tbseparator'
 								},
 								{
 									text: 'Toggle Status',
 									itemId: 'toggleStatusBtn',
-									iconCls: 'fa fa-power-off',									
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('resourcesGrid'), 'resourceId', 'resources');
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbfill'
 								},
 								{
-									text: 'Remove',
+									text: 'Delete',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-trash',																		
+									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',																		
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('resourcesGrid'), 'resourceId', 'resources', undefined, undefined, true);
@@ -1914,7 +1915,7 @@
 									text: 'Save',
 									formBind: true,
 									margin: '0 20 0 0',
-									iconCls: 'fa fa-save',
+									iconCls: 'fa fa-lg fa-save',
 									handler: function(){	
 										var form = this.up('form');
 										var data = form.getValues();
@@ -1942,7 +1943,7 @@
 								{
 									xtype: 'button',
 									text: 'Cancel',										
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close',
 									handler: function(){
 										this.up('form').reset();
 									}									
@@ -2087,7 +2088,7 @@
 								}, 								
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-refresh',
+									iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 									handler: function(){
 										this.up('grid').getStore().reload();
 									}
@@ -2098,36 +2099,36 @@
 								{
 									text: 'Edit',
 									itemId: 'editBtn',
-									iconCls: 'fa fa-edit',
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 									handler: function(){
 										this.up('grid').down('form').reset();
 										this.up('grid').down('form').loadRecord(Ext.getCmp('contactGrid').getSelection()[0]);
 									}									
 								},
 								{
-									xtype: 'tbfill'
+									xtype: 'tbseparator'
 								},
 								{
 									text: 'Toggle Status',
 									itemId: 'toggleStatusBtn',
-									iconCls: 'fa fa-power-off',									
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('contactGrid'), 'componentContactId', 'contacts');
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbfill'
 								},
 								{
-									text: 'Remove',
+									text: 'Delete',
 									itemId: 'delete',
-									iconCls: 'fa fa-trash-o',									
+									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',									
 									disabled: true,
 									handler: function(){
 										
 										Ext.Msg.show({
-											title:'Remove Contact?',
+											title:'Delete Contact?',
 											message: 'Are you sure you want to delete the contact from this entry?',
 											buttons: Ext.Msg.YESNO,
 											icon: Ext.Msg.QUESTION,
@@ -2211,7 +2212,7 @@
 									text: 'Save',
 									formBind: true,
 									margin: '0 20 0 0',
-									iconCls: 'fa fa-save',
+									iconCls: 'fa fa-lg fa-save',
 									handler: function(){	
 										var form = this.up('form');
 										var data = form.getValues();
@@ -2239,7 +2240,7 @@
 								{
 									xtype: 'button',
 									text: 'Cancel',										
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close',
 									handler: function(){
 										this.up('form').reset();
 									}									
@@ -2309,7 +2310,7 @@
 							items: [						
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-refresh',
+									iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 									handler: function(){
 										this.up('grid').getStore().reload();
 									}
@@ -2318,9 +2319,9 @@
 									xtype: 'tbfill'
 								},
 								{
-									text: 'Remove',
+									text: 'Delete',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-trash',								
+									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',								
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('relationshipsGrid'), 'relationshipId', 'relationships');
@@ -2394,7 +2395,7 @@
 									text: 'Save',
 									formBind: true,
 									margin: '0 20 0 0',
-									iconCls: 'fa fa-save',
+									iconCls: 'fa fa-lg fa-save',
 									handler: function(){	
 										var form = this.up('form');
 										var data = form.getValues();
@@ -2423,7 +2424,7 @@
 								{
 									xtype: 'button',
 									text: 'Cancel',										
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close',
 									handler: function(){
 										this.up('form').reset();
 									}									
@@ -2503,29 +2504,32 @@
 								}, 								
 								{
 									text: 'Refresh',
-									iconCls: 'fa fa-refresh',
+									iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 									handler: function(){
 										loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
 									}
 								},								
 								{
-									xtype: 'tbfill'
+									xtype: 'tbseparator'
 								},
 								{
 									text: 'Toggle Status',
 									itemId: 'toggleStatusBtn',
-									iconCls: 'fa fa-power-off',									
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('attributeGrid'), 'type', 'attributes', 'code', null, null, function(){
 											loadComponentAttributes(Ext.getCmp('attributeFilterActiveStatus').getValue());
 										});
 									}
-								},								
+								},
 								{
-									text: 'Remove',
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Delete',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-trash',									
+									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('attributeGrid'), 'type', 'attributes', 'code', null, true, function(){
@@ -2735,7 +2739,7 @@
 								},
 								{
 									text: 'Message Submitter',
-									iconCls: 'fa fa-envelope',
+									iconCls: 'fa fa-lg fa-envelope',
 									handler: function() {
 										
 										//get submiter  
@@ -2761,7 +2765,7 @@
 								{
 									text: 'Integration',
 									id: 'integrationBtn',
-									iconCls: 'fa fa-gear',
+									iconCls: 'fa fa-lg fa-gear icon-small-vertical-correction',
 									disabled: true,
 									handler: function() {
 										integrationWindow.show();
@@ -2777,7 +2781,7 @@
 								{
 									text: 'Save',
 									tooltip: 'Save General information and continue.',
-									iconCls: 'fa fa-save',
+									iconCls: 'fa fa-lg fa-save icon-button-color-add',
 									formBind: true,
 									handler: function() {
 										
@@ -2902,7 +2906,7 @@
 								{
 									text: 'Done',
 									tooltip: 'Close Add/Edit window',
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-check icon-button-color-refresh',
 									handler: function() {
 										this.up('window').close();
 									}													
@@ -3214,7 +3218,7 @@
 							items: [
 								{
 									text: 'Restore',
-									iconCls: 'fa fa-reply',
+									iconCls: 'fa fa-lg fa-reply',
 									handler: function(){
 										this.up('window').hide();
 										
@@ -3245,7 +3249,7 @@
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close',
 									handler: function(){
 										this.up('window').hide();
 									}									
@@ -3307,7 +3311,7 @@
 								{
 									text: 'Restore',
 									id: 'versionWin-tool-restoreBtn',
-									iconCls: 'fa fa-reply',
+									iconCls: 'fa fa-lg fa-reply icon-button-color-refresh',
 									disabled: true,
 									handler: function(){
 										//prompt
@@ -3319,7 +3323,7 @@
 								}, 
 								{
 									text: 'Close',
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 									handler: function(){
 										this.up('window').hide();
 									}
@@ -3402,7 +3406,7 @@
 									items: [
 										{
 											text: 'Create Snapshot',
-											iconCls: 'fa fa-plus',
+											iconCls: 'fa fa-lg fa-plus icon-button-color-add icon-small-vertical-correction',
 											tooltip: 'Creates snapshot of the current verison',
 											handler: function(){
 												var versionWin = this.up('window');
@@ -3425,9 +3429,9 @@
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
+											text: 'Delete',
 											id: 'versionWin-tool-removeBtn',
-											iconCls: 'fa fa-trash',											
+											iconCls: 'fa fa-lg fa-trash icon-button-color-delete',											
 											disabled: true,
 											handler: function(){
 												var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
@@ -3442,7 +3446,7 @@
 													icon: Ext.Msg.QUESTION,
 													fn: function(btn) {
 														if (btn === 'yes') {
-															versionWin.setLoading('Removing version...');
+															versionWin.setLoading('Deleting version...');
 															Ext.Ajax.request({
 																url: 'api/v1/resource/components/' + componentId + '/versionhistory/' + versionHistoryId,
 																method: 'DELETE',
@@ -3527,7 +3531,7 @@
 								{
 									text: 'Previous',
 									id: 'previewWinTools-previousBtn',
-									iconCls: 'fa fa-arrow-left',									
+									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-stop',									
 									handler: function() {
 										actionPreviewNextRecord(false);
 									}									
@@ -3537,7 +3541,7 @@
 								},
 								{
 									text: 'Close',
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 									handler: function() {
 										this.up('window').hide();
 									}
@@ -3548,7 +3552,7 @@
 								{
 									text: 'Next',
 									id: 'previewWinTools-nextBtn',
-									iconCls: 'fa fa-arrow-right',
+									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-stop',
 									iconAlign: 'right',
 									handler: function() {
 										actionPreviewNextRecord(true);
@@ -3585,7 +3589,7 @@
 				var changeOwnerWin = Ext.create('Ext.window.Window', {
 					id: 'changeOwnerWin',
 					title: 'Change Owner - ',
-					iconCls: 'fa fa-user',
+					iconCls: 'fa fa-lg fa-user',
 					width: '35%',
 					height: 175,
 					y: 200,
@@ -3633,7 +3637,7 @@
 										{
 											text: 'Update',
 											formBind: true,
-											iconCls: 'fa fa-save',
+											iconCls: 'fa fa-lg fa-save icon-button-color-add',
 											handler: function(){
 												
 												// Get Selection
@@ -3706,7 +3710,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 											handler: function(){
 												this.up('window').close();
 											}
@@ -3722,7 +3726,7 @@
 				var changeTypeWin = Ext.create('Ext.window.Window', {
 					id: 'changeTypeWin',
 					title: 'Change Type - ',
-					iconCls: 'fa fa-user',
+					iconCls: 'fa fa-lg fa-user',
 					width: '35%',
 					height: 175,
 					y: 200,
@@ -3764,7 +3768,7 @@
 										{
 											text: 'Update',
 											formBind: true,
-											iconCls: 'fa fa-save',
+											iconCls: 'fa fa-lg fa-save icon-button-color-add',
 											handler: function(){
 												
 												// Get Selection
@@ -3847,7 +3851,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 											handler: function(){
 												this.up('window').close();
 											}
@@ -3998,7 +4002,7 @@
 				
 				var mergeComponentWin = Ext.create('Ext.window.Window', {
 					id: 'mergeComponentWin',
-					title: 'Merge <i class="fa fa-question-circle"  data-qtip="This merges entry to target. <br> Meaning target will contain merged entry\'s information and merged entry will be deleted." ></i>',
+					title: 'Merge <i class="fa fa-lg fa-question-circle"  data-qtip="This merges entry to target. <br> Meaning target will contain merged entry\'s information and merged entry will be deleted." ></i>',
 					width: '40%',
 					height: 260,
 					modal: true,
@@ -4020,7 +4024,7 @@
 										{
 											text: 'Merge',
 											formBind: true,
-											iconCls: 'fa fa-exchange',
+											iconCls: 'fa fa-lg fa-exchange',
 											handler: function() {
 												
 												var mergeForm = this.up('form');
@@ -4052,7 +4056,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 											handler: function() {
 												this.up('window').hide();
 											}																						
@@ -4090,7 +4094,7 @@
 				});				
 				
 				var componentGrid = Ext.create('Ext.grid.Panel', {	
-					title: 'Manage Entries <i class="fa fa-question-circle"  data-qtip="This tool allows for manipulating all data related to an entry" ></i>',
+					title: 'Manage Entries <i class="fa fa-lg fa-question-circle"  data-qtip="This tool allows for manipulating all data related to an entry" ></i>',
 					id: 'componentGrid',
 					store: maingridStore,
 					columnLines: true,				
@@ -4206,6 +4210,7 @@
 									valueField: 'componentType',
 									displayField: 'label',
 									typeAhead: false,
+									matchFieldWidth: false,
 									editable: false,
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
@@ -4236,7 +4241,7 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										actionRefreshComponentGrid();
 									}
@@ -4247,19 +4252,18 @@
 								{
 									text: 'Add',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
 									handler: function () {
 										actionAddEditComponent();
 									}
-								},
-								{
-									xtype: 'tbseparator'
 								}, 								
 								{
 									text: 'Edit',
 									id: 'lookupGrid-tools-edit',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-edit',
+									scale: 'medium',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-view',
 									disabled: true,
 									handler: function () {
 										actionAddEditComponent(Ext.getCmp('componentGrid').getSelection()[0]);
@@ -4268,8 +4272,9 @@
 								{
 									text: 'View',
 									id: 'lookupGrid-tools-preview',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-binoculars',
+									scale: 'medium',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									disabled: true,
 									handler: function () {
 										actionPreviewComponent(Ext.getCmp('componentGrid').getSelection()[0].get('componentId'));
@@ -4282,7 +4287,7 @@
 									text: 'Approve',
 									id: 'lookupGrid-tools-approve',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-check',
+									iconCls: 'fa fa-2x fa-check icon-button-color-refresh icon-vertical-correction',
 									disabled: true,
 									handler: function () {									
 										actionApproveComponent();
@@ -4296,14 +4301,14 @@
 									menu: [
 										{
 											text: 'Change Owner',											
-											iconCls: 'fa fa-user',
+											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction',
 											handler: function(){
 												actionChangeOwner();
 											}
 										},
 										{
 											text: 'Change Type',											
-											iconCls: 'fa fa-user',
+											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction',
 											handler: function(){
 												actionChangeType();
 											}
@@ -4311,7 +4316,7 @@
 										{
 											id: 'lookupGrid-tools-action-changeRequests',
 											text: 'Change Requests',																		
-											iconCls: 'fa fa-edit',
+											iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 											handler: function () {												
 												actionChangeRequests(Ext.getCmp('componentGrid').getSelection()[0]);
 											}
@@ -4322,7 +4327,7 @@
 										{
 											id: 'lookupGrid-tools-action-copy',
 											text: 'Copy',											
-											iconCls: 'fa fa-copy',
+											iconCls: 'fa fa-lg fa-copy icon-small-vertical-correction',
 											handler: function(){
 												actionCopyComponent();
 											}
@@ -4330,7 +4335,7 @@
 										{
 											id: 'lookupGrid-tools-action-merge',
 											text: 'Merge',
-											iconCls: 'fa fa-exchange',
+											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction',
 											handler: function(){
 												actionMergeComponent();
 											}
@@ -4338,7 +4343,7 @@
 										{
 											id: 'lookupGrid-tools-action-versions',
 											text: 'Versions',
-											iconCls: 'fa fa-object-ungroup',
+											iconCls: 'fa fa-lg fa-object-ungroup icon-small-vertical-correction',
 											handler: function(){
 												actionVersions();
 											}
@@ -4348,7 +4353,7 @@
 										},
 										{
 											text: 'Toggle Status',
-											iconCls: 'fa fa-power-off',
+											iconCls: 'fa fa-lg fa-power-off icon-small-vertical-correction',
 											handler: function(){
 												actionToggleStatus();
 											}
@@ -4359,7 +4364,7 @@
 										{
 											text: 'Delete',
 											cls: 'alert-danger',
-											iconCls: 'fa fa-trash',
+											iconCls: 'fa fa-lg fa-trash icon-small-vertical-correction',
 											handler: function() {
 												actionDeleteComponent();
 											}											
@@ -4371,15 +4376,13 @@
 								},
 								{
 									text: 'Import',
-									iconCls: 'fa fa-2x fa-upload',
+									iconCls: 'fa fa-2x fa-upload icon-vertical-correction-view',
 									scale: 'medium',
+									width: '110px',
 									handler: function () {
 										importWindow.show();
 									}
 								},	
-								{
-									xtype: 'tbseparator'
-								},
 								{
 									text: 'Export',
 									id: 'lookupGrid-tools-export',

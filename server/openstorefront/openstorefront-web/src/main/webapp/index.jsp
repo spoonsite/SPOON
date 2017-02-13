@@ -273,12 +273,11 @@
 										},
 										{
 											xtype: 'button',
-											text: '<span style="font-size: 10px;">Search Tools</span>',																		
-											iconCls: 'fa fa-2x fa-search-plus icon-top-padding',
-											iconAlign: 'top',
+											text: '<span style="font-size: 12px; margin-left: 2px;">Search Tools</span>',																		
+											iconCls: 'fa fa-2x fa-search-plus icon-vertical-correction-search-tools',
 											margin: '0 0 0 10',
 											style: 'border-radius: 3px 3px 3px 3px;',											
-											width: 100,
+											width: 130,
 											handler: function(){
 												searchtoolsWin.show();
 											}

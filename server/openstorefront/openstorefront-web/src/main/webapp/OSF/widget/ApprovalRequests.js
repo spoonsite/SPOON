@@ -158,8 +158,10 @@ Ext.define('OSF.widget.ApprovalRequests', {
 					items: [
 						{
 							text: 'Preview Request',
+							scale: 'medium',
 							itemId: 'preview',
-							iconCls: 'fa fa-binoculars',
+							width: '180px',
+							iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 							disabled: true,
 							handler: function() {
 								var record = approvalPanel.grid.getSelectionModel().getSelection()[0];

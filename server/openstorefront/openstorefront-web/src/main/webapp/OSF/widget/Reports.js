@@ -101,7 +101,8 @@ Ext.define('OSF.widget.Reports', {
 							text: 'View',
 							scale: 'medium',
 							itemId: 'historyViewButton',
-							iconCls: 'fa fa-2x fa-eye',
+							width: '100px',
+							iconCls: 'fa fa-2x fa-eye icon-vertical-correction-view icon-button-color-view',
 							disabled: true,
 							handler: function () {
 								var grid = this.up('grid');

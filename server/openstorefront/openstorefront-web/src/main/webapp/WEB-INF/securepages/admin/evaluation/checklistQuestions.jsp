@@ -52,7 +52,8 @@
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-2x fa-save text-success',
+										iconCls: 'fa fa-2x fa-save icon-button-color-add icon-vertical-correction-edit',
+										width: '110px',
 										scale: 'medium',
 										handler: function() {
 											var form = this.up('form');
@@ -62,7 +63,7 @@
 											//check question
 											if (!data.question) {
 												Ext.Msg.show({
-													title:'Validtion',
+													title:'Validation',
 													message: 'A question is required.',
 													buttons: Ext.Msg.OK,
 													icon: Ext.Msg.ERROR,
@@ -99,7 +100,7 @@
 									},
 									{
 										text: 'Cancel',									
-										iconCls: 'fa fa-2x fa-close text-danger',
+										iconCls: 'fa fa-2x fa-close icon-button-color-delete icon-vertical-correction',
 										scale: 'medium',
 										handler: function() {
 											this.up('window').close();
@@ -316,8 +317,9 @@
 						items: [
 							{
 								text: 'Refresh',
-								iconCls: 'fa fa-2x fa-refresh',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction-edit',
 								scale: 'medium',
+								width: '110px',
 								handler: function(){
 									actionRefreshQuestion();
 								}
@@ -327,40 +329,43 @@
 							},
 							{
 								text: 'Add',
-								iconCls: 'fa fa-2x fa-plus text-success',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-add',
 								scale: 'medium',
+								width: '100px',
 								handler: function(){
 									actionAddEditQuestion();
 								}
-							},	
-							{
-								text: 'View',
-								iconCls: 'fa fa-2x fa-eye text-info',
-								itemId: 'view',
-								disabled: true,									
-								scale: 'medium',
-								handler: function(){
-									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
-									actionViewQuestion(record);
-								}
-							},							
+							},
 							{
 								text: 'Edit',
-								iconCls: 'fa fa-2x fa-edit',
+								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 								itemId: 'edit',
 								disabled: true,									
 								scale: 'medium',
+								width: '100px',
 								handler: function(){
 									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
 									actionAddEditQuestion(record);
 								}
-							},						
+							},
+							{
+								text: 'View',
+								iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
+								itemId: 'view',
+								disabled: true,									
+								scale: 'medium',
+								width: '100px',
+								handler: function(){
+									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
+									actionViewQuestion(record);
+								}
+							},												
 							{
 								xtype: 'tbseparator'
 							},
 							{
 								text: 'Toggle Status',
-								iconCls: 'fa fa-2x fa-power-off text-warning',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
@@ -374,7 +379,7 @@
 							},
 							{
 								text: 'Import',
-								iconCls: 'fa fa-2x fa-upload',
+								iconCls: 'fa fa-2x fa-upload icon-button-color-toggle-status icon-vertical-correction',
 								scale: 'medium',
 								handler: function(){
 									actionImport();
@@ -382,7 +387,7 @@
 							},
 							{
 								text: 'Export',
-								iconCls: 'fa fa-2x fa-download',
+								iconCls: 'fa fa-2x fa-download icon-button-color-toggle-status',
 								scale: 'medium',
 								handler: function(){
 									actionExport();
@@ -393,7 +398,7 @@
 							},							
 							{
 								text: 'Delete',
-								iconCls: 'fa fa-2x fa-close text-danger',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
 								itemId: 'delete',
 								disabled: true,																
 								scale: 'medium',
@@ -476,7 +481,7 @@
 								{
 									text: 'Previous',
 									itemId: 'viewWinTools-previousBtn',
-									iconCls: 'fa fa-2x fa-arrow-left',
+									iconCls: 'fa fa-2x fa-arrow-left icon-button-color-stop icon-vertical-correction',
 									scale: 'medium',
 									handler: function() {
 										actionPreviewNextRecord(false);
@@ -487,7 +492,7 @@
 								},
 								{
 									text: 'Close',
-									iconCls: 'fa fa-2x fa-close',
+									iconCls: 'fa fa-2x fa-close icon-button-color-delete icon-vertical-correction',
 									scale: 'medium',
 									handler: function() {
 										viewWin.close();
@@ -499,7 +504,7 @@
 								{
 									text: 'Next',
 									itemId: 'viewWinTools-nextBtn',
-									iconCls: 'fa fa-2x fa-arrow-right',
+									iconCls: 'fa fa-2x fa-arrow-right icon-button-color-stop icon-vertical-correction',
 									iconAlign: 'right',
 									scale: 'medium',
 									handler: function() {
@@ -562,7 +567,7 @@
 						var references = response.responseText;
 
 						if (references && references !== 'false') {
-							Ext.Msg.alert('Existing References', 'Unable to delete; Remove evaluation repsonses and checklist templates first.');
+							Ext.Msg.alert('Existing References', 'Unable to delete; Delete evaluation repsonses and checklist templates first.');
 						} else {
 							Ext.Msg.show({
 								title:'Delete Question?',

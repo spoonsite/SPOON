@@ -175,7 +175,8 @@
 								actionLoadContent('User-Profiles');
 							}							
 						}
-					]
+					],
+					width: '150px',
 				}
 			});
 			
@@ -214,7 +215,8 @@
 								actionLoadContent('Section-Templates');
 							}							
 						}											
-					]
+					],
+					width: '200px',
 				}
 			});
 

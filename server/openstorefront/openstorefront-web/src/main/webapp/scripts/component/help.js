@@ -99,7 +99,7 @@ Ext.define('OSF.component.HelpPanel', {
 					items: [
 						{
 							text: 'Print',
-							iconCls: 'fa fa-print',
+							iconCls: 'fa fa-lg fa-print',
 							handler: function(){
 								var frame = Ext.getDom(helpPanel.getId() + '-frame');
 																

@@ -607,7 +607,7 @@ public class EvaluationResource
 	@DELETE
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
-	@APIDescription("Remove a comment. (must be owner or admin)")
+	@APIDescription("Delete a comment. (must be owner or admin)")
 	@Path("/{evaluationId}/comments/{commentId}")
 	public Response deleteComment(
 			@PathParam("evaluationId") String evaluationId,
@@ -911,7 +911,7 @@ public class EvaluationResource
 	@DELETE
 	@RequireAdmin
 	@Produces({MediaType.APPLICATION_JSON})
-	@APIDescription("Remove a recommendation.")
+	@APIDescription("Delete a recommendation.")
 	@Path("/{evaluationId}/checklist/{checklistId}/recommendations/{recommendationId}")
 	public Response deleteRecommendation(
 			@PathParam("evaluationId") String evaluationId,

@@ -77,17 +77,22 @@
 							items: [
 								{
 									text: 'Refresh',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									scale: 'medium',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									tooltip: 'Refresh Grid',
 									handler: function () {
 										refreshGrid();
 									}
 								},
 								{
+									xtype: 'tbseparator'
+								},
+								{
 									text: 'Add',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-corretion',
 									tooltip: 'Add record',
 									handler: function () {
 										addRecord();
@@ -97,18 +102,43 @@
 									text: 'Edit',
 									id: 'editButton',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-edit',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									disabled: true,
 									tooltip: 'Edit selected record',
 									handler: function () {
 										editRecord();
 									}								
-								},							
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'References',
+									id: 'refButton',
+									scale: 'medium',								
+									iconCls: 'fa fa-2x fa-link icon-button-color-toggle-status icon-vertical-correction',
+									tooltip: 'View selected record references',
+									disabled: true,
+									handler: function () {
+										referenceRecords();
+									}								
+								},
+								{
+									scale: 'medium',
+									height: '38px',
+									text: '<span class="fa-stack"><i class="fa fa-link fa-stack-1x icon-horizontal-correction"></i><i class="fa fa-2x fa-ban fa-stack-1x text-danger icon-horizontal-correction"></i></span>"No Organization" References',
+									tooltip: 'Entries without organizations',
+									handler: function () {
+										noOrg();
+								    }
+								},
 								{
 									text: 'Merge',
 									id: 'mergeButton',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-compress',
+									scale: 'medium',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-compress icon-button-color-toggle-status icon-vertical-correction',
 									disabled: true,
 									tooltip: 'Merge selected record into another record',
 									handler: function () {
@@ -116,45 +146,30 @@
 									}								
 								},
 								{
-									text: 'References',
-									id: 'refButton',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-paperclip',
-									tooltip: 'View selected record references',
-									disabled: true,
+									xtype: 'tbfill'
+								},
+								{	text: 'Run Extraction',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-bolt icon-button-color-run icon-vertical-correction',
+									tooltip: 'Start extraction of organizations from metadata',
 									handler: function () {
-										referenceRecords();
-									}								
+										runExtraction();
+								    }
+								},
+								{
+									xtype: 'tbseparator'
 								},
 								{	text: 'Delete',
 									id: 'deleteButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
 									disabled: true,
 									tooltip: 'Delete record',
 									handler: function () {
 										deleteRecord();
 								    }
 								},
-								{
-									xtype: 'tbfill'
-								},
-								{	text: 'Run Extraction',
-									scale: 'medium',
-									iconCls: 'fa fa-2x fa-play',
-									tooltip: 'Start extraction of organizations from metadata',
-									handler: function () {
-										runExtraction();
-								    }
-								},
-								{	text: '"No Organization" References',
-									scale: 'medium',
-									iconCls: 'fa fa-2x fa-file-text-o',
-									tooltip: 'Entries without organizations',
-									handler: function () {
-										noOrg();
-								    }
-								}
 							]
 						},
 						{
@@ -558,7 +573,7 @@
 								items: [
 									{
 										text: 'Apply',
-										iconCls: 'fa fa-check',
+										iconCls: 'fa fa-lg fa-check icon-button-color-add',
 										formBind: true,
 										handler: function(){
 											var data = Ext.getCmp('mergeForm').getValues();
@@ -593,7 +608,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 										handler: function(){
 											Ext.getCmp('mergeWin').close();
 										}											
@@ -772,7 +787,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-save',
+											iconCls: 'fa fa-lg fa-save icon-button-color-add',
 											formBind: true,
 											handler: function(){
 												
@@ -800,7 +815,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 											handler: function(){
 												Ext.getCmp('addEditWin').close();
 											}											
