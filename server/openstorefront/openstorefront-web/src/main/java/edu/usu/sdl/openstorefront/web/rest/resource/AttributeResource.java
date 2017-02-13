@@ -603,7 +603,7 @@ public class AttributeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a type (Inactivates).  Note: this inactivates all attribute type associations. Runs in a background task.")
+	@APIDescription("Delete a type (Inactivates).  Note: this inactivates all attribute type associations. Runs in a background task.")
 	@Path("/attributetypes/{type}")
 	public void deleteAttributeType(
 			@PathParam("type")
@@ -861,7 +861,7 @@ public class AttributeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a Code (Inactivates) and inactivates all attribute type associations. Runs in background.")
+	@APIDescription("Delete a Code (Inactivates) and inactivates all attribute type associations. Runs in background.")
 	@Path("/attributetypes/{type}/attributecodes/{code}")
 	public void deleteAttributeCode(
 			@PathParam("type")
@@ -1199,7 +1199,7 @@ public class AttributeResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a type and all mapping")
+	@APIDescription("Delete a type and all mapping")
 	@Path("/attributexreftypes/{attributeType}")
 	public void deleteMappingType(
 			@PathParam("attributeType")

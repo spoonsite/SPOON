@@ -1943,7 +1943,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',	
+											text: 'Delete',	
 											itemId: 'removeBtn',
 											iconCls: 'fa fa-trash',
 											disabled: true,
@@ -2037,7 +2037,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
+											text: 'Delete',
 											itemId: 'removeBtn',											
 											disabled: true,
 											iconCls: 'fa fa-trash',
@@ -2127,7 +2127,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',	
+											text: 'Delete',	
 											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
@@ -2216,7 +2216,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
+											text: 'Delete',
 											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
@@ -2322,7 +2322,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',	
+											text: 'Delete',	
 											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
@@ -2408,7 +2408,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',	
+											text: 'Delete',	
 											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
@@ -2498,7 +2498,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
+											text: 'Delete',
 											itemId: 'removeBtn',
 											disabled: true,
 											iconCls: 'fa fa-trash',
@@ -2653,7 +2653,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 											xtype: 'tbfill'
 										},
 										{
-											text: 'Remove',
+											text: 'Delete',
 											itemId: 'removeBtn',											
 											disabled: true,
 											iconCls: 'fa fa-trash',
@@ -2747,7 +2747,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							itemId: 'Previous',
 							disabled: true,
 							scale: 'large',
-							iconCls: 'fa fa-2x fa-arrow-left icon-top-padding-2',
+							iconCls: 'fa fa-2x fa-arrow-left icon-button-color-stop icon-top-padding-2',
 							handler: function () {
 								submissionPanel.currentStep--;
 								submissionPanel.changeSteps();
@@ -2761,7 +2761,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							itemId: 'SaveAndExit',
 							hidden: true,
 							scale: 'large',
-							iconCls: 'fa fa-2x fa-save icon-top-padding-2',
+							iconCls: 'fa fa-2x fa-save icon-button-color-add icon-top-padding-2',
 							handler: function () {
 																
 																
@@ -2817,7 +2817,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							itemId: 'SaveLater',
 							scale: 'large',
 							hidden: true,
-							iconCls: 'fa fa-2x fa-save icon-top-padding-2',							
+							iconCls: 'fa fa-2x fa-save icon-button-color-add icon-top-padding-2',							
 							handler: function () {					
 								var promptForSave = false;
 								submissionPanel.cancelSubmissionHandler(promptForSave);																								
@@ -2830,7 +2830,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							text: 'Next',
 							itemId: 'Next',
 							scale: 'large',
-							iconCls: 'fa fa-2x fa-arrow-right icon-top-padding-2',
+							iconCls: 'fa fa-2x fa-arrow-right icon-button-color-stop icon-top-padding-2',
 							iconAlign: 'right',
 							handler: function () {
 								submissionPanel.currentStep++;

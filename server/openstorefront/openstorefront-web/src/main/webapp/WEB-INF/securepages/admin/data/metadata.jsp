@@ -730,7 +730,7 @@
 									// Build "New" Label Presentation
 									var html = '<div style="color: #999; padding: 1em 0 2em 0;">';
 									html += '<strong style="color: #111; float: left;">' + value.replace(/\*/, '<span class="text-danger">[NOT Saved]</span> ') + '</strong>';
-									html += '<span style="float: right"><i class="fa fa-book fa-fw"></i> ' + metadataCount + '</span>';
+									html += '<span style="float: right"><i class="fa fa-book fa-fw icon-small-vertical-correction"></i> ' + metadataCount + '</span>';
 									html += "</div>";
 									return html;
 								}
@@ -739,7 +739,7 @@
 									// Build Saved Label Presentation
 									var html = '<div style="color: #999; padding: 1em 0 2em 0;">';
 									html += '<strong style="color: #111; float: left;">' + value + '</strong>';
-									html += '<span style="float: right"><i class="fa fa-book fa-fw"></i> ' + metadataCount + '</span>';
+									html += '<span style="float: right"><i class="fa fa-book fa-fw icon-small-vertical-correction"></i> ' + metadataCount + '</span>';
 									html += "</div>";
 									return html;
 								}
@@ -912,7 +912,8 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh',
+									width: '120px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										
 										// Send Focus Temporarily Elsewhere
@@ -974,7 +975,8 @@
 								{
 									text: 'Add',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction-edit',
 									handler: function () {
 										actionAddLabelForm();
 									}
@@ -1223,7 +1225,7 @@
 								
 								var html = "<strong>" + component.name + "</strong>";
 								html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-								html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+								html += '<i class="fa fa-book fa-fw icon-small-vertical-correction-book" style="float:left; margin-right: 2px;"></i> ';
 								html += '<span style="float: left;">' + component.type.name + '</span>';
 								html += "</div>";
 								
@@ -1240,7 +1242,8 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh',
+									width: '120px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										
 										// Reload Remote Component Store
@@ -1384,7 +1387,7 @@
 							dropGroup: 'labelAssociation-add-drag-drop-group',
 							enableDrag: true,
 							enableDrop: true,
-							dragText: 'Remove: {0}',
+							dragText: 'Delete: {0}',
 							dragTextField: 'component.name'
 						},
 						listeners: {
@@ -1526,7 +1529,7 @@
 									// Build Component With Record Type
 									var html = "<strong>" + component.name + "</strong>";
 									html += '<div style="color: #999; margin: 1em 0; padding: 0 0 0.75em 0;">';
-									html += '<i class="fa fa-book fa-fw" style="float:left; margin-right: 2px;"></i> ';
+									html += '<i class="fa fa-book fa-fw icon-small-vertical-correction-book" style="float:left; margin-right: 2px;"></i> ';
 									html += '<span style="float: left;">' + component.type.name + '</span>';
 								}
 								
@@ -1709,7 +1712,7 @@
 										{
 											text: 'Create',
 											id: 'addLabelForm-saveButton',
-											iconCls: 'fa fa-save',
+											iconCls: 'fa fa-lg fa-save icon-button-color-add',
 											formBind: true,
 											handler: function () {
 												
@@ -1759,7 +1762,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 											handler: function () {
 												Ext.getCmp('addLabelForm').reset();
 												Ext.getCmp('labelAddWin').hide();

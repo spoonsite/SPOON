@@ -43,7 +43,7 @@
 				
 				var mainPanel = Ext.create('Ext.panel.Panel',{
 					title: 'User Profile',
-					iconCls: 'fa fa-user',
+					iconCls: 'fa fa-lg fa-user',
 					items: [
 						profilePanel
 					]

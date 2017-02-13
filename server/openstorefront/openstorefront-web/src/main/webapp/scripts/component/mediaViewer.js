@@ -91,7 +91,7 @@ Ext.define('OSF.component.MediaViewerWindow', {
 					itemId: 'next',
 					scale: 'large',	
 					margin: '0 5 0 0',
-					iconCls: 'fa fa-2x fa-arrow-right',
+					iconCls: 'fa fa-2x fa-arrow-right icon-button-color-stop',
 					handler: function() {
 						var messageWindow = this.up('window');
 						messageWindow.currentMediaIndex++;

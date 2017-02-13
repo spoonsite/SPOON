@@ -118,7 +118,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 									minWidth: 100,
 									text: 'Check',
 									margin: '30 0 0 0',
-									iconCls: 'fa fa-check',
+									iconCls: 'fa fa-lg fa-check',
 									handler: function(){
 										loadJiraIssue();
 									}
@@ -139,7 +139,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 								{
 									text: 'Save',
 									formBind: true,
-									iconCls: 'fa fa-save',
+									iconCls: 'fa fa-lg fa-save icon-button-color-add',
 									handler: function() {
 										
 										// Force A Jira Check
@@ -180,7 +180,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 									handler: function(){
 										this.up('window').close();
 									}							
@@ -288,7 +288,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 					items: [
 						{
 							text: 'Refresh',							
-							iconCls: 'fa fa-refresh',
+							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 							handler: function(){
 								this.up('grid').getStore().reload();
 							}							
@@ -298,7 +298,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 						},
 						{
 							text: 'Add',							
-							iconCls: 'fa fa-plus',
+							iconCls: 'fa fa-lg fa-plus icon-button-color-add',
 							handler: function(){
 								addEditWindow.show();
 								addEditWindow.getComponent('configForm').reset();
@@ -308,7 +308,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 							text: 'Edit',	
 							itemId: 'tbEdit',
 							disabled: true,
-							iconCls: 'fa fa-edit',
+							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 							handler: function(){
 								addEditWindow.show();
 								var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -317,10 +317,13 @@ Ext.define('OSF.component.IntegrationWindow', {
 							}							
 						},
 						{
+							xtype: 'tbseparator'
+						},
+						{
 							text: 'Run',	
 							itemId: 'tbRun',
 							disabled: true,
-							iconCls: 'fa fa-play',
+							iconCls: 'fa fa-lg fa-bolt icon-button-color-run',
 							handler: function(){
 								var grid = this.up('grid');
 								var componentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
@@ -336,13 +339,10 @@ Ext.define('OSF.component.IntegrationWindow', {
 							}							
 						},						
 						{
-							xtype: 'tbfill'
-						},
-						{
 							text: 'Toggle Status',
 							itemId: 'tbStatus',
 							disabled: true,
-							iconCls: 'fa fa-power-off',
+							iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',
 							handler: function(){
 								var grid = this.up('grid');
 								var componentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
@@ -365,10 +365,13 @@ Ext.define('OSF.component.IntegrationWindow', {
 							}							
 						},
 						{
+							xtype: 'tbfill'
+						},
+						{
 							text: 'Delete',
 							itemId: 'tbDelete',
 							disabled: true,							
-							iconCls: 'fa fa-trash',
+							iconCls: 'fa fa-lg fa-trash icon-button-color-delete',
 							handler: function(){
 								var grid = this.up('grid');
 								var componentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');

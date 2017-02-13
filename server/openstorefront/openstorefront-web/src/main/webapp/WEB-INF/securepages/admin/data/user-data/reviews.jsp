@@ -125,14 +125,14 @@
 														type: 'ajax',
 														url: 'api/v1/resource/components/reviewviews?status=A'
 													});
-													Ext.getCmp('reviewGrid-tools-toggleActivation').setText("Deactivate");
+													Ext.getCmp('reviewGrid-tools-toggleActivation').setText("Toggle Status");
 												} else {
 													store.setProxy({
 														id: 'reviewStoreProxy',
 														type: 'ajax',
 														url: 'api/v1/resource/components/reviewviews?status=I'
 													});
-													Ext.getCmp('reviewGrid-tools-toggleActivation').setText("Activate");
+													Ext.getCmp('reviewGrid-tools-toggleActivation').setText("Toggle Status");
 												}
 												store.load();
 												Ext.getCmp('reviewGrid').getSelectionModel().deselectAll();
@@ -167,7 +167,8 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh',
+									width: '120px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										Ext.getCmp('reviewGrid').getStore().load();
 									}
@@ -176,9 +177,9 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Deactivate',
+									text: 'Toggle Status',
 									id: 'reviewGrid-tools-toggleActivation',
-									iconCls: 'fa fa-2x fa-power-off',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status icon-vertical-correction',
 									disabled: true,
 									scale: 'medium',
 									handler: function () {

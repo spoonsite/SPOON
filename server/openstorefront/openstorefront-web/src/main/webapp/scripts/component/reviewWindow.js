@@ -50,7 +50,7 @@ Ext.define('OSF.component.ReviewWindow', {
 						{
 							text: 'Post Review',
 							formBind: true,
-							iconCls: 'fa fa-save',
+							iconCls: 'fa fa-lg fa-save icon-button-color-add',
 							handler: function(){
 								var form = this.up('form');
 								var data = form.getValues();
@@ -124,7 +124,7 @@ Ext.define('OSF.component.ReviewWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 							handler: function(){
 								this.up('window').close();
 							}

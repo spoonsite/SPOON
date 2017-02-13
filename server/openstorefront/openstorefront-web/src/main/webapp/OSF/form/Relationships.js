@@ -196,7 +196,7 @@ Ext.define('OSF.form.Relationships', {
 							xtype: 'tbfill'
 						},
 						{
-							text: 'Remove',
+							text: 'Delete',
 							itemId: 'removeBtn',
 							iconCls: 'fa fa-trash text-danger',								
 							disabled: true,

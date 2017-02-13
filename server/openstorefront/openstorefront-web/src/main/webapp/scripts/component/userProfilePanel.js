@@ -82,7 +82,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 						width: '175',
 						margin: profileForm.defaults ? profileForm.defaults.labelAlign === 'top' ? '25 0 0 0' : '0 0 0 0' : '0 0 0 0',
 						text: 'Send Test Message',
-						iconCls: 'fa fa-envelope',
+						iconCls: 'fa fa-lg fa-envelope',
 						maxWidth: 175,
 						handler: function(){
 							var user = this.up('form').getForm().findField('username');
@@ -162,7 +162,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 			{
 				text: 'Save',
 				formBind: true,
-				iconCls: 'fa fa-save',
+				iconCls: 'fa fa-lg fa-save icon-button-color-add',
 				handler: function () {
 					var data = profileForm.getValues();
 					data.externalGuid = data.guid;
@@ -255,7 +255,7 @@ Ext.define('OSF.component.UserProfileWindow', {
 				},
 				{
 					text: 'Cancel',
-					iconCls: 'fa fa-close',
+					iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 					handler: function () {
 						profileWindow.close();
 					}

@@ -41,7 +41,7 @@
 									items: [
 										{
 											text: 'Add Sub-Section',
-											iconCls: 'fa fa-plus',																			
+											iconCls: 'fa fa-lg fa-plus icon-button-color-add icon-small-vertical-correction',																			
 											handler: function(){
 												Ext.getCmp('sectionPanel').expand();
 												addSubSecion(Ext.getCmp('sectionPanel'));
@@ -57,8 +57,9 @@
 										{
 											text: 'Save',
 											formBind: true,
-											iconCls: 'fa fa-2x fa-save text-success',
+											iconCls: 'fa fa-lg fa-save icon-button-color-add icon-small-vertical-correction',
 											scale: 'medium',
+											width: '100px',
 											handler: function() {
 												var form = this.up('form');
 												var data = form.getValues();
@@ -161,7 +162,7 @@
 										},
 										{
 											text: 'Cancel',									
-											iconCls: 'fa fa-2x fa-close text-danger',
+											iconCls: 'fa fa-lg fa-close icon-button-color-delete icon-small-vertical-correction',
 											scale: 'medium',
 											handler: function() {
 												this.up('window').close();
@@ -367,7 +368,7 @@
 										items: [											
 											{
 												text: 'Add Custom Field',
-												iconCls: 'fa fa-plus',
+												iconCls: 'fa fa-lg fa-plus icon-button-color-add icon-small-vertical-correction',
 												handler: function() {
 
 													var customFieldWin = Ext.create('Ext.window.Window', {
@@ -470,7 +471,7 @@
 																			{
 																				text: 'Add',
 																				formBind: true,
-																				iconCls: 'fa fa-plus',
+																				iconCls: 'fa fa-lg fa-plus icon-button-color-add icon-small-vertical-correction',
 																				handler: function(){
 																					var form = this.up('form');
 																					var grid = subSectionCmp.getComponent('customFieldGrid');
@@ -496,7 +497,7 @@
 																			},
 																			{
 																				text: 'Cancel',
-																				iconCls: 'fa fa-close text-danger',
+																				iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 																				handler: function(){
 																					customFieldWin.close();
 																				}																				
@@ -518,7 +519,7 @@
 												text: 'Delete',
 												itemId: 'delete',
 												disabled: true,
-												iconCls: 'fa fa-close text-danger',
+												iconCls: 'fa fa-lg fa-trash icon-button-color-delete',
 												handler: function() {
 													var grid = this.up('grid');
 													var selectedRecord = grid.getSelectionModel().getSelection()[0];
@@ -729,8 +730,9 @@
 						items: [
 							{
 								text: 'Refresh',
-								iconCls: 'fa fa-2x fa-refresh',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								scale: 'medium',
+								width: '110px',
 								handler: function(){
 									actionRefresh();
 								}
@@ -740,7 +742,8 @@
 							},
 							{
 								text: 'Add',
-								iconCls: 'fa fa-2x fa-plus text-success',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+								width: '100px',
 								scale: 'medium',
 								handler: function(){
 									actionAddEdit();
@@ -748,8 +751,9 @@
 							},							
 							{
 								text: 'Edit',
-								iconCls: 'fa fa-2x fa-edit text-info',
+								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 								itemId: 'edit',
+								width: '100px',
 								disabled: true,									
 								scale: 'medium',
 								handler: function(){
@@ -762,7 +766,7 @@
 							},
 							{
 								text: 'Toggle Status',
-								iconCls: 'fa fa-2x fa-power-off text-warning',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
@@ -776,10 +780,11 @@
 							},							
 							{
 								text: 'Delete',
-								iconCls: 'fa fa-2x fa-close text-danger',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
 								itemId: 'delete',
 								disabled: true,									
 								scale: 'medium',
+								width: '110px',
 								handler: function(){
 									var record = Ext.getCmp('sectionGrid').getSelectionModel().getSelection()[0];
 									actionDelete(record);
@@ -836,7 +841,7 @@
 						var references = response.responseText;
 
 						if (references && references !== 'false') {
-							Ext.Msg.alert('Existing References', 'Unable to delete; Remove evaluation template first.');
+							Ext.Msg.alert('Existing References', 'Unable to delete; Delete evaluation template first.');
 						} else {
 							Ext.Msg.show({
 								title:'Delete Content Template?',

@@ -476,7 +476,7 @@ public class UserProfileResource
 	}
 
 	@DELETE
-	@APIDescription("Removes a user watch.")
+	@APIDescription("Deletes a user watch.")
 	@RequireAdmin(UserProfileRequireHandler.class)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches/{watchId}")
@@ -547,7 +547,7 @@ public class UserProfileResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a tracking entry from the specified user")
+	@APIDescription("Delete a tracking entry from the specified user")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteUserTracking(

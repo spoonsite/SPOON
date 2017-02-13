@@ -224,14 +224,15 @@ Ext.define('OSF.component.SearchToolWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.SearchToolWindow',
 	title: 'Search Tools',
-	iconCls: 'fa fa-lg fa-search-plus',
+	iconCls: 'fa fa-lg fa-search-plus icon-small-vertical-correction',
 	width: '70%',
 	height: '70%',
 	showTopics: true,
 	showCategory: true,
 	showTags: true,	
-	minHeight: 600,
-	minWidth: 800,
+	minHeight: 700,
+	minWidth: 600,
+	scrollable: true,
 	y: 40,
 	modal: true,
 	maximizable: true,
@@ -247,7 +248,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 		//
 		var topicSearchPanel = Ext.create('Ext.panel.Panel', {
 			title: 'Entry Type',
-			iconCls: 'fa fa-book',
+			iconCls: 'fa fa-lg fa-book icon-small-vertical-correction',
 			layout: 'fit',
 			items: [
 				Ext.create('OSF.component.SearchToolContentPanel', {
@@ -263,7 +264,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 		//
 		var categorySearchPanel = Ext.create('Ext.panel.Panel', {
 			title: 'Category',
-			iconCls: 'fa fa-list-ul',
+			iconCls: 'fa fa-lg fa-list-ul icon-small-vertical-correction',
 			layout: 'fit',
 			items: [
 				Ext.create('OSF.component.SearchToolContentPanel', {
@@ -279,7 +280,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 		//
 		var archSearchPanel = Ext.create('Ext.panel.Panel', {
 			title: 'Architecture',
-			iconCls: 'fa fa-sitemap',
+			iconCls: 'fa fa-lg fa-sitemap icon-small-vertial-correction',
 			layout: 'fit',
 			items: [
 				Ext.create('OSF.component.SearchToolContentPanel', {
@@ -296,7 +297,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 		//
 		var tagSearchPanel = Ext.create('Ext.panel.Panel', {
 			title: 'Tag',
-			iconCls: 'fa fa-tag',
+			iconCls: 'fa fa-lg fa-tag icon-small-vertical-correction',
 			layout: 'fit',
 			items: [
 				Ext.create('OSF.component.SearchToolContentPanel', {
@@ -309,7 +310,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 
 		var advanceSearch = Ext.create('OSF.component.AdvanceSearchPanel', {
 			title: 'Advanced',
-			iconCls: 'fa fa-search-plus',
+			iconCls: 'fa fa-lg fa-search-plus icon-small-vertical-correction',
 			saveHook: function (response, opts) {
 				savedSearches.getStore().reload();
 			},
@@ -321,7 +322,8 @@ Ext.define('OSF.component.SearchToolWindow', {
 						{
 							text: 'Search',
 							scale: 'medium',
-							iconCls: 'fa fa-2x fa-search',
+							iconCls: 'fa fa-2x fa-search icon-button-color-refresh icon-vertical-correction',
+							width: '110px',
 							handler: function () {
 								var searchObj = this.up('panel').getSearch();
 
@@ -345,18 +347,20 @@ Ext.define('OSF.component.SearchToolWindow', {
 						{
 							text: 'Preview Results',
 							scale: 'medium',
-							iconCls: 'fa fa-2x fa-eye',
+							iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
+							width: '170px',
 							handler: function () {
 								this.up('panel').previewResults();
 							}
 						},
 						{
-							xtype: 'tbseparator'
+							xtype: 'tbfill'
 						},
 						{
 							text: 'Save Search',
 							scale: 'medium',
-							iconCls: 'fa fa-2x fa-save',
+							iconCls: 'fa fa-2x fa-save icon-button-color-add icon-vertical-correction',
+							width: '150px',
 							handler: function () {
 								this.up('panel').saveSearch();
 							}
@@ -368,7 +372,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 
 		var savedSearches = Ext.create('Ext.grid.Panel', {
 			title: 'Saved Searches',
-			iconCls: 'fa fa-save',
+			iconCls: 'fa fa-lg fa-save icon-small-vertical-correction',
 			itemId: 'savedGrid',
 			columnLines: true,
 			store: {
@@ -406,7 +410,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 						},
 						{
 							text: 'Manage Searches',
-							iconCls: 'fa fa-gear',
+							iconCls: 'fa fa-lg fa-gear',
 							href: 'UserTool.action?load=Searches',
 							hrefTarget: ''
 						}
@@ -419,10 +423,11 @@ Ext.define('OSF.component.SearchToolWindow', {
 					items: [
 						{
 							text: 'Search',
-							itemId: 'search',
 							scale: 'medium',
+							iconCls: 'fa fa-2x fa-search icon-button-color-refresh icon-vertical-correction',
+							width: '110px',
+							itemId: 'search',
 							disabled: true,
-							iconCls: 'fa fa-2x fa-search',
 							handler: function () {
 
 								var grid = this.up('grid');

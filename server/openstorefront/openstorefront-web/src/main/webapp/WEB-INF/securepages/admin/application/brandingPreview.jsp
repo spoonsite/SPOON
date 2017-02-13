@@ -47,7 +47,7 @@
 	<link href="webjars/extjs/6.2.0/build/classic/theme-triton/resources/theme-triton-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="webjars/extjs/6.2.0/build/packages/ux/classic/triton/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
 	<link href="webjars/extjs/6.2.0/build/packages/charts/classic/triton/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
-	<link href="webjars/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+	<link href="webjars/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 	<link href="Branding.action?CSS&template=extTritonTheme.jsp&v=${appVersion}&brandingId=${param.brandingId}" rel="stylesheet" type="text/css"/>	
 	<link href="Branding.action?CSS&template=apptemplate.jsp&brandingId=${param.brandingId}&v=${appVersion}" rel="stylesheet" type="text/css"/>
 	<link href="Branding.action?Override&brandingId=${param.brandingId}&v=${appVersion}" rel="stylesheet" type="text/css"/>	

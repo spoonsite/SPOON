@@ -438,7 +438,7 @@ public class ComponentSubmissionResource
 	}
 
 	@DELETE
-	@APIDescription("Removes media from the specified component")
+	@APIDescription("Deletes media from the specified component")
 	@Path("/{id}/media/{mediaId}/force")
 	public Response deleteComponentMedia(
 			@PathParam("id")
@@ -472,7 +472,7 @@ public class ComponentSubmissionResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a given resource from the specified component")
+	@APIDescription("Delete a given resource from the specified component")
 	@Path("/{id}/resources/{resourceId}/force")
 	public Response deleteComponentResource(
 			@PathParam("id")

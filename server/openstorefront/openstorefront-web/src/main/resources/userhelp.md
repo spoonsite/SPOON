@@ -210,7 +210,7 @@ on the home page.
 	 entry will be displayed.
  2.  Click on the "Tag" icon to open the tag panel.  Tags will be displayed
 	 below the "Add Tag" text field.
- 3.  Locate the tag and click on the drop down arrow and select "Remove".
+ 3.  Locate the tag and click on the drop down arrow and select "Delete".
 
 ### 2.1.8 Comparing
 ---------
@@ -458,7 +458,7 @@ Step 3) A change request form will appear that requires 4 steps:
 
 	1. Verify or update all user information and click the "Next" button
 	2. Fill in or edit the required fields and click "Next"
-	3. Add/Remove any details (e.g. attributes, contacts, media, etc.) and click "Next"
+	3. Add/Delete any details (e.g. attributes, contacts, media, etc.) and click "Next"
 	4. Review the entry and click "Submit For Review".  This will take you back to the submissions page
 
 Under the "Pending Change" column you will see the status of the entry's change request.  The status is "Pending" 
@@ -469,7 +469,7 @@ rather than updating the contact information on step3.  That way the contact inf
 user profile.
 
 
-#### 2.3.2.3 How to Remove an Entry
+#### 2.3.2.3 How to Delete an Entry
 -----------
 
 1.  Click on the entry you wish to remove
@@ -669,7 +669,7 @@ place.
 Click on an entry to view its details.  From the **Details** page, a user can write a review, submit
 a question or answer, add a tag, watch an entry, submit a correction, and request ownership.
 
-### 2.4.1  Create/Remove a Review
+### 2.4.1  Create/Delete a Review
 --------
 
 How to submit a review of an entry:
@@ -679,10 +679,10 @@ How to submit a review of an entry:
 3.  Complete the required fields on the form and click **Post Review** at the bottom.
 
 To edit a review, click on the **Edit** button.  Make any changes to the review and click **Post Review**.
-To remove a review, click on the **Remove** button.  A confirmation box will ask the user to confirm 
+To remove a review, click on the **Delete** button.  A confirmation box will ask the user to confirm 
 the deletion of the review.
 
-### 2.4.2  Submit/Remove a Question or Answer
+### 2.4.2  Submit/Delete a Question/Answer
 --------
 
 How to submit a question about an entry:
@@ -701,18 +701,18 @@ How to submit an answer to an entry question:
 3.  Type your answer into the text area and click on the **Post** button.
 
 To edit an answer, click on the **Edit** button.  Make any changes to the answer and click **Post**.
-To remove an answer, click on the **Remove** button.
+To remove an answer, click on the **Delete** button.
 
-### 2.4.3  Add/Remove a Tag to an Entry
+### 2.4.3  Add/Delete a Tag to an Entry
 --------
 
 From the **Details** page, click the **Tags** button in the upper-right corner of the entry.
 An **Add Tag** box will appear at the top of the **Details** page where you can either type in your own tag or
 select an existing tag from the drop-down menu.  Click **Add** to attach tag to entry.
 
-To remove a tag, click on the tag's drop-down arrow and select **Remove**.
+To remove a tag, click on the tag's drop-down arrow and select **Delete**.
 
-### 2.4.4  Add/Remove an Entry to Watch List
+### 2.4.4  Add/Delete an Entry to Watch List
 --------
 
 Click on an entry to view its **Details** page.  From the **Details** page, click on the **Watch** icon
@@ -923,7 +923,7 @@ From the attributes page the Action button has three sub-menus:
  
  * **NOTE:** The _Required_ flag is not shown in the Set Flags box as it is mutually exclusive with Allow Multiples.  If
           the Allow Multiples section is not available for changing, it is because one or more previously selected
-          attributes are required.  Remove the required flag(s) on those attribute(s) and then the Allow Multiple flag
+          attributes are required.  Delete the required flag(s) on those attribute(s) and then the Allow Multiple flag
           will be available for changing.
 
  To **Toggle Status** select one or more attributes then Action -> Toggle Status.  The status of each selected 
@@ -1264,7 +1264,7 @@ Parser - Record Structure handled
 **Attribute CSV, Attribute EXCEL (XLSX), Attribute TSV**  
 
 - Record (Attribute Code) per line
-- Header line not support (Remove before upload)
+- Header line not support (Delete before upload)
 - Does not support attachments
 - Map Name is used for Attribute Type
 
@@ -1275,7 +1275,7 @@ Parser - Record Structure handled
 **Component CSV, Component EXCEL (XLSX), Component TSV**	
 
 - Record (Component) per line;  It can map SubComponent Entities as well.
-- Header line not support (Remove before upload)
+- Header line not support (Delete before upload)
 - Does not support attachments (Local resources or media)
 
 **Component JSON, Component XML**	

@@ -259,7 +259,7 @@ Ext.define('OSF.form.Attributes', {
 							}
 						},								
 						{
-							text: 'Remove',
+							text: 'Delete',
 							itemId: 'removeBtn',
 							iconCls: 'fa fa-trash text-danger',									
 							disabled: true,

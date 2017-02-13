@@ -21,8 +21,11 @@ Ext.define('OSF.component.FeedbackWindow', {
 	alias: 'osf.widget.FeedbackWindow',
 	title: 'Feedback / Issues',
 	iconCls: 'fa fa-exclamation-triangle',
-	width: '50%',
-	height: '70%',
+	scrollable: true,
+	width: '40%',
+	minWidth: 150,
+	height: '80%',
+	minHeight: 200,
 	y: 40,
 	modal: true,
 	maximizable: false,
@@ -66,7 +69,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 						{
 							text: 'Send',
 							formBind: true,
-							iconCls: 'fa fa-save',
+							iconCls: 'fa fa-lg fa-save icon-button-color-add',
 							handler: function () {
 								var feedbackForm = this.up('form');
 								var method = 'POST';
@@ -113,7 +116,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 							handler: function () {
 								feedbackWin.close();
 							}

@@ -37,7 +37,8 @@
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-2x fa-save text-success',
+										iconCls: 'fa fa-2x fa-save icon-button-color-add icon-vertical-correction-edit',
+										width: '110px',
 										scale: 'medium',
 										handler: function() {
 											var form = this.up('form');
@@ -77,7 +78,7 @@
 									},
 									{
 										text: 'Cancel',									
-										iconCls: 'fa fa-2x fa-close text-danger',
+										iconCls: 'fa fa-2x fa-close icon-button-color-delete icon-vertical-correction',
 										scale: 'medium',
 										handler: function() {
 											this.up('window').close();
@@ -169,7 +170,7 @@
 										viewConfig: {
 											plugins: {
 												ptype: 'gridviewdragdrop',
-												dragText: 'Drag and drop to Add to template'
+												dragText: 'Drag and drop to add to template'
 											}
 										},										
 										columns: [
@@ -192,7 +193,7 @@
 										viewConfig: {
 											plugins: {
 												ptype: 'gridviewdragdrop',
-												dragText: 'Drag and drop to Remove from template'												
+												dragText: 'Drag and drop to delete from template'												
 											},
 											listeners: {
 												drop: function(node, data, overModel, dropPostition, opts){													
@@ -318,7 +319,7 @@
 						items: [
 							{
 								text: 'Refresh',
-								iconCls: 'fa fa-2x fa-refresh',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								scale: 'medium',
 								handler: function(){
 									actionRefresh();
@@ -329,7 +330,8 @@
 							},
 							{
 								text: 'Add',
-								iconCls: 'fa fa-2x fa-plus text-success',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-add',
+								width: '100px',
 								scale: 'medium',
 								handler: function(){
 									actionAddEdit();
@@ -337,8 +339,9 @@
 							},							
 							{
 								text: 'Edit',
-								iconCls: 'fa fa-2x fa-edit',
+								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 								itemId: 'edit',
+								width: '100px',
 								disabled: true,									
 								scale: 'medium',
 								handler: function(){
@@ -351,7 +354,7 @@
 							},
 							{
 								text: 'Toggle Status',
-								iconCls: 'fa fa-2x fa-power-off text-warning',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
@@ -365,7 +368,7 @@
 							},																				
 							{
 								text: 'Delete',
-								iconCls: 'fa fa-2x fa-close text-danger',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
 								itemId: 'delete',
 								disabled: true,									
 								scale: 'medium',

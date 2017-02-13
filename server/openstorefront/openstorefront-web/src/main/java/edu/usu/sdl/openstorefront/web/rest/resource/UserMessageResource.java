@@ -123,7 +123,7 @@ public class UserMessageResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Removes a user message")
+	@APIDescription("Deletes a user message")
 	@Path("/{id}")
 	public void deleteUseMessage(
 			@PathParam("id")

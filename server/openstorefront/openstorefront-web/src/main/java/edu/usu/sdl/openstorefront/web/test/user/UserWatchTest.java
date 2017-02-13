@@ -70,7 +70,7 @@ public class UserWatchTest
 	{
 		super.cleanupTest();
 		if (userWatch != null) {
-			results.append("Remove watch").append("<br>");
+			results.append("Delete watch").append("<br>");
 			service.getUserService().deleteWatch(userWatch.getUserWatchId());
 		}
 	}

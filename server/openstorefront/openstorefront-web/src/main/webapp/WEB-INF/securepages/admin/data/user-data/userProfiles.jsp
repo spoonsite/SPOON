@@ -334,7 +334,8 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh icon-vertical-correction',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-vertical-correction icon-button-color-refresh',
 									handler: function () {
 										userProfileStore.load();
 									}
@@ -347,11 +348,15 @@
 									id: 'userProfileGrid-tools-edit',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-edit',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										var record = Ext.getCmp('userProfileGrid').getSelection()[0];
 										actionEditUser(record);
 									}
+								},
+								{
+									xtype: 'tbseparator'
 								},
 								{
 									// For cryptic reasons, we must add a space before message
@@ -360,7 +365,8 @@
 									id: 'userProfileGrid-tools-message',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',
+									width: '130px',
+									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction icon-button-color-add',
 									iconAlign: 'left',
 									handler: function () {
 										var records = Ext.getCmp('userProfileGrid').getSelection();
@@ -368,12 +374,9 @@
 									}
 								},
 								{
-									xtype: 'tbseparator'
-								},
-								{
 									text: 'Toggle Status',
 									id: 'userProfileGrid-tools-toggleActivation',
-									iconCls: 'fa fa-2x fa-power-off',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
 									disabled: true,
 									scale: 'medium',
 									tooltip: 'Activates/Deactivates',
@@ -393,12 +396,13 @@
 									text: 'Export',
 									scale: 'medium',
 									id: 'userProfileGrid-tools-export',
-									iconCls: 'fa fa-2x fa-download',
+									width: '150px',
+									iconCls: 'fa fa-2x fa-download icon-button-color-toggle-status icon-vertical-correction-edit',
 									menu: [
 										{
 											text: 'All Profiles',
 											id: 'userProfileGrid-tools-export-all',
-											iconCls: 'fa fa-user',
+											iconCls: 'fa fa-user icon-small-vertical-correction',
 											handler: function() {
 												var records = userProfileGrid.getStore().getData().items;
 												actionExportUser([]);
@@ -407,7 +411,7 @@
 										{
 											text: 'Profiles on Current Page',
 											id: 'userProfileGrid-tools-export-shown',
-											iconCls: 'fa fa-user',
+											iconCls: 'fa fa-user icon-small-vertical-correction',
 											handler: function() {
 												var records = userProfileGrid.getStore().getData().items;
 												actionExportUser(records);
@@ -416,7 +420,7 @@
 										{
 											text: 'Selected Profiles',
 											id: 'userProfileGrid-tools-export-selected',
-											iconCls: 'fa fa-user',
+											iconCls: 'fa fa-user icon-small-vertical-correction',
 											disabled: true,
 											handler: function() {
 												var records = userProfileGrid.getSelection();
