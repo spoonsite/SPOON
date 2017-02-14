@@ -61,13 +61,17 @@
 				}
 			});
 			toolsMenu.push({
+				id: 'tools-menu-relationships',
 				text: 'Relationships',
+				hidden: true,
 				handler: function(){
 					actionLoadContent('Relationships');
 				}			
 			});			
 			toolsMenu.push({
+				id: 'tools-menu-reports',
 				text: 'Reports',
+				hidden: true,
 				handler: function(){
 					actionLoadContent('Reports');
 				}			
@@ -189,9 +193,11 @@
 									}									
 								},
 								{
+									id: 'main-menu-submissions',
 									text: 'Submissions',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-list',
+									hidden: true,
 									handler: function(){
 										actionLoadContent('Submissions');
 									}									
@@ -226,6 +232,19 @@
 					}), 0);
 				}
 			});		
+			
+			CoreService.userservice.getCurrentUser().then(function(user){
+				if (CoreService.userservice.userHasPermisson(user, "REPORTS")) {
+					Ext.getCmp('tools-menu-reports').setHidden(false);					
+				}
+				if (CoreService.userservice.userHasPermisson(user, "RELATION-VIEW-TOOL")) {
+					Ext.getCmp('tools-menu-relationships').setHidden(false);
+				} 
+				if (CoreService.userservice.userHasPermisson(user, "USER-SUBMISSIONS")) {
+					Ext.getCmp('main-menu-submissions').setHidden(false);
+				}
+			});			
+			
 						
 			var actionLoadContent = function(key) {
 				window.location.href = 'UserTool.action?load=' + key;

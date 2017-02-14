@@ -16,7 +16,7 @@
  * See NOTICE.txt for more information.
  */
 
-/* global Ext, CoreUtil */
+/* global Ext, CoreUtil, CoreService */
 
 Ext.define('OSF.component.StandardComboBox', {
     extend: 'Ext.form.field.ComboBox',
@@ -163,9 +163,8 @@ Ext.define('OSF.component.UserMenu', {
 			this.setWidth(this.up('button').getWidth());
 		});
 		
-		CoreService.usersevice.getCurrentUser().then(function(response, opts){
-				var usercontext = Ext.decode(response.responseText);
-				
+		CoreService.userservice.getCurrentUser().then(function(usercontext){
+								
 				var userMenuText = usercontext.username;
 				if (usercontext.firstName && usercontext.lastName)
 				{
@@ -173,7 +172,42 @@ Ext.define('OSF.component.UserMenu', {
 				}
 				userMenu.setText(userMenuText);	
 				
-				if (usercontext.admin) {
+				var permissions = [
+					"ADMIN-USER-MANAGEMENT",
+					"ADMIN-SYSTEM-MANAGEMENT",
+					"ADMIN-ENTRY-MANAGEMENT",
+					"ADMIN-MESSAGE-MANAGEMENT",
+					"ADMIN-JOB-MANAGEMENT",
+					"ADMIN-INTEGRATION",
+					"ADMIN-DATA-IMPORT-EXPORT",
+					"ADMIN-WATCHES",
+					"ADMIN-TRACKING",
+					"ADMIN-SEARCH",
+					"ADMIN-USER-MANAGEMENT-PROFILES",
+					"ADMIN-TEMPMEDIA-MANAGEMENT",
+					"ADMIN-ORGANIZATION",
+					"ADMIN-LOOKUPS",
+					"ADMIN-HIGHLIGHTS",
+					"ADMIN-MEDIA",
+					"ADMIN-FEEDBACK",
+					"ADMIN-EVALUATION-TEMPLATE",
+					"API-DOCS",
+					"ADMIN-BRANDING",
+					"ADMIN-EVALUATION-TEMPLATE-SECTION",
+					"ADMIN-CONTACT-MANAGEMENT",
+					"ADMIN-ENTRY-TEMPLATES",
+					"ADMIN-ENTRY-TYPES",
+					"ADMIN-QUESTIONS",
+					"ADMIN-REVIEW",
+					"ADMIN-EVALUATION-TEMPLATE-CHECKLIST",
+					"ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION",
+					"ADMIN-ATTRIBUTE-MANAGEMENT",
+					"ADMIN-ALERT-MANAGEMENT",
+					"REPORTS-ALL",
+					"ADMIN-EVALUATION-MANAGEMENT"
+				];
+				
+				if (CoreService.userservice.userHasPermisson(usercontext, permissions, 'OR')) {
 					userMenu.getMenu().getComponent('menuAdminTools').setHidden(false);
 				}				
 				

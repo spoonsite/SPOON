@@ -156,8 +156,7 @@ Ext.define('OSF.widget.Questions', {
 		
 		questionPanel.add(questionPanel.grid);
 		
-		CoreService.usersevice.getCurrentUser().then(function(response){
-			var userProfile = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function(userProfile){			
 			questionPanel.grid.getStore().load({
 				url: 'api/v1/resource/componentquestions/' + userProfile.username
 			});

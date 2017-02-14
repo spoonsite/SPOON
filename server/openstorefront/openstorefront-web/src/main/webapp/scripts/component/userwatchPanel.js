@@ -233,8 +233,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 
 		var watchPanel = this;	
 		
-		CoreService.usersevice.getCurrentUser().then(function(response) {
-			var userProfile = Ext.decode(response.responseText);			
+		CoreService.userservice.getCurrentUser().then(function(userProfile) {					
 			watchPanel.user = userProfile.username;
 			watchPanel.getStore().load({
 				url: 'api/v1/resource/userprofiles/'+ watchPanel.user +'/watches/'

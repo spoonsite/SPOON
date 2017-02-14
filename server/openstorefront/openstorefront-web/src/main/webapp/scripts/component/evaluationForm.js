@@ -569,8 +569,7 @@ Ext.define('OSF.component.EvaluationPanel', {
 			evalPanel.branding = branding;
 		});
 		
-		CoreService.usersevice.getCurrentUser().then(function(response, opts){
-			var user = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function(user){
 			evalPanel.user = user;	
 			
 			evalPanel.loadContentForm({

@@ -136,8 +136,8 @@ Ext.define('OSF.component.QuestionWindow', {
 		});	
 				
 		//Query User
-		CoreService.usersevice.getCurrentUser().then(function(response){
-			questionWindow.user = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function(user){
+			questionWindow.user = user;
 						
 			//confirm that they have the required info
 			questionWindow.on('show', function(){
@@ -145,8 +145,8 @@ Ext.define('OSF.component.QuestionWindow', {
 					var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
 						alwaysOnTop: false,
 						saveCallback: function(response, opts){
-							CoreService.usersevice.getCurrentUser().then(function (response) {
-								questionWindow.user = Ext.decode(response.responseText);
+							CoreService.userservice.getCurrentUser().then(function (user) {
+								questionWindow.user = user;
 								
 							});
 						}
@@ -303,8 +303,8 @@ Ext.define('OSF.component.ResponseWindow', {
 		});
 		
 		//Query User
-		CoreService.usersevice.getCurrentUser().then(function(response){
-			responseWindow.user = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function(user){
+			responseWindow.user = user;
 						
 			//confirm that they have the required info
 			responseWindow.on('show', function(){
@@ -312,8 +312,8 @@ Ext.define('OSF.component.ResponseWindow', {
 					var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
 						alwaysOnTop: false,
 						saveCallback: function(response, opts){
-							CoreService.usersevice.getCurrentUser().then(function (response) {
-								responseWindow.user = Ext.decode(response.responseText);
+							CoreService.userservice.getCurrentUser().then(function (user) {
+								responseWindow.user = user;
 								
 							});
 						}

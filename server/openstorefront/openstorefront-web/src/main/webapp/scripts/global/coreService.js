@@ -20,19 +20,99 @@
 
 var CoreService = {
   
-  usersevice: {    
+  userservice: {    
     
     getCurrentUser: function(forceReload){
-      var me = this;     
-    
-      //for now don't cache    
-  
-      var promise = Ext.Ajax.request({
-        url: 'api/v1/resource/userprofiles/currentuser'
-      });
-      
-      return promise;
-    }
+		var me = this;     
+		var deferred = new Ext.Deferred();
+		
+		var haveUser = false;
+		if (sessionStorage && sessionStorage.getItem('user')) {
+			if (!forceReload) {
+				deferred.resolve(Ext.decode(sessionStorage.getItem('user')));
+				haveUser = true;
+			}
+		}
+		
+		if (haveUser === false) {
+			Ext.Ajax.request({
+				url: 'api/v1/resource/userprofiles/currentuser',
+				success: function(response, opts) {
+					var user = Ext.decode(response.responseText);
+					sessionStorage.setItem('user', Ext.encode(user));
+					deferred.resolve(Ext.decode(sessionStorage.getItem('user')));
+				},
+				failure: function(response, opts) {
+					deferred.reject("Error loading user.");
+				}
+			});
+		}
+
+		return deferred.promise;
+    },
+	clearUser: function() {
+		sessionStorage.removeItem('user');
+	},
+	userHasPermisson: function(user, permissions, operator) {
+		var userservice = this; 
+		var valid = false;
+		if (Ext.isArray(permissions)) {
+			var operatorValue = operator ? operator.toUpperCase() : 'AND';
+			if (operatorValue === 'OR') {
+				Ext.Array.each(permissions, function(permission) {
+					Ext.Array.each(user.roles, function(role){
+						Ext.Array.each(role.permissions, function(userpermission) {
+							if (userpermission.permission === permission) {
+								valid = true;
+								return false;
+							}			
+						});
+						if (valid) {
+							return false;
+						}
+					});	
+					if (valid) {
+						return false;
+					}
+				});
+			} else {
+				var foundCount = 0;
+				Ext.Array.each(permissions, function(permission) {
+					var foundPermission = false;
+					Ext.Array.each(user.roles, function(role){						
+						Ext.Array.each(role.permissions, function(userpermission) {
+							if (userpermission.permission === permission) {
+								foundPermission = true;
+								return false;
+							}			
+						});
+						if (foundPermission) {
+							return false;
+						}
+					});	
+					if (foundPermission) {
+						foundCount++;
+					}
+				});				
+				if (foundCount === permissions.length) {
+					valid = true;
+				}
+			}
+		} else {			
+			Ext.Array.each(user.roles, function(role){
+				Ext.Array.each(role.permissions, function(userpermission) {
+					if (userpermission.permission === permissions) {
+						valid = true;
+						return false;
+					}			
+				});
+				if (valid) {
+					return false;
+				}
+			});
+		}
+		return valid;
+	}
     
   },
   systemservice: {

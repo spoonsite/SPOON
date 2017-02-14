@@ -72,6 +72,12 @@
 			Ext.onReady(function () {
 				var adminUser = ${admin};
 				
+				var currentUser;
+				CoreService.userservice.getCurrentUser().then(function(user){
+					currentUser = user;
+					loadUserWidgets(true);
+				})
+				
 				var widgets = [
 					{
 						name: 'Notifications',
@@ -80,6 +86,7 @@
 						iconCls: 'fa fa-envelope',
 						jsClass: 'OSF.component.NotificationPanel',
 						height: 400,
+						permissions: null,
 						allowMultiples: false,
 						refresh: function(widget) {
 							widget.refreshData();
@@ -92,6 +99,7 @@
 						iconCls: 'fa fa-gear',
 						jsClass: 'OSF.widget.SystemStats',						
 						height: 320,
+						permissions: "ADMIN-SYSTEM-MANAGEMENT",
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -105,6 +113,7 @@
 						iconCls: 'fa fa-users',
 						jsClass: 'OSF.widget.UserStats',						
 						height: 320,
+						permissions: "ADMIN-USER-MANAGEMENT",
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -118,6 +127,7 @@
 						iconCls: 'fa fa-database',
 						jsClass: 'OSF.widget.EntryStats',						
 						height: 575,
+						permissions: "ADMIN-ENTRY-MANAGEMENT",
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -131,6 +141,7 @@
 						iconCls: 'fa fa-list',
 						jsClass: 'OSF.widget.ApprovalRequests',						
 						height: 400,
+						permissions: "ADMIN-ENTRY-MANAGEMENT",
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -144,6 +155,7 @@
 						iconCls: 'fa fa-binoculars',
 						jsClass: 'OSF.component.UserWatchPanel',						
 						height: 400,
+						permissions: null,
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -157,6 +169,7 @@
 						iconCls: 'fa fa-list',
 						jsClass: 'OSF.widget.Submissions',						
 						height: 400,
+						permissions: "USER-SUBMISSIONS",
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -170,6 +183,7 @@
 						iconCls: 'fa fa-search',
 						jsClass: 'OSF.widget.SavedSearch',						
 						height: 400,
+						permissions: null,
 						adminOnly: false,
 						allowMultiples: true,
 						refresh: function(widget) {
@@ -192,6 +206,7 @@
 						iconCls: 'fa fa-comment',
 						jsClass: 'OSF.widget.Feedback',						
 						height: 400,
+						permissions: "ADMIN-FEEDBACK",
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -205,6 +220,7 @@
 						iconCls: 'fa fa-file-text-o',
 						jsClass: 'OSF.widget.Reports',						
 						height: 400,
+						permissions: "REPORTS",
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -218,6 +234,7 @@
 						iconCls: 'fa fa-question',
 						jsClass: 'OSF.widget.Questions',						
 						height: 400,
+						permissions: null,
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -231,6 +248,7 @@
 						iconCls: 'fa fa-list-alt',
 						jsClass: 'OSF.widget.RecentUserData',						
 						height: 400,
+						permissions: "ADMIN-ENTRY-MANAGEMENT",						
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -258,8 +276,8 @@
 								keep = false;
 							}
 						}
-						if (widget.adminOnly) {
-							if (!adminUser) {
+						if (widget.permissions) {
+							if (!CoreService.userservice.userHasPermisson(currentUser, widget.permissions)) {
 								keep = false;
 							}
 						}
@@ -473,9 +491,9 @@
 								config.widgetColor = widget.widgetColor;
 								
 								var widgetPanel;
-								if (config.adminOnly) {
+								if (config.permissions) {
 									//if the user is no longer admin don't add widget
-									if (adminUser) {
+									if (CoreService.userservice.userHasPermisson(currentUser, widget.permissions)) {
 										widgetPanel = addWidgetToDashboard(config, noUpdateDash);										
 									} 
 								} else {
@@ -494,7 +512,7 @@
 					});
 					
 				};
-				loadUserWidgets(true);
+				
 				
 				var widgetsOnDashBoard = [];
 				var addWidgetToDashboard = function(widget, noUpdateDash) {

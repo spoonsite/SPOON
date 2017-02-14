@@ -71,7 +71,8 @@ public class SecurityInit
 				SecurityPermission.ENTRY_TAG,
 				SecurityPermission.REPORTS_SCHEDULE,
 				SecurityPermission.REPORTS,
-				SecurityPermission.USER_SUBMISSIONS
+				SecurityPermission.USER_SUBMISSIONS,
+				SecurityPermission.RELATIONSHIP_VIEW_TOOL
 		);
 		
 		for (String newPermission : permissionsToAdd) {
@@ -130,6 +131,7 @@ public class SecurityInit
 				SecurityPermission.ADMIN_WATCHES,
 				SecurityPermission.EVALUATIONS,
 				SecurityPermission.ADMIN_EVALUATION_MANAGEMENT,
+				SecurityPermission.API_DOCS,
 				SecurityPermission.REPORTS_ALL
 		);
 		

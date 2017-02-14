@@ -3322,8 +3322,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		submissionPanel.componentId = null;
 		submissionPanel.editMode = editMode;
 		
-		CoreService.usersevice.getCurrentUser().then(function (response) {
-			var usercontext = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function (usercontext) {			
 			submissionPanel.submitterForm.getForm().setValues(usercontext);
 			submissionPanel.usercontext = usercontext;
 		});

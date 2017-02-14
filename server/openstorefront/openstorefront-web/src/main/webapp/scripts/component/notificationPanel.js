@@ -70,8 +70,7 @@ Ext.define('OSF.component.NotificationPanel', {
 		});
 
 		var actionMarkAsRead = function (record) {
-			CoreService.usersevice.getCurrentUser().then(function (response) {
-				var usercontext = Ext.decode(response.responseText);
+			CoreService.userservice.getCurrentUser().then(function (usercontext) {		
 				Ext.Ajax.request({
 					url: 'api/v1/resource/notificationevent/' + record.get('eventId'),
 					method: 'PUT',

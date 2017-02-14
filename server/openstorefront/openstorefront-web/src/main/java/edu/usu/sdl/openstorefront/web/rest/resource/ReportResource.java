@@ -212,7 +212,7 @@ public class ReportResource
 			reportTypes = reportTypes.stream().filter(r -> r.getComponentReport() == true).collect(Collectors.toList());
 		}
 
-		reportTypes = reportTypes.stream().filter(r -> SecurityUtil.hasPermission(r.getRequiredPermission())).collect(Collectors.toList());
+		reportTypes = reportTypes.stream().filter(r -> r.getRequiredPermission() == null || SecurityUtil.hasPermission(r.getRequiredPermission())).collect(Collectors.toList());
 		reportTypes.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, LookupEntity.FIELD_DESCRIPTION));
 
 		GenericEntity<List<ReportType>> entity = new GenericEntity<List<ReportType>>(reportTypes)

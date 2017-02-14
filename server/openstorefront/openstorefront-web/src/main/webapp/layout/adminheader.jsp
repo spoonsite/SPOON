@@ -56,87 +56,101 @@
 
 
 		//Data Menu
-			var dataMenu = [];
+		var dataMenu = [];
 			dataMenu.push({
 				text: 'Attributes',
+				permission: 'ADMIN-ATTRIBUTE-MANAGEMENT',
 				handler: function(){
 					actionLoadContent('Attributes');
 				}
 			});
 			dataMenu.push({
 				text: 'Contacts',
+				permission: 'ADMIN-CONTACT-MANAGEMENT',
 				handler: function(){
 					actionLoadContent('Contacts');
 				}
 			});			
 			dataMenu.push({
 				text: 'Entries',
+				permission: 'ADMIN-ENTRY-MANAGEMENT',
 				handler: function(){
 					actionLoadContent('Entries');
 				}
 			});
 			dataMenu.push({
 				text: 'Entry Types',
+				permission: 'ADMIN-ENTRY-TYPES',
 				handler: function(){
 					actionLoadContent('Entry-Types');
 				}
 			});
 			dataMenu.push({
 				text: 'Entry Templates',
+				permission: 'ADMIN-ENTRY-TEMPLATES',
 				handler: function(){
 					actionLoadContent('Entry-Template');
 				}
 			});			
 			dataMenu.push({
 				text: 'Highlights',
+				permission: 'ADMIN-HIGHLIGHTS',
 				handler: function(){
 					actionLoadContent('Highlights');
 				}
 			});
 			dataMenu.push({
 				text: 'Integrations',
+				permission: 'ADMIN-INTEGRATION',
 				handler: function(){
 					actionLoadContent('Integrations');
 				}
 			});
 			dataMenu.push({
 				text: 'Imports',
+				permission: 'ADMIN-DATA-IMPORT-EXPORT',
 				handler: function(){
 					actionLoadContent('Imports');
 				}
 			});
 			dataMenu.push({
 				text: 'Lookups',
+				permission: 'ADMIN-LOOKUPS',
 				handler: function(){
 					actionLoadContent('Lookups');
 				}
 			});
 			dataMenu.push({
 				text: 'Media',
+				permission: 'ADMIN-MEDIA',
 				handler: function(){
 					actionLoadContent('Media');
 				}
 			});
 			dataMenu.push({
 				text: 'Metadata',
+				permission: 'ADMIN-ENTRY-MANAGEMENT',
 				handler: function(){
 					actionLoadContent('Metadata');
 				}
 			});
 			dataMenu.push({
 				text: 'Organizations',
+				permission: 'ADMIN-ORGANIZATION',
 				handler: function(){
 					actionLoadContent('Organizations');
 				}				
 			});	
 			dataMenu.push({
 				text: 'Relationships',
+				permission: 'ADMIN-ENTRY-MANAGEMENT',
 				handler: function(){
 					actionLoadContent('Relationships');
 				}				
 			});			
 			dataMenu.push({
 				text: 'Searches',
+				permission: 'ADMIN-SEARCH',
 				handler: function(){
 					actionLoadContent('Searches');
 				}				
@@ -147,30 +161,35 @@
 					items: [
 						{
 							text: 'Questions',
+							permission: 'ADMIN-QUESTIONS',
 							handler: function(){
 								actionLoadContent('Questions');
 							}							
 						},
 						{
 							text: 'Reviews',
+							permission: 'ADMIN-REVIEW',
 							handler: function(){
 								actionLoadContent('Reviews');
 							}							
 						},
 						{
 							text: 'Watches',
+							permission: 'ADMIN-WATCHES',
 							handler: function(){
 								actionLoadContent('Watches');
 							}							
 						},						
 						{
 							text: 'Tags',
+							permission: 'ADMIN-ENTRY-MANAGEMENT',
 							handler: function(){
 								actionLoadContent('Tags');
 							}							
 						},
 						{
 							text: 'User Profiles',
+							permission: 'ADMIN-USER-MANAGEMENT-PROFILES',
 							handler: function(){
 								actionLoadContent('User-Profiles');
 							}							
@@ -182,6 +201,7 @@
 			var evaluationMenu = [];
 			evaluationMenu.push({
 				text: 'Evaluations',
+				permission: 'ADMIN-EVALUATION-MANAGEMENT',
 				handler: function(){
 					actionLoadContent('Evaluations');
 				}				
@@ -192,24 +212,28 @@
 					items: [
 						{
 							text: 'Evaluation Templates',
+							permission: 'ADMIN-EVALUATION-TEMPLATE',
 							handler: function(){
 								actionLoadContent('Evaluation-Templates');
 							}							
 						},
 						{
 							text: 'Checklist Templates',
+							permission: 'ADMIN-EVALUATION-TEMPLATE-CHECKLIST',
 							handler: function(){
 								actionLoadContent('Checklist-Templates');
 							}							
 						},
 						{
 							text: 'Checklist Questions',
+							permission: 'ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION',
 							handler: function(){
 								actionLoadContent('Checklist-Questions');
 							}							
 						},							
 						{
 							text: 'Section Templates',
+							permission: 'ADMIN-EVALUATION-TEMPLATE-SECTION',
 							handler: function(){
 								actionLoadContent('Section-Templates');
 							}							
@@ -224,48 +248,56 @@
 			var appMenu = [];
 			appMenu.push({
 				text: 'Alerts',
+				permission: 'ADMIN-ALERT-MANAGEMENT',
 				handler: function(){
 					actionLoadContent('Alerts');
 				}
 			});			
 			appMenu.push({
 				text: 'Branding',
+				permission: 'ADMIN-BRANDING',
 				handler: function(){
 					actionLoadContent('Branding');
 				}				
 			});	
 			appMenu.push({
 				text: 'Feedback',
+				permission: 'ADMIN-FEEDBACK-MANAGEMENT',
 				handler: function(){
 					actionLoadContent('Feedback');
 				}				
 			});			
 			appMenu.push({
 				text: 'Jobs',
+				permission: 'ADMIN-JOB-MANAGEMENT',
 				handler: function(){
 					actionLoadContent('Jobs');
 				}				
 			});
 			appMenu.push({
 				text: 'Messages',
+				permission: 'ADMIN-MESSAGE-MANAGEMENT',
 				handler: function(){
 					actionLoadContent('Messages');
 				}				
 			});			
 			appMenu.push({
 				text: 'Reports',
+				permission: 'REPORTS',
 				handler: function(){
 					actionLoadContent('Reports');
 				}				
 			});
 			appMenu.push({
 				text: 'System',
+				permission: 'ADMIN-SYSTEM-MANAGEMENT',
 				handler: function(){
 					actionLoadContent('System');
 				}				
 			});
 			appMenu.push({
 				text: 'Tracking',
+				permission: 'ADMIN-TRACKING',
 				handler: function(){
 					actionLoadContent('Tracking');
 				}				
@@ -275,6 +307,7 @@
 			});
 			appMenu.push({
 				text: 'API Documentation',
+				permission: 'API-DOCS',
 				href: 'API.action',
 				hrefTarget: '_blank'
 			});			
@@ -369,10 +402,11 @@
 								},
 								{
 									text: 'Data Management',
+									id: 'dataManagementBtn',
+									hidden: true,
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-database',
-									menu: {										
-										items: dataMenu,
+									menu: {
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());
@@ -382,10 +416,11 @@
 								},
 								{
 									text: 'Evaluation Management',
+									id: 'evaluationManagementBtn',
+									hidden: true,
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-file-text-o',
-									menu: {										
-										items: evaluationMenu,
+									menu: {	
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());
@@ -395,10 +430,11 @@
 								},										
 								{
 									text: 'Application Management',
+									id: 'applicationManagementBtn',
+									hidden: true,
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-gears',
-									menu: {										
-										items: appMenu,
+									menu: {	
 										listeners: {
 											beforerender: function () {
 											 this.setWidth(this.up('button').getWidth());
@@ -421,6 +457,53 @@
 				}
 			});				
 
+			CoreService.userservice.getCurrentUser().then(function(user){
+								
+				var addMenuItems = function(menuToAddTo, menuToCheck) {
+					
+					Ext.Array.each(menuToCheck, function(menuItem){
+						if (menuItem.menu) {
+							var tempMenuItems = [];
+							addMenuItems(tempMenuItems, menuItem.menu.items);
+							if (tempMenuItems.length > 0) {
+								menuItem.menu.items = tempMenuItems;
+								menuToAddTo.push(menuItem);
+							}
+						} else {
+							if (menuItem.permission) {
+								if (CoreService.userservice.userHasPermisson(user, menuItem.permission)) {
+									menuToAddTo.push(menuItem);
+								}						
+							} else {
+								menuToAddTo.push(menuItem);
+							}
+						}
+					});
+					
+				};
+				var dataMenuItems = [];
+				addMenuItems(dataMenuItems, dataMenu);
+
+				if (dataMenuItems.length > 0) {
+					Ext.getCmp('dataManagementBtn').setHidden(false);
+					Ext.getCmp('dataManagementBtn').getMenu().add(dataMenuItems);
+				}
+				
+				var evalMenuItems = [];
+				addMenuItems(evalMenuItems, evaluationMenu);				
+				if (evalMenuItems.length > 0) {
+					Ext.getCmp('evaluationManagementBtn').setHidden(false);
+					Ext.getCmp('evaluationManagementBtn').getMenu().add(evalMenuItems);
+				}
+				
+				var appMenuItems = [];
+				addMenuItems(appMenuItems, appMenu);				
+				if (appMenuItems.length > 0) {
+					Ext.getCmp('applicationManagementBtn').setHidden(false);
+					Ext.getCmp('applicationManagementBtn').getMenu().add(appMenuItems);
+				}				
+				
+			});	
 
 			var actionLoadContent = function(key) {
 				window.location.href = 'AdminTool.action?load=' + key;

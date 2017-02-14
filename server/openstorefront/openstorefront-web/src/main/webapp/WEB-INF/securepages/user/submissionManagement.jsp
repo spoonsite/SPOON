@@ -574,8 +574,8 @@
 				};
 				
 				var currentUser;
-				CoreService.usersevice.getCurrentUser().then(function(response, opts){
-					currentUser = Ext.decode(response.responseText);
+				CoreService.userservice.getCurrentUser().then(function(user){
+					currentUser = user;
 				});
 				
 			});

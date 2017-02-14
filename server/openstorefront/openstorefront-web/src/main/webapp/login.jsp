@@ -254,7 +254,7 @@
 								$("#usernameError").addClass("showError");
 								$("#usernameError").html(data.errors.username);
 							}							
-						 } else {
+						 } else {							
 							if (window.location.href.indexOf("login.jsp") > -1) {
 								window.location.href = data.message; 
 							} else {					

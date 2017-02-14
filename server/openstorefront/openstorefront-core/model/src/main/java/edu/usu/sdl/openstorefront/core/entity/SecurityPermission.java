@@ -37,6 +37,7 @@ public class SecurityPermission
 	public static final String REPORTS_ALL = "REPORTS-ALL";
 	public static final String USER_SUBMISSIONS = "USER-SUBMISSIONS";
 	public static final String EVALUATIONS = "EVALUATIONS";
+	public static final String RELATIONSHIP_VIEW_TOOL = "RELATION-VIEW-TOOL";
 	public static final String ADMIN_USER_MANAGEMENT = "ADMIN-USER-MANAGEMENT";
 	public static final String ADMIN_SYSTEM_MANAGEMENT = "ADMIN-SYSTEM-MANAGEMENT";
 	public static final String ADMIN_ENTRY_MANAGEMENT = "ADMIN-ENTRY-MANAGEMENT";
@@ -84,6 +85,8 @@ public class SecurityPermission
 		codeMap.put(REPORTS_ALL, newLookup(SecurityPermission.class, REPORTS_ALL, "Reports All"));
 		codeMap.put(USER_SUBMISSIONS, newLookup(SecurityPermission.class, USER_SUBMISSIONS, "User submissions"));
 		codeMap.put(EVALUATIONS, newLookup(SecurityPermission.class, EVALUATIONS, "Evaluations"));
+		codeMap.put(RELATIONSHIP_VIEW_TOOL, newLookup(SecurityPermission.class, RELATIONSHIP_VIEW_TOOL, "Relationship View Tool"));
+		
 		codeMap.put(ADMIN_USER_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT, "Admin user management"));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT, "Admin system management"));
 		codeMap.put(ADMIN_ENTRY_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ENTRY_MANAGEMENT, "Admin entry management"));

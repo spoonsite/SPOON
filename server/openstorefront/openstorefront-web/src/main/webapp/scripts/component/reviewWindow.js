@@ -255,8 +255,8 @@ Ext.define('OSF.component.ReviewWindow', {
 		});
 		
 		//Query User
-		CoreService.usersevice.getCurrentUser().then(function(response){
-			reviewWindow.user = Ext.decode(response.responseText);
+		CoreService.userservice.getCurrentUser().then(function(user){
+			reviewWindow.user = user;
 						
 			//confirm that they have the required info
 			reviewWindow.on('show', function(){
@@ -264,8 +264,8 @@ Ext.define('OSF.component.ReviewWindow', {
 					var userProfileWin = Ext.create('OSF.component.UserProfileWindow', {
 						alwaysOnTop: false,
 						saveCallback: function(response, opts){
-							CoreService.usersevice.getCurrentUser().then(function (response) {
-								reviewWindow.user = Ext.decode(response.responseText);
+							CoreService.userservice.getCurrentUser().then(function (user) {
+								reviewWindow.user = user;
 								
 							});
 						}
