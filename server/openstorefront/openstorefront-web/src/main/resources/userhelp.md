@@ -31,51 +31,35 @@ licensed under GPL V3.**
 ## 1.1 Release Notes
 ------  
 =======
-## 1.1 Release Notes for v2.2
+## 1.1 Release Notes for v2.3
 ------
 
-Version 2.2 is a maintenance release that:
+Version 2.3 incorporates:
 
  * Fixes several small bugs
- * Improves the usability of searching
- * Improves submissions, specifically the administration of submissions
-
-### 1.1.1 Administrator Release Notes, v2.2 *
+ * Evaluator Tools added
+ * Admin- System Export/Import
+ * Admin- Adding Roles and Permissions to Users
+ 
+### 1.1.1 Administrator Release Notes, v2.3 *
 ------
 
-*What's new in v2.2*
+*What's new in v2.3*
 
-**Attribute Management**
+**Users, Roles, and Permissions**
 
- There are new ways to manage attributes in the Admin Tools -> Attributes section.
-
- 1. Select one or more attributes and click on Entry Assignment at the top of the table.  A new Manage Assignments 
-    box is shown where you can select an attribute and code and assign it to differing entries.
- 2. With one or multiple attributes selected click on Action -> Toggle status to activate or inactivate the attribute(s).
- 3. With one or multiple attributes selected click on Action -> Set Flags.  Here you can set the various flags 
-    (Visble, Important, Allow Multiples, etc.) for the group of attributes.
- 4. Multiple attributes can be deleted by clicking on Action -> Delete.
+**Evaluator Tools**
  
-**Metadata**
- A new section in Admin Tools has been added under Data Management.  The Metadata Management Tool allows for labels and
- values to easily be added to entries.  Drag and drop to associate the label with an entry.  Filter and sort.
- 
-**Tag Management Tool**
-  The Tag tool (Admin Tools -> Data Management -> User Data -> Tags) has been redone, similar to the Metadata section
-  so that tags can be easily associated with various entries by dragging and dropping.
+**System Export/Import**
   
-**User Profiles**
-  User Profiles can now be exported based on the current page, all, or selected profiles.  In addition searching has been
-  added to search by Username, First Name, or Last Name.
   
-For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.2" target="_blank">v2.2</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
+For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.3" target="_blank">v2.3</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
 =======
-## 1.2 Known Issues, v2.2 * 
+## 1.2 Known Issues, v2.3 * 
  
- * ***Setting flags for multiple attributes in IE9***: In Admin Tools, Attributes if you multi-select more than one
-  attribute then select Action, Set Flags, change the flags, and click Update it will not update in IE9.
-
+ ** **: 
+ 
 # 2.  User Features
 ------
 
