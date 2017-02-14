@@ -437,14 +437,13 @@
 							}
 						},
 						{text: 'Message', dataIndex: 'message', width: 200, flex: 1},
-						{text: 'Event Type', dataIndex: 'eventTypeDescription', width: 150, sortable: false},
+						{text: 'Event Type', dataIndex: 'eventTypeDescription', width: 150},
 						{
 							text: 'Update Date', 
 							dataIndex: 'updateDts',
 							width: 150,
 							xtype: 'datecolumn', 
-							format: 'm/d/y H:i:s',
-							sortable: false
+							format: 'm/d/y H:i:s'
 						}
 					],
 					dockedItems: [
