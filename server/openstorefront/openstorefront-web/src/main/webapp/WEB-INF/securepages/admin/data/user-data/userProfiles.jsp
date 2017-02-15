@@ -358,6 +358,7 @@
 									// to get proper spacing for this button
 									text: '&nbsp;Message',
 									id: 'userProfileGrid-tools-message',
+									hidden: true,
 									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',
@@ -463,6 +464,11 @@
 					}
 				});
 
+				CoreService.userservice.getCurrentUser().then(function(user){				
+					if (CoreService.userservice.userHasPermisson(user, "ADMIN-MESSAGE-MANAGEMENT")) {
+						Ext.getCmp('userProfileGrid-tools-message').setHidden(false);
+					}				
+				});
 
 				var actionToggleUser = function actionToggleUser(record) {
 					if (record) {

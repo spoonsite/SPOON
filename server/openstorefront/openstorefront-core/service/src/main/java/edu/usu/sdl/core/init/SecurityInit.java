@@ -120,6 +120,7 @@ public class SecurityInit
 				SecurityPermission.ADMIN_MEDIA,				
 				SecurityPermission.ADMIN_MESSAGE_MANAGEMENT,
 				SecurityPermission.ADMIN_ORGANIZATION,
+				SecurityPermission.ADMIN_ORGANIZATION_EXTRACTION,
 				SecurityPermission.ADMIN_QUESTIONS,
 				SecurityPermission.ADMIN_REVIEW,
 				SecurityPermission.ADMIN_SEARCH,
@@ -132,7 +133,9 @@ public class SecurityInit
 				SecurityPermission.EVALUATIONS,
 				SecurityPermission.ADMIN_EVALUATION_MANAGEMENT,
 				SecurityPermission.API_DOCS,
-				SecurityPermission.REPORTS_ALL
+				SecurityPermission.REPORTS_ALL,
+				SecurityPermission.ADMIN_SECURITY,
+				SecurityPermission.ADMIN_ROLE_MANAGEMENT
 		);
 		
 		for (String newPermission : permissionsToAdd) {

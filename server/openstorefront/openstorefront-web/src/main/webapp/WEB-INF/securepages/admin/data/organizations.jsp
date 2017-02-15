@@ -140,7 +140,9 @@
 									xtype: 'tbfill'
 								},
 								{	text: 'Run Extraction',
+									id: 'runExtractorBtn',
 									scale: 'medium',
+									hidden: true,
 									iconCls: 'fa fa-2x fa-play',
 									tooltip: 'Start extraction of organizations from metadata',
 									handler: function () {
@@ -177,7 +179,15 @@
 				});
 				
 				addComponentToMainViewPort(orgGrid);
-		
+				
+				
+				CoreService.userservice.getCurrentUser().then(function(user){
+					if (CoreService.userservice.userHasPermisson(user, "ADMIN-ORGANIZATION-EXTRACTION")) {
+						Ext.getCmp('runExtractorBtn').setHidden(false);					
+					}
+				});
+				
+				
 				var selectedObj=null;
 				
 				var checkButtonChanges = function() {

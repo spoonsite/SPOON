@@ -82,7 +82,7 @@ public class SecurityServiceImpl
 			
 			if (securityPolicy == null)	{
 				//default
-				securityPolicy = new SecurityPolicy();
+				securityPolicy = new SecurityPolicy();				
 				securityPolicy.setAllowRegistration(Boolean.TRUE);
 				securityPolicy.setAutoApproveUsers(Boolean.FALSE);
 				securityPolicy.setAllowJSONPSupport(Boolean.FALSE);
@@ -91,29 +91,36 @@ public class SecurityServiceImpl
 				securityPolicy.setMinPasswordLength(8);
 				securityPolicy.setRequireAdminUnlock(Boolean.FALSE);
 				securityPolicy.setRequiresProofOfCitizenship(Boolean.FALSE);
-				securityPolicy.setResetLockoutTimeMinutes(15);								
-			} else {
-				element = new Element(CURRENT_SECURITY_POLICY, securityPolicy);
-				OSFCacheManager.getApplicationCache().put(element);
+				securityPolicy.setResetLockoutTimeMinutes(15);	
+				securityPolicy = updateSecurityPolicy(securityPolicy);
 			}
+			
+			element = new Element(CURRENT_SECURITY_POLICY, securityPolicy);
+			OSFCacheManager.getApplicationCache().put(element);			
 		}	
 		return securityPolicy;
 	}
 
 	@Override
-	public void updateSecurityPolicy(SecurityPolicy securityPolicy)
+	public SecurityPolicy updateSecurityPolicy(SecurityPolicy securityPolicy)
 	{
 		SecurityPolicy existing = persistenceService.findById(SecurityPolicy.class, securityPolicy.getPolicyId());
 		if (existing != null) {
 			existing.updateFields(securityPolicy);
-			persistenceService.persist(existing);
+			securityPolicy = persistenceService.persist(existing);
 		} else {
 			securityPolicy.setPolicyId(persistenceService.generateId());
 			securityPolicy.populateBaseCreateFields();
-			persistenceService.persist(securityPolicy);
-		}			
+			securityPolicy = persistenceService.persist(securityPolicy);
+		}	
+		//Make sure we have a copy as we may cache it.
+		SecurityPolicy securityPolicyNew = new SecurityPolicy();
+		securityPolicyNew.setPolicyId(securityPolicy.getPolicyId());
+		securityPolicyNew = securityPolicyNew.find();
+		
 		OSFCacheManager.getApplicationCache().remove(CURRENT_SECURITY_POLICY);
 		LOG.log(Level.INFO, MessageFormat.format("Security Policy was update by: {0}", SecurityUtil.getCurrentUserName()));	
+		return securityPolicyNew;
 	}
 
 	@Override

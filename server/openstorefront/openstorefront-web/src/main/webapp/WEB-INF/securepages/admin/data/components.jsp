@@ -4371,6 +4371,8 @@
 								},
 								{
 									text: 'Import',
+									id: 'lookupGrid-tools-import',
+									hidden: true, 
 									iconCls: 'fa fa-2x fa-upload',
 									scale: 'medium',
 									handler: function () {
@@ -4383,6 +4385,7 @@
 								{
 									text: 'Export',
 									id: 'lookupGrid-tools-export',
+									hidden: true,
 									iconCls: 'fa fa-2x fa-download',
 									scale: 'medium',
 									disabled: true,
@@ -4423,6 +4426,13 @@
 				});
 								
 				addComponentToMainViewPort(componentGrid);
+				
+				CoreService.userservice.getCurrentUser().then(function(user){				
+					if (CoreService.userservice.userHasPermisson(user, "ADMIN-DATA-IMPORT-EXPORT")) {
+						Ext.getCmp('lookupGrid-tools-import').setHidden(false);
+						Ext.getCmp('lookupGrid-tools-export').setHidden(false);
+					}				
+				});	
 				
 				var checkComponetGridTools = function() {
 					

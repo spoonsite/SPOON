@@ -38,9 +38,10 @@ public interface SecurityService
 	/**
 	 * Updates the policy
 	 * @param securityPolicy 
+	 * @return 
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	void updateSecurityPolicy(SecurityPolicy securityPolicy);
+	SecurityPolicy updateSecurityPolicy(SecurityPolicy securityPolicy);
 	
 	/**
 	 * Validate password meets security rules

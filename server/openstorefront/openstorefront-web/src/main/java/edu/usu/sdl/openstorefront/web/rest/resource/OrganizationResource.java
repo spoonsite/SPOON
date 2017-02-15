@@ -359,7 +359,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION_EXTRACTION)
 	@APIDescription("Extract organizations from the data")
 	@Path("/extract")
 	public Response extractFromData()
