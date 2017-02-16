@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import javax.validation.constraints.NotNull;
@@ -32,16 +33,19 @@ public class UserRole
 {
 
 	@PK(generated = true)
+	@NotNull
 	private String userRoleId;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
 	@FK(UserProfile.class)
+	@ConsumeField
 	private String username;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@FK(SecurityRole.class)
+	@ConsumeField
 	private String role;
 
 	public UserRole()

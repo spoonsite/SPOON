@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,36 +23,24 @@ import java.util.List;
  *
  * @author dshurtleff
  */
-public class OrganizationWrapper
+public class UserRegistrationWrapper
+	extends ListWrapper
 {
+	@DataType(UserRegistrationView.class)
+	private List<UserRegistrationView> data = new ArrayList<>();
 
-	private long totalNumber;
-	
-	@DataType(OrganizationView.class)
-	private List<OrganizationView> data = new ArrayList<>();
-
-	public OrganizationWrapper()
+	public UserRegistrationWrapper()
 	{
 	}
 
-	public long getTotalNumber()
-	{
-		return totalNumber;
-	}
-
-	public void setTotalNumber(long totalNumber)
-	{
-		this.totalNumber = totalNumber;
-	}
-
-	public List<OrganizationView> getData()
+	public List<UserRegistrationView> getData()
 	{
 		return data;
 	}
 
-	public void setData(List<OrganizationView> data)
+	public void setData(List<UserRegistrationView> data)
 	{
 		this.data = data;
 	}
-
+	
 }

@@ -49,7 +49,7 @@ public class UserSecurity
 	@NotNull
 	@Min(0)
 	@APIDescription("This will reset upon successful login")
-	private Integer failLoginAttempts;
+	private Integer failedLoginAttempts;
 	
 	private Date lastLoginAttempt;
 	
@@ -90,14 +90,14 @@ public class UserSecurity
 		this.password = password;
 	}
 
-	public Integer getFailLoginAttempts()
+	public Integer getFailedLoginAttempts()
 	{
-		return failLoginAttempts;
+		return failedLoginAttempts;
 	}
 
-	public void setFailLoginAttempts(Integer failLoginAttempts)
+	public void setFailedLoginAttempts(Integer failedLoginAttempts)
 	{
-		this.failLoginAttempts = failLoginAttempts;
+		this.failedLoginAttempts = failedLoginAttempts;
 	}
 
 	public String getTempPassword()

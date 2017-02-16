@@ -198,7 +198,7 @@ public class LoginAction
 				userSecurity.setUsername(username.toLowerCase());
 				userSecurity = userSecurity.find();
 				if (userSecurity != null) {
-					userSecurity.setFailLoginAttempts(userSecurity.getFailLoginAttempts() + 1);
+					userSecurity.setFailedLoginAttempts(userSecurity.getFailedLoginAttempts() + 1);
 					userSecurity.save();
 				}
 			}

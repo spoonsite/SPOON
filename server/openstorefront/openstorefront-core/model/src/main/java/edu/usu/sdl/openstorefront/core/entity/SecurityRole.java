@@ -35,10 +35,12 @@ public class SecurityRole
 {
 	public static final String DEFAULT_GROUP = "DEFAULT-GROUP";	
 
+	public static final String FIELD_ROLENAME = "roleName";
+	
 	@PK(generated = false)
 	@NotNull
 	@ConsumeField
-	@APIDescription("Should match LDAP group if use external IDAM")
+	@APIDescription("Should match LDAP group if use external IDAM and should be unique")
 	private String roleName;
 
 	@NotNull

@@ -22,18 +22,18 @@ import javax.ws.rs.Path;
  *
  * @author dshurtleff
  */
-@Path("v1/resource/usersecurity")
+@Path("v1/resource/users")
 @APIDescription("Handles security roles")
-public class UserSecurityResource
+public class UserResource
 	extends BaseResource
 {
 	//get users
+	
 	
 	//disable user
 	
 	//unlock user
 	
 	//reset password
-	
-	
+		
 }

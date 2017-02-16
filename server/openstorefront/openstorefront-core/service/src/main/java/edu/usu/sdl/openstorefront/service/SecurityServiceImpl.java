@@ -211,7 +211,7 @@ public class SecurityServiceImpl
 			String encryptedValue = passwordService.encryptPassword(userRegistration.getPassword());
 			userSecurity.setPassword(encryptedValue);			
 			userSecurity.setUsername(userRegistration.getUsername().toLowerCase());
-			userSecurity.setFailLoginAttempts(0);
+			userSecurity.setFailedLoginAttempts(0);
 			userSecurity.populateBaseCreateFields();
 			if (securityPolicy.getAutoApproveUsers()) {
 				userSecurity.setApprovalStatus(UserApprovalStatus.APPROVED);
@@ -358,7 +358,7 @@ public class SecurityServiceImpl
 		
 		if (userSecurity != null) {
 			userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);
-			userSecurity.setFailLoginAttempts(0);
+			userSecurity.setFailedLoginAttempts(0);
 			userSecurity.populateBaseUpdateFields();
 			persistenceService.persist(userSecurity);
 			LOG.log(Level.INFO, MessageFormat.format("user {0} was unlocked by: {1}", username, SecurityUtil.getCurrentUserName()));			
@@ -378,7 +378,7 @@ public class SecurityServiceImpl
 		
 		if (userSecurity != null) {
 			userSecurity.setActiveStatus(UserSecurity.INACTIVE_STATUS);
-			userSecurity.setFailLoginAttempts(0);
+			userSecurity.setFailedLoginAttempts(0);
 			userSecurity.populateBaseUpdateFields();
 			persistenceService.persist(userSecurity);
 			
@@ -462,7 +462,7 @@ public class SecurityServiceImpl
 				LOG.log(Level.INFO, MessageFormat.format("Role {0} was removed from user: {1} by {2}",  role, username, SecurityUtil.getCurrentUserName()));			
 			}
 		} else {
-			throw new OpenStorefrontRuntimeException("Unable to find user to add role to.", "Check input: " + username);
+			throw new OpenStorefrontRuntimeException("Unable to find user to remove role from.", "Check input: " + username);
 		}
 	}
 

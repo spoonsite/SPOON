@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import javax.ws.rs.Consumes;
@@ -39,7 +40,7 @@ public class SecurityPolicyResource
 {
 	
 	@GET 
-	@RequireSecurity("ADMIN-SECURITY")
+	@RequireSecurity(SecurityPermission.ADMIN_SECURITY)
 	@APIDescription("Gets current security policy.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SecurityPolicy.class)
@@ -50,7 +51,7 @@ public class SecurityPolicyResource
 	}
 
 	@PUT
-	@RequireSecurity("ADMIN-SECURITY")
+	@RequireSecurity(SecurityPermission.ADMIN_SECURITY)
 	@APIDescription("Updates security policy.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -60,17 +61,16 @@ public class SecurityPolicyResource
 			@PathParam("policyId") String policyId,
 			SecurityPolicy securityPolicy
 	)
-	{		
-		securityPolicy.setPolicyId(policyId);
+	{	
+		SecurityPolicy existing = new SecurityPolicy();
+		existing.setPolicyId(policyId);
+		if (existing != null) {
 		
-		SecurityPolicy securityPolicy =
-		
-		
-
-		
-		service.getSecurityService().updateSecurityPolicy(securityPolicy);
-		
-		
+			securityPolicy.setPolicyId(policyId);
+			securityPolicy = service.getSecurityService().updateSecurityPolicy(securityPolicy);
+			return Response.ok(securityPolicy).build();
+		} 
+		return sendSingleEntityResponse(existing);
 	}
 	
 }

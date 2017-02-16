@@ -76,7 +76,7 @@ public class OrganizationResource
 	@GET
 	@APIDescription("Gets organization records.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(OrganizationView.class)
+	@DataType(OrganizationWrapper.class)
 	public Response getOrganizations(@BeanParam FilterQueryParams filterQueryParams)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();

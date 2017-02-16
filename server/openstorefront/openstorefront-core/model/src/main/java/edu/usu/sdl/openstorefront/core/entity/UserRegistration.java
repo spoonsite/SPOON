@@ -36,6 +36,7 @@ public class UserRegistration
 {
 
 	@PK(generated = true)
+	@NotNull
 	private String registrationId;
 
 	@ConsumeField

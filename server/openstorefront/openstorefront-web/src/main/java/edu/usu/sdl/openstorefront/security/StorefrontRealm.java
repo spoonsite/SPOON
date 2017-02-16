@@ -76,13 +76,13 @@ public class StorefrontRealm
 		
 		ServiceProxy serviceProxy = ServiceProxy.getProxy();		
 		SecurityPolicy securityPolicy = serviceProxy.getSecurityService().getSecurityPolicy();		
-		if (userSecurity.getFailLoginAttempts() > securityPolicy.getLoginLockoutMaxAttempts()) {
+		if (userSecurity.getFailedLoginAttempts() > securityPolicy.getLoginLockoutMaxAttempts()) {
 			Date now = TimeUtil.currentDate();		
 			Instant instantLastAttempt = Instant.ofEpochMilli(userSecurity.getLastLoginAttempt().getTime());
 			instantLastAttempt.plus(securityPolicy.getResetLockoutTimeMinutes(), ChronoUnit.MINUTES);
 			if (now.toInstant().isAfter(instantLastAttempt)) {
 				if (securityPolicy.getRequireAdminUnlock() == false) {
-					userSecurity.setFailLoginAttempts(0);				
+					userSecurity.setFailedLoginAttempts(0);				
 				} else {
 					throw new LockedAccountException("Account is lock due to excessive failed attempts. Requires admin unlock.");
 				}
