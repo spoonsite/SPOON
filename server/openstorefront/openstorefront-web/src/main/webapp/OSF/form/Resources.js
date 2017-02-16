@@ -325,7 +325,7 @@ Ext.define('OSF.form.Resources', {
 							xtype: 'tbseparator'
 						},
 						{
-							text: 'Remove',
+							text: 'Delete',
 							itemId: 'removeBtn',
 							iconCls: 'fa fa-trash',																		
 							disabled: true,

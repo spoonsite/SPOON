@@ -178,7 +178,7 @@ Ext.define('OSF.component.NotificationPanel', {
 						{
 							text: 'Refresh',
 							scale: 'medium',
-							iconCls: 'fa fa-2x fa-refresh',
+							iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 							handler: function () {
 								this.up('grid').getStore().load({
 									params: {
@@ -221,20 +221,20 @@ Ext.define('OSF.component.NotificationPanel', {
 							xtype: 'tbfill'
 						}, 
 						{
-							text: 'Clear All',
+							text: 'Delete All',
 							scale: 'medium',
-							iconCls: 'fa fa-2x fa-trash',
+							iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
 							handler: function () {
 								var notificationStore = this.up('grid').getStore();
 								
 								Ext.Msg.show({
-									title:'Remove All Notifications?',
-									message: 'Are you sure you want to remove all notifications?',
+									title:'Delete All Notifications?',
+									message: 'Are you sure you want to delete all notifications?',
 									buttons: Ext.Msg.YESNO,
 									icon: Ext.Msg.QUESTION,
 									fn: function(btn) {
 										if (btn === 'yes') {
-											notPanel.notificationGrid.setLoading("Clearing notifications...");
+											notPanel.notificationGrid.setLoading("Deleting notifications...");
 											Ext.Ajax.request({
 												url: 'api/v1/resource/notificationevent/currentuser',
 												method: 'DELETE',

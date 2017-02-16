@@ -126,13 +126,13 @@ public class SystemAction
 			for (ComponentAttribute componentAttribute : componentAttributes) {
 				if (attributeKeySet.contains(componentAttribute.getComponentAttributePk().pkValue())) {
 					service.getPersistenceService().delete(componentAttribute);
-					details.append("Remove duplication: ").append(componentAttribute.getComponentAttributePk().pkValue()).append("<br>");
+					details.append("Delete duplication: ").append(componentAttribute.getComponentAttributePk().pkValue()).append("<br>");
 					dupCount++;
 				} else {
 					attributeKeySet.add(componentAttribute.getComponentAttributePk().pkValue());
 				}
 			}
-			return new StreamingResolution("text/html", dupCount + " Duplicate Component Attribute Remove on: " + attributeType + " attribute Type. <br> Details: <br>" + details);
+			return new StreamingResolution("text/html", dupCount + " Duplicate Component Attribute Delete on: " + attributeType + " attribute Type. <br> Details: <br>" + details);
 		}
 		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 	}

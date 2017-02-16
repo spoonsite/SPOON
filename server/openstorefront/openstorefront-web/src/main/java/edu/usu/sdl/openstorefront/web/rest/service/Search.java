@@ -146,7 +146,7 @@ public class Search
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Removes all indexes from Solr")
+	@APIDescription("Deletes all indexes from Solr")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/clearSolr")
 	public Response clearSolr()
@@ -157,7 +157,7 @@ public class Search
 
 	@POST
 	@RequireAdmin
-	@APIDescription("Removes all indexes from Solr and then reindexes current components and articles")
+	@APIDescription("Deletes all indexes from Solr and then reindexes current components and articles")
 	@Path("/resetSolr")
 	public Response resetSolr()
 	{

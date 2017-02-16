@@ -66,7 +66,7 @@ Ext.define('OSF.component.QuestionWindow', {
 					items: [
 						{
 							text: 'Post',
-							iconCls: 'fa fa-save',
+							iconCls: 'fa fa-lg fa-save icon-button-color-add',
 							handler: function(){
 								var form = this.up('form');
 								var data = form.getValues();
@@ -110,7 +110,7 @@ Ext.define('OSF.component.QuestionWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 							handler: function(){
 								questionWindow.close();
 							}							
@@ -156,7 +156,7 @@ Ext.define('OSF.component.QuestionWindow', {
 					Ext.defer(function(){	
 						Ext.MessageBox.show({
 							title:'Update User Profile',
-							message: 'Please update you profile and fill in missing information to continue.',
+							message: 'Please update your profile and fill in missing information to continue.',
 							buttons: Ext.Msg.OK,
 							icon: Ext.Msg.ERROR										
 						});						
@@ -231,7 +231,7 @@ Ext.define('OSF.component.ResponseWindow', {
 					items: [
 						{
 							text: 'Post',
-							iconCls: 'fa fa-save',
+							iconCls: 'fa fa-lg fa-save icon-button-color-add',
 							handler: function(){
 								var form = this.up('form');
 								var data = form.getValues();
@@ -277,7 +277,7 @@ Ext.define('OSF.component.ResponseWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 							handler: function(){
 								responseWindow.close();
 							}							
@@ -323,7 +323,7 @@ Ext.define('OSF.component.ResponseWindow', {
 					Ext.defer(function(){	
 						Ext.MessageBox.show({
 							title:'Update User Profile',
-							message: 'Please update you profile and fill in missing information to continue.',
+							message: 'Please update your profile and fill in missing information to continue.',
 							buttons: Ext.Msg.OK,
 							icon: Ext.Msg.ERROR										
 						});						

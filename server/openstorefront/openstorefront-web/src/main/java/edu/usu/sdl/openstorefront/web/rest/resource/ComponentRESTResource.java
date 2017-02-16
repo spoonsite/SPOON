@@ -1166,7 +1166,7 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove all attributes from the entity")
+	@APIDescription("Delete all attributes from the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes")
 	public void deleteComponentAttributes(
@@ -1506,7 +1506,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a contact from the component")
+	@APIDescription("Delete a contact from the component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/contacts/{componentContactId}")
 	public Response deleteComponentContact(
@@ -1670,7 +1670,7 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Removes an evaluation section from the component")
+	@APIDescription("Deletes an evaluation section from the component")
 	@Path("/{id}/sections/{evalSection}")
 	public void deleteComponentEvaluationSection(
 			@PathParam("id")
@@ -1686,7 +1686,7 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Removes all evaluation section from the component")
+	@APIDescription("Deletes all evaluation section from the component")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -1888,7 +1888,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a given resource from the specified component")
+	@APIDescription("Delete a given resource from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/resources/{resourceId}/force")
 	public Response deleteComponentResource(
@@ -2096,7 +2096,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Removes media from the specified entity")
+	@APIDescription("Deletes media from the specified entity")
 	@Path("/{id}/media/{mediaId}/force")
 	public Response deleteComponentMedia(
 			@PathParam("id")
@@ -2315,7 +2315,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@APIDescription("Removes metadata from the specified component")
+	@APIDescription("Deletes metadata from the specified component")
 	@Path("/{id}/metadata/{metadataId}/activate")
 	public Response activateComponentMetadata(
 			@PathParam("id")
@@ -2867,7 +2867,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a review from the specified entity")
+	@APIDescription("Delete a review from the specified entity")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -3111,7 +3111,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Removes all cons from the given review accociated with the specified entity")
+	@APIDescription("Deletes all cons from the given review accociated with the specified entity")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -3245,7 +3245,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Removes all pros from the review associated with a specified entity")
+	@APIDescription("Deletes all pros from the review associated with a specified entity")
 	@Consumes(
 			{
 				MediaType.APPLICATION_JSON
@@ -3385,7 +3385,7 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove all tags from the specified component")
+	@APIDescription("Delete all tags from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTag.class)
 	@Path("/{id}/tags")
@@ -3399,7 +3399,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a tag by id from the specified entity")
+	@APIDescription("Delete a tag by id from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tags/{tagId}")
 	public Response deleteComponentTagById(
@@ -3423,7 +3423,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@APIDescription("Remove a single tag from the specified entity by the Tag Text")
+	@APIDescription("Delete a single tag from the specified entity by the Tag Text")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tags/text")
 	public Response deleteComponentTag(
@@ -3777,7 +3777,7 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove a tracking entry from the specified component")
+	@APIDescription("Delete a tracking entry from the specified component")
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteComponentTracking(
 			@PathParam("id")
@@ -3796,7 +3796,7 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Remove all tracking entries from the specified component")
+	@APIDescription("Delete all tracking entries from the specified component")
 	@Path("/{id}/tracking")
 	public void deleteAllComponentTracking(
 			@PathParam("id")
@@ -3919,7 +3919,7 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Removes the integration override time")
+	@APIDescription("Deletes the integration override time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
 	public Response deleteRefreshRate(
@@ -3945,7 +3945,7 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireAdmin
-	@APIDescription("Activates  a component integration model")
+	@APIDescription("Activates a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/activate")
 	public Response activateIntegration(
@@ -3999,7 +3999,7 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Removes component integration and all child configs.")
+	@APIDescription("Deletes component integration and all child configs.")
 	@Path("/{componentId}/integration")
 	public Response deleteComponentConfig(
 			@PathParam("componentId")
@@ -4230,7 +4230,7 @@ public class ComponentRESTResource
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Removes component integration config")
+	@APIDescription("Deletes component integration config")
 	@Path("/{componentId}/integration/configs/{configId}")
 	public void deleteComponentIntegrationConfig(
 			@PathParam("componentId")

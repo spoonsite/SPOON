@@ -36,7 +36,8 @@
 									{
 										text: 'Save',
 										formBind: true,
-										iconCls: 'fa fa-2x fa-save text-success',
+										iconCls: 'fa fa-2x fa-save icon-button-color-add icon-vertical-correction-edit',
+										width: '100px',
 										scale: 'medium',
 										handler: function() {
 											var form = this.up('form');
@@ -76,7 +77,7 @@
 									},
 									{
 										text: 'Cancel',									
-										iconCls: 'fa fa-2x fa-close text-danger',
+										iconCls: 'fa fa-2x fa-close icon-button-color-delete icon-vertical-correction',
 										scale: 'medium',
 										handler: function() {
 											this.up('window').close();
@@ -194,7 +195,7 @@
 										viewConfig: {
 											plugins: {
 												ptype: 'gridviewdragdrop',
-												dragText: 'Drag and drop to Remove from template'												
+												dragText: 'Drag and drop to delete from template'												
 											},
 											listeners: {
 												drop: function(node, data, overModel, dropPostition, opts){													
@@ -327,7 +328,7 @@
 						items: [
 							{
 								text: 'Refresh',
-								iconCls: 'fa fa-2x fa-refresh',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								scale: 'medium',
 								handler: function(){
 									actionRefresh();
@@ -338,40 +339,43 @@
 							},
 							{
 								text: 'Add',
-								iconCls: 'fa fa-2x fa-plus text-success',									
+								iconCls: 'fa fa-2x fa-plus icon-button-color-add',									
 								scale: 'medium',
+								width: '100px',
 								handler: function(){
 									actionAddEdit();
 								}
 							},
 							{
-								text: 'View',
-								iconCls: 'fa fa-2x fa-eye text-info',
-								itemId: 'view',
-								disabled: true,									
-								scale: 'medium',
-								handler: function(){
-									var record = Ext.getCmp('checklistGrid').getSelectionModel().getSelection()[0];
-									actionView(record);
-								}
-							},							
-							{
 								text: 'Edit',
-								iconCls: 'fa fa-2x fa-edit',
+								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 								itemId: 'edit',
 								disabled: true,									
 								scale: 'medium',
+								width: '100px',
 								handler: function(){
 									var record = Ext.getCmp('checklistGrid').getSelectionModel().getSelection()[0];
 									actionAddEdit(record);
 								}
 							},
 							{
+								text: 'View',
+								iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
+								itemId: 'view',
+								disabled: true,									
+								scale: 'medium',
+								width: '110px',
+								handler: function(){
+									var record = Ext.getCmp('checklistGrid').getSelectionModel().getSelection()[0];
+									actionView(record);
+								}
+							},							
+							{
 								xtype: 'tbseparator'
 							},
 							{
 								text: 'Toggle Status',
-								iconCls: 'fa fa-2x fa-power-off text-warning',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
@@ -382,10 +386,11 @@
 							},	
 							{
 								text: 'Copy',
-								iconCls: 'fa fa-2x fa-clone',
+								iconCls: 'fa fa-2x fa-clone icon-button-color-toggle-status icon-vertical-correction-edit',
 								itemId: 'copy',
 								disabled: true,								
 								scale: 'medium',
+								width: '110px',
 								handler: function(){
 									var record = Ext.getCmp('checklistGrid').getSelectionModel().getSelection()[0];
 									actionCopy(record);
@@ -396,7 +401,7 @@
 							},							
 							{
 								text: 'Delete',
-								iconCls: 'fa fa-2x fa-close text-danger',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
 								itemId: 'delete',
 								disabled: true,									
 								scale: 'medium',
@@ -495,7 +500,7 @@
 								{
 									text: 'Previous',
 									id: 'viewWinTools-previousBtn',
-									iconCls: 'fa fa-2x fa-arrow-left',
+									iconCls: 'fa fa-2x fa-arrow-left icon-button-color-toggle-status icon-vertical-correction',
 									scale: 'medium',
 									handler: function() {
 										actionPreviewNextRecord(false);
@@ -506,7 +511,7 @@
 								},
 								{
 									text: 'Close',
-									iconCls: 'fa fa-2x fa-close',
+									iconCls: 'fa fa-2x fa-close icon-button-color-delete icon-vertical-correction',
 									scale: 'medium',
 									handler: function() {
 										this.up('window').close();
@@ -518,7 +523,7 @@
 								{
 									text: 'Next',
 									id: 'viewWinTools-nextBtn',
-									iconCls: 'fa fa-2x fa-arrow-right',
+									iconCls: 'fa fa-2x fa-arrow-right icon-button-color-stop icon-vertical-correction',
 									iconAlign: 'right',
 									scale: 'medium',
 									handler: function() {
@@ -616,7 +621,7 @@
 						var references = response.responseText;
 
 						if (references && references !== 'false') {
-							Ext.Msg.alert('Existing References', 'Unable to delete; Remove evaluation checklists first.');
+							Ext.Msg.alert('Existing References', 'Unable to delete; Delete evaluation checklists first.');
 						} else {
 							Ext.Msg.show({
 								title:'Delete Checklist Template?',

@@ -132,13 +132,13 @@
 			
 			deleteReview: function(reviewId, componentId) {
 				Ext.Msg.show({
-					title:'Remove Review?',
-					message: 'Are you sure you want to remove this review?',
+					title:'Delete Review?',
+					message: 'Are you sure you want to delete this review?',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
 						if (btn === 'yes') {
-							Ext.getCmp('reviewPanel').setLoading("Removing...");
+							Ext.getCmp('reviewPanel').setLoading("Deleting...");
 							Ext.Ajax.request({
 								url: 'api/v1/resource/components/'+componentId+'/reviews/'+reviewId,
 								method: 'DELETE',
@@ -174,13 +174,13 @@
 			deleteResponse: function(responseId, questionId, componentId){
 				
 				Ext.Msg.show({
-					title:'Remove Answer?',
-					message: 'Are you sure you want to remove this answer?',
+					title:'Delete Answer?',
+					message: 'Are you sure you want to delete this answer?',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
 						if (btn === 'yes') {
-							Ext.getCmp('questionPanel').setLoading("Removing...");
+							Ext.getCmp('questionPanel').setLoading("Deleting...");
 							Ext.Ajax.request({
 								url: 'api/v1/resource/components/'+componentId+'/questions/' + questionId + '/responses/' + responseId,
 								method: 'DELETE',
@@ -370,7 +370,7 @@
 								xtype: 'button',								
 								text: '<span class="fa-stack" style="margin-left: -10px;margin-right: -10px; margin-bottom: -10px;"><i class="fa fa-eye fa-stack-1x" style="top: -5px;"></i><i class="fa fa-2x fa-ban fa-stack-1x text-danger"  style="top: -5px;"></i></span>',
 								id: 'watchRemoveBtn',
-								tooltip: 'Remove Watch',
+								tooltip: 'Delete Watch',
 								scale: 'large',								
 								margin: '0 10 0 0',
 								hidden: true,
@@ -421,7 +421,7 @@
 									items: [
 										{
 											text: 'Submit Correction',
-											iconCls: 'fa fa-comment-o',
+											iconCls: 'fa fa-lg fa-comment-o icon-small-vertical-correction',
 											handler: function() {
 												Ext.Msg.show({
 													title:'Submit Correction?',
@@ -450,7 +450,7 @@
 									items: [										
 										{
 											text: 'Submit Correction',
-											iconCls: 'fa fa-comment-o',
+											iconCls: 'fa fa-lg fa-comment-o icon-small-vertical-correction',
 											handler: function() {
 												var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {
 													closeAction: 'destroy',
@@ -471,7 +471,7 @@
 										},
 										{
 											text: 'Request Ownership',
-											iconCls: 'fa fa-envelope-square',
+											iconCls: 'fa fa-lg fa-envelope-square icon-small-vertical-correction',
 											handler: function() {
 												var feedbackWin = Ext.create('OSF.component.FeedbackWindow', {
 													closeAction: 'destroy',
@@ -632,7 +632,7 @@
 						maxWidth: 200,
 						scale: 'medium',
 						margin: 10,
-						iconCls: 'fa fa-lg fa-star-half-o icon-top-padding-5',
+						iconCls: 'fa fa-lg fa-star-half-o icon-button-color-review icon-small-vertical-correction',
 						handler: function(){							
 							ViewPage.reviewWindow.refresh();
 							ViewPage.reviewWindow.show();
@@ -690,7 +690,7 @@
 							'	<td valign="top">',
 							'		<h1><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>',								
 							'		<div class="review-who-section">{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <b>Recommend</b></tpl>', 
-							'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash-o small-button-danger" title="Remove" onclick="ViewPage.deleteReview(\'{reviewId}\', \'{componentId}\')"> Remove</i></tpl>',			
+							'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="ViewPage.deleteReview(\'{reviewId}\', \'{componentId}\')"> Delete</i></tpl>',			
 							'		</div><br>',
 							'		<b>Organization:</b> {organization}<br>',
 							'		<b>Experience:</b> {userTimeDescription}<br>',							
@@ -765,7 +765,7 @@
 						maxWidth: 200,
 						scale: 'medium',
 						margin: 10,
-						iconCls: 'fa  fa-lg fa-comment icon-top-padding-5',
+						iconCls: 'fa  fa-lg fa-comment icon-small-vertical-correction',
 						handler: function(){							
 							ViewPage.questionWindow.show();
 							ViewPage.questionWindow.refresh();
@@ -1019,12 +1019,12 @@
 										}
 									},
 									{
-										text: 'Remove',
+										text: 'Delete',
 										iconCls: 'fa fa-close',
 										handler: function(){
 											var tagButton = this.up('button');
 											var tag = tagButton.entryTag;
-											Ext.getCmp('tagPanel').setLoading('Removing Tag...');
+											Ext.getCmp('tagPanel').setLoading('Deleting Tag...');
 											Ext.Ajax.request({
 												url: 'api/v1/resource/components/' + componentId + '/tags/' + tag.tagId,
 												method: 'DELETE',
@@ -1212,7 +1212,7 @@
 							'<tpl for=".">',
 							'	<tpl if="activeStatus === \'A\'">',
 							'		<div class="question-response"><span class="question-response-letter">A.</span><tpl if="securityMarkingType">({securityMarkingType}) </tpl> {response}</div>',
-							'		<tpl if="username === \'${user}\' || ${admin}"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editResponse(\'{responseId}\')"> Edit</i> <i class="fa fa-trash-o small-button-danger" title="Remove" onclick="ViewPage.deleteResponse(\'{responseId}\', \'{questionId}\', \'{componentId}\')"> Remove</i></tpl>',
+							'		<tpl if="username === \'${user}\' || ${admin}"><i class="fa fa-edit small-button-normal" title="Edit" onclick="ViewPage.editResponse(\'{responseId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="ViewPage.deleteResponse(\'{responseId}\', \'{questionId}\', \'{componentId}\')"> Delete</i></tpl>',
 							'		<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',	
 							'		<hr>',
 							'	</tpl>',
@@ -1244,7 +1244,7 @@
 									{
 										text: 'Edit',
 										tooltip: 'Edit Question',
-										iconCls: 'fa fa-edit',
+										iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 										handler: function(){
 											ViewPage.questionWindow.show();
 											
@@ -1256,16 +1256,16 @@
 									{	
 										text: 'Delete',
 										tooltip: 'Delete Question',
-										iconCls: 'fa fa-trash-o',
+										iconCls: 'fa fa-lg fa-trash icon-button-color-delete',
 										handler: function(){
 											Ext.Msg.show({
-												title:'Remove Question?',
-												message: 'Are you sure you want to review this Question?',
+												title:'Delete Question?',
+												message: 'Are you sure you want to delete this Question?',
 												buttons: Ext.Msg.YESNO,
 												icon: Ext.Msg.QUESTION,
 												fn: function(btn) {
 													if (btn === 'yes') {
-														Ext.getCmp('questionPanel').setLoading("Removing...");
+														Ext.getCmp('questionPanel').setLoading("Deleting...");
 														Ext.Ajax.request({
 															url: 'api/v1/resource/components/' + componentId + '/questions/' + question.questionId,
 															method: 'DELETE',

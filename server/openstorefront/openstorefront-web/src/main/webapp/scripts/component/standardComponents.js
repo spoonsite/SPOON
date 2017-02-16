@@ -83,7 +83,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 	scale: 'large',
 	ui: 'default',	
-	minWidth: 150,
+	minWidth: 170,
 	maxWidth: 250,
 	initCallBack: null,
 	showUserTools: true,

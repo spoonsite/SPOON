@@ -314,7 +314,7 @@ public class Application
 
 	@DELETE
 	@RequireAdmin
-	@APIDescription("Removes config property (Allow it to fallback to the Default)")
+	@APIDescription("Deletes config property (Allow it to fallback to the Default)")
 	@Path("/configproperties/{key}")
 	public void removeConfigProperties(@PathParam("key") String key)
 	{

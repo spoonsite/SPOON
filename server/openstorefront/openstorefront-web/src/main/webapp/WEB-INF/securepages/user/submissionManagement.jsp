@@ -68,7 +68,7 @@
 					var submissionWindow = Ext.create('Ext.window.Window', {
 						id: 'submissionWindow',
 						title: 'Submission Form',
-						iconCls: 'fa fa-file-text-o',
+						iconCls: 'fa fa-lg fa-file-text-o',
 						layout: 'fit',
 						modal: true,
 						width: '90%',
@@ -128,7 +128,7 @@
 								{
 									text: 'Previous',
 									id: 'previewWinTools-previousBtn',
-									iconCls: 'fa fa-arrow-left',									
+									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-stop',									
 									handler: function() {
 										actionPreviewNextRecord(false);
 									}									
@@ -138,7 +138,7 @@
 								},
 								{
 									text: 'Close',
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
 									handler: function() {
 										this.up('window').hide();
 									}
@@ -149,7 +149,7 @@
 								{
 									text: 'Next',
 									id: 'previewWinTools-nextBtn',
-									iconCls: 'fa fa-arrow-right',
+									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-stop',
 									iconAlign: 'right',
 									handler: function() {
 										actionPreviewNextRecord(true);
@@ -182,7 +182,7 @@
 				};				
 				
 				var submissionGrid = Ext.create('Ext.grid.Panel', {	
-					title: 'Submissions <i class="fa fa-question-circle"  data-qtip="Manage your entry submissions here."></i>',
+					title: 'Submissions <i class="fa fa-lg fa-question-circle"  data-qtip="Manage your entry submissions here."></i>',
 					id: 'submissionGrid',
 					columnLines: true,
 					store: {
@@ -249,8 +249,9 @@
 							items: [
 								{
 									text: 'Refresh',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									scale: 'medium',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										actionRefreshSubmission();
 									}
@@ -261,7 +262,7 @@
 								{
 									text: 'New Submission',									
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-plus',									
+									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',									
 									handler: function () {
 										Ext.getCmp('submissionWindow').show();
 										Ext.getCmp('submissionPanel').resetSubmission();
@@ -272,7 +273,8 @@
 									itemId: 'tbEdit',
 									scale: 'medium',	
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										Ext.getCmp('submissionWindow').show();
@@ -284,8 +286,9 @@
 									itemId: 'tbSubmitChange',
 									tooltip: 'Create or edit a change request for an approved entry.',
 									hidden: true,									
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-edit',
+									scale: 'medium',
+									width: '180px',
+									iconCls: 'fa fa-2x fa-comment-o icon-button-color-stop icon-vertical-correction-view',
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];										
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
@@ -317,7 +320,7 @@
 											{
 												text: 'Preview',
 												itemId: 'tbPreview',
-												iconCls: 'fa fa-binoculars',
+												iconCls: 'fa fa-lg fa-binoculars icon-small-vertical-correction',
 												handler: function () {
 													actionPreviewComponent();
 												}
@@ -328,7 +331,7 @@
 											{
 												text: 'Copy',
 												itemId: 'tbCopy',
-												iconCls: 'fa fa-copy',
+												iconCls: 'fa fa-lg fa-copy icon-small-vertical-correction',
 												handler: function () {
 													var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 
@@ -351,7 +354,7 @@
 											{
 												text: 'Toggle Notify',
 												itemId: 'tbNotify',
-												iconCls: 'fa fa-envelope',
+												iconCls: 'fa fa-lg fa-envelope icon-small-vertical-correction',
 												handler: function () {
 													if (currentUser && currentUser.email) {
 														var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
@@ -397,8 +400,9 @@
 									itemId: 'tbUnapprove',
 									tooltip: 'This will send a request to the administation asking for the selected record to be unapproved.',
 									hidden: true,									
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-comment',
+									scale: 'medium',
+									width: '180px',
+									iconCls: 'fa fa-2x fa-comment-o icon-button-color-stop icon-vertical-correction-view',
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
@@ -422,7 +426,7 @@
 									itemId: 'tbUnsubmit',
 									hidden: true,									
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-close',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
@@ -454,7 +458,7 @@
 									itemId: 'tbDelete',
 									disabled: true,
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-trash',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
@@ -482,11 +486,11 @@
 									}
 								},
 								{
-									text: 'Remove Change',
+									text: 'Delete Change',
 									itemId: 'tbRemoveChangeRequest',
 									hidden: true,
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-trash',
+									iconCls: 'fa fa-2x icon-button-color-delete icon-vertical-correction',
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
 										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');

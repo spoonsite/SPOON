@@ -255,6 +255,7 @@ public class ElasticSearchManager
 			// Create Standard Query
 			esQuery.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_NAME, queryString.toString()));
 			esQuery.should(QueryBuilders.matchQuery(ComponentSearchView.FIELD_ORGANIZATION, queryString.toString()));
+                        esQuery.should(QueryBuilders.matchPhraseQuery("description", queryString.toString()));
 			esQuery.should(QueryBuilders.wildcardQuery(ELASTICSEARCH_ALL_FIELDS, queryString.toString()));
 			esQuery.should(QueryBuilders.fuzzyQuery(ELASTICSEARCH_ALL_FIELDS, queryString.toString()));
 		}
@@ -264,6 +265,7 @@ public class ElasticSearchManager
 
 			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, phrase));
 			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
+                        esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase));
 		}
 
 		SearchResponse response = ElasticSearchManager.getClient()

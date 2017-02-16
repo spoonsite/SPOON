@@ -203,6 +203,7 @@
 									text: 'Tools',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-wrench',
+									width: '140px',
 									menu: {										
 										items: toolsMenu,
 										listeners: {

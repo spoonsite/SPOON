@@ -1812,7 +1812,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 				},
 				{
 					text: 'Download Image',
-					iconCls: 'fa fa-download',					
+					iconCls: 'fa fa-lg fa-download icon-button-color-stop',					
 					handler: function(){
 						var containerPanel = this.up('panel');
 						var data = containerPanel.visualPanel.getImage('png');
@@ -1831,7 +1831,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 				},
 				{
 					text: 'Reset',
-					iconCls: 'fa fa-reply',
+					iconCls: 'fa fa-lg fa-undo icon-button-color-refresh',
 					handler: function(){
 						var containerPanel = this.up('panel');
 						
