@@ -194,7 +194,7 @@ on the home page.
 	 entry will be displayed.
  2.  Click on the "Tag" icon to open the tag panel.  Tags will be displayed
 	 below the "Add Tag" text field.
- 3.  Locate the tag and click on the drop down arrow and select "Remove".
+ 3.  Locate the tag and click on the drop down arrow and select "Delete".
 
 ### 2.1.8 Comparing
 ---------
@@ -590,7 +590,7 @@ Entry reviews can be found under the **Tools** drop-down menu. Users can edit an
  - Select a review and click **Edit**.  Update the fields as desired and click **Post Review** (or Cancel).
 
 **To remove a review:**
- - Select a review and click **Delete** in the toolbar.  Confirm the deletion by clicking OK in the confirmation box.
+ - Select a review and click **Delete** in the toolbar.  Confirm the deletion by clicking **Yes** in the confirmation box.
 
  **NOTE:** A review may also be removed from the search results detail screen
 by clicking on the delete icon next to the title of the review. You can only remove reviews you post.
@@ -663,7 +663,7 @@ How to submit a review of an entry:
 3.  Complete the required fields on the form and click **Post Review** at the bottom.
 
 To edit a review, click on the **Edit** button.  Make any changes to the review and click **Post Review**.
-To remove a review, click on the **Remove** button.  A confirmation box will ask the user to confirm 
+To remove a review, click on the **Delete** button.  A confirmation box will ask the user to confirm 
 the deletion of the review.
 
 ### 2.4.2  Submit/Remove a Question or Answer
@@ -685,7 +685,7 @@ How to submit an answer to an entry question:
 3.  Type your answer into the text area and click on the **Post** button.
 
 To edit an answer, click on the **Edit** button.  Make any changes to the answer and click **Post**.
-To remove an answer, click on the **Remove** button.
+To remove an answer, click on the **Delete** button.
 
 ### 2.4.3  Add/Remove a Tag to an Entry
 --------
@@ -694,7 +694,7 @@ From the **Details** page, click the **Tags** button in the upper-right corner o
 An **Add Tag** box will appear at the top of the **Details** page where you can either type in your own tag or
 select an existing tag from the drop-down menu.  Click **Add** to attach tag to entry.
 
-To remove a tag, click on the tag's drop-down arrow and select **Remove**.
+To remove a tag, click on the tag's drop-down arrow and select **Delete**.
 
 ### 2.4.4  Add/Remove an Entry to Watch List
 --------
@@ -1011,7 +1011,7 @@ Inactive entries are not visible to or searchable by users.
 **WARNING:** This is a hard delete and it will remove all associated data
 (media, user reviews, questions, etc.)
 
-1.  Click the delete icon to remove.
+1.  Click the delete icon to delete.
 
 2.  Confirm that you want to delete the entry by clicking **OK** on
     the confirmation dialog.
@@ -1100,13 +1100,13 @@ Entry Types can be made active or inactive by using the Toggle Status button.
           entries; it simply prevents that entry type from being added in future entry 
           submissions.
 
-New with v2.1 Entry Types can now be **removed**.  When you remove a type the system will ask 
+New with v2.1 Entry Types can now be **deleted**.  When you delete a type the system will ask 
  what remaining active entry type you would like to move the existing data to.   This ensures that 
  data (entries) are not lost, but moved to a remaining, active entry type.
 
-**Note:** It is recommended to toggle the status of a type to **inactive**, rather than remove it.  
+**Note:** It is recommended to toggle the status of a type to **inactive**, rather than delete it.  
           Removing entry type that has attribute restriction can change the behavior of the require
-          attributes. It may only be required for entries of type A but when type A is removed then
+          attributes. It may only be required for entries of type A but when type A is deleted then
           the attribute will be required for all entries. 
           (It will require an admin to manually update the attributed if that is not the correct behavior).
   
@@ -1157,9 +1157,9 @@ they do in the table in the Manage Highlights section.
 1.  Click on the **Add** button.
 2.  Fill out the highlight form and click **Save**.
 
-**To edit/remove a highlight:**
+**To edit/delete a highlight:**
 
-1.  Click on the highlight you want to edit or remove.
+1.  Click on the highlight you want to edit or delete.
 2.  In the toolbar, click on **Edit** or **Delete** button.
 3.  After clicking on the **Edit** button, make any changes to the form and click **Save**.
 
@@ -1370,7 +1370,7 @@ the form is complete.
 
 1.  Select the organization you want to remove.
 
-2.  Click on the delete icon next to the organization.
+2.  Click on the **delete** icon next to the organization.
 
 3.  Confirm that you wish to delete the organization by clicking **OK**.
 
