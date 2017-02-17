@@ -37,6 +37,7 @@ public class UserSecurityView
 	private Date lastLoginAttempt;	
 	private Integer failedLoginAttempts;	
 	private boolean pendingUserPasswordReset;
+	private String activeStatus;
 
 	public UserSecurityView()
 	{
@@ -53,7 +54,8 @@ public class UserSecurityView
 		view.setApprovalStatusDescription(TranslateUtil.translate(UserApprovalStatus.class, userSecurity.getApprovalStatus()));		
 		view.setFailedLoginAttempts(userSecurity.getFailedLoginAttempts());
 		view.setLastLoginAttempt(userSecurity.getLastLoginAttempt());
-		
+		view.setActiveStatus(userSecurity.getActiveStatus());
+				
 		if (StringUtils.isNotBlank(userSecurity.getPasswordChangeApprovalCode())) {
 			view.setPendingUserPasswordReset(true);
 		}
@@ -149,6 +151,16 @@ public class UserSecurityView
 	public void setPendingUserPasswordReset(boolean pendingUserPasswordReset)
 	{
 		this.pendingUserPasswordReset = pendingUserPasswordReset;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
 	}
 	
 }

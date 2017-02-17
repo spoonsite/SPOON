@@ -19,17 +19,19 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
+import edu.usu.sdl.openstorefront.core.view.UserCredential;
 import edu.usu.sdl.openstorefront.core.view.UserFilterParams;
 import edu.usu.sdl.openstorefront.core.view.UserSecurityWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import javax.ws.rs.BeanParam;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -78,6 +80,25 @@ public class UserResource
 	}
 	
 	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@APIDescription("Approves user")	
+	@Path("/{username}/approve")
+	public Response approveRegistration(
+			@PathParam("username") String username
+	) 
+	{
+		UserSecurity userSecurity = new UserSecurity();
+		userSecurity.setUsername(username);
+		userSecurity = userSecurity.find();
+		
+		if (userSecurity != null) {			
+			service.getSecurityService().approveRegistration(username);
+			return Response.ok().build();
+		} 		
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}	
+	
+	@PUT
 	@APIDescription("Unlocks a user")
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
 	@Path("/{username}/unlock")
@@ -97,22 +118,35 @@ public class UserResource
 		
 	
 	@PUT
-	@APIDescription("Reset a user password")
+	@APIDescription("Reset a user password (Admin Reset)")
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@Consumes({MediaType.TEXT_PLAIN})
 	@Path("/{username}/resetpassword")
 	public Response resetUserPassword(
 		@PathParam("username") String username,
-		@QueryParam("password") char[] password	
+		UserCredential userCredential
 	)
 	{
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setUsername(username);
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
-			service.getSecurityService().resetPasswordUser(username, password);
+			service.getSecurityService().adminResetPassword(username, userCredential.getPassword());
 			return Response.ok().build();
 		}	
 		return Response.status(Response.Status.NOT_FOUND).build();		
+	}	
+	
+	@DELETE
+	@APIDescription("Delete a user, user registration and profile.")
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@Path("/{username}")
+	public Response deleteUser(
+		@PathParam("username") String username
+	)
+	{
+		service.getSecurityService().deletesUser(username);
+		return Response.noContent().build();	
 	}	
 	
 }

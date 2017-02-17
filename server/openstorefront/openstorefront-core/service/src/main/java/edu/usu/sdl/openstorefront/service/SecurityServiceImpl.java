@@ -276,9 +276,9 @@ public class SecurityServiceImpl
 			userSecurity.populateBaseUpdateFields();
 			persistenceService.persist(userSecurity);
 			
-			LOG.log(Level.INFO, MessageFormat.format("User {0} password was reset by: {1}", username, SecurityUtil.getCurrentUserName()));			
+			LOG.log(Level.INFO, MessageFormat.format("User {0} was approved by: {1}", username, SecurityUtil.getCurrentUserName()));			
 		} else {
-			throw new OpenStorefrontRuntimeException("Unable to find user to reset", "Check input: " + username);
+			throw new OpenStorefrontRuntimeException("Unable to find user to approve", "Check input: " + username);
 		}
 	}	
 
@@ -329,7 +329,7 @@ public class SecurityServiceImpl
 			userSecurity.populateBaseUpdateFields();
 			persistenceService.persist(userSecurity);
 		} else {
-			LOG.log(Level.WARNING, MessageFormat.format("Unable to find user with approval code: ", new String(decodeCode)));
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to find user with password approval code: ", new String(decodeCode)));
 		}		
 		return success;
 	}
@@ -597,7 +597,7 @@ public class SecurityServiceImpl
 										.collect(Collectors.toSet());
 			
 			String query = "select from " + UserProfile.class.getSimpleName() +
-							"where username in :usernameList";
+							" where username in :usernameList ";
 			
 			Map<String, Object> parameterMap = new HashMap<>();
 			parameterMap.put("usernameList", usernames);
@@ -607,7 +607,7 @@ public class SecurityServiceImpl
 					!UserSecurity.FIELD_USERNAME.equals(queryParams.getSearchField())
 				) 
 			{				
-				query += " and " + queryParams.getSearchField() + " like :searchValue";
+				query += " and " + queryParams.getSearchField() + ".toLowerCase() like :searchValue";
 				parameterMap.put("searchValue", queryParams.getSearchValue().toLowerCase() + "%");
 			}
 						

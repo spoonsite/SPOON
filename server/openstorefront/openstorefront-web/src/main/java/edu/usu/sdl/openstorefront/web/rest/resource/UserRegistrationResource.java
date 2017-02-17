@@ -36,11 +36,9 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.sourceforge.stripes.util.bean.BeanUtil;
@@ -61,8 +59,7 @@ public class UserRegistrationResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserRegistrationWrapper.class)
 	public Response getUserRegistration(
-			@BeanParam FilterQueryParams filterQueryParams,
-			@QueryParam("approvalStatus") String approvalStatus
+			@BeanParam FilterQueryParams filterQueryParams
 	)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
@@ -127,8 +124,7 @@ public class UserRegistrationResource
 		registration = registration.find();
 		return sendSingleEntityResponse(UserRegistrationView.toView(registration));
 	}
-	
-	
+		
 	@POST
 	@APIDescription("Creates a user registration")	
 	@Produces({MediaType.APPLICATION_JSON})	
@@ -153,28 +149,9 @@ public class UserRegistrationResource
 		}
 	}
 	
-	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
-	@APIDescription("Approves user registeration")	
-	@Path("/{registrationId}/approve")
-	public Response approveRegistration(
-			@PathParam("registrationId") String registrationId
-	) 
-	{
-		UserRegistration userRegistration = new UserRegistration();
-		userRegistration.setRegistrationId(registrationId);
-		userRegistration = userRegistration.find();
-		
-		if (userRegistration != null) {			
-			service.getSecurityService().approveRegistration(userRegistration.getUsername());
-			return Response.ok().build();
-		} 		
-		return Response.status(Response.Status.NOT_FOUND).build();
-	}
-	
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
-	@APIDescription("Deletes a user registeration record.")		
+	@APIDescription("Deletes a user registeration record and the associated user.")		
 	@Path("/{registrationId}")
 	public void deleteUserRegistration(
 		@PathParam("registrationId") String registrationId
@@ -184,7 +161,7 @@ public class UserRegistrationResource
 		registration.setRegistrationId(registrationId);
 		registration = registration.find();
 		if (registration != null) {
-			registration.delete();
+			service.getSecurityService().deletesUser(registration.getUsername());			
 		}
 	}	
 	

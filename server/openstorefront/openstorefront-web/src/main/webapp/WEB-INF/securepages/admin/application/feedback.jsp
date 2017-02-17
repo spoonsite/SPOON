@@ -95,7 +95,14 @@
 							rootProperty: 'data',
 							totalProperty: 'totalNumber'
 						}							
-					})					
+					}),
+					listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							store.getProxy().extraParams = {
+								status: Ext.getCmp('filterActiveStatus').getValue() ? Ext.getCmp('filterActiveStatus').getValue() : 'A'
+							};
+						}
+					}					
 				});
 
 				var ticketGrid =  Ext.create('Ext.grid.Panel', {

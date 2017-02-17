@@ -64,12 +64,23 @@ public class UserSecurity
 	@ValidValueType(value = {}, lookupClass = UserApprovalStatus.class)
 	@ConsumeField
 	@APIDescription("Status of an approval")
-	@FK(ApprovalStatus.class)
+	@FK(UserApprovalStatus.class)
 	private String approvalStatus;
 
 	public UserSecurity()
 	{
 	}
+
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity); 
+		
+		UserSecurity userSecurity = (UserSecurity) entity;
+		this.setFailedLoginAttempts(userSecurity.getFailedLoginAttempts());
+		this.setLastLoginAttempt(userSecurity.getLastLoginAttempt());
+		this.setApprovalStatus(userSecurity.getApprovalStatus());
+	}	
 
 	public String getUsername()
 	{

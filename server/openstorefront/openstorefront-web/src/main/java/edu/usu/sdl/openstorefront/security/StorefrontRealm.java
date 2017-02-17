@@ -75,7 +75,11 @@ public class StorefrontRealm
 		}
 		
 		ServiceProxy serviceProxy = ServiceProxy.getProxy();		
-		SecurityPolicy securityPolicy = serviceProxy.getSecurityService().getSecurityPolicy();		
+		SecurityPolicy securityPolicy = serviceProxy.getSecurityService().getSecurityPolicy();
+		if (userSecurity.getFailedLoginAttempts() == null) {
+			userSecurity.setFailedLoginAttempts(0);			
+		}
+		
 		if (userSecurity.getFailedLoginAttempts() > securityPolicy.getLoginLockoutMaxAttempts()) {
 			Date now = TimeUtil.currentDate();		
 			Instant instantLastAttempt = Instant.ofEpochMilli(userSecurity.getLastLoginAttempt().getTime());
@@ -104,5 +108,26 @@ public class StorefrontRealm
 	
 		return simpleAuthenticationInfo;
 	}
-		
+
+	@Override
+	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException
+	{
+		try {
+			super.assertCredentialsMatch(token, info); 
+		} catch(AuthenticationException authenticationException) {
+			UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)token;
+			
+			UserSecurity userSecurity = new UserSecurity();
+			userSecurity.setUsername(usernamePasswordToken.getUsername());
+			
+			if (userSecurity.getFailedLoginAttempts() == null) {
+				userSecurity.setFailedLoginAttempts(1);			
+			} else {
+				userSecurity.setFailedLoginAttempts(userSecurity.getFailedLoginAttempts() + 1);
+			}
+			userSecurity.save();
+			throw authenticationException;		
+		}
+	}
+	
 }

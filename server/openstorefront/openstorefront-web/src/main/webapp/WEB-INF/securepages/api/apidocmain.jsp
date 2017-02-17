@@ -289,13 +289,19 @@
 								region: 'west',
 								title: 'Lookup Table',
 								layout: 'fit',
-								width: 275,
+								width: 375,
 								split: true,
 								items: [
 									{
 										xtype: 'grid',
 										columnLines: true,
 										store: {
+											sorters: [
+												new Ext.util.Sorter({
+													property: 'code',
+													direction: 'ASC'
+												})
+											],											
 											autoLoad: true,
 											proxy: {
 												type: 'ajax',
@@ -303,7 +309,8 @@
 											}
 										},
 										columns: [
-											{ text: 'Table', dataIndex: 'description', flex: 1}
+											{ text: 'Table', dataIndex: 'code', width: 175 },
+											{ text: 'Description', dataIndex: 'description', flex: 1}
 										],
 										viewConfig: {
 											enableTextSelection: true
@@ -313,7 +320,7 @@
 												Ext.getCmp('lookupTableDetailGrid').getStore().load({
 													url: 'api/v1/resource/lookuptypes/' + record.get('code')
 												});
-												Ext.getCmp('lookupTableDetailGrid').setTitle(record.get('description'));
+												Ext.getCmp('lookupTableDetailGrid').setTitle(record.get('code') + ' - ' + record.get('description'));
 											}
 										}
 									}
@@ -328,7 +335,13 @@
 								viewConfig: {
 									enableTextSelection: true
 								},								
-								store: {									
+								store: {
+									sorters: [
+										new Ext.util.Sorter({
+											property: 'description',
+											direction: 'ASC'
+										})
+									],
 									proxy: {
 										type: 'ajax',
 										url: 'api/v1/resource/lookuptypes'

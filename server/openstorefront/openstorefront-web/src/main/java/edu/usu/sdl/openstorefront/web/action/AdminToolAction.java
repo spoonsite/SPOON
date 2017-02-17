@@ -64,6 +64,11 @@ public class AdminToolAction
 		pageMap.put("Searches", "/WEB-INF/securepages/admin/data/searches.jsp");
 		pageMap.put("Feedback", "/WEB-INF/securepages/admin/application/feedback.jsp");
 		pageMap.put("Relationships", "/WEB-INF/securepages/admin/data/relationships.jsp");
+		//security
+		pageMap.put("Security", "/WEB-INF/securepages/admin/application/security.jsp");
+		pageMap.put("Security-Roles", "/WEB-INF/securepages/admin/application/roleManagement.jsp");
+		pageMap.put("User-Management", "/WEB-INF/securepages/admin/application/userManagement.jsp");
+		
 
 		//Evaluation
 		pageMap.put("Evaluations", "/WEB-INF/securepages/admin/evaluation/evaluations.jsp");

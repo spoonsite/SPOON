@@ -262,7 +262,7 @@
 			});	
 			appMenu.push({
 				text: 'Feedback',
-				permission: 'ADMIN-FEEDBACK-MANAGEMENT',
+				permission: 'ADMIN-FEEDBACK',
 				handler: function(){
 					actionLoadContent('Feedback');
 				}				
@@ -296,12 +296,33 @@
 				}				
 			});
 			appMenu.push({
+				text: 'Security',
+				permission: 'ADMIN-SECURITY',
+				handler: function(){
+					actionLoadContent('Security');
+				}				
+			});
+			appMenu.push({
+				text: 'Security Roles',
+				permission: 'ADMIN-ROLE-MANAGEMENT',
+				handler: function(){
+					actionLoadContent('Security-Roles');
+				}				
+			});				
+			appMenu.push({
 				text: 'Tracking',
 				permission: 'ADMIN-TRACKING',
 				handler: function(){
 					actionLoadContent('Tracking');
 				}				
-			});			
+			});
+			appMenu.push({
+				text: 'User Management',
+				permission: 'ADMIN-USER-MANAGEMENT',
+				handler: function(){
+					actionLoadContent('User-Management');
+				}				
+			});				
 			appMenu.push({
 				xtype: 'menuseparator'				
 			});

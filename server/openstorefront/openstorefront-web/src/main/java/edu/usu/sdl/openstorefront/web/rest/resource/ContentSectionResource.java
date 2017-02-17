@@ -15,17 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
-import javax.ws.rs.Path;
-
 /**
  *
  * @author dshurtleff
  */
-@APIDescription("Provides access to content sections.")
-@Path("v1/resource/contentsections")
+//@APIDescription("Provides access to content sections.")
+//@Path("v1/resource/contentsections")
 public class ContentSectionResource
-		extends BaseResource
+
 {
 
 	//get sections (option for entity, entityId)
