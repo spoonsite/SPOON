@@ -67,41 +67,42 @@
 					)
 				});
 				
+				var ticketGridStore = Ext.create('Ext.data.Store', {
+					pageSize: 100,
+					autoLoad: true,
+					fields: [
+						{
+							name: 'createDts',
+							type:	'date',
+							dateFormat: 'c'
+						},
+						{
+							name: 'updateDts',
+							type:	'date',
+							dateFormat: 'c'
+						},
+						{
+							name: 'lastViewDts',
+							type:	'date',
+							dateFormat: 'c'
+						}	
+					],
+					proxy: CoreUtil.pagingProxy({
+						type: 'ajax',
+						url: 'api/v1/resource/feedbacktickets',
+						reader: {
+							type: 'json',
+							rootProperty: 'data',
+							totalProperty: 'totalNumber'
+						}							
+					})					
+				});
 
 				var ticketGrid =  Ext.create('Ext.grid.Panel', {
 					title: 'User Feedback <i class="fa fa-question-circle"  data-qtip="Display feedback capture in the application"></i>',
 					id: 'ticketGrid',
 					columnLines: true,
-					store: {
-						pageSize: 100,
-						autoLoad: true,
-						fields: [
-							{
-								name: 'createDts',
-								type:	'date',
-								dateFormat: 'c'
-							},
-							{
-								name: 'updateDts',
-								type:	'date',
-								dateFormat: 'c'
-							},
-							{
-								name: 'lastViewDts',
-								type:	'date',
-								dateFormat: 'c'
-							}	
-						],
-						proxy: CoreUtil.pagingProxy({
-							type: 'ajax',
-							url: 'api/v1/resource/feedbacktickets',
-							reader: {
-								type: 'json',
-								rootProperty: 'data',
-								totalProperty: 'totalNumber'
-							}							
-						})						
-					},
+					store: ticketGridStore,
 					columns: [
 						{ text: 'Ticket Type', dataIndex: 'ticketType',  width: 150},
 						{ text: 'Summary', dataIndex: 'summary', flex: 1, minWidth: 200},
@@ -248,7 +249,13 @@
 									}									
 								}
 							]							
-						}
+						},
+						{
+							xtype: 'pagingtoolbar',
+							dock: 'bottom',
+							store: ticketGridStore,
+							displayInfo: true
+						}						
 					]
 					
 					
