@@ -18,6 +18,8 @@ package edu.usu.sdl.openstorefront.core.api;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
+import edu.usu.sdl.openstorefront.core.view.UserFilterParams;
+import edu.usu.sdl.openstorefront.core.view.UserSecurityWrapper;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 
@@ -69,7 +71,7 @@ public interface SecurityService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	ValidationResult processNewRegistration(UserRegistration userRegistration);	
-	
+
 	/**
 	 * Approve Registration
 	 * @param username 
@@ -119,6 +121,14 @@ public interface SecurityService
 	@ServiceInterceptor(TransactionInterceptor.class)
 	void disableUser(String username);
 	
+	
+	/**
+	 * Delete User, User Registration, User Profile (In-Activates)   
+	 * @param username 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void deletesUser(String username);	
+	
 	/**
 	 * Create or updated a security role
 	 * @param securityRole
@@ -164,5 +174,12 @@ public interface SecurityService
 	 * @return context or null if user is not found.
 	 */
 	UserContext getUserContext(String username);
+	
+	/**
+	 * This will get the user in the built in security DB
+	 * @param queryParams
+	 * @return 
+	 */
+	UserSecurityWrapper getUserViews(UserFilterParams queryParams);
 	
 }

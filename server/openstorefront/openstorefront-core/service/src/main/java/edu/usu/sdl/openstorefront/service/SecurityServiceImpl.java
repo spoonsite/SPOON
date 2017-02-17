@@ -16,8 +16,12 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.SecurityService;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
@@ -28,20 +32,29 @@ import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
 import edu.usu.sdl.openstorefront.core.entity.UserRole;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
+import edu.usu.sdl.openstorefront.core.view.UserFilterParams;
+import edu.usu.sdl.openstorefront.core.view.UserSecurityView;
+import edu.usu.sdl.openstorefront.core.view.UserSecurityWrapper;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.passay.CharacterRule;
@@ -534,8 +547,105 @@ public class SecurityServiceImpl
 				securityRoles.add(defaultRole);
 			}
 			userContext.getRoles().addAll(securityRoles);
+		} else {
+			throw new OpenStorefrontRuntimeException("User doesn't exist: " + username, "User may have be deleted; relogin.");
 		}
 		return userContext;		
+	}
+
+	@Override
+	public UserSecurityWrapper getUserViews(UserFilterParams queryParams)
+	{
+		UserSecurityWrapper userSecurityWrapper = new UserSecurityWrapper();
+		
+		List<UserSecurityView> views = new ArrayList<>();
+		
+		//post filter		
+		UserSecurity userSecurityExample = new UserSecurity();
+		if (Convert.toBoolean(queryParams.getAll()) == false) { 
+			userSecurityExample.setActiveStatus(queryParams.getStatus());
+		}
+		userSecurityExample.setApprovalStatus(queryParams.getApprovalState());
+		
+		QueryByExample queryByExample = new QueryByExample(userSecurityExample);
+		
+		if (StringUtils.isNotBlank(queryParams.getSearchField()) && 
+				StringUtils.isNotBlank(queryParams.getSearchValue()) &&
+				UserSecurity.FIELD_USERNAME.equals(queryParams.getSearchField())
+			) 
+		{
+			UserSecurity userSecuritySearchExample = new UserSecurity();
+			try {
+				BeanUtils.setProperty(userSecuritySearchExample, queryParams.getSearchField(), queryParams.getSearchValue().toLowerCase() + "%");
+
+				SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+				specialOperatorModel.setExample(userSecuritySearchExample);
+				specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
+				specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+				queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+			} catch (IllegalAccessException | InvocationTargetException ex) {
+				LOG.log(Level.WARNING, MessageFormat.format("Unable to search user profiles by field: {0}", queryParams.getSearchField()));
+			}
+		}
+		
+		List<UserSecurity> users = persistenceService.queryByExample(UserSecurity.class, queryByExample);				
+		if (!users.isEmpty()) {
+						
+			Set<String> usernames = users.stream()
+										.map(u->u.getUsername())
+										.collect(Collectors.toSet());
+			
+			String query = "select from " + UserProfile.class.getSimpleName() +
+							"where username in :usernameList";
+			
+			Map<String, Object> parameterMap = new HashMap<>();
+			parameterMap.put("usernameList", usernames);
+			
+			if (StringUtils.isNotBlank(queryParams.getSearchField()) && 
+					StringUtils.isNotBlank(queryParams.getSearchValue()) &&
+					!UserSecurity.FIELD_USERNAME.equals(queryParams.getSearchField())
+				) 
+			{				
+				query += " and " + queryParams.getSearchField() + " like :searchValue";
+				parameterMap.put("searchValue", queryParams.getSearchValue().toLowerCase() + "%");
+			}
+						
+			List<UserProfile> userProfiles = persistenceService.query(query, parameterMap);
+			Map<String, List<UserProfile>> profileMap = userProfiles.stream().collect(Collectors.groupingBy(UserProfile::getUsername));
+			for(UserSecurity userSecurity : users) {
+				List<UserProfile> profiles = profileMap.getOrDefault(userSecurity.getUsername(), new ArrayList<>());
+				if (!profiles.isEmpty()) {
+					UserSecurityView view = UserSecurityView.toView(userSecurity, profiles.get(0));
+					views.add(view);
+				}
+			}		
+			userSecurityWrapper.setTotalNumber(views.size());			
+			views = queryParams.filter(views);
+			userSecurityWrapper.setData(views);
+		}
+		
+		return userSecurityWrapper;
+	}
+
+	@Override
+	public void deletesUser(String username)
+	{
+		UserSecurity userSecurity = new UserSecurity();
+		userSecurity.setUsername(username);
+		userSecurity = userSecurity.findProxy();
+		if (userSecurity != null) {
+			
+			UserRegistration userRegistration = new UserRegistration();
+			userRegistration.setUsername(username);			
+			persistenceService.deleteByExample(userRegistration);
+			
+			getUserService().deleteProfile(username);
+			
+			persistenceService.delete(userSecurity);
+						
+			LOG.log(Level.INFO, MessageFormat.format("User {0} was deleted by {2}. ", username, SecurityUtil.getCurrentUserName()));	
+		}
 	}
 
 }

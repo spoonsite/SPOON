@@ -15,9 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.entity.UserApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.Date;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -42,6 +45,18 @@ public class UserSecurityView
 	public static UserSecurityView toView(UserSecurity userSecurity, UserProfile userProfile)
 	{
 		UserSecurityView view = new UserSecurityView();
+		view.setUsername(userSecurity.getUsername());
+		view.setFirstname(userProfile.getFirstName());
+		view.setLastname(userProfile.getLastName());
+		view.setEmail(userProfile.getEmail());
+		view.setApprovalStatus(userSecurity.getApprovalStatus());
+		view.setApprovalStatusDescription(TranslateUtil.translate(UserApprovalStatus.class, userSecurity.getApprovalStatus()));		
+		view.setFailedLoginAttempts(userSecurity.getFailedLoginAttempts());
+		view.setLastLoginAttempt(userSecurity.getLastLoginAttempt());
+		
+		if (StringUtils.isNotBlank(userSecurity.getPasswordChangeApprovalCode())) {
+			view.setPendingUserPasswordReset(true);
+		}
 		
 		return view;
 	}

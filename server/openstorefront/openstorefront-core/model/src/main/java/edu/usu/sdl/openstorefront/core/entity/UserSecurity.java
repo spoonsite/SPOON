@@ -35,6 +35,7 @@ public class UserSecurity
 	extends StandardEntity<UserSecurity>		
 {
 	public static final String PASSWORD_FIELD = "password";
+	public static final String FIELD_USERNAME = "username";
 	
 	@PK
 	@NotNull
@@ -60,7 +61,7 @@ public class UserSecurity
 	private String passwordChangeApprovalCode;
 	
 	@NotNull
-	@ValidValueType(value = {}, lookupClass = ApprovalStatus.class)
+	@ValidValueType(value = {}, lookupClass = UserApprovalStatus.class)
 	@ConsumeField
 	@APIDescription("Status of an approval")
 	@FK(ApprovalStatus.class)
