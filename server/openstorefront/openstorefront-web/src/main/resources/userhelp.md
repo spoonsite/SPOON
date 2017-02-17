@@ -588,7 +588,7 @@ Entry reviews can be found under the **Tools** drop-down menu. Users can edit an
  - Select a review and click **Edit**.  Update the fields as desired and click **Post Review** (or Cancel).
 
 **To remove a review:**
- - Select a review and click **Delete** in the toolbar.  Confirm the deletion by clicking OK in the confirmation box.
+ - Select a review and click **Delete** in the toolbar.  Confirm the deletion by clicking **Yes** in the confirmation box.
 
  **NOTE:** A review may also be removed from the search results detail screen
 by clicking on the delete icon next to the title of the review. You can only remove reviews you post.
@@ -1009,9 +1009,11 @@ Inactive entries are not visible to or searchable by users.
 **WARNING:** This is a hard delete and it will remove all associated data
 (media, user reviews, questions, etc.)
 
-1.  Click the delete icon to remove.
+1.  Select an entry or entries
 
-2.  Confirm that you want to delete the entry by clicking **OK** on
+2.  Click on Action, then **Delete**
+
+3.  Confirm that you want to delete the entry by clicking **Yes** on
     the confirmation dialog.
 
 **To export an entry:**
@@ -1368,10 +1370,12 @@ the form is complete.
 
 1.  Select the organization you want to remove.
 
-2.  Click on the delete icon next to the organization.
+2.  Click on the delete icon at the top of the page.
 
-3.  Confirm that you wish to delete the organization by clicking **OK**.
+3.  Confirm that you wish to delete the organization by clicking **Yes**.
 
+**NOTE:** If an organization is associated with an entry you will get this message and it will NOT be deleted:
+"That organization has references and cannot be deleted."
 
 **"No Organization" References:**
 This displays a list of references where no organization is listed.  
