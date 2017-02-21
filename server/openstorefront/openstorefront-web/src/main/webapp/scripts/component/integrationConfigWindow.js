@@ -119,7 +119,9 @@ Ext.define('OSF.component.IntegrationWindow', {
 									text: 'Check',
 									margin: '30 0 0 0',
 									iconCls: 'fa fa-lg fa-check',
-									handler: function(){
+									handler: function() {
+										
+										// Load Jira Issue
 										loadJiraIssue();
 									}
 								}
@@ -193,11 +195,25 @@ Ext.define('OSF.component.IntegrationWindow', {
 		});
 		
 		var loadJiraIssue = function() {
+			
+			// Get Form
 			var form = addEditWindow.getComponent('configForm');
+			
+			// Get Issue Number Field
 			var issueField = form.getForm().findField('issueNumber');
+			
+			// Ensure Issue Number Field Has A Value
 			if (issueField.getValue()) {
+				
+				// Capitalize Jira Issue Number
+				issueField.setValue(issueField.getValue().toUpperCase());
+				
+				// Mask Form
 				form.setLoading('Retrieving Issue Name...');
+				
+				// Make Jira Request
 				Ext.Ajax.request({
+					
 					url: 'api/v1/service/jira/ticket/' + issueField.getValue(),
 					callback: function(){
 						form.setLoading(false);

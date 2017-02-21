@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+// <editor-fold defaultstate="collapsed"  desc="IMPORTS">
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
@@ -24,6 +25,7 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
@@ -142,6 +144,7 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
+// </editor-fold>
 
 /**
  * ComponentRESTResource Resource
@@ -925,6 +928,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed" desc="Version history">
 	@GET
 	@APIDescription("Gets all version history for a component")
@@ -1057,6 +1061,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource ATTRIBUTE Section">
 	@GET
 	@APIDescription("Gets attributes for a component")
@@ -3714,6 +3719,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
 	@RequireAdmin
@@ -3820,6 +3826,7 @@ public class ComponentRESTResource
 //
 //	}
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="Integrations">
 	@GET
 	@RequireAdmin
@@ -4114,13 +4121,20 @@ public class ComponentRESTResource
 		if (validationResult.valid()) {
 			//check for exsiting config with the same ticket
 			ComponentIntegrationConfig configExample = new ComponentIntegrationConfig();
-			configExample.setComponentId(componentId);
+			configExample.setComponentId(integrationConfig.getComponentId());
 			configExample.setIntegrationType(integrationConfig.getIntegrationType());
 			configExample.setProjectType(integrationConfig.getProjectType());
 			configExample.setIssueType(integrationConfig.getIssueType());
 			configExample.setIssueNumber(integrationConfig.getIssueNumber());
+			
+			GenerateStatementOption option = new GenerateStatementOption();
+			option.setMethod(GenerateStatementOption.METHOD_UPPER_CASE);
+			
+			QueryByExample configQueryExample = new QueryByExample();
+			configQueryExample.getFieldOptions().put("issueNumber", option);
+			configQueryExample.setExample(configExample);
 
-			long count = service.getPersistenceService().countByExample(configExample);
+			long count = service.getPersistenceService().countByExample(configQueryExample);
 			if (count > 0) {
 				RestErrorModel restErrorModel = new RestErrorModel();
 				restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
@@ -4163,13 +4177,25 @@ public class ComponentRESTResource
 			if (validationResult.valid()) {
 				//check for exsiting config with the same ticket
 				configExample = new ComponentIntegrationConfig();
-				configExample.setComponentId(componentId);
+				configExample.setComponentId(integrationConfig.getComponentId());
+				configExample.setIntegrationConfigId(integrationConfig.getIntegrationConfigId());
 				configExample.setIntegrationType(integrationConfig.getIntegrationType());
 				configExample.setProjectType(integrationConfig.getProjectType());
 				configExample.setIssueType(integrationConfig.getIssueType());
 				configExample.setIssueNumber(integrationConfig.getIssueNumber());
+				
+				GenerateStatementOption configIdOption = new GenerateStatementOption();
+				configIdOption.setOperation(GenerateStatementOption.OPERATION_NOT_EQUALS);
+				
+				GenerateStatementOption issueNumberOption = new GenerateStatementOption();
+				issueNumberOption.setMethod(GenerateStatementOption.METHOD_UPPER_CASE);
 
-				long count = service.getPersistenceService().countByExample(configExample);
+				QueryByExample configQueryExample = new QueryByExample();
+				configQueryExample.getFieldOptions().put("integrationConfigId", configIdOption);
+				configQueryExample.getFieldOptions().put("issueNumber", issueNumberOption);
+				configQueryExample.setExample(configExample);
+
+				long count = service.getPersistenceService().countByExample(configQueryExample);
 				if (count > 0) {
 					RestErrorModel restErrorModel = new RestErrorModel();
 					restErrorModel.getErrors().put("issueNumber", "Issue number needs to be unique per project.");
