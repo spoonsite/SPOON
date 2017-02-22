@@ -89,7 +89,7 @@ public class SecurityInit
 		String adminRoleName = PropertiesManager.getValue(
 			PropertiesManager.KEY_SECURITY_DEFAULT_ADMIN_GROUP, 
 			PropertiesManager.getValue(PropertiesManager.KEY_OPENAM_HEADER_ADMIN_GROUP,
-			"Store-Admin"		
+			"STORE-Admin"		
 		));
 		
 		securityRole = new SecurityRole();

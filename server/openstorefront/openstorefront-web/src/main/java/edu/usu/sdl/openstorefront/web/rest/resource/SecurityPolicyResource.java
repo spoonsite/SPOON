@@ -66,7 +66,7 @@ public class SecurityPolicyResource
 		existing.setPolicyId(policyId);
 		if (existing != null) {
 		
-			securityPolicy.setPolicyId(policyId);
+			securityPolicy.setPolicyId(policyId);			
 			securityPolicy = service.getSecurityService().updateSecurityPolicy(securityPolicy);
 			return Response.ok(securityPolicy).build();
 		} 

@@ -84,6 +84,7 @@ public class SecurityRoleResource
 	
 	
 	@POST
+	@APIDescription("Create a new security role.")
 	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -96,6 +97,7 @@ public class SecurityRoleResource
 	}
 	
 	@PUT
+	@APIDescription("Update a security role.")
 	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)	
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -181,6 +183,7 @@ public class SecurityRoleResource
 	}	
 	
 	@POST
+	@APIDescription("Adds a user to a security role.")
 	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})

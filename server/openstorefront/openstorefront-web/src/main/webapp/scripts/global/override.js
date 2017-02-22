@@ -248,9 +248,10 @@ Ext.onReady(function() {
 	Ext.Ajax.on('requestcomplete', function (conn, response, options, eOpts) {
 		if (response.responseText && response.responseText.indexOf('login.jsp') !== -1) {
 			var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
-			currentlocation = currentlocation + window.parent.location.search;
-
-			window.parent.location.href = "/openstorefront/Login.action?gotoPage="+encodeURIComponent(currentlocation);
+			if (response.request.url.indexOf('service/security/shiroconfig') === -1) {			
+				currentlocation = currentlocation + window.parent.location.search;
+				window.parent.location.href = "/openstorefront/Login.action?gotoPage="+encodeURIComponent(currentlocation);
+			}
 		}		
 	});
 	

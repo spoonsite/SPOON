@@ -99,7 +99,7 @@ public class SecurityServiceImpl
 				securityPolicy.setAllowRegistration(Boolean.TRUE);
 				securityPolicy.setAutoApproveUsers(Boolean.FALSE);
 				securityPolicy.setAllowJSONPSupport(Boolean.FALSE);
-				securityPolicy.setCrsfSupport(Boolean.TRUE);
+				securityPolicy.setCsrfSupport(Boolean.TRUE);
 				securityPolicy.setLoginLockoutMaxAttempts(5);
 				securityPolicy.setMinPasswordLength(8);
 				securityPolicy.setRequireAdminUnlock(Boolean.FALSE);

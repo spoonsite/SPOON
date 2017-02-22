@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
@@ -88,7 +89,7 @@ public class SecurityPolicy
 	
 	@NotNull
 	@ConsumeField
-	private Boolean crsfSupport;	
+	private Boolean csrfSupport;	
 	
 	@NotNull
 	@ConsumeField
@@ -105,19 +106,19 @@ public class SecurityPolicy
 		
 		SecurityPolicy securityPolicy = (SecurityPolicy) entity;
 		
-		setAutoApproveUsers(securityPolicy.getAutoApproveUsers());
+		setAutoApproveUsers(Convert.toBoolean(securityPolicy.getAutoApproveUsers()));
 		setMinPasswordLength(securityPolicy.getMinPasswordLength());
 		setLoginLockoutMaxAttempts(securityPolicy.getLoginLockoutMaxAttempts());
 		setResetLockoutTimeMinutes(securityPolicy.getResetLockoutTimeMinutes());
-		setRequireAdminUnlock(securityPolicy.getRequireAdminUnlock());
-		setRequiresProofOfCitizenship(securityPolicy.getRequiresProofOfCitizenship());
-		setAllowJSONPSupport(securityPolicy.getAllowJSONPSupport());
+		setRequireAdminUnlock(Convert.toBoolean(securityPolicy.getRequireAdminUnlock()));
+		setRequiresProofOfCitizenship(Convert.toBoolean(securityPolicy.getRequiresProofOfCitizenship()));
+		setAllowJSONPSupport(Convert.toBoolean(securityPolicy.getAllowJSONPSupport()));
 		setCorsOrigins(securityPolicy.getCorsOrigins());
 		setCorsMethods(securityPolicy.getCorsMethods());
 		setCorsHeaders(securityPolicy.getCorsHeaders());
 		setCustomHeaders(securityPolicy.getCustomHeaders());
-		setCrsfSupport(securityPolicy.getCrsfSupport());
-		setAllowRegistration(securityPolicy.getAllowRegistration());
+		setCsrfSupport(Convert.toBoolean(securityPolicy.getCsrfSupport()));
+		setAllowRegistration(Convert.toBoolean(securityPolicy.getAllowRegistration()));
 				
 	}
 	
@@ -241,14 +242,14 @@ public class SecurityPolicy
 		this.customHeaders = customHeaders;
 	}
 
-	public Boolean getCrsfSupport()
+	public Boolean getCsrfSupport()
 	{
-		return crsfSupport;
+		return csrfSupport;
 	}
 
-	public void setCrsfSupport(Boolean crsfSupport)
+	public void setCsrfSupport(Boolean csrfSupport)
 	{
-		this.crsfSupport = crsfSupport;
+		this.csrfSupport = csrfSupport;
 	}
 
 	public Boolean getAllowRegistration()
