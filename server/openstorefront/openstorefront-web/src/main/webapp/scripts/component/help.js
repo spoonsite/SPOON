@@ -83,7 +83,7 @@ Ext.define('OSF.component.HelpPanel', {
 								//mark leafs
 								Ext.Array.each(records, function(item){									
 									var markLeafs = function(root) {
-										if (root.childNodes.length == 0) {
+										if (root.childNodes.length === 0) {
 											root.data.leaf = true;
 										} else {
 											Ext.Array.each(root.childNodes, function (child) {
