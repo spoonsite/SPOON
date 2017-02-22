@@ -80,6 +80,19 @@ Ext.define('OSF.component.HelpPanel', {
 									};
 									flattenHelp(allHelp);
 								}
+								//mark leafs
+								Ext.Array.each(records, function(item){									
+									var markLeafs = function(root) {
+										if (root.childNodes.length == 0) {
+											root.data.leaf = true;
+										} else {
+											Ext.Array.each(root.childNodes, function (child) {
+												markLeafs(child);
+											});
+										}
+									};
+									markLeafs(item);
+								});
 							}							
 						}
 					}),
