@@ -29,6 +29,7 @@ public class HelpSectionAll
 
 	private HelpSection helpSection;
 	private List<HelpSectionAll> childSections = new ArrayList<>();
+	private Boolean leaf = false;
 
 	public HelpSectionAll()
 	{
@@ -54,4 +55,14 @@ public class HelpSectionAll
 		this.childSections = childSections;
 	}
 
+	public Boolean getLeaf()
+	{
+		return leaf;
+	}
+
+	public void setLeaf(Boolean leaf)
+	{
+		this.leaf = leaf;
+	}
+	
 }

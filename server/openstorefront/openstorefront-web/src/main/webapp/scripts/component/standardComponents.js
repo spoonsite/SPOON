@@ -104,7 +104,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: 'Home',
-			iconCls: 'fa fa-2x fa-home',
+			iconCls: 'fa fa-2x fa-home icon-button-color-default',
 			href: 'index.jsp'			
 		});
 		
@@ -112,7 +112,7 @@ Ext.define('OSF.component.UserMenu', {
 			menuItems.push({
 				text: 'Admin Tools',
 				itemId: 'menuAdminTools',
-				iconCls: 'fa fa-2x fa-gear',
+				iconCls: 'fa fa-2x fa-gear icon-button-color-default',
 				hidden: true,
 				href: 'AdminTool.action'	
 			});
@@ -121,7 +121,7 @@ Ext.define('OSF.component.UserMenu', {
 		if (userMenu.showUserTools) {
 			menuItems.push({
 				text: 'User Tools',
-				iconCls: 'fa fa-2x fa-user',
+				iconCls: 'fa fa-2x fa-user icon-button-color-default',
 				href: 'UserTool.action'		
 			});
 		}	
@@ -132,7 +132,7 @@ Ext.define('OSF.component.UserMenu', {
 		if (userMenu.showHelp) {
 			menuItems.push({
 				text: '<b>Help</b>',
-				iconCls: 'fa fa-2x fa-question-circle',
+				iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
 				handler: function() {
 					userMenu.helpWin.show();
 				}			
@@ -141,7 +141,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: '<b>Feedback / issues</b>',
-			iconCls: 'fa fa-2x fa-commenting',
+			iconCls: 'fa fa-2x fa-commenting icon-button-color-default',
 			handler: function() {
 				userMenu.feedbackWin.show();
 			}		
@@ -153,7 +153,7 @@ Ext.define('OSF.component.UserMenu', {
 		
 		menuItems.push({
 			text: 'Logout',
-			iconCls: 'fa fa-2x fa-sign-out',
+			iconCls: 'fa fa-2x fa-sign-out icon-button-color-default',
 			href: 'Login.action?Logout'			
 		});
 		

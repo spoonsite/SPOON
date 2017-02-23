@@ -224,7 +224,7 @@
 									itemId: 'complete',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit icon-button-color-toggle-status',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-default',
 									handler: function () {
 										actionMarkStatus(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0], true);										
 									}									
@@ -234,7 +234,7 @@
 									itemId: 'outstanding',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit icon-button-color-toggle-status',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-default',
 									handler: function () {
 										actionMarkStatus(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0], false);										
 									}									
@@ -247,7 +247,7 @@
 									itemId: 'delete',
 									disabled: true,
 									scale: 'medium',									
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function() {
 										actionDelete(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0]);	
 									}									

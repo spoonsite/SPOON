@@ -158,7 +158,7 @@ Ext.define('OSF.component.MessageWindow', {
 							},
 							{
 								text: 'Cancel',
-								iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 								handler: function(){
 									this.up('window').close();
 								}													
@@ -307,7 +307,7 @@ Ext.define('OSF.component.MessageWindow', {
 						{
 							text: 'Send',
 							formBind: true,
-							iconCls: 'fa fa-lg fa-envelope icon-button-color-add',
+							iconCls: 'fa fa-lg fa-envelope-o icon-button-color-add',
 							handler: function() {
 								var mainForm = this.up('form');
 								var data = mainForm.getValues();
@@ -371,7 +371,7 @@ Ext.define('OSF.component.MessageWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							handler: function() {
 								messageForm.reset();
 								messageWindow.close();

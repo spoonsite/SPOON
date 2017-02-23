@@ -185,7 +185,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function(){
 												Ext.getCmp('addEditWin').close();
 											}											
@@ -276,7 +276,7 @@
 									text: 'Toggle Status',
 									id: 'lookupGrid-tools-status',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										actionToggleStatus();
@@ -289,7 +289,7 @@
 									text: 'Delete',
 									id: 'lookupGrid-tools-remove',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										actionRemoveType();
@@ -416,7 +416,7 @@
 											{
 												text: 'Cancel',
 												formbind: true,
-												iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 												handler: function(){
 													promptWindow.close();
 												}												

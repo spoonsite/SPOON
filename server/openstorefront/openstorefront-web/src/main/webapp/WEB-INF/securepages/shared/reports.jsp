@@ -237,7 +237,7 @@
 											text: 'Toggle Status',
 											id: 'reportActivateButton',
 											scale: 'medium',
-											iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+											iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 											disabled: true,
 											handler: function () {
 												scheduleReportActivate();
@@ -252,7 +252,7 @@
 											id: 'reportDeleteButton',
 											scale: 'medium',
 											width: '110px',
-											iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+											iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 											disabled: true,
 											handler: function () {
 												scheduleReportDelete();
@@ -767,7 +767,7 @@
 											},
 											{
 												text: 'Cancel',
-												iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 												handler: function () {
 													Ext.getCmp('scheduleReportWin').destroy();
 												}
@@ -1125,7 +1125,7 @@
 								},
 								{
 									text: 'Scheduled Reports',
-									iconCls: 'fa fa-2x fa-clock-o icon-button-color-gray icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-clock-o icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
 									handler: function () {
 										scheduledReportsWin.show();
@@ -1136,7 +1136,7 @@
 									text: 'Download',
 									id: 'historyExportButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-download icon-button-color-gray icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										historyExport();
@@ -1150,7 +1150,7 @@
 									text: 'Delete',
 									id: 'historyDeleteButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										historyDelete();
@@ -1309,7 +1309,7 @@
 									xtype: 'button',
 									text: 'Previous',
 									id: 'previewWinTools-previousBtn',
-									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-stop',
+									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',
 									handler: function () {
 										actionPreviewNextRecord(false);
 									}
@@ -1321,7 +1321,7 @@
 									xtype: 'button',
 									id: 'previewWinTools-download',
 									text: 'Download',
-									iconCls: 'fa fa-lg fa-download icon-button-color-stop',
+									iconCls: 'fa fa-lg fa-download icon-button-color-default',
 									handler: function () {
 										historyExport();
 									}
@@ -1333,7 +1333,7 @@
 									xtype: 'button',
 									text: 'Next',
 									id: 'previewWinTools-nextBtn',
-									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-stop',
+									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
 									iconAlign: 'right',
 									handler: function () {
 										actionPreviewNextRecord(true);

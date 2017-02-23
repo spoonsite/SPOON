@@ -123,7 +123,7 @@
 									itemId: 'delete',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										actionDeleteResponse(Ext.getCmp('responseGrid').getSelectionModel().getSelection()[0]);
 									}									
@@ -273,7 +273,7 @@
 									itemId: 'delete',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										actionDeleteQuestion(Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0]);
 									}									

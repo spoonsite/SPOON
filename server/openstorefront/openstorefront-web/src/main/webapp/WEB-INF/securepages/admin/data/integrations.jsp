@@ -174,7 +174,7 @@
 								text: 'Toggle Status',
 								id: 'componentConfigGrid-tools-toggleActivation',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								disabled: true,
 								handler: function () {
 									if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() === 1) {
@@ -207,7 +207,7 @@
 								text: 'Delete',
 								id: 'componentConfigGrid-tools-delete',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-trash icon-vertical-correction icon-button-color-delete icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-trash icon-vertical-correction icon-button-color-warning icon-vertical-correction',
 								disabled: true,
 								handler: function () {
 									var title = 'Delete Configuration?';
@@ -756,7 +756,7 @@
 							},
 							{
 								text: 'Cancel',
-								iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 								id: 'cancelAddWindow',
 								handler: function() {
 									Ext.getCmp('addEditMappingForm').reset();
@@ -858,7 +858,7 @@
 								text: 'Delete',
 								id: 'jiraConfigGrid-tools-delete',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-trash icon-button-color-delete',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-warning',
 								disabled: true,
 								handler: function () {
 									var record = jiraConfigGrid.getSelection()[0];

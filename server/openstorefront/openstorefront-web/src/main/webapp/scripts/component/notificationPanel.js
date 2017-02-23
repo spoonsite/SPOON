@@ -223,7 +223,7 @@ Ext.define('OSF.component.NotificationPanel', {
 						{
 							text: 'Delete All',
 							scale: 'medium',
-							iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+							iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 							handler: function () {
 								var notificationStore = this.up('grid').getStore();
 								
@@ -289,7 +289,7 @@ Ext.define('OSF.component.NotificationWindow', {
   alias: 'osf.widget.NotificationWindow',
   
   title: 'Notifications',
-  iconCls: 'fa fa-envelope',
+  iconCls: 'fa fa-envelope-o',
   y: 40,
   width: '80%',
   modal: true,

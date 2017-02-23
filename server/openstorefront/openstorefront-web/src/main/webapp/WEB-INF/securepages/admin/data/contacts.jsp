@@ -68,7 +68,7 @@
 								{
 									text: 'Previous',
 									id: 'referenceWinTools-previousBtn',
-									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-stop',									
+									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
 									handler: function() {
 										actionReferencesNextRecord(false);
 									}									
@@ -78,7 +78,7 @@
 								},
 								{
 									text: 'Close',
-									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function() {
 										this.up('window').hide();
 									}
@@ -89,7 +89,7 @@
 								{
 									text: 'Next',
 									id: 'referenceWinTools-nextBtn',
-									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-stop',
+									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
 									iconAlign: 'right',
 									handler: function() {
 										actionReferencesNextRecord(true);
@@ -184,7 +184,7 @@
 										{
 											xtype: 'button',
 											text: 'Cancel',										
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function(){
 												this.up('form').reset();
 												this.up('window').close();
@@ -426,7 +426,7 @@
 									itemId: 'togglestatus',
 									disabled: true,
 									scale: 'medium',									
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									handler: function() {
 										actionToggleStatus(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);	
 									}
@@ -436,7 +436,7 @@
 									itemId: 'merge',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-compress icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-compress icon-button-color-default icon-vertical-correction',
 									handler: function () {
 										actionMerge(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);										
 									}									
@@ -449,7 +449,7 @@
 									itemId: 'delete',
 									disabled: true,
 									scale: 'medium',									
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function() {
 										actionDelete(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);	
 									}
@@ -590,7 +590,7 @@
 											},
 											{
 												text: 'Cancel',
-												iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 												handler: function() {
 													this.up('window').close();
 												}												

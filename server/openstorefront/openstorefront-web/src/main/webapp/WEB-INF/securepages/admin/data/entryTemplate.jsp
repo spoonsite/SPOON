@@ -315,7 +315,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function() {
 												this.up('window').close();
 											}
@@ -608,7 +608,7 @@
 								{
 									text: 'Close',
 									scale: 'medium',
-									iconCls: 'fa fa-lg fa-close icon-button-color-delete icon-small-vertical-correction',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 									handler: function(){
 										var win = this.up('window');
 										win.close();
@@ -964,7 +964,7 @@
 									text: 'Toggle Status',
 									id: 'lookupGrid-tools-status',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										actionToggleStatus();
@@ -977,7 +977,7 @@
 									text: 'Delete',
 									id: 'lookupGrid-tools-delete',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										actionDelete(Ext.getCmp('templateGrid').getSelection()[0]);

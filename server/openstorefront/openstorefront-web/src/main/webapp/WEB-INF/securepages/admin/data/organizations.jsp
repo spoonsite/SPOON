@@ -117,7 +117,7 @@
 									text: 'References',
 									id: 'refButton',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-link icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-link icon-button-color-default icon-vertical-correction',
 									tooltip: 'View selected record references',
 									disabled: true,
 									handler: function () {
@@ -127,7 +127,7 @@
 								{
 									scale: 'medium',
 									height: '38px',
-									text: '<span class="fa-stack"><i class="fa fa-link fa-stack-1x icon-horizontal-correction"></i><i class="fa fa-2x fa-ban fa-stack-1x text-danger icon-horizontal-correction"></i></span>"No Organization" References',
+									text: '<span class="fa-stack"><i class="fa fa-link fa-stack-1x icon-horizontal-correction"></i><i class="fa fa-2x fa-ban fa-stack-1x icon-button-color-warning icon-horizontal-correction"></i></span>"No Organization" References',
 									tooltip: 'Entries without organizations',
 									handler: function () {
 										noOrg();
@@ -138,7 +138,7 @@
 									id: 'mergeButton',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-compress icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-compress icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									tooltip: 'Merge selected record into another record',
 									handler: function () {
@@ -163,7 +163,7 @@
 									id: 'deleteButton',
 									scale: 'medium',
 									width: '100px',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									tooltip: 'Delete record',
 									handler: function () {
@@ -608,7 +608,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											Ext.getCmp('mergeWin').close();
 										}											
@@ -815,7 +815,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function(){
 												Ext.getCmp('addEditWin').close();
 											}											

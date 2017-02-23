@@ -151,7 +151,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 					itemId: 'toggle',
 					scale: 'medium',
 					disabled: true,
-					iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+					iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 					handler: function () {
 						var grid = this.up('grid');
 						var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -182,7 +182,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 					itemId: 'delete',
 					scale: 'medium',
 					disabled: true,
-					iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+					iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 					handler: function () {
 						var grid = this.up('grid');
 						var record = this.up('grid').getSelectionModel().getSelection()[0];

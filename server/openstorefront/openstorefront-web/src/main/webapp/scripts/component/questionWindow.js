@@ -110,7 +110,7 @@ Ext.define('OSF.component.QuestionWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							handler: function(){
 								questionWindow.close();
 							}							
@@ -277,7 +277,7 @@ Ext.define('OSF.component.ResponseWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							handler: function(){
 								responseWindow.close();
 							}							

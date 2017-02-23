@@ -120,7 +120,7 @@
 									itemId: 'delete',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										actionDelete(Ext.getCmp('reviewGrid').getSelectionModel().getSelection()[0]);
 									}									

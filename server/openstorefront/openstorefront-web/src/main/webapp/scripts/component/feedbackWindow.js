@@ -69,7 +69,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 						{
 							text: 'Send',
 							formBind: true,
-							iconCls: 'fa fa-lg fa-save icon-button-color-add',
+							iconCls: 'fa fa-lg fa-envelope-o icon-button-color-add',
 							handler: function () {
 								var feedbackForm = this.up('form');
 								var method = 'POST';
@@ -116,7 +116,7 @@ Ext.define('OSF.component.FeedbackWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							handler: function () {
 								feedbackWin.close();
 							}

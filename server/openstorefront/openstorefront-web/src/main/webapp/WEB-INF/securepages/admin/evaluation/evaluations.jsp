@@ -61,7 +61,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											createEvaluationWin.close();
 										}										
@@ -238,7 +238,7 @@
 							if (value) {
 								return '<span class="fa fa-lg fa-check icon-button-color-refresh"></span>';
 							} else {
-								return '<span class="fa fa-lg fa-close icon-button-color-delete"></span>';
+								return '<span class="fa fa-lg fa-close icon-button-color-warning"></span>';
 							}
 						}
 					},
@@ -398,7 +398,7 @@
 							},
 							{
 								text: 'Toggle Staus',
-								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								itemId: 'togglestatus',
 								disabled: true,									
 								scale: 'medium',
@@ -427,7 +427,7 @@
 									},									
 									{
 										text: 'Copy',										
-										iconCls: 'fa fa-lg fa-copy icon-button-color-toggle-status',
+										iconCls: 'fa fa-lg fa-copy icon-button-color-default',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											copy(record);
@@ -438,7 +438,7 @@
 									},
 									{
 										text: 'Assign Group',
-										iconCls: 'fa fa-lg fa-users icon-button-color-toggle-status',
+										iconCls: 'fa fa-lg fa-users icon-button-color-default',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAssignGroup(record);
@@ -446,7 +446,7 @@
 									},	
 									{
 										text: 'Assign User',
-										iconCls: 'fa fa-lg fa-user icon-button-color-toggle-status',
+										iconCls: 'fa fa-lg fa-user icon-button-color-default',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAssignUser(record);
@@ -458,7 +458,7 @@
 									{
 										text: 'Unpublish',
 										id: 'unpublish',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											unpublish(record);
@@ -469,7 +469,7 @@
 									},
 									{
 										text: 'Delete',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										cls: 'alert-danger',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];

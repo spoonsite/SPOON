@@ -376,7 +376,7 @@
 								{
 									text: 'Toggle Status',
 									id: 'userProfileGrid-tools-toggleActivation',
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 									disabled: true,
 									scale: 'medium',
 									tooltip: 'Activates/Deactivates',
@@ -397,7 +397,7 @@
 									scale: 'medium',
 									id: 'userProfileGrid-tools-export',
 									width: '150px',
-									iconCls: 'fa fa-2x fa-download icon-button-color-toggle-status icon-vertical-correction-edit',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-vertical-correction-edit',
 									menu: [
 										{
 											text: 'All Profiles',

@@ -275,7 +275,7 @@
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function() {
 										this.up('window').hide();
 									}
@@ -542,7 +542,7 @@
 								{
 									text: 'Delete',
 									id: 'relationshipGridAction-Delete',
-									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',
+									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 									disabled: true,
 									handler: function() {
 										var record = Ext.getCmp('relationshipsGrid').getSelection()[0];

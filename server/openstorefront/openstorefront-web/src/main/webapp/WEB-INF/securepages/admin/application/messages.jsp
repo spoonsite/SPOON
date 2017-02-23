@@ -208,7 +208,7 @@
 									id: 'mCleanUpNowButton',
 									scale: 'medium',
 									width: '250px',
-									iconCls: 'fa fa-2x fa-eraser icon-button-color-eraser icon-vertical-correction-eraser',
+									iconCls: 'fa fa-2x fa-eraser icon-button-color-default icon-vertical-correction-eraser',
 									disabled: false,
 									handler: function () {
 										mCleanupOldMessagesNow();
@@ -225,7 +225,7 @@
 									cls: 'alert-danger',
 									scale: 'medium',
 									width: '110px',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										mDeleteMessage();
@@ -482,7 +482,7 @@
 									text: 'Delete',
 									id: 'nDeleteButton',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										nDelete();
@@ -613,7 +613,7 @@
 									{
 										text: 'Send',
 										formBind: true,
-										iconCls: 'fa fa-lg fa-envelope icon-button-color-add',
+										iconCls: 'fa fa-lg fa-envelope-o icon-button-color-add',
 										handler: function () {
 											var msgtosend = {};
 
@@ -648,7 +648,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function () {
 											Ext.getCmp('sendAdminMsgWin').close();
 										}

@@ -179,7 +179,7 @@
 								{
 									text: 'Toggle Status',
 									id: 'reviewGrid-tools-toggleActivation',
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									scale: 'medium',
 									handler: function () {
