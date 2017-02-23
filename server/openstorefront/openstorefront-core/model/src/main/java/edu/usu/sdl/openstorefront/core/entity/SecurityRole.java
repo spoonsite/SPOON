@@ -22,6 +22,8 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import java.util.List;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -33,10 +35,11 @@ import javax.validation.constraints.Size;
 public class SecurityRole
 		extends StandardEntity<SecurityRole>
 {
-	public static final String DEFAULT_GROUP = "DEFAULT-GROUP";	
+
+	public static final String DEFAULT_GROUP = "DEFAULT-GROUP";
 
 	public static final String FIELD_ROLENAME = "roleName";
-	
+
 	@PK(generated = false)
 	@NotNull
 	@ConsumeField
@@ -53,6 +56,11 @@ public class SecurityRole
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String landingPage;
+
+	@Min(-1)
+	@Max(2000)
+	@ConsumeField
+	private Integer landingPagePriority;
 
 	@ConsumeField
 	@DataType(SecurityRolePermission.class)
@@ -79,19 +87,20 @@ public class SecurityRole
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
-		super.updateFields(entity); 
-		
+		super.updateFields(entity);
+
 		SecurityRole securityRole = (SecurityRole) entity;
 		setRoleName(securityRole.getRoleName());
 		setDescription(securityRole.getDescription());
 		setLandingPage(securityRole.getLandingPage());
+		setLandingPagePriority(securityRole.getLandingPagePriority());
 		setDataSecurity(securityRole.getDataSecurity());
 		setPermissions(securityRole.getPermissions());
 		setAllowUnspecifiedDataSensitivity(securityRole.getAllowUnspecifiedDataSensitivity());
 		setAllowUnspecifiedDataSource(securityRole.getAllowUnspecifiedDataSource());
-				
+
 	}
-	
+
 	public String getRoleName()
 	{
 		return roleName;
@@ -160,6 +169,16 @@ public class SecurityRole
 	public void setAllowUnspecifiedDataSensitivity(Boolean allowUnspecifiedDataSensitivity)
 	{
 		this.allowUnspecifiedDataSensitivity = allowUnspecifiedDataSensitivity;
+	}
+
+	public Integer getLandingPagePriority()
+	{
+		return landingPagePriority;
+	}
+
+	public void setLandingPagePriority(Integer landingPagePriority)
+	{
+		this.landingPagePriority = landingPagePriority;
 	}
 
 }

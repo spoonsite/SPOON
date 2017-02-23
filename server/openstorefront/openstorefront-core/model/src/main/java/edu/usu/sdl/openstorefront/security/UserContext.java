@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Holds user info for a session
@@ -36,7 +37,7 @@ public class UserContext
 {
 
 	private UserProfile userProfile;
-	private List<SecurityRole> roles = new ArrayList<>();	
+	private List<SecurityRole> roles = new ArrayList<>();
 	private boolean admin;
 
 	public UserContext()
@@ -51,49 +52,53 @@ public class UserContext
 		}
 		return OpenStorefrontConstant.ANONYMOUS_USER;
 	}
-	
-	public Set<String> roles() 
+
+	public Set<String> roles()
 	{
 		Set<String> uniqueRoles = new HashSet<>();
 		for (SecurityRole role : roles) {
 			uniqueRoles.add(role.getRoleName());
 		}
 		return uniqueRoles;
-	}	
+	}
 
-	public Set<String> permissions() 
+	public Set<String> permissions()
 	{
 		Set<String> uniquePermissions = new HashSet<>();
 		for (SecurityRole role : roles) {
 			for (SecurityRolePermission securityPermission : role.getPermissions()) {
 				uniquePermissions.add(securityPermission.getPermission());
-			}					
+			}
 		}
 		return uniquePermissions;
 	}
 
-	public Set<String> dataSources() 
+	public Set<String> dataSources()
 	{
 		Set<String> uniqueSources = new HashSet<>();
 		for (SecurityRole role : roles) {
 			for (SecurityRoleData securityRoleData : role.getDataSecurity()) {
-				uniqueSources.add(securityRoleData.getDataSource());
-			}					
+				if (StringUtils.isNotBlank(securityRoleData.getDataSource())) {
+					uniqueSources.add(securityRoleData.getDataSource());
+				}
+			}
 		}
-		return uniqueSources;		
+		return uniqueSources;
 	}
-	
-	public Set<String> dataSensitivity() 
+
+	public Set<String> dataSensitivity()
 	{
 		Set<String> uniqueSensitivity = new HashSet<>();
 		for (SecurityRole role : roles) {
 			for (SecurityRoleData securityRoleData : role.getDataSecurity()) {
-				uniqueSensitivity.add(securityRoleData.getDataSensitivity());
-			}					
+				if (StringUtils.isNotBlank(securityRoleData.getDataSensitivity())) {
+					uniqueSensitivity.add(securityRoleData.getDataSensitivity());
+				}
+			}
 		}
-		return uniqueSensitivity;			
+		return uniqueSensitivity;
 	}
-	
+
 	public UserProfile getUserProfile()
 	{
 		return userProfile;

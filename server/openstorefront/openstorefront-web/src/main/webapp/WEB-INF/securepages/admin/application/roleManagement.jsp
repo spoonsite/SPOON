@@ -57,6 +57,7 @@
 						{ text: 'Name', dataIndex: 'roleName', width: 200 },
 						{ text: 'Description', dataIndex: 'description',flex: 1, minWidth: 200 },
 						{ text: 'Landing Page', dataIndex: 'landingPage', width: 200 },
+						{ text: 'Landing Page Priority', dataIndex: 'landingPagePriority', width: 200 },						
 						{ text: 'Allow Unspecified Data Source', dataIndex: 'allowUnspecifiedDataSource', width: 200 },
 						{ text: 'Allow Unspecified Data Sensitivity', dataIndex: 'allowUnspecifiedDataSensitivity', width: 200 },
 						{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s', hidden: true },
@@ -189,7 +190,7 @@
 						layout: 'fit',
 						modal: true,
 						width: '50%',
-						height: 400,
+						height: 510,
 						items: [
 							{
 								xtype: 'form',
@@ -199,7 +200,8 @@
 								layout: 'anchor',
 								defaults: {
 									width: '100%',
-									labelAlign: 'top'
+									labelAlign: 'top',
+									labelSeparator: ''
 								},
 								items: [
 									{
@@ -215,6 +217,80 @@
 										fieldLabel: 'Description <span class="field-required" />',
 										maxLength: 255,
 										allowBlank: true										
+									},
+									{
+										xtype: 'textfield',
+										name: 'landingPage',
+										fieldLabel: 'Landing Page <span class="field-required" />',
+										maxLength: 255,
+										allowBlank: true										
+									},
+									{
+										xtype: 'numberfield',
+										name: 'landingPagePriority',
+										fieldLabel: 'Landing Page Priority',
+										minValue: -1,
+										maxValue: 2000,
+										allowBlank: true										
+									},
+									{
+										xtype: 'checkbox',
+										name: 'allowUnspecifiedDataSource',
+										boxLabel: 'Allow Unspecified Data Source'
+									},
+									{
+										xtype: 'checkbox',
+										name: 'allowUnspecifiedDataSensitivity',
+										boxLabel: 'Allow Unspecified Data Sensitivity'
+									}
+								],
+								dockedItems: [
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items:[
+											{
+												text: 'Save',
+												formBind: true,
+												iconCls: 'fa fa-2x fa-save',
+												scale: 'medium',
+												handler: function() {
+													var form = this.up('form');
+													
+													var data = form.getValues();													
+													
+													var method = 'POST';
+													var urlEnd = '';
+													if (record) {
+														urlEnd = '/' + data.roleName;
+														data.permissions = record.data.permissions;
+														data.dataSecurity = record.data.dataSecurity;
+													}	
+													
+													CoreUtil.submitForm({
+														url: 'api/v1/resource/securityroles' + urlEnd,
+														method: method,
+														data: data,
+														form: form,
+														success: function(action, opts) {
+															actionRefresh();
+															addEditWin.close();
+														}
+													});													
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												iconCls: 'fa fa-2x fa-close',
+												scale: 'medium',
+												handler: function() {
+													addEditWin.close();
+												}												
+											}
+										]
 									}
 								]
 							}
@@ -230,21 +306,206 @@
 				var actionManageDelete = function(record) {
 					
 					//prompt of moving existing user to new role
+					var deleteWin = Ext.create('Ext.window.Window', {
+						title: 'Delete Role: ' + record.get('roleName') + '?',						
+						iconCls: 'fa fa-question',
+						closeAction: 'destroy',
+						width: 400,
+						height: 200,
+						layout: 'fit',
+						modal: true,
+						items: [
+							{
+								xtype: 'form',
+								scrollable: true,
+								layout: 'anchor',								
+								items: [
+									{
+										xtype: 'combobox',
+										name: 'movetorole',
+										fieldLabel: 'Move users to role (Optional)',
+										labelAlign: 'top',
+										valueField: 'roleName',
+										displayField: 'roleName',
+										forceSelection: true,
+										width: '100%',
+										store: {
+											autoLoad: true,
+											proxy: {
+												type: 'ajax',
+												url: 'api/v1/resource/securityroles'
+											},
+											listeners: {
+												load: function(store, records, opts) {
+													//remove currently selected record
+													
+													
+												}
+											}
+										}
+									}									
+								],
+								dockedItems: [
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												text: 'Delete Role',																								
+												iconCls: 'fa fa-2x fa-trash',
+												scale: 'medium',
+												handler: function(){
+													
+												}
+											}, 
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Cancel',																								
+												iconCls: 'fa fa-2x fa-closx',
+												scale: 'medium',
+												handler: function(){
+													deleteWin.close();
+												}												
+											}
+										]
+									}
+								]
+							}							
+						]
+					});
+					deleteWin.show();
 					
 				};
 				
 				var actionManagePermissions = function(record) {
+						
+					var permissionWin = Ext.create('Ext.window.Window', {
+						title: 'Permissions for Role: ' + record.get('roleName'),						
+						iconCls: 'fa fa-key',
+						closeAction: 'destroy',
+						width: 1000,
+						height: 500,
+						layout: {
+							type: 'hbox',
+							align: 'stretch'
+						},
+						modal: true,
+						items: [
+							{
+								xtype: 'grid',
+								itemId: 'availableGrid',
+								title: 'Permissions Available',
+								width: '50%',
+								margin: '0 5 0 0',
+								columnLines: true,
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/lookuptypes/SecurityPermission'
+									},
+									listeners: {
+										load: function(store, records, opts) {
+											var permissionsInList = [];
+											Ext.Array.each(record.data.permissions, function(inListPermission){
+												permissionWin.getComponent('availableGrid').getStore().filterBy(function(item){
+													var include = true;
+													if (item.get('code') === inListPermission.permission) {
+														permissionsInList.push(item);
+														include = false;
+													}
+													return include;
+												});
+											});
+											permissionWin.getComponent('rolePermissionsGrid').getStore().loadRecords (permissionsInList);
+										}
+									}
+								},
+								viewConfig: {
+									plugins: {
+										ptype: 'gridviewdragdrop',
+										dragText: 'Drag and drop to Add to Role Permissions'
+									}
+								},
+								columns: [
+									{ text: 'Code', dataIndex: 'code', width: 200},
+									{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
+								]
+							},
+							{
+								xtype: 'grid',
+								itemId: 'rolePermissionsGrid',
+								title: 'Permissions In Role',
+								width: '50%',
+								columnLines: true,
+								store: {									
+								},
+								viewConfig: {
+									plugins: {
+										ptype: 'gridviewdragdrop',
+										dragText: 'Drag and drop to Available to Remove Role'
+									}
+								},
+								columns: [
+									{ text: 'Code', dataIndex: 'code', width: 200},
+									{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
+								]						
+							}
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Save',
+										iconCls: 'fa fa-2x fa-save',
+										scale: 'medium',
+										handler: function(){
+											
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Close',
+										iconCls: 'fa fa-2x fa-close',
+										scale: 'medium',
+										handler: function(){
+											permissionWin.close();
+										}										
+									}
+								]
+							}
+						]
+					});
+					permissionWin.show();
 					
+					
+						
 				};				
 				
 				var actionManageData = function(record) {
 					
-					
+					var dataWin = Ext.create('Ext.window.Window', {
+						
+					});					
+					dataWin.show();
 				};				
 				
 				var actionManageUsers = function(record) {
 					
-				};					
+					var dataWin = Ext.create('Ext.window.Window', {
+						
+					});					
+					dataWin.show();
+					
+				};
+				
+				//enable manage users if user has Admin-User-Management
 				
 			});
 			
