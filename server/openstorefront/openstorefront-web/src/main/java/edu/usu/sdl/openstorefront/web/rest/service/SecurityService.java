@@ -27,12 +27,14 @@ import edu.usu.sdl.openstorefront.core.view.UserCredential;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
@@ -89,14 +91,17 @@ public class SecurityService
 		File shiroConfig = FileSystemManager.getConfig("shiro.ini");
 		
 		try {
-			//backup the original 
 			Files.copy(shiroConfig.toPath(), 
 					Paths.get(FileSystemManager.CONFIG_DIR + "/shiro.ini.back"), 
 					StandardCopyOption.REPLACE_EXISTING, 					
 					StandardCopyOption.COPY_ATTRIBUTES);
 			
-			//write changes
-			Files.write(shiroConfig.toPath(), dataView.getData().getBytes(), StandardOpenOption.CREATE);
+			try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(shiroConfig)))) {
+				out.write(dataView.getData());
+				out.flush();
+			} catch (IOException exInternal) {
+				throw exInternal;
+			}
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to save shiro.ini file.",  "Check system permission and disk space.", ex);
 		}

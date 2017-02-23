@@ -41,6 +41,7 @@ public class SecurityRole
 	@NotNull
 	@ConsumeField
 	@APIDescription("Should match LDAP group if use external IDAM and should be unique")
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String roleName;
 
 	@NotNull
