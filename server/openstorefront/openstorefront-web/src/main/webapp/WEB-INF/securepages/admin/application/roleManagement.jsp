@@ -127,6 +127,7 @@
 									text: 'Manage Users',
 									itemId: 'users',
 									disabled: true,
+									hidden: true,
 									iconCls: 'fa fa-2x fa-users',
 									scale: 'medium',
 									handler: function() {
@@ -318,7 +319,8 @@
 							{
 								xtype: 'form',
 								scrollable: true,
-								layout: 'anchor',								
+								layout: 'anchor',
+								bodyStyle: 'padding: 10px',
 								items: [
 									{
 										xtype: 'combobox',
@@ -338,7 +340,12 @@
 											listeners: {
 												load: function(store, records, opts) {
 													//remove currently selected record
-													
+													store.filterBy(function(item){
+														if (item.get('roleName') === record.get('roleName')) {
+															return false;
+														}
+														return true;
+													});
 													
 												}
 											}
@@ -363,7 +370,7 @@
 											},
 											{
 												text: 'Cancel',																								
-												iconCls: 'fa fa-2x fa-closx',
+												iconCls: 'fa fa-2x fa-close',
 												scale: 'medium',
 												handler: function(){
 													deleteWin.close();
@@ -498,14 +505,105 @@
 				
 				var actionManageUsers = function(record) {
 					
-					var dataWin = Ext.create('Ext.window.Window', {
-						
+					var userWin = Ext.create('Ext.window.Window', {
+						title: 'Users for Role: ' + record.get('roleName'),						
+						iconCls: 'fa fa-users',
+						closeAction: 'destroy',
+						width: 1000,
+						height: 500,
+						layout: {
+							type: 'fit'
+						},
+						modal: true,
+						items: [
+							{
+								xtype: 'grid',
+								title: 'Users In Role',
+								columnLines: true,
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/securityroles/' + record.get('roleName') + '/users'
+									}
+								},
+								columns: [
+									{text: 'username', dataIndex: 'username', flex: 1, minWidth: 150},
+									{
+										xtype:'actioncolumn',
+										width: 50,
+										items:[
+											{
+												iconCls: 'fa fa-trash',
+												tooltip: 'delete',
+												handler: function(grid, rowIndex, colIndex) {
+													
+												}
+											}
+										]
+									}
+								],
+								dockedItems: [
+									{
+										xtype: 'form',
+										dock: 'top',
+										bodyStyle: 'padding: 10px;',
+										items: [
+											{
+												xtype: 'combobox',
+												name: 'username',
+												valueField: 'username',
+												displayField: 'username',
+												labelAlign: 'top',												
+												fieldLabel: 'Add User <span class="field-required" />',
+												allowBlank: false
+											}
+										],
+										dockedItems: [
+											{
+												xtype: 'toolbar',
+												dock: 'bottom',
+												items: [
+													{
+														xtype: 'tbfill'
+													},
+													{
+														text: 'Add',
+														formBind: true,
+														iconCls: 'fa fa-plus',
+														handler: function(){
+															
+														}
+													},
+													{
+														text: 'Cancel',
+														iconCls: 'fa fa-close',
+														handler: function(){
+															var form = this.up('form');
+															form.reset();
+														}														
+													},
+													{
+														xtype: 'tbfill'
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						]
 					});					
-					dataWin.show();
+					userWin.show();
 					
 				};
 				
-				//enable manage users if user has Admin-User-Management
+				
+				CoreService.userservice.getCurrentUser().then(function(user){
+					if (CoreService.userservice.userHasPermisson(user, "ADMIN-USER-MANAGEMENT")) {
+						roleGrid.getComponent('tools').getComponent('users').setHidden(false);					
+					}									
+				});					
 				
 			});
 			
