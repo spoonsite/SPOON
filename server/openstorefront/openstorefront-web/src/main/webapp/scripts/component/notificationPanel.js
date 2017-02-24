@@ -123,7 +123,16 @@ Ext.define('OSF.component.NotificationPanel', {
 					}
 				},
 				{text: 'Event Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
-				{text: 'Type', groupable: 'true', dataIndex: 'eventTypeDescription', width: 175},
+				{text: 'Event Type', groupable: 'true', dataIndex: 'eventType', width: 175,
+					renderer: function(value, metaData, record, rowIndex) {
+
+						// Set Tooltip
+						metaData.tdAttr = 'data-qtip="' + record.get('eventTypeDescription') + '"';
+
+						// Simply Return Value
+						return value;
+					}
+				},
 				{text: 'Message', dataIndex: 'message', flex: 1,
 					renderer: function (value, metadata, record) {
 						switch (record.get('eventType')) {
