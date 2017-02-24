@@ -77,7 +77,7 @@
 						name: 'Notifications',
 						code: 'NOTIFICATIONS',
 						description: 'Shows event notifications',
-						iconCls: 'fa fa-envelope',
+						iconCls: 'fa fa-envelope-o',
 						jsClass: 'OSF.component.NotificationPanel',
 						height: 400,
 						allowMultiples: false,
@@ -338,7 +338,7 @@
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-close icon-button-color-delete icon-small-vertical-correction',
+									iconCls: 'fa fa-close icon-button-color-warning icon-small-vertical-correction',
 									handler: function() {
 										this.up('window').close();
 									}

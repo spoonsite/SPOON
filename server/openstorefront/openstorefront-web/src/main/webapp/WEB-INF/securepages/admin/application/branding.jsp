@@ -45,9 +45,9 @@
 					height: '80%',
 					maximizable: true,
 					title: 'Preview',
-					iconCls: 'fa fa-lg fa-eye icon-button-color-view icon-vertical-correction-view',
+					iconCls: 'fa fa-lg fa-eye icon-button-color-view icon-small-vertical-correction',
 					modal: true,
-					width: '110px',
+					minWidth: 500,
 					layout: 'fit',
 					items: [
 						previewContents
@@ -62,7 +62,7 @@
 								},
 								{									
 									text: 'Close',
-									iconCls: 'fa fa-lg fa-close icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 									scale: 'medium',
 									handler: function() {
 										previewWin.close();
@@ -507,7 +507,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 											scale: 'medium',
 											handler: function () {
 												this.up('window').close();
@@ -654,7 +654,7 @@
 									text: 'Toggle Status',
 									itemId: 'activate',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 									disabled: true,
 									handler: function () {
 										var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -666,7 +666,7 @@
 									itemId: 'duplicate',
 									scale: 'medium',
 									width: '150px',
-									iconCls: 'fa fa-2x fa-clone icon-button-color-toggle-status icon-vertical-correction-edit',
+									iconCls: 'fa fa-2x fa-clone icon-button-color-default icon-vertical-correction-edit',
 									menu: {
 										items: [
 											{
@@ -711,7 +711,7 @@
 									text: 'Delete',
 									itemId: 'delete',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										var record = this.up('grid').getSelectionModel().getSelection()[0];

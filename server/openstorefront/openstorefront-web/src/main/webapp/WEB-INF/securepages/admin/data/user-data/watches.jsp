@@ -143,7 +143,7 @@
 									text: 'Toggle Status',
 									itemId: 'toggle',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,									
 									handler: function () {
 										actionSetStatus();

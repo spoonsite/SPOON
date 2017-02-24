@@ -77,7 +77,7 @@
 									},
 									{
 										text: 'Cancel',									
-										iconCls: 'fa fa-2x fa-close icon-button-color-delete icon-vertical-correction',
+										iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 										scale: 'medium',
 										handler: function() {
 											this.up('window').close();
@@ -375,7 +375,7 @@
 							},
 							{
 								text: 'Toggle Status',
-								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
@@ -386,7 +386,7 @@
 							},	
 							{
 								text: 'Copy',
-								iconCls: 'fa fa-2x fa-clone icon-button-color-toggle-status icon-vertical-correction-edit',
+								iconCls: 'fa fa-2x fa-clone icon-button-color-default icon-vertical-correction-edit',
 								itemId: 'copy',
 								disabled: true,								
 								scale: 'medium',
@@ -401,7 +401,7 @@
 							},							
 							{
 								text: 'Delete',
-								iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 								itemId: 'delete',
 								disabled: true,									
 								scale: 'medium',
@@ -500,7 +500,7 @@
 								{
 									text: 'Previous',
 									id: 'viewWinTools-previousBtn',
-									iconCls: 'fa fa-2x fa-arrow-left icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-arrow-left icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
 									handler: function() {
 										actionPreviewNextRecord(false);
@@ -511,7 +511,7 @@
 								},
 								{
 									text: 'Close',
-									iconCls: 'fa fa-2x fa-close icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 									scale: 'medium',
 									handler: function() {
 										this.up('window').close();
@@ -523,7 +523,7 @@
 								{
 									text: 'Next',
 									id: 'viewWinTools-nextBtn',
-									iconCls: 'fa fa-2x fa-arrow-right icon-button-color-stop icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-arrow-right icon-button-color-default icon-vertical-correction',
 									iconAlign: 'right',
 									scale: 'medium',
 									handler: function() {

@@ -78,7 +78,7 @@
 									},
 									{
 										text: 'Cancel',									
-										iconCls: 'fa fa-2x fa-close icon-button-color-delete icon-vertical-correction',
+										iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 										scale: 'medium',
 										handler: function() {
 											this.up('window').close();
@@ -354,7 +354,7 @@
 							},
 							{
 								text: 'Toggle Status',
-								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
@@ -368,7 +368,7 @@
 							},																				
 							{
 								text: 'Delete',
-								iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 								itemId: 'delete',
 								disabled: true,									
 								scale: 'medium',

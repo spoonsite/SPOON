@@ -100,7 +100,7 @@
 									},
 									{
 										text: 'Cancel',									
-										iconCls: 'fa fa-2x fa-close icon-button-color-delete icon-vertical-correction',
+										iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 										scale: 'medium',
 										handler: function() {
 											this.up('window').close();
@@ -365,7 +365,7 @@
 							},
 							{
 								text: 'Toggle Status',
-								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
@@ -379,7 +379,7 @@
 							},
 							{
 								text: 'Import',
-								iconCls: 'fa fa-2x fa-upload icon-button-color-toggle-status icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-vertical-correction',
 								scale: 'medium',
 								handler: function(){
 									actionImport();
@@ -387,7 +387,7 @@
 							},
 							{
 								text: 'Export',
-								iconCls: 'fa fa-2x fa-download icon-button-color-toggle-status',
+								iconCls: 'fa fa-2x fa-download icon-button-color-default',
 								scale: 'medium',
 								handler: function(){
 									actionExport();
@@ -398,7 +398,7 @@
 							},							
 							{
 								text: 'Delete',
-								iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 								itemId: 'delete',
 								disabled: true,																
 								scale: 'medium',
@@ -481,7 +481,7 @@
 								{
 									text: 'Previous',
 									itemId: 'viewWinTools-previousBtn',
-									iconCls: 'fa fa-2x fa-arrow-left icon-button-color-stop icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-arrow-left icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
 									handler: function() {
 										actionPreviewNextRecord(false);
@@ -492,7 +492,7 @@
 								},
 								{
 									text: 'Close',
-									iconCls: 'fa fa-2x fa-close icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 									scale: 'medium',
 									handler: function() {
 										viewWin.close();
@@ -504,7 +504,7 @@
 								{
 									text: 'Next',
 									itemId: 'viewWinTools-nextBtn',
-									iconCls: 'fa fa-2x fa-arrow-right icon-button-color-stop icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-arrow-right icon-button-color-default icon-vertical-correction',
 									iconAlign: 'right',
 									scale: 'medium',
 									handler: function() {

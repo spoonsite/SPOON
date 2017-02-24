@@ -1717,7 +1717,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									}									
 								},
 								{
-									iconCls: 'fa fa-lg fa-trash action-icon icon-button-color-delete icon-small-horizontal-correction-left',
+									iconCls: 'fa fa-lg fa-trash action-icon icon-button-color-warning icon-small-horizontal-correction-left',
 									tooltip: 'Delete',									
 									handler: function(grid, rowIndex, colIndex) {
 										var rec = grid.getStore().getAt(rowIndex);
@@ -1862,7 +1862,7 @@ Ext.define('OSF.component.AdvanceSearchPanel', {
 									{
 										text: 'Cancel',
 										formBind: true,
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											this.up('window').close();
 										}										

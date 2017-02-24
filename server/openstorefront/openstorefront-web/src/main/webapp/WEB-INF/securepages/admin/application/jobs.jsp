@@ -135,7 +135,7 @@
 									name: 'individualJobControl',
 									scale: 'medium',
 									id: 'jobGrid-jobPause',
-									iconCls: 'fa fa-2x fa-pause-circle icon-button-color-pause icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-pause-circle icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										var record = Ext.getCmp('jobGrid').getSelection()[0];
@@ -234,7 +234,7 @@
 									scale: 'medium',
 									toggleGroup: 'scheduler',
 									id: 'jobGrid-schedulerToggleButton',
-									iconCls: 'fa fa-2x fa-pause-circle icon-button-color-pause icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-pause-circle icon-button-color-default icon-vertical-correction',
 									name: 'schedulerControl',
 									handler: function () {
 										toggleScheduler();
@@ -410,7 +410,7 @@
 									tooltip: 'Attempts to cancel the task',
 									scale: 'medium',
 									id: 'taskGrid-tools-cancel',
-									iconCls: 'fa fa-2x fa-stop-circle icon-button-color-stop icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-stop-circle icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									handler: function() {
 										actionCancelTask(Ext.getCmp('taskGrid').getSelection()[0]);
@@ -424,7 +424,7 @@
 									tooltip: 'Delete the task',
 									scale: 'medium',
 									id: 'taskGrid-tools-delete',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function() {
 										actionDeleteTask(Ext.getCmp('taskGrid').getSelection()[0]);
@@ -615,7 +615,7 @@
 								label.setText('Running');
 								label.setStyle({color: 'green'});
 								button.setText('Pause Scheduler');
-								button.setIconCls('fa fa-2x fa-pause-circle icon-button-color-pause icon-vertical-correction');
+								button.setIconCls('fa fa-2x fa-pause-circle icon-button-color-default icon-vertical-correction');
 							}
 							else {
 								label.setText('Paused');

@@ -124,7 +124,7 @@ Ext.define('OSF.component.ReviewWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							handler: function(){
 								this.up('window').close();
 							}

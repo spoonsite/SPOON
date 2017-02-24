@@ -162,7 +162,7 @@
 										},
 										{
 											text: 'Cancel',									
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 											scale: 'medium',
 											handler: function() {
 												this.up('window').close();
@@ -497,7 +497,7 @@
 																			},
 																			{
 																				text: 'Cancel',
-																				iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+																				iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 																				handler: function(){
 																					customFieldWin.close();
 																				}																				
@@ -519,7 +519,7 @@
 												text: 'Delete',
 												itemId: 'delete',
 												disabled: true,
-												iconCls: 'fa fa-lg fa-trash icon-button-color-delete',
+												iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 												handler: function() {
 													var grid = this.up('grid');
 													var selectedRecord = grid.getSelectionModel().getSelection()[0];
@@ -766,7 +766,7 @@
 							},
 							{
 								text: 'Toggle Status',
-								iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
@@ -780,7 +780,7 @@
 							},							
 							{
 								text: 'Delete',
-								iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 								itemId: 'delete',
 								disabled: true,									
 								scale: 'medium',

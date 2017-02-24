@@ -44,7 +44,7 @@ Ext.define('OSF.component.ImportWindow', {
 						{
 							text: 'Upload',
 							formBind: true,
-							iconCls: 'fa fa-upload',
+							iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 							handler: function () {
 								var uploadForm = this.up('form');
 								var data = uploadForm.getValues();
@@ -82,7 +82,7 @@ Ext.define('OSF.component.ImportWindow', {
 						},
 						{
 							text: 'Cancel',
-							iconCls: 'fa fa-close',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							handler: function () {
 								importWindow.close();
 							}

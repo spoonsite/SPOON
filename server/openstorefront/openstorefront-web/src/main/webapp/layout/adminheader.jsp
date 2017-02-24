@@ -329,7 +329,7 @@
 									xtype: 'button',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope',
+									iconCls: 'fa fa-2x fa-envelope-o',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {
@@ -361,7 +361,7 @@
 								{
 									text: 'Dashboard',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-home',
+									iconCls: 'fa fa-2x fa-home icon-button-color-default',
 									handler: function(){
 										actionLoadContent('Dashboard');
 									}									
@@ -372,7 +372,7 @@
 								{
 									text: 'Data Management',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-database',
+									iconCls: 'fa fa-2x fa-database icon-button-color-default',
 									menu: {										
 										items: dataMenu,
 										listeners: {
@@ -385,7 +385,7 @@
 								{
 									text: 'Evaluation Management',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-file-text-o',
+									iconCls: 'fa fa-2x fa-file-text-o icon-button-color-default',
 									menu: {										
 										items: evaluationMenu,
 										listeners: {
@@ -398,7 +398,7 @@
 								{
 									text: 'Application Management',
 									scale   : 'large',
-									iconCls: 'fa fa-2x fa-gears',
+									iconCls: 'fa fa-2x fa-gears icon-button-color-default',
 									menu: {										
 										items: appMenu,
 										listeners: {

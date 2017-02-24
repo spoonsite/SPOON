@@ -42,7 +42,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 				}, 
 				{
 					text: 'Close',
-					iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 					handler: function(){
 						this.up('window').hide();
 					}
@@ -388,7 +388,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 						{
 							text: 'Unsubmit',
 							itemId: 'unsubmitBtn',
-							iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 							disabled: true,
 							handler: function(){ 
 								var changesGrid = this.up('grid');
@@ -424,7 +424,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 						{
 							text: 'Delete',	
 							itemId: 'removeBtn',
-							iconCls: 'fa fa-lg fa-trash icon-button-color-delete',							
+							iconCls: 'fa fa-lg fa-trash icon-button-color-warning',							
 							disabled: true,
 							handler: function(){
 								var changesGrid = this.up('grid');

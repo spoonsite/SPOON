@@ -128,7 +128,7 @@
 								{
 									text: 'Previous',
 									id: 'previewWinTools-previousBtn',
-									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-stop',									
+									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
 									handler: function() {
 										actionPreviewNextRecord(false);
 									}									
@@ -138,7 +138,7 @@
 								},
 								{
 									text: 'Close',
-									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function() {
 										this.up('window').hide();
 									}
@@ -149,7 +149,7 @@
 								{
 									text: 'Next',
 									id: 'previewWinTools-nextBtn',
-									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-stop',
+									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
 									iconAlign: 'right',
 									handler: function() {
 										actionPreviewNextRecord(true);
@@ -288,7 +288,7 @@
 									hidden: true,									
 									scale: 'medium',
 									width: '180px',
-									iconCls: 'fa fa-2x fa-comment-o icon-button-color-stop icon-vertical-correction-view',
+									iconCls: 'fa fa-2x fa-comment-o icon-button-color-default icon-vertical-correction-view',
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];										
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
@@ -354,7 +354,7 @@
 											{
 												text: 'Toggle Notify',
 												itemId: 'tbNotify',
-												iconCls: 'fa fa-lg fa-envelope icon-small-vertical-correction',
+												iconCls: 'fa fa-lg fa-envelope-o icon-small-vertical-correction',
 												handler: function () {
 													if (currentUser && currentUser.email) {
 														var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
@@ -402,7 +402,7 @@
 									hidden: true,									
 									scale: 'medium',
 									width: '180px',
-									iconCls: 'fa fa-2x fa-comment-o icon-button-color-stop icon-vertical-correction-view',
+									iconCls: 'fa fa-2x fa-comment-o icon-button-color-default icon-vertical-correction-view',
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
@@ -426,7 +426,7 @@
 									itemId: 'tbUnsubmit',
 									hidden: true,									
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
@@ -458,7 +458,7 @@
 									itemId: 'tbDelete',
 									disabled: true,
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
@@ -490,7 +490,7 @@
 									itemId: 'tbRemoveChangeRequest',
 									hidden: true,
 									scale: 'medium',								
-									iconCls: 'fa fa-2x icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
 										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');

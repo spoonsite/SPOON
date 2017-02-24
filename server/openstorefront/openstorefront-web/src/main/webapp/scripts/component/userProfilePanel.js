@@ -82,7 +82,7 @@ Ext.define('OSF.component.UserProfilePanel', {
 						width: '175',
 						margin: profileForm.defaults ? profileForm.defaults.labelAlign === 'top' ? '25 0 0 0' : '0 0 0 0' : '0 0 0 0',
 						text: 'Send Test Message',
-						iconCls: 'fa fa-lg fa-envelope',
+						iconCls: 'fa fa-lg fa-envelope-o',
 						maxWidth: 175,
 						handler: function(){
 							var user = this.up('form').getForm().findField('username');
@@ -255,7 +255,7 @@ Ext.define('OSF.component.UserProfileWindow', {
 				},
 				{
 					text: 'Cancel',
-					iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 					handler: function () {
 						profileWindow.close();
 					}

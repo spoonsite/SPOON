@@ -140,7 +140,7 @@
 									text: 'Up',
 									id: 'highlightGrid-tools-up',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-arrow-circle-o-up icon-vertical-correction icon-button-color-toggle-status',
+									iconCls: 'fa fa-2x fa-arrow-circle-o-up icon-vertical-correction icon-button-color-default',
 									disabled: true,
 									handler: function () {
 										actionUpHighlight(Ext.getCmp('highlightGrid').getSelection()[0]);
@@ -150,7 +150,7 @@
 									text: 'Down',
 									id: 'highlightGrid-tools-down',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-arrow-circle-o-down icon-vertical-correction icon-button-color-toggle-status',
+									iconCls: 'fa fa-2x fa-arrow-circle-o-down icon-vertical-correction icon-button-color-default',
 									disabled: true,
 									handler: function () {
 										actionDownHighlight(Ext.getCmp('highlightGrid').getSelection()[0]);
@@ -163,7 +163,7 @@
 									text: 'Delete',
 									id: 'highlightGrid-tools-delete',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-trash icon-vertical-correction icon-button-color-delete',
+									iconCls: 'fa fa-2x fa-trash icon-vertical-correction icon-button-color-warning',
 									disabled: true,
 									handler: function () {
 										actionDeleteHighlight();
@@ -316,9 +316,10 @@
 				var highlightAddEditWin = Ext.create('Ext.window.Window', {
 					id: 'highlightAddEditWin',
 					title: 'Add/Edit Highlight',
-					modal: true,
-					width: '55%',
-					height: '70%',
+					minHeight: 750,
+					minWidth: 700,
+//					modal: true,
+					scrollable: true,
 					maximizable: true,
 					y: '10em',
 					iconCls: 'fa fa-lg fa-edit',
@@ -467,7 +468,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function () {
 												Ext.getCmp('editHighlightForm').reset();
 												Ext.getCmp('highlightAddEditWin').hide();

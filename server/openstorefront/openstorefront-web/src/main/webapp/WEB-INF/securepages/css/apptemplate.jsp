@@ -670,8 +670,10 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	margin-left: -5px
 }
 
-.icon-color-light {
-	color: white
+/* Icon button colors */
+
+.icon-button-color-default {
+	color: #4a4e4f;
 }
 
 .icon-button-color-run {
@@ -690,11 +692,7 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	color: #2E27D9;
 }
 
-.icon-button-color-toggle-status {
-	color: #4a4e4f;
-}
-
-.icon-button-color-delete {
+.icon-button-color-warning {
 	color: #a94442; 
 }
 
@@ -702,37 +700,9 @@ ul.stat-list-group-item, ol.stat-list-group-item {
 	color: #0d4577;
 }
 
-.icon-button-color-review {
-	color: #FBD90E;
-}
-
-.icon-button-color-pause {
-	color: #4a4e4f;
-
-}
-
-.icon-button-color-stop {
-	color: #4a4e4f;
-
-}
-
-.icon-button-color-eraser {
-	color: #4a4e4f;
-}
-
-.icon-button-color-gray {
-	color: #4a4e4f;
-}
-
 /* For icons that don't vertically center for cryptic reasons **/
 .icon-vertical-correction {
 	margin-top: -5px;
-}
-
-icon-vertical-correction {
-	position: relative;
-	left: -5px;
-	top: -3px;
 }
 
 .icon-vertical-correction-send {
@@ -956,11 +926,11 @@ table.confluenceTable td.numberingColumn {
 }
 
 .text-success {
-	color: #3c763d;
+	color: #64B647;
 }
 
 .alert-success {
-    color: #3c763d;
+    color: #64B647;
     background-color: #dff0d8;
     border-color: #d6e9c6;
 }
@@ -984,7 +954,7 @@ table.confluenceTable td.numberingColumn {
 }
 
 .highlight-success {
-    color: #3c763d;
+    color: #64B647;
     background-color: #dff0d8;
     border-color: #d6e9c6;
 }

@@ -244,7 +244,7 @@
 								{
 									text: 'Toggle Status',
 									id: 'alertGrid-tools-toggleActivation',
-									iconCls: 'fa fa-2x fa-power-off icon-button-color-toggle-status icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									scale: 'medium',
 									handler: function () {
@@ -258,7 +258,7 @@
 								{
 									text: 'Delete',
 									id: 'alertGrid-tools-delete',
-									iconCls: 'fa fa-2x fa-trash icon-button-color-delete icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									scale: 'medium',
 									handler: function () {
@@ -548,7 +548,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function () {
 												Ext.getCmp('editAlertForm').reset();
 												Ext.getCmp('alertAddEditWin').hide();

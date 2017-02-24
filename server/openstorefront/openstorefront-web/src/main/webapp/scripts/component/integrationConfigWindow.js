@@ -182,7 +182,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function(){
 										this.up('window').close();
 									}							
@@ -358,7 +358,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 							text: 'Toggle Status',
 							itemId: 'tbStatus',
 							disabled: true,
-							iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',
+							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 							handler: function(){
 								var grid = this.up('grid');
 								var componentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
@@ -387,7 +387,7 @@ Ext.define('OSF.component.IntegrationWindow', {
 							text: 'Delete',
 							itemId: 'tbDelete',
 							disabled: true,							
-							iconCls: 'fa fa-lg fa-trash icon-button-color-delete',
+							iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 							handler: function(){
 								var grid = this.up('grid');
 								var componentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');

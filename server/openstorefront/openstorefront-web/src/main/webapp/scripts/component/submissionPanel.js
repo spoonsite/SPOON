@@ -2747,7 +2747,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							itemId: 'Previous',
 							disabled: true,
 							scale: 'large',
-							iconCls: 'fa fa-2x fa-arrow-left icon-button-color-stop icon-top-padding-2',
+							iconCls: 'fa fa-2x fa-arrow-left icon-button-color-default icon-top-padding-2',
 							handler: function () {
 								submissionPanel.currentStep--;
 								submissionPanel.changeSteps();
@@ -2830,7 +2830,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 							text: 'Next',
 							itemId: 'Next',
 							scale: 'large',
-							iconCls: 'fa fa-2x fa-arrow-right icon-button-color-stop icon-top-padding-2',
+							iconCls: 'fa fa-2x fa-arrow-right icon-button-color-default icon-top-padding-2',
 							iconAlign: 'right',
 							handler: function () {
 								submissionPanel.currentStep++;

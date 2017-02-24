@@ -197,7 +197,7 @@
 								text: 'Toggle Status',
 								id: 'codeGrid-tools-status',
 								disabled: true,
-								iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status icon-small-vertical-correction-media-table',
+								iconCls: 'fa fa-lg fa-power-off icon-button-color-default icon-small-vertical-correction-media-table',
 								handler: function () {
 									actionToggleStatus(Ext.getCmp('codeGrid').getSelection()[0]);
 								}								
@@ -207,14 +207,14 @@
 							},
 							{
 								text: 'Import',																
-								iconCls: 'fa fa-lg fa-upload icon-button-color-toggle-status icon-small-vertical-correction-media-table',
+								iconCls: 'fa fa-lg fa-upload icon-button-color-default icon-small-vertical-correction-media-table',
 								handler: function () {
 									actionImport();
 								}
 							},
 							{
 								text: 'Export',																
-								iconCls: 'fa fa-lg fa-download icon-button-color-toggle-status icon-small-vertical-correction-media-table',								
+								iconCls: 'fa fa-lg fa-download icon-button-color-default icon-small-vertical-correction-media-table',								
 								handler: function () {
 									window.location.href = "api/v1/resource/lookuptypes/" + selectedTable.get('code') + "/export";
 								}
@@ -301,7 +301,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function() {
 											Ext.getCmp('editCodeFormWin').hide();
 										}
@@ -360,7 +360,7 @@
 				modal: true,
 				layout: 'fit',
 				alwaysOnTop: true,
-				iconCls: 'fa fa-lg fa-upload',				
+				iconCls: 'fa fa-lg fa-upload icon-button-color-default',				
 				y: 100,
 				items: [
 					{
@@ -378,7 +378,7 @@
 								items: [
 									{
 										text: 'Upload',
-										iconCls: 'fa fa-lg fa-upload',
+										iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 										formBind: true,
 										handler: function(){
 											Ext.getCmp('uploadForm').submit({
@@ -423,7 +423,7 @@
 									},
 									{
 										text: 'Cancel',
-										iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											importWin.hide();
 										}																				

@@ -233,7 +233,7 @@
 								{
 									text: 'Delete',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',									
+									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('tagGrid'), 'tagId', 'tags');
@@ -337,7 +337,7 @@
 								{
 									text: 'ToggleStatus',
 									itemId: 'statusToggleBtn',
-									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('questionGrid'), 'questionId', 'questions');
@@ -414,7 +414,7 @@
 										{
 											text: 'ToggleStatus',
 											itemId: 'statusToggleBtn',
-											iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',
+											iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 											disabled: true,
 											handler: function(){
 												actionSubComponentToggleStatus(this.up('grid'), 'questionId', 'questions', 'responseId', 'responses');
@@ -533,7 +533,7 @@
 								{
 									text: 'ToggleStatus',
 									itemId: 'statusToggleBtn',
-									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('reviewGrid'), 'reviewId', 'reviews');
@@ -696,7 +696,7 @@
 								},
 								{
 									text: 'Clear All Sections',
-									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',									
+									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',									
 									handler: function(){			
 										Ext.Msg.show({
 											title:'Clear All Sections?',
@@ -978,7 +978,7 @@
 								{
 									text: 'Toggle Status',
 									itemId: 'toggleStatusBtn',
-									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',									
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-default',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('metadataGrid'), 'metadataId', 'metadata');
@@ -1178,7 +1178,7 @@
 								{
 									text: 'Toggle Status',
 									itemId: 'toggleStatusBtn',
-									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',									
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-default',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('dependenciesGrid'), 'dependencyId', 'dependencies');
@@ -1488,7 +1488,7 @@
 								{
 									text: 'Toggle Status',
 									itemId: 'toggleStatusBtn',
-									iconCls: 'fa fa-lg fa-power-off icon-button-color-correction',									
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-default',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('mediaGrid'), 'componentMediaId', 'media');
@@ -1500,7 +1500,7 @@
 								{
 									text: 'Delete',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',
+									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 									disabled: true,
 									handler: function(){
 										var record = Ext.getCmp('mediaGrid').getSelection()[0];
@@ -1812,7 +1812,7 @@
 								{
 									text: 'Toggle Status',
 									itemId: 'toggleStatusBtn',
-									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',									
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-default',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('resourcesGrid'), 'resourceId', 'resources');
@@ -1824,7 +1824,7 @@
 								{
 									text: 'Delete',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',																		
+									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',																		
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('resourcesGrid'), 'resourceId', 'resources', undefined, undefined, true);
@@ -2111,7 +2111,7 @@
 								{
 									text: 'Toggle Status',
 									itemId: 'toggleStatusBtn',
-									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',									
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-default',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('contactGrid'), 'componentContactId', 'contacts');
@@ -2123,7 +2123,7 @@
 								{
 									text: 'Delete',
 									itemId: 'delete',
-									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',									
+									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',									
 									disabled: true,
 									handler: function(){
 										
@@ -2321,7 +2321,7 @@
 								{
 									text: 'Delete',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',								
+									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',								
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('relationshipsGrid'), 'relationshipId', 'relationships');
@@ -2515,7 +2515,7 @@
 								{
 									text: 'Toggle Status',
 									itemId: 'toggleStatusBtn',
-									iconCls: 'fa fa-lg fa-power-off icon-button-color-toggle-status',									
+									iconCls: 'fa fa-lg fa-power-off icon-button-color-default',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('attributeGrid'), 'type', 'attributes', 'code', null, null, function(){
@@ -2529,7 +2529,7 @@
 								{
 									text: 'Delete',
 									itemId: 'removeBtn',
-									iconCls: 'fa fa-lg fa-trash icon-button-color-delete',									
+									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',									
 									disabled: true,
 									handler: function(){
 										actionSubComponentToggleStatus(Ext.getCmp('attributeGrid'), 'type', 'attributes', 'code', null, true, function(){
@@ -2739,7 +2739,7 @@
 								},
 								{
 									text: 'Message Submitter',
-									iconCls: 'fa fa-lg fa-envelope',
+									iconCls: 'fa fa-lg fa-envelope-o icon-button-color-default',
 									handler: function() {
 										
 										//get submiter  
@@ -2765,7 +2765,7 @@
 								{
 									text: 'Integration',
 									id: 'integrationBtn',
-									iconCls: 'fa fa-lg fa-gear icon-small-vertical-correction',
+									iconCls: 'fa fa-lg fa-gear icon-small-vertical-correction icon-button-color-default',
 									disabled: true,
 									handler: function() {
 										integrationWindow.show();
@@ -2904,9 +2904,9 @@
 									xtype: 'tbfill'
 								},
 								{
-									text: 'Done',
+									text: 'Close',
 									tooltip: 'Close Add/Edit window',
-									iconCls: 'fa fa-lg fa-check icon-button-color-refresh',
+									iconCls: 'fa fa-lg fa-times icon-button-color-warning',
 									handler: function() {
 										this.up('window').close();
 									}													
@@ -3323,7 +3323,7 @@
 								}, 
 								{
 									text: 'Close',
-									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function(){
 										this.up('window').hide();
 									}
@@ -3431,7 +3431,7 @@
 										{
 											text: 'Delete',
 											id: 'versionWin-tool-removeBtn',
-											iconCls: 'fa fa-lg fa-trash icon-button-color-delete',											
+											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',											
 											disabled: true,
 											handler: function(){
 												var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
@@ -3531,7 +3531,7 @@
 								{
 									text: 'Previous',
 									id: 'previewWinTools-previousBtn',
-									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-stop',									
+									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
 									handler: function() {
 										actionPreviewNextRecord(false);
 									}									
@@ -3541,7 +3541,7 @@
 								},
 								{
 									text: 'Close',
-									iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									handler: function() {
 										this.up('window').hide();
 									}
@@ -3552,7 +3552,7 @@
 								{
 									text: 'Next',
 									id: 'previewWinTools-nextBtn',
-									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-stop',
+									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
 									iconAlign: 'right',
 									handler: function() {
 										actionPreviewNextRecord(true);
@@ -3635,7 +3635,7 @@
 									dock: 'bottom',
 									items: [
 										{
-											text: 'Update',
+											text: 'Save',
 											formBind: true,
 											iconCls: 'fa fa-lg fa-save icon-button-color-add',
 											handler: function(){
@@ -3710,7 +3710,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function(){
 												this.up('window').close();
 											}
@@ -3766,7 +3766,7 @@
 									dock: 'bottom',
 									items: [
 										{
-											text: 'Update',
+											text: 'Save',
 											formBind: true,
 											iconCls: 'fa fa-lg fa-save icon-button-color-add',
 											handler: function(){
@@ -3851,7 +3851,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function(){
 												this.up('window').close();
 											}
@@ -4056,7 +4056,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-delete',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function() {
 												this.up('window').hide();
 											}																						
@@ -4301,14 +4301,14 @@
 									menu: [
 										{
 											text: 'Change Owner',											
-											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
 												actionChangeOwner();
 											}
 										},
 										{
 											text: 'Change Type',											
-											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
 												actionChangeType();
 											}
@@ -4316,7 +4316,7 @@
 										{
 											id: 'lookupGrid-tools-action-changeRequests',
 											text: 'Change Requests',																		
-											iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction icon-button-color-default',
 											handler: function () {												
 												actionChangeRequests(Ext.getCmp('componentGrid').getSelection()[0]);
 											}
@@ -4327,7 +4327,7 @@
 										{
 											id: 'lookupGrid-tools-action-copy',
 											text: 'Copy',											
-											iconCls: 'fa fa-lg fa-copy icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-copy icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
 												actionCopyComponent();
 											}
@@ -4335,7 +4335,7 @@
 										{
 											id: 'lookupGrid-tools-action-merge',
 											text: 'Merge',
-											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
 												actionMergeComponent();
 											}
@@ -4343,7 +4343,7 @@
 										{
 											id: 'lookupGrid-tools-action-versions',
 											text: 'Versions',
-											iconCls: 'fa fa-lg fa-object-ungroup icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-object-ungroup icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
 												actionVersions();
 											}
@@ -4353,7 +4353,7 @@
 										},
 										{
 											text: 'Toggle Status',
-											iconCls: 'fa fa-lg fa-power-off icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-power-off icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
 												actionToggleStatus();
 											}
@@ -4364,7 +4364,7 @@
 										{
 											text: 'Delete',
 											cls: 'alert-danger',
-											iconCls: 'fa fa-lg fa-trash icon-small-vertical-correction',
+											iconCls: 'fa fa-lg fa-trash icon-small-vertical-correction icon-button-color-default',
 											handler: function() {
 												actionDeleteComponent();
 											}											
@@ -4376,7 +4376,7 @@
 								},
 								{
 									text: 'Import',
-									iconCls: 'fa fa-2x fa-upload icon-vertical-correction-view',
+									iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-vertical-correction-view',
 									scale: 'medium',
 									width: '110px',
 									handler: function () {
@@ -4386,7 +4386,7 @@
 								{
 									text: 'Export',
 									id: 'lookupGrid-tools-export',
-									iconCls: 'fa fa-2x fa-download',
+									iconCls: 'fa fa-2x fa-download icon-button-color-default',
 									scale: 'medium',
 									disabled: true,
 									menu: {
