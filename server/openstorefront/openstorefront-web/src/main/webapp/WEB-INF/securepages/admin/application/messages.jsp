@@ -437,7 +437,16 @@
 							}
 						},
 						{text: 'Message', dataIndex: 'message', width: 200, flex: 1},
-						{text: 'Event Type', dataIndex: 'eventTypeDescription', width: 150},
+						{text: 'Event Type', dataIndex: 'eventType', width: 150,
+							renderer: function(value, metaData, record, rowIndex) {
+								
+								// Set Tooltip
+								metaData.tdAttr = 'data-qtip="' + record.get('eventTypeDescription') + '"';
+								
+								// Simply Return Value
+								return value;
+							}
+						},
 						{
 							text: 'Update Date', 
 							dataIndex: 'updateDts',

@@ -59,13 +59,6 @@ public class NotificationEventResource
 	@Path("/all")
 	public Response getAllEvents(@BeanParam FilterQueryParams filterQueryParams)
 	{
-		// Check Sort Field
-		switch (filterQueryParams.getSortField()) {
-			case "eventTypeDescription":
-				filterQueryParams.setSortField("eventType"); // Adjust Sort Field
-				break;
-		}
-		
 		return handleGetEvents(null, filterQueryParams);
 	}
 
