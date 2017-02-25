@@ -32,8 +32,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -50,12 +52,20 @@ public class UserResource
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSecurityWrapper.class)
-	public Response userProfiles(@BeanParam UserFilterParams filterQueryParams)
+	public Response getUsers(
+			@BeanParam UserFilterParams filterQueryParams,
+			@QueryParam("query") String query
+	)
 	{
 		ValidationResult validationResult = filterQueryParams.validate();
 		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}		
+		
+		if (StringUtils.isNotBlank(query)) {
+			filterQueryParams.setSearchField(UserSecurity.FIELD_USERNAME);
+			filterQueryParams.setSearchValue(query);			
+		}
 		
 		UserSecurityWrapper userSecurityWrapper = service.getSecurityService().getUserViews(filterQueryParams);
 		return sendSingleEntityResponse(userSecurityWrapper);

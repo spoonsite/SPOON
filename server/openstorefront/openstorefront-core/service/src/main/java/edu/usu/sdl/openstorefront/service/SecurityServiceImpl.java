@@ -469,9 +469,9 @@ public class SecurityServiceImpl
 			userRoleExample.setRole(role);
 			userRoleExample.setUsername(username.toLowerCase());
 			
-			userRoleExample = userRoleExample.find();
+			userRoleExample = userRoleExample.findProxy();
 			if (userRoleExample != null) {
-				persistenceService.deleteByExample(userRoleExample);
+				persistenceService.delete(userRoleExample);
 				LOG.log(Level.INFO, MessageFormat.format("Role {0} was removed from user: {1} by {2}",  role, username, SecurityUtil.getCurrentUserName()));			
 			}
 		} else {

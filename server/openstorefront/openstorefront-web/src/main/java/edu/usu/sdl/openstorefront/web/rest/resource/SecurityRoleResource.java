@@ -128,7 +128,7 @@ public class SecurityRoleResource
 				existing.setRoleName(securityRole.getRoleName().toLowerCase());	
 				
 				QueryByExample<SecurityRole> example = new QueryByExample<>(existing);
-				example.getFieldOptions().put(SecurityRole.FIELD_ROLENAME, new GenerateStatementOptionBuilder().setOperation(GenerateStatementOption.METHOD_LOWER_CASE).build());
+				example.getFieldOptions().put(SecurityRole.FIELD_ROLENAME, new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
 				existing = service.getPersistenceService().queryOneByExample(SecurityRole.class, example);
 				if (existing != null) {
 					return Response.status(Response.Status.CONFLICT).build();
@@ -235,8 +235,9 @@ public class SecurityRoleResource
 			} else {
 				LOG.log(Level.FINE, MessageFormat.format("User was not found. User: {0}", username));				
 			}	
-		}	
-		LOG.log(Level.FINE, MessageFormat.format("Role was not found. Role: {0}", rolename));		
+		} else {	
+			LOG.log(Level.FINE, MessageFormat.format("Role was not found. Role: {0}", rolename));		
+		}
 		return Response.noContent().build();
 	}
 	

@@ -263,6 +263,7 @@
 													var method = 'POST';
 													var urlEnd = '';
 													if (record) {
+														method = 'PUT';
 														urlEnd = '/' + data.roleName;
 														data.permissions = record.data.permissions;
 														data.dataSecurity = record.data.dataSecurity;
@@ -472,13 +473,38 @@
 										scale: 'medium',
 										handler: function(){
 											
+											var permissions = [];
+											
+											permissionWin.getComponent('rolePermissionsGrid').getStore().each(function(item){												
+												permissions.push({
+													permission: item.get('code')
+												});
+											});									
+											
+											var data = record.data;
+											data.permissions = permissions;
+											
+											permissionWin.setLoading('Saving Permissions...');
+											Ext.Ajax.request({
+												url: 'api/v1/resource/securityroles/' + encodeURIComponent(record.get('roleName')),
+												method: 'PUT',
+												jsonData: data,
+												callback: function(){
+													permissionWin.setLoading(false);
+												},
+												success: function(response, opts) {
+													Ext.toast('Updated Permissions.')
+													permissionWin.close();
+												}
+											});
+											
 										}
 									},
 									{
 										xtype: 'tbfill'
 									},
 									{
-										text: 'Close',
+										text: 'Cancel',
 										iconCls: 'fa fa-2x fa-close',
 										scale: 'medium',
 										handler: function(){
@@ -489,16 +515,211 @@
 							}
 						]
 					});
-					permissionWin.show();
-					
-					
+					permissionWin.show();					
 						
 				};				
 				
 				var actionManageData = function(record) {
 					
 					var dataWin = Ext.create('Ext.window.Window', {
-						
+						title: 'Data Restrictions for Role: ' + record.get('roleName'),						
+						iconCls: 'fa fa-legal',
+						closeAction: 'destroy',
+						width: 1000,
+						height: 500,
+						layout: {
+							type: 'fit'
+						},
+						modal: true,
+						items: [
+							{
+								xtype: 'tabpanel',
+								items: [
+									{
+										xtype: 'panel',																
+										title: 'Data Sources',
+										layout: {
+											type: 'hbox',
+											align: 'stretch'
+										},
+										items: [
+											{
+												xtype: 'grid',
+												id: 'dataSourcesGrid',
+												title: 'Available (Drag record to Add)',
+												width: '50%',
+												margin: '0 5 0 0',
+												columnLines: true,
+												store: {	
+													autoLoad: true,
+													proxy: {
+														type: 'ajax',
+														url: 'api/v1/resource/lookuptypes/DataSource'
+													},
+													listeners: {
+														load: function(store, records, opts) {
+															
+															var sourcesInList = [];
+															Ext.Array.each(record.data.dataSecurity, function(inListSource){
+																Ext.getCmp('dataSourcesGrid').getStore().filterBy(function(item){
+																	var include = true;
+																	if (item.get('code') === sourcesInList.dataSource) {
+																		sourcesInList.push(item);
+																		include = false;
+																	}
+																	return include;
+																});
+															});
+															Ext.getCmp('dataSourcesInRoleGrid').getStore().loadRecords(sourcesInList);
+															
+														}
+													}											
+												},
+												viewConfig: {
+													plugins: {
+														ptype: 'gridviewdragdrop',
+														dragText: 'Drag and drop to Add to Role'
+													}
+												},										
+												columns: [
+													{ text: 'Code', dataIndex: 'code', width: 200},
+													{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
+												]
+											},
+											{
+												xtype: 'grid',
+												id: 'dataSourcesInRoleGrid',
+												title: 'In Role (Drag record to Remove)',
+												width: '50%',
+												margin: '0 5 0 0',
+												columnLines: true,
+												store: {																						
+												},
+												viewConfig: {
+													plugins: {
+														ptype: 'gridviewdragdrop',
+														dragText: 'Drag and drop to Available to Remove from Role'
+													}
+												},										
+												columns: [
+													{ text: 'Code', dataIndex: 'code', width: 200},
+													{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
+												]										
+											}
+										]
+									},
+									{
+										xtype: 'panel',
+										title: 'Data Sensitivity',
+										width: '100%',
+										height: '50%',
+										layout: {
+											type: 'hbox',
+											align: 'stretch'
+										},
+										items: [
+											{
+												xtype: 'grid',
+												id: 'dataSensitivityGrid',
+												title: 'Available',
+												width: '50%',
+												margin: '0 5 0 0',
+												columnLines: true,
+												store: {	
+													autoLoad: true,
+													proxy: {
+														type: 'ajax',
+														url: 'api/v1/resource/lookuptypes/DataSensitivity'
+													},
+													listeners: {
+														load: function(store, records, opts) {
+															
+															var sourcesInList = [];
+															Ext.Array.each(record.data.dataSecurity, function(inListSource){
+																Ext.getCmp('dataSensitivityGrid').getStore().filterBy(function(item){
+																	var include = true;
+																	if (item.get('code') === sourcesInList.dataSensitivity) {
+																		sourcesInList.push(item);
+																		include = false;
+																	}
+																	return include;
+																});
+															});
+															Ext.getCmp('dataSensitivitiesInRoleGrid').getStore().loadRecords(sourcesInList);
+														}
+													}											
+												},
+												viewConfig: {
+													plugins: {
+														ptype: 'gridviewdragdrop',
+														dragText: 'Drag and drop to Add to Role'
+													}
+												},										
+												columns: [
+													{ text: 'Code', dataIndex: 'code', width: 200},
+													{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
+												]
+											},
+											{
+												xtype: 'grid',
+												id: 'dataSensitivitiesInRoleGrid',
+												title: 'In Role',
+												width: '50%',
+												margin: '0 5 0 0',
+												columnLines: true,
+												store: {																						
+												},
+												viewConfig: {
+													plugins: {
+														ptype: 'gridviewdragdrop',
+														dragText: 'Drag and drop to Available to Remove from Role'
+													}
+												},										
+												columns: [
+													{ text: 'Code', dataIndex: 'code', width: 200},
+													{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
+												]										
+											}
+										]
+									}
+								]
+							}						
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Save',
+										iconCls: 'fa fa-2x fa-save',
+										scale: 'medium',
+										handler: function() {
+											
+											//pull data sources
+											
+											//dataSourcesInRoleGrid
+											
+											//data sensitivity
+											
+											//dataSensitivitiesInRoleGrid
+											
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										iconCls: 'fa fa-2x fa-close',
+										scale: 'medium',
+										handler: function(){
+											dataWin.close();
+										}										
+									}
+								]
+							}
+						]
 					});					
 					dataWin.show();
 				};				
@@ -518,13 +739,14 @@
 						items: [
 							{
 								xtype: 'grid',
+								itemId: 'grid',										
 								title: 'Users In Role',
 								columnLines: true,
 								store: {
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
-										url: 'api/v1/resource/securityroles/' + record.get('roleName') + '/users'
+										url: 'api/v1/resource/securityroles/' + encodeURIComponent(record.get('roleName')) + '/users'
 									}
 								},
 								columns: [
@@ -533,11 +755,34 @@
 										xtype:'actioncolumn',
 										width: 50,
 										items:[
-											{
-												iconCls: 'fa fa-trash',
+											{												
+												iconCls: 'x-fa fa-trash',
 												tooltip: 'delete',
 												handler: function(grid, rowIndex, colIndex) {
+													var selectedUser = grid.getStore().getAt(rowIndex);
 													
+													Ext.Msg.show({
+														title:'Delete user from Role?',
+														message: 'Are you sure you want to remove ' + selectedUser.get('username') + ' from the role?',
+														buttons: Ext.Msg.YESNO,
+														icon: Ext.Msg.QUESTION,
+														fn: function(btn) {
+															if (btn === 'yes') {
+																
+																grid.setLoading('Removing User...');
+																Ext.Ajax.request({
+																	url: 'api/v1/resource/securityroles/' + encodeURIComponent(record.get('roleName')) + '/users/' + encodeURIComponent(selectedUser.get('username')),
+																	method: 'DELETE',
+																	callback: function() {
+																		grid.setLoading(false);
+																	},
+																	success: function(response, opts) {
+																		grid.getStore().load();
+																	}	
+																});																
+															}
+														}
+													});													
 												}
 											}
 										]
@@ -548,15 +793,40 @@
 										xtype: 'form',
 										dock: 'top',
 										bodyStyle: 'padding: 10px;',
+										layout: 'anchor',
 										items: [
 											{
 												xtype: 'combobox',
 												name: 'username',
+												width: '100%',
 												valueField: 'username',
-												displayField: 'username',
+												tpl: Ext.create('Ext.XTemplate',
+													'<ul class="x-list-plain"><tpl for=".">',
+														'<li role="option" class="x-boundlist-item">{firstname} {lastname} - {email}</li>',
+													'</tpl></ul>'
+												),											
+												displayTpl: Ext.create('Ext.XTemplate',
+													'<tpl for=".">',
+														'{firstname} {lastname} - {email}',
+													'</tpl>'
+												),
 												labelAlign: 'top',												
 												fieldLabel: 'Add User <span class="field-required" />',
-												allowBlank: false
+												allowBlank: false,
+												forceSelection: true,
+												queryMode: 'remote',
+												store: {
+													autoLoad: false,
+													proxy: {
+														type: 'ajax',
+														url: 'api/v1/resource/users',
+														reader: {
+															type: 'json',
+															rootProperty: 'data',
+															totalProperty: 'totalNumber'
+														}
+													}
+												}
 											}
 										],
 										dockedItems: [
@@ -572,7 +842,24 @@
 														formBind: true,
 														iconCls: 'fa fa-plus',
 														handler: function(){
+															var form = this.up('form');
+															var data = form.getValues();
+															var addUserData = {
+																username: data.username,
+																role: record.get('roleName')
+															};
 															
+															CoreUtil.submitForm({
+																url: 'api/v1/resource/securityroles/' + encodeURIComponent(record.get('roleName')) + '/users',
+																method: 'POST',
+																loadingText: 'Adding User...',
+																data: addUserData,																
+																form: form,
+																success: function(response, opts) {
+																	userWin.getComponent('grid').getStore().load();
+																	form.reset();																	
+																}
+															});															
 														}
 													},
 													{
