@@ -309,8 +309,7 @@
 					
 					//prompt of moving existing user to new role
 					var deleteWin = Ext.create('Ext.window.Window', {
-						title: 'Delete Role: ' + record.get('roleName') + '?',						
-						iconCls: 'fa fa-question',
+						title: 'Delete Role: ' + record.get('roleName') + '?',												
 						closeAction: 'destroy',
 						width: 400,
 						height: 200,
@@ -363,7 +362,21 @@
 												iconCls: 'fa fa-2x fa-trash',
 												scale: 'medium',
 												handler: function(){
+													var form = this.up('form');
 													
+													var data = form.getValues();		
+													deleteWin.setLoading('Deleting role...');
+													Ext.Ajax.request({
+														url: 'api/v1/resource/securityroles/' + encodeURIComponent(record.get('roleName')) + '?movetorole=' + data.movetorole,
+														method: 'DELETE',
+														callback: function() {
+															deleteWin.setLoading(false);
+														},
+														success: function() {
+															actionRefresh();
+															deleteWin.close();
+														}
+													});
 												}
 											}, 
 											{
@@ -563,7 +576,7 @@
 															Ext.Array.each(record.data.dataSecurity, function(inListSource){
 																Ext.getCmp('dataSourcesGrid').getStore().filterBy(function(item){
 																	var include = true;
-																	if (item.get('code') === sourcesInList.dataSource) {
+																	if (item.get('code') === inListSource.dataSource) {
 																		sourcesInList.push(item);
 																		include = false;
 																	}
@@ -638,7 +651,7 @@
 															Ext.Array.each(record.data.dataSecurity, function(inListSource){
 																Ext.getCmp('dataSensitivityGrid').getStore().filterBy(function(item){
 																	var include = true;
-																	if (item.get('code') === sourcesInList.dataSensitivity) {
+																	if (item.get('code') === inListSource.dataSensitivity) {
 																		sourcesInList.push(item);
 																		include = false;
 																	}
@@ -696,14 +709,36 @@
 										scale: 'medium',
 										handler: function() {
 											
-											//pull data sources
+											var dataRestrictions = [];
 											
-											//dataSourcesInRoleGrid
+											Ext.getCmp('dataSourcesInRoleGrid').getStore().each(function(item){												
+												dataRestrictions.push({
+													dataSource: item.get('code')
+												});
+											});			
 											
-											//data sensitivity
+											Ext.getCmp('dataSensitivitiesInRoleGrid').getStore().each(function(item){												
+												dataRestrictions.push({
+													dataSensitivity: item.get('code')
+												});
+											});											
 											
-											//dataSensitivitiesInRoleGrid
+											var data = record.data;
+											data.dataSecurity = dataRestrictions;
 											
+											dataWin.setLoading('Saving Data Restrictions...');
+											Ext.Ajax.request({
+												url: 'api/v1/resource/securityroles/' + encodeURIComponent(record.get('roleName')),
+												method: 'PUT',
+												jsonData: data,
+												callback: function(){
+													dataWin.setLoading(false);
+												},
+												success: function(response, opts) {
+													Ext.toast('Updated Data Restrictions.')
+													dataWin.close();
+												}
+											});											
 										}
 									},
 									{
