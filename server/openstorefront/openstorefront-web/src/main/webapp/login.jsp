@@ -91,8 +91,9 @@
 			.btn-primary {
 				color: white;
 				background-color: rgb(85, 85, 85);
-				border-color: rgb(72, 72, 72);
+				border-color: rgb(72, 72, 72);				
 			}
+			
 			.btn {
 				display: inline-block;
 				margin-bottom: 0px;
@@ -189,7 +190,14 @@
 				<p id="passwordError" class="clearError"></p>					
 				<br>
 				<br>
-				<input type="button" value="Log in" style="width: auto;" class="btn btn-primary" onclick="submitForm();" />									
+				<input type="button" value="Log in" style="width: 100px;" class="btn btn-primary" onclick="submitForm();" />									
+				
+				<br>
+				<br>
+				<br>
+				<br>
+				<a href="http://localhost:8380/openstorefront/registration.jsp">Sign up</a> | <a href="http://localhost:8380/openstorefront/resetPassword.jsp">Forgot Password</a> 
+				
 			</div>
 		  </form>
 		</div>

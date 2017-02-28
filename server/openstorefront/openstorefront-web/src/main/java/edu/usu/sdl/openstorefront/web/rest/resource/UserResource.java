@@ -18,12 +18,16 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
+import edu.usu.sdl.openstorefront.core.entity.UserRole;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
 import edu.usu.sdl.openstorefront.core.view.UserCredential;
 import edu.usu.sdl.openstorefront.core.view.UserFilterParams;
 import edu.usu.sdl.openstorefront.core.view.UserSecurityWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -33,6 +37,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
@@ -70,6 +75,44 @@ public class UserResource
 		UserSecurityWrapper userSecurityWrapper = service.getSecurityService().getUserViews(filterQueryParams);
 		return sendSingleEntityResponse(userSecurityWrapper);
 	}	
+	
+	@GET
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@APIDescription("Gets security roles that user is in (Not default group is not included).")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(SecurityRole.class)
+	@Path("/{username}/roles")
+	public Response getUserRoles(
+			@PathParam("username") String username
+	) 
+	{
+		UserSecurity userSecurity = new UserSecurity();
+		userSecurity.setUsername(username);
+		userSecurity = userSecurity.find();
+		if (userSecurity != null) {
+			UserRole userRole = new UserRole();
+			userRole.setActiveStatus(UserRole.ACTIVE_STATUS);			
+			userRole.setUsername(username);
+			
+			List<UserRole> userRoles = userRole.findByExample();
+			
+			List<SecurityRole> securityRoles = new ArrayList<>();
+			for (UserRole role : userRoles) {
+				SecurityRole securityRole = new SecurityRole();
+				securityRole.setRoleName(role.getRole());				
+				securityRole = securityRole.find();
+				if (securityRole != null) {
+					securityRoles.add(securityRole);
+				}
+			}
+			
+			GenericEntity<List<SecurityRole>> entity = new GenericEntity<List<SecurityRole>>(securityRoles)
+			{
+			};
+			return sendSingleEntityResponse(entity);
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();		
+	} 
 	
 	@PUT
 	@APIDescription("Disable a user and prevents login")
@@ -141,7 +184,7 @@ public class UserResource
 		userSecurity.setUsername(username);
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
-			service.getSecurityService().adminResetPassword(username, userCredential.getPassword());
+			service.getSecurityService().adminResetPassword(username, userCredential.getPassword().toCharArray());
 			return Response.ok().build();
 		}	
 		return Response.status(Response.Status.NOT_FOUND).build();		

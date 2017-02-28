@@ -24,18 +24,18 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 public class UserCredential
 {
 	@ConsumeField
-	private char[] password;
+	private String password;
 
 	public UserCredential()
 	{
 	}
 
-	public char[] getPassword()
+	public String getPassword()
 	{
 		return password;
 	}
 
-	public void setPassword(char[] password)
+	public void setPassword(String password)
 	{
 		this.password = password;
 	}

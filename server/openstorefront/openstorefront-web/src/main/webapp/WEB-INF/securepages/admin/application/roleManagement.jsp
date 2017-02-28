@@ -70,7 +70,11 @@
 							var tools = roleGrid.getComponent('tools');
 							if (records.length > 0) {					
 								tools.getComponent('edit').setDisabled(false);
-								tools.getComponent('users').setDisabled(false);
+								if (records[0].get('roleName') !== 'DEFAULT-GROUP') {
+									tools.getComponent('users').setDisabled(false);
+								} else {
+									tools.getComponent('users').setDisabled(true);
+								}
 								tools.getComponent('permissions').setDisabled(false);
 								tools.getComponent('dataRestrictions').setDisabled(false);
 								tools.getComponent('delete').setDisabled(false);
@@ -785,7 +789,7 @@
 									}
 								},
 								columns: [
-									{text: 'username', dataIndex: 'username', flex: 1, minWidth: 150},
+									{text: 'Username', dataIndex: 'username', flex: 1, minWidth: 150},
 									{
 										xtype:'actioncolumn',
 										width: 50,

@@ -111,7 +111,7 @@ public class SecurityService
 	@PUT	
 	@APIDescription("Allows a user to reset their password.")	
 	@Produces({MediaType.TEXT_PLAIN})
-	@Consumes({MediaType.TEXT_PLAIN})
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{username}/resetpassword")
 	public Response resetUserPassword(
 		@PathParam("username") String username,
@@ -122,7 +122,7 @@ public class SecurityService
 		userSecurity.setUsername(username);
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
-			String approvalCode = service.getSecurityService().resetPasswordUser(username, userCredential.getPassword());
+			String approvalCode = service.getSecurityService().resetPasswordUser(username, userCredential.getPassword().toCharArray());
 			return Response.ok(approvalCode).build();
 		}	
 		return Response.status(Response.Status.NOT_FOUND).build();		
@@ -143,14 +143,14 @@ public class SecurityService
 	@POST
 	@APIDescription("Allows a user to approve their new password.")	
 	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.TEXT_PLAIN})
+	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(RestErrorModel.class)
 	@Path("/checkPassword")
 	public Response checkPassword(
-		char[] password	
+		UserCredential userCredential	
 	)
 	{
-		ValidationResult result = service.getSecurityService().validatePassword(password);
+		ValidationResult result = service.getSecurityService().validatePassword(userCredential.getPassword().toCharArray());
 		RestErrorModel restErrorModel = result.toRestError();
 		return sendSingleEntityResponse(restErrorModel);
 	}

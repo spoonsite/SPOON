@@ -24,13 +24,16 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserRole;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -65,6 +68,32 @@ public class SecurityRoleResource
 		List<SecurityRole> securityRoles = securityRole.findByExample();
 		return securityRoles;
 	} 
+	
+	@GET
+	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
+	@APIDescription("Gets security roles for pick list.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/lookup")
+	public List<LookupModel> getRolesLookup() 
+	{
+		List<LookupModel> roles = new ArrayList<>();
+		
+		SecurityRole securityRole = new SecurityRole();				
+		List<SecurityRole> securityRoles = securityRole.findByExample();
+		securityRoles = securityRoles.stream()
+									.filter(r -> !SecurityRole.DEFAULT_GROUP.equals(r.getRoleName()))
+									.collect(Collectors.toList());
+		
+		for (SecurityRole role : securityRoles) {
+			LookupModel lookup = new LookupModel();
+			lookup.setCode(role.getRoleName());
+			lookup.setDescription(role.getRoleName());			
+			roles.add(lookup);
+		}		
+		
+		return roles;
+	} 		
 	
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)

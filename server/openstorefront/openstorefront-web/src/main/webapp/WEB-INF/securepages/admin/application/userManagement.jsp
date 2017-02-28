@@ -30,31 +30,129 @@
 
 			Ext.onReady(function () {
 				
+				var registrationGridStore = Ext.create('Ext.data.Store',{
+					pageSize: 100,
+					autoLoad: true,
+					remoteSort: true,
+					sorters: [
+						new Ext.util.Sorter({
+							property: 'createDts',
+							direction: 'DESC'
+						})
+					],					
+					fields: [
+						{
+							name: 'createDts',
+							type:	'date',
+							dateFormat: 'c'
+						}
+					],
+					proxy: CoreUtil.pagingProxy({
+						type: 'ajax',
+						url: 'api/v1/resource/userregistrations',
+						reader: {
+							type: 'json',
+							rootProperty: 'data',
+							totalProperty: 'totalNumber'
+						}							
+					})
+				});
+				
 				var registrationGrid = Ext.create('Ext.grid.Panel',{
 					iconCls: 'fa fa-lg fa-user-plus',
 					title: 'Registrations',
 					columnLines: true,
-					store: {						
-					},
+					store: registrationGridStore,
 					columns: [
-						{ text: 'Username', dataIndex: 'username' }
+						{ text: 'Username', dataIndex: 'username', width: 200 },
+						{ text: 'First name', dataIndex: 'firstName', width: 200 },
+						{ text: 'Last name', dataIndex: 'lastName', width: 200 },
+						{ text: 'Organization', dataIndex: 'organization', width: 200 },
+						{ text: 'Email', dataIndex: 'email', flex: 1, minWidth: 200 },
+						{ text: 'Phone', dataIndex: 'phone', width: 200 },
+						{ text: 'User Type', dataIndex: 'userTypeCode', width: 200, 
+							renderer: function(value, meta, record) {
+								meta.tdAttr = 'data-qtip="' + record.get('userTypeDescription') + '"';
+								return value;
+							}
+						},
+						{ text: 'Registration Date', dataIndex: 'createDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 					],
+					listeners: {
+						selectionChange: function(selectionModel, records, opts) {
+							var tools = registrationGrid.getComponent('tools');
+							if (records.length > 0) {								
+								tools.getComponent('delete').setDisabled(false);								
+							} else {								
+								tools.getComponent('delete').setDisabled(true);								
+							}
+						}
+					},					
 					dockedItems: [
 						{
 							xtype: 'toolbar',
+							itemId: 'tools',
 							items: [
 								{
 									text: 'Refresh',
 									iconCls: 'fa fa-2x fa-refresh',
 									scale: 'medium',
 									handler: function(){
-										
+										actionRefreshRegs();
 									}
+								},															
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Delete',
+									itemId: 'delete',
+									disabled: true,
+									iconCls: 'fa fa-2x fa-trash',
+									scale: 'medium',
+									handler: function(){
+										var record = registrationGrid.getSelectionModel().getSelection()[0];
+										
+										Ext.Msg.show({
+											title:'Delete Registration?',
+											message: 'Are you sure you want to remove this registration? <br><b>Warning:</b> This will delete the user as well.',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function(btn) {
+												if (btn === 'yes') {
+													registrationGrid.setLoading('Deleting the user registration...');
+													
+													Ext.Ajax.request({
+														url: 'api/v1/resource/userregistrations/' + record.get('registrationId'),
+														method: 'DELETE',
+														callback: function(){
+															registrationGrid.setLoading(false);
+														},
+														success: function(){
+															actionRefreshRegs();
+														}
+													})
+												}
+											}
+										});
+									}									
 								}
 							]
+						},
+						{
+							xtype: 'pagingtoolbar',
+							dock: 'bottom',
+							store: registrationGridStore,
+							displayInfo: true
 						}
 					]
 				});
+				
+				var actionRefreshRegs = function() {
+					registrationGrid.getStore().load();
+				};
+				
+				
 				
 				var userGridStore = Ext.create('Ext.data.Store',{
 					pageSize: 500,
@@ -131,13 +229,15 @@
 								tools.getComponent('reset').setDisabled(false);								
 								tools.getComponent('disable').setDisabled(false);
 								tools.getComponent('delete').setDisabled(false);
-								tools.getComponent('approve').setDisabled(false);								
+								tools.getComponent('approve').setDisabled(false);
+								tools.getComponent('role').setDisabled(false);								
 							} else {
 								tools.getComponent('unlock').setDisabled(true);
 								tools.getComponent('reset').setDisabled(true);								
 								tools.getComponent('disable').setDisabled(true);
 								tools.getComponent('delete').setDisabled(true);	
 								tools.getComponent('approve').setDisabled(true);
+								tools.getComponent('role').setDisabled(false);
 							}
 						}
 					},
@@ -300,6 +400,18 @@
 									}
 								},
 								{
+									text: 'Manage Roles',
+									itemId: 'role',
+									disabled: true,	
+									hidden: true,
+									iconCls: 'fa fa-2x fa-key',
+									scale: 'medium',
+									handler: function() {
+										var record = userGrid.getSelectionModel().getSelection()[0];
+										actionManageRoles(record);
+									}
+								},								
+								{
 									xtype: 'tbseparator'
 								},								
 								{
@@ -345,7 +457,7 @@
 				var actionApproveUser = function(record) {
 					userGrid.setLoading('Approving user...');								
 					Ext.Ajax.request({
-						url: 'api/v1/resource/users/' + record.get('username') + '/approve',
+						url: 'api/v1/resource/users/' + encodeURIComponent(record.get('username')) + '/approve',
 						method: 'PUT',
 						callback: function(){
 							userGrid.setLoading(false);
@@ -359,7 +471,7 @@
 				var actionUnlockUser = function(record) {
 					userGrid.setLoading('Unlocking user...');								
 					Ext.Ajax.request({
-						url: 'api/v1/resource/users/' + record.get('username') + '/disable',
+						url: 'api/v1/resource/users/' + encodeURIComponent(record.get('username')) + '/disable',
 						method: 'PUT',
 						callback: function(){
 							userGrid.setLoading(false);
@@ -379,7 +491,7 @@
 						modal: true,
 						layout: 'fit',
 						width: 400,
-						height: 200,
+						height: 235,
 						items: [
 							{
 								xtype: 'form',
@@ -395,7 +507,8 @@
 										name: 'password',
 										width: '100%',
 										allowBlank: false,
-										maxLength: 80
+										maxLength: 80,
+										minLength: 8
 									}
 								],
 								dockedItems: [
@@ -415,7 +528,7 @@
 													formWindow.setLoading('Validating...');
 													Ext.Ajax.request({
 														url: 'api/v1/service/security/checkPassword',
-														method: 'POST',
+														method: 'POST',														
 														jsonData: data,
 														callback: function() {
 															formWindow.setLoading(false);
@@ -424,8 +537,19 @@
 															var checkData = Ext.decode(response.responseText);															
 															if (checkData.success) {
 																
-																
-																
+																formWindow.setLoading('Updating password...');
+																Ext.Ajax.request({
+																	url: 'api/v1/resource/users/' + encodeURIComponent(record.get('username')) + '/resetpassword',
+																	method: 'PUT',
+																	jsonData: data,
+																	callback: function() {
+																		formWindow.setLoading(false);
+																	},
+																	success: function(response, opts) {
+																		Ext.toast('Reset password Sucessfully');
+																		formWindow.close();
+																	}
+																});
 																
 															} else {
 																var errorObj = {};
@@ -497,6 +621,178 @@
 					});	
 				};
 				
+				var actionManageRoles = function(record) {
+					
+					var roleWin = Ext.create('Ext.window.Window', {
+						title: 'Roles for user: ' + record.get('username'),						
+						iconCls: 'fa fa-users',
+						closeAction: 'destroy',
+						width: 1000,
+						height: 500,
+						layout: {
+							type: 'fit'
+						},
+						modal: true,
+						items: [
+							{
+								xtype: 'grid',
+								itemId: 'grid',																		
+								columnLines: true,
+								store: {
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/users/' + encodeURIComponent(record.get('username')) + '/roles'
+									},
+									listeners: {
+										load: function(store, records, opts) {
+											
+											var grid = roleWin.getComponent('grid');
+											var form = grid.getComponent('form');
+											var roleField = form.getComponent('roleName');
+											roleField.getStore().on('load', function(roleStore, roleRecords, roleOpts){
+												
+												roleStore.filterBy(function(item) {
+													var keep = true;
+													store.each(function(userRole){
+														if (item.get('code') === userRole.get('roleName')) {
+															keep = false;
+														}
+													});											
+													
+													return keep;
+												});
+											});
+											roleField.getStore().load();
+											
+										}
+									}
+								},
+								columns: [
+									{text: 'Role Name', dataIndex: 'roleName', width: 150},
+									{text: 'Description', dataIndex: 'description', flex: 1, minWidth: 150},
+									{
+										xtype:'actioncolumn',
+										width: 50,
+										items:[
+											{												
+												iconCls: 'x-fa fa-trash',
+												tooltip: 'delete',
+												handler: function(grid, rowIndex, colIndex) {
+													var selectedRole = grid.getStore().getAt(rowIndex);
+													
+													Ext.Msg.show({
+														title:'Delete role from user?',
+														message: 'Are you sure you want to remove ' + selectedRole.get('roleName') + ' from the user?',
+														buttons: Ext.Msg.YESNO,
+														icon: Ext.Msg.QUESTION,
+														fn: function(btn) {
+															if (btn === 'yes') {
+																
+																grid.setLoading('Removing User...');
+																Ext.Ajax.request({
+																	url: 'api/v1/resource/securityroles/' + encodeURIComponent(selectedRole.get('roleName')) + '/users/' + encodeURIComponent(record.get('username')),
+																	method: 'DELETE',
+																	callback: function() {
+																		grid.setLoading(false);
+																	},
+																	success: function(response, opts) {
+																		grid.getStore().load();
+																	}	
+																});																
+															}
+														}
+													});													
+												}
+											}
+										]
+									}
+								],
+								dockedItems: [
+									{
+										xtype: 'form',
+										itemId: 'form',
+										dock: 'top',
+										bodyStyle: 'padding: 10px;',
+										layout: 'anchor',
+										items: [
+											{
+												xtype: 'combobox',
+												itemId: 'roleName',
+												name: 'roleName',
+												width: '100%',
+												valueField: 'code',
+												displayField: 'description',
+												labelAlign: 'top',												
+												fieldLabel: 'Add Role <span class="field-required" />',
+												allowBlank: false,
+												editable: false,
+												forceSelection: true,
+												queryMode: 'local',
+												store: {
+													autoLoad: false,
+													proxy: {
+														type: 'ajax',
+														url: 'api/v1/resource/securityroles/lookup',														
+													}
+												}
+											}
+										],
+										dockedItems: [
+											{
+												xtype: 'toolbar',
+												dock: 'bottom',
+												items: [
+													{
+														xtype: 'tbfill'
+													},
+													{
+														text: 'Add',
+														formBind: true,
+														iconCls: 'fa fa-plus',
+														handler: function(){
+															var form = this.up('form');
+															var data = form.getValues();
+															var addRoleData = {
+																username: record.get('username'),
+																role: data.roleName
+															};
+															
+															CoreUtil.submitForm({
+																url: 'api/v1/resource/securityroles/' + encodeURIComponent(data.roleName) + '/users',
+																method: 'POST',
+																loadingText: 'Adding Role...',
+																data: addRoleData,																
+																form: form,
+																success: function(response, opts) {
+																	roleWin.getComponent('grid').getStore().load();
+																	form.reset();																	
+																}
+															});															
+														}
+													},
+													{
+														text: 'Cancel',
+														iconCls: 'fa fa-close',
+														handler: function(){
+															var form = this.up('form');
+															form.reset();
+														}														
+													},
+													{
+														xtype: 'tbfill'
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						]
+					});
+					roleWin.show();					
+		
+				};
 				
 				var mainPanel = Ext.create('Ext.tab.Panel', {
 					title: 'User Management <i class="fa fa-question-circle"  data-qtip="Manage users that are using the built in security realm."></i>',
@@ -506,7 +802,14 @@
 					]
 				});
 				
-				addComponentToMainViewPort(mainPanel);				
+				addComponentToMainViewPort(mainPanel);								
+				
+				CoreService.userservice.getCurrentUser().then(function(user){
+					if (CoreService.userservice.userHasPermisson(user, "ADMIN-ROLE-MANAGEMENT")) {
+						userGrid.getComponent('tools').getComponent('role').setHidden(false);					
+					}									
+				});					
+				
 			});
         </script>
 

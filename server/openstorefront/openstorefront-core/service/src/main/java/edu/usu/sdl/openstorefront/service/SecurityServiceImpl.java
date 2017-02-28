@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
 import edu.usu.sdl.openstorefront.core.entity.UserRole;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
+import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.view.UserFilterParams;
 import edu.usu.sdl.openstorefront.core.view.UserSecurityView;
@@ -242,7 +243,11 @@ public class SecurityServiceImpl
 			userProfile.setLastName(userRegistration.getLastName());
 			userProfile.setOrganization(userRegistration.getOrganization());
 			userProfile.setPhone(userRegistration.getPhone());
-			userProfile.setUserTypeCode(userRegistration.getUserTypeCode());
+			if (StringUtils.isNotBlank(userRegistration.getUserTypeCode())) {
+				userProfile.setUserTypeCode(userRegistration.getUserTypeCode());
+			} else {
+				userProfile.setUserTypeCode(UserTypeCode.END_USER);
+			}
 			userProfile.setNotifyOfNew(Boolean.FALSE);
 			getUserService().saveUserProfile(userProfile);
 						
