@@ -57,14 +57,14 @@ For more information see <a href="https://github.com/di2e/openstorefront/release
 ## 1.2 Known Issues, v2.3 * 
 ------
 
- 
+nothing yet
 
-# 2.  User Features
+# 2. User Features
 ------
 
 The features that are available to users to be able to access the information in a variety of ways.
 
-##   2.1  Searching
+## 2.1  Searching
 ------
 
 Application Search provides a way to find entry lists and articles
