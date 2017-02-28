@@ -50,6 +50,7 @@
 		<script src="webjars/extjs/6.2.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
 		
 		<script src="scripts/global/override.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/util/coreUtil.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/framePanel.js?v=${appVersion}" type="text/javascript"></script>			
 		
 		<%

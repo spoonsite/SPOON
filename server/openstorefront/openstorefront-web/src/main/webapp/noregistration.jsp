@@ -1,21 +1,20 @@
 <%-- 
-	See LICENCE-APL.txt
-    Document   : 403-forbbiden
-    Created on : Sep 25, 2014, 4:51:09 PM
+    Document   : noregistration
+    Created on : Feb 28, 2017, 12:06:14 PM
     Author     : dshurtleff
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="com.samaxes.filter.util.HTTPCacheHeader"%>
-<%@page  import="edu.usu.sdl.openstorefront.security.SecurityUtil" %>
-<%@page import="edu.usu.sdl.openstorefront.security.HeaderRealm"%>
+<%-- 
+	See LICENCE-APL.txt
+--%>
+
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">
-		
-        <title>403 Forbidden</title>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">
+	
+        <title>User Registration Not Allowed</title>
 		<style>
 			.disclaimer{
 
@@ -144,42 +143,10 @@
     <body>
 		<div class="auth-forms">
 			<div class="auth-content">
-				<h1>403 - Forbidden</h1>
-				${exception}	
-
-				<%
-					response.setHeader(HTTPCacheHeader.CACHE_CONTROL.getName(), "no-cache, no-store");
-					response.setDateHeader(HTTPCacheHeader.EXPIRES.getName(), 0L);	
-		
-					boolean processGoto = false;
-					if (SecurityUtil.isLoggedIn()) {
-						processGoto = true;
-					} else {
-						if (HeaderRealm.isUsingHeaderRealm()) {				
-							boolean loginSuccessful = HeaderRealm.handleHeaderLogin(request);
-							if (loginSuccessful == false) {	
-								out.print("Unable to handle login; check application configuration.");	
-							} else {
-								processGoto = true;
-							}
-						} else {
-							out.print("Make sure you are login and have the correct permissions.");	
-						}
-					}
-				
-					if (processGoto) {
-						String gotoPage = request.getParameter("goto");
-						if (gotoPage != null) {
-							if (gotoPage.startsWith("/")){
-								gotoPage = gotoPage.substring(1, gotoPage.length());
-							}
-							response.sendRedirect(response.encodeRedirectURL(gotoPage));			
-						}
-					} 
-				%>
-				<br>
-				<a href="login.jsp">Login</a>
+				<h1>User Registration Not Allowed</h1>
+				<p>Please contact an Admin for an account.</p>					
+				<a href='login.jsp'>Return to Login</a>		
 			</div>
-		</div>	
-    </body>
+		</div>
+  </body>
 </html>

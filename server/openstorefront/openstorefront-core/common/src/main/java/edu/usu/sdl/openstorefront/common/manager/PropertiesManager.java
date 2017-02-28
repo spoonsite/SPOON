@@ -54,6 +54,7 @@ public class PropertiesManager
 	public static final String KEY_DB_CONNECT_MAX = "db.connectionpool.max";
 	public static final String KEY_DB_USER = "db.user";
 	public static final String KEY_DB_AT = "db.pw";
+	public static final String KEY_EXTERNAL_HOST_URL = "external.host.url";
 	public static final String KEY_MAX_ERROR_TICKETS = "errorticket.max";
 	public static final String KEY_SEARCH_SERVER = "search.server";
 	public static final String KEY_SOLR_URL = "solr.server.url";
@@ -248,6 +249,7 @@ public class PropertiesManager
 			defaults.put(KEY_FILE_HISTORY_KEEP_DAYS, "180");
 			defaults.put(KEY_MAX_ERROR_TICKETS, "5000");
 			defaults.put(KEY_JOB_WORKING_STATE_OVERRIDE, "30");
+			defaults.put(KEY_EXTERNAL_HOST_URL, "http://localhost:8080/openstorefront");
 			defaults.put(KEY_DBLOG_MAX_RECORD, "50000");
 			defaults.put(KEY_DBLOG_ON, "false");
 			defaults.put(KEY_ALLOW_JIRA_FEEDBACK, "true");

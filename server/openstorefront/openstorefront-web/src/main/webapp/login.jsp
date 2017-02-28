@@ -5,6 +5,7 @@
     Author     : dshurtleff
 --%>
 
+<%@page import="edu.usu.sdl.openstorefront.core.entity.SecurityPolicy"%>
 <%@page import="edu.usu.sdl.openstorefront.core.entity.Branding"%>
 <%@page import="edu.usu.sdl.openstorefront.service.ServiceProxy"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -12,6 +13,10 @@
 <%
 	Branding branding = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
 	request.setAttribute("branding", branding);
+	
+	SecurityPolicy securityPolicy = ServiceProxy.getProxy().getSecurityService().getSecurityPolicy();
+	request.setAttribute("allowRegistration", securityPolicy.getAllowRegistration());
+	
 %>
 <html>
 	<head>
@@ -161,6 +166,10 @@
 				background-image: url(images/grid.png);
 				background-repeat: repeat;
 			}
+			.hidden {
+				display: none; 
+				visibility: hidden;
+			}
 		</style>
 	</head>
 	<body>
@@ -196,7 +205,7 @@
 				<br>
 				<br>
 				<br>
-				<a href="http://localhost:8380/openstorefront/registration.jsp">Sign up</a> | <a href="http://localhost:8380/openstorefront/resetPassword.jsp">Forgot Password</a> 
+				<span id="registration" class="hidden"><a href="http://localhost:8380/openstorefront/registration.jsp">Sign up</a> |</span> <a href="http://localhost:8380/openstorefront/resetPassword.jsp">Forgot Password</a> 
 				
 			</div>
 		  </form>
@@ -204,6 +213,13 @@
 	  </div>
     	</div>	
 		<script type="text/javascript">
+			
+			$(document).ready(function(){
+				if (${allowRegistration}) {
+					$('#registration').removeClass('hidden');
+				}
+			});
+			
 			var QueryString = function () {				
 				  var query_string = {};
 				  var query = window.location.search.substring(1);

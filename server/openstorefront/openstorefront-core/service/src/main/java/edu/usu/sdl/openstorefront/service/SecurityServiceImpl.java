@@ -308,6 +308,19 @@ public class SecurityServiceImpl
 			userSecurity.setPasswordChangeApprovalCode(rawApprovalCode);
 			userSecurity.populateBaseUpdateFields();
 			persistenceService.persist(userSecurity);	
+			
+			//Send the user an email
+			UserProfile userProfile = new UserProfile();
+			userProfile.setUsername(username.toLowerCase());
+			userProfile = userProfile.find();
+			if (userProfile != null) {
+				if (StringUtils.isNotBlank(userProfile.getEmail())) {
+					
+				}
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to find user profile to reset", "Check input: " + username);
+			}
+			
 			LOG.log(Level.INFO, MessageFormat.format("User {0} request a password change. Change is awaiting approval by user", username));
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to reset", "Check input: " + username);

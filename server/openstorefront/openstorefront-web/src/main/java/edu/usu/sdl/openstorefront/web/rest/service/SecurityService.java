@@ -122,10 +122,13 @@ public class SecurityService
 		userSecurity.setUsername(username);
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
-			String approvalCode = service.getSecurityService().resetPasswordUser(username, userCredential.getPassword().toCharArray());
-			return Response.ok(approvalCode).build();
+			service.getSecurityService().resetPasswordUser(username, userCredential.getPassword().toCharArray());
+			//Approve code will be sent via email. Don't send back to requester.
+			return Response.ok().build();
 		}	
-		return Response.status(Response.Status.NOT_FOUND).build();		
+		
+		//Don't indicted if they that they haven't hit a user
+		return Response.ok().build();		
 	}	
 	
 	@PUT	
