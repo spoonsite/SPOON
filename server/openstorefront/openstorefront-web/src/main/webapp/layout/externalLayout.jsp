@@ -42,8 +42,7 @@
 		<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
 		<link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 
-		<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">	
-		<link href="apidoc/css/apidoc.css" rel="stylesheet" type="text/css"/>
+		<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">			
 
 		<script src="webjars/extjs/6.2.0/ext-bootstrap.js" type="text/javascript"></script>
 		<script src="webjars/extjs/6.2.0/build/classic/theme-triton/theme-triton.js" type="text/javascript"></script>
