@@ -53,17 +53,18 @@ Version 2.3 incorporates:
   
 For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.3" target="_blank">v2.3</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
-=======
+
 ## 1.2 Known Issues, v2.3 * 
- 
- ** **: 
- 
-# 2.  User Features
+------
+
+nothing yet
+
+# 2. User Features
 ------
 
 The features that are available to users to be able to access the information in a variety of ways.
 
-##   2.1  Searching
+## 2.1  Searching
 ------
 
 Application Search provides a way to find entry lists and articles
