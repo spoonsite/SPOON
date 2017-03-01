@@ -100,7 +100,18 @@
 									handler: function(){
 										actionRefreshRegs();
 									}
-								},															
+								},
+								{
+									xtype: 'tbseparator'
+								},
+								{
+									text: 'Add',
+									iconCls: 'fa fa-2x fa-plus',
+									scale: 'medium',
+									handler: function(){
+										actionAddUser();
+									}									
+								},
 								{
 									xtype: 'tbfill'
 								},
@@ -152,6 +163,141 @@
 					registrationGrid.getStore().load();
 				};
 				
+				var actionAddUser = function() {
+					
+					var addUserWin = Ext.create('Ext.window.Window', {
+						title: 'Add User',
+						iconCls: 'fa fa-user',
+						modal: true,
+						width: '75%',
+						height: '75%',
+						maxizable: true,
+						layout: 'fit',
+						items: [
+							{
+								xtype: 'form',
+								bodyStyle: 'padding: 10px;',
+								scrollable: true,
+								layout: 'anchor',
+								items: [
+									{
+										xtype: 'fieldset',
+										title: 'Login Credentials',										
+										layout: 'anchor',
+										defaults: {
+											width: '75%',
+											labelSeparator: '',
+											labelAlign: 'top'
+										},
+										items: [
+											{
+												xtype: 'textfield',
+												fieldLabel: 'Username <span class="field-required" />',
+												name: 'username',
+												allowBlank: false,
+												maxLength: 80
+											},
+											{
+												xtype: 'textfield',
+												fieldLabel: 'Password <span class="field-required" />',
+												inputType: 'password',
+												name: 'password',
+												allowBlank: false,
+												maxLength: 80,
+												minLength: 8
+											},
+											{
+												xtype: 'textfield',
+												fieldLabel: 'Confirm Password <span class="field-required" />',
+												inputType: 'password',
+												name: 'confirmPassword',
+												allowBlank: false,
+												maxLength: 80,
+												minLength: 8
+											}
+										]
+									},						
+									{
+										xtype: 'fieldset',
+										title: 'User Information',										
+										layout: 'anchor',
+										defaults: {
+											width: '75%',
+											labelSeparator: '',
+											labelAlign: 'top'
+										},							
+										items: [
+											{
+												xtype: 'textfield',
+												fieldLabel: 'First Name <span class="field-required" />',
+												name: 'firstName',
+												allowBlank: false,
+												maxLength: 80
+											},
+											{
+												xtype: 'textfield',
+												fieldLabel: 'Last Name <span class="field-required" />',
+												name: 'lastName',
+												allowBlank: false,
+												maxLength: 80
+											},			
+											{
+												xtype: 'textfield',
+												fieldLabel: 'Organization',
+												name: 'organization',
+												allowBlank: true,
+												maxLength: 120
+											},								
+											{
+												xtype: 'textfield',
+												fieldLabel: 'Email <span class="field-required" />',
+												name: 'email',
+												allowBlank: false,
+												maxLength: 1024
+											},	
+											{
+												xtype: 'textfield',
+												fieldLabel: 'Phone <span class="field-required" />',
+												name: 'phone',
+												allowBlank: false,
+												maxLength: 80
+											},
+											{
+												xtype: 'combobox',
+												fieldLabel: 'User Type',
+												name: 'userTypeCode',
+												valueField: 'code',
+												displayField: 'description',									
+												editable: false,
+												forceSelection: true,									
+												store: {
+													autoLoad: true,
+													proxy: {
+														type: 'ajax',
+														url: 'api/v1/resource/lookuptypes/UserTypeCode'
+													},
+													listeners: {
+														load: function(store, records, opts) {
+															store.add({
+																code: null,
+																description: 'Select'
+															});
+														}
+													}
+												}
+											}
+										]
+									}
+								],
+								dockedItems: [
+									
+								]
+							}
+						]
+					});
+					addUserWin.show();
+					
+				};
 				
 				
 				var userGridStore = Ext.create('Ext.data.Store',{
