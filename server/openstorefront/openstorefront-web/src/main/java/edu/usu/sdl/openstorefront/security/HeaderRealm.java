@@ -80,7 +80,7 @@ public class HeaderRealm
 		HeaderAccount headerAccount = new HeaderAccount();
 
 		UserContext userContext = headerAuthToken.getUserContext();
-		boolean admin = false;
+
 		if (userContext == null) {
 			ServiceProxy serviceProxy = new ServiceProxy();
 
@@ -98,19 +98,18 @@ public class HeaderRealm
 			userProfile.setPhone(headerAuthToken.getPhone());
 			userProfile.setExternalGuid(headerAuthToken.getGuid());
 
-			if (StringUtils.isNotBlank(headerAuthToken.getGroup())
-					&& StringUtils.isNotBlank(headerAuthToken.getAdminGroupName())) {
-				admin = headerAuthToken.getGroup().contains(headerAuthToken.getAdminGroupName());
-			}
-			userContext = serviceProxy.getUserService().handleLogin(userProfile, headerAuthToken.getRequest(), admin);
-		} else {
-			admin = userContext.isAdmin();
+//			if (StringUtils.isNotBlank(headerAuthToken.getGroup())
+//					&& StringUtils.isNotBlank(headerAuthToken.getAdminGroupName())) {
+//				admin = headerAuthToken.getGroup().contains(headerAuthToken.getAdminGroupName());
+//			}
+			
+			
+			
+			
+			userContext = serviceProxy.getUserService().handleLogin(userProfile, headerAuthToken.getRequest(), false);
 		}
 		headerAccount.setCredentials(userContext);
 		headerAccount.getSimplePrincipals().add(userContext, HeaderRealm.class.getSimpleName());
-		if (admin) {
-			headerAccount.getRoles().add(SecurityUtil.ADMIN_ROLE);
-		}
 
 		return headerAccount;
 	}
@@ -149,6 +148,8 @@ public class HeaderRealm
 			while (groupValues.hasMoreElements()) {
 				group.append(groupValues.nextElement());
 				group.append(" | ");
+				
+				headerAuthToken.getGroups().add(groupValues.nextElement());
 			}
 
 			headerAuthToken.setGroup(group.toString());

@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.view.UserFilterParams;
 import edu.usu.sdl.openstorefront.core.view.UserSecurityWrapper;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.util.Set;
 
 /**
  *
@@ -181,5 +182,17 @@ public interface SecurityService
 	 * @return 
 	 */
 	UserSecurityWrapper getUserViews(UserFilterParams queryParams);
+	
+	/**
+	 * This will remove all existing roles for a user and add matching roles 
+	 * for the given set.
+	 * 
+	 * This is used to handling supporting external role/group management
+	 * 
+	 * @param username
+	 * @param groups 
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	void updateRoleGroup(String username, Set<String> groups);
 	
 }

@@ -41,18 +41,18 @@ public class ResetPasswordMessageGenerator
 	protected String generateMessageInternal(Email email)
 	{
 		StringBuilder message = new StringBuilder();
-		message.append("A password reset was request for your user.<br>");
-		message.append("Click or Copy/Paste URl into your web Browser to Approve Request.<br><br>");
+		message.append("A password reset was requested for your user.<br>");
+		message.append("Click or Copy/Paste the link into your web browser to Approve the request.<br><br>");
 		
 		String externalHostUrl = PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL);
 		
-		String urlToApprove = externalHostUrl +"/approvalChange.jsp?approvalCode=" +  messageContext.getUserPasswordResetCode();
+		String urlToApprove = externalHostUrl +"/approveChange.jsp?approvalCode=" +  messageContext.getUserPasswordResetCode();
 		
 		message.append("<a href='")
 				.append(urlToApprove)		
 				.append("'>" + urlToApprove + "</a><br><br>");
 		
-		message.append("If you didn't request this change you can ignore this message and notify an Admin.<br>Your password will not change until it's approved.");
+		message.append("If you didn't request this change you can ignore this message and notify an Admin.<br>Your password will not be changed until it's approved.");
 		
 		return message.toString();
 	}

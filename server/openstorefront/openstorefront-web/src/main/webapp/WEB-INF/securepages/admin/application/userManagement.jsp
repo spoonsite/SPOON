@@ -22,6 +22,8 @@
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
+		<script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
+		
 		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
 		</stripes:layout-render>	
 		
@@ -63,6 +65,9 @@
 					title: 'Registrations',
 					columnLines: true,
 					store: registrationGridStore,
+					viewConfig: {
+						enableTextSelection: true
+					},					
 					columns: [
 						{ text: 'Username', dataIndex: 'username', width: 200 },
 						{ text: 'First name', dataIndex: 'firstName', width: 200 },
@@ -70,7 +75,7 @@
 						{ text: 'Organization', dataIndex: 'organization', width: 200 },
 						{ text: 'Email', dataIndex: 'email', flex: 1, minWidth: 200 },
 						{ text: 'Phone', dataIndex: 'phone', width: 200 },
-						{ text: 'User Type', dataIndex: 'userTypeCode', width: 200, 
+						{ text: 'User Type', dataIndex: 'userTypeCode', align: 'center', width: 200, 
 							renderer: function(value, meta, record) {
 								meta.tdAttr = 'data-qtip="' + record.get('userTypeDescription') + '"';
 								return value;
@@ -82,9 +87,11 @@
 						selectionChange: function(selectionModel, records, opts) {
 							var tools = registrationGrid.getComponent('tools');
 							if (records.length > 0) {								
-								tools.getComponent('delete').setDisabled(false);								
+								tools.getComponent('delete').setDisabled(false);	
+								tools.getComponent('message').setDisabled(false);
 							} else {								
-								tools.getComponent('delete').setDisabled(true);								
+								tools.getComponent('delete').setDisabled(true);		
+								tools.getComponent('message').setDisabled(true);
 							}
 						}
 					},					
@@ -110,6 +117,20 @@
 									scale: 'medium',
 									handler: function(){
 										actionAddUser();
+									}									
+								},
+								{
+									xtype: 'tbseparator',
+								},
+								{
+									text: '&nbsp;Message',
+									itemId: 'message',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',								
+									handler: function () {
+										var record = registrationGrid.getSelection()[0];
+										actionMessageUser(record);
 									}									
 								},
 								{
@@ -163,15 +184,26 @@
 					registrationGrid.getStore().load();
 				};
 				
+				var actionMessageUser = function(record) {
+					
+					var messageWindow = Ext.create('OSF.component.MessageWindow', {
+						closeAction: 'destroy',
+						initialToUsers: record.get('email')
+					}).show();
+					
+				};
+				
+				
 				var actionAddUser = function() {
 					
 					var addUserWin = Ext.create('Ext.window.Window', {
 						title: 'Add User',
 						iconCls: 'fa fa-user',
+						closeAction: 'destroy',
 						modal: true,
 						width: '75%',
 						height: '75%',
-						maxizable: true,
+						maximizable: true,
 						layout: 'fit',
 						items: [
 							{
@@ -290,7 +322,61 @@
 									}
 								],
 								dockedItems: [
-									
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												text: 'Signup',
+												iconCls: 'fa fa-2x fa-check',
+												formBind: true,
+												scale: 'medium',
+												handler: function(){										
+													var form = this.up('form');
+													var data = form.getValues();
+
+													if (data.password !== data.confirmPassword) {
+														Ext.Msg.show({
+															title:'Validation',
+															message: 'Password and the Confirm Password must match',
+															buttons: Ext.Msg.OK,
+															icon: Ext.Msg.Error,
+															fn: function(btn) {
+															}
+														});
+														form.getForm().markInvalid({
+															confirmPassword: 'Must match password'
+														});											
+													} else {
+
+														CoreUtil.submitForm({
+															url: 'api/v1/resource/userregistrations',
+															method: 'POST',
+															data: data,
+															form: form,
+															success: function(action, opts) {
+																Ext.toast('Successfully add new user.<br>Remember user may need to be approved.');
+																actionRefreshRegs();
+																actionRefreshUsers();
+																addUserWin.close();
+															}
+														});
+													}
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Cancel',
+												iconCls: 'fa fa-2x fa-close',
+												scale: 'medium',
+												handler: function(){										
+													addUserWin.close();
+												}									
+											}											
+										]
+									}
 								]
 							}
 						]
@@ -351,39 +437,61 @@
 						{ text: 'Pending Password Reset', dataIndex: 'pendingUserPasswordReset', width: 200, align: 'center',
 							renderer: function(value, meta, record){
 								if (value) {
-									meta.tdCls = 'button-warning';
+									meta.tdCls = 'alert-warning';
 								}
 								return value;
 							}
 						},
 						{ text: 'Active', align: 'center', dataIndex: 'activeStatus', width: 200,
 							renderer: function(value, meta, record){
-								if (value) {
+								if (value === 'A') {
 									return 'Active';
 								} else {
-									meta.tdCls = 'button-danger';
+									meta.tdCls = 'alert-danger';
 									return 'Locked/Disabled';
 								}
 							}
 						}
 					],
+					viewConfig: {
+						enableTextSelection: true
+					},					
 					listeners: {
 						selectionChange: function(selectionModel, records, opts) {
 							var tools = userGrid.getComponent('tools');
 							if (records.length > 0) {
-								tools.getComponent('unlock').setDisabled(false);
-								tools.getComponent('reset').setDisabled(false);								
-								tools.getComponent('disable').setDisabled(false);
+								
+								if (records[0].get('activeStatus') === 'A') {
+									tools.getComponent('unlock').setDisabled(true);
+								} else {
+									tools.getComponent('unlock').setDisabled(false);
+								}
+								tools.getComponent('reset').setDisabled(false);		
+								if (records[0].get('activeStatus') === 'A') {
+									tools.getComponent('disable').setDisabled(false);
+								} else {
+									tools.getComponent('disable').setDisabled(true);
+								}
 								tools.getComponent('delete').setDisabled(false);
-								tools.getComponent('approve').setDisabled(false);
-								tools.getComponent('role').setDisabled(false);								
+								tools.getComponent('role').setDisabled(false);	
+								tools.getComponent('message').setDisabled(false);	
+								
+								if (records[0].get('approvalStatus') === 'P') {
+									tools.getComponent('approve').setDisabled(false);
+									tools.getComponent('unlock').setDisabled(true);									
+									tools.getComponent('disable').setDisabled(true);
+								} else {
+									tools.getComponent('approve').setDisabled(true);
+								}
+								
 							} else {
 								tools.getComponent('unlock').setDisabled(true);
 								tools.getComponent('reset').setDisabled(true);								
 								tools.getComponent('disable').setDisabled(true);
 								tools.getComponent('delete').setDisabled(true);	
 								tools.getComponent('approve').setDisabled(true);
-								tools.getComponent('role').setDisabled(false);
+								tools.getComponent('role').setDisabled(true);
+								tools.getComponent('message').setDisabled(true);
 							}
 						}
 					},
@@ -556,12 +664,23 @@
 										var record = userGrid.getSelectionModel().getSelection()[0];
 										actionManageRoles(record);
 									}
-								},								
+								},
+								{
+									text: '&nbsp;Message',
+									itemId: 'message',
+									disabled: true,
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction',								
+									handler: function () {
+										var record = userGrid.getSelection()[0];
+										actionMessageUser(record);
+									}										
+								},
 								{
 									xtype: 'tbseparator'
 								},								
 								{
-									text: ' Disable',
+									text: '&nbsp;Disable/Lock',
 									itemId: 'disable',
 									iconCls: 'fa fa-2x fa-user-times',
 									scale: 'medium',
@@ -617,7 +736,7 @@
 				var actionUnlockUser = function(record) {
 					userGrid.setLoading('Unlocking user...');								
 					Ext.Ajax.request({
-						url: 'api/v1/resource/users/' + encodeURIComponent(record.get('username')) + '/disable',
+						url: 'api/v1/resource/users/' + encodeURIComponent(record.get('username')) + '/unlock',
 						method: 'PUT',
 						callback: function(){
 							userGrid.setLoading(false);

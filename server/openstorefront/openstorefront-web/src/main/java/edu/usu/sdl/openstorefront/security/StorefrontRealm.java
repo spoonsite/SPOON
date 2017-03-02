@@ -19,6 +19,7 @@ package edu.usu.sdl.openstorefront.security;
 
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPolicy;
+import edu.usu.sdl.openstorefront.core.entity.UserApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import java.time.Instant;
@@ -74,6 +75,10 @@ public class StorefrontRealm
 			throw new DisabledAccountException("Account " + username + " is disabled");
 		}
 		
+		if (UserApprovalStatus.PENDING.equals(userSecurity.getApprovalStatus())) {
+			throw new DisabledAccountException("Account " + username + " is not approved");
+		}		
+		
 		ServiceProxy serviceProxy = ServiceProxy.getProxy();		
 		SecurityPolicy securityPolicy = serviceProxy.getSecurityService().getSecurityPolicy();
 		if (userSecurity.getFailedLoginAttempts() == null) {
@@ -118,7 +123,8 @@ public class StorefrontRealm
 			UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)token;
 			
 			UserSecurity userSecurity = new UserSecurity();
-			userSecurity.setUsername(usernamePasswordToken.getUsername());
+			userSecurity.setUsername(usernamePasswordToken.getUsername().toLowerCase());
+			userSecurity = userSecurity.find();
 			
 			if (userSecurity.getFailedLoginAttempts() == null) {
 				userSecurity.setFailedLoginAttempts(1);			

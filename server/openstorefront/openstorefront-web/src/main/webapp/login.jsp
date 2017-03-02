@@ -214,6 +214,8 @@
     	</div>	
 		<script type="text/javascript">
 			
+			sessionStorage.clear();
+			
 			$(document).ready(function(){
 				if (${allowRegistration}) {
 					$('#registration').removeClass('hidden');

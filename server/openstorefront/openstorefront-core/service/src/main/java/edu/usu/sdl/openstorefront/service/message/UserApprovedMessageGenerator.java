@@ -44,7 +44,7 @@ public class UserApprovedMessageGenerator
 		UserProfile userProfile = messageContext.getUserProfile();
 		
 		StringBuilder message = new StringBuilder();
-		message.append("You user account request for " + userProfile.getUsername() + " has been approved.<br><br>");
+		message.append("Your user account request for " + userProfile.getUsername() + " has been approved.<br><br>");
 		
 		String externalHostUrl = PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL);
 		message.append("Login to use the system. <a href='"+ externalHostUrl+"'>" + externalHostUrl + "</a><br>");

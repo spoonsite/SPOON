@@ -192,6 +192,7 @@
 									text: 'Signup',
 									iconCls: 'fa fa-2x fa-check',
 									scale: 'medium',
+									formBind: true,
 									handler: function(){										
 										var form = this.up('form');
 										var data = form.getValues();

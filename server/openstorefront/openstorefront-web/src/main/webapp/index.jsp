@@ -35,7 +35,9 @@
 	</div>
 	
 	<script type="text/javascript">
-		
+		//start fresh on index
+		sessionStorage.clear();
+				
 		if (Ext.isIE8m) {
 			Ext.get('browserWarning').setStyle({
 				display: 'block'

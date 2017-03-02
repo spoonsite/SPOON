@@ -39,6 +39,7 @@ public class UserContext
 	private UserProfile userProfile;
 	private List<SecurityRole> roles = new ArrayList<>();
 	private boolean admin;
+	private Set<String> externalGroups = new HashSet<>();
 
 	public UserContext()
 	{
@@ -98,6 +99,38 @@ public class UserContext
 		}
 		return uniqueSensitivity;
 	}
+	
+	public String userLandingPage() 
+	{
+		String landingPage = "/";
+		if (userProfile != null ) {
+			if (StringUtils.isNotBlank(userProfile.getLandingPage())) {
+				landingPage = userProfile.getLandingPage();
+			} else {
+				if (!roles.isEmpty()) {
+					//highest priority should be top
+					roles.sort((role1, role2) -> {
+
+						if (role1.getLandingPagePriority() == null && role2.getLandingPagePriority() == null) {
+							return 0;
+						} else if (role1.getLandingPagePriority() != null && role2.getLandingPagePriority() == null) {
+							return -1;
+						} else if (role1.getLandingPagePriority() == null && role2.getLandingPagePriority() != null) {
+							return 1;
+						} else if (role1.getLandingPagePriority() != null && role2.getLandingPagePriority() != null) {
+							return role2.getLandingPagePriority().compareTo(role1.getLandingPagePriority());
+						}
+
+						return 0;
+					});
+					if (StringUtils.isNotBlank(roles.get(0).getLandingPage()))  {
+						landingPage = roles.get(0).getLandingPage();
+					}
+				}
+			}
+		}
+		return landingPage;
+	}
 
 	public UserProfile getUserProfile()
 	{
@@ -127,6 +160,16 @@ public class UserContext
 	public void setRoles(List<SecurityRole> roles)
 	{
 		this.roles = roles;
+	}
+
+	public Set<String> getExternalGroups()
+	{
+		return externalGroups;
+	}
+
+	public void setExternalGroups(Set<String> externalGroups)
+	{
+		this.externalGroups = externalGroups;
 	}
 
 }

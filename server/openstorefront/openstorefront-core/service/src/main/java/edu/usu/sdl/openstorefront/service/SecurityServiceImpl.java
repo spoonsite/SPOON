@@ -381,10 +381,8 @@ public class SecurityServiceImpl
 
 		Objects.requireNonNull(approvalCode);
 
-		byte[] decodeCode = Base64.getUrlDecoder().decode(approvalCode);
-
 		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setPasswordChangeApprovalCode(new String(decodeCode));
+		userSecurity.setPasswordChangeApprovalCode(approvalCode);
 		userSecurity = userSecurity.findProxy();
 		if (userSecurity != null)
 		{
@@ -393,10 +391,11 @@ public class SecurityServiceImpl
 			userSecurity.setPasswordChangeApprovalCode(null);
 			userSecurity.populateBaseUpdateFields();
 			persistenceService.persist(userSecurity);
+			success = true;
 		}
 		else
 		{
-			LOG.log(Level.WARNING, MessageFormat.format("Unable to find user with password approval code: ", new String(decodeCode)));
+			LOG.log(Level.WARNING, MessageFormat.format("Unable to find user with password approval code: ", approvalCode));
 		}
 		return success;
 	}
@@ -754,6 +753,34 @@ public class SecurityServiceImpl
 
 			LOG.log(Level.INFO, MessageFormat.format("User {0} was deleted by {2}. ", username, SecurityUtil.getCurrentUserName()));
 		}
+	}
+
+	@Override
+	public void updateRoleGroup(String username, Set<String> groups)
+	{
+		Objects.requireNonNull(username);
+		Objects.requireNonNull(groups);
+		
+		UserRole userRole = new UserRole();
+		userRole.setUsername(username);
+		persistenceService.deleteByExample(userRole);
+		
+		SecurityRole roleExample = new SecurityRole();
+		roleExample.setActiveStatus(SecurityRole.ACTIVE_STATUS);
+		
+		List<SecurityRole> roles = roleExample.findByExample();
+		Set<String> existingRoleSet = roles.stream()
+											.map(SecurityRole::getRoleName)
+											.collect(Collectors.toSet());
+		
+		for (String group : groups) 
+		{
+			userRole = new UserRole();
+			userRole.setUsername(username);
+			
+			
+		}		
+		
 	}
 
 }
