@@ -119,6 +119,20 @@ public class StorefrontRealm
 	{
 		try {
 			super.assertCredentialsMatch(token, info); 
+			
+			//clear failed attempts if needed
+			UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)token;
+			
+			UserSecurity userSecurity = new UserSecurity();
+			userSecurity.setUsername(usernamePasswordToken.getUsername().toLowerCase());
+			userSecurity = userSecurity.find();
+			if (userSecurity.getFailedLoginAttempts() != null &&
+					userSecurity.getFailedLoginAttempts() > 0) {
+				userSecurity.setFailedLoginAttempts(0);	
+				userSecurity.save();
+			}
+			
+			
 		} catch(AuthenticationException authenticationException) {
 			UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)token;
 			

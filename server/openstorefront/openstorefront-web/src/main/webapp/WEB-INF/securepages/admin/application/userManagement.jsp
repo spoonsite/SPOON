@@ -394,6 +394,11 @@
 							name: 'lastLoginAttempt',
 							type:	'date',
 							dateFormat: 'c'
+						},
+						{
+							name: 'passwordUpdateDts',
+							type:	'date',
+							dateFormat: 'c'
 						}
 					],
 					proxy: CoreUtil.pagingProxy({
@@ -427,14 +432,14 @@
 						{ text: 'Firstname', dataIndex: 'firstname', width: 200 },
 						{ text: 'Lastname', dataIndex: 'lastname', width: 200 },
 						{ text: 'Email', dataIndex: 'email', minWidth: 200, flex: 1 },
-						{ text: 'Approval Status', dataIndex: 'approvalStatus', width: 200, align: 'center',
+						{ text: 'Approval Status', dataIndex: 'approvalStatus', width: 175, align: 'center',
 							renderer: function(value, meta, record){
 								return record.get('approvalStatusDescription');
 							}
 						},
-						{ text: 'Last Login', dataIndex: 'lastLoginAttempt', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Last Login', dataIndex: 'lastLoginAttempt', align: 'center', width: 175, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Failed Login Attempts', align: 'center', dataIndex: 'failedLoginAttempts', width: 200 },
-						{ text: 'Pending Password Reset', dataIndex: 'pendingUserPasswordReset', width: 200, align: 'center',
+						{ text: 'Pending Password Reset', dataIndex: 'pendingUserPasswordReset', width: 175, align: 'center',
 							renderer: function(value, meta, record){
 								if (value) {
 									meta.tdCls = 'alert-warning';
@@ -442,7 +447,8 @@
 								return value;
 							}
 						},
-						{ text: 'Active', align: 'center', dataIndex: 'activeStatus', width: 200,
+						{ text: 'Password Update Date', align: 'center', dataIndex: 'passwordUpdateDts', width: 175, xtype: 'datecolumn', format:'m/d/y H:i:s' },
+						{ text: 'Active', align: 'center', dataIndex: 'activeStatus', width: 125,
 							renderer: function(value, meta, record){
 								if (value === 'A') {
 									return 'Active';

@@ -47,4 +47,19 @@ public class UserUseCase
 		
 	}
 	
+	@Test
+	public void testGroupParse() 
+	{
+		String adGroup = "CN=STORE-Admin,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab";
+		
+		String groupFragments[] = adGroup.split(",");				
+		for (String fragment : groupFragments) {
+			String keyValue[] = fragment.split("=");
+			if ("CN".equals(keyValue[0])) {
+				System.out.println(keyValue[1]);
+			}
+		}
+		
+	}
+	
 }

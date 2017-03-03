@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.SecurityService;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
@@ -243,6 +244,8 @@ public class SecurityServiceImpl
 			userSecurity.setPassword(encryptedValue);
 			userSecurity.setUsername(userRegistration.getUsername().toLowerCase());
 			userSecurity.setFailedLoginAttempts(0);
+			userSecurity.setPasswordUpdateDts(TimeUtil.currentDate());
+			userSecurity.setUsingDefaultPassword(userRegistration.getUsingDefaultPassword());			
 			userSecurity.populateBaseCreateFields();
 			if (securityPolicy.getAutoApproveUsers())
 			{
@@ -389,6 +392,8 @@ public class SecurityServiceImpl
 			userSecurity.setPassword(userSecurity.getTempPassword());
 			userSecurity.setTempPassword(null);
 			userSecurity.setPasswordChangeApprovalCode(null);
+			userSecurity.setPasswordUpdateDts(TimeUtil.currentDate());
+			userSecurity.setUsingDefaultPassword(Boolean.FALSE);
 			userSecurity.populateBaseUpdateFields();
 			persistenceService.persist(userSecurity);
 			success = true;
@@ -417,6 +422,8 @@ public class SecurityServiceImpl
 				DefaultPasswordService passwordService = new DefaultPasswordService();
 				String encryptedValue = passwordService.encryptPassword(password);
 				userSecurity.setPassword(encryptedValue);
+				userSecurity.setPasswordUpdateDts(TimeUtil.currentDate());
+				userSecurity.setUsingDefaultPassword(Boolean.FALSE);				
 				userSecurity.populateBaseUpdateFields();
 				persistenceService.persist(userSecurity);
 				LOG.log(Level.INFO, MessageFormat.format("User {0} password was reset by: {1}", username, SecurityUtil.getCurrentUserName()));
@@ -775,10 +782,19 @@ public class SecurityServiceImpl
 		
 		for (String group : groups) 
 		{
-			userRole = new UserRole();
-			userRole.setUsername(username);
-			
-			
+			if (existingRoleSet.contains(group)) {									
+				
+				//we just need to add the role without having a security user				
+				userRole = new UserRole();
+				userRole.setRole(group);
+				userRole.setUsername(username);
+				userRole.setUserRoleId(persistenceService.generateId());
+				userRole.populateBaseCreateFields();
+				persistenceService.persist(userRole);
+				
+			} else {
+				LOG.log(Level.FINER, MessageFormat.format("No Matching Role for group: {0}", group));
+			}
 		}		
 		
 	}

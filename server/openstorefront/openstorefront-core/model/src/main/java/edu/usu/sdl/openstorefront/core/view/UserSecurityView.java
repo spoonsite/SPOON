@@ -38,6 +38,8 @@ public class UserSecurityView
 	private Integer failedLoginAttempts;	
 	private boolean pendingUserPasswordReset;
 	private String activeStatus;
+	private Date passwordUpdateDts;
+	private Boolean usingDefaultPassword;	
 
 	public UserSecurityView()
 	{
@@ -55,7 +57,9 @@ public class UserSecurityView
 		view.setFailedLoginAttempts(userSecurity.getFailedLoginAttempts());
 		view.setLastLoginAttempt(userSecurity.getLastLoginAttempt());
 		view.setActiveStatus(userSecurity.getActiveStatus());
-				
+		view.setPasswordUpdateDts(userSecurity.getPasswordUpdateDts());
+		view.setUsingDefaultPassword(userSecurity.getUsingDefaultPassword());
+						
 		if (StringUtils.isNotBlank(userSecurity.getPasswordChangeApprovalCode())) {
 			view.setPendingUserPasswordReset(true);
 		}
@@ -161,6 +165,26 @@ public class UserSecurityView
 	public void setActiveStatus(String activeStatus)
 	{
 		this.activeStatus = activeStatus;
+	}
+
+	public Date getPasswordUpdateDts()
+	{
+		return passwordUpdateDts;
+	}
+
+	public void setPasswordUpdateDts(Date passwordUpdateDts)
+	{
+		this.passwordUpdateDts = passwordUpdateDts;
+	}
+
+	public Boolean getUsingDefaultPassword()
+	{
+		return usingDefaultPassword;
+	}
+
+	public void setUsingDefaultPassword(Boolean usingDefaultPassword)
+	{
+		this.usingDefaultPassword = usingDefaultPassword;
 	}
 	
 }

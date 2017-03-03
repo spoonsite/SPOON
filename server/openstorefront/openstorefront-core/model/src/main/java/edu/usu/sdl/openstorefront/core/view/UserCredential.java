@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -23,8 +24,15 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
  */
 public class UserCredential
 {
+	public static final String FIELD_EXISTING_PASSWORD = "existingPassword";
+	
+	
 	@ConsumeField
+	@NotNull
 	private String password;
+	
+	@ConsumeField
+	private String existingPassword;
 
 	public UserCredential()
 	{
@@ -38,6 +46,16 @@ public class UserCredential
 	public void setPassword(String password)
 	{
 		this.password = password;
+	}
+
+	public String getExistingPassword()
+	{
+		return existingPassword;
+	}
+
+	public void setExistingPassword(String existingPassword)
+	{
+		this.existingPassword = existingPassword;
 	}
 
 }

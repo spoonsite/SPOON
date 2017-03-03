@@ -60,6 +60,12 @@ public class UserSecurity
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String passwordChangeApprovalCode;
 	
+	@NotNull	
+	private Date passwordUpdateDts;
+
+	@APIDescription("This is used to flag the built in admin account; on first creation")
+	private Boolean usingDefaultPassword;		
+	
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = UserApprovalStatus.class)
 	@ConsumeField
@@ -80,6 +86,7 @@ public class UserSecurity
 		this.setFailedLoginAttempts(userSecurity.getFailedLoginAttempts());
 		this.setLastLoginAttempt(userSecurity.getLastLoginAttempt());
 		this.setApprovalStatus(userSecurity.getApprovalStatus());
+		
 	}	
 
 	public String getUsername()
@@ -151,5 +158,25 @@ public class UserSecurity
 	{
 		this.lastLoginAttempt = lastLoginAttempt;
 	}
+	
+	public Boolean getUsingDefaultPassword()
+	{
+		return usingDefaultPassword;
+	}
+
+	public void setUsingDefaultPassword(Boolean usingDefaultPassword)
+	{
+		this.usingDefaultPassword = usingDefaultPassword;
+	}
+
+	public Date getPasswordUpdateDts()
+	{
+		return passwordUpdateDts;
+	}
+
+	public void setPasswordUpdateDts(Date passwordUpdateDts)
+	{
+		this.passwordUpdateDts = passwordUpdateDts;
+	}	
 	
 }

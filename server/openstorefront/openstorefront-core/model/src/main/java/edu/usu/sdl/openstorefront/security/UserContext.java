@@ -73,6 +73,34 @@ public class UserContext
 		}
 		return uniquePermissions;
 	}
+	
+	public boolean allowUnspecifiedDataSources() 
+	{
+		boolean allow = false;
+		
+		for (SecurityRole role : roles) {
+			if (role.getAllowUnspecifiedDataSource()) {
+				allow = true;
+				break;
+			}
+		}		
+		
+		return allow;
+	}
+	
+	public boolean allowUnspecifiedDataSensitivty() 
+	{
+		boolean allow = false;
+		
+		for (SecurityRole role : roles) {
+			if (role.getAllowUnspecifiedDataSensitivity()) {
+				allow = true;
+				break;
+			}
+		}		
+		
+		return allow;		
+	}	
 
 	public Set<String> dataSources()
 	{

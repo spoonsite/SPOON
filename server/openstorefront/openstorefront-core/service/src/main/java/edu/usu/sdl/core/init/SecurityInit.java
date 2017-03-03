@@ -181,6 +181,7 @@ public class SecurityInit
 		userRegistration.setPhone("na");
 		userRegistration.setUserTypeCode(UserTypeCode.END_USER);
 		userRegistration.setUsername(adminUsername);
+		userRegistration.setUsingDefaultPassword(Boolean.TRUE);		
 		service.getSecurityService().processNewRegistration(userRegistration);
 		LOG.log(Level.CONFIG, "Register Admin User");		
 		

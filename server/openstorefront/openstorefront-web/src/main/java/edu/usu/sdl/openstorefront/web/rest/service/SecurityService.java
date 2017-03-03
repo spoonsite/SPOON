@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
 import edu.usu.sdl.openstorefront.core.view.GenericDataView;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.UserCredential;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -35,6 +36,8 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
@@ -46,6 +49,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.realm.Realm;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 
 /**
  *
@@ -107,6 +113,28 @@ public class SecurityService
 		}
 		return Response.ok().build();
 	}
+	
+	@GET
+	@APIDescription("Gets the security realm(s) in use")	
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(LookupModel.class)
+	@Path("/realmname")	
+	public List<LookupModel> getSecurityRealm() 
+	{
+		List<LookupModel> realms = new ArrayList<>();
+		
+		org.apache.shiro.mgt.SecurityManager securityManager = SecurityUtils.getSecurityManager();
+		if (securityManager instanceof DefaultWebSecurityManager) {
+			DefaultWebSecurityManager webSecurityManager = (DefaultWebSecurityManager) securityManager;
+			for (Realm realm : webSecurityManager.getRealms()) {
+				LookupModel lookupModel = new LookupModel();
+				lookupModel.setCode(realm.getClass().getSimpleName());
+				lookupModel.setDescription(realm.getName());
+				realms.add(lookupModel);
+			}
+		}				
+		return realms;
+	}	
 	
 	@PUT	
 	@APIDescription("Allows a user to reset their password.")	

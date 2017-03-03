@@ -130,6 +130,17 @@
 									}
 									listOfOptions += '</ul>';
 									return listOfOptions;
+								} else if (record.get('userManagementAlertOption')) {
+									option = record.get('userManagementAlertOption');
+									var listOfOptions = '<ul>';
+									if (option.alertOnUserRegistration) {
+										listOfOptions += '<li>User Registration</li>';
+									}
+									if (option.alertOnUserNeedsApproval) {
+										listOfOptions += '<li>User Need Approval</li>';
+									}
+									listOfOptions += '</ul>';
+									return listOfOptions;
 								}
 							}
 						},
@@ -317,7 +328,7 @@
 									fieldLabel: 'Alert Type<span class="field-required" />',
 									id: 'alertEntryForm-Type',
 									forceSelection: true,
-									displayField: 'name',
+									displayField: 'description',
 									valueField: 'code',
 									value: 'CMPSUB',
 									name: 'alertType',
@@ -325,6 +336,7 @@
 										change: function (combo, newValue, oldValue, opts) {
 											Ext.getCmp('systemErrorOptions').hide();
 											Ext.getCmp('userDataOptions').hide();
+											Ext.getCmp('userManagementOptions').hide();
 											switch (newValue) {
 												case 'SYSERROR':
 													Ext.getCmp('systemErrorOptions').show();
@@ -332,33 +344,19 @@
 												case 'USERD':
 													Ext.getCmp('userDataOptions').show();
 													break;
+												case 'USERMANG':
+													Ext.getCmp('userManagementOptions').show();
+													break;
 											}
 										}
 									},
-									store: Ext.create('Ext.data.Store', {
-										fields: [
-											'code',
-											'name'
-										],
-										data: [
-											{
-												code: 'CMPSUB',
-												name: 'Entry Submission'
-											},
-											{
-												code: 'CHGREQ',
-												name: 'Change Request'
-											},											
-											{
-												code: 'SYSERROR',
-												name: 'System Error'
-											},
-											{
-												code: 'USERD',
-												name: 'User Data'
-											}
-										]
-									})
+									store: {
+										autoLoad: true,
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/lookuptypes/AlertType'
+										}
+									}
 								},
 								{
 									xtype: 'textfield',
@@ -435,6 +433,26 @@
 											id: 'userData-attributeCodes'
 										}							
 									]
+								},
+								{
+									xtype: 'fieldcontainer',
+									id: 'userManagementOptions',
+									name: 'userManagementAlertOption',
+									fieldLabel: 'User Management Options',
+									defaultType: 'checkboxfield',																		
+									hidden: true,									
+									items: [										
+										{
+											boxLabel: 'User Registration',
+											name: 'alertOnUserRegistration',
+											id: 'usermanage-registration'
+										},
+										{
+											boxLabel: 'User Needs Approval',
+											name: 'alertOnUserNeedsApproval',
+											id: 'usermanage-approval'
+										}
+									]									
 								}
 							],
 							dockedItems: [
@@ -488,6 +506,13 @@
 													se.alertOnReport = (flatData.alertOnReport === "true");
 													se.alertOnIntegration = (flatData.alertOnIntegration === "true");
 													data.systemErrorAlertOption = se;
+												}
+												
+												if (flatData.alertType === 'USERMANG') {											
+													data.userManagementAlertOption = {
+														alertOnUserRegistration: flatData.alertOnUserRegistration,
+														alertOnUserNeedsApproval: flatData.alertOnUserNeedsApproval
+													};
 												}
 
 

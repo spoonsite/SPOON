@@ -25,9 +25,15 @@ import edu.usu.sdl.openstorefront.core.view.UserCredential;
 import edu.usu.sdl.openstorefront.core.view.UserFilterParams;
 import edu.usu.sdl.openstorefront.core.view.UserSecurityWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.validation.RuleResult;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -41,6 +47,9 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 
 /**
  *
@@ -51,6 +60,7 @@ import org.apache.commons.lang3.StringUtils;
 public class UserResource
 	extends BaseResource
 {
+	private static final Logger LOG = Logger.getLogger(UserResource.class.getName());
 
 	@GET
 	@APIDescription("Get a list of user for the built in security")
@@ -173,7 +183,7 @@ public class UserResource
 	@PUT
 	@APIDescription("Reset a user password (Admin Reset)")
 	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
-	@Consumes({MediaType.TEXT_PLAIN})
+	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{username}/resetpassword")
 	public Response resetUserPassword(
 		@PathParam("username") String username,
@@ -184,10 +194,62 @@ public class UserResource
 		userSecurity.setUsername(username);
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
-			service.getSecurityService().adminResetPassword(username, userCredential.getPassword().toCharArray());
-			return Response.ok().build();
+
+			if (SecurityUtil.getCurrentUserName().equals(username) ||
+				SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT)) {	
+				
+				if (SecurityUtil.getCurrentUserName().equals(username)) {
+					//
+				}
+				
+				service.getSecurityService().adminResetPassword(username, userCredential.getPassword().toCharArray());							
+				return Response.ok().build();
+			} else {
+				return Response.status(Response.Status.FORBIDDEN).build();	
+			}
 		}	
 		return Response.status(Response.Status.NOT_FOUND).build();		
+	}	
+	
+	@PUT
+	@APIDescription("Reset the current user's password (Requires Existing password)")	
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/currentuser/resetpassword")
+	public Response resetCurrentUserPassword(
+		UserCredential userCredential
+	)
+	{
+		ValidationModel validationModel = new ValidationModel(userCredential);
+		validationModel.setConsumeFieldsOnly(true);		
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (userCredential.getExistingPassword() == null) {
+			userCredential.setExistingPassword("");
+		}
+		validationResult.merge(service.getSecurityService().validatePassword(userCredential.getPassword().toCharArray()));
+		
+		if (validationResult.valid()) {
+		
+			UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
+			usernamePasswordToken.setUsername(SecurityUtil.getCurrentUserName());
+			usernamePasswordToken.setPassword(userCredential.getExistingPassword().toCharArray());		
+		
+			try {
+				SecurityUtils.getSecurityManager().authenticate(usernamePasswordToken);
+				
+				service.getSecurityService().adminResetPassword(SecurityUtil.getCurrentUserName(), userCredential.getPassword().toCharArray());							
+				return Response.ok().build();
+				
+			} catch (AuthenticationException authException) {
+				LOG.log(Level.FINE, "Current User Password - Failed to auth existing password.", authException);
+				
+				RuleResult result = new RuleResult();
+				result.setFieldName(UserCredential.FIELD_EXISTING_PASSWORD);				
+				result.setMessage("Existing password is invalid");
+				validationResult.getRuleResults().add(result);
+			}			
+		} 
+		
+		return Response.ok(validationResult.toRestError()).build();		
 	}	
 	
 	@DELETE

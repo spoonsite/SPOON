@@ -23,24 +23,34 @@ var CoreService = {
   userservice: {    
     
     getCurrentUser: function(forceReload){
-		var me = this;     
+		var userservice = this;     
 		var deferred = new Ext.Deferred();
 		
 		var haveUser = false;
-		if (sessionStorage && sessionStorage.getItem('user')) {
-			if (!forceReload) {
-				deferred.resolve(Ext.decode(sessionStorage.getItem('user')));
-				haveUser = true;
-			}
+		
+		//page level cache (safe but, minimual impact as it only help complex nested components)
+		if (userservice.user) {
+			deferred.resolve(userservice.user);
+			haveUser = true;
 		}
+		
+		//caching this causes a lot of headaches with edge cases
+//		if (sessionStorage && sessionStorage.getItem('user')) {
+//			if (!forceReload) {
+//				deferred.resolve(Ext.decode(sessionStorage.getItem('user')));
+//				haveUser = true;
+//			}
+//		}
 		
 		if (haveUser === false) {
 			Ext.Ajax.request({
 				url: 'api/v1/resource/userprofiles/currentuser',
 				success: function(response, opts) {
 					var user = Ext.decode(response.responseText);
-					sessionStorage.setItem('user', Ext.encode(user));
-					deferred.resolve(Ext.decode(sessionStorage.getItem('user')));
+					//sessionStorage.setItem('user', Ext.encode(user));
+					//deferred.resolve(Ext.decode(sessionStorage.getItem('user')));
+					userservice.user = user;
+					deferred.resolve(user);
 				},
 				failure: function(response, opts) {
 					deferred.reject("Error loading user.");

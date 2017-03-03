@@ -84,6 +84,9 @@ public class UserRegistration
 	@ConsumeField
 	@FK(value = Organization.class, softReference = true, referencedField = "name")
 	private String organization;
+	
+	@APIDescription("This is used to flag the built in admin account; on first creation")
+	private Boolean usingDefaultPassword;		
 
 	public UserRegistration()
 	{
@@ -177,6 +180,16 @@ public class UserRegistration
 	public void setUsername(String username)
 	{
 		this.username = username;
+	}
+
+	public Boolean getUsingDefaultPassword()
+	{
+		return usingDefaultPassword;
+	}
+
+	public void setUsingDefaultPassword(Boolean usingDefaultPassword)
+	{
+		this.usingDefaultPassword = usingDefaultPassword;
 	}
 
 }
