@@ -44,6 +44,7 @@ public class OSFCacheManager
 	private static Cache componentCache;
 	private static Cache componentLookupCache;
 	private static Cache componentApprovalCache;
+	private static Cache componentDataRestrictionCache;
 	private static Cache componentTypeCache;
 	private static Cache applicationCache;
 	private static Cache contactCache;
@@ -53,11 +54,12 @@ public class OSFCacheManager
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	private static final ReentrantLock lock = new ReentrantLock();
-	
+
 	public static void init()
-	{		
+	{
 		lock.lock();
-		try {
+		try
+		{
 			Configuration config = new Configuration();
 			config.setUpdateCheck(false);
 			config.setName("Main");
@@ -95,6 +97,10 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			componentApprovalCache = singletonManager.getCache("componentApprovalCache");
 
+			memoryOnlyCache = new Cache("componentDataRestrictionCache", 50000, false, false, 600, 600);
+			singletonManager.addCache(memoryOnlyCache);
+			componentDataRestrictionCache = singletonManager.getCache("componentDataRestrictionCache");
+
 			memoryOnlyCache = new Cache("componentTypeCache", 1, false, false, 300, 300);
 			singletonManager.addCache(memoryOnlyCache);
 			componentTypeCache = singletonManager.getCache("componentTypeCache");
@@ -115,7 +121,9 @@ public class OSFCacheManager
 			singletonManager.addCache(memoryOnlyCache);
 			checklistQuestionCache = singletonManager.getCache("checklistQuestionCache");
 
-		} finally {
+		}
+		finally
+		{
 			lock.unlock();
 		}
 
@@ -174,6 +182,11 @@ public class OSFCacheManager
 	public static Cache getComponentApprovalCache()
 	{
 		return componentApprovalCache;
+	}
+
+	public static Cache getComponentDataRestrictionCache()
+	{
+		return componentDataRestrictionCache;
 	}
 
 	public static Cache getApplicationCache()
