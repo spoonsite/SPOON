@@ -68,6 +68,7 @@ import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
+import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
@@ -1626,6 +1627,16 @@ public class CoreComponentServiceImpl
 			}
 		}
 		return approved;
+	}
+	
+	public ComponentSensitivityModel getComponentSensitivity(String componentId)
+	{
+		ComponentSensitivityModel componentSensitivityModel = new ComponentSensitivityModel();
+		
+		//cache pull data set see approval
+		
+		
+		return componentSensitivityModel;
 	}
 
 	public Component copy(String orignalComponentId)
