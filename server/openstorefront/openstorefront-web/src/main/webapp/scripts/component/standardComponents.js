@@ -77,6 +77,138 @@ Ext.define('OSF.component.SecurityComboBox', {
 	
 });
 
+Ext.define('OSF.component.DataSensitivityComboBox', {
+    extend: 'Ext.form.field.ComboBox',
+	alias: 'osf.widget.DataSensitivityComboBox',
+	
+	emptyText: 'Select',
+	labelSeparator: '',
+	fieldLabel: 'Data Sensitivity',
+	name: 'dataSensitivity',
+	width: '100%',	
+	valueField: 'dataSensitivity',
+	displayField: 'dataSensitivityDesc',
+	typeAhead: false,
+	editable: false,
+	forceSelection: true,
+	addSelect: true,
+	hidden: true,
+	queryMode: 'local',
+	labelAlign: 'top',
+	store: {
+		autoLoad: false,
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/lookuptypes/DataSensitivity'			
+		}
+	},	
+	initComponent: function() {
+		var combo = this;	
+		combo.callParent();
+		
+		CoreService.userservice.getCurrentUser().then(function(user){			
+			var data = [];		
+			Ext.Ajax.request({
+				url: 'api/v1/resource/lookuptypes/DataSensitivity',
+				success: function(response, opts) {
+					var lookups = Ext.decode(response);
+				
+					Ext.Array.each(user.roles.dataSecurity, function(item){
+						var found = Ext.Array.findBy(lookups, function(lookup){
+							if (item.dataSensitivity === lookup.code) {
+								return true;
+							}
+						});
+						
+						data.push({
+							dataSensitivity: item.dataSensitivity,
+							dataSensitivityDesc: found.description
+						});
+					});
+					if (combo.addSelect) {
+						data.add({
+							dataSensitivity: null,
+							dataSensitivityDesc: 'Select'
+						});
+					}
+
+					combo.getStore().loadData(data);
+					
+					if (user.roles.dataSecurity.length > 0) {
+						combo.setHidden(false);
+					}
+				}
+			});						
+		});	
+	}	
+	
+});
+
+Ext.define('OSF.component.DataSourceComboBox', {
+    extend: 'Ext.form.field.ComboBox',
+	alias: 'osf.widget.DataSourceComboBox',
+	
+	emptyText: 'Select',
+	labelSeparator: '',
+	fieldLabel: 'Data Source',
+	name: 'dataSource',
+	width: '100%',	
+	valueField: 'dataSource',
+	displayField: 'dataSourceDesc',
+	typeAhead: false,
+	editable: false,
+	forceSelection: true,
+	addSelect: true,
+	queryMode: 'local',
+	labelAlign: 'top',
+	store: {
+		autoLoad: false,
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/lookuptypes/DataSource'			
+		}
+	},	
+	initComponent: function() {
+		var combo = this;	
+		combo.callParent();
+		
+		CoreService.userservice.getCurrentUser().then(function(user){			
+			var data = [];
+			
+			Ext.Ajax.request({
+				url: 'api/v1/resource/lookuptypes/DataSource',
+				success: function(response, opts) {
+					var lookups = Ext.decode(response);
+				
+					Ext.Array.each(user.roles.dataSecurity, function(item){
+						var found = Ext.Array.findBy(lookups, function(lookup){
+							if (item.dataSource === lookup.code) {
+								return true;
+							}
+						});
+						
+						data.push({
+							dataSource: item.dataSource,
+							dataSourceDesc: found.description
+						});
+					});
+					if (combo.addSelect) {
+						data.add({
+							dataSource: null,
+							dataSourceDesc: 'Select'
+						});
+					}
+
+					combo.getStore().loadData(data);
+				}
+			});			
+		});		
+		
+	}	
+	
+});
+
+
 Ext.define('OSF.component.UserMenu', {
     extend: 'Ext.button.Button',
 	alias: 'osf.widget.UserMenu',

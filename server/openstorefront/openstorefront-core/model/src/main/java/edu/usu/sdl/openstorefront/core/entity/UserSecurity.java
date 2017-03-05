@@ -32,40 +32,41 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Security account; used in the builtin security realm. This shouldn't passed back to the user.")
 public class UserSecurity
-	extends StandardEntity<UserSecurity>		
+		extends StandardEntity<UserSecurity>
 {
+
 	public static final String PASSWORD_FIELD = "password";
 	public static final String FIELD_USERNAME = "username";
-	
+
 	@PK
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
 	private String username;
-	
-	@NotNull	
+
+	@NotNull
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
-	@APIDescription("Only Applicatble when using internal security; This is hashed")	
-	private String password;	
-	
+	@APIDescription("Only Applicatble when using internal security; This is hashed")
+	private String password;
+
 	@NotNull
 	@Min(0)
 	@APIDescription("This will reset upon successful login")
 	private Integer failedLoginAttempts;
-	
+
 	private Date lastLoginAttempt;
-	
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String tempPassword;
-	
+
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	private String passwordChangeApprovalCode;
-	
-	@NotNull	
+
+	@NotNull
 	private Date passwordUpdateDts;
 
 	@APIDescription("This is used to flag the built in admin account; on first creation")
-	private Boolean usingDefaultPassword;		
-	
+	private Boolean usingDefaultPassword;
+
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = UserApprovalStatus.class)
 	@ConsumeField
@@ -80,14 +81,16 @@ public class UserSecurity
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
-		super.updateFields(entity); 
-		
+		super.updateFields(entity);
+
 		UserSecurity userSecurity = (UserSecurity) entity;
 		this.setFailedLoginAttempts(userSecurity.getFailedLoginAttempts());
 		this.setLastLoginAttempt(userSecurity.getLastLoginAttempt());
 		this.setApprovalStatus(userSecurity.getApprovalStatus());
-		
-	}	
+		this.setPasswordUpdateDts(userSecurity.getPasswordUpdateDts());
+		this.setUsingDefaultPassword(userSecurity.getUsingDefaultPassword());
+
+	}
 
 	public String getUsername()
 	{
@@ -158,7 +161,7 @@ public class UserSecurity
 	{
 		this.lastLoginAttempt = lastLoginAttempt;
 	}
-	
+
 	public Boolean getUsingDefaultPassword()
 	{
 		return usingDefaultPassword;
@@ -177,6 +180,6 @@ public class UserSecurity
 	public void setPasswordUpdateDts(Date passwordUpdateDts)
 	{
 		this.passwordUpdateDts = passwordUpdateDts;
-	}	
-	
+	}
+
 }

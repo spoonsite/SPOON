@@ -41,10 +41,11 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 
 /**
  * This is used to connect to build security handling
+ *
  * @author dshurtleff
  */
 public class StorefrontRealm
-	extends AuthorizingRealm
+		extends AuthorizingRealm
 {
 
 	@Override
@@ -60,8 +61,8 @@ public class StorefrontRealm
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException
 	{
-		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)token;
-				
+		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
+
 		//pull user security
 		String username = usernamePasswordToken.getUsername().toLowerCase();
 		UserSecurity userSecurity = new UserSecurity();
@@ -70,28 +71,28 @@ public class StorefrontRealm
 		if (userSecurity == null) {
 			throw new UnknownAccountException("Unable to find user.");
 		}
-		
+
 		if (UserSecurity.INACTIVE_STATUS.equals(userSecurity.getActiveStatus())) {
 			throw new DisabledAccountException("Account " + username + " is disabled");
 		}
-		
+
 		if (UserApprovalStatus.PENDING.equals(userSecurity.getApprovalStatus())) {
 			throw new DisabledAccountException("Account " + username + " is not approved");
-		}		
-		
-		ServiceProxy serviceProxy = ServiceProxy.getProxy();		
+		}
+
+		ServiceProxy serviceProxy = ServiceProxy.getProxy();
 		SecurityPolicy securityPolicy = serviceProxy.getSecurityService().getSecurityPolicy();
 		if (userSecurity.getFailedLoginAttempts() == null) {
-			userSecurity.setFailedLoginAttempts(0);			
+			userSecurity.setFailedLoginAttempts(0);
 		}
-		
+
 		if (userSecurity.getFailedLoginAttempts() > securityPolicy.getLoginLockoutMaxAttempts()) {
-			Date now = TimeUtil.currentDate();		
+			Date now = TimeUtil.currentDate();
 			Instant instantLastAttempt = Instant.ofEpochMilli(userSecurity.getLastLoginAttempt().getTime());
 			instantLastAttempt.plus(securityPolicy.getResetLockoutTimeMinutes(), ChronoUnit.MINUTES);
 			if (now.toInstant().isAfter(instantLastAttempt)) {
 				if (securityPolicy.getRequireAdminUnlock() == false) {
-					userSecurity.setFailedLoginAttempts(0);				
+					userSecurity.setFailedLoginAttempts(0);
 				} else {
 					throw new LockedAccountException("Account is lock due to excessive failed attempts. Requires admin unlock.");
 				}
@@ -99,18 +100,18 @@ public class StorefrontRealm
 				throw new LockedAccountException("Account is lock due to excessive failed attempts.");
 			}
 		}
-		
+
 		userSecurity.setLastLoginAttempt(TimeUtil.currentDate());
 		userSecurity.save();
-		
+
 		SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo();
 		simpleAuthenticationInfo.setCredentials(userSecurity.getPassword());
-		
-		SimplePrincipalCollection principalCollection = new SimplePrincipalCollection();				
+
+		SimplePrincipalCollection principalCollection = new SimplePrincipalCollection();
 		UserContext userContext = serviceProxy.getSecurityService().getUserContext(username);
-		principalCollection.add(userContext, StorefrontRealm.class.getSimpleName());				
-		simpleAuthenticationInfo.setPrincipals(principalCollection);		
-	
+		principalCollection.add(userContext, StorefrontRealm.class.getSimpleName());
+		simpleAuthenticationInfo.setPrincipals(principalCollection);
+
 		return simpleAuthenticationInfo;
 	}
 
@@ -118,36 +119,35 @@ public class StorefrontRealm
 	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException
 	{
 		try {
-			super.assertCredentialsMatch(token, info); 
-			
+			super.assertCredentialsMatch(token, info);
+
 			//clear failed attempts if needed
-			UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)token;
-			
+			UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
+
 			UserSecurity userSecurity = new UserSecurity();
 			userSecurity.setUsername(usernamePasswordToken.getUsername().toLowerCase());
 			userSecurity = userSecurity.find();
-			if (userSecurity.getFailedLoginAttempts() != null &&
-					userSecurity.getFailedLoginAttempts() > 0) {
-				userSecurity.setFailedLoginAttempts(0);	
+			if (userSecurity.getFailedLoginAttempts() != null
+					&& userSecurity.getFailedLoginAttempts() > 0) {
+				userSecurity.setFailedLoginAttempts(0);
 				userSecurity.save();
 			}
-			
-			
-		} catch(AuthenticationException authenticationException) {
-			UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)token;
-			
+
+		} catch (AuthenticationException authenticationException) {
+			UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
+
 			UserSecurity userSecurity = new UserSecurity();
 			userSecurity.setUsername(usernamePasswordToken.getUsername().toLowerCase());
 			userSecurity = userSecurity.find();
-			
+
 			if (userSecurity.getFailedLoginAttempts() == null) {
-				userSecurity.setFailedLoginAttempts(1);			
+				userSecurity.setFailedLoginAttempts(1);
 			} else {
 				userSecurity.setFailedLoginAttempts(userSecurity.getFailedLoginAttempts() + 1);
 			}
 			userSecurity.save();
-			throw authenticationException;		
+			throw authenticationException;
 		}
 	}
-	
+
 }
