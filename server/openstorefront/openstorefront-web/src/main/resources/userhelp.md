@@ -40,7 +40,7 @@ Version 2.2 is a maintenance release that:
  * Improves the usability of searching
  * Improves submissions, specifically the administration of submissions
 
-### 1.1.1 Administrator Release Notes, v2.2 *
+### 1.1.1 Administrator Release Notes, v2.2 @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 *What's new in v2.2*
@@ -71,7 +71,7 @@ Version 2.2 is a maintenance release that:
 For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.2" target="_blank">v2.2</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
 
 =======
-## 1.2 Known Issues, v2.2 * 
+## 1.2 Known Issues, v2.2 @ADMIN-SYSTEM-MANAGEMENT 
  
  * ***Setting flags for multiple attributes in IE9***: In Admin Tools, Attributes if you multi-select more than one
   attribute then select Action, Set Flags, change the flags, and click Update it will not update in IE9.
@@ -433,7 +433,7 @@ listings on the application.
 4.  Check the checkbox, **Receive periodic email about recent changes**.
 5.  Click **Save**.
 
-### 2.3.2 Submissions
+### 2.3.2 Submissions @USER-SUBMISSIONS
 -----------
 
 This page displays all of the submissions you, the current logged in user, have
@@ -442,14 +442,14 @@ the column header.  // Describe process flow
 
 
 
-#### 2.3.2.1 How to Create a Submission/Entry
+#### 2.3.2.1 How to Create a Submission/Entry @USER-SUBMISSIONS
 -----------
 
 The first tab of a new submission should be pre-filled with your logged in user information.  
 Make any necessary corrections and click on the Next button at the bottom.
 
 
-#### 2.3.2.2 How to Create a Change Request/Edit Entry
+#### 2.3.2.2 How to Create a Change Request/Edit Entry @USER-SUBMISSIONS
 -----------
 
 Step 1) Click on the entry you wish to edit  
@@ -479,7 +479,7 @@ user profile.
 4.  Once request for removal is approved, the entry will no longer appear in user's list of submissions.
 
 
-#### 2.3.2.4 Other Submission Features
+#### 2.3.2.4 Other Submission Features @USER-SUBMISSIONS
 -----------
 
 A user can copy or preview an entry by selecting an entry and clicking on the "Options" 
@@ -532,7 +532,7 @@ A particular view can be saved by pressing the **Download Image** button.  The *
 allows the user to search for an entry in the current view on the page.
 
 
-#### 2.3.3.3 Reports
+#### 2.3.3.3 Reports @REPORTS
 --------
 
 This section displays reports that have run as well as scheduled reports that will run in the future.
@@ -565,7 +565,7 @@ the report will run, as well as the last run date and time. You can add, activat
 scheduled report, edit, or delete it.
 
 
-#### 2.3.3.3 Admin Reports * 
+#### 2.3.3.3 Admin Reports @REPORTS-ALL
 --------
 
 This section displays reports that have run as well as scheduled reports that will run in the future.
@@ -750,7 +750,7 @@ in the top right corner.  A window will pop-up where you can either customize th
 use the default.
 
 
-# 3. Admin Tools *
+# 3. Admin Tools @ADMIN-SYSTEM-MANAGEMENT
 ----------
 
 Admin tools allow for the management of all data in the system.
@@ -758,7 +758,7 @@ Admin tools allow for the management of all data in the system.
 (Sections marked with * require admin account access.)
 
 
-## 3.1 Dashboard *
+## 3.1 Dashboard @ADMIN-SYSTEM-MANAGEMENT
 --------
 
 The dashboard is the homepage of the Admin Tools.  This is accessed by
@@ -790,14 +790,14 @@ display order, maximized, or closed.  In addition, certain settings such as the 
 and title bar color can be set.  This is done by clicking on the buttons in the 
 right upper corner of the title bar of each individual widget.
 
-## 3.2 Data Management *
+## 3.2 Data Management @ADMIN-ENTRY-MANAGEMENT
 --------
 
 The Data Management menu is used to navigate to different tools for managing the data
 for Storefront.
 
 
-### 3.2.1 Attributes *
+### 3.2.1 Attributes @ADMIN-ATTRIBUTE-MANAGEMENT
 -------
 
 Attributes are used to group and filter catalog items such as entries and articles. 
@@ -813,7 +813,7 @@ Functional Areas of Managing Attributes includes:
   6. Importing and Exporting
     
     
-#### 3.2.1.1 Add New Attribute Type *
+#### 3.2.1.1 Add New Attribute Type @ADMIN-ATTRIBUTE-MANAGEMENT
 ------
 
 Attribute Types represent a related group of specific categories or
@@ -842,7 +842,7 @@ From the Attribute Tool, click on the **Add New Type** button or the
      Allow User-Created Codes, or Hide on Submission.
  
 
-#### 3.2.1.2 Entry Assignment *
+#### 3.2.1.2 Entry Assignment @ADMIN-ENTRY-MANAGEMENT
 ------
 
 This allows for quick drag-and-drop assignment of an entry with an attribute and its associated code.  From the 
@@ -854,13 +854,13 @@ attribute and code with an entry, simply drag it to the right to the Assigned En
 back to the left (Unassigned Entries) column.
 
 
-#### 3.2.1.3 Editing Attributes *
+#### 3.2.1.3 Editing Attributes @ADMIN-ATTRIBUTE-MANAGEMENT
 ------
 
 Refer to 3.2.1.1 on Adding a New Attribute type for a list of fields available.  When finished editing click Save.
 
 
-#### 3.2.1.4 Managing Codes *
+#### 3.2.1.4 Managing Codes @ADMIN-ATTRIBUTE-MANAGEMENT
 ------
 
 An attribute code is a specific category value that can be applied to a
@@ -909,7 +909,7 @@ entry. For example: Entry listing may contain and attribute for
 -  **Highlight Class**     - Used to add color emphasis to a code
 
 
-#### 3.2.1.1 Setting Flags, Toggling Status, and Deleting *
+#### 3.2.1.1 Setting Flags, Toggling Status, and Deleting @ADMIN-ATTRIBUTE-MANAGEMENT
 ------
 
 From the attributes page the Action button has three sub-menus:
@@ -933,7 +933,7 @@ From the attributes page the Action button has three sub-menus:
  To **Delete** select one or more attributes and Action --> Delete.  It is possible to delete multiple attributes at once.
  
 
-#### 3.2.1.6 Importing and Exporting Attributes *
+#### 3.2.1.6 Importing and Exporting Attributes @ADMIN-DATA-IMPORT-EXPORT
 ------
 
 Clicking the **Import** button from Manage Attributes will show buttons to brows and upload files.
@@ -951,7 +951,7 @@ From the Manage Attributes page select one or more attributes.  Click the Export
 Follow the browser download instructions to download the JSON File.
 
 
-### 3.2.2 Contacts *
+### 3.2.2 Contacts @ADMIN-CONTACT-MANAGEMENT
 -----
 
 The Contacts Management area allows for the management of contacts in one place across all entries.  
@@ -973,14 +973,14 @@ An administrator can view references associated with an individual contact by cl
 To merge the entries from one contact to another, click on the target contact and then click **Merge**.  Select the contact to merge
 into the target contact and click **Save**.
 
-### 3.2.3 Entries *
+### 3.2.3 Entries @ADMIN-ENTRY-MANAGEMENT
 -----
 
 Entries can consist of DI2E Components, Articles, or other custom-defined data structure types.
 This section allows for the manipulating of all data related to an entry.
 
 
-#### 3.2.3.1 Managing Entries *
+#### 3.2.3.1 Managing Entries @ADMIN-ENTRY-MANAGEMENT
 ----------
 
 Components can be managed using the Components Tool.  Components are created by an application administrator.
@@ -1053,7 +1053,7 @@ Inactive entries are not visible to or searchable by users.
     notify the admin when the task is complete or if there was an issue.
 
 
-#### 3.2.3.2 Approval *
+#### 3.2.3.2 Approval @ADMIN-ENTRY-MANAGEMENT
 ------
 
 Approved entries are searchable by all users. Pending/Not submitted entries
@@ -1075,7 +1075,7 @@ step above and selecting **Pending**. Marking the entry as
 **Pending** makes it not approved.
 
 
-#### 3.2.3.3 General *
+#### 3.2.3.3 General @ADMIN-ENTRY-MANAGEMENT
 ------
 
 General information about the entry is found here such as the Name, 
@@ -1098,7 +1098,7 @@ c. Security Type:   *select the security level of the entry or article*
 From the **Action** drop-down menu in the toolbar, an administrator can change the ownership or
 type of an entry.  He/she can also view change requests and merge entries together.
   
-### 3.2.4 Entry Types *
+### 3.2.4 Entry Types @ADMIN-ENTRY-TYPES
 ------
 
 Currently, the main entry types are: Article, DI2E Component, and DI2E Document.  However, other custom 
@@ -1128,7 +1128,7 @@ New with v2.1 Entry Types can now be **removed**.  When you remove a type the sy
   
 		  
 		  
-### 3.2.5 Entry Templates *
+### 3.2.5 Entry Templates @ADMIN-ENTRY-TEMPLATES
 -------
 
 Entry Templates allow for the customization of the display fields of particular types of entries.
@@ -1156,7 +1156,7 @@ To edit a template click on the template name and click **Edit** in the toolbar.
 click **Save/Continue** at the bottom.
 	
   
-### 3.2.6 Highlights *
+### 3.2.6 Highlights @ADMIN-HIGHLIGHTS
 -------
 
 A highlight to the home page can be added, edited, or deleted here. 
@@ -1182,7 +1182,7 @@ they do in the table in the Manage Highlights section.
 **Note:** the display position of a highlight can be adjusted by selecting the highlight and clicking
 on either the **Up** or **Down** button in the toolbar.
 
-### 3.2.7 Integrations *
+### 3.2.7 Integrations @ADMIN-INTEGRATION
 -------
 
 Component Integration allows for pulling information from an external
@@ -1236,7 +1236,7 @@ interval. If the configuration job continues to have issues, it may be
 deactivated manually using the tools and then reactivated when the issue
 is resolved.
 
-### 3.2.8 Imports * 
+### 3.2.8 Imports @ADMIN-DATA-IMPORT-EXPORT
 -------
 
 This allows for data imports and mappings.  This is done by importing a file.
@@ -1250,7 +1250,7 @@ imported using that mapping.
 
 **NOTE:**  The import history is only kept for **180 days (Default)**.
 
-#### 3.2.8.1 Data Mapping *
+#### 3.2.8.1 Data Mapping @ADMIN-DATA-IMPORT-EXPORT
 
 Some data importing can be handled by creating data maps.  Typically file with
 simple structure work best.  In some cases, a custom file parse will need to be 
@@ -1296,7 +1296,7 @@ Parser - Record Structure handled
 * Provide attribute mapping for each attribute type expected.
 
 
-### 3.2.9 Lookups *
+### 3.2.9 Lookups @ADMIN-LOOKUPS
 --------
 
 This is used to organize and classify data in a consistent manner.  The codes can
@@ -1322,7 +1322,7 @@ Some examples of Lookups are:
 Media Types, Data Source, Contact Types, Relationship Types, and Organization Types
 
 
-### 3.2.10 Media *
+### 3.2.10 Media @ADMIN-MEDIA
 --------
 
 The Manage Media area is used to add, download, view, and otherwise manage media that 
@@ -1339,13 +1339,13 @@ the form is complete.
 **Viewing Media:** select the media and click **View** in the toolbar.  Some media formats have no preview available.
 
 
-### 3.2.11 Metadata *
+### 3.2.11 Metadata @ADMIN-ENTRY-MANAGEMENT
 --------
 
 **See the Glossary for definition of Metadata**
 
 
-### 3.2.12 Organizations *
+### 3.2.12 Organizations @ADMIN-ORGANIZATION
 --------
 
  Organizations provide information on specific organizations that are linked with
@@ -1357,7 +1357,7 @@ the form is complete.
  - **Address** -                The address for the organization
  - **Contact Information** -    A way to contact the organization
 
-#### 3.2.12.1 Managing Organizations *
+#### 3.2.12.1 Managing Organizations @ADMIN-ORGANIZATION
 --------------
 
 **To add a new organization:**
@@ -1405,7 +1405,7 @@ Allows merging of references from one organization to another.  **NOTE:** the me
 __ONLY__ merges references and __NOT__ the organization information.
 
 
-### 3.2.13 Relationships *
+### 3.2.13 Relationships @ADMIN-ENTRY-MANAGEMENT
 ---------
 
 Quickly create relationships between entries by dragging from the origin grid to the target grid.
@@ -1416,7 +1416,7 @@ if desired.  In addition the Visualization section shows a graphical view of the
 To delete a relationship, click on an existing relationship and then the **Delete** button.
 
 
-### 3.2.14 Searches (Public Saved Searches) *
+### 3.2.14 Searches (Public Saved Searches) @ADMIN-SEARCH
 ---------
 
 This area displays a list of publicly available searches that can be edited, added, activated, or 
@@ -1433,7 +1433,7 @@ To preview results based on the provided search criteria, click on the **Preview
 Make changes to the form and click on **Save** at them bottom.
 
  
-### 3.2.15 User Data *
+### 3.2.15 User Data @ADMIN-USER-MANAGEMENT-PROFILES
 ---------
 
 This section in the Admin Tools -> Data Management allows for the management of user-submitted data such as:
@@ -1449,7 +1449,7 @@ This section in the Admin Tools -> Data Management allows for the management of 
  * User Profiles
  
 
-#### 3.2.15.1 Questions (and Answers) *
+#### 3.2.15.1 Questions (and Answers) @ADMIN-QUESTIONS
 ------
 
 The Questions section of User Data in Data Management of the Admin Tools displays Questions and Answers given on the website.
@@ -1463,7 +1463,7 @@ The table displays active questions, but the drop-down at the top of the page al
  * With a question or answer highlighted, click the associated Deactivate button to remove it from view on the website.
 
 
-#### 3.2.15.2 Reviews *
+#### 3.2.15.2 Reviews @ADMIN-REVIEW
 ------
 
 The Reviews section of User Data in Data Management of the Admin Tools displays entry reviews from the website.
@@ -1477,7 +1477,7 @@ The table displays the list of *active* reviews by default.
  * Selecting an inactive review allows for the Activate button to be pressed, adding the review back to view on the website.
 
 
-#### 3.2.15.3 Watches *
+#### 3.2.15.3 Watches @ADMIN-WATCHES
 ------
 
 The Watches section of User Data in Data Management of the Admin Tools displays all of the watches from all users.
@@ -1487,7 +1487,7 @@ The Watches section of User Data in Data Management of the Admin Tools displays 
  * When an entry (or multiple entries of the same status) is selected, the Activate or Deactivate button can be used to toggle the status of the watches.
  
  
-#### 3.2.15.4 Tags *
+#### 3.2.15.4 Tags @ADMIN-ENTRY-MANAGEMENT
 ------
 
 The Tags section of User Data in Data Management of the Admin Tools displays a list of all tags.
@@ -1499,7 +1499,7 @@ The Tags section of User Data in Data Management of the Admin Tools displays a l
  * In the event of a duplicate tag being added to the same entry the added tag will override the existing tag.
 
 
-#### 3.2.15.5 User Profiles *
+#### 3.2.15.5 User Profiles @ADMIN-USER-MANAGEMENT
 ------
 
 Every user in the system has a user profile.  A user profile contains information
@@ -1545,13 +1545,13 @@ addresses are leaked to other users.
 3.  Save the .json file locally.  The file contains the user information.
 
 
-## 3.3 Application Management *
+## 3.3 Application Management @ADMIN-SYSTEM-MANAGEMENT
 --------
 
 The Application Management menu is used to navigate to the Alerts, Branding, Feedback, Jobs, Messages, Reports, System, Tracking, 
 or API Documentations sections.
 
-### 3.3.1 Alerts *
+### 3.3.1 Alerts @ADMIN-ALERT-MANAGEMENT
 ------
 
 Alerts are triggers set up to watch the data to which an administrator can
@@ -1603,7 +1603,7 @@ Descriptions of Alert Triggers:
 3.  Make desired changes to form and click **Save**.
 
 
-### 3.3.2 Branding *
+### 3.3.2 Branding @ADMIN-BRANDING
 ------
 
 This area allows for different graphic design and theme characteristics to be 
@@ -1630,7 +1630,7 @@ To make changes to an existing branding, click on the name of the branding and c
 To remove a branding, first select the branding and then click on the **Delete** button in the toolbar.
 
 
-### 3.3.3 Feedback *
+### 3.3.3 Feedback @ADMIN-FEEDBACK
 ------
 
 This area displays the user feedback that users give via the application.  
@@ -1644,7 +1644,7 @@ drop-down arrow under **Active Status**.
 To delete a completed or outstanding feedback ticket, select the ticket and click on **Delete** in the toolbar.
  
 
-### 3.3.4 Jobs *
+### 3.3.4 Jobs @ADMIN-JOB-MANAGEMENT
 ------
 
 The Jobs tool allows for viewing and managing of both scheduled background
@@ -1672,7 +1672,7 @@ services.
 **Note:** the administrator can pause or resume the system job scheduler by clicking on the button
  on the **Pause/Resume Scheduler** button on the right-side of the toolbar. 
 
-### 3.3.5 Messages *
+### 3.3.5 Messages @ADMIN-MESSAGE-MANAGEMENT
 ------
 
 There are two tabs that allow you to manage messages.  They are the **User Messages** and **Event Notifications** tabs.
@@ -1682,7 +1682,7 @@ process all queued messages now.  Messages can be viewed/deleted by selecting th
 **Delete** button.
 
 
-### 3.3.6 Reports * 
+### 3.3.6 Reports @REPORTS-ALL 
 ------
 
 Descriptions of the types of reports:
@@ -1700,7 +1700,7 @@ Descriptions of the types of reports:
 
 A report can be either manually generated on demand or set to auto-generate according to a specific schedule.
 
-#### 3.3.6.1 Manually Generating Reports *
+#### 3.3.6.1 Manually Generating Reports @REPORTS-ALL 
 ------
 
 **To generate a report:**
@@ -1717,7 +1717,7 @@ The Report is generated in the background and the status of the report
 is shown in the table. Once the report is complete, it can be downloaded
 by clicking on the report and then the **Download** button in the toolbar.
 
-#### 3.3.6.2 Scheduling Reports *
+#### 3.3.6.2 Scheduling Reports @REPORTS-SCHEDULE
 ------
 
 **To create a scheduled report:**
@@ -1748,7 +1748,7 @@ scheduled interval.
 Make any changes to the form and click **Generate**.
 	
 	
-### 3.3.7 System *
+### 3.3.7 System @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 System Tools are provided to aid in troubleshooting.
@@ -1768,7 +1768,7 @@ System Tools and their Purpose:
 -  **Recent Changes Email** -     Allows for sending/previewing a recent change email.
 
 
-### 3.3.8 Tracking *
+### 3.3.8 Tracking @ADMIN-TRACKING
 
 The application tracks internal user logins, Entry/Resources views,
 and Article views. The application also can be integrated with external
@@ -1781,7 +1781,7 @@ The events are also aggregated into various system generated reports which
 are accessible via the Reports Admin Tool.
 
 
-### 3.3.9 API Documentation *
+### 3.3.9 API Documentation @API-DOCS
 ------
 
 This contains the documentation for the Application Programming Interface, or API.  It
@@ -1802,7 +1802,7 @@ Contains definitions of terms used in the application and in the help documentat
 -  **Highlight**                    -   A news item shown on the home page.
 -  **Watch**                        -   A way to track changes on a listing.
 
-## 4.2 Admin Terminology *
+## 4.2 Admin Terminology @ADMIN-ENTRY-MANAGEMENT"
 -----------------
 
 -  **Attribute Type**   -  A related group of specific categories representing a single attribute of a listing (eg. "Funded" would be a type with the corresponding value "Yes" or "No").

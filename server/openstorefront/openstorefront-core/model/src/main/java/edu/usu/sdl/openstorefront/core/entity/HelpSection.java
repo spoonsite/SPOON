@@ -43,6 +43,7 @@ public class HelpSection
 	private Integer headerLevel;
 	private String content;
 	private Boolean adminSection;
+	private String permission;
 
 	public HelpSection()
 	{
@@ -106,6 +107,16 @@ public class HelpSection
 	public void setAdminSection(Boolean adminSection)
 	{
 		this.adminSection = adminSection;
+	}
+
+	public String getPermission()
+	{
+		return permission;
+	}
+
+	public void setPermission(String permission)
+	{
+		this.permission = permission;
 	}
 
 }
