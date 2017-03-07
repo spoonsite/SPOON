@@ -54,7 +54,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<orientdb.verison>1.7.10</orientdb.verison>
+		<orientdb.verison>2.0.17</orientdb.verison>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
