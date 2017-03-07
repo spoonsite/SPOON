@@ -66,7 +66,7 @@ public class ApplicationPropertyResource
 			@RequiredParam String key)
 	{
 		ApplicationProperty applicationProperty = service.getSystemService().getProperty(key);
-		applicationProperty = service.getPersistenceService().unwrapProxyObject(ApplicationProperty.class, applicationProperty);
+		applicationProperty = service.getPersistenceService().unwrapProxyObject(applicationProperty);
 		return sendSingleEntityResponse(applicationProperty);
 	}
 

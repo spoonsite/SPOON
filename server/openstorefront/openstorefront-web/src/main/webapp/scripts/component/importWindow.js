@@ -152,38 +152,11 @@ Ext.define('OSF.component.ImportWindow', {
 						autoLoad: false
 					}
 				}),
-				{
-					xtype: 'combobox',
+				Ext.create('OSF.component.DataSourceComboBox', {			
 					name: 'dataSource',
-					editable: false,
-					typeAhead: false,
-					width: '100%',
-					fieldLabel: 'Data Source',
-					valueField: 'code',
-					displayField: 'description',					
-					labelAlign: 'top',	
-					labelSeparator: '',
-					emptyText: 'Select',
-					queryMode: 'remote',
-					store: {
-						field: [
-							'code',
-							'description'
-						],
-						listeners: {
-							load: function(myStore){
-								myStore.add([{
-									code: null,
-									description: 'Select'
-								}]);
-							}
-						},
-						proxy: {
-							type: 'ajax',
-							url: 'api/v1/resource/lookuptypes/DataSource'
-						}
-					}
-				},			
+					hideOnNoData: true,
+					width: '100%'
+				}),
 				{
 					xtype: 'filefield',
 					name: 'uploadFile',

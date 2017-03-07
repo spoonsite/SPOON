@@ -240,6 +240,11 @@ public class FilterEngine
 		
 		UserContext userContext = SecurityUtil.getUserContext();
 		if (userContext != null) {
+			
+			if (query.length() > 0) {
+				query.append(" and ");
+			}
+			
 			query.append("(");
 					
 			if (userContext.allowUnspecifiedDataSources()) {
@@ -250,13 +255,14 @@ public class FilterEngine
 			
 			Set<String> datasources = userContext.dataSources();
 			if (!datasources.isEmpty()) {
-				query.append(" " + FIELD_DATA_SOURCE + " IN (");	
+				query.append(" " + FIELD_DATA_SOURCE + " IN [");	
 				
 				List<String> dataSourceList = new ArrayList<>();
 				datasources.forEach((dataSource) -> {
 					dataSourceList.add("'" + dataSource + "'");
 				});
-				query.append(String.join(",", dataSourceList));				
+				query.append(String.join(",", dataSourceList));	
+				query.append("]");	
 			}
 			query.append(")");					
 		}
@@ -277,21 +283,22 @@ public class FilterEngine
 		if (userContext != null) {
 			query.append("(");
 					
-			if (userContext.allowUnspecifiedDataSources()) {
+			if (userContext.allowUnspecifiedDataSensitivty()) {
 				query.append(" " + FIELD_DATA_SENSITIVITY + " IS NULL OR ");				
 			} else {
 				query.append(" " + FIELD_DATA_SENSITIVITY + " IS NOT NULL AND ");				
 			}
 			
-			Set<String> datasources = userContext.dataSources();
-			if (!datasources.isEmpty()) {
-				query.append(" " + FIELD_DATA_SENSITIVITY + " IN (");	
+			Set<String> dataSensitivity = userContext.dataSensitivity();
+			if (!dataSensitivity.isEmpty()) {
+				query.append(" " + FIELD_DATA_SENSITIVITY + " IN [");	
 				
-				List<String> dataSourceList = new ArrayList<>();
-				datasources.forEach((dataSource) -> {
-					dataSourceList.add("'" + dataSource + "'");
+				List<String> dataSensitivityList = new ArrayList<>();
+				dataSensitivity.forEach((dsCode) -> {
+					dataSensitivityList.add("'" + dsCode + "'");
 				});
-				query.append(String.join(",", dataSourceList));				
+				query.append(String.join(",", dataSensitivityList));				
+				query.append("]");	
 			}
 			query.append(")");			
 		}

@@ -92,12 +92,11 @@ public interface PersistenceService
 	 *
 	 * @param <T>
 	 * @param query
-	 * @param parameterMap
-	 * @param dataClass
+	 * @param parameterMap	 
 	 * @param unwrap
 	 * @return
 	 */
-	<T> List<T> query(String query, Map<String, Object> parameterMap, Class<T> dataClass, boolean unwrap);
+	<T> List<T> query(String query, Map<String, Object> parameterMap, boolean unwrap);
 
 	/**
 	 * This will run the example with the default options
@@ -142,9 +141,9 @@ public interface PersistenceService
 
 	<T extends StandardEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus);
 
-	<T> List<T> unwrapProxy(Class<T> origClass, List<T> data);
+	<T> List<T> unwrapProxy(List<T> data);
 
-	<T> T unwrapProxyObject(Class<T> origClass, T data);
+	<T> T unwrapProxyObject(T data);
 
 	<T> int updateByExample(Class<T> entityClass, T exampleSet, T exampleWhere);
 

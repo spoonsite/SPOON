@@ -105,10 +105,12 @@ public class UserContext
 	public Set<String> dataSources()
 	{
 		Set<String> uniqueSources = new HashSet<>();
-		for (SecurityRole role : roles) {
-			for (SecurityRoleData securityRoleData : role.getDataSecurity()) {
-				if (StringUtils.isNotBlank(securityRoleData.getDataSource())) {
-					uniqueSources.add(securityRoleData.getDataSource());
+		for (SecurityRole role : roles) {			
+			if (role.getDataSecurity() != null) {
+				for (SecurityRoleData securityRoleData : role.getDataSecurity()) {
+					if (StringUtils.isNotBlank(securityRoleData.getDataSource())) {
+						uniqueSources.add(securityRoleData.getDataSource());
+					}
 				}
 			}
 		}
@@ -119,9 +121,11 @@ public class UserContext
 	{
 		Set<String> uniqueSensitivity = new HashSet<>();
 		for (SecurityRole role : roles) {
-			for (SecurityRoleData securityRoleData : role.getDataSecurity()) {
-				if (StringUtils.isNotBlank(securityRoleData.getDataSensitivity())) {
-					uniqueSensitivity.add(securityRoleData.getDataSensitivity());
+			if (role.getDataSecurity() != null) {
+				for (SecurityRoleData securityRoleData : role.getDataSecurity()) {
+					if (StringUtils.isNotBlank(securityRoleData.getDataSensitivity())) {
+						uniqueSensitivity.add(securityRoleData.getDataSensitivity());
+					}
 				}
 			}
 		}

@@ -57,6 +57,9 @@ Ext.define('OSF.component.QuestionWindow', {
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
 					hidden: true
+				}),
+				Ext.create('OSF.component.DataSensitivityComboBox', {												
+					width: '100%'
 				})				
 			],
 			dockedItems: [
@@ -222,6 +225,9 @@ Ext.define('OSF.component.ResponseWindow', {
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
 					hidden: true
+				}),			
+				Ext.create('OSF.component.DataSensitivityComboBox', {												
+					width: '100%'
 				})				
 			],
 			dockedItems: [

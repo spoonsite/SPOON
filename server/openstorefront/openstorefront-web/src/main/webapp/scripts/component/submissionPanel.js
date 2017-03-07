@@ -552,6 +552,14 @@ Ext.define('OSF.component.SubmissionPanel', {
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
 					hidden: true
+				}),
+				Ext.create('OSF.component.DataSensitivityComboBox', {			
+					width: '100%'
+				}),				
+				Ext.create('OSF.component.DataSourceComboBox', {			
+					name: 'dataSource',
+					hideOnNoData: true,
+					width: '100%'
 				}),				
 				{
 					xtype: 'panel',

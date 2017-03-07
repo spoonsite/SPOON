@@ -67,7 +67,7 @@ public class LookupTypeResource
 		extends BaseResource
 {
 
-	private static final Logger log = Logger.getLogger(LookupTypeResource.class.getName());
+	private static final Logger LOG = Logger.getLogger(LookupTypeResource.class.getName());
 
 	@GET
 	@APIDescription("Get a list of available lookup entities")
@@ -291,7 +291,7 @@ public class LookupTypeResource
 			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
 			Object value = persistenceService.findById(lookupClass, code);
 			if (value != null) {
-				lookupEntity = (LookupEntity) persistenceService.unwrapProxyObject(lookupClass, value);
+				lookupEntity = (LookupEntity) persistenceService.unwrapProxyObject(value);
 			}
 		} catch (ClassNotFoundException e) {
 			throw new OpenStorefrontRuntimeException("(System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
@@ -342,7 +342,7 @@ public class LookupTypeResource
 			Class lookupClass = Class.forName(DBManager.ENTITY_MODEL_PACKAGE + "." + entityName);
 			Object value = service.getPersistenceService().findById(lookupClass, code);
 			if (value != null) {
-				lookupEntity = (LookupEntity) service.getPersistenceService().unwrapProxyObject(lookupClass, value);
+				lookupEntity = (LookupEntity) service.getPersistenceService().unwrapProxyObject(value);
 			}
 		} catch (ClassNotFoundException e) {
 			throw new OpenStorefrontRuntimeException("(System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);

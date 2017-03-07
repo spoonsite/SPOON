@@ -251,7 +251,10 @@ Ext.define('OSF.form.Contacts', {
 						},
 						Ext.create('OSF.component.SecurityComboBox', {	
 							hidden: contactPanel.hideSecurityMarking
-						})								
+						}),
+						Ext.create('OSF.component.DataSensitivityComboBox', {												
+							width: '100%'
+						})						
 					]
 				},						
 				{

@@ -3118,17 +3118,14 @@
 									fieldLabel: 'GUID',
 									name: 'guid'																		
 								},
-								Ext.create('OSF.component.StandardComboBox', {														
-									fieldLabel: 'Data Source',
-									name: 'dataSource',	
-									width: '100%',
-									margin: '0 0 0 0',
-									editable: false,
-									typeAhead: false,
-									storeConfig: {
-										url: 'api/v1/resource/lookuptypes/DataSource'										
-									}
-								}),
+								Ext.create('OSF.component.DataSensitivityComboBox', {												
+									width: '100%'
+								}),								
+								Ext.create('OSF.component.DataSourceComboBox', {			
+									name: 'dataSource',
+									hideOnNoData: true,
+									width: '100%'
+								}),																
 								Ext.create('OSF.component.SecurityComboBox', {	
 									hidden: !${branding.allowSecurityMarkingsFlg}
 								})

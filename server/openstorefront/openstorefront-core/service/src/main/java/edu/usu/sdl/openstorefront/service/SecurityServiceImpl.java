@@ -504,7 +504,7 @@ public class SecurityServiceImpl
 			securityRole.populateBaseCreateFields();
 			securityRole = persistenceService.persist(securityRole);
 		}
-		securityRole = persistenceService.unwrapProxyObject(SecurityRole.class, securityRole);
+		securityRole = persistenceService.unwrapProxyObject(securityRole);
 		LOG.log(Level.INFO, MessageFormat.format("Security Role {0} was created/updated by: {1}", securityRole.getRoleName(), SecurityUtil.getCurrentUserName()));
 		return securityRole;
 	}

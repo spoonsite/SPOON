@@ -73,6 +73,12 @@ Ext.define('OSF.form.EvaluationInfo', {
 				}
 			}			
 		}));
+		formItems.push(Ext.create('OSF.component.DataSensitivityComboBox', {												
+			width: '100%',
+			labelClsExtra: 'eval-form-field-label',
+			fieldCls: 'eval-form-field',
+			labelWidth: 150
+		}));
 		
 		evalForm.add(formItems);
 	},

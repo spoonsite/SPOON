@@ -234,6 +234,9 @@ Ext.define('OSF.component.ReviewWindow', {
 				Ext.create('OSF.component.SecurityComboBox', {	
 					itemId: 'securityMarkings',
 					hidden: true
+				}),
+				Ext.create('OSF.component.DataSensitivityComboBox', {												
+					width: '100%'
 				})
 
 			]

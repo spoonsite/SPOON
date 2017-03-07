@@ -189,7 +189,10 @@ Ext.define('OSF.form.Resources', {
 				},
 				Ext.create('OSF.component.SecurityComboBox', {	
 					hidden: resourcePanel.hideSecurityMarking 
-				})								
+				}),
+				Ext.create('OSF.component.DataSensitivityComboBox', {												
+					width: '100%'
+				})				
 			]
 		});
 

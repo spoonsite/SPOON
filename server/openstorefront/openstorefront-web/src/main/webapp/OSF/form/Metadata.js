@@ -188,7 +188,10 @@ Ext.define('OSF.form.Metadata', {
 						},
 						Ext.create('OSF.component.SecurityComboBox', {	
 							hidden: metadataPanel.hideSecurityMarking
-						})								
+						}),
+						Ext.create('OSF.component.DataSensitivityComboBox', {												
+							width: '100%'
+						})						
 					]
 				},						
 				{

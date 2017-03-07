@@ -111,22 +111,31 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 			Ext.Ajax.request({
 				url: 'api/v1/resource/lookuptypes/DataSensitivity',
 				success: function(response, opts) {
-					var lookups = Ext.decode(response);
+					var lookups = Ext.decode(response.responseText);
 				
-					Ext.Array.each(user.roles.dataSecurity, function(item){
-						var found = Ext.Array.findBy(lookups, function(lookup){
-							if (item.dataSensitivity === lookup.code) {
-								return true;
+					Ext.Array.each(user.roles, function(securityRole){
+						Ext.Array.each(securityRole.dataSecurity, function(item){
+							if (item.dataSensitivity) {
+								var found = Ext.Array.findBy(lookups, function(lookup){
+									if (item.dataSensitivity === lookup.code) {
+										return true;
+									}
+								});
+
+								data.push({
+									dataSensitivity: item.dataSensitivity,
+									dataSensitivityDesc: found.description
+								});
 							}
-						});
-						
-						data.push({
-							dataSensitivity: item.dataSensitivity,
-							dataSensitivityDesc: found.description
-						});
+						});						
 					});
+
+					if (data.length > 0) {
+						combo.setHidden(false);
+					}
+					
 					if (combo.addSelect) {
-						data.add({
+						data.push({
 							dataSensitivity: null,
 							dataSensitivityDesc: 'Select'
 						});
@@ -134,9 +143,6 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 
 					combo.getStore().loadData(data);
 					
-					if (user.roles.dataSecurity.length > 0) {
-						combo.setHidden(false);
-					}
 				}
 			});						
 		});	
@@ -159,6 +165,8 @@ Ext.define('OSF.component.DataSourceComboBox', {
 	editable: false,
 	forceSelection: true,
 	addSelect: true,
+	hidden: false,
+	hideOnNoData: false,
 	queryMode: 'local',
 	labelAlign: 'top',
 	store: {
@@ -178,22 +186,30 @@ Ext.define('OSF.component.DataSourceComboBox', {
 			Ext.Ajax.request({
 				url: 'api/v1/resource/lookuptypes/DataSource',
 				success: function(response, opts) {
-					var lookups = Ext.decode(response);
+					var lookups = Ext.decode(response.responseText);
 				
-					Ext.Array.each(user.roles.dataSecurity, function(item){
-						var found = Ext.Array.findBy(lookups, function(lookup){
-							if (item.dataSource === lookup.code) {
-								return true;
+					Ext.Array.each(user.roles, function(securityRole){
+						Ext.Array.each(securityRole.dataSecurity, function(item){
+							if (item.dataSource) {
+								var found = Ext.Array.findBy(lookups, function(lookup){
+									if (item.dataSource === lookup.code) {
+										return true;
+									}
+								});
+
+								data.push({
+									dataSource: item.dataSource,
+									dataSourceDesc: found.description
+								});
 							}
 						});
-						
-						data.push({
-							dataSource: item.dataSource,
-							dataSourceDesc: found.description
-						});
 					});
+					if (combo.hideOnNoData && data.length === 0) {
+						combo.setHidden(true);
+					}					
+					
 					if (combo.addSelect) {
-						data.add({
+						data.push({
 							dataSource: null,
 							dataSourceDesc: 'Select'
 						});

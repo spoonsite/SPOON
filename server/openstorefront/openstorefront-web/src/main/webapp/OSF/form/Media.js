@@ -199,7 +199,10 @@ Ext.define('OSF.form.Media', {
 				},
 				Ext.create('OSF.component.SecurityComboBox', {	
 					hidden: mediaPanel.hideSecurityMarking
-				})								
+				}),
+				Ext.create('OSF.component.DataSensitivityComboBox', {												
+					width: '100%'
+				})				
 			]
 		});
 			
