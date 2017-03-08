@@ -60,6 +60,7 @@ import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
@@ -250,6 +251,7 @@ public class ComponentRESTResource
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 		List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(ComponentResource.class, componentResourceExample);
+		componentResources = FilterEngine.filter(componentResources, true);
 
 		List<ComponentResourceView> views = ComponentResourceView.toViewList(componentResources);
 
@@ -325,6 +327,7 @@ public class ComponentRESTResource
 		List<Component> componentViews = new ArrayList<>();
 		idList.forEach(componentId -> {
 			Component view = service.getPersistenceService().findById(Component.class, componentId);
+			view = FilterEngine.filter(view);
 			if (view != null) {
 				componentViews.add(view);
 			}
@@ -344,6 +347,7 @@ public class ComponentRESTResource
 	)
 	{
 		Component view = service.getPersistenceService().findById(Component.class, componentId);
+		view = FilterEngine.filter(view);
 		return sendSingleEntityResponse(view);
 	}
 
@@ -568,7 +572,7 @@ public class ComponentRESTResource
 		return sendSingleEntityResponse(entity);
 	}
 
-	@GET	
+	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
 	@APIDescription("Get a list of components questions")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -928,7 +932,6 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
-	
 	// <editor-fold defaultstate="collapsed" desc="Version history">
 	@GET
 	@APIDescription("Gets all version history for a component")
@@ -1061,7 +1064,6 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
-	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource ATTRIBUTE Section">
 	@GET
 	@APIDescription("Gets attributes for a component")
@@ -1250,8 +1252,8 @@ public class ComponentRESTResource
 		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
-		}		
-		
+		}
+
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setAttributeCode(attributeCode);
 		pk.setAttributeType(attributeType);
@@ -1391,8 +1393,8 @@ public class ComponentRESTResource
 		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
-		}		
-		
+		}
+
 		ComponentExternalDependency dependencyExample = new ComponentExternalDependency();
 		dependencyExample.setDependencyId(dependencyId);
 		dependencyExample.setComponentId(componentId);
@@ -1576,8 +1578,8 @@ public class ComponentRESTResource
 		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
-		}		
-		
+		}
+
 		ComponentContact componentContact = service.getPersistenceService().findById(ComponentContact.class, componentContactId);
 		if (componentContact != null) {
 			checkBaseComponentBelongsToComponent(componentContact, componentId);
@@ -1945,8 +1947,8 @@ public class ComponentRESTResource
 		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		if (response != null) {
 			return response;
-		}		
-		
+		}
+
 		ComponentResource componentResourceExample = new ComponentResource();
 		componentResourceExample.setComponentId(componentId);
 		componentResourceExample.setResourceId(resourceId);
@@ -3738,7 +3740,6 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
-	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
@@ -3845,7 +3846,6 @@ public class ComponentRESTResource
 //
 //	}
 	// </editor-fold>
-	
 	// <editor-fold defaultstate="collapsed"  desc="Integrations">
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
@@ -4319,7 +4319,7 @@ public class ComponentRESTResource
 		if (component != null) {
 			response = ownerCheck(component, permission);
 			if (response == null) {
-				if (!SecurityUtil.hasPermission(permission)) {					
+				if (!SecurityUtil.hasPermission(permission)) {
 					if (skipApproveCheck == false) {
 						if (ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
 							response = Response.status(Response.Status.FORBIDDEN).build();

@@ -109,8 +109,8 @@ public class EvaluationResource
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		queryByExample.setAdditionalWhere(FilterEngine.queryStandardRestriction());		
-		
+		queryByExample.setAdditionalWhere(FilterEngine.queryStandardRestriction());
+
 		queryByExample.setMaxResults(evaluationFilterParams.getMax());
 		queryByExample.setFirstResult(evaluationFilterParams.getOffset());
 		queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());
@@ -144,6 +144,7 @@ public class EvaluationResource
 		Evaluation evaluation = new Evaluation();
 		evaluation.setEvaluationId(evaluationId);
 		evaluation = evaluation.find();
+		evaluation = FilterEngine.filter(evaluation);
 		if (evaluation != null) {
 			return sendSingleEntityResponse(EvaluationView.toView(evaluation));
 		} else {
@@ -427,7 +428,7 @@ public class EvaluationResource
 	)
 	{
 		ContentSectionMedia contentSectionMedia = null;
-		
+
 		ContentSection contentSection = new ContentSection();
 		contentSection.setEntity(Evaluation.class.getSimpleName());
 		contentSection.setEntityId(evaluationId);
@@ -441,7 +442,7 @@ public class EvaluationResource
 			if (contentSectionMedia != null) {
 				contentSectionMedia.setPrivateMedia(Convert.toBoolean(sectionMedia.getPrivateMedia()));
 				contentSectionMedia.setCaption(sectionMedia.getCaption());
-				contentSectionMedia.save();							
+				contentSectionMedia.save();
 			}
 		}
 		return sendSingleEntityResponse(contentSectionMedia);
@@ -674,7 +675,7 @@ public class EvaluationResource
 		section = section.find();
 		return sendSingleEntityResponse(section);
 	}
-	
+
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
@@ -687,7 +688,7 @@ public class EvaluationResource
 	)
 	{
 		ContentSectionAll contentSectionAll = null;
-		
+
 		ContentSection section = new ContentSection();
 		section.setEntity(Evaluation.class.getSimpleName());
 		section.setEntityId(evaluationId);
@@ -695,9 +696,9 @@ public class EvaluationResource
 		section = section.find();
 		if (section != null) {
 			contentSectionAll = service.getContentSectionService().getContentSectionAll(sectionId);
-		}		
+		}
 		return sendSingleEntityResponse(contentSectionAll);
-	}	
+	}
 
 	@GET
 	@RequireSecurity(SecurityPermission.EVALUATIONS)

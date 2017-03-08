@@ -302,7 +302,7 @@ public class CoreComponentServiceImpl
 		ComponentDetailView result = new ComponentDetailView();
 		Component tempComponent = persistenceService.findById(Component.class, componentId);
 		tempComponent = FilterEngine.filter(tempComponent);
-		
+
 		if (tempComponent == null)
 		{
 			return null;
@@ -316,7 +316,7 @@ public class CoreComponentServiceImpl
 		componentRelationshipExample.setComponentId(componentId);
 		List<ComponentRelationship> directRelationships = componentRelationshipExample.findByExample();
 		directRelationships = FilterEngine.filter(directRelationships, true);
-		
+
 		result.getRelationships().addAll(ComponentRelationshipView.toViewList(directRelationships));
 		result.setRelationships(result.getRelationships().stream().filter(r -> r.getTargetApproved()).collect(Collectors.toList()));
 
@@ -324,10 +324,10 @@ public class CoreComponentServiceImpl
 		componentRelationshipExample = new ComponentRelationship();
 		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
 		componentRelationshipExample.setRelatedComponentId(componentId);
-		
+
 		List<ComponentRelationship> inDirectRelationships = componentRelationshipExample.findByExample();
-		inDirectRelationships = FilterEngine.filter(inDirectRelationships, true);		
-		
+		inDirectRelationships = FilterEngine.filter(inDirectRelationships, true);
+
 		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(inDirectRelationships);
 		relationshipViews = relationshipViews.stream().filter(r -> r.getOwnerApproved()).collect(Collectors.toList());
 		result.getRelationships().addAll(relationshipViews);
@@ -348,7 +348,7 @@ public class CoreComponentServiceImpl
 		result.setTags(componentService.getBaseComponent(ComponentTag.class, componentId));
 
 		List<ComponentResource> componentResources = componentService.getBaseComponent(ComponentResource.class, componentId);
-		
+
 		componentResources = SortUtil.sortComponentResource(componentResources);
 		componentResources.forEach(resource
 				->
@@ -356,14 +356,14 @@ public class CoreComponentServiceImpl
 			result.getResources().add(ComponentResourceView.toView(resource));
 		});
 
-		List<ComponentMetadata> componentMetadata = componentService.getBaseComponent(ComponentMetadata.class, componentId);		
+		List<ComponentMetadata> componentMetadata = componentService.getBaseComponent(ComponentMetadata.class, componentId);
 		componentMetadata.forEach(metadata
 				->
 		{
 			result.getMetadata().add(ComponentMetadataView.toView(metadata));
 		});
 
-		List<ComponentMedia> componentMedia = componentService.getBaseComponent(ComponentMedia.class, componentId);	
+		List<ComponentMedia> componentMedia = componentService.getBaseComponent(ComponentMedia.class, componentId);
 		componentMedia.forEach(media
 				->
 		{
@@ -378,7 +378,7 @@ public class CoreComponentServiceImpl
 		});
 
 		List<ComponentContact> componentContact = componentService.getBaseComponent(ComponentContact.class, componentId);
-			componentContact.forEach(contact
+		componentContact.forEach(contact
 				->
 		{
 			result.getContacts().add(ComponentContactView.toView(contact));
@@ -390,7 +390,7 @@ public class CoreComponentServiceImpl
 		componentTrackingExample.setComponentId(componentId);
 		result.setComponentViews(persistenceService.countByExample(componentTrackingExample));
 
-		List<ComponentReview> tempReviews = componentService.getBaseComponent(ComponentReview.class, componentId);	
+		List<ComponentReview> tempReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
 		List<ComponentReviewView> reviews = new ArrayList();
 		tempReviews.forEach(review
 				->
@@ -417,7 +417,7 @@ public class CoreComponentServiceImpl
 
 		// Here we grab the responses to each question
 		List<ComponentQuestionView> questionViews = new ArrayList<>();
-		List<ComponentQuestion> questions = componentService.getBaseComponent(ComponentQuestion.class, componentId);	
+		List<ComponentQuestion> questions = componentService.getBaseComponent(ComponentQuestion.class, componentId);
 		questions.stream().forEach((question)
 				->
 		{
@@ -427,8 +427,8 @@ public class CoreComponentServiceImpl
 			tempResponse.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			List<ComponentQuestionResponse> responses = tempResponse.findByExample();
 			responses = FilterEngine.filter(responses);
-			
-			responseViews = ComponentQuestionResponseView.toViewList(responses);			
+
+			responseViews = ComponentQuestionResponseView.toViewList(responses);
 			questionViews.add(ComponentQuestionView.toView(question, responseViews));
 		});
 		result.setQuestions(questionViews);
@@ -1456,6 +1456,16 @@ public class CoreComponentServiceImpl
 			}
 		}
 
+		if (componentAll != null)
+		{
+			Component componentToFilter = componentAll.getComponent();
+			componentToFilter = FilterEngine.filter(componentToFilter);
+			if (componentToFilter != null)
+			{
+				componentAll = null;
+			}
+		}
+
 		return componentAll;
 	}
 
@@ -1562,8 +1572,8 @@ public class CoreComponentServiceImpl
 		QueryByExample queryByExample = new QueryByExample(componentExample);
 
 		//TODO: consider moving the filtering work to the DB
-		List<Component> components = persistenceService.queryByExample(Component.class, queryByExample);		
-		
+		List<Component> components = persistenceService.queryByExample(Component.class, queryByExample);
+
 		components = FilterEngine.filter(components);
 
 		//filter out pending changes
