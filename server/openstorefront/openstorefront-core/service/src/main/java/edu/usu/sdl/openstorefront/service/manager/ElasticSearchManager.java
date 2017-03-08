@@ -268,9 +268,6 @@ public class ElasticSearchManager
 			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
 		}
 		
-		//esQuery.filter(QueryBuilders.
-		
-
 		SearchResponse response = ElasticSearchManager.getClient()
 				.prepareSearch(INDEX)
 				.setQuery(esQuery)
@@ -295,12 +292,15 @@ public class ElasticSearchManager
 					indexSearchResult.getResultsList().add(SolrComponentModel.fromComponentSearchView(view));
 				} else {
 					LOG.log(Level.FINER, MessageFormat.format("Component is no long approved and active.  Removing index.  {0}", view.getComponentId()));
+					indexSearchResult.setTotalResults(indexSearchResult.getTotalResults()-1);
 					deleteById(view.getComponentId());
 				}
 			} catch (IOException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to handle search result", "check index database", ex);
 			}
 		}
+		indexSearchResult.applyDataFilter();
+		
 		return indexSearchResult;
 	}
 

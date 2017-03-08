@@ -16,8 +16,12 @@
 package edu.usu.sdl.openstorefront.service.search;
 
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.security.UserContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -42,10 +46,65 @@ public class IndexSearchResult
 	 * consider for the future).
 	 * 
 	 */
-	private void applyDataFilter() 
+	public void applyDataFilter() 
 	{
-		//if ()
-		
+		//only one list will be populated at time
+		if (!resultsList.isEmpty()) {
+			UserContext userContext = SecurityUtil.getUserContext();
+			Set<String> dataSources = userContext.dataSources();
+			Set<String> acceptedDataSensitivity = userContext.dataSensitivity();
+			
+			int countBefore = resultsList.size();
+			
+			resultsList = resultsList.stream()
+						.filter(result ->{
+							boolean keepSource = false;
+							if (result.getDataSource() == null && userContext.allowUnspecifiedDataSources()) {
+								 keepSource = true;
+							} else if (dataSources.contains(result.getDataSource())) {
+								keepSource = true;
+							} 
+							
+							if (keepSource) {
+								if (result.getDataSensitivity() == null && userContext.allowUnspecifiedDataSensitivty()) {
+									return true;
+								} else if (acceptedDataSensitivity.contains(result.getDataSensitivity())) {
+									return true;
+								}
+							}
+							return false;
+						})
+						.collect(Collectors.toList());
+			totalResults = totalResults - (countBefore - resultsList.size());
+			
+		} else if (!searchViews.isEmpty()) {
+			UserContext userContext = SecurityUtil.getUserContext();
+			Set<String> dataSources = userContext.dataSources();
+			Set<String> acceptedDataSensitivity = userContext.dataSensitivity();
+			
+			int countBefore = searchViews.size();
+			
+			searchViews.stream()
+						.filter(result ->{
+							boolean keepSource = false;
+							if (result.getDataSource() == null && userContext.allowUnspecifiedDataSources()) {
+								 keepSource = true;
+							} else if (dataSources.contains(result.getDataSource())) {
+								keepSource = true;
+							} 
+							
+							if (keepSource) {
+								if (result.getDataSensitivity() == null && userContext.allowUnspecifiedDataSensitivty()) {
+									return true;
+								} else if (acceptedDataSensitivity.contains(result.getDataSensitivity())) {
+									return true;
+								}
+							}
+							return false;
+						})
+						.collect(Collectors.toList());	
+			totalResults = totalResults - (countBefore - searchViews.size());
+		}
 	}
 	
 	public List<SolrComponentModel> getResultsList()

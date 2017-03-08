@@ -38,7 +38,7 @@ Ext.define('OSF.form.EvaluationInfo', {
 			maxLength: 255,
 			labelSeparator: '',
 			fieldLabel: 'Version <span class="field-required" />',
-			labelWidth: 150,
+			labelWidth: 200,
 			width: '100%',
 			listeners: {
 				change: {	
@@ -60,7 +60,7 @@ Ext.define('OSF.form.EvaluationInfo', {
 			typeAhead: false,
 			width: '100%',
 			fieldLabel: 'Status <span class="field-required" />',
-			labelWidth: 150,
+			labelWidth: 200,
 			storeConfig: {
 				url: 'api/v1/resource/lookuptypes/WorkflowStatus'
 			},
@@ -77,7 +77,8 @@ Ext.define('OSF.form.EvaluationInfo', {
 			width: '100%',
 			labelClsExtra: 'eval-form-field-label',
 			fieldCls: 'eval-form-field',
-			labelWidth: 150
+			labelAlign: 'right',
+			labelWidth: 200
 		}));
 		
 		evalForm.add(formItems);

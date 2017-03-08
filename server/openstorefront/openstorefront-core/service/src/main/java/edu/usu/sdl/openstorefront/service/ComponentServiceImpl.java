@@ -645,7 +645,7 @@ public class ComponentServiceImpl
 	@Override
 	public ComponentSensitivityModel getComponentSensitivity(String componentId)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return core.getComponentSensitivity(componentId);
 	}
 
 }

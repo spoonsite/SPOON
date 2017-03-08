@@ -461,6 +461,7 @@ public class SolrManager
 		}
 		indexSearchResult.getResultsList().addAll(resultsList);
 		indexSearchResult.setTotalResults(totalFound);
+		indexSearchResult.applyDataFilter();
 		
 		return indexSearchResult;		
 	}
