@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationComment;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
@@ -108,6 +109,8 @@ public class EvaluationResource
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
+		queryByExample.setAdditionalWhere(FilterEngine.queryStandardRestriction());		
+		
 		queryByExample.setMaxResults(evaluationFilterParams.getMax());
 		queryByExample.setFirstResult(evaluationFilterParams.getOffset());
 		queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());

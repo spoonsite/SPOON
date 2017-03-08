@@ -77,6 +77,13 @@ public class SolrComponentModel
 	@Field("name_s_is")
 	private String nameString;
 	
+	@Field("datasource_s_is")
+	private String dataSource;
+	
+	@Field("datasensitivy_s_is")	
+	private String dataSensitivity;
+	
+	
 	private int searchWeight;
 	private float queryScore;
 
@@ -279,6 +286,26 @@ public class SolrComponentModel
 	public void setQueryScore(float queryScore)
 	{
 		this.queryScore = queryScore;
+	}
+
+	public String getDataSource()
+	{
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource)
+	{
+		this.dataSource = dataSource;
+	}
+
+	public String getDataSensitivity()
+	{
+		return dataSensitivity;
+	}
+
+	public void setDataSensitivity(String dataSensitivity)
+	{
+		this.dataSensitivity = dataSensitivity;
 	}
 
 }

@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.doc.security.LogicOperation;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -120,10 +121,11 @@ public class MediaAction
 	@HandlesEvent("LoadMedia")
 	public Resolution sendMedia() throws FileNotFoundException
 	{
-		componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);
+		componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);		
+		componentMedia = FilterEngine.filter(componentMedia, true);
 		if (componentMedia == null) {
 			throw new OpenStorefrontRuntimeException("Media not Found", "Check media Id");
-		}
+		} 
 
 		InputStream in;
 		long length;
@@ -415,6 +417,10 @@ public class MediaAction
 		ContentSectionMedia sectionMedia = new ContentSectionMedia();		
 		sectionMedia.setContentSectionMediaId(mediaId);		
 		sectionMedia = sectionMedia.find();
+		
+		//Check component / or evaluate for access
+		
+		
 		if (sectionMedia == null) {
 			log.log(Level.FINE, MessageFormat.format("Section Media with media id: {0} is not found.", mediaId));
 			return new StreamingResolution("image/png")

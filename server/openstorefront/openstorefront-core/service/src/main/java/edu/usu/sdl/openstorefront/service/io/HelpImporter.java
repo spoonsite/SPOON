@@ -186,6 +186,7 @@ public class HelpImporter
 				{
 					String permissionRaw[] = title.split("@");
 					helpSection.setPermission(permissionRaw[1]);
+					helpSection.setTitle(permissionRaw[0].trim());
 				}
 				helpSection.setAdminSection(false);
 

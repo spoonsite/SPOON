@@ -1,7 +1,7 @@
 
 <span style="font-size: 24px;">User Guide</span>
 
-Version 2.2
+Version 2.3
                                                      
 
 # 1. Overview
@@ -31,7 +31,7 @@ licensed under GPL V3.**
 ## 1.1 Release Notes
 ------  
 =======
-## 1.1 Release Notes for v2.2
+## 1.1 Release Notes for v2.3
 ------
 
 Version 2.2 is a maintenance release that:
@@ -40,7 +40,7 @@ Version 2.2 is a maintenance release that:
  * Improves the usability of searching
  * Improves submissions, specifically the administration of submissions
 
-### 1.1.1 Administrator Release Notes, v2.2 @ADMIN-SYSTEM-MANAGEMENT
+### 1.1.1 Administrator Release Notes, v2.3 @ADMIN-SYSTEM-MANAGEMENT
 ------
 
 *What's new in v2.2*
@@ -1802,7 +1802,7 @@ Contains definitions of terms used in the application and in the help documentat
 -  **Highlight**                    -   A news item shown on the home page.
 -  **Watch**                        -   A way to track changes on a listing.
 
-## 4.2 Admin Terminology @ADMIN-ENTRY-MANAGEMENT"
+## 4.2 Admin Terminology @ADMIN-ENTRY-MANAGEMENT
 -----------------
 
 -  **Attribute Type**   -  A related group of specific categories representing a single attribute of a listing (eg. "Funded" would be a type with the corresponding value "Yes" or "No").

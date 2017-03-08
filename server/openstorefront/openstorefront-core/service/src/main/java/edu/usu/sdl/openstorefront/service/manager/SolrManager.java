@@ -270,6 +270,8 @@ public class SolrManager
 			solrDocModel.setIsComponent(Boolean.TRUE);
 			solrDocModel.setId(component.getComponentId());
 			solrDocModel.setNameString(component.getName());
+			solrDocModel.setDataSource(component.getDataSource());
+			solrDocModel.setDataSensitivity(component.getDataSensitivity());			
 			solrDocModel.setName(component.getName());
 			String description = StringProcessor.stripHtml(component.getDescription());
 			solrDocModel.setDescription(description.replace("<>", "").replace("\n", ""));

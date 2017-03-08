@@ -65,6 +65,8 @@ public class ComponentSearchView
 	private Integer listingSecurityMarkingRank;
 	private String listingSecurityMarkingStyle;
 	private float searchScore;
+	private String dataSource;
+	private String dataSensitivity;
 	
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
@@ -112,6 +114,8 @@ public class ComponentSearchView
 		view.setVersion(component.getVersion());
 		view.setComponentType(component.getComponentType());
 		view.setComponentTypeDescription(TranslateUtil.translateComponentType(component.getComponentType()));
+		view.setDataSource(component.getDataSource());
+		view.setDataSensitivity(component.getDataSensitivity());
 		
 		List<SearchResultAttribute> componentAttributes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
@@ -530,6 +534,26 @@ public class ComponentSearchView
 	public void setSearchScore(float searchScore)
 	{
 		this.searchScore = searchScore;
+	}
+
+	public String getDataSource()
+	{
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource)
+	{
+		this.dataSource = dataSource;
+	}
+
+	public String getDataSensitivity()
+	{
+		return dataSensitivity;
+	}
+
+	public void setDataSensitivity(String dataSensitivity)
+	{
+		this.dataSensitivity = dataSensitivity;
 	}
 
 }

@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.ResultTypeStat;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
@@ -306,7 +307,12 @@ public class SearchServiceImpl
 
 				//get intermediate Results
 				if (!masterResults.isEmpty()) {
-					String query = "select componentId, componentType, name, lastUpdateDts, activeStatus, approvalState from " + Component.class.getSimpleName() + " where componentId in :idList";
+					String query = "select componentId, componentType, name, lastUpdateDts, activeStatus, approvalState from " + 
+									Component.class.getSimpleName() + 
+									" where " +
+									FilterEngine.queryComponentRestriction() +
+									" and componentId in :idList";
+					
 					Map<String, Object> parameterMap = new HashMap<>();
 					parameterMap.put("idList", masterResults);
 					List<ODocument> results = persistenceService.query(query, parameterMap);

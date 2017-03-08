@@ -51,7 +51,7 @@ public class FilterEngine
 	 * @param dataItems
 	 * @return
 	 */
-	public static <T> List<T> filter(List<T> dataItems)
+	public static <T extends StandardEntity> List<T> filter(List<T> dataItems)
 	{
 		return filter(dataItems, false);
 	}
@@ -64,7 +64,7 @@ public class FilterEngine
 	 * @param checkParentComponent
 	 * @return
 	 */
-	public static <T> List<T> filter(List<T> dataItems, boolean checkParentComponent)
+	public static <T extends StandardEntity> List<T> filter(List<T> dataItems, boolean checkParentComponent)
 	{
 		if (isFilterable(dataItems)) {
 			dataItems = dataItems.stream()
@@ -82,7 +82,7 @@ public class FilterEngine
 	 * @param data
 	 * @return
 	 */
-	public static <T> T filter(T data)
+	public static <T extends StandardEntity> T filter(T data)
 	{
 		return filter(data, false);
 	}
@@ -96,7 +96,7 @@ public class FilterEngine
 	 * restricted)
 	 * @return null if filter or the data if it should be kept
 	 */
-	public static <T> T filter(T data, boolean checkParentComponent)
+	public static <T extends StandardEntity> T filter(T data, boolean checkParentComponent)
 	{
 		T returnValue = null;
 		if (data == null) {
@@ -188,14 +188,13 @@ public class FilterEngine
 	 * @param data (It's assume the list only contains one data type)
 	 * @return true if data can be Filtered
 	 */
-	public static <T> boolean isFilterable(List<T> data)
+	public static <T extends StandardEntity> boolean isFilterable(List<T> data)
 	{
 		boolean filterable = false;
 
 		if (data != null
 				&& !data.isEmpty()
-				&& SecurityUtil.isLoggedIn()
-				&& data.get(0) instanceof StandardEntity) {
+				&& SecurityUtil.isLoggedIn()) {
 			filterable = true;
 		}
 
@@ -210,13 +209,12 @@ public class FilterEngine
 	 * @param data
 	 * @return true if data can be Filtered
 	 */
-	public static <T> boolean isFilterable(T data)
+	public static <T extends StandardEntity> boolean isFilterable(T data)
 	{
 		boolean filterable = false;
 
 		if (data != null
-				&& SecurityUtil.isLoggedIn()
-				&& data instanceof StandardEntity) {
+				&& SecurityUtil.isLoggedIn()) {
 			filterable = true;
 		}
 

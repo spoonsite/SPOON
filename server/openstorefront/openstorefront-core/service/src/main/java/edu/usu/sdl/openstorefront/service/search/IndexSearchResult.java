@@ -34,7 +34,20 @@ public class IndexSearchResult
 	public IndexSearchResult()
 	{
 	}
-
+	
+	/**
+	 * This will filter the data according to the user 
+	 * Keep mind the total may NOT be accurate; The only way to make it accurate
+	 * would be to pull all results or apply filter to the query. (Which should
+	 * consider for the future).
+	 * 
+	 */
+	private void applyDataFilter() 
+	{
+		//if ()
+		
+	}
+	
 	public List<SolrComponentModel> getResultsList()
 	{
 		return resultsList;

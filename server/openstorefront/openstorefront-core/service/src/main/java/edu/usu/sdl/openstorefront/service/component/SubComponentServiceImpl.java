@@ -42,6 +42,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewProCon;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
@@ -92,7 +93,9 @@ public class SubComponentServiceImpl
 			T baseComponentExample = subComponentClass.newInstance();
 			baseComponentExample.setComponentId(componentId);
 			baseComponentExample.setActiveStatus(activeStatus);
-			return persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
+			List<T> data = persistenceService.queryByExample(subComponentClass, new QueryByExample(baseComponentExample));
+			data = FilterEngine.filter(data);
+			return data;
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
@@ -678,7 +681,9 @@ public class SubComponentServiceImpl
 	public List<ComponentTag> getTagCloud()
 	{
 		String query = "select * from ComponentTag where activeStatus='A' GROUP BY text";
-		return persistenceService.query(query, null);
+		List<ComponentTag> tags = persistenceService.query(query, null);
+		tags = FilterEngine.filter(tags, true);		
+		return tags;
 	}
 
 	public List<ComponentMetadata> getMetadata()

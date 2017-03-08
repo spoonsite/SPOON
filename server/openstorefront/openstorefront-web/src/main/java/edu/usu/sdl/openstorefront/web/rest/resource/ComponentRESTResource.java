@@ -241,7 +241,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Get all resources for ")
+	@APIDescription("Get all resources for components")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentResourceView.class)
 	@Path("/resources")
