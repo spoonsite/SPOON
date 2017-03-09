@@ -526,40 +526,40 @@ public class Application
 	@APIDescription("Gets information about system caches.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(CacheView.class)
-	@Path("/caches")	
+	@Path("/caches")
 	public Response getCaches()
 	{
 		List<CacheView> cacheViews = new ArrayList<>();
-		for (String cacheName :OSFCacheManager.getCacheManager().getCacheNames()) {
+		for (String cacheName : OSFCacheManager.getCacheManager().getCacheNames()) {
 			CacheView cacheView = new CacheView();
 			cacheView.setName(cacheName);
-			
+
 			Cache cache = OSFCacheManager.getCacheManager().getCache(cacheName);
 			cacheView.setHitCount(cache.getStatistics().cacheHitCount());
 			cacheView.setRoughCount(cache.getKeysNoDuplicateCheck().size());
-			
+
 			long total = cache.getStatistics().cacheHitCount() + cache.getStatistics().cacheMissCount();
 			if (total > 0) {
-				cacheView.setHitRatio((double)cache.getStatistics().cacheHitCount() / (double)total);
+				cacheView.setHitRatio((double) cache.getStatistics().cacheHitCount() / (double) total);
 			} else {
 				cacheView.setHitRatio(0);
 			}
-			cacheView.setMissCount(cache.getStatistics().cacheMissCount());						
+			cacheView.setMissCount(cache.getStatistics().cacheMissCount());
 			cacheViews.add(cacheView);
 		}
-		
+
 		GenericEntity<List<CacheView>> entity = new GenericEntity<List<CacheView>>(cacheViews)
 		{
-		};		
+		};
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Clears cache of records")
-	@Path("/caches/{name}/flush")	
+	@Path("/caches/{name}/flush")
 	public Response flushCaches(
-		@PathParam("name") String cacheName
+			@PathParam("name") String cacheName
 	)
 	{
 		Cache cache = OSFCacheManager.getCacheManager().getCache(cacheName);
@@ -567,106 +567,106 @@ public class Application
 			cache.removeAll();
 			return Response.ok().build();
 		}
-		
+
 		return sendSingleEntityResponse(null);
 	}
-	
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Gets information resource managers")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ManagerView.class)
-	@Path("/managers")	
+	@Path("/managers")
 	public Response getManagers()
-	{	
-		List<ManagerView> views = CoreSystem.getManagersView();		
+	{
+		List<ManagerView> views = CoreSystem.getManagersView();
 		GenericEntity<List<ManagerView>> entity = new GenericEntity<List<ManagerView>>(views)
 		{
-		};		
-		return sendSingleEntityResponse(entity);		
+		};
+		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Starts a manager (It's preferable to use restart rather than stop and starting)")
-	@Path("/managers/{managerClass}/start")	
+	@Path("/managers/{managerClass}/start")
 	public Response startManager(
-		@PathParam("managerClass") String managerClass
+			@PathParam("managerClass") String managerClass
 	)
 	{
 		Initializable manager = CoreSystem.findManager(managerClass, true);
-		
+
 		if (manager != null) {
 			CoreSystem.startManager(managerClass);
 			return Response.ok().build();
 		}
-		
+
 		return sendSingleEntityResponse(null);
-	}	
-	
+	}
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Stops a manager (It's preferable to use restart rather than stop and starting)")
-	@Path("/managers/{managerClass}/stop")	
+	@Path("/managers/{managerClass}/stop")
 	public Response stopManager(
-		@PathParam("managerClass") String managerClass
+			@PathParam("managerClass") String managerClass
 	)
 	{
 		Initializable manager = CoreSystem.findManager(managerClass, true);
-		
+
 		if (manager != null) {
 			CoreSystem.stopManager(managerClass);
 			return Response.ok().build();
 		}
-		
+
 		return sendSingleEntityResponse(null);
-	}	
-	
+	}
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Restart a manager.")
-	@Path("/managers/{managerClass}/restart")	
+	@Path("/managers/{managerClass}/restart")
 	public Response restartManager(
-		@PathParam("managerClass") String managerClass
+			@PathParam("managerClass") String managerClass
 	)
 	{
 		Initializable manager = CoreSystem.findManager(managerClass, true);
-		
+
 		if (manager != null) {
 			CoreSystem.restartManager(managerClass);
 			return Response.ok().build();
 		}
-		
+
 		return sendSingleEntityResponse(null);
-	}	
+	}
 
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@APIDescription("Restart the application. Note the system will be unavailable until the restart is complete.")
-	@Path("/restart")	
+	@Path("/restart")
 	public Response restartApplication(
-		@PathParam("managerClass") String managerClass
+			@PathParam("managerClass") String managerClass
 	)
 	{
 		CoreSystem.restart();
 		return Response.ok().build();
-	}	
-	
+	}
+
 	@GET
 	@Produces({MediaType.TEXT_PLAIN})
 	@APIDescription("Translate a label to key; Useful for generating code for attribute.")
 	@Path("/key")
 	public Response toKey(
-		@QueryParam("label") @RequiredParam String label	
+			@QueryParam("label") @RequiredParam String label
 	)
 	{
 		String key = "";
-		
+
 		if (StringUtils.isNotBlank(label)) {
 			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 			key = sanitizer.santize(StringUtils.left(label.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
 		}
 		return Response.ok(key).build();
 	}
-	
+
 }

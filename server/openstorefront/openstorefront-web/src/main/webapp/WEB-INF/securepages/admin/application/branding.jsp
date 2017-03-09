@@ -45,8 +45,9 @@
 					height: '80%',
 					maximizable: true,
 					title: 'Preview',
-					iconCls: 'fa fa-eye',
+					iconCls: 'fa fa-lg fa-eye icon-button-color-view icon-small-vertical-correction',
 					modal: true,
+					minWidth: 500,
 					layout: 'fit',
 					items: [
 						previewContents
@@ -61,7 +62,7 @@
 								},
 								{									
 									text: 'Close',
-									iconCls: 'fa fa-2x fa-close',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 									scale: 'medium',
 									handler: function() {
 										previewWin.close();
@@ -79,7 +80,7 @@
 				var addEditBrandingWin = Ext.create('Ext.window.Window', {
 					id: 'addEditBrandingWin',
 					title: 'Add/Edit Branding',
-					iconCls: 'fa fa-sliders',
+					iconCls: 'fa fa-lg fa-sliders',
 					modal: true,
 					width: '80%',
 					height: '80%',
@@ -466,7 +467,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-2x fa-save',
+											iconCls: 'fa fa-lg fa-save icon-button-color-add icon-small-vertical-correction',
 											scale: 'medium',
 											formBind: true,
 											handler: function () {
@@ -486,7 +487,7 @@
 										{
 											text: 'Preview',
 											tooltip: 'Saves and preview',
-											iconCls: 'fa fa-2x fa-eye',
+											iconCls: 'fa fa-lg fa-eye icon-button-color-view icon-small-vertical-correction',
 											scale: 'medium',
 											formBind: true,											
 											handler: function () {												
@@ -506,7 +507,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-2x fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 											scale: 'medium',
 											handler: function () {
 												this.up('window').close();
@@ -561,7 +562,7 @@
 				
 
 				var brandingGrid = Ext.create('Ext.grid.Panel', {
-					title: 'Manage Branding <i class="fa fa-question-circle"  data-qtip="This tool allows the ability to set the graphic design and theme characteristics for the site." ></i>',
+					title: '  <i class="fa fa-lg fa-question-circle"  data-qtip="This tool allows the ability to set the graphic design and theme characteristics for the site." ></i>',
 					id: 'brandingGrid',
 					columnLines: true,
 					store: {
@@ -616,15 +617,20 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
+									width: '110px',
 									handler: function () {
 										actionRefresh();
 									}
 								},
 								{
+									xtype: 'tbseparator'
+								},
+								{
 									text: 'Add',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
+									width: '100px',
 									handler: function () {
 										actionAdd();
 									}
@@ -633,7 +639,8 @@
 									text: 'Edit',
 									itemId: 'edit',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-edit',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+									width: '100px',
 									disabled: true,
 									handler: function () {
 										var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -644,10 +651,10 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Activate',
+									text: 'Toggle Status',
 									itemId: 'activate',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-power-off',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 									disabled: true,
 									handler: function () {
 										var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -658,12 +665,14 @@
 									text: 'Duplicate',
 									itemId: 'duplicate',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-clone',
+									width: '150px',
+									iconCls: 'fa fa-2x fa-clone icon-button-color-default icon-vertical-correction-edit',
 									menu: {
 										items: [
 											{
 												text: 'Selected Branding',	
 												id: 'duplicateSelected',
+												cls: 'menu-items-css',
 												disabled: true,
 												handler: function() {
 													var record = this.up('grid').getSelectionModel().getSelection()[0];	
@@ -674,7 +683,8 @@
 												xtype: 'menuseparator'
 											},
 											{
-												text: 'Current Branding',	
+												text: 'Current Branding',
+												cls: 'menu-items-css',
 												handler: function() {														
 													actionDuplicate();
 												}												
@@ -688,7 +698,8 @@
 								{
 									text: 'Reset To Default',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-undo',
+									iconCls: 'fa fa-2x fa-undo icon-button-color-refresh icon-vertical-correction',
+									width: '170px',
 									handler: function () {
 										actionResetToDefault();
 									}
@@ -700,7 +711,7 @@
 									text: 'Delete',
 									itemId: 'delete',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-power-off',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										var record = this.up('grid').getSelectionModel().getSelection()[0];

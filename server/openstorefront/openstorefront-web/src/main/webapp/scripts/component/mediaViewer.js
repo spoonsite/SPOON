@@ -91,7 +91,7 @@ Ext.define('OSF.component.MediaViewerWindow', {
 					itemId: 'next',
 					scale: 'large',	
 					margin: '0 5 0 0',
-					iconCls: 'fa fa-2x fa-arrow-right',
+					iconCls: 'fa fa-2x fa-arrow-right icon-button-color-default',
 					handler: function() {
 						var messageWindow = this.up('window');
 						messageWindow.currentMediaIndex++;
@@ -115,7 +115,7 @@ Ext.define('OSF.component.MediaViewerWindow', {
 				{
 					xtype: 'button',
 					text: 'Download',
-					iconCls: 'fa fa-large fa-download',
+					iconCls: 'fa fa-large fa-download icon-button-color-default',
 					handler: function(){
 						window.location.href = this.up('window').media.link;
 					}

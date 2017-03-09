@@ -83,8 +83,9 @@
 							items: [
 								{
 									text: 'Refresh',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									scale: 'medium',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										actionRefreshResponses();
 									}
@@ -97,7 +98,8 @@
 									itemId: 'view',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-binoculars',
+									width: '140px',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									handler: function () {
 										actionViewEntry(Ext.getCmp('responseGrid').getSelectionModel().getSelection()[0].get('componentId'));										
 									}									
@@ -106,8 +108,9 @@
 									text: 'Edit',
 									itemId: 'edit',
 									scale: 'medium',
+									width: '100px',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										actionEditResponse(Ext.getCmp('responseGrid').getSelectionModel().getSelection()[0]);										
 									}									
@@ -120,7 +123,7 @@
 									itemId: 'delete',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-trash-o',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										actionDeleteResponse(Ext.getCmp('responseGrid').getSelectionModel().getSelection()[0]);
 									}									
@@ -153,7 +156,7 @@
 				};
 						
 				var responseWindow = Ext.create('OSF.component.ResponseWindow', {
-					title: 'Edit Answer',						
+					title: 'Edit Answer',
 					postHandler: function(responseWin, response) {
 						actionRefreshResponses();
 					}
@@ -166,13 +169,13 @@
 				
 				var actionDeleteResponse = function(record) {
 					Ext.Msg.show({
-						title:'Remove Answer?',
-						message: 'Are you sure you want to remove this Answer?',
+						title:'Delete Answer?',
+						message: 'Are you sure you want to delete this Answer?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {
 							if (btn === 'yes') {
-								Ext.getCmp('questionGrid').setLoading("Removing...");
+								Ext.getCmp('questionGrid').setLoading("Deleting...");
 								Ext.Ajax.request({
 									url: 'api/v1/resource/components/'+record.get('componentId')+'/questions/'+record.get('questionId') + '/responses/' + record.get('responseId'),
 									method: 'DELETE',
@@ -230,8 +233,9 @@
 							items: [
 								{
 									text: 'Refresh',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									scale: 'medium',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										actionRefreshQuestions();
 									}
@@ -244,7 +248,8 @@
 									itemId: 'view',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-binoculars',
+									width: '140px',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									handler: function () {
 										actionViewEntry(Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0].get('componentId'));										
 									}									
@@ -254,7 +259,8 @@
 									itemId: 'edit',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										actionEditQuestion(Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0]);										
 									}									
@@ -267,7 +273,7 @@
 									itemId: 'delete',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-trash-o',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function () {
 										actionDeleteQuestion(Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0]);
 									}									
@@ -334,13 +340,13 @@
 				
 				var actionDeleteQuestion = function(record) {
 					Ext.Msg.show({
-						title:'Remove Question?',
-						message: 'Are you sure you want to remove this question?',
+						title:'Delete Question?',
+						message: 'Are you sure you want to delete this question?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {
 							if (btn === 'yes') {
-								Ext.getCmp('questionGrid').setLoading("Removing...");
+								Ext.getCmp('questionGrid').setLoading("Deleting...");
 								Ext.Ajax.request({
 									url: 'api/v1/resource/components/'+record.get('componentId')+'/questions/'+record.get('questionId'),
 									method: 'DELETE',

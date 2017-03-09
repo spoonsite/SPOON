@@ -109,8 +109,9 @@ import org.apache.commons.lang.StringUtils;
 public class AttributeResource
 		extends BaseResource
 {
+
 	private static final Logger LOG = Logger.getLogger(AttributeResource.class.getName());
-	
+
 	@Context
 	HttpServletRequest request;
 
@@ -177,15 +178,15 @@ public class AttributeResource
 	@DataType(RelationshipView.class)
 	@Path("/relationships")
 	public Response getAttributeRelationships(
-		@QueryParam("attributeType") String filterAttributeType 
-	) 
+			@QueryParam("attributeType") String filterAttributeType
+	)
 	{
 		List<RelationshipView> relationships = new ArrayList<>();
-				
+
 		AttributeType attributeTypeExample = new AttributeType();
 		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		attributeTypeExample.setAttributeType(filterAttributeType);
-						
+
 		List<AttributeType> attributeTypes = attributeTypeExample.findByExample();
 		for (AttributeType attributeType : attributeTypes) {
 			if (attributeType.getArchitectureFlg()) {
@@ -203,25 +204,25 @@ public class AttributeResource
 					relationship.setTargetKey(attributeType.getAttributeType());
 					relationship.setTargetName(attributeType.getDescription());
 					relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
-										
+
 					relationships.add(relationship);
-				}				
+				}
 			}
-		}		
-		
+		}
+
 		GenericEntity<List<RelationshipView>> entity = new GenericEntity<List<RelationshipView>>(relationships)
 		{
 		};
 		return sendSingleEntityResponse(entity);
 	}
 
-	public void buildRelations(List<RelationshipView> relationships, Architecture architecture,  Architecture parent) 
+	public void buildRelations(List<RelationshipView> relationships, Architecture architecture, Architecture parent)
 	{
 		if (parent != null) {
 			RelationshipView relationship = new RelationshipView();
 			String key = architecture.getAttributeType() + "-" + architecture.getAttributeCode();
 			String keyParent = parent.getAttributeType() + "-" + parent.getAttributeCode();
-			
+
 			relationship.setKey(key);
 			relationship.setName(architecture.getName());
 			relationship.setEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
@@ -230,15 +231,15 @@ public class AttributeResource
 			relationship.setTargetName(parent.getName());
 			relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
 
-			relationships.add(relationship);			
+			relationships.add(relationship);
 		}
-		
+
 		for (Architecture child : architecture.getChildren()) {
 			buildRelations(relationships, child, architecture);
-		}		
-		
-	}	
-	
+		}
+
+	}
+
 	@POST
 	@APIDescription("Exports attributes in JSON format. To import attributes, POST to /Upload.action?UploadAttributes with the file (Requires Admin)")
 	@RequireSecurity(value = {SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT, SecurityPermission.ADMIN_DATA_IMPORT_EXPORT})
@@ -373,7 +374,7 @@ public class AttributeResource
 			return Response.ok(attributeCode).build();
 		}
 	}
-	
+
 	@GET
 	@APIDescription("Gets attribute code details")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -394,7 +395,7 @@ public class AttributeResource
 		} else {
 			return Response.ok(AttributeDetail.toView(attributeCode)).build();
 		}
-	}	
+	}
 
 	@GET
 	@APIDescription("Gets attribute code base on filter. Always sorted by sort Order or label")
@@ -486,7 +487,7 @@ public class AttributeResource
 
 		return sendSingleEntityResponse(attributeCode);
 	}
-	
+
 	@GET
 	@APIDescription("Get the components which contain a specified attribute type and code")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -508,13 +509,13 @@ public class AttributeResource
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
 		List<ComponentAttribute> attributeComponents = service.getPersistenceService().queryByExample(ComponentAttribute.class, new QueryByExample(componentAttributeExample));
 		for (ComponentAttribute attributeComponent : attributeComponents) {
-			
+
 			Component component = service.getPersistenceService().findById(Component.class, attributeComponent.getComponentAttributePk().getComponentId());
-			
+
 			ComponentView view = ComponentView.toView(component);
-			
+
 			if (view != null) {
-				
+
 				components.add(view);
 			}
 		}
@@ -581,7 +582,7 @@ public class AttributeResource
 	private Response handleAttributePostPutType(AttributeType attributeType, boolean post)
 	{
 		attributeType.updateNullFlags();
-		
+
 		ValidationModel validationModel = new ValidationModel(attributeType);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
@@ -758,7 +759,7 @@ public class AttributeResource
 		return handleAttributePostPutCode(attributeCode, true);
 	}
 
-	@POST	
+	@POST
 	@APIDescription("Creates a new user-generated attribute codes. Return all codes translated.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -766,10 +767,10 @@ public class AttributeResource
 	@Path("/attributetypes/usercodes")
 	public Response postUserAttributeCode(
 			AttributeCodeSave attributeCodeSave)
-	{		
-		List<AttributeCode> updatedCodes = new ArrayList<>();		
+	{
+		List<AttributeCode> updatedCodes = new ArrayList<>();
 		for (NewAttributeCode saveCode : attributeCodeSave.getUserAttributes()) {
-		
+
 			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 			String key = sanitizer.santize(StringUtils.left(saveCode.getAttributeCodeLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
 
@@ -780,36 +781,35 @@ public class AttributeResource
 			newAttributeCodePk.setAttributeCode(key);
 			newAttributeCode.setAttributeCodePk(newAttributeCodePk);
 			updatedCodes.add(newAttributeCode);
-			
+
 			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, saveCode.getAttributeType());
 			if (attributeType != null) {
 				// The attribute type must allow user-generated codes to continue
 				if (Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
 
-					//see if it already exist...if so do nothing. So we don't alert.				
-					AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, newAttributeCodePk);				
+					//see if it already exist...if so do nothing. So we don't alert.
+					AttributeCode existing = service.getPersistenceService().findById(AttributeCode.class, newAttributeCodePk);
 					if (existing == null) {
 						ValidationModel validationModel = new ValidationModel(newAttributeCode);
 						validationModel.setConsumeFieldsOnly(true);
 						ValidationResult validationResult = ValidationUtil.validate(validationModel);
 						if (validationResult.valid()) {
 							service.getAttributeService().saveAttributeCode(newAttributeCode, false);
-							
-							
+
 							AlertContext alertContext = new AlertContext();
 							alertContext.setAlertType(AlertType.USER_DATA);
 							alertContext.setDataTrigger(newAttributeCode);
 							service.getAlertService().checkAlert(alertContext);
 						} else {
 							LOG.log(Level.WARNING, validationResult.toString());
-						}						
-					}		
+						}
+					}
 				} else {
 					LOG.log(Level.WARNING, MessageFormat.format("Attribute type doesn''t support user codes Type: {0}", saveCode.getAttributeType()));
 				}
 			} else {
 				LOG.log(Level.WARNING, MessageFormat.format("Unable to find attribute type: {0}", saveCode.getAttributeType()));
-			}		
+			}
 		}
 		GenericEntity<List<AttributeCode>> entity = new GenericEntity<List<AttributeCode>>(updatedCodes)
 		{
@@ -841,7 +841,8 @@ public class AttributeResource
 		}
 	}
 
-	private Response handleAttributePostPutCode(AttributeCode attributeCode, boolean post) {
+	private Response handleAttributePostPutCode(AttributeCode attributeCode, boolean post)
+	{
 		ValidationModel validationModel = new ValidationModel(attributeCode);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);

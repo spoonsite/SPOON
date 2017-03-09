@@ -158,7 +158,7 @@
 									items: [
 										{
 											text: 'Save',
-											iconCls: 'fa fa-save',
+											iconCls: 'fa fa-lg fa-save icon-button-color-add',
 											formBind: true,
 											handler: function(){
 												var method = Ext.getCmp('entryForm').edit ? 'PUT' : 'POST'; 												
@@ -185,7 +185,7 @@
 										},
 										{
 											text: 'Cancel',
-											iconCls: 'fa fa-close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function(){
 												Ext.getCmp('addEditWin').close();
 											}											
@@ -241,7 +241,7 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										actionRefreshEntryGrid();
 									}
@@ -252,45 +252,44 @@
 								{
 									text: 'Add',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-plus',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
 									handler: function () {
 										actionAddEntry();
 									}
-								},
-								{
-									xtype: 'tbseparator'
-								}, 								
+								},								
 								{
 									text: 'Edit',
 									id: 'lookupGrid-tools-edit',
-									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-edit',
+									scale: 'medium',
+									width: '100px',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									disabled: true,
 									handler: function () {
 										actionEditEntry(Ext.getCmp('entryGrid').getSelection()[0]);
 									}								
 								},
 								{
-									xtype: 'tbfill'
-								},								
+									xtype: 'tbseparator'
+								},
 								{
 									text: 'Toggle Status',
 									id: 'lookupGrid-tools-status',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-power-off',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										actionToggleStatus();
 									}								
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbfill'
 								},
 								{
-									text: 'Remove',
+									text: 'Delete',
 									id: 'lookupGrid-tools-remove',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-close text-danger',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										actionRemoveType();
@@ -377,7 +376,7 @@
 						title: 'Move Existing Data',
 						y: 200,
 						width: 400,
-						height: 125,
+						height: 150,
 						modal: true,
 						layout: 'fit',
 						items: [
@@ -392,12 +391,12 @@
 											{
 												text: 'Apply',
 												formBind: true,
-												iconCls: 'fa fa-check',
+												iconCls: 'fa fa-lg fa-check icon-button-color-refresh',
 												handler: function(){
 													var form = this.up('form');
 													var data = form.getValues();
 													
-													Ext.getCmp('entryGrid').setLoading("Removing entry type...");
+													Ext.getCmp('entryGrid').setLoading("Deleting entry type...");
 													Ext.Ajax.request({
 														url: 'api/v1/resource/componenttypes/' + typeToRemove + '?newtype=' + data.componentType,
 														method: 'DELETE',
@@ -417,7 +416,7 @@
 											{
 												text: 'Cancel',
 												formbind: true,
-												iconCls: 'fa fa-close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 												handler: function(){
 													promptWindow.close();
 												}												

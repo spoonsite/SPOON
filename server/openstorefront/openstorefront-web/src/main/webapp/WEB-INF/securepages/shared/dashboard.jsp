@@ -83,7 +83,7 @@
 						name: 'Notifications',
 						code: 'NOTIFICATIONS',
 						description: 'Shows event notifications',
-						iconCls: 'fa fa-envelope',
+						iconCls: 'fa fa-envelope-o',
 						jsClass: 'OSF.component.NotificationPanel',
 						height: 400,
 						permissions: null,
@@ -230,7 +230,7 @@
 					{
 						name: 'Questions',
 						code: 'QUESTIONS',
-						description: 'Shows your question and allows for viewing responses.',
+						description: 'Shows your questions and allows for viewing responses.',
 						iconCls: 'fa fa-question',
 						jsClass: 'OSF.widget.Questions',						
 						height: 400,
@@ -310,9 +310,9 @@
 							tpl: new Ext.XTemplate(
 								'<tpl for=".">',
 								'  <div class="widget-picklist-item" onclick="dashboardPage.selectWidget(\'{code}\')">',								
-								'	<span style="float: left; width: 100px; padding-right: 20px;">',
-								'		<tpl if="selected"><i class="fa fa-5x fa-check highlight-success "></i>',
-								'		</tpl><tpl if="!selected"><i class="fa-5x {iconCls}"></i></tpl>',
+								'	<span style="float: left; width: 100px; padding-right: 20px; text-align: center;">',
+								'		<tpl if="selected"><i class="fa fa-3x fa-check highlight-success "></i>',
+								'		</tpl><tpl if="!selected"><i class="fa-3x {iconCls}"></i></tpl>',
 								'	</span>',
 								'	<div class="widget-picklist-item-title">{name}</div> {description}',								
 								'  </div>',
@@ -327,7 +327,7 @@
 							items: [
 								{
 									text: 'Add Selected Widgets',
-									iconCls: 'fa fa-plus',									
+									iconCls: 'fa fa-plus icon-button-color-add icon-small-vertical-correction',									
 									handler: function() {
 										var selectedWidget = false;
 										Ext.Array.each(dashboardPage.widgets, function(item) {
@@ -356,7 +356,7 @@
 								},
 								{
 									text: 'Cancel',
-									iconCls: 'fa fa-close',
+									iconCls: 'fa fa-close icon-button-color-warning icon-small-vertical-correction',
 									handler: function() {
 										this.up('window').close();
 									}
@@ -448,7 +448,7 @@
 							items: [
 								{
 									text: 'Add Widget',
-									iconCls: 'fa fa-2x fa-plus',
+									iconCls: 'fa fa-2x fa-plus icon-button-color-add',
 									scale: 'medium',
 									handler: function() {
 										addWidgetsWin.show();
@@ -741,8 +741,8 @@
 							beforeclose: function(panel, opts) {
 								if (!panel.doWidgetRemove) {
 									Ext.Msg.show({
-										title:'Remove Widget?',
-										message: 'Are you sure you want to remove widget?',
+										title:'Delete Widget?',
+										message: 'Are you sure you want to delete this widget?',
 										buttons: Ext.Msg.YESNO,
 										icon: Ext.Msg.QUESTION,
 										fn: function(btn) {

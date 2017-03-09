@@ -79,7 +79,7 @@ public class SystemAction
 	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
 	@HandlesEvent("BulkAttributeStatusUpdate")
 	public Resolution attributeStatusUpdate()
-	{		
+	{
 		LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 
 		ComponentAttribute componentAttributeExample = new ComponentAttribute();

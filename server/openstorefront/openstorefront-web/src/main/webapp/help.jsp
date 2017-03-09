@@ -63,7 +63,7 @@
 									xtype: 'button',
 									scale   : 'large',
 									ui: 'default',
-									iconCls: 'fa fa-2x fa-envelope icon-top-padding',
+									iconCls: 'fa fa-2x fa-envelope-o icon-top-padding',
 									iconAlign: 'left',
 									text: 'Notifications',
 									handler: function() {

@@ -320,14 +320,14 @@ Ext.define('OSF.form.Contacts', {
 							xtype: 'tbseparator'
 						},
 						{
-							text: 'Remove',
+							text: 'Delete',
 							itemId: 'delete',
-							iconCls: 'fa fa-trash-o',									
+							iconCls: 'fa fa-trash',									
 							disabled: true,
 							handler: function(){
 
 								Ext.Msg.show({
-									title:'Remove Contact?',
+									title:'Delete Contact?',
 									message: 'Are you sure you want to delete the contact from this entry?',
 									buttons: Ext.Msg.YESNO,
 									icon: Ext.Msg.QUESTION,

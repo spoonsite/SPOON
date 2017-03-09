@@ -35,7 +35,7 @@
 				
 				var viewWindow = Ext.create('Ext.window.Window', {
 					title: 'Details',
-					iconCls: 'fa fa-eye',
+					iconCls: 'fa fa-lg fa-eye',
 					modal: true,
 					width: '70%',
 					height: '60%',
@@ -204,17 +204,22 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',								
-									iconCls: 'fa fa-2x fa-refresh',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
+									width: '110px',
 									handler: function () {
 										actionRefresh();
 									}
+								},
+								{
+									xtype: 'tbseparator'
 								},
 								{
 									text: 'View Details',
 									itemId: 'view',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
+									width: '140px',
 									handler: function () {
 										actionView(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0]);										
 									}									
@@ -227,7 +232,7 @@
 									itemId: 'complete',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-default',
 									handler: function () {
 										actionMarkStatus(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0], true);										
 									}									
@@ -237,7 +242,7 @@
 									itemId: 'outstanding',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-edit',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-default',
 									handler: function () {
 										actionMarkStatus(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0], false);										
 									}									
@@ -250,7 +255,7 @@
 									itemId: 'delete',
 									disabled: true,
 									scale: 'medium',									
-									iconCls: 'fa fa-2x fa-close',
+									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									handler: function() {
 										actionDelete(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0]);	
 									}									
@@ -304,13 +309,13 @@
 
 				var actionDelete = function(record) {
 					Ext.Msg.show({
-						title: 'Remove Feedback?',
-						message: 'Are you sure you want to remove the selected feedback?',
+						title: 'Delete Feedback?',
+						message: 'Are you sure you want to delete the selected feedback?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {
 							if (btn === 'yes') {
-								Ext.getCmp('ticketGrid').setLoading('Removing Feedback...');
+								Ext.getCmp('ticketGrid').setLoading('Deleting Feedback...');
 								Ext.Ajax.request({
 									url: 'api/v1/resource/feedbacktickets/' + record.get('feedbackId'),
 									method: 'DELETE',

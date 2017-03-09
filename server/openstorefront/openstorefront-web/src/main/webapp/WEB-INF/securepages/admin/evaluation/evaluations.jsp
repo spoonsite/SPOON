@@ -21,8 +21,8 @@
 			var createEvaluationWin = Ext.create('Ext.window.Window', {
 				title: 'Create Evaluation',
 				modal: true,
-				width: 500,
-				height: 550,
+				width: 550,
+				maxHeight: '80%',
 				layout: 'fit',
 				items: [
 					{
@@ -36,8 +36,8 @@
 								dock: 'bottom',
 								items: [
 									{
-										text: 'Create',
-										iconCls: 'fa fa-save',
+										text: 'Save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-add',
 										handler: function(){
 											var form = this.up('form');
 											var data = form.getValues();
@@ -60,8 +60,8 @@
 										xtype: 'tbfill'
 									},
 									{
-										text: 'Close',
-										iconCls: 'fa fa-close',
+										text: 'Cancel',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											createEvaluationWin.close();
 										}										
@@ -127,7 +127,10 @@
 								typeAhead: false,	
 								valueField: 'code',
 								displayField: 'description',
-								fieldLabel: 'Status <span class="field-required" />',								
+								fieldLabel: 'Status <span class="field-required" />',
+								listConfig: {
+									minWidth: '100px'
+								},
 								store: {
 									proxy: {
 										type: 'ajax',
@@ -233,9 +236,9 @@
 					{ text: 'Published', dataIndex: 'published', align: 'center', width: 175,
 						renderer: function(value) {
 							if (value) {
-								return '<span class="fa fa-check text-success"></span>';
+								return '<span class="fa fa-lg fa-check icon-button-color-refresh"></span>';
 							} else {
-								return '<span class="fa fa-close text-danger"></span>';
+								return '<span class="fa fa-lg fa-close icon-button-color-warning"></span>';
 							}
 						}
 					},
@@ -329,12 +332,12 @@
 							Ext.create('OSF.component.StandardComboBox', {
 								id: 'filterWorkflowStatus',
 								name: 'workflowStatus',								
-								allowBlank: false,								
 								margin: '0 0 5 0',
+								matchFieldWidth: false,
 								editable: false,
 								typeAhead: false,
 								emptyText: 'All',
-								width: 200,	
+								minWidth: 200,	
 								fieldLabel: 'Workflow Status',								
 								storeConfig: {
 									url: 'api/v1/resource/lookuptypes/WorkflowStatus',
@@ -360,8 +363,9 @@
 						items: [
 							{
 								text: 'Refresh',
-								iconCls: 'fa fa-2x fa-refresh',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								scale: 'medium',
+								width: '110px',
 								handler: function(){
 									actionRefresh();
 								}
@@ -370,8 +374,8 @@
 								xtype: 'tbseparator'
 							},
 							{
-								text: 'Create',
-								iconCls: 'fa fa-2x fa-plus text-success',
+								text: 'Add',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
 								scale: 'medium',
 								handler: function(){
 									addEditEvaluation();
@@ -379,9 +383,10 @@
 							},							
 							{
 								text: 'Edit',
-								iconCls: 'fa fa-2x fa-edit',
+								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 								itemId: 'edit',
-								disabled: true,								
+								disabled: true,
+								width: '100px',
 								scale: 'medium',
 								handler: function(){
 									var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
@@ -392,6 +397,17 @@
 								xtype: 'tbseparator'
 							},
 							{
+								text: 'Toggle Staus',
+								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
+								itemId: 'togglestatus',
+								disabled: true,									
+								scale: 'medium',
+								handler: function(){
+									var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
+									actionToggleStatus(record);
+								}
+							},
+							{
 								text: 'Action',
 								itemId: 'action',
 								disabled: true,									
@@ -400,7 +416,7 @@
 									{
 										text: 'Publish',
 										id: 'publish',
-										iconCls: 'fa fa-check text-success',
+										iconCls: 'fa fa-lg fa-check icon-button-color-refresh',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											publish(record);
@@ -411,7 +427,7 @@
 									},									
 									{
 										text: 'Copy',										
-										iconCls: 'fa fa-copy',
+										iconCls: 'fa fa-lg fa-copy icon-button-color-default',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											copy(record);
@@ -422,7 +438,7 @@
 									},
 									{
 										text: 'Assign Group',
-										iconCls: 'fa fa-users',
+										iconCls: 'fa fa-lg fa-users icon-button-color-default',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAssignGroup(record);
@@ -430,7 +446,7 @@
 									},	
 									{
 										text: 'Assign User',
-										iconCls: 'fa fa-user',
+										iconCls: 'fa fa-lg fa-user icon-button-color-default',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAssignUser(record);
@@ -442,7 +458,7 @@
 									{
 										text: 'Unpublish',
 										id: 'unpublish',
-										iconCls: 'fa fa-close text-danger',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											unpublish(record);
@@ -453,7 +469,7 @@
 									},
 									{
 										text: 'Delete',
-										iconCls: 'fa fa-close text-danger',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										cls: 'alert-danger',
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
@@ -461,20 +477,6 @@
 										}										
 									}									
 								]
-							},							
-							{
-								xtype: 'tbfill'
-							},																				
-							{
-								text: 'Toggle Staus',
-								iconCls: 'fa fa-2x fa-power-off text-warning',
-								itemId: 'togglestatus',
-								disabled: true,									
-								scale: 'medium',
-								handler: function(){
-									var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
-									actionToggleStatus(record);
-								}
 							}								
 						]
 					},
@@ -552,7 +554,7 @@
 			var publish = function(record){
 				Ext.Msg.show({
 					title:'Publish Evaluation?',
-					message: 'Are you sure you want to PUBLISH this evalaution?',
+					message: 'Are you sure you want to PUBLISH this evaluation?',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
@@ -576,7 +578,7 @@
 			var unpublish = function(record){
 				Ext.Msg.show({
 					title:'Unpublish Evaluation?',
-					message: 'Are you sure you want to UNPUBLISH this evalaution?',
+					message: 'Are you sure you want to UNPUBLISH this evaluation?',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
@@ -623,7 +625,7 @@
 			var actionDelete = function(record) {
 				Ext.Msg.show({
 					title:'Delete Evaluation?',
-					message: 'Are you sure you want to delete this evalaution?',
+					message: 'Are you sure you want to delete this evaluation?',
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {

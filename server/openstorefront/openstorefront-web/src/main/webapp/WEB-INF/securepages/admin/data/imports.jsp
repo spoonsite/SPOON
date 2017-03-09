@@ -69,7 +69,7 @@
 								xtype: 'tbfill'								
 							}, 
 							{
-								text: 'Done',
+								text: 'Close',
 								iconCls: 'fa fa-close',
 								handler: function() {
 									addEditAttributeCodeWin.close();
@@ -160,7 +160,7 @@
 												margin: '0 20 10 0',
 												width: '200',
 												scale: 'medium',
-												iconCls: 'fa fa-2x fa-plus',
+												iconCls: 'fa fa-lg fa-plus',
 												handler: function() {
 													this.setText('Add');
 													var form = this.up('form');
@@ -186,7 +186,7 @@
 												xtype: 'button',
 												text: 'Cancel',
 												margin: '5 0 00 0',
-												iconCls: 'fa  fa-close',
+												iconCls: 'fa fa-lg fa-close',
 												handler: function() {
 													Ext.getCmp('attributeCodeAddBtn').setText('Add');
 													var form = this.up('form');
@@ -206,7 +206,7 @@
 										text: 'Edit',
 										itemId: 'edit',
 										disabled: true,
-										iconCls: 'fa fa-edit',
+										iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 										handler: function(){
 											var grid = this.up('grid');																	
 											var form = Ext.getCmp('attributeCodeForm');
@@ -221,10 +221,10 @@
 										xtype: 'tbfill'
 									},
 									{
-										text: 'Remove',
+										text: 'Delete',
 										itemId: 'remove',
 										disabled: true,
-										iconCls: 'fa fa-remove',
+										iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 										handler: function(){
 											var grid = this.up('grid');	
 											var record = grid.getSelectionModel().getSelection()[0];
@@ -343,7 +343,7 @@
 											{
 												xtype: 'button',
 												text: 'Upload',												
-												iconCls: 'fa fa-upload',
+												iconCls: 'fa fa-upload icon-button-color-default',
 												formBind: true,
 												handler: function() {
 													var uploadForm = this.up('form');
@@ -538,16 +538,17 @@
 													{
 														xtype: 'container',
 														layout: 'hbox',
+														margin: '0 0 10 0',
 														items: [
 															{
 																xtype: 'button',
 																id: 'fieldAddBtn',
 																text: 'Add',
 																formBind: true,
-																margin: '0 20 10 0',
-																width: '200',
+																margin: '0 20 0 0',
+																width: '100',
 																scale: 'medium',
-																iconCls: 'fa fa-2x fa-plus',
+																iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 																handler: function() {
 																	this.setText('Add');
 																	var form = this.up('form');
@@ -585,8 +586,9 @@
 															{
 																xtype: 'button',
 																text: 'Cancel',
-																margin: '5 0 00 0',
-																iconCls: 'fa  fa-close',
+//																margin: '5 0 0 0',
+																scale: 'medium',
+																iconCls: 'fa fa-lg fa-close icon-small-vertical-correction',
 																handler: function() {
 																	Ext.getCmp('fieldAddBtn').setText('Add');
 																	var form = this.up('form');
@@ -651,7 +653,7 @@
 																text: 'Edit',
 																itemId: 'edit',
 																disabled: true,
-																iconCls: 'fa fa-edit',
+																iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 																handler: function() {
 																	var grid = this.up('grid');																	
 																	var form = Ext.getCmp('fieldForm');
@@ -666,10 +668,10 @@
 																xtype: 'tbfill'
 															},
 															{
-																text: 'Remove',
+																text: 'Delete',
 																itemId: 'remove',
 																disabled: true,
-																iconCls: 'fa fa-close',
+																iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 																handler: function() {
 																	var grid = this.up('grid');	
 																	var record = grid.getSelectionModel().getSelection()[0];
@@ -794,16 +796,17 @@
 													{
 														xtype: 'container',
 														layout: 'hbox',
+														margin: '0 0 10 0',
 														items: [
 															{
 																xtype: 'button',
 																id: 'attributeTypeAddBtn',
 																text: 'Add',
 																formBind: true,
-																margin: '0 20 10 0',
-																width: '200',
+																margin: '0 20 0 0',
+																width: '100',
 																scale: 'medium',
-																iconCls: 'fa fa-2x fa-plus',
+																iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
 																handler: function() {
 																	this.setText('Add');
 																	var form = this.up('form');
@@ -834,8 +837,9 @@
 															{
 																xtype: 'button',
 																text: 'Cancel',
-																margin: '5 0 00 0',
-																iconCls: 'fa  fa-close',
+//																margin: '5 0 0 0',
+																scale: 'medium',
+																iconCls: 'fa fa-lg fa-close icon-small-vertical-correction',
 																handler: function() {
 																	Ext.getCmp('attributeTypeAddBtn').setText('Add');
 																	var form = this.up('form');
@@ -930,10 +934,10 @@
 																xtype: 'tbfill'
 															},
 															{
-																text: 'Remove',
+																text: 'Delete',
 																itemId: 'remove',
 																disabled: true,
-																iconCls: 'fa fa-close',
+																iconCls: 'fa fa-trash',
 																handler: function() {
 																	var grid = this.up('grid');	
 																	var record = grid.getSelectionModel().getSelection()[0];
@@ -957,7 +961,7 @@
 									{
 										text: 'Save',										
 										scale: 'medium',
-										iconCls: 'fa fa-2x fa-save',
+										iconCls: 'fa fa-lg fa-save icon-button-color-add icon-small-vertical-correction',
 										handler: function() {
 											mappingActionSave();
 										}
@@ -974,7 +978,7 @@
 									{
 										text: 'Cancel',
 										scale: 'medium',
-										iconCls: 'fa fa-2x fa-close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
 										handler: function() {
 											addEditMapping.close();
 										}										
@@ -1194,7 +1198,7 @@
 							{
 								text: 'Refresh',
 								scale: 'medium',
-								iconCls: 'fa  fa-2x fa-refresh',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function() {
 									actionRefreshMappings();
 								}
@@ -1205,7 +1209,8 @@
 							{
 								text: 'Add',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-plus',
+								width: '100px',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-add icon-vertical-correction',
 								handler: function() {
 									actionShowMappingForm();
 								}
@@ -1214,8 +1219,9 @@
 								text: 'Edit',
 								itemId: 'edit',
 								disabled: true,
+								width: '100px',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-edit',
+								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 								handler: function() {
 									var grid = mappingPanel;
 									var mapRecord = mappingPanel.getSelectionModel().getSelection()[0];
@@ -1293,9 +1299,10 @@
 							{
 								text: 'Copy',
 								itemId: 'copy',
-								disabled: true,	
+								disabled: true,
+								width: '120px',
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-copy',
+								iconCls: 'fa fa-2x fa-clone icon-vertical-correction-view icon-button-color-default',
 								handler: function(){	
 									var grid = mappingPanel;
 									var record = mappingPanel.getSelectionModel().getSelection()[0];	
@@ -1320,7 +1327,8 @@
 								itemId: 'preview',
 								disabled: true,	
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-binoculars',
+								width: '120px',
+								iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 								handler: function(){									
 									var record = mappingPanel.getSelectionModel().getSelection()[0];	
 									
@@ -1361,7 +1369,7 @@
 																		xtype: 'button',
 																		text: 'Upload',
 																		formBind: true,
-																		iconCls: 'fa fa-upload',
+																		iconCls: 'fa fa-lg fa-upload',
 																		handler: function() {
 																			var uploadForm = this.up('form');
 																			var previewPanel = uploadForm.up('panel');
@@ -1407,7 +1415,7 @@
 															},
 															{
 																text: 'Close',
-																iconCls: 'fa fa-close',
+																iconCls: 'fa  fa-lg fa-close icon-button-color-warning',
 																handler: function() {
 																	previewWin.close();
 																}
@@ -1434,7 +1442,7 @@
 								text: 'Import',
 								itemId: 'import',								
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-upload',
+								iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-vertical-correction',
 								handler: function(){											
 									var record = mappingPanel.getSelectionModel().getSelection()[0];
 									
@@ -1458,7 +1466,7 @@
 														items: [
 															{
 																text: 'Upload',
-																iconCls: 'fa fa-upload',
+																iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 																formBind: true,
 																handler: function() {
 																	var uploadForm = this.up('form');
@@ -1487,7 +1495,7 @@
 															},
 															{
 																text: 'Cancel',
-																iconCls: 'fa fa-close',
+																iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 																handler: function(){
 																	var uploadForm = this.up('form');
 																	uploadForm.reset();
@@ -1521,7 +1529,7 @@
 								itemId: 'export',
 								disabled: true,	
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-download',
+								iconCls: 'fa fa-2x fa-download icon-button-color-default',
 								handler: function(){		
 									var record = mappingPanel.getSelectionModel().getSelection()[0];	
 									
@@ -1533,18 +1541,18 @@
 								xtype: 'tbseparator'
 							},
 							{
-								text: 'Remove',
+								text: 'Delete',
 								itemId: 'remove',
 								disabled: true,								
 								scale: 'medium',
-								iconCls: 'fa fa-2x fa-close text-danger',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 								handler: function() {
 									var grid = mappingPanel;
 									var record = mappingPanel.getSelectionModel().getSelection()[0];									
 									
 									Ext.Msg.show({
-										title:'Remove Mapping',
-										message: 'Are you sure you want to remove this mapping?',
+										title:'Delete Mapping',
+										message: 'Are you sure you want to delete this mapping?',
 										buttons: Ext.Msg.YESNO,
 										icon: Ext.Msg.QUESTION,
 										fn: function(btn) {
@@ -1725,7 +1733,7 @@
 							{
 								text: 'Refresh',								
 								scale: 'medium',								
-								iconCls: 'fa fa-2x fa-refresh',
+								iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 								handler: function () {
 									this.up('grid').getStore().reload();
 								}
@@ -1733,25 +1741,28 @@
 							{
 								xtype: 'tbseparator'
 							},
-							{
-								text: 'View Details',
-								itemId: 'viewDetailsBtn',
-								scale: 'medium',								
-								iconCls: 'fa fa-2x fa-binoculars',
-								disabled: true,
+							{					
+								text: 'Import',								
+								scale: 'medium',
+								width: '120px',
+								iconCls: 'fa fa-2x fa-upload icon-vertical-correction-view icon-button-color-default',
 								handler: function () {
-									actionViewDetails(Ext.getCmp('fileHistoryGrid').getSelectionModel().getSelection()[0]);
+									importWindow.show();
 								}
 							},
+							
 							{
 								xtype: 'tbseparator'
 							},							
-							{					
-								text: 'Import',								
-								scale: 'medium',								
-								iconCls: 'fa fa-2x fa-upload',
+							{
+								text: 'View Details',
+								itemId: 'viewDetailsBtn',
+								scale: 'medium',
+								width: '150px',
+								iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
+								disabled: true,
 								handler: function () {
-									importWindow.show();
+									actionViewDetails(Ext.getCmp('fileHistoryGrid').getSelectionModel().getSelection()[0]);
 								}
 							},							
 							{
@@ -1761,7 +1772,7 @@
 								text: 'Reprocess',
 								itemId: 'reprocessBtn',
 								scale: 'medium',								
-								iconCls: 'fa fa-2x fa-reply',
+								iconCls: 'fa fa-2x fa-undo icon-button-color-refresh icon-vertical-correction',
 								disabled: true,
 								handler: function () {
 									actionReprocess(Ext.getCmp('fileHistoryGrid').getSelectionModel().getSelection()[0]);
@@ -1771,7 +1782,7 @@
 								text: 'Rollback',
 								itemId: 'rollbackBtn',
 								scale: 'medium',								
-								iconCls: 'fa fa-2x fa-close',
+								iconCls: 'fa fa-2x fa-close icon-vertical-correction icon-button-color-warning',
 								disabled: true,
 								handler: function () {
 									actionRollback(Ext.getCmp('fileHistoryGrid').getSelectionModel().getSelection()[0]);
@@ -1793,7 +1804,7 @@
 								text: 'Download',
 								id: 'downloadBtn',
 								scale: 'medium',								
-								iconCls: 'fa fa-2x fa-download',
+								iconCls: 'fa fa-2x fa-download icon-button-color-default',
 								disabled: true,
 								handler: function () {
 									actionDownload(Ext.getCmp('fileHistoryGrid').getSelectionModel().getSelection()[0]);
@@ -1907,7 +1918,7 @@
 							{
 								text: 'Previous',
 								id: 'detailWindow-previousBtn',
-								iconCls: 'fa fa-arrow-left',									
+								iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
 								handler: function() {
 									actionDetailsNextRecord(false);
 								}									
@@ -1917,7 +1928,7 @@
 							},
 							{
 								text: 'Close',
-								iconCls: 'fa fa-close',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 								handler: function() {
 									this.up('window').hide();
 								}
@@ -1928,7 +1939,7 @@
 							{
 								text: 'Next',
 								id: 'detailWindow-nextBtn',
-								iconCls: 'fa fa-arrow-right',
+								iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
 								iconAlign: 'right',
 								handler: function() {
 									actionDetailsNextRecord(true);

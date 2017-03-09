@@ -112,7 +112,8 @@
 								{
 									text: 'Refresh',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-refresh',
+									width: '110px',
+									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
 										componentPanel.getStore().load();
 										componentPanel.getSelectionModel().deselectAll();
@@ -160,11 +161,11 @@
 							dock: 'top',
 							items: [
 								{
-									text: 'Deactivate',
+									text: 'Toggle Status',
 									id: 'question-activateButton',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-power-off',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									handler: function () {
 										var cmpSel = componentPanel.getSelectionModel().hasSelection();
 										var qSel = questionPanel.getSelectionModel().hasSelection();
@@ -268,10 +269,10 @@
 											answerPanel.getStore().filter('activeStatus', newValue);
 											var actButton = Ext.getCmp('answer-activateButton');
 											if (newValue === 'A') {
-												actButton.setText('Deactivate');
+												actButton.setText('Toggle Status');
 											}
 											else {
-												actButton.setText('Activate');
+												actButton.setText('Toggle Status');
 											}
 											actButton.disable();
 										}
@@ -294,11 +295,11 @@
 									})
 								},
 								{
-									text: 'Deactivate',
+									text: 'Toggle Status',
 									id: 'answer-activateButton',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-power-off',
+									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									handler: function () {
 										var cmpSel = componentPanel.getSelectionModel().hasSelection();
 										var qSel = questionPanel.getSelectionModel().hasSelection();
@@ -405,11 +406,11 @@
 											var aButton = Ext.getCmp('answer-activateButton');
 											var newUrl = 'api/v1/resource/components/questionviews';
 											if (newValue === 'A') {
-												qButton.setText('Deactivate');
+												qButton.setText('Toggle Status');
 												newUrl += '?status=A';
 											}
 											else {
-												qButton.setText('Activate');
+												qButton.setText('Toggle Status');
 												newUrl += '?status=I';
 											}
 											qButton.disable();
